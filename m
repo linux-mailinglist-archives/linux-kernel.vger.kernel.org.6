@@ -1,111 +1,135 @@
-Return-Path: <linux-kernel+bounces-234446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F21791C6BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:39:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A22091C6C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EAA71F25C04
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:39:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C49061F24E2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:43:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D8A762D0;
-	Fri, 28 Jun 2024 19:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34900762DF;
+	Fri, 28 Jun 2024 19:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="EUESVM0x"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0Dtfvbo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95ABC74077
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 19:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D9156444;
+	Fri, 28 Jun 2024 19:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719603584; cv=none; b=o4tenbDV09S+w1H7ib4eRLKeIeXpSJgRpk+cPeqVlTjBVmIaSGAfwbYbmBzgegl0k7MN6SSbtFkNIAFy0t0oh+ILCR360YfCRdWxPoHZPppOhDeLL2ANPJX5rLQo4w2aqc77dP8Y3T/Xrmg2J0nzNLbNuBDK1soXzYXRbAi5pZk=
+	t=1719603778; cv=none; b=QJ1xuYxdXK218SIWn6s3GiYy6KFsX8DdEhegBxMH9amOXNGe0q6pfb9aKV1Kfqx6p541qEy/A83CP3SyJmLQzvimAVCmq6n1cDeDwN4uihnharAQ3I+lRhXtuEUfeSygOVkDfcH9o2DwhYM2ohu/1/66SLxU8N47BHt0o8EHbXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719603584; c=relaxed/simple;
-	bh=AiKlbNF2JyzTB73CXpB1ZJjuPsbUQGJbXOtwJrCQavA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=CoLifUoCYkwQ8MLBvpsQ5kz1g53t6IWybEH3+9+XN33hVSumXF21mC2qSVnYEnJQMWPIk5tQAQRMLzMz9mSKgoKX2TmifAoD76E7K4PcHwuGPasCQNsFvSe+vTHeC4QCxH4ewAljHThbcQAsTBkug73/7JQnx6sBKf4D/NbLVH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=EUESVM0x; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3772749962dso660475ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 12:39:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1719603581; x=1720208381; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Jlu7OFoSigy4VBRWahwI/CAdqSq3ZHba+Z6d6xpDy0s=;
-        b=EUESVM0x+XPkNnj5nWjY/8assAO+ASkJX3u3d8foYc88i2FbJvO/pxfC/Uouel6kMt
-         zV9LpmUPTaryLRWIbiOF1wJUavylRu4mfAXHr/9mNJqMFqypHRQu3lAkJNq/8ZeSKWRq
-         0K/0G8NwUBL/d+4rd3QWreJBhwFJBQ/vlnO7E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719603581; x=1720208381;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jlu7OFoSigy4VBRWahwI/CAdqSq3ZHba+Z6d6xpDy0s=;
-        b=wcgEropY6QEgVa1ftyfen/qPu7t0Scrajt/EZ5drD1+M1L+HMpG0bcmAsg//JV1jug
-         ZDzaha5dBUHHreV3JDXLvNNbjatDkoPQj3Qk8Oh3gNlHkofsZiyiPqplB7KrjVizYL7N
-         xtSCsOT24FWMrOzhiDiYmBFERCsGx3kLaLEQBeDQZGSlddqp2wP8Gr91gOHA/ED5Usox
-         qfHRjjdO+1u3NiCwZ4aeC15XuTjlRo+vF29gLD2Mc5bHybmqLur8hoMRSHYoWqMnJFDz
-         Xudbgq6b22FBEUlAcYFSJfGqQXpuY8dBO3lT+A0QEDQhxhcpA1ubmEu+dF8w4zcT+6Qt
-         VfIA==
-X-Forwarded-Encrypted: i=1; AJvYcCVhOpUl9Z/ANs3KId5bU3y66SzbkbCeS6wVnSDJ0FcKY5IEWVj5sXajLwZTMJPnxjdyBFWzhxth4TRN0yXgWiO3QugDnDFWdJ2WyrP/
-X-Gm-Message-State: AOJu0YyYBrU5KhCf/9uGJ1tNn2PBZiyQ7E2ZLsz9HBLNV+pt9OI3xOJc
-	lEzzx7Fu3cdt9UYVLRi78/6X+1f150ylFYtHzW3e9sYG2yZ2xaR3deay1JRs/AY=
-X-Google-Smtp-Source: AGHT+IEFN9w6La20dA4pfLcoEu0o6yN5RPDj+kWUC6AC8H3QgED7762nwW8XTv0QM/TYaxu3/bA0JQ==
-X-Received: by 2002:a05:6e02:13a5:b0:376:3918:c50 with SMTP id e9e14a558f8ab-37639180e02mr219326075ab.0.1719603581458;
-        Fri, 28 Jun 2024 12:39:41 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-37ad2f40743sm5547015ab.43.2024.06.28.12.39.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jun 2024 12:39:41 -0700 (PDT)
-Message-ID: <74e09bb5-6226-4c6c-8694-7f4235dbb9f9@linuxfoundation.org>
-Date: Fri, 28 Jun 2024 13:39:40 -0600
+	s=arc-20240116; t=1719603778; c=relaxed/simple;
+	bh=azzMXAYWdML81bvBEeMLV/S4wFPRaOArS+pvGUlUIL4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fc/VgJsPwuEVj1Xo9KnrMe1Hga3o2DeGvSRiSK6INGIOSmX1ECuLJNU5xugV6mD4Nb3IDGhh1KSQECvUbPOeMXeXimDrfQuhrodJzBNICR+bjMkyRGlgUNV2pEuK5PaXkO1sMqqXeRnliX8FIdW9c+R057xwRV5EfLm9+jUvDpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V0Dtfvbo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5221C116B1;
+	Fri, 28 Jun 2024 19:42:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719603778;
+	bh=azzMXAYWdML81bvBEeMLV/S4wFPRaOArS+pvGUlUIL4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V0DtfvboT9qXDQsxvgCjCzxwqtlQOmR6ntEJFj1Vnd1cJ9DV77yWK+ektlrZ3WELy
+	 rjzg7+5boW1xf0K06TadxfCWlpoWyxn/4gm0k2h26+EI0AnRDjMFH5m6tsns0I54nM
+	 eAS6bS8BXbgmKy6nmtU0NKIRo37nxLHPm/MO3w7EluGAOy9hNmHUUzKKJby8WEX2tT
+	 GiMf1IzjSOi9Z9B6qLqN348DviFeN2SJ4LiOchoO13YIVSP5V/+oqZHp8qE2pjBfTH
+	 5h8G9v68S8JHx93XIO+w6H5Fipkzq0W0SxyKZ++T+gRwlpLDh3oIex4PJPpaFiM+jM
+	 q5COyddYjdxEQ==
+Date: Fri, 28 Jun 2024 21:42:53 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Igor Pylypiv <ipylypiv@google.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 6/6] ata: libata-scsi: Check ATA_QCFLAG_RTF_FILLED
+ before using result_tf
+Message-ID: <Zn8SPZG4y4wvSH-g@ryzen.lan>
+References: <20240626230411.3471543-1-ipylypiv@google.com>
+ <20240626230411.3471543-7-ipylypiv@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] Updating maintainer and correcting Czech translation
- in cpupower
-To: Daniel Hejduk <danielhejduk@disroot.org>, shuah@kernel.org,
- trenn@suse.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <ba4d74fd-6762-4e9d-8346-5f3384cb60ce@linuxfoundation.org>
- <20240628174420.5370-1-danielhejduk@disroot.org>
-Content-Language: en-US
-Cc: Shuah Khan <skhan@linuxfoundation.org>
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240628174420.5370-1-danielhejduk@disroot.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240626230411.3471543-7-ipylypiv@google.com>
 
-On 6/28/24 11:44, Daniel Hejduk wrote:
-> *** BLURB HERE ***
-
-Explain what this patch series does.
+On Wed, Jun 26, 2024 at 11:04:11PM +0000, Igor Pylypiv wrote:
+> qc->result_tf contents are only valid when the ATA_QCFLAG_RTF_FILLED flag
+> is set. The ATA_QCFLAG_RTF_FILLED flag should be always set for commands
+> that failed or for commands that have the ATA_QCFLAG_RESULT_TF flag set.
 > 
-> Daniel Hejduk (3):
->    Updating cpupower's Czech translation maintainer
->    Correcting needs work strings and adding new to cpupower's Czech
->      translation
->    Adding changelog for cpupower
-
-short summary format is wrong. Refer to commits in the kernel
-rep for reference on how to write summary and commit logs.
-  
+> Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
+> ---
+>  drivers/ata/libata-scsi.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
 > 
->   tools/power/cpupower/ChangeLog |   3 +
->   tools/power/cpupower/po/cs.po  | 174 +++++++++++++++++----------------
->   2 files changed, 95 insertions(+), 82 deletions(-)
->   create mode 100644 tools/power/cpupower/ChangeLog
+> diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+> index 02af4d5d5799..d5874d4b9253 100644
+> --- a/drivers/ata/libata-scsi.c
+> +++ b/drivers/ata/libata-scsi.c
+> @@ -242,10 +242,16 @@ void ata_scsi_set_sense_information(struct ata_device *dev,
+>   */
+>  static void ata_scsi_set_passthru_sense_fields(struct ata_queued_cmd *qc)
+>  {
+> +	struct ata_device *dev = qc->dev;
+>  	struct scsi_cmnd *cmd = qc->scsicmd;
+>  	struct ata_taskfile *tf = &qc->result_tf;
+>  	unsigned char *sb = cmd->sense_buffer;
+>  
+> +	if (!(qc->flags & ATA_QCFLAG_RTF_FILLED)) {
+> +		ata_dev_dbg(dev, "Missing RTF: cannot set ATA PT sense fields.\n");
+> +		return;
+> +	}
+> +
+>  	if ((sb[0] & 0x7f) >= 0x72) {
+>  		unsigned char *desc;
+>  		u8 len;
+> @@ -923,10 +929,16 @@ static void ata_to_sense_error(u8 drv_stat, u8 drv_err, u8 *sk, u8 *asc,
+>   */
+>  static void ata_gen_passthru_sense(struct ata_queued_cmd *qc)
+>  {
+> +	struct ata_device *dev = qc->dev;
+>  	struct scsi_cmnd *cmd = qc->scsicmd;
+>  	struct ata_taskfile *tf = &qc->result_tf;
+>  	u8 sense_key, asc, ascq;
+>  
+> +	if (!(qc->flags & ATA_QCFLAG_RTF_FILLED)) {
+> +		ata_dev_dbg(dev, "Missing RTF: cannot generate ATA PT sense data.\n");
+> +		return;
+> +	}
+> +
+>  	/*
+>  	 * Use ata_to_sense_error() to map status register bits
+>  	 * onto sense key, asc & ascq.
+> @@ -970,6 +982,12 @@ static void ata_gen_ata_sense(struct ata_queued_cmd *qc)
+>  		ata_scsi_set_sense(dev, cmd, NOT_READY, 0x04, 0x21);
+>  		return;
+>  	}
+> +
+> +	if (!(qc->flags & ATA_QCFLAG_RTF_FILLED)) {
+> +		ata_dev_dbg(dev, "Missing RTF: cannot generate sense data.\n");
+> +		return;
+> +	}
+> +
+>  	/* Use ata_to_sense_error() to map status register bits
+>  	 * onto sense key, asc & ascq.
+>  	 */
+> -- 
+> 2.45.2.803.g4e1b14247a-goog
+> 
 
-thanks,
--- Shuah
+In order to be more consistent with existing prints in this file,
+please do not capitalize the first letter, and remove the punctuation.
 
+
+Kind regards,
+Niklas
 
