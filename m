@@ -1,142 +1,105 @@
-Return-Path: <linux-kernel+bounces-233553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0F9191B955
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:03:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2695791B95C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:04:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EDAC286F1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:03:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40B711C231AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5EC146D6E;
-	Fri, 28 Jun 2024 08:03:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 924EB14389B;
+	Fri, 28 Jun 2024 08:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="GCLgh/3S"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="korjE8nw"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95E514375A;
-	Fri, 28 Jun 2024 08:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929B14436A
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 08:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719561793; cv=none; b=joD+uo8j55Yb2FDj00CwgLJlWwa5ggsnCFKMMlgjq1Kyboumzf+fngZXIY3eC73VZ0eQINTbNsWQ6TJ+1EVkwXvqze2cf2MRP+vPbIzEZT8PRqdtMg9gi7+B+T2ervKQpQeHfU1+NDaP7EBtfKegtDzOiJXmcPnForyYSI/fJCw=
+	t=1719561875; cv=none; b=rw5Rxrsn7elB+lRP/jYyYTDWge1exLSK7voM/tW9TpVV3W6iW9RZzBbEhKQC+6OJvYuZ2dr7jQjsEW/r1hZWM1JKdzRqT0Ji+DUkel2/59l+CLF007A4UVJ420X4JDynx1zUl/VBDQ3oBIDVP80s5VPL5Jkc155qf8SDjU9bwws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719561793; c=relaxed/simple;
-	bh=yPCtwntitwnq3P1LKmfs4zz3mc8+InZdnuHc3hi9Ylk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KXZ8lvDpMH+IeW+uKKWHihg+X1hEB5UQXbPO6rpugLcw957FA30X37if9kMAHmRk3I/5QvAcehL1IatKh5V34eQE7bfE+iVS4DPQXRZe1M0+HuRj0bx38HsD+QTfpHkYEkdZc1k03ssAPTKJbBVqSDt6qp5HerjhCXxcIlUTv0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=GCLgh/3S; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 728DB40E021A;
-	Fri, 28 Jun 2024 08:03:09 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id JE-v6gqwM-Fi; Fri, 28 Jun 2024 08:03:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1719561786; bh=cVfSEJoYI9K0X4J37xQ+u9NuE3Ao5q+TdjlnQbav5uQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GCLgh/3SKA7iIa6OISo/2RyK4dTZnRR1eaus1F4iNpS0fGSrj95b9hJYqTZTKgkXz
-	 /2oZRRnzy3Ga6cUnjGEcQyXSdtHOV9opsrWvl2dRvgdkfg/ZvK1bN9/zSA9aBTmoi3
-	 +W64B7IZbySGJJefzyFJ2/L+FHoECPjkyr9yx76MLv7Rxb3pDcpsoeQicY3vhMwdXd
-	 4Q5VykYuRSmpE9ZrmK44aoNHdUFF83D9BQFKDUEeJsZO682rkNlPLDsbSpjVSIuZXv
-	 afFrbfUTlpKIM6oawmgpuRuXf/ql/mds8ZmQ+32l4zm0bIsec7ARNz1DGDnBbXvbYQ
-	 JSPeKQDLZaHGjWoIbCGjQ7t2+ZWCmpk21XbcGQG4zNqttTBZdOPUH5hrYa58gGIHVJ
-	 HI9vmI/F40jN9LRqOun6xbX0Xruqcr0/mnwS7EPXqfI7JKaLf2PaMkDfTx5onrD+8c
-	 N967Y8tDCxQhNoaUnRKjD/YL6I38NScreg2i3zHZe3pbQcHK6du8rlAfKD/lkp12f2
-	 vCJ8OLmWenLMP7RvUn7lfiFSdV99yr5adTmAlMGLlFbikTcpZsdc/lZeqWcm2iCagU
-	 QQqax4fFN7CSdzzKvOUouemsQXWBBj48nR5JCU1/Zyqb+7Bs3gQEn5TlXq1d6+fLNa
-	 9Xeg1iUIeJYEZPkq+jC0Om5E=
-Received: from nazgul.tnic (business-24-134-159-81.pool2.vodafone-ip.de [24.134.159.81])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D935140E0219;
-	Fri, 28 Jun 2024 08:02:45 +0000 (UTC)
-Date: Fri, 28 Jun 2024 10:03:05 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Brice Goglin <brice.goglin@gmail.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Perry Yuan <Perry.Yuan@amd.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: Re: [PATCH PATCH v2 1/9] x86/cpu/topology: Add CPU type to struct
- cpuinfo_topology
-Message-ID: <20240628080305.GEZn5uOSnW40fVgaNA@fat_crate.local>
-References: <20240627-add-cpu-type-v2-0-f927bde83ad0@linux.intel.com>
- <20240627-add-cpu-type-v2-1-f927bde83ad0@linux.intel.com>
+	s=arc-20240116; t=1719561875; c=relaxed/simple;
+	bh=qRTyb0qwbmxdEWCwT3F1bApEFMrbfFFwqUJe5Ucy6GY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RoS0kMqzQ2NdYZe3eYHauij8K1YSdlYoiBNdxzXwVAxeesx0fsoHxWQMchjgMp7lISKj7j+5zqhEyh4mL7HWuwJ9Xij9I7gs5X6cKh6+TptoPhf6+9EPQ+Cfw+Iwnx2tvGeVczarKPJOYf68sN7mI9kEjrukAyCburX8Zez0wAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=korjE8nw; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2c72becd4fdso232957a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 01:04:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719561874; x=1720166674; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1Sgyvv0YJuBT0GMeHDfvUWM7p1X2ARTlWPgT25XarGw=;
+        b=korjE8nwcWqyhBz7qIwFXHfGFeDkTsEtw248cSvThwLNT4fb5dyiuuMHyCKzM94Rct
+         CMhdHpFsRUjW3VgCFNE6cZ4u+UbdEUq4CvaGeURdFGeMX6SQph2wO1JQ4vl+GjPXfciA
+         F8GE+EAwVsUkIrJKW//RNj002FPuoKAtXTANg2+claUZvhEjToYNuEBkAtZ0jGafllm9
+         TBGp694HUtJ9snRmqcBXffZZa0Cn0NxH8RRRoIn98YpKuGK0voTDLGDqzcL/uTuWlyH/
+         F/wnkDWNk+p1h71bpm52DwYFk/VWlyYpHEg5BMV3q/q29j90CRml4bK/mPnNK7r4hrWx
+         weqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719561874; x=1720166674;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1Sgyvv0YJuBT0GMeHDfvUWM7p1X2ARTlWPgT25XarGw=;
+        b=fabSJCde2wuk37ZHe93cQc2dr0GJeYq38xkE81w3qQSYbmzm+SJEVNo1lGGsxzujbm
+         GSHeEwA6ff+XA0BIfkVVWOjMRI8zmGhmE1btgJRZZHXVW68RCsv3MZQFPxeygp2hgoTL
+         KLzoiw/bmmP3or+dL0+hKcsR3XMJc5DWRRee+xKg9riqwOzrjvRFyF8K/CqbPTXNN1tA
+         c4URh3pCWwPzVydRJwakQyqq75gq630hLhEYmZ52RLsT8ROePuW8yJd13U5wOA6bou1q
+         PrWG4RUXYwNhctb310o0xkOYelMl0CmNWsftZ+fxnx8E3kZzx9Q5zwOtJSxBw5DS9RlK
+         TkiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXCtvbK2jRtsvzg9ToI1AiDky6tNvOIJN+af7m+RFKZOY/g635vBzE413LPGXExMsOmlgejONx7tkUdM9tP5QOWZBONmqIXQuvJd/zk
+X-Gm-Message-State: AOJu0YzhYckcMOLFhjvGwmz/J17mLzvUi3fTHxWP5S6JA5ZppWIxBPw8
+	x+TQ3zCovhzrzz9W672DzqPqHfI6Z1IHpqr9SziYQOU067ABkrazEZkcTyY32dLN/Xg9UQbxVJ0
+	P1DWRR7O7JnHfpen7FHvWopmejV45t4gXArmE2tLNo8nEFiR15p0RiMk=
+X-Google-Smtp-Source: AGHT+IGokMxMdrRpAQhGGsHM10XhBXkulH70J71bCFu4c4v+kGQxwEh4ZUgRnoYk3x/XpGOZgDgZlwaIgvcgL6uh1Gg=
+X-Received: by 2002:a17:90a:d38b:b0:2c4:dfa6:df00 with SMTP id
+ 98e67ed59e1d1-2c86127e0eemr12912932a91.8.1719561873523; Fri, 28 Jun 2024
+ 01:04:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240627-add-cpu-type-v2-1-f927bde83ad0@linux.intel.com>
+References: <20240627145754.27333-1-iii@linux.ibm.com> <20240627145754.27333-3-iii@linux.ibm.com>
+In-Reply-To: <20240627145754.27333-3-iii@linux.ibm.com>
+From: Alexander Potapenko <glider@google.com>
+Date: Fri, 28 Jun 2024 10:03:51 +0200
+Message-ID: <CAG_fn=U-HQOtES0bRSRXvrsjW=aHpQeMNzS2ZK+dPgWJxx60bg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] kmsan: do not pass NULL pointers as 0
+To: Ilya Leoshkevich <iii@linux.ibm.com>
+Cc: Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, kasan-dev@googlegroups.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 27, 2024 at 01:44:06PM -0700, Pawan Gupta wrote:
-> The hw_cpu_type is populated in the below debugfs file:
-> 
->   # cat /sys/kernel/debug/x86/topo/cpus/#
+On Thu, Jun 27, 2024 at 5:14=E2=80=AFPM Ilya Leoshkevich <iii@linux.ibm.com=
+> wrote:
+>
+> sparse complains about passing NULL pointers as 0.  Fix all instances.
 
-What "below debugfs file"? A '#'?
+Thanks a lot for fixing this!
 
-> diff --git a/arch/x86/kernel/cpu/debugfs.c b/arch/x86/kernel/cpu/debugfs.c
-> index 3baf3e435834..8082e03a5976 100644
-> --- a/arch/x86/kernel/cpu/debugfs.c
-> +++ b/arch/x86/kernel/cpu/debugfs.c
-> @@ -22,6 +22,7 @@ static int cpu_debug_show(struct seq_file *m, void *p)
->  	seq_printf(m, "die_id:              %u\n", c->topo.die_id);
->  	seq_printf(m, "cu_id:               %u\n", c->topo.cu_id);
->  	seq_printf(m, "core_id:             %u\n", c->topo.core_id);
-> +	seq_printf(m, "hw_cpu_type:         %x\n", c->topo.hw_cpu_type);
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202406272033.KejtfLkw-lkp@i=
+ntel.com/
 
-Yeah, no, we're not going to perpetuate this silliness of printing hex
-values without a preceding "0x".
+Rant: I noticed recently that checkpatch.pl aggressively demands
+having the Closes: tag follow Reported-by:, even when it is not
+strictly necessary per
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#usin=
+g-reported-by-tested-by-reviewed-by-suggested-by-and-fixes.
 
->  	seq_printf(m, "logical_pkg_id:      %u\n", c->topo.logical_pkg_id);
->  	seq_printf(m, "logical_die_id:      %u\n", c->topo.logical_die_id);
->  	seq_printf(m, "llc_id:              %u\n", c->topo.llc_id);
-> diff --git a/arch/x86/kernel/cpu/topology_common.c b/arch/x86/kernel/cpu/topology_common.c
-> index 9a6069e7133c..8b47bd6b0623 100644
-> --- a/arch/x86/kernel/cpu/topology_common.c
-> +++ b/arch/x86/kernel/cpu/topology_common.c
-> @@ -140,6 +140,14 @@ static void parse_topology(struct topo_scan *tscan, bool early)
->  	}
->  }
->  
-> +static void topo_set_hw_cpu_type(struct cpuinfo_x86 *c)
-> +{
-> +	c->topo.hw_cpu_type = X86_HW_CPU_TYPE_UNKNOWN;
-> +
-> +	if (c->x86_vendor == X86_VENDOR_INTEL && c->cpuid_level >= 0x1a)
-> +		c->topo.hw_cpu_type = cpuid_eax(0x1a) >> X86_CPU_TYPE_INTEL_SHIFT;
-> +}
-
-Why isn't this happening in cpu/intel.c? And then you don't need yet
-another silly function.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+Reviewed-by: Alexander Potapenko <glider@google.com>
 
