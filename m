@@ -1,140 +1,252 @@
-Return-Path: <linux-kernel+bounces-233658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08D6D91BB24
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:10:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74A5191BB28
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:10:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B5681C218AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:10:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97C0F1C23234
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C9915251D;
-	Fri, 28 Jun 2024 09:09:02 +0000 (UTC)
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41AAD155A2F;
+	Fri, 28 Jun 2024 09:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VsifPcFn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72966143886;
-	Fri, 28 Jun 2024 09:08:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF7D152E02
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 09:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719565741; cv=none; b=ZhpuK7sQJipGmYGuQ+0JDXIDz0b9aUdJU/nopioEubJ2KpDQPfkaaKNRSvAe2MuwYqdC6wGHx2salAYr+IFyG0KML4j0GTs4Hwf3OtodK7mHd3N4eW2FQqDPr1QAw+bERELPhnJ/7eyEHZbL2uPYg1AgSE4SMo2mUtUcnM/V8Fg=
+	t=1719565763; cv=none; b=RYAitwyl40amM80gvVMm/+pdG17KhDzjpb4pWIMjEv99rQ88zpDBrEyPwRU9AzS+NjsYXxw+1R+9D200Si9UoDizTbKD4VdP1zaVLpQKoacxUgFJm3+FmlPWe2EqD7sEtlROe1Y7NCwlS7M/HGVPu7w2OvURKpszdlX8ppmMD60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719565741; c=relaxed/simple;
-	bh=V9E60qE03GNp1ZSzcc5LUZ5BfHBScjNIHpUp764H5Sk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mv2C0z0GanxX9wagGJcxaaiJCgvbxCj1hGNpELjcLJ2fM1YAEpdC4Sq5AOsU0bbOe09LGByhNHs9B8AzzP9aB9kGgdPt+Cz6NCBUQuEbnsD+bTrGid5u58aeTk0rolNuVM7IflkoPDaYjbAAQPKJasUy40PiyJDgUieSte8PSYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e035dc23a21so268295276.0;
-        Fri, 28 Jun 2024 02:08:59 -0700 (PDT)
+	s=arc-20240116; t=1719565763; c=relaxed/simple;
+	bh=SIySpQCkV++Gn01uCQqrsxns8iu5uDxRGSSIfvZ6WqY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l0L4GImobdvQdFPryWt78Re2Yz1/9RLMxvTO0uK76WC2nYtzdhhq1JbybyzDvVenyEdrmo/jSVsznuqs2hFPgjfIsKWDswQeF4YDpeuS0a38DwYadgJXp5Rs+ZRjpuClkcLfToVUflPTie1SlCcMdsAZADzYcKDVOvx32alQBJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VsifPcFn; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719565760;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9yWBbb3piCGdDy7HD6ZzfPnqrZTOJPMpN0iR2xh32w0=;
+	b=VsifPcFn+H7KiB6cunIidud6ZM5LD3s9BL2pUWT0e/r3QTn313+FFmsZfqXmxkXltHOwgN
+	/SYQN0RKsO0aLTRGLBSQvyNVkXLr8vosuMCVI4l27fTYmZTtaAqlEffmgT6Q1XJxWsaFO1
+	zPimsbMmTsTPHqV7NiLEP/y7PAiIg6E=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-556-mjC0WyUdP6qqtdpEJrKQwQ-1; Fri, 28 Jun 2024 05:09:18 -0400
+X-MC-Unique: mjC0WyUdP6qqtdpEJrKQwQ-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4255f94080bso3650885e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 02:09:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719565737; x=1720170537;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VmEhtYpo+REVO/LhNr2Nj/+NOg5cmsiF88zpbEmWvCQ=;
-        b=nLkb1hbKEaq84NFzYho9QXUgWBi9BAHfbkshCkMV7uuHeN3K/y8M+sTJ9DMvfErk9M
-         9jf254rODKMAESK43crKHU8Y2dHja37pU0HbYC1rKmsY+ug58vFfvScTK/gbHVvCMjQQ
-         A3pewX4sDVvOAqwRwQaSPc+71uC/DqFg0K8UloItMT7k1RTIgUjANGgJjVJAShGIZxaH
-         ZcDVH8oxVEheSKyphBV+M7NvLbQHkHGWYsjeX5K8bPijX9kWCG6WF0/Mw4Q6WVqFPqX0
-         htGfWlE7dyDpSW/bYySXWBD3+I8JAc8JRUuvmJlgSve9/qMmkzGdXt7ADyA3q6cysWtX
-         vK7A==
-X-Forwarded-Encrypted: i=1; AJvYcCV1P1K3uLGrJoYK2Q+kQdttrmROFNORZcP1lt71lGkjsctIBrpbahpNA/mT/jgf84pwFshf/m1AxyF4ypurUUBATgXh38BBvyNcsFyQxGISFbouLpY2FJeWT/ZbyvaWJl54UgNOZGT6/2cWI5wld5inz/U4bQwSzcwHoEnKMSRIc37J+Brk7KvzDjPZB6vJ4yyH8OkcIyufO/YuzyDaBiU6VYa3/qbf+HclZynrciw5d66SYfv1ro8jItydpeo8JFxg
-X-Gm-Message-State: AOJu0YwaBuUqCRh1DWpy+UM4T3HjDdNl6dWTPVvdN0cOA22gpyYzJLSK
-	shIFVFRPCf1DwOEKjmGmaVMJUoHEVXoRq3CVqhBt+pn/tciqa6lIewRJhmaV
-X-Google-Smtp-Source: AGHT+IEdLQVdDZIKv5kTADQPClDDJ9RYFiHmeHyrh+V2qmFh14Vd421MbTW5RDjkcOW3gcIN0rRFeQ==
-X-Received: by 2002:a5b:b0d:0:b0:e02:bc67:829e with SMTP id 3f1490d57ef6-e0345587a0fmr4644925276.65.1719565736763;
-        Fri, 28 Jun 2024 02:08:56 -0700 (PDT)
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com. [209.85.128.177])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e0353d79c73sm257216276.24.2024.06.28.02.08.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jun 2024 02:08:56 -0700 (PDT)
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-64b0d45a7aaso3072657b3.0;
-        Fri, 28 Jun 2024 02:08:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVodL8ffWFlkBworYdqfcDgy7p4jDGxn3MlH3gD5dA0eOWNhvfwNjVeOfLHDyHoWdmiZHor2pFF6S+r7tQVm9ujsYqxSzzboPwd6ZciUrkofqNQxl39c6ObZH/YEoi2Qm1bqAqfOKKQok3gWlElCH0zshToB45enlYFrbQ9AYg4xBoniQn/XjgCfORHuK6TTdHOQCiWT7wUdTfVqXZ/4htvTg/pGV3Q3cOfDoJkBBiZ3Al5z6qxHz7pRr4r36S5VrH4
-X-Received: by 2002:a81:6e54:0:b0:63c:486a:289e with SMTP id
- 00721157ae682-643abf3cbd5mr164214937b3.32.1719565735023; Fri, 28 Jun 2024
- 02:08:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719565758; x=1720170558;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9yWBbb3piCGdDy7HD6ZzfPnqrZTOJPMpN0iR2xh32w0=;
+        b=pUPa93PkKtirICdy7iaCtIvqndCegZS02zpevce86qQZqlyB5TulYCJusdUXDbya/T
+         zrxnaQk7UZgeSKzJO6MKGdvXqHSRy+nIkfnDktc72D9pfrPhyUXaJNC8/2+ltEXhxm10
+         R7FsTzhpChCzr7fiQ3oRLC86nrRyKuNZx+h61Ni48cYINRlLl5EtoQNOfM2UBw+QbnJF
+         XP9Q8A2WzDYU0Hu/RTLoPOI52uztJU1qP5IpsAwNRH1xis6Dsag+g+gKCUtVdSTcn4ao
+         1LuzthXfVCDQ84q3JqkKwv36rTfI2bfJz8zBi/VmGaG3PYsh81v72N7pzQac/XW+k6Sl
+         K9Xw==
+X-Forwarded-Encrypted: i=1; AJvYcCXSI5lUlc1EABW1hRbiji6g1T6XJzPNOqhJ22hDbuoktLKPayuNXFJOADtuFJUCW6ABSkDUYCX27XcUYTagMn6g0ArovTXSx1KQnnae
+X-Gm-Message-State: AOJu0Yz1SUKhfWT0yjSPvl3Gcur00ulifvg9kks2w5ncdPw0ygrgzt1E
+	O1A2nvgQyQytNAedAOO7JluKMSKOmDyv3n3ZiP3+nsBoPnp6YA80ag2LP8qQ5i7CFv5DKvizJS7
+	XJxqNdd/tiPlkc9MHiq6frAWPdG0ZjKaC9v9pGz6zQTVYpbh9t0IAVDQFb3ERXw==
+X-Received: by 2002:a05:600c:2e16:b0:425:5f25:c926 with SMTP id 5b1f17b1804b1-4255f25ca11mr49899655e9.19.1719565757847;
+        Fri, 28 Jun 2024 02:09:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFLU+57BTTkzFmhEgyrNonqIAqaUPJ6LrIcPsHkgfDROh96pQSfJWSfs9ZVKQcYxxBa29DKHg==
+X-Received: by 2002:a05:600c:2e16:b0:425:5f25:c926 with SMTP id 5b1f17b1804b1-4255f25ca11mr49899415e9.19.1719565757149;
+        Fri, 28 Jun 2024 02:09:17 -0700 (PDT)
+Received: from sgarzare-redhat ([193.207.132.11])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b0c0fb3sm25546245e9.40.2024.06.28.02.09.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 02:09:16 -0700 (PDT)
+Date: Fri, 28 Jun 2024 11:09:09 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: luigi.leonardi@outlook.com
+Cc: "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	virtualization@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, Daan De Meyer <daan.j.demeyer@gmail.com>
+Subject: Re: [PATCH net-next v3 1/3] vsock: add support for SIOCOUTQ ioctl
+ for all vsock socket types.
+Message-ID: <nasvwizxcxeu64dux7yop3bwxdpbneu2bts6ob6ahwwietoxh6@wtffmxmiq5g3>
+References: <20240626-ioctl_next-v3-0-63be5bf19a40@outlook.com>
+ <20240626-ioctl_next-v3-1-63be5bf19a40@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
- <20240625121358.590547-8-claudiu.beznea.uj@bp.renesas.com>
- <TY3PR01MB11346EF9A001F68162148B70F86D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <6289f329-118f-4970-a525-75c3a48bd28b@tuxon.dev> <TY3PR01MB1134603F92C72D9B6C6C3733C86D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <2f162986-33c5-4d80-958c-4f857adaad20@tuxon.dev> <TY3PR01MB11346CA73575CF61B2024F3B386D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY3PR01MB11346CA73575CF61B2024F3B386D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 28 Jun 2024 11:08:42 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVRQ-o2ERma2UD0NJ6CgoJv_TaQYua+mS3tZdGziThjDg@mail.gmail.com>
-Message-ID: <CAMuHMdVRQ-o2ERma2UD0NJ6CgoJv_TaQYua+mS3tZdGziThjDg@mail.gmail.com>
-Subject: Re: [PATCH v2 07/12] i2c: riic: Define individual arrays to describe
- the register offsets
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: "Claudiu.Beznea" <claudiu.beznea@tuxon.dev>, Chris Brandt <Chris.Brandt@renesas.com>, 
-	"andi.shyti@kernel.org" <andi.shyti@kernel.org>, "robh@kernel.org" <robh@kernel.org>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"magnus.damm@gmail.com" <magnus.damm@gmail.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>, 
-	"sboyd@kernel.org" <sboyd@kernel.org>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, 
-	"wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20240626-ioctl_next-v3-1-63be5bf19a40@outlook.com>
 
-Hi Biju,
+nit: in theory in this patch we don't support it for any of the 
+transports, so I wouldn't confuse and take that part out of the title.
 
-On Fri, Jun 28, 2024 at 10:09=E2=80=AFAM Biju Das <biju.das.jz@bp.renesas.c=
-om> wrote:
-> > -----Original Message-----
-> > From: claudiu beznea <claudiu.beznea@tuxon.dev>
-> > On 28.06.2024 10:55, Biju Das wrote:
-> > > Are we sure RZ/A does not support fast mode plus?
-> >
-> > From commit description of patch 09/12:
-> >
-> > Fast mode plus is available on most of the IP variants that RIIC driver=
- is working with. The
-> > exception is (according to HW manuals of the SoCs where this IP is avai=
-lable) the Renesas RZ/A1H.
-> > For this, patch introduces the struct riic_of_data::fast_mode_plus.
-> >
-> > I checked the manuals of all the SoCs where this driver is used.
-> >
-> > I haven't checked the H/W manual?
-> >
-> > On the manual I've downloaded from Renesas web site the FMPE bit of RII=
-CnFER is not available on
-> > RZ/A1H.
+WDYT with someting like:
+
+     vsock: add support for SIOCOUTQ ioctl
+
+On Wed, Jun 26, 2024 at 02:08:35PM GMT, Luigi Leonardi via B4 Relay 
+wrote:
+>From: Luigi Leonardi <luigi.leonardi@outlook.com>
 >
-> I just found RZ/A2M manual, it supports FMP and register layout looks sim=
-ilar to RZ/G2L.
-> Wolfram tested it with r7s72100 genmai board acessing an eeprom. Not sure=
- is it RZ/A1 or RZ/A2?
+>Add support for ioctl(s) for SOCK_STREAM SOCK_SEQPACKET and SOCK_DGRAM
+>in AF_VSOCK.
+>The only ioctl available is SIOCOUTQ/TIOCOUTQ, which returns the number
+>of unsent bytes in the socket. This information is transport-specific
+>and is delegated to them using a callback.
+>
+>Suggested-by: Daan De Meyer <daan.j.demeyer@gmail.com>
+>Signed-off-by: Luigi Leonardi <luigi.leonardi@outlook.com>
+>---
+> include/net/af_vsock.h   |  3 +++
+> net/vmw_vsock/af_vsock.c | 60 +++++++++++++++++++++++++++++++++++++++++++++---
+> 2 files changed, 60 insertions(+), 3 deletions(-)
+>
+>diff --git a/include/net/af_vsock.h b/include/net/af_vsock.h
+>index 535701efc1e5..7b5375ae7827 100644
+>--- a/include/net/af_vsock.h
+>+++ b/include/net/af_vsock.h
+>@@ -169,6 +169,9 @@ struct vsock_transport {
+> 	void (*notify_buffer_size)(struct vsock_sock *, u64 *);
+> 	int (*notify_set_rcvlowat)(struct vsock_sock *vsk, int val);
+>
+>+	/* SIOCOUTQ ioctl */
+>+	size_t (*unsent_bytes)(struct vsock_sock *vsk);
 
-Genmai is RZ/A1H (r7s72100).
+If you want to return also errors, maybe better returning ssize_t.
+This should fix one of the error reported by kernel bots.
 
-Gr{oetje,eeting}s,
+>+
+> 	/* Shutdown. */
+> 	int (*shutdown)(struct vsock_sock *, int);
+>
+>diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
+>index 4b040285aa78..d6140d73d122 100644
+>--- a/net/vmw_vsock/af_vsock.c
+>+++ b/net/vmw_vsock/af_vsock.c
+>@@ -112,6 +112,7 @@
+> #include <net/sock.h>
+> #include <net/af_vsock.h>
+> #include <uapi/linux/vm_sockets.h>
+>+#include <uapi/asm-generic/ioctls.h>
+>
+> static int __vsock_bind(struct sock *sk, struct sockaddr_vm *addr);
+> static void vsock_sk_destruct(struct sock *sk);
+>@@ -1292,6 +1293,59 @@ int vsock_dgram_recvmsg(struct socket *sock, struct msghdr *msg,
+> }
+> EXPORT_SYMBOL_GPL(vsock_dgram_recvmsg);
+>
+>+static int vsock_do_ioctl(struct socket *sock, unsigned int cmd,
+>+			  int __user *arg)
+>+{
+>+	struct sock *sk = sock->sk;
+>+	struct vsock_sock *vsk;
+>+	int retval;
+>+
+>+	vsk = vsock_sk(sk);
+>+
+>+	switch (cmd) {
+>+	case SIOCOUTQ: {
+>+		size_t n_bytes;
+>+
+>+		if (!vsk->transport || !vsk->transport->unsent_bytes) {
+>+			retval = -EOPNOTSUPP;
+>+			break;
+>+		}
+>+
+>+		if (vsk->transport->unsent_bytes) {
 
-                        Geert
+This if is not necessary after the check we did earlier, right?
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Removing it should fix the other issue reported by the bot.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+>+			if (sock_type_connectible(sk->sk_type) && sk->sk_state == TCP_LISTEN) {
+>+				retval = -EINVAL;
+>+				break;
+>+			}
+>+
+>+			n_bytes = vsk->transport->unsent_bytes(vsk);
+>+			if (n_bytes < 0) {
+>+				retval = n_bytes;
+>+				break;
+>+			}
+>+
+>+			retval = put_user(n_bytes, arg);
+>+		}
+>+		break;
+>+	}
+>+	default:
+>+		retval = -ENOIOCTLCMD;
+>+	}
+>+
+>+	return retval;
+>+}
+>+
+>+static int vsock_ioctl(struct socket *sock, unsigned int cmd,
+>+		       unsigned long arg)
+>+{
+>+	int ret;
+>+
+>+	lock_sock(sock->sk);
+>+	ret = vsock_do_ioctl(sock, cmd, (int __user *)arg);
+>+	release_sock(sock->sk);
+>+
+>+	return ret;
+>+}
+>+
+> static const struct proto_ops vsock_dgram_ops = {
+> 	.family = PF_VSOCK,
+> 	.owner = THIS_MODULE,
+>@@ -1302,7 +1356,7 @@ static const struct proto_ops vsock_dgram_ops = {
+> 	.accept = sock_no_accept,
+> 	.getname = vsock_getname,
+> 	.poll = vsock_poll,
+>-	.ioctl = sock_no_ioctl,
+>+	.ioctl = vsock_ioctl,
+> 	.listen = sock_no_listen,
+> 	.shutdown = vsock_shutdown,
+> 	.sendmsg = vsock_dgram_sendmsg,
+>@@ -2286,7 +2340,7 @@ static const struct proto_ops vsock_stream_ops = {
+> 	.accept = vsock_accept,
+> 	.getname = vsock_getname,
+> 	.poll = vsock_poll,
+>-	.ioctl = sock_no_ioctl,
+>+	.ioctl = vsock_ioctl,
+> 	.listen = vsock_listen,
+> 	.shutdown = vsock_shutdown,
+> 	.setsockopt = vsock_connectible_setsockopt,
+>@@ -2308,7 +2362,7 @@ static const struct proto_ops vsock_seqpacket_ops = {
+> 	.accept = vsock_accept,
+> 	.getname = vsock_getname,
+> 	.poll = vsock_poll,
+>-	.ioctl = sock_no_ioctl,
+>+	.ioctl = vsock_ioctl,
+> 	.listen = vsock_listen,
+> 	.shutdown = vsock_shutdown,
+> 	.setsockopt = vsock_connectible_setsockopt,
+>
+>-- 
+>2.45.2
+>
+>
+>
+
 
