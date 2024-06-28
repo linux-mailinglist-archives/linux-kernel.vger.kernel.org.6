@@ -1,111 +1,131 @@
-Return-Path: <linux-kernel+bounces-233860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1B7F91BE6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:23:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F6C491BE74
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:24:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 972411F21DAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:23:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E31B1B23171
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:24:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848B2158860;
-	Fri, 28 Jun 2024 12:23:42 +0000 (UTC)
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B523E158A09;
+	Fri, 28 Jun 2024 12:24:08 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFDBC1E898
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 12:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D4E1514DD;
+	Fri, 28 Jun 2024 12:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719577422; cv=none; b=YRatLDoVPYJpjN6bVx+heVCSeeR/R4AxxZsYJNR/3jxDlkpKIf1a3zT3n85rGu31+XdEGOLQk390GPlAP7tlkjCOH18yNmrXt2qKaTIwRNE/3XzmMraNDYXcks7TBunmCzDjsjyg4ADHalcw5axIJ6Wtzz5CEYNlIAUcVFWU2lY=
+	t=1719577448; cv=none; b=ls8i2lZe3GKoHACu4TcIUPoyFlxeF3u4Him+h6/7bl2xQb0WIqLpWSKOkkYRAh6q7UXwZhpPmkAGWOCL4yWl9z/d7P0ufxOZCGUdFUEJld1qhrilASseV/RU3l7d477b+rDz1U6wc2UK7a0nkxA4VSL0DLk1UGEn9rXH+nVYK6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719577422; c=relaxed/simple;
-	bh=x0DDOupEb909J2YBU87gG45MWtvoBT8NytrGnM37QgY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SwEvie/cqPjpJtEGpFeHeZzO90O+UeDuHLJkZMoUSJSTIdMMWc96OZDU17HpTdn4TUYg+0Wtln/scckCxQIBwNOHvIgSAVxgS4mIaWOUqWat4V8FFc+ykQS02h34SZ7x18pWoJdFLE/AK1G8bNqJYfgYvT+BjqqooGtEhvHmDNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:acf4:1256:ab55:12e6])
-	by laurent.telenet-ops.be with bizsmtp
-	id h0PX2C0025ECAAU010PXHm; Fri, 28 Jun 2024 14:23:31 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sNAdQ-000VEZ-W0;
-	Fri, 28 Jun 2024 14:23:30 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sNAdW-00Bkeh-Qv;
-	Fri, 28 Jun 2024 14:23:30 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Marc Zyngier <maz@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] irqchip/gic-v3: Pass GICV index to gic_of_setup_kvm_info()
-Date: Fri, 28 Jun 2024 14:23:29 +0200
-Message-Id: <2eb7c6e9c142f08cbe34bc6f423778f389ac67f4.1719577252.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1719577448; c=relaxed/simple;
+	bh=d+r8oOYodumHjWb4/1A1r6mqSgsc+MjymPkD+3M1T4A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A7adUUuBrfkdhWMqwEBPEKxNNP7p0oOVi8QkRRYKAagzghvqLwe3bcVtHMuX3zA+X0FGks9tOAy+28KSm2k9WTPv78oa3i3QRo1N+UDDAaxbc+ORki200J6fPg0MtT0YJJPnCANpAXTjgBTmBVnZpDj71VpPbfpG4nsoWlipv7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.97.1)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1sNAdr-000000002r5-3X5l;
+	Fri, 28 Jun 2024 12:23:51 +0000
+Date: Fri, 28 Jun 2024 13:23:47 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>, Jens Axboe <axboe@kernel.dk>,
+	Hauke Mehrtens <hauke@hauke-m.de>, Felix Fietkau <nbd@nbd.name>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Dave Chinner <dchinner@redhat.com>, Jan Kara <jack@suse.cz>,
+	Christian Brauner <brauner@kernel.org>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Li Lingfeng <lilingfeng3@huawei.com>,
+	Christian Heusel <christian@heusel.eu>,
+	Min Li <min15.li@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Mikko Rapeli <mikko.rapeli@linaro.org>, Yeqi Fu <asuk4.q@gmail.com>,
+	Victor Shih <victor.shih@genesyslogic.com.tw>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Li Zhijian <lizhijian@fujitsu.com>,
+	"Ricardo B. Marliere" <ricardo@marliere.net>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [PATCH v4 3/4] block: add support for notifications
+Message-ID: <Zn6rU-mCYQcyCkGT@makrotopia.org>
+References: <cover.1719520771.git.daniel@makrotopia.org>
+ <4ebef78f07ff1ea4d553c481ffa9e130d65db772.1719520771.git.daniel@makrotopia.org>
+ <Zn4_-alKtxuZ6zNt@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zn4_-alKtxuZ6zNt@infradead.org>
 
-The caller of gic_of_setup_kvm_info() already queried DT for the value
-of the #redistributor-regions property.  So just calculate and pass the
-GICV index, instead of doing the DT look-up again in the callee.
+On Thu, Jun 27, 2024 at 09:45:45PM -0700, Christoph Hellwig wrote:
+> On Thu, Jun 27, 2024 at 09:50:50PM +0100, Daniel Golle wrote:
+> > Add notifier block to notify other subsystems about the addition or
+> > removal of block devices.
+> 
+> Notification for what?  I really hate the concept of random modular
+> code being able to hook into device discovery / partition scanning.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Adding a dedicated notification interface (instead of using block
+internals in the nvmem driver) has been requested in a previous review
+by Bart Van Assche:
+
+https://patchwork.kernel.org/comment/25771998/
+
+Quote from that previous review comment:
+>>> Why to add this functionality to the block layer instead of somewhere
+>>> in the drivers/ directory?
+>> 
+>> Simply because we need notifications about appearing and disappearing
+>> block devices, or a way to iterate over all block devices in a system.
+>> For both there isn't currently any other interface than using a
+>> class_interface for that, and that requires access to &block_class
+>> which is considered a block subsystem internal.
+>
+> That's an argument for adding an interface to the block layer that
+> implements this functionality but not for adding this code in the block
+> layer.
 ---
- drivers/irqchip/irq-gic-v3.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index 1f70262742f3b7c7..9c03b63277ba5b2b 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -2185,11 +2185,10 @@ static void __init gic_populate_ppi_partitions(struct device_node *gic_node)
- 	of_node_put(parts_node);
- }
- 
--static void __init gic_of_setup_kvm_info(struct device_node *node)
-+static void __init gic_of_setup_kvm_info(struct device_node *node, u32 gicv_idx)
- {
- 	int ret;
- 	struct resource r;
--	u32 gicv_idx;
- 
- 	gic_v3_kvm_info.type = GIC_V3;
- 
-@@ -2197,11 +2196,6 @@ static void __init gic_of_setup_kvm_info(struct device_node *node)
- 	if (!gic_v3_kvm_info.maint_irq)
- 		return;
- 
--	if (of_property_read_u32(node, "#redistributor-regions",
--				 &gicv_idx))
--		gicv_idx = 1;
--
--	gicv_idx += 3;	/* Also skip GICD, GICC, GICH */
- 	ret = of_address_to_resource(node, gicv_idx, &r);
- 	if (!ret)
- 		gic_v3_kvm_info.vcpu = r;
-@@ -2292,7 +2286,7 @@ static int __init gic_of_init(struct device_node *node, struct device_node *pare
- 	gic_populate_ppi_partitions(node);
- 
- 	if (static_branch_likely(&supports_deactivate_key))
--		gic_of_setup_kvm_info(node);
-+		gic_of_setup_kvm_info(node, nr_redist_regions + 3);
- 	return 0;
- 
- out_unmap_rdist:
--- 
-2.34.1
+So that's what I did consequently. Using the notification interface
+the NVMEM driver can live in drivers/nvmem/ and doesn't need to be
+using block internals.
 
+> And not actually having a user for it is a complete no-go.
+> 
+
+The user will be the nvmem provider, you can see the code in earlier
+versions of the patchset where I had included it:
+
+https://patchwork.kernel.org/project/linux-block/patch/96554d6b4d9fa72f936c2c476eb0b023cdd60a64.1717031992.git.daniel@makrotopia.org/
+
+Being another subsystem I thought it'd be better to deal with the
+block related things first, and once that has been sorted out I will
+move on to add the NVMEM driver and make the necessary changes for
+using it on eMMC.
+
+
+Thank you for taking a look at this. Let me know if anything else
+is not clear or needs to be changed.
+
+
+Cheers
+
+
+Daniel
 
