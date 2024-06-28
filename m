@@ -1,112 +1,103 @@
-Return-Path: <linux-kernel+bounces-233475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C904A91B77B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:03:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8444091B782
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:03:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6503C1F22852
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:03:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B470F1C21173
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86445337C;
-	Fri, 28 Jun 2024 07:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EECA13E058;
+	Fri, 28 Jun 2024 07:03:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="pNnAviyq"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L/fL2U42"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810DE125AC
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 07:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A316F125AC;
+	Fri, 28 Jun 2024 07:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719558183; cv=none; b=M3bp+fNpRJbNylkIXuYZp9RO2TRlvxcp1eutMbeX1GOS3RLEOb5Syq0Y0zUKDBv+M59MFvaRydKkngxunDUs1IVlFRCpY9ZnVzEPyx01FnuUN5jstYurcaggfGkdq4gf5h+B1bCZD8yfjJRkonMglnCt4R2qIh1EsxTSqBUyFi0=
+	t=1719558227; cv=none; b=XQMcQ7vZ66Blh7rZouLtEnEkHvNolZkZhKS4vA1tTUrduTEOkiPb6nbbUzgEcI4YEDuxmO8S3O5xdwhWAc2m24TmVElrO1mbEIoRQNcLfGmV9kbqqon/tHchx7MrpiJ+2UbFWoKvAGFl/cmXY9zSuehBqFzrl+XJH0o4d4WLFnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719558183; c=relaxed/simple;
-	bh=6wK9jajmiCwtkMGJMfiVWu+OKcV6ibcE2YlazNvpDRc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=C/WzxkmVFDm0YEK8Jml+7PJNnC/toYMPqzq3Dzr9Ha6E107TO+iCgrwQ6Pi0uPW5g0gEDdfD246jEdmfa9v7Cr4LG8/UXoSLSfImRd7LvVgKd5e0VuIXLKkzsv2+F8m8K5JXw5+PNIROaZHksZC76u/nVo6t+nR6V53d2ghSF3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=pNnAviyq; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1719558171;
-	bh=yKAZtPM5GEr7CZjyMumaDPYIdeEdVpmcv/sFYuGOa9Q=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=pNnAviyq9uqhUftQyMYSIpMi22zRA/e2RLe2mk9dsbBulBptFighU+2xzZhq57gN4
-	 W8OHDxJFhAozwDw9+r+KGMRvHmaBzqQ5wv/saWrhEZrSMY7vNOHytT29zPfM17nKsA
-	 j/wF2y89PcCRCzBZeMvVvi6ofDNLtmKxmpFR9QR1yxuxnDNHXBIB2UU8+KumhVa1MG
-	 zHu8Ww8Fm1TIpYRBTNoBEuHRTYf6MHs+VZveXwM/fsmdMgoL94c5+Wcqn6K3Mm/Zme
-	 DRx6CypwoAKrLlnVrNXssY7rU/lzEcYngKoMJ7sauDbdNypraPrNybVkum3rD7EQtb
-	 KXBRZe+7BCJXg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4W9RGK5Rg0z4w2N;
-	Fri, 28 Jun 2024 17:02:49 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Jialong Yang <jialong.yang@shingroup.cn>, Nicholas Piggin
- <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>
-Cc: luming.yu@shingroup.cn, shenghui.qu@shingroup.cn, Jialong Yang
- <jialong.yang@shingroup.cn>, linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, Masami
- Hiramatsu <mhiramat@kernel.org>, Karol Herbst <karolherbst@gmail.com>,
- Pekka Paalanen <ppaalanen@gmail.com>, nouveau@lists.freedesktop.org
-Subject: Re: [PATCH v1 1/2] powerpc/mmiotrace: Add MMIO Tracing tool for
- PowerPC
-In-Reply-To: <2bf90acf7d29641ba6643934ff8dbba897dbd2d9.1718873074.git.jialong.yang@shingroup.cn>
-References: <2bf90acf7d29641ba6643934ff8dbba897dbd2d9.1718873074.git.jialong.yang@shingroup.cn>
-Date: Fri, 28 Jun 2024 17:02:48 +1000
-Message-ID: <87h6ddlfc7.fsf@mail.lhotse>
+	s=arc-20240116; t=1719558227; c=relaxed/simple;
+	bh=3X1MYFbfPFItTW0/VokXn+z9ucFH3r/YhPWshyQeayU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=kkJV3C0ptIsqX4M2cn83FZS0HjETlmoXsOs8cIQBlHXScZJhWFNhrF4nc7dUwRNYoZYnCn/epkKbUL8tC0Uqa7tarP05531FUAGCMWbT87pJi+B19oXQ2PlKFvoqPwuNqzFIDDSGtF1AaJG7FHw99UiW/Bnk4GqorWhHgQC9rXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L/fL2U42; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2c2d25b5432so188608a91.2;
+        Fri, 28 Jun 2024 00:03:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719558226; x=1720163026; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g1CHoIZeJtIf2ePFFJ0KGCQoC4Wx5b33LDat/8F3E4k=;
+        b=L/fL2U42y1jkeWWXG/8anDqagD5uJj9AnfoxniDeOYXEJz4HI1LbvEY95rOUjGg0Dq
+         megGUW5uxXrXyQWaAldDYCtkVdv5uNA0uAcsCVQ7Zzsgq5lIAcSwQ8+FlfxJ2hf6fIVo
+         GopmdsLSBMDfnmgU0n5t/zCKKoJetL/wHAu6kyI9pA4q54sKAk5SZKU6W9aQtPMP78Hd
+         kyBfC7KuT2gfath+sysE5Rtl0thcz39m2vNRfPj/Ry6IP45Tktl64TPfER+kyshExzpm
+         z5xroKO8ldJslsqy9UahwTe4+xkceYsNHCIKw96nLh2ZG4XPfCeMqlGs9Ge83OJNsuPt
+         4mPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719558226; x=1720163026;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g1CHoIZeJtIf2ePFFJ0KGCQoC4Wx5b33LDat/8F3E4k=;
+        b=QCBH4eI3Ut6ltuT7POlTKHtNCAs5PTlLIsZZTRu0ohICcR2Qb4e/JrdW0wUi4DOMim
+         aIfMrWnbCTqihf4wzyOyki7SOqpmipdn6saQ+2R8XIpKRAwgKXWIq8ZMVGDEPtCyb8OO
+         dnlz9nlCbSLhCLqwDHe78cWx7hCLuJMq2xYgrMdk602QPMS7HqZsmHJapovgdJg0wfyU
+         Soaw1x/9EePqSL2wO4OJWB52ZAhMhPuzGR7sqfsxBjWIARgZEWudfaRE2hQRT0/5ZpD5
+         AFNt6Jl5SRaJqGtLIzutvV25MoI3YQBLPuTr+lD4yEthvy9g0D8mfmn+Kzaa2j6rJAIY
+         +/+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWhaCt1tDBxdUbkX/v0wvI42D/QNfU9LEmgdbM258K3nuyoyc2zcngFE1Mihc3JsFbUSIwJdjkouBBpG5cr4OprclWyAtH0QZ1OVqzkv+lWrOTrICzAjq53Q9BMXfrPWkw5T2jwym0T42rr877vJIeop9GWh9Ehs8NzbuiWbhH1bmWPXcTwqys69BF29A==
+X-Gm-Message-State: AOJu0YxTfeRNyv1M3T20WH3tCS/0mnarltZ06MjSrUmpGbRYJRacUwzW
+	4Y0ZkftEdsFQkPCNkCu65JeVdFjra5WOsZMOCRJmdA3hnInUcoc2
+X-Google-Smtp-Source: AGHT+IGS9AdHpDDTB41Zy++wNdbA3CWe3YJ/2/uzP2NiiLr/yfetlDWt1/cRzRQyTWMuYfhslv336g==
+X-Received: by 2002:a17:90a:9e6:b0:2c8:7fa:993c with SMTP id 98e67ed59e1d1-2c861409604mr13020964a91.18.1719558225856;
+        Fri, 28 Jun 2024 00:03:45 -0700 (PDT)
+Received: from dev0.. ([122.176.81.22])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91d3eb774sm889779a91.53.2024.06.28.00.03.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 00:03:45 -0700 (PDT)
+From: Abhinav Jain <jain.abhinav177@gmail.com>
+To: akpm@linux-foundation.org
+Cc: jain.abhinav177@gmail.com,
+	javier.carrasco.cruz@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	shuah@kernel.org,
+	skhan@linuxfoundation.org
+Subject: Re: [PATCH] selftests/proc: fix unused result warning during test compilation
+Date: Fri, 28 Jun 2024 07:03:38 +0000
+Message-Id: <20240628070338.65008-1-jain.abhinav177@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240625110526.d443fe6d3feb51a50aebf849@linux-foundation.org>
+References: <20240625110526.d443fe6d3feb51a50aebf849@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Jialong Yang <jialong.yang@shingroup.cn> writes:
-> mmiotrace is a useful tool to trace MMIO accesses. Nowadays, it only
-> supported on x86 and x86_64 platforms.
-
-I've never used mmiotrace, and don't know it well.
-
-I'm not necessarily opposed to merging it, but AFAIK it was mostly used
-for reverse engineering proprietary drivers, where the driver itself
-couldn't be easily instrumented. Is that what you're using it for?
-
-For drivers where we have the source wouldn't it be easier to just use
-tracepoints in the MMIO accessors?
-
-Is it still in-use/maintained on the x86 side?
-
-> Here is a support for powerpc.
-> The manual is located at Documentation/trace/mmiotrace.rst which means
-> I have not changed user API. People will be easy to use it.
-> Almost all files are copied from x86/mm, there are only some
-> differences from hardware and architectures software.
+On Tue, 25 Jun 2024 11:05:26 -0700, Andrew Morton wrote:
+> Thanks.  There's a patch queued which simply deletes this code.
 >
-> LINK: https://lore.kernel.org/lkml/20080127195536.50809974@daedalus.pq.iki.fi/
->
-> Signed-off-by: Jialong Yang <jialong.yang@shingroup.cn>
-> ---
->  arch/powerpc/Kconfig.debug       |   3 +
->  arch/powerpc/mm/Makefile         |   1 +
->  arch/powerpc/mm/kmmio.c          | 649 +++++++++++++++++++++++++++++++
->  arch/powerpc/mm/mmio-mod.c       | 414 ++++++++++++++++++++
->  arch/powerpc/mm/mmiotrace_arch.c | 149 +++++++
->  arch/powerpc/mm/mmiotrace_arch.h |  25 ++
->  arch/powerpc/mm/pf_in.c          | 185 +++++++++
->  arch/powerpc/mm/pf_in.h          |  33 ++
->  8 files changed, 1459 insertions(+)
-  
-At a glance most of that code could be shared between arches. I don't
-think I can merge that as-is, without some attempt to split the generic
-parts out.
+> https://lkml.kernel.org/r/20240603124220.33778-1-amer.shanawany@gmail.com
 
-cheers
+Thank you for sharing the queued patch Andrew.
+There has been no update/revert on it, may I know what would be the next step here?
+After reading the patch above, I believe my change is "more" right. Is that correct?
+
+Thanks and Regards
+- Abhinav
 
