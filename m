@@ -1,82 +1,83 @@
-Return-Path: <linux-kernel+bounces-233567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D5A691B99F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:15:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91EE891B9A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:15:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4689F1F23D30
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:15:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDE1A1C235EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F306146D53;
-	Fri, 28 Jun 2024 08:14:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE5671465A1;
+	Fri, 28 Jun 2024 08:15:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PAn8MuQD"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JvjQF31Q"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C7E145B09
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 08:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA15146D49
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 08:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719562492; cv=none; b=VnUL0yZaje+iFjjQDsetFTIDf2BnlMbKOrq3aKjMsgGSrk8E+CKMf5445YZtS9Gfjz3mbmdlx4e7av6WXunRumL2c1+TEvLvANc68Vgem1Rx4yLXHQCT2SWt3BC1t5WFpjVWBMQt0pOcAaBRIOgdeXKCjU1YKYzpEYDc1bk3xuE=
+	t=1719562507; cv=none; b=TUbut6FHddYAvULm4HhhFrbWEfX6+KvulHtyFkM6NGKP7p55gxpkWH/biRIckXrQ39prqww84nIdy2oHvnLitv1csok1JjY/OQTlDPoT8LuHe8OKh1uMpJuZOeJyEr53TfpywAAFa83yZGn+L0h0NvsrtnQuxOiidWvQu5/XQqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719562492; c=relaxed/simple;
-	bh=aIFPuYhbMEspAOzXfR/bH+Fm5KNxHLFrbI/0BWwUaQg=;
+	s=arc-20240116; t=1719562507; c=relaxed/simple;
+	bh=pTUeXVvagiAOX0gsD6IPogOu/97cu9jgdrjcH3WYizU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iCjDA9uXuncQmoQNm2j2jPT/VmuyQnBL7zuoJyiUbCw231PXNSGmMsvZ/Uwe82IpIqKQWcMqCIFZgN3B2I1hGbgKzRsffngwsMGM23oS6g2XqIoKqCkhSBlPVaSiDaayeC6p7bECnweh6ROykmP80vxipaSpeITFKJjBwZdItsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PAn8MuQD; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-425624255f3so1976445e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 01:14:50 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=EabnnEryA/QNvcIe1SoQ6R/x96AzJsDVOBHnWb1eUSJ0FhvOFvF8IhiSJrd/PAO5V+XdXcGrSKZUSWrPguznGQWURYAOLRktKnF6o6P67FvRDLgK8oOMJnp1cVSWUuC3tP7c8XUhrNyQ5Bf+GRXTdTE3JDVh0ZWGBqb59/XJ+6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JvjQF31Q; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a725ea1a385so35764066b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 01:15:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719562489; x=1720167289; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1719562502; x=1720167302; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5p5vZCwu+kIfI6E/jSCcA3j2SGSRGBxA6ocPxaq30sA=;
-        b=PAn8MuQDujwx80dRqoIi+PbRmh1eU2eqYgBkBvgXAgoZPwYHT6Ie2j5som5T5J8P6q
-         yHNGtPkzcXYf7YD/ygjD2uqmkSaQ5y1mNxdCThr4e+EGoqHk/l2VOHp8QFU+2G7eXfer
-         12X57xtqI0TFr2Iqll4m17tNQs0IBgxl2R/3i2dDe7iPZWfgmQxyzrTbX9jEL3lh1l6F
-         NMlEFscCnAlZKQLAio4RrDLedictefVqCamWvtuL0RJCOKYEPB8GZKZUjE3ieZZB/B6j
-         Jr9SUkgj115j7cfEaGMRyNysiSyXE5KWvdi2XLjj4gahLtPNVknU2HETyyVYiOO0W7vA
-         Ct/w==
+        bh=nqLlOcQQA1EIzNXkhLBuQWSjSlMYijdUt29humv/fBI=;
+        b=JvjQF31QMZOTMgD0gBKyooJDTcwdnDnrhdZ9Q26oC7EHz/qjJm3PB2FLNlbPAkbLHH
+         LqahhRebSd+XRx716NeMuYGRN/ev48M3VU6jzC2oSlQPA8w25xQI/sehcFCRC7/AxuRL
+         H9wrqX4lqr+UfFVsOoWy/3x+xpnDZ9XbEd+bfg3X/sRtO6u1WA4f/iFrzrfUKXLcyte6
+         ojG2j9m2Nyt3cf2jBaFelt0DDAeMUUMBA+i/DLYgjb1OeS0QKVK9+TzK8qJWG68+BEJw
+         c6YvmKiYcD6GXkqYkGzLxcB16/TkhMrkoMgB04hqPYMh+ncMRP+C92fdTzRviVMxm14y
+         78VQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719562489; x=1720167289;
+        d=1e100.net; s=20230601; t=1719562502; x=1720167302;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5p5vZCwu+kIfI6E/jSCcA3j2SGSRGBxA6ocPxaq30sA=;
-        b=i9jpKB94kDL5+m8Eo6bIDXrKQiD2jNQ8sLoAKkinFiLU825D0eJhALfeVEreRT1NMv
-         uvBLa1uxq+EcNkI7vOhqDWlj5cBfe4m08/I3d7HfPtEU6eU1FNRl/Amf0TuhplydvVde
-         XZUnquQmBTNLDSnbCNmRUKUinaI/mfwYpSGnSouexQ72+OayPpNVopwo87vlX2VV95y9
-         ug5zNhs+8ojnqCtxRC5Gk5tkznIvClpc8k36UfdoULOGzQxLLMoFmbFA/wu+lK3Jveok
-         ph2T+Y6DsXJ9ySYBCvYvjhWjWSLjcyZYCaEl3OCk5vMnS5QKVvPKru9EhjjWqVLcPaGf
-         Kz6g==
-X-Forwarded-Encrypted: i=1; AJvYcCWeJYKQVxOx0v+R8peLktaxafA3trJ3aXmAzcigv4a2qkyVrMRmOdGdgqMHGs/nyYgLAX0AX0gqL+3W1ZHZevh9IHrKfc5amlJA4kKs
-X-Gm-Message-State: AOJu0YyDll3Z5r05znMAly9rQ+dhKw1iCTKwqhC1UHfSGLBKh5aKxbbj
-	HYWd4wdGEND5mfTKDuNPrby1rpFd92D2yH0FxnvxUn4D6WwqL/Xh54R29tWKyjQ=
-X-Google-Smtp-Source: AGHT+IERat1T50yD424DDB+EpCE39bTSKhswb6OkBsxZplNjpH1EV9xixuDz3OSQBaaYIPvhFsoHTw==
-X-Received: by 2002:a05:600c:1616:b0:421:b65d:2235 with SMTP id 5b1f17b1804b1-4256d4246f3mr8736965e9.0.1719562489347;
-        Fri, 28 Jun 2024 01:14:49 -0700 (PDT)
-Received: from linaro.org ([82.79.124.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af5b61bsm23968405e9.17.2024.06.28.01.14.48
+        bh=nqLlOcQQA1EIzNXkhLBuQWSjSlMYijdUt29humv/fBI=;
+        b=en5YUtNr7TrBxTX0xC7M+FYOa3VszQ5HaHVXND4fmyo/MWTynCyi5xD3KFeMde1h83
+         DXRH4yXy/x5EfWA0kaaJ86mN7eZdPWY6wXIonGyEWF1U2a7NqszXb2AvGnHl5mIf1UMq
+         CY+f0OIkdZ+weByngKDEV4ONyWRuJAQjXowx2xcmX/0leUxEOKHDSAmFa9ymKkvjJwyg
+         H8d7SJm+2e3XkyDspqJ0LkkXuvnanJRm3Wa5g5+PBcuvssyJ5r1//51PTiT7xEI4Cghm
+         45WDl6z73tsGE77Hwci5N+GKWExgOr7qpbjzJUw9KuUG+j0fVi2LbQpMExW+VZfv3qKf
+         FIPg==
+X-Forwarded-Encrypted: i=1; AJvYcCXoKn/Vsu7fw3notOSmlgZ2IIGGxNnbbnN9rIQdyLa2XlLnyY4Dg3wbyfv9TdBIvJ8OfCkFSJJ+2nf4Oe4+T1AW7qEitoD/vIu5Sycc
+X-Gm-Message-State: AOJu0YxB/R/CaR6E0w+z7oYCefprcEPAumYfDVd892Lu0aULjGMokf+o
+	/4YobLj0fCABxFfWkYoZ1OI8nBlg0VTi/+uRnFCvwTCDBjblS+Uk4cFFyyLxQQw=
+X-Google-Smtp-Source: AGHT+IFtrZNHvkM+1D5Qqnw97MEaBSYKkXSf4YD5eSBkUIwju0hMYrI/Lg+SsBts/4RTOO7DdYI2Jg==
+X-Received: by 2002:a17:906:6a85:b0:a6f:9ded:3200 with SMTP id a640c23a62f3a-a7242c4e28cmr878310466b.3.1719562501987;
+        Fri, 28 Jun 2024 01:15:01 -0700 (PDT)
+Received: from localhost (109-81-86-16.rct.o2.cz. [109.81.86.16])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab065241sm52910366b.108.2024.06.28.01.15.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 01:14:48 -0700 (PDT)
-Date: Fri, 28 Jun 2024 11:14:47 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: gcc-x1e80100: Set parent rate for USB3 sec
- and tert PHY pipe clks
-Message-ID: <Zn5w9zKxIT/2OvB4@linaro.org>
-References: <20240530-x1e80100-clk-gcc-usb3-sec-tert-set-parent-rate-v1-1-7b2b04cad545@linaro.org>
- <3ukguewuqqm5gmbd3afl62ihysdzkk44j3f2nuqht4gjuf5ruo@zu7jmmnbrpdj>
+        Fri, 28 Jun 2024 01:15:01 -0700 (PDT)
+Date: Fri, 28 Jun 2024 10:15:00 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: xiujianfeng <xiujianfeng@huawei.com>
+Cc: hannes@cmpxchg.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+	muchun.song@linux.dev, akpm@linux-foundation.org,
+	cgroups@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] mm: memcg: adjust the warning when seq_buf
+ overflows
+Message-ID: <Zn5xBNY-Z4eNTCAL@tiehlicka>
+References: <20240628072333.2496527-1-xiujianfeng@huawei.com>
+ <Zn5qELsJZ0CrdlZA@tiehlicka>
+ <0e44be2c-7039-710b-202f-c452bfc3f1ad@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,63 +86,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3ukguewuqqm5gmbd3afl62ihysdzkk44j3f2nuqht4gjuf5ruo@zu7jmmnbrpdj>
+In-Reply-To: <0e44be2c-7039-710b-202f-c452bfc3f1ad@huawei.com>
 
-On 24-05-31 02:56:12, Dmitry Baryshkov wrote:
-> On Thu, May 30, 2024 at 05:05:24PM +0300, Abel Vesa wrote:
-> > Allow the USB3 second and third GCC PHY pipe clocks to propagate the
-> > rate to the pipe clocks provided by the QMP combo PHYs. The first
-> > instance is already doing that.
+On Fri 28-06-24 16:09:02, xiujianfeng wrote:
 > 
-> Which driver changes the rate of those clocks?
-
-Sorry for the late reply.
-
-These clocks are consumed by the combo PHYs, so driver is
-phy-qcom-qmp-combo. This driver doesn't change the rates of the pipe
-clocks as of yet.
-
-The fix is still good, even if it's just to align all three clocks.
-
 > 
+> On 2024/6/28 15:45, Michal Hocko wrote:
+> > On Fri 28-06-24 07:23:33, Xiu Jianfeng wrote:
+> >> Currently it uses WARN_ON_ONCE() if seq_buf overflows when user reads
+> >> memory.stat, the only advantage of WARN_ON_ONCE is that the splat is
+> >> so verbose that it gets noticed. And also it panics the system if
+> >> panic_on_warn is enabled. It seems like the warning is just an over
+> >> reaction and a simple pr_warn should just achieve the similar effect.
+> >>
+> >> Suggested-by: Michal Hocko <mhocko@suse.com>
+> >> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
 > > 
-> > Fixes: ("161b7c401f4b clk: qcom: Add Global Clock controller (GCC) driver for X1E80100")
-> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> > ---
-> >  drivers/clk/qcom/gcc-x1e80100.c | 2 ++
-> >  1 file changed, 2 insertions(+)
+> > Acked-by: Michal Hocko <mhocko@suse.com>
 > > 
-> > diff --git a/drivers/clk/qcom/gcc-x1e80100.c b/drivers/clk/qcom/gcc-x1e80100.c
-> > index 1404017be918..8c72fdc99fd9 100644
-> > --- a/drivers/clk/qcom/gcc-x1e80100.c
-> > +++ b/drivers/clk/qcom/gcc-x1e80100.c
-> > @@ -5269,6 +5269,7 @@ static struct clk_branch gcc_usb3_sec_phy_pipe_clk = {
-> >  				&gcc_usb3_sec_phy_pipe_clk_src.clkr.hw,
-> >  			},
-> >  			.num_parents = 1,
-> > +			.flags = CLK_SET_RATE_PARENT,
-> >  			.ops = &clk_branch2_ops,
-> >  		},
-> >  	},
-> > @@ -5339,6 +5340,7 @@ static struct clk_branch gcc_usb3_tert_phy_pipe_clk = {
-> >  				&gcc_usb3_tert_phy_pipe_clk_src.clkr.hw,
-> >  			},
-> >  			.num_parents = 1,
-> > +			.flags = CLK_SET_RATE_PARENT,
-> >  			.ops = &clk_branch2_ops,
-> >  		},
-> >  	},
-> > 
-> > ---
-> > base-commit: 9d99040b1bc8dbf385a8aa535e9efcdf94466e19
-> > change-id: 20240530-x1e80100-clk-gcc-usb3-sec-tert-set-parent-rate-420a9e2113d1
-> > 
-> > Best regards,
-> > -- 
-> > Abel Vesa <abel.vesa@linaro.org>
-> > 
+> > I would just squash this with other patch removing it from
+> > memcg_stat_format. But this is up to you.
 > 
-> -- 
-> With best wishes
-> Dmitry
+> Sorry, I might have misunderstood, if you can squash them, it looks good
+> to me, thanks.
+
+Andrew usually can do that even when the patch is in his tree. But as
+I've said having 2 patches is ok as well.
+-- 
+Michal Hocko
+SUSE Labs
 
