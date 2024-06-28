@@ -1,124 +1,162 @@
-Return-Path: <linux-kernel+bounces-233802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29F1B91BD98
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:37:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E09891BD9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:38:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C59F81F23BA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:37:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADA2B1C227F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479BF15884B;
-	Fri, 28 Jun 2024 11:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hHkMu8tY"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61505158D66;
+	Fri, 28 Jun 2024 11:37:24 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FFE157488
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 11:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE52D158A35;
+	Fri, 28 Jun 2024 11:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719574635; cv=none; b=SQ2ClwyNSkf9OI/0i+wYYwDeotLWw6WcMnBU3p0NTUloNwYFok4CFmokdbQbK8HGS3xTOE12nlu9AxyMAVMKA/cuUsBzHisSUeEylbND81G5XoQxci9TzEr/VuC5/Ey8el82kBvStFP+ChGhq/gTjwsyAGJiuOoWDleebJU91mg=
+	t=1719574643; cv=none; b=AftxL7YWD6Ooz2H7HE647zd/quI1c3+Qj/iUYKxRiJmC1dYNZLNzUlOAUUnFicXk3ZF/rRpHonuOAF1DGxRWz5Nek0xLgBK0uhpJSWh5rgijGuUJ8d6RQDuPHzYpCrNabwvewNwuNnwkAlnBG77Gznu7nhomTxeQBwNpZiHMN8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719574635; c=relaxed/simple;
-	bh=AB8J+iZrZaFjCJLdHR+aQydmJFfAV4W2jBf8xJ1slms=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=j+IvQFE82p0kvXH0xWJ5ExZarXYHaeMsQ5ZZnQwDLrcqG6YQu7Kh6++GslZIsiPuK43IlW87zwkBKgVMrQeYCyVSSfBM5+yuQDhgOTh1Srvg1YJNEmsszahzaOdV6Swso+o/NmioTcVuoxx0iTNUwU4UF/OXurto3q5jcfSNhXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hHkMu8tY; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-36703b0f914so357257f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 04:37:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719574632; x=1720179432; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xNA2Gh8U8LmpmJPYkwIg20NtTAEf9GOo0g5n9aJKVOE=;
-        b=hHkMu8tYD+hyqDQ0nQY8Mek7H8gkGbaYIWblcDcfjP/loQ+1p+LpWdpxj4IuD55ruZ
-         Nvt4Hz3jzKMbOGNIf05bVv1QE+jcOs3nj2G6Ne9FsDF8772rP7pP0XKHlOwzw5EBQjqT
-         GzZDeutr6beTNoZNaFPfIItj4bvddxHvWBKUQwWtkmpSgd3C66RdADh0cv7Xfnp2eHaY
-         TAnjH07xsSjAJaeFiyOOq3iCw+jcYcBG9BlsIC3Zgy0EYHC7k8NCGZzc7LWPFiUihJQI
-         PmOzSEzsadxFH0jPGeQylaQ5zLJemevunJzTsy3YoI5CTPWdozzenwLkCGFXGKPcW1ak
-         3qgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719574632; x=1720179432;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xNA2Gh8U8LmpmJPYkwIg20NtTAEf9GOo0g5n9aJKVOE=;
-        b=Ix5bQAuAzidPkT1cTD69sEn2fDQ+MGfNC0Q8fYyLeVa70I2q0JMYTHA3KOnqAc6IUF
-         QPg6TJy2B007B2BHmTYjSWD3EiSXzVREydkp/qLlhiwA4vrodanMKXhcDj9IMYxeG6tc
-         dCs0hhaVpEH9FQw7kv6ZVOJyGMerKfcV7KOpq8mOmAtlSXjsn5OCzvwDptX0IWt2ecDt
-         ubscFQ/3GeYIg8VpiBdF1TuJetupoZd3E05K7jQIsKvFKQdMNnVg8bqzGtSN47aNC5jL
-         jlMKPf1kUSzt3yHlwWXY0WsOdzIFmgaMp81BrMEq/W7BYtznqA/erAGqsBdnhmlYwna2
-         YCOQ==
-X-Gm-Message-State: AOJu0YzkKReYHgq9++W6pyqUTisqgRubHAaRhgZGN3fKBNr0lwcosGZ/
-	/z/lYSX1Zp418dAzmDaFBdzQ5J4AgmdPUQLUvd/OqJig+mH9MNbJ33siojMDoCc=
-X-Google-Smtp-Source: AGHT+IEtQ2F/ZhnVsAtxFPenxSImh3RT49kp9cUCErX/CHqLmjJQdHe8xOXur99JwYwacWedK++COg==
-X-Received: by 2002:a5d:47c2:0:b0:366:df35:b64f with SMTP id ffacd0b85a97d-36760a62fb7mr1704746f8f.4.1719574632423;
-        Fri, 28 Jun 2024 04:37:12 -0700 (PDT)
-Received: from srini-hackbase.lan ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0fba5asm2048937f8f.71.2024.06.28.04.37.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 04:37:12 -0700 (PDT)
-From: srinivas.kandagatla@linaro.org
-To: gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-	stable@vger.kernel.org,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 4/4] nvmem: core: limit cell sysfs permissions to main attribute ones
-Date: Fri, 28 Jun 2024 12:37:04 +0100
-Message-Id: <20240628113704.13742-5-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240628113704.13742-1-srinivas.kandagatla@linaro.org>
-References: <20240628113704.13742-1-srinivas.kandagatla@linaro.org>
+	s=arc-20240116; t=1719574643; c=relaxed/simple;
+	bh=Uwa9DiSYD3gjtp88rgsIr0BCC8uTTimKDrWBJ24KDaY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fRBmwasjltWFJAlGmPGYVJvSub3Z8mxsTJLmMuqYGO+X5pcO9mKKDePMcgCrFF6kfXuImxezJfph8Mim6B/j+wwhKklgqkX536YX9FwBXNVQAMHISuALW9ykBzVyEeTVKKvhuXLHbpSU3kxYr7k7HKkiOsAFIOuVo0n4Tp44P9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4W9YLh2Mzwz4f3mJ7;
+	Fri, 28 Jun 2024 19:37:00 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 934781A0170;
+	Fri, 28 Jun 2024 19:37:12 +0800 (CST)
+Received: from [10.174.177.174] (unknown [10.174.177.174])
+	by APP1 (Coremail) with SMTP id cCh0CgBXgHxjoH5mMEhDAg--.18518S3;
+	Fri, 28 Jun 2024 19:37:10 +0800 (CST)
+Message-ID: <3536f485-e496-4042-a231-c43a567cee7b@huaweicloud.com>
+Date: Fri, 28 Jun 2024 19:37:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1143; i=srinivas.kandagatla@linaro.org; h=from:subject; bh=Y26lcDOMAGbcgW1j/vk529VAyqPSlMBhAzffwgYorYs=; b=owGbwMvMwMVYtfBv5HGTUHPG02pJDGl1C0JmKbU+Op1tfWi7YZZQjuqXsrcfn7eY/mf38PG9L CzxMUmwk9GYhYGRi0FWTJFF6bl/1LE/j759l7vbCzOIlQlkCgMXpwBMRCyG/X9Y2LTTp9nCVnTr ndli+m93dVaJd2PcSunc+07hdZtTYyavMTcpvHRB5sfuQEHJuctjiu/Yv9u9PvCfxdO6rddn6yv Y1Uz2PuOzKa3sWiPbm4Jn/zo2zlDbqu6m/Vf7abavbkaonfYsqe8KEj1zNbVTVVO+F0dWW/os0+ 0w1TF7zuxoojvTrc+uspjvVfh7R1MpkWRpdW3eKwFSsdIxqzn4jxRmKn98+5h5Q9wmNcffryI2/ Z3/J51BVeRkkpg7k/B0XnWtlQH+9+dE7jg0xdwj/Lx8s8KKCqUufl61FY6CNz126bV+dD6617p7 +SUjpueF5Z5dr3x/vdAo7/i566/HrbtbeVQ+7tu3Zs9aAA==
-X-Developer-Key: i=srinivas.kandagatla@linaro.org; a=openpgp; fpr=ED6472765AB36EC43B3EF97AD77E3FC0562560D6
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/9] cachefiles: random bugfixes
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: Christian Brauner <brauner@kernel.org>, jlayton@kernel.org,
+ dhowells@redhat.com, netfs@lists.linux.dev, jefflexu@linux.alibaba.com,
+ zhujia.zj@bytedance.com, linux-erofs@lists.ozlabs.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yangerkun@huawei.com, houtao1@huawei.com, yukuai3@huawei.com,
+ wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
+ Baokun Li <libaokun@huaweicloud.com>
+References: <20240628062930.2467993-1-libaokun@huaweicloud.com>
+ <ce6a7e15-5bea-413a-951e-b252319e1dfd@linux.alibaba.com>
+Content-Language: en-US
+From: Baokun Li <libaokun@huaweicloud.com>
+In-Reply-To: <ce6a7e15-5bea-413a-951e-b252319e1dfd@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:cCh0CgBXgHxjoH5mMEhDAg--.18518S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxuryDuF4UJrW5Aw4UCw1DGFg_yoW5CF4rpF
+	Wakay5KFWkWry0kws2yr4xtF4Fy3yxXFnrGr1rWr1UC3s8XF1IyrZakw1Yvas5Cr4fGw4a
+	vr4jvas3AryqyaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkE14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Gr0_
+	Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQvt
+	AUUUUU=
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAQAIBV1jkIANfAAAsT
 
-From: Thomas Weißschuh <linux@weissschuh.net>
+Hi Xiang,
 
-The cell sysfs attribute should not provide more access to the nvmem
-data than the main attribute itself.
-For example if nvme_config::root_only was set, the cell attribute
-would still provide read access to everybody.
+On 2024/6/28 15:39, Gao Xiang wrote:
+> Hi Baokun,
+>
+> On 2024/6/28 14:29, libaokun@huaweicloud.com wrote:
+>> From: Baokun Li <libaokun1@huawei.com>
+>>
+>> Hi all!
+>>
+>> This is the third version of this patch series, in which another 
+>> patch set
+>> is subsumed into this one to avoid confusing the two patch sets.
+>> (https://patchwork.kernel.org/project/linux-fsdevel/list/?series=854914)
+>>
+>> Thank you, Jia Zhu, Gao Xiang, Jeff Layton, for the feedback in the
+>> previous version.
+>>
+>> We've been testing ondemand mode for cachefiles since January, and we're
+>> almost done. We hit a lot of issues during the testing period, and this
+>> patch series fixes some of the issues. The patches have passed internal
+>> testing without regression.
+>>
+>> The following is a brief overview of the patches, see the patches for
+>> more details.
+>>
+>> Patch 1-2: Add fscache_try_get_volume() helper function to avoid
+>> fscache_volume use-after-free on cache withdrawal.
+>>
+>> Patch 3: Fix cachefiles_lookup_cookie() and cachefiles_withdraw_cache()
+>> concurrency causing cachefiles_volume use-after-free.
+>>
+>> Patch 4: Propagate error codes returned by vfs_getxattr() to avoid
+>> endless loops.
+>>
+>> Patch 5-7: A read request waiting for reopen could be closed maliciously
+>> before the reopen worker is executing or waiting to be scheduled. So
+>> ondemand_object_worker() may be called after the info and object and 
+>> even
+>> the cache have been freed and trigger use-after-free. So use
+>> cancel_work_sync() in cachefiles_ondemand_clean_object() to cancel the
+>> reopen worker or wait for it to finish. Since it makes no sense to wait
+>> for the daemon to complete the reopen request, to avoid this pointless
+>> operation blocking cancel_work_sync(), Patch 1 avoids request generation
+>> by the DROPPING state when the request has not been sent, and Patch 2
+>> flushes the requests of the current object before cancel_work_sync().
+>>
+>> Patch 8: Cyclic allocation of msg_id to avoid msg_id reuse misleading
+>> the daemon to cause hung.
+>>
+>> Patch 9: Hold xas_lock during polling to avoid dereferencing reqs 
+>> causing
+>> use-after-free. This issue was triggered frequently in our tests, and we
+>> found that anolis 5.10 had fixed it. So to avoid failing the test, this
+>> patch is pushed upstream as well.
+>>
+>> Comments and questions are, as always, welcome.
+>> Please let me know what you think.
+>
+> Patch 4-9 looks good to me, and they are independent to patch 1-3
+> so personally I guess they could go upstream in advance.
 
-Mask out permissions not available on the main attribute.
+Thank you for your review!
 
-Fixes: 0331c611949f ("nvmem: core: Expose cells through sysfs")
-Cc: stable@vger.kernel.org
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- drivers/nvmem/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Indeed, the first three patches have no dependencies on the later
+ones, and the later ones can be merged in first.
+>
+> I hope the way to fix cachefiles in patch 1-4 could be also
+> confirmed by David and Jeff since they relates the generic
+> cachefiles logic anyway.
+Yes, the first four patches modify the generic process for cachefiles,
+and it would be great if David and Jeff could take a look at those.
+The logic for patches 2 and 3 is a bit more complex, so the review
+may take some time.
 
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 1285300ed239..f8dd7eb40fbe 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -462,7 +462,7 @@ static int nvmem_populate_sysfs_cells(struct nvmem_device *nvmem)
- 						    "%s@%x,%x", entry->name,
- 						    entry->offset,
- 						    entry->bit_offset);
--		attrs[i].attr.mode = 0444;
-+		attrs[i].attr.mode = 0444 & nvmem_bin_attr_get_umode(nvmem);
- 		attrs[i].size = entry->bytes;
- 		attrs[i].read = &nvmem_cell_attr_read;
- 		attrs[i].private = entry;
--- 
-2.25.1
+Cheers,
+Baokun
 
 
