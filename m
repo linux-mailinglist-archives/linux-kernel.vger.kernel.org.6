@@ -1,133 +1,120 @@
-Return-Path: <linux-kernel+bounces-234328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7462E91C541
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:56:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E93D491C546
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:58:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6AA41C23724
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:56:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 930DF1F255BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7C11CD5A4;
-	Fri, 28 Jun 2024 17:56:39 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6BA1CCCD2;
+	Fri, 28 Jun 2024 17:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SExNMaAk"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B18815253B;
-	Fri, 28 Jun 2024 17:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63FC31C232C;
+	Fri, 28 Jun 2024 17:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719597399; cv=none; b=Af22rg3dW6eqT0hnSs8A4eez5iLFqpxuBjF4FSfgPLIxJag83nvTsLCZF4l7AcVA0a30tRr4N9kqbZPvTVnjBpF9kJ4j35DgAGNdTpkprjaeU0YYF4HslikjLJPpsZjzJoYjvQ4/zITU3ho66fs6YY0bzvs/jDrlTve2ruDOgAk=
+	t=1719597511; cv=none; b=UQ/l3UWc8qXjp25THjrHxxX73NNYg7P3AVkRimMPhBCssdFxeVcvbqaAGO9ddmBdErt49A48vcWYkOeZKYi2/C3/WNEX4L7rks4zjJrbTEYJ9IPWewbvtjkWI6vTggnjE2GBbWOhwz3+DLoiJoDH99LEHKvL218Q0RJVAYfmbww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719597399; c=relaxed/simple;
-	bh=oYS7jmYESQRNo05AqB51F3nXEy6uK/Kv0yx6spSKe/o=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Aq7n43jp/31Fjqz7YX1+eij7oNbVxTwbSGkpgiQj6vRbXaJxknUzd6rujOORRwUWrTLfaWU4GbY3gEhpKlcvSxxGmWsEKs6EsA6FDBpVqvDZuRR/7UJ7rz4F7JTQmIMdRaF7U9RiS9HOktj23D6ead7gEBDeV2LW+SG6TNpNEZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8572C116B1;
-	Fri, 28 Jun 2024 17:56:33 +0000 (UTC)
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Marc Zyngier <maz@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	linux-acpi@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	loongarch@lists.linux.dev,
-	x86@kernel.org,
-	Russell King <linux@armlinux.org.uk>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Miguel Luis <miguel.luis@oracle.com>,
-	James Morse <james.morse@arm.com>,
-	Salil Mehta <salil.mehta@huawei.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	linuxarm@huawei.com,
-	justin.he@arm.com,
-	jianyong.wu@arm.com
-Subject: Re: [PATCH v10 00/19] ACPI/arm64: add support for virtual cpu hotplug
-Date: Fri, 28 Jun 2024 18:56:31 +0100
-Message-Id: <171959723432.44645.7883276197359651212.b4-ty@arm.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240529133446.28446-1-Jonathan.Cameron@huawei.com>
-References: <20240529133446.28446-1-Jonathan.Cameron@huawei.com>
+	s=arc-20240116; t=1719597511; c=relaxed/simple;
+	bh=SLMLIlIwPxeoqGSeXB0AmCzYU+PGutTsVn/dsTy+csY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=olAIFHbJWtKpSKaiG61xGYfSTwWFcSU3qNKm/WrARPq/+A/Z4wf+iIi9e8jpp1YzdVY8ImhaGiFOPiR34Z+LGj9LPduhT4cFjXyZ3PCeZ/end3VccNg9o0zoD1D8Jz5vPHcb2cbxkri2SXk6/4P0PhSC5+YKVmYI486q5fSqrEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SExNMaAk; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719597510; x=1751133510;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=SLMLIlIwPxeoqGSeXB0AmCzYU+PGutTsVn/dsTy+csY=;
+  b=SExNMaAkVd5Re05lmFkoNh2J6lGSKZ5z9dbAj4AAHqV52weMmNP33hYq
+   qSNHFm8J7WaUHMs/6pOGRiT4kb13kt6sTDFy9aPEmXp8oxMZCA7c/jVYZ
+   Iy0+Z/Xm2rDraTZqobKgc52r+tL3OqzW/Rr3HMbooI81F0v40uKaXFRUr
+   NGnT/4LvM0gvOAtsIdq31IDxw2p8MH53Cz79iKLcHvHgchfaIk1xFleQO
+   ktVmERZX6gzCrnzOZcSEurBXD73706OcgmQXEuxvBoPP+9bUF3Pn7yl9L
+   rA7EBx1LRjYYcR4Ou+3dkuMqCPx5V0eTMinquVf0VGt10eeBdA/Ge2LMF
+   w==;
+X-CSE-ConnectionGUID: gYMeI+YHTm22tRvS7niOyg==
+X-CSE-MsgGUID: 296V7a9vRbq1c54aasXNfg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11117"; a="16528358"
+X-IronPort-AV: E=Sophos;i="6.09,169,1716274800"; 
+   d="scan'208";a="16528358"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 10:58:29 -0700
+X-CSE-ConnectionGUID: MuGJDCC9RO6Mghn9BdfYvg==
+X-CSE-MsgGUID: agBB+jtoQv2UHY75WX5/jw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,169,1716274800"; 
+   d="scan'208";a="49281196"
+Received: from irvmail002.ir.intel.com ([10.43.11.120])
+  by fmviesa005.fm.intel.com with ESMTP; 28 Jun 2024 10:58:26 -0700
+Received: from [10.245.96.165] (mwajdecz-MOBL.ger.corp.intel.com [10.245.96.165])
+	by irvmail002.ir.intel.com (Postfix) with ESMTP id BB2542877F;
+	Fri, 28 Jun 2024 18:58:24 +0100 (IST)
+Message-ID: <712046ed-2481-4644-80d7-707bbe8b5c20@intel.com>
+Date: Fri, 28 Jun 2024 19:58:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build failure after merge of the drm
+To: Mark Brown <broonie@kernel.org>, Dave Airlie <airlied@redhat.com>,
+ DRI <dri-devel@lists.freedesktop.org>,
+ =?UTF-8?Q?Piotr_Pi=C3=B3rkowski?= <piotr.piorkowski@intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Lucas De Marchi <lucas.demarchi@intel.com>
+Cc: buildfailureaftermergeofthedrmtree@sirena.org.uk,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <Zn7s611xnutUFxR0@sirena.org.uk>
+Content-Language: en-US
+From: Michal Wajdeczko <michal.wajdeczko@intel.com>
+In-Reply-To: <Zn7s611xnutUFxR0@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 29 May 2024 14:34:27 +0100, Jonathan Cameron wrote:
-> v10:
-> - Make acpi_processor_set_per_cpu() return 0 / error rather than bool
->   to simplify error handling at the call sites.
->   (Thanks to both Rafael and Gavin who commented on this)
-> - Gather tags.
-> - Rebase on v6.10-rc1
+
+
+On 28.06.2024 19:03, Mark Brown wrote:
+> Hi all,
 > 
-> [...]
+> After merging the drm tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> /tmp/next/build/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c: In function 'pf_get_threshold':
+> /tmp/next/build/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c:1788:27: error: unused variable 'xe' [-Werror=unused-variable]
+>  1788 |         struct xe_device *xe = gt_to_xe(gt);
+>       |                           ^~
+> cc1: all warnings being treated as errors
+> 
+> Caused by commit
+> 
+>   629df234bfe73d ("drm/xe/pf: Introduce functions to configure VF thresholds")
 
-Applied to arm64 (for-next/vcpu-hotplug), thanks! If nothing falls
-apart, it should end up in mainline for 6.11.
+it must have been something else wrong, as this commit [1] does not
+contain this line, it was not part of patch itself [2] and I can't find
+any other commit related to this function on drm-tip
 
-Thomas, the GICv3 patches have been acked by Marc but they are missing
-your ack. If you want it added, I can refresh the series in the next day
-or so, otherwise the branch should remain stable. Thanks.
+but it was noticed today and some fixup was already applied [3]
 
-[01/19] ACPI: processor: Simplify initial onlining to use same path for cold and hotplug
-        https://git.kernel.org/arm64/c/c1385c1f0ba3
-[02/19] cpu: Do not warn on arch_register_cpu() returning -EPROBE_DEFER
-        https://git.kernel.org/arm64/c/d830ef3ac569
-[03/19] ACPI: processor: Drop duplicated check on _STA (enabled + present)
-        https://git.kernel.org/arm64/c/157080f03c7a
-[04/19] ACPI: processor: Return an error if acpi_processor_get_info() fails in processor_add()
-        https://git.kernel.org/arm64/c/fadf231f0a06
-[05/19] ACPI: processor: Fix memory leaks in error paths of processor_add()
-        https://git.kernel.org/arm64/c/47ec9b417ed9
-[06/19] ACPI: processor: Move checks and availability of acpi_processor earlier
-        https://git.kernel.org/arm64/c/cd9239660b8c
-[07/19] ACPI: processor: Add acpi_get_processor_handle() helper
-        https://git.kernel.org/arm64/c/36b921637e90
-[08/19] ACPI: processor: Register deferred CPUs from acpi_processor_get_info()
-        https://git.kernel.org/arm64/c/b398a91decd9
-[09/19] ACPI: scan: switch to flags for acpi_scan_check_and_detach()
-        https://git.kernel.org/arm64/c/1859a671bdb9
-[10/19] ACPI: Add post_eject to struct acpi_scan_handler for cpu hotplug
-        https://git.kernel.org/arm64/c/3b9d0a78aeda
-[11/19] arm64: acpi: Move get_cpu_for_acpi_id() to a header
-        https://git.kernel.org/arm64/c/8d34b6f17b9a
-[12/19] arm64: acpi: Harden get_cpu_for_acpi_id() against missing CPU entry
-        https://git.kernel.org/arm64/c/2488444274c7
-[13/19] irqchip/gic-v3: Don't return errors from gic_acpi_match_gicc()
-        https://git.kernel.org/arm64/c/fa2dabe57220
-[14/19] irqchip/gic-v3: Add support for ACPI's disabled but 'online capable' CPUs
-        https://git.kernel.org/arm64/c/d633da5d3ab1
-[15/19] arm64: psci: Ignore DENIED CPUs
-        https://git.kernel.org/arm64/c/643e12da4a49
-[16/19] arm64: arch_register_cpu() variant to check if an ACPI handle is now available.
-        https://git.kernel.org/arm64/c/eba4675008a6
-[17/19] arm64: Kconfig: Enable hotplug CPU on arm64 if ACPI_PROCESSOR is enabled.
-        https://git.kernel.org/arm64/c/9d0873892f4d
-[18/19] arm64: document virtual CPU hotplug's expectations
-        https://git.kernel.org/arm64/c/828ce929d1c3
-[19/19] cpumask: Add enabled cpumask for present CPUs that can be brought online
-        https://git.kernel.org/arm64/c/4e1a7df45480
+[1]
+https://gitlab.freedesktop.org/drm/xe/kernel/-/commit/629df234bfe73dacb4bb0daa4bc2c14824dba159
+[2] https://patchwork.freedesktop.org/patch/594015/?series=133236&rev=2
+[3]
+https://patchwork.freedesktop.org/patch/601248/?series=135512&rev=1#comment_1094525
 
--- 
-Catalin
-
+> 
+> I have used the tree from 20240627 instead.
 
