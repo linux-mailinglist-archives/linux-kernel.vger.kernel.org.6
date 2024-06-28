@@ -1,64 +1,73 @@
-Return-Path: <linux-kernel+bounces-233789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8634691BD58
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:25:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3F8491BD57
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:25:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9D021C22424
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:25:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C448B217DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D679156C52;
-	Fri, 28 Jun 2024 11:25:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5502315687D;
+	Fri, 28 Jun 2024 11:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gGKGKKwO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Sc3S8tdq"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AE1A156242
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 11:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384E2481D7
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 11:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719573912; cv=none; b=W1oA2x7irzmfgPHaNHOlE9RDiPGguBbqqhjQKMnB2Y3ltNoGsnbqhwtkURsa2LxWelQMoKt3sM+jYmVK2cb5cl/XR8ZTXw7APYq0Rvp/bgiLAaohIVus6PoKxZ83+Wtb+/Ft8vrRqDwbd1egL0nkyi6b4biXKQjZrn/KtcqbdLk=
+	t=1719573904; cv=none; b=PVBYpbEVfM92Ahi1YmO7uYOGQnX8hd47cGPtX7imJCbBkdXkV6CvCCOhMyPM814BLXgHRglHwg5WGXng76t/oxCsWsIw4reRbkX+YgEdiurxvaQL1PrNTaBQt2i8jP+pILkz2pCNt29Qjfa0Fl/RhnW14E4f6C3QL5EuM23F2HM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719573912; c=relaxed/simple;
-	bh=zVan0NHkWDffat6lSLM3TgKs5irxqac2uR3WD3BclUI=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=R1HtgXZGe9YhN1SATdGimJec/twbAGhtur9GqAvHCmMn3mWv+OHXuch7nQTmAEFs1sw00Uu1z24owI7owTOlw/ZUH8+ABv959IrTSgF49Nm42Uuk6hvcCjZV2PK2YOxRmePLMluON9/0TrG0Me+G2XcHah5qkd0NZ4Y3ZKa8tLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gGKGKKwO; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719573910; x=1751109910;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=zVan0NHkWDffat6lSLM3TgKs5irxqac2uR3WD3BclUI=;
-  b=gGKGKKwO4gVv8xtKV+ymf0q58pE0PfpwU00RcOYygf+/K05nENRpqrOf
-   QUNHF2XW4SE7EkrBEHtgHjcc24TTtwGCUR5RpbFV9m2HKBSB0RyIj/YsX
-   cH3IlcLFieX5JzHwiGQvJ8M9XBJMjk9zC47dmh7CuSdSBrGgRwTI1oO5B
-   YYvAb6/ZwxKqQQpmGG8kTZI3t7USzoTWC/1Wp2edilRUKMJZO8W0cxmVg
-   hCp3ZzaT0GXr3+n/luc+0bccYtdZ3237KAhus5IQcZrdCu2ClJA5drBW4
-   PUhC0W77hw8czBKf7JXLx/7A9BAzkH5XwMyUSr0tDS/5BUukpM3womC+4
-   w==;
-X-CSE-ConnectionGUID: 0+ZQS4LsTPOgJgqeGqZoeA==
-X-CSE-MsgGUID: vuTfA7WCTvusFtvE23ztUA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="16428297"
-X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
-   d="scan'208";a="16428297"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 04:25:10 -0700
-X-CSE-ConnectionGUID: rjlAP/UTQLSfbC2jIrnDPw==
-X-CSE-MsgGUID: 8efYNTgTQKux6IzMXd87yA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,169,1716274800"; 
-   d="scan'208";a="44548285"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.125.248.220]) ([10.125.248.220])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 04:24:54 -0700
-Message-ID: <92346e46-7306-4ed2-ad74-d20b0dbc60a4@linux.intel.com>
-Date: Fri, 28 Jun 2024 19:24:51 +0800
+	s=arc-20240116; t=1719573904; c=relaxed/simple;
+	bh=V9KXg+SCmWZafo6obrdRFIhSGLezPfhb2JXZvNu0exU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L84GJWg/qTNVgmWIT7cqAU9fngvXnkBeRhu5ojYq/TR837FbFbDwG9rTtMcJZKZ5X7zxr5llm1jwtv8/ejNcNta1yUXpsXPu1TjpZCwoM5MO/dOiImZgzPyOWC7GJFFZSOd+KLqMaEs4iM5g0NXhu3gGgamBjf0vt232QOFMXl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Sc3S8tdq; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3676447928bso293801f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 04:25:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1719573899; x=1720178699; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+vT0oI1WLiPKuk+C4WN1sqVJ5ks3XibkeL1J+rw6OW0=;
+        b=Sc3S8tdq6Qx2OwJ5Jx4wgA/ImXi3UzAfdyuprMGELe8b0lLzRsXwr/VQXnhCy5MHSP
+         Q+88jtRepdzRcr2QUKOVz9GAY61c2gRM2UX3bYncyT++SNoq8wjnJBR6UQvYehijMRi3
+         F+o1YuDhw35FqIelK07ar674laPUQfD59EB4cS0q1BxWwW8LwZcOJnP16LHgBufcjVQT
+         OORu8jYR+gWQTsc/ANAxhDAIxuEjfW/Yi2pI48Ke22CpkhNt+7neOQ2HltRWm3na65bX
+         3oGtA4eRavGfrQ91Sz2bm8WLgtw4nVDIJBTS3jZErkkUFtNYfYZwC7qoxj9Pr4/IE5La
+         GhEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719573899; x=1720178699;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+vT0oI1WLiPKuk+C4WN1sqVJ5ks3XibkeL1J+rw6OW0=;
+        b=Dbgwyw4UnB1MV8NWnmrlXsUSA7u4cjnsp0TMvLNkoP4m1L1NORxkEQeTdhe3MiABZD
+         y52iBbWgYtUKxzHMIGx918JFlnNCAfBMIMckFGOIFojNIyWqkOlTv3NM0L4XHEKRbwWE
+         digM/qG758qdfOidoLbE0Tm2JsLCYNnmHNE0UElwBHeeuN5a8aKxuTNDVDaIFHWzHjzp
+         4okigoYO3nHJRnMqiuiRwgZSfvPUvatrGR3gSw7JK5EcTsrjnJ/Jl8hYz77so/PPW4L2
+         PzNhNYMoPfhDFoIpNwr17cbPgLEEEevPZdrdxhI27tVMYjyEZgR+ojkDWVbx9MSnVqJc
+         em6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVFWqqVdAacJleQgqHeRxnzmPTqdG+/EtwckdBJwaQggxCvRPLzk1tUn2aw16kEwJxXsEMKDypEhS9zVFmonm6Cie2ac5XHSNO8GRJ1
+X-Gm-Message-State: AOJu0YzM7uihttf/h2jU3PT8xdwLWv4+MJxZpqp8zAIcgHJ69GOfzI8C
+	uiNEzzZIzyNG/LF4TOZAC9s/2wm2A855/QnqQiWyZwm+ykBQn1kgHGYgzgH374w=
+X-Google-Smtp-Source: AGHT+IEg/llQOTje8PQzJ/D61BuZ9d+OzSn6/FeavrJj+1FuwRfzHkTT7CRfYqx6QCghqsKlm9fzjQ==
+X-Received: by 2002:a05:6000:2c2:b0:366:eb45:6d55 with SMTP id ffacd0b85a97d-366eb456ecemr14224463f8f.49.1719573899534;
+        Fri, 28 Jun 2024 04:24:59 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.70])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0d8cb4sm2019563f8f.25.2024.06.28.04.24.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Jun 2024 04:24:59 -0700 (PDT)
+Message-ID: <ae2223f8-4058-4bd1-b480-ed2b4b1d526f@tuxon.dev>
+Date: Fri, 28 Jun 2024 14:24:57 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,228 +75,193 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, "iommu@lists.linux.dev"
- <iommu@lists.linux.dev>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] iommu/vt-d: Add helper to flush caches for context
- change
-To: "Tian, Kevin" <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Jason Gunthorpe <jgg@ziepe.ca>
-References: <20240627023121.50166-1-baolu.lu@linux.intel.com>
- <20240627023121.50166-2-baolu.lu@linux.intel.com>
- <BN9PR11MB527642AD41669FCF390297378CD72@BN9PR11MB5276.namprd11.prod.outlook.com>
- <80d727b4-c1eb-49d1-9b4a-ab3f0a4b54e2@linux.intel.com>
- <BN9PR11MB52760D102BD4F0AD7C24BCD58CD02@BN9PR11MB5276.namprd11.prod.outlook.com>
+Subject: Re: [PATCH v2 07/12] i2c: riic: Define individual arrays to describe
+ the register offsets
 Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <BN9PR11MB52760D102BD4F0AD7C24BCD58CD02@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ Chris Brandt <Chris.Brandt@renesas.com>,
+ "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240625121358.590547-8-claudiu.beznea.uj@bp.renesas.com>
+ <TY3PR01MB11346EF9A001F68162148B70F86D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <6289f329-118f-4970-a525-75c3a48bd28b@tuxon.dev>
+ <TY3PR01MB1134603F92C72D9B6C6C3733C86D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <2f162986-33c5-4d80-958c-4f857adaad20@tuxon.dev>
+ <TY3PR01MB11346CA73575CF61B2024F3B386D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <79c26030-4b92-4ef3-b8ce-d011f492161b@tuxon.dev>
+ <TY3PR01MB11346A2DFBD7FE81337A748D386D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <20ff64a8-e619-4281-894f-1aa08ea67f18@tuxon.dev>
+ <TY3PR01MB1134678E3A8485DB152BD66D386D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <TY3PR01MB1134678E3A8485DB152BD66D386D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 2024/6/28 15:43, Tian, Kevin wrote:
->> From: Baolu Lu <baolu.lu@linux.intel.com>
->> Sent: Thursday, June 27, 2024 4:22 PM
+
+
+On 28.06.2024 13:49, Biju Das wrote:
+> Hi Claudiu,
+> 
+>> -----Original Message-----
+>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
+>> Sent: Friday, June 28, 2024 11:25 AM
+>> Subject: Re: [PATCH v2 07/12] i2c: riic: Define individual arrays to describe the register offsets
 >>
->> On 2024/6/27 14:08, Tian, Kevin wrote:
->>>> From: Lu Baolu <baolu.lu@linux.intel.com>
->>>> Sent: Thursday, June 27, 2024 10:31 AM
->>>>
->>>> + */
->>>> +void intel_context_flush_present(struct device_domain_info *info,
->>>> +				 struct context_entry *context,
->>>> +				 bool affect_domains)
->>>> +{
->>>> +	struct intel_iommu *iommu = info->iommu;
->>>> +	u16 did = context_domain_id(context);
->>>> +	struct pasid_entry *pte;
->>>> +	int i;
->>>> +
->>>> +	assert_spin_locked(&iommu->lock);
->>>> +
->>>> +	/*
->>>> +	 * Device-selective context-cache invalidation. The Domain-ID field
->>>> +	 * of the Context-cache Invalidate Descriptor is ignored by hardware
->>>> +	 * when operating in scalable mode. Therefore the @did value
->>>> doesn't
->>>> +	 * matter in scalable mode.
->>>> +	 */
->>>> +	iommu->flush.flush_context(iommu, did, PCI_DEVID(info->bus, info-
->>>>> devfn),
->>>> +				   DMA_CCMD_MASK_NOBIT,
->>>> DMA_CCMD_DEVICE_INVL);
->>>> +
->>>> +	/*
->>>> +	 * For legacy mode:
->>>> +	 * - Domain-selective IOTLB invalidation
->>>> +	 * - Global Device-TLB invalidation to all affected functions
->>>> +	 */
->>>> +	if (!sm_supported(iommu)) {
->>>> +		iommu->flush.flush_iotlb(iommu, did, 0, 0,
->>>> DMA_TLB_DSI_FLUSH);
->>>> +		__context_flush_dev_iotlb(info);
->>>> +
->>>> +		return;
->>>> +	}
->>>> +
->>>> +	/*
->>>> +	 * For scalable mode:
->>>> +	 * - Domain-selective PASID-cache invalidation to affected domains
->>>> +	 * - Domain-selective IOTLB invalidation to affected domains
->>>> +	 * - Global Device-TLB invalidation to affected functions
->>>> +	 */
->>>> +	if (affect_domains) {
->>>> +		for (i = 0; i < info->pasid_table->max_pasid; i++) {
->>>> +			pte = intel_pasid_get_entry(info->dev, i);
->>>> +			if (!pte || !pasid_pte_is_present(pte))
->>>> +				continue;
->>>> +
->>>> +			did = pasid_get_domain_id(pte);
->>>> +			qi_flush_pasid_cache(iommu, did,
->>>> QI_PC_ALL_PASIDS, 0);
->>>> +			iommu->flush.flush_iotlb(iommu, did, 0, 0,
->>>> DMA_TLB_DSI_FLUSH);
->>>> +		}
->>>> +	}
->>>> +
->>>> +	__context_flush_dev_iotlb(info);
->>>> +}
->>>> --
->>>> 2.34.1
->>>>
+>>
+>>
+>> On 28.06.2024 11:24, Biju Das wrote:
+>>> Hi Claudiu,
 >>>
->>> this change moves the entire cache invalidation flow inside
->>> iommu->lock. Though the directly-affected operations are not in
->>> critical path the indirect impact applies to all other paths acquiring
->>> iommu->lock given it'll be held unnecessarily longer after this
->>> change.
+>>>> -----Original Message-----
+>>>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
+>>>> Sent: Friday, June 28, 2024 9:13 AM
+>>>> Subject: Re: [PATCH v2 07/12] i2c: riic: Define individual arrays to
+>>>> describe the register offsets
+>>>>
+>>>>
+>>>>
+>>>> On 28.06.2024 11:09, Biju Das wrote:
+>>>>>
+>>>>> Hi Claudiu,
+>>>>>
+>>>>>> -----Original Message-----
+>>>>>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
+>>>>>> Sent: Friday, June 28, 2024 9:03 AM
+>>>>>> Subject: Re: [PATCH v2 07/12] i2c: riic: Define individual arrays
+>>>>>> to describe the register offsets
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> On 28.06.2024 10:55, Biju Das wrote:
+>>>>>>> Hi Claudiu,
+>>>>>>>
+>>>>>>>> -----Original Message-----
+>>>>>>>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
+>>>>>>>> Sent: Friday, June 28, 2024 8:32 AM
+>>>>>>>> Subject: Re: [PATCH v2 07/12] i2c: riic: Define individual arrays
+>>>>>>>> to describe the register offsets
+>>>>>>>>
+>>>>>>>> Hi, Biju,
+>>>>>>>>
+>>>>>>>> On 28.06.2024 08:59, Biju Das wrote:
+>>>>>>>>> Hi Claudiu,
+>>>>>>>>>
+>>>>>>>>>> -----Original Message-----
+>>>>>>>>>> From: Claudiu <claudiu.beznea@tuxon.dev>
+>>>>>>>>>> Sent: Tuesday, June 25, 2024 1:14 PM
+>>>>>>>>>> Subject: [PATCH v2 07/12] i2c: riic: Define individual arrays
+>>>>>>>>>> to describe the register offsets
+>>>>>>>>>>
+>>>>>>>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>>>>>>>
+>>>>>>>>>> Define individual arrays to describe the register offsets. In
+>>>>>>>>>> this way we can describe different IP variants that share the
+>>>>>>>>>> same register offsets but have differences in other characteristics.
+>>>>>>>>>> Commit prepares for the addition
+>>>>>>>> of fast mode plus.
+>>>>>>>>>>
+>>>>>>>>>> Signed-off-by: Claudiu Beznea
+>>>>>>>>>> <claudiu.beznea.uj@bp.renesas.com>
+>>>>>>>>>> ---
+>>>>>>>>>>
+>>>>>>>>>> Changes in v2:
+>>>>>>>>>> - none
+>>>>>>>>>>
+>>>>>>>>>>  drivers/i2c/busses/i2c-riic.c | 58
+>>>>>>>>>> +++++++++++++++++++----------------
+>>>>>>>>>>  1 file changed, 31 insertions(+), 27 deletions(-)
+>>>>>>>>>>
+>>>>>>>>>> diff --git a/drivers/i2c/busses/i2c-riic.c
+>>>>>>>>>> b/drivers/i2c/busses/i2c-riic.c index
+>>>>>>>>>> 9fe007609076..8ffbead95492 100644
+>>>>>>>>>> --- a/drivers/i2c/busses/i2c-riic.c
+>>>>>>>>>> +++ b/drivers/i2c/busses/i2c-riic.c
+>>>>>>>>>> @@ -91,7 +91,7 @@ enum riic_reg_list {  };
+>>>>>>>>>>
+>>>>>>>>>>  struct riic_of_data {
+>>>>>>>>>> -	u8 regs[RIIC_REG_END];
+>>>>>>>>>> +	const u8 *regs;
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> Since you are touching this part, can we drop struct and Use u8*
+>>>>>>>>> as device_data instead?
+>>>>>>>>
+>>>>>>>> Patch 09/12 "i2c: riic: Add support for fast mode plus" adds a
+>>>>>>>> new member to struct
+>>>>>> riic_of_data.
+>>>>>>>> That new member is needed to differentiate b/w hardware versions
+>>>>>>>> supporting fast mode plus based on compatible.
+>>>>>>>
+>>>>>>> Are we sure RZ/A does not support fast mode plus?
+>>>>>>
+>>>>>> From commit description of patch 09/12:
+>>>>>>
+>>>>>> Fast mode plus is available on most of the IP variants that RIIC
+>>>>>> driver is working with. The exception is (according to HW manuals
+>>>>>> of the SoCs where this IP is
+>>>> available) the Renesas RZ/A1H.
+>>>>>> For this, patch introduces the struct riic_of_data::fast_mode_plus.
+>>>>>>
+>>>>>> I checked the manuals of all the SoCs where this driver is used.
+>>>>>>
+>>>>>> I haven't checked the H/W manual?
+>>>>>>
+>>>>>> On the manual I've downloaded from Renesas web site the FMPE bit of
+>>>>>> RIICnFER is not available on RZ/A1H.
+>>>>>
+>>>>> I just found RZ/A2M manual, it supports FMP and register layout looks similar to RZ/G2L.
+>>>>
+>>>> I introduced struct riic_of_data::fast_mode_plus because of RZ/A1H.
 >>>
->>> If the only requirement of holding iommu->lock is to walk the pasid
->>> table, probably we can collect a bitmap of DID's in the locked walk
->>> and then invalidate each in a loop outside of iommu->lock. Here
->>> we only care about DIDs associated with the old context entry at
->>> this point. New pasid attach will hit new context entry. Concurrent
->>> pasid detach then may just come with duplicated invalidations.
+>>> Maybe make the register layout as per SoC
+>>>
+>>> RZ/A1 --> &riic_rz_a_info
+>>> RZ/A2 and RZ/{G2L,G2LC,V2L,G2UL,FIVE} --> &riic_rz_g2_info RZ/G3S and
+>>> RZ/V2H --> &riic_rz_v2h_info
 >>
->> The iommu->lock is not only for the PASID table walk. The basic
->> schematic here is that once a present context table entry is being
->> changed, all PASID entries should not be altered until all the related
->> caches have been flushed. This is because the configuration of the
->> context entry might also impact PASID translation.
+>> Sorry, but I don't understand. Patch 09/12 already does that but a bit
+>> differently:
 > 
-> Is it what the spec explicitly requires? My impression was that we
-> need to invalidate any cache which may be associated with the old
-> context entry, which is not equal to prohibiting PASID entries from
-> being changed at the same time (as long as those changes won't
-> cause a stale cache entry being active).
+> Now register layout is added to differentiate the SoCs for adding support
+> to RZ/G3S and this layout should match with the hardware manual for all supported SoCs.
+> Currently it is wrong for RZ/A2 SoC, while you fixed it for all other SoCs.
 
-No, I didn't find that the VT-d spec explicitly requires this. But
-conceptually, the context entry controls features of the whole device,
-while pasid entries control the translation on a pasid. The change in
-context entry potentially impacts the pasid translation ...
+I checked RZ/A2M. There is nothing broken. The only thing that I see is
+that the FP+ is not enabled on RZ/A2M (please let me know if there is
+anything else I missed). I don't see this broken. It is the same behavior
+that was before this patch.
+
+Anyway, I'll update it for that too, if nobody has something against, but I
+cannot test it. If any hardware bug for it, I cannot say.
 
 > 
-> e.g. let's say this helper collects valid pasid entries (2, 3, 4) and
-> associated DIDs (x, y, z) in a locked walk of the pasid table and
-> then follows the spec sequence to invalidate the pasid cache
-> for (2, 3, 4) and the iotlb for (x, y, z) outside of the lock.
-> 
-> there could be several concurrent scenarios if iommu->lock is
-> only guarded on the pasid table walking:
-> 
-> 1) pasid entry #1 is torn down before the locked walk. The
-> teardown path will invalidate its pasid cache and iotlb properly.
-> 2) pasid entry #4 is torn down after the locked walk. Then we may
-> see duplicated invalidations both in this helper and in the
-> teardown path.
-> 3) new pasid attach before locked walk may be associated with
-> either old or new context entry, depending on whether it's passed
-> the context cache invalidation. In any case it will be captured by
-> locked walk and then have related cache invalidated in the helper.
-> 4) new pasid attach after locked walk is always safe as related
-> cache will only be associated with the new context entry.
-
-... hence, from the driver's point of view, let's start from simplicity
-unless there's any real use case.
-
 >>
->> Previously, we did not apply this lock because all those cases involved
->> changing the context entry from present to non-present, and we were
->> certain that all PASID entries were empty. Now, as we are making it a
->> generic helper that also serves scenarios where the entry remains
->> present after the change, we need this lock to ensure that no PASID
->> entry changes occur at the same time.
+>> RZ/{G2L, G2LC, G2UL, V2L, FIVE} -> riic_rz_g2_info RZ/G3S and RZ/V2H -> riic_rz_v2h_info Everything
+>> else: riic_rz_a_info
 >>
+>> I don't have anything at hand to test the "everything else" thus I enabled it for RZ/{G2L, G2LC,
+>> G2UL, V2L, FIVE}, RZ/G3S and RZ/V2H.
 > 
-> Even if we want to do a conservative locking I prefer to not applying
-> it to existing paths which clearly have no need for extended lock.
+> You don't need to test, as 
+> the existing other users don't have FMP+ enabled in device tree.
+
+It's the same as today (w/o adding specific entry for it).
+
 > 
-> Then probably making a specific helper for pri flip makes more sense
-> than generalizing code to incur unnecessary lock overhead on existing
-> paths...
-
-Yes, agreed with you. We don't need to extend this lock mechanism change
-to the existing cases where it's unnecessary.
-
-How about below additional changes?
-
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index c5d9c2283977..523407f6f6b2 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -1954,8 +1954,8 @@ static void domain_context_clear_one(struct 
-device_domain_info *info, u8 bus, u8
-
-  	context_clear_entry(context);
-  	__iommu_flush_cache(iommu, context, sizeof(*context));
--	intel_context_flush_present(info, context, true);
-  	spin_unlock(&iommu->lock);
-+	intel_context_flush_present(info, context, true);
-  }
-
-  static int domain_setup_first_level(struct intel_iommu *iommu,
-diff --git a/drivers/iommu/intel/pasid.c b/drivers/iommu/intel/pasid.c
-index 01156135e60f..9a7b5668c723 100644
---- a/drivers/iommu/intel/pasid.c
-+++ b/drivers/iommu/intel/pasid.c
-@@ -690,8 +690,8 @@ static void device_pasid_table_teardown(struct 
-device *dev, u8 bus, u8 devfn)
-
-  	context_clear_entry(context);
-  	__iommu_flush_cache(iommu, context, sizeof(*context));
-+	spin_unlock(&iommu->lock);
-  	intel_context_flush_present(info, context, false);
--	spin_unlock(&iommu->lock);
-  }
-
-  static int pci_pasid_table_teardown(struct pci_dev *pdev, u16 alias, 
-void *data)
-@@ -889,8 +889,6 @@ void intel_context_flush_present(struct 
-device_domain_info *info,
-  	struct pasid_entry *pte;
-  	int i;
-
--	assert_spin_locked(&iommu->lock);
--
-  	/*
-  	 * Device-selective context-cache invalidation. The Domain-ID field
-  	 * of the Context-cache Invalidate Descriptor is ignored by hardware
-@@ -919,6 +917,13 @@ void intel_context_flush_present(struct 
-device_domain_info *info,
-  	 * - Global Device-TLB invalidation to affected functions
-  	 */
-  	if (flush_domains) {
-+		/*
-+		 * If the IOMMU is running in scalable mode and there might
-+		 * be potential PASID translations, the caller should hold
-+		 * the lock to ensure that context changes and cache flushes
-+		 * are atomic.
-+		 */
-+		assert_spin_locked(&iommu->lock);
-  		for (i = 0; i < info->pasid_table->max_pasid; i++) {
-  			pte = intel_pasid_get_entry(info->dev, i);
-  			if (!pte || !pasid_pte_is_present(pte))
-
-Best regards,
-baolu
+> Cheers,
+> Biju
 
