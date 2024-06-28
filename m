@@ -1,140 +1,170 @@
-Return-Path: <linux-kernel+bounces-234124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B98B491C27A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:20:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A63691C27C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:21:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75D10286B7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:20:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57413283F71
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92501C9EA4;
-	Fri, 28 Jun 2024 15:19:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9271C9ED2;
+	Fri, 28 Jun 2024 15:20:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="M2Etf2FU"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L281UsoW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB771C8FD0
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 15:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDF11C2336;
+	Fri, 28 Jun 2024 15:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719587968; cv=none; b=fSX1/X8jkKCGa7ksi0Gzj3okeaYsvj/AaodSYTgO7Z1rEjHvYCNyy51ZvsizyfuZdICZ8TnHH07wTPwLHPVNpGiJYu626YHdayXFqFlvOs/UjWbFpyDPMBDjmVxCZKUX5M2KC2qE1w+5OvqHfvfhJi390Pf0qqJM+w1488kMDlQ=
+	t=1719588001; cv=none; b=PTOlQjg9GB2BFMbejZMQPAqyPnfhMJDqSiJumMd/SaJdVOxxqjm3BZeQ6GxK8lNIx3oSNXIlKYsj5cbubDUeTPUO/siulm9aMNhiT/mkPlSL2vdKVjKCUBRs5pWkq8N95eKGokCFNTRESaico+fIeEWDpuSZZ0pxCdd42BafRAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719587968; c=relaxed/simple;
-	bh=HPnLolP4WP+K+XqMhYDxxgbHsUPe0mOBx+n/fTfQXZ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c9+8LN99rb49r7cOTORjoUaI/xCxJaUgXtnNt/zjraNN7BieItc/NHCA27Tm8goywOzcTpLTNdGunbOPGqK6GReNXtXU0toORSjMunlx8C+R2ifyBu2dYXfy4hN2XNZTB21eHdIl5G1UVWNwoSaUg6s6mrMnKwxg0bWb8/cYsSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=M2Etf2FU; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.205] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 45SFIhFx3061799
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Fri, 28 Jun 2024 08:18:44 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 45SFIhFx3061799
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024061501; t=1719587926;
-	bh=CLIDw+4i/fnZq6/k/RBTLF/CChJ1uJ8DmwkjiPX77bQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=M2Etf2FUtu0NX8wAXsHXHfRFYDOc6+NJTJ1nt+GlAAzpeWn93y8k8GeH6ZqpAgom/
-	 3Ly1RKzr0nRArGqtPnbuOqL5jqDssmmItdRpR4AbV1Cip5yKgDStlINkhxgHTvP+9m
-	 7p8IczIAwXf4QVaVhpGQqNkn4f6xhy2BGYtm8SBDjkGXy1D5XUjloR84r7OAuHEy1W
-	 FN0wttzVbKdOsG2jLkWNlKH8gj8DMDTjB9wKpMKNDKfCiVHkItMGQjB448by4YSDW7
-	 mCVFoJmQzdhqPugRHBVlYgSe+yN46RRf90OHCBkBqpPaJM3NktFKlWTMRXUFnnZDek
-	 n6/XeOArJbzsg==
-Message-ID: <c0ec7712-c538-4cd1-ada2-d0120c662ce8@zytor.com>
-Date: Fri, 28 Jun 2024 08:18:38 -0700
+	s=arc-20240116; t=1719588001; c=relaxed/simple;
+	bh=3I4qytfU1UkShz8BnwuREmBojQJIahzWA24/ByvF5Os=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IPLppcf4kO8romoKbCWBH1fQU/tb/XB5iNtMWMqlhLqQ3y+zWFUxqCl55XLgH+tSbny/XwoBCzddusQv43yGXpdbogBbSAjZDM+zW9YBoYf2+X935DYyfH4Xmm/rWV3hiNo0riadiwb5qXakxCXrN6E13lIJINTs9jkwzGFNsiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L281UsoW; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719588000; x=1751124000;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=3I4qytfU1UkShz8BnwuREmBojQJIahzWA24/ByvF5Os=;
+  b=L281UsoWVssHfMl+PfA04aEGS84eiFvZd2O6v6/dy2XcFprt+wszWpz9
+   DvgAB+Oqc7vDLQPMlqlvLiHgTS+RISU/hjOK61wTjh4P548SDE5VfPnyt
+   zn4wzTev9imAWDOapcMLtUTZ+Pnt5rd3d/v6JSAgkeXDv0SWKf3LdK1fg
+   jCiaxSDI5bvhrUNhH7dAzgcP9dOM1E0v1GK8tz2gYny/ygqz0hHqHmURZ
+   XglTTzg6bQy3bz/PfSKJTD5xKpgWs9Ldhx2/YVdahopcmrmJx3XRCpunD
+   rbBalrwP+Hj87kd7TE0rp5ruGPXmBOG8IYld18XLIbxZF63WFsT5j3+mY
+   Q==;
+X-CSE-ConnectionGUID: MGoOhvq6QNih6FoaftcOOw==
+X-CSE-MsgGUID: Kdv8Vbm7QridZPxGg8PBXw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11117"; a="42195707"
+X-IronPort-AV: E=Sophos;i="6.09,169,1716274800"; 
+   d="scan'208";a="42195707"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 08:19:59 -0700
+X-CSE-ConnectionGUID: w/00j5kkSKC7Ae7PujqBPQ==
+X-CSE-MsgGUID: rb0JCCsZRNiSX+Z+MEO3yQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,169,1716274800"; 
+   d="scan'208";a="75972129"
+Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 08:19:57 -0700
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: alex.williamson@redhat.com,
+	kevin.tian@intel.com,
+	jgg@nvidia.com,
+	yi.l.liu@intel.com,
+	Yan Zhao <yan.y.zhao@intel.com>
+Subject: [PATCH] vfio: Get/put KVM only for the first/last vfio_df_open/close in cdev path
+Date: Fri, 28 Jun 2024 23:18:45 +0800
+Message-ID: <20240628151845.22166-1-yan.y.zhao@intel.com>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] x86/fred: Always install system interrupt handler
- into IDT
-To: Hou Wenlong <houwenlong.hwl@antgroup.com>
-Cc: linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshan.ljs@antgroup.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, Xin Li
- <xin3.li@intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-References: <cover.1718972598.git.houwenlong.hwl@antgroup.com>
- <2f632ef59c8c9cc27c3702bc2d286496ed298d65.1718972598.git.houwenlong.hwl@antgroup.com>
- <dca1635b-1e08-4dbb-9dbb-335cbdcf9b9d@zytor.com>
- <20240628093656.GA103025@k08j02272.eu95sqa>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <20240628093656.GA103025@k08j02272.eu95sqa>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/28/2024 2:36 AM, Hou Wenlong wrote:
-> Hi Xin,
-> 
-> It seems preferable to parse the FRED command line and disable FRED
-> early instead of using this method. As mentioned in my cover letter, I
-> initially attempted to fix the problem this way (by parsing the command
-> line in cpu_parse_early_param()). Should I send a new patch for it, or
-> will you be covering it in your work to enable FRED early?
-> 
+In the device cdev path, adjust the handling of the KVM reference count to
+only increment with the first vfio_df_open() and decrement after the final
+vfio_df_close(). This change addresses a KVM reference leak that occurs
+when a device cdev file is opened multiple times and attempts to bind to
+iommufd repeatedly.
 
-I have done it in my patches that enables FRED early, but if you want,
-you can post it, because you're a key contributor in this work.
+Currently, vfio_df_get_kvm_safe() is invoked prior to each vfio_df_open()
+in the cdev path during iommufd binding. The corresponding
+vfio_device_put_kvm() is executed either when iommufd is unbound or if an
+error occurs during the binding process.
 
-Thanks!
-     Xin
+However, issues arise when a device binds to iommufd more than once. The
+second vfio_df_open() will fail during iommufd binding, and
+vfio_device_put_kvm() will be triggered, setting device->kvm to NULL.
+Consequently, when iommufd is unbound from the first successfully bound
+device, vfio_device_put_kvm() becomes ineffective, leading to a leak in the
+KVM reference count.
 
-> Thanks!
-> 
->>> +	idt_install_sysvec(vector, asm_##function);			\
->>>   }
->>>   #else /* !__ASSEMBLY__ */
->>
->> Thanks!
->>      Xin
-> 
+Below is the calltrace that will be produced in this scenario when the KVM
+module is unloaded afterwards, reporting "BUG kvm_vcpu (Tainted: G S):
+Objects remaining in kvm_vcpu on __kmem_cache_shutdown()".
+
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x80/0xc0
+ slab_err+0xb0/0xf0
+ ? __kmem_cache_shutdown+0xc1/0x4e0
+ ? rcu_is_watching+0x11/0x50
+ ? lock_acquired+0x144/0x3c0
+ __kmem_cache_shutdown+0x1b7/0x4e0
+ kmem_cache_destroy+0xa6/0x260
+ kvm_exit+0x80/0xc0 [kvm]
+ vmx_exit+0xe/0x20 [kvm_intel]
+ __x64_sys_delete_module+0x143/0x250
+ ? ktime_get_coarse_real_ts64+0xd3/0xe0
+ ? syscall_trace_enter+0x143/0x210
+ do_syscall_64+0x6f/0x140
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+Fixes: 5fcc26969a16 ("vfio: Add VFIO_DEVICE_BIND_IOMMUFD")
+Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+---
+ drivers/vfio/device_cdev.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/vfio/device_cdev.c b/drivers/vfio/device_cdev.c
+index bb1817bd4ff3..3b85d01d1b27 100644
+--- a/drivers/vfio/device_cdev.c
++++ b/drivers/vfio/device_cdev.c
+@@ -65,6 +65,7 @@ long vfio_df_ioctl_bind_iommufd(struct vfio_device_file *df,
+ {
+ 	struct vfio_device *device = df->device;
+ 	struct vfio_device_bind_iommufd bind;
++	bool put_kvm = false;
+ 	unsigned long minsz;
+ 	int ret;
+ 
+@@ -101,12 +102,15 @@ long vfio_df_ioctl_bind_iommufd(struct vfio_device_file *df,
+ 	}
+ 
+ 	/*
+-	 * Before the device open, get the KVM pointer currently
++	 * Before the device's first open, get the KVM pointer currently
+ 	 * associated with the device file (if there is) and obtain
+-	 * a reference.  This reference is held until device closed.
++	 * a reference.  This reference is held until device's last closed.
+ 	 * Save the pointer in the device for use by drivers.
+ 	 */
+-	vfio_df_get_kvm_safe(df);
++	if (device->open_count == 0) {
++		vfio_df_get_kvm_safe(df);
++		put_kvm = true;
++	}
+ 
+ 	ret = vfio_df_open(df);
+ 	if (ret)
+@@ -129,7 +133,8 @@ long vfio_df_ioctl_bind_iommufd(struct vfio_device_file *df,
+ out_close_device:
+ 	vfio_df_close(df);
+ out_put_kvm:
+-	vfio_device_put_kvm(device);
++	if (put_kvm)
++		vfio_device_put_kvm(device);
+ 	iommufd_ctx_put(df->iommufd);
+ 	df->iommufd = NULL;
+ out_unlock:
+
+base-commit: 6ba59ff4227927d3a8530fc2973b80e94b54d58f
+-- 
+2.43.2
 
 
