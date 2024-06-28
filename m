@@ -1,105 +1,98 @@
-Return-Path: <linux-kernel+bounces-233641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5C5991BA9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:00:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A318291BA9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:01:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24D58B22B1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:00:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49DF9285BE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F0414E2F4;
-	Fri, 28 Jun 2024 08:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PHU1/CmL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD93147C71;
+	Fri, 28 Jun 2024 09:00:43 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A607B15252C
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 08:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BFA6405E6
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 09:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719565174; cv=none; b=gokG1bGMFZpmsjN/zwn+IGGgPNjxgsUS3eI53dRcwcb5BIjpBE8WXOXabtAAorObbyxZ1e5UqOJMJRd/AeW0FFpgz8ZK5AQp13VnFzxfFc6v/rHkyXkQXbSGSSUMj/l0uOOgYH3QTMuhd607UjUKnEj6n4+oeR+IzOfMCa9EpmA=
+	t=1719565242; cv=none; b=di+YSTgZ1HQkENoy/0klJCbnvIEztQPLYTOOxJi6vTSobzm1XE+ZcBuvM6S/OqV5szRLqqb6hcmlDdTyih/8uX4GpJuHH0tMAunaBaZd5NLSGVadW/sjtY6BrOBuSVhSxNx92FuN6q8yzla2uZJCIULf9wN6McWT1AXgikopa5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719565174; c=relaxed/simple;
-	bh=Tzi/G+a5CDQDPwSJ90qqFEIkE/wkGYuBcX/dDaobTmo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rcm2hfZ6vXqaI65TbtrGY+SK66vVWEkgscdhdmMbq24ctDYJGm2EoAwGT17FRtAN6ngb8/0+IQWTlRZLo0qNl06cJvkDmGyCaPmtZy8N7vSNTfgQJL3KndyTVNUIu/CvzryxXKWB5ZP0WGoT7ByPXM9bBDQStKSJljyAVE0c5A4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PHU1/CmL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C704C116B1;
-	Fri, 28 Jun 2024 08:59:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719565174;
-	bh=Tzi/G+a5CDQDPwSJ90qqFEIkE/wkGYuBcX/dDaobTmo=;
-	h=Date:From:To:Cc:Subject:From;
-	b=PHU1/CmL55oi4rwwfy2FVOGwVVKD0r1YWzAA22UAMZtvr9AgIuJF/igDcePO5AKHV
-	 3TuE/6Mzfllh5DRxnnfktg+9WoyAb3akO96jISeU/pyv9eoWC8B3QfeZ5kf5nPEBMn
-	 KC2mQvsAP5eQxfUFP4a2M1qsYP2TFVV/Tyg3zKbtKKIbEKh8jEYJ70YWIGFP3ggb0u
-	 ALcVEJjSA2Ko5CjFvBRv7nuuPPIxPVNywX1bb4upCzO+PKM8TAueLa7M+WP5i0eaHP
-	 9eSjs46lvRVWvtg+9TBKKgDAwbQUJCdEGrDnPeono+mJMS6htPnyGxWKYa5Nw4OcgJ
-	 2FQbRZLM7Sl9A==
-Date: Fri, 28 Jun 2024 09:59:29 +0100
-From: Will Deacon <will@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: [GIT PULL] arm64 fixes for -rc6
-Message-ID: <20240628085928.GA13251@willie-the-truck>
+	s=arc-20240116; t=1719565242; c=relaxed/simple;
+	bh=1kmTYq8rgl5jWz1Nbpy6TdwYJmr2R6u5TKl7kwjNSLg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fSvYP0ixmb0EXqF+rEafVu/5yOS+G4s+ysUYB0RDNOmod8h3ezAOzfpN40NsfD9LOxkl/hmLrTJvzkfjdxhPl4fdN+qT52wJkz+G0sXqrM/ayTrshmMEvCv1Pkf4TzYXwZdbPEyrD9KhWh7eGVP/sFv4U/aZgkMecPivxT2EjpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sN7T5-0003c4-Pb; Fri, 28 Jun 2024 11:00:31 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sN7T4-005ZJi-U7; Fri, 28 Jun 2024 11:00:30 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sN7T4-002PIf-2g;
+	Fri, 28 Jun 2024 11:00:30 +0200
+Date: Fri, 28 Jun 2024 11:00:30 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Dent Project <dentproject@linuxfoundation.org>,
+	kernel@pengutronix.de, linux-doc@vger.kernel.org
+Subject: Re: [PATCH net-next v5 5/7] net: ethtool: Add new power limit get
+ and set features
+Message-ID: <Zn57rqFgDq7rg1pA@pengutronix.de>
+References: <20240628-feature_poe_power_cap-v5-0-5e1375d3817a@bootlin.com>
+ <20240628-feature_poe_power_cap-v5-5-5e1375d3817a@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20240628-feature_poe_power_cap-v5-5-5e1375d3817a@bootlin.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Fri, Jun 28, 2024 at 10:31:58AM +0200, Kory Maincent wrote:
+> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+> 
+> This patch expands the status information provided by ethtool for PSE c33
+> with available power limit and available power limit ranges. It also adds
+> a call to pse_ethtool_set_pw_limit() to configure the PSE control power
+> limit.
+> 
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 
-Please can you pull this pair of small arm64 fixes for -rc6?
+Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-One is a fix for the recently merged uffd-wp support (which was
-triggering a spurious warning) and the other is a fix to the clearing
-of the initial idmap pgd in some configurations.
-
-Cheers,
-
-Will
-
---->8
-
-The following changes since commit 83a7eefedc9b56fe7bfeff13b6c7356688ffa670:
-
-  Linux 6.10-rc3 (2024-06-09 14:19:43 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
-
-for you to fetch changes up to ecc54006f158ae0245a13e59026da2f0239c1b86:
-
-  arm64: Clear the initial ID map correctly before remapping (2024-06-24 12:37:46 +0100)
-
-----------------------------------------------------------------
-arm64 fixes for -rc6
-
-- Fix spurious page-table warning when clearing PTE_UFFD_WP in a live
-  pte
-
-- Fix clearing of the idmap pgd when using large addressing modes
-
-----------------------------------------------------------------
-Ryan Roberts (1):
-      arm64: mm: Permit PTE SW bits to change in live mappings
-
-Zenghui Yu (1):
-      arm64: Clear the initial ID map correctly before remapping
-
- arch/arm64/include/asm/pgtable-hwdef.h | 1 +
- arch/arm64/kernel/pi/map_kernel.c      | 2 +-
- arch/arm64/mm/mmu.c                    | 3 ++-
- 3 files changed, 4 insertions(+), 2 deletions(-)
+Thank you!
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
