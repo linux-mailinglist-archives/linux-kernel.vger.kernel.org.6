@@ -1,203 +1,159 @@
-Return-Path: <linux-kernel+bounces-234688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DDEF91C975
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 01:08:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BD4B91C977
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 01:09:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF89E1F23ED2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 23:08:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0912E28632E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 23:09:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9EA81ABA;
-	Fri, 28 Jun 2024 23:08:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB90823D1;
+	Fri, 28 Jun 2024 23:09:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i+b+CIvq"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eigCCS1z"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C1278C8B
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 23:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A5C78C8B;
+	Fri, 28 Jun 2024 23:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719616100; cv=none; b=azHKYxI3KcE+inO4cXxhF5Pjan1HDMZFEG/bWymuz7GjifrkrZ5XvHiPA/OTLoP6ViqyT/DV8QOJhSuyZZP39tleN/GuYh+tmsk07xrOGeT+HSY3Ka9nLfqdtrvScVuRps7jA7qs3Mo9nPlFw13lh/oEx9nKom/L97EnnF6iAF8=
+	t=1719616155; cv=none; b=XcVuS23iyJ57Q3YLG9Cxgu/sNHF4FnUcCU46WXR1i2tDSKtd5MNgXDEMXvHQlYhTUZlcBkG0FTFtzAZeX6B7JPAn5iI2yd+PDVmhfvDPeI0tQy7fDPJ033VVAAEUr2G5EsP+jACQQNCQtBtSgHLA+MEQ7OyN6IV4wAV7GtvEr/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719616100; c=relaxed/simple;
-	bh=NtbVjSdP8d+VGj0ri6OFhKzJIsrRyEWIHSNNTsCFn1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e+CgQu/Bx38QMM8cDNMycAhLymMIvAjxmeHn6tIdUri/o6aRy9Y0voDWAFK8LmguBqSEv1F5ixCobfAhtfXXecTvOjvI1no62UN85yVPYGziy4cPoeVeD21U4RUWA90lur/R8ZMpNgOP2wZUE7yJVSfh1QVxWcsMkg2XHD+EPGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i+b+CIvq; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fa75f53f42so6609605ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 16:08:18 -0700 (PDT)
+	s=arc-20240116; t=1719616155; c=relaxed/simple;
+	bh=z7JoLm3IXpavqAJHJCUvHP2e2QGFZ2aV/bO4oxR/MLM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HZr/BJF0mGI7anOPdOTbCxFaQ4+AlBvmUrujZGkrj3ywidnJ5JTLtutBPzAxVi249Yw3LEke02eFUupnzlunBNBG2BfR66oU1KHIe8+VHvmxAyiKTJqt9ShRQXeslrpOhC3T++1/EK3Fs1DASlsd3jStS9QY2NpnZ0bclvewKRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eigCCS1z; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-701fa273824so648699a34.2;
+        Fri, 28 Jun 2024 16:09:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719616098; x=1720220898; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jD9fY0cEwd49BrRewlF88rHZA1K4FTXJg9jWSvOMwnw=;
-        b=i+b+CIvqmpETAvpiaICO428rfOlHGT2jHzcs2LWOoTIbCGBcAtpN1wHCuJiavPjRIM
-         lpcp4si0ftOHqg5OKhrKieo9KZyw9wqRLh7Mvy0JIcY7GGsKzMNjVm3rIDkzSYr9CLsR
-         a0SSgYcqUQJpYDE8jLJXzo66MhNEVwuTySnMYj9lg1eXjS390sp8eDghZr/byrqZ1o15
-         TP67qL1ZrEvPJi5OyiIoj6fLGNI7pZthb9Q8iqCVWWw3PuN6XXOhqo1xnZrJ11tXd2Yv
-         LRiAcouUAEYRj+5w+H2J8jNirrfCo+q63q4yb4kFcHM/Em388UFavB9lnXBC3N4FJtre
-         f6WA==
+        d=gmail.com; s=20230601; t=1719616152; x=1720220952; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=AB5VXkhFLy7bVZlsjKePD5M7nT8UqPknmWbvDbQuVy8=;
+        b=eigCCS1zZScFSFF8SKogJJiRIBCHpMsEXgxFqYqVYsFjxaulSZFOEWM2Am3ZhJVhTD
+         +uZj31yyAykRkz1A+jIZ7LC+/T2UvPfOngzA/5mt/oPzLKtrNMpYhJRy6VWhYI2e3ISO
+         3keiRy0ZPLFiw6NfO2mDQsFF+ulxL6wEJ8Ex5/U8TbAd/g/LOWT+DX4YOhc8XbD2xyrK
+         A+bqHfM0v94t8fRg0OVNk+MfhQukduyhO8KLTjYmcmHJBF8/0/Z45EnCq8wScRWSFJKO
+         dcP92TQROFe8mmkFIkBe31T5AgJAWhz0PM8ANy8SB6b9xB9yEr9jc+Mfa930q5/Jqh7B
+         eu4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719616098; x=1720220898;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1719616152; x=1720220952;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jD9fY0cEwd49BrRewlF88rHZA1K4FTXJg9jWSvOMwnw=;
-        b=GcgaTYrkFSD3c+MxW34dpc9FiHlXH9CRBW7KhvHAr92Pqn4dfWc2McqAa9vvDuhzCj
-         IPju9GNiHg6o7BzgfSN1GbxzpwGC8NciE7qzTOnymY9FlXYFIiUGCvgduOLDIeC1tjDi
-         r+/NhYTuumDxPmWbky9/aUVk+sRc2R+Z6lGYdmo7WZPF2VU3+kOCk4FtHCUql/KPX2ro
-         8i8OL1ktKjH45TX68ZBAosLrhbcXmkll8P/88CY5vnTv7/vQPWSEf9jKve0GhlfPsO4x
-         CYY7+lANH10XcRR3z69oYGaoJCExSL4qR9R4hmzq5j6Cgnq7N63bm46K14vLsFDxyGGG
-         BlOw==
-X-Forwarded-Encrypted: i=1; AJvYcCXQA3Z1ymnSML4+KaSbZuVBcQ7QwUKtHTniTFSXvi1A8JLJqe4ZObCQ9/6Cdy8nh+5Ds0xwsiW8aVw35v17BA+S2s+trn3pGV5SyptX
-X-Gm-Message-State: AOJu0YzqWlVRTsqAhhxhBx4zUWeoeVNgmxHwycmxyHIrBnZmVuNKGblI
-	rWbPHaZ4Qz5OUkl5f9eAPT9Ny81gFaBkZj8qtTc0ylcgXF88cwRFBkBfbe5Dfg==
-X-Google-Smtp-Source: AGHT+IHjekMXh02l0Ycz2rjYtlbdVH4UamFXyViW/QcLiWsUWCu1Vrnw+AQiFre0Cv3NqpjXzsWYhw==
-X-Received: by 2002:a17:903:18d:b0:1fa:1f31:e78a with SMTP id d9443c01a7336-1fa23f07182mr185772005ad.6.1719616097509;
-        Fri, 28 Jun 2024 16:08:17 -0700 (PDT)
-Received: from google.com (148.98.83.34.bc.googleusercontent.com. [34.83.98.148])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac10c8f81sm20752945ad.28.2024.06.28.16.08.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 16:08:16 -0700 (PDT)
-Date: Fri, 28 Jun 2024 23:08:13 +0000
-From: Igor Pylypiv <ipylypiv@google.com>
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Damien Le Moal <dlemoal@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/6] ata: libata: Set ATA_QCFLAG_RTF_FILLED in
- fill_result_tf()
-Message-ID: <Zn9CXRMWFczmG_P3@google.com>
-References: <20240626230411.3471543-1-ipylypiv@google.com>
- <20240626230411.3471543-6-ipylypiv@google.com>
- <Zn8ZIxQRimgVZ2S3@ryzen.lan>
+        bh=AB5VXkhFLy7bVZlsjKePD5M7nT8UqPknmWbvDbQuVy8=;
+        b=AQvGQvzjlO3c9Ej8bjB7dEdBFRgDIEq9JSGW8SRomHdfJAEuMt+mZigQMMx865Jk4B
+         QjDdu4ZUXTr2+8SK3wUwmSHeoJlWivHXr1tA/zH+i2LAzehma5x9NcTqoRu0xTPVbZ/Y
+         r+fLgH4k7y7rVK1xF2NbfmIpKrI7QE5l4D45Z50elTXD9EZcWoIF84Vqm5uLfSLb3gfv
+         KuVvVPIuwCsGVO48vNo9Lbtzfkck+7kbRSE8sJU0LH0cUWFL2ivP/WHXnsjIzy2uHXxn
+         XOWUZXQPRlvPvmWyoYWb4aaMB6YLkTsp7HD+8sEH7wEXiFxxjQmty+8dZax6/lGOQKrD
+         /ohA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRkLiw7ft5QLbnp6BLol/vOBmz1el7Pb9l6SRlWayEtRNcsSi+OsS+7Bb9KJT3kSG0SeLRTNqdG1TmmOOKgdPqPtpD62QTTqDHN7F8
+X-Gm-Message-State: AOJu0Ywn/eD103x2Pysf5wjmhiGTXTlwfZBIxqpys1ktn7MTKcohfdiL
+	1eHD9KW6KrT6dzHXYY4wJV7pbn0lD/IDnuPxkwFGWunyE506F9Bl
+X-Google-Smtp-Source: AGHT+IGkRtyP/TvqQ2OIjsu7j55ykZfful5elMmYNHfS/vzIUWYSM+oiXDywUwMFd1wu9klkLBDcdg==
+X-Received: by 2002:a05:6808:144a:b0:3d6:3217:3775 with SMTP id 5614622812f47-3d632173a27mr3659638b6e.44.1719616152465;
+        Fri, 28 Jun 2024 16:09:12 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70803ecfc61sm2165966b3a.132.2024.06.28.16.09.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Jun 2024 16:09:11 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <2bbdb1bd-ea4d-4c14-9ea7-9fce09ac76b7@roeck-us.net>
+Date: Fri, 28 Jun 2024 16:09:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zn8ZIxQRimgVZ2S3@ryzen.lan>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/4] i2c: piix4: Register SPDs
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ Andi Shyti <andi.shyti@kernel.org>, Jean Delvare <jdelvare@suse.com>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>
+References: <20240627-piix4-spd-v2-0-617ce47b8ff4@weissschuh.net>
+ <20240627-piix4-spd-v2-4-617ce47b8ff4@weissschuh.net>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20240627-piix4-spd-v2-4-617ce47b8ff4@weissschuh.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 28, 2024 at 10:12:19PM +0200, Niklas Cassel wrote:
-> On Wed, Jun 26, 2024 at 11:04:10PM +0000, Igor Pylypiv wrote:
-> > ATA_QCFLAG_RTF_FILLED is not specific to ahci and can be used generally
-> > to check if qc->result_tf contains valid data.
-> > 
-> > Reviewed-by: Hannes Reinecke <hare@suse.de>
-> > Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
-> > Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
-> > ---
-> >  drivers/ata/libahci.c     | 10 ----------
-> >  drivers/ata/libata-core.c |  8 ++++++++
-> >  2 files changed, 8 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/drivers/ata/libahci.c b/drivers/ata/libahci.c
-> > index 83431aae74d8..0728d445e531 100644
-> > --- a/drivers/ata/libahci.c
-> > +++ b/drivers/ata/libahci.c
-> > @@ -2075,13 +2075,6 @@ static void ahci_qc_fill_rtf(struct ata_queued_cmd *qc)
-> >  	struct ahci_port_priv *pp = qc->ap->private_data;
-> >  	u8 *rx_fis = pp->rx_fis;
-> >  
-> > -	/*
-> > -	 * rtf may already be filled (e.g. for successful NCQ commands).
-> > -	 * If that is the case, we have nothing to do.
-> > -	 */
-> > -	if (qc->flags & ATA_QCFLAG_RTF_FILLED)
-> > -		return;
-> > -
-> >  	if (pp->fbs_enabled)
-> >  		rx_fis += qc->dev->link->pmp * AHCI_RX_FIS_SZ;
-> >  
-> > @@ -2095,7 +2088,6 @@ static void ahci_qc_fill_rtf(struct ata_queued_cmd *qc)
-> >  	    !(qc->flags & ATA_QCFLAG_EH)) {
-> >  		ata_tf_from_fis(rx_fis + RX_FIS_PIO_SETUP, &qc->result_tf);
-> >  		qc->result_tf.status = (rx_fis + RX_FIS_PIO_SETUP)[15];
-> > -		qc->flags |= ATA_QCFLAG_RTF_FILLED;
-> >  		return;
-> >  	}
-> >  
-> > @@ -2118,12 +2110,10 @@ static void ahci_qc_fill_rtf(struct ata_queued_cmd *qc)
-> >  		 */
-> >  		qc->result_tf.status = fis[2];
-> >  		qc->result_tf.error = fis[3];
-> > -		qc->flags |= ATA_QCFLAG_RTF_FILLED;
-> >  		return;
-> >  	}
-> >  
-> >  	ata_tf_from_fis(rx_fis + RX_FIS_D2H_REG, &qc->result_tf);
-> > -	qc->flags |= ATA_QCFLAG_RTF_FILLED;
-> >  }
-> >  
-> >  static void ahci_qc_ncq_fill_rtf(struct ata_port *ap, u64 done_mask)
-> > diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-> > index e1bf8a19b3c8..a9fc3ec9300f 100644
-> > --- a/drivers/ata/libata-core.c
-> > +++ b/drivers/ata/libata-core.c
-> > @@ -4801,8 +4801,16 @@ static void fill_result_tf(struct ata_queued_cmd *qc)
-> >  {
-> >  	struct ata_port *ap = qc->ap;
-> >  
-> > +	/*
-> > +	 * rtf may already be filled (e.g. for successful NCQ commands).
-> > +	 * If that is the case, we have nothing to do.
-> > +	 */
-> > +	if (qc->flags & ATA_QCFLAG_RTF_FILLED)
-> > +		return;
-> > +
-> >  	qc->result_tf.flags = qc->tf.flags;
+On 6/27/24 10:48, Thomas Weißschuh wrote:
+> The piix4 I2C bus can carry SPDs, register them if present.
+> Only look on bus 0, as this is where the SPDs seem to be located.
 > 
-> One functional change that I can see from this is that after this commit,
-> we will no longer do: qc->result_tf.flags = qc->tf.flags;
-> if ATA_QCFLAG_RTF_FILLED was set.
+> Only the first 8 slots are supported. If the system has more,
+> then these will not be visible.
+> 
+> The AUX bus can not be probed as on some platforms it reports all
+> devices present and all reads return "0".
+> This would allow the ee1004 to be probed incorrectly.
 
-Nice catch, Niklas! I'll fix it in v4. Thank you!
+Was this reported somewhere ? I don't see it happen on any of my systems
+(of course that doesn't really mean anything).
 
 > 
-> e.g. ata_scsi_set_passthru_sense_fields() and ata_gen_ata_sense()
-> makes use of result_tf->flags, so we probably still want to do this.
-> 
-> 
-> Perhaps keep this function as you have it and simply do:
-> 
-> diff --git a/drivers/ata/libahci.c b/drivers/ata/libahci.c
-> index 0728d445e531..fdfa7b266218 100644
-> --- a/drivers/ata/libahci.c
-> +++ b/drivers/ata/libahci.c
-> @@ -2148,6 +2148,7 @@ static void ahci_qc_ncq_fill_rtf(struct ata_port *ap, u64 done_mask)
->                         if (qc && ata_is_ncq(qc->tf.protocol)) {
->                                 qc->result_tf.status = status;
->                                 qc->result_tf.error = error;
-> +                               qc->result_tf.flags = qc->tf.flags;
->                                 qc->flags |= ATA_QCFLAG_RTF_FILLED;
->                         }
->                         done_mask &= ~(1ULL << tag);
-> @@ -2172,6 +2173,7 @@ static void ahci_qc_ncq_fill_rtf(struct ata_port *ap, u64 done_mask)
->                         fis += RX_FIS_SDB;
->                         qc->result_tf.status = fis[2];
->                         qc->result_tf.error = fis[3];
-> +                       qc->result_tf.flags = qc->tf.flags;
->                         qc->flags |= ATA_QCFLAG_RTF_FILLED;
->                 }
->                 done_mask &= ~(1ULL << tag);
-> 
-> 
-> 
-> >  	ap->ops->qc_fill_rtf(qc);
-> > +	qc->flags |= ATA_QCFLAG_RTF_FILLED;
-> >  }
-> >  
-> >  static void ata_verify_xfer(struct ata_queued_cmd *qc)
-> > -- 
-> > 2.45.2.803.g4e1b14247a-goog
-> > 
+> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+
+Reviewed-and-tested-by: Guenter Roeck <linux@roeck-us.net>
+
+Thanks,
+Guenter
+
 
