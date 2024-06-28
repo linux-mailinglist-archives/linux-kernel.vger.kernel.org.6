@@ -1,128 +1,138 @@
-Return-Path: <linux-kernel+bounces-234385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76E2E91C5FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:44:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 746C291C600
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:45:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 319E028314E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:44:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2098B24793
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8121CD5D3;
-	Fri, 28 Jun 2024 18:44:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C4531CE09C;
+	Fri, 28 Jun 2024 18:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IalppJ1R"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kQJx335b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A80725634
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 18:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5167E1CE087;
+	Fri, 28 Jun 2024 18:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719600284; cv=none; b=a1JYVkN+4VrfEWrz5W+0npemxRZjxig6yTmsMMeOf21dL1CUoC6GkPVt8WpxAj3V64fZMImz4eGmQ87PEubI2s/cuwR2jJaSOl7aSkDRgYOLvf+F3Oe073MUsAaxPBoVxnDkqCZhh2m6TowTWFyY3kmlajcyKLWK0QzxWFuTH/o=
+	t=1719600286; cv=none; b=ZvMdQHqHKyalz80Io6rMJjF4Nj1Vi42AwZ2JhNErq8xqJrq1NlPT7QqjtuJyNBeCoT/QdQriOnsvbVF4lQdUSNhu0M6Oyn5T4usxK9ENijoAIEZ8oL08Q1hSbP3NpiIN5mnn/1acPNRZPHA7ofUbRETHL4iILCZaL9kDj9Am8GI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719600284; c=relaxed/simple;
-	bh=CjeOPx08KHZCMpZar8Zw4g3simp6ijuR/rUR6FpMdU8=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=Ei71snPxf0BCQmpBy5c46pf8HV4V2V3jDPeYa0klYhT18Kf3/0YOH8W5GMbV/ZNIIJTCziMUlxNPv/uZ3a/3NSEKPsVTb/TAWbu1nc0WR+H+DAMpT8NOQuwjVBLkEe7SqMdXNpWr/3hiDbp9qfQN4pnh9K6E+oTCq1ymEBUUxT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IalppJ1R; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57d457357easo1257135a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 11:44:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719600281; x=1720205081; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=DyDuHHLcDpZV6xvkvgsuMWxJVbSxBe6+9nLQ49p2W/Y=;
-        b=IalppJ1R/euobZBQzsDeoUsGzhya3ujkUtMHIRwax9Hp0/idDzuLOIbqX4wPhRNRDS
-         19Gn/BfszVq9cBr/38WtNQrHlZQS44uOjxywhOh7T6fEFmX1ecU9gz6Xy38wHE1/2IP7
-         A7h4NxYj4ojfJbbhmKM4jpGpyBBskZkpcD0penMStUV4c2tZCmWtaS2vlJpdql224RCi
-         cD9TXk8F6paE5jTLcFEeefonDtbJVrEFY+PkAlSoKiPAwHR63kF404YfcsUmBHQDLjla
-         uBIo9uKfMzUYdMPwtbcamj1bv/QmIPpdKxHDxBxUogDBZr3V28xXkrqQgoQlGd74uH7N
-         48Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719600281; x=1720205081;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DyDuHHLcDpZV6xvkvgsuMWxJVbSxBe6+9nLQ49p2W/Y=;
-        b=oE5zZz+5/Opw1zt6yBh3kkJ2yI352xsJ9DD3nlbWXFCM6eyF83J+fTvFY7H+4YE7tN
-         YoMTQijpQXMlqLqG7o6ZBwcrETfKS9+XzGs7rHUxsMyLXEc5Jom+iLT57wgP3pXC/yjB
-         jKStiDHexoH0nKj/q8NTMPqAVzP9f4Xmh5SM7EWkIsGzqSdjQ1Rb2r3veKbiuj2hUcZj
-         X8cF3wKWSelLgGRq8V821gTaASpahHLJ/YvSoAaXDALkUVSlz5TfT0FakFSVoyY5qnDz
-         Vc0UJq9iX1eVog9AnNMr6oIzjL3NocQdy4zRK1BBdm0UDPAI2jMyxjMKVrjyvJgkn3QI
-         xkrg==
-X-Forwarded-Encrypted: i=1; AJvYcCXsAh8HFbVFnKKJDjJ9YU2ddgOHOnRLfHciUrW437iDhwsunw/QPdi+A4sjtBBg1QgZkbe6DCLRxp0GPmKKp7BAelVtPc4FbDgSWTUn
-X-Gm-Message-State: AOJu0YwbVfIRdKQnFhioPczDOjLbb7RUMKO/vfLXpDu8liq3wdj41khP
-	/R2RvLtpFzeUpraJEP3cLGfqWs0pmo5a1fvvMPn1y5P9+JjuEp/d4GCo8lo9/PBXrHV7zlRWuZA
-	A95NAY1jf5730/YgxbyGRkcHGEFTMw63P
-X-Google-Smtp-Source: AGHT+IGIDNxv7UkwNj6t32nU9mTwm4hZstgH1Gq54BFg3PYElDBMdRUZ0VO6tdEJLBbCCbfpp6FEKsk51eASC35Ku0o=
-X-Received: by 2002:a17:907:a80e:b0:a6f:4d6b:c779 with SMTP id
- a640c23a62f3a-a727f8200f3mr737792266b.52.1719600281288; Fri, 28 Jun 2024
- 11:44:41 -0700 (PDT)
+	s=arc-20240116; t=1719600286; c=relaxed/simple;
+	bh=TojJnQL9RaBjm4QgGb02q4GOqfk8aC6iXrl2HScJwXw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J991ihSYEVIkVq8yTucv6la3gibVExfPqqCLbiwjOGDo6T36jThr3GP85DXMCOJR+3/VJXNl1qFe9SuWOUaw81Wvv/Ll5Mhf0yfcJtrjigpsREdwRtFwTRn54Nl7YWOkzkIRS5pAJj6hrMhmi5MElWGBsTlbc4BQbB5nJvyGod4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kQJx335b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46313C116B1;
+	Fri, 28 Jun 2024 18:44:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719600285;
+	bh=TojJnQL9RaBjm4QgGb02q4GOqfk8aC6iXrl2HScJwXw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kQJx335budzDjbxiJmgE8ap98NyXQ39VbGjrPcOUYHNg57UCVY1ot/cDtE0FMqjnU
+	 x+9hUpMZdwEP5LC4HnTo+yqOb1XNN8ELJtrvPo1zR44DlDpfM0T6zaozstVa3AWHGt
+	 qxye3+r3kT+BmY7/4OJazOhdlDZUErsaQHktHINxmzAOlOMbmf00mC42neGxAp95bu
+	 dj6kvVEblhVcJBKU+PwZdbguEMSMi/tI4J47SaoQ/Ni+vOJrZ2EaZyzjEJN+c2AOlg
+	 SOYBguHOmA4wykK86YpS6y+XizW7aMrfkMCBgIYtah0vkcdnsE+gY9xVs8Na6wECsf
+	 7Xrntfb4eJV5A==
+Date: Fri, 28 Jun 2024 20:44:41 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Igor Pylypiv <ipylypiv@google.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v3 2/6] ata: libata-scsi: Do not overwrite valid sense
+ data when CK_COND=1
+Message-ID: <Zn8EmT1fefVzgy0F@ryzen.lan>
+References: <20240626230411.3471543-1-ipylypiv@google.com>
+ <20240626230411.3471543-3-ipylypiv@google.com>
+ <Zn1zsaTLE3hYbSsK@ryzen.lan>
+ <Zn3ffnqsN4pVZA4m@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Pintu Agarwal <pintu.ping@gmail.com>
-Date: Sat, 29 Jun 2024 00:14:28 +0530
-Message-ID: <CAOuPNLjpMaa1hC-VOzN_aQCuLt=T6PkgC3NBBDp8BBE5xhHTew@mail.gmail.com>
-Subject: device-mapper: verity: 251:0: metadata block 18398 is corrupted
-To: dm-devel@redhat.com, open list <linux-kernel@vger.kernel.org>, snitzer@redhat.com, 
-	agk@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zn3ffnqsN4pVZA4m@google.com>
 
-Hi,
-In one of our NAND products (arm64) we are having Kernel 5.15 along
-with squashfs + ubiblock + dm-verity on rootfs along with ramdisk.
+On Thu, Jun 27, 2024 at 09:54:06PM +0000, Igor Pylypiv wrote:
+> 
+> Thank you, Niklas! I agree that this code is too complicated and should be
+> simplified. I don't think we should change the code too much in this patch
+> since it is going to be backported to stable releases.
+> 
+> Would you mind sending a patch for the proposed simplifications following
+> this patch series?
+> 
 
-Recently we have enabled "NAND Page Cache" in our nand driver to
-improve nand read performance.
-But after enabling this feature, the dm-verity detects metadata
-corruption during boot-up and the device is crashing.
-If we disable dm-verity (from ramdisk) then we don't see this problem
-and the device boots fine.
+I would prefer if we changed it as part of this commit to be honest.
 
-Are there any dm-verity specific changes (in higher Kernel version)
-that we are missing here ?
 
-This is the failure log.
-What does the below metadata corruption indicate ?
-Does this mean, the root_hash is corrupted ?
+I also re-read the SAT spec, and found that it says that:
+"""
+If the CK_COND bit is set to:
+a) one, then the SATL shall return a status of CHECK CONDITION upon ATA command completion,
+without interpreting the contents of the STATUS field and returning the ATA fields from the request
+completion in the sense data as specified in table 209; and
+b) zero, then the SATL shall terminate the command with CHECK CONDITION status only if an error
+occurs in processing the command. See clause 11 for a description of ATA error conditions.
+"""
 
-{{{
-[    7.731295][  T136] device-mapper: verity: 251:0: metadata block
-18398 is corrupted
-[    7.742723][  T136] ------------[ cut here ]------------
-[    7.748206][  T136] workqueue: WQ_MEM_RECLAIM kverityd:verity_work
-is flushing !WQ_MEM_RECLAIM k_sm_usb:0x0
-[    7.754840][  T136] WARNING: CPU: 3 PID: 136 at
-kernel/workqueue.c:2660 check_flush_dependency+0x12c/0x134
-[...]
-[    7.809215][  T136] pc : check_flush_dependency+0x12c/0x134
-[    7.814933][  T136] lr : check_flush_dependency+0x12c/0x134
-[...]
-[    7.905120][  T136] Call trace:
-[    7.908345][  T136]  check_flush_dependency+0x12c/0x134
-[    7.913710][  T136]  flush_workqueue+0x1cc/0x4dc
-[    7.918452][  T136]  dwc3_msm_shutdown+0x48/0x58
-[    7.923195][  T136]  platform_shutdown+0x24/0x30
-[    7.927937][  T136]  device_shutdown+0x170/0x220
-[    7.932680][  T136]  kernel_restart+0x40/0xfc
-[    7.937152][  T136]  verity_handle_err+0x11c/0x1b0
-[    7.942071][  T136]  verity_hash_for_block+0x260/0x2d8
-[    7.947343][  T136]  verity_verify_io+0xe8/0x568
-[    7.952085][  T136]  verity_work+0x24/0x74
-[    7.956297][  T136]  process_one_work+0x1a8/0x3a0
-[    7.961133][  T136]  worker_thread+0x22c/0x490
-[    7.965700][  T136]  kthread+0x154/0x218
-[    7.969725][  T136]  ret_from_fork+0x10/0x20
-[    7.974116][  T136] ---[ end trace 166e4069e91d0a01 ]---
-}}}
+So it seems quite clear that if CK_COND == 1, we should set CHECK CONDITION,
+so that answers the question/uncertainty I asked/expressed in earlier emails.
 
-Thanks,
-Pintu
+
+I think this patch (which should be applied on top of your v3 series),
+makes the code way easier to read/understand:
+
+diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+index d5874d4b9253..5b211551ac10 100644
+--- a/drivers/ata/libata-scsi.c
++++ b/drivers/ata/libata-scsi.c
+@@ -1659,26 +1656,27 @@ static void ata_scsi_qc_complete(struct ata_queued_cmd *qc)
+ {
+        struct scsi_cmnd *cmd = qc->scsicmd;
+        u8 *cdb = cmd->cmnd;
+-       int need_sense = (qc->err_mask != 0) &&
+-               !(qc->flags & ATA_QCFLAG_SENSE_VALID);
+-       int need_passthru_sense = (qc->err_mask != 0) ||
+-               (qc->flags & ATA_QCFLAG_SENSE_VALID);
++       bool have_sense = qc->flags & ATA_QCFLAG_SENSE_VALID;
++       bool is_ata_passthru = cdb[0] == ATA_16 || cdb[0] == ATA_12;
++       bool is_ck_cond_request = cdb[2] & 0x20;
++       bool is_error = qc->err_mask != 0;
+ 
+        /* For ATA pass thru (SAT) commands, generate a sense block if
+         * user mandated it or if there's an error.  Note that if we
+-        * generate because the user forced us to [CK_COND =1], a check
++        * generate because the user forced us to [CK_COND=1], a check
+         * condition is generated and the ATA register values are returned
+         * whether the command completed successfully or not. If there
+-        * was no error, we use the following sense data:
++        * was no error, and CK_COND=1, we use the following sense data:
+         * sk = RECOVERED ERROR
+         * asc,ascq = ATA PASS-THROUGH INFORMATION AVAILABLE
+         */
+-       if (((cdb[0] == ATA_16) || (cdb[0] == ATA_12)) &&
+-           ((cdb[2] & 0x20) || need_passthru_sense)) {
+-               if (!(qc->flags & ATA_QCFLAG_SENSE_VALID))
++       if (is_ata_passthru && (is_ck_cond_request || is_error || have_sense)) {
++               if (!have_sense)
+                        ata_gen_passthru_sense(qc);
+                ata_scsi_set_passthru_sense_fields(qc);
+-       } else if (need_sense) {
++               if (is_ck_cond_request)
++                       set_status_byte(qc->scsicmd, SAM_STAT_CHECK_CONDITION);
++       } else if (is_error && !have_sense) {
+                ata_gen_ata_sense(qc);
+        } else {
+                /* Keep the SCSI ML and status byte, clear host byte. */
 
