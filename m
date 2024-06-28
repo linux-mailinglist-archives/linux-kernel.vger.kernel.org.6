@@ -1,181 +1,113 @@
-Return-Path: <linux-kernel+bounces-233312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1257A91B55F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 05:18:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E2BF91B561
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 05:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ABD41F21AD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:18:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F5E51C21A24
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25EF2033A;
-	Fri, 28 Jun 2024 03:17:57 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5BB1F95A;
+	Fri, 28 Jun 2024 03:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bfw7UMQr"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013B914F98;
-	Fri, 28 Jun 2024 03:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8AC414277;
+	Fri, 28 Jun 2024 03:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719544677; cv=none; b=QzxuM/qfQRGs09+7pIbMBBCJy00DSGs608lVMoNIjQ9xewhlkpdtHEuv2WkYyHhtbF4WnI8igGBhykNfbh0XfoVFmkYiymJbJrUBbS5iY5Jt8sXo0OkuVojRB76WDV3jXVum/eLCQ7mDtE5dMjHRAyYSTC0DvxwCHISE2Gac260=
+	t=1719544701; cv=none; b=uQu5gZJvAlGyLF+flwy8BYb8wo1nfZvZnEqstz8Q4q3uw+zX1XR7VXg2KBET8m/fDGs8MzwYSJtDped9TsLY6OpAHDLUp93EtOQrWoycVPM/0qsKh2sf/7S2dZ+ITI4VI7DRHRnvTnAQBbUxOfAsygPNTWwe1rDntUNILK6dcIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719544677; c=relaxed/simple;
-	bh=dMy4fHHtJeHBGQuTQc8XZeB7AVBx9rY1azNnkx0dm20=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QTiqauBNI9x00iyyQPFcC1uTv9kd5uMYGMaWs7sbCGr9tXXYdRtjGBjQpnyMRTzMfDVVlaKuPy3cWv95yyrxUf15EBqE5SYw3CzSNphd9SE0lZY0Cm7QjMN8WINKcM+RcT7CmubODQn0QVgi73QkZUkp4bafH+CB8GJzmKvKDTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4W9LGc3kssz4f3jYb;
-	Fri, 28 Jun 2024 11:17:44 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id AA1121A0572;
-	Fri, 28 Jun 2024 11:17:51 +0800 (CST)
-Received: from [10.174.179.155] (unknown [10.174.179.155])
-	by APP2 (Coremail) with SMTP id Syh0CgB34YZdK35mKJgzAg--.48554S3;
-	Fri, 28 Jun 2024 11:17:51 +0800 (CST)
-Message-ID: <6b4baf79-365f-946f-3d71-e78fafbd0988@huaweicloud.com>
-Date: Fri, 28 Jun 2024 11:17:49 +0800
+	s=arc-20240116; t=1719544701; c=relaxed/simple;
+	bh=h92E2HHI/sLLhO3tji/J6FcOrGgu6Iv3Rn34UKirp3s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GezI0PmvQ6d1j6UN4xLSB5Vawf55iQJLvkrhALky8vvTI2AjxWxeG2i/dlC5UiazbwqbVxMGdyNXdc5c4ERR1QRRBWKu29MDj1eoCAQlwcV5PdMn73G5WRR0uI2qTn3SyuEpPasbtqVvuHuZoc5eatQoySnyIvQKNCAI2gtFttI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bfw7UMQr; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719544700; x=1751080700;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=h92E2HHI/sLLhO3tji/J6FcOrGgu6Iv3Rn34UKirp3s=;
+  b=Bfw7UMQrnURP8+kUKBRK8IkDBA+/UxlE1o9kcSlsR+YdnNH1JTmI6Z0s
+   6a54sxm9kCSj8BxUTfMmGFrqcTCaF18u0JJTblT8sXlUc1BGj2flUmwii
+   PG3JhTIRmx1lEcxybENOvOwk+k298Sn7ynzA5J285M0yDbAxf+Yy6IFfN
+   qlG1x5RnUpP6l3mPvu33ftI/Xbk1MjksmWchgNO1rWLgs4t0GbGksH854
+   nUIF6uILbojm+/CoDreIgVzNUz4ez5TgBhXJe4Rh1KcikSKB9mhpoqiV8
+   WMN89S/q2Yzlzc9U+NIPuhZpmPbfCoHtX22gwjW/0/76K6M8pMsz1Gr81
+   Q==;
+X-CSE-ConnectionGUID: v3kpa4juQpujmLvBXFvvWQ==
+X-CSE-MsgGUID: OOis4k6GQ6qvLNrV1VLdZQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="16669261"
+X-IronPort-AV: E=Sophos;i="6.09,167,1716274800"; 
+   d="scan'208";a="16669261"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 20:18:20 -0700
+X-CSE-ConnectionGUID: IeQ2OvYkSFmpE7lNL6HNag==
+X-CSE-MsgGUID: WCMYJbTKSdeFBs340tLxNw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,167,1716274800"; 
+   d="scan'208";a="44656877"
+Received: from lizhipe3-mobl1.ccr.corp.intel.com (HELO rzhang1-mobl7.ccr.corp.intel.com) ([10.249.171.174])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 20:18:08 -0700
+From: Zhang Rui <rui.zhang@intel.com>
+To: peterz@infradead.org
+Cc: mingo@redhat.com,
+	tglx@linutronix.de,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ak@linux.intel.com,
+	kan.liang@linux.intel.com
+Subject: [PATCH V2 0/3] perf/x86/intel/cstate: Update for latest client platforms
+Date: Fri, 28 Jun 2024 11:17:55 +0800
+Message-Id: <20240628031758.43103-1-rui.zhang@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:104.0) Gecko/20100101
- Thunderbird/104.0
-Subject: Re: [PATCH] blk-cgroup: don't clear stat in blkcg_reset_stats()
-To: Waiman Long <longman@redhat.com>, tj@kernel.org, josef@toxicpanda.com,
- hch@lst.de, axboe@kernel.dk
-Cc: ming.lei@redhat.com, cgroups@vger.kernel.org,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yangerkun@huawei.com, yukuai1@huaweicloud.com, houtao1@huawei.com,
- yi.zhang@huawei.com, lilingfeng3@huawei.com, paolo.valente@unimore.it
-References: <20240627090856.2345018-1-lilingfeng@huaweicloud.com>
- <66095664-5a14-422a-a703-dec437577a3d@redhat.com>
-From: Li Lingfeng <lilingfeng@huaweicloud.com>
-In-Reply-To: <66095664-5a14-422a-a703-dec437577a3d@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgB34YZdK35mKJgzAg--.48554S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxJw1rtrW3Ar13KF45Cw18Grg_yoWrGF13pF
-	WkC3W3C3yDKF1kJr10ga47XryF9ws5t34DJr15Xa4rKr1qyrySvF1DZrZY9FyUAFWxXr48
-	Xr1jqr9rZay5K3JanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9F14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
-	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
-	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E
-	3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
-	sGvfC2KfnxnUUI43ZEXa7VUbXdbUUUUUU==
-X-CM-SenderInfo: polox0xjih0w46kxt4xhlfz01xgou0bp/
 
+There are a couple of cstate changes on latest Intel client platforms.
 
-在 2024/6/28 5:03, Waiman Long 写道:
->
-> On 6/27/24 05:08, Li Lingfeng wrote:
->> From: Li Lingfeng <lilingfeng3@huawei.com>
->>
->> The list corruption described in commit 6da668063279 ("blk-cgroup: fix
->> list corruption from resetting io stat") has no effect. It's unnecessary
->> to fix it.
->>
->> As for cgroup v1, it does not use iostat any more after commit
->> ad7c3b41e86b("blk-throttle: Fix io statistics for cgroup v1"), so using
->> memset to clear iostat has no real effect.
->> As for cgroup v2, it will not call blkcg_reset_stats() to corrupt the
->> list.
->>
->> The list of root cgroup can be used by both cgroup v1 and v2 while
->> non-root cgroup can't since it must be removed before switch between
->> cgroup v1 and v2.
->> So it may has effect if the list of root used by cgroup v2 was corrupted
->> after switching to cgroup v1, and switch back to cgroup v2 to use the
->> corrupted list again.
->> However, the root cgroup will not use the list any more after commit
->> ef45fe470e1e("blk-cgroup: show global disk stats in root cgroup 
->> io.stat").
->>
->> Although this has no negative effect, it is not necessary. Remove the
->> related code.
-> You may be right that it may not be necessary in the mainline kernel, 
-> it does fix the issue on distros with older kernels or some stable 
-> releases where commit ad7c3b41e86b("blk-throttle: Fix io statistics 
-> for cgroup v1") may not be present.
->
->>
->> Fixes: 6da668063279 ("blk-cgroup: fix list corruption from resetting 
->> io stat")
-> I don't think there should be a fixes tag or it will be backported to 
-> stable releases.
-OK, I will remove it.
->> Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
->> ---
->>   block/blk-cgroup.c | 24 ------------------------
->>   1 file changed, 24 deletions(-)
->>
->> diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
->> index 37e6cc91d576..1113c398a742 100644
->> --- a/block/blk-cgroup.c
->> +++ b/block/blk-cgroup.c
->> @@ -629,29 +629,6 @@ static void blkg_iostat_set(struct blkg_iostat 
->> *dst, struct blkg_iostat *src)
->>       }
->>   }
->>   -static void __blkg_clear_stat(struct blkg_iostat_set *bis)
->> -{
->> -    struct blkg_iostat cur = {0};
->> -    unsigned long flags;
->> -
->> -    flags = u64_stats_update_begin_irqsave(&bis->sync);
->> -    blkg_iostat_set(&bis->cur, &cur);
->> -    blkg_iostat_set(&bis->last, &cur);
->> -    u64_stats_update_end_irqrestore(&bis->sync, flags);
->> -}
->> -
->> -static void blkg_clear_stat(struct blkcg_gq *blkg)
->> -{
->> -    int cpu;
->> -
->> -    for_each_possible_cpu(cpu) {
->> -        struct blkg_iostat_set *s = per_cpu_ptr(blkg->iostat_cpu, cpu);
->> -
->> -        __blkg_clear_stat(s);
->> -    }
->> -    __blkg_clear_stat(&blkg->iostat);
->> -}
->> -
->>   static int blkcg_reset_stats(struct cgroup_subsys_state *css,
->>                    struct cftype *cftype, u64 val)
->>   {
->> @@ -668,7 +645,6 @@ static int blkcg_reset_stats(struct 
->> cgroup_subsys_state *css,
->>        * anyway.  If you get hit by a race, retry.
->>        */
->>       hlist_for_each_entry(blkg, &blkcg->blkg_list, blkcg_node) {
->> -        blkg_clear_stat(blkg);
->>           for (i = 0; i < BLKCG_MAX_POLS; i++) {
->>               struct blkcg_policy *pol = blkcg_policy[i];
->
-> If you are saying that iostat is no longer used in cgroup v1, why not 
-> remove the blkcg_reset_stats() and its supporting functions and 
-> deprecate the v1 reset_stats control file. The file should still be 
-> there to avoid userspace regression, but it will be a nop.
-I'm not sure if we can just remove blkcg_reset_stats() since
-bfq_pd_reset_stats() may be called in it.
+Alderlake platform, followed by Raptorlake, Meteorlake and Arrowlake,
+doesn't have PC7/PC9.
+Lunarlake platform doesn't have PC7/PC8/PC9.
 
-Thanks.
->
-> Cheers,
-> Longman
+Fix current code and update support for new platforms.
+
+Patch 1/3 fixes Alderlake/Raptorlake/Meteorlake by removing PC7/PC9
+support.
+Patch 2/3 adds Arrowlake support, which behaves the same as Alderlake.
+Patch 3/3 adds Lunarlake support, which behaves similar to Alderlake,
+but with PC8 removed.
+
+Patch V1 has been posted at
+   https://lore.kernel.org/all/20240419071019.1103953-1-rui.zhang@intel.com/
+
+Changes since V1:
+- Add Reviewed-by tag from Liang, Kan.
+- Rebase on top of new CPU model macros from Tony.
+- Improve changelog.
+
+----------------------------------------------------------------
+Zhang Rui (3):
+      perf/x86/intel/cstate: Fix Alderlake/Raptorlake/Meteorlake
+      perf/x86/intel/cstate: Add Arrowlake support
+      perf/x86/intel/cstate: Add Lunarlake support
+
+ arch/x86/events/intel/cstate.c | 39 ++++++++++++++++++++++++++-------------
+ 1 file changed, 26 insertions(+), 13 deletions(-)
 
 
