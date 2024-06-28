@@ -1,197 +1,143 @@
-Return-Path: <linux-kernel+bounces-233334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC43191B597
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 05:49:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AB7E91B599
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 05:52:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 750591F22714
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:49:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF9FBB21EBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:52:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0F1208B8;
-	Fri, 28 Jun 2024 03:49:22 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E36210EC;
+	Fri, 28 Jun 2024 03:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="IuHhMlTZ"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974DF1CAA2
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 03:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2131CAA2;
+	Fri, 28 Jun 2024 03:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719546562; cv=none; b=oYLi4fQPLY2TJ0+YuHtQZfwCOgZ2+qyIyOPOHOeWRo84z72IwujWIevxyXTXq2DRGuN8dHGetFJxjxeiziWbW1sPidE8d711CzpcHcRntDC51XDhCqgtwfY4qPvh/HpL2ok7Z2bvLHMr/QwK10J33C+M23UPcOB0IJvvdeLThAs=
+	t=1719546765; cv=none; b=fy5b9Cfa5cF6CGBOOkSwZouMJFGcLCL+KXgw9AvV6cDlPSmd43nNah7yOKUFQaPMcY1W/Law8VO6TUlBFVmlnDHmL15ElCJcyq3vV2yZlVb0tUOIW/RKCImQUAPj91XLEIctQYStv1S+ax1McRO8zjMfer3Bl5wHngVjklwPBVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719546562; c=relaxed/simple;
-	bh=4Ez0imzoqhZIdaqAVS88s2ruIY/vU2ZK5QKbU0p7CbY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=u4hT49OtZsfrwBTfmwMAjIwnC+7aUUSFeagu09Wr9raZQVRkIFhQeNzRjwbMEcLywTVBvKS0OBScdh27itRO+wSUEJGZLkHaRxFVLu4yIC8EmIEAL7jpWaUhzLPE1ITBEION5ib8cCxSoH1rJaYi59Wa+FpURwP0HU3RV9jg+4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3762b8b440cso2972475ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 20:49:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719546560; x=1720151360;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8JwdNQNfgAC6JzHWGdFGw8Z+WdShuiruUP5M7wkwIME=;
-        b=Zorw9vuy/cfZ3Ds2cBoE2GCxpczvz2++rNV8FWSMUoBRTN9VTAZfqoJSuIJhL9g/MP
-         jM6Viaw0+Mt0THVe0Yo58qcfKIce56vcn2JOAfcX6qMW0cBhWxTs/mbPkufs19XNaG4b
-         dzlFpp/dzXUetUQHWOdGZ0C4zaPPYijt/FNKMc43lrngGSn8TXIbflGhDsm26glvAEBo
-         uBkrurLHWw4D8WO39zoXQi0X+Epr3dOPFMyrJpSqRiD3altJrQXK7sKQDr55qPhq4/bS
-         TaTnnGG+GFh3Oz1bcGgOxG7XfuCo+kJ4m4T/F5R96e2JMiruHnwoZVCUUVSUCEPAXnIt
-         S7KA==
-X-Forwarded-Encrypted: i=1; AJvYcCXS8g3lBFhjCwvYRFt9G5bHp+HmjBb1foW096FPIstHpGljvoA2OJFUNBNiyHEm0o6uOKthx9N7OPKM8Kz3ZHR1G0si7E+0Wox5H8LY
-X-Gm-Message-State: AOJu0YwKKcsW+vsskm9LXGbdsxDcDp0W+xfftWt44M7DFaMB2DEtrcUb
-	ztLSeSPkkdz3tLDkOGsCNxDYLrQnxKFA7uaLkLGL2iOw5TzvhqfVhif4vscXtpujNajDr7Y13yY
-	JjnEtd6F5H/IfE/fEL9zToizVwghY/7J0B2JZd/AeabQd+n/f5hbstRE=
-X-Google-Smtp-Source: AGHT+IEkL5gP1IvIpaLOnicTHd8Z6eZvBNeImYEDjaKPNLyjvTjKkfkc3XxebFdZD1YGsey8BlMlvF8le/v7EKcIVT5lP1Ba8rbO
+	s=arc-20240116; t=1719546765; c=relaxed/simple;
+	bh=8jD4cOobXcm+/H4yDXHO7QwI3+XbZcZhIqYdMwDDK0A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JZo+tzas53yYmrdb8U7pxBXHPLttxV5A15hQ0y6NFpp/C2Nj4FjtMbUEYfxcGZZuOqK6T9oCiCF840GdpK6JAcUyGLsdHXk8mXCKKloovUP7nKoaTYAjg12vVCCbCTxqg4U9vVPMW6/XuuARJDBnC62RV467xUjOsw2CSscSLMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=IuHhMlTZ; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B87FB40E0194;
+	Fri, 28 Jun 2024 03:52:38 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id fmL6Lq6c0wLz; Fri, 28 Jun 2024 03:52:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1719546755; bh=HmPUn1KTX13hXMNtZOsiZL1UCOVmOMvqRxVnbVqEKGQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IuHhMlTZzQDDnRTtlF8xzFUiHfjHxBvwTq7eAK6B/ultaI239YFnMdUP2u9aLyBRi
+	 di1B2L9F3UWENbeqCNKm7duWW2raC8G/n0GD2GCVMG2gT07H7rOpoiEl/gKQYMcjG0
+	 niYA2hxVVQetMCQJ+NWBZd/Qnxi9Y758IqM3CMDtMO4ah9Yh8iX9ZFFU5gy5vaHsMZ
+	 qfZQecvubfIYc1zPU53My7ma6xe7nR8kDikQ+sAbgevpTPODSGBXlELVt/e1DkrVp8
+	 FAbbtqFO7Hfue4sRby7WldrFu2+QjN7wZ5xWKm6piJfi4xRXUSC0juIOIbsk0R9igg
+	 +3pqMB+RCX5gseZpLrOzYKcVrnWehetHzjatYlL9a8R4Y8XXI7ShV6fwMeN6+H/iNM
+	 Jxtxe8GdCx/zHrN9+ND8/RxYB0VuD82VB0ebVXwr/Jl0QW85Dk+gefORlxAul84hw8
+	 +8qV/XntsDjt9Gtn7YUT7cqnf3JFGEiXBmdV8SXLI21XSvyzRFqAM48Vjtq/uQrq+/
+	 6j0dp5EP5qFJkR7DxMHkCaocaLokZbZ4H8PHZqH9/xiMVRvbQZQRpRTfLwFimqpaWI
+	 OXgrZlM0XImladLufDaWNUAknuGAWPqkZnlmTaNYdxVbm11nv9Qq/Sr4ej2giVkdQm
+	 CzJyGIAOSnyD+s82Khdhim4Q=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1DDFE40E0192;
+	Fri, 28 Jun 2024 03:52:24 +0000 (UTC)
+Date: Fri, 28 Jun 2024 05:52:17 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Nikunj A Dadhania <nikunj@amd.com>
+Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
+	kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
+	dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
+	pbonzini@redhat.com
+Subject: Re: [PATCH v10 07/24] virt: sev-guest: Store VMPCK index to SNP
+ guest device structure
+Message-ID: <20240628035217.GAZn4zcWMZy3mgCKky@fat_crate.local>
+References: <20240621123903.2411843-1-nikunj@amd.com>
+ <20240621123903.2411843-8-nikunj@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ced2:0:b0:379:86a8:e438 with SMTP id
- e9e14a558f8ab-37986a8e630mr1580725ab.2.1719546559890; Thu, 27 Jun 2024
- 20:49:19 -0700 (PDT)
-Date: Thu, 27 Jun 2024 20:49:19 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e097b1061beb2182@google.com>
-Subject: [syzbot] [bcachefs?] kernel BUG in bch2_fs_release (2)
-From: syzbot <syzbot+9db8552458d57264a358@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240621123903.2411843-8-nikunj@amd.com>
 
-Hello,
+On Fri, Jun 21, 2024 at 06:08:46PM +0530, Nikunj A Dadhania wrote:
+> Currently, SEV guest driver retrieves the pointers to VMPCK and
+> os_area_msg_seqno from the secrets page. In order to get rid of this
+> dependency,
 
-syzbot found the following issue on:
+And we do this because...?
 
-HEAD commit:    f2661062f16b Linux 6.10-rc5
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=159df741980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=53ab35b556129242
-dashboard link: https://syzkaller.appspot.com/bug?extid=9db8552458d57264a358
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+> use vmpck_id to index the appropriate key and the corresponding
+> message sequence number.
+> 
+> Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
+> ---
+>  drivers/virt/coco/sev-guest/sev-guest.c | 74 ++++++++++++-------------
+>  1 file changed, 37 insertions(+), 37 deletions(-)
 
-Unfortunately, I don't have any reproducer for this issue yet.
+...
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-f2661062.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c8274ddce14a/vmlinux-f2661062.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e3623ed3bb77/bzImage-f2661062.xz
+>  static bool is_vmpck_empty(struct snp_guest_dev *snp_dev)
+>  {
+>  	char zero_key[VMPCK_KEY_LEN] = {0};
+> +	u8 *key = get_vmpck(snp_dev);
+>  
+> -	if (snp_dev->vmpck)
+> -		return !memcmp(snp_dev->vmpck, zero_key, VMPCK_KEY_LEN);
+> -
+> -	return true;
+> +	return !memcmp(key, zero_key, VMPCK_KEY_LEN);
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9db8552458d57264a358@syzkaller.appspotmail.com
+There's a count_nonzero_bytes() function which you can export and use here
+instead of expanding the stack unnecessarily.
 
-------------[ cut here ]------------
-kernel BUG at fs/bcachefs/super.c:567!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 0 PID: 5232 Comm: syz-executor.1 Not tainted 6.10.0-rc5-syzkaller #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:__bch2_fs_free fs/bcachefs/super.c:567 [inline]
-RIP: 0010:bch2_fs_release+0x722/0x870 fs/bcachefs/super.c:605
-Code: 89 ee e8 c1 85 79 fd 4d 85 ed 75 20 e8 87 8a 79 fd 31 ff 4c 89 f6 e8 ad 85 79 fd 4d 85 f6 0f 84 4f fb ff ff e8 6f 8a 79 fd 90 <0f> 0b e8 67 8a 79 fd bf 07 00 00 00 f3 49 0f bc c5 89 c6 41 89 c5
-RSP: 0018:ffffc90002f47d38 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffff888060900068 RCX: ffffffff84150573
-RDX: ffff888020248000 RSI: ffffffff84150581 RDI: 0000000000000007
-RBP: ffff888060900000 R08: 0000000000000007 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000000 R12: 0000607f8106a5d8
-R13: 0000000000000008 R14: 0000000000000001 R15: 0000000000000008
-FS:  0000000000000000(0000) GS:ffff88802c000000(0063) knlGS:0000000057322400
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 0000000032434000 CR3: 0000000047630000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- kobject_cleanup lib/kobject.c:689 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x1fa/0x5b0 lib/kobject.c:737
- deactivate_locked_super+0xbe/0x1a0 fs/super.c:473
- deactivate_super+0xde/0x100 fs/super.c:506
- cleanup_mnt+0x222/0x450 fs/namespace.c:1267
- task_work_run+0x14e/0x250 kernel/task_work.c:180
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x278/0x2a0 kernel/entry/common.c:218
- __do_fast_syscall_32+0x80/0x120 arch/x86/entry/common.c:389
- do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-RIP: 0023:0xf72c2579
-Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
-RSP: 002b:00000000ff88f5f8 EFLAGS: 00000292 ORIG_RAX: 0000000000000034
-RAX: 0000000000000000 RBX: 00000000ff88f6a0 RCX: 0000000000000009
-RDX: 00000000f7418ff4 RSI: 00000000f7369361 RDI: 00000000ff890744
-RBP: 00000000ff88f6a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000296 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__bch2_fs_free fs/bcachefs/super.c:567 [inline]
-RIP: 0010:bch2_fs_release+0x722/0x870 fs/bcachefs/super.c:605
-Code: 89 ee e8 c1 85 79 fd 4d 85 ed 75 20 e8 87 8a 79 fd 31 ff 4c 89 f6 e8 ad 85 79 fd 4d 85 f6 0f 84 4f fb ff ff e8 6f 8a 79 fd 90 <0f> 0b e8 67 8a 79 fd bf 07 00 00 00 f3 49 0f bc c5 89 c6 41 89 c5
-RSP: 0018:ffffc90002f47d38 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffff888060900068 RCX: ffffffff84150573
-RDX: ffff888020248000 RSI: ffffffff84150581 RDI: 0000000000000007
-RBP: ffff888060900000 R08: 0000000000000007 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000000 R12: 0000607f8106a5d8
-R13: 0000000000000008 R14: 0000000000000001 R15: 0000000000000008
-FS:  0000000000000000(0000) GS:ffff88802c000000(0063) knlGS:0000000057322400
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 0000000032434000 CR3: 0000000047630000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess), 2 bytes skipped:
-   0:	10 06                	adc    %al,(%rsi)
-   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
-   6:	10 07                	adc    %al,(%rdi)
-   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
-   c:	10 08                	adc    %cl,(%rax)
-   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
-  1e:	00 51 52             	add    %dl,0x52(%rcx)
-  21:	55                   	push   %rbp
-  22:	89 e5                	mov    %esp,%ebp
-  24:	0f 34                	sysenter
-  26:	cd 80                	int    $0x80
-* 28:	5d                   	pop    %rbp <-- trapping instruction
-  29:	5a                   	pop    %rdx
-  2a:	59                   	pop    %rcx
-  2b:	c3                   	ret
-  2c:	90                   	nop
-  2d:	90                   	nop
-  2e:	90                   	nop
-  2f:	90                   	nop
-  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+In any case, there are multiple methods how to check whether a buffer is
+zeroes, which are cheaper than this.
 
+> -static u8 *get_vmpck(int id, struct snp_secrets_page *secrets, u32 **seqno)
+> +static bool assign_vmpck(struct snp_guest_dev *dev, unsigned int vmpck_id)
+>  {
+> -	if (!(id < VMPCK_MAX_NUM))
+> -		return NULL;
+> +	if (!(vmpck_id < VMPCK_MAX_NUM))
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Yeah, flip that logic.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> +		return false;
+> +
+> +	dev->vmpck_id = vmpck_id;
+>  
+> -	*seqno = &secrets->os_area.msg_seqno[id];
+> -	return secrets->vmpck[id];
+> +	return true;
+>  }
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+...
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+-- 
+Regards/Gruss,
+    Boris.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+https://people.kernel.org/tglx/notes-about-netiquette
 
