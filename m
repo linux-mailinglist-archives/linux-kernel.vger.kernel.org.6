@@ -1,136 +1,100 @@
-Return-Path: <linux-kernel+bounces-233649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2DB891BAB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:05:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A837891BB12
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:08:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F046284C27
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:05:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D956E1C237C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0051B14EC42;
-	Fri, 28 Jun 2024 09:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="kyzpMQb9"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BDA0156F33;
+	Fri, 28 Jun 2024 09:06:45 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0729C7E766;
-	Fri, 28 Jun 2024 09:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF6914EC79
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 09:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719565493; cv=none; b=ohbM1JxHsMf8gLiF6Bh/X32vkOBrmcWE4tLma7kvxUONsGl/SP+bFXNTcAHGlR49YEzfoSA0Gr1jCH6rV2MpSKDE6O12uzRouBrsiGCk0WYTrGfRaqSOxQBefmS0d6hW9hszuOoIUt4CiSavCUYD8xB9ozssIaYx3HOJsiFo4HU=
+	t=1719565604; cv=none; b=lXs3BmnYR33CA29TyemGn6NHCq0xBd7O+2NacxZH1QZJACYSmXxrT0Hzps572ZaHa+HViar6XL9yjlMiz064a0QM6AXHSZXDE4vP5jQ9weBYljjTyNS+FJwcThlTXDKv9pLo8LGjVJaUa5C2HkbY7UxMndp7TdQf0ObK+wOtVys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719565493; c=relaxed/simple;
-	bh=U3+DfGDqFokDiR/y2k4xxkXE0EkMHAg60CIsaw1oG54=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UkXzueRjylOBf/7ZbFTpO1kXs0ZMWtQEpoMRX1NBIfQKZ/RpA5wQUiyLaMKrYbZGvVctVzH3qjcgvu0aD9oBdWmM35WspD34p8gD/84eOiz5M8L5oy8ULs5G41CNBMU6AEEk9mDZTQPedkLpSk1o3Rq+DtXyTIm6lz2GPDEbXus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=kyzpMQb9; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1719565491; x=1751101491;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=U3+DfGDqFokDiR/y2k4xxkXE0EkMHAg60CIsaw1oG54=;
-  b=kyzpMQb9owWbwKSCRA6z6YK3fTz/aaVZNNCNsBnc0BFlKrximrTOZC6M
-   5bRaNH5/hu+bQhlmvZ/V7/t3cDAL3FbVUrUWyZ4AGzyhTuLVmfh2LDsuQ
-   hAG2R2K8Qpi4m5a4qN000xKlZ6UJw/Ri6qqiQxmmvXxRjwXrFK25yKKBM
-   fw1Zbi/oyktNt51+NhSQcOx16wQfYofL/TiEXTguymoF6d/82t8MU64bg
-   Ke+ntB8Cm8JqNeqUIhhTKAgvreKG9dxmF1CXRWrrMx00VMcF9KvoZmXLh
-   j1x/MG+4ruR9d/NAYz2kD+PdKy4tplirbXML5Fe8m+nuPoPMA69hYP4C7
-   g==;
-X-CSE-ConnectionGUID: wfCG7+eBT9GlpV5sQJBFkA==
-X-CSE-MsgGUID: deir/aDGSFCkzcqL2B9BEA==
-X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
-   d="scan'208";a="196014078"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 28 Jun 2024 02:04:50 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 28 Jun 2024 02:04:38 -0700
-Received: from daire-X570 (10.10.85.11) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Fri, 28 Jun 2024 02:04:36 -0700
-Date: Fri, 28 Jun 2024 10:04:36 +0100
-From: Daire McNamara <daire.mcnamara@microchip.com>
-To: Conor Dooley <conor@kernel.org>
-CC: <linux-pci@vger.kernel.org>, Conor Dooley <conor.dooley@microchip.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof
- =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH v2 0/2] PCI: microchip: support using either instance 1
- or 2
-Message-ID: <Zn58pDsX5YZL/pTD@daire-X570>
-References: <20240612-outfield-gummy-388a36d95100@spud>
+	s=arc-20240116; t=1719565604; c=relaxed/simple;
+	bh=x2ZqB4B9q5gkwgBjNmpKXr1taQ80Dqf0dI+xalcZrIY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jbxZ8G4BOsqxSZALiOdU+goUsJ+uvVKDhlG2st1MQhw8YHFqSa7z1g6paVqvMibJbjoQqPStGsYGasxpD7r1iNnEHAQ/G3nEdyCTJSnSOg1pYRbSqvX7akYtO2xsd724YcxfMxO1NhVr9MX7/qr/TK/WlKsBVDydadhn5an0WLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sN7Yu-00059T-UW; Fri, 28 Jun 2024 11:06:32 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sN7Yu-005ZR1-Aj; Fri, 28 Jun 2024 11:06:32 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sN7Yu-002PLU-0l;
+	Fri, 28 Jun 2024 11:06:32 +0200
+Date: Fri, 28 Jun 2024 11:06:32 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Dent Project <dentproject@linuxfoundation.org>,
+	kernel@pengutronix.de, linux-doc@vger.kernel.org
+Subject: Re: [PATCH net-next v5 7/7] net: pse-pd: pd692x0: Enhance with new
+ current limit and voltage read callbacks
+Message-ID: <Zn59GOf9Avc49qGP@pengutronix.de>
+References: <20240628-feature_poe_power_cap-v5-0-5e1375d3817a@bootlin.com>
+ <20240628-feature_poe_power_cap-v5-7-5e1375d3817a@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240612-outfield-gummy-388a36d95100@spud>
+In-Reply-To: <20240628-feature_poe_power_cap-v5-7-5e1375d3817a@bootlin.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-With the proviso of fixing the axi_/apb_ nit
+On Fri, Jun 28, 2024 at 10:32:00AM +0200, Kory Maincent wrote:
+> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+> 
+> This patch expands PSE callbacks with newly introduced
+> pi_get/set_current_limit() and pi_get_voltage() callback.
+> It also add the power limit ranges description in the status returned.
+> The only way to set ps692x0 port power limit is by configure the power
+> class plus a small power supplement which maximum depends on each class.
+> 
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 
-Acked-by: Daire McNamara <daire.mcnamara@microchip.com>
+Acked-by: Oleksij Rempel <o.rempel@pengutronix.de>
+ 
+Thank you!
 
-On Wed, Jun 12, 2024 at 11:57:54AM +0100, Conor Dooley wrote:
-> From: Conor Dooley <conor.dooley@microchip.com>
-> 
-> The current driver and binding for PolarFire SoC's PCI controller assume
-> that the root port instance in use is instance 1. The second reg
-> property constitutes the region encompassing both "control" and "bridge"
-> registers for both instances. In the driver, a fixed offset is applied to
-> find the base addresses for instance 1's "control" and "bridge"
-> registers. The BeagleV Fire uses root port instance 2, so something must
-> be done so that software can differentiate. This series splits the
-> second reg property in two, with dedicated "control" and "bridge"
-> entries so that either instance can be used.
-> 
-> Cheers,
-> Conor.
-> 
-> v2:
-> - try the new reg format before the old one to avoid warnings in the
->   new case
-> - reword $subject for 2/2
-> 
-> CC: Daire McNamara <daire.mcnamara@microchip.com>
-> CC: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> CC: Krzysztof Wilczyński <kw@linux.com>
-> CC: Rob Herring <robh@kernel.org>
-> CC: Bjorn Helgaas <bhelgaas@google.com>
-> CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> CC: Conor Dooley <conor+dt@kernel.org>
-> CC: linux-pci@vger.kernel.org
-> CC: devicetree@vger.kernel.org
-> CC: linux-kernel@vger.kernel.org
-> CC: linux-riscv@lists.infradead.org
-> 
-> Conor Dooley (2):
->   dt-bindings: PCI: microchip,pcie-host: fix reg properties
->   PCI: microchip: rework reg region handing to support using either
->     instance 1 or 2
-> 
->  .../bindings/pci/microchip,pcie-host.yaml     |  10 +-
->  drivers/pci/controller/pcie-microchip-host.c  | 155 +++++++++---------
->  2 files changed, 79 insertions(+), 86 deletions(-)
-> 
-> -- 
-> 2.43.0
-> 
-> 
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
