@@ -1,92 +1,91 @@
-Return-Path: <linux-kernel+bounces-233620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C827D91BA49
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:44:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E691991BA4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:45:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 835C22840CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:44:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70A1DB23A63
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:45:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E58314B97E;
-	Fri, 28 Jun 2024 08:44:43 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8133D14D6E4;
+	Fri, 28 Jun 2024 08:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m7qIWgsv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C7E43AC0;
-	Fri, 28 Jun 2024 08:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E6B1494BD;
+	Fri, 28 Jun 2024 08:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719564283; cv=none; b=ZsFjhWSA42zVCqfX6OX8tV3x3IDz3O7DCFamLTj7pXUrS1p7krCq0JRsmB8ywXcnodrOJ/sb/tQ8SlPfo3FptMgQNh/jFn9k7b9Pvp0utKFHAPLLFODilglf+goDuuJwRyoR5bQA+XULZ9PmJglmmvoVyjNKK25D2QDLgFj+4M4=
+	t=1719564304; cv=none; b=IAWkMxWUfP3dicb+3ndXmXvw+DsE4cob5KPXrLMZirP1M5wDn1qefIhl2rLMkRo84vY7/qKVWsw1qN7XMbicoLvLhq1zEkSSnGz5/hnNMcVdQxvW/s4PHDEY9GdFRq1oY55mf/GOPzU44QNIhWdpDgrZ3u3a8LOwjqiwxg8a/7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719564283; c=relaxed/simple;
-	bh=rjY3yb4wtSMvrFArcSzxrYzmsyqAuKcfTtVos4HkRYo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=En2E3pClvmrTPf0oJgm5paEC0C+i07nWTQiVpc6UFnahUPAkq8UA2isamvUviactPl1VqwM6zPGKNr24SsCRPoeeQBhNMropvSKiilask5aBCCxpp2/Q16HK1YZTXLasQqagaERgnvS6/0VmzpM042Kz/wVe7Qlt6UCVbEGdNyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Date: Fri, 28 Jun 2024 08:44:34 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Palmer Dabbelt <palmer@sifive.com>, linux-riscv@lists.infradead.org,
-	linux-serial@vger.kernel.org, Inochi Amaoto <inochiama@outlook.com>,
-	Meng Zhang <zhangmeng.kevin@spacemit.com>,
-	Yangyu Chen <cyy@cyyself.name>
-Subject: Re: [PATCH v2 03/10] dt-bindings: riscv: add SpacemiT K1 bindings
-Message-ID: <20240628084434.GA1752165@ofsar>
-References: <20240627-k1-01-basic-dt-v2-0-cc06c7555f07@gentoo.org>
- <20240627-k1-01-basic-dt-v2-3-cc06c7555f07@gentoo.org>
- <eb05af3d-85b8-4068-961e-20f2f7d7d0c2@kernel.org>
+	s=arc-20240116; t=1719564304; c=relaxed/simple;
+	bh=cC+EmC/4LJL8p72CmY1W0gVCgYZuQXFrJjllOON5cRA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=I2SV47NBksLZQURSEsnzz0yWAhXLaIoKI2T6a392ACBtYRoq4wGhDwBt74HRbJZTujAyVmR4lvddNC9zyTdwqyP9V1WAxl+ycfrDtFOIYqgEjko4EJYgiGti5J1e6EdaOCstjuhItlHtUJhRiMUsCji1m/Xcz8KzhfgUl1pqcu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m7qIWgsv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30415C2BD10;
+	Fri, 28 Jun 2024 08:45:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719564304;
+	bh=cC+EmC/4LJL8p72CmY1W0gVCgYZuQXFrJjllOON5cRA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=m7qIWgsvfXgM9EfkQoo4XwC9oblZQYOndBTwObvOBSEpKlv1hqwUmC8WIwC+uUwhj
+	 fPi0A+F8+UTMhv5adgBduSp/iQ9tsG25sPkZWAdBwOMFQIM4dBHcgqV4KT0R1BChnZ
+	 x9ztdGaoiruXo1Bvg38CM3/ElbcSkj8+7k2Ug+vCh67Rvw6fVK3gsV+VkgWwKk8SUQ
+	 wglMYa4NdaGaXlw1/TXCyc9OJdG8E5bkft0QkF4C1meC9pz8TyuAbPJBLcwKlsJ6Fb
+	 /xZCr/2/ichN8f2kBD2PRwUWmLZgg2bFsElL0vI0YBENV1d4Kz0iBxjR3kUwsdQiyz
+	 B7viv6honmy7g==
+From: Christian Brauner <brauner@kernel.org>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Simon Horman <horms@kernel.org>,
+	dhowells@redhat.com,
+	jlayton@kernel.org
+Subject: Re: [RESEND PATCH] fscache: Remove duplicate included header
+Date: Fri, 28 Jun 2024 10:44:48 +0200
+Message-ID: <20240628-dingfest-gemessen-756a29e9af0b@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240628062329.321162-2-thorsten.blum@toblux.com>
+References: <20240628062329.321162-2-thorsten.blum@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eb05af3d-85b8-4068-961e-20f2f7d7d0c2@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=875; i=brauner@kernel.org; h=from:subject:message-id; bh=cC+EmC/4LJL8p72CmY1W0gVCgYZuQXFrJjllOON5cRA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTVVbC/XetzVnouV5jIohsPF5wuCc5qiy//vNJj+d+5Z vO2q1U+7yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjI3UWMDA8fTtys4m12aFPF /P9Z4cKMrdlL5zIIxayRfCquXi+qHMPI0Dano09f8tp9i+wYBZ3Cxc/us4oY31/w9reBlc4E847 3rAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On 09:34 Fri 28 Jun     , Krzysztof Kozlowski wrote:
-> On 27/06/2024 17:31, Yixun Lan wrote:
-> > From: Yangyu Chen <cyy@cyyself.name>
-> > 
-> > Add DT binding documentation for the SpacemiT K1 Soc[1] and the Banana
-> > Pi BPi-F3 board[2] which used it.
-> > 
-> > [1] https://www.spacemit.com/en/spacemit-key-stone-2/
-> > [2] https://docs.banana-pi.org/en/BPI-F3/BananaPi_BPI-F3
+On Fri, 28 Jun 2024 08:23:30 +0200, Thorsten Blum wrote:
+> Remove duplicate included header file linux/uio.h
 > 
-> You got a bug reported by tool and you send the same version again,
-> producing the same bug.
 > 
-> In case it is not clear:
-> 
-> *You cannot ignore* bug reports, comments, reviewer requests or any
-> other reply to your patchset. Each one must be addressed one way or another.
-> 
-sorry, it's my fault, I rushed to send out this series.
-and yes, I should really go back and check all the thread..
 
-I will fix all the issues in next version (tags, dt error..)
+Applied to the vfs.netfs branch of the vfs/vfs.git tree.
+Patches in the vfs.netfs branch should appear in linux-next soon.
 
--- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.netfs
+
+[1/1] fscache: Remove duplicate included header
+      https://git.kernel.org/vfs/vfs/c/5094b901bedc
 
