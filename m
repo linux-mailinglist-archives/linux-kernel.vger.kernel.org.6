@@ -1,126 +1,222 @@
-Return-Path: <linux-kernel+bounces-234095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D09491C230
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:11:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69A3191C232
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:13:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D01231F209B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:11:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 891E11C21539
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60E1E1C232D;
-	Fri, 28 Jun 2024 15:11:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486881C232E;
+	Fri, 28 Jun 2024 15:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="drzmKZ4z"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Dwr6GmSM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20FF11C2325;
-	Fri, 28 Jun 2024 15:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1FD1C2324
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 15:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719587511; cv=none; b=OwmgqS2HMdMGN/VVSbWUslb9dowsqd4sfnjyxfCZVBKDYJsl19dhMGrrxUCXTIlznWNxPRdMMylGJ8h/ShwCWKEGP0B4hpXnSibK4L4wfY5nmH+myVKs0dBGoZn5dQuK/02lbkSYbBV4Fa/3wFcRi8oYZCXOfLeYanw9dQBOaG8=
+	t=1719587610; cv=none; b=gkOv9ea9rgEaIveeJHVEDfzLcE8KYmw1a6l66bQjfFunSiSCfuOFpdWegE6y3tzD91F787UYt8f5FhN4+oN5CTUZl1LLs9DW8eSxmj+3cR2IkL372ZnOXRLpdiglbuatmJiYrynQz6wbmvwjUSybJKtq0L8GprxmCbeTT9d2n78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719587511; c=relaxed/simple;
-	bh=rQEfzzO0+5DLw75IH4g52W9FtnhmN3EFRLppSXhgdjY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BXMW2zHNKgAyJsP+ybu8JVn9KsA1zUoTZdqlnKi8re8uSSe7Q/64mrab0BGXLLdVu3/w+gFbkgHj9zJSufgZtpQ+7+c3k1faii3kMd4OSUAVOIofjdT2w9ktVyBS2AvsapHmImLuuvV2XOu3IUUbJg8fI2zxYqfdmatOw82YPHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=drzmKZ4z; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-424acfff613so7472615e9.0;
-        Fri, 28 Jun 2024 08:11:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719587508; x=1720192308; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=G+CX/J/whOmL5e2jZfXh+sXtbh8Qe8rzOa/IDtcigV8=;
-        b=drzmKZ4z2EJQMrL6cy4/1TWmTaNx1DHTpus4QGZutXs8TN72IMSYL098NO/1Ywsada
-         J5y+hxl8lS1IsHRyKXQKQXk0X4I/gC6oMjyuG4dXLzq90EqXZZ3gBzSlL5QX+S5X6ZBq
-         MrdLZbFy1zPrfSPniDc3/H6b3QpoCwpSo6Rcc5AAEpaMuzBpIrmy6sDXc5PR2meW7kF9
-         F0PFEziWj9vFPL+10RnPmhanQOf9RfpWWyy2d96GLcNwujkz9J60q89RhmQP5vfOy7v4
-         wC9UDZgZnrdel36b8t6XZ1AGqSfLj5k/FoqkasvdqvNNZ4W14T4l4J2RMb3sDomwiJ50
-         s7hA==
+	s=arc-20240116; t=1719587610; c=relaxed/simple;
+	bh=/RsLrIy7792uAmwaSU0cpjm4eTNuzbhKlWq/Nw06Kdg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A8HnKjS6l5YK4u0Wp4Sw1Eu2/+bXQ7jjsEbaAexAOcVR4pN71HObePJDRTmOj3jLTo/x3TlA6EexouSJusE25f6OGSsvT1BQ5VaLTFTTJxA7iveehIrCdL32rOsk8HrRgLjtMvFf1E0lp4+hW8Ocf4Vb029RdriyvTcNozNjhIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Dwr6GmSM; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719587607;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SrMxFlkvF5Xx3kyh2gKy3OS40cVo8d/2WmP45b5pzjM=;
+	b=Dwr6GmSMT6NdchVXPJUHt4i8BmwLJaDnalZmXZreclLReKDGGDyc1rWAioyrDzWnkxJ+7I
+	6vIqt3obYraBt11RqYBjX02hhbq8G1ZoWi+hIfzYkUPhZ1bnK5i13GKWmT+UXJ/59luzBH
+	W84ikIjs9XVYY2lQWzKPWhnU/UQsaOI=
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com
+ [209.85.166.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-367-5ZqGT9QfMt-Hs4PZhiZhLw-1; Fri, 28 Jun 2024 11:13:24 -0400
+X-MC-Unique: 5ZqGT9QfMt-Hs4PZhiZhLw-1
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3762171acdfso10074965ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 08:13:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719587508; x=1720192308;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G+CX/J/whOmL5e2jZfXh+sXtbh8Qe8rzOa/IDtcigV8=;
-        b=XEdBehkv/QOUD8lklOp3yk8+HKko8aJLRWv3IP6XTAms+oGtAjkwM3Pvpoyc4Kc7RK
-         yEKfDz1yeY/ycGMSD7fSn0wtFRKoB/lYjl6M4q3kYoAPJ9tWBkJ2WEluOnuOLsJtAFAh
-         KMi9t9k646guXN/M0wmhkKUprJwwbwWpskFJyyB5M79GffdwZvjY/L61auu3vh44JEwP
-         dRCRKJaYpLnMC3Dxq2GDfygZ++e9F3Uathg4OvQEOpgCrAQ8SgdT5MoPsRU2eZEMwSR/
-         w6xLEaa/QRm8WYdrM6V3xuWWoXyePCZDAwI9F85DRVC1rWjPZYjrrZDjiHtnAfIWvAc6
-         G3Zg==
-X-Forwarded-Encrypted: i=1; AJvYcCWDVPGtKnnjooTnt64/TE5gRtfc2f8jvZ+guFau7Uk0f+6Grp/h15k9uX4Lllj8gtNsFcxHN3FgzY2OktjpK2i7GreMG+g5nvQzcuT3DKsAa5qQdovWzPKhLrJKIi0YlEW27r3NFLdRjDs=
-X-Gm-Message-State: AOJu0Yw9oB4aLCP/YbZzhHuxiPU7mZdhvxv9tGTw0Wqe3j7n3TFqsmJ9
-	IN2LlzUjCP9cUsSCn7ccd30d3LZYEHc8VV41Je03R6rcAS62XNfQ
-X-Google-Smtp-Source: AGHT+IG6bIw9CRMaqOGhIIwzIzPx7Q9OiiKWcCVtvqQxFvYGv/s6oRMr6XdnyfWpJ0WiG+9UQHaLMw==
-X-Received: by 2002:a05:600c:3514:b0:421:e7ae:955b with SMTP id 5b1f17b1804b1-4248cc3415bmr141599475e9.21.1719587507970;
-        Fri, 28 Jun 2024 08:11:47 -0700 (PDT)
-Received: from orome (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b063569sm40258315e9.21.2024.06.28.08.11.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 08:11:47 -0700 (PDT)
-Date: Fri, 28 Jun 2024 17:11:46 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, kernel@pengutronix.de
-Subject: Re: [PATCH] reset: tegra-bpmp: allow building under COMPILE_TEST
-Message-ID: <d4omnd626yqxpovjkpgztl74lp67qjxiu2vvqps7guuuwxzlo5@mvdxrejii5g6>
-References: <20240625-reset-compile-bpmp-v1-1-647e846303d8@pengutronix.de>
+        d=1e100.net; s=20230601; t=1719587602; x=1720192402;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SrMxFlkvF5Xx3kyh2gKy3OS40cVo8d/2WmP45b5pzjM=;
+        b=Gw29nphrmCXZkMPSnkFHUyqmxsvKnB8Rzi1626H8g0D5fSnTksvlyUGHKv8C3vVqQB
+         6OfpbfQRlzYVpOAROkvh8DWvBsuqGREJszr75h3CkuuR7hfOqfpLumAZzQE9QnteXYJ3
+         M7nKAVOImTglSR5z9nym1zfIh1Dm4FFeWHSZjZXoVypRv0kfd+RYA2k4OJq5iWTzzoIc
+         XV8lSrHJa1Vjpv4cxjclLIyNPqVJ29jyTRcOPHNLTXMmxem35XaPj5dYn/+DwOhfUs8/
+         rTnVi5BBKaO2rBq2B4eLw+WxVafUOON3VMVFAFtSFvarG346uXzzQEQrtvcSGQf74qBU
+         g4HQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX6pGFqshK/2NUKN9lVA4/fRvkak4uxGYcgdIkKf1uqPG45gdNpACmy7yRBt4UNJOIQGHt6zahCMQjBamLqRcOdFuvLZvqcWqbHcHIr
+X-Gm-Message-State: AOJu0Yz1LZeKdIG/B8YZ/X7E9xIFp/5EGImRF09JBNpKds+PJ3Y7v33Q
+	jZ8h798vjub+vnSylNDNXJ8r7z+DyvPKFqIBqUKq+WFzNK2/tr23LINGyaPJvjqy+SkB/z50jbH
+	XonAUzT09IkOgJ1Rjr73+Dag5DvjHBUyx3fbDC75s9Tw05kRFe038GePkDb1kMEO/mMI4+AL1OX
+	36Lxs30S28SxRWSmh2vVGrDAG/GSlIf6/Zn0uC
+X-Received: by 2002:a05:6e02:1a84:b0:374:a14e:1485 with SMTP id e9e14a558f8ab-3763f605265mr200274535ab.11.1719587601843;
+        Fri, 28 Jun 2024 08:13:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEKmwTuaYeKLPivP+QG5odpKM3D6WTn+vaMZ3Tdn8xSndTcK66bsRPw0+hVD1sOv0XQNOn7pKlz3aoefpWuMLQ=
+X-Received: by 2002:a05:6e02:1a84:b0:374:a14e:1485 with SMTP id
+ e9e14a558f8ab-3763f605265mr200274205ab.11.1719587601450; Fri, 28 Jun 2024
+ 08:13:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="up57rqki3tzs6oce"
-Content-Disposition: inline
-In-Reply-To: <20240625-reset-compile-bpmp-v1-1-647e846303d8@pengutronix.de>
-
-
---up57rqki3tzs6oce
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240626201129.272750-2-lkarpins@redhat.com> <20240626201129.272750-3-lkarpins@redhat.com>
+ <Znx-WGU5Wx6RaJyD@casper.infradead.org> <50512ec3-da6d-4140-9659-58e0514a4970@redhat.com>
+ <20240627115418.lcnpctgailhlaffc@quack3> <20240627-abkassieren-grinsen-6ce528fe5526@brauner>
+ <d1b449cb-7ff8-4953-84b9-04dd56ddb187@redhat.com> <20240628-gelingen-erben-0f6e14049e68@brauner>
+In-Reply-To: <20240628-gelingen-erben-0f6e14049e68@brauner>
+From: Alexander Larsson <alexl@redhat.com>
+Date: Fri, 28 Jun 2024 17:13:10 +0200
+Message-ID: <CAL7ro1HtzvcuQbRpdtYAG1eK+0tekKYaTh-L_8FqHv_JrSFcZg@mail.gmail.com>
+Subject: Re: [RFC v3 1/1] fs/namespace: remove RCU sync for MNT_DETACH umount
+To: Christian Brauner <brauner@kernel.org>
+Cc: Ian Kent <ikent@redhat.com>, Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>, 
+	Lucas Karpinski <lkarpins@redhat.com>, viro@zeniv.linux.org.uk, raven@themaw.net, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Eric Chanudet <echanude@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 25, 2024 at 02:51:41PM GMT, Philipp Zabel wrote:
-> The Tegra BPMP reset driver can be compiled without TEGRA_BPMP being
-> enabled. Allow it to be built under COMPILE_TEST.
->=20
-> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-> ---
->  drivers/reset/Makefile      | 2 +-
->  drivers/reset/tegra/Kconfig | 3 ++-
->  2 files changed, 3 insertions(+), 2 deletions(-)
+On Fri, Jun 28, 2024 at 2:54=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> On Fri, Jun 28, 2024 at 11:17:43AM GMT, Ian Kent wrote:
+> >
+> > On 27/6/24 23:16, Christian Brauner wrote:
+> > > On Thu, Jun 27, 2024 at 01:54:18PM GMT, Jan Kara wrote:
+> > > > On Thu 27-06-24 09:11:14, Ian Kent wrote:
+> > > > > On 27/6/24 04:47, Matthew Wilcox wrote:
+> > > > > > On Wed, Jun 26, 2024 at 04:07:49PM -0400, Lucas Karpinski wrote=
+:
+> > > > > > > +++ b/fs/namespace.c
+> > > > > > > @@ -78,6 +78,7 @@ static struct kmem_cache *mnt_cache __ro_af=
+ter_init;
+> > > > > > >    static DECLARE_RWSEM(namespace_sem);
+> > > > > > >    static HLIST_HEAD(unmounted);    /* protected by namespace=
+_sem */
+> > > > > > >    static LIST_HEAD(ex_mountpoints); /* protected by namespac=
+e_sem */
+> > > > > > > +static bool lazy_unlock =3D false; /* protected by namespace=
+_sem */
+> > > > > > That's a pretty ugly way of doing it.  How about this?
+> > > > > Ha!
+> > > > >
+> > > > > That was my original thought but I also didn't much like changing=
+ all the
+> > > > > callers.
+> > > > >
+> > > > > I don't really like the proliferation of these small helper funct=
+ions either
+> > > > > but if everyone
+> > > > >
+> > > > > is happy to do this I think it's a great idea.
+> > > > So I know you've suggested removing synchronize_rcu_expedited() cal=
+l in
+> > > > your comment to v2. But I wonder why is it safe? I *thought*
+> > > > synchronize_rcu_expedited() is there to synchronize the dropping of=
+ the
+> > > > last mnt reference (and maybe something else) - see the comment at =
+the
+> > > > beginning of mntput_no_expire() - and this change would break that?
+> > > Yes. During umount mnt->mnt_ns will be set to NULL with namespace_sem
+> > > and the mount seqlock held. mntput() doesn't acquire namespace_sem as
+> > > that would get rather problematic during path lookup. It also elides
+> > > lock_mount_hash() by looking at mnt->mnt_ns because that's set to NUL=
+L
+> > > when a mount is actually unmounted.
+> > >
+> > > So iirc synchronize_rcu_expedited() will ensure that it is actually t=
+he
+> > > system call that shuts down all the mounts it put on the umounted lis=
+t
+> > > and not some other task that also called mntput() as that would cause
+> > > pretty blatant EBUSY issues.
+> > >
+> > > So callers that come before mnt->mnt_ns =3D NULL simply return of cou=
+rse
+> > > but callers that come after mnt->mnt_ns =3D NULL will acquire
+> > > lock_mount_hash() _under_ rcu_read_lock(). These callers see an eleva=
+ted
+> > > reference count and thus simply return while namespace_lock()'s
+> > > synchronize_rcu_expedited() prevents the system call from making
+> > > progress.
+> > >
+> > > But I also don't see it working without risk even with MNT_DETACH. It
+> > > still has potential to cause issues in userspace. Any program that
+> > > always passes MNT_DETACH simply to ensure that even in the very rare
+> > > case that a mount might still be busy is unmounted might now end up
+> > > seeing increased EBUSY failures for mounts that didn't actually need =
+to
+> > > be unmounted with MNT_DETACH. In other words, this is only inocuous i=
+f
+> > > userspace only uses MNT_DETACH for stuff they actually know is busy w=
+hen
+> > > they're trying to unmount. And I don't think that's the case.
+> > >
+> > I'm sorry but how does an MNT_DETACH umount system call return EBUSY, I
+> > can't
+> >
+> > see how that can happen?
+>
+> Not the umount() call is the problem. Say you have the following
+> sequence:
+>
+> (1) mount(ext4-device, /mnt)
+>     umount(/mnt, 0)
+>     mount(ext4-device, /mnt)
+>
+> If that ext4 filesystem isn't in use anymore then umount() will succeed.
+> The same task can immediately issue a second mount() call on the same
+> device and it must succeed.
+>
+> Today the behavior for this is the same whether or no the caller uses
+> MNT_DETACH. So:
+>
+> (2) mount(ext4-device, /mnt)
+>     umount(/mnt, MNT_DETACH)
+>     mount(ext4-device, /mnt)
+>
+> All that MNT_DETACH does is to skip the check for busy mounts otherwise
+> it's identical to a regular umount. So (1) and (2) will behave the same
+> as long as the filesystem isn't used anymore.
+>
+> But afaict with your changes this wouldn't be true anymore. If someone
+> uses (2) on a filesystem that isn't busy then they might end up getting
+> EBUSY on the second mount. And if I'm right then that's potentially a
+> rather visible change.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+This is rather unfortunate, as the synchronize_rcu call is quite
+expensive. In particular on a real-time kernel where there are no
+expedited RCUs. This is causing container startup to be slow, as there
+are several umount(MNT_DETACH) happening during container setup (after
+the pivot_root, etc).
 
---up57rqki3tzs6oce
-Content-Type: application/pgp-signature; name="signature.asc"
+Maybe we can add a umount flag for users that don't need the current
+behaviour wrt EBUSY? In the container usecase the important part is
+that the old mounts are disconnected from the child namespace and not
+really what the mount busy state is (typically it is still mounted in
+the parent namespace anyway).
 
------BEGIN PGP SIGNATURE-----
+--=20
+=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D=
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D
+ Alexander Larsson                                Red Hat, Inc
+       alexl@redhat.com         alexander.larsson@gmail.com
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmZ+0rIACgkQ3SOs138+
-s6Gtog//ZyHa5W7H1aY18Em0Pbp7cA+BnZ38GYzURxkFSqte4liUJsrfbSY9gNym
-GEz2CU/pKDhPLBrBOMqg2Qp6IDk0mtvZOx53Je/YFm+4Z1w7s2Cx+JOP798zNNmX
-oi9XEhU/6WK9SpDj81j/sfSZU5d+wtWjDrIl3k0aAZ+NS1bOapniarBwN3eH3FJj
-aJC9XEHNqISjcPxVwA7PJRNd7TxAL/mRlJBuPbZfkXY+mCxpar/Avx9C/j2Z9op8
-u0QomH2h6xwl4uzc6ltetbPQBhnp1hflEt6PQGorOJ3vLQcvaJWsBKJiJWT9D7Kq
-XHVIyzyCAl1y1Qu7Ovyjo66zkbqiam/K3jQfDSO3dVlfqtz385pKjxiNdXc5+oSB
-kvRTjscwxwz3C1COpejC38r7HNjR7BqRZUng7KT6RwUEdsntbHtVCZqbDXqn5iet
-o8xtj1oADJG0kMcRykqlTS7IQ80p3UVqk/EnmxF+V30ZURSqfZS9FATQQhNWfY5w
-/LTVZTHg7lXy0Crh/cKASewhNdESBu0DbGf8zwNm+vsXCpLb3PJA5wTX7vBww8Lr
-jTa1TgLT2tUAXTnRspkxkUsC3qvXR6SsA1BlJzjHcVa1aoZVu/drtpXx9rTPDa4B
-v/ickMzOJVvEy95G41iXaHug4o5AAyfY+gGKXw7+1M4YuT5nkto=
-=2US+
------END PGP SIGNATURE-----
-
---up57rqki3tzs6oce--
 
