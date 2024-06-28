@@ -1,254 +1,174 @@
-Return-Path: <linux-kernel+bounces-233705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B34BA91BBC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:44:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C39E691BBE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:50:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 112EBB233E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:44:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC5581C21EB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F145F153804;
-	Fri, 28 Jun 2024 09:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WW30j+kN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D5F153804;
+	Fri, 28 Jun 2024 09:50:13 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E5D152530;
-	Fri, 28 Jun 2024 09:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719567861; cv=fail; b=pzlT0lmGA19RHB8qkcVvjLbY74xFxSKyRExzQmiUOu0auQFn8GOPmcfKgWZYZA6CMuRbXVfky1fofS5lfKLHV7UsAYwoOLjuX+GCPRoYwtJljNtmaHannffNDVNjNd6c6NAb70f4jlQiVOBWAwr1wasgXhDH8EEJVTGNZNqgOFQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719567861; c=relaxed/simple;
-	bh=3FoAUeN8qKTSvJUfXF2J5IyvcMsdp/SNY+y2KvO2GXc=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=pD7lUhDnZ6baFmHnfdusw7mTEgZxwwktPnBhEPmaygUftEiyl+0m1u4v2IFkAQMb7hDc/hrSmByttIotU+G8UfrI4bSRYxNZ+KwMD0+CHngUUhLfAVjLZgGGfeTjkCaS6pBEI1jcbRVcMX+9w4TJVvEgL5FQL3vw2JTdwj3TDvQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WW30j+kN; arc=fail smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719567860; x=1751103860;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=3FoAUeN8qKTSvJUfXF2J5IyvcMsdp/SNY+y2KvO2GXc=;
-  b=WW30j+kNdKz5zszwXDhXJ8CFRgJEEKa8RWyfuzo2wely7Vtsnys174A6
-   8Z8hPhf6byPObQsEgm4Kxz+iaBF17h3kbCbWI1y+B1SF8Qd1Ex+hIWG4u
-   mdLyGrshCrd+LZR9ul4tk66Fas26JKVL5fFiZs33d+xZYaSKrSJtnnVp8
-   wEVxsqROay8dJO4KWOmBMIAHeOkrj65ZU6IveE3pw5A881dAfdwnVq2yx
-   KURehczAocFBmtWHEIsPOjI09lkePZeDbbGIuZy9udZiw/yPRyKLJlsU3
-   BcyKfi8Vbn+eIQAr+j6fFyJoaOoz0xL4H3LLatcPJyfAQD3PQVl/kSUWW
-   Q==;
-X-CSE-ConnectionGUID: zF+swnY0STKrjdPO4GtJTA==
-X-CSE-MsgGUID: MztTcDoaQu6queeVZdhRpA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="16420411"
-X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
-   d="scan'208";a="16420411"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 02:44:20 -0700
-X-CSE-ConnectionGUID: K4LiQssjQdqbTdP2yTsx5A==
-X-CSE-MsgGUID: MgndNKwES/uyaXM0paEpHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
-   d="scan'208";a="44572769"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 28 Jun 2024 02:44:20 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 28 Jun 2024 02:44:19 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 28 Jun 2024 02:44:19 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.45) by
- edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 28 Jun 2024 02:44:19 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EWYIO46SYTWg8AGFYvxbY/h+dgSEupQBZmnIdf+yGQUSPXtgO3tDb9x4u7GnVP+whpn7r6DZ0Ntn3/3PQAKYvMsbMqa4tofFQKihdoKVElUC63S+jBJ01pxRBZbaE6CUtbGdgE3wTIuEOIH98mLZtRud9jz8fkoI5okhdvB9OTkQJMJ/dnE3/eYf9CtsMEZFmLdZdxbEZ+zPPg2ouGNUMz14wv8OCWoNvESj9i6IlrQz0Wa0y3wenqDepHyafrVEmZpf7z/veO8Xg/twheuPLdF1j24ANAaB/K7ODQ1xUP5pBFe0fzsp503pEQvBNWBMsn8IVVTVex4V18YrlgnWzQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EJa8nuEz6tm40nXhf5PKXbJYKsYd7dOawi4IllIIo1E=;
- b=hGuPAugBVAlqdYSP64OMzQPTJotdUvdZMSLPMvc+7nDXRPMuCZV222UPbULj7yBFAnJBG1OsfiLf4UbfUSXqIERpWRr92cpOleMkL2QrA+jRiu7n0aDnzzFQpOW5SNo9a54aVe90bVOlkyItcBFW4FJd2s7ZR74Si6lq7uBGVkgQx+7e8DZXMvIDMcPNMF5ycamlXeAnTz7C3DOeHefH2mwdtlfm0XHB4vXHapTwcZbvYRO3BgneWXZRFgp7CjBaG0l4jmynMUX928RPMdnOntfXmw0MxK08cuy8RiQGlGFfTQe1IYdidoiU8iapvWhMBtbl+JGtEyDO/ZEOe10cAw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7529.namprd11.prod.outlook.com (2603:10b6:8:141::20)
- by DS0PR11MB8017.namprd11.prod.outlook.com (2603:10b6:8:115::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.34; Fri, 28 Jun
- 2024 09:44:17 +0000
-Received: from DS0PR11MB7529.namprd11.prod.outlook.com
- ([fe80::d244:15cd:1060:941a]) by DS0PR11MB7529.namprd11.prod.outlook.com
- ([fe80::d244:15cd:1060:941a%3]) with mapi id 15.20.7719.022; Fri, 28 Jun 2024
- 09:44:17 +0000
-Message-ID: <cba9e18a-3add-4fd1-89ad-bb5d0fc521e4@intel.com>
-Date: Fri, 28 Jun 2024 17:48:11 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] vfio: Reuse file f_inode as vfio device inode
-To: Yan Zhao <yan.y.zhao@intel.com>, Jason Gunthorpe <jgg@nvidia.com>
-CC: "Tian, Kevin" <kevin.tian@intel.com>, "kvm@vger.kernel.org"
-	<kvm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "alex.williamson@redhat.com"
-	<alex.williamson@redhat.com>, "peterx@redhat.com" <peterx@redhat.com>,
-	"ajones@ventanamicro.com" <ajones@ventanamicro.com>
-References: <20240617095332.30543-1-yan.y.zhao@intel.com>
- <20240626133528.GE2494510@nvidia.com>
- <BN9PR11MB5276407FF3276B2D9C2D85798CD72@BN9PR11MB5276.namprd11.prod.outlook.com>
- <Zn02BUdJ7kvOg6Vw@yzhao56-desk.sh.intel.com>
- <20240627124209.GK2494510@nvidia.com>
- <Zn5IVqVsM/ehfRbv@yzhao56-desk.sh.intel.com>
-Content-Language: en-US
-From: Yi Liu <yi.l.liu@intel.com>
-In-Reply-To: <Zn5IVqVsM/ehfRbv@yzhao56-desk.sh.intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR02CA0027.apcprd02.prod.outlook.com
- (2603:1096:3:18::15) To DS0PR11MB7529.namprd11.prod.outlook.com
- (2603:10b6:8:141::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8DFD2AF05
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 09:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719568212; cv=none; b=UD7MG3NyLOKNQ4Hv60aJcJznW5A9niB+YvdjjIphBZ8t/PR8ZFKcMJZsYwyYXlLHGjWvfTCgRHBBclS740F+h2y9F1AOK3nPs4slaFm1a26YmcnVFXMkiACLovYhQhwrvQEn/515rT8dECPQZTZcwCy+40bgynLm3Rd/jsMMkkk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719568212; c=relaxed/simple;
+	bh=RFkwjKRBKpuLhTw8uyk2KWQoI5qOeVfZQixg0lBl9QM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rV4hhAIEYvB3e/nCBac/rUqrXh2q7h5EV1SdRWerulm19BxROWsdvYCSVu41LNg39PcePl+R5EzrXfQcYIOwBexODTUt49V2qkMpJQoqnVBwBHhcoHytTL9cYKvQELds+IkWNSgFVqTsl92oCnCrOBFA0N663nz9GzOPJvNmUxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sN8Eg-0004Ti-S6; Fri, 28 Jun 2024 11:49:42 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sN8Ec-005ZkR-IP; Fri, 28 Jun 2024 11:49:38 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sN8Ec-002Q5R-1U;
+	Fri, 28 Jun 2024 11:49:38 +0200
+Date: Fri, 28 Jun 2024 11:49:38 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Mark Brown <broonie@kernel.org>, Martin Sperl <kernel@martin.sperl.org>,
+	David Jander <david@protonic.nl>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-iio@vger.kernel.org,
+	Julien Stephan <jstephan@baylibre.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v2 0/5] spi: add support for pre-cooking messages
+Message-ID: <Zn6HMrYG2b7epUxT@pengutronix.de>
+References: <20240219-mainline-spi-precook-message-v2-0-4a762c6701b9@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7529:EE_|DS0PR11MB8017:EE_
-X-MS-Office365-Filtering-Correlation-Id: 23d32f96-2b63-4e54-1266-08dc9756e086
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?VlJoNVlqRmRQd2pTNWUrMk93b2NRRGFrejlWY2IzTDdVRWx0ZlJsMU5SL2g3?=
- =?utf-8?B?VmQ1S0wvSW1ZbDZLdG13My9SWDhzWlJGaUhYd1hYdElpKzZ6aXJKMkJMQlN5?=
- =?utf-8?B?c2lYZGUyMGlGQklVajRTU0YweEFZUWs2SnNNb3BwdmI0K0E5ODUrcytUTThM?=
- =?utf-8?B?N2VBNWZiNmREWnhZVXdXZkhIY09OeGk0anJEZjFMTkRKMjVIcXdHR2Uza0N2?=
- =?utf-8?B?MmRqUjB0dE9ERFlhdStocDBIQ3gyNG1EMXo4dHY4eUJhOG1TNWZhb2tHZStL?=
- =?utf-8?B?bTZscWMwaTBvcU5vVzUzL094V3VmYkl5b0R6Ty9xOU1sTFJXK29XSk92U0dL?=
- =?utf-8?B?bHROb0tjVE1nY3FvY3FGSnd0cytjNXptWFMxODExWm9yY0hRbDc3N0JmTCtI?=
- =?utf-8?B?ZGw4REIrZXFFdDAyTHRFRkY1aWRDeDlTQkZrTU9BTVhla3M5UU9Wcjg1OFc4?=
- =?utf-8?B?ZmNkZVhKTE1hVHFydFErRklUUDhQQURQaHlpYWZXWEJlN3VyWlFZbDUvM3No?=
- =?utf-8?B?M3dZTENpNVFrV1F4RXRCaW5oM244cllSa1p1ZmZXUmR5VEFSc3lEZlQ5eW5Z?=
- =?utf-8?B?dlFKNGw3U2FucVdrLzJqMHNKSXFNU2p2bUhsUTRGM0tqanlXRG8yVy9KaUw4?=
- =?utf-8?B?eWNHNjNBYk1nelRhYjNJbXI3dzc5WGtkVklmUCtJL2picE02VjRlb1NKT0E4?=
- =?utf-8?B?WEIrVHdNNDkrN2RMVXN1blM4RzhDSXUxa2crK0owTUFHU2ZuYjZteTFGVnFw?=
- =?utf-8?B?aW0yUEh2VjU3OUo0VUtuYktBME9tZW1Db2RVekoveXlNeUZ5SEN6aTF4Nkcr?=
- =?utf-8?B?ZmVkUjF4QVZyblRqYzFBT0RHNE5uSFloTFVYRTN2RGU3Q3RPTVVCUDlxelBL?=
- =?utf-8?B?NHNRWDkvYU5RNkZWTXI1RWZqMHh1K3JUOWRic0pyRkRuSzJkeUlnSWh1cC9K?=
- =?utf-8?B?NjdJREp4Z2dsMHpXSk1mVDhKT0kxbjZrVEplUTNpcS9OZVBqcWZvcTFZcjM5?=
- =?utf-8?B?WEhFZkJQb1RHbDFaak5DVTNDLzcrWnY0Nll4MzBsTzFrT1V2MTFJbHM5b3F3?=
- =?utf-8?B?WjBaN2tzc2YxNGlRNjhzTHJPVzE1c3BjYzl6SmNGNFdqMDBSUVRXRm5PTVBm?=
- =?utf-8?B?L0ZJb2RoQ3BaZEhubEY0WTYrZTJjcnZmTFNzZmRjUVdUS1lTUElTaTE0RnZv?=
- =?utf-8?B?aEowZExhdHBvUWx5OVBzb3c0OWszSzBsK3FJandKNXVCb3VoYk1NWWpsSlBz?=
- =?utf-8?B?SjVMTXNXYUhTTm05dWdSd0YxdUhGSzdOSW1BM3RKLzZqYjVFNjVLWlgvM2Ew?=
- =?utf-8?B?UFhBQ3JPblJiK1p0a0lDMEtWZkJ0dFM2aUVFd3ZRRXpYbXo1K05meHMvUG9W?=
- =?utf-8?B?N1N2ekZqSWY2WC9uU0V1SjFndS9TR1ZxaXNaaHMyRHhKN2ZQSlM3QU5ydGlE?=
- =?utf-8?B?dDJFRng4T2pwWFUxYnVEYUgyektHa1UxSi9vSFdXd0IxM0tYSUI4ZVBzMnRT?=
- =?utf-8?B?ZXVDNnpxcWVETU1iRUR1ODdsR2RGaWlBWktVd1FQOXU1ZzNUbUEzOHNid2pN?=
- =?utf-8?B?QUYxZUppY3QydzVLQnFFVVBrWFBZRUpEQ0YvMkVLSEwzd0NndllrSGFiNFJG?=
- =?utf-8?B?L1hFaDdaYUptMzIrdzAvNnliVGtUb2ZlNWh4ZHZQald2Tlh5TXNkUkxBakZm?=
- =?utf-8?B?SWNvSzI3NXhUcGsvZlJibHhqV255M0pHTDZrbUxaZXNYbzdCOEliOUljSVN3?=
- =?utf-8?B?c3FCOXZ0bFE4SEZWdENZbnRMbk5PWXQyUDIzam1mZ1ZBcXRJSXNjMmVFbmhz?=
- =?utf-8?B?MHJrYkVsYllDMkl1anZ5dz09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB7529.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Wm0xQnFMZ2hmaTE2OUdpWGhDMU03MGc2cFJYNHBsNEhDdFFVRHZ3MFh1V2xS?=
- =?utf-8?B?cnM3dXhKVnBENEs3U01PMFg5QWtZbjNLUGw2dHJsOU9lcyt4MnR2dFZqbWJl?=
- =?utf-8?B?VnRtdWpLanZVcWdSSk5IZGw2TzdsWEEzeDRPT2tRRUVkUFBkMlBrU21Iamgy?=
- =?utf-8?B?M1JWYitjVjBHS1pBQmcwbmVFdTBBTUNJTXMzM0NzY1g0dTV4NGVKOGNkVXVz?=
- =?utf-8?B?T0NSNnprajhzWXBsdStQUGh1VkN0bElVNFJTVW9aYUxiSG5iZGg1dGJML1lS?=
- =?utf-8?B?RHVoVzh0YXArdHlWVm5oZUxucVB5YUUvUmZOOUNUN3hxblBmWW40SE15VmtW?=
- =?utf-8?B?NGFlbm0vOFAzWXVJdHFnTkJoa3BFVWtJMzNwaW5ZSVRhN0pPMk95ZWlvUnhI?=
- =?utf-8?B?cnR5Rnp5NElDaUJqbVBLVzRwWGRya2tJcW1FMndXSHowSk8zS3lVQm8yK3VS?=
- =?utf-8?B?aWMvWnhqL2NJNTZtTmZLQTN6VFNRMFpDM0R0QXJlbHdyRUR6bDJ4TlNhQzY4?=
- =?utf-8?B?N0JpTkRuN2tySGZqd0c3NklzZ0t3UG9iWlJtcFU4eFp1MVRwemRjQ0FvOFdT?=
- =?utf-8?B?aHlyaDNod1NUTisvdGNGN3ZjWE0yMlk2WkY0Z250T0xqWktiRGZsNE5WcDI4?=
- =?utf-8?B?bGMxdXV6R2ZXOTBSNm5rOTlGTnVLdi9xZkxjR0VBMEhwT0o1ZlpjZ2hOcStH?=
- =?utf-8?B?QlFNSSt4bnVsOG9pNDdzQm5NVVJ1aVlSV0gxU3lnQmdzbjdNaEZoTmlzNFVX?=
- =?utf-8?B?UHNKNCtwQUxwZGFUL3ZXSEpLSGlNeVhsV0toMzRacGhRdHRLeHdZYXgzbEhI?=
- =?utf-8?B?dy81ckNQUFVTYUxKdS94SWtRRFdGeGFxMVRWR3lMbjFOdkFMdC9NeWFWd2Y1?=
- =?utf-8?B?VjRoWWpEc2Jqbmlhc2dzVUpnWVcvRFZ6OUJoRHBWczE1djZxT3N6QThPeTl0?=
- =?utf-8?B?R1BmQXkrMzRyZnNNYzdFQXM1VzQwbkhtSU9NUkVKbnBnVlk1VFhJNTE0MXdk?=
- =?utf-8?B?QzRHeDRSZjRyaER1bDBHeDRqSjZSdU5DTzVRK1NHTi96RG4xWHhVRG5FVUY4?=
- =?utf-8?B?OVJNcVdIZVY2VFhraXhhOVluVHNVL0lxVUdjZU5jbktCL0t4cjZ1eE0veHht?=
- =?utf-8?B?QmRUdTdpNm1HR1dhVkZMT2xKSVdvVHpaOW40V1dOWEd6UmF0K3JCcmEyeFJT?=
- =?utf-8?B?aGJwVU1ZcHU5SThsQ0p0dkFtNUZtK1ZqNHdQbmhIb0lTQVZGaHB4K3dIQmtN?=
- =?utf-8?B?SDhFTllweVkvamxkVStsQ3FxYm9vRlV2TnNIS1Vmd2tIUXgwKzdWTEUzdUg3?=
- =?utf-8?B?YTI5YWhGb3NFcGJzNU9hcFZUcmt4bHVYanlyNU9XNHlsamVlSFlJemhrcWZn?=
- =?utf-8?B?eTkxYzFtZDNQd09lVmtPc2MzUnBNTFoyOWszdExGTlE4Snk1b3pveFM4KzJP?=
- =?utf-8?B?NVVDZGNKN01icFVYd1BGdGhVQXRoK1RUODA5SWd4Qm5uYmsrT0s3dkg4VDlz?=
- =?utf-8?B?aXZpMHVKSytMYjlaN1hzU0ZMUHZvSmNQb1h1WE1NL1BrcnZvTGJrSUpyUUpN?=
- =?utf-8?B?R0FOa1ZVeUtTUTZXOFFFdE9IMGR1Q2JOdmE1cXhqbTY4MFNHNHZmWGhGUkVF?=
- =?utf-8?B?Z2lySXllb3NEUXYwWHFWM2dvYlpYejdTYU9XdlRtd01zS1lwbFNpV3J3N0F3?=
- =?utf-8?B?eTBIMlNSeDh5N0dQTEdzbFRsalB1Rmo2Qmxnd094UnIyRnRiOVI0TDQwb21l?=
- =?utf-8?B?RXFXc2pWUHl1WGNWcmg4alVTYmZwU2VXaytGSVZWK1ZpRVNIbnFKblRqUC9N?=
- =?utf-8?B?TXNsaDR4L3RJRVV2VWUwcGtWbUpMUXVMR1hJTWhuTXJyZEpzUnlkMVZKa29Q?=
- =?utf-8?B?MVVtdFN0SFltaENSemFqeHNIbEIrcWtGRXBHYXBWUHNLQ29nV01uZ3JnQXhL?=
- =?utf-8?B?VTdHVlJsNXhXQ211WXZ6a1YwbXZYbU1XTDg2UGozLy85S0VpL01uVEIrVGJ3?=
- =?utf-8?B?NWxPNHM1L0lEMnFqVkdOUFcyU2dvbXRzeVYrbk91elV1YWFMVGhpR3VSZzFQ?=
- =?utf-8?B?MUJFNlFPR3hEQzkva2NmaEYyRHhob0NBbWZSTGpsVVM5Ylo4VWxiNUI1SC9o?=
- =?utf-8?Q?yl2rpb0uHf1tOwIHca25YApMK?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 23d32f96-2b63-4e54-1266-08dc9756e086
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7529.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jun 2024 09:44:17.0858
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FG6OZ6XRO+1A/KCdKLcrbLTbway8/ZqHGXdxSCYKZ0BBNAsHYHJsRgDM542XLl/FPuDK/7WK55WyocIGyMZZSw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB8017
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240219-mainline-spi-precook-message-v2-0-4a762c6701b9@baylibre.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 2024/6/28 13:21, Yan Zhao wrote:
-> On Thu, Jun 27, 2024 at 09:42:09AM -0300, Jason Gunthorpe wrote:
->> On Thu, Jun 27, 2024 at 05:51:01PM +0800, Yan Zhao wrote:
->>
->>>>>> This doesn't seem right.. There is only one device but multiple file
->>>>>> can be opened on that device.
->>> Maybe we can put this assignment to vfio_df_ioctl_bind_iommufd() after
->>> vfio_df_open() makes sure device->open_count is 1.
->>
->> Yeah, that seems better.
->>
->> Logically it would be best if all places set the inode once the
->> inode/FD has been made to be the one and only way to access it.
-> For group path, I'm afraid there's no such a place ensuring only one active fd
-> in kernel.
-> I tried modifying QEMU to allow two openings and two assignments of the same
-> device. It works and appears to guest that there were 2 devices, though this
-> ultimately leads to device malfunctions in guest.
-> 
->>> BTW, in group path, what's the benefit of allowing multiple open of device?
->>
->> I don't know, the thing that opened the first FD can just dup it, no
->> idea why two different FDs would be useful. It is something we removed
->> in the cdev flow
->>
-> Thanks. However, from the code, it reads like a drawback of the cdev flow :)
-> I don't understand why the group path is secure though.
-> 
->          /*
->           * Only the group path allows the device to be opened multiple
->           * times.  The device cdev path doesn't have a secure way for it.
->           */
->          if (device->open_count != 0 && !df->group)
->                  return -EINVAL;
-> 
-> 
+Hi David,
 
-The group path only allow single group open, so the device FDs retrieved
-via the group is just within the opener of the group. This secure is built
-on top of single open of group.
+On Mon, Feb 19, 2024 at 04:33:17PM -0600, David Lechner wrote:
+> This is a follow-up to [1] where it was suggested to break down the
+> proposed SPI offload support into smaller series.
+> 
+> This takes on the first suggested task of introducing an API to
+> "pre-cook" SPI messages. This idea was first discussed extensively in
+> 2013 [2][3] and revisited more briefly 2022 [4].
+> 
+> The goal here is to be able to improve performance (higher throughput,
+> and reduced CPU usage) by allowing peripheral drivers that use the
+> same struct spi_message repeatedly to "pre-cook" the message once to
+> avoid repeating the same validation, and possibly other operations each
+> time the message is sent.
+> 
+> This series includes __spi_validate() and the automatic splitting of
+> xfers in the optimizations. Another frequently suggested optimization
+> is doing DMA mapping only once. This is not included in this series, but
+> can be added later (preferably by someone with a real use case for it).
+> 
+> To show how this all works and get some real-world measurements, this
+> series includes the core changes, optimization of a SPI controller
+> driver, and optimization of an ADC driver. This test case was only able
+> to take advantage of the single validation optimization, since it didn't
+> require splitting transfers. With these changes, CPU usage of the
+> threaded interrupt handler, which calls spi_sync(), was reduced from
+> 83% to 73% while at the same time the sample rate (frequency of SPI
+> xfers) was increased from 20kHz to 25kHz.
+> 
+> [1]: https://lore.kernel.org/linux-spi/20240109-axi-spi-engine-series-3-v1-1-e42c6a986580@baylibre.com/T/
+> [2]: https://lore.kernel.org/linux-spi/E81F4810-48DD-41EE-B110-D0D848B8A510@martin.sperl.org/T/
+> [3]: https://lore.kernel.org/linux-spi/39DEC004-10A1-47EF-9D77-276188D2580C@martin.sperl.org/T/
+> [4]: https://lore.kernel.org/linux-spi/20220525163946.48ea40c9@erd992/T/
 
--- 
+I have a regression after this patch set. My system explodes with
+following trace:
+ Unable to handle kernel paging request at virtual address 0064f69bfd319200
+ Mem abort info:                                  
+   ESR = 0x0000000086000004
+   EC = 0x21: IABT (current EL), IL = 32 bits
+   SET = 0, FnV = 0
+   EA = 0, S1PTW = 0
+   FSC = 0x04: level 0 translation fault
+ [0064f69bfd319200] address between user and kernel address ranges
+ Internal error: Oops: 0000000086000004 [#1] PREEMPT SMP
+ Modules linked in: lan78xx etnaviv crct10dif_ce gpu_sched fsl_imx8_ddr_perf caam ina2xx ina3221 rtc_snvs error imx8mm_thermal imx_cpufreq_dt fuse
+ CPU: 2 PID: 103 Comm: spi2 Tainted: G        W          6.8.0-rc3-00118-g82b98fb8cd33 #36
+ Hardware name: Philips i.MX8MPlus Delta Evaluation Kit (DT)
+ pstate: 20000005 (nzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+ pc : 0x64f69bfd319200
+ lr : spi_res_release+0x68/0xb8
+ sp : ffff800083a6bcb0
+ x29: ffff800083a6bcb0 x28: ffff800081906008 x27: ffff8000809feea8
+ x26: 0000000000000001 x25: dead000000000122 x24: dead000000000100
+ x23: ffff800083c7ba38 x22: ffff0000c3ca5000 x21: ffff800083c7b9e0
+ x20: ffff800083c7ba40 x19: ffff800083c7bb48 x18: 0020000000000000
+ x17: 0000000000901400 x16: 00000000b0891400 x15: 049d200e412d4100
+ x14: 00000090fff6c1f4 x13: 000000280b412d41 x12: 000ed3ddde0a5202
+ x11: 6e0194029343039e x10: 00000000000014c0 x9 : ffff8000809fd5dc
+ x8 : ffff800081906008 x7 : ffff0000c3c9c41c x6 : ffff8000800f34b0
+ x5 : 0000000000000000 x4 : ffff800083a6bab8 x3 : 8f64f69bfd319200
+ x2 : ffff800083c7bb60 x1 : ffff800083c7b9e0 x0 : ffff0000c3ca5000
+ Call trace:
+  0x64f69bfd319200
+  spi_async+0xac/0x110
+9H0[]6 spi_mux_transfer_one_message+0xb8/0xf0
+  __spi_pump_transfer_message+0x26c/0x650
+  __spi_pump_messages+0xe0/0x228
+  spi_pump_messages+0x20/0x38
+  kthread_worker_fn+0xe0/0x2a8
+  kthread+0x10c/0x120
+  ret_from_fork+0x10/0x20
+ Code: ???????? ???????? ???????? ???????? (????????) 
+ ---[ end trace 0000000000000000 ]---
+ Kernel panic - not syncing: Oops: Fatal exception
+ SMP: stopping secondary CPUs
+ Kernel Offset: disabled
+ CPU features: 0x0,00000008,00020000,2100421b
+ Memory Limit: none
+ Rebooting in 10 seconds..
+
+It seems to be spi_mux specific. We have seen similar trace on other system
+with spi_mux.
+
 Regards,
-Yi Liu
+Oleksij
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
