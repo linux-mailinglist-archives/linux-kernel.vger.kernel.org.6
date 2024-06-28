@@ -1,60 +1,79 @@
-Return-Path: <linux-kernel+bounces-233902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3FE491BF01
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:47:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4CF791BF06
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:50:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5F971C225E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:47:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A375C1C2299C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F210D1AC790;
-	Fri, 28 Jun 2024 12:47:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901D61BE843;
+	Fri, 28 Jun 2024 12:50:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OKMyiVYs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jjxBv5RZ"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403421AC244;
-	Fri, 28 Jun 2024 12:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 622B54C3BE;
+	Fri, 28 Jun 2024 12:50:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719578854; cv=none; b=QgXwEd5OmMGxYmN/BL6oCzJe7Xe5rIxlAD059NoPXJKLD8egkuQ7M6QTiozHMdCX1shccuSddRxnsk6P1QzJ5yNUDLdE+PQdm3NtOE4auIKpAFPkHqryCYTyAnYExYm8HASkI79mMnJJ4hNaQodEOkuw9bvy/9f2o8xANxJzYWc=
+	t=1719579039; cv=none; b=m8+5plmRd3AbJMfpCSL5Ky/VvwFW0OiVRVJXaxsAXeKc3GaPJLVLsmjnuJdFk1aEu1ijk8pmogHA86XAT0K85XbyV6Zw4AZvFe1KakorPRzsDyvcWy87A5ljfMmwjb7yQ6rm5wUqkv5bdMlAh7Azh/f/SMlf77YlI1OOOr2VMdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719578854; c=relaxed/simple;
-	bh=LHijR0kl7hNylO84H4MwHL6n5jNx5enYAaT3OgCdYX0=;
+	s=arc-20240116; t=1719579039; c=relaxed/simple;
+	bh=RzFen9JQSi644qnKFr/+16SgU8rM196DVKOyw4xfV+c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FpNsc1Q9auiuWvDKm+7LWtAS5xEUynOkuWuxv+JV6So32M36KQurS80oABlZ0vYMwD+J9Vdg+X4aM9f/ixN377uniA/IqkdY1vQR0Sgqdcy7rtyhZWD+Lq9izzHpcBP+Zze4NiAzETSEZDkL8MxBYhOIKi6u553icb/9ZH2CIA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OKMyiVYs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 679CFC116B1;
-	Fri, 28 Jun 2024 12:47:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719578853;
-	bh=LHijR0kl7hNylO84H4MwHL6n5jNx5enYAaT3OgCdYX0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OKMyiVYsyRe1/pt43HihCWtQxR3ZEwpB9M7ibE6ziN+SrgD+Ss8kcyDdkoBGAfhQr
-	 FawZLNmO6T64KgF9Xqi8r/UbCSZQR9FA6lgsPKMEC/ssBGwSYAIbJJXUy73oq2MFTf
-	 jeAqUpcOaBM5MSEgl7KhA6NdMXKkrhsyy6DI2fkRAUANbA2l969qNLYm7+UTJK5Kzo
-	 ZENn2tWegXElhOjphbcLlGGU2rQEbNq27K07KUUBkfC26K7qnu6WWJZk2xmmx+W8p0
-	 Ayzt97AC1lmzfnhyUXMoxJYJL38XGrDRm+6Emw3S/F+9RLZW7OQUUa0KUI1eu2XAaH
-	 uGx/YqiBu/K0w==
-Date: Fri, 28 Jun 2024 09:47:30 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=PpIyoFcW4Qjm9UulggrvEmUEdbaRC/BxZjqbGuIBmfkBGaG13IjoNDWgwM9HjbHhV58VQWnvmo+lf71TlAyCxNqgX17cCQxCbUgT5FfaDqQ4pBJq8vfoOKC9KNwLQWhwjDlj4ne+078AFPMIGR04khGX9KQrnfOJQC0f2m9IFOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jjxBv5RZ; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=mnbrvixIDdkfJ/Y+2RZM5FtacFOILjP6fmsLKyS1/AQ=; b=jjxBv5RZOWAbmnUOGV+3KEzNKg
+	eoW8zWsbdt2AbU8EWwKhlVBEiG0IMFFRD5HD8f+140PbY357uVg/aGT3eQttdQJ9nSIk7hcSuDZnI
+	M8auMVuPmV1XDjyztJlO9zXRimFRuJerrdsxOQDFP5ORLAdf2+l6u8E/w7PzSxQunN104j/aKtn8I
+	xBB7Vk7pQ1fERCywhGQl6x0ShbRjGU2a8dMpRaVclCbXC8Hox3w0iDsyogf1EYYDE3z2MmTaEOWSG
+	6Jif0ko7zO/DGYg5zSi3cr1Dsu41LltGETThaQpfjzwqzOYtk2UCg2LAfkIjv5YRTTC0LG49Cd3on
+	mE4Mow5Q==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sNB3U-0000000Dk7f-3qsS;
+	Fri, 28 Jun 2024 12:50:20 +0000
+Date: Fri, 28 Jun 2024 05:50:20 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Christoph Hellwig <hch@infradead.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>, Jens Axboe <axboe@kernel.dk>,
+	Hauke Mehrtens <hauke@hauke-m.de>, Felix Fietkau <nbd@nbd.name>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Dave Chinner <dchinner@redhat.com>, Jan Kara <jack@suse.cz>,
+	Christian Brauner <brauner@kernel.org>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Li Lingfeng <lilingfeng3@huawei.com>,
+	Christian Heusel <christian@heusel.eu>,
+	Min Li <min15.li@samsung.com>, Avri Altman <avri.altman@wdc.com>,
 	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Yicong Yang <yangyicong@hisilicon.com>
-Subject: Re: [PATCH 2/2] perf stat: Fix a segfault with --per-cluster
- --metric-only
-Message-ID: <Zn6w4pO7VkU4IFYm@x1>
-References: <20240627200353.1230407-1-namhyung@kernel.org>
- <20240627200353.1230407-2-namhyung@kernel.org>
+	Hannes Reinecke <hare@suse.de>,
+	Mikko Rapeli <mikko.rapeli@linaro.org>, Yeqi Fu <asuk4.q@gmail.com>,
+	Victor Shih <victor.shih@genesyslogic.com.tw>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Li Zhijian <lizhijian@fujitsu.com>,
+	"Ricardo B. Marliere" <ricardo@marliere.net>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [PATCH v4 3/4] block: add support for notifications
+Message-ID: <Zn6xjP8eH470wWXC@infradead.org>
+References: <cover.1719520771.git.daniel@makrotopia.org>
+ <4ebef78f07ff1ea4d553c481ffa9e130d65db772.1719520771.git.daniel@makrotopia.org>
+ <Zn4_-alKtxuZ6zNt@infradead.org>
+ <Zn6rU-mCYQcyCkGT@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,92 +82,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240627200353.1230407-2-namhyung@kernel.org>
+In-Reply-To: <Zn6rU-mCYQcyCkGT@makrotopia.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, Jun 27, 2024 at 01:03:53PM -0700, Namhyung Kim wrote:
-> The new --per-cluster option was added recently but it forgot to update
-> the aggr_header fields which are used for --metric-only option.  And it
-> resulted in a segfault due to NULL string in fputs().
-
-Before:
-
-acme@number:~$ sudo ~acme/bin/perf stat -a -x : --per-cluster -M tma_core_bound --metric-only true
-Segmentation fault
-acme@number:~$ 
-acme@number:~$ sudo su -
-root@number:~# gdb perf
-(gdb) run stat -a -x : --per-cluster -M tma_core_bound --metric-only true
-Starting program: /root/bin/perf stat -a -x : --per-cluster -M tma_core_bound --metric-only true
-
-Program received signal SIGSEGV, Segmentation fault.
-0x00007ffff6f7f8dd in __strlen_avx2 () from /lib64/libc.so.6
-(gdb) bt
-#0  0x00007ffff6f7f8dd in __strlen_avx2 () from /lib64/libc.so.6
-#1  0x00007ffff6e97a3a in fputs () from /lib64/libc.so.6
-#2  0x000000000056b805 in print_metric_headers ()
-#3  0x000000000056e084 in evlist.print_counters ()
-#4  0x0000000000432513 in cmd_stat ()
-#5  0x00000000004c5fb9 in run_builtin ()
-#6  0x00000000004c62c9 in handle_internal_command ()
-#7  0x0000000000410e57 in main ()
-(gdb)
-
-After:
-
-acme@number:~$ sudo ~acme/bin/perf stat -a -x : --per-cluster -M tma_core_bound --metric-only true
-cluster:cpus:%  tma_core_bound:%  tma_core_bound:
-S0-D0-CLS0:2:18.2::::
-S0-D0-CLS8:2:26.7::::
-S0-D0-CLS16:2:14.2::::
-S0-D0-CLS24:2:10.6::::
-S0-D0-CLS32:2:0.6::::
-S0-D0-CLS40:2:42.5::::
-S0-D0-CLS48:2:21.1::::
-S0-D0-CLS56:2:36.8::::
-S0-D0-CLS64:0:::::::1.0:
-S0-D0-CLS72:0:::::::0.8:
-S0-D0-CLS80:0:::::::1.0:
-acme@number:~$
-
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-- Arnaldo
- 
-> Fixes: cbc917a1b03b ("perf stat: Support per-cluster aggregation")
-> Cc: Yicong Yang <yangyicong@hisilicon.com>
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> ---
->  tools/perf/util/stat-display.c | 3 +++
->  1 file changed, 3 insertions(+)
+On Fri, Jun 28, 2024 at 01:23:47PM +0100, Daniel Golle wrote:
+> So that's what I did consequently. Using the notification interface
+> the NVMEM driver can live in drivers/nvmem/ and doesn't need to be
+> using block internals.
 > 
-> diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
-> index e8673c9f6b49..462227f663cb 100644
-> --- a/tools/perf/util/stat-display.c
-> +++ b/tools/perf/util/stat-display.c
-> @@ -38,6 +38,7 @@
->  static int aggr_header_lens[] = {
->  	[AGGR_CORE] 	= 18,
->  	[AGGR_CACHE]	= 22,
-> +	[AGGR_CLUSTER]	= 20,
->  	[AGGR_DIE] 	= 12,
->  	[AGGR_SOCKET] 	= 6,
->  	[AGGR_NODE] 	= 6,
-> @@ -49,6 +50,7 @@ static int aggr_header_lens[] = {
->  static const char *aggr_header_csv[] = {
->  	[AGGR_CORE] 	= 	"core%scpus%s",
->  	[AGGR_CACHE]	= 	"cache%scpus%s",
-> +	[AGGR_CLUSTER]	= 	"cluster%scpus%s",
->  	[AGGR_DIE] 	= 	"die%scpus%s",
->  	[AGGR_SOCKET] 	= 	"socket%scpus%s",
->  	[AGGR_NONE] 	= 	"cpu%s",
-> @@ -60,6 +62,7 @@ static const char *aggr_header_csv[] = {
->  static int aggr_header_num[] = {
->  	[AGGR_CORE] 	= 	2,
->  	[AGGR_CACHE]	= 	2,
-> +	[AGGR_CLUSTER]	= 	2,
->  	[AGGR_DIE] 	= 	2,
->  	[AGGR_SOCKET] 	= 	2,
->  	[AGGR_NONE] 	= 	1,
-> -- 
-> 2.45.2.803.g4e1b14247a-goog
+> > And not actually having a user for it is a complete no-go.
+> > 
+> 
+> The user will be the nvmem provider, you can see the code in earlier
+> versions of the patchset where I had included it:
+> 
+> https://patchwork.kernel.org/project/linux-block/patch/96554d6b4d9fa72f936c2c476eb0b023cdd60a64.1717031992.git.daniel@makrotopia.org/
+> 
+> Being another subsystem I thought it'd be better to deal with the
+> block related things first, and once that has been sorted out I will
+> move on to add the NVMEM driver and make the necessary changes for
+> using it on eMMC.
+
+It is rather hard to review an interface without the users.
+
+I still dislike the idea of notifications from bdev discovery /
+partition scanning into the users of them.  We have one such users
+in the MD legacy autodetect code, but that has largely been considered
+at bad idea and distros tend to use mdadm based assembly from initramfs
+instead.  Which IMHO feels like the right thing for nvmem as well,
+just have an nvmem provider that opens a file for a user provided
+path and use kernel_read on it.  This can covered block devices,
+character devices and even regular files.  It will require initramfs
+support, but that is pretty much used everywhere for storage discovery
+and setup anyway.
 
