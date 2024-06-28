@@ -1,235 +1,125 @@
-Return-Path: <linux-kernel+bounces-234675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BDF991C95A
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 00:56:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36BC291C96F
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 01:04:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC7B21F241A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:56:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E26E2851AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 23:04:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28BAD85285;
-	Fri, 28 Jun 2024 22:56:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6643824A3;
+	Fri, 28 Jun 2024 23:04:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nipEa4aN"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nHMml38v"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69478002A;
-	Fri, 28 Jun 2024 22:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E30626CB;
+	Fri, 28 Jun 2024 23:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719615378; cv=none; b=RBwei/aVOedlYQpe0TI8eNTUFBr7Q+OEmEpTURMCmvGgGYOGDQALuxe77k11cVa3OrVLyZ6dkZpWGeuy7ZBviYUMGORJyKymNEPO3S3utE1ur4UBwJJSZIasvKwJ6634iIMVdDTMhLFjL3xAN8A7cs6brZSKoIa2Ua4AhHR45ww=
+	t=1719615841; cv=none; b=lIkgHIu7uI8gbL/N7+fJxEYIgjcMSdz+Z+OOg1DOrFq1RAtqj827jpSDzbklxubn9A+LHlLuxn31+l/OD3J4XtDCx5RUOXQqREhvaIypwlUGbs0PWlnpc5XAmfLzbp9ovbag4hXs/frRyKL00eS7hGVH2KRV9W65gYjP4RsK2N0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719615378; c=relaxed/simple;
-	bh=jqYFSUT/a2n7uSZLnvdv9HsDOXaAO27gYxryHNzeCEI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Fj26knmwE/kz3l4rEnLmFl5sEprsT2lKNmxFgHxjuZJMsF7qz/mfe2LTqkY455FT3PkU+EC1Sll9Q8RdV/cwdunp7lJ2vNQ7m/s2Vc0nPNySrTPGYIu7xaY2Ojwgvkw/BIZFWK7abbGgIeni9u5K7VNIuhzvm5rsJdXlIoQ97Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nipEa4aN; arc=none smtp.client-ip=209.85.215.171
+	s=arc-20240116; t=1719615841; c=relaxed/simple;
+	bh=wZfauyp79Jdmtph/xEdmahuQwGRjmdF6s7bdzha4HeE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M9OTqxhch4ekARsSoEUuX9k/SaNiaIePYVzS+0yLr5Z0MoXh2rroCqs/HOU0Py1iAuWKMbxTKG0IdVUQ1Um79Uv+yqAD98x7QppjR+PoOLlEQY5YKyTeb4/pUyiWLdpLfih8QUh0R934sluiAffwQkv8jdBx4uxMlpwFMJBwgxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nHMml38v; arc=none smtp.client-ip=209.85.216.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7180308e90bso795686a12.1;
-        Fri, 28 Jun 2024 15:56:16 -0700 (PDT)
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2c927152b4bso794829a91.2;
+        Fri, 28 Jun 2024 16:03:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719615376; x=1720220176; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xUcQS852IggxOCmKXqE3YJJNYXGvn0FPbNBN8y1e0Sc=;
-        b=nipEa4aN5/DRpNre/mZ2R3kmiAOak4l0cFdUZCyJPXH/8FWqZUlREizPRDky/YM4GT
-         moL+8cnhvVEEN/MoWb0UceOvZ7S2erjY35Gr8L5tStFaA6FdBTIXNv5pwSGjkLLV8mKb
-         sWYsed9upcfWBGGYHe/O+P527djykRFA6rVpVyq/LlLt1ltw+uPPuoV6AcXcglhVhceX
-         MGT7Cci2zGsOIcKJ21pbAB5CW48PE6KDoLyKje6L9JfQI7QZK8uxfa03r77KAm/efmZy
-         S64Lq+O0Qm/8+medi6OE4AAsOGbXgofJPQOWYXmCcCkP0QiuziIKpIgX18YWPY2RGjhk
-         UY1A==
+        d=gmail.com; s=20230601; t=1719615839; x=1720220639; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wZfauyp79Jdmtph/xEdmahuQwGRjmdF6s7bdzha4HeE=;
+        b=nHMml38vSx6sGryhOqsVXkGfFt4rkE5m+6z6LWGYrJGMug5GHcf2j3BRGgx5oxMkm6
+         7aSQS7YPpVisoK2Rdzt2P+G9Qi5EEq+2PgbF3Y9IMEAndC+dM9gclXTBUcX49RWC8xZv
+         Fh/GbdC72OVn+zk2OvuycYJgUWdzzn7RioF9Dp2VSqOXSAGzp982WepO9mObZMw/7j9i
+         sDQUJw2vz63E9macAlXiR/SgTFD4gTnKDHfxU7eW1trLzUJU2jkPlXQjrC2iWTRexbY9
+         rUZPkWECbBAmOERPZVVkMs6RVUW9dTzR0O4gy0DmxsvwmKFgqbmIYW4nNFp3wt8EfHoO
+         t8wQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719615376; x=1720220176;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xUcQS852IggxOCmKXqE3YJJNYXGvn0FPbNBN8y1e0Sc=;
-        b=vKLMkS81V2GQRBuvxlzWXSRzuNcHMfdvKG08tFUPvHuIFpDHpEzTSMSU2Ng4BmD4ES
-         C0B8rKKU0LNDPyhGq5oX3/C7Wlj0IY50mg59bg2uaI2jo5uZs0379wHfdcVsH9XrF+AO
-         NAhADk/9X5hte8nzavw0a/okpcCMPF5Wlor+qIOphAszB53ZPy1oJxSMqnvCnOzzGUR4
-         0HjE2CI+WjO8EyLwFO64zJrp6y/Y2Ewbbg7Z7iNm9MwYQiyHeDBLXMUfNNVVB0IjhquL
-         n3Kt8BvQeZrg1TO8pkiPyPuDVGxHj8Y0MWD0dHHQD/cN2fBu6X3ep7NYaGZ96xX0oPIr
-         4VNA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDZ7Z1LQoxXG1txwEhBAxJgHQsYmZbmEHzKcKSvzmYBEGVq0AR97rrL1A4MpUtbc5AVp7WpnO1eXKwqXY2NtypSSxncSSBIAOgCy4SsvYlemCCBpdiuonJ/R6oXoamg/PqeZUUv1YJgg==
-X-Gm-Message-State: AOJu0Yx5YaqqV8Wdrb2VO/X/2gcMIKgXGRkiQhYAsgQKw/iZn+thxmT8
-	cJIiMu7OEtbpJ+d0ksgrYhQTT+9S3fxrCoN70qhJR8St7/iFe1cf
-X-Google-Smtp-Source: AGHT+IEZnjxDA5OCNYz7pbDMXf6iKykKThrzOkcD/z8qiGIfTDi72Ed5E+eRlHQkwB0H36m+T2fExA==
-X-Received: by 2002:a05:6a20:c123:b0:1bd:2994:b5bc with SMTP id adf61e73a8af0-1bd2994b984mr9724732637.58.1719615376114;
-        Fri, 28 Jun 2024 15:56:16 -0700 (PDT)
-Received: from localhost.localdomain ([177.194.39.94])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91ce17a5fsm2176711a91.3.2024.06.28.15.56.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 15:56:15 -0700 (PDT)
-From: Lucca fachinetti <luccafachinetti@gmail.com>
-To: pavel@ucw.cz,
-	dmurphy@ti.com,
-	robh+dt@kernel.org,
-	lee@kernel.org
-Cc: linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	g.luiztrevisan@gmail.com,
-	Lucca Fachinetti <luccafachinetti@gmail.com>
-Subject: [PATCH 1/1] dt-bindings: leds: max77650: convert the binding document to yaml
-Date: Fri, 28 Jun 2024 19:55:51 -0300
-Message-Id: <20240628225551.107833-1-luccafachinetti@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1719615839; x=1720220639;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wZfauyp79Jdmtph/xEdmahuQwGRjmdF6s7bdzha4HeE=;
+        b=Nfmf74qNCwnlVd7S1KmgixzvtRoHI7CVT68kruNTv3PNOvX55VLYNHbgeO1/lT5PQ9
+         bVNafNoZOlmL4b86M/BnAhSLOjraUgPe7rj6xLmhV4RBcyJS6ArRHE687JdDH+lt2Cp1
+         k+1lOoQ7EeorhcdSL0bIJO+LoRtNfJY7YkbAjroUDV7bJJEzBvHMiDc1Fa730priKvfL
+         uSfJnmc1xrIspPkXqgQPMsFCYup5hLUIccCWPkqRrvwABBPm8s65dUBV7bqsceuS8gaC
+         AXgxWlN4JimU3B8TjiYXzOKsePVxu0Id32Lx60fYjTPPi8C417BllGBS7HyNeUR0Qz3c
+         ef6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU/ZXHwbsv7Srk3FCezlYAeV3n1R4BQRD5jFB54SItnplIOFLtxK5a87opazp7saPWE2URg8ilNDAyiYChZRHK5qUb8ftoiiNLJl9WU5tbB/3cuc1HYU07HsQqHOBBQ/oBIKqAgEG/J5aEYsSORTWBY6PqSUSSIwQMS6UX5Y3ETNA==
+X-Gm-Message-State: AOJu0YzabO4l8fsUwk6GGPxYIFLeLO1KRjqsl9RpEiweURyPPMuXiC/G
+	Q0C3lJeX4WnxDwLb5OylFkSc+IvkIMIVPp540slP5K4naFVb3wcS64ojxo8d00LIlWTu28ww7V+
+	oRUw3G0rv82xl8oWiuYLwhodWEiQ=
+X-Google-Smtp-Source: AGHT+IGQJATCcwut6IdbTB0yrcfOAh393EyBxn430jIUYzX/w6k1wH1j5dkfojeHwptNnJVG2CWfMoITxzCs1HlsK64=
+X-Received: by 2002:a17:90a:7447:b0:2c7:aba6:d32f with SMTP id
+ 98e67ed59e1d1-2c861267638mr16266664a91.22.1719615839179; Fri, 28 Jun 2024
+ 16:03:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240627170900.1672542-1-andrii@kernel.org> <20240627170900.1672542-4-andrii@kernel.org>
+ <878qyqyorq.fsf@linux.intel.com> <CAEf4BzZHOhruFGinsRoPLtOsCzbEJyf2hSW=-F67hEHhvAsNZQ@mail.gmail.com>
+ <Zn86IUVaFh7rqS2I@tassilo>
+In-Reply-To: <Zn86IUVaFh7rqS2I@tassilo>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 28 Jun 2024 16:03:47 -0700
+Message-ID: <CAEf4Bzb3CnCKZi-kZ21F=qM0BHvJnexgajP0mHanRfEOzzES6A@mail.gmail.com>
+Subject: Re: [PATCH v6 3/6] fs/procfs: add build ID fetching to PROCMAP_QUERY API
+To: Andi Kleen <ak@linux.intel.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, akpm@linux-foundation.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, gregkh@linuxfoundation.org, 
+	linux-mm@kvack.org, liam.howlett@oracle.com, surenb@google.com, 
+	rppt@kernel.org, adobriyan@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Lucca Fachinetti <luccafachinetti@gmail.com>
+On Fri, Jun 28, 2024 at 3:33=E2=80=AFPM Andi Kleen <ak@linux.intel.com> wro=
+te:
+>
+> > Yep, makes sense. I'm currently reworking this whole lib/buildid.c
+> > implementation to remove all the restrictions on data being in the
+> > first page only, and making it work in a faultable context more
+> > reliably. I can audit the code for TOCTOU issues and incorporate your
+> > feedback. I'll probably post the patch set next week, will cc you as
+> > well.
+>
+> Please also add checks that the mapping is executable, to
+> close the obscure "can check the first 4 bytes of every mapped
+> file is ELF\0" hole.
+>
+> But it will still need the hardening because mappings from
+> ld.so are not EBUSY for writes.
 
-Convert the binding document for max77650 LED module to yaml.
+I'm a bit confused. Two things:
 
-Signed-off-by: Lucca Fachinetti <luccafachinetti@gmail.com>
----
- .../bindings/leds/leds-is31fl32xx.txt         | 52 --------------
- .../bindings/leds/leds-is31fl32xx.yaml        | 67 +++++++++++++++++++
- 2 files changed, 67 insertions(+), 52 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt
- create mode 100644 Documentation/devicetree/bindings/leds/leds-is31fl32xx.yaml
+1) non-executable file-backed VMA still has build ID associated with
+it. Note, build ID is extracted from the backing file's content, not
+from VMA itself. The part of ELF file that contains build ID isn't
+necessarily mmap()'ed at all
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt b/Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt
-deleted file mode 100644
-index 926c2117942c..000000000000
---- a/Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt
-+++ /dev/null
-@@ -1,52 +0,0 @@
--Binding for ISSI IS31FL32xx and Si-En SN32xx LED Drivers
--
--The IS31FL32xx/SN32xx family of LED drivers are I2C devices with multiple
--constant-current channels, each with independent 256-level PWM control.
--Each LED is represented as a sub-node of the device.
--
--Required properties:
--- compatible: one of
--	issi,is31fl3236
--	issi,is31fl3235
--	issi,is31fl3218
--	issi,is31fl3216
--	si-en,sn3218
--	si-en,sn3216
--- reg: I2C slave address
--- address-cells : must be 1
--- size-cells : must be 0
--
--LED sub-node properties:
--- reg : LED channel number (1..N)
--- label :  (optional)
--  see Documentation/devicetree/bindings/leds/common.txt
--- linux,default-trigger :  (optional)
--  see Documentation/devicetree/bindings/leds/common.txt
--
--
--Example:
--
--is31fl3236: led-controller@3c {
--	compatible = "issi,is31fl3236";
--	reg = <0x3c>;
--	#address-cells = <1>;
--	#size-cells = <0>;
--
--	led@1 {
--		reg = <1>;
--		label = "EB:blue:usr0";
--	};
--	led@2 {
--		reg = <2>;
--		label = "EB:blue:usr1";
--	};
--	...
--	led@36 {
--		reg = <36>;
--		label = "EB:blue:usr35";
--	};
--};
--
--For more product information please see the links below:
--http://www.issi.com/US/product-analog-fxled-driver.shtml
--http://www.si-en.com/product.asp?parentid=890
-diff --git a/Documentation/devicetree/bindings/leds/leds-is31fl32xx.yaml b/Documentation/devicetree/bindings/leds/leds-is31fl32xx.yaml
-new file mode 100644
-index 000000000000..0f4c7c3440c6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-is31fl32xx.yaml
-@@ -0,0 +1,67 @@
-+ # SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/leds/leds-is31fl32xx.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: LED driver for is31fl32xx and Si-En SN32xx.
-+
-+maintainers:
-+  - Pavel Machek <pavel@ucw.cz>
-+  - Lee Jones <lee@kernel.org>
-+
-+description: |
-+  Binding for ISSI is31fl32xx and Si-En SN32xx LED Drivers
-+
-+  The is31fl32xx/SN32xx family of LED drivers are I2C devices with multiple
-+  constant-current channels, each with independent 256-level PWM control.
-+  Each LED is represented as a sub-node of the device.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - issi,is31fl3236
-+      - issi,is31fl3235
-+      - issi,is31fl3218
-+      - issi,is31fl3216
-+      - si-en,sn3218
-+      - si-en,sn3216
-+
-+  reg:
-+    maxItems: 1
-+    description:
-+      I2C slave address
-+
-+  '#address-cells':
-+    const: 1
-+
-+  "#size-cells":
-+    const: 0
-+
-+patternProperties:
-+  "^led@[1-9][0-9]*$":
-+    type: object
-+    description: |
-+      Properties for a single subnode LED.
-+    additionalProperties: false
-+
-+    properties:
-+      reg:
-+        minItems: 1
-+        description:
-+          LED channel number (1..N)
-+
-+      label: true
-+
-+      linux,default-trigger: true
-+
-+    required:
-+      - reg
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#size-cells"
-+  - "#address-cells"
-+
-+additionalProperties: false
--- 
-2.34.1
+2) What sort of exploitation are we talking about here? it's not
+enough for backing file to have correct 4 starting bytes (0x7f"ELF"),
+we still have to find correct PT_NOTE segment, and .note.gnu.build-id
+section within it, that has correct type (3) and key name "GNU".
 
+I'm trying to understand what we are protecting against here.
+Especially that opening /proc/<pid>/maps already requires
+PTRACE_MODE_READ permissions anyways (or pid should be self).
+
+>
+> -Andi
 
