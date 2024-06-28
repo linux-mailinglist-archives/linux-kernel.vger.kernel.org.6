@@ -1,183 +1,103 @@
-Return-Path: <linux-kernel+bounces-234049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22BE191C164
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:45:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4155E91C166
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:45:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4593B1C20A3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:45:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC320B2370E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:45:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F13EA1C007E;
-	Fri, 28 Jun 2024 14:45:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9EF21C0053;
+	Fri, 28 Jun 2024 14:45:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a/thw11u"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="USazIl4K"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1AFD14EC79;
-	Fri, 28 Jun 2024 14:44:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8743FD4;
+	Fri, 28 Jun 2024 14:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719585900; cv=none; b=UdG3X8nlR5DNHw7Lw8nPbymm0jv+NrkD2tgHzLbquRDeNkEz42PAveW3nN9T3xpbz7JsG999FE3bGgANHtNpOf4fWQdNWUUmm6Wy1Ym/ov2HUjY4C0mzuSmMUaPha+PYqXdJHvjw/M3buSZ89USj72zo8fg0y6HYf/wF9uaAj5Y=
+	t=1719585930; cv=none; b=MiApb57CKgJK1ki7MDthAUJjWCHHP/O8EjALiRivoLiF+ggk1k9LimCOxmK7X84cis4rbSN0ZEDmyikyaxU/hdvlRi8fI+UvP6xcjKM+ChGxzOPP/TsDb9DS3gStKEbatAzd67nZdBsWBJsdNQDQ0uknfBpmrsYBt8aX4BZu1pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719585900; c=relaxed/simple;
-	bh=DmLqzFjJbB0hJBMh3LrdXIhkKP11RtHF5Wv9rb1z7JY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LfUr4/XzmIkaRRjB/+g6h3NNr/hpDhqy7oYnwE4itae8ZK15ZdhV6uRtlUybpJDKK/lcDd1TNRIuw0qMjkW3L6QoLzZ7u6hz0kk88uIaTzK2lwM2eU9m0/sPZ6ctwBkzZeZqOA5uj+WBaMu9thmiLXM95bafpuKq5eROoX7w5gQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a/thw11u; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-dfac121b6a6so558412276.0;
-        Fri, 28 Jun 2024 07:44:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719585898; x=1720190698; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lY17Rl2BBYwhSYey18wXJP5wuY+jww+c9dAKfRtKfzY=;
-        b=a/thw11uZIU+cZVl5eoKZjqcANhwcuUMv4SQT64F4+Gd5as/ti+rhiE3iN8nfro27/
-         Obw2rPQTsOceDZAetI6f1wi0wtW1FBdg4/l6AhmHpWPaaM3ufigiQk8RHijgeST+OUss
-         WSEYSKWscVXyqrUOBmmtzfCvxNphuXNgh2Av1RJ6vDJKyApiqroGriIXIDSCQ8SO1mbL
-         hWUcTDqs8gN3Wqk6lggwnD/mQSEIGhbwRT9d8+mekN9mDJ+5rl1ATBl3v6nvmW1Z91tX
-         RL1MA4DkzVMgQO3w73jfreVrbtw0M6IAkO9Zw3fb1jpFi0wfPM0pm4sji3JChlXI6QAh
-         jXAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719585898; x=1720190698;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lY17Rl2BBYwhSYey18wXJP5wuY+jww+c9dAKfRtKfzY=;
-        b=vCryU+64mYglJmneFHHRln2MXOT44t/B7XWrHxdKzfRwhclI3w2kidXkPd8JmbISOx
-         gjOewNQaToO6kDUhVsYsvq5Ggyr6X+EJU7emxoNFnVhSKeIA9CZpIVPekGR3L49bNkfH
-         2VWf4XKdWOvb5Y5qYztVPUE0Xs/0X8zCso+1oHPIon/kOsWE3CdJUo5L0HTb20ZC0/aG
-         uaCEaetjlnZ06+supaPFep+5gBsh+pC8NDZ+GATqx4cqZ1sCR53HA07N0a31QJmTWOQh
-         YOwFHusNgRGBvnpXl0ZLpDOpITSiZW669JK5KP5ZTG9+ARlaZuZwJHXsh9bHdSUdhWTN
-         a14w==
-X-Forwarded-Encrypted: i=1; AJvYcCU36vQnlJnc7nWv/Gxca8mkUArnUZJdKA1mZgaoRc825N1tjq+0101Fpt1nA117trp7E2IcJ2ee24rG/H4jjim5Xips2xiAkbGtJG9PfUnXewUn2AztcxXJez3YmKNff0Uq7xBy+QO7/t/XHrPSVQ==
-X-Gm-Message-State: AOJu0Yz6ZorlwHc9nbZVuicru5Mxzqy6qRsahILVwjMsZYdtW0xfptuZ
-	WA0fXQSvX1fAuUd6QIMNrBJxe58PCEJLUQlXKotL+q0lTEzdnGUV43tToQNl+z2G2ocx8Wm8so6
-	NWNYseaTjhpPbSODqyQWFD4fQ4gc=
-X-Google-Smtp-Source: AGHT+IFLjWEoHasp3B27U0Ucd8KsgjiQoPHc/utqKowc7r80+fpHK1Z/WVZL3Ss3qf8YiVx97wCE1/y2tGDZdfk/wlg=
-X-Received: by 2002:a5b:18b:0:b0:e03:61cf:a9f4 with SMTP id
- 3f1490d57ef6-e0361cfaa7bmr799871276.16.1719585897716; Fri, 28 Jun 2024
- 07:44:57 -0700 (PDT)
+	s=arc-20240116; t=1719585930; c=relaxed/simple;
+	bh=aICuprWnSjP9eScCzHB3FMUjG8kNJF3xR6iAE6BPq08=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E7g9on3Px+ZRiAWyVdQDLPGYS8xReARixiCA6MKhSigx9ASTpyVNlUTt1hwB3pcbqikAaTUXe1TfD+Wz3dKDAb6Ef2hg+7bOmtCmJLJ+I1YeFG1kHK8yE7aHgoeU64GpEbTI9vR5GyrdBrP0FM29sL30+4PtDV1M6vaP90yz0dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=USazIl4K; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 439A340E0027;
+	Fri, 28 Jun 2024 14:45:24 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 1EkaqO1vDdWG; Fri, 28 Jun 2024 14:45:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1719585921; bh=g878iQcJ2TWlDYARgfF2E7Nv6DYEvGZ50sNVanN/6IM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=USazIl4KIKWFGJggBkcn4pn9HbQL+ZTwfgEYfzyzVCSUcYSjim2PUX/NrVS32WgNL
+	 uuq8LrVYkMp0T4ubO0S4wIEmihMmrBOLZSxMpP4bjTV+6bjifMY5Up1H6hqzr9tU5Y
+	 3OhSK4bZS3N6oiclMAjabZhKgWK/TJ+XZcUWpgnMkncqy8OXqaqBxHcmMxDOjFZFjA
+	 soGytd/vrG5sKCvaZxXL7D+imGHKYdT6l8fsGz0Nq2lIGI/Hxnplr2CJk9SptW1+/u
+	 QRs6or3+ERwtA3lOVCW5yHjWEvHIn+Jqj/MygxFIoV3ayyTOw71N8yOypTn4ylIniX
+	 tiYnqoLbm01C7x0u+64mGRiLlwWA+twu2efmwIWfJQig6bgwXeKpa0v9wL60VNTIyd
+	 uejLl9tkfsl9ApR/1HK9PlQlz3gMrvuj1zV/uufLidJ3Tf+8Cg45cLJ1rLeHk0mYY6
+	 yoIGwJ2SR59k4x3o3riODckeoZ6HXcUqJ54D95YID52tQWCz/xkr39LX4ixolzkMvO
+	 6ZIwiFjnQjecqh3Djc5n+wruOCarUP0o6m5lyj3GguxVZkV/D3D8DGcnqaYKNXnuDQ
+	 vIgCR/VXBrKWGlOp03J7JSvd/6v0D9erTLKla9hT7Wba90sCGBAvplhS9GM7QTHXCr
+	 STL1xVkn3q4lCPrsq/uZe8fg=
+Received: from nazgul.tnic (business-24-134-159-81.pool2.vodafone-ip.de [24.134.159.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3C48E40E0187;
+	Fri, 28 Jun 2024 14:45:13 +0000 (UTC)
+Date: Fri, 28 Jun 2024 16:45:35 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tony.luck@intel.com, x86@kernel.org,
+	avadhut.naik@amd.com, john.allen@amd.com
+Subject: Re: [PATCH v2 1/5] x86/topology: Export helper to get CPU number
+ from APIC ID
+Message-ID: <20240628144535.GAZn7Mj4jofP3Vz2xf@fat_crate.local>
+References: <20240624212008.663832-1-yazen.ghannam@amd.com>
+ <20240624212008.663832-2-yazen.ghannam@amd.com>
+ <87ed8l7byy.ffs@tglx>
+ <20240626014212.GA1086@yaz-khff2.amd.com>
+ <20240628083722.GFZn52QnltR_2gjuO5@fat_crate.local>
+ <20240628141542.GA124261@yaz-khff2.amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240624181345.124764-1-howardchu95@gmail.com>
- <20240624181345.124764-5-howardchu95@gmail.com> <Zn7LoTU45bhZaihh@x1>
-In-Reply-To: <Zn7LoTU45bhZaihh@x1>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Fri, 28 Jun 2024 22:44:46 +0800
-Message-ID: <CAH0uvohNPeR3NFr4iFLkfDnkXZ_jJt3nzkO+UxLeeO3MXYfpsQ@mail.gmail.com>
-Subject: Re: [PATCH v3 4/8] perf trace: Filter enum arguments with enum names
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: adrian.hunter@intel.com, irogers@google.com, jolsa@kernel.org, 
-	kan.liang@linux.intel.com, namhyung@kernel.org, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Arnaldo Carvalho de Melo <acme@redhat.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240628141542.GA124261@yaz-khff2.amd.com>
 
-Hello,
+On Fri, Jun 28, 2024 at 10:15:42AM -0400, Yazen Ghannam wrote:
+> Thanks for the tip. It looks to me that SMP and X86_LOCAL_APIC are
+> generally independent.
 
-Making this error message better is great for user experience. I will
-implement this.
+They are?
 
-Thanks,
-Howard
+config X86_LOCAL_APIC
+        def_bool y
+        depends on X86_64 || SMP
+	^^^^^^^		     ^^^
 
-On Fri, Jun 28, 2024 at 10:41=E2=80=AFPM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> On Tue, Jun 25, 2024 at 02:13:41AM +0800, Howard Chu wrote:
-> > Before:
-> >
-> > perf $ ./perf trace -e timer:hrtimer_start --filter=3D'mode!=3DHRTIMER_=
-MODE_ABS_PINNED_HARD' --max-events=3D1
-> > No resolver (strtoul) for "mode" in "timer:hrtimer_start", can't set fi=
-lter "(mode!=3DHRTIMER_MODE_ABS_PINNED_HARD) && (common_pid !=3D 281988)"
-> >
-> > After:
-> >
-> > perf $ ./perf trace -e timer:hrtimer_start --filter=3D'mode!=3DHRTIMER_=
-MODE_ABS_PINNED_HARD' --max-events=3D1
-> >      0.000 :0/0 timer:hrtimer_start(hrtimer: 0xffff9498a6ca5f18, functi=
-on: 0xffffffffa77a5be0, expires: 12351248764875, softexpires: 1235124876487=
-5, mode: HRTIMER_MODE_ABS)
-> >
-> > && and ||:
-> >
-> > perf $ ./perf trace -e timer:hrtimer_start --filter=3D'mode !=3D HRTIME=
-R_MODE_ABS_PINNED_HARD && mode !=3D HRTIMER_MODE_ABS' --max-events=3D1
-> >      0.000 Hyprland/534 timer:hrtimer_start(hrtimer: 0xffff9497801a84d0=
-, function: 0xffffffffc04cdbe0, expires: 12639434638458, softexpires: 12639=
-433638458, mode: HRTIMER_MODE_REL)
-> >
-> > perf $ ./perf trace -e timer:hrtimer_start --filter=3D'mode =3D=3D HRTI=
-MER_MODE_REL || mode =3D=3D HRTIMER_MODE_PINNED' --max-events=3D1
-> >      0.000 ldlck-test/60639 timer:hrtimer_start(hrtimer: 0xffffb16404ee=
-7bf8, function: 0xffffffffa7790420, expires: 12772614418016, softexpires: 1=
-2772614368016, mode: HRTIMER_MODE_REL)
-> >
-> > Switching it up, using both enum name and integer value(--filter=3D'mod=
-e =3D=3D HRTIMER_MODE_ABS_PINNED_HARD || mode =3D=3D 0'):
-> >
-> > perf $ ./perf trace -e timer:hrtimer_start --filter=3D'mode =3D=3D HRTI=
-MER_MODE_ABS_PINNED_HARD || mode =3D=3D 0' --max-events=3D3
-> >      0.000 :0/0 timer:hrtimer_start(hrtimer: 0xffff9498a6ca5f18, functi=
-on: 0xffffffffa77a5be0, expires: 12601748739825, softexpires: 1260174873982=
-5, mode: HRTIMER_MODE_ABS_PINNED_HARD)
-> >      0.036 :0/0 timer:hrtimer_start(hrtimer: 0xffff9498a6ca5f18, functi=
-on: 0xffffffffa77a5be0, expires: 12518758748124, softexpires: 1251875874812=
-4, mode: HRTIMER_MODE_ABS_PINNED_HARD)
-> >      0.172 tmux: server/41881 timer:hrtimer_start(hrtimer: 0xffffb16408=
-1e7838, function: 0xffffffffa7790420, expires: 12518768255836, softexpires:=
- 12518768205836, mode: HRTIMER_MODE_ABS)
-> >
-> > P.S.
-> > perf $ pahole hrtimer_mode
-> > enum hrtimer_mode {
-> >         HRTIMER_MODE_ABS             =3D 0,
-> >         HRTIMER_MODE_REL             =3D 1,
-> >         HRTIMER_MODE_PINNED          =3D 2,
-> >         HRTIMER_MODE_SOFT            =3D 4,
-> >         HRTIMER_MODE_HARD            =3D 8,
-> >         HRTIMER_MODE_ABS_PINNED      =3D 2,
-> >         HRTIMER_MODE_REL_PINNED      =3D 3,
-> >         HRTIMER_MODE_ABS_SOFT        =3D 4,
-> >         HRTIMER_MODE_REL_SOFT        =3D 5,
-> >         HRTIMER_MODE_ABS_PINNED_SOFT =3D 6,
-> >         HRTIMER_MODE_REL_PINNED_SOFT =3D 7,
-> >         HRTIMER_MODE_ABS_HARD        =3D 8,
-> >         HRTIMER_MODE_REL_HARD        =3D 9,
-> >         HRTIMER_MODE_ABS_PINNED_HARD =3D 10,
-> >         HRTIMER_MODE_REL_PINNED_HARD =3D 11,
-> > };
-> >
-> > Committer testing:
->
-> Further testing:
->
-> root@number:~# perf trace -e timer:hrtimer_start --filter=3D'mode !=3D HR=
-TIMER_MODE_ABS_PINNED_WRONG'
-> "HRTIMER_MODE_ABS_PINNED_WRONG" not found for "mode" in "timer:hrtimer_st=
-art", can't set filter "(mode !=3D HRTIMER_MODE_ABS_PINNED_WRONG) && (commo=
-n_pid !=3D 103306 && common_pid !=3D 3476)"
-> root@number:~#
->
-> Maybe we can list the possibilities, i.e. print all of 'enum
-> hrtimer_mode'
->
-> This can be on a followup patch, just recording the idea here.
->
-> - Arnaldo
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
