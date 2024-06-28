@@ -1,55 +1,73 @@
-Return-Path: <linux-kernel+bounces-233484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7480291B803
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:17:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63FF991B80A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:18:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 976891C22053
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:17:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F7EE1C218AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07CB913E409;
-	Fri, 28 Jun 2024 07:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FDD13EFEE;
+	Fri, 28 Jun 2024 07:18:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="A78BQxXc"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SpmUfmU3"
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C308310A14;
-	Fri, 28 Jun 2024 07:17:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B739D7EF10;
+	Fri, 28 Jun 2024 07:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719559027; cv=none; b=ACvg4HiY7GlChqU0MRxwN+NbpLRqOgWJJXPC5GtNsyCzl5+vHPY/8Mezs5/lnrnsvCVdmiB4BMckR9ZDjJ9O3F1zrC1zO4N7YV1rQKjoIo4wY8Eyb42/HrT5CKFOBgAcRvMCLrK9ht6w4pMzZTBM3SmSUpKGY3NtulrrYXZmzrU=
+	t=1719559081; cv=none; b=gT2fyoUXCk8nNEBJlBUq9k4YxtFzX4ZYcpOSYQKDd4L2d66FIka5D/KcehQtez8h3pLrxAbzd9vRuVG286/AUo2MoF2J7jn/gx1hI1jo72vISKF5vVlYGyueyi1Jm5Ge93lUa0MMqD6Zgidvdiyunl6gqpKcoCxeyLPC7BoX5iE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719559027; c=relaxed/simple;
-	bh=DmlFcDAuhQL5dAxseaJPHDWyJzFoqXVVTL5/VSU9j+A=;
+	s=arc-20240116; t=1719559081; c=relaxed/simple;
+	bh=0RZPHCsU4i+1vrvYWab6QVG+YOkmC5+uqu8sWSbOTvw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hC8sLrkI/jVqL3hF0L0LPme4moT7Pb//8GZoSWHVuOKMymzUCb+whwQ8iYwi/GKWX8ayRWllp/NENJ/jqO0Hg1sXD+1ZTTw/uez/oBahWgbok8F9SG9vm7YiZp5M1hkWzFcFuj1u6ZnOrzT7nXWcWMW0M9KwOl3V9cv1ysZuZ14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=A78BQxXc; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1719559007; x=1720163807; i=deller@gmx.de;
-	bh=BVCvxso8LWcDBYVgY2qR9LImDTuBOXdQaYFxMSV7Poc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=A78BQxXc9VkBkMEX/sLHLzPceiNsRLnEajv/nSvoQDQKk6nwv8WvFqmENu6Z7iVJ
-	 3J6Z6IQUYYeTpiWDfIkkzsb9OmNGkDPyrjMNpEan/GpW3rCUKm0gV78xdtbat73Gx
-	 48uQsEvZTGbCXbfc2vSjdLxFmdbJW7xFLImM1fWcCspO58SmVMZwp4gtfYmG5K7MG
-	 MaDrgXw/+y/umPnUByR92FGHZcHNG1OdAN6VsjdEqq0KU0QDzQPi0DfoIiDdrNWnR
-	 DR9LGXC+hO+9c5hr7vyhfboTScIge+2qjK71tJHGAANS2RS3oB3RM57d9fgxNgFlI
-	 0/JFw1wQzXBOogB4DA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.55] ([109.250.63.78]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1M59C8-1sLzv03e68-004JhY; Fri, 28
- Jun 2024 09:16:46 +0200
-Message-ID: <72418d4e-76ac-44ae-9f4a-f314d925f928@gmx.de>
-Date: Fri, 28 Jun 2024 09:16:45 +0200
+	 In-Reply-To:Content-Type; b=kdJxMHyJnUm1+Uhz6S6p9yklB8uTODM80Chmf+76qXgV15eqG464nvfze5v+H/k7+f5zBtJSIrp6oiu3w0duhmXWXb+zgsq/o5vUs/v/Eei/d0sptpxRtObD+lictVjnFCRrBskaf+NNP986Ibl8I7FIvt3OFd2nlzipWX4zpPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SpmUfmU3; arc=none smtp.client-ip=209.85.167.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3d55e963db5so169594b6e.2;
+        Fri, 28 Jun 2024 00:17:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719559079; x=1720163879; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ihtavBzq8pdcbr377xAX4xq7trLirF46FWhb4Rl5dvA=;
+        b=SpmUfmU3tMZSwaoq7fHjk/Oa3vLuIW2qPCvN85FPREz9OjTWRa9X5eSZVN5sr5ndpU
+         TvPEm/LIlkSBl/lV43r+iCkeMmfXwNqCRe0pwp7BAF+PUebahLU/J8wmY9qItU9Un3rh
+         qOOXag2sJMBTJlARZiLbVFnmbzpKeLj3o2x7AO0E1Ra+RxEGM457+kO4EtbhKPnMqH3H
+         tWQfKRdCOTD28pmav1R502HM26tGV9BAXDK/gFH2jvTdRrjr3aXtBVpyDnZSRQoV23Kk
+         MIregEd/8WNGuO0PL41/15iZ3b22Aq7HWHn/bhi2LdSuxUzAJ39KGmWBYYM+r8upMEYy
+         pwOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719559079; x=1720163879;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ihtavBzq8pdcbr377xAX4xq7trLirF46FWhb4Rl5dvA=;
+        b=ENIHzG11tHjRsTC9smjOrlIEMYAF7+GDYM9QT7Ryaad3BqViwzkRelPGNZEeeAly0N
+         kgtaQElFvqap12KqG1idg8FxMe2RzB5G8JZFOci7YQ0JYAttsltyIndbGIJPyc9PppRO
+         Udzr4n05pBNDEluBU+MUvJ33xeOtjdE8/Lh+iD6xr7NWjVFp6D1baFobKkAjqKp5XYN/
+         JToeexarP+RR+D1VS29SN8WYGKNgpjPg6GF7kQGN4h1/Aka9LNfQrg1H2O7zO0n8tW8g
+         CYivdP+WNrP8Ca85IN+Y2Os9TYdfZIQzAwf/6e3Z7xicrfylZdyUHhXQ9epj+RwRqiVT
+         ntoA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/Y1Mwm3uUzw1uIMjLzT3iQj93a9urPjU8nWoadAm7Sjkar8g7in25X5Y0BjqnGMlMDB5Ix03aBxn4V9Ct5i6SOzXSAXqLyl/uEoIX0gaFlu6DW02Hgvqlp+tX7Pdwc3lFXfqvE0gyQXLiI54a3eQHvf3PtO+dRSl2vdfqi1ENjI3Yaw==
+X-Gm-Message-State: AOJu0Yyhne3PBOdYhwU9grqvlQggfLLRV8nJbQ9S0RnK3ks8D51+V+1x
+	H3w662fDJ283TYN6sAV9g6RujzJ8Mo1wHfz6oC9AxuN603GUpS5jvVVXHb+9r9c=
+X-Google-Smtp-Source: AGHT+IFRIoBQG3lK79wL64nahydZiVGcshjIkJCabX0xCJPwNakHf8vLho5MT+pOLeZP9d8Q05SeWQ==
+X-Received: by 2002:a05:6808:1287:b0:3d5:5f49:86ea with SMTP id 5614622812f47-3d55f498a3dmr10255017b6e.22.1719559078686;
+        Fri, 28 Jun 2024 00:17:58 -0700 (PDT)
+Received: from [172.19.1.51] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70803ecf9d0sm876772b3a.115.2024.06.28.00.17.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Jun 2024 00:17:58 -0700 (PDT)
+Message-ID: <bc609725-9201-49e7-bb34-3b3b4077c0e6@gmail.com>
+Date: Fri, 28 Jun 2024 15:17:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,90 +75,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fbdev: omap2: Return clk_prepare_enable to transfer the
- error
-To: Chen Ni <nichen@iscas.ac.cn>, laurent.pinchart@ideasonboard.com,
- kuninori.morimoto.gx@renesas.com
-Cc: linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20240628032812.280895-1-nichen@iscas.ac.cn>
+Subject: Re: [PATCH v2 2/2] mmc: sdhci-of-ma35d1: Add Nuvoton MA35D1 SDHCI
+ driver
+To: Adrian Hunter <adrian.hunter@intel.com>, ulf.hansson@linaro.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ p.zabel@pengutronix.de, pbrobinson@gmail.com, serghox@gmail.com,
+ mcgrof@kernel.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
+ forbidden405@outlook.com, tmaimon77@gmail.com, andy.shevchenko@gmail.com,
+ linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: ychuang3@nuvoton.com, schung@nuvoton.com
+References: <20240626094900.581552-1-shanchun1218@gmail.com>
+ <20240626094900.581552-3-shanchun1218@gmail.com>
+ <216059e5-2160-4797-b431-b391ff69cd2c@intel.com>
+ <f0ae92ec-ae2c-418d-9cfd-199e312e2c23@gmail.com>
+ <8e633bf9-4891-4e5c-acac-187c7e7249f5@intel.com>
 Content-Language: en-US
-From: Helge Deller <deller@gmx.de>
-Autocrypt: addr=deller@gmx.de; keydata=
- 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
-In-Reply-To: <20240628032812.280895-1-nichen@iscas.ac.cn>
+From: Shan-Chun Hung <shanchun1218@gmail.com>
+In-Reply-To: <8e633bf9-4891-4e5c-acac-187c7e7249f5@intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:dx4qoQlPZaG6FI2b4ClufdZB9k9eYU8N+FyxceWck9YLG9mnnvO
- cLvm3Jjf3/GL3vdpDT3+wZIiB18yfBzs+cSnGdz1cATRfzYcWPoaG48DYmWw0LZLP2uB+hl
- Xz1dsb005pu3di56zns6CUzjK67p2JnASgQUHLCr8PybEKwHqP9Fan+NRl6E0W6a+mS3n9Z
- YACq+irr0j5MqkfxnQFMg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:3LYUJZkI6qQ=;SZ013v6RcqX/uXL1yPPXZ2LVXAM
- hV96OijzHdb9eYhtjVlvsYFhuZ4upnwebPkwdFeSVQuLgmpulCUVs40DJZ9eVd6+2idD50CN3
- ZT2OyFT/d7pPu8EKJPtsqlmco3WtVrHQmRP83ukosUNmPqFqwcRZ7uUTWIMlZNBOVfTCX4wEp
- 4SE+Yg3u1pK/K/vVfoS33jhjtFumUN188DQa6UrZEytSdsJ1dJgfZ40oFYgmvnvZ/ir4gBWKh
- DxEb8oPZjMXirKy2ExwYPZG6TiyiJPYoSjn1UaNMYtnliNCHCYGKnR3491j8T/XICjVNxVDy5
- oRFffHXehNR431+BXnwv+NEGTq2YtnX9HCDNovCNOW3NG619g5yocmwWZillPb7AAUrR+6C7d
- e8GrtREfjAOXsI0HwejhNNurTnc4NAzvPsBF7LsXDC5JMWoptL2Z8sDNZCtZ8BmoVvdWhF1RJ
- 7pSNdREXqONcwmtX2liPGzwpvT19ANw+pr1SqrVKgZ36+rWMWbLnMKbQrRNg4dhC7YXmpksd7
- lKjsDKihYhv4eSUjjYe9Dq9hrOfPN3P6ZlCnQF1a3Caadj3cyrm7gY929Nih2JccIwl5oUsOq
- VE1nI9dq2U3PP8Ek91kEfdayj/w95HhhBV5GjDr+vW/E8rBtC2O/qwrLGnxz+gVpct4T4OpmA
- 7zOb+fb0Qe0ct5526Jm0RJ/jaiEtQ+9P1WxUrDRk+BCjOEF9qSs5vzLZJxxyoBmslEP2voYxr
- mg/OqxT7V7H+Zg5vxQXGTNAVQKe6CkKE+1Tpb0xyDl4uQTPEhDQIu1hIz3owAyR9QJMq9tTkQ
- uAx2yRizO8u+LmSkAxHNqVhajdc5Dp4C8lloHVIje+trU=
+Content-Transfer-Encoding: 8bit
 
-On 6/28/24 05:28, Chen Ni wrote:
-> Return clk_prepare_enable() in order to transfer the error if it fails.
+Dear Adrian,
+
+Yes, that is correct. It relates to the AHB bus DMA burst size.
+
+     /*
+      * Split data into chunks of 16 or 8 bytes for sending.
+      * Each chunk transfer is guaranteed to be uninterrupted on the bus.
+      * This likely corresponds to the AHB bus DMA burst size.
+      */
+
+Best Regards,
+
+Shan-Chun
+
+On 2024/6/28 下午 02:59, Adrian Hunter wrote:
+> On 28/06/24 09:30, Shan-Chun Hung wrote:
+>> On 2024/6/27 下午 05:40, Adrian Hunter wrote:
+>>> On 26/06/24 12:49, Shan-Chun Hung wrote:
+>>>> +    /* Enable INCR16 and INCR8 */
+>>> Comment would be more useful if it said what INCR16 and
+>>> INCR8 are
+>> I will modify as follows:
+>>
+>> /*
+>>   * Split data into chunks of 16 or 8 bytes for sending.
+>>   * Each chunk transfer is guaranteed to be uninterrupted on the bus.
+>>   */
+>>
+> AFAICT, it relates to AHB bus DMA burst size, so maybe add
+> that if it is correct.
 >
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
-> ---
->   drivers/video/fbdev/omap2/omapfb/dss/venc.c | 4 +---
->   1 file changed, 1 insertion(+), 3 deletions(-)
-
-applied.
-Thanks!
-Helge
-
 
