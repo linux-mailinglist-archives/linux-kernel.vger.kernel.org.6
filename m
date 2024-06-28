@@ -1,112 +1,86 @@
-Return-Path: <linux-kernel+bounces-233857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 227DF91BE5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:17:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CA0891BE5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:20:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53C851C2351B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:17:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E0C11C231DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB3115748F;
-	Fri, 28 Jun 2024 12:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F2GYbI1n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C483155382;
+	Fri, 28 Jun 2024 12:20:06 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD2B71E898;
-	Fri, 28 Jun 2024 12:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B36F1DFF7
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 12:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719577064; cv=none; b=gKXsK60ib6PFcWaK4N7+NTY4nUgYfes5o1tVcO+21MiWbR/ZZ4lw3vY5SD1B2Q4Pr65cnfx5XF2zuN5h7BeYqcRbe7dtinIv5WrglvktpWB/jPuf+Gm5qfG175n0ZoN2R+vLUAGxUY905dY63DFMse1OA0SiNnSVLOwd6vwx25A=
+	t=1719577205; cv=none; b=X77cN3Y0blIcL75gElmP8lHlHfbUgLJu8kKv9Ad7ss8NcYMwf9RQ7kKE+6RkbSK8hTKYeUqSQSwahgeaEbo3UouL4pWertpUUBBcSNttsjWBv1Q7kNE18pYpkKm7aoRugnKy+6XgN3afL1ywYCl9TlojB51zli8qXBoGqYqG9/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719577064; c=relaxed/simple;
-	bh=lPJqidH6rh/hlQuWyzH6JWqpzeGhRdafVAMs4oSHz4E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FoPiKMQn730OVP6ZnhzKtoJbLj5CF7X1+DGfU5g+8fN1lnzM2ZNbuBoA3c4jtATqNynDIEoiLf0HOJgpxZDo9QWnf4ly7PjXq3M7xD4iUvgrB8qpr75Qtw6KOPxFoGKHfgNHhzhhfXatx+zof7uoL0KxlJIHfysXWHsu/pFqpZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F2GYbI1n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0990C116B1;
-	Fri, 28 Jun 2024 12:17:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719577064;
-	bh=lPJqidH6rh/hlQuWyzH6JWqpzeGhRdafVAMs4oSHz4E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F2GYbI1nQ/yRuFUoE73M98TleeFTikguAos6EIvQhQHMmeptwXiBxBZu97ptu8dRC
-	 ZGFHqwpYzKjKOYqx7iszA/QHESDYTXOqKJeVKfmrgIr/bmf992ebpNrUEKX5Ob/QKK
-	 8qIl6Hfov8OaIqS5yN08WC7bUgnrg1xW1KIaH8gLNO1JY+mnqWq1ybNWDvL/jvklWK
-	 qfPM1sfex6KWU4vttFtXTlUje4z6efY3Uo3A82rVXk6W8VGtJg38sJIoA0SFRwOHfH
-	 A7ghmVbjUc/wNQguxLYcQgDWcOidHQNUI/MeP3XEZ+8IBVd2z33vhrCuwUYL+OCb4Y
-	 mSG1TTbQP9vbw==
-Date: Fri, 28 Jun 2024 13:17:38 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: David Lechner <dlechner@baylibre.com>,
-	Martin Sperl <kernel@martin.sperl.org>,
-	David Jander <david@protonic.nl>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-iio@vger.kernel.org,
-	Julien Stephan <jstephan@baylibre.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v2 0/5] spi: add support for pre-cooking messages
-Message-ID: <15effa16-696a-4cc5-941b-375d1bbc31df@sirena.org.uk>
-References: <20240219-mainline-spi-precook-message-v2-0-4a762c6701b9@baylibre.com>
- <Zn6HMrYG2b7epUxT@pengutronix.de>
+	s=arc-20240116; t=1719577205; c=relaxed/simple;
+	bh=FDC2dUfWO4nH9LpDf6cyTh2SdPvtJfTTD59QqRggdOg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Wi4jZFozv3cNbXyR2kaaR4v3/y67KpGC0HsshObcDXdxJYLMZVrXu3B22qZzPqyTpSrpawOclbJfWN+F5o8YPEZC+MZOnpqKDjYZ6dA7a7/XjndmcRTmBs1rEOfDhaQU5TYsGoIpYqUEq8E1db3+zHe994Id7GDTFN/2oXs3CGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-37597adfab4so6235125ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 05:20:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719577203; x=1720182003;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UYusc0tQ3njMzJmg2sOkeDNFSQZ+MDXlKHNqZlbwyIg=;
+        b=diGM6F38HJwmGdha2KhJO8MdLDdhudOkOizZDr0rzjeptARvvhq4bkCPWgRDQ3lYnj
+         Eya5ggqgpA6MDbXICfe2Q9TN7BOOcZJjHKKmAwJyzz1BtAS9YXzE0laiD6hocgXLB+Cx
+         zHpClth40PjpW4aQ/YiP2J6qQkZeARtFPpckxt8fDTeymFnfLtGXQ6RZ/41JjmvgtEp1
+         pjXTv6sUN3PmK8HDrVNAOE5IqzQtfuEYUWSeOOlFtx28eopUQgHU+OMhUWdKTC1eIPv1
+         guas5XxKljGCKWkJgy2AYqRdIapwTQsSpgr6CCt/sfvH2AF6MB8uy0fQsl60fWdcRrlU
+         9Xfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUhPf9tFNi1ZHRLnXo+P/PLNbr+hXBUkr6g8rmW0GRk6FeiRkieOzTuJ7TDVU7DwzVvaZ3MRHcHGOFYtTTCa64/kWWy8/IDskYjet2o
+X-Gm-Message-State: AOJu0YxvFbOONarSSH6EUCOD5PHvZtMGlfeRiy2T0sWbFFf4bBZhukQo
+	xdscYrsglqQpizFUKzKaeAQrGcgL4g4xAJ3PL2fqyqhRcz3BduuGvsOdZj8Ib6CdyNPpFJOzq5E
+	mlAwF/o7GhdgMM7Di7e2B6LPZQuLGslzhyLerYA0vMq/nRk+/P4yM9s0=
+X-Google-Smtp-Source: AGHT+IFgBt3+tAZJOdE4bRf3OpqAXRVPLuWocVu9MUG1gfrSV96Sg+sF5HdHKKaLiQZDUVoEfIAf/IMPokmsymnS0BvmjgKyJIao
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="HJ5q/Xqa/ExsXZ/6"
-Content-Disposition: inline
-In-Reply-To: <Zn6HMrYG2b7epUxT@pengutronix.de>
-X-Cookie: divorce, n:
+X-Received: by 2002:a05:6e02:1a8c:b0:375:dad7:a664 with SMTP id
+ e9e14a558f8ab-3763f74fbc3mr13890005ab.6.1719577203442; Fri, 28 Jun 2024
+ 05:20:03 -0700 (PDT)
+Date: Fri, 28 Jun 2024 05:20:03 -0700
+In-Reply-To: <20240628102859.2379-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006017fa061bf244a3@google.com>
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in l2tp_tunnel_del_work
+From: syzbot <syzbot+b471b7c936301a59745b@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
---HJ5q/Xqa/ExsXZ/6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On Fri, Jun 28, 2024 at 11:49:38AM +0200, Oleksij Rempel wrote:
-> On Mon, Feb 19, 2024 at 04:33:17PM -0600, David Lechner wrote:
+Reported-and-tested-by: syzbot+b471b7c936301a59745b@syzkaller.appspotmail.com
 
-> I have a regression after this patch set. My system explodes with
-> following trace:
+Tested on:
 
-Not looked at this at all but were you able to try a bisect?
+commit:         185d7211 net: xilinx: axienet: Enable multicast by def..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=14609ac6980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e78fc116033e0ab7
+dashboard link: https://syzkaller.appspot.com/bug?extid=b471b7c936301a59745b
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=148aa8b9980000
 
->  Call trace:
->   0x64f69bfd319200
->   spi_async+0xac/0x110
-> 9H0[]6 spi_mux_transfer_one_message+0xb8/0xf0
-
-Could you run this through addr2line please?
-
---HJ5q/Xqa/ExsXZ/6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ+qeEACgkQJNaLcl1U
-h9DIsQf+LObiaHYQilaxnoCMNm6d/Ie3c221fUY6BfaRAVRU7kBHxpM1/DtRXMzN
-B+OJxgTKmT726SMZoT+JX+fRfF4GWYQhPpM47Ic6leC/uwk8EjhNGT5rHXCUutIN
-58EmKsfMBn2KI/L4avav/nigQE0hsB7EJK8QnjsYEi29TdZVWXEGiRTJRK3VoDTI
-Xd1vroVy2Y2NCVjkW6QvxeSmdYtcoYtH/SUH5omPJTDea3+5kyLnHO2Ufftsluo5
-C0hJrSchIpWOPBU704f0MQ8ZscKPsVEa8Cjuqf2w3qyBcs0ORGWlD7HJdtfP8BGB
-vCyX+tJs4JccE01WgzZGfEQoreK5Jg==
-=vIz6
------END PGP SIGNATURE-----
-
---HJ5q/Xqa/ExsXZ/6--
+Note: testing is done by a robot and is best-effort only.
 
