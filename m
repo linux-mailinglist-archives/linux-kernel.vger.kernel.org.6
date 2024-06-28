@@ -1,170 +1,140 @@
-Return-Path: <linux-kernel+bounces-233657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB6BA91BB1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:10:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08D6D91BB24
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:10:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7234D284E34
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:10:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B5681C218AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A17C1527B1;
-	Fri, 28 Jun 2024 09:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aL9hMGs8"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C9915251D;
+	Fri, 28 Jun 2024 09:09:02 +0000 (UTC)
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A471514CE;
-	Fri, 28 Jun 2024 09:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72966143886;
+	Fri, 28 Jun 2024 09:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719565679; cv=none; b=HhgE6iRk83JHG3zEI97tOUP1C9vP/v0mO5hjVdCEQzDUd3UZeL5p7tCkVQoEFP4bD3BpWM5m0S/ll8T/K236zJsIqtO8hjp7e0TGTLwdhmmGZVeaI9aH//J5izdHGFEZUq1gifIlCjX/GD0YdhfxAG7q3c+mTQ6+8gUE3c8GZOA=
+	t=1719565741; cv=none; b=ZhpuK7sQJipGmYGuQ+0JDXIDz0b9aUdJU/nopioEubJ2KpDQPfkaaKNRSvAe2MuwYqdC6wGHx2salAYr+IFyG0KML4j0GTs4Hwf3OtodK7mHd3N4eW2FQqDPr1QAw+bERELPhnJ/7eyEHZbL2uPYg1AgSE4SMo2mUtUcnM/V8Fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719565679; c=relaxed/simple;
-	bh=5fQWibtpOshGtirNX2M3Lzqc/lxOsvsf7eoeRN+pJxo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qQc1rhITNTHxMvsT2nv/iKmv174p6EuX9MBPiHE/THfDM3L5Eb+vlYIBI3X6N9A41r5aCzHzLd9lcQomtXzbaWUOM9F3j7a0ml5MhlVUg3xB1mQgWOg6jjvvNMzlbcfsmJAFHFIS85YOHOyb2PsB5nxx6nK/RJDW7tdduBgBU+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aL9hMGs8; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1719565741; c=relaxed/simple;
+	bh=V9E60qE03GNp1ZSzcc5LUZ5BfHBScjNIHpUp764H5Sk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mv2C0z0GanxX9wagGJcxaaiJCgvbxCj1hGNpELjcLJ2fM1YAEpdC4Sq5AOsU0bbOe09LGByhNHs9B8AzzP9aB9kGgdPt+Cz6NCBUQuEbnsD+bTrGid5u58aeTk0rolNuVM7IflkoPDaYjbAAQPKJasUy40PiyJDgUieSte8PSYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4248ff53f04so3094295e9.0;
-        Fri, 28 Jun 2024 02:07:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719565676; x=1720170476; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cew9yHu3J9evLv4jKck/18U0eJGnpQ5whgz3tg5sGmw=;
-        b=aL9hMGs8ImReec1XdLta2UITLJT8DB0dDcpL4wv/9MKctfMnmOk+M0F7yq2mPkbM6B
-         22SGrEr33+6Qv90mqzrL4JC/zg4xbjQxec3MS5UYv76M8C2p9d1lW2RbLafQj6XgvQkQ
-         xGqRogBHW1bXB+6i23JAYkiovPrh1X1oVDla9kKrZhBSmhNhBTMPDC+kJnt9TmaN+Jcx
-         ZHpET6GfDXCV9oA9hcqavZnpQMqS/KfLUuYU6gET+8OvhLdlGOGfgA33yeoCtezl6ksg
-         R+xRI8T85QuWqCn/846d2SBAC92Dgt4LZIt8eMcn2DIXlFI1HyTFipYKknl8N3hvLYZj
-         vbyg==
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e035dc23a21so268295276.0;
+        Fri, 28 Jun 2024 02:08:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719565676; x=1720170476;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cew9yHu3J9evLv4jKck/18U0eJGnpQ5whgz3tg5sGmw=;
-        b=HZSF7X8HapzoXuLUBQ1TiSeIcLg/x/JdxlAKXoRGsqr66uP9MmmaitqSFj6qUWuFJm
-         dWF4yQ5gFOLhi86YyDI84AnsuQfr5mHN8vlS2mIEUdu+AiSuTxBdCX1nA3JZ2VRymsaq
-         +FV/4nIKbjw6G3bgUUHK85tucJD6IHOwC2FPAp1iaUaLmn5M6X7H2337yHBoNAOAC53w
-         Pepmfs3yzJWXt9gzI8oqVqj0OREVD7x+cTdGQHzZOWgvw6NOaZ/qcqmX7PQLmE/Jrnrs
-         xd8lhwDY8Fj1qVR4tXQi6KYSvNBboZQBQPIrkmD4Qdv1LwAsisCZ5MFkNRn/klK4IZr1
-         EbPw==
-X-Forwarded-Encrypted: i=1; AJvYcCVgZrnYzDhgFVnbUmpwvtV+rgWzCn/kQhGLzrs7a3zGqFDZ/XwQOVGHh/l5CLWGDHS5hJJT/SU/nRcWuYWLMWBqN7IhGzZcoDsW4LPA4jrLCyIahVhnuu+25MA2XH7NgT/XM34NiIVCdw==
-X-Gm-Message-State: AOJu0YyZcMDmNc7jZ+pAOkNpbkA+pmkPNwzubDu4kE/1Z1yO0XnB5hul
-	vfean939tHEkpzBtmA6yjCAiMSMWnHqFUYpD30GVAyiqkWotcBt8
-X-Google-Smtp-Source: AGHT+IFQmp20IWKSZUXJyuTq3KzuQCJ5ILSvfoBtaCo0ZNshBsYzvl/EkkAk09uYIl3jP5aG0vhWMQ==
-X-Received: by 2002:a05:600c:4f8f:b0:425:6f96:8bce with SMTP id 5b1f17b1804b1-4256f968deemr4401445e9.21.1719565675854;
-        Fri, 28 Jun 2024 02:07:55 -0700 (PDT)
-Received: from vitor-nb.. ([2001:8a0:e622:f700:9efe:cd99:5e7d:a75])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b09a94csm25226885e9.33.2024.06.28.02.07.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 02:07:55 -0700 (PDT)
-From: Vitor Soares <ivitro@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: Vitor Soares <vitor.soares@toradex.com>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	ivitro@gmail.com
-Subject: [PATCH v3] arm64: dts: imx8mm-verdin: add TPM device
-Date: Fri, 28 Jun 2024 10:07:51 +0100
-Message-Id: <20240628090751.797818-1-ivitro@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1719565737; x=1720170537;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VmEhtYpo+REVO/LhNr2Nj/+NOg5cmsiF88zpbEmWvCQ=;
+        b=nLkb1hbKEaq84NFzYho9QXUgWBi9BAHfbkshCkMV7uuHeN3K/y8M+sTJ9DMvfErk9M
+         9jf254rODKMAESK43crKHU8Y2dHja37pU0HbYC1rKmsY+ug58vFfvScTK/gbHVvCMjQQ
+         A3pewX4sDVvOAqwRwQaSPc+71uC/DqFg0K8UloItMT7k1RTIgUjANGgJjVJAShGIZxaH
+         ZcDVH8oxVEheSKyphBV+M7NvLbQHkHGWYsjeX5K8bPijX9kWCG6WF0/Mw4Q6WVqFPqX0
+         htGfWlE7dyDpSW/bYySXWBD3+I8JAc8JRUuvmJlgSve9/qMmkzGdXt7ADyA3q6cysWtX
+         vK7A==
+X-Forwarded-Encrypted: i=1; AJvYcCV1P1K3uLGrJoYK2Q+kQdttrmROFNORZcP1lt71lGkjsctIBrpbahpNA/mT/jgf84pwFshf/m1AxyF4ypurUUBATgXh38BBvyNcsFyQxGISFbouLpY2FJeWT/ZbyvaWJl54UgNOZGT6/2cWI5wld5inz/U4bQwSzcwHoEnKMSRIc37J+Brk7KvzDjPZB6vJ4yyH8OkcIyufO/YuzyDaBiU6VYa3/qbf+HclZynrciw5d66SYfv1ro8jItydpeo8JFxg
+X-Gm-Message-State: AOJu0YwaBuUqCRh1DWpy+UM4T3HjDdNl6dWTPVvdN0cOA22gpyYzJLSK
+	shIFVFRPCf1DwOEKjmGmaVMJUoHEVXoRq3CVqhBt+pn/tciqa6lIewRJhmaV
+X-Google-Smtp-Source: AGHT+IEdLQVdDZIKv5kTADQPClDDJ9RYFiHmeHyrh+V2qmFh14Vd421MbTW5RDjkcOW3gcIN0rRFeQ==
+X-Received: by 2002:a5b:b0d:0:b0:e02:bc67:829e with SMTP id 3f1490d57ef6-e0345587a0fmr4644925276.65.1719565736763;
+        Fri, 28 Jun 2024 02:08:56 -0700 (PDT)
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com. [209.85.128.177])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e0353d79c73sm257216276.24.2024.06.28.02.08.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Jun 2024 02:08:56 -0700 (PDT)
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-64b0d45a7aaso3072657b3.0;
+        Fri, 28 Jun 2024 02:08:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVodL8ffWFlkBworYdqfcDgy7p4jDGxn3MlH3gD5dA0eOWNhvfwNjVeOfLHDyHoWdmiZHor2pFF6S+r7tQVm9ujsYqxSzzboPwd6ZciUrkofqNQxl39c6ObZH/YEoi2Qm1bqAqfOKKQok3gWlElCH0zshToB45enlYFrbQ9AYg4xBoniQn/XjgCfORHuK6TTdHOQCiWT7wUdTfVqXZ/4htvTg/pGV3Q3cOfDoJkBBiZ3Al5z6qxHz7pRr4r36S5VrH4
+X-Received: by 2002:a81:6e54:0:b0:63c:486a:289e with SMTP id
+ 00721157ae682-643abf3cbd5mr164214937b3.32.1719565735023; Fri, 28 Jun 2024
+ 02:08:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240625121358.590547-8-claudiu.beznea.uj@bp.renesas.com>
+ <TY3PR01MB11346EF9A001F68162148B70F86D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <6289f329-118f-4970-a525-75c3a48bd28b@tuxon.dev> <TY3PR01MB1134603F92C72D9B6C6C3733C86D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <2f162986-33c5-4d80-958c-4f857adaad20@tuxon.dev> <TY3PR01MB11346CA73575CF61B2024F3B386D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY3PR01MB11346CA73575CF61B2024F3B386D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 28 Jun 2024 11:08:42 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVRQ-o2ERma2UD0NJ6CgoJv_TaQYua+mS3tZdGziThjDg@mail.gmail.com>
+Message-ID: <CAMuHMdVRQ-o2ERma2UD0NJ6CgoJv_TaQYua+mS3tZdGziThjDg@mail.gmail.com>
+Subject: Re: [PATCH v2 07/12] i2c: riic: Define individual arrays to describe
+ the register offsets
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: "Claudiu.Beznea" <claudiu.beznea@tuxon.dev>, Chris Brandt <Chris.Brandt@renesas.com>, 
+	"andi.shyti@kernel.org" <andi.shyti@kernel.org>, "robh@kernel.org" <robh@kernel.org>, 
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
+	"magnus.damm@gmail.com" <magnus.damm@gmail.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>, 
+	"sboyd@kernel.org" <sboyd@kernel.org>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, 
+	"wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Vitor Soares <vitor.soares@toradex.com>
+Hi Biju,
 
-Add TPM device found on Verdin iMX8M Mini PID4 0090 variant.
+On Fri, Jun 28, 2024 at 10:09=E2=80=AFAM Biju Das <biju.das.jz@bp.renesas.c=
+om> wrote:
+> > -----Original Message-----
+> > From: claudiu beznea <claudiu.beznea@tuxon.dev>
+> > On 28.06.2024 10:55, Biju Das wrote:
+> > > Are we sure RZ/A does not support fast mode plus?
+> >
+> > From commit description of patch 09/12:
+> >
+> > Fast mode plus is available on most of the IP variants that RIIC driver=
+ is working with. The
+> > exception is (according to HW manuals of the SoCs where this IP is avai=
+lable) the Renesas RZ/A1H.
+> > For this, patch introduces the struct riic_of_data::fast_mode_plus.
+> >
+> > I checked the manuals of all the SoCs where this driver is used.
+> >
+> > I haven't checked the H/W manual?
+> >
+> > On the manual I've downloaded from Renesas web site the FMPE bit of RII=
+CnFER is not available on
+> > RZ/A1H.
+>
+> I just found RZ/A2M manual, it supports FMP and register layout looks sim=
+ilar to RZ/G2L.
+> Wolfram tested it with r7s72100 genmai board acessing an eeprom. Not sure=
+ is it RZ/A1 or RZ/A2?
 
-While adding the node, rename `pinctrl_pmic_tpm_ena` to
-`pinctrl_tpm_spi_cs`.
+Genmai is RZ/A1H (r7s72100).
 
-Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
----
-v2->v3
-  - Match node name with label `pinctrl_tpm_spi_cs`.
+Gr{oetje,eeting}s,
 
-v1->v2
-  - rename `pinctrl_pmic_tpm_ena` to `pinctrl_tpm_spi_cs`.
+                        Geert
 
- .../boot/dts/freescale/imx8mm-verdin.dtsi      | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi b/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
-index 98544741ce17..085498fa471c 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
-@@ -228,15 +228,16 @@ &ecspi2 {
- 	pinctrl-0 = <&pinctrl_ecspi2>;
- };
- 
--/* Verdin CAN_1 (On-module) */
-+/* On-module SPI */
- &ecspi3 {
- 	#address-cells = <1>;
- 	#size-cells = <0>;
--	cs-gpios = <&gpio5 25 GPIO_ACTIVE_LOW>;
-+	cs-gpios = <&gpio5 25 GPIO_ACTIVE_LOW>, <&gpio4 19 GPIO_ACTIVE_LOW>;
- 	pinctrl-names = "default";
--	pinctrl-0 = <&pinctrl_ecspi3>;
-+	pinctrl-0 = <&pinctrl_ecspi3>, <&pinctrl_tpm_spi_cs>;
- 	status = "okay";
- 
-+	/* Verdin CAN_1 */
- 	can1: can@0 {
- 		compatible = "microchip,mcp251xfd";
- 		clocks = <&clk40m>;
-@@ -246,6 +247,12 @@ can1: can@0 {
- 		reg = <0>;
- 		spi-max-frequency = <8500000>;
- 	};
-+
-+	verdin_som_tpm: tpm@1 {
-+		compatible = "atmel,attpm20p", "tcg,tpm_tis-spi";
-+		reg = <0x1>;
-+		spi-max-frequency = <36000000>;
-+	};
- };
- 
- /* Verdin ETH_1 (On-module PHY) */
-@@ -808,8 +815,7 @@ &iomuxc {
- 	pinctrl-0 = <&pinctrl_gpio1>, <&pinctrl_gpio2>,
- 		    <&pinctrl_gpio3>, <&pinctrl_gpio4>,
- 		    <&pinctrl_gpio7>, <&pinctrl_gpio8>,
--		    <&pinctrl_gpio_hog1>, <&pinctrl_gpio_hog2>, <&pinctrl_gpio_hog3>,
--		    <&pinctrl_pmic_tpm_ena>;
-+		    <&pinctrl_gpio_hog1>, <&pinctrl_gpio_hog2>, <&pinctrl_gpio_hog3>;
- 
- 	pinctrl_can1_int: can1intgrp {
- 		fsl,pins =
-@@ -1111,7 +1117,7 @@ pinctrl_sai5: sai5grp {
- 	};
- 
- 	/* control signal for optional ATTPM20P or SE050 */
--	pinctrl_pmic_tpm_ena: pmictpmenagrp {
-+	pinctrl_tpm_spi_cs: tpmspicsgrp {
- 		fsl,pins =
- 			<MX8MM_IOMUXC_SAI1_TXD7_GPIO4_IO19		0x106>;	/* PMIC_TPM_ENA */
- 	};
--- 
-2.34.1
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
