@@ -1,117 +1,147 @@
-Return-Path: <linux-kernel+bounces-233566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82BDA91B99C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:14:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D5A691B99F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:15:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3830E1F21766
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:14:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4689F1F23D30
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:15:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D611474A9;
-	Fri, 28 Jun 2024 08:14:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F306146D53;
+	Fri, 28 Jun 2024 08:14:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="OZ7BZVkV"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PAn8MuQD"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F6C1422C5
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 08:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C7E145B09
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 08:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719562448; cv=none; b=ddLBGYnIMBVN9E35n/wxkwq/tSmxRPr7FzznOJKOiWOFkus2xL0i7Q2DrF+65EQG1IIB5xhDC9fYhaa+alRbSSGmeVjWzqWSiQQxjc6qMZlTDUrm2/5axmzy3Sw87FCjA6pSR9KV85IyQzSnvWCKN1IIwLvuzEMwqthoxhYTfXs=
+	t=1719562492; cv=none; b=VnUL0yZaje+iFjjQDsetFTIDf2BnlMbKOrq3aKjMsgGSrk8E+CKMf5445YZtS9Gfjz3mbmdlx4e7av6WXunRumL2c1+TEvLvANc68Vgem1Rx4yLXHQCT2SWt3BC1t5WFpjVWBMQt0pOcAaBRIOgdeXKCjU1YKYzpEYDc1bk3xuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719562448; c=relaxed/simple;
-	bh=nqRVrVZ5iHTB+ps1/W7+ndXdI8MuJhemXqbN2y63NUc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=miITB4Z5h5PHQChZXl8Vq4qVIGT/nOV1amr7oEwwJTuXOLEZGvDwkVMbtu/JMeNZ+i/K/4w9iO5Smglt4m+UNjj2V0WnVxocrmgBkQoqd1uwxZA7E4LYEHt6UiD/+xx33IVJB8e+5JBO4RMp6w7qXmn8o9Xz93mYSHsZT5UC01s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=OZ7BZVkV; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-36740e64749so224305f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 01:14:06 -0700 (PDT)
+	s=arc-20240116; t=1719562492; c=relaxed/simple;
+	bh=aIFPuYhbMEspAOzXfR/bH+Fm5KNxHLFrbI/0BWwUaQg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iCjDA9uXuncQmoQNm2j2jPT/VmuyQnBL7zuoJyiUbCw231PXNSGmMsvZ/Uwe82IpIqKQWcMqCIFZgN3B2I1hGbgKzRsffngwsMGM23oS6g2XqIoKqCkhSBlPVaSiDaayeC6p7bECnweh6ROykmP80vxipaSpeITFKJjBwZdItsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PAn8MuQD; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-425624255f3so1976445e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 01:14:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719562445; x=1720167245; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M+A2p+KZRH/8xvrbpyHuEUhzOc8IOFJevUwe6fDGuuE=;
-        b=OZ7BZVkVWwOvMm/H/ywvPbjhfbJxOZNVB/vrrohsdOo+jUA66Rk1aht/Lke9Ml6HMh
-         9Lh0U4EozX7mZwFplFdSM5E4S0C0wV+xgw9C8Iu7vvWtbrEeX2xeugxwTi8zVBeaF1Iz
-         hh+nCyP3BbGEQ693Z7ghQBsMDN7n8iAi3zYs18BNQPPEYnKceFKJoMsqGMEDXP12p0FU
-         wgvdccBGFcmCXtAauko4xYrttAWnYBQzmlwvQpmLZCvrhmnY3Rn1NeJs6l2/LY4Dp0CR
-         nWftVEFeTOKDm/t3wV2KRkt+6B6gR0j+u4YKKkZrX9QdxHs62O5gonsa9q9Sw8YzKjvm
-         jLgQ==
+        d=linaro.org; s=google; t=1719562489; x=1720167289; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5p5vZCwu+kIfI6E/jSCcA3j2SGSRGBxA6ocPxaq30sA=;
+        b=PAn8MuQDujwx80dRqoIi+PbRmh1eU2eqYgBkBvgXAgoZPwYHT6Ie2j5som5T5J8P6q
+         yHNGtPkzcXYf7YD/ygjD2uqmkSaQ5y1mNxdCThr4e+EGoqHk/l2VOHp8QFU+2G7eXfer
+         12X57xtqI0TFr2Iqll4m17tNQs0IBgxl2R/3i2dDe7iPZWfgmQxyzrTbX9jEL3lh1l6F
+         NMlEFscCnAlZKQLAio4RrDLedictefVqCamWvtuL0RJCOKYEPB8GZKZUjE3ieZZB/B6j
+         Jr9SUkgj115j7cfEaGMRyNysiSyXE5KWvdi2XLjj4gahLtPNVknU2HETyyVYiOO0W7vA
+         Ct/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719562445; x=1720167245;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M+A2p+KZRH/8xvrbpyHuEUhzOc8IOFJevUwe6fDGuuE=;
-        b=Zt02MPJhdoF/cF5EtI10K6T4NPjtEunM+d8I8KXKamwbT0qDJOyMWTcz78WMBFF/oq
-         eLpRk9bBUV+Ws+3stJOJccBkoiLQD1Z5vh0goLmIxqHnD/kWRKWzw2tR/TUsur0zsERQ
-         5VrnypmHIovtjdOyY/NmOn3znjsRcGmiiyY3RAWQJ6Cb2mdviBpbkjjSMx6HLJKpJkhl
-         QEvoTLiEBGlrMTX/Fftk5mraXDti+yipBaPpc0DeK8T8Vf4vBKWhGTdPYhPT1yx6cdud
-         vCHIUtUH0v68GUo7gRS8uJiWm343LkHzW2Dbt+8XjIV93cMlt98vjnJGDtW5K0GKsno3
-         Gxtw==
-X-Forwarded-Encrypted: i=1; AJvYcCVfOaW3mNvEOleV2LVkLFfi1pulVCyo0diMdWLEDGHAUbuPYw5XJ8g4a+dl+W2ZSscjLnIuv7ysnfHVQhYSt0OJNMgdxu54c1YD3syo
-X-Gm-Message-State: AOJu0YxERDnMHX3u71mpvk3TbqtederpBA6mAisBVSIOwNJHJXqTaQbU
-	uUeHaFpXLHLPanpWllu0/a8FIBqxUb6VRg2ZpaFoymGVzczS+wK3ewPKyDtXPzY=
-X-Google-Smtp-Source: AGHT+IGdgSQ/Loq0ddkVqf0l8lNw8JF9rgv9IPIxTPMHfTT2BIwjBV2OdOQ66kl/5H+IrO6I9TR51Q==
-X-Received: by 2002:adf:fc0d:0:b0:355:143:b5f5 with SMTP id ffacd0b85a97d-366e96bf096mr9758192f8f.64.1719562444843;
-        Fri, 28 Jun 2024 01:14:04 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:cb0e:590a:642a:e1f9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0fb92fsm1479113f8f.88.2024.06.28.01.14.04
+        d=1e100.net; s=20230601; t=1719562489; x=1720167289;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5p5vZCwu+kIfI6E/jSCcA3j2SGSRGBxA6ocPxaq30sA=;
+        b=i9jpKB94kDL5+m8Eo6bIDXrKQiD2jNQ8sLoAKkinFiLU825D0eJhALfeVEreRT1NMv
+         uvBLa1uxq+EcNkI7vOhqDWlj5cBfe4m08/I3d7HfPtEU6eU1FNRl/Amf0TuhplydvVde
+         XZUnquQmBTNLDSnbCNmRUKUinaI/mfwYpSGnSouexQ72+OayPpNVopwo87vlX2VV95y9
+         ug5zNhs+8ojnqCtxRC5Gk5tkznIvClpc8k36UfdoULOGzQxLLMoFmbFA/wu+lK3Jveok
+         ph2T+Y6DsXJ9ySYBCvYvjhWjWSLjcyZYCaEl3OCk5vMnS5QKVvPKru9EhjjWqVLcPaGf
+         Kz6g==
+X-Forwarded-Encrypted: i=1; AJvYcCWeJYKQVxOx0v+R8peLktaxafA3trJ3aXmAzcigv4a2qkyVrMRmOdGdgqMHGs/nyYgLAX0AX0gqL+3W1ZHZevh9IHrKfc5amlJA4kKs
+X-Gm-Message-State: AOJu0YyDll3Z5r05znMAly9rQ+dhKw1iCTKwqhC1UHfSGLBKh5aKxbbj
+	HYWd4wdGEND5mfTKDuNPrby1rpFd92D2yH0FxnvxUn4D6WwqL/Xh54R29tWKyjQ=
+X-Google-Smtp-Source: AGHT+IERat1T50yD424DDB+EpCE39bTSKhswb6OkBsxZplNjpH1EV9xixuDz3OSQBaaYIPvhFsoHTw==
+X-Received: by 2002:a05:600c:1616:b0:421:b65d:2235 with SMTP id 5b1f17b1804b1-4256d4246f3mr8736965e9.0.1719562489347;
+        Fri, 28 Jun 2024 01:14:49 -0700 (PDT)
+Received: from linaro.org ([82.79.124.209])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af5b61bsm23968405e9.17.2024.06.28.01.14.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 01:14:04 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Frank Li <Frank.Li@nxp.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] dt-bindings: gpio: fsl,qoriq-gpio: add common property gpio-line-names
-Date: Fri, 28 Jun 2024 10:14:03 +0200
-Message-ID: <171956244055.25464.5584663942925200358.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240627202151.456812-1-Frank.Li@nxp.com>
-References: <20240627202151.456812-1-Frank.Li@nxp.com>
+        Fri, 28 Jun 2024 01:14:48 -0700 (PDT)
+Date: Fri, 28 Jun 2024 11:14:47 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: gcc-x1e80100: Set parent rate for USB3 sec
+ and tert PHY pipe clks
+Message-ID: <Zn5w9zKxIT/2OvB4@linaro.org>
+References: <20240530-x1e80100-clk-gcc-usb3-sec-tert-set-parent-rate-v1-1-7b2b04cad545@linaro.org>
+ <3ukguewuqqm5gmbd3afl62ihysdzkk44j3f2nuqht4gjuf5ruo@zu7jmmnbrpdj>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3ukguewuqqm5gmbd3afl62ihysdzkk44j3f2nuqht4gjuf5ruo@zu7jmmnbrpdj>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-
-
-On Thu, 27 Jun 2024 16:21:51 -0400, Frank Li wrote:
-> Add common gpio-line-names property for fsl,qoriq-gpio to fix below
-> warning.
+On 24-05-31 02:56:12, Dmitry Baryshkov wrote:
+> On Thu, May 30, 2024 at 05:05:24PM +0300, Abel Vesa wrote:
+> > Allow the USB3 second and third GCC PHY pipe clocks to propagate the
+> > rate to the pipe clocks provided by the QMP combo PHYs. The first
+> > instance is already doing that.
 > 
-> arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-kbox-a-230-ls.dtb: gpio@2300000: 'gpio-line-names' does not match any of the regexes: 'pinctrl-[0-9]+'
->         from schema $id: http://devicetree.org/schemas/gpio/fsl,qoriq-gpio.yaml
+> Which driver changes the rate of those clocks?
+
+Sorry for the late reply.
+
+These clocks are consumed by the combo PHYs, so driver is
+phy-qcom-qmp-combo. This driver doesn't change the rates of the pipe
+clocks as of yet.
+
+The fix is still good, even if it's just to align all three clocks.
+
 > 
+> > 
+> > Fixes: ("161b7c401f4b clk: qcom: Add Global Clock controller (GCC) driver for X1E80100")
+> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> > ---
+> >  drivers/clk/qcom/gcc-x1e80100.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/drivers/clk/qcom/gcc-x1e80100.c b/drivers/clk/qcom/gcc-x1e80100.c
+> > index 1404017be918..8c72fdc99fd9 100644
+> > --- a/drivers/clk/qcom/gcc-x1e80100.c
+> > +++ b/drivers/clk/qcom/gcc-x1e80100.c
+> > @@ -5269,6 +5269,7 @@ static struct clk_branch gcc_usb3_sec_phy_pipe_clk = {
+> >  				&gcc_usb3_sec_phy_pipe_clk_src.clkr.hw,
+> >  			},
+> >  			.num_parents = 1,
+> > +			.flags = CLK_SET_RATE_PARENT,
+> >  			.ops = &clk_branch2_ops,
+> >  		},
+> >  	},
+> > @@ -5339,6 +5340,7 @@ static struct clk_branch gcc_usb3_tert_phy_pipe_clk = {
+> >  				&gcc_usb3_tert_phy_pipe_clk_src.clkr.hw,
+> >  			},
+> >  			.num_parents = 1,
+> > +			.flags = CLK_SET_RATE_PARENT,
+> >  			.ops = &clk_branch2_ops,
+> >  		},
+> >  	},
+> > 
+> > ---
+> > base-commit: 9d99040b1bc8dbf385a8aa535e9efcdf94466e19
+> > change-id: 20240530-x1e80100-clk-gcc-usb3-sec-tert-set-parent-rate-420a9e2113d1
+> > 
+> > Best regards,
+> > -- 
+> > Abel Vesa <abel.vesa@linaro.org>
+> > 
 > 
-> [...]
-
-Applied, thanks!
-
-[1/1] dt-bindings: gpio: fsl,qoriq-gpio: add common property gpio-line-names
-      commit: 3550b5db3af4d0ff7f2ad07367af6427534620f0
-
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> -- 
+> With best wishes
+> Dmitry
 
