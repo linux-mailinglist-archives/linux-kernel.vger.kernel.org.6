@@ -1,103 +1,159 @@
-Return-Path: <linux-kernel+bounces-233476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8444091B782
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:03:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05B2B91B787
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:04:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B470F1C21173
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:03:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFDF51F21D71
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:04:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EECA13E058;
-	Fri, 28 Jun 2024 07:03:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L/fL2U42"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5385113DB90;
+	Fri, 28 Jun 2024 07:04:08 +0000 (UTC)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A316F125AC;
-	Fri, 28 Jun 2024 07:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F0C5125AC
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 07:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719558227; cv=none; b=XQMcQ7vZ66Blh7rZouLtEnEkHvNolZkZhKS4vA1tTUrduTEOkiPb6nbbUzgEcI4YEDuxmO8S3O5xdwhWAc2m24TmVElrO1mbEIoRQNcLfGmV9kbqqon/tHchx7MrpiJ+2UbFWoKvAGFl/cmXY9zSuehBqFzrl+XJH0o4d4WLFnM=
+	t=1719558247; cv=none; b=gjMCuFMz3AA1h4k3NTGVK5GkC4KElm1J0wv7Ifpxy9QmvNKHuupWtMxHLp52BplW054E5VOJYmhrnXaMwqzUooXDng+zTYoEke51odNwJYWTBeCkKHC6hNgOq13Ox0p5pIpbO1OtOKR00RLd6s3AUjN4MsDh+9BHlpaF6x9wHvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719558227; c=relaxed/simple;
-	bh=3X1MYFbfPFItTW0/VokXn+z9ucFH3r/YhPWshyQeayU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kkJV3C0ptIsqX4M2cn83FZS0HjETlmoXsOs8cIQBlHXScZJhWFNhrF4nc7dUwRNYoZYnCn/epkKbUL8tC0Uqa7tarP05531FUAGCMWbT87pJi+B19oXQ2PlKFvoqPwuNqzFIDDSGtF1AaJG7FHw99UiW/Bnk4GqorWhHgQC9rXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L/fL2U42; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1719558247; c=relaxed/simple;
+	bh=lxYNJK4GyW/o8cyCG3eFSJLlMQJAQfW3Y7irdMMEYNY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LYCyOI9+/aJach+hvN2OgAgJ6/IgTbL5DakwHeRhzolHPMkq0iOfEJ+6YH+B4NyWUY5zvDxhCnUG0E+yqeh3L/0NnpquqO7nnYVHyZ2UGMTN3Xe/S5ed6ClU8ShVgCEK8MItnyMIyLLwlIPQ3mhy4Xou3UqwBzAt1JJhNHO3Tbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2c2d25b5432so188608a91.2;
-        Fri, 28 Jun 2024 00:03:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719558226; x=1720163026; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g1CHoIZeJtIf2ePFFJ0KGCQoC4Wx5b33LDat/8F3E4k=;
-        b=L/fL2U42y1jkeWWXG/8anDqagD5uJj9AnfoxniDeOYXEJz4HI1LbvEY95rOUjGg0Dq
-         megGUW5uxXrXyQWaAldDYCtkVdv5uNA0uAcsCVQ7Zzsgq5lIAcSwQ8+FlfxJ2hf6fIVo
-         GopmdsLSBMDfnmgU0n5t/zCKKoJetL/wHAu6kyI9pA4q54sKAk5SZKU6W9aQtPMP78Hd
-         kyBfC7KuT2gfath+sysE5Rtl0thcz39m2vNRfPj/Ry6IP45Tktl64TPfER+kyshExzpm
-         z5xroKO8ldJslsqy9UahwTe4+xkceYsNHCIKw96nLh2ZG4XPfCeMqlGs9Ge83OJNsuPt
-         4mPA==
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-64789495923so2532307b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 00:04:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719558226; x=1720163026;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1719558243; x=1720163043;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=g1CHoIZeJtIf2ePFFJ0KGCQoC4Wx5b33LDat/8F3E4k=;
-        b=QCBH4eI3Ut6ltuT7POlTKHtNCAs5PTlLIsZZTRu0ohICcR2Qb4e/JrdW0wUi4DOMim
-         aIfMrWnbCTqihf4wzyOyki7SOqpmipdn6saQ+2R8XIpKRAwgKXWIq8ZMVGDEPtCyb8OO
-         dnlz9nlCbSLhCLqwDHe78cWx7hCLuJMq2xYgrMdk602QPMS7HqZsmHJapovgdJg0wfyU
-         Soaw1x/9EePqSL2wO4OJWB52ZAhMhPuzGR7sqfsxBjWIARgZEWudfaRE2hQRT0/5ZpD5
-         AFNt6Jl5SRaJqGtLIzutvV25MoI3YQBLPuTr+lD4yEthvy9g0D8mfmn+Kzaa2j6rJAIY
-         +/+A==
-X-Forwarded-Encrypted: i=1; AJvYcCWhaCt1tDBxdUbkX/v0wvI42D/QNfU9LEmgdbM258K3nuyoyc2zcngFE1Mihc3JsFbUSIwJdjkouBBpG5cr4OprclWyAtH0QZ1OVqzkv+lWrOTrICzAjq53Q9BMXfrPWkw5T2jwym0T42rr877vJIeop9GWh9Ehs8NzbuiWbhH1bmWPXcTwqys69BF29A==
-X-Gm-Message-State: AOJu0YxTfeRNyv1M3T20WH3tCS/0mnarltZ06MjSrUmpGbRYJRacUwzW
-	4Y0ZkftEdsFQkPCNkCu65JeVdFjra5WOsZMOCRJmdA3hnInUcoc2
-X-Google-Smtp-Source: AGHT+IGS9AdHpDDTB41Zy++wNdbA3CWe3YJ/2/uzP2NiiLr/yfetlDWt1/cRzRQyTWMuYfhslv336g==
-X-Received: by 2002:a17:90a:9e6:b0:2c8:7fa:993c with SMTP id 98e67ed59e1d1-2c861409604mr13020964a91.18.1719558225856;
-        Fri, 28 Jun 2024 00:03:45 -0700 (PDT)
-Received: from dev0.. ([122.176.81.22])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91d3eb774sm889779a91.53.2024.06.28.00.03.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 00:03:45 -0700 (PDT)
-From: Abhinav Jain <jain.abhinav177@gmail.com>
-To: akpm@linux-foundation.org
-Cc: jain.abhinav177@gmail.com,
-	javier.carrasco.cruz@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	shuah@kernel.org,
-	skhan@linuxfoundation.org
-Subject: Re: [PATCH] selftests/proc: fix unused result warning during test compilation
-Date: Fri, 28 Jun 2024 07:03:38 +0000
-Message-Id: <20240628070338.65008-1-jain.abhinav177@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240625110526.d443fe6d3feb51a50aebf849@linux-foundation.org>
-References: <20240625110526.d443fe6d3feb51a50aebf849@linux-foundation.org>
+        bh=N4VYcLeI6FK6UKDIjd//YA7QOqVsn4Xvt1s7Cj81jOs=;
+        b=eSRkR3ffQZ8cplKM2FQ4r08k7C9GNSmI41znJXS/cBQKe4U7xpxiqo7WV8/YG2uHW3
+         94ZvEPil5TdQX5qwWySXDowFcSzK/CxoAB5Mg9Y+ZxMDPu8KVyC9lwcUamyGj+D3vay5
+         3s2FqD1qYWIyi8KVRwjX8MLHyGH2RuJO149uOGyrEFKTTxaqb+NCvNy6b26HJNpw9GxZ
+         Jdls078iGz/TU437sQvl6LP/REERuycWmdvki5ypgU+eShxBviY5+vkEuPYE5lzgQotS
+         wGZi0rtAIMaLLZCXdP1r5pWpiyei1BNz2SRXLGwHuBNSDNHH2fFiIC0huwPoW1/cFJ20
+         1a+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUgiInhHhlPNKr0AyBRmxYOnY+y6LVSl7MLDqZlnj+dlKdy2EL2ZDXpybe1F63JBGOLkEiEZBSVCujX2gE2Nxoqp71DRmSk/dyAbg3a
+X-Gm-Message-State: AOJu0YzEMTrCrmjxDqxC2tytt6hgE9ROvlK+pEybBqvVtouXSYgFpLH2
+	hhYmkAA9YtcB800kY2pYFzTcfffQN1/IQhuixLVZ6P0EDdClph2MfJr12GET
+X-Google-Smtp-Source: AGHT+IGKlx9DNBdvRvzjsltJmYQRAcFupGvwZf4TlFsc3qU6wjm3GTUoKrtXF9lKB1WC2oDjM4H4ug==
+X-Received: by 2002:a81:844a:0:b0:63b:d242:4fa0 with SMTP id 00721157ae682-649c13117aemr37868787b3.21.1719558243430;
+        Fri, 28 Jun 2024 00:04:03 -0700 (PDT)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-64a9a239b5asm2458577b3.41.2024.06.28.00.04.03
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Jun 2024 00:04:03 -0700 (PDT)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-64789495923so2532127b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 00:04:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUETatJOV/XJ3RjuS2AfkMIz5R1L6ADa26nwFuBEypgF7/beJ7FXSZpkw5LtwgbP8M2HlLqfxJoJRvmwz6GL/N+eoin0GdCjdzZMEYM
+X-Received: by 2002:a05:690c:944:b0:64a:397f:9599 with SMTP id
+ 00721157ae682-64a397f9801mr27078607b3.30.1719558242907; Fri, 28 Jun 2024
+ 00:04:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240627173530.460615-1-thuth@redhat.com>
+In-Reply-To: <20240627173530.460615-1-thuth@redhat.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 28 Jun 2024 09:03:50 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU4cpizpk7CWPbCs3GKJcG95yrnh9FwwEgLsm17wa-fNA@mail.gmail.com>
+Message-ID: <CAMuHMdU4cpizpk7CWPbCs3GKJcG95yrnh9FwwEgLsm17wa-fNA@mail.gmail.com>
+Subject: Re: [PATCH] drm/fbdev-generic: Fix framebuffer on big endian devices
+To: Thomas Huth <thuth@redhat.com>
+Cc: dri-devel@lists.freedesktop.org, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	linux-kernel@vger.kernel.org, Javier Martinez Canillas <javierm@redhat.com>, 
+	Hamza Mahfooz <hamza.mahfooz@amd.com>, Christian Zigotzky <chzigotzky@xenosoft.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 25 Jun 2024 11:05:26 -0700, Andrew Morton wrote:
-> Thanks.  There's a patch queued which simply deletes this code.
+Hi Thomas,
+
+CC Christian
+
+On Thu, Jun 27, 2024 at 7:35=E2=80=AFPM Thomas Huth <thuth@redhat.com> wrot=
+e:
+> Starting with kernel 6.7, the framebuffer text console is not working
+> anymore with the virtio-gpu device on s390x hosts. Such big endian fb
+> devices are usinga different pixel ordering than little endian devices,
+> e.g. DRM_FORMAT_BGRX8888 instead of DRM_FORMAT_XRGB8888.
 >
-> https://lkml.kernel.org/r/20240603124220.33778-1-amer.shanawany@gmail.com
+> This used to work fine as long as drm_client_buffer_addfb() was still
+> calling drm_mode_addfb() which called drm_driver_legacy_fb_format()
+> internally to get the right format. But drm_client_buffer_addfb() has
+> recently been reworked to call drm_mode_addfb2() instead with the
+> format value that has been passed to it as a parameter (see commit
+> 6ae2ff23aa43 ("drm/client: Convert drm_client_buffer_addfb() to drm_mode_=
+addfb2()").
+>
+> That format parameter is determined in drm_fbdev_generic_helper_fb_probe(=
+)
+> via the drm_mode_legacy_fb_format() function - which only generates
+> formats suitable for little endian devices. So to fix this issue
+> switch to drm_driver_legacy_fb_format() here instead to take the
+> device endianness into consideration.
+>
+> Fixes: 6ae2ff23aa43 ("drm/client: Convert drm_client_buffer_addfb() to dr=
+m_mode_addfb2()")
+> Closes: https://issues.redhat.com/browse/RHEL-45158
+> Signed-off-by: Thomas Huth <thuth@redhat.com>
 
-Thank you for sharing the queued patch Andrew.
-There has been no update/revert on it, may I know what would be the next step here?
-After reading the patch above, I believe my change is "more" right. Is that correct?
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+works fine on m68k-virt, so:
+Tested-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Thanks and Regards
-- Abhinav
+Christian had reported a similar issue before[1].
+I submitted a different solution fixing virtio[2] instead, but that
+caused issues with virtio-mouse-pci cursor...
+
+> --- a/drivers/gpu/drm/drm_fbdev_generic.c
+> +++ b/drivers/gpu/drm/drm_fbdev_generic.c
+> @@ -84,7 +84,8 @@ static int drm_fbdev_generic_helper_fb_probe(struct drm=
+_fb_helper *fb_helper,
+>                     sizes->surface_width, sizes->surface_height,
+>                     sizes->surface_bpp);
+>
+> -       format =3D drm_mode_legacy_fb_format(sizes->surface_bpp, sizes->s=
+urface_depth);
+> +       format =3D drm_driver_legacy_fb_format(dev, sizes->surface_bpp,
+> +                                            sizes->surface_depth);
+>         buffer =3D drm_client_framebuffer_create(client, sizes->surface_w=
+idth,
+>                                                sizes->surface_height, for=
+mat);
+>         if (IS_ERR(buffer))
+
+[1] https://lore.kernel.org/6530cea3-4507-454e-bc36-a6970c8e7578@xenosoft.d=
+e/
+[2] "[PATCH v2] drm/virtio: Add suppport for non-native buffer formats"
+    https://lore.kernel.org/47a81d2e0e47b1715718779b6978a8b595cc7c5d.170014=
+0609.git.geert@linux-m68k.org
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
