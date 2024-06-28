@@ -1,161 +1,123 @@
-Return-Path: <linux-kernel+bounces-233529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C7AE91B8CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:47:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B41091B8CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:47:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF7261C2261D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:47:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91A77B21A14
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830AE143729;
-	Fri, 28 Jun 2024 07:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0A9142E7C;
+	Fri, 28 Jun 2024 07:47:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D1vi+bni"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b="ph70L+uT"
+Received: from bee.tesarici.cz (bee.tesarici.cz [37.205.15.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4FC558B9
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 07:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21FDC14389C
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 07:47:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.15.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719560833; cv=none; b=MLPq5kTgZP1xKPctzGkgKumQNaLKjwxC2vV6FnHGaIzAEHUfA68yU4d0k690ZTMVjc3lbcMYebjtG2irFyzl5LP1TXON0stSAO/RpsznPkCSF/Y7so/AeOdo3mvZ+l9yIQ10YZnttwcm69rXbRvDrwzG/qQWh/2XJjcplVXJUoQ=
+	t=1719560840; cv=none; b=t07b/joVwSc6a8rG7G+8lKMqZwKhrQnULBkf8F2PXAbOocvqdbvQZKi1XOu5SUg9AqtRO8TqT864oWG6EKfepTe/YAV1coBCPmrrpOor4sCWKIOleZrfcBGCUQGoEqOFCYMl9kWhp1aWxQyiyscelQ98LKIz0R1l07ZeOcKGv84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719560833; c=relaxed/simple;
-	bh=X1XDg4CWqLekR5BIvTtoObyb6G/m6s5Hzu4qSPrR74o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qjXqNc0ReJbxuj2Jzl2M3qZiozvMeV69gIq4mQl4jfxartSB641KEeSzg1v98E63uLLKiRoNGnMEe3HGMd1eQZpKklPihgAz8dUhwznHEn0G2w2fjAt7Dcfxhhqekeij9jl12AP9WekmQvX0ap2nSIYOsaLqVq+1izxvFOW2ztI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D1vi+bni; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52cdbc20faeso380900e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 00:47:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719560830; x=1720165630; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nc4Qf7GLtkVCveBTGX7EpUl9LATF5aggezB8l/JLORQ=;
-        b=D1vi+bniCua+mbHIjXYINUB/IsSvMoAof0vyXF95cZLQgPuCD9lKewEs5JyP39YNiL
-         qRaoUPXFsnH6F21OmWSqbLXNlnfu1qj7QiyMJKEuN56U5XZN2TV8ss7Q0z0Qes85FC5X
-         yGtVVwN4QerUNqzU02zuMC0zmjEa+rR7NbXvGjizGKfe1H6IN3L+QMNgSmWmLLPhFKJn
-         QSrDvN1kZ0iiApkSHGp84qe2ka584xJzXqKYbeUkaJoauqhQP0rVihkDp5Dq6L0fACGa
-         Ua0WbnfFxqCeLroQcPw/ZKykcHqtRUrgOX+22+wlXd8fMTKP/ssDFpBt+aZR98k+TYo9
-         xPpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719560830; x=1720165630;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Nc4Qf7GLtkVCveBTGX7EpUl9LATF5aggezB8l/JLORQ=;
-        b=bIjM0RHmbz8JlYJEqq+pq2OdhJeAF/En4qD4igKFxu5JJZGMbiVDk8FdL4v5cM4tjc
-         Er61ZYfL4Xme/MgiKBI3fVcXHHH+d0sYVBEris//r0W6Ftyrve+1yWjRJAbuoV2IpoQD
-         x1iAp7QzSwvvwOUx9XXgr2N+XFZxzv5UV6rubB+XWfqazcXPzY/WBJ0F8OpUeXjjTXlI
-         UZlq9Q5DT7tHmCDUA53P7aQIr+YWWTpaYFPVdEJU04ZUC/ikDfSaZzpW/HMjmgfW37sw
-         rk2jTFP7GKfugA6obbbejKbBPA3LM0w8NwuEan1Va/a6oZJ/NTr2n4GaXbFfPrcDMYOH
-         ildw==
-X-Forwarded-Encrypted: i=1; AJvYcCUuwyu9xJu5L5e2iNT7O+xZUA8agV7kvqPHipO37C681QKjTSIJbqJnh8vtvAaTLmAN1zv01xFpioIBWSjufC9tTBwQ9E+zthJI5WdW
-X-Gm-Message-State: AOJu0YxOiZ4Eavj8v0nuhUtQN/5vD0wYN+KZMoJdVwV9R/6rFbae95HE
-	FSzmy3KAjwUMtcR02/SrivVXhDuNBb70mblVrVAr+83gtj9jSvFawg94k2Wg39s=
-X-Google-Smtp-Source: AGHT+IEDr3s7URgwk4byM1UEJod82amd+japUT2kSdheEtNmdtI5YyE+4VmV/k4KdQ5AmSQUb0CC7w==
-X-Received: by 2002:a05:6512:6c7:b0:52e:6d6e:577e with SMTP id 2adb3069b0e04-52e6d6e5833mr4844105e87.2.1719560830271;
-        Fri, 28 Jun 2024 00:47:10 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab278edsm193556e87.173.2024.06.28.00.47.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 00:47:09 -0700 (PDT)
-Date: Fri, 28 Jun 2024 10:47:08 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: linux-sound@vger.kernel.org, srinivas.kandagatla@linaro.org, 
-	bgoswami@quicinc.com, lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org, 
-	konrad.dybcio@linaro.org, perex@perex.cz, tiwai@suse.com, linux-arm-msm@vger.kernel.org, 
-	alsa-devel@alsa-project.org, devicetree@vger.kernel.org, elder@linaro.org, 
-	krzysztof.kozlowski@linaro.org, caleb.connolly@linaro.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/7] arm64: dts: qcom: qrb4210-rb2: add HDMI audio
- playback support
-Message-ID: <tqjjrkpdrqjobg5fp5jml5pj23ollc4yolln46lb533kwsgncf@tfzaxwydqhht>
-References: <20240628010715.438471-1-alexey.klimov@linaro.org>
- <20240628010715.438471-8-alexey.klimov@linaro.org>
+	s=arc-20240116; t=1719560840; c=relaxed/simple;
+	bh=TdBoKhuo2tCz9X+S2Aj2hKXKblJgI01wpNxyiJI9jo8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=elFqpR4TcWuuqQZ9X1y6LeEoXp+0q59ZlOJgDXGEbQayLlYC42xEHtduHx5shVc6YTTEeDe75Q4Fx1rzTLEyqnPpcAkxZNW2O88Kvxly4w/VFY74SLyRE9Gm3Lk6BvwAlrOZdue51y81rhasRYpSuKxQMkmddgFNdDiYmoV96GQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz; spf=pass smtp.mailfrom=tesarici.cz; dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b=ph70L+uT; arc=none smtp.client-ip=37.205.15.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tesarici.cz
+Received: from meshulam.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-4427-cc85-6706-c595.ipv6.o2.cz [IPv6:2a00:1028:83b8:1e7a:4427:cc85:6706:c595])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by bee.tesarici.cz (Postfix) with ESMTPSA id E7D851D8D35;
+	Fri, 28 Jun 2024 09:47:09 +0200 (CEST)
+Authentication-Results: mail.tesarici.cz; dmarc=fail (p=quarantine dis=none) header.from=tesarici.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tesarici.cz; s=mail;
+	t=1719560830; bh=5ABgD9l3EPOUU6jm+gY3zAzc/yQqRQCNjAF+JnVqObA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ph70L+uT/DAzbwgpXZ98YCI0PdG5EwmgkmsqPguQEP0YOpMbT2rLDIizYB2bn9azV
+	 XZUf4hFMrQBrHaaPx9NJ0HB/Y3l1CNnOuzCg23Wiz7VeAdR58J+oD/edxNunQJewth
+	 HGq96j8oOk0LzMLn9+R7BJNAe6bcwsZ0a1VW+3u1NxYvU8xXV9Q2ZnkHpRLPyEGMj7
+	 qNa6juUJL0gtrvkzQwBc63MI5TOFwMp+RXARGs+m+zf5GyPbVt3AUObC30fJasUJRO
+	 iQVOrDYOKaIajMpRC9oht/oPM7anlz0Qj4szdUDUot78hLSr0N8R/9k7VaudClHJqW
+	 JnXDXZtOhxSxw==
+Date: Fri, 28 Jun 2024 09:47:08 +0200
+From: Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
+To: "hch@lst.de" <hch@lst.de>
+Cc: Michael Kelley <mhklinux@outlook.com>, "robin.murphy@arm.com"
+ <robin.murphy@arm.com>, "joro@8bytes.org" <joro@8bytes.org>,
+ "will@kernel.org" <will@kernel.org>, "jgross@suse.com" <jgross@suse.com>,
+ "sstabellini@kernel.org" <sstabellini@kernel.org>,
+ "oleksandr_tyshchenko@epam.com" <oleksandr_tyshchenko@epam.com>,
+ "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
+Subject: Re: [RFC 1/1] swiotlb: Reduce calls to swiotlb_find_pool()
+Message-ID: <20240628094708.3a454619@meshulam.tesarici.cz>
+In-Reply-To: <20240628060129.GA26206@lst.de>
+References: <20240607031421.182589-1-mhklinux@outlook.com>
+	<SN6PR02MB41577686D72E206DB0084E90D4D62@SN6PR02MB4157.namprd02.prod.outlook.com>
+	<20240627060251.GA15590@lst.de>
+	<20240627085216.556744c1@meshulam.tesarici.cz>
+	<SN6PR02MB4157E61B49C8435E38AC968DD4D72@SN6PR02MB4157.namprd02.prod.outlook.com>
+	<20240627152513.GA23497@lst.de>
+	<SN6PR02MB4157D9B1A64FF78461D6A7EDD4D72@SN6PR02MB4157.namprd02.prod.outlook.com>
+	<20240628060129.GA26206@lst.de>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240628010715.438471-8-alexey.klimov@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 28, 2024 at 02:07:15AM GMT, Alexey Klimov wrote:
-> Add sound node, dsp-related pieces and LPASS pinctrl to enable
-> HDMI audio support on Qualcomm QRB4210 RB2 board. That is the
-> only sound output supported for now.
+V Fri, 28 Jun 2024 08:01:29 +0200
+"hch@lst.de" <hch@lst.de> naps=C3=A1no:
 
-I see that you have also added the MultiMedia DAIs, which don't seem to
-be used with this patch.
+> On Thu, Jun 27, 2024 at 04:02:59PM +0000, Michael Kelley wrote:
+> > > > Conceptually, it's still being used as a boolean function based on
+> > > > whether the return value is NULL.  Renaming it to swiotlb_get_pool()
+> > > > more accurately describes the return value, but obscures the
+> > > > intent of determining if it is a swiotlb buffer.  I'll think about =
+it.
+> > > > Suggestions are welcome. =20
+> > >=20
+> > > Just keep is_swiotlb_buffer as a trivial inline helper that returns
+> > > bool. =20
+> >=20
+> > I don't understand what you are suggesting.  Could you elaborate a bit?
+> > is_swiotlb_buffer() can't be trivial when CONFIG_SWIOTLB_DYNAMIC
+> > is set. =20
+>=20
+> Call the main function that finds and retuns the pool swiotlb_find_pool,
+> and then have a is_swiotlb_buffer wrapper that just returns bool.
+>=20
 
-> 
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/qrb4210-rb2.dts | 73 ++++++++++++++++++++++++
->  1 file changed, 73 insertions(+)
-> 
-> +&sound {
-> +	compatible = "qcom,qrb4210-rb2-sndcard";
-> +	pinctrl-0 = <&lpi_i2s2_active>;
-> +	pinctrl-names = "default";
-> +	model = "Qualcomm-RB2-WSA8815-Speakers-DMIC0";
-> +	audio-routing = "MM_DL1",  "MultiMedia1 Playback",
-> +			"MM_DL2",  "MultiMedia2 Playback";
-> +
-> +	mm1-dai-link {
-> +		link-name = "MultiMedia1";
-> +		cpu {
-> +			sound-dai = <&q6asmdai  MSM_FRONTEND_DAI_MULTIMEDIA1>;
-> +		};
-> +	};
-> +
-> +	mm2-dai-link {
-> +		link-name = "MultiMedia2";
-> +		cpu {
-> +			sound-dai = <&q6asmdai  MSM_FRONTEND_DAI_MULTIMEDIA2>;
-> +		};
-> +	};
-> +
-> +	mm3-dai-link {
-> +		link-name = "MultiMedia3";
-> +		cpu {
-> +			sound-dai = <&q6asmdai  MSM_FRONTEND_DAI_MULTIMEDIA3>;
-> +		};
-> +	};
-> +
-> +	hdmi-dai-link {
-> +		link-name = "HDMI Playback";
-> +		cpu {
-> +			sound-dai = <&q6afedai SECONDARY_MI2S_RX>;
-> +		};
-> +
-> +		platform {
-> +			sound-dai = <&q6routing>;
-> +		};
-> +
-> +		codec {
-> +			sound-dai = <&lt9611_codec 0>;
-> +		};
-> +	};
-> +};
-> +
->  &tlmm {
->  	gpio-reserved-ranges = <43 2>, <49 1>, <54 1>,
->  			       <56 3>, <61 2>, <64 1>,
-> -- 
-> 2.45.2
-> 
+I see. That's not my point. After applying Michael's patch, the return
+value is always used, except here:
 
--- 
-With best wishes
-Dmitry
+bool dma_direct_need_sync(struct device *dev, dma_addr_t dma_addr)
+{
+	return !dev_is_dma_coherent(dev) ||
+	       is_swiotlb_buffer(dev, dma_to_phys(dev, dma_addr));
+}
+
+I don't think this one occurrence in the entire source tree is worth a
+separate inline function.
+
+If nobody has a better idea, I'm not really offended by keeping the
+original name, is_swiotlb_buffer(). It would just become the only
+function which starts with "is_" and provides more information in the
+return value than a simple yes/no, and I thought there must be an
+unwritten convention about that.
+
+Petr T
 
