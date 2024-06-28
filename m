@@ -1,74 +1,64 @@
-Return-Path: <linux-kernel+bounces-233422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84C9D91B6D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:16:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B3EE91B6DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:17:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5C47282647
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 06:16:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89F131F23040
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 06:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4358A4CE04;
-	Fri, 28 Jun 2024 06:16:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 046644D8B5;
+	Fri, 28 Jun 2024 06:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R3wqgRTC"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A8oTcd1R"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDAA74D8A4
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 06:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6123BBC5;
+	Fri, 28 Jun 2024 06:17:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719555370; cv=none; b=ZMZwexeOOBicB1fE5jpwALorMFdMXEt1w6BcRPLcI2YQRBMykPJpj001jjde8miwXjGnyuezYpZLxBRD+tQvUzhywfuVGPysko+mR1KWGaXPCTVo6cZ+pJo23TT7yBKpSLevkepfpaOO6heOhAwEtnvJroXayVezcLT/PbaqhsY=
+	t=1719555439; cv=none; b=EsTSE2YaXWGBi6iUIktZQMpEjcynUCyEC6w4/OAlOqohPo9rOH04hlpFpmsc7WTuxUFhRZYYoHs468AdRVwKASf8qguZjzw5cE6caLHXsso5vg2Pz+Kkgt+z0rg2qH/Ft/rghA8mCAC3Sr+AiR0ZS5NNt1zfhTMkViesoWA9FoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719555370; c=relaxed/simple;
-	bh=AneQCkbY/cQogK9upva4XOfFk3Om035v2bCBkchxhEM=;
+	s=arc-20240116; t=1719555439; c=relaxed/simple;
+	bh=aK4LofN6Eiak/ccoF1tbT0SoMOSglzyn7z2oygdb9aE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=odVukN7CZqB9od3jHy50jvZMhNl+L/kNzcGl1a41aYqwlGy3Ds6+y9MMfTfv1pGfff3DN970RV2ErcXNzEWcFee02Wch0Dm863zsfldS1e4QkIxy2uiC2ooZKOROZfS0aEUhQhzw42TZRz+LEktkj9zIdYi0nRsUbkIbxb5Dc4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R3wqgRTC; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52cd628f21cso229434e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 23:16:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719555367; x=1720160167; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=4kMx75Yulrng/FdlL6y95jTJoRfya8ekwLjBMuEhsaQ=;
-        b=R3wqgRTCEmFahi0J/NupwPIWGr0yLNWxZCGR6eaNiYgWRTnv0BFMBOYmd2l2SgYGNy
-         XXpSgPP5Z/MV5YImyixm6GNgYac9vXUWdBoUpJDcfOt2ogPRKpSqcomPPO6RpCDl0myL
-         rSeNzVvrlhRSdWyBTikETgaU7fnhWm5pGbhti2LX0p706K4g3H117LZpd+GxQ8dMQZny
-         Cdc1SBafswk/XKuPBeRHWMpOq/r8jdcqq6hvQ6G7W2aYMvkDb27XtbYLBlApHP5+8DRW
-         z0DNxwXp+KmQiuFr+kZBY4dZ5x3IkCmIPvv+w49Jl6xB0gs63YitLtyz7LhwQfJko52f
-         6u4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719555367; x=1720160167;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4kMx75Yulrng/FdlL6y95jTJoRfya8ekwLjBMuEhsaQ=;
-        b=Ax3sR4rehOHcJWgqoMfZf6TkBKkmFQBcVeE4KBIK0I3nRWF5sluiSTVpefry6Sq8Et
-         RsVHrZ8gXmjTFCrdvSnEb3QgnjWUEWQM6/YcrmapcvjhQ2zCU86q2fVRqpa649Hg8SgQ
-         YFmTFg13hyJDzK4HVG5t8Hz6mQ2v4cMxUCIrlMFmxexqhHCcX4CoxabFipQ9PMrRT8Kj
-         UlyTLU+UMt3anebLYKzoAEHjIqjAFO/9PTmOK4+dEQAmprcrgjGb2EenntTLREUCUWLL
-         u1v1zXNvMDycXElY8JQE+8tRIY+WzsLZE0b7uaFrX1dMXbLc0ooHHpHTVLx8JKEfLF9Q
-         oNGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVgQiatDIeji1eZZ6FPv+fBc6KZPEjHrI+COV718CKHV7Rhc3pxK62ghaZyLoWFD6409BJoKKG6138B61v30thUxnXkBrGJn4a0Q9DL
-X-Gm-Message-State: AOJu0YwqKa2fd6P55HkS3OKqBuhdSgLXQgjI0G2bW9izMJ+TPhMCkzPu
-	BRfyRY59mJMJCSHPFq/YpbywpWAUHLl7CS43AMYS0ONuBx3AvlMriA8njMbu/GI=
-X-Google-Smtp-Source: AGHT+IEV7eFaSP/m3xouuSYf9kFIIXNH+dXsGe0h6ycnpBTVM544dUvJ1G53bzN62Zf7TG6R/+nejw==
-X-Received: by 2002:ac2:4ed4:0:b0:52c:d8ce:c323 with SMTP id 2adb3069b0e04-52ce183b77emr8380535e87.35.1719555366868;
-        Thu, 27 Jun 2024 23:16:06 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b09a828sm19847595e9.37.2024.06.27.23.16.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Jun 2024 23:16:06 -0700 (PDT)
-Message-ID: <33b7e7f7-0965-4538-94af-67108ebf9b76@linaro.org>
-Date: Fri, 28 Jun 2024 08:16:04 +0200
+	 In-Reply-To:Content-Type; b=pGZqoqJUZHMpTz00bzEvLeTNLUKq3DjZv7+PF9ON25ctgvYRYX0m2SNq2nyhjCp4skAEWzN0gTLzWnfuZaDlNAAom/l1OEnV8eWZiN2fovJbgG8Dg3ZEK1o3j6VileIX+UYD5w2IFuhI5YJyvl4neEwzTI40+ksN2+L84KRVRuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A8oTcd1R; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719555438; x=1751091438;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=aK4LofN6Eiak/ccoF1tbT0SoMOSglzyn7z2oygdb9aE=;
+  b=A8oTcd1RVkKU1jJe5ys+gBw0wTur2AJ3pmcC7FFAHEh+Da9CtnBUBIsB
+   W2lplTjUnGFUDyurCu14DelhpSiHi0soXt6U4rdelY3h64plfuOUzqc8p
+   zGn+w4yhcFRILaXT+V/1+4UYLgfsuoqG1Irq7g1dJOG36GYE6kg1OHctS
+   dhjSonfzK1ST0pX1Bp+f9M+ujTVkQufyByu4FB3fikv/Mnrnu1du7egwt
+   vwcUQi/aTyerm789O2vI4ijhk/FHJGJ0kOpL6oxskcJINrJQkLXsVbhCI
+   wycdJhHP5nmEsZ7xY8lf6u+HgCe5l3heIPVEw3yQtZaNfo8l77a/hMX1W
+   g==;
+X-CSE-ConnectionGUID: gu0Lrz4FSf2BQAa+1UKYuw==
+X-CSE-MsgGUID: JV+XudBNTTmWU4MuFJSOFQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="27345175"
+X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
+   d="scan'208";a="27345175"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 23:17:17 -0700
+X-CSE-ConnectionGUID: Y3uI7pq5TOyhtuPKBK4V5Q==
+X-CSE-MsgGUID: MSaKZeNoQruuIj8JjzYMTA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
+   d="scan'208";a="44627240"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.232.203]) ([10.124.232.203])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 23:17:13 -0700
+Message-ID: <4f5dbf6f-3805-43b6-867c-2503ccec7c1a@linux.intel.com>
+Date: Fri, 28 Jun 2024 14:17:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,82 +66,179 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] arm64: dts: qcom: sm6115: add apr, its services and
- simple sound node
-To: Alexey Klimov <alexey.klimov@linaro.org>, linux-sound@vger.kernel.org,
- srinivas.kandagatla@linaro.org, bgoswami@quicinc.com, lgirdwood@gmail.com,
- broonie@kernel.org
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- andersson@kernel.org, konrad.dybcio@linaro.org, perex@perex.cz,
- tiwai@suse.com, linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org,
- devicetree@vger.kernel.org, elder@linaro.org, dmitry.baryshkov@linaro.org,
- caleb.connolly@linaro.org, linux-kernel@vger.kernel.org
-References: <20240628010715.438471-1-alexey.klimov@linaro.org>
- <20240628010715.438471-5-alexey.klimov@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] perf topdown: Correct leader selection with sample_read
+ enabled
+To: "Liang, Kan" <kan.liang@linux.intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Dapeng Mi <dapeng1.mi@intel.com>
+References: <20240614213908.352840-1-dapeng1.mi@linux.intel.com>
+ <df56c6e1-5d99-4cbe-abd4-772e7ff948af@linux.intel.com>
 Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240628010715.438471-5-alexey.klimov@linaro.org>
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <df56c6e1-5d99-4cbe-abd4-772e7ff948af@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 28/06/2024 03:07, Alexey Klimov wrote:
-> Add apr (asynchronous packet router) node and its associated services
-> required to enable audio on QRB4210 RB2 platform.
-> Also, add an empty sound{} device node. This allows board dts
-> files to fill in required board specific properties.
-> 
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/sm6115.dtsi | 59 ++++++++++++++++++++++++++++
->  1 file changed, 59 insertions(+)
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On 6/27/2024 11:11 PM, Liang, Kan wrote:
+> Hi Dapeng,
+>
+> On 2024-06-14 5:39 p.m., Dapeng Mi wrote:
+>> Addresses an issue where, in the absence of a topdown metrics event
+>> within a sampling group, the slots event was incorrectly bypassed as
+>> the sampling leader when sample_read was enabled.
+>>
+>> perf record -e '{slots,branches}:S' -c 10000 -vv sleep 1
+>>
+>> In this case, the slots event should be sampled as leader but the
+>> branches event is sampled in fact like the verbose output shows.
+>>
+>> perf_event_attr:
+>>   type                             4 (cpu)
+>>   size                             168
+>>   config                           0x400 (slots)
+>>   sample_type                      IP|TID|TIME|READ|CPU|IDENTIFIER
+>>   read_format                      ID|GROUP|LOST
+>>   disabled                         1
+>>   sample_id_all                    1
+>>   exclude_guest                    1
+>> ------------------------------------------------------------
+>> sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 = 5
+>> ------------------------------------------------------------
+>> perf_event_attr:
+>>   type                             0 (PERF_TYPE_HARDWARE)
+>>   size                             168
+>>   config                           0x4 (PERF_COUNT_HW_BRANCH_INSTRUCTIONS)
+>>   { sample_period, sample_freq }   10000
+>>   sample_type                      IP|TID|TIME|READ|CPU|IDENTIFIER
+>>   read_format                      ID|GROUP|LOST
+>>   sample_id_all                    1
+>>   exclude_guest                    1
+>>
+>> The sample period of slots event instead of branches event is reset to
+>> 0.
+>>
+>> This fix ensures the slots event remains the leader under these
+>> conditions.
+> This should be just one of the issues with the slots/topdown related
+> sampling read.
+>
+> If adding one more topdown event, the sampling read may still be broken.
+>  perf record -e "{slots,instructions,topdown-retiring}:S"  -C0 sleep 1
+>  WARNING: events were regrouped to match PMUs
+>  Error:
+>  The sys_perf_event_open() syscall returned with 22 (Invalid argument)
+> for event (topdown-retiring).
+>
+> That may require Yanfei's patch.
+> https://lore.kernel.org/lkml/20240411144852.2507143-1-yanfei.xu@intel.com/
 
-Best regards,
-Krzysztof
+Yes, we need this patch. It would fix the error what you see.
 
+
+>
+> Please give it try and summarize all the required patches for the
+> topdown sampling read feature.
+
+I would talk with Yanfei, and collect all required patches into a whole
+patchset. This would make the patch review more easily.
+
+
+>
+> Besides, we need a test for the sampling read as well.
+> Ian has provided a very good base. Please add a topdown sampling read
+> case on top of it as well.
+> https://lore.kernel.org/lkml/CAP-5=fUkg-cAXTb+3wbFOQCfdXgpQeZw40XHjfrNFbnBD=NMXg@mail.gmail.com/
+
+Sure. I would look at it and add a test case.
+
+
+>
+>
+> Thanks,
+> Kan
+>
+>> Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
+>> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+>> ---
+>>  tools/perf/arch/x86/util/topdown.c | 42 ++++++++++++++++++++++++++++--
+>>  1 file changed, 40 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/tools/perf/arch/x86/util/topdown.c b/tools/perf/arch/x86/util/topdown.c
+>> index 3f9a267d4501..aea6896bbb57 100644
+>> --- a/tools/perf/arch/x86/util/topdown.c
+>> +++ b/tools/perf/arch/x86/util/topdown.c
+>> @@ -1,6 +1,7 @@
+>>  // SPDX-License-Identifier: GPL-2.0
+>>  #include "api/fs/fs.h"
+>>  #include "util/evsel.h"
+>> +#include "util/evlist.h"
+>>  #include "util/pmu.h"
+>>  #include "util/pmus.h"
+>>  #include "util/topdown.h"
+>> @@ -31,6 +32,32 @@ bool topdown_sys_has_perf_metrics(void)
+>>  	return has_perf_metrics;
+>>  }
+>>  
+>> +static int perf_pmus__topdown_event(void *vstate, struct pmu_event_info *info)
+>> +{
+>> +	if (!strcmp(info->name, (char *)vstate))
+>> +		return 1;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static bool is_topdown_metric_event(struct evsel *event)
+>> +{
+>> +	struct perf_pmu *pmu;
+>> +
+>> +	if (!topdown_sys_has_perf_metrics())
+>> +		return false;
+>> +
+>> +	if (event->core.attr.type != PERF_TYPE_RAW)
+>> +		return false;
+>> +
+>> +	pmu = perf_pmus__find_by_type(PERF_TYPE_RAW);
+>> +	if (pmu && perf_pmu__for_each_event(pmu, false, event->name,
+>> +					    perf_pmus__topdown_event))
+>> +		return true;
+>> +
+>> +	return false;
+>> +}
+>> +
+>>  #define TOPDOWN_SLOTS		0x0400
+>>  
+>>  /*
+>> @@ -41,11 +68,22 @@ bool topdown_sys_has_perf_metrics(void)
+>>   */
+>>  bool arch_topdown_sample_read(struct evsel *leader)
+>>  {
+>> +	struct evsel *event;
+>> +
+>>  	if (!evsel__sys_has_perf_metrics(leader))
+>>  		return false;
+>>  
+>> -	if (leader->core.attr.config == TOPDOWN_SLOTS)
+>> -		return true;
+>> +	if (leader->core.attr.config != TOPDOWN_SLOTS)
+>> +		return false;
+>> +
+>> +	/*
+>> +	 * If slots event as leader event but no topdown metric events in group,
+>> +	 * slots event should still sample as leader.
+>> +	 */
+>> +	evlist__for_each_entry(leader->evlist, event) {
+>> +		if (event != leader && is_topdown_metric_event(event))
+>> +			return true;
+>> +	}
+>>  
+>>  	return false;
+>>  }
+>>
+>> base-commit: 92e5605a199efbaee59fb19e15d6cc2103a04ec2
 
