@@ -1,158 +1,118 @@
-Return-Path: <linux-kernel+bounces-233868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1416491BE84
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:27:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E24591BE88
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:28:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 452EE1C221B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:27:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17011B231DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:28:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EEB21586C4;
-	Fri, 28 Jun 2024 12:27:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63AD9158D77;
+	Fri, 28 Jun 2024 12:27:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uxhYQTOz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZUKaTnMV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C809D27733
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 12:27:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1560158878;
+	Fri, 28 Jun 2024 12:27:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719577665; cv=none; b=CPIitKV7Q5Jh26JamRUWOO6QrRHFwyJziBWJqG93fZtjItydoyC6wS6ARI8220jrdZcuPXSPxmY3t520hqTUxwpjCee+0sPGtYkgsNyg9bm/Fth2bD9FgK0JV4L9m99NXN6AhNHDwiEdlSuAYx5cNAffMRLjKi3ZRue2RQmX/R4=
+	t=1719577668; cv=none; b=oTv0alOilqm4T3vJg0E3IvWkxFhz/2flTTFHWO4a96olVxFXufa776u0z7CO54x621ydtj0xDRrOwuBj3BcWxmXoEddwUubakiJNd5yIDO2cKumlMrUZExLnLszcUeNpg8gl0x5V8EO+IMBdjcNoEJmcCO7GyZ6MYetWG48eDzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719577665; c=relaxed/simple;
-	bh=hJK0wVcohUrm/QMAdA241PXIxwDTFNwjJipFh5DJ78s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PJO/8GqWXPMGXspVL0wD1n/u3ohaccfByQuDumTuoxC9nOW5g03b6eiD2DVAvOE9MpKY+gh/+2WMXwMTufGPJ4ERaAK7JhpxMrKTE5dudmY2wXKhrtuuU+JxCdykoGn6an3HWawqobQQcFmqvdKrt7S2tspaBxp2VrxBoQdP+iM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uxhYQTOz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91BA2C116B1;
-	Fri, 28 Jun 2024 12:27:39 +0000 (UTC)
+	s=arc-20240116; t=1719577668; c=relaxed/simple;
+	bh=cR9hwW6RbLbUXG6oU/iwUSWz39yoTnI9vJYrvNX6PsY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LBKhcyaW3tSYkVega5QNN+92BCNlC/KhY+GsAJ/464xukkx9Vb2Vo66sk50SwJkL3dYK9kKtcyZEJXApLxlDzxyQgoGxMFGXCo4Rh4JVsoHseOUo83fBcX85g65JtwCFpvs1TwTdGqNej7sSCTxrQQ8gbMtEUXDgcSrbt2qb5DI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZUKaTnMV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 33C49C4AF0B;
+	Fri, 28 Jun 2024 12:27:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719577665;
-	bh=hJK0wVcohUrm/QMAdA241PXIxwDTFNwjJipFh5DJ78s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uxhYQTOzDvadvS7QMAwBzg5aiD/rX8maTKwQpgxF/vtp04sRNVjUoCI02+UFbURAZ
-	 VlXABhW1gKOH+a3yY0P/Tlwa1KcXkDFLTG83ds2P0LsI+jKIunAqq8qt7aNrY48O/+
-	 6fHdM7IPhFrWHF8OvHEG9KZPy6bYQFTseSXXeAV2iFu5kyttIQZfiPCGQPHOCdXvNF
-	 dWQX5IHAp3G5A0I+J2P3/B6DlPy//GNn+pgwPwY6VB80qUH0Uu+hJZOBjtFqw/Zoo3
-	 PDZl5ITBHF++Z+9gZa5snOFP+kB7ZIcmGhflk+eO6wg2xrt+1sj8X0RcGGPCVN7wcb
-	 qz05o+kvMskcQ==
-Date: Fri, 28 Jun 2024 13:27:36 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Shenghao Ding <shenghao-ding@ti.com>
-Cc: andriy.shevchenko@linux.intel.com, lgirdwood@gmail.com, perex@perex.cz,
-	pierre-louis.bossart@linux.intel.com, 13916275206@139.com,
-	zhourui@huaqin.com, alsa-devel@alsa-project.org, i-salazar@ti.com,
-	linux-kernel@vger.kernel.org, j-chadha@ti.com,
-	liam.r.girdwood@intel.com, jaden-yue@ti.com,
-	yung-chuan.liao@linux.intel.com, dipa@ti.com, yuhsuan@google.com,
-	henry.lo@ti.com, tiwai@suse.de, baojun.xu@ti.com, soyer@irl.hu,
-	Baojun.Xu@fpt.com, judyhsiao@google.com, navada@ti.com,
-	cujomalainey@google.com, aanya@ti.com, nayeem.mahmud@ti.com,
-	savyasanchi.shukla@netradyne.com, flaviopr@microsoft.com,
-	jesse-ji@ti.com, darren.ye@mediatek.com
-Subject: Re: [PATCH v1] ASoc: tas2781: Add new Kontrol to set tas2563 digital
- gain
-Message-ID: <fc4aaa9d-53e3-4709-a20b-2f77d718e815@sirena.org.uk>
-References: <20240628041844.1776-1-shenghao-ding@ti.com>
+	s=k20201202; t=1719577668;
+	bh=cR9hwW6RbLbUXG6oU/iwUSWz39yoTnI9vJYrvNX6PsY=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=ZUKaTnMVlYOakPuqGcROXStsVp14aiEOfX7+MEEyuovAfFF+DzDdDycACiEvXyv6a
+	 XVkfYsuEmFQoGaeG/GgnOtkW9MT3N+fe+/oCmoGW+rPEveZw4CG1J9S1RHshE2FWuV
+	 nbufX5EwuvUW/Hqp5lKAHBSi9ZmT8dC2PvFmUuut2mUHNm338QEQeQqVTNzyTtDj6C
+	 wtFOg03f5Nlh3ooBW/OhNkt/gsiRSP+5NrCCbpJKtlzNDPf9rR6EwTupRjXTSggv2D
+	 sb2fse3IZmc+2tGyyZi4otJfuOMBXBJuhBa+btrCF3XFmGaizC5IAf53tBvcaGxMf3
+	 ieVTSxGhLLqFg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CF99C2BD09;
+	Fri, 28 Jun 2024 12:27:48 +0000 (UTC)
+From: Joel Granados via B4 Relay <devnull+j.granados.samsung.com@kernel.org>
+Subject: [PATCH RFC 0/5] iommu/vt-d: Create a cache_tag_id to reduce
+ argument passing
+Date: Fri, 28 Jun 2024 14:27:38 +0200
+Message-Id: <20240628-jag-revisit_cache_tag_assign-v1-0-a0c19063c983@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="XEMZY2HieQ0Ithcn"
-Content-Disposition: inline
-In-Reply-To: <20240628041844.1776-1-shenghao-ding@ti.com>
-X-Cookie: divorce, n:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADqsfmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDMyML3azEdF2IwpL45MTkjNT4ksT0+MTi4sz0PF1DSwuTFAsDC2MzyzQ
+ loBEFRalpmRVg46OVgtyclWJrawEXC1ascwAAAA==
+To: David Woodhouse <dwmw2@infradead.org>, 
+ Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, 
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ Joel Granados <j.granados@samsung.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1156;
+ i=j.granados@samsung.com; h=from:subject:message-id;
+ bh=cR9hwW6RbLbUXG6oU/iwUSWz39yoTnI9vJYrvNX6PsY=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGZ+rDsYYKC6MidKQAjlRDvFg//BAhVVpBLdD
+ dclu5H24CmCsIkBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJmfqw7AAoJELqXzVK3
+ lkFPPJsL/jz6HY71bfDOzt+pzs3OdCZV2ZGPlvK5UfCKjYtBGvtRhzTgZlXbokny2wCwBk32cZz
+ 8C39Do+2N0UQ9xpoyws/CH08wHjdPXzV8aC4PLvWKa99E1gyfBnV/Fif3eTlHa1NvOLoE3+O0lA
+ aBRzjORh5VSxz1GQq3g+gI4DKbWoFbJtN3aBHWjlIiI6wzC29pNwwrZEV3JqjtMhumw6zZaiRqe
+ GlxofuwwQ1ax++K2FbV3Ut77HbTGcj5pRwaCdF8fclLSijIhmZyNXmwpYF3yMVKd/w0BjX6L2l7
+ m5nb+KBwX6mCtZxsLBPX+070lGoQUW6SbwO29/a69kTkFZ33yGWiPSU7FS7r2k65p9f70uzV22K
+ I0AIIPif+JEAOy4KTnNKmAVaiePTIxUA16/r0IFHl70pAmJDGM5x7efWkTWxYghuHsY7pTe53Wr
+ A51ctu8/1XWFYqcQ52QPdE0VUyFr+Q8pmB7Ya69p/T0B/DjaQg1W/rfySehg7v0eKCzDXsrG7C7
+ 3U=
+X-Developer-Key: i=j.granados@samsung.com; a=openpgp;
+ fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
+X-Endpoint-Received: by B4 Relay for j.granados@samsung.com/default with
+ auth_id=70
+X-Original-From: Joel Granados <j.granados@samsung.com>
+Reply-To: j.granados@samsung.com
+
+Does it make sense to replace 4 arguments (domain id, dev, pasid and
+type) with just one (cache_tag_id) in the {un}assignment functions in
+drivers/iommu/intel/cache.c?
+
+In working with this file I made a few changes so I could understand it
+a bit better (no functional modifications). I can keep going if ppl see
+that it make sense.
+
+Comments are greatly appreciated.
+
+Signed-off-by: Joel Granados <j.granados@samsung.com>
+---
+Joel Granados (5):
+      iommu/vt-d: introduce cache_tag_id to the struct cache_tag
+      iommu/vt-d: Replace cache_tag_match with a tag comparison function
+      iommu/vt-d: Pass cache_tag_id to {un}assignment functions
+      iommu/vt-d: Use ats_enable as an argument
+      iommu/vt-d: Remove dev_iommu_priv_get call from domain_get_id_for_dev
+
+ drivers/iommu/intel/cache.c | 184 ++++++++++++++++++++++----------------------
+ drivers/iommu/intel/iommu.h |  24 +++---
+ 2 files changed, 104 insertions(+), 104 deletions(-)
+---
+base-commit: bcace518c52fd7d786a9093711e84847db98e1ef
+change-id: 20240628-jag-revisit_cache_tag_assign-1984d808369f
+
+Best regards,
+-- 
+Joel Granados <j.granados@samsung.com>
 
 
---XEMZY2HieQ0Ithcn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Jun 28, 2024 at 12:18:43PM +0800, Shenghao Ding wrote:
-
-> -static int tas2781_force_fwload_get(struct snd_kcontrol *kcontrol,
-> +static int tasdev_force_fwload_get(struct snd_kcontrol *kcontrol,
->  	struct snd_ctl_elem_value *ucontrol)
->  {
->  	struct snd_soc_component *component =3D
-> @@ -118,7 +119,7 @@ static int tas2781_force_fwload_get(struct snd_kcontr=
-ol *kcontrol,
->  	return 0;
->  }
-> =20
-> -static int tas2781_force_fwload_put(struct snd_kcontrol *kcontrol,
-> +static int tasdev_force_fwload_put(struct snd_kcontrol *kcontrol,
->  	struct snd_ctl_elem_value *ucontrol)
-
-Are these fwload changes really related to the rest of the change?  They
-feel like they should be a separate patch, even if it's a peparatory one
-for this.
-
-> +static int tas2563_digital_gain_put(
-> +	struct snd_kcontrol *kcontrol,
-> +	struct snd_ctl_elem_value *ucontrol)
-> +{
-
-> +	for (i =3D 0; i < tas_dev->ndev; i++) {
-> +		ret =3D tasdevice_dev_bulk_write(tas_dev, i, reg,
-> +			(unsigned char *)tas2563_dvc_table[vol], 4);
-> +		if (ret)
-> +			dev_err(tas_dev->dev,
-> +				"%s, set digital vol error in device %d\n",
-> +				__func__, i);
-> +	}
-> +
-> +out:
-> +	mutex_unlock(&tas_dev->codec_lock);
-> +	return ret;
-> +}
-
-This needs to return 1 if the value is being changed, the mixer-test
-selftest will tell you about this and other issues.
-
-> +static const struct snd_kcontrol_new tas2563_snd_controls[] =3D {
-> +	SOC_SINGLE_RANGE_EXT_TLV("Speaker Digital Gain", TAS2563_DVC_LVL, 0,
-> +		0, ARRAY_SIZE(tas2563_dvc_table) - 1, 0,
-> +		tas2563_digital_gain_get, tas2563_digital_gain_put,
-> +		tas2563_dvc_tlv),
->  };
-
-Volume controls should end in Volume, again mixer-test will tell you
-this - please run mixer-test.
-
->  static int tasdevice_codec_probe(struct snd_soc_component *codec)
->  {
->  	struct tasdevice_priv *tas_priv =3D snd_soc_component_get_drvdata(codec=
-);
-> +	int rc;
-> +
-> +	if (tas_priv->chip_id =3D=3D TAS2781) {
-> +	} else {
-
-If you write this as a switch statement it'll be more extensible.
-
---XEMZY2HieQ0Ithcn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ+rDgACgkQJNaLcl1U
-h9BGpAf+MRghGzscAmxRBjyebKkh1iaVhHcFCK++zjP+ZPE9MOGExz2lX+WYMHoe
-SAltr4Fys7zepRaRzf2QKM2tjnCTQi0EayXEE/6C4KkoiWevl4NXLAYNjn0KtjqT
-uVdgH4CxrAelgeBw1rWXg4K5/enCe1sYJk1cfIUwbrVn1GT0xd/1sIeH6uXR8drk
-mRq+D270Ce2YIotP7+0xOev5uOPaUzQeTI3p1tocmDrHlzgoZ6T+hAZ6T9NENnom
-SVhnEB7ZmHslxO8YVyPfkuoOUn/J/WgjwhfAD4/TawYoppkWhrWk1zayHeAnjX57
-zunLfO6R8hnixDTySiHyXVgwy7Te7A==
-=OGLo
------END PGP SIGNATURE-----
-
---XEMZY2HieQ0Ithcn--
 
