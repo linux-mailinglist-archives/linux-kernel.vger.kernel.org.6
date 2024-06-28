@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-234621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2B6F91C8AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 23:58:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0295391C8B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 23:59:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 873C7281CC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:58:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 260FF1C2330F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:59:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B41613A259;
-	Fri, 28 Jun 2024 21:56:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219081A38D8;
+	Fri, 28 Jun 2024 21:56:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eL+4dBpu"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DLmb8Ydf"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9DED85270
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 21:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC7513C676
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 21:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719611796; cv=none; b=YWlzF/MLLUYLWy+zXNa04PNmtI1tJ+y0mhpbA3eFwjaG9gD8TG8nKrUQDap3vd193j9dY3K1/FqPxKm0fWPrhd2R0CpmLdpG72mKWzb3wRuW8lIwNFRfA3RGNAlZKj/5amSrWhQJLU9nrauVs0uQ1ruTvSRj5KXd5ujGN9EgToM=
+	t=1719611800; cv=none; b=eRumBS1/kzNu+On3awAzhZjmWUghzPF2xaO7P8cBPOa5+sBfC14gn6167Y4Oh60Sd2BCND9CvbMwplXENUV8HJyehg6aJ3aTj+U2g5c4n/MiWDZqSsZqgQj+6zZb8tXTV7gKs5sxnzp9MdDRavOF2jo9P3ycqoiqvBABtk8yH00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719611796; c=relaxed/simple;
-	bh=fJdyJmm169ahsAE7AU4WeTiO841LkwbRErK0K/CR60c=;
+	s=arc-20240116; t=1719611800; c=relaxed/simple;
+	bh=7gwzf/trQEcQpsp3Q62b5pMAB6BI8DFeIhWQ/vV4hOM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=u3DsssueOgbGYFd9Sty145J88qpAFwJk7xXg4RCmAerD5k+g8XyXDfGxvPg1D6FtvgjBJ/PFJcvbvRQtHpn2cdFGm6iLG8/0d2PwqE7Kye06ShsYY6e05e63OK/bxpduk7ZNofAhojw82c4VT8LcbU252972QAs9cGvnjUB5Bhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eL+4dBpu; arc=none smtp.client-ip=198.175.65.21
+	 MIME-Version; b=FiPvXQfiHQ0H+CTgHLH3ncIYgGGTa6KOq89V1Zop6YOL4T4Eec+5IqDDB+VONggUQZO+vKsQeRNGn+V3NKkB6R1Niam0qEjL4lMpa2Rbef+9W9+D/6sqWhZsowLRvj9RuktFtmxM6TAQGJHQk2Upw/OMpiM5e/env9xzyg33TjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DLmb8Ydf; arc=none smtp.client-ip=198.175.65.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719611795; x=1751147795;
+  t=1719611798; x=1751147798;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=fJdyJmm169ahsAE7AU4WeTiO841LkwbRErK0K/CR60c=;
-  b=eL+4dBpu8FmXiVdYFMWq8QeUq/DCpINtSQGRzNXUO/IlMiyD6xVco7Vl
-   JTbTNXoYs6wuE4TfBvGW+Jx0qS91tRW1OcHIUfOXPjNhfKP+aQ9xldXHs
-   UZWXbPIOTCKK35Guoxe1G6zYa3xJ4a5DT7TEJplS6L6lbJpzMy50FgKIk
-   h0HQ72gF2QoLqZa9S56SGO4o6DIUAaXAXzOrMCla9tefWUyvyYSrwq+c/
-   tk9FmTpdSizwrWi0R2vZM3/AnCz4212UENzyIin1bXALEvB8uVKlNWRWE
-   u/tZ87OXIWqoW7genLhCEv+84Lqgvy8oEIJ+XyG4HH/QaETp8DyD25cWp
+  bh=7gwzf/trQEcQpsp3Q62b5pMAB6BI8DFeIhWQ/vV4hOM=;
+  b=DLmb8YdfXbnVQhDFD7KgxCJr9Wgfdz/QDd9bH44x0rywuMaZ1BHIj14O
+   PfkHkDn1ZHO6g3qYzjbhxAhXVm7/jU6uXP2ZvI+vWPZybb4oBKx9SLJXp
+   wc6aXtZ8iTiXLFnigRKwI4y6lOH6ektdb9Cy8cOo95FvMES+3vjcfWIKF
+   nBwAX2bjF2H7J4e8cNNdSFECgPWV7BPdjoLWQ7mCi5v1/UZ09rvVSm9wh
+   IZq3IgYJO08PQ4d7KQRVH8BmjNDxwNC0uINyIkeWHxavYAZzCK3u4XkEz
+   jPoVaeu9ywMefQ3J73TE0RimWYmx4ZtV2rjuZ/eWFUHmbqacQwVcsRu5p
    Q==;
-X-CSE-ConnectionGUID: Ed38s9HERPSRJU3ugKKuJQ==
-X-CSE-MsgGUID: YrQ+tqfTS+axx+TNaclOsQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11117"; a="16762600"
+X-CSE-ConnectionGUID: hNUSp6v+SyqrFB0SvkJ/lw==
+X-CSE-MsgGUID: HWVplntUQYGKomyzdtsatw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11117"; a="16762615"
 X-IronPort-AV: E=Sophos;i="6.09,170,1716274800"; 
-   d="scan'208";a="16762600"
+   d="scan'208";a="16762615"
 Received: from fmviesa002.fm.intel.com ([10.60.135.142])
   by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 14:56:28 -0700
-X-CSE-ConnectionGUID: 4wtQ1trrTLqlAJ4amq0hMA==
-X-CSE-MsgGUID: 6iY7GJ+QSei8td+K2IZEDA==
+X-CSE-ConnectionGUID: QWV9m6F7T/6zO3o57zoSuQ==
+X-CSE-MsgGUID: Yy/X5S/ZSg6ntkxze2J4xQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,170,1716274800"; 
-   d="scan'208";a="68065669"
+   d="scan'208";a="68065672"
 Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
   by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 14:56:27 -0700
 From: Tony Luck <tony.luck@intel.com>
@@ -70,9 +70,9 @@ Cc: x86@kernel.org,
 	linux-kernel@vger.kernel.org,
 	patches@lists.linux.dev,
 	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v23 12/19] x86/resctrl: Allocate a new field in union mon_data_bits
-Date: Fri, 28 Jun 2024 14:56:12 -0700
-Message-ID: <20240628215619.76401-13-tony.luck@intel.com>
+Subject: [PATCH v23 13/19] x86/resctrl: Create Sub-NUMA Cluster (SNC) monitor files
+Date: Fri, 28 Jun 2024 14:56:13 -0700
+Message-ID: <20240628215619.76401-14-tony.luck@intel.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240628215619.76401-1-tony.luck@intel.com>
 References: <20240628215619.76401-1-tony.luck@intel.com>
@@ -84,71 +84,123 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When Sub-NUMA Cluster (SNC) mode is enabled the legacy monitor reporting
-files must report the sum of the data from all of the SNC nodes that
-share the L3 cache that is referenced by the monitor file.
+When SNC mode is enabled, create subdirectories and files to monitor
+at the SNC node granularity. Legacy behavior is preserved by tagging
+the monitor files at the L3 granularity with the "sum" attribute.
+When the user reads these files the kernel will read monitor data
+from all SNC nodes that share the same L3 cache instance and return
+the aggregated value to the user.
 
-Resctrl squeezes all the attributes of these files into 32-bits so they
-can be stored in the "priv" field of struct kernfs_node.
+Note that the "domid" field for files that must sum across SNC domains
+has the L3 cache instance id, while non-summing files use the domain id.
 
-Currently only three monitor events are defined by enum resctrl_event_id
-so reducing it from 8-bits to 7-bits still provides more than enough
-space to represent all the known event types. But note that this choice
-was arbitrary. The "rid" field is also far wider than needed for the
-current number of resource id types.  This structure is purely internal
-to resctrl, no ABI issues with modifying it. Subsequent changes may
-rearrange the allocation of bits between each of the fields as needed.
-
-Give the bit to a new "sum" field that indicates that reading this file
-must sum across SNC nodes. This bit also indicates that the domid field
-is the id of an L3 cache (instead of a domain id) to find which domains
-must be summed.
-
-Fix up other issues in the kerneldoc description for mon_data_bits.
+The "sum" files do not need to make a call to mon_event_read() to
+initialize the MBM counters. This will be handled by initializing the
+individual SNC nodes that share the L3.
 
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- arch/x86/kernel/cpu/resctrl/internal.h | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 62 +++++++++++++++++++-------
+ 1 file changed, 46 insertions(+), 16 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-index 681b5bdcd2f9..13d862221f9c 100644
---- a/arch/x86/kernel/cpu/resctrl/internal.h
-+++ b/arch/x86/kernel/cpu/resctrl/internal.h
-@@ -127,19 +127,25 @@ struct mon_evt {
- };
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index 9c38ddcfe150..8502385e389f 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -3026,7 +3026,8 @@ static void rmdir_mondata_subdir_allrdtgrp(struct rdt_resource *r,
+ }
  
- /**
-- * union mon_data_bits - Monitoring details for each event file
-+ * union mon_data_bits - Monitoring details for each event file.
-  * @priv:              Used to store monitoring event data in @u
-- *                     as kernfs private data
-- * @rid:               Resource id associated with the event file
-- * @evtid:             Event id associated with the event file
-- * @domid:             The domain to which the event file belongs
-- * @u:                 Name of the bit fields struct
-+ *                     as kernfs private data.
-+ * @u.rid:             Resource id associated with the event file.
-+ * @u.evtid:           Event id associated with the event file.
-+ * @u.sum:             Set when event must be summed across multiple
-+ *                     domains.
-+ * @u.domid:           When @u.sum is zero this is the domain to which
-+ *                     the event file belongs. When @sum is one this
-+ *                     is the id of the L3 cache that all domains to be
-+ *                     summed share.
-+ * @u:                 Name of the bit fields struct.
-  */
- union mon_data_bits {
- 	void *priv;
- 	struct {
- 		unsigned int rid		: 10;
--		enum resctrl_event_id evtid	: 8;
-+		enum resctrl_event_id evtid	: 7;
-+		unsigned int sum		: 1;
- 		unsigned int domid		: 14;
- 	} u;
- };
+ static int mon_add_all_files(struct kernfs_node *kn, struct rdt_mon_domain *d,
+-			     struct rdt_resource *r, struct rdtgroup *prgrp)
++			     struct rdt_resource *r, struct rdtgroup *prgrp,
++			     bool do_sum)
+ {
+ 	struct rmid_read rr = {0};
+ 	union mon_data_bits priv;
+@@ -3037,14 +3038,15 @@ static int mon_add_all_files(struct kernfs_node *kn, struct rdt_mon_domain *d,
+ 		return -EPERM;
+ 
+ 	priv.u.rid = r->rid;
+-	priv.u.domid = d->hdr.id;
++	priv.u.domid = do_sum ? d->ci->id : d->hdr.id;
++	priv.u.sum = do_sum;
+ 	list_for_each_entry(mevt, &r->evt_list, list) {
+ 		priv.u.evtid = mevt->evtid;
+ 		ret = mon_addfile(kn, mevt->name, priv.priv);
+ 		if (ret)
+ 			return ret;
+ 
+-		if (is_mbm_event(mevt->evtid))
++		if (!do_sum && is_mbm_event(mevt->evtid))
+ 			mon_event_read(&rr, r, d, prgrp, mevt->evtid, true);
+ 	}
+ 
+@@ -3055,23 +3057,51 @@ static int mkdir_mondata_subdir(struct kernfs_node *parent_kn,
+ 				struct rdt_mon_domain *d,
+ 				struct rdt_resource *r, struct rdtgroup *prgrp)
+ {
+-	struct kernfs_node *kn;
++	struct kernfs_node *kn, *ckn;
+ 	char name[32];
+-	int ret;
++	bool snc_mode;
++	int ret = 0;
+ 
+-	sprintf(name, "mon_%s_%02d", r->name, d->hdr.id);
+-	/* create the directory */
+-	kn = kernfs_create_dir(parent_kn, name, parent_kn->mode, prgrp);
+-	if (IS_ERR(kn))
+-		return PTR_ERR(kn);
++	lockdep_assert_held(&rdtgroup_mutex);
+ 
+-	ret = rdtgroup_kn_set_ugid(kn);
+-	if (ret)
+-		goto out_destroy;
++	snc_mode = r->mon_scope == RESCTRL_L3_NODE;
++	sprintf(name, "mon_%s_%02d", r->name, snc_mode ? d->ci->id : d->hdr.id);
++	kn = kernfs_find_and_get(parent_kn, name);
++	if (kn) {
++		/*
++		 * rdtgroup_mutex will prevent this directory from being
++		 * removed. No need to keep this hold.
++		 */
++		kernfs_put(kn);
++	} else {
++		kn = kernfs_create_dir(parent_kn, name, parent_kn->mode, prgrp);
++		if (IS_ERR(kn))
++			return PTR_ERR(kn);
+ 
+-	ret = mon_add_all_files(kn, d, r, prgrp);
+-	if (ret)
+-		goto out_destroy;
++		ret = rdtgroup_kn_set_ugid(kn);
++		if (ret)
++			goto out_destroy;
++		ret = mon_add_all_files(kn, d, r, prgrp, snc_mode);
++		if (ret)
++			goto out_destroy;
++	}
++
++	if (snc_mode) {
++		sprintf(name, "mon_sub_%s_%02d", r->name, d->hdr.id);
++		ckn = kernfs_create_dir(kn, name, parent_kn->mode, prgrp);
++		if (IS_ERR(ckn)) {
++			ret = -EINVAL;
++			goto out_destroy;
++		}
++
++		ret = rdtgroup_kn_set_ugid(ckn);
++		if (ret)
++			goto out_destroy;
++
++		ret = mon_add_all_files(ckn, d, r, prgrp, false);
++		if (ret)
++			goto out_destroy;
++	}
+ 
+ 	kernfs_activate(kn);
+ 	return 0;
 -- 
 2.45.2
 
