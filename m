@@ -1,100 +1,127 @@
-Return-Path: <linux-kernel+bounces-234361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEE2691C5A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:27:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32AA491C5AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:27:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FB5B1F24263
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:27:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC3FA2818F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A4F1CD5A4;
-	Fri, 28 Jun 2024 18:27:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF151CD5B3;
+	Fri, 28 Jun 2024 18:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="By2l4T17"
-Received: from gentwo.org (gentwo.org [62.72.0.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GI30o1qA"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC262DDC0
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 18:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD082DDC0;
+	Fri, 28 Jun 2024 18:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719599222; cv=none; b=BVJxYbB+MuK0BPd0KlileUakPEg9MeNGZDeGBCkWHGc4Hsv2Bk3N+13RZQhy0JwaG3KbEnC8clXC5qGDu9NIKo9yU/v1NslEfvwKFT9sgLG81s+Qyx8LVmzS0CZWepWws1sOpNMNtwV/GNM+55inmT1rgW6pfE62B2A6zQYRmGk=
+	t=1719599251; cv=none; b=X8bSIZzq31sj1NeAn85Oy0XfnTtgsqwVqS10+fZjmXUXnQX4PmUej0zk6GH0/81IaET9FjtvERiwNHFHq0OUJh0yKSiVbYGZy0l6iKqde89DyOupsqKghLPiTCo/7D2m4Mjr352dQjN2t/osxnuSQI53zCXQ9B+1xs8TX/llDgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719599222; c=relaxed/simple;
-	bh=9tninp6H435D2gYhObWndxNCzT5sDUwz4keq4P7yoE4=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=CZw7inarQHmz+9Xn5bGQo02uQgrio22Ve8r5/+J1tciIuebvMrKee6q0nb3BhnFUmUtzU+SKs/CXpqUCkqsOfNbmFYjo33mDUvlIb+TWwQ5b5Ycn4sLnn45pRtMpOMfE9bP5HqRTUK2VllgSjEX3bmMLJVvqoJjJY4isCfYGXmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=By2l4T17; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
-	s=default; t=1719599220;
-	bh=9tninp6H435D2gYhObWndxNCzT5sDUwz4keq4P7yoE4=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=By2l4T173q8ozWqpo5UF9Oo/+OdAdvVk7p2WV2yywewSsA5hV9E227cdFX3T/dAoX
-	 /m3LpjgVw5dXs64UcJBNkic3U8LIRGmyfg4qJ6H6/g4yqPPsog/fhCdMZZba8E6rbw
-	 L5P6CEwXpRZyPzRtq3ZApfvfsBspGyS4r+5zuoxM=
-Received: by gentwo.org (Postfix, from userid 1003)
-	id 0095C4037C; Fri, 28 Jun 2024 11:26:59 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id F3A5C401D7;
-	Fri, 28 Jun 2024 11:26:59 -0700 (PDT)
-Date: Fri, 28 Jun 2024 11:26:59 -0700 (PDT)
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-cc: Yang Shi <yang@os.amperecomputing.com>, will@kernel.org, 
-    anshuman.khandual@arm.com, david@redhat.com, scott@os.amperecomputing.com, 
-    linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [v5 PATCH] arm64: mm: force write fault for atomic RMW
- instructions
-In-Reply-To: <Zn7xs6OYZz4dyA8a@arm.com>
-Message-ID: <e0779c4c-9a1a-3b10-0c25-6cd3e148b917@gentwo.org>
-References: <20240626191830.3819324-1-yang@os.amperecomputing.com> <Zn7q3oL1AE8jdM-g@arm.com> <773c8be7-eb73-010c-acea-1c2fefd65b84@gentwo.org> <Zn7xs6OYZz4dyA8a@arm.com>
+	s=arc-20240116; t=1719599251; c=relaxed/simple;
+	bh=EoIMkdip0Jqkq5yLw0PSMZmQ3Q58+ZzMoc5HAn1XXLs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BbIm2Wuia+lgFy94Ka1j/jB02c2vN1ehdcXvPOcM/8JgPSh9r15z/BAl+wA5dbfy4FN3QDJ608N0AOE+sYnuxFpsoYTEZqgRM80BK8NTJXilSxTrgotCfBWlOt81e/UXqfs011nCu6ADQb1+3wK+flnn9nLJFd2QpsRoLoi0BCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GI30o1qA; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ec58040f39so8868281fa.2;
+        Fri, 28 Jun 2024 11:27:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719599248; x=1720204048; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dgGUkmn1jPeeQuMXMcfk1hTstH8mcemeot+l8YFexZY=;
+        b=GI30o1qAMbHkJLUO5EW5BTAZ3xJa6KaguK7UJ9zEidYrgO0EI9hEUclEwctgjRPRoB
+         Hdzq81WTikfhnJU05GBLg5TOYFBGZqgCyhrsYaQv5pqRQDYQQkF4ykpeZsSqK39bhMVl
+         E/B8UeF6PNTyy/00+v06quOEQM/YbrfraevBf1meIdfJWIajrpe47sbFdc55ZU+5IvZm
+         q2EVKkdKAVXSCo22gMZuyhZUp48ySdhCFu4prp1RWKEdlJuq7rFLXGZiLj+Tvs9lcYmJ
+         ediAf3qorZ/eX1xHBzA0qYeE39YyC14kNhYZL8VYx4+bLjScO5kzyWyd1ojLej3crKlS
+         z0wQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719599248; x=1720204048;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dgGUkmn1jPeeQuMXMcfk1hTstH8mcemeot+l8YFexZY=;
+        b=XZm20R3yE+g3jDkUXza+GwxmMezLCK6WEjPH3uYEVgr1lrkcODl2GixLxyztpHSF4u
+         KngAqIA/C1qyQdEGyZ6hNLI72ICQ0n1S/K4mZts1/zM+/tzbOl1TaXwMhXkYpsGt/epm
+         s4NK60Q5qf6VJyhlIvqeul9Dsx8zvdL7+L89IyqIHrfvk/4sXAc/hfNBUqC7P6cO8VS8
+         JnIHofcsDD5Ju7rG3Y0tQPIB8lil37ucKfX4Hhki5JyDyFoB0LYdhJ/vCRC+hZvHj+F0
+         N1YSui13+zkaPFXRvgHpXb2aizSuPHdJc6r/mUpL3cW2OkeSa7ABET5yaCYSpStFP8kN
+         JAIA==
+X-Forwarded-Encrypted: i=1; AJvYcCW7T4Fg/8a+yJOu7pUigMLsXj63v2W47fAXOHjiS8dHjMyaCYJlTcUxRuMD7E0kBtyrHIF2IT1lszb0ESc81YAqarFl/THD7zekCROMPs/pqmFVpDoNDIKclLTPBErQDwFCrqIZ
+X-Gm-Message-State: AOJu0YzTkkUAyIb/wcNWJCvPeB3ZjozvcF0ooIayzkH9+++y83Bsnd8M
+	kKrvyES6K6Rm6tPTeQXAv853An5TEACyNk9gexyWd+bwpW8BkJ561mstPKgtSLND0nCMNI8PJoR
+	+0ccDr25M3n0HVkfMy50ykwUYTZwWkQ==
+X-Google-Smtp-Source: AGHT+IHS2YMlbAwnhePYHqSgke0BKfxRk6YNzoY3zHWvbGGz8ba49/3S2DgaqWbp8u3oQrZOZoMWNMsUfdQVPv11hRU=
+X-Received: by 2002:a2e:87d3:0:b0:2ec:500c:b2e0 with SMTP id
+ 38308e7fff4ca-2ec593e0cc0mr112746701fa.22.1719599247749; Fri, 28 Jun 2024
+ 11:27:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+References: <20240627221413.671680-1-yang@os.amperecomputing.com> <Zn5ZmPQCdvHTCwAn@infradead.org>
+In-Reply-To: <Zn5ZmPQCdvHTCwAn@infradead.org>
+From: Yang Shi <shy828301@gmail.com>
+Date: Fri, 28 Jun 2024 11:27:15 -0700
+Message-ID: <CAHbLzkodRFsBWvZ8zZZVeFTNzrwV0PNpT2XmUwFxL1KygPmd4Q@mail.gmail.com>
+Subject: Re: [v2 PATCH] mm: gup: do not call try_grab_folio() in slow path
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Yang Shi <yang@os.amperecomputing.com>, peterx@redhat.com, yangge1116@126.com, 
+	david@redhat.com, akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 28 Jun 2024, Catalin Marinas wrote:
-
-> Linux-specific (e.g. madvise()), I agree, but arm64-specific definitely
-> not. I'd argue that expecting the atomic_add(0) to only trigger a single
-> write fault is arch specific. You can't do this on arm32 or arm64
-> pre-LSE (I haven't checked other architectures).
-
-The single write fault is x86 behavior. I am not sure how other 
-architectures handle that.
-
-> IIUC, OpenJDK added this feature about two years ago but the arm64
-> behaviour hasn't changed in the meantime. So it's not like we broke the
-> ABI and forcing user space to update.
-
-The focus of OpenJDK may not be arm64 and they never saw the issue? We 
-only know this because we have an insider on staff. AFACIT we get pushback 
-from them as well. There are certainly numerous other open 
-source applications that behave in a similar way. We just dont know about 
-it.
-
-> This patch does feel a bit like working around a non-optimal user choice
-> in kernel space. Who knows, madvise() may even be quicker if you do a
-> single call for a larger VA vs touching each page.
-
-Looks to me like unexpected surprising behavior on ARM64. madvise is 
-rather particular to Linux and its semantics are ever evolving.
-
->> A lot of these are proprietary.
+On Thu, Jun 27, 2024 at 11:35=E2=80=AFPM Christoph Hellwig <hch@infradead.o=
+rg> wrote:
 >
-> Are you aware of other (proprietary) software relying on such pattern to
-> fault pages in as writeable?
+> > +int __must_check try_grab_folio(struct folio *folio, int refs, unsigne=
+d int flags)
+>
+> Overly long line (same for the external declaration)
+>
+> > +     struct page *page =3D &folio->page;
+>
+> Page is only used for is_pci_p2pdma_page and is_zero_page, and for
+> the latter a is_zero_folio already exist.  Maybe remove the local
+> variable, use is_zero_folio and just open code the dereference in the
+> is_pci_p2pdma_page call?
 
-I would not be told about such things by companies I did not work for and 
-if I have gotten knowledge about this in some way in the past then I would 
-not be allowed to talk about it.
+Thanks, Christoph. Good point, I think we can use is_zero_folio and
+open coeded it in is_pci_p2pdma_page.
 
+And all the format problems will be solved in v3.
+
+>
+> > +             ret =3D gup_hugepte(vma, ptep, sz, addr, end, flags, page=
+s, nr, fast);
+>
+> Overly lone line.
+>
+> > +             folio_ref_add(folio,
+> > +                             refs * (GUP_PIN_COUNTING_BIAS - 1));
+>
+> Nit: this easily fits onto a single line.
+>
+> >                       if (gup_hugepd(NULL, __hugepd(pmd_val(pmd)), addr=
+,
+> > -                                    PMD_SHIFT, next, flags, pages, nr)=
+ !=3D 1)
+> > +                                    PMD_SHIFT, next, flags, pages, nr,=
+ true) !=3D 1)
+>
+> Overly long lin (same in the similar calls below)
+>
+>
 
