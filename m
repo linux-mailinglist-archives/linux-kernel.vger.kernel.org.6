@@ -1,102 +1,85 @@
-Return-Path: <linux-kernel+bounces-233958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B972191C013
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:57:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6446D91C016
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:57:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71F6B1F21EA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:57:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 981E41C2103D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E30C21E89A;
-	Fri, 28 Jun 2024 13:57:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D1C1BE866;
+	Fri, 28 Jun 2024 13:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bk23BsBl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Nv5TNJtG";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QpB/r0sB"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CDAB1BE847;
-	Fri, 28 Jun 2024 13:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E12315B98D;
+	Fri, 28 Jun 2024 13:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719583029; cv=none; b=XTW8jusK7RblR2ena8QNk7je62xI/HsU+EvUHho6zPwgcmhOiBQDEYmMHqS7WcGSwba2x/uAFpjKF9N1suF8PbKwY3KqcyOb9Ej6ijg+YvQ7TkAulqyNw+gpAPSkWDJ3f3WoR0FfPVzTa2n6/TPxqqpcmrFkCXeVi2DL6um3MBk=
+	t=1719583049; cv=none; b=qpCV1QCdIfN4hVmItW/46znWRUhMM5NufhLi5cnjtU9IzdU3zl82KzA8vTv4r/Py4Aj9P3ewGkOPwCnUwA/ARYJ6w54a37UkyfJM7Kw2bNGiYiS5B7oXdaNh6N6qiezOCozR2YnPkurcNKJ8AO5DmQ5+KaoFStO5VSynB80FIuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719583029; c=relaxed/simple;
-	bh=jgTgj8hpzllNCQWInO86hvCBqczz1c5oqJXlnU6t5NI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RYFqZFBSLHszwkQa2hb+h5u/iByq7+R3ljNxaGhHINnC3Vf002zbCCZbXL0ZQAzMJ5kK6gJ4D+MbrZ3/IvgbnlKYB/Vh74iBX1fLG7mcRiQx2AM8o4GB71wY+a7E1E3McrsGDH++VTp0LMPymOLaNSaqm9100amCVqyaH9zIgGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bk23BsBl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A400EC116B1;
-	Fri, 28 Jun 2024 13:57:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719583029;
-	bh=jgTgj8hpzllNCQWInO86hvCBqczz1c5oqJXlnU6t5NI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Bk23BsBlC3tj4xmIbhWi9LHZejcfJV91nZqYtBu972B4Oj8s5HDk5cFKoQBizvWuz
-	 HXkJTRacLvmtE5znK5ba1pTudcmyw6zBQEanjD+9zbPcWQzAhifdi9CATgG1K84UwQ
-	 hYmrekCcJFH+LfuUKxNUF9fbcwafLBsqqtARWxi+mwgUXEVbFmNs10N2r4R4WEVuAQ
-	 fU+oJK8lcUsy5/30KCeg27CCu1xNLrlWeaT5kwVD6a2mBb20psOeyX6ACgZ9zGgMmJ
-	 rEIg7Qf6ayMUiARcqovaHj6FgfWsW4gGnKB9vWPTAoqgs6v+wn10OrIQO6o+pmpfrM
-	 mLWRggEkFG46g==
-Date: Fri, 28 Jun 2024 14:57:03 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Witold Sadowski <wsadowski@marvell.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"pthombar@cadence.com" <pthombar@cadence.com>
-Subject: Re: [EXTERNAL] Re: [PATCH v9 6/9] spi: cadence: Add Marvell xfer
- operation support
-Message-ID: <79122cc3-f0bb-4ed4-8441-55db0003acd4@sirena.org.uk>
-References: <20240619141716.1785467-1-wsadowski@marvell.com>
- <20240619141716.1785467-7-wsadowski@marvell.com>
- <408b4046-12bc-40d0-aaf4-adced4033946@sirena.org.uk>
- <CO6PR18MB409861918DAF0D8D9FE684EEB0D02@CO6PR18MB4098.namprd18.prod.outlook.com>
+	s=arc-20240116; t=1719583049; c=relaxed/simple;
+	bh=dd3XuLdWn+2DEQRIFIIEPEyiNfs/uNZbOJ3D+9u4ivw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=iofDsrPWzHLGGR+9pmuh1SHFfFQHebVvXEN6Yn3Wm87G518NWJCeHyc9GgrVGUFdnZg7VW2mVN7jKfL2cjF31P/BQ2w6i7dZJGxkOxQMwUgyGdvQ0sfkmKTyUM8vIFct9cfhfw5MmI+6BoyOQJMcoxfsW0ZxW4vbibhtEh8vo5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Nv5TNJtG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QpB/r0sB; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1719583047;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jlwf/7TRlRrmmnPlqSzOyvgQVcgyWjkojMXGq41OTLc=;
+	b=Nv5TNJtGreU5aRpmB7WuzPFsw47OVVDpuc+UJ+ypayp5GU1U10adxDthfHTgTWhe9Cnbo5
+	d0FYI896a+xk6U2mALf2OWEyrMl2IDiT1FyDVs0W5Jj7YnmhDAyUbmRL3SlWZSD7WtRpw8
+	UYmPDTDvdjJwVN4ePRPJCwfZKxx/GBWEybzU5vxThTkBte8bEi88G13K0Por8mJVrFpTDC
+	HLoGxfUg2xXIsIH0gFlXO0/qrCrnQ78md9G9ND7eK7EoVr7xpAvj6DB6CeHzxwl7fzi7NR
+	/Q8g58vDhwDvLNSuacRiv1I7kN3NjBIet+i8w8iTVPzDi4/MkK4+FWXGBGNzow==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1719583047;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jlwf/7TRlRrmmnPlqSzOyvgQVcgyWjkojMXGq41OTLc=;
+	b=QpB/r0sBq/SKQn17tcpD+PAkRdtPzpzGvfho8ru+3w/WUqiGM2JsMnyZYwOat+1yuwUz4o
+	MTeLmP2Q+yRurUBA==
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org,
+ patches@lists.linux.dev
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, linux-crypto@vger.kernel.org,
+ linux-api@vger.kernel.org, x86@kernel.org, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Adhemerval Zanella Netto
+ <adhemerval.zanella@linaro.org>, Carlos O'Donell <carlos@redhat.com>,
+ Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Jann
+ Horn <jannh@google.com>, Christian Brauner <brauner@kernel.org>, David
+ Hildenbrand <dhildenb@redhat.com>
+Subject: Re: [PATCH v18 4/5] random: introduce generic vDSO getrandom()
+ implementation
+In-Reply-To: <20240620005339.1273434-5-Jason@zx2c4.com>
+References: <20240620005339.1273434-1-Jason@zx2c4.com>
+ <20240620005339.1273434-5-Jason@zx2c4.com>
+Date: Fri, 28 Jun 2024 15:57:26 +0200
+Message-ID: <87sewxxj95.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="RdpequBgoMAFoAv0"
-Content-Disposition: inline
-In-Reply-To: <CO6PR18MB409861918DAF0D8D9FE684EEB0D02@CO6PR18MB4098.namprd18.prod.outlook.com>
-X-Cookie: divorce, n:
+Content-Type: text/plain
 
+On Thu, Jun 20 2024 at 02:53, Jason A. Donenfeld wrote:
+>     return grnd_ctx.fn(buf, len, flags, state, grnd_allocator.size_per_each);
+>   }
+>
+> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
 
---RdpequBgoMAFoAv0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, Jun 28, 2024 at 01:48:00PM +0000, Witold Sadowski wrote:
-
-> > This loop doesn't implement any of the delay stuff, ideally it either
-> > would or would reject transfers that request transfers.
-
-> I'm not sure about what kind of the delay You are referring to. Can You explain?
-
-The _delay fields in spi_transfer.
-
---RdpequBgoMAFoAv0
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ+wS4ACgkQJNaLcl1U
-h9BUlQf8DjSSXtPHq/fUXzfb7QZEOo7hObbT2LtRrpsC/AZ5TJ2/uH8Hcsa3Xs7j
-gg4YfWNm0LbC0QVH99pzx/xUFZh2+FwJ2gWApfUAIbYBZsdcxiuetso3ucfSYMag
-AyXFnzVdHqsu2qlKhnC+3GTn3GOhGnz1ZppV+yzMXMszK3UdortpSdHw2UOd9z65
-lGgi3xwd7LLAhcjFdUB6nNZUZcPZ8UyY5J2N+GfcKaCR+qJcuIaBHvOvLfagKoPq
-E1pB4q8H7yNiHhxiA3ZavG0lBJ+TQ045oQjveexgGzMbJ3AzP2JfSmeAAiISUoap
-AtIRq/Xb8QRhV7st9Qqo6vOC7XXnZw==
-=R/vK
------END PGP SIGNATURE-----
-
---RdpequBgoMAFoAv0--
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 
