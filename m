@@ -1,112 +1,98 @@
-Return-Path: <linux-kernel+bounces-234288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9264691C4B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:20:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBABE91C4B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:21:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46F821F22C76
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:20:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DAE2B20389
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:21:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE04E1CFD4F;
-	Fri, 28 Jun 2024 17:18:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1A31CB33A;
+	Fri, 28 Jun 2024 17:21:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="RKbFkYnE"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b="kbMcgn20"
+Received: from smtp1.ms.mff.cuni.cz (smtp-in1.ms.mff.cuni.cz [195.113.20.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85FA91CFD48
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 17:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B8D1DDCE;
+	Fri, 28 Jun 2024 17:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.113.20.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719595111; cv=none; b=nBAvXepFpBOfeGmQfgN8djBvkqTITmctrRdHLtuf2hQBheMEu4o2JNU6OxmxFdDlXvpzo6erU02uW5JuEm8qk11r4/WflMxQ8l1YbQ06R9Ywi2nrGlKomEXcckJBKh9nHugCM64OlTNxWrRDoJH10FAVeJnTBXJb3CV2XKGWvuk=
+	t=1719595290; cv=none; b=osuwn7nF7t3PAJCqUfRDidNrkf8PYO4VXnqDqmNC43GrFbbs8MdtlsQhYWAuWM8Z/ZbKA94kVomYfk24eujupznGoXO8s8ATXBF9IWnzFijimixTPvq5dEV7IvJ2LvmHbKO5wXyjLJQQ7BDO85LEf/hGep9K8DXO71zh0QZmSYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719595111; c=relaxed/simple;
-	bh=RFHiuY1hBRFafK9fzUjmZnRVOM+aQhmgEXbVxYNmDTQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZljTGEYyPe40jyIjhNgwhiL1TY097YMSD5O2QFCB2thkGFMlU7eU2War1CMrJRB2PEwE8JBXNu9euEn6qIhE5WuoEATQbdGYt03HUcnXf3HrxeEFOeIiozpp06kQVJcF15dsHOS3GfOa9m3h1wK4PFABHoCpR6EVxni9yE+YJcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=RKbFkYnE; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-120-63.bstnma.fios.verizon.net [173.48.120.63])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 45SHHtvH024131
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 13:17:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1719595077; bh=wIjWt0UUSggE+fxOOHBDOXTXa8EsNhtHr9vWBIP/G74=;
-	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=RKbFkYnEhFwDMSNDrES8H/NamCv0POJYdED6xe9DpjPUNo5mJcoL1uhhGM7SRwIgi
-	 boEzN517Eg6ptPEWO6qWVKSF1HPY4bp6ChUr2MOwUGqSS9E04RM2WX7qk7aVrxqpkr
-	 aKHHYkNIOqjRmGorXe6rgT15mvrPcX4aNR6cwwnXOfFWs4YmeXIWUi6BSf2HeffU+t
-	 VaIYkE92T8JSUDPh7dFbHW4xYzcJK6zC/5a6IoWJUdbeApD24DzyFrPgHLnpceCWkI
-	 xmSUd/6K760EQoCRqV4+6fISzs7nOu/G3LxLxIG/NPruf9damBRar5wlCbyaP2e+fW
-	 2NNY+oxz4KN8g==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id DB04C15C02DA; Fri, 28 Jun 2024 13:17:54 -0400 (EDT)
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: linux-ext4@vger.kernel.org, Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, adilger.kernel@dilger.ca, jack@suse.cz,
-        ritesh.list@gmail.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
-        yukuai3@huawei.com
-Subject: Re: [PATCH v5 00/10] ext4: support adding multi-delalloc blocks
-Date: Fri, 28 Jun 2024 13:17:50 -0400
-Message-ID: <171959506221.737463.10372679974958819518.b4-ty@mit.edu>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240517124005.347221-1-yi.zhang@huaweicloud.com>
-References: <20240517124005.347221-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1719595290; c=relaxed/simple;
+	bh=NbOS8wtvU7uKZD7BIvMjlCuVnUcuWUyNlr4dVg1GJ5w=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:To:From:
+	 References:In-Reply-To; b=Whx5V12RGS9g9fMMhYdmsOzqLNBfD9INUISPaM0rdO2j8sKPD0VSKShirVXnN4O91f7cxwhDL9XuxjZtYV75+VujXaqrRCS4WVklAmnF0RDdu/+J4TL5B8gHMv5E93hRfwPHP7Kpn/1qR/iBGzyIcZFmsW5bmJGx2kZaCyOlq7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz; spf=pass smtp.mailfrom=matfyz.cz; dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b=kbMcgn20; arc=none smtp.client-ip=195.113.20.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matfyz.cz
+X-SubmittedBy: id balejk@matfyz.cz subject /postalCode=110+2000/O=Univerzita+20Karlova/street=Ovocn+5CxC3+5CxBD+20trh+20560/5/ST=Praha,+20Hlavn+5CxC3+5CxAD+20m+5CxC4+5Cx9Bsto/C=CZ/CN=Karel+20Balej/emailAddress=balejk@matfyz.cz
+	serial F5FD910E8FE2121B897F7E55B84E351D
+	issued by /C=NL/O=GEANT+20Vereniging/CN=GEANT+20Personal+20CA+204
+	auth type TLS.CUNI
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mff.cuni.cz;
+	s=submission; t=1719595214; x=1720895214;
+	bh=NbOS8wtvU7uKZD7BIvMjlCuVnUcuWUyNlr4dVg1GJ5w=; h=From;
+	b=kbMcgn20SSqY+/JxddiLXwHe9sRBJ9BKqp4uHpNCQLh5PZrbZvIQO1XMKrGNPI2PT
+	 HpY0OkPKM4Ui8kXeCfb1+coH564dkDDw6PkYgz6EkKrSWIh1TNtu9LryK4YUuzb1a4
+	 9LBh6/yHSWk+3RqJjtVf8iafrA4dSQFqerg7nD5eRfhMJbbfswm9us0YK7jrzY5dlr
+	 bZCM6C6Vv+kGGfBI5WA+olaLCjIVuoFMEfSoQkxuhkagIsOwjZGbqg8kOklomUq0OP
+	 3My/2ZHjF+yi2Nc1qL7dRtCXCFihkSLm6X8xKW9kyfOF/iD0nyhI2XMioUWg1En8Md
+	 u7jQLsnSNXIfA==
+Received: from localhost (cdwifi-a110.cd-t.cz [213.235.133.110] (may be forged))
+	(authenticated)
+	by smtp1.ms.mff.cuni.cz (8.16.1/8.16.1) with ESMTPS id 45SHKBZq057515
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
+	Fri, 28 Jun 2024 19:20:13 +0200 (CEST)
+	(envelope-from balejk@matfyz.cz)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 28 Jun 2024 19:20:50 +0200
+Message-Id: <D2BTN4CHSFO0.1H59EH2PH7HAG@matfyz.cz>
+Cc: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
+        <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>
+Subject: Re: [PATCH v7 0/5] initial support for Marvell 88PM886 PMIC
+To: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
+        "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+        "Conor Dooley"
+ <conor+dt@kernel.org>,
+        "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+        "Liam
+ Girdwood" <lgirdwood@gmail.com>,
+        "Mark Brown" <broonie@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-input@vger.kernel.org>
+From: "Karel Balej" <balejk@matfyz.cz>
+References: <20240531175109.15599-1-balejk@matfyz.cz>
+ <171958569931.3316488.12728822093231549974.b4-ty@kernel.org>
+In-Reply-To: <171958569931.3316488.12728822093231549974.b4-ty@kernel.org>
 
+Lee Jones, 2024-06-28T15:41:39+01:00:
+> On Fri, 31 May 2024 19:34:55 +0200, Karel Balej wrote:
+> > the following implements basic support for Marvell's 88PM886 PMIC which
+> > is found for instance as a component of the samsung,coreprimevelte
+> > smartphone which inspired this and also serves as a testing platform.
+> >=20
+> > The code for the MFD is based primarily on this old series [1] with the
+> > addition of poweroff based on the smartphone's downstream kernel tree
+> > [2]. The onkey and regulators drivers are based on the latter. I am not
+> > in possesion of the datasheet.
+> >=20
+> > [...]
+>
+> Applied, thanks!
 
-On Fri, 17 May 2024 20:39:55 +0800, Zhang Yi wrote:
-> Changes since v4:
->  - In patch 3, switch to check EXT4_ERROR_FS instead of
->    ext4_forced_shutdown() to prevent warning on errors=continue mode as
->    Jan suggested.
->  - In patch 8, rename ext4_da_check_clu_allocated() to
->    ext4_clu_alloc_state() and change the return value according to the
->    cluster allocation state as Jan suggested.
->  - In patch 9, do some appropriate logic changes since
->    the ext4_clu_alloc_state() has been changed in patch 8, so I remove
->    the reviewed-by tag from Jan, please take a look again.
-> 
-> [...]
+Thank you and thank you and everybody else for all the feedback and
+reviews, I appreciate it.
 
-Applied, thanks!
-
-[01/10] ext4: factor out a common helper to query extent map
-        commit: 8e4e5cdf2fdeb99445a468b6b6436ad79b9ecb30
-[02/10] ext4: check the extent status again before inserting delalloc block
-        commit: 0ea6560abb3bac1ffcfa4bf6b2c4d344fdc27b3c
-[03/10] ext4: warn if delalloc counters are not zero on inactive
-        commit: b37c907073e80016333b442c845c3acc198e570f
-[04/10] ext4: trim delalloc extent
-        commit: 14a210c110d1ffbef4ed56e88e3c34de04790ff8
-[05/10] ext4: drop iblock parameter
-        commit: bb6b18057f18e9b7f53a524721060652de151e8a
-[06/10] ext4: make ext4_es_insert_delayed_block() insert multi-blocks
-        commit: 12eba993b94c9186e44a01f46e38b3ab3c635f2d
-[07/10] ext4: make ext4_da_reserve_space() reserve multi-clusters
-        commit: 0d66b23d79c750276f791411d81a524549a64852
-[08/10] ext4: factor out a helper to check the cluster allocation state
-        commit: 49bf6ab4d30b7a39d86a585e0a58f6c449d2e009
-[09/10] ext4: make ext4_insert_delayed_block() insert multi-blocks
-        commit: 1850d76c1b781ad9c7dc3c4968fb40c1915231c0
-[10/10] ext4: make ext4_da_map_blocks() buffer_head unaware
-        commit: 8262fe9a902c8a7b68c8521ebe18360a9145bada
-
-Best regards,
--- 
-Theodore Ts'o <tytso@mit.edu>
+K. B.
 
