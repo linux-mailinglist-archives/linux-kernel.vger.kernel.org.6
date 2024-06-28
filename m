@@ -1,103 +1,223 @@
-Return-Path: <linux-kernel+bounces-234150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD83B91C2D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:45:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFD0E91C2DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:45:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88AD32818B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:45:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69E4D1F21233
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:45:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7EF1C68AC;
-	Fri, 28 Jun 2024 15:44:57 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D411C68AD;
+	Fri, 28 Jun 2024 15:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QXjZRA2Z"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9911C232A
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 15:44:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B616B1DFFB;
+	Fri, 28 Jun 2024 15:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719589497; cv=none; b=OHp7Cxzi+y3CT2rxnypSDqca9f2zjLFNVDZ/h3cDSFnKt2m6NzNz1dVtA/jUhXu096rRkpKeHE2YITgaN9ydwffi1ti5jNxQeD57Ayq+yub46rjCMaPBVqlaWGtJd7aSBAuhWKY+p1g/Rfr9pJIHZUEPP90FjNPwQbQe58743tE=
+	t=1719589528; cv=none; b=pSS3J5UgmZ4K8brPWBXMxYNkQn4UHOIxU5NLOzR1H/4wY7DR3g//ePr6ITSkSvOvIuWBWltYD+xCy1ZYK7c1QI3PJ4u14IVCXuYq9YbdGkT/8ZlXrtZyWTMrD/p0OX5Qd5jr2JVunB6c7WuiRXJ4FlHDqVW7a0DsjGQluitbZvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719589497; c=relaxed/simple;
-	bh=XsXz7tj4MWXfO0oeuOwwAxT/XW/MBVtvfAwz/ynTj5E=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=EJRhRsh33EovLegKHwYFy2HBrRnHEVic2ZNSmVaGKUkmfmjHhdGyMDc9dSlll/Gs//s+E8h36PtWb1LyRz1pPdd5mMOwVFfufWaa8743rHTQIJCd24zUaVvsyf96BCNf3M15BGBMp98NABSbpdyOAbjqQ3hjzEXzIEQW+g7o/vU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-403-_-9d1xoqMG6pjkY9001tZQ-1; Fri, 28 Jun 2024 16:44:52 +0100
-X-MC-Unique: _-9d1xoqMG6pjkY9001tZQ-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Fri, 28 Jun
- 2024 16:44:15 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Fri, 28 Jun 2024 16:44:15 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Anand Khoje' <anand.a.khoje@oracle.com>, Jesse Brandeburg
-	<jesse.brandeburg@intel.com>, "linux-rdma@vger.kernel.org"
-	<linux-rdma@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>
-CC: "saeedm@mellanox.com" <saeedm@mellanox.com>, "leon@kernel.org"
-	<leon@kernel.org>, "tariqt@nvidia.com" <tariqt@nvidia.com>,
-	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
-	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
-	"davem@davemloft.net" <davem@davemloft.net>
-Subject: RE: [PATCH v5] net/mlx5: Reclaim max 50K pages at once
-Thread-Topic: [PATCH v5] net/mlx5: Reclaim max 50K pages at once
-Thread-Index: AQHaxrywOgnvsJUo4Uq4JrrB7H2fV7HdVSZA
-Date: Fri, 28 Jun 2024 15:44:15 +0000
-Message-ID: <666c79de2adf4959bd167f3f1c45e1fc@AcuMS.aculab.com>
-References: <20240624153321.29834-1-anand.a.khoje@oracle.com>
- <0b926745-f2c9-4313-a874-4b7e059b8d64@intel.com>
- <1f9868a7-a336-4a79-bc51-d29461295444@oracle.com>
-In-Reply-To: <1f9868a7-a336-4a79-bc51-d29461295444@oracle.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1719589528; c=relaxed/simple;
+	bh=S+sJWHqWZoXrfvBmxSaHrYo7Br+7IHD8kAPP9u3CkTo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IEtn0ZqevSYow8TYbSLbjSdML64Bm2eb1FWyvcDc158y7A8V03B2+cvXLahHjR2Jrc5PU2jMYjZkmMl+wPtcYpCnwbMkOdoBP64yJ8BBPrgZWHEBpguOb6sgmLZJtJ0nnMugvOjHt5JRDj2xzu13j+2KwJyFovtSYnsAmoNrNjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QXjZRA2Z; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52cdb0d816bso779316e87.1;
+        Fri, 28 Jun 2024 08:45:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719589525; x=1720194325; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=C5jYmtDyMsBks9HOK7YKwsTxAghw5ezyRltrHdspFHU=;
+        b=QXjZRA2ZOYkmSFFnqJkGzCX2T61TtM4O4PqsggzxaDmz0s6CNmp6KTZadCLCyREYye
+         TKyQJA4+0lZ4jPgvJC0/SALoEIJpSFElSBgQ1heWX+ok6renvl8P9W9vIELv4aYcIBeY
+         m3AN1lyL/sF6fBhSGxog+vPTdIxBPbwXa2y4iO7kNg3StrcnMVwIDhJ6DJBOT6WrJAM/
+         YiD1mCrx4L9iVZojzzW4QiEpOK6dX7sxhQJWmGGx+vPthSrEhJSFv4xs64vgCZUpTCyg
+         GfAscoa8BRsTzJdDyMsZmgA1UItW5osI8cwSjpPB4olPdjVxv3pwrDemHlgYXwhOVnqL
+         Ky1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719589525; x=1720194325;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C5jYmtDyMsBks9HOK7YKwsTxAghw5ezyRltrHdspFHU=;
+        b=rDIjAqnj9WyhWb/GeVdsHndajC7rm1gFWywyxgmmoSSoqJWaw+rtv5RYTvkkcYH3Qh
+         AD/89ihWQR9QtvWrf8H9/uoNsulGeoi2FfEm9vkHlFnAHxamBOErGyHNTd/6jhZ4mGMg
+         t1kJfcBNMKvwftGaw7UUZwp8NNQAZYS5icV8ZVAkT9iqifdlgW1BwALDGiG2NY40hh5I
+         Av/na3VGId+komUrOBZn+SrqUahsmhkfOj5TS7rXalPVzLfRuhLbGkJ6v39tmXgV8Xpp
+         ZLOfK2RjpDSeLQTpnLuWfC3pUxNRPKKhWnag3sG/+vvn6qrX/77XR6sCxMEuXDds5hhc
+         A05A==
+X-Forwarded-Encrypted: i=1; AJvYcCVqwzx5ltqZrpNqQtiBVyYVlPVfjNtv1gQfhZtuHET3RMXr4hUcmB3dvJI0RDxDy9wogP/ISAf3SPD2H7UBcjWaK24+n40sY7A7wOCIt+X9PWKBwmeQrE3upPZZFCs5SlCUOQhFhF7qkw==
+X-Gm-Message-State: AOJu0Ywh35ENDvuPlxGL2RCCKnUjVomBVo6k1LwLRZNUWXQP/u7Td0/r
+	yp+UkySHQvkUVE/orJRymT2xJpSKeuDHuf5M7ksTl66qXhq+4TKS
+X-Google-Smtp-Source: AGHT+IFq7AQRfYM2GxU9KBwkSxdM7k+i3cYB+sSVbzdWG1Jpk+aL9Bk0vGy+BNtba4DsenjFUxqcmw==
+X-Received: by 2002:a05:6512:e9f:b0:52c:df96:1726 with SMTP id 2adb3069b0e04-52e7b8e033bmr898324e87.1.1719589524518;
+        Fri, 28 Jun 2024 08:45:24 -0700 (PDT)
+Received: from localhost ([213.79.110.82])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab27776sm304605e87.169.2024.06.28.08.45.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 08:45:24 -0700 (PDT)
+From: Serge Semin <fancer.lancer@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] dt-bindings: net: dwmac: Validate PBL for all IP-cores
+Date: Fri, 28 Jun 2024 18:45:12 +0300
+Message-ID: <20240628154515.8783-1-fancer.lancer@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 
-Li4uDQo+IFRoZSB3YXkgTWVsbGFub3ggQ29ubmVjdFg1IGRyaXZlciBoYW5kbGVzICdyZWxlYXNl
-IG9mIGFsbG9jYXRlZCBwYWdlcw0KPiBmcm9tIEhDQScgb3IgJ2FsbG9jYXRpb24gb2YgcGFnZXMg
-dG8gSENBJywgaXMgYnkgc2VuZGluZyBhbiBldmVudCB0byB0aGUNCj4gaG9zdC4gVGhpcyBldmVu
-dCB3aWxsIGhhdmUgbnVtYmVyIG9mIHBhZ2VzIGluIGl0LiBJZiB0aGUgbnVtYmVyIGlzDQo+IHBv
-c2l0aXZlLCB0aGF0IGluZGljYXRlcyBIQ0EgaXMgcmVxdWVzdGluZyB0aGF0IG51bWJlciBvZiBw
-YWdlcyB0byBiZQ0KPiBhbGxvY2F0ZWQuIEFuZCBpZiB0aGF0IG51bWJlciBpcyBuZWdhdGl2ZSwg
-aXQgaXMgdGhlIEhDQSBpbmRpY2F0aW5nIHRoYXQNCj4gdGhhdCBudW1iZXIgb2YgcGFnZXMgY2Fu
-IGJlIHJlY2xhaW1lZCBieSB0aGUgaG9zdC4NCg0KQSBvbmUgbGluZSBjb21tZW50IHdvdWxkIGRv
-Lg0KUG9zc2libHkgZXZlbiBuZWdhdGluZyB0aGUgYmUzMnRvaCgpIHJlc3VsdD8NCg0KPiBJbiB0
-aGlzIHBhdGNoIHdlIGFyZSByZXN0cmljdGluZyB0aGUgbWF4aW11bSBudW1iZXIgb2YgcGFnZXMg
-dGhhdCBjYW4gYmUNCj4gcmVjbGFpbWVkIHRvIGJlIDUwMDAwIChlZmZlY3RpdmVseSB0aGlzIHdv
-dWxkIGJlIC01MDAwMCBhcyBpdCBpcw0KPiByZWNsYWltKS4gVGhpcyBsaW1pdCBpcyBiYXNlZCBv
-biB0aGUgY2FwYWJpbGl0eSBvZiB0aGUgZmlybXdhcmUgYXMgaXQNCj4gY2Fubm90IHJlbGVhc2Ug
-bW9yZSB0aGFuIDUwMDAwIGJhY2sgdG8gdGhlIGhvc3QgaW4gb25lIGdvLg0KDQpIYW5nIG9uLCB3
-aHkgYXJlIHlvdSBzb2Z0IGxpbWl0aW5nIGl0IHRvIHRoZSBoYXJkIGxpbWl0Pw0KSSB0aG91Z2h0
-IHRoZSBwcm9ibGVtIHdhcyB0aGF0IHJlbGVhc2luZyBhIGxvdCBvZiBwYWdlcyB0b29rIGEgbG9u
-Zw0KdGltZSBhbmQgJ3N0dWZmZWQnIG90aGVyIHRpbWUtY3JpdGljYWwgdGFza3MuDQoNClRoZSBv
-bmx5IHdheSB0byByZXNvbHZlIHRoYXQgd291bGQgc2VlbSB0byBiZSB0byBkZWZlciB0aGUgYWN0
-dWFsIGZyZWVpbmcNCnRvIGEgbG93IChvciBhdCBsZWFzdCBub3JtYWwgdXNlcikgcHJpb3JpdHkg
-dGhyZWFkLg0KWW91IHdvdWxkIGRlZmluaXRlbHkgd2FudCB0byBnZXQgb3V0IG9mICdzb2Z0aW50
-JyBjb250ZXh0Lg0KKFdoaWNoIGlzIG91dCBvZiBuYXBpIHVubGVzcyBmb3JjZWQgdG8gYmUgdGhy
-ZWFkZWQgLSBhbmQgdGhhdCBvbmx5IHJlYWxseQ0Kd29ya3MgaWYgeW91IGZvcmNlIHRoZSB0aHJl
-YWRzIHVuZGVyIHRoZSBSVCBzY2hlZHVsZXIuKQ0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBB
-ZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMs
-IE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
+Indeed the maximum DMA burst length can be programmed not only for DW
+xGMACs, Allwinner EMACs and Spear SoC GMAC, but in accordance with
+[1, 2, 3] for Generic DW *MAC IP-cores. Moreover the STMMAC driver parses
+the property and then apply the configuration for all supported DW MAC
+devices. All of that makes the property being available for all IP-cores
+the bindings supports. Let's make sure the PBL-related properties are
+validated for all of them by the common DW *MAC DT schema.
+
+[1] DesignWare Cores Ethernet MAC Universal Databook, Revision 3.73a,
+    October 2013, p.378.
+
+[2] DesignWare Cores Ethernet Quality-of-Service Databook, Revision 5.10a,
+    December 2017, p.1223.
+
+[3] DesignWare Cores XGMAC - 10G Ethernet MAC Databook, Revision 2.11a,
+    September 2015, p.469-473.
+
+Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
+
+---
+
+The discussion where we agreed to submit this change:
+Link: https://lore.kernel.org/netdev/20240625215442.190557-2-robh@kernel.org
+
+---
+ .../devicetree/bindings/net/snps,dwmac.yaml   | 80 ++++++-------------
+ 1 file changed, 26 insertions(+), 54 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+index 5a39d931e429..509086b76211 100644
+--- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
++++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+@@ -447,6 +447,32 @@ properties:
+     description:
+       Use Address-Aligned Beats
+ 
++  snps,pbl:
++    description:
++      Programmable Burst Length (tx and rx)
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [1, 2, 4, 8, 16, 32]
++
++  snps,txpbl:
++    description:
++      Tx Programmable Burst Length. If set, DMA tx will use this
++      value rather than snps,pbl.
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [1, 2, 4, 8, 16, 32]
++
++  snps,rxpbl:
++    description:
++      Rx Programmable Burst Length. If set, DMA rx will use this
++      value rather than snps,pbl.
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [1, 2, 4, 8, 16, 32]
++
++  snps,no-pbl-x8:
++    $ref: /schemas/types.yaml#/definitions/flag
++    description:
++      Don\'t multiply the pbl/txpbl/rxpbl values by 8. For core
++      rev < 3.50, don\'t multiply the values by 4.
++
+   snps,fixed-burst:
+     $ref: /schemas/types.yaml#/definitions/flag
+     description:
+@@ -577,60 +603,6 @@ dependencies:
+ 
+ allOf:
+   - $ref: ethernet-controller.yaml#
+-  - if:
+-      properties:
+-        compatible:
+-          contains:
+-            enum:
+-              - allwinner,sun7i-a20-gmac
+-              - allwinner,sun8i-a83t-emac
+-              - allwinner,sun8i-h3-emac
+-              - allwinner,sun8i-r40-gmac
+-              - allwinner,sun8i-v3s-emac
+-              - allwinner,sun50i-a64-emac
+-              - ingenic,jz4775-mac
+-              - ingenic,x1000-mac
+-              - ingenic,x1600-mac
+-              - ingenic,x1830-mac
+-              - ingenic,x2000-mac
+-              - qcom,sa8775p-ethqos
+-              - qcom,sc8280xp-ethqos
+-              - snps,dwmac-3.50a
+-              - snps,dwmac-4.10a
+-              - snps,dwmac-4.20a
+-              - snps,dwmac-5.20
+-              - snps,dwxgmac
+-              - snps,dwxgmac-2.10
+-              - st,spear600-gmac
+-
+-    then:
+-      properties:
+-        snps,pbl:
+-          description:
+-            Programmable Burst Length (tx and rx)
+-          $ref: /schemas/types.yaml#/definitions/uint32
+-          enum: [1, 2, 4, 8, 16, 32]
+-
+-        snps,txpbl:
+-          description:
+-            Tx Programmable Burst Length. If set, DMA tx will use this
+-            value rather than snps,pbl.
+-          $ref: /schemas/types.yaml#/definitions/uint32
+-          enum: [1, 2, 4, 8, 16, 32]
+-
+-        snps,rxpbl:
+-          description:
+-            Rx Programmable Burst Length. If set, DMA rx will use this
+-            value rather than snps,pbl.
+-          $ref: /schemas/types.yaml#/definitions/uint32
+-          enum: [1, 2, 4, 8, 16, 32]
+-
+-        snps,no-pbl-x8:
+-          $ref: /schemas/types.yaml#/definitions/flag
+-          description:
+-            Don\'t multiply the pbl/txpbl/rxpbl values by 8. For core
+-            rev < 3.50, don\'t multiply the values by 4.
+-
+   - if:
+       properties:
+         compatible:
+-- 
+2.43.0
 
 
