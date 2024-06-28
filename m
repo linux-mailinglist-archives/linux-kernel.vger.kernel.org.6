@@ -1,97 +1,137 @@
-Return-Path: <linux-kernel+bounces-234483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3553D91C738
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:17:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7B5691C73A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:17:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FB59B26B50
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:17:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62A98280CBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:17:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305867D3F8;
-	Fri, 28 Jun 2024 20:14:50 +0000 (UTC)
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D638F770FA;
+	Fri, 28 Jun 2024 20:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VJUBETHI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3666F30D;
-	Fri, 28 Jun 2024 20:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C1F450249;
+	Fri, 28 Jun 2024 20:16:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719605689; cv=none; b=THSbU7HKQPQ3SF+aeTTH7J5FOzVI4Z95AS4kYd2Aot60c7B3MnQzU+aVWlwOMO+KiWZZR5PE0Xdyt+gSoP0eSs8GMbTcNxOTaYwr3iF5T2HGYR5hWFuespJH6lM1Hp63AgVNAUoD+DOqdNM83t7LIa1UyQn0yg0jblGzUXVU+wA=
+	t=1719605796; cv=none; b=T80HGxaLgtP62bVsydAUaGssXf0L8NDBFB6zPnI6JvYg9BMAvAm0Lfw0Av0LZmzLIRkP9xNIt3suD5gyvm8Ov2aRtQKOBjSDNluX6BfZNHWips6TTc5T4IsGpzXRUCqLBFW0RQPwlH7Xcyl72e72zuhKTPy+cWVsUavvhcFbxoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719605689; c=relaxed/simple;
-	bh=obCeelJAwx5GAnKZ4ry9wmPEI7cPJSqm7xpbG8rCpYk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qUrXL/P7P7iVc7VITQ/TyWwMisC40/D6m+ojtd1ZqtPTw3E8Bv0iaVokanWQvHrdbU9dlAs32UjCJXWes2i94ISEcdMDVcnNzZwVVzw3wamNTUjLQcZ/eFrbcDgGbWaql11oWZSWSpmmfJ4AJvPg4iKae3v+SESJNKXk7XTHY5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fa78306796so7177595ad.3;
-        Fri, 28 Jun 2024 13:14:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719605687; x=1720210487;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bBDN2B5pDUVTWkXVifbegKXgqAIs059uvS0l5ghNuJY=;
-        b=HUJ+rkREXudTBRm//ZHVmzivhKSiakJza47kvaOythHmmBfzEpefwoAjd7tv18gLZn
-         t7VFm3iqm6Fr/y68E2O0TPVzwDx8wsy2jozwIESwk6yfaeZcWwzjJqNRs2agNT7tjsR4
-         uF/FndBjjjyahdzj5FOi0L9ke4NirqdnD3IwI6NwfeSXA8q7pJ1HK7Hxl3ZlZFBsAjrj
-         T8A7ErEYOrr4Wo1dxvjxf0AYu5g63jzmXH3vYbgHbfKHjC9Q7OklMUszR7XWDMOHc7fy
-         DZCFHDHm2gBIkf2PusZLjtvIodIak/TvpamKezUOU7Ts4NvM8TEJL7gmvvSj2Qi2bnpS
-         ri0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWDC2rjnNeA5zcv30T7oGS6TTOkF0lVaF71QrxWdXf/oTQ1MJM7OgQFGydAZEkgLG0ysKHHYrzJ/3v1ZsGsPieOx4rGCQnAoQnHVVGz/N3EjTFGoiqtSFxvAMXiDLD86PpOIwaIWeJHSui4WYjs1lmqmRSt/I0b/OjR5vcsnNgWU/Byw8eT2LWKVW+dWZlgB+/ycM7paqie2mQxmxTQTzLJwcM=
-X-Gm-Message-State: AOJu0YxghKQZPHYvztDcQPYXJBJEZW312iEzHCt+1D953nNqzJ+VdvN+
-	3y7AbCW2Qg9zCVM5HGBHkKUPtJ5ODr7j0E3YYl4iTumNQx3wbQx+yZ0VgQ1OCl95yw==
-X-Google-Smtp-Source: AGHT+IGSx9cHBNpDRJGVoxB1dkpda9AGwG0lC2I2mA9Ov9RfIcgLxQ1AOd2rpJvpgzEZZ/sLDcETqA==
-X-Received: by 2002:a17:902:654f:b0:1fa:e69:f0e5 with SMTP id d9443c01a7336-1fa1d68d05bmr141482925ad.67.1719605687428;
-        Fri, 28 Jun 2024 13:14:47 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac10d2060sm19986115ad.15.2024.06.28.13.14.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 13:14:46 -0700 (PDT)
-Date: Sat, 29 Jun 2024 05:14:45 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>, quic_vbadigan@quicinc.com,
-	quic_skananth@quicinc.com, quic_nitegupt@quicinc.com,
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v15 2/4] dt-bindings: pci: qcom: Add OPP table
-Message-ID: <20240628201445.GA2206339@rocinante>
-References: <20240619-opp_support-v15-0-aa769a2173a3@quicinc.com>
- <20240619-opp_support-v15-2-aa769a2173a3@quicinc.com>
+	s=arc-20240116; t=1719605796; c=relaxed/simple;
+	bh=+hjZmy+i/jia3KZUtnP6na3L9fbAC7hhffAvdTALoqw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ZyH+364CS+dIDHOSc/Ewp40+biy9QcDKDs1frs/1QqVWJJOm0Cy2NIONXVaVdqCxnrAcWjhCHUYwQ8/myp9Z+QGJuRsnLCkiZPEmefQNu5oVzQDRogHzsF/mUEa8XLjrQ95VXhD07382nVS86qIXmyMcu/83VY9swEd481nTQU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VJUBETHI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03119C116B1;
+	Fri, 28 Jun 2024 20:16:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719605795;
+	bh=+hjZmy+i/jia3KZUtnP6na3L9fbAC7hhffAvdTALoqw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=VJUBETHI6mmuvFLtAZuoA9q3idnwXYL725TsMJa3ENC/fl56m0feHGifpqC/kTmo2
+	 Zz6v0JG7Yviq6GQGi2SYtRIEfhyTY7cDenLXRpLZI24Ww7iVG8nrOF3curc5FmGa+w
+	 zpKKYlAEYMd0+B9iMNRPHx+VHl84GG6pPDtcUwZjm+NA9ysfXFMcUQtyxJbWrt5rs8
+	 /V67qxBrKYmmdOTyJX34155fF8soa9Xzzq87zjdCorZ3LQ3quhOpjd8HKO4H30vBV3
+	 PU4BUfF8Qhnr/LvAJoQHd9pADBNTTS93QN3BX3Vp3ylmDuom31WTNOI0bgGGXaWqkG
+	 GQwlPMx1t04oA==
+Date: Fri, 28 Jun 2024 21:16:32 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Jun 28
+Message-ID: <Zn8aIDP2A-EBbZaa@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="GtAAJVELQfreE8oB"
+Content-Disposition: inline
+
+
+--GtAAJVELQfreE8oB
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240619-opp_support-v15-2-aa769a2173a3@quicinc.com>
 
-Hello,
+Hi all,
 
-> PCIe needs to choose the appropriate performance state of RPMh power
-> domain based on the PCIe gen speed.
-> 
-> Adding the Operating Performance Points table allows to adjust power
-> domain performance state and ICC peak bw, depending on the PCIe data
-> rate and link width.
+Stephen should be back on Monday so normal service restored.
 
-Applied to dt-bindings, thank you!
+Changes since 20240627:
 
-[1/1] dt-bindings: pci: qcom: Add OPP table
-      https://git.kernel.org/pci/pci/c/1b029ce3b0b5
+The risc-v tree gained a conflcit with the risc-v-fixes tree.
 
-	Krzysztof
+The btrfs tree gained multiple conflicts with the fs-current tree.
+
+The drm tree gained a conflict with Linus' tree.
+
+The drm tree gained a build failure, I used the version from 20240627
+instead.
+
+The block tree gained multiple conflicts with the vfs-brauner tree.
+
+The kvm-riscv tree gained a conflict with the perf tree.
+
+The drm tree gained a build failure due to an interacton with the
+driver-core tree for which I applied a fixup.
+
+Non-merge commits (relative to Linus' tree): 8590
+ 9252 files changed, 783165 insertions(+), 159592 deletions(-)
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm
+and a native build of tools/perf.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 378 trees (counting Linus' and 106 trees of bug
+fix patches pending for the current merge release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
+Gortmaker for triage and bug fixes.
+
+--GtAAJVELQfreE8oB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ/Gh8ACgkQJNaLcl1U
+h9DGCwf/TmWrPzKQDBfhihxbIXYh37GXlciDBwkhG6BHuZn+vX/pWZ4uYWHcCoqW
+UaxNc77ZhIeUTRegDBiG8zqTPaoD17fYhAliFeYwInlETkLtNFFFYenqEvgDYd9B
+3XrKGFi7NetLMcO/k2o3TdbJf1+dLZrcIV5xtg6x7TS/+G56rwVuKCv2nF5L9kCZ
+Wmh/p+b/xzSxbORhwtoi03tshNl9N8+G54H34teBfJrnswqKfL4B5ktkX7e3j8Mg
+NYpqkgzGpeS1FOmOIbveAL2IUsJuah6a/gHStwP74UaGDL2iszWEFvzoi1Gg/pbb
+MuJ5tZoyCoOxzTT7wRL6zIPYktikIg==
+=rOpE
+-----END PGP SIGNATURE-----
+
+--GtAAJVELQfreE8oB--
 
