@@ -1,84 +1,116 @@
-Return-Path: <linux-kernel+bounces-234238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A86E591C425
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:51:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4F2C91C42A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:51:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA46E1C21162
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:51:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6A001C22157
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952BF1CB303;
-	Fri, 28 Jun 2024 16:51:13 +0000 (UTC)
-Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9C01C9EDF;
+	Fri, 28 Jun 2024 16:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JpuuV/eY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89336D2E5;
-	Fri, 28 Jun 2024 16:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA41D2E5;
+	Fri, 28 Jun 2024 16:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719593473; cv=none; b=dM3yXq8O1hdP0czlQ/Kke/zrsky7Lcjrjl0VPt52lWzm8DQlgvjHXSygLZNSnJANql6YIPmbkKReakzeecm9LnqG9osYyZUdvUY+OY7UkAmiEnn5AoI8EsVawpMRy7262JGcPVN1vfn6HaqCabMCdj9F3AJKWNRDbH7007Xw7FA=
+	t=1719593496; cv=none; b=TUOlmS599ms6WgZesvibJ0+N9DwzqYzHPLQSJySUfXKNdBlJ2K8hW1G6FI/HL6uBHPvIIuZyi95ckyVGmtiCIc+O/vRpwydGP6ydpwuxXgukr3ihFL8JVP/AcY+OUyntXMx7PMRV2SpGiwZQ6sokFHWOh8jT7gqxHInYaLD/u/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719593473; c=relaxed/simple;
-	bh=vuiLWhFs/4dgSOcAzxk+VPRyXw33EbyQ0Ll/O8Trnk4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
-	 References:In-Reply-To; b=kQi4v2GQqUPo0obzDovX6VM4dLMcvwpXtnUvKRH+Y3jZ0b9HvHsAIAK0S7WcGetwrb6WpT23d/hXgsPvx84lNKDlByrx8edCVG4o2Gzvc2IJgF9BOTZH/hnCWb9NcHTedGn6ZwWmSNlTLTwuubZputykF4VcRWDmmuEQkUnk8lA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=walle.cc; arc=none smtp.client-ip=159.69.201.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
-Received: from localhost (unknown [IPv6:2a02:810b:4340:4ee9:4685:ff:fe12:5967])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.3ffe.de (Postfix) with ESMTPSA id 1B01D144A;
-	Fri, 28 Jun 2024 18:51:09 +0200 (CEST)
+	s=arc-20240116; t=1719593496; c=relaxed/simple;
+	bh=Xx8AHRpEaxvuZ24nCW01xv/wTFnUrbCQevtmg0yUDOE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=YT+7CeaWy5S83K0hKcBVmj/PEIazm7HwcV3uXuGv161e3pjnE9aZjtt+tJl4g0YX7B7PSPqO/qgqwjCcF+GkSmljpdV2/ThZNWLGYu7pVSPwQARSZ+7/+aKtMJI2HuiLDU9gcwufIavazroX8j1iOwbeW4bpp7BgSc2YdStFDBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JpuuV/eY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62D31C116B1;
+	Fri, 28 Jun 2024 16:51:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719593496;
+	bh=Xx8AHRpEaxvuZ24nCW01xv/wTFnUrbCQevtmg0yUDOE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=JpuuV/eYiclGYNAVtvJDqTrDM7x5lvbnXrdH/8BFy+8SlQMDNob5sS/Wxijl/qKPO
+	 FEg0YmRorYkgAnBeiCIeFc6bfUA5YnQMgCWxVNZ+Pqj/uwGoHzKYURZSY7Fh+EYkuH
+	 o5B0hLxONKr5r5omMZgv/Pp3i4Tp2u73N7uqUtSL7QOybpCNh//RVQzK4m0gnFfpo0
+	 vWSx1MVCfhnl4FW7o42JtzfalJcnrGBZFFWo+6i6ibpu1R3zZra/grUTePRlfCtkMf
+	 fht6WAR8o2GK2yd89Cx/1n0Bp0IZ6TQnPCGAkPRbTnZwQQIlpvz5joGHc6YZrYqNAs
+	 sCoDg8cgAqTxQ==
+Date: Fri, 28 Jun 2024 17:51:31 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Riana Tauro <riana.tauro@intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+Subject: linux-next: manual merge of the drm tree with the origin tree
+Message-ID: <Zn7qE8rGdTMXmhK-@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7IWLkhR3deeAeUwl"
+Content-Disposition: inline
+
+
+--7IWLkhR3deeAeUwl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 28 Jun 2024 18:51:08 +0200
-Message-Id: <D2BT0DT9UQ66.2L497FSY7GMAL@kernel.org>
-Subject: Re: [PATCH 3/4] dt-bindings: mtd: macronix,mx25l12833f: add SPI-NOR
- chip
-Cc: "Conor Dooley" <conor@kernel.org>, "Erez Geva" <erezgeva@nwtime.org>,
- <linux-mtd@lists.infradead.org>, "Tudor Ambarus"
- <tudor.ambarus@linaro.org>, "Pratyush Yadav" <pratyush@kernel.org>,
- <linux-kernel@vger.kernel.org>, "Miquel Raynal"
- <miquel.raynal@bootlin.com>, "Richard Weinberger" <richard@nod.at>,
- "Vignesh Raghavendra" <vigneshr@ti.com>, <devicetree@vger.kernel.org>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Erez" <erezgeva2@gmail.com>
-X-Mailer: aerc 0.16.0
-References: <20240628140328.279792-1-erezgeva@nwtime.org>
- <20240628140328.279792-4-erezgeva@nwtime.org>
- <20240628-refuse-actress-b76985aa020c@spud>
- <D2BS0YMA48BG.1PEPFC3KMFV8N@kernel.org>
- <CANeKEMMrXK=mw=n=9DuTnprkTs3ct446oaC2QTJyst8Nd+D6rw@mail.gmail.com>
-In-Reply-To: <CANeKEMMrXK=mw=n=9DuTnprkTs3ct446oaC2QTJyst8Nd+D6rw@mail.gmail.com>
 
-On Fri Jun 28, 2024 at 6:30 PM CEST, Erez wrote:
-> I do not know why they decided to use the same JEDEC ID for two chips.
-> Your guess is as good as mine.
+Hi all,
 
-That's a common pattern and we try hard to figure that out during
-probe time instead of hardcoding it. E.g. by looking at the SFDP
-data. Have a look at various fixups in drivers/mtd/spi-nor/.
+Today's linux-next merge of the drm tree got a conflict in:
 
-compatibles are really the last resort to distinguish flash devices.
+  drivers/gpu/drm/xe/xe_gt_idle.c
 
-Next time, please mention such information in the commit message,
-please.
+between commit:
 
-Also please have a look at
-https://docs.kernel.org/driver-api/mtd/spi-nor.html
+  2470b141bfae2 ("drm/xe: move disable_c6 call")
 
--michael
+=66rom the origin tree and commits:
+
+  6800e63cf97ba ("drm/xe: move disable_c6 call")
+  38e8c4184ea0e ("drm/xe: Enable Coarse Power Gating")
+  ecab82af27873 ("drm/xe/vf: Don't support gtidle if VF")
+
+=66rom the drm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+
+diff --cc drivers/gpu/drm/xe/xe_gt_idle.c
+index 944770fb2daff,67aba41405100..0000000000000
+--- a/drivers/gpu/drm/xe/xe_gt_idle.c
++++ b/drivers/gpu/drm/xe/xe_gt_idle.c
+
+--7IWLkhR3deeAeUwl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ+6hIACgkQJNaLcl1U
+h9BZvwf+J82kZVRXzrNZjb7UKRVQsQVP8nAbDDMXpbBJsyU5tUHusr+/urAZoZAz
+Ph8paEH9AykYvDGiGMZ+He+UwFYd90x5EXsvdD+v4qeFHRT33RDWPJ9HeqKO7czY
+9d7UIkFw1/j4q5prRT0PrGvirif5W6JCR1SS8iIU/BG/gEUZ6wBHBFuab9YOPWsO
+p4Ab6BJimKGf9xrzYBW39GkArebZTVD7QHEnP6AGSWrBmvYATBMhZ6tEUVFWvFHG
+37mXZjJFjw/Jnb/bccp+8LjPOtaMs1fEEr/Fd4YQ6nW4ENQSBJOqeV9OMwaH53AP
+DlTYhtWsoaGvWk/GU5kPkcSj7TaP9A==
+=HPbD
+-----END PGP SIGNATURE-----
+
+--7IWLkhR3deeAeUwl--
 
