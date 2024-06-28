@@ -1,209 +1,308 @@
-Return-Path: <linux-kernel+bounces-233783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFA1791BD2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:14:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BC2391BD36
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:17:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D0A81F23164
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:14:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3B2D282C39
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:16:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4532156242;
-	Fri, 28 Jun 2024 11:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECCE715688D;
+	Fri, 28 Jun 2024 11:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wiKoSuo7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="shKHQb+W";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wiKoSuo7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="shKHQb+W"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bo7PGrLK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFC914F9F2;
-	Fri, 28 Jun 2024 11:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC1315572D
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 11:16:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719573238; cv=none; b=hJ+5H00PgHji5O55VD1rqMSgtvFua8xen1CEyF6mbMB/iSSBqsqytsJZYyTjxCWKBMncNHnv0mwCxr6NQQqI8wlVtR2hiK4oUxgsi57Qmf8W6Ve6ILqj22DygfFaVIxki7PdHwnXbn1CDip1Vr3yrgGKc8Cw/kaN/VOY2rNUAKY=
+	t=1719573400; cv=none; b=XXTDhzdMmOHUPjoQu1FNTpvwjCyCq5D+AELa9hKsRMzL+nm7J1AUAF+SgqktpPb7Yj02wnA0FwMn4sNC4h/zyeSUmnHQUftmnx4BQnTMETRXlqd5WzM4jva8ibFYziI1u9KQNIpJpbYqvStyDBu05JZqNmFCQvwv/S19tEB6Uso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719573238; c=relaxed/simple;
-	bh=MuriAqX618t8StIaVZuupMBbbg4WrxyKt9NA3Tb2N4w=;
+	s=arc-20240116; t=1719573400; c=relaxed/simple;
+	bh=cB2Lot4axGNas2OU5FTaj1NgaR3at77/54FACPAlKc8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VTNJCQzlxAPhkBuzqK/iKzAauwY/xf01jEbaxMgLw23zLX8Jz8NKLT1FJ9N1UswnT9hDew763umaGZc1C3p7uYdYAlKEtw/wD8JFNIAreAm28yGL8FKQug9CnysHLwO1za5Pjq2JomGuO/uepcLFOl1VjyXDoDtRGJc1SDaU7t0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wiKoSuo7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=shKHQb+W; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wiKoSuo7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=shKHQb+W; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 2DB3B1F441;
-	Fri, 28 Jun 2024 11:13:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719573234; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NYv9x5DIil7KJUBKeVEES118wzDw7cpTuMkkFCeW1/BNynx6TU2Ir8yGKUgX/QFUXhOulp3TiVW4ZId6K7UeltULdeEIeUpqtc6M/s/r+69R35WotdeUAHBS9Ia5As2bsBOd81xm4IjITI6gytASlytjJhGX3TwXYVPPy5yZWKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bo7PGrLK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719573397;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=iSabMPYZH3IQ9skkdgGwlpc9kmhikVgNIgrANj0iNso=;
-	b=wiKoSuo7uhWB/poWLfuJK+j7kpWmZXaYb8n21lplFeGLcX/eAru1tTO6IqNgzrl3SDNji/
-	1WfTAWfTO+W1pDrv0IKdHnia9axR8tyY3Q+2htUI/dpY6lJboHU0rab0Aflz4kmgL6u1yr
-	gpc0thKIM9+b+ltennYhNpp1Hl1Yh08=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719573234;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iSabMPYZH3IQ9skkdgGwlpc9kmhikVgNIgrANj0iNso=;
-	b=shKHQb+WUGwVaCTGkuqrnkWxCXFEoTWaoC8atyu6UscfQ8NWB2SMF05BaLs8ArKoBgpgSv
-	CQVa+1LoWXcCyVDw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719573234; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iSabMPYZH3IQ9skkdgGwlpc9kmhikVgNIgrANj0iNso=;
-	b=wiKoSuo7uhWB/poWLfuJK+j7kpWmZXaYb8n21lplFeGLcX/eAru1tTO6IqNgzrl3SDNji/
-	1WfTAWfTO+W1pDrv0IKdHnia9axR8tyY3Q+2htUI/dpY6lJboHU0rab0Aflz4kmgL6u1yr
-	gpc0thKIM9+b+ltennYhNpp1Hl1Yh08=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719573234;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iSabMPYZH3IQ9skkdgGwlpc9kmhikVgNIgrANj0iNso=;
-	b=shKHQb+WUGwVaCTGkuqrnkWxCXFEoTWaoC8atyu6UscfQ8NWB2SMF05BaLs8ArKoBgpgSv
-	CQVa+1LoWXcCyVDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 203D813A9A;
-	Fri, 28 Jun 2024 11:13:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id rbraB/KafmbjVAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 28 Jun 2024 11:13:54 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A4950A088E; Fri, 28 Jun 2024 13:13:45 +0200 (CEST)
-Date: Fri, 28 Jun 2024 13:13:45 +0200
-From: Jan Kara <jack@suse.cz>
-To: Ian Kent <ikent@redhat.com>
-Cc: Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-	Lucas Karpinski <lkarpins@redhat.com>, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, raven@themaw.net, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Alexander Larsson <alexl@redhat.com>,
-	Eric Chanudet <echanude@redhat.com>
-Subject: Re: [RFC v3 1/1] fs/namespace: remove RCU sync for MNT_DETACH umount
-Message-ID: <20240628111345.3bbcgie4gar6icyj@quack3>
-References: <20240626201129.272750-2-lkarpins@redhat.com>
- <20240626201129.272750-3-lkarpins@redhat.com>
- <Znx-WGU5Wx6RaJyD@casper.infradead.org>
- <50512ec3-da6d-4140-9659-58e0514a4970@redhat.com>
- <20240627115418.lcnpctgailhlaffc@quack3>
- <cfda4682-34b4-462c-acf6-976b0d79ba06@redhat.com>
+	bh=ZlGqYCvpxUtS+VdKueIF34H2lavVthiHCNvJIyMxjQk=;
+	b=bo7PGrLK6bFfxAv0Pu3j0B9OlAMtsAZ8AZQm98wTffwpvUDMpQ11/tzCkfKcNjC1l/4kTG
+	AIFWyZUcfsrW7Z4h/lonUF0PlZ5i9y+Qri6fHGXeLyCBUWfUbtoITFQMPlkAVMvArSruyf
+	pV9dlWMigaBgW8jiBAwr62A9PL9d6Ns=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-360-O5dKsPfQMxqoHs4E7hJD8w-1; Fri, 28 Jun 2024 07:16:36 -0400
+X-MC-Unique: O5dKsPfQMxqoHs4E7hJD8w-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4248fa5daacso4538485e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 04:16:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719573392; x=1720178192;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZlGqYCvpxUtS+VdKueIF34H2lavVthiHCNvJIyMxjQk=;
+        b=AiBt073YxjpOTYQ6MnFQ6O/P2L8w0LvuXDxVJhnoLZcUATD7ymKIrR3r3Bj9eY6c4L
+         bXnyplP4ZXLipBCNxbEyAsy6e9ZGQh91c3ndGsngLbh4dAcAZbu6pH+WBqK6x4BWsGyJ
+         CqNBmpiLeHfxZi8unAD47rDTxM/0/wXClXKb2yVh4HTa9g8+w6GUF1XHiLgcgAPBC5ao
+         lLDj02Gv6rUaOXiUIKpXbFqI1xOvsO5Hf9AyG5OIx4eRrWBMQjwGbgTIOi5Bdo+ipM3a
+         r/wk2Etm/6inYJ3xKBnnFynszwMbDycs4yAsx+wLDeo5oKsz/M+BqtfJkBXCwtmpCTay
+         P8hQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW3/xseNCHyA+uZqMleh7N66CGls+FpA0J11/p5kr8S14uzINz9u4iiq+fZP35u/aCDpVozFTCqn/YyjMtgd+cYfogS8ZAKyPOUnTZo
+X-Gm-Message-State: AOJu0Yx+CurM0eVpCabXybM+mib0cMRMSYRiaEdQL5wOakOI9Q8py14k
+	H/VMaWuueFz845P3uZ0eMR/T1s5xX8UTYtlxltxQioHfNSitfr7N1igCe18D0QCapk5AYIYk73Y
+	ikAdZ1vrdv+bXnMYO4TaByEPzthcg7+0d7xWmmJPqwNC7zQwyBNo8T1THyLwM4w==
+X-Received: by 2002:a05:600c:a29f:b0:425:5ea6:236 with SMTP id 5b1f17b1804b1-4255ea60371mr49513985e9.28.1719573391986;
+        Fri, 28 Jun 2024 04:16:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEyPwfEwM5GqciNJwTRavZB5JFhzJ9CBQ2fFV7Dql3t6q6MFOInK4WYOf9EpanV+QVZr8fUGw==
+X-Received: by 2002:a05:600c:a29f:b0:425:5ea6:236 with SMTP id 5b1f17b1804b1-4255ea60371mr49513745e9.28.1719573391339;
+        Fri, 28 Jun 2024 04:16:31 -0700 (PDT)
+Received: from sgarzare-redhat ([193.207.134.173])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b063485sm30356325e9.21.2024.06.28.04.16.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 04:16:30 -0700 (PDT)
+Date: Fri, 28 Jun 2024 13:16:24 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: luigi.leonardi@outlook.com
+Cc: "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	virtualization@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org
+Subject: Re: [PATCH net-next v3 2/3] vsock/virtio: add SIOCOUTQ support for
+ all virtio based transports
+Message-ID: <7ejdsieevuooprdaprn2ymqqv5ssd2fntlp6tsodeu6pvnuvue@chzg6ww45bni>
+References: <20240626-ioctl_next-v3-0-63be5bf19a40@outlook.com>
+ <20240626-ioctl_next-v3-2-63be5bf19a40@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <cfda4682-34b4-462c-acf6-976b0d79ba06@redhat.com>
-X-Spam-Score: -3.80
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+In-Reply-To: <20240626-ioctl_next-v3-2-63be5bf19a40@outlook.com>
 
-On Fri 28-06-24 10:58:54, Ian Kent wrote:
-> 
-> On 27/6/24 19:54, Jan Kara wrote:
-> > On Thu 27-06-24 09:11:14, Ian Kent wrote:
-> > > On 27/6/24 04:47, Matthew Wilcox wrote:
-> > > > On Wed, Jun 26, 2024 at 04:07:49PM -0400, Lucas Karpinski wrote:
-> > > > > +++ b/fs/namespace.c
-> > > > > @@ -78,6 +78,7 @@ static struct kmem_cache *mnt_cache __ro_after_init;
-> > > > >    static DECLARE_RWSEM(namespace_sem);
-> > > > >    static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
-> > > > >    static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
-> > > > > +static bool lazy_unlock = false; /* protected by namespace_sem */
-> > > > That's a pretty ugly way of doing it.  How about this?
-> > > Ha!
-> > > 
-> > > That was my original thought but I also didn't much like changing all the
-> > > callers.
-> > > 
-> > > I don't really like the proliferation of these small helper functions either
-> > > but if everyone
-> > > 
-> > > is happy to do this I think it's a great idea.
-> > So I know you've suggested removing synchronize_rcu_expedited() call in
-> > your comment to v2. But I wonder why is it safe? I *thought*
-> > synchronize_rcu_expedited() is there to synchronize the dropping of the
-> > last mnt reference (and maybe something else) - see the comment at the
-> > beginning of mntput_no_expire() - and this change would break that?
-> 
-> Interesting, because of the definition of lazy umount I didn't look closely
-> enough at that.
-> 
-> But I wonder, how exactly would that race occur, is holding the rcu read
-> lock sufficient since the rcu'd mount free won't be done until it's
-> released (at least I think that's how rcu works).
+On Wed, Jun 26, 2024 at 02:08:36PM GMT, Luigi Leonardi via B4 Relay wrote:
+>From: Luigi Leonardi <luigi.leonardi@outlook.com>
+>
+>Introduce support for stream_bytes_unsent and seqpacket_bytes_unsent
+>ioctl for virtio_transport, vhost_vsock and vsock_loopback.
+>
+>For all transports the unsent bytes counter is incremented
+>in virtio_transport_get_credit.
+>
+>In the virtio_transport (G2H) the counter is decremented each
+>time the host notifies the guest that it consumed the skbuffs.
+>In vhost-vsock (H2G) the counter is decremented after the skbuff
+>is queued in the virtqueue.
+>In vsock_loopback the counter is decremented after the skbuff is
+>dequeued.
+>
+>Signed-off-by: Luigi Leonardi <luigi.leonardi@outlook.com>
+>---
+> drivers/vhost/vsock.c                   |  4 +++-
+> include/linux/virtio_vsock.h            |  7 +++++++
+> net/vmw_vsock/virtio_transport.c        |  4 +++-
+> net/vmw_vsock/virtio_transport_common.c | 35 +++++++++++++++++++++++++++++++++
+> net/vmw_vsock/vsock_loopback.c          |  7 +++++++
+> 5 files changed, 55 insertions(+), 2 deletions(-)
+>
+>diff --git a/drivers/vhost/vsock.c b/drivers/vhost/vsock.c
+>index ec20ecff85c7..dba8b3ea37bf 100644
+>--- a/drivers/vhost/vsock.c
+>+++ b/drivers/vhost/vsock.c
+>@@ -244,7 +244,7 @@ vhost_transport_do_send_pkt(struct vhost_vsock *vsock,
+> 					restart_tx = true;
+> 			}
+>
+>-			consume_skb(skb);
+>+			virtio_transport_consume_skb_sent(skb, true);
+> 		}
+> 	} while(likely(!vhost_exceeds_weight(vq, ++pkts, total_len)));
+> 	if (added)
+>@@ -451,6 +451,8 @@ static struct virtio_transport vhost_transport = {
+> 		.notify_buffer_size       = virtio_transport_notify_buffer_size,
+> 		.notify_set_rcvlowat      = virtio_transport_notify_set_rcvlowat,
+>
+>+		.unsent_bytes             = virtio_transport_bytes_unsent,
 
-I'm concerned about a race like:
+The callback is named `unsent_bytes`, I'd use something similar also
+in the function name, so `virtio_transport_unsent_bytes`, or the
+opposite renaming the callback, as you prefer, but I'd use the same
+for both.
 
-[path lookup]				[umount -l]
-...
-path_put()
-  mntput(mnt)
-    mntput_no_expire(m)
-      rcu_read_lock();
-      if (likely(READ_ONCE(mnt->mnt_ns))) {
-					do_umount()
-					  umount_tree()
-					    ...
-					    mnt->mnt_ns = NULL;
-					    ...
-					  namespace_unlock()
-					    mntput(&m->mnt)
-					      mntput_no_expire(mnt)
-				              smp_mb();
-					      mnt_add_count(mnt, -1);
-					      count = mnt_get_count(mnt);
-					      if (count != 0) {
-						...
-						return;
-        mnt_add_count(mnt, -1);
-        rcu_read_unlock();
-        return;
--> KABOOM, mnt->mnt_count dropped to 0 but nobody cleaned up the mount!
-      }
+>+
+> 		.read_skb = virtio_transport_read_skb,
+> 	},
+>
+>diff --git a/include/linux/virtio_vsock.h b/include/linux/virtio_vsock.h
+>index c82089dee0c8..e74c12878213 100644
+>--- a/include/linux/virtio_vsock.h
+>+++ b/include/linux/virtio_vsock.h
+>@@ -134,6 +134,8 @@ struct virtio_vsock_sock {
+> 	u32 peer_fwd_cnt;
+> 	u32 peer_buf_alloc;
+>
 
-And this scenario is exactly prevented by synchronize_rcu() in
-namespace_unlock().
+Can you remove this extra empty line, so it's clear that it is
+protected by tx_lock?
 
+>+	size_t bytes_unsent;
+>+
+> 	/* Protected by rx_lock */
+> 	u32 fwd_cnt;
+> 	u32 last_fwd_cnt;
+>@@ -193,6 +195,11 @@ s64 virtio_transport_stream_has_data(struct vsock_sock *vsk);
+> s64 virtio_transport_stream_has_space(struct vsock_sock *vsk);
+> u32 virtio_transport_seqpacket_has_data(struct vsock_sock *vsk);
+>
+>+size_t virtio_transport_bytes_unsent(struct vsock_sock *vsk);
+>+
+>+void virtio_transport_consume_skb_sent(struct sk_buff *skb,
+>+				       bool consume);
+>+
+> int virtio_transport_do_socket_init(struct vsock_sock *vsk,
+> 				 struct vsock_sock *psk);
+> int
+>diff --git a/net/vmw_vsock/virtio_transport.c b/net/vmw_vsock/virtio_transport.c
+>index 43d405298857..fc62d2818c2c 100644
+>--- a/net/vmw_vsock/virtio_transport.c
+>+++ b/net/vmw_vsock/virtio_transport.c
+>@@ -311,7 +311,7 @@ static void virtio_transport_tx_work(struct work_struct *work)
+>
+> 		virtqueue_disable_cb(vq);
+> 		while ((skb = virtqueue_get_buf(vq, &len)) != NULL) {
+>-			consume_skb(skb);
+>+			virtio_transport_consume_skb_sent(skb, true);
+> 			added = true;
+> 		}
+> 	} while (!virtqueue_enable_cb(vq));
+>@@ -540,6 +540,8 @@ static struct virtio_transport virtio_transport = {
+> 		.notify_buffer_size       = virtio_transport_notify_buffer_size,
+> 		.notify_set_rcvlowat      = virtio_transport_notify_set_rcvlowat,
+>
+>+		.unsent_bytes             = virtio_transport_bytes_unsent,
+>+
+> 		.read_skb = virtio_transport_read_skb,
+> 	},
+>
+>diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/virtio_transport_common.c
+>index 16ff976a86e3..3a7fa36f306b 100644
+>--- a/net/vmw_vsock/virtio_transport_common.c
+>+++ b/net/vmw_vsock/virtio_transport_common.c
+>@@ -463,6 +463,26 @@ void virtio_transport_inc_tx_pkt(struct virtio_vsock_sock *vvs, struct sk_buff *
+> }
+> EXPORT_SYMBOL_GPL(virtio_transport_inc_tx_pkt);
+>
+>+void virtio_transport_consume_skb_sent(struct sk_buff *skb, bool consume)
+>+{
+>+	struct sock *s = skb->sk;
+>+
+>+	if (s && skb->len) {
+>+		struct vsock_sock *vs = vsock_sk(s);
+>+		struct virtio_vsock_sock *vvs;
+>+
+>+		vvs = vs->trans;
+>+
+>+		spin_lock_bh(&vvs->tx_lock);
+>+		vvs->bytes_unsent -= skb->len;
+>+		spin_unlock_bh(&vvs->tx_lock);
+>+	}
+>+
+>+	if (consume)
+>+		consume_skb(skb);
+>+}
+>+EXPORT_SYMBOL_GPL(virtio_transport_consume_skb_sent);
+>+
+> u32 virtio_transport_get_credit(struct virtio_vsock_sock *vvs, u32 credit)
+> {
+> 	u32 ret;
+>@@ -475,6 +495,7 @@ u32 virtio_transport_get_credit(struct virtio_vsock_sock *vvs, u32 credit)
+> 	if (ret > credit)
+> 		ret = credit;
+> 	vvs->tx_cnt += ret;
+>+	vvs->bytes_unsent += ret;
+> 	spin_unlock_bh(&vvs->tx_lock);
+>
+> 	return ret;
+>@@ -488,6 +509,7 @@ void virtio_transport_put_credit(struct virtio_vsock_sock *vvs, u32 credit)
+>
+> 	spin_lock_bh(&vvs->tx_lock);
+> 	vvs->tx_cnt -= credit;
+>+	vvs->bytes_unsent -= credit;
+> 	spin_unlock_bh(&vvs->tx_lock);
+> }
+> EXPORT_SYMBOL_GPL(virtio_transport_put_credit);
+>@@ -1090,6 +1112,19 @@ void virtio_transport_destruct(struct vsock_sock *vsk)
+> }
+> EXPORT_SYMBOL_GPL(virtio_transport_destruct);
+>
+>+size_t virtio_transport_bytes_unsent(struct vsock_sock *vsk)
+>+{
+>+	struct virtio_vsock_sock *vvs = vsk->trans;
+>+	size_t ret;
+>+
+>+	spin_lock_bh(&vvs->tx_lock);
+>+	ret = vvs->bytes_unsent;
+>+	spin_unlock_bh(&vvs->tx_lock);
+>+
+>+	return ret;
+>+}
+>+EXPORT_SYMBOL_GPL(virtio_transport_bytes_unsent);
+>+
+> static int virtio_transport_reset(struct vsock_sock *vsk,
+> 				  struct sk_buff *skb)
+> {
+>diff --git a/net/vmw_vsock/vsock_loopback.c b/net/vmw_vsock/vsock_loopback.c
+>index 6dea6119f5b2..9098613561e3 100644
+>--- a/net/vmw_vsock/vsock_loopback.c
+>+++ b/net/vmw_vsock/vsock_loopback.c
+>@@ -98,6 +98,8 @@ static struct virtio_transport loopback_transport = {
+> 		.notify_buffer_size       = virtio_transport_notify_buffer_size,
+> 		.notify_set_rcvlowat      = virtio_transport_notify_set_rcvlowat,
+>
+>+		.unsent_bytes             = virtio_transport_bytes_unsent,
+>+
+> 		.read_skb = virtio_transport_read_skb,
+> 	},
+>
+>@@ -123,6 +125,11 @@ static void vsock_loopback_work(struct work_struct *work)
+> 	spin_unlock_bh(&vsock->pkt_queue.lock);
+>
+> 	while ((skb = __skb_dequeue(&pkts))) {
+>+		/* Decrement the bytes_sent counter without deallocating skb
+                                  ^
+Should be `bytes_unsent` ?
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>+		 * It is freed by the receiver.
+>+		 */
+>+		virtio_transport_consume_skb_sent(skb, false);
+>+
+
+nit: no need for this new empty line.
+
+> 		virtio_transport_deliver_tap_pkt(skb);
+> 		virtio_transport_recv_pkt(&loopback_transport, skb);
+> 	}
+>
+>-- 
+>2.45.2
+>
+>
+>
+
 
