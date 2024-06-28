@@ -1,160 +1,201 @@
-Return-Path: <linux-kernel+bounces-233932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44B2691BF93
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:33:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D259791BF9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:35:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB4EAB20C7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:33:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51D9A1F232F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D2B1E4A1;
-	Fri, 28 Jun 2024 13:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D2B15356B;
+	Fri, 28 Jun 2024 13:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TJ0F5hAf"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="ju0ciyei"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 367251E481
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 13:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17A829B0;
+	Fri, 28 Jun 2024 13:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719581585; cv=none; b=Y9ZQuQcmDYX5P5kXtBLACX3ZQQd2cE1DfFinYKoa2LTDktEMwQ86Ec4UpLw78T+40v7ht8zifpp+JdoMbgLkjinQhZLm6dSW1jSCDFItkNLiF5wv/lPsBgNhkIXd0d1h1WajmRAiuKBld8Zs8zQ++lfSIyCI4LIBuF4Z3FUuajI=
+	t=1719581743; cv=none; b=fp2yPbmlkSDTojLlCK0deTVJlbF88xLpDmoRRoeo0LVOZH78vz30Xqpd+bM7QBCoMmdeIHYPMzAzCEqhnkie6R7cm/GDxTCEUZdD3kRj2iOMmMBaQguc1K12b4j7tXaYbEHYToOu+sf3E97Ui3gyQlC+krpx/lV5589o652GBI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719581585; c=relaxed/simple;
-	bh=n9kWTMTK7JCDbkID1J92euC/9dyjlUgau6is7eksbls=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jzBH76RSo+Txixf1Rr9vpXSrLeW9Y5uvAPh+jmWKht6JkCAnFQoNC/zONhzO5MQtd+uXZYyJRT3/8lkIgx3FQVY8UJR2SuuKpo3J2HfK4CB7Oso3DjnhcFkvD1XOSnMFY+Lsa7s9B+ags+bbPkrMw7qRzkty84IfGA1dvA7PPro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TJ0F5hAf; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ebe40673e8so6759351fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 06:33:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1719581581; x=1720186381; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=o6rPZUMuSi4ADyF686OqBZEn8J7FK8w8TCFqb/kA/fQ=;
-        b=TJ0F5hAf/CWMsuBu+pHK5rymbzj+5NK8nhN+GlqL5+M4LGbvsHv8xy3jEpXKYRwefH
-         wfMQM76sxHpEYzdLnQ8Qvy53crYa2wzbGgzDfYbIBjQgoBcyV0aRbEceleBj025HxMsm
-         ds2pnzdH7rNZOpA30rAKjM0oXJyG4GaaJL8jTlW6JTNCmZVF86kIKgTlKXWD8aPkcccB
-         F1I5u6RwYTanD1yM7pYiJqy5eg9LEiRhHyxypZwqWe6GXdJsjQWuzX5mR40PEHGVmkj1
-         KPsBihNcOeR+TA4h7vzlJcEbQ54EUL9YqyuL4B/QgcP0ACCFSV7xCIeylw5hnQ44R6Jd
-         xhbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719581581; x=1720186381;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o6rPZUMuSi4ADyF686OqBZEn8J7FK8w8TCFqb/kA/fQ=;
-        b=jhmEgpZn1SJsAp254SGdjCU8KDcqNB88zadrTYF9Qjnn9v8NlHIBj26AqxnWSZhLx2
-         4C+yV2Jvf9syRkzQllaznAbgrbYhrEk3wepfcg4Qf4j+sXkPh+OLMYHB8Ig4c+t/xtzT
-         gzhRgdZ/aVUZFJTovshJJQehlrAJBjhtfzbTcbUzJrZYctwuQaj4qh9jGIElAz+fxdIu
-         mhB6pC/dbUvrOFDtO2WAbma9EBQAnZQNQQxHIreUgy6c/B8c2jW3lt9aSGB7xwJ4wGjj
-         hLqpweEAM9RNfUa7+y+aQqS9T/G+KajRzvFiUIm6EpAHd4ek0JkbMs1AsS85/AUULcto
-         wDcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUOW2u+/tVzgoiZXhOJlKZM7RyJVuXXdrgQHSeF8BgCUTSvhX79D2yiinIFStR/Jo/Aj63Oeq7jWdArHNpK1TO6ndoDGoet9rKgbLQR
-X-Gm-Message-State: AOJu0Yy+B1zjAUoa3tbFKX7DwKJV2TT0ezSrPPGbZig7aPvqSDjK6zuB
-	QgHi1DOaujbrNTHXBRc/4Hx/sAaquvfjUBUjxWcmrJ2hru1vyI3Et/Pt0Plel58=
-X-Google-Smtp-Source: AGHT+IHj8ml0/+ZNwtzeTk8oDPn2OvJgKXPj6vFkFsJMm4VtCqspX8b0C/ll/qiA7gnoj03Bp937nA==
-X-Received: by 2002:a2e:9d88:0:b0:2ec:51fc:2f5a with SMTP id 38308e7fff4ca-2ec5b36b1eamr103308001fa.4.1719581581261;
-        Fri, 28 Jun 2024 06:33:01 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7080256af5asm1568816b3a.56.2024.06.28.06.32.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 06:33:00 -0700 (PDT)
-Date: Fri, 28 Jun 2024 15:32:52 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH printk v2 12/18] printk: Add kthread for all legacy
- consoles
-Message-ID: <Zn67hDCEHdgtYPv3@pathway.suse.cz>
-References: <20240603232453.33992-1-john.ogness@linutronix.de>
- <20240603232453.33992-13-john.ogness@linutronix.de>
- <Zn6iq3n2ggL138Gs@pathway.suse.cz>
- <87cyo1xnmw.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1719581743; c=relaxed/simple;
+	bh=vxepn1OELtQLJxgDaXvCAEeWK/4QuhD+gbAMDXntklM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mo8sMQTIE0GyLxFWHNCZeAzF4alLfQ0jISGVjd4HKi0Si7/savDC6vGDWyZ3jL0hwcGpDeWOaAutrsykkFmPwi3bwUzaE3SiTcwNsEXF+ImngU06lzUsLtOnJ6ZzwMk9uS79o6tGzvZ8Ueu4aGXiXcKqgVOXEYYMMUqGh2c+nzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=ju0ciyei; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45SA18wT027510;
+	Fri, 28 Jun 2024 06:35:23 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	pfpt0220; bh=omEZVOBCcp8+CSUlgFa39jtiTPNXYzqmJa6zdpIsYO4=; b=ju0
+	ciyeiL89qJliZMqxD7NcdieOVWs6DynHGo+2/t226UKPCnoZIl3+prPGeMH4/aWV
+	JrRQXYEgBrFMadnDWVyy3z1xghwu7It8yr2/+2zcfyFPH/n8uPlJSVV/BmPi7aHD
+	zQBObrejbZkDyzXDPZl6qITDXlkIat42tKBbIHn932QxzzsfzYHuazsaVUPdYBRW
+	HjdjrkDwSS2ScM4K+9Eg6/U/p+lm/vWm3BRFrgmR8hB3Rv2Lppd/XnxOZKP9JBLi
+	quel6X0DjuCM02jruaFk6m0M8aOADm3cOMcZDT/pz6OcTkniABmt9nJE3Uo1oj6c
+	RhqCBs0X00C8m/j+t3g==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 401c8hubm1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Jun 2024 06:35:22 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Fri, 28 Jun 2024 06:35:21 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Fri, 28 Jun 2024 06:35:21 -0700
+Received: from hyd1soter3.marvell.com (unknown [10.29.37.12])
+	by maili.marvell.com (Postfix) with ESMTP id 7246E3F704E;
+	Fri, 28 Jun 2024 06:35:18 -0700 (PDT)
+From: Geetha sowjanya <gakula@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <kuba@kernel.org>, <davem@davemloft.net>, <pabeni@redhat.com>,
+        <edumazet@google.com>, <sgoutham@marvell.com>, <gakula@marvell.com>,
+        <sbhatta@marvell.com>, <hkelam@marvell.com>
+Subject: [net-next PATCH v7 00/10] Introduce RVU representors  
+Date: Fri, 28 Jun 2024 19:05:07 +0530
+Message-ID: <20240628133517.8591-1-gakula@marvell.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87cyo1xnmw.fsf@jogness.linutronix.de>
+Content-Type: text/plain
+X-Proofpoint-GUID: Ok1I-PtgNUx8-OpgDvECxP6ccK3YHSCF
+X-Proofpoint-ORIG-GUID: Ok1I-PtgNUx8-OpgDvECxP6ccK3YHSCF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-28_09,2024-06-28_01,2024-05-17_01
 
-On Fri 2024-06-28 14:28:47, John Ogness wrote:
-> On 2024-06-28, Petr Mladek <pmladek@suse.com> wrote:
-> >> @@ -1494,7 +1508,9 @@ void nbcon_cpu_emergency_exit(void)
-> >>  		 * to handle it.
-> >>  		 */
-> >>  		do_trigger_flush = true;
-> >> -		if (printing_via_unlock && !is_printk_deferred()) {
-> >> +		if (!force_printkthreads() &&
-> >
-> > Is this correct? We still need to flush the messages directly
-> > when the legacy kthread is not ready yet.
-> 
-> No! If force_printkthreads() is set, messages will never flush directly
-> except for console_flush_on_panic().
+This series adds representor support for each rvu devices.
+When switchdev mode is enabled, representor netdev is registered
+for each rvu device. In implementation of representor model, 
+one NIX HW LF with multiple SQ and RQ is reserved, where each
+RQ and SQ of the LF are mapped to a representor. A loopback channel
+is reserved to support packet path between representors and VFs.
+CN10K silicon supports 2 types of MACs, RPM and SDP. This
+patch set adds representor support for both RPM and SDP MAC
+interfaces.
 
-But this is an _emergency_ context! This would be inconsistent with
-the nbcon consoles where the messages are flushed directly.
+- Patch 1: Refactors and exports the shared service functions.
+- Patch 2: Implements basic representor driver.
+- Patch 3: Add devlink support to create representor netdevs that
+  can be used to manage VFs.
+- Patch 4: Implements basec netdev_ndo_ops.
+- Patch 5: Installs tcam rules to route packets between representor and
+	   VFs.
+- Patch 6: Enables fetching VF stats via representor interface
+- Patch 7: Adds support to sync link state between representors and VFs .
+- Patch 8: Enables configuring VF MTU via representor netdevs.
+- Patch 9: Add representors for sdp MAC.
+- Patch 10: Add devlink port support.
 
-Is RT sheduling quaranteed when the system reached emergency state?
+Command to create VF representor
+#devlink dev eswitch set pci/0002:1c:00.0 mode switchdev
+VF representors are created for each VF when switch mode is set switchdev on representor PCI device
+# devlink dev eswitch set pci/0002:1c:00.0  mode switchdev 
+# ip link show
+25: r0p1: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/ether 32:0f:0f:f0:60:f1 brd ff:ff:ff:ff:ff:ff
+26: r1p1: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/ether 3e:5d:9a:4d:e7:7b brd ff:ff:ff:ff:ff:ff
 
-In fact, we probably should not check force_printkthreads() here at
-all. It would be only for NBCON_PRIO_NORMAL context.
+#devlink dev
+pci/0002:01:00.0
+pci/0002:02:00.0
+pci/0002:03:00.0
+pci/0002:04:00.0
+pci/0002:05:00.0
+pci/0002:06:00.0
+pci/0002:07:00.0
 
-Or the option should force the kthreads even for nbcon consoles.
+~# devlink port
+pci/0002:1c:00.0/0: type eth netdev r0p1v0 flavour pcipf controller 0 pfnum 1 vfnum 0 external false splittable false
+pci/0002:1c:00.0/1: type eth netdev r1p1v1 flavour pcivf controller 0 pfnum 1 vfnum 1 external false splittable false
+pci/0002:1c:00.0/2: type eth netdev r2p1v2 flavour pcivf controller 0 pfnum 1 vfnum 2 external false splittable false
+pci/0002:1c:00.0/3: type eth netdev r3p1v3 flavour pcivf controller 0 pfnum 1 vfnum 3 external false splittable false
 
+-----------
+v1-v2:
+ -Fixed build warnings.
+ -Address review comments provided by "Kalesh Anakkur Purayil".
 
-> I see that I implemented get_init_console_seq() to flush since it is
-> known to be in task state. But that is wrong. Also there it should not
-> flush directly. It is not about whether or not printing is safe. It is
-> about deferring to the thread 100% of the time except for panic.
-> 
-> >> +void nbcon_legacy_kthread_create(void)
-> >> +{
-> >> +	struct task_struct *kt;
-> >> +
-> >> +	lockdep_assert_held(&console_mutex);
-> >> +
-> >> +	if (!force_printkthreads())
-> >> +		return;
-> >> +
-> >> +	if (!printk_threads_enabled || nbcon_legacy_kthread)
-> >> +		return;
-> >> +
-> >> +	kt = kthread_run(nbcon_legacy_kthread_func, NULL, "pr/legacy");
-> >> +	if (IS_ERR(kt)) {
-> >> +		pr_err("unable to start legacy printing thread\n");
-> >> +		return;
-> >
-> > Is this acceptable for RT, please?
-> 
-> It is not acceptable for mainline. For the next version, any failed
-> thread creation leads to unregistering the console. In the case of the
-> legacy thread, it will mean unregistering all legacy consoles on
-> failure.
+v2-v3:
+ - Used extack for error messages.
+ - As suggested reworked commit messages.
+ - Fixed sparse warning.
 
-It means that the system would become silent. Is this a good idea?
+v3-v4: 
+ - Patch 2 & 3: Fixed coccinelle reported warnings.
+ - Patch 10: Added devlink port support.
 
-IMHO, we have a fundamental problem here.
-Are RT guarantees more important than printk() or vice versa?
+v4-v5:
+  - Patch 3: Removed devm_* usage in rvu_rep_create()
+  - Patch 3: Fixed build warnings.
 
-What is happening when the RT guarantees are violated?
-For example, when the scheduler detects a problem?
-Does it panic() or tries to continue?
+v5-v6:
+  - Addressed review comments provided by "Simon Horman".
+  - Added review tag. 
 
-From my POV, silent system is the worst solution. The user
-might think: "no messages, no problem".
+v6-v7:
+  - Rebased on top net-next branch.
 
-Best Regards,
-Petr
+Geetha sowjanya (10):
+  octeontx2-pf: Refactoring RVU driver
+  octeontx2-pf: RVU representor driver
+  octeontx2-pf: Create representor netdev
+  octeontx2-pf: Add basic net_device_ops
+  octeontx2-af: Add packet path between representor and VF
+  octeontx2-pf: Get VF stats via representor
+  octeontx2-pf: Add support to sync link state between representor and
+    VFs
+  octeontx2-pf: Configure VF mtu via representor
+  octeontx2-pf: Add representors for sdp MAC
+  octeontx2-pf: Add devlink port support
+
+ .../net/ethernet/marvell/octeontx2/Kconfig    |   8 +
+ .../ethernet/marvell/octeontx2/af/Makefile    |   3 +-
+ .../ethernet/marvell/octeontx2/af/common.h    |   2 +
+ .../net/ethernet/marvell/octeontx2/af/mbox.h  |  74 ++
+ .../net/ethernet/marvell/octeontx2/af/npc.h   |   1 +
+ .../net/ethernet/marvell/octeontx2/af/rvu.c   |  11 +
+ .../net/ethernet/marvell/octeontx2/af/rvu.h   |  30 +-
+ .../marvell/octeontx2/af/rvu_debugfs.c        |  27 -
+ .../marvell/octeontx2/af/rvu_devlink.c        |   6 +
+ .../ethernet/marvell/octeontx2/af/rvu_nix.c   |  81 ++-
+ .../marvell/octeontx2/af/rvu_npc_fs.c         |   5 +
+ .../ethernet/marvell/octeontx2/af/rvu_reg.h   |   4 +
+ .../ethernet/marvell/octeontx2/af/rvu_rep.c   | 464 ++++++++++++
+ .../marvell/octeontx2/af/rvu_struct.h         |  26 +
+ .../marvell/octeontx2/af/rvu_switch.c         |  20 +-
+ .../ethernet/marvell/octeontx2/nic/Makefile   |   2 +
+ .../ethernet/marvell/octeontx2/nic/cn10k.c    |   4 +-
+ .../ethernet/marvell/octeontx2/nic/cn10k.h    |   2 +-
+ .../marvell/octeontx2/nic/otx2_common.c       |  56 +-
+ .../marvell/octeontx2/nic/otx2_common.h       |  84 ++-
+ .../marvell/octeontx2/nic/otx2_devlink.c      |  49 ++
+ .../ethernet/marvell/octeontx2/nic/otx2_pf.c  | 305 +++++---
+ .../marvell/octeontx2/nic/otx2_txrx.c         |  38 +-
+ .../marvell/octeontx2/nic/otx2_txrx.h         |   3 +-
+ .../ethernet/marvell/octeontx2/nic/otx2_vf.c  |  19 +-
+ .../net/ethernet/marvell/octeontx2/nic/rep.c  | 684 ++++++++++++++++++
+ .../net/ethernet/marvell/octeontx2/nic/rep.h  |  53 ++
+ 27 files changed, 1834 insertions(+), 227 deletions(-)
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/af/rvu_rep.c
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/nic/rep.c
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/nic/rep.h
+
+-- 
+2.25.1
+
 
