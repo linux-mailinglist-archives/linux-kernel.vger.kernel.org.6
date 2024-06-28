@@ -1,66 +1,66 @@
-Return-Path: <linux-kernel+bounces-234519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DA6691C790
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:55:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35E0391C792
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:55:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C88822833E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:55:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59B4A1C23CE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23BD80043;
-	Fri, 28 Jun 2024 20:54:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9707B3F3;
+	Fri, 28 Jun 2024 20:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="XXsydSbB"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="bg8BNAiZ"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861EB7D3F4
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 20:54:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A5F7D41D
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 20:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719608087; cv=none; b=SbzOJQAaFHhGyBgePfXyvURHCfnuW9SaVF++JUiSHrEKs+NnX5gfoCB0qHmmDX9c1H5bx2yEiiKPyscC+dRDSg/+jlfttewWkU0SU8VG2siJYkXxnPSuCyjMLvDqdnS1b5SZPB4gw+N3Z5jDmywBS+Krm1QMjMx1JZOqiD+JwJ4=
+	t=1719608091; cv=none; b=h8kVI6N3u5rMPW7/SxkssxmJKd7QdxTHz97oRWojC717AjknQHLEO0CGLdt5/L++n9Lo7bYJTG+VPYn/tnvMF0nVxnGH6I5tTedD6ia9vSJ/c/DzFxS3ECX2LgJAhXIQkBEmPC/s/sssZ6cdMi/Y9FNj4uR3VlrnSuBdPgV+LV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719608087; c=relaxed/simple;
-	bh=ILREiau6eos0iPiPYxuFutozKjRt8tnCvPTjOI8uH4o=;
+	s=arc-20240116; t=1719608091; c=relaxed/simple;
+	bh=DNFx8C4e6NnUrSbsWBNctKGJEj3ty7vcCPgFH6VftMw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type; b=lyMYBPMqTcm3iIe7sRTj6v+oREHEolB6g0Mw/EJa7aoe0takKTO/MlQY742VXgj+P/6pF4nO7nQgS/M/RA9sTAIo3qgrdEhOHXbFnAYqrU1F1clmLMHSed7cwLcZ/pjwQZTggHCJ6jzW9jo42nJcnM+mqMKgKtyPzjtRjw57Ynk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=XXsydSbB; arc=none smtp.client-ip=209.85.214.171
+	 Content-Type; b=eFJvyzUn8rlgq6SnZ9n78CBwtxEc0cHT22QoJ3BIhR1yMuGSOIiS6XcDJeFsSqN/nX87xqQ9OsVOcUgmiKGnVNlrgNJV6N97A2JUAjyD5jqvgFtUEo7KKLl/7uPjBnAGe9t+vkR23o+2Qsa+3va5lwJGozbrYL6dJu9dyiWPY6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=bg8BNAiZ; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fa2782a8ccso6183425ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 13:54:46 -0700 (PDT)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f9b364faddso7393795ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 13:54:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1719608086; x=1720212886; darn=vger.kernel.org;
+        d=broadcom.com; s=google; t=1719608089; x=1720212889; darn=vger.kernel.org;
         h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=KFYg9IGgRjjQvEb+c7OuDi2Osde5PKmDwF8O8XgEgIw=;
-        b=XXsydSbB+rcZ/QEocBIUVaprIVCkSoj4rgEq5EH5h9bFcv5q3AV/1d2EuLNa++ltDE
-         W+ItAZCjenl58FVzTpp7mFr6V54T2iPfJ1YXch0AQqRWE1vbWpqafyknhVARbyr2F6oM
-         XKd56O383adETMBwCJHN91MwAv3RKV6B22DGU=
+        bh=A/tKin/J72WHiWomlWuleKfkDLkcWAY3EHLw/WOCmYA=;
+        b=bg8BNAiZ/o2KRkEIezDiXNUjX/p19qXcyFFnMHnV18oetwCFpDxfQwlmJyK3wSnNgK
+         EpF43YOoMQFZXW7Jvs687rtiOIO89aKWh4G9Uc9buX/AxQkSZAKaOm65elNCSFozTzk0
+         AwYBxXFWpC18YaAalbW+AxPMw7PPUCQaEuA7g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719608086; x=1720212886;
+        d=1e100.net; s=20230601; t=1719608089; x=1720212889;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KFYg9IGgRjjQvEb+c7OuDi2Osde5PKmDwF8O8XgEgIw=;
-        b=FwKVvCfeCvUtAftrLdq9elg0LCdlQ7IB7D+IjflN06mOEkqKY3q3YuzrYGXH6nY9h9
-         ootvQYKpLs+KtyoC7WMdOgZu473jDCWc3yuECLWh0oKLZednzECyOEKbTOGb4ThLxZ4H
-         FJxBO3+6rnqXe0eEhILFHsYWYZ8j9tsrXZwbfSExyNmjg7YOCpyaMLuyzyXRq8g5hu9k
-         DS1dR4Fmvd66Y0ug1Cpi7jOJ2bAT4tICMaDoHSiDj7nAyjNz6NrpoKACEPLRUw3WOQIn
-         rgPaqGHd/47Mto77JHCTN9JQYpaudKjrPgx9XDBgtTimt0FnL41Mb10qeA7+kH/lMXcm
-         W9wg==
-X-Forwarded-Encrypted: i=1; AJvYcCXW+zqk1Rw7+RyzMh/WqEsJq//gRSEM5RYOdKn0IzyOBh5Y5Uty097ExzH01GV+cqVqPz/R3p9q6kt2zAY9NC/PVcbXA3pEqrNbKhfV
-X-Gm-Message-State: AOJu0YwBYhYxVxEugDR7oJHwiusaxfSlNr0uoMBuJHFxa8OXi4dAhA8J
-	52uB/EaIZQ/Ede8qtqy4+P2/uxcKfFuJtkAvrq2MY+qSWtjsRVYJkmCyRwX/4w==
-X-Google-Smtp-Source: AGHT+IH/L+b6uQbJFoZXayOD8y14oJ/r7oa8wxPA2GIhVQOwDkQLMKI+EZwDN8QDCgoLaXZnM2uLgQ==
-X-Received: by 2002:a17:902:e846:b0:1f6:502d:ca88 with SMTP id d9443c01a7336-1fa23f15aa5mr171432915ad.49.1719608085820;
-        Fri, 28 Jun 2024 13:54:45 -0700 (PDT)
+        bh=A/tKin/J72WHiWomlWuleKfkDLkcWAY3EHLw/WOCmYA=;
+        b=ip2CJgJvxaXO6QiULZiUgszjxOPL77aeUWzyc6IiPn28+3dbg1HUOr2fkuHo+1u9+y
+         k3hepKrbrodulTrjbWm1bEJmF8kEFzYmODmoZorLnKVc65S8/d/NL2Z2b5dRJLqIBy9m
+         eCW0GA5Kz7ks7unrggorfCyVTOwoYdVI55gkXCGIeVYEjp+cn98Wcg4BegVtVpqAkI6e
+         cVT8n9A8OKgs06a2OAe5gy/2sInlyEyUqEmG8VMQBEHFsHkuQWMFjPdY9vDj0cGWB/z5
+         f1/N2cVi5NO0Shtj4G7PcvFmryRv8GHvt06r8ikkC1zsFDIgoyZQlo19/KRIPb74KZkf
+         n1RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWtX6NA4gpkhG+64mfu7sSrhUx9cCrECCOh9jxbXKUEhvBynoFg8lVTuF259Y5uqwtnHT2ZD+Dh4zHoiz+Q6FGDwwi54VHU+WQFr/4o
+X-Gm-Message-State: AOJu0Yzd8jfvOe/+crl3mzZyErOz+qZ8+3lOv+OHfa2VA6xorIOF7hFO
+	A4BgTCuRrIFAzkoOYRXkBEiWwL5vv8a59qpeFY2jwDZQYQIAGMZulaJF0+4N/A==
+X-Google-Smtp-Source: AGHT+IH53+z3u40ypBPUnp1e3vEo5MfhKqeiN52/BbM9xTHnKLTKgtdLAteEEpEEBJewCFPGreBQ7w==
+X-Received: by 2002:a17:902:ec8e:b0:1fa:2099:5c18 with SMTP id d9443c01a7336-1fa23f269aemr190937555ad.26.1719608089092;
+        Fri, 28 Jun 2024 13:54:49 -0700 (PDT)
 Received: from stbsrv-and-01.and.broadcom.net ([192.19.144.250])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac15393d1sm19695135ad.157.2024.06.28.13.54.43
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac15393d1sm19695135ad.157.2024.06.28.13.54.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 13:54:45 -0700 (PDT)
+        Fri, 28 Jun 2024 13:54:48 -0700 (PDT)
 From: Jim Quinlan <james.quinlan@broadcom.com>
 To: linux-pci@vger.kernel.org,
 	Nicolas Saenz Julienne <nsaenz@kernel.org>,
@@ -79,86 +79,73 @@ Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
 	linux-rpi-kernel@lists.infradead.org (moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE),
 	linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE),
 	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v1 3/8] PCI: brcmstb: Use bridge reset if available
-Date: Fri, 28 Jun 2024 16:54:22 -0400
-Message-Id: <20240628205430.24775-4-james.quinlan@broadcom.com>
+Subject: [PATCH v1 4/8] PCI: brcmstb: Use swinit reset if available
+Date: Fri, 28 Jun 2024 16:54:23 -0400
+Message-Id: <20240628205430.24775-5-james.quinlan@broadcom.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20240628205430.24775-1-james.quinlan@broadcom.com>
 References: <20240628205430.24775-1-james.quinlan@broadcom.com>
 Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000224071061bf97526"
+	boundary="00000000000054f11e061bf97522"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
---000000000000224071061bf97526
+--00000000000054f11e061bf97522
 
-The 7712 SOC has a bridge reset which can be described in the device tree.
-If it is present, use it. Otherwise, continue to use the legacy method to
-reset the bridge.
+The 7712 SOC adds a software init reset device for the PCIe HW.
+If found in the DT node, use it.
 
 Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
 ---
- drivers/pci/controller/pcie-brcmstb.c | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+ drivers/pci/controller/pcie-brcmstb.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
 diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-index c2eb29b886f7..4104c3668fdb 100644
+index 4104c3668fdb..0f1c3e1effb1 100644
 --- a/drivers/pci/controller/pcie-brcmstb.c
 +++ b/drivers/pci/controller/pcie-brcmstb.c
-@@ -265,6 +265,7 @@ struct brcm_pcie {
- 	enum pcie_type		type;
+@@ -266,6 +266,7 @@ struct brcm_pcie {
  	struct reset_control	*rescal;
  	struct reset_control	*perst_reset;
-+	struct reset_control	*bridge;
+ 	struct reset_control	*bridge;
++	struct reset_control	*swinit;
  	int			num_memc;
  	u64			memc_size[PCIE_BRCM_MAX_MEMC];
  	u32			hw_rev;
-@@ -732,12 +733,19 @@ static void __iomem *brcm7425_pcie_map_bus(struct pci_bus *bus,
- 
- static void brcm_pcie_bridge_sw_init_set_generic(struct brcm_pcie *pcie, u32 val)
- {
--	u32 tmp, mask =  RGR1_SW_INIT_1_INIT_GENERIC_MASK;
--	u32 shift = RGR1_SW_INIT_1_INIT_GENERIC_SHIFT;
-+	if (pcie->bridge) {
-+		if (val)
-+			reset_control_assert(pcie->bridge);
-+		else
-+			reset_control_deassert(pcie->bridge);
-+	} else {
-+		u32 tmp, mask =  RGR1_SW_INIT_1_INIT_GENERIC_MASK;
-+		u32 shift = RGR1_SW_INIT_1_INIT_GENERIC_SHIFT;
- 
--	tmp = readl(pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
--	tmp = (tmp & ~mask) | ((val << shift) & mask);
--	writel(tmp, pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
-+		tmp = readl(pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
-+		tmp = (tmp & ~mask) | ((val << shift) & mask);
-+		writel(tmp, pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
-+	}
- }
- 
- static void brcm_pcie_bridge_sw_init_set_7278(struct brcm_pcie *pcie, u32 val)
-@@ -1635,6 +1643,12 @@ static int brcm_pcie_probe(struct platform_device *pdev)
- 		goto clk_out;
+@@ -1626,6 +1627,25 @@ static int brcm_pcie_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "could not enable clock\n");
+ 		return ret;
  	}
- 
-+	pcie->bridge = devm_reset_control_get_optional_exclusive(&pdev->dev, "bridge");
-+	if (IS_ERR(pcie->bridge)) {
-+		ret = PTR_ERR(pcie->bridge);
++
++	pcie->swinit = devm_reset_control_get_optional_exclusive(&pdev->dev, "swinit");
++	if (IS_ERR(pcie->swinit)) {
++		ret = dev_err_probe(&pdev->dev, PTR_ERR(pcie->swinit),
++				    "failed to get 'swinit' reset\n");
 +		goto clk_out;
 +	}
 +
- 	ret = brcm_phy_start(pcie);
- 	if (ret) {
- 		reset_control_rearm(pcie->rescal);
++	ret = reset_control_assert(pcie->swinit);
++	if (ret) {
++		dev_err_probe(&pdev->dev, ret, "could not assert reset 'swinit'\n");
++		goto clk_out;
++	} else {
++		ret = dev_err_probe(&pdev->dev, reset_control_deassert(pcie->swinit),
++				    "could not de-assert reset 'swinit' after asserting\n");
++		if (ret)
++			goto clk_out;
++	}
++
+ 	pcie->rescal = devm_reset_control_get_optional_shared(&pdev->dev, "rescal");
+ 	if (IS_ERR(pcie->rescal)) {
+ 		ret = PTR_ERR(pcie->rescal);
 -- 
 2.17.1
 
 
---000000000000224071061bf97526
+--00000000000054f11e061bf97522
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -229,14 +216,14 @@ AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
 75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
 AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
 AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
-MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCA/dNpvXT2lzKnHbs7cg+ONCVm8BcCY
-5H676eiqhSc1VTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA2
-MjgyMDU0NDZaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
+MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCDkO7qOjsQMNA6+kF4dELNnE5tcUOw5
+APaA+eCqaRcmXTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA2
+MjgyMDU0NDlaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
 hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
-AgEwDQYJKoZIhvcNAQEBBQAEggEAHBlESdiIbjIhWyqEXtakXByo4IQdwYOTxZq+5eqV4bcfN0Gr
-Dp295uBuOqxggAxc6L1OmbjO/u5AZF59mun6u/U3iYL2RhT3eoi5HNm6tXfuX66AddwT5yWZZWNT
-DQp0dL0JNaRs6mFvmOy9IPXJmHd6QgSwTqVJWah0m/4hzR+q2gsyYmFYTU9eGIcF7jJ8YpCK/6H8
-5sN6gT5RGPfX8+jpFRj1FmlKjar++phiByCkA1d7XfoUJoDJ+n2qdMSCbetHJVNEY9jkIl7R0+id
-FakZ27kS2DjSl/8m+ZSlpk2WkKxTiP0EZIIcl/clH2adKESk8Am2dn3zKXH5u+VziQ==
---000000000000224071061bf97526--
+AgEwDQYJKoZIhvcNAQEBBQAEggEAOagm7imxYXGnvhMf6V/YhasYGXHiV+swDqdthZCGe7QrDury
+G2Ba0F5YkrQfvwTl6vTkpo0T4TU2cZJY8ABdtmPWZcPYq+wPmLL/KtVCcpwgeRlGS0wky5s55tjF
+xmZ2WyiwaRgzMbjjmI4slt231dZcLyhyXKkuDO1z7HbwK7ftPjMEj8TuTe4VpOmnAsrmv0WbxQ0i
+0ABegy6roMVcrne7vxoCNlJ2qQAMYhmUJf1FmGao0FTIQLtM9EoAJshkMeRMo9mBNxhprdXKMNdd
+ZN8rCJ4uRmDfPH/3Deu5v2KxbE9CwZCVc5nnv6n+tPPWrO6fAB0etgEOQ4yQNGScUg==
+--00000000000054f11e061bf97522--
 
