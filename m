@@ -1,146 +1,126 @@
-Return-Path: <linux-kernel+bounces-234094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFBA491C22D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:11:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D09491C230
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:11:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 676742828F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:11:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D01231F209B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678981C2337;
-	Fri, 28 Jun 2024 15:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60E1E1C232D;
+	Fri, 28 Jun 2024 15:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dmXw/0U1"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="drzmKZ4z"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C40451BF336
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 15:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20FF11C2325;
+	Fri, 28 Jun 2024 15:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719587480; cv=none; b=tcDdkQC1riJSOmMIpmpOIfR0zKXdkmk4oBRL8hpJk64s+VEh+bREyvG7gP3IBekJqk2Bd40UlCdzjwwNmD45XLIYashIrYWYy3AoB35PU0MGouquGGRjIURPoJk0bDmD8N1VwTLpcmbWwai+hFAP24piyn9KBtc4+LsQAeUTRWc=
+	t=1719587511; cv=none; b=OwmgqS2HMdMGN/VVSbWUslb9dowsqd4sfnjyxfCZVBKDYJsl19dhMGrrxUCXTIlznWNxPRdMMylGJ8h/ShwCWKEGP0B4hpXnSibK4L4wfY5nmH+myVKs0dBGoZn5dQuK/02lbkSYbBV4Fa/3wFcRi8oYZCXOfLeYanw9dQBOaG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719587480; c=relaxed/simple;
-	bh=IoUQMkRlutwZpLhi+B8muMB2qxCoEdTw4U8Kbs1pSW0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=q73LLhIyuqyeTZheBb71nytsOpnjKgTG9tOlIAn8poB3CEaGukawoGYWD8IH2pNDZ92RWu6FbKYn5dZsmjGSU9YuEaee9ZKgFUcnLHykqIMf8M2nOCUgp0zgXMlNxolsKSDya2CY2/0O5e4xhu0bnb/Qyykg516YduaG+10ePpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dmXw/0U1; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6b2c6291038so6160236d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 08:11:18 -0700 (PDT)
+	s=arc-20240116; t=1719587511; c=relaxed/simple;
+	bh=rQEfzzO0+5DLw75IH4g52W9FtnhmN3EFRLppSXhgdjY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BXMW2zHNKgAyJsP+ybu8JVn9KsA1zUoTZdqlnKi8re8uSSe7Q/64mrab0BGXLLdVu3/w+gFbkgHj9zJSufgZtpQ+7+c3k1faii3kMd4OSUAVOIofjdT2w9ktVyBS2AvsapHmImLuuvV2XOu3IUUbJg8fI2zxYqfdmatOw82YPHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=drzmKZ4z; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-424acfff613so7472615e9.0;
+        Fri, 28 Jun 2024 08:11:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1719587478; x=1720192278; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ewUlL1qV/fAyQa0r+zSGNQy6ZDoRG0k1rfyTSSVFaRw=;
-        b=dmXw/0U1GLbuLv2UBIPbHuRAEAlffJYd+xeYvKdY+REIO7QH4Gi8jq4OLdTitVv1TY
-         mBaOLXY6wd0+mcY51Jk2qlqtswIKdixPnlNN+QaszbPwnV5bFbRkD/b64/iZpfmlxppk
-         t6Tii6QYaH1w49a4XRWryZ2wWJNqXcblByqy0=
+        d=gmail.com; s=20230601; t=1719587508; x=1720192308; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=G+CX/J/whOmL5e2jZfXh+sXtbh8Qe8rzOa/IDtcigV8=;
+        b=drzmKZ4z2EJQMrL6cy4/1TWmTaNx1DHTpus4QGZutXs8TN72IMSYL098NO/1Ywsada
+         J5y+hxl8lS1IsHRyKXQKQXk0X4I/gC6oMjyuG4dXLzq90EqXZZ3gBzSlL5QX+S5X6ZBq
+         MrdLZbFy1zPrfSPniDc3/H6b3QpoCwpSo6Rcc5AAEpaMuzBpIrmy6sDXc5PR2meW7kF9
+         F0PFEziWj9vFPL+10RnPmhanQOf9RfpWWyy2d96GLcNwujkz9J60q89RhmQP5vfOy7v4
+         wC9UDZgZnrdel36b8t6XZ1AGqSfLj5k/FoqkasvdqvNNZ4W14T4l4J2RMb3sDomwiJ50
+         s7hA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719587478; x=1720192278;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ewUlL1qV/fAyQa0r+zSGNQy6ZDoRG0k1rfyTSSVFaRw=;
-        b=enlz9oHwEleLQNqmftlzfAZgV4pe/g0wzYVb5mHffIkyCjzpvAUQvBwEaulczaoKXN
-         NeeKoH4nCcR+TtwWTrcSeEhstoQLFttmOrVP5X3t5tRRRZKq/TeIzuoVviPpr3Jln6Df
-         oQjV6yoYy8GrMDqJ1/W3Wd5mQIFFAB8k41v6+LYhPOGuPaJGuL2DNnM0fTi11+KfQqvd
-         +tvdVIQOTQdoRJ2yr4aHWWWmZVEZ4/oZcfU8VBdfb3kVTLIZ2aCibeQV9bG/3/nn7ruU
-         GdN9rExoz/I5PAOc31YDpvpAPMl1/mbkEYkwoLOB3dacWSkC2KXLMEaw7wrJ1LXMRekn
-         80Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6rwDNoitULcIoB2bGxqoxZSC05kPXdcSsWuqaYLsGssHeozaL8EOsLRZUpgAjy4bTtYXj6X5m9KM9Lqo1gT04EkEDzI0GfjJTEUeY
-X-Gm-Message-State: AOJu0YxR82SRtZdrtGEbvta9P0EcGQo8aedw3S8/tqzxs31CJ9JeibkD
-	e7yC9KKzWjtlPN+2M/VJcvWh4wENoxHByYOqLftjbDUlqd4dgXOwdbGYkBA6lA==
-X-Google-Smtp-Source: AGHT+IGWfSOemKkZb5msOxo57P5Pa0H8aUEVN9sUgcscdSX3cMREFWR8el+dHT96RwEANwnK0nKXcA==
-X-Received: by 2002:a05:6214:224c:b0:6b5:101c:6473 with SMTP id 6a1803df08f44-6b5a5405c0cmr32591476d6.2.1719587477714;
-        Fri, 28 Jun 2024 08:11:17 -0700 (PDT)
-Received: from denia.c.googlers.com (123.178.145.34.bc.googleusercontent.com. [34.145.178.123])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b59e564455sm8532496d6.42.2024.06.28.08.11.17
+        d=1e100.net; s=20230601; t=1719587508; x=1720192308;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G+CX/J/whOmL5e2jZfXh+sXtbh8Qe8rzOa/IDtcigV8=;
+        b=XEdBehkv/QOUD8lklOp3yk8+HKko8aJLRWv3IP6XTAms+oGtAjkwM3Pvpoyc4Kc7RK
+         yEKfDz1yeY/ycGMSD7fSn0wtFRKoB/lYjl6M4q3kYoAPJ9tWBkJ2WEluOnuOLsJtAFAh
+         KMi9t9k646guXN/M0wmhkKUprJwwbwWpskFJyyB5M79GffdwZvjY/L61auu3vh44JEwP
+         dRCRKJaYpLnMC3Dxq2GDfygZ++e9F3Uathg4OvQEOpgCrAQ8SgdT5MoPsRU2eZEMwSR/
+         w6xLEaa/QRm8WYdrM6V3xuWWoXyePCZDAwI9F85DRVC1rWjPZYjrrZDjiHtnAfIWvAc6
+         G3Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCWDVPGtKnnjooTnt64/TE5gRtfc2f8jvZ+guFau7Uk0f+6Grp/h15k9uX4Lllj8gtNsFcxHN3FgzY2OktjpK2i7GreMG+g5nvQzcuT3DKsAa5qQdovWzPKhLrJKIi0YlEW27r3NFLdRjDs=
+X-Gm-Message-State: AOJu0Yw9oB4aLCP/YbZzhHuxiPU7mZdhvxv9tGTw0Wqe3j7n3TFqsmJ9
+	IN2LlzUjCP9cUsSCn7ccd30d3LZYEHc8VV41Je03R6rcAS62XNfQ
+X-Google-Smtp-Source: AGHT+IG6bIw9CRMaqOGhIIwzIzPx7Q9OiiKWcCVtvqQxFvYGv/s6oRMr6XdnyfWpJ0WiG+9UQHaLMw==
+X-Received: by 2002:a05:600c:3514:b0:421:e7ae:955b with SMTP id 5b1f17b1804b1-4248cc3415bmr141599475e9.21.1719587507970;
+        Fri, 28 Jun 2024 08:11:47 -0700 (PDT)
+Received: from orome (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b063569sm40258315e9.21.2024.06.28.08.11.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 08:11:17 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Fri, 28 Jun 2024 15:11:15 +0000
-Subject: [PATCH] media: imx-pxp: Rewrite coeff expression
+        Fri, 28 Jun 2024 08:11:47 -0700 (PDT)
+Date: Fri, 28 Jun 2024 17:11:46 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, kernel@pengutronix.de
+Subject: Re: [PATCH] reset: tegra-bpmp: allow building under COMPILE_TEST
+Message-ID: <d4omnd626yqxpovjkpgztl74lp67qjxiu2vvqps7guuuwxzlo5@mvdxrejii5g6>
+References: <20240625-reset-compile-bpmp-v1-1-647e846303d8@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240628-gcc5-v1-1-7cd56f04a6a8@chromium.org>
-X-B4-Tracking: v=1; b=H4sIAJPSfmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDMyML3fTkZFNdc8NESzOLZHOLVEsLJaDSgqLUtMwKsDHRsbW1AEhi88h
- WAAAA
-To: Philipp Zabel <p.zabel@pengutronix.de>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>
-Cc: linux-media@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="up57rqki3tzs6oce"
+Content-Disposition: inline
+In-Reply-To: <20240625-reset-compile-bpmp-v1-1-647e846303d8@pengutronix.de>
 
-GCC5 cannot figure out that the expressions are constant, and that
-triggers a build failure. Rewrite the expressions.
 
-The following gcc5 error is workaround:
+--up57rqki3tzs6oce
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- #define BM_PXP_CSC1_COEF0_YCBCR_MODE 0x80000000
-                                      ^
-    BM_PXP_CSC1_COEF0_YCBCR_MODE |
-    ^
- #define BM_PXP_CSC1_COEF0_YCBCR_MODE 0x80000000
-                                      ^
+On Tue, Jun 25, 2024 at 02:51:41PM GMT, Philipp Zabel wrote:
+> The Tegra BPMP reset driver can be compiled without TEGRA_BPMP being
+> enabled. Allow it to be built under COMPILE_TEST.
+>=20
+> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+> ---
+>  drivers/reset/Makefile      | 2 +-
+>  drivers/reset/tegra/Kconfig | 3 ++-
+>  2 files changed, 3 insertions(+), 2 deletions(-)
 
-drivers/media/platform/nxp/imx-pxp.c: In function 'pxp_setup_csc':
-drivers/media/platform/nxp/imx-pxp.h:582:38: error: initializer element is not constant
-drivers/media/platform/nxp/imx-pxp.c:374:4: note: in expansion of macro 'BM_PXP_CSC1_COEF0_YCBCR_MODE'
-drivers/media/platform/nxp/imx-pxp.h:582:38: note: (near initialization for 'csc1_coef_bt601_lim[0]')
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
-While implementing media-ci, we have found this build error with gcc5.
----
- drivers/media/platform/nxp/imx-pxp.h | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-diff --git a/drivers/media/platform/nxp/imx-pxp.h b/drivers/media/platform/nxp/imx-pxp.h
-index 44f95c749d2e..ae4c6021c156 100644
---- a/drivers/media/platform/nxp/imx-pxp.h
-+++ b/drivers/media/platform/nxp/imx-pxp.h
-@@ -594,12 +594,17 @@
- 	(((v) << 18) & BM_PXP_CSC1_COEF0_C0)
- #define BP_PXP_CSC1_COEF0_UV_OFFSET      9
- #define BM_PXP_CSC1_COEF0_UV_OFFSET 0x0003FE00
-+
-+/*
-+ * We use v * (1 << 9) instead of v << 9, to workaround a gcc5 bug.
-+ * The compiler cannot understand that the expression is constant.
-+*/
- #define BF_PXP_CSC1_COEF0_UV_OFFSET(v)  \
--	(((v) << 9) & BM_PXP_CSC1_COEF0_UV_OFFSET)
-+	(((v) * (1 << 9)) & BM_PXP_CSC1_COEF0_UV_OFFSET)
- #define BP_PXP_CSC1_COEF0_Y_OFFSET      0
- #define BM_PXP_CSC1_COEF0_Y_OFFSET 0x000001FF
- #define BF_PXP_CSC1_COEF0_Y_OFFSET(v)  \
--	(((v) << 0) & BM_PXP_CSC1_COEF0_Y_OFFSET)
-+	((v) & BM_PXP_CSC1_COEF0_Y_OFFSET)
- 
- #define HW_PXP_CSC1_COEF1	(0x000001b0)
- 
+--up57rqki3tzs6oce
+Content-Type: application/pgp-signature; name="signature.asc"
 
----
-base-commit: 6aa082910445aec6b1dc652a69c5178a555d8ca5
-change-id: 20240628-gcc5-71a968c78e98
+-----BEGIN PGP SIGNATURE-----
 
-Best regards,
--- 
-Ricardo Ribalda <ribalda@chromium.org>
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmZ+0rIACgkQ3SOs138+
+s6Gtog//ZyHa5W7H1aY18Em0Pbp7cA+BnZ38GYzURxkFSqte4liUJsrfbSY9gNym
+GEz2CU/pKDhPLBrBOMqg2Qp6IDk0mtvZOx53Je/YFm+4Z1w7s2Cx+JOP798zNNmX
+oi9XEhU/6WK9SpDj81j/sfSZU5d+wtWjDrIl3k0aAZ+NS1bOapniarBwN3eH3FJj
+aJC9XEHNqISjcPxVwA7PJRNd7TxAL/mRlJBuPbZfkXY+mCxpar/Avx9C/j2Z9op8
+u0QomH2h6xwl4uzc6ltetbPQBhnp1hflEt6PQGorOJ3vLQcvaJWsBKJiJWT9D7Kq
+XHVIyzyCAl1y1Qu7Ovyjo66zkbqiam/K3jQfDSO3dVlfqtz385pKjxiNdXc5+oSB
+kvRTjscwxwz3C1COpejC38r7HNjR7BqRZUng7KT6RwUEdsntbHtVCZqbDXqn5iet
+o8xtj1oADJG0kMcRykqlTS7IQ80p3UVqk/EnmxF+V30ZURSqfZS9FATQQhNWfY5w
+/LTVZTHg7lXy0Crh/cKASewhNdESBu0DbGf8zwNm+vsXCpLb3PJA5wTX7vBww8Lr
+jTa1TgLT2tUAXTnRspkxkUsC3qvXR6SsA1BlJzjHcVa1aoZVu/drtpXx9rTPDa4B
+v/ickMzOJVvEy95G41iXaHug4o5AAyfY+gGKXw7+1M4YuT5nkto=
+=2US+
+-----END PGP SIGNATURE-----
 
+--up57rqki3tzs6oce--
 
