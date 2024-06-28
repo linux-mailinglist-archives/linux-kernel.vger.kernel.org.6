@@ -1,256 +1,360 @@
-Return-Path: <linux-kernel+bounces-234084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48FFE91C1FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:01:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 261D391C1FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:01:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C852C1F25C8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:01:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D10A2285EA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:01:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42D11C8FAC;
-	Fri, 28 Jun 2024 15:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D051C233D;
+	Fri, 28 Jun 2024 15:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="s7XUOXi0"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DzLg2rvs"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBEE81C2335;
-	Fri, 28 Jun 2024 15:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875C73FD4;
+	Fri, 28 Jun 2024 15:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719586848; cv=none; b=VtQl6KEREnywgJzE/VyPY31JmO6IoKoR04SebtaSFGpodX46Fusw5F8F0xrUzBQbkkpa69373sQ0JA2bDmgWP03Xao4mt3C7M64fPkbvWGX6YjeTbeVhqoC2haHqmhPm0QXWTmQJ0bgL91yF6/oatAfLUVfnmlXUtgE0IDLdkJw=
+	t=1719586846; cv=none; b=SJ/eaHeVtpS/r5H+VPe+aRdrcIOcUj6ZjjXSTaNmdR3drKB8Bp8H0On+GkHsgPW3dynoM8xyfbTREz7D+PIqpCrKONU2gmbtpi9NefmJUQF7wzqIfD+mIW3z1+Ir5+wZvtqFInzKLrt7MGKMP9KCJEEXGlBRAHBy57dptxF9/dQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719586848; c=relaxed/simple;
-	bh=2Hlz8LE4kbwT2LiDChvzYkIbZQFo/ro6nZ6xc6tL6u4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EyUudeWkIY0aaPMbHZZVAibJUOl2+/j/g0zTjWmyKC5zJMu1KR1w9h5JZKFMhkQFgAviO+VFQonv415uogKniHB5v0Sf4g4tP/8mHATFZnnWkCJXvZNxeym0tZhpKFy5lI93oMYs747Myb75v6MeAKrVajQIC2uvSb68cXTmCas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=s7XUOXi0; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=2Hlz8LE4kbwT2LiDChvzYkIbZQFo/ro6nZ6xc6tL6u4=; b=s7XUOXi00sLn4RWr74p151Wss7
-	k7VtBw48K94H9rxiAOAwWtAc5jjI9ht+hHbrrfhxqWaNNfWBWW6eDvFyUynLT8A1sucrDU6GU51C7
-	inFEiwRRDRpwGra2qScFM17/BLbx/bCHF5gnFqcxkX9HCSnf0K41rQgghzBqTSDeKFn0A0cydeiq5
-	UANaQikR81jjhXdF766Rl3Pq90hOY1e98N8lNFs5lQ2KsgkWfjc8zbfeYVfwaMbHXhBM8akja9Vta
-	up6rm2Jngn5wZs0+i6U3hHjtZOqOAQz7bHvQKzrLa+/pE9KL7vcyWhKzXW6sGIHEuF0EH2E8M62ca
-	1Ht0f1GQ==;
-Received: from [2001:8b0:10b:5:2b2d:df20:7441:40a4] (helo=u3832b3a9db3152.ant.amazon.com)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sND5O-0000000Eml2-49Ww;
-	Fri, 28 Jun 2024 15:00:27 +0000
-Message-ID: <a78f803e7c253b981c94f30a5322003af86ee5b4.camel@infradead.org>
-Subject: Re: [PATCH v2] kvm: Fix warning in__kvm_gpc_refresh
-From: David Woodhouse <dwmw2@infradead.org>
-To: paul@xen.org, Pei Li <peili.dev@gmail.com>, Sean Christopherson
- <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linuxfoundation.org, 
-	syzkaller-bugs@googlegroups.com, llvm@lists.linux.dev, 
-	syzbot+fd555292a1da3180fc82@syzkaller.appspotmail.com
-Date: Fri, 28 Jun 2024 16:00:22 +0100
-In-Reply-To: <4e25df0e-000c-4af7-a34f-ba831623aab8@xen.org>
-References: <20240627-bug5-v2-1-2c63f7ee6739@gmail.com>
-	 <4e25df0e-000c-4af7-a34f-ba831623aab8@xen.org>
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
-	boundary="=-yJTJCQBOZFH98vQQiONa"
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1719586846; c=relaxed/simple;
+	bh=TQ29WTOlgVz9lpnINbsm/k1ZvlJhZEBQuQgp385o7b0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tNIN9hjEEtneCGCP0w7mndyg09ehS8Mjtnky5GLBuuWMtlg91WGd1EC4cGm0z1Z+PC2Abgm2NvXxb4l/5pPJex5grY935w/DGyot8ChmebLd07zBgCtHilN1b9xlWIKwIDaWJ+TFnL7LulTrLCJssjrzu4tp5YulS9PMe3BYIAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DzLg2rvs; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-70a078edb8aso43135b3a.1;
+        Fri, 28 Jun 2024 08:00:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719586844; x=1720191644; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=N0tTR9/3hvy36cl92DWUqcfr4tyVmjebr+2/8fWtMBw=;
+        b=DzLg2rvsIJGg3b546pRMOeUESKRIWeIdjuYgaTgzKvLbeNjSDbXVWEBedjOfCVGRSg
+         ePdD/87lf46FDgxyE7Shv1NBFDTFf6mwjoLZb/W5A56vR3hwNETV9gVf3yEbEglWMqTd
+         0dYJckkG8lQOXjt+ALibx5XJhFeeyw5lHL8ScNxXkU03RnO7EkXRuxpEEolCTyCbkHdi
+         5j9YzR0EyseEUvC7BRKrhM3BNJK/H0IcermD8Xubn7uIgmYMVe6ylvRi96XJdYLkr+vc
+         ebcxC2L7tfv0MsmCwqVHdBJpf9rQD200xYKJiPMByRCC2EkxTtD0cvo5GTRxz9YVF/qb
+         uqKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719586844; x=1720191644;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N0tTR9/3hvy36cl92DWUqcfr4tyVmjebr+2/8fWtMBw=;
+        b=a+KgznfAPNUp8buPqqt/dwZsTaSBrcc3bhTLHbvNHi2n5P5hrWnwIVAKMXY/q5OiXF
+         sxTlnbk3NNLD6GIuy6jSCGmXo6ajPNeQfZQu4KCYughfKif0lcmZWZEIGnNe5PSh0dLD
+         C4p0bmNHSz5cJEZLiy5xXPMPvsEB45AbIYpLisqKphX9FiHXeX7oAxSeqKfc33DuCVxB
+         TZpPip3uxj0hIbr5y6I2tQmWimUs424ntr2L5fiVmARb1ApZtTsXKRZF7bbSN2Ooa2vg
+         dojeOFDacDWrSHNe2W3P8DlfXEtcBxC/7Tudu+Dus5LBvJkGgoy3/qZKyGoNfTk12917
+         pwCw==
+X-Forwarded-Encrypted: i=1; AJvYcCWp0d4iN15xbhzdjM1b4SgGXzqwDOeWZSZp3b6ZiZCii+9wqb7x47C+t4/RcK2/TD79Iy7Yfq0DCPoAJ88WWW54Zf5N19kblwU4zc4=
+X-Gm-Message-State: AOJu0Ywr0gVvrSNiyF5A0iBlbOmtn8h6w50ePSqEWlaoC3poYpg8XK/7
+	eavengNqx9aKDVfYMHLL+Ta9RxlpOV0af+wbLpcJ7jzD7c1KqRyz
+X-Google-Smtp-Source: AGHT+IH8xws64ncsO0bkCL4GLzc9PnU7m4nQ8NgeCFWicy8gEFvZtU0q1eMX6E6DZsYC3gJe4tun7A==
+X-Received: by 2002:a05:6a00:3a97:b0:706:a97d:ca1c with SMTP id d2e1a72fcca58-70851875a26mr2720877b3a.6.1719586843567;
+        Fri, 28 Jun 2024 08:00:43 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70802464b18sm1703993b3a.45.2024.06.28.08.00.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Jun 2024 08:00:42 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <349543e5-21b2-4725-9b33-1fcb4ae124f6@roeck-us.net>
+Date: Fri, 28 Jun 2024 08:00:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] hwmon: (max6639) : Add DT support
+To: Naresh Solanki <naresh.solanki@9elements.com>,
+ Jean Delvare <jdelvare@suse.com>
+Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org
+References: <20240628115451.4169902-1-naresh.solanki@9elements.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20240628115451.4169902-1-naresh.solanki@9elements.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 6/28/24 04:54, Naresh Solanki wrote:
+> Remove platform data & add devicetree support.
+> 
 
---=-yJTJCQBOZFH98vQQiONa
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Unless I am missing something, this doesn't just add devicetree support,
+it actually _mandates_ devicetree support. There are no defaults.
+That is not acceptable.
 
-On Fri, 2024-06-28 at 15:25 +0100, Paul Durrant wrote:
-> On 27/06/2024 16:03, Pei Li wrote:
-> > Check for invalid hva address stored in data and return -EINVAL before
-> > calling into __kvm_gpc_activate().
-> >=20
-> > Reported-by: syzbot+fd555292a1da3180fc82@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=3Dfd555292a1da3180fc82
-> > Tested-by: syzbot+fd555292a1da3180fc82@syzkaller.appspotmail.com
-> > Signed-off-by: Pei Li <peili.dev@gmail.com>
-> > ---
-> > Syzbot reports a warning message in __kvm_gpc_refresh(). This warning
-> > requires at least one of gpa and uhva to be valid.
-> > WARNING: CPU: 0 PID: 5090 at arch/x86/kvm/../../../virt/kvm/pfncache.c:=
-259 __kvm_gpc_refresh+0xf17/0x1090 arch/x86/kvm/../../../virt/kvm/pfncache.=
-c:259
-> >=20
-> > We are calling it from kvm_gpc_activate_hva(). This function always cal=
-ls
-> > __kvm_gpc_activate() with INVALID_GPA. Thus, uhva must be valid to
-> > disable this warning.
-> >=20
-> > This patch checks for invalid hva address and return -EINVAL before
-> > calling __kvm_gpc_activate().
-> >=20
-> > syzbot has tested the proposed patch and the reproducer did not trigger
-> > any issue.
-> >=20
-> > Tested on:
-> >=20
-> > commit:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 afcd4813 Merge =
-tag 'mm-hotfixes-stable-2024-06-26-17-2..
-> > git tree:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D1427e301980=
-000
-> > kernel config:=C2=A0 https://syzkaller.appspot.com/x/.config?x=3De40800=
-950091403a
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3Dfd555292a1da3=
-180fc82
-> > compiler:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Debian clang version 15.0=
-.6, GNU ld (GNU Binutils for Debian) 2.40
-> > patch:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 https://sy=
-zkaller.appspot.com/x/patch.diff?x=3D13838f3e980000
-> >=20
-> > Note: testing is done by a robot and is best-effort only.
-> > ---
-> > Changes in v2:
-> > - Adapted Sean's suggestion to check for valid address before calling
-> > =C2=A0=C2=A0 into __kvm_gpc_activate().
-> > - Link to v1: https://lore.kernel.org/r/20240625-bug5-v1-1-e072ed5fce85=
-@gmail.com
-> > ---
-> > =C2=A0 arch/x86/kvm/xen.c=C2=A0 | 2 +-
-> > =C2=A0 virt/kvm/pfncache.c | 3 +++
-> > =C2=A0 2 files changed, 4 insertions(+), 1 deletion(-)
-> >=20
->=20
-> Reviewed-by: Paul Durrant <paul@xen.org>
+More comments inline.
 
-Reviewed-by: David Woodhouse <dwmw@amazon.co.uk>
+> Signed-off-by: Naresh Solanki <naresh.solanki@9elements.com>
+> ---
+>   drivers/hwmon/max6639.c               | 99 ++++++++++++++++++++-------
+>   include/linux/platform_data/max6639.h | 15 ----
+>   2 files changed, 73 insertions(+), 41 deletions(-)
+>   delete mode 100644 include/linux/platform_data/max6639.h
+> 
+> diff --git a/drivers/hwmon/max6639.c b/drivers/hwmon/max6639.c
+> index f54720d3d2ce..9ae7aecb0737 100644
+> --- a/drivers/hwmon/max6639.c
+> +++ b/drivers/hwmon/max6639.c
+> @@ -19,7 +19,6 @@
+>   #include <linux/hwmon-sysfs.h>
+>   #include <linux/err.h>
+>   #include <linux/mutex.h>
+> -#include <linux/platform_data/max6639.h>
+>   #include <linux/regmap.h>
+>   #include <linux/util_macros.h>
+>   
+> @@ -81,6 +80,7 @@ struct max6639_data {
+>   	/* Register values initialized only once */
+>   	u8 ppr[MAX6639_NUM_CHANNELS];	/* Pulses per rotation 0..3 for 1..4 ppr */
+>   	u8 rpm_range[MAX6639_NUM_CHANNELS]; /* Index in above rpm_ranges table */
+> +	bool fan_enable[MAX6639_NUM_CHANNELS];
+>   
+>   	/* Optional regulator for FAN supply */
+>   	struct regulator *reg;
+> @@ -276,6 +276,11 @@ static int max6639_write_fan(struct device *dev, u32 attr, int channel,
+>   
+>   static umode_t max6639_fan_is_visible(const void *_data, u32 attr, int channel)
+>   {
+> +	struct max6639_data *data = (struct max6639_data *)_data;
+> +
+> +	if (!data->fan_enable[channel])
+> +		return 0;
+> +
+>   	switch (attr) {
+>   	case hwmon_fan_input:
+>   	case hwmon_fan_fault:
+> @@ -372,6 +377,11 @@ static int max6639_write_pwm(struct device *dev, u32 attr, int channel,
+>   
+>   static umode_t max6639_pwm_is_visible(const void *_data, u32 attr, int channel)
+>   {
+> +	struct max6639_data *data = (struct max6639_data *)_data;
+> +
+> +	if (!data->fan_enable[channel])
+> +		return 0;
+> +
+>   	switch (attr) {
+>   	case hwmon_pwm_input:
+>   	case hwmon_pwm_freq:
+> @@ -544,43 +554,85 @@ static int rpm_range_to_reg(int range)
+>   	int i;
+>   
+>   	for (i = 0; i < ARRAY_SIZE(rpm_ranges); i++) {
+> -		if (rpm_ranges[i] == range)
+> +		if (range <= rpm_ranges[i])
 
-Thanks.
+What does this change have to do with adding devicetree support,
+why is it done, and what is its impact ?
 
---=-yJTJCQBOZFH98vQQiONa
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
+So far the assumption was that only valid values would be accepted by
+the function, returning a default if there was no match. The incoming
+data is from devicetree, where the range should be well defined and
+accurate. With that in mind, I don't see the point of accepting values
+outside the supported ranges.
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
-ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
-EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
-FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
-aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
-VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
-aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
-AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
-ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
-QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
-rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
-ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
-U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
-DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
-BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
-dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
-BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
-QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
-CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
-xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
-IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
-kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
-eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
-KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
-1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
-OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
-x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
-5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
-DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
-UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
-MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
-ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
-oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
-SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
-xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
-RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
-bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
-NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
-KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
-5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
-C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
-gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
-VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
-MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
-by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
-b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
-BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
-QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
-c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
-AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
-qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
-v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
-Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
-tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
-Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
-YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
-ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
-IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
-ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
-GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
-h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
-9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
-P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
-2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
-BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
-7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
-lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
-lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
-AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
-Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
-FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
-BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
-cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
-aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
-LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
-BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
-cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
-Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
-lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
-WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
-hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
-IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
-dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
-NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
-xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
-DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQwNjI4MTUwMDIyWjAvBgkqhkiG9w0BCQQxIgQgBsVWvQQO
-sllGs+MKphVMxrVdFzkD3TkL0TX5c7AVlZEwgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
-BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
-A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
-DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
-MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
-Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
-lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgAPVqb2rp+iy2cE03485HI2WgwJcOoB8y5V
-yBayB6jF9IO+9wXRDkbAj7mK/4ScmALN+8BY7ISOkyZuZW/+DqVIcwZVhE1E5JadoKNxZIQQtXgY
-gnhhBGMZyQVQ1ndVgP6anklhGeSYPVAwPTx4NPhA/yZZGXcBqi4Rhb6Qj//cBTvCiCQbTDbax6Ma
-jANaCowg7TE3wSClO1qOHZz9CU4kxZcBY+AU8K/JwRay14ROpzKZ7iVtrrRVjhUztks/zZBsTqgz
-o3jBeQ/EMkPKmUVLIVzjUXhf+KIuhrI1RkpLwCFG7xUWJkI8r6AI8m3YEs6s+EQ6hr54SaQw4e2q
-PHBqoieSY72+kN3fyM8vScd//MSvhXlmev/hbYqoRMyskYiVIQhW5qP0CvyVwBgal2VRBIqndUtx
-FlowJRrwhooeR7qk5i08SoCTG/g4LuVq7Lq0nsldS2FDOjehgm0EtnbyVPXcIUmEIQrRKHkdBsVp
-LBBONd+i82GhmtRk29jI8og4Kd3nphBX5W/yGpIaF8YoeILXjIt6gKRkHZ7vt0OCeDCFpZ1k1skD
-d+0dYNDnQE8d8nRKoJR9dOW3HQkGDVcISlcWw8h1g54ufR4ZFIyBrVaVFc1Hjnl5KRtMA7525d5a
-eZFMbujUQ8rNl1GzXwDEIL9Jr+wsYRwtu8qOYfRTMgAAAAAAAA==
+Flexible data makes sense for sysfs attributes, where we can not
+expect users to know acceptable values. For those, it is acceptable
+and even desirable to find a closest match. However, that does not apply
+to data obtained from devicetree.
 
+>   			return i;
+>   	}
+>   
+>   	return 1; /* default: 4000 RPM */
+>   }
+>   
+> +static int max6639_probe_child_from_dt(struct i2c_client *client,
+> +				       struct device_node *child,
+> +				       struct max6639_data *data)
+> +
+> +{
+> +	struct device *dev = &client->dev;
+> +	u32 i, val;
+> +	int err;
+> +
+> +	err = of_property_read_u32(child, "reg", &i);
+> +	if (err) {
+> +		dev_err(dev, "missing reg property of %pOFn\n", child);
+> +		return err;
+> +	}
+> +
+> +	if (i > 1) {
+> +		dev_err(dev, "Invalid fan index reg %d\n", i);
+> +		return -EINVAL;
+> +	}
+> +
+> +	data->fan_enable[i] = true;
+> +
+> +	err = of_property_read_u32(child, "pulses-per-revolution", &val);
+> +
+> +	if (!err) {
+> +		if (val < 0 || val > 5) {
 
---=-yJTJCQBOZFH98vQQiONa--
+Accepting 0 seems wrong. Also, val is u32 and will never be < 0.
+
+> +			dev_err(dev, "invalid pulses-per-revolution %d of %pOFn\n", val, child);
+> +			return -EINVAL;
+> +		}
+> +		data->ppr[i] = val;
+> +	}
+> +
+> +	err = of_property_read_u32(child, "max-rpm", &val);
+> +
+> +	if (!err)
+> +		data->rpm_range[i] = rpm_range_to_reg(val);
+> +
+> +	return 0;
+> +}
+> +
+>   static int max6639_init_client(struct i2c_client *client,
+>   			       struct max6639_data *data)
+>   {
+> -	struct max6639_platform_data *max6639_info =
+> -		dev_get_platdata(&client->dev);
+> -	int i;
+> -	int rpm_range = 1; /* default: 4000 RPM */
+> -	int err, ppr;
+> +	struct device *dev = &client->dev;
+> +	const struct device_node *np = dev->of_node;
+> +	struct device_node *child;
+> +	int i, err;
+>   
+>   	/* Reset chip to default values, see below for GCONFIG setup */
+>   	err = regmap_write(data->regmap, MAX6639_REG_GCONFIG, MAX6639_GCONFIG_POR);
+>   	if (err)
+>   		return err;
+>   
+> -	/* Fans pulse per revolution is 2 by default */
+> -	if (max6639_info && max6639_info->ppr > 0 &&
+> -			max6639_info->ppr < 5)
+> -		ppr = max6639_info->ppr;
+> -	else
+> -		ppr = 2;
+> -
+> -	data->ppr[0] = ppr;
+> -	data->ppr[1] = ppr;
+
+As mentioned above, this may work for your use case, but it won't work
+for existing users of this driver.
+
+> +	for_each_child_of_node(np, child) {
+> +		if (strcmp(child->name, "fan"))
+> +			continue;
+>   
+> -	if (max6639_info)
+> -		rpm_range = rpm_range_to_reg(max6639_info->rpm_range);
+> -	data->rpm_range[0] = rpm_range;
+> -	data->rpm_range[1] = rpm_range;
+> +		err = max6639_probe_child_from_dt(client, child, data);
+> +		if (err) {
+> +			of_node_put(child);
+> +			return err;
+> +		}
+> +	}
+>   
+>   	for (i = 0; i < MAX6639_NUM_CHANNELS; i++) {
+> +		if (!data->fan_enable[i])
+> +			err = regmap_set_bits(data->regmap, MAX6639_REG_OUTPUT_MASK, BIT(1 - i));
+> +		else
+> +			err = regmap_clear_bits(data->regmap, MAX6639_REG_OUTPUT_MASK, BIT(1 - i));
+> +		if (err)
+> +			return err;
+> +
+>   		/* Set Fan pulse per revolution */
+>   		err = max6639_set_ppr(data, i, data->ppr[i]);
+>   		if (err)
+> @@ -593,12 +645,7 @@ static int max6639_init_client(struct i2c_client *client,
+>   			return err;
+>   
+>   		/* Fans PWM polarity high by default */
+> -		if (max6639_info) {
+> -			if (max6639_info->pwm_polarity == 0)
+> -				err = regmap_write(data->regmap, MAX6639_REG_FAN_CONFIG2a(i), 0x00);
+> -			else
+> -				err = regmap_write(data->regmap, MAX6639_REG_FAN_CONFIG2a(i), 0x02);
+> -		}
+> +		err = regmap_write(data->regmap, MAX6639_REG_FAN_CONFIG2a(i), 0x00);
+>   		if (err)
+>   			return err;
+>   
+> diff --git a/include/linux/platform_data/max6639.h b/include/linux/platform_data/max6639.h
+> deleted file mode 100644
+> index 65bfdb4fdc15..000000000000
+> --- a/include/linux/platform_data/max6639.h
+> +++ /dev/null
+> @@ -1,15 +0,0 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> -#ifndef _LINUX_MAX6639_H
+> -#define _LINUX_MAX6639_H
+> -
+> -#include <linux/types.h>
+> -
+> -/* platform data for the MAX6639 temperature sensor and fan control */
+> -
+> -struct max6639_platform_data {
+> -	bool pwm_polarity;	/* Polarity low (0) or high (1, default) */
+> -	int ppr;		/* Pulses per rotation 1..4 (default == 2) */
+> -	int rpm_range;		/* 2000, 4000 (default), 8000 or 16000 */
+> -};
+> -
+> -#endif /* _LINUX_MAX6639_H */
+> 
+> base-commit: 52c1e818d66bfed276bd371f9e7947be4055af87
+
 
