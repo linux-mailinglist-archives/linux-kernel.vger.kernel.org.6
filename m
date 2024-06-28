@@ -1,397 +1,143 @@
-Return-Path: <linux-kernel+bounces-234041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 126AB91C143
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:40:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E4A591C13E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:40:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85E7C1F24613
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:40:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90BC51C21005
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6C71C2306;
-	Fri, 28 Jun 2024 14:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="jDJpA1fw"
-Received: from mail.mainlining.org (mainlining.org [5.75.144.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01001C0DD9;
-	Fri, 28 Jun 2024 14:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719585604; cv=none; b=KGTSO3JrAYAjOBTnPm2A3fifihUR0pUqQgcX2hnyilsW8EkEFSFx/H9pT+zfBXuKiJ1tJ7Hnofq34me5ALQ5VGXmycVrXE9WRauM65cjsisEK1sXxqLA3L1D2/Kq41DCcTWfWIuIJ7kJInaxCYTuN4Fs35ZhhxCOryGmDK+uJBI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719585604; c=relaxed/simple;
-	bh=HerbXrcCoX2JmXE5cUk6sHhLJhw+0pW04CzU6oYhEUM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=n2gFFYQJnlgwTQcc4drb2POX6IGuaIihO4DpcaC7ggkFMgo5OqNOVXWDhZlJH6yBOhEA7eJoj0S62hqguXjrUA7fjlhU1hM9mU1apviRnXVC9kATibC9FzjXoMChW6fIj0YPgLNXVj9qDpqV0U35hah46a6hmD+IoxK7TnuOJls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=jDJpA1fw; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Received: from [192.168.1.130] (BC2492F3.dsl.pool.telekom.hu [188.36.146.243])
-	by mail.mainlining.org (Postfix) with ESMTPSA id BE5A9E456F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 280D61C007C;
 	Fri, 28 Jun 2024 14:39:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1719585600;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=i52Sev5f9ZkM3avljYpNjnOCa55uzK8xYUVVeQmsO7I=;
-	b=jDJpA1fwz8ec7Zrd7x9+j3aBBSB7Sb2cteI/uU/RM87IXztwXy864TRjz2F1+nB3eEh7r1
-	63aTgeADSz9kP4rE7OnYTJz1NCO1pAnQFgSJYTJa+lcZHro6IZ8UbG2ZGq+AUMl+NHkT30
-	o7uTAvz9vVLELCrzedvCpJuP6e6wYzjfDSJl7O1cgLobWFEu7JAhfUc1A/vQi8RuG5Z9KS
-	1BHDPxVShg2Y3hbX7x3yaDDKT0SfJ/19Z5Ik+B0EGIb46WoWTllC93LLtChD+b23F2CfUR
-	lRzlljxxzLVqC+Hai1GeeyU3DlU7e1UDS5EAsMuGzF/CFowfOiGledfIQRN1uQ==
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Fri, 28 Jun 2024 16:39:40 +0200
-Subject: [PATCH 2/2] drm/msm/dpu: add support for MSM8953
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mBUKDczh"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B551E53A
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 14:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719585598; cv=none; b=g0MATWP397LomBzKu7mUWu2a67HdMl/okLgWkOGsq+BX+8CtincrtY20CwnIYGY3t3jf9dI1LFeMCNiq/U+RRtlTBun8xXsdxkZUCYzzrkC1bVTKf4Ens0H3Bu+g32E06eHnm63zP3YdziRwvTSv6pMEBBtkWFJyvGqV4MrgFHQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719585598; c=relaxed/simple;
+	bh=Zkc0OU91HUSJKg9h2HoiHVtFijVhqu/DfMdfPlf7dRk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M14l+659pER+9iIJevr+ipKR3zv1HghumFT32/B7ovJvMTkK1nJijX8vhir/n48LWokn/tvbwrNR83keS/cZ2tzF7LQcrB+VLoKZy55psyjZkm4hDPd5JxfE2d7kkhp9g6UAldxMukcZvHP318cgGQG/mH5wzGoJ2UVau1PdoMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mBUKDczh; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4217c7eb6b4so5836105e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 07:39:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719585594; x=1720190394; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5fX1MMnIpDBOm77iDLoe1RG1qLzLS5Do9mpyDQwOVT4=;
+        b=mBUKDczhZciHkQUM2cLJ3nUm9wdmNJZKTe8kgmEVTpNbfTXkem+hmQzEJJ41F6/FJd
+         VdrQ/91S1jsYeOQTF5fCUNo6b1eNRAC1QzbAHR7CVK830OiYdWOgzAO3mMdiSEMnTGmw
+         xA5eooNyQ+Oa8KsBzxPVirqfuvVWHOW4RkLAPqFHUliulIEA34P2wbhKR67muIho0OzH
+         3ip3ibF+aDQoGE1k9Q4zg5bxQS/EByXlu54KwT5Vc/53Fly4qUEcSCbtWlBJP5S7vBPp
+         dhk0xgcZW254ijzVynpALLORYjWBYtTaeqzf4CgxIcgkHR3FkWhiHLOndtXDwg02i5rs
+         kxsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719585594; x=1720190394;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5fX1MMnIpDBOm77iDLoe1RG1qLzLS5Do9mpyDQwOVT4=;
+        b=U3Wn48f7nDndyb6AtuqCGzdWxjyohDJI/wNCvAfG9c1vqX6nd+nKzr3HtPz+EB2fnV
+         6niJJQ0mFhiCq9V7rYEKAv6xxqoirV9TqYwGJzIdaCHShBauC1ZYfezNP7/mnVeXn81f
+         NYfFzTwSDD4679vpCVMYlkE4J6ZMUo+d9fP8SCQdpePw14U77Sd6U4jSq/nO6zblMpPs
+         hYjRC9i22OMDUU61lJiqW/Q7ugHIzLnkMpWGQXMIWSjM7d6S3FU8xY+LgxHFaFr84pN+
+         NVH6gebuvVIUrBn6oigSxhDsdGHtnfmfLDXoSqtdsMESREFjZUYMfskESntdR6+OAuXW
+         gPeg==
+X-Gm-Message-State: AOJu0Yx4zsrjbq6vj06RlOB/VKlon5h29C7r9BxrisDaUJXmh+XRhQAl
+	48Y+VPts8HideL7NBd8C1tbEgZMgDit9ifQxcKch4zs8CxLlQcXtleBOM8TqEXA=
+X-Google-Smtp-Source: AGHT+IFiwW/g9bMvX363nZWYpupjIfTEXXcoSHzUKGy6GKc+YaQcE+dP2/YqcheNmOHdUbTm/7lcFw==
+X-Received: by 2002:a05:600c:4da1:b0:425:65c5:9af4 with SMTP id 5b1f17b1804b1-42565c59c70mr28348295e9.41.1719585594358;
+        Fri, 28 Jun 2024 07:39:54 -0700 (PDT)
+Received: from [192.168.0.107] ([79.115.63.178])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b061006sm37150835e9.22.2024.06.28.07.39.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Jun 2024 07:39:53 -0700 (PDT)
+Message-ID: <aa4df0e5-bbd4-46f7-8e58-b42a8c909327@linaro.org>
+Date: Fri, 28 Jun 2024 15:39:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240628-dpu-msm8953-msm8996-v1-2-a31c77248db7@mainlining.org>
-References: <20240628-dpu-msm8953-msm8996-v1-0-a31c77248db7@mainlining.org>
-In-Reply-To: <20240628-dpu-msm8953-msm8996-v1-0-a31c77248db7@mainlining.org>
-To: Rob Clark <robdclark@gmail.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-X-Mailer: b4 0.14.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] Add generic functions for accessing the SPI-NOR chip.
+To: Erez Geva <erezgeva@nwtime.org>, linux-mtd@lists.infradead.org,
+ Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Erez Geva <ErezGeva2@gmail.com>
+References: <20240628140328.279792-1-erezgeva@nwtime.org>
+ <20240628140328.279792-2-erezgeva@nwtime.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20240628140328.279792-2-erezgeva@nwtime.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Hi, Erez,
 
-Add support for MSM8953, which has MDP5 v1.16. It looks like
-trimmed down version of MSM8996. Less SSPP, LM and PP blocks. No DSC,
-etc.
+On 6/28/24 3:03 PM, Erez Geva wrote:
+> From: Erez Geva <ErezGeva2@gmail.com>
+> 
+> Functions:
+> 
+>  - Send a opcode
+> 
+>  - Read a register
+> 
+>  - Write a register
+> 
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-[Remove intr_start from CTLs config, reword the commit]
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
----
- .../drm/msm/disp/dpu1/catalog/dpu_1_16_msm8953.h   | 218 +++++++++++++++++++++
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c     |  12 ++
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h     |   1 +
- drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |   1 +
- drivers/gpu/drm/msm/msm_drv.c                      |   1 +
- 5 files changed, 233 insertions(+)
+Please describe your changes. You may want to re-read:
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_1_16_msm8953.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_1_16_msm8953.h
-new file mode 100644
-index 000000000000..14f36ea6ad0e
---- /dev/null
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_1_16_msm8953.h
-@@ -0,0 +1,218 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (c) 2023, Linaro Limited
-+ */
-+
-+#ifndef _DPU_1_16_MSM8953_H
-+#define _DPU_1_16_MSM8953_H
-+
-+static const struct dpu_caps msm8953_dpu_caps = {
-+	.max_mixer_width = DEFAULT_DPU_LINE_WIDTH,
-+	.max_mixer_blendstages = 0x4,
-+	.max_linewidth = DEFAULT_DPU_LINE_WIDTH,
-+	.pixel_ram_size = 40 * 1024,
-+	.max_hdeci_exp = MAX_HORZ_DECIMATION,
-+	.max_vdeci_exp = MAX_VERT_DECIMATION,
-+};
-+
-+static const struct dpu_mdp_cfg msm8953_mdp[] = {
-+	{
-+		.name = "top_0",
-+		.base = 0x0, .len = 0x454,
-+		.features = BIT(DPU_MDP_VSYNC_SEL),
-+		.clk_ctrls = {
-+			[DPU_CLK_CTRL_VIG0] = { .reg_off = 0x2ac, .bit_off = 0 },
-+			[DPU_CLK_CTRL_RGB0] = { .reg_off = 0x2ac, .bit_off = 4 },
-+			[DPU_CLK_CTRL_RGB1] = { .reg_off = 0x2b4, .bit_off = 4 },
-+			[DPU_CLK_CTRL_DMA0] = { .reg_off = 0x2ac, .bit_off = 8 },
-+			[DPU_CLK_CTRL_CURSOR0] = { .reg_off = 0x3a8, .bit_off = 16 },
-+		},
-+	},
-+};
-+
-+static const struct dpu_ctl_cfg msm8953_ctl[] = {
-+	{
-+		.name = "ctl_0", .id = CTL_0,
-+		.base = 0x1000, .len = 0x64,
-+	}, {
-+		.name = "ctl_1", .id = CTL_1,
-+		.base = 0x1200, .len = 0x64,
-+	}, {
-+		.name = "ctl_2", .id = CTL_2,
-+		.base = 0x1400, .len = 0x64,
-+	},
-+};
-+
-+static const struct dpu_sspp_cfg msm8953_sspp[] = {
-+	{
-+		.name = "sspp_0", .id = SSPP_VIG0,
-+		.base = 0x4000, .len = 0x150,
-+		.features = VIG_MSM8953_MASK,
-+		.sblk = &dpu_vig_sblk_qseed2,
-+		.xin_id = 0,
-+		.type = SSPP_TYPE_VIG,
-+		.clk_ctrl = DPU_CLK_CTRL_VIG0,
-+	}, {
-+		.name = "sspp_4", .id = SSPP_RGB0,
-+		.base = 0x14000, .len = 0x150,
-+		.features = RGB_MSM8953_MASK,
-+		.sblk = &dpu_rgb_sblk,
-+		.xin_id = 1,
-+		.type = SSPP_TYPE_RGB,
-+		.clk_ctrl = DPU_CLK_CTRL_RGB0,
-+	}, {
-+		.name = "sspp_5", .id = SSPP_RGB1,
-+		.base = 0x16000, .len = 0x150,
-+		.features = RGB_MSM8953_MASK,
-+		.sblk = &dpu_rgb_sblk,
-+		.xin_id = 5,
-+		.type = SSPP_TYPE_RGB,
-+		.clk_ctrl = DPU_CLK_CTRL_RGB1,
-+	}, {
-+		.name = "sspp_8", .id = SSPP_DMA0,
-+		.base = 0x24000, .len = 0x150,
-+		.features = DMA_MSM8953_MASK | BIT(DPU_SSPP_CURSOR),
-+		.sblk = &dpu_dma_sblk,
-+		.xin_id = 2,
-+		.type = SSPP_TYPE_DMA,
-+		.clk_ctrl = DPU_CLK_CTRL_DMA0,
-+	},
-+};
-+
-+static const struct dpu_lm_cfg msm8953_lm[] = {
-+	{
-+		.name = "lm_0", .id = LM_0,
-+		.base = 0x44000, .len = 0x320,
-+		.sblk = &msm8998_lm_sblk,
-+		.lm_pair = LM_1,
-+		.pingpong = PINGPONG_0,
-+		.dspp = DSPP_0,
-+	}, {
-+		.name = "lm_1", .id = LM_1,
-+		.base = 0x45000, .len = 0x320,
-+		.sblk = &msm8998_lm_sblk,
-+		.lm_pair = LM_0,
-+		.pingpong = PINGPONG_1,
-+	},
-+};
-+
-+static const struct dpu_pingpong_cfg msm8953_pp[] = {
-+	{
-+		.name = "pingpong_0", .id = PINGPONG_0,
-+		.base = 0x70000, .len = 0xd4,
-+		.features = PINGPONG_MSM8996_MASK,
-+		.sblk = &msm8996_pp_sblk,
-+		.intr_done = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 8),
-+		.intr_rdptr = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 12),
-+	}, {
-+		.name = "pingpong_1", .id = PINGPONG_1,
-+		.base = 0x70800, .len = 0xd4,
-+		.features = PINGPONG_MSM8996_MASK,
-+		.sblk = &msm8996_pp_sblk,
-+		.intr_done = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 9),
-+		.intr_rdptr = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 13),
-+	},
-+};
-+
-+static const struct dpu_dspp_cfg msm8953_dspp[] = {
-+	{
-+		.name = "dspp_0", .id = DSPP_0,
-+		.base = 0x54000, .len = 0x1800,
-+		.features = DSPP_SC7180_MASK,
-+		.sblk = &msm8998_dspp_sblk,
-+	},
-+};
-+
-+static const struct dpu_intf_cfg msm8953_intf[] = {
-+	{
-+		.name = "intf_0", .id = INTF_0,
-+		.base = 0x6a000, .len = 0x268,
-+		.type = INTF_NONE,
-+		.prog_fetch_lines_worst_case = 14,
-+		.intr_underrun = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 24),
-+		.intr_vsync = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 25),
-+		.intr_tear_rd_ptr = -1,
-+	}, {
-+		.name = "intf_1", .id = INTF_1,
-+		.base = 0x6a800, .len = 0x268,
-+		.type = INTF_DSI,
-+		.controller_id = MSM_DSI_CONTROLLER_0,
-+		.prog_fetch_lines_worst_case = 14,
-+		.intr_underrun = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 26),
-+		.intr_vsync = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 27),
-+		.intr_tear_rd_ptr = -1,
-+	}, {
-+		.name = "intf_2", .id = INTF_2,
-+		.base = 0x6b000, .len = 0x268,
-+		.type = INTF_DSI,
-+		.controller_id = MSM_DSI_CONTROLLER_1,
-+		.prog_fetch_lines_worst_case = 14,
-+		.intr_underrun = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 28),
-+		.intr_vsync = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 29),
-+		.intr_tear_rd_ptr = -1,
-+	},
-+};
-+
-+static const struct dpu_perf_cfg msm8953_perf_data = {
-+	.max_bw_low = 3400000,
-+	.max_bw_high = 3400000,
-+	.min_core_ib = 2400000,
-+	.min_llcc_ib = 0, /* No LLCC on this SoC */
-+	.min_dram_ib = 800000,
-+	.undersized_prefill_lines = 2,
-+	.xtra_prefill_lines = 2,
-+	.dest_scale_prefill_lines = 3,
-+	.macrotile_prefill_lines = 4,
-+	.yuv_nv12_prefill_lines = 8,
-+	.linear_prefill_lines = 1,
-+	.downscaling_prefill_lines = 1,
-+	.amortizable_threshold = 25,
-+	.min_prefill_lines = 14,
-+	.danger_lut_tbl = {0xf, 0xffff, 0x0},
-+	.safe_lut_tbl = {0xfffc, 0xff00, 0xffff},
-+	.qos_lut_tbl = {
-+		{.nentry = ARRAY_SIZE(msm8998_qos_linear),
-+		.entries = msm8998_qos_linear
-+		},
-+		{.nentry = ARRAY_SIZE(msm8998_qos_macrotile),
-+		.entries = msm8998_qos_macrotile
-+		},
-+		{.nentry = ARRAY_SIZE(msm8998_qos_nrt),
-+		.entries = msm8998_qos_nrt
-+		},
-+	},
-+	.cdp_cfg = {
-+		{.rd_enable = 1, .wr_enable = 1},
-+		{.rd_enable = 1, .wr_enable = 0}
-+	},
-+	.clk_inefficiency_factor = 105,
-+	.bw_inefficiency_factor = 120,
-+};
-+
-+static const struct dpu_mdss_version msm8953_mdss_ver = {
-+	.core_major_ver = 1,
-+	.core_minor_ver = 16,
-+};
-+
-+const struct dpu_mdss_cfg dpu_msm8953_cfg = {
-+	.mdss_ver = &msm8953_mdss_ver,
-+	.caps = &msm8953_dpu_caps,
-+	.mdp = msm8953_mdp,
-+	.ctl_count = ARRAY_SIZE(msm8953_ctl),
-+	.ctl = msm8953_ctl,
-+	.sspp_count = ARRAY_SIZE(msm8953_sspp),
-+	.sspp = msm8953_sspp,
-+	.mixer_count = ARRAY_SIZE(msm8953_lm),
-+	.mixer = msm8953_lm,
-+	.dspp_count = ARRAY_SIZE(msm8953_dspp),
-+	.dspp = msm8953_dspp,
-+	.pingpong_count = ARRAY_SIZE(msm8953_pp),
-+	.pingpong = msm8953_pp,
-+	.intf_count = ARRAY_SIZE(msm8953_intf),
-+	.intf = msm8953_intf,
-+	.vbif_count = ARRAY_SIZE(msm8996_vbif),
-+	.vbif = msm8996_vbif,
-+	.perf = &msm8953_perf_data,
-+};
-+
-+#endif
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
-index da7b75e09251..3ae8114ec1e2 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
-@@ -21,6 +21,11 @@
- 	(VIG_BASE_MASK | \
- 	BIT(DPU_SSPP_CSC_10BIT))
- 
-+#define VIG_MSM8953_MASK \
-+	(BIT(DPU_SSPP_QOS) |\
-+	 BIT(DPU_SSPP_SCALER_QSEED2) |\
-+	 BIT(DPU_SSPP_CSC))
-+
- #define VIG_MSM8996_MASK \
- 	(BIT(DPU_SSPP_QOS) | BIT(DPU_SSPP_CDP) |\
- 	 BIT(DPU_SSPP_TS_PREFILL) | BIT(DPU_SSPP_SCALER_QSEED2) |\
-@@ -37,6 +42,9 @@
- 
- #define VIG_QCM2290_MASK (VIG_BASE_MASK | BIT(DPU_SSPP_QOS_8LVL))
- 
-+#define DMA_MSM8953_MASK \
-+	(BIT(DPU_SSPP_QOS))
-+
- #define DMA_MSM8996_MASK \
- 	(BIT(DPU_SSPP_QOS) | BIT(DPU_SSPP_TS_PREFILL) | BIT(DPU_SSPP_CDP))
- 
-@@ -71,6 +79,9 @@
- #define DMA_CURSOR_MSM8998_MASK \
- 	(DMA_MSM8998_MASK | BIT(DPU_SSPP_CURSOR))
- 
-+#define RGB_MSM8953_MASK \
-+	(BIT(DPU_SSPP_QOS))
-+
- #define RGB_MSM8996_MASK \
- 	(BIT(DPU_SSPP_QOS) | BIT(DPU_SSPP_CDP) |\
- 	 BIT(DPU_SSPP_TS_PREFILL) | BIT(DPU_SSPP_SCALER_RGB))
-@@ -766,6 +777,7 @@ static const struct dpu_qos_lut_entry sc7180_qos_nrt[] = {
-  *************************************************************/
- 
- #include "catalog/dpu_1_7_msm8996.h"
-+#include "catalog/dpu_1_16_msm8953.h"
- 
- #include "catalog/dpu_3_0_msm8998.h"
- #include "catalog/dpu_3_2_sdm660.h"
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-index 69f089431901..68c1364c3ffe 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-@@ -831,6 +831,7 @@ struct dpu_mdss_cfg {
- 	const struct dpu_format_extended *vig_formats;
- };
- 
-+extern const struct dpu_mdss_cfg dpu_msm8953_cfg;
- extern const struct dpu_mdss_cfg dpu_msm8996_cfg;
- extern const struct dpu_mdss_cfg dpu_msm8998_cfg;
- extern const struct dpu_mdss_cfg dpu_sdm630_cfg;
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-index 58933d66bace..8676cdfc2f31 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-@@ -1435,6 +1435,7 @@ static const struct dev_pm_ops dpu_pm_ops = {
- };
- 
- static const struct of_device_id dpu_dt_match[] = {
-+	{ .compatible = "qcom,msm8953-mdp5", .data = &dpu_msm8953_cfg, },
- 	{ .compatible = "qcom,msm8996-mdp5", .data = &dpu_msm8996_cfg, },
- 	{ .compatible = "qcom,msm8998-dpu", .data = &dpu_msm8998_cfg, },
- 	{ .compatible = "qcom,qcm2290-dpu", .data = &dpu_qcm2290_cfg, },
-diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
-index df1ad00541f5..e3db561b562d 100644
---- a/drivers/gpu/drm/msm/msm_drv.c
-+++ b/drivers/gpu/drm/msm/msm_drv.c
-@@ -984,6 +984,7 @@ module_param(prefer_mdp5, bool, 0444);
- 
- /* list all platforms supported by both mdp5 and dpu drivers */
- static const char *const msm_mdp5_dpu_migration[] = {
-+	"qcom,msm8953-mdp5",
- 	"qcom,msm8996-mdp5",
- 	"qcom,sdm630-mdp5",
- 	"qcom,sdm660-mdp5",
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#submitting-patches-the-essential-guide-to-getting-your-code-into-the-kernel
 
--- 
-2.45.2
+> Signed-off-by: Erez Geva <ErezGeva2@gmail.com>
+> ---
+>  drivers/mtd/spi-nor/core.c | 130 +++++++++++++++++++++++++++----------
+>  drivers/mtd/spi-nor/core.h |  27 +-------
+>  2 files changed, 99 insertions(+), 58 deletions(-)
+> 
+> diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
+> index 028514c6996f..0f267da339a4 100644
+> --- a/drivers/mtd/spi-nor/core.c
+> +++ b/drivers/mtd/spi-nor/core.c
+> @@ -354,53 +354,134 @@ int spi_nor_write_any_volatile_reg(struct spi_nor *nor, struct spi_mem_op *op,
+>  }
+>  
+>  /**
+> - * spi_nor_write_enable() - Set write enable latch with Write Enable command.
+> + * _nor_send_cmd() - Send instruction without address or data to the chip.
+>   * @nor:	pointer to 'struct spi_nor'.
+> + * @opcode:	Command to send
+>   *
+>   * Return: 0 on success, -errno otherwise.
+>   */
+> -int spi_nor_write_enable(struct spi_nor *nor)
+> +static inline int _nor_send_cmd(struct spi_nor *nor, u8 opcode)
 
+and my review stops here. Why did you think it is good to introduce a
+_nor* method and not an spi_nor* one?
+
+I'm not going to review the rest of the patches. Please send a v2 that
+convinces me to spend more than 2 minutes on it.
+
+Cheers,
+ta
 
