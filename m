@@ -1,140 +1,123 @@
-Return-Path: <linux-kernel+bounces-234950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43ACB91CD45
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 15:37:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A6E791CD4E
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 15:40:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C3251C20FAE
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 13:37:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAF0A1F226E5
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 13:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2A7811E2;
-	Sat, 29 Jun 2024 13:37:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B3080BF3;
+	Sat, 29 Jun 2024 13:40:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aqSLbEwA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BmA6SMBp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B8980BEE;
-	Sat, 29 Jun 2024 13:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3CA1D52D
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 13:40:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719668260; cv=none; b=evA9Z+CrZYRthhFJKTPt1LekJsELtPAxryD3HbtC55FEPqEFdy/wLjN3u/3Ow1jI32Sby5mRWZns5yHGHnT+p8w3H5vjfdQvvQTAeV7QTqPde9dVr0NL6ClaFWvjF0rnu7V+Ji8Hm3xHXPX2hLNqGQPXeFRHWMiiMOJYyvarZ7A=
+	t=1719668446; cv=none; b=HCtGb2UP/x/ByXeF3/kEHtBlLqsj+0uVe9KOaipMA+LEPowPU2CaK8OvWZ4zKGkbt9tc9uTfZ2r6rLhFTr3SMJ+w/jNE2t4KKlRxdcda+cSz796q3WEoUFcuM6iQ7ddpXOh7FS11MvVRUy5CZms6rOZ7svda9H52wG0nNGzYhg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719668260; c=relaxed/simple;
-	bh=dqQDZvowwBChjuJGhkhif3m/CmZP0CoBJ1KWcJsYoWY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=OsS9R8x1pRzh41aXAjNHmRCSzuEpUKkV8EBLiM2Rg74Vl9OSYlewbxdRuPSdx2x9GzK/JDrPqvXibcvMQ6/Oq/IU2j9Keb3You6IHi+lKe0iHPuDdeiwuEt0rGt8yHVrCfcDl180zE20U+uVrxnki71HcarzwfE77XUHKDrh2q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aqSLbEwA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A68DC2BBFC;
-	Sat, 29 Jun 2024 13:37:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719668259;
-	bh=dqQDZvowwBChjuJGhkhif3m/CmZP0CoBJ1KWcJsYoWY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=aqSLbEwAi+lF14D7sPC/B15D6Z7lGoZUVvGZxn9YX8o/H43KfUh56m2wPPo7smbys
-	 n8lndxZFWMcpd7ZVe7sb1y3CfkTMsvfTemFPPyvpJreXjP+RI0nAX2+qCUclsEGetT
-	 1/P/RrpSIdb9lAKTuTvnjrexKJPCvCT55N3QZiR07IGBecMXRfv+vN/5TlA554Kq0S
-	 ucYFqCs/Zi/qKSylmP9JPXr6i5wvXrWcqSwxCOnAAnMGRfaA+3HUV+s1hTgJiJ9a9n
-	 CePkSqUDF+jGdWemDD/Sw5yIpM4lq9zjLB20rqekhAYmOo8/1rAfndRw188Go5OypW
-	 GQmidjmWl9eGA==
-Date: Sat, 29 Jun 2024 15:37:36 +0200
-From: Wolfram Sang <wsa@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
-Subject: [PULL REQUEST] i2c-for-6.10-rc6
-Message-ID: <ZoAOIATcp1T_89x2@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
+	s=arc-20240116; t=1719668446; c=relaxed/simple;
+	bh=TsD41L2f2VKq34Ph7lBOtRyiHdK+mQQb4xF8FjIP0iU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jM5pO4jvAO6mcCjJ4Tuo2o46YhkK8i+KsdcTdgrD90vOkZ4E2qwFQeOSh+iKnkFbe/Sjw1dM8KjjoTEkUysbe/K+MdLUJ+ILZbeFYFL9w9XOA3MbcWcLV1O8jAKs+lQUIAkMVevPWQI7oHjkl5Q81QuI5lQbttbU8/WoKzNoXfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BmA6SMBp; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719668443;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TsD41L2f2VKq34Ph7lBOtRyiHdK+mQQb4xF8FjIP0iU=;
+	b=BmA6SMBpnn4CBR6G6srJ+J+C8L4S92EwVcXs5byhZK3NLnx/mLteo74rWIKrDco0xE6KR3
+	f+kPgNk1bcJ0iNYwE37/9OdtbZ/B/67uiEr9fZevyVFfWNUu3bPWTVX0ZlRXZm/4ACQAs6
+	Pz5/VJ6dkD07iJxkVhHO/wd2xZtNDPg=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-164-sgm5t3g6P3mMyhjci7Oh7Q-1; Sat,
+ 29 Jun 2024 09:40:34 -0400
+X-MC-Unique: sgm5t3g6P3mMyhjci7Oh7Q-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 43AD11956087;
+	Sat, 29 Jun 2024 13:40:30 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.39.192.76])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 452B219560A3;
+	Sat, 29 Jun 2024 13:40:24 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sat, 29 Jun 2024 15:38:55 +0200 (CEST)
+Date: Sat, 29 Jun 2024 15:38:49 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: andrii.nakryiko@gmail.com, andrii@kernel.org, bpf@vger.kernel.org,
+	chenhuacai@kernel.org, jolsa@kernel.org, kernel@xen0n.name,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, mhiramat@kernel.org, nathan@kernel.org,
+	rostedt@goodmis.org
+Subject: Re: [PATCH] LoongArch: uprobes: make
+ UPROBE_SWBP_INSN/UPROBE_XOLBP_INSN constant
+Message-ID: <20240629133747.GA4504@redhat.com>
+References: <20240627173806.GC21813@redhat.com>
+ <37f79351-a051-3fa9-7bfb-960fb2762e27@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Etker0Y8FjzdLkMR"
-Content-Disposition: inline
-
-
---Etker0Y8FjzdLkMR
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <37f79351-a051-3fa9-7bfb-960fb2762e27@loongson.cn>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Linus,
+On 06/29, Tiezhu Yang wrote:
+>
+> On Thu, 27 Jun 2024 19:38:06 +0200
+> Oleg Nesterov <oleg@redhat.com> wrote:
+>
+> ...
+>
+> > > > +arch_initcall(check_emit_break);
+> > > > +
+> > >
+> > > I wouldn't even bother with this, but whatever.
+> >
+> > Agreed, this looks a bit ugly. I did this only because I can not test
+> > this (hopefully trivial) patch and the maintainers didn't reply.
+>
+> The LoongArch maintainer Huacai told me offline to reply this thread today.
+>
+> > If LoongArch boots at least once with this change, this run-time check
+> > can be removed.
+>
+> I will test it next Monday.
 
-Arnd's patch seems a bit large for rc6. It was in place for rc3 but fell
-through the cracks :( We are sorry about that.
+Thanks!
 
-The following changes since commit f2661062f16b2de5d7b6a5c42a9a5c96326b8454:
+> > And just in case... I didn't dare to make a more "generic" change, but
+> > perhaps KPROBE_BP_INSN and KPROBE_SSTEPBP_INSN should be redefined the
+> > same way for micro-optimization. In this case __emit_break() should be
+> > probably moved into arch/loongarch/include/asm/inst.h.
+>
+> Yeah. I think so too.
 
-  Linux 6.10-rc5 (2024-06-23 17:08:54 -0400)
+OK... should I send v2? Or another change which does this on top of this
+patch? Or will you do it yourself?
 
-are available in the Git repository at:
+>
+> Thanks,
+> Tiezhu
+>
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.10-rc6
-
-for you to fetch changes up to c116deafd1a5cc1e9739099eb32114e90623209c:
-
-  i2c: testunit: discard write requests while old command is running (2024-06-28 20:44:38 +0200)
-
-----------------------------------------------------------------
-Two fixes for the testunit and and a fixup for the code reorganization
-of the previous wmt-driver
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      i2c: viai2c: turn common code into a proper module
-
-Wolfram Sang (3):
-      Merge tag 'i2c-host-fixes-6.10-rc6' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current
-      i2c: testunit: don't erase registers after STOP
-      i2c: testunit: discard write requests while old command is running
-
-
-with much appreciated quality assurance from
-----------------------------------------------------------------
-Andi Shyti (2):
-      (Rev.) i2c: testunit: discard write requests while old command is running
-      (Rev.) i2c: testunit: don't erase registers after STOP
-
-Hans Hu (1):
-      (Test) i2c: viai2c: turn common code into a proper module
-
- drivers/i2c/busses/Makefile             |   6 +-
- drivers/i2c/busses/i2c-viai2c-common.c  |  71 +++-----------------
- drivers/i2c/busses/i2c-viai2c-common.h  |   2 +-
- drivers/i2c/busses/i2c-viai2c-wmt.c     |  36 ++++++++++
- drivers/i2c/busses/i2c-viai2c-zhaoxin.c | 113 +++++++++++++++++++++++++-------
- drivers/i2c/i2c-slave-testunit.c        |   5 +-
- 6 files changed, 143 insertions(+), 90 deletions(-)
-
---Etker0Y8FjzdLkMR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaADiAACgkQFA3kzBSg
-KbaB/w/+IbGFUNgGgNSx7C/2JVazFD/j/QQWhdy+O/6SYGQMa4SIat3GYAwPy8d9
-QRl0SM0kds0e5v5Rdr7gpiuMxXnAqN/FSKYr+LPYbmOReDkWD+uaOBC5R8yRz5oA
-SeHeBqdPmwWxLFLXIMqZ3Ff55tV1kc41gR9Z+qKAHp3UdthgikDC02e4G1tX7X7S
-Ll3QItK+eGc4FPY8HpM87w34cDnR/yGipTG2vrxHFbuQR45Hs5Gmnqo7g/THVtya
-MdRJ8hZC25kWO3qb5CIcOn/IkBI/6XS/erdS0FhwhuIRvmvsEA/SerJ1aq9RVrkt
-gnDlt22BrDujX1zqKuaysjznH4kXk9p+aEKoZ02aZdpj12gpQdYilK9wGYoG5Dju
-WQSnkGEPqMJS93rx6akZ4nB75O0QYSJae6DE3Ly0x7joHlc1xwYSheC+ICJs7liQ
-aEM9oiebeF2WRLzd+MGFw7mBQ4QfTtVROJCIh3PDcEOBBS/s23+69gwlTropmquN
-B8EQt0oZbTuhKjW8ic2390kGtZcamCvhWQECjC2AwyvmnXH976/rIqH6sOWhiyQt
-A5an8GllmFrS0f6HsunZIVFyHbbRMxoEt4K/WasJbHnCDF/WAGIAeKQIUkT/vCfo
-h5RbFHn7Ms2aI3s39c+r6nIykcd1NZCQeZJ7xbFrRWO8axc2Yfw=
-=n1/r
------END PGP SIGNATURE-----
-
---Etker0Y8FjzdLkMR--
 
