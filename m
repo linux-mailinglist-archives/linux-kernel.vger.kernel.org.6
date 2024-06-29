@@ -1,102 +1,80 @@
-Return-Path: <linux-kernel+bounces-235015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ED2791CE62
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 19:46:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0993D91CE64
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 19:47:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8467FB219E8
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 17:46:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B91EA282B97
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 17:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C33C9132113;
-	Sat, 29 Jun 2024 17:46:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D123E12FF91;
+	Sat, 29 Jun 2024 17:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CWCGBKeh"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gk4kcpKU"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3512F4C99;
-	Sat, 29 Jun 2024 17:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F27F4C99;
+	Sat, 29 Jun 2024 17:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719683197; cv=none; b=t1hhteSIB42jZMij9SJqXyAOcTKMy4vhKzVVhZ95foja9JgL+1uhmz3jlSdkXDxr3elAqvWLH/BpUJK+He48YZOtfQ6mcD2+86l/6gitZtCIeivbD5jGtz2H4JlivBFHxzIfPNYhCKWnPKwPe3jQromV6OukhJAt5HLkH2/9/jQ=
+	t=1719683228; cv=none; b=Ihpm8OPuDxpVEv5OAafAC3HYfT2Ub5B1COtYJRxOZ/jldCgdZnqF4h0MbHdtLVpstjoV0IlNU5RHxgrc7s0W036eOsPS86BblcyjLjlpHbLC7RKPrAIeiswFlIz7yToQxk9DAIBqMd78xl187pKA7oPP6+TCcKHbPsaSOK3uEJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719683197; c=relaxed/simple;
-	bh=dI9d3ZkEDcUi8OCXq+Czxr9kfoJgXIcUvNvNGQ0NXBI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kRvzQ0gNMpP9bRjhbqWBSL0f6EzsEzGFTV8dMDR7v3lJ6WLyn3KOl/4eygyFMvkLfQ+9r8Bsk8J+cUcBfMwhsRk3FfzLHyPzbCEcDOCr4sPmmVzj0nk8tZvODVhnQkwnkwV+u7kpELBG8J2FqdQwmtMV09qB3OxiSX3SsQKUAUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CWCGBKeh; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1719683228; c=relaxed/simple;
+	bh=8jXpjaEGXIVt/rnGrJd4HdmWE4veMgKAlIPQ5e/UWBw=;
+	h=Message-ID:Date:From:To:Subject:MIME-Version:Content-Type:
+	 Content-Disposition; b=Kw5D5Nc7HboCIfAWU7EHxOZEmaanXYpVRTrO8eHbToLyuC6nA4eX2uSl1TY/KiWXoJIZZQyDBcWtkUpiJKUm7kPK055evfXoRpYaI2HNUaBjIwWcVNh0OsKDCF3gbo7xLpqRFRGTsT9+k08tvC7kNyTZSSYGOJ5pgS+XuTgVekU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gk4kcpKU; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f9b523a15cso10996955ad.0;
-        Sat, 29 Jun 2024 10:46:36 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-424f2b73629so15864835e9.2;
+        Sat, 29 Jun 2024 10:47:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719683195; x=1720287995; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xJTuEAT8kFn/N38NgReiBC7u1W13u19d45QTb6wSxDI=;
-        b=CWCGBKehQ/GEOzPutmEbKRLEEmubx5jGEaFk0UxFkteX8rmIaIBL3/8r2vPi0yPKvX
-         HD8R/7bnTgpiiB++BVaJTdxLBZvWvmx9NqdcVjoKozhRzEBLypFJPOkXJA1O6ARU3x81
-         k30+JXQtvWf2imxLL+LpIAyeFysvJ6HtknlhbQbbaCICtHPOPuUS0YWVgIJXi4vp3dWa
-         yEykgrMvO63vL2h4nAc/AFpjCrMu+sfvqlsLnrPtGl+uz5D0uKTonh56Y6vsQWrLeWsZ
-         y0cNM20w9FSCnpY8K+YfP0lz3RH37TT3tkmmwpkZXBMEazaegb2gcLR0ztCZr/XsW+bM
-         LDpg==
+        d=gmail.com; s=20230601; t=1719683225; x=1720288025; darn=vger.kernel.org;
+        h=content-disposition:mime-version:subject:to:from:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RM9I+OAVtRNtNBzaQ8k/P87nr2q6nUcg+dZj/RNtCeo=;
+        b=Gk4kcpKUvPfmbMt4tkwbioNPHJH1Fsmo0Je/H9OwVHd34i1T/u/58fOZo+7GJIxQGa
+         Pa/pHcOjfsGnSI914pZjOfcdi1boGe8PQBgQXXarGmWMJaVPzPMUoFiMg3u074mibCGc
+         yBJuYbFGcyZsdDYxBa9+uU0htAadrwq+VzYUsyiTu9Tk8VKNmdREMMUqOqWk40w91Dv6
+         n4sO9R/ZJyAXf3zUmysM+6OSS02fAJa7a6/G0/UvyOqG9w7h8mU4c4uAtq1lcjwKjutp
+         LK3ncLffTsG4rYDJCOsIFvqXAtNyRL8oCeiwcD3RW9RTFMaigXd/do3r/Xb1OoshVC6y
+         FESw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719683195; x=1720287995;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xJTuEAT8kFn/N38NgReiBC7u1W13u19d45QTb6wSxDI=;
-        b=HegUrbEg/MHOoylF3VtmFoW5H8c7gegDLoIhapk7v6l/TBbdUGuIIUdarJxOzb+k+g
-         JTaDq2+APW8a6jUFpYsBdwWVVdhuZRfF+LbD5A7uFEji56YFdYGtptcf0ud4UPN7hLgm
-         A+45PAVX3E4kGAjO97TmosVnZHm5/l9DD8pNpxNBjmGF5HT/2w48LZ4Yh+D9PxbHAorH
-         PcYfAZBOIPVc+MMe7hdKlMTbeYJgvJ4nMvm6gBfv8V9OKSmCXeJ0dC83o4u/4WbNmcHV
-         FB7TOnsNqYZOsjBsilHLPCxuTafC3i0GWGTmBX/CfjunXG8fQ5hgXksa7FQJvzjnmQSK
-         i2gQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV5bjV3KbyreGQ+qfDAqQYiJY2w8Q2wY4BXlGH05fplOrQCJwDgpch92ZVkqMQKweIT0XTCbIK4z2aCshJZcfmzxwQE++58VrkhOdJMcSKtBtYhb4GRI1HY1Ml56BtRvCls4geGL9JZqlFgAY+z2CgvaG98fzfd/tNQZeUrNrE7Z5UqCwv8XxBw9iiNDR3GgyAmN3pyXruMEEKVN+jYWZRASrnIzSvM0GX/aniD1wRI5iqlYXHBa3p6z0OBKuul0OpIJviqRpb7SHGos3QqcgaOF1z6I54F9oOcD0oA3DI2nIBRccTZgqYwdc4EA2wGQvKNZVEz84mkZuQ/Du7KPrbD25Dzi+r1+fmQa0HcLJPBBxsDTvqoa911gosyAlx1yfjeSwCt+Kjir0eZ7CPlX0FScwM=
-X-Gm-Message-State: AOJu0Yw4X+dD4cfI0R1d8XVwTuEMbaK9p/Y/eh2LGfynXZ5ZuC6UXKBV
-	uGh8+ED9K9KDPKlDGwJ5KHt2Vf/CZnrRn2c4ESH7ws3yqKLy3DIL
-X-Google-Smtp-Source: AGHT+IGXRwOTNfWOpdGXl+28hO8NMkh0znjd2CrkAf/HqJ5kuBn+8boNjwtHpyuWIrNeZ3XB7V/gSQ==
-X-Received: by 2002:a17:902:ea0b:b0:1f6:3580:65c9 with SMTP id d9443c01a7336-1fadb4afc15mr29069525ad.26.1719683195282;
-        Sat, 29 Jun 2024 10:46:35 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac159a286sm34552615ad.282.2024.06.29.10.46.34
+        d=1e100.net; s=20230601; t=1719683225; x=1720288025;
+        h=content-disposition:mime-version:subject:to:from:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RM9I+OAVtRNtNBzaQ8k/P87nr2q6nUcg+dZj/RNtCeo=;
+        b=KgluldZibd1Ey8LETb0K/bvOdAgwRMr6uJFGJKNB7m8Vf57ESC/2Ta1FFAQA6Vpfdx
+         MifjqtiQrsAmJ0rhFC5cSSnU+DyVAqyXSczv1i366ezKiqYf1RXmaEd86yqRpXP4ingC
+         LJ87SpYLjFFQh4GdsRLQuuRXX0L5BQdX0N9Cn3uPAZi8+8yL9hH5r4CNqbjuVWqJFyMo
+         NxCTX7a8ICUWFWNJiknffbb5m+tdNXR3ZIEJuhvVkTo4/RIzjsLFWd50+zw4HLe5DKqG
+         CjD/yT9vuHHt2haN//LSPELdVbSio48Z2EU9Fr7BXynAFwW54SlxdKmoGliG7ry500zj
+         eGFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUtYjN6gfOGixl6X2lrbGn5hT5vKyk+e3aaNYzNWbjwtmYuinYPBXQY/sgfWiLKLQ7jSxU+5/lk6VDWZCis1SD7VIgwEnrOCZYw26cQiwZoure8NHySTTMWEYiMhb/Vk0E/Q+wI8KykDqU=
+X-Gm-Message-State: AOJu0YzKOmtBaidqHdVn11bwN4eXz3jG2xuHT24otsKAY7g0KASs9+ZO
+	Q8fM6qsY4tV1F0SuLngBLDk3DXjMrek0dw61FFPBh2Oj0BvmXnGZ
+X-Google-Smtp-Source: AGHT+IH4uBsJD46pExK4S2eIL1HXcwBAMRAtXfuDZKRJ0KGCzOPoK9l5N7iXtrbM8bLZxaTAjDSgNQ==
+X-Received: by 2002:a05:6000:c09:b0:35f:16c9:a5bd with SMTP id ffacd0b85a97d-367756aa9d5mr1239993f8f.23.1719683224932;
+        Sat, 29 Jun 2024 10:47:04 -0700 (PDT)
+Received: from laptom (88-121-55-84.subs.proxad.net. [88.121.55.84])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0e12fcsm5373040f8f.48.2024.06.29.10.47.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Jun 2024 10:46:34 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Sat, 29 Jun 2024 10:46:33 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	linux-mips@vger.kernel.org, Helge Deller <deller@gmx.de>,
-	linux-parisc@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>, sparclinux@vger.kernel.org,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
-	linuxppc-dev@lists.ozlabs.org, Brian Cain <bcain@quicinc.com>,
-	linux-hexagon@vger.kernel.org, Guo Ren <guoren@kernel.org>,
-	linux-csky@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
-	linux-s390@vger.kernel.org, Rich Felker <dalias@libc.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	linux-sh@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org, libc-alpha@sourceware.org,
-	musl@lists.openwall.com,
-	Adhemerval Zanella <adhemerval.zanella@linaro.org>
-Subject: Re: [PATCH v2 06/13] parisc: use generic sys_fanotify_mark
- implementation
-Message-ID: <a913c77e-1abb-409f-86b9-8805c1451988@roeck-us.net>
-References: <20240624163707.299494-1-arnd@kernel.org>
- <20240624163707.299494-7-arnd@kernel.org>
+        Sat, 29 Jun 2024 10:47:04 -0700 (PDT)
+Message-ID: <66804898.5d0a0220.6df0f.4f0a@mx.google.com>
+X-Google-Original-Message-ID: <ZoBImPI8YbgOzycV@laptom.>
+Date: Sat, 29 Jun 2024 19:47:04 +0200
+From: Tom Mounet <tommounet@gmail.com>
+To: Marc Dietrich <marvin24@gmx.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	ac100@lists.launchpad.net, linux-tegra@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	outreachy@lists.linux.dev
+Subject: [PATCH v3] staging: nvec: Use x instead of x != NULL to improve
+ readability.
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,70 +83,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240624163707.299494-7-arnd@kernel.org>
 
-On Mon, Jun 24, 2024 at 06:37:04PM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> The sys_fanotify_mark() syscall on parisc uses the reverse word order
-> for the two halves of the 64-bit argument compared to all syscalls on
-> all 32-bit architectures. As far as I can tell, the problem is that
-> the function arguments on parisc are sorted backwards (26, 25, 24, 23,
-> ...) compared to everyone else, so the calling conventions of using an
-> even/odd register pair in native word order result in the lower word
-> coming first in function arguments, matching the expected behavior
-> on little-endian architectures. The system call conventions however
-> ended up matching what the other 32-bit architectures do.
-> 
-> A glibc cleanup in 2020 changed the userspace behavior in a way that
-> handles all architectures consistently, but this inadvertently broke
-> parisc32 by changing to the same method as everyone else.
-> 
-> The change made it into glibc-2.35 and subsequently into debian 12
-> (bookworm), which is the latest stable release. This means we
-> need to choose between reverting the glibc change or changing the
-> kernel to match it again, but either hange will leave some systems
-> broken.
-> 
-> Pick the option that is more likely to help current and future
-> users and change the kernel to match current glibc. This also
-> means the behavior is now consistent across architectures, but
-> it breaks running new kernels with old glibc builds before 2.35.
-> 
-> Link: https://sourceware.org/git/?p=glibc.git;a=commitdiff;h=d150181d73d9
-> Link: https://git.kernel.org/pub/scm/linux/kernel/git/history/history.git/commit/arch/parisc/kernel/sys_parisc.c?h=57b1dfbd5b4a39d
-> Cc: Adhemerval Zanella <adhemerval.zanella@linaro.org>
-> Tested-by: Helge Deller <deller@gmx.de>
-> Acked-by: Helge Deller <deller@gmx.de>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> I found this through code inspection, please double-check to make
-> sure I got the bug and the fix right.
-> 
+Use x instead of x != NULL to improve readability.
+Issue identified by checkpatch.
 
-Building parisc:allmodconfig ... failed
---------------
-Error log:
-In file included from fs/notify/fanotify/fanotify_user.c:14:
-include/linux/syscalls.h:248:25: error: conflicting types for 'sys_fanotify_mark'; have 'long int(int,  unsigned int,  u32,  u32,  int,  const char *)' {aka 'long int(int,  unsigned int,  unsigned int,  unsigned int,  int,  const char *)'}
-  248 |         asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))       \
-      |                         ^~~
-include/linux/syscalls.h:234:9: note: in expansion of macro '__SYSCALL_DEFINEx'
-  234 |         __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-      |         ^~~~~~~~~~~~~~~~~
-include/linux/syscalls.h:228:36: note: in expansion of macro 'SYSCALL_DEFINEx'
-  228 | #define SYSCALL_DEFINE6(name, ...) SYSCALL_DEFINEx(6, _##name, __VA_ARGS__)
-      |                                    ^~~~~~~~~~~~~~~
-include/linux/syscalls.h:287:27: note: in expansion of macro 'SYSCALL_DEFINE6'
-  287 | #define SYSCALL32_DEFINE6 SYSCALL_DEFINE6
-      |                           ^~~~~~~~~~~~~~~
-fs/notify/fanotify/fanotify_user.c:1924:1: note: in expansion of macro 'SYSCALL32_DEFINE6'
- 1924 | SYSCALL32_DEFINE6(fanotify_mark,
-      | ^~~~~~~~~~~~~~~~~
-include/linux/syscalls.h:862:17: note: previous declaration of 'sys_fanotify_mark' with type 'long int(int,  unsigned int,  u64,  int,  const char *)' {aka 'long int(int,  unsigned int,  long long unsigned int,  int,  const char *)'}
-  862 | asmlinkage long sys_fanotify_mark(int fanotify_fd, unsigned int flags,
-      |                 ^~~~~~~~~~~~~~~~~
-make[6]: [scripts/Makefile.build:244: fs/notify/fanotify/fanotify_user.o] Error 1 (ignored)
+Signed-off-by: Tom Mounet <tommounet@gmail.com>
+---
+v3: Add change history and proper description
+v2: Make commit title clearer
 
-Guenter
+ drivers/staging/nvec/nvec.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index e5ca78e57..814eb121c 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -300,7 +300,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
+ {
+ 	mutex_lock(&nvec->sync_write_mutex);
+ 
+-	if (msg != NULL)
++	if (msg)
+ 		*msg = NULL;
+ 
+ 	nvec->sync_write_pending = (data[1] << 8) + data[0];
+@@ -322,7 +322,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
+ 
+ 	dev_dbg(nvec->dev, "nvec_sync_write: pong!\n");
+ 
+-	if (msg != NULL)
++	if (msg)
+ 		*msg = nvec->last_sync_msg;
+ 	else
+ 		nvec_msg_free(nvec, nvec->last_sync_msg);
+-- 
+2.39.2
+
 
