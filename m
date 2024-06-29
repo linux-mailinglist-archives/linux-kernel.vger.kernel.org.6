@@ -1,105 +1,157 @@
-Return-Path: <linux-kernel+bounces-234862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B0B991CBB1
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 10:38:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3A8191CBC2
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 10:56:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2D2D283857
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 08:38:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFCFBB221A6
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 08:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E58A38385;
-	Sat, 29 Jun 2024 08:38:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A7538FA1;
+	Sat, 29 Jun 2024 08:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HSpIQWIf";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fMTTsVzO"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iegBsroS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75FC937703;
-	Sat, 29 Jun 2024 08:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF81F2E64A;
+	Sat, 29 Jun 2024 08:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719650282; cv=none; b=bsT/PDo9cL44DdRzxf51R7XEsei9dEW/1Mzw9hFkFT3YGpr2j2mYGZdMV7rbfW/o3fJ84bexObGTSGoTUK7nqkY+a+oKIBjQ9dvrniX+fvqkjkoM+zF+AATw9gVyXWLhPcmhJzei2QgKScorJlpP/1yWxjq+nbnLDrMArVxV6Dk=
+	t=1719651370; cv=none; b=Nwc3PT8K2o/yt8DuoT3FKirf4K5jBxrMq3KCNVKd2sCGjWnTja3S6WeTni9wd+aIOKU4rXy5XETJiVAggD7Py9DBT9K3ykAJhe8Ok2jpd+VXczosz+SFLv0OgprshXMgAN6Bi7tAeEpxGKDVwnEffCrxbiyfYrhp44lI3Y3ap/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719650282; c=relaxed/simple;
-	bh=q/3lT/7sRnUNMd+59T7wJOpFjJcROwhrHn3K/SaaZQQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Bz/KddG5h3VcCENjjYLLwx+7odSZZBxZsUkGBx/miUxt+n/FbKll86F3+nQE2oA9Nq51N0er7LsTETW6SXbLTG3w8m49dnqAfOYBfqcNAxImd5y/CUOhZphfIfseY4PcMUZrEz6CUdnrqWzkXs1OlWUDpTz47RSly1JbpvcfZ68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HSpIQWIf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fMTTsVzO; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1719650279;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TUFJvIfZrgiznYfgSI2fEF0HgrLUinnhHj4NcJxIY7I=;
-	b=HSpIQWIfLYjnVetGPvASNKXrCMaFiE/Ws84xltt0Sf+pZ5oVM+xkMuUVy8d7UXuaPsPxkl
-	tR+2Gduf1bUgujal8+v9oyrXohkxLqNmS7ASHW9Q3EXGghIhhsv1rB2DXh4uvYyTChtkHP
-	ORQfZeGvhccb8xaZRphhmszBxJaG1e0dbtzRzcECzY/Y+djKTt0abXY5Irg24W/xqSq51y
-	X/nQJhTiylR7SF4IBe2Bz4y5k21LV0gjHTDd5JGfKt6vxAGYU+5zTAQod9epIZrKQb+s78
-	Ksu0GsJLLi7fI6toVSCt/V945PqqPLYWmV9IpjZL1A0dzC0qbjiYKacYHaawrw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1719650279;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TUFJvIfZrgiznYfgSI2fEF0HgrLUinnhHj4NcJxIY7I=;
-	b=fMTTsVzOPD8Lf770Fvq7+goRYUzr2wpFw6BFLBw+z6xScfjxNz+UMwfdCSx/R2ad6kYULw
-	bOD5bUBI/j2uVOBw==
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
- maz@kernel.org, anna-maria@linutronix.de, shawnguo@kernel.org,
- s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com,
- rdunlap@infradead.org, vidyas@nvidia.com, ilpo.jarvinen@linux.intel.com,
- apatel@ventanamicro.com, kevin.tian@intel.com, nipun.gupta@amd.com,
- den@valinux.co.jp, andrew@lunn.ch, gregory.clement@bootlin.com,
- sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org,
- rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org,
- lorenzo.pieralisi@arm.com, jgg@mellanox.com, ammarfaizi2@gnuweeb.org,
- robin.murphy@arm.com, lpieralisi@kernel.org, nm@ti.com, kristo@kernel.org,
- vkoul@kernel.org, okaya@kernel.org, agross@kernel.org,
- andersson@kernel.org, mark.rutland@arm.com,
- shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com,
- shivamurthy.shastri@linutronix.de
-Subject: Re: [patch V4 05/21] irqchip/gic-v3-its: Provide MSI parent for
- PCI/MSI[-X]
-In-Reply-To: <Zn84OIS0zLWASKr2@arm.com>
-References: <20240623142137.448898081@linutronix.de>
- <20240623142235.024567623@linutronix.de> <Zn84OIS0zLWASKr2@arm.com>
-Date: Sat, 29 Jun 2024 10:37:59 +0200
-Message-ID: <87h6dcxhy0.ffs@tglx>
+	s=arc-20240116; t=1719651370; c=relaxed/simple;
+	bh=Usk4hC7B6imkCxrHaQXk94Nplnxwr+jME/OfM7kVFc4=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Zm/WEtaIDG6bhjokAdAckO4+wqb0Mv0uw0yigNn2T8/BNxogQBKnL5ghCWMiW0SyAqEhyVNrgEwEryhI9CT6Vg/BHRFazWUTk52zxtwMraGqHvASONMLzTDCJJLc6tWoStm6oy2Yn4E/OD3027QwPo0IWWvX4/XglIdGpv5+9cA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iegBsroS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A94CC4AF0B;
+	Sat, 29 Jun 2024 08:56:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719651369;
+	bh=Usk4hC7B6imkCxrHaQXk94Nplnxwr+jME/OfM7kVFc4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=iegBsroSG2xpT5nJosVosuNactH50axeeo1QH67qfyq0eTxMpVc7MKuvqBtW/SK9F
+	 26AifYxbFC/BIF6iTXvTces1j31xC/DXwCm2rCqdPfP/mimlQyK8yD11NQEeIjGj6w
+	 V96dc5UAsBVRWTjsl3uVYSPUpyDWknAx72TV/VjYTsKfSs5cCyTDF4SoMNKITZEMBX
+	 LiDJCJhY6900sH6al1XZGqWYTHOR7ZXf6/1kRqnCFMa/SzMrfxxzaI2GHzjktD2OAz
+	 w0ksU9risLol2i5W6yTe0iH4xqHQyNojn2r4TD5U6jUicFExJGwwoZMiSUztJkmxHY
+	 arPftWRUhKchQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sNTsM-008MU8-PI;
+	Sat, 29 Jun 2024 09:56:06 +0100
+Date: Sat, 29 Jun 2024 09:55:54 +0100
+Message-ID: <87ikxsi0v9.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Shaoqin Huang <shahuang@redhat.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	kvmarm@lists.linux.dev,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] KVM: arm64: Allow userspace to change ID_AA64PFR1_EL1
+In-Reply-To: <20240628060454.1936886-2-shahuang@redhat.com>
+References: <20240628060454.1936886-1-shahuang@redhat.com>
+	<20240628060454.1936886-2-shahuang@redhat.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/28.2
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: shahuang@redhat.com, oliver.upton@linux.dev, kvmarm@lists.linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Fri, Jun 28 2024 at 23:24, Catalin Marinas wrote:
-> I just noticed guests (under KVM) failing to boot on my TX2 with your
-> latest branch. I bisected to this patch as the first bad commit.
+On Fri, 28 Jun 2024 07:04:51 +0100,
+Shaoqin Huang <shahuang@redhat.com> wrote:
+> 
+> Allow userspace to change the guest-visible value of the register with
+> some severe limitation:
+> 
+>   - No changes to features not virtualized by KVM (MPAM_frac, RAS_frac,
+>     SME, RNDP_trap).
+> 
+>   - No changes to features (CSV2_frac, NMI, MTE_frac, GCS, THE, MTEX,
+>     DF2, PFAR) which haven't been added into the ftr_id_aa64pfr1[].
+>     Because the struct arm64_ftr_bits definition for each feature in the
+>     ftr_id_aa64pfr1[] is used by arm64_check_features. If they're not
+>     existing in the ftr_id_aa64pfr1[], the for loop won't check the if
+>     the new_val is safe for those features.
+> ---
+>  arch/arm64/kvm/sys_regs.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+
+This is getting very tiring:
+
+- this isn't a valid patch, as it doesn't carry a proper SoB. You did
+  it last time, I pointed it out, and you ignored me.
+
+- this is *wrong*. The moment the kernel publishes any of the fields
+  you have decided to ignore, the restoring of a VM on a new kernel
+  will fail if the host and the VM have different values.
+
 >
-> I'm away this weekend, so won't have time to dive deeper. It looks like
-> the CPU is stuck in do_idle() (no timer interrupts?). Also sysrq did not
-> seem able to get the stack trace on the other CPUs. It fails both with a
-> single or multiple CPUs in the same way place (shortly before mounting
-> the rootfs and starting user space).
+> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+> index 22b45a15d068..159cded22357 100644
+> --- a/arch/arm64/kvm/sys_regs.c
+> +++ b/arch/arm64/kvm/sys_regs.c
+> @@ -2306,7 +2306,9 @@ static const struct sys_reg_desc sys_reg_descs[] = {
+>  		   ID_AA64PFR0_EL1_GIC |
+>  		   ID_AA64PFR0_EL1_AdvSIMD |
+>  		   ID_AA64PFR0_EL1_FP), },
+> -	ID_SANITISED(ID_AA64PFR1_EL1),
+> +	ID_WRITABLE(ID_AA64PFR1_EL1, ID_AA64PFR1_EL1_MTE |
 
-From the RH log it's clear that PCI interrupts are not delivered.
+Why? If the VM has been created with MTE support, this must be obeyed.
 
-> I'll drop your branch from the arm64 for-kernelci for now and have a
-> look again on Monday.
+> +				     ID_AA64PFR1_EL1_SSBS |
+> +				     ID_AA64PFR1_EL1_BT),
+>  	ID_UNALLOCATED(4,2),
+>  	ID_UNALLOCATED(4,3),
+>  	ID_WRITABLE(ID_AA64ZFR0_EL1, ~ID_AA64ZFR0_EL1_RES0),
 
-I stare too. Unfortunately I don't have access to such hardware :(
+So let me be very blunt:
 
-Thanks,
+- you *must* handle *all* the fields described in that register. There
+  are 15 valid fields there, and I want to see all 15 fields being
+  explicitly dealt with.
 
-        Thomas
+- fields that can be changed without ill effect must be enabled for
+  write, irrespective of what the cpufeature code does (CSV2_frac, for
+  example).
+
+- fields that have a fixed value because KVM doesn't handle the
+  corresponding feature must be explicitly disabled in the register
+  accessor (MPAM, RNDR, MTEX, THE...). Just like we do for SME.
+
+- fields that correspond to a feature that is controlled by an
+  internal flag (MTE) must not be writable. Just like we do for PAuth
+  in ID_AA64ISAR1_EL1.
+
+- you *must* handle *all* the fields described in that register.
+
+Until I see all of the above, I will not take this patch. If you don't
+want to do this, that's absolutely fine by me. Just don't post another
+patch. But if you do, this is the deal.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
