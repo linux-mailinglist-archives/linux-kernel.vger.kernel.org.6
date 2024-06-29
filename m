@@ -1,157 +1,134 @@
-Return-Path: <linux-kernel+bounces-234965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F1BA91CD92
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 16:23:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C81F591CD98
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 16:28:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2D98B226CA
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 14:23:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E8D91F21EAA
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 14:28:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C5481AD2;
-	Sat, 29 Jun 2024 14:23:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5683481ABB;
+	Sat, 29 Jun 2024 14:28:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JZuffGoP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PgSSi+0s";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2rEaYi8g"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E3C62574F;
-	Sat, 29 Jun 2024 14:23:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A29C022331;
+	Sat, 29 Jun 2024 14:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719671012; cv=none; b=AlftRxUyRQ2LvAs8M5yloXo9cjnj0XNcJ9wQ4tkxCKHDrMFU9qNtB8f9zoogTopBFekyJl5zSdo3zfnroP8yn6HfpDKMqzoLXy9FDjIW1NZLTHoKmqNhYumcJKjotfQQxUybIZlq8ZvUoOwEYmDDGEjoNMmqco58ikA4cM63jQg=
+	t=1719671300; cv=none; b=cRbxGhNGyVd9ZeUkhhagJW2fpeN86fk9vq0y+5qV9gxwdYnFrHT4Cw72gOEjZBzhhkKdyl8RFvlB659eBonx0Hs6pym5cmrSIkqVGjpP79WyeoEx2/+eeycXAnz96f83QMz50VwcTDGI3xtWHTakFupEhwGVZzKsaH3+ePpwF0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719671012; c=relaxed/simple;
-	bh=RpJX4jnJ1foxztiWqLsT54cnw7nsRb+sOuX5F/IJV/o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=PPtKP9Rd6yxOWDPQ3xUvCDd6inECOXQTeW9vLhS92i4aF9GpOZHsHYSa6fiCPyEOuObe08Kp12aygRkpv4IShjH5DUZGcfZfUBxKjOcFqIgg8T7Xi0xeksdkBNa99xRL9vqb9ac7oFZM0rMyNaeoDOkl3Ybq9Om9X3vAcS3Kdq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JZuffGoP; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719671011; x=1751207011;
-  h=message-id:date:mime-version:subject:to:references:from:
-   cc:in-reply-to:content-transfer-encoding;
-  bh=RpJX4jnJ1foxztiWqLsT54cnw7nsRb+sOuX5F/IJV/o=;
-  b=JZuffGoPj/Ln/6V2URHXffvWO+TR4YQcPHfOUoYh+cVz9bN2h3yz2CW6
-   Wpg4CkbVkz8PNFm+Em1WdivqCNph9JJNdUPuuyBObH3zvobOGngdcYGu/
-   rNIxIcnd3PjL/iLDQxEw3s1zCanmNeaK9BqRjxthTQAgKSe3uqIHJXzK7
-   smYJmaxz/seoz6eHOy8R90FfmCsFQqrPlqfwsLuvNDFHTFvuhKgCkkskE
-   Q5VMggLAAtEG5ckTjH3oxCl9j0wpp7ngdLtJcl7k9z58n3eirLQfeqXIg
-   UR5oDY33hrxeJrsqPdkVmDncMOYni84Y9JV1MRdqskeZqc6r3xlkOG3x9
-   Q==;
-X-CSE-ConnectionGUID: dfQYYckDRQq0zlW+HHyOCQ==
-X-CSE-MsgGUID: 1FJ28ZaMS4OE2iHoI9JEpg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11117"; a="34284176"
-X-IronPort-AV: E=Sophos;i="6.09,172,1716274800"; 
-   d="scan'208";a="34284176"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2024 07:23:30 -0700
-X-CSE-ConnectionGUID: CP4kXIR3QRmPjN6sa6Ptww==
-X-CSE-MsgGUID: zqw3upPuT1Ktkp7QIFBUXg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,172,1716274800"; 
-   d="scan'208";a="49498260"
-Received: from yma27-mobl.ccr.corp.intel.com (HELO [10.124.248.81]) ([10.124.248.81])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2024 07:23:26 -0700
-Message-ID: <20f6b9aa-65e0-4e05-9d41-85e4a22b51c2@intel.com>
-Date: Sat, 29 Jun 2024 22:23:23 +0800
+	s=arc-20240116; t=1719671300; c=relaxed/simple;
+	bh=X7zZNylCN8GtJr+u7LlOatOgbbVPIKN5zLkCTBfNQ6I=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=eCjh//BwBfLb6OfcLHWv2/hoTEV+7maetSlIAA6FtERR57kgKXy0V8n89cbj4f/m9oOVK89A3/4E0YfEaoLNFknmstiWkc+/GICoBhQ0hZwgHd7HnujPwpQr7f/loq614C10FoBX+C1PckxUpQlxmc8QDK3T+4DrnMr7iGWL8E8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PgSSi+0s; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2rEaYi8g; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sat, 29 Jun 2024 14:28:10 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1719671291;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k7Exg/rhEwPQXkcLyFUYfEsb1kegpQZgHxCy+2c2LFQ=;
+	b=PgSSi+0seuL7wKSKY+nXcryP4qpjWdRBxMKHvExSF6x7f/AqvMAAqVP3ucQ9ux+2oTfjjh
+	MmSTdHQowulNLXwk4rPzJU5QueQfuJWxfpJA4qY9DrSyHLZKEg0LVnUjA72OsCj4sJsvO6
+	b/nuKA+sMVBqnHVnFMzhXZvEhV3fKMfwCujZjTo9t6nfLHcOlBLv9jT2WyTi4ioEh4ykL1
+	XkpSqQ+3vYNnhBf1vhPEK50arcHbZdAw+bJTiL+LZ+j4WyFG4/27Ym8tkwSICaDoVoO3uy
+	Hxwjm3wmbcLHVxUBiyNn+Jp2zgtVTcfWs5scEv4Ak7UoTdfpiG3cT12y/af2Xg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1719671291;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k7Exg/rhEwPQXkcLyFUYfEsb1kegpQZgHxCy+2c2LFQ=;
+	b=2rEaYi8gmLRI/CInt/2/Mz5Jz9bK/yC3Dzj+DIefPQQ9Kk/OPieEB5y+Gw1y/Yd2ix00uv
+	EdxJDAPYsaZHOFAw==
+From: "tip-bot2 for Andrew Cooper" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cpu] x86/cpu/intel: Drop stray FAM6 check with new Intel
+ CPU model defines
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240529183605.17520-1-andrew.cooper3@citrix.com>
+References: <20240529183605.17520-1-andrew.cooper3@citrix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] fs/file.c: add fast path in alloc_fd()
-To: Mateusz Guzik <mjguzik@gmail.com>
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240622154904.3774273-1-yu.ma@intel.com>
- <20240622154904.3774273-2-yu.ma@intel.com>
- <20240625115257.piu47hzjyw5qnsa6@quack3>
- <20240625125309.y2gs4j5jr35kc4z5@quack3>
- <87a1279c-c5df-4f3b-936d-c9b8ed58f46e@intel.com>
- <20240626115427.d3x7g3bf6hdemlnq@quack3>
- <CAGudoHEkw=cRG1xFHU02YjkM2+MMS2vkY_moZ2QUjAToEzbR3g@mail.gmail.com>
- <20240627-laufschuhe-hergibt-8158b7b6b206@brauner>
- <32ac6edc-62b4-405d-974f-afe1e718114d@intel.com>
- <CAGudoHE5ROsy_hZB9uZjcjko0+=DbsUtBkmX9D1K1RG1GWrNbg@mail.gmail.com>
-From: "Ma, Yu" <yu.ma@intel.com>
-Content-Language: en-US
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- viro@zeniv.linux.org.uk, edumazet@google.com, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, pan.deng@intel.com, tianyou.li@intel.com,
- tim.c.chen@intel.com, tim.c.chen@linux.intel.com, yu.ma@intel.com
-In-Reply-To: <CAGudoHE5ROsy_hZB9uZjcjko0+=DbsUtBkmX9D1K1RG1GWrNbg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Message-ID: <171967129041.2215.8478111408430544596.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the x86/cpu branch of tip:
 
-On 6/28/2024 3:59 AM, Mateusz Guzik wrote:
-> On Thu, Jun 27, 2024 at 8:27 PM Ma, Yu <yu.ma@intel.com> wrote:
->> 2. For fast path implementation, the essential and simple point is to
->> directly return an available bit if there is free bit in [0-63]. I'd
->> emphasize that it does not only improve low number of open fds (even it
->> is the majority case on system as Honza agreed), but also improve the
->> cases that lots of fds open/close frequently with short task (as per the
->> algorithm, lower bits will be prioritized to allocate after being
->> recycled). Not only blogbench, a synthetic benchmark, but also the
->> realistic scenario as claimed in f3f86e33dc3d("vfs: Fix pathological
->> performance case for __alloc_fd()"), which literally introduced this
->> 2-levels bitmap searching algorithm to vfs as we see now.
-> I don't understand how using next_fd instead is supposed to be inferior.
->
-> Maybe I should clarify that by API contract the kernel must return the
-> lowest free fd it can find. To that end it maintains the next_fd field
-> as a hint to hopefully avoid some of the search work.
->
-> In the stock kernel the first thing done in alloc_fd is setting it as
-> a starting point:
->          fdt = files_fdtable(files);
->          fd = start;
->          if (fd < files->next_fd)
->                  fd = files->next_fd;
->
-> that is all the calls which come here with 0 start their search from
-> next_fd position.
->
-> Suppose you implemented the patch as suggested by me and next_fd fits
-> the range of 0-63. Then you get the benefit of lower level bitmap
-> check just like in the patch you submitted, but without having to
-> first branch on whether you happen to be in that range.
->
-> Suppose next_fd is somewhere higher up, say 80. With your general
-> approach the optimization wont be done whatsoever or it will be
-> attempted at the 0-63 range when it is an invariant it finds no free
-> fds.
->
-> With what I'm suggesting the general idea of taking a peek at the
-> lower level bitmap can be applied across the entire fd space. Some
-> manual mucking will be needed to make sure this never pulls more than
-> one cacheline, easiest way out I see would be to align next_fd to
-> BITS_PER_LONG for the bitmap search purposes.
+Commit-ID:     34b3fc558b537bdf99644dcde539e151716f6331
+Gitweb:        https://git.kernel.org/tip/34b3fc558b537bdf99644dcde539e151716f6331
+Author:        Andrew Cooper <andrew.cooper3@citrix.com>
+AuthorDate:    Wed, 29 May 2024 19:36:05 +01:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Sat, 29 Jun 2024 16:10:37 +02:00
 
-Some misunderstanding here, Guzik, I thought you felt not so worth for 
-fast path in previous feedback, so the whole message sent just wanna say 
-we still think the original idea is reasonable. Back to the point here, 
-the way to implement it in find_next_fd() by searching the word with 
-next_fd makes sense and OK to me. It's efficient, concise and should 
-bring us the expected benefits. I'll re-measure the data for reference 
-based on the code proposed by you and Honza.
+x86/cpu/intel: Drop stray FAM6 check with new Intel CPU model defines
 
-> Outside of the scope of this patchset, but definitely worth
-> considering, is an observation that this still pulls an entire
-> cacheline worth of a bitmap (assuming it grew). If one could assume
-> that the size is always a multiply of 64 bytes (which it is after
-> first expansion) the 64 byte scan could be entirely inlined -- there
-> is quite a bit of fd fields in this range we may as well scan in hopes
-> of avoiding looking at the higher level bitmap, after all we already
-> paid for fetching it. This would take the optimization to its logical
-> conclusion.
->
-> Perhaps it would be ok to special-case the lower bitmap to start with
-> 64 bytes so that there would be no need to branch on it.
+The outer if () should have been dropped when switching to c->x86_vfm.
+
+Fixes: 6568fc18c2f6 ("x86/cpu/intel: Switch to new Intel CPU model defines")
+Signed-off-by: Andrew Cooper <andrew.cooper3@citrix.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Acked-by: Tony Luck <tony.luck@intel.com>
+Link: https://lore.kernel.org/r/20240529183605.17520-1-andrew.cooper3@citrix.com
+---
+ arch/x86/kernel/cpu/intel.c | 18 +++++++-----------
+ 1 file changed, 7 insertions(+), 11 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index a813089..a9ea0db 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -294,17 +294,13 @@ static void early_init_intel(struct cpuinfo_x86 *c)
+ 	}
+ 
+ 	/* Penwell and Cloverview have the TSC which doesn't sleep on S3 */
+-	if (c->x86 == 6) {
+-		switch (c->x86_vfm) {
+-		case INTEL_ATOM_SALTWELL_MID:
+-		case INTEL_ATOM_SALTWELL_TABLET:
+-		case INTEL_ATOM_SILVERMONT_MID:
+-		case INTEL_ATOM_AIRMONT_NP:
+-			set_cpu_cap(c, X86_FEATURE_NONSTOP_TSC_S3);
+-			break;
+-		default:
+-			break;
+-		}
++	switch (c->x86_vfm) {
++	case INTEL_ATOM_SALTWELL_MID:
++	case INTEL_ATOM_SALTWELL_TABLET:
++	case INTEL_ATOM_SILVERMONT_MID:
++	case INTEL_ATOM_AIRMONT_NP:
++		set_cpu_cap(c, X86_FEATURE_NONSTOP_TSC_S3);
++		break;
+ 	}
+ 
+ 	/*
 
