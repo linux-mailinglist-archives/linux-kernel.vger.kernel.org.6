@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-234904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00CDD91CC41
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 13:10:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F5E091CC42
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 13:10:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E9FA1C21288
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 11:10:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED409281987
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 11:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC3144C93;
-	Sat, 29 Jun 2024 11:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04D1545022;
+	Sat, 29 Jun 2024 11:10:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IF9pcmmI"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FSyuMovX"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D4E39FD9
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 11:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E843BBCB
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 11:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719659435; cv=none; b=XvS+ES3IDFx74wiGK67swOPcDnI1F5nLRCakAqkZaSAVX0Ixu4KWDXzb6QuueFv39tWyYGH4k1RzPN7rLSSIhLBtToQSbLAVZihsUXZiGVY+xhfYrhfEn1qiWsp6p+80tc6PsfL1CimlVD41KtJuvVE9vDJc3DgSaQBlFz0/lEM=
+	t=1719659443; cv=none; b=QRvKh2RjBNKrTGPBfKhPwHMofVaM9Jd+pnIiFIRlQUcTv/RdJzKaEr3YoyPHHvOLbmu6MDs7dGgaQsjI7duPtS9e2hSGiTYNyi09ViquyRWd/2Usu4VIAy9GkDdITRfkphNx/Q3jQVSTPNpZBki+OXFWd2tGxh3ssrS2u/Lo5pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719659435; c=relaxed/simple;
-	bh=qowpaKq/OhdJi8ITdojZT8NtJ5JQXS8Eub32ge7BcM8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZygcE6IyzxG/ZuNzErpPhWtxzc878bMHiKvwC8mApiNLAS1U5jmW055u7vXOUeojJuIF6lvzMKD5ZL/hKHpdf0Rh/EOYWK7usdfOJRccB49Z6Mvg0VUZKyFZAYPxfoaHiXWq/OQTje81rV7mrGGvT18l1lyAqXyhp8eAm2aaVp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IF9pcmmI; arc=none smtp.client-ip=209.85.214.176
+	s=arc-20240116; t=1719659443; c=relaxed/simple;
+	bh=SGq2hW/NvZoA82j/tEFoRYZkFisE57WjWOUttKoRE0s=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=QR3zDvYc7Hyg+UU7kVG391TQQMyrVw4TSxJJ+/WaYXdvOWJyGL4ynaaD0eo3HywU5Vx6pdJPJJNYuCCk/TDVyeYzoejMZujjiE93LIooK4g/Jad/Q0d3nmaX6ptkbUSz78pjN9XC8+FM1Bg8SpetTCZQmSbQfZXcOfYEB/FOltw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FSyuMovX; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f70c457823so7403075ad.3
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 04:10:33 -0700 (PDT)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f480624d10so10574195ad.1
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 04:10:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719659433; x=1720264233; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pBAcVgcZQQmUaocHAdNszX5FkxHdKW1jcpkzZ5MX9kQ=;
-        b=IF9pcmmIoyJVjBG7ANVCW0Z8W/JpMoJCHrIC+xLSzM1/akI442FBKnBgtAfJ/ewjJi
-         ZNPCkR29gUHRzfsvLq9Ai4HHgC+F01pnXy5s7Xf+Nh2EadjA2XSTsnuNaDAHGwIxUIiM
-         H4HCLXezdGmPd7CMvfCjyRmcfF/5wR5Mv3vgV4HE7aMM/G5ofhpRg6qVR0AZSPMyVnZN
-         tFbl6TmRITkvV21ctah2PuqSoskvcVheFvmDUdhywnTvkq7Wx1Aysw2riVrnKQeMB0vz
-         u9ykl7YNFQsXZmq6piYPNh0b1bzsq/YzmInM8m4xhFK333PqF05dLCC5ykyrmBnZH/00
-         Ap2w==
+        d=gmail.com; s=20230601; t=1719659441; x=1720264241; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VIIRuBxsg8MoTkqvJ2vYF4yyI+YXFJLITJS/F7oC53Q=;
+        b=FSyuMovX0LUNQF8M5W+5BmHaLnA6FI3pYeGPJ4OSVwIFkmvFaMKcxnh3E1mobNFPub
+         4S+9wCU7RTpkCaLIYmSFvyR4hmL1zhKgshiDwwkvRqiHmAbLRcqkss9r6QYK7fnlZkK0
+         neU4XQRK+pmex5M7xXpJ0lyC+nT8ygJOFnezWRm71O4fCG8D9nVNJ1T86D12tr+I2uwA
+         fccj5S14FaF0rxTV4CAIlgPHOqPSSKSanrUU8rk4V/bm1Yb9r9FJicnu09HM767RMuel
+         io19XCwqcckVxa0pNR9za+4DrBla1X8f2h9vcRoTU6ICE0Syypgt7+Pp9XXirBlMh5Qy
+         M/tQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719659433; x=1720264233;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pBAcVgcZQQmUaocHAdNszX5FkxHdKW1jcpkzZ5MX9kQ=;
-        b=GKQzoDEVq5cjkMzAStXlHzDjMNHzqQLfeclBj+KEN9I1mea4M0aOevLc0ciUp2Y87a
-         UOSpQBXzpfXJRasy5CNsuYmJ5BPMCDwrbnBPRI7BfP7YEMVqNIYmOjFoC336Mx/W0iC6
-         EIWmpco+FMEw41uX84RClCLRBYPcCSZGTc5NB8uzathktj9EuSoiR9BeOzf2697CasnW
-         f67N7VHXa6Xn84sox7KFY3UYXa0vxV3DsNL8wcnrhit0OZARoazjaabiTinO7h5DHwlc
-         fruYtapXqKMhYLkNx310XrOtMOmuUZ4+OXAPJWa5ALyVb5Tsb1dAtB2QkQC2bdkT1FtB
-         /DHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUlwWOykVSyaTCvHEwozV6ByKGr9coDWxYpIn/VwOgiBlVNbnnuvzamzWJACWGTFsjQ2bywmhgD3ACyhfOJfbC0uX+geEYe8twppESC
-X-Gm-Message-State: AOJu0Yzk4BPx/7k4EzllksP1D6aajnF/TPOOrNvAqhucwFixPpfoXq8P
-	6OPzC5Vdc7HJirDgpySkQh7i4I2oDHwWUiXdr4L7uHnpk6rwtyeP
-X-Google-Smtp-Source: AGHT+IFcma5rRXL35Rr9ot3u/wZrnRCfziW0eE4+61wGxHzyqaFYi4s2Hx7oY/SVvwtFUFY0PE5FDQ==
-X-Received: by 2002:a17:902:e546:b0:1f6:fcd9:5b86 with SMTP id d9443c01a7336-1fadbc73dcemr3582105ad.12.1719659432559;
-        Sat, 29 Jun 2024 04:10:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719659441; x=1720264241;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VIIRuBxsg8MoTkqvJ2vYF4yyI+YXFJLITJS/F7oC53Q=;
+        b=K5GJei1iZEecsWOgpJDoWibgYLnMzPD3si3fc+F4JZ3HLgzr4WdiHdMixeUgJqDHcy
+         qKs8YTKGChvMY62Wlm8DKMAkEU+O9cTnjsen+7QhnAzSho+1z2+oAe6F96T7s+vODPai
+         D+HOtD+zeDd75yAuNs6o8+xnvnCkdqBeYuRnTWk36Z+p65NHbKUo00ZRc9kj8+3V+Pqx
+         ZLv4mJm2UxGCL+TNSUdOrDNwjKePlSNtQEQnUwtFDCJSK0yr5E6SWZ81+JGXx3sPJ+yJ
+         9Hk5XTT4Frtwmo9cUloZOpxL5a5WJjymf9EyXxGYlZwFyyJiLhTSN1I0J4kd66jFgx2O
+         cU5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW9VNdwh06FQXljEPEXw4l/O/8wQUng3iZOzQ9QM7phFoBNiHQKpHgUU7L8m4Qk9WRNNTmUsBDaWnTcp/jh/gyMSj03TRa7E0Rdj6Z0
+X-Gm-Message-State: AOJu0YzlUyHaiZjNTlDTljeap5t6ULgYVr+tzoKj6hGEaz32/vRUp97v
+	yhMFjWkuc3rw9tLaLnqc9jec9ihSwyLx2LSrxHUIsbBL6N+aXYUd
+X-Google-Smtp-Source: AGHT+IG6qDn8EOGdMtx+wBwudZlM8Ulw9rvzL2rVxiK7pncEZX4lJDneiLE4Y/g+u+PcPoP0vLfGKQ==
+X-Received: by 2002:a17:902:d506:b0:1f7:1706:25ba with SMTP id d9443c01a7336-1fadbc84427mr5112845ad.15.1719659440685;
+        Sat, 29 Jun 2024 04:10:40 -0700 (PDT)
 Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac1596920sm30068975ad.268.2024.06.29.04.10.24
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac1596920sm30068975ad.268.2024.06.29.04.10.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Jun 2024 04:10:32 -0700 (PDT)
+        Sat, 29 Jun 2024 04:10:40 -0700 (PDT)
 From: Barry Song <21cnbao@gmail.com>
 To: akpm@linux-foundation.org,
 	linux-mm@kvack.org
@@ -88,10 +90,12 @@ Cc: chrisl@kernel.org,
 	shakeel.butt@linux.dev,
 	senozhatsky@chromium.org,
 	minchan@kernel.org
-Subject: [PATCH RFC v4 0/2] mm: support mTHP swap-in for zRAM-like swapfile
-Date: Sat, 29 Jun 2024 23:10:08 +1200
-Message-Id: <20240629111010.230484-1-21cnbao@gmail.com>
+Subject: [PATCH RFC v4 1/2] mm: swap: introduce swapcache_prepare_nr and swapcache_clear_nr for large folios swap-in
+Date: Sat, 29 Jun 2024 23:10:09 +1200
+Message-Id: <20240629111010.230484-2-21cnbao@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240629111010.230484-1-21cnbao@gmail.com>
+References: <20240629111010.230484-1-21cnbao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,113 +106,253 @@ Content-Transfer-Encoding: 8bit
 
 From: Barry Song <v-songbaohua@oppo.com>
 
-In an embedded system like Android, more than half of anonymous memory is
-actually stored in swap devices such as zRAM. For instance, when an app 
-is switched to the background, most of its memory might be swapped out.
+Commit 13ddaf26be32 ("mm/swap: fix race when skipping swapcache") supports
+one entry only, to support large folio swap-in, we need to handle multiple
+swap entries.
 
-Currently, we have mTHP features, but unfortunately, without support
-for large folio swap-ins, once those large folios are swapped out,
-we lose them immediately because mTHP is a one-way ticket.
+Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+---
+ include/linux/swap.h |   4 +-
+ mm/swap.h            |   4 +-
+ mm/swapfile.c        | 114 +++++++++++++++++++++++++------------------
+ 3 files changed, 70 insertions(+), 52 deletions(-)
 
-This is unacceptable and reduces mTHP to merely a toy on systems
-with significant swap utilization.
-
-This patch introduces mTHP swap-in support. For now, we limit mTHP
-swap-ins to contiguous swaps that were likely swapped out from mTHP as
-a whole.
-
-Additionally, the current implementation only covers the SWAP_SYNCHRONOUS
-case. This is the simplest and most common use case, benefiting millions
-of Android phones and similar devices with minimal implementation
-cost. In this straightforward scenario, large folios are always exclusive,
-eliminating the need to handle complex rmap and swapcache issues.
-
-It offers several benefits:
-1. Enables bidirectional mTHP swapping, allowing retrieval of mTHP after
-   swap-out and swap-in.
-2. Eliminates fragmentation in swap slots and supports successful THP_SWPOUT
-   without fragmentation. Based on the observed data [1] on Chris's and Ryan's
-   THP swap allocation optimization, aligned swap-in plays a crucial role
-   in the success of THP_SWPOUT.
-3. Enables zRAM/zsmalloc to compress and decompress mTHP, reducing CPU usage
-   and enhancing compression ratios significantly. We have another patchset
-   to enable mTHP compression and decompression in zsmalloc/zRAM[2].
-
-Using the readahead mechanism to decide whether to swap in mTHP doesn't seem
-to be an optimal approach. There's a critical distinction between pagecache
-and anonymous pages: pagecache can be evicted and later retrieved from disk,
-potentially becoming a mTHP upon retrieval, whereas anonymous pages must
-always reside in memory or swapfile. If we swap in small folios and identify
-adjacent memory suitable for swapping in as mTHP, those pages that have been
-converted to small folios may never transition to mTHP. The process of
-converting mTHP into small folios remains irreversible. This introduces
-the risk of losing all mTHP through several swap-out and swap-in cycles,
-let alone losing the benefits of defragmentation, improved compression
-ratios, and reduced CPU usage based on mTHP compression/decompression.
-
-Conversely, in deploying mTHP on millions of real-world products with this
-feature in OPPO's out-of-tree code[3], we haven't observed any significant
-increase in memory footprint for 64KiB mTHP based on CONT-PTE on ARM64.
-
-[1] https://lore.kernel.org/linux-mm/20240622071231.576056-1-21cnbao@gmail.com/
-[2] https://lore.kernel.org/linux-mm/20240327214816.31191-1-21cnbao@gmail.com/
-[3] OnePlusOSS / android_kernel_oneplus_sm8550 
-https://github.com/OnePlusOSS/android_kernel_oneplus_sm8550/tree/oneplus/sm8550_u_14.0.0_oneplus11
-
--v4:
- Many parts of v3 have been merged into the mm tree with the help on reviewing
- from Ryan, David, Ying and Chris etc. Thank you very much!
- This is the final part to allocate large folios and map them.
-
- * Use Yosry's zswap_never_enabled(), notice there is a bug. I put the bug fix
-   in this v4 RFC though it should be fixed in Yosry's patch
- * lots of code improvement (drop large stack, hold ptl etc) according
-   to Yosry's and Ryan's feedback
- * rebased on top of the latest mm-unstable and utilized some new helpers
-   introduced recently.
-
--v3:
- https://lore.kernel.org/linux-mm/20240304081348.197341-1-21cnbao@gmail.com/
- * avoid over-writing err in __swap_duplicate_nr, pointed out by Yosry,
-   thanks!
- * fix the issue folio is charged twice for do_swap_page, separating
-   alloc_anon_folio and alloc_swap_folio as they have many differences
-   now on
-   * memcg charing
-   * clearing allocated folio or not
-
--v2:
- https://lore.kernel.org/linux-mm/20240229003753.134193-1-21cnbao@gmail.com/
- * lots of code cleanup according to Chris's comments, thanks!
- * collect Chris's ack tags, thanks!
- * address David's comment on moving to use folio_add_new_anon_rmap
-   for !folio_test_anon in do_swap_page, thanks!
- * remove the MADV_PAGEOUT patch from this series as Ryan will
-   intergrate it into swap-out series
- * Apply Kairui's work of "mm/swap: fix race when skipping swapcache"
-   on large folios swap-in as well
- * fixed corrupted data(zero-filled data) in two races: zswap and
-   a part of entries are in swapcache while some others are not
-   in by checking SWAP_HAS_CACHE while swapping in a large folio
-
--v1:
- https://lore.kernel.org/all/20240118111036.72641-1-21cnbao@gmail.com/#t
-
-Barry Song (1):
-  mm: swap: introduce swapcache_prepare_nr and swapcache_clear_nr for
-    large folios swap-in
-
-Chuanhua Han (1):
-  mm: support large folios swapin as a whole for zRAM-like swapfile
-
- include/linux/swap.h  |   4 +-
- include/linux/zswap.h |   2 +-
- mm/memory.c           | 210 +++++++++++++++++++++++++++++++++++-------
- mm/swap.h             |   4 +-
- mm/swap_state.c       |   2 +-
- mm/swapfile.c         | 114 +++++++++++++----------
- 6 files changed, 251 insertions(+), 85 deletions(-)
-
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index e473fe6cfb7a..c0f4f2073ca6 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -481,7 +481,7 @@ extern int get_swap_pages(int n, swp_entry_t swp_entries[], int order);
+ extern int add_swap_count_continuation(swp_entry_t, gfp_t);
+ extern void swap_shmem_alloc(swp_entry_t);
+ extern int swap_duplicate(swp_entry_t);
+-extern int swapcache_prepare(swp_entry_t);
++extern int swapcache_prepare_nr(swp_entry_t entry, int nr);
+ extern void swap_free_nr(swp_entry_t entry, int nr_pages);
+ extern void swapcache_free_entries(swp_entry_t *entries, int n);
+ extern void free_swap_and_cache_nr(swp_entry_t entry, int nr);
+@@ -555,7 +555,7 @@ static inline int swap_duplicate(swp_entry_t swp)
+ 	return 0;
+ }
+ 
+-static inline int swapcache_prepare(swp_entry_t swp)
++static inline int swapcache_prepare_nr(swp_entry_t swp, int nr)
+ {
+ 	return 0;
+ }
+diff --git a/mm/swap.h b/mm/swap.h
+index baa1fa946b34..b96b1157441f 100644
+--- a/mm/swap.h
++++ b/mm/swap.h
+@@ -59,7 +59,7 @@ void __delete_from_swap_cache(struct folio *folio,
+ void delete_from_swap_cache(struct folio *folio);
+ void clear_shadow_from_swap_cache(int type, unsigned long begin,
+ 				  unsigned long end);
+-void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry);
++void swapcache_clear_nr(struct swap_info_struct *si, swp_entry_t entry, int nr);
+ struct folio *swap_cache_get_folio(swp_entry_t entry,
+ 		struct vm_area_struct *vma, unsigned long addr);
+ struct folio *filemap_get_incore_folio(struct address_space *mapping,
+@@ -120,7 +120,7 @@ static inline int swap_writepage(struct page *p, struct writeback_control *wbc)
+ 	return 0;
+ }
+ 
+-static inline void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry)
++static inline void swapcache_clear_nr(struct swap_info_struct *si, swp_entry_t entry, int nr)
+ {
+ }
+ 
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index f7224bc1320c..8f60dd10fdef 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -1352,7 +1352,8 @@ static void swap_entry_free(struct swap_info_struct *p, swp_entry_t entry)
+ }
+ 
+ static void cluster_swap_free_nr(struct swap_info_struct *sis,
+-		unsigned long offset, int nr_pages)
++		unsigned long offset, int nr_pages,
++		unsigned char usage)
+ {
+ 	struct swap_cluster_info *ci;
+ 	DECLARE_BITMAP(to_free, BITS_PER_LONG) = { 0 };
+@@ -1362,7 +1363,7 @@ static void cluster_swap_free_nr(struct swap_info_struct *sis,
+ 	while (nr_pages) {
+ 		nr = min(BITS_PER_LONG, nr_pages);
+ 		for (i = 0; i < nr; i++) {
+-			if (!__swap_entry_free_locked(sis, offset + i, 1))
++			if (!__swap_entry_free_locked(sis, offset + i, usage))
+ 				bitmap_set(to_free, i, 1);
+ 		}
+ 		if (!bitmap_empty(to_free, BITS_PER_LONG)) {
+@@ -1396,7 +1397,7 @@ void swap_free_nr(swp_entry_t entry, int nr_pages)
+ 
+ 	while (nr_pages) {
+ 		nr = min_t(int, nr_pages, SWAPFILE_CLUSTER - offset % SWAPFILE_CLUSTER);
+-		cluster_swap_free_nr(sis, offset, nr);
++		cluster_swap_free_nr(sis, offset, nr, 1);
+ 		offset += nr;
+ 		nr_pages -= nr;
+ 	}
+@@ -3382,7 +3383,7 @@ void si_swapinfo(struct sysinfo *val)
+ }
+ 
+ /*
+- * Verify that a swap entry is valid and increment its swap map count.
++ * Verify that nr swap entries are valid and increment their swap map counts.
+  *
+  * Returns error code in following case.
+  * - success -> 0
+@@ -3392,66 +3393,88 @@ void si_swapinfo(struct sysinfo *val)
+  * - swap-cache reference is requested but the entry is not used. -> ENOENT
+  * - swap-mapped reference requested but needs continued swap count. -> ENOMEM
+  */
+-static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
++static int __swap_duplicate_nr(swp_entry_t entry, unsigned char usage, int nr)
+ {
+ 	struct swap_info_struct *p;
+ 	struct swap_cluster_info *ci;
+ 	unsigned long offset;
+ 	unsigned char count;
+ 	unsigned char has_cache;
+-	int err;
++	int err, i;
+ 
+ 	p = swp_swap_info(entry);
+ 
+ 	offset = swp_offset(entry);
++	VM_WARN_ON(nr > SWAPFILE_CLUSTER - offset % SWAPFILE_CLUSTER);
+ 	ci = lock_cluster_or_swap_info(p, offset);
+ 
+-	count = p->swap_map[offset];
++	err = 0;
++	for (i = 0; i < nr; i++) {
++		count = p->swap_map[offset + i];
+ 
+-	/*
+-	 * swapin_readahead() doesn't check if a swap entry is valid, so the
+-	 * swap entry could be SWAP_MAP_BAD. Check here with lock held.
+-	 */
+-	if (unlikely(swap_count(count) == SWAP_MAP_BAD)) {
+-		err = -ENOENT;
+-		goto unlock_out;
+-	}
++		/*
++		 * swapin_readahead() doesn't check if a swap entry is valid, so the
++		 * swap entry could be SWAP_MAP_BAD. Check here with lock held.
++		 */
++		if (unlikely(swap_count(count) == SWAP_MAP_BAD)) {
++			err = -ENOENT;
++			goto unlock_out;
++		}
+ 
+-	has_cache = count & SWAP_HAS_CACHE;
+-	count &= ~SWAP_HAS_CACHE;
+-	err = 0;
++		has_cache = count & SWAP_HAS_CACHE;
++		count &= ~SWAP_HAS_CACHE;
+ 
+-	if (usage == SWAP_HAS_CACHE) {
++		if (usage == SWAP_HAS_CACHE) {
++			/* set SWAP_HAS_CACHE if there is no cache and entry is used */
++			if (!has_cache && count)
++				continue;
++			else if (has_cache)		/* someone else added cache */
++				err = -EEXIST;
++			else				/* no users remaining */
++				err = -ENOENT;
+ 
+-		/* set SWAP_HAS_CACHE if there is no cache and entry is used */
+-		if (!has_cache && count)
+-			has_cache = SWAP_HAS_CACHE;
+-		else if (has_cache)		/* someone else added cache */
+-			err = -EEXIST;
+-		else				/* no users remaining */
+-			err = -ENOENT;
++		} else if (count || has_cache) {
+ 
+-	} else if (count || has_cache) {
++			if ((count & ~COUNT_CONTINUED) < SWAP_MAP_MAX)
++				continue;
++			else if ((count & ~COUNT_CONTINUED) > SWAP_MAP_MAX)
++				err = -EINVAL;
++			else if (swap_count_continued(p, offset + i, count))
++				continue;
++			else
++				err = -ENOMEM;
++		} else
++			err = -ENOENT;			/* unused swap entry */
+ 
+-		if ((count & ~COUNT_CONTINUED) < SWAP_MAP_MAX)
++		if (err)
++			goto unlock_out;
++	}
++
++	for (i = 0; i < nr; i++) {
++		count = p->swap_map[offset + i];
++		has_cache = count & SWAP_HAS_CACHE;
++		count &= ~SWAP_HAS_CACHE;
++
++		if (usage == SWAP_HAS_CACHE)
++			has_cache = SWAP_HAS_CACHE;
++		else if ((count & ~COUNT_CONTINUED) < SWAP_MAP_MAX)
+ 			count += usage;
+-		else if ((count & ~COUNT_CONTINUED) > SWAP_MAP_MAX)
+-			err = -EINVAL;
+-		else if (swap_count_continued(p, offset, count))
+-			count = COUNT_CONTINUED;
+ 		else
+-			err = -ENOMEM;
+-	} else
+-		err = -ENOENT;			/* unused swap entry */
++			count = COUNT_CONTINUED;
+ 
+-	if (!err)
+-		WRITE_ONCE(p->swap_map[offset], count | has_cache);
++		WRITE_ONCE(p->swap_map[offset + i], count | has_cache);
++	}
+ 
+ unlock_out:
+ 	unlock_cluster_or_swap_info(p, ci);
+ 	return err;
+ }
+ 
++static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
++{
++	return __swap_duplicate_nr(entry, usage, 1);
++}
++
+ /*
+  * Help swapoff by noting that swap entry belongs to shmem/tmpfs
+  * (in which case its reference count is never incremented).
+@@ -3485,22 +3508,17 @@ int swap_duplicate(swp_entry_t entry)
+  * -EEXIST means there is a swap cache.
+  * Note: return code is different from swap_duplicate().
+  */
+-int swapcache_prepare(swp_entry_t entry)
++int swapcache_prepare_nr(swp_entry_t entry, int nr)
+ {
+-	return __swap_duplicate(entry, SWAP_HAS_CACHE);
++	return __swap_duplicate_nr(entry, SWAP_HAS_CACHE, nr);
+ }
+ 
+-void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry)
++void swapcache_clear_nr(struct swap_info_struct *si, swp_entry_t entry, int nr)
+ {
+-	struct swap_cluster_info *ci;
+-	unsigned long offset = swp_offset(entry);
+-	unsigned char usage;
++	pgoff_t offset = swp_offset(entry);
+ 
+-	ci = lock_cluster_or_swap_info(si, offset);
+-	usage = __swap_entry_free_locked(si, offset, SWAP_HAS_CACHE);
+-	unlock_cluster_or_swap_info(si, ci);
+-	if (!usage)
+-		free_swap_slot(entry);
++	VM_WARN_ON(nr > SWAPFILE_CLUSTER - offset % SWAPFILE_CLUSTER);
++	cluster_swap_free_nr(si, offset, nr, SWAP_HAS_CACHE);
+ }
+ 
+ struct swap_info_struct *swp_swap_info(swp_entry_t entry)
 -- 
 2.34.1
 
