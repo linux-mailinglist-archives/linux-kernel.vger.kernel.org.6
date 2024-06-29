@@ -1,154 +1,160 @@
-Return-Path: <linux-kernel+bounces-234821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F90891CB24
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 07:00:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDDF391CB26
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 07:00:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47E21284D55
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 05:00:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ACE01F23768
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 05:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E80E142624;
-	Sat, 29 Jun 2024 04:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D02EB1EB31;
+	Sat, 29 Jun 2024 04:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fvcNo7j1"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="mcK/EMvC"
+Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazolkn19010006.outbound.protection.outlook.com [52.103.66.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0FF013DDDA
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 04:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719636913; cv=none; b=KDfBFh4IBBMCbZZ+YXJMIeHNehJFJBDhnjb4XsF4iqyKIMjzh/554zqER7piJfqevEI3wSgYRdgxmpLN0pLPlQSlyRikN+f9QTo1M8FmurYDVR6QCxjXgTFDouaMllnF37pe1PSB4HBltZVBFwu28TwR9TIVlSMySKb4k5IEa9E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719636913; c=relaxed/simple;
-	bh=LHUR1TtI8mjnffStNAsHkz9pS7nlHhMp1tJRMZ9MeSg=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=jH6E089Fz1dJf93jB88OfX/5as/q3yMLaOy0r9+ykxgM8pjnbYxHyBrty0tzwb558H+RRlA0j3UdBKVMo/nwKzBPx1zW1rR0GuUCWPn9g57D12mqfhD9H7Os9KfQZId/HxkGmis4oLZvpwwofCHh2Jrb63CTcK150EkBz4f4lG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fvcNo7j1; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dfa7a8147c3so2305751276.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 21:55:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719636911; x=1720241711; darn=vger.kernel.org;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5I8Dk3Jx18DLwgnut7bHcO920rFAKP8Txv5pQFBGNLA=;
-        b=fvcNo7j13pqJty/CVGWl75FCEgaUjN2YrgxfkgIA5e2YUzL1IWEzwRMVkcLb0XmbNZ
-         xGydguIpDITqpARLL5xRLp1kfAUJpFiTmfrktGtxQ3EGlUGnZCIrSL9AcO1FGBSBK6VD
-         09Otdn0RrF1F0LAP1XQz53JfCEqGiEAZByvU6veSpdst8E0tlZ2u8pP1BR+pq6NzOjLg
-         No3Efkl6VG3rbVzlvilkzZF7Jh0wpQfOiJ8rjUWkQIl35ofvZmabJLnarBWWHIst7Msk
-         JlBPty+vIaZyfgmA7ooJumP3SykEzvIy4ZXlJ/RfWVK5pcuys7kHAN2JSpcR4mhCQOIW
-         8Yfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719636911; x=1720241711;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5I8Dk3Jx18DLwgnut7bHcO920rFAKP8Txv5pQFBGNLA=;
-        b=gaJmyO7G8Ztj4mXYn141+UGkJeyXzUhc0lq14V/yB86RKMvbr7mnH/WKkt6g81+zip
-         uhTo8MSq+CUjalpS+oXfWXoVYRfkeEXUexeZ80/3I+d1dsWU3Hm89D0SCsaxEIHmALlB
-         DavtQBUKk4ztsLsaBBgUt1it0GNHLOP7okdDMgWCL+h0rTJ/vg5F4rkMDou0F2K72rhd
-         j3aalgfX+HI1ZctVosfqPwm64+th2RpTvcPJyFd2dkOmOYzhJusPboE8/mcmV6q+hLim
-         yW2ZiORDB+o8s9yX5FX4TIcnTlZXI07fhfcp0KGJlz2xh2KCNa2KVEs1yVr2LWPlCHzn
-         deLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9BQMGVeFGM6SYZcz1Qbf54E00LIzLR4H+Zh7Kbu7FyNleFfaFDeQD9E2O/kW/cRHoMTizNYZ3Ou/SvAhNj3V16HuXhau9YNxulW4P
-X-Gm-Message-State: AOJu0YyD3P/EDR0PIDyQXStScHhIBsu6WD7FBc6m0/T+fHMQwBSn2kWw
-	jmbLnrOg4MBwTNUXZsffog5qi87fPE417/AN65UkuV4F+lMgL8ctkpAef16nZGTbURKAT+ME0vJ
-	1DFAISg==
-X-Google-Smtp-Source: AGHT+IHlhj9A+3l7M0c3Zsg//bzFK4sGoQmqySkzynjsb5X2abAc4H7qqAulmEHW+TVVXLld2Zhy5UyS6h0g
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:f9fe:7acd:496e:4edb])
- (user=irogers job=sendgmr) by 2002:a05:6902:150d:b0:e03:554e:f396 with SMTP
- id 3f1490d57ef6-e036eb5c458mr765276.6.1719636910826; Fri, 28 Jun 2024
- 21:55:10 -0700 (PDT)
-Date: Fri, 28 Jun 2024 21:53:50 -0700
-In-Reply-To: <20240629045350.285243-1-irogers@google.com>
-Message-Id: <20240629045350.285243-29-irogers@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03EA1D52D;
+	Sat, 29 Jun 2024 04:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.66.6
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719637157; cv=fail; b=k+RjpZ0gTWjOJFOJQ/dgWKVHXy+ynQQeKhmvusp2N64xuWpiymRONBmj4dWSkuSKD3we5s/mziaVRmvoXAziy9somBJ1a+EjUp9I2CZ74uKWu++Xml6Njku6n/7xdgR2BSKTd67xpLRjt4nP9IkrlBMGLdHdNAhGe6E5U6vKmx4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719637157; c=relaxed/simple;
+	bh=33Si3f+mOXiJy5bA0uzrLMFokCQixm1hYtCcmwhkMFA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=kgneyAS3AeHJPoA0LSOcp5XXiwbFw2gtaplpb+1RZj4V6lTPdjkPgAmOp5sN0f/Qz6aMeAz7sHzvsk4I7nq7jm2J84pP1dHXilLsbZK1nF/tRzHoPSVIIscJ7vxnMGdV68iVcLT7RNMKcA1COGvBkrnfmfsry8KfFnfSmYuTdIg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=mcK/EMvC; arc=fail smtp.client-ip=52.103.66.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=azOVPvdWg2gP9t7Q7ZzVPi6zgdONedn/dVbnGVR4MkU899Fdlu1ex16rdfUYhiRyvhnR6rt0VnO0NV0wzoocCKj5P7rPii5doLyeBwdg8dwqYuTqMx1DceIbsoaYXldnVBkrHnQNkcw5WI/GCBFKww6I9dihTISWRbu5PTPMjoA2d+GCzbkA5GqSPcM8jQXykfQEnfRYC8ZhubBi3je5kYNKjRxOSduCYCbZ8j3NNl2feC5Q+zPPakNRtjEuya1C9zaB74B6ro3LycbAeNTKCqNC18sTJBxA44+Pckx4aRyUDZSMuxEOoKWqhOorhA+wfhRLqS/VSE1FON10Pig4RQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ql8OHgZnd3XUNuK8X2KVFxqMF2N1HFA0ONBjLRgWS/w=;
+ b=c8L5EYOOfRftGty4wd9vraw7jdXhTGLEAPlsYnb49sWRN6INqGzEZA7Gz8meg+T9qOzUN4evxYsNFyL+8FrvlxbSxu7hAeuzq5XMPomt/yaqbymM06mu/dXSP2FIkxqHxaPJPtWnF2ojnojCrqvVwdQZIJRflDjRSVZhboF5e9oDZjcY/Nd6aTITlDYi0GRktv6mqHsf1bsJ00ZnPnpfq/3OIZBnLbuoGmCe+c0BZ3AO9MUb9exDUgN3vF6Jw+8oVdZ3rkdBJVl0G+SjJ6uxePQQ+08XH+yFdPBbzpGjo1SHOiApARavMNJZwjcOUmAWGq6aIdadyBTgtYX5G53gFg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ql8OHgZnd3XUNuK8X2KVFxqMF2N1HFA0ONBjLRgWS/w=;
+ b=mcK/EMvCILQg/6tteTSpx3rp41nmQGZwhth7mtWORKnyJXAj1YBgAN5lOKDSpmrXa2drXz1Mer5T5Aemf6VM4jt2bXeW3nWVKoqou/wxgIFHJ8x59PghJloVDFQIaVYvLSJ41xxw1oIG0S+qYRaCO7mRj3ZS+Bv4gWBShHOaUzxJJJAaiaAmEGu6CWNusyxPVIzrPWboqWZObXYDR4Ca5vxDrUdDYZmh1HV+6Ldl/bxYE/k3Boh4z0D1qRHoEZkclT09UGXna48MpoyjSfMRsKeNg7yKo7qnwY0MxS82xEb7jnNGU3SM5GvO3ENMMXwxXBaeJ6nL0M83cEv6KoSKpQ==
+Received: from TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:77::8) by
+ OS3P286MB1829.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:1bf::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7719.28; Sat, 29 Jun 2024 04:59:12 +0000
+Received: from TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::ad5c:3146:bd0d:f17c]) by TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::ad5c:3146:bd0d:f17c%5]) with mapi id 15.20.7719.028; Sat, 29 Jun 2024
+ 04:59:11 +0000
+From: Shiji Yang <yangshiji66@outlook.com>
+To: jiaxun.yang@flygoat.com
+Cc: arnd@arndb.de,
+	bhe@redhat.com,
+	fancer.lancer@gmail.com,
+	gregkh@linuxfoundation.org,
+	javierm@redhat.com,
+	khalid@gonehiking.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	namiltd@yahoo.com,
+	tsbogend@alpha.franken.de,
+	yangshiji66@outlook.com
+Subject: Re: [PATCH V2] mips: kernel: fix detect_memory_region() function
+Date: Sat, 29 Jun 2024 12:56:39 +0800
+Message-ID:
+ <TYCP286MB08959A6EA0BCB900503BA18EBCD12@TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <0ffe69cc-3a82-4d2c-86d8-5ab9b176ce4a@app.fastmail.com>
+References: <0ffe69cc-3a82-4d2c-86d8-5ab9b176ce4a@app.fastmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [TNPdsjdDW0E1H1zMMfvLm2zI5lo0yvda]
+X-ClientProxiedBy: JH0PR04CA0010.apcprd04.prod.outlook.com
+ (2603:1096:990:4::17) To TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:77::8)
+X-Microsoft-Original-Message-ID:
+ <20240629045639.11057-1-yangshiji66@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240629045350.285243-1-irogers@google.com>
-X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
-Subject: [PATCH v3 28/28] perf session: Constify tool
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>, 
-	Will Deacon <will@kernel.org>, James Clark <james.clark@arm.com>, 
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Yicong Yang <yangyicong@hisilicon.com>, 
-	Jonathan Cameron <jonathan.cameron@huawei.com>, Nick Terrell <terrelln@fb.com>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Anshuman Khandual <anshuman.khandual@arm.com>, Song Liu <song@kernel.org>, 
-	Ilkka Koskinen <ilkka@os.amperecomputing.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
-	Huacai Chen <chenhuacai@kernel.org>, Yanteng Si <siyanteng@loongson.cn>, 
-	Sun Haiyong <sunhaiyong@loongson.cn>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYCP286MB0895:EE_|OS3P286MB1829:EE_
+X-MS-Office365-Filtering-Correlation-Id: 803ac03e-0c99-42c2-54b5-08dc97f8373b
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|8060799006|461199028|440099028|4302099013|3412199025|1602099012|1710799026;
+X-Microsoft-Antispam-Message-Info:
+	oHUwmCUG4qiPoq+9geW98kNY1mgILW1/DSBROz5z/BuBCubvo+lEfkAs+GF2k2mOTKTX6aW9JWZRRl+tIdHWRhWmo1cKz1poisQzI7RegzEBlDZHtK7FqYkYgRByG4+AEIpBHXJj7SpTEzZ55+ThUy7iwdsb3R5qLaeDZClA67U2y0KtA7PcMmxPSmHspE3s9gzXdlFlmp0TKxPmp1WjUiGLo2hoKB5tgOuzseHA/rP0zkos8Q3vrBDf/KdA33qrKbowVzRVJ3fK+FZLHEFGQK0u6e4KElMX2basdcY6L79M34VK1tKxyIPVd14H9HKkHeM7MukCJh696MkLC8JL66bTZTkxj9UtHR5DkawFeYuQgw95EUp99WUwzZP1gXfEOgcvNmQU8sIHZKQXmZJZcNjTsUaOZUBvWH0pVP8DW3GT78WlN3w0iwMtBLPoxN+yjGZ3RouKILDK3t26DOrCbYl1YosDd1Sz1eEJtzvqkShGqpJGElHys8A2t1ulBKTn8lTj4U9rOnjTt9Gj+cFz685EbjCCy1dUWJ9he/2H0tDgS0ak7X15MrypS4zD88uvTD9uyT+E7R4P2D+7gmyGxLmJ+nZGWL+KijBUgrWBMemcUd7DxyZiqioRv2qGnYGEvqr/Jh2hdhMD0DlL7V7ljrdvgRnugtoqr2ks4kFoBBvSKeecHk/nMWEOSfd/UoTZGYjqH4baZRGc52fHgJ82BqbF9ItPKivHAkt/8fBmsoboLe/eYwQK89VYofGvYyBK
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?S795QD12mW3b25BFRexpojb+o52397gyIovdFeTODYtEo9PCyH2bjPrl0W5F?=
+ =?us-ascii?Q?LOejXdyLp9yAfF8olE2UGFZ7zUTmT4CP2gC1ry1hwtuzaUEUhyhLJ1vwrz+G?=
+ =?us-ascii?Q?POII6Q2Xc3yXV/IV53gSsO3iueWd8qzGuJjE7jA6Tx1KYeS4rHvrFcO0k315?=
+ =?us-ascii?Q?imW1PIPnAEJklvBbFXsmSLYFFhDIhaz1zKBE7zFwsKNnz6vj9MxKcwARIrhw?=
+ =?us-ascii?Q?tblNKXU15lEmo5Z/nFENV8GSzoSInvgFwhKin7fG8JRts4w1+R3gJCXBEVBN?=
+ =?us-ascii?Q?XkbNAUQQ0ALN5l0LYQFSX2gAsczg6xU/bEOoDnRINfj0zOKz8srhwgro2AwY?=
+ =?us-ascii?Q?BZlMezTqJFq3xdAzD6CARuhKOcsuiYEAoITtXvtoNZGcMNclwd0OzRGCnZzE?=
+ =?us-ascii?Q?k+mftB6DmVn/KDH7mZEjmCuQpNSdcZsY4CA87IRYqbOhfIhhiFclh57Yw1ol?=
+ =?us-ascii?Q?Esdp7zpfgoSADJbh3s93inn6xapBpP+ydfeO0Za09rXbCYJGgBCygY1rIVmY?=
+ =?us-ascii?Q?/jYJa55JEFjSoR5sIzVNOcAVyFNCBDHyeQM8HxOOeuN4+BnQkV7lWxNExh1x?=
+ =?us-ascii?Q?MY3HH10FYGVuuRQuSet45lkB8TevwPxcPwWLql72fVwNZIoNfAQ0LY+I6YhV?=
+ =?us-ascii?Q?EPo3DExEDtJqu74mTE6ZxYRXKJK1UA07gNCCiGBMDhCfSM8waHFejESFTaJA?=
+ =?us-ascii?Q?iu7KcBL8fgyo3AGSKaRoHQkYNIoQyXLZjNKApXy2lREA57FWlTbnp1ECWWrT?=
+ =?us-ascii?Q?1fUWWSPqd/RDsRlNHB1IFYFFtBKUlMLoW2TNtlyWKaf7gq/JLJWdWIuPJxpM?=
+ =?us-ascii?Q?9PYRtIveJBPDryDAH8cXVvrSFn+N13AH39n7i3RGZL7QWXWyd7gy1iVUx7xs?=
+ =?us-ascii?Q?kXouMJOxzKSq7AuAF2I/xYAN/VJRXqR89Z7upuj5OryaaKFryoOFDox4zJ7U?=
+ =?us-ascii?Q?0XPbepv1GErOMG8Svr8bhGv2VobfW8lO60FPvfx+zSF0oZM90dgl7g2ZtIl8?=
+ =?us-ascii?Q?STlMTJPyJQc1cK/uoXOhCIodj4ke5ndhKbtu7fnzD+PKCSwb1UFP1l7ReFZ/?=
+ =?us-ascii?Q?mZVz2CEznCUp3Apq+urvP6vBXvNUi5g2ZgsKULpa7P2PRW2ku9VfgiLSWwRW?=
+ =?us-ascii?Q?O9dOgl7tmAWWS/P8Ei4oL8Fa/PQGD98P8UCPN8xurzG4dQrHvkiRxZO8Apzx?=
+ =?us-ascii?Q?IQ1zSTguNRIQdXJdHs5yqxV3ab8hzwKThjmOIPb+xx+2f7U8CHlKJ7r6uVKL?=
+ =?us-ascii?Q?XLdwIW2f5y93GzRN8fpy?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 803ac03e-0c99-42c2-54b5-08dc97f8373b
+X-MS-Exchange-CrossTenant-AuthSource: TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jun 2024 04:59:11.7786
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3P286MB1829
 
-Make tool const now that all uses are const and
-perf_tool__fill_defaults won't be used. The aim is to better capture
-that sessions don't mutate tools.
+On Tue, 25 Jun 2024 02:58:54 +0100, Jiaxun Yang wrote:
+>> The detect_memory_region() has been broken on 6.6 kernel[1]. This
+>> patch fixes it by:
+>> 1. Do not use memcmp() on unallocated memory, as the new introduced
+>>    fortify dynamic object size check[2] will return unexpected result.
+>> 2. Use a fixed pattern instead of a random function pointer as the
+>>    magic value.
+>> 3. Flip magic value and double check it.
+>> 4. Enable this feature only for 32-bit CPUs. Currently, only ath79 and
+>>    ralink CPUs are using it. And 64-bit CPU doesn't have the KSEG1ADDR
+>>    definition.
+>
+>Hi Shiji,
+>
+>Thanks for your patch.
+>
+>Please don't break 64bit system.
+>Use CKSEG1ADDR_OR_64BIT instead.
+>
+>Thanks
+>- Jiaxun
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/util/session.c | 6 +++---
- tools/perf/util/session.h | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+Thanks. I've updated and tested it in v2 patch.
+https://lore.kernel.org/linux-mips/TYCP286MB0895F65439037ED134FEA7DDBCD12@TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM/
 
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index 6f5692902892..e0eec409e951 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -1771,7 +1771,7 @@ static int __perf_session__process_decomp_events(struct perf_session *session);
- static int __perf_session__process_pipe_events(struct perf_session *session)
- {
- 	struct ordered_events *oe = &session->ordered_events;
--	struct perf_tool *tool = session->tool;
-+	const struct perf_tool *tool = session->tool;
- 	union perf_event *event;
- 	uint32_t size, cur_size = 0;
- 	void *buf = NULL;
-@@ -2183,7 +2183,7 @@ static int __perf_session__process_events(struct perf_session *session)
- 		.in_place_update = session->data->in_place_update,
- 	};
- 	struct ordered_events *oe = &session->ordered_events;
--	struct perf_tool *tool = session->tool;
-+	const struct perf_tool *tool = session->tool;
- 	struct ui_progress prog;
- 	int err;
- 
-@@ -2233,7 +2233,7 @@ static int __perf_session__process_events(struct perf_session *session)
- static int __perf_session__process_dir_events(struct perf_session *session)
- {
- 	struct perf_data *data = session->data;
--	struct perf_tool *tool = session->tool;
-+	const struct perf_tool *tool = session->tool;
- 	int i, ret, readers, nr_readers;
- 	struct ui_progress prog;
- 	u64 total_size = perf_data__size(session->data);
-diff --git a/tools/perf/util/session.h b/tools/perf/util/session.h
-index 7f69baeae7fb..7c8dd6956330 100644
---- a/tools/perf/util/session.h
-+++ b/tools/perf/util/session.h
-@@ -43,7 +43,7 @@ struct perf_session {
- 	u64			one_mmap_offset;
- 	struct ordered_events	ordered_events;
- 	struct perf_data	*data;
--	struct perf_tool	*tool;
-+	const struct perf_tool	*tool;
- 	u64			bytes_transferred;
- 	u64			bytes_compressed;
- 	struct zstd_data	zstd_data;
--- 
-2.45.2.803.g4e1b14247a-goog
-
+Regards,
+Shiji Yang
 
