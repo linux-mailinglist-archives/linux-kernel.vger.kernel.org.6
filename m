@@ -1,298 +1,167 @@
-Return-Path: <linux-kernel+bounces-234742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56EE391CA16
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 03:49:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AB6391CA5F
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 03:56:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F41622830CD
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 01:49:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DB391C21CBE
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 01:56:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6855566A;
-	Sat, 29 Jun 2024 01:49:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31BF3D531;
+	Sat, 29 Jun 2024 01:54:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HdrYmhJy"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="T11DECJE"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D62C2F2C;
-	Sat, 29 Jun 2024 01:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC161E521;
+	Sat, 29 Jun 2024 01:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719625750; cv=none; b=HCuCEOgNSrWiniKkdBR06e6khdO+aiiNMEBtzgMLlfhlESmFvlZb8D4omRiDBenF2BjDHv/FmeFAvFxShSCldQ5PB7UMJ3E3XqIeGeQe4n+y89+N+rYZkk4Yb/Bw19CojnVyZzJUzfGYY/KxFWUZegUI68CDCIVqnv4iLK7Ir4w=
+	t=1719626085; cv=none; b=NuquX953lxGCACgao4tdnE+24BR8IsDNpR6JB6UX5qcADNkjde/q/bwCw1GIzXt+AUSs3H8Eg+OtRHLjij3viAKKdVuOp/5AKw/+MZ0yxDJ8+2xuzYgQXF+r2AIi64YtNJrkG4ZqjvXi4THI67MCYQz/xrbpq/NMpyC0wxHCp8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719625750; c=relaxed/simple;
-	bh=xKD6IBum6Auj1fEhDZ1eYezrsEYFjj7S0WRjkTcWNuE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=BwCKNkSb9rgGwMYR8r+FcKVX42fWS9IrPKk6Pb+EQ+yZbbGlh1Nh5U39SsPvcGl8xEmuRmBs2FB3RqlL3Bce8HcUy8MaWNArAPEA+0MCWvdRjqdHYJCBR6X6Zg/qp7TWWayRBulLkamnDRQL1A8PbEXLeiRH0XIWQKxmkS9pGNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HdrYmhJy; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70698bcd19eso908834b3a.0;
-        Fri, 28 Jun 2024 18:49:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719625748; x=1720230548; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=8rlXgaH8KLmqo1tJ0ciF97QiwLxWcr3xFfDIUUgWK4Y=;
-        b=HdrYmhJyFP7v112Uooc9+X7pp/tdjcyxORDBynD/dgDLk/MWbV7PGQWF2D5EClR6di
-         Q/ebgYuVgAAIt5gMJBUnSrsO6KEmxZccpudU/bRCeq4fDJtF1ciwfIOluAdj63R/oICR
-         M44aEwF2Sfaf8VGlxdhvXm/22jFscvOODf7Zu7Nad4/+Eg45IB3os4jBysGrbO/guiQl
-         dq1HlxtV56aVufqspS2dJGy+hRapKU2LOYJbI889Tt7Xzk/4txzji2YLc6xnBdpjPk8A
-         XnPVclE+6z3DeIzgAiyg3N4H6Q89v3he82tPLzzzztYmiLNM67m4yNrdzTblgkNfDiia
-         IPbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719625748; x=1720230548;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8rlXgaH8KLmqo1tJ0ciF97QiwLxWcr3xFfDIUUgWK4Y=;
-        b=W67+8xUvFHMaETlPT7OlRbje3MJdN1V7aGtvLTab4qTH/4+9x4BR01MAiS5zb3nBmX
-         RgXEzC23UvBB8TxJ2EJwnrcDBjrEqpodlS3V082OAlVPChKJgeXm8Pq+XstfqX0SZms7
-         SzNDFDEAH5PPRI2PJr75rbfgoTPiO9XPX4d3vMLlxcFSlpWjUCodZOeaKE+9Q364mB8N
-         Qi1/47PspOEs19o2tWjWBBFElwDjLsA5v3h0jR0Tz5GHGc9fhRfC+q03ruk1E/HCC1fs
-         ZMJUy+r0XOk9BAFK8QSW7PvQMmfDMwir+ABeC1W3U3dx1HQNIdp0I+i31kBXpe6ASc0d
-         mwCA==
-X-Forwarded-Encrypted: i=1; AJvYcCUE+9GN/UoRL7/5yL+hcjNimH+T3AI2Tt/KL3uq5Z0rB2dnhesrMkUxtyV/QDvrAqK6HuNbG30IXO4iPzDIJLS1bLYf
-X-Gm-Message-State: AOJu0YwjkZHFmcQjuem1mzI/zjL2EemvSzLg492FiGZDM9ey1JxEDMtP
-	X4dyY5pD1Bu4HOyYQmsEPHvc/OzjUUnIwkkJa0fXTJlS4i/X0HQv
-X-Google-Smtp-Source: AGHT+IHjD4fQwqZ1H0rSoUgKm9TvRIAhuHgGbmVsiC/1KOprWC/aBCOGHnMW+G/uqFM7ri6XjKPnvQ==
-X-Received: by 2002:a05:6a00:4649:b0:709:822f:82c2 with SMTP id d2e1a72fcca58-709823ec591mr2029983b3a.12.1719625748220;
-        Fri, 28 Jun 2024 18:49:08 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70802564b50sm2287243b3a.67.2024.06.28.18.49.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 18:49:07 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Fri, 28 Jun 2024 15:49:06 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>
-Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	David Vernet <void@manifault.com>, kernel-team@meta.com
-Subject: [PATCH sched_ext/for-6.11 1/2] sched_ext: Take out ->priq and
- ->flags from scx_dsq_node
-Message-ID: <Zn9oEjsm_1aWb35J@slm.duckdns.org>
+	s=arc-20240116; t=1719626085; c=relaxed/simple;
+	bh=Fg6PdLl0POAiZcXqhSR/3cus8dCmfzYZanJy1PFyjpk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lPiv5/BIf+OWo795FCmZlvuRQQ1luANIxrOTm1xwPKvXnvugMZ3n/pSOLZezYykT1z60gCyhzk0YSQRmHWolqVl+lkAsuNDHL407Bx41EwLMl89dm3uND6cOholWQhdjk0bwl8tmUeBysT5zJl6RCm8/G2RkcZ+Jgg+tL0PR7wE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=T11DECJE; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45SExIdk015121;
+	Sat, 29 Jun 2024 01:54:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=LSw/TZ7Oav1VrpzpoEXPd0
+	pkctbcy6cZJu241gwyaoQ=; b=T11DECJEeXyHfNARum0FlwTRaAZDRnufv4BuAr
+	MPSVncI1XB6rN1RdvPikU9XvCHw9YrV9ShB96QTTIOPlfqlHo50Ftlg/Rd+FczVE
+	nOIayMWn5rIa/rnngj9tcZc8goMnuT4fWcHezsY50hAjltVsrRTSngJBIJfRZ4Cy
+	m1VTFQcx88CgDJJHzTQJ9L8Eyy7+Qjr7baZ0Y/Gu4Oj8TVgVS6cK/RfaH//2jCqn
+	xXm7wx+GBZQL49VkKrhwW04Dfur5HLDfXSayvQVu5G0NEQ1Jif5g06jp7p+JH9ME
+	eRBDXWeCpXhFSrGMxqjwXYT3jms/THb5XsTvQ2/MTlq53vVA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywqsj1sqg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 29 Jun 2024 01:54:06 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45T1s519017271
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 29 Jun 2024 01:54:05 GMT
+Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 28 Jun 2024 18:53:57 -0700
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+To: freedreno <freedreno@lists.freedesktop.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
+        "OPEN
+ FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "Will
+ Deacon" <will@kernel.org>
+CC: Akhil P Oommen <quic_akhilpo@quicinc.com>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Conor Dooley <conor+dt@kernel.org>, "Daniel
+ Vetter" <daniel@ffwll.ch>,
+        David Airlie <airlied@gmail.com>, Joerg Roedel
+	<joro@8bytes.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        Maxime Ripard <mripard@kernel.org>, "Rob
+ Herring" <robh@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>, Sean Paul
+	<sean@poorly.run>,
+        Thomas Zimmermann <tzimmermann@suse.de>, <iommu@lists.linux.dev>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 0/5] Support for Adreno X1-85 GPU
+Date: Sat, 29 Jun 2024 07:19:33 +0530
+Message-ID: <20240629015111.264564-1-quic_akhilpo@quicinc.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 2OGEFCZLGwYLn8DEsMnljkq_2k9Rl8sK
+X-Proofpoint-GUID: 2OGEFCZLGwYLn8DEsMnljkq_2k9Rl8sK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-28_18,2024-06-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
+ bulkscore=0 phishscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
+ mlxscore=0 impostorscore=0 mlxlogscore=999 priorityscore=1501 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2406290013
 
-struct scx_dsq_node contains two data structure nodes to link the containing
-task to a DSQ and a flags field that is protected by the lock of the
-associated DSQ. One reason why they are grouped into a struct is to use the
-type independently as a cursor node when iterating tasks on a DSQ. However,
-when iterating, the cursor only needs to be linked on the FIFO list and the
-rb_node part ends up inflating the size of the iterator data structure
-unnecessarily making it potentially too expensive to place it on stack.
+This series adds support for the Adreno X1-85 GPU found in Qualcomm's
+compute series chipset, Snapdragon X1 Elite (x1e80100). In this new
+naming scheme for Adreno GPU, 'X' stands for compute series, '1' denotes
+1st generation and '8' & '5' denotes the tier and the SKU which it
+belongs.
 
-Take ->priq and ->flags out of scx_dsq_node and put them in sched_ext_entity
-as ->dsq_priq and ->dsq_flags, respectively. scx_dsq_node is renamed to
-scx_dsq_list_node and the field names are renamed accordingly. This will
-help implementing DSQ task iterator that can be allocated on stack.
+X1-85 has major focus on doubling core clock frequency and bandwidth
+throughput. It has a dedicated collapsible Graphics MX rail (gmxc) to
+power the memories and double the number of data channels to improve
+bandwidth to DDR.
 
-No functional change intended.
+Mesa has the necessary bits present already to support this GPU. We are
+able to bring up Gnome desktop by hardcoding "0xffff43050a01" as
+chipid. Also, verified glxgears and glmark2. We have plans to add the
+new chipid support to Mesa in next few weeks, but these patches can go in
+right away to get included in v6.11.
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Suggested-by: Alexei Starovoitov <ast@kernel.org>
-Cc: David Vernet <void@manifault.com>
----
- include/linux/sched/ext.h |   10 ++++----
- init/init_task.c          |    2 -
- kernel/sched/ext.c        |   54 +++++++++++++++++++++++-----------------------
- 3 files changed, 33 insertions(+), 33 deletions(-)
+This series is rebased on top of msm-next branch. P3 cherry-picks cleanly on
+qcom/for-next.
 
---- a/include/linux/sched/ext.h
-+++ b/include/linux/sched/ext.h
-@@ -121,10 +121,8 @@ enum scx_kf_mask {
- 	__SCX_KF_TERMINAL	= SCX_KF_ENQUEUE | SCX_KF_SELECT_CPU | SCX_KF_REST,
- };
- 
--struct scx_dsq_node {
--	struct list_head	list;		/* dispatch order */
--	struct rb_node		priq;		/* p->scx.dsq_vtime order */
--	u32			flags;		/* SCX_TASK_DSQ_* flags */
-+struct scx_dsq_list_node {
-+	struct list_head	node;
- };
- 
- /*
-@@ -133,7 +131,9 @@ struct scx_dsq_node {
-  */
- struct sched_ext_entity {
- 	struct scx_dispatch_q	*dsq;
--	struct scx_dsq_node	dsq_node;	/* protected by dsq lock */
-+	struct scx_dsq_list_node dsq_list;	/* dispatch order */
-+	struct rb_node		dsq_priq;	/* p->scx.dsq_vtime order */
-+	u32			dsq_flags;	/* protected by DSQ lock */
- 	u32			flags;		/* protected by rq lock */
- 	u32			weight;
- 	s32			sticky_cpu;
---- a/init/init_task.c
-+++ b/init/init_task.c
-@@ -102,7 +102,7 @@ struct task_struct init_task __aligned(L
- #endif
- #ifdef CONFIG_SCHED_CLASS_EXT
- 	.scx		= {
--		.dsq_node.list	= LIST_HEAD_INIT(init_task.scx.dsq_node.list),
-+		.dsq_list.node	= LIST_HEAD_INIT(init_task.scx.dsq_list.node),
- 		.sticky_cpu	= -1,
- 		.holding_cpu	= -1,
- 		.runnable_node	= LIST_HEAD_INIT(init_task.scx.runnable_node),
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -1360,9 +1360,9 @@ static bool scx_dsq_priq_less(struct rb_
- 			      const struct rb_node *node_b)
- {
- 	const struct task_struct *a =
--		container_of(node_a, struct task_struct, scx.dsq_node.priq);
-+		container_of(node_a, struct task_struct, scx.dsq_priq);
- 	const struct task_struct *b =
--		container_of(node_b, struct task_struct, scx.dsq_node.priq);
-+		container_of(node_b, struct task_struct, scx.dsq_priq);
- 
- 	return time_before64(a->scx.dsq_vtime, b->scx.dsq_vtime);
- }
-@@ -1378,9 +1378,9 @@ static void dispatch_enqueue(struct scx_
- {
- 	bool is_local = dsq->id == SCX_DSQ_LOCAL;
- 
--	WARN_ON_ONCE(p->scx.dsq || !list_empty(&p->scx.dsq_node.list));
--	WARN_ON_ONCE((p->scx.dsq_node.flags & SCX_TASK_DSQ_ON_PRIQ) ||
--		     !RB_EMPTY_NODE(&p->scx.dsq_node.priq));
-+	WARN_ON_ONCE(p->scx.dsq || !list_empty(&p->scx.dsq_list.node));
-+	WARN_ON_ONCE((p->scx.dsq_flags & SCX_TASK_DSQ_ON_PRIQ) ||
-+		     !RB_EMPTY_NODE(&p->scx.dsq_priq));
- 
- 	if (!is_local) {
- 		raw_spin_lock(&dsq->lock);
-@@ -1419,21 +1419,21 @@ static void dispatch_enqueue(struct scx_
- 			scx_ops_error("DSQ ID 0x%016llx already had FIFO-enqueued tasks",
- 				      dsq->id);
- 
--		p->scx.dsq_node.flags |= SCX_TASK_DSQ_ON_PRIQ;
--		rb_add(&p->scx.dsq_node.priq, &dsq->priq, scx_dsq_priq_less);
-+		p->scx.dsq_flags |= SCX_TASK_DSQ_ON_PRIQ;
-+		rb_add(&p->scx.dsq_priq, &dsq->priq, scx_dsq_priq_less);
- 
- 		/*
- 		 * Find the previous task and insert after it on the list so
- 		 * that @dsq->list is vtime ordered.
- 		 */
--		rbp = rb_prev(&p->scx.dsq_node.priq);
-+		rbp = rb_prev(&p->scx.dsq_priq);
- 		if (rbp) {
- 			struct task_struct *prev =
- 				container_of(rbp, struct task_struct,
--					     scx.dsq_node.priq);
--			list_add(&p->scx.dsq_node.list, &prev->scx.dsq_node.list);
-+					     scx.dsq_priq);
-+			list_add(&p->scx.dsq_list.node, &prev->scx.dsq_list.node);
- 		} else {
--			list_add(&p->scx.dsq_node.list, &dsq->list);
-+			list_add(&p->scx.dsq_list.node, &dsq->list);
- 		}
- 	} else {
- 		/* a FIFO DSQ shouldn't be using PRIQ enqueuing */
-@@ -1442,9 +1442,9 @@ static void dispatch_enqueue(struct scx_
- 				      dsq->id);
- 
- 		if (enq_flags & (SCX_ENQ_HEAD | SCX_ENQ_PREEMPT))
--			list_add(&p->scx.dsq_node.list, &dsq->list);
-+			list_add(&p->scx.dsq_list.node, &dsq->list);
- 		else
--			list_add_tail(&p->scx.dsq_node.list, &dsq->list);
-+			list_add_tail(&p->scx.dsq_list.node, &dsq->list);
- 	}
- 
- 	dsq_mod_nr(dsq, 1);
-@@ -1487,18 +1487,18 @@ static void dispatch_enqueue(struct scx_
- static void task_unlink_from_dsq(struct task_struct *p,
- 				 struct scx_dispatch_q *dsq)
- {
--	if (p->scx.dsq_node.flags & SCX_TASK_DSQ_ON_PRIQ) {
--		rb_erase(&p->scx.dsq_node.priq, &dsq->priq);
--		RB_CLEAR_NODE(&p->scx.dsq_node.priq);
--		p->scx.dsq_node.flags &= ~SCX_TASK_DSQ_ON_PRIQ;
-+	if (p->scx.dsq_flags & SCX_TASK_DSQ_ON_PRIQ) {
-+		rb_erase(&p->scx.dsq_priq, &dsq->priq);
-+		RB_CLEAR_NODE(&p->scx.dsq_priq);
-+		p->scx.dsq_flags &= ~SCX_TASK_DSQ_ON_PRIQ;
- 	}
- 
--	list_del_init(&p->scx.dsq_node.list);
-+	list_del_init(&p->scx.dsq_list.node);
- }
- 
- static bool task_linked_on_dsq(struct task_struct *p)
- {
--	return !list_empty(&p->scx.dsq_node.list);
-+	return !list_empty(&p->scx.dsq_list.node);
- }
- 
- static void dispatch_dequeue(struct rq *rq, struct task_struct *p)
-@@ -1523,8 +1523,8 @@ static void dispatch_dequeue(struct rq *
- 		raw_spin_lock(&dsq->lock);
- 
- 	/*
--	 * Now that we hold @dsq->lock, @p->holding_cpu and @p->scx.dsq_node
--	 * can't change underneath us.
-+	 * Now that we hold @dsq->lock, @p->holding_cpu and @p->scx.dsq_* can't
-+	 * change underneath us.
- 	*/
- 	if (p->scx.holding_cpu < 0) {
- 		/* @p must still be on @dsq, dequeue */
-@@ -2034,7 +2034,7 @@ static void consume_local_task(struct rq
- 	/* @dsq is locked and @p is on this rq */
- 	WARN_ON_ONCE(p->scx.holding_cpu >= 0);
- 	task_unlink_from_dsq(p, dsq);
--	list_add_tail(&p->scx.dsq_node.list, &rq->scx.local_dsq.list);
-+	list_add_tail(&p->scx.dsq_list.node, &rq->scx.local_dsq.list);
- 	dsq_mod_nr(dsq, -1);
- 	dsq_mod_nr(&rq->scx.local_dsq, 1);
- 	p->scx.dsq = &rq->scx.local_dsq;
-@@ -2109,7 +2109,7 @@ retry:
- 
- 	raw_spin_lock(&dsq->lock);
- 
--	list_for_each_entry(p, &dsq->list, scx.dsq_node.list) {
-+	list_for_each_entry(p, &dsq->list, scx.dsq_list.node) {
- 		struct rq *task_rq = task_rq(p);
- 
- 		if (rq == task_rq) {
-@@ -2628,7 +2628,7 @@ static void put_prev_task_scx(struct rq
- static struct task_struct *first_local_task(struct rq *rq)
- {
- 	return list_first_entry_or_null(&rq->scx.local_dsq.list,
--					struct task_struct, scx.dsq_node.list);
-+					struct task_struct, scx.dsq_list.node);
- }
- 
- static struct task_struct *pick_next_task_scx(struct rq *rq)
-@@ -3308,8 +3308,8 @@ void init_scx_entity(struct sched_ext_en
- 	 */
- 	memset(scx, 0, offsetof(struct sched_ext_entity, tasks_node));
- 
--	INIT_LIST_HEAD(&scx->dsq_node.list);
--	RB_CLEAR_NODE(&scx->dsq_node.priq);
-+	INIT_LIST_HEAD(&scx->dsq_list.node);
-+	RB_CLEAR_NODE(&scx->dsq_priq);
- 	scx->sticky_cpu = -1;
- 	scx->holding_cpu = -1;
- 	INIT_LIST_HEAD(&scx->runnable_node);
-@@ -4158,7 +4158,7 @@ static void scx_dump_task(struct seq_buf
- 		  jiffies_delta_msecs(p->scx.runnable_at, dctx->at_jiffies));
- 	dump_line(s, "      scx_state/flags=%u/0x%x dsq_flags=0x%x ops_state/qseq=%lu/%lu",
- 		  scx_get_task_state(p), p->scx.flags & ~SCX_TASK_STATE_MASK,
--		  p->scx.dsq_node.flags, ops_state & SCX_OPSS_STATE_MASK,
-+		  p->scx.dsq_flags, ops_state & SCX_OPSS_STATE_MASK,
- 		  ops_state >> SCX_OPSS_QSEQ_SHIFT);
- 	dump_line(s, "      sticky/holding_cpu=%d/%d dsq_id=%s dsq_vtime=%llu",
- 		  p->scx.sticky_cpu, p->scx.holding_cpu, dsq_id_buf,
+P1, P2 & P3 for Rob Clark
+P4 for Will Deacon
+P5 for Bjorn to pick up.
+
+Changes in v2:
+- Minor update to compatible pattern, '[x]' -> 'x'
+- Increased address space size (Rob)
+- Introduced gmu_chipid in a6xx_info (Rob)
+- Improved fallback logic for gmxc (Dmitry)
+- Rebased on top of msm-next
+- Picked a new patch for arm-mmu bindings update
+- Reordered gpu & gmu reg enties to match schema
+
+Akhil P Oommen (5):
+  dt-bindings: display/msm/gmu: Add Adreno X185 GMU
+  drm/msm/adreno: Add support for X185 GPU
+  drm/msm/adreno: Introduce gmu_chipid for a740 & a750
+  dt-bindings: arm-smmu: Add X1E80100 GPU SMMU
+  arm64: dts: qcom: x1e80100: Add gpu support
+
+ .../devicetree/bindings/display/msm/gmu.yaml  |   4 +
+ .../devicetree/bindings/iommu/arm,smmu.yaml   |   3 +-
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi        | 195 ++++++++++++++++++
+ drivers/gpu/drm/msm/adreno/a6xx_catalog.c     |  20 ++
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.c         |  34 +--
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.c         |   2 +-
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.h         |   1 +
+ drivers/gpu/drm/msm/adreno/adreno_gpu.h       |   5 +
+ 8 files changed, 239 insertions(+), 25 deletions(-)
+
+-- 
+2.45.1
+
 
