@@ -1,76 +1,73 @@
-Return-Path: <linux-kernel+bounces-234902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5FE791CC37
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 13:07:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 561BC91CC3A
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 13:07:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1447A1F21D78
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 11:07:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0DFF1F21DB3
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 11:07:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB9C147A7C;
-	Sat, 29 Jun 2024 11:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C684D8BB;
+	Sat, 29 Jun 2024 11:07:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DyCMUlxU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lFxBooZz"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C782739FD9
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 11:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABD8542A98
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 11:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719659251; cv=none; b=uws7SA3ADPulzigcNMNc6C85vcOuQ+m+30g37KdCV577KKcyoOO7UndFClDqSvl1iKO84wHWlKAXgiqHvw0hnDIZ7kV20t/R+BR+eYakJZfclO+LAmPGtQQc/SZSUDiBe/MibbuXUXqxsHgEJWLwjuBhKgN1K5atDNgEFFa2IBQ=
+	t=1719659253; cv=none; b=Q3ZA6UQtyFsKTEYl56spuHD4zcoG4EiSr0wmtlLHLEq898q4x+ef8xwvQXfGI7C3oJSJi8SqKXH5z7GARqwljWJI3qE1O8y9fKi1TQZyQym1psKx/NdLNZCH7VUQOL7QEWww2XAJZGZdbQZNO6XlxCcFZPkxBkLGJ+Ky32Z7bKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719659251; c=relaxed/simple;
-	bh=NcxFNUMMQezM2LMdc1WYMgJDFmd3gJrEycPqfxG99F4=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=jE97Ry/6TJ+I1fqMylZTQuOZD1sMdf6t3c62TPmM4Yo0v52vWsTnFOamizgYOM45e0QY/tTKEchQ5BTeYZAK6JSryEnJQjZ0yA9VaZLS1Ou4SgkWy9a6GceazSahSXfuzBWi3ONdb2deN9ga2uBGw0f3Ptn8G2AUXYFpnPZEirM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DyCMUlxU; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719659248;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=xeiu4yUjhxRvSoRvsElkoFHjxoTJHRpvHUxDn3uagD0=;
-	b=DyCMUlxUmMAHfqPM9a2OgcFpSOobRUuGyeNNOckjZG/Wn3DlNcd52HAe5n2XNyyCjpTx6c
-	f8JsvSgq5xInMA3y1XCe/hsPIYyA8bdScz9OwiR5o3VdRU8BcGhbS4gaDyvC3MHmYJZlvn
-	I3EH6Dhmj8ukqHgwJHKUjXFEpNZJHdU=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-352-ZtXeLYFeOcKl5tag-2BMjA-1; Sat, 29 Jun 2024 07:07:26 -0400
-X-MC-Unique: ZtXeLYFeOcKl5tag-2BMjA-1
-Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-57d3d594107so1032915a12.3
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 04:07:26 -0700 (PDT)
+	s=arc-20240116; t=1719659253; c=relaxed/simple;
+	bh=A27AZyvz2A7Q9roo7P9DdKR5Zk9tltXk4k5EOFMW2PE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K5hzd6HECMV4hzOeTADBUjcMmYEi7NgKlt0YPZ06L5Slc2InfoGNvp83NW+8DaUi2+KVeC747qtIY2e29r/Q1G22LlnCiL7QAV6TKMdBSlZt6vthXrp8WnGNeOiYhwqMygiufcOPjgf4EwJ6MFHhl+CZDSRobU1YWHTgdzcayM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lFxBooZz; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42567ddf099so10627495e9.3
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 04:07:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719659250; x=1720264050; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oeVOD5CA0cinTFO1deV1ecLyqh6tETXTXZTto3YUbA0=;
+        b=lFxBooZzp7TuRROQ2m3yEzXTLbffcnO3Yilqph9wnTL5E5b+ytlSdn/H63eAoyzpIq
+         6t48CUSaArjELxX3fnsHymiyNuJDKnozisXuU7HoyL6es14C49jC70s4LJgJC/l95Nsd
+         vEy+BmJwIw107Aym36MrVO2NFJ3Eynw621ehigotsjTIZQ9kKYUeWCSZbw7Jeh/cxHaK
+         9lH0Osntyhr1tZWrEjsefdQAy+JuldO1Wc8ySECIUIJGbsDmc2m2UJzPJUfWoUpSbkS4
+         cVBDG6aZMVZHm/QQKoaKzZbaDB8yIR4AjYEkEcHeqs9LyKicoQGg/ClNXts4PaSz8arR
+         Zgwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719659246; x=1720264046;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=xeiu4yUjhxRvSoRvsElkoFHjxoTJHRpvHUxDn3uagD0=;
-        b=MEU2fiIdLURfTJCletijjvqjYN0nMyqL/v5UNLUFFr+eeJgNGXqDv1cq7T2ILaFWM+
-         +tLwMLBzOqt+aCXQ1falC3svzyjtWifgbaozCheRAwMjzszbbYKaKvJS79DKzRdcpIVu
-         HnxD4/dt8RB0wstF5IuNj1h2wsUcLwTasrOcDWQ9Zs7AVfpmtdwNAxK4bQu1hADyLmeO
-         oprelHbBBxDONufyntunoetGCsrBk2hUOXvScrwlcZVJQ3FSeFEachBW1Ha4G6rQ6+LT
-         BL3EItE8CRpDSqfmaVBUrE4WhaPyvs2yKEgHlXlfAHGrdahTxFiy0hl5vTD6DRzpqpGP
-         vndQ==
-X-Gm-Message-State: AOJu0Yzcf+zfjj+GBof7oRs0F2QJWCFvnQwgpg1te8Zipec++Ait9Ewn
-	LDHd5XUC45CATRezdvXzlgzQTBNy5lwYZuOCWwnOr3+mrOHJUEfR/tLG+x37buKu5pqDTLBFhuy
-	v+aWoLHftaHRMFCTMCdu3N1/boF6K8i+5JNHBGwxUQ//NtjyOvr+kpPDgbptsmw==
-X-Received: by 2002:a05:6402:13c5:b0:57d:5ac:7426 with SMTP id 4fb4d7f45d1cf-5879f0c68dcmr617475a12.9.1719659245794;
-        Sat, 29 Jun 2024 04:07:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGKKZ2Whjr0POZ5x7iFcBXdDHfuXZ1a5911pCuil2ybmEGOUa7+r9+7NPJ1vu40qlVCKgzoqg==
-X-Received: by 2002:a05:6402:13c5:b0:57d:5ac:7426 with SMTP id 4fb4d7f45d1cf-5879f0c68dcmr617463a12.9.1719659245292;
-        Sat, 29 Jun 2024 04:07:25 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5861381756esm2154757a12.56.2024.06.29.04.07.24
+        d=1e100.net; s=20230601; t=1719659250; x=1720264050;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oeVOD5CA0cinTFO1deV1ecLyqh6tETXTXZTto3YUbA0=;
+        b=Dxv8xK+C3akxsWQG5CIYv4omN3jYPPHZZT5VHXFSb9AXY3RAq1gnKI/+Kp6OCL0Suw
+         270pxLbE2GNM1cgHGkxkf+aoITr56YeS9j1zy3C/Fv5q9UeJRpAEwkuvhgypIMF8KNqb
+         iRyoBveyN6pmQ5ev7LH+IjjKz5YpyLlP3U2upBP+FyDcNTVwh1BVb9LNxcb6+zixGxL1
+         5HByCapPESHpTLGxSINA/HGuGz30r6dehAb02NCJyjjdRyQ7aIKitE23l6WCJliPiKIQ
+         fvxCPN1Ip9rFGh03p1+cEJjOpc7owazTGMfuAVINokz+fNsrijRAiklHn0Cne3I6Dhzm
+         7PvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9tu8C36n86B+V2KX6pO7RzUFDqfnfeeW7IF3hwpAtsktS3sOzWHjTY1NVTUQ8nyEqhT1HJm/UtRrwvPX/ow1EiFexeM+eLWFAgUnW
+X-Gm-Message-State: AOJu0YxTb6TYUw3a5tG7oAOAHw4iERdasEFCj0QXq66ea9voZgZb6KTp
+	+f6hn8oJmtF4gQ85AOBOvSugFnCtMpJorTFGD7bwOqiIBltR94b75jAdAHlaqx0=
+X-Google-Smtp-Source: AGHT+IFp0LPwn95vvUy4qg44MiPqjUSQeFK9TzL595b4Lm8//Szl2OQ26nmO4n4sJUTNlSJn3a1JJg==
+X-Received: by 2002:a5d:4eca:0:b0:367:1e6:4ab1 with SMTP id ffacd0b85a97d-367756bb503mr390586f8f.33.1719659249815;
+        Sat, 29 Jun 2024 04:07:29 -0700 (PDT)
+Received: from [192.168.0.38] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0cd71esm4641757f8f.21.2024.06.29.04.07.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 29 Jun 2024 04:07:24 -0700 (PDT)
-Message-ID: <e472b2cb-a6bc-4959-9b3d-540930f8118a@redhat.com>
-Date: Sat, 29 Jun 2024 13:07:23 +0200
+        Sat, 29 Jun 2024 04:07:29 -0700 (PDT)
+Message-ID: <620d1bb9-99a4-43b2-8750-8f0f3e490bb7@linaro.org>
+Date: Sat, 29 Jun 2024 12:07:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,105 +75,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: [GIT PULL] platform-drivers-x86 for 6.10-4
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- platform-driver-x86@vger.kernel.org,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Content-Language: en-US, nl
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 3/6] arm64: dts: qcom: sc7280: Add IMX577 camera sensor
+To: Vikram Sharma <quic_vikramsa@quicinc.com>, Robert Foss
+ <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Kapatrala Syed <akapatra@quicinc.com>,
+ Hariram Purushothaman <hariramp@quicinc.com>,
+ cros-qcom-dts-watchers@chromium.org, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Loic Poulain <loic.poulain@linaro.org>, Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-i2c@vger.kernel.org, Hariram Purushothaman
+ <quic_hariramp@quicinc.com>, Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
+References: <20240629-camss_first_post_linux_next-v1-0-bc798edabc3a@quicinc.com>
+ <20240629-camss_first_post_linux_next-v1-3-bc798edabc3a@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20240629-camss_first_post_linux_next-v1-3-bc798edabc3a@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+On 28/06/2024 19:32, Vikram Sharma wrote:
+> Add support for IMX577 camera sensor for SC7280 SoC.
+> 
+> Signed-off-by: Hariram Purushothaman <quic_hariramp@quicinc.com>
+> Signed-off-by: Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
+> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+> ---
+>   arch/arm64/boot/dts/qcom/sc7280.dtsi | 33 +++++++++++++++++++++++++++++++++
+>   1 file changed, 33 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> index 9ac251fec262..1c99ee09a11a 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> @@ -5167,6 +5167,39 @@ cci3_sleep: cci3-sleep-state {
+>   				bias-pull-down;
+>   			};
+>   
+> +			cam2_default: cam2-default {
+> +				rst {
+> +					pins = "gpio78"; /*cam3*/
 
-Here is the third round of fixes for platform-drivers-x86 for 6.10.
+I don't think the /* cam3 */ adds much here TBH.
 
-Highlights:
- -  Fix lg-laptop driver not working with 2024 LG laptop models
- -  Add missing MODULE_DESCRIPTION() macros to various modules
- -  nvsw-sn2201: Add check for platform_device_add_resources
+> +					function = "gpio";
+> +					drive-strength = <2>;
+> +					bias-disable;
+> +				};
+> +
+> +				mclk {
+> +					pins = "gpio67"; /*cam3*/
+> +					function = "cam_mclk";
+> +					drive-strength = <2>; /*RB5 was 16 and i changed to 2 here*/
 
-Regards,
+You can drop that comment too, actually more saliently, what are you 
+changing from 16 to 2 since its being mentioned ?
 
-Hans
-
-
-The following changes since commit 77f1972bdcf7513293e8bbe376b9fe837310ee9c:
-
-  platform/x86/amd/hsmp: Check HSMP support on AMD family of processors (2024-06-03 11:57:28 +0200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.10-4
-
-for you to fetch changes up to 7add1ee34692aabd146b86a8e88abad843ed6659:
-
-  platform/x86: add missing MODULE_DESCRIPTION() macros (2024-06-24 13:33:20 +0200)
-
-----------------------------------------------------------------
-platform-drivers-x86 for v6.10-4
-
-Highlights:
- -  Fix lg-laptop driver not working with 2024 LG laptop models
- -  Add missing MODULE_DESCRIPTION() macros to various modules
- -  nvsw-sn2201: Add check for platform_device_add_resources
-
-The following is an automated git shortlog grouped by driver:
-
-add missing MODULE_DESCRIPTION() macros:
- -  add missing MODULE_DESCRIPTION() macros
-
-lg-laptop:
- -  Use ACPI device handle when evaluating WMAB/WMBB
- -  Change ACPI device id
- -  Remove LGEX0815 hotkey handling
-
-platform/mellanox:
- -  nvsw-sn2201: Add check for platform_device_add_resources
-
-platform/x86/intel:
- -  add missing MODULE_DESCRIPTION() macros
-
-platform/x86/siemens:
- -  add missing MODULE_DESCRIPTION() macros
-
-wireless-hotkey:
- -  Add support for LG Airplane Button
-
-----------------------------------------------------------------
-Armin Wolf (4):
-      platform/x86: wireless-hotkey: Add support for LG Airplane Button
-      platform/x86: lg-laptop: Remove LGEX0815 hotkey handling
-      platform/x86: lg-laptop: Change ACPI device id
-      platform/x86: lg-laptop: Use ACPI device handle when evaluating WMAB/WMBB
-
-Chen Ni (1):
-      platform/mellanox: nvsw-sn2201: Add check for platform_device_add_resources
-
-Jeff Johnson (3):
-      platform/x86/siemens: add missing MODULE_DESCRIPTION() macros
-      platform/x86/intel: add missing MODULE_DESCRIPTION() macros
-      platform/x86: add missing MODULE_DESCRIPTION() macros
-
- drivers/platform/mellanox/nvsw-sn2201.c            |  5 +-
- drivers/platform/x86/amilo-rfkill.c                |  1 +
- drivers/platform/x86/firmware_attributes_class.c   |  1 +
- drivers/platform/x86/ibm_rtl.c                     |  1 +
- drivers/platform/x86/intel/hid.c                   |  1 +
- drivers/platform/x86/intel/pmc/pltdrv.c            |  1 +
- drivers/platform/x86/intel/rst.c                   |  1 +
- drivers/platform/x86/intel/smartconnect.c          |  1 +
- drivers/platform/x86/intel/vbtn.c                  |  1 +
- drivers/platform/x86/lg-laptop.c                   | 89 +++++++++-------------
- .../x86/siemens/simatic-ipc-batt-apollolake.c      |  1 +
- .../x86/siemens/simatic-ipc-batt-elkhartlake.c     |  1 +
- .../platform/x86/siemens/simatic-ipc-batt-f7188x.c |  1 +
- drivers/platform/x86/siemens/simatic-ipc-batt.c    |  1 +
- drivers/platform/x86/siemens/simatic-ipc.c         |  1 +
- drivers/platform/x86/uv_sysfs.c                    |  1 +
- drivers/platform/x86/wireless-hotkey.c             |  3 +
- drivers/platform/x86/xo1-rfkill.c                  |  1 +
- 18 files changed, 56 insertions(+), 56 deletions(-)
-
+---
+bod
 
