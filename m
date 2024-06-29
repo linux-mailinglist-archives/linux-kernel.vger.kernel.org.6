@@ -1,157 +1,135 @@
-Return-Path: <linux-kernel+bounces-234932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 075F891CCEC
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 15:05:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3EB091CCF3
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 15:06:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D9801C21127
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 13:05:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 127361C211DB
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 13:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A54877107;
-	Sat, 29 Jun 2024 13:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF391E4A0;
+	Sat, 29 Jun 2024 13:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fvx13+dx"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E0cOJvXB"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1CFE4205D
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 13:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B587F487
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 13:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719666335; cv=none; b=NaZQJg7xovq6yM3xJ0HzZtQuEVf7FgL3aunjyR3xvXgywJYvRXVxc2HmuUCbXlvnC60FiUu5lyy4abgyZn23tP7Xp6XVVdUZWT4pPKae4iR++15NfcYRpSlfGdLU0jYtovhva0ssPLHIFCkGhTnPk3WRUnciAJkaDIcxSU2j/0U=
+	t=1719666391; cv=none; b=FGAqeGyAsVUNASJs3vDJHWBpvlu2BVIpVDkMbVx4AS3n9i9jV6+6PfG3x7kwzD4+gkVO1HgbtYMvquy8s1D9hF2mE4PPJifVosHXJZEfPGN+HJCdHWkyrRiJiZM0cL+sTfkNqa3XJpgPQe/bgLkFjWfwFwIyes4V7JzA16BsI0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719666335; c=relaxed/simple;
-	bh=+GloaJVSprqCGpULiUI/O36iec3Yuequ8ZLM2WLDhNA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s82XfQfVU6JJR8nuhPo1KgSs1mBYkGNCdKrC16dIkHL2FN8ml0AK/CBnwy9UFnmFeP1l6fQPpyBV+lfi5gCkqV0+B9fKsLHihCs6aSL9H4M7VfpZwA2v6Hbqne64vx+dbkHdeCgUBwJMxgK1bkhMmAYgpA1v68oECwbxNV+tRso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Fvx13+dx; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f9c6e59d34so11413325ad.2
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 06:05:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719666333; x=1720271133; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Hr41jn7CS+JV7JYEOXmHYOhJrr4EACp9o9fXqaxlvEQ=;
-        b=Fvx13+dxBbvCO9u8msJoUvEAv1quxljn6PMdinzrtSpow4qFafKr1PgzG9K3+VrK8V
-         hx2F1y4oMyaOD/vGaJ/y+uzBBt2w9adBd1UyDtCnvVS4eJEqkqcgrllFGXXTckZj59Ot
-         kAM023AAI+GyaE2Ve701KoAEZKJZHJgPi2IOOEhrByPd9MNwZSGjyMNqO6KvKWk/I+sY
-         OoAAQ6d+KhFi7pBONQ/5OZ02OZjQA0/aVA7IoFXWA2OpbJIRVvRswRLiNGdZfzCDmBpg
-         69oum7A7SHU62W8wWgt0zOlUGPJd1PUq1SufyMQwnZf+ysbOcgRERDd/Q8165ePRjzgG
-         RdkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719666333; x=1720271133;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hr41jn7CS+JV7JYEOXmHYOhJrr4EACp9o9fXqaxlvEQ=;
-        b=mYR1k1QvpjfLZDzbTrtzvosKJhywHEFmxjPyNwul8n1LuaBbNTo8YHrUUtTISIJ/1/
-         e0YBhjCWJLBr7LtNdAFhbRBwxnZE61wALWmOfFOUFKDpBeSPL1d+VnqEekKjllkegR+p
-         +jlRr+9I84NwiUlR5px9i3JHIfu2CAV8egCnkUEwVOQqckVqLbaBOXmX9wOKtlIWPtU1
-         rcK4fPUXHLacVMmPGq4mJlnBQWsOdsbnP67y5AvMqJHwB8M5FtzE5FxsD991QaccjpEY
-         WzZ/yKoQIEz3y2VKw1AD0cTxPgONmCbw1e4fM+6192scgAwRBvK6FSAVSHSLnyZcEn9q
-         LvmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVN6/AgffImLPzScaKSBNWPBGLF6BhwRUyHUGINUdDBEUArF0av4mk7FRr787Ke48ql4dUz9GHSDkmzfAFM4b7PdfRo67qTzSrTsow8
-X-Gm-Message-State: AOJu0YyD0NmFbJa3nPfN+1fZZyqjpivrQ+fLO5MwpjZnsHMXdbDD1OWF
-	veVdzW8du5l+mf6572U9Owd2Y9JwCeNab8b/uHAcsUS+850URg3RaTaRTPxiYg==
-X-Google-Smtp-Source: AGHT+IE5aU4sW0gZNOnsBZmQhd5QPQlm2dJswEqAC+AISCYfDs6s10N0soFFT4U1SUdqSjSMRwrfaA==
-X-Received: by 2002:a17:903:2349:b0:1f7:23ee:d496 with SMTP id d9443c01a7336-1fadbcb2064mr6324365ad.30.1719666333190;
-        Sat, 29 Jun 2024 06:05:33 -0700 (PDT)
-Received: from thinkpad ([220.158.156.249])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac1598576sm31531345ad.278.2024.06.29.06.05.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Jun 2024 06:05:32 -0700 (PDT)
-Date: Sat, 29 Jun 2024 18:35:25 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	devicetree@vger.kernel.org, Jason Liu <jason.hui.liu@nxp.com>
-Subject: Re: [PATCH v6 02/10] PCI: imx6: Fix i.MX8MP PCIe EP's occasional
- failure to trigger MSI
-Message-ID: <20240629130525.GC5608@thinkpad>
-References: <20240617-pci2_upstream-v6-0-e0821238f997@nxp.com>
- <20240617-pci2_upstream-v6-2-e0821238f997@nxp.com>
+	s=arc-20240116; t=1719666391; c=relaxed/simple;
+	bh=bzolQ7McCJ0wHotT5r4eTm/vv72nW1TF4Jc1AZfRGbk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GgjTLqEGT6YbMfsv1BeKgZgBxOCD7fMWMamqRJjbU6OU96qAkIGvenLooMKAxuBAojySDNf3N2Y45Hx58Amku6Z5Hue8+YaS56xy3sShIK1Vv2b+EXWNa9fLhEO56lQ3CdNFIknYYk5F/yz0MmPNL4YMvwDXnDAGt9NlC0fnltQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E0cOJvXB; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719666389; x=1751202389;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=bzolQ7McCJ0wHotT5r4eTm/vv72nW1TF4Jc1AZfRGbk=;
+  b=E0cOJvXBFPUU/Pi4q234lUY9B/HQb3fbubSf2hdFxhJJMSCzdy+2TaaR
+   8usMIyheXYWidX05IfSfDENcEFcHLSzZJmGEvHmj7DvapO2JTQPDrlqEn
+   NjxNG9cf1KqQrfVu0HaYYTIrpitHynNE57R3aVrUJjGdS3dAPNPtv/CQh
+   AvyeiW7dt6Z7K+hcXckZqmMaL8njDpGFR0qjr3o5UkaSD4ErtTImB36Re
+   p0JesuKk2BUtWj3aANQOD1HYI4+lkHfERjHAfY/A6D7q6/P/GEML4JSph
+   Uo49D4lOOqH9V7Zi85OqLnf3EOQah1dvotHWSFjFGXH633i/tz0bY/QHV
+   A==;
+X-CSE-ConnectionGUID: gJuas6UtQO6WcHW4HpHDAw==
+X-CSE-MsgGUID: zrBMZYQXShGbGzwETX2BkQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11117"; a="39354806"
+X-IronPort-AV: E=Sophos;i="6.09,172,1716274800"; 
+   d="scan'208";a="39354806"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2024 06:06:28 -0700
+X-CSE-ConnectionGUID: SkeSC493RTSHS6PaAqz9dQ==
+X-CSE-MsgGUID: HLSy8GRmTMW595+fHL1oFQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,172,1716274800"; 
+   d="scan'208";a="44919239"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa010.jf.intel.com with ESMTP; 29 Jun 2024 06:06:26 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 31A3D1BD; Sat, 29 Jun 2024 16:06:23 +0300 (EEST)
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Michael Kelley <mikelley@microsoft.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Kai Huang <kai.huang@intel.com>
+Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Dexuan Cui <decui@microsoft.com>,
+	linux-coco@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/tdx: Fix crash on kexec
+Date: Sat, 29 Jun 2024 16:06:20 +0300
+Message-ID: <20240629130621.1671544-1-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240617-pci2_upstream-v6-2-e0821238f997@nxp.com>
 
-On Mon, Jun 17, 2024 at 04:16:38PM -0400, Frank Li wrote:
-> From: Richard Zhu <hongxing.zhu@nxp.com>
-> 
-> Correct occasional MSI triggering failures in i.MX8MP PCIe EP by apply 64KB
-> hardware alignment requirement.
-> 
-> MSI triggering fail if the outbound MSI memory region (ep->msi_mem) is not
-> aligned to 64KB.
-> 
-> In dw_pcie_ep_init():
-> 
-> ep->msi_mem = pci_epc_mem_alloc_addr(epc, &ep->msi_mem_phys,
-> 				     epc->mem->window.page_size);
-> 
+The function tdx_enc_status_changed() was modified to handle vmalloc()
+mappings. It now utilizes slow_virt_to_phys() to determine the physical
+address of the page by walking page tables and looking for the physical
+address in the page table entry.
 
-So this is an alignment restriction w.r.t iATU. In that case, we should be
-passing 'pci_epc_features::align' instead?
+However, this adjustment conflicted with the enabling of kexec. The
+function tdx_kexec_finish() clears the page table entry before calling
+tdx_enc_status_changed(), causing a BUG_ON() error in
+slow_virt_to_phys().
 
-- Mani
+To address this issue, tdx_enc_status_change() should use __pa() to
+obtain physical addresses whenever possible. The virt_addr_valid() check
+will handle such cases, while any other scenarios, including vmalloc()
+mappings, will resort to slow_virt_to_phys().
 
-> Set ep->page_size to match drvdata::epc_features::align since different
-> SOCs have different alignment requirements.
-> 
-> Fixes: 1bd0d43dcf3b ("PCI: imx6: Clean up addr_space retrieval code")
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> Acked-by: Jason Liu <jason.hui.liu@nxp.com>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  drivers/pci/controller/dwc/pci-imx6.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 9a71b8aa09b3c..ca9a000c9a96d 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -1118,6 +1118,8 @@ static int imx6_add_pcie_ep(struct imx6_pcie *imx6_pcie,
->  	if (imx6_check_flag(imx6_pcie, IMX6_PCIE_FLAG_SUPPORT_64BIT))
->  		dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64));
->  
-> +	ep->page_size = imx6_pcie->drvdata->epc_features->align;
-> +
->  	ret = dw_pcie_ep_init(ep);
->  	if (ret) {
->  		dev_err(dev, "failed to initialize endpoint\n");
-> 
-> -- 
-> 2.34.1
-> 
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Fixes: e1b8ac3aae58 ("x86/tdx: Support vmalloc() for tdx_enc_status_changed()")
+---
+ arch/x86/coco/tdx/tdx.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
+diff --git a/arch/x86/coco/tdx/tdx.c b/arch/x86/coco/tdx/tdx.c
+index ef8ec2425998..8f471260924f 100644
+--- a/arch/x86/coco/tdx/tdx.c
++++ b/arch/x86/coco/tdx/tdx.c
+@@ -813,8 +813,16 @@ static bool tdx_enc_status_changed(unsigned long vaddr, int numpages, bool enc)
+ 		step = PAGE_SIZE;
+ 
+ 	for (addr = start; addr < end; addr += step) {
+-		phys_addr_t start_pa = slow_virt_to_phys((void *)addr);
+-		phys_addr_t end_pa   = start_pa + step;
++		phys_addr_t start_pa;
++		phys_addr_t end_pa;
++
++		/* The check fails on vmalloc() mappings */
++		if (virt_addr_valid(addr))
++			start_pa = __pa(addr);
++		else
++			start_pa = slow_virt_to_phys((void *)addr);
++
++		end_pa = start_pa + step;
+ 
+ 		if (!tdx_enc_status_changed_phys(start_pa, end_pa, enc))
+ 			return false;
 -- 
-மணிவண்ணன் சதாசிவம்
+2.43.0
+
 
