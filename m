@@ -1,150 +1,91 @@
-Return-Path: <linux-kernel+bounces-235033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D5EA91CE9F
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 20:54:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C76091CEA1
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 20:58:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3308D1C20D07
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 18:54:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA2E81F21B8E
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 18:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D2A136664;
-	Sat, 29 Jun 2024 18:54:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E2C134402;
+	Sat, 29 Jun 2024 18:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nIkJfIxm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="gpRxZV3t"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D4B4B5A6;
-	Sat, 29 Jun 2024 18:54:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD06132118
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 18:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719687258; cv=none; b=ZhCU/7sgJxOSYR9JjtnAyFZtdKxt/X5cegG9EViZ/vI7Zk/q0m1ZecevQHcxXPS/r0IlP+XNAYlLG9XNa00+vMo9j3aBQ7EJevw7tSIsaEzkFRMxhG2+igotXxIvSD2cWERUpvW9Elm7tFPuyJtgNCprH+zNqeUBMVIwDs+vajg=
+	t=1719687493; cv=none; b=L4PIDFx2Vi/CiBY7jOsuSA4riIqBGThlUi6l1BOyRTQH9AAnZx/PKsZXe/Z4yN/fWlCOOGbFbJru6Pq3q0lSZYeDz8IuxLGpJ0kFNGxcsdD9jiFgTG5NEsBkEYkjfoIuU8YGe0usDvUT6vPqfvzz6ib8bIJ/dtJyRmMRX+lRkiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719687258; c=relaxed/simple;
-	bh=h3pcQDAvvq6HFxa7uRxPPUPp9rBdRJXWaZhpH2XU/S4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ukLu91h9NAe/N5N4dS+mIUzQ7GqdSR8m+sfvF9YwFTbCBCMtGPSQwqTDFkjz5edgX+yocndVhKy+Rwd4h6t8RTKD7bUBKyIPb/nlUZN7l6b8bIbL0lTFoMi/qxdvonpviaaV0ui5szBQrW2zxk4ob0Jn5+fdLUrIdkwQAF3LKJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nIkJfIxm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E60E5C2BBFC;
-	Sat, 29 Jun 2024 18:54:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719687258;
-	bh=h3pcQDAvvq6HFxa7uRxPPUPp9rBdRJXWaZhpH2XU/S4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nIkJfIxmOWNpv1CnluAL4r8Y2paaFuymucgaKYLWhCMkwng1cQrNOorvRQJS8YYc4
-	 OF6uy/qrHPgN4CsiMCNTY9PDNtuJUpEVd8ROOCiSC0RkvVb4s1vbgRnLBbL4/7uwx1
-	 2ygegtT+PvgCvFTybRifH8bKQ7St2Qsr1aeia5Zeg3Qmo8RXdgQBZzgVUO7seHf7Sl
-	 aonOLXeUbx4/D8cq2QKVKESSmvULh8Qm2FvKizIm2B+gn4JhxXKqNfId+jgwlCRC5J
-	 r3lNeTrol74cfOH6byQ9gHF9bUjy8mdOFEGd98MiiOdT4yOGdZhEyl/+CslcEv6c1X
-	 Y3TVXxdjXl+9Q==
-Date: Sat, 29 Jun 2024 19:54:11 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Olivier Moysan <olivier.moysan@foss.st.com>
-Cc: <fabrice.gasnier@foss.st.com>, Nuno Sa <nuno.sa@analog.com>, Lars-Peter
- Clausen <lars@metafoo.de>, <linux-iio@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 3/8] iio: add child nodes support in iio backend
- framework
-Message-ID: <20240629195411.63a72497@jic23-huawei>
-In-Reply-To: <20240625150717.1038212-4-olivier.moysan@foss.st.com>
-References: <20240625150717.1038212-1-olivier.moysan@foss.st.com>
-	<20240625150717.1038212-4-olivier.moysan@foss.st.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719687493; c=relaxed/simple;
+	bh=4XdOuO+suNvQDwIYnF6y+V7ZtBcFHF+TeDB/fbDthHc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f3WM8pUBk6WZBTwUwflAANJ5HuuzHnl+z0kIjbkUjrWG4fbIKPqbPjp+1z4oT3hIoGnHmkyPidpK4JaxR1RZLn5j8aL2iFtpKhO7/497sFFXGlTxoCYBTI/bRvER+BLPiqXQmkz9Rhd920SFB0nucbHKlpP7MiIW6FtBhNimEhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=gpRxZV3t; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1719687483; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=iQNmjx9aMgLa1f79E0y6SIn1TUROyrKh2kuEUUI4uHQ=;
+	b=gpRxZV3tSL23DGQUQ60MM8mzSVFjaPXpKZlQG1eWYN6bsHPrZcuA5H6UDh2U9RvbPLyY9E+d6cuacBOeHPGzzfnCQgVF1JKAmdkPGMbi+8/GZWyWAmAQWH/PXLkORBiUpE8mbSnBEthU2nXOxLvIB2eFYYowkLRFbpK7SOrmUrY=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R861e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0W9ThmIU_1719687464;
+Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W9ThmIU_1719687464)
+          by smtp.aliyun-inc.com;
+          Sun, 30 Jun 2024 02:58:02 +0800
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: linux-erofs@lists.ozlabs.org,
+	Chao Yu <chao@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>
+Subject: [PATCH] erofs: ensure m_llen is reset to 0 if metadata is invalid
+Date: Sun, 30 Jun 2024 02:57:43 +0800
+Message-ID: <20240629185743.2819229-1-hsiangkao@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, 25 Jun 2024 17:07:11 +0200
-Olivier Moysan <olivier.moysan@foss.st.com> wrote:
+Sometimes, the on-disk metadata might be invalid due to storage
+failure or other unknown issues.
 
-> Add an API to support IIO generic channels binding:
-> http://devicetree.org/schemas/iio/adc/adc.yaml#
-> This new API is needed, as generic channel DT node isn't populated as a
-> device.
-> Add devm_iio_backend_fwnode_get() to allow an IIO device backend
-> consumer to reference backend phandles in its child nodes.
-> 
-> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
-> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+In that case, z_erofs_map_blocks_iter() may still return a valid
+m_llen while other fields remain invalid (e.g., m_plen can be 0).
 
-A passing comment inline. I'm not asking for any changes in this
-series (unless you want to make it more complex ;)
+Due to the return value of z_erofs_scan_folio() in some path will
+be ignored on purpose, the following z_erofs_scan_folio() could
+then use the invalid value by accident.
 
-> ---
->  drivers/iio/industrialio-backend.c | 62 +++++++++++++++++++++---------
->  include/linux/iio/backend.h        |  2 +
->  2 files changed, 45 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industrialio-backend.c
-> index 6be1fa9a960b..8cc959ac278a 100644
-> --- a/drivers/iio/industrialio-backend.c
-> +++ b/drivers/iio/industrialio-backend.c
-> @@ -577,19 +577,10 @@ static int __devm_iio_backend_get(struct device *dev, struct iio_backend *back)
->  	return 0;
->  }
->  
-> -/**
-> - * devm_iio_backend_get - Device managed backend device get
-> - * @dev: Consumer device for the backend
-> - * @name: Backend name
-> - *
-> - * Get's the backend associated with @dev.
-> - *
-> - * RETURNS:
-> - * A backend pointer, negative error pointer otherwise.
-> - */
-> -struct iio_backend *devm_iio_backend_get(struct device *dev, const char *name)
-> +static struct iio_backend *__devm_iio_backend_fwnode_get(struct device *dev, const char *name,
-> +							 struct fwnode_handle *fwnode)
->  {
-> -	struct fwnode_handle *fwnode;
-> +	struct fwnode_handle *fwnode_back;
->  	struct iio_backend *back;
->  	unsigned int index;
->  	int ret;
-> @@ -604,19 +595,19 @@ struct iio_backend *devm_iio_backend_get(struct device *dev, const char *name)
->  		index = 0;
->  	}
->  
-> -	fwnode = fwnode_find_reference(dev_fwnode(dev), "io-backends", index);
-> -	if (IS_ERR(fwnode)) {
-> -		dev_err_probe(dev, PTR_ERR(fwnode),
-> +	fwnode_back = fwnode_find_reference(fwnode, "io-backends", index);
+Let's reset m_llen to 0 to prevent this.
 
-Not really related, but this looks 'ripe' for some cleanup.h magic.
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+---
+ fs/erofs/zmap.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> +	if (IS_ERR(fwnode_back)) {
-> +		dev_err_probe(dev, PTR_ERR(fwnode_back),
->  			      "Cannot get Firmware reference\n");
-> -		return ERR_CAST(fwnode);
-> +		return ERR_CAST(fwnode_back);
->  	}
->  
->  	guard(mutex)(&iio_back_lock);
->  	list_for_each_entry(back, &iio_back_list, entry) {
-> -		if (!device_match_fwnode(back->dev, fwnode))
-> +		if (!device_match_fwnode(back->dev, fwnode_back))
->  			continue;
->  
-> -		fwnode_handle_put(fwnode);
-> +		fwnode_handle_put(fwnode_back);
->  		ret = __devm_iio_backend_get(dev, back);
->  		if (ret)
->  			return ERR_PTR(ret);
-> @@ -624,11 +615,44 @@ struct iio_backend *devm_iio_backend_get(struct device *dev, const char *name)
->  		return back;
->  	}
->  
-> -	fwnode_handle_put(fwnode);
-> +	fwnode_handle_put(fwnode_back);
->  	return ERR_PTR(-EPROBE_DEFER);
->  }
+diff --git a/fs/erofs/zmap.c b/fs/erofs/zmap.c
+index 9b248ee5fef2..74d3d7bffcf3 100644
+--- a/fs/erofs/zmap.c
++++ b/fs/erofs/zmap.c
+@@ -711,6 +711,8 @@ int z_erofs_map_blocks_iter(struct inode *inode, struct erofs_map_blocks *map,
+ 
+ 	err = z_erofs_do_map_blocks(inode, map, flags);
+ out:
++	if (err)
++		map->m_llen = 0;
+ 	trace_z_erofs_map_blocks_iter_exit(inode, map, flags, err);
+ 	return err;
+ }
+-- 
+2.43.5
+
 
