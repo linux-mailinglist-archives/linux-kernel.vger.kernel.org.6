@@ -1,135 +1,148 @@
-Return-Path: <linux-kernel+bounces-234871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71D8091CBD8
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 11:16:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 462E191CBDB
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 11:19:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 736431C21420
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 09:16:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFCCF1F2238D
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 09:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A193BB47;
-	Sat, 29 Jun 2024 09:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202293BB25;
+	Sat, 29 Jun 2024 09:18:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pw3PYbzN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cD0UhejH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A017208B0;
-	Sat, 29 Jun 2024 09:16:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613B93BBC5;
+	Sat, 29 Jun 2024 09:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719652567; cv=none; b=J6iqclD2tqRbR2fPBi7FnODEN9fO2sVctKdUUAqjhgSppmerlq6REXoGlpHxh2BfNunsx2spZrJr+dFAx9GVyW9kd/01zZxxazsKjjcmSYhQ+Ra+ev9juH+mZ4QgNFy6wy3SPcX97t00VVOodM2unjlfPhGV8Z/be+XoiWCq37I=
+	t=1719652738; cv=none; b=AtjFV9Kd7o8dlzkuxlofwXX65J/8B8ozyMHq6lZ1+vPGLbytRFje4IswM7pZOR3rasQeDy4LigD0gd1GcRS12DAeNz+lo9F1a5uSiG1dzYP1Xq5T5Tfx9/bWasLd9fjp/uwFH5DdQszMY0OjsEvP1ziE6XRi2OPIkEnK1l0cIDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719652567; c=relaxed/simple;
-	bh=1CNjP73ry8cY70hB93727FwLvKQuKgEDilX8HeyNIS0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AvwXoNlA2ucc4qmDOy7PhixeBPuLXJRSk8L39FnohF5mjMRR9MeDhdVR8gPhCi3NxDHcXlhtwFN/TbMwNp4izJHTtr/FGpFOsIMmU27tOHuahRvR/NiJNq50s4it+lcWKCvlqdIeHnDg9pbX7Wdp6sA1YLvC/HdNj2J8MR5g/P0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pw3PYbzN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A58BFC2BBFC;
-	Sat, 29 Jun 2024 09:16:04 +0000 (UTC)
+	s=arc-20240116; t=1719652738; c=relaxed/simple;
+	bh=j0D4aM0HPc9hn8KU2KMSVB0fUvC5FVvdEkb1od0ha9Y=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=d3n4Eakz7ukoNvCZ3vZcC7aFeY7/Z/uCFxTvKtk5hvHQG+C3RVVcUWV/yV0OS9rgxaLH8pW73IWJOD23QQjQt/RP1cZ7m/FYm9QP6e4t0B7pXDhcdf/BEsqhNMqDxDFLhchQlpN+KjZW1a5euXPg0qRbPrO6Q4piKBZDn4sxlVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cD0UhejH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B891DC2BBFC;
+	Sat, 29 Jun 2024 09:18:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719652567;
-	bh=1CNjP73ry8cY70hB93727FwLvKQuKgEDilX8HeyNIS0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pw3PYbzN4tbTTU5JwIMg7eqRBo6uEwa/HOk4g81tqa4h95BTEtv4JNxrHT3HXMqHQ
-	 6GFN9VoBYQocs+UFopOonVAPOjL5eCs+HQWJs+C41ASODv1EtSvmFHydAfsx4WKk8S
-	 VLgf2gAPjXRGd/4EMynLWBUUOK4tQtK0TqLeut+fHeuNtB8r3ly/+68wnHDkcqUPBo
-	 XwfASXmg/su3W0+9nK1QJvDe9flLImqutXozY4RUBzPXGzRSoUPKF3XWuU98gz64T0
-	 H2Cgp7PgPJP8g66f5UDUboPG6BfIRBJU/8ShLW2xEImu3kBgwoI1YATMVN24rhx3tI
-	 WrTwUHUuq7bFQ==
-Date: Sat, 29 Jun 2024 10:16:02 +0100
-From: Simon Horman <horms@kernel.org>
-To: Marek Vasut <marex@denx.de>
-Cc: netdev@vger.kernel.org, Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Christophe Roullier <christophe.roullier@foss.st.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>, kernel@dh-electronics.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [net-next,PATCH v2] net: phy: realtek: Add support for PHY LEDs
- on RTL8211F
-Message-ID: <20240629091602.GJ837606@kernel.org>
-References: <20240625204221.265139-1-marex@denx.de>
- <20240628142742.GH783093@kernel.org>
- <a7f614cd-fe39-4746-8a83-2a2d14fc46f4@denx.de>
+	s=k20201202; t=1719652737;
+	bh=j0D4aM0HPc9hn8KU2KMSVB0fUvC5FVvdEkb1od0ha9Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cD0UhejHsdlBZZ3E3eAHSL8Un4GVWpUBluJ1RvU7gYspHeTFjW15HtYYj45XD2MzC
+	 SXCp1vENFFCX7mR+KpW1g1x20TOiEuPVhW8GsM9eVgw1s5x093wMmzIpoY0cS0fj07
+	 IRiIsuxdySegvLIF5B9j89do6+hpD6KfcGBkFYRWYc/0gJmlz07fj8LD2BR77G++hB
+	 X/CG2pnH0mBmstXtBezVMjg3+n2w2TmQNqOO8EQG9ibkjHrK45siiWV6PVG8feFIqD
+	 7ICHFhjt7uI01eryAuq806z2SRRLHAz0fYO28syLEngonpkS5HeeSEtAOZeCdGtnXs
+	 NJY1agnLr6+cA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sNUER-008Mh4-6l;
+	Sat, 29 Jun 2024 10:18:55 +0100
+Date: Sat, 29 Jun 2024 10:18:54 +0100
+Message-ID: <86frswhzsx.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-pci@vger.kernel.org,
+	anna-maria@linutronix.de,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	festevam@gmail.com,
+	bhelgaas@google.com,
+	rdunlap@infradead.org,
+	vidyas@nvidia.com,
+	ilpo.jarvinen@linux.intel.com,
+	apatel@ventanamicro.com,
+	kevin.tian@intel.com,
+	nipun.gupta@amd.com,
+	den@valinux.co.jp,
+	andrew@lunn.ch,
+	gregory.clement@bootlin.com,
+	sebastian.hesselbarth@gmail.com,
+	gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	alex.williamson@redhat.com,
+	will@kernel.org,
+	lorenzo.pieralisi@arm.com,
+	jgg@mellanox.com,
+	ammarfaizi2@gnuweeb.org,
+	robin.murphy@arm.com,
+	lpieralisi@kernel.org,
+	nm@ti.com,
+	kristo@kernel.org,
+	vkoul@kernel.org,
+	okaya@kernel.org,
+	agross@kernel.org,
+	andersson@kernel.org,
+	mark.rutland@arm.com,
+	shameerali.kolothum.thodi@huawei.com,
+	yuzenghui@huawei.com,
+	shivamurthy.shastri@linutronix.de
+Subject: Re: [patch V4 05/21] irqchip/gic-v3-its: Provide MSI parent for PCI/MSI[-X]
+In-Reply-To: <Zn84OIS0zLWASKr2@arm.com>
+References: <20240623142137.448898081@linutronix.de>
+	<20240623142235.024567623@linutronix.de>
+	<Zn84OIS0zLWASKr2@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a7f614cd-fe39-4746-8a83-2a2d14fc46f4@denx.de>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: catalin.marinas@arm.com, tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, anna-maria@linutronix.de, shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com, rdunlap@infradead.org, vidyas@nvidia.com, ilpo.jarvinen@linux.intel.com, apatel@ventanamicro.com, kevin.tian@intel.com, nipun.gupta@amd.com, den@valinux.co.jp, andrew@lunn.ch, gregory.clement@bootlin.com, sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org, rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org, lorenzo.pieralisi@arm.com, jgg@mellanox.com, ammarfaizi2@gnuweeb.org, robin.murphy@arm.com, lpieralisi@kernel.org, nm@ti.com, kristo@kernel.org, vkoul@kernel.org, okaya@kernel.org, agross@kernel.org, andersson@kernel.org, mark.rutland@arm.com, shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com, shivamurthy.shastri@linutronix.de
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Fri, Jun 28, 2024 at 08:58:51PM +0200, Marek Vasut wrote:
-> On 6/28/24 4:27 PM, Simon Horman wrote:
-> > On Tue, Jun 25, 2024 at 10:42:17PM +0200, Marek Vasut wrote:
-> > > Realtek RTL8211F Ethernet PHY supports 3 LED pins which are used to
-> > > indicate link status and activity. Add minimal LED controller driver
-> > > supporting the most common uses with the 'netdev' trigger.
-> > > 
-> > > Signed-off-by: Marek Vasut <marex@denx.de>
-> > > ---
-> > > Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
-> > > Cc: Andrew Lunn <andrew@lunn.ch>
-> > > Cc: Christophe Roullier <christophe.roullier@foss.st.com>
-> > > Cc: David S. Miller <davem@davemloft.net>
-> > > Cc: Eric Dumazet <edumazet@google.com>
-> > > Cc: Heiner Kallweit <hkallweit1@gmail.com>
-> > > Cc: Jakub Kicinski <kuba@kernel.org>
-> > > Cc: Paolo Abeni <pabeni@redhat.com>
-> > > Cc: Russell King <linux@armlinux.org.uk>
-> > > Cc: kernel@dh-electronics.com
-> > > Cc: linux-kernel@vger.kernel.org
-> > > Cc: netdev@vger.kernel.org
-> > > ---
-> > > V2: - RX and TX are not differentiated, either both are set or not set,
-> > >        filter this in rtl8211f_led_hw_is_supported()
-> > > ---
-> > >   drivers/net/phy/realtek.c | 106 ++++++++++++++++++++++++++++++++++++++
-> > >   1 file changed, 106 insertions(+)
-> > > 
-> > > diff --git a/drivers/net/phy/realtek.c b/drivers/net/phy/realtek.c
-> > > index 2174893c974f3..bed839237fb55 100644
-> > > --- a/drivers/net/phy/realtek.c
-> > > +++ b/drivers/net/phy/realtek.c
-> > > @@ -32,6 +32,15 @@
-> > >   #define RTL8211F_PHYCR2				0x19
-> > >   #define RTL8211F_INSR				0x1d
-> > > +#define RTL8211F_LEDCR				0x10
-> > > +#define RTL8211F_LEDCR_MODE			BIT(15)
-> > > +#define RTL8211F_LEDCR_ACT_TXRX			BIT(4)
-> > > +#define RTL8211F_LEDCR_LINK_1000		BIT(3)
-> > > +#define RTL8211F_LEDCR_LINK_100			BIT(1)
-> > > +#define RTL8211F_LEDCR_LINK_10			BIT(0)
-> > > +#define RTL8211F_LEDCR_MASK			GENMASK(4, 0)
-> > > +#define RTL8211F_LEDCR_SHIFT			5
-> > > +
+On Fri, 28 Jun 2024 23:24:56 +0100,
+Catalin Marinas <catalin.marinas@arm.com> wrote:
+> 
+> Hi Thomas,
+> 
+> On Sun, Jun 23, 2024 at 05:18:39PM +0200, Thomas Gleixner wrote:
+> > From: Thomas Gleixner <tglx@linutronix.de>
 > > 
-> > Hi Marek,
+> > The its_pci_msi_prepare() function from the ITS-PCI/MSI code provides the
+> > 'global' PCI/MSI domains. Move this function to the ITS-MSI parent code and
+> > amend the function to use the domain hardware size, which is the MSI[X]
+> > vector count, for allocating the ITS slots for the PCI device.
 > > 
-> > FWIIW, I think that if you use FIELD_PREP and FIELD_GET then
-> > RTL8211F_LEDCR_SHIFT can be removed.
+> > Enable PCI matching in msi_parent_ops and provide the necessary update to
+> > the ITS specific child domain initialization function so that the prepare
+> > callback gets invoked on allocations.
+> > 
+> > The latter might be optimized to do the allocation right at the point where
+> > the child domain is initialized, but keep it simple for now.
+> > 
+> > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> > Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+> > Signed-off-by: Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>
+> > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 > 
-> FIELD_PREP/FIELD_GET only works for constant mask, in this case the mask is
-> not constant but shifted by SHIFT*index .
-> 
-> Other drivers introduce workarounds like this for exactly this issue:
-> 
-> drivers/clk/at91/pmc.h:#define field_prep(_mask, _val) (((_val) <<
-> (ffs(_mask) - 1)) & (_mask))
-> 
-> I don't think it is worth perpetuating that.
+> I just noticed guests (under KVM) failing to boot on my TX2 with your
+> latest branch. I bisected to this patch as the first bad commit.
 
-Thanks Marek,
+Reproduced here on a different host (M1), so this is not specific to
+TX2 (which would have been odd since KVM emulates the ITS entirely).
 
-Sorry for missing that the mask is not constant.
-And in that case I agree with the approach you have taken in this patch.
+I'll start digging.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
