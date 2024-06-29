@@ -1,214 +1,157 @@
-Return-Path: <linux-kernel+bounces-234923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA0DF91CCAD
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 14:20:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4EE191CCB1
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 14:23:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1338DB2138B
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 12:20:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D53B2B21C72
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 12:23:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04947BAE7;
-	Sat, 29 Jun 2024 12:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC107BAE7;
+	Sat, 29 Jun 2024 12:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fz8v3ipt"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mYmf9NGz"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595371D52D;
-	Sat, 29 Jun 2024 12:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB067CF30
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 12:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719663627; cv=none; b=tKhhWaihbXQF3ZNL719akFlgPI1xMkqXJkG8IoJtkV6u2Q6B8kYyinZyWKm/O/rO1DdUDJMGTn+9Q3ie5vep1k1lcblFoXspsIbJ/Kp6r452X/hRq0V3swdb+Q3S6gKZaJ945SNYpgZI95Uf6fECoGRlA5MsA8VmoqFPumipeQI=
+	t=1719663791; cv=none; b=CD28M++dyRSTjKaNORguBiwsrkc15fsrDqS1j3HV2gDsB3RftcqFlzrPR+tAxZmvZv+mfT0OB4ZIgiuE1fKWDd8El8Lf7s4xHceORzAxDm2NAx1CqWM0ewCTBGhP3dzo9pZXuYXfH2EEIMvvCnq7EGeK7PA2ww4Ukmq4QUycqMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719663627; c=relaxed/simple;
-	bh=Zt95ysWonWB222QIcNggbw5J7dgab+eiQ5Il5BPRrxM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K9kYDumKCUU5dF3ayMpTapzMEuvYvY5qHsGg62b4FNRZKKHu+/kH50q4adIPhSbcG95iE9B4aBfHtksmsyZgtKpZ3SE7UgNHhDd5TLpyIiamUJdufDt1NekL3mDtrkg1Ev3CmO9I4V+1JULKYNHM79iGh2Htl2/SlKcDXSyh1g8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fz8v3ipt; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57ccd1111b0so948606a12.3;
-        Sat, 29 Jun 2024 05:20:25 -0700 (PDT)
+	s=arc-20240116; t=1719663791; c=relaxed/simple;
+	bh=0y5cSgtBlkamEEyslLX8DfwkBZ+qF4qV5H9+Ndn+Qw4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mLtHJheN7sIl4L2+id6XwAkSfGgMlo1A7QqBi033ZJVkmjp/GYjiUNk5XhqCTyJP52JvVa/PSobogqKtVVTO4dF03ziyxNpga9DI0H2MG1z+kmMar40YEo10BiJ1T0QOo/lbrzfVM8R4/CNLziw6n2YryRc+7FsfZteO1gRciZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mYmf9NGz; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-707f9c3bd02so1091243b3a.0
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 05:23:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719663623; x=1720268423; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=07fSqL5YF7ajSMIBHHKbI5Tv87KUL1yMlVbcsEO3BYg=;
-        b=Fz8v3ipt1IJmZu5K+Vjf6VmBwLKz4YwdpivdOCdeYgLdbiUc5Mg0/oJQkjplrmGYHZ
-         Z92M6+0bV1GsFQwd+aieECyA8oYV9aHZ4FQrBWaYxmP74Y37HaMjM61xYxkmYLyputQb
-         sy59ocPOnewWV5GiZzqicrbluFrjYwAw692B7ZzT+62pGXGL8IxDYYUXj244r4MO9HNJ
-         arvlf/Hws805kS6bUZnl4Bo4iuifeGxdaKHEoE/7oTRFvpq8eXbUsLkN0b6wIs/ayKqH
-         8mcWa+fiir7c5sohchhDrU5lnmLTdRDQggTBw3nA+Bi7n+4MAgfRb7BO9k11ju9bfHTc
-         OWhw==
+        d=linaro.org; s=google; t=1719663789; x=1720268589; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=hd/fN6JrXuuparzKe/1dgdm1z2pqZRQTyP5PJ9H207I=;
+        b=mYmf9NGz4AEE4ghG7AT/o31qdXDXd3KNh2La/mgNpSBZK+uhD1bBl0P2aRsNV7F5w8
+         V4EPYPUts6FTNdH1ccO/G+eY5aCL2N/yg3KGX+iACfSC3OSCcDavfVW7qlEvu85nBEM7
+         Kkmla1evBKZilJmj1c9+mTN17J/7rSHxXdezrl8piZ7t0R7gimvm/k1fIZvyrV0NL1Ik
+         rwqbBFB+G6WJaB26irForAuStY12KvhoXEXq0+4gMpsmyBR/bdHzmTZOnPwQ0iSjZLl3
+         gKOAHr6BxusrHlV1cevYW/YsYb0Ra35D8KbxHUsg2d/WFyAZxpWgJUGfCWOlOG/k+t8O
+         jYwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719663623; x=1720268423;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=07fSqL5YF7ajSMIBHHKbI5Tv87KUL1yMlVbcsEO3BYg=;
-        b=rmIT6J64mzAmildimhHv6JCRWygS7+ZrnCXXgkIUv6Rqu1yyKZ3z/TUgwmvH9WzJMA
-         V00nC76sM2tJyT6aPPGhCwy2JyMj5q6v6G0KdOHktQC1UGMLR7V2qwHUVwHm+bGViqOl
-         hUfhGnJHowL4cAKwkaq5q1ODsD99TZTgN8yiCxXclduiNVODAeemsGVUtAB7n9Lzxhox
-         O46I/uo+YeEU0UfvhGcklco81XHJXh8Z341zveKu1EhxTrT2k9hf/eVSE+paPs/a8EsQ
-         18ySgyaaZivnAloSGxflz4AmjeXBcN0ZF3ww8DtM8NVbgz2yq+A6cpcM4nteXlcY5Prr
-         83Zw==
-X-Forwarded-Encrypted: i=1; AJvYcCWge5NNwmNfbXpgMcBX+m901ELX9W6k6WTQjtw8w3TOKJQ0JVkMWVlBA6FDSkruKf2KHanOu+DLX7m3jk292Yy9T6RS+O4HBvx+rcmz3ZIZyWH5rh2MhS8l+8PPzHUHsCRFRgd532I=
-X-Gm-Message-State: AOJu0YwuSFzootswiU6nCKTWGlZcNddXUCcsS5KP+f/X8ulSOwnbbPCk
-	RsQFppGDkU98JBAWKkbLPvxqE8El7TQAPDesWlL6sZbmoQB1j41NxQsD7pPOP7v9Zds7POuh34a
-	LHqKWJ6/LBTUfSqHQOsxGcdh0Mow=
-X-Google-Smtp-Source: AGHT+IGtFjcHlGtifyhNolw/jEepuzMeMplZd3U4ZvMARe2e+6A1TlJEHr1lREcHPfv0ZZM+WDU7pUxdbuetnXhjbK4=
-X-Received: by 2002:a05:6402:50cc:b0:578:638e:3683 with SMTP id
- 4fb4d7f45d1cf-5879ede2742mr870998a12.5.1719663623309; Sat, 29 Jun 2024
- 05:20:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719663789; x=1720268589;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hd/fN6JrXuuparzKe/1dgdm1z2pqZRQTyP5PJ9H207I=;
+        b=pLTC2hdNvLMVgfL9qdzpPv33fifML9VCljesYKhl2I3hz/Nhp/r2iLrsiiGGnbA0rV
+         2DKOOA/CyLoMmdQH73TNQROF5L1UjornpjfHW3VAOWc1a2IU7wJOMOOWc2NR6o2bnfwP
+         T/qEFFRpBXLDCUo1z1c0HMjfbInKyfG4ZRCgkgYe/SRylu1VVLDLiHmmb1HFgFBdOycM
+         Jkd3aQBeztqWSLo/YpjCgigoJp/iDzGJF3au7vS71LpwRWuV26jL1kPazcRIGDP6PMG3
+         sFExLdgCn4fFVVC8XepdaewdjcO1hEm7i1ZD89aTX0bdlFPvUZGxVdekcJVmL3UFKHDN
+         xWsg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1YL3/e1BnC3DObePPQQ2gJohOoxjms/36x8um/L33IgLgtQGh/As4BKgfDCOMLz5u6jnEhIjIt8GrSj2cHeucgbCuc/fC3tw8iZVH
+X-Gm-Message-State: AOJu0YzXC8ojNOG2z7pZRwWHebvsklKtyQQmno9/ojUkdQzlSVpECwjn
+	9DBmm+wTJvQDPydvVd79i2gzNCBpgigJNDMLIbYT1pBrp1SJby8t0NkjzmzWHQ==
+X-Google-Smtp-Source: AGHT+IEW0u5OjNVhFbntAWf/v7zidI2Sjsqla8PVFtRXPmZZ7xJh0N+dgrcQ2vSjwdtKDdMLAlmuaw==
+X-Received: by 2002:a05:6a00:2e18:b0:706:8066:5cd6 with SMTP id d2e1a72fcca58-70aaaf31a15mr736491b3a.32.1719663788507;
+        Sat, 29 Jun 2024 05:23:08 -0700 (PDT)
+Received: from thinkpad ([220.158.156.249])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70803ecf70asm3179116b3a.102.2024.06.29.05.23.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 29 Jun 2024 05:23:08 -0700 (PDT)
+Date: Sat, 29 Jun 2024 17:53:01 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 01/10] PCI: imx6: Fix establish link failure in EP
+ mode for iMX8MM and iMX8MP
+Message-ID: <20240629122301.GB5608@thinkpad>
+References: <20240617-pci2_upstream-v6-0-e0821238f997@nxp.com>
+ <20240617-pci2_upstream-v6-1-e0821238f997@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240623-fix-lib-install-v1-1-bcbd03b78d87@gmail.com> <cfee36c5-c5d9-49db-bc94-c6e5fdb77840@linuxfoundation.org>
-In-Reply-To: <cfee36c5-c5d9-49db-bc94-c6e5fdb77840@linuxfoundation.org>
-From: Roman Storozhenko <romeusmeister@gmail.com>
-Date: Sat, 29 Jun 2024 14:20:11 +0200
-Message-ID: <CALsPMBNd67iYF_tFQbBH=e3D0Mjn+KOv6sA1x6Hr940_C+sjMQ@mail.gmail.com>
-Subject: Re: [PATCH] cpupower: fix lib default installation path
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>, 
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240617-pci2_upstream-v6-1-e0821238f997@nxp.com>
 
-On Fri, Jun 28, 2024 at 10:44=E2=80=AFPM Shuah Khan <skhan@linuxfoundation.=
-org> wrote:
->
-> On 6/23/24 07:10, Roman Storozhenko wrote:
-> > Invocation the tool built with the default settings fails:
-> > $ cpupower
-> > cpupower: error while loading shared libraries: libcpupower.so.1: canno=
-t
-> > open shared object file: No such file or directory> The issue is that M=
-akefile puts the library to "/usr/lib64" dir for a 64
-> > bit machine. This is wrong. According to the "File hierarchy standard
-> > specification:
-> > https://en.wikipedia.org/wiki/Filesystem_Hierarchy_Standard
-> > https://refspecs.linuxfoundation.org/FHS_3.0/fhs-3.0.pdf
-> >
-> > "/usr/lib<qual>" dirs are intended for alternative-format libraries
-> > (e.g., "/usr/lib32" for 32-bit libraries on a 64-bit machine (optional)=
-).
-> >
-> > The utility is built for the current machine and doesn't change bit
-> > depth.
-> > Fix the issue by changing library destination dir to "/usr/lib".
-> >
-> > Signed-off-by: Roman Storozhenko <romeusmeister@gmail.com>
-> > ---
-> >   tools/power/cpupower/Makefile | 10 +---------
-> >   1 file changed, 1 insertion(+), 9 deletions(-)
-> >
-> > diff --git a/tools/power/cpupower/Makefile b/tools/power/cpupower/Makef=
-ile
-> > index cd0225a312b4..6c02f401069e 100644
-> > --- a/tools/power/cpupower/Makefile
-> > +++ b/tools/power/cpupower/Makefile
-> > @@ -67,6 +67,7 @@ LANGUAGES =3D                         de fr it cs pt =
-ka
-> >   bindir ?=3D   /usr/bin
-> >   sbindir ?=3D  /usr/sbin
-> >   mandir ?=3D   /usr/man
-> > +libdir ?=3D    /usr/lib
-> >   includedir ?=3D       /usr/include
-> >   localedir ?=3D        /usr/share/locale
-> >   docdir ?=3D       /usr/share/doc/packages/cpupower
-> > @@ -94,15 +95,6 @@ RANLIB =3D $(CROSS)ranlib
-> >   HOSTCC =3D gcc
-> >   MKDIR =3D mkdir
->
-> These are set when make invoked from the kernel main
-> Makefile - see "make tools" option in main Makefile
-> >
-> > -# 64bit library detection
-> > -include ../../scripts/Makefile.arch
->
-> This does the 64-librray detection based on arch.
-> > -
-> > -ifeq ($(IS_64_BIT), 1)
-> > -libdir ?=3D    /usr/lib64
-> > -else
-> > -libdir ?=3D    /usr/lib
-> > -endif
-> > -
-> >   # Now we set up the build system
-> >   #
-> >
-> >
-> > ---
-> > base-commit: f76698bd9a8ca01d3581236082d786e9a6b72bb7
-> > change-id: 20240623-fix-lib-install-3b7dccdbdf45
-> >
-> > Best regards,
->
-> What happens if you cross-compile with this patch? Take a look at this
-> commit that fixed cross-compile:
->
-> a73f6e2fbe8077811ea9546e0d44a7533111f0ba
->
-> This makefile has to be in sync with the rest of the tools - see
-> "make tools" in the kernel main Makefile.
+On Mon, Jun 17, 2024 at 04:16:37PM -0400, Frank Li wrote:
+> From: Richard Zhu <hongxing.zhu@nxp.com>
+> 
+> Add IMX6_PCIE_FLAG_HAS_APP_RESET flag to IMX8MM_EP and IMX8MP_EP drvdata.
+> This flag was overlooked during code restructuring. It is crucial to
+> release the app-reset from the System Reset Controller before initiating
+> LTSSM to rectify the issue
+> 
+> Fixes: 0c9651c21f2a ("PCI: imx6: Simplify reset handling by using *_FLAG_HAS_*_RESET")
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-I have done this using "make tools" method mainline kernel and the
-patch for x86_64 and risc-v:
-1) x86_64
-$make cpupower
-$ sudo make cpupower_install -j8
-$ cpupower
-cpupower: error while loading shared libraries: libcpupower.so.1:
-cannot open shared object file: No such file or directory
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Works with my patch, and doesn't work with the mainline.
+- Mani
 
-2) RISC-V:
-$ make ARCH=3Driscv CROSS_COMPILE=3Driscv64-linux-gnu- cpupower -j8
-$ sudo make ARCH=3Driscv CROSS_COMPILE=3Driscv64-linux-gnu- cpupower_instal=
-l -j8
-$ cpupower
-cpupower: error while loading shared libraries: libcpupower.so.1:
-cannot open shared object file: No such file or directory
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 917c69edee1d5..9a71b8aa09b3c 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -1578,7 +1578,8 @@ static const struct imx6_pcie_drvdata drvdata[] = {
+>  	},
+>  	[IMX8MM_EP] = {
+>  		.variant = IMX8MM_EP,
+> -		.flags = IMX6_PCIE_FLAG_HAS_PHYDRV,
+> +		.flags = IMX6_PCIE_FLAG_HAS_APP_RESET |
+> +			 IMX6_PCIE_FLAG_HAS_PHYDRV,
+>  		.mode = DW_PCIE_EP_TYPE,
+>  		.gpr = "fsl,imx8mm-iomuxc-gpr",
+>  		.clk_names = imx8mm_clks,
+> @@ -1589,7 +1590,8 @@ static const struct imx6_pcie_drvdata drvdata[] = {
+>  	},
+>  	[IMX8MP_EP] = {
+>  		.variant = IMX8MP_EP,
+> -		.flags = IMX6_PCIE_FLAG_HAS_PHYDRV,
+> +		.flags = IMX6_PCIE_FLAG_HAS_APP_RESET |
+> +			 IMX6_PCIE_FLAG_HAS_PHYDRV,
+>  		.mode = DW_PCIE_EP_TYPE,
+>  		.gpr = "fsl,imx8mp-iomuxc-gpr",
+>  		.clk_names = imx8mm_clks,
+> 
+> -- 
+> 2.34.1
+> 
 
-Works with my patch, and doesn't work with the mainline.
-
-By the way - the cpupower makefile handles neither 'CROSS_COMPILE' nor
-'ARCH' variables.
-So the result is always the same - binary for x86_64 architecture.
-
-Let me try to rephrase what I wrote in the initial patch message:
-The current lib target dir is based on architecture bit width, and
-this  is wrong.
-The library should be put in the '/usr/lib' dir regardless of whether
-it is x86_32 or x86_64 .
-This is the case for all the distros that comply with the 'File
-Hierarchy Standard 3.0"
-by Linux Foundation. Most of the distros comply with it.
-You can check this by examining the "/usr/lb64" dir on debian-based
-distros and find
-that it contains only "/usr/lib64/ld-linux-x86-64.so.2"
-And examine that "/usr/lib" contains both 32 and 64 bit code:
-find /usr/lib -name "*.so*" -type f | xargs file | grep 32-bit
-find /usr/lib -name "*.so*" -type f | xargs file | grep 64-bit
-
->
-> thanks,
-> -- Shuah
->
->
-
-
---=20
-Kind regards,
-Roman Storozhenko
+-- 
+மணிவண்ணன் சதாசிவம்
 
