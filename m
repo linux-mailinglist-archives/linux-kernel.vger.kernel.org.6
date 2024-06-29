@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-234888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44E6791CC12
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 12:18:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAAA991CC13
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 12:20:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 304581C21287
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 10:18:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02CFC283371
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 10:20:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2343FBB3;
-	Sat, 29 Jun 2024 10:18:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2FE3FE55;
+	Sat, 29 Jun 2024 10:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e7WbSjO3"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Zy4Eb31d"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F2D23767;
-	Sat, 29 Jun 2024 10:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36FC2BAE2
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 10:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719656300; cv=none; b=mzKiAEK73+8HAKoirzR1Aqd4tsaa7OHUQIJtAkFER67wCoPnOUWlKUmIqbf+S47+VTHw88jctFGg7C2YXsbp9v5Ty/SxlwRASPlfAYsrHSikEMEnVRBR+9n2lWFaj1Lr6UXiK4x+Gy5dbC23Qzo/O7ipw1idIV1emjiykcMy+fU=
+	t=1719656430; cv=none; b=TzUiKRIGOT3HC4Rv+TGueL+NkYZnB5Z9F7EMge8+i+fMhG7DnLWoeGF3hXq7oRRvj9Nt/3vLB6h9MXO13gEonxT+6xYtAh2SzwIXjCq54Lht1jcPf3liUEBLTBbNAlrNWOZzuEjS5ushCYNzar2kY9WB8cI02RIcSzd9bTDrV+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719656300; c=relaxed/simple;
-	bh=zNUije4Rf1fu7rha7favpYddd5zkpBg5u37yMsb+L/c=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=PRNo9sI0+Jo5kz0fWg7PHSr9/AshDoahEmnvoBYRRj5P2V1p2devw+yJlLBEU4rcqEptq++O4xjbCkEdk9yaYylywOFQy4Z9Bl5mbL7O5JRJYRqDQc4WKurFFGqgYOujVDnSP+kiwEeXOHuvDnV3voK4wYZAO2KdRQYoUUYqYDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e7WbSjO3; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a7245453319so229573966b.1;
-        Sat, 29 Jun 2024 03:18:18 -0700 (PDT)
+	s=arc-20240116; t=1719656430; c=relaxed/simple;
+	bh=/h+/KiD+8YcmKDbvUnLysSmi8xU0L8Gy+fezN8KWdh8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HwD5ZuVjXiuc3+A8w9+GgpjBpzIsBK4FzlZwN59GwwI96vq1awcpYzehULLrRHsaGseo/ktyRTX0W+QjFm7tgw/bS+tjyaqGYc5qySMaOnKjf4CabSeE/dLljkJVChViPwvJC75tqI4Zi12/yjx4geo6cQuCVVsqua3La2HnFY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Zy4Eb31d; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-36733f09305so767509f8f.3
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 03:20:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719656297; x=1720261097; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=QlwoXKISijQ0DRcF+GZnJmixbJReAkQz34nOTF0Vuxk=;
-        b=e7WbSjO3ZuAjbv1KvmjiFwQg7vpKYbXBDGygUBzcXTp77mAfrCeXmUssaajhpTB/HH
-         X1aCLlQ5ZXAOIx2fSKozBEcNPncMnP8UR1MDtW0BbXzZaRq2jfqsWLIqYXwirpambVOR
-         0fZ20ueny0hnl5dL8Tu3tqq7PWMePKKstEo9zzLNPzBXwYz8Odjqee0PbShyZf5//YsJ
-         NCfan5zCW4tmGjyjDIx9mqeDlNQGE7nt5GdBVOw9oaRBeipNXEiu5DzxQrsXyKEvC93E
-         u7l06f06q1YDLvoocUeECO0UiJnxAtZ8UaOoYm5GYYMASwEOpe+LAIkmGyL4sEpFfXfN
-         IGHQ==
+        d=suse.com; s=google; t=1719656425; x=1720261225; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hHfc2Ok8Ex6+h+gzfv5bxVHv1mLg7+fEtcCdnzYL8h4=;
+        b=Zy4Eb31dkSMFzyGMmGx347jowlXlbj5t69GaOXqsNkOG8duVD6WykKzeaZoDHbUj+4
+         MMBmVn0p+zpexOpjO4u8gruy5VbUyUvmSk0KuWSS/fNMaFdhmcvuL3070c1FvwOQRC6R
+         6kM1qsHFlKCAwy0wp9Y1KTz8PSszMTk8qVbowHWupPJe511aDTWN4hKcSHTD2PEDvF5e
+         8suD8XEpgrsPc5+0UP+f9t9OgBWntK+9JPrMUskX7Qn/VCKRlt0/SZTiWOiI8iWoFUSQ
+         FxU7URYU7TAZ5SMpTGeGF4RPWZW4GipdjUsF/E5qG7HqYaSTgiH/u26AstzcvGNUtB3B
+         swdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719656297; x=1720261097;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1719656425; x=1720261225;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QlwoXKISijQ0DRcF+GZnJmixbJReAkQz34nOTF0Vuxk=;
-        b=nJ2EWJK49ZjyxbaRVW27LgomVPG9guy19xg6c2UIqYslWGx1Bj9AvWVumAjiRn3NTj
-         gnUHTw340Ro47USfXwwnzMLxnsRJulqeK18bvARhgV/xbd9X4W7JebZe7j1UdqFzcnv+
-         IcMAU4r5cLgXe5EWH9yDtl0VtwwsjZ6EjYnafFwl700nR44Jz0M00Hwa0lBcmvDcH8Qe
-         uVgqbrLc78N5o444Ux/+eVbNvCWV2/BiFzFQDXli58jkPSB8hKRP8MwsG9Tdh3N80aAL
-         3iDktU55YIKQgJslZYsd6eDQuBoJrSf/rJru6FC3v0wEwY4W2aIU3OnhV3doEgu9c845
-         DJyw==
-X-Forwarded-Encrypted: i=1; AJvYcCXN2Y8Belu8EMBNrIgtK5tof7eqWmnz0qRzepbLylZLUQ3UVaX+1XSGcnpAiIX1QNbtvFysXLTYWvBSVzqf8YPaCPpC0B8IPkyVmFp8xCu/IUuyO9iwOE0dHtvMr/hOlX/K9EdmpS5gj7g=
-X-Gm-Message-State: AOJu0YwI4BiSdJB9wWaJyY+Sj/8rFbpggaHLhAte9LPKnwWyUdMkAy41
-	Z9WnMyT3n9FTaMYlsljGzdw3TYLaDInqfLtGgqfH/7Ppe++9+Sv0
-X-Google-Smtp-Source: AGHT+IF/MBEiMijU8GjgEXLJuB9PxQWKYMlbEYZlv/UgCvP3oFNMsmcWz1PuXDww6RQR6rVaR2ksVQ==
-X-Received: by 2002:a17:907:2d86:b0:a72:5760:1424 with SMTP id a640c23a62f3a-a7513773b0dmr91562566b.0.1719656296728;
-        Sat, 29 Jun 2024 03:18:16 -0700 (PDT)
-Received: from ?IPV6:2a02:a449:4071:1:32d0:42ff:fe10:6983? (2a02-a449-4071-1-32d0-42ff-fe10-6983.fixed6.kpn.net. [2a02:a449:4071:1:32d0:42ff:fe10:6983])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab06565csm151609666b.103.2024.06.29.03.18.15
+        bh=hHfc2Ok8Ex6+h+gzfv5bxVHv1mLg7+fEtcCdnzYL8h4=;
+        b=IL6Re+1gp53IELgXY/lEU0xv/0mHRdvyIzyupZZhoXeZkfiDT4fcmTk2I2QlZ5v5tE
+         lDVJcpRtgQTtIQ12Y5sFU77WTtVb70RpOBmZ3qK5Q1H5BtbZzxHCRHbhw6aLFY1dIWU5
+         tolVSUFfxGsvZ5a9BRuDcJK9M8k1O0He/QAPP1f+/aYEUn5685Nq4IamLuLzti3PUbZE
+         HFIdXn9Cq2FhltaUIlOSlf9wkoSBr6dmprC5bXQAHKK//lMA13Q7q2n5N4ZbWpq6O4u+
+         I5AmI667i+IH3brSPELjSLyehEI8cJX5FdIxnZfNJYakbqMLR/ZRLVN5oEseTyXbIk+y
+         iZEA==
+X-Forwarded-Encrypted: i=1; AJvYcCW7SF0Emcql1q35YEcJakhrjEX2n0IeHVen5mt1RlCI8DtrIa6xvckV66asMozu1FRttWltuMdZebr/uFMhFIUbocTZj8/2fCvdrDuJ
+X-Gm-Message-State: AOJu0Yz5U6xRZ/yb9kpqvgtxG6cvKIrrqRlFE6Oji+IJldl5OPgClE25
+	nVhFlgwT1TqpcgsQBEJl+w0B+ew8V46nKmFChprgYOJ723juyfB6ofcD+dzZuco=
+X-Google-Smtp-Source: AGHT+IHf8b56QVpki6o1vkILYZt5x1CAglvQFemSTn8n4t2wrS7SaYvjI6qxpUZwzm4Bwxfh47BlPw==
+X-Received: by 2002:a5d:64e8:0:b0:362:9313:e535 with SMTP id ffacd0b85a97d-3677571b64bmr500999f8f.48.1719656425365;
+        Sat, 29 Jun 2024 03:20:25 -0700 (PDT)
+Received: from ?IPV6:2003:e5:8729:4000:29eb:6d9d:3214:39d2? (p200300e58729400029eb6d9d321439d2.dip0.t-ipconnect.de. [2003:e5:8729:4000:29eb:6d9d:3214:39d2])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0cd707sm4554373f8f.1.2024.06.29.03.20.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 29 Jun 2024 03:18:16 -0700 (PDT)
-Message-ID: <a3a1ed17-17f7-480a-8faf-b493918956f0@gmail.com>
-Date: Sat, 29 Jun 2024 12:18:15 +0200
+        Sat, 29 Jun 2024 03:20:25 -0700 (PDT)
+Message-ID: <2982a4f2-ea8f-4fa4-81ea-d73c00fc2ad0@suse.com>
+Date: Sat, 29 Jun 2024 12:20:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,181 +75,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Johan Jonker <jbx6244@gmail.com>
-Subject: Re: [PATCH v7] drm/rockchip: rk3066_hdmi: add sound support
-To: Andy Yan <andyshrk@163.com>
-Cc: heiko@sntech.de, hjc@rock-chips.com, andy.yan@rock-chips.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, daniel@ffwll.ch, lgirdwood@gmail.com, broonie@kernel.org,
- linux-sound@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <5c651b3f-fe30-4874-98ed-044f7c62dd97@gmail.com>
- <7c53f7d.bb08.1905ef690ef.Coremail.andyshrk@163.com>
+Subject: Re: [PATCH] x86/mm: fix lookup_address() to handle physical memory
+ holes in direct mapping
+To: Ashish Kalra <Ashish.Kalra@amd.com>, dave.hansen@linux.intel.com,
+ luto@kernel.org, peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
+ bp@alien8.de
+Cc: x86@kernel.org, hpa@zytor.com, kirill.shutemov@linux.intel.com,
+ rick.p.edgecombe@intel.com, mhklinux@outlook.com, peterx@redhat.com,
+ linux-kernel@vger.kernel.org, thomas.lendacky@amd.com,
+ linux-coco@lists.linux.dev, jroedel@suse.de
+References: <20240628205229.193800-1-Ashish.Kalra@amd.com>
 Content-Language: en-US
-In-Reply-To: <7c53f7d.bb08.1905ef690ef.Coremail.andyshrk@163.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+In-Reply-To: <20240628205229.193800-1-Ashish.Kalra@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Andy, thanks.
+On 28.06.24 22:52, Ashish Kalra wrote:
+> From: Ashish Kalra <ashish.kalra@amd.com>
+> 
+> lookup_address_in_pgd_attr() at pte level it is simply returning
+> pte_offset_kernel() and there does not seem to be a check for
+> returning NULL if pte_none().
+> 
+> Fix lookup_address_in_pgd_attr() to add check for pte_none()
+> after pte_offset_kernel() and return NULL if it is true.
 
-On 6/28/24 15:08, Andy Yan wrote:
-> 
-> Hi Johan,
-> 
-> At 2024-06-28 17:23:39, "Johan Jonker" <jbx6244@gmail.com> wrote:
->> Add sound support to the RK3066 HDMI driver.
->> The HDMI TX audio source is connected to I2S_8CH.
->>
->> Signed-off-by: Zheng Yang <zhengyang@rock-chips.com>
->> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
->> ---
->>
->> Changed V7:
->>  rebase
->> ---
->> drivers/gpu/drm/rockchip/Kconfig       |   2 +
->> drivers/gpu/drm/rockchip/rk3066_hdmi.c | 274 ++++++++++++++++++++++++-
->> 2 files changed, 275 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/rockchip/Kconfig
->> index 1bf3e2829cd0..a32ee558408c 100644
->> --- a/drivers/gpu/drm/rockchip/Kconfig
->> +++ b/drivers/gpu/drm/rockchip/Kconfig
->> @@ -102,6 +102,8 @@ config ROCKCHIP_RGB
->> config ROCKCHIP_RK3066_HDMI
->> 	bool "Rockchip specific extensions for RK3066 HDMI"
->> 	depends on DRM_ROCKCHIP
->> +	select SND_SOC_HDMI_CODEC if SND_SOC
->> +	select SND_SOC_ROCKCHIP_I2S if SND_SOC
->> 	help
->> 	  This selects support for Rockchip SoC specific extensions
->> 	  for the RK3066 HDMI driver. If you want to enable
->> diff --git a/drivers/gpu/drm/rockchip/rk3066_hdmi.c b/drivers/gpu/drm/rockchip/rk3066_hdmi.c
->> index 784de990da1b..d3128b787629 100644
->> --- a/drivers/gpu/drm/rockchip/rk3066_hdmi.c
->> +++ b/drivers/gpu/drm/rockchip/rk3066_hdmi.c
->> @@ -15,12 +15,20 @@
->> #include <linux/platform_device.h>
->> #include <linux/regmap.h>
->>
->> +#include <sound/hdmi-codec.h>
->> +
->> #include "rk3066_hdmi.h"
->>
->> #include "rockchip_drm_drv.h"
->>
->> #define DEFAULT_PLLA_RATE 30000000
->>
->> +struct audio_info {
->> +	int channels;
->> +	int sample_rate;
->> +	int sample_width;
->> +};
->> +
->> struct hdmi_data_info {
->> 	int vic; /* The CEA Video ID (VIC) of the current drm display mode. */
->> 	unsigned int enc_out_format;
->> @@ -54,9 +62,16 @@ struct rk3066_hdmi {
->>
->> 	unsigned int tmdsclk;
->>
->> +	struct platform_device *audio_pdev;
->> +	stru
-> 
-> ......
-> 
->> +
->> +	return ret;
->> +}
->> +
->> +static const struct hdmi_codec_ops audio_codec_ops = {
->> +	.hw_params = rk3066_hdmi_audio_hw_params,
->> +	.audio_shutdown = rk3066_hdmi_audio_shutdown,
->> +	.mute_stream = rk3066_hdmi_audio_mute_stream,
->> +	.get_eld = rk3066_hdmi_audio_get_eld,
->> +	.no_capture_mute = 1,
->> +};
->> +
->> +static int rk3066_hdmi_audio_codec_init(struct rk3066_hdmi *hdmi,
->> +					struct device *dev)
->> +{
->> +	struct hdmi_codec_pdata codec_data = {
->> +		.i2s = 1,
->> +		.ops = &audio_codec_ops,
->> +		.max_i2s_channels = 8,
->> +	};
->> +
->> +	hdmi->audio.channels = 2;
->> +	hdmi->audio.sample_rate = 48000;
->> +	hdmi->audio.sample_width = 16;
->> +	hdmi->audio_enable = false;
->> +	hdmi->audio_pdev =
->> +		platform_device_register_data(dev,
->> +					      HDMI_CODEC_DRV_NAME,
->> +					      PLATFORM_DEVID_NONE,
->> +					      &codec_data,
->> +					      sizeof(codec_data));
->> +
->> +	return PTR_ERR_OR_ZERO(hdmi->audio_pdev);
->> +}
->> +
->> static int
->> rk3066_hdmi_register(struct drm_device *drm, struct rk3066_hdmi *hdmi)
->> {
->> @@ -566,6 +834,8 @@ rk3066_hdmi_register(struct drm_device *drm, struct rk3066_hdmi *hdmi)
->>
->> 	drm_connector_attach_encoder(&hdmi->connector, encoder);
->>
->> +	rk3066_hdmi_audio_codec_init(hdmi, dev);
-> 
-> 
-> According to Documentation/driver-api/driver-model/driver.rst,
-> 
+Please have a look at the comment above lookup_address(). You should not
+break the documented behavior without verifying that no caller is relying
+on the current behavior. If this is fine, please update the comment.
 
-> It is best not to register at the bind callback：
 
-Question for the DRM experts:
-What would be the correct location/level for the rk3066_hdmi_audio_codec_init() function?
-Is that at the rk3066_hdmi_encoder_enable() function?
-Are there other functions/examples for sound in the DRM toolbox?
+Juergen
 
-Johan
 > 
-> .. warning::
->       -EPROBE_DEFER must not be returned if probe() has already created
->       child devices, even if those child devices are removed again
->       in a cleanup path. If -EPROBE_DEFER is returned after a child
->       device has been registered, it may result in an infinite loop of
->       .probe() calls to the same driver.
+> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
+> ---
+>   arch/x86/mm/pat/set_memory.c | 7 ++++++-
+>   1 file changed, 6 insertions(+), 1 deletion(-)
 > 
-> For example：
-> vop_probe --》component_add--》rk3066_hdmi_bind--》rk3066_hdmi_audio_codec_init--》hdmi_codec_probe--》rockchip_rgb_init（DEFER when panel not ready）
-> 
-> This  may result in an infinite loop of probe
-> 
-> 
->> +
->> 	return 0;
->> }
->>
->> @@ -813,6 +1083,7 @@ static int rk3066_hdmi_bind(struct device *dev, struct device *master,
->> 	return 0;
->>
->> err_cleanup_hdmi:
->> +	platform_device_unregister(hdmi->audio_pdev);
->> 	hdmi->connector.funcs->destroy(&hdmi->connector);
->> 	hdmi->encoder.encoder.funcs->destroy(&hdmi->encoder.encoder);
->> err_disable_i2c:
->> @@ -828,6 +1099,7 @@ static void rk3066_hdmi_unbind(struct device *dev, struct device *master,
->> {
->> 	struct rk3066_hdmi *hdmi = dev_get_drvdata(dev);
->>
->> +	platform_device_unregister(hdmi->audio_pdev);
->> 	hdmi->connector.funcs->destroy(&hdmi->connector);
->> 	hdmi->encoder.encoder.funcs->destroy(&hdmi->encoder.encoder);
->>
->> --
->> 2.39.2
->>
+> diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
+> index 443a97e515c0..be8b5bf3bc3f 100644
+> --- a/arch/x86/mm/pat/set_memory.c
+> +++ b/arch/x86/mm/pat/set_memory.c
+> @@ -672,6 +672,7 @@ pte_t *lookup_address_in_pgd_attr(pgd_t *pgd, unsigned long address,
+>   	p4d_t *p4d;
+>   	pud_t *pud;
+>   	pmd_t *pmd;
+> +	pte_t *pte;
+>   
+>   	*level = PG_LEVEL_256T;
+>   	*nx = false;
+> @@ -717,7 +718,11 @@ pte_t *lookup_address_in_pgd_attr(pgd_t *pgd, unsigned long address,
+>   	*nx |= pmd_flags(*pmd) & _PAGE_NX;
+>   	*rw &= pmd_flags(*pmd) & _PAGE_RW;
+>   
+> -	return pte_offset_kernel(pmd, address);
+> +	pte = pte_offset_kernel(pmd, address);
+> +	if (pte_none(*pte))
+> +		return NULL;
+> +
+> +	return pte;
+>   }
+>   
+>   /*
+
 
