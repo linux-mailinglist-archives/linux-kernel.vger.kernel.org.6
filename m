@@ -1,120 +1,118 @@
-Return-Path: <linux-kernel+bounces-234970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 465ED91CDA3
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 16:40:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 616E791CDAA
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 16:58:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEB1E2833BD
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 14:40:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E0811C211D0
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 14:57:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39C3D824A0;
-	Sat, 29 Jun 2024 14:40:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C11824BC;
+	Sat, 29 Jun 2024 14:57:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="U023f2iv"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="E0gCzjp/"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2E25660;
-	Sat, 29 Jun 2024 14:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE721D52D;
+	Sat, 29 Jun 2024 14:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719672047; cv=none; b=eopcBHJ6ihvKK5e5sdj2R2RqAW4+1W49kYM73ZuMiCAcOsy47MUTkV8o/a+17BHw22Sr7AebbLobjX8w5IucX95YuF7yugaPpMOThFAAvB+5HfYtJerrRhCaKbUSjVJTaLFq36LguWhLrwYuozwiABN8KAft+QK2dnrLsGRLM94=
+	t=1719673070; cv=none; b=dHdij/IsoUqNb5qls/1mSG222yP27nxNRc+UgMYxkpXKCLUrGk0I9DCLVwqBSOBM5+m9MjXOGbSHI3yGln0VOa0MDxV8bViaJ9e2Fjtcw0cdXAvQ9FvTI6uK+FwwZZk0orHRHWKcE8gUTOEIRa+lrzbMHbhtVXEOVYe9oe9ZCHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719672047; c=relaxed/simple;
-	bh=4BbzsoAcYjjslEn0KSNDVOtRhzU2MoWz1axFIMNUH+A=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=lmcjW6RjlofdkV2d6yfHz55XQdkHAoGfp3KKYUiW6hShWlQEpuSEmL8yclhD7wjLIfeA/Jhg5grXyWGknRmTd5eUVn01d9H5RoLiKUWAPfViTRG00CGn0QSr1VsuLgHGqMOhzsL1ZO557qX+MvccEGfn5ry8fHJCw5hH0JVhTyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=U023f2iv; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719672024; x=1720276824; i=markus.elfring@web.de;
-	bh=PaPR7WLBZJA1HrQa7Iavj/L9F3coe01A/6bOeloyPcI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=U023f2ivaOADosPdQNx7ZFM8a5bMFWc2S+Nrvvz+a2PK0cqkI3NmdrxTKX89G0Zv
-	 GSpRMhAaUSoatfz1wY3UcrvuQa9IpthzHxZM4OZyWDoGqGabNcNPlTmk+p7wCVRsb
-	 hu12G+w+WumW3TalVjCkVMQV2wqEfEJ1G0h4NTMmIeLA5ayAJs3lBNVttf7vx8pf/
-	 5nZV3/IEeMAM+pPiq+jiBn3UOl5iwKCzUyHWh4Lyd5dn/9jIFphJskynDP7lOhnug
-	 QS1mOho8eOyiO1bD2phwy0PCVZjQlKPCYFRIG76UhPKjxNnEWSxiNPECqdr3of1+S
-	 FR0nreGS+Ph/HtH40A==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MyNwm-1sDqM812aa-0165Bv; Sat, 29
- Jun 2024 16:40:24 +0200
-Message-ID: <5d97e724-928d-45aa-b526-ee9c0d71dfd5@web.de>
-Date: Sat, 29 Jun 2024 16:40:20 +0200
+	s=arc-20240116; t=1719673070; c=relaxed/simple;
+	bh=5KUqIH8oR9S8Oul/SubmquGzNQYNYip/VXcm9bSvXZI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UtwJr7yPK093xu/w7jmVfSwglB6rMua2jymTM24jUH2l3yuJHKfDuqN9BnIWvmnN7H/KRb0woAb3k8tirvhyxNhf3PJ1WyUyzqYlKsl8tq9CDLLMrJdmmTPjv2waptEK7Lu/tj0DZo0dboRp96t3Z38LV+t62FBLwj0y9E0FyOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=E0gCzjp/; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E1A3640E0219;
+	Sat, 29 Jun 2024 14:57:45 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id jaKAkfwgC1lf; Sat, 29 Jun 2024 14:57:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1719673062; bh=eidaWZkQ9zYvGZvDZWYlfu8Wo1BVtlIeu2FB1QuEbwY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E0gCzjp/3skB/ErRfxBOVZllAN4DK5yql8V+4ggu6UhPAPEaVDGZnZdLPHS3SNdMx
+	 JTWj2fITRlYa9BO0Zbz7kvZYvALscohUyukiWtlwRmJa0/KIJds3Bi46ZBTchuiRFn
+	 BHIJzVPjMYnZdCNca/X33kKqq/qt0DnwKD7EdGBRtw58lMJ8XwjJ8Ji5s+km0fhUH7
+	 L4VUMOE0cbY6FlUM90vMiXywEWVohK0WFrmi3AV3rPsJfaOmOw++GOZ3AXNNGKuVBa
+	 drrr67hn0k7tVfz4wQFZCI1xEPYGlHdTGj811aYt6/IIjNeEq37qz9v6RSK1meYyf4
+	 J2y7+KDewXmXKigV74wmde7/fAOm2AAzZiwazJAovONt8Hfxc8edP6Y7KqgeZG7wzM
+	 0TuSOlTxMw4+3PNiDadZZllYBI0TMmzgZ7H8ojqGkcHmoL79KoTJszuerghjZBKjc0
+	 qHkl3/mqhS2n4tb7r4/dLQWhDetJ3uzfps19bDn4+zpwd2OFa0Y1qaBvKASKj4vCSd
+	 jrFvn/RE89YJWZFjPfblETWIpaO7dWFXs+8Cf2nk9KMglVziYkzE19fQ0yWVKIASlM
+	 dSNm1nkyIDXXmVYOpiVye/F40ESyDmSOliIPVrtLKmH2pExHEcoKbGNWEeAHoXFntP
+	 U2FgEgJMCEGl9gqsU66PtVqA=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DA09440E0027;
+	Sat, 29 Jun 2024 14:57:30 +0000 (UTC)
+Date: Sat, 29 Jun 2024 16:57:25 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>,
+	Johannes Thumshirn <morbidrsa@gmail.com>,
+	Ralf Baechle <ralf@linux-mips.org>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-mips@vger.kernel.org
+Subject: Re: [PATCH v2] EDAC: add missing MODULE_DESCRIPTION() macros
+Message-ID: <20240629145725.GBZoAg1ZqBWQmJ2_FP@fat_crate.local>
+References: <20240617-md-arm64-drivers-edac-v2-1-6d6c5dd1e5da@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Amelie Delaunay <amelie.delaunay@st.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
- Julia Lawall <julia.lawall@inria.fr>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] usb: typec: stusb160x: Use common code in stusb160x_probe()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:XjXAvu5rOee3IFBmLF07cD2Wldccy5BMejPO8HHUoJI1MQVEM0T
- /US+0bD3lPhS7JIN0hw3xdXW83j9POdZQqKZNiNN4oU1Wv4hVa9HjNEMYzMU9xawJFXqHZi
- oTYOry/WZrI8+2wmiUGIXvGPk+g+aHD/93I65NDf/BQMqFIrOwnBjOMchCfdSBKuMaU1knl
- 1freYno+s5UvLFfPriPhQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:vR2SkLRsqGY=;qK9Zj4+2CL+s1ELaJlKjU7yC4F6
- QceVF5bhFm00CspckrgTmtkMklRknQqKPSmGtDO6q6LXFvQ4uZcbsyOzx4TCKfg7Ka/TmJ6f0
- KNf4pw4gKXNoF55U5/X88jdpHC2GYMEh43sSij0GdflE0XGcCa28eJyCfQzxNyjk+4ceQrydn
- jzN52R6aYSy8EIDjaZ+EF0Voghub+coQU0Y9hnmgL6WgHkaxbzR4UD9fxBwCE39cbhkHN0GsN
- FEZ5rxKxF3Ex78sAsT36td5Ra4JdkmYMo15SKLdn4qE3kXuVaL+PJbzSengijncI3PXrlivbV
- I1QlJftvexNJtS8IexVkjm1ULhrroXtWd5rRAeyhHSYV/Ysh3IvQVdh8Tv/+PFiFb5OB38MsS
- /jgA63O94acPBB8EoRGnSsAyjiP4nu6cRQ91UJtvkYiRkn567KKaY3AZ5hC1gs5C0WfBAzKH0
- iujBHTiVvN+MX+5wxZ7GcbzKDdQS1Zwc9N2zpRmCjjj3NbYSNWs41cpoFuD7ElpPYrYgdlGlh
- ZoQYx/R+mPT2T8FPs/UxTvHeyNfC8OfqLvbPJwFbNlLLErccee1l0Pw7QrQR3qFzSLRYnLiB6
- KKVoRkJTeMHwDx1x4LHuhnvAfJscj9cirxBJIOecdogct0iIFtDJISpou5VGzmqqdX2yr8MWZ
- qxV16OrQZ4tmNq6TgwipqwRi9itMUnoa8rBb9lCyLJps9djxinRlHHaVR6eQlIP8CCCbZddKa
- 3MAtgXQ4sjp6USWV9qf/6fZkC/23OBjQ/HEGbZfrBkrjJeAvaZyiTYTHiuI1Q0F3qaJXKYj0L
- EHHJ3ZaK6mpGWWf/dz2Bs2oOl5kjcvJyikmlEjV79emOo=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240617-md-arm64-drivers-edac-v2-1-6d6c5dd1e5da@quicinc.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 29 Jun 2024 16:18:23 +0200
+On Mon, Jun 17, 2024 at 12:53:52PM -0700, Jeff Johnson wrote:
+> With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/edac/layerscape_edac_mod.o
+> 
+> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
+> files which have a MODULE_LICENSE().
+> 
+> This includes mpc85xx_edac.c and four octeon_edac-*.c files which,
+> although they did not produce a warning with the arm64 allmodconfig
+> configuration, may cause this warning with other configurations.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+> Changes in v2:
+> - Updated to fix all missing MODULE_DESCRIPTION() macros in drivers/edac
+> - Link to v1: https://lore.kernel.org/r/20240613-md-arm64-drivers-edac-v1-1-149a4f0f61bb@quicinc.com
+> - v1 subject: [PATCH] EDAC: layerscape: add missing MODULE_DESCRIPTION() macro
+> ---
+>  drivers/edac/layerscape_edac.c | 1 +
+>  drivers/edac/mpc85xx_edac.c    | 1 +
+>  drivers/edac/octeon_edac-l2c.c | 1 +
+>  drivers/edac/octeon_edac-lmc.c | 1 +
+>  drivers/edac/octeon_edac-pc.c  | 1 +
+>  drivers/edac/octeon_edac-pci.c | 1 +
+>  6 files changed, 6 insertions(+)
 
-Replace a function call and a return statement by a status code assignment
-and a goto statement so that a bit of common code can be better reused
-at the end of this function implementation.
+Applied, thanks.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/usb/typec/stusb160x.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+-- 
+Regards/Gruss,
+    Boris.
 
-diff --git a/drivers/usb/typec/stusb160x.c b/drivers/usb/typec/stusb160x.c
-index f3140fc04c12..e610f19126b7 100644
-=2D-- a/drivers/usb/typec/stusb160x.c
-+++ b/drivers/usb/typec/stusb160x.c
-@@ -777,9 +777,8 @@ static int stusb160x_probe(struct i2c_client *client)
- 		}
- 	}
-
--	fwnode_handle_put(fwnode);
--
--	return 0;
-+	ret =3D 0;
-+	goto fwnode_put;
-
- role_sw_put:
- 	if (chip->role_sw)
-=2D-
-2.45.2
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
