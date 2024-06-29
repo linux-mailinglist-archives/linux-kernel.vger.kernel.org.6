@@ -1,175 +1,137 @@
-Return-Path: <linux-kernel+bounces-234985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1940191CDF7
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 17:39:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 783DD91CDF8
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 17:41:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C39CD1F21DDD
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 15:39:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C5BC1C21080
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 15:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105488626C;
-	Sat, 29 Jun 2024 15:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95768564A;
+	Sat, 29 Jun 2024 15:41:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="V4byZGAC"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pc6ky84E"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7768286A;
-	Sat, 29 Jun 2024 15:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569768286A
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 15:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719675579; cv=none; b=UQskC26OeNXmwT2ybMdlSjqTPUsuobAmPPIMq857yhBdXqtXBkjh0HfLbmL1Z/iHTD46sZvh8GaB2xXEwJIGwFIuiL/WG6PlxuUZdxrOiVXFCHQzxx3sSAdGLFyJVVZK9GaGM3blUiOnky2p7MvTXVhaSWFzHLHC+QXU3AZo5iE=
+	t=1719675683; cv=none; b=a+CJCW7Dvb75VdSHObjUoWQTOGv+D+pd2a7Xy6ZDIPNaLX+3ayCNltaFtf382BgyBs2Kc6bAViDOhJwnhyPJKkVDCgWgJ/ewKyJ8N+XiPK2Ax6hMBRj/Qiz9A8MuM7/e0T0rAdmEqISE2qZqu0ljv2+yGakLVZQ3U6LNaoxEUWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719675579; c=relaxed/simple;
-	bh=e1w7tCSLitbegU/39rbUW0dPY3lV0G8wundqNPTKVuQ=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=QbI3XwVe98WmDubjRdXgZ+Q5/rTTMJycLjJN5QGHe84CViZKfyourWSJda5hZb9UlEV8CLkVmUN7jwdy576f6qEUxuq5rpi8rSOG3T7kb42/ufsa4nrUdtadTozpYt9Hnv8REkv9LBkJJfi0Vg5xHe0/gST3lPruv94fFWm5afQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=V4byZGAC; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1719675683; c=relaxed/simple;
+	bh=DMeIYntaGyx/3udKaLVfUapBSggn/EKXU+zMLd6LXiM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rWNDNWSSECxg4ULdKsUSI2oBrWN6+2NGuecDNg29U0KuW3ESG+HGSezauk86Q1xAmz55u/eytn+dZGzB8Hkc6rxd/xYaM91tf84PQyhBcSBhkAu7RK0QvQ2DdSQoJhwGPQJxz9ZLWpLx73Ona7ZMjSJiK7v1pUA+ZdhtZSx2vUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pc6ky84E; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ec61eeed8eso19318291fa.0
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 08:41:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719675679; x=1720280479; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Aoxmox5eBIkVDi8vBxgtfZej1EQ1HZTnJK5bAOTy1Vo=;
+        b=Pc6ky84EXVLk84lC2UcN46GPUvNlS2PJXkoTCZgimD2eK2tn9UE2rNyOYZv27Pxr3t
+         ayygLwdxKBmQHBgTQi+HfDRkK4haaPAVo/J6qd8I8t3gvvD1b5mruuueoOO5oYo5taO7
+         6AsFWGFar9zF09vwVE58OTfsrfBMAEYjUjUQIU4vh6DXlklzY1DhNaDjWdH1aFiHgPlJ
+         V/5K8SmpYfJkki/RDuKokDxfBSJ0xWDItZNs3DqCH+ySaboK2bBiQcLE30eR1mSGV+BO
+         s3VvWWn4z6GU6K9GPJowJCRTXwHQ7KkTpDeBEqrV0CcNZKfUasDkDxeAHSfArps3wqBY
+         wubg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719675679; x=1720280479;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Aoxmox5eBIkVDi8vBxgtfZej1EQ1HZTnJK5bAOTy1Vo=;
+        b=q577sZ3TjXX2eO2g1AlHKeRYFf/S51ugTxY7/YaQLZoSc7nQ6XE3bnRexKtioJTZI0
+         P3L5lhap7PIDkrNGQqmjxW7ht6aCfNW2cqSmE3/baf/MWLXOiyLiTwBQKykSyG+mP0Mq
+         2syusbBVi+ybCqOQ4OFUre0Vj93IvWxdWvWZBWxOtd+TMsQRji24ZTrrWbC8eUmFOC5c
+         xNsXvAfpdL9uvHyT1SJeV+iwVsvZp8cOZkh7k8/dkvoDsBe/xvu5kLAM+Id1l4QWWGq/
+         6UKsgtjZCneIBpdCxZKHov/wgJh667K6O9tE9ssxjPrXwloB5b739HVfxQbIM2veHzDM
+         eIqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUbh89nmXmUkxZ4c+Vdddph0oqwgzKXgwgDyjW2n2Bb176iCMD+cIp4XFelNFJ9TSkCRXJ7lRp3sShLgwPe02+Y4ocQqJSVaegx3Dp/
+X-Gm-Message-State: AOJu0Ywt66zYPJMB9+D1jZDbaYLym7Yc1drpjCqTBfVcuZIy++KwdNOu
+	qfVVoxkB0rJMO3hAPSZDmEFPYrg/ADGgMYhZngvsDxCSpChSG1pHrC4tJNU3soUd+q5i6l8Y91z
+	1UT2GD66WVtEo/avrrFIrzYx0JA==
+X-Google-Smtp-Source: AGHT+IHaAa7k97l7voQh9B9SuQqwncKl+W4BjACyju7LNYGNQ5cWYXCtkv0B0JQtN8AWXNZPgFemyjAP7xjab2X1N6A=
+X-Received: by 2002:a05:6512:a8f:b0:52c:e0ce:2d32 with SMTP id
+ 2adb3069b0e04-52e82687e2cmr1004291e87.36.1719675679177; Sat, 29 Jun 2024
+ 08:41:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1719675574;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=waJk0JDcbLWa+5H3B25h3EW4Cq2sMa/N3FgnU9ZkX8E=;
-	b=V4byZGACLv04ZtZJX0XW7hDYfYzQyfjHrsAxRhVnWkFGcZgnTvqQ7hsUZA/AUfZfXX68OX
-	vvoR5lletgqIyYtMJZ65y7J92czOxX084lEEkSCAAWBhDRu3dr9zRXM/XWJ8WCkBNQzpBp
-	rzvZy+UL3RezqvoEJy9V0LB/+6Bmj0gZ3VJh7QwrQqRZZenIzYkqEdxGgWHSYpB0TyozIh
-	VFbYYOR997H3SNksm1WlcK/A4V/jb/1Zv51Iyn8hNr1nK7UM7nVO9v8ZXQmK2r0X/o7Gql
-	wkTczVVuwjO4zHOazBz7iVFCQFTU0nhKR9WrIPhWkQtlVtn26mo7K6Lh1G+Q3w==
-Date: Sat, 29 Jun 2024 17:39:34 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: linux-rockchip@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-kernel@vger.kernel.org, Diederik de Haas <didi.debian@cknow.org>,
- Jonas Karlman <jonas@kwiboo.se>
-Subject: Re: [PATCH] arm64: dts: rockchip: Add optional GPU OPP voltage ranges
- to RK356x SoC dtsi
-In-Reply-To: <f10d5a3c425c2c4312512c20bd35073c@manjaro.org>
-References: <446399362bd2dbeeaecd8351f68811165429749a.1719637113.git.dsimic@manjaro.org>
- <7679413.EvYhyI6sBW@diego> <f10d5a3c425c2c4312512c20bd35073c@manjaro.org>
-Message-ID: <36170f8485293b336106e92346478daa@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+References: <20240627-fix-dosemu-vm86-v2-1-d5579f698e77@linux.intel.com>
+In-Reply-To: <20240627-fix-dosemu-vm86-v2-1-d5579f698e77@linux.intel.com>
+From: Brian Gerst <brgerst@gmail.com>
+Date: Sat, 29 Jun 2024 11:41:07 -0400
+Message-ID: <CAMzpN2gmxgbuYqwEcia7bpXhHHh_KgY37_wbwGeK5oBAy5=reA@mail.gmail.com>
+Subject: Re: [PATCH v2] x86/entry_32: Move CLEAR_CPU_BUFFERS before restoring segments
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Robert Gill <rtgill82@gmail.com>, Jari Ruusu <jariruusu@protonmail.com>, 
+	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>, antonio.gomez.iglesias@linux.intel.com, 
+	daniel.sneddon@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-06-29 17:25, Dragan Simic wrote:
-> On 2024-06-29 17:10, Heiko Stübner wrote:
->> Am Samstag, 29. Juni 2024, 07:11:24 CEST schrieb Dragan Simic:
->> 
->>> +#ifndef RK356X_GPU_NPU_SHARED_REGULATOR
->> 
->> is there some reason for this duplicating of opps?
->> 
->> The regulator framework should pick the lowest supported voltage
->> anyway, so it seems you're just extending them upwards a bit.
->> 
->> So I really don't so why we'd need to sets here.
-> 
-> The reason is improved strictness.  Having the exact GPU OPP voltages
-> required for the boards whose GPU regulators can provide those exact
-> voltages makes it possible to detect misconfigurations much easier,
-> just like it was the case with the board dts misconfiguration that
-> resulted in the recent DCDC_REG2 patch. [1]
-> 
-> If we had GPU OPP voltage ranges in place instead, the aforementioned
-> issue would probably remain undetected for some time.  It wouldn't be
-> the end of the world, :) of course, but the resulting increased power
-> consumption isn't one of the desired outcomes.
-> 
-> [1] 
-> https://lore.kernel.org/linux-rockchip/e70742ea2df432bf57b3f7de542d81ca22b0da2f.1716225483.git.dsimic@manjaro.org/
+On Thu, Jun 27, 2024 at 10:57=E2=80=AFPM Pawan Gupta
+<pawan.kumar.gupta@linux.intel.com> wrote:
+>
+> Robert Gill reported below #GP when dosemu software was executing vm86()
+> system call:
+>
+>   general protection fault: 0000 [#1] PREEMPT SMP
+>   CPU: 4 PID: 4610 Comm: dosemu.bin Not tainted 6.6.21-gentoo-x86 #1
+>   Hardware name: Dell Inc. PowerEdge 1950/0H723K, BIOS 2.7.0 10/30/2010
+>   EIP: restore_all_switch_stack+0xbe/0xcf
+>   EAX: 00000000 EBX: 00000000 ECX: 00000000 EDX: 00000000
+>   ESI: 00000000 EDI: 00000000 EBP: 00000000 ESP: ff8affdc
+>   DS: 0000 ES: 0000 FS: 0000 GS: 0033 SS: 0068 EFLAGS: 00010046
+>   CR0: 80050033 CR2: 00c2101c CR3: 04b6d000 CR4: 000406d0
+>   Call Trace:
+>    show_regs+0x70/0x78
+>    die_addr+0x29/0x70
+>    exc_general_protection+0x13c/0x348
+>    exc_bounds+0x98/0x98
+>    handle_exception+0x14d/0x14d
+>    exc_bounds+0x98/0x98
+>    restore_all_switch_stack+0xbe/0xcf
+>    exc_bounds+0x98/0x98
+>    restore_all_switch_stack+0xbe/0xcf
+>
+> This only happens when VERW based mitigations like MDS, RFDS are enabled.
+> This is because segment registers can have funky values with vm86() that
+> can result in #GP when executing VERW. Intel SDM vol. 2C documents the
+> following behavior for VERW instruction:
+>
+>   #GP(0) - If a memory operand effective address is outside the CS, DS, E=
+S,
+>            FS, or GS segment limit.
 
-On second thought, after seeing that the RK3399 CPU and GPU OPPs
-already specify voltage ranges, I think it would be better to drop
-the distinction between the separate strict voltages and the voltage
-ranges in this patch, and to add some additional debugging messages
-to drivers/opp/of.c that would allow any misconfiguration issues to
-be rather easily detected.
+This isn't limited to just VM86 mode, since any user DS that isn't a
+flat segment can also cause problems.
 
->> Also the voltage-range thing makes sense for non-gpu-npu-sharing
->> boards, when the supplying regulator does not fully support the
->> direct single-value voltage.
->> 
->> (rk3399-puma was such a case if I remember correctly)
->> 
->> So I really see no reason for this duplication.
-> 
-> Perhaps we could rename the RK356X_GPU_NPU_SHARED_REGULATOR macro
-> accordingly in the v2, to RK356X_GPU_OPP_VOLTAGE_RANGES, for example,
-> with some additional explanations in the patch description and the
-> RK356x SoC dtsi file itself.
-> 
->>>  		opp-200000000 {
->>>  			opp-hz = /bits/ 64 <200000000>;
->>>  			opp-microvolt = <825000>;
->>> @@ -222,6 +229,37 @@ opp-800000000 {
->>>  			opp-hz = /bits/ 64 <800000000>;
->>>  			opp-microvolt = <1000000>;
->>>  		};
->>> +#else
->>> +		opp-200000000 {
->>> +			opp-hz = /bits/ 64 <200000000>;
->>> +			opp-microvolt = <825000 825000 1000000>;
->>> +		};
->>> +
->>> +		opp-300000000 {
->>> +			opp-hz = /bits/ 64 <300000000>;
->>> +			opp-microvolt = <825000 825000 1000000>;
->>> +		};
->>> +
->>> +		opp-400000000 {
->>> +			opp-hz = /bits/ 64 <400000000>;
->>> +			opp-microvolt = <825000 825000 1000000>;
->>> +		};
->>> +
->>> +		opp-600000000 {
->>> +			opp-hz = /bits/ 64 <600000000>;
->>> +			opp-microvolt = <825000 825000 1000000>;
->>> +		};
->>> +
->>> +		opp-700000000 {
->>> +			opp-hz = /bits/ 64 <700000000>;
->>> +			opp-microvolt = <900000 900000 1000000>;
->>> +		};
->>> +
->>> +		opp-800000000 {
->>> +			opp-hz = /bits/ 64 <800000000>;
->>> +			opp-microvolt = <1000000 1000000 1000000>;
->>> +		};
->>> +#endif /* RK356X_GPU_NPU_SHARED_REGULATOR */
->>>  	};
->>> 
->>>  	hdmi_sound: hdmi-sound {
->>> 
->> 
->> 
->> 
->> 
->> 
->> _______________________________________________
->> Linux-rockchip mailing list
->> Linux-rockchip@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-rockchip
-> 
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+> CLEAR_CPU_BUFFERS macro executes VERW instruction before returning to
+> user space. Add CLEAR_CPU_BUFFERS to the macro RESTORE_REGS before it
+> restores segment registers. In vm86 mode kernel does not support SYSCALL
+> and SYSENTER instructions, so the problem is only limited to int80 path
+> in 32-bit mode. In the opportunistic SYSEXIT path use
+> CLEAR_CPU_BUFFERS_SAFE that ensures a sane %ds value.
+
+The simpler fix is to use an SS segment override (verw
+%ss:mds_verw_sel), since the stack segment is still valid right up to
+the IRET/SYSEXIT.
+
+Brian Gerst
 
