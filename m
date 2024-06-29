@@ -1,80 +1,77 @@
-Return-Path: <linux-kernel+bounces-235075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9B2991CFAD
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 01:30:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CD8E91CFB6
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 01:37:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1622D1C20F2F
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 23:30:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 369131C211FA
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 23:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C52C135A63;
-	Sat, 29 Jun 2024 23:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B643613B7AF;
+	Sat, 29 Jun 2024 23:37:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="j/VbK+1N"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="3HrvFnjb"
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3281D540
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 23:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82BD3B1AC
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 23:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719703846; cv=none; b=quR0J+Rig8g07JiMjiJaTEdSxup90fjebOzx5Sxz9IhU8qxZcApAbjQyBpZNwPeJKk17mnnkOw+dNozvQ7rjs+NYU0XkAppWIE66Y49Wdx9ddzYPGWsauX6BhqhaVtFbEi5ubygXycENbh+/hfLQzg0UHuFq/mEVQoRBXvUl2Po=
+	t=1719704247; cv=none; b=r0G1Chrc67i0bpyuAXUbjJNAAzehtFEVACXU5ox6oxDkTwZ7iywadz4DASKhi72RFbFDUqd+PQil3LM8M8giKuMfJ49w7aa8F74VlegEdz9EVhwD3wJxdkBUPDgzHMapsa1/mzhYalLZekI/PsBIdSuNSrUhhHl9rZjFBogI80E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719703846; c=relaxed/simple;
-	bh=IEJjlAS5//s9IpfZOVPZKU6ryrB48hGMt4oSDmz/BIs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DEZ63gJTFyOFATguD2G9Srifi4A7ie3RUcOFFG7atZh/fbAyMejD3mQQIJ9KminOjbtKZ36oZtKG7bhfCEjF30ru2N7h9Gqrlz45M3cSvZBauwM37OAQZj30NL9EG+yLB/5vRkMiB/Vo3w0lvQX6XRvssTkqUlGYa5TKzhiIiI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=j/VbK+1N; arc=none smtp.client-ip=209.85.219.42
+	s=arc-20240116; t=1719704247; c=relaxed/simple;
+	bh=IBEoI0bvSqitYJRqzPDoW8or7zGkJuOYQ/JpQeLhubU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cb0PzCqUZUl09GwUxetM7czAqAqRNz0LeD8ukTgiWg76XpAbZnqdUxxCIFBl/sSEfqitOsI44+rdB0xJ2Z0EN3QyELiwu/gcRwsnAxgrvn1+Jh+r+LnQ0LyEzOVicHVSchazBtpoUNDdQRUcHRNQ8k9xK71mP+/Rg5Ty1+vID4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=3HrvFnjb; arc=none smtp.client-ip=209.85.167.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6b54683f65fso9309516d6.1
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 16:30:44 -0700 (PDT)
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3c9cc66c649so1090901b6e.1
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 16:37:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1719703844; x=1720308644; darn=vger.kernel.org;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1719704245; x=1720309045; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kzngZ4dBsZTw3mzD7TJaRH343afEjYAiOI6vhb3xMXs=;
-        b=j/VbK+1NaxRuT4jUqnZcD14LO3iMjW+G759wD3rfc9rsjLsFGbKGO1MCjm12+4FqxS
-         8I5hhtN+Qr5mD/Mne86it7EIvYpM4fZUAQC5plOkcHzu7O+sThYQA3YOfmK1qRlutQxS
-         3RioUDSD0QuIiB+BoEGZEn6/yk7vijU+JR7+5AuPFdnhkv7A0Eu/QkrZbXBgT/0HTA20
-         IAJtbdgaOIbdpvf4CQyQvdfv7f6Obm6e01vAuH1Yu0XHG8qzcERChfE2Y3dp8Lx9E0CJ
-         jJq5nK5/ddU0T5TyyFmXG3HHZP16fncE4xJQJNhDx4hN6Bmn+x3LrJfLWE5KHGr9/97x
-         jIKg==
+        bh=+3puRN6mg4Kad0heP72+x0UdDRAPxRVJ0rwKkzRspK0=;
+        b=3HrvFnjbv8R42DQH8RBAMyz+cUhlrHdxoFIuKcmVTUIV4TFIvGSUUPCsO1XrlN3Man
+         Hek+sQOp0wUfhZBdrJp4AbfS+2tP4yACs7vF4CcXKjVPHrEiZKoyCpS4jyS+ypoPJaLw
+         76BjNHfVtBazwh2cq4eolmPW2kZ9QunW070n8yL90vmY/skXDIaluZnBaDs6vPqP7NI5
+         RMKVeRoVG8uxXy78ikuKBSfzeMN6gxrfODfIyRvXj6Galsausj10b0i2DPRnRFMVWLpY
+         TJCGj0+8SCyAP6/qp94rs4tCKv78q9tuytzg82nNYr//bNra92DTvXNBI6O2HrVnjeFJ
+         cLPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719703844; x=1720308644;
+        d=1e100.net; s=20230601; t=1719704245; x=1720309045;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kzngZ4dBsZTw3mzD7TJaRH343afEjYAiOI6vhb3xMXs=;
-        b=RmZrDmUU8ydkM6CMu04VgT9Di5j32GCxWZYUcijOoH0zLucQVQQeENOIH1jHQud4/H
-         bh7vrrXw7pd79vsy6hdMm+UyVXDOIfgNq6S5uSa6gqH+ycd3VVS+8XUlctk2U9aYcWyG
-         vJPQhT58VTf6hH6Uerq9jnpnibcR3dACazmqqZOByVKrg05xVUd1bPuGKaGCmwoWESLe
-         6ncAxZFXfhwUz6B4XWhi9whVQIsY6J77YgvvGZkgxgH6BaY3X7SQCGq9iGNRQd4m+Zoz
-         DJ3zjbFWlhB2fL58369oU+NEuzLbwbe8rHbU/5+sQ3usxpLIWn8YiWx2JXl7dGA6jgbm
-         yiDA==
-X-Forwarded-Encrypted: i=1; AJvYcCVtsAKy7TivumApZPKqTn9OlW4UCPzehkp8i270Yz14dDtHY9qn1rwP0mECOWMaorc9/sU9aURFj6mBcpRQPQcUHCRtXiGYgQ0XwntG
-X-Gm-Message-State: AOJu0YxBGVyVHiWVsPqzf7Urok87GG3dJoqpfVvceMyicmNAHMF/ZiLc
-	6C1APuHOdENNJyTajNfKmOxo1I4DebkJGOT1exfjlHVJ8ZXNL+Q3LyKFeyGi+0VtEZloqwjbab2
-	/
-X-Google-Smtp-Source: AGHT+IHMoATyt6j5Mm2oZ60wF78Ol80+nzN8Vjq1tYadVGAVyarOr8GCKkzWv8xp4vKA1CkWio12pg==
-X-Received: by 2002:ad4:5e8e:0:b0:6b5:8de5:d0b7 with SMTP id 6a1803df08f44-6b5b71a5d60mr27016206d6.44.1719703843928;
-        Sat, 29 Jun 2024 16:30:43 -0700 (PDT)
+        bh=+3puRN6mg4Kad0heP72+x0UdDRAPxRVJ0rwKkzRspK0=;
+        b=YIhdN3iN1ExJqwGM06oH2heHQfJtyp+3N/LTC+CX0pXYnHeqvs5jS5Lil3muL3TDg9
+         3fK44W3egdpgb0B9UnjnOXCvQLG7PwN8y9zUEM6OT2r4aaQjfobhqPqFGwuyXXt9C9/Y
+         +pgEzUbzfKC1OOPQygSK1WPWO886uXdpPtt1L1MegLyyfPciKM+O38fBi0vS3E6AFi/y
+         HwR6Q+5Zoe3XG8tx8ajhDx3gHrC3NCI4iIqoouslIh2bg6QXGskebxszH5LtCB8XQ+Kc
+         a4RSV3vGSuU0mag+tUl0eJm09zjLfenWr/H3SEgmiM/QMzylx6t2GQEuopl2vOx9WnTJ
+         Y4NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWg6C0j8T2GNSeaqP1QlLBd6e8B8keDcKRpF5/nez4B4yZjxWqpD2U/4asQLknOMR4vjNmpCsuh2zCml9xHFbxm/7eSl8ur1wRaWkNB
+X-Gm-Message-State: AOJu0Yy3X31Mtsjjz6XNI6qRMy4hXEy7W/sFSC15fj3gf8olLoYtiUR2
+	cOQWAWOcd6WJNCwQgF5DmmTAx/qZ12InU/gpvMW+lKKmi1PQ3x0K//v4gYHdp8w=
+X-Google-Smtp-Source: AGHT+IG8P+5igDk4ExwABkE2XwoDTVpTr+1Rh0xMCSl5Q2BnEcJHHpU8Ukw7tYI1CUy+tLNvveX6pg==
+X-Received: by 2002:a05:6808:199c:b0:3d6:2d6d:e0e3 with SMTP id 5614622812f47-3d6b55908demr2183569b6e.52.1719704244748;
+        Sat, 29 Jun 2024 16:37:24 -0700 (PDT)
 Received: from fedora.vc.shawcable.net (S0106c09435b54ab9.vc.shawcable.net. [24.85.107.15])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fad31d5d57sm26608945ad.160.2024.06.29.16.30.43
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7080246ee80sm3791646b3a.69.2024.06.29.16.37.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Jun 2024 16:30:43 -0700 (PDT)
+        Sat, 29 Jun 2024 16:37:24 -0700 (PDT)
 From: Thorsten Blum <thorsten.blum@toblux.com>
-To: linux@armlinux.org.uk
-Cc: mingo@kernel.org,
-	sshegde@linux.ibm.com,
-	linux-arm-kernel@lists.infradead.org,
+To: kees@kernel.org
+Cc: linux-hardening@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH v2] ARM, sched/topology: Check return value of kcalloc()
-Date: Sun, 30 Jun 2024 01:30:29 +0200
-Message-ID: <20240629233028.275424-2-thorsten.blum@toblux.com>
+Subject: [PATCH] gcc-plugins: Remove duplicate included header file stringpool.h
+Date: Sun, 30 Jun 2024 01:36:09 +0200
+Message-ID: <20240629233608.278028-2-thorsten.blum@toblux.com>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -84,34 +81,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Check the return value of kcalloc() and panic() if memory allocation
-fails.
+The header file stringpool.h is included for GCC version >= 8 and then
+again for all versions.
 
-Compile-tested only.
+Since the header file stringpool.h was added in GCC 4.9 and the kernel
+currently requires GCC 5.1 as a minimum, remove the conditional include.
+
+Including the header file only once removes the following warning
+reported by make includecheck:
+
+  stringpool.h is included more than once
+
+However, it's important to include stringpool.h before attribs.h
+because attribs.h uses some of its functions.
+
+Compile-tested with GCC 14.
 
 Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
 ---
-Changes in v2:
-- Panic instead of failing gracefully by returning early after feedback
-  from Russell King
-- Link to v1: https://lore.kernel.org/linux-kernel/20240628194350.542376-2-thorsten.blum@toblux.com/
----
- arch/arm/kernel/topology.c | 2 ++
- 1 file changed, 2 insertions(+)
+ scripts/gcc-plugins/gcc-common.h | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/arch/arm/kernel/topology.c b/arch/arm/kernel/topology.c
-index 2336ee2aa44a..27d6527f5fb6 100644
---- a/arch/arm/kernel/topology.c
-+++ b/arch/arm/kernel/topology.c
-@@ -93,6 +93,8 @@ static void __init parse_dt_topology(void)
- 
- 	__cpu_capacity = kcalloc(nr_cpu_ids, sizeof(*__cpu_capacity),
- 				 GFP_NOWAIT);
-+	if (unlikely(!__cpu_capacity))
-+		panic("Failed to allocate memory for __cpu_capacity\n");
- 
- 	for_each_possible_cpu(cpu) {
- 		const __be32 *rate;
+diff --git a/scripts/gcc-plugins/gcc-common.h b/scripts/gcc-plugins/gcc-common.h
+index 1ae39b9f4a95..3222c1070444 100644
+--- a/scripts/gcc-plugins/gcc-common.h
++++ b/scripts/gcc-plugins/gcc-common.h
+@@ -62,11 +62,7 @@
+ #include "pass_manager.h"
+ #include "predict.h"
+ #include "ipa-utils.h"
+-
+-#if BUILDING_GCC_VERSION >= 8000
+ #include "stringpool.h"
+-#endif
+-
+ #include "attribs.h"
+ #include "varasm.h"
+ #include "stor-layout.h"
+@@ -78,7 +74,6 @@
+ #include "context.h"
+ #include "tree-ssa-alias.h"
+ #include "tree-ssa.h"
+-#include "stringpool.h"
+ #if BUILDING_GCC_VERSION >= 7000
+ #include "tree-vrp.h"
+ #endif
 -- 
 2.45.2
 
