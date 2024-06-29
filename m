@@ -1,136 +1,212 @@
-Return-Path: <linux-kernel+bounces-234887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B651991CC0F
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 12:13:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3882F91CC0E
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 12:11:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B62D81C21280
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 10:13:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E01C6283703
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 10:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72CF43D575;
-	Sat, 29 Jun 2024 10:13:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B95F3F9FB;
+	Sat, 29 Jun 2024 10:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VptIlpJk"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J8Z+GxAg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A372E3EE
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 10:12:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F772E3EE;
+	Sat, 29 Jun 2024 10:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719655979; cv=none; b=ar8+A07Qt+3zqIYLwp2Hhqmo8VnNumnBSmqGNbN76093LcVcOKknx7P+PLAeCG2gqeUiXXslSi0ZBmiK2aAcHOQt4TNY8mMnEWhGe5oEoGh/5bhPR/jVojqi7e5FsE1zbwh2ZkIajsoTxQoL7maVfkrZzf52CPwcT2GLVK4A2O4=
+	t=1719655874; cv=none; b=EIlVZQBaNdSyT6oKdK4Ku5nOoE6F7NEoYBFOMjCdd7frlEoNJRrEp+LQmNeT1Ds3RQ9xqo4s67C2BgbmKv+o8BG4E09TWOSFOtwSh9QBdaLA0E0/JsSEhf/6eAYDj8bjuAxbcHGaKx3HIC0zo/lV+PKjOyETtpbdYHOqvz8q4ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719655979; c=relaxed/simple;
-	bh=mVb24fnuRVL8X+zLFAfCADvfEPJ+TVtgExoeRQHI38k=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BT+OjgLZXALNedRLCMLdEqDxlsnSYhT8Mojup9IBpCPcvIDv9xo8Fy9Ncn/gHtljIyF+7uFbDD/yWkvZQl7MNnczszW1cLVzQMP5hQbtzTi93NjCXfXAyE3/lerGoPIQLdAmmeiF3EzZQx5rGwWzR16qlmqBCbmczBVmoFiiY/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VptIlpJk; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45TABWGL075947;
-	Sat, 29 Jun 2024 05:11:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719655892;
-	bh=j+35sZloQtOncQRrC2TQVPifEH/ctuOisMlfiAP9d5Q=;
-	h=From:To:CC:Subject:Date;
-	b=VptIlpJkn+NFmFYIRl2THRZ+eRJptDnn+04i7BymHc5Uu0hPFEJytzNfEiqh+C6r7
-	 tszNwSMj/b/T62ElZ6kOa+qoCDvcdVXW/9iyt/qe+BjlMYMPrHXobkhhfPt31QZHsz
-	 ZU6JIbxXYhG165Kbu7/GbEkE7Rhz07XK+6wh9DQE=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45TABWrU127666
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sat, 29 Jun 2024 05:11:32 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 29
- Jun 2024 05:11:31 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sat, 29 Jun 2024 05:11:31 -0500
-Received: from LT5CG31242FY.dhcp.ti.com ([10.250.160.158])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45TABLfH074877;
-	Sat, 29 Jun 2024 05:11:22 -0500
-From: Shenghao Ding <shenghao-ding@ti.com>
-To: <broonie@kernel.org>
-CC: <andriy.shevchenko@linux.intel.com>, <lgirdwood@gmail.com>,
-        <perex@perex.cz>, <pierre-louis.bossart@linux.intel.com>,
-        <13916275206@139.com>, <zhourui@huaqin.com>,
-        <alsa-devel@alsa-project.org>, <i-salazar@ti.com>,
-        <linux-kernel@vger.kernel.org>, <j-chadha@ti.com>,
-        <liam.r.girdwood@intel.com>, <jaden-yue@ti.com>,
-        <yung-chuan.liao@linux.intel.com>, <dipa@ti.com>, <yuhsuan@google.com>,
-        <henry.lo@ti.com>, <tiwai@suse.de>, <baojun.xu@ti.com>, <soyer@irl.hu>,
-        <Baojun.Xu@fpt.com>, <judyhsiao@google.com>, <navada@ti.com>,
-        <cujomalainey@google.com>, <aanya@ti.com>, <nayeem.mahmud@ti.com>,
-        <savyasanchi.shukla@netradyne.com>, <flaviopr@microsoft.com>,
-        <jesse-ji@ti.com>, <darren.ye@mediatek.com>,
-        Shenghao Ding
-	<shenghao-ding@ti.com>
-Subject: [PATCH v1] ASoc: tas2781: Add name_prefix as the prefix name of DSP firmwares and calibrated data files
-Date: Sat, 29 Jun 2024 18:11:10 +0800
-Message-ID: <20240629101112.628-1-shenghao-ding@ti.com>
-X-Mailer: git-send-email 2.33.0.windows.2
+	s=arc-20240116; t=1719655874; c=relaxed/simple;
+	bh=FnIL5yyt+lay07WZTdrkwW99UN6S/7QLQv1aXmRY8oA=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gBaFY2TvQjr1eldjnCnveoKZyUcAAPa47F48D1FF40OiISvuMfr/gbGVInMOE1ujLAi2R2LD+qSMPfK8TexHnPGFrSqCsG/1bEI4KjZKXijiet0XjIXw2+Gp088KzKXD6ECMxyL9XQtgPvGChM/t8iF+iy6SPixwctu5TEXFJJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J8Z+GxAg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5164C2BBFC;
+	Sat, 29 Jun 2024 10:11:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719655873;
+	bh=FnIL5yyt+lay07WZTdrkwW99UN6S/7QLQv1aXmRY8oA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=J8Z+GxAgG7bZ/af/qv3F1wtxXLfJuFAn8pHXyW04lmthoJULG1oemLUJPVRGOFZOL
+	 9Dv3YRyYsXLOT2v3Y2YxVg389rhFIv8AyPHct74RGK4FGZQZu9tIFEj9m6bJD/IvNy
+	 CrztD+SgeDll30W7C5ZfjudGZj0Qi26n84eJtaUL27FBhrxZlilH6QoD3YNTkLBXfQ
+	 INl9IwZQwfly+vX+KUQ5SZHVPZWdaMzbj15qnzQ03+AP+Ksj2Bspv4PwVhD9UwooGI
+	 vJIU3+92Vq8iHaigvq1wnxxy2Z2kuD0leqRc1QU/NHlNJT670cqqca7DFUfUbCq6Pt
+	 65eN5n7IVDGYg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sNV31-008N1i-9T;
+	Sat, 29 Jun 2024 11:11:11 +0100
+Date: Sat, 29 Jun 2024 11:11:10 +0100
+Message-ID: <86bk3khxdt.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-pci@vger.kernel.org,
+	anna-maria@linutronix.de,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	festevam@gmail.com,
+	bhelgaas@google.com,
+	rdunlap@infradead.org,
+	vidyas@nvidia.com,
+	ilpo.jarvinen@linux.intel.com,
+	apatel@ventanamicro.com,
+	kevin.tian@intel.com,
+	nipun.gupta@amd.com,
+	den@valinux.co.jp,
+	andrew@lunn.ch,
+	gregory.clement@bootlin.com,
+	sebastian.hesselbarth@gmail.com,
+	gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	alex.williamson@redhat.com,
+	will@kernel.org,
+	lorenzo.pieralisi@arm.com,
+	jgg@mellanox.com,
+	ammarfaizi2@gnuweeb.org,
+	robin.murphy@arm.com,
+	lpieralisi@kernel.org,
+	nm@ti.com,
+	kristo@kernel.org,
+	vkoul@kernel.org,
+	okaya@kernel.org,
+	agross@kernel.org,
+	andersson@kernel.org,
+	mark.rutland@arm.com,
+	shameerali.kolothum.thodi@huawei.com,
+	yuzenghui@huawei.com,
+	shivamurthy.shastri@linutronix.de
+Subject: Re: [patch V4 05/21] irqchip/gic-v3-its: Provide MSI parent for PCI/MSI[-X]
+In-Reply-To: <86cyo0hyc6.wl-maz@kernel.org>
+References: <20240623142137.448898081@linutronix.de>
+	<20240623142235.024567623@linutronix.de>
+	<Zn84OIS0zLWASKr2@arm.com>
+	<87h6dcxhy0.ffs@tglx>
+	<86ed8ghypg.wl-maz@kernel.org>
+	<86cyo0hyc6.wl-maz@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: tglx@linutronix.de, catalin.marinas@arm.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, anna-maria@linutronix.de, shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com, rdunlap@infradead.org, vidyas@nvidia.com, ilpo.jarvinen@linux.intel.com, apatel@ventanamicro.com, kevin.tian@intel.com, nipun.gupta@amd.com, den@valinux.co.jp, andrew@lunn.ch, gregory.clement@bootlin.com, sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org, rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org, lorenzo.pieralisi@arm.com, jgg@mellanox.com, ammarfaizi2@gnuweeb.org, robin.murphy@arm.com, lpieralisi@kernel.org, nm@ti.com, kristo@kernel.org, vkoul@kernel.org, okaya@kernel.org, agross@kernel.org, andersson@kernel.org, mark.rutland@arm.com, shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com, shivamurthy.shastri@linutronix.de
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Add name_prefix as the prefix name of DSP firmwares
-and calibrated data files which stored speaker
-calibrated impedance.
+On Sat, 29 Jun 2024 10:50:33 +0100,
+Marc Zyngier <maz@kernel.org> wrote:
+> 
+> On Sat, 29 Jun 2024 10:42:35 +0100,
+> Marc Zyngier <maz@kernel.org> wrote:
+> > 
+> > On Sat, 29 Jun 2024 09:37:59 +0100,
+> > Thomas Gleixner <tglx@linutronix.de> wrote:
+> > > 
+> > > On Fri, Jun 28 2024 at 23:24, Catalin Marinas wrote:
+> > > > I just noticed guests (under KVM) failing to boot on my TX2 with your
+> > > > latest branch. I bisected to this patch as the first bad commit.
+> > > >
+> > > > I'm away this weekend, so won't have time to dive deeper. It looks like
+> > > > the CPU is stuck in do_idle() (no timer interrupts?). Also sysrq did not
+> > > > seem able to get the stack trace on the other CPUs. It fails both with a
+> > > > single or multiple CPUs in the same way place (shortly before mounting
+> > > > the rootfs and starting user space).
+> > > 
+> > > From the RH log it's clear that PCI interrupts are not delivered.
+> > > 
+> > > > I'll drop your branch from the arm64 for-kernelci for now and have a
+> > > > look again on Monday.
+> > > 
+> > > I stare too. Unfortunately I don't have access to such hardware :(
+> > 
+> > On the face of it, the LPIs are never unmasked (grepping in
+> > /sys/kernel/debug/kvm/*/vgic-state):
+> > 
+> > Distributor
+> > ===========
+> > vgic_model:	GICv3
+> > nr_spis:	32
+> > nr_lpis:	7
+> > enabled:	1
+> > 
+> > P=pending_latch, L=line_level, A=active
+> > E=enabled, H=hw, C=config (level=1, edge=0)
+> > G=group
+> > 
+> > VCPU 0 TYP   ID TGT_ID PLAEHCG     HWID   TARGET SRC PRI VCPU_ID
+> > ----------------------------------------------------------------
+> > [...]
+> >        LPI 8192      0 1000001        0        0   0 160      -1 
+> >        LPI 8193      1 0000001        0        0   0 160      -1 
+> >        LPI 8194      2 0000001        0        0   0 160      -1 
+> >        LPI 8256      3 0000001        0        0   0 160      -1 
+> >        LPI 8257      4 0000001        0        0   0 160      -1 
+> >        LPI 8320      5 0000001        0        0   0 160      -1 
+> >        LPI 8321      6 1000001        0        0   0 160      -1
+> > 
+> > 8192 and 8321 are pending, but never enabled.
+> > 
+> > This is further confirmed by placing traces in the guest. Now trying
+> > to find my way through the new maze of callbacks, because something is
+> > clearly missing there.
+> 
+> This is clearly related to MSI_FLAG_PCI_MSI_MASK_PARENT which is not
+> seen as being set from cond_unmask_parent(), and ignoring this
+> condition results in a booting VM.
+> 
+> I have the ugly feeling that the flag is applied at the wrong level,
+> or not propagated.
 
-Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
----
- sound/soc/codecs/tas2781-i2c.c | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+Here's a possible fix. Making the masking at the ITS level optional is
+not an option (haha). It is the PCI masking that is totally
+superfluous and that could completely be elided.
 
-diff --git a/sound/soc/codecs/tas2781-i2c.c b/sound/soc/codecs/tas2781-i2c.c
-index 4d1a0d836e77..cc765d45c6b5 100644
---- a/sound/soc/codecs/tas2781-i2c.c
-+++ b/sound/soc/codecs/tas2781-i2c.c
-@@ -394,8 +394,12 @@ static void tasdevice_fw_ready(const struct firmware *fmw,
- 	 * failing to load DSP firmware is NOT an error.
- 	 */
- 	tas_priv->fw_state = TASDEVICE_RCA_FW_OK;
--	scnprintf(tas_priv->coef_binaryname, 64, "%s_coef.bin",
--		tas_priv->dev_name);
-+	if (tas_priv->name_prefix)
-+		scnprintf(tas_priv->rca_binaryname, 64, "%s-%s_coef.bin",
-+			tas_priv->name_prefix, tas_priv->dev_name);
-+	else
-+		scnprintf(tas_priv->coef_binaryname, 64, "%s_coef.bin",
-+			tas_priv->dev_name);
- 	ret = tasdevice_dsp_parser(tas_priv);
- 	if (ret) {
- 		dev_err(tas_priv->dev, "dspfw load %s error\n",
-@@ -418,8 +422,15 @@ static void tasdevice_fw_ready(const struct firmware *fmw,
- 	 * calibrated data inside algo.
- 	 */
- 	for (i = 0; i < tas_priv->ndev; i++) {
--		scnprintf(tas_priv->cal_binaryname[i], 64, "%s_cal_0x%02x.bin",
--			tas_priv->dev_name, tas_priv->tasdevice[i].dev_addr);
-+		if (tas_priv->name_prefix)
-+			scnprintf(tas_priv->cal_binaryname[i], 64,
-+				"%s-%s_cal_0x%02x.bin", tas_priv->name_prefix,
-+				tas_priv->dev_name,
-+				tas_priv->tasdevice[i].dev_addr);
-+		else
-+			scnprintf(tas_priv->cal_binaryname[i], 64,
-+				"%s_cal_0x%02x.bin", tas_priv->dev_name,
-+				tas_priv->tasdevice[i].dev_addr);
- 		ret = tas2781_load_calibration(tas_priv,
- 			tas_priv->cal_binaryname[i], i);
- 		if (ret != 0)
+With this hack, I can boot a GICv3+ITS guest as usual.
+
+	M.
+
+diff --git a/drivers/irqchip/irq-gic-v3-its-msi-parent.c b/drivers/irqchip/irq-gic-v3-its-msi-parent.c
+index 21daa452ffa6d..b66e64eaae440 100644
+--- a/drivers/irqchip/irq-gic-v3-its-msi-parent.c
++++ b/drivers/irqchip/irq-gic-v3-its-msi-parent.c
+@@ -10,13 +10,13 @@
+ #include "irq-gic-common.h"
+ #include "irq-msi-lib.h"
+ 
+-#define ITS_MSI_FLAGS_REQUIRED  (MSI_FLAG_USE_DEF_DOM_OPS |	\
+-				 MSI_FLAG_USE_DEF_CHIP_OPS)
++#define ITS_MSI_FLAGS_REQUIRED  (MSI_FLAG_USE_DEF_DOM_OPS  |	\
++				 MSI_FLAG_USE_DEF_CHIP_OPS |	\
++				 MSI_FLAG_PCI_MSI_MASK_PARENT)
+ 
+ #define ITS_MSI_FLAGS_SUPPORTED (MSI_GENERIC_FLAGS_MASK |	\
+ 				 MSI_FLAG_PCI_MSIX      |	\
+-				 MSI_FLAG_MULTI_PCI_MSI |	\
+-				 MSI_FLAG_PCI_MSI_MASK_PARENT)
++				 MSI_FLAG_MULTI_PCI_MSI)
+ 
+ #ifdef CONFIG_PCI_MSI
+ static int its_pci_msi_vec_count(struct pci_dev *pdev, void *data)
+
+
 -- 
-2.34.1
-
+Without deviation from the norm, progress is not possible.
 
