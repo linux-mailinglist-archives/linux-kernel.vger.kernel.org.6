@@ -1,188 +1,231 @@
-Return-Path: <linux-kernel+bounces-234846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5FC991CB72
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 08:40:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98D9891CB78
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 08:59:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF1941C214DE
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 06:40:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC36C1C21CCA
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 06:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044D534CD8;
-	Sat, 29 Jun 2024 06:40:33 +0000 (UTC)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA77381DF;
+	Sat, 29 Jun 2024 06:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="RFdThJhf"
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469171FC4;
-	Sat, 29 Jun 2024 06:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282E01CF9B;
+	Sat, 29 Jun 2024 06:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719643232; cv=none; b=TaqK50mNFg90w1R6fe0/MjchnG8LDQHJ5TKYgSE45OWe+an55lRUq5evTChPBi2LIJN/mGWjs4zsl7D5t6H2cFJ7DTvTGYpoXdH7c8Hok4ljpuckCDbaGaYmJzk9shsALDxN4HIsNpkXRauau0+n1Pi2zgh6yYMCmForLfnpG2o=
+	t=1719644347; cv=none; b=mbSb+Fvp8wRd8rAfCe2HbEys4sG/fF5XF1fIF8H/+KdnJKnccErAc8wjZjzHrsNRNxnWMINJGY5VjJjc8Yi7m62eHbibyvh4RY9ts65bVCEuCoHNmFzQ9ezQq4uBgBSELrmbeRLo1E8gQ1bkpjC4NMUh3Jd4jLG6d3XjMyUcwoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719643232; c=relaxed/simple;
-	bh=Cn09Ef8gCqLXly+Rs3FB1Boi9qEevm3VkSEoUZ3h5tQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OUAZs55Q+p9sOwRjhFsCm5S6Efm9UdN+mKvtk7ikdcDzSFjIGozJp/0C6O55E9BZfH1NP1quHrc68jrCMWYxhFQRCTkOjswa5gySiug5bqFCQr2JpcsIGbsE9dYhYcvIjgw6hC5oqVk4XWjromXUQl74Hm+5gVQgzPWVYrsLcFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52cdb0d816bso1317439e87.1;
-        Fri, 28 Jun 2024 23:40:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719643226; x=1720248026;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9VvrX6QrJoZbVIAjkNDDZQYHf2ppstlZCyPEGAhFB7E=;
-        b=X67D/5/1n5jmf0dQKWFSIvtmw3nppCtZlaBY2vgNoK3xDvsRCBbIauwQN7KPRta5u5
-         jW3N34KjqQ+F0AQpPs+aNnd9GTsMfxznVijpAkid1FBKleldOG98kidKCJJ4C+KHKUrr
-         ab7b89K7IhQy8hHF9YPnEu5bM1NRCQOkgJI29FSRtxOBPLYm4CwV2iISYiUHuX/S0lHv
-         fg5xtKBxQi79tQ71sbAHsgR+LfnOrlXp8K+hIhWTQO/wwi5EDKnMDkyH3NkTRIOAj+qV
-         ZRYIUt9tSoc5yQtu+xtSXQXr3MwlbIxbCTuVnb5omoH0W4EJwGDztbmedCEUmfU9H8h+
-         wVWA==
-X-Forwarded-Encrypted: i=1; AJvYcCX1rvHFvbCZCaSrUVuTiFMfM36PqbHB00LzGpSNaln985WgiSZDEALegE8C4t83kD9t32bOvcnqLDTCkmLDfgSQCSHHR19s/9dJa8Y39jp8sQv7gOu9gZNPOb5yCLnPazj/dVp63ogPRTs36K5VDWISmKcDFGbUxqvnyMPz1osF
-X-Gm-Message-State: AOJu0YwagGx5+GbcKgv0SP9pVb7kvVYjs5g1pTlTTc5X9w5c85QDrhN/
-	qVulOIdofeeKca+h9MO4+zqfrEVcijTJCbYMN9KncH+KAaoI2RCKPkkPB5wR
-X-Google-Smtp-Source: AGHT+IFA7ugnhEf1xJP1uidTDJA7jOk1oGHqKAQ620msPV8LOpgs9etJjcusPNCUBD2oPeIAQBJltg==
-X-Received: by 2002:a05:6512:33d2:b0:52c:d5a8:496 with SMTP id 2adb3069b0e04-52e825cb663mr127761e87.22.1719643225834;
-        Fri, 28 Jun 2024 23:40:25 -0700 (PDT)
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab2780asm505088e87.178.2024.06.28.23.40.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jun 2024 23:40:25 -0700 (PDT)
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ee4ab5958dso21076501fa.1;
-        Fri, 28 Jun 2024 23:40:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUCw4DN2qw3Eg08nIlIMw6YRheG4FNQu0Lzl3fMtGthCjfHHpft6K67r7dUeS8n+v3f5RruMRPPtgzwdNi4Rkf1CTdcl9PvRCiSewN0bSr81gC4qq8dE5YGgnTzE4N9pF3/0blChg6+a9t/LRXdiD3PKYSlvJ+zk/nBHrE+EE2d
-X-Received: by 2002:a05:651c:21a:b0:2ec:4e05:8d99 with SMTP id
- 38308e7fff4ca-2ee5e6c5e60mr958211fa.20.1719643225204; Fri, 28 Jun 2024
- 23:40:25 -0700 (PDT)
+	s=arc-20240116; t=1719644347; c=relaxed/simple;
+	bh=6KyjtX5hOxB5LlFjn7fgJk+/s9NXrVzZ9ltFbNSFa2U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c2rOU53onIwN8wRks1YDYeRXIbfsEoKNTkneepKAONJS6u8aUPAIk8AHyXDlMJpgJZkuCC/VEPs0bJofbsq3F4WUBPI7nhSsar1BAWtUvqZs7Ih/s4sxGNWdJGUjNWnK8k1ERcDJQFc5XS5gUlC0uIH7Xxplm4mLP/jWRRJ9rew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=RFdThJhf; arc=none smtp.client-ip=80.12.242.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([86.243.222.230])
+	by smtp.orange.fr with ESMTPA
+	id NS2ussK9tE745NS2vs6O5R; Sat, 29 Jun 2024 08:58:56 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1719644336;
+	bh=7ZffAGKYDmgIjO3VVxySPyiErhAqXhow8CsGzx+lLxE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=RFdThJhfv4vP0hsVXmPTV5moPfCdjkgSOtnIqkWMriydYqth15YzuIU7lvY7cYBYD
+	 SxTULNmD8MBCbXjHJUwQy0f3hk1hMCh6uWVJykx9fay1rYE8U52k0tRgmWUNx9okxd
+	 YfebuiBFrfp+8CjStf3Y9/L6y6x6olhY2w7w9HYLqq1lKvOETEIg8iW+8K1altibgl
+	 6+/JosxD5GUz4zE9v23oRPFn13dL3ZE/LIlxRWXzpowNqG4NC+zyPnIH4rBMitnHVQ
+	 4JK8CLFEeZ5kuvWKjI+RchpY5MS84JOMNC117wT5DfMXRFnQ8IgOacLOiGjQ/LI/bL
+	 usaVooEKFjHIA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 29 Jun 2024 08:58:56 +0200
+X-ME-IP: 86.243.222.230
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-acpi@vger.kernel.org
+Subject: [PATCH] ACPI: PMIC: Constify struct pmic_table
+Date: Sat, 29 Jun 2024 08:58:42 +0200
+Message-ID: <a6c9b1bcdf259adabbcaf91183d3f5ab87a98600.1719644292.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240623-sunxi-ng_fix_common_probe-v1-1-7c97e32824a1@oltmanns.dev>
- <yw1x4j9e62dt.fsf@mansr.com>
-In-Reply-To: <yw1x4j9e62dt.fsf@mansr.com>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sat, 29 Jun 2024 14:40:11 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67GbUF7S9hKdNb=az0ZsoEU=fXjKzyQvEd+tSHrWf4eCg@mail.gmail.com>
-Message-ID: <CAGb2v67GbUF7S9hKdNb=az0ZsoEU=fXjKzyQvEd+tSHrWf4eCg@mail.gmail.com>
-Subject: Re: [PATCH] clk: sunxi-ng: common: Don't call hw_to_ccu_common on hw
- without common
-To: =?UTF-8?B?TcOlbnMgUnVsbGfDpXJk?= <mans@mansr.com>
-Cc: Frank Oltmanns <frank@oltmanns.dev>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, 
-	"Robert J. Pafford" <pafford.9@buckeyemail.osu.edu>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 27, 2024 at 7:39=E2=80=AFPM M=C3=A5ns Rullg=C3=A5rd <mans@mansr=
-.com> wrote:
->
-> Frank Oltmanns <frank@oltmanns.dev> writes:
->
-> > In order to set the rate range of a hw sunxi_ccu_probe calls
-> > hw_to_ccu_common() assuming all entries in desc->ccu_clks are contained
-> > in a ccu_common struct. This assumption is incorrect and, in
-> > consequence, causes invalid pointer de-references.
-> >
-> > Remove the faulty call. Instead, add one more loop that iterates over
-> > the ccu_clks and sets the rate range, if required.
-> >
-> > Fixes: b914ec33b391 ("clk: sunxi-ng: common: Support minimum and maximu=
-m rate")
-> > Reported-by: Robert J. Pafford <pafford.9@buckeyemail.osu.edu>
-> > Closes: https://lore.kernel.org/lkml/DM6PR01MB58047C810DDD5D0AE397CADFF=
-7C22@DM6PR01MB5804.prod.exchangelabs.com/
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
-> > ---
-> > Robert, could you please test if this fixes the issue you reported.
-> >
-> > I'm CC'ing M=C3=A5ns here, because he observed some strange behavior [1=
-] with
-> > the original patch. Is it possible for you to look into if this patch
-> > fixes your issue without the need for the following (seemingly
-> > unrelated) patches:
-> >       cedb7dd193f6 "drm/sun4i: hdmi: Convert encoder to atomic"
-> >       9ca6bc246035 "drm/sun4i: hdmi: Move mode_set into enable"
->
-> This does indeed fix it.  6.9 is still broken, though, but that's
-> probably for other reasons.
+'struct pmic_table' is not modified in these drivers.
 
-Can I take that as a Tested-by?
+Constifying this structure moves some data to a read-only section, so
+increase overall security.
 
-> > Thanks,
-> >   Frank
-> >
-> > [1]: https://lore.kernel.org/lkml/yw1xo78z8ez0.fsf@mansr.com/
-> > ---
-> >  drivers/clk/sunxi-ng/ccu_common.c | 18 ++++++++++++------
-> >  1 file changed, 12 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/clk/sunxi-ng/ccu_common.c b/drivers/clk/sunxi-ng/c=
-cu_common.c
-> > index ac0091b4ce24..be375ce0149c 100644
-> > --- a/drivers/clk/sunxi-ng/ccu_common.c
-> > +++ b/drivers/clk/sunxi-ng/ccu_common.c
-> > @@ -132,7 +132,6 @@ static int sunxi_ccu_probe(struct sunxi_ccu *ccu, s=
-truct device *dev,
-> >
-> >       for (i =3D 0; i < desc->hw_clks->num ; i++) {
-> >               struct clk_hw *hw =3D desc->hw_clks->hws[i];
-> > -             struct ccu_common *common =3D hw_to_ccu_common(hw);
-> >               const char *name;
-> >
-> >               if (!hw)
-> > @@ -147,14 +146,21 @@ static int sunxi_ccu_probe(struct sunxi_ccu *ccu,=
- struct device *dev,
-> >                       pr_err("Couldn't register clock %d - %s\n", i, na=
-me);
-> >                       goto err_clk_unreg;
-> >               }
-> > +     }
-> > +
-> > +     for (i =3D 0; i < desc->num_ccu_clks; i++) {
-> > +             struct ccu_common *cclk =3D desc->ccu_clks[i];
-> > +
-> > +             if (!cclk)
-> > +                     continue;
-> >
-> > -             if (common->max_rate)
-> > -                     clk_hw_set_rate_range(hw, common->min_rate,
-> > -                                           common->max_rate);
-> > +             if (cclk->max_rate)
-> > +                     clk_hw_set_rate_range(&cclk->hw, cclk->min_rate,
-> > +                                           cclk->max_rate);
-> >               else
-> > -                     WARN(common->min_rate,
-> > +                     WARN(cclk->min_rate,
-> >                            "No max_rate, ignoring min_rate of clock %d =
-- %s\n",
-> > -                          i, name);
-> > +                          i, clk_hw_get_name(&cclk->hw));
-> >       }
-> >
-> >       ret =3D of_clk_add_hw_provider(node, of_clk_hw_onecell_get,
-> >
-> > ---
-> > base-commit: 2607133196c35f31892ee199ce7ffa717bea4ad1
-> > change-id: 20240622-sunxi-ng_fix_common_probe-5677c3e487fc
-> >
-> > Best regards,
-> > --
-> >
-> > Frank Oltmanns <frank@oltmanns.dev>
-> >
->
-> --
-> M=C3=A5ns Rullg=C3=A5rd
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   3811	    786	      0	   4597	   11f5	drivers/acpi/pmic/intel_pmic_xpower.o
+
+   text	   data	    bss	    dec	    hex	filename
+   4147	    450	      0	   4597	   11f5	drivers/acpi/pmic/intel_pmic_xpower.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only
+---
+ drivers/acpi/pmic/intel_pmic.c          | 2 +-
+ drivers/acpi/pmic/intel_pmic.h          | 4 ++--
+ drivers/acpi/pmic/intel_pmic_bxtwc.c    | 4 ++--
+ drivers/acpi/pmic/intel_pmic_bytcrc.c   | 4 ++--
+ drivers/acpi/pmic/intel_pmic_chtdc_ti.c | 4 ++--
+ drivers/acpi/pmic/intel_pmic_chtwc.c    | 2 +-
+ drivers/acpi/pmic/intel_pmic_xpower.c   | 4 ++--
+ 7 files changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/acpi/pmic/intel_pmic.c b/drivers/acpi/pmic/intel_pmic.c
+index f20dbda1a831..134e9ca8eaa2 100644
+--- a/drivers/acpi/pmic/intel_pmic.c
++++ b/drivers/acpi/pmic/intel_pmic.c
+@@ -31,7 +31,7 @@ struct intel_pmic_opregion {
+ 
+ static struct intel_pmic_opregion *intel_pmic_opregion;
+ 
+-static int pmic_get_reg_bit(int address, struct pmic_table *table,
++static int pmic_get_reg_bit(int address, const struct pmic_table *table,
+ 			    int count, int *reg, int *bit)
+ {
+ 	int i;
+diff --git a/drivers/acpi/pmic/intel_pmic.h b/drivers/acpi/pmic/intel_pmic.h
+index d956b03a6ca0..006f0780ffab 100644
+--- a/drivers/acpi/pmic/intel_pmic.h
++++ b/drivers/acpi/pmic/intel_pmic.h
+@@ -21,9 +21,9 @@ struct intel_pmic_opregion_data {
+ 					  u32 reg_address, u32 value, u32 mask);
+ 	int (*lpat_raw_to_temp)(struct acpi_lpat_conversion_table *lpat_table,
+ 				int raw);
+-	struct pmic_table *power_table;
++	const struct pmic_table *power_table;
+ 	int power_table_count;
+-	struct pmic_table *thermal_table;
++	const struct pmic_table *thermal_table;
+ 	int thermal_table_count;
+ 	/* For generic exec_mipi_pmic_seq_element handling */
+ 	int pmic_i2c_address;
+diff --git a/drivers/acpi/pmic/intel_pmic_bxtwc.c b/drivers/acpi/pmic/intel_pmic_bxtwc.c
+index e247615189fa..c332afbf82bd 100644
+--- a/drivers/acpi/pmic/intel_pmic_bxtwc.c
++++ b/drivers/acpi/pmic/intel_pmic_bxtwc.c
+@@ -24,7 +24,7 @@
+ #define VSWITCH1_OUTPUT         BIT(4)
+ #define VUSBPHY_CHARGE          BIT(1)
+ 
+-static struct pmic_table power_table[] = {
++static const struct pmic_table power_table[] = {
+ 	{
+ 		.address = 0x0,
+ 		.reg = 0x63,
+@@ -177,7 +177,7 @@ static struct pmic_table power_table[] = {
+ 	} /* MOFF -> MODEMCTRL Bit 0 */
+ };
+ 
+-static struct pmic_table thermal_table[] = {
++static const struct pmic_table thermal_table[] = {
+ 	{
+ 		.address = 0x00,
+ 		.reg = 0x4F39
+diff --git a/drivers/acpi/pmic/intel_pmic_bytcrc.c b/drivers/acpi/pmic/intel_pmic_bytcrc.c
+index 2b09f8da5400..b4c21a75294a 100644
+--- a/drivers/acpi/pmic/intel_pmic_bytcrc.c
++++ b/drivers/acpi/pmic/intel_pmic_bytcrc.c
+@@ -16,7 +16,7 @@
+ 
+ #define PMIC_A0LOCK_REG		0xc5
+ 
+-static struct pmic_table power_table[] = {
++static const struct pmic_table power_table[] = {
+ /*	{
+ 		.address = 0x00,
+ 		.reg = ??,
+@@ -134,7 +134,7 @@ static struct pmic_table power_table[] = {
+ 	}, /* V105 -> V1P05S, L2 SRAM */
+ };
+ 
+-static struct pmic_table thermal_table[] = {
++static const struct pmic_table thermal_table[] = {
+ 	{
+ 		.address = 0x00,
+ 		.reg = 0x75
+diff --git a/drivers/acpi/pmic/intel_pmic_chtdc_ti.c b/drivers/acpi/pmic/intel_pmic_chtdc_ti.c
+index 79f9df552524..ecb36fbc1e7f 100644
+--- a/drivers/acpi/pmic/intel_pmic_chtdc_ti.c
++++ b/drivers/acpi/pmic/intel_pmic_chtdc_ti.c
+@@ -23,7 +23,7 @@
+ #define CHTDC_TI_BPTHERM	0x58
+ #define CHTDC_TI_GPADC		0x5a
+ 
+-static struct pmic_table chtdc_ti_power_table[] = {
++static const struct pmic_table chtdc_ti_power_table[] = {
+ 	{ .address = 0x00, .reg = 0x41 }, /* LDO1 */
+ 	{ .address = 0x04, .reg = 0x42 }, /* LDO2 */
+ 	{ .address = 0x08, .reg = 0x43 }, /* LDO3 */
+@@ -39,7 +39,7 @@ static struct pmic_table chtdc_ti_power_table[] = {
+ 	{ .address = 0x30, .reg = 0x4e }, /* LD14 */
+ };
+ 
+-static struct pmic_table chtdc_ti_thermal_table[] = {
++static const struct pmic_table chtdc_ti_thermal_table[] = {
+ 	{
+ 		.address = 0x00,
+ 		.reg = CHTDC_TI_GPADC
+diff --git a/drivers/acpi/pmic/intel_pmic_chtwc.c b/drivers/acpi/pmic/intel_pmic_chtwc.c
+index 25aa3e33b09a..81caede51ca2 100644
+--- a/drivers/acpi/pmic/intel_pmic_chtwc.c
++++ b/drivers/acpi/pmic/intel_pmic_chtwc.c
+@@ -70,7 +70,7 @@
+  * "regulator: whiskey_cove: implements Whiskey Cove pmic VRF support"
+  * https://github.com/intel-aero/meta-intel-aero/blob/master/recipes-kernel/linux/linux-yocto/0019-regulator-whiskey_cove-implements-WhiskeyCove-pmic-V.patch
+  */
+-static struct pmic_table power_table[] = {
++static const struct pmic_table power_table[] = {
+ 	{
+ 		.address = 0x0,
+ 		.reg = CHT_WC_V1P8A_CTRL,
+diff --git a/drivers/acpi/pmic/intel_pmic_xpower.c b/drivers/acpi/pmic/intel_pmic_xpower.c
+index 43c5850b4bf3..49bda5e0c8aa 100644
+--- a/drivers/acpi/pmic/intel_pmic_xpower.c
++++ b/drivers/acpi/pmic/intel_pmic_xpower.c
+@@ -26,7 +26,7 @@
+ #define AXP288_ADC_TS_CURRENT_ON_ONDEMAND		(2 << 0)
+ #define AXP288_ADC_TS_CURRENT_ON			(3 << 0)
+ 
+-static struct pmic_table power_table[] = {
++static const struct pmic_table power_table[] = {
+ 	{
+ 		.address = 0x00,
+ 		.reg = 0x13,
+@@ -129,7 +129,7 @@ static struct pmic_table power_table[] = {
+ };
+ 
+ /* TMP0 - TMP5 are the same, all from GPADC */
+-static struct pmic_table thermal_table[] = {
++static const struct pmic_table thermal_table[] = {
+ 	{
+ 		.address = 0x00,
+ 		.reg = XPOWER_GPADC_LOW
+-- 
+2.45.2
+
 
