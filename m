@@ -1,249 +1,123 @@
-Return-Path: <linux-kernel+bounces-235076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B35191CFB4
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 01:37:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3180391CFB7
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 01:42:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAAAE1F21CD4
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 23:36:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51B161C21095
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 23:42:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673C713BC30;
-	Sat, 29 Jun 2024 23:36:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F3713211E;
+	Sat, 29 Jun 2024 23:42:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i7+ZT4xj"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TnarpeiC"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1027224CE;
-	Sat, 29 Jun 2024 23:36:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B749F224CE
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 23:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719704210; cv=none; b=DZ2OsopeTL8mD2jfp3eP1/z6yu60au49lGsxEN71N05SwRyjmgcdSkfuE93S30v/5aVzYe82E3jzCn1dN9+GfauEjaXWOMrSAiLJP1id7wmKebyXSBBqY2i6w00RTLtJTQxgIk3GVBfQQztWJsvwntoHtx05a1d3rS1aEHmYOH0=
+	t=1719704529; cv=none; b=QBolLB7EVvlUNGTVv76kTwUhq3oyFSOew2vrK6ZFcstndpVFHwACUqH9BNME+YZ9VSkhHzJrcCBh1NCbrfFV2PMtelnE36ehSztavBCoGQPzgsrDocF68damTT2j0Q665V5n0aCPlAufI3X5HKf79irupI6sAweaDjoW094JTb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719704210; c=relaxed/simple;
-	bh=qdubja2a/eO+GwSBXrRZh7WYf1LsoKAYcNwuqfk3DPc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=TOUIGLTrZC+88E8mE0e5cVaFpzlYKEdKkusCJtif7r5SRH3KVD2tyYfdwv6rpQMSfE443+iroNuWfMz7taUa70qYdG+aUMdoh7rgCvbsk2mMt35daNK63XZ6zgsLASsWRnRGdQYFGuB0mPo4tKAemh0/AeSQ8NiLnYGlEGhv3rM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i7+ZT4xj; arc=none smtp.client-ip=209.85.221.52
+	s=arc-20240116; t=1719704529; c=relaxed/simple;
+	bh=/RVI+NuTW83Ntxmw+C16AWLP8jraqs9TGJc2ijesKGE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SwNNFYKcGkqbiqudePctk8PzqYYVS89hglUt/RWBNgnoDkr6s8uaVhMRdvows1H+WAEknkLPnWDSu1RlD/sH613W68jnnnGjnHdubF1sz89QcZ34hiEVrK/EjrqNfWsZbisLFyfMjoXOplHg0nPrHRmWVO4zMMYph9jd+SozSfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TnarpeiC; arc=none smtp.client-ip=209.85.210.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-36733f09305so980254f8f.3;
-        Sat, 29 Jun 2024 16:36:48 -0700 (PDT)
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70a078edb8aso713099b3a.1
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 16:42:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719704207; x=1720309007; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jYfyAe8uv69x0OGW51XJGsYOuqxBkM/QrcL6+VazXM0=;
-        b=i7+ZT4xjiBaTQbj0rajeijaMmxRvWRmFyXPnKolpa8F3I1bfHCOr1ZO6YKr/EUg3TS
-         XBhfUSWnqdvMmjjzhwJX85bssIWhiQwn8YADGeBGLLOMspCG2Xx+OLIVLqDaWAg4J5WR
-         CmJr7X/NHhFhJVo5Ir2yhFmm9kHJQIDCoemWUobLGg7+PVXzTl2+xP+1ojZO1fQxdY07
-         tenY1PgcM7wIFiCYVdilcA9aWkRA/5cUl3jtgWgIF+LgRVjWKBcgZMG/N5rEOkYlrwxF
-         RDVy/c0+suwvx98mK0J6lQ9vJspaUX7s5rh2D1USAYVEhFdoCYzP4HrLmt0eZdB6/H+q
-         JHpw==
+        d=gmail.com; s=20230601; t=1719704527; x=1720309327; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZlOndXAQYIA/gkCwrk2GQEBTFD9obTR1n2sQ+YWZvbU=;
+        b=TnarpeiCD9f8+G7/B7EUPUMI2NIERIKiFLaIj7Y3CuZljKxXclircLHb6+JNaTocgh
+         AcnBFAptTU6RfdYRCbewYyR+83d2fTqS4CxWBvFI85ddkxbfjgf61VKfBkgOCySM41Dc
+         qvt4bcma0cQ9EO7HXLRA+/OBC/f7vg9ZjpEPn9/iY3soUa/iFJI25+m13bBeBhg+SI0x
+         uwW/Pubhd++H2wgKg8xZzWEZUQYYcKNi+hU1+IThGaAZg6ik0uRa2mlgCK1WtRDKddVZ
+         3Ao3eVZqAjtCkV5PwzTuGwM7+QsQKWHS04mpzG8U8vmreDkKQV0yAFrmb9TGJxdgASem
+         J5rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719704207; x=1720309007;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1719704527; x=1720309327;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=jYfyAe8uv69x0OGW51XJGsYOuqxBkM/QrcL6+VazXM0=;
-        b=g7kc/CidzUsaVO9CXUmpQ9Yw0832FfeRvmFmjhEJkc9UuaUWT5OfbQKLcolL0hw8Vw
-         wiqcpVq37tqyvSuYaPoXi6ZtW/gVTaottIt9hlrLCw5gtP4h8nEr7KyOX+pRZ7PsQFsp
-         0rdIL1QrLn6q0jpd7I0bu8qx1IIghDrHY7XzGYB4oKpQE2vIdCbNExr1TmNJO8BHaMvA
-         v8WaX+1oNG/MnyNToW0miCtulNnWQRZSai2vTVeoYMcwwhddKI7KgTjwDaX6sbp2JaIL
-         w1L7V9k98lj1tnAevhQ/tPaMpdMhULZhl1aeonUiob3qN1+3j5geFaO0CjRPHUfnKCy+
-         OzzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXr4Q651f7xrIwYPdba8RNHuSxzRudabSJ9ECxwfGgmz1Kgvc29kGUTiBqOkCxcaad6KGrfuvxi3pi/EsMaPmczBFIuIjN6avP2irp3
-X-Gm-Message-State: AOJu0YxFagmXANFmrbxv+uqQTA6CW8axPRlKPSPJkhbQKtRX2po7oqNO
-	d68coUwlUnAVtI92QNg1Uty+e3OCLLCBhbkY3SsxBYMvGyEp3lrb
-X-Google-Smtp-Source: AGHT+IFThPOK8y8A/Io5Ody69yRW+unRpRrZ5ZSTS3jZEaXRHJX4mGppm/j/1/5GEJ2GHr2ByJrlfQ==
-X-Received: by 2002:a5d:61cc:0:b0:367:4d9d:568b with SMTP id ffacd0b85a97d-367757283cemr1157140f8f.68.1719704206899;
-        Sat, 29 Jun 2024 16:36:46 -0700 (PDT)
-Received: from [192.168.1.130] (BC24902A.dsl.pool.telekom.hu. [188.36.144.42])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0d9f9dsm5939238f8f.41.2024.06.29.16.36.45
+        bh=ZlOndXAQYIA/gkCwrk2GQEBTFD9obTR1n2sQ+YWZvbU=;
+        b=ozKholfL/CHD2Uysn44L61ipnlJ8BckG+mYZYDYFdz3Olq5geadNa1mmNR2f6bU6Bv
+         X48kxlkVw4Qut8gnjgKmHjlvlkBmoy6T0IIBJes/Di339w6ISyrEjLD55cKRkUk/vaBN
+         96uSLmN04TN/Ykj3QNi6Xk/oIs8HsHXy2rdWDy2DIul75CDuETuTAdSv3UGz6rBvP0NW
+         RrQvN7afqEoXyrnsySvlhW35yzH/tahdC9ntPKgYzfqhovAgdkwJv2r0/6Ne+2UVNqW3
+         NKT23yppDdEK9e85yuBqOobC1nr5SpImrZRnubCACqfLZ/LF5PDyrntzS9+dw2r6V61/
+         FUiA==
+X-Gm-Message-State: AOJu0YxW8ev6cqELWx3mjFvHrajFhit/xHXtNqdhQh0KIlWzVLnqmhk2
+	Jb9K9uBRpDnJNCd/8LruZWT30CEbYiTD5deKVIYlGpmBoRsnMf4j
+X-Google-Smtp-Source: AGHT+IHNvRvSLdv6mjuw6V64R4JnaBcm1WHMuRvefgESl1YG1bBt/ZuuPsKKx3UjbO2Vvrq6vxH+AQ==
+X-Received: by 2002:a05:6a00:8c9:b0:705:a9d9:62b1 with SMTP id d2e1a72fcca58-70aaabc0162mr3284197b3a.15.1719704526992;
+        Sat, 29 Jun 2024 16:42:06 -0700 (PDT)
+Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7080498a021sm3760061b3a.203.2024.06.29.16.42.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Jun 2024 16:36:46 -0700 (PDT)
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <trabarni@gmail.com>
-Date: Sun, 30 Jun 2024 01:36:42 +0200
-Subject: [PATCH v3] drm/msm/adreno: Add support for Adreno 505 GPU
+        Sat, 29 Jun 2024 16:42:06 -0700 (PDT)
+From: Barry Song <21cnbao@gmail.com>
+To: akpm@linux-foundation.org,
+	linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org,
+	Barry Song <v-songbaohua@oppo.com>,
+	David Hildenbrand <david@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>
+Subject: [PATCH] mm/vmscan: drop checking if _deferred_list is empty before using TTU_SYNC
+Date: Sun, 30 Jun 2024 11:41:55 +1200
+Message-Id: <20240629234155.53524-1-21cnbao@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240630-a505-v3-1-ed1e8eae3d84@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAImagGYC/22MwQ7CIBAFf6XhLAYWqK0n/8N4QNi2m9hiwBBN0
- 3+X1ph48Dgvb2ZmCSNhYsdqZhEzJQpTAbWrmBvs1CMnX5iBAC1qobg1wnA0B9W011p6sKxc7xE
- 7em6Z86XwQOkR4murZrmu34D+BLLkkjeAKJ3QHoQ49aOl296Fka2BDP8kKJLvrGlbq71y8ldal
- uUNhRyHIM0AAAA=
-To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Daniil Titov <daniilt971@gmail.com>, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <trabarni@gmail.com>
-X-Mailer: b4 0.14.0
 
-From: Daniil Titov <daniilt971@gmail.com>
+From: Barry Song <v-songbaohua@oppo.com>
 
-This GPU is found on SoCs such as MSM8937 (450 MHz), MSM8940 (475 MHz),
-SDM439 (650 MHz).
+The optimization of list_empty(&folio->_deferred_list) aimed to prevent
+increasing the PTL duration when a large folio is partially unmapped,
+for example, from subpage 0 to subpage (nr - 2).
 
-Signed-off-by: Daniil Titov <daniilt971@gmail.com>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-Signed-off-by: Barnabás Czémán <trabarni@gmail.com>
+But Ryan's commit 5ed890ce5147 ("mm: vmscan: avoid split during
+shrink_folio_list()") actually splits this kind of large folios. This
+makes the "optimization" useless.
+
+Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
 ---
-Changes in v3:
-- Rebase on the latest linux-next.
-- Link to v2: https://lore.kernel.org/r/20240604-a505-v2-1-dfa599a4d3c1@gmail.com
+ -v1
+ * I remember David and Ryan once suggested that this check could be dropped
+   while the patch was being pulled into mm-unstable. However, for some reason,
+   I forgot to request squashing this change.
 
-Changes in v2:
-- use DRM_MSM_INACTIVE_PERIOD instead of 250 ms.
-- Link to v1: https://lore.kernel.org/r/20240604-a505-v1-1-82ee1c04d200@gmail.com
----
- drivers/gpu/drm/msm/adreno/a5xx_catalog.c | 13 +++++++++++++
- drivers/gpu/drm/msm/adreno/a5xx_gpu.c     | 29 +++++++++++++++++------------
- drivers/gpu/drm/msm/adreno/adreno_gpu.h   |  5 +++++
- 3 files changed, 35 insertions(+), 12 deletions(-)
+ mm/vmscan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/msm/adreno/a5xx_catalog.c b/drivers/gpu/drm/msm/adreno/a5xx_catalog.c
-index 455a953dee67..633f31539162 100644
---- a/drivers/gpu/drm/msm/adreno/a5xx_catalog.c
-+++ b/drivers/gpu/drm/msm/adreno/a5xx_catalog.c
-@@ -10,6 +10,19 @@
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 3d4c681c6d40..0761f91b407f 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1291,7 +1291,7 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
+ 			 * try_to_unmap acquire PTL from the first PTE,
+ 			 * eliminating the influence of temporary PTE values.
+ 			 */
+-			if (folio_test_large(folio) && list_empty(&folio->_deferred_list))
++			if (folio_test_large(folio))
+ 				flags |= TTU_SYNC;
  
- static const struct adreno_info a5xx_gpus[] = {
- 	{
-+		.chip_ids = ADRENO_CHIP_IDS(0x05000500),
-+		.family = ADRENO_5XX,
-+		.revn = 505,
-+		.fw = {
-+			[ADRENO_FW_PM4] = "a530_pm4.fw",
-+			[ADRENO_FW_PFP] = "a530_pfp.fw",
-+		},
-+		.gmem = (SZ_128K + SZ_8K),
-+		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
-+		.quirks = ADRENO_QUIRK_TWO_PASS_USE_WFI |
-+			  ADRENO_QUIRK_LMLOADKILL_DISABLE,
-+		.init = a5xx_gpu_init,
-+	}, {
- 		.chip_ids = ADRENO_CHIP_IDS(0x05000600),
- 		.family = ADRENO_5XX,
- 		.revn = 506,
-diff --git a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-index c003f970189b..c0b5373e90d7 100644
---- a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-@@ -439,7 +439,8 @@ void a5xx_set_hwcg(struct msm_gpu *gpu, bool state)
- 	const struct adreno_five_hwcg_regs *regs;
- 	unsigned int i, sz;
- 
--	if (adreno_is_a506(adreno_gpu) || adreno_is_a508(adreno_gpu)) {
-+	if (adreno_is_a505(adreno_gpu) || adreno_is_a506(adreno_gpu) ||
-+	    adreno_is_a508(adreno_gpu)) {
- 		regs = a50x_hwcg;
- 		sz = ARRAY_SIZE(a50x_hwcg);
- 	} else if (adreno_is_a509(adreno_gpu) || adreno_is_a512(adreno_gpu)) {
-@@ -483,7 +484,8 @@ static int a5xx_me_init(struct msm_gpu *gpu)
- 	OUT_RING(ring, 0x00000000);
- 
- 	/* Specify workarounds for various microcode issues */
--	if (adreno_is_a506(adreno_gpu) || adreno_is_a530(adreno_gpu)) {
-+	if (adreno_is_a505(adreno_gpu) || adreno_is_a506(adreno_gpu) ||
-+	    adreno_is_a530(adreno_gpu)) {
- 		/* Workaround for token end syncs
- 		 * Force a WFI after every direct-render 3D mode draw and every
- 		 * 2D mode 3 draw
-@@ -752,10 +754,11 @@ static int a5xx_hw_init(struct msm_gpu *gpu)
- 		0x00100000 + adreno_gpu->info->gmem - 1);
- 	gpu_write(gpu, REG_A5XX_UCHE_GMEM_RANGE_MAX_HI, 0x00000000);
- 
--	if (adreno_is_a506(adreno_gpu) || adreno_is_a508(adreno_gpu) ||
--	    adreno_is_a510(adreno_gpu)) {
-+	if (adreno_is_a505(adreno_gpu) || adreno_is_a506(adreno_gpu) ||
-+	    adreno_is_a508(adreno_gpu) || adreno_is_a510(adreno_gpu)) {
- 		gpu_write(gpu, REG_A5XX_CP_MEQ_THRESHOLDS, 0x20);
--		if (adreno_is_a506(adreno_gpu) || adreno_is_a508(adreno_gpu))
-+		if (adreno_is_a505(adreno_gpu) || adreno_is_a506(adreno_gpu) ||
-+			adreno_is_a508(adreno_gpu))
- 			gpu_write(gpu, REG_A5XX_CP_MERCIU_SIZE, 0x400);
- 		else
- 			gpu_write(gpu, REG_A5XX_CP_MERCIU_SIZE, 0x20);
-@@ -771,7 +774,8 @@ static int a5xx_hw_init(struct msm_gpu *gpu)
- 		gpu_write(gpu, REG_A5XX_CP_ROQ_THRESHOLDS_1, 0x40201B16);
- 	}
- 
--	if (adreno_is_a506(adreno_gpu) || adreno_is_a508(adreno_gpu))
-+	if (adreno_is_a505(adreno_gpu) || adreno_is_a506(adreno_gpu) ||
-+	    adreno_is_a508(adreno_gpu))
- 		gpu_write(gpu, REG_A5XX_PC_DBG_ECO_CNTL,
- 			  (0x100 << 11 | 0x100 << 22));
- 	else if (adreno_is_a509(adreno_gpu) || adreno_is_a510(adreno_gpu) ||
-@@ -789,8 +793,9 @@ static int a5xx_hw_init(struct msm_gpu *gpu)
- 	 * Disable the RB sampler datapath DP2 clock gating optimization
- 	 * for 1-SP GPUs, as it is enabled by default.
- 	 */
--	if (adreno_is_a506(adreno_gpu) || adreno_is_a508(adreno_gpu) ||
--	    adreno_is_a509(adreno_gpu) || adreno_is_a512(adreno_gpu))
-+	if (adreno_is_a505(adreno_gpu) || adreno_is_a506(adreno_gpu) ||
-+	    adreno_is_a508(adreno_gpu) || adreno_is_a509(adreno_gpu) ||
-+	    adreno_is_a512(adreno_gpu))
- 		gpu_rmw(gpu, REG_A5XX_RB_DBG_ECO_CNTL, 0, (1 << 9));
- 
- 	/* Disable UCHE global filter as SP can invalidate/flush independently */
-@@ -1345,7 +1350,7 @@ static int a5xx_pm_resume(struct msm_gpu *gpu)
- 	if (ret)
- 		return ret;
- 
--	/* Adreno 506, 508, 509, 510, 512 needs manual RBBM sus/res control */
-+	/* Adreno 505, 506, 508, 509, 510, 512 needs manual RBBM sus/res control */
- 	if (!(adreno_is_a530(adreno_gpu) || adreno_is_a540(adreno_gpu))) {
- 		/* Halt the sp_input_clk at HM level */
- 		gpu_write(gpu, REG_A5XX_RBBM_CLOCK_CNTL, 0x00000055);
-@@ -1388,9 +1393,9 @@ static int a5xx_pm_suspend(struct msm_gpu *gpu)
- 	u32 mask = 0xf;
- 	int i, ret;
- 
--	/* A506, A508, A510 have 3 XIN ports in VBIF */
--	if (adreno_is_a506(adreno_gpu) || adreno_is_a508(adreno_gpu) ||
--	    adreno_is_a510(adreno_gpu))
-+	/* A505, A506, A508, A510 have 3 XIN ports in VBIF */
-+	if (adreno_is_a505(adreno_gpu) || adreno_is_a506(adreno_gpu) ||
-+	    adreno_is_a508(adreno_gpu) || adreno_is_a510(adreno_gpu))
- 		mask = 0x7;
- 
- 	/* Clear the VBIF pipe before shutting down */
-diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-index cff8ce541d2c..2497bbc07ed4 100644
---- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-+++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-@@ -324,6 +324,11 @@ static inline int adreno_is_a430(const struct adreno_gpu *gpu)
- 	return adreno_is_revn(gpu, 430);
- }
- 
-+static inline int adreno_is_a505(const struct adreno_gpu *gpu)
-+{
-+	return adreno_is_revn(gpu, 505);
-+}
-+
- static inline int adreno_is_a506(const struct adreno_gpu *gpu)
- {
- 	return adreno_is_revn(gpu, 506);
-
----
-base-commit: 1eb586a9782cde8e5091b9de74603e0a8386b09e
-change-id: 20240603-a505-e57389b61d2a
-
-Best regards,
+ 			try_to_unmap(folio, flags);
 -- 
-Barnabás Czémán <trabarni@gmail.com>
+2.34.1
 
 
