@@ -1,53 +1,62 @@
-Return-Path: <linux-kernel+bounces-235028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5223291CE93
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 20:38:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5893291CE96
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 20:40:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69D401C20E9E
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 18:38:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11E3C282A1E
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 18:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 251CF136657;
-	Sat, 29 Jun 2024 18:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5378136657;
+	Sat, 29 Jun 2024 18:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="b9z/WMkg"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cYyxZgdL"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CAB15660;
-	Sat, 29 Jun 2024 18:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF3D5660;
+	Sat, 29 Jun 2024 18:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719686325; cv=none; b=IJxFg4vLPVhaOISrrHxjvPOQjp9Jz7325AKRZc0gEViN2UliD7pC1bKKK6AXz/26LDGMHtl7T2q4DLTfEHyea82HRW9nHQWYXxMGcDZeQWVgTEfxiRm97o92Mtr2tXLtjjvWISQCfxaW0wfL1r/xmn+klDk0bVuOLK2OtIdOZZA=
+	t=1719686430; cv=none; b=qbS8cRpc/TZIwotPNwnJXe67StvmCn5gdgDJ1LuSjgopH6e1pMJzxvoBEu7WJ5JIjOIddKiK2QNjz5D+7GcIfhRjchhG43xsDzV0aaSbB/Bd2IoHR1fFzGoSLr52ajggLrWZaQBDHkltdBm7fb35yY+ceHtNphWVbDAap7BIjh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719686325; c=relaxed/simple;
-	bh=ydeN4nfGc/V7ZiWNo9W4bhoyVSromNzKtrx09K0p+ks=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lrdvhysCOJMeXtJcHdIHvUDM6oMfmBa6g2o0EO/ozRfOZGTO2R2KZNsBg85OVUkXSvtI673ZZwycMOb2dLVAoDNBu/d7En2HBsMeVoBffO2nMgFZXB4Wt04JC0M7eA9ZAfEQCPg1gWKstr0Nrv5gFpp3kdRMgCZ70DYWfXaqEac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=b9z/WMkg; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.205] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 45TIcAka3566514
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Sat, 29 Jun 2024 11:38:10 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 45TIcAka3566514
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024061501; t=1719686291;
-	bh=QREjH9Gqqog/OBy3UIyRvzAzZFT617sJGPOSTR1kXpY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=b9z/WMkg9i8suUdycCAWLaXme3fH2yExsOf1e4ux99+Mb3IeDWxwfjdlrXNG4F4So
-	 Tyu5//0jpboMrEa5R60y0MG/J1TbwaTocXnBzATV398JqWI8h3FN7iuuOr06B5yhAc
-	 1YPi7DRemyan2f2XbWotKNMLjs+EluPrXZp+DUPdmqzQcczIVDE/gFZuVnV9/iAmHs
-	 aZ+GwqUOxww1bDpaCyAkFgQYowuo+0avqtJwCI9NzH7GpJrPr93OS5RNsuyfvss8Co
-	 90fGlt2ONr+cTSnO8HznSbAUCYhd15IwfyKoByC2lXBteNFYy+f7QSbOlxq2D+N59p
-	 z488vjYt2MS8g==
-Message-ID: <ca060eaf-0ace-4a8e-af86-a45b6f32340e@zytor.com>
-Date: Sat, 29 Jun 2024 11:38:10 -0700
+	s=arc-20240116; t=1719686430; c=relaxed/simple;
+	bh=YOMshYfVX3JgDBPVISxi9XYTzmfXR4P4xJtJPKISiuo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Qt4MGt0OkSgYMJgOCCP/WGZ2PtK/2tepV8zVlBgiu/X2v6U+iPFdHgomitCV7O8nlSs+ycfCZ4ZPFP/0jWrRGEoMXNL482FgS/wpAyfHudnSRxNZgkdxkAVhe+oVxy9Z1ffXYMGer4RQ3JHqdb3dx4A6HZC+uGlpfS1S9MlWXA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cYyxZgdL; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45TIe7in029076;
+	Sat, 29 Jun 2024 13:40:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719686407;
+	bh=ZSK7rQ4eUCg7g5a2dHPPID0qKPfa7S2DfO23/dAVjrc=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=cYyxZgdLD1TOXhB//4HXL5qkwgwK0breV2a0Z9SjqokPL/daMOkuJqG02/r0kopK8
+	 x3gc05xNiUppNw4x5UAb9wvswWTMQ77vGVmhpzx+BSXZLJuw4+EE8s8R1qAczpSGe3
+	 hlrM+0/sfINrmEsa0aX1omesFhvqTc8Valhqr+F8=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45TIe71E091196
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sat, 29 Jun 2024 13:40:07 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 29
+ Jun 2024 13:40:07 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sat, 29 Jun 2024 13:40:07 -0500
+Received: from [172.24.227.94] (uda0132425.dhcp.ti.com [172.24.227.94])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45TIe3W4072481;
+	Sat, 29 Jun 2024 13:40:04 -0500
+Message-ID: <69cd28cc-60d3-4ca6-b31b-af940a937d9a@ti.com>
+Date: Sun, 30 Jun 2024 00:10:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,101 +64,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 11/11] KVM: X86: Use common code for PV IPIs in linux
- guest
-To: Jacob Pan <jacob.jun.pan@linux.intel.com>, X86 Kernel <x86@kernel.org>,
-        Sean Christopherson <seanjc@google.com>,
-        LKML
- <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Xin Li <xin3.li@intel.com>, linux-perf-users@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Tony Luck <tony.luck@intel.com>,
-        Andy Lutomirski <luto@kernel.org>, acme@kernel.org,
-        kan.liang@linux.intel.com, Andi Kleen <andi.kleen@intel.com>,
-        "Mehta, Sohil" <sohil.mehta@intel.com>,
-        Zeng Guang <guang.zeng@intel.com>
-References: <20240628201839.673086-1-jacob.jun.pan@linux.intel.com>
- <20240628201839.673086-12-jacob.jun.pan@linux.intel.com>
+Subject: Re: [PATCH] arm: dts: k3-j721e-mcu-wakeup: Add bootph-all to chipid
+To: Neha Malcom Francis <n-francis@ti.com>, <nm@ti.com>, <kristo@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>
+References: <20240627101003.3608397-1-n-francis@ti.com>
+From: Vignesh Raghavendra <vigneshr@ti.com>
 Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <20240628201839.673086-12-jacob.jun.pan@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <20240627101003.3608397-1-n-francis@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 6/28/2024 1:18 PM, Jacob Pan wrote:
-> Paravirtual apic hooks to enable PV IPIs for KVM if the "send IPI"
 
-s/Paravirtual apic/Paravirtualize APIC/
 
-> hypercall is available. Reuse common code for ICR preparation which
-> covers NMI-source reporting if in effect.
-
-I see a lot of "NMI source". Should we use "NMI-source" in all places?
-
+On 27/06/24 15:40, Neha Malcom Francis wrote:
+> Add bootph-all property to the chipid node so that it is available at
+> bootloader stage for obtaining the SoC ID and revision.
 > 
-> Originally-by: Zeng Guang <guang.zeng@intel.com>
-> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> Signed-off-by: Neha Malcom Francis <n-francis@ti.com>
 > ---
->   arch/x86/kernel/kvm.c | 10 +---------
->   1 file changed, 1 insertion(+), 9 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-> index 263f8aed4e2c..a45d60aa0302 100644
-> --- a/arch/x86/kernel/kvm.c
-> +++ b/arch/x86/kernel/kvm.c
-> @@ -516,15 +516,7 @@ static void __send_ipi_mask(const struct cpumask *mask, int vector)
->   
->   	local_irq_save(flags);
->   
-> -	switch (vector) {
-> -	default:
-> -		icr = APIC_DM_FIXED | vector;
-> -		break;
-> -	case NMI_VECTOR:
-> -		icr = APIC_DM_NMI;
-> -		break;
-> -	}
-> -
-> +	icr = __prepare_ICR(0, vector, 0);
->   	for_each_cpu(cpu, mask) {
->   		apic_id = per_cpu(x86_cpu_to_apicid, cpu);
->   		if (!ipi_bitmap) {
 
+$subject prefix should match existing convention for the file
+
+arm64: dts: ti: ...
+
+
+>  arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi
+> index 9349ae07c046..c2417ef614cf 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi
+> @@ -57,6 +57,7 @@ wkup_conf: bus@43000000 {
+>  		chipid: chipid@14 {
+>  			compatible = "ti,am654-chipid";
+>  			reg = <0x14 0x4>;
+> +			bootph-all;
+>  		};
+>  	};
+>  
+
+-- 
+Regards
+Vignesh
 
