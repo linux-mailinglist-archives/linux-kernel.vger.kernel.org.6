@@ -1,128 +1,76 @@
-Return-Path: <linux-kernel+bounces-234980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF96D91CDE5
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 17:31:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8335691CDE8
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 17:32:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A58328305B
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 15:30:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F066B21973
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 15:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A798595F;
-	Sat, 29 Jun 2024 15:30:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 372DA84D14;
+	Sat, 29 Jun 2024 15:32:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ov3iC2Nr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=emersion.fr header.i=@emersion.fr header.b="fIveWBJk"
+Received: from mail-4323.proton.ch (mail-4323.proton.ch [185.70.43.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25C04175A;
-	Sat, 29 Jun 2024 15:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6735D4175A
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 15:32:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719675052; cv=none; b=tGBs4oudZlpKTH71M7gxV8A/OwRacO9NbXlfbMTOoz3z3RCdzGwSdGRpcNMBoSXO5kQcYt6K4gPbNlZBrRYVCV9NuBnRBTOMNVDC4OoFtYjZgY4ejd6jeF4ML2RDlk4hKdbznpppACD+mRR6OGko/1BwQrxCOe5tgDP0tMu6WdA=
+	t=1719675157; cv=none; b=WXu0L4a6bpaFWixpITiWHdT8eP9NZH7e4g/q3/FXgLtBEDQVGzcYfqXM0zFHigyfCBeY8T8P9MvgIYwsCtn34cU32o+WizNLs37iPwgap2zDOG3H59n0XHOhCSBPDekwTxZbo0pHrl5vS2dgKMOLoutYDISGrZaR3oLVfrE1sOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719675052; c=relaxed/simple;
-	bh=T5g2MJScF2SnMwzHMmI6jH/lderd7VPwPuoFsvSu1gc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lJCTBHdbQvUSRbAAL8M1U6M1S9ockFDUtIA/BFZRrA5CSuzDZsUfX3WwLG08SFY9pxTaP4n7m9CfudB74GDXEiyu94ye/3CqfWu4tyFHRDz8tM9IFisqY0PPyTMJdZeBNsOU7b+Jume5eWNDyZ+18s4IrG/CMzpPXgUAcBplsJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ov3iC2Nr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98E9EC2BBFC;
-	Sat, 29 Jun 2024 15:30:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719675052;
-	bh=T5g2MJScF2SnMwzHMmI6jH/lderd7VPwPuoFsvSu1gc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ov3iC2Nrb3diAWLv714jftirxWL0ofd7NLjLrrRrb6oBIZmzJxbcOnBhkOcBVKRe8
-	 tQcoPDy2wRiY4yS7r2RxfYjhnJoq7EcEgR+JAv9oMLgLu01s1R0kAlveEQ+fmIntsr
-	 bkgWWRZ8Eomk7h9CMKY5VULn4VWxmoV0dFkU+fIG5fuVpdAYz/CbpCLZMc1h7cteLm
-	 7sv9OPSANMwxGhiWK3MliKdtAk4JEk3lzKiFOj+Ncc4gsQ2AyyzXwuZXlv04Vf2OxV
-	 jmm0rAzHa9nHm8d1r3zjkkvGT7QyKH+DlpuJ0fJqwORhIapmWyimet21RLUr3z57C3
-	 UEdTcXGQtRIIw==
-Date: Sat, 29 Jun 2024 16:30:43 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Guillaume Stols <gstols@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Beniamin Bia <beniamin.bia@analog.com>, Stefan Popa
- <stefan.popa@analog.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
- devicetree@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- jstephan@baylibre.com, dlechner@baylibre.com
-Subject: Re: [PATCH v2 05/10] dt-bindings: iio: adc: adi,ad7606: add supply
- properties
-Message-ID: <20240629163043.5e96e80c@jic23-huawei>
-In-Reply-To: <20240628-cleanup-ad7606-v2-5-96e02f90256d@baylibre.com>
-References: <20240628-cleanup-ad7606-v2-0-96e02f90256d@baylibre.com>
-	<20240628-cleanup-ad7606-v2-5-96e02f90256d@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719675157; c=relaxed/simple;
+	bh=ARk1CN4SNcrfhu3AqT6RA6aL1fK6aSQsAxE+h/7vxhs=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EPGM5xeNOx64m7Zykhfz0ZzeDCKKxtpP469lDWzVCqV18BqSpGN0DaUG6OT+YMJeB51H+kRGlHA51gz2tNdzvANz1pkAdFzKBI5CVIwT8ZLrq99OgfGHhQTydsoX1N4Y+j+gEDqMzfE/5WhYrKt0rrY5irgInJrQ9aaLaYYWBfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=emersion.fr; spf=pass smtp.mailfrom=emersion.fr; dkim=pass (2048-bit key) header.d=emersion.fr header.i=@emersion.fr header.b=fIveWBJk; arc=none smtp.client-ip=185.70.43.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=emersion.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emersion.fr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=emersion.fr;
+	s=protonmail3; t=1719675146; x=1719934346;
+	bh=ARk1CN4SNcrfhu3AqT6RA6aL1fK6aSQsAxE+h/7vxhs=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=fIveWBJkSHRuccK8cvS5m9EEIOm7OhJ7/rp9IPhhkZjWp0WSdqOExdFE+mGuPkHxP
+	 cDBCGiR0XfY7FeY5UNf0VG2msGpfX/4bJcw3JAemv4hFre+JtpXjqk66x6mbxAINIG
+	 YtCb39zRvqmZTFMNcC3ko3NNGtvvLMawB+DyLvvH9NOh+l9+271W9CVR6+bOFBREho
+	 FdRso2Eg4Q8fA2PjhPnFni1RodWQ7zDN+ehoB4FUZpCwAqh6D3jNo4slCK+rs2wVeK
+	 YS68CZVR+6wz5fg8T9/alry7xsyYtXBkL/fY+J1vZgoAYwRazqsUt4kxHja+RQ37HI
+	 2t0pJJOyRBVQA==
+Date: Sat, 29 Jun 2024 15:32:20 +0000
+To: =?utf-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+From: Simon Ser <contact@emersion.fr>
+Cc: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-dev@igalia.com, alexander.deucher@amd.com, christian.koenig@amd.com, Pekka Paalanen <ppaalanen@gmail.com>, daniel@ffwll.ch, Daniel Stone <daniel@fooishbar.org>, =?utf-8?Q?=27Marek_Ol=C5=A1=C3=A1k=27?= <maraeo@gmail.com>, Dave Airlie <airlied@gmail.com>, ville.syrjala@linux.intel.com, Xaver Hugl <xaver.hugl@gmail.com>, Joshua Ashton <joshua@froggi.es>, =?utf-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH 1/1] drm/atomic: Allow userspace to use explicit sync with atomic async flips
+Message-ID: <E2TvhjtSDwH2ewf7fHTKGQChRCccKteo-t-FYLisImD7vCllDyV4_hcl8LsfKyY28mc5D7_zYSIJ5Qjac8QnENcI12RQHsDj5O3JyPzhiIg=@emersion.fr>
+In-Reply-To: <20240622170951.738735-1-andrealmeid@igalia.com>
+References: <20240622170951.738735-1-andrealmeid@igalia.com>
+Feedback-ID: 1358184:user:proton
+X-Pm-Message-ID: eb194cda8e85e2e446f855a2521d5ab3ca4f3c8d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 28 Jun 2024 14:48:23 +0000
-Guillaume Stols <gstols@baylibre.com> wrote:
+On Saturday, June 22nd, 2024 at 19:09, Andr=C3=A9 Almeida <andrealmeid@igal=
+ia.com> wrote:
 
-> Add voltage supplies
-> 
-> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
-Trivial comment inline. No need to reroll for that though.
+> Allow userspace to use explicit synchronization with atomic async flips.
+> That means that the flip will wait for some hardware fence, and then
+> will flip as soon as possible (async) in regard of the vblank.
 
-> ---
->  Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-> index 509970922cda..a1c38a5812f7 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-> @@ -35,6 +35,15 @@ properties:
->  
->    avcc-supply: true
->  
-> +  vdrive-supply:
-> +    description:
-> +      Determines the voltage level at which the interface logic pins will
-> +      operate.
-> +
-> +  refin-supply:
-> +    description:
-> +      The voltage supply for optional external reference voltage.
-> +
->    interrupts:
->      description:
->        The BUSY pin falling edge indicates that the conversion is over, and thus
-> @@ -106,9 +115,11 @@ required:
->    - reg
->    - spi-cpha
->    - avcc-supply
-> +  - vdrive-supply
->    - interrupts
->    - adi,conversion-start-gpios
->  
-> +
-Unrelated white space change.  Remember to check patches for these.
-If whitespace changes are needed have an additional patch that just does
-that.
+LGTM.
 
->  allOf:
->    - $ref: /schemas/spi/spi-peripheral-props.yaml#
->  
-> @@ -130,6 +141,7 @@ examples:
->              spi-cpha;
->  
->              avcc-supply = <&adc_vref>;
-> +            vdrive-supply = <&vdd_supply>;
->  
->              interrupts = <25 IRQ_TYPE_EDGE_FALLING>;
->              interrupt-parent = <&gpio>;
-> 
+Would you mind sending a patch for FB_DAMAGE_CLIPS as well?
 
+Reviewed-by: Simon Ser <contact@emersion.fr>
 
