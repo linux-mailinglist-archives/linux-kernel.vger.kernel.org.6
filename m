@@ -1,275 +1,137 @@
-Return-Path: <linux-kernel+bounces-234946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81E2991CD30
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 15:32:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E24E91CD34
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 15:33:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B806B21946
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 13:32:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7E191F2230C
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 13:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A304880614;
-	Sat, 29 Jun 2024 13:32:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B618005C;
+	Sat, 29 Jun 2024 13:33:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kP92CHjP"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="tshK4bQD"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F743BB48;
-	Sat, 29 Jun 2024 13:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 976C51879;
+	Sat, 29 Jun 2024 13:33:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719667941; cv=none; b=JwOZMrunv3XldcMNXRMljCbQ+eARnI4O65ToiP/2WC2IXc6Iz/fBLogxJLoR8qxXKcj9T3w25hxnOsQu4PO5ZDZZip2VMEtsbQxm9GCKlN6OxPSOFS9elDLd4VVUVtNc0+3vIIOXgdccn0P4d2IH9QW8YmQlT4xnO221nsw2fmA=
+	t=1719668027; cv=none; b=FYaR8mfVLR+NtDqbMOh6YTiw4iwYoIWXyGSq9w7jX2uh0qSEOrgUnAi3ENVGxdKC9/57nsUIpXLtzCdl6heWzY/QkUly6KFm5omUzglm4I+eQxUYDYfsYjbry6fehlZLOPTTnY4izSmpFzqlSYUBgXqsQJJNoyPEq9sjegJWBXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719667941; c=relaxed/simple;
-	bh=UT0/VIb4UwrYNdYJ/l7BBaSMJPvRv51xbLFYY6RXwig=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kTLrZcZGqYySefSuzxXUbuNz5XucAERO2BBQSRrIRaGU1UjNHo3LRWR+YhuFMBcl2hDxAR/bq+nFj9gAENFhch22NcR7D8QIgOWmR4DOgoqrO4f8wNPNQjPcd6JFAcX4jclYBqgZWGHamtkkELQnjusEFo7MJiNfuWXShDWfPdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kP92CHjP; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57d1d45ba34so1908904a12.3;
-        Sat, 29 Jun 2024 06:32:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719667938; x=1720272738; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+ZgrWGkd1meoHWo3+J42luLI3PD/AXRaWnAoTRiKZiA=;
-        b=kP92CHjPqLkmNEm4yy2hQBCtgxitrrgLdXayDuU35vYa2YVnr1Ja2Uk8rSjW8Zy3JZ
-         sPtXKq6S+O8bIDMte3Ikrx4e3X5/0NtYlhPuCreguFKVqvIanqDGVlyKVzgWzGSq7rrZ
-         sT6wjjVFcd5Pig6g6qNcss8NF4CKc8JcDYIQqgXOYXYpe95Yf1yIobP9o5Uh+KC+VRgH
-         LXt0OQCsGzqV8MXe3Gj1S03GJ5AnM/uprUBrupqrHzHK7AoH1jKAcHXQNIaNYNIdrkvF
-         lsnYc3pecC5wBQN2W/1uOWjvh4OJfBWHqC+CDcJNXEBYSD8+plcnMN8ka/Qx68qRGBhk
-         22BA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719667938; x=1720272738;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+ZgrWGkd1meoHWo3+J42luLI3PD/AXRaWnAoTRiKZiA=;
-        b=hMurD2nHzx61aY82shVbHC7ZcMhBQnd4uQy4CdZuxFKa6j5T3cYha8Weyo0LDeXVyt
-         W+IRqxJ/TW4thgz8s/g8PC5rVjlqz5fy7BFr55keMApT3zgddkOQ4IKsPkf/d6KioRuI
-         bFdMMl40Y88Vg8o66tXAOjbOosXbhFFfcVhn8+MFY8XF/rlzG08L20WP0jfCTJYTtDEs
-         Y2u1hmI9hs8ufvPMLKdiOf/sX4xjl1A53E0FThFY6gPsHoaJP5WCAvJGDXmgBrd2ba6c
-         fFLnbrOYmykVSopI54NaUJVY2KTyI3YFTyhCNE7/h4yRbVY/VSyg8t8HLzrJtj6ayKd7
-         IddQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW/nwjpCXLzlbJzFAh/QlD306VfV7y34Ld3EFbIByhmuCI704IhAA03iarYUOAvKz+64mwS5GjpRi3yUutGzCg6qpRLHXqHZs5hv4XvEVyhflrDi6E5I/RlQ+7gB9ASlevX0xRCzCBD/I6Xdw==
-X-Gm-Message-State: AOJu0YzOjhMnCA8WAXyYkkmXgh83T3T6rhhgZlm6bdAx9K46KirGyrOX
-	NVqDBmFXMC78jS5T+u3iDl4+UfS7zS6mbTpbZLC92C45vuxYDHebqPbgb/o8TBoOfg8/XOFm95M
-	XcC8cW2AnDUS0di9cSPY0D1jJexrfhw==
-X-Google-Smtp-Source: AGHT+IFvFuLSfoqQo8otUXQUXzOPg8zdgXZW8DX2SjfJm3mHt6zQq6wbuQpB8S2qspBnkctoW6DN/nj6zMo3ATVh4Z8=
-X-Received: by 2002:a05:6402:1d4e:b0:57c:60f0:98bc with SMTP id
- 4fb4d7f45d1cf-5879f59bc5bmr749843a12.11.1719667938126; Sat, 29 Jun 2024
- 06:32:18 -0700 (PDT)
+	s=arc-20240116; t=1719668027; c=relaxed/simple;
+	bh=oo4jUmPrf9jedsT2pOZ0aqtdEjW9FoLur2248hOMMRs=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=RyOhAZBGhpptKxGXE2aW0w8EmyG2xaUMW5DPnOMZTq+pxqW1E5TzuRy1kzH3p0PecL7GDyUv7c7UPraKD41XCtDTSvC4Z9q7FkYnVxzP8xpW67XFKSeOkzhTnsD/V04+WEU0opJukpsdlpu3Dd8FqkJKTLqUulr4d37m8Fd4vJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=tshK4bQD; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719668002; x=1720272802; i=markus.elfring@web.de;
+	bh=Jup8QKQKJK0UGda0jM7cmsa/0c9sCTQpq+i/WNXMOao=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=tshK4bQD1QALZfsFVyW/4awZwh/ORsiSslDLjqc6RYbw8PdBec8b9zKQYUAMg6H/
+	 alcSyanPfxneJCxKthGaTpCIiF237llxdjBuuqr/f3PDsE7F5sByCHknKQqoJiE+f
+	 Mjbi1B8WGs7qLQH3vfei4xIsqjnWVNstOvJOOSsbZwsEiEIxjpdlaS4TtPyOU4kxM
+	 p8L060cRGSloRd7nUDnEPYJ1hye3lNoD2BCe5uc2mAgjLU7+1QjUCKIlW+4Cob6Wu
+	 ozn/zaYVyuXZySJf/V2RAkOZdoUMnis225uGrs5esMg2hwBwoI6hDR9P4V8kR/hCX
+	 5s3SkiivsT7s2sciXw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MVaYi-1sp9EM2hFc-00Llgd; Sat, 29
+ Jun 2024 15:33:22 +0200
+Message-ID: <a9623e7e-ce3a-434c-a904-39c6934c2ff5@web.de>
+Date: Sat, 29 Jun 2024 15:33:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618164303.66615-1-robdclark@gmail.com> <20240618164303.66615-2-robdclark@gmail.com>
- <20240629015831.sglaflboanhrarmn@hu-akhilpo-hyd.qualcomm.com>
-In-Reply-To: <20240629015831.sglaflboanhrarmn@hu-akhilpo-hyd.qualcomm.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Sat, 29 Jun 2024 06:32:05 -0700
-Message-ID: <CAF6AEGtHyGZhBaqNXtujNMg7Cv_cLkUQoCiAckKAWUihzO1i4Q@mail.gmail.com>
-Subject: Re: [PATCH v4 1/5] drm/msm/adreno: Split up giant device table
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, Rob Clark <robdclark@chromium.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Sean Paul <sean@poorly.run>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: chrome-platform@lists.linux.dev, kernel-janitors@vger.kernel.org,
+ Benson Leung <bleung@chromium.org>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?=
+ <groeck@chromium.org>, Prashant Malani <pmalani@chromium.org>,
+ Tzung-Bi Shih <tzungbi@kernel.org>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] platform/chrome: cros_ec_typec: Use common error handling
+ code in cros_typec_init_ports()
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:8GEojlSlW/ZWYYZVwoHEsxx02W5R81RIHVkpu3Caty7Yd5qzQyE
+ fsWuQFmUgY4yHRsLI7PvnUcm+PK4rRHnQTaQ/dDHe2ukv1JOOLBcoGcdEv3Vjg8ySwPzjCt
+ t7pEt5TEb8/GtJxdjbjGPtzN0xiIcwPnMEOpkfrcw+HfTe/MV8yYZyVhrvHIYyExe0DcmQ2
+ Ue13yqLbhF7XU1fsl3ldw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:lzHNyPcj72Y=;EwPosG9IEVCYx49EBR8RezqvZCh
+ KVGX77aZ3zF+tFbbgt8NAFYW0oTQUbwAyiJmgRgRG2s2y1w4PMmHF0JbsJBwGuf365huJVNPB
+ 7Wod+0wlwKT2CUnm+zBEEfK4ue9L3UEYk0TaUxMGmN6xzv2KaUxTJIaR29BPv/9dK3yCG6JLD
+ rRSbT9mPBuaAh+C7pIKOWNcQMHNo25d1HJ76+6qAj3VfqovZdjteZg2yUuzcuUStAdejwp5ue
+ YeTGhS68KKd7Di2KtK2KFMEeqd4IwOoWYAckUwza+GnKFjw3ox7ZRXkpTWBt0X3g+rVKHqnZG
+ +PzReSZKxTl1hKCjdwm+bIrtEd1wR7FH7voq7+0936H4pfaUO3KghtkeEr1DxUKJTp2iq5I5H
+ dZLhxZ3jyFdZ2QNd+ksyM9WCz1frqkDtl3kfJiXqvWwW818BnsW5JlvUiYqLCwOdiN8xNt3xS
+ 3oUXLLrGT3jEZlX/bjfmRB9LX3BCV9cNXpN7YHanKnPQHwQx2DemvNHOtxcUfbI4kWT52IlbS
+ DUh8+owUdiiquZ7No6NH4JC57q4DRq7b7q9n5/KW4JNFK4GzLOeVQHd/uKii39knh446619Z3
+ ltKZf1GLf45jujWFzvTZnqeJT2y54Gsr6+MFI2jh7ptOUP/yxlkQQGJatz2vd/OjzUsOh3U1i
+ mNUnin7dyAFzOhBfs37hxdnIvN7eoy8w84wyIUZVPIfyGSNDpSiepjDmENeXLdoMcVMMo6DSK
+ MBIBEdenZOwXwIqAoQaHKb86+fviWQjoBD3VXfYR3IjqtnuZ8W/Bn5Hgd1bQYoW7Whow+kTsO
+ uouWaOEbCtL6/89mRO8akYtEADY9v3UTC7ogaugtHcUsI=
 
-On Fri, Jun 28, 2024 at 6:58=E2=80=AFPM Akhil P Oommen <quic_akhilpo@quicin=
-c.com> wrote:
->
-> On Tue, Jun 18, 2024 at 09:42:47AM -0700, Rob Clark wrote:
-> > From: Rob Clark <robdclark@chromium.org>
-> >
-> > Split into a separate table per generation, in preparation to move each
-> > gen's device table to it's own file.
-> >
-> > Signed-off-by: Rob Clark <robdclark@chromium.org>
-> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> > ---
-> >  drivers/gpu/drm/msm/adreno/adreno_device.c | 67 +++++++++++++++++-----
-> >  drivers/gpu/drm/msm/adreno/adreno_gpu.h    | 10 ++++
-> >  2 files changed, 63 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/msm/adreno/adreno_device.c b/drivers/gpu/d=
-rm/msm/adreno/adreno_device.c
-> > index c3703a51287b..a57659eaddc2 100644
-> > --- a/drivers/gpu/drm/msm/adreno/adreno_device.c
-> > +++ b/drivers/gpu/drm/msm/adreno/adreno_device.c
-> > @@ -20,7 +20,7 @@ bool allow_vram_carveout =3D false;
-> >  MODULE_PARM_DESC(allow_vram_carveout, "Allow using VRAM Carveout, in p=
-lace of IOMMU");
-> >  module_param_named(allow_vram_carveout, allow_vram_carveout, bool, 060=
-0);
-> >
-> > -static const struct adreno_info gpulist[] =3D {
-> > +static const struct adreno_info a2xx_gpus[] =3D {
-> >       {
-> >               .chip_ids =3D ADRENO_CHIP_IDS(0x02000000),
-> >               .family =3D ADRENO_2XX_GEN1,
-> > @@ -54,7 +54,12 @@ static const struct adreno_info gpulist[] =3D {
-> >               .gmem  =3D SZ_512K,
-> >               .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
-> >               .init  =3D a2xx_gpu_init,
-> > -     }, {
-> > +     }
-> > +};
-> > +DECLARE_ADRENO_GPULIST(a2xx);
-> > +
-> > +static const struct adreno_info a3xx_gpus[] =3D {
-> > +     {
-> >               .chip_ids =3D ADRENO_CHIP_IDS(0x03000512),
-> >               .family =3D ADRENO_3XX,
-> >               .fw =3D {
-> > @@ -116,7 +121,12 @@ static const struct adreno_info gpulist[] =3D {
-> >               .gmem  =3D SZ_1M,
-> >               .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
-> >               .init  =3D a3xx_gpu_init,
-> > -     }, {
-> > +     }
-> > +};
-> > +DECLARE_ADRENO_GPULIST(a3xx);
-> > +
-> > +static const struct adreno_info a4xx_gpus[] =3D {
-> > +     {
-> >               .chip_ids =3D ADRENO_CHIP_IDS(0x04000500),
-> >               .family =3D ADRENO_4XX,
-> >               .revn  =3D 405,
-> > @@ -149,7 +159,12 @@ static const struct adreno_info gpulist[] =3D {
-> >               .gmem  =3D (SZ_1M + SZ_512K),
-> >               .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
-> >               .init  =3D a4xx_gpu_init,
-> > -     }, {
-> > +     }
-> > +};
-> > +DECLARE_ADRENO_GPULIST(a4xx);
-> > +
-> > +static const struct adreno_info a5xx_gpus[] =3D {
-> > +     {
-> >               .chip_ids =3D ADRENO_CHIP_IDS(0x05000600),
-> >               .family =3D ADRENO_5XX,
-> >               .revn =3D 506,
-> > @@ -274,7 +289,12 @@ static const struct adreno_info gpulist[] =3D {
-> >               .quirks =3D ADRENO_QUIRK_LMLOADKILL_DISABLE,
-> >               .init =3D a5xx_gpu_init,
-> >               .zapfw =3D "a540_zap.mdt",
-> > -     }, {
-> > +     }
-> > +};
-> > +DECLARE_ADRENO_GPULIST(a5xx);
-> > +
-> > +static const struct adreno_info a6xx_gpus[] =3D {
-> > +     {
-> >               .chip_ids =3D ADRENO_CHIP_IDS(0x06010000),
-> >               .family =3D ADRENO_6XX_GEN1,
-> >               .revn =3D 610,
-> > @@ -520,7 +540,12 @@ static const struct adreno_info gpulist[] =3D {
-> >               .zapfw =3D "a690_zap.mdt",
-> >               .hwcg =3D a690_hwcg,
-> >               .address_space_size =3D SZ_16G,
-> > -     }, {
-> > +     }
-> > +};
-> > +DECLARE_ADRENO_GPULIST(a6xx);
-> > +
-> > +static const struct adreno_info a7xx_gpus[] =3D {
-> > +     {
-> >               .chip_ids =3D ADRENO_CHIP_IDS(0x07000200),
-> >               .family =3D ADRENO_6XX_GEN1, /* NOT a mistake! */
-> >               .fw =3D {
-> > @@ -582,7 +607,17 @@ static const struct adreno_info gpulist[] =3D {
-> >               .init =3D a6xx_gpu_init,
-> >               .zapfw =3D "gen70900_zap.mbn",
-> >               .address_space_size =3D SZ_16G,
-> > -     },
-> > +     }
-> > +};
-> > +DECLARE_ADRENO_GPULIST(a7xx);
-> > +
-> > +static const struct adreno_gpulist *gpulists[] =3D {
-> > +     &a2xx_gpulist,
-> > +     &a3xx_gpulist,
-> > +     &a4xx_gpulist,
-> > +     &a5xx_gpulist,
-> > +     &a6xx_gpulist,
-> > +     &a6xx_gpulist,
->
-> Typo. a6xx_gpulist -> a7xx_gpulist.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 29 Jun 2024 15:17:44 +0200
 
-yup, already have a patch fixing that in msm-next-robclark
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function implementation.
 
-BR,
--R
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/platform/chrome/cros_ec_typec.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> -Akhil
->
-> >  };
-> >
-> >  MODULE_FIRMWARE("qcom/a300_pm4.fw");
-> > @@ -617,13 +652,17 @@ MODULE_FIRMWARE("qcom/yamato_pm4.fw");
-> >  static const struct adreno_info *adreno_info(uint32_t chip_id)
-> >  {
-> >       /* identify gpu: */
-> > -     for (int i =3D 0; i < ARRAY_SIZE(gpulist); i++) {
-> > -             const struct adreno_info *info =3D &gpulist[i];
-> > -             if (info->machine && !of_machine_is_compatible(info->mach=
-ine))
-> > -                     continue;
-> > -             for (int j =3D 0; info->chip_ids[j]; j++)
-> > -                     if (info->chip_ids[j] =3D=3D chip_id)
-> > -                             return info;
-> > +     for (int i =3D 0; i < ARRAY_SIZE(gpulists); i++) {
-> > +             for (int j =3D 0; j < gpulists[i]->gpus_count; j++) {
-> > +                     const struct adreno_info *info =3D &gpulists[i]->=
-gpus[j];
-> > +
-> > +                     if (info->machine && !of_machine_is_compatible(in=
-fo->machine))
-> > +                             continue;
-> > +
-> > +                     for (int k =3D 0; info->chip_ids[k]; k++)
-> > +                             if (info->chip_ids[k] =3D=3D chip_id)
-> > +                                     return info;
-> > +             }
-> >       }
-> >
-> >       return NULL;
-> > diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/=
-msm/adreno/adreno_gpu.h
-> > index 77526892eb8c..17aba8c58f3d 100644
-> > --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-> > +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-> > @@ -114,6 +114,16 @@ struct adreno_info {
-> >
-> >  #define ADRENO_CHIP_IDS(tbl...) (uint32_t[]) { tbl, 0 }
-> >
-> > +struct adreno_gpulist {
-> > +     const struct adreno_info *gpus;
-> > +     unsigned gpus_count;
-> > +};
-> > +
-> > +#define DECLARE_ADRENO_GPULIST(name)                  \
-> > +const struct adreno_gpulist name ## _gpulist =3D {      \
-> > +     name ## _gpus, ARRAY_SIZE(name ## _gpus)      \
-> > +}
-> > +
-> >  /*
-> >   * Helper to build a speedbin table, ie. the table:
-> >   *      fuse | speedbin
-> > --
-> > 2.45.2
-> >
+diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/ch=
+rome/cros_ec_typec.c
+index 4d305876ec08..aff744a0b38f 100644
+=2D-- a/drivers/platform/chrome/cros_ec_typec.c
++++ b/drivers/platform/chrome/cros_ec_typec.c
+@@ -348,15 +348,13 @@ static int cros_typec_init_ports(struct cros_typec_d=
+ata *typec)
+ 	port_prop =3D dev->of_node ? "reg" : "port-number";
+ 	device_for_each_child_node(dev, fwnode) {
+ 		if (fwnode_property_read_u32(fwnode, port_prop, &port_num)) {
+-			ret =3D -EINVAL;
+ 			dev_err(dev, "No port-number for port, aborting.\n");
+-			goto unregister_ports;
++			goto e_inval;
+ 		}
+
+ 		if (port_num >=3D typec->num_ports) {
+ 			dev_err(dev, "Invalid port number.\n");
+-			ret =3D -EINVAL;
+-			goto unregister_ports;
++			goto e_inval;
+ 		}
+
+ 		dev_dbg(dev, "Registering port %d\n", port_num);
+@@ -408,6 +406,8 @@ static int cros_typec_init_ports(struct cros_typec_dat=
+a *typec)
+
+ 	return 0;
+
++e_inval:
++	ret =3D -EINVAL;
+ unregister_ports:
+ 	cros_unregister_ports(typec);
+ 	return ret;
+=2D-
+2.45.2
+
 
