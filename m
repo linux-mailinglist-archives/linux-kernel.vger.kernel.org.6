@@ -1,114 +1,119 @@
-Return-Path: <linux-kernel+bounces-234896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27D9391CC27
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 12:40:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B773591CC2A
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 12:44:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F5FEB2207A
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 10:40:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D2C41F22B10
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 10:44:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D906BB58;
-	Sat, 29 Jun 2024 10:39:53 +0000 (UTC)
-Received: from chessie.everett.org (chessie.fmt1.pfcs.com [66.220.13.234])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6E4548FD;
-	Sat, 29 Jun 2024 10:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.220.13.234
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719657593; cv=none; b=BS5ozXRfGw2DHyTOWcFqSvnoFqjFHVfVqTPonzpHnksbxdQVKafFeZPEJIrEVp3tIvCssob+Qq7oPPIGmaPzKNlAZ1nC6+DiKuQIR2ijOyS5IMmdXh4WMMW6VGtDG5rKXgq3E/1of3+EYHO8aIct1YHZIJ78g7Sb3P1wSQIHMpU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719657593; c=relaxed/simple;
-	bh=uZ2YnKUN1+47QeDnb1e0FnFLPlZBFZXdCO5qwChC5CI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HvyIV1bSk4eRjH5zwAZ3QKueQN+BFoi9zIG01RXwf3Vh1WXqqD57oVYj8ApOvYXTcWrw21Ajco1Uvn8Im5iw7jD88SeQQk5lyyfYAvRVqgPTADfX4UPxGhyjGCIL+KuWsW51phLYLfM5r5aVAwqF8rrBqhiEJwkMJLGHEdKvZVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nwtime.org; spf=pass smtp.mailfrom=nwtime.org; arc=none smtp.client-ip=66.220.13.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nwtime.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nwtime.org
-Received: from localhost.localdomain (unknown [31.16.248.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C79246525;
+	Sat, 29 Jun 2024 10:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nw4MLVWO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OcBbTenA"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by chessie.everett.org (Postfix) with ESMTPSA id 4WB82410BczMQLy;
-	Sat, 29 Jun 2024 10:39:39 +0000 (UTC)
-From: Erez Geva <erezgeva@nwtime.org>
-To: linux-mtd@lists.infradead.org,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Michael Walle <mwalle@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	devicetree@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Erez Geva <ErezGeva2@gmail.com>
-Subject: [PATCH v2 4/4] Add Macronix SPI-NOR mx25l12833f with OTP.
-Date: Sat, 29 Jun 2024 12:39:13 +0200
-Message-Id: <20240629103914.161530-5-erezgeva@nwtime.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240629103914.161530-1-erezgeva@nwtime.org>
-References: <20240629103914.161530-1-erezgeva@nwtime.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7954F2033E;
+	Sat, 29 Jun 2024 10:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719657885; cv=none; b=OQXj57xutgahHRIUZVFHj6OEx6XFkB00ZbjUrEHC2agO4+fAkSgHv664q91GpsFOPQB5Mh8DC2dR110KadKn2wP9U8JjGX1+Dz4w8+1+AtBIrpm42yL9lGQr6QGBK9J98TC2p8AuJ+Y/VyIWfQ8lkn0sBBSNjfrQrnRZboJuCuY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719657885; c=relaxed/simple;
+	bh=6VXJiGOnoyju9ruRHYHFhUu95mEhUl6t/2oo8RmMCOA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=hFPlLsrGNCGk5Nnl4wYdh/7HJPYERBkPKC3555q2ecHmYZ+PwwLWxck28Q7NuEVWdKwEXUTlUc/KESvErfnnxiQ3b0slzusbGEBZLKKjNvepkUakCjMD9MALi8E/R9M9H2IFkWvKYy2vYG7Xkm0BYMWiuClVsp2bmulhbUTWCjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nw4MLVWO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OcBbTenA; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1719657882;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YBr0wMQUI9nfHEgcW87Tn7+jfpVx+jXLrJH0EYZ954o=;
+	b=nw4MLVWOk00BwhzggrZaMrhcXL2Kh+j64AG8H/iGBr9RQvByomDldI84G3tc8QkuT0uJKc
+	JuKWG0UAs9db/0QVzkXV/K6n3ggUWczQo/SwMVpMRb0aK3hGZs1mGDAKunMoKLtpIaqVN5
+	K92YNbJAFDA/YNlmLdRnfejd/MZwf+4yDiZy+J/NhqWa3IdRYC9dWAZvMjSf0K0uiOPklv
+	L+SWhkCQB5mrSIoujAC6h3KlrFM5D+BAH1M84bE4xK/YmAUNdloOEkY9++dE4vuYHLeeik
+	jPBo2KMuo9ts18/M9C9eWSt9KT0jZ2wRVNTzp8/m3cRm01s4QycJd3tkmAxufA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1719657882;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YBr0wMQUI9nfHEgcW87Tn7+jfpVx+jXLrJH0EYZ954o=;
+	b=OcBbTenA5kOfmm/vsUhr/wkot+gSaZ5It7tkFtx+SJNb4IWB2rNQq89G4tWsxqSaCti1RQ
+	pcjv31+K/6gJhyAw==
+To: Marc Zyngier <maz@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, LKML
+ <linux-kernel@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-pci@vger.kernel.org, anna-maria@linutronix.de, shawnguo@kernel.org,
+ s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com,
+ rdunlap@infradead.org, vidyas@nvidia.com, ilpo.jarvinen@linux.intel.com,
+ apatel@ventanamicro.com, kevin.tian@intel.com, nipun.gupta@amd.com,
+ den@valinux.co.jp, andrew@lunn.ch, gregory.clement@bootlin.com,
+ sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org,
+ rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org,
+ lorenzo.pieralisi@arm.com, jgg@mellanox.com, ammarfaizi2@gnuweeb.org,
+ robin.murphy@arm.com, lpieralisi@kernel.org, nm@ti.com, kristo@kernel.org,
+ vkoul@kernel.org, okaya@kernel.org, agross@kernel.org,
+ andersson@kernel.org, mark.rutland@arm.com,
+ shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com,
+ shivamurthy.shastri@linutronix.de
+Subject: Re: [patch V4 05/21] irqchip/gic-v3-its: Provide MSI parent for
+ PCI/MSI[-X]
+In-Reply-To: <86bk3khxdt.wl-maz@kernel.org>
+References: <20240623142137.448898081@linutronix.de>
+ <20240623142235.024567623@linutronix.de> <Zn84OIS0zLWASKr2@arm.com>
+ <87h6dcxhy0.ffs@tglx> <86ed8ghypg.wl-maz@kernel.org>
+ <86cyo0hyc6.wl-maz@kernel.org> <86bk3khxdt.wl-maz@kernel.org>
+Date: Sat, 29 Jun 2024 12:44:41 +0200
+Message-ID: <87ed8gxc2u.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Erez Geva <ErezGeva2@gmail.com>
+Marc!
 
-mx25l12833f uses the same JEDEC ID as mx25l12805d.
+On Sat, Jun 29 2024 at 11:11, Marc Zyngier wrote:
+>> I have the ugly feeling that the flag is applied at the wrong level,
+>> or not propagated.
 
-The 2 chips have the same flash size.
-So user can use mx25l12805d setting with mx25l12833f chip.
+Indeed.
 
-mx25l12833f support SFDP and have a bigger symmetric OTP.
+> Here's a possible fix. Making the masking at the ITS level optional is
+> not an option (haha). It is the PCI masking that is totally
+> superfluous and that could completely be elided.
 
-Macronix annonce the end of life of mx25l12805d in 2010.
+It's the right fix because ITS requires this bit to be set.
 
-See:
-  "https://www.macronix.com/Lists/TechDoc/Attachments/9861/PCN31_2009 PCN_MX25L6405D and MX25L12805D.pdf"
+Vs. PCI masking, you are right from a pure ITS point of view, but not
+from the PCI side. PCI can't be unmsaked until there is a valid message
+and we need to mask it on shutdown.
 
-Signed-off-by: Erez Geva <ErezGeva2@gmail.com>
----
- drivers/mtd/spi-nor/core.c     | 1 +
- drivers/mtd/spi-nor/macronix.c | 5 +++++
- 2 files changed, 6 insertions(+)
+It's not a run time issue at all because PCI/MSI is edge triggered so
+the mask/unmask dance only matters during startup, shutdown and message
+update.
 
-diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
-index 0f267da339a4..6a5caa199978 100644
---- a/drivers/mtd/spi-nor/core.c
-+++ b/drivers/mtd/spi-nor/core.c
-@@ -3799,6 +3799,7 @@ static const struct spi_device_id spi_nor_dev_ids[] = {
- 	 */
- 	{"at25df321a"},	{"at25df641"},	{"at26df081a"},
- 	{"mx25l4005a"},	{"mx25l1606e"},	{"mx25l6405d"},	{"mx25l12805d"},
-+	{"mx25l12833f"}, /* Uses the same JEDEC ID of mx25l12805d */
- 	{"mx25l25635e"},{"mx66l51235l"},
- 	{"n25q064"},	{"n25q128a11"},	{"n25q128a13"},	{"n25q512a"},
- 	{"s25fl256s1"},	{"s25fl512s"},	{"s25sl12801"},	{"s25fl008k"},
-diff --git a/drivers/mtd/spi-nor/macronix.c b/drivers/mtd/spi-nor/macronix.c
-index f210231468a6..28ae6041fe8c 100644
---- a/drivers/mtd/spi-nor/macronix.c
-+++ b/drivers/mtd/spi-nor/macronix.c
-@@ -247,6 +247,11 @@ static const struct flash_info macronix_nor_parts[] = {
- 		.size = SZ_16M,
- 		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_4BIT_BP,
- 		.no_sfdp_flags = SECT_4K,
-+	}, {	/* Yes, Same JEDEC ID as mx25l12805d */
-+		.id = SNOR_ID(0xc2, 0x20, 0x18),
-+		.name = "mx25l12833f",
-+		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_4BIT_BP,
-+		.otp = SNOR_OTP(512, 2, 0x000, 0x200),
- 	}, {
- 		.id = SNOR_ID(0xc2, 0x20, 0x19),
- 		.name = "mx25l25635e",
--- 
-2.39.2
+> With this hack, I can boot a GICv3+ITS guest as usual.
 
+It's not a hack. It's the proper solution. Let me fold that back and
+look at the other PCI conversions which probably have the same issue.
+
+Thanks for digging into this. This help is truly welcome right now.
+
+Thanks,
+
+        tglx
 
