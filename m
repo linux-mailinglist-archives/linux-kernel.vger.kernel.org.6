@@ -1,83 +1,99 @@
-Return-Path: <linux-kernel+bounces-234826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CA1891CB30
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 07:08:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56EA091CB33
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 07:08:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22A6A2828A7
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 05:08:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13C94285092
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 05:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EEE42262B;
-	Sat, 29 Jun 2024 05:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9E223767;
+	Sat, 29 Jun 2024 05:08:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FakoS15h"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YYIq8xGF"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9921A22EED;
-	Sat, 29 Jun 2024 05:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067E52574B;
+	Sat, 29 Jun 2024 05:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719637677; cv=none; b=HsAFKM/Nd/WoNEfPq2LcAOdDnNhiSTys06gRjMqJUY3oHuvTU19IIhfy6mcG8ZlCvxoI+649Qr5JE12DmoglaqBNAoepG87dC2txfpcmPk4BezuOpvAyeauEicfjHf5BtKxhZkC/t4WHiRIAHNKnspKDRtHnKg337T7806IsNqg=
+	t=1719637728; cv=none; b=thkQ5Y27X86UUn5X1L/bR/MPArB6JW0gLlLvxkU2frO0bVXAvXsK1Q3iA7yBNbfkBm+gfgyjuzrzkGhDS5KF0mJ2um8ORhWn970kLTr+fxoKkpQSRLeHy4SfbCZhrbaN1iLmTQqEZiiygSIwejYiG84R9rqoc+IiYNbDmebK+ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719637677; c=relaxed/simple;
-	bh=JiGa0hM0IJCfmGk8pEs5BdhbltrxovzTV/1aDiuYmBg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KsBpQRAhgfDKtkx6UkJaZg0ynDhY1chV10Qb/Pb9Ugz97Qr9OBOYu5lkW/Bs4h+SntbcbQVLfWmGDoED+fDkvFRrlrfBRUck9eOCd/mpYd9+5kJBRzGZV0x1ynoM/HKpyMN5DlTxd3yfExcml5UJq1L0zEqiGf7+h5uAK8H6ypg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FakoS15h; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=x/HYiLGQ3SOLxAS6bivKppuZ/MDeziKeAXkLEabBkL4=; b=FakoS15hg/TtOqQf8cSf/fAnUq
-	vtIKLozCEJWWXJKKv1384bi6C739JgRQjQyN/4RzdP7bUqWTJL2R7w361hJLwk21bABqpt8EBjZFc
-	fRMKLTooEbrh/nBzyxrBIQ7qJzaNiikhfxkqwD9MnLdsoQOcccpAtJ+ZHWA/mghyYfJG5VceHnpAI
-	ddbg7v02JW7FsWfoyVV/cFrcPAjf05rpCY0FDPKGEm5F+SxNXpjYJgzCug3jV8uS0uaxWr9OAE8X8
-	UpTlZ68BBXYdkGOUkeZlNASaCy/Xy5YtvlSyDUoAuMTZvqpgkFkWY9+lvGO376TeAPeTSM795WBHl
-	aeTXiaPg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sNQJS-0000000Fuht-3oFz;
-	Sat, 29 Jun 2024 05:07:50 +0000
-Date: Fri, 28 Jun 2024 22:07:50 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Christoph Hellwig <hch@infradead.org>, Keith Busch <kbusch@kernel.org>,
-	Andreas Hindborg <nmi@metaspace.dk>, Jens Axboe <axboe@kernel.dk>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Damien Le Moal <dlemoal@kernel.org>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] null_blk: fix validation of block size
-Message-ID: <Zn-Wpq2AzBo6rcgd@infradead.org>
-References: <20240603192645.977968-1-nmi@metaspace.dk>
- <Zl4dxaQgPbw19Irk@kbusch-mbp.dhcp.thefacebook.com>
- <Zl6cHI48ye7Tp1-C@infradead.org>
- <8f8f8f78-fcd4-4e71-8dd5-bae03a627a34@oracle.com>
+	s=arc-20240116; t=1719637728; c=relaxed/simple;
+	bh=UKw3yZsiEJ3sQagyK7bPffVFQ+WL5759UwplEQoQte8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=edisJUe23/JvROyBwDr1zCSgJjNs1oSKrDJJ8ZMoIuqbKhXzOdabO8OXTXzDtRpgEDUsZvjtuN3tRNV8mtNZ4kz7HLFc9iJ8qa8V7Q6JCBSs7XdTZIixqiUCMVwJNBnFOs67ap05rB92L2UvQqrUE5UlFVDig0km0qwse3FL+C0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YYIq8xGF; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3737dc4a669so5508135ab.0;
+        Fri, 28 Jun 2024 22:08:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719637726; x=1720242526; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UKw3yZsiEJ3sQagyK7bPffVFQ+WL5759UwplEQoQte8=;
+        b=YYIq8xGFw5BGSGcmcjqy8jwaYdR+gYPgeAUm63Exjl9s7lRVnvA3KdtOLUg75kqQOc
+         SAB3IDM7/kbli5jtlouDlw0Fv5jciaGY0OiDwayT8S6xbuElHPUkv40exxfUTXRLCBBM
+         vGIF8fGswSL2CADJKCwgT1CJ57wjUZCFQr6ljeDTHJSQVS654n4SLF5pjuYKA0mumn6j
+         2vkZaZBuNrGGJz4UxPTM7McPVJhy/XOkpbgjFvY4YYdctWhQ5a9fClgnbf0dcZ8ngGcn
+         vU+cbZL2/jSCGiCUL+zgjNNXtzC8iXD9ftIZxMerGo8a8Mr2YAs9WY7t8j5h1QYdfWOb
+         R0ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719637726; x=1720242526;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UKw3yZsiEJ3sQagyK7bPffVFQ+WL5759UwplEQoQte8=;
+        b=jkWAsapQm+c5sIyZuWt+Ru78bx7744mFI8ryXNfzE3TKNT6a3shlMFQ+nmudL1PP6F
+         znJTGz+TkDUuOlL56I7874YrMJcnGL3sBXwHpGmvETdE+81bat5nvKYUOZoIpZ949Y4m
+         roncDPdcEhPnS3EbAoOLF1pdG4AgBacPna7Qsh4EYBGp/9ZTBR/xzdtxNrLE0aiuF5P5
+         qDXYbQ8hVAijyDYgByEBCA0YAF6zJzu7Y7VByQMM9U3TObPtvXPVMKU4+5+8D44LfTm4
+         EFl9ZpiwPR8TieAJBr26QLFHkUBOS9+h691nQz+wuZ9TUjNXOPfFA4n3LXUZjakhDIiK
+         RC5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVctRtrWdcl9bRQZKL4pyVmOGjWZSoha5kHwegJPgaBoesODPPmFdTK7Hx5vdgAjcz6rf7LMlOG/JGaLMsG9rgAYNP1JuCgiZgLrSodRzQ45+3JOi/ULYjzjoDda+8B3NpwPEzHuF8sWFt7sPMOWh3BdZZRyCuuivj8LktKcill0sztbQgVCTASE4IxEw==
+X-Gm-Message-State: AOJu0YyA1+7xR3UWBC+RnCvlZT/4afKvBc/o+Hx+Dp0zi84+lKfyPb49
+	SNWqheQY8pq4DXlCoKMZuX2Pe1Ag2VRJWjGw6Pjjy19YPdUSlkap
+X-Google-Smtp-Source: AGHT+IFzCIIbJbprV53JWa5jq90gCbhKWFPEXv58H+Z69M6U7EP3n/zD55Xyy/rA6+Ph24LIy6+88A==
+X-Received: by 2002:a05:6e02:1a84:b0:376:410b:ae67 with SMTP id e9e14a558f8ab-37cd1c78523mr1771085ab.16.1719637726152;
+        Fri, 28 Jun 2024 22:08:46 -0700 (PDT)
+Received: from dev0.. ([49.47.68.167])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70802b495a1sm2552236b3a.92.2024.06.28.22.08.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 22:08:45 -0700 (PDT)
+From: Abhinav Jain <jain.abhinav177@gmail.com>
+To: akpm@linux-foundation.org
+Cc: jain.abhinav177@gmail.com,
+	javier.carrasco.cruz@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	shuah@kernel.org,
+	skhan@linuxfoundation.org
+Subject: Re: [PATCH] selftests/proc: fix unused result warning during test compilation
+Date: Sat, 29 Jun 2024 05:08:39 +0000
+Message-Id: <20240629050839.990471-1-jain.abhinav177@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240628133014.111d3a0690033f9fcb2bc57d@linux-foundation.org>
+References: <20240628133014.111d3a0690033f9fcb2bc57d@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8f8f8f78-fcd4-4e71-8dd5-bae03a627a34@oracle.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 28, 2024 at 03:30:00PM +0100, John Garry wrote:
-> On 04/06/2024 05:46, Christoph Hellwig wrote:
-> > > It also looks like a good idea if this check was just done in
-> > > blk_validate_limits() so that each driver doesn't have to do their own
-> > > checks. That block function is kind of recent though.
-> > Yes.  We already discussed this in another thread a few days ago.
-> Has anyone taken this work? I was going to unless someone else wants to. 4
-> or 5 drivers directly reference blk_validate_block_size() now.
+On Fri, 28 Jun 2024 13:30:14 -0700, Andrew Morton wrote:
+> Well, it's all inside `if (0)', so just remove it.
 
-I haven't look at it yet, so from my point of view feel free to tackle
-it.
+Removed and shared v2 version of the patch here:
+https://lore.kernel.org/all/20240629050449.990451-1-jain.abhinav177@gmail.com/
+
+Please review. Thanks.
 
