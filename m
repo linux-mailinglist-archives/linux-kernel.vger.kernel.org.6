@@ -1,123 +1,126 @@
-Return-Path: <linux-kernel+bounces-235078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3180391CFB7
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 01:42:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E38291CFBB
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 01:54:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51B161C21095
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 23:42:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 580CA282C3F
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 23:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F3713211E;
-	Sat, 29 Jun 2024 23:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51264D8D0;
+	Sat, 29 Jun 2024 23:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TnarpeiC"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q7Bwldry"
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B749F224CE
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 23:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A0042078
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 23:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719704529; cv=none; b=QBolLB7EVvlUNGTVv76kTwUhq3oyFSOew2vrK6ZFcstndpVFHwACUqH9BNME+YZ9VSkhHzJrcCBh1NCbrfFV2PMtelnE36ehSztavBCoGQPzgsrDocF68damTT2j0Q665V5n0aCPlAufI3X5HKf79irupI6sAweaDjoW094JTb0=
+	t=1719705281; cv=none; b=iGGExfie/Lf/SWsudkDpbHvky4pkTJEY7sZgCyRR0q8Ntp++ooD9hoHDTtqQvb/QVZv7/YZ+lDr6ab25sBpjkyhe4mv306t3KPrtHCGLfICxN0AxD0ENQHYzJmdcn9mV/X5Ckm05bxoucsMMQnqJVlmnsdlGBdxTtmMCPL9Yjww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719704529; c=relaxed/simple;
-	bh=/RVI+NuTW83Ntxmw+C16AWLP8jraqs9TGJc2ijesKGE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SwNNFYKcGkqbiqudePctk8PzqYYVS89hglUt/RWBNgnoDkr6s8uaVhMRdvows1H+WAEknkLPnWDSu1RlD/sH613W68jnnnGjnHdubF1sz89QcZ34hiEVrK/EjrqNfWsZbisLFyfMjoXOplHg0nPrHRmWVO4zMMYph9jd+SozSfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TnarpeiC; arc=none smtp.client-ip=209.85.210.177
+	s=arc-20240116; t=1719705281; c=relaxed/simple;
+	bh=HNKSnvjndFDSHXGnRsk2y67Mg3MJw2O1ab42oLbeluM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oTrIcQGLgOeyNYMcDzNw2PWhcas8DBvskXEkyWHCEeMqnmE/HFCYkp4ggpnFVWqloHDEFi65H3uWh2dDpcgYP5VO72Y3dhJ+86jnUkYu3x5NzZ8ptBB1jsNRmjBiw2497NJljArChlEhSn46Y/h0WfXXqzr5jPaO7jWkcHkw8Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q7Bwldry; arc=none smtp.client-ip=209.85.166.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70a078edb8aso713099b3a.1
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 16:42:07 -0700 (PDT)
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3762c172d93so8800735ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 16:54:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719704527; x=1720309327; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZlOndXAQYIA/gkCwrk2GQEBTFD9obTR1n2sQ+YWZvbU=;
-        b=TnarpeiCD9f8+G7/B7EUPUMI2NIERIKiFLaIj7Y3CuZljKxXclircLHb6+JNaTocgh
-         AcnBFAptTU6RfdYRCbewYyR+83d2fTqS4CxWBvFI85ddkxbfjgf61VKfBkgOCySM41Dc
-         qvt4bcma0cQ9EO7HXLRA+/OBC/f7vg9ZjpEPn9/iY3soUa/iFJI25+m13bBeBhg+SI0x
-         uwW/Pubhd++H2wgKg8xZzWEZUQYYcKNi+hU1+IThGaAZg6ik0uRa2mlgCK1WtRDKddVZ
-         3Ao3eVZqAjtCkV5PwzTuGwM7+QsQKWHS04mpzG8U8vmreDkKQV0yAFrmb9TGJxdgASem
-         J5rg==
+        d=gmail.com; s=20230601; t=1719705279; x=1720310079; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HNKSnvjndFDSHXGnRsk2y67Mg3MJw2O1ab42oLbeluM=;
+        b=Q7Bwldry85ef5Ts4sFUVjaDMU17a9aOZCChovvKqNJk79Xm/aOPmWgxFjdJbOeKqYK
+         aOLUgbzJ1HA95KYug3T7hAYhp0hU7COHP0u87ZcNLCp6o2cbVQr3OY2eoiINGlVjPv7r
+         Z7ngrfum7+8nXBP8lRVCqVGAtGHNnB3kKImKr+1moYn7p08htOe5LFGPVfGOZ9a08wb1
+         exYqMAQ9uOCuxLqvAAPIDiZpBRMqAEmEhUIj+bXaQ00DnlmHrWa7O2PTJ9fzb8fjjokN
+         4fvRzK8dll7nwDQGo0GLfz9FMwZLCIBTQDamCDAbzK8Hilax80pZx2uuKdiZd1OV7epq
+         8M6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719704527; x=1720309327;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZlOndXAQYIA/gkCwrk2GQEBTFD9obTR1n2sQ+YWZvbU=;
-        b=ozKholfL/CHD2Uysn44L61ipnlJ8BckG+mYZYDYFdz3Olq5geadNa1mmNR2f6bU6Bv
-         X48kxlkVw4Qut8gnjgKmHjlvlkBmoy6T0IIBJes/Di339w6ISyrEjLD55cKRkUk/vaBN
-         96uSLmN04TN/Ykj3QNi6Xk/oIs8HsHXy2rdWDy2DIul75CDuETuTAdSv3UGz6rBvP0NW
-         RrQvN7afqEoXyrnsySvlhW35yzH/tahdC9ntPKgYzfqhovAgdkwJv2r0/6Ne+2UVNqW3
-         NKT23yppDdEK9e85yuBqOobC1nr5SpImrZRnubCACqfLZ/LF5PDyrntzS9+dw2r6V61/
-         FUiA==
-X-Gm-Message-State: AOJu0YxW8ev6cqELWx3mjFvHrajFhit/xHXtNqdhQh0KIlWzVLnqmhk2
-	Jb9K9uBRpDnJNCd/8LruZWT30CEbYiTD5deKVIYlGpmBoRsnMf4j
-X-Google-Smtp-Source: AGHT+IHNvRvSLdv6mjuw6V64R4JnaBcm1WHMuRvefgESl1YG1bBt/ZuuPsKKx3UjbO2Vvrq6vxH+AQ==
-X-Received: by 2002:a05:6a00:8c9:b0:705:a9d9:62b1 with SMTP id d2e1a72fcca58-70aaabc0162mr3284197b3a.15.1719704526992;
-        Sat, 29 Jun 2024 16:42:06 -0700 (PDT)
-Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7080498a021sm3760061b3a.203.2024.06.29.16.42.04
+        d=1e100.net; s=20230601; t=1719705279; x=1720310079;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HNKSnvjndFDSHXGnRsk2y67Mg3MJw2O1ab42oLbeluM=;
+        b=drZCRLp8QXOs+DvsyMaWpTpzVJWV2QtttUYWegwgS1CzsExa8x+jt3xCMDdCJQfyjm
+         1XcHVUrSiwvrIKHajjNo1DyaqhgUUWXgse2btpekYcyshsc/9OnNosrJn2k9yaNYP6w4
+         yCEP7eL3XsAXEkFClAc/ex1rDzuTWOTRtyXJo+i+6udgczAespP88UqDaUheu+eITGwH
+         JnN7QCNpO+w0pZJSyUCxCCq7Bf+qv/xhY+uI1BEZB4xrZmxQJSmCdoCVKjuuDhpNLljH
+         9ljWoFfQHtRZJmBJHAbukZOxjbpjU6q/n7/Py9SovlN6ath3O4BQYLqwdq226FcucF0J
+         XHZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXEXKQb9Uqt8/nzuBDJkiCT3qBjIIhpEIJwph7cAFNE9v5rHXwA+yeJ9zwqdwXZA7yi4G+MtD8X9bUh0gSrkuTfZXtsQwnuO70ffD/v
+X-Gm-Message-State: AOJu0YzBwWWCtX24pc5ns9EBQ5OyRJxJYwBI30g3u1GS3m0YzYZdHGl2
+	/gBE9YmkhDvLwaTooXqZS2z44WnzbBCKfwlRL8MRIx149skvY7StERT1nQ==
+X-Google-Smtp-Source: AGHT+IHzkEWGzka9+7sZ/fPfgApaRYQew1kLnqeJ5l8qDXOb+dRdERKLjHPG8Ok9L3fCttLw5kh5PQ==
+X-Received: by 2002:a05:6e02:1a4c:b0:375:da94:e46b with SMTP id e9e14a558f8ab-37cd0de9cafmr25528895ab.5.1719705278878;
+        Sat, 29 Jun 2024 16:54:38 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac10e2cc5sm38521475ad.80.2024.06.29.16.54.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Jun 2024 16:42:06 -0700 (PDT)
-From: Barry Song <21cnbao@gmail.com>
-To: akpm@linux-foundation.org,
-	linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org,
-	Barry Song <v-songbaohua@oppo.com>,
-	David Hildenbrand <david@redhat.com>,
-	Ryan Roberts <ryan.roberts@arm.com>
-Subject: [PATCH] mm/vmscan: drop checking if _deferred_list is empty before using TTU_SYNC
-Date: Sun, 30 Jun 2024 11:41:55 +1200
-Message-Id: <20240629234155.53524-1-21cnbao@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Sat, 29 Jun 2024 16:54:38 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 8F5DF1852C705; Sun, 30 Jun 2024 06:54:34 +0700 (WIB)
+Date: Sun, 30 Jun 2024 06:54:34 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Yusef Aslam <yuzi54780@outlook.com>,
+	Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] Staging: rtl8192e: rtllib_rx: fix alignment
+Message-ID: <ZoCeul3pAjZLOT8E@archie.me>
+References: <CWLP265MB65165E806F938F87CB67BF87FDD62@CWLP265MB6516.GBRP265.PROD.OUTLOOK.COM>
+ <2024062727-diabolic-lusty-7baf@gregkh>
+ <CWLP265MB6516AB499D407C0AB0CF106EFDD72@CWLP265MB6516.GBRP265.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="91Qoq1IeelA5QvL4"
+Content-Disposition: inline
+In-Reply-To: <CWLP265MB6516AB499D407C0AB0CF106EFDD72@CWLP265MB6516.GBRP265.PROD.OUTLOOK.COM>
 
-From: Barry Song <v-songbaohua@oppo.com>
 
-The optimization of list_empty(&folio->_deferred_list) aimed to prevent
-increasing the PTL duration when a large folio is partially unmapped,
-for example, from subpage 0 to subpage (nr - 2).
+--91Qoq1IeelA5QvL4
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-But Ryan's commit 5ed890ce5147 ("mm: vmscan: avoid split during
-shrink_folio_list()") actually splits this kind of large folios. This
-makes the "optimization" useless.
+On Thu, Jun 27, 2024 at 07:09:50PM +0100, Yusef Aslam wrote:
+> On Thu, 2024-06-27 at 15:43 +0200, Greg KH wrote:
+> > This all should not be in the body of the email, please use a tool
+> > like
+> > 'git send-email' to send patches.
+>=20
+> Oh k thanks, I was trying to use git send-email but in the end I just
+> copy pasted the email into Evolution as msmtp was not sending emails
+> for some reason.
 
-Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>
----
- -v1
- * I remember David and Ryan once suggested that this check could be dropped
-   while the patch was being pulled into mm-unstable. However, for some reason,
-   I forgot to request squashing this change.
+Authentication issues?
 
- mm/vmscan.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Confused...
 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 3d4c681c6d40..0761f91b407f 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1291,7 +1291,7 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
- 			 * try_to_unmap acquire PTL from the first PTE,
- 			 * eliminating the influence of temporary PTE values.
- 			 */
--			if (folio_test_large(folio) && list_empty(&folio->_deferred_list))
-+			if (folio_test_large(folio))
- 				flags |= TTU_SYNC;
- 
- 			try_to_unmap(folio, flags);
--- 
-2.34.1
+--=20
+An old man doll... just what I always wanted! - Clara
 
+--91Qoq1IeelA5QvL4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZoCetQAKCRD2uYlJVVFO
+o6I1APsHLrevLZMMM0lYJnxtWSvhmiuZ6aAFFByjryG/++/10QD/YcCo8RNKbXVA
+8wPGTFp+EaEp6BP5jD6AcZm7cOj8RA4=
+=3B0Q
+-----END PGP SIGNATURE-----
+
+--91Qoq1IeelA5QvL4--
 
