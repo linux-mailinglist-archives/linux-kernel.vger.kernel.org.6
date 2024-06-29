@@ -1,118 +1,83 @@
-Return-Path: <linux-kernel+bounces-234825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D30491CB2E
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 07:06:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CA1891CB30
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 07:08:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 067971F237DD
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 05:06:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22A6A2828A7
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 05:08:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977732233A;
-	Sat, 29 Jun 2024 05:05:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EEE42262B;
+	Sat, 29 Jun 2024 05:07:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="fF0zb4uv"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FakoS15h"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352701878;
-	Sat, 29 Jun 2024 05:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9921A22EED;
+	Sat, 29 Jun 2024 05:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719637553; cv=none; b=CqdVOu8/A8ANAjE2GYu63Ofhe9T0r26PYPBcHm57PFGAa/D2B9ZqKpPmjnUGtw93GDXOA6FNDTLqLdTYPTlYmpcy9NIwVPNAxsj3Gc7HZm8h8uWKLSOxinoArNWK1eN7DmiD4uY27bZ9H5pOkVfIIR9PzJxqn6cs9gmYGRIxgJY=
+	t=1719637677; cv=none; b=HsAFKM/Nd/WoNEfPq2LcAOdDnNhiSTys06gRjMqJUY3oHuvTU19IIhfy6mcG8ZlCvxoI+649Qr5JE12DmoglaqBNAoepG87dC2txfpcmPk4BezuOpvAyeauEicfjHf5BtKxhZkC/t4WHiRIAHNKnspKDRtHnKg337T7806IsNqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719637553; c=relaxed/simple;
-	bh=e8b6twANdQhhJnHGZLu7xXSZ3FEgLhooVfreBuvC2+I=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=MkB1n7ZGK8HIiNJjEDI/Jdbb9dZ3PvJOTw/EBadzTdTPX7ibRNJPkEyJco3Tk7fazLtI5hQ/9mrCeLKUhUUmhmNRJpsY5IyumXMecP/Aw61Dx33ZW4w5yX31Ta6IGJQAo60Jry5D5wRQRAS9L1Lyxx8v8JnBk+0/4NSBikK3ndY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=fF0zb4uv; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1719637677; c=relaxed/simple;
+	bh=JiGa0hM0IJCfmGk8pEs5BdhbltrxovzTV/1aDiuYmBg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KsBpQRAhgfDKtkx6UkJaZg0ynDhY1chV10Qb/Pb9Ugz97Qr9OBOYu5lkW/Bs4h+SntbcbQVLfWmGDoED+fDkvFRrlrfBRUck9eOCd/mpYd9+5kJBRzGZV0x1ynoM/HKpyMN5DlTxd3yfExcml5UJq1L0zEqiGf7+h5uAK8H6ypg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FakoS15h; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=x/HYiLGQ3SOLxAS6bivKppuZ/MDeziKeAXkLEabBkL4=; b=FakoS15hg/TtOqQf8cSf/fAnUq
+	vtIKLozCEJWWXJKKv1384bi6C739JgRQjQyN/4RzdP7bUqWTJL2R7w361hJLwk21bABqpt8EBjZFc
+	fRMKLTooEbrh/nBzyxrBIQ7qJzaNiikhfxkqwD9MnLdsoQOcccpAtJ+ZHWA/mghyYfJG5VceHnpAI
+	ddbg7v02JW7FsWfoyVV/cFrcPAjf05rpCY0FDPKGEm5F+SxNXpjYJgzCug3jV8uS0uaxWr9OAE8X8
+	UpTlZ68BBXYdkGOUkeZlNASaCy/Xy5YtvlSyDUoAuMTZvqpgkFkWY9+lvGO376TeAPeTSM795WBHl
+	aeTXiaPg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sNQJS-0000000Fuht-3oFz;
+	Sat, 29 Jun 2024 05:07:50 +0000
+Date: Fri, 28 Jun 2024 22:07:50 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Keith Busch <kbusch@kernel.org>,
+	Andreas Hindborg <nmi@metaspace.dk>, Jens Axboe <axboe@kernel.dk>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Damien Le Moal <dlemoal@kernel.org>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] null_blk: fix validation of block size
+Message-ID: <Zn-Wpq2AzBo6rcgd@infradead.org>
+References: <20240603192645.977968-1-nmi@metaspace.dk>
+ <Zl4dxaQgPbw19Irk@kbusch-mbp.dhcp.thefacebook.com>
+ <Zl6cHI48ye7Tp1-C@infradead.org>
+ <8f8f8f78-fcd4-4e71-8dd5-bae03a627a34@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1719637542;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gMwo9V8qLbkFXcqLqAUxMVPbvcdzo4YSJGNKNIvXkRc=;
-	b=fF0zb4uvEgnZtxW8uojfDKDdIlcN8DBHzIRDoYO1jEixWBcuP6f2OHqCaFf3Npx/oFkDY5
-	zKF/fIhbMJh1dx+Tbb8kw2YWXSGXEWcA14iSKGemkSa7mBxH69jyM4mQzBzvuySWBUw0ZG
-	AZaaHxI32lXUED5sBi2Nz2EiCE9Mw+yYYKEZSu5wwda8TfRJEajmxd5JUYFdVNvPCOCBgp
-	Ujf5hVauG4a9v6etZyISosh9mEPueww7a+mpUQAWEkcSlau8CYRv2s9OyjtJ/jSAJQo4cc
-	Y+FbS7bTDQN5L0RY3o/yCk870O0SB4gu44SWBfwim0FFDwoQUKnLw3EeDf4EUg==
-Date: Sat, 29 Jun 2024 07:05:41 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Diederik de Haas <didi.debian@cknow.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, Jonas Karlman <jonas@kwiboo.se>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@debian.org>, Chen-Yu Tsai
- <wens@kernel.org>, linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: rockchip: Add dma-names to uart1 on
- quartz64-b
-In-Reply-To: <20240628120130.24076-1-didi.debian@cknow.org>
-References: <20240628120130.24076-1-didi.debian@cknow.org>
-Message-ID: <bd137fb5f44b247d843e0d218a495c62@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8f8f8f78-fcd4-4e71-8dd5-bae03a627a34@oracle.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 2024-06-28 14:00, Diederik de Haas wrote:
-> There have been several attempts to set the dma-names property on the
-> SoC level (in rk356x.dtsi), but that appears to cause problems when set
-> on channels without flow control.
-> 
-> Quoting part of a previous attempt for clarification:
-> 
->> Nah, enabling it for bluetooth is fine because you have flow control.
->> My issues have been on channels without flow control. Without DMA it
->> simply drops messages or the channel hangs until you close and reopen
->> it. With DMA, when an overflow locks up the channel it is usually
->> unavailable until the board is rebooted.
-> 
-> Setting it on the board level for the bluetooth connection was deemed
-> safe, so do so for the Quartz64 Model B.
-> 
-> This fixes the following error/warning:
-> 
->   of_dma_request_slave_channel: dma-names property of node
->       '/serial@fe650000' missing or empty
->   dw-apb-uart fe650000.serial: failed to request DMA
-> 
-> Signed-off-by: Diederik de Haas <didi.debian@cknow.org>
-> Link: https://libera.irclog.whitequark.org/armlinux/2024-02-29
-> Link: https://lore.kernel.org/linux-rockchip/18284546.sWSEgdgrri@diego/
+On Fri, Jun 28, 2024 at 03:30:00PM +0100, John Garry wrote:
+> On 04/06/2024 05:46, Christoph Hellwig wrote:
+> > > It also looks like a good idea if this check was just done in
+> > > blk_validate_limits() so that each driver doesn't have to do their own
+> > > checks. That block function is kind of recent though.
+> > Yes.  We already discussed this in another thread a few days ago.
+> Has anyone taken this work? I was going to unless someone else wants to. 4
+> or 5 drivers directly reference blk_validate_block_size() now.
 
-Thanks for this patch, it's looking good to me.
-
-Reviewed-by: Dragan Simic <dsimic@manjaro.org>
-
-> ---
->  arch/arm64/boot/dts/rockchip/rk3566-quartz64-b.dts | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3566-quartz64-b.dts
-> b/arch/arm64/boot/dts/rockchip/rk3566-quartz64-b.dts
-> index b908ce006c26..13e599a85eb8 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3566-quartz64-b.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3566-quartz64-b.dts
-> @@ -652,6 +652,7 @@ &tsadc {
->  };
-> 
->  &uart1 {
-> +	dma-names = "tx", "rx";
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&uart1m0_xfer &uart1m0_ctsn &uart1m0_rtsn>;
->  	status = "okay";
+I haven't look at it yet, so from my point of view feel free to tackle
+it.
 
