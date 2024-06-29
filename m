@@ -1,91 +1,233 @@
-Return-Path: <linux-kernel+bounces-235034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C76091CEA1
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 20:58:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DA8E91CEA3
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 21:04:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA2E81F21B8E
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 18:58:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 953B81C20DA7
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 19:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E2C134402;
-	Sat, 29 Jun 2024 18:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1CC135A6D;
+	Sat, 29 Jun 2024 19:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="gpRxZV3t"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qmie8DnL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD06132118
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 18:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6871064B;
+	Sat, 29 Jun 2024 19:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719687493; cv=none; b=L4PIDFx2Vi/CiBY7jOsuSA4riIqBGThlUi6l1BOyRTQH9AAnZx/PKsZXe/Z4yN/fWlCOOGbFbJru6Pq3q0lSZYeDz8IuxLGpJ0kFNGxcsdD9jiFgTG5NEsBkEYkjfoIuU8YGe0usDvUT6vPqfvzz6ib8bIJ/dtJyRmMRX+lRkiE=
+	t=1719687834; cv=none; b=JGYCTUGzvEC+NDy9/RSJ6QKefrJuHmNc+0sX4fR5OlK/fdpMyYOi3yOl5T7hoHEN11CGm8UUwbihuRZLC9x9Lm2JcoZS+XVv0hd6u6HN0yCO7U9jn1pnliwayW4upFSPjRLNd7CQNSpKRbkKTPYyvkTKrgRyQeRu+oTVmVtswY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719687493; c=relaxed/simple;
-	bh=4XdOuO+suNvQDwIYnF6y+V7ZtBcFHF+TeDB/fbDthHc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f3WM8pUBk6WZBTwUwflAANJ5HuuzHnl+z0kIjbkUjrWG4fbIKPqbPjp+1z4oT3hIoGnHmkyPidpK4JaxR1RZLn5j8aL2iFtpKhO7/497sFFXGlTxoCYBTI/bRvER+BLPiqXQmkz9Rhd920SFB0nucbHKlpP7MiIW6FtBhNimEhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=gpRxZV3t; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1719687483; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=iQNmjx9aMgLa1f79E0y6SIn1TUROyrKh2kuEUUI4uHQ=;
-	b=gpRxZV3tSL23DGQUQ60MM8mzSVFjaPXpKZlQG1eWYN6bsHPrZcuA5H6UDh2U9RvbPLyY9E+d6cuacBOeHPGzzfnCQgVF1JKAmdkPGMbi+8/GZWyWAmAQWH/PXLkORBiUpE8mbSnBEthU2nXOxLvIB2eFYYowkLRFbpK7SOrmUrY=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R861e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0W9ThmIU_1719687464;
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W9ThmIU_1719687464)
-          by smtp.aliyun-inc.com;
-          Sun, 30 Jun 2024 02:58:02 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: linux-erofs@lists.ozlabs.org,
-	Chao Yu <chao@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>
-Subject: [PATCH] erofs: ensure m_llen is reset to 0 if metadata is invalid
-Date: Sun, 30 Jun 2024 02:57:43 +0800
-Message-ID: <20240629185743.2819229-1-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1719687834; c=relaxed/simple;
+	bh=VhwYj9wYMKcVVnuUSektec5JaiNKACPQOUGlOLJi5/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=k/8O1pvJ4sNBpFkKM5oEyoWMUyOsmlgRV7WqIWwBxPnJF6bQd7EXfbzPSD99yIQi1ICby2uc8dHs62Vk/LAxO+UpST2XvBAL44WpyiZB9Peo0v6Vfm+3HjK2ilroEi4hg62q6k9YhzRhnqShTJYq2KIjCFPc1jgEuFrWzeTs50Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qmie8DnL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC8FCC2BBFC;
+	Sat, 29 Jun 2024 19:03:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719687833;
+	bh=VhwYj9wYMKcVVnuUSektec5JaiNKACPQOUGlOLJi5/M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qmie8DnLr6Vjc/blzQEer4aMbo82Jb7MiaMVnje2nVNSePWdJDfRKc3BY/ZkBzHzT
+	 C/L2Jsqxmx8OrJVy9UPoHDhip063TJY6v836mwM7GF6an5ZruBHdW+dnpY6GjSL1cw
+	 Hjowd9V4K4PZIYvTYPCzE+9wR9FxRlN0tP8QdTagFy+cYCJpAWyiYTNBrNE2/bNJgQ
+	 +4X0LFhE6OZABjFhUy/mc5a2M9aeAff2PWSD2nXyqC4Pc4N15CGihDSs56J0PzzjA5
+	 W0wkuGH4zJ1XgRoxzJ1NSSOBLEhjZE8iz/cVgu9z5I/5SgVLCYvm1+CTPcYyAR9tVB
+	 pVigWgq+T1Ceg==
+Date: Sat, 29 Jun 2024 20:03:47 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Olivier Moysan <olivier.moysan@foss.st.com>
+Cc: <fabrice.gasnier@foss.st.com>, Lars-Peter Clausen <lars@metafoo.de>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, <linux-iio@vger.kernel.org>,
+ <linux-stm32@st-md-mailman.stormreply.com>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 6/8] iio: adc: stm32-dfsdm: adopt generic channels
+ bindings
+Message-ID: <20240629200347.4e282f21@jic23-huawei>
+In-Reply-To: <20240625150717.1038212-7-olivier.moysan@foss.st.com>
+References: <20240625150717.1038212-1-olivier.moysan@foss.st.com>
+	<20240625150717.1038212-7-olivier.moysan@foss.st.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Sometimes, the on-disk metadata might be invalid due to storage
-failure or other unknown issues.
+On Tue, 25 Jun 2024 17:07:14 +0200
+Olivier Moysan <olivier.moysan@foss.st.com> wrote:
 
-In that case, z_erofs_map_blocks_iter() may still return a valid
-m_llen while other fields remain invalid (e.g., m_plen can be 0).
+> Move to generic channels binding to ease new backend framework adoption
+> and prepare the convergence with MDF IP support on STM32MP2 SoC family.
+> 
+> Legacy binding:
+> DFSDM is an IIO channel consumer.
+> SD modulator is an IIO channels provider.
+> The channel phandles are provided in DT through io-channels property
+> and channel indexes through st,adc-channels property.
+> 
+> New binding:
+> DFSDM is an IIO channel provider.
+> The channel indexes are given by reg property in channel child node.
+> 
+> This new binding is intended to be used with SD modulator IIO backends.
+> It does not support SD modulator legacy IIO devices.
+> The st,adc-channels property presence is used to discriminate
+> between legacy and backend bindings.
+> 
+> The support of the DFSDM legacy channels and SD modulator IIO devices
+> is kept for backward compatibility.
+> 
+> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
 
-Due to the return value of z_erofs_scan_folio() in some path will
-be ignored on purpose, the following z_erofs_scan_folio() could
-then use the invalid value by accident.
+Hi Olivier
 
-Let's reset m_llen to 0 to prevent this.
+Some minor comments inline.
 
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
----
- fs/erofs/zmap.c | 2 ++
- 1 file changed, 2 insertions(+)
+thanks,
 
-diff --git a/fs/erofs/zmap.c b/fs/erofs/zmap.c
-index 9b248ee5fef2..74d3d7bffcf3 100644
---- a/fs/erofs/zmap.c
-+++ b/fs/erofs/zmap.c
-@@ -711,6 +711,8 @@ int z_erofs_map_blocks_iter(struct inode *inode, struct erofs_map_blocks *map,
- 
- 	err = z_erofs_do_map_blocks(inode, map, flags);
- out:
-+	if (err)
-+		map->m_llen = 0;
- 	trace_z_erofs_map_blocks_iter_exit(inode, map, flags, err);
- 	return err;
- }
--- 
-2.43.5
+Jonathan
+
+
+
+> @@ -1362,15 +1422,20 @@ static int stm32_dfsdm_dma_request(struct device *dev,
+>  	return 0;
+>  }
+>  
+> -static int stm32_dfsdm_adc_chan_init_one(struct iio_dev *indio_dev,
+> -					 struct iio_chan_spec *ch)
+> +static int stm32_dfsdm_adc_chan_init_one(struct iio_dev *indio_dev, struct iio_chan_spec *ch,
+> +					 struct fwnode_handle *child)
+>  {
+>  	struct stm32_dfsdm_adc *adc = iio_priv(indio_dev);
+>  	int ret;
+>  
+> -	ret = stm32_dfsdm_channel_parse_of(adc->dfsdm, indio_dev, ch);
+> -	if (ret < 0)
+> +	if (child)
+> +		ret = stm32_dfsdm_generic_channel_parse_of(adc->dfsdm, indio_dev, ch, child);
+> +	else /* Legacy binding */
+> +		ret = stm32_dfsdm_channel_parse_of(adc->dfsdm, indio_dev, ch);
+> +	if (ret < 0) {
+> +		dev_err(&indio_dev->dev, "Failed to parse channel\n");
+>  		return ret;
+
+return dev_err_probe() assuming only called from probe() which I think is the case
+but haven't actually checked.
+
+
+> +	}
+>  
+>  	ch->type = IIO_VOLTAGE;
+>  	ch->indexed = 1;
+> @@ -1385,6 +1450,7 @@ static int stm32_dfsdm_adc_chan_init_one(struct iio_dev *indio_dev,
+>  
+>  	if (adc->dev_data->type == DFSDM_AUDIO) {
+>  		ch->ext_info = dfsdm_adc_audio_ext_info;
+> +		ch->scan_index = 0;
+>  	} else {
+>  		ch->scan_type.shift = 8;
+>  	}
+> @@ -1392,8 +1458,51 @@ static int stm32_dfsdm_adc_chan_init_one(struct iio_dev *indio_dev,
+>  	ch->scan_type.realbits = 24;
+>  	ch->scan_type.storagebits = 32;
+>  
+> -	return stm32_dfsdm_chan_configure(adc->dfsdm,
+> -					  &adc->dfsdm->ch_list[ch->channel]);
+> +	return stm32_dfsdm_chan_configure(adc->dfsdm, &adc->dfsdm->ch_list[ch->channel]);
+Is there a change here? If it's just a line wrap don't do that in same patch
+making real changes.
+
+> +}
+> +
+> +static int stm32_dfsdm_chan_init(struct iio_dev *indio_dev, struct iio_chan_spec *channels)
+> +{
+> +	int num_ch = indio_dev->num_channels;
+> +	int chan_idx = 0, ret = 0;
+
+	int ret;
+
+> +
+> +	for (chan_idx = 0; chan_idx < num_ch; chan_idx++) {
+> +		channels[chan_idx].scan_index = chan_idx;
+> +		ret = stm32_dfsdm_adc_chan_init_one(indio_dev, &channels[chan_idx], NULL);
+> +		if (ret < 0) {
+> +			dev_err(&indio_dev->dev, "Channels init failed\n");
+> +			return ret;
+			return dev_err_probe()
+(I think this is only called from probe?)
+
+> +		}
+> +	}
+> +
+> +	return ret;
+return 0;
+at least I assume it can't be positive? 
+> +}
+> +
+> +static int stm32_dfsdm_generic_chan_init(struct iio_dev *indio_dev, struct iio_chan_spec *channels)
+> +{
+> +	struct fwnode_handle *child;
+> +	int chan_idx = 0, ret;
+> +
+> +	device_for_each_child_node(&indio_dev->dev, child) {
+
+device_for_each_child_node_scoped()  as then you can do direct returns.
+
+
+> +		/* Skip DAI node in DFSDM audio nodes */
+> +		if (fwnode_property_present(child, "compatible"))
+> +			continue;
+> +
+> +		channels[chan_idx].scan_index = chan_idx;
+> +		ret = stm32_dfsdm_adc_chan_init_one(indio_dev, &channels[chan_idx], child);
+> +		if (ret < 0) {
+> +			dev_err(&indio_dev->dev, "Channels init failed\n");
+> +			goto err;
+return dev_err_probe() once using scoped above.
+
+
+> +		}
+> +
+> +		chan_idx++;
+> +	}
+> +	return chan_idx;
+> +
+> +err:
+> +	fwnode_handle_put(child);
+> +
+> +	return ret;
+>  }
+>
+>  
+> @@ -1430,43 +1547,60 @@ static int stm32_dfsdm_adc_init(struct device *dev, struct iio_dev *indio_dev)
+
+> -	ch = devm_kcalloc(&indio_dev->dev, num_ch, sizeof(*ch),
+> -			  GFP_KERNEL);
+> -	if (!ch)
+> -		return -ENOMEM;
+> +	if (legacy) {
+> +		/* Bind to SD modulator IIO device. */
+> +		adc->hwc = devm_iio_hw_consumer_alloc(&indio_dev->dev);
+> +		if (IS_ERR(adc->hwc))
+> +			return -EPROBE_DEFER;
+
+Obviously in the legacy path, but worth a dev_err_probe() because
+if we defer, debug info gets stashed away so it is easy to see
+why a driver is continuing to defer.
+
+> +	} else {
+> +		/* Generic binding. SD modulator IIO device not used. Use SD modulator backend. */
+> +		adc->hwc = NULL;
 
 
