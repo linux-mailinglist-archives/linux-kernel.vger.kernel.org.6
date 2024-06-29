@@ -1,95 +1,89 @@
-Return-Path: <linux-kernel+bounces-234848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F26B91CB7B
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 09:20:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C20F91CB82
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 09:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5A2D1F22D1D
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 07:20:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A261283A6C
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 07:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F33834CD8;
-	Sat, 29 Jun 2024 07:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7902E851;
+	Sat, 29 Jun 2024 07:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Va2WLuiN"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="UM9dRey6"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ABA2AD49;
-	Sat, 29 Jun 2024 07:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D583D69;
+	Sat, 29 Jun 2024 07:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719645603; cv=none; b=Z8YSb8Y65Ek2ZBUrMDpXkgaY6tYgycBswGEppUrLWRvFSUu8Hf1SgUvxMqHEN+PHUtVPtO/gk++QtA+bGTrQtGVl9MuKuvg4bzku3oNc4Nb23dDtn9FcCkFtvhBQMZBOc72+NhHJPGMZP5Qtwxf7i2kw7SwuV9xQUDq/eJWc2Vc=
+	t=1719646224; cv=none; b=YQBQ1vtGEu5s7bJJ2eRi0wm7dz/BanJqHcxXNuJcM79Uxr43/p4ocmqB5OeDRSTCrMzWX+3cGCjalj1SirADv+HcQ4HcVmqbkoJw9Ix1dk8j1EQNyJ05uDFYSyAv4D1TUTYz8A5yZlux2PFt38sIRw2gVFHll4VxVxE86rqHtlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719645603; c=relaxed/simple;
-	bh=43KSNdy635mC+m8pthn4X3ijJbOR+DQUlbunS7xxVS0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OpQOFfQMOlVymRXPyFW+vj4iMYsjI0M/JVVM7k/r5zBqhlQd5snKgAOPWx9oNU7IW47FUjgIZNgsXWNc77QWVTsrmAwO9YhNMLquMKH4Sn74pg2ympGf7jxUqfUtj0navIHkdJaNVeA3X4IUh3eRW7EZX79Ao2SJ1nDf8qVd5nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Va2WLuiN; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1719645589;
-	bh=43KSNdy635mC+m8pthn4X3ijJbOR+DQUlbunS7xxVS0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Va2WLuiN/gG2+vp+0zVx7TteJs9XIGnfYL7HWuWz2kVVO0ZCRubN0ocPoGxICQc1z
-	 6j/6IQQ9xYrwOpCQwm+0Z4qarg2AjCeA9nXUjGQwkR8d5crtenM9GDI6GcrhdxyASt
-	 N4tUwLkCTxtiSWRdEd7AETdeNTy62CByDvCEfDJE=
-Date: Sat, 29 Jun 2024 09:19:48 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Andi Shyti <andi.shyti@kernel.org>, Jean Delvare <jdelvare@suse.com>, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: [PATCH v2 4/4] i2c: piix4: Register SPDs
-Message-ID: <afd11870-eab1-4b90-9b81-2a7c84be46e5@t-8ch.de>
-References: <20240627-piix4-spd-v2-0-617ce47b8ff4@weissschuh.net>
- <20240627-piix4-spd-v2-4-617ce47b8ff4@weissschuh.net>
- <2bbdb1bd-ea4d-4c14-9ea7-9fce09ac76b7@roeck-us.net>
+	s=arc-20240116; t=1719646224; c=relaxed/simple;
+	bh=QL/ulRF3WQDUZh0765KisZheh8Z7kRGyVfR1QZjKE0U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=AGOFLMOjRQwAWy5H0DQ9wazTj03jeqbashuC//3heyamxT0lP+TcPzof36IAEOqMLJYGFAxQ05BS+GD32nYsZO7jz4RBVxE/t63V91NEKQpdsgsA/Jxztdb5ihnwuseJSqimaYQgNvmGrFQzsLplihtlyCb6WGdLaaWG9MZp3eQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=UM9dRey6; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1719646213;
+	bh=QL/ulRF3WQDUZh0765KisZheh8Z7kRGyVfR1QZjKE0U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=UM9dRey6OYS6I3j0jXoaVgyR3dKW8lp+23A2Qys7IHzs8rnBzw8pe5v9kofWowwyN
+	 sXYtVBTn9XUe4WUNNwdnK0jJw5y3JceECvcCT9Hg3NR+7T6V1tdEidNZUbk2p68i80
+	 w9G67/N3wkquXFKoJNlOQdJLTpKnguw9fexo8LNYoTxlZG2qeina5jRGev7VitRAxt
+	 GdItJ2E5xwsjsxCk08Z5LuGMoa66fyQ8QzJ/ZmMJNMaBhciqUrEuSit2i9l3CJVKzy
+	 BCsCOHSOIYyzAxMHmQnP+/iTX4+lQzjgfm/dtPIdgccequb6lcRYgTAHhmTieUCXWS
+	 1e2HoFl80vQpQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WB3qS5J2Zz4w2P;
+	Sat, 29 Jun 2024 17:30:11 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Shawn Anastasio <sanastasio@raptorengineering.com>, Krishna Kumar
+ <krishnak@linux.ibm.com>, npiggin@gmail.com
+Cc: nathanl@linux.ibm.com, aneesh.kumar@kernel.org,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ christophe.leroy@csgroup.eu, gbatra@linux.ibm.com, bhelgaas@google.com,
+ tpearson@raptorengineering.com, oohall@gmail.com,
+ brking@linux.vnet.ibm.com, mahesh.salgaonkar@in.ibm.com,
+ linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v3 1/2] pci/hotplug/pnv_php: Fix hotplug driver crash on
+ Powernv
+In-Reply-To: <76a154af-bd69-44f4-a6d8-e569b0890878@raptorengineering.com>
+References: <20240624121052.233232-1-krishnak@linux.ibm.com>
+ <20240624121052.233232-2-krishnak@linux.ibm.com>
+ <888d3984-d00e-4148-a1ca-f7887c0af413@raptorengineering.com>
+ <87msn5llkv.fsf@mail.lhotse>
+ <76a154af-bd69-44f4-a6d8-e569b0890878@raptorengineering.com>
+Date: Sat, 29 Jun 2024 17:30:10 +1000
+Message-ID: <875xtskxz1.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2bbdb1bd-ea4d-4c14-9ea7-9fce09ac76b7@roeck-us.net>
+Content-Type: text/plain
 
-On 2024-06-28 16:09:09+0000, Guenter Roeck wrote:
-> On 6/27/24 10:48, Thomas Weißschuh wrote:
-> > The piix4 I2C bus can carry SPDs, register them if present.
-> > Only look on bus 0, as this is where the SPDs seem to be located.
-> > 
-> > Only the first 8 slots are supported. If the system has more,
-> > then these will not be visible.
-> > 
-> > The AUX bus can not be probed as on some platforms it reports all
-> > devices present and all reads return "0".
-> > This would allow the ee1004 to be probed incorrectly.
-> 
-> Was this reported somewhere ? I don't see it happen on any of my systems
-> (of course that doesn't really mean anything).
+Shawn Anastasio <sanastasio@raptorengineering.com> writes:
+> Hi Michael,
+>
+> On 6/27/24 11:48 PM, Michael Ellerman wrote:
+>> Was the panic reported anywhere? So we can link to the report in the
+>> commit.
+>
+> It was indeed -- here is the link to the thread from last December:
+> https://lists.ozlabs.org/pipermail/linuxppc-dev/2023-December/267034.html
 
-It happened on one of the big server systems I tested on.
+Thanks.
 
-> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> 
-> Reviewed-and-tested-by: Guenter Roeck <linux@roeck-us.net>
-
-Thanks!
-
-FYI, combined tags are discouraged by
-Documentation/process/maintainer-tip.rst:
-
-  Please do not use combined tags, e.g. ``Reported-and-tested-by``, as
-  they just complicate automated extraction of tags.
-
-I'll add the tags in split form to the patch.
-
-
-Thomas
+cheers
 
