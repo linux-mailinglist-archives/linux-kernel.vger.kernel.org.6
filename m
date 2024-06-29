@@ -1,148 +1,148 @@
-Return-Path: <linux-kernel+bounces-234968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2214191CD9B
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 16:30:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FCF791CD9D
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 16:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B9E81F22631
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 14:30:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0F59B2260F
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 14:30:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4043480C09;
-	Sat, 29 Jun 2024 14:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5796823B8;
+	Sat, 29 Jun 2024 14:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A6JWTX/c"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uhMMqDAc"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D387B1E489
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 14:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67FEB7D3F5
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 14:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719671419; cv=none; b=ZjWEMZZRpgu+0IM7aE5CMIjBLAbfoOPNKbFrlAh8lOorbra4Wir/4GzkznnfFgD0rEjnAOQx2tDSQ97cN60dHfcQR/IAxBDUh+psrsaxVdvmtldY/FHRR4exkN68iI5oqVbkpre4xpcNl0NOcmVS4I+NUgXVL1hP6m2W8BmldBc=
+	t=1719671446; cv=none; b=Lxr4Wn7JliIw4tqe9Dk8HmYSl40PjkMIrmDwdcooFE6mYuvlWdH26TfcLyHTxp2A+172NGtN6AugU4UAQZ4ybDXffTX3eml0atiZqfjJXUq3Vpv3iIygISdQtyEEQ00bWpz7zrkpzy0K7Hqiod/TgE1Dr6MueAPJdUf+2oGNEpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719671419; c=relaxed/simple;
-	bh=4c4eNHgquP5LXvtkVKXE1VzOZkK6RNUxtXFoN7k8dlw=;
+	s=arc-20240116; t=1719671446; c=relaxed/simple;
+	bh=6GbLi1JD0DeqwbARIUWnsx6f1P44NPHpbsq6lRJDRm0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MXsamdRggHSPRm1YAmd0ugqa1QvKU4mcxR0BhH897Y38te2X+brUB/MQkO/kwD00QOnfKf424c8fixrNsQ+HeQbZbhqUm9y9QJCR9EKxpzKB+6igWCDaKyPk8Nr5Z6qjF30/vMpIx5fV6MKxrzmoFfLdIznZDn6haqKdv/SwfMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A6JWTX/c; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57d06101d76so1830813a12.3
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 07:30:17 -0700 (PDT)
+	 To:Cc:Content-Type; b=AwFO2QSutUcGO6qHGoOhv2BlQz7dCUdWfwLRyCYHzmX/0/R5umPbVO2sq8NkyIQN8ZZ3/NE/buywBZPweItJQzEDYunPBSzXddbbe/6w7DKgrs88hLbbc/YuHMsT6odbyxteK/xpRR5l1rPsCo1q2OoNdScmoB4AVMktJoHUTzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uhMMqDAc; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57d119fddd9so4844a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 07:30:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719671416; x=1720276216; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1719671443; x=1720276243; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VG9SqCZxDcweEqWP+jIbPso5aga3wixc1/xcyoRvDi0=;
-        b=A6JWTX/cTIOzIHSyZod5JOnmCi6rYUj9/T1wtm5LfZS8xHFDJ3sNP9WyNSyIQAyOg7
-         PWBbEpWWF5/c+Bwcot+MEd+Fzr1tWBVDD/2fxrMJJOIG22Z6lYUM/t+OfF840ffSCsVH
-         m+Aj/1uKWZGsrDJk7QOrAlrHm5g3PReSzDyveAspEBKdFD29k17Kujbz/8YHQ1Vt4wPM
-         7pa1N9HAlhvg+BxvNlJfFHkq0su7NEgvjZF4lcBOpiURRmGDIbREPzTJcbnnnszn0EqY
-         Pch0fCG+XmkpyzP4LkLBISsEz95vkIgk8yiGPaaTiREEZr5EKYGbS8mvGxy5OAHtqEGR
-         3YjQ==
+        bh=zrud1JhfOlUfYB81S7Syr/8uTZeCdrf+FlsoxmK/I4o=;
+        b=uhMMqDAcFyJ8riw892JZyCOfM+uvTFsVHdWfkXkUnmsbwU2nBP3HkUETwEmiR1JGYR
+         Tql2vR59f29RiaynZeU7I3GtqDjhbDvuVpdMX4mT5t5aTLS/BpodWzaJB2VMVHItUpAu
+         nVN/WRVqiDRk6DbS0tLQqh9IbhdM7T6pn5ItTUkfEvzzVtYiibkFhKdgUegI4x65yVuF
+         DsNYMTCSTa1taqTjcA1DAg4taaPbJ8lyZm+17mMa1M2f0lAh3KnEPR0DZFSOlpPI4Gqq
+         jsJ1dvdiz8d+p79tsSiQI4qtiy1gIFEHaSL32cXcZeOkFnz2vVE31hSo9yYwkKU2GVoT
+         iULg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719671416; x=1720276216;
+        d=1e100.net; s=20230601; t=1719671443; x=1720276243;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VG9SqCZxDcweEqWP+jIbPso5aga3wixc1/xcyoRvDi0=;
-        b=riTGbS0TZAAMFQAyGiuzrYe4IU0lGJn7TjPVfXdfzphtrY+pmpIPHU3t0r9wz9Rvwc
-         NvVCahx0EFd2XQgRYqKqBGzrnKR8kfACbf9Q4Ez8Lvncvqe0UtAdNjALUiV2yaxp9G9e
-         ElIJS0EgOH+HMxOA0dGn+5+j0lpBPuzajmL5/IrLRUqZtw+Y6mmrvgImAfYwztAYJjUK
-         xr6+YiC3lg+6V97TNyo2bd+4Zi0WGe21meXs31TAacbXcKGef3ow5dugb5E/ovcbHDym
-         6b3Tc9ZMAQY/KIMT8ai1QuRmdkpwjtmSQhsZ5paW1/ZS3sW2bDdDBHJtLGHNYI8UOp4X
-         Ny6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXi+uvT/MoDApYM6G/SixUi2ZjjBO2XY+hdT1othwtFX9GZ0TOSDkkahwD1/R5EFp1MgNfcPpH1RWdT5J6s4cmfBAbz+F16DldRR3GS
-X-Gm-Message-State: AOJu0Yy13petG0+6h3gOzPkdtVVPT5V8GFZBWWvFd/VRhUsqYD9q5tkB
-	HkZTMbZIbQ2glJW++4dzxsBWTC7pzC694yrafTwLkO5lWOlJWt143S6LgWNx6YQHGgK5aFH9CdG
-	OPkmJPgDsXeJ34kKRvTLN1aGVFls=
-X-Google-Smtp-Source: AGHT+IG0VFG34dW6TntSYGpVhzlZoKnQog7LGdjEUr2rXNIVqshKQ72zGCPy+dOq0y/6WL0TqlFup1SG7llo9wwJPFs=
-X-Received: by 2002:a05:6402:1910:b0:57d:619:7721 with SMTP id
- 4fb4d7f45d1cf-5879f982feemr833762a12.21.1719671415676; Sat, 29 Jun 2024
- 07:30:15 -0700 (PDT)
+        bh=zrud1JhfOlUfYB81S7Syr/8uTZeCdrf+FlsoxmK/I4o=;
+        b=rGUj8iChEOJFGjwfsE7Ih83VsQbAaOR+SYIFiUNf3JurZFz8k2HIRwDoC1n/X3/okH
+         +i7ZYygeO7hxTCZOzyWEOZEf37Ra+TomXSrohH0nOA3d+SOPI2Oc8AjfgCKxJYOTt6Ji
+         K5HVbLOUzWBIjF1Shrw/I/2fSYByfKtrb61XHDszo0wk3iK+ifVCVI0hXpugVJCUr1Yg
+         xr/2kyALD4izLpCds5rOq6umlpdhwQjJM3BJmErcg1lzxmWkp/MAEKFMy55mkx9avS0/
+         8bF+gY2XDSV3TVf1EfHEsGyUSRy9HQxq3oiOUuhQDMXZJdmmsndf0VchGtoA6q4Epzy6
+         LzKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXH4GYFzXAijvroSd9xOWzL9pwk416NokfZJW3PN2FlW++R6S0cP5o0AF/V73ZyPBTsKtL84HgA0+VVP4zYAwLXj8r6PkPnStACabmM
+X-Gm-Message-State: AOJu0YyqUP9nRiaXcMDrGmPwimlCnM+wAlfu9Sjz6uQfgLFnl34gZm9I
+	gOj24xi5TczZhl0aLmqaY7dFQSno5AY28TCwohoMj3ExTIKPYcfNlkGIMY7pKe3FQniuk2Rh3ZS
+	2Zumh3N0e/zlY0uHWx+pzMpDt3cgXbkQxT/E8
+X-Google-Smtp-Source: AGHT+IF6Ig144tkRe+lYrfurwiAb/HGvUlbkbhXr2qYEad3JtuJTL7bhoRuypkZ9VxzjKILvi3jchWLefZw/5jHXLgc=
+X-Received: by 2002:a50:8ad0:0:b0:57d:44ab:ecff with SMTP id
+ 4fb4d7f45d1cf-5872f6702a3mr120663a12.2.1719671442396; Sat, 29 Jun 2024
+ 07:30:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240628130750.73097-1-ioworker0@gmail.com> <20240628130750.73097-3-ioworker0@gmail.com>
- <CAGsJ_4ybc6-PmJEP-h_uWmT1wqE9gmT8b0juXkYYi7XpzSrpdA@mail.gmail.com>
-In-Reply-To: <CAGsJ_4ybc6-PmJEP-h_uWmT1wqE9gmT8b0juXkYYi7XpzSrpdA@mail.gmail.com>
-From: Lance Yang <ioworker0@gmail.com>
-Date: Sat, 29 Jun 2024 22:30:04 +0800
-Message-ID: <CAK1f24nzALDT5zVL2bCBvf34sLfq1k_z6f9KBcVYRB+4dCCYrA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] mm: add docs for per-order mTHP split counters
-To: Barry Song <21cnbao@gmail.com>
-Cc: akpm@linux-foundation.org, dj456119@gmail.com, ryan.roberts@arm.com, 
-	david@redhat.com, shy828301@gmail.com, ziy@nvidia.com, libang.li@antgroup.com, 
-	baolin.wang@linux.alibaba.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, Mingzhe Yang <mingzhe.yang@ly.com>
+References: <a9623e7e-ce3a-434c-a904-39c6934c2ff5@web.de>
+In-Reply-To: <a9623e7e-ce3a-434c-a904-39c6934c2ff5@web.de>
+From: Guenter Roeck <groeck@google.com>
+Date: Sat, 29 Jun 2024 07:30:28 -0700
+Message-ID: <CABXOdTc6G9E2SdyP+27Gp3HsxfKqKOPmqkYG2x6Avg5bzCNNdA@mail.gmail.com>
+Subject: Re: [PATCH] platform/chrome: cros_ec_typec: Use common error handling
+ code in cros_typec_init_ports()
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: chrome-platform@lists.linux.dev, kernel-janitors@vger.kernel.org, 
+	Benson Leung <bleung@chromium.org>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <groeck@chromium.org>, 
+	Prashant Malani <pmalani@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Barry,
-
-Thanks a lot for taking time to review!
-
-On Sat, Jun 29, 2024 at 11:08=E2=80=AFAM Barry Song <21cnbao@gmail.com> wro=
-te:
+On Sat, Jun 29, 2024 at 6:33=E2=80=AFAM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
 >
-> On Sat, Jun 29, 2024 at 1:09=E2=80=AFAM Lance Yang <ioworker0@gmail.com> =
-wrote:
-> >
-> > This commit introduces documentation for mTHP split counters in
-> > transhuge.rst.
-> >
-> > Signed-off-by: Mingzhe Yang <mingzhe.yang@ly.com>
-> > Signed-off-by: Lance Yang <ioworker0@gmail.com>
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 29 Jun 2024 15:17:44 +0200
 >
-> Reviewed-by: Barry Song <baohua@kernel.org>
-
-Have a nice weekend ;)
-Lance
-
+> Add a jump target so that a bit of exception handling can be better reuse=
+d
+> at the end of this function implementation.
 >
-> > ---
-> >  Documentation/admin-guide/mm/transhuge.rst | 16 ++++++++++++++++
-> >  1 file changed, 16 insertions(+)
-> >
-> > diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation=
-/admin-guide/mm/transhuge.rst
-> > index 1f72b00af5d3..709fe10b60f4 100644
-> > --- a/Documentation/admin-guide/mm/transhuge.rst
-> > +++ b/Documentation/admin-guide/mm/transhuge.rst
-> > @@ -514,6 +514,22 @@ file_fallback_charge
-> >         falls back to using small pages even though the allocation was
-> >         successful.
-> >
-> > +split
-> > +       is incremented every time a huge page is successfully split int=
-o
-> > +       base pages. This can happen for a variety of reasons but a comm=
-on
-> > +       reason is that a huge page is old and is being reclaimed.
-> > +       This action implies splitting any block mappings into PTEs.
-> > +
-> > +split_failed
-> > +       is incremented if kernel fails to split huge
-> > +       page. This can happen if the page was pinned by somebody.
-> > +
-> > +split_deferred
-> > +       is incremented when a huge page is put onto split
-> > +       queue. This happens when a huge page is partially unmapped and
-> > +       splitting it would free up some memory. Pages on split queue ar=
-e
-> > +       going to be split under memory pressure.
-> > +
-> >  As the system ages, allocating huge pages may be expensive as the
-> >  system uses memory compaction to copy data around memory to free a
-> >  huge page for use. There are some counters in ``/proc/vmstat`` to help
-> > --
-> > 2.45.2
-> >
+
+I see no value in this patch.
+
+Guenter
+
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/platform/chrome/cros_ec_typec.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/c=
+hrome/cros_ec_typec.c
+> index 4d305876ec08..aff744a0b38f 100644
+> --- a/drivers/platform/chrome/cros_ec_typec.c
+> +++ b/drivers/platform/chrome/cros_ec_typec.c
+> @@ -348,15 +348,13 @@ static int cros_typec_init_ports(struct cros_typec_=
+data *typec)
+>         port_prop =3D dev->of_node ? "reg" : "port-number";
+>         device_for_each_child_node(dev, fwnode) {
+>                 if (fwnode_property_read_u32(fwnode, port_prop, &port_num=
+)) {
+> -                       ret =3D -EINVAL;
+>                         dev_err(dev, "No port-number for port, aborting.\=
+n");
+> -                       goto unregister_ports;
+> +                       goto e_inval;
+>                 }
+>
+>                 if (port_num >=3D typec->num_ports) {
+>                         dev_err(dev, "Invalid port number.\n");
+> -                       ret =3D -EINVAL;
+> -                       goto unregister_ports;
+> +                       goto e_inval;
+>                 }
+>
+>                 dev_dbg(dev, "Registering port %d\n", port_num);
+> @@ -408,6 +406,8 @@ static int cros_typec_init_ports(struct cros_typec_da=
+ta *typec)
+>
+>         return 0;
+>
+> +e_inval:
+> +       ret =3D -EINVAL;
+>  unregister_ports:
+>         cros_unregister_ports(typec);
+>         return ret;
+> --
+> 2.45.2
+>
 
