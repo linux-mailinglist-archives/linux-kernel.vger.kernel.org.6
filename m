@@ -1,132 +1,203 @@
-Return-Path: <linux-kernel+bounces-234792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B822A91CB07
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 06:53:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B80B991CB08
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 06:54:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AE33B22C21
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 04:53:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13E84B22CDD
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 04:54:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65552033A;
-	Sat, 29 Jun 2024 04:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 686D222EED;
+	Sat, 29 Jun 2024 04:54:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="k+xhhoeu"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pNDKMXEt"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D532C684
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 04:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BBB2570
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 04:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719636782; cv=none; b=Fo2ZzHk29zM9C5a7eKGEj02+87u1OuwNBTSARK2B7Y8SGRtSLPunLvQdX/e3u0DwyE4Dn431tYFswmRKO4mwugf386E/GfdRVsWGuhMnWFsP7l1wpUwjDEzYh/Qe0eDhz0awaNHfGV/JF9mlLCkfxrj3EyoM5nRE2WA4VEmLLzE=
+	t=1719636850; cv=none; b=II4gnSE5zkRYJREcm7+42TKf6tjnopAbWelCIRusWDyd/GeBDX48zKE1YjtVdAl79GRUD3TMagU9q8pFvs/kqI6h4/lRzwgXQ53iihzVBklfMdyL9TBhszjiCpUsm9ekSYktrHPGrv64rp2Azt5gmuYMYbsCljvYByA1NQaWq8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719636782; c=relaxed/simple;
-	bh=hTg0m15hao46yudGVG866WlZpeOh7SkeZz5wgAoJGm8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=a0/IWdyF1XYX2CnMDLA3uumawouk5r9KD9d9IjnA1SNaIYwicGFi7Um7xoEPZDBuoe8RQeh3Nh29aQYjYQfkCZ3o6lzreKoePPOqUHJi1WQC6XfMJY+rgN4V08Jn0PvJ0nYA2Gai9h0SlK2Mt5ZcdoIY9sS6RH2pZtSOC4azjvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=k+xhhoeu; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45T4ab6C028498;
-	Sat, 29 Jun 2024 04:52:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	VYjkpS9rvu4zTA/sXPiOwttTNNhhPJDzKngsyZMHEBg=; b=k+xhhoeuv7Gxs94h
-	qEP2t9obimHowg2mkmux8WFy6PwmIk4a0RNnVhdxsKJ/53uT9fpJIkUzYmbF/TDA
-	pk1Y01ugVvpJMsavTzCHkMzgRtKiGTnBaGnHKZQSvloUgCIgsvNsSDyf3O7PoUeT
-	E8LxLpM/v2V+Ml7D58286JW5gcICv32a+yQDGyBG08Ra75E6t437IDjFhkmjypVy
-	KbVaMhXBcNa28B4FxT/MWynqxGq87IA7Pf1LV1MubQH0fzs29WZn+CcBW+RSmJzC
-	8NMT4NZmX5VbS8T5onOHs7WUMiLzZIhfjanMWNCZ9O2r2/xRQCK3cvLt91kn4fSU
-	L0rMTQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 402an706nm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 29 Jun 2024 04:52:42 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45T4qeHB026787
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 29 Jun 2024 04:52:40 GMT
-Received: from [10.81.24.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 28 Jun
- 2024 21:52:40 -0700
-Message-ID: <0aa9e0aa-3d8f-4277-8348-99b9dd176954@quicinc.com>
-Date: Fri, 28 Jun 2024 21:52:39 -0700
+	s=arc-20240116; t=1719636850; c=relaxed/simple;
+	bh=ulgnEXeySFIkrktz7yXWAqrrSl4AnoUp7YlCZDC6t6o=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=UTq/3avsnZZcGluWDl3NT9xYkSqRbApG7+PUOgEd3qO5cUBkrTpdYsvrtJtXh4yxeHgk9diVOoDDnWsa+uomZBFM8+x8kE2lbbivORDJY+YrvDP/ZkDIquENMw5rxgQ+GcA/bU4LGLZLYwHscgiMFzeaLBPXOJJAwzrOy499308=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pNDKMXEt; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-63bf44b87d4so13766247b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 21:54:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719636848; x=1720241648; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/0dC8Bwm3vf/Imiu0GWXnmXRUHRnUVX3GhUs/K6jXVQ=;
+        b=pNDKMXEt4vuOwp0Iozt4OYhdV1Vq/DiqEbcyJOd3CONAbytZBmHbI3zfMDihqqyjgk
+         woA4t5A1zMgoQgW4qA2xtDp141OtP0bqfOKq5bZKnBrawFDMZMlMpbqWzTGzTLRhpmGn
+         ne0XRJbRnROJxM8N0ZaL+buLJPK+bcMRJfdyqlwZJI45MdeeIf15MAk6Xm8a8ovsVu3S
+         CLMeN9cNYPZit7cOKXJJDTJCqBtim9ZQ4+fIA7pxbnK/aLIq7mJj9qVLexB8LsNQt6cl
+         fbHeOuuvbtdEls/OgGK2w8KsOhHz6xBlwjJxtwqNZxxDhL3n3hiWtUjO2VME+Z78B0sf
+         pI9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719636848; x=1720241648;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/0dC8Bwm3vf/Imiu0GWXnmXRUHRnUVX3GhUs/K6jXVQ=;
+        b=XW8fcJWavtJ9yiQMCWmTCCGMety73R2x2YdwU5v5ku4w8MXRTPuIJSrZA74JQTZlxv
+         b+8o4y/9MgkIM1epK7D3Y/K+WpJuV03rajDP1KAzoxora5sObZ1i6Kkg9bwGbHVYfiRb
+         KSPZ8/myYSUs0vq1a25XrMU5vd459PiFRtHf6CFOxjNktJfxEhvAcZt3C/moRGZRR9No
+         cgAJCfZKV4OO01huOJx/CPmIZ6UOXny2wULCibIIZVp2pQRIX7tDnRZBBWswfsuvOh3N
+         JTIdAJ6mqw66SPsEKnbCfuzPj05zAxw006CmbhB23VQRU5ebSpbG/72u9pzw2MRuSksE
+         0fYg==
+X-Forwarded-Encrypted: i=1; AJvYcCXk3jJEgLkm1aEjg2i8w1qW9JwNAPvdTEFYf3dNli12dmJkpwsE2IBoGb8h1vkeYKGv3Gz/ewCWzJjr1enJGcUPUsIxKqgVJUmTKEXo
+X-Gm-Message-State: AOJu0YytobxSUYW4aiOH1ltrx+ZyFMo5UxHCivsX+KwfltZ+EPYseJti
+	Fbs+qjyMm9kXkDNgPTJScLY0CJDRUpNbYV8ZU9g6PLrXSkk+xAV9RdQxjxpFjqgWhrDI6MuR3cL
+	pMRHuXw==
+X-Google-Smtp-Source: AGHT+IHoHdrZmEBlrpZ6Zqpk1K2Ypd9vGdWOS5MBKTc36yPJSr3winrBSZVjqq0a+AN9vOt7GZ4Og36DCWr+
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:f9fe:7acd:496e:4edb])
+ (user=irogers job=sendgmr) by 2002:a81:9281:0:b0:648:2f1d:1329 with SMTP id
+ 00721157ae682-64c6b773206mr325697b3.1.1719636848038; Fri, 28 Jun 2024
+ 21:54:08 -0700 (PDT)
+Date: Fri, 28 Jun 2024 21:53:22 -0700
+Message-Id: <20240629045350.285243-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] drm: Add panel backlight quirks
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-        Alex Deucher
-	<alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?=
-	<christian.koenig@amd.com>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter
-	<daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
-        Rodrigo
- Siqueira <Rodrigo.Siqueira@amd.com>,
-        Mario Limonciello
-	<mario.limonciello@amd.com>,
-        Matt Hartley <matt.hartley@gmail.com>,
-        Kieran
- Levin <ktl@framework.net>, Hans de Goede <hdegoede@redhat.com>
-CC: <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, Dustin Howett <dustin@howett.net>
-References: <20240623-amdgpu-min-backlight-quirk-v2-0-cecf7f49da9b@weissschuh.net>
- <20240623-amdgpu-min-backlight-quirk-v2-1-cecf7f49da9b@weissschuh.net>
-Content-Language: en-US
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240623-amdgpu-min-backlight-quirk-v2-1-cecf7f49da9b@weissschuh.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: yP_U84sdQLgyQ95bNMSMJL6UQFEAH4E5
-X-Proofpoint-ORIG-GUID: yP_U84sdQLgyQ95bNMSMJL6UQFEAH4E5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-29_01,2024-06-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- clxscore=1011 adultscore=0 malwarescore=0 mlxlogscore=999 suspectscore=0
- phishscore=0 bulkscore=0 spamscore=0 impostorscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406290034
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
+Subject: [PATCH v3 00/28]  Constify tool pointers
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>, 
+	Will Deacon <will@kernel.org>, James Clark <james.clark@arm.com>, 
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Yicong Yang <yangyicong@hisilicon.com>, 
+	Jonathan Cameron <jonathan.cameron@huawei.com>, Nick Terrell <terrelln@fb.com>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Anshuman Khandual <anshuman.khandual@arm.com>, Song Liu <song@kernel.org>, 
+	Ilkka Koskinen <ilkka@os.amperecomputing.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
+	Huacai Chen <chenhuacai@kernel.org>, Yanteng Si <siyanteng@loongson.cn>, 
+	Sun Haiyong <sunhaiyong@loongson.cn>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/23/24 01:51, Thomas Weißschuh wrote:
-> Panels using a PWM-controlled backlight source without an do not have a
-> standard way to communicate their valid PWM ranges.
-> On x86 the ranges are read from ACPI through driver-specific tables.
-> The built-in ranges are not necessarily correct, or may grow stale if an
-> older device can be retrofitted with newer panels.
-> 
-> Add a quirk infrastructure with which the valid backlight ranges can be
-> maintained as part of the kernel.
-> 
-> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> ---
-...
+struct perf_tool provides a set of function pointers that are called
+through when processing perf data. To make filling the pointers less
+cumbersome, if they are NULL perf_tools__fill_defaults will add
+default do nothing implementations.
 
-> +EXPORT_SYMBOL(drm_get_panel_backlight_quirk);
-> +
-> +MODULE_LICENSE("GPL");
+This change refactors struct perf_tool to have an init function that
+provides the default implementation. The special use of NULL and
+perf_tools__fill_defaults are removed. As a consequence the tool
+pointers can then all be made const, which better reflects the
+behavior a particular perf command would expect of the tool and to
+some extent can reduce the cognitive load on someone working on a
+command.
 
-Missing a MODULE_DESCRIPTION()
+v3: Just remove auxtrace dummy tools [Adrian] and make s390-cpumsf
+    struct removal its own patch [Adrian].
+v2: Remove dummy tool initialization [Adrian] and make zero sized. Add
+    cs-etm fix for address sanitizer build, found necessary when
+    testing dummy tool change.
 
-This will result in a make W=1 warning
+Ian Rogers (28):
+  perf auxtrace: Remove dummy tools
+  perf s390-cpumsf: Remove unused struct
+  perf cs-etm: Fix address sanitizer dso build failure
+  perf tool: Constify tool pointers
+  perf tool: Move fill defaults into tool.c
+  perf tool: Add perf_tool__init
+  perf kmem: Use perf_tool__init
+  perf buildid-list: Use perf_tool__init
+  perf kvm: Use perf_tool__init
+  perf lock: Use perf_tool__init
+  perf evlist: Use perf_tool__init
+  perf record: Use perf_tool__init
+  perf c2c: Use perf_tool__init
+  perf script: Use perf_tool__init
+  perf inject: Use perf_tool__init
+  perf report: Use perf_tool__init
+  perf stat: Use perf_tool__init
+  perf annotate: Use perf_tool__init
+  perf sched: Use perf_tool__init
+  perf mem: Use perf_tool__init
+  perf timechart: Use perf_tool__init
+  perf diff: Use perf_tool__init
+  perf data convert json: Use perf_tool__init
+  perf data convert ctf: Use perf_tool__init
+  perf test event_update: Ensure tools is initialized
+  perf kwork: Use perf_tool__init
+  perf tool: Remove perf_tool__fill_defaults
+  perf session: Constify tool
+
+ tools/perf/arch/x86/util/event.c    |   4 +-
+ tools/perf/bench/synthesize.c       |   2 +-
+ tools/perf/builtin-annotate.c       |  44 ++--
+ tools/perf/builtin-buildid-list.c   |  10 +
+ tools/perf/builtin-c2c.c            |  33 ++-
+ tools/perf/builtin-diff.c           |  30 ++-
+ tools/perf/builtin-evlist.c         |  10 +-
+ tools/perf/builtin-inject.c         | 159 ++++++------
+ tools/perf/builtin-kmem.c           |  20 +-
+ tools/perf/builtin-kvm.c            |  19 +-
+ tools/perf/builtin-kwork.c          |  33 ++-
+ tools/perf/builtin-lock.c           |  41 ++-
+ tools/perf/builtin-mem.c            |  37 +--
+ tools/perf/builtin-record.c         |  47 ++--
+ tools/perf/builtin-report.c         |  67 +++--
+ tools/perf/builtin-sched.c          |  50 ++--
+ tools/perf/builtin-script.c         | 106 ++++----
+ tools/perf/builtin-stat.c           |  26 +-
+ tools/perf/builtin-timechart.c      |  25 +-
+ tools/perf/builtin-top.c            |   2 +-
+ tools/perf/builtin-trace.c          |   4 +-
+ tools/perf/tests/cpumap.c           |   6 +-
+ tools/perf/tests/dlfilter-test.c    |   2 +-
+ tools/perf/tests/dwarf-unwind.c     |   2 +-
+ tools/perf/tests/event_update.c     |   9 +-
+ tools/perf/tests/stat.c             |   6 +-
+ tools/perf/tests/thread-map.c       |   2 +-
+ tools/perf/util/Build               |   1 +
+ tools/perf/util/arm-spe.c           |  55 +---
+ tools/perf/util/auxtrace.c          |  12 +-
+ tools/perf/util/auxtrace.h          |  20 +-
+ tools/perf/util/bpf-event.c         |   4 +-
+ tools/perf/util/build-id.c          |  34 +--
+ tools/perf/util/build-id.h          |   8 +-
+ tools/perf/util/cs-etm.c            |  49 +---
+ tools/perf/util/data-convert-bt.c   |  34 ++-
+ tools/perf/util/data-convert-json.c |  47 ++--
+ tools/perf/util/dso.h               |  10 +
+ tools/perf/util/event.c             |  54 ++--
+ tools/perf/util/event.h             |  38 +--
+ tools/perf/util/header.c            |   6 +-
+ tools/perf/util/header.h            |   4 +-
+ tools/perf/util/hisi-ptt.c          |   6 +-
+ tools/perf/util/intel-bts.c         |  37 +--
+ tools/perf/util/intel-pt.c          |  30 +--
+ tools/perf/util/jitdump.c           |   4 +-
+ tools/perf/util/s390-cpumsf.c       |  11 +-
+ tools/perf/util/session.c           | 372 ++++------------------------
+ tools/perf/util/session.h           |   9 +-
+ tools/perf/util/synthetic-events.c  |  80 +++---
+ tools/perf/util/synthetic-events.h  |  70 +++---
+ tools/perf/util/tool.c              | 294 ++++++++++++++++++++++
+ tools/perf/util/tool.h              |  18 +-
+ tools/perf/util/tsc.c               |   2 +-
+ 54 files changed, 998 insertions(+), 1107 deletions(-)
+ create mode 100644 tools/perf/util/tool.c
+
+-- 
+2.45.2.803.g4e1b14247a-goog
 
 
