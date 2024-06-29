@@ -1,179 +1,111 @@
-Return-Path: <linux-kernel+bounces-234783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9E3191CAE9
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 06:07:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DAB891CAEA
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 06:09:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 126C41C220CD
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 04:07:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B5FB1F23031
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 04:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C7E1F956;
-	Sat, 29 Jun 2024 04:07:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1621EEFC;
+	Sat, 29 Jun 2024 04:09:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="j6vlGq2F"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="tNxx3uaY"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593C81CF9B;
-	Sat, 29 Jun 2024 04:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146FB46BF
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 04:09:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719634055; cv=none; b=amYXiEPC8GkQoHERc3WfnuUFdSuNQBvqj/Lr2vnmE5fsO21YsjeNKfEPCrhQhkv84iDxoNqSTHvmOlLr/wLqk0aLa3+Q21VOwlOpmmiuAWYbP0NYnCuDEpSOjOIJfXkhmyI/Mw1CJ1tVK7IyiJskXRhiB3ECTmBwxjJR4m8yMiw=
+	t=1719634176; cv=none; b=ivmJ7JhJPMZXbqqIdXDzT+S05lSlzcnKCoSW60+t1INLN8DF6wriwHNBukU9eAp1YmSou66X1IRehgmIs1vGMES1zaLAH85JGlDvJXjeSGdHb8JWSykLdRXcax2NP5x5tHH2uQZJ8v/2E75+dZTas7VROShbqAscz5fyCi4W4DM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719634055; c=relaxed/simple;
-	bh=v8wYNIfVxJYiz5W/YICynSOpO3HoaR7jGETBNYhB8Ck=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jom093P6sWuCbZrIa4A+WSa5ynhnkzQgKkoOBUaYDHEz4Ir1kNy0A/61AXy9BCOxr8ax3C4ecLb/DT5EUk5Q3zKg3mon/nYelmRGBQc+xrWbCAuAOkGe0hAOBp51Vc3F38D5nZEU31RhSM38KtS/d6tqSK4IVc+L112fTH+sCrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=j6vlGq2F; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.205] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 45T474G03297363
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Fri, 28 Jun 2024 21:07:04 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 45T474G03297363
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024061501; t=1719634025;
-	bh=TeqD09dJUgpaGeoPpw8n1OcOVWmDg6pgiXZSw4mRkqo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=j6vlGq2F8jgnLsR43RaahQe5rePD27CZLAN0J7V6ja/q0qFoh7Kil1/Vi4D1stZYd
-	 d9h+1c4b/Rab9L5F/QhoCoke8G7FQ70L8hKadc4zL/bKiptSr+NnyeguQqfWWSCH2j
-	 ePkwdYE3+GisWgw3I5q7evNdLtwXtOpzxwwnzR88BYwpBVNqrEVu5J5pkehykKd5eB
-	 sA3vdtX4OyP+5D+NC92TYHutj1etsSC9+zaIQlOmAUCeB9U/0e4TABVMB5GFX+H0WJ
-	 c7tfOnk877dcITZIW0+g4vAUkLDfRRHo6R7IXs+/oOEZFeAcz/1qVEjdUM5vnpB9RE
-	 qY/cglOKEPamw==
-Message-ID: <6c8160e4-3d67-410d-aad0-3ec731a903f8@zytor.com>
-Date: Fri, 28 Jun 2024 21:07:04 -0700
+	s=arc-20240116; t=1719634176; c=relaxed/simple;
+	bh=4OXrOqVZrGvVz94JQfdHCueae5egX1aL+2B2zn/orf4=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=iVAonxcZCsZ7aDtKkUp1o6hfyGF/xpF+VZ2NIW5xYdwalxeaKlv02pHjseTuFTAdm35FbY7oRn/oNBsTTliJLCgFdNDunMtxOZDwzGgqTiHWpvkqef+dWOXO2CwcZCw/wXIK8Zf+E+7m1uUl2aTpKx1IokEPRCSmUsb6c3Nu/dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=tNxx3uaY; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-70aaab1cb72so50619b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 21:09:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1719634174; x=1720238974; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4OXrOqVZrGvVz94JQfdHCueae5egX1aL+2B2zn/orf4=;
+        b=tNxx3uaY3PXtkez22V+YVABN8ezeKk78tNOZbjob+87xCF7+UqN4z6+jeGFARhV912
+         E/vEI6bmHxTibHT8X56bBX+uqSuHR3TZHAq6Rkj0snhd42cLzDl16VL9a2SoseaQ6/tf
+         wWnmX80LfAfSedF7wQVRBWWAaRqSM5yEdLERykMJk1aXTZXXb4YCKnltB4sbtn54qa3n
+         W2qjqjNZmWT2YIsXpLOnkKG1QvT8JLCpWFKDs0xXQ+DpsjWlIHoPgzKu01WXbzIsF6X0
+         9WTprCGlCKtCjqu7VEFziEiAkuJeZtVbYqrKf3rtySTiqf6ClV0p1Vk0AJ/iPPnON1Ch
+         0plw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719634174; x=1720238974;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4OXrOqVZrGvVz94JQfdHCueae5egX1aL+2B2zn/orf4=;
+        b=tess08xJzi02m+5xnbqw35jyHyCbp146E3LJH0bD7DzNYULeQ2eWzvZ5zy9shpIc3n
+         1ihQRdNKPp8qvJ6q9/bZAwBzAdPWgZQtsuLUaPLYV1niBxF/Dnb4nBod49lZSfAt156v
+         WM/RZcRwY93/c4yKJLcY0kvTlW6V1bv+XcuxiIAbRHjS2N1hwKnwV+nDHUR2RhL9htPS
+         2AB/va/4qiweEbJ8mCiiH0dHYG7SbFQxccczG3YVYxt+4knSTd76s76bAm6+G9Yy70i/
+         tS8kps0pKODgT9jm88U3xMSlDRpM9vqMZa+cf8G9r+kocsPzqDRh8uhDG6nXaC/nODgp
+         umkg==
+X-Forwarded-Encrypted: i=1; AJvYcCX5hXsAwJ5tieiBxDI3jcJe1HaAsNltvZdKZi1KnejTR2qBAKeAo3dm3VA1PhJiJh7bFUeQBeuTB9EU9jp+2nODQKFVeN251ZawAaMu
+X-Gm-Message-State: AOJu0YzwUGYsDHDq6tJQijBxXh6lgCz5HiIFGhTpGagnOQ3/1pq6RJY3
+	qde1q0GhwQf6DFBYUQ1oSr2ZQz0v6WxFrGqfSf3P9UJiODjuldDA8/x3c+9r0Zw=
+X-Google-Smtp-Source: AGHT+IEM6YblCoAYp7Y4Fh1s2M340/lkPtcPusKM4ctqmd+2C1Pim+LjM/g/1VAiD8fWLdC7x6iKTg==
+X-Received: by 2002:a05:6a00:1881:b0:704:2563:5079 with SMTP id d2e1a72fcca58-70aaaeec928mr202271b3a.27.1719634174205;
+        Fri, 28 Jun 2024 21:09:34 -0700 (PDT)
+Received: from smtpclient.apple ([2604:3d08:8e80:cf0:c875:3a7f:341d:5a70])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7080205c688sm2411391b3a.5.2024.06.28.21.09.33
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Jun 2024 21:09:33 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 07/11] KVM: VMX: Handle NMI Source report in VM exit
-To: Jacob Pan <jacob.jun.pan@linux.intel.com>, X86 Kernel <x86@kernel.org>,
-        Sean Christopherson <seanjc@google.com>,
-        LKML
- <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Xin Li <xin3.li@intel.com>, linux-perf-users@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Tony Luck <tony.luck@intel.com>,
-        Andy Lutomirski <luto@kernel.org>, acme@kernel.org,
-        kan.liang@linux.intel.com, Andi Kleen <andi.kleen@intel.com>,
-        "Mehta, Sohil" <sohil.mehta@intel.com>,
-        Zeng Guang <guang.zeng@intel.com>
-References: <20240628201839.673086-1-jacob.jun.pan@linux.intel.com>
- <20240628201839.673086-8-jacob.jun.pan@linux.intel.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <20240628201839.673086-8-jacob.jun.pan@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [PATCH] ARM, sched/topology: Check return value of kcalloc()
+From: Thorsten Blum <thorsten.blum@toblux.com>
+In-Reply-To: <Zn8xae/b6lNaWcKq@shell.armlinux.org.uk>
+Date: Fri, 28 Jun 2024 21:09:22 -0700
+Cc: mingo@kernel.org,
+ sshegde@linux.ibm.com,
+ linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <9BB5B7C2-C35C-4F5C-9DC2-AD015288A992@toblux.com>
+References: <20240628194350.542376-2-thorsten.blum@toblux.com>
+ <Zn8xae/b6lNaWcKq@shell.armlinux.org.uk>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+X-Mailer: Apple Mail (2.3774.600.62)
 
-On 6/28/2024 1:18 PM, Jacob Pan wrote:
-> From: Zeng Guang <guang.zeng@intel.com>
-> 
-> If the "NMI exiting" VM-execution control is 1, the value of the 16-bit NMI
-> source vector is saved in the exit-qualification field in the VMCS when VM
-> exits occur on CPUs that support NMI source.
-> 
-> KVM that is aware of NMI-source reporting will push the bitmask of NMI source
-> vectors as the exceptoin event data field on the stack for then entry of FRED
-> exception. Subsequently, the host NMI exception handler is invoked which
-> will process NMI source information in the event data. This operation is
-> independent of vCPU FRED enabling status.
-> 
-> Signed-off-by: Zeng Guang <guang.zeng@intel.com>
-> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> ---
->   arch/x86/entry/entry_64_fred.S |  2 +-
->   arch/x86/kvm/vmx/vmx.c         | 11 ++++++++---
->   2 files changed, 9 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/x86/entry/entry_64_fred.S b/arch/x86/entry/entry_64_fred.S
-> index a02bc6f3d2e6..0d934a3fcaf8 100644
-> --- a/arch/x86/entry/entry_64_fred.S
-> +++ b/arch/x86/entry/entry_64_fred.S
-> @@ -92,7 +92,7 @@ SYM_FUNC_START(asm_fred_entry_from_kvm)
->   	 * +--------+-----------------+
->   	 */
->   	push $0				/* Reserved, must be 0 */
-> -	push $0				/* Event data, 0 for IRQ/NMI */
-> +	push %rsi			/* Event data for IRQ/NMI */
->   	push %rdi			/* fred_ss handed in by the caller */
->   	push %rbp
->   	pushf
+On 28. Jun 2024, at 14:55, Russell King (Oracle) <linux@armlinux.org.uk> =
+wrote:
+> On Fri, Jun 28, 2024 at 09:43:51PM +0200, Thorsten Blum wrote:
+>> Check the return value of kcalloc() and return early if memory
+>> allocation fails.
+>=20
+> If we fail this allocation even with your fix, how likely is it that =
+the
+> system will boot and manage to run userspace?
 
-This belongs to the previous patch, it is part of the host changes.
+I thought about panicking, but wasn't sure if it's justified.
 
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 4e7b36081b76..6719c598fa5f 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -7331,10 +7331,15 @@ static noinstr void vmx_vcpu_enter_exit(struct kvm_vcpu *vcpu,
->   	if ((u16)vmx->exit_reason.basic == EXIT_REASON_EXCEPTION_NMI &&
->   	    is_nmi(vmx_get_intr_info(vcpu))) {
->   		kvm_before_interrupt(vcpu, KVM_HANDLING_NMI);
-> -		if (cpu_feature_enabled(X86_FEATURE_FRED))
-> -			fred_entry_from_kvm(EVENT_TYPE_NMI, NMI_VECTOR, 0);
-> -		else
-> +		if (cpu_feature_enabled(X86_FEATURE_FRED)) {
-> +			unsigned long edata = 0;
-> +
-> +			if (cpu_feature_enabled(X86_FEATURE_NMI_SOURCE))
-> +				edata = vmx_get_exit_qual(vcpu);
-> +			fred_entry_from_kvm(EVENT_TYPE_NMI, NMI_VECTOR, edata);
+But since it would just crash anyway when accessing a NULL pointer
+later on, it's probably best to panic() if the memory allocation fails.
 
-Simply do fred_entry_from_kvm(EVENT_TYPE_NMI, NMI_VECTOR, 
-vmx_get_exit_qual(vcpu))?
+I'll submit a v2 shortly.
 
-> +		} else {
->   			vmx_do_nmi_irqoff();
-> +		}
->   		kvm_after_interrupt(vcpu);
->   	}
->   
-
+Thanks,
+Thorsten=
 
