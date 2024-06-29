@@ -1,133 +1,124 @@
-Return-Path: <linux-kernel+bounces-234769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9550291CAC6
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 05:08:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68B9191CAC8
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 05:09:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 494E11F22C92
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 03:08:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0E7B1F22DFB
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 03:08:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95F4F1CF9B;
-	Sat, 29 Jun 2024 03:08:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D7631D540;
+	Sat, 29 Jun 2024 03:08:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I5kHilRn"
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MeYDPcHc"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307EA1CD16
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 03:08:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800001EB31;
+	Sat, 29 Jun 2024 03:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719630519; cv=none; b=BxpAy5T5hZC0rkINNDEc0KeiMsXtkXK7ljwzHXlkki4+1C5blYxSKn32QTR2o4SA5HNkFjrUJj/XTqiaBqf/y4j94GlDEFMikKfYY2SgOdqhIYLEma0530LmvuaAaLQU9DEBSu02uuCwCwuDVJ0YdJ5aIFzCSSUAh1r/lDUnwPo=
+	t=1719630528; cv=none; b=EgZobXCNTCZG57NyHguMA99F5qe6m5cHyQXAw1ZpME47O0I/1UDJymFPsXwr27xYmgTindgFLExkMII5vhHmjzxDONkEboFZvtOiT21fCPMfDYDUNPnLqSHsYLtK4uk8rvHYX8mzpRnW+YDuMjLB5SYlNC+vpdRnwfQpp0+ElyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719630519; c=relaxed/simple;
-	bh=qgGPcvsb6+r1xFDoLZxcteM9a1bh4kiL5lMtFZ4Q4Pw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LuyAsxvU3bYZuWMLTZa/yu8sFb8JzK6T/Modk4v77lr4YB4kPwNUeICHuaguRR5Jxe6dIO4LD6HA6Cjh3cvXCbCO2MJpS7wZqHultyKrfK5du4ntVpcreklRujGGx6OEGqSLVypMO7RHyLidPGUpTv255DeZ2dXA/g8ljCKt1RM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I5kHilRn; arc=none smtp.client-ip=209.85.222.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-80b76c5de79so305876241.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 20:08:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719630517; x=1720235317; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4wnDlBRDbrFFEHWTsI1GTSLJKALgYqucEpLx25tc8G0=;
-        b=I5kHilRnnB9YhMNRGLoVyHVtqgQUeX1i8Xut/8en7WmGt3ItkcT2pLIC2fHeVbdQXF
-         YDQ0NVYwXx9rHRtjEIZWYFbF0jfxUwbGRLSlvppU7ZwrPkOriARvS6DcChG+B6aOHSu5
-         l2x+3d/DQEjcxGKG1ulc/PTX23WfA+XM25ptGTD3VC1V5KLZs9zS3yWpv16K9YxvZcAk
-         M327YHXQctw4GTpkvuweq9l1LzLYfqs0INc/JMyYFInvjx4BCC5KRk9bnSpvBb6MBp5K
-         K7y4EuSRq6Rdyev3NyhE6C3SYbqtD9UFw0HcGqFN64MBdGx05/lp4zkpjS4li3dycAc5
-         FO5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719630517; x=1720235317;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4wnDlBRDbrFFEHWTsI1GTSLJKALgYqucEpLx25tc8G0=;
-        b=R1gCcfuHGuA3Ew/GLZ6W67/iCrUKUYQbtjvK0Vf4OWvhUcQbF0Dy9C7xyz0sISXF50
-         //m0JHHSmV7eDuIlocLO5Ad0rKCDsMGl7vmZynBP83eYutOTuswC8AOmpGD89cbqPUg+
-         ALU17a6iP49/ijxgiffv+1H5G77rdRX9miDTzmErW38eX1UVa9YQ0yxoozOYEyBGXPVl
-         /5T3mowdvLPvb0OtW9d37SnCXcFDSMcMNq/EB/VExCbuNR+E9O6+eOY+3+M5z7EOvvQU
-         s1TB3Yca4L5rAV7vQsGFthCg4R3KI8MtC4xbWJ7rHFwUV6isBMrrDOvPFagbzlKNYvST
-         IotA==
-X-Forwarded-Encrypted: i=1; AJvYcCXC0REiYfeF/y/Fks5wEJ5bULr8duZnnn/oiJaOE/xlqpuiM4OZ/dGqn3C5JTZKeJkMCQtN20RuKx6KR9T3YVRRz1eLHEssJXepbGVf
-X-Gm-Message-State: AOJu0YxAD6jUKUISers0gLHJq0A7R1aV+0M7qLgtArALtnHuH3AqOPgw
-	zBEZ4X2ock9+i1avfF4Clu0vydVF3j1Ni3+vXdIMRaWeLdfjPq/yx1LpgggelE3CbBu0ixYcoYY
-	2zPDf0PJCHehiCZjuT/Byg7q0ZDg=
-X-Google-Smtp-Source: AGHT+IEqdYyqlZVAB91EWsBZkFGv2Ld0LLd1tYty5zbmWTQg46BTlegrkIgfb0nwZQMkDf4wN47qNiiJSB1sQxuuye0=
-X-Received: by 2002:a67:f8d9:0:b0:48c:42e9:1eeb with SMTP id
- ada2fe7eead31-48f52b00d9cmr17326855137.17.1719630516987; Fri, 28 Jun 2024
- 20:08:36 -0700 (PDT)
+	s=arc-20240116; t=1719630528; c=relaxed/simple;
+	bh=VLey5HTG1ce3qfqn5FGTexMgy6lpFW/kPfkmJKKgxeU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ARzzqrtuCnmzgMW8IDT/dvJNj9riTjiWG4mAnQ98Bfvjzee8ixx+ny0jVgJqAMUpF5eXoJJpiZU4Qp29yUgson5ftNU5SciI3tXrPODnMvlSyZw5lM12nO3Szga3Rn55K+H8rJkMpssvycDeP1UFV/lgUB2bNfH4sTMJgpxtQeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MeYDPcHc; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45SFvjGX015158;
+	Sat, 29 Jun 2024 03:08:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	HGxVsfN3za+mToVpqfn892s4MHmmP3ddMR1WlCtHhY8=; b=MeYDPcHcGIIjTBgr
+	ToUYYCCYs5dwIyqNlxP3yJ2YOmePsgL5uPEYhBfXUyqdELhIOKc8IJnO072KuyhX
+	8KIuw7Vt0Ccl5WcbkX823YTlpynlRolkWMVib/u6g/EtgBti2KkaiM6h8WvGQpL2
+	Y3fVAHMAyXG8Ew4ePeTLZLwilb3BN0+ON5luRtDD3S08YtXJHi7dx5sx64h+q9aC
+	Y01I2LwcNsupwFVe/F5NwQ4Lhl71seX7oVpBgstCigs9/Lv8hN+NgaAnBYOkRWRW
+	3sCgiU2PUk5kBQIpcm1WNmrJrqOcfK40cQc6/R+vM1o6OpH6+qn9DL5AYa6BLj1K
+	Xiw5xQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywqsj1vsk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 29 Jun 2024 03:08:42 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45T38fDL024972
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 29 Jun 2024 03:08:41 GMT
+Received: from [10.48.245.152] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 28 Jun
+ 2024 20:08:41 -0700
+Message-ID: <94597a22-7de6-4422-8af2-f243156daca9@quicinc.com>
+Date: Fri, 28 Jun 2024 20:08:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240628130750.73097-1-ioworker0@gmail.com> <20240628130750.73097-3-ioworker0@gmail.com>
-In-Reply-To: <20240628130750.73097-3-ioworker0@gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Sat, 29 Jun 2024 15:08:25 +1200
-Message-ID: <CAGsJ_4ybc6-PmJEP-h_uWmT1wqE9gmT8b0juXkYYi7XpzSrpdA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] mm: add docs for per-order mTHP split counters
-To: Lance Yang <ioworker0@gmail.com>
-Cc: akpm@linux-foundation.org, dj456119@gmail.com, ryan.roberts@arm.com, 
-	david@redhat.com, shy828301@gmail.com, ziy@nvidia.com, libang.li@antgroup.com, 
-	baolin.wang@linux.alibaba.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, Mingzhe Yang <mingzhe.yang@ly.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs: ufs: add MODULE_DESCRIPTION()
+Content-Language: en-US
+To: Evgeniy Dushistov <dushistov@mail.ru>,
+        Andrew Morton
+	<akpm@linux-foundation.org>
+CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+References: <20240510-ufs-md-v1-1-85eaff8c6beb@quicinc.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240510-ufs-md-v1-1-85eaff8c6beb@quicinc.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: SmiD1pkA_clIF74u9KUIbGPHD12l5QmI
+X-Proofpoint-GUID: SmiD1pkA_clIF74u9KUIbGPHD12l5QmI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-28_18,2024-06-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
+ bulkscore=0 phishscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
+ mlxscore=0 impostorscore=0 mlxlogscore=999 priorityscore=1501 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2406290022
 
-On Sat, Jun 29, 2024 at 1:09=E2=80=AFAM Lance Yang <ioworker0@gmail.com> wr=
-ote:
->
-> This commit introduces documentation for mTHP split counters in
-> transhuge.rst.
->
-> Signed-off-by: Mingzhe Yang <mingzhe.yang@ly.com>
-> Signed-off-by: Lance Yang <ioworker0@gmail.com>
-
-Reviewed-by: Barry Song <baohua@kernel.org>
-
+On 5/10/2024 12:02 PM, Jeff Johnson wrote:
+> Fix make W=1 warning:
+> 
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/ufs/ufs.o
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 > ---
->  Documentation/admin-guide/mm/transhuge.rst | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
->
-> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/a=
-dmin-guide/mm/transhuge.rst
-> index 1f72b00af5d3..709fe10b60f4 100644
-> --- a/Documentation/admin-guide/mm/transhuge.rst
-> +++ b/Documentation/admin-guide/mm/transhuge.rst
-> @@ -514,6 +514,22 @@ file_fallback_charge
->         falls back to using small pages even though the allocation was
->         successful.
->
-> +split
-> +       is incremented every time a huge page is successfully split into
-> +       base pages. This can happen for a variety of reasons but a common
-> +       reason is that a huge page is old and is being reclaimed.
-> +       This action implies splitting any block mappings into PTEs.
-> +
-> +split_failed
-> +       is incremented if kernel fails to split huge
-> +       page. This can happen if the page was pinned by somebody.
-> +
-> +split_deferred
-> +       is incremented when a huge page is put onto split
-> +       queue. This happens when a huge page is partially unmapped and
-> +       splitting it would free up some memory. Pages on split queue are
-> +       going to be split under memory pressure.
-> +
->  As the system ages, allocating huge pages may be expensive as the
->  system uses memory compaction to copy data around memory to free a
->  huge page for use. There are some counters in ``/proc/vmstat`` to help
-> --
-> 2.45.2
->
+>  fs/ufs/super.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/ufs/super.c b/fs/ufs/super.c
+> index 44666afc6209..bc625788589c 100644
+> --- a/fs/ufs/super.c
+> +++ b/fs/ufs/super.c
+> @@ -1540,4 +1540,5 @@ static void __exit exit_ufs_fs(void)
+>  
+>  module_init(init_ufs_fs)
+>  module_exit(exit_ufs_fs)
+> +MODULE_DESCRIPTION("UFS Filesystem");
+>  MODULE_LICENSE("GPL");
+> 
+> ---
+> base-commit: dd5a440a31fae6e459c0d6271dddd62825505361
+> change-id: 20240510-ufs-md-7a78d87a7ff4
+
++Andrew since he's signed off on this file in the past.
+
+Following up to see if anything else is needed from me. Hoping to see this in
+linux-next so I can remove it from my tracking spreadsheet :)
+
+/jeff
 
