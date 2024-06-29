@@ -1,174 +1,177 @@
-Return-Path: <linux-kernel+bounces-234939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 043F691CD06
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 15:10:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89B0891CD0A
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 15:14:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF680283396
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 13:10:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36ED7283786
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 13:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140DD7F483;
-	Sat, 29 Jun 2024 13:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451617F48C;
+	Sat, 29 Jun 2024 13:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lUgoBi7P"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bwlJbaIQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 950677EEF5
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 13:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C0B7BB0A
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 13:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719666649; cv=none; b=mi41xldheWLNYUu1ytxAoXcMiR2+4v2wXeUgGiTXCIhDAlw8dpxX4Svnqu1zqNdgRJAmTgkzOIwV3xhuvfjRoi58mYmxXvTgLGYpCE4gArZZHR5YJLNbeON6GiYejosIHZvlKCWPSdl92KM69EfFgbUeNtA7vBeaqRRBtMxKITA=
+	t=1719666877; cv=none; b=ra23L2ZM4r2YNMYwaAjCCgd0WWizI4LFdn7g6t5gDCt817eFTDJAdBDAm+bYyF3GdO/9H/Jcn4Tom8gHoaSPzLERnqJtCnwrhfqS8OHl7DqzHK6YLpSengjwZyESPGZvUIDgH7KzAby+0+kPP9lGhy1l2NYWIHUd3A9wlBqlZVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719666649; c=relaxed/simple;
-	bh=Zc9sO0I5Bw+ymeOBrEoIlWnptOfQfEsWBo61k8+NyvY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fmzep8eGoTi1MezDLvK5YJKA4nZbupDCTHzPRu446wD31LBIBEB9yWPeoFkPNocJrfeJKo6yWR5gsmQJwhcFHY3dWoyHfM0UhyQvQMCOwZQaIOrmCa1V9/ztvsSD1ii9tk8t6YKn1POiXXG7wuo36HjDhCfKhRRkdbzTJJJ4wlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lUgoBi7P; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a7252bfe773so160824866b.1
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 06:10:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719666646; x=1720271446; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=NYxUnwUSohZuqH5Y3Oi4aiVD5zcwYSgn+PulSvwJzXQ=;
-        b=lUgoBi7PZyZazKChLZOIhAWtoTXHWBvK73zEYmwhjyKyO/agvUBakL8OP2/pvnA4dd
-         aa/xzcqwxt4nHtIkuYTBNBbJ7jhdOLJJy1c37EeyApPs9zEw1CJxgBgkDtBXWw9yNxAs
-         G6oBbxhi/HqWMnSqs4t2id9i/0ZCa7lrCFz4I/HYd32APBMnUTS7uYywk1B2NyXuFKVu
-         ONm6Fxbx6Wkx/8MitNmzYK2jD0CF1aXF6bmBs2RGBF6HV6IXWTgVSbToouFnJxWzAlHz
-         5RJLVz2FALnnz/4gjOc3lOotpgiHqt8N9675edo998KAfsthvl7PcqEfDFwHlL+EieFr
-         nzgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719666646; x=1720271446;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NYxUnwUSohZuqH5Y3Oi4aiVD5zcwYSgn+PulSvwJzXQ=;
-        b=WI+exeAx4Id1AxWrURwYXYWFFJ6RXUjCJaGyOm0CanMhbTPjoQTzjXR3ESzZFaWEt6
-         X7vJMMgvD7mO9ksGnWShWVAvHPuO2y/Ronv3T0TrEm99MgZ8/tCQ03fpk0NiBcf5KFNw
-         P2jIS/71qAOV9jksiVHNqmTDEmvc4EsIC2N9sJtIszHJlY7Vd8bGzPKmda6/MeTlAWQW
-         JYY5MMNtKm7sphEm8nSH/xhFBVAUg6JrUlaZ6zcaJ1kxZU+HQxs/+nUam2z2SkBI0lzV
-         zMNTObeCHbDFXexHsYA+l3g+0XJiA990EymV9865s9YMiviaIHAAFW0vjmqdFCwwIC4r
-         xxjg==
-X-Forwarded-Encrypted: i=1; AJvYcCUkscZAZjEIOcb4zCbnzZSYMnJFu+7qrZrgJsGmk7P5hRosFHkGOiTZ2l07T8kbdWe+W0Bj+Wul244iUjGXnc7A2X74OABf2SUs7JVX
-X-Gm-Message-State: AOJu0YwAoZBg75I7RVp34sfTSJj6AkAN0Lr6LHW0ESEJ+z5GYoeUUNzb
-	26hGABLuJ0pWDOgFUUGsD1Dmj7mUbpz0BbMNOZsm0NBDM6ALbJfsXQ8acSJjrk8=
-X-Google-Smtp-Source: AGHT+IF+d1chV2WaX+/TeZL5Zwzjo9i5T/U6DacLXmVqnZmlmiiqw31CXiOO6ryly0BzFkD1Mv1m5Q==
-X-Received: by 2002:a17:907:728e:b0:a6f:9b06:6b42 with SMTP id a640c23a62f3a-a75142d855bmr67725466b.5.1719666645529;
-        Sat, 29 Jun 2024 06:10:45 -0700 (PDT)
-Received: from [192.168.215.29] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab0b56a0sm163117866b.199.2024.06.29.06.10.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 29 Jun 2024 06:10:45 -0700 (PDT)
-Message-ID: <a35aacc5-a9d6-4a8e-b016-c23236413871@linaro.org>
-Date: Sat, 29 Jun 2024 15:10:41 +0200
+	s=arc-20240116; t=1719666877; c=relaxed/simple;
+	bh=7hQNt+tgzDNyfI0ERdM6ItE7zkfdbY+XR2lT9HnNWQg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sZiBghpyJDwlZRXr0nyzACJh52lppu2eTKuW/YbuZTi/ghF9jwFyvhaCVaCcySiSIEjzsbGYqab7hG0TjgZY5OcqwlFQIlZQhqrQNTfHyiGEdJkEhojoHiFKQ/FGfl4+9ZwsSie/dYtqErj8ZSH/pFjBl1HlUBl4QRYsjCci3kI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bwlJbaIQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719666874;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hVE+qq0FwSaAl4lhPG6AnVt6VIFtlGrvH7aPKz8kJo8=;
+	b=bwlJbaIQLZP5kXV+ok1l8+DM2m4WfgHi18XnINGi7qfuOoQAevhsekEdEbJoPk21XF/mv6
+	8TJ2vXbFTir4r7b3LD6OF1pg0Q+mZApwZg+cEdfL6mffWV7hi1Xe8ycFWnPR5/Arf0Y9Lv
+	POA527nK+rHKbTlsWQNy700cEul+0lM=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-677-76R4QKeIOdmQdyaoaLZSWg-1; Sat,
+ 29 Jun 2024 09:14:28 -0400
+X-MC-Unique: 76R4QKeIOdmQdyaoaLZSWg-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DE1DE19560AA;
+	Sat, 29 Jun 2024 13:14:26 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.33])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id CE98B3000218;
+	Sat, 29 Jun 2024 13:14:22 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sat, 29 Jun 2024 15:12:52 +0200 (CEST)
+Date: Sat, 29 Jun 2024 15:12:47 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, mhocko@suse.com, brauner@kernel.org,
+	tandersen@netflix.com, bigeasy@linutronix.de,
+	vincent.whitchurch@axis.com, ardb@kernel.org,
+	linux-kernel@vger.kernel.org, Martin Liu <liumartin@google.com>,
+	Minchan Kim <minchan@google.com>
+Subject: Re: [PATCH 1/1] signal: on exit skip waiting for an ack from the
+ tracer if it is frozen
+Message-ID: <20240629131247.GA6138@redhat.com>
+References: <20240628173247.3507846-1-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/6] arm64: dts: qcom: sc7280: Add IMX577 camera sensor
-To: Vikram Sharma <quic_vikramsa@quicinc.com>, Robert Foss
- <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Kapatrala Syed <akapatra@quicinc.com>,
- Hariram Purushothaman <hariramp@quicinc.com>,
- cros-qcom-dts-watchers@chromium.org, Bjorn Andersson <andersson@kernel.org>,
- Loic Poulain <loic.poulain@linaro.org>, Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-i2c@vger.kernel.org, Hariram Purushothaman
- <quic_hariramp@quicinc.com>, Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
-References: <20240629-camss_first_post_linux_next-v1-0-bc798edabc3a@quicinc.com>
- <20240629-camss_first_post_linux_next-v1-3-bc798edabc3a@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240629-camss_first_post_linux_next-v1-3-bc798edabc3a@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240628173247.3507846-1-surenb@google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 28.06.2024 8:32 PM, Vikram Sharma wrote:
-> Add support for IMX577 camera sensor for SC7280 SoC.
+Oh, PTRACE_EVENT_EXIT again. I can't even recall how many times
+I mentioned it is broken by design but any possible change is user
+visible...
+
+But I don't really understand this patch.
+
+On 06/28, Suren Baghdasaryan wrote:
+>
+> When a process is being killed or exiting and it has a tracer, it will
+> notify the tracer and wait for an ack from the tracer to proceed. However
+> if the tracer is frozen, this ack will not arrive until the tracer gets
+> thawed. This poses a problem especially during memory pressure because
+> resources of the process are not released.
+
+Yes. But how does this differ from situation when the tracer is not
+frozen but just sleeps? Or it is traced too and its tracer is frozen?
+
+> Things become even more interesting if OOM killer picks such tracee
+> and adds it into oom_victims. oom_victims counter will get incremented
+> and stay that way until tracee exits. In the meantime, if the system
+> tries to go into suspend, it will call oom_killer_disable() after
+> freezing all processes.
+
+Confused... suspend doesn't use cgroup_freeze/etc, so it seems your
+patch should check frozen() rather than cgroup_task_frozen() ?
+And what if try_to_freeze_tasks() does freeze_task(tracee->parent)
+right after the check in ptrace_stop() below?
+
+
+I think it would better to simply change ptrace_stop() to check TIF_MEMDIE
+along with __fatal_signal_pending() and return in this case.
+
+Although TIF_MEMDIE is per-thread... perhaps signal->oom_mm != NULL?
+
+Michal, what do you think?
+
+Of course, this won't fix all problems.
+
+Oleg.
+
+> That call will fail due to positive oom_victims,
+> but not until freeze_timeout_msecs passes. For the whole duration of the
+> freeze_timeout_msecs (20sec by default) the system will appear
+> unresponsive.
+> To fix this problem, skip the ack waiting step in the tracee when it's
+> exiting and the tracer is frozen. Per ptrace(2) manual, the tracer
+> cannot assume that the ptrace-stopped tracee exists. Therefore this
+> change does not break any valid assumptions.
 > 
-> Signed-off-by: Hariram Purushothaman <quic_hariramp@quicinc.com>
-> Signed-off-by: Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
-> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+> Debugged-by: Martin Liu <liumartin@google.com>
+> Debugged-by: Minchan Kim <minchan@google.com>
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 > ---
->  arch/arm64/boot/dts/qcom/sc7280.dtsi | 33 +++++++++++++++++++++++++++++++++
->  1 file changed, 33 insertions(+)
+>  kernel/signal.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> index 9ac251fec262..1c99ee09a11a 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> @@ -5167,6 +5167,39 @@ cci3_sleep: cci3-sleep-state {
->  				bias-pull-down;
->  			};
+> diff --git a/kernel/signal.c b/kernel/signal.c
+> index 1f9dd41c04be..dd9c18fdaaa5 100644
+> --- a/kernel/signal.c
+> +++ b/kernel/signal.c
+> @@ -2320,6 +2320,19 @@ static int ptrace_stop(int exit_code, int why, unsigned long message,
+>  	if (gstop_done && (!current->ptrace || ptrace_reparented(current)))
+>  		do_notify_parent_cldstop(current, false, why);
 >  
-> +			cam2_default: cam2-default {
-> +				rst {
-> +					pins = "gpio78"; /*cam3*/
-
-You can drop these comments.. the node name and label suggest this is
-cam*2* anyway
-
-> +					function = "gpio";
-> +					drive-strength = <2>;
-> +					bias-disable;
-> +				};
+> +	/*
+> +	 * If tracer is frozen, it won't ack until it gets unfrozen and if the
+> +	 * tracee is exiting this means its resources do not get freed until
+> +	 * the tracer is thawed. Skip waiting for the tracer. Per ptrace(2)
+> +	 * manual, the tracer cannot assume that the ptrace-stopped tracee
+> +	 * exists, so exiting now should not be an issue.
+> +	 */
+> +	if (current->ptrace && (exit_code >> 8) == PTRACE_EVENT_EXIT &&
+> +	    cgroup_task_frozen(current->parent)) {
+> +		read_unlock(&tasklist_lock);
+> +		goto skip_wait;
+> +	}
 > +
-> +				mclk {
-> +					pins = "gpio67"; /*cam3*/
-> +					function = "cam_mclk";
-> +					drive-strength = <2>; /*RB5 was 16 and i changed to 2 here*/
+>  	/*
+>  	 * The previous do_notify_parent_cldstop() invocation woke ptracer.
+>  	 * One a PREEMPTION kernel this can result in preemption requirement
+> @@ -2356,6 +2369,7 @@ static int ptrace_stop(int exit_code, int why, unsigned long message,
+>  	schedule();
+>  	cgroup_leave_frozen(true);
+>  
+> +skip_wait:
+>  	/*
+>  	 * We are back.  Now reacquire the siglock before touching
+>  	 * last_siginfo, so that we are sure to have synchronized with
+> 
+> base-commit: 6c0483dbfe7223f2b8390e3d5fe942629d3317b7
+> -- 
+> 2.45.2.803.g4e1b14247a-goog
+> 
 
-/* why? */
-
-Konrad
 
