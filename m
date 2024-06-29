@@ -1,28 +1,28 @@
-Return-Path: <linux-kernel+bounces-234894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57C4D91CC23
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 12:40:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD30B91CC25
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 12:40:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA7B01F22515
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 10:40:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34DDEB216B2
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 10:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BD64502A9;
-	Sat, 29 Jun 2024 10:39:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7799D558A5;
+	Sat, 29 Jun 2024 10:39:52 +0000 (UTC)
 Received: from chessie.everett.org (chessie.fmt1.pfcs.com [66.220.13.234])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A707348CCC;
-	Sat, 29 Jun 2024 10:39:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13924DA00;
+	Sat, 29 Jun 2024 10:39:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.220.13.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719657590; cv=none; b=sfZ2kb8IyJQshGDkI5L4J+5soHTqtVejE5KV0KT3spIRyjTwMT73EzAnYkqFni+4hwrQeRCs3ycIO9PYJNn2iXZXvRoaE3Wh95RZgiPEVi2cN2ANngPC91RALqdWIEKrmqK7TpDJNoU8hcGMxKKLIFSpd3aa184zPSAAwzobzh0=
+	t=1719657592; cv=none; b=rwLULi/TOl754/NFCiFaoMgZsSXgGj4Zixtax5PSLscBiJ7Q0fC4YaZVaUL5ZeaW8G1v1+uIcf5Sj3qk4RuEpS9DcfbRUxhpC3QV0MxaRoYH0K2z9uTiLmYs13MDyy4Ad6G+/cyETro+UldUsudOaFNqAXx5E4g+I+ryVo24Zqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719657590; c=relaxed/simple;
-	bh=BKnp5qBwbxDEcoRm80oPnb70IF4TvTnv8dTWdnMJYCw=;
+	s=arc-20240116; t=1719657592; c=relaxed/simple;
+	bh=3L85TKkLLTgbl2Qz3WciGX78hYPgRZKrh89XtjYinJU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=t38waO8k2iR1OSiaXWuOyWK3qIiZPVH8fZwZg22lmoiTOsFQCNhwyaJrmPWqUelv+e8XQVFKJ0lq+S8VOCDrOZxUJkwyGmQGDeZE5Y6FtLt28MHuw/t13vUplF0kK0ecrOJUTmJDlnkNPsq1SyyK4ZowQpHUrUiklTyzWI1CoxE=
+	 MIME-Version; b=FEhk2u1Vm2Zl87v5w7+upKHzv2oNj+NZhu7x0k51rM9u0LVhiHsaLpiufYWaJc8chummsHRFSSyOySp4/nqSpmbqyeI8ZAlRDciAklrjxQs1vokvbSKoxqRu/QUT9kc+LifcKE/CYZqTcV81DYtzmXFqgfflqSPipJ+Tq0PfC5Q=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nwtime.org; spf=pass smtp.mailfrom=nwtime.org; arc=none smtp.client-ip=66.220.13.234
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nwtime.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nwtime.org
@@ -30,8 +30,8 @@ Received: from localhost.localdomain (unknown [31.16.248.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by chessie.everett.org (Postfix) with ESMTPSA id 4WB81y4Gz6zMQLp;
-	Sat, 29 Jun 2024 10:39:34 +0000 (UTC)
+	by chessie.everett.org (Postfix) with ESMTPSA id 4WB8212wC9zMQLv;
+	Sat, 29 Jun 2024 10:39:37 +0000 (UTC)
 From: Erez Geva <erezgeva@nwtime.org>
 To: linux-mtd@lists.infradead.org,
 	Tudor Ambarus <tudor.ambarus@linaro.org>,
@@ -46,9 +46,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Erez Geva <ErezGeva2@gmail.com>
-Subject: [PATCH v2 2/4] Add support for SPI-NOR Macronix OTP.
-Date: Sat, 29 Jun 2024 12:39:11 +0200
-Message-Id: <20240629103914.161530-3-erezgeva@nwtime.org>
+Subject: [PATCH v2 3/4] dt-bindings: mtd: macronix,mx25l12833f: add SPI-NOR chip
+Date: Sat, 29 Jun 2024 12:39:12 +0200
+Message-Id: <20240629103914.161530-4-erezgeva@nwtime.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240629103914.161530-1-erezgeva@nwtime.org>
 References: <20240629103914.161530-1-erezgeva@nwtime.org>
@@ -62,244 +62,37 @@ Content-Transfer-Encoding: 8bit
 
 From: Erez Geva <ErezGeva2@gmail.com>
 
-Macronix SPI-NOR support OTP.
-Add callbacks to read, write and lock the OTP.
+Add Macronix SPI-NOR mx25l12833f.
 
-Notice Macronix OTP do not support erase.
-Every bit written with '0', can not be changed further.
+mx25l12833f uses the same JEDEC ID as mx25l12805d.
+
+Although mx25l12833f is a new chip that support read ID and SFDP,
+ users might want to specify it in the device tree,
+ to differ it from the old mx25l12805d chip.
+
+Macronix annonce the end of life of mx25l12805d in 2010.
+
+See:
+  "https://www.macronix.com/Lists/TechDoc/Attachments/9861/PCN31_2009 PCN_MX25L6405D and MX25L12805D.pdf"
 
 Signed-off-by: Erez Geva <ErezGeva2@gmail.com>
 ---
- drivers/mtd/spi-nor/macronix.c | 185 +++++++++++++++++++++++++++++++++
- include/linux/mtd/spi-nor.h    |  10 ++
- 2 files changed, 195 insertions(+)
+ Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/spi-nor/macronix.c b/drivers/mtd/spi-nor/macronix.c
-index ea6be95e75a5..f210231468a6 100644
---- a/drivers/mtd/spi-nor/macronix.c
-+++ b/drivers/mtd/spi-nor/macronix.c
-@@ -8,6 +8,180 @@
- 
- #include "core.h"
- 
-+/**
-+ * macronix_nor_otp_enter() - Send Enter Secured OTP instruction to the chip.
-+ * @nor:	pointer to 'struct spi_nor'.
-+ *
-+ * Return: 0 on success, -errno otherwise.
-+ */
-+static int macronix_nor_otp_enter(struct spi_nor *nor)
-+{
-+	int error;
-+
-+	error = spi_nor_send_cmd(nor, SPINOR_OP_ENSO);
-+
-+	if (error)
-+		dev_dbg(nor->dev, "error %d on Macronix Enter Secured OTP\n", error);
-+
-+	return error;
-+}
-+
-+/**
-+ * macronix_nor_otp_exit() - Send Exit Secured OTP instruction to the chip.
-+ * @nor:	pointer to 'struct spi_nor'.
-+ *
-+ * Return: 0 on success, -errno otherwise.
-+ */
-+static int macronix_nor_otp_exit(struct spi_nor *nor)
-+{
-+	int error;
-+
-+	error = spi_nor_send_cmd(nor, SPINOR_OP_EXSO);
-+
-+	if (error)
-+		dev_dbg(nor->dev, "error %d on Macronix Enter Secured OTP\n", error);
-+
-+	return error;
-+}
-+
-+/**
-+ * macronix_nor_otp_read() - read security register
-+ * @nor:	pointer to 'struct spi_nor'
-+ * @addr:       offset to read from
-+ * @len:        number of bytes to read
-+ * @buf:        pointer to dst buffer
-+ *
-+ * Return: number of bytes read successfully, -errno otherwise
-+ */
-+static int macronix_nor_otp_read(struct spi_nor *nor, loff_t addr, size_t len, u8 *buf)
-+{
-+	int ret, error;
-+
-+	error = macronix_nor_otp_enter(nor);
-+	if (error)
-+		return error;
-+
-+	ret = spi_nor_read_data(nor, addr, len, buf);
-+
-+	error = macronix_nor_otp_exit(nor);
-+
-+	if (ret < 0)
-+		dev_dbg(nor->dev, "error %d on Macronix read OTP data\n", ret);
-+	else if (error)
-+		return error;
-+
-+	return ret;
-+}
-+
-+/**
-+ * macronix_nor_otp_write() - write security register
-+ * @nor:        pointer to 'struct spi_nor'
-+ * @addr:       offset to write to
-+ * @len:        number of bytes to write
-+ * @buf:        pointer to src buffer
-+ *
-+ * Return: number of bytes written successfully, -errno otherwise
-+ */
-+static int macronix_nor_otp_write(struct spi_nor *nor, loff_t addr, size_t len, const u8 *buf)
-+{
-+	int error, ret = 0;
-+
-+	error = macronix_nor_otp_enter(nor);
-+	if (error)
-+		return error;
-+
-+	error = spi_nor_write_enable(nor);
-+	if (error)
-+		goto otp_write_err;
-+
-+	ret = spi_nor_write_data(nor, addr, len, buf);
-+	if (ret < 0) {
-+		dev_dbg(nor->dev, "error %d on Macronix write OTP data\n", ret);
-+		goto otp_write_err;
-+	}
-+
-+	error = spi_nor_wait_till_ready(nor);
-+	if (error)
-+		dev_dbg(nor->dev, "error %d on Macronix waiting write OTP finish\n", error);
-+
-+otp_write_err:
-+
-+	error = macronix_nor_otp_exit(nor);
-+
-+	return ret;
-+}
-+
-+/**
-+ * macronix_nor_otp_lock() - lock the OTP region
-+ * @nor:        pointer to 'struct spi_nor'
-+ * @region:     OTP region
-+ *
-+ * Return: 0 on success, -errno otherwise.
-+ */
-+static int macronix_nor_otp_lock(struct spi_nor *nor, unsigned int region)
-+{
-+	int error;
-+	u8 *rdscur = nor->bouncebuf;
-+
-+	error = spi_nor_read_reg(nor, SPINOR_OP_RDSCUR, 1);
-+	if (error) {
-+		dev_dbg(nor->dev, "error %d on read security register\n", error);
-+		return error;
-+	}
-+
-+	switch (region) {
-+	case 0: /* Lock 1st 4K-bit region */
-+		if (rdscur[0] & SEC_REG_LDSO)
-+			return 0; /* Already locked */
-+		rdscur[0] |= SEC_REG_LDSO;
-+		break;
-+	case 1: /* Lock 2nd 4K-bit region */
-+		if (rdscur[0] & SEC_REG_LDS1)
-+			return 0; /* Already locked */
-+		rdscur[0] |= SEC_REG_LDS1;
-+		break;
-+	default:
-+		return 0; /* Unknown region */
-+	}
-+
-+	error = spi_nor_write_reg(nor, SPINOR_OP_WRSCUR, 1);
-+	if (error)
-+		dev_dbg(nor->dev, "error %d on update security register\n", error);
-+
-+	return error;
-+}
-+
-+/**
-+ * macronix_nor_otp_is_locked() - get the OTP region lock status
-+ * @nor:        pointer to 'struct spi_nor'
-+ * @region:     OTP region
-+ *
-+ * Return: 0 on success, -errno otherwise.
-+ */
-+static int macronix_nor_otp_is_locked(struct spi_nor *nor, unsigned int region)
-+{
-+	int ret;
-+	u8 *rdscur = nor->bouncebuf;
-+
-+	ret = spi_nor_read_reg(nor, SPINOR_OP_RDSCUR, 1);
-+	if (ret) {
-+		dev_dbg(nor->dev, "error %d on read security register\n", ret);
-+		return ret;
-+	}
-+
-+	switch (region) {
-+	case 0: /* 1st 4K-bit region */
-+		ret = (rdscur[0] & SEC_REG_LDSO) > 0;
-+		break;
-+	case 1: /* 2nd 4K-bit region */
-+		ret = (rdscur[0] & SEC_REG_LDS1) > 0;
-+		break;
-+	default: /* Unknown region */
-+		break;
-+	}
-+	return ret;
-+}
-+
- static int
- mx25l25635_post_bfpt_fixups(struct spi_nor *nor,
- 			    const struct sfdp_parameter_header *bfpt_header,
-@@ -190,8 +364,19 @@ static void macronix_nor_default_init(struct spi_nor *nor)
- 	nor->params->quad_enable = spi_nor_sr1_bit6_quad_enable;
- }
- 
-+static const struct spi_nor_otp_ops macronix_nor_otp_ops = {
-+	.read = macronix_nor_otp_read,
-+	.write = macronix_nor_otp_write,
-+	/* .erase = Macronix OTP do not support erase, */
-+	.lock = macronix_nor_otp_lock,
-+	.is_locked = macronix_nor_otp_is_locked,
-+};
-+
- static int macronix_nor_late_init(struct spi_nor *nor)
- {
-+	if (nor->params->otp.org->n_regions)
-+		nor->params->otp.ops = &macronix_nor_otp_ops;
-+
- 	if (!nor->params->set_4byte_addr_mode)
- 		nor->params->set_4byte_addr_mode = spi_nor_set_4byte_addr_mode_en4b_ex4b;
- 
-diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
-index cdcfe0fd2e7d..f5965f90f51e 100644
---- a/include/linux/mtd/spi-nor.h
-+++ b/include/linux/mtd/spi-nor.h
-@@ -81,6 +81,16 @@
- #define SPINOR_OP_BP		0x02	/* Byte program */
- #define SPINOR_OP_AAI_WP	0xad	/* Auto address increment word program */
- 
-+/* Used by Macronix OTP. */
-+#define SPINOR_OP_RDSCUR	0x2b	/* read security register */
-+#define SPINOR_OP_WRSCUR	0x2f	/* write security register */
-+#define SPINOR_OP_ENSO		0xb1	/* enter secured OTP */
-+#define SPINOR_OP_EXSO		0xc1	/* exit secured OTP */
-+
-+/* Security register */
-+#define SEC_REG_LDSO		BIT(1)  /* lock-down bit 1st 4K-bit */
-+#define SEC_REG_LDS1		BIT(0)  /* lock-down bit 2nd 4K-bit */
-+
- /* Used for Macronix and Winbond flashes. */
- #define SPINOR_OP_EN4B		0xb7	/* Enter 4-byte mode */
- #define SPINOR_OP_EX4B		0xe9	/* Exit 4-byte mode */
+diff --git a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml b/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
+index 6e3afb42926e..625a618a7992 100644
+--- a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
++++ b/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
+@@ -22,7 +22,7 @@ properties:
+               n25q(32b|064|128a11|128a13|256a|512a|164k)))|\
+               atmel,at25df(321a|641|081a)|\
+               everspin,mr25h(10|40|128|256)|\
+-              (mxicy|macronix),mx25l(4005a|1606e|6405d|8005|12805d|25635e)|\
++              (mxicy|macronix),mx25l(4005a|1606e|6405d|8005|12805d|12833f|25635e)|\
+               (mxicy|macronix),mx25u(4033|4035)|\
+               (spansion,)?s25fl(128s|256s1|512s|008k|064k|164k)|\
+               (sst|microchip),sst25vf(016b|032b|040b)|\
 -- 
 2.39.2
 
