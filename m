@@ -1,116 +1,128 @@
-Return-Path: <linux-kernel+bounces-235022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C28F591CE88
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 20:16:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4CA491CE8F
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 20:33:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF19F282D7E
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 18:16:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31618B213B9
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 18:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA6A17736;
-	Sat, 29 Jun 2024 18:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ce5wk3Wf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF7512FB34;
+	Sat, 29 Jun 2024 18:32:52 +0000 (UTC)
+Received: from mail.asbjorn.biz (mail.asbjorn.biz [185.38.24.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6856200AF
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 18:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35B75660
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 18:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.38.24.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719684966; cv=none; b=t308zN/f4bPiCSWqwi63dixZu9bVuO2ADpCdNaO0HEEJUYPZMBo+P37z1wYcSOuBo7k06r0HI5fFTIQZ4rOU4PUY86lbCXHja2woN3MgHWHwFlEzUHfELmlzq7Q5V0I4kvQCKlfoH2PEKKyG3vON3rouaHhGKVeEoSgyRkPv5ss=
+	t=1719685971; cv=none; b=GMWrKt/v8J/vB6ZIUITxKpcoqdxNeN/2Bv+Yw7T0BFrhl7nS6g2IMgv5zHcR0Huy/EJbKbBssPUqySMJ4aAyZuo/sZtdll9CQUE0/mupw8saeEMnR0SZ6W59gNeRqvIW3/0YDGQlwzT4ZuZKqiJu9FmSb0i/d6ngsFhdCuYYc6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719684966; c=relaxed/simple;
-	bh=sRpEGduP9SPZky9x//lKa5fHbfKE9ykk2lA3WvW7E2Y=;
-	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=uIoXULExMOzrcb+VdOLkapVMbZ6nRA1riV1DI6YYOjBgIs5LkMt/ZIS0V9H7jy95XGagASku1s+2VCD9z8A6jqnhM11Q8YgGwGz0ZjKndfY/EGYZ4vRdiKJPJ4+hVBgf/iZ8faHQE3AmDTOgLYssnbkX3r+ypNaCKe9RF+vLCKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ce5wk3Wf; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719684963;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=xjeARSeXgpxc8bfxlatTH/kv5e9qdHwwiP+kzk8DEsw=;
-	b=Ce5wk3WfBFWWZmQFHHOK580MUtfyJ+H1rVRbMgQS47tNR7aifh5Q00RP/P/ZXNeklOmhxB
-	D/k/Fsf1rnAP6Qh2xHSHfClZBOnOACNy/6pFW4uBU+ljgBsEdwjK67URjnZ/93cJwuLiEJ
-	2vX6GSsMINtFI6sCIdEwuv3drv7hiDo=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-642-AKkOgFBVPF205PxVvsJdtQ-1; Sat,
- 29 Jun 2024 14:15:59 -0400
-X-MC-Unique: AKkOgFBVPF205PxVvsJdtQ-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7956519560AB;
-	Sat, 29 Jun 2024 18:15:58 +0000 (UTC)
-Received: from file1-rdu.file-001.prod.rdu2.dc.redhat.com (unknown [10.11.5.21])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A9D1519560A3;
-	Sat, 29 Jun 2024 18:15:57 +0000 (UTC)
-Received: by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix, from userid 12668)
-	id 8B43030C1C14; Sat, 29 Jun 2024 18:15:56 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-	by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix) with ESMTP id 8472E40D0E;
-	Sat, 29 Jun 2024 20:15:56 +0200 (CEST)
-Date: Sat, 29 Jun 2024 20:15:56 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>
-cc: Waiman Long <longman@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
-    Laurence Oberman <loberman@redhat.com>, 
-    Jonathan Brassow <jbrassow@redhat.com>, Ming Lei <minlei@redhat.com>, 
-    Ondrej Kozina <okozina@redhat.com>, Milan Broz <gmazyland@gmail.com>, 
-    linux-kernel@vger.kernel.org, dm-devel@lists.linux.dev
-Subject: dm-crypt performance regression due to workqueue changes
-Message-ID: <32fd8274-d5f-3eca-f5d2-1a9117fd8edb@redhat.com>
+	s=arc-20240116; t=1719685971; c=relaxed/simple;
+	bh=STBPCs8SDAJB8vAZOpZaJuTyIH4sta10k3Qf4/aJAoI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sHAbqPgpBenLSGQ45Mdq5FUdiX5jP2EOf/AKEQXBXaucGLaliNEJSAQxL78W+Vx85uy4hR9ij15oY27WDer3Bm+8yfnjb7ZLiBQ9CTWAjkAQJlFPKXMyUVTRrG/3MSwnx2Syx+sgTgHQo/ZGeuO4Uog9/op5kGA0eHrD5/qU89c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=asbjorn.st; spf=pass smtp.mailfrom=asbjorn.st; arc=none smtp.client-ip=185.38.24.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=asbjorn.st
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asbjorn.st
+Received: from x201s (space.labitat.dk [185.38.175.0])
+	by mail.asbjorn.biz (Postfix) with ESMTPSA id C4C351C0A988;
+	Sat, 29 Jun 2024 18:25:41 +0000 (UTC)
+Received: by x201s (Postfix, from userid 1000)
+	id 212A62025CC; Sat, 29 Jun 2024 18:25:27 +0000 (UTC)
+From: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <asbjorn@asbjorn.st>
+To: intel-gfx@lists.freedesktop.org
+Cc: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <asbjorn@asbjorn.st>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	=?UTF-8?q?Jouni=20H=C3=B6gander?= <jouni.hogander@intel.com>,
+	Zhao Liu <zhao1.liu@intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/i915: implement vmap/vunmap GEM object functions
+Date: Sat, 29 Jun 2024 18:25:06 +0000
+Message-ID: <20240629182513.78026-1-asbjorn@asbjorn.st>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi
+Implement i915_gem_vmap_object() and i915_gem_vunmap_object(),
+based on i915_gem_dmabuf_vmap() and i915_gem_dmabuf_vunmap().
 
-I report that the patch 63c5484e74952f60f5810256bd69814d167b8d22 
-("workqueue: Add multiple affinity scopes and interface to select them") 
-is causing massive dm-crypt slowdown in virtual machines.
+This enables a drm_client to use drm_client_buffer_vmap() and
+drm_client_buffer_vunmap() on hardware using the i915 driver.
 
-Steps to reproduce:
-* Install a system in a virtual machine with 16 virtual CPUs
-* Create a scratch file with "dd if=/dev/zero of=Scratch.img bs=1M
-  count=2048 oflag=direct" - the file should be on a fast NVMe drive
-* Attach the scratch file to the virtual machine as /dev/vdb; cache mode
-  should be 'none'
-* cryptsetup --force-password luksFormat /dev/vdb
-* cryptsetup luksOpen /dev/vdb cr
-* fio --direct=1 --bsrange=128k-128k --runtime=40 --numjobs=1
-  --ioengine=libaio --iodepth=8 --group_reporting=1
-  --filename=/dev/mapper/cr --name=job --rw=read
+Tested with a currently out of tree pixelflut drm_client[1] on:
+- Lenovo ThinkCentre M720q (CoffeeLake-S GT2 / Intel UHD Graphics 630)
+- Dell Wyse N06D - 3030 LT (ValleyView on Intel Celeron N2807 SOC)
 
-With 6.5, we get 3600MiB/s; with 6.6 we get 1400MiB/s.
+[1] XDP->DRM pixelflut: https://labitat.dk/wiki/Pixelflut-XDR
 
-The reason is that virt-manager by default sets up a topology where we 
-have 16 sockets, 1 core per socket, 1 thread per core. And that workqueue 
-patch avoids moving work items across sockets, so it processes all 
-encryption work only on one virtual CPU.
+Signed-off-by: Asbjørn Sloth Tønnesen <asbjorn@asbjorn.st>
+---
+This patch applies on top of drm-intel/drm-intel-next (32a120f52a4c)
 
-The performance degradation may be fixed with "echo 'system'
->/sys/module/workqueue/parameters/default_affinity_scope" - but it is 
-regression anyway, as many users don't know about this option.
+ drivers/gpu/drm/i915/gem/i915_gem_object.c | 26 ++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-How should we fix it? There are several options:
-1. revert back to 'numa' affinity
-2. revert to 'numa' affinity only if we are in a virtual machine
-3. hack dm-crypt to set the 'numa' affinity for the affected workqueues
-4. any other solution?
-
-Mikulas
+diff --git a/drivers/gpu/drm/i915/gem/i915_gem_object.c b/drivers/gpu/drm/i915/gem/i915_gem_object.c
+index 58e6c680fe0d..356530b599ce 100644
+--- a/drivers/gpu/drm/i915/gem/i915_gem_object.c
++++ b/drivers/gpu/drm/i915/gem/i915_gem_object.c
+@@ -873,6 +873,30 @@ bool i915_gem_object_needs_ccs_pages(struct drm_i915_gem_object *obj)
+ 	return lmem_placement;
+ }
+ 
++static int i915_gem_vmap_object(struct drm_gem_object *gem_obj,
++				struct iosys_map *map)
++{
++	struct drm_i915_gem_object *obj = to_intel_bo(gem_obj);
++	void *vaddr;
++
++	vaddr = i915_gem_object_pin_map(obj, I915_MAP_WB);
++	if (IS_ERR(vaddr))
++		return PTR_ERR(vaddr);
++
++	iosys_map_set_vaddr(map, vaddr);
++
++	return 0;
++}
++
++static void i915_gem_vunmap_object(struct drm_gem_object *gem_obj,
++				   struct iosys_map *map)
++{
++	struct drm_i915_gem_object *obj = to_intel_bo(gem_obj);
++
++	i915_gem_object_flush_map(obj);
++	i915_gem_object_unpin_map(obj);
++}
++
+ void i915_gem_init__objects(struct drm_i915_private *i915)
+ {
+ 	INIT_WORK(&i915->mm.free_work, __i915_gem_free_work);
+@@ -896,6 +920,8 @@ static const struct drm_gem_object_funcs i915_gem_object_funcs = {
+ 	.free = i915_gem_free_object,
+ 	.close = i915_gem_close_object,
+ 	.export = i915_gem_prime_export,
++	.vmap = i915_gem_vmap_object,
++	.vunmap = i915_gem_vunmap_object,
+ };
+ 
+ /**
+-- 
+2.45.2
 
 
