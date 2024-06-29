@@ -1,157 +1,113 @@
-Return-Path: <linux-kernel+bounces-234867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3A8191CBC2
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 10:56:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E05491CBC0
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 10:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFCFBB221A6
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 08:56:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBF2DB22405
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 08:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A7538FA1;
-	Sat, 29 Jun 2024 08:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iegBsroS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 962AE3D0AD;
+	Sat, 29 Jun 2024 08:53:22 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF81F2E64A;
-	Sat, 29 Jun 2024 08:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338002E651
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 08:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719651370; cv=none; b=Nwc3PT8K2o/yt8DuoT3FKirf4K5jBxrMq3KCNVKd2sCGjWnTja3S6WeTni9wd+aIOKU4rXy5XETJiVAggD7Py9DBT9K3ykAJhe8Ok2jpd+VXczosz+SFLv0OgprshXMgAN6Bi7tAeEpxGKDVwnEffCrxbiyfYrhp44lI3Y3ap/Y=
+	t=1719651202; cv=none; b=AWJRh8j2miSp0wVuh6LD1KKHhsgTe6fkIQ73djNytl9RBKtM4N5eymLIIk8yIri4xjrcgzRNIiL342v+cyC8AuSBKmSR+q+D16zhIkZTlTrA26akxuD5yETj/56B0bTo+zwFH8ahrmYk9UjAq3KXILdvaiZDlhC8blvxoYjgGf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719651370; c=relaxed/simple;
-	bh=Usk4hC7B6imkCxrHaQXk94Nplnxwr+jME/OfM7kVFc4=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Zm/WEtaIDG6bhjokAdAckO4+wqb0Mv0uw0yigNn2T8/BNxogQBKnL5ghCWMiW0SyAqEhyVNrgEwEryhI9CT6Vg/BHRFazWUTk52zxtwMraGqHvASONMLzTDCJJLc6tWoStm6oy2Yn4E/OD3027QwPo0IWWvX4/XglIdGpv5+9cA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iegBsroS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A94CC4AF0B;
-	Sat, 29 Jun 2024 08:56:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719651369;
-	bh=Usk4hC7B6imkCxrHaQXk94Nplnxwr+jME/OfM7kVFc4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=iegBsroSG2xpT5nJosVosuNactH50axeeo1QH67qfyq0eTxMpVc7MKuvqBtW/SK9F
-	 26AifYxbFC/BIF6iTXvTces1j31xC/DXwCm2rCqdPfP/mimlQyK8yD11NQEeIjGj6w
-	 V96dc5UAsBVRWTjsl3uVYSPUpyDWknAx72TV/VjYTsKfSs5cCyTDF4SoMNKITZEMBX
-	 LiDJCJhY6900sH6al1XZGqWYTHOR7ZXf6/1kRqnCFMa/SzMrfxxzaI2GHzjktD2OAz
-	 w0ksU9risLol2i5W6yTe0iH4xqHQyNojn2r4TD5U6jUicFExJGwwoZMiSUztJkmxHY
-	 arPftWRUhKchQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sNTsM-008MU8-PI;
-	Sat, 29 Jun 2024 09:56:06 +0100
-Date: Sat, 29 Jun 2024 09:55:54 +0100
-Message-ID: <87ikxsi0v9.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Shaoqin Huang <shahuang@redhat.com>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	kvmarm@lists.linux.dev,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] KVM: arm64: Allow userspace to change ID_AA64PFR1_EL1
-In-Reply-To: <20240628060454.1936886-2-shahuang@redhat.com>
-References: <20240628060454.1936886-1-shahuang@redhat.com>
-	<20240628060454.1936886-2-shahuang@redhat.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/28.2
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1719651202; c=relaxed/simple;
+	bh=N23JfvemXKqh7VqUX0O6fy3MfH1Q0h9yZIHi7l1ghpQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=E0IygG7bqnXFaKAJR6iAE52hz8DeRlyIPJ/nd9oUa6UWmFQs3fsPqbUYhc/dproGz915+7gUhhnqu66Lgm8q3N5gLtVo9JFzXIz84xzqnAz7bKZH9BmTikZ4D5y6cAakkaz9WxXtXTu59k8waxALToxHSohvK6R4K2y5dm45Vfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WB5g122w0znYVL;
+	Sat, 29 Jun 2024 16:53:01 +0800 (CST)
+Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id E7ACC18006F;
+	Sat, 29 Jun 2024 16:53:11 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemi100008.china.huawei.com
+ (7.221.188.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Sat, 29 Jun
+ 2024 16:53:11 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <catalin.marinas@arm.com>, <will@kernel.org>, <oleg@redhat.com>,
+	<tglx@linutronix.de>, <peterz@infradead.org>, <luto@kernel.org>,
+	<kees@kernel.org>, <wad@chromium.org>, <ruanjinjie@huawei.com>,
+	<rostedt@goodmis.org>, <arnd@arndb.de>, <ardb@kernel.org>,
+	<broonie@kernel.org>, <mark.rutland@arm.com>, <rick.p.edgecombe@intel.com>,
+	<leobras@redhat.com>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH v3 0/3] arm64: entry: Convert to generic entry
+Date: Sat, 29 Jun 2024 16:55:58 +0800
+Message-ID: <20240629085601.470241-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: shahuang@redhat.com, oliver.upton@linux.dev, kvmarm@lists.linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemi100008.china.huawei.com (7.221.188.57)
 
-On Fri, 28 Jun 2024 07:04:51 +0100,
-Shaoqin Huang <shahuang@redhat.com> wrote:
-> 
-> Allow userspace to change the guest-visible value of the register with
-> some severe limitation:
-> 
->   - No changes to features not virtualized by KVM (MPAM_frac, RAS_frac,
->     SME, RNDP_trap).
-> 
->   - No changes to features (CSV2_frac, NMI, MTE_frac, GCS, THE, MTEX,
->     DF2, PFAR) which haven't been added into the ftr_id_aa64pfr1[].
->     Because the struct arm64_ftr_bits definition for each feature in the
->     ftr_id_aa64pfr1[] is used by arm64_check_features. If they're not
->     existing in the ftr_id_aa64pfr1[], the for loop won't check the if
->     the new_val is safe for those features.
-> ---
->  arch/arm64/kvm/sys_regs.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+Currently, x86, Riscv, Loongarch use the generic entry. Convert arm64
+to use the generic entry infrastructure from kernel/entry/*. The generic
+entry makes maintainers' work easier and codes more elegant, which aslo
+removed a lot of duplicate code.
 
-This is getting very tiring:
+Changes in v3:
+- Test the MTE test cases.
+- Handle forget_syscall() in arch_post_report_syscall_entry()
+- Make the arch funcs not use __weak as Thomas suggested, so move
+  the arch funcs to entry-common.h, and make arch_forget_syscall() folded
+  in arch_post_report_syscall_entry() as suggested.
+- Move report_single_step() to thread_info.h for arm64
+- Change __always_inline() to inline, add inline for the other arch funcs.
+- Remove unused signal.h for entry-common.h.
+- Add Suggested-by.
+- Update the commit message.
 
-- this isn't a valid patch, as it doesn't carry a proper SoB. You did
-  it last time, I pointed it out, and you ignored me.
+Changes in v2:
+- Add tested-by.
+- Fix a bug that not call arch_post_report_syscall_entry() in
+  syscall_trace_enter() if ptrace_report_syscall_entry() return not zero.
+- Refactor report_syscall().
+- Add comment for arch_prepare_report_syscall_exit().
+- Adjust entry-common.h header file inclusion to alphabetical order.
+- Update the commit message.
 
-- this is *wrong*. The moment the kernel publishes any of the fields
-  you have decided to ignore, the restoring of a VM on a new kernel
-  will fail if the host and the VM have different values.
+Jinjie Ruan (3):
+  entry: Add some arch funcs to support arm64 to use generic entry
+  arm64: Prepare to switch to generic entry
+  arm64: entry: Convert to generic entry
 
->
-> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> index 22b45a15d068..159cded22357 100644
-> --- a/arch/arm64/kvm/sys_regs.c
-> +++ b/arch/arm64/kvm/sys_regs.c
-> @@ -2306,7 +2306,9 @@ static const struct sys_reg_desc sys_reg_descs[] = {
->  		   ID_AA64PFR0_EL1_GIC |
->  		   ID_AA64PFR0_EL1_AdvSIMD |
->  		   ID_AA64PFR0_EL1_FP), },
-> -	ID_SANITISED(ID_AA64PFR1_EL1),
-> +	ID_WRITABLE(ID_AA64PFR1_EL1, ID_AA64PFR1_EL1_MTE |
-
-Why? If the VM has been created with MTE support, this must be obeyed.
-
-> +				     ID_AA64PFR1_EL1_SSBS |
-> +				     ID_AA64PFR1_EL1_BT),
->  	ID_UNALLOCATED(4,2),
->  	ID_UNALLOCATED(4,3),
->  	ID_WRITABLE(ID_AA64ZFR0_EL1, ~ID_AA64ZFR0_EL1_RES0),
-
-So let me be very blunt:
-
-- you *must* handle *all* the fields described in that register. There
-  are 15 valid fields there, and I want to see all 15 fields being
-  explicitly dealt with.
-
-- fields that can be changed without ill effect must be enabled for
-  write, irrespective of what the cpufeature code does (CSV2_frac, for
-  example).
-
-- fields that have a fixed value because KVM doesn't handle the
-  corresponding feature must be explicitly disabled in the register
-  accessor (MPAM, RNDR, MTEX, THE...). Just like we do for SME.
-
-- fields that correspond to a feature that is controlled by an
-  internal flag (MTE) must not be writable. Just like we do for PAuth
-  in ID_AA64ISAR1_EL1.
-
-- you *must* handle *all* the fields described in that register.
-
-Until I see all of the above, I will not take this patch. If you don't
-want to do this, that's absolutely fine by me. Just don't post another
-patch. But if you do, this is the deal.
-
-	M.
+ arch/arm64/Kconfig                    |   1 +
+ arch/arm64/include/asm/entry-common.h | 172 ++++++++++++
+ arch/arm64/include/asm/ptrace.h       |   5 +
+ arch/arm64/include/asm/stacktrace.h   |   5 +-
+ arch/arm64/include/asm/syscall.h      |   6 +-
+ arch/arm64/include/asm/thread_info.h  |  23 +-
+ arch/arm64/kernel/entry-common.c      | 368 +++++---------------------
+ arch/arm64/kernel/ptrace.c            |  90 -------
+ arch/arm64/kernel/signal.c            |   3 +-
+ arch/arm64/kernel/syscall.c           |  18 +-
+ include/linux/entry-common.h          |  90 +++++++
+ include/linux/thread_info.h           |  13 +
+ kernel/entry/common.c                 |  37 +--
+ 13 files changed, 395 insertions(+), 436 deletions(-)
+ create mode 100644 arch/arm64/include/asm/entry-common.h
 
 -- 
-Without deviation from the norm, progress is not possible.
+2.34.1
+
 
