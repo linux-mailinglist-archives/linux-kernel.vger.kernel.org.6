@@ -1,167 +1,138 @@
-Return-Path: <linux-kernel+bounces-234777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFA7191CADE
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 05:24:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9CB591CAE0
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 05:31:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6303B224EC
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 03:24:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6819FB224E5
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 03:31:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068091E526;
-	Sat, 29 Jun 2024 03:24:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A1C1E526;
+	Sat, 29 Jun 2024 03:31:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UmJ4qD4t"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m5vGZfjw"
+Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52D53C00;
-	Sat, 29 Jun 2024 03:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87478A945;
+	Sat, 29 Jun 2024 03:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719631463; cv=none; b=kMVHn/Iwuu3+4IkAbhAsApDEtZGbV0O0AxszJh+TEpAdNfUnrB3Ca0WlT9Fu2OEYX3iAT/2lEHq1zWHUrnNtI2pX919sdFESoDoIy8veI65dgmKb9K5Dsxwn2qYcJEsUtDZa/dH3sYADhHEwXR9i4htziDxcUSEBsTsFYII+kR8=
+	t=1719631887; cv=none; b=PgrIScQaGUMh2c7wiTWpPdUJ2yCggfu5by/dQUvufPjh/FrT3Y0iaohs/X3leWoUcnCMRZ8ro3h18tAS7BepemJUA5jdxPHbaORpglkgE2jYXs9dAarmLUX4A0ISaQULsA7c/XfpFIS39anXCHPwUGFTtXWUS4GNX68LR7NFNXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719631463; c=relaxed/simple;
-	bh=zzFzV9Hf3y2xU4IErrtSymGVyrv9lLHfRvbFW6GO8Qs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eh0EgwEdfQEUfb2qMtm86mexSdVVK+92z4gG2AelgjJA0ZM+1E3ij+SI941tX+wFfm8tbKfZAPafyMBQsa0dLx1X/NjJHZnnz2IWgN8XnpSxEizsWD9UgL6WbmL0l+q7Glj5Z1zQPY775I6ahuRkJVFKEpQ649a1FvqJIPp48sU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UmJ4qD4t; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45T2smtT027565;
-	Sat, 29 Jun 2024 03:24:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	SVVShuazCaLUDPTDIegp+IOHraDAN3vXNEH1dB82+0k=; b=UmJ4qD4tfmNmqDOX
-	ewt+spLRRN3ja2tfpOOiJMZWEe2rtvJ4rBqOR2/xE9rmPsnPV6e8r3hsOEIGf8hQ
-	/lw3v0xRBw4B5Yon0O71rmD9aru7oB+Got7syoj9Wcc6WVrgnRHUS969QP85ouPA
-	6KU214FdtKBXiTyEJhnAT7w6b0/J6iw881RkZ0bTPQDWn6eaDuh7qE8r1eddB5HT
-	SHaOW+c1/B61wWaCUBr7SJJzCPShCr6fnE8sGmH2ftwcj3/lMAoJLwxHJzpevBpY
-	HsEXZlJ0ImLkJwGBjP7HymHb0TAfhxOmMqVqwVYpYy4MiAOY4ORjjfcsleaVfUGO
-	EYBPYw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40297rg34k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 29 Jun 2024 03:24:20 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45T3OJtb011895
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 29 Jun 2024 03:24:19 GMT
-Received: from [10.48.245.152] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 28 Jun
- 2024 20:24:18 -0700
-Message-ID: <0c52c041-6091-4fe2-a519-b8d26e5fc3e8@quicinc.com>
-Date: Fri, 28 Jun 2024 20:24:18 -0700
+	s=arc-20240116; t=1719631887; c=relaxed/simple;
+	bh=UMbUn3CgsoktVzkBOL+mHpKeupOeuLEClQKjfRD/RVo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YUh1f1HCinyvL2XrqFIUcGc/SOORBxS/zPt5u5Q6xHBlnMBUL26LISqtBQTztmlUFtqPCUsUAXSHv5eWz6aQRmCCR/wtJp+IpbTiBg0zILRiP7hPknY5NiNUa/7+GUBV5dhkLaekXL94KXUNkLmQ8BDayRf0MDRyZPNlq+bY2dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m5vGZfjw; arc=none smtp.client-ip=209.85.160.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-24c9f6338a4so591500fac.1;
+        Fri, 28 Jun 2024 20:31:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719631885; x=1720236685; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mSl9MMzmnJSlDuFOdf3HeBK75wkl+RK1RWvEFXp2fhI=;
+        b=m5vGZfjwrnrjrzkWIADQ8Uq8LfsBlRcetNijK4ZrciYEXXJTnkPRGWuY3PS4EyhcYZ
+         otjb3Lq2fwFYeUsZ1BMxpJwBmDMhM94DfLM2/FOwbNHAkAKqvm9502zZtNFg1kaPbFbo
+         t5r1XooB8HpjdVQ/nzGhlAcLrXoFiPf2JMeuy3W6ooSm3dE4GNWKhRnwbuiVGsrY2fNg
+         S3KmlvpriboZwmFFwRFNUfzIXaBgBNe+49yiJgKEsirWj/qIfF1VrTXLNSjOR78NUgbB
+         mnef0BKx2qThuV9mualjcTJpwX0fyjId7pNx6ybCHGdY414h5RsRD2fYIZ4aeKNQUWhr
+         8lFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719631885; x=1720236685;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mSl9MMzmnJSlDuFOdf3HeBK75wkl+RK1RWvEFXp2fhI=;
+        b=SEiK6y+u65gaPNp/nzWKu2hORVQPlgJySMZNQL5Ss4rHllu+Kf6KmDbvHnndwJDYCe
+         p/ltxDIEG2c38rxNH+VgtJ7s/E5Sa+hMzGLJV/XbE33uV9czE3NkGAenlIGv8wfia1cJ
+         3OqqMjucZVudhJA5LhlpggKBHVFVx5hqUWp0PMnA1SHXqxNof/yyRyDMnXRNUPT/EhRP
+         4N8hJR5uxfIsGGGuVYLYMHo4kSz2jrOkgSY1KKSwVl+q+u9oMa56RlS7XkKT2idUkNqk
+         YqDDBMxyHICIw8JwLD9CBoISxW8xVCP802BfE9UVOMgLCWCG0l9It910nSp/hEGlSUEO
+         WWhA==
+X-Forwarded-Encrypted: i=1; AJvYcCWAZbqTwSC63rmScNhYZFn2lUEJtyDO5wLhD9NRj7fV/lkSAqfnhZrEhBIEcqB1bZ1UQ+9hWffLyLFrTLOcafwtAlmFJSW/FH94ZDtC
+X-Gm-Message-State: AOJu0YyFXXcAnxftbbwvTBzc1imArT8lpXupRcbrTX7/6RRadRymKb/5
+	GnwCQsvIrhaivbZ2yOTMIiygEgTLQwkqFgfJAd+6upyhGNEPmc8Q
+X-Google-Smtp-Source: AGHT+IGWOucm3yANDUxSUMd+Sqwxzia3bJCdr5UpKwsT9yw8LfxMGazEPdAT+FPDio4CDnhliR47BA==
+X-Received: by 2002:a05:6870:e9aa:b0:254:a2c2:d3c3 with SMTP id 586e51a60fabf-25db340df60mr35138fac.2.1719631885592;
+        Fri, 28 Jun 2024 20:31:25 -0700 (PDT)
+Received: from [127.0.1.1] (107-197-105-120.lightspeed.sntcca.sbcglobal.net. [107.197.105.120])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-701f7b397b7sm539594a34.68.2024.06.28.20.31.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 20:31:25 -0700 (PDT)
+From: Pei Li <peili.dev@gmail.com>
+Date: Fri, 28 Jun 2024 20:31:22 -0700
+Subject: [PATCH] Fix WARNING in __ext4_ioctl
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] s390/dasd: add missing MODULE_DESCRIPTION() macros
-Content-Language: en-US
-To: Stefan Haberland <sth@linux.ibm.com>,
-        Jan Hoeppner
-	<hoeppner@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik
-	<gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian
- Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>
-CC: <linux-s390@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20240615-md-s390-drivers-s390-block-dasd-v1-1-36b200f14344@quicinc.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240615-md-s390-drivers-s390-block-dasd-v1-1-36b200f14344@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Yf5mmrD-0RqAvYnEepWgdMKZGdKY3cK6
-X-Proofpoint-GUID: Yf5mmrD-0RqAvYnEepWgdMKZGdKY3cK6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-28_18,2024-06-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
- lowpriorityscore=0 clxscore=1011 mlxscore=0 suspectscore=0 spamscore=0
- adultscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406290023
+Message-Id: <20240628-bug8-v1-1-417ef53cca33@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAAmAf2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDMyML3aTSdAtd8zRzA4NEIyOLZJNEJaDSgqLUtMwKsDHRsbW1AMPc8nx
+ WAAAA
+To: Theodore Ts'o <tytso@mit.edu>, 
+ Andreas Dilger <adilger.kernel@dilger.ca>
+Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ skhan@linuxfoundation.org, syzkaller-bugs@googlegroups.com, 
+ linux-kernel-mentees@lists.linuxfoundation.org, 
+ syzbot+2cab87506a0e7885f4b9@syzkaller.appspotmail.com, 
+ Pei Li <peili.dev@gmail.com>
+X-Mailer: b4 0.15-dev-13183
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1719631884; l=1333;
+ i=peili.dev@gmail.com; s=20240625; h=from:subject:message-id;
+ bh=UMbUn3CgsoktVzkBOL+mHpKeupOeuLEClQKjfRD/RVo=;
+ b=mek6p9iKGykiUOqRtZH7wiiHEclyE1V/+I/m0KTKQaC6EZocWYSaK0oWt3Z2kN5Ilf1L3JCNN
+ 60WZ9Ny256PAqNlMP0GuYamNeNQCnNL3me4L548CY510ClW366+MJNB
+X-Developer-Key: i=peili.dev@gmail.com; a=ed25519;
+ pk=I6GWb2uGzELGH5iqJTSK9VwaErhEZ2z2abryRD6a+4Q=
 
-On 6/15/2024 7:19 PM, Jeff Johnson wrote:
-> With ARCH=s390, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/s390/block/dasd_diag_mod.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/s390/block/dasd_eckd_mod.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/s390/block/dasd_fba_mod.o
-> 
-> Add the missing invocations of the MODULE_DESCRIPTION() macro.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
-> Corrections to these descriptions are welcomed. I'm not an expert in
-> this code so in most cases I've taken these descriptions directly from
-> code comments, Kconfig descriptions, or git logs.  History has shown
-> that in some cases these are originally wrong due to cut-n-paste
-> errors, and in other cases the drivers have evolved such that the
-> original information is no longer accurate.
-> ---
->  drivers/s390/block/dasd_diag.c | 1 +
->  drivers/s390/block/dasd_eckd.c | 1 +
->  drivers/s390/block/dasd_fba.c  | 1 +
->  3 files changed, 3 insertions(+)
-> 
-> diff --git a/drivers/s390/block/dasd_diag.c b/drivers/s390/block/dasd_diag.c
-> index ea4b1d01bb76..8245b742e4a2 100644
-> --- a/drivers/s390/block/dasd_diag.c
-> +++ b/drivers/s390/block/dasd_diag.c
-> @@ -29,6 +29,7 @@
->  #include "dasd_int.h"
->  #include "dasd_diag.h"
->  
-> +MODULE_DESCRIPTION("S/390 Support for DIAG access to DASD Disks");
->  MODULE_LICENSE("GPL");
->  
->  /* The maximum number of blocks per request (max_blocks) is dependent on the
-> diff --git a/drivers/s390/block/dasd_eckd.c b/drivers/s390/block/dasd_eckd.c
-> index 2f16f543079b..f8113974cfba 100644
-> --- a/drivers/s390/block/dasd_eckd.c
-> +++ b/drivers/s390/block/dasd_eckd.c
-> @@ -44,6 +44,7 @@
->  /* 64k are 128 x 512 byte sectors  */
->  #define DASD_RAW_SECTORS_PER_TRACK 128
->  
-> +MODULE_DESCRIPTION("S/390 DASD ECKD Disks device driver");
->  MODULE_LICENSE("GPL");
->  
->  static struct dasd_discipline dasd_eckd_discipline;
-> diff --git a/drivers/s390/block/dasd_fba.c b/drivers/s390/block/dasd_fba.c
-> index 361e9bd75257..9ef7b168aba8 100644
-> --- a/drivers/s390/block/dasd_fba.c
-> +++ b/drivers/s390/block/dasd_fba.c
-> @@ -32,6 +32,7 @@
->  #define DASD_FBA_CCW_LOCATE 0x43
->  #define DASD_FBA_CCW_DEFINE_EXTENT 0x63
->  
-> +MODULE_DESCRIPTION("S/390 DASD FBA Disks device driver");
->  MODULE_LICENSE("GPL");
->  
->  static struct dasd_discipline dasd_fba_discipline;
-> 
-> ---
-> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-> change-id: 20240615-md-s390-drivers-s390-block-dasd-9a143c6ca093
+Specify the size of s_volume_name in strscpy_pad() to avoid buffer
+overflow.
 
-Following up to see if anything else is needed from me. Hoping to see this in
-linux-next so I can remove it from my tracking spreadsheet :)
+Reported-by: syzbot+2cab87506a0e7885f4b9@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=2cab87506a0e7885f4b9
+Signed-off-by: Pei Li <peili.dev@gmail.com>
+---
+strscpy_pad() by default takes the size of destination string as the
+size to be read from source string. However, as s_volume_name is only
+declared as an array of size EXT4_LABEL_MAX, we are reading 1 byte more
+than expected.
 
-/jeff
+Specify the size of s_volume_name in strscpy_pad() to avoid buffer
+overflow.
+---
+ fs/ext4/ioctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
+index dab7acd49709..0c4fb579757a 100644
+--- a/fs/ext4/ioctl.c
++++ b/fs/ext4/ioctl.c
+@@ -1151,7 +1151,7 @@ static int ext4_ioctl_getlabel(struct ext4_sb_info *sbi, char __user *user_label
+ 	BUILD_BUG_ON(EXT4_LABEL_MAX >= FSLABEL_MAX);
+ 
+ 	lock_buffer(sbi->s_sbh);
+-	strscpy_pad(label, sbi->s_es->s_volume_name);
++	strscpy_pad(label, sbi->s_es->s_volume_name, EXT4_LABEL_MAX);
+ 	unlock_buffer(sbi->s_sbh);
+ 
+ 	if (copy_to_user(user_label, label, sizeof(label)))
+
+---
+base-commit: 55027e689933ba2e64f3d245fb1ff185b3e7fc81
+change-id: 20240628-bug8-7f700a228c4a
+
+Best regards,
+-- 
+Pei Li <peili.dev@gmail.com>
+
 
