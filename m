@@ -1,190 +1,140 @@
-Return-Path: <linux-kernel+bounces-234949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F19B91CD41
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 15:37:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43ACB91CD45
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 15:37:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C3051F22163
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 13:37:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C3251C20FAE
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 13:37:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24988120F;
-	Sat, 29 Jun 2024 13:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2A7811E2;
+	Sat, 29 Jun 2024 13:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m9wQ9gaE"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aqSLbEwA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3937D1879
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 13:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B8980BEE;
+	Sat, 29 Jun 2024 13:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719668212; cv=none; b=sBhT6c6T0vgalAVnXxX/3mqW0JXTFoqJ6djLs6Y39g85PI6o97iVrj9OtXaBO5LOpvB9LmQj+qRyGdPP4QdROwHYqbcNAajYaJ7J/Uf3XrA8vq1rpNWy9XJokgSRMFOYHHv32gNTXVNHihN+HHDk/K040+ak3ayR20N1iGpKf44=
+	t=1719668260; cv=none; b=evA9Z+CrZYRthhFJKTPt1LekJsELtPAxryD3HbtC55FEPqEFdy/wLjN3u/3Ow1jI32Sby5mRWZns5yHGHnT+p8w3H5vjfdQvvQTAeV7QTqPde9dVr0NL6ClaFWvjF0rnu7V+Ji8Hm3xHXPX2hLNqGQPXeFRHWMiiMOJYyvarZ7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719668212; c=relaxed/simple;
-	bh=pEKkk9d0dkZtVkvo71avDXYFjS+/LQXs6eudgJgzkCU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PUGT6Gn7eo41audHvVMZWGn+v9eM4gYvX6RXRoGBoCc+EaTJ0Q7dhIJNzm0w8Gu1OYljDpc8i5CGZ+QclvQS9EJE0ifZ6PC9CnYb1nfQaqF6eGMpdhTp4rLZrQ8pKq9/KpXbwNdZa3Vn6HLwJZ86Blx8q6F2ETaQj1tl8q7Mc3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m9wQ9gaE; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ec52fbb50aso17290311fa.3
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 06:36:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719668208; x=1720273008; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fb+wSaIrJVe+pkmIcOdPYU+4bx32BHvpwZol/N+Ajuo=;
-        b=m9wQ9gaEGSueTlCiFflwMTHImkHduTDhofaQZ0/fB+JwSTOdcAfWvfs865Co1e4rkf
-         rdTVWXva2aNUp8bvRbmgTRb2oLPE+EO5tlDjMM6D2k1Os1nrMCCtM3mW5M6uFURybKvF
-         xn7IuEtilhwXAe/PIuh6fopUYkk7WYfwQkfVvsRgMsEPxMXKZ9uTW+DYzJBDcMgY8Pb6
-         QaIndoqSXTV6qU1HT5e8+BC59xQfh5/zZj0MyFm3w0gc9D6rbJRh7p7ICzXkEElrnzlK
-         hWh/P5wNlUJpc/hbYL1x/uVgDhZ4y4ZrIIkK3yfge4yC0pfFDv63Gw7VU4FxmnEdvnb5
-         kCnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719668208; x=1720273008;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Fb+wSaIrJVe+pkmIcOdPYU+4bx32BHvpwZol/N+Ajuo=;
-        b=PXtoImIdTRSFQUhNmMreMmC/xoa0POzcCdaxuxNCJdCtSqTVjFpz20opGB24XEiE2t
-         3GnUkOn7xP0XG+En7MTSTcS6gL6Fm25T0cZenqF1BPFN1XjkU0JSp1XpR0ZGySDGjdIP
-         KY6KK7S4gQpNGtBPXSufa34s1/fyYUc+SUDSSOZOCCq+ZuS0new75q6BkK1dITObcwXC
-         Djjw0gscgs15DMweQCi7Ss6bu9xmlqCwoNC7PrscEAVKkxCaBocTnD+46b4CO1xShlYR
-         mg1Ypl8fCgk3t0vdMmsXTUtrwb7LIXd9nygON8pVOguxK8REUDeVxFrJbCAgtDEfd9z/
-         M1MQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0qeA9Ip1yH16rRuIGIwzshH9lYUzX2fbO0cyzzqpouYgJQThKxXcQRfL/joC6e+J8zqIOwTr7qCBev91lP0CkehGzEL9ys3baC8fv
-X-Gm-Message-State: AOJu0YzE7VrNKX5ADrPvw7+8xLBRPwNVfh1WowWALlUNcmyrkkcEnizj
-	2rBjz9hg+Nbkula2R/LG8gSrwC3z43Az0/ZuyodG5Odw7pcv6yv1PYs8wA8iYdA=
-X-Google-Smtp-Source: AGHT+IFViPkvLnjVI+tzuVPmDLNUpmDc9Ajbta0rj8EHH09MphUCQjSVvr6pLzm9yp2KFajt9W7Q6A==
-X-Received: by 2002:a2e:b00e:0:b0:2ec:5785:ee97 with SMTP id 38308e7fff4ca-2ee5e707ddemr8165451fa.53.1719668208268;
-        Sat, 29 Jun 2024 06:36:48 -0700 (PDT)
-Received: from [192.168.215.29] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5861381756esm2268082a12.56.2024.06.29.06.36.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 29 Jun 2024 06:36:47 -0700 (PDT)
-Message-ID: <bc6d0faa-b3d6-4094-b569-dec3a5ed7545@linaro.org>
-Date: Sat, 29 Jun 2024 15:36:46 +0200
+	s=arc-20240116; t=1719668260; c=relaxed/simple;
+	bh=dqQDZvowwBChjuJGhkhif3m/CmZP0CoBJ1KWcJsYoWY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=OsS9R8x1pRzh41aXAjNHmRCSzuEpUKkV8EBLiM2Rg74Vl9OSYlewbxdRuPSdx2x9GzK/JDrPqvXibcvMQ6/Oq/IU2j9Keb3You6IHi+lKe0iHPuDdeiwuEt0rGt8yHVrCfcDl180zE20U+uVrxnki71HcarzwfE77XUHKDrh2q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aqSLbEwA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A68DC2BBFC;
+	Sat, 29 Jun 2024 13:37:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719668259;
+	bh=dqQDZvowwBChjuJGhkhif3m/CmZP0CoBJ1KWcJsYoWY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=aqSLbEwAi+lF14D7sPC/B15D6Z7lGoZUVvGZxn9YX8o/H43KfUh56m2wPPo7smbys
+	 n8lndxZFWMcpd7ZVe7sb1y3CfkTMsvfTemFPPyvpJreXjP+RI0nAX2+qCUclsEGetT
+	 1/P/RrpSIdb9lAKTuTvnjrexKJPCvCT55N3QZiR07IGBecMXRfv+vN/5TlA554Kq0S
+	 ucYFqCs/Zi/qKSylmP9JPXr6i5wvXrWcqSwxCOnAAnMGRfaA+3HUV+s1hTgJiJ9a9n
+	 CePkSqUDF+jGdWemDD/Sw5yIpM4lq9zjLB20rqekhAYmOo8/1rAfndRw188Go5OypW
+	 GQmidjmWl9eGA==
+Date: Sat, 29 Jun 2024 15:37:36 +0200
+From: Wolfram Sang <wsa@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: [PULL REQUEST] i2c-for-6.10-rc6
+Message-ID: <ZoAOIATcp1T_89x2@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 0/6] Add interconnect driver for IPQ9574 SoC
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, djakov@kernel.org,
- dmitry.baryshkov@linaro.org, quic_anusha@quicinc.com,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, bryan.odonoghue@linaro.org
-References: <20240430064214.2030013-1-quic_varada@quicinc.com>
- <ZjXrTywO6+iRaEYk@hu-varada-blr.qualcomm.com>
- <90bb9256-d54d-4e01-aa06-4184e2b95d48@linaro.org>
- <Zmgc+Qzwt6Zbg/w+@hu-varada-blr.qualcomm.com>
- <ZnumpkYR2ILpbOwF@hu-varada-blr.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <ZnumpkYR2ILpbOwF@hu-varada-blr.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Etker0Y8FjzdLkMR"
+Content-Disposition: inline
 
-On 26.06.2024 7:27 AM, Varadarajan Narayanan wrote:
-> On Tue, Jun 11, 2024 at 03:16:33PM +0530, Varadarajan Narayanan wrote:
->> On Thu, Jun 06, 2024 at 04:07:23PM +0200, Konrad Dybcio wrote:
->>> On 4.05.2024 10:01 AM, Varadarajan Narayanan wrote:
->>>> Bjorn,
->>>>
->>>>> On Tue, Apr 30, 2024 at 12:12:08PM +0530, Varadarajan Narayanan wrote:
->>>>> MSM platforms manage NoC related clocks and scaling from RPM.
->>>>> However, in IPQ SoCs, RPM is not involved in managing NoC
->>>>> related clocks and there is no NoC scaling.
->>>>>
->>>>> However, there is a requirement to enable some NoC interface
->>>>> clocks for the accessing the peripherals present in the
->>>>> system. Hence add a minimalistic interconnect driver that
->>>>> establishes a path from the processor/memory to those peripherals
->>>>> and vice versa.
->>>>>
->>>>> Change icc-clk driver to take master and slave ids instead
->>>>> of auto generating.
->>>>>
->>>>> Currently, drivers/clk/qcom/clk-cbf-8996.c is the only user of
->>>>> icc-clk. And, it had exactly one master and one slave node.
->>>>> For this the auto generated master (= 1) and slave (= 0) was
->>>>> enough.
->>>>>
->>>>> However, when drivers/clk/qcom/gcc-ipq9574.c wanted to make use
->>>>> of the icc-clk framework, it had more number of master and slave
->>>>> nodes and the auto generated ids did not suit the usage.
->>>>>
->>>>> ---
->>>>> v11:	No code changes
->>>>> 	Commit log changed for the first patch
->>>>> 	Added Acked-By: to 3 patches
->>>>
->>>> Can this be included in your driver changes for 6.10?
->>>
->> Konrad,
->>
->>> FWIW there is still an open discussion at v9
->>> <CAA8EJpqENsojPQmCbma_nQLEZq8nK1fz1K0JdtvLd=kPrH_DBw@mail.gmail.com>
->>
->> Thanks for reminding. Have responded to it.
->> https://lore.kernel.org/linux-arm-msm/Zmgb+OjdBNw71sC1@hu-varada-blr.qualcomm.com/
-> 
-> Bjorn/Konrad,
-> 
-> Can this be merged for 6.11. I believe the discussion open at v9
-> has been addressed. Please let me know if anything is still pending.
-> 
-> Below patches depend on this series:
-> 
-> 	PCI: https://lore.kernel.org/linux-arm-msm/20240512082858.1806694-1-quic_devipriy@quicinc.com/
-> 	NSSCC: https://lore.kernel.org/linux-arm-msm/20240625070536.3043630-1-quic_devipriy@quicinc.com/
 
-Looks solved now! Bjorn, feel free to pick this up
+--Etker0Y8FjzdLkMR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Konrad
+Linus,
+
+Arnd's patch seems a bit large for rc6. It was in place for rc3 but fell
+through the cracks :( We are sorry about that.
+
+The following changes since commit f2661062f16b2de5d7b6a5c42a9a5c96326b8454:
+
+  Linux 6.10-rc5 (2024-06-23 17:08:54 -0400)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.10-rc6
+
+for you to fetch changes up to c116deafd1a5cc1e9739099eb32114e90623209c:
+
+  i2c: testunit: discard write requests while old command is running (2024-06-28 20:44:38 +0200)
+
+----------------------------------------------------------------
+Two fixes for the testunit and and a fixup for the code reorganization
+of the previous wmt-driver
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      i2c: viai2c: turn common code into a proper module
+
+Wolfram Sang (3):
+      Merge tag 'i2c-host-fixes-6.10-rc6' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current
+      i2c: testunit: don't erase registers after STOP
+      i2c: testunit: discard write requests while old command is running
+
+
+with much appreciated quality assurance from
+----------------------------------------------------------------
+Andi Shyti (2):
+      (Rev.) i2c: testunit: discard write requests while old command is running
+      (Rev.) i2c: testunit: don't erase registers after STOP
+
+Hans Hu (1):
+      (Test) i2c: viai2c: turn common code into a proper module
+
+ drivers/i2c/busses/Makefile             |   6 +-
+ drivers/i2c/busses/i2c-viai2c-common.c  |  71 +++-----------------
+ drivers/i2c/busses/i2c-viai2c-common.h  |   2 +-
+ drivers/i2c/busses/i2c-viai2c-wmt.c     |  36 ++++++++++
+ drivers/i2c/busses/i2c-viai2c-zhaoxin.c | 113 +++++++++++++++++++++++++-------
+ drivers/i2c/i2c-slave-testunit.c        |   5 +-
+ 6 files changed, 143 insertions(+), 90 deletions(-)
+
+--Etker0Y8FjzdLkMR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaADiAACgkQFA3kzBSg
+KbaB/w/+IbGFUNgGgNSx7C/2JVazFD/j/QQWhdy+O/6SYGQMa4SIat3GYAwPy8d9
+QRl0SM0kds0e5v5Rdr7gpiuMxXnAqN/FSKYr+LPYbmOReDkWD+uaOBC5R8yRz5oA
+SeHeBqdPmwWxLFLXIMqZ3Ff55tV1kc41gR9Z+qKAHp3UdthgikDC02e4G1tX7X7S
+Ll3QItK+eGc4FPY8HpM87w34cDnR/yGipTG2vrxHFbuQR45Hs5Gmnqo7g/THVtya
+MdRJ8hZC25kWO3qb5CIcOn/IkBI/6XS/erdS0FhwhuIRvmvsEA/SerJ1aq9RVrkt
+gnDlt22BrDujX1zqKuaysjznH4kXk9p+aEKoZ02aZdpj12gpQdYilK9wGYoG5Dju
+WQSnkGEPqMJS93rx6akZ4nB75O0QYSJae6DE3Ly0x7joHlc1xwYSheC+ICJs7liQ
+aEM9oiebeF2WRLzd+MGFw7mBQ4QfTtVROJCIh3PDcEOBBS/s23+69gwlTropmquN
+B8EQt0oZbTuhKjW8ic2390kGtZcamCvhWQECjC2AwyvmnXH976/rIqH6sOWhiyQt
+A5an8GllmFrS0f6HsunZIVFyHbbRMxoEt4K/WasJbHnCDF/WAGIAeKQIUkT/vCfo
+h5RbFHn7Ms2aI3s39c+r6nIykcd1NZCQeZJ7xbFrRWO8axc2Yfw=
+=n1/r
+-----END PGP SIGNATURE-----
+
+--Etker0Y8FjzdLkMR--
 
