@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-234926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D33BB91CCD5
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 14:56:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A950091CCD9
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 14:58:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E437F1C210E6
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 12:56:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F1B42830E5
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 12:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44717D09D;
-	Sat, 29 Jun 2024 12:56:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396297E0EA;
+	Sat, 29 Jun 2024 12:58:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="glxRhO+R"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mkAnT5c/"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B11142ABA
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 12:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D986479B87
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 12:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719665807; cv=none; b=vDLCcuD0a88k1GS/eXSOvxxr+lX+C5wLWaBecXtSSjU4fVe+LRIGvVSHOzkXR4iMNtFbzNed0gRFV8MW2mJJrNOZ9cLWWr2Xx2dV23L9wWih85gkzq0oPViNoblw+Pw02gT7mAEUgaXZuzYEdc12JOGdnP/YM/OoWzDe/kvasag=
+	t=1719665925; cv=none; b=jJORoFEHNk1G4lhg7vDjQ5CakfHg18mHjnahmY5thBLivGrakNEIRFMKKQn/XToanqTiTVim/ZE0qUFxvT1B+wCphkl4TlOZvv0+tPjuzRZNCDP6jsr5re7uuqeDpaxNAIygr0Iym8ldK3/lGHLEZwH5xckk5RKHUu/hbl7D12w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719665807; c=relaxed/simple;
-	bh=aoX0AYKkE/8EHAJYrYxVzfMl8NYAv9cp+xERbNhnvDo=;
+	s=arc-20240116; t=1719665925; c=relaxed/simple;
+	bh=vDGWkwSsRo/RHGcWfPYYbGRp6w/yoKtIXAJWPvy2KMo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bpfj2J4TOctK6hrizfC1RtaUwoL8RdNWczUeHiF8gnHouK2Lox0HLSD0GnOgEW2VTmalsmtZkA0Sx5ZXy5kCOKnoRLI8FsknsrDmqRMaZLk+tiNvJDjEbzLDXLegSWD4wgGZw7GXtH5lxwc3F99jN6aRP5AaiUGNIXhhJA6dEo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=glxRhO+R; arc=none smtp.client-ip=209.85.208.42
+	 In-Reply-To:Content-Type; b=IDMWiMkd7R4yvWYEVZ2X9oomzHvJaOIpoPAAlv+bzeGPUi+hOnjRaJ+AOyTpJcdHQ5vgnY+rM3h+vvGg2XnS+kxjIp2OGEWevQNO/UFMoNerZdDMcKOTiBjqukvVbkNFQwM3qPscI+aBN8qBF1BS+7ZPGAHugJDBcaeaK+8Pxl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mkAnT5c/; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-584ef6c07c2so3868220a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 05:56:45 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a72517e6225so177669866b.0
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 05:58:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719665804; x=1720270604; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1719665922; x=1720270722; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=VLCFevl+bnXSYKqYiNMt3y9w/Slf85G42xq1zxOL/VE=;
-        b=glxRhO+R6AL5j1h8kks/6nJumjoVu9jcssqSPMtn/SmHPldhmpQB7DIMGWLqkdiBJt
-         V1zzbNfoRVFTiOrq96gdEqyD9Tgzdu331O3my1Z8Iu5lHTpGh2Dc82G/xMJ4sq29hqua
-         BmwzQ4dVJJ5YlySIf0ugaFVFW8CJPiYGZhYa8YhEsAFX6VE4lShlMLP63R1wA2ep8nWC
-         tpUVSPQLZILU8/GPIakGvTw4cAfv4dsrY8owwJDUmeGcQEAh7gfCAunMrgg53IHKj2KE
-         0zydoMgg9fYmxYtDT2rp2wEqR4Xrj96Sp757ibGafKh2AugrNYyAHKZYF2jzStQExU3Y
-         wZAQ==
+        bh=v2mP7MxtYe2gIOfvr/SrQWWXQkCRmCCOozysmV9oTS4=;
+        b=mkAnT5c/ZaNGHGA+UV3fHYG17/mufa707oZ//M8zF0tH6p5F8Nq1WndIWzZdFIKvzT
+         RABIz5Q71bzWB7HTwDenHfchx9plhT8OY3IYgwZrr6KsL73qWu4gr4rSHdyNdqhLTuD8
+         2ClgB+/XBsNNl58IPnQ95QpcNcJDghGgmHtnP1+Q6enNjtsD2x79mgdb2fYFYebdfNYr
+         eGdVFd8M4taJxVcpISxlJh0NJtcEqafltVp3RiFeBQDYf1X0ynPA5+TBqEUV1StpnKmc
+         LvAqc6s//pAwZn+CrXnXubewMv4Z6RrUL5wsFVnwzeFmJsN0cjQls0UhJsnHbgVL0+0D
+         kveQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719665804; x=1720270604;
+        d=1e100.net; s=20230601; t=1719665922; x=1720270722;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VLCFevl+bnXSYKqYiNMt3y9w/Slf85G42xq1zxOL/VE=;
-        b=q1IUF1cGftQtFjSMwfgThNcEdO48Sjgwg222FIdzIyT/i1N871j6dM8UJQJOaZqgIc
-         sREOepV+PYo8+Znzs/2Iruiq+TaoxYo6eK6EM5VXVnRyQEOHnaMUaBSDlzaG2/Z1LBcU
-         3kljbR1/l7aMv91fUnikcKvIfOxSK0mnnudGGszPDmEyylvoiOPKRXipC4gOzvsiAgn3
-         GJoCXEjluTEGAM4IljQfavZg61uidTIlWZYDaW4n6PUb3bMmA3qMzdkk2XuoTGbP/ztC
-         TYNWdcyX94suJS5zBuZcmffWHQOws8MAGMpKC2t/TASGbwDQ9Gij0jUueUB4C9xDzNzw
-         Xinw==
-X-Forwarded-Encrypted: i=1; AJvYcCXx9WOTFibBLA1YMJUVupjbF8oQg7hcd/90jfE6GRa48YTiFqb3PGZmhzK5PJ3C06zH/dViBy5AIdlGGl1p5XyOov65Na2kQIzeEour
-X-Gm-Message-State: AOJu0Yyz+fP1TS1N1pSY0dIw0Bw/tZZnA7cB4g4YRaw6xSua5tkp6Tul
-	1kpljmwAzJOy2+NmBGCr4fmnYZSaCvVb8tPWWCMmyXNRQxm1diY4u13W9gqoKQA=
-X-Google-Smtp-Source: AGHT+IEFToXVictsFhLt27KEbw2INbGmxJOI/RnHLwEHzpz95mIpAqGiJvm+Lavqpk16FUMfxkb7Jg==
-X-Received: by 2002:a17:906:2709:b0:a6f:e699:a9f8 with SMTP id a640c23a62f3a-a72aeeb255fmr258839866b.18.1719665803243;
-        Sat, 29 Jun 2024 05:56:43 -0700 (PDT)
+        bh=v2mP7MxtYe2gIOfvr/SrQWWXQkCRmCCOozysmV9oTS4=;
+        b=gS7zUgEykk/dZd0L2luavQpv3wDQMrV2eg3b7LoRwz7js0naSsjpvYQ3z7mHJca/i5
+         A/ZSNTUGmdzk060EFju3f3OLXT7NzgDNE8AYjh51pd60Os1IY7vUctTsGK1/WFGVvjOZ
+         cUfqkTL3ywNN683vfZn4Ye76QOzADxO7zw0Sfvb9gKj+sVm3HgTCZPd5pnjbZ778KBuO
+         8F0zch6QFd71gxqaPbzHKyZMQ5gXpHbiXi6uwlZlzgoprUgwh6RZv/twC4MQXoV6Wl+y
+         qyJnib2d2Oa/hYUtaKvsDd7wbvbepkZA9f9p5mPoQLjwIkBp1ugBxN2v9KQXgRXUNCh9
+         ZXqg==
+X-Forwarded-Encrypted: i=1; AJvYcCV2+i7myHMauhdSm+q7PrtZVQbB1U+CXg9dlK/s0D6aWW5zA26UwWAJsmyGyorGgnZLNppDEtP7euo6cf6i60dLIX7qoSU4r43Jl26O
+X-Gm-Message-State: AOJu0YzoX5rED6gTI32px4bppqzTAz1/09g/vj7Db1Lpt1swNHGVck/u
+	5OEB7lTr2p5VpFWiFKhR8hFrCU4tRS5pvlncvdAAiMdWpINYZ5t7wc0/FQtG9HU=
+X-Google-Smtp-Source: AGHT+IGfBm1kNYL6sngRYMXntB+6Klbn8GdkkN+/Rh8GYMfmy08RaQLGcqeGMqMAGWneA8ZdDwkf3w==
+X-Received: by 2002:a17:906:e289:b0:a6f:51d0:d226 with SMTP id a640c23a62f3a-a75144a7c20mr64191666b.66.1719665921901;
+        Sat, 29 Jun 2024 05:58:41 -0700 (PDT)
 Received: from [192.168.215.29] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab06521esm161574466b.110.2024.06.29.05.56.41
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab0657f1sm164707366b.141.2024.06.29.05.58.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 29 Jun 2024 05:56:42 -0700 (PDT)
-Message-ID: <0c47c5fa-5fe2-4675-8eb9-9707f044ce90@linaro.org>
-Date: Sat, 29 Jun 2024 14:56:40 +0200
+        Sat, 29 Jun 2024 05:58:41 -0700 (PDT)
+Message-ID: <7854b136-7a10-42c1-8384-278e22922c2a@linaro.org>
+Date: Sat, 29 Jun 2024 14:58:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,16 +76,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: Add device tree for ASUS Vivobook S
- 15
-To: wuxilin123@gmail.com, Bjorn Andersson <andersson@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>,
- Johan Hovold <johan+linaro@kernel.org>
-References: <20240628-asus-vivobook-s15-v1-0-2a1e4571b8ab@gmail.com>
- <20240628-asus-vivobook-s15-v1-2-2a1e4571b8ab@gmail.com>
+Subject: Re: [PATCH 4/7] arm64: dts: qcom: sm6115: add apr, its services and
+ simple sound node
+To: Alexey Klimov <alexey.klimov@linaro.org>, linux-sound@vger.kernel.org,
+ srinivas.kandagatla@linaro.org, bgoswami@quicinc.com, lgirdwood@gmail.com,
+ broonie@kernel.org
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ andersson@kernel.org, perex@perex.cz, tiwai@suse.com,
+ linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org,
+ devicetree@vger.kernel.org, elder@linaro.org, dmitry.baryshkov@linaro.org,
+ krzysztof.kozlowski@linaro.org, caleb.connolly@linaro.org,
+ linux-kernel@vger.kernel.org
+References: <20240628010715.438471-1-alexey.klimov@linaro.org>
+ <20240628010715.438471-5-alexey.klimov@linaro.org>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
@@ -123,74 +126,20 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20240628-asus-vivobook-s15-v1-2-2a1e4571b8ab@gmail.com>
+In-Reply-To: <20240628010715.438471-5-alexey.klimov@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 28.06.2024 1:30 PM, Xilin Wu via B4 Relay wrote:
-> From: Xilin Wu <wuxilin123@gmail.com>
+On 28.06.2024 3:07 AM, Alexey Klimov wrote:
+> Add apr (asynchronous packet router) node and its associated services
+> required to enable audio on QRB4210 RB2 platform.
+> Also, add an empty sound{} device node. This allows board dts
+> files to fill in required board specific properties.
 > 
-> ASUS Vivobook S 15 is a laptop based on the Qualcomm Snapdragon X Elite
-> SoC (X1E78100).
-> 
-> Add the device tree for the laptop with support for the following features:
-> 
-> - CPU frequency scaling up to 3.4GHz
-> - NVMe storage on PCIe 6a (capable of Gen4x4, currently limited to Gen4x2)
-> - Keyboard and touchpad
-> - WCN7850 Wi-Fi
-> - Two Type-C ports on the left side (USB3 only in one orientation)
-> - internal eDP display
-> - ADSP and CDSP remoteprocs
-> 
-> Further details could be found in the cover letter.
-> 
-> Signed-off-by: Xilin Wu <wuxilin123@gmail.com>
+> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 > ---
 
-[...]
-
-> +	pmic-glink {
-> +		compatible = "qcom,x1e80100-pmic-glink",
-> +			     "qcom,sm8550-pmic-glink",
-> +			     "qcom,pmic-glink";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		orientation-gpios = <&tlmm 121 GPIO_ACTIVE_HIGH>,
-> +				    <&tlmm 123 GPIO_ACTIVE_HIGH>;
-
-#address-/size-cells usually go at the end
-
-> +
-> +		connector@0 {
-
-Could you add a comment detailing which port is which (like in x1e80100-crd.dts)?
-
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&nvme_reg_en>;
-
-property-n
-property-names
-
-[...]
-
-> +
-> +	ports {
-> +		port@1 {
-> +			reg = <1>;
-
-Please separate properties with subnodes with a newline
-
-[...]
-
-> +
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pcie6a_default>;
-
-property-n
-property-names
-
-Looks good otherwise!
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
 Konrad
 
