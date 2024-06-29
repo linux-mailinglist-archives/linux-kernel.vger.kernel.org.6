@@ -1,227 +1,87 @@
-Return-Path: <linux-kernel+bounces-234941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 237C091CD14
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 15:26:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C822A91CD15
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 15:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2664B1C21249
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 13:26:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84880283697
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 13:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2947AE5D;
-	Sat, 29 Jun 2024 13:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="khB+ZG3o"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7B1811FE;
+	Sat, 29 Jun 2024 13:26:05 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286A251016
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 13:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EAED51016
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 13:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719667557; cv=none; b=N/TAcBq286uK07dLnjLaPHlSlNKP/BexHErpltaN8BwBg0aIro/GYFZ+rl/2D9VcOYcZXwhMwa7V/Ko4sX0x3dSyF6qGOUhlCEUTwuZtmPRsz/Sg5Dnov3218U1XZpu2OfB17mftkUUN8I4F5t+6sIkTJ+scVtwbaIkgG8dOMFQ=
+	t=1719667565; cv=none; b=VcIB7njYWax8ASvkO9Cid2R54KOGj5EmyQ0W29wFpHXdpydlmPc45GGLD7sIK1xE/xb7DuqsV+hJuGBBB+JaqOQXm0Dzx0bxoix3AngGbUmIyOSzWpz7Hs/VhWHaRQEYZ2OvwBiNbTnllRRqD9jqBvoZijeOtw63amsxPQu23yY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719667557; c=relaxed/simple;
-	bh=6EhUsA3UxVX3IQKQ+u+Zt+mCTBTcxt3GZzyVOlXeRrs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g/0kvsEHMu/bIiHADpIsAAaQcaI+6z9eVHK+2i2PMLXka8gVAcEhOQdqp2ThnQrRRKwq/uDralRciTtcsAnerzGq3sDE7Q/Awj9R6YXMhLzuZW1A/+pLq1ZLK0lKAD4+t9UYTXV0c++ZHO5vA53iaQnoqJA1ER22nF2ncgBq/nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=khB+ZG3o; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a725ea1a385so183702066b.3
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 06:25:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719667554; x=1720272354; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=3fkbnmyjpmYb5mPmveRTWfsHhRYjv7G8dpWohhpks2o=;
-        b=khB+ZG3oz6xg97Dv+97B1Rq9EV9P8O/N9G8NpUhsOT42mjr3bzUNDiZDppf4bBDwN3
-         qXlMPHFX7LrUivXG4XhIiWW4udYh9+iEuOF+T/zJ4M09VMrFdhIJvPIkvLGNjld3lzTZ
-         xWQkfnurcLohiHo8MzwT0B5m5FSGccpNnDNh0plZ33YLadNo24lK3lHldrTncwgujjjY
-         DPtOwJ7Nu5b6VP7VBRDIlHyRV8e1rqonqB5GnfvBqPvG21UF7Zg2U1eVPjxjBNsMYkLd
-         9ksfI9C9IDH78FznmmmEDmjutsFtp5nuRoLLMoobMbOxzPn716U4xMhllXWz/RHXJdBx
-         kdzw==
+	s=arc-20240116; t=1719667565; c=relaxed/simple;
+	bh=5P1CH6GzkyY5pai/w1CHGsZFKMPSk7wJa8u8CrsVCkA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=HMUbhFOHKCMI4Bn/F8uatEw+DdD3KpfLJaLoA177IYUj7rfZjfzlcVMb3zfW0owspH84cvToZfpzu7GlDdsUtAHiewpQJSkWPPz5UzX+6+20p4i/p90f4gRpBtU24Qo7RIhoErpKiwPcP/kqXcwbC1hJwlNHapyTScN2DwntWHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7f6200ad270so157490539f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 06:26:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719667554; x=1720272354;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3fkbnmyjpmYb5mPmveRTWfsHhRYjv7G8dpWohhpks2o=;
-        b=V6xc/DJ/Vm0NYKR0tPTym7CpIecFOXEO5lDkEZqX7YWxpoWV5x91J/tXF1metv05WK
-         aCdgVArjQtKd4fGryl9Czg2R66Lu53fHYYLwtjJ34zBbU9xFO2dNFoU3rMkkns9TGeKt
-         BtIKhvGnTx7B7OnJYAPOtQvLUVQICPw4kqj6DuvXFTGy9cFI+gCgOAxjJVTOhEMtNrRx
-         K+lo/GYkA2r5pl5RSx8udsF+z40FmG1IiR6VZ1b6MzGiAuGDwMBOUsE/GgvdP2p40Kqu
-         6I2P/wl/BzmU6rQgJx+JDg0uZgY0z1DzNrVWlMgaWdZGzI4B+tp1rgGvy8KObwF/3pxs
-         LzwA==
-X-Forwarded-Encrypted: i=1; AJvYcCXqA2TnwlllLzzqxbnfLS4pgchI5EvWJ0wJctaBq6yY55vlijq+mEYyUrSgYLt1rKCIdzRmP2KbRNOLODgkSZwKmYFfebn28prgEkV1
-X-Gm-Message-State: AOJu0YzQiRi2D3N6jLH6GENZlBOKqoL119vD7j0+pRZ+v8RYFC4m7IKu
-	PmY2XElLe8Gxs6W9q3pIpBJ1LR7FMWlBUWTvyHYcnNdlSeIO8/+mmf3lMyyNUpg=
-X-Google-Smtp-Source: AGHT+IHxXY3GnqAyDZpcxtE7Yybd2qLLCguisyhttFM3FF7Lao1hk9scg++tV+vI4pVCEzZTgoMfnQ==
-X-Received: by 2002:a17:907:9620:b0:a72:88e2:c30f with SMTP id a640c23a62f3a-a751447b26cmr88092866b.48.1719667554305;
-        Sat, 29 Jun 2024 06:25:54 -0700 (PDT)
-Received: from [192.168.215.29] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab0b7dcfsm164134366b.209.2024.06.29.06.25.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 29 Jun 2024 06:25:53 -0700 (PDT)
-Message-ID: <e758edc4-49b5-4b3c-abe2-7d5cbce52ee2@linaro.org>
-Date: Sat, 29 Jun 2024 15:25:51 +0200
+        d=1e100.net; s=20230601; t=1719667562; x=1720272362;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qah6vO2D/nZwZPdmC8w9RAPYgV68NoVHKtszw7TUcBw=;
+        b=J9jcrHXoJANm8qsasOE7vI0ecM051ijn0Cn2WJ+lu7XlHyoNNLiloWqP64RFV1R372
+         WbEQhhJu/nIVFBG3OUhwzdHTN6+mfddxuIhW271KMPHqFPobMS7uhVaz/3SuruPDkrz3
+         ufqETSS/KMwP0sr6SfLR/OvfgdELJA5x8C70ZXWq0jtzYrXXbN+fT4J4s0AJrHQvy771
+         Wi/A9j26NmYDhHvElB/YpFUAzo6wXmVkEubBs0vNvayE2aOUwRr9zz5BwoyxqSkCJAuK
+         UFjZ3Q+MbV1X10nxtqgjp4r0EYhEhXnF20IoJN4NBDzCQYX+VOQA2n0m4Dv6lf/jdU0C
+         rAQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZJek+SNmCcUtU9OjTDKaSw7jKbO4FimsT24vivApJVUYXzO1ke2p6/63Ae7y9xiaVyH4MVdfBtpYLiZVWoESSmdHTvg9pH7efUE0H
+X-Gm-Message-State: AOJu0YznVvLQaN45R1OmD6cemqNpL9MzKCDxSIT+96oGnDfIG7Yo9Qed
+	p9Y43ZBzckAbR5FzVFbT0HUa9DG3sYGjuxgV29gciAX6nCEQ3vpq9i+QNZoUqSFtIfalMTjGQli
+	B00JrUD8QduMvnCdw2tCShlQ2mbh/OwQ8bekR5pJowyj9idR96XSIgLw=
+X-Google-Smtp-Source: AGHT+IFvo/+Zh25Hlb4S4jnxsxsMdE8n+QhhHxJL1k6gbMASjaZsbiH4N6iV+DSRs7O9yCyRd+qiUupIawkj9vqT49t5m8i+ngNB
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 6/6] arm64: dts: qcom: ipq9574: Add icc provider
- ability to gcc
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: Georgi Djakov <djakov@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, andersson@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, quic_anusha@quicinc.com,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <1a08ef42-b52f-4c97-90d7-e7fdee7725b4@linaro.org>
- <Zmgb+OjdBNw71sC1@hu-varada-blr.qualcomm.com>
- <176137e5-6312-4d46-97b6-c4494bc1c61b@kernel.org>
- <ZmlAdETV0+6Md8HC@hu-varada-blr.qualcomm.com>
- <e24cfd23-6f77-46a0-b020-9cb3daef6930@kernel.org>
- <Zml4RQ5R5s3mVMnI@hu-varada-blr.qualcomm.com>
- <8e32a8be-dbbf-49ca-92a1-2fe3c8bfb571@kernel.org>
- <ZmpsOdsl9AMTSH88@hu-varada-blr.qualcomm.com>
- <ZnKKjomRQtJS2ZgL@hu-varada-blr.qualcomm.com>
- <9938a67b-1f6b-4955-b4c0-a9f78c55f276@linaro.org>
- <Zn54xhM/qfBv58e2@hu-varada-blr.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <Zn54xhM/qfBv58e2@hu-varada-blr.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6638:890f:b0:4b9:ad96:2adc with SMTP id
+ 8926c6da1cb9f-4bbb707534emr83180173.4.1719667562759; Sat, 29 Jun 2024
+ 06:26:02 -0700 (PDT)
+Date: Sat, 29 Jun 2024 06:26:02 -0700
+In-Reply-To: <20240629113329.2452-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000035d35b061c074ebd@google.com>
+Subject: Re: [syzbot] [bluetooth?] BUG: sleeping function called from invalid
+ context in lock_sock_nested (3)
+From: syzbot <syzbot+55cd5225f71c5cff7f6f@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 28.06.2024 10:48 AM, Varadarajan Narayanan wrote:
-> On Thu, Jun 27, 2024 at 12:00:35AM +0200, Konrad Dybcio wrote:
->> On 19.06.2024 9:36 AM, Varadarajan Narayanan wrote:
->>
->> [...]
->>
->>
->>> Tested the patches with both gcc and nsscc providers having
->>> 'sync_state' set to icc_sync_state.
->>>
->>> 	# dmesg | grep synced
->>> 	[    3.029820] qcom,gcc-ipq9574 1800000.clock-controller: interconnect provider is in synced state
->>> 	[    3.470106] qcom,nsscc-ipq9574 39b00000.clock-controller: interconnect provider is in synced state
->>>
->>> I can see that icc_sync_state is getting called and clocks
->>> related to paths with zero bandwidth are getting disabled.
->>>
->>> Will post the NSSCC patches to get the full picture.
->>
->> Going back to the original question, does removing interconnects = from
->> things like PCIe now make them not work / crash the device, which would
->> indicate the NoC clocks were indeed gated?
-> 
-> Yes. With and without 'interconnects =', the following behaviour
-> is same
-> 	* Boot completes
-> 	* PCIe devices were probed succesfully and can be
-> 	  seen in /proc/bus/pci/devices.
-> 	* icc_sync_state is called. The system has 4 pcie nodes
-> 	  in the DT, out of which pcie0 is not enabled.
-> 
-> The difference is seen in icc_sync_state
-> 
->     With 'interconnects ='
-> 
-> 	* During icc_sync_state, the following 2 clocks
-> 	  corresponding to the interconnects of 'pcie0' get
-> 	  disabled.
-> 
-> 	[    2.986356] ---> clk_core_disable_lock: gcc_anoc_pcie0_1lane_m_clk
-> 	[    3.012486] ---> clk_core_disable_lock: gcc_snoc_pcie0_1lane_s_clk
-> 
-> 	* System shutdown also completes without issues
-> 
->     Without the 'interconnects =',
-> 
-> 	* During icc_sync_state, the following clocks
-> 	  corresponding to the interconnects of all the 4 PCIe
-> 	  nodes get disabled.
-> 
-> 	[    2.887860] ---> clk_core_disable_lock: gcc_anoc_pcie0_1lane_m_clk
-> 	[    2.913988] ---> clk_core_disable_lock: gcc_snoc_pcie0_1lane_s_clk
-> 	[    2.939857] ---> clk_core_disable_lock: gcc_anoc_pcie1_1lane_m_clk
-> 	[    2.965725] ---> clk_core_disable_lock: gcc_snoc_pcie1_1lane_s_clk
-> 	[    2.991594] ---> clk_core_disable_lock: gcc_anoc_pcie2_2lane_m_clk
-> 	[    3.017463] ---> clk_core_disable_lock: gcc_snoc_pcie2_2lane_s_clk
-> 	[    3.043328] ---> clk_core_disable_lock: gcc_anoc_pcie3_2lane_m_clk
-> 	[    3.069201] ---> clk_core_disable_lock: gcc_snoc_pcie3_2lane_s_clk
-> 
-> 	* System shutdown hangs (possibly due to un-clocked
-> 	  access of PCIe register) in pcie_pme_interrupt_enable
-> 
-> 		[   10.773134]  dump_stack+0x18/0x24
-> 		[   10.776779]  pcie_pme_remove+0x2c/0x88
-> 		[   10.780078]  pcie_port_remove_service+0x50/0x74
-> 		[   10.783725]  device_remove+0x12c/0x148
-> 		[   10.788151]  __device_release_driver+0x65c/0x8cc
-> 		[   10.791972]  device_release_driver+0x2c/0x44
-> 		[   10.796746]  bus_remove_device+0xcc/0x10c
-> 		[   10.800999]  device_del+0x14c/0x400
-> 		[   10.804904]  device_unregister+0x18/0x34
-> 		[   10.808203]  remove_iter+0x2c/0x3c
-> 		[   10.812369]  device_for_each_child+0x60/0xb4
-> 		[   10.815583]  pcie_portdrv_shutdown+0x34/0x90
-> 		[   10.820009]  pci_device_shutdown+0x34/0x74
-> 		[   10.824263]  device_shutdown+0x150/0x258
-> 		[   10.828169]  kernel_restart_prepare+0x98/0xbc
-> 		[   10.832249]  kernel_restart+0x44/0x110
-> 		[   10.836502]  __do_sys_reboot+0x18c/0x304
-> 
-> I believe, this is confirms NOC clocks getting disabled by
-> icc_sync_state.
+Hello,
 
-Yes, this looks good now, thanks.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Konrad
+Reported-and-tested-by: syzbot+55cd5225f71c5cff7f6f@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         6c0483db Merge tag 'nfsd-6.10-3' of git://git.kernel.o..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=16abd699980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=67463c0717b8d4ca
+dashboard link: https://syzkaller.appspot.com/bug?extid=55cd5225f71c5cff7f6f
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=144ae3a9980000
+
+Note: testing is done by a robot and is best-effort only.
 
