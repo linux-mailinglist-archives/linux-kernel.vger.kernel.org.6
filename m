@@ -1,139 +1,215 @@
-Return-Path: <linux-kernel+bounces-234903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 561BC91CC3A
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 13:07:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00CDD91CC41
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 13:10:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0DFF1F21DB3
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 11:07:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E9FA1C21288
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 11:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C684D8BB;
-	Sat, 29 Jun 2024 11:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC3144C93;
+	Sat, 29 Jun 2024 11:10:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lFxBooZz"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IF9pcmmI"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABD8542A98
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 11:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D4E39FD9
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 11:10:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719659253; cv=none; b=Q3ZA6UQtyFsKTEYl56spuHD4zcoG4EiSr0wmtlLHLEq898q4x+ef8xwvQXfGI7C3oJSJi8SqKXH5z7GARqwljWJI3qE1O8y9fKi1TQZyQym1psKx/NdLNZCH7VUQOL7QEWww2XAJZGZdbQZNO6XlxCcFZPkxBkLGJ+Ky32Z7bKc=
+	t=1719659435; cv=none; b=XvS+ES3IDFx74wiGK67swOPcDnI1F5nLRCakAqkZaSAVX0Ixu4KWDXzb6QuueFv39tWyYGH4k1RzPN7rLSSIhLBtToQSbLAVZihsUXZiGVY+xhfYrhfEn1qiWsp6p+80tc6PsfL1CimlVD41KtJuvVE9vDJc3DgSaQBlFz0/lEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719659253; c=relaxed/simple;
-	bh=A27AZyvz2A7Q9roo7P9DdKR5Zk9tltXk4k5EOFMW2PE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K5hzd6HECMV4hzOeTADBUjcMmYEi7NgKlt0YPZ06L5Slc2InfoGNvp83NW+8DaUi2+KVeC747qtIY2e29r/Q1G22LlnCiL7QAV6TKMdBSlZt6vthXrp8WnGNeOiYhwqMygiufcOPjgf4EwJ6MFHhl+CZDSRobU1YWHTgdzcayM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lFxBooZz; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42567ddf099so10627495e9.3
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 04:07:31 -0700 (PDT)
+	s=arc-20240116; t=1719659435; c=relaxed/simple;
+	bh=qowpaKq/OhdJi8ITdojZT8NtJ5JQXS8Eub32ge7BcM8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZygcE6IyzxG/ZuNzErpPhWtxzc878bMHiKvwC8mApiNLAS1U5jmW055u7vXOUeojJuIF6lvzMKD5ZL/hKHpdf0Rh/EOYWK7usdfOJRccB49Z6Mvg0VUZKyFZAYPxfoaHiXWq/OQTje81rV7mrGGvT18l1lyAqXyhp8eAm2aaVp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IF9pcmmI; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f70c457823so7403075ad.3
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 04:10:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719659250; x=1720264050; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oeVOD5CA0cinTFO1deV1ecLyqh6tETXTXZTto3YUbA0=;
-        b=lFxBooZzp7TuRROQ2m3yEzXTLbffcnO3Yilqph9wnTL5E5b+ytlSdn/H63eAoyzpIq
-         6t48CUSaArjELxX3fnsHymiyNuJDKnozisXuU7HoyL6es14C49jC70s4LJgJC/l95Nsd
-         vEy+BmJwIw107Aym36MrVO2NFJ3Eynw621ehigotsjTIZQ9kKYUeWCSZbw7Jeh/cxHaK
-         9lH0Osntyhr1tZWrEjsefdQAy+JuldO1Wc8ySECIUIJGbsDmc2m2UJzPJUfWoUpSbkS4
-         cVBDG6aZMVZHm/QQKoaKzZbaDB8yIR4AjYEkEcHeqs9LyKicoQGg/ClNXts4PaSz8arR
-         Zgwg==
+        d=gmail.com; s=20230601; t=1719659433; x=1720264233; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pBAcVgcZQQmUaocHAdNszX5FkxHdKW1jcpkzZ5MX9kQ=;
+        b=IF9pcmmIoyJVjBG7ANVCW0Z8W/JpMoJCHrIC+xLSzM1/akI442FBKnBgtAfJ/ewjJi
+         ZNPCkR29gUHRzfsvLq9Ai4HHgC+F01pnXy5s7Xf+Nh2EadjA2XSTsnuNaDAHGwIxUIiM
+         H4HCLXezdGmPd7CMvfCjyRmcfF/5wR5Mv3vgV4HE7aMM/G5ofhpRg6qVR0AZSPMyVnZN
+         tFbl6TmRITkvV21ctah2PuqSoskvcVheFvmDUdhywnTvkq7Wx1Aysw2riVrnKQeMB0vz
+         u9ykl7YNFQsXZmq6piYPNh0b1bzsq/YzmInM8m4xhFK333PqF05dLCC5ykyrmBnZH/00
+         Ap2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719659250; x=1720264050;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oeVOD5CA0cinTFO1deV1ecLyqh6tETXTXZTto3YUbA0=;
-        b=Dxv8xK+C3akxsWQG5CIYv4omN3jYPPHZZT5VHXFSb9AXY3RAq1gnKI/+Kp6OCL0Suw
-         270pxLbE2GNM1cgHGkxkf+aoITr56YeS9j1zy3C/Fv5q9UeJRpAEwkuvhgypIMF8KNqb
-         iRyoBveyN6pmQ5ev7LH+IjjKz5YpyLlP3U2upBP+FyDcNTVwh1BVb9LNxcb6+zixGxL1
-         5HByCapPESHpTLGxSINA/HGuGz30r6dehAb02NCJyjjdRyQ7aIKitE23l6WCJliPiKIQ
-         fvxCPN1Ip9rFGh03p1+cEJjOpc7owazTGMfuAVINokz+fNsrijRAiklHn0Cne3I6Dhzm
-         7PvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9tu8C36n86B+V2KX6pO7RzUFDqfnfeeW7IF3hwpAtsktS3sOzWHjTY1NVTUQ8nyEqhT1HJm/UtRrwvPX/ow1EiFexeM+eLWFAgUnW
-X-Gm-Message-State: AOJu0YxTb6TYUw3a5tG7oAOAHw4iERdasEFCj0QXq66ea9voZgZb6KTp
-	+f6hn8oJmtF4gQ85AOBOvSugFnCtMpJorTFGD7bwOqiIBltR94b75jAdAHlaqx0=
-X-Google-Smtp-Source: AGHT+IFp0LPwn95vvUy4qg44MiPqjUSQeFK9TzL595b4Lm8//Szl2OQ26nmO4n4sJUTNlSJn3a1JJg==
-X-Received: by 2002:a5d:4eca:0:b0:367:1e6:4ab1 with SMTP id ffacd0b85a97d-367756bb503mr390586f8f.33.1719659249815;
-        Sat, 29 Jun 2024 04:07:29 -0700 (PDT)
-Received: from [192.168.0.38] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0cd71esm4641757f8f.21.2024.06.29.04.07.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 29 Jun 2024 04:07:29 -0700 (PDT)
-Message-ID: <620d1bb9-99a4-43b2-8750-8f0f3e490bb7@linaro.org>
-Date: Sat, 29 Jun 2024 12:07:27 +0100
+        d=1e100.net; s=20230601; t=1719659433; x=1720264233;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pBAcVgcZQQmUaocHAdNszX5FkxHdKW1jcpkzZ5MX9kQ=;
+        b=GKQzoDEVq5cjkMzAStXlHzDjMNHzqQLfeclBj+KEN9I1mea4M0aOevLc0ciUp2Y87a
+         UOSpQBXzpfXJRasy5CNsuYmJ5BPMCDwrbnBPRI7BfP7YEMVqNIYmOjFoC336Mx/W0iC6
+         EIWmpco+FMEw41uX84RClCLRBYPcCSZGTc5NB8uzathktj9EuSoiR9BeOzf2697CasnW
+         f67N7VHXa6Xn84sox7KFY3UYXa0vxV3DsNL8wcnrhit0OZARoazjaabiTinO7h5DHwlc
+         fruYtapXqKMhYLkNx310XrOtMOmuUZ4+OXAPJWa5ALyVb5Tsb1dAtB2QkQC2bdkT1FtB
+         /DHA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlwWOykVSyaTCvHEwozV6ByKGr9coDWxYpIn/VwOgiBlVNbnnuvzamzWJACWGTFsjQ2bywmhgD3ACyhfOJfbC0uX+geEYe8twppESC
+X-Gm-Message-State: AOJu0Yzk4BPx/7k4EzllksP1D6aajnF/TPOOrNvAqhucwFixPpfoXq8P
+	6OPzC5Vdc7HJirDgpySkQh7i4I2oDHwWUiXdr4L7uHnpk6rwtyeP
+X-Google-Smtp-Source: AGHT+IFcma5rRXL35Rr9ot3u/wZrnRCfziW0eE4+61wGxHzyqaFYi4s2Hx7oY/SVvwtFUFY0PE5FDQ==
+X-Received: by 2002:a17:902:e546:b0:1f6:fcd9:5b86 with SMTP id d9443c01a7336-1fadbc73dcemr3582105ad.12.1719659432559;
+        Sat, 29 Jun 2024 04:10:32 -0700 (PDT)
+Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac1596920sm30068975ad.268.2024.06.29.04.10.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 29 Jun 2024 04:10:32 -0700 (PDT)
+From: Barry Song <21cnbao@gmail.com>
+To: akpm@linux-foundation.org,
+	linux-mm@kvack.org
+Cc: chrisl@kernel.org,
+	david@redhat.com,
+	hannes@cmpxchg.org,
+	kasong@tencent.com,
+	linux-kernel@vger.kernel.org,
+	mhocko@suse.com,
+	nphamcs@gmail.com,
+	ryan.roberts@arm.com,
+	shy828301@gmail.com,
+	surenb@google.com,
+	kaleshsingh@google.com,
+	hughd@google.com,
+	v-songbaohua@oppo.com,
+	willy@infradead.org,
+	xiang@kernel.org,
+	ying.huang@intel.com,
+	yosryahmed@google.com,
+	baolin.wang@linux.alibaba.com,
+	shakeel.butt@linux.dev,
+	senozhatsky@chromium.org,
+	minchan@kernel.org
+Subject: [PATCH RFC v4 0/2] mm: support mTHP swap-in for zRAM-like swapfile
+Date: Sat, 29 Jun 2024 23:10:08 +1200
+Message-Id: <20240629111010.230484-1-21cnbao@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/6] arm64: dts: qcom: sc7280: Add IMX577 camera sensor
-To: Vikram Sharma <quic_vikramsa@quicinc.com>, Robert Foss
- <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Kapatrala Syed <akapatra@quicinc.com>,
- Hariram Purushothaman <hariramp@quicinc.com>,
- cros-qcom-dts-watchers@chromium.org, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Loic Poulain <loic.poulain@linaro.org>, Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-i2c@vger.kernel.org, Hariram Purushothaman
- <quic_hariramp@quicinc.com>, Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
-References: <20240629-camss_first_post_linux_next-v1-0-bc798edabc3a@quicinc.com>
- <20240629-camss_first_post_linux_next-v1-3-bc798edabc3a@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20240629-camss_first_post_linux_next-v1-3-bc798edabc3a@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 28/06/2024 19:32, Vikram Sharma wrote:
-> Add support for IMX577 camera sensor for SC7280 SoC.
-> 
-> Signed-off-by: Hariram Purushothaman <quic_hariramp@quicinc.com>
-> Signed-off-by: Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
-> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
-> ---
->   arch/arm64/boot/dts/qcom/sc7280.dtsi | 33 +++++++++++++++++++++++++++++++++
->   1 file changed, 33 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> index 9ac251fec262..1c99ee09a11a 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> @@ -5167,6 +5167,39 @@ cci3_sleep: cci3-sleep-state {
->   				bias-pull-down;
->   			};
->   
-> +			cam2_default: cam2-default {
-> +				rst {
-> +					pins = "gpio78"; /*cam3*/
+From: Barry Song <v-songbaohua@oppo.com>
 
-I don't think the /* cam3 */ adds much here TBH.
+In an embedded system like Android, more than half of anonymous memory is
+actually stored in swap devices such as zRAM. For instance, when an app 
+is switched to the background, most of its memory might be swapped out.
 
-> +					function = "gpio";
-> +					drive-strength = <2>;
-> +					bias-disable;
-> +				};
-> +
-> +				mclk {
-> +					pins = "gpio67"; /*cam3*/
-> +					function = "cam_mclk";
-> +					drive-strength = <2>; /*RB5 was 16 and i changed to 2 here*/
+Currently, we have mTHP features, but unfortunately, without support
+for large folio swap-ins, once those large folios are swapped out,
+we lose them immediately because mTHP is a one-way ticket.
 
-You can drop that comment too, actually more saliently, what are you 
-changing from 16 to 2 since its being mentioned ?
+This is unacceptable and reduces mTHP to merely a toy on systems
+with significant swap utilization.
 
----
-bod
+This patch introduces mTHP swap-in support. For now, we limit mTHP
+swap-ins to contiguous swaps that were likely swapped out from mTHP as
+a whole.
+
+Additionally, the current implementation only covers the SWAP_SYNCHRONOUS
+case. This is the simplest and most common use case, benefiting millions
+of Android phones and similar devices with minimal implementation
+cost. In this straightforward scenario, large folios are always exclusive,
+eliminating the need to handle complex rmap and swapcache issues.
+
+It offers several benefits:
+1. Enables bidirectional mTHP swapping, allowing retrieval of mTHP after
+   swap-out and swap-in.
+2. Eliminates fragmentation in swap slots and supports successful THP_SWPOUT
+   without fragmentation. Based on the observed data [1] on Chris's and Ryan's
+   THP swap allocation optimization, aligned swap-in plays a crucial role
+   in the success of THP_SWPOUT.
+3. Enables zRAM/zsmalloc to compress and decompress mTHP, reducing CPU usage
+   and enhancing compression ratios significantly. We have another patchset
+   to enable mTHP compression and decompression in zsmalloc/zRAM[2].
+
+Using the readahead mechanism to decide whether to swap in mTHP doesn't seem
+to be an optimal approach. There's a critical distinction between pagecache
+and anonymous pages: pagecache can be evicted and later retrieved from disk,
+potentially becoming a mTHP upon retrieval, whereas anonymous pages must
+always reside in memory or swapfile. If we swap in small folios and identify
+adjacent memory suitable for swapping in as mTHP, those pages that have been
+converted to small folios may never transition to mTHP. The process of
+converting mTHP into small folios remains irreversible. This introduces
+the risk of losing all mTHP through several swap-out and swap-in cycles,
+let alone losing the benefits of defragmentation, improved compression
+ratios, and reduced CPU usage based on mTHP compression/decompression.
+
+Conversely, in deploying mTHP on millions of real-world products with this
+feature in OPPO's out-of-tree code[3], we haven't observed any significant
+increase in memory footprint for 64KiB mTHP based on CONT-PTE on ARM64.
+
+[1] https://lore.kernel.org/linux-mm/20240622071231.576056-1-21cnbao@gmail.com/
+[2] https://lore.kernel.org/linux-mm/20240327214816.31191-1-21cnbao@gmail.com/
+[3] OnePlusOSS / android_kernel_oneplus_sm8550 
+https://github.com/OnePlusOSS/android_kernel_oneplus_sm8550/tree/oneplus/sm8550_u_14.0.0_oneplus11
+
+-v4:
+ Many parts of v3 have been merged into the mm tree with the help on reviewing
+ from Ryan, David, Ying and Chris etc. Thank you very much!
+ This is the final part to allocate large folios and map them.
+
+ * Use Yosry's zswap_never_enabled(), notice there is a bug. I put the bug fix
+   in this v4 RFC though it should be fixed in Yosry's patch
+ * lots of code improvement (drop large stack, hold ptl etc) according
+   to Yosry's and Ryan's feedback
+ * rebased on top of the latest mm-unstable and utilized some new helpers
+   introduced recently.
+
+-v3:
+ https://lore.kernel.org/linux-mm/20240304081348.197341-1-21cnbao@gmail.com/
+ * avoid over-writing err in __swap_duplicate_nr, pointed out by Yosry,
+   thanks!
+ * fix the issue folio is charged twice for do_swap_page, separating
+   alloc_anon_folio and alloc_swap_folio as they have many differences
+   now on
+   * memcg charing
+   * clearing allocated folio or not
+
+-v2:
+ https://lore.kernel.org/linux-mm/20240229003753.134193-1-21cnbao@gmail.com/
+ * lots of code cleanup according to Chris's comments, thanks!
+ * collect Chris's ack tags, thanks!
+ * address David's comment on moving to use folio_add_new_anon_rmap
+   for !folio_test_anon in do_swap_page, thanks!
+ * remove the MADV_PAGEOUT patch from this series as Ryan will
+   intergrate it into swap-out series
+ * Apply Kairui's work of "mm/swap: fix race when skipping swapcache"
+   on large folios swap-in as well
+ * fixed corrupted data(zero-filled data) in two races: zswap and
+   a part of entries are in swapcache while some others are not
+   in by checking SWAP_HAS_CACHE while swapping in a large folio
+
+-v1:
+ https://lore.kernel.org/all/20240118111036.72641-1-21cnbao@gmail.com/#t
+
+Barry Song (1):
+  mm: swap: introduce swapcache_prepare_nr and swapcache_clear_nr for
+    large folios swap-in
+
+Chuanhua Han (1):
+  mm: support large folios swapin as a whole for zRAM-like swapfile
+
+ include/linux/swap.h  |   4 +-
+ include/linux/zswap.h |   2 +-
+ mm/memory.c           | 210 +++++++++++++++++++++++++++++++++++-------
+ mm/swap.h             |   4 +-
+ mm/swap_state.c       |   2 +-
+ mm/swapfile.c         | 114 +++++++++++++----------
+ 6 files changed, 251 insertions(+), 85 deletions(-)
+
+-- 
+2.34.1
+
 
