@@ -1,174 +1,131 @@
-Return-Path: <linux-kernel+bounces-234771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 271E591CACB
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 05:10:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBB8B91CACD
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 05:10:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81F0F2846BB
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 03:10:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 874661F225F2
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 03:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD831D543;
-	Sat, 29 Jun 2024 03:10:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A1D1D556;
+	Sat, 29 Jun 2024 03:10:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zi+zLacS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JR3LT8Jl"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8A91CF90;
-	Sat, 29 Jun 2024 03:09:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D87522086;
+	Sat, 29 Jun 2024 03:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719630600; cv=none; b=SM+DOd+gmYITGrQo11qq+9P7Xl3izYkMUEmXboX40/fTYKNA0RSNcJtvwZNuHKDeotmhjAi8L7pvEYJDTfHDgX764blFCjG+9/adTZiZsDKigsvWEPd7U24K2JpHlhGTpIsDMXhfsfTWB/P+20P3SwGsDD/uq1vnr+uU6Mhpyig=
+	t=1719630624; cv=none; b=TOcgRktdaGtDrsMcXO7dHrWxi1AotZZy3hq9g0wH6w229JSDIdqM+i2mzCFd7uuz2flrP/a0u1wPxnsyKT12UqJ4fabViqbRrOnEUFtb7OPM65t0xO4CpvYAB/Usx4kEVJTSr/sYg1K8IaTeOk9kf7UWXBKHcQnM/jdHaEPPPTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719630600; c=relaxed/simple;
-	bh=f3l1q+6TnZPwqbHcnPQ46pla6sNSv0vzO2Ms+sBmZVY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nDht9S1MHfGbK5zjDWB1jqJwfOnqKp1m5FMtDHdeF0axP2jHGG1YaIl5VLIpE20NGx8dOk1ndwAdSmG2+GMmi34D/z+ksgAlJGxRHZqB90/Dc6D7PyWbM2tuyWsrBqbIwLovCTrHHD5bPzU35mwMbsvLhBvM6Ks0pQ3J86TJZsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zi+zLacS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DADABC116B1;
-	Sat, 29 Jun 2024 03:09:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719630599;
-	bh=f3l1q+6TnZPwqbHcnPQ46pla6sNSv0vzO2Ms+sBmZVY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Zi+zLacSovRHGT4+Eu6tPTB1T3KOx2Iv4Pxf6M+/VKoPuBplriWdmczVXieIlsAF9
-	 1qyuE1ipCkRu3i5ZgcN540sVJu29JecR4lE+8hVZQUDF2AvoMuFjwgSCIveKTLzkQM
-	 FGPYCyzLDXJKNys9uUoeMP0SQ3UrbFIuONjV+G7783yacjYlYPSf7bqgincdJYs3+u
-	 xQ3BuJ9c5NhM4xxF/ftdHLc98/F5PnjIXBE7x7dX9eWkKKSyoyuwQbFDwiGwWxY5TW
-	 QaObChfThuAA6atbSOqktMdEwJ9WW8pALLrlLORt9jzS6sNev0fvQokH+Z0JIvzLG2
-	 HuW7ZW8HU1iCg==
-Date: Sat, 29 Jun 2024 05:09:54 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Igor Pylypiv <ipylypiv@google.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v3 2/6] ata: libata-scsi: Do not overwrite valid sense
- data when CK_COND=1
-Message-ID: <Zn97AtP4IC7T1NoO@ryzen.lan>
-References: <20240626230411.3471543-1-ipylypiv@google.com>
- <20240626230411.3471543-3-ipylypiv@google.com>
- <Zn1zsaTLE3hYbSsK@ryzen.lan>
- <Zn3ffnqsN4pVZA4m@google.com>
- <Zn8EmT1fefVzgy0F@ryzen.lan>
- <Zn9H17FoDDg9hpUr@google.com>
+	s=arc-20240116; t=1719630624; c=relaxed/simple;
+	bh=ecaQLAgzhBzzmTT5df0SGRynpgMqFN50zOvlg6650X8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Ihc/NKuh0lnxZm8eJelcjZQYjqvw460RqV3oeRgG0d4mgMNkEIv5jb57AQv/6vkwB/61lSKdq6XkJ+cB19DwGt++mkZ69xjA9lJUqMIj4KUBK/LZihAEBhadw7DH0b1vvUeHtnGH1dwfOEeh7KACWXeVwtdofAlGw823RXoUtBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JR3LT8Jl; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45SG2YDn015339;
+	Sat, 29 Jun 2024 03:10:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	1uNs3pB+IC28ZfqQi+oFquJimoPG805ibakF1kqPOyw=; b=JR3LT8JlQWNPPoxU
+	Gfmq7yU6X6Lbi7qLLPZppwky/kY9EeEy1iYkMEE3P5l7/sRHjBGmInos29ao6gmv
+	9CB/KqU+Fkko3YQ69vjZ5a2RIaX4aq3pHPklUiDJFoh226qWAznfpMXAdbxxtsdD
+	ZPoiIiJH6YE28UBe+crs3x9V374SrXEKu5Hx9ygUxd1oO1AQZfqU4sTuMZXmkXMr
+	JUsp1EVbehpiw67TjO4CaiJjZMCMOigEqQ2Bx+3SYvPd3dGRP4YtFNIqF/Exm/Jy
+	bFSEdrTMVUXtozEylp6z55P05hz7KY+RZkCyjr0rRFVZblO824d5s4SlvB+NqHCL
+	cVTIfQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 400gcmgru9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 29 Jun 2024 03:10:19 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45T3AIZ0011474
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 29 Jun 2024 03:10:18 GMT
+Received: from [10.48.245.152] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 28 Jun
+ 2024 20:10:18 -0700
+Message-ID: <3f8bb9ef-059e-4ef1-9e03-f90ddc8e612f@quicinc.com>
+Date: Fri, 28 Jun 2024 20:10:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zn9H17FoDDg9hpUr@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] platform/goldfish: goldfish_pipe: add missing
+ MODULE_DESCRIPTION() macro
+Content-Language: en-US
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>
+CC: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240615-goldfish_pipe-md-v2-1-b4323a969594@quicinc.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240615-goldfish_pipe-md-v2-1-b4323a969594@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: BjjZf5qqqRVpiT9HbV2mGXDwOJHuL_dP
+X-Proofpoint-ORIG-GUID: BjjZf5qqqRVpiT9HbV2mGXDwOJHuL_dP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-28_18,2024-06-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ mlxlogscore=999 clxscore=1015 mlxscore=0 phishscore=0 impostorscore=0
+ adultscore=0 malwarescore=0 lowpriorityscore=0 priorityscore=1501
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406290023
 
-On Fri, Jun 28, 2024 at 11:31:35PM +0000, Igor Pylypiv wrote:
-> On Fri, Jun 28, 2024 at 08:44:41PM +0200, Niklas Cassel wrote:
-> > On Thu, Jun 27, 2024 at 09:54:06PM +0000, Igor Pylypiv wrote:
-> > > 
-> > > Thank you, Niklas! I agree that this code is too complicated and should be
-> > > simplified. I don't think we should change the code too much in this patch
-> > > since it is going to be backported to stable releases.
-> > > 
-> > > Would you mind sending a patch for the proposed simplifications following
-> > > this patch series?
-> > > 
-> > 
-> > I would prefer if we changed it as part of this commit to be honest.
-> > 
-> > 
-> > I also re-read the SAT spec, and found that it says that:
-> > """
-> > If the CK_COND bit is set to:
-> > a) one, then the SATL shall return a status of CHECK CONDITION upon ATA command completion,
-> > without interpreting the contents of the STATUS field and returning the ATA fields from the request
-> > completion in the sense data as specified in table 209; and
-> > b) zero, then the SATL shall terminate the command with CHECK CONDITION status only if an error
-> > occurs in processing the command. See clause 11 for a description of ATA error conditions.
-> > """
-> > 
-> > So it seems quite clear that if CK_COND == 1, we should set CHECK CONDITION,
-> > so that answers the question/uncertainty I asked/expressed in earlier emails.
-> > 
-> > 
-> > I think this patch (which should be applied on top of your v3 series),
-> > makes the code way easier to read/understand:
-> > 
+On 6/15/2024 2:34 PM, Jeff Johnson wrote:
+> With arch=x86, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/platform/goldfish/goldfish_pipe.o
 > 
-> Agree, having self-explanatory variable names makes the code much more
-> readable. I'll add the patch in v4.
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
 > 
-> Do you mind if I set you as the author of the patch with the corresponding
-> Signed-off-by tag?
-
-I still think that you are the author.
-
-But if you want, feel free to add me as: Co-developed-by
-(which would also require you to add my Signed-off-by), see:
-https://www.kernel.org/doc/html/latest/process/submitting-patches.html#when-to-use-acked-by-cc-and-co-developed-by
-
-
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+> Changes in v2:
+> - Rebased to v6.10-rc3
+> - Updated commit text to use a more recent boilerplate
+> - Since there are no matching entries in MAINTAINERS, added Andrew & Greg
+>   to see if this can go through one of their misc trees
+> - Link to v1: https://lore.kernel.org/r/20240509-goldfish_pipe-md-v1-1-acb513276263@quicinc.com
+> ---
+>  drivers/platform/goldfish/goldfish_pipe.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> > diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-> > index d5874d4b9253..5b211551ac10 100644
-> > --- a/drivers/ata/libata-scsi.c
-> > +++ b/drivers/ata/libata-scsi.c
-> > @@ -1659,26 +1656,27 @@ static void ata_scsi_qc_complete(struct ata_queued_cmd *qc)
-> >  {
-> >         struct scsi_cmnd *cmd = qc->scsicmd;
-> >         u8 *cdb = cmd->cmnd;
-> > -       int need_sense = (qc->err_mask != 0) &&
-> > -               !(qc->flags & ATA_QCFLAG_SENSE_VALID);
-> > -       int need_passthru_sense = (qc->err_mask != 0) ||
-> > -               (qc->flags & ATA_QCFLAG_SENSE_VALID);
-> > +       bool have_sense = qc->flags & ATA_QCFLAG_SENSE_VALID;
-> > +       bool is_ata_passthru = cdb[0] == ATA_16 || cdb[0] == ATA_12;
-> > +       bool is_ck_cond_request = cdb[2] & 0x20;
-> > +       bool is_error = qc->err_mask != 0;
-> >  
-> >         /* For ATA pass thru (SAT) commands, generate a sense block if
-> >          * user mandated it or if there's an error.  Note that if we
-> > -        * generate because the user forced us to [CK_COND =1], a check
-> > +        * generate because the user forced us to [CK_COND=1], a check
-> >          * condition is generated and the ATA register values are returned
-> >          * whether the command completed successfully or not. If there
-> > -        * was no error, we use the following sense data:
-> > +        * was no error, and CK_COND=1, we use the following sense data:
-> >          * sk = RECOVERED ERROR
-> >          * asc,ascq = ATA PASS-THROUGH INFORMATION AVAILABLE
-> >          */
-> > -       if (((cdb[0] == ATA_16) || (cdb[0] == ATA_12)) &&
-> > -           ((cdb[2] & 0x20) || need_passthru_sense)) {
-> > -               if (!(qc->flags & ATA_QCFLAG_SENSE_VALID))
-> > +       if (is_ata_passthru && (is_ck_cond_request || is_error || have_sense)) {
-> > +               if (!have_sense)
-> >                         ata_gen_passthru_sense(qc);
-> >                 ata_scsi_set_passthru_sense_fields(qc);
-> > -       } else if (need_sense) {
-> > +               if (is_ck_cond_request)
-> > +                       set_status_byte(qc->scsicmd, SAM_STAT_CHECK_CONDITION);
+> diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/goldfish/goldfish_pipe.c
+> index 061aa9647c19..c2aab0cfab33 100644
+> --- a/drivers/platform/goldfish/goldfish_pipe.c
+> +++ b/drivers/platform/goldfish/goldfish_pipe.c
+> @@ -946,4 +946,5 @@ static struct platform_driver goldfish_pipe_driver = {
+>  
+>  module_platform_driver(goldfish_pipe_driver);
+>  MODULE_AUTHOR("David Turner <digit@google.com>");
+> +MODULE_DESCRIPTION("Goldfish virtual device for QEMU pipes");
+>  MODULE_LICENSE("GPL v2");
 > 
-> SAM_STAT_CHECK_CONDITION will be set by ata_gen_passthru_sense(). Perhaps we
-> can move the SAM_STAT_CHECK_CONDITION setting into else if?
+> ---
+> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+> change-id: 20240509-goldfish_pipe-md-1dec20bd3a90
 
-I think it is fine that:
-if (is_ck_cond_request)
-	set_status_byte(qc->scsicmd, SAM_STAT_CHECK_CONDITION);
+Following up to see if anything else is needed from me. Hoping to see this in
+linux-next so I can remove it from my tracking spreadsheet :)
 
-might set SAM_STAT_CHECK_CONDITION even if it is already set.
-
-Personally, I think that my suggestion is slightly clearer when it comes
-to highlight the behavior of CK_COND. (CK_COND will set CHECK_CONDITION,
-regardless if successful command or error command, and regardless if
-we already had sense or not.)
-
-And considering that we finally make this hard to read code slightly more
-readable than it was to start off with, I would prefer my alternative.
-
-
-Kind regards,
-Niklas
+/jeff
 
