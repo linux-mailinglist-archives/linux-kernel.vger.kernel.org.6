@@ -1,203 +1,133 @@
-Return-Path: <linux-kernel+bounces-235065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57ADA91CF36
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 23:32:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC1C891CF38
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 23:34:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1310F282772
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 21:32:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33BB5B2155D
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 21:34:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55CC413E02E;
-	Sat, 29 Jun 2024 21:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D22013F458;
+	Sat, 29 Jun 2024 21:34:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="lIW00jCE"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kAGGW/eK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4288320F;
-	Sat, 29 Jun 2024 21:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5DA413A258;
+	Sat, 29 Jun 2024 21:34:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719696738; cv=none; b=eQZckZHZwdDBDmiCpD2Tdd3X6hzm9ASEjmoqkT3P74Q4rRVOC4kuCVrN+C4MOvfB+eYZt2ANXAQY11++5XmCF4dkt0UOoqcYxCaVvnKNAM+GeF3ieIb6E6HgrVZBQ7pLrkxwWslxk4WBaeq2TuXNL1ng6B2ze30VPaiF4gjv+mI=
+	t=1719696874; cv=none; b=GdiIyeR3snWI8jnMTWsx+rkFGSyN1dEM10sUiArH3hxF0F0IDRu+xt1X0HWnedNVEvGW49926B9h2YVkXh4AG1MIHCbTtHidyWifrMGTprf8GvXyOTU6RLVgRDALqbf2im74t6eoF7AkYbBGv3BSAdlP38gqggXPoqKwq1l30M4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719696738; c=relaxed/simple;
-	bh=wl4MR4fPe4TXQGxgnbj2K6s2iNtDcWwLhg0nPvCkUig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TyVWkDb9mRtvFcYBBYoEIaf3dY3nebJtSnijY+X72usPQPjoB/b/H2YXcljr8MyxRxD7IxEy5fhOLDCILJZQDsV1V78rfCS5DyPjNqxh/ip4RxF9t6D85TS2XCq1vgZPOMr3pp8BysqgllTu57Z+376TcklYwncnfvsHBNZKjws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=lIW00jCE; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1719696713; x=1720301513; i=deller@gmx.de;
-	bh=Vs8+siwQ7YRYNcVl7ZAqgvB6Ka6/tuWhKQGnLfn1gT4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=lIW00jCE6Dv22wuVLWPGDZNIwfbFM21jVdxta+Eyk8TflEpHWHU3jBSWRjJy7M78
-	 /y9D5d0lZ9nF+Vs8yGweFj5avsZVVuT/UhXcZm6SJczey1Mnrf+6ddwPS+bP7D73A
-	 r6DSzRnH5Ko0M05NjrMEqq1wJe1o1uEE7iDbr6R34tMqPDdRN758heDwAS8aENMUZ
-	 Ut0TMaI3U5YMp1SH9zVlAbZL+SXOZgB6m3IzM4b1rUjcsgTgRkI1xXTF88fC1pvQG
-	 eS3J44Y6x6fQHFIprJtaCth516h0kH5Jp9W/N3pR3WXlQz3K5PYvqknRY1kLl5N2S
-	 Xx+QNK2oyebYPKWSKA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.55] ([109.250.63.78]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M3UZ6-1sODu71O2k-00FQi2; Sat, 29
- Jun 2024 23:31:53 +0200
-Message-ID: <5affede5-7111-4eff-9019-abcbdac62228@gmx.de>
-Date: Sat, 29 Jun 2024 23:31:51 +0200
+	s=arc-20240116; t=1719696874; c=relaxed/simple;
+	bh=brAlC7GMJ52jyyUcexG5QqXWVvYk3xfdSHoPpTs+Hm0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=VcSeKboEXCaJMZ6Xy7lsWAZbz60oq9yzZm1BdnntWrguecNpMV96aYt0bTSeT8T6RyNHhMP4EIceINOni3aEWgQlGsj2098epb6htZ6hiypNoWWn5kqNpK5PDAOKL/oC78LjFsf0tCGD+jWYgd8viMEJcfg2vYRHLomnhIpSKNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kAGGW/eK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11732C2BBFC;
+	Sat, 29 Jun 2024 21:34:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719696874;
+	bh=brAlC7GMJ52jyyUcexG5QqXWVvYk3xfdSHoPpTs+Hm0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=kAGGW/eKuwYX2q/7m3gDl2n6UmKMTFpyU4Mt/SgF7jMcMNAXzxlmylg0w1Ys9hTAv
+	 aniObAIzSOxTvwx226nyWyGh2oHd5zU6VvtgRI35IuiHZ8WlqaYVZkXB0r/yil78zS
+	 YyGW29Z4N9/qNazLfD1H/63r+ihkUMwLqN0eSan2mG/dD2N2Dx6CwqvUWHam/+kKVf
+	 HrOGDYL2th9E6k90vG0cbVHkf0DAGZWgr1Bgx59BS5T6EiLtQCLkfMSyVUvA4Ey2WE
+	 RC6PnkVub878djH1cB7bL/kAAo4ty0IdJ5RQOdoH2v43Clj5aQv136i9YLyWTxTkM/
+	 Teg2cN0hcFwQw==
+Date: Sat, 29 Jun 2024 16:34:32 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Zhou Shengqing <zhoushengqing@ttyinfo.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, lkp@intel.com,
+	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v3] PCI: Enable io space 1k granularity for intel cpu
+ root port
+Message-ID: <20240629213432.GA1485157@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] syscalls: fix sys_fanotify_mark prototype
-To: Arnd Bergmann <arnd@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: Guenter Roeck <linux@roeck-us.net>, linux-api@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-parisc <linux-parisc@vger.kernel.org>
-References: <20240629210359.94426-1-arnd@kernel.org>
-Content-Language: en-US
-From: Helge Deller <deller@gmx.de>
-Autocrypt: addr=deller@gmx.de; keydata=
- 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
-In-Reply-To: <20240629210359.94426-1-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:YuFBkdMKhtABe1/aPj695y1WAGmtsiDjh7X1rDY5k+9zW5FaZ0i
- HE5LFufohO9jVXgG3P1ihWDCxIZgWET3WYSCcX03idlcEy3dZLn2Lood8JpkTL01OCxpWks
- OOKQUA61Mr/qycqwpjuj33O3z4Wsu7j7z7/Ppt3VeDThF5lhyqOBlEOKd5/iGyoh2VV2htt
- edLS8KbxT50OyGSmKnK0A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:R+7rKO6wNiQ=;Yr0IbvcdHgu1gHOJJvsUI5Cu/Zk
- LMhnG1SBSoTbQ9V70W999Q+0OO37zb6PxlISz3L61tulqJkDsb5pGgNcrXpSp9LglE5xl2REk
- RDNWTkct4yj+COg2KX+NJo4uHOrP3STbpCT9uA3X3OpzZk1GXxY/7dSKeqW1EiEQyIanM1uy/
- u5OSr8BSyB0Skl4BmywwONlvHrXn5DWiSsJvI/IZL7szxbQeyFrsYgdby4hSpJYUUpj/W/J0W
- vDszlyR/pnCr97LYbLXFdP681N7fnFq6U6BJrfXDnJ/PmlZYdsQmNjCuCH0QWhUED3S5bUf35
- vfKlQq/ElRmu8pL31gdpMLNHsgA+TQjR5Rk5Pc/Zj26vAKjnaL2aq0Yl8vgu285PsrSp1yiHO
- f9a93i8eU10rpnTAELRocAA8VAYwBpyxNEC7/PWx3sDy3HiSTQoI2lk984mzgWoAwqWpVwbQ5
- h7upAyMO7h1nSOfPAVpbRFO5853Vaf9snL1SEnc9hMFBpaaQeycLI3lNEpSEw7cIMuxM1o994
- wtmIExI5iy2eJzs1fURAQLuXVR2aYcqHlNr4xZfUq3exRcqtApgsDmV36yPu+go7z2RbXqbsY
- NEu3YJEEvFjOlosLffeMLQZl+q4tIBzpLAx9rDGjZpBM9kigB989HcjsQss10kMTppAVgam9i
- zYeOpfKLLp3Mfwg5wW9xyHaQ+utIpslm/3rT/WYsMKNzEuMGDLB7zuYmP74r4+3roz+HE7ng5
- f+trzFQ0+AddPFib4qbocIlKZyhnSOSal1eERLgFOyDSiN6XG6Xj9ei6gvECOhW6mP2WnDFr0
- MsNilpvMMnbHb+JYYcj4eIkv+fkY2JS+5xag1mo0ikVbw=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240627005856.11449-1-zhoushengqing@ttyinfo.com>
 
-On 6/29/24 23:03, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> My earlier fix missed an incorrect function prototype that shows up on
-> native 32-bit builds:
->
-> In file included from fs/notify/fanotify/fanotify_user.c:14:
-> include/linux/syscalls.h:248:25: error: conflicting types for 'sys_fanot=
-ify_mark'; have 'long int(int,  unsigned int,  u32,  u32,  int,  const cha=
-r *)' {aka 'long int(int,  unsigned int,  unsigned int,  unsigned int,  in=
-t,  const char *)'}
->   1924 | SYSCALL32_DEFINE6(fanotify_mark,
->        | ^~~~~~~~~~~~~~~~~
-> include/linux/syscalls.h:862:17: note: previous declaration of 'sys_fano=
-tify_mark' with type 'long int(int,  unsigned int,  u64,  int, const char =
-*)' {aka 'long int(int,  unsigned int,  long long unsigned int,  int,  con=
-st char *)'}
->
-> On x86 and powerpc, the prototype is also wrong but hidden in an #ifdef,
-> so it never caused problems.
->
-> Add another alternative declaration that matches the conditional functio=
-n
-> definition.
->
-> Fixes: 403f17a33073 ("parisc: use generic sys_fanotify_mark implementati=
-on")
-> Reported-by: Guenter Roeck <linux@roeck-us.net>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-Guenter, thanks for noticing!
-
-Arnd, I can confirm this patch fixes the 32-bit build for hppa,
-so you may add:
-Tested-by: Helge Deller <deller@gmx.de>
-
-Thank you!
-Helge
-
-
+On Thu, Jun 27, 2024 at 12:58:56AM +0000, Zhou Shengqing wrote:
+> This patch add 1k granularity for intel root port bridge.Intel latest
+> server CPU support 1K granularity,And there is an BIOS setup item named
+> "EN1K",but linux doesn't support it. if an IIO has 5 IOU (SPR has 5 IOUs)
+> all are bifurcated 2x8.In a 2P server system,There are 20 P2P bridges
+> present.if keep 4K granularity allocation,it need 20*4=80k io space,
+> exceeding 64k.I test it in a 16*nvidia 4090s system under intel eaglestrem
+> platform.There are six 4090s that cannot be allocated I/O resources.
+> So I applied this patch.And I found a similar implementation in quirks.c,
+> but it only targets the Intel P64H2 platform.
+> 
+> Signed-off-by: Zhou Shengqing <zhoushengqing@ttyinfo.com>
 > ---
-> I've queued this fix in the asm-generic tree now
->
->   include/linux/syscalls.h | 6 ++++++
->   1 file changed, 6 insertions(+)
->
-> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-> index 63424af87bba..fff820c3e93e 100644
-> --- a/include/linux/syscalls.h
-> +++ b/include/linux/syscalls.h
-> @@ -859,9 +859,15 @@ asmlinkage long sys_prlimit64(pid_t pid, unsigned i=
-nt resource,
->   				const struct rlimit64 __user *new_rlim,
->   				struct rlimit64 __user *old_rlim);
->   asmlinkage long sys_fanotify_init(unsigned int flags, unsigned int eve=
-nt_f_flags);
-> +#if defined(CONFIG_ARCH_SPLIT_ARG64)
-> +asmlinkage long sys_fanotify_mark(int fanotify_fd, unsigned int flags,
-> +                                unsigned int mask_1, unsigned int mask_=
-2,
-> +				int dfd, const char  __user * pathname);
-> +#else
->   asmlinkage long sys_fanotify_mark(int fanotify_fd, unsigned int flags,
->   				  u64 mask, int fd,
->   				  const char  __user *pathname);
-> +#endif
->   asmlinkage long sys_name_to_handle_at(int dfd, const char __user *name=
-,
->   				      struct file_handle __user *handle,
->   				      int __user *mnt_id, int flag);
+>  drivers/pci/probe.c | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+> 
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index 5fbabb4e3425..909962795311 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -461,6 +461,9 @@ static void pci_read_bridge_windows(struct pci_dev *bridge)
+>  	u32 buses;
+>  	u16 io;
+>  	u32 pmem, tmp;
+> +	u16 ven_id, dev_id;
+> +	u16 en1k = 0;
+> +	struct pci_dev *dev = NULL;
+>  	struct resource res;
+>  
+>  	pci_read_config_dword(bridge, PCI_PRIMARY_BUS, &buses);
+> @@ -478,6 +481,26 @@ static void pci_read_bridge_windows(struct pci_dev *bridge)
+>  	}
+>  	if (io) {
+>  		bridge->io_window = 1;
+> +		if (pci_is_root_bus(bridge->bus)) {
+> +			list_for_each_entry(dev, &bridge->bus->devices, bus_list) {
+> +				pci_read_config_word(dev, PCI_VENDOR_ID, &ven_id);
+> +				pci_read_config_word(dev, PCI_DEVICE_ID, &dev_id);
+> +				if (ven_id == PCI_VENDOR_ID_INTEL && dev_id == 0x09a2) {
+> +					/*IIO MISC Control offset 0x1c0*/
+> +					pci_read_config_word(dev, 0x1c0, &en1k);
+> +				}
+> +			}
+> +		/*
+> +		 *Intel ICX SPR EMR GNR
+> +		 *IIO MISC Control (IIOMISCCTRL_1_5_0_CFG) — Offset 1C0h
+> +		 *bit 2:Enable 1K (EN1K)
+> +		 *This bit when set, enables 1K granularity for I/O space decode
+> +		 *in each of the virtual P2P bridges
+> +		 *corresponding to root ports, and DMI ports.
+> +		 */
+> +		if (en1k & 0x4)
+> +			bridge->io_window_1k = 1;
+> +		}
 
+I still think this is not going to work because I don't want this kind
+of device-specific clutter in this generic path. The pcibios_*
+interfaces are history that we'd like to get rid of also, but it would
+be better than putting it here.
+
+Please follow english conventions as much as you can, e.g., space
+after "*" in comments, space after period at end of sentence,
+capitalize first word of sentence, blank line between paragraphs.
+Most of this you can see by looking at other comments.
+
+>  		pci_read_bridge_io(bridge, &res, true);
+>  	}
+>  
+> -- 
+> 2.39.2
+> 
 
