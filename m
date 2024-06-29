@@ -1,425 +1,237 @@
-Return-Path: <linux-kernel+bounces-235030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A036F91CE99
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 20:41:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8EE291CE9B
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 20:47:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8E701C20E7A
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 18:41:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B98801C20EC5
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 18:47:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 180771369AA;
-	Sat, 29 Jun 2024 18:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93637136664;
+	Sat, 29 Jun 2024 18:47:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kuFBWLuS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hYZZxRb1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A22C5660;
-	Sat, 29 Jun 2024 18:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317744B5A6;
+	Sat, 29 Jun 2024 18:47:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719686491; cv=none; b=axxExUFfnfHFPDElEsHt4lyVO6RNaEGrGQ67j2JQb0KigEGagLJZwk+dSFLuhoqoavHvpbhKd0ZvRWfjze3qccNUwgqE+lWvq25dkaSfqkPai46GupJgeM4fA7Fzv3vYXmSJ5SMP1mpYwPRfha61+DTHxW/+j5UI/Ph/gOIik2w=
+	t=1719686841; cv=none; b=Aek5sYZfUpx53Obrd8VdgvhO8/VYIYulcdjwIpfRztFrQ1Y1Sm1z+bfXt/QujRqDmSj3qSgOmUkbIDqCsIlfgz2EA1ls5UUvI+nkG8TatNTbMD6FIjBupikorLUHU23kQdXCUluDzKAMZ9dXrqK7nEqPVvhjBcPUeqZFyvsP9iQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719686491; c=relaxed/simple;
-	bh=QvapwvFyxd9QiVdG4fzZ/mb3LdJr5rEx0NRw7tsH71c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bDriwlEzXWu9alPuryeng96pGbXYRBMNDZ3KVLNQ9rWxQU4oLJHR49OYQfOSGZEIiDD8S/iJtaDB8iA9QUStMcDwfcBUE/WWiePkNQF1AXuGLPEqPa38oqnEbdJuoIqOPpfJrsNTNY9oAuST149DswOWoLpasg+DmlgjczaQkNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kuFBWLuS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B0D7C2BBFC;
-	Sat, 29 Jun 2024 18:41:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719686490;
-	bh=QvapwvFyxd9QiVdG4fzZ/mb3LdJr5rEx0NRw7tsH71c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kuFBWLuS430W9X4VWy0EakCHmQOIllvLPYbCpAf3lJvcnI1gPTZKk8eI6smAWKOoj
-	 0wBfRTOdfh0WiZL7oaSYIsyJnHZDdf99nJPdVc2H+An/nOVm2sZ72zlfNZ6K7FQ3Z+
-	 KD2pt8eiYlnupUvaFjjyx5PgSbN0SauL+wxuhanKi8RSZjQzNAebdslQi7oLcTGO2Y
-	 Mh755ua2nTPCoYB4xD131sGjVENSy04pf8uycWZR9PPu5GKyR3a3/4J6Dhu6JXuipS
-	 OCdMorKiARZRJRMcTh8m4b77OI4EG7+afS8NVvvGVfc5OL5lVxHMb9l4uV2th/rxNU
-	 nYZIOj87KI8CA==
-Date: Sat, 29 Jun 2024 19:41:22 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Yasin Lee <yasin.lee.x@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- yasin.lee.x@outlook.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH v8 3/3] iio: proximity: Add driver support for TYHX's
- HX9023S capacitive proximity sensor
-Message-ID: <20240629194122.1f4b7b3b@jic23-huawei>
-In-Reply-To: <20240625-add-tyhx-hx9023s-sensor-driver-v8-3-0c224e3bddbc@gmail.com>
-References: <20240625-add-tyhx-hx9023s-sensor-driver-v8-0-0c224e3bddbc@gmail.com>
-	<20240625-add-tyhx-hx9023s-sensor-driver-v8-3-0c224e3bddbc@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719686841; c=relaxed/simple;
+	bh=E4zUiywCt0sKLcfWlehSQEbDnjUwj7jC0wCrkGpJNuw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NOaPvGyj7etkCR/f5GasozdyGFlx1/SJ+hfIVii0r2y7YZ3kpfa/tkwah0mR1eSstX/EL3q5UWqmZZiShoFOQKbSD/ZLil9GPE9d2FGBJ2h6j+75k3fd2OpRGCTnWw1TgY4f/h72rxaMTOzBSAnT0+VpoJc7TUwjdepc2qdC89w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hYZZxRb1; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719686840; x=1751222840;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=E4zUiywCt0sKLcfWlehSQEbDnjUwj7jC0wCrkGpJNuw=;
+  b=hYZZxRb1xD6SDfpTvDpzEadDBlPWN31d3I6TrnzbEaLcAhMhjA0VMxYl
+   QiyXQUv9qZe4qH5Z3gRTGUJkZlwUxzTw3nkvM18cQ9/EKbOLNfdwcoPa2
+   FvuHTOddWrorThKXxaICEtPrDlH7ik8GGB5O6+9mGKYvO8gCmwSY914MX
+   JM7K6CO5c609cayS5nBsKwGNXrVH04cGB3f4Hp3oZs8nGefp6PCCe0HvW
+   2zRekQpttrb+UzqyviUCKfADrPPEKSIfkfOE2Xb5x9Dbc1XVOZEGs6Fbd
+   FDh3bCITfiLDAG71s1n8Sss/cyeMQzbMPvCAuqIraXnY7c0kvCUX0ipoa
+   A==;
+X-CSE-ConnectionGUID: OSElh/ZBQISyBJTqIdynQA==
+X-CSE-MsgGUID: eCtih6ARTqWEGaTFdDQuZQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11118"; a="20609258"
+X-IronPort-AV: E=Sophos;i="6.09,172,1716274800"; 
+   d="scan'208";a="20609258"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2024 11:47:19 -0700
+X-CSE-ConnectionGUID: shg5fcFPT16nUwGl5IfEgQ==
+X-CSE-MsgGUID: k98idGcUR9uZHX9j9E0ahg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,172,1716274800"; 
+   d="scan'208";a="44968259"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.94.249.84])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2024 11:47:13 -0700
+Message-ID: <d7b48d48-1bea-4dec-bf04-ed65602f4c4a@intel.com>
+Date: Sat, 29 Jun 2024 21:47:10 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/5] perf: support specify vdso path in cmdline
+To: duchangbin <changbin.du@huawei.com>
+Cc: Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "llvm@lists.linux.dev" <llvm@lists.linux.dev>
+References: <20240625033740.223009-1-changbin.du@huawei.com>
+ <20240625033740.223009-2-changbin.du@huawei.com>
+ <5a9e8dae-e9d9-4a97-98f5-d76be9068342@intel.com>
+ <7eef4826a2f3494ea1dc92ed98d543fb@huawei.com>
+ <05f95eb8-9b4c-4327-a97f-a15654278c41@intel.com>
+ <Zn37bj4LER_A1bX1@google.com> <1599b5defa46422eb66885e7430cc70f@huawei.com>
+ <18d0ae92-d764-4151-a2d6-f017b22b4c92@intel.com>
+ <88e192fb4b82454bbb008b65be94ffae@huawei.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <88e192fb4b82454bbb008b65be94ffae@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, 25 Jun 2024 23:58:54 +0800
-Yasin Lee <yasin.lee.x@gmail.com> wrote:
+On 29/06/24 05:32, duchangbin wrote:
+> On Fri, Jun 28, 2024 at 08:27:55PM +0300, Adrian Hunter wrote:
+>> On 28/06/24 07:21, duchangbin wrote:
+>>> On Thu, Jun 27, 2024 at 04:53:18PM -0700, Namhyung Kim wrote:
+>>>> Hello guys,
+>>>>
+>>>> On Wed, Jun 26, 2024 at 01:32:42PM +0300, Adrian Hunter wrote:
+>>>>> On 26/06/24 05:26, duchangbin wrote:
+>>>>>> On Tue, Jun 25, 2024 at 04:20:49PM +0300, Adrian Hunter wrote:
+>>>>>>> On 25/06/24 06:37, Changbin Du wrote:
+>>>>>>>> The vdso dumped from process memory (in buildid-cache) lacks debugging
+>>>>>>>> info. To annotate vdso symbols with source lines we need specify a
+>>>>>>>> debugging version.
+>>>>>>>>
+>>>>>>>> For x86, we can find them from your local build as
+>>>>>>>> arch/x86/entry/vdso/vdso{32,64}.so.dbg. Or they may reside in
+>>>>>>>> /lib/modules/<version>/vdso/vdso{32,64}.so on Ubuntu. But notice that
+>>>>>>>> the buildid has to match.
+>>>>>>>>
+>>>>>>>> $ sudo perf record -a
+>>>>>>>> $ sudo perf report --objdump=llvm-objdump \
+>>>>>>>>   --vdso arch/x86/entry/vdso/vdso64.so.dbg,arch/x86/entry/vdso/vdso32.so.dbg
+>>>>>>>>
+>>>>>>>> Samples: 17K of event 'cycles:P', 4000 Hz, Event count (approx.): 1760
+>>>>>>>> __vdso_clock_gettime  /work/linux-host/arch/x86/entry/vdso/vdso64.so.d
+>>>>>>>> Percent│       movq    -48(%rbp),%rsi
+>>>>>>>>        │       testq   %rax,%rax
+>>>>>>>>        │     ;               return vread_hvclock();
+>>>>>>>>        │       movq    %rax,%rdx
+>>>>>>>>        │     ;               if (unlikely(!vdso_cycles_ok(cycles)))
+>>>>>>>>        │     ↑ js      eb
+>>>>>>>>        │     ↑ jmp     74
+>>>>>>>>        │     ;               ts->tv_sec = vdso_ts->sec;
+>>>>>>>>   0.02 │147:   leaq    2(%rbx),%rax
+>>>>>>>>        │       shlq    $4, %rax
+>>>>>>>>        │       addq    %r10,%rax
+>>>>>>>>        │     ;               while ((seq = READ_ONCE(vd->seq)) & 1) {
+>>>>>>>>   9.38 │152:   movl    (%r10),%ecx
+>>>>>>>>
+>>>>>>>> When doing cross platform analysis, we also need specify the vdso path if
+>>>>>>>> we are interested in its symbols.
+>>>>>>>
+>>>>>>> Would it be possible to add vdso and vdso debug to the build-id
+>>>>>>> cache and ensure perf can find it there?
+>>>>>>>
+>>>>>>> Typically, getting dsos from another machine is handled via
+>>>>>>> build-id cache e.g. what perf-archive does
+>>>>>>>
+>>>>>> Hmm. I agree this is better alternative approach for cross-machine analysis.
+>>>>>> When collecting vdsos to buildid cache, I think we can use the local searched
+>>>>>> objects (with debug symbols) instead if its build-id matches vdsos from process
+>>>>>> dumping (the real code ran).
+>>>>>>
+>>>>>> Currently I just follow what perf does for vmlinux so to reuse most of existing
+>>>>>> code. Maybe vmlinux is too big to add to buildid-cahce?
+>>>>>>
+>>>>>> Can we keep our current strategy for now? I'll think about above options when
+>>>>>> I have more time.
+>>>>>>
+>>>>>
+>>>>> I tried adding vdso via perf buildid-cache.  It doesn't work only
+>>>>> because the lookup expects the basename to be "vdso" but it is
+>>>>> "elf".
+>>>>>
+>>>>> Adding a link from "vdso" to "elf" made it work e.g.
+>>>>>
+>>>>> $ cat gettimeofday-test.c
+>>>>> #include <stdio.h>
+>>>>> #include <sys/time.h>
+>>>>>
+>>>>> int main()
+>>>>> {
+>>>>>         struct timeval tv;
+>>>>>         int ret;
+>>>>>
+>>>>>         ret = gettimeofday(&tv, NULL);
+>>>>>         if (ret == -1) {
+>>>>>                 fprintf(stderr, "gettimeofday failed\n");
+>>>>>                 return 1;
+>>>>>         }
+>>>>>
+>>>>>         printf("%lu.%lu\n", (unsigned long)tv.tv_sec, (unsigned long)tv.tv_usec);
+>>>>>
+>>>>>         return 0;
+>>>>> $ perf record -e intel_pt//u ./gettimeofday-test
+>>>>> 1719397042.892837
+>>>>> [ perf record: Woken up 1 times to write data ]
+>>>>> [ perf record: Captured and wrote 0.026 MB perf.data ]
+>>>>> $ perf script --itrace=e
+>>>>> $ perf buildid-cache --remove /lib/modules/6.5.0-41-generic/vdso/vdso64.so
+>>>>> $ perf script --itrace=e
+>>>>> Warning:
+>>>>> 2 instruction trace errors
+>>>>>  instruction trace error type 1 time 525345.386424204 cpu 4 pid 198976 tid 198976 ip 0x7ffddb0e8e00 code 5: Failed to get instruction
+>>>>>  instruction trace error type 1 time 525345.386424829 cpu 4 pid 198976 tid 198976 ip 0x7ffddb0e884d code 5: Failed to get instruction
+>>>>> $ perf buildid-cache --add /lib/modules/6.5.0-41-generic/vdso/vdso64.so
+>>>>> $ perf script --itrace=e
+>>>>> Warning:
+>>>>> 2 instruction trace errors
+>>>>>  instruction trace error type 1 time 525345.386424204 cpu 4 pid 198976 tid 198976 ip 0x7ffddb0e8e00 code 5: Failed to get instruction
+>>>>>  instruction trace error type 1 time 525345.386424829 cpu 4 pid 198976 tid 198976 ip 0x7ffddb0e884d code 5: Failed to get instruction
+>>>>> $ cd ~/.debug/.build-id/c3/530aed66e71bfd10af66039f58cc7c4d2eaba8
+>>>>> ~/.debug/.build-id/c3/530aed66e71bfd10af66039f58cc7c4d2eaba8$ ln -s elf vdso
+>>>>> ~/.debug/.build-id/c3/530aed66e71bfd10af66039f58cc7c4d2eaba8$ ls -l
+>>>>> total 36
+>>>>> -rw-r--r-- 1 ahunter ahunter 33272 Jun 26 13:17 elf
+>>>>> -rw-r----- 1 ahunter ahunter     0 Jun 26 13:17 probes
+>>>>> lrwxrwxrwx 1 ahunter ahunter     3 Jun 26 13:18 vdso -> elf
+>>>>> /.debug/.build-id/c3/530aed66e71bfd10af66039f58cc7c4d2eaba8$ cd
+>>>>> $ perf script --itrace=e
+>>>>> $ 
+>>>>>
+>>>>> So maybe a change could be made to build_id_cache__add() to add
+>>>>> the extra link if the file name matches vdso
+>>>>  
+>>>> Thanks for doing this!  I noticed buildid_cache__basename() will handle
+>>>> the name properly once it realizes the file is a vdso.  Maybe we can
+>>>> check the filepath with some patterns, or simply add an command line
+>>>> option to say it's a vdso.
+>>>>
+>>>> Thanks,
+>>>> Namhyung
+>>>>
+>>> I added some tricks for vdso in build_id_cache__add(). It replace vdso object
+>>> with debugging one if found. Is this okay?
+>>
+>> perf has support for storing debug files in the build-id
+>> cache using the base name "debug" instead of "elf", so really
+>> it would be better to make that work
+>>
+> My thoughts are:
+>   1. add debugging vdso file as "debug" in buildid cache.
+>   2. add a new perf config item 'annotate.prefer_debug_file' (default false) to
+>      annotate with debugging object files.
 
-> A SAR sensor from NanjingTianyihexin Electronics Ltd.
-> 
-> The device has the following entry points:
-> 
-> Usual frequency:
-> - sampling_frequency
-> 
-> Instant reading of current values for different sensors:
-> - in_proximity0_raw
-> - in_proximity1_raw
-> - in_proximity2_raw
-> - in_proximity3_raw
-> - in_proximity4_raw
-> and associated events in events/
-> 
-> Signed-off-by: Yasin Lee <yasin.lee.x@gmail.com>
-Hi Yasin
-
-Definitely getting close to ready to merge.
-A few bits of review feedback inline to resolve.
-
-Jonathan
-
-> diff --git a/drivers/iio/proximity/hx9023s.c b/drivers/iio/proximity/hx9023s.c
-> new file mode 100644
-> index 000000000000..c455f20d784f
-> --- /dev/null
-> +++ b/drivers/iio/proximity/hx9023s.c
-> @@ -0,0 +1,1131 @@
-
-> +
-> +#define HX9023S_CHIP_ID 0x1D
-> +#define HX9023S_CH_NUM 5
-> +#define HX9023S_2BYTES 2
-> +#define HX9023S_3BYTES 3
-
-Don't use defines where the number is actually more meaningful
-when seen in the code.
-
-> +#define HX9023S_BYTES_MAX HX9023S_3BYTES
-This define is useful but just make it 3.
-
-> +struct hx9023s_ch_data {
-> +	int raw; /* Raw Data*/
-> +	int lp; /* Low Pass Filter Data*/
-> +	int bl; /* Base Line Data */
-> +	int diff; /* difference of Low Pass Data and Base Line Data */
-Difference
-
-for consistency of capitalizaton.
-
-
-> +static int hx9023s_ch_cfg(struct hx9023s_data *data)
-> +{
-> +	unsigned int i;
-> +	u16 reg;
-> +	u8 reg_list[HX9023S_CH_NUM * 2];
-> +	u8 ch_pos[HX9023S_CH_NUM];
-> +	u8 ch_neg[HX9023S_CH_NUM];
-> +	/* Bit positions corresponding to input pin connections */
-> +	u8 conn_cs[HX9023S_CH_NUM] = {0, 2, 4, 6, 8};
-
-Space after { and before }
-
-> +
-> +	for (i = 0; i < HX9023S_CH_NUM; i++) {
-> +		ch_pos[i] = data->ch_data[i].channel_positive == HX9023S_NOT_CONNECTED ?
-> +			HX9023S_NOT_CONNECTED : conn_cs[data->ch_data[i].channel_positive];
-> +		ch_neg[i] = data->ch_data[i].channel_negative == HX9023S_NOT_CONNECTED ?
-> +			HX9023S_NOT_CONNECTED : conn_cs[data->ch_data[i].channel_negative];
-> +
-> +		reg = (HX9023S_POS << ch_pos[i]) | (HX9023S_NEG << ch_neg[i]);
-> +		put_unaligned_le16(reg, &reg_list[i * 2]);
-> +	}
-> +
-> +	return regmap_bulk_write(data->regmap, HX9023S_CH0_CFG_7_0, reg_list, HX9023S_CH_NUM * 2);
-> +}
-
-> +
-> +static int hx9023s_sample(struct hx9023s_data *data)
-> +{
-> +	int ret, value;
-> +	unsigned int i;
-> +	u8 data_size, offset_data_size, *p, size, rx_buf[HX9023S_CH_NUM * HX9023S_BYTES_MAX];
-
-Long line combining different data types. Break them up to improve readability.
-
-	u8 rx_buf[HX9023S_CH_NUM * HX9023S_BYTES_MAX];
-	u8 data_size, offset_data_size, size;
-	u8 *p;
-
-> +
-> +	ret = hx9023s_data_lock(data, true);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = hx9023s_data_select(data);
-> +	if (ret)
-> +		goto err;
-> +
-> +	data_size = HX9023S_3BYTES;
-This local variable hurts readabilty.
-> +
-> +	/* ch0~ch3 */
-> +	p = rx_buf;
-Why local variable?
-> +	size = (HX9023S_CH_NUM - 1) * data_size;
-
-This is non obvious sizing.  Here a comment is appropriate.
-
-/* 3 bytes for each of channels 0 to 3 which have contiguous registers */
-
-> +	ret = regmap_bulk_read(data->regmap, HX9023S_RAW_BL_CH0_0, p, size);
-
-Combining above comments.
-
-	ret = regmap_bulk_read(data->regmap, HX9023S_RAW_BL_CH0_0, &rx_buf, size);
-
-> +	if (ret)
-> +		goto err;
-> +
-> +	/* ch4 */
-> +	p = rx_buf + size;
-> +	size = data_size;
-Here as well provide a comment on the fact the channel is 3 contiguous registers.
-
-
-> +	ret = regmap_bulk_read(data->regmap, HX9023S_RAW_BL_CH4_0, p, size);
-> +	if (ret)
-> +		goto err;
-> +
-> +	for (i = 0; i < HX9023S_CH_NUM; i++) {
-> +		value = get_unaligned_le16(&rx_buf[i * data_size + 1]);
-This seems odd.  From the datasheet I found seems there are some bits in
-the ch0_0 register as well. Why just pull out 16 bits?
-
-I would use a get_unaligned_le24() call to get the rest and then rely on
-shift for userspace to drop bits 3:0
-
-It it makes sense to just provide the top 16 bits thats fine.
-> +		value = sign_extend32(value, 15);
-
-Why use int to store an s16?  If you just use an s16 for value then no
-need to sign extend and then store that into an s16 .raw in the channel
-data structure.
-
-> +		data->ch_data[i].raw = 0;
-> +		data->ch_data[i].bl = 0;
-> +		if (data->ch_data[i].sel_raw)
-> +			data->ch_data[i].raw = value;
-> +		if (data->ch_data[i].sel_bl)
-> +			data->ch_data[i].bl = value;
-> +	}
-> +
-> +	/* ch0~ch3 */
-> +	p = rx_buf;
-> +	size = (HX9023S_CH_NUM - 1) * data_size;
-As above - use a comment to explain why this is 12 then just use 12.
-Current form is far form obvious.
-
-> +	ret = regmap_bulk_read(data->regmap, HX9023S_LP_DIFF_CH0_0, p, size);
-> +	if (ret)
-> +		goto err;
-> +
-> +	/* ch4 */
-> +	p = rx_buf + size;
-> +	size = data_size;
-> +	ret = regmap_bulk_read(data->regmap, HX9023S_LP_DIFF_CH4_0, p, size);
-> +	if (ret)
-> +		goto err;
-> +
-> +	for (i = 0; i < HX9023S_CH_NUM; i++) {
-> +		value = get_unaligned_le16(&rx_buf[i * data_size + 1]);
-> +		value = sign_extend32(value, 15);
-> +		data->ch_data[i].lp = 0;
-> +		data->ch_data[i].diff = 0;
-> +		if (data->ch_data[i].sel_lp)
-> +			data->ch_data[i].lp = value;
-> +		if (data->ch_data[i].sel_diff)
-> +			data->ch_data[i].diff = value;
-> +	}
-> +
-> +	for (i = 0; i < HX9023S_CH_NUM; i++) {
-> +		if (data->ch_data[i].sel_lp && data->ch_data[i].sel_bl)
-> +			data->ch_data[i].diff = data->ch_data[i].lp - data->ch_data[i].bl;
-> +	}
-> +
-> +	/* offset DAC */
-> +	offset_data_size = HX9023S_2BYTES;
-> +	p = rx_buf;
-> +	size = HX9023S_CH_NUM * offset_data_size;
-> +	ret = regmap_bulk_read(data->regmap, HX9023S_OFFSET_DAC0_7_0, p, size);
-> +	if (ret)
-> +		goto err;
-> +
-> +	for (i = 0; i < HX9023S_CH_NUM; i++) {
-> +		value = get_unaligned_le16(&rx_buf[i * offset_data_size]);
-> +		value = FIELD_GET(GENMASK(11, 0), value);
-> +		data->ch_data[i].dac = value;
-> +	}
-> +
-> +err:
-> +	return hx9023s_data_lock(data, false);
-> +}
-
-
-> +
-> +static int hx9023s_property_get(struct hx9023s_data *data)
-> +{
-> +	struct fwnode_handle *child;
-> +	struct device *dev = regmap_get_device(data->regmap);
-> +	int ret;
-> +	u32 i, reg, temp, array[2];
-> +
-> +	data->chan_in_use = 0;
-> +	for (i = 0; i < HX9023S_CH_NUM; i++) {
-> +		data->ch_data[i].channel_positive = HX9023S_NOT_CONNECTED;
-> +		data->ch_data[i].channel_negative = HX9023S_NOT_CONNECTED;
-> +	}
-> +
-> +	device_for_each_child_node(dev, child) {
-
-Use
-	device_for_each_child_node_scoped(dev, child) {
-As then no need to call fwnode_handle_put() in error paths.
-
-> +		ret = fwnode_property_read_u32(child, "reg", &reg);
-> +		if (ret || reg >= HX9023S_CH_NUM) {
-> +			fwnode_handle_put(child);
-> +			return dev_err_probe(dev, ret, "Failed to read reg\n");
-> +		}
-> +		__set_bit(reg, &data->chan_in_use);
-> +
-> +		if (fwnode_property_read_u32(child, "input-channel", &temp) == 0) {
-> +			data->ch_data[reg].channel_positive = temp;
-> +			data->ch_data[reg].channel_negative = HX9023S_NOT_CONNECTED;
-> +		} else if (fwnode_property_read_u32_array(child, "diff-channels",
-> +							array, sizeof(array)) == 0) {
-> +			data->ch_data[reg].channel_positive = array[0];
-> +			data->ch_data[reg].channel_negative = array[1];
-> +		} else {
-> +			fwnode_handle_put(child);
-> +			return dev_err_probe(dev, ret,
-> +				"Failed to read channel input for channel %d\n", reg);
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-
-
-> +
-> +static void hx9023s_push_events(struct iio_dev *indio_dev)
-> +{
-> +	struct hx9023s_data *data = iio_priv(indio_dev);
-> +	s64 timestamp = iio_get_time_ns(indio_dev);
-> +	unsigned long prox_changed;
-> +	unsigned int chan;
-> +
-> +	hx9023s_sample(data);
-
-check the return codes for these calls that involve bus transactions.
-If they fail, just return form this function having not pushed an event.
-
-Otherwise we may push stale data.
-
-> +	hx9023s_get_prox_state(data);
-> +
-> +	prox_changed = (data->chan_prox_stat ^ data->prox_state_reg) & data->chan_event;
-> +	for_each_set_bit(chan, &prox_changed, HX9023S_CH_NUM) {
-> +		unsigned int dir;
-> +
-> +		dir = (data->prox_state_reg & BIT(chan)) ? IIO_EV_DIR_FALLING : IIO_EV_DIR_RISING;
-> +
-> +		iio_push_event(indio_dev,
-> +			       IIO_UNMOD_EVENT_CODE(IIO_PROXIMITY, chan, IIO_EV_TYPE_THRESH, dir),
-> +			       timestamp);
-> +	}
-> +	data->chan_prox_stat = data->prox_state_reg;
-> +}
-
-
-
-
-
-
-> +static int hx9023s_id_check(struct iio_dev *indio_dev)
-> +{
-> +	struct hx9023s_data *data = iio_priv(indio_dev);
-> +	int ret;
-> +	unsigned int id;
-> +
-> +	ret = regmap_read(data->regmap, HX9023S_DEVICE_ID, &id);
-> +	if (ret || id != HX9023S_CHIP_ID)
-> +		return -ENODEV;
-This breaks the use of callback compatible IDs in future. It is only
-appropriate to print a warning on an unknown ID .
-Also don't eat the error value returned - it may provide a useful hint
-of a problem.
-
-	if (ret)
-		return ret;
-
-	if (id != HX9023S_CHIP_ID)
-		dev_warn(&indio_dev->dev.parent,
-			 "Unexpected chip ID, assuming compatible\n");
-
-	return 0;
-
-there are lots of older drivers where we did this wrong. We tend to
-repair this when otherwise working on a driver, so it will take a
-while before they are all fixed.
-
-
-> +
-> +	return 0;
-> +}
-> +
-> +static int hx9023s_probe(struct i2c_client *client)
-> +{
-> +	struct device *dev = &client->dev;
-> +	struct iio_dev *indio_dev;
-> +	struct hx9023s_data *data;
-> +	int ret;
-> +
-> +	indio_dev = devm_iio_device_alloc(dev, sizeof(struct hx9023s_data));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	data = iio_priv(indio_dev);
-> +	mutex_init(&data->mutex);
-> +
-> +	data->regmap = devm_regmap_init_i2c(client, &hx9023s_regmap_config);
-> +	if (IS_ERR(data->regmap))
-> +		return dev_err_probe(dev, PTR_ERR(data->regmap), "regmap init failed\n");
-> +
-> +	ret = hx9023s_property_get(data);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "dts phase failed\n");
-> +
-> +	ret = devm_regulator_get_enable(dev, "vdd");
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "regulator get failed\n");
-> +
-> +	ret = hx9023s_id_check(indio_dev);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "id check failed\n");
-
-As commented on above, this should not fail on a missmatch ont he ID, just
-on a failure to read it at all.  That enables future devices that haven't
-been made yet and happen to be compatible to be able to work with older
-linux kernels that predate them.
-
-
-> +}
+Is that needed?  Isn't the debug information read from
+the "debug" file?  If not, does that need fixing?
 
 
