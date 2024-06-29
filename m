@@ -1,148 +1,98 @@
-Return-Path: <linux-kernel+bounces-234872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 462E191CBDB
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 11:19:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1FA091CBE2
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 11:21:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFCCF1F2238D
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 09:19:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CF6328343B
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 09:21:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202293BB25;
-	Sat, 29 Jun 2024 09:18:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E62A3CF6A;
+	Sat, 29 Jun 2024 09:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cD0UhejH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="JsLkESlh"
+Received: from msa.smtpout.orange.fr (smtp-69.smtpout.orange.fr [80.12.242.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613B93BBC5;
-	Sat, 29 Jun 2024 09:18:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA68140849
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 09:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719652738; cv=none; b=AtjFV9Kd7o8dlzkuxlofwXX65J/8B8ozyMHq6lZ1+vPGLbytRFje4IswM7pZOR3rasQeDy4LigD0gd1GcRS12DAeNz+lo9F1a5uSiG1dzYP1Xq5T5Tfx9/bWasLd9fjp/uwFH5DdQszMY0OjsEvP1ziE6XRi2OPIkEnK1l0cIDk=
+	t=1719652853; cv=none; b=MyrTD5BhKF9tQTMcVvXKbRleYKvaCIwEo2U9Y/qqwhAq6SPJewmsBoBYNykGDlBhurFHAZvYWSSVa5nLIHl0Rw9C3tDdh5rOady6/2W09AQM+00sng3XyhSjlHZA/JmMUcOk2q8f2xF6+cm0tCJVR8JUxCIS1rHDm3gah8P4558=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719652738; c=relaxed/simple;
-	bh=j0D4aM0HPc9hn8KU2KMSVB0fUvC5FVvdEkb1od0ha9Y=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d3n4Eakz7ukoNvCZ3vZcC7aFeY7/Z/uCFxTvKtk5hvHQG+C3RVVcUWV/yV0OS9rgxaLH8pW73IWJOD23QQjQt/RP1cZ7m/FYm9QP6e4t0B7pXDhcdf/BEsqhNMqDxDFLhchQlpN+KjZW1a5euXPg0qRbPrO6Q4piKBZDn4sxlVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cD0UhejH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B891DC2BBFC;
-	Sat, 29 Jun 2024 09:18:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719652737;
-	bh=j0D4aM0HPc9hn8KU2KMSVB0fUvC5FVvdEkb1od0ha9Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cD0UhejHsdlBZZ3E3eAHSL8Un4GVWpUBluJ1RvU7gYspHeTFjW15HtYYj45XD2MzC
-	 SXCp1vENFFCX7mR+KpW1g1x20TOiEuPVhW8GsM9eVgw1s5x093wMmzIpoY0cS0fj07
-	 IRiIsuxdySegvLIF5B9j89do6+hpD6KfcGBkFYRWYc/0gJmlz07fj8LD2BR77G++hB
-	 X/CG2pnH0mBmstXtBezVMjg3+n2w2TmQNqOO8EQG9ibkjHrK45siiWV6PVG8feFIqD
-	 7ICHFhjt7uI01eryAuq806z2SRRLHAz0fYO28syLEngonpkS5HeeSEtAOZeCdGtnXs
-	 NJY1agnLr6+cA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sNUER-008Mh4-6l;
-	Sat, 29 Jun 2024 10:18:55 +0100
-Date: Sat, 29 Jun 2024 10:18:54 +0100
-Message-ID: <86frswhzsx.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-pci@vger.kernel.org,
-	anna-maria@linutronix.de,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	festevam@gmail.com,
-	bhelgaas@google.com,
-	rdunlap@infradead.org,
-	vidyas@nvidia.com,
-	ilpo.jarvinen@linux.intel.com,
-	apatel@ventanamicro.com,
-	kevin.tian@intel.com,
-	nipun.gupta@amd.com,
-	den@valinux.co.jp,
-	andrew@lunn.ch,
-	gregory.clement@bootlin.com,
-	sebastian.hesselbarth@gmail.com,
-	gregkh@linuxfoundation.org,
-	rafael@kernel.org,
-	alex.williamson@redhat.com,
-	will@kernel.org,
-	lorenzo.pieralisi@arm.com,
-	jgg@mellanox.com,
-	ammarfaizi2@gnuweeb.org,
-	robin.murphy@arm.com,
-	lpieralisi@kernel.org,
-	nm@ti.com,
-	kristo@kernel.org,
-	vkoul@kernel.org,
-	okaya@kernel.org,
-	agross@kernel.org,
-	andersson@kernel.org,
-	mark.rutland@arm.com,
-	shameerali.kolothum.thodi@huawei.com,
-	yuzenghui@huawei.com,
-	shivamurthy.shastri@linutronix.de
-Subject: Re: [patch V4 05/21] irqchip/gic-v3-its: Provide MSI parent for PCI/MSI[-X]
-In-Reply-To: <Zn84OIS0zLWASKr2@arm.com>
-References: <20240623142137.448898081@linutronix.de>
-	<20240623142235.024567623@linutronix.de>
-	<Zn84OIS0zLWASKr2@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1719652853; c=relaxed/simple;
+	bh=pC6V2+u2WQ4S8FkLlPfozSbePEASsC7GRAOeIw4oKM8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ePDZFyWM78Z/6ckF8GSG7aDNF7YpQaL9xZ6L1UXPEB412M9dntXJdojX9R46YKPvYvOF3l/rIwT7vXrIE9LmFCcYEp4DhRCnmMld4BulbiwbPmyMLGs3SEz454XVbQLDwYYLIqEWBf6LHHELIcGfSUzJ7pfNi3bEpKNjilv1xlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=JsLkESlh; arc=none smtp.client-ip=80.12.242.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([86.243.222.230])
+	by smtp.orange.fr with ESMTPA
+	id NUF6sgiHDa7etNUF6s5cmT; Sat, 29 Jun 2024 11:19:38 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1719652778;
+	bh=JpucOAbumbHAvBNa/G5y6qwvaXXu9oGDOGj7Rt8h4IU=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=JsLkESlhxnCH4AOpFKKtHgC4mDBa19akQInXPCbNnj95NJ8Wci32l/R3/SEs0/nlI
+	 OiLuG0aA+55ZKQODcJZw4mqFJ9UnFpn4FvUpHyvFup7F9nWnju5/znFUMaIJzTS7w6
+	 s28pwX0JmYGUtr+W+tKGS0QRMKKKqDTyexKkAMd6i1In1HWPt+/cbwZMX4ESMeWeq+
+	 hPDwdNa37H4UxaefqvbA1rNT29/LrJOwdvj0YVlTq6KzGTny2nszRyAsH5ZnI8rS8B
+	 3xzgGHvDpWMFyDWtafT+lKtwLka6Lw3t6q52x64dw/CgArFoc35nz5pA5My2fjiQgM
+	 pULIr6daqPvnw==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 29 Jun 2024 11:19:38 +0200
+X-ME-IP: 86.243.222.230
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	fparent@baylibre.com,
+	fchiby@baylibre.com,
+	s.hauer@pengutronix.de
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 0/4] soc: mediatek: pwrap: Constify some data and other improvements
+Date: Sat, 29 Jun 2024 11:19:29 +0200
+Message-ID: <cover.1719652155.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: catalin.marinas@arm.com, tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, anna-maria@linutronix.de, shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com, rdunlap@infradead.org, vidyas@nvidia.com, ilpo.jarvinen@linux.intel.com, apatel@ventanamicro.com, kevin.tian@intel.com, nipun.gupta@amd.com, den@valinux.co.jp, andrew@lunn.ch, gregory.clement@bootlin.com, sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org, rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org, lorenzo.pieralisi@arm.com, jgg@mellanox.com, ammarfaizi2@gnuweeb.org, robin.murphy@arm.com, lpieralisi@kernel.org, nm@ti.com, kristo@kernel.org, vkoul@kernel.org, okaya@kernel.org, agross@kernel.org, andersson@kernel.org, mark.rutland@arm.com, shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com, shivamurthy.shastri@linutronix.de
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, 28 Jun 2024 23:24:56 +0100,
-Catalin Marinas <catalin.marinas@arm.com> wrote:
-> 
-> Hi Thomas,
-> 
-> On Sun, Jun 23, 2024 at 05:18:39PM +0200, Thomas Gleixner wrote:
-> > From: Thomas Gleixner <tglx@linutronix.de>
-> > 
-> > The its_pci_msi_prepare() function from the ITS-PCI/MSI code provides the
-> > 'global' PCI/MSI domains. Move this function to the ITS-MSI parent code and
-> > amend the function to use the domain hardware size, which is the MSI[X]
-> > vector count, for allocating the ITS slots for the PCI device.
-> > 
-> > Enable PCI matching in msi_parent_ops and provide the necessary update to
-> > the ITS specific child domain initialization function so that the prepare
-> > callback gets invoked on allocations.
-> > 
-> > The latter might be optimized to do the allocation right at the point where
-> > the child domain is initialized, but keep it simple for now.
-> > 
-> > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> > Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
-> > Signed-off-by: Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>
-> > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> 
-> I just noticed guests (under KVM) failing to boot on my TX2 with your
-> latest branch. I bisected to this patch as the first bad commit.
+This series is motivated by patch 1. The 3 other patches are some
+additionnal goodies spotted while looking at the code.
 
-Reproduced here on a different host (M1), so this is not specific to
-TX2 (which would have been odd since KVM emulates the ITS entirely).
+Patch 1 constifies struct pmic_wrapper_type to move some data to a
+read-only section, in order to increase safety.
 
-I'll start digging.
+Patch 2 does the same for some int arrays. This helps move about 7 ko of
+data to a read-only section. Not that bad!
 
-	M.
+Patch 3 simplifies code related to clk management. It also fixes an
+issue if the driver is unloaded.
+
+Patch 4 is just a clean-up of some messages.
+
+Christophe JAILLET (4):
+  soc: mediatek: pwrap: Constify struct pmic_wrapper_type
+  soc: mediatek: pwrap: Constify some struct int[]
+  soc: mediatek: pwrap: Use devm_clk_get_[optional_]enabled()
+  soc: mediatek: pwrap: Simplify some error messages
+
+ drivers/soc/mediatek/mtk-pmic-wrap.c | 125 +++++++++------------------
+ 1 file changed, 43 insertions(+), 82 deletions(-)
 
 -- 
-Without deviation from the norm, progress is not possible.
+2.45.2
+
 
