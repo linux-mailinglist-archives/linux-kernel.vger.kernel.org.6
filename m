@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-234927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A950091CCD9
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 14:58:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E45491CCDB
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 15:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F1B42830E5
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 12:58:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E57A21F220F1
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 13:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396297E0EA;
-	Sat, 29 Jun 2024 12:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEFE67D09D;
+	Sat, 29 Jun 2024 13:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mkAnT5c/"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jetnY5ka"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D986479B87
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 12:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95E114205D
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 13:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719665925; cv=none; b=jJORoFEHNk1G4lhg7vDjQ5CakfHg18mHjnahmY5thBLivGrakNEIRFMKKQn/XToanqTiTVim/ZE0qUFxvT1B+wCphkl4TlOZvv0+tPjuzRZNCDP6jsr5re7uuqeDpaxNAIygr0Iym8ldK3/lGHLEZwH5xckk5RKHUu/hbl7D12w=
+	t=1719666027; cv=none; b=uR+2nvRERQyvim0/4UouUVBFFKtSPo1EnYGBDtxRpSwZftSr96iRIuf57Qx1Rr/WcP14L4N2Z6O39O9uJThgZEX+O2OhFbBUwSW0cYCo4ngmo+l1Z9ovxIJIZLtchRABA8kPEI0J84ENht7Zt+GRDwNHFk6n9EjV5RyLieMNCJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719665925; c=relaxed/simple;
-	bh=vDGWkwSsRo/RHGcWfPYYbGRp6w/yoKtIXAJWPvy2KMo=;
+	s=arc-20240116; t=1719666027; c=relaxed/simple;
+	bh=ot5a8rokzctOylmDMW7OKTocc2lhbdL+QbEkX/+xEOA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IDMWiMkd7R4yvWYEVZ2X9oomzHvJaOIpoPAAlv+bzeGPUi+hOnjRaJ+AOyTpJcdHQ5vgnY+rM3h+vvGg2XnS+kxjIp2OGEWevQNO/UFMoNerZdDMcKOTiBjqukvVbkNFQwM3qPscI+aBN8qBF1BS+7ZPGAHugJDBcaeaK+8Pxl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mkAnT5c/; arc=none smtp.client-ip=209.85.218.43
+	 In-Reply-To:Content-Type; b=aZ81JB6jFLMVdEa8nkIR/eTVZOxG3Mm8vSBo2dsmrZHABHw7ZLoFjFJzR8tVfX+4eA2Vc6EEnyn5pwZArpJYIO5BypdvNLQn5Mq2+0sFMtlXL9OF4bMrx8MRYHBTV6SDhqei4KKICieJCbcD2utgeD1Sx/SKvysJx/ucCFcnjzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jetnY5ka; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a72517e6225so177669866b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 05:58:43 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57d106e69a2so1172152a12.0
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 06:00:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719665922; x=1720270722; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1719666024; x=1720270824; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=v2mP7MxtYe2gIOfvr/SrQWWXQkCRmCCOozysmV9oTS4=;
-        b=mkAnT5c/ZaNGHGA+UV3fHYG17/mufa707oZ//M8zF0tH6p5F8Nq1WndIWzZdFIKvzT
-         RABIz5Q71bzWB7HTwDenHfchx9plhT8OY3IYgwZrr6KsL73qWu4gr4rSHdyNdqhLTuD8
-         2ClgB+/XBsNNl58IPnQ95QpcNcJDghGgmHtnP1+Q6enNjtsD2x79mgdb2fYFYebdfNYr
-         eGdVFd8M4taJxVcpISxlJh0NJtcEqafltVp3RiFeBQDYf1X0ynPA5+TBqEUV1StpnKmc
-         LvAqc6s//pAwZn+CrXnXubewMv4Z6RrUL5wsFVnwzeFmJsN0cjQls0UhJsnHbgVL0+0D
-         kveQ==
+        bh=UEg/qecc9GOxiH4G4/QXpIKmp7IY8s4FIWFEbQvcIJg=;
+        b=jetnY5kaZq7w0PoIWyCCpp9sSmuvfhNzFVBgcjZA7teXSacnkZFp7lXWXMP4/4MImM
+         qUdcaqp0hp03v7CnqcBdRVrNPMrSqG339araAt0qRQ6+tyolQCp6foNMHTF5xsB6JFGJ
+         pMyStqDNwuVnD+Rw7oxBk7T99RWB5YVqQqPuo/h7xftP6Y1/riBs3o5FfkCEpv5ppLu0
+         pHB8sZJqw4PrXD63O9QK0d55YZBNt9qaf6f7pTrhx4SMGtWZj9LT5MvnEDvEUQjN5MWQ
+         WE4fZjquO+olJDLGYEX+cQSIPu9axnWOL5RoibkJZdbC6dobS5fO1apGpwMewBmi4YKE
+         iBgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719665922; x=1720270722;
+        d=1e100.net; s=20230601; t=1719666024; x=1720270824;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=v2mP7MxtYe2gIOfvr/SrQWWXQkCRmCCOozysmV9oTS4=;
-        b=gS7zUgEykk/dZd0L2luavQpv3wDQMrV2eg3b7LoRwz7js0naSsjpvYQ3z7mHJca/i5
-         A/ZSNTUGmdzk060EFju3f3OLXT7NzgDNE8AYjh51pd60Os1IY7vUctTsGK1/WFGVvjOZ
-         cUfqkTL3ywNN683vfZn4Ye76QOzADxO7zw0Sfvb9gKj+sVm3HgTCZPd5pnjbZ778KBuO
-         8F0zch6QFd71gxqaPbzHKyZMQ5gXpHbiXi6uwlZlzgoprUgwh6RZv/twC4MQXoV6Wl+y
-         qyJnib2d2Oa/hYUtaKvsDd7wbvbepkZA9f9p5mPoQLjwIkBp1ugBxN2v9KQXgRXUNCh9
-         ZXqg==
-X-Forwarded-Encrypted: i=1; AJvYcCV2+i7myHMauhdSm+q7PrtZVQbB1U+CXg9dlK/s0D6aWW5zA26UwWAJsmyGyorGgnZLNppDEtP7euo6cf6i60dLIX7qoSU4r43Jl26O
-X-Gm-Message-State: AOJu0YzoX5rED6gTI32px4bppqzTAz1/09g/vj7Db1Lpt1swNHGVck/u
-	5OEB7lTr2p5VpFWiFKhR8hFrCU4tRS5pvlncvdAAiMdWpINYZ5t7wc0/FQtG9HU=
-X-Google-Smtp-Source: AGHT+IGfBm1kNYL6sngRYMXntB+6Klbn8GdkkN+/Rh8GYMfmy08RaQLGcqeGMqMAGWneA8ZdDwkf3w==
-X-Received: by 2002:a17:906:e289:b0:a6f:51d0:d226 with SMTP id a640c23a62f3a-a75144a7c20mr64191666b.66.1719665921901;
-        Sat, 29 Jun 2024 05:58:41 -0700 (PDT)
+        bh=UEg/qecc9GOxiH4G4/QXpIKmp7IY8s4FIWFEbQvcIJg=;
+        b=o3dUlXlZD1R8JByg0fvj1uUcYQ7M14cr24SYGPTs3W0ptmSU71TjXWVgdkZ2tJGyfy
+         KvRJvoYfzGWmNzm0Gi0GPMMUNOUVa2nZ93wrNdYef5JUhBdfaa7ayIXpBCBN2coiZzHH
+         G/iA+FxzBbQoICe+jLHnLePZqk+5bGjUNOA+t3LE5jd/QgnjQySU7eitgKsU8/W01hAp
+         xG7thSgUXSYXoBrzyqcEnJPDfy2ZrXlmJ8mW2cjclYF755HwswYyNInLjSuFTbVdovBK
+         wnExBLcLnlntUm3uerr7Rh3ZXcMkdcg5DRcDn/RqVeKbkZTfNu9QYwsXuJNJnFCRkUfd
+         4D4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWWmnfR/X/RdiU6A/HV8wvyw/OsQK20xROeKKhSmSXuhfzCMqIaJ6JrmZe29v/qxGxgUb5P0yV1dmtg8NsjGbkaWFgOxYdN4PyzWzjq
+X-Gm-Message-State: AOJu0Yybi2Rbr00XKNa2CcUAlq5cmLX9yqjM1kC6mirUQmNu1q/YYxtU
+	IVMh+m6W5C0qNbeVPf1QtKshmIbyMbzP1Ai76HtOTvWjjpGxBmYZdFL41qDpKFs=
+X-Google-Smtp-Source: AGHT+IHkCYiVDJCqvGrXKmZQC+62RHHte3QlwzzTtlB3bLbOCJsrqfldJ62Q4CC196+iqqHX43vVxw==
+X-Received: by 2002:a05:6402:5107:b0:57c:603a:6b2b with SMTP id 4fb4d7f45d1cf-58782a534a0mr770292a12.21.1719666023628;
+        Sat, 29 Jun 2024 06:00:23 -0700 (PDT)
 Received: from [192.168.215.29] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab0657f1sm164707366b.141.2024.06.29.05.58.39
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58614d503a6sm2217159a12.76.2024.06.29.06.00.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 29 Jun 2024 05:58:41 -0700 (PDT)
-Message-ID: <7854b136-7a10-42c1-8384-278e22922c2a@linaro.org>
-Date: Sat, 29 Jun 2024 14:58:38 +0200
+        Sat, 29 Jun 2024 06:00:23 -0700 (PDT)
+Message-ID: <6c074d15-79b4-44b0-b0fd-698da7b8eb9f@linaro.org>
+Date: Sat, 29 Jun 2024 15:00:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,8 +76,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] arm64: dts: qcom: sm6115: add apr, its services and
- simple sound node
+Subject: Re: [PATCH 7/7] arm64: dts: qcom: qrb4210-rb2: add HDMI audio
+ playback support
 To: Alexey Klimov <alexey.klimov@linaro.org>, linux-sound@vger.kernel.org,
  srinivas.kandagatla@linaro.org, bgoswami@quicinc.com, lgirdwood@gmail.com,
  broonie@kernel.org
@@ -88,7 +88,7 @@ Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
  krzysztof.kozlowski@linaro.org, caleb.connolly@linaro.org,
  linux-kernel@vger.kernel.org
 References: <20240628010715.438471-1-alexey.klimov@linaro.org>
- <20240628010715.438471-5-alexey.klimov@linaro.org>
+ <20240628010715.438471-8-alexey.klimov@linaro.org>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
@@ -126,20 +126,34 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20240628010715.438471-5-alexey.klimov@linaro.org>
+In-Reply-To: <20240628010715.438471-8-alexey.klimov@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 28.06.2024 3:07 AM, Alexey Klimov wrote:
-> Add apr (asynchronous packet router) node and its associated services
-> required to enable audio on QRB4210 RB2 platform.
-> Also, add an empty sound{} device node. This allows board dts
-> files to fill in required board specific properties.
+> Add sound node, dsp-related pieces and LPASS pinctrl to enable
+> HDMI audio support on Qualcomm QRB4210 RB2 board. That is the
+> only sound output supported for now.
 > 
 > Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 > ---
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+[...]
+
+> +&q6asmdai {
+> +	dai@0 {
+> +		reg = <0>;
+> +	};
+> +
+> +	dai@1 {
+> +		reg = <1>;
+> +	};
+> +
+> +	dai@2 {
+> +		reg = <2>;
+> +	};
+
+Should these DAIs be moved to the SoC node?
 
 Konrad
 
