@@ -1,148 +1,120 @@
-Return-Path: <linux-kernel+bounces-234969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FCF791CD9D
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 16:30:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 465ED91CDA3
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 16:40:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0F59B2260F
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 14:30:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEB1E2833BD
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 14:40:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5796823B8;
-	Sat, 29 Jun 2024 14:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39C3D824A0;
+	Sat, 29 Jun 2024 14:40:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uhMMqDAc"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="U023f2iv"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67FEB7D3F5
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 14:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2E25660;
+	Sat, 29 Jun 2024 14:40:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719671446; cv=none; b=Lxr4Wn7JliIw4tqe9Dk8HmYSl40PjkMIrmDwdcooFE6mYuvlWdH26TfcLyHTxp2A+172NGtN6AugU4UAQZ4ybDXffTX3eml0atiZqfjJXUq3Vpv3iIygISdQtyEEQ00bWpz7zrkpzy0K7Hqiod/TgE1Dr6MueAPJdUf+2oGNEpM=
+	t=1719672047; cv=none; b=eopcBHJ6ihvKK5e5sdj2R2RqAW4+1W49kYM73ZuMiCAcOsy47MUTkV8o/a+17BHw22Sr7AebbLobjX8w5IucX95YuF7yugaPpMOThFAAvB+5HfYtJerrRhCaKbUSjVJTaLFq36LguWhLrwYuozwiABN8KAft+QK2dnrLsGRLM94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719671446; c=relaxed/simple;
-	bh=6GbLi1JD0DeqwbARIUWnsx6f1P44NPHpbsq6lRJDRm0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AwFO2QSutUcGO6qHGoOhv2BlQz7dCUdWfwLRyCYHzmX/0/R5umPbVO2sq8NkyIQN8ZZ3/NE/buywBZPweItJQzEDYunPBSzXddbbe/6w7DKgrs88hLbbc/YuHMsT6odbyxteK/xpRR5l1rPsCo1q2OoNdScmoB4AVMktJoHUTzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uhMMqDAc; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57d119fddd9so4844a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 07:30:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719671443; x=1720276243; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zrud1JhfOlUfYB81S7Syr/8uTZeCdrf+FlsoxmK/I4o=;
-        b=uhMMqDAcFyJ8riw892JZyCOfM+uvTFsVHdWfkXkUnmsbwU2nBP3HkUETwEmiR1JGYR
-         Tql2vR59f29RiaynZeU7I3GtqDjhbDvuVpdMX4mT5t5aTLS/BpodWzaJB2VMVHItUpAu
-         nVN/WRVqiDRk6DbS0tLQqh9IbhdM7T6pn5ItTUkfEvzzVtYiibkFhKdgUegI4x65yVuF
-         DsNYMTCSTa1taqTjcA1DAg4taaPbJ8lyZm+17mMa1M2f0lAh3KnEPR0DZFSOlpPI4Gqq
-         jsJ1dvdiz8d+p79tsSiQI4qtiy1gIFEHaSL32cXcZeOkFnz2vVE31hSo9yYwkKU2GVoT
-         iULg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719671443; x=1720276243;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zrud1JhfOlUfYB81S7Syr/8uTZeCdrf+FlsoxmK/I4o=;
-        b=rGUj8iChEOJFGjwfsE7Ih83VsQbAaOR+SYIFiUNf3JurZFz8k2HIRwDoC1n/X3/okH
-         +i7ZYygeO7hxTCZOzyWEOZEf37Ra+TomXSrohH0nOA3d+SOPI2Oc8AjfgCKxJYOTt6Ji
-         K5HVbLOUzWBIjF1Shrw/I/2fSYByfKtrb61XHDszo0wk3iK+ifVCVI0hXpugVJCUr1Yg
-         xr/2kyALD4izLpCds5rOq6umlpdhwQjJM3BJmErcg1lzxmWkp/MAEKFMy55mkx9avS0/
-         8bF+gY2XDSV3TVf1EfHEsGyUSRy9HQxq3oiOUuhQDMXZJdmmsndf0VchGtoA6q4Epzy6
-         LzKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXH4GYFzXAijvroSd9xOWzL9pwk416NokfZJW3PN2FlW++R6S0cP5o0AF/V73ZyPBTsKtL84HgA0+VVP4zYAwLXj8r6PkPnStACabmM
-X-Gm-Message-State: AOJu0YyqUP9nRiaXcMDrGmPwimlCnM+wAlfu9Sjz6uQfgLFnl34gZm9I
-	gOj24xi5TczZhl0aLmqaY7dFQSno5AY28TCwohoMj3ExTIKPYcfNlkGIMY7pKe3FQniuk2Rh3ZS
-	2Zumh3N0e/zlY0uHWx+pzMpDt3cgXbkQxT/E8
-X-Google-Smtp-Source: AGHT+IF6Ig144tkRe+lYrfurwiAb/HGvUlbkbhXr2qYEad3JtuJTL7bhoRuypkZ9VxzjKILvi3jchWLefZw/5jHXLgc=
-X-Received: by 2002:a50:8ad0:0:b0:57d:44ab:ecff with SMTP id
- 4fb4d7f45d1cf-5872f6702a3mr120663a12.2.1719671442396; Sat, 29 Jun 2024
- 07:30:42 -0700 (PDT)
+	s=arc-20240116; t=1719672047; c=relaxed/simple;
+	bh=4BbzsoAcYjjslEn0KSNDVOtRhzU2MoWz1axFIMNUH+A=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=lmcjW6RjlofdkV2d6yfHz55XQdkHAoGfp3KKYUiW6hShWlQEpuSEmL8yclhD7wjLIfeA/Jhg5grXyWGknRmTd5eUVn01d9H5RoLiKUWAPfViTRG00CGn0QSr1VsuLgHGqMOhzsL1ZO557qX+MvccEGfn5ry8fHJCw5hH0JVhTyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=U023f2iv; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719672024; x=1720276824; i=markus.elfring@web.de;
+	bh=PaPR7WLBZJA1HrQa7Iavj/L9F3coe01A/6bOeloyPcI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=U023f2ivaOADosPdQNx7ZFM8a5bMFWc2S+Nrvvz+a2PK0cqkI3NmdrxTKX89G0Zv
+	 GSpRMhAaUSoatfz1wY3UcrvuQa9IpthzHxZM4OZyWDoGqGabNcNPlTmk+p7wCVRsb
+	 hu12G+w+WumW3TalVjCkVMQV2wqEfEJ1G0h4NTMmIeLA5ayAJs3lBNVttf7vx8pf/
+	 5nZV3/IEeMAM+pPiq+jiBn3UOl5iwKCzUyHWh4Lyd5dn/9jIFphJskynDP7lOhnug
+	 QS1mOho8eOyiO1bD2phwy0PCVZjQlKPCYFRIG76UhPKjxNnEWSxiNPECqdr3of1+S
+	 FR0nreGS+Ph/HtH40A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MyNwm-1sDqM812aa-0165Bv; Sat, 29
+ Jun 2024 16:40:24 +0200
+Message-ID: <5d97e724-928d-45aa-b526-ee9c0d71dfd5@web.de>
+Date: Sat, 29 Jun 2024 16:40:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <a9623e7e-ce3a-434c-a904-39c6934c2ff5@web.de>
-In-Reply-To: <a9623e7e-ce3a-434c-a904-39c6934c2ff5@web.de>
-From: Guenter Roeck <groeck@google.com>
-Date: Sat, 29 Jun 2024 07:30:28 -0700
-Message-ID: <CABXOdTc6G9E2SdyP+27Gp3HsxfKqKOPmqkYG2x6Avg5bzCNNdA@mail.gmail.com>
-Subject: Re: [PATCH] platform/chrome: cros_ec_typec: Use common error handling
- code in cros_typec_init_ports()
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: chrome-platform@lists.linux.dev, kernel-janitors@vger.kernel.org, 
-	Benson Leung <bleung@chromium.org>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <groeck@chromium.org>, 
-	Prashant Malani <pmalani@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Amelie Delaunay <amelie.delaunay@st.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
+ Julia Lawall <julia.lawall@inria.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] usb: typec: stusb160x: Use common code in stusb160x_probe()
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:XjXAvu5rOee3IFBmLF07cD2Wldccy5BMejPO8HHUoJI1MQVEM0T
+ /US+0bD3lPhS7JIN0hw3xdXW83j9POdZQqKZNiNN4oU1Wv4hVa9HjNEMYzMU9xawJFXqHZi
+ oTYOry/WZrI8+2wmiUGIXvGPk+g+aHD/93I65NDf/BQMqFIrOwnBjOMchCfdSBKuMaU1knl
+ 1freYno+s5UvLFfPriPhQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:vR2SkLRsqGY=;qK9Zj4+2CL+s1ELaJlKjU7yC4F6
+ QceVF5bhFm00CspckrgTmtkMklRknQqKPSmGtDO6q6LXFvQ4uZcbsyOzx4TCKfg7Ka/TmJ6f0
+ KNf4pw4gKXNoF55U5/X88jdpHC2GYMEh43sSij0GdflE0XGcCa28eJyCfQzxNyjk+4ceQrydn
+ jzN52R6aYSy8EIDjaZ+EF0Voghub+coQU0Y9hnmgL6WgHkaxbzR4UD9fxBwCE39cbhkHN0GsN
+ FEZ5rxKxF3Ex78sAsT36td5Ra4JdkmYMo15SKLdn4qE3kXuVaL+PJbzSengijncI3PXrlivbV
+ I1QlJftvexNJtS8IexVkjm1ULhrroXtWd5rRAeyhHSYV/Ysh3IvQVdh8Tv/+PFiFb5OB38MsS
+ /jgA63O94acPBB8EoRGnSsAyjiP4nu6cRQ91UJtvkYiRkn567KKaY3AZ5hC1gs5C0WfBAzKH0
+ iujBHTiVvN+MX+5wxZ7GcbzKDdQS1Zwc9N2zpRmCjjj3NbYSNWs41cpoFuD7ElpPYrYgdlGlh
+ ZoQYx/R+mPT2T8FPs/UxTvHeyNfC8OfqLvbPJwFbNlLLErccee1l0Pw7QrQR3qFzSLRYnLiB6
+ KKVoRkJTeMHwDx1x4LHuhnvAfJscj9cirxBJIOecdogct0iIFtDJISpou5VGzmqqdX2yr8MWZ
+ qxV16OrQZ4tmNq6TgwipqwRi9itMUnoa8rBb9lCyLJps9djxinRlHHaVR6eQlIP8CCCbZddKa
+ 3MAtgXQ4sjp6USWV9qf/6fZkC/23OBjQ/HEGbZfrBkrjJeAvaZyiTYTHiuI1Q0F3qaJXKYj0L
+ EHHJ3ZaK6mpGWWf/dz2Bs2oOl5kjcvJyikmlEjV79emOo=
 
-On Sat, Jun 29, 2024 at 6:33=E2=80=AFAM Markus Elfring <Markus.Elfring@web.=
-de> wrote:
->
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 29 Jun 2024 15:17:44 +0200
->
-> Add a jump target so that a bit of exception handling can be better reuse=
-d
-> at the end of this function implementation.
->
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 29 Jun 2024 16:18:23 +0200
 
-I see no value in this patch.
+Replace a function call and a return statement by a status code assignment
+and a goto statement so that a bit of common code can be better reused
+at the end of this function implementation.
 
-Guenter
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/usb/typec/stusb160x.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/platform/chrome/cros_ec_typec.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/c=
-hrome/cros_ec_typec.c
-> index 4d305876ec08..aff744a0b38f 100644
-> --- a/drivers/platform/chrome/cros_ec_typec.c
-> +++ b/drivers/platform/chrome/cros_ec_typec.c
-> @@ -348,15 +348,13 @@ static int cros_typec_init_ports(struct cros_typec_=
-data *typec)
->         port_prop =3D dev->of_node ? "reg" : "port-number";
->         device_for_each_child_node(dev, fwnode) {
->                 if (fwnode_property_read_u32(fwnode, port_prop, &port_num=
-)) {
-> -                       ret =3D -EINVAL;
->                         dev_err(dev, "No port-number for port, aborting.\=
-n");
-> -                       goto unregister_ports;
-> +                       goto e_inval;
->                 }
->
->                 if (port_num >=3D typec->num_ports) {
->                         dev_err(dev, "Invalid port number.\n");
-> -                       ret =3D -EINVAL;
-> -                       goto unregister_ports;
-> +                       goto e_inval;
->                 }
->
->                 dev_dbg(dev, "Registering port %d\n", port_num);
-> @@ -408,6 +406,8 @@ static int cros_typec_init_ports(struct cros_typec_da=
-ta *typec)
->
->         return 0;
->
-> +e_inval:
-> +       ret =3D -EINVAL;
->  unregister_ports:
->         cros_unregister_ports(typec);
->         return ret;
-> --
-> 2.45.2
->
+diff --git a/drivers/usb/typec/stusb160x.c b/drivers/usb/typec/stusb160x.c
+index f3140fc04c12..e610f19126b7 100644
+=2D-- a/drivers/usb/typec/stusb160x.c
++++ b/drivers/usb/typec/stusb160x.c
+@@ -777,9 +777,8 @@ static int stusb160x_probe(struct i2c_client *client)
+ 		}
+ 	}
+
+-	fwnode_handle_put(fwnode);
+-
+-	return 0;
++	ret =3D 0;
++	goto fwnode_put;
+
+ role_sw_put:
+ 	if (chip->role_sw)
+=2D-
+2.45.2
+
 
