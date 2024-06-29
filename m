@@ -1,121 +1,161 @@
-Return-Path: <linux-kernel+bounces-234852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA91491CB8D
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 10:04:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15D0A91CB90
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 10:08:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 911C01F2268E
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 08:04:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 413051C2147C
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 08:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB17838FAD;
-	Sat, 29 Jun 2024 08:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A73138DC8;
+	Sat, 29 Jun 2024 08:08:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="DSb4N0dU"
-Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.219])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E071CFA0;
-	Sat, 29 Jun 2024 08:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.219
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="2o+yKsnI"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D9646FB9
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 08:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719648241; cv=none; b=G37HCqIzVU0MBW3Yk7uN1Us9W1B4aDGlPY5QgSxE+E/kt67DNTkuG5ky2/G7RyG7gdHr/bmpaanJCcD+tmE/JoZEai7G3JnwUmp7eC2VzfLRnupolKhVSa54QB1me9iSUXAi6i3klO/sf/Q4eRrfOv4J8ROe+RDRfOACc842Bsc=
+	t=1719648518; cv=none; b=GCqDFYdShrHzq19wpiqw3phatEnet8xPRZc9sXYNvIiLiKoHJZ2XTDzhdTA3fjsbdVCuJbC/xk9ShqXwCSnySAbhJRmXmqsFU7QpeRS56iJhg2ZWC9eu9VbpXBeP78Z+KArSR4Oy5RxUvIKLdT/FK+1kWFoJA2v5Dlo7+fc9SqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719648241; c=relaxed/simple;
-	bh=VOubikG6ZpnVVZCM7MJ8dHjxeyaHenragv3J+gQEHdc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=C6ZZRYp+/0UCU0L9uOBpO3SR8MACvSC22RkvVNg17mceb+P35C2J3L/DPhcTawOe/r/vl2KXeETxl5VkkuyRv0/ld5dAGUYnRb7THrk75wsJbLXXktjQ74E9MuOOATinB/mqZC0g206dHPGkoQluXW5BcgljWq/WQwMJ2vZFKhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=DSb4N0dU reason="signature verification failed"; arc=none smtp.client-ip=45.254.50.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=QfAQv6rdwkp+lvfK9xPCyNRFEgAyBJrfS4SIVVxYfyc=; b=D
-	Sb4N0dUKgHssEp/5svGHDZdJWnqIFs2pjHVwg9ZUJtLykQkYgYv34v2H/rW2aJ+/
-	9UrdhQAyHTM74Mw6LvN42A5sK4qmk2vbezq43aOGEVEUK4/3jCPRD6LUeFGofpwp
-	xUn+a2/iDkDt3pOgj6e2ROM3g46ZnNF8ifuX63HttI=
-Received: from slark_xiao$163.com ( [112.97.61.182] ) by
- ajax-webmail-wmsvr-40-115 (Coremail) ; Sat, 29 Jun 2024 16:03:28 +0800
- (CST)
-Date: Sat, 29 Jun 2024 16:03:28 +0800 (CST)
-From: "Slark Xiao" <slark_xiao@163.com>
-To: "Jeffrey Hugo" <quic_jhugo@quicinc.com>
-Cc: manivannan.sadhasivam@linaro.org, loic.poulain@linaro.org, 
-	ryazanov.s.a@gmail.com, johannes@sipsolutions.net, 
-	netdev@vger.kernel.org, mhi@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re:Re: [PATCH v3 2/3] bus: mhi: host: Add name for mhi_controller
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <cde35f69-4d6e-d46d-88ca-9c5d6d5e757f@quicinc.com>
-References: <20240628073626.1447288-1-slark_xiao@163.com>
- <cde35f69-4d6e-d46d-88ca-9c5d6d5e757f@quicinc.com>
-X-NTES-SC: AL_Qu2aC/qft0or7iWeYOkfmk8Sg+84W8K3v/0v1YVQOpF8jDzp4AcPVGFHF0bdysidFwqFmhyTbCJOyu1wb5JYea0BAtDJVsQjLe1KmLXa219Cjw==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1719648518; c=relaxed/simple;
+	bh=BBCyaQxLREiLslktbppCVuX5IJLqgoO4r239wd0ABN4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iPnpSXuYbGeDzGr33YzgFaWAa4O5EEHsDCxSy+0ocuYWrKlDQcSPMrh2Gn8o6Wn205HQBL9ZqGMqEWPlKyAvG3aWVGMiHf9G/6algk9XJ3uhuJ4thlTvT2ZYFdarGC8acoQdk3nNMyo0bAaHeEMkfYJ8mCyxIRxTx7dIc2uj+eA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=2o+yKsnI; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52cdf2c7454so2536022e87.1
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 01:08:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719648513; x=1720253313; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=O+ZkvhHwk7750FqBEhJS3DcahoN5BOHgNv+lFscO4cQ=;
+        b=2o+yKsnIodi6PgVHPFXIJ0BMDl0L+arGFPJF4OilTyeyIFYb+fkuM74L0H1y4grh0y
+         8LAc4Vdqm6w/BpmZDsdpqq7vfQA2Gifxq1bmTdKFotYW7H3e8jboEzsotm10LH8NRR9W
+         MbdQqxfOgZWIb/fv0xUYD/uyl5sP+f71e63iXI2+DjfCWDVw7PdEDQGlszhundQnRbB1
+         Ay0O0itysZGqF6oZsGyvXj0QMvL8gdWv0SEaJ+5pLS+QpEWuL2MsqqKTIWl/6huT1vmh
+         LzfHfcKoNrpDbTfk+wMSrBfPz+XEKfSfBKv8tBLE2jeHIV0O4LCz0EYsHNAnx2g036CM
+         LpWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719648513; x=1720253313;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O+ZkvhHwk7750FqBEhJS3DcahoN5BOHgNv+lFscO4cQ=;
+        b=oOMgosAvXFgc4iDhZrZ0b3LJzbmdFD33n3yRkgEjYLnRh1b/lNZawRp4JiEPBxrugo
+         SVcdnpPtE8lyv+5C3fvtBtipQFXxw08dCupUm1XBBv42vwiftwtLZvvrZ4cvz/97Lm4z
+         9yxBmcil8vXsK1FOZawFlbbPQbeTZu79JauQEm9kBE0FLwUeexHMEVyYA/GVptZ87q4k
+         VEusvsStkWlqW1wbls5xmVcBFPB9IoXIv8487sIvRi5/FgOa/KoXoEdVhxd5aS/9xeEO
+         8xEOMM99m0jHxV75uisFiqy+w6bRI3W3oYdP+ts2jevGOZapEPsq6eL+gqUf+Fe3xqs1
+         6JVw==
+X-Forwarded-Encrypted: i=1; AJvYcCXIHNbHKTOyLySJ4OfjGajEbwI5376bDDsm8PDSCbU2hHqJdrkiNrDvNOvAXr+2+03JHD6f1Z6PQ06Iw+zubdBXTc4XcJwH4ZB85AdQ
+X-Gm-Message-State: AOJu0YzNxgslEEjoZGTfs4JWj3nBPXiOVefwmraPhvk/iHywTRAzZgBk
+	WT0WUzodqpJ1hYF0AySmnLm4FU938P5kMv6EMxWC0KYODq+++KA+Drf6jN/+Ne0=
+X-Google-Smtp-Source: AGHT+IHSv5ihn1P8nevgMRliFhmUKmMh5e2Mdjl2yEP3hmMQ7slo4hojvW0p6v4hYOoAt+gWbx6ylA==
+X-Received: by 2002:a05:6512:6cf:b0:52c:83c7:936a with SMTP id 2adb3069b0e04-52e8270b86bmr434039e87.42.1719648511415;
+        Sat, 29 Jun 2024 01:08:31 -0700 (PDT)
+Received: from localhost ([2a02:8071:b783:6940:850d:6139:5a25:72d0])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a75101e4f76sm35601466b.192.2024.06.29.01.08.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 29 Jun 2024 01:08:30 -0700 (PDT)
+Date: Sat, 29 Jun 2024 10:08:29 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, 
+	"linus.walleij@linaro.org" <linus.walleij@linaro.org>, "dan.carpenter@linaro.org" <dan.carpenter@linaro.org>, 
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	Aisheng Dong <aisheng.dong@nxp.com>, "festevam@gmail.com" <festevam@gmail.com>, 
+	"shawnguo@kernel.org" <shawnguo@kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: Re: [PATCH V3 1/3] pinctrl: ti: iodelay: Use scope based
+ of_node_put() cleanups
+Message-ID: <vy2jjh73agfhbovxt3isc626dru3daxwxba7gql6cj3ftpq2qx@pye5xiepzdc4>
+References: <20240627131721.678727-1-peng.fan@oss.nxp.com>
+ <20240627131721.678727-2-peng.fan@oss.nxp.com>
+ <dldl7dkdcsuajjjpg2pczfnupqrsghmpz27i45xi5beeou5ntg@y2ysounw3pqq>
+ <DB7PR04MB59481B0994BE9D1175C4949A88D12@DB7PR04MB5948.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <298e9aeb.2587.190630546b9.Coremail.slark_xiao@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wD3P47Qv39mWmsUAA--.8330W
-X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiJQIMZGVOB8H34gAEsz
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fntpmbabhhgn6lo3"
+Content-Disposition: inline
+In-Reply-To: <DB7PR04MB59481B0994BE9D1175C4949A88D12@DB7PR04MB5948.eurprd04.prod.outlook.com>
 
-CkF0IDIwMjQtMDYtMjggMjI6Mzg6NTcsICJKZWZmcmV5IEh1Z28iIDxxdWljX2podWdvQHF1aWNp
-bmMuY29tPiB3cm90ZToKPk9uIDYvMjgvMjAyNCAxOjM2IEFNLCBTbGFyayBYaWFvIHdyb3RlOgo+
-PiAgIEZvciBTRFg3MiBNQklNIG1vZGUsIGl0IHN0YXJ0cyBkYXRhIG11eCBpZCBmcm9tIDExMiBp
-bnN0ZWFkIG9mIDAuCj4+ICAgVGhpcyB3b3VsZCBsZWFkIHRvIGRldmljZSBjYW4ndCBwaW5nIG91
-dHNpZGUgc3VjY2Vzc2Z1bGx5Lgo+PiAgIEFsc28gTUJJTSBzaWRlIHdvdWxkIHJlcG9ydCAiYmFk
-IHBhY2tldCBzZXNzaW9uICgxMTIpIi4KPgoKPldlaXJkIGluZGVudGF0aW9uCgpNeSBtaXN0YWtl
-LiBXaWxsIGJlIGNvcnJlY3RlZCBpbiBuZXh0LgoKPgo+PiAgIEluIG9kZXIgdG8gZml4IHRoaXMg
-aXNzdWUsIHdlIGRlY2lkZSB0byB1c2UgdGhlIG1vZGVtIG5hbWUKPgo+Im9yZGVyIgo+Cj4+IHRv
-IGRvIGEgbWF0Y2ggaW4gY2xpZW50IGRyaXZlciBzaWRlLiBUaGVuIGNsaWVudCBkcml2ZXIgY291
-bGQKPj4gc2V0IGEgY29ycmVzcG9uZGluZyBtdXhfaWQgdmFsdWUgZm9yIHRoaXMgbW9kZW0gcHJv
-ZHVjdC4KPj4gCj4+IFNpZ25lZC1vZmYtYnk6IFNsYXJrIFhpYW8gPHNsYXJrX3hpYW9AMTYzLmNv
-bT4KPj4gLS0tCj4+ICAgZHJpdmVycy9idXMvbWhpL2hvc3QvcGNpX2dlbmVyaWMuYyB8IDEgKwo+
-PiAgIGluY2x1ZGUvbGludXgvbWhpLmggICAgICAgICAgICAgICAgfCAyICsrCj4+ICAgMiBmaWxl
-cyBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKykKPj4gCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2J1
-cy9taGkvaG9zdC9wY2lfZ2VuZXJpYy5jIGIvZHJpdmVycy9idXMvbWhpL2hvc3QvcGNpX2dlbmVy
-aWMuYwo+PiBpbmRleCAxZmIxYzJmMmZlMTIuLjE0YTExODgwYmNlYSAxMDA2NDQKPj4gLS0tIGEv
-ZHJpdmVycy9idXMvbWhpL2hvc3QvcGNpX2dlbmVyaWMuYwo+PiArKysgYi9kcml2ZXJzL2J1cy9t
-aGkvaG9zdC9wY2lfZ2VuZXJpYy5jCj4+IEBAIC0xMDg2LDYgKzEwODYsNyBAQCBzdGF0aWMgaW50
-IG1oaV9wY2lfcHJvYmUoc3RydWN0IHBjaV9kZXYgKnBkZXYsIGNvbnN0IHN0cnVjdCBwY2lfZGV2
-aWNlX2lkICppZCkKPj4gICAJbWhpX2NudHJsLT5ydW50aW1lX2dldCA9IG1oaV9wY2lfcnVudGlt
-ZV9nZXQ7Cj4+ICAgCW1oaV9jbnRybC0+cnVudGltZV9wdXQgPSBtaGlfcGNpX3J1bnRpbWVfcHV0
-Owo+PiAgIAltaGlfY250cmwtPm1ydSA9IGluZm8tPm1ydV9kZWZhdWx0Owo+PiArCW1oaV9jbnRy
-bC0+bmFtZSA9IGluZm8tPm5hbWU7Cj4+ICAgCj4+ICAgCWlmIChpbmZvLT5lZGxfdHJpZ2dlcikK
-Pj4gICAJCW1oaV9jbnRybC0+ZWRsX3RyaWdnZXIgPSBtaGlfcGNpX2dlbmVyaWNfZWRsX3RyaWdn
-ZXI7Cj4+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L21oaS5oIGIvaW5jbHVkZS9saW51eC9t
-aGkuaAo+PiBpbmRleCBiNTczZjE1NzYyZjguLjg2YWE0ZjUyODQyYyAxMDA2NDQKPj4gLS0tIGEv
-aW5jbHVkZS9saW51eC9taGkuaAo+PiArKysgYi9pbmNsdWRlL2xpbnV4L21oaS5oCj4+IEBAIC0z
-NjEsNiArMzYxLDcgQEAgc3RydWN0IG1oaV9jb250cm9sbGVyX2NvbmZpZyB7Cj4+ICAgICogQHdh
-a2Vfc2V0OiBEZXZpY2Ugd2FrZXVwIHNldCBmbGFnCj4+ICAgICogQGlycV9mbGFnczogaXJxIGZs
-YWdzIHBhc3NlZCB0byByZXF1ZXN0X2lycSAob3B0aW9uYWwpCj4+ICAgICogQG1ydTogdGhlIGRl
-ZmF1bHQgTVJVIGZvciB0aGUgTUhJIGRldmljZQo+PiArICogQG5hbWU6IG5hbWUgb2YgdGhlIG1v
-ZGVtCj4KCj5XaHkgcmVzdHJpY3QgdGhpcyB0byBtb2RlbXM/ICBUaGVyZSBhcmUgcGxlbnR5IG9m
-IG90aGVyIE1ISSBkZXZpY2VzCgpBY3R1YWxseSBhbGwgTUhJIGRldmljZXMgY291bGQgYmUgY2Fs
-bGVkIG1vZGVtcy4gSSBkb24ndCB0aGluayB0aGlzIGlzCmEgd3JvbmcgbmFtZS4KCj4KPj4gICAg
-Kgo+PiAgICAqIEZpZWxkcyBtYXJrZWQgYXMgKHJlcXVpcmVkKSBuZWVkIHRvIGJlIHBvcHVsYXRl
-ZCBieSB0aGUgY29udHJvbGxlciBkcml2ZXIKPj4gICAgKiBiZWZvcmUgY2FsbGluZyBtaGlfcmVn
-aXN0ZXJfY29udHJvbGxlcigpLiBGb3IgdGhlIGZpZWxkcyBtYXJrZWQgYXMgKG9wdGlvbmFsKQo+
-PiBAQCAtNDQ1LDYgKzQ0Niw3IEBAIHN0cnVjdCBtaGlfY29udHJvbGxlciB7Cj4+ICAgCWJvb2wg
-d2FrZV9zZXQ7Cj4+ICAgCXVuc2lnbmVkIGxvbmcgaXJxX2ZsYWdzOwo+PiAgIAl1MzIgbXJ1Owo+
-PiArCWNvbnN0IGNoYXIgKm5hbWU7Cj4KCj5QbGVhc2UgcnVuIHBhaG9sZQoKRW1tLCBqdXN0IGNo
-ZWNrZWQswqAgdGhlcmUgYXJlIDMgaG9sZXM6CsKgwqDCoCB1MzLCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIE0zO8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoCAvKsKgwqAgMzEywqDCoMKgwqAgNCAqLwrCoMKgIMKgLyogWFhYIDQgYnl0ZXMg
-aG9sZSwgdHJ5IHRvIHBhY2sgKi8KLi4uCsKgwqDCoCBib29swqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgd2FrZV9zZXQ7wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-IC8qwqDCoCA1MjbCoMKgwqDCoCAxICovCsKgwqAgwqAvKiBYWFggMSBieXRlIGhvbGUsIHRyeSB0
-byBwYWNrICovCi4uLgrCoMKgwqAgdTMywqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoCBtcnU7wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAvKsKg
-wqAgNTM2wqDCoMKgwqAgNCAqLwrCoMKgIMKgLyogWFhYIDQgYnl0ZXMgaG9sZSwgdHJ5IHRvIHBh
-Y2sgKi8KCkkgd2lsbCBwdXQgJ2NvbnN0IGNoYXIgKm5hbWUnIGFib3ZlICd1MzIgbXJ1JyB0byBh
-dm9pZCB0aGUgbGFzdCBob2xlLgpJcyB0aGlzIG9rYXk/Cgo+Cj4+ICAgfTsKPj4gICAKPj4gICAv
-KioK
+
+--fntpmbabhhgn6lo3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hello,
+
+On Sat, Jun 29, 2024 at 01:32:15AM +0000, Peng Fan wrote:
+> > Subject: Re: [PATCH V3 1/3] pinctrl: ti: iodelay: Use scope based
+> > of_node_put() cleanups
+> >=20
+> > Hello Peng,
+> >=20
+> > On Thu, Jun 27, 2024 at 09:17:19PM +0800, Peng Fan (OSS) wrote:
+> > > From: Peng Fan <peng.fan@nxp.com>
+> > >
+> > > Use scope based of_node_put() cleanup to simplify code.
+> > >
+> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > > ---
+> > >  drivers/pinctrl/ti/pinctrl-ti-iodelay.c | 43
+> > > +++++++++----------------
+> > >  1 file changed, 15 insertions(+), 28 deletions(-)
+> > >
+> > > diff --git a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+> > > b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+> > > index ef9758638501..f5e5a23d2226 100644
+> > > --- a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+> > > +++ b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+> > > @@ -822,53 +822,48 @@ MODULE_DEVICE_TABLE(of,
+> > ti_iodelay_of_match);
+> > > static int ti_iodelay_probe(struct platform_device *pdev)  {
+> > >  	struct device *dev =3D &pdev->dev;
+> > > -	struct device_node *np =3D of_node_get(dev->of_node);
+> > > +	struct device_node *np __free(device_node) =3D
+> > > +of_node_get(dev->of_node);
+> >=20
+> > of_node_put? -------------------------------------------^
+>=20
+> You mean use of_node_put here?
+> of_node_get should be used here. The __free will automatically
+> do of_node_put when function return.
+
+Ah, I misinterpreted the syntax. I thought your code registers
+of_node_get() as cleanup handler.
+
+Sorry for the noise,
+Uwe
+
+--fntpmbabhhgn6lo3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZ/wPoACgkQj4D7WH0S
+/k49FQf6A1ST0ozfIDojlpA4JikoIS8wCnOr+3tnyb+aUL93oVwWgcctdiBPIUPr
+yBotdPy4myrfd3Rducnik2BvhkbGUe+pxRGBMxrXdPm7MtUyADJOJVsOzQFhfE5h
+MtGrbEKpBVWbDM/8XU6p7KrwfZ/43y3AxVIlT/GsGHcvYkftuelV4kadao6hOK45
+sPaOQaWQt0z3nYySrs/0O1VvDoK2NphgcFJ74TDmLhaU/7AMdlJD83gjtcFnIE9T
+jA91hOEmeLk87SBFq54xGBZkVtbSGjOszbAnYF1nGx0KsRJy2RV6U9g0q91w/HB5
+1WeFWctqcbTZ9vkWz3HL6m4004cIRA==
+=TJVm
+-----END PGP SIGNATURE-----
+
+--fntpmbabhhgn6lo3--
 
