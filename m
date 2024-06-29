@@ -1,212 +1,255 @@
-Return-Path: <linux-kernel+bounces-234886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3882F91CC0E
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 12:11:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44E6791CC12
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 12:18:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E01C6283703
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 10:11:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 304581C21287
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 10:18:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B95F3F9FB;
-	Sat, 29 Jun 2024 10:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2343FBB3;
+	Sat, 29 Jun 2024 10:18:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J8Z+GxAg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e7WbSjO3"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F772E3EE;
-	Sat, 29 Jun 2024 10:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F2D23767;
+	Sat, 29 Jun 2024 10:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719655874; cv=none; b=EIlVZQBaNdSyT6oKdK4Ku5nOoE6F7NEoYBFOMjCdd7frlEoNJRrEp+LQmNeT1Ds3RQ9xqo4s67C2BgbmKv+o8BG4E09TWOSFOtwSh9QBdaLA0E0/JsSEhf/6eAYDj8bjuAxbcHGaKx3HIC0zo/lV+PKjOyETtpbdYHOqvz8q4ls=
+	t=1719656300; cv=none; b=mzKiAEK73+8HAKoirzR1Aqd4tsaa7OHUQIJtAkFER67wCoPnOUWlKUmIqbf+S47+VTHw88jctFGg7C2YXsbp9v5Ty/SxlwRASPlfAYsrHSikEMEnVRBR+9n2lWFaj1Lr6UXiK4x+Gy5dbC23Qzo/O7ipw1idIV1emjiykcMy+fU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719655874; c=relaxed/simple;
-	bh=FnIL5yyt+lay07WZTdrkwW99UN6S/7QLQv1aXmRY8oA=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gBaFY2TvQjr1eldjnCnveoKZyUcAAPa47F48D1FF40OiISvuMfr/gbGVInMOE1ujLAi2R2LD+qSMPfK8TexHnPGFrSqCsG/1bEI4KjZKXijiet0XjIXw2+Gp088KzKXD6ECMxyL9XQtgPvGChM/t8iF+iy6SPixwctu5TEXFJJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J8Z+GxAg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5164C2BBFC;
-	Sat, 29 Jun 2024 10:11:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719655873;
-	bh=FnIL5yyt+lay07WZTdrkwW99UN6S/7QLQv1aXmRY8oA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=J8Z+GxAgG7bZ/af/qv3F1wtxXLfJuFAn8pHXyW04lmthoJULG1oemLUJPVRGOFZOL
-	 9Dv3YRyYsXLOT2v3Y2YxVg389rhFIv8AyPHct74RGK4FGZQZu9tIFEj9m6bJD/IvNy
-	 CrztD+SgeDll30W7C5ZfjudGZj0Qi26n84eJtaUL27FBhrxZlilH6QoD3YNTkLBXfQ
-	 INl9IwZQwfly+vX+KUQ5SZHVPZWdaMzbj15qnzQ03+AP+Ksj2Bspv4PwVhD9UwooGI
-	 vJIU3+92Vq8iHaigvq1wnxxy2Z2kuD0leqRc1QU/NHlNJT670cqqca7DFUfUbCq6Pt
-	 65eN5n7IVDGYg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sNV31-008N1i-9T;
-	Sat, 29 Jun 2024 11:11:11 +0100
-Date: Sat, 29 Jun 2024 11:11:10 +0100
-Message-ID: <86bk3khxdt.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-pci@vger.kernel.org,
-	anna-maria@linutronix.de,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	festevam@gmail.com,
-	bhelgaas@google.com,
-	rdunlap@infradead.org,
-	vidyas@nvidia.com,
-	ilpo.jarvinen@linux.intel.com,
-	apatel@ventanamicro.com,
-	kevin.tian@intel.com,
-	nipun.gupta@amd.com,
-	den@valinux.co.jp,
-	andrew@lunn.ch,
-	gregory.clement@bootlin.com,
-	sebastian.hesselbarth@gmail.com,
-	gregkh@linuxfoundation.org,
-	rafael@kernel.org,
-	alex.williamson@redhat.com,
-	will@kernel.org,
-	lorenzo.pieralisi@arm.com,
-	jgg@mellanox.com,
-	ammarfaizi2@gnuweeb.org,
-	robin.murphy@arm.com,
-	lpieralisi@kernel.org,
-	nm@ti.com,
-	kristo@kernel.org,
-	vkoul@kernel.org,
-	okaya@kernel.org,
-	agross@kernel.org,
-	andersson@kernel.org,
-	mark.rutland@arm.com,
-	shameerali.kolothum.thodi@huawei.com,
-	yuzenghui@huawei.com,
-	shivamurthy.shastri@linutronix.de
-Subject: Re: [patch V4 05/21] irqchip/gic-v3-its: Provide MSI parent for PCI/MSI[-X]
-In-Reply-To: <86cyo0hyc6.wl-maz@kernel.org>
-References: <20240623142137.448898081@linutronix.de>
-	<20240623142235.024567623@linutronix.de>
-	<Zn84OIS0zLWASKr2@arm.com>
-	<87h6dcxhy0.ffs@tglx>
-	<86ed8ghypg.wl-maz@kernel.org>
-	<86cyo0hyc6.wl-maz@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1719656300; c=relaxed/simple;
+	bh=zNUije4Rf1fu7rha7favpYddd5zkpBg5u37yMsb+L/c=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=PRNo9sI0+Jo5kz0fWg7PHSr9/AshDoahEmnvoBYRRj5P2V1p2devw+yJlLBEU4rcqEptq++O4xjbCkEdk9yaYylywOFQy4Z9Bl5mbL7O5JRJYRqDQc4WKurFFGqgYOujVDnSP+kiwEeXOHuvDnV3voK4wYZAO2KdRQYoUUYqYDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e7WbSjO3; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a7245453319so229573966b.1;
+        Sat, 29 Jun 2024 03:18:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719656297; x=1720261097; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=QlwoXKISijQ0DRcF+GZnJmixbJReAkQz34nOTF0Vuxk=;
+        b=e7WbSjO3ZuAjbv1KvmjiFwQg7vpKYbXBDGygUBzcXTp77mAfrCeXmUssaajhpTB/HH
+         X1aCLlQ5ZXAOIx2fSKozBEcNPncMnP8UR1MDtW0BbXzZaRq2jfqsWLIqYXwirpambVOR
+         0fZ20ueny0hnl5dL8Tu3tqq7PWMePKKstEo9zzLNPzBXwYz8Odjqee0PbShyZf5//YsJ
+         NCfan5zCW4tmGjyjDIx9mqeDlNQGE7nt5GdBVOw9oaRBeipNXEiu5DzxQrsXyKEvC93E
+         u7l06f06q1YDLvoocUeECO0UiJnxAtZ8UaOoYm5GYYMASwEOpe+LAIkmGyL4sEpFfXfN
+         IGHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719656297; x=1720261097;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QlwoXKISijQ0DRcF+GZnJmixbJReAkQz34nOTF0Vuxk=;
+        b=nJ2EWJK49ZjyxbaRVW27LgomVPG9guy19xg6c2UIqYslWGx1Bj9AvWVumAjiRn3NTj
+         gnUHTw340Ro47USfXwwnzMLxnsRJulqeK18bvARhgV/xbd9X4W7JebZe7j1UdqFzcnv+
+         IcMAU4r5cLgXe5EWH9yDtl0VtwwsjZ6EjYnafFwl700nR44Jz0M00Hwa0lBcmvDcH8Qe
+         uVgqbrLc78N5o444Ux/+eVbNvCWV2/BiFzFQDXli58jkPSB8hKRP8MwsG9Tdh3N80aAL
+         3iDktU55YIKQgJslZYsd6eDQuBoJrSf/rJru6FC3v0wEwY4W2aIU3OnhV3doEgu9c845
+         DJyw==
+X-Forwarded-Encrypted: i=1; AJvYcCXN2Y8Belu8EMBNrIgtK5tof7eqWmnz0qRzepbLylZLUQ3UVaX+1XSGcnpAiIX1QNbtvFysXLTYWvBSVzqf8YPaCPpC0B8IPkyVmFp8xCu/IUuyO9iwOE0dHtvMr/hOlX/K9EdmpS5gj7g=
+X-Gm-Message-State: AOJu0YwI4BiSdJB9wWaJyY+Sj/8rFbpggaHLhAte9LPKnwWyUdMkAy41
+	Z9WnMyT3n9FTaMYlsljGzdw3TYLaDInqfLtGgqfH/7Ppe++9+Sv0
+X-Google-Smtp-Source: AGHT+IF/MBEiMijU8GjgEXLJuB9PxQWKYMlbEYZlv/UgCvP3oFNMsmcWz1PuXDww6RQR6rVaR2ksVQ==
+X-Received: by 2002:a17:907:2d86:b0:a72:5760:1424 with SMTP id a640c23a62f3a-a7513773b0dmr91562566b.0.1719656296728;
+        Sat, 29 Jun 2024 03:18:16 -0700 (PDT)
+Received: from ?IPV6:2a02:a449:4071:1:32d0:42ff:fe10:6983? (2a02-a449-4071-1-32d0-42ff-fe10-6983.fixed6.kpn.net. [2a02:a449:4071:1:32d0:42ff:fe10:6983])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab06565csm151609666b.103.2024.06.29.03.18.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 29 Jun 2024 03:18:16 -0700 (PDT)
+Message-ID: <a3a1ed17-17f7-480a-8faf-b493918956f0@gmail.com>
+Date: Sat, 29 Jun 2024 12:18:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: tglx@linutronix.de, catalin.marinas@arm.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, anna-maria@linutronix.de, shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com, rdunlap@infradead.org, vidyas@nvidia.com, ilpo.jarvinen@linux.intel.com, apatel@ventanamicro.com, kevin.tian@intel.com, nipun.gupta@amd.com, den@valinux.co.jp, andrew@lunn.ch, gregory.clement@bootlin.com, sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org, rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org, lorenzo.pieralisi@arm.com, jgg@mellanox.com, ammarfaizi2@gnuweeb.org, robin.murphy@arm.com, lpieralisi@kernel.org, nm@ti.com, kristo@kernel.org, vkoul@kernel.org, okaya@kernel.org, agross@kernel.org, andersson@kernel.org, mark.rutland@arm.com, shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com, shivamurthy.shastri@linutronix.de
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Johan Jonker <jbx6244@gmail.com>
+Subject: Re: [PATCH v7] drm/rockchip: rk3066_hdmi: add sound support
+To: Andy Yan <andyshrk@163.com>
+Cc: heiko@sntech.de, hjc@rock-chips.com, andy.yan@rock-chips.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, daniel@ffwll.ch, lgirdwood@gmail.com, broonie@kernel.org,
+ linux-sound@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <5c651b3f-fe30-4874-98ed-044f7c62dd97@gmail.com>
+ <7c53f7d.bb08.1905ef690ef.Coremail.andyshrk@163.com>
+Content-Language: en-US
+In-Reply-To: <7c53f7d.bb08.1905ef690ef.Coremail.andyshrk@163.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, 29 Jun 2024 10:50:33 +0100,
-Marc Zyngier <maz@kernel.org> wrote:
+Hi Andy, thanks.
+
+On 6/28/24 15:08, Andy Yan wrote:
 > 
-> On Sat, 29 Jun 2024 10:42:35 +0100,
-> Marc Zyngier <maz@kernel.org> wrote:
-> > 
-> > On Sat, 29 Jun 2024 09:37:59 +0100,
-> > Thomas Gleixner <tglx@linutronix.de> wrote:
-> > > 
-> > > On Fri, Jun 28 2024 at 23:24, Catalin Marinas wrote:
-> > > > I just noticed guests (under KVM) failing to boot on my TX2 with your
-> > > > latest branch. I bisected to this patch as the first bad commit.
-> > > >
-> > > > I'm away this weekend, so won't have time to dive deeper. It looks like
-> > > > the CPU is stuck in do_idle() (no timer interrupts?). Also sysrq did not
-> > > > seem able to get the stack trace on the other CPUs. It fails both with a
-> > > > single or multiple CPUs in the same way place (shortly before mounting
-> > > > the rootfs and starting user space).
-> > > 
-> > > From the RH log it's clear that PCI interrupts are not delivered.
-> > > 
-> > > > I'll drop your branch from the arm64 for-kernelci for now and have a
-> > > > look again on Monday.
-> > > 
-> > > I stare too. Unfortunately I don't have access to such hardware :(
-> > 
-> > On the face of it, the LPIs are never unmasked (grepping in
-> > /sys/kernel/debug/kvm/*/vgic-state):
-> > 
-> > Distributor
-> > ===========
-> > vgic_model:	GICv3
-> > nr_spis:	32
-> > nr_lpis:	7
-> > enabled:	1
-> > 
-> > P=pending_latch, L=line_level, A=active
-> > E=enabled, H=hw, C=config (level=1, edge=0)
-> > G=group
-> > 
-> > VCPU 0 TYP   ID TGT_ID PLAEHCG     HWID   TARGET SRC PRI VCPU_ID
-> > ----------------------------------------------------------------
-> > [...]
-> >        LPI 8192      0 1000001        0        0   0 160      -1 
-> >        LPI 8193      1 0000001        0        0   0 160      -1 
-> >        LPI 8194      2 0000001        0        0   0 160      -1 
-> >        LPI 8256      3 0000001        0        0   0 160      -1 
-> >        LPI 8257      4 0000001        0        0   0 160      -1 
-> >        LPI 8320      5 0000001        0        0   0 160      -1 
-> >        LPI 8321      6 1000001        0        0   0 160      -1
-> > 
-> > 8192 and 8321 are pending, but never enabled.
-> > 
-> > This is further confirmed by placing traces in the guest. Now trying
-> > to find my way through the new maze of callbacks, because something is
-> > clearly missing there.
+> Hi Johan,
 > 
-> This is clearly related to MSI_FLAG_PCI_MSI_MASK_PARENT which is not
-> seen as being set from cond_unmask_parent(), and ignoring this
-> condition results in a booting VM.
+> At 2024-06-28 17:23:39, "Johan Jonker" <jbx6244@gmail.com> wrote:
+>> Add sound support to the RK3066 HDMI driver.
+>> The HDMI TX audio source is connected to I2S_8CH.
+>>
+>> Signed-off-by: Zheng Yang <zhengyang@rock-chips.com>
+>> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+>> ---
+>>
+>> Changed V7:
+>>  rebase
+>> ---
+>> drivers/gpu/drm/rockchip/Kconfig       |   2 +
+>> drivers/gpu/drm/rockchip/rk3066_hdmi.c | 274 ++++++++++++++++++++++++-
+>> 2 files changed, 275 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/rockchip/Kconfig
+>> index 1bf3e2829cd0..a32ee558408c 100644
+>> --- a/drivers/gpu/drm/rockchip/Kconfig
+>> +++ b/drivers/gpu/drm/rockchip/Kconfig
+>> @@ -102,6 +102,8 @@ config ROCKCHIP_RGB
+>> config ROCKCHIP_RK3066_HDMI
+>> 	bool "Rockchip specific extensions for RK3066 HDMI"
+>> 	depends on DRM_ROCKCHIP
+>> +	select SND_SOC_HDMI_CODEC if SND_SOC
+>> +	select SND_SOC_ROCKCHIP_I2S if SND_SOC
+>> 	help
+>> 	  This selects support for Rockchip SoC specific extensions
+>> 	  for the RK3066 HDMI driver. If you want to enable
+>> diff --git a/drivers/gpu/drm/rockchip/rk3066_hdmi.c b/drivers/gpu/drm/rockchip/rk3066_hdmi.c
+>> index 784de990da1b..d3128b787629 100644
+>> --- a/drivers/gpu/drm/rockchip/rk3066_hdmi.c
+>> +++ b/drivers/gpu/drm/rockchip/rk3066_hdmi.c
+>> @@ -15,12 +15,20 @@
+>> #include <linux/platform_device.h>
+>> #include <linux/regmap.h>
+>>
+>> +#include <sound/hdmi-codec.h>
+>> +
+>> #include "rk3066_hdmi.h"
+>>
+>> #include "rockchip_drm_drv.h"
+>>
+>> #define DEFAULT_PLLA_RATE 30000000
+>>
+>> +struct audio_info {
+>> +	int channels;
+>> +	int sample_rate;
+>> +	int sample_width;
+>> +};
+>> +
+>> struct hdmi_data_info {
+>> 	int vic; /* The CEA Video ID (VIC) of the current drm display mode. */
+>> 	unsigned int enc_out_format;
+>> @@ -54,9 +62,16 @@ struct rk3066_hdmi {
+>>
+>> 	unsigned int tmdsclk;
+>>
+>> +	struct platform_device *audio_pdev;
+>> +	stru
 > 
-> I have the ugly feeling that the flag is applied at the wrong level,
-> or not propagated.
+> ......
+> 
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static const struct hdmi_codec_ops audio_codec_ops = {
+>> +	.hw_params = rk3066_hdmi_audio_hw_params,
+>> +	.audio_shutdown = rk3066_hdmi_audio_shutdown,
+>> +	.mute_stream = rk3066_hdmi_audio_mute_stream,
+>> +	.get_eld = rk3066_hdmi_audio_get_eld,
+>> +	.no_capture_mute = 1,
+>> +};
+>> +
+>> +static int rk3066_hdmi_audio_codec_init(struct rk3066_hdmi *hdmi,
+>> +					struct device *dev)
+>> +{
+>> +	struct hdmi_codec_pdata codec_data = {
+>> +		.i2s = 1,
+>> +		.ops = &audio_codec_ops,
+>> +		.max_i2s_channels = 8,
+>> +	};
+>> +
+>> +	hdmi->audio.channels = 2;
+>> +	hdmi->audio.sample_rate = 48000;
+>> +	hdmi->audio.sample_width = 16;
+>> +	hdmi->audio_enable = false;
+>> +	hdmi->audio_pdev =
+>> +		platform_device_register_data(dev,
+>> +					      HDMI_CODEC_DRV_NAME,
+>> +					      PLATFORM_DEVID_NONE,
+>> +					      &codec_data,
+>> +					      sizeof(codec_data));
+>> +
+>> +	return PTR_ERR_OR_ZERO(hdmi->audio_pdev);
+>> +}
+>> +
+>> static int
+>> rk3066_hdmi_register(struct drm_device *drm, struct rk3066_hdmi *hdmi)
+>> {
+>> @@ -566,6 +834,8 @@ rk3066_hdmi_register(struct drm_device *drm, struct rk3066_hdmi *hdmi)
+>>
+>> 	drm_connector_attach_encoder(&hdmi->connector, encoder);
+>>
+>> +	rk3066_hdmi_audio_codec_init(hdmi, dev);
+> 
+> 
+> According to Documentation/driver-api/driver-model/driver.rst,
+> 
 
-Here's a possible fix. Making the masking at the ITS level optional is
-not an option (haha). It is the PCI masking that is totally
-superfluous and that could completely be elided.
+> It is best not to register at the bind callback：
 
-With this hack, I can boot a GICv3+ITS guest as usual.
+Question for the DRM experts:
+What would be the correct location/level for the rk3066_hdmi_audio_codec_init() function?
+Is that at the rk3066_hdmi_encoder_enable() function?
+Are there other functions/examples for sound in the DRM toolbox?
 
-	M.
-
-diff --git a/drivers/irqchip/irq-gic-v3-its-msi-parent.c b/drivers/irqchip/irq-gic-v3-its-msi-parent.c
-index 21daa452ffa6d..b66e64eaae440 100644
---- a/drivers/irqchip/irq-gic-v3-its-msi-parent.c
-+++ b/drivers/irqchip/irq-gic-v3-its-msi-parent.c
-@@ -10,13 +10,13 @@
- #include "irq-gic-common.h"
- #include "irq-msi-lib.h"
- 
--#define ITS_MSI_FLAGS_REQUIRED  (MSI_FLAG_USE_DEF_DOM_OPS |	\
--				 MSI_FLAG_USE_DEF_CHIP_OPS)
-+#define ITS_MSI_FLAGS_REQUIRED  (MSI_FLAG_USE_DEF_DOM_OPS  |	\
-+				 MSI_FLAG_USE_DEF_CHIP_OPS |	\
-+				 MSI_FLAG_PCI_MSI_MASK_PARENT)
- 
- #define ITS_MSI_FLAGS_SUPPORTED (MSI_GENERIC_FLAGS_MASK |	\
- 				 MSI_FLAG_PCI_MSIX      |	\
--				 MSI_FLAG_MULTI_PCI_MSI |	\
--				 MSI_FLAG_PCI_MSI_MASK_PARENT)
-+				 MSI_FLAG_MULTI_PCI_MSI)
- 
- #ifdef CONFIG_PCI_MSI
- static int its_pci_msi_vec_count(struct pci_dev *pdev, void *data)
-
-
--- 
-Without deviation from the norm, progress is not possible.
+Johan
+> 
+> .. warning::
+>       -EPROBE_DEFER must not be returned if probe() has already created
+>       child devices, even if those child devices are removed again
+>       in a cleanup path. If -EPROBE_DEFER is returned after a child
+>       device has been registered, it may result in an infinite loop of
+>       .probe() calls to the same driver.
+> 
+> For example：
+> vop_probe --》component_add--》rk3066_hdmi_bind--》rk3066_hdmi_audio_codec_init--》hdmi_codec_probe--》rockchip_rgb_init（DEFER when panel not ready）
+> 
+> This  may result in an infinite loop of probe
+> 
+> 
+>> +
+>> 	return 0;
+>> }
+>>
+>> @@ -813,6 +1083,7 @@ static int rk3066_hdmi_bind(struct device *dev, struct device *master,
+>> 	return 0;
+>>
+>> err_cleanup_hdmi:
+>> +	platform_device_unregister(hdmi->audio_pdev);
+>> 	hdmi->connector.funcs->destroy(&hdmi->connector);
+>> 	hdmi->encoder.encoder.funcs->destroy(&hdmi->encoder.encoder);
+>> err_disable_i2c:
+>> @@ -828,6 +1099,7 @@ static void rk3066_hdmi_unbind(struct device *dev, struct device *master,
+>> {
+>> 	struct rk3066_hdmi *hdmi = dev_get_drvdata(dev);
+>>
+>> +	platform_device_unregister(hdmi->audio_pdev);
+>> 	hdmi->connector.funcs->destroy(&hdmi->connector);
+>> 	hdmi->encoder.encoder.funcs->destroy(&hdmi->encoder.encoder);
+>>
+>> --
+>> 2.39.2
+>>
 
