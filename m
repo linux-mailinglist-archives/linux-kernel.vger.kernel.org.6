@@ -1,53 +1,74 @@
-Return-Path: <linux-kernel+bounces-234947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E24E91CD34
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 15:33:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9182891CD3C
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 15:36:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7E191F2230C
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 13:33:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43E95283618
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 13:36:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B618005C;
-	Sat, 29 Jun 2024 13:33:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0121A7CF18;
+	Sat, 29 Jun 2024 13:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="tshK4bQD"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RBFu7S1r"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 976C51879;
-	Sat, 29 Jun 2024 13:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B315279B87
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 13:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719668027; cv=none; b=FYaR8mfVLR+NtDqbMOh6YTiw4iwYoIWXyGSq9w7jX2uh0qSEOrgUnAi3ENVGxdKC9/57nsUIpXLtzCdl6heWzY/QkUly6KFm5omUzglm4I+eQxUYDYfsYjbry6fehlZLOPTTnY4izSmpFzqlSYUBgXqsQJJNoyPEq9sjegJWBXE=
+	t=1719668184; cv=none; b=Tu0lExYKEUdN4R1M7XfgOp5IgGAYkrBbm/WNQz9KvgFyRWdR7RXAtMMxP4/K+cz89VVMzAQyF3E/odxlFMBgh8Ysbml0YqOa+QWr9YWFJ3rfJtHeUM3TLPipkN7/Z0dQc6eUcJAvv7TzRU+esMnwUQPunZBDICm8s5YaBTCX85E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719668027; c=relaxed/simple;
-	bh=oo4jUmPrf9jedsT2pOZ0aqtdEjW9FoLur2248hOMMRs=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=RyOhAZBGhpptKxGXE2aW0w8EmyG2xaUMW5DPnOMZTq+pxqW1E5TzuRy1kzH3p0PecL7GDyUv7c7UPraKD41XCtDTSvC4Z9q7FkYnVxzP8xpW67XFKSeOkzhTnsD/V04+WEU0opJukpsdlpu3Dd8FqkJKTLqUulr4d37m8Fd4vJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=tshK4bQD; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719668002; x=1720272802; i=markus.elfring@web.de;
-	bh=Jup8QKQKJK0UGda0jM7cmsa/0c9sCTQpq+i/WNXMOao=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=tshK4bQD1QALZfsFVyW/4awZwh/ORsiSslDLjqc6RYbw8PdBec8b9zKQYUAMg6H/
-	 alcSyanPfxneJCxKthGaTpCIiF237llxdjBuuqr/f3PDsE7F5sByCHknKQqoJiE+f
-	 Mjbi1B8WGs7qLQH3vfei4xIsqjnWVNstOvJOOSsbZwsEiEIxjpdlaS4TtPyOU4kxM
-	 p8L060cRGSloRd7nUDnEPYJ1hye3lNoD2BCe5uc2mAgjLU7+1QjUCKIlW+4Cob6Wu
-	 ozn/zaYVyuXZySJf/V2RAkOZdoUMnis225uGrs5esMg2hwBwoI6hDR9P4V8kR/hCX
-	 5s3SkiivsT7s2sciXw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MVaYi-1sp9EM2hFc-00Llgd; Sat, 29
- Jun 2024 15:33:22 +0200
-Message-ID: <a9623e7e-ce3a-434c-a904-39c6934c2ff5@web.de>
-Date: Sat, 29 Jun 2024 15:33:21 +0200
+	s=arc-20240116; t=1719668184; c=relaxed/simple;
+	bh=TBujtsgPSMyOfLYZxDA3iP9CsxfxpL2YehAcFvxFxZc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Y6fnWHLbR6948AYs1K/US2Os088aT7/ei5et1jLKIIWZ18oXFq9dka8cowkw62rNOU/jaiIpewQJXVzmhVs58mRcCW5kfcVuBeIo0eTTPBDFLH0G5UqavW8o2TQk8w2qlq7HTSAAtHOmpD3nLbz+7RZW7gUptslXWTLeaSCquMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RBFu7S1r; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2eaea28868dso20635841fa.3
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 06:36:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719668181; x=1720272981; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=D38SN9broVRElDVJrNbH9lpxn7RrifUECcswQJGhmS4=;
+        b=RBFu7S1rGVA1zR/tHC/+ZGJ/3iEPPWavUXnpDjTV+M8UAwhWbl/M8sGCYYDkHz9rzy
+         Ez8uKS1ULDIU/oewcRnvp9fMhDsU0VSx/xwsGB0lL2KqfovW2UEcXua7kyx5JDSgSi3g
+         Hy4t6OBnmF76HmJcgsonyF0sFyNGSLBGnxW5h9dBQJG3NAvCfrLiooQXDube9HgcLpOo
+         wJkkoirWXR3+BGSEYFByc88PiJB5H/xLCqyW0WYMO4Xj3CmmtIn5qg7XvtLtREN+QRgc
+         t+t0PVsRtPCayiAWjg3ivaILYrO8NnSW2GKJoH1WT4F47qeV+RHyCs0LXGJAAriZEk5h
+         DaGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719668181; x=1720272981;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D38SN9broVRElDVJrNbH9lpxn7RrifUECcswQJGhmS4=;
+        b=aYK4Mkwx72EoXHenYPM1ZyBR0v2cGmBON9boDQhC9599ncsYdUF/Si6woFobkL33FQ
+         dzPA+SyeuW0BlMPKsPUbwdiyP3ekyjLdUXd+gcfNy+GSEy2rd/9q0zwB6sercGYFYOKn
+         5zH8FxqRN1iPy4Xx7K0EIrhE9ZCE1axPj8IGcZHo3OeIfNhPAJ47obYcn1hscGkoR4lQ
+         EMLtVAQeEM8g/hxRJkCViUF8zI9TbErup3rEnkqnCa4+SHISfLpr1zRmaLVznNRDKN/L
+         q3UxCsSqyYBDqgnMWzgzHJKsX6vlQFUUnmtzpUzYfIhulNJsoeZORGHALeN4403Sr8+k
+         N51A==
+X-Forwarded-Encrypted: i=1; AJvYcCWk7TVpiZyk2tBIyGsXs86BVOQ6b0IstMIuj2Mp09zX9MD6IRsMO6465WCKlDRCFrF8CCfuMYZGV7wj6ma35q+VhWmFBOvsjcwpOMl9
+X-Gm-Message-State: AOJu0YzyAfcee+6fzCwvNlU3LGqvtEPO3tsAyc74Z9fvyfnT5RBb+iMN
+	cj1ZRB7jmyms6r5pnIgvPvNarSnjaoku3BmM/hU+ac0ise09ZsW8CoG2Cfq4ITs=
+X-Google-Smtp-Source: AGHT+IFJB16j6hMGw+LMqnNbELLe+/Lcybj4FJLisCZYX8Q5AVwCXH9TyN/LbqPZoyd4YuHSimyCtg==
+X-Received: by 2002:a05:651c:221a:b0:2ec:4f0c:36f9 with SMTP id 38308e7fff4ca-2ee5e6f628fmr12224891fa.36.1719668179689;
+        Sat, 29 Jun 2024 06:36:19 -0700 (PDT)
+Received: from [192.168.215.29] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72aaf1d201sm162949566b.9.2024.06.29.06.36.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 29 Jun 2024 06:36:19 -0700 (PDT)
+Message-ID: <53356c90-ec68-46fe-8e0b-0bcead54c39f@linaro.org>
+Date: Sat, 29 Jun 2024 15:36:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,83 +76,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: chrome-platform@lists.linux.dev, kernel-janitors@vger.kernel.org,
- Benson Leung <bleung@chromium.org>, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?=
- <groeck@chromium.org>, Prashant Malani <pmalani@chromium.org>,
- Tzung-Bi Shih <tzungbi@kernel.org>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] platform/chrome: cros_ec_typec: Use common error handling
- code in cros_typec_init_ports()
+Subject: Re: [PATCH v11 5/6] clk: qcom: ipq9574: Use icc-clk for enabling NoC
+ related clocks
+To: Varadarajan Narayanan <quic_varada@quicinc.com>, andersson@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, djakov@kernel.org,
+ dmitry.baryshkov@linaro.org, quic_anusha@quicinc.com,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, bryan.odonoghue@linaro.org
+References: <20240430064214.2030013-1-quic_varada@quicinc.com>
+ <20240430064214.2030013-6-quic_varada@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20240430064214.2030013-6-quic_varada@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:8GEojlSlW/ZWYYZVwoHEsxx02W5R81RIHVkpu3Caty7Yd5qzQyE
- fsWuQFmUgY4yHRsLI7PvnUcm+PK4rRHnQTaQ/dDHe2ukv1JOOLBcoGcdEv3Vjg8ySwPzjCt
- t7pEt5TEb8/GtJxdjbjGPtzN0xiIcwPnMEOpkfrcw+HfTe/MV8yYZyVhrvHIYyExe0DcmQ2
- Ue13yqLbhF7XU1fsl3ldw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:lzHNyPcj72Y=;EwPosG9IEVCYx49EBR8RezqvZCh
- KVGX77aZ3zF+tFbbgt8NAFYW0oTQUbwAyiJmgRgRG2s2y1w4PMmHF0JbsJBwGuf365huJVNPB
- 7Wod+0wlwKT2CUnm+zBEEfK4ue9L3UEYk0TaUxMGmN6xzv2KaUxTJIaR29BPv/9dK3yCG6JLD
- rRSbT9mPBuaAh+C7pIKOWNcQMHNo25d1HJ76+6qAj3VfqovZdjteZg2yUuzcuUStAdejwp5ue
- YeTGhS68KKd7Di2KtK2KFMEeqd4IwOoWYAckUwza+GnKFjw3ox7ZRXkpTWBt0X3g+rVKHqnZG
- +PzReSZKxTl1hKCjdwm+bIrtEd1wR7FH7voq7+0936H4pfaUO3KghtkeEr1DxUKJTp2iq5I5H
- dZLhxZ3jyFdZ2QNd+ksyM9WCz1frqkDtl3kfJiXqvWwW818BnsW5JlvUiYqLCwOdiN8xNt3xS
- 3oUXLLrGT3jEZlX/bjfmRB9LX3BCV9cNXpN7YHanKnPQHwQx2DemvNHOtxcUfbI4kWT52IlbS
- DUh8+owUdiiquZ7No6NH4JC57q4DRq7b7q9n5/KW4JNFK4GzLOeVQHd/uKii39knh446619Z3
- ltKZf1GLf45jujWFzvTZnqeJT2y54Gsr6+MFI2jh7ptOUP/yxlkQQGJatz2vd/OjzUsOh3U1i
- mNUnin7dyAFzOhBfs37hxdnIvN7eoy8w84wyIUZVPIfyGSNDpSiepjDmENeXLdoMcVMMo6DSK
- MBIBEdenZOwXwIqAoQaHKb86+fviWQjoBD3VXfYR3IjqtnuZ8W/Bn5Hgd1bQYoW7Whow+kTsO
- uouWaOEbCtL6/89mRO8akYtEADY9v3UTC7ogaugtHcUsI=
+Content-Transfer-Encoding: 7bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 29 Jun 2024 15:17:44 +0200
+On 30.04.2024 8:42 AM, Varadarajan Narayanan wrote:
+> Use the icc-clk framework to enable few clocks to be able to
+> create paths and use the peripherals connected on those NoCs.
+> 
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function implementation.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/platform/chrome/cros_ec_typec.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/ch=
-rome/cros_ec_typec.c
-index 4d305876ec08..aff744a0b38f 100644
-=2D-- a/drivers/platform/chrome/cros_ec_typec.c
-+++ b/drivers/platform/chrome/cros_ec_typec.c
-@@ -348,15 +348,13 @@ static int cros_typec_init_ports(struct cros_typec_d=
-ata *typec)
- 	port_prop =3D dev->of_node ? "reg" : "port-number";
- 	device_for_each_child_node(dev, fwnode) {
- 		if (fwnode_property_read_u32(fwnode, port_prop, &port_num)) {
--			ret =3D -EINVAL;
- 			dev_err(dev, "No port-number for port, aborting.\n");
--			goto unregister_ports;
-+			goto e_inval;
- 		}
-
- 		if (port_num >=3D typec->num_ports) {
- 			dev_err(dev, "Invalid port number.\n");
--			ret =3D -EINVAL;
--			goto unregister_ports;
-+			goto e_inval;
- 		}
-
- 		dev_dbg(dev, "Registering port %d\n", port_num);
-@@ -408,6 +406,8 @@ static int cros_typec_init_ports(struct cros_typec_dat=
-a *typec)
-
- 	return 0;
-
-+e_inval:
-+	ret =3D -EINVAL;
- unregister_ports:
- 	cros_unregister_ports(typec);
- 	return ret;
-=2D-
-2.45.2
-
+Konrad
 
