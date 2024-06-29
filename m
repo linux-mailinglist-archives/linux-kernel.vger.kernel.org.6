@@ -1,125 +1,148 @@
-Return-Path: <linux-kernel+bounces-234967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A30CA91CD9A
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 16:29:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2214191CD9B
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 16:30:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FBEF2833B2
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 14:29:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B9E81F22631
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 14:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF46381ACA;
-	Sat, 29 Jun 2024 14:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4043480C09;
+	Sat, 29 Jun 2024 14:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="mkMtK7Sr"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A6JWTX/c"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC592574F
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 14:28:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D387B1E489
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 14:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719671342; cv=none; b=Wa0oCAnkf5kxbEFOQkuovK3IvrqiJj2n19UGmuTCpsenkRXFJUDaG1Gw9aeio2eDHMTevZnLzTdVvDnfKRAiSiEgtDkr2MaeOmRJo1gNbkjbirjg+HDChQh+xF2B6j23XOxB4KPhFIUvu+twlzz8KEaAQllwlaxiidnQQgWrZMg=
+	t=1719671419; cv=none; b=ZjWEMZZRpgu+0IM7aE5CMIjBLAbfoOPNKbFrlAh8lOorbra4Wir/4GzkznnfFgD0rEjnAOQx2tDSQ97cN60dHfcQR/IAxBDUh+psrsaxVdvmtldY/FHRR4exkN68iI5oqVbkpre4xpcNl0NOcmVS4I+NUgXVL1hP6m2W8BmldBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719671342; c=relaxed/simple;
-	bh=uIaD8ZBxLPhcfgj7aofsksVVm3xFYi0A9yZhtMP0kiw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LVycWKZnxcZGGVF/ygsIum+z1+pUTbUglPQ4Pu+gJYyXWJfv3abIRg6Zi9UAgg1pKJxvWDRN2OpMFPgt4saAHYLYwOOHnaETDCEBtSqYlasv4i56E3qOnylX9/MJ/VV5tV5z2pi5DiYxFELWl8RQs8wBM4Y+H13Ia5/O45bCjKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=mkMtK7Sr; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1fa94d0ba3dso795285ad.2
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 07:28:59 -0700 (PDT)
+	s=arc-20240116; t=1719671419; c=relaxed/simple;
+	bh=4c4eNHgquP5LXvtkVKXE1VzOZkK6RNUxtXFoN7k8dlw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MXsamdRggHSPRm1YAmd0ugqa1QvKU4mcxR0BhH897Y38te2X+brUB/MQkO/kwD00QOnfKf424c8fixrNsQ+HeQbZbhqUm9y9QJCR9EKxpzKB+6igWCDaKyPk8Nr5Z6qjF30/vMpIx5fV6MKxrzmoFfLdIznZDn6haqKdv/SwfMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A6JWTX/c; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57d06101d76so1830813a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 07:30:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1719671339; x=1720276139; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2p5XLNwS2YRBahtSdOANhzhq5mBjZgumL1aQTLRpZko=;
-        b=mkMtK7SrdzT47/t0IalOe/AYnUIi8fDYx+cebRtuFLEzwurtO/brkoHnNnygNSSFQz
-         AhgTMApQO5hW6cXJippjsa0Dvtr3uoSN4tpvU2cyQ1+GF627zarI8lB/M01qdMo7bql2
-         9LAh5p/mNpAnGbwJ86MXdFJUaB4/HQ0d6dEaLkd9nTAeUpdZr1Sr5tkYlwq9hzJGCHoH
-         7/NKadoTfM7EDktUXMDWrUZeAyqrvKmjMchhUykmOwwFuGXJV4nnyNvFfbPQYrprMAtb
-         FTNfKWEIM7OR5IQQJ7l/tW14mFnIP/c0/ng4jkGNyXhX5OUV+x8cMBZ6AkrMKRJCKnOi
-         KMLA==
+        d=gmail.com; s=20230601; t=1719671416; x=1720276216; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VG9SqCZxDcweEqWP+jIbPso5aga3wixc1/xcyoRvDi0=;
+        b=A6JWTX/cTIOzIHSyZod5JOnmCi6rYUj9/T1wtm5LfZS8xHFDJ3sNP9WyNSyIQAyOg7
+         PWBbEpWWF5/c+Bwcot+MEd+Fzr1tWBVDD/2fxrMJJOIG22Z6lYUM/t+OfF840ffSCsVH
+         m+Aj/1uKWZGsrDJk7QOrAlrHm5g3PReSzDyveAspEBKdFD29k17Kujbz/8YHQ1Vt4wPM
+         7pa1N9HAlhvg+BxvNlJfFHkq0su7NEgvjZF4lcBOpiURRmGDIbREPzTJcbnnnszn0EqY
+         Pch0fCG+XmkpyzP4LkLBISsEz95vkIgk8yiGPaaTiREEZr5EKYGbS8mvGxy5OAHtqEGR
+         3YjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719671339; x=1720276139;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2p5XLNwS2YRBahtSdOANhzhq5mBjZgumL1aQTLRpZko=;
-        b=BZy11R9JLPU+QWiVX4RaMX712wpdGwYt9y1P/e49QFGKswBFy9XZ4N5OYnM/O0u3SP
-         1eGyDcRIRiT9R2w1erglI1iHZmd9KV+t5/ZOqvOEMzuCN900HFLOSC0G7kbfw3bR+9XS
-         lj1qCvKvkJNI+687glfibr/mrUV2INzTIrTXsdS3Zq8onP59WXheo3/9YKXhdXLKtdFL
-         lIYo4T1pCyqbLux3BlHDG/kRmjqtYBwU3Z/Tnxd78NFVf47gO4YnA4xDH00VsqM+oeH0
-         nHvneBr2SGMH+S+bSId0X9Q8DF+6DQtjh8mD16XFEFQlJnyMU5Qi5vd//n5Hy5zaSJ+0
-         qKXw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCfn8pANzrm+KsGQV2mFL6fQ4QULvkrZdeXViZMevih0vjZslvXTzDzaMSrstqICd4Q5fpykMEbx2bCi/yCjXHKaEHwoHfEONE4THB
-X-Gm-Message-State: AOJu0YzdeI6j+Ny+i6fywQtQJEL0ZMbBP3hICAgE212gGc6ROj5pj288
-	sC8fM5ofyQ2nTINrMjSSE9V5OrUK428wfWu2TjbBknczT+gmXDhenSHaY+r4SK8=
-X-Google-Smtp-Source: AGHT+IF5H4C/jQELWTgkXFGgHR0QJ7TWYa1ahOViweIVG8k2UjXlw9gVU49DkNGyutaZsrjJXKy6kw==
-X-Received: by 2002:a17:902:ea0b:b0:1f9:ecaa:75e9 with SMTP id d9443c01a7336-1fadbd395f7mr10861945ad.4.1719671339216;
-        Sat, 29 Jun 2024 07:28:59 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac1568efdsm32821455ad.193.2024.06.29.07.28.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 29 Jun 2024 07:28:58 -0700 (PDT)
-Message-ID: <53d0ee02-c33f-4fd5-ab14-cf28a618a699@kernel.dk>
-Date: Sat, 29 Jun 2024 08:28:56 -0600
+        d=1e100.net; s=20230601; t=1719671416; x=1720276216;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VG9SqCZxDcweEqWP+jIbPso5aga3wixc1/xcyoRvDi0=;
+        b=riTGbS0TZAAMFQAyGiuzrYe4IU0lGJn7TjPVfXdfzphtrY+pmpIPHU3t0r9wz9Rvwc
+         NvVCahx0EFd2XQgRYqKqBGzrnKR8kfACbf9Q4Ez8Lvncvqe0UtAdNjALUiV2yaxp9G9e
+         ElIJS0EgOH+HMxOA0dGn+5+j0lpBPuzajmL5/IrLRUqZtw+Y6mmrvgImAfYwztAYJjUK
+         xr6+YiC3lg+6V97TNyo2bd+4Zi0WGe21meXs31TAacbXcKGef3ow5dugb5E/ovcbHDym
+         6b3Tc9ZMAQY/KIMT8ai1QuRmdkpwjtmSQhsZ5paW1/ZS3sW2bDdDBHJtLGHNYI8UOp4X
+         Ny6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXi+uvT/MoDApYM6G/SixUi2ZjjBO2XY+hdT1othwtFX9GZ0TOSDkkahwD1/R5EFp1MgNfcPpH1RWdT5J6s4cmfBAbz+F16DldRR3GS
+X-Gm-Message-State: AOJu0Yy13petG0+6h3gOzPkdtVVPT5V8GFZBWWvFd/VRhUsqYD9q5tkB
+	HkZTMbZIbQ2glJW++4dzxsBWTC7pzC694yrafTwLkO5lWOlJWt143S6LgWNx6YQHGgK5aFH9CdG
+	OPkmJPgDsXeJ34kKRvTLN1aGVFls=
+X-Google-Smtp-Source: AGHT+IG0VFG34dW6TntSYGpVhzlZoKnQog7LGdjEUr2rXNIVqshKQ72zGCPy+dOq0y/6WL0TqlFup1SG7llo9wwJPFs=
+X-Received: by 2002:a05:6402:1910:b0:57d:619:7721 with SMTP id
+ 4fb4d7f45d1cf-5879f982feemr833762a12.21.1719671415676; Sat, 29 Jun 2024
+ 07:30:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: manual merge of the block tree with the vfs-brauner
- tree
-To: Christian Brauner <brauner@kernel.org>, Mark Brown <broonie@kernel.org>
-Cc: John Garry <john.g.garry@oracle.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Mateusz Guzik <mjguzik@gmail.com>,
- Prasad Singamsetty <prasad.singamsetty@oracle.com>
-References: <Zn76C70F9QB_Z0bw@sirena.org.uk>
- <20240629-gelohnt-widmung-b53f957cd69f@brauner>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240629-gelohnt-widmung-b53f957cd69f@brauner>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240628130750.73097-1-ioworker0@gmail.com> <20240628130750.73097-3-ioworker0@gmail.com>
+ <CAGsJ_4ybc6-PmJEP-h_uWmT1wqE9gmT8b0juXkYYi7XpzSrpdA@mail.gmail.com>
+In-Reply-To: <CAGsJ_4ybc6-PmJEP-h_uWmT1wqE9gmT8b0juXkYYi7XpzSrpdA@mail.gmail.com>
+From: Lance Yang <ioworker0@gmail.com>
+Date: Sat, 29 Jun 2024 22:30:04 +0800
+Message-ID: <CAK1f24nzALDT5zVL2bCBvf34sLfq1k_z6f9KBcVYRB+4dCCYrA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] mm: add docs for per-order mTHP split counters
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, dj456119@gmail.com, ryan.roberts@arm.com, 
+	david@redhat.com, shy828301@gmail.com, ziy@nvidia.com, libang.li@antgroup.com, 
+	baolin.wang@linux.alibaba.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, Mingzhe Yang <mingzhe.yang@ly.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/29/24 4:05 AM, Christian Brauner wrote:
-> On Fri, Jun 28, 2024 at 06:59:39PM GMT, Mark Brown wrote:
->> Hi all,
->>
->> Today's linux-next merge of the block tree got a conflict in:
->>
->>   fs/stat.c
->>
->> between commit:
->>
->>   0ef625bba6fb2 ("vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)")
->>
->> from the vfs-brauner tree and commit:
->>
->>   0f9ca80fa4f96 ("fs: Add initial atomic write support info to statx")
->>   9abcfbd235f59 ("block: Add atomic write support for statx")
->>
->> from the block tree.
-> 
-> Jens,
-> 
-> Can you give me the fs bits and I'll put them in a shared branch we can
-> both pull in?
+Hi Barry,
 
-It's pretty far down in my tree at this point, so I think we'll just
-have to live with this conflict. At least it's not a complicated one to
-resolve.
+Thanks a lot for taking time to review!
 
--- 
-Jens Axboe
+On Sat, Jun 29, 2024 at 11:08=E2=80=AFAM Barry Song <21cnbao@gmail.com> wro=
+te:
+>
+> On Sat, Jun 29, 2024 at 1:09=E2=80=AFAM Lance Yang <ioworker0@gmail.com> =
+wrote:
+> >
+> > This commit introduces documentation for mTHP split counters in
+> > transhuge.rst.
+> >
+> > Signed-off-by: Mingzhe Yang <mingzhe.yang@ly.com>
+> > Signed-off-by: Lance Yang <ioworker0@gmail.com>
+>
+> Reviewed-by: Barry Song <baohua@kernel.org>
 
+Have a nice weekend ;)
+Lance
+
+>
+> > ---
+> >  Documentation/admin-guide/mm/transhuge.rst | 16 ++++++++++++++++
+> >  1 file changed, 16 insertions(+)
+> >
+> > diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation=
+/admin-guide/mm/transhuge.rst
+> > index 1f72b00af5d3..709fe10b60f4 100644
+> > --- a/Documentation/admin-guide/mm/transhuge.rst
+> > +++ b/Documentation/admin-guide/mm/transhuge.rst
+> > @@ -514,6 +514,22 @@ file_fallback_charge
+> >         falls back to using small pages even though the allocation was
+> >         successful.
+> >
+> > +split
+> > +       is incremented every time a huge page is successfully split int=
+o
+> > +       base pages. This can happen for a variety of reasons but a comm=
+on
+> > +       reason is that a huge page is old and is being reclaimed.
+> > +       This action implies splitting any block mappings into PTEs.
+> > +
+> > +split_failed
+> > +       is incremented if kernel fails to split huge
+> > +       page. This can happen if the page was pinned by somebody.
+> > +
+> > +split_deferred
+> > +       is incremented when a huge page is put onto split
+> > +       queue. This happens when a huge page is partially unmapped and
+> > +       splitting it would free up some memory. Pages on split queue ar=
+e
+> > +       going to be split under memory pressure.
+> > +
+> >  As the system ages, allocating huge pages may be expensive as the
+> >  system uses memory compaction to copy data around memory to free a
+> >  huge page for use. There are some counters in ``/proc/vmstat`` to help
+> > --
+> > 2.45.2
+> >
 
