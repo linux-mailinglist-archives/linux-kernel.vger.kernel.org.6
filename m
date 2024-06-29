@@ -1,160 +1,135 @@
-Return-Path: <linux-kernel+bounces-234870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD65091CBD6
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 11:10:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71D8091CBD8
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 11:16:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D4ED1F2231A
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 09:10:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 736431C21420
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 09:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D77B3BB30;
-	Sat, 29 Jun 2024 09:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A193BB47;
+	Sat, 29 Jun 2024 09:16:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lRKm4VBm"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pw3PYbzN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2181CF9B;
-	Sat, 29 Jun 2024 09:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A017208B0;
+	Sat, 29 Jun 2024 09:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719652230; cv=none; b=mk8X63USEThcjyzhzvoS4NJ8bn3j/FbeUz4OVYORZhS++iB6iFi6NrJTn7zh600f1S3AQjWzvGF+84XliY6Xxh3CtE/QWJxnqs/p5WW6NlUUcuvUVJqKfkIZge8NkneiyQ1ZMFGDby4TPFCgJVAZow9NEf4yWXcwr5yVqKuPz8A=
+	t=1719652567; cv=none; b=J6iqclD2tqRbR2fPBi7FnODEN9fO2sVctKdUUAqjhgSppmerlq6REXoGlpHxh2BfNunsx2spZrJr+dFAx9GVyW9kd/01zZxxazsKjjcmSYhQ+Ra+ev9juH+mZ4QgNFy6wy3SPcX97t00VVOodM2unjlfPhGV8Z/be+XoiWCq37I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719652230; c=relaxed/simple;
-	bh=0qtBIVRF4tQXI/cSqAlbbskNESKysYkhxdb0PY/8yDw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HQjdH869TgL9fToTeB7ZEQT4fLDdlX0PGxmwqnbGG8faGVfwcx4Aa6F8oMGxVdMKtUmju1lytGUd6SXknYiUa2HZ0dEd/8+o/laIuqMr8xM/TLpiusXdHO9HM/YmlPDifsWS6zRHFjk+nqDLeW8rPJ+1F2i0UFye7WHAjB/TQaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lRKm4VBm; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ec10324791so14546401fa.1;
-        Sat, 29 Jun 2024 02:10:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719652227; x=1720257027; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZDwuIDgfSKVVddL+mBAVoNcFHRGflV4dK2Y+ujjCIXA=;
-        b=lRKm4VBmALZ1lwmWd9kl8s7BhpQ1bDq6VmvPazHGFUyGy7wpjG8Ujr7lFiuDMxHKdJ
-         vH6W6IAkAu4XGiFzm+oUefou3FN0Y/8EJUFoix9Z6BNjF9Uz0+x8j6bDrSiHGB3sl5Zf
-         l9oS36SAiMS3UtppSQWDCFK5zOvIj73BuvlYaeeCIvyq7vVKsca9mh9IWz6i193Z+op6
-         /gE55GCmSyCL1acnM1SVka3W5MM/QEzNb7z5g+Re9gfCFbSn3jXPDq+kKD2gO+/5edEh
-         rUT+7IQSesmPhuRk/VFMrzjdwJA+xLtciYr6Nu9rVGS8+8PRWQCU9nBv4waluvV6Kenu
-         pqxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719652227; x=1720257027;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZDwuIDgfSKVVddL+mBAVoNcFHRGflV4dK2Y+ujjCIXA=;
-        b=cHUGZN3xL75Wmubc8q1LKtPj38clIDXjxTUuYdvNvLqPkONr/Xve+XfW/f1SYsTavA
-         hRjexSklBJifjkfmQKX43T7Qu7MIBVMTlpsidcMst5f8TuWvLUfUemTEZ+zK9pZ+8sZg
-         W0+FdLfx9dehTorf9a/2WJXyVw/u9TkxVFIwgeFq+TKCKp4fjcW91QkbGkhgBHkklvhN
-         JWvEjONu/0aOFe2r70M8tHz6s/aa2BJCmd5UU/XuICSSLbhyP6d/C1cNCnDcze2MY7Iw
-         BrMY0geoij2UMVaVObRisLUhWkkXs7R6Nc6Jiyo42XaBzr5xbZeF/dUm9NSARQBm26OI
-         gv9A==
-X-Forwarded-Encrypted: i=1; AJvYcCWOXJ6m/hTwGaO2xN8zPuit7xixLc4KQMJTpy09GlXZIpu5EFJaifnGKCOP5XghE7dr34t/Q5IXUsE5jIjjwbeHxURkdZBh/vn4yH6eGZiFZK5Qa3pio5aCv17i6cbQLWZAP6pmVat7RLIiTohDZhpFLSkGdXvBEsVPIJ5vpDZeFer8+w==
-X-Gm-Message-State: AOJu0Ywep5Ykz8ylqhtq6MwnaFgYOeGaRrqFbYZO4TNFYlq5zRGKBDiT
-	J1m7W+wZM89puix63boqslsbtf00y7/qFpm+dDhQkOk2ARXk7tsIQqpWT+pFY/Y=
-X-Google-Smtp-Source: AGHT+IHgFn5RNN+RjMV45lrt6DSLu8SQlEH3qlHL2mcett7FAmuELRstt4JWRiyH9fv8eU/uft1ACQ==
-X-Received: by 2002:a2e:7004:0:b0:2ec:556f:3474 with SMTP id 38308e7fff4ca-2ee5e6d76e9mr4611561fa.52.1719652226200;
-        Sat, 29 Jun 2024 02:10:26 -0700 (PDT)
-Received: from ?IPV6:2a01:4b00:ad19:5100:878e:1e97:29e2:65e0? ([2a01:4b00:ad19:5100:878e:1e97:29e2:65e0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af3cf85sm67068815e9.4.2024.06.29.02.10.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 29 Jun 2024 02:10:25 -0700 (PDT)
-Message-ID: <66122c40-9c69-471c-8f59-cfb1c9b0b6ec@gmail.com>
-Date: Sat, 29 Jun 2024 10:10:19 +0100
+	s=arc-20240116; t=1719652567; c=relaxed/simple;
+	bh=1CNjP73ry8cY70hB93727FwLvKQuKgEDilX8HeyNIS0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AvwXoNlA2ucc4qmDOy7PhixeBPuLXJRSk8L39FnohF5mjMRR9MeDhdVR8gPhCi3NxDHcXlhtwFN/TbMwNp4izJHTtr/FGpFOsIMmU27tOHuahRvR/NiJNq50s4it+lcWKCvlqdIeHnDg9pbX7Wdp6sA1YLvC/HdNj2J8MR5g/P0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pw3PYbzN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A58BFC2BBFC;
+	Sat, 29 Jun 2024 09:16:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719652567;
+	bh=1CNjP73ry8cY70hB93727FwLvKQuKgEDilX8HeyNIS0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pw3PYbzN4tbTTU5JwIMg7eqRBo6uEwa/HOk4g81tqa4h95BTEtv4JNxrHT3HXMqHQ
+	 6GFN9VoBYQocs+UFopOonVAPOjL5eCs+HQWJs+C41ASODv1EtSvmFHydAfsx4WKk8S
+	 VLgf2gAPjXRGd/4EMynLWBUUOK4tQtK0TqLeut+fHeuNtB8r3ly/+68wnHDkcqUPBo
+	 XwfASXmg/su3W0+9nK1QJvDe9flLImqutXozY4RUBzPXGzRSoUPKF3XWuU98gz64T0
+	 H2Cgp7PgPJP8g66f5UDUboPG6BfIRBJU/8ShLW2xEImu3kBgwoI1YATMVN24rhx3tI
+	 WrTwUHUuq7bFQ==
+Date: Sat, 29 Jun 2024 10:16:02 +0100
+From: Simon Horman <horms@kernel.org>
+To: Marek Vasut <marex@denx.de>
+Cc: netdev@vger.kernel.org, Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Christophe Roullier <christophe.roullier@foss.st.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>, kernel@dh-electronics.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [net-next,PATCH v2] net: phy: realtek: Add support for PHY LEDs
+ on RTL8211F
+Message-ID: <20240629091602.GJ837606@kernel.org>
+References: <20240625204221.265139-1-marex@denx.de>
+ <20240628142742.GH783093@kernel.org>
+ <a7f614cd-fe39-4746-8a83-2a2d14fc46f4@denx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/2] iio: light: ROHM BH1745 colour sensor
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: lars@metafoo.de, krzk+dt@kernel.org, conor+dt@kernel.org,
- robh@kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, Ivan Orlov <ivan.orlov0322@gmail.com>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-References: <20240625220328.558809-1-muditsharma.info@gmail.com>
- <20240625220328.558809-2-muditsharma.info@gmail.com>
- <20240628203701.507c477c@jic23-huawei>
-Content-Language: en-US
-From: Mudit Sharma <muditsharma.info@gmail.com>
-In-Reply-To: <20240628203701.507c477c@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a7f614cd-fe39-4746-8a83-2a2d14fc46f4@denx.de>
 
-On 28/06/2024 20:37, Jonathan Cameron wrote:
-> Hi Mudit,
+On Fri, Jun 28, 2024 at 08:58:51PM +0200, Marek Vasut wrote:
+> On 6/28/24 4:27 PM, Simon Horman wrote:
+> > On Tue, Jun 25, 2024 at 10:42:17PM +0200, Marek Vasut wrote:
+> > > Realtek RTL8211F Ethernet PHY supports 3 LED pins which are used to
+> > > indicate link status and activity. Add minimal LED controller driver
+> > > supporting the most common uses with the 'netdev' trigger.
+> > > 
+> > > Signed-off-by: Marek Vasut <marex@denx.de>
+> > > ---
+> > > Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
+> > > Cc: Andrew Lunn <andrew@lunn.ch>
+> > > Cc: Christophe Roullier <christophe.roullier@foss.st.com>
+> > > Cc: David S. Miller <davem@davemloft.net>
+> > > Cc: Eric Dumazet <edumazet@google.com>
+> > > Cc: Heiner Kallweit <hkallweit1@gmail.com>
+> > > Cc: Jakub Kicinski <kuba@kernel.org>
+> > > Cc: Paolo Abeni <pabeni@redhat.com>
+> > > Cc: Russell King <linux@armlinux.org.uk>
+> > > Cc: kernel@dh-electronics.com
+> > > Cc: linux-kernel@vger.kernel.org
+> > > Cc: netdev@vger.kernel.org
+> > > ---
+> > > V2: - RX and TX are not differentiated, either both are set or not set,
+> > >        filter this in rtl8211f_led_hw_is_supported()
+> > > ---
+> > >   drivers/net/phy/realtek.c | 106 ++++++++++++++++++++++++++++++++++++++
+> > >   1 file changed, 106 insertions(+)
+> > > 
+> > > diff --git a/drivers/net/phy/realtek.c b/drivers/net/phy/realtek.c
+> > > index 2174893c974f3..bed839237fb55 100644
+> > > --- a/drivers/net/phy/realtek.c
+> > > +++ b/drivers/net/phy/realtek.c
+> > > @@ -32,6 +32,15 @@
+> > >   #define RTL8211F_PHYCR2				0x19
+> > >   #define RTL8211F_INSR				0x1d
+> > > +#define RTL8211F_LEDCR				0x10
+> > > +#define RTL8211F_LEDCR_MODE			BIT(15)
+> > > +#define RTL8211F_LEDCR_ACT_TXRX			BIT(4)
+> > > +#define RTL8211F_LEDCR_LINK_1000		BIT(3)
+> > > +#define RTL8211F_LEDCR_LINK_100			BIT(1)
+> > > +#define RTL8211F_LEDCR_LINK_10			BIT(0)
+> > > +#define RTL8211F_LEDCR_MASK			GENMASK(4, 0)
+> > > +#define RTL8211F_LEDCR_SHIFT			5
+> > > +
+> > 
+> > Hi Marek,
+> > 
+> > FWIIW, I think that if you use FIELD_PREP and FIELD_GET then
+> > RTL8211F_LEDCR_SHIFT can be removed.
 > 
-> I'd failed on previous reviews to notice the odd trigger in here.
-> What is it, because it doesn't seem to be a dataready trigger as the device
-> doesn't seem to provide such an interrupt?
-
-Hi Jonathan,
-
-Thank you for your review on this.
-
-I've incorrect called it as a dataready trigger, I missed this as part 
-of my initial cleanup - apologies for the confusion caused by this. I 
-should potentially call it 'threshold' or 'dev'. Please suggest what you 
-think would be appropriate here.
-
-The sensor has an active low interrupt pin which is connected to a GPIO 
-(input, pullup). When the sensor reading crosses value set in threshold 
-high or threshold low resisters, interrupt signal is generated and the 
-interrupt gets handled in 'bh1745_interrupt_handler()' (interrupt also 
-depends on number of consecutive judgements set in BH1745_PERSISTENCE 
-register)
-
+> FIELD_PREP/FIELD_GET only works for constant mask, in this case the mask is
+> not constant but shifted by SHIFT*index .
 > 
-> Various other comments inline.
-
-Will address all for v7
->
-...
->> +static irqreturn_t bh1745_interrupt_handler(int interrupt, void *p)
->> +{
->> +	struct iio_dev *indio_dev = p;
->> +	struct bh1745_data *data = iio_priv(indio_dev);
->> +	int ret;
->> +	int value;
->> +
->> +	ret = regmap_read(data->regmap, BH1745_INTR, &value);
->> +	if (ret)
->> +		return IRQ_NONE;
->> +
->> +	if (value & BH1745_INTR_STATUS) {
->> +		guard(mutex)(&data->lock);
->> +		iio_push_event(indio_dev,
->> +			       IIO_UNMOD_EVENT_CODE(IIO_INTENSITY, data->int_src,
->> +						    IIO_EV_TYPE_THRESH,
->> +						    IIO_EV_DIR_EITHER),
->> +			       iio_get_time_ns(indio_dev));
+> Other drivers introduce workarounds like this for exactly this issue:
 > 
-> What is happening here.  You always push out the event and use that as
-> a trigger?  This is an unusual trigger if it's appropriate to use it for
-> one at all.  You've called it a dataready trigger but it is not obvious
-> that this device provides any such signal.
+> drivers/clk/at91/pmc.h:#define field_prep(_mask, _val) (((_val) <<
+> (ffs(_mask) - 1)) & (_mask))
+> 
+> I don't think it is worth perpetuating that.
 
-When an interrupt occurs, BH1745_INTR_STATUS bit is set in the 
-BH1745_INTR register. Event is only pushed out when the 
-BH1745_INTR_STATUS bit is set.
->> +
->> +		iio_trigger_poll_nested(data->trig);
->> +
->> +		return IRQ_HANDLED;
->> +	}
->> +
->> +	return IRQ_NONE;
->> +}
+Thanks Marek,
 
-Best regards,
-Mudit Sharma
+Sorry for missing that the mask is not constant.
+And in that case I agree with the approach you have taken in this patch.
 
