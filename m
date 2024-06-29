@@ -1,137 +1,109 @@
-Return-Path: <linux-kernel+bounces-235061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 266C891CF1D
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 23:03:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57F1F91CF20
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 23:04:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 935FBB216B1
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 21:03:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51512B216A6
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 21:04:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD9F13E039;
-	Sat, 29 Jun 2024 21:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A851013E02E;
+	Sat, 29 Jun 2024 21:04:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b="XReh2JTh"
-Received: from polaris.svanheule.net (polaris.svanheule.net [84.16.241.116])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZQBRWXOY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA14137756
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 21:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.241.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2AC94B5A6;
+	Sat, 29 Jun 2024 21:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719694999; cv=none; b=md+PrAZ6PU9yY8i5TfOKfJYrgByRwPg1z/1T6a9SaJ6lwyL4juHYYhJjB3c+N8YnaDL9ocpIHD3Q5dcRlZo9HQGlUFzMiqzZ3ioDLsjNMYGV1zJUYOBWPjxUbAB8lvpX1UFp05hfHBH+DGRVQdU7k/ZWdtOhAF1pq4ca3Sr7Fb4=
+	t=1719695046; cv=none; b=NrfpuymRXtREDsbj6JdnTg+hFLv86WfgAWY+iGZ4MgAsM1UYpCK16yo9QSA+HG2B6lhoQ/C1pO6THlxG7jB6Oroyr8izULzKt2gwrFqX5gAQeVhOQmvCnMYPF9FLdu4g/UiRDQNz4oO7hR+SBk//P7XFdJxsxlxrtlmbzQpw7Rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719694999; c=relaxed/simple;
-	bh=+jQfiXKKOHuxkd0OeYkrcVbG0bY626ByuZ9J+7PQEjw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=IWOjePIEu7/tgjeIKK0gL8K9a1yil9NMa8WNLE+R5Op0C07HrBYCx4DSTuqN46hQgmW20Eq5QgfjEdLssgosqseanmllgvfllGLfBS8F5Zbh38DOIcusi2lphs9kUH4IThdHS6SqOil4AwljdOj3QLnJnJcij10etakBat/ho44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net; spf=pass smtp.mailfrom=svanheule.net; dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b=XReh2JTh; arc=none smtp.client-ip=84.16.241.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svanheule.net
-Received: from mars.vega.svanheule.net (unknown [94.110.49.146])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sander@svanheule.net)
-	by polaris.svanheule.net (Postfix) with ESMTPSA id 0C8AF50CF2E;
-	Sat, 29 Jun 2024 23:03:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
-	s=mail1707; t=1719694994;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EOt20HLhQmGQw8jZ8eMvbLL+V4dAOnTiGGiOjMXATI8=;
-	b=XReh2JThCDlVXVXO2mHGANRM/Zb4Itn0A+Qwk2MznJ4YIU4qzXYJkrZvE0EBRv3Y1eYQ/9
-	8drQBSs/833MK+a9LD8cV6i1nPdT3dhcKsWTaCZI7G2ViB7S4kdfqd3zS7ytiHy90IacN2
-	n+Dc0N26vB8RgXWLeCevCbIQ/1wnDpk0VDN7DtinVtLNTQLLH/6zgpJCZhYDdL70U3x1MK
-	Y9vjSvbeTjb+6QCNqhbqJUsY6ZyMvuk7c6QkTtmoP26L911U2vFT2BzWz2CZPof5OOmOjs
-	EvV2CRFnr0tQgb4cNvhLczAFGjU4XElMwcrrZ0SHAXXyIQUl+73bCVrFrXOo1w==
-Message-ID: <e0f0f6ceb37225dd3d85038773b09c7ceee96499.camel@svanheule.net>
-Subject: Re: [PATCH v3 7/9] clocksource: realtek: Add timer driver for
- rtl-otto platforms
-From: Sander Vanheule <sander@svanheule.net>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>, tglx@linutronix.de, 
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
- tsbogend@alpha.franken.de, daniel.lezcano@linaro.org,
- paulburton@kernel.org,  peterz@infradead.org, mail@birger-koblitz.de,
- bert@biot.com, john@phrozen.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-mips@vger.kernel.org, kabel@kernel.org, ericwouds@gmail.com, Markus
- Stockhausen <markus.stockhausen@gmx.de>
-Date: Sat, 29 Jun 2024 23:03:12 +0200
-In-Reply-To: <20240627043317.3751996-8-chris.packham@alliedtelesis.co.nz>
-References: <20240627043317.3751996-1-chris.packham@alliedtelesis.co.nz>
-	 <20240627043317.3751996-8-chris.packham@alliedtelesis.co.nz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+	s=arc-20240116; t=1719695046; c=relaxed/simple;
+	bh=m/yNJEhb5BzeQMP8vX+LrhZlQykraSLPqSVe5MB1HLs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=X1ZK3KB1Z2JtTmwwtItTajEuOZiUQ6gTBLE0aCGaTTjGaSDMYi/hbFKe0j6l8vs0z1rSZPB3FYh/LESiGNAhJbVPt9cEAIRZCBl48frITizTTuWjgWpB7/Ikd0aDEheEX9ctVUG4NVPJPxbwWXgqbK3d7fyrsk+hUzskAhrfXRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZQBRWXOY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29E3DC2BBFC;
+	Sat, 29 Jun 2024 21:04:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719695045;
+	bh=m/yNJEhb5BzeQMP8vX+LrhZlQykraSLPqSVe5MB1HLs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ZQBRWXOYlsMN1RcJHl1t13bQmGkOx1YbPd1hztXwwce0Hb6tJn1J5KULEZM7FA4Su
+	 Hy2hLqck/PA1ca2XWL+sAu5hMAfNUUngXaCgIXS451X5E4lfT0cYiEFKJYC4c4Nqok
+	 Q5+cSIZYsH6hnnkkVJqCLxNoMu5x90BouvCQt976UY79IMrdsF9/fKEcNCcwzlWItV
+	 oO88JS0nu2r7iE0B7CpvY1Fh4tDagdjpQJH6qkAJfRY+X2m2FzqVZCU9XiDatUR182
+	 ZKSLkJaQjrm2K1UyFa24eIo+1Ne0/4x394fA+wCn4SWDJ3wNKJJquDP+L/2OSIx2W8
+	 ou5Q77TIE0QGQ==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>,
+	Helge Deller <deller@gmx.de>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	linux-api@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] syscalls: fix sys_fanotify_mark prototype
+Date: Sat, 29 Jun 2024 23:03:37 +0200
+Message-Id: <20240629210359.94426-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Chris,
+From: Arnd Bergmann <arnd@arndb.de>
 
-On Thu, 2024-06-27 at 16:33 +1200, Chris Packham wrote:
-> The timer/counter block on the Realtek SoCs provides up to 5 timers. It
-> also includes a watchdog timer but this isn't being used currently (it
-> will be added as a separate wdt driver).
+My earlier fix missed an incorrect function prototype that shows up on
+native 32-bit builds:
 
-Do you mean the watchdog timer supported by drivers/watchdog/realtek_otto_w=
-dt.c? Or are
-you referring to another watchdog timer?
+In file included from fs/notify/fanotify/fanotify_user.c:14:
+include/linux/syscalls.h:248:25: error: conflicting types for 'sys_fanotify_mark'; have 'long int(int,  unsigned int,  u32,  u32,  int,  const char *)' {aka 'long int(int,  unsigned int,  unsigned int,  unsigned int,  int,  const char *)'}
+ 1924 | SYSCALL32_DEFINE6(fanotify_mark,
+      | ^~~~~~~~~~~~~~~~~
+include/linux/syscalls.h:862:17: note: previous declaration of 'sys_fanotify_mark' with type 'long int(int,  unsigned int,  u64,  int, const char *)' {aka 'long int(int,  unsigned int,  long long unsigned int,  int,  const char *)'}
 
-> One timer will be used per CPU as a local clock event generator. An
-> additional timer will be used as an overal stable clocksource.
->=20
-> Signed-off-by: Markus Stockhausen <markus.stockhausen@gmx.de>
-> Signed-off-by: Sander Vanheule <sander@svanheule.net>
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> ---
+On x86 and powerpc, the prototype is also wrong but hidden in an #ifdef,
+so it never caused problems.
 
-For reference, I submitted a driver for the same hardware back in 2022, but=
- didn't manage
-to follow up to finalize the submission:
+Add another alternative declaration that matches the conditional function
+definition.
 
-https://lore.kernel.org/all/cover.1642369117.git.sander@svanheule.net/
+Fixes: 403f17a33073 ("parisc: use generic sys_fanotify_mark implementation")
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+I've queued this fix in the asm-generic tree now
 
+ include/linux/syscalls.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> +
-> +/* Module initialization part. */
-> +static DEFINE_PER_CPU(struct timer_of, rttm_to) =3D {
-> +	.flags				=3D TIMER_OF_BASE | TIMER_OF_CLOCK |
-> TIMER_OF_IRQ,
-> +	.of_irq =3D {
-> +		.flags			=3D IRQF_PERCPU | IRQF_TIMER,
-
-In the original review of this code, I had some doubts about the use of IRQ=
-F_PERCPU. Maybe
-the people in Cc can shed some light on this.
-
-If I understand correctly, the SoC interrupts these timers use are not per-=
-cpu interrupts.
-(For comparison, AFAICT the MIPS CPU interrupts are)
-
-
-
-> +		.handler		=3D rttm_timer_interrupt,
-> +	},
-> +	.clkevt =3D {
-> +		.rating			=3D 400,
-> +		.features		=3D CLOCK_EVT_FEAT_PERIODIC |
-> CLOCK_EVT_FEAT_ONESHOT,
-
-If the use of IRQF_PERCPU is appropriate, I wonder if the driver should als=
-o use
-CLOCK_EVT_FEAT_PERCPU.
-
-
-Best,
-Sander
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 63424af87bba..fff820c3e93e 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -859,9 +859,15 @@ asmlinkage long sys_prlimit64(pid_t pid, unsigned int resource,
+ 				const struct rlimit64 __user *new_rlim,
+ 				struct rlimit64 __user *old_rlim);
+ asmlinkage long sys_fanotify_init(unsigned int flags, unsigned int event_f_flags);
++#if defined(CONFIG_ARCH_SPLIT_ARG64)
++asmlinkage long sys_fanotify_mark(int fanotify_fd, unsigned int flags,
++                                unsigned int mask_1, unsigned int mask_2,
++				int dfd, const char  __user * pathname);
++#else
+ asmlinkage long sys_fanotify_mark(int fanotify_fd, unsigned int flags,
+ 				  u64 mask, int fd,
+ 				  const char  __user *pathname);
++#endif
+ asmlinkage long sys_name_to_handle_at(int dfd, const char __user *name,
+ 				      struct file_handle __user *handle,
+ 				      int __user *mnt_id, int flag);
+-- 
+2.39.2
 
 
