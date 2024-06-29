@@ -1,231 +1,95 @@
-Return-Path: <linux-kernel+bounces-234847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98D9891CB78
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 08:59:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F26B91CB7B
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 09:20:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC36C1C21CCA
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 06:59:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5A2D1F22D1D
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 07:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA77381DF;
-	Sat, 29 Jun 2024 06:59:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F33834CD8;
+	Sat, 29 Jun 2024 07:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="RFdThJhf"
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Va2WLuiN"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282E01CF9B;
-	Sat, 29 Jun 2024 06:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ABA2AD49;
+	Sat, 29 Jun 2024 07:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719644347; cv=none; b=mbSb+Fvp8wRd8rAfCe2HbEys4sG/fF5XF1fIF8H/+KdnJKnccErAc8wjZjzHrsNRNxnWMINJGY5VjJjc8Yi7m62eHbibyvh4RY9ts65bVCEuCoHNmFzQ9ezQq4uBgBSELrmbeRLo1E8gQ1bkpjC4NMUh3Jd4jLG6d3XjMyUcwoY=
+	t=1719645603; cv=none; b=Z8YSb8Y65Ek2ZBUrMDpXkgaY6tYgycBswGEppUrLWRvFSUu8Hf1SgUvxMqHEN+PHUtVPtO/gk++QtA+bGTrQtGVl9MuKuvg4bzku3oNc4Nb23dDtn9FcCkFtvhBQMZBOc72+NhHJPGMZP5Qtwxf7i2kw7SwuV9xQUDq/eJWc2Vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719644347; c=relaxed/simple;
-	bh=6KyjtX5hOxB5LlFjn7fgJk+/s9NXrVzZ9ltFbNSFa2U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c2rOU53onIwN8wRks1YDYeRXIbfsEoKNTkneepKAONJS6u8aUPAIk8AHyXDlMJpgJZkuCC/VEPs0bJofbsq3F4WUBPI7nhSsar1BAWtUvqZs7Ih/s4sxGNWdJGUjNWnK8k1ERcDJQFc5XS5gUlC0uIH7Xxplm4mLP/jWRRJ9rew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=RFdThJhf; arc=none smtp.client-ip=80.12.242.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([86.243.222.230])
-	by smtp.orange.fr with ESMTPA
-	id NS2ussK9tE745NS2vs6O5R; Sat, 29 Jun 2024 08:58:56 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1719644336;
-	bh=7ZffAGKYDmgIjO3VVxySPyiErhAqXhow8CsGzx+lLxE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=RFdThJhfv4vP0hsVXmPTV5moPfCdjkgSOtnIqkWMriydYqth15YzuIU7lvY7cYBYD
-	 SxTULNmD8MBCbXjHJUwQy0f3hk1hMCh6uWVJykx9fay1rYE8U52k0tRgmWUNx9okxd
-	 YfebuiBFrfp+8CjStf3Y9/L6y6x6olhY2w7w9HYLqq1lKvOETEIg8iW+8K1altibgl
-	 6+/JosxD5GUz4zE9v23oRPFn13dL3ZE/LIlxRWXzpowNqG4NC+zyPnIH4rBMitnHVQ
-	 4JK8CLFEeZ5kuvWKjI+RchpY5MS84JOMNC117wT5DfMXRFnQ8IgOacLOiGjQ/LI/bL
-	 usaVooEKFjHIA==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 29 Jun 2024 08:58:56 +0200
-X-ME-IP: 86.243.222.230
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-acpi@vger.kernel.org
-Subject: [PATCH] ACPI: PMIC: Constify struct pmic_table
-Date: Sat, 29 Jun 2024 08:58:42 +0200
-Message-ID: <a6c9b1bcdf259adabbcaf91183d3f5ab87a98600.1719644292.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1719645603; c=relaxed/simple;
+	bh=43KSNdy635mC+m8pthn4X3ijJbOR+DQUlbunS7xxVS0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OpQOFfQMOlVymRXPyFW+vj4iMYsjI0M/JVVM7k/r5zBqhlQd5snKgAOPWx9oNU7IW47FUjgIZNgsXWNc77QWVTsrmAwO9YhNMLquMKH4Sn74pg2ympGf7jxUqfUtj0navIHkdJaNVeA3X4IUh3eRW7EZX79Ao2SJ1nDf8qVd5nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Va2WLuiN; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1719645589;
+	bh=43KSNdy635mC+m8pthn4X3ijJbOR+DQUlbunS7xxVS0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Va2WLuiN/gG2+vp+0zVx7TteJs9XIGnfYL7HWuWz2kVVO0ZCRubN0ocPoGxICQc1z
+	 6j/6IQQ9xYrwOpCQwm+0Z4qarg2AjCeA9nXUjGQwkR8d5crtenM9GDI6GcrhdxyASt
+	 N4tUwLkCTxtiSWRdEd7AETdeNTy62CByDvCEfDJE=
+Date: Sat, 29 Jun 2024 09:19:48 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Jean Delvare <jdelvare@suse.com>, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH v2 4/4] i2c: piix4: Register SPDs
+Message-ID: <afd11870-eab1-4b90-9b81-2a7c84be46e5@t-8ch.de>
+References: <20240627-piix4-spd-v2-0-617ce47b8ff4@weissschuh.net>
+ <20240627-piix4-spd-v2-4-617ce47b8ff4@weissschuh.net>
+ <2bbdb1bd-ea4d-4c14-9ea7-9fce09ac76b7@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <2bbdb1bd-ea4d-4c14-9ea7-9fce09ac76b7@roeck-us.net>
 
-'struct pmic_table' is not modified in these drivers.
+On 2024-06-28 16:09:09+0000, Guenter Roeck wrote:
+> On 6/27/24 10:48, Thomas Weißschuh wrote:
+> > The piix4 I2C bus can carry SPDs, register them if present.
+> > Only look on bus 0, as this is where the SPDs seem to be located.
+> > 
+> > Only the first 8 slots are supported. If the system has more,
+> > then these will not be visible.
+> > 
+> > The AUX bus can not be probed as on some platforms it reports all
+> > devices present and all reads return "0".
+> > This would allow the ee1004 to be probed incorrectly.
+> 
+> Was this reported somewhere ? I don't see it happen on any of my systems
+> (of course that doesn't really mean anything).
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security.
+It happened on one of the big server systems I tested on.
 
-On a x86_64, with allmodconfig, as an example:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-   3811	    786	      0	   4597	   11f5	drivers/acpi/pmic/intel_pmic_xpower.o
+> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> 
+> Reviewed-and-tested-by: Guenter Roeck <linux@roeck-us.net>
 
-   text	   data	    bss	    dec	    hex	filename
-   4147	    450	      0	   4597	   11f5	drivers/acpi/pmic/intel_pmic_xpower.o
+Thanks!
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only
----
- drivers/acpi/pmic/intel_pmic.c          | 2 +-
- drivers/acpi/pmic/intel_pmic.h          | 4 ++--
- drivers/acpi/pmic/intel_pmic_bxtwc.c    | 4 ++--
- drivers/acpi/pmic/intel_pmic_bytcrc.c   | 4 ++--
- drivers/acpi/pmic/intel_pmic_chtdc_ti.c | 4 ++--
- drivers/acpi/pmic/intel_pmic_chtwc.c    | 2 +-
- drivers/acpi/pmic/intel_pmic_xpower.c   | 4 ++--
- 7 files changed, 12 insertions(+), 12 deletions(-)
+FYI, combined tags are discouraged by
+Documentation/process/maintainer-tip.rst:
 
-diff --git a/drivers/acpi/pmic/intel_pmic.c b/drivers/acpi/pmic/intel_pmic.c
-index f20dbda1a831..134e9ca8eaa2 100644
---- a/drivers/acpi/pmic/intel_pmic.c
-+++ b/drivers/acpi/pmic/intel_pmic.c
-@@ -31,7 +31,7 @@ struct intel_pmic_opregion {
- 
- static struct intel_pmic_opregion *intel_pmic_opregion;
- 
--static int pmic_get_reg_bit(int address, struct pmic_table *table,
-+static int pmic_get_reg_bit(int address, const struct pmic_table *table,
- 			    int count, int *reg, int *bit)
- {
- 	int i;
-diff --git a/drivers/acpi/pmic/intel_pmic.h b/drivers/acpi/pmic/intel_pmic.h
-index d956b03a6ca0..006f0780ffab 100644
---- a/drivers/acpi/pmic/intel_pmic.h
-+++ b/drivers/acpi/pmic/intel_pmic.h
-@@ -21,9 +21,9 @@ struct intel_pmic_opregion_data {
- 					  u32 reg_address, u32 value, u32 mask);
- 	int (*lpat_raw_to_temp)(struct acpi_lpat_conversion_table *lpat_table,
- 				int raw);
--	struct pmic_table *power_table;
-+	const struct pmic_table *power_table;
- 	int power_table_count;
--	struct pmic_table *thermal_table;
-+	const struct pmic_table *thermal_table;
- 	int thermal_table_count;
- 	/* For generic exec_mipi_pmic_seq_element handling */
- 	int pmic_i2c_address;
-diff --git a/drivers/acpi/pmic/intel_pmic_bxtwc.c b/drivers/acpi/pmic/intel_pmic_bxtwc.c
-index e247615189fa..c332afbf82bd 100644
---- a/drivers/acpi/pmic/intel_pmic_bxtwc.c
-+++ b/drivers/acpi/pmic/intel_pmic_bxtwc.c
-@@ -24,7 +24,7 @@
- #define VSWITCH1_OUTPUT         BIT(4)
- #define VUSBPHY_CHARGE          BIT(1)
- 
--static struct pmic_table power_table[] = {
-+static const struct pmic_table power_table[] = {
- 	{
- 		.address = 0x0,
- 		.reg = 0x63,
-@@ -177,7 +177,7 @@ static struct pmic_table power_table[] = {
- 	} /* MOFF -> MODEMCTRL Bit 0 */
- };
- 
--static struct pmic_table thermal_table[] = {
-+static const struct pmic_table thermal_table[] = {
- 	{
- 		.address = 0x00,
- 		.reg = 0x4F39
-diff --git a/drivers/acpi/pmic/intel_pmic_bytcrc.c b/drivers/acpi/pmic/intel_pmic_bytcrc.c
-index 2b09f8da5400..b4c21a75294a 100644
---- a/drivers/acpi/pmic/intel_pmic_bytcrc.c
-+++ b/drivers/acpi/pmic/intel_pmic_bytcrc.c
-@@ -16,7 +16,7 @@
- 
- #define PMIC_A0LOCK_REG		0xc5
- 
--static struct pmic_table power_table[] = {
-+static const struct pmic_table power_table[] = {
- /*	{
- 		.address = 0x00,
- 		.reg = ??,
-@@ -134,7 +134,7 @@ static struct pmic_table power_table[] = {
- 	}, /* V105 -> V1P05S, L2 SRAM */
- };
- 
--static struct pmic_table thermal_table[] = {
-+static const struct pmic_table thermal_table[] = {
- 	{
- 		.address = 0x00,
- 		.reg = 0x75
-diff --git a/drivers/acpi/pmic/intel_pmic_chtdc_ti.c b/drivers/acpi/pmic/intel_pmic_chtdc_ti.c
-index 79f9df552524..ecb36fbc1e7f 100644
---- a/drivers/acpi/pmic/intel_pmic_chtdc_ti.c
-+++ b/drivers/acpi/pmic/intel_pmic_chtdc_ti.c
-@@ -23,7 +23,7 @@
- #define CHTDC_TI_BPTHERM	0x58
- #define CHTDC_TI_GPADC		0x5a
- 
--static struct pmic_table chtdc_ti_power_table[] = {
-+static const struct pmic_table chtdc_ti_power_table[] = {
- 	{ .address = 0x00, .reg = 0x41 }, /* LDO1 */
- 	{ .address = 0x04, .reg = 0x42 }, /* LDO2 */
- 	{ .address = 0x08, .reg = 0x43 }, /* LDO3 */
-@@ -39,7 +39,7 @@ static struct pmic_table chtdc_ti_power_table[] = {
- 	{ .address = 0x30, .reg = 0x4e }, /* LD14 */
- };
- 
--static struct pmic_table chtdc_ti_thermal_table[] = {
-+static const struct pmic_table chtdc_ti_thermal_table[] = {
- 	{
- 		.address = 0x00,
- 		.reg = CHTDC_TI_GPADC
-diff --git a/drivers/acpi/pmic/intel_pmic_chtwc.c b/drivers/acpi/pmic/intel_pmic_chtwc.c
-index 25aa3e33b09a..81caede51ca2 100644
---- a/drivers/acpi/pmic/intel_pmic_chtwc.c
-+++ b/drivers/acpi/pmic/intel_pmic_chtwc.c
-@@ -70,7 +70,7 @@
-  * "regulator: whiskey_cove: implements Whiskey Cove pmic VRF support"
-  * https://github.com/intel-aero/meta-intel-aero/blob/master/recipes-kernel/linux/linux-yocto/0019-regulator-whiskey_cove-implements-WhiskeyCove-pmic-V.patch
-  */
--static struct pmic_table power_table[] = {
-+static const struct pmic_table power_table[] = {
- 	{
- 		.address = 0x0,
- 		.reg = CHT_WC_V1P8A_CTRL,
-diff --git a/drivers/acpi/pmic/intel_pmic_xpower.c b/drivers/acpi/pmic/intel_pmic_xpower.c
-index 43c5850b4bf3..49bda5e0c8aa 100644
---- a/drivers/acpi/pmic/intel_pmic_xpower.c
-+++ b/drivers/acpi/pmic/intel_pmic_xpower.c
-@@ -26,7 +26,7 @@
- #define AXP288_ADC_TS_CURRENT_ON_ONDEMAND		(2 << 0)
- #define AXP288_ADC_TS_CURRENT_ON			(3 << 0)
- 
--static struct pmic_table power_table[] = {
-+static const struct pmic_table power_table[] = {
- 	{
- 		.address = 0x00,
- 		.reg = 0x13,
-@@ -129,7 +129,7 @@ static struct pmic_table power_table[] = {
- };
- 
- /* TMP0 - TMP5 are the same, all from GPADC */
--static struct pmic_table thermal_table[] = {
-+static const struct pmic_table thermal_table[] = {
- 	{
- 		.address = 0x00,
- 		.reg = XPOWER_GPADC_LOW
--- 
-2.45.2
+  Please do not use combined tags, e.g. ``Reported-and-tested-by``, as
+  they just complicate automated extraction of tags.
 
+I'll add the tags in split form to the patch.
+
+
+Thomas
 
