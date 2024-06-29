@@ -1,117 +1,137 @@
-Return-Path: <linux-kernel+bounces-234877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7176591CBE4
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 11:21:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F68891CBE5
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 11:24:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B467283412
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 09:21:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0768F2834BC
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 09:23:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89BEF446AC;
-	Sat, 29 Jun 2024 09:20:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B953BB25;
+	Sat, 29 Jun 2024 09:23:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="GLm2aW9j"
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mkqyJRkG"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F8543AD5
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 09:20:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65259381B9
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 09:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719652858; cv=none; b=p7UWZpETpWArn0QmKSEdtQb6/3k6qs+FKVMBs79zna1gM6qAh9lz7WKXsqUiJjE0z1lwYsGsZmCsv0qRYkcJ1P5dpEB/uVTwLKtfbo71Rs2PLoiM6C+qOy2XQZeip1LLYuMPFdhNe1EKvBw7KOzObyb/EgKN2twdrtK5rriLO3E=
+	t=1719653034; cv=none; b=t3FrsuaUEzg7kW1AU5DPvnvgTdqkBixENPDZMVxGleLOVEKX7EgM6SkzV/cRTitHyyaCUp56HHuVE9dqkE5DBXh4HE81hjaQz2w0AZ9zKGJAWywNwZFCA7OHpygmlfInmvVRKjI95m5wGDgqfeGunXcF/ijw/n8pfqfGs2Bc9lU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719652858; c=relaxed/simple;
-	bh=JEqQTXN7i/UpjDTg0v2GMhy06AEN/B1xTgSE3FEecGA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=l/BKsOp/j/3aIfWhDxVQ+/Lt5xcQR+zPa/H41PQ0jytn49IHPR3PDNZ5t/32SzradvswrSuwWRcf26i0Thms3iukKEOTSG+c44D5yi93NdPd48bH/8kjVyhYk5Cj0G0v+Dhb+F2qBteF8D1BVCLwmSU2eamTNklXnUYFdtcc6bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=GLm2aW9j; arc=none smtp.client-ip=80.12.242.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([86.243.222.230])
-	by smtp.orange.fr with ESMTPA
-	id NUF6sgiHDa7etNUFFs5cqZ; Sat, 29 Jun 2024 11:19:45 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1719652785;
-	bh=SbC8eskPoxKJ+eN2Qq7W2GaCgbxx29oD7K2szf1j0QE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=GLm2aW9jAdL1vITOmoKJ22fGy+4A6bXXIupEbaVhXFBjWbK4tAcN7p6wrh9akuhCi
-	 9DIgF6Sgqyauc36H8w9LgJ3GDogS4OEERhmEcl6Bj9ASurrX+/k0Y+ZKl8xWSmXVB4
-	 dMI678AoM5hbZYzDdRewj11b8KefFRB5pCdE0cI8KUmt++9xIN1XHYdpPdoY6uTVJH
-	 tCGxCg6XRMKq6KoO1Wtw+H2uuPax70nAM/klCzp2ru/6xNMiIStjHNvJlbaURU7gd2
-	 oE9Kt1a+VQlPW/1VBalZD1kANRAfeafe7iFBxr9hR3hEFQuO73Zx2A2C0XiJGBiRYH
-	 Nk80KScPP8b9A==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 29 Jun 2024 11:19:45 +0200
-X-ME-IP: 86.243.222.230
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	fparent@baylibre.com,
-	fchiby@baylibre.com,
-	s.hauer@pengutronix.de
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 4/4] soc: mediatek: pwrap: Simplify some error messages
-Date: Sat, 29 Jun 2024 11:19:33 +0200
-Message-ID: <7e6f7dcded577091061e2bc3f86d6ec5f6c4be7d.1719652155.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.1719652155.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1719652155.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1719653034; c=relaxed/simple;
+	bh=a8lBBR+zq9+SenzNjJUVvc8RiDEZ37nxr16SZQT231U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Jr7lxXRdeTWqfpJHVK09Hhqj6EAQ90tPnEhBVyfJlSacUuzfODZbaKJdXB/QlB2Btpb2OD41XRwuMPB6Poip6TfBELSDudqR/bU6eVXW0NTDzRPHP+3znVLiYnO3oZrQQcTnVjnQa085r19F0TimOah4+y1bm4uWk7rhkUi4BII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mkqyJRkG; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5854ac8168fso1593288a12.2
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 02:23:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719653031; x=1720257831; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dutiK21L6e08iTcsoNDSH2EG6qkKH/ZpV/B61gNV7FM=;
+        b=mkqyJRkGwOmFWXiYU4NmI/WKxty5fszvyBoNuvLhCyrRT4rerI3vBDnsoVJ5Nt4Kc2
+         0nmETleq0ilYZdqqILn7xvWizbQrM4TKviJp23ykyhbuv+N5g17pmhkTCkUHd3VS3tc3
+         TseKikmDRUuWfEDYXQMxmUI2suF4flyYVIMvUikV2QZEwVVdaC/xGnx9wDbXcU5d6DXX
+         11uof4MVl4FEsTEyy81Ls32zZwGrTJ0MCp2eT3G+Mo8/ST3taQuKQ8Rt7iBsewUfITgU
+         0d2da+fVvfSQncJXth7tx/+qEk44FYAlJ6uH3yNuVdIfRbHYf9CP5xoleZNsP8BjatXy
+         5vLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719653031; x=1720257831;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dutiK21L6e08iTcsoNDSH2EG6qkKH/ZpV/B61gNV7FM=;
+        b=ohOeTFKVw4e1B2966eGUPXGM9YM0cB5acSFSMndZ2Ka1BUZ2XAoyN5AJ8KveiZq7wW
+         GT39vbq256/dtKfNvwUqTiRy6472gTlj4F3MoEhaWAlGb7alXkNrq68Kf61lmbItR1y7
+         8Vhxz/uIhLgCD//UWJ+QWvKL7s/k45JcOc+ruXXhYVdiVmarEmFMkE9lnfGJxPBffrqc
+         iNkj4PCh45flat2O1GcECH+Q5YbmSG947CdCiSbnyFukQQ2JlXTekhOJgefzHe7H2yzl
+         j8UHBfhds8rnxybS6HHPbyf84RRfkW7wYnlkOPBKqYCXKMrYECw9R9gF0efQEWAx+ci8
+         aJIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7yiagvETpyeT6J2XBYzGWRukfMuh806/42rvub29U1oU2vMDObfr8aKo+HviZE19iMLycJ1HeFCzK+Owb7kssxmOkV3RTjxJ8nlTX
+X-Gm-Message-State: AOJu0YxS7NXXNL1zFgyi7rkVlz1Qlnl8/xG2jfRriup6Dehzm0q1Dc27
+	sbfGTL+vustby4QbMJoG3Dg56qBXysSbpf3xUYll2Yv2Mu97SagIgYI3TPhvs4w=
+X-Google-Smtp-Source: AGHT+IFnRzvdM0vkP7UaAjE/niQLhB+sI8vKKpjEfqgqrqegYl2NxtWtJ+49LZotsm8GiBQpdCpEgw==
+X-Received: by 2002:a05:6402:11c9:b0:57c:fe38:54c3 with SMTP id 4fb4d7f45d1cf-5879fa7b3c9mr442218a12.22.1719653030598;
+        Sat, 29 Jun 2024 02:23:50 -0700 (PDT)
+Received: from uffe-tuxpro14.valamar-dc.local ([195.29.219.1])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5861324f0a3sm2059654a12.35.2024.06.29.02.23.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 29 Jun 2024 02:23:50 -0700 (PDT)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Linus <torvalds@linux-foundation.org>,
+	linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [GIT PULL] MMC fixes for v6.10-rc6
+Date: Sat, 29 Jun 2024 11:23:48 +0200
+Message-Id: <20240629092348.8191-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-dev_err_probe() already display the error code in a human readable form,
-there is no need to add it explicitly to the message.
+Hi Linus,
 
-While at it, remove some useless {}.
+Here's a PR with a couple of MMC fixes intended for v6.10-rc6. Details about the
+highlights are as usual found in the signed tag.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only
----
- drivers/soc/mediatek/mtk-pmic-wrap.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+Please pull this in!
 
-diff --git a/drivers/soc/mediatek/mtk-pmic-wrap.c b/drivers/soc/mediatek/mtk-pmic-wrap.c
-index 6981d6a1ab93..c55f4061b8ef 100644
---- a/drivers/soc/mediatek/mtk-pmic-wrap.c
-+++ b/drivers/soc/mediatek/mtk-pmic-wrap.c
-@@ -2533,18 +2533,14 @@ static int pwrap_probe(struct platform_device *pdev)
- 	}
- 
- 	clk = devm_clk_get_optional_enabled(wrp->dev, "sys");
--	if (IS_ERR(clk)) {
-+	if (IS_ERR(clk))
- 		return dev_err_probe(wrp->dev, PTR_ERR(clk),
--				     "failed to get clock: %pe\n",
--				     clk);
--	}
-+				     "failed to get sys clock\n");
- 
- 	clk = devm_clk_get_optional_enabled(wrp->dev, "tmr");
--	if (IS_ERR(clk)) {
-+	if (IS_ERR(clk))
- 		return dev_err_probe(wrp->dev, PTR_ERR(clk),
--				     "failed to get clock: %pe\n",
--				     clk);
--	}
-+				     "failed to get tmr clock\n");
- 
- 	/* Enable internal dynamic clock */
- 	if (HAS_CAP(wrp->master->caps, PWRAP_CAP_DCM)) {
--- 
-2.45.2
+Kind regards
+Ulf Hansson
 
+
+The following changes since commit 6ba59ff4227927d3a8530fc2973b80e94b54d58f:
+
+  Linux 6.10-rc4 (2024-06-16 13:40:16 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v6.10-rc4
+
+for you to fetch changes up to ab069ce125965a5e282f7b53b86aee76ab32975c:
+
+  mmc: sdhci: Do not lock spinlock around mmc_gpio_get_ro() (2024-06-20 16:42:30 +0200)
+
+----------------------------------------------------------------
+MMC host:
+ - moxart-mmc: Revert "mmc: moxart-mmc: Use sg_miter for PIO"
+ - sdhci: Do not invert write-protect twice
+ - sdhci: Do not lock spinlock around mmc_gpio_get_ro()
+ - sdhci-pci/sdhci-pci-o2micro: Return proper error codes
+ - sdhci-brcmstb: Fix support for erase/trim/discard
+
+----------------------------------------------------------------
+Adrian Hunter (2):
+      mmc: sdhci: Do not invert write-protect twice
+      mmc: sdhci: Do not lock spinlock around mmc_gpio_get_ro()
+
+Ilpo Järvinen (2):
+      mmc: sdhci-pci: Convert PCIBIOS_* return codes to errnos
+      mmc: sdhci-pci-o2micro: Convert PCIBIOS_* return codes to errnos
+
+Kamal Dasu (1):
+      mmc: sdhci-brcmstb: check R1_STATUS for erase/trim/discard
+
+Linus Walleij (1):
+      Revert "mmc: moxart-mmc: Use sg_miter for PIO"
+
+ drivers/mmc/host/moxart-mmc.c        | 78 ++++++++++++++++++++----------------
+ drivers/mmc/host/sdhci-brcmstb.c     |  4 ++
+ drivers/mmc/host/sdhci-pci-core.c    | 11 +++--
+ drivers/mmc/host/sdhci-pci-o2micro.c | 41 ++++++++++---------
+ drivers/mmc/host/sdhci.c             | 25 +++++++-----
+ 5 files changed, 90 insertions(+), 69 deletions(-)
 
