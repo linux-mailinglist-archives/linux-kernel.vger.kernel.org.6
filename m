@@ -1,66 +1,200 @@
-Return-Path: <linux-kernel+bounces-234982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A03B891CDEC
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 17:34:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5431491CDF1
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 17:37:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3712FB21C20
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 15:34:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A3451C21100
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 15:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFAB0823CE;
-	Sat, 29 Jun 2024 15:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD54384E04;
+	Sat, 29 Jun 2024 15:37:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=emersion.fr header.i=@emersion.fr header.b="5k00CWLy"
-Received: from mail-0201.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T0qqI8mU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0004D1DFE8
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 15:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.77.79.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB78C1DFE8;
+	Sat, 29 Jun 2024 15:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719675289; cv=none; b=PMGrjcyDD3ftCluq55nnKtm25BhfMInVwG3ttFc5GhATsWi2oY2UBufdIOdR7YK/GX7zCqZTJtATcI6nnBXxheMLnoZb68B0VW+WEVZbxw+oumrjCuRpzcS7zLi3t/sn7S4K0Tx37zSgaqQYrHqVpUvaFPWCumGpy15zKsDcdQw=
+	t=1719675430; cv=none; b=VY3QM6SSDDCGq+2zG1NLZ6NGNc3Ymzse/KJU6XwC57ckmDAkASAJrnG1IbFugxaIelG+eCy1q6P/ctz61xR6ovPdS9/E+iwOABEbETbm9mLjYVIzhtLL4bewZg2mbuTTxybN5XYAjkLYTcf02OGWq8PveHpHrvAEyc0PAysYn4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719675289; c=relaxed/simple;
-	bh=tcrv1emIiF0c9leopgU8fSqbwyVlehaFj8V97sK9GnE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IApP/LFCxZXapcDPLBMNsuiP2c5CkRVbbpZK31vlldzFs3oXyGWeLjeE0xiQWROWVv01LV1vYzQGr+9o0BARQokuaCFA4rs66ZiBoX5mWhgy3IdQeQCUGJytB53yxWRg8i+g8fSj/EmjlT+02Dh/vr6V8IAgX/EIXyucWtHAeKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=emersion.fr; spf=pass smtp.mailfrom=emersion.fr; dkim=pass (2048-bit key) header.d=emersion.fr header.i=@emersion.fr header.b=5k00CWLy; arc=none smtp.client-ip=51.77.79.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=emersion.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emersion.fr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=emersion.fr;
-	s=protonmail3; t=1719675270; x=1719934470;
-	bh=tcrv1emIiF0c9leopgU8fSqbwyVlehaFj8V97sK9GnE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=5k00CWLysWDqh4H/ioHlbfQgsuuaH575h0D5vgYr2/HcG2vTqNd8csabAx1f8lmeg
-	 dAgneA4gfeRcru0yBxeARxyrm/hAxMb7TPjFpHHZYk8mxcDKGsVTNskqN380Maotnq
-	 AsPNmCk++mFAINeHPLDwwffSZ+NFPQbZcQZDwimtiAWTSAddrVj0MM5m9gF219VMH+
-	 lRoA9i0T7IiVfDQTFs53Jx+/CNkrSf2Bo/gZEic3XPQws3whrdiSXROopY5wITwuqf
-	 yCtZWH8x6XfNjaAC5sMTt3yDMcL55NLkIH1XM45FLbythv19FWyFSDARLoIHhftbm1
-	 wCekgVB25I5og==
-Date: Sat, 29 Jun 2024 15:34:25 +0000
-To: =?utf-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-From: Simon Ser <contact@emersion.fr>
-Cc: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-dev@igalia.com, alexander.deucher@amd.com, christian.koenig@amd.com, Pekka Paalanen <ppaalanen@gmail.com>, daniel@ffwll.ch, Daniel Stone <daniel@fooishbar.org>, =?utf-8?Q?=27Marek_Ol=C5=A1=C3=A1k=27?= <maraeo@gmail.com>, Dave Airlie <airlied@gmail.com>, ville.syrjala@linux.intel.com, Xaver Hugl <xaver.hugl@gmail.com>, Joshua Ashton <joshua@froggi.es>, =?utf-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH 1/1] drm/atomic: Allow userspace to use explicit sync with atomic async flips
-Message-ID: <PPWhSnGWwPfxmBFtMxYf_r6jv7owTpZf43ColyQuh1tcjl9qN9lrHrYO47QVdgS2XXUeORRMlw6gNfwx67bV4MmAQ8IyKpDLe1C8UmjDcUQ=@emersion.fr>
-In-Reply-To: <E2TvhjtSDwH2ewf7fHTKGQChRCccKteo-t-FYLisImD7vCllDyV4_hcl8LsfKyY28mc5D7_zYSIJ5Qjac8QnENcI12RQHsDj5O3JyPzhiIg=@emersion.fr>
-References: <20240622170951.738735-1-andrealmeid@igalia.com> <E2TvhjtSDwH2ewf7fHTKGQChRCccKteo-t-FYLisImD7vCllDyV4_hcl8LsfKyY28mc5D7_zYSIJ5Qjac8QnENcI12RQHsDj5O3JyPzhiIg=@emersion.fr>
-Feedback-ID: 1358184:user:proton
-X-Pm-Message-ID: 1b2e1d26fc220e1e05526e8edebce2894d8d6761
+	s=arc-20240116; t=1719675430; c=relaxed/simple;
+	bh=uBhS/HMC3Y7Zk7BpvYR/7CveBA8jwnAijIUS2nLxHw0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ToEOlhbCS74zsdXrSX0/JemfnlvuZwab7lx3+NryA419Wxs0Mz42XzKHbNVIuBvM/LTHjTYSHzJNxF0K2F/Tzhe853Yssnc0pz+jqI5puU3Ejx4IfdPBLICKQwp7uRzYfGaZ9NzlXT/BBK/+KiFlk+tMyfBgj/+7PHSx1w0kOrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T0qqI8mU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9177C2BBFC;
+	Sat, 29 Jun 2024 15:37:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719675429;
+	bh=uBhS/HMC3Y7Zk7BpvYR/7CveBA8jwnAijIUS2nLxHw0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=T0qqI8mUBEg9tqTq4BDhabNpItbf4zsvj0adP8N39ALQaSHdILtlyDXfyIJAIRMRs
+	 FeudjVkSZd28cUeV0+Z5gnCyVoXxj7anpZgRImZhcAK6pVgVuz91syGKqXz+ccW5Z2
+	 g5b73rxsdITFDKPuB5Y3kbraLG5fO4iKYA53cao2fdcHxYBtnrNZRs2hfycGHG9cpu
+	 qmIh+Nhct5nMwa4pI90xnKNR+ofCVmk9lVv/q+H6bEJouLcmNyYJiyGj+xu38laEDj
+	 07mJbk0XOorWERUng23ga/A03V3w97Rp2liNM0nrYilGlevwY+PLz+JpbV3myGlelE
+	 LgQ9rxD2E4DVw==
+Date: Sat, 29 Jun 2024 16:36:59 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Guillaume Stols <gstols@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Beniamin Bia <beniamin.bia@analog.com>, Stefan Popa
+ <stefan.popa@analog.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+ devicetree@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ jstephan@baylibre.com, dlechner@baylibre.com
+Subject: Re: [PATCH v2 10/10] iio: adc: ad7606: switch mutexes to
+ scoped_guard
+Message-ID: <20240629163659.322954c3@jic23-huawei>
+In-Reply-To: <20240628-cleanup-ad7606-v2-10-96e02f90256d@baylibre.com>
+References: <20240628-cleanup-ad7606-v2-0-96e02f90256d@baylibre.com>
+	<20240628-cleanup-ad7606-v2-10-96e02f90256d@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-BTW, should we allow OUT_FENCE_PTR as well? Would that work as expected
-with async flips?
+On Fri, 28 Jun 2024 14:48:28 +0000
+Guillaume Stols <gstols@baylibre.com> wrote:
+
+> Switching to scoped_guard simplifies the code and avoids to take care to
+> unlock the mutex in case of premature return.
+> 
+> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
+> ---
+>  drivers/iio/adc/ad7606.c | 60 ++++++++++++++++++++++--------------------------
+>  1 file changed, 27 insertions(+), 33 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
+> index 50ccc245e314..3c439787d130 100644
+> --- a/drivers/iio/adc/ad7606.c
+> +++ b/drivers/iio/adc/ad7606.c
+> @@ -69,19 +69,17 @@ static int ad7606_reg_access(struct iio_dev *indio_dev,
+>  	struct ad7606_state *st = iio_priv(indio_dev);
+>  	int ret;
+>  
+> -	mutex_lock(&st->lock);
+> +	guard(mutex)(&st->lock);
+> +
+>  	if (readval) {
+>  		ret = st->bops->reg_read(st, reg);
+>  		if (ret < 0)
+> -			goto err_unlock;
+> +			return ret;
+>  		*readval = ret;
+> -		ret = 0;
+> +		return 0;
+>  	} else {
+> -		ret = st->bops->reg_write(st, reg, writeval);
+> +		return st->bops->reg_write(st, reg, writeval);
+>  	}
+> -err_unlock:
+> -	mutex_unlock(&st->lock);
+> -	return ret;
+>  }
+>  
+>  static int ad7606_read_samples(struct ad7606_state *st)
+> @@ -124,18 +122,18 @@ static irqreturn_t ad7606_trigger_handler(int irq, void *p)
+>  	struct ad7606_state *st = iio_priv(indio_dev);
+>  	int ret;
+>  
+> -	mutex_lock(&st->lock);
+
+Why not simply a guard(mutex)(&st->lock) ?
+
+Then we avoid the somewhat nasty label in an nested block of code.
+
+> +	scoped_guard(mutex, &st->lock) {
+> +		ret = ad7606_read_samples(st);
+> +		if (ret)
+> +			goto error_ret;
+>  
+> -	ret = ad7606_read_samples(st);
+> -	if (ret == 0)
+>  		iio_push_to_buffers_with_timestamp(indio_dev, st->data,
+>  						   iio_get_time_ns(indio_dev));
+> -
+> -	iio_trigger_notify_done(indio_dev->trig);
+> -	/* The rising edge of the CONVST signal starts a new conversion. */
+> -	gpiod_set_value(st->gpio_convst, 1);
+> -
+> -	mutex_unlock(&st->lock);
+> +error_ret:
+> +		iio_trigger_notify_done(indio_dev->trig);
+> +		/* The rising edge of the CONVST signal starts a new conversion. */
+> +		gpiod_set_value(st->gpio_convst, 1);
+> +	}
+>  
+>  	return IRQ_HANDLED;
+>  }
+> @@ -259,17 +257,15 @@ static int ad7606_write_raw(struct iio_dev *indio_dev,
+>  
+>  	switch (mask) {
+>  	case IIO_CHAN_INFO_SCALE:
+> -		mutex_lock(&st->lock);
+> -		i = find_closest(val2, st->scale_avail, st->num_scales);
+> -		if (st->sw_mode_en)
+> -			ch = chan->address;
+> -		ret = st->write_scale(indio_dev, ch, i);
+> -		if (ret < 0) {
+> -			mutex_unlock(&st->lock);
+> -			return ret;
+> +		scoped_guard(mutex, &st->lock) {
+
+The mutex is grabbed in all paths that actually do anything.
+Pull it out of the switch and use
+guard(mutex)(&st->lock);
+
+That will reduce the changes needed and give the same cleanups.
+I doubt we care about potentially slowing down the path that returns an error
+as we are writing something unwriteable.
+
+> +			i = find_closest(val2, st->scale_avail, st->num_scales);
+> +			if (st->sw_mode_en)
+> +				ch = chan->address;
+> +			ret = st->write_scale(indio_dev, ch, i);
+> +			if (ret < 0)
+> +				return ret;
+> +			st->range[ch] = i;
+>  		}
+> -		st->range[ch] = i;
+> -		mutex_unlock(&st->lock);
+>  
+>  		return 0;
+>  	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
+> @@ -277,14 +273,12 @@ static int ad7606_write_raw(struct iio_dev *indio_dev,
+>  			return -EINVAL;
+>  		i = find_closest(val, st->oversampling_avail,
+>  				 st->num_os_ratios);
+> -		mutex_lock(&st->lock);
+> -		ret = st->write_os(indio_dev, i);
+> -		if (ret < 0) {
+> -			mutex_unlock(&st->lock);
+> -			return ret;
+> +		scoped_guard(mutex, &st->lock) {
+> +			ret = st->write_os(indio_dev, i);
+> +			if (ret < 0)
+> +				return ret;
+> +			st->oversampling = st->oversampling_avail[i];
+>  		}
+> -		st->oversampling = st->oversampling_avail[i];
+> -		mutex_unlock(&st->lock);
+>  
+>  		return 0;
+>  	default:
+> 
+
 
