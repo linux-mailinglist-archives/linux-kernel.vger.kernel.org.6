@@ -1,198 +1,132 @@
-Return-Path: <linux-kernel+bounces-234791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1DCC91CB05
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 06:52:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B822A91CB07
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 06:53:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 132D31C21FD4
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 04:52:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AE33B22C21
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 04:53:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACEC921103;
-	Sat, 29 Jun 2024 04:51:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65552033A;
+	Sat, 29 Jun 2024 04:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="gtUeHe3n"
-Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01olkn2019.outbound.protection.outlook.com [40.92.98.19])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="k+xhhoeu"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70AD2570;
-	Sat, 29 Jun 2024 04:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.98.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719636713; cv=fail; b=KPF8cBsE/+tpQrY4vGAuMD8UeVQJblDo2nYB+AOx+sgJ4lCiLeyezffxnTOYYFAGokNtfMYsYZc3wO3l24Mxbpyr2TBHNQR8dzzFdHwZHEutS0YobO3ZBU8/Di8Uzn84dQ6R5da9Mgb3QMWyqkKkgwImSia4zqO2x8z0+DUGgMk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719636713; c=relaxed/simple;
-	bh=pHLgOZFr3eVQObqzXDzdUcf5lgNz81Gc6ynBHXyw70s=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=VCF0bsANV+T2AKaMM6mooQfSxBwOGuJm6+AaAHPrGBwvxsnPSL9wIFFLCkprG/hH6HOU+29sHhM+w0hZALPWF4DBfh9LwlKfFEt7ns5tKAv0GcFCLv3C2en6/y22CcbXHIMdB/kUPkklju5iEGtCAVO2rGRfbLIHnJqpdLnhosI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=gtUeHe3n; arc=fail smtp.client-ip=40.92.98.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EJQa8rPigEPeRU7C+cVPn/vEEBbW6gccTctnKXMPUAbwlYhvtM5y+ct0ubbmfHDUy7LDNXxaMyBJosXEuAKxnT7mM0whd6RDqONX1vjA97FAheMCTai6C0MD2GVZCbCkuNzdUkVd98WEVoruCvBoVNdTIIjt2VmHEWqwBl4FuQWDecfjJ7n28GCabNse7AZB/lLNK+vankD9ee8cj2bfDnjaO9WWmcBDsu15pVuSQJGxqjkBoA/9xIFMqKXoAbAqaYgpTWd8xvRUYqmMHWwPWpf1nK/PO0rjrvr+o7iBIKa2CR/Ix0Ap3ZN9HlWpI065AFY+nsimB8HWU7Cn9yHGEQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=O6h2ZcaqNodmfOn3vj3xIOsDVQAAGIHARdDbDoYV8t4=;
- b=eIZynly0V1WRgowUOqAJ8xwujtuRG4nI30JWNP1hDntzwfPuYsFsfvlB/lRHLkAOiow+dDNuIgohx/kUwACcikJNviIGYoW4jPJHoyhgD+z1cQ/A9TfBt9jt+3n3gzqEpbGmRntmwk6ILLpgCZo05FpxHEayyBqQMc3bascOBFeZ8fc+XxXIqG6JgUOXUDnuzHjiZTkxNS3Ai4MQiW7yp4QD6L/HeYZnfkQwFKJ/pCrHx0wMzorRwyB4i30g50J+8ljsR3F2rts8wmxxOyWt/5EIcDV2F3hz81LPOrl/KsDhZ3I/CvPgBxLdQA4iWC+IEe8PA6a7Loo+V8UYH0ctGg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O6h2ZcaqNodmfOn3vj3xIOsDVQAAGIHARdDbDoYV8t4=;
- b=gtUeHe3nJjysr3btSzf00O0RgYljYVHiA6Xr+wiTEW06fjZGKwuNOv5i3CwmxFT+0Ol23k/jPJ9IwPkY/6UoKW1HyZRIZiUbFS562v1OMH3WOG5iQ4WpjLje65pPeJrRwdVf7UdZX5ulaiDMkATCOQ5wln30dqqgAMQKYujpsyOz5aWf4P/EeI1mjnFBrPXdXG8ilxmGhkLRT7UNLiBimavSry7iNJHhFSF3slNliR28njhAhNRYCjYIhyIwkGdecpNPvYXhV0Of0/QBXd1Y8d1mE39kn4GmyqAFYAbF0kPAab3UWzNFv9Htc5z648O8iI5sLphLy8rWRgTPkKyLSg==
-Received: from TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:77::8) by
- TYCP286MB3543.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:3a9::12) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7719.28; Sat, 29 Jun 2024 04:51:47 +0000
-Received: from TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM
- ([fe80::ad5c:3146:bd0d:f17c]) by TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM
- ([fe80::ad5c:3146:bd0d:f17c%5]) with mapi id 15.20.7719.028; Sat, 29 Jun 2024
- 04:51:47 +0000
-From: Shiji Yang <yangshiji66@outlook.com>
-To: linux-mips@vger.kernel.org
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Khalid Aziz <khalid@gonehiking.org>,
-	Baoquan He <bhe@redhat.com>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Shiji Yang <yangshiji66@outlook.com>,
-	Mieczyslaw Nalewaj <namiltd@yahoo.com>
-Subject: [PATCH v3] mips: kernel: fix detect_memory_region() function
-Date: Sat, 29 Jun 2024 12:49:08 +0800
-Message-ID:
- <TYCP286MB0895F65439037ED134FEA7DDBCD12@TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM>
-X-Mailer: git-send-email 2.39.2
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [qzlrWRpwigI4hbFWcoCXzU3S6kxlvrRq]
-X-ClientProxiedBy: JH0PR01CA0004.apcprd01.prod.exchangelabs.com
- (2603:1096:990:56::20) To TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:77::8)
-X-Microsoft-Original-Message-ID:
- <20240629044908.9509-1-yangshiji66@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D532C684
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 04:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719636782; cv=none; b=Fo2ZzHk29zM9C5a7eKGEj02+87u1OuwNBTSARK2B7Y8SGRtSLPunLvQdX/e3u0DwyE4Dn431tYFswmRKO4mwugf386E/GfdRVsWGuhMnWFsP7l1wpUwjDEzYh/Qe0eDhz0awaNHfGV/JF9mlLCkfxrj3EyoM5nRE2WA4VEmLLzE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719636782; c=relaxed/simple;
+	bh=hTg0m15hao46yudGVG866WlZpeOh7SkeZz5wgAoJGm8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=a0/IWdyF1XYX2CnMDLA3uumawouk5r9KD9d9IjnA1SNaIYwicGFi7Um7xoEPZDBuoe8RQeh3Nh29aQYjYQfkCZ3o6lzreKoePPOqUHJi1WQC6XfMJY+rgN4V08Jn0PvJ0nYA2Gai9h0SlK2Mt5ZcdoIY9sS6RH2pZtSOC4azjvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=k+xhhoeu; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45T4ab6C028498;
+	Sat, 29 Jun 2024 04:52:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	VYjkpS9rvu4zTA/sXPiOwttTNNhhPJDzKngsyZMHEBg=; b=k+xhhoeuv7Gxs94h
+	qEP2t9obimHowg2mkmux8WFy6PwmIk4a0RNnVhdxsKJ/53uT9fpJIkUzYmbF/TDA
+	pk1Y01ugVvpJMsavTzCHkMzgRtKiGTnBaGnHKZQSvloUgCIgsvNsSDyf3O7PoUeT
+	E8LxLpM/v2V+Ml7D58286JW5gcICv32a+yQDGyBG08Ra75E6t437IDjFhkmjypVy
+	KbVaMhXBcNa28B4FxT/MWynqxGq87IA7Pf1LV1MubQH0fzs29WZn+CcBW+RSmJzC
+	8NMT4NZmX5VbS8T5onOHs7WUMiLzZIhfjanMWNCZ9O2r2/xRQCK3cvLt91kn4fSU
+	L0rMTQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 402an706nm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 29 Jun 2024 04:52:42 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45T4qeHB026787
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 29 Jun 2024 04:52:40 GMT
+Received: from [10.81.24.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 28 Jun
+ 2024 21:52:40 -0700
+Message-ID: <0aa9e0aa-3d8f-4277-8348-99b9dd176954@quicinc.com>
+Date: Fri, 28 Jun 2024 21:52:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCP286MB0895:EE_|TYCP286MB3543:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2cd96a7c-11fd-4aee-4112-08dc97f72dbc
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199028|8060799006|440099028|3412199025|1710799026;
-X-Microsoft-Antispam-Message-Info:
-	74XScfcY67jXcA+v3/CzksAWcXf+F4eEovWCqVWWzg8m1wVvT55SO7tY1+6E/7nd0awQdFCOv554RNLsWAQYQ5ZhnaXdxWpb9Vu/3kdNWvsZVGtF+eES45XTXFr8+lXx+9V3iLlL5mYvQcPwYzrtROL8XryhUghF0TKt8mI66akpf5GoHMiGpE+szgD6NCYDtuKV14X/PPFggOAnQxkfhSkqWM5HTedvzSHOo95Bzx46XWsAQ/I5azk1Cz+KlKlIJScyT6Zl3PSLqOB8kmzOdzpKB6fNADr/jRg0xKGUlNPQkZZH0pMWVP71KbdJmpZASdtwTch9ynPfYTUofNavXKQcJdOuSSwc/BmVRennaabcOYXvuOP9gtyoqw44i87ZISFFWJANf0MVCxm9HfhTjqzAR/uPuqh2ZUH3o6FBXmBHK0u0obk+McQPSW7oZPHAvr4zz89yNOGAKNUUwM5VMsIw6Pl56n643iSRMEVmW8vzA5GP1/PcfuFtkiAgHrosS2wi58jGU61ae7YK6gBEBmppC3PBFHvdByAz3Ebh8wWIcR3s8k7WCVrWWKr2/lBB64V4R7XR1JoW/PT3uOs5G3Pgp8I6Jm2y1BglUB47BcTLzRPOZnYW5lWvjqZwTKSOj/KjCCiEVIHW/YR4hiKKACKAf9PgHtEMGIrmRgu/80DRLmuUukzCxHAUAIA3JSpQgt74Pe0PwgU58d3jZ5R3Nw==
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?HczfOwJeklLsSMWrO2azHUKnRhJB3FXHqRNLvUJw+zTFZAfu922p5iEwqwWr?=
- =?us-ascii?Q?1Pyx1W6XO9nX8ffY5CXc7fG2uXLxhFop9F/5uo8PYxMA2prw3gwJ5m49lkDs?=
- =?us-ascii?Q?QOQr2OodQ/uAMn05csDM21og24UwSQWsKq5UJp04mn46Rg4TDl+DtAAoDW+o?=
- =?us-ascii?Q?cnLLjcl25tvTGI8+mEQFTC4Lz9OhPfFwAa6bHlW60ew9tuw3j/WRfE+rTemy?=
- =?us-ascii?Q?ly/TD7RaM2IJBlDmt9aaO6iQs7wKQzjM3YorzYVUztFiKmSG7MqhfJIl0VzD?=
- =?us-ascii?Q?3/s7w/BBNCMR/D9VCtbHa1jQ0LR/UfEm7ppI99Upuu49Kz2RoB+TIQIXj5Qa?=
- =?us-ascii?Q?MNGfj5LooGUTmDaerX98fq5A6Bq+fWK4ACtNFhDNJveDY26UTfrSFYEUfOvn?=
- =?us-ascii?Q?1Mx96F5CLUdQiwZHYR5zS8qNyC1abhFGQLdcj3W8ha2+fMNpedewrKGmv60R?=
- =?us-ascii?Q?dTFIisGf4pCpY4e8e1sUOH+Cz7jzqeg9zbLDwKWR80ypjg1cVdpozJXSjj4p?=
- =?us-ascii?Q?6qLYiCvRn5JvxxDmmISbZ1MpxRNnm/bmjNkAlP4wDmAFugxoDxbRFl48Qy8N?=
- =?us-ascii?Q?hjZWAjm0hM3SCyiAaO4JdWDqviJzPePnPnFTQCg6kZ4gInBIY9QJsJj42xFC?=
- =?us-ascii?Q?F4B58hrO6KAK8wx4rCY+/8OyMZ2qof5dbaztCJqowHVYfYNaID9EUYKUPX6/?=
- =?us-ascii?Q?nrWwUPuIupk0Cjv0NLfyA+GZ0YQMRPEw3XCRYEN8HoDNjnybZHrJxaMLFI3n?=
- =?us-ascii?Q?26lQ8JxfiUaPTEQifIzvC+k/VN3FbAGzgnFkdF66PrPQSPNQMUzuMNNvWhxJ?=
- =?us-ascii?Q?qNAz+I+3qB+ZnM4YTuYh/9WY93UFGaaSdoI51B/4I8VpDZosu/jGDgLWcp1v?=
- =?us-ascii?Q?1gIsG65//xviOf8ALMS5z+6mksOZ0N1xwiC8TKpzeKLbCDxrgfvZ7xYVBKS/?=
- =?us-ascii?Q?gjpuAJjS+oCpUG/vjXwf5YkOQmbh/xhjAkMZU/YzTKLtFl9hTzzc5LUlIR49?=
- =?us-ascii?Q?CZtKx3VjhDCasB6BnIRfbAPwYnXVQ0EMuMS0DPMQ+1XmnzjkQVYOOyDOB2bS?=
- =?us-ascii?Q?XHUo0RFflgAP5easDvImO6nh9CaRIktOLRnz1ilxsdZuyFHlOE3KDtbV7lho?=
- =?us-ascii?Q?+BpAYWcfL0gVcbn4DPcJ+vFBg0DciXmcCg2oyFuNpyjzqGUGbaUzIzj+ZNsl?=
- =?us-ascii?Q?Dat+wm4M6N7ZhM9N6sFWB56mHKl0TzNI+5EFrTiQeuJhWniYCtj455ZRyOwr?=
- =?us-ascii?Q?WFC28v6m/c6TAEvWoYFI?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2cd96a7c-11fd-4aee-4112-08dc97f72dbc
-X-MS-Exchange-CrossTenant-AuthSource: TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jun 2024 04:51:46.3105
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCP286MB3543
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] drm: Add panel backlight quirks
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+        Alex Deucher
+	<alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?=
+	<christian.koenig@amd.com>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter
+	<daniel@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
+        Rodrigo
+ Siqueira <Rodrigo.Siqueira@amd.com>,
+        Mario Limonciello
+	<mario.limonciello@amd.com>,
+        Matt Hartley <matt.hartley@gmail.com>,
+        Kieran
+ Levin <ktl@framework.net>, Hans de Goede <hdegoede@redhat.com>
+CC: <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, Dustin Howett <dustin@howett.net>
+References: <20240623-amdgpu-min-backlight-quirk-v2-0-cecf7f49da9b@weissschuh.net>
+ <20240623-amdgpu-min-backlight-quirk-v2-1-cecf7f49da9b@weissschuh.net>
+Content-Language: en-US
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240623-amdgpu-min-backlight-quirk-v2-1-cecf7f49da9b@weissschuh.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: yP_U84sdQLgyQ95bNMSMJL6UQFEAH4E5
+X-Proofpoint-ORIG-GUID: yP_U84sdQLgyQ95bNMSMJL6UQFEAH4E5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-29_01,2024-06-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ clxscore=1011 adultscore=0 malwarescore=0 mlxlogscore=999 suspectscore=0
+ phishscore=0 bulkscore=0 spamscore=0 impostorscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2406290034
 
-1. Do not use memcmp() on unallocated memory, as the new introduced
-   fortify dynamic object size check[1] will return unexpected result.
-2. Use a fixed pattern instead of a random function pointer as the
-   magic value. "0xaa5555aa" has a large information entropy and is
-   widely used in memory testing.
-3. Flip the magic value and double check it to ensure memory overlap.
+On 6/23/24 01:51, Thomas Weißschuh wrote:
+> Panels using a PWM-controlled backlight source without an do not have a
+> standard way to communicate their valid PWM ranges.
+> On x86 the ranges are read from ACPI through driver-specific tables.
+> The built-in ranges are not necessarily correct, or may grow stale if an
+> older device can be retrofitted with newer panels.
+> 
+> Add a quirk infrastructure with which the valid backlight ranges can be
+> maintained as part of the kernel.
+> 
+> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> ---
+...
 
-Tested on ralink/mt7620 and ath79/ar9344
+> +EXPORT_SYMBOL(drm_get_panel_backlight_quirk);
+> +
+> +MODULE_LICENSE("GPL");
 
-[1] commit 439a1bcac648 ("fortify: Use __builtin_dynamic_object_size() when available")
-Signed-off-by: Shiji Yang <yangshiji66@outlook.com>
-Tested-by: Mieczyslaw Nalewaj <namiltd@yahoo.com>
----
+Missing a MODULE_DESCRIPTION()
 
-changes:
-v2 -> v3:
-* Using CKSEG1ADDR_OR_64BIT() instead of excluding 64bit system.
-
-* Using volatile pointer to get and compare u32 data.
-
-v1: 
-https://lore.kernel.org/all/TYAP286MB0315E609C476B86E22700626BC292@TYAP286MB0315.JPNP286.PROD.OUTLOOK.COM/
-
-v2:
-https://lore.kernel.org/all/TYCP286MB089598ABD1E2F66003D71EB8BCD52@TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM/ 
-
- arch/mips/kernel/setup.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
-
-diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
-index 12a1a4ffb602..4197c7568f49 100644
---- a/arch/mips/kernel/setup.c
-+++ b/arch/mips/kernel/setup.c
-@@ -86,21 +86,26 @@ static struct resource bss_resource = { .name = "Kernel bss", };
- unsigned long __kaslr_offset __ro_after_init;
- EXPORT_SYMBOL(__kaslr_offset);
- 
--static void *detect_magic __initdata = detect_memory_region;
--
- #ifdef CONFIG_MIPS_AUTO_PFN_OFFSET
- unsigned long ARCH_PFN_OFFSET;
- EXPORT_SYMBOL(ARCH_PFN_OFFSET);
- #endif
- 
-+#define MIPS_MEM_TEST_PATTERN		0xaa5555aa
-+
- void __init detect_memory_region(phys_addr_t start, phys_addr_t sz_min, phys_addr_t sz_max)
- {
--	void *dm = &detect_magic;
-+	u32 detect_magic;
-+	volatile u32 *dm = (volatile u32 *)CKSEG1ADDR_OR_64BIT(&detect_magic);
- 	phys_addr_t size;
- 
- 	for (size = sz_min; size < sz_max; size <<= 1) {
--		if (!memcmp(dm, dm + size, sizeof(detect_magic)))
--			break;
-+		*dm = MIPS_MEM_TEST_PATTERN;
-+		if (*dm == *(volatile u32 *)((void *)dm + size)) {
-+			*dm = ~MIPS_MEM_TEST_PATTERN;
-+			if (*dm == *(volatile u32 *)((void *)dm + size))
-+				break;
-+		}
- 	}
- 
- 	pr_debug("Memory: %lluMB of RAM detected at 0x%llx (min: %lluMB, max: %lluMB)\n",
--- 
-2.45.1
+This will result in a make W=1 warning
 
 
