@@ -1,123 +1,93 @@
-Return-Path: <linux-kernel+bounces-235016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0993D91CE64
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 19:47:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64F5B91CE67
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 19:47:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B91EA282B97
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 17:47:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E07DCB21ACD
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 17:47:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D123E12FF91;
-	Sat, 29 Jun 2024 17:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6A512FF91;
+	Sat, 29 Jun 2024 17:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gk4kcpKU"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iDwSqwqf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F27F4C99;
-	Sat, 29 Jun 2024 17:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C6F20DE8;
+	Sat, 29 Jun 2024 17:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719683228; cv=none; b=Ihpm8OPuDxpVEv5OAafAC3HYfT2Ub5B1COtYJRxOZ/jldCgdZnqF4h0MbHdtLVpstjoV0IlNU5RHxgrc7s0W036eOsPS86BblcyjLjlpHbLC7RKPrAIeiswFlIz7yToQxk9DAIBqMd78xl187pKA7oPP6+TCcKHbPsaSOK3uEJ4=
+	t=1719683243; cv=none; b=WPBzYqmg3AgEM+/3vUhXPEtgKll+0Y6VlpaPWOF2tQdjGUktD6XK/z7cehZDnrqU9LeZNs5jOpCh0VfB4ujZqN1xUKdEmWmlDFYER5Zz/ZQGtw7ZGQpkOCm26vF3cRB43OwNZvp8X642E/LQoVb91Fj3/n749onA/dNU8DB7tD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719683228; c=relaxed/simple;
-	bh=8jXpjaEGXIVt/rnGrJd4HdmWE4veMgKAlIPQ5e/UWBw=;
-	h=Message-ID:Date:From:To:Subject:MIME-Version:Content-Type:
-	 Content-Disposition; b=Kw5D5Nc7HboCIfAWU7EHxOZEmaanXYpVRTrO8eHbToLyuC6nA4eX2uSl1TY/KiWXoJIZZQyDBcWtkUpiJKUm7kPK055evfXoRpYaI2HNUaBjIwWcVNh0OsKDCF3gbo7xLpqRFRGTsT9+k08tvC7kNyTZSSYGOJ5pgS+XuTgVekU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gk4kcpKU; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-424f2b73629so15864835e9.2;
-        Sat, 29 Jun 2024 10:47:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719683225; x=1720288025; darn=vger.kernel.org;
-        h=content-disposition:mime-version:subject:to:from:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RM9I+OAVtRNtNBzaQ8k/P87nr2q6nUcg+dZj/RNtCeo=;
-        b=Gk4kcpKUvPfmbMt4tkwbioNPHJH1Fsmo0Je/H9OwVHd34i1T/u/58fOZo+7GJIxQGa
-         Pa/pHcOjfsGnSI914pZjOfcdi1boGe8PQBgQXXarGmWMJaVPzPMUoFiMg3u074mibCGc
-         yBJuYbFGcyZsdDYxBa9+uU0htAadrwq+VzYUsyiTu9Tk8VKNmdREMMUqOqWk40w91Dv6
-         n4sO9R/ZJyAXf3zUmysM+6OSS02fAJa7a6/G0/UvyOqG9w7h8mU4c4uAtq1lcjwKjutp
-         LK3ncLffTsG4rYDJCOsIFvqXAtNyRL8oCeiwcD3RW9RTFMaigXd/do3r/Xb1OoshVC6y
-         FESw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719683225; x=1720288025;
-        h=content-disposition:mime-version:subject:to:from:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RM9I+OAVtRNtNBzaQ8k/P87nr2q6nUcg+dZj/RNtCeo=;
-        b=KgluldZibd1Ey8LETb0K/bvOdAgwRMr6uJFGJKNB7m8Vf57ESC/2Ta1FFAQA6Vpfdx
-         MifjqtiQrsAmJ0rhFC5cSSnU+DyVAqyXSczv1i366ezKiqYf1RXmaEd86yqRpXP4ingC
-         LJ87SpYLjFFQh4GdsRLQuuRXX0L5BQdX0N9Cn3uPAZi8+8yL9hH5r4CNqbjuVWqJFyMo
-         NxCTX7a8ICUWFWNJiknffbb5m+tdNXR3ZIEJuhvVkTo4/RIzjsLFWd50+zw4HLe5DKqG
-         CjD/yT9vuHHt2haN//LSPELdVbSio48Z2EU9Fr7BXynAFwW54SlxdKmoGliG7ry500zj
-         eGFA==
-X-Forwarded-Encrypted: i=1; AJvYcCUtYjN6gfOGixl6X2lrbGn5hT5vKyk+e3aaNYzNWbjwtmYuinYPBXQY/sgfWiLKLQ7jSxU+5/lk6VDWZCis1SD7VIgwEnrOCZYw26cQiwZoure8NHySTTMWEYiMhb/Vk0E/Q+wI8KykDqU=
-X-Gm-Message-State: AOJu0YzKOmtBaidqHdVn11bwN4eXz3jG2xuHT24otsKAY7g0KASs9+ZO
-	Q8fM6qsY4tV1F0SuLngBLDk3DXjMrek0dw61FFPBh2Oj0BvmXnGZ
-X-Google-Smtp-Source: AGHT+IH4uBsJD46pExK4S2eIL1HXcwBAMRAtXfuDZKRJ0KGCzOPoK9l5N7iXtrbM8bLZxaTAjDSgNQ==
-X-Received: by 2002:a05:6000:c09:b0:35f:16c9:a5bd with SMTP id ffacd0b85a97d-367756aa9d5mr1239993f8f.23.1719683224932;
-        Sat, 29 Jun 2024 10:47:04 -0700 (PDT)
-Received: from laptom (88-121-55-84.subs.proxad.net. [88.121.55.84])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0e12fcsm5373040f8f.48.2024.06.29.10.47.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Jun 2024 10:47:04 -0700 (PDT)
-Message-ID: <66804898.5d0a0220.6df0f.4f0a@mx.google.com>
-X-Google-Original-Message-ID: <ZoBImPI8YbgOzycV@laptom.>
-Date: Sat, 29 Jun 2024 19:47:04 +0200
-From: Tom Mounet <tommounet@gmail.com>
-To: Marc Dietrich <marvin24@gmx.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	ac100@lists.launchpad.net, linux-tegra@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	outreachy@lists.linux.dev
-Subject: [PATCH v3] staging: nvec: Use x instead of x != NULL to improve
- readability.
+	s=arc-20240116; t=1719683243; c=relaxed/simple;
+	bh=ucondZEsatUWCjlxK69XIYXU87xs6bDJEuRfh2m1bTs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fQJniEfPnLWc2VJh8hdGjrirLVuIhMkl+K0wYy6SQeo+xcZOdA7C6Gx3yzr/vjJW3MKrewdWb+IlM/j7S5DKgklqsEL/nyQug9TmBgsFWpChBg7eMS2QSsGIvCA+aaePo0AoF0xweNH4T4nrC/PA+BZI4YS/ZekAlnqLMlxC3MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iDwSqwqf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1C95C2BBFC;
+	Sat, 29 Jun 2024 17:47:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719683243;
+	bh=ucondZEsatUWCjlxK69XIYXU87xs6bDJEuRfh2m1bTs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=iDwSqwqf6S6bVCzCKXqp9pOQAV8YFhCgBb0/0aGJnJYPvTudRP54u62+4dKDvsBFR
+	 ysNylb8N/dk12vkbVN6Ga4uRovObvf/j99QPkkrlwhYO8dFXWlbGDQly4Czzd7G/Hb
+	 mFGDk6GQ0R3YJ4f6Zem0Y3FCXmKmlX1skqiuZRTZ46bitgEneSJ9q4KUxZUceh1cTO
+	 J/3+vUgjzbLRNdbdIIwAq09YJLNpufuM1UmKrMIcq/ylOtUsXE0uKBlSf3mEyKbDyh
+	 Z4ONY2dtVgpOpoIiNZMkp3jm4wzGBPhyustEK7cpONjntdNj40LRn+p4Jkqi//AG8V
+	 bh+zfFuyGF8UQ==
+Date: Sat, 29 Jun 2024 18:47:16 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: Add AVAGO APDS9306
+Message-ID: <20240629184716.69aad230@jic23-huawei>
+In-Reply-To: <20240626135231.8937-1-subhajit.ghosh@tweaklogic.com>
+References: <20240626135231.8937-1-subhajit.ghosh@tweaklogic.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Use x instead of x != NULL to improve readability.
-Issue identified by checkpatch.
+On Wed, 26 Jun 2024 23:22:31 +0930
+Subhajit Ghosh <subhajit.ghosh@tweaklogic.com> wrote:
 
-Signed-off-by: Tom Mounet <tommounet@gmail.com>
----
-v3: Add change history and proper description
-v2: Make commit title clearer
-
- drivers/staging/nvec/nvec.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-index e5ca78e57..814eb121c 100644
---- a/drivers/staging/nvec/nvec.c
-+++ b/drivers/staging/nvec/nvec.c
-@@ -300,7 +300,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
- {
- 	mutex_lock(&nvec->sync_write_mutex);
- 
--	if (msg != NULL)
-+	if (msg)
- 		*msg = NULL;
- 
- 	nvec->sync_write_pending = (data[1] << 8) + data[0];
-@@ -322,7 +322,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
- 
- 	dev_dbg(nvec->dev, "nvec_sync_write: pong!\n");
- 
--	if (msg != NULL)
-+	if (msg)
- 		*msg = nvec->last_sync_msg;
- 	else
- 		nvec_msg_free(nvec, nvec->last_sync_msg);
--- 
-2.39.2
+> Add myself as maintainer of APDS9306 ambient light sensor driver.
+> 
+> Signed-off-by: Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>
+Applied. Thanks
+> ---
+>  MAINTAINERS | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 2ca8f35dfe03..ebe19ba2d62f 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -3521,6 +3521,13 @@ F:	include/linux/cfag12864b.h
+>  F:	include/uapi/linux/map_to_14segment.h
+>  F:	include/uapi/linux/map_to_7segment.h
+>  
+> +AVAGO APDS9306 AMBIENT LIGHT SENSOR DRIVER
+> +M:	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>
+> +L:	linux-iio@vger.kernel.org
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/iio/light/avago,apds9300.yaml
+> +F:	drivers/iio/light/apds9306.c
+> +
+>  AVIA HX711 ANALOG DIGITAL CONVERTER IIO DRIVER
+>  M:	Andreas Klinger <ak@it-klinger.de>
+>  L:	linux-iio@vger.kernel.org
+> 
+> base-commit: 55027e689933ba2e64f3d245fb1ff185b3e7fc81
 
 
