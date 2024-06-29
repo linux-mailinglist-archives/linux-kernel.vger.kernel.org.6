@@ -1,151 +1,123 @@
-Return-Path: <linux-kernel+bounces-235018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7659791CE6A
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 19:51:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6193591CE75
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 19:59:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DF43B2108B
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 17:51:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DA34282D70
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 17:59:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36529132101;
-	Sat, 29 Jun 2024 17:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E37132132;
+	Sat, 29 Jun 2024 17:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WX1WcE3q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="HyvcYbt8"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF311E878;
-	Sat, 29 Jun 2024 17:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6749D200AF;
+	Sat, 29 Jun 2024 17:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719683454; cv=none; b=LevtmgDGxCnwTbbiP17HqFx4Rf85nriKpc/aXwDNCSXaRXIKdermwZ62+DH18qMXmKrmT4PehyyqEootLOhM0E0agoZNdu2UAm/6Yqy8zoR4C/9q1N4m77BPaRJz/BMUNRZzxo+fJEsh0yG1/eLJ+JGBG0j7vgysdu4IdyDC2iQ=
+	t=1719683939; cv=none; b=P3twygdiG0edW04bTOPtQFsIuLpOgnctoST0bJ45L3chovND59ZcGtPpZ4ZplOwhXIiL8OG4LsFpK9TWQscXRSyuuAsA/lMHeyrSkbhMDunyYNzhl7NUqQWBCbAcBBEXY5fW6SKNYtSSVATQsU7bEU6C3Em1nBSQEvdC4sPp374=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719683454; c=relaxed/simple;
-	bh=ITDBg+BM/o2RD6OiOLTIdk8OthQXA0HiROBqsQ/2j+4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nWzR94Hf11pcrw+Vv5XEWON/1ZA31fNdVbkyUxvsF7+X6MTrigRWP3GRgLETmQGEeNnZWdzT7ryevOWqPX4gNJu6RVnbnDeMR9I/+EmdqPyirOCe3CXbK/PwV139Yu/X9Y2iQGEanYUgx3aSwTwco+DZ6tHIpFE/xQw8ZK9rtVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WX1WcE3q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B676C2BBFC;
-	Sat, 29 Jun 2024 17:50:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719683453;
-	bh=ITDBg+BM/o2RD6OiOLTIdk8OthQXA0HiROBqsQ/2j+4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WX1WcE3qdgX8tiHmWgQro3VCUKU161VJDb4nMrowDYUovFtdLuQLI0cd3gWrbuYN3
-	 FPCY3k2XFnayFfVuwolHwGUK5S6mQgG2YrVNvHymqdgRq09wVdq5UWD14U+m50jq6v
-	 oh07X3Oqu3YHUEaQIZPuODywMRmyS3NpmECMCjjd8msFONr+8LQh+SAgSNCQgJi2od
-	 1704BJ+zLk/92qIFxDdmAtslyrM4eNV0rb2SEA+sdlaLHoC3r2he5gemCheSaxhpAM
-	 bVc8U0elNF+d3+njHdjTlR7Ii8gSUCk65z4DNKapZVmpHV3WbCiB8D5lCDZfc0U+XL
-	 hQPQkOV3uNNhg==
-Date: Sat, 29 Jun 2024 18:50:46 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Mudit Sharma <muditsharma.info@gmail.com>
-Cc: lars@metafoo.de, krzk+dt@kernel.org, conor+dt@kernel.org,
- robh@kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, Ivan Orlov <ivan.orlov0322@gmail.com>, Javier
- Carrasco <javier.carrasco.cruz@gmail.com>
-Subject: Re: [PATCH v6 2/2] iio: light: ROHM BH1745 colour sensor
-Message-ID: <20240629185046.290c7d81@jic23-huawei>
-In-Reply-To: <66122c40-9c69-471c-8f59-cfb1c9b0b6ec@gmail.com>
-References: <20240625220328.558809-1-muditsharma.info@gmail.com>
-	<20240625220328.558809-2-muditsharma.info@gmail.com>
-	<20240628203701.507c477c@jic23-huawei>
-	<66122c40-9c69-471c-8f59-cfb1c9b0b6ec@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719683939; c=relaxed/simple;
+	bh=aLrT4oOnpymwjd8DVpGHvZEJrdv2DOdEX0kQWZpJWRA=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=qvQ38NKBFrT/3N3syaYx57AeLX2LwxcKt43Qig/cYsjkn1vQ7JeM5RQGlAIVIAgwrtxhzlQT7RUvoyzLJu/+qzfvKOxdeWrkxRGhWK96k2nxtd2aLWRzXRIOUh3QTBbrxFsO4xK/dbFcFjl35H0WKv53lbkGaVDM2iitjPf95Yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=HyvcYbt8; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
+	s=s31663417; t=1719683920; x=1720288720; i=frank-w@public-files.de;
+	bh=aLrT4oOnpymwjd8DVpGHvZEJrdv2DOdEX0kQWZpJWRA=;
+	h=X-UI-Sender-Class:Date:From:To:CC:Subject:Reply-to:In-Reply-To:
+	 References:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=HyvcYbt8SJ7A8KWkB1a032mAMta423UnsOZPh6Z/cAD08ObBFIif9W+6xAiEx7Uf
+	 gUfW9YnxAseq0SsQcg3bajeU4DOPvCoIuBT3R3Jv4Yfr/ernWvBFi1nOrWefPcfnt
+	 cdEpjSH7YbYC0HjHdcDXKnEk2nAPkXzOhBkuFXOEeZJzyLEa586GF8a+mhRUtKJAz
+	 YZv1dWrI8V6YJdXqzwmXV+r/y3n+MWj1TPcrs8yWhGtvnZnmmdwFLnvI+gBq+pYto
+	 Rmu0qsOA1Pg1oEKjhG/uhcG7Jqvb5qg7u6TCKVTcsPqOZddt8rBDmdaICck4uYEGW
+	 aJ6nwhBUZfIRNW6CYQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [127.0.0.1] ([80.245.77.57]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1M6Ue3-1sUV2E3kxl-008jaY; Sat, 29
+ Jun 2024 19:58:40 +0200
+Date: Sat, 29 Jun 2024 19:58:38 +0200
+From: Frank Wunderlich <frank-w@public-files.de>
+To: Markus Elfring <Markus.Elfring@web.de>,
+ Christian Marangi <ansuelsmth@gmail.com>, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org,
+ Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>,
+ Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+CC: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v2_1/2=5D_arm64=3A_dts=3A_mediate?=
+ =?US-ASCII?Q?k=3A_mt7622=3A_readd_syscon_to_pciesys_node?=
+User-Agent: K-9 Mail for Android
+Reply-to: frank-w@public-files.de
+In-Reply-To: <9f67af8b-9c8c-4ad6-88c3-03d9fd9673d2@web.de>
+References: <20240628105542.5456-1-ansuelsmth@gmail.com> <9f67af8b-9c8c-4ad6-88c3-03d9fd9673d2@web.de>
+Message-ID: <7B85B9EF-589B-4025-9933-847C6BDCF284@public-files.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:/XeJwdnckIOl1ojd6eCqyn4n7VHLmaLRB1MmDzcRq4iP+LgaqM9
+ aoGV8ocSw5XCK4SmmZ1AbuTshcCrdsRGiL+8VJHOJ1BlVgb4RS0Rd85iUeJ2E7Mg0xQbLRM
+ pR5Ahj6teUQXjEAd/oS/GXWScw0jHEKyEElJ3x6U02BecSyNGKNtGAs0Rx3ZO2Qs+NeqDgk
+ trX5YINi4Ej7VdcpAZinA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:aXtMXo6gijc=;daTEpV3dzaZ3Xfnp2LUT3IOkcIi
+ ITveyJxrT/X8ytrJYBRNKr/x95owVeX/C9T7qBD/Kmtd2U3QUSPqpXFR5E4dUzjgE7g35amDP
+ /zkpkeIHV8ipLjst1NnPEG0iarLJVo9Hs1Ijkzop02rQMhBEb4Bx3j4S3YB5ZvNL3n7M8oKGw
+ fPdMJJduhdtG1ToRI1EpPWczgVYycNv0UBfi8yMKzwy/o6t6eEkxPNmaMrunHK8yERfyvEVEX
+ NnK6zUkDwaqLEmqE7LAuNpseuRZgRFff9npL2cK5HC+PXDh3vvidymtN7GJ/UZcG5RZ7zwSdg
+ RKSNV0JH1wux420g3qhWF5ovJHiOyOmOrDAaIe4nbVy37B7vgoeuXEv5tiE5BQV55XeHd+Rng
+ KIS0JcpFyh6lAhixklb/llgvBEmo8SQfY1VoEYL+bYItPnghx70X4TDQNYYNN9QvsEfsF1VcG
+ Eo4vsgx9MFWnawBrIMyYvil9UDpNE+MUc8ABhnF357XiVNMp1E4Wwjjctq4cRRnA0UeZrSZmc
+ gKlG7PmI90ODmiecKDgsE9nOftb/zbBChNgGNKbQC5Zv88CKepaAES6A2a432Yi7nSmmPY8RV
+ RMJwXhhS5xfd3x7uAaSucm1K3FZrAjsVZl3Fky+eWGhMHtOfabaTj6x3hyJsHcknYhjwotnsj
+ Upg+TXk6bxPGRRIJ4uCZSbLO27nl5eZAI2VS4WODbF6RO4NgVcFBvIxu6nJv8irTJ1mnOFhAu
+ G/a62lLZuVX8YJDT689FohWgNFXt92hDEOC+lz36w6rptZkal8xiTnIkhTMeLRpJIXZnRSQ98
+ 1vgJich+5VizoOGmB27nJlslGE7vaoitXvpEbb+5sOhuY=
 
-On Sat, 29 Jun 2024 10:10:19 +0100
-Mudit Sharma <muditsharma.info@gmail.com> wrote:
+Am 29=2E Juni 2024 19:35:01 MESZ schrieb Markus Elfring <Markus=2EElfring@w=
+eb=2Ede>:
+>> Sata node reference the pciesys with the property mediatek,phy-node
+>> and that is used as a syscon to access the pciesys regs=2E
+>>
+>> Readd the syscon compatible to pciesys node to restore correct
+>> functionality of the SATA interface=2E
+>=E2=80=A6
+>> Reported-by: Frank Wunderlich =E2=80=A6
+>
+>Was any related information published?
+>
+>Regards,
+>Markus
+>
 
-> On 28/06/2024 20:37, Jonathan Cameron wrote:
-> > Hi Mudit,
-> > 
-> > I'd failed on previous reviews to notice the odd trigger in here.
-> > What is it, because it doesn't seem to be a dataready trigger as the device
-> > doesn't seem to provide such an interrupt?  
-> 
-> Hi Jonathan,
-> 
-> Thank you for your review on this.
-> 
-> I've incorrect called it as a dataready trigger, I missed this as part 
-> of my initial cleanup - apologies for the confusion caused by this. I 
-> should potentially call it 'threshold' or 'dev'. Please suggest what you 
-> think would be appropriate here.
-> 
-> The sensor has an active low interrupt pin which is connected to a GPIO 
-> (input, pullup). When the sensor reading crosses value set in threshold 
-> high or threshold low resisters, interrupt signal is generated and the 
-> interrupt gets handled in 'bh1745_interrupt_handler()' (interrupt also 
-> depends on number of consecutive judgements set in BH1745_PERSISTENCE 
-> register)
+Hi,
 
-This isn't really a trigger. Just report the event and don't register a trigger at
-all. 
+I found this while changing uboot to of_upstream and fixed it there (not y=
+et send to mailinglist)=2E As of_upstream uses linux dts,i rechecked if it =
+is broken there too and yes it is=2E
 
-In theory we could have a trigger with these properties (and we did discuss
-many years ago how to do this in a generic fashion) but today it isn't
-something any standard userspace will understand how to use.
-
-> 
-> > 
-> > Various other comments inline.  
-> 
-> Will address all for v7
-> >  
-> ...
-> >> +static irqreturn_t bh1745_interrupt_handler(int interrupt, void *p)
-> >> +{
-> >> +	struct iio_dev *indio_dev = p;
-> >> +	struct bh1745_data *data = iio_priv(indio_dev);
-> >> +	int ret;
-> >> +	int value;
-> >> +
-> >> +	ret = regmap_read(data->regmap, BH1745_INTR, &value);
-> >> +	if (ret)
-> >> +		return IRQ_NONE;
-> >> +
-> >> +	if (value & BH1745_INTR_STATUS) {
-> >> +		guard(mutex)(&data->lock);
-> >> +		iio_push_event(indio_dev,
-> >> +			       IIO_UNMOD_EVENT_CODE(IIO_INTENSITY, data->int_src,
-> >> +						    IIO_EV_TYPE_THRESH,
-> >> +						    IIO_EV_DIR_EITHER),
-> >> +			       iio_get_time_ns(indio_dev));  
-> > 
-> > What is happening here.  You always push out the event and use that as
-> > a trigger?  This is an unusual trigger if it's appropriate to use it for
-> > one at all.  You've called it a dataready trigger but it is not obvious
-> > that this device provides any such signal.  
-> 
-> When an interrupt occurs, BH1745_INTR_STATUS bit is set in the 
-> BH1745_INTR register. Event is only pushed out when the 
-> BH1745_INTR_STATUS bit is set.
-That bit is fine. My confusion is more about the trigger.  I think
-the short answer is drop the next line and indeed all the code registering
-a trigger as this device doesn't provide appropriate hardware.
-
-> >> +
-> >> +		iio_trigger_poll_nested(data->trig);
-> >> +
-> >> +		return IRQ_HANDLED;
-> >> +	}
-> >> +
-> >> +	return IRQ_NONE;
-> >> +}  
-> 
-> Best regards,
-> Mudit Sharma
-> 
-
+But i have not sent issue to mailinglist because we fixed it before :)
+regards Frank
 
