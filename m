@@ -1,165 +1,238 @@
-Return-Path: <linux-kernel+bounces-235005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCFAA91CE32
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 18:47:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C55291CE31
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 18:47:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54D6C282F3F
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 16:47:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84C571C20E91
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 16:47:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D76132113;
-	Sat, 29 Jun 2024 16:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7B48626C;
+	Sat, 29 Jun 2024 16:46:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ua2N9FxN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="VTzQBBWL"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2082.outbound.protection.outlook.com [40.107.236.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426B912FB3F
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 16:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719679621; cv=none; b=HZb6gsWSrnIfkMxPsa3WE/OwoR7QnX4pX6WZQDFRGQ96f7nH8snmyewYKyT7Fw6z0869woCnVQl9WelEUnTQbIxZvC2pPqsVKSNVCWoUjovRaG/tMtImMDwA6A3L8ppxkCz6wSjnF45sfuQaHWxQF3D/eI8s9HOpuiO3NYElhKI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719679621; c=relaxed/simple;
-	bh=NdwDYXy90DzmNJ9UeuXmr+nGjsI/yHOxnXcY6RirEsQ=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=VPn6/NC6b6J79dljD6ENrzDTdHldSS0Ua8yq9rZwWDmCPrsqLMQZmWuy9mIAq0MTj0f5oM+7HwTcpEh62UPlrl0fppk8oiGd9YWt9nGoZG4D4glth8b+p0crokdrIDBwWR8IO7pL6veEsCE2kZ6CqqVRKoZcsQs339Qa0SAVaEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ua2N9FxN; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719679620; x=1751215620;
-  h=date:from:to:cc:subject:message-id;
-  bh=NdwDYXy90DzmNJ9UeuXmr+nGjsI/yHOxnXcY6RirEsQ=;
-  b=Ua2N9FxNEXZr4Os8vb9KozwKl1v1AYy9GPgYE6cFG8cFCUrDtEneRWUZ
-   QSvxGqhRLmRhhfV9K66s30DNijmKaBm3NV7sMCOLiNC5xV2p9px+C5BCv
-   QDj+UvjB013S7yJj7wy/CQkO39042VEmJipx7yaOLf8zC/gvCEZucI87W
-   uEpaNlxOezEr1q5ARv0zG8fzeFYJbbDUtkkT4TZIfH2dIz86uyK85o7Xk
-   ty7uENZcvOjtPSeaR6qbf4+lgeFTPonqM9C7HJAYaYa5XDBn97oi1woDu
-   6nYC71Ho6S34xBDgFI7OFaTjLWL4T4vMwi7AeqiSVWjsvhqK/sLUePxYQ
-   A==;
-X-CSE-ConnectionGUID: Ay32/KoMTw+5qzU9oQNhDQ==
-X-CSE-MsgGUID: rGBNZRARSwO+/ZsY2NGWSA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11118"; a="20666084"
-X-IronPort-AV: E=Sophos;i="6.09,172,1716274800"; 
-   d="scan'208";a="20666084"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2024 09:46:59 -0700
-X-CSE-ConnectionGUID: NSnkV4GGTv2kIVz8sufIiw==
-X-CSE-MsgGUID: pgbCrVIORtKNQcettnd+6g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,172,1716274800"; 
-   d="scan'208";a="45800994"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 29 Jun 2024 09:46:57 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sNbDz-000Jr2-1s;
-	Sat, 29 Jun 2024 16:46:55 +0000
-Date: Sun, 30 Jun 2024 00:46:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/vmware] BUILD SUCCESS
- 57b7b6acb41b51087ceb40c562efe392ec8c9677
-Message-ID: <202406300024.4XdHdHsQ-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5917581720
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 16:46:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719679616; cv=fail; b=PorpaAT6z7oYrLCJlQsRdo+FMw9OR4VrT9hYc+PuteaiQR+eufSPOu1TX3Kq1I5oVgzlZfwWIevi0wfnO3iilitxUiwwUqEJPZ8rg2HvCNBRftnUVfaT3k6qZU9Z/lEnyyA+1NWwWzf+PloNf0NZFFtKslkvzEDNLmoWvvdPEEI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719679616; c=relaxed/simple;
+	bh=iTEFAyDRJnDRtU54Wg1XL30P4D53OAsJv1b1Z+Vic84=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=chU5Adba0zAAhgPMmAMCUkQz+J3KRiFAhuzvUbOmK7e7SVneTK8pEjoSCgykTFxT+QSlllEgP+hdaXjPTgOJ3Lzyx9ZXcy0eD+YEwjOJlU3DYKhUO5Vl92mEhzOo7DEFFj+4NZ1cf/EPGD8TmupIwujm6edbcjK95bT1rne9bzA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=VTzQBBWL; arc=fail smtp.client-ip=40.107.236.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gzA9siBBJkW/V2uWg/6oPsGt8b7QUbm7RlbRrCjqZlglnCj759fuqvRkXLKWFV0pk3TW93PRQynGVEYuv5dpMF5TyFRv71+V058E2PWaCE0+U4GRzY+OCG4CrhRkGvkwYx3FjAXSx6b8Dqm7I7tiHPUR8T9HUHyT8SOqicsdjQ2iwMdX7zjencAYClfeqnUl8ew5Okd6HA6i7xKnkhGyiNiCI9GrYvEm3kCV7ul7y5Z6aQhXZZrUmGUMjcjWy9dLBWX3hQNN/sNsnzu6LcNngMQreS4SY2m8mumjWF/tecfp1JtZ340pWgIxOkH46F5WlgAtNkj/4by5zVPc3bXc7w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yBopiIZ9frPVLG79hv7d2AzQoXwC6WFrci8lIv+t7ig=;
+ b=IXlgWYGV+tjm+1mKIy1DliEB/OmCdNXsPnx+tCHvFymJ2sddCItLEuPQPwX1uBZp/92pPRMrtp44zJkjCdCwNOVXogv6URMXqlVffRkQ66iTlsCmWB6pOhIELQcy/SLmTFoPUYrZm4+W8tkdHN0XJ14e0EMzfdsYSgJcIFtMWFpjdAU9//Dq0X827PSTnFGMtOVVmCnzFa8CrkbCrYf1ZxpRFi3j1LZPprtyOmIhZccDOTF006wt2zAJEtxk4rjcvAXGP/zF8rGmWiJq98TTGy9FGaObmXC01iVx4JnQftOj2bVOprIXTNQchHMbUCz+K1neHBip2C6d5HT+LVPyLA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yBopiIZ9frPVLG79hv7d2AzQoXwC6WFrci8lIv+t7ig=;
+ b=VTzQBBWLzx+Apg2GU+LXTaBE57scwDCsSoIyMJ/JOUepskuUsx+boAYbcXTry4BfBXHGJWNUiHjg3V0m30mUMOk0LaKv6lVwXzo1wp6gv6fdLcV1TESO645HHwxsk0QlGXIkpEvyVV0SNWfnZ9D+e/8h387tePIVXQznnLHYn70=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MW6PR12MB8733.namprd12.prod.outlook.com (2603:10b6:303:24c::8)
+ by MW3PR12MB4459.namprd12.prod.outlook.com (2603:10b6:303:56::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.28; Sat, 29 Jun
+ 2024 16:46:50 +0000
+Received: from MW6PR12MB8733.namprd12.prod.outlook.com
+ ([fe80::71a6:a9da:c464:fa2e]) by MW6PR12MB8733.namprd12.prod.outlook.com
+ ([fe80::71a6:a9da:c464:fa2e%3]) with mapi id 15.20.7719.028; Sat, 29 Jun 2024
+ 16:46:50 +0000
+Message-ID: <ea465a40-f673-42b1-8b1c-a2efb20cd562@amd.com>
+Date: Sat, 29 Jun 2024 10:46:45 -0600
+User-Agent: Mozilla Thunderbird
+Subject: Re: 6.10/bisected/regression - commits bc87d666c05 and 6d4279cb99ac
+ cause appearing green flashing bar on top of screen on Radeon 6900XT and
+ 120Hz
+Content-Language: en-US
+To: Alex Deucher <alexdeucher@gmail.com>,
+ Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
+ "Mahfooz, Hamza" <Hamza.Mahfooz@amd.com>
+Cc: Linux regressions mailing list <regressions@lists.linux.dev>,
+ "Deucher, Alexander" <alexander.deucher@amd.com>,
+ amd-gfx list <amd-gfx@lists.freedesktop.org>,
+ dri-devel <dri-devel@lists.freedesktop.org>,
+ Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+References: <CABXGCsNptxsQO=5=qi-JYiFX=rX8Ok5inK80Gn0qrUFWbtBGng@mail.gmail.com>
+ <CADnq5_PDxJ8O1JUQ9RBYRFB9G1WZJos05ZAM4jUKuPBwPxjNkA@mail.gmail.com>
+ <CABXGCsNN9LwHc2x2AAEH=5UNwpvkWkBqRYz3OP8MZ6Woy+HDXA@mail.gmail.com>
+ <b6c440ca-e63e-429b-af41-5f27d4b8b2a2@leemhuis.info>
+ <CABXGCsNoFfMn7LaqqFgEPg-ECyUPN=f=SXVrFi=GZk6c69-Gqw@mail.gmail.com>
+ <CADnq5_PDSkr4hOHJmb1J30UC0a7sXsm5-TPkEmjzffMK_A+7ug@mail.gmail.com>
+From: Rodrigo Siqueira Jordao <Rodrigo.Siqueira@amd.com>
+In-Reply-To: <CADnq5_PDSkr4hOHJmb1J30UC0a7sXsm5-TPkEmjzffMK_A+7ug@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BN9PR03CA0810.namprd03.prod.outlook.com
+ (2603:10b6:408:13f::35) To MW6PR12MB8733.namprd12.prod.outlook.com
+ (2603:10b6:303:24c::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW6PR12MB8733:EE_|MW3PR12MB4459:EE_
+X-MS-Office365-Filtering-Correlation-Id: 363d9241-a81a-4bb0-e1b1-08dc985b12dd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QUNwazZXT1NwbnA3T2dHdmI1Q2tuSytmSDNSd3A0emZWT2VEZ001TkdOZVdX?=
+ =?utf-8?B?NGMxWjI2NmhzcHNobG1iMWQxeHpMSmhyVFU1ZWRWNTk1VDFvbHFBM3ozR1FE?=
+ =?utf-8?B?LzZWdDNLSVBCRGVRRUpGOHZ2bjJQVElKN2JXak13eTBSTFJRTzJlblFTSkdV?=
+ =?utf-8?B?KzJxODdtYzlTVktsVXZJV3FWZXRmZk5jK2NNN0cwOHBjZjl2WkwzaEsrQTZC?=
+ =?utf-8?B?cU1lTDJ2eWZXVDBNTVpsZTZNNlMrOU1PU0dFZHFUb3JFK2NqMjZ4VlFHanl2?=
+ =?utf-8?B?dnZNaC8vYTJRNGc3ZjhQMkVNTUlCdU1uNjN0L2dQK090NGVnUjhyQTA5SG03?=
+ =?utf-8?B?NHZvTW9TVHBYTDZnckcvMUJKNjlwN2FOVTJTZXZ1NlY0UFBsSEZLS2p2Q1J5?=
+ =?utf-8?B?Mi84ZVNZSHZYS05HMlhlN09TQkQwM1NlbUdvWS9hUm1ZRG1Nb2YyR21NbmdD?=
+ =?utf-8?B?WFRmcFJoQ2hCUFg1ZGRPL0p4azJxcVMxYWVVdzNwZ1VPK3VzS00yU04vdThZ?=
+ =?utf-8?B?ZmYrVUl3dXdDYVlWSC80aDZCMUMwSWd0eHg0NFVraU10V1luUXZrdDk4T1k2?=
+ =?utf-8?B?YnJKYkdvemltZ0ZkQjFFWmVXME45dGF1QTJjVkV6T2I2RGV6K3hGWnRGY0wv?=
+ =?utf-8?B?MmtMVHJJcjdNcDBwcmpNM0sxWXFySC9NZ1pYN2NkZTVZYnJPcUd3bzJWUmd6?=
+ =?utf-8?B?SzFtRk9neFI1OHY0eEV3Q0I2Y1gvcGErdmw4ZUNuODdBTjVsNStLY1BBNTdX?=
+ =?utf-8?B?ZjJzWFNsZlhjMk9nVnB5WWNzSzB0bzJKd1dpQnZvRWtYV2R4Z3BOdUdkUXJP?=
+ =?utf-8?B?ZEdZT1hoZ09XUTd6N2ZEeDhNQzQ0Q0FLdUw2QURCb3QxcUV2K2ZOMXJCS2pt?=
+ =?utf-8?B?N1R1V1FkYWpYTXBjbnRiS2pWOVJpcklxd0dOY0dLYngrbTg2V1hCR2YxaXR4?=
+ =?utf-8?B?T3JuWDhXMzdWLzA4VlZNeGtvaGNZQ3JaNUFMS3R1ZmZzL1Q3bnZLWHVpY0lM?=
+ =?utf-8?B?SmY0WXNNakhTVmVGUDUzRnpoVUZoUVJXeEtTNE84Ukthb3V3SXByWjRFcXVR?=
+ =?utf-8?B?Y1VMZ1ZnazJRL0Z6dWFJVFg5R3dxeDg1dFI5UkVOUlA5aXR2bUlrSWRrd01a?=
+ =?utf-8?B?Vy9ENzVBSFpGSmhJR01EakZabDhua295eEhiaWFETjM0Q3ZvSFl4ZldUVEs3?=
+ =?utf-8?B?Yk5QSWlMS3Yyc0QyZWR4Z1RkRGJ3N1F2Rk14OWJTL2RNV2hsbnh2TFhpYnZi?=
+ =?utf-8?B?cjhzV2drY290UUVtN3JjU1VmbXd1R0NKcUFvSWI1S1dKVXpzMXZxREk1dk41?=
+ =?utf-8?B?K3hxeGZJcmV5ZjByMWxoazllTjNjWHFsaE9WMHFDRlFsTC9mWkorR2cyM0NV?=
+ =?utf-8?B?UjNybHpkamRYZHBLM1dXZk1sWTZFenJWSVNiVUI3NUR3ZEloQzdma2pJL2l0?=
+ =?utf-8?B?anJDNVV3UGNtNkdXYTVSN2oxUnZmcDdXYlhia1lPNUppRTRvMDR5TmJoNVh2?=
+ =?utf-8?B?UXZSRndDMThQek1UNzJIK2laYzJHOC9LVmVTQ0dBL1dsU2RjNmZZNzd3ZXZu?=
+ =?utf-8?B?WXZ0YmVaSnlha3Fnb052QnMxam5VS0lrd2RqelhxLzBZNmp6R0xHc25XSXhJ?=
+ =?utf-8?B?Uk5LSGV6clA1VEY0ejJ4Rmp2bzRsWWZqVi9QelRKZUl0UFBZcEdzdmtTamhj?=
+ =?utf-8?B?R3ZZeXA1ZGFMZlJCV1BwbXJhcERmaWR1KzZUVjhXTlArcHgzcTYraHJnczFW?=
+ =?utf-8?Q?kyP/P5r27cpSb5OMz0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW6PR12MB8733.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eE1oWHVRbTdiN0dDT2xyK0w4Rml6Ujd1MzArZytjWnJod1RaRWZvbGpRYUxY?=
+ =?utf-8?B?MkN5QVpNT2tOaVRZTjRrYW1zM0RSMG9nNDk1UXBtR0tVUmJMcFJjaE82MlZs?=
+ =?utf-8?B?VHFxb3U2VnlmeTUzTzlzWUt6cGxPajgway9nVytXSk4rMUV3MWZhMzNDVzYw?=
+ =?utf-8?B?TnlqNlVIS3pBRktBUEZmTUIrOHVpUnBFdjUvcnk5RjVoMU1TRk1jb2FFS0M1?=
+ =?utf-8?B?T0MzSE1MWWp5OUJLcGx2cEd0U3VzMmYwbDJ4VzFVQjN2RkxPMUdQckR0aFpR?=
+ =?utf-8?B?dS9UNmhiWWNLZEVpajZUNVZrZzA4QzlWU0h2UXFyVitzaHFTN3cyRit1OTlF?=
+ =?utf-8?B?aFdySDZWMkNOaHBEWGkra3UrNDZNODRTOTJjYTNNTkRTZXRLTUdYeTJmYVU2?=
+ =?utf-8?B?UTVTbStUenluTm1iNnFkSXNYYmVzQi9NUC94OFNzSkl5VVdXdW1VUkg4UE1S?=
+ =?utf-8?B?NjJRWnVHTDF5QkR5NXZwaHI5S3h5NThQQjExbXRNK2VkdmZkZ1dkWDkwZUVy?=
+ =?utf-8?B?eFg1Z21Fd2RicHArb1UxRjVjOVh3RCt5dklXZHlnckh5T01BMGE0NW51TjFR?=
+ =?utf-8?B?di9nNmtNMXl3OE1EMC9URitETGFaYlhDdytjWGNlejBmUHlmUlNjZ0EwRWF2?=
+ =?utf-8?B?ZjhkOHdoUFordTdMZEpMTHRmU0Vwd01NU3R5elR5ZGNCc05xZkkvWEwxendV?=
+ =?utf-8?B?cmF6VHgzVllxbFQ4a1hhUTFZeXJDbXZpQ3pKUE5WZjMyMWwzRWdnOVlncHpB?=
+ =?utf-8?B?YUlXbmpwYy9YcU1WSGtkeWhCR3JyY0VidFBJSllzN3M3OThzNGJRT2VGNFla?=
+ =?utf-8?B?N2pHTTQ5TG5MZ3JQM1N3Ny96b0w2eVNEYjNJdXJQSVFSa2t6STloQ1J5VnNC?=
+ =?utf-8?B?WENYbjE5M0lveTRTcnJDS3NoY1c4aUtOVFRDZElxbG0vdVZlbXpwTWNWd0l3?=
+ =?utf-8?B?WmNRck9kMEFqTVZZRHRwN3BPem5kRjhLWjF5TElweVhxUVNWdFIxWDJsTEk1?=
+ =?utf-8?B?ZWtqcXg2ZGd6eGxOSlQ2WjJhRnJJNmF1Zk00ZjBCbVI1R1VkL0trMDJpOVdm?=
+ =?utf-8?B?MWtKSXRieHdTd0FkeFhMU09XemV4b1lRa0RGTGhqWktSY29jNXdpdE1BZUg2?=
+ =?utf-8?B?UUpUd0IxTGp6cXFodFZteStsUkVKQTdyaENNc3h1WFVwYlZUb1VyMnY0NHQ1?=
+ =?utf-8?B?SmUxZnhkMExRUTNEK0srVjlYZW1VL3B5OEtoeUt4Y1dzd0JvTklvdWtOT2F6?=
+ =?utf-8?B?bzVmTFNHTHRmOG5QcG1xTTJhdXFtVHZWTjhjdVhMNEtZL0J2cjVVSmhsR08z?=
+ =?utf-8?B?bWx5MDROWUJtTktaTWVWMFBKY1V3Ui9FQVE2L2JtTnc5WnFhMzA3YzNBbits?=
+ =?utf-8?B?eU9GeU5haGJaUktLRnkwZy9xcmRJNTdnckRWUVJtSjFXemFOcC9kb3NTbElS?=
+ =?utf-8?B?M3hFZktmc3ptc25BQVpRM3FSQ05GZlg4cDI0eHhUcDVvL0xZMlNGUWhaQTQ3?=
+ =?utf-8?B?QThuL1IyRGN5dmlqZk9yZGlucDduVHBwR3VBUi9NY3J0VGFnay9ZNVh4eTFk?=
+ =?utf-8?B?VlBsbldPaGlxQ1BYSmJEQTNNT0MwUllJSnJFQ3VuM3YzbFJSV3FXOC9IanMv?=
+ =?utf-8?B?WmMxOExVZmVXSm1mdUdmZnVEc2h5NWtNKzAvRy9acXNESU8zaW1xSUo2YXQ3?=
+ =?utf-8?B?UXY0TGJIYXVqa216eHNBdmJ0bDlQNVJYTGdVNDVMQVRQODhBSkwzY0dUNUNl?=
+ =?utf-8?B?QUluTXlBTU1WQzVSQ2xpcldVdWs4aXdkYzBaMDcrNmZqWVhRQjhqY1FZMThZ?=
+ =?utf-8?B?TDRDMVFxQWpJa29ucnVLdTArRGRMZUMxaUJjbkxCVGJDRG1BNkdxVFlJK1Bk?=
+ =?utf-8?B?RTZOZzMrOXpISFJoQ0pqSHhEcVRhT3F4Mk9maDVST3NIREFSamtmSklJMlBD?=
+ =?utf-8?B?OEhXYUx2czNVZ0ZKODlRdVF1SkJPUjVkOXhJMGN0d05QNU10ZGE2bzcrMGI5?=
+ =?utf-8?B?N29vVERhN1FRUkt4MGV4TGt3M2trUG4ybk5IS01jRUtMemhTWmp5SkhtSFYy?=
+ =?utf-8?B?RGozckFrMkpvdjBPTm9kQ1Vjb1JzenRudUloT2dsdmlyUnY4VHFuMmhiZ1B0?=
+ =?utf-8?Q?+EK9JpGDCNLFj33f+FVumMHxd?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 363d9241-a81a-4bb0-e1b1-08dc985b12dd
+X-MS-Exchange-CrossTenant-AuthSource: MW6PR12MB8733.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jun 2024 16:46:50.7003
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wtPp27AbkVYrtrT3ZcMspxc53K07heZ3vQz9nRAf9BFJ3m/4EH5I2INpEKHDKOZ+0YyrYmf8ybfmvuBEq7K36w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4459
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/vmware
-branch HEAD: 57b7b6acb41b51087ceb40c562efe392ec8c9677  x86/vmware: Add TDX hypercall support
 
-elapsed time: 5782m
 
-configs tested: 73
-configs skipped: 2
+On 6/28/24 9:19 AM, Alex Deucher wrote:
+> On Fri, Jun 21, 2024 at 6:45 AM Mikhail Gavrilov
+> <mikhail.v.gavrilov@gmail.com> wrote:
+>>
+>> On Fri, Jun 21, 2024 at 12:56 PM Linux regression tracking (Thorsten
+>> Leemhuis) <regressions@leemhuis.info> wrote:
+>>> Hmmm, I might have missed something, but it looks like nothing happened
+>>> here since then. What's the status? Is the issue still happening?
+>>
+>> Yes. Tested on e5b3efbe1ab1.
+>>
+>> I spotted that the problem disappears after forcing the TV to sleep
+>> (activate screensaver <Super> + <L>) and then wake it up by pressing
+>> any button and entering a password.
+>> Hope this information can't help figure out how to fix it.
+> 
+> @Siqueira, Rodrigo @Mahfooz, Hamza any ideas?
+> 
+> Alex
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Hi Mikhail,
 
-tested configs:
-alpha                               defconfig   gcc-13.2.0
-arc                                 defconfig   gcc-13.2.0
-arc                   randconfig-001-20240627   gcc-13.2.0
-arc                   randconfig-002-20240627   gcc-13.2.0
-arm                                 defconfig   clang-14
-arm                          exynos_defconfig   clang-17
-arm                   randconfig-001-20240627   gcc-13.2.0
-arm                   randconfig-002-20240627   clang-19
-arm                   randconfig-003-20240627   gcc-13.2.0
-arm                   randconfig-004-20240627   clang-19
-arm                       versatile_defconfig   gcc-13.2.0
-arm64                               defconfig   gcc-13.2.0
-arm64                 randconfig-001-20240627   gcc-13.2.0
-arm64                 randconfig-002-20240627   clang-19
-arm64                 randconfig-003-20240627   clang-17
-arm64                 randconfig-004-20240627   clang-19
-csky                                defconfig   gcc-13.2.0
-csky                  randconfig-001-20240627   gcc-13.2.0
-csky                  randconfig-002-20240627   gcc-13.2.0
-hexagon                             defconfig   clang-19
-hexagon               randconfig-001-20240627   clang-17
-hexagon               randconfig-002-20240627   clang-19
-loongarch                           defconfig   gcc-13.2.0
-loongarch                 loongson3_defconfig   gcc-13.2.0
-loongarch             randconfig-001-20240627   gcc-13.2.0
-loongarch             randconfig-002-20240627   gcc-13.2.0
-m68k                                defconfig   gcc-13.2.0
-microblaze                          defconfig   gcc-13.2.0
-mips                        bcm63xx_defconfig   clang-17
-mips                 decstation_r4k_defconfig   gcc-13.2.0
-mips                           ip27_defconfig   gcc-13.2.0
-mips                           ip32_defconfig   clang-19
-mips                          rm200_defconfig   gcc-13.2.0
-nios2                               defconfig   gcc-13.2.0
-nios2                 randconfig-001-20240627   gcc-13.2.0
-nios2                 randconfig-002-20240627   gcc-13.2.0
-openrisc                            defconfig   gcc-13.2.0
-parisc                           alldefconfig   gcc-13.2.0
-parisc                              defconfig   gcc-13.2.0
-parisc                randconfig-001-20240627   gcc-13.2.0
-parisc                randconfig-002-20240627   gcc-13.2.0
-parisc64                            defconfig   gcc-13.2.0
-powerpc                  iss476-smp_defconfig   gcc-13.2.0
-powerpc               randconfig-001-20240627   gcc-13.2.0
-powerpc               randconfig-002-20240627   clang-19
-powerpc               randconfig-003-20240627   gcc-13.2.0
-powerpc                    socrates_defconfig   gcc-13.2.0
-powerpc                     tqm8548_defconfig   clang-19
-powerpc64             randconfig-001-20240627   gcc-13.2.0
-powerpc64             randconfig-002-20240627   gcc-13.2.0
-powerpc64             randconfig-003-20240627   gcc-13.2.0
-riscv                               defconfig   clang-19
-riscv                 randconfig-001-20240627   gcc-13.2.0
-riscv                 randconfig-002-20240627   clang-19
-s390                                defconfig   clang-19
-s390                  randconfig-001-20240627   clang-16
-s390                  randconfig-002-20240627   clang-15
-sh                                  defconfig   gcc-13.2.0
-sh                 kfr2r09-romimage_defconfig   gcc-13.2.0
-sh                    randconfig-001-20240627   gcc-13.2.0
-sh                    randconfig-002-20240627   gcc-13.2.0
-sh                          rsk7201_defconfig   gcc-13.2.0
-sh                           se7750_defconfig   gcc-13.2.0
-sparc64                             defconfig   gcc-13.2.0
-sparc64               randconfig-001-20240627   gcc-13.2.0
-sparc64               randconfig-002-20240627   gcc-13.2.0
-um                                  defconfig   clang-19
-um                             i386_defconfig   gcc-13
-um                    randconfig-001-20240627   clang-19
-um                    randconfig-002-20240627   clang-19
-um                           x86_64_defconfig   clang-15
-xtensa                randconfig-001-20240627   gcc-13.2.0
-xtensa                randconfig-002-20240627   gcc-13.2.0
+I'm trying to reproduce this issue, but until now, I've been unable to 
+reproduce it. I tried some different scenarios with the following 
+components:
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+1. Displays: I tried with one and two displays
+  - 4k@120 - DP && 4k@60 - HDMI
+  - 4k@244 Oled - DP
+2. GPU: 7900XTX
+3. OSes:
+  - ArchLinux kernel 6.9.6, Gnome (no changes)
+  - Ubuntu 22 + latest amd-staging-drm-next + latest firmware, Gnome
+
+Anyway, I could not reproduce the issue with the below components. I may 
+be missing something that will trigger this bug; in this sense, could 
+you describe the following:
+- The display resolution and refresh rate.
+- Are you able to reproduce this issue with DP and HDMI?
+- Could you provide the firmware information: sudo cat 
+/sys/kernel/debug/dri/0/amdgpu_firmware_info
+
+Also, could you conduct the below tests and report the results:
+
+- Test 1: Just revert the fallback patch (drm/amd/display: Add fallback 
+configuration for set DRR in DCN10) and see if it solves the issue.
+- Test 2: Try the latest amd-staging-drm-next 
+(https://gitlab.freedesktop.org/agd5f/linux) and see if the issue is gone.
+- Test 3: In the kernel that you see the issue, could you install the 
+latest firmware and see if it fix the issue? Check: 
+https://gitlab.freedesktop.org/drm/firmware P.S.: Don't forget to update 
+the initramfs or something similar in your system.
+
+Thanks
+Siqueira
 
