@@ -1,113 +1,184 @@
-Return-Path: <linux-kernel+bounces-234962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6E6191CD89
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 16:04:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7755A91CD8B
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 16:09:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2FD01F21EF5
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 14:04:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3A53B22661
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 14:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C824B5A6;
-	Sat, 29 Jun 2024 14:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55837E572;
+	Sat, 29 Jun 2024 14:09:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FuTOzR5t"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nAZERnbu"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432A54C99
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 14:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77DA029429;
+	Sat, 29 Jun 2024 14:09:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719669855; cv=none; b=uxBSu5qQC1/XlEbQcwUi7TM+qRrlYOzmn6v/x1TwFtK5etWXVrjIHsfzyIf03rjP2uvy5T7RRV6dm0V7/r2SaMR5Fn3zycBTLuJ+7JTbifq6KZQYrZEhsqEaVlkpDapMbvCNWq6PPbp1hsKOD+NmVJAu3sKw36Od9zIV3PT4sFE=
+	t=1719670184; cv=none; b=qfcfqy09qZwJAAw90fg4S4GrnjHzz2GS2j/14eK0FlsXXcf+Ymn2u9JA1dsBnbqwS0gjLAjPwOF5F7nHieIbuLHdEoVtTM+dyX3o/DaO/Ji/Sw6soBbuaOqCTaW9dKCUU1d+Na+PMeRm8NZaUuf8RFRYs5rVz+ZEw7JsB4IK4og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719669855; c=relaxed/simple;
-	bh=5BmhQ9F7ttoYPRCcC0d8Lj6aXmR+zf4vxXS4iJbiM18=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=grAkJt0Tp+Y33m6G5YUylOR2+DxA5qJ8q0R44QqUUqgXc+DyD9AxViwkKqUJq/KzcbeTbSemyWWNTa/Dm2FLhQbHVpKjiyS/xnrXX9/LzISLKr1UZg+Wfy+j1VB+kUKhe3tBfbeKjHN9PMVKi3gzlBZZAmaB76IgmrT3w7CdXl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FuTOzR5t; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719669853; x=1751205853;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5BmhQ9F7ttoYPRCcC0d8Lj6aXmR+zf4vxXS4iJbiM18=;
-  b=FuTOzR5tQFCRRP6ZSlViN+A4dY8dcxdj2Gp3UJ+89O1m/5p6ZKq5CJJb
-   LKBOy0n42GcMcPpYUk5t+PH2nw792wbsN6XgUReBhH88A78cPPNHUKZdZ
-   mZcD2H3ymxGf2dK0ez3QXQop/qZ7wtx888Vbo7IWbk9gcLsK9zw4quftD
-   Iw1sqsYzgIAVqLATq4Xa5yflMak283leRlTifPcUGF1W2x0yCotIdzcuZ
-   6wm827yLOnFZfOFaYJXak3E2qcpMSqaU77O0ZR4ixeSRoNddIC3DwN0Ts
-   jyIMCYcnswuEAlbk6UfncWnLv0QW1jf469MTVgUjJWmRzolbScpwPRFGd
-   Q==;
-X-CSE-ConnectionGUID: cAJ2s/KeRQGxEkoWaxGRUw==
-X-CSE-MsgGUID: GQl4HNlXQmGBOEz9xIAvpA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11117"; a="34379461"
-X-IronPort-AV: E=Sophos;i="6.09,172,1716274800"; 
-   d="scan'208";a="34379461"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2024 07:04:12 -0700
-X-CSE-ConnectionGUID: OmsxdMKDTLCVoCHsvhNQeA==
-X-CSE-MsgGUID: 2osVXlujQSCPsSppXIL39A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,172,1716274800"; 
-   d="scan'208";a="44915433"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa007.fm.intel.com with ESMTP; 29 Jun 2024 07:04:09 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 78317215C; Sat, 29 Jun 2024 17:04:08 +0300 (EEST)
-Date: Sat, 29 Jun 2024 17:04:08 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Borislav Petkov <bp@alien8.de>, Dexuan Cui <decui@microsoft.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Michael Kelley <mikelley@microsoft.com>, 
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, Kai Huang <kai.huang@intel.com>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/tdx: Fix crash on kexec
-Message-ID: <poxeykijyqrz5hxrey46s6hh2qd6byirbevwuwec2gtbfq266c@npegk7sn3ot7>
-References: <20240629130621.1671544-1-kirill.shutemov@linux.intel.com>
- <20240629135933.GAZoATRVAubo7ZDdKB@fat_crate.local>
+	s=arc-20240116; t=1719670184; c=relaxed/simple;
+	bh=qidqv+3+yc4iAU/4uTFwaHupGUAA32Klrwo7vaMgXCg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P/6KBDM5ZAkncFm3BE+dNopNYdm2mDi7ix/IjQ+HdOeCnre2Hi4KEd5PXjnsx7QJ2/x7JaMeHs6GxT+1IRT9BGDy0hYoDLM2iocDo0F66+uLXhYBfZbsG7/QHfBQhjVGrwt1zOQj4UCH2XZRK32RNs9pivj9ZsqaJcsWL84wvxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nAZERnbu; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-706a4a04891so1072993b3a.3;
+        Sat, 29 Jun 2024 07:09:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719670182; x=1720274982; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=Uc/shT8LqLSzfQOGIW8uApf23cdrjjd3SgxuZNz1P6U=;
+        b=nAZERnbuCNBQU3JGMA8As9xA+uLAVqL6ogcHXO/GVByuE3I+uY5zKPV79V3uywkU7Y
+         Cx5vY+JtE6ARJY9m/vdjUNyABinJuVtc+olEMkp5WcSjZYaZjrL/M8r2P7YQmzE79DMr
+         WvmUrQ9uhx0rRB6k4P4gNxONutvXpDoRxdgfzvCLehUOzGgl5w1vWXYAcvJI8qoIMncR
+         KinhLMLJ8cgdWVZPMHvCeZQz5k71IxpJfKbU8u+bYYaCF7jRlFXowXa4tBIpEgLEj43+
+         xS0ks6s0PQ08IapImx1ncMHSOzs9kpHfbI8kXOVDNBTxr8yd8OQY4TzFwtK948oKFzqV
+         nOPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719670182; x=1720274982;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Uc/shT8LqLSzfQOGIW8uApf23cdrjjd3SgxuZNz1P6U=;
+        b=TSEKjp2wTgRD20JNg8KKAz6vJ9GesLZzwFSHqmwUHmRPiK18WmJgCl7RsWLnZCxGpt
+         /I0X1yseItNywjzNBDoDIUrWtCwoD9KF3RsEA5sF2hhcZqub0XttIE+SGAh/tVSnlQVS
+         4aPLmE+/HgTeUvL5LBlfEpWCL22nGgwSCVJawj2zMTrORy+01p5bbiT9tXPlJ/ucw/L1
+         EjzR555wruw1M+LE3OMYPjxHnqW6qGzMjklDqiq5UtJ7SH5ULUA3l/Dd6daIypGp49gX
+         3jZDLgudEgaCafIev6tNxectRpgqNukP9mTojJmMrORwcxAn2BFwHQDFtjDP2ZwsGIyC
+         D9tQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWHcXwJQ/K5/5x7o7yokPOBUcFVg8VAByuTceF+hB6zlp0yk075RVTfRl44CNqdVKKtTG4Dospg7CnedpvElLajwVQA3/1oU5qTRx8onOG5tcQo7xbnb8FIumFlWszaRoW7L1uUxLpA
+X-Gm-Message-State: AOJu0YxyPDVw2/JCo7XbXyc3ld+RyR61QZrYr5DWJkSzo1cnDJj6QJDs
+	/IgCGHRG2rGY8nSxDBGG7BYQgYbRE1F6hiX/hXP0t61F+kY0WIgG
+X-Google-Smtp-Source: AGHT+IGrZaLDg45Wz9YLM8sohVKuta+tS9lS0SVQ6ZuHKOCq4WCAkkurVVSVn8iKUTbcNeH9+tA3nw==
+X-Received: by 2002:a05:6a20:7f9f:b0:1bd:1ab1:e90c with SMTP id adf61e73a8af0-1bef6138c16mr1168998637.15.1719670181515;
+        Sat, 29 Jun 2024 07:09:41 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac10d1b56sm32618615ad.41.2024.06.29.07.09.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 29 Jun 2024 07:09:40 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <094fad89-b5b9-4dc3-975d-13a841e212ae@roeck-us.net>
+Date: Sat, 29 Jun 2024 07:09:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240629135933.GAZoATRVAubo7ZDdKB@fat_crate.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/4] i2c: piix4: Register SPDs
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Jean Delvare <jdelvare@suse.com>,
+ linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>
+References: <20240627-piix4-spd-v2-0-617ce47b8ff4@weissschuh.net>
+ <20240627-piix4-spd-v2-4-617ce47b8ff4@weissschuh.net>
+ <2bbdb1bd-ea4d-4c14-9ea7-9fce09ac76b7@roeck-us.net>
+ <afd11870-eab1-4b90-9b81-2a7c84be46e5@t-8ch.de>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <afd11870-eab1-4b90-9b81-2a7c84be46e5@t-8ch.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jun 29, 2024 at 03:59:33PM +0200, Borislav Petkov wrote:
-> On Sat, Jun 29, 2024 at 04:06:20PM +0300, Kirill A. Shutemov wrote:
-> > The function tdx_enc_status_changed() was modified to handle vmalloc()
-> > mappings. It now utilizes slow_virt_to_phys() to determine the physical
-> > address of the page by walking page tables and looking for the physical
-> > address in the page table entry.
-> > 
-> > However, this adjustment conflicted with the enabling of kexec. The
-> > function tdx_kexec_finish() clears the page table entry before calling
-> > tdx_enc_status_changed(), causing a BUG_ON() error in
-> > slow_virt_to_phys().
-> > 
-> > To address this issue, tdx_enc_status_change() should use __pa() to
-> > obtain physical addresses whenever possible. The virt_addr_valid() check
-> > will handle such cases, while any other scenarios, including vmalloc()
-> > mappings, will resort to slow_virt_to_phys().
-> > 
-> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > Fixes: e1b8ac3aae58 ("x86/tdx: Support vmalloc() for tdx_enc_status_changed()")
+On 6/29/24 00:19, Thomas Weißschuh wrote:
+> On 2024-06-28 16:09:09+0000, Guenter Roeck wrote:
+>> On 6/27/24 10:48, Thomas Weißschuh wrote:
+>>> The piix4 I2C bus can carry SPDs, register them if present.
+>>> Only look on bus 0, as this is where the SPDs seem to be located.
+>>>
+>>> Only the first 8 slots are supported. If the system has more,
+>>> then these will not be visible.
+>>>
+>>> The AUX bus can not be probed as on some platforms it reports all
+>>> devices present and all reads return "0".
+>>> This would allow the ee1004 to be probed incorrectly.
+>>
+>> Was this reported somewhere ? I don't see it happen on any of my systems
+>> (of course that doesn't really mean anything).
 > 
-> I'm going to zap this one from x86/urgent and give you guys ample time to test
-> thus stuff better and longer.
+> It happened on one of the big server systems I tested on.
 > 
-> Also, what is this e1b8ac3aae58 fixing and why is it urgent?
 
-Daxuan, how urgent is this fix for you?
+>>> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+>>
+>> Reviewed-and-tested-by: Guenter Roeck <linux@roeck-us.net>
+> 
+> Thanks!
+> 
+> FYI, combined tags are discouraged by
+> Documentation/process/maintainer-tip.rst:
+> 
+>    Please do not use combined tags, e.g. ``Reported-and-tested-by``, as
+>    they just complicate automated extraction of tags.
+> 
+> I'll add the tags in split form to the patch.
+> 
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+NP with me. though strictly speaking that only applies to the tip tree.
+I started using it after someone else asked for it, but I don't like it
+too much anyway. Combining it was an attempt to avoid the "please
+combine ..." feedback ;-).
+
+On a side note, I also applied the other three patches, but I am not sure
+if that counts as "Tested", so I didn't send a tag for those.
+
+Thanks,
+Guenter
+
 
