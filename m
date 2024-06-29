@@ -1,138 +1,286 @@
-Return-Path: <linux-kernel+bounces-234778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9CB591CAE0
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 05:31:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A23AE91CAE2
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 05:40:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6819FB224E5
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 03:31:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB1621C21A9A
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 03:40:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A1C1E526;
-	Sat, 29 Jun 2024 03:31:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B4C01EA71;
+	Sat, 29 Jun 2024 03:40:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m5vGZfjw"
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="aZrNZHse"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87478A945;
-	Sat, 29 Jun 2024 03:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A23D46BF;
+	Sat, 29 Jun 2024 03:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719631887; cv=none; b=PgrIScQaGUMh2c7wiTWpPdUJ2yCggfu5by/dQUvufPjh/FrT3Y0iaohs/X3leWoUcnCMRZ8ro3h18tAS7BepemJUA5jdxPHbaORpglkgE2jYXs9dAarmLUX4A0ISaQULsA7c/XfpFIS39anXCHPwUGFTtXWUS4GNX68LR7NFNXA=
+	t=1719632405; cv=none; b=S8Ousy2YsY//XINm7YuR/20tlryII3jzTQOlDibhFZMl+1KmziLdIEekcLCeC/GARN5alIJmbvuGA3U/Yl9WPwVuDaMMjMbi7aFUdmCWgEynT6Hu/daiE+L465abYMZq+yo7khJtmvstJZe5Tq1mbSNZL9GI2hIlqBt8nRgHW4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719631887; c=relaxed/simple;
-	bh=UMbUn3CgsoktVzkBOL+mHpKeupOeuLEClQKjfRD/RVo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YUh1f1HCinyvL2XrqFIUcGc/SOORBxS/zPt5u5Q6xHBlnMBUL26LISqtBQTztmlUFtqPCUsUAXSHv5eWz6aQRmCCR/wtJp+IpbTiBg0zILRiP7hPknY5NiNUa/7+GUBV5dhkLaekXL94KXUNkLmQ8BDayRf0MDRyZPNlq+bY2dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m5vGZfjw; arc=none smtp.client-ip=209.85.160.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-24c9f6338a4so591500fac.1;
-        Fri, 28 Jun 2024 20:31:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719631885; x=1720236685; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mSl9MMzmnJSlDuFOdf3HeBK75wkl+RK1RWvEFXp2fhI=;
-        b=m5vGZfjwrnrjrzkWIADQ8Uq8LfsBlRcetNijK4ZrciYEXXJTnkPRGWuY3PS4EyhcYZ
-         otjb3Lq2fwFYeUsZ1BMxpJwBmDMhM94DfLM2/FOwbNHAkAKqvm9502zZtNFg1kaPbFbo
-         t5r1XooB8HpjdVQ/nzGhlAcLrXoFiPf2JMeuy3W6ooSm3dE4GNWKhRnwbuiVGsrY2fNg
-         S3KmlvpriboZwmFFwRFNUfzIXaBgBNe+49yiJgKEsirWj/qIfF1VrTXLNSjOR78NUgbB
-         mnef0BKx2qThuV9mualjcTJpwX0fyjId7pNx6ybCHGdY414h5RsRD2fYIZ4aeKNQUWhr
-         8lFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719631885; x=1720236685;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mSl9MMzmnJSlDuFOdf3HeBK75wkl+RK1RWvEFXp2fhI=;
-        b=SEiK6y+u65gaPNp/nzWKu2hORVQPlgJySMZNQL5Ss4rHllu+Kf6KmDbvHnndwJDYCe
-         p/ltxDIEG2c38rxNH+VgtJ7s/E5Sa+hMzGLJV/XbE33uV9czE3NkGAenlIGv8wfia1cJ
-         3OqqMjucZVudhJA5LhlpggKBHVFVx5hqUWp0PMnA1SHXqxNof/yyRyDMnXRNUPT/EhRP
-         4N8hJR5uxfIsGGGuVYLYMHo4kSz2jrOkgSY1KKSwVl+q+u9oMa56RlS7XkKT2idUkNqk
-         YqDDBMxyHICIw8JwLD9CBoISxW8xVCP802BfE9UVOMgLCWCG0l9It910nSp/hEGlSUEO
-         WWhA==
-X-Forwarded-Encrypted: i=1; AJvYcCWAZbqTwSC63rmScNhYZFn2lUEJtyDO5wLhD9NRj7fV/lkSAqfnhZrEhBIEcqB1bZ1UQ+9hWffLyLFrTLOcafwtAlmFJSW/FH94ZDtC
-X-Gm-Message-State: AOJu0YyFXXcAnxftbbwvTBzc1imArT8lpXupRcbrTX7/6RRadRymKb/5
-	GnwCQsvIrhaivbZ2yOTMIiygEgTLQwkqFgfJAd+6upyhGNEPmc8Q
-X-Google-Smtp-Source: AGHT+IGWOucm3yANDUxSUMd+Sqwxzia3bJCdr5UpKwsT9yw8LfxMGazEPdAT+FPDio4CDnhliR47BA==
-X-Received: by 2002:a05:6870:e9aa:b0:254:a2c2:d3c3 with SMTP id 586e51a60fabf-25db340df60mr35138fac.2.1719631885592;
-        Fri, 28 Jun 2024 20:31:25 -0700 (PDT)
-Received: from [127.0.1.1] (107-197-105-120.lightspeed.sntcca.sbcglobal.net. [107.197.105.120])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-701f7b397b7sm539594a34.68.2024.06.28.20.31.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 20:31:25 -0700 (PDT)
-From: Pei Li <peili.dev@gmail.com>
-Date: Fri, 28 Jun 2024 20:31:22 -0700
-Subject: [PATCH] Fix WARNING in __ext4_ioctl
+	s=arc-20240116; t=1719632405; c=relaxed/simple;
+	bh=oQC+KdQQ62QAgi54o+FyAIkuupA2Q0hcEt+dVsT/T+c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cDIDXfmcrc+8CtObOC7tJAFJxek3k5QLVtyDENFCJzfIaQHXWxaQPhAiaY0OkxgDaAXhVR4H1kfhWlQ2KCqAcAPqPJAwi54S5QgJF+ZxulFok/y7gnMx7xmh8qMQEl5FRovKAjeA+w6QJHzgMbQUKc74sMZhu21UBPDOKVvNgJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=aZrNZHse; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.205] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 45T3dOED3288717
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Fri, 28 Jun 2024 20:39:24 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 45T3dOED3288717
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024061501; t=1719632366;
+	bh=fSbrHdLUnBGvxi//CP8K0sMgm0pNU1J6y3lWyreHIt4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aZrNZHseEEX9fliWlsENzGUFK51LQ3oc+Aw6eSb301YK7q8470mtWfpWPNKreyks8
+	 lBfloJnKWbsUf6E9chL2Q2k0o3eP3xzNW8tBcPEvslgosSWTkhZN3HDIM9Jxq+QN5s
+	 84URUUcA9K+V7UEuf+9X5lV+Ril9yGNy0FdqDHzemJhsP79JQDgQlsMLfdp2Ph275Q
+	 38QRJX6SJMMmAzshz9A7VIzACtZzPA2ukJlPt+OLPxLoa+NSHdLTfpbB8jgest7mH2
+	 zGK2oN/D23m3smg6Rr9xd8BeoKM6Wgk5QV1ChnBbKSwVA1JOjUganUx4oaK/zjGzAc
+	 fBTEK61YBQegA==
+Message-ID: <3177880c-6538-4a18-bb2b-2926c69ef434@zytor.com>
+Date: Fri, 28 Jun 2024 20:39:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 05/11] x86/irq: Process nmi sources in NMI handler
+To: Jacob Pan <jacob.jun.pan@linux.intel.com>, X86 Kernel <x86@kernel.org>,
+        Sean Christopherson <seanjc@google.com>,
+        LKML
+ <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Xin Li <xin3.li@intel.com>, linux-perf-users@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Tony Luck <tony.luck@intel.com>,
+        Andy Lutomirski <luto@kernel.org>, acme@kernel.org,
+        kan.liang@linux.intel.com, Andi Kleen <andi.kleen@intel.com>,
+        "Mehta, Sohil" <sohil.mehta@intel.com>
+References: <20240628201839.673086-1-jacob.jun.pan@linux.intel.com>
+ <20240628201839.673086-6-jacob.jun.pan@linux.intel.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <20240628201839.673086-6-jacob.jun.pan@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240628-bug8-v1-1-417ef53cca33@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAAmAf2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDMyML3aTSdAtd8zRzA4NEIyOLZJNEJaDSgqLUtMwKsDHRsbW1AMPc8nx
- WAAAA
-To: Theodore Ts'o <tytso@mit.edu>, 
- Andreas Dilger <adilger.kernel@dilger.ca>
-Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, 
- skhan@linuxfoundation.org, syzkaller-bugs@googlegroups.com, 
- linux-kernel-mentees@lists.linuxfoundation.org, 
- syzbot+2cab87506a0e7885f4b9@syzkaller.appspotmail.com, 
- Pei Li <peili.dev@gmail.com>
-X-Mailer: b4 0.15-dev-13183
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1719631884; l=1333;
- i=peili.dev@gmail.com; s=20240625; h=from:subject:message-id;
- bh=UMbUn3CgsoktVzkBOL+mHpKeupOeuLEClQKjfRD/RVo=;
- b=mek6p9iKGykiUOqRtZH7wiiHEclyE1V/+I/m0KTKQaC6EZocWYSaK0oWt3Z2kN5Ilf1L3JCNN
- 60WZ9Ny256PAqNlMP0GuYamNeNQCnNL3me4L548CY510ClW366+MJNB
-X-Developer-Key: i=peili.dev@gmail.com; a=ed25519;
- pk=I6GWb2uGzELGH5iqJTSK9VwaErhEZ2z2abryRD6a+4Q=
 
-Specify the size of s_volume_name in strscpy_pad() to avoid buffer
-overflow.
+On 6/28/2024 1:18 PM, Jacob Pan wrote:
+> With NMI source reporting enabled, NMI handler can prioritize the
+> handling of sources reported explicitly. If the source is unknown, then
+> resume the existing processing flow. i.e. invoke all NMI handlers.
+> 
+> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
 
-Reported-by: syzbot+2cab87506a0e7885f4b9@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=2cab87506a0e7885f4b9
-Signed-off-by: Pei Li <peili.dev@gmail.com>
----
-strscpy_pad() by default takes the size of destination string as the
-size to be read from source string. However, as s_volume_name is only
-declared as an array of size EXT4_LABEL_MAX, we are reading 1 byte more
-than expected.
+The code looks good to me, however please improve coding styles and
+comments, see below.
 
-Specify the size of s_volume_name in strscpy_pad() to avoid buffer
-overflow.
----
- fs/ext4/ioctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> ---
+> v3:
+>     - Use a static flag to disable NMIs in case of HW failure
+>     - Optimize the case when unknown NMIs are mixed with known NMIs(HPA)
+> v2:
+>     - Disable NMI source reporting once garbage data is given in FRED
+> return stack. (HPA)
+> ---
+>   arch/x86/kernel/nmi.c | 73 +++++++++++++++++++++++++++++++++++++++++--
+>   1 file changed, 70 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/nmi.c b/arch/x86/kernel/nmi.c
+> index 639a34e78bc9..c3a10af7f26b 100644
+> --- a/arch/x86/kernel/nmi.c
+> +++ b/arch/x86/kernel/nmi.c
+> @@ -149,23 +149,90 @@ static inline int do_handle_nmi(struct nmiaction *a, struct pt_regs *regs, unsig
+>   	return thishandled;
+>   }
+>   
+> +static int nmi_handle_src(unsigned int type, struct pt_regs *regs, unsigned long *handled_mask)
+> +{
+> +	static bool nmi_source_disabled;
+> +	bool has_unknown_src = false;
+> +	unsigned long source_bitmask;
+> +	struct nmiaction *a;
+> +	int handled = 0;
+> +	int vec = 1;
+> +
+> +	if (!cpu_feature_enabled(X86_FEATURE_NMI_SOURCE) ||
+> +	    type != NMI_LOCAL || nmi_source_disabled)
 
-diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-index dab7acd49709..0c4fb579757a 100644
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -1151,7 +1151,7 @@ static int ext4_ioctl_getlabel(struct ext4_sb_info *sbi, char __user *user_label
- 	BUILD_BUG_ON(EXT4_LABEL_MAX >= FSLABEL_MAX);
- 
- 	lock_buffer(sbi->s_sbh);
--	strscpy_pad(label, sbi->s_es->s_volume_name);
-+	strscpy_pad(label, sbi->s_es->s_volume_name, EXT4_LABEL_MAX);
- 	unlock_buffer(sbi->s_sbh);
- 
- 	if (copy_to_user(user_label, label, sizeof(label)))
+Harder to read, no need to break into 2 lines.
 
----
-base-commit: 55027e689933ba2e64f3d245fb1ff185b3e7fc81
-change-id: 20240628-bug8-7f700a228c4a
+> +		return 0;
+> +
+> +	source_bitmask = fred_event_data(regs);
+> +	if (!source_bitmask) {
 
-Best regards,
--- 
-Pei Li <peili.dev@gmail.com>
+unlikely()?
+
+> +		pr_warn("NMI received without source information! Disable source reporting.\n");
+
+It sounds you're disabling some hardware functionality. Better to say,
+maybe:
+
+Buggy hardware? Disable NMI source handling.
+
+> +		nmi_source_disabled = true;
+> +		return 0;
+> +	}
+> +
+> +	/*
+> +	 * Per NMI source specification, there is no guarantee that a valid
+> +	 * NMI vector is always delivered, even when the source specified
+> +	 * one. It is software's responsibility to check all available NMI
+> +	 * sources when bit 0 is set in the NMI source bitmap. i.e. we have
+
+s/i.e./I.e.,/
+
+> +	 * to call every handler as if we have no NMI source.
+
+This comment is misleading, because you do skip NMI handlers with source
+bits set in polling.
+
+And add an empty line to ease review.
+
+> +	 * On the other hand, if we do get non-zero vectors, we know exactly
+> +	 * what the sources are. So we only call the handlers with the bit set.
+> +	 */
+> +	if (source_bitmask & BIT(NMI_SOURCE_VEC_UNKNOWN)) {
+> +		pr_warn_ratelimited("NMI received with unknown source\n");
+
+s/source/sources/
+
+> +		has_unknown_src = true;
+> +	}
+> +
+> +	rcu_read_lock();
+
+Add an empty line.
+
+> +	/* Bit 0 is for unknown NMI sources, skip it. */
+
+Put "vec = 1 " close to this comment.
+
+> +	for_each_set_bit_from(vec, &source_bitmask, NR_NMI_SOURCE_VECTORS) {
+> +		a = rcu_dereference(nmiaction_src_table[vec]);
+> +		if (!a) {
+> +			pr_warn_ratelimited("NMI received %d no handler", vec);
+
+Use a better log message.
+
+> +			continue;
+> +		}
+
+Empty line again.
+
+> +		handled += do_handle_nmi(a, regs, type);
+
+Ditto.
+
+> +		/*
+> +		 * Needs polling if unknown source bit is set, handled_mask is
+
+                                    ^the
+
+> +		 * used to tell the polling code which NMIs can be skipped.
+> +		 */
+> +		if (has_unknown_src)
+> +			*handled_mask |= BIT(vec);
+> +	}
+
+empty line please.
+
+> +	rcu_read_unlock();
+> +
+> +	return handled;
+> +}
+> +
+>   static int nmi_handle(unsigned int type, struct pt_regs *regs)
+>   {
+>   	struct nmi_desc *desc = nmi_to_desc(type);
+> +	unsigned long handled_mask = 0;
+>   	struct nmiaction *a;
+>   	int handled=0;
+>   
+> -	rcu_read_lock();
+> +	/*
+> +	 * Check if the NMI source handling is complete, otherwise polling is
+> +	 * still required. handled_mask is non-zero if NMI source handling is
+> +	 * partial due to unknown NMI sources.
+> +	 */
+> +	handled = nmi_handle_src(type, regs, &handled_mask);
+> +	if (handled && !handled_mask)
+> +		return handled;
+>   
+> +	rcu_read_lock();
+
+keep original empty lines around it.
+
+>   	/*
+>   	 * NMIs are edge-triggered, which means if you have enough
+>   	 * of them concurrently, you can lose some because only one
+>   	 * can be latched at any given time.  Walk the whole list
+>   	 * to handle those situations.
+>   	 */
+> -	list_for_each_entry_rcu(a, &desc->head, list)
+> +	list_for_each_entry_rcu(a, &desc->head, list) {
+> +		/* Skip NMIs handled earlier with source info */
+> +		if (BIT(a->source_vec) & handled_mask)
+> +			continue;
+>   		handled += do_handle_nmi(a, regs, type);
+> -
+> +	}
+>   	rcu_read_unlock();
+
+keep original empty lines around it.
+
+>   
+>   	/* return total number of NMI events handled */
 
 
