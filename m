@@ -1,285 +1,102 @@
-Return-Path: <linux-kernel+bounces-235048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 082BB91CEDB
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 21:40:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99FC591CEDD
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 21:41:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C0B1282ABE
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 19:40:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B25928268E
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 19:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1705A13A259;
-	Sat, 29 Jun 2024 19:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6392813A259;
+	Sat, 29 Jun 2024 19:41:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f9SUy0kk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="IvV0/a6m"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381E3101F7;
-	Sat, 29 Jun 2024 19:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68AC5132112
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 19:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719690034; cv=none; b=ENB9alTvDN2VqtLAHG0hiUvbkydg8lSsAmqQADJzOjknjxFMV+6IzN/ywaT1fe92Lf53hLYaFZBxy8nfSJVkgVOaOdR6AzeajYHXbKToopVvEWl1DtC+B593BSDCzkVJNVLzbOXG1oytEloZSh5z4QUnm0Ce4otg/hB/8HOktvo=
+	t=1719690090; cv=none; b=o1m74sV/a5f7NXzSrkyY5aHoLsh5Pc3Hzh4X4Bnp9OUxQuNfNt+VPI8WmZ7i/T4/HWunyB+cqgxQws+Irqg24VhX/b+l8l1lxn8TrwkptPlAq4mJLjpFJK44xns3D30KyTJ0aFBjQC0EDu9us8QuVfU8NUIaNn+dHlZO9+zSCF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719690034; c=relaxed/simple;
-	bh=CLqV4T7POX7Nto6uLWv8qFe9eUAumC1+HgHxGpgT82g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PpvpNH0m7OOZwFd/7FT3KqyEI4N+d5CjMZCKt9WHU9Ug+kTwFOGUbax0fiTboebTGKd92qSe1j5hvwxI22YEysTxBRN0xPd73yIB8ejbXe47ucwpdc3URq089ypQsPgyOzspf4gV2BnsyuiUlyjQhYszBAJ2KmTitc8e+jgw56Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f9SUy0kk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87023C2BBFC;
-	Sat, 29 Jun 2024 19:40:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719690033;
-	bh=CLqV4T7POX7Nto6uLWv8qFe9eUAumC1+HgHxGpgT82g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=f9SUy0kkMsqEqHSodFumADPi9zKq82xLTNMbjGp9otlqPx/Kdwb2rGGiujUwtGHa3
-	 Y0XkNSbfgfMmGt3WtAygWMMGcXVt6+7F28Kl2TWGtz+urvn4BAMdbrbB+fOSVmRAcq
-	 dJKkNYWXFIlsONj9iLuMMJTsz7y3LZCrpAI86z1cVL6/qdTTM7YhYup1VACrTqiC0E
-	 sST4ETm8wpQCruUm+DPEjrm3w/KtkGznaOgQVWfUbjf14UKZYSdKxBBwSH5bejENGk
-	 f01jsaCwRA1Bp8wCNSkPBMUF8Qh2MSbyZvYOX7sui34n/zluR2fimv/4aTphdaZCOg
-	 R11dqUqocCvSw==
-Date: Sat, 29 Jun 2024 20:40:25 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Neil Armstrong
- <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>,
- linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-iio@vger.kernel.org, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH 2/2] iio: frequency: add amlogic clock measure support
-Message-ID: <20240629204025.683b1b69@jic23-huawei>
-In-Reply-To: <20240624173105.909554-3-jbrunet@baylibre.com>
-References: <20240624173105.909554-1-jbrunet@baylibre.com>
-	<20240624173105.909554-3-jbrunet@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719690090; c=relaxed/simple;
+	bh=7vPF89JqiQ26FpVeIb7dSTEUFz/HFZoHOdmVeUGva9A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gGp/D9o0rIxDLQDe3g04WBd2HbwOXCZ7Llp1euSiFIm8MKOLVuDeQkiiVP3cGxv6REcGxp4WVcEKFlq6rLnSZZhB4C/sPh4jkIOiECOeB+oBJquqPHQjDnvqvAa91LesrjHDjoghlA7Vi47elMNCMJuTcpTwT9jyP7wdHdNlJmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=IvV0/a6m; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0AE8740E0192;
+	Sat, 29 Jun 2024 19:41:26 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Awy5ITLtTbDh; Sat, 29 Jun 2024 19:41:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1719690083; bh=q38rzttyvrNSHHoFhRlOeB1rK/rAwV4gpC+ACZtNu7M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IvV0/a6mcPl0GFFqT0rsz/Y8dnNK3g6Vc9t4fWbC98FFMIRX7W7sX6S7PUTA67ST9
+	 EH6WqTyKjJVmrA74uOM7JeQe3E5VeuTAxDePYIP3OMO7d1oHEXWhqx1lDAhuJQjDQN
+	 NhYmQ0eKDPyQhDD1l769lZUj+KOf7rCKvsrVDXPswjywddkd2SNiix/piPAi3zEgVk
+	 af4z86InPSbAks++JyvvNSRlqTSZ2RPR6XbDpFBjUZ5qcn6GIyTIwOv2Q2+9HktWpB
+	 K8hJX5gqozzUedzdwBhItjEHnkHZOSUVtOPbajbB/IJxJEY2up4NjO97xp17/MYsVw
+	 fprdOdKDvJdkSLgfh9bCVXsDUHDmzU8ud+w6s5mQvOq/3EjlU5zqmneo6t2X6sNaDU
+	 4uhSzugriTnL1BnB9Yw2D2AHtzRF9oxjpLSX/iGSmGli/Bqh2LG16xQSWO9ngWZu/N
+	 rsDvgGypVbrHIlPeOrhFYehV+cr2bHke2/VdueBb4Kiq7Vp0Mt/9VrG6Apd1MFwb3N
+	 apaHrS2hfMnNAUdqsPRdFVLBpCDgQk+3qXsBLlkMpg7VdzZHx+5GgHiMXoc0SCw6V2
+	 1zpTh6T0Kjsyn/X1Qe+pJBvQWmxMGotlTmlTPpYY/WXMMT2Z2Ftf8ksDJfRsbzzWyb
+	 WrzOEq1SvWGJL1W09KESup5o=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BF8A140E021A;
+	Sat, 29 Jun 2024 19:41:09 +0000 (UTC)
+Date: Sat, 29 Jun 2024 21:41:03 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Dexuan Cui <decui@microsoft.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, "x86@kernel.org" <x86@kernel.org>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Michael Kelley <mikelley@microsoft.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Kai Huang <kai.huang@intel.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86/tdx: Fix crash on kexec
+Message-ID: <20240629194103.GCZoBjTzC4m9a9yw1k@fat_crate.local>
+References: <20240629130621.1671544-1-kirill.shutemov@linux.intel.com>
+ <20240629135933.GAZoATRVAubo7ZDdKB@fat_crate.local>
+ <poxeykijyqrz5hxrey46s6hh2qd6byirbevwuwec2gtbfq266c@npegk7sn3ot7>
+ <SA1PR21MB1317A2E38083B300256AD5F1BFD12@SA1PR21MB1317.namprd21.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <SA1PR21MB1317A2E38083B300256AD5F1BFD12@SA1PR21MB1317.namprd21.prod.outlook.com>
 
-On Mon, 24 Jun 2024 19:31:03 +0200
-Jerome Brunet <jbrunet@baylibre.com> wrote:
+On Sat, Jun 29, 2024 at 07:27:57PM +0000, Dexuan Cui wrote:
+> It would be great to add e1b8ac3aae58 to the branch x86/tdx.
 
-> Add support for the HW found in most Amlogic SoC dedicated to measure
-> system clocks.
-> 
-> This drivers aims to replace the one found in
-> drivers/soc/amlogic/meson-clk-measure.c with following improvements:
-> 
-> * Access to the measurements through the IIO API:
->   Easier re-use of the results in userspace and other drivers
-> * Controllable scale with raw measurements
-> * Higher precision with processed measurements
-> 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Interesting device and the driver is pretty clean.
+Sure we will, once it is properly tested. This very thread says otherwise.
 
-Needs a new channel type though as altvoltage is in volts not hz.
+-- 
+Regards/Gruss,
+    Boris.
 
-Various minor comments inline.
-
-Thanks,
-
-Jonathan
-
-> +
-> +struct amlogic_cmsr {
-> +	struct regmap *reg;
-> +	struct regmap *duty;
-> +	struct mutex lock;
-Add a comment on the data protected by this lock.  Scope isn't always obvious.
-> +};
-
-> +static struct iio_chan_spec *cmsr_populate_channels(struct device *dev,
-> +						    const char * const *conf)
-> +{
-> +	struct iio_chan_spec *chan;
-> +	int i;
-> +
-> +	chan = devm_kzalloc(dev, sizeof(*chan) * CLK_MSR_MAX, GFP_KERNEL);
-> +	if (!chan)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	for (i = 0; i < CLK_MSR_MAX; i++) {
-> +		chan[i].type = IIO_ALTVOLTAGE;
-
-As per other branch of the thread.  I think this needs to be a new
-IIO_FREQUENCY channel as the input we care about here is simply frequency,
-not the voltage.
-
-> +		chan[i].indexed = 1;
-> +		chan[i].channel = i;
-> +		chan[i].info_mask_separate = (BIT(IIO_CHAN_INFO_RAW) |
-> +					    BIT(IIO_CHAN_INFO_PROCESSED));
-
-Drop outer ()
-
-> +		chan[i].info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE);
-> +		chan[i].datasheet_name = conf[i];
-> +	}
-> +
-> +	return chan;
-> +}
-
-
-> +static int cmsr_measure_processed_unlocked(struct amlogic_cmsr *cm,
-> +					   unsigned int idx,
-> +					   int *val2)
-> +{
-> +	unsigned int time = CLK_MIN_TIME;
-> +	u64 rate;
-> +	int ret;
-> +
-> +	/*
-> +	 * The challenge here is to provide the best accuracy
-> +	 * while not spending to much time doing it.
-> +	 * - Starting with a short duration risk not detecting
-> +	 *   slow clocks, but it is fast. All 128 can be done in ~8ms
-> +	 * - Starting with a long duration risk overflowing the
-> +	 *   measurement counter and would be way to long, especially
-> +	 *   considering the number of disabled clocks. ~4s for all
-> +	 *   128 worst case.
-> +	 *
-> +	 * This IP measures system clocks so all clock are expected
-> +	 * to be 1kHz < f < 8GHz. We can compromise based on this,
-> +	 * doing it in 3 pass:
-> +	 * #1 Starting if 64us window: detects 30kHz < f < 8GHz
-> +	 *    - Go to #2 if no detection, Go to #3 otherwise
-> +	 * #2 Extend duration to 1024us (f > 1kHz)
-> +	      - Assume f = 0Hz if no detection, Go to #3 otherwise
-> +	 * #3 Clock has been detected, adjust window for best accuracy
-> +	 *
-> +	 * Doing the range detection takes ~1ms per clock, including disabled
-> +	   clocks.
-> +	 * Actual measurement takes at most ~65ms in step #3 for slow clocks,
-> +	 * when the full range the HW is used.
-> +	 */
-> +
-> +	/* Step #1 - quick measurement */
-> +	cmsr_set_time_unlocked(cm, time);
-> +	ret = cmsr_measure_unlocked(cm, idx);
-> +	if (ret < 0)
-> +		return ret;
-> +
-
-if (ret == 0)
-
-> +	else if (ret == 0) {
-> +		/* Step #2 - extend the window if necessary */
-> +		time *= 16;
-> +		cmsr_set_time_unlocked(cm, time);
-> +		ret = cmsr_measure_unlocked(cm, idx);
-> +		if (ret < 0)
-> +			return ret;
-> +
-		if (ret == 0)
-
-> +		else if (ret == 0) {
-> +			/* Still nothing - assume no clock */
-> +			*val2 = 0;
-> +			return 0;
-> +		}
-> +	}
-> +
-> +	/* Step #3: Adapt scale for better precision */
-> +	time = time * MSR_MEASURED * 3 / (ret * 4); /* 25% margin */
-> +	time = min_t(unsigned int, MSR_TIME_MAX, time);
-> +
-> +	/* Actually measure rate with an optimized scale */
-> +	cmsr_set_time_unlocked(cm, time);
-> +	ret = cmsr_measure_unlocked(cm, idx);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	rate = DIV_ROUND_CLOSEST_ULL(ret * 1000000ULL, time);
-> +	*val2 = rate >> 32ULL;
-> +	return (int)rate;
-> +}
-
-
-
-> +static int cmsr_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct iio_dev *indio_dev;
-> +	struct amlogic_cmsr *cm;
-> +	const char * const *conf;
-> +	void __iomem *regs;
-> +
-> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*cm));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +	platform_set_drvdata(pdev, indio_dev);
-> +	cm = iio_priv(indio_dev);
-> +
-> +	conf = of_device_get_match_data(dev);
-
-We try to avoid of specific calls in IIO drivers.
-device_get_match_data() should work here.
-
-Reason for this is not that it matters in one driver, but that people tend
-to cut and paste device tree stuff and it ends up in drivers where ACPI
-and other firmware types are relevant.
-
-Also I only have remember how one type of firmware property read call works ;)
-
-> +	if (!conf) {
-> +		dev_err(dev, "failed to match device\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	regs = devm_platform_ioremap_resource_byname(pdev, "reg");
-> +	if (IS_ERR(regs))
-> +		return PTR_ERR(regs);
-> +
-> +	cm->reg = devm_regmap_init_mmio(dev, regs, &cmsr_regmap_cfg);
-> +	if (IS_ERR(cm->reg)) {
-> +		dev_err(dev, "failed to init main regmap: %ld\n",
-> +			PTR_ERR(cm->reg));
-> +		return PTR_ERR(cm->reg);
-> +	}
-> +
-> +	regs = devm_platform_ioremap_resource_byname(pdev, "duty");
-> +	if (IS_ERR(regs))
-> +		return PTR_ERR(regs);
-> +
-> +	cm->duty = devm_regmap_init_mmio(dev, regs, &cmsr_regmap_cfg);
-> +	if (IS_ERR(cm->duty)) {
-> +		dev_err(dev, "failed to init duty regmap: %ld\n",
-> +			PTR_ERR(cm->duty));
-> +		return PTR_ERR(cm->duty);
-Preference for dev_err_probe() for all errors in probe() and functions
-that will only be called form probe. There is a nice version that handled PTR_ERR
-under review though so maybe we can come around later and use that once it's available
-
-> +	}
-> +
-> +	mutex_init(&cm->lock);
-> +
-> +	/* Init scale with a sane default */
-> +	cmsr_set_time_unlocked(cm, CLK_MIN_TIME);
-> +
-> +	indio_dev->name = "amlogic-clk-msr";
-> +	indio_dev->info = &cmsr_info;
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> +	indio_dev->num_channels = CLK_MSR_MAX;
-
-Superficially looks like the number of channels depends on the compatible.
-Ideally we shouldn't provide channels to userspace that aren't useful.
-
-You could search the name arrays to see how far they go, but that is bit ugly.
-Probably wrap those in a structure with a num_channels parameter as well.
-
-> +	indio_dev->channels = cmsr_populate_channels(dev, conf);
-> +	if (IS_ERR(indio_dev->channels))
-> +		return PTR_ERR(indio_dev->channels);
-> +
-> +	return devm_iio_device_register(dev, indio_dev);
-> +}
+https://people.kernel.org/tglx/notes-about-netiquette
 
