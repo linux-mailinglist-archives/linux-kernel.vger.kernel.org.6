@@ -1,158 +1,78 @@
-Return-Path: <linux-kernel+bounces-235056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EE0591CF0D
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 22:46:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B56D291CF10
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 22:51:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 114BF1F219B5
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 20:46:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 929F11C20CBE
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 20:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5B6B139CFE;
-	Sat, 29 Jun 2024 20:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D73AE13D625;
+	Sat, 29 Jun 2024 20:50:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b="ga9h4jZ2"
-Received: from polaris.svanheule.net (polaris.svanheule.net [84.16.241.116])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ldQjrjtc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718B24B5A6
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 20:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.241.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 209832032B;
+	Sat, 29 Jun 2024 20:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719694010; cv=none; b=F+eGC2veOeD01Pdt5RF78gnIFYJ4vzlWKbivHucJXh4muUWIL+r+sPrKt+iISo8zGUSOnehE2x/9nLf9oWfff7mQys99k9HVocTu0Qu9z4tkaxphTrYQh7t/y+GpD+L9yc9s1pQqQC80mtT+NvsY42fkkXBSuxR8VqAhQNTeR0c=
+	t=1719694255; cv=none; b=DmWufpGFCN4xomZrnNvdDlJNbzfvvT4G7QqBKuC1HhswPvoFHzThNbGXPAKdFiOsaWkngt/4uNDQCO4rQQvqzXx14hLD0Za6IOqaC6bRsnl+mX2hUZGzwW8z86+nMDHG46nYT/CcLJ4kV2GjFWKTdl+7WyKuO0tZvlS29GXAKw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719694010; c=relaxed/simple;
-	bh=yNMhGK1opgE2HSUTgSYp/GhoMx5lkgWtAFvzWwgNagM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=O3r5443sVtdIP6G1qYaPW0ruvw5vobdThStCM/hpc4IJJfaVVwGcqijhOk8WcYhpvAHB12deL/F+jqFwd6z/iE86uFmvu65VJ123+WTs3+YLSOG9+Qba9FD2RrAcC/q8Uir7j9hGNW4RoJiTnavAuS/hW3r6VMrpwxZorDcqj6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net; spf=pass smtp.mailfrom=svanheule.net; dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b=ga9h4jZ2; arc=none smtp.client-ip=84.16.241.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svanheule.net
-Received: from mars.vega.svanheule.net (unknown [94.110.49.146])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sander@svanheule.net)
-	by polaris.svanheule.net (Postfix) with ESMTPSA id D5CF950CF11;
-	Sat, 29 Jun 2024 22:40:21 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
-	s=mail1707; t=1719693622;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VZAHodOL3wsA9f2Wkj7btMgY0z9vyT6v2GBhO/wOmdM=;
-	b=ga9h4jZ26D9Fzzlzj56TP24EJR8nWR1Xfxdc5s8rsPMX2hoUDlpYYzBCRiDq2w3HtsQcPX
-	nS1TNoMBR6yaZ2tVeI1hrHMksIEdpef+LYfWzx9TFN4rUUvsryL5EkLIfTL4T5lN6FIlmP
-	O61m9r4FKrz7ryRMYo9je9ySUmWZTi3s6zJaXN+YbgIjwASFknRX02ePMS0fbPRHH1vc0X
-	D8QBdZE1TlZtcQXXEjKaXyLTGVWI7J/0lb1tnT4NCZlfC36JPy7hsgThqUvS/1gvcfSR16
-	W9HcvvLwLHqQllmvoaLP1ZLaEBGG4muatvNFhnzxzXzh5r1RyGIib+Yh6fwbDQ==
-Message-ID: <4427a46483d9b7d122ce6923c2fc8cf0d470c6dd.camel@svanheule.net>
-Subject: Re: [PATCH v3 5/9] dt-bindings: timer: Add schema for
- realtek,otto-timer
-From: Sander Vanheule <sander@svanheule.net>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>, tglx@linutronix.de, 
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
- tsbogend@alpha.franken.de, daniel.lezcano@linaro.org,
- paulburton@kernel.org,  peterz@infradead.org, mail@birger-koblitz.de,
- bert@biot.com, john@phrozen.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-mips@vger.kernel.org, kabel@kernel.org, ericwouds@gmail.com
-Date: Sat, 29 Jun 2024 22:40:20 +0200
-In-Reply-To: <20240627043317.3751996-6-chris.packham@alliedtelesis.co.nz>
-References: <20240627043317.3751996-1-chris.packham@alliedtelesis.co.nz>
-	 <20240627043317.3751996-6-chris.packham@alliedtelesis.co.nz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+	s=arc-20240116; t=1719694255; c=relaxed/simple;
+	bh=htBZTH+Edjre4pkYs24rFwxkI0nMVpuFJxTMnbP39cs=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=mqkHedE/TvQiVreMKgFWv843vYkJcoVMvaPwMCPWt5DNKhIEr13CH0VfoWfWU/JhGIxlmnYConu6o7WBS15pRrOl/+Gm3f1UlNM6LLo5/ntAPkrXw7hMwDxVnvtC2kmKdQJPkMSi5/cAqPEocczm2sYcRS1KulsR/snXmIDMzmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ldQjrjtc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A912FC2BBFC;
+	Sat, 29 Jun 2024 20:50:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719694254;
+	bh=htBZTH+Edjre4pkYs24rFwxkI0nMVpuFJxTMnbP39cs=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=ldQjrjtc2OXnnv7Wt437y4vgF1uTXf/EI6xsYur+Ymse1I1H89bQOL1VAj7ObO9/A
+	 LjJNFC2HTAGMwZbBxeOmsjMBFflXoPGKnbngtsmcEFG1YTGgfF/shpwwjwXpy7FW7a
+	 GY+BEHLGBIQAT6Vn0Z+qjyUNEfJz7Juf7auGHGhER47EYGSTgzywppihT3DKmqh7m9
+	 FiuxtoRdNpZgt744/nI6wJphHFyOTvbOM1O3FddS76ZeP23zTZpVtLGIIgcIZUYX6z
+	 slNPTqic5SEkLrFl83OOEaYi5aj7pIPRPBrN0tiYl24toi4vM8eCyFrCqLzCStcqt8
+	 UYxhlSLxqATaA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 9DF45C433E9;
+	Sat, 29 Jun 2024 20:50:54 +0000 (UTC)
+Subject: Re: [GIT PULL] Please pull NFS client bugfix for Linux-6.10
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <dc1c267b7628de99b6f134f411a9c3ca86bc56c4.camel@hammerspace.com>
+References: <dc1c267b7628de99b6f134f411a9c3ca86bc56c4.camel@hammerspace.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <dc1c267b7628de99b6f134f411a9c3ca86bc56c4.camel@hammerspace.com>
+X-PR-Tracked-Remote: git://git.linux-nfs.org/projects/trondmy/linux-nfs.git tags/nfs-for-6.10-3
+X-PR-Tracked-Commit-Id: 6ddc9deacc1312762c2edd9de00ce76b00f69f7c
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 8282d5af7be82100c5460d093e9774140a26b96a
+Message-Id: <171969425463.4408.8279816423986894290.pr-tracker-bot@kernel.org>
+Date: Sat, 29 Jun 2024 20:50:54 +0000
+To: Trond Myklebust <trondmy@hammerspace.com>
+Cc: "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
 
-Hi Chris,
+The pull request you sent on Sat, 29 Jun 2024 18:34:18 +0000:
 
-Thanks for submitting these patches!
+> git://git.linux-nfs.org/projects/trondmy/linux-nfs.git tags/nfs-for-6.10-3
 
-On Thu, 2024-06-27 at 16:33 +1200, Chris Packham wrote:
-> Add the devicetree schema for the realtek,otto-timer present on a number
-> of Realtek SoCs.
->=20
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> ---
-[...]
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/8282d5af7be82100c5460d093e9774140a26b96a
 
-> +
-> +=C2=A0 reg:
-> +=C2=A0=C2=A0=C2=A0 items:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: timer0 registers
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: timer1 registers
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: timer2 registers
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: timer3 registers
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: timer4 registers
-> +
-> +=C2=A0 clocks:
-> +=C2=A0=C2=A0=C2=A0 maxItems: 1
-> +
-> +=C2=A0 interrupts:
-> +=C2=A0=C2=A0=C2=A0 items:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: timer0 interrupt
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: timer1 interrupt
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: timer2 interrupt
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: timer3 interrupt
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: timer4 interrupt
+Thank you!
 
-Instead of providing a (SoC dependent) number of reg and interrupt items, c=
-an't we just
-provide one reg+interrupt per timer and instantiate one block for however m=
-any timers the
-SoC has?
-
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +=C2=A0 - |
-> +=C2=A0=C2=A0=C2=A0 timer@3200 {
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible =3D "realtek,rtl9302-timer", "=
-realtek,otto-timer";
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg =3D <0x3200 0x10>, <0x3210 0x10>, <0x=
-3220 0x10>,
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 <0x32=
-30 0x10>, <0x3240 0x10>;
-> +
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 interrupt-parent =3D <&intc>;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 interrupts =3D <7>, <8>, <9>, <10>, <11>;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clocks =3D <&lx_clk>;
-> +=C2=A0=C2=A0=C2=A0 };
-
-So this would become:
-	timer@3200 {
-		compatible =3D ...
-		reg =3D <0x3200 0x10>;
-		interrupt-parent =3D <&intc>;
-		interrupts =3D <7>;
-		...
-	};
-	timer@3210 {
-		compatible =3D ...
-		reg =3D <0x3210 0x10>;
-		interrupt-parent =3D <&intc>;
-		interrupts =3D <8>;
-		...
-	};
-	...
-
-More verbose, but it also makes the binding a bit simpler. The driver can t=
-hen still do
-whatever it wants with all the timers that are registered, although some mo=
-re resource
-locking might be required.
-
-Best,
-Sander
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
