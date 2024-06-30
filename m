@@ -1,154 +1,94 @@
-Return-Path: <linux-kernel+bounces-235146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59C3491D0BC
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 11:08:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04B5591D0C9
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 11:17:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D090A1F213CB
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 09:08:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3304E1C2098E
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 09:17:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A4D12D1FA;
-	Sun, 30 Jun 2024 09:08:03 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D22212D744;
+	Sun, 30 Jun 2024 09:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="lnkK7fA7"
+Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1FDD41C6C;
-	Sun, 30 Jun 2024 09:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7E139ADD
+	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 09:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719738483; cv=none; b=a09GN0ow6RSPLNubz7XDhZEFag1cRdHyWBxp56mGq5JhhGu3ArojsqCPFF+Tv52I9o088UzyzIYiJTxzL7Fs+upt4qk6SxSHIzW8FepD665ePKpJul6m6/rawAC2ecrMI5zxgjA6WaATu49vOp5kn2WA5ymreOi0AhRk8OtN8i4=
+	t=1719739028; cv=none; b=cR18Lqwty+D+3/qVY0IVLDxSw80JHCkSywOgqpERj19rGBZjKTp2tEQYRfOXF85VtHWq+hChUL7pjk+wOUSz+j+2KW31++nBZhmEpYOogV78Lkp9thuB6RrLwhAhNj3gGIXvCSLXtFLLGJpuPhVQD6rc90Vfcm3D/MSb2kJSKqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719738483; c=relaxed/simple;
-	bh=MSt0m7xQbrpa80ashPL1WjRzF7Xr5s9mnGJ5nmgDXFY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SLqCZuz3aUD1HE265tZpIq08a1Qu52o4WiGWQjcSi3gBYQzeq/EzxhD+i/8BpPcHA//BGpr7gj0jwn35jL0R9NlcblbtraTueRhaHROy7XUR3YUsE6FixpToi56i1DibftWt/ziV7wwdu+ny+mkLKXcMaNZBQ/lIdBfOuge3oMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i53875a16.versanet.de ([83.135.90.22] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sNqXE-0002Nw-OK; Sun, 30 Jun 2024 11:07:48 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: linux-rockchip@lists.infradead.org, Dragan Simic <dsimic@manjaro.org>,
- Diederik de Haas <didi.debian@cknow.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-kernel@vger.kernel.org, Jonas Karlman <jonas@kwiboo.se>,
- Diederik de Haas <didi.debian@cknow.org>
-Subject:
- Re: [PATCH v2] arm64: dts: rockchip: Add GPU OPP voltage ranges to RK356x SoC
- dtsi
-Date: Sun, 30 Jun 2024 11:07:47 +0200
-Message-ID: <1894199.CQOukoFCf9@diego>
-In-Reply-To: <2442162.AJoTavkB1d@bagend>
-References:
- <bdb60f1f793166cd65f58ab7aea025347076019c.1719679068.git.dsimic@manjaro.org>
- <2442162.AJoTavkB1d@bagend>
+	s=arc-20240116; t=1719739028; c=relaxed/simple;
+	bh=bX7ZFvRHPigz2PpOmz+R/1fX7AVO6r9sR1w2lkN+3j4=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=prSHIVqyffd73AtqZBi40Tl+ernDK0Ud3JRSUEBDY1axhNvZ9ljr2/MiRG97pw2p2AWUi+HtX2I5Nycn9LizZe5STJaEuvOMXrdjUU0R7ZXSojVETg02dFeS8VtDpcEwkPwa///ixzDt2lf92Cbh+R2Sx1iFWvFsdBaCZDj929c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=lnkK7fA7; arc=none smtp.client-ip=162.62.58.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1719738716; bh=j4nZJ30e87StHskzMgAYoeekGmN/efAr1X8jXLvUZ1E=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=lnkK7fA7r4aS0el4fTgJQ4xLuHDjlohF1Jx6MdeDGgTmck0qebRvY/SLYYeOclf04
+	 l2EuIk06iwhbWDoalA2+Pm/Ga8mrBrpet0kKZ2ixkXrK71jJ4JyuEFWByclS/SR0Dy
+	 Q+Ofm+8TJ33KeZ3ZHTS4XOY0vuvYBYQPnytoQAOQ=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id 269A8038; Sun, 30 Jun 2024 17:09:41 +0800
+X-QQ-mid: xmsmtpt1719738581tymvkb127
+Message-ID: <tencent_17CBBA43BB47335B9E931B5D4BD11B062508@qq.com>
+X-QQ-XMAILINFO: NY/MPejODIJVSyOQupuGHmL6ioAjaQbfhBwMCtYfTZVgLwBqmA5G3wsYsPTPTc
+	 WjUd2GEQIe52oNZN99u3HUMIPz5eXvE+kWdxoLsVBhjyHU3S0kHtL1mW2BsP32oMQZgLKRxm6n31
+	 6+Oi4Wwzm58PUT026GSIY7abY/yZvhruFsvcNlQn6Ml1slsGnxuF26QLOcyrhlOYW35Zl0Lc2ZIO
+	 x2EBbV30tOM9Vljn8ymXEKbeDxaFN4YQUDCBVnrufw6kczcqOa3+NkMvnEGyYSHWHnTuuqeGDw0r
+	 322BoI45poRpxfPFpqVJjQCwLyll3UoSCVrKga3bSqOnGcfMEd10pZvZkfrELgKqr8PlXeb5bqjM
+	 J9zapCfKwT9X99nOGszp1zBPqEiQsPSQFdhLAOKIR4e1++MiRUsmfANUglT/J5NgkavXyWugvzNz
+	 XtlFZbnA9DYsYjAwpynUujxYpgoyna7zrT4e5IZtm6BgicdvN4OAVWM1dFVMM/SFIG1pZJJ2Xyei
+	 gk5R9spSe/Xp2idvAhT04MnsAEeVjdY947VtE7zhvsLgCbfPusy0YyykHF7qYEmzarPZ8ODNbNEl
+	 /WKlYn8IbXYPNaBk63UkWXlFKctHMXsDUebOfdGRaY5uVSo0DENSm0+tN8gUzHaDuBPlsad/uX3l
+	 gU26LF72FwLMIEJcpNk/WYZTAmaBH+y2XNLrE3QnuJtTy3tucYEN4dxGvDFXiaAsf8OHWfZOorwc
+	 m+T14GAij2VT4msxVPOYkIqjHKG9zxTC7eZXfGlqJTjWwnufAmfvwVOzWMBLINlwJwnHPWtvGBmD
+	 UUQkYRsU7CYAfqlX+Sxw5L6eVkA60PDpINf+ZLKPP9PD/dri6B3UtUvi4T2y9J+HNhcLsATOJ7Zp
+	 rfL1ROjkxrjl0C5Tm6e/o8YxUcI9GRKg==
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+ae688d469e36fb5138d0@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [syzbot] [ext4?] BUG: unable to handle kernel paging request in do_split
+Date: Sun, 30 Jun 2024 17:09:42 +0800
+X-OQ-MSGID: <20240630090941.2411923-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <00000000000075a135061c0480d0@google.com>
+References: <00000000000075a135061c0480d0@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 
-Am Sonntag, 30. Juni 2024, 00:01:41 CEST schrieb Diederik de Haas:
-> On Saturday, 29 June 2024 18:39:02 CEST Dragan Simic wrote:
-> > Add support for voltage ranges to the GPU OPPs defined in the SoC dtsi for
-> > RK356x.  These voltage ranges are useful for RK356x-based boards that are
-> > designed to use the same power supply for the GPU and NPU portions of the
-> > SoC, which is described further in the following documents:
-> > 
-> >   - Rockchip RK3566 Hardware Design Guide, version 1.1.0, page 37
-> >   - Rockchip RK3568 Hardware Design Guide, version 1.2, page 78
-> 
-> That was interesting to read, thanks.
-> Now I understand the difference between rk809(-5) and rk817(-5).
-> 
-> But AFAIUI the above description described why there were separate tables for 
-> rk809 and rk817 in v1. But that was dropped in v2. So it seems to me the 
-> (commit) message should be updated accordingly?
-> 
-> I also expected that (for v1) there would be a similar construct as was 
-> recently added for rk3588. But I should interpret Heiko's comments as that 
-> strategy should not be applied to rk356x?
+if split is too small, such as 0, use it to calculate continued will out of bound map
 
-The issue I had was more about the #ifdef'ery and then having a board define
-a constant to enable one or the other.
+#syz test: upstream 55027e689933
 
-As far as I understood the description, the OPP itself is the same in
-terms of frequency and voltage, just the regulator can't fully realize
-that target voltage, so the solution is to allow a voltage range, to
-also support the less-exact regulator.
-
-On the rk3588 on the other hand the soc variants have different OPP
-tables themselfs, because the soc itself only supports different
-frequencies+voltages. So the solution here is the split of the OPPs so
-that we don't mess around with /delete-node/ edits of one OPP table.
-
-So TL;DR separate OPP tables are the way to go if the user needs different
-freq+voltage values and voltage ranges allows boards to use less-adapted
-regulators.
-
-
-> > The values for the exact GPU OPP voltages and the lower limits for the GPU
-> > OPP voltage ranges differ from the values found in the vendor kernel source
-> > (cf. downstream commit f8b9431ee38e ("arm64: dts: rockchip: rk3568: support
-> > adjust opp-table by otp")). [1][2]  
-> 
-> Why? In their latest update Rockchip changed it to the values as specified in 
-> the links. My assumption is that based on extensive testing they did and/or 
-> the feedback they got from the client/customers, they felt the need to change 
-> it to the values they did.
-> 
-> I think we should follow their values unless we have an explicit and very good 
-> reason to deviate from that.
-
-Correct.
-Values from some "random" Radxa kernel would also not be my
-selection of choice.
-
-In the mainline-kernel we always want the save choice - which in for me
-is Rockchip's. If people want to experiment with other values on their own
-boards to sort of overclock their chips, that's their prerogative.
-
-
-Heiko
-
-
-> > However, our values have served us well so far, so let's keep them for now,
-> 
-> And I don't think that qualifies as a (very) good reason.
-> I think it's reasonable to assume that far more (stress) testing has been done 
-> with the downstream code, then has happened with the upstream code.
-> Hopefully that'll change in the future, but I don't think we're there yet.
-> 
-> When we/upstream adds npu support, I think we should also follow downstream's 
-> OPP values, unless we have a very good reason to deviate from that.
-> 
-> > until we actually start supporting the CPU and GPU binning, together with
-> > the related voltage adjustments.
-> 
-> I may not fully understand what you mean by that, but I think it's (again) 
-> reasonable to assume that Rockchip has far more insight into this then we do.
-> 
-> Cheers,
->   Diederik
-> 
-> > [1]
-> > https://github.com/rockchip-linux/kernel/commit/f8b9431ee38ed561650be7092ab
-> > 93f564598daa9 [2]
-> > https://raw.githubusercontent.com/rockchip-linux/kernel/f8b9431ee38ed561650
-> > be7092ab93f564598daa9/arch/arm64/boot/dts/rockchip/rk3568.dtsi
-> 
-
-
-
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index a630b27a4cc6..0a111274dc4a 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -2043,7 +2043,7 @@ static struct ext4_dir_entry_2 *do_split(handle_t *handle, struct inode *dir,
+ 		split = count/2;
+ 
+ 	hash2 = map[split].hash;
+-	continued = hash2 == map[split - 1].hash;
++	continued = split > 0 ? hash2 == map[split - 1].hash : 0;
+ 	dxtrace(printk(KERN_INFO "Split block %lu at %x, %i/%i\n",
+ 			(unsigned long)dx_get_block(frame->at),
+ 					hash2, split, count-split));
 
 
