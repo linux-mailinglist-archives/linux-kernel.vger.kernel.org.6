@@ -1,145 +1,246 @@
-Return-Path: <linux-kernel+bounces-235348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65FE891D465
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 00:21:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AA5A91D460
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 00:19:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE841B20E27
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 22:21:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 133431F2117D
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 22:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8727762EF;
-	Sun, 30 Jun 2024 22:21:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0715CDE9;
+	Sun, 30 Jun 2024 22:19:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="F9CcUMVH"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="na0Fkpdp"
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 322AD4AEF2
-	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 22:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355022AE68
+	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 22:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719786073; cv=none; b=pCpupi/zvOOKy0oH/8emnKbQETnx66DfCqA/w8jRsBbnlqnybdXqRcXVIUASTAtEpygvjar/4h273U8RQ4cF8PrcOKuNg5VgDbkrj3Qoas2l6qek9z3fHzX6L8S2LXICG/fBC4bh6EMnaOZklMPEcbTN6OKyz4inv/3LDlPdssc=
+	t=1719785980; cv=none; b=CRD/wOr9elZC6DCyCENSQsUyTwZrCh9gOgP6WLgownVm7UgJjWyc7r63YyrxMVeN1irFfVa4+LIRveLz+RV3fd9xmgvBOdpPyoDMbR9LBT7GuwAYcWO8TEnsXj1qEs2nQQlIhkplP1Vv2nYMZcTBOqt7phbPHWc8E+fHtzHhz9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719786073; c=relaxed/simple;
-	bh=nOgpLH4FJZCWrvvr/n+yFPgBNQ1PcGFgd/SYvlL67lg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=OEzZ1lum4u64eCg7sQ5IDj2mb3lUvxN90l9VmS87CvyKV5Rw1y7yAT/tjfJJDYsIHB/WlEeAJ4tECqEOlR3Fikz0QL/iOc1cw6ADchrqcHmcdCFo7U7wjDI8GBQJb5KGrNVZhoiCnNyp+lD4LtCZ0OvgJqGWGI7tHV4cmZ48Kos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=F9CcUMVH; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 8679A2C0659;
-	Mon,  1 Jul 2024 10:12:30 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1719785550;
-	bh=nOgpLH4FJZCWrvvr/n+yFPgBNQ1PcGFgd/SYvlL67lg=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=F9CcUMVHER0JKF+Mk3IrPXQHTUdBRh0r/xq+PZ1vtvuXqmdvF637zixEtxJgNsAjh
-	 RB+G3LonfJWaJh69Y0Xn7q2vxdGoYB5dG6XSaY9e+4bYTSY1B9Lwe4hyFzy7uisTnO
-	 8ej/iBQ7xtWDUYi44NPg5uupa6uVj7iDO/IpOM4W4agp5b0Pu05DzvGy1NAGxfchEz
-	 HSdW0pbqmOkAoqHsN0ggpHKlKTgfOmjhbydJLbsgoHS73rqSCf/traScmVIkgdOHot
-	 nw+MkCkDzRQTIgRktl4lZQgrI583wLmeIxY4gLZ7hZ0hbnsB41nBdnIKjLLz6hL0c3
-	 6Ho9G9S0h6QFQ==
-Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B6681d84e0001>; Mon, 01 Jul 2024 10:12:30 +1200
-Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
- svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 1 Jul 2024 10:12:30 +1200
-Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
- svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
- 15.02.1544.011; Mon, 1 Jul 2024 10:12:30 +1200
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: Krzysztof Kozlowski <krzk@kernel.org>, "tglx@linutronix.de"
-	<tglx@linutronix.de>, "robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
-	<conor+dt@kernel.org>, "tsbogend@alpha.franken.de"
-	<tsbogend@alpha.franken.de>, "daniel.lezcano@linaro.org"
-	<daniel.lezcano@linaro.org>, "paulburton@kernel.org" <paulburton@kernel.org>,
-	"peterz@infradead.org" <peterz@infradead.org>, "mail@birger-koblitz.de"
-	<mail@birger-koblitz.de>, "bert@biot.com" <bert@biot.com>, "john@phrozen.org"
-	<john@phrozen.org>, "sander@svanheule.net" <sander@svanheule.net>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, "kabel@kernel.org"
-	<kabel@kernel.org>, "ericwouds@gmail.com" <ericwouds@gmail.com>
-Subject: Re: [PATCH v3 6/9] dt-bindings: interrupt-controller:
- realtek,rtl-intc: Add rtl9300-intc
-Thread-Topic: [PATCH v3 6/9] dt-bindings: interrupt-controller:
- realtek,rtl-intc: Add rtl9300-intc
-Thread-Index: AQHayEsk886ha4dF906RSsJN+a1s27HacQGAgAWqb4A=
-Date: Sun, 30 Jun 2024 22:12:30 +0000
-Message-ID: <1b9f9deb-37b9-4be7-9e95-9ee4f95d3d69@alliedtelesis.co.nz>
-References: <20240627043317.3751996-1-chris.packham@alliedtelesis.co.nz>
- <20240627043317.3751996-7-chris.packham@alliedtelesis.co.nz>
- <8a708add-52a7-4189-b0f1-e2a4c83230a9@kernel.org>
-In-Reply-To: <8a708add-52a7-4189-b0f1-e2a4c83230a9@kernel.org>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B3C1E29676C8FB479E65EDDCDA65A4CF@atlnz.lc>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1719785980; c=relaxed/simple;
+	bh=7t/hvLfnp3ulwwuGa0R3lXO/+NS/TEqQ4pUEyuE9iY4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gMuWotIHpRfRWEsrcZXkSu4VNb1j/Em1CzR12kdmoGjcgrEJL50iUgXQTj2CGW6MvGeq6RaNvVnsbIQMIPVdrYgpwTd4WFufx1/a3R4j0k3dBFtYNJFLIQ8jCi9S3DCbAf2ZXunQfXhorRr6mziTq3VfVnXidxqoXNF/J81m7h0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=na0Fkpdp; arc=none smtp.client-ip=209.85.166.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-7eeea388a8eso95847539f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 15:19:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719785978; x=1720390778; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4xBwqprF3AIyKjWMpWtTgv9XeBi4pK+ZW2WSJxhUHqk=;
+        b=na0Fkpdp50z9tEI5d6LR3ofi5mhpHWiPLrKXWpICZpVtc3NaIgn3CgU4ZVEYwQ4xJl
+         whUwpzufv8uDA2MD2hL8pdCP0qK/q0/60tnPh8DSEQqNCpIDC92m5Xe2rjUHa4/ViVJ7
+         /ZX4HXePue+uL+8dkRTIwp+UzTBDFR6hKAZJu7vWKRF1Ts2AGwfsFlUbpS+s8VgJCPil
+         PyTO5HBK4GlYjIt5e/LlrujFkWH1f26SWD5Ps0fzsw1wXsf8jAKrpVGTeWIZhNjbFFVS
+         2MrIGAhP0Aq7zB1NTmhNV6SjUeekM/4ombPK+1VlfgOU3T5I7QGWx2rS60rTtTbmVLOJ
+         6g6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719785978; x=1720390778;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4xBwqprF3AIyKjWMpWtTgv9XeBi4pK+ZW2WSJxhUHqk=;
+        b=lVCivxalHLvrfxGMJPF+OAu+4ch6YmsffN0k1ZYdbblfkjO07+f+vA7s8twWJJpuO/
+         qlbMbjJKO/uVskckzBHklv+/K966SR9yo72Gl8cbhFYt76pfW2NvvWgiRNhT9Ut8deyx
+         +j2MQOboQIQI8eHLQz+oTipIi+XeCrfArdqg3y4wwxGlZ008qQYY1ebtSvHCXiF8sUQp
+         3sx0YvZNaSb56to/Dc5+wQpDIoUJ+uh74FWh0NtDgnW4ksogchLEIWvYSeBN2WC1sJja
+         TdZzQ2azeJnOCPewiCdeaGnI2Jq98PFxACsQiBRwORWM6IPUfw+P3oF9GegymOlSLC25
+         cvxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXL9h+0C9TFpXcx7B5oUxwUtWC2+LZWCc6fgJGB1IK/MNEbj6ud7Jyv4bcdQhy3P+fcqWKpEPH7mEQhg3uKwb+2dN11j1/QaEOsPL8d
+X-Gm-Message-State: AOJu0YxA3zhLDj8iHEyMs33xJJDEql/dv1AkiGHtxeBsqPIy7hHcoCQ/
+	v3T8WHBSQmWOoBknvgtw/Jd5lZ+NiTNxH+orKJp0QfkADeO1nt+g
+X-Google-Smtp-Source: AGHT+IFbelENHxw+JrJUzxuU8eqeK32hWjKnOOmc0H3WlPOot9jUlCb8eAKHQjc4ie+sDwHejBlnMg==
+X-Received: by 2002:a6b:6106:0:b0:7f6:2e72:e81b with SMTP id ca18e2360f4ac-7f62ee168f6mr439239939f.4.1719785978120;
+        Sun, 30 Jun 2024 15:19:38 -0700 (PDT)
+Received: from aford-System-Version.lan ([2601:447:d002:5be:3ec3:787e:965c:8518])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-7f61ce9de0dsm171361839f.20.2024.06.30.15.19.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 30 Jun 2024 15:19:37 -0700 (PDT)
+From: Adam Ford <aford173@gmail.com>
+To: dri-devel@lists.freedesktop.org
+Cc: aford@beaconembedded.com,
+	Adam Ford <aford173@gmail.com>,
+	Liu Ying <victor.liu@nxp.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V3] drm/bridge: adv7511: Fix Intermittent EDID failures
+Date: Sun, 30 Jun 2024 17:19:31 -0500
+Message-ID: <20240630221931.1650565-1-aford173@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=CvQccW4D c=1 sm=1 tr=0 ts=6681d84e a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=n6AQODhFvGrmFGPgcxAA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-SEG-SpamProfiler-Score: 0
+Content-Transfer-Encoding: 8bit
 
-DQpPbiAyNy8wNi8yNCAxOTo0MSwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToNCj4gT24gMjcv
-MDYvMjAyNCAwNjozMywgQ2hyaXMgUGFja2hhbSB3cm90ZToNCj4+IEFkZCBhIGNvbXBhdGlibGUg
-c3RyaW5nIGZvciB0aGUgaW50ZXJydXB0IGNvbnRyb2xsZXIgZm91bmQgb24gdGhlDQo+PiBydGw5
-MzB4IFNvQ3MuIFRoZSBpbnRlcnJ1cHQgY29udHJvbGxlciBoYXMgcmVnaXN0ZXJzIGZvciBWUEUx
-IHNvIHRoZXNlDQo+PiBhcmUgYWRkZWQgYXMgYSBzZWNvbmQgcmVnIGNlbGwuDQo+Pg0KPj4gU2ln
-bmVkLW9mZi1ieTogQ2hyaXMgUGFja2hhbSA8Y2hyaXMucGFja2hhbUBhbGxpZWR0ZWxlc2lzLmNv
-Lm56Pg0KPj4gLS0tDQo+Pg0KPj4gTm90ZXM6DQo+PiAgICAgIENoYW5nZXMgaW4gdjM6DQo+PiAg
-ICAgIC0gVXNlIGl0ZW1zIHRvIGRlc2NyaWJlIHRoZSByZWdzIHByb3BlcnR5DQo+PiAgICAgIENo
-YW5nZXMgaW4gdjI6DQo+PiAgICAgIC0gU2V0IHJlZzptYXhJdGVtcyB0byAyIHRvIGFsbG93IGZv
-ciBWUEUxIHJlZ2lzdGVycyBvbiB0aGUgcnRsOTMwMC4gQWRkDQo+PiAgICAgICAgYSBjb25kaXRp
-b24gdG8gZW5mb3JjZSB0aGUgb2xkIGxpbWl0IG9uIG90aGVyIFNvQ3MuDQo+PiAgICAgIC0gQ29u
-bm9yIGFuZCBLcnp5c3p0b2Ygb2ZmZXJlZCBhY2tzIG9uIHYxIGJ1dCBJIHRoaW5rIHRoZSBjaGFu
-Z2VzIGhlcmUNCj4+ICAgICAgICBhcmUgYmlnIGVub3VnaCB0byB2b2lkIHRob3NlLg0KPj4NCj4+
-ICAgLi4uL2ludGVycnVwdC1jb250cm9sbGVyL3JlYWx0ZWsscnRsLWludGMueWFtbCB8IDE4ICsr
-KysrKysrKysrKysrKysrLQ0KPj4gICAxIGZpbGUgY2hhbmdlZCwgMTcgaW5zZXJ0aW9ucygrKSwg
-MSBkZWxldGlvbigtKQ0KPj4NCj4+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRy
-ZWUvYmluZGluZ3MvaW50ZXJydXB0LWNvbnRyb2xsZXIvcmVhbHRlayxydGwtaW50Yy55YW1sIGIv
-RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2ludGVycnVwdC1jb250cm9sbGVyL3Jl
-YWx0ZWsscnRsLWludGMueWFtbA0KPj4gaW5kZXggZmI1NTkzNzI0MDU5Li5kMGU1YmRmNDVkMDUg
-MTAwNjQ0DQo+PiAtLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvaW50ZXJy
-dXB0LWNvbnRyb2xsZXIvcmVhbHRlayxydGwtaW50Yy55YW1sDQo+PiArKysgYi9Eb2N1bWVudGF0
-aW9uL2RldmljZXRyZWUvYmluZGluZ3MvaW50ZXJydXB0LWNvbnRyb2xsZXIvcmVhbHRlayxydGwt
-aW50Yy55YW1sDQo+PiBAQCAtMjUsNiArMjUsNyBAQCBwcm9wZXJ0aWVzOg0KPj4gICAgICAgICAt
-IGl0ZW1zOg0KPj4gICAgICAgICAgICAgLSBlbnVtOg0KPj4gICAgICAgICAgICAgICAgIC0gcmVh
-bHRlayxydGw4MzgwLWludGMNCj4+ICsgICAgICAgICAgICAgIC0gcmVhbHRlayxydGw5MzAwLWlu
-dGMNCj4+ICAgICAgICAgICAgIC0gY29uc3Q6IHJlYWx0ZWsscnRsLWludGMNCj4+ICAgICAgICAg
-LSBjb25zdDogcmVhbHRlayxydGwtaW50Yw0KPj4gICAgICAgICAgIGRlcHJlY2F0ZWQ6IHRydWUN
-Cj4+IEBAIC0zNSw3ICszNiw5IEBAIHByb3BlcnRpZXM6DQo+PiAgICAgICBjb25zdDogMQ0KPj4g
-ICANCj4+ICAgICByZWc6DQo+PiAtICAgIG1heEl0ZW1zOiAxDQo+IE1pc3NpbmcgbWluSXRlbXMg
-KGFzIHRlc3Rpbmcgd291bGQgdGVsbCB5b3UpDQoNCkhtbSBJIHJlYWxseSBkaWQgdGVzdCB0aGlz
-LiBFdmVuIG5vdyBydW5uaW5nDQoNCmBtYWtlIEFSQ0g9bWlwcyBPPWJ1aWxkX21pcHMgDQpEVF9T
-Q0hFTUFfRklMRVM9cmVhbHRlayxydGwtaW50Yy55YW1sOnJlYWx0ZWstcnRsLnlhbWw6cmVhbHRl
-ayxvdHRvLXRpbWVyLnlhbWwgDQpjbGVhbiBkdF9iaW5kaW5nX2NoZWNrYCBkb2Vzbid0IHNlZW0g
-dG8geWllbGQgYW55IGNvbXBsYWludHMuIEFtIEkgDQp0ZXN0aW5nIHRoaXMgcHJvcGVybHk/DQoN
-Cj4NCj4+ICsgICAgaXRlbXM6DQo+PiArICAgICAgLSBkZXNjcmlwdGlvbjogdnBlMCByZWdpc3Rl
-cnMNCj4+ICsgICAgICAtIGRlc2NyaXB0aW9uOiB2cGUxIHJlZ2lzdGVycw0KPj4gICANCj4+ICAg
-ICBpbnRlcnJ1cHRzOg0KPj4gICAgICAgbWluSXRlbXM6IDENCj4+IEBAIC03MSw2ICs3NCwxOSBA
-QCBhbGxPZjoNCj4+ICAgICAgIGVsc2U6DQo+PiAgICAgICAgIHJlcXVpcmVkOg0KPj4gICAgICAg
-ICAgIC0gaW50ZXJydXB0cw0KPj4gKyAgLSBpZjoNCj4+ICsgICAgICBwcm9wZXJ0aWVzOg0KPj4g
-KyAgICAgICAgY29tcGF0aWJsZToNCj4+ICsgICAgICAgICAgY29udGFpbnM6DQo+PiArICAgICAg
-ICAgICAgY29uc3Q6IHJlYWx0ZWsscnRsOTMwMC1pbnRjDQo+PiArICAgIHRoZW46DQo+PiArICAg
-ICAgcHJvcGVydGllczoNCj4+ICsgICAgICAgIHJlZzoNCj4gTmVlZGVkIGlzOiBtaW5JdGVtczog
-Mg0KPg0KPj4gKyAgICAgICAgICBtYXhJdGVtczogMg0KPj4gKyAgICBlbHNlOg0KPj4gKyAgICAg
-IHByb3BlcnRpZXM6DQo+PiArICAgICAgICByZWc6DQo+PiArICAgICAgICAgIG1heEl0ZW1zOiAx
-DQo+PiAgIA0KPj4gICBhZGRpdGlvbmFsUHJvcGVydGllczogZmFsc2UNCj4+ICAgDQo+IEJlc3Qg
-cmVnYXJkcywNCj4gS3J6eXN6dG9mDQo+
+In the process of adding support for shared IRQ pins, a scenario
+was accidentally created where adv7511_irq_process returned
+prematurely causing the EDID to fail randomly.
+
+Since the interrupt handler is broken up into two main helper functions,
+update both of them to treat the helper functions as IRQ handlers. These
+IRQ routines process their respective tasks as before, but if they
+determine that actual work was done, mark the respective IRQ status
+accordingly, and delay the check until everything has been processed.
+
+This should guarantee the helper functions don't return prematurely
+while still returning proper values of either IRQ_HANDLED or IRQ_NONE.
+
+Reported-by: Liu Ying <victor.liu@nxp.com>
+Fixes: f3d9683346d6 ("drm/bridge: adv7511: Allow IRQ to share GPIO pins")
+Signed-off-by: Adam Ford <aford173@gmail.com>
+Tested-by: Liu Ying <victor.liu@nxp.com> # i.MX8MP EVK ADV7535 EDID retrieval w/o IRQ
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+V3:  Remove unnecessary declaration of ret by evaluating the return
+     code of regmap_read directly.
+
+V2:  Fix uninitialized cec_status
+     Cut back a little on error handling to return either IRQ_NONE or
+     IRQ_HANDLED.
+
+diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511.h b/drivers/gpu/drm/bridge/adv7511/adv7511.h
+index ea271f62b214..ec0b7f3d889c 100644
+--- a/drivers/gpu/drm/bridge/adv7511/adv7511.h
++++ b/drivers/gpu/drm/bridge/adv7511/adv7511.h
+@@ -401,7 +401,7 @@ struct adv7511 {
+ 
+ #ifdef CONFIG_DRM_I2C_ADV7511_CEC
+ int adv7511_cec_init(struct device *dev, struct adv7511 *adv7511);
+-void adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1);
++int adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1);
+ #else
+ static inline int adv7511_cec_init(struct device *dev, struct adv7511 *adv7511)
+ {
+diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c b/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c
+index 44451a9658a3..2e9c88a2b5ed 100644
+--- a/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c
++++ b/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c
+@@ -119,7 +119,7 @@ static void adv7511_cec_rx(struct adv7511 *adv7511, int rx_buf)
+ 	cec_received_msg(adv7511->cec_adap, &msg);
+ }
+ 
+-void adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)
++int adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)
+ {
+ 	unsigned int offset = adv7511->info->reg_cec_offset;
+ 	const u32 irq_tx_mask = ADV7511_INT1_CEC_TX_READY |
+@@ -131,16 +131,19 @@ void adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)
+ 	unsigned int rx_status;
+ 	int rx_order[3] = { -1, -1, -1 };
+ 	int i;
++	int irq_status = IRQ_NONE;
+ 
+-	if (irq1 & irq_tx_mask)
++	if (irq1 & irq_tx_mask) {
+ 		adv_cec_tx_raw_status(adv7511, irq1);
++		irq_status = IRQ_HANDLED;
++	}
+ 
+ 	if (!(irq1 & irq_rx_mask))
+-		return;
++		return irq_status;
+ 
+ 	if (regmap_read(adv7511->regmap_cec,
+ 			ADV7511_REG_CEC_RX_STATUS + offset, &rx_status))
+-		return;
++		return irq_status;
+ 
+ 	/*
+ 	 * ADV7511_REG_CEC_RX_STATUS[5:0] contains the reception order of RX
+@@ -172,6 +175,8 @@ void adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)
+ 
+ 		adv7511_cec_rx(adv7511, rx_buf);
+ 	}
++
++	return IRQ_HANDLED;
+ }
+ 
+ static int adv7511_cec_adap_enable(struct cec_adapter *adap, bool enable)
+diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+index 66ccb61e2a66..c8d2c4a157b2 100644
+--- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
++++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+@@ -469,6 +469,8 @@ static int adv7511_irq_process(struct adv7511 *adv7511, bool process_hpd)
+ {
+ 	unsigned int irq0, irq1;
+ 	int ret;
++	int cec_status = IRQ_NONE;
++	int irq_status = IRQ_NONE;
+ 
+ 	ret = regmap_read(adv7511->regmap, ADV7511_REG_INT(0), &irq0);
+ 	if (ret < 0)
+@@ -478,29 +480,31 @@ static int adv7511_irq_process(struct adv7511 *adv7511, bool process_hpd)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	/* If there is no IRQ to handle, exit indicating no IRQ data */
+-	if (!(irq0 & (ADV7511_INT0_HPD | ADV7511_INT0_EDID_READY)) &&
+-	    !(irq1 & ADV7511_INT1_DDC_ERROR))
+-		return -ENODATA;
+-
+ 	regmap_write(adv7511->regmap, ADV7511_REG_INT(0), irq0);
+ 	regmap_write(adv7511->regmap, ADV7511_REG_INT(1), irq1);
+ 
+-	if (process_hpd && irq0 & ADV7511_INT0_HPD && adv7511->bridge.encoder)
++	if (process_hpd && irq0 & ADV7511_INT0_HPD && adv7511->bridge.encoder) {
+ 		schedule_work(&adv7511->hpd_work);
++		irq_status = IRQ_HANDLED;
++	}
+ 
+ 	if (irq0 & ADV7511_INT0_EDID_READY || irq1 & ADV7511_INT1_DDC_ERROR) {
+ 		adv7511->edid_read = true;
+ 
+ 		if (adv7511->i2c_main->irq)
+ 			wake_up_all(&adv7511->wq);
++		irq_status = IRQ_HANDLED;
+ 	}
+ 
+ #ifdef CONFIG_DRM_I2C_ADV7511_CEC
+-	adv7511_cec_irq_process(adv7511, irq1);
++	cec_status = adv7511_cec_irq_process(adv7511, irq1);
+ #endif
+ 
+-	return 0;
++	/* If there is no IRQ to handle, exit indicating no IRQ data */
++	if (irq_status == IRQ_HANDLED || cec_status == IRQ_HANDLED)
++		return IRQ_HANDLED;
++
++	return IRQ_NONE;
+ }
+ 
+ static irqreturn_t adv7511_irq_handler(int irq, void *devid)
+@@ -509,7 +513,7 @@ static irqreturn_t adv7511_irq_handler(int irq, void *devid)
+ 	int ret;
+ 
+ 	ret = adv7511_irq_process(adv7511, true);
+-	return ret < 0 ? IRQ_NONE : IRQ_HANDLED;
++	return ret < 0 ? IRQ_NONE : ret;
+ }
+ 
+ /* -----------------------------------------------------------------------------
+-- 
+2.43.0
+
 
