@@ -1,80 +1,89 @@
-Return-Path: <linux-kernel+bounces-235187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C575991D14C
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 12:53:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB2C991D14E
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 12:53:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 030E01C21141
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 10:53:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA1C2B211F0
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 10:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A78513BC05;
-	Sun, 30 Jun 2024 10:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KF+iED/v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE5B4084C;
-	Sun, 30 Jun 2024 10:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F52113B7AF;
+	Sun, 30 Jun 2024 10:53:33 +0000 (UTC)
+Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378BA4084C;
+	Sun, 30 Jun 2024 10:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719744799; cv=none; b=fxBawbMcdq/5PYE6ZLvEbnExT+1JfnaYBRFggj/lwkdyaN1VVXeD/kyy+Si6kuObSnwjmUrlmRbKrvlmKhSmxeGTN0169g1COhGKckgwea5s6YReSvu39MWTHKGY5smhD7H5gCvd/9fiNZX5g8o3+tWSnW0Zh4rzc/kxGHl2hZo=
+	t=1719744812; cv=none; b=V41OZ2DXIVX88wb/RnuOTLsAYFS9G+Lm9rnOJvgEpidHoA1VT58AB/FXzBDJRsIrRkXhxxrvxSk0PVY3/u41FgLo9Ljvpkj6JH5Ypswzl33AZO40kEeRpHb2jYecz1WsOfn4rN+QPhvrHyVBNXu7X0cK5WVU4YKpADPOv6FQxEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719744799; c=relaxed/simple;
-	bh=X03voHUifmb8bqmnBGtDT3nywiB2tpmsP5r6Xw2xkC8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=afnVCwI8vJopsmcwm4rnYvXU6BrPlktjhr8mlZtSF7JAn2JzVSifEqP5FP+tOtoVqj+pHauDxnn7f6qvFUE8xVwD9uTlnXVhit65O+gQF+k4C6/13uWHGTsYNHlUmPdd7Ra5mZO6LrUYigxAIVN9ToTk8LDR+wgFv2axu/gV26w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KF+iED/v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54737C2BD10;
-	Sun, 30 Jun 2024 10:53:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719744799;
-	bh=X03voHUifmb8bqmnBGtDT3nywiB2tpmsP5r6Xw2xkC8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KF+iED/v174xDcyrhsshlcnMfEM9TxeoedZu0DZmgcbqPlJfFmDGM3Ui8Y62nrVYg
-	 C9wz09t3zcHRgorYywuel9qTkbh69n72si85C22J0S5eOtZufIyHKWaoWd/VwxDuzS
-	 lVZixKciKW2CUKLNP/9sxo4prTL0xHkMQQidEqW+knzGs6dcjjHl3hGdWde0Y5GiEE
-	 0oigJQ2AUlWL3Dby/rurYZ8k3nZoiByvtEvw13AAZRPBYC8HbyDw88OhR4TTyUyDnq
-	 TVZCKzFy4K/e1qurEiE+eCU8c+Vonc7ubJxj/+HR4/FRL2En5kFJHvD5FdJMaszREy
-	 nH7glmjVguIyA==
-Date: Sun, 30 Jun 2024 11:53:07 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>
-Cc: <broonie@kernel.org>, <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
- <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
- <conor+dt@kernel.org>, <nuno.sa@analog.com>, <dlechner@baylibre.com>,
- <corbet@lwn.net>, <marcelo.schmitt1@gmail.com>,
- <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-spi@vger.kernel.org>, <linux-doc@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 3/7] spi: spi-gpio: Add support for MOSI idle state
- configuration
-Message-ID: <20240630115307.19865a2f@jic23-huawei>
-In-Reply-To: <02a6d235b75d79eb227f0927c5a4614d4b34007b.1719686465.git.marcelo.schmitt@analog.com>
-References: <cover.1719686465.git.marcelo.schmitt@analog.com>
-	<02a6d235b75d79eb227f0927c5a4614d4b34007b.1719686465.git.marcelo.schmitt@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719744812; c=relaxed/simple;
+	bh=IZTq1zvuarLg033WSFXregmEl+OW1UuBIvBKnYOUUHY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=urGDtVB5pxxlatJ05CEuobCCj1wnFOEhqgHlVkhFNGkf9nfQ5bzMr5su0i3lK91pW0aSswDjoPLeOiWLIFh7KI27L16TK59IPaxbuhP7fVHvEvf/f0NYxrryZGis5leRnOnHECqEPo6Thd3zJGssCDqUbF+OdC3KmQ9kg9kMABQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+	by vmicros1.altlinux.org (Postfix) with ESMTP id 3C94472C8F5;
+	Sun, 30 Jun 2024 13:53:23 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+	id 2F08D7CCB3A; Sun, 30 Jun 2024 13:53:23 +0300 (IDT)
+Date: Sun, 30 Jun 2024 13:53:23 +0300
+From: "Dmitry V. Levin" <ldv@strace.io>
+To: Vincent Donnefort <vdonnefort@google.com>
+Cc: rostedt@goodmis.org, mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com, kernel-team@android.com,
+	rdunlap@infradead.org, rppt@kernel.org, david@redhat.com,
+	linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v23 3/5] tracing: Allow user-space mapping of the
+ ring-buffer
+Message-ID: <20240630105322.GA17573@altlinux.org>
+References: <20240510140435.3550353-1-vdonnefort@google.com>
+ <20240510140435.3550353-4-vdonnefort@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240510140435.3550353-4-vdonnefort@google.com>
 
-On Sat, 29 Jun 2024 16:05:33 -0300
-Marcelo Schmitt <marcelo.schmitt@analog.com> wrote:
+On Fri, May 10, 2024 at 03:04:32PM +0100, Vincent Donnefort wrote:
+[...]
+> diff --git a/include/uapi/linux/trace_mmap.h b/include/uapi/linux/trace_mmap.h
+> index b682e9925539..bd1066754220 100644
+> --- a/include/uapi/linux/trace_mmap.h
+> +++ b/include/uapi/linux/trace_mmap.h
+> @@ -43,4 +43,6 @@ struct trace_buffer_meta {
+>  	__u64	Reserved2;
+>  };
+>  
+> +#define TRACE_MMAP_IOCTL_GET_READER		_IO('T', 0x1)
+> +
 
-> Implement MOSI idle low and MOSI idle high to better support peripherals
-> that request specific MOSI behavior.
-> 
-> Acked-by: Nuno Sa <nuno.sa@analog.com>
-> Reviewed-by: David Lechner <dlechner@baylibre.com>
-> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-LGTM
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+I'm sorry but among all the numbers this one was probably the least
+fortunate choice because it collides with TCGETS on most of architectures.
+
+For example, this is how strace output would look like when
+TRACE_MMAP_IOCTL_GET_READER support is added:
+
+$ strace -e ioctl stty
+ioctl(0, TCGETS or TRACE_MMAP_IOCTL_GET_READER, {c_iflag=ICRNL|IXON, c_oflag=NL0|CR0|TAB0|BS0|VT0|FF0|OPOST|ONLCR, c_cflag=B38400|CS8|CREAD, c_lflag=ISIG|ICANON|ECHO|ECHOE|ECHOK|IEXTEN|ECHOCTL|ECHOKE, ...}) = 0
+
+Even though ioctl numbers are inherently not unique, TCGETS is
+a very traditional one, so it would be great if you could change
+TRACE_MMAP_IOCTL_GET_READER to avoid this collision.
+
+Given that _IO('T', 0x1) is _IOC(_IOC_NONE, 'T', 0x1, 0),
+something like _IOC(_IOC_NONE, 'T', 0x1, 0x1) should be OK.
+
+
+-- 
+ldv
 
