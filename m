@@ -1,184 +1,163 @@
-Return-Path: <linux-kernel+bounces-235203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8F1591D17A
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 13:43:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9191891D186
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 13:54:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E57E1F2182B
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 11:43:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 501A31F218FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 11:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C6113C811;
-	Sun, 30 Jun 2024 11:43:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B46213C685;
+	Sun, 30 Jun 2024 11:53:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hvcdcw4y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="hTn0AXCL"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A7F2E419;
-	Sun, 30 Jun 2024 11:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A3039863
+	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 11:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719747816; cv=none; b=JPe/nYE5i8123L1pS8EhuDx32ciRqhWM/KQuHf3x28SnFbAiuDk2ALX6XlXB4My3Uu93ewlgZf7JKLED4GF9+jzzxZpux/xm4EE6F+raD0hdP0DUc3nbaaLsBVC6GmHlpfXHeXyNPxKUN7GaXeVlcNTJz2eZhOwgLNAqDa2iWcM=
+	t=1719748435; cv=none; b=HHwm1w/iNEk6xDSmLZtX46YL7w70oTqAju91MTmg44WanRoOxSvfgRCvLaYSrHdf2kGLmhBuhTHD+lKjPJON1tU0y4CasSvWGdZCKBUcxdepj3h1xb3Hdi+b4xZSQrsBu8pykcxYi5sfXYU0tszvp5n72npctpEaCw/Uv958Xrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719747816; c=relaxed/simple;
-	bh=lnHlEnqgGp94dnnzJe32XBDVLkt7LiVbT6eZ5HzhyaE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n8IPpRiV9uI0KKAr8XZts96A7G6spliqnh3doqRuM3xStN7bNJTFWtXoA2mp+2lXStCv7VzUditZIEBZw+HrhTR2LNOZxCVr6dWZvi4aP+9DEe4iWHrScJKFuhSZzY8maH16IrE1hlpRc/N3PgpWcAyhBqyP03OaBFSKXn6mLbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hvcdcw4y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BAE2C2BD10;
-	Sun, 30 Jun 2024 11:43:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719747815;
-	bh=lnHlEnqgGp94dnnzJe32XBDVLkt7LiVbT6eZ5HzhyaE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hvcdcw4yVOUU1ieo0faYj60C5UBjmdn/ebFgAaK1mx5zKdmWim94BRayPTJqbc6w7
-	 FqvUKRw7ncSiVZCIBkYauiEvvLSJIlcYnZiVGangan3QIwcuvutgNtEkHLlhRCGPJ8
-	 T2lZiaAWb6s80RiDnemIL43OFKHt12RX2I3yh5PbBbD9g3JwG9s4lHA5P7/kU1Vd8D
-	 /S6KIQbLc0W1Bh2+phA9C1FMwZaiV/xJ3nKKHH9PfpIYEanGPpB1Qsh+cywMe4wevc
-	 +VI+JR4O5A/pU/J/5w4mI1t3eIJlP9lW74FZlWTAecaQqbTgce04TGkQDBjUO0HUY/
-	 muarSpI8i9LFQ==
-Date: Sun, 30 Jun 2024 12:43:30 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>,
-	Alexandru Ardelean <aardelean@baylibre.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	Alisa-Dariana Roman <alisa.roman@analog.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v6 5/6] iio: adc: ad7192: Add clock provider
-Message-ID: <20240630-jubilant-pyromania-d6b004a793a9@spud>
-References: <20240624124941.113010-1-alisa.roman@analog.com>
- <20240624124941.113010-6-alisa.roman@analog.com>
- <CA+GgBR8r_W9X0hROUEw-xePyKAhOTBjJtf=cHbfWfvUUfk5j_g@mail.gmail.com>
- <a72569f7c1f5d9a7158fe774179ec8fc76016168.camel@gmail.com>
- <20240630105448.758dd131@jic23-huawei>
+	s=arc-20240116; t=1719748435; c=relaxed/simple;
+	bh=Rc/rkJP79Bg+yJWN98zeLCeIPPgSRC0sq2d22DX92g8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=B54kZxODBP6FI2P6xJKNYNG6GVTUAMcqBzX+P2Jzei6wecDf0YJDW7+MClw+19b82zdCj0PiDxBCizZB41QN1l5XjDwzU37YMwvJyQ2q9nTJvLycA1nt3VgHkhS8ZOTppG7JL84v6rGbFoIt+7SbLWz0z+5vTM4dAhXFaXWmr0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=hTn0AXCL; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+X-Envelope-To: linux-rockchip@lists.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1719748430;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y+fDDJqQ+osPbRhFMpBP9B/lzHqe+hkb/V0i04petRE=;
+	b=hTn0AXCLVq+C4+llFVwC1ciz2avIme9mohkFaT7BpiOH20qYWq5jPWMIWO+P+hrMGga43i
+	D5+bxDlZusjXBmjapgf66E30wMwfg7nPxeWDJeqd1vgjI5OVVew/IPDimCOgL9Fl+rZAIk
+	KbHDOyJDw6JGiZeW55aLgnvztWzLvEC7zGSuPmpZ7n4TxD7QBfCJtLhGupkqRtY2r9LNq8
+	tZq6fsL7lT8eZZ5ZBBBCcLKaogIyiqboW4zSHiXiZeh+HyOejDc70sLIwlC5VNRJZakWQR
+	nVe6Kxb9XSmy7XPMAmV8qxkIv7725BvaobCaWE6sQTqmLk5ppvys7nGvj1nGMQ==
+X-Envelope-To: heiko@sntech.de
+X-Envelope-To: dsimic@manjaro.org
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: devicetree@vger.kernel.org
+X-Envelope-To: robh@kernel.org
+X-Envelope-To: krzk+dt@kernel.org
+X-Envelope-To: conor+dt@kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: jonas@kwiboo.se
+X-Envelope-To: didi.debian@cknow.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Diederik de Haas <didi.debian@cknow.org>
+To: linux-rockchip@lists.infradead.org,
+ Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: Dragan Simic <dsimic@manjaro.org>, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, linux-kernel@vger.kernel.org,
+ Jonas Karlman <jonas@kwiboo.se>, Diederik de Haas <didi.debian@cknow.org>
+Subject:
+ Re: [PATCH v2] arm64: dts: rockchip: Add GPU OPP voltage ranges to RK356x SoC
+ dtsi
+Date: Sun, 30 Jun 2024 13:53:36 +0200
+Message-ID: <2794811.2mGxvYehNa@bagend>
+Organization: Connecting Knowledge
+In-Reply-To: <1894199.CQOukoFCf9@diego>
+References:
+ <bdb60f1f793166cd65f58ab7aea025347076019c.1719679068.git.dsimic@manjaro.org>
+ <2442162.AJoTavkB1d@bagend> <1894199.CQOukoFCf9@diego>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Mi5L2Q7GuWi83TYj"
-Content-Disposition: inline
-In-Reply-To: <20240630105448.758dd131@jic23-huawei>
+Content-Type: multipart/signed; boundary="nextPart2147336.LgE2u5Xh1p";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
+X-Migadu-Flow: FLOW_OUT
 
-
---Mi5L2Q7GuWi83TYj
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+--nextPart2147336.LgE2u5Xh1p
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"; protected-headers="v1"
+From: Diederik de Haas <didi.debian@cknow.org>
+Date: Sun, 30 Jun 2024 13:53:36 +0200
+Message-ID: <2794811.2mGxvYehNa@bagend>
+Organization: Connecting Knowledge
+In-Reply-To: <1894199.CQOukoFCf9@diego>
+MIME-Version: 1.0
 
-On Sun, Jun 30, 2024 at 10:54:48AM +0100, Jonathan Cameron wrote:
->=20
-> > > > +
-> > > > =A0static int ad7192_clock_setup(struct ad7192_state *st)
-> > > > =A0{
-> > > > =A0=A0=A0=A0=A0=A0=A0 struct device *dev =3D &st->sd.spi->dev;
-> > > > @@ -412,6 +496,11 @@ static int ad7192_clock_setup(struct ad7192_st=
-ate *st)
-> > > > =A0=A0=A0=A0=A0=A0=A0 if (ret < 0) {
-> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 st->clock_sel =3D AD7=
-192_CLK_INT;
-> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 st->fclk =3D AD7192_I=
-NT_FREQ_MHZ;
-> > > > +
-> > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 ret =3D ad7192_register=
-_clk_provider(st);
-> > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 if (ret)
-> > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
- return dev_err_probe(dev, ret,
-> > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 "Failed to =
-register clock
-> > > > provider\n"); =20
-> > >=20
-> > > A question here: do we want to fail the probe of this driver when it
-> > > cannot register a clock provider?
-> > > Or should we ignore it?
-> > > No preference from my side. =20
+On Sunday, 30 June 2024 11:07:47 CEST Heiko St=FCbner wrote:
+> Am Sonntag, 30. Juni 2024, 00:01:41 CEST schrieb Diederik de Haas:
+> > On Saturday, 29 June 2024 18:39:02 CEST Dragan Simic wrote:
+> > > Add support for voltage ranges to the GPU OPPs defined in the SoC
+> > > dtsi for RK356x.  These voltage ranges are useful for RK356x-based
+> > > boards that are designed to use the same power supply for the GPU
+> > > and NPU portions of the SoC, which is described further in the
+> > > following documents:
+> > >   - Rockchip RK3566 Hardware Design Guide, version 1.1.0, page 37
+> > >   - Rockchip RK3568 Hardware Design Guide, version 1.2, page 78
 > >=20
-> > Sensible question... I would say it depends. On one side this is an opt=
-ional
-> > feature so we should not (arguably) error out. OTOH, someone may really=
- want
-> > (and relies on) this feature so failing makes sense.
+> > That was interesting to read, thanks.
+> > Now I understand the difference between rk809(-5) and rk817(-5).
 > >=20
-> > Maybe we should have
+> > But AFAIUI the above description described why there were separate tabl=
+es
+> > for rk809 and rk817 in v1. But that was dropped in v2. So it seems to me
+> > the (commit) message should be updated accordingly?
 > >=20
-> > if (!device_property_present(&spi->dev, "#clock-cells"))
-> > 	return 0;
+> > I also expected that (for v1) there would be a similar construct as was
+> > recently added for rk3588. But I should interpret Heiko's comments as t=
+hat
+> > strategy should not be applied to rk356x?
 >=20
-> I'm not 100% sure from looking at the code, but if the absence of this pr=
-operty
-> (because the DT writer doesn't care about this) is sufficient to make the
-> calls in ad7192_register_clk_provider() fail then we should check this.
-> I don't think we need the complexity of get_provider_clk_node() as there =
-is
-> no reason to look in a parent of this device (it's not an mfd or similar)=
- so
-> this check should be sufficient.
->=20
-> Does this also mean the binding should not require this?  I suspect it sh=
-ouldn't.
+> The issue I had was more about the #ifdef'ery and then having a board def=
+ine
+> a constant to enable one or the other.
 
-Per the binding (proposed and current) I think the code here is fine
-w.r.t. probe failures. Before the series, it looks like clocks/clock-names
-were required by the binding and the driver would fail to probe if they were
-not provided. The current code only fails to probe if neither clocks
-or clock-names and #clock-cells are not provided, so it is a weaker
-restriction than before. The binding doesn't require #clock-cells at all
-times, only if the clock consumer properties are not present, so it is
-both fine backwards compatibility wise and seems to match how the driver
-is behaving. I'm biased, but I don't buy "the DT writer doesn't care" as
-an argument cos if they didn't care about adding the required clock
-consumer properties now then they'd not have probed before either...
+Yeah, I had some thoughts about that too, but by the time I was ready to=20
+respond to that, there was v2, so that became irrelevant.
+
+> As far as I understood the description, the OPP itself is the same in
+> terms of frequency and voltage, just the regulator can't fully realize
+> that target voltage, so the solution is to allow a voltage range, to
+> also support the less-exact regulator.
+>=20
+> On the rk3588 on the other hand the soc variants have different OPP
+> tables themselfs, because the soc itself only supports different
+> frequencies+voltages. So the solution here is the split of the OPPs so
+> that we don't mess around with /delete-node/ edits of one OPP table.
+>=20
+> So TL;DR separate OPP tables are the way to go if the user needs different
+> freq+voltage values and voltage ranges allows boards to use less-adapted
+> regulators.
+
+Thanks for the explanation.
+
+One of the things I researched was whether there was a different OPP table
+in Rockchip's rk3566.dtsi (and then the assumption that RK817 =3D RK3566 and
+RK809 =3D RK3568, which would be flawed/incorrect). But there wasn't.
 
 Cheers,
-Conor.
-
-> > in ad7192_register_clk_provider(). So that if we fail the function, the=
-n yes, we
-> > should fail probing as FW wants this to be a provider. Also, not provid=
-ing
-> > #clock-cells means we don't register the clock.
-> >=20
-> > Having said the above I think that failing devm_clk_hw_register() means=
- that
-> > something is already really wrong (or we have a bug in the driver) so l=
-ikely we
-> > should keep it simple and just always provide the clock and return an e=
-rror if
-> > we fail to do so.
-> >=20
-> > my 2 cents...
-> >=20
-> > - Nuno S=E1
-> >=20
-> >=20
->=20
-
---Mi5L2Q7GuWi83TYj
+  Diederik
+--nextPart2147336.LgE2u5Xh1p
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoFE4gAKCRB4tDGHoIJi
-0rd8APwLmRCAOSGfaSnmDqSvcuqh7evVo0woKBO/UgxUyVuLsgD/TZkzpeKNRZEm
-fQTButiI6kY4xg9gTIlu1fpoHUJUFAc=
-=BG+3
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZoFHQAAKCRDXblvOeH7b
+bgjgAP9vzAu7MpfS69xyFFLPIIGggmPUGMKxwsGTISYyDo1sHAD9HLwFVtMo7sv9
+mQ/R7ZmppweghrcD2CYHYBSJEJVL1QI=
+=AB/w
 -----END PGP SIGNATURE-----
 
---Mi5L2Q7GuWi83TYj--
+--nextPart2147336.LgE2u5Xh1p--
+
+
+
 
