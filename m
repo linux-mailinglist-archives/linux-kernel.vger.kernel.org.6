@@ -1,255 +1,250 @@
-Return-Path: <linux-kernel+bounces-235101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B51391D02C
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 08:36:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FE9D91D02D
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 08:37:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36B781C20AF0
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 06:36:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07200282017
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 06:37:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952A93A1CD;
-	Sun, 30 Jun 2024 06:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18253A1CD;
+	Sun, 30 Jun 2024 06:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q6USyfI9"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tmuhM4PL"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487CF38DD9;
-	Sun, 30 Jun 2024 06:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A3D38DF9;
+	Sun, 30 Jun 2024 06:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719729374; cv=none; b=LHOwD4u77ShX0STVvWKayYZkWZWPaZOthbM65t0V4M1OjDfaquKiNw7R4QbrzQhoRtJXF8fxOw4PudH6GcgWF0C6YTMS7GlZ615UEpDXyuXlOh61uVSLeE6wu3MmAbK7/2PP9C/pXwqEQBZoBCTN0/Msl3BCIpCgSyMuVLMDuqs=
+	t=1719729426; cv=none; b=a/dqtGpB7IzdeIyqdhKAHcZEpfOiUKBTp3p1Lq/lVyyNYcgG5VAsQmgM1iPnQQQv6bqkYaThJ5kV7i1BT78o/eaT4JWroWuSNkMeai5UZ9XIQ+wdrsOB+JUdKW17c+q6+RGNLI+JN5TWS/nHZQGZn+SS3ZXE0NsLRCCf7oABAKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719729374; c=relaxed/simple;
-	bh=WbPqT2wpd4+ZeKcUAwbmkkoCmR6ML4SAFPLKfk61mbg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JkoTmcP0tq6fIjff1dxzQS+ojMILsEUld+ORODZxQgiYDP4EumN9ZZpK+TyIanbCMCB/28+854OXgorZookM+uNQSCCxl2LTGW2bvCjJdKgdfR/kCiaPOQZZn3pX3prct8oqwouQ6K/Q86xLiP1ai7IddeYwd98ZkPwGvweFibU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q6USyfI9; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f9c6e59d34so15105015ad.2;
-        Sat, 29 Jun 2024 23:36:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719729372; x=1720334172; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QcY18BrD0/gIItoUlZh8XyBfrX5yv5R+UNZ4yG5hJ04=;
-        b=Q6USyfI9CL3qsNub2TuT24SbIA9cyh0gXSrTQD6nxVxvDpuLlwvMXyIi0QeQseAaEk
-         y38SLJUwUBbECYC4D3ZVI7vGboUtmTiOkJ6uRkDmc4TzXENgMGl91m9ksvWvjBlzfUYw
-         6HmXMrugcqWbi30J2JPYqiZpxPLBtzztjJZK0BWQW2KCgNGP8xKalFThoIDE75EUE1fa
-         7BrC/0Mm35DnjqDweXet8o/6ZpXmL32rVn4SPth98hkF/zu5bzSXeVAlDDF41yh/P/Qm
-         DY+dhhxkLDqzD9Pf1jn7FYzKBx7IX1A5EawdYi3FlPOrgJFVPexR9bti7zeUDQb1KatV
-         HxlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719729372; x=1720334172;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QcY18BrD0/gIItoUlZh8XyBfrX5yv5R+UNZ4yG5hJ04=;
-        b=lzX4zoLdFcRu5V+Yh2tXHEWbjdmD1KGxAGYExsIq5j5Jvch2X5qK5eKVafKD05qY/e
-         l1PPhNiyBog4W+8JSE5dToihtYIfzSu9+K9n3v40DTguHk0nyhljjBllx2RZh8SXQKqV
-         6E/25+5ffCKraan/8+9h57cuWY1z48G2hjtBBMJs7NhG89bjm5WZoQxxxEyoTbuVbwY8
-         I9bQdIlwIQbN4hALbtbggOUgSbIxO1vT/qSd8/YdL8Vmk51Mka66JpqWbS0M0++Wh6hI
-         +QZbokNt8WMozg+sgCFFrgpnLto9202M0Vt6e6X5HVtxQnScL5k1LagySxlIBTC8j1DW
-         CoWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUsqaCBcO1rjpg1scfipqCWlN599TkaYYOXVNddBQUzELezCxphPFp8xB0uiXDgU4VsPEOrIhaEIZ72A7kAUEi2ZUcH2GV3LFh1h2bZ0drkBkVSwX5alLyTacYMe0gsX5r1oSkJi01TJDuHR+Ejh5DZRSAHtNYJrbbsIPj9iAqR2skgjQ==
-X-Gm-Message-State: AOJu0YyBel23mnFPLBIg7QOW5VEK45ijc2+ZRBShlcL54NQuO+IS+1Rn
-	U3WOVR2LBdINVAlayL+HyMaPZVepv2JtW0v2Kn0n2Pg5d4YzisXS
-X-Google-Smtp-Source: AGHT+IE8yebFjC0WOZuqWWT6VmnzC1kB3+fdYIoJd1m5PkeCFVi/btZzICJa9As2qUt+igNxcU/aNw==
-X-Received: by 2002:a17:902:aa85:b0:1f7:22bf:57f4 with SMTP id d9443c01a7336-1fadbcf338fmr20187525ad.55.1719729372416;
-        Sat, 29 Jun 2024 23:36:12 -0700 (PDT)
-Received: from ga401ii.. ([2401:4900:1cc9:59f2:a68f:8261:cbcf:3139])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1fac1538a1asm41180575ad.150.2024.06.29.23.36.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Jun 2024 23:36:11 -0700 (PDT)
-From: Kanak Shilledar <kanakshilledar@gmail.com>
-To: 
-Cc: kanakshilledar111@protonmail.com,
-	Kanak Shilledar <kanakshilledar@gmail.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH 1/2] arch: riscv: thead: implement basic spi
-Date: Sun, 30 Jun 2024 12:05:41 +0530
-Message-ID: <20240630063543.115754-2-kanakshilledar@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1719729426; c=relaxed/simple;
+	bh=jEUDuUEkZQcBX7wCGT05A6QqljKXyMusCq8WZ/RSbog=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gPrap3eTIGLOP5oFoMRkNBe8dUtl0ZDPC7lHLiRdcy2WxTIsmkymtQiDkW/Q39+Af87du5dnQOc4/in44PxmJEq9q8kfhI0nT/b3cshmcBAM5WLHrYComnEZbDwHFpPUd5gymym/dfOm3cdaQ8ZFlSqC5m+nYpu/zVXJjlStMXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=tmuhM4PL; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45U6U16E013777;
+	Sun, 30 Jun 2024 06:36:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=d
+	FHlskbbd355KHmfVN/F3O+IlnsRZyEsDSWLKE/XXmQ=; b=tmuhM4PLEoZFDV30s
+	mVNBRcs4HAfRj/w+mPXUdsNw2rk6/+FP06Ct8QcKIwUNXxgGgVtLEa6fS+Yqm8mY
+	mR0OxdALS3tcdUjCWMfVua2TnnwBOfJQgHetsIhRcOWEBvFLueQ3PwL5Vr6TGBYj
+	iachxWuHzipX7YrVZniDcsHHi1LGJAoQPCDO0kV3+exYz/srv76PZFauLwh8WauD
+	rl0LehlZdkwFrijg2xp96J4eLkYYRCz0xQaWS1j6OYoVP1OWU1/v6YTWFPZ0LIM2
+	CjkBa5qUwmBYJeg4Lnt2DSdAMQ+B2bHEDnbi6EdVvYpHAOLelCvklKLnaZn+x4Pe
+	kVZaw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40324hr08f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 30 Jun 2024 06:36:54 +0000 (GMT)
+Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45U6arVb023395;
+	Sun, 30 Jun 2024 06:36:53 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40324hr08a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 30 Jun 2024 06:36:53 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45U57Thb009152;
+	Sun, 30 Jun 2024 06:36:52 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 402w0094ux-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 30 Jun 2024 06:36:52 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45U6anTW20382416
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 30 Jun 2024 06:36:51 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3223A58054;
+	Sun, 30 Jun 2024 06:36:49 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D932658062;
+	Sun, 30 Jun 2024 06:36:37 +0000 (GMT)
+Received: from [9.43.35.135] (unknown [9.43.35.135])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Sun, 30 Jun 2024 06:36:37 +0000 (GMT)
+Message-ID: <cea69b48-7c9b-42e2-9281-238988f617ed@linux.ibm.com>
+Date: Sun, 30 Jun 2024 12:06:36 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/3] perf sched map: Add --fuzzy-name option for fuzzy
+ matching in task names
+Content-Language: en-US
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Athira Rajeev
+ <atrajeev@linux.vnet.ibm.com>,
+        Chen Yu <yu.c.chen@intel.com>, Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>, acme@redhat.com,
+        Fernand Sieber <sieberf@amazon.com>,
+        linux-perf-users <linux-perf-users@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+References: <20240626091550.46707-1-vineethr@linux.ibm.com>
+ <20240626091550.46707-4-vineethr@linux.ibm.com> <Zn34FZxPLh3llxy9@google.com>
+From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+In-Reply-To: <Zn34FZxPLh3llxy9@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: ybpRwZdJisQM_n6OJZLMkocZfvry0MKZ
+X-Proofpoint-ORIG-GUID: vhfmfNbsWqJmTora7BjBaFcLrARP0aRW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-30_05,2024-06-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
+ impostorscore=0 lowpriorityscore=0 clxscore=1015 bulkscore=0
+ malwarescore=0 priorityscore=1501 mlxscore=0 mlxlogscore=999
+ suspectscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2406140001 definitions=main-2406300047
 
-implemented basic spi support for TH1520 SoC.
-created a fixed clock and a simple spi0 node.
-updated the matching binding to include thead,th1520-spi as compatible.
-added a spidev device in devicetree which will utilise the spi0 node.
-this is usually reserved for a SPI NOR flash which is left unpopulated
-underneath the carrier board. I performed a SPI self loop test using
-tools/spi/spidev_test.c and tried sending `\xDE\xAD\xBE\xEF` and verified
-it is being received correctly. i updated the of_device_id struct in
-drivers/spi/spi-dw-mmio.c to include "thead,th1520-spi" as the compatible.
-this patch also adds basic spi support on beaglev ahead which shares the
-same TH1520 SoC. i have only tested on LicheePi 4A.
+Hi Namhyung,
 
-Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
----
- .../devicetree/bindings/spi/snps,dw-apb-ssi.yaml |  4 ++++
- .../boot/dts/thead/th1520-beaglev-ahead.dts      |  9 +++++++++
- .../boot/dts/thead/th1520-lichee-module-4a.dtsi  |  4 ++++
- .../riscv/boot/dts/thead/th1520-lichee-pi-4a.dts | 10 ++++++++++
- arch/riscv/boot/dts/thead/th1520.dtsi            | 16 ++++++++++++++++
- drivers/spi/spi-dw-mmio.c                        |  1 +
- 6 files changed, 44 insertions(+)
+On 28/06/24 05:09, Namhyung Kim wrote:
+> On Wed, Jun 26, 2024 at 02:45:50PM +0530, Madadi Vineeth Reddy wrote:
+>> The --fuzzy-name option can be used if fuzzy name matching is required.
+>> For example, "taskname" can be matched to any string that contains
+>> "taskname" as its substring.
+>>
+>> Sample output for --task-name wdav --fuzzy-name
+>> =============
+>>  .  *A0  .   .   .   .   -   .   131040.641346 secs A0 => wdavdaemon:62509
+>>  .   A0 *B0  .   .   .   -   .   131040.641378 secs B0 => wdavdaemon:62274
+>>  -  *-   -   -   -   -   -   -   131040.641379 secs
+> 
+>    -  *-   B0  -   -   -   -   -   131040.641379 secs
+> 
+>> *C0  .   B0  .   .   .   .   .   131040.641572 secs C0 => wdavdaemon:62283
+>>  C0  .   B0  .  *D0  .   .   .   131040.641572 secs D0 => wdavdaemon:62277
+>>  C0  .   B0  .   D0  .  *E0  .   131040.641578 secs E0 => wdavdaemon:62270
+>> *-   -   -   -   -   -   -   -   131040.641581 secs
+> 
+>   *-   -   B0  -   D0  -   E0  -   131040.641581 secs
+> 
 
-diff --git a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
-index fde3776a558b..bccd00a1ddd0 100644
---- a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
-+++ b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
-@@ -88,6 +88,10 @@ properties:
-               - renesas,r9a06g032-spi # RZ/N1D
-               - renesas,r9a06g033-spi # RZ/N1S
-           - const: renesas,rzn1-spi   # RZ/N1
-+      - description: T-HEAD TH1520 SoC SPI Controller
-+        items:
-+          - const: thead,th1520-spi
-+          - const: snps,dw-apb-ssi
- 
-   reg:
-     minItems: 1
-diff --git a/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts b/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-index d9b4de9e4757..3103b74e0288 100644
---- a/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-+++ b/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-@@ -17,6 +17,7 @@ aliases {
- 		gpio1 = &gpio1;
- 		gpio2 = &gpio2;
- 		gpio3 = &gpio3;
-+		spi0 = &spi0;
- 		serial0 = &uart0;
- 		serial1 = &uart1;
- 		serial2 = &uart2;
-@@ -52,6 +53,10 @@ &sdhci_clk {
- 	clock-frequency = <198000000>;
- };
- 
-+&spi_clk {
-+	clock-frequency = <396000000>;
-+};
-+
- &uart_sclk {
- 	clock-frequency = <100000000>;
- };
-@@ -79,3 +84,7 @@ &sdio0 {
- &uart0 {
- 	status = "okay";
- };
-+
-+&spi0 {
-+	status = "okay";
-+};
-diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi b/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
-index 1365d3a512a3..6939bd36560c 100644
---- a/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
-+++ b/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
-@@ -33,6 +33,10 @@ &sdhci_clk {
- 	clock-frequency = <198000000>;
- };
- 
-+&spi_clk {
-+	clock-frequency = <396000000>;
-+};
-+
- &uart_sclk {
- 	clock-frequency = <100000000>;
- };
-diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-index 9a3884a73e13..26f82fe91489 100644
---- a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-+++ b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-@@ -14,6 +14,7 @@ aliases {
- 		gpio1 = &gpio1;
- 		gpio2 = &gpio2;
- 		gpio3 = &gpio3;
-+		spi0 = &spi0;
- 		serial0 = &uart0;
- 		serial1 = &uart1;
- 		serial2 = &uart2;
-@@ -30,3 +31,12 @@ chosen {
- &uart0 {
- 	status = "okay";
- };
-+
-+&spi0 {
-+	status = "okay";
-+	spidev@0 {
-+		compatible = "rohm,dh2228fv";
-+		reg = <0>;
-+		spi-max-frequency = <500000>;
-+	};
-+};
-diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
-index d2fa25839012..f962de663e7e 100644
---- a/arch/riscv/boot/dts/thead/th1520.dtsi
-+++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-@@ -140,6 +140,12 @@ apb_clk: apb-clk-clock {
- 		#clock-cells = <0>;
- 	};
- 
-+	spi_clk: spi-clock {
-+		compatible = "fixed-clock";
-+		clock-output-names = "spi_clk";
-+		#clock-cells = <0>;
-+	};
-+
- 	uart_sclk: uart-sclk-clock {
- 		compatible = "fixed-clock";
- 		clock-output-names = "uart_sclk";
-@@ -183,6 +189,16 @@ clint: timer@ffdc000000 {
- 					      <&cpu3_intc 3>, <&cpu3_intc 7>;
- 		};
- 
-+		spi0: spi@ffe700c000 {
-+			compatible = "thead,th1520-spi", "snps,dw-apb-ssi";
-+			reg = <0xff 0xe700c000 0x0 0x1000>;
-+			interrupts = <54 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&spi_clk>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		uart0: serial@ffe7014000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0xff 0xe7014000 0x0 0x100>;
-diff --git a/drivers/spi/spi-dw-mmio.c b/drivers/spi/spi-dw-mmio.c
-index 819907e332c4..39e3d46ebf5d 100644
---- a/drivers/spi/spi-dw-mmio.c
-+++ b/drivers/spi/spi-dw-mmio.c
-@@ -419,6 +419,7 @@ static const struct of_device_id dw_spi_mmio_of_match[] = {
- 	{ .compatible = "microchip,sparx5-spi", dw_spi_mscc_sparx5_init},
- 	{ .compatible = "canaan,k210-spi", dw_spi_canaan_k210_init},
- 	{ .compatible = "amd,pensando-elba-spi", .data = dw_spi_elba_init},
-+	{ .compatible = "thead,th1520-spi", .data = dw_spi_pssi_init},
- 	{ /* end of table */}
- };
- MODULE_DEVICE_TABLE(of, dw_spi_mmio_of_match);
--- 
-2.45.2
+Understood. Thank you for the review.
+
+Thanks and Regards
+Madadi Vineeth Reddy
+
+> Thanks,
+> Namhyung
+> 
+>>
+>> Suggested-by: Chen Yu <yu.c.chen@intel.com>
+>> Reviewed-and-tested-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+>> Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+>> ---
+>>  tools/perf/Documentation/perf-sched.txt |  3 +++
+>>  tools/perf/builtin-sched.c              | 22 +++++++++++++++-------
+>>  2 files changed, 18 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/tools/perf/Documentation/perf-sched.txt b/tools/perf/Documentation/perf-sched.txt
+>> index 3095e280eb92..938b41a3befa 100644
+>> --- a/tools/perf/Documentation/perf-sched.txt
+>> +++ b/tools/perf/Documentation/perf-sched.txt
+>> @@ -137,6 +137,9 @@ OPTIONS for 'perf sched map'
+>>  	task name(s).
+>>  	('-' indicates other tasks while '.' is idle).
+>>  
+>> +--fuzzy-name::
+>> +	Given task name(s) can be partially matched (fuzzy matching).
+>> +
+>>  OPTIONS for 'perf sched timehist'
+>>  ---------------------------------
+>>  -k::
+>> diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
+>> index ecb43deb9d74..c801c38e8b9a 100644
+>> --- a/tools/perf/builtin-sched.c
+>> +++ b/tools/perf/builtin-sched.c
+>> @@ -157,6 +157,7 @@ struct perf_sched_map {
+>>  	struct perf_cpu_map	*color_cpus;
+>>  	const char		*color_cpus_str;
+>>  	const char		*task_name;
+>> +	bool			fuzzy;
+>>  	struct perf_cpu_map	*cpus;
+>>  	const char		*cpus_str;
+>>  };
+>> @@ -1599,12 +1600,16 @@ static struct CommandList *parse_commands(const char *commands)
+>>  	return cmd_list;
+>>  }
+>>  
+>> -static bool sched_match_task(const char *comm_str, struct CommandList *cmd_list)
+>> +static bool sched_match_task(const char *comm_str, struct CommandList *cmd_list, bool fuzzy_match)
+>>  {
+>>  	bool match_found = false;
+>>  
+>> -	for (int i = 0; i < cmd_list->command_count && !match_found; i++)
+>> -		match_found = !strcmp(comm_str, cmd_list->command_list[i]);
+>> +	for (int i = 0; i < cmd_list->command_count && !match_found; i++) {
+>> +		if (fuzzy_match)
+>> +			match_found = !!strstr(comm_str, cmd_list->command_list[i]);
+>> +		else
+>> +			match_found = !strcmp(comm_str, cmd_list->command_list[i]);
+>> +	}
+>>  
+>>  	return match_found;
+>>  }
+>> @@ -1727,7 +1732,8 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
+>>  			 */
+>>  			tr->shortname[0] = '.';
+>>  			tr->shortname[1] = ' ';
+>> -		} else if (!sched->map.task_name || sched_match_task(str, cmd_list)) {
+>> +		} else if (!sched->map.task_name || sched_match_task(str, cmd_list,
+>> +								sched->map.fuzzy)) {
+>>  			tr->shortname[0] = sched->next_shortname1;
+>>  			tr->shortname[1] = sched->next_shortname2;
+>>  
+>> @@ -1756,15 +1762,15 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
+>>  	 * Check which of sched_in and sched_out matches the passed --task-name
+>>  	 * arguments and call the corresponding print_sched_map.
+>>  	 */
+>> -	if (sched->map.task_name && !sched_match_task(str, cmd_list)) {
+>> -		if (!sched_match_task(thread__comm_str(sched_out), cmd_list))
+>> +	if (sched->map.task_name && !sched_match_task(str, cmd_list, sched->map.fuzzy)) {
+>> +		if (!sched_match_task(thread__comm_str(sched_out), cmd_list, sched->map.fuzzy))
+>>  			goto out;
+>>  		else
+>>  			goto sched_out;
+>>  
+>>  	} else {
+>>  		str = thread__comm_str(sched_out);
+>> -		if (!(sched->map.task_name && !sched_match_task(str, cmd_list)))
+>> +		if (!(sched->map.task_name && !sched_match_task(str, cmd_list, sched->map.fuzzy)))
+>>  			proceed = 1;
+>>  	}
+>>  
+>> @@ -3707,6 +3713,8 @@ int cmd_sched(int argc, const char **argv)
+>>                      "display given CPUs in map"),
+>>  	OPT_STRING(0, "task-name", &sched.map.task_name, "task",
+>>  		"map output only for the given task name(s)."),
+>> +	OPT_BOOLEAN(0, "fuzzy-name", &sched.map.fuzzy,
+>> +		"given command name can be partially matched (fuzzy matching)"),
+>>  	OPT_PARENT(sched_options)
+>>  	};
+>>  	const struct option timehist_options[] = {
+>> -- 
+>> 2.43.2
+>>
 
 
