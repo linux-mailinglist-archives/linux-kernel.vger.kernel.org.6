@@ -1,246 +1,224 @@
-Return-Path: <linux-kernel+bounces-235347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AA5A91D460
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 00:19:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 186ED91D46A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 00:29:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 133431F2117D
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 22:19:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D2751C208B8
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 22:29:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0715CDE9;
-	Sun, 30 Jun 2024 22:19:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F101F77F1B;
+	Sun, 30 Jun 2024 22:29:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="na0Fkpdp"
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="5IdRy5iU"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355022AE68
-	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 22:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5AC3C092
+	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 22:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719785980; cv=none; b=CRD/wOr9elZC6DCyCENSQsUyTwZrCh9gOgP6WLgownVm7UgJjWyc7r63YyrxMVeN1irFfVa4+LIRveLz+RV3fd9xmgvBOdpPyoDMbR9LBT7GuwAYcWO8TEnsXj1qEs2nQQlIhkplP1Vv2nYMZcTBOqt7phbPHWc8E+fHtzHhz9c=
+	t=1719786579; cv=none; b=gTNrewcq5CnYAxJItERHQNbDzyKMhMjwq8o0o+Us6fYYIZRO91NmCMkaRDJ6sgz3ptakwoGssWKMr34bELmZs7/3fkRJoMn9MmNbUMV2qqerlWRoWtapznRHgmrzi/8V3oFeQYGjgNyI2Bv3WvU0XYPqjjrhaM8rp1BvjQOmcUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719785980; c=relaxed/simple;
-	bh=7t/hvLfnp3ulwwuGa0R3lXO/+NS/TEqQ4pUEyuE9iY4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gMuWotIHpRfRWEsrcZXkSu4VNb1j/Em1CzR12kdmoGjcgrEJL50iUgXQTj2CGW6MvGeq6RaNvVnsbIQMIPVdrYgpwTd4WFufx1/a3R4j0k3dBFtYNJFLIQ8jCi9S3DCbAf2ZXunQfXhorRr6mziTq3VfVnXidxqoXNF/J81m7h0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=na0Fkpdp; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-7eeea388a8eso95847539f.2
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 15:19:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719785978; x=1720390778; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4xBwqprF3AIyKjWMpWtTgv9XeBi4pK+ZW2WSJxhUHqk=;
-        b=na0Fkpdp50z9tEI5d6LR3ofi5mhpHWiPLrKXWpICZpVtc3NaIgn3CgU4ZVEYwQ4xJl
-         whUwpzufv8uDA2MD2hL8pdCP0qK/q0/60tnPh8DSEQqNCpIDC92m5Xe2rjUHa4/ViVJ7
-         /ZX4HXePue+uL+8dkRTIwp+UzTBDFR6hKAZJu7vWKRF1Ts2AGwfsFlUbpS+s8VgJCPil
-         PyTO5HBK4GlYjIt5e/LlrujFkWH1f26SWD5Ps0fzsw1wXsf8jAKrpVGTeWIZhNjbFFVS
-         2MrIGAhP0Aq7zB1NTmhNV6SjUeekM/4ombPK+1VlfgOU3T5I7QGWx2rS60rTtTbmVLOJ
-         6g6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719785978; x=1720390778;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4xBwqprF3AIyKjWMpWtTgv9XeBi4pK+ZW2WSJxhUHqk=;
-        b=lVCivxalHLvrfxGMJPF+OAu+4ch6YmsffN0k1ZYdbblfkjO07+f+vA7s8twWJJpuO/
-         qlbMbjJKO/uVskckzBHklv+/K966SR9yo72Gl8cbhFYt76pfW2NvvWgiRNhT9Ut8deyx
-         +j2MQOboQIQI8eHLQz+oTipIi+XeCrfArdqg3y4wwxGlZ008qQYY1ebtSvHCXiF8sUQp
-         3sx0YvZNaSb56to/Dc5+wQpDIoUJ+uh74FWh0NtDgnW4ksogchLEIWvYSeBN2WC1sJja
-         TdZzQ2azeJnOCPewiCdeaGnI2Jq98PFxACsQiBRwORWM6IPUfw+P3oF9GegymOlSLC25
-         cvxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXL9h+0C9TFpXcx7B5oUxwUtWC2+LZWCc6fgJGB1IK/MNEbj6ud7Jyv4bcdQhy3P+fcqWKpEPH7mEQhg3uKwb+2dN11j1/QaEOsPL8d
-X-Gm-Message-State: AOJu0YxA3zhLDj8iHEyMs33xJJDEql/dv1AkiGHtxeBsqPIy7hHcoCQ/
-	v3T8WHBSQmWOoBknvgtw/Jd5lZ+NiTNxH+orKJp0QfkADeO1nt+g
-X-Google-Smtp-Source: AGHT+IFbelENHxw+JrJUzxuU8eqeK32hWjKnOOmc0H3WlPOot9jUlCb8eAKHQjc4ie+sDwHejBlnMg==
-X-Received: by 2002:a6b:6106:0:b0:7f6:2e72:e81b with SMTP id ca18e2360f4ac-7f62ee168f6mr439239939f.4.1719785978120;
-        Sun, 30 Jun 2024 15:19:38 -0700 (PDT)
-Received: from aford-System-Version.lan ([2601:447:d002:5be:3ec3:787e:965c:8518])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-7f61ce9de0dsm171361839f.20.2024.06.30.15.19.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Jun 2024 15:19:37 -0700 (PDT)
-From: Adam Ford <aford173@gmail.com>
-To: dri-devel@lists.freedesktop.org
-Cc: aford@beaconembedded.com,
-	Adam Ford <aford173@gmail.com>,
-	Liu Ying <victor.liu@nxp.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH V3] drm/bridge: adv7511: Fix Intermittent EDID failures
-Date: Sun, 30 Jun 2024 17:19:31 -0500
-Message-ID: <20240630221931.1650565-1-aford173@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1719786579; c=relaxed/simple;
+	bh=Cq+4sWNnSF5Wwpo+JnRAVuu33kX9Y7YBwUOWrI81JAM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SP8GNSozmRLIJh5+Cl/z5gC+CNNHIFulJVSVaYyRE/McQvU4WiQGFNzlhHj7dmmVZJznqI2nGnoxNkXgFF5UzTUzUTny7Lky1byswdLuYD83HJlAk63rLCrGA4fGsZlCw3zuIvIXI2/KLQdH3vRLvTn6I0KzcSNVudBtYi5DHlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=5IdRy5iU; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4WC3kg2RFdzll9fK;
+	Sun, 30 Jun 2024 22:29:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:mime-version:x-mailer:message-id:date
+	:date:subject:subject:from:from:received:received; s=mr01; t=
+	1719786567; x=1722378568; bh=J+n0B7rRFzUjAtFXrRfyRNlbqruLIjMEnHM
+	f3m/4HNg=; b=5IdRy5iU550Rz98OZd++RJ7nqHgev9Ad8v4PYYcdRPGNs5HlL1/
+	zNa1RMG6HdpXI+wYQUBZjb5nDjq8N2fnqN6rUbGYWjqo/eMVCys97CuAhhZjCOOf
+	1pBsIx2uNqQ+vy1bU9gL4+LWWiHfwkiru8fDs5Rgu965Ak+dEmEgjOTHOp1D0jcF
+	uGYuuGjJsYevMhCPwoGJqwiQgWRHlucqJP8Ed6g6VrrdVYESM+aB2Z4HDvpUt/P+
+	kDGdHeJGP2z8OQ3meaihaWX0Pv/QA8HkW85N3eXGQQCkVoFU8G+9NIiSaUzicaWL
+	1/6XD/Vw3+hXwj3d8lNkizGNNYfOsijVPqA==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id dcHp36B831ug; Sun, 30 Jun 2024 22:29:27 +0000 (UTC)
+Received: from bvanassche-glaptop2.roam.corp.google.com (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4WC3kY5yGkzll9f8;
+	Sun, 30 Jun 2024 22:29:25 +0000 (UTC)
+From: Bart Van Assche <bvanassche@acm.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	linux-kernel@vger.kernel.org,
+	Bart Van Assche <bvanassche@acm.org>
+Subject: [PATCH 00/53] Let create*_workqueue() accept a printf-style format string
+Date: Sun, 30 Jun 2024 15:26:18 -0700
+Message-ID: <20240630222904.627462-1-bvanassche@acm.org>
+X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 
-In the process of adding support for shared IRQ pins, a scenario
-was accidentally created where adv7511_irq_process returned
-prematurely causing the EDID to fail randomly.
+Hi Tejun,
 
-Since the interrupt handler is broken up into two main helper functions,
-update both of them to treat the helper functions as IRQ handlers. These
-IRQ routines process their respective tasks as before, but if they
-determine that actual work was done, mark the respective IRQ status
-accordingly, and delay the check until everything has been processed.
+A significant amount of kernel code formats the workqueue name before it
+calls a workqueue creation function. This patch series simplifies such ke=
+rnel
+code and modifies the create*_workqueue() macros such that these accept a
+printf-style format string and argument list.
 
-This should guarantee the helper functions don't return prematurely
-while still returning proper values of either IRQ_HANDLED or IRQ_NONE.
+The approach of this patch series is as follows:
+1. Introduce the create*_workqueue2() macros that accept a printf-style
+   format string and argument list.
+2. Convert all workqueue creation calls that might pass a name that inclu=
+des
+   a formatting character from create*_workqueue(name) into
+   create*_workqueue2("%s", name).
+3. Convert all workqueue creation code that is preceded by workqueue name
+   formatting code into a create*_workqueue2(fmt, args) call.
+4. Convert all create*_workqueue2() calls into create*_workqueue() calls,
+   remove the original create*_workqueue() calls and rename the new
+   create*_workqueue2() macros into create*_workqueue().
 
-Reported-by: Liu Ying <victor.liu@nxp.com>
-Fixes: f3d9683346d6 ("drm/bridge: adv7511: Allow IRQ to share GPIO pins")
-Signed-off-by: Adam Ford <aford173@gmail.com>
-Tested-by: Liu Ying <victor.liu@nxp.com> # i.MX8MP EVK ADV7535 EDID retrieval w/o IRQ
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
-V3:  Remove unnecessary declaration of ret by evaluating the return
-     code of regmap_read directly.
+Please consider this patch series for the next merge window.
 
-V2:  Fix uninitialized cec_status
-     Cut back a little on error handling to return either IRQ_NONE or
-     IRQ_HANDLED.
+Thanks,
 
-diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511.h b/drivers/gpu/drm/bridge/adv7511/adv7511.h
-index ea271f62b214..ec0b7f3d889c 100644
---- a/drivers/gpu/drm/bridge/adv7511/adv7511.h
-+++ b/drivers/gpu/drm/bridge/adv7511/adv7511.h
-@@ -401,7 +401,7 @@ struct adv7511 {
- 
- #ifdef CONFIG_DRM_I2C_ADV7511_CEC
- int adv7511_cec_init(struct device *dev, struct adv7511 *adv7511);
--void adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1);
-+int adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1);
- #else
- static inline int adv7511_cec_init(struct device *dev, struct adv7511 *adv7511)
- {
-diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c b/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c
-index 44451a9658a3..2e9c88a2b5ed 100644
---- a/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c
-+++ b/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c
-@@ -119,7 +119,7 @@ static void adv7511_cec_rx(struct adv7511 *adv7511, int rx_buf)
- 	cec_received_msg(adv7511->cec_adap, &msg);
- }
- 
--void adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)
-+int adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)
- {
- 	unsigned int offset = adv7511->info->reg_cec_offset;
- 	const u32 irq_tx_mask = ADV7511_INT1_CEC_TX_READY |
-@@ -131,16 +131,19 @@ void adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)
- 	unsigned int rx_status;
- 	int rx_order[3] = { -1, -1, -1 };
- 	int i;
-+	int irq_status = IRQ_NONE;
- 
--	if (irq1 & irq_tx_mask)
-+	if (irq1 & irq_tx_mask) {
- 		adv_cec_tx_raw_status(adv7511, irq1);
-+		irq_status = IRQ_HANDLED;
-+	}
- 
- 	if (!(irq1 & irq_rx_mask))
--		return;
-+		return irq_status;
- 
- 	if (regmap_read(adv7511->regmap_cec,
- 			ADV7511_REG_CEC_RX_STATUS + offset, &rx_status))
--		return;
-+		return irq_status;
- 
- 	/*
- 	 * ADV7511_REG_CEC_RX_STATUS[5:0] contains the reception order of RX
-@@ -172,6 +175,8 @@ void adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)
- 
- 		adv7511_cec_rx(adv7511, rx_buf);
- 	}
-+
-+	return IRQ_HANDLED;
- }
- 
- static int adv7511_cec_adap_enable(struct cec_adapter *adap, bool enable)
-diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-index 66ccb61e2a66..c8d2c4a157b2 100644
---- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-+++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-@@ -469,6 +469,8 @@ static int adv7511_irq_process(struct adv7511 *adv7511, bool process_hpd)
- {
- 	unsigned int irq0, irq1;
- 	int ret;
-+	int cec_status = IRQ_NONE;
-+	int irq_status = IRQ_NONE;
- 
- 	ret = regmap_read(adv7511->regmap, ADV7511_REG_INT(0), &irq0);
- 	if (ret < 0)
-@@ -478,29 +480,31 @@ static int adv7511_irq_process(struct adv7511 *adv7511, bool process_hpd)
- 	if (ret < 0)
- 		return ret;
- 
--	/* If there is no IRQ to handle, exit indicating no IRQ data */
--	if (!(irq0 & (ADV7511_INT0_HPD | ADV7511_INT0_EDID_READY)) &&
--	    !(irq1 & ADV7511_INT1_DDC_ERROR))
--		return -ENODATA;
--
- 	regmap_write(adv7511->regmap, ADV7511_REG_INT(0), irq0);
- 	regmap_write(adv7511->regmap, ADV7511_REG_INT(1), irq1);
- 
--	if (process_hpd && irq0 & ADV7511_INT0_HPD && adv7511->bridge.encoder)
-+	if (process_hpd && irq0 & ADV7511_INT0_HPD && adv7511->bridge.encoder) {
- 		schedule_work(&adv7511->hpd_work);
-+		irq_status = IRQ_HANDLED;
-+	}
- 
- 	if (irq0 & ADV7511_INT0_EDID_READY || irq1 & ADV7511_INT1_DDC_ERROR) {
- 		adv7511->edid_read = true;
- 
- 		if (adv7511->i2c_main->irq)
- 			wake_up_all(&adv7511->wq);
-+		irq_status = IRQ_HANDLED;
- 	}
- 
- #ifdef CONFIG_DRM_I2C_ADV7511_CEC
--	adv7511_cec_irq_process(adv7511, irq1);
-+	cec_status = adv7511_cec_irq_process(adv7511, irq1);
- #endif
- 
--	return 0;
-+	/* If there is no IRQ to handle, exit indicating no IRQ data */
-+	if (irq_status == IRQ_HANDLED || cec_status == IRQ_HANDLED)
-+		return IRQ_HANDLED;
-+
-+	return IRQ_NONE;
- }
- 
- static irqreturn_t adv7511_irq_handler(int irq, void *devid)
-@@ -509,7 +513,7 @@ static irqreturn_t adv7511_irq_handler(int irq, void *devid)
- 	int ret;
- 
- 	ret = adv7511_irq_process(adv7511, true);
--	return ret < 0 ? IRQ_NONE : IRQ_HANDLED;
-+	return ret < 0 ? IRQ_NONE : ret;
- }
- 
- /* -----------------------------------------------------------------------------
--- 
-2.43.0
+Bart.
+
+Bart Van Assche (53):
+  workqueue: Introduce the create*_workqueue2() macros
+  dmaengine: idxd: Switch to create*_workqueue2()
+  drm/amdgpu: Switch to create*_workqueue2()
+  media: i2c: adv7511: Switch to create*_workqueue2()
+  media: cobalt: Switch to create*_workqueue2()
+  media: dm1105: Switch to create*_workqueue2()
+  misc: bcm_vk: Switch to create*_workqueue2()
+  net: amd-xgbe: Switch to create*_workqueue2()
+  net: atlantic: Switch to create*_workqueue2()
+  net: mvpp2: Switch to create*_workqueue2()
+  remoteproc: stm32: Switch to create*_workqueue2()
+  mm/z3fold: Switch to create*_workqueue2()
+  usb: typec: tcpm: Switch to create*_workqueue2()
+  net/qla3xxx: Switch to create*_workqueue2()
+  sfc: Switch to create*_workqueue2()
+  wifi: zd1211rw: Switch to create*_workqueue2()
+  power: supply: mt6370: Switch to create*_workqueue2()
+  remoteproc: imx_rproc: Switch to create*_workqueue2()
+  scsi: hisi_sas: Switch to create*_workqueue2()
+  scsi: mpt3sas: Switch to create*_workqueue2()
+  accel/habanalabs: Simplify the workqueue creation calls
+  crypto: safexcel - Simplify a create*_workqueue() call
+  pds_core: Simplify a create*_workqueue() call
+  net: bna: Simplify a create*_workqueue() call
+  net/mlx5: Simplify the create*_workqueue() calls
+  net: lan966x: Simplify a create*_workqueue() call
+  net: sparx5: Simplify the create*_workqueue() calls
+  net: mscc: ocelot: Simplify a create*_workqueue() call
+  net: qed: Simplify a create*_workqueue() call
+  net: stmmac: Simplify a create*_workqueue() call
+  nfc: mrvl: Simplify a create*_workqueue() call
+  scsi: ibmvscsi_tgt: Simplify a create*_workqueue() call
+  scsi: libsas: Simplify the create*_workqueue() calls
+  scsi: mpi3mr: Simplify a create*_workqueue() call
+  scsi: qedf: Simplify the create*_workqueue() calls
+  scsi: qedi: Simplify the create*_workqueue() calls
+  scsi: qla2xxx: Simplify the create*_workqueue() calls
+  scsi: qla4xxx: Simplify a create*_workqueue() call
+  scsi: vmw_pvscsi: Simplify a create*_workqueue() call
+  scsi: myrb: Simplify the create*_workqueue() calls
+  scsi: myrs: Simplify the create*_workqueue() calls
+  scsi: stex: Simplify the create*_workqueue() calls
+  scsi: fcoe: Simplify the create*_workqueue() calls
+  scsi: snic: Simplify the create*_workqueue() calls
+  scsi: scsi_transport_fc: Simplify the create*_workqueue() calls
+  scsi: core: Simplify the alloc_workqueue() calls
+  serial: max3100: Simplify a create*_workqueue() call
+  scsi: ufs: Simplify the create*_workqueue() calls
+  usb: typec: ucsi: Simplify a create*_workqueue() call
+  cifs: Simplify a create*_workqueue() call
+  mac802154: Simplify the create*_workqueue() calls
+  nfc: nci: Simplify the create*_workqueue() calls
+  workqueue: Rename create*_workqueue2() into create*_workqueue()
+
+ drivers/accel/habanalabs/common/device.c      | 25 +++++++++----------
+ drivers/crypto/inside-secure/safexcel.c       |  4 +--
+ drivers/dma/idxd/cdev.c                       |  2 +-
+ drivers/dma/idxd/init.c                       |  2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_reset.c     |  2 +-
+ drivers/media/i2c/adv7511-v4l2.c              |  2 +-
+ drivers/media/pci/cobalt/cobalt-driver.c      |  2 +-
+ drivers/media/pci/dm1105/dm1105.c             |  2 +-
+ drivers/misc/bcm-vk/bcm_vk_dev.c              |  2 +-
+ drivers/net/ethernet/amd/pds_core/main.c      |  7 ++----
+ drivers/net/ethernet/amd/xgbe/xgbe-drv.c      |  4 +--
+ .../net/ethernet/aquantia/atlantic/aq_main.c  |  2 +-
+ drivers/net/ethernet/brocade/bna/bnad.c       |  4 +--
+ drivers/net/ethernet/brocade/bna/bnad.h       |  1 -
+ .../net/ethernet/marvell/mvpp2/mvpp2_main.c   |  3 ++-
+ drivers/net/ethernet/mellanox/mlx5/core/cmd.c | 12 ++-------
+ .../net/ethernet/mellanox/mlx5/core/health.c  | 10 ++------
+ .../mellanox/mlx5/core/sf/vhca_event.c        |  5 ++--
+ .../microchip/lan966x/lan966x_ethtool.c       |  7 ++----
+ .../microchip/sparx5/sparx5_ethtool.c         |  6 ++---
+ .../ethernet/microchip/sparx5/sparx5_main.c   |  6 ++---
+ drivers/net/ethernet/mscc/ocelot_stats.c      |  6 ++---
+ drivers/net/ethernet/qlogic/qed/qed_sriov.c   |  9 +++----
+ drivers/net/ethernet/qlogic/qla3xxx.c         |  2 +-
+ drivers/net/ethernet/sfc/efx_common.c         |  3 ++-
+ drivers/net/ethernet/sfc/falcon/efx.c         |  3 ++-
+ drivers/net/ethernet/sfc/siena/efx_common.c   |  3 ++-
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h  |  1 -
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 11 +++-----
+ drivers/net/wireless/zydas/zd1211rw/zd_usb.c  |  2 +-
+ drivers/nfc/nfcmrvl/fw_dnld.c                 |  8 +++---
+ drivers/power/supply/mt6370-charger.c         |  2 +-
+ drivers/remoteproc/imx_rproc.c                |  2 +-
+ drivers/remoteproc/stm32_rproc.c              |  2 +-
+ drivers/scsi/fcoe/fcoe_sysfs.c                |  7 +-----
+ drivers/scsi/hisi_sas/hisi_sas_main.c         |  2 +-
+ drivers/scsi/hosts.c                          |  9 +++----
+ drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c      |  4 +--
+ drivers/scsi/libsas/sas_init.c                |  9 +++----
+ drivers/scsi/mpi3mr/mpi3mr_fw.c               |  4 +--
+ drivers/scsi/mpt3sas/mpt3sas_base.c           |  4 +--
+ drivers/scsi/myrb.c                           |  5 ++--
+ drivers/scsi/myrb.h                           |  1 -
+ drivers/scsi/myrs.c                           |  5 ++--
+ drivers/scsi/myrs.h                           |  1 -
+ drivers/scsi/qedf/qedf_main.c                 | 17 +++++--------
+ drivers/scsi/qedi/qedi_main.c                 |  8 +++---
+ drivers/scsi/qla2xxx/qla_os.c                 | 10 ++++----
+ drivers/scsi/qla4xxx/ql4_os.c                 |  5 ++--
+ drivers/scsi/scsi_transport_fc.c              |  4 +--
+ drivers/scsi/snic/snic_main.c                 |  5 ++--
+ drivers/scsi/stex.c                           |  6 ++---
+ drivers/scsi/vmw_pvscsi.c                     |  8 ++----
+ drivers/tty/serial/max3100.c                  |  4 +--
+ drivers/ufs/core/ufshcd.c                     | 13 +++-------
+ drivers/usb/typec/tcpm/fusb302.c              |  2 +-
+ drivers/usb/typec/ucsi/ucsi.c                 |  9 ++-----
+ fs/smb/client/smbdirect.c                     |  3 +--
+ include/linux/mlx5/driver.h                   |  5 ----
+ include/linux/workqueue.h                     | 15 +++++------
+ include/scsi/fcoe_sysfs.h                     |  1 -
+ include/scsi/scsi_host.h                      |  1 -
+ include/scsi/scsi_transport_fc.h              |  3 ---
+ mm/z3fold.c                                   |  4 +--
+ net/mac802154/main.c                          |  7 +++---
+ net/nfc/nci/core.c                            | 13 +++++-----
+ 66 files changed, 135 insertions(+), 223 deletions(-)
 
 
