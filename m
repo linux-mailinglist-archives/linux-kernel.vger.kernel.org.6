@@ -1,111 +1,146 @@
-Return-Path: <linux-kernel+bounces-235142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC61491D0AF
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 10:59:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E191F91D0B6
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 10:59:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9F591C20B4E
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 08:59:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C8F1281BFF
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 08:59:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F57712CD96;
-	Sun, 30 Jun 2024 08:59:01 +0000 (UTC)
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A1212DD90;
+	Sun, 30 Jun 2024 08:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V9k9rd3a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A7712C48B
-	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 08:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F80512CD96;
+	Sun, 30 Jun 2024 08:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719737941; cv=none; b=SfOQ3ySHQgzNYYhpef7/3H6hV7gwbIDcbb2jOc5HyoF4c11qnwJW2WLsoL1NI2uTtWexbbScFKMw6zqI4DPcq+vSGPXtnW0RK93V/4w0wtpDqaHTwsalBF2l7kqMfBp1a2XVZAcep9PNiNZgbxey41y97Enqv5TfyLGgsWoVqKw=
+	t=1719737969; cv=none; b=TzqrbEEhzXuoYHC5s6oFuM/0AY27OtJPdPxPnWzi/j81bDMDohyiuH3ftUmTUpKBarE63E6/kFd3+9l2X3R0gjmiU49ZHiFLQGoWvcnPfVS+xFOFBRUCc/m3OaqiuditT8x5/snDwd5Oh2oUo126OT2gEs7ICOcrGSfUCKlw1bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719737941; c=relaxed/simple;
-	bh=Vu0xPU7YvANQvoF5JV0ltf4MRq5rP4MWjiT29tyW7Ec=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tni1vm5KOGd4YyRmtpJbfn3tyQx5Ie1OQ+QQuX43PGoiHJ8X4lCr+N6LTUr3kwTdfc5wfooWj0UU+/rA1GwztaStwYxjt1m1bgqscPcjj7gH/wUPnkqzjzqToytB0yxIYrK/wuXlnjuonAtpCuqURfEPtRvD6gw0o74Wl+XtTy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42110872bf9so2454565e9.3
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 01:58:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719737938; x=1720342738;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E81u6EdEvG55UDl4LbxoEBMbepuHWzs/Ve/isPi70fs=;
-        b=ECHQCuVi8FbTh87cpWkmRLtc0z852gyUkf/+Hsn9KrLonnu5xykq2MYN5BZFS7rRHh
-         QjAmZTBQL0gC4yTLNKu9A9h4YvnHDldB45HiycVcSbn4TArLEyY2nXQY72dLemODJ4/k
-         56hdSzg52cgo960c3w+eQmb6MHtSZsR+X07mFcffttJvtWnfo3eQ4ukgqWnWiUxIdaqI
-         hK+sE8PRDCM8WyMgwoNMrOPsrZEY44B0xz6ukegmEP+jtADLOyAU66zqInRYT4lj2yY8
-         pTimpUIiHlVbMn/ud0q7n+b3ny2MUV6LqenoFHZpiU1lhrDhudQe9nBI6r43OKRqF/0j
-         iJaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8Dq112uzK0rN+jeWzT9vYDecbSniHLyM7sHOGaz6ZlzI2pf3W/XUaENKgKwOQw0mi1pkAqYF8TD8GzntM4uJI2CgYFMgOLq0yKvij
-X-Gm-Message-State: AOJu0YwYVME0wzkatwnR1aXyxINt8/jaluKo1IgB112LfW7DeDmKRO1b
-	G/BmTCeCGqrFArQfBG7NQmO28Zh1RKzL8PmDb1cTBRlM4FxCUFpQ
-X-Google-Smtp-Source: AGHT+IEGAsRDUvjWOLgC/54rILbb6FRNzUF/Ag71hPxBY+9UOWOGXWoSTFhJ7i9Ps8ADcRPTERUqhw==
-X-Received: by 2002:a05:600c:3b05:b0:425:69cb:548b with SMTP id 5b1f17b1804b1-4257a15ac67mr19343605e9.4.1719737937727;
-        Sun, 30 Jun 2024 01:58:57 -0700 (PDT)
-Received: from [10.50.4.180] (bzq-84-110-32-226.static-ip.bezeqint.net. [84.110.32.226])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0cd56dsm6890447f8f.19.2024.06.30.01.58.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 30 Jun 2024 01:58:56 -0700 (PDT)
-Message-ID: <0779b376-38e3-42ef-b32a-a9cfab2749f2@grimberg.me>
-Date: Sun, 30 Jun 2024 11:58:55 +0300
+	s=arc-20240116; t=1719737969; c=relaxed/simple;
+	bh=ubd/LNdUMtaC79ActlqFB4RXyv5gk0dFugNatKOZ0lc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ViSrkGLtK/4OR/oxH3pNPg2DnjHS29EruAC1xL/uTyXzn2BH0/2cqR0WMdBOTGG89xWUz+VPmqdM6/eWCV45Fmq18XgbY/yxltW4se6Bf9GE2UCe+NGb5O2n5xCZGU5nNHMAQjGICzGdK7pM+O5pPlJZ8cYV1DuHLsHuf/XJlrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V9k9rd3a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9C963C2BD10;
+	Sun, 30 Jun 2024 08:59:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719737968;
+	bh=ubd/LNdUMtaC79ActlqFB4RXyv5gk0dFugNatKOZ0lc=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=V9k9rd3aMNBdiv2CeX+FLhPGMWRsQA26cAO9/Um4eSB+PDrMQFfeAHgAfu8RMjVuw
+	 akIb2r2rwBEkQR+x7K3zgzQMNs5laNrZ1hE2Vlsc5vwbWXKTj9PY/TowHvm+0MBpCV
+	 dZlWMeFNZRp4Yr4FJNP9C0FVS1C9aUXA9lZ2lznOTz/mtO/9jsdY9Dd5ZG5QAwhCyi
+	 3iqPwVI6j9XqFOa7hrGcOosm9lrQun/H5fUe44011qT0SApGE7RR9lPNV6R8VdNrG3
+	 Ztrnzt/migNBD7g2ruySS9QXshJI+R5/FM2rSVySJjfiGERNp1ArMCuLQqEeQ4BIwv
+	 MezATS5umDBlg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C275C30653;
+	Sun, 30 Jun 2024 08:59:28 +0000 (UTC)
+From: Xilin Wu via B4 Relay <devnull+wuxilin123.gmail.com@kernel.org>
+Subject: [PATCH v3 0/2] Introduce ASUS Vivobook S 15
+Date: Sun, 30 Jun 2024 16:59:25 +0800
+Message-Id: <20240630-asus-vivobook-s15-v3-0-bce7ca4d9683@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] nvmet: support polling task for RDMA and TCP
-To: Ping Gan <jacky_gam_2001@163.com>, hch@lst.de, kch@nvidia.com,
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: ping.gan@dell.com
-References: <20240626082823.48326-1-jacky_gam_2001@163.com>
-Content-Language: en-US
-From: Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <20240626082823.48326-1-jacky_gam_2001@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAG0egWYC/4WNwQ6CMBAFf4X07BraQimc/A/DocUCG4WarjYaw
+ r9bOHnS47xk5i2MXEBHrMkWFlxEQj8nkIeMdaOZBwd4ScxELopcCQ2GngQRo7feX4F4CZUwRV1
+ pJbnSLHn34Hp87c1zm3hEevjw3i8i39ZftcghB2G4K8qKW23saZgM3o6dn7b4P7MWnZV1L3uu1
+ JfZruv6AXym0OXsAAAA
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>, 
+ Johan Hovold <johan+linaro@kernel.org>, 
+ Elliot Berman <quic_eberman@quicinc.com>, Xilin Wu <wuxilin123@gmail.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1719737967; l=2142;
+ i=wuxilin123@gmail.com; s=20240424; h=from:subject:message-id;
+ bh=ubd/LNdUMtaC79ActlqFB4RXyv5gk0dFugNatKOZ0lc=;
+ b=mjXYYhBhAvSnFdkC/xu3h2iXAxUt1jkkdnCu202fD7SdH7Ozr+FvOh+mE48htsyrq2cWVIW30
+ sc93YHtLs9CAVEOtrxx3mkcit7d+/iAI6CKXa9fFnOU6OoYlMxwPQkI
+X-Developer-Key: i=wuxilin123@gmail.com; a=ed25519;
+ pk=vPnxeJnlD/PfEbyQPZzaay5ezxI/lMrke7qXy31lSM8=
+X-Endpoint-Received: by B4 Relay for wuxilin123@gmail.com/20240424 with
+ auth_id=157
+X-Original-From: Xilin Wu <wuxilin123@gmail.com>
+Reply-To: wuxilin123@gmail.com
 
-Hey Ping Gan,
+ASUS Vivobook S 15 is a laptop based on the Qualcomm Snapdragon X Elite
+SoC (X1E78100). This series adds initial support for the device.
+
+Currently working features:
+
+- CPU frequency scaling up to 3.4GHz
+- NVMe storage on PCIe 6a (capable of Gen4x4, currently limited to Gen4x2)
+- Keyboard and touchpad
+- WCN7850 Wi-Fi
+- Two Type-C ports on the left side
+- internal eDP display
+- ADSP and CDSP remoteprocs
+
+Some features which can get working with out of tree patches:
+
+- GPU [1]
+- Bluetooth [2]
+
+Notably not working features:
+
+- Battery monitoring via battmgr
+- Orientation switching and altmode on the Type-C ports (USB4 retimer driver needed?)
+- Two USB Type-A ports on the right side (dwc3 multiport controller)
+- Front camera
+- SD card slot
+- HDMI connector (using a Parade PS186 DP 1.4 to HDMI 2.0 converter) 
+- USB4 and the retimer (Parade PS8830?)
+- Anything using the EC
+
+Dump of the ACPI tables could be found here: [3]
+
+[1] https://lore.kernel.org/all/20240623110753.141400-1-quic_akhilpo@quicinc.com/
+[2] https://git.codelinaro.org/abel.vesa/linux/-/commits/topic/b4/x1e80100-bt
+[3] https://github.com/aarch64-laptops/build/pull/103
+
+Signed-off-by: Xilin Wu <wuxilin123@gmail.com>
+---
+Changes in v3:
+- Add comment detailing pmic-glink connector mapping (Konrad)
+- Minor changes in dts (Konrad)
+- Link to v2: https://lore.kernel.org/r/20240628-asus-vivobook-s15-v1-0-92cb39f3f166@gmail.com
+
+Changes in v2:
+- Fix accidentally changed Makefile
+- Link to v1: https://lore.kernel.org/r/20240628-asus-vivobook-s15-v1-0-2a1e4571b8ab@gmail.com
+
+---
+Xilin Wu (2):
+      dt-bindings: arm: qcom: Add ASUS Vivobook S 15
+      arm64: dts: qcom: Add device tree for ASUS Vivobook S 15
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |   1 +
+ arch/arm64/boot/dts/qcom/Makefile                  |   1 +
+ .../boot/dts/qcom/x1e80100-asus-vivobook-s15.dts   | 616 +++++++++++++++++++++
+ 3 files changed, 618 insertions(+)
+---
+base-commit: 642a16ca7994a50d7de85715996a8ce171a5bdfb
+change-id: 20240628-asus-vivobook-s15-72a497863168
+
+Best regards,
+-- 
+Xilin Wu <wuxilin123@gmail.com>
 
 
-On 26/06/2024 11:28, Ping Gan wrote:
-> When running nvmf on SMP platform, current nvme target's RDMA and
-> TCP use kworker to handle IO. But if there is other high workload
-> in the system(eg: on kubernetes), the competition between the
-> kworker and other workload is very radical. And since the kworker
-> is scheduled by OS randomly, it's difficult to control OS resource
-> and also tune the performance. If target support to use delicated
-> polling task to handle IO, it's useful to control OS resource and
-> gain good performance. So it makes sense to add polling task in
-> rdma-rdma and rdma-tcp modules.
-
-This is NOT the way to go here.
-
-Both rdma and tcp are driven from workqueue context, which are bound 
-workqueues.
-
-So there are two ways to go here:
-1. Add generic port cpuset and use that to direct traffic to the 
-appropriate set of cores
-(i.e. select an appropriate comp_vector for rdma and add an appropriate 
-steering rule
-for tcp).
-2. Add options to rdma/tcp to use UNBOUND workqueues, and allow users to 
-control
-these UNBOUND workqueues cpumask via sysfs.
-
-(2) will not control interrupts to steer to other workloads cpus, but 
-the handlers may
-run on a set of dedicated cpus.
-
-(1) is a better solution, but harder to implement.
-
-You also should look into nvmet-fc as well (and nvmet-loop for that matter).
 
