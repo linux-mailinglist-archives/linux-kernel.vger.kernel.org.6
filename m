@@ -1,63 +1,49 @@
-Return-Path: <linux-kernel+bounces-235266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A8BA91D291
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 18:01:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A8B291D30E
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 19:27:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2C9C28169C
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 16:01:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6F4A1C2091C
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 17:27:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3F0F15534E;
-	Sun, 30 Jun 2024 16:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="UNNtXGRc"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29314155A5D;
+	Sun, 30 Jun 2024 17:27:33 +0000 (UTC)
+Received: from mail-m17214.xmail.ntesmail.com (mail-m17214.xmail.ntesmail.com [45.195.17.214])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C08913DBBE;
-	Sun, 30 Jun 2024 16:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723AF13D242;
+	Sun, 30 Jun 2024 17:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.195.17.214
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719763250; cv=none; b=XwNBE/BYAvm8JImQ4sZaKZ5Bcx0Pv2oGEtxHYFaZgANmEFy55wbJpjLcJgdWh5S22cf3QAAPNwAr0kj18lupt81+2yg9vlI2uqGBytloJBAW1Tmq6t9VsI5SYqbg2/Hu8ubk/pSlTnNxC3Ezt0ROg2V3rvgbMisqM8+QYH6RruM=
+	t=1719768452; cv=none; b=G8sLT1Cv5CS2b+N0Yw2CXcCQXzY/mHdlvWkqomN1+I++xdXmP2yz8XBd/djdfHr3MnZ5WQepR6W+rR6Nm/vYGDq3vQeeYTYV+c3wJKRotfdus8ooM1D+Oi2QzNqcpNbCpDKR90m10GLEQqIIqlnoxzNH1UcOD/4HZoHQ5aAZfXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719763250; c=relaxed/simple;
-	bh=UXJgWksWglnFs3muIQpJ7TNHZ3RJRjmZTfDMGVRRZcg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bTEe4YVmtJ3SPpghFnvaqRuH170Vf4SOgfBMdc59JNvSUo7v2j7AFooriMSC+zf9gh9XkPm4RDecnL03aFx4rNtY07IA0ifz8/tJawOKgzS7PRLsWxM+wXsrrAj46zYkGvaom88r9WMzFizZLhTveCOEjXyjQCH8LtusmXmen5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=UNNtXGRc; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
-From: Dragan Simic <dsimic@manjaro.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1719763246;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Guv1sE7D+9DIv1Ejtj1tQsUSVZc3puEsRvEvnQebVMM=;
-	b=UNNtXGRc4LwBEU3X/kQ1BtSCnp6NZxC8faJEiyINdG8haStOfiAW+kHXJo8pvo0THTEFb6
-	9BX5+/HdxOX/AokQUqQ8q93xef5QKVG8i53ZzJuB/wfzG6YHO/6Tg7OZ6qKgExk9Z/xw0Q
-	oHDCPIIictYkSM5V8atUmi2cDiv0O+qUsVDpNSfLDi6eAWWAIJsr0jkawJP42PIyrNJQX5
-	UxGqRWGSHADptp6iqRJ/4yeegnU5kYk+0V6SROa3DV8WldAkZtqmX6VzolIU7LrNfMgr41
-	lfCbx0RnbucyTT9X9R2El4jqllrce+woVXrC4gXNUMWQ794LwyFNwd7lRKFVKw==
-To: linux-rockchip@lists.infradead.org
-Cc: heiko@sntech.de,
+	s=arc-20240116; t=1719768452; c=relaxed/simple;
+	bh=A7lZXB+YNdmG407zrnZzFmINSND5c9ARdDF8hprFWWo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hOLxGCPAyIrtepTUlSWftEpeck3EuPsGw75zRxOKDcjTLfQ1HMZuWPm8evCuFMi6hgeM8CTQGHK0ht/42Y8rG7Y+ZfUi2e0nKmXc0E47dHnonISR9VppgD31X6NHcVt9JAZ+lZ/4vd4C58Eh0P+OtwT+aDvb5VLwDAojyliWtSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.195.17.214
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from amadeus-Vostro-3710.lan (unknown [IPV6:240e:3b3:2c01:1720:3110:52ea:d52a:84f0])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id 606D67E0129;
+	Sun, 30 Jun 2024 23:00:14 +0800 (CST)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
+	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	didi.debian@cknow.org,
-	jonas@kwiboo.se
-Subject: [PATCH v3 2/2] arm64: dts: rockchip: Update GPU OPP voltages in RK356x SoC dtsi
-Date: Sun, 30 Jun 2024 18:00:41 +0200
-Message-Id: <80301764e8983c8410c806ed2256403823709897.1719763100.git.dsimic@manjaro.org>
-In-Reply-To: <cover.1719763100.git.dsimic@manjaro.org>
-References: <cover.1719763100.git.dsimic@manjaro.org>
+	devicetree@vger.kernel.org,
+	Chukun Pan <amadeus@jmu.edu.cn>
+Subject: [PATCH v2 0/9]  arm64: dts: rockchip: fixes support for Lunzn Fastrhino R6xS
+Date: Sun, 30 Jun 2024 23:00:01 +0800
+Message-Id: <20240630150010.55729-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,64 +51,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCSh8eVkwdQktCQ0tCHxlOSFYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlJT0seQUgZSEFJGEtKQUpMSUtBSEpKS0FOSR4aQR9OSRpBQ08dS1lXWRYaDx
+	IVHRRZQVlPS0hVSktJSEJLQ1VKS0tVSkJZBg++
+X-HM-Tid: 0a9069a9329b03a2kunm606d67e0129
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OUk6MAw5GjNNIxwZLTBPSCsD
+	TEMaFBFVSlVKTEpCTE5CTUpPQklCVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUlP
+	Sx5BSBlIQUkYS0pBSkxJS0FISkpLQU5JHhpBH05JGkFDTx1LWVdZCAFZQUlJSEw3Bg++
 
-Update the values for the exact Rockchip RK356x GPU OPP voltages and the
-lower limits for the GPU OPP voltage ranges, using the most conservative
-values (i.e. the highest per-OPP voltages) found in the vendor kernel source
-(cf. downstream commit f8b9431ee38e ("arm64: dts: rockchip: rk3568: support
-adjust opp-table by otp")). [1][2]
+Changes in v2:
+  Separate commits for regulator and supply changes
+  Separate commits for R68S Ethernet PHY changes
 
-Using the most conservative per-OPP voltages ensures reliable GPU operation
-regardless of the actual GPU binning, with the downside of possibly using
-a bit more power than absolutely needed.
+Chukun Pan (9):
+  arm64: dts: rockchip: fix regulator name for Lunzn Fastrhino R6xS
+  arm64: dts: rockchip: fix usb regulator for Lunzn Fastrhino R6xS
+  arm64: dts: rockchip: fix pmu_io supply for Lunzn Fastrhino R6xS
+  arm64: dts: rockchip: remove unused usb2 nodes for Lunzn Fastrhino
+    R6xS
+  arm64: dts: rockchip: disable display subsystem for Lunzn Fastrhino
+    R6xS
+  arm64: dts: rockchip: fixes PHY reset for Lunzn Fastrhino R68S
+  arm64: dts: rockchip: use generic Ethernet PHY reset bindings for
+    Lunzn Fastrhino R68S
+  arm64: dts: rockchip: remove useless tx/rx_delay for Lunzn Fastrhino
+    R68S
+  arm64: dts: rockchip: Enable UHS-I SDR-50 for Lunzn FastRhino R66S
 
-[1] https://github.com/rockchip-linux/kernel/commit/f8b9431ee38ed561650be7092ab93f564598daa9
-[2] https://raw.githubusercontent.com/rockchip-linux/kernel/f8b9431ee38ed561650be7092ab93f564598daa9/arch/arm64/boot/dts/rockchip/rk3568.dtsi
+ .../dts/rockchip/rk3568-fastrhino-r66s.dts    |  6 ++-
+ .../dts/rockchip/rk3568-fastrhino-r66s.dtsi   | 48 ++++++-------------
+ .../dts/rockchip/rk3568-fastrhino-r68s.dts    | 30 ++++++------
+ 3 files changed, 33 insertions(+), 51 deletions(-)
 
-Suggested-by: Diederik de Haas <didi.debian@cknow.org>
-Helped-by: Jonas Karlman <jonas@kwiboo.se>
-Signed-off-by: Dragan Simic <dsimic@manjaro.org>
----
- arch/arm64/boot/dts/rockchip/rk356x.dtsi | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+-- 
+2.25.1
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk356x.dtsi b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
-index ec772bce359a..e3c77dabc72b 100644
---- a/arch/arm64/boot/dts/rockchip/rk356x.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
-@@ -195,27 +195,27 @@ gpu_opp_table: opp-table-1 {
- 
- 		opp-200000000 {
- 			opp-hz = /bits/ 64 <200000000>;
--			opp-microvolt = <825000 825000 1000000>;
-+			opp-microvolt = <850000 850000 1000000>;
- 		};
- 
- 		opp-300000000 {
- 			opp-hz = /bits/ 64 <300000000>;
--			opp-microvolt = <825000 825000 1000000>;
-+			opp-microvolt = <850000 850000 1000000>;
- 		};
- 
- 		opp-400000000 {
- 			opp-hz = /bits/ 64 <400000000>;
--			opp-microvolt = <825000 825000 1000000>;
-+			opp-microvolt = <850000 850000 1000000>;
- 		};
- 
- 		opp-600000000 {
- 			opp-hz = /bits/ 64 <600000000>;
--			opp-microvolt = <825000 825000 1000000>;
-+			opp-microvolt = <900000 900000 1000000>;
- 		};
- 
- 		opp-700000000 {
- 			opp-hz = /bits/ 64 <700000000>;
--			opp-microvolt = <900000 900000 1000000>;
-+			opp-microvolt = <950000 950000 1000000>;
- 		};
- 
- 		opp-800000000 {
 
