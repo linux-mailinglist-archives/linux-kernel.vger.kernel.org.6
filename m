@@ -1,145 +1,96 @@
-Return-Path: <linux-kernel+bounces-235256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAEF691D252
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 17:27:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 939F491D255
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 17:34:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E927B209D2
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 15:27:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C52C31C2092D
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 15:34:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F970153517;
-	Sun, 30 Jun 2024 15:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A7C153823;
+	Sun, 30 Jun 2024 15:34:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dpolakovic.space header.i=@dpolakovic.space header.b="Lpj97W8C"
-Received: from m1-out-mua-14.websupport.sk (m1-out-mua-14.websupport.sk [45.13.137.23])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fc7zUtxh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF8F1527AF
-	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 15:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.13.137.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C792282F1;
+	Sun, 30 Jun 2024 15:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719761253; cv=none; b=XEa97OT7i4Abi33MECTXpb68/TtJJKpuv0ugxgkcKZdkUOZLt2cxZdyr0174Bf3CSMaTmkwYs9MSbGpMiU+4otTmW5stiA11FdNBe96vES3LWm7Pjk/e8gKjzTJqafnGBBxqd5yWarEaPhTb/fBFUKz7EcbrOj/XDquDZ1ptHtE=
+	t=1719761646; cv=none; b=MRj/EOB1XPsKsrk9O9Rd9om8mEw01PihpQzraOfk1MYoDrHrlMbrAM0yAVrAF61um6GNOicYm9r/JShO0RQntvcRU6zuFGtJ+G6+cBR0+J0FNRubE9GavlYzsxpNLu3V4LySJLXNeqLZCIvcXHLEBUQ6t2RJH2dh512d8PqcgTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719761253; c=relaxed/simple;
-	bh=hVsbcKrwrQ3OoEgw8Y8zg8NGLkzoqomWNcuzWMWboO8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RZdjDQEV+fzPtBZGeeg3XsSO/j3DQ7Hkk2e+V0IPZWK3bJEtrnfDsBVAxtbLZJc1YMo0wEbSXtVD5FvXsgTRxdWwJfN3wWkGXL3PXcwqfDYFKCP7hr5t8FgAxNSOY1xx6Qbm6vI769Kx8iWGh0meq0P/Lc7oh6HgNGAudRl3pts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dpolakovic.space; spf=pass smtp.mailfrom=dpolakovic.space; dkim=pass (2048-bit key) header.d=dpolakovic.space header.i=@dpolakovic.space header.b=Lpj97W8C; arc=none smtp.client-ip=45.13.137.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dpolakovic.space
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dpolakovic.space
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dpolakovic.space;
-	s=mail; t=1719761246;
-	bh=hVsbcKrwrQ3OoEgw8Y8zg8NGLkzoqomWNcuzWMWboO8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Lpj97W8CtjWQ6T/Mp78pXlScLJ8uNwxDU3tYDRoz8lMzSvkmI/bC1N74WRkqztDnH
-	 Q4eTjhDOYiEKvon8OChNtkn/5gp7X5xtpLcegWnrfyZD6SD/arm0k/ocRoyENnlufo
-	 idKgZ3wKwLs1Vdl7Wift/ng5VthhHUgCj++yFzE1nkeWw7eug18LnK7BbK4LhIZlEU
-	 kNdyOHsh+pK0yL1TLhLnTgehuF/KqyLfxtHo1XBr53HSWNvmMp3mKTGohwxMpNJVyt
-	 aXiwz4QLIODByxYzUSzURncdch5jfWWg38u2AI2E7DcYFM27Y41frpRYxDqAvtApX9
-	 7v8YVYF2ptCKQ==
-Received: from m1-u5-ing.websupport.sk (unknown [10.30.5.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	by m1-out-mua-14.websupport.sk (Postfix) with ESMTPS id 4WBtMf6Hhqz1G26;
-	Sun, 30 Jun 2024 17:27:26 +0200 (CEST)
-X-Authenticated-Sender: email@dpolakovic.space
-Authentication-Results: m1-u5-ing.websupport.sk;
-	auth=pass smtp.auth=email@dpolakovic.space smtp.mailfrom=email@dpolakovic.space
-Received: from [192.168.1.29] (static-bband-88.87-197-167.telecom.sk [87.197.167.88])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: email@dpolakovic.space)
-	by m1-u5-ing.websupport.sk (Postfix) with ESMTPSA id 4WBtMd2g8fzY9Ml;
-	Sun, 30 Jun 2024 17:27:25 +0200 (CEST)
-Message-ID: <9e3b638d-76f2-8520-2a24-7de0cd0bc149@dpolakovic.space>
-Date: Sun, 30 Jun 2024 17:27:24 +0200
+	s=arc-20240116; t=1719761646; c=relaxed/simple;
+	bh=oBsDaIgWwOPsN5NcDJk1MTGtGIh9YzY81gZmoTW+7Vg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Bh+j8JOGxXoenUlwVcBOBqrtMZYqzYRnkarx95uEOfIk8gRJTJBFR/cB/6qjrOKxRujyqUwuUTzZXQJbozT/MTXYghHuFxo7hzXFHVM9bLEegRiW/r/em0D+Pz3tptR6oieFM3pUohqf8d+4X21w7VWA05s3hKAvxBDYfuiPMuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fc7zUtxh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62F8EC2BD10;
+	Sun, 30 Jun 2024 15:34:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719761645;
+	bh=oBsDaIgWwOPsN5NcDJk1MTGtGIh9YzY81gZmoTW+7Vg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Fc7zUtxhDWhgTkv4LQ29OHLe2IiluCwDUiWsZj2GETG+towrxRViQgzgjTuWsPozG
+	 kRdD9A9a63BkxcSMjqUA9UV8+5S6oPqO1Aj7umyUgMuSYxLJPv67BixCDpWvVpuhaS
+	 sNT/a+7/Em3FM89w1RU0k9DQ2aB6dvUIj+ZBa1AC+dSbP0WAGZgjeQr4wRF82iVNIj
+	 7YeR1cYPzf4+nzSMthbtVEjXpnjkRCmQJwK/PrALsN09FA4IE/MGXmZfoXZJHsHA4j
+	 Aiv9JBtUWJa5h/iAou+T8cEu2ymT6JXb6b/gFt/PfD/fjcVpmr+ehXXV8hTDlrKu8X
+	 tFzix+OVM05Xw==
+Received: by wens.tw (Postfix, from userid 1000)
+	id 58B8C5FD47; Sun, 30 Jun 2024 23:34:03 +0800 (CST)
+From: Chen-Yu Tsai <wens@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Frank Oltmanns <frank@oltmanns.dev>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	=?UTF-8?q?M=C3=A5ns=20Rullg=C3=A5rd?= <mans@mansr.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	"Robert J. Pafford" <pafford.9@buckeyemail.osu.edu>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] clk: sunxi-ng: common: Don't call hw_to_ccu_common on hw without common
+Date: Sun, 30 Jun 2024 23:34:02 +0800
+Message-Id: <171976163761.1183893.10044135406471629615.b4-ty@csie.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240623-sunxi-ng_fix_common_probe-v1-1-7c97e32824a1@oltmanns.dev>
+References: <20240623-sunxi-ng_fix_common_probe-v1-1-7c97e32824a1@oltmanns.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: proposition for fixing Y292B bug
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Theodore Ts'o <tytso@mit.edu>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Andrew Morton <akpm@linux-foundation.org>, "H. Peter Anvin" <hpa@zytor.com>
-References: <3be3235a-dea7-a5ca-b5ea-4047bdeb695d@dpolakovic.space>
- <ZoFgga45QCh2uA0i@archie.me>
-Content-Language: en-US
-From: David Polakovic <email@dpolakovic.space>
-In-Reply-To: <ZoFgga45QCh2uA0i@archie.me>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Action: no action
-X-Out-Spamd-Result: default: False [1.90 / 1000.00];
-	INTRODUCTION(2.00)[];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com,vger.kernel.org];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	ARC_NA(0.00)[];
-	RCVD_COUNT_ZERO(0.00)[0];
-	HAS_X_AS(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:6855, ipnet:87.197.0.0/16, country:SK];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+]
-X-Out-Rspamd-Queue-Id: 4WBtMd2g8fzY9Ml
-X-Out-Rspamd-Server: m1-rspamd-out-5
-Feedback-ID: m1:dpolakovic.spac
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Thanks for reply.
+From: Chen-Yu Tsai <wens@csie.org>
 
-My proposed solution was to create this BigInt datatype, which
-stores the value in array. The functions for division, multiplication,
-addition, subtraction and comparison could be stored in separate
-".h" library for manipulation with BigInt datatype. The paper speaks
-more in detail.
+On Sun, 23 Jun 2024 10:45:58 +0200, Frank Oltmanns wrote:
+> In order to set the rate range of a hw sunxi_ccu_probe calls
+> hw_to_ccu_common() assuming all entries in desc->ccu_clks are contained
+> in a ccu_common struct. This assumption is incorrect and, in
+> consequence, causes invalid pointer de-references.
+> 
+> Remove the faulty call. Instead, add one more loop that iterates over
+> the ccu_clks and sets the rate range, if required.
+> 
+> [...]
 
-And yes, this truly is an userspace solution, but for kernel space
-implementation I have zero to none experience. Therefore I wrote
-here.
+Applied to clk-fixes-for-6.10 in git@github.com:linux-sunxi/linux-sunxi.git, thanks!
 
-dpo
+[1/1] clk: sunxi-ng: common: Don't call hw_to_ccu_common on hw without common
+      commit: ea977d742507e534d9fe4f4d74256f6b7f589338
 
-
-On 6/30/24 15:41, Bagas Sanjaya wrote:
-> On Sun, Jun 30, 2024 at 10:05:18AM +0200, David Polakovic wrote:
->> Hello dear developers and enthusiasts.
->>
->> My name is David and recently I wrote a blog post about "necessity"
->> of fixing 64-bit signed integer overflow of time_t, sometime in year
->> 292 billion. I proposed this to simply have software complete solution
->> for timekeeping. The blog had somewhat nice feedback and few people
->> told me to write to your mailing list.
->>
->> As I mention in the list, I am no way experienced enough in kernel
->> space to turn this into full merge request, so I post it to you and
->> if anyone would like to build on this idea, it is GPLd for your convenience.
->>
->> Any feedback is highly appreciated so please, include me in CC's.
->>
->> The blog is written with funny attitude, but it is in no way meant to
->> be joke, parody or insult.
->> https://dpolakovic.space/blogs/y292b
-> Reading your paper, it seems like the userspace solution is to introduce bigger
-> int type (i.e. int128/bigint); and you want the same to apply to kernel, right?
-> Also, if that happens, I think C also needs built-in bigint type.
->
-> Confused...
->
+Best regards,
+-- 
+Chen-Yu Tsai <wens@csie.org>
 
