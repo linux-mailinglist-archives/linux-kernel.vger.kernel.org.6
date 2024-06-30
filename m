@@ -1,88 +1,118 @@
-Return-Path: <linux-kernel+bounces-235156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6176091D0D5
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 11:34:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE10791D0C7
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 11:15:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95F881C20A4E
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 09:34:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 015C51C20A11
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 09:15:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6821412DD8A;
-	Sun, 30 Jun 2024 09:34:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994DA12E1D6;
+	Sun, 30 Jun 2024 09:15:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b="b1e/lUSS"
-Received: from www.linux-watchdog.org (www.linux-watchdog.org [185.87.125.42])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD316282ED;
-	Sun, 30 Jun 2024 09:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.87.125.42
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="en4uil1K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C62143BBC9;
+	Sun, 30 Jun 2024 09:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719740060; cv=none; b=M0I7COXcTx8KMlZtXWvBUezRV6BoR9sBzGo+ODsjk7V7nCP1ceat5DDIy8HV54RJmSMQ2EcJSKNN4zb9ONY8bOaflRVd3kF3k6N2qdOJgw2QzuZ4cUd30FJYnFJXhhXGVkK9+6VSqHHqge5L7nqEz0qybIrLOD/xqB2jmpT8rqA=
+	t=1719738914; cv=none; b=EIkRrn0L6ench/hwgY/ELGdxMfrRl/DbW+lp8/OjeinPnXQZJiHKi+osFq4cvkaS5+j87XGalCnfBnz+SclZcOao9ms1xt9NXMo5LDkoaT77u3ORI8mE8tiJxP8t3aU/kYzAKGJ0JOX2wn4aZwgAItmjrm0Ac4uCveBwZpcCkP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719740060; c=relaxed/simple;
-	bh=k+G8NV2hvavRL0EHhCZYJQFAgauLbWs7Fncj83jaM6I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CsopRjjsMRN/IrUXGaQDfrXjcNvyO0seXC45lGzr0x808oIPcGHxFAPnKwOqDyIWsoU4BT1VperGeGChqN2vN44p2N+xYs5hOaNhx63uRXkDEVtsfJWpC273WWcJ8yq1il5BlCXfRjNdxeEaVu2jor3inARQ/NteS+6v4pp6IUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=linux-watchdog.org; spf=pass smtp.mailfrom=linux-watchdog.org; dkim=pass (1024-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b=b1e/lUSS; arc=none smtp.client-ip=185.87.125.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=linux-watchdog.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux-watchdog.org
-Received: by www.linux-watchdog.org (Postfix, from userid 500)
-	id 6C18B40A00; Sun, 30 Jun 2024 11:14:03 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 www.linux-watchdog.org 6C18B40A00
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-watchdog.org;
-	s=odk20180602; t=1719738843;
-	bh=k+G8NV2hvavRL0EHhCZYJQFAgauLbWs7Fncj83jaM6I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b1e/lUSS9zcUNcbVDGSsvzX1RVsSzOjhsF+M/29s6KnIKBWK0n5JrhHVML3gKF5KL
-	 ghBTdwxgp5SCkmZ0vy/Xng+eGW5F8Km3+RgS+d5nvpqibCLrASnfUcRYBtO3FCfsK4
-	 Dgsk8nhwoOr5f1hQT44Koa8CNE69vVJ3JaG+Fh1I=
-Date: Sun, 30 Jun 2024 11:14:03 +0200
-From: Wim Van Sebroeck <wim@linux-watchdog.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>, Arnd Bergmann <arnd@arndb.de>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>
-Subject: Re: [GIT PULL REQUEST] watchdog - v6.10 release cycle (fixes).
-Message-ID: <20240630091403.GA12993@www.linux-watchdog.org>
-References: <20240625133151.GA1554@www.linux-watchdog.org>
- <CAHk-=whgnEuO1+8Gk3AiWeuSeAuCoUWnkuxUvczHwfJL+juAsA@mail.gmail.com>
+	s=arc-20240116; t=1719738914; c=relaxed/simple;
+	bh=tc+Ufg00udHbrhXlW8SdH881js1R768qk0khtQCwXfM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jgnXa9UVacxspO0n9NWLqClYvJLkTJwugyPUfRIMo97jkFf9+xANkinwgm1kDugZc/eHUp8Olht2o3tymcvcImA0OLnBAfiPmp54vAsrTITiGAnl5U6lF8HJJrGoelpmNPk7e6axLEPyyld7qGu9vDhsGzMUfZ1Ot90y8F0ycRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=en4uil1K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EE12C4AF17;
+	Sun, 30 Jun 2024 09:15:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719738914;
+	bh=tc+Ufg00udHbrhXlW8SdH881js1R768qk0khtQCwXfM=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=en4uil1KnZ/7MbdeOWy8vNN5qJWiUXY0l2SbZobfjZ8oplSyoWMu1lOkjeF8flaH3
+	 /HV9bJ7Vv9kKv17jPnFYwEukaevW6iRTUbbr5QDOdTbDZa3n6lDKP1nTClVwZpq8+J
+	 oLaPu6sLyqwDf8E5OWmtJo7s5wiOFHtSqV6PrOxjaurK1T+ap5dnqpfGVBAeURsbSe
+	 TFAgfJQljWDYaCUdX8gxQiYJybypsxpSCGjM1obpaU26PlmwrDoAjm1+7EE7AWAQTh
+	 jcCs2X75RvRjSA5W7N6I/D1JRGNwVEi8P24nBLFrROD6E/ZZHuaJSCEo8rj9dPsIHL
+	 Z81Vj7v43wiTQ==
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ec0f3b9cfeso23743541fa.0;
+        Sun, 30 Jun 2024 02:15:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWakp4fEobeJm555EldJIGf93SwgK4DltWYxvEErGotj/jvDoK+D3wwIodLG65l+oThfZBKfhlltKdItd+DE3Fx76cLIgDWRYe4usgkx+9vTZDrFVcwzXZ3631WMAQGLmUHVwmpCU8JXfCMbwg2QzeUcQR0ntaGpntRLQcpRj8t/ZwlvI5n2mR9edoQ1qbffykCX5ervYnO2I8xyckHKYCp
+X-Gm-Message-State: AOJu0YyG6hh/+ijapfwEZc/3LoR/jwV7deq7lbgRrVap+nj+UWuJEiUe
+	hE7T6oBC2yCHHIGNV5HmW144Srt0wWVqIc+2visdmcUD1NzX+cx5tgicTcS4CXk+PeJvHVuW2an
+	i9QKKeL3qmmx0M1viOU7rTX9qfKA=
+X-Google-Smtp-Source: AGHT+IHYW4n5GnYJwHXqY+6mUXvauoz57bZueShtW/YuVL9pXD9MpL3q7Rr5kG0lABD6uVFGXFXO7kcRPrfoJTzNisI=
+X-Received: by 2002:a2e:a179:0:b0:2ec:4fec:8bda with SMTP id
+ 38308e7fff4ca-2ee5e6cd6a7mr18022581fa.36.1719738912735; Sun, 30 Jun 2024
+ 02:15:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=whgnEuO1+8Gk3AiWeuSeAuCoUWnkuxUvczHwfJL+juAsA@mail.gmail.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
+References: <20240630073605.2164346-1-jacobe.zang@wesion.com>
+ <20240630073605.2164346-5-jacobe.zang@wesion.com> <bd661690-1de8-4030-a209-ef26d3559221@gmx.net>
+ <TYZPR03MB7001AC28827A86338BF2B77380D22@TYZPR03MB7001.apcprd03.prod.outlook.com>
+In-Reply-To: <TYZPR03MB7001AC28827A86338BF2B77380D22@TYZPR03MB7001.apcprd03.prod.outlook.com>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Sun, 30 Jun 2024 17:15:00 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66Vk8SMs1TOs+80Jy5fXumuYqCx59Tzd_N7wJAfyysQcw@mail.gmail.com>
+Message-ID: <CAGb2v66Vk8SMs1TOs+80Jy5fXumuYqCx59Tzd_N7wJAfyysQcw@mail.gmail.com>
+Subject: Re: [PATCH v3 4/5] wifi: brcmfmac: Add optional lpo clock enable support
+To: Jacobe Zang <jacobe.zang@wesion.com>
+Cc: Stefan Wahren <wahrenst@gmx.net>, "robh@kernel.org" <robh@kernel.org>, 
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "heiko@sntech.de" <heiko@sntech.de>, 
+	"kvalo@kernel.org" <kvalo@kernel.org>, "davem@davemloft.net" <davem@davemloft.net>, 
+	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>, 
+	"pabeni@redhat.com" <pabeni@redhat.com>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
+	"efectn@protonmail.com" <efectn@protonmail.com>, "dsimic@manjaro.org" <dsimic@manjaro.org>, 
+	"jagan@edgeble.ai" <jagan@edgeble.ai>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "arend@broadcom.com" <arend@broadcom.com>, 
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, 
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, "megi@xff.cz" <megi@xff.cz>, 
+	"duoming@zju.edu.cn" <duoming@zju.edu.cn>, "bhelgaas@google.com" <bhelgaas@google.com>, 
+	"minipli@grsecurity.net" <minipli@grsecurity.net>, 
+	"brcm80211@lists.linux.dev" <brcm80211@lists.linux.dev>, 
+	"brcm80211-dev-list.pdl@broadcom.com" <brcm80211-dev-list.pdl@broadcom.com>, Nick Xie <nick@khadas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On Sun, Jun 30, 2024 at 5:10=E2=80=AFPM Jacobe Zang <jacobe.zang@wesion.com=
+> wrote:
+>
+> Hi Stefan,
+>
+> >> WiFi modules often require 32kHz clock to function. Add support to
+> >> enable the clock to PCIe driver.
+> > the low power clock is independent from the host interface like PCIe. S=
+o
+> > the clock handling should move to the common code. Sorry, not i cannot
+> > give a good suggestion, what's the best place for this.
+>
+> I think the clock is used by the PCIe device so enable it in this file. A=
+lso I checked
+> use of clock which in spi[0] or sdio[0] device was enabled similarly to t=
+his.
+>
+> [0] https://lore.kernel.org/all/20210806081229.721731-4-claudiu.beznea@mi=
+crochip.com/
 
-> On Tue, 25 Jun 2024 at 06:51, Wim Van Sebroeck <wim@linux-watchdog.org> wrote:
-> >
-> >   git://www.linux-watchdog.org/linux-watchdog.git linux-watchdog-6.10-rc-fixes
-> 
-> ENOSUCHTAG.
-> 
-> I do see the commit you mention in HEAD, but there's no actual signed
-> tag referencing it.
-> 
-> Forgot to push out (and then didn't react to the error messages that
-> git request-pull gave you)?
+You're looking at the wrong driver. For brcmfmac, the lpo clock is toggled
+by the MMC pwrseq code. And for the Bluetooth side (where it really matters=
+)
+for UARTs, it is in drivers/bluetooth/hci_bcm.c. and documented in the
+binding Documentation/devicetree/bindings/net/broadcom-bluetooth.yaml
 
-It didn't gave me any warnings, so I took time to investigate it this morning.
-Turns out I did not do it on the linux-watchdog tree but on the linux-watchog-next tree :-( .
-Such a stupid mistake from my side...
 
-I'll fix it and will come back.
-
-Kind regards,
-Wim.
-
+ChenYu
 
