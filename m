@@ -1,151 +1,285 @@
-Return-Path: <linux-kernel+bounces-235157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C6F191D0D6
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 11:35:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4523791D0DA
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 11:36:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC64E1F215A6
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 09:35:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AACC9B210C2
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 09:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98BFE12DD8A;
-	Sun, 30 Jun 2024 09:35:30 +0000 (UTC)
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D27812E1ED;
+	Sun, 30 Jun 2024 09:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Z36tpFhd"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20DC282ED
-	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 09:35:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD74282ED;
+	Sun, 30 Jun 2024 09:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719740130; cv=none; b=HjKWsTe2XesxhVTQmaLEuh2zWIqRN2fAm46oBIF82swSiY7UIRSZs+oT17pbaw6ipyqRotdcolSL0HVjGknQQ91r2anJ7TaQJ/iK3Ib5mfiVlvQGDV/9KQFQoh/AtN7rHrNu+qxQ2aaacv/ugX/JWEsByC1yG4BhRnCdJ56c/o0=
+	t=1719740151; cv=none; b=BcFQ+8b4LZcCEKY5K/3ZDSbIMVTQUOQ5UdZ2B+kyFKHyg91d8gYkO+B9MM6JKdVB1hprDDiD1eQGfQqywKGZvqobEEd33iPFQrt4HZDqR9AlG3o8FSjJIl4Jezq6/kjiclybqi8HCxJv2yodqdcSDzyAM/mFPzg+R7dgil2MZkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719740130; c=relaxed/simple;
-	bh=8+bYA5ZIR5bd70JQo1wZwQP2+i0txmilLygHuNt/rr0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VPjQ3A37AWTOPs1YHTF7RXBY66ZcJLkCTn/J60Q8IrP7BdFiKHwKedgNUc+cethaFTD4urK2YznxbCW6oAIYX+jLYKSKASCX571iqeHv63Io7L1qj35Yqw3QgEJvCZaBr3XwVITbse7UNVqblxXJPgGIkble6QpXX9miBXw5Bq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3d55e2e0327so1180501b6e.0
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 02:35:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719740128; x=1720344928;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fa0craKq8Fvm8bkWAnyHT4L9wh19HhtSlODuh8HZXoA=;
-        b=phBX/X3YQ8/B4OMQI3USbUlaHdFgZrLSdkDpPPLaRi+0421eTc/EumjZdWcd345ftS
-         SXywbEzyVjEdM5c0EYZfOo+MzZ/qs4eKevoPigaVJm7WcOUO4aFt41z5pZ2i36b15tz8
-         MYie5yy7LJdUZ4hpdr2FcRV/fFkyZbOOKwiN1uxqkNnoP2feohNAhXvh+7s4bkf7fbUA
-         ONSgAH5gADE2JVzQODdDiqS3LtetvLpchNijbNCEJCxfVDNfZbPr/COANmZj4iiJzDAz
-         e3CXcdwBi1p3bnNggPQkAlp03uZ/aSxNbyvVfB+MJCMzh0QwzmzZhjIkLtG1ldg+YG8j
-         hNzg==
-X-Forwarded-Encrypted: i=1; AJvYcCVulvk/UZMUuH2fgH3bRnGUqIzuq09wzDHOZuDjKRh0Z88VlGe1HLina6KfQfHUGl5v0n9nsn6H6N6YHQa3UCd7qnHfQxQ3RahGeA+L
-X-Gm-Message-State: AOJu0YzJoe740xl7BiqydIqfwcdp/EckF9DbCg/j7vvHoCJIM3S4DX0b
-	XnjBuVYXXqY/jdpa5AuK4JHhRAYu+pLAT4mP3GYlwx2Pi4bsyrEQWsmn9cgU7UrdTjzflgl9ZtF
-	XmiQFmDLIeYARmBDnFMGIApdifyY=
-X-Google-Smtp-Source: AGHT+IF18VVEZk/QEdbv+aSO5JzRkAfarKSu+RGRYxbbGUZermxNFAEqCR6nhlbym9tOWEXD47u3l4Bcl+dkPN8oAd8=
-X-Received: by 2002:a05:6808:1a24:b0:3d6:3450:7fed with SMTP id
- 5614622812f47-3d6b4727127mr3626319b6e.39.1719740127555; Sun, 30 Jun 2024
- 02:35:27 -0700 (PDT)
+	s=arc-20240116; t=1719740151; c=relaxed/simple;
+	bh=mggnU2m/HyxNLvJ6qPq4P6ZJXZroENZLj14BgKfkDP0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IuoJk3Z0gKH69RWHD++PxggF9TpG9ZEqIeoDsdD/rcNV0uUDWqcC7TMgaGUCW9CPCwWOjGR7LNoo29NQ9hyDhiWfNgiT7uclgU0L8tbBH8jnj6mvmzXB/GZPm84mjf3AREXgBpq4rKBGOAGmrgEuRduKbugCW9nsCXqS3DknSTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Z36tpFhd; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45U9J3k4002838;
+	Sun, 30 Jun 2024 09:35:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4q8UNhiWgZ7Cc1A+okTFAmm4vbLeRCpN3RPDisIrE5k=; b=Z36tpFhdeEMJYvGH
+	5fgO+yr8mVz1VhPGGo60w7Vn3x0kCMgEtKkYqP+TXKlN4X3rZna8EEoCt8ltbTqd
+	BQTke5VbMRjszyhxIxHb+TA+ugpanQV41wkNk5FsJfEr/1LLcvfPI19ApriIlr6G
+	KfACnIy1g/dcJ5FAeN+H9NTA8E8JVdoaAm1MMIXWnK5CSfYIspc+0yQ4QJPSqcAp
+	V+uLoMdP+BWYglpOYozWlLco0U2qM48doolGZg1QjXGIIRHClaG+d/CRivyCzepu
+	JcQQI+6bMukQtV6fyfcmKq1p5T78zJWVQ/qsCsu8gdIIb/+gwwu3lTfolk51sZ2Z
+	o0utaw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 402ag29th3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 30 Jun 2024 09:35:33 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45U9ZWLG027408
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 30 Jun 2024 09:35:32 GMT
+Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sun, 30 Jun 2024 02:35:28 -0700
+Date: Sun, 30 Jun 2024 15:05:24 +0530
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+To: Rob Clark <robdclark@gmail.com>
+CC: <dri-devel@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
+        <freedreno@lists.freedesktop.org>, Rob Clark <robdclark@chromium.org>,
+        "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>, Sean Paul <sean@poorly.run>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        open list
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 1/5] drm/msm/adreno: Split up giant device table
+Message-ID: <20240630093524.3zmzxrgmngfh7giv@hu-akhilpo-hyd.qualcomm.com>
+References: <20240618164303.66615-1-robdclark@gmail.com>
+ <20240618164303.66615-2-robdclark@gmail.com>
+ <20240629015831.sglaflboanhrarmn@hu-akhilpo-hyd.qualcomm.com>
+ <CAF6AEGtHyGZhBaqNXtujNMg7Cv_cLkUQoCiAckKAWUihzO1i4Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240221114904.1849-1-justinjiang@vivo.com>
-In-Reply-To: <20240221114904.1849-1-justinjiang@vivo.com>
-From: Barry Song <baohua@kernel.org>
-Date: Sun, 30 Jun 2024 21:35:15 +1200
-Message-ID: <CAGsJ_4ytMMbPo4EuNSQ-A75T+5h3O+nM127xcMg+QpKjf5D8Sg@mail.gmail.com>
-Subject: Re: [PATCH] mm: shrink skip folio mapped by an exiting task
-To: Zhiguo Jiang <justinjiang@vivo.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAF6AEGtHyGZhBaqNXtujNMg7Cv_cLkUQoCiAckKAWUihzO1i4Q@mail.gmail.com>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: kbeiAbv5rnUbGGObmQ5GO6XGcd4s_4sK
+X-Proofpoint-GUID: kbeiAbv5rnUbGGObmQ5GO6XGcd4s_4sK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-30_08,2024-06-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
+ malwarescore=0 phishscore=0 impostorscore=0 mlxlogscore=999 bulkscore=0
+ spamscore=0 priorityscore=1501 suspectscore=0 adultscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406300075
 
-On Thu, Feb 22, 2024 at 12:49=E2=80=AFAM Zhiguo Jiang <justinjiang@vivo.com=
-> wrote:
->
+On Sat, Jun 29, 2024 at 06:32:05AM -0700, Rob Clark wrote:
+> On Fri, Jun 28, 2024 at 6:58 PM Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
+> >
+> > On Tue, Jun 18, 2024 at 09:42:47AM -0700, Rob Clark wrote:
+> > > From: Rob Clark <robdclark@chromium.org>
+> > >
+> > > Split into a separate table per generation, in preparation to move each
+> > > gen's device table to it's own file.
+> > >
+> > > Signed-off-by: Rob Clark <robdclark@chromium.org>
+> > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> > > ---
+> > >  drivers/gpu/drm/msm/adreno/adreno_device.c | 67 +++++++++++++++++-----
+> > >  drivers/gpu/drm/msm/adreno/adreno_gpu.h    | 10 ++++
+> > >  2 files changed, 63 insertions(+), 14 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/msm/adreno/adreno_device.c b/drivers/gpu/drm/msm/adreno/adreno_device.c
+> > > index c3703a51287b..a57659eaddc2 100644
+> > > --- a/drivers/gpu/drm/msm/adreno/adreno_device.c
+> > > +++ b/drivers/gpu/drm/msm/adreno/adreno_device.c
+> > > @@ -20,7 +20,7 @@ bool allow_vram_carveout = false;
+> > >  MODULE_PARM_DESC(allow_vram_carveout, "Allow using VRAM Carveout, in place of IOMMU");
+> > >  module_param_named(allow_vram_carveout, allow_vram_carveout, bool, 0600);
+> > >
+> > > -static const struct adreno_info gpulist[] = {
+> > > +static const struct adreno_info a2xx_gpus[] = {
+> > >       {
+> > >               .chip_ids = ADRENO_CHIP_IDS(0x02000000),
+> > >               .family = ADRENO_2XX_GEN1,
+> > > @@ -54,7 +54,12 @@ static const struct adreno_info gpulist[] = {
+> > >               .gmem  = SZ_512K,
+> > >               .inactive_period = DRM_MSM_INACTIVE_PERIOD,
+> > >               .init  = a2xx_gpu_init,
+> > > -     }, {
+> > > +     }
+> > > +};
+> > > +DECLARE_ADRENO_GPULIST(a2xx);
+> > > +
+> > > +static const struct adreno_info a3xx_gpus[] = {
+> > > +     {
+> > >               .chip_ids = ADRENO_CHIP_IDS(0x03000512),
+> > >               .family = ADRENO_3XX,
+> > >               .fw = {
+> > > @@ -116,7 +121,12 @@ static const struct adreno_info gpulist[] = {
+> > >               .gmem  = SZ_1M,
+> > >               .inactive_period = DRM_MSM_INACTIVE_PERIOD,
+> > >               .init  = a3xx_gpu_init,
+> > > -     }, {
+> > > +     }
+> > > +};
+> > > +DECLARE_ADRENO_GPULIST(a3xx);
+> > > +
+> > > +static const struct adreno_info a4xx_gpus[] = {
+> > > +     {
+> > >               .chip_ids = ADRENO_CHIP_IDS(0x04000500),
+> > >               .family = ADRENO_4XX,
+> > >               .revn  = 405,
+> > > @@ -149,7 +159,12 @@ static const struct adreno_info gpulist[] = {
+> > >               .gmem  = (SZ_1M + SZ_512K),
+> > >               .inactive_period = DRM_MSM_INACTIVE_PERIOD,
+> > >               .init  = a4xx_gpu_init,
+> > > -     }, {
+> > > +     }
+> > > +};
+> > > +DECLARE_ADRENO_GPULIST(a4xx);
+> > > +
+> > > +static const struct adreno_info a5xx_gpus[] = {
+> > > +     {
+> > >               .chip_ids = ADRENO_CHIP_IDS(0x05000600),
+> > >               .family = ADRENO_5XX,
+> > >               .revn = 506,
+> > > @@ -274,7 +289,12 @@ static const struct adreno_info gpulist[] = {
+> > >               .quirks = ADRENO_QUIRK_LMLOADKILL_DISABLE,
+> > >               .init = a5xx_gpu_init,
+> > >               .zapfw = "a540_zap.mdt",
+> > > -     }, {
+> > > +     }
+> > > +};
+> > > +DECLARE_ADRENO_GPULIST(a5xx);
+> > > +
+> > > +static const struct adreno_info a6xx_gpus[] = {
+> > > +     {
+> > >               .chip_ids = ADRENO_CHIP_IDS(0x06010000),
+> > >               .family = ADRENO_6XX_GEN1,
+> > >               .revn = 610,
+> > > @@ -520,7 +540,12 @@ static const struct adreno_info gpulist[] = {
+> > >               .zapfw = "a690_zap.mdt",
+> > >               .hwcg = a690_hwcg,
+> > >               .address_space_size = SZ_16G,
+> > > -     }, {
+> > > +     }
+> > > +};
+> > > +DECLARE_ADRENO_GPULIST(a6xx);
+> > > +
+> > > +static const struct adreno_info a7xx_gpus[] = {
+> > > +     {
+> > >               .chip_ids = ADRENO_CHIP_IDS(0x07000200),
+> > >               .family = ADRENO_6XX_GEN1, /* NOT a mistake! */
+> > >               .fw = {
+> > > @@ -582,7 +607,17 @@ static const struct adreno_info gpulist[] = {
+> > >               .init = a6xx_gpu_init,
+> > >               .zapfw = "gen70900_zap.mbn",
+> > >               .address_space_size = SZ_16G,
+> > > -     },
+> > > +     }
+> > > +};
+> > > +DECLARE_ADRENO_GPULIST(a7xx);
+> > > +
+> > > +static const struct adreno_gpulist *gpulists[] = {
+> > > +     &a2xx_gpulist,
+> > > +     &a3xx_gpulist,
+> > > +     &a4xx_gpulist,
+> > > +     &a5xx_gpulist,
+> > > +     &a6xx_gpulist,
+> > > +     &a6xx_gpulist,
+> >
+> > Typo. a6xx_gpulist -> a7xx_gpulist.
+> 
+> yup, already have a patch fixing that in msm-next-robclark
 
-This is clearly version 3, as you previously sent version 2, correct?
+fwiw, Tested-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
 
-> If an anon folio reclaimed by shrink_inactive_list is mapped by an
-> exiting task, this anon folio will be firstly swaped-out into
-> swapspace in shrink flow and then this swap folio is freed in task
-> exit flow. But if this folio mapped by an exiting task can skip
-> shrink and be freed directly in task exiting flow, which will save
-> swap-out time and alleviate the load of the tasks exiting process.
-> The file folio is also similar.
->
-
-Could you please describe the specific impact on users, including user
-experience and power consumption? How serious is this problem?
-
-> And when system is low memory, it more likely to occur, because more
-> backend applidatuions will be killed.
-
-Applications?
-
->
-> This patch can alleviate the load of the tasks exiting process.
-
-I'm not completely convinced this patch is correct, but it appears to be
-heading in the right direction. Therefore, I expect to see new versions
-rather than it being dead.
-
->
-> Signed-off-by: Zhiguo Jiang <justinjiang@vivo.com>
-> ---
->  mm/rmap.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->  mode change 100644 =3D> 100755 mm/rmap.c
-
-You changed the file mode to 755, which is incorrect.
-
->
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index 3746a5531018..146e5f4ec069
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -840,6 +840,13 @@ static bool folio_referenced_one(struct folio *folio=
-,
->         int referenced =3D 0;
->         unsigned long start =3D address, ptes =3D 0;
->
-> +       /* Skip this folio if it's mapped by an exiting task */
-> +       if (unlikely(!atomic_read(&vma->vm_mm->mm_users)) ||
-> +               unlikely(test_bit(MMF_OOM_SKIP, &vma->vm_mm->flags))) {
-> +               pra->referenced =3D -1;
-
-Why use -1? Is this meant to simulate lock contention to keep the folio wit=
-hout
-activating it?
-
-        /* rmap lock contention: rotate */
-        if (referenced_ptes =3D=3D -1)
-                return FOLIOREF_KEEP;
-
-Please do have some comments to explain why.
-
-I'm not convinced this change is appropriate for shared folios. It seems
-more suitable for exclusive folios used solely by the exiting process.
-
-
-> +               return false;
-> +       }
-> +
->         while (page_vma_mapped_walk(&pvmw)) {
->                 address =3D pvmw.address;
->
-> --
-> 2.39.0
->
-
-Thanks
-Barry
+-Akhil
+> 
+> BR,
+> -R
+> 
+> > -Akhil
+> >
+> > >  };
+> > >
+> > >  MODULE_FIRMWARE("qcom/a300_pm4.fw");
+> > > @@ -617,13 +652,17 @@ MODULE_FIRMWARE("qcom/yamato_pm4.fw");
+> > >  static const struct adreno_info *adreno_info(uint32_t chip_id)
+> > >  {
+> > >       /* identify gpu: */
+> > > -     for (int i = 0; i < ARRAY_SIZE(gpulist); i++) {
+> > > -             const struct adreno_info *info = &gpulist[i];
+> > > -             if (info->machine && !of_machine_is_compatible(info->machine))
+> > > -                     continue;
+> > > -             for (int j = 0; info->chip_ids[j]; j++)
+> > > -                     if (info->chip_ids[j] == chip_id)
+> > > -                             return info;
+> > > +     for (int i = 0; i < ARRAY_SIZE(gpulists); i++) {
+> > > +             for (int j = 0; j < gpulists[i]->gpus_count; j++) {
+> > > +                     const struct adreno_info *info = &gpulists[i]->gpus[j];
+> > > +
+> > > +                     if (info->machine && !of_machine_is_compatible(info->machine))
+> > > +                             continue;
+> > > +
+> > > +                     for (int k = 0; info->chip_ids[k]; k++)
+> > > +                             if (info->chip_ids[k] == chip_id)
+> > > +                                     return info;
+> > > +             }
+> > >       }
+> > >
+> > >       return NULL;
+> > > diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> > > index 77526892eb8c..17aba8c58f3d 100644
+> > > --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> > > +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> > > @@ -114,6 +114,16 @@ struct adreno_info {
+> > >
+> > >  #define ADRENO_CHIP_IDS(tbl...) (uint32_t[]) { tbl, 0 }
+> > >
+> > > +struct adreno_gpulist {
+> > > +     const struct adreno_info *gpus;
+> > > +     unsigned gpus_count;
+> > > +};
+> > > +
+> > > +#define DECLARE_ADRENO_GPULIST(name)                  \
+> > > +const struct adreno_gpulist name ## _gpulist = {      \
+> > > +     name ## _gpus, ARRAY_SIZE(name ## _gpus)      \
+> > > +}
+> > > +
+> > >  /*
+> > >   * Helper to build a speedbin table, ie. the table:
+> > >   *      fuse | speedbin
+> > > --
+> > > 2.45.2
+> > >
 
