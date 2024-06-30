@@ -1,116 +1,120 @@
-Return-Path: <linux-kernel+bounces-235125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F45991D07A
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 10:10:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7638291D07B
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 10:11:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0613E1F21504
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 08:10:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED6891F210A7
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 08:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90B0D41C73;
-	Sun, 30 Jun 2024 08:10:17 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF59840C03;
+	Sun, 30 Jun 2024 08:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=dpolakovic.space header.i=@dpolakovic.space header.b="RnMA7DNk"
+Received: from m1-out-mua-14.websupport.sk (m1-out-mua-14.websupport.sk [45.13.137.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE4A3A268;
-	Sun, 30 Jun 2024 08:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F6A3B2BB
+	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 08:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.13.137.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719735017; cv=none; b=VDfKb1ldwM/2GzQoJp308tNw/Y6t2rtElGiI7lPLvcJ7RLqn0c51QtqeyQZkiJVpNkDxmZX8Yuco5K7EPsjqgkBig+xBsQeE0I2CjnCRpC0XSqh3Pa7KgQb75ClelMnDul0CUJL83F9wwnBSQEm3wpi34PRXMVsOlET/P9PMz+k=
+	t=1719735054; cv=none; b=MjoBgrXAnqHVHFd7Wp5EVNQugU9AB9Bw58rtsDySJxQWB9EJ62ZMf0sjIycCXp7Jc5SHKUDQVhrTVJpFRLtNBAYJNCM1fk+tPVkLlfij590970IbHH0GZEIt9ot4N4MO7rMMV46QYvORA7Uw1Y4KZGc/WdPmjvbBd0RsMEO/V14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719735017; c=relaxed/simple;
-	bh=H0n9BHPoOTdAepeEduREmT4dEfXjG2iu4JOFV0f/i1s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aGBs8f+ZSzmiiXVgh/0rWV9F6Ds1VCjpsIibb9dQx4eeIsUVg/SR1mUPFnQzcBppZs8fFYYibrtFzX6Gg2t9JXD/u+zIhPvYIxFv775x7iKXxOjNpF0/fQNxKdOJKJ+5J5pea0Ex4eR7njggW7DemVFyu+Lzps7qSFDW1c5cDFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	s=arc-20240116; t=1719735054; c=relaxed/simple;
+	bh=xVaM5Zi24tUv2+zX/Vj4NJdlvblvkRzFs9lbnnkL6+c=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=WcNpneHNCPEuYrG+zhTFYR0dE6OX7OdwSaubziyFLezNuXjYsH5ZulGc65Zs87KDm+R8asWRcV+0vBE64k8QrrBY4hASSE7imC027jSD5aFXzCWSrPMlxWDH+pTl7hHfVqIzR8vIhBNlSQJQIf42jEJjjZROMQJrzG7DHZP4mWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dpolakovic.space; spf=pass smtp.mailfrom=dpolakovic.space; dkim=pass (2048-bit key) header.d=dpolakovic.space header.i=@dpolakovic.space header.b=RnMA7DNk; arc=none smtp.client-ip=45.13.137.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dpolakovic.space
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dpolakovic.space
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dpolakovic.space;
+	s=mail; t=1719734720;
+	bh=xVaM5Zi24tUv2+zX/Vj4NJdlvblvkRzFs9lbnnkL6+c=;
+	h=Date:To:From:Subject:From;
+	b=RnMA7DNkEgC3k3KjgUnx18vJx6+JR7sDilP6r12jFw0JF8GATOi5wJaE2S+G2xvuI
+	 Yt97A/OovlorYyWScSlycCqVhhO0A/7lGsyYXaUDHMzBdvgjjB9RhM7c8U400aGIoK
+	 ukJR0AQnL8M9c9Y9xvdjQIRTmAFFz3wCUs7eLP99DvI0H/ut39PETAZbmCd1ItXEeJ
+	 wdjlg838O/jP4IDB3ihzomysQsWg0RYc+5DmsNOSW90cMGPxeP1/SkJOWy/pXsfqMv
+	 mWwi6nYWkESdgyFbEhNYZqgKBag5dP+4w6C5nlaaME4Y5s5jhoje1ZZmTu/Kgsk9FV
+	 O8NSTi9HTmWbg==
+Received: from m1-u6-ing.websupport.sk (unknown [10.30.6.2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 649B7100D942D;
-	Sun, 30 Jun 2024 10:04:40 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id DDEA72760BE; Sun, 30 Jun 2024 10:04:39 +0200 (CEST)
-Date: Sun, 30 Jun 2024 10:04:39 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Aditya Garg <gargaditya08@live.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
-	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Orlando Chamberlain <orlandoch.dev@gmail.com>,
-	Kerem Karabay <kekrby@gmail.com>
-Subject: Re: [PATCH] efi: libstub: add support for the apple_set_os protocol
-Message-ID: <ZoERl1PWoc2xDGWz@wunner.de>
-References: <EBE51900-DA87-4113-B389-80B9C9160F0F@live.com>
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	by m1-out-mua-14.websupport.sk (Postfix) with ESMTPS id 4WBhYX2HXFz1xV8
+	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 10:05:20 +0200 (CEST)
+X-Authenticated-Sender: email@dpolakovic.space
+Authentication-Results: m1-u6-ing.websupport.sk;
+	auth=pass smtp.auth=email@dpolakovic.space smtp.mailfrom=email@dpolakovic.space
+Received: from [192.168.0.54] (dev190.net181.ip-net.sk [46.227.181.190])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: email@dpolakovic.space)
+	by m1-u6-ing.websupport.sk (Postfix) with ESMTPSA id 4WBhYX00WFzdvMt
+	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 10:05:19 +0200 (CEST)
+Message-ID: <3be3235a-dea7-a5ca-b5ea-4047bdeb695d@dpolakovic.space>
+Date: Sun, 30 Jun 2024 10:05:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <EBE51900-DA87-4113-B389-80B9C9160F0F@live.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Content-Language: en-US
+To: linux-kernel@vger.kernel.org
+From: David Polakovic <email@dpolakovic.space>
+Subject: proposition for fixing Y292B bug
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Out-Rspamd-Queue-Id: 4WBhYX00WFzdvMt
+X-Out-Spamd-Result: default: False [1.90 / 1000.00];
+	INTRODUCTION(2.00)[];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	ASN(0.00)[asn:56349, ipnet:46.227.176.0/21, country:SK];
+	RCVD_COUNT_ZERO(0.00)[0];
+	HAS_X_AS(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	GENERIC_REPUTATION(0.00)[-0.49971426981811];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_NONE(0.00)[];
+	RCPT_COUNT_ONE(0.00)[1]
+X-Out-Rspamd-Server: m1-rspamd-out-4
+X-Rspamd-Action: no action
 
-On Sun, Jun 30, 2024 at 04:42:55AM +0000, Aditya Garg wrote:
-> Commit 0c18184de990 brought support for T2 Macs in apple-gmux. But in order to
+Hello dear developers and enthusiasts.
 
-Please run patches through scripts/checkpatch.pl before submission.
-The subject of the commit is missing here and lines should be wrapped
-at 72 or at least 74 chars.
+My name is David and recently I wrote a blog post about "necessity"
+of fixing 64-bit signed integer overflow of time_t, sometime in year
+292 billion. I proposed this to simply have software complete solution
+for timekeeping. The blog had somewhat nice feedback and few people
+told me to write to your mailing list.
 
+As I mention in the list, I am no way experienced enough in kernel
+space to turn this into full merge request, so I post it to you and
+if anyone would like to build on this idea, it is GPLd for your convenience.
 
-> Based on this patch for GRUB by Andreas Heider <andreas@heider.io>:
-> https://lists.gnu.org/archive/html/grub-devel/2013-12/msg00442.html
+Any feedback is highly appreciated so please, include me in CC's.
 
-Please include his Signed-off-by and cc him.
+The blog is written with funny attitude, but it is in no way meant to
+be joke, parody or insult.
+https://dpolakovic.space/blogs/y292b
 
-
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -399,6 +399,8 @@
->  			      useful so that a dump capture kernel won't be
->  			      shot down by NMI
->  
-> +	apple_set_os	[KNL] Report that macOS is being booted to the firmware
-> +
-
-Why the kernel parameter?  Why not do this unconditionally?
+The source code can be found here.
+https://git.dpolakovic.space/?p=unix-time-fix;a=summary
 
 
-> +struct apple_set_os_protocol {
-> +	u64 version;
-> +	efi_status_t (__efiapi *set_os_version) (const char *);
-> +	efi_status_t (__efiapi *set_os_vendor) (const char *);
-> +	struct {
-> +		u32 version;
-> +		u32 set_os_version;
-> +		u32 set_os_vendor;
-> +	} mixed_mode;
-> +};
+Thank you for your time.
 
-How about declaring this __packed, just to be on the safe side?
+dpo
 
-Why "mixed_mode"?  Seems like an odd name given "mixed mode"
-in EFI context usually means 64-bit OS, but 32-bit EFI.
-
-
-> +static void apple_set_os(void)
-> +{
-> +	efi_guid_t guid = APPLE_SET_OS_PROTOCOL_GUID;
-
-My recollection is that if you don't declare this static const,
-gcc generates suboptimal code.  (It constructs the GUID on the
-stack at runtime instead of storing it in .rodata.)
-Maybe it's become smarter in the meantime, but I doubt it.
-
-Thanks,
-
-Lukas
 
