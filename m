@@ -1,126 +1,205 @@
-Return-Path: <linux-kernel+bounces-235079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E38291CFBB
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 01:54:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C9CA91CFC2
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 02:39:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 580CA282C3F
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 23:54:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 120E41C20C85
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 00:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51264D8D0;
-	Sat, 29 Jun 2024 23:54:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806033FC7;
+	Sun, 30 Jun 2024 00:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q7Bwldry"
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KfRZK4lc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A0042078
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 23:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1414A1FA1
+	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 00:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719705281; cv=none; b=iGGExfie/Lf/SWsudkDpbHvky4pkTJEY7sZgCyRR0q8Ntp++ooD9hoHDTtqQvb/QVZv7/YZ+lDr6ab25sBpjkyhe4mv306t3KPrtHCGLfICxN0AxD0ENQHYzJmdcn9mV/X5Ckm05bxoucsMMQnqJVlmnsdlGBdxTtmMCPL9Yjww=
+	t=1719707968; cv=none; b=ee8nWi1n3eA7nv/9+nvxLKTgyhvaGoUix2dHrhpcMXWoLBF/A6ShYGZLsDfR2SHCeSJhYQseZbZXwmqJ0S5rVo0wvNaA16RUVvjxry/6NRTGJtEJLUhQY20n9pSiRQ8QimB3TU1UZNIrWUXHfZUzFHeN3EjenRWHteU0pgA4b2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719705281; c=relaxed/simple;
-	bh=HNKSnvjndFDSHXGnRsk2y67Mg3MJw2O1ab42oLbeluM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oTrIcQGLgOeyNYMcDzNw2PWhcas8DBvskXEkyWHCEeMqnmE/HFCYkp4ggpnFVWqloHDEFi65H3uWh2dDpcgYP5VO72Y3dhJ+86jnUkYu3x5NzZ8ptBB1jsNRmjBiw2497NJljArChlEhSn46Y/h0WfXXqzr5jPaO7jWkcHkw8Us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q7Bwldry; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3762c172d93so8800735ab.0
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 16:54:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719705279; x=1720310079; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HNKSnvjndFDSHXGnRsk2y67Mg3MJw2O1ab42oLbeluM=;
-        b=Q7Bwldry85ef5Ts4sFUVjaDMU17a9aOZCChovvKqNJk79Xm/aOPmWgxFjdJbOeKqYK
-         aOLUgbzJ1HA95KYug3T7hAYhp0hU7COHP0u87ZcNLCp6o2cbVQr3OY2eoiINGlVjPv7r
-         Z7ngrfum7+8nXBP8lRVCqVGAtGHNnB3kKImKr+1moYn7p08htOe5LFGPVfGOZ9a08wb1
-         exYqMAQ9uOCuxLqvAAPIDiZpBRMqAEmEhUIj+bXaQ00DnlmHrWa7O2PTJ9fzb8fjjokN
-         4fvRzK8dll7nwDQGo0GLfz9FMwZLCIBTQDamCDAbzK8Hilax80pZx2uuKdiZd1OV7epq
-         8M6g==
+	s=arc-20240116; t=1719707968; c=relaxed/simple;
+	bh=tRIoatf77wwm0sxL/U2o7B+pzFe98brwQ+ax4MdYMS0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rt9IeUrOfDTz7qPZ36uZHulMpyhCZ4mwZIXWkyEN6jj7y/eoLRqizIcwt57qwxExaRMqVwCg5WYLPzu4w/6uwX9nI7ucIWbxAb8vCVK6cIa5T1GEmkxq2X1VYYWu10IkehG6FE0tFTOJbrWuI/08eApW7HHbrQdwweSJ8Cv2OFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KfRZK4lc; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719707965;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dYIxGuEXpUSy/5Y6UAVKbTkIJVtmPhwJBZMzOU8+q5w=;
+	b=KfRZK4lcSqzRbNr503YQUYQwDJbbfLFF582zoe1ytj9qgCESA9BZnbvL9vOjXIWXFBQB4M
+	nloklyj8GMYEoWQa37/nWuVAuM+GpZGvnRB+kRyv0XhoK1vJ9gohK9PJvPd5b2BZjKfNaO
+	ooiOXKPxlHVEkc1wteN3X8tHj5FEJvI=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-126-i36h06CoNhShIYCUnVeDJg-1; Sat, 29 Jun 2024 20:39:17 -0400
+X-MC-Unique: i36h06CoNhShIYCUnVeDJg-1
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2c8f8388f60so1222485a91.3
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 17:39:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719705279; x=1720310079;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HNKSnvjndFDSHXGnRsk2y67Mg3MJw2O1ab42oLbeluM=;
-        b=drZCRLp8QXOs+DvsyMaWpTpzVJWV2QtttUYWegwgS1CzsExa8x+jt3xCMDdCJQfyjm
-         1XcHVUrSiwvrIKHajjNo1DyaqhgUUWXgse2btpekYcyshsc/9OnNosrJn2k9yaNYP6w4
-         yCEP7eL3XsAXEkFClAc/ex1rDzuTWOTRtyXJo+i+6udgczAespP88UqDaUheu+eITGwH
-         JnN7QCNpO+w0pZJSyUCxCCq7Bf+qv/xhY+uI1BEZB4xrZmxQJSmCdoCVKjuuDhpNLljH
-         9ljWoFfQHtRZJmBJHAbukZOxjbpjU6q/n7/Py9SovlN6ath3O4BQYLqwdq226FcucF0J
-         XHZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXEXKQb9Uqt8/nzuBDJkiCT3qBjIIhpEIJwph7cAFNE9v5rHXwA+yeJ9zwqdwXZA7yi4G+MtD8X9bUh0gSrkuTfZXtsQwnuO70ffD/v
-X-Gm-Message-State: AOJu0YzBwWWCtX24pc5ns9EBQ5OyRJxJYwBI30g3u1GS3m0YzYZdHGl2
-	/gBE9YmkhDvLwaTooXqZS2z44WnzbBCKfwlRL8MRIx149skvY7StERT1nQ==
-X-Google-Smtp-Source: AGHT+IHzkEWGzka9+7sZ/fPfgApaRYQew1kLnqeJ5l8qDXOb+dRdERKLjHPG8Ok9L3fCttLw5kh5PQ==
-X-Received: by 2002:a05:6e02:1a4c:b0:375:da94:e46b with SMTP id e9e14a558f8ab-37cd0de9cafmr25528895ab.5.1719705278878;
-        Sat, 29 Jun 2024 16:54:38 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac10e2cc5sm38521475ad.80.2024.06.29.16.54.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Jun 2024 16:54:38 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 8F5DF1852C705; Sun, 30 Jun 2024 06:54:34 +0700 (WIB)
-Date: Sun, 30 Jun 2024 06:54:34 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Yusef Aslam <yuzi54780@outlook.com>,
-	Greg KH <gregkh@linuxfoundation.org>
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] Staging: rtl8192e: rtllib_rx: fix alignment
-Message-ID: <ZoCeul3pAjZLOT8E@archie.me>
-References: <CWLP265MB65165E806F938F87CB67BF87FDD62@CWLP265MB6516.GBRP265.PROD.OUTLOOK.COM>
- <2024062727-diabolic-lusty-7baf@gregkh>
- <CWLP265MB6516AB499D407C0AB0CF106EFDD72@CWLP265MB6516.GBRP265.PROD.OUTLOOK.COM>
+        d=1e100.net; s=20230601; t=1719707956; x=1720312756;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dYIxGuEXpUSy/5Y6UAVKbTkIJVtmPhwJBZMzOU8+q5w=;
+        b=L4DnVI9sFUFEjYha7XJCjvq6HXGg2UqrCnif2Q5bMWs17ENOW1WrFEbwd3/kMjchHO
+         m0L8L8DUzcafnHHbe4gG/N8dIZXJS0hsMMKOGOaqHJxkUmjRsRJgYgqDB0HdZW5enQKe
+         oIIu4IUVM85/RTlqq42lYzbTr8wYo89l2hwdWXVPQARGI/KnoIIDUv6PuVKUQLznSJf8
+         TSrZ9L61Xel68L18C21NjuUjBKkjSTDdwfut0nPBXrOUbYdG12ULP2YRQSESt0yubiwH
+         36gPsnKUWytqO6Rlj8NqRdh0FSeBFxK1N/Dzn3YskGr7MJ9CQ62Loir5Up60YoVYGEId
+         ylEA==
+X-Forwarded-Encrypted: i=1; AJvYcCX7Jkjw+o+UdXSr6HtnTZnZJvcEcro7sx7pLdn/SAUoiGdoVVUjM0znUzbcy9xoZHb+j5DbZ8UuPrcfkpixpjIIkGEzJQ3K33wFeNvl
+X-Gm-Message-State: AOJu0YxbxORn3YCS/XKnL4S6v9xElJ2NddTEoj5OS5WKZa20zL+H9HZ5
+	GIv0/fh2LfF5LEu6NhqrlftchsUw/GEL/D26ITe0SioXDbkIvqzosJFu5PBXGJs1apcmWOhE4XX
+	nnclkO7tu90J4/VuzLwSxnEW+F2FTNF7eOZfGzB8cP0dn9S35oQXbvwSgVPTkag==
+X-Received: by 2002:a17:902:e5cd:b0:1f9:d99f:61ab with SMTP id d9443c01a7336-1fadbcf410emr12621605ad.62.1719707956596;
+        Sat, 29 Jun 2024 17:39:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG/NdzPye3ofsIgF1rsz62eiDjuN05hA7t2+cnE7758DAdfnF9KWdi//koW+PTHyTmfFFAF4Q==
+X-Received: by 2002:a17:902:e5cd:b0:1f9:d99f:61ab with SMTP id d9443c01a7336-1fadbcf410emr12621455ad.62.1719707956151;
+        Sat, 29 Jun 2024 17:39:16 -0700 (PDT)
+Received: from [192.168.68.51] ([103.210.27.92])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac15966b1sm37766095ad.262.2024.06.29.17.39.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 29 Jun 2024 17:39:15 -0700 (PDT)
+Message-ID: <47a261e0-006d-4c64-9c9b-bc73797b8d6b@redhat.com>
+Date: Sun, 30 Jun 2024 10:39:04 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="91Qoq1IeelA5QvL4"
-Content-Disposition: inline
-In-Reply-To: <CWLP265MB6516AB499D407C0AB0CF106EFDD72@CWLP265MB6516.GBRP265.PROD.OUTLOOK.COM>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 17/19] arm64: Kconfig: Enable hotplug CPU on arm64 if
+ ACPI_PROCESSOR is enabled.
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, linux-acpi@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>,
+ loongarch@lists.linux.dev, x86@kernel.org,
+ Russell King <linux@armlinux.org.uk>, "Rafael J . Wysocki"
+ <rafael@kernel.org>, Miguel Luis <miguel.luis@oracle.com>,
+ James Morse <james.morse@arm.com>, Salil Mehta <salil.mehta@huawei.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Hanjun Guo <guohanjun@huawei.com>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ linuxarm@huawei.com, justin.he@arm.com, jianyong.wu@arm.com
+References: <20240529133446.28446-1-Jonathan.Cameron@huawei.com>
+ <20240529133446.28446-18-Jonathan.Cameron@huawei.com>
+Content-Language: en-US
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <20240529133446.28446-18-Jonathan.Cameron@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+Hi Jonathan and Catalin,
 
---91Qoq1IeelA5QvL4
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 5/29/24 11:34 PM, Jonathan Cameron wrote:
+> In order to move arch_register_cpu() to be called via the same path
+> for initially present CPUs described by ACPI and hotplugged CPUs
+> ACPI_HOTPLUG_CPU needs to be enabled.
+> 
+> The protection against invalid IDs in acpi_map_cpu() is needed as
+> at least one production BIOS is in the wild which reports entries
+> in DSDT (with no _STA method, so assumed enabled and present)
+> that don't match MADT.
+> 
+> Tested-by: Miguel Luis <miguel.luis@oracle.com>
+> Reviewed-by: Gavin Shan <gshan@redhat.com>
+> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> ---
+>   arch/arm64/Kconfig       |  1 +
+>   arch/arm64/kernel/acpi.c | 22 ++++++++++++++++++++++
+>   2 files changed, 23 insertions(+)
+> 
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 5d91259ee7b5..e8f2ef2312db 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -5,6 +5,7 @@ config ARM64
+>   	select ACPI_CCA_REQUIRED if ACPI
+>   	select ACPI_GENERIC_GSI if ACPI
+>   	select ACPI_GTDT if ACPI
+> +	select ACPI_HOTPLUG_CPU if ACPI_PROCESSOR
 
-On Thu, Jun 27, 2024 at 07:09:50PM +0100, Yusef Aslam wrote:
-> On Thu, 2024-06-27 at 15:43 +0200, Greg KH wrote:
-> > This all should not be in the body of the email, please use a tool
-> > like
-> > 'git send-email' to send patches.
->=20
-> Oh k thanks, I was trying to use git send-email but in the end I just
-> copy pasted the email into Evolution as msmtp was not sending emails
-> for some reason.
+ACPI_HOTPLUG_CPU depends on (ACPI_PROCESSOR && HOTPLUG_CPU). It needs to be:
 
-Authentication issues?
+	select ACPI_HOTPLUG_CPU if ACPI_PROCESSOR && HOTPLUG_CPU
 
-Confused...
+Otherwise, we can have compiling error with the following configurations.
 
---=20
-An old man doll... just what I always wanted! - Clara
+CONFIG_ACPI_PROCESSOR=y
+CONFIG_HOTPLUG_CPU=n
+CONFIG_ACPI_HOTPLUG_CPU=y
 
---91Qoq1IeelA5QvL4
-Content-Type: application/pgp-signature; name="signature.asc"
+arch/arm64/kernel/smp.c: In function ‘arch_unregister_cpu’:
+arch/arm64/kernel/smp.c:563:9: error: implicit declaration of function ‘unregister_cpu’; did you mean ‘register_cpu’? [-Werror=implicit-function-declaration]
+   563 |         unregister_cpu(c);
+       |         ^~~~~~~~~~~~~~
+       |         register_cpu
 
------BEGIN PGP SIGNATURE-----
+Since the series has been queued to Catalin's "for-next/vcpu-hotplug" branch, I
+guess the easiest way would be to fix it in place with Catalin's help.
 
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZoCetQAKCRD2uYlJVVFO
-o6I1APsHLrevLZMMM0lYJnxtWSvhmiuZ6aAFFByjryG/++/10QD/YcCo8RNKbXVA
-8wPGTFp+EaEp6BP5jD6AcZm7cOj8RA4=
-=3B0Q
------END PGP SIGNATURE-----
+Thanks,
+Gavin
 
---91Qoq1IeelA5QvL4--
+>   	select ACPI_IORT if ACPI
+>   	select ACPI_REDUCED_HARDWARE_ONLY if ACPI
+>   	select ACPI_MCFG if (ACPI && PCI)
+> diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
+> index e0e7b93c16cc..9360ba86678b 100644
+> --- a/arch/arm64/kernel/acpi.c
+> +++ b/arch/arm64/kernel/acpi.c
+> @@ -30,6 +30,7 @@
+>   #include <linux/pgtable.h>
+>   
+>   #include <acpi/ghes.h>
+> +#include <acpi/processor.h>
+>   #include <asm/cputype.h>
+>   #include <asm/cpu_ops.h>
+>   #include <asm/daifflags.h>
+> @@ -423,6 +424,27 @@ void arch_reserve_mem_area(acpi_physical_address addr, size_t size)
+>   	memblock_mark_nomap(addr, size);
+>   }
+>   
+> +#ifdef CONFIG_ACPI_HOTPLUG_CPU
+> +int acpi_map_cpu(acpi_handle handle, phys_cpuid_t physid, u32 apci_id,
+> +		 int *pcpu)
+> +{
+> +	/* If an error code is passed in this stub can't fix it */
+> +	if (*pcpu < 0) {
+> +		pr_warn_once("Unable to map CPU to valid ID\n");
+> +		return *pcpu;
+> +	}
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(acpi_map_cpu);
+> +
+> +int acpi_unmap_cpu(int cpu)
+> +{
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(acpi_unmap_cpu);
+> +#endif /* CONFIG_ACPI_HOTPLUG_CPU */
+> +
+>   #ifdef CONFIG_ACPI_FFH
+>   /*
+>    * Implements ARM64 specific callbacks to support ACPI FFH Operation Region as
+
 
