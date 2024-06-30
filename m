@@ -1,99 +1,97 @@
-Return-Path: <linux-kernel+bounces-235403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB35291D4A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 00:46:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4442891D4B0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 01:09:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78F85B20626
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 22:46:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D64EFB20E15
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 23:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C714453363;
-	Sun, 30 Jun 2024 22:46:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569886EB4A;
+	Sun, 30 Jun 2024 23:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="D9EsBDL2"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Tevq+fg1"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC7B8F72
-	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 22:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A82D45C18;
+	Sun, 30 Jun 2024 23:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719787592; cv=none; b=Hyv7KE7pvujbrOpvRG/D+KQf06q4YwKlu6vowNT6pewug6/FSbzyW5y82ucXDx0UcfgZ8zCN7y1dgFW8mrG0RYf3icJVMi5PEMcVJZ3lOZl1co7t1nbBzYJjHe2Y5bHTd2fDBADEJVWFB/Oo+Zn4JPAAe3eXP5HePUcFWJeLz1E=
+	t=1719788961; cv=none; b=Cyn9c3bKrQmKKwwcz0ZGZQR0T7s15qJYn7M6Xx03JiuNUVydA/rzpBZ1g4x3u4BHhGX4o0aycPHQcBYWILQ22DRpcgXmszM4GJM5xJrlqrFbigBqGVj989i4CzNkT6jLzudm9Aqhs+t5LZtKZtqPdSFdnfWZF+6J93RHIJs02kQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719787592; c=relaxed/simple;
-	bh=3KYSHImy4sid1JqafwysJRfu6xujcLeRpReG88SWVuY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oq+HL1efTyMQMd6lnCbNNJmcXKknrv3I46SlTHBqugEuzI/oHHQZL2sg4ezzaswcoLuIRicrxEtKu3frlPnmOKdH6bX1yRHxdqPmiwvdxVLJyQnGkiVDGr3Rcx96iqozrow3nGftjQKPcnwC2Zqnh+EYlM0NiGpsf3z3HkvjlTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=D9EsBDL2; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=8CNH/yok+eXaazKi2wQ8w+472tdh5r6qdmPijvgJ2KE=; b=D9EsBDL2ZEM25FHb
-	QudG/ewHdhJRsEwKyitoT3r42hWBHYjraV+NgGqTrkwogaDeM72ieGIL+S1z30D0ZTBWCrbZ96kXL
-	6RyzEk2+/f97xcMGNA0D7HhyUgPcg8xZcyDEhQDnayLrPwR7xJErxNYI9U1ZGjTeAYShXstkqi2KT
-	qi+Ee5T8HahMpGs4QOwOPuoxvS8FBT+RREn5W0ehmEVbY1JszpfGUP1F5mcItZ+8/3I1QkzWIqjnX
-	JMLRueTr0y4qOEfMk3L5G049n0dnhfcdYoLmqp+2zEkKC0cM7EGNBZGDmQq1o0u3FC1qvVmtDv1IA
-	RyTlbtPYeogu1axN/Q==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sO3JL-009Cng-0i;
-	Sun, 30 Jun 2024 22:46:19 +0000
-Date: Sun, 30 Jun 2024 22:46:19 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: "Sudip Mukherjee (Codethink)" <sudipm.mukherjee@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, arnd@arndb.de,
-	linux-kernel@vger.kernel.org, linux-parport@lists.infradead.org
-Subject: Re: [PATCH 1/3] parport: Remove 'drivers' list
-Message-ID: <ZoHgOwCFjcYBeOMc@gallifrey>
-References: <20240502154823.67235-1-linux@treblig.org>
- <20240502154823.67235-2-linux@treblig.org>
- <ZoHHVcYSOho2Yfro@debian>
+	s=arc-20240116; t=1719788961; c=relaxed/simple;
+	bh=oJUvNd8+Erzk7yzDx40vkFWIXQ+1rv/mENLB2vpcpEc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=qEGT1kq7O9QQDovwrporJ06j+UVa912Mgsc6kkelWerh1KmgRtE8AblVnNEiO3HfPz06D4hOntL6CDNCDOw9zAGNKZ2Fc5KdVlVKDggTy55SXP7kalGh6ooqh26pkF4qOYTM8mDppgN/wLN1ndH1A3TwRnq9AdVyMt1/mn766eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Tevq+fg1; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1719788955;
+	bh=+gIHKdQRK5Z4MWlbiZxnXGJUYKXbMvf1z3fPt2s7qOE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Tevq+fg1TAwfR2U7UV54qWSwbWQFFX/D+FjNY3a1VPQChc63PeV9nsYQCXXI/RATP
+	 /Zskj7bTyGBlkAc47QoOsmlA316ZiZkeZxp4IbSb/SRU7oZMoWcyCzzuYWFeD0eeOu
+	 0SQS7+ua5GoPlxTCO7LdVSr0XaAmFconERogBwcSA86Ukrvptrc7dZq3N7bcv1tldc
+	 FTUvdPy388NiEKwFuNxks9Gj+TY4Kjm3EYwd8LBPs6MkCBmUq0IYQ02lRG6tiHF42s
+	 MF0rQNpWmnOHenaGObsSeXkeRDK4sRlo1nOJLAELsTJZSmGqN8y3+d6NKtc95FS5Ck
+	 KEyv+/Ey4ksng==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WC4cV6XQfz4wnr;
+	Mon,  1 Jul 2024 09:09:14 +1000 (AEST)
+Date: Mon, 1 Jul 2024 09:09:13 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the ntfs3 tree
+Message-ID: <20240701090913.2348f098@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <ZoHHVcYSOho2Yfro@debian>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 22:45:51 up 53 days,  9:59,  1 user,  load average: 0.00, 0.01, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Type: multipart/signed; boundary="Sig_/CnYfNz6V0O0G_Q=++ulTpMi";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-* Sudip Mukherjee (Codethink) (sudipm.mukherjee@gmail.com) wrote:
-> On Thu, May 02, 2024 at 04:48:21PM +0100, linux@treblig.org wrote:
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > 
-> > The list has been empty since:
-> >  'commit 3275158fa52a ("parport: remove use of devmodel")'
-> > 
-> > This also means we can remove the 'list_head' from
-> > struct parport_driver.
-> > 
-> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> 
-> Acked-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+--Sig_/CnYfNz6V0O0G_Q=++ulTpMi
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks!
+Hi all,
 
+Commit
 
-> Greg, can you please take the series.
+  76a65ae141a2 ("fs/ntfs3: Fix the format of the "nocase" mount option")
 
-Dave
+is missing a Signed-off-by from its author and committer.
 
-> -- 
-> Regards
-> Sudip
-> 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/CnYfNz6V0O0G_Q=++ulTpMi
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaB5ZoACgkQAVBC80lX
+0GxcJwf/b6taKWXHr07BRr1sHHmxyrNSOt3ow7PQWQsKgOTJV+0W2m5DtLijs0+3
+w16RGueX2nT2DHXANj6juAPZL6ubVLLFF7KJKuDo0WTf5q2rq/6kZ7Np239Nh552
+3JvJELCufsQ+/UO2EouJqCkrNUlf24mJ6fneBFCczf36KB4EUpSWC+VGrRBW8BSS
+3/XatLwJR6tSanjTL7t2gL6kL9W93wva7QZu8PHEJ9Px8KiN40rmwf1N8j+vmbAX
+M2hWLTpT05RyCPo8cCoRmYt4CpEvRsGnxeGaLHwv2QgGszGSSCJfsE8cXHnc+BFt
+x2PeRKomWv4tKusJ69OmN72XwngMKw==
+=rlT6
+-----END PGP SIGNATURE-----
+
+--Sig_/CnYfNz6V0O0G_Q=++ulTpMi--
 
