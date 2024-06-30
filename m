@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-235275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B7E491D2AB
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 18:28:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64C4891D2AC
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 18:28:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 119B8B20CFB
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 16:28:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95E061C209CE
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 16:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C97A2F877;
-	Sun, 30 Jun 2024 16:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79511155325;
+	Sun, 30 Jun 2024 16:28:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XDsg4qJc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JiwjfbJu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE3A25B1E0;
-	Sun, 30 Jun 2024 16:28:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3B51552E7;
+	Sun, 30 Jun 2024 16:28:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719764886; cv=none; b=kPAKzfM4OG3HFhiHY1SJ5/gJ1pDz7bDePZOf2Jtp6udJqCjGsR5+bbNHowABY0u/oRMtnHecTnflzK1WbFDGp/Edr1i7Hz+T4gQ7rbdZ6z6k7rWwRQAQ/oeH3J0+Y9O0NEpH1+TttXB3f/OjZPbuS7TbeUiJ2P4lssEQvB7kePI=
+	t=1719764887; cv=none; b=pV1pc9LbE0NJYdY2MFUTCubu3YkPTpMyvudhMEhDj7YOUGFU7RuA5Q3ofLcHZFztmbZfX5x/sTuoEuRd1l67smGvatNSC9Tk6zIMsrJuHY3sK2KWjw1h4GuaoLpvBYOv7OY36CZLS2nJIDzE4jAKYggwugm/qEcfHLmgpAi19UU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719764886; c=relaxed/simple;
-	bh=dUSY9WlVjpaC0jibaT6PWQbRPziL6WMnbcskSU/tty8=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=nWxqlycWDOedj1nuUcg2JekMTlE4VdkIu4NT+AEd1JJFSYIVRnB/ODWjbE9gJsVHLlysD+YQQmSs/7dDK7DQlRz4XvnGmyP0Ht0U0R1PXtnQoHgHCAudszeezaFgy57iPrE/p1TjWGFtoLc7EYj5QmYqSqGTfLs/IwxENo1gqe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XDsg4qJc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B0715C2BD10;
-	Sun, 30 Jun 2024 16:28:06 +0000 (UTC)
+	s=arc-20240116; t=1719764887; c=relaxed/simple;
+	bh=q4G+DsBRqmeZukKGOvCZiLom4qITsHnT+V/7L9bWe3w=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=dDiTIxBBTemArlvhxSLeldC98/DxB6bmwsifiyzs3LaTSkjECPungfQpAoDSuCnwjgkGXjfYaG94gRJeozbZeyLdgU2z4jqPhDUodXqYut1DLsWptQI7UgGLMsNhKnMmREZGOmRf3n2hqRcBl1oNprLw7kezT2/cjy+m8XFkxI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JiwjfbJu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9AF72C4AF0C;
+	Sun, 30 Jun 2024 16:28:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719764886;
-	bh=dUSY9WlVjpaC0jibaT6PWQbRPziL6WMnbcskSU/tty8=;
+	s=k20201202; t=1719764887;
+	bh=q4G+DsBRqmeZukKGOvCZiLom4qITsHnT+V/7L9bWe3w=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=XDsg4qJc4g0Kf/WJs+dKn2xM4TRVTMz9LPV+m3yCr67ZRUnOafqPATXkWxqi+acIM
-	 6hV4PJz1olhmRMXkW6Sz0eIparoVKzaWprMXF0KbGJ/b+GcL8PsNfDCzQ/JEyfEXgL
-	 b8Og9zv80b7+dkpQnvVsgJHQralqBKHcgfoihBj/oRQstCUu8AaxEhQM/ZLl4k9YbD
-	 aED/xaiyJ38NvMHdHjWaU+1XBJ7BUvfzTHBxBLraJ9uk5IQYeVzl1uiOWDS1ynujrH
-	 IT0bwprbBjd1TawDz7w3zVVjeYnqi+E371GbKsv8IPqtLx6sH0pN8MeFNxr5P87aQn
-	 C9XNRcQLUGuPA==
+	b=JiwjfbJuBvRacIVB8acDcx4xWAtZUwNO1a8740orbbAJ9M3jTpEIMMJ/pC7aHKjqZ
+	 TAl/WLT4BB/1VHtKB8FJmMswC+NlWzt6QWiQvXcJCv5YdBRHb1beAGB28WfgloNzgB
+	 IpxqdJjcGgFcr1KJFmhjO2G28gVIPZIwa1Ex9PgPc07yJ7WMFQQEmoGt80GmuM9BC4
+	 eTpom1Qp40cLUfIOFFMRzHMtRDZl7YKcLCGKxwUSUg5scd9Ims0lHYCK6VpJxFP0m5
+	 jl5arqXCun4yjqJ8LQTnolbNFXzM9DIbLYoSvpdr0cMnCQnZGyo+K2QOIGM64jSQsm
+	 DxWlj9BGPCteA==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A65F3C433E9;
-	Sun, 30 Jun 2024 16:28:06 +0000 (UTC)
-Subject: Re: [GIT PULL] TTY / Serial driver fixes for 6.10-rc6
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 92842C433A2;
+	Sun, 30 Jun 2024 16:28:07 +0000 (UTC)
+Subject: Re: [GIT PULL] Staging driver fixes for 6.10-rc6
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <ZoFnsuNJy_Fz8_qE@kroah.com>
-References: <ZoFnsuNJy_Fz8_qE@kroah.com>
-X-PR-Tracked-List-Id: <linux-serial.vger.kernel.org>
-X-PR-Tracked-Message-Id: <ZoFnsuNJy_Fz8_qE@kroah.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-6.10-rc6
-X-PR-Tracked-Commit-Id: cc8d5a2f09a54405321769abfd6ec3395482336a
+In-Reply-To: <ZoFnxy7Wy7fI_iDL@kroah.com>
+References: <ZoFnxy7Wy7fI_iDL@kroah.com>
+X-PR-Tracked-List-Id: <linux-staging.lists.linux.dev>
+X-PR-Tracked-Message-Id: <ZoFnxy7Wy7fI_iDL@kroah.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git tags/staging-6.10-rc6
+X-PR-Tracked-Commit-Id: fcdd7b7bda3c21d1ba1247419e4a1eb8e2d0bfbb
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 3e334486ec5cc6e79e7b0c4f58757fe8e05fbe5a
-Message-Id: <171976488667.24413.1678305741571152562.pr-tracker-bot@kernel.org>
-Date: Sun, 30 Jun 2024 16:28:06 +0000
+X-PR-Merge-Commit-Id: 12529aa130276d622fe229f0c208ad3fb7e7138e
+Message-Id: <171976488759.24413.10255274800180521625.pr-tracker-bot@kernel.org>
+Date: Sun, 30 Jun 2024 16:28:07 +0000
 To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Jiri Slaby <jslaby@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Sun, 30 Jun 2024 16:12:02 +0200:
+The pull request you sent on Sun, 30 Jun 2024 16:12:23 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-6.10-rc6
+> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git tags/staging-6.10-rc6
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/3e334486ec5cc6e79e7b0c4f58757fe8e05fbe5a
+https://git.kernel.org/torvalds/c/12529aa130276d622fe229f0c208ad3fb7e7138e
 
 Thank you!
 
