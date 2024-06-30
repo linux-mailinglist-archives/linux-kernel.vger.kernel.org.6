@@ -1,96 +1,148 @@
-Return-Path: <linux-kernel+bounces-235257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 939F491D255
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 17:34:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 772E791D27F
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 17:43:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C52C31C2092D
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 15:34:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21EA91F213C9
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 15:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A7C153823;
-	Sun, 30 Jun 2024 15:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8AC15383F;
+	Sun, 30 Jun 2024 15:43:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fc7zUtxh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="N0x1hXEY"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C792282F1;
-	Sun, 30 Jun 2024 15:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996E7282F1;
+	Sun, 30 Jun 2024 15:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719761646; cv=none; b=MRj/EOB1XPsKsrk9O9Rd9om8mEw01PihpQzraOfk1MYoDrHrlMbrAM0yAVrAF61um6GNOicYm9r/JShO0RQntvcRU6zuFGtJ+G6+cBR0+J0FNRubE9GavlYzsxpNLu3V4LySJLXNeqLZCIvcXHLEBUQ6t2RJH2dh512d8PqcgTY=
+	t=1719762203; cv=none; b=WGT9MkeRCYjV1YcrmksOlDq7fbbUdsKylbGnfCMDWacLq4gZWy+pAOfng6eiTASt35a5+fdYkG590MykqhkJR62mpfvQ+jvBejO7G+Ar2ClIVL5ZyZ9sdfNUoH4Bd/gVYJ03MHKa59KCEcNjStMmcRYmUM1XB7hp+ub6ZU6tSEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719761646; c=relaxed/simple;
-	bh=oBsDaIgWwOPsN5NcDJk1MTGtGIh9YzY81gZmoTW+7Vg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Bh+j8JOGxXoenUlwVcBOBqrtMZYqzYRnkarx95uEOfIk8gRJTJBFR/cB/6qjrOKxRujyqUwuUTzZXQJbozT/MTXYghHuFxo7hzXFHVM9bLEegRiW/r/em0D+Pz3tptR6oieFM3pUohqf8d+4X21w7VWA05s3hKAvxBDYfuiPMuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fc7zUtxh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62F8EC2BD10;
-	Sun, 30 Jun 2024 15:34:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719761645;
-	bh=oBsDaIgWwOPsN5NcDJk1MTGtGIh9YzY81gZmoTW+7Vg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Fc7zUtxhDWhgTkv4LQ29OHLe2IiluCwDUiWsZj2GETG+towrxRViQgzgjTuWsPozG
-	 kRdD9A9a63BkxcSMjqUA9UV8+5S6oPqO1Aj7umyUgMuSYxLJPv67BixCDpWvVpuhaS
-	 sNT/a+7/Em3FM89w1RU0k9DQ2aB6dvUIj+ZBa1AC+dSbP0WAGZgjeQr4wRF82iVNIj
-	 7YeR1cYPzf4+nzSMthbtVEjXpnjkRCmQJwK/PrALsN09FA4IE/MGXmZfoXZJHsHA4j
-	 Aiv9JBtUWJa5h/iAou+T8cEu2ymT6JXb6b/gFt/PfD/fjcVpmr+ehXXV8hTDlrKu8X
-	 tFzix+OVM05Xw==
-Received: by wens.tw (Postfix, from userid 1000)
-	id 58B8C5FD47; Sun, 30 Jun 2024 23:34:03 +0800 (CST)
-From: Chen-Yu Tsai <wens@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Frank Oltmanns <frank@oltmanns.dev>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	=?UTF-8?q?M=C3=A5ns=20Rullg=C3=A5rd?= <mans@mansr.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	"Robert J. Pafford" <pafford.9@buckeyemail.osu.edu>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi-ng: common: Don't call hw_to_ccu_common on hw without common
-Date: Sun, 30 Jun 2024 23:34:02 +0800
-Message-Id: <171976163761.1183893.10044135406471629615.b4-ty@csie.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240623-sunxi-ng_fix_common_probe-v1-1-7c97e32824a1@oltmanns.dev>
-References: <20240623-sunxi-ng_fix_common_probe-v1-1-7c97e32824a1@oltmanns.dev>
+	s=arc-20240116; t=1719762203; c=relaxed/simple;
+	bh=AUtORzMDdCMyeiqRqRZoORUxo2N6tHdV8x1n9L+WDrM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pEr8YBlQWnm4tLUkj10F1VHgm99xgO4QfCrLdni0maAAjgj54M78Wrsrkeh0I9UTNqrcww8N1w3f7cXcu1bBks8XGbKQZzYcBdlSROnVK+D39aiZqQQNKGFsJUkNzE8SB/RjNSADiBYJB3ycNTywxdDmdllIasHl6NjVYsYrNyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=N0x1hXEY; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+X-Envelope-To: dsimic@manjaro.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1719762198;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wJzZ3477L/XZ9+MboeTgz9sk1fFCg1tDlQJ3aVTYhSc=;
+	b=N0x1hXEYCl5UUvG0T2FsNMb8/KJ1nkk7nMOyENDU6LXly51iZCMAVCWNh9rLTbiHw/W319
+	/zDEg4l7UGyAD7IOcm7sX1l9ts0It1sIpS8+FSfZCur11KldCixQgICk56V7f4c2lL7+nz
+	1BcHOty8s1OiHvrfkwknrTuZl62JkjjXJqwN6VdrGvpuIsuxmLUIWBMt/rO0WXHyEv6q3b
+	+A0uN8mk5Etjwp62UgRcDUfjaNYcL6DhvQvI/0xpfX+664ySLcRcU3iD7pg7bZJDAdkNZC
+	I3VbUWjUg5ZKakvKgXBMSffK4+cPhKrD3Uhczx0lkpzwtsbgYR1TRgg9HppC7A==
+X-Envelope-To: linux-rockchip@lists.infradead.org
+X-Envelope-To: heiko@sntech.de
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: devicetree@vger.kernel.org
+X-Envelope-To: robh@kernel.org
+X-Envelope-To: krzk+dt@kernel.org
+X-Envelope-To: conor+dt@kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: jonas@kwiboo.se
+X-Envelope-To: didi.debian@cknow.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Diederik de Haas <didi.debian@cknow.org>
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: linux-rockchip@lists.infradead.org, heiko@sntech.de,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-kernel@vger.kernel.org, Jonas Karlman <jonas@kwiboo.se>,
+ Diederik de Haas <didi.debian@cknow.org>
+Subject:
+ Re: [PATCH v2] arm64: dts: rockchip: Add GPU OPP voltage ranges to RK356x SoC
+ dtsi
+Date: Sun, 30 Jun 2024 17:43:05 +0200
+Message-ID: <2573506.7YG5XaKc65@bagend>
+Organization: Connecting Knowledge
+In-Reply-To: <b8951ac4e29184fa35919c6ab85b8f87@manjaro.org>
+References:
+ <bdb60f1f793166cd65f58ab7aea025347076019c.1719679068.git.dsimic@manjaro.org>
+ <2442162.AJoTavkB1d@bagend> <b8951ac4e29184fa35919c6ab85b8f87@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="nextPart3294961.YX3dR29aPv";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
+X-Migadu-Flow: FLOW_OUT
 
-From: Chen-Yu Tsai <wens@csie.org>
+--nextPart3294961.YX3dR29aPv
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
+From: Diederik de Haas <didi.debian@cknow.org>
+To: Dragan Simic <dsimic@manjaro.org>
+Date: Sun, 30 Jun 2024 17:43:05 +0200
+Message-ID: <2573506.7YG5XaKc65@bagend>
+Organization: Connecting Knowledge
+In-Reply-To: <b8951ac4e29184fa35919c6ab85b8f87@manjaro.org>
+MIME-Version: 1.0
 
-On Sun, 23 Jun 2024 10:45:58 +0200, Frank Oltmanns wrote:
-> In order to set the rate range of a hw sunxi_ccu_probe calls
-> hw_to_ccu_common() assuming all entries in desc->ccu_clks are contained
-> in a ccu_common struct. This assumption is incorrect and, in
-> consequence, causes invalid pointer de-references.
+Hi Dragan,
+
+On Sunday, 30 June 2024 14:04:50 CEST Dragan Simic wrote:
+> > I also expected that (for v1) there would be a similar construct as was
+> > recently added for rk3588. But I should interpret Heiko's comments as
+> > that strategy should not be applied to rk356x?
 > 
-> Remove the faulty call. Instead, add one more loop that iterates over
-> the ccu_clks and sets the rate range, if required.
+> The trouble with applying the same strategy, ...
+
+One of the reasons I like/hoped for it is that I'm a 'sucker' for consistency.
+
+> ... the need for voltage ranges depends on one of the board features,
+> i.e. the GPU and NPU voltage regulators.  As such, it still has to
+> affect the RK356x SoC dtsi, which may warrant separate
+> rk356x-gpu-range.dtsi, for example, but the troubles would arise ...
+
+... but it's probably better if I (generally) abstain from taking part
+in the discussion about the correct/desired implementation as I don't
+understand the material in enough detail to meaningfully contribute.
+
+> That's why the v1 went with a macro instead.
+
+... which didn't seem to help with my consistency wish ;-)
+(AFAIC there's no need to discuss this further (publicly))
+
+> > When we/upstream adds npu support, I think we should also follow
+> > downstream's OPP values, unless we have a very good reason to
+> > deviate from that.
 > 
-> [...]
+> That would make sense, especially because we haven't had the NPU
+> supported before in the mainline.
 
-Applied to clk-fixes-for-6.10 in git@github.com:linux-sunxi/linux-sunxi.git, thanks!
+I first wondered why you hadn't *updated* the npu OPP values ... 
+to later find out they haven't been specified at all in 'upstream'.
 
-[1/1] clk: sunxi-ng: common: Don't call hw_to_ccu_common on hw without common
-      commit: ea977d742507e534d9fe4f4d74256f6b7f589338
+Cheers,
+  Diederik
+--nextPart3294961.YX3dR29aPv
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
-Best regards,
--- 
-Chen-Yu Tsai <wens@csie.org>
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZoF9CQAKCRDXblvOeH7b
+bkBSAP0azzram50AgiLu7+7CoG5ibxdTLWfqWJXFnDz/NRklwQEA2F+7ZSC8Ny2q
+vSJyaTgsxoSxeIKiNdrNgVIRgBAx/w8=
+=NjR2
+-----END PGP SIGNATURE-----
+
+--nextPart3294961.YX3dR29aPv--
+
+
+
 
