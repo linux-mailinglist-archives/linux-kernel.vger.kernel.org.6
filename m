@@ -1,262 +1,190 @@
-Return-Path: <linux-kernel+bounces-235108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29BE291D03D
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 09:02:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03EE391D03F
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 09:10:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84D2E281FF0
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 07:02:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 590F7B212A3
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 07:09:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 883B53C6AC;
-	Sun, 30 Jun 2024 07:02:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0903BBC9;
+	Sun, 30 Jun 2024 07:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="noERcjYU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YMKo3aCu"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B804B27456;
-	Sun, 30 Jun 2024 07:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719730941; cv=fail; b=lZGMTjDPVQN+AV5ukVdL9pgHEYZbsmJuUGGGL6y21zzTWHiVFwWV4XrQGTjYXbALIre+tZa544fIfR0FT+NVo1YEgarBOJjvBjQc9jZETp7ilhEFM3K1w7yDigmqYG5FOafyHnWwRlOnNavouPXOET41Q+e+uXYaeTNVN7xpfyo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719730941; c=relaxed/simple;
-	bh=YzWZjZxLEOOyLajuf7w3m6Bz2OqsrFJBb9pp3C5GVp8=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=oA5AYv94cnfF7uClw+kH++9Z6+aFb2QH/72J2hrjU+yLrOF6Wrh65Frz6DH6QhwAV/3vTir8wvaoeymZY8xUhEHmGmhpglD8XlKzDO9mYqCZPHYKeYbrZ0M3pcA+tupjs3qmbhs4K1xIZ+AF4nfn633sF8Z4Hl7Siy0dnNaV1SM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=noERcjYU; arc=fail smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719730940; x=1751266940;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=YzWZjZxLEOOyLajuf7w3m6Bz2OqsrFJBb9pp3C5GVp8=;
-  b=noERcjYUgR8okAb1cuAGEtU88TMRKDzIqttarBTp7JTXXrnPxsCryFf/
-   Fvi31+J9m8CFNcZUhPCBD7b7JxcbQ/IFJEV0HZsaGdMqENh2o9e85jmha
-   jNemBm7hMG9b4GVpJViN9vDpw/9+/mFdwtlyBHgjNLDYCKR91Qc8+PKy9
-   yjsh8by0/tM9BdOY29x6YP02T7K6s87g4zH39X3nGBpf+y1G0gkPHAdGE
-   K1FDQ+NVlv5zzUiayH9mstTCmPyiXT3ISeZr2o1e9vG1TSyCoal1Gx8V1
-   yAynWt9gqBnk46DgKHCEnVYQZ4PFvacMFl8UFo538H+eGpUWy3/oVOfhf
-   Q==;
-X-CSE-ConnectionGUID: M0/bRcBFS/OjNoNrwbZm2A==
-X-CSE-MsgGUID: WuXLJmrGQkmcWwFWCilIhg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11118"; a="27454208"
-X-IronPort-AV: E=Sophos;i="6.09,173,1716274800"; 
-   d="scan'208";a="27454208"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2024 00:02:19 -0700
-X-CSE-ConnectionGUID: LaJYbaOlTdi0EHg4JildNA==
-X-CSE-MsgGUID: Cq85M3+rQquXlCQu/XiKEg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,173,1716274800"; 
-   d="scan'208";a="45233551"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 30 Jun 2024 00:02:19 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sun, 30 Jun 2024 00:02:18 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Sun, 30 Jun 2024 00:02:18 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.100)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sun, 30 Jun 2024 00:02:18 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UzezmVyQqz6JZE8tYKtV9MebokhbJMfpzs/p+0eUNysKETWx3QydS5VcgichEm8S9hMFWhRVvuX3sk/5VCNqPbu3bXT01oOpSGyjSD2ushoMuAQMe3+0Yu2mzFpvrqg5w4k2TiS6DNH76db7ZehidkD6ZhrYRV8VuptBoad2ZwHNNITiYVWWdIN9mZtLQ+zCYTyydEKNjoODGnOmnapRHc3yuD/A61QJBv0gWuQMaZu+e1Z9A+IM0MPbSjDZRTrevVSOPpcoZzmNjs3ZDMH3cccTqfLoWnV1X586q5ROnytPWhmdEr+y+xKd47HN485kntjYDuwCiKnDunQXex0nwA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CiGewsBT+fEHXb0Rb6sTaGXpZI+PEOlpXnP0SEbYrsk=;
- b=oQ/iQm83Enni8XHtjKUjvESmdHeEt167DuiO6lTzQ0oUgWIH4BufReSef36xmkhHGJCRkDvwsFCeaX6pc1a70a0RpJ6uKO1WU201Wqm4hQMVXIn4f+jn9yeDg7AAW3K/+u5k1EudHEHf0nRIdeZLRa6AxT/Xi/LPuBG1jPmoQZtyQajKO9Xh8iHp/0Z76RXf9dxwYPQ4Rdl5tvnIGyelg/Ki3YNMSbc9W25mLUmOJ/0Jsyi766cqDRIwz95vpFYzziI/V31CxgxClnUa5XhzzdHSsBn4xeU9UXkTGEhzEGgHqaa1PiBqIKbk2yF/9R3Adtf+DqNzVXUXQxljPUtkEg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7529.namprd11.prod.outlook.com (2603:10b6:8:141::20)
- by SA2PR11MB5162.namprd11.prod.outlook.com (2603:10b6:806:114::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.28; Sun, 30 Jun
- 2024 07:02:11 +0000
-Received: from DS0PR11MB7529.namprd11.prod.outlook.com
- ([fe80::d244:15cd:1060:941a]) by DS0PR11MB7529.namprd11.prod.outlook.com
- ([fe80::d244:15cd:1060:941a%3]) with mapi id 15.20.7719.022; Sun, 30 Jun 2024
- 07:02:10 +0000
-Message-ID: <f588f627-2593-4e89-ae13-df9bb64143c4@intel.com>
-Date: Sun, 30 Jun 2024 15:06:05 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] vfio: Reuse file f_inode as vfio device inode
-To: Yan Zhao <yan.y.zhao@intel.com>
-CC: Jason Gunthorpe <jgg@nvidia.com>, "Tian, Kevin" <kevin.tian@intel.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "alex.williamson@redhat.com"
-	<alex.williamson@redhat.com>, "peterx@redhat.com" <peterx@redhat.com>,
-	"ajones@ventanamicro.com" <ajones@ventanamicro.com>
-References: <20240617095332.30543-1-yan.y.zhao@intel.com>
- <20240626133528.GE2494510@nvidia.com>
- <BN9PR11MB5276407FF3276B2D9C2D85798CD72@BN9PR11MB5276.namprd11.prod.outlook.com>
- <Zn02BUdJ7kvOg6Vw@yzhao56-desk.sh.intel.com>
- <20240627124209.GK2494510@nvidia.com>
- <Zn5IVqVsM/ehfRbv@yzhao56-desk.sh.intel.com>
- <cba9e18a-3add-4fd1-89ad-bb5d0fc521e4@intel.com>
- <Zn7WofbKsjhlN41U@yzhao56-desk.sh.intel.com>
-Content-Language: en-US
-From: Yi Liu <yi.l.liu@intel.com>
-In-Reply-To: <Zn7WofbKsjhlN41U@yzhao56-desk.sh.intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR04CA0158.apcprd04.prod.outlook.com (2603:1096:4::20)
- To DS0PR11MB7529.namprd11.prod.outlook.com (2603:10b6:8:141::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A774084C;
+	Sun, 30 Jun 2024 07:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719731388; cv=none; b=fb1IkbsqUXpO5qwHNHY8x0lqy6fDIPqoLjgcDwmO0pTdZ8YBYEhzclARWMtohcRwXWDudrP4181CAHBSFzuwydCQy+l+QdZsps6Dv3+2Ik8Rysh0K9DIXK3QweCFl+RYkqQKT3jALyKNjZ6nmx48lpGYf5RVEVYMIKwbw0heA/U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719731388; c=relaxed/simple;
+	bh=+sX6ULmlLv/0jScNyfAwutPCjz4FV6sRoYcqNTUuPcI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IPr8SoSM6CmqrT77qrY4i/dWHWBHBF0rYVirdWXPo55qVzOYjUFAQSDe519EwLv1TRQihlf6gkHC/o0SOYc25aHcCHZZk1rEwLzJ5VYjHKe6YhPI+2+QYHH9fMzG1/8jZ15IHxjNKL/EEe6gNdTsI5FXBIqMccLxNeg89QoWkTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YMKo3aCu; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45U79di2084201;
+	Sun, 30 Jun 2024 02:09:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719731379;
+	bh=EnLzB75c23YJnuba7kDcKU7PP1s2SR97VQiBuiWzAkM=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=YMKo3aCuU8h2ytQM1eQIjVgmFuFMbHm29ICxh6UdEM+TgB1HgLr1KCoHbZxMIVZLS
+	 DMCimp8YUBRqwUSY3JVgxDKjIbVNFck59RdZmxMovPgBzps7LKfODq2kHB/ZClHxq7
+	 4lJkT6CZBklm13N4gt+pGMiqqjDKeDHX0RB4MmuE=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45U79dPQ068587
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sun, 30 Jun 2024 02:09:39 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 30
+ Jun 2024 02:09:39 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sun, 30 Jun 2024 02:09:39 -0500
+Received: from [172.24.227.94] (uda0132425.dhcp.ti.com [172.24.227.94])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45U79Xkw001404;
+	Sun, 30 Jun 2024 02:09:34 -0500
+Message-ID: <0ca809d0-3d0f-47d1-b5e7-aa78d65d7917@ti.com>
+Date: Sun, 30 Jun 2024 12:39:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7529:EE_|SA2PR11MB5162:EE_
-X-MS-Office365-Filtering-Correlation-Id: 07964cf1-ff21-423d-516f-08dc98d28fb0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?Tm1JU1QzZ2Y0WlFNMDZzK2hTUFZKdFplYXhLK2RTQlAybmNIS3lKSHZxUTRz?=
- =?utf-8?B?WGxDZmZaVTBoZGE5bVM2WitORkNLeGtpb1VSZFhnUHkzcFU3RzU4T3JBMURq?=
- =?utf-8?B?TE14d242OHFSSlkvUjlXNGRDaWpoOVpyK2ZaYjdTeXVkWGh0V0QwVm5mekpD?=
- =?utf-8?B?VHRUSDRnVjI1amJDemljbWZMUkhzSnNETmwrYnBkTGlFR3psNE1MQkI1WW9q?=
- =?utf-8?B?cUcxRmdlcm9GSURqMy9kaGVrM0s2cW9ReW93THNRWmphT05qMGoxdW1ybEdS?=
- =?utf-8?B?NmJ0enhIcG9abE1DT3BUOUVGbmhrT2RzWExiekFmWCs1dEFmbUx2YnpIVlh6?=
- =?utf-8?B?dEZ2c2ZySlNOVnNnZlBOMStFR3FFejhlZFN4MDUxQzdoaVdSNGM3VS9YMzFT?=
- =?utf-8?B?WU9SMHNkUHRuS1BGb1lRVGhjL3RnOHUyT1gvRldyRnRUdlhmZWVPNXhBRUI4?=
- =?utf-8?B?N21EUU5tTGY4N0pLQVVWWkFOZmtzMlIxRVFTNkxYaDdzT3FEMGZTeW5GZEFm?=
- =?utf-8?B?WmdNcjhBUTIrcXp4NjBla1BjZ2NzOGJLL2ZtZndQcTQxcUZrYnJaMlU3N3hh?=
- =?utf-8?B?bVBnTEdSZ3k1SUJnWVlhL2VVL2VhWS9CdjNpQUVLZDlSK285L2VOcWJ1MVhy?=
- =?utf-8?B?NzljQ1crZXJ1Tzl3Qkt4MWx3bXVrY01oYWZRK2liZ1E5STliZkkwQjBrTXpE?=
- =?utf-8?B?UDB1cDliK09QeGZiakZFekxoOCtvNmVoZTJ5VCtCUktBL2RDeWY1N29mN3Ax?=
- =?utf-8?B?alBvKzBSZ2x0NGJJZVFPbk5Ed2VwWGI4a09MbVcvNm9QVlBnYUZTc2tLZWd4?=
- =?utf-8?B?SlA5Rm1zcFpadlJkMGpMWFJlSHZjakxpR20rSlZTN0lWcnRESGROcHQwZUpx?=
- =?utf-8?B?VHhHTS9JdGYyVlJMdjBuRkM5VU1iN3pSY002c094cW1rZkJxZnV1QjdOWjNL?=
- =?utf-8?B?dTc0S29JclBTY3dnOXJsTmhnNGZUc3hJaFRTVERzU01ObVoyTHk4Vng1UkhJ?=
- =?utf-8?B?YjRvOVBwRjdBclhFdW0yYmliUm5TTnl1VkJ2eExTR3FaWEtXYlZacnI4TEhL?=
- =?utf-8?B?eXdZNXlhZkdLNlp5TzduVXpxM0pwSTR0UUJVdlljRHJ0T0VmUTR1Y1FvVUhD?=
- =?utf-8?B?YmxtYW9Fb3Z6elRvcWVieUQyeG5KeFAvNERIL1loNklyeGUwelZOc3ZyN1RU?=
- =?utf-8?B?WUY2Y1owZ2VrcGRLaWhrY1AyTFBuUjltQ1BRcVdhT0lPa09ZcUNRWGNvWUNV?=
- =?utf-8?B?V1pXQmtnSjVFNU0xWU9YZ1dyZCtROTk0RldPOEk5MzRqblFFN09UQmlER3ov?=
- =?utf-8?B?R2NVWnQ5dnhjOTgvWkg2cXlWdjYwYzRhQ0dCRTJHL25xRVVOSFo2bWxIY1NN?=
- =?utf-8?B?ZXpWR05IUXJFWUV2OS9nVTdGd3B2c3Y3TGZGdThGYlFoRkVMTkltYW8yckhL?=
- =?utf-8?B?WmVQMWkyQnhwNTVQeUc5RWVBWjMwaE9yWndRdEVVenlWTWkwUUpYVnF1QlFN?=
- =?utf-8?B?Z285MUtSZ0NHb0ZZK2tqTDl6ZGVtd01CNTY1ajFTVGlCR3Z1aC84QzdRV3Qw?=
- =?utf-8?B?SnFFNmZBanZqbEtJdXorVm0yMUlNVnVzb2JYbjJNUjlqVjZZejZFeGZFRTk4?=
- =?utf-8?B?NENFUUNmMWp0VitvYTZuRkJRam5HWDVaT0U1NjZMUDl0SHNOMmtDSFBUQ1Rw?=
- =?utf-8?B?QmpRdkFHeHN5UDJTN0U1eTRBYXB0WFE0eGg1VmM3RnF4UWd2bkh4RTVUTEZF?=
- =?utf-8?B?NTJWeklhSUZ0ZE14b2hmV0huT3lTbmkwY0ZiUUxXYVRISUt0ODdEdmZpYjl3?=
- =?utf-8?B?Vy94SExNOGxWazloLzJTdz09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB7529.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RDNrZCt3MlRrcHBNeHpTVHFVcklDSkUzckdLMVgwMGlUWnpyKzlENU8rWU5y?=
- =?utf-8?B?NlVGWnhmbmJiYllTL0JWTXM0UWxvVlRENWtBRHRrZ1NhUkM5eS9jUTc3VFNS?=
- =?utf-8?B?Y2xMaDRETGYzUHBqMkE5VXNZNXZsUWdiUjBuMktSVHBmVjcrMkxuUlRoQ2li?=
- =?utf-8?B?L1E4L2JjTHJVY3FJQzdiTlpOOUtkeXZaQk1Oc2NhaFBhSVBFZ0pJWG9rMEIx?=
- =?utf-8?B?YjJSVDEyY1Z5bkMvbitQV3FIc2hsTUVNNE13RnhuSmQxeWNwR1RmaEZNRE82?=
- =?utf-8?B?ZFovK09TZmU3Wmh4MjdoSjJSckI2NTREM0RVN2podHV0QmVxRlBkNnA1OFJx?=
- =?utf-8?B?Y3pNWW5aMnJ5OFRNaFFUV3VmQXduRkxDcER3N3VrYjUySnYvMW5XRC9UN2dw?=
- =?utf-8?B?UnRSUUwrZkEzZWZpaEpOSklsL3BreThFVEVLUlRqNFpFcEt2cG10UTh5N3NP?=
- =?utf-8?B?b0RicTFIR24zb3JWeGRRNGF6UGY3RE9tM1NsM3A4dUVCSG5ob3NWSU9vYmsx?=
- =?utf-8?B?VnVrazZIem5DeWtEcmJERU1JVTVQRlFIc0xwVTJLU29nNEc3WWxjMEg2N3l2?=
- =?utf-8?B?cjIzRkhCUEJPZld5NjdyTXNSd3M2SWtLNElRVE9TbDVibHhvSUNpcHBpYjZM?=
- =?utf-8?B?dmo1dGZDWU5hR2h4R1prVHB5YlQrMllxR0pZRXZWMWdZOGtlMEk2THpDaWJC?=
- =?utf-8?B?azdTM2RjNEY3WU03S1IrWG00TW9LUkRURHJ5K2hKeVpUNWtUdnVPNXQxOVdX?=
- =?utf-8?B?TWJTK3BHQkZqaHhxbmFJUTkxRE41QjBFSE5iaU1vS2NtVDRad3lpdjlvNWRL?=
- =?utf-8?B?eEhSa3ExUWRRUlJJMkk5Y3FlRUp4Y3JFT0NYdi9mWkcrRVpOYXFHUUxsZmZG?=
- =?utf-8?B?dFJMWjMwbkw0STF5Kzlmemo5WXJwd1RCUUFaSmVxMVhaRE5zQzNFU1AvNmFQ?=
- =?utf-8?B?VDhxcTdJMHl4Ty81MlR3SVhoa0NHVmFiUUt4SUh5MENsVUlNOE1ma05nQitE?=
- =?utf-8?B?YWNoTU14SEE1TXY2d0xVYTZrSi9qNHFmbEdiemNLbTdqTktLWWkvOWlQVEkx?=
- =?utf-8?B?RWdEQ3NNRzlhcXlvNk4vTlpYWjJJWlB3bW1vK2ptczlWMHFjWk01MzVmbUJU?=
- =?utf-8?B?MFFqekltU2VoVVZXZVNLZE9XZ1A4UzhTUnhKckc1bUhRL21WLytmeWRWb3pk?=
- =?utf-8?B?UXkrNTRmSmErNnNZNlJkc3huVm16c1htVk9hZ0RySmMwb0UySlZla3FqNE1E?=
- =?utf-8?B?V1ZZbWJBam51ZllQS0txVC96emJiSDF5VkwxM2t2SGFvelZsaW9NKzRCMGNW?=
- =?utf-8?B?WWtBRGt0WkxHSTM3NUpTeXlWd05pUGdYLzJxc2NCRmVDenNhUGM3UmhiV2lM?=
- =?utf-8?B?Ny9GMmJ3UFBvWlpaTmhrUWFWL0gxVjhqVzVDdDJPS3Q5c1FCUnNPVGpiR2N5?=
- =?utf-8?B?Q1pYTXVqQmhGRUtHSnJwaXFjdVNHeDBDbVVzSlROc1d1M1BORFVkd0V3MmRS?=
- =?utf-8?B?YVBTR3BkSk5EU2dLYmJlOHNvYmx4K1RmSWM1R2pPUmJZR1NaNU5ESlBYeW5E?=
- =?utf-8?B?ejBVSTJoSGN2WFVNcEZrVFJFaFRvK0ZYdVFWZUFDUk9keHdOM0FFSlA2RTJF?=
- =?utf-8?B?UDcyRW14NHZLcWJFcDhuNnNvWFRySUhsc21HcnFQdGtQSUZmd1BtNHRPUXcx?=
- =?utf-8?B?YnJUbm9JYmErRkU4UDlJOUFsbkdYdFFVZ2orMDN1VG5sVmRTd1AwR25hOTla?=
- =?utf-8?B?TzUxUzdQb3ZjS1hxQVNMOTdhczFseFBUWnBNWVM3cXZ1Nmx1WTdxZUlxcWxh?=
- =?utf-8?B?d0c4Y1pkUXluOFA3aXJ5alRRY2F4by9Fa3BHV2JGT09RRGsvakRyNHMwMjBY?=
- =?utf-8?B?aGsrRlRxV1ppR0tyMjFERlF0azhPenlxQ21DOW1raVZmZC9QMSs0RGlETEZi?=
- =?utf-8?B?VEtINk0yY1pCNU1LdjR3ZEFsbHAwdWZ1OFhpaGpUdEVXR3VwcEcrMndydGo3?=
- =?utf-8?B?citBRzM4ME9ZVXZPTDRXR1RxSWhpeFFscXY3bGVzZnJlYmJuUTkwdkVEOUpw?=
- =?utf-8?B?L0ZwVjRvR0FsWjJTc3FhTVlNSmdvek9KVXpZOVppWk1ubWhJREJZaERHa2tK?=
- =?utf-8?Q?h/soKjhIuUuHGPUrr6OtiFqkD?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 07964cf1-ff21-423d-516f-08dc98d28fb0
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7529.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2024 07:02:10.4053
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OsNKJzrXpPliaZuKTY7Le+sg498RXgGNEGrBQqi6SD6Oz0H2bQ///tKOSnFsrlrj643aqjhxOvgxjob3erNrXA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB5162
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] Add global CMA reserve area
+To: Randolph Sapp <rs@ti.com>, Devarsh Thakkar <devarsht@ti.com>,
+        Andrew Davis
+	<afd@ti.com>, <nm@ti.com>, <kristo@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <praneeth@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
+        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
+        <vijayp@ti.com>, "Khasim, Syed Mohammed" <khasim@ti.com>
+References: <20240613150902.2173582-1-devarsht@ti.com>
+ <D1ZXO8F3XN2I.3CTTE245I0TYY@ti.com>
+ <24c0ed06-3c32-4cc3-922c-4717d35a1112@ti.com>
+ <64b78ba2-776c-1de6-4c13-001d11000ff0@ti.com>
+ <D2BSORIL5C7T.3B8EAANVQ7TX5@ti.com>
+From: Vignesh Raghavendra <vigneshr@ti.com>
+Content-Language: en-US
+In-Reply-To: <D2BSORIL5C7T.3B8EAANVQ7TX5@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 2024/6/28 23:28, Yan Zhao wrote:
-> On Fri, Jun 28, 2024 at 05:48:11PM +0800, Yi Liu wrote:
->> On 2024/6/28 13:21, Yan Zhao wrote:
->>> On Thu, Jun 27, 2024 at 09:42:09AM -0300, Jason Gunthorpe wrote:
->>>> On Thu, Jun 27, 2024 at 05:51:01PM +0800, Yan Zhao wrote:
+
+
+On 28/06/24 22:05, Randolph Sapp wrote:
+> On Fri Jun 28, 2024 at 10:57 AM CDT, Devarsh Thakkar wrote:
+>> Hi Andrew, Vignesh,
+>>
+>> On 24/06/24 22:03, Andrew Davis wrote:
+>>> On 6/14/24 12:58 PM, Randolph Sapp wrote:
+>>>> On Thu Jun 13, 2024 at 10:08 AM CDT, Devarsh Thakkar wrote:
+>>>>> Add global CMA reserve area for AM62x, AM62A and AM62P SoCs.
+>>>>> These SoCs do not have MMU and hence require contiguous memory pool to
+>>>>> support various multimedia use-cases.
+>>>>>
+>>>>> Brandon Brnich (1):
+>>>>>    arm64: dts: ti: k3-am62p5-sk: Reserve 576 MiB of global CMA
+>>>>>
+>>>>> Devarsh Thakkar (2):
+>>>>>    arm64: dts: ti: k3-am62x-sk-common: Reserve 128MiB of global CMA
+>>>>>    arm64: dts: ti: k3-am62a7-sk: Reserve 576MiB of global CMA
+>>>>>
+>>>>>   arch/arm64/boot/dts/ti/k3-am62a7-sk.dts        | 9 +++++++++
+>>>>>   arch/arm64/boot/dts/ti/k3-am62p5-sk.dts        | 7 +++++++
+>>>>>   arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi | 8 ++++++++
+>>>>>   3 files changed, 24 insertions(+)
 >>>>
->>>>>>>> This doesn't seem right.. There is only one device but multiple file
->>>>>>>> can be opened on that device.
->>>>> Maybe we can put this assignment to vfio_df_ioctl_bind_iommufd() after
->>>>> vfio_df_open() makes sure device->open_count is 1.
+>>>> I'm still a little torn about putting this allocation into the device tree
+>>>> directly as the actual required allocation size depends on the task.
 >>>>
->>>> Yeah, that seems better.
->>>>
->>>> Logically it would be best if all places set the inode once the
->>>> inode/FD has been made to be the one and only way to access it.
->>> For group path, I'm afraid there's no such a place ensuring only one active fd
->>> in kernel.
->>> I tried modifying QEMU to allow two openings and two assignments of the same
->>> device. It works and appears to guest that there were 2 devices, though this
->>> ultimately leads to device malfunctions in guest.
 >>>
->>>>> BTW, in group path, what's the benefit of allowing multiple open of device?
->>>>
->>>> I don't know, the thing that opened the first FD can just dup it, no
->>>> idea why two different FDs would be useful. It is something we removed
->>>> in the cdev flow
->>>>
->>> Thanks. However, from the code, it reads like a drawback of the cdev flow :)
->>> I don't understand why the group path is secure though.
->>>
->>>           /*
->>>            * Only the group path allows the device to be opened multiple
->>>            * times.  The device cdev path doesn't have a secure way for it.
->>>            */
->>>           if (device->open_count != 0 && !df->group)
->>>                   return -EINVAL;
->>>
+>>> That is the exact reason this does not belong in DT. For everyone *not*
+>>> using the most extreme case (12x decodes at the same time), this is
+>>> all wasted space. If one is running out of CMA, they can add more on
+>>> the kernel cmdline.
 >>>
 >>
->> The group path only allow single group open, so the device FDs retrieved
->> via the group is just within the opener of the group. This secure is built
->> on top of single open of group.
-> What if the group is opened for only once but VFIO_GROUP_GET_DEVICE_FD
-> ioctl is called for multiple times?
+>> I disagree with this. The 12x decode for 480p is not an extreme use-case this
+>> is something VPU is capable to run at optimum frame-rate (12x 1080p it can't)
+>> and as the AM62A7 is meant to be AI + multimedia centric device, per the
+>> device definition we were given the requirements to support a list of
+>> multimedia use-cases which should work out of box and 12x decode for 480p was
+>> one of them as device is very much capable of doing that with optimum
+>> performance and I don't think it is right to change these requirements on the fly.
+>>
+>> The AM62A7 board has 4 GiB of DDR and we have been using this CMA value since
+>> more than a year, I have never heard anyone complain about out of memory or
+>> CMA starvation and it suffices to requirements of *most use-cases*, but if for
+>> some specific use-case it doesn't suffice, user can change it via kernel cmdline.
+>>
+>> The kernelcmdline suggestion doesn't suffice out of box experience required,
+>> we don't want to ask the user to reboot the board everytime they run out of CMA.
+>>
+>>
+>>>> If it's allowed though, this series is fine for introducing those changes. This
+>>>> uses the long-tested values we've been using on our tree for a bit now. The
+>>>> only
+>>>> thing that's a little worrying is the missing range definitions for devices
+>>>> with
+>>>> more than 32bits of addressable memory as Brandon has pointed out. Once that's
+>>>> addressed:
+>>>>
+>>>> Reviewed-by: Randolph Sapp <rs@ti.com>
+>>>>
+>>>> Specifying these regions using the kernel cmdline parameter via u-boot was
+>>>> brought up as a potential workaround. This is fine until you get into distro
+>>>> boot methods which will almost certainly attempt to override those. I don't
+>>>> know. Still a little odd. Curious how the community feels about it.
+>>>>
+>>>> Technically the user or distro can still override it with the cmdline parameter
+>>>> if necessary, so this may be the best way to have a useful default.
+>>>>
+>>>
+>>
+>> Unlike above, this solution is independent of distro as it should be as we
+>> want that all the supported multimedia use-cases should work out of box. This
+>> solution is nothing illegal as CMA region carveouts are not a kernel
+>> deprecated feature.
+> 
+> Right. I support this change for at least introducing a usable default. 32M of
+> CMA is barely enough to run glmark2 under Weston once everything's up and
+> running.
+> 
+> As I said before, the user or distro can still override the dt CMA block with
+> the cma kernel parameter if they aren't happy with the default block.
+> Unfortunately this is about the only way to have a usable default value to fall
+> back on.
+> 
 
-this should happen within the process context that has opened the group. it
-should be safe, and that would be tracked by the open_count.
+
+Given the number of SoMs and non TI EVMs that are about to come out with
+AM62A/P and AM67s, we need to provide a consistent way of being able to
+support multimedia IPs out of the box. Modifying cmdline may not always
+be feasible given distro defaults don't always provide a way to do so.
+
+So I am inclined to queue first 2 patches unless there is another way t
+achieve this.
+
+[...]
 
 -- 
-Regards,
-Yi Liu
+Regards
+Vignesh
 
