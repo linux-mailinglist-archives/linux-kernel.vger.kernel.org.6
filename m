@@ -1,78 +1,112 @@
-Return-Path: <linux-kernel+bounces-235504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E06B791D5E9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 03:57:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B043091D6BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 05:57:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9C771C20F1D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 01:57:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 570AC281F74
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 03:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69238BFD;
-	Mon,  1 Jul 2024 01:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cvq5RW3/"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4E71B809;
+	Mon,  1 Jul 2024 03:57:25 +0000 (UTC)
+Received: from mail-m1018.netease.com (mail-m1018.netease.com [154.81.10.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A075680;
-	Mon,  1 Jul 2024 01:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B456710A0E;
+	Mon,  1 Jul 2024 03:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=154.81.10.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719799068; cv=none; b=Ddg/VmTfI9arRZH83QG80UOVphgGpyuSMuGQH/6O8i6HYoZlOl7/1hiTFu1h2Wj+EWqAkSlyg4WtTusB1z4yuj2/tPdD7p/8tYn4hViInYswMUHYSzdR6+iA+XrMwIHIzX+WWXjJ68AK6nUXukoluLpMbTcWJ2wYOr5jM+GNPD4=
+	t=1719806244; cv=none; b=t6OjWBZwgWGvA8AmRbe6N5b4WkRs//Z3wDAK0drZGWHBPzR/5+/UtjVgMx3P9PmoIblr5CuMJrwj1BfLi2qYNfZ9suqp29BNTVcaymByHFKzBJO95rR2AN3ko48+R2KtlAJrkdQNQp907afwQU2HXgVqPCJSTy+tkn7+4iGhiMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719799068; c=relaxed/simple;
-	bh=dAcg64ahrUs6xKjPlFG7iXVRMyTH6v1FySymrApX5DM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uPKn/Im54dbd/7lJX/EUS8p+vwZLYAt3aM21FmMUOp/C1n8fgLE4zN1e1+rDEUZ3W3T5nVD1aUGFak26aGa50FibmAs/mDVFBDpfpibgHVFNnkY/mX0s6U4rCt4sw6tdqq28mlPm4yuMT+PxPtmK6zuvzPF3JPgpcfuRL6GXUAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cvq5RW3/; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-	bh=agTYjNaPrT+m/7rjsG9WXRj8JUSXluViwvnJtTpoSE8=; b=cvq5RW3/I8srt4nQob0QhZ3ycx
-	1tdBRjJ689ykiUTk6sRrWQjrMSrxmzW0Yp+srWOEACD/eixoiEZfSVikjgfRoUsbpPMx+KuFwVPqE
-	xfhP0Ka0e8O9BZXu3+mvY2T80BT5jOpkWAXS5M63lCnUYuXjf72JME/V8vn+RA1bWYHa/TuUKzKd0
-	Zyq03oytT//qWqF6O+6KFaU5QcUWC9rvSQVYyeuOvHIbGU8oAF7Pr6KLE4ostUDEgv3UsLC1EZMs9
-	wG6kXF9pM0ynU4r3apBO/AqKYAyInE5aKzltpmQYprVmSIzHjSYdMIkaChyuLNAy/D3YHgdQPgZRY
-	rRCkSb4g==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sO6Ib-00000001QiU-1qiC;
-	Mon, 01 Jul 2024 01:57:45 +0000
-Date: Sun, 30 Jun 2024 18:57:45 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the modules tree
-Message-ID: <ZoINGcQwJ4LlqRCN@bombadil.infradead.org>
-References: <20240701092429.308aded3@canb.auug.org.au>
+	s=arc-20240116; t=1719806244; c=relaxed/simple;
+	bh=Kxlb8Q72bEcQSqLoPPdxbd/Pn5A5udv2bxWYhz66ISw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=fUATo1COR6gd64PxZUFzxOzrOYDOtMf2DoT+a6WHRRDuOny/9uVWr8Tzxsdz+rO+4OO6ZI4Lz8Glshwi0VcUw7yWHnjlVHXjL+hG0zYf92tvKfmw30yMxH8dgnFG0NdXvYIzwrdkCx98v+FNutVCsFBIZxGfN0dk6va4YbnlGyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=154.81.10.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from amadeus-Vostro-3710.lan (unknown [IPV6:240e:3b3:2c01:1720:3110:52ea:d52a:84f0])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id F1B2D7E017B;
+	Sun, 30 Jun 2024 23:00:14 +0800 (CST)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Chukun Pan <amadeus@jmu.edu.cn>
+Subject: [PATCH v2 1/9] arm64: dts: rockchip: fix regulator name for Lunzn Fastrhino R6xS
+Date: Sun, 30 Jun 2024 23:00:02 +0800
+Message-Id: <20240630150010.55729-2-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240630150010.55729-1-amadeus@jmu.edu.cn>
+References: <20240630150010.55729-1-amadeus@jmu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240701092429.308aded3@canb.auug.org.au>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCSUhLVhoeS0lJGRpLSB5LGFYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlJT0seQUgZSEFJGEtKQUpMSUtBSEpKS0FOSR4aQR9OSRpBQ08dS1lXWRYaDx
+	IVHRRZQVlPS0hVSktJT09PS1VKS0tVS1kG
+X-HM-Tid: 0a9069a934eb03a2kunmf1b2d7e017b
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OU06Dxw6HjNCFRwVFzEXSD9W
+	QjkKCQpVSlVKTEpCTE5CTUpOTkhLVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUlP
+	Sx5BSBlIQUkYS0pBSkxJS0FISkpLQU5JHhpBH05JGkFDTx1LWVdZCAFZQUlDTkg3Bg++
 
-On Mon, Jul 01, 2024 at 09:24:29AM +1000, Stephen Rothwell wrote:
-> Hi all,
->=20
-> Commit
->=20
->   1f3dacc0dcef ("module: create weak dependecies")
->=20
-> is missing a Signed-off-by from its committer.
+Make the regulator name the same as those marked by schematics.
 
-Fixed, thanks.
+Fixes: c79dab407afd ("arm64: dts: rockchip: Add Lunzn Fastrhino R66S")
+Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
+---
+ arch/arm64/boot/dts/rockchip/rk3568-fastrhino-r66s.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-  Luis
+diff --git a/arch/arm64/boot/dts/rockchip/rk3568-fastrhino-r66s.dtsi b/arch/arm64/boot/dts/rockchip/rk3568-fastrhino-r66s.dtsi
+index 89e84e3a9262..93987c8740f7 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3568-fastrhino-r66s.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3568-fastrhino-r66s.dtsi
+@@ -39,9 +39,9 @@ status_led: led-status {
+ 		};
+ 	};
+ 
+-	dc_12v: dc-12v-regulator {
++	vcc12v_dcin: vcc12v-dcin-regulator {
+ 		compatible = "regulator-fixed";
+-		regulator-name = "dc_12v";
++		regulator-name = "vcc12v_dcin";
+ 		regulator-always-on;
+ 		regulator-boot-on;
+ 		regulator-min-microvolt = <12000000>;
+@@ -65,7 +65,7 @@ vcc3v3_sys: vcc3v3-sys-regulator {
+ 		regulator-boot-on;
+ 		regulator-min-microvolt = <3300000>;
+ 		regulator-max-microvolt = <3300000>;
+-		vin-supply = <&dc_12v>;
++		vin-supply = <&vcc12v_dcin>;
+ 	};
+ 
+ 	vcc5v0_sys: vcc5v0-sys-regulator {
+@@ -75,7 +75,7 @@ vcc5v0_sys: vcc5v0-sys-regulator {
+ 		regulator-boot-on;
+ 		regulator-min-microvolt = <5000000>;
+ 		regulator-max-microvolt = <5000000>;
+-		vin-supply = <&dc_12v>;
++		vin-supply = <&vcc12v_dcin>;
+ 	};
+ 
+ 	vcc5v0_usb_host: vcc5v0-usb-host-regulator {
+-- 
+2.25.1
+
 
