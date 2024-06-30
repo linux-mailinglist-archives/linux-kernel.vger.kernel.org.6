@@ -1,141 +1,96 @@
-Return-Path: <linux-kernel+bounces-235173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C24A91D110
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 12:22:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0049391D112
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 12:23:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C925D1F21519
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 10:22:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30C3F1C20DA4
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 10:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F75135A65;
-	Sun, 30 Jun 2024 10:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="rrNyYJtj";
-	dkim=permerror (0-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="Fx7TSSIK"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2363039AF4;
+	Sun, 30 Jun 2024 10:22:47 +0000 (UTC)
+Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EBAE39AF4;
-	Sun, 30 Jun 2024 10:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719742963; cv=pass; b=nlyhKZLsYSRxwV3oP0jBMYzfXqCwLHBJezK0wTJw498/mT8DdT88IsZOVgzSvf9cx92N7VaPuYTqIULl8wSdy3yNOLabLDHv/zE/MPByAlDwie6fwiKSz5qZvZjX8rozAHsX2Naklo+cpKI8pz/CMEguKiTvhL9zp5PvqwbAGyk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719742963; c=relaxed/simple;
-	bh=R9fpC1UOjFrQKHRI6TgHz66Hbzvd1ayFN0DprYdtRq8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type; b=VSsyqkztZec+q37ej1PJsyCBUKQAC5I3X5Eh+PJP+nE8zNm3hpNXEwTa8B4tU9UnqZWypRX761qcT/lkWTUYUlYd4pNZuRt157MYjMZpKT16LYjjaCigTfQkU31p0ptibcCRhZbIXTVLmEhZ65FeA3ImQAqeR3BFW7V80347H/Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de; spf=none smtp.mailfrom=xenosoft.de; dkim=pass (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b=rrNyYJtj; dkim=permerror (0-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b=Fx7TSSIK; arc=pass smtp.client-ip=85.215.255.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=xenosoft.de
-ARC-Seal: i=1; a=rsa-sha256; t=1719742917; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=DM7U0nYhlpqhcR7998gBwwIeNC4vzlyVQxbMCYAxIgLpE18CE7BOFt7dN5u64JPmuk
-    0da9wlnU3NtkQZSzDT/8OtKBo+mXyHQ8NCWrAWg7mHHvwr76AuU5WAekWaLq2A4sRopt
-    BRHuqy8zAXGxq6SqSTCeA9eEUguNFkkwmBLwtT0n716VehnHmpoI/3utoFHmr/wepAun
-    fUvjBYP9SHUNyX+HD2MT8h57vbYsxoFnsoLNinFB97z031a6qbe6Mk55fdNMxHU2ds0i
-    X6ymRjaHETIEZVzIF/jOXRaMkWGmI4Y5eYNSb6tTjKluNo7Df7GMAq6BQX9hAqi4fGon
-    Aobg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1719742917;
-    s=strato-dkim-0002; d=strato.com;
-    h=To:Subject:From:Date:Message-ID:Cc:Date:From:Subject:Sender;
-    bh=koImhGjb7REMlZ/XmgRbFgMfDWJDeMGzhBpOSppcQCg=;
-    b=Kyq5TvX6BUoJ+sS67S5L4oCBtwxb6qdAAlNGZDb3gNYWT0ScvEPStFU6Na+xZ5WBSc
-    RfRMlC6ALkkUZw1W2NGXe6uBhj/0Q80EJC8Fv/A5FpL3+rpUckiB2MzhlRg5FwZ07+7V
-    MocptiXQD9sngtWwVkMrFlR8ElsfIem/tyVLL3Ef97UAQ0nxaOobgAPPG+P1U9fdMGCe
-    hk3N6/BID/u+xXf6HKryCDZApEIjzFRT/jDtRlVbLLMp3oTv6Xa4ViZ4ZJqnWZ8QLexy
-    8WjV/delbr2TtGKtS0bWqKA1+NqgxM147ek1fuftuLIPpfmSFfBKuFbtAEtbK0lVzSBm
-    JatQ==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1719742917;
-    s=strato-dkim-0002; d=xenosoft.de;
-    h=To:Subject:From:Date:Message-ID:Cc:Date:From:Subject:Sender;
-    bh=koImhGjb7REMlZ/XmgRbFgMfDWJDeMGzhBpOSppcQCg=;
-    b=rrNyYJtjpkKmA0QcxDXpASOq7JUYgYpK8eqvuabSrMY/XKau9q0jf+L3f/to4GshVo
-    PWOFU9qtStMYJocl73DgMLrfJDeoYah/I47xyL83JIbZIRE0hPVr7j9hiiKiDedT7LpN
-    DV54Ozm0w+GtdsHZhVYwbZ2rfEUPn7DqvOgD4PAyRywdPnnqvXQRyt2hmzz1Xo9wMUO4
-    0pPT0nU8PpmIGwRgwUZii7y1bksB+l3Hn7RjWitQp5UBgOV9KUwYk/nTcECZAoc5udIW
-    FINdRvAm9wsQhvVi7HbhIUDhZp6zoP+Ge7mDFdFs05lg4HIfmpS4I60HEIAiLLq5Z1RG
-    NyUg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1719742917;
-    s=strato-dkim-0003; d=xenosoft.de;
-    h=To:Subject:From:Date:Message-ID:Cc:Date:From:Subject:Sender;
-    bh=koImhGjb7REMlZ/XmgRbFgMfDWJDeMGzhBpOSppcQCg=;
-    b=Fx7TSSIKx2lKyTwirMmbPOP29OkpoRezklgZkMUFwV5mrLnJQRHNxIxnD5Ya6KyCyY
-    aSGF+2gGrFWywueMpqCw==
-X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5DdBfi4XXBswJY17nMJxMU7SicerhpVThcASu2X0Ag=="
-Received: from [IPV6:2a02:8109:8984:5d00:8535:f3a7:32a7:65f9]
-    by smtp.strato.de (RZmta 50.5.0 AUTH)
-    with ESMTPSA id e0838905UALuCbd
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Sun, 30 Jun 2024 12:21:56 +0200 (CEST)
-Message-ID: <3ab66fab-c3f2-4bed-a04d-a10c57dcdd9b@xenosoft.de>
-Date: Sun, 30 Jun 2024 12:21:55 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9816312E1C4;
+	Sun, 30 Jun 2024 10:22:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719742966; cv=none; b=dJvU3CdF4SJeSzizFxwi7OsJRueXjSJJN4UApTPUljB9DzigJyGGRts4//dpDNrLoNBEcPajSWoNEXtVVJoMnmr2QPqU+PVXGleJ3vFuGCZXPmv+gqHGF9vs+QiSsB167pRXkWtXuMqtF/7P0DSydBTJ4egXVSnN7Cszrklgi4k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719742966; c=relaxed/simple;
+	bh=DOnNnE4RcBLiZAGrxkiwP6nL1AslR903xEuZh7DzIi0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UqaZQH5dvWiAayBBicuV45EIX+o0Axh3+rdDhMqzBfu2QRPjmpfzGzEDqaEmER52MI4UrbikUQdNoc3lR/u8e4a9TY77pjLMNCP4uL8vbH/0uqwMnyjWMz5Br6tscenlujnDd7R4spBv3DiJcicsXAn/TwrE02ZkEVvYDVcXslk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 56242100D942D;
+	Sun, 30 Jun 2024 12:22:41 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 0F4AF2473DA; Sun, 30 Jun 2024 12:22:41 +0200 (CEST)
+Date: Sun, 30 Jun 2024 12:22:41 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Aditya Garg <gargaditya08@live.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
+	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Orlando Chamberlain <orlandoch.dev@gmail.com>,
+	Kerem Karabay <kekrby@gmail.com>
+Subject: Re: [PATCH] efi: libstub: add support for the apple_set_os protocol
+Message-ID: <ZoEx8S0_eUDM6Cjq@wunner.de>
+References: <EBE51900-DA87-4113-B389-80B9C9160F0F@live.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: de-DE
-From: Christian Zigotzky <chzigotzky@xenosoft.de>
-Subject: [PowerPC] [PASEMI] Issue with the identification of ATA drives after
- the of/irq updates 2024-05-29
-To: Rob Herring <robh@kernel.org>, Marc Zyngier <maz@kernel.org>,
- apatel@ventanamicro.com, DTML <devicetree@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
- mad skateman <madskateman@gmail.com>, "R.T.Dickinson" <rtd2@xtra.co.nz>,
- Matthew Leaman <matthew@a-eon.biz>, Darren Stevens
- <darren@stevens-zone.net>, Christian Zigotzky <info@xenosoft.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <EBE51900-DA87-4113-B389-80B9C9160F0F@live.com>
 
-Hello,
+On Sun, Jun 30, 2024 at 04:42:55AM +0000, Aditya Garg wrote:
+> +struct apple_set_os_protocol {
+> +	u64 version;
+> +	efi_status_t (__efiapi *set_os_version) (const char *);
+> +	efi_status_t (__efiapi *set_os_vendor) (const char *);
+> +	struct {
+> +		u32 version;
+> +		u32 set_os_version;
+> +		u32 set_os_vendor;
+> +	} mixed_mode;
+> +};
 
-There is an issue with the identification of ATA drives with our P.A. 
-Semi Nemo boards [1] after the
-commit "of/irq: Factor out parsing of interrupt-map parent phandle+args 
-from of_irq_parse_raw()" [2].
+Only the very first MacBooks that shipped in 2006 used a 32-bit EFI.
+We don't need to call apple_set_os on those, so just get rid of the
+mixed_mode portion of this struct and then ...
 
-Error messages:
+> @@ -321,6 +345,9 @@ static void setup_quirks(struct boot_params *boot_params)
+>  	if (IS_ENABLED(CONFIG_APPLE_PROPERTIES) &&
+>  	    !memcmp(efistub_fw_vendor(), apple, sizeof(apple)))
+>  		retrieve_apple_device_properties(boot_params);
+> +
+> +	if (efi_apple_set_os)
+> +		apple_set_os();
+>  }
 
-ata2.00: failed to IDENTIFY (I/O error, err_mask=0x4)
-ata2.00: qc timeout after 10000 mssecs (cmd 0xec)
+... make the call to apple_set_os() conditional on:
 
-Screenshots [3]
+	if (efi_is_64bit() &&
+	    !memcmp(efistub_fw_vendor(), apple, sizeof(apple)))
 
-I bisected yesterday [4] and "of/irq: Factor out parsing of 
-interrupt-map parent phandle+args from of_irq_parse_raw()" [2] is the 
-first bad commit.
-
-Then I created a patch for reverting this first bad commit. I also 
-reverted the changes in drivers/of/property.c. [5]
-
-The patched kernel boots with successful detection of the ATA devices.
-
-Please check the of/irq updates.
+We don't want to call this on non-Apple hardware if we can help it.
 
 Thanks,
-Christian
 
-
-[1] https://en.wikipedia.org/wiki/AmigaOne_X1000
-[2] 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?h=v6.10-rc5&id=935df1bd40d43c4ee91838c42a20e9af751885cc
-[3]
-- https://i.ibb.co/WcH8g4K/20240626-095132.jpg
-- https://i.ibb.co/K7KnDxx/panic2.jpg
-- https://i.ibb.co/frnbJfb/panic3.jpg
-
-[4] https://forum.hyperion-entertainment.com/viewtopic.php?p=58585#p58585
-[5] 
-https://github.com/chzigotzky/kernels/blob/main/patches/X1000/of_irq_v2.patch
+Lukas
 
