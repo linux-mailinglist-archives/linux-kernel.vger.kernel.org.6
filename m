@@ -1,74 +1,75 @@
-Return-Path: <linux-kernel+bounces-235358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF7F491D472
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 00:31:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 248A291D473
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 00:32:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 182901C2099E
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 22:31:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A675E2813D4
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 22:32:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD74127E37;
-	Sun, 30 Jun 2024 22:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B2F80026;
+	Sun, 30 Jun 2024 22:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="qGW/JrMn"
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="q2tAX2f5"
 Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762668624A
-	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 22:30:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2128624A
+	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 22:30:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719786603; cv=none; b=Z5AaedMZDZioHcpWeAl2AzNVpgjbPWyCi/vnv8/4+mVIf7rdrvylvB6SnHRQOrPwgcIBX6wCwapAYVRwxzUf9bGt09qDkkrN/YFNm00trJSURsJNiU6qB/+SLcBmEc09Sv6B2TM/vnrJAsGtXG6pPi9u8T6/1esqUXtUDwVl4AY=
+	t=1719786608; cv=none; b=FnVP7yGfqF1cqC3uCj1P9MYUPXD2pIhs9lXtKHPR35QSx4medNfaQCmT8VRE71JZCjx3sbs0tshBv1mtEd25uVvViQ7HiDeooEXzH+yPwT2auD7AqmqBZOXp364N7ss9Z0ju9wYAIha5PRrSSn9XmgFdTX0evF1uE50nwOPzmdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719786603; c=relaxed/simple;
-	bh=irvSMTCzI3t4tfguws3Nrcz/k9hV9SmulSyBsJFulpI=;
+	s=arc-20240116; t=1719786608; c=relaxed/simple;
+	bh=q4FDaCENCotKPSfwslVLUAA1Ser1FnTfGGfLfoPTebM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qjqTBzqGYe9h8L0+DvLXstkDVGp52GkN1yrINVHd77SmTihZbKI+Sl62yeo89qIkf+vG2K5G0hQCKlAxIQoMVvNFPNQRtiUpSyxLrHPm12cQNqccAV87uTKCw0ZlFpnlp01d8GyhXxJDAUKBMWCxbCnEbNhB7wFh6vEkXnoQZVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=qGW/JrMn; arc=none smtp.client-ip=199.89.1.12
+	 MIME-Version; b=ZHQQFCov6478USNyTPOfJHRGavuns8n606Rl2qXzJQrDQzUhL6gy0CgCOlm6qPRztQJdlBe/QBdNxZoe4lFMtZoLNqRZLUA9sArVA7OCvlYiUaApzDSX2VITF8MSxuzR6JFMsLNYZpoiye28d3qUD3ET84obM/Uu6btFSHAJbMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=q2tAX2f5; arc=none smtp.client-ip=199.89.1.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
 Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4WC3lG1qWpzll9f5;
-	Sun, 30 Jun 2024 22:30:02 +0000 (UTC)
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4WC3lL2lr9zll9fL;
+	Sun, 30 Jun 2024 22:30:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
 	content-transfer-encoding:mime-version:references:in-reply-to
 	:x-mailer:message-id:date:date:subject:subject:from:from
-	:received:received; s=mr01; t=1719786599; x=1722378600; bh=44MW5
-	f10dQ/FgETCP9mDtvWVX+L0nriVCkHaNfe0l5E=; b=qGW/JrMneUGeh0x5KCKTr
-	anxgifqRovFpB7LUNZu4H5+9N49Olo+Iqp+DL1VbaC4Hm5lTiVHrO4DxEZyAaBul
-	JF7TsRswhOyPCROa218CVd+o1aIxhqNR7KP1tmdM39781vVdqoiS5izNDvJYxvW5
-	keEW1NG8VElUBCt69eufHuqzfmQLM0aqnKcZ84l/D8fOc/IIOqxEsd87/8+XxuHU
-	a2wLmFzzRMet1PsK2JPUYH2hDyHIdYsAFxyyr7KTonT1cga8sYhsndijDQbN4Yca
-	hRi9/WSEj+VTtEnMyNokMt6U6u3ps3ciQjNsJtjNMSUZhctAvCuEuQYj9k68oLJZ
-	g==
+	:received:received; s=mr01; t=1719786603; x=1722378604; bh=/Qb3Y
+	SBw3En6vtyNzCSJi/Dv0n52h34BgQzTQ9ny/Fc=; b=q2tAX2f50MqvcUsqzKDs3
+	MofC3tjx62H4NHPeMiW+lK6iAdO/6Dz8cSMRJo0Lwy9hXfUAhlZ+Ob/FyqJthNZk
+	i+ef1ck4aERdicCnj8UwEAqDOxCDuWljknGjyiHLazPxx6vXdIcgxBjLzAarzJpH
+	Kb35/bk0mmX5rUvb3BfS6m9MXJtBU7rABdBUbydNYAiCEB9Frnsd/wiKguYCS8lU
+	SKjcc6pa+Gb22lcFgP0dqLvrhcXTzB1TkAHHo8SHnZIMrlAYculzsOhMb8iQs0+a
+	vbKHrqk5R9XT4BJKuwtzPTf5dfsTdHWn5PH27y+TNMTKJqEiI+BMncYIg4PQiZMb
+	Q==
 X-Virus-Scanned: by MailRoute
 Received: from 009.lax.mailroute.net ([127.0.0.1])
  by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id dFK0kVybXwe9; Sun, 30 Jun 2024 22:29:59 +0000 (UTC)
+ id x2_Fgjso-tfL; Sun, 30 Jun 2024 22:30:03 +0000 (UTC)
 Received: from bvanassche-glaptop2.roam.corp.google.com (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4WC3l82SKjzll9f8;
-	Sun, 30 Jun 2024 22:29:56 +0000 (UTC)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4WC3lD0BMGzll9fH;
+	Sun, 30 Jun 2024 22:29:59 +0000 (UTC)
 From: Bart Van Assche <bvanassche@acm.org>
 To: Tejun Heo <tj@kernel.org>
 Cc: Lai Jiangshan <jiangshanlai@gmail.com>,
 	"Martin K . Petersen" <martin.petersen@oracle.com>,
 	linux-kernel@vger.kernel.org,
 	Bart Van Assche <bvanassche@acm.org>,
-	Igor Russkikh <irusskikh@marvell.com>,
+	Marcin Wojtas <marcin.s.wojtas@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
 	"David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
 	Jakub Kicinski <kuba@kernel.org>,
 	Paolo Abeni <pabeni@redhat.com>
-Subject: [PATCH 09/53] net: atlantic: Switch to create*_workqueue2()
-Date: Sun, 30 Jun 2024 15:26:27 -0700
-Message-ID: <20240630222904.627462-10-bvanassche@acm.org>
+Subject: [PATCH 10/53] net: mvpp2: Switch to create*_workqueue2()
+Date: Sun, 30 Jun 2024 15:26:28 -0700
+Message-ID: <20240630222904.627462-11-bvanassche@acm.org>
 X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
 In-Reply-To: <20240630222904.627462-1-bvanassche@acm.org>
 References: <20240630222904.627462-1-bvanassche@acm.org>
@@ -84,22 +85,23 @@ Prepare for removal of the create*_workqueue() macros.
 
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- drivers/net/ethernet/aquantia/atlantic/aq_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_main.c b/drivers/n=
-et/ethernet/aquantia/atlantic/aq_main.c
-index c1d1673c5749..606ec93ba429 100644
---- a/drivers/net/ethernet/aquantia/atlantic/aq_main.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_main.c
-@@ -513,7 +513,7 @@ static int __init aq_ndev_init_module(void)
- {
- 	int ret;
-=20
--	aq_ndev_wq =3D create_singlethread_workqueue(aq_ndev_driver_name);
-+	aq_ndev_wq =3D create_singlethread_workqueue2("%s", aq_ndev_driver_name=
-);
- 	if (!aq_ndev_wq) {
- 		pr_err("Failed to create workqueue\n");
- 		return -ENOMEM;
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/ne=
+t/ethernet/marvell/mvpp2/mvpp2_main.c
+index 9adf4301c9b1..58b104d2f24c 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+@@ -7635,7 +7635,8 @@ static int mvpp2_probe(struct platform_device *pdev=
+)
+ 	snprintf(priv->queue_name, sizeof(priv->queue_name),
+ 		 "stats-wq-%s%s", netdev_name(priv->port_list[0]->dev),
+ 		 priv->port_count > 1 ? "+" : "");
+-	priv->stats_queue =3D create_singlethread_workqueue(priv->queue_name);
++	priv->stats_queue =3D
++		create_singlethread_workqueue2("%s", priv->queue_name);
+ 	if (!priv->stats_queue) {
+ 		err =3D -ENOMEM;
+ 		goto err_port_probe;
 
