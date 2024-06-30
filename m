@@ -1,129 +1,79 @@
-Return-Path: <linux-kernel+bounces-235180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0237291D12C
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 12:38:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88D2C91D130
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 12:39:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC5FE281B07
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 10:38:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9394B210DB
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 10:39:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F00D139CEF;
-	Sun, 30 Jun 2024 10:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97D3F13A24B;
+	Sun, 30 Jun 2024 10:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hx6AiIOW"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BDf3vzZ0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BBDC1E878;
-	Sun, 30 Jun 2024 10:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA7928366;
+	Sun, 30 Jun 2024 10:39:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719743878; cv=none; b=scDDwxvNx63kmiJ3jNW+/dkLUtS4qdyZAuPb6O0alZz41DwZbN2W0ewykgierrF/X2g1ICF0DLJTGzdeZAtOgJU3EBwmcfYk69l5RbZSgC9I9YlTaV+MkGOb9cUY7rDvaqF+yPrXBhPkk3xA+SsvxRTSbFcqDppUrlN9U57cCd8=
+	t=1719743959; cv=none; b=acgukTPygWAxkBNqr4BkuRSbbm1J44OcMCUAOs55mdYwE0v1BfJ/Xh4SPlaPGnay1OXjtYbzoeIoeUsxaIDXj+lW+EPKsPWyU6yStY2fcpKfkDh+IqW5bp1KGDTJja0ocEiz64BhZMlwC6tm2KAdwGXcrgwaJKMwq/v+Mohr0qY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719743878; c=relaxed/simple;
-	bh=bpcViS5LQY0OktTmKYD6xTF3nZ89Wbqo1+5YJX485f4=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=OMF0IocND/34HmZRApcSFqluTAuE8EiPBVqr6N0lRKEhSq0NQ7VY4oOhXikIhKS/p0xv7k2fBXiJuwZ2rYNK1lpXDvRt43OIg/n9g4SWCpJbAbnyNaEbivHOGikRGGD8cOTZqFj3y7zz9S8RMMopMYSE2LL7uSSw8JcYBOEkZrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hx6AiIOW; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-363ba6070b1so132619f8f.0;
-        Sun, 30 Jun 2024 03:37:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719743875; x=1720348675; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:from:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iuE2Ud4V3w+e53yi43m8pMBIJuScpcjaVEcgNcib0DQ=;
-        b=Hx6AiIOWnldNNdNTxotezQ/AI224QuDQACySrwL6jSV5TuZOInlOfc4uFFgIeAX0+I
-         FXQCJ40c/hsjcHvOUqYTGvjBzxqZk/UdXW47kmq8APEOW7H3t/b+lzGPvhiu82OM6GSP
-         KmX+cr9GdM7Lp2HuUBPe2jpOaVfrLFIrDnFmJaOhiFu4V2AxSbq85hSBa9awAX/fyqUN
-         rX57IUJ4c7iKrMCeXLiFHJl2Hn3WXCXWaj1nN4zVowCaV41HO8tB3THCgX+pAQotaYiL
-         mDsbhSpvhnQ2JA0Fl4S6g8u8hCycly+fOsjpsGqOA9CFifeqvRVv2jln1lihypT5eSXj
-         0yxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719743875; x=1720348675;
-        h=content-transfer-encoding:cc:to:subject:from:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=iuE2Ud4V3w+e53yi43m8pMBIJuScpcjaVEcgNcib0DQ=;
-        b=D9HGIiYawVmG6oqrZ18OAaura2NmWBtBfnUKSXbhD9q5c2ktktpwn+3mzkk9KUdJHO
-         hukb2IkurKIaf4YO86TqUAM8JrpTy1ZwxwYM4/XALh0OhnEhYGC9fUwx/06v0eFnqeks
-         LYadbLvwgLKbauPQgUXb7ptfh/em8OkZ8atO18HzGsN0t6PySJtb2X1z7YZJpXQctVbh
-         JDrkw2Lhc4IoCCs7FkG2MneGRPqxk0ITo/QMRYez+SgZZ5YXOTUqh2/Yq4gwV0CVAJxr
-         rksl7z89pjd+mPGlBscGY9+esGzAlGIYP4O8Yqc5HPvUQGSAYgbvpBHuqSF6wVXv1CTQ
-         D17w==
-X-Forwarded-Encrypted: i=1; AJvYcCVuFCCCnSYfr251loiks9AAk4xXrMKiX8Yu+eYilboHaRzNwet2xeWru2JqfbkoyHwbmonGFKl+tTGzmxjyYFPMXajtn0523d0wBNIl
-X-Gm-Message-State: AOJu0Yx/LtbciirmAGUzo2fC3tnZqdunrVuLb+4elYtikpl0Q6PR4RkK
-	LtknQt1fRRMUZ9J7CF7gpjZZPzOPju72gk4AZmFj1ZnSCFRdizHHoUosIA==
-X-Google-Smtp-Source: AGHT+IHKMZ0WthVhHtisNWWMCcUCgeN80h/zkh4IY9YimIQzobB2EJFD5tra1jRJSemaeYnQJyFSGw==
-X-Received: by 2002:a5d:59a4:0:b0:360:872b:7e03 with SMTP id ffacd0b85a97d-3677561dd88mr2087042f8f.0.1719743875235;
-        Sun, 30 Jun 2024 03:37:55 -0700 (PDT)
-Received: from [192.168.0.103] (p57ba2f9b.dip0.t-ipconnect.de. [87.186.47.155])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0e1412sm7088215f8f.53.2024.06.30.03.37.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 30 Jun 2024 03:37:54 -0700 (PDT)
-Message-ID: <13cd3ec0-0f4f-4119-b2a5-f74e33e3c862@gmail.com>
-Date: Sun, 30 Jun 2024 12:37:53 +0200
+	s=arc-20240116; t=1719743959; c=relaxed/simple;
+	bh=Tj4q6jEJqYSn6+jQMgyMtlL/JqoIylWIkWpK/zH/yBM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ghXX2ep6FIyl3IYjbIrdQrWdYWmBM7pbK5QYX4jMP7nH80+FPiCt08qsnkGiDIin6ZdDTBGjajYT/viqHlrFfymkTn3UBcF5GloHgMoAUMi5019d4QOUANlnSvZW7vnsH1Yp2/TpwGhLhnFqerXv0hU9NNVXUDb4rZpYkwu/k1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BDf3vzZ0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 628EFC2BD10;
+	Sun, 30 Jun 2024 10:39:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719743959;
+	bh=Tj4q6jEJqYSn6+jQMgyMtlL/JqoIylWIkWpK/zH/yBM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BDf3vzZ0XVb9ANdmS1PxFS8qCXWmdxO/oyM8XnXQx61IvEzCU4MlVQviGafx2yjpV
+	 +Tvt6dnl5PwOyHuYCU9KrrrnhlNbp8KsC382+nLhXuijgl5VKV6r3I4uke1Y6RvpUj
+	 NDtKBqLxiHAVKvXHUZeOdmKKuj50tZpSqJP7ApVjpkecwbWIRDN0/srARzS7a3vcm/
+	 1re8nk7x2NN6I5AVFtHgk+c3c2yq9E1jJjH60Bh3XakiLqEcedQRQ55YkjTm9zx55W
+	 qcYxT79AMCtgafVAlvuqVCP15wJvI+KTxHcSffm5p4hMUNnRZ3KeMPYcQJ5UauPles
+	 TMjO8FyHBmaPA==
+Date: Sun, 30 Jun 2024 11:39:11 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Mark Brown <broonie@kernel.org>, Michael Hennerich
+ <michael.hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Marcelo Schmitt <marcelo.schmitt@analog.com>, Jonathan Corbet
+ <corbet@lwn.net>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] iio: adc: ad7944: use
+ devm_spi_optimize_message()
+Message-ID: <20240630113911.7631403c@jic23-huawei>
+In-Reply-To: <20240624-devm_spi_optimize_message-v3-2-912138c27b66@baylibre.com>
+References: <20240624-devm_spi_optimize_message-v3-0-912138c27b66@baylibre.com>
+	<20240624-devm_spi_optimize_message-v3-2-912138c27b66@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-Subject: [RFC] staging: nvec: cannot configure to compile driver for testing
-To: linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Cc: Tom Mounet <tommounet@gmail.com>, Julia Lawall <julia.lawall@inria.fr>,
- Marc Dietrich <marvin24@gmx.de>, Greg KH <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Hi,
+On Mon, 24 Jun 2024 15:46:08 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-to test the patch:
+> Use new devm_spi_optimize_message() helper to simplify repeated code
+> in the ad7944 driver.
+> 
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+Merged the updated tag from Mark and applied this on top.
 
-[PATCH v3] staging: nvec: Use x instead of x != NULL to improve readability.
-https://lore.kernel.org/linux-staging/66804898.5d0a0220.6df0f.4f0a@mx.google.com/T/#u
+Thanks,
 
-I would like to compile the driver nvec. But the issue I have is that I 
-cannot configure to compile it.
-
-
-When start make menuconfig
-
-and search with / for NVEC I can see:
-
-Symbol: MFD_NVEC [=n] 
-                                                        Type  : tristate 
- 
-                                        Defined at 
-drivers/staging/nvec/Kconfig:2 
-                                              Prompt: NV Tegra Embedded 
-Controller SMBus Interface 
-                              Depends on: STAGING [=y] && I2C [=y] && 
-GPIOLIB [=y] && ARCH_TEGRA 
-                Location: 
- 
-  -> Device Drivers 
-                                                      (2)   -> Staging 
-drivers (STAGING [=y])
-	 -> NV Tegra Embedded Controller SMBus Interface (MFD_NVEC [=n])
-Selects: MFD_CORE [=y] 
-
-
-But I cannot jump or go into "NV Tegra Embedded Controller SMBus Interface"
-
-In my .config file there is no string "NVEC" at all.
-
-How to config this driver to be compiled?
-
-Thanks for your support.
-
-Bye Philipp
+Jonathan
 
