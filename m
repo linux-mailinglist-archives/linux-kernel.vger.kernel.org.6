@@ -1,304 +1,252 @@
-Return-Path: <linux-kernel+bounces-235192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4658E91D15D
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 13:11:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1838E91D164
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 13:17:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFB191F21EA9
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 11:11:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14C65282A28
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 11:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF37413BC3F;
-	Sun, 30 Jun 2024 11:11:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0216913C689;
+	Sun, 30 Jun 2024 11:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="NXx4CSI8"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cfbHhE0p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECF026AEA;
-	Sun, 30 Jun 2024 11:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21D47200C1;
+	Sun, 30 Jun 2024 11:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719745894; cv=none; b=W/RkQidemRCoqSzsPRsdIKG4EOdZFcIpXHPQNXOyRnbrBnyp+6cKau+186uOa29WMviwFO78bKQFXK4nQbseS8Ab+Qnak0d6gz/bPJkuk9pVpb/CAS5omalj2lgc6gjeXaQ5avbFQD1XHBTcXyhKRMXeRypBu5zgpJwQkJ2K+uI=
+	t=1719746256; cv=none; b=Z4XlsTKo+5Gcruw1h2pknVWayT5sZ5dXIy6kmVBDOpc3Drv5K32J9/UAodJu1E/McszXKgELphBAXGQGcDmqjk40dmfk59mzaCTsg/mY263y3SBbqYHcsEhE2PnMrR1hkM9/3lvMtQ6jGuoAj4WlG6bwJI0yeOkv5ddJMY0cWRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719745894; c=relaxed/simple;
-	bh=3BjmXY+pdr2s/Ga/e1KtwFXIk8qZ2TZGUJ0X6RkeauE=;
-	h=Content-Type:Subject:From:In-Reply-To:Date:Cc:Message-Id:
-	 References:To:MIME-Version; b=NQV/I1ttFtc5fftOX9+f8G996opr8aZXwRfOIZQypcnEAxUP1Mc5WQIpWZ273eD3bQ98+8OGbWsiyafNWtVcAcOzqg3BFgH4CdJbIZntJbOGma1P5n39bjkbQJj5lBNPu9OT76HVjZNZrZvqXA9e6G+t8RbDo4kPbwHHnHqNFKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=NXx4CSI8; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
-Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45UAuxSs026283;
-	Sun, 30 Jun 2024 11:11:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-type:subject:from:in-reply-to:date:cc:message-id
-	:references:to:content-transfer-encoding:mime-version; s=pp1;
-	 bh=1G5epHYVqZq3rG9a0RyaQBxZsyF9DuolvP6Si3WOm8g=; b=NXx4CSI8JbGi
-	k1mXxPPkxj0v+Z+iOf9X94TdYRY3HbOmPEwE5T7g3UMsptB2snvaxZYipyw2KN2h
-	C33TMoAbuDGKqJlzCYvd1gmo09q32Yg7GDIS7IqVQ92lnZ8b/6mEmcsIcHQ+akhf
-	4rTLPR7FtlmoDijyChUVaavj9N5h3CTL4+P6Ix57Ow9XMoB3R9c+/dhgY9zRThQQ
-	GNDKyRftb1If509Nm1QI2mwZlia5E42a3WCFmJLBlc2woTlTp3YWLwDhk5aGMiVe
-	MZM6fRoPtsBIGR9FMwhx4tr7MV/slVkFg0aRjgcwrN49vE0/LviGSc3LKayqj7Tp
-	bKIpw4XhSQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4035mvg24n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 30 Jun 2024 11:11:15 +0000 (GMT)
-Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45UBBEaN016392;
-	Sun, 30 Jun 2024 11:11:14 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4035mvg24h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 30 Jun 2024 11:11:14 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45U7vPLf024095;
-	Sun, 30 Jun 2024 11:11:13 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 402ya31h5r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 30 Jun 2024 11:11:13 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45UBB82v54723026
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 30 Jun 2024 11:11:10 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1F5852004B;
-	Sun, 30 Jun 2024 11:11:08 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 76CB320043;
-	Sun, 30 Jun 2024 11:11:05 +0000 (GMT)
-Received: from smtpclient.apple (unknown [9.43.36.144])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Sun, 30 Jun 2024 11:11:05 +0000 (GMT)
-Content-Type: text/plain;
-	charset=utf-8
-Subject: Re: [V4 05/16] tools/perf: Add disasm_line__parse to parse raw
- instruction for powerpc
-From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-In-Reply-To: <ZnyFVE22bcdilUyL@google.com>
-Date: Sun, 30 Jun 2024 16:40:53 +0530
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ian Rogers <irogers@google.com>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-perf-users <linux-perf-users@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, akanksha@linux.ibm.com,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Kajol Jain <kjain@linux.ibm.com>,
-        Disha Goel <disgoel@linux.vnet.ibm.com>
-Message-Id: <B9F41DF0-C5B4-46A5-BF30-5BCA4187E133@linux.vnet.ibm.com>
-References: <20240614172631.56803-1-atrajeev@linux.vnet.ibm.com>
- <20240614172631.56803-6-atrajeev@linux.vnet.ibm.com>
- <ZnpYBvXLhyAqZzvh@google.com>
- <E2A1A4AA-E344-4B42-86CE-E0EDD82A398F@linux.vnet.ibm.com>
- <ZnsQOD3arkR0qoPJ@google.com>
- <40DB645D-BFA7-44EA-B937-ADE81EEC1316@linux.vnet.ibm.com>
- <ZnyFVE22bcdilUyL@google.com>
-To: Namhyung Kim <namhyung@kernel.org>
-X-Mailer: Apple Mail (2.3774.600.62)
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: yF1Csm4Lsa6coAMOsQ_I2TVGt19Yqz76
-X-Proofpoint-ORIG-GUID: emi7M2YIlmbA1ktGayiGILEV9uVx7Rb0
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1719746256; c=relaxed/simple;
+	bh=NaPQ4uNEOSAllGqmDxgXXmyzGu/F7JDU6SOkzOWwVzo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HFM8Niqd7T8gLfKwB79wn+fUrBUfJBx56NMi0kq12gDBB2iwBUdMYhSUge1Z1UcF0GOHP8u+dYLhq/B4AQRyNdACUK3e1UGFoy0F7XZf0DnwjWNHVo4Cxhc5AkUEa3i976jv4VvGYT5noKbXB1W/8V558wdTeAEGtisYL639+FI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cfbHhE0p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 434D1C2BD10;
+	Sun, 30 Jun 2024 11:17:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719746255;
+	bh=NaPQ4uNEOSAllGqmDxgXXmyzGu/F7JDU6SOkzOWwVzo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cfbHhE0p09RkjXrsJifIsNH0PoYOAp4wH5j47/qd7FzYIt1j+1n3ZoeO/GpWC27nE
+	 UxTANs4hGAWsJMWc8vv4qJfESebNiLY4s2Qr9EFdq+WxqN7KkJVD7L/lW3gbIhTTaA
+	 t0ffC/HFW77BhLC72xp6Nv+l0wY7FkmgmSvIz8lghKNwV3CDEWfIauUnfWQxfnThsS
+	 2OwgvLtd10nC0IzT8brNo8B6iM8mBEKcHmAm2MsmKb6yevXrwOgEwJ/6Cdcekn9XG5
+	 +nPGv1yG93M/eiT9gv85gNVtvDRn4Bgvp5v85jgCCeWny+nclBkiuCxa39acxNATUO
+	 opdXS2BwS4cfw==
+Date: Sun, 30 Jun 2024 12:17:26 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>
+Cc: <broonie@kernel.org>, <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+ <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+ <conor+dt@kernel.org>, <nuno.sa@analog.com>, <dlechner@baylibre.com>,
+ <corbet@lwn.net>, <marcelo.schmitt1@gmail.com>,
+ <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-spi@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 6/7] iio: adc: Add support for AD4000
+Message-ID: <20240630121726.5d75578e@jic23-huawei>
+In-Reply-To: <628a85cb8cbee32ea7d2930c63e73f2ef449a800.1719686465.git.marcelo.schmitt@analog.com>
+References: <cover.1719686465.git.marcelo.schmitt@analog.com>
+	<628a85cb8cbee32ea7d2930c63e73f2ef449a800.1719686465.git.marcelo.schmitt@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-30_09,2024-06-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 clxscore=1015 phishscore=0 bulkscore=0 impostorscore=0
- mlxscore=0 adultscore=0 mlxlogscore=999 suspectscore=0 malwarescore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406300085
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+On Sat, 29 Jun 2024 16:06:59 -0300
+Marcelo Schmitt <marcelo.schmitt@analog.com> wrote:
+
+> Add support for AD4000 series of low noise, low power, high speed,
+> successive approximation register (SAR) ADCs.
+> 
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+
+Hi Marcelo
+
+A few comments inline. However, the spi_w8r8 etc can easily be a follow up
+optimization patch (if you agree it's a good improvement) and the
+other changes are so trivial I could tweak whilst applying.
+
+So unless you have to do a v7 for some other reason this is fine for
+merging as is - subject to the fact it's not been on list long enough yet
+and I need Mark to pick up the SPI parts and throw me a tag to pull.
+
+Thanks,
+
+Jonathan
 
 
+> --- /dev/null
+> +++ b/drivers/iio/adc/ad4000.c
+> @@ -0,0 +1,708 @@
 
-> On 27 Jun 2024, at 2:47=E2=80=AFAM, Namhyung Kim <namhyung@kernel.org> wr=
-ote:
->=20
-> Hello,
->=20
-> On Wed, Jun 26, 2024 at 09:38:28AM +0530, Athira Rajeev wrote:
->>=20
->>=20
->>> On 26 Jun 2024, at 12:15=E2=80=AFAM, Namhyung Kim <namhyung@kernel.org>=
- wrote:
->>>=20
->>> On Tue, Jun 25, 2024 at 06:12:51PM +0530, Athira Rajeev wrote:
->>>>=20
->>>>=20
->>>>> On 25 Jun 2024, at 11:09=E2=80=AFAM, Namhyung Kim <namhyung@kernel.or=
-g> wrote:
->>>>>=20
->>>>> On Fri, Jun 14, 2024 at 10:56:20PM +0530, Athira Rajeev wrote:
->>>>>> Currently, the perf tool infrastructure disasm_line__parse function =
-to
->>>>>> parse disassembled line.
->>>>>>=20
->>>>>> Example snippet from objdump:
->>>>>> objdump  --start-address=3D<address> --stop-address=3D<address>  -d =
---no-show-raw-insn -C <vmlinux>
->>>>>>=20
->>>>>> c0000000010224b4: lwz     r10,0(r9)
->>>>>>=20
->>>>>> This line "lwz r10,0(r9)" is parsed to extract instruction name,
->>>>>> registers names and offset. In powerpc, the approach for data type
->>>>>> profiling uses raw instruction instead of result from objdump to ide=
-ntify
->>>>>> the instruction category and extract the source/target registers.
->>>>>>=20
->>>>>> Example: 38 01 81 e8     ld      r4,312(r1)
->>>>>>=20
->>>>>> Here "38 01 81 e8" is the raw instruction representation. Add functi=
-on
->>>>>> "disasm_line__parse_powerpc" to handle parsing of raw instruction.
->>>>>> Also update "struct disasm_line" to save the binary code/
->>>>>> With the change, function captures:
->>>>>>=20
->>>>>> line -> "38 01 81 e8     ld      r4,312(r1)"
->>>>>> raw instruction "38 01 81 e8"
->>>>>>=20
->>>>>> Raw instruction is used later to extract the reg/offset fields. Macr=
-os
->>>>>> are added to extract opcode and register fields. "struct disasm_line"
->>>>>> is updated to carry union of "bytes" and "raw_insn" of 32 bit to car=
-ry raw
->>>>>> code (raw). Function "disasm_line__parse_powerpc fills the raw
->>>>>> instruction hex value and can use macros to get opcode. There is no
->>>>>> changes in existing code paths, which parses the disassembled code.
->>>>>> The architecture using the instruction name and present approach is
->>>>>> not altered. Since this approach targets powerpc, the macro
->>>>>> implementation is added for powerpc as of now.
->>>>>>=20
->>>>>> Since the disasm_line__parse is used in other cases (perf annotate) =
-and
->>>>>> not only data tye profiling, the powerpc callback includes changes to
->>>>>> work with binary code as well as mneumonic representation. Also in c=
-ase
->>>>>> if the DSO read fails and libcapstone is not supported, the approach
->>>>>> fallback to use objdump as option. Hence as option, patch has change=
-s to
->>>>>> ensure objdump option also works well.
->>>>>>=20
->>>>>> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
->>>>>> ---
-> [SNIP]
->>>>>> +/*
->>>>>> + * Parses the result captured from symbol__disassemble_*
->>>>>> + * Example, line read from DSO file in powerpc:
->>>>>> + * line:    38 01 81 e8
->>>>>> + * opcode: fetched from arch specific get_opcode_insn
->>>>>> + * rawp_insn: e8810138
->>>>>> + *
->>>>>> + * rawp_insn is used later to extract the reg/offset fields
->>>>>> + */
->>>>>> +#define PPC_OP(op) (((op) >> 26) & 0x3F)
->>>>>> +
->>>>>> +static int disasm_line__parse_powerpc(struct disasm_line *dl)
->>>>>> +{
->>>>>> + char *line =3D dl->al.line;
->>>>>> + const char **namep =3D &dl->ins.name;
->>>>>> + char **rawp =3D &dl->ops.raw;
->>>>>> + char tmp, *tmp_raw_insn, *name_raw_insn =3D skip_spaces(line);
->>>>>> + char *name =3D skip_spaces(name_raw_insn + 11);
->>>>>> + int objdump =3D 0;
->>>>>> +
->>>>>> + if (strlen(line) > 11)
->>>>>> + objdump =3D 1;
->>>>>> +
->>>>>> + if (name_raw_insn[0] =3D=3D '\0')
->>>>>> + return -1;
->>>>>> +
->>>>>> + if (objdump) {
->>>>>> + *rawp =3D name + 1;
->>>>>> + while ((*rawp)[0] !=3D '\0' && !isspace((*rawp)[0]))
->>>>>> + ++*rawp;
->>>>>> + tmp =3D (*rawp)[0];
->>>>>> + (*rawp)[0] =3D '\0';
->>>>>> +
->>>>>> + *namep =3D strdup(name);
->>>>>> + if (*namep =3D=3D NULL)
->>>>>> + return -1;
->>>>>> +
->>>>>> + (*rawp)[0] =3D tmp;
->>>>>> + *rawp =3D strim(*rawp);
->>>>>> + } else
->>>>>> + *namep =3D "";
->>>=20
->>> Then can you handle this logic under if (annotate_opts.show_raw_insn)
->>> in disasm_line__parse() instead of adding a new function?
->>>=20
->>> Thanks,
->>> Namhyung
->>=20
->> Hi Namhyung,
->>=20
->> We discussed to have a per-arch disasm_line_parse() here:
->> https://lore.kernel.org/all/CAM9d7ci1LDa7moT2qDr2qK+DTNLU6ZBkmROnbdozAju=
-QLQfNog@mail.gmail.com/#t
->>=20
->> So I added it as a new function : disasm_line__parse_powerpc
->> Since it is not used by other archs, we can go with having new function ?
->=20
-> Ok, I thought it'd be quite different from disasm_line__parse() but it
-> seems that it's mostly similar except for the raw insn.  So I think it's
-> better to add the logic to the generic disasm_line__parse().  Sorry for
-> the inconvenience.
->=20
-> Thanks,
-> Namhyung
+> +
+> +struct ad4000_state {
+> +	struct spi_device *spi;
+> +	struct gpio_desc *cnv_gpio;
+> +	struct spi_transfer xfers[2];
+> +	struct spi_message msg;
+> +	struct mutex lock; /* Protect read modify write cycle */
+> +	int vref_mv;
+> +	enum ad4000_sdi sdi_pin;
+> +	bool span_comp;
+> +	u16 gain_milli;
+> +	int scale_tbl[AD4000_SCALE_OPTIONS][2];
+> +
+> +	/*
+> +	 * DMA (thus cache coherency maintenance) requires the transfer buffers
+> +	 * to live in their own cache lines.
+> +	 */
+> +	struct {
+> +		union {
+> +			__be16 sample_buf16;
+> +			__be32 sample_buf32;
+> +		} data;
+> +		s64 timestamp __aligned(8);
+> +	} scan __aligned(IIO_DMA_MINALIGN);
+> +	u8 tx_buf[2];
+> +	u8 rx_buf[2];
 
-Hi Namhyung
+If you made the spi_w8r8() change suggested below (which uses a bounce buffer
+in the spi core), rx_buf would be unused and can go away.
 
-I think it=E2=80=99s better to keep it as separate function. The field for =
-raw_insn and length differs from arch to arch ( powerpc is 32 bit instructi=
-on) .
-Also to handle cases where no objdump is used and only directly read from D=
-SO, disasm_line_parse needs some changes.
-Later for other archs to adopt DSO read or raw instruction or use different=
- way, its better we keep it separate function.=20
-I will have it as separate function in V5 and include comment on what is th=
-e specific changes done compared to generic disasm_line__parse.
+Given I think registers accesses on this device are all off the fast path
+you could even use spi_write_then_read() with zero read size for the
+register writes and rely on the spi core bounce buffers.
+That way tx_buf goes away as well leaving you with the dma
+safe buffer for only the fast path reads.
 
-Thanks
-Athira
+> +};
+> +
+> +static void ad4000_fill_scale_tbl(struct ad4000_state *st,
+> +				  struct iio_chan_spec const *chan)
+> +{
+> +	int val, tmp0, tmp1;
+> +	int scale_bits;
+> +	u64 tmp2;
+> +
+> +	/*
+> +	 * ADCs that output two's complement code have one less bit to express
+> +	 * voltage magnitude.
+> +	 */
+> +	if (chan->scan_type.sign == 's')
+> +		scale_bits = chan->scan_type.realbits - 1;
+> +	else
+> +		scale_bits = chan->scan_type.realbits;
+> +
+> +	/*
+> +	 * The gain is stored as a fraction of 1000 and, as we need to
+> +	 * divide vref_mv by the gain, we invert the gain/1000 fraction.
+> +	 * Also multiply by an extra MILLI to preserve precision.
+> +	 * Thus, we have MILLI * MILLI equals MICRO as fraction numerator.
+> +	 */
+> +	val = mult_frac(st->vref_mv, MICRO, st->gain_milli);
+
+If you are rolling a v7 for other reasons, stick some line breaks in here!
+It's a bit of a mass of text that is hard for my eyes to parse!
+
+> +	/* Would multiply by NANO here but we multiplied by extra MILLI */
+> +	tmp2 = shift_right((u64)val * MICRO, scale_bits);
+> +	tmp0 = div_s64_rem(tmp2, NANO, &tmp1);
+> +	/* Store scale for when span compression is disabled */
+> +	st->scale_tbl[0][0] = tmp0; /* Integer part */
+> +	st->scale_tbl[0][1] = abs(tmp1); /* Fractional part */
+> +	/* Store scale for when span compression is enabled */
+> +	st->scale_tbl[1][0] = tmp0;
+> +	/* The integer part is always zero so don't bother to divide it. */
+> +	if (chan->differential)
+> +		st->scale_tbl[1][1] = DIV_ROUND_CLOSEST(abs(tmp1) * 4, 5);
+> +	else
+> +		st->scale_tbl[1][1] = DIV_ROUND_CLOSEST(abs(tmp1) * 9, 10);
+> +}
+
+> +static int ad4000_read_reg(struct ad4000_state *st, unsigned int *val)
+> +{
+> +	struct spi_transfer t = {
+> +		.tx_buf = st->tx_buf,
+> +		.rx_buf = st->rx_buf,
+> +		.len = 2,
+> +	};
+> +	int ret;
+> +
+> +	st->tx_buf[0] = AD4000_READ_COMMAND;
+> +	ret = spi_sync_transfer(st->spi, &t, 1);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	*val = st->rx_buf[1];
+> +	return ret;
+
+I'd be tempted to do
+
+	ssize_t ret;
+
+	ret = spi_w8r8(AD4000_READ_COMMAND);
+	if (ret < 0)
+		return ret;
+	*val = ret;
+	
+	return 0;
+
+> +}
 
 
->=20
->>>>>> +
->>>>>> + tmp_raw_insn =3D strdup(name_raw_insn);
->>>>>> + tmp_raw_insn[11] =3D '\0';
->>>>>> + remove_spaces(tmp_raw_insn);
->>>>>> +
->>>>>> + dl->raw.raw_insn =3D strtol(tmp_raw_insn, NULL, 16);
->>>>>> + if (objdump)
->>>>>> + dl->raw.raw_insn =3D be32_to_cpu(strtol(tmp_raw_insn, NULL, 16));
->>>>>=20
->>>>> Hmm.. can you use a sscanf() instead?
->>>>>=20
->>>>> sscanf(line, "%x %x %x %x", &dl->raw.bytes[0], &dl->raw.bytes[1], ...)
->>>>>=20
->>>>> Thanks,
->>>>> Namhyung
->>>>>=20
->>>> Sure will address in V5
->>>>=20
->>>> Thanks
->>>> Athira
->>>>>> +
->>>>>> + return 0;
->>>>>> +}
+> +static int ad4000_write_raw(struct iio_dev *indio_dev,
+> +			    struct iio_chan_spec const *chan, int val, int val2,
+> +			    long mask)
+> +{
+> +	struct ad4000_state *st = iio_priv(indio_dev);
+> +	unsigned int reg_val;
+> +	bool span_comp_en;
+> +	int ret;
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_SCALE:
+> +		iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
+> +			guard(mutex)(&st->lock);
+> +
+> +			ret = ad4000_read_reg(st, &reg_val);
+> +			if (ret < 0)
+> +				return ret;
+> +
+> +			span_comp_en = val2 == st->scale_tbl[1][1];
+> +			reg_val &= ~AD4000_CFG_SPAN_COMP;
+> +			reg_val |= FIELD_PREP(AD4000_CFG_SPAN_COMP, span_comp_en);
+> +
+> +			ret = ad4000_write_reg(st, reg_val);
+> +			if (ret < 0)
+> +				return ret;
+> +
+> +			st->span_comp = span_comp_en;
+> +			return ret;
 
+If you are spinning for another reason, make it clear this is always good.
+The spi_write() never returns positive so current code is correct but I had
+to go check which this would have avoided.
+
+			return 0;
+
+If nothing else comes up, I'll probably tweak whilst applying.
+
+J
+
+> +		}
+> +		unreachable();
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
 
 
