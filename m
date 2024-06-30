@@ -1,215 +1,95 @@
-Return-Path: <linux-kernel+bounces-235185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A53C491D142
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 12:52:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3855991D147
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 12:52:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C92E21C20E33
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 10:52:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E55EE2824F9
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 10:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E4413C676;
-	Sun, 30 Jun 2024 10:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA87613B7AF;
+	Sun, 30 Jun 2024 10:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="TAnDNIGc"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gDBUKEaX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A6D4084C
-	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 10:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD7A4084C;
+	Sun, 30 Jun 2024 10:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719744710; cv=none; b=sEe0th7FnQq0kwxC5ls8x0x1YRVRFFK+zR7IlbIxw08qTTz9VTWW70B0ZUskaVOnbZrM9qJYqPfDsloJio/Vwt0IbPE+nsJY/5Z6vDwucIvo4RkfRznOgFP+fwR5AZtEJTxnokkTFDOowL0YjxsOQwZGD+fkJQi+T67qaGKfirE=
+	t=1719744735; cv=none; b=D7Jgvyy9R6awOT1x5HJY4LAwiE4HrTF/sdJxcVtUm6eIuTVYhC69CR20XYYlqKgEpFLMWer6oAugZyBUPTkA6Bp7ZeJMoEXeS0HzK+WWHK4eUkOWLEWzjzkFyjHa2hMcxIkR7etGmbecG6lQBwkp/JyYNSDaDh6pOgOZUoz3+aY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719744710; c=relaxed/simple;
-	bh=rWY6+G+C+ZqnUR+6zAeZDHfK+LvgYiC8D4LeuktFWbw=;
-	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=MVaZwblWcDHoYiPS+gWxV5V+mtsmO6IRpT8l9g7ctnU+qy9VLOqoc2xzCLTEFUE2I97lHRC7H1kTErqlWBKYq5aVAysQ4AUZi9osfYBQc/d+R8SX6zPj9INzXoHV9CAteuHwWYPRiJhoBic0P7ctMHFeBfvkG5ZLnFkhq+fGHdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=TAnDNIGc; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a724b4f1218so257991166b.2
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 03:51:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1719744707; x=1720349507; darn=vger.kernel.org;
-        h=mime-version:subject:user-agent:references:in-reply-to:message-id
-         :date:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=B4pX+Oj5fd1Lo4nAiAwTrjG71q0VZyEuRljvm5tslhA=;
-        b=TAnDNIGcazMVKTk2mtanodxJdJrifmSLIMceKPtDmmyhgV6lV83JKXNOPO83+xrHdm
-         5/jHOrG2aHNVbM/mx1BOzfH+Y97L5Ha84HNROy2EzeLQAF0fbdUMwQiFqgi6/JfXIT2a
-         Iev/BOI7MMdw/1HSUD9tDFBjdYpXdcFoNp0tI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719744707; x=1720349507;
-        h=mime-version:subject:user-agent:references:in-reply-to:message-id
-         :date:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B4pX+Oj5fd1Lo4nAiAwTrjG71q0VZyEuRljvm5tslhA=;
-        b=C6wl+81jE1PQjJbQ91/uAfa9B7TcUxwJLDWvzGtbmypbV0YFQLLsmPosAblYcw9XVY
-         nYRboP2TSeDfRizKvXtVxAe5Wvv2LGsUNnN1Ks6Bi9SF7aYKwDIUXh49FlQqPVPt5eJK
-         8f4pfvKPTJMOwlZKm1EmeZ+EVGPBI99MngzQoYdem4TAtKhUfp0rCteUNkp0k+Lxw03u
-         KytqV8q/+bowHQrnweQhR/uRG3hid9iON3nX2BwhQzyB99BxNIInNF2x9fnKFSaRciax
-         mCpk9hnhqpSHIpEtP0AAqS2PcUXlJihYlPD94LV131bSdvGrjXkdJxmWW8HBxC/VQ8Ow
-         MSsw==
-X-Forwarded-Encrypted: i=1; AJvYcCXSVLsCVFy0QNifhHuQBAF6ZIZekc1Rbb7N7gcpP8c/XinxmpyeoMNBczeThSD0szb1C1ccqfl8TTxnuQb4Pl0oqSZgbaURpBzv+WPG
-X-Gm-Message-State: AOJu0YxnbUUNtcEghxRgqw8XEei/i+RpA/rD9MaKf7+ubE11Ej8T8S1X
-	RAgkBW8egcCfkfK3J0EWtmK80jSyDCvHiATRg+QQyv2TLw0kpNtRenYBu5CYtw==
-X-Google-Smtp-Source: AGHT+IHqXK4sB8oBb7KRPu5Nbgngk9XNwKyJTwWUPZT4CqqnLhwKZZbrMG4VU6Ars2hfH5hEuB1sXA==
-X-Received: by 2002:a17:906:6a24:b0:a6f:5192:6f4d with SMTP id a640c23a62f3a-a7514402304mr204151166b.8.1719744707156;
-        Sun, 30 Jun 2024 03:51:47 -0700 (PDT)
-Received: from [192.168.178.38] (f215227.upc-f.chello.nl. [80.56.215.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab0651dfsm237167266b.142.2024.06.30.03.51.45
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 30 Jun 2024 03:51:46 -0700 (PDT)
-From: Arend Van Spriel <arend.vanspriel@broadcom.com>
-To: Stefan Wahren <wahrenst@gmx.net>, <wens@kernel.org>, Jacobe Zang <jacobe.zang@wesion.com>
-CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <heiko@sntech.de>, <kvalo@kernel.org>, <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>, <conor+dt@kernel.org>, <efectn@protonmail.com>, <dsimic@manjaro.org>, <jagan@edgeble.ai>, <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>, <arend@broadcom.com>, <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>, <megi@xff.cz>, <duoming@zju.edu.cn>, <bhelgaas@google.com>, <minipli@grsecurity.net>, <brcm80211@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>, Nick Xie <nick@khadas.com>
-Date: Sun, 30 Jun 2024 12:51:44 +0200
-Message-ID: <19068c5ae00.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
-In-Reply-To: <8e44631c-955f-42de-bb2f-f3a32c79f1c1@gmx.net>
-References: <20240630073605.2164346-1-jacobe.zang@wesion.com>
- <20240630073605.2164346-5-jacobe.zang@wesion.com>
- <bd661690-1de8-4030-a209-ef26d3559221@gmx.net>
- <TYZPR03MB7001AC28827A86338BF2B77380D22@TYZPR03MB7001.apcprd03.prod.outlook.com>
- <CAGb2v66Vk8SMs1TOs+80Jy5fXumuYqCx59Tzd_N7wJAfyysQcw@mail.gmail.com>
- <8e44631c-955f-42de-bb2f-f3a32c79f1c1@gmx.net>
-User-Agent: AquaMail/1.51.5 (build: 105105504)
-Subject: Re: [PATCH v3 4/5] wifi: brcmfmac: Add optional lpo clock enable support
+	s=arc-20240116; t=1719744735; c=relaxed/simple;
+	bh=GlOyv5pCwvf164vGNZO0oDiGCeZTmoHYis09Nzt4RHQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PTDZJaZeOyuS8c7nqTeyvuErRIue6b1ANV9vJC1PE3513A4AL/Nkmvm0i/HexxP+Af9RbdL1u14APCDFCTOMn9JNegF5C2xoXOVz1W3gdYOmTpF0Dm7MbWt8dc34Iyl04cCA6CiYXiVdh4ccXsq/B7PSspYIil8UVxYQjDhzYIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gDBUKEaX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7CA2C4AF0E;
+	Sun, 30 Jun 2024 10:52:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719744734;
+	bh=GlOyv5pCwvf164vGNZO0oDiGCeZTmoHYis09Nzt4RHQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gDBUKEaXyCLDVuvJ24aScBh9v9+jZjaNuzCuxogzRs2jU4P1P4NNYoqiJ+KYgHZ9x
+	 qxCMYyk0ym+nTa4sGvTMGBx59qHtqJxvmmFDa5D0Q6Xkp7/KwKu9A1kk2wKMDuHr2F
+	 L9fSd0PKpSpOdmUT7sPHZQqevjFvAbsq95fFsrdoZqzw0OV8Ehl5guv1rTcP+Mu1hy
+	 3jnx8wQOs+C25c4DTTrHD8kqPqSz6u4/5v8ZaI5zQT4NdFTRl5Dgvx4sYAdMpkwYm6
+	 nIdtxfD3Rqs0JGB739OPj9fB1SsCRXWEUNc3dLX+HiBfOa2c1ezBm6DaBf9I04sKcB
+	 kUzzgkRqtxM5w==
+Date: Sun, 30 Jun 2024 11:52:04 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>
+Cc: <broonie@kernel.org>, <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+ <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+ <conor+dt@kernel.org>, <nuno.sa@analog.com>, <dlechner@baylibre.com>,
+ <corbet@lwn.net>, <marcelo.schmitt1@gmail.com>,
+ <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-spi@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 2/7] spi: bitbang: Implement support for MOSI idle
+ state configuration
+Message-ID: <20240630115204.490c063d@jic23-huawei>
+In-Reply-To: <b08e21823638c241228f4bc27a7bf5d4ed88d54a.1719686465.git.marcelo.schmitt@analog.com>
+References: <cover.1719686465.git.marcelo.schmitt@analog.com>
+	<b08e21823638c241228f4bc27a7bf5d4ed88d54a.1719686465.git.marcelo.schmitt@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000697608061c1944c3"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
---000000000000697608061c1944c3
-Content-Type: text/plain; format=flowed; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+On Sat, 29 Jun 2024 16:05:05 -0300
+Marcelo Schmitt <marcelo.schmitt@analog.com> wrote:
 
-On June 30, 2024 11:54:43 AM Stefan Wahren <wahrenst@gmx.net> wrote:
+> Some SPI peripherals may require strict MOSI line state when the controller
+> is not clocking out data.
+> Implement support for MOSI idle state configuration (low or high) by
+> setting the data output line level on controller setup and after transfers.
+> Bitbang operations now call controller specific set_mosi_idle() call back
+> to set MOSI to its idle state.
+> The MOSI line is kept at its idle state if no tx buffer is provided.
 
-> Am 30.06.24 um 11:15 schrieb Chen-Yu Tsai:
->> On Sun, Jun 30, 2024 at 5:10 PM Jacobe Zang <jacobe.zang@wesion.com> wrote:
->>> Hi Stefan,
->>>
->>>>> WiFi modules often require 32kHz clock to function. Add support to
->>>>> enable the clock to PCIe driver.
->>>> the low power clock is independent from the host interface like PCIe. So
->>>> the clock handling should move to the common code. Sorry, not i cannot
->>>> give a good suggestion, what's the best place for this.
->>> I think the clock is used by the PCIe device so enable it in this file. 
->>> Also I checked
->>> use of clock which in spi[0] or sdio[0] device was enabled similarly to this.
->>>
->>> [0] 
->>> https://lore.kernel.org/all/20210806081229.721731-4-claudiu.beznea@microchip.com/
->> You're looking at the wrong driver. For brcmfmac, the lpo clock is toggled
->> by the MMC pwrseq code. And for the Bluetooth side (where it really matters)
->> for UARTs, it is in drivers/bluetooth/hci_bcm.c. and documented in the
->> binding Documentation/devicetree/bindings/net/broadcom-bluetooth.yaml
-> Thanks for clarifying. So this change handles the PCIe case without
-> bluetooth. For USB the clock control doesn't make sense.
->
-> Sorry for the noise
+Slightly odd wrapping - this doesn't warrant 3 paragraphs, so I'd just
+reflow it into one. 
 
-So someone could end up with both wifi and bt LPO clock defined in DTS 
-file. Not sure if that can be expressed and validated in device tree, but 
-at the least there should be a fair warning in both binding files that 
-there can be only one!
+I'm not a fan of counting F's, so would have gone with GENMASK for those
+but it's not the local style, so fair enough to hard code them.
+FWIW given it's been a long time since I messed around in SPI controller
+drivers...
 
-The LPO clock matters to the chip. It is not specific to the BT part. The 
-clock is important for the power-up cycle. The timing difference WL_REG_ON 
-and BT_REG_ON is expressed in LPO clock cycles.
-
-Regards,
-Arend
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
 
-
-
---000000000000697608061c1944c3
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-2Gzj3QNJRLsZu1TLyOyBBIr/BE7UiY3RabgRzknBGAPmzhS+fmyM8OtM5BYBsFBrSUFtZZO2p/tf
-Nbc24J2zf2peoZ8MK+7WQqummYlOnz+FyDkA9EybeNMcS5C+xi/PAgMBAAGjggHdMIIB2TAOBgNV
-HQ8BAf8EBAMCBaAwgaMGCCsGAQUFBwEBBIGWMIGTME4GCCsGAQUFBzAChkJodHRwOi8vc2VjdXJl
-Lmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcnQwQQYI
-KwYBBQUHMAGGNWh0dHA6Ly9vY3NwLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24y
-Y2EyMDIwME0GA1UdIARGMEQwQgYKKwYBBAGgMgEoCjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3
-dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAJBgNVHRMEAjAAMEkGA1UdHwRCMEAwPqA8oDqG
-OGh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3Js
-MCcGA1UdEQQgMB6BHGFyZW5kLnZhbnNwcmllbEBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYB
-BQUHAwQwHwYDVR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFIikAXd8CEtv
-ZbDflDRnf3tuStPuMA0GCSqGSIb3DQEBCwUAA4IBAQCdS5XCYx6k2GGZui9DlFsFm75khkqAU7rT
-zBX04sJU1+B1wtgmWTVIzW7ugdtDZ4gzaV0S9xRhpDErjJaltxPbCylb1DEsLj+AIvBR34caW6ZG
-sQk444t0HPb29HnWYj+OllIGMbdJWr0/P95ZrKk2bP24ub3ZP/8SyzrohfIba9WZKMq6g2nTLZE3
-BtkeSGJx/8dy0h8YmRn+adOrxKXHxhSL8BNn8wsmIZyYWe6fRcBtO3Ks2DOLyHCdkoFlN8x9VUQF
-N2ulEgqCbRKkx+qNirW86eF138lr1gRxzclu/38ko//MmkAYR/+hP3WnBll7zbpIt0jc9wyFkSqH
-p8a1MYICbTCCAmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1z
-YTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMTv1t
-bpIzNUky46LXMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCDa2AZi8L4XSq4RqH3T
-ZgHw2+DGNXcGvo3EmgIQ3SuywTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJ
-BTEPFw0yNDA2MzAxMDUxNDdaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFl
-AwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzAL
-BglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAFg2B4wdCpp+Ji7jgMrS2vrSl03HVGEIZj4xu
-Og9J4Bei4dGFcpNMqYreRpeNQI70jSl54CuCLoPhGTtERkvM5eRnO0HQrKwGNNa4U58Tr7qQ3hu8
-zmAoujTyKs6Xn0/y3ileNOGJSqsVLFQQEsdXZb69mwAPRwkiB3ojgLwA+yFJZclMUxZLuLBlqMsh
-dHq3s6QbAS5bpW9KY6vI+JnfO8rIm7wO5h228KITkOGqgRljBgpiRTqddeCLfeooS6ws79pHHx6B
-Z8zNJw/EXVcRG0rM/o2BSFO9bs32tOjCFKz6/KC5gGJ/EV/7Pf1BEmEn2BPsi7EdkbuTEQZMK/fm
-8Q==
---000000000000697608061c1944c3--
+> 
+> Acked-by: Nuno Sa <nuno.sa@analog.com>
+> Reviewed-by: David Lechner <dlechner@baylibre.com>
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
 
