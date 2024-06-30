@@ -1,134 +1,135 @@
-Return-Path: <linux-kernel+bounces-235104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8039E91D033
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 08:53:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 409AF91D034
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 08:53:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C704A281B1D
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 06:53:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE3E22819D6
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 06:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E5A138DE5;
-	Sun, 30 Jun 2024 06:53:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD7D3A1BF;
+	Sun, 30 Jun 2024 06:53:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="DhCX2WWK"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="OgvTQ+88"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAB82594
-	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 06:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719730392; cv=pass; b=t5lYUZnjMDkuNDtuHXhAWDfbAcNf+DkWGjRoOrcBnUckVGqN9R3utSdGZwpmeTo6ZwYiwOfl+hhKLvFfo0J6sudZTUayL62HP0bmzJgUMYZCtHSchr+m/MKFPwMb9lpkUrricyFYHSvaIqR2l4uoB+kyPzI0A60ZIxpWJy5/A4E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719730392; c=relaxed/simple;
-	bh=GlvmRLhSLQMxqqnJLWA67YWA13Mc0uaKIfKavL5U0Hs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=OUI5s1XMhYM6Z9sFTcCI3tYln04JkEpW8IvMGA5WJ8v5J2YPdW8yjKyxY6Zf2ZyAn3zDO7l7s6v1OAKphx06pWUAPa5w36ExjV2wgIn89+2coIiM58RosZwc3jBOYK93RkSQ4o3yfM1nTqYAcWIkXFNwLZX4pmPHWcpMSghR7KE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=DhCX2WWK; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1719730374; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=eU4klpRyAxmW0vXJdPVVPkWSQQj9VfQf5v1q9nBAJAw4Gc883S1CO6jXy06LHCB4Vq5sx6xT7MKI8dsArBtx4EkvBcKEejvsMM11N1qsBdLDJlskyfrmF9VSywVIzwN2dIH7jMhtcZMxuAzDELl7UJND9DKzKxtG+OD64NRGSQM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1719730374; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=GlvmRLhSLQMxqqnJLWA67YWA13Mc0uaKIfKavL5U0Hs=; 
-	b=FJi2p88Pp6IFGhtZmmi2Tyia/6lUbBC/NxONV/SonbnP9pLsj+yTnVpyzrPJ8evXCpq6HlirS9ebybajTmtR6GkYfgwAtiROmwPLXNY+TLKGa+zSOkeZVATVeVcPZHD1WkCT7iXQRdgvT8osMrvR0BhOkFFHq34rRbLmlLAwjzo=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1719730374;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=GlvmRLhSLQMxqqnJLWA67YWA13Mc0uaKIfKavL5U0Hs=;
-	b=DhCX2WWKwy0PllVfQ9k31kQX1VRgSsunOcybHw9lPNNnAaM15Gmlfa9Kf3BE4EX+
-	HdmjS9pj4gT6VcgChs0V+ndmzDC9K9cUVNq1NeeFqt9CCnvMfMi7yag/HaXLxAqFdna
-	OewydSyy2L+DWrWojSNP63hOSixgTZbqmCw+H9ADdJWHVHJoEZVtworqU5abt0OTYS4
-	QUU8pSn4XTMw9+S+qvSzYBy+MIuz2xtZBwqfDl4qNOVM+WGS3WXAeQB7UQfTnxF58sR
-	0x+PRLvwHRyqahKkllsUQSUMmXYW/bqN21XniaQQls68fuEQ+TcjS/jIr9aqJh8OhTz
-	LDv28dFf5w==
-Received: by mx.zohomail.com with SMTPS id 1719730372425888.1304650498818;
-	Sat, 29 Jun 2024 23:52:52 -0700 (PDT)
-Message-ID: <d721003aca5b023feee8ab63a4ac29944f5b4549.camel@icenowy.me>
-Subject: Re: [RFC PATCH 2/2] drm/ttm: downgrade cached to write_combined
- when snooping not available
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>, Christian Koenig
- <christian.koenig@amd.com>, Huang Rui <ray.huang@amd.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>,  Thomas Zimmermann <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Date: Sun, 30 Jun 2024 14:52:47 +0800
-In-Reply-To: <a143a2c3-c6f0-4537-acc6-94f229f14639@app.fastmail.com>
-References: <20240629052247.2653363-1-uwu@icenowy.me>
-	 <20240629052247.2653363-3-uwu@icenowy.me>
-	 <a143a2c3-c6f0-4537-acc6-94f229f14639@app.fastmail.com>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.44.4 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652C83E467
+	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 06:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719730403; cv=none; b=K4IRvozza/vX7cNu9rUfPtTCd0Hwa3VaxIg1/RVeFpSF+Q7t69yG7Y1mvkwUaYvZWhkEyN6WZUzLdolrAaX+dAFLvNWz1gpNgITXMtL/PuCD//ovG7tB5WBpEzowBXM6DWbnLPoRncqeoMQQtHWEQg631CIz2kL4JD4jKqWg3qM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719730403; c=relaxed/simple;
+	bh=92Fr2FI0hzTIr3j6+QoFA8EzGb3LeRI2MHqAshn6kcQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=UxgJrxPFagcsjhWoTaCrngZ8Ytqv1PGRc5ewxGVnizctZgmpdD8K6mDb/Hw1k8/OvG++p1BAe5j3J/LDZSOVIPM5QBnRNX7BAqGxnlkfi2J3fQJkwNU64Xx/KmtYnKh8F80g4FovRgxaygod9iJGGuVoZ8oW5NVhdP6iGvw8tLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=OgvTQ+88; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52d259dbe3cso2083568e87.0
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 23:53:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719730398; x=1720335198; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ew4KWJgmKbpOxqo+GQy5qo/brhj1D5g+M8tiJYpqXX8=;
+        b=OgvTQ+88fFeaCfXlI8EFoQuCKPhtVYqHFlcvmQJvvBq+j1LbNhl+l8+KBAFtaZQ1fU
+         SyySRibUemRUuSyYhWN2xwdlWuXbNJMCGa5mQu4JJE2mBH2LezKFnMi4VBPeoLSHQ6bW
+         aREPZ7EptC/50NiwJzADOJ74JhwXBUzTgVceypJLRD7T4IySH3g32YnEsXbQmxaMvcm/
+         kgleX4cAkHCzCScVh6GaFDS50LiWGfBlj5hHc/v144GqmQzIi/iBCiyEhst2cMufJf3w
+         0CIlqw31L4cvIPJzaEdJJ5kbAtYlZpCRztVAaJ/cMaL8DBY5L1baDcCcYITd5xE15dFs
+         cNxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719730398; x=1720335198;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ew4KWJgmKbpOxqo+GQy5qo/brhj1D5g+M8tiJYpqXX8=;
+        b=YofUZ0YQAID069rWujNCY6EhmLnQjpp0uQXYA5h8JgFLRNxJb62GwU0Gykz+8ImtVq
+         N35OOhpBGjP8Jcd4pSpslnuEXDpZl2YtHPDUhfaiMOT07LXmi0yD5eSHxPA9IPim7TCc
+         nIralG+Z08lSeF2XvgHPDiWw85l0WwFDelmETRoVFYkri2d881d2CGO3iNGJFEGa5SWq
+         AlxHYBpwD4q1ZvD+ycWNYXKVPY+SWnN7mj5P6jt/OIk/AA6VZq86LTj8ouYAq0UXgWkU
+         8H877r2daBUqT4Qluv4JIshiJ4Xilwg4NQujM4mDuLO4V/L/ANTKyAirVNM0UCt3IJ2w
+         t9hA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJbsSRnOBfJ84VnZdN3nnIlIsEs84a6UYbTzWIk+Jou/n1wDJIp3O9EQHpCRylS61/HIq613fKhz2ckriHNMWw65XoBDCSdxOzA0QE
+X-Gm-Message-State: AOJu0YwVOffkTG0YDgpiiIhRO3jCOH/5+rJ5lrz5MIyvvELGS/v1U7SI
+	qnwSKChnbkxtlCrLgPBz0y1R83Y5zPS8egCMYGLSwEaS17+9MKmJQ7CiLlACSpY=
+X-Google-Smtp-Source: AGHT+IEnzCb0ZjEgk4HVemu0D2vV5LVoJK9bnWbsrBx3BpfdiC+g0YptGg0s/NfloHGeam0Y9qPU0w==
+X-Received: by 2002:a05:6512:4014:b0:52c:b479:902d with SMTP id 2adb3069b0e04-52e82643b97mr2093475e87.4.1719730397113;
+        Sat, 29 Jun 2024 23:53:17 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:51e2:ba1a:8ad5:52c9])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b09a073sm100168595e9.32.2024.06.29.23.53.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 29 Jun 2024 23:53:16 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: kernel test robot <lkp@intel.com>
+Cc: Mark Brown <broonie@kernel.org>,  Liam Girdwood <lgirdwood@gmail.com>,
+  Takashi Iwai <tiwai@suse.com>,  Jaroslav Kysela <perex@perex.cz>,
+  oe-kbuild-all@lists.linux.dev,  alsa-devel@alsa-project.org,
+  linux-sound@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] ALSA: pcm: add support for 128kHz sample rate
+In-Reply-To: <202406300718.iL828kaG-lkp@intel.com> (kernel test robot's
+	message of "Sun, 30 Jun 2024 07:29:29 +0800")
+References: <20240628122429.2018059-2-jbrunet@baylibre.com>
+	<202406300718.iL828kaG-lkp@intel.com>
+Date: Sun, 30 Jun 2024 08:53:15 +0200
+Message-ID: <1j1q4ej50k.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+Content-Type: text/plain
 
-5ZyoIDIwMjQtMDYtMjnmmJ/mnJ/lha3nmoQgMjA6NTcgKzAxMDDvvIxKaWF4dW4gWWFuZ+WGmemB
-k++8mgo+IAo+IAo+IOWcqDIwMjTlubQ25pyIMjnml6Xlha3mnIgg5LiK5Y2INjoyMu+8jEljZW5v
-d3kgWmhlbmflhpnpgZPvvJoKPiBbLi4uXQo+ID4gQEAgLTMwMiw2ICszMDIsMTAgQEAgcGdwcm90
-X3QgdHRtX2lvX3Byb3Qoc3RydWN0IHR0bV9idWZmZXJfb2JqZWN0Cj4gPiAqYm8sIAo+ID4gc3Ry
-dWN0IHR0bV9yZXNvdXJjZSAqcmVzLAo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqBjYWNoaW5nID0gcmVzLT5idXMuY2FjaGluZzsKPiA+IMKgwqDCoMKgwqDCoMKgwqB9Cj4gPiAK
-PiA+ICvCoMKgwqDCoMKgwqDCoC8qIERvd25ncmFkZSBjYWNoZWQgbWFwcGluZyBmb3Igbm9uLXNu
-b29waW5nIGRldmljZXMgKi8KPiA+ICvCoMKgwqDCoMKgwqDCoGlmICghYm8tPmJkZXYtPmRtYV9j
-b2hlcmVudCAmJiBjYWNoaW5nID09IHR0bV9jYWNoZWQpCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgY2FjaGluZyA9IHR0bV93cml0ZV9jb21iaW5lZDsKPiBIaSBJY2Vub3d5LAo+
-IAo+IFRoYW5rcyBmb3IgeW91ciBwYXRjaCEgWW91IHNhdmVkIG1hbnkgbm9uLWNvaCBQQ0llIGhv
-c3QKPiBpbXBsZW1lbnRhdGlvbnMgYSBkYXkhLgo+IAo+IFVuZm9ydHVuYXRlbHkgSSBkb24ndCB0
-aGluayB3ZSBjYW4gc2FmZWx5IHR0bV9jYWNoZWQgdG8KPiB0dG1fd3JpdGVfY29tbmluZWQsIHdl
-J3ZlCj4gaGFkIGVub3VnaCBkcmFtYSB3aXRoIHdyaXRlIGNvbWJpbmUgYmVoYXZpb3VyIG9uIGFs
-bCBkaWZmZXJlbnQKPiBwbGF0Zm9ybXMuCgpJIHRoaW5rIG9uIHRoZXNlIHBsYXRmb3JtcywgdHRt
-X3dyaXRlX2NvbWJpbmVkIHNob3VsZCBiZSBwcmV2ZW50ZWQgdG8KYmUgbWFwcGVkIHRvIHBncHJv
-dF93cml0ZWNvbWJpbmUgaW5zdGVhZCwgYnV0IGRvd25ncmFkZSB0dG1fY2FjaGVkIHRvCnR0bV93
-cml0ZV9jb21iaW5lZCAoYW5kIHRoZW4gYmVpbmcgdHJlYXRlZCBzYW1lIGFzIHR0bV91bmNhY2hl
-ZCkgaXMKYWNjZXB0YWJsZS4KCj4gCj4gU2VlIGRybV9hcmNoX2Nhbl93Y19tZW1vcnkgaW4gZHJt
-X2NhY2hlLmguCj4gCj4gVGhhbmtzIAo+IAo+ID4gKwo+ID4gwqDCoMKgwqDCoMKgwqDCoHJldHVy
-biB0dG1fcHJvdF9mcm9tX2NhY2hpbmcoY2FjaGluZywgdG1wKTsKPiA+IMKgfQo+ID4gwqBFWFBP
-UlRfU1lNQk9MKHR0bV9pb19wcm90KTsKPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
-dHRtL3R0bV90dC5jCj4gPiBiL2RyaXZlcnMvZ3B1L2RybS90dG0vdHRtX3R0LmMKPiA+IGluZGV4
-IDdiMDBkZGYwY2U0OWYuLjMzMzVkZjQ1ZmJhNWUgMTAwNjQ0Cj4gPiAtLS0gYS9kcml2ZXJzL2dw
-dS9kcm0vdHRtL3R0bV90dC5jCj4gPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdHRtL3R0bV90dC5j
-Cj4gPiBAQCAtMTUyLDYgKzE1MiwxMCBAQCBzdGF0aWMgdm9pZCB0dG1fdHRfaW5pdF9maWVsZHMo
-c3RydWN0IHR0bV90dAo+ID4gKnR0bSwKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBlbnVtIHR0bV9jYWNoaW5nIGNhY2hpbmcs
-Cj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqAgdW5zaWduZWQgbG9uZyBleHRyYV9wYWdlcykKPiA+IMKgewo+ID4gK8KgwqDCoMKg
-wqDCoMKgLyogRG93bmdyYWRlIGNhY2hlZCBtYXBwaW5nIGZvciBub24tc25vb3BpbmcgZGV2aWNl
-cyAqLwo+ID4gK8KgwqDCoMKgwqDCoMKgaWYgKCFiby0+YmRldi0+ZG1hX2NvaGVyZW50ICYmIGNh
-Y2hpbmcgPT0gdHRtX2NhY2hlZCkKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBj
-YWNoaW5nID0gdHRtX3dyaXRlX2NvbWJpbmVkOwo+ID4gKwo+ID4gwqDCoMKgwqDCoMKgwqDCoHR0
-bS0+bnVtX3BhZ2VzID0gKFBBR0VfQUxJR04oYm8tPmJhc2Uuc2l6ZSkgPj4gUEFHRV9TSElGVCkK
-PiA+ICsgZXh0cmFfcGFnZXM7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgdHRtLT5wYWdlX2ZsYWdzID0g
-cGFnZV9mbGFnczsKPiA+IMKgwqDCoMKgwqDCoMKgwqB0dG0tPmRtYV9hZGRyZXNzID0gTlVMTDsK
-PiA+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2RybS90dG0vdHRtX2NhY2hpbmcuaAo+ID4gYi9pbmNs
-dWRlL2RybS90dG0vdHRtX2NhY2hpbmcuaAo+ID4gaW5kZXggYTE4ZjQzZTkzYWJhYi4uZjkyZDc5
-MTFmNTBlNCAxMDA2NDQKPiA+IC0tLSBhL2luY2x1ZGUvZHJtL3R0bS90dG1fY2FjaGluZy5oCj4g
-PiArKysgYi9pbmNsdWRlL2RybS90dG0vdHRtX2NhY2hpbmcuaAo+ID4gQEAgLTQ3LDcgKzQ3LDgg
-QEAgZW51bSB0dG1fY2FjaGluZyB7Cj4gPiAKPiA+IMKgwqDCoMKgwqDCoMKgwqAvKioKPiA+IMKg
-wqDCoMKgwqDCoMKgwqAgKiBAdHRtX2NhY2hlZDogRnVsbHkgY2FjaGVkIGxpa2Ugbm9ybWFsIHN5
-c3RlbSBtZW1vcnksCj4gPiByZXF1aXJlcyB0aGF0Cj4gPiAtwqDCoMKgwqDCoMKgwqAgKiBkZXZp
-Y2VzIHNub29wIHRoZSBDUFUgY2FjaGUgb24gYWNjZXNzZXMuCj4gPiArwqDCoMKgwqDCoMKgwqAg
-KiBkZXZpY2VzIHNub29wIHRoZSBDUFUgY2FjaGUgb24gYWNjZXNzZXMuIERvd25ncmFkZWQgdG8K
-PiA+ICvCoMKgwqDCoMKgwqDCoCAqIHR0bV93cml0ZV9jb21iaW5lZCB3aGVuIHRoZSBzbm9vcGlu
-ZyBjYXBhaWJsaXR5IGlzCj4gPiBtaXNzaW5nLgo+ID4gwqDCoMKgwqDCoMKgwqDCoCAqLwo+ID4g
-wqDCoMKgwqDCoMKgwqDCoHR0bV9jYWNoZWQKPiA+IMKgfTsKPiA+IC0tIAo+ID4gMi40NS4yCj4g
-Cgo=
+On Sun 30 Jun 2024 at 07:29, kernel test robot <lkp@intel.com> wrote:
 
+> Hi Jerome,
+>
+> kernel test robot noticed the following build errors:
+>
+> [auto build test ERROR on tiwai-sound/for-next]
+> [also build test ERROR on tiwai-sound/for-linus broonie-sound/for-next linus/master v6.10-rc5 next-20240628]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Jerome-Brunet/ALSA-pcm-add-support-for-128kHz-sample-rate/20240629-201915
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git for-next
+> patch link:    https://lore.kernel.org/r/20240628122429.2018059-2-jbrunet%40baylibre.com
+> patch subject: [PATCH 1/3] ALSA: pcm: add support for 128kHz sample rate
+> config: i386-buildonly-randconfig-004-20240630
+> compiler: gcc-7 (Ubuntu 7.5.0-6ubuntu2) 7.5.0
+> reproduce (this is a W=1 build):
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202406300718.iL828kaG-lkp@intel.com/
+>
+> All errors (new ones prefixed by >>):
+>
+>>> sound/usb/caiaq/audio.c:179:2: error: #error "Change this table"
+>     #error "Change this table"
+>      ^~~~~
+>
+>
+> vim +179 sound/usb/caiaq/audio.c
+>
+> 523f1dce37434a sound/usb/caiaq/caiaq-audio.c Daniel Mack 2007-03-26  176  
+> 523f1dce37434a sound/usb/caiaq/caiaq-audio.c Daniel Mack 2007-03-26  177  /* this should probably go upstream */
+> 523f1dce37434a sound/usb/caiaq/caiaq-audio.c Daniel Mack 2007-03-26  178  #if SNDRV_PCM_RATE_5512 != 1 << 0 || SNDRV_PCM_RATE_192000 != 1 << 12
+> 523f1dce37434a sound/usb/caiaq/caiaq-audio.c Daniel Mack 2007-03-26 @179  #error "Change this table"
+> 523f1dce37434a sound/usb/caiaq/caiaq-audio.c Daniel Mack 2007-03-26  180  #endif
+> 523f1dce37434a sound/usb/caiaq/caiaq-audio.c Daniel Mack 2007-03-26  181  
+
+This file is not in mainline or
+https://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git for-next
+branch ... Don't know what to make of this error ?
+
+-- 
+Jerome
 
