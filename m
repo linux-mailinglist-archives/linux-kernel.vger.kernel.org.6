@@ -1,235 +1,159 @@
-Return-Path: <linux-kernel+bounces-235235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A179291D1F3
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 16:05:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF24191D1F5
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 16:09:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D005A281BE2
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 14:05:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A14331F2153F
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 14:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43EE14D2AC;
-	Sun, 30 Jun 2024 14:05:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C6614E2CC;
+	Sun, 30 Jun 2024 14:09:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="COhNXR4s"
-Received: from mail-pf1-f194.google.com (mail-pf1-f194.google.com [209.85.210.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hIpyXJeD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464147E572;
-	Sun, 30 Jun 2024 14:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282897E572;
+	Sun, 30 Jun 2024 14:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719756311; cv=none; b=D+NsXsG1N72zA9L99qmzhB5ReG6Nmkdwhl/Ybq21mjyIPfXLcwvVgB8lqaYRil8YYfdxxrDnuwcHUdbzUnMtc0a3Q+gqvPfjot0frH0PmPamaxO2/U3nbtvjkaikb8WGME1qfz7N5QlLttM3xB5udNMfsggayRGvf0n7XKMJ934=
+	t=1719756579; cv=none; b=r2wYkIEbqxJsB8iWwaJP6jQHFC48/coFD2HDLwPHD9DC2q5Oq+0atxVuJZ7L1yWGDfsyhjeK7G/MnZu9zs+Ood6BexsvtBlFDFivRA9MpjUiD8p/Dvhqvgr8m+UdLs39jI0OWegCsKDCC/2zlBiBe50ppBlus1WpgNK0ewc6BDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719756311; c=relaxed/simple;
-	bh=JCX9RfkKcMe+viiahsmPNFHNBoULkMPfhabNd7u8+bc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MFCiPZHOPRut6FbmIZZ7ezZGGN4tC5dTqSYAVEQvfHwEZGZaUs8Jc4v51eYZlQ2ictX5gbEkoqeb++aHpT2rrlZwZCIM00cwVNSVW0IzNf2NzBmaQFNUJMI6w9ReHkNCQ/r3/dI1lO7ouqholtUIfVvpQNLjVQTi/yaV1RNWiWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=COhNXR4s; arc=none smtp.client-ip=209.85.210.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f194.google.com with SMTP id d2e1a72fcca58-7066463c841so1202943b3a.1;
-        Sun, 30 Jun 2024 07:05:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719756308; x=1720361108; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3DMYWxVOVrbNinxcGttYFC0mIp7rbZQcJJC99krmUaA=;
-        b=COhNXR4sv+RgWoYqZSuZl+uXM+UHLNASbgDtXbkskijNi0vnEOWvOGA5lTERShg70n
-         NqdjfeGtNzTmmro/pome+0X0fZBe2+ibvGJHcxw81PuUvkeKZAvCzC1WStuc7gunA4tZ
-         AK5qx4of+LNBnLNV/hafVPPF4z/DTf2vA8+yMFHqaU/giurnlMtxxROA+9dhnrb3hxed
-         a+krIuz0A/rGn96iSPcQX/lkyEwRZJCgc34iDG2MivzDik5WIIAo3A3PDLj5T+XqVZsO
-         MlRmQUAOshWT7uk0AYYJ46NywBkIpX4dCnUrwh5DHPcqvzgQ8b+RAl0RL/SPeUkbR3FK
-         vfKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719756308; x=1720361108;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3DMYWxVOVrbNinxcGttYFC0mIp7rbZQcJJC99krmUaA=;
-        b=N+JM2jU47SHUlOjb9BZMSkmSkOXJayHJZABqt/dvdtCNL3/5B8ltQKAY/4eWLgBokS
-         pLgjZSQJsvsRV9MwNayFFQNu0s9r48ZBUkJMN03+Svlkqc8/lN0Ve8qkAgYP6WL1N+wu
-         Ux0miRYcLde4eCE1FLMRl+1sOyVkPvyufPguQiQQafgLzb1ytvvcIrH7fn5VVpuvVsnm
-         HRVtqC/gBdvl5PymkyOPC3LmpEEHmny7K1hqZlBu2YWurFtiL2QS15fb0LZRKGbO37Ri
-         X3bZAFVjJ4AagFELnf0XWjjxyX0U6P45aLckpw6eEVYJdBsZTuE7QCLyEDuxCZ1eYnx7
-         s+wg==
-X-Forwarded-Encrypted: i=1; AJvYcCUpdl3VB9oh96s/36RdpT5HxByicXlI3EmXFjEYzr0w166sc2BXW+e4I8gcxDSpj4XebScPVHfbIcpfI0yozjbFynoFyS/OFCV7UsxlGvYypXK799Hr4GvR1Xy/d7asmQCKBrVd
-X-Gm-Message-State: AOJu0YwbJhwhlCwWV/xJGV/6W9O84/PkyIk8GFokU6VMeb83YiHWWYMU
-	YWkAozveWlpNiiUwZ41X/G7mH3fPvHeXgMbXdrqbd6kZ22lWMP/t
-X-Google-Smtp-Source: AGHT+IErdZVHdJ/n/+BICGWyxIK1iehPhM3FHCl6vnJuEVkPFljF68IEBchgBhk61MJ9O5d8qzA4Ig==
-X-Received: by 2002:a05:6a20:748a:b0:1be:cf09:4f0 with SMTP id adf61e73a8af0-1bef61ff386mr2330753637.44.1719756308256;
-        Sun, 30 Jun 2024 07:05:08 -0700 (PDT)
-Received: from ?IPV6:2409:8a55:301b:e120:19b7:87b2:860d:6c8d? ([2409:8a55:301b:e120:19b7:87b2:860d:6c8d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac1598cfbsm46583435ad.250.2024.06.30.07.05.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 30 Jun 2024 07:05:07 -0700 (PDT)
-Message-ID: <0a80e362-1eb7-40b0-b1b9-07ec5a6506ea@gmail.com>
-Date: Sun, 30 Jun 2024 22:05:01 +0800
+	s=arc-20240116; t=1719756579; c=relaxed/simple;
+	bh=/xCCulK2LDvM6T4DDK3IaPZekIJJ7Gq+2ykmVNaX2YM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WMPAxB2gcmQYmSFun+UbT/Kwa7uZt9pYFPcEQIn2FZB2RFPgnowxTxP3WTHFgBp+6vlRtmkcIW8eV45m+wccWU3TUiEFeki38X5Kn6QqG5gJGDphJsnb5fE2u7T8qIo4lgAwX8pZag4uRSXPx8KYCcTsj6+KUxYJ5OtUW/Ze6Ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hIpyXJeD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB1F4C2BD10;
+	Sun, 30 Jun 2024 14:09:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719756578;
+	bh=/xCCulK2LDvM6T4DDK3IaPZekIJJ7Gq+2ykmVNaX2YM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hIpyXJeDjyxKeeaNxtVJX644yi5CswNk4QOjMTn10ZTy8z1URm5QSFhuiPgNw2BhM
+	 3rkcWZCDMNXDAjRewXOwPJmp/XooFrSToztonDGy77Mh6n25fc2TmQ65BCxE8Miet/
+	 OcWwcQgbQMo263ZlWTOwuxWs5mIwksFrbnFxNiHzV88do6qwZzHOknD66IVKY3GNQe
+	 ragVgaD33bELePr9TIUPh/g7LMsGZ/8oEGcwGWCc1M5Mlep1ngwSknu6qtSFHxrJso
+	 p5JP0fHbVDZtLXOf5KI2fggU9uw8qIpOu1AmEgHLyvNZ2wnse79/850GDego4u9XZz
+	 tk/wLpivtFLTg==
+Date: Sun, 30 Jun 2024 15:09:33 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Jessica Clarke <jrtc27@jrtc27.com>
+Cc: Yong-Xuan Wang <yongxuan.wang@sifive.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-riscv <linux-riscv@lists.infradead.org>,
+	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org,
+	Greentime Hu <greentime.hu@sifive.com>,
+	Vincent Chen <vincent.chen@sifive.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v6 2/4] dt-bindings: riscv: Add Svade and Svadu Entries
+Message-ID: <20240630-caboose-diameter-7e73bf86da49@spud>
+References: <20240628093711.11716-1-yongxuan.wang@sifive.com>
+ <20240628093711.11716-3-yongxuan.wang@sifive.com>
+ <20240628-clamp-vineyard-c7cdd40a6d50@spud>
+ <402C3422-0248-4C0F-991E-C0C4BBB0FA72@jrtc27.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v9 10/13] mm: page_frag: introduce
- prepare/probe/commit API
-To: Alexander Duyck <alexander.duyck@gmail.com>,
- Yunsheng Lin <linyunsheng@huawei.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-References: <20240625135216.47007-1-linyunsheng@huawei.com>
- <20240625135216.47007-11-linyunsheng@huawei.com>
- <33c3c7fc00d2385e741dc6c9be0eade26c30bd12.camel@gmail.com>
- <38da183b-92ba-ce9d-5472-def199854563@huawei.com>
- <CAKgT0Ueg1u2S5LJuo0Ecs9dAPPDujtJ0GLcm8BTsfDx9LpJZVg@mail.gmail.com>
-From: Yunsheng Lin <yunshenglin0825@gmail.com>
-In-Reply-To: <CAKgT0Ueg1u2S5LJuo0Ecs9dAPPDujtJ0GLcm8BTsfDx9LpJZVg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="VstelAVsSG0eBIgw"
+Content-Disposition: inline
+In-Reply-To: <402C3422-0248-4C0F-991E-C0C4BBB0FA72@jrtc27.com>
 
-On 6/30/2024 1:37 AM, Alexander Duyck wrote:
-> On Sat, Jun 29, 2024 at 4:15 AM Yunsheng Lin <linyunsheng@huawei.com> wrote:
 
-...
+--VstelAVsSG0eBIgw
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->>>
->>> Why is this a macro instead of just being an inline? Are you trying to
->>> avoid having to include a header due to the virt_to_page?
->>
->> Yes, you are right.
->> I tried including different headers for virt_to_page(), and it did not
->> work for arch/x86/kernel/asm-offsets.s, which has included linux/sched.h,
->> and linux/sched.h need 'struct page_frag_cache' for 'struct task_struct'
->> after this patchset, including page_frag_cache.h for sched.h causes the
->> below compiler error:
->>
->>    CC      arch/x86/kernel/asm-offsets.s
->> In file included from ./arch/x86/include/asm/page.h:89,
->>                   from ./arch/x86/include/asm/thread_info.h:12,
->>                   from ./include/linux/thread_info.h:60,
->>                   from ./include/linux/spinlock.h:60,
->>                   from ./include/linux/swait.h:7,
->>                   from ./include/linux/completion.h:12,
->>                   from ./include/linux/crypto.h:15,
->>                   from arch/x86/kernel/asm-offsets.c:9:
->> ./include/linux/page_frag_cache.h: In function ‘page_frag_alloc_align’:
->> ./include/asm-generic/memory_model.h:37:34: error: ‘vmemmap’ undeclared (first use in this function); did you mean ‘mem_map’?
->>     37 | #define __pfn_to_page(pfn)      (vmemmap + (pfn))
->>        |                                  ^~~~~~~
->> ./include/asm-generic/memory_model.h:65:21: note: in expansion of macro ‘__pfn_to_page’
->>     65 | #define pfn_to_page __pfn_to_page
->>        |                     ^~~~~~~~~~~~~
->> ./arch/x86/include/asm/page.h:68:33: note: in expansion of macro ‘pfn_to_page’
->>     68 | #define virt_to_page(kaddr)     pfn_to_page(__pa(kaddr) >> PAGE_SHIFT)
->>        |                                 ^~~~~~~~~~~
->> ./include/linux/page_frag_cache.h:151:16: note: in expansion of macro ‘virt_to_page’
->>    151 |         return virt_to_page(va);
->>        |                ^~~~~~~~~~~~
->> ./include/asm-generic/memory_model.h:37:34: note: each undeclared identifier is reported only once for each function it appears in
->>     37 | #define __pfn_to_page(pfn)      (vmemmap + (pfn))
->>        |                                  ^~~~~~~
->> ./include/asm-generic/memory_model.h:65:21: note: in expansion of macro ‘__pfn_to_page’
->>     65 | #define pfn_to_page __pfn_to_page
->>        |                     ^~~~~~~~~~~~~
->> ./arch/x86/include/asm/page.h:68:33: note: in expansion of macro ‘pfn_to_page’
->>     68 | #define virt_to_page(kaddr)     pfn_to_page(__pa(kaddr) >> PAGE_SHIFT)
->>        |                                 ^~~~~~~~~~~
->> ./include/linux/page_frag_cache.h:151:16: note: in expansion of macro ‘virt_to_page’
->>    151 |         return virt_to_page(va);
->>
->>
-> 
-> I am pretty sure you just need to add:
-> #include <asm/page.h>
+On Sat, Jun 29, 2024 at 02:09:34PM +0100, Jessica Clarke wrote:
+> On 28 Jun 2024, at 17:19, Conor Dooley <conor@kernel.org> wrote:
+> >=20
+> > On Fri, Jun 28, 2024 at 05:37:06PM +0800, Yong-Xuan Wang wrote:
+> >> Add entries for the Svade and Svadu extensions to the riscv,isa-extens=
+ions
+> >> property.
+> >>=20
+> >> Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+> >> ---
+> >> .../devicetree/bindings/riscv/extensions.yaml | 28 +++++++++++++++++++
+> >> 1 file changed, 28 insertions(+)
+> >>=20
+> >> diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b=
+/Documentation/devicetree/bindings/riscv/extensions.yaml
+> >> index 468c646247aa..c3d053ce7783 100644
+> >> --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
+> >> +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> >> @@ -153,6 +153,34 @@ properties:
+> >>             ratified at commit 3f9ed34 ("Add ability to manually trigg=
+er
+> >>             workflow. (#2)") of riscv-time-compare.
+> >>=20
+> >> +        - const: svade
+> >> +          description: |
+> >> +            The standard Svade supervisor-level extension for SW-mana=
+ged PTE A/D
+> >> +            bit updates as ratified in the 20240213 version of the pr=
+ivileged
+> >> +            ISA specification.
+> >> +
+> >> +            Both Svade and Svadu extensions control the hardware beha=
+vior when
+> >> +            the PTE A/D bits need to be set. The default behavior for=
+ the four
+> >> +            possible combinations of these extensions in the device t=
+ree are:
+> >> +            1) Neither Svade nor Svadu present in DT =3D>
+> >=20
+> >>                It is technically
+> >> +               unknown whether the platform uses Svade or Svadu. Supe=
+rvisor may
+> >> +               assume Svade to be present and enabled or it can disco=
+ver based
+> >> +               on mvendorid, marchid, and mimpid.
+> >=20
+> > I would just write "for backwards compatibility, if neither Svade nor
+> > Svadu appear in the devicetree the supervisor may assume Svade to be
+> > present and enabled". If there are systems that this behaviour causes
+> > problems for, we can deal with them iff they appear. I don't think
+> > looking at m*id would be sufficient here anyway, since the firmware can
+> > have an impact. I'd just drop that part entirely.
+>=20
+> Older QEMU falls into that category, as do Bluespec=E2=80=99s soft-cores =
+(which
+> ours are derived from at Cambridge). I feel that, in reality, one
+> should be prepared to handle both trapping and atomic updates if
+> writing an OS that aims to support case 1.
 
-I am supposing you mean adding the above to page_frag_cache.h, right?
+I guess that is actually what we should put in then, to use an
+approximation of your wording, something like
+	Neither Svade nor Svadu present in DT =3D> Supervisor software should be
+	prepared to handle either hardware updating of the PTE A/D bits or page
+	faults when they need updated
+?
 
-It seems thing is more complicated for SPARSEMEM_VMEMMAP case, as it 
-needs the declaration of 'vmemmap'(some arch defines it as a pointer 
-variable while some arch defines it as a macro) and the definition of 
-'struct page' for '(vmemmap + (pfn))' operation.
+--VstelAVsSG0eBIgw
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Adding below for 'vmemmap' and 'struct page' seems to have some compiler 
-error caused by interdependence between linux/mm_types.h and asm/pgtable.h:
-#include <asm/pgtable.h>
-#include <linux/mm_types.h>
+-----BEGIN PGP SIGNATURE-----
 
-As below, asm/pgtable.h obviously need the definition of 'struct 
-mm_struct' from linux/mm_types.h, and linux/mm_types.h has some
-a long dependency of asm/pgtable.h starting from linux/uprobes.h
-if we add '#include <asm/pgtable.h>' in linux/page_frag_cache.h:
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoFnHQAKCRB4tDGHoIJi
+0ndoAP93+tDDtA9REzbCkIEltVoxfZckvSQWizwwYg211bfpVwEAr32+ixQYgkK/
+rHueZ5hB231ndT82y+Y9rNscAzTMUwA=
+=tz48
+-----END PGP SIGNATURE-----
 
-In file included from ./include/linux/page_frag_cache.h:8,
-                  from ./include/linux/sched.h:49,
-                  from ./include/linux/percpu.h:13,
-                  from ./arch/x86/include/asm/msr.h:15,
-                  from ./arch/x86/include/asm/tsc.h:10,
-                  from ./arch/x86/include/asm/timex.h:6,
-                  from ./include/linux/timex.h:67,
-                  from ./include/linux/time32.h:13,
-                  from ./include/linux/time.h:60,
-                  from ./include/linux/jiffies.h:10,
-                  from ./include/linux/ktime.h:25,
-                  from ./include/linux/timer.h:6,
-                  from ./include/linux/workqueue.h:9,
-                  from ./include/linux/srcu.h:21,
-                  from ./include/linux/notifier.h:16,
-                  from ./arch/x86/include/asm/uprobes.h:13,
-                  from ./include/linux/uprobes.h:49,
-                  from ./include/linux/mm_types.h:16,
-                  from ./include/linux/mmzone.h:22,
-                  from ./include/linux/gfp.h:7,
-                  from ./include/linux/slab.h:16,
-                  from ./include/linux/crypto.h:17,
-                  from arch/x86/kernel/asm-offsets.c:9:
-./arch/x86/include/asm/pgtable.h: In function ‘pte_accessible’:
-./arch/x86/include/asm/pgtable.h:970:40: error: invalid use of undefined 
-type ‘struct mm_struct’
-   970 |                         atomic_read(&mm->tlb_flush_pending))
-       |                                        ^~
-./arch/x86/include/asm/pgtable.h: In function ‘pmdp_establish’:
-./arch/x86/include/asm/pgtable.h:1370:37: error: invalid use of 
-undefined type ‘struct vm_area_struct’
-  1370 |         page_table_check_pmd_set(vma->vm_mm, pmdp, pmd);
-       |                                     ^~
-./arch/x86/include/asm/pgtable.h: At top level:
-./arch/x86/include/asm/pgtable.h:1495:50: error: ‘struct vm_fault’ 
-declared inside parameter list will not be visible outside of this 
-definition or declaration [-Werror]
-  1495 | static inline void update_mmu_cache_range(struct vm_fault *vmf,
-       |                                                  ^~~~~~~~
-In file included from ./arch/x86/include/asm/page.h:89,
-                  from ./arch/x86/include/asm/thread_info.h:12,
-                  from ./include/linux/thread_info.h:60,
-                  from ./include/linux/spinlock.h:60,
-                  from ./include/linux/swait.h:7,
-                  from ./include/linux/completion.h:12,
-                  from ./include/linux/crypto.h:15,
-                  from arch/x86/kernel/asm-offsets.c:9:
-./include/linux/page_frag_cache.h: In function ‘page_frag_alloc_probe’:
-./include/asm-generic/memory_model.h:37:42: error: invalid use of 
-undefined type ‘struct page’
-    37 | #define __pfn_to_page(pfn)      (vmemmap + (pfn))
-       |                                          ^
-./include/asm-generic/memory_model.h:65:21: note: in expansion of macro 
-‘__pfn_to_page’
-    65 | #define pfn_to_page __pfn_to_page
-       |                     ^~~~~~~~~~~~~
-./arch/x86/include/asm/page.h:68:33: note: in expansion of macro 
-‘pfn_to_page’
-    68 | #define virt_to_page(kaddr)     pfn_to_page(__pa(kaddr) >> 
-PAGE_SHIFT)
-       |                                 ^~~~~~~~~~~
-./include/linux/page_frag_cache.h:225:16: note: in expansion of macro 
-‘virt_to_page’
-   225 |         return virt_to_page(encoded_va);
-       |                ^~~~~~~~~~~~
-cc1: all warnings being treated as errors
-
-> 
+--VstelAVsSG0eBIgw--
 
