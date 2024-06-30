@@ -1,144 +1,148 @@
-Return-Path: <linux-kernel+bounces-235163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1DDC91D0E9
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 11:50:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4092891D0F8
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 11:55:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CB4D1F21516
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 09:50:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AD11281584
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 09:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB85412F5A1;
-	Sun, 30 Jun 2024 09:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19CD813A24F;
+	Sun, 30 Jun 2024 09:55:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IQrNtJn+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="Ai/47YDR"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C0B12DDBF
-	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 09:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F91717736;
+	Sun, 30 Jun 2024 09:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719740996; cv=none; b=OOBL423gTkdlvRYH5MbZh3LijZ0cj4h1NnoNNGNLX+nZf5axcP3erHo01x9asutg+8wlov/7RafR/TS2ATOwVRKn5tZ3ovfG7KOOWsOF/sizYhPF2Y8st/SzJnyFLfvLihYKKL2Ga8HkQHYpkaYnkGCRMZo4bRLcYrQ1DM2E7Pg=
+	t=1719741308; cv=none; b=EERxSsKDly041njmuQZuhRYEtr6qUTeXeGWOpNqXF9gmVBYiHe0Pn1xV3+VeOVXKX5fs9ZTyrx3BRFOzB9/3ni6Jj1J59iVKFUXbPezG4vM/hjmvmgphXr2bgAz6ptIhvodlKQveSxljsIo3qJhG1OBYVQ9bfTLprPLu6kIU+1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719740996; c=relaxed/simple;
-	bh=+Hj+ej1yELwJpTLeFNY7s0JvVDII4lE0COM7CkqbpyU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=DZVPcmoR2AMg77QwmpzHJfnjgsyST2kDVZdaEQqiKsGCp1Cbeur/O8oX1sduUzBqm2wVeLvWPrjHNFfsqu32ESiq3XLKcHouScXouc3x5bprCgue3leivxZpfxRnEXYVIqyheBjQQ7o5XzOGQT7NWVcu25lyagNF/Afjya5egt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IQrNtJn+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719740993;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uxkrqXVgzzzEksGK9Qx5+Z70+SzFjaVw0EtwfNJwAVQ=;
-	b=IQrNtJn+m2Z5HFBT3RbIyUuYG54So+jMdjJNMozikp/7Z//J20q+IzqeH6Q6lhtX/SMq/O
-	TxQfEUj/o5FfPWDC5FeNvGzvtcQeDiIqr7SS/CGcCZKu5xXVJEzwztdeiOZrZ9AVSFB1eM
-	UFUiplPiGnf4zXS1VZLvufEeRfxGFUI=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-303-6FQfftPNP9-_kT62E-oubA-1; Sun,
- 30 Jun 2024 05:49:49 -0400
-X-MC-Unique: 6FQfftPNP9-_kT62E-oubA-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E618C19560AB;
-	Sun, 30 Jun 2024 09:49:47 +0000 (UTC)
-Received: from file1-rdu.file-001.prod.rdu2.dc.redhat.com (unknown [10.11.5.21])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A1F673000218;
-	Sun, 30 Jun 2024 09:49:46 +0000 (UTC)
-Received: by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix, from userid 12668)
-	id 8398130C1C14; Sun, 30 Jun 2024 09:49:45 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-	by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix) with ESMTP id 80C2E40D0E;
-	Sun, 30 Jun 2024 11:49:45 +0200 (CEST)
-Date: Sun, 30 Jun 2024 11:49:45 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Waiman Long <longman@redhat.com>
-cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
-    Mike Snitzer <snitzer@kernel.org>, Laurence Oberman <loberman@redhat.com>, 
-    Jonathan Brassow <jbrassow@redhat.com>, Ming Lei <minlei@redhat.com>, 
-    Ondrej Kozina <okozina@redhat.com>, Milan Broz <gmazyland@gmail.com>, 
-    linux-kernel@vger.kernel.org, dm-devel@lists.linux.dev
-Subject: Re: dm-crypt performance regression due to workqueue changes
-In-Reply-To: <a699a394-d36a-4f42-bd49-9a5a573fd58f@redhat.com>
-Message-ID: <e5e5b436-17a6-aafe-2f61-eb659fa35ae2@redhat.com>
-References: <32fd8274-d5f-3eca-f5d2-1a9117fd8edb@redhat.com> <a699a394-d36a-4f42-bd49-9a5a573fd58f@redhat.com>
+	s=arc-20240116; t=1719741308; c=relaxed/simple;
+	bh=vlpdb/+H3zch9Ng49zn3tG7OaI4bM4ldo+uRPLJ3wXE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OXGCR9JoTOVFfZNpPV+LSS/KU/7JQM7wF/VExnTvHqTQa2MOsaDhaVKJrkYBujCIh/wZT2U6QKMVOTx8m93Y0CbDSidBRd202nI6NX21QOx0CWsrglIqXJy410YJlcKznbpQibZkMEzW460B68Q0Jfsn4r9v5u0a5xHGbOISbP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=Ai/47YDR; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1719741254; x=1720346054; i=wahrenst@gmx.net;
+	bh=vlpdb/+H3zch9Ng49zn3tG7OaI4bM4ldo+uRPLJ3wXE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Ai/47YDRf5utuBKzfB3ej2YKAzV+lDZYR5XR+Isvq4E0WwKo2U9sKxl6hRw5gMJA
+	 6BrTlRB7cZwSYmUSGigwNkYIUj/rrf0K/P2DexizYVFa9LXwZ/CX2s+chSH4CmLYg
+	 m2heyiUnmj5eqtOlWEpQfEbTGfF/MyEWn/t7Ni8j4tZB+mvX1yW1g3maPvK5LokXG
+	 2lS1SumMnYNAAxkMa8mcxf5U2vh2/v8GLQBpb3wkO7wj1MOdBKtaJiV+K+T3vDAZS
+	 qjG0U1eAnGKi6z3ijjV/tMxnEsGX9urMT3xEeqeMmncoHDVhGjkzHFdLfuWUqP8K6
+	 mIe2NVfcuTABNojHug==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MowGU-1s5p8a1DIs-00ntu2; Sun, 30
+ Jun 2024 11:54:14 +0200
+Message-ID: <8e44631c-955f-42de-bb2f-f3a32c79f1c1@gmx.net>
+Date: Sun, 30 Jun 2024 11:54:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="185210117-1505880377-1719740985=:507932"
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/5] wifi: brcmfmac: Add optional lpo clock enable
+ support
+To: wens@kernel.org, Jacobe Zang <jacobe.zang@wesion.com>
+Cc: "robh@kernel.org" <robh@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>, "heiko@sntech.de"
+ <heiko@sntech.de>, "kvalo@kernel.org" <kvalo@kernel.org>,
+ "davem@davemloft.net" <davem@davemloft.net>,
+ "edumazet@google.com" <edumazet@google.com>,
+ "kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com"
+ <pabeni@redhat.com>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "efectn@protonmail.com" <efectn@protonmail.com>,
+ "dsimic@manjaro.org" <dsimic@manjaro.org>,
+ "jagan@edgeble.ai" <jagan@edgeble.ai>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "arend@broadcom.com" <arend@broadcom.com>,
+ "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "megi@xff.cz"
+ <megi@xff.cz>, "duoming@zju.edu.cn" <duoming@zju.edu.cn>,
+ "bhelgaas@google.com" <bhelgaas@google.com>,
+ "minipli@grsecurity.net" <minipli@grsecurity.net>,
+ "brcm80211@lists.linux.dev" <brcm80211@lists.linux.dev>,
+ "brcm80211-dev-list.pdl@broadcom.com" <brcm80211-dev-list.pdl@broadcom.com>,
+ Nick Xie <nick@khadas.com>
+References: <20240630073605.2164346-1-jacobe.zang@wesion.com>
+ <20240630073605.2164346-5-jacobe.zang@wesion.com>
+ <bd661690-1de8-4030-a209-ef26d3559221@gmx.net>
+ <TYZPR03MB7001AC28827A86338BF2B77380D22@TYZPR03MB7001.apcprd03.prod.outlook.com>
+ <CAGb2v66Vk8SMs1TOs+80Jy5fXumuYqCx59Tzd_N7wJAfyysQcw@mail.gmail.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <CAGb2v66Vk8SMs1TOs+80Jy5fXumuYqCx59Tzd_N7wJAfyysQcw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:wgVhvE1mQNGeE2c7GCy2YyHYqkHv0qtOLjU7gMUJRPduSP6aA3d
+ C9KM/Dt6TwOjaZ7HiyF3/nZyFDWyyWRIs+ouU39gaTmCUSj+NLjfNKaVbadSY0enNNn20Bq
+ WaQNjsTAunVtOYNhLO0pmOsKbTYmidIAghz96D3nAxbl9chvh52l2B2//peoMffCZK/a+Bd
+ GAcWy0CtQmHsetg6+4HvQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:z2UQengSf74=;8/TGaodA/VNt91yVVeHooACI4JX
+ AzSwAjWjUMX6+Ac/4FM0k8j4gxdcmVxIiqpvF79mx4rXhSZUwNIjN6GV6Qx7ifdfqfErXGrxG
+ WkkrxACr+fmANXQGN6Nip/TmqNAVyXbRNAZXXDEqIF2zi/rgVMZTzOIqYUyWfFcSVWMSByOiY
+ VXJkX7JQmNw+PZGjSay+HsCQSLQAnHx9wmb6au+lPs31TdRdlQqJe6gw5W39XNv/UvGcwu/h3
+ TozVXJipA67N829fKDVAYkH4V3OY0z1pGTdXRVaj0AjK3LRdW1QwFt0urT9RSKQX4ZufV/2Ez
+ NhTpNPSg9+c0cEfYVpYQlVY+bT3AIXv5Tw3TqBVBILYYNrOdi/CVD6Eg9TqUV2SEB7Wr+FfwT
+ kjDPFx6mS8fIJE/OKFBmAqbrPeo1cLxF0GDg7/DxctNutdH08J4btOKBSAMSu8WmklrKIPOcs
+ MqB3PCdsaduEjMOfzDHha4tGJsHQ4x7pX1tsi1Jlmou2RaRSqc70mglwnphmOvi1viEXPWHGb
+ Wfhj5MMOYuRDwi1TBdrfzCdg6Gfn7aL5cQN54KnXm7cXg/BfVGBUqm8gbeK8tIEB7vnN1CIfK
+ XFUeMkxSjzp9JYUE09fTl1N9M9LHzOutBez5h7ELJEe0b2Eng5gOK1Z0HqduecgXIRHxdmNcE
+ cG56KXSC4n4+QrTcH/mTC1X4kcr/04BLWokrFoxJ6jdoVNUHpepbdh0Ephgus8JmON4jPutyC
+ pc2+2m8aaCqtg1XKQO0khCU3uY0S8ff1u2tYDV/e6vAdeIQO0oXvet5RYByOJKkxrVlaWRjIN
+ TepscKIdm7O0fKhT7fim6wwg9Tn71VIgEdT/VQbRLAIY0=
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Am 30.06.24 um 11:15 schrieb Chen-Yu Tsai:
+> On Sun, Jun 30, 2024 at 5:10=E2=80=AFPM Jacobe Zang <jacobe.zang@wesion.=
+com> wrote:
+>> Hi Stefan,
+>>
+>>>> WiFi modules often require 32kHz clock to function. Add support to
+>>>> enable the clock to PCIe driver.
+>>> the low power clock is independent from the host interface like PCIe. =
+So
+>>> the clock handling should move to the common code. Sorry, not i cannot
+>>> give a good suggestion, what's the best place for this.
+>> I think the clock is used by the PCIe device so enable it in this file.=
+ Also I checked
+>> use of clock which in spi[0] or sdio[0] device was enabled similarly to=
+ this.
+>>
+>> [0] https://lore.kernel.org/all/20210806081229.721731-4-claudiu.beznea@=
+microchip.com/
+> You're looking at the wrong driver. For brcmfmac, the lpo clock is toggl=
+ed
+> by the MMC pwrseq code. And for the Bluetooth side (where it really matt=
+ers)
+> for UARTs, it is in drivers/bluetooth/hci_bcm.c. and documented in the
+> binding Documentation/devicetree/bindings/net/broadcom-bluetooth.yaml
+Thanks for clarifying. So this change handles the PCIe case without
+bluetooth. For USB the clock control doesn't make sense.
 
---185210117-1505880377-1719740985=:507932
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-
-
-
-On Sat, 29 Jun 2024, Waiman Long wrote:
-
-> On 6/29/24 14:15, Mikulas Patocka wrote:
-> > Hi
-> >
-> > I report that the patch 63c5484e74952f60f5810256bd69814d167b8d22
-> > ("workqueue: Add multiple affinity scopes and interface to select them")
-> > is causing massive dm-crypt slowdown in virtual machines.
-> >
-> > Steps to reproduce:
-> > * Install a system in a virtual machine with 16 virtual CPUs
-> > * Create a scratch file with "dd if=/dev/zero of=Scratch.img bs=1M
-> >    count=2048 oflag=direct" - the file should be on a fast NVMe drive
-> > * Attach the scratch file to the virtual machine as /dev/vdb; cache mode
-> >    should be 'none'
-> > * cryptsetup --force-password luksFormat /dev/vdb
-> > * cryptsetup luksOpen /dev/vdb cr
-> > * fio --direct=1 --bsrange=128k-128k --runtime=40 --numjobs=1
-> >    --ioengine=libaio --iodepth=8 --group_reporting=1
-> >    --filename=/dev/mapper/cr --name=job --rw=read
-> >
-> > With 6.5, we get 3600MiB/s; with 6.6 we get 1400MiB/s.
-> >
-> > The reason is that virt-manager by default sets up a topology where we
-> > have 16 sockets, 1 core per socket, 1 thread per core. And that workqueue
-> > patch avoids moving work items across sockets, so it processes all
-> > encryption work only on one virtual CPU.
-> >
-> > The performance degradation may be fixed with "echo 'system'
-> >> /sys/module/workqueue/parameters/default_affinity_scope" - but it is
-> > regression anyway, as many users don't know about this option.
-> >
-> > How should we fix it? There are several options:
-> > 1. revert back to 'numa' affinity
-> > 2. revert to 'numa' affinity only if we are in a virtual machine
-> > 3. hack dm-crypt to set the 'numa' affinity for the affected workqueues
-> > 4. any other solution?
-> 
-> Another alternative  is to go back to the old "numa" default if the kernel is
-> running under a hypervisor since the cpu configuration information is likely
-> to be incorrect anyway. The current default of "cache" will remain if not
-> under a hypervisor.
-> 
-> Cheers,
-> Longman
-
-Yes. How could we detect that we run under a hypervisor portably? There's 
-a flag X86_FEATURE_HYPERVISOR, but it's x86-only.
-
-Mikulas
---185210117-1505880377-1719740985=:507932--
+Sorry for the noise
+>
+>
+> ChenYu
 
 
