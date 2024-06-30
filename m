@@ -1,103 +1,110 @@
-Return-Path: <linux-kernel+bounces-235211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C35A91D1A5
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 14:41:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EFB391D1A9
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 14:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 022CE281CC8
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 12:41:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F3B31C20A57
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 12:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF94F13D532;
-	Sun, 30 Jun 2024 12:40:56 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D789613D63E;
+	Sun, 30 Jun 2024 12:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J0O3ir7O"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71AC37E572;
-	Sun, 30 Jun 2024 12:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86781E535;
+	Sun, 30 Jun 2024 12:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719751256; cv=none; b=ItngGkuSNZvHkD7llfCdsyM/Deii5bm93Vj7VU/S1YWk1I17K1MwvPZn6zEml39eTOWx5F4YzZN8k1j3D5JSRzUw9tqzg5mAw1DOPHnqaJ44wW4pOL6KboxkfRoAs433ia5pedWNa7l/e6TpTqhoUwwAiBAbF30Fv66v7f/VNYQ=
+	t=1719751767; cv=none; b=Xg0qFHuwRGWNDfVLOBAAoVcEmFe7IfOpZth6iRVgsQSRQjgHv3OJF49mB1tT1x2UtlXmXNPwYqgRd9aUAuz1fdULPToSRB5dAd362+s3O2JIuV9O/9ULFv74BJxGx0PrOYWgvMqep3Y30V6kmnE/KUg35zOOZsZeBGd7rR0Ejz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719751256; c=relaxed/simple;
-	bh=XueVtoABFp4BgyvUh4hGtMOzXKjORvFjOeyUviTBzdE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tUGlWMrYnCXJtyDP9cIxFQG7hT6mE8UQtbxRSMrjKabeQdNbNJawT1UBTgxbNTHqXEC0XZUWZeFxo6vgU8F0D2cp5WaVqMmiY0wSRYAqyOqtufU5LHLCLFitRfUclMAtXf6knSP9bbqwwGjkAqMYKZPkMoqPAJMciTjInbG0xKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79949C2BD10;
-	Sun, 30 Jun 2024 12:40:54 +0000 (UTC)
-Date: Sun, 30 Jun 2024 08:40:53 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Dmitry V. Levin" <ldv@strace.io>
-Cc: Vincent Donnefort <vdonnefort@google.com>, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, kernel-team@android.com,
- rdunlap@infradead.org, rppt@kernel.org, david@redhat.com,
- linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-api@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds
- <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v23 3/5] tracing: Allow user-space mapping of the
- ring-buffer
-Message-ID: <20240630084053.0b506916@rorschach.local.home>
-In-Reply-To: <20240630105322.GA17573@altlinux.org>
-References: <20240510140435.3550353-1-vdonnefort@google.com>
-	<20240510140435.3550353-4-vdonnefort@google.com>
-	<20240630105322.GA17573@altlinux.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719751767; c=relaxed/simple;
+	bh=a9O/NzgMe8+fDWtOKPMlEACFmvGKExpbZLnMk8fchX8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lTOWYBurfa0EK/qWojiUNFLww2sCUa6gfmsWyIcjJT+jn3b/HPOvsigEsbJ9o4ER4sLWfcY3Rq+67yLN4UnL9tWj1iXHvJOY6iQwrl0ABimNk9fk1yIyVU6D2ivWTwMcCbRSG30qSFXHnAa2Wp4YOtkPEr5rg83M/OPY/WomoNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J0O3ir7O; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42564a0d3ceso13491315e9.0;
+        Sun, 30 Jun 2024 05:49:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719751764; x=1720356564; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tg5zNNEzFCoSVGWs3dv8lzrslyjqsfj67eSpfY5+Gsc=;
+        b=J0O3ir7O716oOagJt4U4Rpz8fNcMoT8WoIQMFy0LsQInK8/63M8bxGtYFLU+93UZRF
+         PDwm0jZIzQ8snn2JGP5c5hSgx+8rr89/R1QrSB44n6Z8xuHhhhyYYctxnpKn53Mv5Qrh
+         vPeB2kbRUz3PpxutHYHhROB1dj+9KR5W/I6aY+5vRzRMs7XGRXu6fjOaQzk1BN7Ax/5m
+         8w/EyRtmQLevJ/REnmnIxG0mYol86X7Y965d0v9e1fwDXmu2HNABwcoeowZiC6BLxDXj
+         kq8qfVBPdsSuQKGLbUxXGC03WsKxtBDS4/5sOhTNJtSDUMsEnvq2OelE8zVHfBAE41vt
+         5E/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719751764; x=1720356564;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tg5zNNEzFCoSVGWs3dv8lzrslyjqsfj67eSpfY5+Gsc=;
+        b=UEDherPfoexamCRXiWAeDRIrkCoRulpjlcJcrWfKwcZKVSEQrzrb7L8wuM6qWNXG3q
+         zAmK7yqWu1WMh69cZ7QGrD7hHWdyTmQFUOWcXOCvBmK63oOlvbhlcDXUWL6lx3nCsuDa
+         xuD0/Sr1gZ5Hs5n2czo6wAaDvHl3fJje5uxgiTAPR/sSTig3qhg4UKnA1peASB+ImjFR
+         oPN3DP39ULmKfg2aFynvzVnOTpRJSggSYFYNVuv86GeHZmJcULDTcZumYJJodMew+SSH
+         5GiifgTxRu8KXWmMzhzm5yTPdE7/BsQ9ZnyCoU/oV66AY5CXi2EFh40PwubzITr9A1g6
+         Rh6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVcWqNLuCG0k3f1uzpIbxYCUaCiPeTQyKzyI5ihd25W1XzfNK6z5ugKjfM0XSu0Kf99wu8Y5vMlsmaCj3DE7NZ98g8rxr8uuElj4SZdgk3Dhi7EJ9yrJRoXJ55j2JZDtLSJ5jlulxo20Q==
+X-Gm-Message-State: AOJu0Yyl42IY68fU5etDEQu7mfzG/9gCi0pIrOkE2Gt2NdxHkdsJM+2d
+	HlkXgfWot07Av4g4LvewfY2uOSRr5m1hF8FjW0KTQcBxVLW5pAGA
+X-Google-Smtp-Source: AGHT+IE+vPZwRbkYpYEM7vADTRG1SV+oBbAzMmcCt28aKRwgND0NVkVoELN8evaf0L1tyHCz8L3Z5A==
+X-Received: by 2002:a05:600c:63c8:b0:424:a48a:99ff with SMTP id 5b1f17b1804b1-4257a0257cemr19983065e9.8.1719751763580;
+        Sun, 30 Jun 2024 05:49:23 -0700 (PDT)
+Received: from qamajeed.Home ([39.45.181.116])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b097bd6sm112411665e9.30.2024.06.30.05.49.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 30 Jun 2024 05:49:23 -0700 (PDT)
+From: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
+To: rafael@kernel.org,
+	lenb@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
+Subject: [PATCH] Updating a vulnerable use of strcpy.
+Date: Sun, 30 Jun 2024 17:48:29 +0500
+Message-Id: <20240630124829.189869-1-qasim.majeed20@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Sun, 30 Jun 2024 13:53:23 +0300
-"Dmitry V. Levin" <ldv@strace.io> wrote:
+Replacing strcpy with strscpy with memory bound.
 
-> On Fri, May 10, 2024 at 03:04:32PM +0100, Vincent Donnefort wrote:
-> [...]
-> > diff --git a/include/uapi/linux/trace_mmap.h b/include/uapi/linux/trace_mmap.h
-> > index b682e9925539..bd1066754220 100644
-> > --- a/include/uapi/linux/trace_mmap.h
-> > +++ b/include/uapi/linux/trace_mmap.h
-> > @@ -43,4 +43,6 @@ struct trace_buffer_meta {
-> >  	__u64	Reserved2;
-> >  };
-> >  
-> > +#define TRACE_MMAP_IOCTL_GET_READER		_IO('T', 0x1)
-> > +  
-> 
-> I'm sorry but among all the numbers this one was probably the least
-> fortunate choice because it collides with TCGETS on most of architectures.
+Signed-off-by: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
+---
+ drivers/acpi/acpi_video.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Hmm, that is unfortunate.
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index 1fda30388297..700f0e8fdba2 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -1128,8 +1128,8 @@ static int acpi_video_bus_get_one_device(struct acpi_device *device, void *arg)
+ 		return -ENOMEM;
+ 	}
+ 
+-	strcpy(acpi_device_name(device), ACPI_VIDEO_DEVICE_NAME);
+-	strcpy(acpi_device_class(device), ACPI_VIDEO_CLASS);
++	strscpy(acpi_device_name(device), ACPI_VIDEO_DEVICE_NAME, strlen(ACPI_VIDEO_DEVICE_NAME));
++	strscpy(acpi_device_class(device), ACPI_VIDEO_CLASS, strlen(ACPI_VIDEO_CLASS));
+ 
+ 	data->device_id = device_id;
+ 	data->video = video;
+-- 
+2.34.1
 
-> 
-> For example, this is how strace output would look like when
-> TRACE_MMAP_IOCTL_GET_READER support is added:
-> 
-> $ strace -e ioctl stty
-> ioctl(0, TCGETS or TRACE_MMAP_IOCTL_GET_READER, {c_iflag=ICRNL|IXON, c_oflag=NL0|CR0|TAB0|BS0|VT0|FF0|OPOST|ONLCR, c_cflag=B38400|CS8|CREAD, c_lflag=ISIG|ICANON|ECHO|ECHOE|ECHOK|IEXTEN|ECHOCTL|ECHOKE, ...}) = 0
-> 
-> Even though ioctl numbers are inherently not unique, TCGETS is
-> a very traditional one, so it would be great if you could change
-> TRACE_MMAP_IOCTL_GET_READER to avoid this collision.
-> 
-> Given that _IO('T', 0x1) is _IOC(_IOC_NONE, 'T', 0x1, 0),
-> something like _IOC(_IOC_NONE, 'T', 0x1, 0x1) should be OK.
-
-Well, it may not be too late to update this as it hasn't been
-officially released in 6.10 yet. It's still only in the -rc and the
-library doesn't rely on this yet (I've been holding off until 6.10 was
-officially released before releasing the library that uses it).
-
-I can send a patch this week to update it. Or feel free to send a patch
-yourself.
-
-Thanks,
-
--- Steve
 
