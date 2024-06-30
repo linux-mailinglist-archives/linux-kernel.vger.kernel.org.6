@@ -1,61 +1,66 @@
-Return-Path: <linux-kernel+bounces-235231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB48D91D1E5
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 15:52:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 585A291D1EB
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 16:00:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DA8C281A62
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 13:52:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94E2D1C20A88
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 14:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A4A14038F;
-	Sun, 30 Jun 2024 13:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 962681422DC;
+	Sun, 30 Jun 2024 14:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NrJ8WKON"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="deRF3w+6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D616426AD0;
-	Sun, 30 Jun 2024 13:52:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFCB113DBB3;
+	Sun, 30 Jun 2024 14:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719755524; cv=none; b=ZZg4KHtLVb3o0R8tYE8Wtt1fnArO+h4U9esYZHXnGbJeafx9HXUdB18peoFMvo/2Is753RWMn91o2raw+Jqwluckwbyssl60LG36nU2kQZEoQEc2Bl1BxW59ni4g/kraGPt9opBd5+jiIA2EIP8+GxPc6ExboDzb5pA478yFjgI=
+	t=1719756014; cv=none; b=WJvf0E7ZLU5E90290TwoX2cmzeO6iHc7O6UzMy3oFyuZ4yrMC/sj/fBpUL7l9pWeX5b2vJerdl3GKm0vhUS6sWycFR4/5OxqcOKABEycIl17djQFrpXBIJRl3HXIeDCkSduzFcB4wfrG/jj2954MBygTrQ9yqMvBGW6oT1ZSSwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719755524; c=relaxed/simple;
-	bh=cKx0d4ITrHDtw1Yenlz2VXJhqqK9XmmncyP3oHvZX0A=;
+	s=arc-20240116; t=1719756014; c=relaxed/simple;
+	bh=ih12JHTetNkTeksjpMCJOXUWcwVm9PgEUMFbcuLoU/8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EaD92gVq8awIIMzBi0szI1bawRDykYRWgDlwl8IdgBaGfYDW+8h/nBsvErE+YqH3evXb4NhNUpTRVS+guxsPHBKdyVw/gof/3385oHQecUraT+TqaQN5HPQemYyZeSbrH61ur+ztnlmoc/UQL2gYAMUBTHskHe67wpps16kVB00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NrJ8WKON; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19B0DC2BD10;
-	Sun, 30 Jun 2024 13:51:59 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=W2k3AkMlCefmFaoYMb81dDn3SguF2TAvWg+xJae3yoRmQiNYSUqeCHHERNTiFnYf1yabEO6vceRnXNIjHsJINyFM6xadHsd/m1+FWBVBzJxD31xHvAHooheruGDIWSrVMP2sGSNbXOE7AtQFO+WVI4LC+WeRK67bqsMUVtnbIEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=deRF3w+6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D4F8C2BD10;
+	Sun, 30 Jun 2024 14:00:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719755523;
-	bh=cKx0d4ITrHDtw1Yenlz2VXJhqqK9XmmncyP3oHvZX0A=;
+	s=k20201202; t=1719756014;
+	bh=ih12JHTetNkTeksjpMCJOXUWcwVm9PgEUMFbcuLoU/8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NrJ8WKONt6dG+tVGeuXMgTh7uWywa69PQJ9QrRSQYUZcwgL4wN8lrB8wXR1JrWFFN
-	 rDaO7LQ82EJlNzzAYWbJlXD+//Q9wFIbbkXpmpFFEfQTXfl6R9ZGhq92zoqENmXOJ5
-	 TUvPj5U+lhqRfX5AYIY80ZtZYzlCf80lpHEesGzptfpLDM1LCrqyXTZk62cpjYOBek
-	 3Xm/RmluDGf1jpwOM5HM+P896GAvfIEhsw93VHNXIuJnARMD9vvcmMjy0u7ER4VJWG
-	 QUoG7OcOpipGktFoGSoE4sPAv+o5lSvrgQ7QpT6xkbbOW/EZNfedbDDstSjJiqZyV6
-	 lCIJfO7N08l3Q==
-Date: Sun, 30 Jun 2024 14:51:57 +0100
+	b=deRF3w+6o/GL1cKMQ/2DJZ4IzzKBGmfvH1u3HoP9jgvptYbMijXhjrbJosjHVYgN+
+	 bbDZQFfk/jsMJA8dI+R1aXHRaYp9HR4cs84Gm75Xp/CHGDB3EWA+YGx0GSrUqCOX9r
+	 uNltKMWWm4DsM/GWTGtppo2HJixdTfsh+kDwNVGezEcbNAc0SmJqMqXQIZw1ryzku5
+	 LStHO9pEpZ04QNAi8snj1PuUrDhJDADEcqO9gYRuGvBxEfqf3zSa/VIxK8pn0vwwon
+	 W1Hz2wkB96yOZ/5+xz7Dx+LWe4+QFZCBYphWWCGRf1kO5VnZMfSdDS93+NAxGqk+1P
+	 JPzEFWjjEoh+w==
+Date: Sun, 30 Jun 2024 15:00:08 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Kanak Shilledar <kanakshilledar@gmail.com>
-Cc: kanakshilledar111@protonmail.com, Serge Semin <fancer.lancer@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Guillaume Stols <gstols@baylibre.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH] arch: riscv: thead: implement basic spi
-Message-ID: <20240630-generous-carnation-c534f5d84a8a@spud>
-References: <20240630063845.116307-1-kanakshilledar@gmail.com>
+	Beniamin Bia <beniamin.bia@analog.com>,
+	Stefan Popa <stefan.popa@analog.com>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	jstephan@baylibre.com, dlechner@baylibre.com
+Subject: Re: [PATCH v2 02/10] dt-bindings: iio: adc: adi,ad7606: comment and
+ sort the compatible names
+Message-ID: <20240630-darling-dairy-f161f784f45a@spud>
+References: <20240628-cleanup-ad7606-v2-0-96e02f90256d@baylibre.com>
+ <20240628-cleanup-ad7606-v2-2-96e02f90256d@baylibre.com>
+ <20240629162223.5b8d35b8@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,71 +68,110 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="eVSbUZ+H5PdYupqW"
+	protocol="application/pgp-signature"; boundary="gveNh7Lwv1kh1y0C"
 Content-Disposition: inline
-In-Reply-To: <20240630063845.116307-1-kanakshilledar@gmail.com>
+In-Reply-To: <20240629162223.5b8d35b8@jic23-huawei>
 
 
---eVSbUZ+H5PdYupqW
-Content-Type: text/plain; charset=us-ascii
+--gveNh7Lwv1kh1y0C
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 30, 2024 at 12:08:20PM +0530, Kanak Shilledar wrote:
-> implemented basic spi support for TH1520 SoC.
-> created a fixed clock and a simple spi0 node.
-> updated the matching binding to include thead,th1520-spi as compatible.
-> added a spidev device in devicetree which will utilise the spi0 node.
-> this is usually reserved for a SPI NOR flash which is left unpopulated
-> underneath the carrier board. I performed a SPI self loop test using
-> tools/spi/spidev_test.c and tried sending `\xDE\xAD\xBE\xEF` and verified
-> it is being received correctly. i updated the of_device_id struct in
-> drivers/spi/spi-dw-mmio.c to include "thead,th1520-spi" as the compatible.
-> this patch also adds basic spi support on beaglev ahead which shares the
-> same TH1520 SoC. i have only tested on LicheePi 4A.
+On Sat, Jun 29, 2024 at 04:22:23PM +0100, Jonathan Cameron wrote:
+> On Fri, 28 Jun 2024 14:48:20 +0000
+> Guillaume Stols <gstols@baylibre.com> wrote:
 >=20
-> Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
-> ---
->  .../devicetree/bindings/spi/snps,dw-apb-ssi.yaml |  4 ++++
->  .../boot/dts/thead/th1520-beaglev-ahead.dts      |  9 +++++++++
->  .../boot/dts/thead/th1520-lichee-module-4a.dtsi  |  4 ++++
->  .../riscv/boot/dts/thead/th1520-lichee-pi-4a.dts | 10 ++++++++++
->  arch/riscv/boot/dts/thead/th1520.dtsi            | 16 ++++++++++++++++
->  drivers/spi/spi-dw-mmio.c                        |  1 +
+> > AD7606-8 is referred to as AD7606 by Analog Devices. This comment aims
+> > to avoid confusion. Also the compatible names were not sorted by
+> > alphabetical order.
+> >=20
+> > Signed-off-by: Guillaume Stols <gstols@baylibre.com>
+>=20
+> So b4 interestingly picked up both acks from Rob and Conor on this
+> one but I can't figure out where Conor's one came from so I've dropped
+> it.
 
-This needs to be 3 different patches - one for the binding, one for the
-driver and a final one for the dts files.
+My copy of b4 (0.14-dev-d4707) doesn't create one for me:
+/stuff/b4/b4.sh shazam -s -S -t shazam 20240628-cleanup-ad7606-v2-2-96e02f9=
+0256d@baylibre.com
+Grabbing thread from lore.kernel.org/all/20240628-cleanup-ad7606-v2-2-96e02=
+f90256d@baylibre.com/t.mbox.gz
+Checking for newer revisions
+Grabbing search results from lore.kernel.org
+Analyzing 20 messages in the thread
+Looking for additional code-review trailers on lore.kernel.org
+Checking attestation on all messages, may take a moment...
+---
+  =E2=9C=93 [PATCH v2 1/10] dt-bindings: iio: adc: adi,ad7606: add missing =
+datasheet link
+    + Acked-by: Rob Herring (Arm) <robh@kernel.org> (=E2=9C=93 DKIM/kernel.=
+org)
+    + Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+  =E2=9C=93 [PATCH v2 2/10] dt-bindings: iio: adc: adi,ad7606: comment and =
+sort the compatible names
+    + Acked-by: Rob Herring (Arm) <robh@kernel.org> (=E2=9C=93 DKIM/kernel.=
+org)
+    + Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+  =E2=9C=93 [PATCH v2 3/10] dt-bindings: iio: adc: adi,ad7606: normalize te=
+xtwidth
+    + Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+  =E2=9C=93 [PATCH v2 4/10] dt-bindings: iio: adc: adi,ad7606: improve desc=
+riptions
+    + Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+  =E2=9C=93 [PATCH v2 5/10] dt-bindings: iio: adc: adi,ad7606: add supply p=
+roperties
+    + Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+  =E2=9C=93 [PATCH v2 6/10] dt-bindings: iio: adc: adi,ad7606: fix example
+    + Acked-by: Conor Dooley <conor.dooley@microchip.com> (=E2=9C=93 DKIM/k=
+ernel.org)
+    + Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+  =E2=9C=93 [PATCH v2 7/10] dt-bindings: iio: adc: adi,ad7606: add conditio=
+ns
+    + Reviewed-by: Conor Dooley <conor.dooley@microchip.com> (=E2=9C=93 DKI=
+M/kernel.org)
+    + Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+  =E2=9C=93 [PATCH v2 8/10] iio: adc: ad7606: fix oversampling gpio array
+    + Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+  =E2=9C=93 [PATCH v2 9/10] iio: adc: ad7606: fix standby gpio state to mat=
+ch the documentation
+    + Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+  =E2=9C=93 [PATCH v2 10/10] iio: adc: ad7606: switch mutexes to scoped_gua=
+rd
+    + Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+  ---
+  =E2=9C=93 Signed: DKIM/baylibre-com.20230601.gappssmtp.com (From: gstols@=
+baylibre.com)
+---
+Total patches: 10
+---
+ Base: using specified base-commit 07d4d0bb4a8ddcc463ed599b22f510d5926c2495
+Applying: dt-bindings: iio: adc: adi,ad7606: add missing datasheet link
+Applying: dt-bindings: iio: adc: adi,ad7606: comment and sort the compatibl=
+e names
+Applying: dt-bindings: iio: adc: adi,ad7606: normalize textwidth
+Applying: dt-bindings: iio: adc: adi,ad7606: improve descriptions
+Applying: dt-bindings: iio: adc: adi,ad7606: add supply properties
+Applying: dt-bindings: iio: adc: adi,ad7606: fix example
+Applying: dt-bindings: iio: adc: adi,ad7606: add conditions
+Applying: iio: adc: ad7606: fix oversampling gpio array
+Applying: iio: adc: ad7606: fix standby gpio state to match the documentati=
+on
+Applying: iio: adc: ad7606: switch mutexes to scoped_guard
 
-> +
-> +&spi0 {
-> +	status =3D "okay";
-> +	spidev@0 {
+tbh, I'm not actually sure why I didn't ack those patches on v1, they
+were all pretty trivial...
 
-"spidev" is not a type of device, the nodename should match the type.
-
-> +		compatible =3D "rohm,dh2228fv";
-> +		reg =3D <0>;
-> +		spi-max-frequency =3D <500000>;
-> +	};
-> +};
-
-I'll put money on you not having a dh2228fv on this board. Document what
-you actually have on it please, not what allows you to probe the spidev
-driver in linux.
-
-Thanks,
-Conor.
-
---eVSbUZ+H5PdYupqW
+--gveNh7Lwv1kh1y0C
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoFi+QAKCRB4tDGHoIJi
-0p/gAQCLljnYLl8vueT7x7bP7BbxcvpOjPRbZHWtZI7hHpiClwD+IXxTFRklvK2o
-7ydwy5gESot6/RpSP9MJ3N+FhDBfTAI=
-=Clsg
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoFk6AAKCRB4tDGHoIJi
+0iCnAP9zN8Iaxw1TB9IzX2VNxydUR9jq65UV0PytiU1hFDgMQQEApfnWKy+/gsil
+FNtAR3ceR9p8FnAxjYeK0lPqkRL+PAQ=
+=m4Qw
 -----END PGP SIGNATURE-----
 
---eVSbUZ+H5PdYupqW--
+--gveNh7Lwv1kh1y0C--
 
