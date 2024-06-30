@@ -1,182 +1,95 @@
-Return-Path: <linux-kernel+bounces-235247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CDBF91D23C
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 17:05:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D67ED91D23E
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 17:06:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45F09B20F37
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 15:05:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76DBB1F21476
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 15:06:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC761534EA;
-	Sun, 30 Jun 2024 15:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBFE51534E6;
+	Sun, 30 Jun 2024 15:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BO+S1cBi"
-Received: from mail-il1-f194.google.com (mail-il1-f194.google.com [209.85.166.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bEV6mBHY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21AC237169;
-	Sun, 30 Jun 2024 15:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A01135A65;
+	Sun, 30 Jun 2024 15:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719759943; cv=none; b=L39EdIDssg2bU+YWMJ3mQwO6gqIP5QspbbwV9RiNO/TG+GS1s2ZKUMvIag2GwTigS9JbsgYiL/G9v7AOg7bX8dkqTTvvAc83SjqGN8Mhi7SANrIAb61UjJ3QB55V2nfU++a7W/g4tQ9Wi9++WMJsPqmVrmHSIO/daJqmZuVib7g=
+	t=1719759991; cv=none; b=pQu+c5E6OEghvWaPovxe+3Jlo3Dm+3spe0SzqS0O5vqDss2CDGM3ML1GQZtpSxcb2wJyslAASz8tUiQY9B1RX15qSIUllrxV/AX6t/eMgexiBTYINOBiJDLwas7kspt8P07XyFY3ijvCgSs41y6R4aKVrlTn9PL94ESm5x+1E9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719759943; c=relaxed/simple;
-	bh=dx3OCP5t7t92Mf5fN+e5eNI51y+3HJQnWDn1nZMKnVI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eU12bj/XB5x5QqXp842cjWrUi64MxWRA08zxHBojVG9I8IJ/N+JrYReFaRorZc5L39YLvzsRJ39cN+tulR5w66dafx7tAtxv1wvUVauCEAg9+uyJg2irbHol5wTLCK1qQwuT2Uac9NTUIrTPLOXz16oSqbf73Y5Q2ZvS0Ky5oFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BO+S1cBi; arc=none smtp.client-ip=209.85.166.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f194.google.com with SMTP id e9e14a558f8ab-375f5c3ddb1so9742445ab.1;
-        Sun, 30 Jun 2024 08:05:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719759941; x=1720364741; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8pW+jLLcRjyIRN35ybG3Xi0qa84JdPP0aoNcuOxSBAw=;
-        b=BO+S1cBiFS4SAQojPOyLtKPl9SPT0fCwHnNC7UNGUtT51YeWtaHKyF30rkg4EiYVTS
-         JNi+JaUEOvQqvtWaGXgw7AsBY4V29itLAnvUZRw0Q7mgd59zt120cA3aVsLXSVsPfOVL
-         MTPDMkFmveaj6jRIERi/aCOPjmCdT0VDf5/glnla6K5QylDwhJxWwkn3TeIqJFxfS9Df
-         PNhXkRx0NYFr5WZF03zeCeqEq/BetPBkFZBAAsbmbNXF2Rdbqpsqjs9f26PZvCMxiEWD
-         Il1246+kZ9/AXJgG9xI7bK0DbTK6H6RKTx0mgTOF53iVLZ2y4V/xqQIaqikw6VXTMdwp
-         /jog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719759941; x=1720364741;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8pW+jLLcRjyIRN35ybG3Xi0qa84JdPP0aoNcuOxSBAw=;
-        b=DWtJuuemQ5PdrpazKA0f5RE6esRFVAtEd27xeYLhpPw77urQU6p66XU6J776AaT9z0
-         HVKO+9JvK8nN28YUcNZ7BqK8hO4wJhZKPpbh8bvzjE4R9LFlcATc6Eb6ywrXYHQuNYj2
-         CJHL+29f2ZseDljgk1WeAAGIU1uz+xwYZnskg+yWYo+Dt2I6vlYYTgV7Vsg4ccht7zRz
-         /iXxrsYHBsqyvjHzmTwHMZy1HLF+w4z1GUAy95WlyV6x67MgWdffD/5f6nH2vxiKQLOy
-         hosr2/Qk4SC1AP9tjG9N5HXrZxOj+zO8XD7xc2Ves3uaJ12o7FYsVXcvkXQ9CSkWktNw
-         Jkdw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6u1sxUTIvOFarxGJMNo9UV3iIiIAx+sjtc0hQbvdVo++7crKjdWtQMmXo6dgIeZrRhmzlABdbiRoLwFiIB08BqONmeMlStIds7l79yS0SSc68qQ/X0OWYVDeid7A05eY0Jzwk
-X-Gm-Message-State: AOJu0YzGzNHnfzZjBTyDSHX18uYGP2AIvUyQyfk+KQlR7pW/yX+8sTwy
-	CkduK5NoLrLsgZItKBU0feJGushIfO4r9Zzwj4Yjjc7Up+ZTvs01
-X-Google-Smtp-Source: AGHT+IHwHse3in2PkiQPU0Xyop/sYo1K4tQUV+09TypRGky1b2Wvq0lTqu+sx/7oBcNPcDVIxVvMAw==
-X-Received: by 2002:a05:6e02:2168:b0:374:a176:e26e with SMTP id e9e14a558f8ab-37cd3498a70mr33419805ab.31.1719759941163;
-        Sun, 30 Jun 2024 08:05:41 -0700 (PDT)
-Received: from ?IPV6:2409:8a55:301b:e120:19b7:87b2:860d:6c8d? ([2409:8a55:301b:e120:19b7:87b2:860d:6c8d])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-708044ac419sm4779020b3a.164.2024.06.30.08.05.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 30 Jun 2024 08:05:40 -0700 (PDT)
-Message-ID: <15623dac-9358-4597-b3ee-3694a5956920@gmail.com>
-Date: Sun, 30 Jun 2024 23:05:34 +0800
+	s=arc-20240116; t=1719759991; c=relaxed/simple;
+	bh=c+JK2VSNQ31PnD2iQNuRuQbry+DoqeD124arYuJ+Juw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JLAtXktxY/K/E5CjQHA64WZJ8dK35xxaTYpliK2FzXLHabX+eP49DOS+WJgGTR4r4qZOBI41ZxWPpDk7Xo8aZZXezoMLHYoXBOdiynNOrEWM9mpvfbecKnrYpV6CKu/64FEZTBWV6xASvytSI/cSsVc7Md2SZVXEFPVhquQEchI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bEV6mBHY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70A87C2BD10;
+	Sun, 30 Jun 2024 15:06:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719759990;
+	bh=c+JK2VSNQ31PnD2iQNuRuQbry+DoqeD124arYuJ+Juw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=bEV6mBHYlCdS2EsLB3+1Z+jegmRJYISn1E6aJWP8DJf7/ZDu7B9YbhsWuL4L04Tki
+	 rDIus2kqQ9Vzk6hQASgX42OhzRpJIa/jkeF3GPzgwTVdVrWtFuMXKCCITnd89CetSz
+	 bx8lLyu32y9LigNdM5B71TKlRPHfGEKpwJDDqIf5ofQ06fprpfoQUtdLnusKwOkLR4
+	 T99F4w6aSaZl6oXo3CVPuMbmouJvyDoFpYZPRCE78XL/W4KcURso2ThVuP9TsupsV6
+	 T0XhcUN6IC8azj9sFxEhrjg4H0FdeUrKDZySdOOeX3L708xEwYCARQpOVaPCKGALel
+	 t7JWg5vj6ugXA==
+Received: by wens.tw (Postfix, from userid 1000)
+	id B90A05FD47; Sun, 30 Jun 2024 23:06:27 +0800 (CST)
+From: Chen-Yu Tsai <wens@kernel.org>
+To: Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Chen-Yu Tsai <wens@kernel.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH 0/3] riscv: allwinner: ClockworkPi and DevTerm devicetrees
+Date: Sun, 30 Jun 2024 23:06:15 +0800
+Message-Id: <171975990845.1182816.12708794418763846620.b4-ty@csie.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240622150731.1105901-1-wens@kernel.org>
+References: <20240622150731.1105901-1-wens@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v9 10/13] mm: page_frag: introduce
- prepare/probe/commit API
-To: Alexander Duyck <alexander.duyck@gmail.com>
-Cc: Yunsheng Lin <linyunsheng@huawei.com>, davem@davemloft.net,
- kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- linux-mm@kvack.org
-References: <20240625135216.47007-1-linyunsheng@huawei.com>
- <20240625135216.47007-11-linyunsheng@huawei.com>
- <33c3c7fc00d2385e741dc6c9be0eade26c30bd12.camel@gmail.com>
- <38da183b-92ba-ce9d-5472-def199854563@huawei.com>
- <CAKgT0Ueg1u2S5LJuo0Ecs9dAPPDujtJ0GLcm8BTsfDx9LpJZVg@mail.gmail.com>
- <0a80e362-1eb7-40b0-b1b9-07ec5a6506ea@gmail.com>
- <CAKgT0UcRbpT6UFCSq0Wd9OHrCqOGR=BQ063-zNBZ4cVNmduZGw@mail.gmail.com>
-From: Yunsheng Lin <yunshenglin0825@gmail.com>
-In-Reply-To: <CAKgT0UcRbpT6UFCSq0Wd9OHrCqOGR=BQ063-zNBZ4cVNmduZGw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On 6/30/2024 10:35 PM, Alexander Duyck wrote:
-> On Sun, Jun 30, 2024 at 7:05 AM Yunsheng Lin <yunshenglin0825@gmail.com> wrote:
->>
->> On 6/30/2024 1:37 AM, Alexander Duyck wrote:
->>> On Sat, Jun 29, 2024 at 4:15 AM Yunsheng Lin <linyunsheng@huawei.com> wrote:
->>
->> ...
->>
->>>>>
->>>>> Why is this a macro instead of just being an inline? Are you trying to
->>>>> avoid having to include a header due to the virt_to_page?
->>>>
->>>> Yes, you are right.
+From: Chen-Yu Tsai <wens@csie.org>
+
+On Sat, 22 Jun 2024 23:07:28 +0800, Chen-Yu Tsai wrote:
+> From: Chen-Yu Tsai <wens@csie.org>
 > 
-> ...
+> Hi folks,
 > 
->>> I am pretty sure you just need to add:
->>> #include <asm/page.h>
->>
->> I am supposing you mean adding the above to page_frag_cache.h, right?
->>
->> It seems thing is more complicated for SPARSEMEM_VMEMMAP case, as it
->> needs the declaration of 'vmemmap'(some arch defines it as a pointer
->> variable while some arch defines it as a macro) and the definition of
->> 'struct page' for '(vmemmap + (pfn))' operation.
->>
->> Adding below for 'vmemmap' and 'struct page' seems to have some compiler
->> error caused by interdependence between linux/mm_types.h and asm/pgtable.h:
->> #include <asm/pgtable.h>
->> #include <linux/mm_types.h>
->>
+> Here are a couple patches that were originally sent by Samuel, but later
+> dropped due to the system LDO regulator bindings not getting merged. The
+> regulator bindings were recently resent and landed [1], so now is the time
+> to get the rest of the stragglers in.
 > 
-> Maybe you should just include linux/mm.h as that should have all the
-> necessary includes to handle these cases. In any case though it
+> [...]
 
-Including linux/mm.h seems to have similar compiler error, just the
-interdependence is between linux/mm_types.h and linux/mm.h now.
+Applied to sunxi/drivers-for-6.11 in sunxi/linux.git, thanks!
 
-As below, linux/mmap_lock.h obviously need the definition of
-'struct mm_struct' from linux/mm_types.h, and linux/mm_types.h
-has some a long dependency of linux/mm.h starting from
-linux/uprobes.h if we add '#include <linux/mm.h>' in 
-linux/page_frag_cache.h:
+[1/3] dt-bindings: sram: sunxi-sram: Add regulators child
+      https://git.kernel.org/sunxi/linux/c/3a6fb9025cdf
 
-In file included from ./include/linux/mm.h:16,
-                  from ./include/linux/page_frag_cache.h:6,
-                  from ./include/linux/sched.h:49,
-                  from ./include/linux/percpu.h:13,
-                  from ./arch/x86/include/asm/msr.h:15,
-                  from ./arch/x86/include/asm/tsc.h:10,
-                  from ./arch/x86/include/asm/timex.h:6,
-                  from ./include/linux/timex.h:67,
-                  from ./include/linux/time32.h:13,
-                  from ./include/linux/time.h:60,
-                  from ./include/linux/jiffies.h:10,
-                  from ./include/linux/ktime.h:25,
-                  from ./include/linux/timer.h:6,
-                  from ./include/linux/workqueue.h:9,
-                  from ./include/linux/srcu.h:21,
-                  from ./include/linux/notifier.h:16,
-                  from ./arch/x86/include/asm/uprobes.h:13,
-                  from ./include/linux/uprobes.h:49,
-                  from ./include/linux/mm_types.h:16,
-                  from ./include/linux/mmzone.h:22,
-                  from ./include/linux/gfp.h:7,
-                  from ./include/linux/slab.h:16,
-                  from ./include/linux/crypto.h:17,
-                  from arch/x86/kernel/asm-offsets.c:9:
-./include/linux/mmap_lock.h: In function ‘mmap_assert_locked’:
-./include/linux/mmap_lock.h:65:30: error: invalid use of undefined type 
-‘const struct mm_struct’
-    65 |         rwsem_assert_held(&mm->mmap_lock);
-       |                              ^~
-
-> doesn't make any sense to have a define in one include that expects
-> the user to then figure out what other headers to include in order to
-> make the define work they should be included in the header itself to
-> avoid any sort of weird dependencies.
-
-Perhaps there are some season why there are two headers for the mm 
-subsystem, linux/mm_types.h and linux/mm.h?
-And .h file is supposed to include the linux/mm_types.h while .c file
-is supposed to include the linux/mm.h?
-If the above is correct, it seems the above rule is broked by including 
-linux/mm.h in linux/page_frag_cache.h.
+Best regards,
+-- 
+Chen-Yu Tsai <wens@csie.org>
 
