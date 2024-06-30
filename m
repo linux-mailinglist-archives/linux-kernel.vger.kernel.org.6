@@ -1,104 +1,166 @@
-Return-Path: <linux-kernel+bounces-235337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B703491D418
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 23:03:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1078391D41C
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 23:07:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E298B20E7C
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 21:03:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A07C2281405
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 21:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6164F47A66;
-	Sun, 30 Jun 2024 21:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311C94F20E;
+	Sun, 30 Jun 2024 21:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aXQu3jyC"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WHY7+0K1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD082C182
-	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 21:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F4B2AE68;
+	Sun, 30 Jun 2024 21:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719781398; cv=none; b=ZMr0O0NC4HMAohTlVoKyXrpIrsfU564xnizhWcP+HXvaoqM1+pu31n90op7NhU8XjQPpO9KRSMRHujHwAePlWCRhW8wDNIIwoT4TIvkjdflD8k2RFzh4iIuIXdXQ8bjKwIpe2I3hJ/SCYW7cv08BhY9nN++Abzl6Rey1QIU2R+I=
+	t=1719781667; cv=none; b=YAlDdSSaWLH4YODI+810aPOpAMo9AIYJxSD08a5Llc6blUkUWMdp2dg9fFVDm0O8DIy+UWDjDMo6f+WC6qDOxPvNTjxCySUHxnwS13P6FASjlR/gnSs+dkJmr3i//LuU77dEFpCbVv3UqXB+b5WVbg0AEB+E8l3lU+Goc/XHXQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719781398; c=relaxed/simple;
-	bh=bmGReT06QR8U5+08gkLzRj5wNHELS7aXIy+Kh/dGdHA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WMhZsxRJwtAeMoBW4Bwe5PWRACDiPsWbPsZMQin8PMhkSL48y6D9hWpMYlEkxuOf0GMaUDlnhguRrZBlJ2Axva3kagfpUaTCiPcmJl2nPVaU1C6142DnW0ybEhb0Dvd4ufwEcfZ8qT8TnqESFrgTBJCngUOoXmjtSEW57rgMzkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aXQu3jyC; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3629c517da9so1991364f8f.2
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 14:03:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719781395; x=1720386195; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fn8zoOCppkz1MVyNN7FtalyPUaz4TtRfMJv4RFmaufk=;
-        b=aXQu3jyCOJoDoGCVtZQRYGU9zb91L26Q+ggPi+yt6R9XCrkbr70PZRiEHfkfCc5VR7
-         6IZzin4+ml8PMilsWjpKG+MkUQNz1sM1w/FeOS/SLc2+WeB3PVQXBWBi622UFp8FD8Ld
-         Sr7ycGAP1YeAlzMjeNWpJyLvoSIaAtlONPPAyVh39aQhYz9oB29RDk6A8rXaqKYHFcsc
-         qJ8nK892Bhc/YaaAuwtgQdf753gTh+rM4iKQUiw5QOguD/3PzkEQnFt+UFJc/TQgVK7Q
-         zahtbcSxCc8g4OcKiWzuIUO6Y47mPA3AZoQOOjIAK084tBSSkeD8D6+ikgEI7KBZCDI1
-         D2bQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719781395; x=1720386195;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Fn8zoOCppkz1MVyNN7FtalyPUaz4TtRfMJv4RFmaufk=;
-        b=ImqfLJfNi1KyH8fhJjgsZGTnpd2aYN85kkFBtNiTkt4eXsc/R3boydvYfTRwSa9/dx
-         J6D1+nIXhKP0xkAA8vldmCUnPNMshls5hINrfWRlZoDz1IHqsFx2LfmYCQS0P1l/XVRU
-         KwDsG39jvBDQEczck9YpfhInQFB+XBQBbFfISq2Jyw23l/YZL9DFPy5O1gg4Y9lWHnOK
-         7+jEmi1hL8NfN85R7WFcbFAeJUKuHar/Rqri9brw1mN+BRQS+4tylfdYwsWXbdnxCwIZ
-         lwqfbeex7kk3xy2jgcWkF8LbO1I/zh7S22YaCd8IleXCNTl+UlCbn8NyuPnjiQ6CRDyk
-         Jinw==
-X-Forwarded-Encrypted: i=1; AJvYcCXrimByq8Yanpel1b1ARvApiP9UFPPtQcLRVptROEsI99v5X1vBkdcMrxghqfG7FuUbJNWMaj6pVHSiNpzuDt7tNXDq/j8DKMDYoSOV
-X-Gm-Message-State: AOJu0YxNF11VhIpXIruu3kKjibEA3DdNMKrQA2jNJnqft0LccwS0iZlY
-	bOs0MpSRcXn/g9c5L20ljwA/DrC5mQZkT+dTbcLasyDkdEnMHEmj
-X-Google-Smtp-Source: AGHT+IHBNYUuSXWgDj1lBivLXolqrQuiwI0qYY8jsNAsYZLjds4YfZ5UOxJLygjSbJaMlykGQFj2fw==
-X-Received: by 2002:adf:f248:0:b0:367:1696:9cf4 with SMTP id ffacd0b85a97d-3677572fa8fmr3175494f8f.57.1719781395380;
-        Sun, 30 Jun 2024 14:03:15 -0700 (PDT)
-Received: from debian ([67.208.53.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b0c0f99sm126118125e9.41.2024.06.30.14.03.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Jun 2024 14:03:14 -0700 (PDT)
-Date: Sun, 30 Jun 2024 22:03:13 +0100
-From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-To: linux@treblig.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: arnd@arndb.de, linux-kernel@vger.kernel.org,
-	linux-parport@lists.infradead.org
-Subject: Re: [PATCH 3/3] parport: Remove parport_driver.devmodel
-Message-ID: <ZoHIEUCaYkOFnmyt@debian>
-References: <20240502154823.67235-1-linux@treblig.org>
- <20240502154823.67235-4-linux@treblig.org>
+	s=arc-20240116; t=1719781667; c=relaxed/simple;
+	bh=77XTBIyxEHi2pWA9EdzatQ3mgTNKrOB8Dqo5RGzGxG8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Wq2NMl4svVJguN5XBmmkq+RJl4AnT54IWTtC9iWYNxcQwsfX3TTxEPvvQs2UdsW/K2IhMCEmyJdntHGsgFL6owDUdtn2vFFrq0J34E7JaZ6sJDMyifTvPxLogO7qzUpPIrf6hfM0ob2bYueRFaT4WBhMsswHkx5Bpl7ASz2ncXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WHY7+0K1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 519CAC2BD10;
+	Sun, 30 Jun 2024 21:07:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719781665;
+	bh=77XTBIyxEHi2pWA9EdzatQ3mgTNKrOB8Dqo5RGzGxG8=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=WHY7+0K1ko1M2f7h4lhw/pdOUjPlpbuOWxPOM0UdHIbFmI2Z+5V806+qIi+wEmiRK
+	 4JxqSQ+HrzRdB7wItUfTk33W9dHQoqomIhKai/1JCU6kob10iWsya6nu9KLN8J/8Kh
+	 HLNL/R7G+N7FqyAbJsQsEk9loe7hwQuWg2fQ3kjBxbNSviZx+fUzGrBpUeSY1Fx1Cg
+	 9cQfZ+uMyb5Dwdzc4cNmCueaP02JuJ+W7SQqRtNZ9EysgLfI0xChLw2guMNXkESY66
+	 p8SUawddrcXBKq05+rs3ZRTzGs5/ZIcEWZxacxZ2D5ox2HU5Lw+PCQeyHcyJc52kyj
+	 gNScX5r0r1h/Q==
+Message-ID: <4ec0e4822293763691d8699750b0df88385ab646.camel@kernel.org>
+Subject: Re: [RFC PATCH 0/3] tracing: Support poll on event hist file
+From: Tom Zanussi <zanussi@kernel.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Steven Rostedt
+	 <rostedt@goodmis.org>, Shuah Khan <shuah@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Date: Sun, 30 Jun 2024 16:07:43 -0500
+In-Reply-To: <171932861260.584123.15653284949837094747.stgit@devnote2>
+References: <171932861260.584123.15653284949837094747.stgit@devnote2>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240502154823.67235-4-linux@treblig.org>
 
-On Thu, May 02, 2024 at 04:48:23PM +0100, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> 'devmodel' hasn't actually been used since:
->   'commit 3275158fa52a ("parport: remove use of devmodel")'
-> and everyone now has it set to true and has been fixed up; remove
-> the flag.
-> 
-> (There are still comments all over about it)
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Hi Masami,
 
-Acked-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+On Wed, 2024-06-26 at 00:16 +0900, Masami Hiramatsu (Google) wrote:
+> Hi,
+>=20
+> Here is an RFC patch to support polling on event 'hist' file.
+>=20
+> There has been interest in allowing user programs to monitor kernel
+> events in real time. Ftrace provides `trace_pipe` interface to wait
+> on events in the ring buffer, but it is needed to wait until filling
+> up a page with events in the ring buffer. We can also peek the
+> `trace` file periodically, but that is inefficient way to monitor
+> a randomely happening event.
+>=20
+> This patch set allows user to `poll`(or `select`, `epoll`) on event
+> histogram interface. As you know each event has its own `hist` file
+> which shows histograms generated by trigger action. So user can set
+> a new hist trigger on any event you want to monitor, and poll on the
+> `hist` file until it is updated.
+>=20
+> There are 2 poll events are supported, POLLIN and POLLPRI. POLLIN
+> means that there are any readable update on `hist` file and this
+> event will be flashed only when you call read(). So, this is
+> useful if you want to read the histogram periodically.
+> The other POLLPRI event is for monitoring trace event. Like the
+> POLLIN, this will be returned when the histogram is updated, but
+> you don't need to read() the file and use poll() again.
+>=20
+> Note that this waits for histogram update (not event arrival), thus
+> you must set a histogram on the event at first.
+>=20
+> Here is an example usage:
+>=20
+> ----
+> TRACEFS=3D/sys/kernel/tracing
+> EVENT=3D$TRACEFS/events/sched/sched_process_free
+>=20
+> # setup histogram trigger and enable event
+> echo "hist:key=3Dcomm" >> $EVENT/trigger
+> echo 1 > $EVENT/enable
+>=20
+> # Wait for update
+> poll $EVENT/hist
+>=20
+> # Event arrived.
+> echo "process free event is comming"
+> tail $TRACEFS/trace
+> ----
+>=20
+> The 'poll' command is in the selftest patch.
+>=20
+> You can take this series also from here;
+>=20
+> https://git.kernel.org/pub/scm/linux/kernel/git/mhiramat/linux.git/log/?h=
+=3Dtopic/event-hist-poll
+>=20
+> Thank you,
 
--- 
-Regards
-Sudip
+I think this is a clever use of the histogram files, and will be very
+useful for real-time monitoring apps. I'm looking forward to using it
+myself - thanks for doing this.
+
+For the whole series,
+
+Reviewed-by: Tom Zanussi <zanussi@kernel.org>
+
+>=20
+> ---
+>=20
+> Masami Hiramatsu (Google) (3):
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tracing/hist: Add poll(POLLIN) support on =
+hist file
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tracing/hist: Support POLLPRI event for po=
+ll on histogram
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 selftests/tracing: Add hist poll() support=
+ test
+>=20
+>=20
+> =C2=A0include/linux/trace_events.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 5 +
+> =C2=A0kernel/trace/trace_events.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 18 ++++
+> =C2=A0kernel/trace/trace_events_hist.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ |=C2=A0 101
+> +++++++++++++++++++-
+> =C2=A0tools/testing/selftests/ftrace/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 3 +
+> =C2=A0tools/testing/selftests/ftrace/poll.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 34 +++++++
+> =C2=A0.../ftrace/test.d/trigger/trigger-hist-poll.tc=C2=A0=C2=A0=C2=A0=C2=
+=A0 |=C2=A0=C2=A0 46 +++++++++
+> =C2=A06 files changed, 204 insertions(+), 3 deletions(-)
+> =C2=A0create mode 100644 tools/testing/selftests/ftrace/poll.c
+> =C2=A0create mode 100644
+> tools/testing/selftests/ftrace/test.d/trigger/trigger-hist-poll.tc
+>=20
+> --
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
 
