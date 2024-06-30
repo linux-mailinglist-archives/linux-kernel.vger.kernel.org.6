@@ -1,176 +1,156 @@
-Return-Path: <linux-kernel+bounces-235190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6735F91D159
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 13:05:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 134DD91D15B
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 13:06:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCF3728292B
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 11:05:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2857282936
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 11:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31BCA13BC30;
-	Sun, 30 Jun 2024 11:05:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3008613BC30;
+	Sun, 30 Jun 2024 11:06:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FSQcB3Gd"
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	dkim=pass (2048-bit key) header.d=codasip.com header.i=@codasip.com header.b="hD9h/I2k"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C752526AEA;
-	Sun, 30 Jun 2024 11:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE731386B4
+	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 11:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719745502; cv=none; b=BIabzmVnryr7QI+7pjqG2TejnJ7VYf+tHqeSZjcwrWPl8rkCkZNVYe3Zo7csDAEn/lnStssRMAlK0GsVol7ZK87fI4gLMKhDlkNf4zM5t94/qUpDJCRIss7T/pNVAHNElad0Gt3hWcZlIZfWUhTufxHOl65ZsJV+A8rSFBtAnWA=
+	t=1719745582; cv=none; b=tMCk7zrCbJL/2/wu5FZ+pdl7xjwaLX9Rmt/14LsPthmwN85F1SfsgtkvZhpOtwCW+keUhEF373RbUzlZ3/eD5CzXD6Oy1jG9X2M+1fJwuBd8mYU7Jlc9bk2hNGnpMBM/REE5206zUkn1XAcC7CZe9veycT0Y6Ww7yEnznp0sTdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719745502; c=relaxed/simple;
-	bh=3oTcgFFEabFUHR4BN5HWFRl903EH/sfNAXoX6hgtzOY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y8OLHAk4RSBqCmBM6v6bCliDXTkcC3nuB8iTrSlm5VHvQf7psdGBFDLL/6ALNWrMqHotcd9LIXajIZSGxTVvycHYOfQ08OFbnKpiKpr7JAS4qu7xnXolHIMgNnXXhJPygQi7NU7TKbqUbPa7zORu9Y6ZTT/ZjFY92tTUkmlR8co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FSQcB3Gd; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-4ef2006dcdbso684914e0c.3;
-        Sun, 30 Jun 2024 04:05:00 -0700 (PDT)
+	s=arc-20240116; t=1719745582; c=relaxed/simple;
+	bh=zQ4dYj5/jyd9de0aK8+xJ72ZgjXm+/bM/SAlhqzL9Q4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aBoTf0PHbLHb398lJcFXASivuqKvEAm6X83sTxdBn8CneS3yt5MStR8Yi/C/GVxMXSC7UKPS3lmH34WjRKhrTH/T6Gpd9eUAHORz5LKmVhylMMWUWjQNnpdoyPLRQQN299ZCetMmANz3ZyUtjuVF6bASEbct3LX+r8LRY/nIU+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=codasip.com; spf=pass smtp.mailfrom=codasip.com; dkim=pass (2048-bit key) header.d=codasip.com header.i=@codasip.com header.b=hD9h/I2k; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=codasip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codasip.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-425809eef0eso914875e9.3
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 04:06:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719745499; x=1720350299; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OQbh5b9f2jn9p/VBOf+euH8ks1nyqbf4ekAmXJMwNA8=;
-        b=FSQcB3Gdy1K8hoTGOIQoHPGOc1LrkhSIaY9tBwK97vXkk0URlt3t/ZAFpZZy+9XZWR
-         uESiqsw0ufXZJR/J1pZ8hPbNaxmRP8IJMTiMmN3u04gMKRood+xVKNvqH8OhkGPq8HiQ
-         hG77iyptkqpg0kpPvj90Ip3QofJxpYX2oMBPdfnnLT8cB2wuUU3G/wloYrUf9MriXAZe
-         6kv7Yr80AbHYN/OZOSZP6lvsD/Et9GA9GqGs5Bw/3IhPdpYpeC0WZDXzx1rcfqf4QFRs
-         zv7NtxKp1MNTUds5flXSx4V+bjobh7Q+eS2BAuUHaxX802hSURDyuHk7b/SD5JIVrHJu
-         W8Xw==
+        d=codasip.com; s=google; t=1719745579; x=1720350379; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GjW7qbBBooXO2YCGv7moaJ34uYcCR+XgnWB+1lWKJdE=;
+        b=hD9h/I2ko95j60xonJk76re3Bwn+b+V2CaN4+OslSmpmJ25X28b23uQaEXJAViObLd
+         /LVpj0T0BNx3pc2VMSepECOSEGfRo6sNsuwm336vtz8WPRPBf11JymkPhIUljrqexcw1
+         lwsEkrkuDkOSQc3gop9joXRWyHpqTRtIaz4F/9DZw5Lx1QXe1j9nRwyxeOaqTvOGEXal
+         DgvsDT/e6vX25EeHs8AgfGI+kMEVIhNOn/u86LceQ+WHZXUTQS7wMhRkVAqTJMIC/mFO
+         hslysxxj7klqoUznVjvpobmo43wS4uWpbhG7HB6cdM6CWyLBT51WNcRJJYSfoszTB8Mj
+         8UUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719745499; x=1720350299;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OQbh5b9f2jn9p/VBOf+euH8ks1nyqbf4ekAmXJMwNA8=;
-        b=tNps8IsLe9somLCwFzEHk9L/WaBAJYZKOT0J5gE6kaKkfnyHTn9osmvYJz5Om3CuYy
-         +0YS2gtUcYugp6rfPkmoGgF1IcYqxpFKFmtC/xR0qXhl1jpvrp0qqezOuN9wNZN1lqzy
-         nmVxlGuiOKKaP/WTF3xkPDyJ0UoTSUnLJabeAcj8o4Ygy5d9w1zSApWJof/gyKPrfsWa
-         sPWxqQjhJZ1FxoR6VH7BpLRTLvkEa+EUG39LlARbUxLJApEIEuIEUw8Gbs7wWbBnkTi5
-         Yvupsjkgrk4MeEm5OqHhOvWP0YtoUrNaKwH+ZpmEabP8fROhfgJlIcrS31DL1nxDZHXp
-         JmoA==
-X-Forwarded-Encrypted: i=1; AJvYcCWc15wY21l9V3TKfQgoovuUI1rgjjY7kffVo6Pb22v9/bojiHdM2P7SFeqcT+SXMcChKcDFYFqmjIPJwXlRjY60esKkS+5EYpx25TEnbcIaLlc6U+iSSPRA+OpHaUB12sd7bPZXOrKo
-X-Gm-Message-State: AOJu0Yw5dg6GUr5vbWdOkQU9+j7b8n8ARAWX57h4QXiG+yzpgLVt2ECj
-	hnNvU3VYjf72AM3BaxY6GSARuSwqORnr6Di/mIqYfHvCGWXPxVwJTaXq8+YvT5MdVIJQkr1CNU/
-	6toqcOi4S/9Ff6uYJUM+8Sv3zP7E=
-X-Google-Smtp-Source: AGHT+IEmYCF04/6qjuvJxwTbmOn0mUraHsGZiA9+fjY01GPc+8mRN52E3SfeV6FfkozXleVb2SSrat02LBykXWEHnhs=
-X-Received: by 2002:a05:6122:2899:b0:4ec:f9ad:d21a with SMTP id
- 71dfb90a1353d-4f2a56db17cmr3093066e0c.10.1719745499347; Sun, 30 Jun 2024
- 04:04:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719745579; x=1720350379;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GjW7qbBBooXO2YCGv7moaJ34uYcCR+XgnWB+1lWKJdE=;
+        b=I7ZnMrcrNOL+rE3x6DlI3FPTDZKyu3kc4y6VaECVlU9QlblQqVCRhPgxN8iY2azUb3
+         JasTpYhpuj3eeMY4keLGN0JlmdwLbdFIj2q5OxZxxC6Uhh+C9PZk6KGniRQfpFBQ91R8
+         QbzZIph844nqYUvT6EM1ATcb2DgmZ7JVfYgsiL6DwgrvhLRH8zbqwJJ7BsjdODBKK7H6
+         uO1QW7dp+eGJ0brCu2A+qLKvLh2JR22g65wKIbQ80HiAn+uoozspIyMKHBFU/Oyt3z2u
+         8d9ykJfFrW9oUtfiVGUzf/4JhRfVVLdni6HuKobkWJdZlwrAEz1yiJYmysP7zC1fcNIw
+         kkhw==
+X-Forwarded-Encrypted: i=1; AJvYcCUAGqutFTjG3RND9flqoVjIoqdcutEtaabTf3vsHPJPsiXiUhq64g/41KpExy+pToDSvXrNWn934GOQv939dSMYxTn4c3gEi0t41SG0
+X-Gm-Message-State: AOJu0YyVTLv6h1o8jm4Ibky9CUJB5d3+PTx252OEIBZwKP512XaI9Dkk
+	tajDQgg5/b5epiJ41AWoGA4DiZcgSXbgdiLI2gWz19URMQ+7zNsGC3g9V4Lg9K8=
+X-Google-Smtp-Source: AGHT+IEvGYJuscPCEUzw0BBrWd4sYa5asBO8etIxeRFC+suVG1W50JfPw2PlqeU2vd+9krcjevMglw==
+X-Received: by 2002:a05:6000:1e92:b0:366:e8ac:50b2 with SMTP id ffacd0b85a97d-3677569952cmr2084407f8f.7.1719745578699;
+        Sun, 30 Jun 2024 04:06:18 -0700 (PDT)
+Received: from nb152.user.codasip.com ([2a00:23c6:2008:8201:ed43:a615:7f98:da0d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0da004sm7159415f8f.45.2024.06.30.04.06.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 30 Jun 2024 04:06:18 -0700 (PDT)
+From: Stuart Menefy <stuart.menefy@codasip.com>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>
+Cc: Stuart Menefy <stuart.menefy@codasip.com>,
+	linux-doc@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] riscv: Extend sv39 linear mapping max size to 128G
+Date: Sun, 30 Jun 2024 12:05:49 +0100
+Message-ID: <20240630110550.1731929-1-stuart.menefy@codasip.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <EBE51900-DA87-4113-B389-80B9C9160F0F@live.com>
- <ZoERl1PWoc2xDGWz@wunner.de> <MA0P287MB021730971A804FB760463A39B8D22@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
- <ZoEtG0DUJOS4ROQC@wunner.de> <MA0P287MB0217B3F9B9E1CFA54FAD96CEB8D22@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
-In-Reply-To: <MA0P287MB0217B3F9B9E1CFA54FAD96CEB8D22@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
-From: Orlando Chamberlain <orlandoch.dev@gmail.com>
-Date: Sun, 30 Jun 2024 21:04:48 +1000
-Message-ID: <CADfWnbYVko8R1WHuDugEp4_HzrfHRJH8G2Fk_Orxbt1UL+E8KQ@mail.gmail.com>
-Subject: Re: [PATCH] efi: libstub: add support for the apple_set_os protocol
-To: Aditya Garg <gargaditya08@live.com>
-Cc: Lukas Wunner <lukas@wunner.de>, Ard Biesheuvel <ardb@kernel.org>, 
-	Hans de Goede <hdegoede@redhat.com>, 
-	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kerem Karabay <kekrby@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, 30 Jun 2024 at 20:50, Aditya Garg <gargaditya08@live.com> wrote:
->
->
->
-> > On 30 Jun 2024, at 3:32=E2=80=AFPM, Lukas Wunner <lukas@wunner.de> wrot=
-e:
-> >
-> > =EF=BB=BFOn Sun, Jun 30, 2024 at 09:13:33AM +0000, Aditya Garg wrote:
-> >>>> On 30 Jun 2024, at 1:34 PM, Lukas Wunner <lukas@wunner.de> wrote:
-> >>> On Sun, Jun 30, 2024 at 04:42:55AM +0000, Aditya Garg wrote:
-> >>>> Based on this patch for GRUB by Andreas Heider <andreas@heider.io>:
-> >>>> https://lists.gnu.org/archive/html/grub-devel/2013-12/msg00442.html
-> >>>
-> >>> Please include his Signed-off-by and cc him.
-> >>
-> >> Not sure about this since the patch was send to grub and not lkml,
-> >> and his work has been used without informing him for this patch solely
-> >> on the basis of GPL.
-> >>
-> >> I've always been confused in signed-off-by in case of authors whose wo=
-rk
-> >> has been used without their explicit consent just because the license
-> >> permits it.
-> >>
-> >> Should I still add his signed-off-by?
-> >
-> > I would.
-> >
-> >
-> >>>> --- a/Documentation/admin-guide/kernel-parameters.txt
-> >>>> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> >>>> @@ -399,6 +399,8 @@
-> >>>>                 useful so that a dump capture kernel won't be
-> >>>>                 shot down by NMI
-> >>>>
-> >>>> +    apple_set_os    [KNL] Report that macOS is being booted to the =
-firmware
-> >>>> +
-> >>>
-> >>> Why the kernel parameter?  Why not do this unconditionally?
-> >>
-> >> 1. Not all Macs have dual GPU. We don't want to unnecessarily "fool"
-> >> the firmware in thinking macOS is being booted.
-> >> 2. apple-gmux is a reverse engineered driver, although upstreamed,
-> >> not very efficient in switching GPUs. So it's better to make unlocking
-> >> the GPU optional. + not everyone wants the intel GPU, people are happy
-> >> working with the dedicated AMD GPU (used by default if apple_set_os
-> >> isn't enabled).
-> >
-> > So my opinion is that these aren't good arguments.  We should be
-> > identifying as Darwin by default in EFI, just as we've been doing
-> > in ACPI since 7bc5a2bad0b8.  If there are any adverse effects,
-> > we should look into them, but users shouldn't be forced to set
-> > an obscure kernel parameter only to enable certain features of
-> > their hardware.  It is for this reason that you'll usually get
-> > Greg KH's trademark "this isn't the 90s anymore" comment when
-> > adding new kernel parameters.  We need to handle the hardware
-> > correctly *automatically*.
-> >
-> I'm not in a favour of "forcing" dual GPU on users, especially because th=
-e features are quite unstable. On some distros like Ubuntu, since kernel 6.=
-8, unlocking the GPU results in blank screen instead of igpu due to a regre=
-ssion (note that this patch has nothing to do with this regression, it's so=
-mething the platform drivers people will look into).
+This harmonizes all virtual addressing modes which can now all map
+(PGDIR_SIZE * PTRS_PER_PGD) / 4 of physical memory.
 
-Is this just with apple-set-os or was
-https://github.com/t2linux/linux-t2-patches/blob/main/2009-apple-gmux-allow=
--switching-to-igpu-at-probe.patch
-and the kernel parameter it adds being used when that issue happened?
+The RISCV implementation of KASAN requires that the boundary between
+shallow mappings are aligned on an 8G boundary. In this case we need
+VMALLOC_START to be 8G aligned. So although we only need to move the
+start of the linear mapping down by 4GiB to allow 128GiB to be mapped,
+we actually move it down by 8GiB (creating a 4GiB hole between the
+linear mapping and KASAN shadow space) to maintain the alignment
+requirement.
 
->
-> On the 2019 MacBook Pros the vgaswitchroo is not working and inputs from =
-AMD are nil. Basically you get stuck to the Intel GPU and if you try to use=
- the AMD GPU, but the GPUs remain on (currently no way has been found to sw=
-itch off the AMD one)
+Signed-off-by: Stuart Menefy <stuart.menefy@codasip.com>
+---
 
-Do you mean that switching which gpu is connected to the display at
-runtime isn't working? I *think* is is related to the not-upstream
-patch I linked above?
+Changes since V1:
+This is a modified version of the patch posted by Alexandre Ghiti
+<alexghiti@rivosinc.com> [1]. That version moved the start of the
+liner mapping by 4GiB, but was subsequently found to trigger a problem
+in the KASAN code [2]. By moving the start address by 8GiB alignment
+requiremenents are maintained.
 
->
-> So I guess we have 2 options:
->
-> 1. Wait until apple-gmux becomes quite stable before merging this (fat ch=
-ance)
-> 2. Give me some better idea to handle this.
->
+[1] https://lore.kernel.org/linux-riscv/20240514133614.87813-1-alexghiti@rivosinc.com/
+[2] https://lore.kernel.org/linux-riscv/4011b34a-1b86-42c7-aaf6-3bd297149f06@ghiti.fr/
+
+---
+ Documentation/arch/riscv/vm-layout.rst | 11 ++++++-----
+ arch/riscv/include/asm/page.h          |  2 +-
+ 2 files changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/Documentation/arch/riscv/vm-layout.rst b/Documentation/arch/riscv/vm-layout.rst
+index e476b4386bd9..077b968dcc81 100644
+--- a/Documentation/arch/riscv/vm-layout.rst
++++ b/Documentation/arch/riscv/vm-layout.rst
+@@ -47,11 +47,12 @@ RISC-V Linux Kernel SV39
+                                                               | Kernel-space virtual memory, shared between all processes:
+   ____________________________________________________________|___________________________________________________________
+                     |            |                  |         |
+-   ffffffc6fea00000 | -228    GB | ffffffc6feffffff |    6 MB | fixmap
+-   ffffffc6ff000000 | -228    GB | ffffffc6ffffffff |   16 MB | PCI io
+-   ffffffc700000000 | -228    GB | ffffffc7ffffffff |    4 GB | vmemmap
+-   ffffffc800000000 | -224    GB | ffffffd7ffffffff |   64 GB | vmalloc/ioremap space
+-   ffffffd800000000 | -160    GB | fffffff6ffffffff |  124 GB | direct mapping of all physical memory
++   ffffffc4fea00000 | -236    GB | ffffffc4feffffff |    6 MB | fixmap
++   ffffffc4ff000000 | -236    GB | ffffffc4ffffffff |   16 MB | PCI io
++   ffffffc500000000 | -236    GB | ffffffc5ffffffff |    4 GB | vmemmap
++   ffffffc600000000 | -232    GB | ffffffd5ffffffff |   64 GB | vmalloc/ioremap space
++   ffffffd600000000 | -168    GB | fffffff5ffffffff |  128 GB | direct mapping of all physical memory
++                    |            |                  |         |
+    fffffff700000000 |  -36    GB | fffffffeffffffff |   32 GB | kasan
+   __________________|____________|__________________|_________|____________________________________________________________
+                                                               |
+diff --git a/arch/riscv/include/asm/page.h b/arch/riscv/include/asm/page.h
+index 115ac98b8d72..81d47fbbd927 100644
+--- a/arch/riscv/include/asm/page.h
++++ b/arch/riscv/include/asm/page.h
+@@ -37,7 +37,7 @@
+  * define the PAGE_OFFSET value for SV48 and SV39.
+  */
+ #define PAGE_OFFSET_L4		_AC(0xffffaf8000000000, UL)
+-#define PAGE_OFFSET_L3		_AC(0xffffffd800000000, UL)
++#define PAGE_OFFSET_L3		_AC(0xffffffd600000000, UL)
+ #else
+ #define PAGE_OFFSET		_AC(CONFIG_PAGE_OFFSET, UL)
+ #endif /* CONFIG_64BIT */
+-- 
+2.43.0
+
 
