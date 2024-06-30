@@ -1,207 +1,194 @@
-Return-Path: <linux-kernel+bounces-235171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 658CA91D10B
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 12:04:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADAFF91D10E
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 12:17:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E352D281BDD
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 10:04:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A3F81F2158C
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 10:17:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BF813211E;
-	Sun, 30 Jun 2024 10:04:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D271D13213A;
+	Sun, 30 Jun 2024 10:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="idMAzM3S"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JbwvxeNI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E2912DDAE;
-	Sun, 30 Jun 2024 10:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132BA28366;
+	Sun, 30 Jun 2024 10:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719741888; cv=none; b=S553JQWCUQ7SKOq2oCRJcXFi4TvsPBIXwHZxsrSt6/hz7JJS1TGLHdjvyXciyzYMTL/e1wRyORwNVsCeVEmrXTv98Vd8iWweMcmJYET3y3c9qMSu12U+WhneTTqvukFg6QYYykYLU20Z7o+x4LWtbUHC1rsn6+Vw0FNLSDdjPEI=
+	t=1719742666; cv=none; b=aZO6vBuvSW3L1cL2t0SkJFfPCMz4pB7YOYoAhA0IfKzLglbdov0YWC3KAV6qfvBUca8jOVFToVDzi1pcfVzNnyIpbUKlDiSIOEfuOYrT69gOuuJjaLSm1dma8ZpTk74dSJVDXeAjRunofKXb1rRTE9qpP07jyACEXEBwOB9GlH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719741888; c=relaxed/simple;
-	bh=jd86wld+u7/8tOlPpDaYI6KLsajHvkeFtIARj5F5qQY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iVThE2HKUgsWxfHVUYGKvPAPlkePPY6+EaRigUE2knvkv3Y1iNULzN0Io3OE4avDtGEQANr7XaEHtaeKhOO9F23+WE1JgXLA+lZjkDnVwLT9PzGOXOVHFuV+QIvLAfzIcKOp2131qKbTZwG9PFObA6p+C+eeC/+7Q2b9/plxLDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=idMAzM3S; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6fe617966fso159910566b.1;
-        Sun, 30 Jun 2024 03:04:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719741885; x=1720346685; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o617bWQRGL7AXpKHgsvXTyzvAX01tVJwbwYGMP9yg4c=;
-        b=idMAzM3SG4FVXt/jHNPDg2T5rJQbAbHK/z+Td42Ud9nPosYG4krNAJg9S4qDsudiPk
-         6OnPyTGS3cJTBooov8GLMkj2gYKmGk43MGXV+/fAWV1kixm7r7Z8u6tFfC2Opw5/bXck
-         UKQYDTXnKHsjrBr72dDs8DRdZZNVNjpmMu2P/kFZjKb2uOJgHoFk+TFsAQuHap/4S++h
-         5LGXIeUEAGfuHQyRO0jZFYH3h/KlTgQLZni8NwNWUEjlLJ/5Q67jwja2w0Y8rP1jvMHP
-         wITbg0FwzbgZLo7DaodiLNbay05qQitvU3W9cDE6kr152c+Iw6cD42rkA2mWLlKm6jhF
-         /GOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719741885; x=1720346685;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o617bWQRGL7AXpKHgsvXTyzvAX01tVJwbwYGMP9yg4c=;
-        b=T7mWcT2jXOT9rM/H2MEOxleAaB87ALCZxzmZfnTsz5dTHoNumRAMaCuCGmjP2EQXXD
-         PSucBLXM64BDE2MoDp4Kd0H9bK1kMf29oZGIKJFW7a87cXT2o4ay/1CIfAZ6t9Isg7Ns
-         2z3JkduBh0m+kg2W2mlidmq/wuZDasIobxNnHO2aEjGe1O4SX9Tjf7zIAzc2x6snxhEj
-         fayJ55YKy4+aIREX7ClVWCdKQQU/6GF74FTT4S64wWQPbaNm6fmRJOXPcSbnoTHydCbu
-         D3/0irkbQKQxLHkJZjSujoUVbGGRKeW5xZ6Y4JNTDwKH2oVDada2GSqg9ZJSTmroYmVD
-         amyg==
-X-Forwarded-Encrypted: i=1; AJvYcCUqt5Ta9TrrT3J40NakBevI1/7ChXpNiPuc0no6iTNhzS8B46iX05tBsPnSyPKI38rydYEwWZ0CyUE/jThHT+ZzEOzOhlcCifYxoEkHCFcZYwexhWNJh6JUDVnVxD5QmuiDMl6+
-X-Gm-Message-State: AOJu0Yy7YP0HEZLbts2BmoEtTccGvvLsYeZx7sOTDIwIWLPHQld7eWQQ
-	NnMrXul7aY/ZUZXgSOH0ijUiNyy6KcjjRoJQ1EKcJdc7KwE6xD6ZfIGJ6d3KzBfskkazKjcI+F7
-	rsauRgWjY1IOrMeU1/u2XDrH5FVs=
-X-Google-Smtp-Source: AGHT+IFPqEU+V1VDRuCLs1LVF3C/KXP2R6B7s5PTM8+z/ve2MiGYbV7HExEQvJFtLMY2yJcfKaeSiA78h2EcS2EpMnE=
-X-Received: by 2002:a17:906:bc90:b0:a6f:f1bc:21ce with SMTP id
- a640c23a62f3a-a75144f666amr161051366b.47.1719741884561; Sun, 30 Jun 2024
- 03:04:44 -0700 (PDT)
+	s=arc-20240116; t=1719742666; c=relaxed/simple;
+	bh=IWPNBQyIalTctizb0/fr4sK41qNaTJQ9mhfRy3wg/l8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HzBdCpYTdlbZWTn/gZgffRt9gG63zg2gTqi8vJmPjMBkW/B+S4akyduMz1sBT+ZbxSmIs99Rk8iYqiOX7NnQuZSMXsvVmYNszvRMOCEMmHpjN5LnozQ0hqMt7YXa5kIC27MP/zFI/aOpRAFOYpAEMCyjzujwpNtTqrhNSc4zum4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JbwvxeNI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDAAAC2BD10;
+	Sun, 30 Jun 2024 10:17:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719742665;
+	bh=IWPNBQyIalTctizb0/fr4sK41qNaTJQ9mhfRy3wg/l8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=JbwvxeNIAJuppst26HTjvrH0b6Tz+Ef/OEyxD6E83uOMmB42WK+g5HHgelSMABDKu
+	 T460eyVH7tjTGK3VWbjwF07NfYPv0ORxcDDDZvSf+vnQKy46vp5VOK40OZVdmofeOp
+	 I1lbpuJHn/LhNyNFo6yJvGrDtnPbuzQbgu5bhuYNqzo8w1MNTVFF8iFM0PE6IiPKQ/
+	 22qgTvDPMVlQUqu8GVkn+zx2nLc6XqjURoHlF9+nKZkKwS7uqEr0FQN/jzLSP2aZw6
+	 StWSJNMWHPhk6dAhRVNMBIC5WBBUpa629QmVplC9pMoZMqXnfyclvyQ0W+LOV6HThA
+	 fb/RrugYh8BQQ==
+Date: Sun, 30 Jun 2024 11:17:37 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>,
+ linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-iio@vger.kernel.org, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH 2/2] iio: frequency: add amlogic clock measure support
+Message-ID: <20240630111737.276c949a@jic23-huawei>
+In-Reply-To: <1jwmm6hp5s.fsf@starbuckisacylon.baylibre.com>
+References: <20240624173105.909554-1-jbrunet@baylibre.com>
+	<20240624173105.909554-3-jbrunet@baylibre.com>
+	<20240629204025.683b1b69@jic23-huawei>
+	<1jwmm6hp5s.fsf@starbuckisacylon.baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <fdaf2e41bb6a0c5118ff9cc21f4f62583208d885.1718655070.git.dsimic@manjaro.org>
- <CAKGbVbs8VmCXVOHbhkCYEHNJiKWwy10p0SV9J09h2h7xjs7hUg@mail.gmail.com>
- <CAKGbVbsM4rCprWdp+aGXE-pvCkb6N7weUyG2z4nXqFpv+y=LrA@mail.gmail.com>
- <20240618-great-hissing-skink-b7950e@houat> <4813a6885648e5368028cd822e8b2381@manjaro.org>
- <457ae7654dba38fcd8b50e38a1275461@manjaro.org> <2c072cc4bc800a0c52518fa2476ef9dd@manjaro.org>
- <CAKGbVbsGm7emEPzGuf0Xn5k22Pbjfg9J9ykJHtvDF3SacfDg6A@mail.gmail.com> <74c69c3bb4498099a195ec890e1a7896@manjaro.org>
-In-Reply-To: <74c69c3bb4498099a195ec890e1a7896@manjaro.org>
-From: Qiang Yu <yuq825@gmail.com>
-Date: Sun, 30 Jun 2024 18:04:31 +0800
-Message-ID: <CAKGbVbvDdLMAS9Z4yDtY2gmaqM9SGgk7z38Kb0EzWX_y42XE3Q@mail.gmail.com>
-Subject: Re: [PATCH] drm/lima: Mark simple_ondemand governor as softdep
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: Maxime Ripard <mripard@kernel.org>, dri-devel@lists.freedesktop.org, 
-	lima@lists.freedesktop.org, maarten.lankhorst@linux.intel.com, 
-	tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
-	linux-kernel@vger.kernel.org, Philip Muller <philm@manjaro.org>, 
-	Oliver Smith <ollieparanoid@postmarketos.org>, Daniel Smith <danct12@disroot.org>, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Applied to drm-misc-next.
+On Sun, 30 Jun 2024 09:21:03 +0200
+Jerome Brunet <jbrunet@baylibre.com> wrote:
 
-On Wed, Jun 26, 2024 at 2:49=E2=80=AFPM Dragan Simic <dsimic@manjaro.org> w=
-rote:
->
-> Hello Qiang,
->
-> On 2024-06-26 03:11, Qiang Yu wrote:
-> > On Wed, Jun 26, 2024 at 2:15=E2=80=AFAM Dragan Simic <dsimic@manjaro.or=
-g>
-> > wrote:
-> >>
-> >> Hello everyone,
-> >>
-> >> Just checking, any further thoughts about this patch?
-> >>
-> > I'm OK with this as a temp workaround because it's simple and do no
-> > harm
-> > even it's not perfect. If no other better suggestion for short term,
-> > I'll submit
-> > this at weekend.
->
-> Thanks.  Just as you described it, it's far from perfect, but it's still
-> fine until there's a better solution, such as harddeps.  I'll continue
-> my
-> research about the possibility for adding harddeps, which would
-> hopefully
-> replace quite a few instances of the softdep (ab)use.
->
-> >> On 2024-06-18 21:22, Dragan Simic wrote:
-> >> > On 2024-06-18 12:33, Dragan Simic wrote:
-> >> >> On 2024-06-18 10:13, Maxime Ripard wrote:
-> >> >>> On Tue, Jun 18, 2024 at 04:01:26PM GMT, Qiang Yu wrote:
-> >> >>>> On Tue, Jun 18, 2024 at 12:33=E2=80=AFPM Qiang Yu <yuq825@gmail.c=
-om> wrote:
-> >> >>>> >
-> >> >>>> > I see the problem that initramfs need to build a module depende=
-ncy chain,
-> >> >>>> > but lima does not call any symbol from simpleondemand governor =
-module.
-> >> >>>> > softdep module seems to be optional while our dependency is har=
-d one,
-> >> >>>> > can we just add MODULE_INFO(depends, _depends), or create a new
-> >> >>>> > macro called MODULE_DEPENDS()?
-> >> >>
-> >> >> I had the same thoughts, because softdeps are for optional module
-> >> >> dependencies, while in this case it's a hard dependency.  Though,
-> >> >> I went with adding a softdep, simply because I saw no better option
-> >> >> available.
-> >> >>
-> >> >>>> This doesn't work on my side because depmod generates modules.dep
-> >> >>>> by symbol lookup instead of modinfo section. So softdep may be ou=
-r
-> >> >>>> only
-> >> >>>> choice to add module dependency manually. I can accept the softde=
-p
-> >> >>>> first, then make PM optional later.
-> >> >>
-> >> >> I also thought about making devfreq optional in the Lima driver,
-> >> >> which would make this additional softdep much more appropriate.
-> >> >> Though, I'm not really sure that's a good approach, because not
-> >> >> having working devfreq for Lima might actually cause issues on
-> >> >> some devices, such as increased power consumption.
-> >> >>
-> >> >> In other words, it might be better to have Lima probing fail if
-> >> >> devfreq can't be initialized, rather than having probing succeed
-> >> >> with no working devfreq.  Basically, failed probing is obvious,
-> >> >> while a warning in the kernel log about no devfreq might easily
-> >> >> be overlooked, causing regressions on some devices.
-> >> >>
-> >> >>> It's still super fragile, and depends on the user not changing the
-> >> >>> policy. It should be solved in some other, more robust way.
-> >> >>
-> >> >> I see, but I'm not really sure how to make it more robust?  In
-> >> >> the end, some user can blacklist the simple_ondemand governor
-> >> >> module, and we can't do much about it.
-> >> >>
-> >> >> Introducing harddeps alongside softdeps would make sense from
-> >> >> the design standpoint, but the amount of required changes wouldn't
-> >> >> be trivial at all, on various levels.
-> >> >
-> >> > After further investigation, it seems that the softdeps have
-> >> > already seen a fair amount of abuse for what they actually aren't
-> >> > intended, i.e. resolving hard dependencies.  For example, have
-> >> > a look at the commit d5178578bcd4 (btrfs: directly call into
-> >> > crypto framework for checksumming) [1] and the lines containing
-> >> > MODULE_SOFTDEP() at the very end of fs/btrfs/super.c. [2]
-> >> >
-> >> > If a filesystem driver can rely on the abuse of softdeps, which
-> >> > admittedly are a bit fragile, I think we can follow the same
-> >> > approach, at least for now.
-> >> >
-> >> > With all that in mind, I think that accepting this patch, as well
-> >> > as the related Panfrost patch, [3] should be warranted.  I'd keep
-> >> > investigating the possibility of introducing harddeps in form
-> >> > of MODULE_HARDDEP() and the related support in kmod project,
-> >> > similar to the already existing softdep support, [4] but that
-> >> > will inevitably take a lot of time, both for implementing it
-> >> > and for reaching various Linux distributions, which is another
-> >> > reason why accepting these patches seems reasonable.
-> >> >
-> >> > [1]
-> >> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/c=
-ommit/?id=3Dd5178578bcd4
-> >> > [2]
-> >> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/t=
-ree/fs/btrfs/super.c#n2593
-> >> > [3]
-> >> > https://lore.kernel.org/dri-devel/4e1e00422a14db4e2a80870afb704405da=
-16fd1b.1718655077.git.dsimic@manjaro.org/
-> >> > [4]
-> >> > https://git.kernel.org/pub/scm/utils/kernel/kmod/kmod.git/commit/?id=
-=3D49d8e0b59052999de577ab732b719cfbeb89504d
+> On Sat 29 Jun 2024 at 20:40, Jonathan Cameron <jic23@kernel.org> wrote:
+> 
+> > On Mon, 24 Jun 2024 19:31:03 +0200
+> > Jerome Brunet <jbrunet@baylibre.com> wrote:
+> >  
+> >> Add support for the HW found in most Amlogic SoC dedicated to measure
+> >> system clocks.
+> >> 
+> >> This drivers aims to replace the one found in
+> >> drivers/soc/amlogic/meson-clk-measure.c with following improvements:
+> >> 
+> >> * Access to the measurements through the IIO API:
+> >>   Easier re-use of the results in userspace and other drivers
+> >> * Controllable scale with raw measurements
+> >> * Higher precision with processed measurements
+> >> 
+> >> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>  
+> > Interesting device and the driver is pretty clean.
+> >
+> > Needs a new channel type though as altvoltage is in volts not hz.
+> >
+> > Various minor comments inline.
+> >
+> > Thanks,  
+> 
+> Thanks for the feedback Jonathan.
+> 
+> Just a couple of things,
+> 
+> David expressed concerns with having both IIO_CHAN_INFO_RAW and
+> IIO_CHAN_INFO_PROCESSED for a channel and we did not reach a conclusion
+> on this.
+> 
+> My idea here is to:
+>  * Give full control over the scale to the consumer with
+>    IIO_CHAN_INFO_RAW
+>  * Give an easy/convenient way to get an Hz result with
+>    IIO_CHAN_INFO_PROCESSED. There is a bit more than just 'raw * scale'
+>    in the implementation of this info to figure out the most appropriate
+>    scale for the measurement. They idea is also to avoid code
+>    duplication in consumers.
+
+So we have had a few cases of software driving autorange finding for sensors
+in the past (typically light sensors). An example is the gp2ap020a00f driver but
+those have been been driven by interrupts to detect range issue and are much
+more complex than what you have here.  Note that driver only provides _RAW,
+I think because we have no documentation of how to convert to an illuminance
+reading.  It's old though and probably not a good example to follow.
+
+> 
+> David is definitely more familiar than me with IIO but we did not really
+> know how to move forward on this.
+> 
+> Is it OK to have both IIO_CHAN_INFO_RAW and IIO_CHAN_INFO_PROCESSED, or
+> should I ditch IIO_CHAN_INFO_RAW ?
+
+I'll ask the obvious question - do you have a usecase for _RAW + _SCALE
+if not we can take the conservative approach of not providing it 'yet'
+and revisit once that use case surfaces.
+
+Otherwise, I tend to resist mixing processed and raw + scale just because
+it makes it hard for userspace to understand the difference. This combination
+has only happened in the past due to driver evolution (we got it wrong
+initially for a given driver). 
+
+So I'm not strongly against providing both (and amending my standard
+'don't do this reply' to include this as a special case) but I want to
+know someone actually cares.
+
+
+> 
+> >
+> > Jonathan  
+> 
+> [...]
+> 
+> >> +	indio_dev->name = "amlogic-clk-msr";
+> >> +	indio_dev->info = &cmsr_info;
+> >> +	indio_dev->modes = INDIO_DIRECT_MODE;
+> >> +	indio_dev->num_channels = CLK_MSR_MAX;  
+> >
+> > Superficially looks like the number of channels depends on the compatible.
+> > Ideally we shouldn't provide channels to userspace that aren't useful.  
+> 
+> Not exactly. All SoCs have 128 inputs, Some may not be connected indeed
+> but some are, and the name is just not documented (yet).
+
+> >
+> > You could search the name arrays to see how far they go, but that is bit ugly.
+> > Probably wrap those in a structure with a num_channels parameter as well.
+> >  
+> 
+> I've been doodling with this idea while writing this
+> driver. Technically, there is no problem.
+> 
+> The legacy driver this one will be replacing used to expose all 128
+> inputs. I thought it was more important to have continuity with the
+> legacy driver than filtering out possibly useless channels.
+
+ok.
+> 
+> Another benefit of keeping all 128 is that the channel index (both in
+> sysfs and more crucially in DT) matches the one in the SoC documentation.
+> That makes things easier.
+> 
+> Would it be acceptable to keep all 128 channels then or do you still
+> prefer that I filter out the undocumented ones ?
+
+Your explanation for why we should keep them is fine.
+Add some suitable comments so we don't forget it.
+
+> 
+> >> +	indio_dev->channels = cmsr_populate_channels(dev, conf);
+> >> +	if (IS_ERR(indio_dev->channels))
+> >> +		return PTR_ERR(indio_dev->channels);
+> >> +
+> >> +	return devm_iio_device_register(dev, indio_dev);
+> >> +}  
+> 
+> Thanks for you help.
+> 
+You are welcome
+J
 
