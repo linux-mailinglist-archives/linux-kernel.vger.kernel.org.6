@@ -1,113 +1,83 @@
-Return-Path: <linux-kernel+bounces-235127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE43D91D07F
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 10:17:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71E6291D083
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 10:25:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E4F31F2152B
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 08:17:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A342A1C20966
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 08:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A4C441C73;
-	Sun, 30 Jun 2024 08:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="OiNgCUp4"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D06612C48B;
+	Sun, 30 Jun 2024 08:24:57 +0000 (UTC)
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C7239FD8
-	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 08:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732727B3FE;
+	Sun, 30 Jun 2024 08:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719735451; cv=none; b=QY7JdNzFgQ4YJJYjMEmLGh8bt8RoSAnD/IuF+JdxG9m7U/AgiBiu+Z0lsx3msQ8YrgQq3nC6MA6wPZkUOO+C1nhBwkxaNViEJ4FnrVdCnvs96c1R3OIagR7aJ56OIFBDrIWOk8Vv6oGB2v1KPXAlwaPifZGn0Y1yWcoxb/MF7Vo=
+	t=1719735897; cv=none; b=COKaVhvHQbykgwLtm3qbU0e2nQK3LW3/4zg2W2srGwUm/FRsqch8fldgyPasQnj78P/OP9th/YUG/4exh9+mh7tet7kFdfark8wi+WnmKVpSM4zEvCKBPnBTlVHnJZL+Vqq4DJcSsz1kMZBFKPyGwh9ecDIrG3hIzqsKO/uJE7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719735451; c=relaxed/simple;
-	bh=hwgBuZgzFbjbsiDTCBSXM1LK7u5i2lMfzSZ5VG2Zqlk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=RtAEIeoZfQCSsGHBRnTZzhwVqh2fjL4trrkohQUGNZhx+xdaxJh9hN2hM9hAbFZmtyL42IG1695eGPdqxhLoWesPr9uuIriEVh0O0DuKP+YXOehELbyLup40AYvIB9iMiEUJpIgD1nb1fmdGk75ZBl8GlRs2eNY5275VHKXs5jA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=OiNgCUp4; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id ED20140E021B;
-	Sun, 30 Jun 2024 08:17:19 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id ECHYfZcslXlp; Sun, 30 Jun 2024 08:17:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1719735437; bh=cAupij/Vy3zFzRBF041kyQkQgMt5j+qQsGS6DKFRfiM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=OiNgCUp4YhKxYHHr+dMxk0BIJtT3s5hPhGRtIUv+X1TXWG5xPiTYoA6ko1vbo/7wE
-	 0BdB4DGsx2RIBZ0iubZr4Dr6l8/O7NzPiWBJihkUOMGgxbRJCn+vSRaGsuLea53kBb
-	 4+SOzf4eSO/2AkjBISmxq0AlaWhXKBWX6clNxq+TEXHcIphIHRBpRa6vFXQR1NWaHe
-	 uIKSVqm31un5unHSbQyy2DQxJZ9l+li23CElR6I5PWUznlbFhRVyuxyR5245ofL4ig
-	 U/IPhMemA++EN6JOqg6PQ6HGvE54pYnfQ9Xx2rD7tLJetsk/8/MUxHenu9h68X2bmn
-	 KpVkPgnqlRVu5ptfdtoco8AYmbgWSslkETgS/uiDe0HMNcfNlHLp9+u2YJ7sPgsQcj
-	 j+GBKK1uQCVwRLkVta+PhkcDCRTHJ5l2ZrQ/jOcSLBqixwQ5qZBL0+5WU3iiSIAHPV
-	 mQ/7X054ddl22R3APr5G5anjDIVhA88KaMpg1ssldLrmmyIJ8dxC/RM7MuGzbY2d6z
-	 Br2PnjsBjhav64Napo1zFmk0f9k95EKLWQey6OZANSOLN32sbJxBY61mzYu3X5aIHH
-	 LVZdqk//NtUlcC+pFbn+I//dnrnUzjrYGlS9obwzlA57cFhoSQj4J9bMWxWluhgRj0
-	 bsj//sPgWiaV0qDLgv1jDLvk=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E09A340E0192;
-	Sun, 30 Jun 2024 08:17:13 +0000 (UTC)
-Date: Sun, 30 Jun 2024 10:17:06 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] timers/urgent for v6.10-rc6
-Message-ID: <20240630081706.GAZoEUguWzfEsXgB3n@fat_crate.local>
+	s=arc-20240116; t=1719735897; c=relaxed/simple;
+	bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AKkYCrhwOvJpL5qymmG0e5VnZQdKm9lHV1wuaruZQxQ4SOhStw2awxYGWA8HXpfJM8AVMnVzu3i3DG3XyejVSEazc1EKPvF7xwfWPkdr80w7+tQLY84Qs9A53S/NiouTKPzP59q4aNYYxsnDdqy1HOcej34f8pBwhcUAi4+250o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3635f991f4bso111878f8f.0;
+        Sun, 30 Jun 2024 01:24:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719735894; x=1720340694;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
+        b=h3+k3y8/58kY1WbZDESYLmrqsdM8kWQ9idr+7LGhaI/ZqacmPCPtq/4icmgXsyyK05
+         gPAr7zAwelufZT1H5cUblQelIUckjQHLTKu8XqQY5XlDi24AtleZ4qTIVMVU5aIEhO25
+         XTYUFcEavdt5lvPxSRwY0LIB/Sp45IA9VdgweXJByQdg4erLKq8nI+g8KAahsfITsrNR
+         6pyTgYYzku6sb63rDBk/sSR/KbqJ222VZJKvkk2Na9UZIkZTdICVNAPjRCCZob2ll7de
+         QEnUY0ZW5qMUQ5I39t42t3aptZlrQwbCmHT3lmq8mAcBF3as7Ft3PcfiDczFjr1FEY+C
+         2Njw==
+X-Forwarded-Encrypted: i=1; AJvYcCVgmVt6HDXOUkL9Wk9afjP1MPCW4bF0w3ASnAVcc9s9uxfIKUv8h9/z18Fy2SqT8cXdk8HdGiA7prc/cdChSqldbZi/j8BTdBr37aqJLAfbmoTtithsAlnnIZta+G78ybts+xwk6hpQ2AI=
+X-Gm-Message-State: AOJu0Yxb2SaKLsBbNwpxi/KjmZjvCi3Y0KOqoaPY7ZV4ofUIAsZxvCh0
+	CjGjZjU+jdJCXLb+pVufWl5kn8KwP09nJyNNg4cdC5JmN4bhl7t5
+X-Google-Smtp-Source: AGHT+IF5j4Vvn/c1MwtD4Sq5KqVqB2yPZ6w2Wu759kgeCpnor3yzD4Ab/b8p68qtUYiSQzSM/GC5fQ==
+X-Received: by 2002:a05:600c:4848:b0:425:7ac6:96f7 with SMTP id 5b1f17b1804b1-4257ac69876mr15928965e9.0.1719735893588;
+        Sun, 30 Jun 2024 01:24:53 -0700 (PDT)
+Received: from [10.50.4.180] (bzq-84-110-32-226.static-ip.bezeqint.net. [84.110.32.226])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b097b77sm102371405e9.33.2024.06.30.01.24.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 30 Jun 2024 01:24:53 -0700 (PDT)
+Message-ID: <f9790913-fbf6-4a05-bf2c-56051ab07eab@grimberg.me>
+Date: Sun, 30 Jun 2024 11:24:50 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] blk-mq: add blk_mq_num_possible_queues helper
+To: Daniel Wagner <dwagner@suse.de>, Jens Axboe <axboe@kernel.dk>,
+ Keith Busch <kbusch@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Christoph Hellwig <hch@lst.de>
+Cc: Frederic Weisbecker <fweisbecker@suse.com>, Mel Gorman <mgorman@suse.de>,
+ Hannes Reinecke <hare@suse.de>,
+ Sridhar Balaraman <sbalaraman@parallelwireless.com>,
+ "brookxu.cn" <brookxu.cn@gmail.com>, Ming Lei <ming.lei@redhat.com>,
+ linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-nvme@lists.infradead.org
+References: <20240627-isolcpus-io-queues-v2-0-26a32e3c4f75@suse.de>
+ <20240627-isolcpus-io-queues-v2-1-26a32e3c4f75@suse.de>
+Content-Language: en-US
+From: Sagi Grimberg <sagi@grimberg.me>
+In-Reply-To: <20240627-isolcpus-io-queues-v2-1-26a32e3c4f75@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Linus,
-
-please pull a siggle timers fix for v6.10-rc6.
-
-Thx.
-
----
-
-The following changes since commit 6ba59ff4227927d3a8530fc2973b80e94b54d58f:
-
-  Linux 6.10-rc4 (2024-06-16 13:40:16 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/timers_urgent_for_v6.10_rc6
-
-for you to fetch changes up to 5a830bbce3af16833fe0092dec47b6dd30279825:
-
-  hrtimer: Prevent queuing of hrtimer without a function callback (2024-06-25 16:54:27 +0200)
-
-----------------------------------------------------------------
-- Warn when an hrtimer doesn't get a callback supplied
-
-----------------------------------------------------------------
-Phil Chang (1):
-      hrtimer: Prevent queuing of hrtimer without a function callback
-
- kernel/time/hrtimer.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
 
