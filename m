@@ -1,167 +1,258 @@
-Return-Path: <linux-kernel+bounces-235306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F65191D365
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 21:21:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 069E791D367
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 21:23:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 969A81F210A0
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 19:21:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 780651F21238
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 19:23:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18310153503;
-	Sun, 30 Jun 2024 19:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDAC3153800;
+	Sun, 30 Jun 2024 19:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MkubfGsL"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OxVxAQWW"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8F46BFD4
-	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 19:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6E122094;
+	Sun, 30 Jun 2024 19:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719775256; cv=none; b=KoZwEvDJb+QPoCUt4e4ULtf6W2xlPJY+izTTPwwYlt6+cZNQGWQUYqvGBcVA4OIjUK2+piRG6U8E/9t+JfabVHjyWaxqfkF88rviWDkjDa01XEagPvvyrvk/5kl+hSQrw5Q3Q3kjr9a4iXPXDFK10T0wvacS41n/Y3dCMXs7z+I=
+	t=1719775393; cv=none; b=qpvZXWl8A5Dq0EWA86sgpZ+5CKSK6vCpieEM7AQkvebR9IQlaXFwgF7ryr40Vu3ViSJ1bHe9rc341f22YZYOi6QRC0gHHf9MGjQnibmZwkIZNuXCH2450ym+56D1yi7++ZlEQjglk66vI1MtvAap5m3CVG5LMlYFcFbX0olauNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719775256; c=relaxed/simple;
-	bh=Y9TOcpLulOZFrN5XtJjl7Oi6Aq55ZZoIpVs239hA5Dc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fi3E0BAfEtmmMLe2TTuqf2HLWmNaS/qPMW+VO9r7uhxvZ4c7AH3OLqF3sC3ulFmfEvXp03VKMNLKSBLuWzsPzOfOuhSiymT3vu7YrSYE+eTgLSXbL3cTXu75uBujXqKujEOLVgFxitwJFN8ppNBKFqPKpKc70bwYu6udxO9Xi4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MkubfGsL; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-643f1ee4b3cso21164927b3.3
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 12:20:54 -0700 (PDT)
+	s=arc-20240116; t=1719775393; c=relaxed/simple;
+	bh=y2ItLlNZ0XcESy7AmAvwA2YN1RcdeP7Qg19scDw7VjI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=MQmFvi4eRxj/Sjn7T+xgqmhrEwsNzlrK6NF50LUb6vo2Iha8ctqIJzqLAY4E158of/QftQfqMcJsNe3w2H14eMOqyM/7xkLSI9lx7p7tzmiSMdOh9hd9lEv1lPiQNm9h/+Z9zBvUJL9vIy4eDfwWxg0s7pkeP7g7HvhOYDOuCww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OxVxAQWW; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-79d5d1a54fcso210765985a.1;
+        Sun, 30 Jun 2024 12:23:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719775254; x=1720380054; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C06Lxu2qWtoIPdhV6FpMtGF74vdhlrNGojrNRfofH9A=;
-        b=MkubfGsLlC4Dk6HK5q0QoaTKgCIX63n3AlJn/CCWgL+Fp6OZEbkXLU00yMyn/SdGlJ
-         VgFxBbkt+zS7IccYlkPvX3jUbVSZlIeHRyJstR02bQoDphtV6Q+yi/77XBx1I3C3XeOs
-         +SOTH1rKirgNem3dgk5dIi0ZWRlJeZjh5kqhG8XKI5NDgGLYmrPMU8PAzZV9Z9Py+lE5
-         QID6guNmmlvq8D2hqfRwzOqMGoutjH5UO2z2/o+cxPdKpJj3mTeKdXzh/Vxc0iS5///g
-         rj1wX0nMSb6mXBfU4aIXuiUAzXUy8tbtJ4hMlRQpd7G6zopL7NouAlmMz2TrM2aldLvr
-         3Sxg==
+        d=gmail.com; s=20230601; t=1719775390; x=1720380190; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JoKTcGoL8QUQQFT/fSGl00mqRLXmkP7pkW9VMQKO/d8=;
+        b=OxVxAQWWaWxktrt3GfENPVAbv9y98LwcHpQoWscnRmAbj9eDeiSKzJHDKZOtlGdQxu
+         fgozmDRGPveVREQwI3Io9FV9W2XZ6xUCOAvuU/6deX4+Ex8eFu8/S6rVz8q4FcG996Dg
+         WZh4l0XdsQvOFZIHuK/xDlsJMoOK5et3PukOF4EJVz9kz0q0vJQneImEnGwpeXqUcA3B
+         jYSgb42OSSV3hC5O1LZH3Zs8UcH8xmzbSX9QtPzpQEeEJtDFhDzF12G3xd/VDYVkjw5w
+         fl9ZBs2KGSeuqWhah8G9yLszYiSvdt6vL2BGGVnfN7MXK4RmYrafNfRgfkUoDd2wxIZh
+         cvyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719775254; x=1720380054;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C06Lxu2qWtoIPdhV6FpMtGF74vdhlrNGojrNRfofH9A=;
-        b=qWAkHlbc1qg5RjOuPkvozTYB3oNUJS7ntm33bgBQz7XWTPygrLHzMuw6TRtxiAgCje
-         ScSvJutcui++FiqTjpmNa9U7ueLjtsUAAK7CN1n8zpAIuOPXH9XdR04YN2rPGlR9xtu+
-         uJDyy/WQtrOEIds1H4l6qmGF8aFTvmQcfL5yR1yj502X7+HHDfMrkl1l35M4uQuZe6U5
-         5urrL5GC2PebJgmHYp8sbuv6qSNXJIwe6+ARwfDWXj9cF2g0/DyYEjJrEnAPDOeanKEK
-         7d9dsavC2p22+uQzaUTFq2NVKD/Uq0HRHlV7T1SYQoaA5EQqalfw42AoBkTsylUScZgP
-         JZ2g==
-X-Forwarded-Encrypted: i=1; AJvYcCVyGPP46eFFZEqKtwazKEfmAqLIbLH/WJwswkgMtUzl62W1pxXdxzDrsl3ZFpLO46U9UNIBCJ7KxHcng2Pr+XZ2xT+GF1xo2w24q2/5
-X-Gm-Message-State: AOJu0YxYhRzL8v5pyXF/2HTcPFND06jPrHRZKfMTFF5jrVQsk6KOML97
-	RH0oN+R9I6vOJGUQi4HomCPSihNuL26aah+69Wz7LpnZ45ToXR3z0WftfUVK3ZfnwhnMOf5lgXp
-	200GRFQSkpkKK1eKrdiN3Sa2HJCG4432kpkFz
-X-Google-Smtp-Source: AGHT+IGCOqYO5pqQ2PG6c8jd1PMpmtTfTOZf69o8IXJqeg8eV2Vim7tcDe/Fn0eirZ3xG+EnMPI+pXn4eXzAftJKWyQ=
-X-Received: by 2002:a81:60c2:0:b0:647:eaea:f4d9 with SMTP id
- 00721157ae682-64c73ae7b6dmr30365037b3.52.1719775253512; Sun, 30 Jun 2024
- 12:20:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719775390; x=1720380190;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JoKTcGoL8QUQQFT/fSGl00mqRLXmkP7pkW9VMQKO/d8=;
+        b=lRx458QTDDC/+VhjZG3+eECKfwt2WOzGa3MuceyiTErGx6abnID0s/MrPmo4Augtje
+         IfBCqCRkmIfnEbAm1/ZZzF1RD/sxGe8GuMz0pq2Lz0/c//3iWRVO5ajPovD5/Aoeh7Bq
+         sL1yf8Prqgv7Wkp1b+ypwrOG/TrrGlEglTvJ1bXbrfLvJgMcYg2K5Sr8sxoi5AzSaA6L
+         M/rs5Bxe9kUdSvf4/bTcV4gjqpcOxoV/rwytxYTIOm1sRdpMo2jeuXZ9P2sVEHzMawxJ
+         4dIixiTrwQmWvA8fjdJDHGTzq1xb/WSBk4Q05Mz6Y2vwramsu4xIwyQDv81k/jxvtZxY
+         UWmA==
+X-Forwarded-Encrypted: i=1; AJvYcCUztrojn0NVwmveROKmEdJxxLAvurTfYY+YR30G3bzv9opJIvtLhtcswmxYFeq98vDPUds28kQKzsq6xjEspFJBH3hs4K8HbQZQOLVyRyzrzCXqA9UucPfSPZryRzvU/03WmJlnHVLgJAWfA9ak
+X-Gm-Message-State: AOJu0Yye4qopSr6swLN03EsdNqerhD3bJWjx0ZwD/NUpDEYkLWAKDBOc
+	I5cusKD9zJcCQL2DJmPV9pTaA1YSL6c7YHrB5YL7vUK3TDahz/4OJftGGg==
+X-Google-Smtp-Source: AGHT+IFX/fyTwBgcfWmh9v9S3vFkXPMB2+qkXFPsD4ebezd1LT3aY8Rg4LcOnWJwgI6F866DvlUJqA==
+X-Received: by 2002:a05:620a:44d4:b0:79c:c3d:9c22 with SMTP id af79cd13be357-79d7b720e0amr725166585a.8.1719775390121;
+        Sun, 30 Jun 2024 12:23:10 -0700 (PDT)
+Received: from [127.0.1.1] ([2607:fea8:bad7:5400:fba0:e92d:3751:1f60])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b5bfcce25esm6054086d6.78.2024.06.30.12.23.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 30 Jun 2024 12:23:09 -0700 (PDT)
+From: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
+Date: Sun, 30 Jun 2024 15:22:58 -0400
+Subject: [PATCH v2] selftest: acct: Add selftest for the acct() syscall
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240614225951.3845577-1-surenb@google.com> <18a30d5c-abf3-4ceb-a7fd-2edfd8bee2a8@suse.cz>
-In-Reply-To: <18a30d5c-abf3-4ceb-a7fd-2edfd8bee2a8@suse.cz>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Sun, 30 Jun 2024 12:20:42 -0700
-Message-ID: <CAJuCfpFPDAjE5aNYxTngxzAusz_9QkOdnELSRNadi2Sxb4O=oA@mail.gmail.com>
-Subject: Re: [PATCH 1/1] mm/slab: fix 'variable obj_exts set but not used' warning
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, 
-	pasha.tatashin@soleen.com, souravpanda@google.com, keescook@chromium.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	kernel test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240630-kselftest-acct-syscall-v2-1-b30bbe2a69cd@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAJGwgWYC/4WNQQ6CMBBFr0K6dkxbtagr72FYlHaAiYWaTkMkh
+ LtbuYDL95L//ioYEyGLe7WKhDMxxamAPlTCDXbqEcgXFlrqszRaw4sxdBk5g3UuAy/sbAig/U1
+ 2tTGmVSjK+J2wo88efjaFB+Ic07L/zOpn/yZnBQq8rmV7afHqT/WjHy2Fo4ujaLZt+wJ88PLxv
+ AAAAA==
+To: Shuah Khan <shuah@kernel.org>
+Cc: javiercarrascocruz@gmail.com, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, 
+ Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
+X-Mailer: b4 0.14-dev-0bd45
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1719775389; l=4321;
+ i=abdulrasaqolawani@gmail.com; s=20240613; h=from:subject:message-id;
+ bh=y2ItLlNZ0XcESy7AmAvwA2YN1RcdeP7Qg19scDw7VjI=;
+ b=OSDhMmTzgNFa/mfsXtTo+ocpkTgfWnwk0HgKbjLUnuVzjjuQvpHd33dS6CKTlUlrw4oUfz2Bs
+ B/Av/2FGkKaAS/GujrqQgP0GYUT7OOdggzZKc7+y9s57wlzyWs1zMk7
+X-Developer-Key: i=abdulrasaqolawani@gmail.com; a=ed25519;
+ pk=cUqfinPW5pkopFB8ShBc0ZTNgYvSW5ZTa8aLIFPGp/w=
 
-On Mon, Jun 17, 2024 at 3:04=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
-ote:
->
-> On 6/15/24 12:59 AM, Suren Baghdasaryan wrote:
-> > slab_post_alloc_hook() uses prepare_slab_obj_exts_hook() to obtain
-> > slabobj_ext object. Currently the only user of slabobj_ext object in
-> > this path is memory allocation profiling, therefore when it's not enabl=
-ed
-> > this object is not needed. This also generates a warning when compiling
-> > with CONFIG_MEM_ALLOC_PROFILING=3Dn. Move the code under this configura=
-tion
-> > to fix the warning. If more slabobj_ext users appear in the future, the
-> > code will have to be changed back to call prepare_slab_obj_exts_hook().
-> >
-> > Fixes: 4b8736964640 ("mm/slab: add allocation accounting into slab allo=
-cation and free paths")
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202406150444.F6neSaiy-lkp=
-@intel.com/
-> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
->
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
->
-> But it seems to me we could remove the whole #ifdef if current->alloc_tag
-> (which doesn't exist with !MEM_ALLOC_PROFILING) had an access helper, or
-> there was a alloc_tag_add_current() variant?
+Noticed that there was no selftest for the acct() syscall
+which enables the kernel to record terminated processes
+into a specified file.
 
-Hmm. I'll check if current->alloc_tag is the only reason for this
-ifdef. If so then you are correct and we can simplify this code.
+The acct() system call enables or disables process accounting.
+If accounting is turned on, records for each terminating process
+are appended to a specified filename as it terminates. An argument of NULL
+causes accounting to be turned off.
 
->
-> > ---
-> >  mm/slub.c | 7 ++++---
-> >  1 file changed, 4 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/mm/slub.c b/mm/slub.c
-> > index 1373ac365a46..4927edec6a8c 100644
-> > --- a/mm/slub.c
-> > +++ b/mm/slub.c
-> > @@ -3902,7 +3902,6 @@ bool slab_post_alloc_hook(struct kmem_cache *s, s=
-truct list_lru *lru,
-> >                         unsigned int orig_size)
-> >  {
-> >       unsigned int zero_size =3D s->object_size;
-> > -     struct slabobj_ext *obj_exts;
-> >       bool kasan_init =3D init;
-> >       size_t i;
-> >       gfp_t init_flags =3D flags & gfp_allowed_mask;
-> > @@ -3945,9 +3944,11 @@ bool slab_post_alloc_hook(struct kmem_cache *s, =
-struct list_lru *lru,
-> >               kmemleak_alloc_recursive(p[i], s->object_size, 1,
-> >                                        s->flags, init_flags);
-> >               kmsan_slab_alloc(s, p[i], init_flags);
-> > +#ifdef CONFIG_MEM_ALLOC_PROFILING
-> >               if (need_slab_obj_ext()) {
-> > +                     struct slabobj_ext *obj_exts;
-> > +
-> >                       obj_exts =3D prepare_slab_obj_exts_hook(s, flags,=
- p[i]);
-> > -#ifdef CONFIG_MEM_ALLOC_PROFILING
-> >                       /*
-> >                        * Currently obj_exts is used only for allocation=
- profiling.
-> >                        * If other users appear then mem_alloc_profiling=
-_enabled()
-> > @@ -3955,8 +3956,8 @@ bool slab_post_alloc_hook(struct kmem_cache *s, s=
-truct list_lru *lru,
-> >                        */
-> >                       if (likely(obj_exts))
-> >                               alloc_tag_add(&obj_exts->ref, current->al=
-loc_tag, s->size);
-> > -#endif
-> >               }
-> > +#endif
-> >       }
-> >
-> >       return memcg_slab_post_alloc_hook(s, lru, flags, size, p);
-> >
-> > base-commit: c286c21ff94252f778515b21b6bebe749454a852
->
+This patch provides a test for the acct() syscall.
+
+References:
+https://man7.org/linux/man-pages/man2/acct.2.html
+
+Signed-off-by: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
+---
+Changes in v2:
+Add testcases to test error conditions.
+Add kselftest function for reporting results.
+
+- Link to v1: https://lore.kernel.org/r/20240622-kselftest-acct-syscall-v1-1-d270b5be8d37@gmail.com
+---
+ tools/testing/selftests/Makefile            |  1 +
+ tools/testing/selftests/acct/.gitignore     |  2 +
+ tools/testing/selftests/acct/Makefile       |  4 ++
+ tools/testing/selftests/acct/acct_syscall.c | 89 +++++++++++++++++++++++++++++
+ 4 files changed, 96 insertions(+)
+
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index 9039f3709aff..45a58ef5ad92 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -1,4 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
++TARGETS += acct
+ TARGETS += alsa
+ TARGETS += amd-pstate
+ TARGETS += arm64
+diff --git a/tools/testing/selftests/acct/.gitignore b/tools/testing/selftests/acct/.gitignore
+new file mode 100644
+index 000000000000..8ab358d81bd2
+--- /dev/null
++++ b/tools/testing/selftests/acct/.gitignore
+@@ -0,0 +1,2 @@
++acct_syscall
++config
+\ No newline at end of file
+diff --git a/tools/testing/selftests/acct/Makefile b/tools/testing/selftests/acct/Makefile
+new file mode 100644
+index 000000000000..ff3e238c5634
+--- /dev/null
++++ b/tools/testing/selftests/acct/Makefile
+@@ -0,0 +1,4 @@
++TEST_GEN_PROGS := acct_syscall
++CFLAGS += -Wall
++
++include ../lib.mk
+\ No newline at end of file
+diff --git a/tools/testing/selftests/acct/acct_syscall.c b/tools/testing/selftests/acct/acct_syscall.c
+new file mode 100644
+index 000000000000..4fa00a88a1bd
+--- /dev/null
++++ b/tools/testing/selftests/acct/acct_syscall.c
+@@ -0,0 +1,89 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/* kselftest for acct() system call
++ *  The acct() system call enables or disables process accounting.
++ */
++
++#include <stdio.h>
++#include <errno.h>
++#include <string.h>
++#include <sys/wait.h>
++
++#include "../kselftest.h"
++
++int main(void)
++{
++	// Setting up kselftest framework
++	ksft_print_header();
++	ksft_set_plan(1);
++
++	// Create file to log closed processes
++	char filename[] = "process_log";
++	FILE *fp;
++
++	fp = fopen(filename, "w");
++
++	int i = acct(filename);
++
++	// Handle error conditions
++	if (i) {
++		switch (errno) {
++		case EPERM:
++			ksft_test_result_error("%s. Please run the test as root.\n",
++				strerror(errno));
++			break;
++
++		case EACCES:
++			ksft_test_result_error("Insufficient privilege.\n");
++			break;
++
++		case EIO:
++			ksft_test_result_error("Error writing to the file: %s.\n", filename);
++			break;
++
++		default:
++			ksft_test_result_error("%s.\n", strerror(errno));
++			break;
++		}
++
++		remove(filename);
++		fclose(fp);
++		ksft_finished();
++		return 1;
++	}
++
++	// Create child process and wait for it to terminate.
++	pid_t child_pid;
++
++	child_pid = fork();
++
++	if (child_pid < 0) {
++		ksft_test_result_error("Process failed\n");
++		ksft_finished();
++		return 1;
++	} else if (child_pid == 0) {
++		ksft_print_msg("Child process successfully created!\n");
++	} else {
++		wait(NULL);
++		fseek(fp, 0L, SEEK_END);
++		int sz = ftell(fp);
++
++		ksft_print_msg("Parent process successfully created!\n");
++
++		i = acct(NULL);
++
++		if (sz <= 0) {
++			ksft_test_result_fail("Terminated child process not logged");
++			ksft_exit_fail();
++			return 1;
++		}
++
++		ksft_test_result_pass("Successfully logged terminated process.\n");
++		remove(filename);
++		fclose(fp);
++		ksft_exit_pass();
++		return 0;
++	}
++
++	return 1;
++}
+
+---
+base-commit: 50736169ecc8387247fe6a00932852ce7b057083
+change-id: 20240622-kselftest-acct-syscall-2d90f7666b1e
+
+Best regards,
+-- 
+Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
+
 
