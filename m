@@ -1,255 +1,134 @@
-Return-Path: <linux-kernel+bounces-235103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D55B291D031
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 08:39:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8039E91D033
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 08:53:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90377B2121E
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 06:39:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C704A281B1D
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 06:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303633A28D;
-	Sun, 30 Jun 2024 06:38:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E5A138DE5;
+	Sun, 30 Jun 2024 06:53:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IJgUA/s3"
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="DhCX2WWK"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3CB539FD0;
-	Sun, 30 Jun 2024 06:38:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719729537; cv=none; b=q0IAaqYZsVxNVY2k3r06fuMFQH3D4r+DRfHhpeSdJhl/k42CtIhVLvOVTSYLFpelyj9e2nJCVbNnpbl4zIOyEPRFTryVkGS4K4HznuplbYTxsVnD7tWufszMERJlqW7cp1BxZu97Hx5vcruiBX9ok/1bB5JlU7r9PqIxD3LsVzo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719729537; c=relaxed/simple;
-	bh=WbPqT2wpd4+ZeKcUAwbmkkoCmR6ML4SAFPLKfk61mbg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gn/JpZA0esyM4CUrjV8C42outy/Tk1rAY87Sufz00boqHaFQ/6AyRRs7FvAxh+C5nlXRldC2W73mC6H/d6qoU/pJPCzAMZ3gEHc0qjtLA8nvEkGuSgvWXyYm5UcMSK/1dbJRuXU+XZgMuHjbbedWhoARC/WomvoEr7OQRL5uAVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IJgUA/s3; arc=none smtp.client-ip=209.85.160.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-24cbb884377so1189253fac.0;
-        Sat, 29 Jun 2024 23:38:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719729535; x=1720334335; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QcY18BrD0/gIItoUlZh8XyBfrX5yv5R+UNZ4yG5hJ04=;
-        b=IJgUA/s3NhU7hp8fpfn1W71leordKftmNUayhZGMaaynrH/uFDVJh3LWFZSbOet1Bd
-         Ed+TDQjsTwPkH6IAVBbbKxiDN6s3Qmpgff/kPm7n+id59a+XQKuJfFUMIoFMX6qxf2LO
-         bJSzE/7E5nfye1JwPKrY0hY9L0P4KtPb75CMWnE9fw7n+n+x1qTfrBNc1N7Kb9fjdpbk
-         pyJ08wib4xVfjMO7V93DDhTCZsyY9FKmFf/17pJahfituL0GNK6y5SZNLIM8T+oey5tQ
-         zigTcOgGxymmytTngypt7x7FQrZbBAX2snzM4YHlh/BHiZe0mUWDLiQ4UNtpwT4Tg4p2
-         bfnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719729535; x=1720334335;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QcY18BrD0/gIItoUlZh8XyBfrX5yv5R+UNZ4yG5hJ04=;
-        b=ahxTajR8d4ggZgJDm5a2csyEjndja+O3YGmJ9AWWKjwgKCzjA0X3hpqFVnv7LD41vg
-         cjgbbrODABdrjhgcFs9U9oiXpH7FarolpiG6WVTlsTKJMBGPSstb7q5xXoRQrwnIxrJk
-         QYwwatY/u8z75eAg9ZbNJaqUE7rdmW2Ighi3969i/KTNxhAdm6A2zRFGJF0/mV7iT7lX
-         i0Js2L8OMlUITv8YEbNjPVbHR6rUSuukSQHJwP7qIp4A4s372ojlJj7oq857H+8K4zLD
-         +UxHp9n8G5sCwpytHmMyMKBuENPfZO8STOUUO+VHhR10Cj1D1xDG1w24pORkb3Mjy3YS
-         UUhw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCCdSCE6RRvB61pnR+zxf+4NYwNMWxEMv9rQuRdj+dsHMcBzZ/2rBZuTJQgmVMS/VBA0ByoOSuNdTxM175xtgDh17ma4v8yse6UDP/obXES/47ATBPiVT1hqL3S9oE5KEAKiWqrnhV1JVvX2gq6LEBUoGfmMoSf0SHRlLMm7D5XsyXcw==
-X-Gm-Message-State: AOJu0YwQu/r4k3+8UCHB5mTg1RCsHfAANFlnHJ1Ys+XXgQZD+P8LY4CM
-	JXe2bQyN3ZJmKsC+yPNmYUgmX+XyAiIvRZ8iANi4NvcwMUVc8nH8
-X-Google-Smtp-Source: AGHT+IHV1EFyJxWJPau3gYXlLOEE5X8O10yturZa5h2xV6cnNt8lNgwXIjAPH9L3av1Etv9r9X8Qcg==
-X-Received: by 2002:a05:6870:d6a5:b0:254:a217:f8b9 with SMTP id 586e51a60fabf-25db344283dmr2390728fac.31.1719729534620;
-        Sat, 29 Jun 2024 23:38:54 -0700 (PDT)
-Received: from ga401ii.. ([2401:4900:1cc9:59f2:a68f:8261:cbcf:3139])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-70804989399sm4164149b3a.193.2024.06.29.23.38.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Jun 2024 23:38:54 -0700 (PDT)
-From: Kanak Shilledar <kanakshilledar@gmail.com>
-To: 
-Cc: kanakshilledar111@protonmail.com,
-	Kanak Shilledar <kanakshilledar@gmail.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH] arch: riscv: thead: implement basic spi
-Date: Sun, 30 Jun 2024 12:08:20 +0530
-Message-ID: <20240630063845.116307-1-kanakshilledar@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAB82594
+	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 06:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719730392; cv=pass; b=t5lYUZnjMDkuNDtuHXhAWDfbAcNf+DkWGjRoOrcBnUckVGqN9R3utSdGZwpmeTo6ZwYiwOfl+hhKLvFfo0J6sudZTUayL62HP0bmzJgUMYZCtHSchr+m/MKFPwMb9lpkUrricyFYHSvaIqR2l4uoB+kyPzI0A60ZIxpWJy5/A4E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719730392; c=relaxed/simple;
+	bh=GlvmRLhSLQMxqqnJLWA67YWA13Mc0uaKIfKavL5U0Hs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=OUI5s1XMhYM6Z9sFTcCI3tYln04JkEpW8IvMGA5WJ8v5J2YPdW8yjKyxY6Zf2ZyAn3zDO7l7s6v1OAKphx06pWUAPa5w36ExjV2wgIn89+2coIiM58RosZwc3jBOYK93RkSQ4o3yfM1nTqYAcWIkXFNwLZX4pmPHWcpMSghR7KE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=DhCX2WWK; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1719730374; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=eU4klpRyAxmW0vXJdPVVPkWSQQj9VfQf5v1q9nBAJAw4Gc883S1CO6jXy06LHCB4Vq5sx6xT7MKI8dsArBtx4EkvBcKEejvsMM11N1qsBdLDJlskyfrmF9VSywVIzwN2dIH7jMhtcZMxuAzDELl7UJND9DKzKxtG+OD64NRGSQM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1719730374; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=GlvmRLhSLQMxqqnJLWA67YWA13Mc0uaKIfKavL5U0Hs=; 
+	b=FJi2p88Pp6IFGhtZmmi2Tyia/6lUbBC/NxONV/SonbnP9pLsj+yTnVpyzrPJ8evXCpq6HlirS9ebybajTmtR6GkYfgwAtiROmwPLXNY+TLKGa+zSOkeZVATVeVcPZHD1WkCT7iXQRdgvT8osMrvR0BhOkFFHq34rRbLmlLAwjzo=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1719730374;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=GlvmRLhSLQMxqqnJLWA67YWA13Mc0uaKIfKavL5U0Hs=;
+	b=DhCX2WWKwy0PllVfQ9k31kQX1VRgSsunOcybHw9lPNNnAaM15Gmlfa9Kf3BE4EX+
+	HdmjS9pj4gT6VcgChs0V+ndmzDC9K9cUVNq1NeeFqt9CCnvMfMi7yag/HaXLxAqFdna
+	OewydSyy2L+DWrWojSNP63hOSixgTZbqmCw+H9ADdJWHVHJoEZVtworqU5abt0OTYS4
+	QUU8pSn4XTMw9+S+qvSzYBy+MIuz2xtZBwqfDl4qNOVM+WGS3WXAeQB7UQfTnxF58sR
+	0x+PRLvwHRyqahKkllsUQSUMmXYW/bqN21XniaQQls68fuEQ+TcjS/jIr9aqJh8OhTz
+	LDv28dFf5w==
+Received: by mx.zohomail.com with SMTPS id 1719730372425888.1304650498818;
+	Sat, 29 Jun 2024 23:52:52 -0700 (PDT)
+Message-ID: <d721003aca5b023feee8ab63a4ac29944f5b4549.camel@icenowy.me>
+Subject: Re: [RFC PATCH 2/2] drm/ttm: downgrade cached to write_combined
+ when snooping not available
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>, Christian Koenig
+ <christian.koenig@amd.com>, Huang Rui <ray.huang@amd.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>,  Thomas Zimmermann <tzimmermann@suse.de>, David
+ Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Date: Sun, 30 Jun 2024 14:52:47 +0800
+In-Reply-To: <a143a2c3-c6f0-4537-acc6-94f229f14639@app.fastmail.com>
+References: <20240629052247.2653363-1-uwu@icenowy.me>
+	 <20240629052247.2653363-3-uwu@icenowy.me>
+	 <a143a2c3-c6f0-4537-acc6-94f229f14639@app.fastmail.com>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-implemented basic spi support for TH1520 SoC.
-created a fixed clock and a simple spi0 node.
-updated the matching binding to include thead,th1520-spi as compatible.
-added a spidev device in devicetree which will utilise the spi0 node.
-this is usually reserved for a SPI NOR flash which is left unpopulated
-underneath the carrier board. I performed a SPI self loop test using
-tools/spi/spidev_test.c and tried sending `\xDE\xAD\xBE\xEF` and verified
-it is being received correctly. i updated the of_device_id struct in
-drivers/spi/spi-dw-mmio.c to include "thead,th1520-spi" as the compatible.
-this patch also adds basic spi support on beaglev ahead which shares the
-same TH1520 SoC. i have only tested on LicheePi 4A.
-
-Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
----
- .../devicetree/bindings/spi/snps,dw-apb-ssi.yaml |  4 ++++
- .../boot/dts/thead/th1520-beaglev-ahead.dts      |  9 +++++++++
- .../boot/dts/thead/th1520-lichee-module-4a.dtsi  |  4 ++++
- .../riscv/boot/dts/thead/th1520-lichee-pi-4a.dts | 10 ++++++++++
- arch/riscv/boot/dts/thead/th1520.dtsi            | 16 ++++++++++++++++
- drivers/spi/spi-dw-mmio.c                        |  1 +
- 6 files changed, 44 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
-index fde3776a558b..bccd00a1ddd0 100644
---- a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
-+++ b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
-@@ -88,6 +88,10 @@ properties:
-               - renesas,r9a06g032-spi # RZ/N1D
-               - renesas,r9a06g033-spi # RZ/N1S
-           - const: renesas,rzn1-spi   # RZ/N1
-+      - description: T-HEAD TH1520 SoC SPI Controller
-+        items:
-+          - const: thead,th1520-spi
-+          - const: snps,dw-apb-ssi
- 
-   reg:
-     minItems: 1
-diff --git a/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts b/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-index d9b4de9e4757..3103b74e0288 100644
---- a/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-+++ b/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-@@ -17,6 +17,7 @@ aliases {
- 		gpio1 = &gpio1;
- 		gpio2 = &gpio2;
- 		gpio3 = &gpio3;
-+		spi0 = &spi0;
- 		serial0 = &uart0;
- 		serial1 = &uart1;
- 		serial2 = &uart2;
-@@ -52,6 +53,10 @@ &sdhci_clk {
- 	clock-frequency = <198000000>;
- };
- 
-+&spi_clk {
-+	clock-frequency = <396000000>;
-+};
-+
- &uart_sclk {
- 	clock-frequency = <100000000>;
- };
-@@ -79,3 +84,7 @@ &sdio0 {
- &uart0 {
- 	status = "okay";
- };
-+
-+&spi0 {
-+	status = "okay";
-+};
-diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi b/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
-index 1365d3a512a3..6939bd36560c 100644
---- a/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
-+++ b/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
-@@ -33,6 +33,10 @@ &sdhci_clk {
- 	clock-frequency = <198000000>;
- };
- 
-+&spi_clk {
-+	clock-frequency = <396000000>;
-+};
-+
- &uart_sclk {
- 	clock-frequency = <100000000>;
- };
-diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-index 9a3884a73e13..26f82fe91489 100644
---- a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-+++ b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-@@ -14,6 +14,7 @@ aliases {
- 		gpio1 = &gpio1;
- 		gpio2 = &gpio2;
- 		gpio3 = &gpio3;
-+		spi0 = &spi0;
- 		serial0 = &uart0;
- 		serial1 = &uart1;
- 		serial2 = &uart2;
-@@ -30,3 +31,12 @@ chosen {
- &uart0 {
- 	status = "okay";
- };
-+
-+&spi0 {
-+	status = "okay";
-+	spidev@0 {
-+		compatible = "rohm,dh2228fv";
-+		reg = <0>;
-+		spi-max-frequency = <500000>;
-+	};
-+};
-diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
-index d2fa25839012..f962de663e7e 100644
---- a/arch/riscv/boot/dts/thead/th1520.dtsi
-+++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-@@ -140,6 +140,12 @@ apb_clk: apb-clk-clock {
- 		#clock-cells = <0>;
- 	};
- 
-+	spi_clk: spi-clock {
-+		compatible = "fixed-clock";
-+		clock-output-names = "spi_clk";
-+		#clock-cells = <0>;
-+	};
-+
- 	uart_sclk: uart-sclk-clock {
- 		compatible = "fixed-clock";
- 		clock-output-names = "uart_sclk";
-@@ -183,6 +189,16 @@ clint: timer@ffdc000000 {
- 					      <&cpu3_intc 3>, <&cpu3_intc 7>;
- 		};
- 
-+		spi0: spi@ffe700c000 {
-+			compatible = "thead,th1520-spi", "snps,dw-apb-ssi";
-+			reg = <0xff 0xe700c000 0x0 0x1000>;
-+			interrupts = <54 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&spi_clk>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		uart0: serial@ffe7014000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0xff 0xe7014000 0x0 0x100>;
-diff --git a/drivers/spi/spi-dw-mmio.c b/drivers/spi/spi-dw-mmio.c
-index 819907e332c4..39e3d46ebf5d 100644
---- a/drivers/spi/spi-dw-mmio.c
-+++ b/drivers/spi/spi-dw-mmio.c
-@@ -419,6 +419,7 @@ static const struct of_device_id dw_spi_mmio_of_match[] = {
- 	{ .compatible = "microchip,sparx5-spi", dw_spi_mscc_sparx5_init},
- 	{ .compatible = "canaan,k210-spi", dw_spi_canaan_k210_init},
- 	{ .compatible = "amd,pensando-elba-spi", .data = dw_spi_elba_init},
-+	{ .compatible = "thead,th1520-spi", .data = dw_spi_pssi_init},
- 	{ /* end of table */}
- };
- MODULE_DEVICE_TABLE(of, dw_spi_mmio_of_match);
--- 
-2.45.2
+5ZyoIDIwMjQtMDYtMjnmmJ/mnJ/lha3nmoQgMjA6NTcgKzAxMDDvvIxKaWF4dW4gWWFuZ+WGmemB
+k++8mgo+IAo+IAo+IOWcqDIwMjTlubQ25pyIMjnml6Xlha3mnIgg5LiK5Y2INjoyMu+8jEljZW5v
+d3kgWmhlbmflhpnpgZPvvJoKPiBbLi4uXQo+ID4gQEAgLTMwMiw2ICszMDIsMTAgQEAgcGdwcm90
+X3QgdHRtX2lvX3Byb3Qoc3RydWN0IHR0bV9idWZmZXJfb2JqZWN0Cj4gPiAqYm8sIAo+ID4gc3Ry
+dWN0IHR0bV9yZXNvdXJjZSAqcmVzLAo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqBjYWNoaW5nID0gcmVzLT5idXMuY2FjaGluZzsKPiA+IMKgwqDCoMKgwqDCoMKgwqB9Cj4gPiAK
+PiA+ICvCoMKgwqDCoMKgwqDCoC8qIERvd25ncmFkZSBjYWNoZWQgbWFwcGluZyBmb3Igbm9uLXNu
+b29waW5nIGRldmljZXMgKi8KPiA+ICvCoMKgwqDCoMKgwqDCoGlmICghYm8tPmJkZXYtPmRtYV9j
+b2hlcmVudCAmJiBjYWNoaW5nID09IHR0bV9jYWNoZWQpCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgY2FjaGluZyA9IHR0bV93cml0ZV9jb21iaW5lZDsKPiBIaSBJY2Vub3d5LAo+
+IAo+IFRoYW5rcyBmb3IgeW91ciBwYXRjaCEgWW91IHNhdmVkIG1hbnkgbm9uLWNvaCBQQ0llIGhv
+c3QKPiBpbXBsZW1lbnRhdGlvbnMgYSBkYXkhLgo+IAo+IFVuZm9ydHVuYXRlbHkgSSBkb24ndCB0
+aGluayB3ZSBjYW4gc2FmZWx5IHR0bV9jYWNoZWQgdG8KPiB0dG1fd3JpdGVfY29tbmluZWQsIHdl
+J3ZlCj4gaGFkIGVub3VnaCBkcmFtYSB3aXRoIHdyaXRlIGNvbWJpbmUgYmVoYXZpb3VyIG9uIGFs
+bCBkaWZmZXJlbnQKPiBwbGF0Zm9ybXMuCgpJIHRoaW5rIG9uIHRoZXNlIHBsYXRmb3JtcywgdHRt
+X3dyaXRlX2NvbWJpbmVkIHNob3VsZCBiZSBwcmV2ZW50ZWQgdG8KYmUgbWFwcGVkIHRvIHBncHJv
+dF93cml0ZWNvbWJpbmUgaW5zdGVhZCwgYnV0IGRvd25ncmFkZSB0dG1fY2FjaGVkIHRvCnR0bV93
+cml0ZV9jb21iaW5lZCAoYW5kIHRoZW4gYmVpbmcgdHJlYXRlZCBzYW1lIGFzIHR0bV91bmNhY2hl
+ZCkgaXMKYWNjZXB0YWJsZS4KCj4gCj4gU2VlIGRybV9hcmNoX2Nhbl93Y19tZW1vcnkgaW4gZHJt
+X2NhY2hlLmguCj4gCj4gVGhhbmtzIAo+IAo+ID4gKwo+ID4gwqDCoMKgwqDCoMKgwqDCoHJldHVy
+biB0dG1fcHJvdF9mcm9tX2NhY2hpbmcoY2FjaGluZywgdG1wKTsKPiA+IMKgfQo+ID4gwqBFWFBP
+UlRfU1lNQk9MKHR0bV9pb19wcm90KTsKPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
+dHRtL3R0bV90dC5jCj4gPiBiL2RyaXZlcnMvZ3B1L2RybS90dG0vdHRtX3R0LmMKPiA+IGluZGV4
+IDdiMDBkZGYwY2U0OWYuLjMzMzVkZjQ1ZmJhNWUgMTAwNjQ0Cj4gPiAtLS0gYS9kcml2ZXJzL2dw
+dS9kcm0vdHRtL3R0bV90dC5jCj4gPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdHRtL3R0bV90dC5j
+Cj4gPiBAQCAtMTUyLDYgKzE1MiwxMCBAQCBzdGF0aWMgdm9pZCB0dG1fdHRfaW5pdF9maWVsZHMo
+c3RydWN0IHR0bV90dAo+ID4gKnR0bSwKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBlbnVtIHR0bV9jYWNoaW5nIGNhY2hpbmcs
+Cj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAgdW5zaWduZWQgbG9uZyBleHRyYV9wYWdlcykKPiA+IMKgewo+ID4gK8KgwqDCoMKg
+wqDCoMKgLyogRG93bmdyYWRlIGNhY2hlZCBtYXBwaW5nIGZvciBub24tc25vb3BpbmcgZGV2aWNl
+cyAqLwo+ID4gK8KgwqDCoMKgwqDCoMKgaWYgKCFiby0+YmRldi0+ZG1hX2NvaGVyZW50ICYmIGNh
+Y2hpbmcgPT0gdHRtX2NhY2hlZCkKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBj
+YWNoaW5nID0gdHRtX3dyaXRlX2NvbWJpbmVkOwo+ID4gKwo+ID4gwqDCoMKgwqDCoMKgwqDCoHR0
+bS0+bnVtX3BhZ2VzID0gKFBBR0VfQUxJR04oYm8tPmJhc2Uuc2l6ZSkgPj4gUEFHRV9TSElGVCkK
+PiA+ICsgZXh0cmFfcGFnZXM7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgdHRtLT5wYWdlX2ZsYWdzID0g
+cGFnZV9mbGFnczsKPiA+IMKgwqDCoMKgwqDCoMKgwqB0dG0tPmRtYV9hZGRyZXNzID0gTlVMTDsK
+PiA+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2RybS90dG0vdHRtX2NhY2hpbmcuaAo+ID4gYi9pbmNs
+dWRlL2RybS90dG0vdHRtX2NhY2hpbmcuaAo+ID4gaW5kZXggYTE4ZjQzZTkzYWJhYi4uZjkyZDc5
+MTFmNTBlNCAxMDA2NDQKPiA+IC0tLSBhL2luY2x1ZGUvZHJtL3R0bS90dG1fY2FjaGluZy5oCj4g
+PiArKysgYi9pbmNsdWRlL2RybS90dG0vdHRtX2NhY2hpbmcuaAo+ID4gQEAgLTQ3LDcgKzQ3LDgg
+QEAgZW51bSB0dG1fY2FjaGluZyB7Cj4gPiAKPiA+IMKgwqDCoMKgwqDCoMKgwqAvKioKPiA+IMKg
+wqDCoMKgwqDCoMKgwqAgKiBAdHRtX2NhY2hlZDogRnVsbHkgY2FjaGVkIGxpa2Ugbm9ybWFsIHN5
+c3RlbSBtZW1vcnksCj4gPiByZXF1aXJlcyB0aGF0Cj4gPiAtwqDCoMKgwqDCoMKgwqAgKiBkZXZp
+Y2VzIHNub29wIHRoZSBDUFUgY2FjaGUgb24gYWNjZXNzZXMuCj4gPiArwqDCoMKgwqDCoMKgwqAg
+KiBkZXZpY2VzIHNub29wIHRoZSBDUFUgY2FjaGUgb24gYWNjZXNzZXMuIERvd25ncmFkZWQgdG8K
+PiA+ICvCoMKgwqDCoMKgwqDCoCAqIHR0bV93cml0ZV9jb21iaW5lZCB3aGVuIHRoZSBzbm9vcGlu
+ZyBjYXBhaWJsaXR5IGlzCj4gPiBtaXNzaW5nLgo+ID4gwqDCoMKgwqDCoMKgwqDCoCAqLwo+ID4g
+wqDCoMKgwqDCoMKgwqDCoHR0bV9jYWNoZWQKPiA+IMKgfTsKPiA+IC0tIAo+ID4gMi40NS4yCj4g
+Cgo=
 
 
