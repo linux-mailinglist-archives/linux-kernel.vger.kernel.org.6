@@ -1,181 +1,207 @@
-Return-Path: <linux-kernel+bounces-235169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6268091D105
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 12:02:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 658CA91D10B
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 12:04:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACC8C1F21606
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 10:02:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E352D281BDD
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 10:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32C81304A3;
-	Sun, 30 Jun 2024 10:02:16 +0000 (UTC)
-Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BF813211E;
+	Sun, 30 Jun 2024 10:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="idMAzM3S"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869E72C6BD;
-	Sun, 30 Jun 2024 10:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E2912DDAE;
+	Sun, 30 Jun 2024 10:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719741736; cv=none; b=fQV89nT5x7RrHq9rI/0GcUVUnf3hzt9TjKAe0r+Hp8F8587NTP9vBjHGTuqbP0hL7YiriaWgFn/AM5g/pBVn5Rh1j+vATEePlH6XlgWFJtEzJI5FAm33FmywolsL0jibDEjrot5rdlZ6ivMZ5T6hFT3syQQWi18TeUM4m4YmC74=
+	t=1719741888; cv=none; b=S553JQWCUQ7SKOq2oCRJcXFi4TvsPBIXwHZxsrSt6/hz7JJS1TGLHdjvyXciyzYMTL/e1wRyORwNVsCeVEmrXTv98Vd8iWweMcmJYET3y3c9qMSu12U+WhneTTqvukFg6QYYykYLU20Z7o+x4LWtbUHC1rsn6+Vw0FNLSDdjPEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719741736; c=relaxed/simple;
-	bh=RY2gjv1yXfwN5K8FDIl8+sx/uOjU3+I+cP7/CtnagEw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FZ3cYDnvZRWEK37GG5y2i7qx1sYa+3B5qq3nnVkjPdz65JAwF2zegSSEgz+Oma97lfg1qZ6FmW18Eg5tbAv/xpV/6ZN0rSYB7NlwOKvI2+s7fcUS74D7WewOkilKAMiNrbJTnlp6Ud6NccYjgt4+HT4YM85wrm2hlY9wCSHXess=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout2.hostsharing.net (Postfix) with ESMTPS id EF8872800B1BB;
-	Sun, 30 Jun 2024 12:02:03 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id CDCF01EA3A5; Sun, 30 Jun 2024 12:02:03 +0200 (CEST)
-Date: Sun, 30 Jun 2024 12:02:03 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Aditya Garg <gargaditya08@live.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
-	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Orlando Chamberlain <orlandoch.dev@gmail.com>,
-	Kerem Karabay <kekrby@gmail.com>
-Subject: Re: [PATCH] efi: libstub: add support for the apple_set_os protocol
-Message-ID: <ZoEtG0DUJOS4ROQC@wunner.de>
-References: <EBE51900-DA87-4113-B389-80B9C9160F0F@live.com>
- <ZoERl1PWoc2xDGWz@wunner.de>
- <MA0P287MB021730971A804FB760463A39B8D22@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1719741888; c=relaxed/simple;
+	bh=jd86wld+u7/8tOlPpDaYI6KLsajHvkeFtIARj5F5qQY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iVThE2HKUgsWxfHVUYGKvPAPlkePPY6+EaRigUE2knvkv3Y1iNULzN0Io3OE4avDtGEQANr7XaEHtaeKhOO9F23+WE1JgXLA+lZjkDnVwLT9PzGOXOVHFuV+QIvLAfzIcKOp2131qKbTZwG9PFObA6p+C+eeC/+7Q2b9/plxLDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=idMAzM3S; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6fe617966fso159910566b.1;
+        Sun, 30 Jun 2024 03:04:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719741885; x=1720346685; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o617bWQRGL7AXpKHgsvXTyzvAX01tVJwbwYGMP9yg4c=;
+        b=idMAzM3SG4FVXt/jHNPDg2T5rJQbAbHK/z+Td42Ud9nPosYG4krNAJg9S4qDsudiPk
+         6OnPyTGS3cJTBooov8GLMkj2gYKmGk43MGXV+/fAWV1kixm7r7Z8u6tFfC2Opw5/bXck
+         UKQYDTXnKHsjrBr72dDs8DRdZZNVNjpmMu2P/kFZjKb2uOJgHoFk+TFsAQuHap/4S++h
+         5LGXIeUEAGfuHQyRO0jZFYH3h/KlTgQLZni8NwNWUEjlLJ/5Q67jwja2w0Y8rP1jvMHP
+         wITbg0FwzbgZLo7DaodiLNbay05qQitvU3W9cDE6kr152c+Iw6cD42rkA2mWLlKm6jhF
+         /GOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719741885; x=1720346685;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o617bWQRGL7AXpKHgsvXTyzvAX01tVJwbwYGMP9yg4c=;
+        b=T7mWcT2jXOT9rM/H2MEOxleAaB87ALCZxzmZfnTsz5dTHoNumRAMaCuCGmjP2EQXXD
+         PSucBLXM64BDE2MoDp4Kd0H9bK1kMf29oZGIKJFW7a87cXT2o4ay/1CIfAZ6t9Isg7Ns
+         2z3JkduBh0m+kg2W2mlidmq/wuZDasIobxNnHO2aEjGe1O4SX9Tjf7zIAzc2x6snxhEj
+         fayJ55YKy4+aIREX7ClVWCdKQQU/6GF74FTT4S64wWQPbaNm6fmRJOXPcSbnoTHydCbu
+         D3/0irkbQKQxLHkJZjSujoUVbGGRKeW5xZ6Y4JNTDwKH2oVDada2GSqg9ZJSTmroYmVD
+         amyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUqt5Ta9TrrT3J40NakBevI1/7ChXpNiPuc0no6iTNhzS8B46iX05tBsPnSyPKI38rydYEwWZ0CyUE/jThHT+ZzEOzOhlcCifYxoEkHCFcZYwexhWNJh6JUDVnVxD5QmuiDMl6+
+X-Gm-Message-State: AOJu0Yy7YP0HEZLbts2BmoEtTccGvvLsYeZx7sOTDIwIWLPHQld7eWQQ
+	NnMrXul7aY/ZUZXgSOH0ijUiNyy6KcjjRoJQ1EKcJdc7KwE6xD6ZfIGJ6d3KzBfskkazKjcI+F7
+	rsauRgWjY1IOrMeU1/u2XDrH5FVs=
+X-Google-Smtp-Source: AGHT+IFPqEU+V1VDRuCLs1LVF3C/KXP2R6B7s5PTM8+z/ve2MiGYbV7HExEQvJFtLMY2yJcfKaeSiA78h2EcS2EpMnE=
+X-Received: by 2002:a17:906:bc90:b0:a6f:f1bc:21ce with SMTP id
+ a640c23a62f3a-a75144f666amr161051366b.47.1719741884561; Sun, 30 Jun 2024
+ 03:04:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <MA0P287MB021730971A804FB760463A39B8D22@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+References: <fdaf2e41bb6a0c5118ff9cc21f4f62583208d885.1718655070.git.dsimic@manjaro.org>
+ <CAKGbVbs8VmCXVOHbhkCYEHNJiKWwy10p0SV9J09h2h7xjs7hUg@mail.gmail.com>
+ <CAKGbVbsM4rCprWdp+aGXE-pvCkb6N7weUyG2z4nXqFpv+y=LrA@mail.gmail.com>
+ <20240618-great-hissing-skink-b7950e@houat> <4813a6885648e5368028cd822e8b2381@manjaro.org>
+ <457ae7654dba38fcd8b50e38a1275461@manjaro.org> <2c072cc4bc800a0c52518fa2476ef9dd@manjaro.org>
+ <CAKGbVbsGm7emEPzGuf0Xn5k22Pbjfg9J9ykJHtvDF3SacfDg6A@mail.gmail.com> <74c69c3bb4498099a195ec890e1a7896@manjaro.org>
+In-Reply-To: <74c69c3bb4498099a195ec890e1a7896@manjaro.org>
+From: Qiang Yu <yuq825@gmail.com>
+Date: Sun, 30 Jun 2024 18:04:31 +0800
+Message-ID: <CAKGbVbvDdLMAS9Z4yDtY2gmaqM9SGgk7z38Kb0EzWX_y42XE3Q@mail.gmail.com>
+Subject: Re: [PATCH] drm/lima: Mark simple_ondemand governor as softdep
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: Maxime Ripard <mripard@kernel.org>, dri-devel@lists.freedesktop.org, 
+	lima@lists.freedesktop.org, maarten.lankhorst@linux.intel.com, 
+	tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
+	linux-kernel@vger.kernel.org, Philip Muller <philm@manjaro.org>, 
+	Oliver Smith <ollieparanoid@postmarketos.org>, Daniel Smith <danct12@disroot.org>, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 30, 2024 at 09:13:33AM +0000, Aditya Garg wrote:
-> > On 30 Jun 2024, at 1:34 PM, Lukas Wunner <lukas@wunner.de> wrote:
-> > On Sun, Jun 30, 2024 at 04:42:55AM +0000, Aditya Garg wrote:
-> > > Based on this patch for GRUB by Andreas Heider <andreas@heider.io>:
-> > > https://lists.gnu.org/archive/html/grub-devel/2013-12/msg00442.html
-> > 
-> > Please include his Signed-off-by and cc him.
-> 
-> Not sure about this since the patch was send to grub and not lkml,
-> and his work has been used without informing him for this patch solely
-> on the basis of GPL.
-> 
-> I've always been confused in signed-off-by in case of authors whose work
-> has been used without their explicit consent just because the license
-> permits it.
-> 
-> Should I still add his signed-off-by?
+Applied to drm-misc-next.
 
-I would.
-
-
-> > > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > > @@ -399,6 +399,8 @@
-> > >                  useful so that a dump capture kernel won't be
-> > >                  shot down by NMI
-> > > 
-> > > +    apple_set_os    [KNL] Report that macOS is being booted to the firmware
-> > > +
-> > 
-> > Why the kernel parameter?  Why not do this unconditionally?
-> 
-> 1. Not all Macs have dual GPU. We don't want to unnecessarily "fool"
-> the firmware in thinking macOS is being booted.
-> 2. apple-gmux is a reverse engineered driver, although upstreamed,
-> not very efficient in switching GPUs. So it's better to make unlocking
-> the GPU optional. + not everyone wants the intel GPU, people are happy
-> working with the dedicated AMD GPU (used by default if apple_set_os
-> isn't enabled).
-
-So my opinion is that these aren't good arguments.  We should be
-identifying as Darwin by default in EFI, just as we've been doing
-in ACPI since 7bc5a2bad0b8.  If there are any adverse effects,
-we should look into them, but users shouldn't be forced to set
-an obscure kernel parameter only to enable certain features of
-their hardware.  It is for this reason that you'll usually get
-Greg KH's trademark "this isn't the 90s anymore" comment when
-adding new kernel parameters.  We need to handle the hardware
-correctly *automatically*.
-
-There is one known issue affecting the keyboard on certain
-MacBook Air models:  Apple had been using dual SPI and USB
-keyboards and trackpads since about 2013 but started to ship
-SPI-only models in 2015 with the MacBook 12".
-
-The models that shipped in the 2013/2014 time frame used USB
-by default and were automatically switched to SPI if apple_set_os
-is invoked.  Not a problem since drivers/input/keyboard/applespi.c
-has been in mainline for a while now, but there are some very
-specific models that lack certain data in the DSDT which the
-applespi.c driver needs:
-
-https://github.com/cb22/macbook12-spi-driver/issues/65
-
-However at this point that shouldn't stop us from making
-apple_set_os the default.  We should rather just try to amend
-the applespi.c driver with a DMI quirk or something.
-That requires someone to test patches, so we need to find
-someone with an affected machine before we can fix it.
-
-But potential issues with 10+ years old hardware shouldn't
-stop us from enabling a feature by default that's useful on
-more recent hardware.  So I'm strongly in favor of getting rid
-of the kernel parameter and then let's work on addressing side
-effects of apple_set_os one by one.
-
-
-> > > +struct apple_set_os_protocol {
-> > > +    u64 version;
-> > > +    efi_status_t (__efiapi *set_os_version) (const char *);
-> > > +    efi_status_t (__efiapi *set_os_vendor) (const char *);
-> > > +    struct {
-> > > +        u32 version;
-> > > +        u32 set_os_version;
-> > > +        u32 set_os_vendor;
-> > > +    } mixed_mode;
-> > > +};
-> > 
-> > How about declaring this __packed, just to be on the safe side?
-> You mean "struct __attribute__((__packed__)) apple_set_os_protocol {" ?
-
-Just add __packed at the end of the declaration.
-See efi_manage_capsule_header in include/linux/efi.h for an example.
-
-I think we haven't been very consistent with __packed declarations.
-The rationale not to use them everywhere is probably that gcc generally
-doesn't insert padding if only 32-bit and 64-bit types are used,
-but that's not guaranteed to be true forever.
-
-
-> > 
-> > Why "mixed_mode"?  Seems like an odd name given "mixed mode"
-> > in EFI context usually means 64-bit OS, but 32-bit EFI.
-> 
-> EFI firmware on T2 Macs doesn't seem to follow the standard EFI specs
-> (expected from Apple). Earlier it claimed to follow EFI 2.0, but we
-> had to force linux to use EFI 1.1 for it. So as far as Apple is
-> concerned, you'll get to see such strange things.
-> 
-> I guess this strange behaviour is because the T2 security chip handles
-> the EFI.
-
-I don't quite follow.  Andreas' grub patch doesn't have this
-"mixed_mode" struct, so where is it (and the name) coming from?
-
-Thanks,
-
-Lukas
+On Wed, Jun 26, 2024 at 2:49=E2=80=AFPM Dragan Simic <dsimic@manjaro.org> w=
+rote:
+>
+> Hello Qiang,
+>
+> On 2024-06-26 03:11, Qiang Yu wrote:
+> > On Wed, Jun 26, 2024 at 2:15=E2=80=AFAM Dragan Simic <dsimic@manjaro.or=
+g>
+> > wrote:
+> >>
+> >> Hello everyone,
+> >>
+> >> Just checking, any further thoughts about this patch?
+> >>
+> > I'm OK with this as a temp workaround because it's simple and do no
+> > harm
+> > even it's not perfect. If no other better suggestion for short term,
+> > I'll submit
+> > this at weekend.
+>
+> Thanks.  Just as you described it, it's far from perfect, but it's still
+> fine until there's a better solution, such as harddeps.  I'll continue
+> my
+> research about the possibility for adding harddeps, which would
+> hopefully
+> replace quite a few instances of the softdep (ab)use.
+>
+> >> On 2024-06-18 21:22, Dragan Simic wrote:
+> >> > On 2024-06-18 12:33, Dragan Simic wrote:
+> >> >> On 2024-06-18 10:13, Maxime Ripard wrote:
+> >> >>> On Tue, Jun 18, 2024 at 04:01:26PM GMT, Qiang Yu wrote:
+> >> >>>> On Tue, Jun 18, 2024 at 12:33=E2=80=AFPM Qiang Yu <yuq825@gmail.c=
+om> wrote:
+> >> >>>> >
+> >> >>>> > I see the problem that initramfs need to build a module depende=
+ncy chain,
+> >> >>>> > but lima does not call any symbol from simpleondemand governor =
+module.
+> >> >>>> > softdep module seems to be optional while our dependency is har=
+d one,
+> >> >>>> > can we just add MODULE_INFO(depends, _depends), or create a new
+> >> >>>> > macro called MODULE_DEPENDS()?
+> >> >>
+> >> >> I had the same thoughts, because softdeps are for optional module
+> >> >> dependencies, while in this case it's a hard dependency.  Though,
+> >> >> I went with adding a softdep, simply because I saw no better option
+> >> >> available.
+> >> >>
+> >> >>>> This doesn't work on my side because depmod generates modules.dep
+> >> >>>> by symbol lookup instead of modinfo section. So softdep may be ou=
+r
+> >> >>>> only
+> >> >>>> choice to add module dependency manually. I can accept the softde=
+p
+> >> >>>> first, then make PM optional later.
+> >> >>
+> >> >> I also thought about making devfreq optional in the Lima driver,
+> >> >> which would make this additional softdep much more appropriate.
+> >> >> Though, I'm not really sure that's a good approach, because not
+> >> >> having working devfreq for Lima might actually cause issues on
+> >> >> some devices, such as increased power consumption.
+> >> >>
+> >> >> In other words, it might be better to have Lima probing fail if
+> >> >> devfreq can't be initialized, rather than having probing succeed
+> >> >> with no working devfreq.  Basically, failed probing is obvious,
+> >> >> while a warning in the kernel log about no devfreq might easily
+> >> >> be overlooked, causing regressions on some devices.
+> >> >>
+> >> >>> It's still super fragile, and depends on the user not changing the
+> >> >>> policy. It should be solved in some other, more robust way.
+> >> >>
+> >> >> I see, but I'm not really sure how to make it more robust?  In
+> >> >> the end, some user can blacklist the simple_ondemand governor
+> >> >> module, and we can't do much about it.
+> >> >>
+> >> >> Introducing harddeps alongside softdeps would make sense from
+> >> >> the design standpoint, but the amount of required changes wouldn't
+> >> >> be trivial at all, on various levels.
+> >> >
+> >> > After further investigation, it seems that the softdeps have
+> >> > already seen a fair amount of abuse for what they actually aren't
+> >> > intended, i.e. resolving hard dependencies.  For example, have
+> >> > a look at the commit d5178578bcd4 (btrfs: directly call into
+> >> > crypto framework for checksumming) [1] and the lines containing
+> >> > MODULE_SOFTDEP() at the very end of fs/btrfs/super.c. [2]
+> >> >
+> >> > If a filesystem driver can rely on the abuse of softdeps, which
+> >> > admittedly are a bit fragile, I think we can follow the same
+> >> > approach, at least for now.
+> >> >
+> >> > With all that in mind, I think that accepting this patch, as well
+> >> > as the related Panfrost patch, [3] should be warranted.  I'd keep
+> >> > investigating the possibility of introducing harddeps in form
+> >> > of MODULE_HARDDEP() and the related support in kmod project,
+> >> > similar to the already existing softdep support, [4] but that
+> >> > will inevitably take a lot of time, both for implementing it
+> >> > and for reaching various Linux distributions, which is another
+> >> > reason why accepting these patches seems reasonable.
+> >> >
+> >> > [1]
+> >> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/c=
+ommit/?id=3Dd5178578bcd4
+> >> > [2]
+> >> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/t=
+ree/fs/btrfs/super.c#n2593
+> >> > [3]
+> >> > https://lore.kernel.org/dri-devel/4e1e00422a14db4e2a80870afb704405da=
+16fd1b.1718655077.git.dsimic@manjaro.org/
+> >> > [4]
+> >> > https://git.kernel.org/pub/scm/utils/kernel/kmod/kmod.git/commit/?id=
+=3D49d8e0b59052999de577ab732b719cfbeb89504d
 
