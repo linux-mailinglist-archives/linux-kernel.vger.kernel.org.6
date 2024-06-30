@@ -1,117 +1,83 @@
-Return-Path: <linux-kernel+bounces-235255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C4C391D251
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 17:27:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8874F91D24A
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 17:09:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD7EFB20995
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 15:27:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34C2B1F21425
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 15:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF634153580;
-	Sun, 30 Jun 2024 15:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="GcCbrExb"
-Received: from out203-205-251-82.mail.qq.com (out203-205-251-82.mail.qq.com [203.205.251.82])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA2B2153BE3;
+	Sun, 30 Jun 2024 15:09:37 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0ABC152536;
-	Sun, 30 Jun 2024 15:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.251.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4126E1527A5;
+	Sun, 30 Jun 2024 15:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719761213; cv=none; b=AkyAUnF5gEHr/vmfLeBUM7ahlwpGpudqAfVznRUTVu88EeAEgClJeUjmzlYCzSSts419Q62M20Ib9jQMdEkzO0xNtPu0yfZrMBVbQL0utL2hbIfTzc4Rh8J7TML8k3ce9fwYa7CJtykp7zkKLWWxIZVhhmFXJX+17GoFR1cYNfA=
+	t=1719760177; cv=none; b=DtiCI8Ltltns8j+O4Gdh8J2ucddej1E7kLnvN2lMVu5/DVQH60+jOYfMIB2xZ+tKTIkDmfMQ4N/D5CVJJG/oB66QtGPnZ+xxTL/jnO3UuBGphnYp+HGjf2t8IBMWUVDx6VrSObkFYKJM3VRnKjGh8PxnMoLyFPZ7wvnlf3h+hIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719761213; c=relaxed/simple;
-	bh=vO1NLBQxNQfA2xpyrK/rc/jpoKmQGGIJOtTb9QALIFo=;
-	h=Message-ID:Date:From:To:cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=snNyBgLwRcl6akSt+s14gCM0n9f9va5/HUwQ0jJh5QFR9FyOcw+4Wd/Avt10m4iAXEhodddY9vqPQyf4xI1oj3C6Uii5zI2OHUgCuEqH47UhmtDexRemBtaqvaaGVEOJMfkVQKXwhzjWucZOjOnpdNQS9guFpi1dGsFhwz7JyCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=GcCbrExb; arc=none smtp.client-ip=203.205.251.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1719760902; bh=lZ3i5L1HLdTTCLMU39/mrQkhmO03fgVVzrbXx5lN1sk=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References;
-	b=GcCbrExbiyLxe/FpoK0j8Rp0VI9RbN79etRgW/XlBCRpSjDiFL9SRdoWiqGQfE4u7
-	 f++YZ0HU0nC5gXnNmn/WbaPTuTT55Gv/k1CGIaUx0mWSzHu131als7CsrbI/OZssm+
-	 +tmxIHVUoFgHqeBcJ4mEMesczdT9dIfkvojfsgTk=
-Received: from LAPTOP-PMPPB61H ([36.129.28.219])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id 210974CF; Sun, 30 Jun 2024 23:08:16 +0800
-X-QQ-mid: xmsmtpt1719760096te8gy3gs2
-Message-ID: <tencent_6866D69439F77A09338872DC0398A84CB908@qq.com>
-X-QQ-XMAILINFO: N2bAIxLK0elnc+9Xe7d2ddVQ9KxnEcqKNXLiYmjhiz5xuush6I9PgckgkgBUKT
-	 tw3JK3gjPwyFA4jP9L00VIh1g+z5JHTzPi5lJcBD60NOsuSz9iy/wzc7QyoY80uvRsOtQAvSQXKm
-	 o3xmxXWZWcmJXkdAYNHjaoApocQe8zXFmEvA0gEJi7b0la7aVpKvk2TOgh2hFv1hCuGtIUlWPqhq
-	 59IhAo5e4+RoLzujf3IdYAICX5JlEDDzOrcr47MhBMzcuS3/ZOTQsPmIm1ltNPmg6FmPAVdYklvt
-	 JhEHUqGEcXXf4I65JS2A+08tEOoUIIe5+yfRir0818kJTEel2R3OQIvFiDPFL2igZY2CKHMX8aw2
-	 qqlMAEp2MsEYh5tkFFzg76XnDqJxngCW7aj1o7Yk/VBUw7fdilhG24mDROEkQAvqgJX6kCIf/CA4
-	 esea8wg/EZZI7dr+lcaduRd7eto3BrLzDHPOvV8+a2Eowlu0E1ci+TdSkjTHoNoH0c2R9/BwP/yo
-	 OpQ7plDI/Zsb++Au5SaV0f4YPTLRCaJG6BNe/kGVSskq1AxTeFR4zqgVC8VtDU1Ecltcgo+ckYQb
-	 f4pfs8Aak5Vp70ARkteKdrvfCBHDBl95ctSiDyroarJ5pwuXsfvW26xsILCsBRHH7PpNc/ySx1Oa
-	 +ttpX3X2HxOIqDE2nTUV+bTrwD8/OGMQgD7Do3jAXVXdowD3WYExSdJ0YAQ9R8eo4KpYUaACNGv0
-	 3VvKyL6jdfedDoor17Vqe/LupGWElQ+jlSwajbwjONkY31OggxIpQf5T3n/SDaqNiz5MCbYsdhGH
-	 HhbFPiox4p516EryjFJzOdA49VaP8QIJsHKUQP4QE5ktn9l2O0MN1xY6j9uj0bDUjLfpcwuqy7hf
-	 d4Q7TdanBXQyOx9YPjoDsvR5sFdOSsWMepNyIjOl4HNjVTgvGxIEIELpBWXftC7B2JvMzB0OOVfh
-	 1RfwGCmgWfy45v+IPuEhNnMB5X1/TixOvPcoYCla6wi6JpSDN/Ok3nPa8B/ZVi9ptAGRIFC3k=
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-Date: Sun, 30 Jun 2024 23:08:17 +0800
-From: Zhou congjie <zcjie0802@qq.com>
-To: Zijun Hu <quic_zijuhu@quicinc.com>, gregkh@linuxfoundation.org, 
-    rafael@kernel.org, akpm@linux-foundation.org, dmitry.torokhov@gmail.com
-cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] kobject_uevent: Fix OOB access within
- zap_modalias_env()
-In-Reply-To: <1716524403-5415-1-git-send-email-quic_zijuhu@quicinc.com>
-X-OQ-MSGID: <77765b34-80c6-6371-06b5-50be2a72e5de@qq.com>
-References: <1716524403-5415-1-git-send-email-quic_zijuhu@quicinc.com>
+	s=arc-20240116; t=1719760177; c=relaxed/simple;
+	bh=xbFID+3ErU08rjSuOkfRzCMODIEU1e5ZIdOh0iUKZ48=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Q+nDRriuzPrz9pR+Xx5Tp9gJz+qjVcBurT84ggYwPCw2WBlYI+P1IhewZ8/wZBZPsG2IhBbugkMdrMqNxY8OXzjPV+A4WFU4PFn24ovet5uys9Sd0ED4/ad8Cpt+VHrFIulnCWmuRac5FxUemgojxSK4Aiz20Pba9sZ2vczvRJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1C6CC32786;
+	Sun, 30 Jun 2024 15:09:36 +0000 (UTC)
+Received: from wens.tw (localhost [127.0.0.1])
+	by wens.tw (Postfix) with ESMTP id 6D2055FADF;
+	Sun, 30 Jun 2024 23:09:34 +0800 (CST)
+From: Chen-Yu Tsai <wens@csie.org>
+To: Jernej Skrabec <jernej.skrabec@gmail.com>, linux-sunxi@lists.linux.dev, 
+ Samuel Holland <samuel@sholland.org>
+Cc: devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, 
+ Jisheng Zhang <jszhang@kernel.org>, linux-riscv@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Andre Przywara <andre.przywara@arm.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor@kernel.org>, linux-kernel@vger.kernel.org, 
+ Heiko Stuebner <heiko@sntech.de>, Palmer Dabbelt <palmer@rivosinc.com>
+In-Reply-To: <20221231233851.24923-11-samuel@sholland.org>
+References: <20221231233851.24923-1-samuel@sholland.org>
+ <20221231233851.24923-11-samuel@sholland.org>
+Subject: Re: (subset) [PATCH v4 10/12] riscv: dts: allwinner: Add
+ ClockworkPi and DevTerm devicetrees
+Message-Id: <171976017441.1183261.11626776990169196800.b4-ty@csie.org>
+Date: Sun, 30 Jun 2024 23:09:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On Fri, 24 May 2024, Zijun Hu wrote:
-
-> Subject: [PATCH] kobject_uevent: Fix OOB access within zap_modalias_env()
-> zap_modalias_env() wrongly calculates size of memory block
-> to move, so maybe cause OOB memory access issue, fixed by
-> correcting size to memmove.
+On Sat, 31 Dec 2022 17:38:49 -0600, Samuel Holland wrote:
+> Clockwork Tech manufactures several SoMs for their RasPi CM3-compatible
+> "ClockworkPi" mainboard. Their R-01 SoM features the Allwinner D1 SoC.
+> The R-01 contains only the CPU, DRAM, and always-on voltage regulation;
+> it does not merit a separate devicetree.
 > 
-> Fixes: 9b3fa47d4a76 ("kobject: fix suppressing modalias in uevents delivered over netlink")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-> ---
->  lib/kobject_uevent.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> The ClockworkPi mainboard features analog audio, a MIPI-DSI panel, USB
+> host and peripheral ports, an Ampak AP6256 WiFi/Bluetooth module, and an
+> X-Powers AXP228 PMIC for managing a Li-ion battery.
 > 
-> diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
-> index 03b427e2707e..f153b4f9d4d9 100644
-> --- a/lib/kobject_uevent.c
-> +++ b/lib/kobject_uevent.c
-> @@ -434,7 +434,7 @@ static void zap_modalias_env(struct kobj_uevent_env *env)
->  
->  		if (i != env->envp_idx - 1) {
->  			memmove(env->envp[i], env->envp[i + 1],
-> -				env->buflen - len);
-> +				env->buf + env->buflen - env->envp[i + 1]);
->  
->  			for (j = i; j < env->envp_idx - 1; j++)
->  				env->envp[j] = env->envp[j + 1] - len;
-> 
+> [...]
 
-I notice it too.
+Applied to sunxi/dt-for-6.11 in sunxi/linux.git, thanks!
 
-In the debug, I find that length of "env->buflen - len" is definitely 
-larger than  "env->buf + env->buflen - env->envp[i+1". So memmove() just 
-copy some extra '\0', and the problem will not happen when the length of 
-env variables is much smaller than 2048. That is why the problem is 
-difficult to be observed.
+[10/12] riscv: dts: allwinner: Add ClockworkPi and DevTerm devicetrees
+        https://git.kernel.org/sunxi/linux/c/0ce1d34678e5
 
-But when the length of env variables is close to 2048 or even more than 
-2048, the memmove will access the memory not belong to env->buf[2048]. 
+Best regards,
+-- 
+Chen-Yu Tsai <wens@csie.org>
 
 
