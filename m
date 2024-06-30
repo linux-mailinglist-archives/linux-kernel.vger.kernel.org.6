@@ -1,108 +1,276 @@
-Return-Path: <linux-kernel+bounces-235175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C0C591D115
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 12:24:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB59091D11A
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 12:26:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B39AF1F210A6
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 10:23:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE241B20F7E
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 10:26:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B814313664C;
-	Sun, 30 Jun 2024 10:23:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D15136E21;
+	Sun, 30 Jun 2024 10:25:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gD97672E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QAnlfGOA"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0319E39AF4;
-	Sun, 30 Jun 2024 10:23:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E2E12F5B3;
+	Sun, 30 Jun 2024 10:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719743033; cv=none; b=WLvEYwUtsqRbcyyjhimob0Zy+B98XH1y85l/iLvwYrpTb9buAMil/XEvdX/2+bK1hepGDQ5qk0jjQV28v7f66hpXe4hzcUUQ/Y0I5zzafKee2LsQzAFncIQm3ZEhwxNrnj09MYU7JzNK90anC9TQSYry26eu9sKAH4X3Pub5oU8=
+	t=1719743153; cv=none; b=DRuQeUNGRiPaxJvBLyUDQ2XKvEw1s0Hcoep9y4POF4JecRKQNthoopt5xwUkobakwFIngRghcxUzM5Yo5hxiSKqOJmxi0GykUKZ+d2JkUzcyh2zgpDrn8b12x3ucHM2qu91BkQgwi8JLpk7HmS6HfRMt3EIuU38RD0FxDdxi5Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719743033; c=relaxed/simple;
-	bh=y0ejgBJ3UauYVz+T8z0rRMKFb8zGfTiA1i0ks44YuiM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MJfZUEoDW26bjOjuCMHaSF0picM9IP2C8RhhG+oDOqhBxONlYIckQP7Ajrdv788x7sMvgyn0IX6wR09rQ9nL3t6D9KjfbqP9F5hycdZuQM3VUkPNSlIXcTfLf7017kR4rASAOyJaRTNEVJQ82cwzHDyTlDc5ttuZS6HiqeOC6LU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gD97672E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C66EAC2BD10;
-	Sun, 30 Jun 2024 10:23:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719743032;
-	bh=y0ejgBJ3UauYVz+T8z0rRMKFb8zGfTiA1i0ks44YuiM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=gD97672EZWlc83vEUhas5eexxBYFsAfDTg3KBSG5TtW2D59ov5GBJtMtmz3wZs32l
-	 8EyfXEGIx+dEvJUYWpMn2GAsljVoRTVU3lUuIZss0qMBOHBg2XostBIyra5eMHWzzP
-	 yJtFG5D1AaCDhXUtcTk3ejOa6g/ORa7KdWNKHUkUqk6D9OZKLJn5DviAWnH5XWV4cI
-	 9QLXWsOTONQ+kJtbXXM2ghJcoMlibzcKuF+m2yBARx4xQvW1uC/KozuBtBSDUZwOuh
-	 yvMXKy27a8Hbac2JOPHPGFl7nfVgZ2or4lLQkrZI3HnL8QqmBlAXNf7ycqZMqKbg/4
-	 TxjsYoBjjDmlw==
-Date: Sun, 30 Jun 2024 11:23:42 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: lars@metafoo.de, petre.rodan@subdimension.ro, mazziesaccount@gmail.com,
- ak@it-klinger.de, ang.iglesiasg@gmail.com, linus.walleij@linaro.org,
- tgamblin@baylibre.com, ajarizzo@gmail.com, phil@raspberrypi.com,
- 579lpy@gmail.com, andriy.shevchenko@linux.intel.com,
- semen.protsenko@linaro.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 0/3] iio: pressure: bmp280: Minor cleanup and
- triggered
-Message-ID: <20240630112342.4ab1f021@jic23-huawei>
-In-Reply-To: <20240628171726.124852-1-vassilisamir@gmail.com>
-References: <20240628171726.124852-1-vassilisamir@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719743153; c=relaxed/simple;
+	bh=ERNPoMgab7edYwcAV401eBGZI79v7WllDbPw4mzHZKg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZwkOYf367s1n6pVGLSkNTlL8E32JVn3Uqkr6P8L7+6YJAaJgIXYFjQiIWayKJUiVuc2JhhPaRfTJl2chZSAGQfRX1jm6SoI5cvWy63TJc/JxhSbRnLW01QDaM4mjrMz8utllsjpd9NhuNKWKuZrwxVG/s8m1FNsCP1i+slCGaSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QAnlfGOA; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45U99xFY024734;
+	Sun, 30 Jun 2024 10:25:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=IS91P518NB5qx+yzIfVqp6xy
+	OjGVz8XGtBbP53L1sPA=; b=QAnlfGOAHD/YsDigWoIXIxXTbsULhQbUQ2ES6BmU
+	t7z03VOg0dYHb3hXYAxGpD4lz+UCUcV0Q7es1Eq7tB3vxDqEEgI7G1+VthoXFlZu
+	SCv6UvU0YZ1XQpnpu6zbKw2+Sc2Lgj2YMHknsRSKZpFIcX7xkJ1sclrVivv+glTj
+	pXo9OKh39xcPOtDjsTiaBT58kF7qiI2oIZOy1p2EvtX3o2k1T2ksY0bN1UXCebuw
+	fWfXqPoJC1ltKHljotwBpU8cgKruFSvT3ujbT8D+JmDft5fxFd9P8mYFsjGQ55tP
+	lwDd0z6t5NnRXLC/KzzBYn1s+3p1FwtxlM9saQFcZfi3fg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40297rj0k3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 30 Jun 2024 10:25:33 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45UAPXMa006638
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 30 Jun 2024 10:25:33 GMT
+Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sun, 30 Jun 2024 03:25:28 -0700
+Date: Sun, 30 Jun 2024 15:55:24 +0530
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Abhinav
+ Kumar" <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        David Airlie <airlied@gmail.com>, "Daniel
+ Vetter" <daniel@ffwll.ch>,
+        Bjorn Andersson <andersson@kernel.org>, Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v4 1/5] drm/msm/adreno: Implement SMEM-based speed bin
+Message-ID: <20240630102524.talnb3qx5jfmcj5y@hu-akhilpo-hyd.qualcomm.com>
+References: <20240625-topic-smem_speedbin-v4-0-f6f8493ab814@linaro.org>
+ <20240625-topic-smem_speedbin-v4-1-f6f8493ab814@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240625-topic-smem_speedbin-v4-1-f6f8493ab814@linaro.org>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: JHFAsILtmM6qFXL-TQKZpY7-lT_q8149
+X-Proofpoint-GUID: JHFAsILtmM6qFXL-TQKZpY7-lT_q8149
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-30_08,2024-06-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
+ lowpriorityscore=0 clxscore=1015 mlxscore=0 suspectscore=0 spamscore=0
+ adultscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406300082
 
-On Fri, 28 Jun 2024 19:17:23 +0200
-Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+On Tue, Jun 25, 2024 at 08:28:06PM +0200, Konrad Dybcio wrote:
+> On recent (SM8550+) Snapdragon platforms, the GPU speed bin data is
+> abstracted through SMEM, instead of being directly available in a fuse.
+> 
+> Add support for SMEM-based speed binning, which includes getting
+> "feature code" and "product code" from said source and parsing them
+> to form something that lets us match OPPs against.
+> 
+> Due to the product code being ignored in the context of Adreno on
+> production parts (as of SM8650), hardcode it to SOCINFO_PC_UNKNOWN.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
+>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c      |  8 +++---
+>  drivers/gpu/drm/msm/adreno/adreno_device.c |  2 ++
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.c    | 41 +++++++++++++++++++++++++++---
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.h    |  7 ++++-
+>  4 files changed, 50 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> index c98cdb1e9326..8ace096bb68c 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> @@ -2124,13 +2124,15 @@ static u32 fuse_to_supp_hw(const struct adreno_info *info, u32 fuse)
+>  	return UINT_MAX;
+>  }
+>  
+> -static int a6xx_set_supported_hw(struct device *dev, const struct adreno_info *info)
+> +static int a6xx_set_supported_hw(struct adreno_gpu *adreno_gpu,
+> +				 struct device *dev,
+> +				 const struct adreno_info *info)
+>  {
+>  	u32 supp_hw;
+>  	u32 speedbin;
+>  	int ret;
+>  
+> -	ret = adreno_read_speedbin(dev, &speedbin);
+> +	ret = adreno_read_speedbin(adreno_gpu, dev, &speedbin);
+>  	/*
+>  	 * -ENOENT means that the platform doesn't support speedbin which is
+>  	 * fine
+> @@ -2290,7 +2292,7 @@ struct msm_gpu *a6xx_gpu_init(struct drm_device *dev)
+>  
+>  	a6xx_llc_slices_init(pdev, a6xx_gpu, is_a7xx);
+>  
+> -	ret = a6xx_set_supported_hw(&pdev->dev, config->info);
+> +	ret = a6xx_set_supported_hw(adreno_gpu, &pdev->dev, config->info);
+>  	if (ret) {
+>  		a6xx_llc_slices_destroy(a6xx_gpu);
+>  		kfree(a6xx_gpu);
+> diff --git a/drivers/gpu/drm/msm/adreno/adreno_device.c b/drivers/gpu/drm/msm/adreno/adreno_device.c
+> index 1e789ff6945e..e514346088f9 100644
+> --- a/drivers/gpu/drm/msm/adreno/adreno_device.c
+> +++ b/drivers/gpu/drm/msm/adreno/adreno_device.c
+> @@ -6,6 +6,8 @@
+>   * Copyright (c) 2014,2017 The Linux Foundation. All rights reserved.
+>   */
+>  
+> +#include <linux/soc/qcom/socinfo.h>
+> +
+>  #include "adreno_gpu.h"
+>  
+>  bool hang_debug = false;
+> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> index 1c6626747b98..6ffd02f38499 100644
+> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> @@ -21,6 +21,9 @@
+>  #include "msm_gem.h"
+>  #include "msm_mmu.h"
+>  
+> +#include <linux/soc/qcom/smem.h>
+> +#include <linux/soc/qcom/socinfo.h>
+> +
+>  static u64 address_space_size = 0;
+>  MODULE_PARM_DESC(address_space_size, "Override for size of processes private GPU address space");
+>  module_param(address_space_size, ullong, 0600);
+> @@ -1061,9 +1064,39 @@ void adreno_gpu_ocmem_cleanup(struct adreno_ocmem *adreno_ocmem)
+>  			   adreno_ocmem->hdl);
+>  }
+>  
+> -int adreno_read_speedbin(struct device *dev, u32 *speedbin)
+> +int adreno_read_speedbin(struct adreno_gpu *adreno_gpu,
+> +			 struct device *dev, u32 *fuse)
+>  {
+> -	return nvmem_cell_read_variable_le_u32(dev, "speed_bin", speedbin);
+> +	u32 fcode;
+> +	int ret;
+> +
+> +	/*
+> +	 * Try reading the speedbin via a nvmem cell first
+> +	 * -ENOENT means "no nvmem-cells" and essentially means "old DT" or
+> +	 * "nvmem fuse is irrelevant", simply assume it's fine.
+> +	 */
+> +	ret = nvmem_cell_read_variable_le_u32(dev, "speed_bin", fuse);
+> +	if (!ret)
+> +		return 0;
+> +	else if (ret != -ENOENT)
+> +		return dev_err_probe(dev, ret, "Couldn't read the speed bin fuse value\n");
+> +
+> +#ifdef CONFIG_QCOM_SMEM
+> +	/*
+> +	 * Only check the feature code - the product code only matters for
+> +	 * proto SoCs unavailable outside Qualcomm labs, as far as GPU bin
+> +	 * matching is concerned.
+> +	 *
+> +	 * Ignore EOPNOTSUPP, as not all SoCs expose this info through SMEM.
+> +	 */
+> +	ret = qcom_smem_get_feature_code(&fcode);
+> +	if (!ret)
+> +		*fuse = ADRENO_SKU_ID(fcode);
+> +	else if (ret != -EOPNOTSUPP)
+> +		return dev_err_probe(dev, ret, "Couldn't get feature code from SMEM\n");
+> +#endif
+> +
+> +	return 0;
+>  }
+>  
+>  int adreno_gpu_init(struct drm_device *drm, struct platform_device *pdev,
+> @@ -1102,9 +1135,9 @@ int adreno_gpu_init(struct drm_device *drm, struct platform_device *pdev,
+>  			devm_pm_opp_set_clkname(dev, "core");
+>  	}
+>  
+> -	if (adreno_read_speedbin(dev, &speedbin) || !speedbin)
+> +	if (adreno_read_speedbin(adreno_gpu, dev, &speedbin) || !speedbin)
+>  		speedbin = 0xffff;
+> -	adreno_gpu->speedbin = (uint16_t) (0xffff & speedbin);
+> +	adreno_gpu->speedbin = speedbin;
 
-> Changes in v9:
-> 
-> Patch 1/3:
-> 	- In bmp580_temp_coeffs, instead of *1000/2^16, now we have *125/2^13
-> 	  to avoid overflows, as it was proposed.
-> 	- Type casting to (s64) to temperature read in the read_raw_impl
-> 	  function was removed as well as it is no longer needed.
-> 
-> Patch 3/3:
-> 	- Renamed "buffer_handler" to "trigger_handler" to keep consistency
-> 	  with the rest of the drivers.
-> 	- Added new iio_channel_spec for bmp580 in order to use IIO_LE and
-> 	  real_bits = 24.
-> 
-> v8: https://lore.kernel.org/linux-iio/20240617230540.32325-1-vassilisamir@gmail.com/
+This value is exposed to userspace via MSM_PARAM_CHIP_ID. 16 bits are
+reserved for speedbin, so we should ensure somewhere that we don't
+accidently use more than that.
 
-This seems fine to me now, but I'd like a final 'we didn't break anything' from
-Adam before i pick it up.  Once bitten, twice shy and all that ;)
+Also, what is the the max value of fcode? I think we should leave some
+space for pcode too. We never know for sure if that won't be required in
+future.
 
-J
+-Akhil
 
+>  
+>  	gpu_name = devm_kasprintf(dev, GFP_KERNEL, "%"ADRENO_CHIPID_FMT,
+>  			ADRENO_CHIPID_ARGS(config->chip_id));
+> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> index cff8ce541d2c..563c08b44624 100644
+> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> @@ -79,6 +79,10 @@ struct adreno_reglist {
+>  
+>  struct adreno_speedbin {
+>  	uint16_t fuse;
+> +/* As of SM8650, PCODE on production SoCs is meaningless wrt the GPU bin */
+> +#define ADRENO_SKU_ID_FCODE		GENMASK(15, 0)
+> +#define ADRENO_SKU_ID(fcode)	(fcode)
 
+> +
+>  	uint16_t speedbin;
+>  };
+>  
+> @@ -545,7 +549,8 @@ int adreno_fault_handler(struct msm_gpu *gpu, unsigned long iova, int flags,
+>  			 struct adreno_smmu_fault_info *info, const char *block,
+>  			 u32 scratch[4]);
+>  
+> -int adreno_read_speedbin(struct device *dev, u32 *speedbin);
+> +int adreno_read_speedbin(struct adreno_gpu *adreno_gpu,
+> +			 struct device *dev, u32 *speedbin);
+>  
+>  /*
+>   * For a5xx and a6xx targets load the zap shader that is used to pull the GPU
 > 
-> Vasileios Amoiridis (3):
->   iio: pressure: bmp280: Generalize read_*() functions
->   iio: pressure: bmp280: Add SCALE, RAW values in channels and
->     refactorize them
->   iio: pressure: bmp280: Add triggered buffer support
+> -- 
+> 2.45.2
 > 
->  drivers/iio/pressure/Kconfig       |   2 +
->  drivers/iio/pressure/bmp280-core.c | 643 +++++++++++++++++++++++++----
->  drivers/iio/pressure/bmp280-spi.c  |   8 +-
->  drivers/iio/pressure/bmp280.h      |  34 +-
->  4 files changed, 589 insertions(+), 98 deletions(-)
-> 
-> 
-> base-commit: 3341d69268accb5294b569ec37e55212a8a28ac5
-
 
