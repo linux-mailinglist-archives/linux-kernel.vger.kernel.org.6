@@ -1,117 +1,250 @@
-Return-Path: <linux-kernel+bounces-235240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53BF091D1FE
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 16:13:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4641D91D202
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 16:17:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2717B20D1D
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 14:12:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C806F1F21067
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 14:17:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1588914D2AC;
-	Sun, 30 Jun 2024 14:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2743F15219E;
+	Sun, 30 Jun 2024 14:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="zUJnp7rB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ff/aOzUb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A2A1474B4
-	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 14:12:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AEAC2772A;
+	Sun, 30 Jun 2024 14:17:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719756772; cv=none; b=crrppsWCd7vIRr7N5bHbvYCi1URvMman3nB/X+VF4aAOzwEo26LNQuxwKztwveHh2UasJO918qRuZZJc6OxIe2sXQjZkdKk088IjJtFv4N1JBh2kXqCI2yAvrCN+qBPZm12uxTIiJ1/Y13osi3OHd85y1dItmYXhx7MNnAbxLJo=
+	t=1719757036; cv=none; b=Bhepn5gVjB3YBbFZ/AfNKQB7eakebdZ1/i8zUyPLQdwP0MHARo2GhlQI7Gmzy9lTV5HLPukbWgqCtw2x7QDLB8j/MM3GhL8ql7wujIbpNOt5Aa3sDVsTC/nUiEUlvaHdpjGZtt3QCSG/6k2ebGAfruMQnSvKnOIZIg9r5mdFxLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719756772; c=relaxed/simple;
-	bh=KI/zhPaBRnnC7OM39K5ZZDR+faQvjDPOyPmyOyUwh8k=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=l/Fl3uNgRpplSqGbSb6TTAnNvCns7Jp9U3+lm8k7HyZ2ryws9hE7Bb4TkQ9togY++O/sMSGtnsFXMeiAgbSLH4VPIebY0J49im44F1vAYe2cD9iZJusdh0tVd4C2GIPKe4NGzzfEgHxyTfRC0xQzjgEBF/CtRTahrm/09zKG7/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=zUJnp7rB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A10DC2BD10;
-	Sun, 30 Jun 2024 14:12:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1719756772;
-	bh=KI/zhPaBRnnC7OM39K5ZZDR+faQvjDPOyPmyOyUwh8k=;
-	h=Date:From:To:Cc:Subject:From;
-	b=zUJnp7rBusgMC7x9/wSeXiWX5guCx/azU7NtQgYJBvvqDrKTFZbjR+sKZD1PS5XrP
-	 KBEDxUNobsjDzwxlh3LxvyMWtPnfzx5aqHTKh96N2bfKgpZc90+aSVcf9Vp+vwj8+r
-	 uLuXcyo8PErt74J7JeKLxou2CIwei1a0bvQcxjK0=
-Date: Sun, 30 Jun 2024 16:12:45 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Char/Misc driver fixes for 6.10-rc6
-Message-ID: <ZoFn3eQvziKriKTG@kroah.com>
+	s=arc-20240116; t=1719757036; c=relaxed/simple;
+	bh=OeWxeK/hAq3F4XgmyMlEfI6ENOAQhsAVS+UmRnEu2Nc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p11UMGm4p5322w2Pc9A5rvj7GGUA0JVlo4f+3A7DUUC6hNxLibpKCfxuOVqBEylDkKe+xOpO1VTEXo6iD2HRbwsSuGDp+XuUl9pX9N9lUnNAWKPpOB/vQ0Aqfsz4QB3c0IWfH62hxC9F8lJpszqQ0RIGNj5k52+5ow5DaDiz5gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ff/aOzUb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 041B0C2BD10;
+	Sun, 30 Jun 2024 14:17:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719757036;
+	bh=OeWxeK/hAq3F4XgmyMlEfI6ENOAQhsAVS+UmRnEu2Nc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ff/aOzUbI30EZmVRrbvhaDGnR9o5VV861hQnrRQIDmcvLywHaYyqq33V3lu3ZpS5v
+	 uv2sUS8BMBtkJ003PIdCy/O1/qkY1H7EqR4aWX3ITPrVuMAIZ72VbQW/KO7c01KA+9
+	 FvVUEBZhBeZq4KLDzTDjRUf2dAwVm+luTOijGf0ZXD7rU0Qs3ta/oLHTR2WbhGVLog
+	 nNnrV/ZKUuDhCI/lcLxHmcTu9K6XdaUjDSfvlAN6/jhXwoHjS6LcbHPjrKnqwjBz+W
+	 3KM9y3tyozQ6Lqat32EctqoY1jrKXccke5ADC0AQhweH3lQRLwY9NwcY/ZCCevHbVt
+	 TiuzKB4x8VqjA==
+Date: Sun, 30 Jun 2024 15:17:10 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Hironori KIKUCHI <kikuchan98@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Jagan Teki <jagan@amarulasolutions.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Sam Ravnborg <sam@ravnborg.org>, David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: display: st7701: Add Anbernic RG28XX
+ panel
+Message-ID: <20240630-babied-grill-13c840abb70a@spud>
+References: <20240628051019.975172-1-kikuchan98@gmail.com>
+ <20240628051019.975172-2-kikuchan98@gmail.com>
+ <20240628-splashy-slug-1d74e3fd9fe6@spud>
+ <CAG40kxERY2r2cj58kjVMMg1JVOChRKraKYFo_K5C5fnx0g80Qw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="x1OfUyRHDxZE9NVr"
 Content-Disposition: inline
+In-Reply-To: <CAG40kxERY2r2cj58kjVMMg1JVOChRKraKYFo_K5C5fnx0g80Qw@mail.gmail.com>
 
-The following changes since commit 6ba59ff4227927d3a8530fc2973b80e94b54d58f:
 
-  Linux 6.10-rc4 (2024-06-16 13:40:16 -0700)
+--x1OfUyRHDxZE9NVr
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-are available in the Git repository at:
+On Sat, Jun 29, 2024 at 05:26:56PM +0900, Hironori KIKUCHI wrote:
+> Hello Conor,
+>=20
+> Thank you for your reply.
+>=20
+> On Sat, Jun 29, 2024 at 1:27=E2=80=AFAM Conor Dooley <conor@kernel.org> w=
+rote:
+> >
+> > On Fri, Jun 28, 2024 at 02:10:15PM +0900, Hironori KIKUCHI wrote:
+> > > The RG28XX panel is a display panel of the Anbernic RG28XX, a handheld
+> > > gaming device from Anbernic. It is 2.8 inches in size (diagonally) wi=
+th
+> > > a resolution of 480x640.
+> > >
+> > > This panel is driven by a variant of the ST7701 driver IC internally,
+> > > confirmed by dumping and analyzing its BSP initialization sequence
+> > > by using a logic analyzer. It is very similar to the existing
+> > > densitron,dmt028vghmcmi-1a panel, but differs in some unknown
+> > > register values, so add a new entry for the panel to distinguish them.
+> > >
+> > > Additionally, the panel is connected via SPI instead of MIPI DSI.
+> > > So add and modify for SPI as well.
+> > >
+> > > Signed-off-by: Hironori KIKUCHI <kikuchan98@gmail.com>
+> > > ---
+> > >  .../display/panel/sitronix,st7701.yaml        | 69 +++++++++++++++++=
+--
+> > >  1 file changed, 64 insertions(+), 5 deletions(-)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/display/panel/sitronix=
+,st7701.yaml b/Documentation/devicetree/bindings/display/panel/sitronix,st7=
+701.yaml
+> > > index b348f5bf0a9..835ea436531 100644
+> > > --- a/Documentation/devicetree/bindings/display/panel/sitronix,st7701=
+=2Eyaml
+> > > +++ b/Documentation/devicetree/bindings/display/panel/sitronix,st7701=
+=2Eyaml
+> > > @@ -20,21 +20,19 @@ description: |
+> > >    Densitron DMT028VGHMCMI-1A is 480x640, 2-lane MIPI DSI LCD panel
+> > >    which has built-in ST7701 chip.
+> > >
+> > > -allOf:
+> > > -  - $ref: panel-common.yaml#
+> > > -
+> > >  properties:
+> > >    compatible:
+> > >      items:
+> > >        - enum:
+> > >            - anbernic,rg-arc-panel
+> > > +          - anbernic,rg28xx-panel
+> >
+> > Please no wildcards in compatibles - what is the actual model of this
+> > panel? I don't really want to see the model of the handheld here if
+> > possible.
+>=20
+> Well, the "RG28XX" is the actual product name of the device...
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git tags/char-misc-6.10-rc6
+Ah, I see. I didn't realise that.
 
-for you to fetch changes up to 06ebbce9c3a84e5632fa3cd0864ce07093793e32:
+> Besides, there is no vendor name or model name on the panel; there is
+> no information at all.
+> Since the panel cannot be disassembled from the housing of the device,
+> I named it like this.
+>=20
+> >
+> > >            - densitron,dmt028vghmcmi-1a
+> > >            - elida,kd50t048a
+> > >            - techstar,ts8550b
+> > >        - const: sitronix,st7701
+> > >
+> > >    reg:
+> > > -    description: DSI virtual channel used by that screen
+> > > +    description: DSI / SPI channel used by that screen
+> > >      maxItems: 1
+> > >
+> > >    VCC-supply:
+> > > @@ -43,6 +41,13 @@ properties:
+> > >    IOVCC-supply:
+> > >      description: I/O system regulator
+> > >
+> > > +  dc-gpios:
+> > > +    maxItems: 1
+> > > +    description:
+> > > +      Controller data/command selection (D/CX) in 4-line SPI mode.
+> > > +      If not set, the controller is in 3-line SPI mode.
+> > > +      Disallowed for DSI.
+> > > +
+> > >    port: true
+> > >    reset-gpios: true
+> > >    rotation: true
+> > > @@ -57,7 +62,38 @@ required:
+> > >    - port
+> > >    - reset-gpios
+> > >
+> > > -additionalProperties: false
+> > > +allOf:
+> > > +  - $ref: panel-common.yaml#
+> > > +  - if:
+> > > +      properties:
+> > > +        compatible:
+> > > +          contains:
+> > > +            # SPI connected panels
+> > > +            enum:
+> > > +              - anbernic,rg28xx-panel
+> > > +    then:
+> > > +      $ref: /schemas/spi/spi-peripheral-props.yaml
+> >
+> > I'm not really keen on this. I'd rather see a different binding for the
+> > SPI version compared to the MIPI ones. Is doing things like this common
+> > for panels? If it is, I'll turn a blind eye..
+>=20
+> This might be the first case that a driver supports both DSI and SPI
+> for a panel.
+> The panel can be either a DSI device or an SPI device.
 
-  Merge tag 'counter-fixes-for-6.10' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/wbg/counter into char-misc-linus (2024-06-24 12:59:56 +0200)
+The commit message sounded like the panel was capable of doing SPI
+instead of DSI, is that not the case and the panel is actually capable
+of doing both, just happens to be connected as SPI in this particular
+device?
 
-----------------------------------------------------------------
-Char/Misc driver fixes for 6.10-rc6
+> I'm not sure if this is the right way to represent it in the documentatio=
+n...
+>=20
+> >
+> > > +
+> > > +  - if:
+> > > +      properties:
+> > > +        compatible:
+> > > +          not:
+> > > +            contains:
+> > > +              # DSI or SPI without D/CX pin
+> > > +              enum:
+> > > +                - anbernic,rg-arc-panel
+> > > +                - anbernic,rg28xx-panel
+> > > +                - densitron,dmt028vghmcmi-1a
+> > > +                - elida,kd50t048a
+> > > +                - techstar,ts8550b
+> >
+> > This is all the compatibles in the file, so nothing is allowed to use
+> > dc-gpios? Why bother adding it?
+>=20
+> There are 3 types of connections that the driver supports: DSI, SPI
+> with D/CX pin, and SPI without D/CX pin.
+> Although most SPI panels don't have a D/CX pin, theoretically "SPI
+> with D/CX pin" exists.
+> So, it's just prepared for that.
+>=20
+> IMHO, once it's found, the list should be negated. List panels for SPI
+> with D/CX pin, instead.
 
-Here are some small driver fixes for 6.10-rc6.  Included in here are:
-  - IIO driver fixes for reported issues
-  - Counter driver fix for a reported problem.
+To be honest, I'd just delete this complication until something arrives
+that actually uses that pin.
 
-All of these have been in linux-next this week with no reported issues
+Cheers,
+Conor.
 
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+--x1OfUyRHDxZE9NVr
+Content-Type: application/pgp-signature; name="signature.asc"
 
-----------------------------------------------------------------
-Alexander Sverdlin (1):
-      iio: accel: fxls8962af: select IIO_BUFFER & IIO_KFIFO_BUF
+-----BEGIN PGP SIGNATURE-----
 
-David Lechner (1):
-      counter: ti-eqep: enable clock at probe
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoFo5gAKCRB4tDGHoIJi
+0qshAQDKaLumFOWuN4jrXjbK4gsVoAH2fcl1soFQO6NFzf5UwAD/clQeMvJj+YfN
+Da1uAHKzY0HmeY5HiUmeSFDTZ4GsZgI=
+=rtsx
+-----END PGP SIGNATURE-----
 
-Dimitri Fedrau (1):
-      iio: humidity: hdc3020: fix hysteresis representation
-
-Fernando Yang (1):
-      iio: adc: ad7266: Fix variable checking bug
-
-Greg Kroah-Hartman (2):
-      Merge tag 'iio-fixes-for-6.10b' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/jic23/iio into char-misc-linus
-      Merge tag 'counter-fixes-for-6.10' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/wbg/counter into char-misc-linus
-
-Ke Sun (1):
-      iio: dac: fix ad9739a random config compile error
-
-Sean Anderson (1):
-      iio: xilinx-ams: Don't include ams_ctrl_channels in scan_mask
-
-Vasileios Amoiridis (4):
-      iio: chemical: bme680: Fix pressure value output
-      iio: chemical: bme680: Fix calibration data variable
-      iio: chemical: bme680: Fix overflows in compensate() functions
-      iio: chemical: bme680: Fix sensor data read operation
-
- drivers/counter/ti-eqep.c          |   6 +
- drivers/iio/accel/Kconfig          |   2 +
- drivers/iio/adc/ad7266.c           |   2 +
- drivers/iio/adc/xilinx-ams.c       |   8 +-
- drivers/iio/chemical/bme680.h      |   2 +
- drivers/iio/chemical/bme680_core.c |  62 ++++++-
- drivers/iio/dac/Kconfig            |   2 +-
- drivers/iio/humidity/hdc3020.c     | 323 ++++++++++++++++++++++++++++---------
- 8 files changed, 321 insertions(+), 86 deletions(-)
+--x1OfUyRHDxZE9NVr--
 
