@@ -1,70 +1,76 @@
-Return-Path: <linux-kernel+bounces-235399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BAF691D49B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 00:40:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EA1391D49C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 00:41:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45A3C281421
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 22:40:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0E3D1C20C3F
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 22:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA14415FA90;
-	Sun, 30 Jun 2024 22:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CB9154BFE;
+	Sun, 30 Jun 2024 22:33:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="uqdB3qe5"
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="ypXXEvTv"
 Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029F2152E05
-	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 22:32:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0277152E05
+	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 22:33:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719786775; cv=none; b=TgRmCFfu4S1mig/zBTfCpBFT+Ertp1vfIJBEzprF3c8pGdjZg9wYOVB0OBXqOY0q/XbXeGfWL5Aj1gz41T+Ag01feaXjn8RqaoFKIU3GSREA0U3AQttfQpbVxSLwhwKYJcKz+UdQZKQpZot52YNnBMUIRPT9vEcKwcNkahAjzcI=
+	t=1719786782; cv=none; b=agWma5l2PxKc4i6XlfGHILtOsK7DrsRp+ep1+vKp3fioMM6ocd7X7krpDXGkYI1mRgoUdvqMFEWjs92WmvOs+T8mqMTruN0/KygqIh8baMRQw72UxW8AtOG3G6tjqqJ0hFRWt6pTIeVqLdW3nWW/btnBrOMyC2Mmwwu8pmgP8vU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719786775; c=relaxed/simple;
-	bh=KdKXZB0z/guBxicLlk/q6so368Vo18UU3FWu9nn+quc=;
+	s=arc-20240116; t=1719786782; c=relaxed/simple;
+	bh=kRpExk4x9tfl9h4cWwV0YGuS1KGOXqj2NqEFnkOTHJo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uV1iIwsiMqkumQ2VHxzKZjfEzlaP4tqiIG2RmRtaAxybN2xHjGbXfBE9+iDKm/DFiWNQ7pasxep+IFzBxOxotGP+aCnfsytGRxTchpiZQPRMdl5NKH/JSiqBRJ2oVyzH9nU0u4rZECa+NwTlFsoeu3KZR1yjLsktDkZVTXT0dro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=uqdB3qe5; arc=none smtp.client-ip=199.89.1.12
+	 MIME-Version; b=q1Fl3UdUvd5J4cBKKy/bxovOuylEkhWx8jaxQaQRcPfh9OTFiVYYXKXy94ttjJISSwN7O0inhofsYK3P2RlMH+rG65sMb9u4U3K/9px9fkf/Fg5ecMdi9hckbKbfjM6mSQ59SH/8Gr0hFGlLQuVjyNygMi6RqR0RYIzcT1v3OSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=ypXXEvTv; arc=none smtp.client-ip=199.89.1.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
 Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4WC3pY5FlPzll9fH;
-	Sun, 30 Jun 2024 22:32:53 +0000 (UTC)
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4WC3ph3HTxzll9fS;
+	Sun, 30 Jun 2024 22:33:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
 	content-transfer-encoding:mime-version:references:in-reply-to
 	:x-mailer:message-id:date:date:subject:subject:from:from
-	:received:received; s=mr01; t=1719786772; x=1722378773; bh=8IK+B
-	TaSdZkQ3BhysHIJwNCbPfP6WrIPCnh9smlGuRU=; b=uqdB3qe5+vgZmLWP6PKtJ
-	r3kg+DHPfPrKfF4gFkyL/FTEGyQibJVaHOORHo8d4ShryaRBF15pTCfeUZzMd4/d
-	JnVR8XAL1X0qqUFv1JYZHlBnoNXEipBd9PVlMiFBS39TUbm233JmXrhz86fKNSNU
-	gvREjUpW5DHh4r7yv6p0719x120KdV3FeZnKCVWuY/VIUFJwg8oa0DvURcP/g1HZ
-	2JVx1jJmX9+rq8VsaHM79wbVS9t/ZO5ACQQRrqE4E4n9sWuGmJOnMCcsnWR3reSK
-	IO9Gez3bf4hFD+6lIDqh5iXtsJX/Gq4O8FZLvKvW5VYPY6MCAndqMn5iVAzRwZof
-	A==
+	:received:received; s=mr01; t=1719786776; x=1722378777; bh=V2NX3
+	eyWGWMhNoxe/EKRPRkGq3N4wz7FavNMU1tftA0=; b=ypXXEvTv1RAb/kXTebCYX
+	cM/PrTLuB5DCvqo4C5aE96IDpUWHzNYpnyBj2nBCKJndu2/dmUVwGXbL/YJBOp2S
+	l1hgkVD/XpHwBxJoHH+rU0hQOsKKuWIsyKP8gsRvtvnxdcr4ux8uzW0TjVULs/UY
+	ZIkzNjaao03zwGs1Co2dPA3pVpXKvHD1o34kIf7f//m0Yz6LtsIQ6H2bKXkP5qPO
+	4EWOUBpUb7xpm6WuAD51FDY3caCFr/VXjrQdIv2N2Et8XdZsE1m9+6tMOjNluOou
+	HVwQdaYpZCd+tVEtMb+N2Zo4DNnN+0nzMWgViih/6jbMMDSwtCELBWAOvs701Wuc
+	w==
 X-Virus-Scanned: by MailRoute
 Received: from 009.lax.mailroute.net ([127.0.0.1])
  by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id CnGocwtBD9pr; Sun, 30 Jun 2024 22:32:52 +0000 (UTC)
+ id 3KvzqA691eiw; Sun, 30 Jun 2024 22:32:56 +0000 (UTC)
 Received: from bvanassche-glaptop2.roam.corp.google.com (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4WC3pV3vbszll9fB;
-	Sun, 30 Jun 2024 22:32:50 +0000 (UTC)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4WC3pX6BKfzll9fK;
+	Sun, 30 Jun 2024 22:32:52 +0000 (UTC)
 From: Bart Van Assche <bvanassche@acm.org>
 To: Tejun Heo <tj@kernel.org>
 Cc: Lai Jiangshan <jiangshanlai@gmail.com>,
 	"Martin K . Petersen" <martin.petersen@oracle.com>,
 	linux-kernel@vger.kernel.org,
 	Bart Van Assche <bvanassche@acm.org>,
-	Steve French <sfrench@samba.org>
-Subject: [PATCH 50/53] cifs: Simplify a create*_workqueue() call
-Date: Sun, 30 Jun 2024 15:27:08 -0700
-Message-ID: <20240630222904.627462-51-bvanassche@acm.org>
+	Alexander Aring <alex.aring@gmail.com>,
+	Stefan Schmidt <stefan@datenfreihafen.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Subject: [PATCH 51/53] mac802154: Simplify the create*_workqueue() calls
+Date: Sun, 30 Jun 2024 15:27:09 -0700
+Message-ID: <20240630222904.627462-52-bvanassche@acm.org>
 X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
 In-Reply-To: <20240630222904.627462-1-bvanassche@acm.org>
 References: <20240630222904.627462-1-bvanassche@acm.org>
@@ -81,22 +87,36 @@ workqueue name before create*_workqueue() is called.
 
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- fs/smb/client/smbdirect.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ net/mac802154/main.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/fs/smb/client/smbdirect.c b/fs/smb/client/smbdirect.c
-index d74e829de51c..045067fa2a37 100644
---- a/fs/smb/client/smbdirect.c
-+++ b/fs/smb/client/smbdirect.c
-@@ -1458,8 +1458,7 @@ static int allocate_caches_and_workqueue(struct smb=
-d_connection *info)
- 	if (!info->response_mempool)
- 		goto out3;
+diff --git a/net/mac802154/main.c b/net/mac802154/main.c
+index 9ab7396668d2..9da6b21eb3b5 100644
+--- a/net/mac802154/main.c
++++ b/net/mac802154/main.c
+@@ -193,19 +193,18 @@ static void ieee802154_setup_wpan_phy_pib(struct wp=
+an_phy *wpan_phy)
+ int ieee802154_register_hw(struct ieee802154_hw *hw)
+ {
+ 	struct ieee802154_local *local =3D hw_to_local(hw);
+-	char mac_wq_name[IFNAMSIZ + 10] =3D {};
+ 	struct net_device *dev;
+ 	int rc =3D -ENOSYS;
 =20
--	scnprintf(name, MAX_NAME_LEN, "smbd_%p", info);
--	info->workqueue =3D create_workqueue(name);
-+	info->workqueue =3D create_workqueue2("smbd_%p", info);
- 	if (!info->workqueue)
- 		goto out4;
+ 	local->workqueue =3D
+-		create_singlethread_workqueue(wpan_phy_name(local->phy));
++		create_singlethread_workqueue2("%s", wpan_phy_name(local->phy));
+ 	if (!local->workqueue) {
+ 		rc =3D -ENOMEM;
+ 		goto out;
+ 	}
 =20
+-	snprintf(mac_wq_name, IFNAMSIZ + 10, "%s-mac-cmds", wpan_phy_name(local=
+->phy));
+-	local->mac_wq =3D	create_singlethread_workqueue(mac_wq_name);
++	local->mac_wq =3D create_singlethread_workqueue2(
++		"%s-mac-cmds", wpan_phy_name(local->phy));
+ 	if (!local->mac_wq) {
+ 		rc =3D -ENOMEM;
+ 		goto out_wq;
 
