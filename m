@@ -1,131 +1,154 @@
-Return-Path: <linux-kernel+bounces-235138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EF0391D0A5
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 10:42:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7723991D0A9
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 10:44:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 609F01C20B36
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 08:42:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 095EC281766
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 08:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A55F12C54B;
-	Sun, 30 Jun 2024 08:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E7B12CDB6;
+	Sun, 30 Jun 2024 08:44:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="R4NyR9AH";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pbgfmiqe"
-Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="Gqtk2aL4"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4301D39AF4
-	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 08:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B028039AF4;
+	Sun, 30 Jun 2024 08:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719736918; cv=none; b=rIuDwQb9wgeD/msV6+4KO1HqCRNFts7e7is6SRPoBKi1X0CQ1pck3K8ErQSBZFVHsysz9beCcYJCXuUkLvyzPBRKwjaLdE4rH3kvyzAFDl0a7O8cZFKDK+lRs4pJlbDKu5u3Zy8xE1aLCC8q0e5U96TpedGH+H79pE+IMMT6gyA=
+	t=1719737041; cv=none; b=DFMwl4E2kL9zl2Up46oyu4qi7tdRvGlsSgL4eCkMglFapVeIwmHJqxsQTZ27mhbhtGVm3RN8Drl95pUIL0Y+BU6LQShKZtRr3kSUQeihJZAZlcFphy0OjWSJX2M8q4P3MFPfT3zcfVUZpyUxfGNm1M75QkL6CZ0eazX8wlmuRzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719736918; c=relaxed/simple;
-	bh=Lcc8qXlzhGATMFJRhGlIwCV/tE6b+e4ghq06jHhIDI4=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=aRZu0fzoUD9ZuKIOJnGM0Jwnc/MsmD6ZOZpxbDbm/sLVBckU+ehfn/6S+PwovR2hw2hM9oIpfVl4ZyBvFoF0bBY+7YNfgTzvHp5ENjgBmm62jnH0lOvxIHMxVmUnZA8Pl2VjbEMTVtevhOhH3z0ukPEtY/vngqOY3FUX0kEHvmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=R4NyR9AH; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=pbgfmiqe; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 2D9F71380248;
-	Sun, 30 Jun 2024 04:41:55 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Sun, 30 Jun 2024 04:41:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1719736915;
-	 x=1719823315; bh=VvAaUclb6Rtxg1lwqBiSTbFrF4mkSFAdG0oWO0fgMR8=; b=
-	R4NyR9AHu70IkxlKyKolLi0sqaW/xJQg80/C7p15nxk8NDLMkM6DzL/XA2CkD9+b
-	Y5/AkE8ONHpn88llfRGGQD3sdKx46aQZlwuN402Plob1p8zrjX/5xIGp/etINUhj
-	Vyb7pJbk/F5JPvEUyJCaDNufAlOvUGTuXULW58z6sAs90RezWKGam1R1r3hvtdAR
-	VV6tQkZgYicnxouUehNqqWPVNlBOb08duw2tHSf3tymVvBrfYXKESXFbUCpu1Mh9
-	/zoYLGp8IqPXox1MaTXwcsbVrAPCmi2mh+rluRkuOW5m8SOZYnV4tt4WMQ4WGZ80
-	Ij2Z0aue98gAO7pZRR4erw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1719736915; x=
-	1719823315; bh=VvAaUclb6Rtxg1lwqBiSTbFrF4mkSFAdG0oWO0fgMR8=; b=p
-	bgfmiqemeD4qE57YXsSqlK67MZ/TUe69ZPT7AtP/4KOXUHaY3mQaYAjW23ai5yEm
-	Eg98Hu/SQEjISIrlHSpjTBQirEP62/wgf8TCKZYGj5Qyj4KTZELxkVFLprz3MsmB
-	1zEN5uqYMvpgegj7loPQhpxszEcphKjTdm35owRsc7RQv3qZ8xVAsunVfQcdUUjh
-	RTlX9598YqL95iOa23HYpZuz8Bn8RiROO1N6R7Hb6twK06HEGtVQY8HMSJQnZzOJ
-	FLd6U4bpHWIP2KTfGvJgF9g/MFgooudOfpohj8MazWaSdg6e/geT3gUIDdtbfH42
-	cYL4P3XmGPwTkyzjCa/uQ==
-X-ME-Sender: <xms:UhqBZuQziVF0YOn2JjU_mV3rvTrhQ2nNJW77maE-iIURmX7bNk8usg>
-    <xme:UhqBZjwMMNKdgfMyRXNCVTGyz_tCzwGipbhKINs4dQ7FvqsM01zUUlF7gbS28n3Fn
-    yzrhzhDA2hlQr2PfMk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddugddtiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepgeefjeehvdelvdffieejieejiedvvdfhleeivdelveehjeelteegudektdfg
-    jeevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:UhqBZr11I_DTv2N9QdJwH_bVy3K9bP3b156sedGNChEs4kI-tW24Sg>
-    <xmx:UhqBZqBbANC7ecmIK8vRWvovYNufkhoDsIbpItEbwH5spuwkTVIw0Q>
-    <xmx:UhqBZniHPFalNV4qFc7zoV3n98jeDY2xTeFa6OzMRHkWIuAOYrwEcA>
-    <xmx:UhqBZmoaAo28GRvHVHzRnTv0JIIRK__mwN7Y3FDg7cdEqpNgYU1xGA>
-    <xmx:UxqBZngd5burRCzrzHghbSWtLuFd5JzlyY5X1sx5NLXIaTIthrroA8eP>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id CF7A6B6008D; Sun, 30 Jun 2024 04:41:54 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-538-g1508afaa2-fm-20240616.001-g1508afaa
+	s=arc-20240116; t=1719737041; c=relaxed/simple;
+	bh=LiuqvRSyYUEcIEYiEIohQUTYIE6wNbj3g07Nvpvw1dI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rvhcI4nIlopITygdzT8XYxGPyail5QzRS9oP5xppwyGRNFgs07qK5WS/meYe3FUo1UBef8bz1N+Z0kiMg5qx2EyO3xbyMF169Tfi5BMbG7ZLG0ZYqgJQ1YNbXTQYl0I13iwm0PLSWfcV3N8fCQauYABA288fb1oF4ph+aHr90Ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=Gqtk2aL4; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1719736988; x=1720341788; i=wahrenst@gmx.net;
+	bh=DWHFm2E/o/V6Cw7bSZdgzS7ATWvaFTxO3EAYiMwnYQ0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Gqtk2aL46vidGporVc+8B4Wm0DTc4MDZqFfMQrhgYmocdhWOr97DwUJHWAkEnqI7
+	 dnlLZ9j2DLem/JiB0Rix3qBSGEnIX+7CcHOmC2dldSynU/9qwRKljVhwB4Q7Xkw+W
+	 1n2/or4A0pYXL8p5gZcvQihweDBtDZRFAbJcovJezYj+xbl8xV+f1WNOiPmoFZG1H
+	 momwphcUGCZQhC8zWsYBB44RjdEY9JYV4D/shWOJVeXVPtZ9h14N/McBhc4H9HUwW
+	 i6p9rWmIYpV4Voar2iGcPwHKG5D0CkhABcrBzioaCQ1wE0XfkcWvXVQTqffRMXu1a
+	 N1I/c5haTudE5F0bSQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MtwYu-1s9k6i2nbY-014cGt; Sun, 30
+ Jun 2024 10:43:08 +0200
+Message-ID: <bd661690-1de8-4030-a209-ef26d3559221@gmx.net>
+Date: Sun, 30 Jun 2024 10:43:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <773543e6-9a1f-4a97-9802-bec63c8c8f55@app.fastmail.com>
-In-Reply-To: 
- <CACRpkdYA9BCtNNf31uGkF4_Zp7uUZ-Zp6-PLa-qVVSi6NJ-_sA@mail.gmail.com>
-References: <20240628180852.1738922-1-dmitry.torokhov@gmail.com>
- <CACRpkdYA9BCtNNf31uGkF4_Zp7uUZ-Zp6-PLa-qVVSi6NJ-_sA@mail.gmail.com>
-Date: Sun, 30 Jun 2024 10:41:34 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Linus Walleij" <linus.walleij@linaro.org>,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>
-Cc: "Haojian Zhuang" <haojian.zhuang@gmail.com>,
- "Daniel Mack" <daniel@zonque.org>, "Robert Jarzmik" <robert.jarzmik@free.fr>,
- soc@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/10] ARM: pxa: use software nodes/properties for GPIOs
-Content-Type: text/plain;charset=utf-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/5] wifi: brcmfmac: Add optional lpo clock enable
+ support
+To: Jacobe Zang <jacobe.zang@wesion.com>, robh@kernel.org,
+ krzk+dt@kernel.org, heiko@sntech.de, kvalo@kernel.org, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, conor+dt@kernel.org
+Cc: efectn@protonmail.com, dsimic@manjaro.org, jagan@edgeble.ai,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ arend@broadcom.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+ megi@xff.cz, duoming@zju.edu.cn, bhelgaas@google.com,
+ minipli@grsecurity.net, brcm80211@lists.linux.dev,
+ brcm80211-dev-list.pdl@broadcom.com, nick@khadas.com
+References: <20240630073605.2164346-1-jacobe.zang@wesion.com>
+ <20240630073605.2164346-5-jacobe.zang@wesion.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <20240630073605.2164346-5-jacobe.zang@wesion.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:mgMXk3DXRcduwz95csSCv+CkqV380IX24h7ngin2weAe06nSBut
+ XRhB1UiQp3lf2b0NYmvfVLy2/mO9OQ7MdSCGUF1luiS5UtcOzG+EOLW42qqlwMhlb4e54Ar
+ Ks90Wb/EKJM5mT9LD5u6n2d4dyNSY7FQqhw8asreSyh5xF4QdxvbIl7Zz5Z0NDVEINqzLCH
+ 2SlZtn7IAjSBasUem///w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:mou2LmE+Pqw=;DPg1kwFi8AE287jvIuA+tl/khDX
+ kuBJ9gbe+rII+gFJy8tELFBxwny1ffwYSQxDUeKCIWxVv7fO8o1kvYL9dFKhBnM4F26o2hgqC
+ ngafc1iyAy51Dt5CPiFzUfhvVXOVOwLh10euaKGwfnZah7nzx6SDpfOEPgZYC03kzqxvt6QoX
+ Z5uFSzARf5MExs3Ok3AXzRBBGfm3StKyeVa1D/Y2pm2MjkedX0p4U0CJWFxjQSOly5GChb/u3
+ YRX/RtASHZGM/2fOG46JEwsO5hR1mpeSVsoErCprGVeyanNbrO+JhamoGOLFkseSjvavozcVm
+ g3yhvrP+lp6YlfqKRAOb2ups6iQeeCIY+rSZUZWIldpBVWZgCXu81Y35kRu7iH75ji9Pw7jv4
+ vWecdWERENJSTB0VP2EzumDKUWMA8r5unVHqfjikKygugc3sQHuSZFxSkIMPvuxx5p9QYYktr
+ IS4lRAq1EokBMevuY6NDnns9AWp+5oMOXI6V5SYAgPcvmy0ICirTDWujoXRNFQXea+egNu5vJ
+ NpSCFAQSAmLhsKL/mPDLh31XJSnZ69M6VYBO9tdQM7T2Yn+qCnc4FYHlve/ULcDS2gaZmvxN/
+ NoRjgGDSwxud0ZlxL8r/VzbkR+ViB1wxnYW2h+KLKO1wx2oPkHNOH3vfTt353Z0xZjcTz0IDj
+ isq9L2oZDGnq/CF8qTH+wg+UNsRjVx3WeTruimQskvC3KvVz/4zjTJ+5gjoRQImoNi9W0Ng3s
+ gzu2uW8uflqzhpk38d5MT2mK3KkqFDm4HTxiEk4EcaAfwzJkuy6Q6frW97wHrGOsGXOoxfpXZ
+ HlOq4pMqmz+NNykvuX2Lwl04GbG8TwYzNcgJmXi5srOxo=
 
-On Sun, Jun 30, 2024, at 10:07, Linus Walleij wrote:
-> On Fri, Jun 28, 2024 at 8:09=E2=80=AFPM Dmitry Torokhov <dmitry.torokh=
-ov@gmail.com> wrote:
+Hi,
+
+Am 30.06.24 um 09:36 schrieb Jacobe Zang:
+> WiFi modules often require 32kHz clock to function. Add support to
+> enable the clock to PCIe driver.
+the low power clock is independent from the host interface like PCIe. So
+the clock handling should move to the common code. Sorry, not i cannot
+give a good suggestion, what's the best place for this.
 >
->> This series converts legacy pxa boards (spitz, gumstix) to use softwa=
-re
->> nodes/properties to describe various GPIOs instead of relying on GPIO
->> lookup tables. The benefit is that structure and behavior is closer to
->> DT-described GPIOs.
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> for the patches I didn't write myself.
-
-Thanks for the review!
-
-> What this really needs is testing... :/
+> Co-developed-by: Ondrej Jirman <megi@xff.cz>
+> Signed-off-by: Ondrej Jirman <megi@xff.cz>
+> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
+> ---
+>   .../net/wireless/broadcom/brcm80211/brcmfmac/pcie.c    | 10 ++++++++++
+>   1 file changed, 10 insertions(+)
 >
-> If nobody is testing, I think you should just send a pull request
-> to soc@kernel.org and users can find out the hard way and help
-> fixing regressions. It's a bit hopeless to work on this sometimes.
+> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c b/d=
+rivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
+> index 06698a714b523..e84f562fc91b8 100644
+> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
+> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
+> @@ -3,6 +3,7 @@
+>    * Copyright (c) 2014 Broadcom Corporation
+>    */
+>
+> +#include <linux/clk.h>
+>   #include <linux/kernel.h>
+>   #include <linux/module.h>
+>   #include <linux/firmware.h>
+> @@ -2411,6 +2412,7 @@ brcmf_pcie_probe(struct pci_dev *pdev, const struc=
+t pci_device_id *id)
+>   	struct brcmf_pciedev *pcie_bus_dev;
+>   	struct brcmf_core *core;
+>   	struct brcmf_bus *bus;
+> +	struct clk *clk;
+>
+>   	if (!id) {
+>   		id =3D pci_match_id(brcmf_pcie_devid_table, pdev);
+> @@ -2422,6 +2424,14 @@ brcmf_pcie_probe(struct pci_dev *pdev, const stru=
+ct pci_device_id *id)
+>
+>   	brcmf_dbg(PCIE, "Enter %x:%x\n", pdev->vendor, pdev->device);
+>
+> +	clk =3D devm_clk_get_optional_enabled(&pdev->dev, "lpo");
+> +	if (IS_ERR(clk))
+> +		return PTR_ERR(clk);
+> +	if (clk) {
+> +		brcmf_dbg(PCIE, "enabling 32kHz clock\n", pdev->vendor, pdev->device)=
+;
+> +		clk_set_rate(clk, 32768);
+> +	}
+> +
+>   	ret =3D -ENOMEM;
+>   	devinfo =3D kzalloc(sizeof(*devinfo), GFP_KERNEL);
+>   	if (devinfo =3D=3D NULL)
 
-No need, the patches are already in my patchwork queue and I
-will just apply them directly.
-
-       Arnd
 
