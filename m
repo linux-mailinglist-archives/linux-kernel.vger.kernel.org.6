@@ -1,112 +1,183 @@
-Return-Path: <linux-kernel+bounces-235292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32ADC91D301
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 19:03:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8736791D303
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 19:05:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 538FE2814EF
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 17:03:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3305E281599
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 17:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F7915534E;
-	Sun, 30 Jun 2024 17:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334AC153BD9;
+	Sun, 30 Jun 2024 17:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VljQIJzD"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Np4ylwn/"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEFDA282ED;
-	Sun, 30 Jun 2024 17:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E98B149C7C
+	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 17:05:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719767023; cv=none; b=aFJa9qi2BtI+LQP3eghnEJFFDl0isdZOOSF561CljeftYnPqJkbGYrUUMuHxM/oATtx4LOrbqE9/SEJ8V2yCVAIKGOAj3ISpP5jFpP7ebBlkvlUK83JLvkFwF+NdVb1ePB8TMZbC3uNr1BYkWI2XlZ297wpG2BPHpgsAK9/iFu8=
+	t=1719767118; cv=none; b=Nbr9UYkDSBVzFkF92cd/3F92L6BqpsaTWYz7JEe8P3dUeNfzO7Ts713/EzDsGQa3GU35SG5tAGQWVielIUNjW7zG5Pg9adPq7bZhJrDZEovpSqBz/cRAB6NCwv+jrgjlwz6lENFzkcfT/wLDh7sAcFosDZ46/9etDy5hGCUb0s8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719767023; c=relaxed/simple;
-	bh=jjOtl29A70pu8X4oM6FwG48iiDZVebDe/QwQZ12SrB0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E9kZAPqulzpIIym/ETOISs59oa+QtFZ2xfiqDLPgNTla6akwbl6B6RtJjixHg1Jb6eUASqpH1Ej+uwCH7Q7MtqdCkpJkLMfKx077RlM1sMwHpEi3eX3cTo9fcNvrVTPFhsQoXgrezTsW9kaYOXTMj2gF4EAK+IcvYQ9ZIj3b3x8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VljQIJzD; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	s=arc-20240116; t=1719767118; c=relaxed/simple;
+	bh=n2dAj2oN7HJiCQPqoHoq8A9BCbp7dPW4A95PEMCjjIg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TNLYlF3LEy2yoliwROGbEUy9NGnXR3lBbv779ilmttaM8i6IwzY2m5N1Z9klvEwTxuK1B8EeY9zyVVwNWCOF3Sdur4Z72OroeYSA6xbytCZ/QmJ5CpT3xdc+WTQ+jEDWTYLG62zjeq+9o7L53JFm2jpi2PMKQTzEtYpri+y5sSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Np4ylwn/; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-706683e5249so1272090b3a.2;
-        Sun, 30 Jun 2024 10:03:40 -0700 (PDT)
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ebeefb9a7fso26422131fa.0
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 10:05:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719767020; x=1720371820; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N5owlD5lltLvAbBD17/0DblPjtl+cJf7M5OuX1U77Xg=;
-        b=VljQIJzD9ZUG2BMg5qTrrthNYv4u89uqmaZxNbyW3IY6tudxCY4erRr719M/sVgl0v
-         SeydgA+hRzvbSQG67ylr5G65Cl+uJAcfyLq2NQHQmfy5/BRWG+3X7VpA4VWOqaar2/om
-         1QsgWL4kcqxtL1zRxg5EQzuXFtRHRxtr1jwA0DrJY3uqkTaYlyLb5b/NPayqD9qWe9Tf
-         /4DNKdOa7gwg2SqPbxuBBAGVMyC/GNXWHQrKEwi9alsmLo8jzJ6my8esNXisRx9M0y/D
-         C7ZnfadC6Lzp/zZBuXo5b3fnKYByRlWHO3V5Eq2Ztul3bjcHLTBLByCjJrUq0N9IaweS
-         4EvQ==
+        d=gmail.com; s=20230601; t=1719767114; x=1720371914; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TSBwaS4j56NlcOuTEVGitgpl2zqsxNnDtYPNdmykvCQ=;
+        b=Np4ylwn/OX873LAd6N+jAeVGvd340e2PMyuxPtKdhVVHdyW57UQ96/DFLczItivGJe
+         opmNhfWixXHNGTKcMrDNSBN2+vdnjStJTLkMzID4HRLTfgKhs3MtINOYhnor03tQjtiA
+         IXVk5BsPfWziQ3k7AqDq+bqqHqy1/66dA5RY3NFh82w1FPF47CaTaCRV3rninx+bFDnK
+         wN2kAFjWE0PAaPPfujXIO3JoClTQbTgh/mvgRiW9qubeCgxBphvzjI1Dn+FX0x3579AH
+         J+epHgOn7SCff9IgvF6GkAdnthV/UCvDQrihE+EgqEghPF4sFt954dpKhVTMb9CzC8cx
+         uAqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719767020; x=1720371820;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1719767114; x=1720371914;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=N5owlD5lltLvAbBD17/0DblPjtl+cJf7M5OuX1U77Xg=;
-        b=vYAhRlmtnLT0hMUWo25eGncbLpTDEGktBnOI66aOs0PUvhhTju4b323iTsdaLvQDV0
-         LKjKx/mx/2TjTwb4gbN+d2mBc/vMZAKD2lRTLXeJa+MGjt5vl8IuKIcdouYEw1eZgcQf
-         1Q8kPqS6xedLNRFf0J51+P+sJ5ZCM6E6vhUA/rn/3/78ZohEZb3OMvNK1SwUQGHCcusD
-         m63DojpezIw1NHaaiXg1tBQFVA+cnErqF2/T/JV1/x56zQIoMpMkt6McD/TFcScuCOGW
-         wbINS5f6fSb9FHNNm04zcGf0IlYFlxj/XNWps/LNTWstwPuAUo+WZN0DJauM5dSIfB/l
-         jSXg==
-X-Forwarded-Encrypted: i=1; AJvYcCVztEjLRHTXNKINyxGas1gsMotTscjloIxmiwfcm1UvC0JOhFH9Yn2m+uS1ZYAUaFHoxR4n0o4r+WUSDPFQU1+cnAvB4fNnasr8cJUYt3cQKgL9RE5WVUkV5l0Zr8MMBosIstHl3w==
-X-Gm-Message-State: AOJu0YzeOu0wCrolsGpUv8D6JKxkNkdFrP4iMsr9A03IxZ/MuA1RZXXV
-	niaOh7FFP9MiZzUu67mqiOU8XcPgfrod/wzkkMVQhoptMK3NsAE1
-X-Google-Smtp-Source: AGHT+IHYxsuWVeTEzWjVUqY7oP9c8XAbyyBTRknQeSpRCfFrevznM+SVVPU99dZ2H5Ae+KP5a75wMQ==
-X-Received: by 2002:a05:6a20:4324:b0:1bd:23bd:4b9a with SMTP id adf61e73a8af0-1bef60f3bd8mr3111465637.9.1719767020235;
-        Sun, 30 Jun 2024 10:03:40 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91ce17a77sm5078379a91.6.2024.06.30.10.03.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Jun 2024 10:03:39 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Sun, 30 Jun 2024 07:03:38 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Chen Ridong <chenridong@huawei.com>, cgroups@vger.kernel.org,
-	Aditya Kali <adityakali@google.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Serge Hallyn <sergeh@kernel.org>, Waiman Long <longman@redhat.com>,
-	Zefan Li <lizefan.x@bytedance.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V4] cgroup/cpuset: Prevent UAF in proc_cpuset_show()
-Message-ID: <ZoGP6uV2oD4AdYWP@slm.duckdns.org>
-References: <20240628013604.573498-1-chenridong@huawei.com>
- <e5a78840-b623-485c-b467-828a5a0b7d37@web.de>
+        bh=TSBwaS4j56NlcOuTEVGitgpl2zqsxNnDtYPNdmykvCQ=;
+        b=WjpL59PWeY5maThpSP9dSSwo/s9PESEH2RzopuFGCLco84a36Tv87Ql++m0/GKhkVK
+         XUOAeHgpmR7Jf7qON/Vcu6LvFbPKRS/6+CzSLyu9Oo/lYRGANKJI/l7abTJ+fPRwj1bB
+         IJo7525x6lwk7G/XBouzFcEkBaB/bQTgMRHbQXp2QS3QKb7uNFMOsMA6pxdCc5CAm2D5
+         4lFi7E9znli9MyBZBrsw9bhcO9GTgIei5zTGL7sSjmWSrCzWSt3u+iiONJXJEQy0954Q
+         zuhDXBY19tRHcKD3IBk78m4pqRc9JdOZJI0jnIXghb4X6qhGAu6pnadev9jMw3x1L7Ix
+         wMQA==
+X-Forwarded-Encrypted: i=1; AJvYcCVqvuMtCLqit/nrbtNsh9yvqGEHbjnhVBFtnaLeDAj89fkicV0Ic3TxqazlDRFJk1wp48t1UTLWbz2gAgv7L+/r63fznGgsk095y0WA
+X-Gm-Message-State: AOJu0YwqAckTaAMBn97fZ/Tz+wqOBdmDh0xuhaR7HyZp7LfWDOx/hAm5
+	+IIlKHkooSGwQmsbuzRC75yfPJYb5JNjLroTovG1+6qzUed5XvZ7EQ2NtCw6eLYGDA/k3Fr4ueZ
+	ZH7VfS4ljqhDUre4LlRjUtkBr6ZA=
+X-Google-Smtp-Source: AGHT+IG7YHJPWnQ2Einzgx/hq1VY62FwoAmFbqi2vP0rjaW6mj6HE6Hk848vv1ff23xCzGk+ngx5RSdfIDimeiOwyGI=
+X-Received: by 2002:a2e:bcc1:0:b0:2ee:6a72:f006 with SMTP id
+ 38308e7fff4ca-2ee6a72f0e6mr5705301fa.21.1719767114078; Sun, 30 Jun 2024
+ 10:05:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e5a78840-b623-485c-b467-828a5a0b7d37@web.de>
+References: <20240624151122.23724-1-wuhoipok@gmail.com> <3c627f1d-ab9e-480f-8f42-91a108477c24@suse.de>
+In-Reply-To: <3c627f1d-ab9e-480f-8f42-91a108477c24@suse.de>
+From: Hoi Pok Wu <wuhoipok@gmail.com>
+Date: Sun, 30 Jun 2024 13:05:03 -0400
+Message-ID: <CANyH0kAPuxnTR0UA3EBfzd8aAFH4kw9qVN1GLi-g60VE5NUYwg@mail.gmail.com>
+Subject: Re: [PATCH v3 0/7] drm/radeon: remove load callback
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	"Pan, Xinhui" <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Dear Thmoas,
 
-On Sun, Jun 30, 2024 at 11:20:58AM +0200, Markus Elfring wrote:
-> Under which circumstances would you become interested to apply statements
-> like the following?
-> 
-> * guard(rcu)();
->   https://elixir.bootlin.com/linux/v6.10-rc5/source/include/linux/rcupdate.h#L1093
-> 
-> * guard(spinlock_irq)(&css_set_lock);
->   https://elixir.bootlin.com/linux/v6.10-rc5/source/include/linux/spinlock.h#L567
+Thanks a lot for the feedback.
+I admit that my patch was a mess, sorry about that.
 
-I don't really care either way. Neither makes meaningful difference here.
+I have submitted a v3 to change a lot of stuff, these patches should
+be able to be built now.
+I also improve readability, where each patch does their own stuff.
 
-Thanks.
+Best regards,
+Wu
 
--- 
-tejun
+On Wed, Jun 26, 2024 at 10:47=E2=80=AFAM Thomas Zimmermann <tzimmermann@sus=
+e.de> wrote:
+>
+> Hi
+>
+> Am 24.06.24 um 17:10 schrieb Wu Hoi Pok:
+> > Changes between v1 and v3:
+> >
+> > 1. add "ddev->dev_private =3D rdev;"
+> > 2. include a cover letter
+>
+> A cover letter should briefly say what the patchset is about.
+>
+> BTW it's not clear to me why you need to modify radeon_dev.dev for
+> removing the load callback. It seems it's a separate issue.
+>
+> Best regards
+> Thomas
+>
+>
+> >
+> > Wu Hoi Pok (7):
+> >    drm/radeon: remove load callback
+> >    drm/radeon: rdev->ddev to rdev_to_drm(rdev) 1
+> >    drm/radeon: rdev->ddev to rdev_to_drm(rdev) 2
+> >    drm/radeon: rdev->ddev to rdev_to_drm(rdev) 3
+> >    drm/radeon: rdev->ddev to rdev_to_drm(rdev) 4
+> >    drm/radeon: rdev->ddev to rdev_to_drm(rdev) 5
+> >    drm/radeon: rdev->ddev to rdev_to_drm(rdev) 6
+> >
+> >   drivers/gpu/drm/radeon/atombios_encoders.c |  2 +-
+> >   drivers/gpu/drm/radeon/cik.c               | 14 ++--
+> >   drivers/gpu/drm/radeon/dce6_afmt.c         |  2 +-
+> >   drivers/gpu/drm/radeon/evergreen.c         | 12 ++--
+> >   drivers/gpu/drm/radeon/ni.c                |  2 +-
+> >   drivers/gpu/drm/radeon/r100.c              | 24 +++----
+> >   drivers/gpu/drm/radeon/r300.c              |  6 +-
+> >   drivers/gpu/drm/radeon/r420.c              |  6 +-
+> >   drivers/gpu/drm/radeon/r520.c              |  2 +-
+> >   drivers/gpu/drm/radeon/r600.c              | 12 ++--
+> >   drivers/gpu/drm/radeon/r600_cs.c           |  2 +-
+> >   drivers/gpu/drm/radeon/r600_dpm.c          |  4 +-
+> >   drivers/gpu/drm/radeon/r600_hdmi.c         |  2 +-
+> >   drivers/gpu/drm/radeon/radeon.h            | 11 +++-
+> >   drivers/gpu/drm/radeon/radeon_acpi.c       | 10 +--
+> >   drivers/gpu/drm/radeon/radeon_agp.c        |  2 +-
+> >   drivers/gpu/drm/radeon/radeon_atombios.c   |  2 +-
+> >   drivers/gpu/drm/radeon/radeon_audio.c      |  4 +-
+> >   drivers/gpu/drm/radeon/radeon_combios.c    | 12 ++--
+> >   drivers/gpu/drm/radeon/radeon_device.c     | 19 ++----
+> >   drivers/gpu/drm/radeon/radeon_display.c    | 74 +++++++++++----------=
+-
+> >   drivers/gpu/drm/radeon/radeon_drv.c        | 27 +++++---
+> >   drivers/gpu/drm/radeon/radeon_drv.h        |  1 -
+> >   drivers/gpu/drm/radeon/radeon_fbdev.c      | 26 ++++----
+> >   drivers/gpu/drm/radeon/radeon_fence.c      |  8 +--
+> >   drivers/gpu/drm/radeon/radeon_gem.c        |  2 +-
+> >   drivers/gpu/drm/radeon/radeon_i2c.c        |  2 +-
+> >   drivers/gpu/drm/radeon/radeon_ib.c         |  2 +-
+> >   drivers/gpu/drm/radeon/radeon_irq_kms.c    | 12 ++--
+> >   drivers/gpu/drm/radeon/radeon_kms.c        | 18 ++----
+> >   drivers/gpu/drm/radeon/radeon_object.c     |  2 +-
+> >   drivers/gpu/drm/radeon/radeon_pm.c         | 20 +++---
+> >   drivers/gpu/drm/radeon/radeon_ring.c       |  2 +-
+> >   drivers/gpu/drm/radeon/radeon_ttm.c        |  6 +-
+> >   drivers/gpu/drm/radeon/rs400.c             |  6 +-
+> >   drivers/gpu/drm/radeon/rs600.c             | 14 ++--
+> >   drivers/gpu/drm/radeon/rs690.c             |  2 +-
+> >   drivers/gpu/drm/radeon/rv515.c             |  4 +-
+> >   drivers/gpu/drm/radeon/rv770.c             |  2 +-
+> >   drivers/gpu/drm/radeon/si.c                |  4 +-
+> >   40 files changed, 193 insertions(+), 191 deletions(-)
+> >
+>
+> --
+> --
+> Thomas Zimmermann
+> Graphics Driver Developer
+> SUSE Software Solutions Germany GmbH
+> Frankenstrasse 146, 90461 Nuernberg, Germany
+> GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+> HRB 36809 (AG Nuernberg)
+>
 
