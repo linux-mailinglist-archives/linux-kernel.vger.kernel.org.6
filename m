@@ -1,125 +1,84 @@
-Return-Path: <linux-kernel+bounces-235130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A79E91D086
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 10:25:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38FC591D088
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 10:25:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24E0A281D40
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 08:25:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A6B11C20AE4
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 08:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B8012C475;
-	Sun, 30 Jun 2024 08:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="JeUOSxbd"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1945912D1FA;
+	Sun, 30 Jun 2024 08:25:32 +0000 (UTC)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7261812C474
-	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 08:25:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C32012C474;
+	Sun, 30 Jun 2024 08:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719735923; cv=none; b=CTNUrZcjWbXaNUUmveg7NqjdErsyJ9g+8vkEktALqmTGcsOulEC3stnvsJZMYC8eEVZFkd72NEWYLMUf8LegXYqWZpiVdrMqUoAu8SlufMGFq7qMsqsGGufeSlbihvJCfyav0JKjnmCm6ufUWQ8FzlvhCwUcxp2nLN17Cbaz/1U=
+	t=1719735931; cv=none; b=E9Z7JofJJ75qOImC9cxduejkTGT2GZMPX7PbJUB2pIxqYm3WhsmeuqGPYSTEDsHz4aSu5wNpoZWQ+BhoZu+Hh5naahq05EBIIsGMy422OUr33l20yBfMSEN+1U7KA8+AJQ+ww243n85L+XikZB1movP4G5bSDaJD67tcmFWtHio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719735923; c=relaxed/simple;
-	bh=ZRvJXSC6w8X02Xb9KptFL1thczL5JN55FA3WUW5Ns64=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=BicRdkdrgxzlsNeZ1LVrbdq4cghxDkDwcg0zv1WkEtCchKibDNlyxvJFQova4g6ENeR+bSM4q4UmEzbBsNNIIEgk8fXarVMUtdeABb14B0C5e9rrAlkiuHWKA4KAfTkh+tB6hhmGztW1EqcH8ORqq0Sb89DFdvvoGNj4t5qTzDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=JeUOSxbd; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1D76940E021B;
-	Sun, 30 Jun 2024 08:25:19 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id gX6jNmEA3pGy; Sun, 30 Jun 2024 08:25:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1719735916; bh=LETWBp6ehYzID/DjSY2kxHGGv5hqpNuqQSs0pbZk+DE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=JeUOSxbdhKbVhJiPVA9QvnFer6eQXKXrWwpKVEgIG0GxC/HsVUkzakjxkkzuNKXXU
-	 o7fLmHqeYM158V0YjXJRZZxCzjMA8vaEC3S7Mx+KKzym4j0Y/suCtvMORizR15iJJ8
-	 NCaTBas6vBuF44feg0h22uOXPVTMWVGBBCXCvXXRTh2OANrGBxUVeYII49UmHWFue4
-	 suB34ePypz444gNjNwrC1REQDwXHDWt2ptgZl6xf1e//NwcsMEqSI7Q/iaudf3PFFk
-	 bkULqdXdRXE3t/4dHL75FLysfC2fzZ6A+VcmdtWuAaLpDYW/drnlqtf5ftm/eXnCj3
-	 xLw66bZlsuIC2IWCWPTN69TxWTEkt0uVG81q7mnPAaH9sQitIEmJmxP7GfqH3A/Qqr
-	 Qwb5ylpZCUYF8uoXOjkkeHQ/sARU4GFwWrKv88KOKZ7gJS7gzzkRjcdIjC+MdlErv+
-	 93ZfAH00wQuYRZN8w4aG7NDKAe5qpL3ls+8vKGfYxAunWSZwlTkoxsbCA5hYRA3Fgr
-	 BnlDaAgiHT7+8FteeV61VNuj3SsZD5Zac5LqxmZ0h2UpzoFYZZxejFLUGJ1OPqpyK8
-	 T5nUWVuct+chO28Q+VFiacR9aEbeM9Ks2kwjgUR1JyptMVf+d1Yq+/+fnECAa5d3wC
-	 z7/XcV4i5UB9e1nt3VLKYr10=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 115CF40E0177;
-	Sun, 30 Jun 2024 08:25:13 +0000 (UTC)
-Date: Sun, 30 Jun 2024 10:25:12 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] irq/urgent for v6.10-rc6
-Message-ID: <20240630082512.GAZoEWaIpE4ma790Gd@fat_crate.local>
+	s=arc-20240116; t=1719735931; c=relaxed/simple;
+	bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QiI85XKXeGacvDwYCyUMJ1iKuaST205JXJVAUlBbO/Y5EVdK/ngP1Gi5HtsGj+GGP2flG5kPDc++g0f6O8e60FoObRp7eXTuWAkuEoLaffoT4te4SjDiEMkzb8RwOkYrd5cU+HScpAq9tBqXGfSYb4kuA2cOW3IUeD+Wu2lPdig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52e7adf4debso185907e87.0;
+        Sun, 30 Jun 2024 01:25:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719735928; x=1720340728;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
+        b=G8zxcGNVoQpdyfpvlH7yothBqY0tY+67POgNSwlVNpvTDX/BuyaTonRtEFSUzCFfJ6
+         3+9QTIBGqCP7yvs6LQP2DGGGFTPSfi/XHyIPFSgUo1w4gFCZxvxyzo80qFSnTeZZkqTL
+         djtqBJ5FNlT2bVRmaa4bUaRHDGbIXObIDdy2yBWrhntTLcyJKPuCjw9fp8ZXrn/QjQgA
+         Sftqikv3sw2LF/oQ5UA6e/iP51qWG+8o1+mVYeP1VU9t7O5Ec5qaabyXu4IjtUootx2J
+         pM6sFkAsugih0klNb7nigMOuiHa7g2ReXTqlfKQ6uETbkr45CBxvTC5aQblFrU7iDUkJ
+         m+Sw==
+X-Forwarded-Encrypted: i=1; AJvYcCWessFK7szUT9YIm4c+ZVq/mUc0tM3mKvdJD7H2CIu4bCy/ONtscstRiym2mvA1YOdiHK5vs9AOlxgSqWGpG/hIXkrN/Tllugz7HbbTijENOBZsVKRzGnZKxAXQZH8igdho2M/6RIEhRcs=
+X-Gm-Message-State: AOJu0YxkHytnPo1DxkomSC9wJ+xGL67ZYZsS6iW5Lo8ZPxVKuAGW+tsN
+	1rM6Kivke3giwM0u4KBxMytr6yyPqNGoTcPmJzOuZwM29TU+sYrG
+X-Google-Smtp-Source: AGHT+IESUjeAFOhpin+AORXLQ1ucUyymLVGh3HpTXyH2l5Sz6D0B8lqJqtGoTgJWatL/imKYw89URQ==
+X-Received: by 2002:a2e:a267:0:b0:2ec:4f41:501 with SMTP id 38308e7fff4ca-2ee5e337d17mr14893491fa.1.1719735927753;
+        Sun, 30 Jun 2024 01:25:27 -0700 (PDT)
+Received: from [10.50.4.180] (bzq-84-110-32-226.static-ip.bezeqint.net. [84.110.32.226])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675f9dfbdbsm6468852f8f.103.2024.06.30.01.25.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 30 Jun 2024 01:25:26 -0700 (PDT)
+Message-ID: <f790f4eb-231b-46fa-8347-a0ae7bd6f1c0@grimberg.me>
+Date: Sun, 30 Jun 2024 11:25:24 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] lib/group_cpus.c: honor housekeeping config when
+ grouping CPUs
+To: Daniel Wagner <dwagner@suse.de>, Jens Axboe <axboe@kernel.dk>,
+ Keith Busch <kbusch@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Christoph Hellwig <hch@lst.de>
+Cc: Frederic Weisbecker <fweisbecker@suse.com>, Mel Gorman <mgorman@suse.de>,
+ Hannes Reinecke <hare@suse.de>,
+ Sridhar Balaraman <sbalaraman@parallelwireless.com>,
+ "brookxu.cn" <brookxu.cn@gmail.com>, Ming Lei <ming.lei@redhat.com>,
+ linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-nvme@lists.infradead.org
+References: <20240627-isolcpus-io-queues-v2-0-26a32e3c4f75@suse.de>
+ <20240627-isolcpus-io-queues-v2-3-26a32e3c4f75@suse.de>
+Content-Language: en-US
+From: Sagi Grimberg <sagi@grimberg.me>
+In-Reply-To: <20240627-isolcpus-io-queues-v2-3-26a32e3c4f75@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Linus,
-
-please pull a couple of urgent IRQs fixes for v6.10-rc6.
-
-Thx.
-
----
-
-The following changes since commit 6ba59ff4227927d3a8530fc2973b80e94b54d58f:
-
-  Linux 6.10-rc4 (2024-06-16 13:40:16 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/irq_urgent_for_v6.10_rc6
-
-for you to fetch changes up to 9eee5330656bf92f51cb1f09b2dc9f8cf975b3d1:
-
-  PCI/MSI: Fix UAF in msi_capability_init (2024-06-24 23:33:38 +0200)
-
-----------------------------------------------------------------
- - Make sure multi-bridge machines get all eiointc interrupt controllers
-   initialized even if the number of CPUs has been limited by a cmdline param
-
- - Make sure interrupt lines on liointc hw are configured properly even when
-   interrupt routing changes
-
- - Avoid use-after-free in the error path of the MSI init code
-
-----------------------------------------------------------------
-Huacai Chen (2):
-      irqchip/loongson-eiointc: Use early_cpu_to_node() instead of cpu_to_node()
-      irqchip/loongson-liointc: Set different ISRs for different cores
-
-Mostafa Saleh (1):
-      PCI/MSI: Fix UAF in msi_capability_init
-
- drivers/irqchip/irq-loongson-eiointc.c |  5 +++--
- drivers/irqchip/irq-loongson-liointc.c |  4 ++--
- drivers/pci/msi/msi.c                  | 10 ++++++++--
- 3 files changed, 13 insertions(+), 6 deletions(-)
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
 
