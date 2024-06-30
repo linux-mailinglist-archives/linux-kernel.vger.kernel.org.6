@@ -1,74 +1,76 @@
-Return-Path: <linux-kernel+bounces-235378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C4D991D486
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 00:36:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A93991D487
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 00:36:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E5801C20B7F
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 22:36:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A087F1F2158C
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 22:36:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27C015A489;
-	Sun, 30 Jun 2024 22:31:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD1015A85A;
+	Sun, 30 Jun 2024 22:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="pcR/wko7"
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="QKOIP7bB"
 Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05FB7159207
-	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 22:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D45D15A4BD
+	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 22:31:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719786700; cv=none; b=qTqI7ZmdTDp5HhTFDE4h12/de5p4yX/UCXebnpCFD1QXODwiZ/xG9zQbPaV5HXm/7q5VNSUo3MPtgR/RvwGZ8PiRh1rbtLbIobPOdeQfmkTkpZ+Ej0p+2rsM8XMJl2ef6FrC+1SNYLsNDZUwfn+DTkajO9AJF7ud8CIFWfpz1iU=
+	t=1719786705; cv=none; b=qVZMZq4uG0H0e6CxM9amWBr/HRRmGPPTJg0/X2I/K7UME9BPRpTkTJOponnMQuHRCibpSxogAtpQ8HEmxk1APQEri44/KVhQozVlpdxmRuS+NMt93izAQ/DE1infJarLfSpWJHB5xzBJ/X3+gaQ8gMzoPoe0w/wIj2HmuvrxcmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719786700; c=relaxed/simple;
-	bh=5nXDwYcUndMN/hXfZxWms1Bfi4qrheYAH/IuzVKtBfM=;
+	s=arc-20240116; t=1719786705; c=relaxed/simple;
+	bh=JSkHTlB7yZdplM/7G/qXLRG1GoBd+Q4wowBKQDCYLto=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ggAH9BuR/UTBnd+ySyUEvLhE4feSrvbzyyLd/wbOH4QY45ANh7vcncSBMM7wA1MKh2gnlmcJrxKh8/RO4VAuFwOmtvg8omuybJOdwO9Rf8GV0qWyllZx3SKVyXaM5mz7FDhNiDxmLWeoulqFikAJuShGHsre9ZrQ0vH/FA+OIX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=pcR/wko7; arc=none smtp.client-ip=199.89.1.12
+	 MIME-Version; b=fivj5ov1rwWEoRAyJUBmh0ADHVe+vAr4t7/iDgPH2mDYJxvNpWoIF4y/Cmx5L4VXoFd1pHr+NYF0fMYtMZNSYgKqncpxD/zRMqmvzPhKG6Fy3HtYaSHp6imv//IN2uB54ZbRwwcxiRRoDK/DeDbudYg6TfZDbak25SwXFbkqkYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=QKOIP7bB; arc=none smtp.client-ip=199.89.1.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
 Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4WC3n65GxKzll9f8;
-	Sun, 30 Jun 2024 22:31:38 +0000 (UTC)
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4WC3nC71Tnzll9fS;
+	Sun, 30 Jun 2024 22:31:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
 	content-transfer-encoding:mime-version:references:in-reply-to
 	:x-mailer:message-id:date:date:subject:subject:from:from
-	:received:received; s=mr01; t=1719786695; x=1722378696; bh=Q3kJ2
-	KuV1/JaaGNMf/Ki3r1gW/L1Or/OKqX6F4/esOs=; b=pcR/wko7BTdM6SG+5rdTd
-	Spr1G2PeDRd75Otno35PZY9cWACLqkWNE6TqC4rD64BmiU0IP+82bfOq5v8xzdNk
-	c54wszSjriVGk5ILKXcu+c9WQN+li/HONg0hR3FoWrBCM2i2QjzPhOmwUofZ3K+G
-	UeK2TUtpFz75FZ6wE1kQE6YO0xlNQKX4lRNyEB7tf8eY3F8wXK5o7E5gDkJidUD3
-	NheUk7Fz+jU3gIyVRX/BBF44apc3o1BK/DLKA7x0xatkXdPgzycRCjomocaJgDbY
-	y3qAIsar1I10lkpZt2mdVcI0jrDaqRo42zq5s5BhUjkrZCn2R5Qo1hGx5gzazVfT
+	:received:received; s=mr01; t=1719786699; x=1722378700; bh=75WFP
+	EdUXWblentuwvT78l/3oziSfkIkIK6jAXwSd+Q=; b=QKOIP7bB64mbQCfxJ/3LY
+	DNpqXrQ2nSmZjHFU+rgWrKDcQJZ/NUgaH6xaJrDweyuv19cXhZkj3yc+R0CqhpGM
+	JbBB8QzFJhx4gmZpdA9bewesZXLR4rVzAlHgaHhY0YVsriLIqKpChd0desOHMKxy
+	M+jt44JsvhdjuBsFNbJMH95J68z6Vfp300ZEBWo89mCV23fJcTt7qhjdkgJH3o99
+	ONqwKv4+0VpPwwrOynmJnLUYkOZPdZWgN8JqDWyj+EJksTrLsJtEWDEXS4931CAf
+	S0XBkIF/4bW4E8h7oeMz6hAqxX46P3kJ+wivp7OIpltngR+BlZyFRut77nTeeDGK
 	w==
 X-Virus-Scanned: by MailRoute
 Received: from 009.lax.mailroute.net ([127.0.0.1])
  by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id cjYvoBAK_nai; Sun, 30 Jun 2024 22:31:35 +0000 (UTC)
+ id YIvhKeFffLTI; Sun, 30 Jun 2024 22:31:39 +0000 (UTC)
 Received: from bvanassche-glaptop2.roam.corp.google.com (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4WC3n030V3zll9fH;
-	Sun, 30 Jun 2024 22:31:32 +0000 (UTC)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4WC3n41pQ3zll9fB;
+	Sun, 30 Jun 2024 22:31:35 +0000 (UTC)
 From: Bart Van Assche <bvanassche@acm.org>
 To: Tejun Heo <tj@kernel.org>
 Cc: Lai Jiangshan <jiangshanlai@gmail.com>,
 	"Martin K . Petersen" <martin.petersen@oracle.com>,
 	linux-kernel@vger.kernel.org,
 	Bart Van Assche <bvanassche@acm.org>,
-	Manish Chopra <manishc@marvell.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
 	"David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
 	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Subject: [PATCH 29/53] net: qed: Simplify a create*_workqueue() call
-Date: Sun, 30 Jun 2024 15:26:47 -0700
-Message-ID: <20240630222904.627462-30-bvanassche@acm.org>
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Subject: [PATCH 30/53] net: stmmac: Simplify a create*_workqueue() call
+Date: Sun, 30 Jun 2024 15:26:48 -0700
+Message-ID: <20240630222904.627462-31-bvanassche@acm.org>
 X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
 In-Reply-To: <20240630222904.627462-1-bvanassche@acm.org>
 References: <20240630222904.627462-1-bvanassche@acm.org>
@@ -85,36 +87,49 @@ workqueue name before create*_workqueue() is called.
 
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_sriov.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h      |  1 -
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 11 ++++-------
+ 2 files changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_sriov.c b/drivers/net/et=
-hernet/qlogic/qed/qed_sriov.c
-index fa167b1aa019..29c5b301bbd7 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_sriov.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_sriov.c
-@@ -5262,7 +5262,6 @@ void qed_iov_wq_stop(struct qed_dev *cdev, bool sch=
-edule_first)
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac.h b/drivers/net/e=
+thernet/stmicro/stmmac/stmmac.h
+index b23b920eedb1..b47528ad4fb6 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac.h
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
+@@ -343,7 +343,6 @@ struct stmmac_priv {
+ 	unsigned long fpe_task_state;
+ 	struct workqueue_struct *fpe_wq;
+ 	struct work_struct fpe_task;
+-	char wq_name[IFNAMSIZ + 4];
 =20
- int qed_iov_wq_start(struct qed_dev *cdev)
+ 	/* TC Handling */
+ 	unsigned int tc_entries_max;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/=
+net/ethernet/stmicro/stmmac/stmmac_main.c
+index b3afc7cb7d72..42d0e2e630c9 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -3362,17 +3362,14 @@ static void stmmac_safety_feat_configuration(stru=
+ct stmmac_priv *priv)
+=20
+ static int stmmac_fpe_start_wq(struct stmmac_priv *priv)
  {
--	char name[NAME_SIZE];
- 	int i;
-=20
- 	for_each_hwfn(cdev, i) {
-@@ -5274,11 +5273,9 @@ int qed_iov_wq_start(struct qed_dev *cdev)
- 		if (IS_PF(p_hwfn->cdev) && !IS_PF_SRIOV(p_hwfn))
- 			continue;
-=20
--		snprintf(name, NAME_SIZE, "iov-%02x:%02x.%02x",
--			 cdev->pdev->bus->number,
--			 PCI_SLOT(cdev->pdev->devfn), p_hwfn->abs_pf_id);
+-	char *name;
 -
--		p_hwfn->iov_wq =3D create_singlethread_workqueue(name);
-+		p_hwfn->iov_wq =3D create_singlethread_workqueue2(
-+			"iov-%02x:%02x.%02x", cdev->pdev->bus->number,
-+			PCI_SLOT(cdev->pdev->devfn), p_hwfn->abs_pf_id);
- 		if (!p_hwfn->iov_wq) {
- 			DP_NOTICE(p_hwfn, "Cannot create iov workqueue\n");
- 			return -ENOMEM;
+ 	clear_bit(__FPE_TASK_SCHED, &priv->fpe_task_state);
+ 	clear_bit(__FPE_REMOVING,  &priv->fpe_task_state);
+=20
+-	name =3D priv->wq_name;
+-	sprintf(name, "%s-fpe", priv->dev->name);
+-
+-	priv->fpe_wq =3D create_singlethread_workqueue(name);
++	priv->fpe_wq =3D
++		create_singlethread_workqueue2("%s-fpe", priv->dev->name);
+ 	if (!priv->fpe_wq) {
+-		netdev_err(priv->dev, "%s: Failed to create workqueue\n", name);
++		netdev_err(priv->dev, "%s: Failed to create workqueue\n",
++			   __func__);
+=20
+ 		return -ENOMEM;
+ 	}
 
