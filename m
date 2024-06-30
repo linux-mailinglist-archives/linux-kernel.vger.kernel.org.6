@@ -1,136 +1,95 @@
-Return-Path: <linux-kernel+bounces-235088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 798AD91CFDE
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 04:40:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 995C891CFDF
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 04:51:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E11E2824AA
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 02:40:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3E061F21AD6
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 02:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257E829422;
-	Sun, 30 Jun 2024 02:40:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F6528399;
+	Sun, 30 Jun 2024 02:51:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="SkPHGBfG"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Ug+vfT52"
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3E5110A;
-	Sun, 30 Jun 2024 02:40:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074091E864
+	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 02:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719715209; cv=none; b=saUKF873CfiN0CmmEqgNKBUaRkLSFraTzm/X10wHDmXxt397Kj+kp7LG2TSTP7Pk+jYAsN9NmDufeTRirKOBTk3VMQxythXErldrVDQORpMZ/GwYCUicHW4/ZR64NBAlOb1HmzXUqg6A4H4GGzVaW9cOITBPbUmSKuSaQuV8Ans=
+	t=1719715893; cv=none; b=mxMBg+pg9hqgHXcah0n1G7WcAypwSlH9bdobKiZaZjazLI5DsUeXrfDOLLBqkJ2Qy/ZF4u0xk/e7qYHRAV04TpjG5WQtlALEBUANhB1Jbm0SZWhAQn6BpvkqWbTxFgJv3SDp+Cu2ssz9qquWMhMFnM7RMS/38bRV0qrtnK9H+Xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719715209; c=relaxed/simple;
-	bh=tTaUZ3gw2WIKPoFASF97Fsyku9pYLM++iEoIJI+caJg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=h6wRO5L6VAluGF8XYtyJ0flZhvIzUyc7bdMBNlLnL6srbfbTB4W+jjN5mRifi/gSGrZp2QMBDc5ZjAdZ/1aqW0Olq3X0nomm/bZXeI4TSWGyvws8iwyXwthTU3RpiGP15c2VUHtYj30WGA8TGKOfQ+fSplmaqFGTEF5woQ6ZYs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=SkPHGBfG; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
-	s=default; t=1719715200;
-	bh=tTaUZ3gw2WIKPoFASF97Fsyku9pYLM++iEoIJI+caJg=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=SkPHGBfG/KPEqzTnuf2n32UERfuZTF/SxB8Ls8HwfbIt/X5Woa2lFrb0BbPdEtDG7
-	 z7oOyjPG3QQGC6uuDdm0ytxrzvmZNnCqQT9dJxVwESlZCOJnfaZ0A7VqruL+gMZGg+
-	 9yrgk2GnH5duteGDkTImvKGBnaF+4eewZ5RHoxpI=
-Received: from [IPv6:240e:358:118a:c500:dc73:854d:832e:2] (unknown [IPv6:240e:358:118a:c500:dc73:854d:832e:2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 0B0EE66A47;
-	Sat, 29 Jun 2024 22:39:55 -0400 (EDT)
-Message-ID: <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site>
-Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
-From: Xi Ruoyao <xry111@xry111.site>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org, 
-	viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, axboe@kernel.dk, 
-	torvalds@linux-foundation.org, loongarch@lists.linux.dev
-Date: Sun, 30 Jun 2024 10:39:51 +0800
-In-Reply-To: <CAAhV-H7iKyQBvV+J9T1ekxh9OF8h=F9zp_QMyuhFBrFXGHHmTg@mail.gmail.com>
-References: <20240625110029.606032-1-mjguzik@gmail.com>
-	 <20240625110029.606032-3-mjguzik@gmail.com>
-	 <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
-	 <e8db013bf06d2170dc48a8252c7049c6d1ee277a.camel@xry111.site>
-	 <CAAhV-H7iKyQBvV+J9T1ekxh9OF8h=F9zp_QMyuhFBrFXGHHmTg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 
+	s=arc-20240116; t=1719715893; c=relaxed/simple;
+	bh=8exVNBhNNdcbPI6TllxHKJ3cEOqOLzGM0+EAOi6vD10=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Nwav/CbuPyHkc38EoTOWtioYOZeY+RzGPrDKjswF9lxlsJrI1PynFv/qooIIshI3+i+rJNnWJa/Hs61iTvw7WNaltG0AxAabMTOSfen0yb6L7e7CTFneR3iltZBs491gKQo28PmXxgKyGHFCjzTrGFdoX9uaUe5O4XOq/Qg9iyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Ug+vfT52; arc=none smtp.client-ip=115.124.30.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1719715882; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=k2mW9kF0tcNvyXieKkWUUqtbjUaDk9gY5NZvuOVoRas=;
+	b=Ug+vfT52xLwOlKQ47oav8ZXuMRAxfkikoK9cVRv8SxhmL/oXehloy1k+QOs8eRcJHtHy/fNOSRy5hX2+VlMYaZzYVCXp7W+Lxwq8h6nvnEXgnzZQh+1jS6GiKP0ZgzNOz4xMOjk84JRDGXUaWbLiqrXirNW84KvJ82EEeLU4ISg=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R661e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045046011;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0W9UWqM4_1719715880;
+Received: from 30.27.95.242(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W9UWqM4_1719715880)
+          by smtp.aliyun-inc.com;
+          Sun, 30 Jun 2024 10:51:21 +0800
+Message-ID: <7adcf002-864e-489a-ac70-99c9850ea4f1@linux.alibaba.com>
+Date: Sun, 30 Jun 2024 10:51:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] erofs: ensure m_llen is reset to 0 if metadata is invalid
+To: linux-erofs@lists.ozlabs.org, Chao Yu <chao@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240629185743.2819229-1-hsiangkao@linux.alibaba.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20240629185743.2819229-1-hsiangkao@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, 2024-06-30 at 09:40 +0800, Huacai Chen wrote:
-> On Tue, Jun 25, 2024 at 11:00=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> w=
-rote:
-> >=20
-> > On Tue, 2024-06-25 at 22:09 +0800, Huacai Chen wrote:
-> > > On Tue, Jun 25, 2024 at 7:01=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.=
-com>
-> > > wrote:
-> > > >=20
-> > > > The newly used helper also checks for 0-sized buffers.
-> > > >=20
-> > > > This avoids path lookup code, lockref management, memory
-> > > > allocation
-> > > > and
-> > > > in case of NULL path userspace memory access (which can be quite
-> > > > expensive with SMAP on x86_64).
-> > > >=20
-> > > > statx with AT_EMPTY_PATH paired with "" or NULL argument as
-> > > > appropriate
-> > > > issued on Sapphire Rapids (ops/s):
-> > > > stock:=C2=A0=C2=A0=C2=A0=C2=A0 4231237
-> > > > 0-check:=C2=A0=C2=A0 5944063 (+40%)
-> > > > NULL path: 6601619 (+11%/+56%)
-> > > >=20
-> > > > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> > > Hi, Ruoyao,
-> > >=20
-> > > I'm a bit confused. Ii this patch a replacement of your recent
-> > > patch?
-> >=20
-> > Yes, both Linus and Christian hates introducing a new AT_ flag for
-> > this.
-> >=20
-> > This patch just makes statx(fd, NULL, AT_EMPTY_PATH, ...) behave
-> > like
-> > statx(fd, "", AT_EMPTY_PATH, ...) instead.=C2=A0 NULL avoids the
-> > performance
-> > issue and it's also audit-able by seccomp BPF.
-> To be honest, I still want to restore __ARCH_WANT_NEW_STAT. Because
-> even if statx() becomes audit-able, it is still blacklisted now.
 
-Then patch the sandbox to allow it.
 
-The sandbox **must** be patched anyway or it'll be broken on all 32-bit
-systems after 2037.  [Unless they'll unsupport all 32-bit systems before
-2037.]
+On 2024/6/30 02:57, Gao Xiang wrote:
+> Sometimes, the on-disk metadata might be invalid due to storage
+> failure or other unknown issues.
+user interrupts, storage failures, or other unknown causes.
 
-> Restoring __ARCH_WANT_NEW_STAT is a very small change that doesn't
-> introduce any complexity, but it makes life easier. And I think libLoL
-> also likes __ARCH_WANT_NEW_STAT, though it isn't an upstream
-> project...
-
-At least you should not restore it for 32-bit.  libLoL also has nothing
-to do with 32-bit systems anyway.  Maybe conditional it with a #if
-checking __BITS_PER_LONG.
-
-And the vendors should really port their software to the upstreamed ABI
-instead of relying on liblol.  <rant>Is a recompiling so difficult, or
-are the programmers so stupid to invoke plenty of low-level syscalls
-directly (bypassing Glibc) in their code?</rant>
-
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+> 
+> In that case, z_erofs_map_blocks_iter() may still return a valid
+> m_llen while other fields remain invalid (e.g., m_plen can be 0).
+> 
+> Due to the return value of z_erofs_scan_folio() in some path will
+> be ignored on purpose, the following z_erofs_scan_folio() could
+> then use the invalid value by accident.
+> 
+> Let's reset m_llen to 0 to prevent this.
+> 
+> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+> ---
+>   fs/erofs/zmap.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/fs/erofs/zmap.c b/fs/erofs/zmap.c
+> index 9b248ee5fef2..74d3d7bffcf3 100644
+> --- a/fs/erofs/zmap.c
+> +++ b/fs/erofs/zmap.c
+> @@ -711,6 +711,8 @@ int z_erofs_map_blocks_iter(struct inode *inode, struct erofs_map_blocks *map,
+>   
+>   	err = z_erofs_do_map_blocks(inode, map, flags);
+>   out:
+> +	if (err)
+> +		map->m_llen = 0;
+>   	trace_z_erofs_map_blocks_iter_exit(inode, map, flags, err);
+>   	return err;
+>   }
 
