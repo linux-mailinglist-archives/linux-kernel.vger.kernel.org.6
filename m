@@ -1,252 +1,228 @@
-Return-Path: <linux-kernel+bounces-235193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1838E91D164
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 13:17:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F221C91D166
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 13:18:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14C65282A28
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 11:17:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C9F51F22054
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 11:18:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0216913C689;
-	Sun, 30 Jun 2024 11:17:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583D313C3CC;
+	Sun, 30 Jun 2024 11:17:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cfbHhE0p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="JTF5OV6C"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21D47200C1;
-	Sun, 30 Jun 2024 11:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F9812EBCA
+	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 11:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719746256; cv=none; b=Z4XlsTKo+5Gcruw1h2pknVWayT5sZ5dXIy6kmVBDOpc3Drv5K32J9/UAodJu1E/McszXKgELphBAXGQGcDmqjk40dmfk59mzaCTsg/mY263y3SBbqYHcsEhE2PnMrR1hkM9/3lvMtQ6jGuoAj4WlG6bwJI0yeOkv5ddJMY0cWRA=
+	t=1719746267; cv=none; b=MQMBHxP3eT6VCMVp/lNd6sWPyTX7i8CSBvrgcUt42erHAqGzCPH2pQ1ylKZ6WS+pd9e9PR0tB68KvTvlwcEDDdJEfJ4/2LzsU3dln9lrNp/NMQ2P47+7g0ZqIuName8Ls6TkSEDp+GZIsOcuCwfX6UtVk9peOTHx2+Kn3kP267g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719746256; c=relaxed/simple;
-	bh=NaPQ4uNEOSAllGqmDxgXXmyzGu/F7JDU6SOkzOWwVzo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HFM8Niqd7T8gLfKwB79wn+fUrBUfJBx56NMi0kq12gDBB2iwBUdMYhSUge1Z1UcF0GOHP8u+dYLhq/B4AQRyNdACUK3e1UGFoy0F7XZf0DnwjWNHVo4Cxhc5AkUEa3i976jv4VvGYT5noKbXB1W/8V558wdTeAEGtisYL639+FI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cfbHhE0p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 434D1C2BD10;
-	Sun, 30 Jun 2024 11:17:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719746255;
-	bh=NaPQ4uNEOSAllGqmDxgXXmyzGu/F7JDU6SOkzOWwVzo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cfbHhE0p09RkjXrsJifIsNH0PoYOAp4wH5j47/qd7FzYIt1j+1n3ZoeO/GpWC27nE
-	 UxTANs4hGAWsJMWc8vv4qJfESebNiLY4s2Qr9EFdq+WxqN7KkJVD7L/lW3gbIhTTaA
-	 t0ffC/HFW77BhLC72xp6Nv+l0wY7FkmgmSvIz8lghKNwV3CDEWfIauUnfWQxfnThsS
-	 2OwgvLtd10nC0IzT8brNo8B6iM8mBEKcHmAm2MsmKb6yevXrwOgEwJ/6Cdcekn9XG5
-	 +nPGv1yG93M/eiT9gv85gNVtvDRn4Bgvp5v85jgCCeWny+nclBkiuCxa39acxNATUO
-	 opdXS2BwS4cfw==
-Date: Sun, 30 Jun 2024 12:17:26 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>
-Cc: <broonie@kernel.org>, <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
- <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
- <conor+dt@kernel.org>, <nuno.sa@analog.com>, <dlechner@baylibre.com>,
- <corbet@lwn.net>, <marcelo.schmitt1@gmail.com>,
- <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-spi@vger.kernel.org>, <linux-doc@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 6/7] iio: adc: Add support for AD4000
-Message-ID: <20240630121726.5d75578e@jic23-huawei>
-In-Reply-To: <628a85cb8cbee32ea7d2930c63e73f2ef449a800.1719686465.git.marcelo.schmitt@analog.com>
-References: <cover.1719686465.git.marcelo.schmitt@analog.com>
-	<628a85cb8cbee32ea7d2930c63e73f2ef449a800.1719686465.git.marcelo.schmitt@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719746267; c=relaxed/simple;
+	bh=jYFIEExFVrT+ug+PvDyzzupw1REP9eVYtglOcKLmjA4=;
+	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=rqf3kwLxL6zF2SpqmJpzWhE/vkhp2rDZ1mCHgeL2lYoKTLotES6DDU1X9NeALKzpTx/Og3zNN1/VkJftBNzp/fHHRY2wmfr4ifd2/onGrpA8k1X3M45CQfae/r2vNb2qqEVKJyOzhr7k4E2Qh0tsAdJoNkxsVzOtu9ROgMERz+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=JTF5OV6C; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57d251b5fccso2409076a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 04:17:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1719746264; x=1720351064; darn=vger.kernel.org;
+        h=mime-version:subject:user-agent:references:in-reply-to:message-id
+         :date:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=E3EPmo2FexfTxQGrXm7V8QHoIygOXQe8blOyjyhzLA8=;
+        b=JTF5OV6CF16BJbrbEp+5piA5yQaSdb6XMvEhh/RjFFX65wj2ehCdqUlPeHacv8ZfwH
+         IRDZG4Fd5uqXYp9hbV+CTJ7aBM/bShVP16GJFdvUb12EwYYPy8HspeBlhee4b11Ydzcm
+         BU/nvl3oWfNdt4oWkDA60nBqBzxzFlMsIjcBo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719746264; x=1720351064;
+        h=mime-version:subject:user-agent:references:in-reply-to:message-id
+         :date:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E3EPmo2FexfTxQGrXm7V8QHoIygOXQe8blOyjyhzLA8=;
+        b=hkTLM+JS1qy5ojLJNyWM7fEFLQwN0NabyUiMRC0WI8izoRJxkZ+o5Rt5WHol9lZyg2
+         +Pmc1hmNhKTm/k+Qeqe+Z3rmznUkH7IAkhzza9LncdFBUykXm5HYlDAmoY94bG2YAe/f
+         6P+ZkDTUa3IMq7myms0UaKFX75BEgDgPwBOz+0Qy+uLa9FkAfYNL4rN5wEog7kl05rmQ
+         wN+mCto9qZzdh6HmzQEFMI7jXatquqly+cR4oGD9p7EveVXiHq9/4ittnqPZkRyl7au1
+         JGrdPfapuusP5blgzVl/23FSum+n16Q7hhyhASk1ND8re3Va2RDl/AfR7yhWg3R7urrl
+         ENng==
+X-Forwarded-Encrypted: i=1; AJvYcCVMbJImBwJGoC4IxtoaxO3bQXqfeqQVzXPdEUGmSFU3JJ0ITDDZNlK0SeB3YCjf4Ba5lLdarpDU1rT4SR4o9rWK6tRDcTCQITtESC2A
+X-Gm-Message-State: AOJu0YxcafDX7iqBrSDRJ4FQQVrahiKjulpsiEJ9jOocREYT7WJvfHEN
+	7C95lW7PUZtXCMdN1/tEaqxPoofX2LWKvlPLZ01LmFiWxEymV+KWdoCIJTts3g==
+X-Google-Smtp-Source: AGHT+IHg8xytfm5chj5iIP2jymelgvdxZpjTBraIIahB6oJ7vUJGLLj+96u4dyZzkMkGYwpAKgpbCQ==
+X-Received: by 2002:a17:906:a091:b0:a6f:49eb:31a5 with SMTP id a640c23a62f3a-a75144b67a4mr151258866b.77.1719746264001;
+        Sun, 30 Jun 2024 04:17:44 -0700 (PDT)
+Received: from [192.168.178.38] (f215227.upc-f.chello.nl. [80.56.215.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab06517csm234240666b.105.2024.06.30.04.17.42
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 30 Jun 2024 04:17:43 -0700 (PDT)
+From: Arend Van Spriel <arend.vanspriel@broadcom.com>
+To: Jacobe Zang <jacobe.zang@wesion.com>, <robh@kernel.org>, <krzk+dt@kernel.org>, <heiko@sntech.de>, <kvalo@kernel.org>, <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>, <conor+dt@kernel.org>
+CC: <efectn@protonmail.com>, <dsimic@manjaro.org>, <jagan@edgeble.ai>, <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>, <arend@broadcom.com>, <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>, <megi@xff.cz>, <duoming@zju.edu.cn>, <bhelgaas@google.com>, <minipli@grsecurity.net>, <brcm80211@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>, <nick@khadas.com>
+Date: Sun, 30 Jun 2024 13:17:41 +0200
+Message-ID: <19068dd7008.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+In-Reply-To: <20240630073605.2164346-6-jacobe.zang@wesion.com>
+References: <20240630073605.2164346-1-jacobe.zang@wesion.com>
+ <20240630073605.2164346-6-jacobe.zang@wesion.com>
+User-Agent: AquaMail/1.51.5 (build: 105105504)
+Subject: Re: [PATCH v3 5/5] wifi: brcmfmac: Add support for AP6275P
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="00000000000034234b061c19a149"
 
-On Sat, 29 Jun 2024 16:06:59 -0300
-Marcelo Schmitt <marcelo.schmitt@analog.com> wrote:
+--00000000000034234b061c19a149
+Content-Type: text/plain; format=flowed; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 
-> Add support for AD4000 series of low noise, low power, high speed,
-> successive approximation register (SAR) ADCs.
-> 
-> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+On June 30, 2024 9:36:40 AM Jacobe Zang <jacobe.zang@wesion.com> wrote:
 
-Hi Marcelo
+> This module features BCM43752A2 chipset. The firmware requires
+> randomness seeding, so enabled it.
+>
+> Co-developed-by: Ondrej Jirman <megi@xff.cz>
+> Signed-off-by: Ondrej Jirman <megi@xff.cz>
+> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
+> Link: 
+> https://megous.com/git/linux/commit/?h=ap6275p-6.10&id=1a99573bc8ed412e60e1969c0b29d53a0e5782e0
+> ---
+> drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c      | 5 ++++-
+> .../net/wireless/broadcom/brcm80211/include/brcm_hw_ids.h    | 2 ++
+> 2 files changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c 
+> b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
+> index e84f562fc91b8..f427d664cf3a5 100644
+> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
+> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
 
-A few comments inline. However, the spi_w8r8 etc can easily be a follow up
-optimization patch (if you agree it's a good improvement) and the
-other changes are so trivial I could tweak whilst applying.
+[...]
 
-So unless you have to do a v7 for some other reason this is fine for
-merging as is - subject to the fact it's not been on list long enough yet
-and I need Mark to pick up the SPI parts and throw me a tag to pull.
+> @@ -1721,7 +1723,7 @@ static int brcmf_pcie_download_fw_nvram(struct 
+> brcmf_pciedev_info *devinfo,
+>  memcpy_toio(devinfo->tcm + address, nvram, nvram_len);
+>  brcmf_fw_nvram_free(nvram);
+>
+> - if (devinfo->otp.valid) {
+> + if (devinfo->otp.valid || devinfo->ci->chip
 
-Thanks,
+So the problem here is that otp validity is not unambiguous. The seed 
+requirement is mandated by firmware and was introduced for new WCC chips 
+moving forward.
 
-Jonathan
+I would suggest to have a need_seed flag in the driver_data of the device 
+table (below). It currently is used only for vendor identification.
 
+Regards,
+Arend
 
-> --- /dev/null
-> +++ b/drivers/iio/adc/ad4000.c
-> @@ -0,0 +1,708 @@
-
-> +
-> +struct ad4000_state {
-> +	struct spi_device *spi;
-> +	struct gpio_desc *cnv_gpio;
-> +	struct spi_transfer xfers[2];
-> +	struct spi_message msg;
-> +	struct mutex lock; /* Protect read modify write cycle */
-> +	int vref_mv;
-> +	enum ad4000_sdi sdi_pin;
-> +	bool span_comp;
-> +	u16 gain_milli;
-> +	int scale_tbl[AD4000_SCALE_OPTIONS][2];
-> +
-> +	/*
-> +	 * DMA (thus cache coherency maintenance) requires the transfer buffers
-> +	 * to live in their own cache lines.
-> +	 */
-> +	struct {
-> +		union {
-> +			__be16 sample_buf16;
-> +			__be32 sample_buf32;
-> +		} data;
-> +		s64 timestamp __aligned(8);
-> +	} scan __aligned(IIO_DMA_MINALIGN);
-> +	u8 tx_buf[2];
-> +	u8 rx_buf[2];
-
-If you made the spi_w8r8() change suggested below (which uses a bounce buffer
-in the spi core), rx_buf would be unused and can go away.
-
-Given I think registers accesses on this device are all off the fast path
-you could even use spi_write_then_read() with zero read size for the
-register writes and rely on the spi core bounce buffers.
-That way tx_buf goes away as well leaving you with the dma
-safe buffer for only the fast path reads.
-
-> +};
-> +
-> +static void ad4000_fill_scale_tbl(struct ad4000_state *st,
-> +				  struct iio_chan_spec const *chan)
-> +{
-> +	int val, tmp0, tmp1;
-> +	int scale_bits;
-> +	u64 tmp2;
-> +
-> +	/*
-> +	 * ADCs that output two's complement code have one less bit to express
-> +	 * voltage magnitude.
-> +	 */
-> +	if (chan->scan_type.sign == 's')
-> +		scale_bits = chan->scan_type.realbits - 1;
-> +	else
-> +		scale_bits = chan->scan_type.realbits;
-> +
-> +	/*
-> +	 * The gain is stored as a fraction of 1000 and, as we need to
-> +	 * divide vref_mv by the gain, we invert the gain/1000 fraction.
-> +	 * Also multiply by an extra MILLI to preserve precision.
-> +	 * Thus, we have MILLI * MILLI equals MICRO as fraction numerator.
-> +	 */
-> +	val = mult_frac(st->vref_mv, MICRO, st->gain_milli);
-
-If you are rolling a v7 for other reasons, stick some line breaks in here!
-It's a bit of a mass of text that is hard for my eyes to parse!
-
-> +	/* Would multiply by NANO here but we multiplied by extra MILLI */
-> +	tmp2 = shift_right((u64)val * MICRO, scale_bits);
-> +	tmp0 = div_s64_rem(tmp2, NANO, &tmp1);
-> +	/* Store scale for when span compression is disabled */
-> +	st->scale_tbl[0][0] = tmp0; /* Integer part */
-> +	st->scale_tbl[0][1] = abs(tmp1); /* Fractional part */
-> +	/* Store scale for when span compression is enabled */
-> +	st->scale_tbl[1][0] = tmp0;
-> +	/* The integer part is always zero so don't bother to divide it. */
-> +	if (chan->differential)
-> +		st->scale_tbl[1][1] = DIV_ROUND_CLOSEST(abs(tmp1) * 4, 5);
-> +	else
-> +		st->scale_tbl[1][1] = DIV_ROUND_CLOSEST(abs(tmp1) * 9, 10);
-> +}
-
-> +static int ad4000_read_reg(struct ad4000_state *st, unsigned int *val)
-> +{
-> +	struct spi_transfer t = {
-> +		.tx_buf = st->tx_buf,
-> +		.rx_buf = st->rx_buf,
-> +		.len = 2,
-> +	};
-> +	int ret;
-> +
-> +	st->tx_buf[0] = AD4000_READ_COMMAND;
-> +	ret = spi_sync_transfer(st->spi, &t, 1);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	*val = st->rx_buf[1];
-> +	return ret;
-
-I'd be tempted to do
-
-	ssize_t ret;
-
-	ret = spi_w8r8(AD4000_READ_COMMAND);
-	if (ret < 0)
-		return ret;
-	*val = ret;
-	
-	return 0;
-
-> +}
+> == BRCM_CC_43752_CHIP_ID) {
+>  size_t rand_len = BRCMF_RANDOM_SEED_LENGTH;
+>  struct brcmf_random_seed_footer footer = {
+>  .length = cpu_to_le32(rand_len),
+> @@ -2710,6 +2712,7 @@ static const struct pci_device_id 
+> brcmf_pcie_devid_table[] = {
+>  BRCMF_PCIE_DEVICE(BRCM_PCIE_4366_5G_DEVICE_ID, BCA),
+>  BRCMF_PCIE_DEVICE(BRCM_PCIE_4371_DEVICE_ID, WCC),
+>  BRCMF_PCIE_DEVICE(BRCM_PCIE_43596_DEVICE_ID, CYW),
+> + BRCMF_PCIE_DEVICE(BRCM_PCIE_43752_DEVICE_ID, WCC),
+>  BRCMF_PCIE_DEVICE(BRCM_PCIE_4377_DEVICE_ID, WCC),
+>  BRCMF_PCIE_DEVICE(BRCM_PCIE_4378_DEVICE_ID, WCC),
+>  BRCMF_PCIE_DEVICE(BRCM_PCIE_4387_DEVICE_ID, WCC),
 
 
-> +static int ad4000_write_raw(struct iio_dev *indio_dev,
-> +			    struct iio_chan_spec const *chan, int val, int val2,
-> +			    long mask)
-> +{
-> +	struct ad4000_state *st = iio_priv(indio_dev);
-> +	unsigned int reg_val;
-> +	bool span_comp_en;
-> +	int ret;
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_SCALE:
-> +		iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
-> +			guard(mutex)(&st->lock);
-> +
-> +			ret = ad4000_read_reg(st, &reg_val);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			span_comp_en = val2 == st->scale_tbl[1][1];
-> +			reg_val &= ~AD4000_CFG_SPAN_COMP;
-> +			reg_val |= FIELD_PREP(AD4000_CFG_SPAN_COMP, span_comp_en);
-> +
-> +			ret = ad4000_write_reg(st, reg_val);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			st->span_comp = span_comp_en;
-> +			return ret;
 
-If you are spinning for another reason, make it clear this is always good.
-The spi_write() never returns positive so current code is correct but I had
-to go check which this would have avoided.
 
-			return 0;
+--00000000000034234b061c19a149
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-If nothing else comes up, I'll probably tweak whilst applying.
-
-J
-
-> +		}
-> +		unreachable();
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-
+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
+2Gzj3QNJRLsZu1TLyOyBBIr/BE7UiY3RabgRzknBGAPmzhS+fmyM8OtM5BYBsFBrSUFtZZO2p/tf
+Nbc24J2zf2peoZ8MK+7WQqummYlOnz+FyDkA9EybeNMcS5C+xi/PAgMBAAGjggHdMIIB2TAOBgNV
+HQ8BAf8EBAMCBaAwgaMGCCsGAQUFBwEBBIGWMIGTME4GCCsGAQUFBzAChkJodHRwOi8vc2VjdXJl
+Lmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcnQwQQYI
+KwYBBQUHMAGGNWh0dHA6Ly9vY3NwLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24y
+Y2EyMDIwME0GA1UdIARGMEQwQgYKKwYBBAGgMgEoCjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3
+dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAJBgNVHRMEAjAAMEkGA1UdHwRCMEAwPqA8oDqG
+OGh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3Js
+MCcGA1UdEQQgMB6BHGFyZW5kLnZhbnNwcmllbEBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYB
+BQUHAwQwHwYDVR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFIikAXd8CEtv
+ZbDflDRnf3tuStPuMA0GCSqGSIb3DQEBCwUAA4IBAQCdS5XCYx6k2GGZui9DlFsFm75khkqAU7rT
+zBX04sJU1+B1wtgmWTVIzW7ugdtDZ4gzaV0S9xRhpDErjJaltxPbCylb1DEsLj+AIvBR34caW6ZG
+sQk444t0HPb29HnWYj+OllIGMbdJWr0/P95ZrKk2bP24ub3ZP/8SyzrohfIba9WZKMq6g2nTLZE3
+BtkeSGJx/8dy0h8YmRn+adOrxKXHxhSL8BNn8wsmIZyYWe6fRcBtO3Ks2DOLyHCdkoFlN8x9VUQF
+N2ulEgqCbRKkx+qNirW86eF138lr1gRxzclu/38ko//MmkAYR/+hP3WnBll7zbpIt0jc9wyFkSqH
+p8a1MYICbTCCAmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1z
+YTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMTv1t
+bpIzNUky46LXMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCBrTbD4G+4EF0VD3euW
+uEyjSzimP0p0FdYfmUumD8hL/DAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJ
+BTEPFw0yNDA2MzAxMTE3NDRaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFl
+AwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzAL
+BglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAIvADSi9AEOPFFmRi6ImkmAJNkPNGTrBZnbpr
+CEbT3jHtA+cIoxSTLK7NFmU5Na+uJhT0j6ZEQZLfr+1Ehn6+dIJzfbZbQTpWLlg/sTy3EVSlJkEA
+tkyOJ+qMF+s0fN9oChtv9b/RBYYz6+M+VyV497PaQWV+Cv3W6uD599bi5BGgLn8C8HKmR4LV/OjJ
+EUpJUAwuLj0v26DWaRhRvoDx6oU5OnG6wqoDvEllBQkhPqOMf83L8E5JLBNIeJlpPGnd1pUXLN2n
+xqh10+4DP7bmqn3qWegkVqrcXIOI/drCTiVfq3dtljw9brXlMhcTOVgWDKo/a8kVooSs1LQE2cXU
+nw==
+--00000000000034234b061c19a149--
 
