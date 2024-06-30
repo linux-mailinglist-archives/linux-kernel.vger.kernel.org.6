@@ -1,135 +1,139 @@
-Return-Path: <linux-kernel+bounces-235105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 409AF91D034
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 08:53:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F11791D036
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 08:56:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE3E22819D6
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 06:53:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA2731F218E7
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 06:56:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD7D3A1BF;
-	Sun, 30 Jun 2024 06:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="OgvTQ+88"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652C83E467
-	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 06:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89963B2BB;
+	Sun, 30 Jun 2024 06:56:31 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB4B2837B;
+	Sun, 30 Jun 2024 06:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719730403; cv=none; b=K4IRvozza/vX7cNu9rUfPtTCd0Hwa3VaxIg1/RVeFpSF+Q7t69yG7Y1mvkwUaYvZWhkEyN6WZUzLdolrAaX+dAFLvNWz1gpNgITXMtL/PuCD//ovG7tB5WBpEzowBXM6DWbnLPoRncqeoMQQtHWEQg631CIz2kL4JD4jKqWg3qM=
+	t=1719730591; cv=none; b=gR/w08RI4zfNN6VUONea0Hg8+hW/0XHwKU/BIZKhWhqhJvWiSwZ2+CgvUbN59aTZl8FPWYmrncFJJ7YX5YtmF69KeizXJ6LIQDgLmSTbudWNoWkGUK9798MStMYzuIZDLpBShhf9cVlbxZl04SVTn7L/3LMjoE5oxnsN0NlN55c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719730403; c=relaxed/simple;
-	bh=92Fr2FI0hzTIr3j6+QoFA8EzGb3LeRI2MHqAshn6kcQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=UxgJrxPFagcsjhWoTaCrngZ8Ytqv1PGRc5ewxGVnizctZgmpdD8K6mDb/Hw1k8/OvG++p1BAe5j3J/LDZSOVIPM5QBnRNX7BAqGxnlkfi2J3fQJkwNU64Xx/KmtYnKh8F80g4FovRgxaygod9iJGGuVoZ8oW5NVhdP6iGvw8tLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=OgvTQ+88; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52d259dbe3cso2083568e87.0
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Jun 2024 23:53:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719730398; x=1720335198; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ew4KWJgmKbpOxqo+GQy5qo/brhj1D5g+M8tiJYpqXX8=;
-        b=OgvTQ+88fFeaCfXlI8EFoQuCKPhtVYqHFlcvmQJvvBq+j1LbNhl+l8+KBAFtaZQ1fU
-         SyySRibUemRUuSyYhWN2xwdlWuXbNJMCGa5mQu4JJE2mBH2LezKFnMi4VBPeoLSHQ6bW
-         aREPZ7EptC/50NiwJzADOJ74JhwXBUzTgVceypJLRD7T4IySH3g32YnEsXbQmxaMvcm/
-         kgleX4cAkHCzCScVh6GaFDS50LiWGfBlj5hHc/v144GqmQzIi/iBCiyEhst2cMufJf3w
-         0CIlqw31L4cvIPJzaEdJJ5kbAtYlZpCRztVAaJ/cMaL8DBY5L1baDcCcYITd5xE15dFs
-         cNxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719730398; x=1720335198;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ew4KWJgmKbpOxqo+GQy5qo/brhj1D5g+M8tiJYpqXX8=;
-        b=YofUZ0YQAID069rWujNCY6EhmLnQjpp0uQXYA5h8JgFLRNxJb62GwU0Gykz+8ImtVq
-         N35OOhpBGjP8Jcd4pSpslnuEXDpZl2YtHPDUhfaiMOT07LXmi0yD5eSHxPA9IPim7TCc
-         nIralG+Z08lSeF2XvgHPDiWw85l0WwFDelmETRoVFYkri2d881d2CGO3iNGJFEGa5SWq
-         AlxHYBpwD4q1ZvD+ycWNYXKVPY+SWnN7mj5P6jt/OIk/AA6VZq86LTj8ouYAq0UXgWkU
-         8H877r2daBUqT4Qluv4JIshiJ4Xilwg4NQujM4mDuLO4V/L/ANTKyAirVNM0UCt3IJ2w
-         t9hA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJbsSRnOBfJ84VnZdN3nnIlIsEs84a6UYbTzWIk+Jou/n1wDJIp3O9EQHpCRylS61/HIq613fKhz2ckriHNMWw65XoBDCSdxOzA0QE
-X-Gm-Message-State: AOJu0YwVOffkTG0YDgpiiIhRO3jCOH/5+rJ5lrz5MIyvvELGS/v1U7SI
-	qnwSKChnbkxtlCrLgPBz0y1R83Y5zPS8egCMYGLSwEaS17+9MKmJQ7CiLlACSpY=
-X-Google-Smtp-Source: AGHT+IEnzCb0ZjEgk4HVemu0D2vV5LVoJK9bnWbsrBx3BpfdiC+g0YptGg0s/NfloHGeam0Y9qPU0w==
-X-Received: by 2002:a05:6512:4014:b0:52c:b479:902d with SMTP id 2adb3069b0e04-52e82643b97mr2093475e87.4.1719730397113;
-        Sat, 29 Jun 2024 23:53:17 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:51e2:ba1a:8ad5:52c9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b09a073sm100168595e9.32.2024.06.29.23.53.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Jun 2024 23:53:16 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: kernel test robot <lkp@intel.com>
-Cc: Mark Brown <broonie@kernel.org>,  Liam Girdwood <lgirdwood@gmail.com>,
-  Takashi Iwai <tiwai@suse.com>,  Jaroslav Kysela <perex@perex.cz>,
-  oe-kbuild-all@lists.linux.dev,  alsa-devel@alsa-project.org,
-  linux-sound@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] ALSA: pcm: add support for 128kHz sample rate
-In-Reply-To: <202406300718.iL828kaG-lkp@intel.com> (kernel test robot's
-	message of "Sun, 30 Jun 2024 07:29:29 +0800")
-References: <20240628122429.2018059-2-jbrunet@baylibre.com>
-	<202406300718.iL828kaG-lkp@intel.com>
-Date: Sun, 30 Jun 2024 08:53:15 +0200
-Message-ID: <1j1q4ej50k.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1719730591; c=relaxed/simple;
+	bh=blR4af+oJUOjmsjaK4tAkHlJHHKTe0N/YlteM2/+gdc=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=mTkasqj02MOeyj8PEGhWMBbuUuDdaiNzhjbcER27OoaPSTjoCcftBkYtdFPfSjqjJUHucMCNi6zxSB9+zuhSPdILClcKaIeG3EZH469U5am7qbRo+mSRsoNusTI2UiU9V9HULG1AMXsbbpQPSh0wDW2XVbfynEXIfYNZSBlXV0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id E52BE92009C; Sun, 30 Jun 2024 08:56:19 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id D7A9192009B;
+	Sun, 30 Jun 2024 07:56:19 +0100 (BST)
+Date: Sun, 30 Jun 2024 07:56:19 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Shiji Yang <yangshiji66@outlook.com>
+cc: linux-mips@vger.kernel.org, 
+    Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+    Arnd Bergmann <arnd@arndb.de>, 
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    Javier Martinez Canillas <javierm@redhat.com>, 
+    Khalid Aziz <khalid@gonehiking.org>, Baoquan He <bhe@redhat.com>, 
+    Jiaxun Yang <jiaxun.yang@flygoat.com>, 
+    Serge Semin <fancer.lancer@gmail.com>, linux-kernel@vger.kernel.org, 
+    Mieczyslaw Nalewaj <namiltd@yahoo.com>
+Subject: Re: [PATCH v3] mips: kernel: fix detect_memory_region() function
+In-Reply-To: <TYCP286MB0895F65439037ED134FEA7DDBCD12@TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM>
+Message-ID: <alpine.DEB.2.21.2406300615200.43454@angie.orcam.me.uk>
+References: <TYCP286MB0895F65439037ED134FEA7DDBCD12@TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 
-On Sun 30 Jun 2024 at 07:29, kernel test robot <lkp@intel.com> wrote:
+On Sat, 29 Jun 2024, Shiji Yang wrote:
 
-> Hi Jerome,
->
-> kernel test robot noticed the following build errors:
->
-> [auto build test ERROR on tiwai-sound/for-next]
-> [also build test ERROR on tiwai-sound/for-linus broonie-sound/for-next linus/master v6.10-rc5 next-20240628]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Jerome-Brunet/ALSA-pcm-add-support-for-128kHz-sample-rate/20240629-201915
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git for-next
-> patch link:    https://lore.kernel.org/r/20240628122429.2018059-2-jbrunet%40baylibre.com
-> patch subject: [PATCH 1/3] ALSA: pcm: add support for 128kHz sample rate
-> config: i386-buildonly-randconfig-004-20240630
-> compiler: gcc-7 (Ubuntu 7.5.0-6ubuntu2) 7.5.0
-> reproduce (this is a W=1 build):
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202406300718.iL828kaG-lkp@intel.com/
->
-> All errors (new ones prefixed by >>):
->
->>> sound/usb/caiaq/audio.c:179:2: error: #error "Change this table"
->     #error "Change this table"
->      ^~~~~
->
->
-> vim +179 sound/usb/caiaq/audio.c
->
-> 523f1dce37434a sound/usb/caiaq/caiaq-audio.c Daniel Mack 2007-03-26  176  
-> 523f1dce37434a sound/usb/caiaq/caiaq-audio.c Daniel Mack 2007-03-26  177  /* this should probably go upstream */
-> 523f1dce37434a sound/usb/caiaq/caiaq-audio.c Daniel Mack 2007-03-26  178  #if SNDRV_PCM_RATE_5512 != 1 << 0 || SNDRV_PCM_RATE_192000 != 1 << 12
-> 523f1dce37434a sound/usb/caiaq/caiaq-audio.c Daniel Mack 2007-03-26 @179  #error "Change this table"
-> 523f1dce37434a sound/usb/caiaq/caiaq-audio.c Daniel Mack 2007-03-26  180  #endif
-> 523f1dce37434a sound/usb/caiaq/caiaq-audio.c Daniel Mack 2007-03-26  181  
+> 1. Do not use memcmp() on unallocated memory, as the new introduced
+>   fortify dynamic object size check[1] will return unexpected result.
 
-This file is not in mainline or
-https://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git for-next
-branch ... Don't know what to make of this error ?
+ That seems like a bug in the check to me.  Why would `memcmp' referring 
+to a location within the data section cause an unexpected result, forcing 
+code to use an equivalent handcoded sequence?  This defeats the purpose of 
+having possibly optimised code in `memcmp' for this.
 
--- 
-Jerome
+> diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
+> index 12a1a4ffb602..4197c7568f49 100644
+> --- a/arch/mips/kernel/setup.c
+> +++ b/arch/mips/kernel/setup.c
+> @@ -86,21 +86,26 @@ static struct resource bss_resource = { .name = "Kernel bss", };
+>  unsigned long __kaslr_offset __ro_after_init;
+>  EXPORT_SYMBOL(__kaslr_offset);
+>  
+> -static void *detect_magic __initdata = detect_memory_region;
+> -
+>  #ifdef CONFIG_MIPS_AUTO_PFN_OFFSET
+>  unsigned long ARCH_PFN_OFFSET;
+>  EXPORT_SYMBOL(ARCH_PFN_OFFSET);
+>  #endif
+>  
+> +#define MIPS_MEM_TEST_PATTERN		0xaa5555aa
+> +
+>  void __init detect_memory_region(phys_addr_t start, phys_addr_t sz_min, phys_addr_t sz_max)
+>  {
+> -	void *dm = &detect_magic;
+> +	u32 detect_magic;
+> +	volatile u32 *dm = (volatile u32 *)CKSEG1ADDR_OR_64BIT(&detect_magic);
+>  	phys_addr_t size;
+>  
+>  	for (size = sz_min; size < sz_max; size <<= 1) {
+> -		if (!memcmp(dm, dm + size, sizeof(detect_magic)))
+> -			break;
+> +		*dm = MIPS_MEM_TEST_PATTERN;
+> +		if (*dm == *(volatile u32 *)((void *)dm + size)) {
+> +			*dm = ~MIPS_MEM_TEST_PATTERN;
+> +			if (*dm == *(volatile u32 *)((void *)dm + size))
+
+ Can't you just do *(dm + (size >> 2)) and avoid all the horrible casting?  
+Or maybe even dm[0] == dm[size >> 2]?
+
+> +				break;
+> +		}
+>  	}
+
+ Anyway this code makes no sense to me, with or without the change.  What 
+is it exactly supposed to peek at, the location of `detect_magic' plus 
+some offset?
+
+ What about the `start' parameter?  What is it for, given that it's not 
+used in probing, but only for reporting and adding the memory region?  Is 
+it not where probing is supposed to happen in the first place?
+
+ I can see how `ath79_detect_mem_size' this mess has come from made some 
+sense as in 9b75733b7b5e0^:arch/mips/ath79/setup.c -- a bit hackish, but 
+the size of the probing window set to 1024 bytes combined with comparing 
+against machine code from `ath79_detect_mem_size' made a false hit highly 
+unlikely.  That sense has been lost since and your change partially fixes 
+it by making a check against both the straight and the complemented value 
+of a test pattern.  Good.
+
+ But still that does not fix the issue with `start'.  Given how this code 
+has been written I'm not even sure if it's suitable for nonzero `start' at 
+all.  Or should the call to `memblock_add' just be adjusted accordingly:
+
+	memblock_add(start, size - start);
+
+?  This might make sense and if suitable, then it should be documented as 
+the feature of `detect_memory_region' (as should probably be that it will 
+round the amount of memory available down to the nearest power of two).
+
+ Alternatively the code can start probing at `start', but then it'll have 
+to be rewritten, because obviously `detect_magic' may not necessarily be 
+above `start'.
+
+  Maciej
 
