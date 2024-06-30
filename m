@@ -1,157 +1,141 @@
-Return-Path: <linux-kernel+bounces-235220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3888991D1C3
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 15:18:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E730C91D1C9
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 15:29:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A9D728209B
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 13:18:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92E3E1F21425
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 13:29:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6116813E41A;
-	Sun, 30 Jun 2024 13:18:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9080413F43C;
+	Sun, 30 Jun 2024 13:29:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hWUgOO+g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ifzeGgc1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93722200C1;
-	Sun, 30 Jun 2024 13:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9E01E49F;
+	Sun, 30 Jun 2024 13:29:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719753521; cv=none; b=joX0v7Rm/x/zPetw6H63GdWYfI9YB+ymumxpuBv7SOnrVxHJNy84EtsSJ2N6CIh+5oCdUc5/7KVJAsPEV5kqzuU/pymHE9QfXSAytlj51fjE2qn26XItMOhFVH0vP8U4eqwDNbAjXgFJmuSvKjUP+Z275ILYmOhBIdE+0tnsQ+w=
+	t=1719754146; cv=none; b=TPhjj/Rehe5RxjBbhD9AXOnfcZYDD4WQ5azbiQK1rxOYphx6yYV929kq6xLCCPmM5tXt/t+O+m/z8TV1eRTbPG/F4g9vf2wJrCbA75V5y+I18HmFiFXy6vRUhbkXsuvdJrx6zn4B06l3zaH/sfKXH3O6guAbAjOUweLSIE1jS6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719753521; c=relaxed/simple;
-	bh=FJRs+QLA3UuXw3IDsXaaAJ3YUQhbqBMN2G3niJbLHIY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O+1OWBNY3JP0ZoTswONoqRxNmbaodOZgFiyj8J44N6mUjOHRzSVCJxyKtPmXsf3MOrX8XL9PuiRvwTc5qQV/vVpaIVPG8mt+YIKb3eKhw/oBb8jmhslb9mjInuZYU7R5160Bh1PeCDbv7XknzSy6oz6NTv4/xsbuLTNQZqdFUuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hWUgOO+g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32FF5C4AF10;
-	Sun, 30 Jun 2024 13:18:41 +0000 (UTC)
+	s=arc-20240116; t=1719754146; c=relaxed/simple;
+	bh=ChFb8w15BttkA8Gd38P/acg2lX8jxg3AeR6dCf7FnUk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QBvUGr4HB3JJrmeO7qrycIYDKzXD9JjqPomNMxSxkdcpfmRTfn3M7jjo6HdVgi89xAYeO0T20VePjJxLyTdIeRv9w9jJWHqAvpX09hIeVsk5Yc6QL9145JPW6XDSfrG4mV7qzKslHGDpGJnOUOFETZ9qAAfzsV8I55dmwJD1Ojc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ifzeGgc1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94DADC2BD10;
+	Sun, 30 Jun 2024 13:29:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719753521;
-	bh=FJRs+QLA3UuXw3IDsXaaAJ3YUQhbqBMN2G3niJbLHIY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=hWUgOO+g+CSTSlofd7fxbXimU+gLIhXJ1OxAKnpgYbIJ4KY2VaiBiZvbiz8RcbxEq
-	 ue8RXYdlG3iIiDtL5TmQR/aFaB8ddlRYC76gupN69TcIywGHb84ep9kpILvwCaSM+I
-	 34npRLTu315+Vrnnu+vV0iTxK8G96j8+SncA1PPjLxlqGjpMKX60vMT9gK1fOUAr8S
-	 /8CbQg5Yvw4+jjgb3me3i0T0qX43hFWd0IsWDvofEoIN2n9EospIor44YFaL9/t41U
-	 YPjVdr8yTVTydQhHbY05u8oUVxT2TVBqcVhEa7rldBd8CqoKab/tNHf5s16Zjunp7U
-	 mSXbdthfxLknQ==
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57d26a4ee65so2290748a12.2;
-        Sun, 30 Jun 2024 06:18:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUYRnaV6aF6r/nnYoEq45qZwexc8Ks5oBX0k3Odiz/XRaCpNyPzpgW18hGJueaUkSlyJpB10TmwWLCQ02DjhhcSCPTbFMEQVFTHOViurONQniOYzrt715/EAcL3Om0S4pYCEaCAlEpc+yMBrytTGKBq6WCCPZZkdqMuOZ5Hzy3a6k5EpZwW
-X-Gm-Message-State: AOJu0Yy9gK4VTyIi4jE9RnLYqdGigjII5TGvVEBhUQ/4+Rwr7ZBjPs7K
-	GB5E0CWp0JH4OBskPPMs9RrJViM+jXyc4cjRE2IpZwthKb0+45tyHvH2dm4OciCPhBYmkS2gkC6
-	SNWZpt/DERLrdZCkvQleAbS2iB+M=
-X-Google-Smtp-Source: AGHT+IF3lBKPMxzpHBsJqqcYva7QkzTBDP5ZLA0nE5KiBAVuajy50fWI+fi4TbLxsA0iEv6rlMrNiPsotAnuqtkQYKc=
-X-Received: by 2002:a17:906:40d7:b0:a72:5d75:6337 with SMTP id
- a640c23a62f3a-a751447bb1cmr174658766b.53.1719753519682; Sun, 30 Jun 2024
- 06:18:39 -0700 (PDT)
+	s=k20201202; t=1719754146;
+	bh=ChFb8w15BttkA8Gd38P/acg2lX8jxg3AeR6dCf7FnUk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ifzeGgc1XPqx+MtSb9wIhYQKdSYS+/J+fwqGorROaN67YFRM/STdky6UuWpNhVyLw
+	 z8GC43AJg4Im2K/Ryq0gJG2Pyu32+fx49gEeQnQRCPPCWA+7b0HvR367HICrhYrdbu
+	 hs2MwLJhopRfIyNColSNZ5x5W1OjkUQ1Kzxc7XD5/14Z1Bgi3tUB18SX48HBLS6TrN
+	 tuyw5sk9l5P13hiWKilWIwQekNuQJ8c0tGUD3VF5ajg94CmRe1EU6qjYYdAROTsarG
+	 695L5QuZsPICkubKeh5Wl45ajosLI9iRdkXL1Keg2/r5NegBHWHpJZfAOpj/ue7OxN
+	 QulWDHuDUXqoA==
+Date: Sun, 30 Jun 2024 14:28:59 +0100
+From: Simon Horman <horms@kernel.org>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Peter Hilber <peter.hilber@opensynergy.com>,
+	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
+	"Ridoux, Julien" <ridouxj@amazon.com>, virtio-dev@lists.linux.dev,
+	"Luu, Ryan" <rluu@amazon.com>,
+	"Christopher S. Hall" <christopher.s.hall@intel.com>,
+	Jason Wang <jasowang@redhat.com>, John Stultz <jstultz@google.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>, netdev@vger.kernel.org,
+	Richard Cochran <richardcochran@gmail.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Kees Cook <kees@kernel.org>, linux-hardening@vger.kernel.org
+Subject: Re: [RFC PATCH v2] ptp: Add vDSO-style vmclock support
+Message-ID: <20240630132859.GC17134@kernel.org>
+References: <20231218073849.35294-1-peter.hilber@opensynergy.com>
+ <684eac07834699889fdb67be4cee09319c994a42.camel@infradead.org>
+ <671a784b-234f-4be6-80bf-5135e257ed40@opensynergy.com>
+ <db594efd5a5774748a9ef07cc86741f5a677bdbf.camel@infradead.org>
+ <c0ae63fc88365c93d5401972683a41112c094704.camel@infradead.org>
+ <4a0a240dffc21dde4d69179288547b945142259f.camel@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240625110029.606032-1-mjguzik@gmail.com> <20240625110029.606032-3-mjguzik@gmail.com>
- <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
- <e8db013bf06d2170dc48a8252c7049c6d1ee277a.camel@xry111.site>
- <CAAhV-H7iKyQBvV+J9T1ekxh9OF8h=F9zp_QMyuhFBrFXGHHmTg@mail.gmail.com> <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site>
-In-Reply-To: <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sun, 30 Jun 2024 21:18:26 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4XZCb_Yr=5yONmPKuCywGEP0Ncqjy9WEeQqzU31ssMhQ@mail.gmail.com>
-Message-ID: <CAAhV-H4XZCb_Yr=5yONmPKuCywGEP0Ncqjy9WEeQqzU31ssMhQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
-To: Xi Ruoyao <xry111@xry111.site>, Arnd Bergmann <arnd@arndb.de>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org, viro@zeniv.linux.org.uk, 
-	jack@suse.cz, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	io-uring@vger.kernel.org, axboe@kernel.dk, torvalds@linux-foundation.org, 
-	loongarch@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4a0a240dffc21dde4d69179288547b945142259f.camel@infradead.org>
 
-On Sun, Jun 30, 2024 at 10:40=E2=80=AFAM Xi Ruoyao <xry111@xry111.site> wro=
-te:
->
-> On Sun, 2024-06-30 at 09:40 +0800, Huacai Chen wrote:
-> > On Tue, Jun 25, 2024 at 11:00=E2=80=AFPM Xi Ruoyao <xry111@xry111.site>=
- wrote:
-> > >
-> > > On Tue, 2024-06-25 at 22:09 +0800, Huacai Chen wrote:
-> > > > On Tue, Jun 25, 2024 at 7:01=E2=80=AFPM Mateusz Guzik <mjguzik@gmai=
-l.com>
-> > > > wrote:
-> > > > >
-> > > > > The newly used helper also checks for 0-sized buffers.
-> > > > >
-> > > > > This avoids path lookup code, lockref management, memory
-> > > > > allocation
-> > > > > and
-> > > > > in case of NULL path userspace memory access (which can be quite
-> > > > > expensive with SMAP on x86_64).
-> > > > >
-> > > > > statx with AT_EMPTY_PATH paired with "" or NULL argument as
-> > > > > appropriate
-> > > > > issued on Sapphire Rapids (ops/s):
-> > > > > stock:     4231237
-> > > > > 0-check:   5944063 (+40%)
-> > > > > NULL path: 6601619 (+11%/+56%)
-> > > > >
-> > > > > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> > > > Hi, Ruoyao,
-> > > >
-> > > > I'm a bit confused. Ii this patch a replacement of your recent
-> > > > patch?
-> > >
-> > > Yes, both Linus and Christian hates introducing a new AT_ flag for
-> > > this.
-> > >
-> > > This patch just makes statx(fd, NULL, AT_EMPTY_PATH, ...) behave
-> > > like
-> > > statx(fd, "", AT_EMPTY_PATH, ...) instead.  NULL avoids the
-> > > performance
-> > > issue and it's also audit-able by seccomp BPF.
-> > To be honest, I still want to restore __ARCH_WANT_NEW_STAT. Because
-> > even if statx() becomes audit-able, it is still blacklisted now.
->
-> Then patch the sandbox to allow it.
->
-> The sandbox **must** be patched anyway or it'll be broken on all 32-bit
-> systems after 2037.  [Unless they'll unsupport all 32-bit systems before
-> 2037.]
-Yes, but it will not happen immediately.
++ Kees Cook, linux-hardening
 
->
-> > Restoring __ARCH_WANT_NEW_STAT is a very small change that doesn't
-> > introduce any complexity, but it makes life easier. And I think libLoL
-> > also likes __ARCH_WANT_NEW_STAT, though it isn't an upstream
-> > project...
->
-> At least you should not restore it for 32-bit.  libLoL also has nothing
-> to do with 32-bit systems anyway.  Maybe conditional it with a #if
-> checking __BITS_PER_LONG.
-Agree, but currently LoongArch only support 64bit, so we don't need
-#ifdef now (Many Kconfig options also need to depend on 64bit, but
-dependencies are removed when LoongArch get upstream).
+On Tue, Jun 25, 2024 at 08:01:56PM +0100, David Woodhouse wrote:
+> From: David Woodhouse <dwmw@amazon.co.uk>
+> 
+> The vmclock "device" provides a shared memory region with precision clock
+> information. By using shared memory, it is safe across Live Migration.
+> 
+> Like the KVM PTP clock, this can convert TSC-based cross timestamps into
+> KVM clock values. Unlike the KVM PTP clock, it does so only when such is
+> actually helpful.
+> 
+> The memory region of the device is also exposed to userspace so it can be
+> read or memory mapped by application which need reliable notification of
+> clock disruptions.
+> 
+> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 
->
-> And the vendors should really port their software to the upstreamed ABI
-> instead of relying on liblol.  <rant>Is a recompiling so difficult, or
-> are the programmers so stupid to invoke plenty of low-level syscalls
-> directly (bypassing Glibc) in their code?</rant>
-Unfortunately, libLoL may exist for a very long time. Recompiling
-isn't difficult, the real problem is "I have already ported to
-LoongArch, why should I port again?".
+...
 
-Huacai
+> diff --git a/drivers/ptp/ptp_vmclock.c b/drivers/ptp/ptp_vmclock.c
 
->
-> --
-> Xi Ruoyao <xry111@xry111.site>
-> School of Aerospace Science and Technology, Xidian University
->
+...
+
+> +static int vmclock_probe(struct platform_device *pdev)
+> +{
+
+...
+
+> +	/* If there is valid clock information, register a PTP clock */
+> +	if (st->cs_id) {
+> +		st->ptp_clock_info = ptp_vmclock_info;
+> +		strncpy(st->ptp_clock_info.name, st->name, sizeof(st->ptp_clock_info.name));
+
+Hi David,
+
+W=1 allmodconfig builds with gcc-13 flag the following.
+Reading the documentation of strncpy() in fortify-string.h,
+I wonder if strscpy() would be more appropriate in this case.
+
+In file included from ./include/linux/string.h:374,
+                 from ./include/linux/bitmap.h:13,
+                 from ./include/linux/cpumask.h:13,
+                 from ./arch/x86/include/asm/paravirt.h:21,
+                 from ./arch/x86/include/asm/cpuid.h:62,
+                 from ./arch/x86/include/asm/processor.h:19,
+                 from ./include/linux/sched.h:13,
+                 from ./include/linux/ratelimit.h:6,
+                 from ./include/linux/dev_printk.h:16,
+                 from ./include/linux/device.h:15,
+                 from drivers/ptp/ptp_vmclock.c:8:
+In function 'strncpy',
+    inlined from 'vmclock_probe' at drivers/ptp/ptp_vmclock.c:480:3:
+./include/linux/fortify-string.h:125:33: warning: '__builtin_strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
+  125 | #define __underlying_strncpy    __builtin_strncpy
+      |                                 ^
+./include/linux/fortify-string.h:205:16: note: in expansion of macro '__underlying_strncpy'
+  205 |         return __underlying_strncpy(p, q, size);
+
+...
 
