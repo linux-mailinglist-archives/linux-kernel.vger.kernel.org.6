@@ -1,197 +1,207 @@
-Return-Path: <linux-kernel+bounces-235086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEA0591CFD6
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 03:43:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58FA291CFD9
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 04:08:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13BE91C20F02
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 01:43:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 286D81F2197F
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 02:08:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0CA4A1B;
-	Sun, 30 Jun 2024 01:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382DE5660;
+	Sun, 30 Jun 2024 02:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RxVvOibP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tnQXold+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20E73EBE;
-	Sun, 30 Jun 2024 01:43:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0E74A1B;
+	Sun, 30 Jun 2024 02:08:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719711824; cv=none; b=dKriFPnoMA/s/qFVUlS5g9Qr7h1GV8xdWMDY64EVkdvAX2XHE+G4djIBdJcYNq3nfpD6Kqfi6QHXeSpD0Ox70nVb8qnZDP/m+R4sz7bqWY+5Onssv+8UG7uR+esLl79tWxAePS3qz0OZjrYG4wiQBBOGTV3/7KbaozOuRzhQRiE=
+	t=1719713287; cv=none; b=LhVin5QSBQbwXMsT0ZOHVfF2HaC4WcJhgKsV/rpTy1wv5mUYHf2itXOUFkzN2G8EzuM1m7FNCNocKamdhpkKpDhQE7y4jMFYNaHJuJXpAAVDRgIPrhVnF/wdQoU5wxjMBQWbPmFvWKRYUHR266xi9GoUpkUSMEL013ztrY5MYko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719711824; c=relaxed/simple;
-	bh=O/yU9WizPMUCOe8qi26FPcfh2g5Pe63VCVioU9Vfn9Y=;
+	s=arc-20240116; t=1719713287; c=relaxed/simple;
+	bh=iFjFttgRTQ2SwqDY9upSpaZfvy03BxFKJH5G8viK1w4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lMn6ae8QkBqkk3dftvjrzbdhwCmTc5prvMXnlzGYcXcISbg50LJ/LAJNMOE9yrq8mrS6Gha2WdFJL8QXOmFkWE2bVtGoGm2A5Fw48ADF3K5vgNmNOQ6zo5cFG9Xi3V+McDvLQkzQmn+gu9NkY7rgLH0G71X4ywwg8faznknskRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RxVvOibP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C02CC4AF07;
-	Sun, 30 Jun 2024 01:43:43 +0000 (UTC)
+	 To:Cc:Content-Type; b=fVe5i0qmaUX7YPdnqtoZ1BQzf5ICQ+FHauPqwOZLPXZZXL/ih5okdp6T7TIA64cIjPG34Wg9Tt9xgS+R1KO1Lltg05ySmHRNthSXUQOTEKFwPn9s2Y4vJtvmHCGvXW6zNtKnUiKua4idNGgnaPn5JeMoUozD0uC1TkOIkDadOz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tnQXold+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E81F6C4AF07;
+	Sun, 30 Jun 2024 02:08:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719711823;
-	bh=O/yU9WizPMUCOe8qi26FPcfh2g5Pe63VCVioU9Vfn9Y=;
+	s=k20201202; t=1719713286;
+	bh=iFjFttgRTQ2SwqDY9upSpaZfvy03BxFKJH5G8viK1w4=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=RxVvOibPZjRj13r4ZvrUmKs203kYIcbpsBs+51cd9Yr1ql1e6FxM20s7eJRFkTfqI
-	 tBwWOA8ZHfPSdyrV8rHR26GiZ6u3tSozk8DuWIPx9D7jl2tgC9b5Z2y8wCHUBihEPo
-	 cxGJC57SlPreMnkLrRlLm23qqG/XoBNk3CNTwtWXJLjRBPqf/KGCnr/f36IvcdTn6O
-	 uVwSd9Akq4U5McV+I5oi0XQ4/VZLS3DGt4ysJRC0wRe6HG2SJRj4ivEriU3wVQ012N
-	 Xm7vTHQwVzY4hIKv4AagS0vzjE36NcmrP8Ng4F+y2S1SX2NLXV7kVxb7DAJ6H0K4Fz
-	 CU+vGtLoVwMMw==
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57d044aa5beso2207358a12.2;
-        Sat, 29 Jun 2024 18:43:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVw49TFWcPDCwHOoM2RzAAPyq34AvNx/VESmu7C15nLqNzGw0I//LGO6t7F0h7CwhVrJG5XjvPgJnHBnbJCA3143QD3PstPCGPJFSMAhK0flLyO5YQ9IV1E1fphel4/d2lo9NywjQLRseOfjIwcP3xCIxVIbOzJMxuZw88SjJgSqb2iAOcC
-X-Gm-Message-State: AOJu0YzHoOHT3ooyZMLtfvCPkns+FhzK/O0sUi8oIau+RtvCk8oXPPXy
-	j3cZrqrl4j+293x59Fq5Uos2vFrhWrp/jcplkrkNwDmIyf2fopr06rHAc1QiVpXvy46eDULiIy5
-	bdb5kfD5iOpeQj24arU9sb/nI7/o=
-X-Google-Smtp-Source: AGHT+IF1SqY61BcCy/EByMCU4N+bUc6L3mA6B7pscrTMU4LiHM3tRWPtW6AedSdTHTBUM05m8G42JlbI2ns2KgSH6e8=
-X-Received: by 2002:a05:6402:2811:b0:57c:61a2:ed47 with SMTP id
- 4fb4d7f45d1cf-5879f5a3739mr1306169a12.24.1719711822199; Sat, 29 Jun 2024
- 18:43:42 -0700 (PDT)
+	b=tnQXold+7BItQOkaXYn4wUJFHdYVUlxe8M+8OrJYMGiJbByB1RLsWhpMsWXj+fZ7v
+	 MOnofG/Fi/y+Ht2O8P5xr7B1xIb7++Kv4tDpCuwOYWi7A/tlXijIPKz8DmSmKqGgAg
+	 eHNcLbYK4Cg7VtEPoMOj2+VyIhWp9RUSZJweJ0Hf6IVDrc7cdwgg6VLb0pct4qN00c
+	 ZolYZ8JRUSqcihWfpA+JN/MaICV1BD6YGZIcGOkDKaAQfkU8zFUjK4jEWcBaceXw8V
+	 ovVbDMcDhmyJBzs62fA1EQNk8jflJT9vLYzVGFNv0CVd++XaEobbwF+zCszPG/2Dj5
+	 eDx29V833xHsg==
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a7245453319so294811566b.1;
+        Sat, 29 Jun 2024 19:08:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWHZ/laENhGGVNuSjCd7jRAEpMst7kPIvjhaYjcYTuQBX6QuNLrHcNaj64l64gpIYqHP/XX+QvMvccUJ1OxSHTzq3kw/lntV0rRxwUNYAQzfzEjc1XVguYe3j5Mw0zKYs1f
+X-Gm-Message-State: AOJu0YzVkVGPFYdOThYf9k9Wwh4mcYVUMNtcBJsNVazI5T0IXMsdInUT
+	o6E4qwKeMD7qncIqwahl2dVTKgMK586TJhUNHchtLCAaAvU83vl71ZjxckZOQUeDbgs+qu5EgCj
+	yfIp84FP1Y+5h6DHBQ7Ygnw1d9Bo=
+X-Google-Smtp-Source: AGHT+IGNg1x9Zl6jHYZFTfFnRABUyl8yaxcqHbNrEka6utzRXqO6gsECXwj5mbYm4/cTFHrICnHNTtrtk7224OC3yXA=
+X-Received: by 2002:a17:907:3f29:b0:a6f:6df5:a264 with SMTP id
+ a640c23a62f3a-a751386ec5fmr201080466b.1.1719713285494; Sat, 29 Jun 2024
+ 19:08:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240627173806.GC21813@redhat.com> <37f79351-a051-3fa9-7bfb-960fb2762e27@loongson.cn>
- <20240629133747.GA4504@redhat.com> <CAAhV-H4tCrTuWJa88JE96N93U2O_RUsnA6WAAUMOWR6EzM9Mzw@mail.gmail.com>
- <20240629150313.GB4504@redhat.com>
-In-Reply-To: <20240629150313.GB4504@redhat.com>
+References: <20240626063239.3722175-1-maobibo@loongson.cn> <20240626063239.3722175-3-maobibo@loongson.cn>
+In-Reply-To: <20240626063239.3722175-3-maobibo@loongson.cn>
 From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sun, 30 Jun 2024 09:43:30 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4HtRkn1i9pxBojEmzWPysqq=mScoP6PYzZ6v29v2WYoQ@mail.gmail.com>
-Message-ID: <CAAhV-H4HtRkn1i9pxBojEmzWPysqq=mScoP6PYzZ6v29v2WYoQ@mail.gmail.com>
-Subject: Re: [PATCH] LoongArch: make the users of larch_insn_gen_break() constant
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, andrii.nakryiko@gmail.com, andrii@kernel.org, 
-	bpf@vger.kernel.org, jolsa@kernel.org, kernel@xen0n.name, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	loongarch@lists.linux.dev, mhiramat@kernel.org, nathan@kernel.org, 
-	rostedt@goodmis.org
+Date: Sun, 30 Jun 2024 10:07:53 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4O8QNb61xkErd9y_1tK_70=Y=LNqzy=9Ny5EQK1XZJaQ@mail.gmail.com>
+Message-ID: <CAAhV-H4O8QNb61xkErd9y_1tK_70=Y=LNqzy=9Ny5EQK1XZJaQ@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] LoongArch: KVM: Add LBT feature detection function
+To: Bibo Mao <maobibo@loongson.cn>
+Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>, kvm@vger.kernel.org, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi, Oleg,
+Hi, Bibo,
 
-On Sat, Jun 29, 2024 at 11:05=E2=80=AFPM Oleg Nesterov <oleg@redhat.com> wr=
-ote:
+On Wed, Jun 26, 2024 at 2:32=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> wrot=
+e:
 >
-> LoongArch defines UPROBE_SWBP_INSN as a function call and this breaks
-> arch_uprobe_trampoline() which uses it to initialize a static variable.
+> Two kinds of LBT feature detection are added here, one is VCPU
+> feature, the other is VM feature. VCPU feature dection can only
+> work with VCPU thread itself, and requires VCPU thread is created
+> already. So LBT feature detection for VM is added also, it can
+> be done even if VM is not created, and also can be done by any
+> thread besides VCPU threads.
 >
-> Add the new "__builtin_constant_p" helper, __emit_break(), and redefine
-> the current users of larch_insn_gen_break() to use it.
+> Loongson Binary Translation (LBT) feature is defined in register
+> cpucfg2. Here LBT capability detection for VCPU is added.
 >
-> The patch adds check_emit_break() into kprobes.c and uprobes.c to test
-> this change. They can be removed if LoongArch boots at least once, but
-> otoh these 2 __init functions will be discarded by free_initmem().
+> Here ioctl command KVM_HAS_DEVICE_ATTR is added for VM, and macro
+> KVM_LOONGARCH_VM_FEAT_CTRL is added to check supported feature. And
+> three sub-features relative with LBT are added as following:
+>  KVM_LOONGARCH_VM_FEAT_X86BT
+>  KVM_LOONGARCH_VM_FEAT_ARMBT
+>  KVM_LOONGARCH_VM_FEAT_MIPSBT
 >
-> Fixes: ff474a78cef5 ("uprobe: Add uretprobe syscall to speed up return pr=
-obe")
-> Reported-by: Nathan Chancellor <nathan@kernel.org>
-> Closes: https://lore.kernel.org/all/20240614174822.GA1185149@thelio-3990X=
-/
-> Suggested-by: Andrii Nakryiko <andrii@kernel.org>
-> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
 > ---
->  arch/loongarch/include/asm/inst.h    |  3 +++
->  arch/loongarch/include/asm/uprobes.h |  4 ++--
->  arch/loongarch/kernel/kprobes.c      | 12 ++++++++++--
->  arch/loongarch/kernel/uprobes.c      |  8 ++++++++
->  4 files changed, 23 insertions(+), 4 deletions(-)
+>  arch/loongarch/include/uapi/asm/kvm.h |  6 ++++
+>  arch/loongarch/kvm/vcpu.c             |  6 ++++
+>  arch/loongarch/kvm/vm.c               | 44 ++++++++++++++++++++++++++-
+>  3 files changed, 55 insertions(+), 1 deletion(-)
 >
-> diff --git a/arch/loongarch/include/asm/inst.h b/arch/loongarch/include/a=
-sm/inst.h
-> index c3993fd88aba..944482063f14 100644
-> --- a/arch/loongarch/include/asm/inst.h
-> +++ b/arch/loongarch/include/asm/inst.h
-> @@ -532,6 +532,9 @@ static inline void emit_##NAME(union loongarch_instru=
-ction *insn,   \
+> diff --git a/arch/loongarch/include/uapi/asm/kvm.h b/arch/loongarch/inclu=
+de/uapi/asm/kvm.h
+> index ddc5cab0ffd0..c40f7d9ffe13 100644
+> --- a/arch/loongarch/include/uapi/asm/kvm.h
+> +++ b/arch/loongarch/include/uapi/asm/kvm.h
+> @@ -82,6 +82,12 @@ struct kvm_fpu {
+>  #define KVM_IOC_CSRID(REG)             LOONGARCH_REG_64(KVM_REG_LOONGARC=
+H_CSR, REG)
+>  #define KVM_IOC_CPUCFG(REG)            LOONGARCH_REG_64(KVM_REG_LOONGARC=
+H_CPUCFG, REG)
 >
->  DEF_EMIT_REG0I15_FORMAT(break, break_op)
->
-> +/* like emit_break(imm) but returns a constant expression */
-> +#define __emit_break(imm)      ((u32)((imm) | (break_op << 15)))
+> +/* Device Control API on vm fd */
+> +#define KVM_LOONGARCH_VM_FEAT_CTRL     0
+> +#define  KVM_LOONGARCH_VM_FEAT_X86BT   0
+> +#define  KVM_LOONGARCH_VM_FEAT_ARMBT   1
+> +#define  KVM_LOONGARCH_VM_FEAT_MIPSBT  2
 > +
->  #define DEF_EMIT_REG0I26_FORMAT(NAME, OP)                              \
->  static inline void emit_##NAME(union loongarch_instruction *insn,      \
->                                int offset)                              \
-> diff --git a/arch/loongarch/include/asm/uprobes.h b/arch/loongarch/includ=
-e/asm/uprobes.h
-> index c8f59983f702..99a0d198927f 100644
-> --- a/arch/loongarch/include/asm/uprobes.h
-> +++ b/arch/loongarch/include/asm/uprobes.h
-> @@ -9,10 +9,10 @@ typedef u32 uprobe_opcode_t;
->  #define MAX_UINSN_BYTES                8
->  #define UPROBE_XOL_SLOT_BYTES  MAX_UINSN_BYTES
->
-> -#define UPROBE_SWBP_INSN       larch_insn_gen_break(BRK_UPROBE_BP)
-> +#define UPROBE_SWBP_INSN       __emit_break(BRK_UPROBE_BP)
->  #define UPROBE_SWBP_INSN_SIZE  LOONGARCH_INSN_SIZE
->
-> -#define UPROBE_XOLBP_INSN      larch_insn_gen_break(BRK_UPROBE_XOLBP)
-> +#define UPROBE_XOLBP_INSN      __emit_break(BRK_UPROBE_XOLBP)
->
->  struct arch_uprobe {
->         unsigned long   resume_era;
-> diff --git a/arch/loongarch/kernel/kprobes.c b/arch/loongarch/kernel/kpro=
-bes.c
-> index 17b040bd6067..78cfaac52748 100644
-> --- a/arch/loongarch/kernel/kprobes.c
-> +++ b/arch/loongarch/kernel/kprobes.c
-> @@ -4,8 +4,16 @@
->  #include <linux/preempt.h>
->  #include <asm/break.h>
->
-> -#define KPROBE_BP_INSN         larch_insn_gen_break(BRK_KPROBE_BP)
-> -#define KPROBE_SSTEPBP_INSN    larch_insn_gen_break(BRK_KPROBE_SSTEPBP)
-> +#define KPROBE_BP_INSN         __emit_break(BRK_KPROBE_BP)
-> +#define KPROBE_SSTEPBP_INSN    __emit_break(BRK_KPROBE_SSTEPBP)
-> +
-> +static __init int check_emit_break(void)
-> +{
-> +       BUG_ON(KPROBE_BP_INSN      !=3D larch_insn_gen_break(BRK_KPROBE_B=
-P));
-> +       BUG_ON(KPROBE_SSTEPBP_INSN !=3D larch_insn_gen_break(BRK_KPROBE_S=
-STEPBP));
-> +       return 0;
-> +}
-> +arch_initcall(check_emit_break);
->
->  DEFINE_PER_CPU(struct kprobe *, current_kprobe);
->  DEFINE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
-> diff --git a/arch/loongarch/kernel/uprobes.c b/arch/loongarch/kernel/upro=
-bes.c
-> index 87abc7137b73..90462d94c28f 100644
-> --- a/arch/loongarch/kernel/uprobes.c
-> +++ b/arch/loongarch/kernel/uprobes.c
-> @@ -7,6 +7,14 @@
->
->  #define UPROBE_TRAP_NR UINT_MAX
->
-> +static __init int check_emit_break(void)
-> +{
-> +       BUG_ON(UPROBE_SWBP_INSN  !=3D larch_insn_gen_break(BRK_UPROBE_BP)=
-);
-> +       BUG_ON(UPROBE_XOLBP_INSN !=3D larch_insn_gen_break(BRK_UPROBE_XOL=
-BP));
-> +       return 0;
-> +}
-> +arch_initcall(check_emit_break);
-Do you mind if I remove the runtime checking after Tiezhu tests the correct=
-ness?
+>  /* Device Control API on vcpu fd */
+>  #define KVM_LOONGARCH_VCPU_CPUCFG      0
+>  #define KVM_LOONGARCH_VCPU_PVTIME_CTRL 1
+If you insist that LBT should be a vm feature, then I suggest the
+above two also be vm features. Though this is an UAPI change, but
+CPUCFG is upstream in 6.10-rc1 and 6.10-final hasn't been released. We
+have a chance to change it now.
 
 Huacai
 
-> +
->  int arch_uprobe_analyze_insn(struct arch_uprobe *auprobe,
->                              struct mm_struct *mm, unsigned long addr)
->  {
-> --
-> 2.25.1.362.g51ebf55
+> diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
+> index 233d28d0e928..9734b4d8db05 100644
+> --- a/arch/loongarch/kvm/vcpu.c
+> +++ b/arch/loongarch/kvm/vcpu.c
+> @@ -565,6 +565,12 @@ static int _kvm_get_cpucfg_mask(int id, u64 *v)
+>                         *v |=3D CPUCFG2_LSX;
+>                 if (cpu_has_lasx)
+>                         *v |=3D CPUCFG2_LASX;
+> +               if (cpu_has_lbt_x86)
+> +                       *v |=3D CPUCFG2_X86BT;
+> +               if (cpu_has_lbt_arm)
+> +                       *v |=3D CPUCFG2_ARMBT;
+> +               if (cpu_has_lbt_mips)
+> +                       *v |=3D CPUCFG2_MIPSBT;
 >
+>                 return 0;
+>         case LOONGARCH_CPUCFG3:
+> diff --git a/arch/loongarch/kvm/vm.c b/arch/loongarch/kvm/vm.c
+> index 6b2e4f66ad26..09e05108c68b 100644
+> --- a/arch/loongarch/kvm/vm.c
+> +++ b/arch/loongarch/kvm/vm.c
+> @@ -99,7 +99,49 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long=
+ ext)
+>         return r;
+>  }
+>
+> +static int kvm_vm_feature_has_attr(struct kvm *kvm, struct kvm_device_at=
+tr *attr)
+> +{
+> +       switch (attr->attr) {
+> +       case KVM_LOONGARCH_VM_FEAT_X86BT:
+> +               if (cpu_has_lbt_x86)
+> +                       return 0;
+> +               return -ENXIO;
+> +       case KVM_LOONGARCH_VM_FEAT_ARMBT:
+> +               if (cpu_has_lbt_arm)
+> +                       return 0;
+> +               return -ENXIO;
+> +       case KVM_LOONGARCH_VM_FEAT_MIPSBT:
+> +               if (cpu_has_lbt_mips)
+> +                       return 0;
+> +               return -ENXIO;
+> +       default:
+> +               return -ENXIO;
+> +       }
+> +}
+> +
+> +static int kvm_vm_has_attr(struct kvm *kvm, struct kvm_device_attr *attr=
+)
+> +{
+> +       switch (attr->group) {
+> +       case KVM_LOONGARCH_VM_FEAT_CTRL:
+> +               return kvm_vm_feature_has_attr(kvm, attr);
+> +       default:
+> +               return -ENXIO;
+> +       }
+> +}
+> +
+>  int kvm_arch_vm_ioctl(struct file *filp, unsigned int ioctl, unsigned lo=
+ng arg)
+>  {
+> -       return -ENOIOCTLCMD;
+> +       struct kvm *kvm =3D filp->private_data;
+> +       void __user *argp =3D (void __user *)arg;
+> +       struct kvm_device_attr attr;
+> +
+> +       switch (ioctl) {
+> +       case KVM_HAS_DEVICE_ATTR:
+> +               if (copy_from_user(&attr, argp, sizeof(attr)))
+> +                       return -EFAULT;
+> +
+> +               return kvm_vm_has_attr(kvm, &attr);
+> +       default:
+> +               return -EINVAL;
+> +       }
+>  }
+> --
+> 2.39.3
 >
 
