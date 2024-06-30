@@ -1,122 +1,121 @@
-Return-Path: <linux-kernel+bounces-235295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF76A91D306
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 19:13:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1755D91D311
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 19:36:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF973B20D9F
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 17:13:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5E141F2147B
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 17:36:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A212C6A3;
-	Sun, 30 Jun 2024 17:13:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A085F155C82;
+	Sun, 30 Jun 2024 17:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l2j7ETf5"
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jkuGZOG7"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E38B12D1F1
-	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 17:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B01D12FB34;
+	Sun, 30 Jun 2024 17:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719767593; cv=none; b=L7i4O4cGekFvdm3cwfV3xiQDYIpphohRoPtHxG/W4/mKX52rdabqQOc8iFE0/Qb4O5QtRTxL7mAV9lTUh6EU4xoLL8ITLbzNg3LhUZMcOSJfNoQqvD00buuDv+5uUKmbm8PPht84hfPGbzCCOxWwS/BRi/hTJCzrEGeffNEVFzw=
+	t=1719769001; cv=none; b=N9/4esXkbYs1JH/RaaaYpsx+H+zDPKHrExN7Lxmj+dm7Z9mJc9idzq6cgcpu6QeswMBn1Fv/rH4zETs/MBcAjL1zWDLPV6S3xQxU3BIqF5PBgmfd9w9hL8VlgmjgvnWnNDsF74MrLc+cbAyeBkm+/Tl+sXUKu2jPXxgTEbqrS8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719767593; c=relaxed/simple;
-	bh=Qvyy3/lXwyEKWXW3eZp7oyXDjXCqcmUmVrNjAO+0GB8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y24meo2feUIxbmt3agEdkTbmb2fM7yM30xHtehCyAs5KUWiLVMv5fbBBQ4bWM4QRmsypfVZNt2X54wJTROwIhHKA2TdV+F2vIWGyPjp5lXiWKypoUiXaTMQ09XlGWLEk4TGEmhziRorjfjg/pcKJNytWJrsGhn2VEcrEoPVgbss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l2j7ETf5; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	s=arc-20240116; t=1719769001; c=relaxed/simple;
+	bh=CEC/uj+jHgVHI5ry1SInCzFe6GhCVaTspmdYEMfm9Eo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mS5d0Q9vGoQsR1vu2THnFRDDPD+nAYOIHDgZR1jpe79ldmXLah4MeKWkksuXulmOlmLXf956hvZXDSVlLFICRWZ/BsLGgStBjYVrD5YEUhP+gcImx/btviGv3kHZOyAzwgCbVeQe3bLaXkeoNehpvDMt0JKuZyzgOpkgqDZF16s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jkuGZOG7; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-7f6309e9f29so49563339f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 10:13:12 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ebe40673e8so25508131fa.3;
+        Sun, 30 Jun 2024 10:36:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719767591; x=1720372391; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0TlkErQpa0xa7YZ2T83OsxknNGSqMh+VvQCwH5wNmHY=;
-        b=l2j7ETf5bxi3vmqCt6n77r2L05KLHwm1e1m1anGaJiGHDbIv9mwAjTfnZWMRXlUzt7
-         Mf/UJJXRS5TjDv6BzNr4kRGBV4gMzc9uPe4goUvlyWf/lqWs1Xx90Bygay6IkmtgWXPh
-         WwQ5+N4AbA88smfga6WRhav0hHQo3YKj0/TxWp/GziknVI1Cpl6sLEzcV7IrcqnxQSB0
-         yOYHA/QpawksMTBdzF4uVVvQYwJu2s3Ji2mO5r0l6lo3XRuVx8eusBVkWVdfzO5vrB4s
-         E7qo2Y5vq0DgtvuRRBwf+3CpAiUNCDEsXHiK/D+wX7KZTOcinU3+qhvEpKC20zkZKYhl
-         lSaQ==
+        d=gmail.com; s=20230601; t=1719768997; x=1720373797; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dy3gLu7I5dJFeESwGxccqcPXiCFfnXkkk3gsTdwYcCI=;
+        b=jkuGZOG71feBJTnWxahUpJp6sdEqr/GOINstHobk3HS7k2wfjkeUay1agZ3hmHmPAZ
+         Flkj/r4NiTtnYbyNpz5HF8fy4yArbB4FnQ4byhJvd7W8ZWvdF0WtRAMM7qLpBybgFAZN
+         En//0d56bHnwqJMybO1W7jherFtnVw+Bwr++79a5/Mvj4eUJ4/Gppamu9GyA/0U4/nz3
+         p7AqIn0D0wdH8H2Tev1UPrr4mtnsf9Kx1USu157XiqhSfBvqElGMQBsZ+ZZtPq1gc2xM
+         vmKm7nsxJRu0I8wy5Nu7d9uWPQKbXHldNHCj5hyoMv5BEQdMR4ugNMFaDSPuZH8tYYRy
+         8azQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719767591; x=1720372391;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0TlkErQpa0xa7YZ2T83OsxknNGSqMh+VvQCwH5wNmHY=;
-        b=oAT5ppn+gFMYJebHRNfrsiX4dfnJN2BqXtj3lwR1SOM2wqzIiYejzkvLgSsZXLhfFm
-         Wz4a0nT+khSJB4LtfRzAJ9+H4wcw4w5jEr+O4xEEW76JyUZtQaNre5fxFrJjCumEl9+G
-         Fb93mgOjRtKe4sgQCSspDrm4TfUo4ioVNZ9QnU2frLMYoSO9oy4e3mZNjfRp2kk4lRKw
-         ZFl0LHuOuDtqpmlqBb0SnBf6B4FGpZTGdit06XQCtQyMLpgwMwScjo8VSRMBl8EVqw5r
-         VWpr1TrB6/R1PiZ4qNjFqxLjKhm6mtTrplAY1V8RW3AOB2vHGnmmZLci9WhB+mZPRgAv
-         wL4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUdOuvVfUmtC/0jKv/syhnwWPapkyUxfgdwk/WX0fzcmNez0AyPTB/7uXMW2wCD+g9a4DQ9ZDir/1axpRjLUxa9KsE0UvzEEkF/vizT
-X-Gm-Message-State: AOJu0YyBU2Q2WNT/u2A8vzf150MQOEAtSDqdmRWb7/xuYmHt46vpweRC
-	50GAX5BtN+rhnCbmAbnzma5BhEJcJyyLJasQQmXbWbTSmBsl5Ei9
-X-Google-Smtp-Source: AGHT+IHL5QOdEfhGtEp4jRiJ9wOspdZ3OAW2+SZYHN4iHgTZ+RSxfUJigxeqU9GpA9qg3ovx2PO/Ow==
-X-Received: by 2002:a6b:7314:0:b0:7f6:1f20:f136 with SMTP id ca18e2360f4ac-7f62ee7a0cbmr443659739f.19.1719767591625;
-        Sun, 30 Jun 2024 10:13:11 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-72c6a7e5cd2sm3894217a12.28.2024.06.30.10.13.10
+        d=1e100.net; s=20230601; t=1719768997; x=1720373797;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dy3gLu7I5dJFeESwGxccqcPXiCFfnXkkk3gsTdwYcCI=;
+        b=a+8Myp5I/rgZBIMUjKEorl+AEkzlMgiw1TeSs4lDZbuqdrL67IJ4+Xsh8qGAuJ79Yu
+         6eIibpZAoB1KmvIxrJ1Lsba0uzpFQYfBsLeo3rsyIY8BFtVkQF9A3sjH/zk94Q7jZOrd
+         i/Eu5RqcAGX8oO/G4yztXChQasO8rExJGWPTJRK832F6JzrTxeLzyQFGGBTpHW79aSAU
+         m94pfUKEv7OJDvkrZrmQxProlusAfhft+k+2lXPfjPqr/FSxEu++pd4IHOQKeTBSutAY
+         qmy3oT6UXsAMbVEDuXEqpcdgZipNgYm9aicJsEIXOCAKOkZ+7gEQ2eEPo7+Wqsm+Il2a
+         shgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXaDlYNCK09WSVf4rtPU3PpT7gPekcD1f2Zm0Rn5qrPpXxgrdyTBh4AGFL9p6aVF5QEPBlhSLP0/kvnHTYQMWxUsLeuYpSmHt1lHJbjJqPEWeolhve90nyU/jyTHpa1fW/VXcNesN4YSw==
+X-Gm-Message-State: AOJu0Yzui4ZOLi+A7j373vHdpkjY70QCNbgvkdkCVsS6fuw80T4XaSey
+	jegp70CSN87Q+Miu00yD8SxpBPgcw2G6Ewk5UKXXTa+ujDl1G7EJ
+X-Google-Smtp-Source: AGHT+IEluxmXHWuWL59Y3dBrov94K52axD5ahoJlnyO9WMAgLtJbqeeymhVYBmVpEr7qOY961jxTow==
+X-Received: by 2002:a2e:3e15:0:b0:2ec:3c55:3056 with SMTP id 38308e7fff4ca-2ee5e6c9951mr19863121fa.44.1719768997070;
+        Sun, 30 Jun 2024 10:36:37 -0700 (PDT)
+Received: from qamajeed.Home ([39.45.181.116])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-425787f37casm34202085e9.1.2024.06.30.10.36.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Jun 2024 10:13:11 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Sun, 30 Jun 2024 07:13:09 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>,
-	Waiman Long <longman@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
-	Laurence Oberman <loberman@redhat.com>,
-	Jonathan Brassow <jbrassow@redhat.com>,
-	Ming Lei <minlei@redhat.com>, Ondrej Kozina <okozina@redhat.com>,
-	Milan Broz <gmazyland@gmail.com>, linux-kernel@vger.kernel.org,
-	dm-devel@lists.linux.dev
-Subject: Re: dm-crypt performance regression due to workqueue changes
-Message-ID: <ZoGSJWMD9v1BxUDb@slm.duckdns.org>
-References: <32fd8274-d5f-3eca-f5d2-1a9117fd8edb@redhat.com>
+        Sun, 30 Jun 2024 10:36:36 -0700 (PDT)
+From: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
+To: rafael@kernel.org,
+	lenb@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
+Subject: [PATCH v2] Updating a vulnerable use of strcpy.
+Date: Sun, 30 Jun 2024 22:35:10 +0500
+Message-Id: <20240630173510.9481-1-qasim.majeed20@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <32fd8274-d5f-3eca-f5d2-1a9117fd8edb@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Replacing strcpy with strscpy and memory bound the copy.
 
-On Sat, Jun 29, 2024 at 08:15:56PM +0200, Mikulas Patocka wrote:
-> With 6.5, we get 3600MiB/s; with 6.6 we get 1400MiB/s.
-> 
-> The reason is that virt-manager by default sets up a topology where we 
-> have 16 sockets, 1 core per socket, 1 thread per core. And that workqueue 
-> patch avoids moving work items across sockets, so it processes all 
-> encryption work only on one virtual CPU.
-> 
-> The performance degradation may be fixed with "echo 'system'
-> >/sys/module/workqueue/parameters/default_affinity_scope" - but it is 
-> regression anyway, as many users don't know about this option.
-> 
-> How should we fix it? There are several options:
-> 1. revert back to 'numa' affinity
-> 2. revert to 'numa' affinity only if we are in a virtual machine
-> 3. hack dm-crypt to set the 'numa' affinity for the affected workqueues
-> 4. any other solution?
+Signed-off-by: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
+---
+ drivers/acpi/acpi_video.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Do you happen to know why libvirt is doing that? There are many other
-implications to configuring the system that way and I don't think we want to
-design kernel behaviors to suit topology information fed to VMs which can be
-arbitrary.
-
-Thanks.
-
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index 1fda30388297..6113baffd53f 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -1128,8 +1128,8 @@ static int acpi_video_bus_get_one_device(struct acpi_device *device, void *arg)
+ 		return -ENOMEM;
+ 	}
+ 
+-	strcpy(acpi_device_name(device), ACPI_VIDEO_DEVICE_NAME);
+-	strcpy(acpi_device_class(device), ACPI_VIDEO_CLASS);
++	strscpy(acpi_device_name(device), ACPI_VIDEO_DEVICE_NAME, strlen(ACPI_VIDEO_DEVICE_NAME));
++	strscpy(acpi_device_class(device), ACPI_VIDEO_CLASS, strlen(ACPI_VIDEO_CLASS));
+ 
+ 	data->device_id = device_id;
+ 	data->video = video;
+@@ -2010,8 +2010,8 @@ static int acpi_video_bus_add(struct acpi_device *device)
+ 	}
+ 
+ 	video->device = device;
+-	strcpy(acpi_device_name(device), ACPI_VIDEO_BUS_NAME);
+-	strcpy(acpi_device_class(device), ACPI_VIDEO_CLASS);
++	strscpy(acpi_device_name(device), ACPI_VIDEO_BUS_NAME, strlen(ACPI_VIDEO_BUS_NAME));
++	strscpy(acpi_device_class(device), ACPI_VIDEO_CLASS, strlen(ACPI_VIDEO_CLASS));
+ 	device->driver_data = video;
+ 
+ 	acpi_video_bus_find_cap(video);
 -- 
-tejun
+2.34.1
+
 
