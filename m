@@ -1,133 +1,86 @@
-Return-Path: <linux-kernel+bounces-235154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC8F491D0D2
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 11:27:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0773D91D0D3
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 11:33:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B15C1F2160A
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 09:27:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 808D5B21086
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 09:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60E412EBCA;
-	Sun, 30 Jun 2024 09:26:57 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4769912DD8A;
+	Sun, 30 Jun 2024 09:33:05 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7FF374CC;
-	Sun, 30 Jun 2024 09:26:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D518282ED
+	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 09:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719739617; cv=none; b=geAzICeLsyc53ZT08j4Q6pX2O57iUHNaoFhRfrCY1BSOxKJikVjFeUt0tjWU7Ug/C6SNFjgIK37wyUi3tQ5jvmJ7a9gKl3PqK5Wh/fA1xOTJHyrQBkHcDhR1wswSt4QCIlK0uCem/s2AGVKQkB+HFN7zMrAHCBekKZ7fH2Q3BaY=
+	t=1719739984; cv=none; b=tb5wxznZ9d4VgDjtmp5HenpfxWesapMShoeuKThK4kjMbg96G3ymMj//GzqIDwmg0NWiVzsIP0Njirbf4cBLlttzFu8VQbslh5/T/dsYEVTqkqcNZ6ueZMMUHn/1PVGmDuGvsSeWinVQX6aNgx8X9dLKo7WbevcuJsD4GZP5qF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719739617; c=relaxed/simple;
-	bh=G6kjI9e67vuphJpJZBPzCIb8jDjF9XA4lesDH05PDMg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bav5FaD2DEsOMkBBzK3j0HoaPXAChmYZrKyOFrIZCT2uTD5gWr0NKHA57S6CuivqKl+snptIFGWR9jwSvYuQ7xnBLRSst9DXzOU8iInmmExeZPIMKxkafCaLuwNd8ciJtVTHXtcc3hDdl5EssIdtiKAQBhKW/WPJpapROK0l6Ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88924C2BD10;
-	Sun, 30 Jun 2024 09:26:52 +0000 (UTC)
-Date: Sun, 30 Jun 2024 10:26:50 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Gavin Shan <gshan@redhat.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>, loongarch@lists.linux.dev,
-	x86@kernel.org, Russell King <linux@armlinux.org.uk>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Miguel Luis <miguel.luis@oracle.com>,
-	James Morse <james.morse@arm.com>,
-	Salil Mehta <salil.mehta@huawei.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Hanjun Guo <guohanjun@huawei.com>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, linuxarm@huawei.com,
-	justin.he@arm.com, jianyong.wu@arm.com
-Subject: Re: [PATCH v10 17/19] arm64: Kconfig: Enable hotplug CPU on arm64 if
- ACPI_PROCESSOR is enabled.
-Message-ID: <ZoEk2mfQkIhLuh-8@arm.com>
-References: <20240529133446.28446-1-Jonathan.Cameron@huawei.com>
- <20240529133446.28446-18-Jonathan.Cameron@huawei.com>
- <47a261e0-006d-4c64-9c9b-bc73797b8d6b@redhat.com>
+	s=arc-20240116; t=1719739984; c=relaxed/simple;
+	bh=0IoZT0c3L7MF/qyJ3BuhcxrkqOfVnY8AHMCmsRUXlaU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=FIJyXXmkP9ncYbRy6fvv/Dckj4zG/RMKgk6WMF7hAf9mP+pe+/oiadcmiMwmMbmK68JjGfaAFjwzJ7e1XCmn1yZYKnY8w2Rf96bNCidkuMHF5alF2AySgm5NaGm0MvUdtgDp3nNECN6p9HgQN9rYtuaUxT1Gf/tkgOIosqUyZjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7f6200ad270so221481239f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 02:33:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719739982; x=1720344782;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vFm/9ZXsB9e8tSPAg8CmTIlEdCpRRuUoLvsONF6LjYE=;
+        b=by0aI/u0icMq1UyYgis31++UotQE5pT+YE+/rrQrcgEDobb4ZWuA+pcD/Dfq3MloZj
+         EJRijvVwP/PfxTXI1ftBCl9O1ZzVTst7kOu4oQzbu3qXuqrgsLJjNeMWk9sHj1QFfOE/
+         23sI2+0eu7rBPe13u7udOsl9IB1sxIGFuRy7rr4+yHu4mSZ6yovZD7DI1N9k3f04ouzw
+         0Ttp8bnD4dGOvqmvZdpvylTvC7TCb/qzTfEniE11Gu3KszHqxAbpnlpswRICcKYK05LK
+         8IIkTYOTLXk3KMEOhM++O5LGo0Kgt7Qn0O/LmAjG9SzPUQL0VblerU/5BDnZs9ZTjIfC
+         QRyA==
+X-Forwarded-Encrypted: i=1; AJvYcCVssftyb0Gs5GrvghtflRIGLsJuuX6FHdVrKHjRQ68oUe62vtzyNCzqRHXVNBtbcs+rGtaFL7OIb6rNZwWgx8r96EdWW5CltJeyp9gp
+X-Gm-Message-State: AOJu0YyQ/af1d+DSk8rifuGNaB2I8x0I6wjVtWdRPRnTpYlrJtelwSF0
+	kQUrr4UHIrtA5Xz1vv/YKo3EdX+NTFUhOgTKXMwyq0OrCjyGJB4eMQUQao7zfhe5Dw5ldTWLZwR
+	8RUlbjDcnN7pc3672SpO93cJYVYPkKirl9t/BkiISg0CzMGKcYwpcmEQ=
+X-Google-Smtp-Source: AGHT+IFH/GwS0WaNuqfkdbbjEhmj1EPutKlDILbXsAS4ceNyPsRZ6BQh/1FAv56lWoxEiSjSvupEmtvbzIYke9/uneKyxiYI/zJM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <47a261e0-006d-4c64-9c9b-bc73797b8d6b@redhat.com>
+X-Received: by 2002:a05:6602:2dc9:b0:7f3:d89c:6030 with SMTP id
+ ca18e2360f4ac-7f62ee88d1dmr15325939f.4.1719739982595; Sun, 30 Jun 2024
+ 02:33:02 -0700 (PDT)
+Date: Sun, 30 Jun 2024 02:33:02 -0700
+In-Reply-To: <tencent_17CBBA43BB47335B9E931B5D4BD11B062508@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c4d507061c182a87@google.com>
+Subject: Re: [syzbot] [ext4?] BUG: unable to handle kernel paging request in do_split
+From: syzbot <syzbot+ae688d469e36fb5138d0@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Gavin,
+Hello,
 
-On Sun, Jun 30, 2024 at 10:39:04AM +1000, Gavin Shan wrote:
-> On 5/29/24 11:34 PM, Jonathan Cameron wrote:
-> > In order to move arch_register_cpu() to be called via the same path
-> > for initially present CPUs described by ACPI and hotplugged CPUs
-> > ACPI_HOTPLUG_CPU needs to be enabled.
-> > 
-> > The protection against invalid IDs in acpi_map_cpu() is needed as
-> > at least one production BIOS is in the wild which reports entries
-> > in DSDT (with no _STA method, so assumed enabled and present)
-> > that don't match MADT.
-> > 
-> > Tested-by: Miguel Luis <miguel.luis@oracle.com>
-> > Reviewed-by: Gavin Shan <gshan@redhat.com>
-> > Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > ---
-> >   arch/arm64/Kconfig       |  1 +
-> >   arch/arm64/kernel/acpi.c | 22 ++++++++++++++++++++++
-> >   2 files changed, 23 insertions(+)
-> > 
-> > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> > index 5d91259ee7b5..e8f2ef2312db 100644
-> > --- a/arch/arm64/Kconfig
-> > +++ b/arch/arm64/Kconfig
-> > @@ -5,6 +5,7 @@ config ARM64
-> >   	select ACPI_CCA_REQUIRED if ACPI
-> >   	select ACPI_GENERIC_GSI if ACPI
-> >   	select ACPI_GTDT if ACPI
-> > +	select ACPI_HOTPLUG_CPU if ACPI_PROCESSOR
-> 
-> ACPI_HOTPLUG_CPU depends on (ACPI_PROCESSOR && HOTPLUG_CPU). It needs to be:
-> 
-> 	select ACPI_HOTPLUG_CPU if ACPI_PROCESSOR && HOTPLUG_CPU
-> 
-> Otherwise, we can have compiling error with the following configurations.
-> 
-> CONFIG_ACPI_PROCESSOR=y
-> CONFIG_HOTPLUG_CPU=n
-> CONFIG_ACPI_HOTPLUG_CPU=y
-> 
-> arch/arm64/kernel/smp.c: In function ‘arch_unregister_cpu’:
-> arch/arm64/kernel/smp.c:563:9: error: implicit declaration of function ‘unregister_cpu’; did you mean ‘register_cpu’? [-Werror=implicit-function-declaration]
->   563 |         unregister_cpu(c);
->       |         ^~~~~~~~~~~~~~
->       |         register_cpu
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Ah, I thought that in addition to the warning for unmet dependencies,
-kbuild would also leave the option off. I need to add SUSPEND=n and
-HIBERNATE=n to my build scripts.
+Reported-and-tested-by: syzbot+ae688d469e36fb5138d0@syzkaller.appspotmail.com
 
-The fix matches what x86 does, so I'm ok with it.
+Tested on:
 
-> Since the series has been queued to Catalin's "for-next/vcpu-hotplug" branch, I
-> guess the easiest way would be to fix it in place with Catalin's help.
+commit:         55027e68 Merge tag 'input-for-v6.10-rc5' of git://git...
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=16bb8761980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=67463c0717b8d4ca
+dashboard link: https://syzkaller.appspot.com/bug?extid=ae688d469e36fb5138d0
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=10754c81980000
 
-I wasn't planning to rebase the branch unless there's something major.
-Since the doesn't happen with defconfig, it's doesn't affect bisection
-that much, so my preference would be for a fix on top of this branch
-(and with a Fixes: tag since the branch is stable).
-
-Thanks.
-
--- 
-Catalin
+Note: testing is done by a robot and is best-effort only.
 
