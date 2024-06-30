@@ -1,194 +1,141 @@
-Return-Path: <linux-kernel+bounces-235172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADAFF91D10E
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 12:17:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C24A91D110
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 12:22:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A3F81F2158C
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 10:17:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C925D1F21519
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 10:22:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D271D13213A;
-	Sun, 30 Jun 2024 10:17:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F75135A65;
+	Sun, 30 Jun 2024 10:22:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JbwvxeNI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="rrNyYJtj";
+	dkim=permerror (0-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="Fx7TSSIK"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132BA28366;
-	Sun, 30 Jun 2024 10:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719742666; cv=none; b=aZO6vBuvSW3L1cL2t0SkJFfPCMz4pB7YOYoAhA0IfKzLglbdov0YWC3KAV6qfvBUca8jOVFToVDzi1pcfVzNnyIpbUKlDiSIOEfuOYrT69gOuuJjaLSm1dma8ZpTk74dSJVDXeAjRunofKXb1rRTE9qpP07jyACEXEBwOB9GlH0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719742666; c=relaxed/simple;
-	bh=IWPNBQyIalTctizb0/fr4sK41qNaTJQ9mhfRy3wg/l8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HzBdCpYTdlbZWTn/gZgffRt9gG63zg2gTqi8vJmPjMBkW/B+S4akyduMz1sBT+ZbxSmIs99Rk8iYqiOX7NnQuZSMXsvVmYNszvRMOCEMmHpjN5LnozQ0hqMt7YXa5kIC27MP/zFI/aOpRAFOYpAEMCyjzujwpNtTqrhNSc4zum4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JbwvxeNI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDAAAC2BD10;
-	Sun, 30 Jun 2024 10:17:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719742665;
-	bh=IWPNBQyIalTctizb0/fr4sK41qNaTJQ9mhfRy3wg/l8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=JbwvxeNIAJuppst26HTjvrH0b6Tz+Ef/OEyxD6E83uOMmB42WK+g5HHgelSMABDKu
-	 T460eyVH7tjTGK3VWbjwF07NfYPv0ORxcDDDZvSf+vnQKy46vp5VOK40OZVdmofeOp
-	 I1lbpuJHn/LhNyNFo6yJvGrDtnPbuzQbgu5bhuYNqzo8w1MNTVFF8iFM0PE6IiPKQ/
-	 22qgTvDPMVlQUqu8GVkn+zx2nLc6XqjURoHlF9+nKZkKwS7uqEr0FQN/jzLSP2aZw6
-	 StWSJNMWHPhk6dAhRVNMBIC5WBBUpa629QmVplC9pMoZMqXnfyclvyQ0W+LOV6HThA
-	 fb/RrugYh8BQQ==
-Date: Sun, 30 Jun 2024 11:17:37 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Neil Armstrong
- <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>,
- linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-iio@vger.kernel.org, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH 2/2] iio: frequency: add amlogic clock measure support
-Message-ID: <20240630111737.276c949a@jic23-huawei>
-In-Reply-To: <1jwmm6hp5s.fsf@starbuckisacylon.baylibre.com>
-References: <20240624173105.909554-1-jbrunet@baylibre.com>
-	<20240624173105.909554-3-jbrunet@baylibre.com>
-	<20240629204025.683b1b69@jic23-huawei>
-	<1jwmm6hp5s.fsf@starbuckisacylon.baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EBAE39AF4;
+	Sun, 30 Jun 2024 10:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719742963; cv=pass; b=nlyhKZLsYSRxwV3oP0jBMYzfXqCwLHBJezK0wTJw498/mT8DdT88IsZOVgzSvf9cx92N7VaPuYTqIULl8wSdy3yNOLabLDHv/zE/MPByAlDwie6fwiKSz5qZvZjX8rozAHsX2Naklo+cpKI8pz/CMEguKiTvhL9zp5PvqwbAGyk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719742963; c=relaxed/simple;
+	bh=R9fpC1UOjFrQKHRI6TgHz66Hbzvd1ayFN0DprYdtRq8=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type; b=VSsyqkztZec+q37ej1PJsyCBUKQAC5I3X5Eh+PJP+nE8zNm3hpNXEwTa8B4tU9UnqZWypRX761qcT/lkWTUYUlYd4pNZuRt157MYjMZpKT16LYjjaCigTfQkU31p0ptibcCRhZbIXTVLmEhZ65FeA3ImQAqeR3BFW7V80347H/Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de; spf=none smtp.mailfrom=xenosoft.de; dkim=pass (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b=rrNyYJtj; dkim=permerror (0-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b=Fx7TSSIK; arc=pass smtp.client-ip=85.215.255.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=xenosoft.de
+ARC-Seal: i=1; a=rsa-sha256; t=1719742917; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=DM7U0nYhlpqhcR7998gBwwIeNC4vzlyVQxbMCYAxIgLpE18CE7BOFt7dN5u64JPmuk
+    0da9wlnU3NtkQZSzDT/8OtKBo+mXyHQ8NCWrAWg7mHHvwr76AuU5WAekWaLq2A4sRopt
+    BRHuqy8zAXGxq6SqSTCeA9eEUguNFkkwmBLwtT0n716VehnHmpoI/3utoFHmr/wepAun
+    fUvjBYP9SHUNyX+HD2MT8h57vbYsxoFnsoLNinFB97z031a6qbe6Mk55fdNMxHU2ds0i
+    X6ymRjaHETIEZVzIF/jOXRaMkWGmI4Y5eYNSb6tTjKluNo7Df7GMAq6BQX9hAqi4fGon
+    Aobg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1719742917;
+    s=strato-dkim-0002; d=strato.com;
+    h=To:Subject:From:Date:Message-ID:Cc:Date:From:Subject:Sender;
+    bh=koImhGjb7REMlZ/XmgRbFgMfDWJDeMGzhBpOSppcQCg=;
+    b=Kyq5TvX6BUoJ+sS67S5L4oCBtwxb6qdAAlNGZDb3gNYWT0ScvEPStFU6Na+xZ5WBSc
+    RfRMlC6ALkkUZw1W2NGXe6uBhj/0Q80EJC8Fv/A5FpL3+rpUckiB2MzhlRg5FwZ07+7V
+    MocptiXQD9sngtWwVkMrFlR8ElsfIem/tyVLL3Ef97UAQ0nxaOobgAPPG+P1U9fdMGCe
+    hk3N6/BID/u+xXf6HKryCDZApEIjzFRT/jDtRlVbLLMp3oTv6Xa4ViZ4ZJqnWZ8QLexy
+    8WjV/delbr2TtGKtS0bWqKA1+NqgxM147ek1fuftuLIPpfmSFfBKuFbtAEtbK0lVzSBm
+    JatQ==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1719742917;
+    s=strato-dkim-0002; d=xenosoft.de;
+    h=To:Subject:From:Date:Message-ID:Cc:Date:From:Subject:Sender;
+    bh=koImhGjb7REMlZ/XmgRbFgMfDWJDeMGzhBpOSppcQCg=;
+    b=rrNyYJtjpkKmA0QcxDXpASOq7JUYgYpK8eqvuabSrMY/XKau9q0jf+L3f/to4GshVo
+    PWOFU9qtStMYJocl73DgMLrfJDeoYah/I47xyL83JIbZIRE0hPVr7j9hiiKiDedT7LpN
+    DV54Ozm0w+GtdsHZhVYwbZ2rfEUPn7DqvOgD4PAyRywdPnnqvXQRyt2hmzz1Xo9wMUO4
+    0pPT0nU8PpmIGwRgwUZii7y1bksB+l3Hn7RjWitQp5UBgOV9KUwYk/nTcECZAoc5udIW
+    FINdRvAm9wsQhvVi7HbhIUDhZp6zoP+Ge7mDFdFs05lg4HIfmpS4I60HEIAiLLq5Z1RG
+    NyUg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1719742917;
+    s=strato-dkim-0003; d=xenosoft.de;
+    h=To:Subject:From:Date:Message-ID:Cc:Date:From:Subject:Sender;
+    bh=koImhGjb7REMlZ/XmgRbFgMfDWJDeMGzhBpOSppcQCg=;
+    b=Fx7TSSIKx2lKyTwirMmbPOP29OkpoRezklgZkMUFwV5mrLnJQRHNxIxnD5Ya6KyCyY
+    aSGF+2gGrFWywueMpqCw==
+X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5DdBfi4XXBswJY17nMJxMU7SicerhpVThcASu2X0Ag=="
+Received: from [IPV6:2a02:8109:8984:5d00:8535:f3a7:32a7:65f9]
+    by smtp.strato.de (RZmta 50.5.0 AUTH)
+    with ESMTPSA id e0838905UALuCbd
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Sun, 30 Jun 2024 12:21:56 +0200 (CEST)
+Message-ID: <3ab66fab-c3f2-4bed-a04d-a10c57dcdd9b@xenosoft.de>
+Date: Sun, 30 Jun 2024 12:21:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Content-Language: de-DE
+From: Christian Zigotzky <chzigotzky@xenosoft.de>
+Subject: [PowerPC] [PASEMI] Issue with the identification of ATA drives after
+ the of/irq updates 2024-05-29
+To: Rob Herring <robh@kernel.org>, Marc Zyngier <maz@kernel.org>,
+ apatel@ventanamicro.com, DTML <devicetree@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+ mad skateman <madskateman@gmail.com>, "R.T.Dickinson" <rtd2@xtra.co.nz>,
+ Matthew Leaman <matthew@a-eon.biz>, Darren Stevens
+ <darren@stevens-zone.net>, Christian Zigotzky <info@xenosoft.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Sun, 30 Jun 2024 09:21:03 +0200
-Jerome Brunet <jbrunet@baylibre.com> wrote:
+Hello,
 
-> On Sat 29 Jun 2024 at 20:40, Jonathan Cameron <jic23@kernel.org> wrote:
-> 
-> > On Mon, 24 Jun 2024 19:31:03 +0200
-> > Jerome Brunet <jbrunet@baylibre.com> wrote:
-> >  
-> >> Add support for the HW found in most Amlogic SoC dedicated to measure
-> >> system clocks.
-> >> 
-> >> This drivers aims to replace the one found in
-> >> drivers/soc/amlogic/meson-clk-measure.c with following improvements:
-> >> 
-> >> * Access to the measurements through the IIO API:
-> >>   Easier re-use of the results in userspace and other drivers
-> >> * Controllable scale with raw measurements
-> >> * Higher precision with processed measurements
-> >> 
-> >> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>  
-> > Interesting device and the driver is pretty clean.
-> >
-> > Needs a new channel type though as altvoltage is in volts not hz.
-> >
-> > Various minor comments inline.
-> >
-> > Thanks,  
-> 
-> Thanks for the feedback Jonathan.
-> 
-> Just a couple of things,
-> 
-> David expressed concerns with having both IIO_CHAN_INFO_RAW and
-> IIO_CHAN_INFO_PROCESSED for a channel and we did not reach a conclusion
-> on this.
-> 
-> My idea here is to:
->  * Give full control over the scale to the consumer with
->    IIO_CHAN_INFO_RAW
->  * Give an easy/convenient way to get an Hz result with
->    IIO_CHAN_INFO_PROCESSED. There is a bit more than just 'raw * scale'
->    in the implementation of this info to figure out the most appropriate
->    scale for the measurement. They idea is also to avoid code
->    duplication in consumers.
+There is an issue with the identification of ATA drives with our P.A. 
+Semi Nemo boards [1] after the
+commit "of/irq: Factor out parsing of interrupt-map parent phandle+args 
+from of_irq_parse_raw()" [2].
 
-So we have had a few cases of software driving autorange finding for sensors
-in the past (typically light sensors). An example is the gp2ap020a00f driver but
-those have been been driven by interrupts to detect range issue and are much
-more complex than what you have here.  Note that driver only provides _RAW,
-I think because we have no documentation of how to convert to an illuminance
-reading.  It's old though and probably not a good example to follow.
+Error messages:
 
-> 
-> David is definitely more familiar than me with IIO but we did not really
-> know how to move forward on this.
-> 
-> Is it OK to have both IIO_CHAN_INFO_RAW and IIO_CHAN_INFO_PROCESSED, or
-> should I ditch IIO_CHAN_INFO_RAW ?
+ata2.00: failed to IDENTIFY (I/O error, err_mask=0x4)
+ata2.00: qc timeout after 10000 mssecs (cmd 0xec)
 
-I'll ask the obvious question - do you have a usecase for _RAW + _SCALE
-if not we can take the conservative approach of not providing it 'yet'
-and revisit once that use case surfaces.
+Screenshots [3]
 
-Otherwise, I tend to resist mixing processed and raw + scale just because
-it makes it hard for userspace to understand the difference. This combination
-has only happened in the past due to driver evolution (we got it wrong
-initially for a given driver). 
+I bisected yesterday [4] and "of/irq: Factor out parsing of 
+interrupt-map parent phandle+args from of_irq_parse_raw()" [2] is the 
+first bad commit.
 
-So I'm not strongly against providing both (and amending my standard
-'don't do this reply' to include this as a special case) but I want to
-know someone actually cares.
+Then I created a patch for reverting this first bad commit. I also 
+reverted the changes in drivers/of/property.c. [5]
+
+The patched kernel boots with successful detection of the ATA devices.
+
+Please check the of/irq updates.
+
+Thanks,
+Christian
 
 
-> 
-> >
-> > Jonathan  
-> 
-> [...]
-> 
-> >> +	indio_dev->name = "amlogic-clk-msr";
-> >> +	indio_dev->info = &cmsr_info;
-> >> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> >> +	indio_dev->num_channels = CLK_MSR_MAX;  
-> >
-> > Superficially looks like the number of channels depends on the compatible.
-> > Ideally we shouldn't provide channels to userspace that aren't useful.  
-> 
-> Not exactly. All SoCs have 128 inputs, Some may not be connected indeed
-> but some are, and the name is just not documented (yet).
+[1] https://en.wikipedia.org/wiki/AmigaOne_X1000
+[2] 
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?h=v6.10-rc5&id=935df1bd40d43c4ee91838c42a20e9af751885cc
+[3]
+- https://i.ibb.co/WcH8g4K/20240626-095132.jpg
+- https://i.ibb.co/K7KnDxx/panic2.jpg
+- https://i.ibb.co/frnbJfb/panic3.jpg
 
-> >
-> > You could search the name arrays to see how far they go, but that is bit ugly.
-> > Probably wrap those in a structure with a num_channels parameter as well.
-> >  
-> 
-> I've been doodling with this idea while writing this
-> driver. Technically, there is no problem.
-> 
-> The legacy driver this one will be replacing used to expose all 128
-> inputs. I thought it was more important to have continuity with the
-> legacy driver than filtering out possibly useless channels.
-
-ok.
-> 
-> Another benefit of keeping all 128 is that the channel index (both in
-> sysfs and more crucially in DT) matches the one in the SoC documentation.
-> That makes things easier.
-> 
-> Would it be acceptable to keep all 128 channels then or do you still
-> prefer that I filter out the undocumented ones ?
-
-Your explanation for why we should keep them is fine.
-Add some suitable comments so we don't forget it.
-
-> 
-> >> +	indio_dev->channels = cmsr_populate_channels(dev, conf);
-> >> +	if (IS_ERR(indio_dev->channels))
-> >> +		return PTR_ERR(indio_dev->channels);
-> >> +
-> >> +	return devm_iio_device_register(dev, indio_dev);
-> >> +}  
-> 
-> Thanks for you help.
-> 
-You are welcome
-J
+[4] https://forum.hyperion-entertainment.com/viewtopic.php?p=58585#p58585
+[5] 
+https://github.com/chzigotzky/kernels/blob/main/patches/X1000/of_irq_v2.patch
 
