@@ -1,59 +1,55 @@
-Return-Path: <linux-kernel+bounces-235131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38FC591D088
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 10:25:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 188EB91D08E
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 10:27:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A6B11C20AE4
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 08:25:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A7851C20A86
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 08:27:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1945912D1FA;
-	Sun, 30 Jun 2024 08:25:32 +0000 (UTC)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0426A12C7FF;
+	Sun, 30 Jun 2024 08:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="GSCRgTX4"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C32012C474;
-	Sun, 30 Jun 2024 08:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E280E7B3FE;
+	Sun, 30 Jun 2024 08:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719735931; cv=none; b=E9Z7JofJJ75qOImC9cxduejkTGT2GZMPX7PbJUB2pIxqYm3WhsmeuqGPYSTEDsHz4aSu5wNpoZWQ+BhoZu+Hh5naahq05EBIIsGMy422OUr33l20yBfMSEN+1U7KA8+AJQ+ww243n85L+XikZB1movP4G5bSDaJD67tcmFWtHio=
+	t=1719736062; cv=none; b=CNo4MFirPY61jlzU4SE9P0kvQdIfwJ6hQZQZyVWeCTZ+i07lSzuS+q1T/gpKM+DUr22M+vs+EZl45R4Hz+DlMajVO0Ke7uxph7OZewQgx95R2psdibzF/Bg3qCnDdF7H/QfTe7tdDVjypLJk+gFNmuqwnMBVGoTXAEAnUYUSlh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719735931; c=relaxed/simple;
-	bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
+	s=arc-20240116; t=1719736062; c=relaxed/simple;
+	bh=mEH+UpZfHB0izTrzQvX9YTRSwDv76x2qO7S3xISkzBU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QiI85XKXeGacvDwYCyUMJ1iKuaST205JXJVAUlBbO/Y5EVdK/ngP1Gi5HtsGj+GGP2flG5kPDc++g0f6O8e60FoObRp7eXTuWAkuEoLaffoT4te4SjDiEMkzb8RwOkYrd5cU+HScpAq9tBqXGfSYb4kuA2cOW3IUeD+Wu2lPdig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52e7adf4debso185907e87.0;
-        Sun, 30 Jun 2024 01:25:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719735928; x=1720340728;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
-        b=G8zxcGNVoQpdyfpvlH7yothBqY0tY+67POgNSwlVNpvTDX/BuyaTonRtEFSUzCFfJ6
-         3+9QTIBGqCP7yvs6LQP2DGGGFTPSfi/XHyIPFSgUo1w4gFCZxvxyzo80qFSnTeZZkqTL
-         djtqBJ5FNlT2bVRmaa4bUaRHDGbIXObIDdy2yBWrhntTLcyJKPuCjw9fp8ZXrn/QjQgA
-         Sftqikv3sw2LF/oQ5UA6e/iP51qWG+8o1+mVYeP1VU9t7O5Ec5qaabyXu4IjtUootx2J
-         pM6sFkAsugih0klNb7nigMOuiHa7g2ReXTqlfKQ6uETbkr45CBxvTC5aQblFrU7iDUkJ
-         m+Sw==
-X-Forwarded-Encrypted: i=1; AJvYcCWessFK7szUT9YIm4c+ZVq/mUc0tM3mKvdJD7H2CIu4bCy/ONtscstRiym2mvA1YOdiHK5vs9AOlxgSqWGpG/hIXkrN/Tllugz7HbbTijENOBZsVKRzGnZKxAXQZH8igdho2M/6RIEhRcs=
-X-Gm-Message-State: AOJu0YxkHytnPo1DxkomSC9wJ+xGL67ZYZsS6iW5Lo8ZPxVKuAGW+tsN
-	1rM6Kivke3giwM0u4KBxMytr6yyPqNGoTcPmJzOuZwM29TU+sYrG
-X-Google-Smtp-Source: AGHT+IESUjeAFOhpin+AORXLQ1ucUyymLVGh3HpTXyH2l5Sz6D0B8lqJqtGoTgJWatL/imKYw89URQ==
-X-Received: by 2002:a2e:a267:0:b0:2ec:4f41:501 with SMTP id 38308e7fff4ca-2ee5e337d17mr14893491fa.1.1719735927753;
-        Sun, 30 Jun 2024 01:25:27 -0700 (PDT)
-Received: from [10.50.4.180] (bzq-84-110-32-226.static-ip.bezeqint.net. [84.110.32.226])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675f9dfbdbsm6468852f8f.103.2024.06.30.01.25.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 30 Jun 2024 01:25:26 -0700 (PDT)
-Message-ID: <f790f4eb-231b-46fa-8347-a0ae7bd6f1c0@grimberg.me>
-Date: Sun, 30 Jun 2024 11:25:24 +0300
+	 In-Reply-To:Content-Type; b=nkOsMSLSwRXE2ij0zvXUWb4tCFOBmDt+r4L4R2Kq4zdgVe4gsFwD6yc11vhYrIRqHTiTZd2ovZnqW/vJZ+XJy9qWywySJvOpRE1A6NPReCKajIn+iB8tX9eWTI2ZS4Unbhj/8Z0ha0vjpsYtMIKVuln7oxpL9haqGPs5S5uOE1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=GSCRgTX4; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1719736014; x=1720340814; i=wahrenst@gmx.net;
+	bh=nsatQbMwWazHWjCGtPZLKlMFGJm60bL4DCX/RYQYfww=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=GSCRgTX4Am+7nOm4ncdp9J/Y7GRlnUM6LXDeq2RU2gUd3caDn7gWMgXTWxb/+TD4
+	 eUkrjpC8L1ttI2AFHTIUUgvoBcfIYlJWfFJwu5Jj/4xlph3YT5iou9i5p6/8IRRpJ
+	 /3ct08Z0BKZz/nI7HIJoZZsQ/z+n1u/5T4JvMcaTourJFhO8jglwFhjGhqiNg/kaZ
+	 ma+gtHhwgcuTsxrqO+8he4W9MUaJmR1Znq+5SPOL3sRCWA0ta7dA7Dc5+ZwnuNVVf
+	 FOTR9pRkBnPaSu6+mxPHokRI1YXLLeq+dK/L/HHdg8UbLwTBTpGUrUtKwjsnT6BQ6
+	 GEq6/jBpaXlRggxh2w==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MVeI8-1spQu947xU-00UhCM; Sun, 30
+ Jun 2024 10:26:54 +0200
+Message-ID: <c34d4c60-da28-40e9-b86e-41bf8cd71b24@gmx.net>
+Date: Sun, 30 Jun 2024 10:26:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,24 +57,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] lib/group_cpus.c: honor housekeeping config when
- grouping CPUs
-To: Daniel Wagner <dwagner@suse.de>, Jens Axboe <axboe@kernel.dk>,
- Keith Busch <kbusch@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Christoph Hellwig <hch@lst.de>
-Cc: Frederic Weisbecker <fweisbecker@suse.com>, Mel Gorman <mgorman@suse.de>,
- Hannes Reinecke <hare@suse.de>,
- Sridhar Balaraman <sbalaraman@parallelwireless.com>,
- "brookxu.cn" <brookxu.cn@gmail.com>, Ming Lei <ming.lei@redhat.com>,
- linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
- linux-nvme@lists.infradead.org
-References: <20240627-isolcpus-io-queues-v2-0-26a32e3c4f75@suse.de>
- <20240627-isolcpus-io-queues-v2-3-26a32e3c4f75@suse.de>
+Subject: Re: [PATCH v3 2/5] dt-bindings: net: wireless: brcm4329-fmac: add
+ clock description for AP6275P Wi-Fi device
+To: Jacobe Zang <jacobe.zang@wesion.com>, robh@kernel.org,
+ krzk+dt@kernel.org, heiko@sntech.de, kvalo@kernel.org, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, conor+dt@kernel.org
+Cc: efectn@protonmail.com, dsimic@manjaro.org, jagan@edgeble.ai,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ arend@broadcom.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+ megi@xff.cz, duoming@zju.edu.cn, bhelgaas@google.com,
+ minipli@grsecurity.net, brcm80211@lists.linux.dev,
+ brcm80211-dev-list.pdl@broadcom.com, nick@khadas.com
+References: <20240630073605.2164346-1-jacobe.zang@wesion.com>
+ <20240630073605.2164346-3-jacobe.zang@wesion.com>
 Content-Language: en-US
-From: Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <20240627-isolcpus-io-queues-v2-3-26a32e3c4f75@suse.de>
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <20240630073605.2164346-3-jacobe.zang@wesion.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:UsRdSvMT7LvqkBgf2MMlJCt+oUY1cPrdOCam4+DWocwBgRUGkOR
+ umY/KuFxXQuMBWvZsS5NdefexWZFw8/pt+cTQv67MH9xqR/BXA+SUnkmyjTihU3ZnaxAQIe
+ aCIskfUAQYpGN3YLc84ogq6vAiA5whIEv1r43hSsgZzzQPr7czy5M+Y79dJ7/nBr4MXtCuw
+ of0ETPM/bJYTY/pLEoljg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:jLcFPFMzJLY=;HtTlBMAMOmLTFxw4iUjwe9NTF5C
+ pyl7n3ID/f82VtW1rUN6slUucWjkEp3ojdLF0Tl276NFePfzUUzXnkI+oPZdGXLBQQ7lmL7gM
+ ndLqvl15lozGNKqwHwcJKBU+9quLwf49NtLNKe01o/hnXOfyy8wtf7P+Eo7r/+4rdf5RCqMZL
+ Po55mXOZ2dvLzO+ibimw5RIG4faUhdjYPyty8dQsGBuzKWG9Usz+QHWkTlrBPD79cJl+GSpyp
+ 5WQpZ/9cHqJQxxjaDZnMUYR5ihbk9Nsec0J6PeEVWSzd+UM4CACmzMkr6gTfCPnLNbpaFtZCS
+ e6y8D6ahAahN12n7dyV5olua2EOuVsPEPpL0AmwvqXAxx/kb9T4ZWkjtE+IQHM0d5rYcbTvL+
+ 0mfd54YDYQafj7H+6EFdEDorGu9ESfLu6+Hyl/SerpmfGpLJIUl9hdmmOfLxInobmjSnpurEX
+ Nbj75UWBWW4uEJfQiL0IsEPjv99wnps4yFqfvvF0pfdO2KYOZ6fsqKP29hadr03UWE+THx3Um
+ /52APqAAxlJmzt07J/7tZ76xWMmXb7tasF7/1jvmKXtMAY0Afm8owjkw/do5qeHJI3IIX0BsY
+ SmTCSYH1W7ZrIe/UQNEorlc6VNzQMVvZkVreOaYazC7PaqHDZQtZdnaezAhaKBy/4d2ZMRFWR
+ x9OdcWCvFoPXGhIOI61Cft7K7eVMu7to5TMv1RA9nWWJyvAeUAFEOAF1moyqU6GFy/iWcszJx
+ MTyAzcm4PQaz3gtTE7LzWy5X7bQvBQu0Vme/Omani5jxD0Xi1ufS85Yt2wjJbmRyVHbW6l8KO
+ uduLZSY3/mOE8pffpLrVFdp2NOb9m1zPOmNnBBM/dLN+w=
 
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Hi Jacobe,
+
+Am 30.06.24 um 09:36 schrieb Jacobe Zang:
+> Add clocks and clock-names for brcm4329-fmac.
+thanks for taking care of this. According to CYW43455 datasheet which is
+also covered by this binding, there are more clocks in the hardware
+design, so i suggest to reword subject and commit message that this
+patch only adds the low power clock.
+>
+> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
+> ---
+>   .../bindings/net/wireless/brcm,bcm4329-fmac.yaml          | 8 ++++++++
+>   1 file changed, 8 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329=
+-fmac.yaml b/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-f=
+mac.yaml
+> index 2c2093c77ec9a..f542b60e44dc4 100644
+> --- a/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.y=
+aml
+> +++ b/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.y=
+aml
+> @@ -122,6 +122,14 @@ properties:
+>         NVRAM. This would normally be filled in by the bootloader from p=
+latform
+>         configuration data.
+>
+> +  clocks:
+> +    items:
+> +      - description: Wi-Fi RTC clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: lpo
+> +
+>   required:
+>     - compatible
+>     - reg
+
 
