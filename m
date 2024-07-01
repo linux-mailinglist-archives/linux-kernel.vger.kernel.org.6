@@ -1,193 +1,125 @@
-Return-Path: <linux-kernel+bounces-235993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCE6291DC29
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:15:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ABE391DC2B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:16:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF6ED1C213E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:15:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9FED281D0B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D258D12D1FF;
-	Mon,  1 Jul 2024 10:15:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3049212C550;
+	Mon,  1 Jul 2024 10:15:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yCvQyUXA";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="a+lbrj8e";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yCvQyUXA";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="a+lbrj8e"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u2v27683"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938992D03B;
-	Mon,  1 Jul 2024 10:15:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D638B50A80
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 10:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719828942; cv=none; b=c4PUyBL/AkqgRugyGovbHIlhodpHzr/3VMh8dEVP+zDeH28Yn1bP8aB5lr+zUS5AFWu5XWKNPOpCnwOjI8XgTLIRBOLDYJe5tRHSWecZt/ys9Do9qCpP5vjmodsKcqbMRHhGp5qUqo4zddn3fLUHOOm5/iMEc1rt/82pJr9mnwM=
+	t=1719828955; cv=none; b=dTLDILR057V5LgzwGAA1N39rEGr8oWdqVS9AvSLX2LMukV4f7I0qPO30zv76vFXg0A+qZGu7bDBZeCnwEdJM7X1QpmI6/tn21ek/y9j5AM/KvcNCEgSxMmabqKAxwEbChgjd6hB2ufeYiGyFS0Qq3C1x1FhAQGRj3KdUvY8Eh0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719828942; c=relaxed/simple;
-	bh=U4DbQtuzQ+uMggYZUwgmOrbcZxTv1B12NqqFPf9l6bk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oM+7IW4ZFrJS3xqIpPnKMLra453QOInDCQuPXocJrKsY1G++8MnidZxGvF3q+Viom8mnrOPMs3he9iHh4kCBFgO6foUYMFRL57R+Cl7DgxKWti8+9smgieNNtk5hIglwV5sma/DRlZLh4iLKX79CnBxBZBJhwEY6E5x9yewMdnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yCvQyUXA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=a+lbrj8e; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yCvQyUXA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=a+lbrj8e; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A3ABB1F828;
-	Mon,  1 Jul 2024 10:15:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719828936; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=R/TRMhm8+wYDdVD+A+j/RgDwMqo/Ch98fNThchTyh0Y=;
-	b=yCvQyUXA5jwPRCTdBZBr277+kFFsUgxEh79yUILlsAx1D3GhsP3s8WPaBN822dI3roevx5
-	zqO8dRL+ZBBOyWfWn1Ejv4mClOxi0TcDGGD96QI8J/tM1LK5liqubFAW9BmYd4OAmmkpo5
-	V1hLn/IedM6dLDgrOU8OiK4p0153GZk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719828936;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=R/TRMhm8+wYDdVD+A+j/RgDwMqo/Ch98fNThchTyh0Y=;
-	b=a+lbrj8eW3qqE3DwytjgzR01WBdjOhft4pwQLb4WCjGacQoXhgtWS54iHdqey+dBVv3fcX
-	3BRMs6Oizmg19BAA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719828936; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=R/TRMhm8+wYDdVD+A+j/RgDwMqo/Ch98fNThchTyh0Y=;
-	b=yCvQyUXA5jwPRCTdBZBr277+kFFsUgxEh79yUILlsAx1D3GhsP3s8WPaBN822dI3roevx5
-	zqO8dRL+ZBBOyWfWn1Ejv4mClOxi0TcDGGD96QI8J/tM1LK5liqubFAW9BmYd4OAmmkpo5
-	V1hLn/IedM6dLDgrOU8OiK4p0153GZk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719828936;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=R/TRMhm8+wYDdVD+A+j/RgDwMqo/Ch98fNThchTyh0Y=;
-	b=a+lbrj8eW3qqE3DwytjgzR01WBdjOhft4pwQLb4WCjGacQoXhgtWS54iHdqey+dBVv3fcX
-	3BRMs6Oizmg19BAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 951EF139C2;
-	Mon,  1 Jul 2024 10:15:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id T4cfJMiBgmZ+JAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 01 Jul 2024 10:15:36 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 45BE8A088E; Mon,  1 Jul 2024 12:15:36 +0200 (CEST)
-Date: Mon, 1 Jul 2024 12:15:36 +0200
-From: Jan Kara <jack@suse.cz>
-To: Alexander Larsson <alexl@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>, Ian Kent <ikent@redhat.com>,
-	Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-	Lucas Karpinski <lkarpins@redhat.com>, viro@zeniv.linux.org.uk,
-	raven@themaw.net, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Eric Chanudet <echanude@redhat.com>
-Subject: Re: [RFC v3 1/1] fs/namespace: remove RCU sync for MNT_DETACH umount
-Message-ID: <20240701101536.jb452t25xds6x7f3@quack3>
-References: <Znx-WGU5Wx6RaJyD@casper.infradead.org>
- <50512ec3-da6d-4140-9659-58e0514a4970@redhat.com>
- <20240627115418.lcnpctgailhlaffc@quack3>
- <20240627-abkassieren-grinsen-6ce528fe5526@brauner>
- <d1b449cb-7ff8-4953-84b9-04dd56ddb187@redhat.com>
- <20240628-gelingen-erben-0f6e14049e68@brauner>
- <CAL7ro1HtzvcuQbRpdtYAG1eK+0tekKYaTh-L_8FqHv_JrSFcZg@mail.gmail.com>
- <97cf3ef4-d2b4-4cb0-9e72-82ca42361b13@redhat.com>
- <20240701-zauber-holst-1ad7cadb02f9@brauner>
- <CAL7ro1FOYPsN3Y18tgHwpg+VB=rU1XB8Xds9P89Mh4T9N98jyA@mail.gmail.com>
+	s=arc-20240116; t=1719828955; c=relaxed/simple;
+	bh=p9IZykpzzwL8zuxYVmTUY8tOOxsh+H4SkI/bv64/8wg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pO5UFphAMx0ED1aab7RDAOYVx2NPIKWxUIsi4UPnXY7/u/VolYWRCPY53g3Cpd9NDEZfpDScv+KQ7Cj/cLMxojSeqjvDVVruWxYyn3DxsjJxcTfWryAe2soyBeTBBYd5XL1+D77k8vGlLY66YBfdpVGByynU/EHX7KdQ4WfVP2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u2v27683; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4256eec963eso20098505e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 03:15:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719828952; x=1720433752; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=P7ERjJOyUzEMj0FpXGqXf5xmcTSrmBtKih96OlIC8Hg=;
+        b=u2v276833Pg6Ck1TDl0YKnxcJRsQH6ksy6RrBFU83uIBNaCpzAE7DN12Lwu5ATJJYb
+         xlAoNtQBvZKcUKjA8H1q3RrnaoLR0G3qfuf4JY7yeANh1O28Dz7yHH/N4Dkv+eGe6HQT
+         uHLA9u5g6ZB4FN2KMmSQhFLMzFOmHDl7zvs/azpHLXrdfwj+uH2T7tq3r2+OI9n/m8aa
+         YDCkZ1kD3IbKANS2qZlK3068pg3c/aw5L9rQRmR7xcYYPr4dmnrwYxpUhwVy4KGPe/80
+         lbNbcAndR9vwlLtKN+jBgp6KYzGvJB3J+cCV3+HDZnZLZjZZpO2onykDlDqTc9RSshvj
+         ZopQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719828952; x=1720433752;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=P7ERjJOyUzEMj0FpXGqXf5xmcTSrmBtKih96OlIC8Hg=;
+        b=W84MjZWptdwPUfjb61p3WM2WEeldMAW98t/khrmEHcNEsEEn95OM3z9AsK+5obVnoM
+         vWC2zTkzTm30fMp5zooBQ4sqBs963jzvMoirMOih3cM+YS50GZkvhpkXvVtrBmqJFnzM
+         M/JGWRXZHaWnuvEG5Dr76WEPZkY+5ZchopHU+QsNHB4Rk3jhiPy8l1p8vZ4pXjTb/aU5
+         L8+iUNoC5LVx9tTuXZO/mDa+PNzNiLsjYhbUjuQ5e9TKhWBDKFDZYnOBIjnamYWK5oVr
+         Bb2Y+l4ro2dideweE1m58XzQMatgeGsOw+oPnqQJf9Buu/6AVatvgp0teqxvrxwPIzF1
+         J+bg==
+X-Forwarded-Encrypted: i=1; AJvYcCWnkkWoFjAXOHn8cngCK66SJ+G/Yc35JYC6xkynHaCFCFo0jNaqtGeyaUIQXK9sGQ/5FJr67O4wPnH7f5Uk5T1L3rEQXHJLKDrQ0bfx
+X-Gm-Message-State: AOJu0Yxeadm8f90DVGYVr+ni8pu8e+MUAP4P+eF6mSfnucuTMygS2LK6
+	WUcNknTSIlwI8HcyS2CFqFCF4JgjFbYf6dJ0hLPwbE24yjZl4I5gTflXE5LO2Dk=
+X-Google-Smtp-Source: AGHT+IFs0W4UETdvUKHjNDT0jsOLwENUOC2FNNISouAi43UfaMazl23H6AZNzwRfQJHVRLXNsxZQzw==
+X-Received: by 2002:a05:600c:6c8f:b0:424:9c01:a0d3 with SMTP id 5b1f17b1804b1-4257a02f7fbmr36087385e9.12.1719828952192;
+        Mon, 01 Jul 2024 03:15:52 -0700 (PDT)
+Received: from [192.168.2.107] ([79.115.63.178])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af5b626sm144627895e9.15.2024.07.01.03.15.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Jul 2024 03:15:51 -0700 (PDT)
+Message-ID: <1d56c3b2-7adf-45b9-a509-956340f3f17b@linaro.org>
+Date: Mon, 1 Jul 2024 11:15:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL7ro1FOYPsN3Y18tgHwpg+VB=rU1XB8Xds9P89Mh4T9N98jyA@mail.gmail.com>
-X-Spam-Score: -3.80
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/4] dt-bindings: mtd: macronix,mx25l12833f: add
+ SPI-NOR chip
+To: Erez <erezgeva2@gmail.com>, Esben Haabendal <esben@geanix.com>
+Cc: Erez Geva <erezgeva@nwtime.org>, linux-mtd@lists.infradead.org,
+ Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>,
+ linux-kernel@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+References: <20240629103914.161530-1-erezgeva@nwtime.org>
+ <20240629103914.161530-4-erezgeva@nwtime.org>
+ <1c457520-07b7-4bde-b040-e8bca959a4f5@linaro.org>
+ <CANeKEMOODBNZA6efh0E0Ga_KaVs5Y3WLcUftRhNwYHhnXO=GNw@mail.gmail.com>
+ <CANeKEMO42rJt5Ob4_HDcZ3eEMvuMOPvRaFaLwL8SA65NtxSV7A@mail.gmail.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <CANeKEMO42rJt5Ob4_HDcZ3eEMvuMOPvRaFaLwL8SA65NtxSV7A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon 01-07-24 10:41:40, Alexander Larsson wrote:
-> On Mon, Jul 1, 2024 at 7:50 AM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > > I always thought the rcu delay was to ensure concurrent path walks "see" the
-> > >
-> > > umount not to ensure correct operation of the following mntput()(s).
-> > >
-> > >
-> > > Isn't the sequence of operations roughly, resolve path, lock, deatch,
-> > > release
-> > >
-> > > lock, rcu wait, mntput() subordinate mounts, put path.
-> >
-> > The crucial bit is really that synchronize_rcu_expedited() ensures that
-> > the final mntput() won't happen until path walk leaves RCU mode.
-> >
-> > This allows caller's like legitimize_mnt() which are called with only
-> > the RCU read-lock during lazy path walk to simple check for
-> > MNT_SYNC_UMOUNT and see that the mnt is about to be killed. If they see
-> > that this mount is MNT_SYNC_UMOUNT then they know that the mount won't
-> > be freed until an RCU grace period is up and so they know that they can
-> > simply put the reference count they took _without having to actually
-> > call mntput()_.
-> >
-> > Because if they did have to call mntput() they might end up shutting the
-> > filesystem down instead of umount() and that will cause said EBUSY
-> > errors I mentioned in my earlier mails.
+
+
+On 7/1/24 10:46 AM, Erez wrote:
+> When using mx25l12805d, we do not read SFDP.
+> As it uses the no-SFDP flags.
+> When using mx25l12833f hardware with mx25l12805d driver, it did not
+> try to read the SFDP.
+> Yet mx25l12833f does have SFDP, when I remove the no-SFDP flags, the
+> driver fetch the SFDP.
 > 
-> But such behaviour could be kept even without an expedited RCU sync.
-> Such as in my alternative patch for this:
-> https://www.spinics.net/lists/linux-fsdevel/msg270117.html
+> Secondly SFDP does not contain OTP information.
 > 
-> I.e. we would still guarantee the final mput is called, but not block
-> the return of the unmount call.
+> mx25l12805d has two OTP regions of 128 KiB and 384 KiB (yes asymmetric).
+> While mx25l12833f has two OTP regions of 512 KiB.
+> 
+> How do we handle it?
 
-So FWIW the approach of handing off the remainder of namespace_unlock()
-into rcu callback for lazy unmount looks workable to me. Just as Al Viro
-pointed out you cannot do all the stuff right from the RCU callback as the
-context doesn't allow all the work to happen there, so you just need to
-queue work from RCU callback and then do the real work from there (but OTOH
-you can avoid the task work in mnput_noexpire() in that case - will need a
-bit of refactoring).
+You would first try to parse SFDP and initialize the flash based on
+SFDP. If there's no SFDP then you fallback to the flags declared at
+flash declaration. Esben had a try recently, see [1]. I don't know if
+there's any progress in that direction.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Also, you haven't mentioned anything about the testing. Do you have the
+flash?
+
+[1]
+https://lore.kernel.org/linux-mtd/20240603-macronix-mx25l3205d-fixups-v2-0-ff98da26835c@geanix.com/
 
