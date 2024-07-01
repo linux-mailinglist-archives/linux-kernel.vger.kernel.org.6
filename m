@@ -1,165 +1,169 @@
-Return-Path: <linux-kernel+bounces-235729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF69791D902
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:34:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABB6491D905
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:35:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34C72B228B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:34:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 662FD282C88
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730076F073;
-	Mon,  1 Jul 2024 07:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE622768FD;
+	Mon,  1 Jul 2024 07:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="J2jRLiee"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f29dGmZA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8B81EB21
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 07:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160EA37142;
+	Mon,  1 Jul 2024 07:35:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719819242; cv=none; b=LkAlW0H2heYGdGlLPrLv0U20NvlA4Yehtlh+nkZsL2rhrFnqIwhIR8kVlwYiGCPYRRAjKW3B3faMYkKcSgh/OEZ5oCePuEzYLPZH5+iq0mysLVSC2I/Z19Kpq6Dnsq8esIj/DPYPmU5ApIif0ZKyyfwHNd2HEWuRP/2+sNinjG4=
+	t=1719819311; cv=none; b=HWKCQtD2DBagGfqhBjob8Sex2HOjT5J6ya88a6DE3QBHVABlZaiqeauIBno5QMyU2ZbKjfRuOBKvPc1wg95JbGsWRQ4XaF6qdzNNA8e1rEC0yUXzq2kncQvXohhGMXlNAxFv0WBMKXHs53WOdAWC5eNJFuT+tiwUE35TS1xfG8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719819242; c=relaxed/simple;
-	bh=eZsMjIZhDuPAksSPMbB5+rRUCtL8QcyCA/PNWz9K4Qs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i1hm7ZyYq/hgIZevqUmLlQp4QHDm9PmFnU+z8HrQYh2SaVa56jhb2Cuy4BO8Y+fGu1c71vGzioKviAjxBCwqe6OnFnHMBBC1XSnmk3bDCkmAdFiBPMPRWJkLTk5i1apRqQi9CGiwLL1gVhpDberneBc7+iCYNTJd4aIzUrCcMpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=J2jRLiee; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ec595d0acbso31819711fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 00:34:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719819239; x=1720424039; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KGnaHuY/UYIawLKptXg5wA64lSgFUEpMdtAJsEUQQL0=;
-        b=J2jRLieesVcI/v3IBiJV35yyA3kTNxHQ31yKaA/q+kpq0W6ofXq/2pxYyjECAbObpr
-         J7GjnB4nJC2SSYqHGyXKOmuCeJTBWUI43AVkPfGiopdhD8DCE2KsK5toMw3BJAFeokty
-         OXOhm58MMUnExd7j/8Qkxitx3qVVpBT+lh5rf9r/RsroMbSrsqDVN67VBVVWvEUtq/oJ
-         nWc1fwUrYSfCym1WOKRtRqhXB6rmypLDhP84rrlWeuA2CcMuRAJDc0RTteMXq0i0ySZe
-         tFhOy5tv0rsmnLIJjS01T3OW1zRBkbPZUAcsQAYh3cD2PQLX4XvUQ6goVSkbmrTQak2+
-         tv4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719819239; x=1720424039;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KGnaHuY/UYIawLKptXg5wA64lSgFUEpMdtAJsEUQQL0=;
-        b=ngRsSkQU6EiAzKraJogc0HZeKoXuZeDi3TqEdHA9tsVQT0ghDVyi6kSKtjPjOLm4U+
-         568mJnQafAn8oFB/hV0S5UCRDxmOzfMvDgJFmrQOy/A2wEkrBTp5tvCIfMvbTrsdA3/2
-         xlvL5SPX2rmRkOMZBIQDHZfHrRtfLqm1qOJ4c/XAOjKfA6PRV5ch0zpMCODXn3CXNqtP
-         voiwABpK7bkbzrRH+cYedp9CFrkQQBNFZ4Aiq66OPPoZv9JYQfgkr9VKVVKAaWd5PErU
-         0prJTppx8sm3UH8/aIfqTpoGkUM6QpObZvm5vIvKdE8wbUpzRvc2PYO6dWGeN6QCU6ik
-         jgTg==
-X-Forwarded-Encrypted: i=1; AJvYcCX975WvzRbCKO5TVDkDSHkehQLNZDPTmH5cOmP8Is9gmFNMcFqZgdIxrvmD3XPoQ/DaUth4kuGG8N5NRSaz3jbciJCwU9olK0SNfQe4
-X-Gm-Message-State: AOJu0Yz4KteoUJ47F7/DkY5WyBbjCzd3js5j5tgTccbtrjXKB3FUPjm3
-	5Q+KXQmNtQ3H0xIlKoBoaAMwED85uQj0jSuHtUeGyDLzWBxvH5NnNMdIe9AsAKsFM5IQ3WFkLyv
-	7ZeHOFA62bwdaiS/KA1LsZftcn7485shhpH5qag==
-X-Google-Smtp-Source: AGHT+IFZ3XxeN71lww9NC0DG+IOMdkmXvd+56jLZTVfxUnDmNNaMUdKKc2sk6skBQksAT62FrN/QAiIUHt+mXlr4aWw=
-X-Received: by 2002:a2e:a5c4:0:b0:2ee:5ec1:1838 with SMTP id
- 38308e7fff4ca-2ee5ec11928mr45421871fa.30.1719819239028; Mon, 01 Jul 2024
- 00:33:59 -0700 (PDT)
+	s=arc-20240116; t=1719819311; c=relaxed/simple;
+	bh=Bif20sIYf7xrjcP4nu3TdOd59ri0smG6Qu7LpJ9O0l0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qotoPA3jj9Da45AErK/ZX5VEXYZSSRWchUQzN772mTjOYIAdcIqZDNUmcFYaVZfnvDwtI+t+1hY3gwAkmJMHszj/5i3gsoYZZ8X5LjlCZuTPTU+o7bagxD6H6WIkY56RdZNjQFyq5PTNSI3Ck+cXWZA45eZI+zACZKn64f/L9aY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f29dGmZA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7DADC116B1;
+	Mon,  1 Jul 2024 07:35:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719819310;
+	bh=Bif20sIYf7xrjcP4nu3TdOd59ri0smG6Qu7LpJ9O0l0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f29dGmZAFJTpEYqr/eq0Au2YnHN/RWzGpGUxouBjLpcMoul4uC8+26+839FZiYB2S
+	 6xlOXFyO5Gu+Li+Umkhnl6RyLjUMhNAVjop+PUWDVS18yBTaxgKzLx8qoVwDWn336n
+	 U4vMHIXj+MV/FtgQMcK040cCh4bCvpblR9Ujjc80ddY527R1/D20vedRdvG1M5fs9p
+	 9cQxNz5xm4NaC0kUEadAU/mnWE5viARnKIUGK/p0ouKAZOQh1X1H2erRCi1gjt/PuX
+	 H7HkKsV4lmhl/seu61kFH+lsJ14T0BSZk+5XYYPvUKZDOL8o2+klbzAMWRXEZ6H7ti
+	 xtjLvwlbF0TxQ==
+Date: Mon, 1 Jul 2024 08:35:05 +0100
+From: Simon Horman <horms@kernel.org>
+To: Roger Quadros <rogerq@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Julien Panis <jpanis@baylibre.com>, Andrew Lunn <andrew@lunn.ch>,
+	srk@ti.com, vigneshr@ti.com, danishanwar@ti.com,
+	pekka Varis <p-varis@ti.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+Subject: Re: [PATCH net-next v2 6/7] net: ethernet: ti: cpsw_ale: add helper
+ to setup classifier defaults
+Message-ID: <20240701073505.GI17134@kernel.org>
+References: <20240628-am65-cpsw-multi-rx-v2-0-c399cb77db56@kernel.org>
+ <20240628-am65-cpsw-multi-rx-v2-6-c399cb77db56@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <9d1156b9-cdf1-44be-b65d-45b17c0b681e@gmail.com>
-In-Reply-To: <9d1156b9-cdf1-44be-b65d-45b17c0b681e@gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 1 Jul 2024 09:33:47 +0200
-Message-ID: <CAMRc=MczeH+ptirFQpFi968m+-4RoABa43M5VQUx4guZTZxLSw@mail.gmail.com>
-Subject: Re: [PROBLEM linux-next] ERROR: modpost: "devm_qcom_tzmem_pool_new"
- [drivers/firmware/qcom/qcom-scm.ko] undefined!
-To: Mirsad Todorovac <mtodorovac69@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Kernel Build System <linux-kbuild@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240628-am65-cpsw-multi-rx-v2-6-c399cb77db56@kernel.org>
 
-On Fri, Jun 28, 2024 at 8:27=E2=80=AFPM Mirsad Todorovac <mtodorovac69@gmai=
-l.com> wrote:
->
-> Hi all,
->
-> In vanilla linux-next next-20240627 branch, there seems to be a build err=
-or with
-> KCONFIG_SEED=3D0x44AB31A6.
->
-> The error log is:
->
-> ~/linux/kernel/linux-next$ time nice make -j 36 bindeb-pkg |& tee ../err-=
-6.10-rc5-next-20240627-29.log; date
->   GEN     debian
-> dpkg-buildpackage --build=3Dbinary --no-pre-clean --unsigned-changes -R'm=
-ake -f debian/rules' -j1 -a$(cat debian/arch)
-> dpkg-buildpackage: info: source package linux-upstream
-> dpkg-buildpackage: info: source version 6.10.0-rc5-38
-> dpkg-buildpackage: info: source distribution jammy
-> dpkg-buildpackage: info: source changed by marvin <marvin@defiant>
->  dpkg-source --before-build .
-> dpkg-buildpackage: info: host architecture amd64
->  make -f debian/rules binary
-> #
-> # No change to .config
-> #
-> mkdir -p /home/marvin/linux/kernel/linux-next/tools/objtool && make O=3D/=
-home/marvin/linux/kernel/linux-next subdir=3Dtools/objtool --no-print-direc=
-tory -C objtool
-> mkdir -p /home/marvin/linux/kernel/linux-next/tools/bpf/resolve_btfids &&=
- make O=3D/home/marvin/linux/kernel/linux-next subdir=3Dtools/bpf/resolve_b=
-tfids --no-print-directory -C bpf/resolve_btfids
->   INSTALL libsubcmd_headers
->   INSTALL libsubcmd_headers
->   CALL    scripts/checksyscalls.sh
->   UPD     init/utsversion-tmp.h
->   CC      init/version.o
->   AR      init/built-in.a
->   CHK     kernel/kheaders_data.tar.xz
->   AR      built-in.a
->   AR      vmlinux.a
->   LD      vmlinux.o
->   OBJCOPY modules.builtin.modinfo
->   GEN     modules.builtin
->   MODPOST Module.symvers
-> ERROR: modpost: "devm_qcom_tzmem_pool_new" [drivers/firmware/qcom/qcom-sc=
-m.ko] undefined!
-> make[5]: *** [scripts/Makefile.modpost:145: Module.symvers] Error 1
-> make[4]: *** [Makefile:1886: modpost] Error 2
-> make[3]: *** [debian/rules:74: build-arch] Error 2
-> dpkg-buildpackage: error: make -f debian/rules binary subprocess returned=
- exit status 2
-> make[2]: *** [scripts/Makefile.package:121: bindeb-pkg] Error 2
-> make[1]: *** [/home/marvin/linux/kernel/linux-next/Makefile:1555: bindeb-=
-pkg] Error 2
-> make: *** [Makefile:240: __sub-make] Error 2
->
-> real    0m5.950s
-> user    0m15.971s
-> sys     0m10.430s
-> Fri Jun 28 20:22:03 CEST 2024
-> ~/linux/kernel/linux-next$
->
-> Please find attached .config, just to be sure that we are talking about t=
-he same thing.
->
-> Best regards,
-> Mirsad Todorovac
+On Fri, Jun 28, 2024 at 03:01:55PM +0300, Roger Quadros wrote:
+> Default behaviour is to have 8 classifiers to map 8 DSCP/PCP
+> priorities to N receive threads (flows). N depends on number of
+> RX channels enabled for the port.
+> 
+> Signed-off-by: Roger Quadros <rogerq@kernel.org>
+> ---
+>  drivers/net/ethernet/ti/cpsw_ale.c | 57 ++++++++++++++++++++++++++++++++++++++
+>  drivers/net/ethernet/ti/cpsw_ale.h |  1 +
+>  2 files changed, 58 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/ti/cpsw_ale.c b/drivers/net/ethernet/ti/cpsw_ale.c
+> index 75a17184d34c..51da527388df 100644
+> --- a/drivers/net/ethernet/ti/cpsw_ale.c
+> +++ b/drivers/net/ethernet/ti/cpsw_ale.c
+> @@ -1650,3 +1650,60 @@ static void cpsw_ale_policer_thread_idx_enable(struct cpsw_ale *ale, u32 idx,
+>  	regmap_field_write(ale->fields[ALE_THREAD_VALUE], thread_id);
+>  	regmap_field_write(ale->fields[ALE_THREAD_ENABLE], enable ? 1 : 0);
+>  }
+> +
+> +/* Disable all policer entries and thread mappings */
+> +static void cpsw_ale_policer_reset(struct cpsw_ale *ale)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < ale->params.num_policers ; i++) {
+> +		cpsw_ale_policer_read_idx(ale, i);
+> +		regmap_field_write(ale->fields[POL_PORT_MEN], 0);
+> +		regmap_field_write(ale->fields[POL_PRI_MEN], 0);
+> +		regmap_field_write(ale->fields[POL_OUI_MEN], 0);
+> +		regmap_field_write(ale->fields[POL_DST_MEN], 0);
+> +		regmap_field_write(ale->fields[POL_SRC_MEN], 0);
+> +		regmap_field_write(ale->fields[POL_OVLAN_MEN], 0);
+> +		regmap_field_write(ale->fields[POL_IVLAN_MEN], 0);
+> +		regmap_field_write(ale->fields[POL_ETHERTYPE_MEN], 0);
+> +		regmap_field_write(ale->fields[POL_IPSRC_MEN], 0);
+> +		regmap_field_write(ale->fields[POL_IPDST_MEN], 0);
+> +		regmap_field_write(ale->fields[POL_EN], 0);
+> +		regmap_field_write(ale->fields[POL_RED_DROP_EN], 0);
+> +		regmap_field_write(ale->fields[POL_YELLOW_DROP_EN], 0);
+> +		regmap_field_write(ale->fields[POL_PRIORITY_THREAD_EN], 0);
+> +
+> +		cpsw_ale_policer_thread_idx_enable(ale, i, 0, 0);
+> +	}
+> +}
+> +
+> +/* Default classifer is to map 8 user priorities to N receive channels */
+> +void cpsw_ale_classifier_setup_default(struct cpsw_ale *ale, int num_rx_ch)
+> +{
+> +	int pri, idx;
+> +	int pri_thread_map[8][9] = {	{ 0, 0, 0, 0, 0, 0, 0, 0, },
+> +					{ 0, 0, 0, 0, 1, 1, 1, 1, },
+> +					{ 0, 0, 0, 0, 1, 1, 2, 2, },
+> +					{ 1, 0, 0, 1, 2, 2, 3, 3, },
+> +					{ 1, 0, 0, 1, 2, 3, 4, 4, },
+> +					{ 1, 0, 0, 2, 3, 4, 5, 5, },
+> +					{ 1, 0, 0, 2, 3, 4, 5, 6, },
+> +					{ 2, 0, 1, 3, 4, 5, 6, 7, } };
 
-The fix for this is in the qcom tree[1] but I'm not sure why it still
-hasn't been pulled into next. I don't see any notifications about
-conflicts in next which could be the reason. Cc'ing Mark and Stephen.
+Hi Roger,
 
-Bart
+Perhaps it is obvious, but I'm wondering if it is appropriate
+to add a comment explaining the layout of the table, especially
+the latter rows where the mapping of priority to receive channel
+seems somewhat non-trivial.
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git/commit/?=
-h=3Dfor-next&id=3Dd96377892dd89bd4e7e5ae7293647f6bc7bddf7d
+> +
+> +	cpsw_ale_policer_reset(ale);
+> +
+> +	/* use first 8 classifiers to map 8 (DSCP/PCP) priorities to channels */
+> +	for (pri = 0; pri < 8; pri++) {
+> +		idx = pri;
+> +
+> +		/* Classifier 'idx' match on priority 'pri' */
+> +		cpsw_ale_policer_read_idx(ale, idx);
+> +		regmap_field_write(ale->fields[POL_PRI_VAL], pri);
+> +		regmap_field_write(ale->fields[POL_PRI_MEN], 1);
+> +		cpsw_ale_policer_write_idx(ale, idx);
+> +
+> +		/* Map Classifier 'idx' to thread provided by the map */
+> +		cpsw_ale_policer_thread_idx_enable(ale, idx,
+> +						   pri_thread_map[num_rx_ch - 1][pri], 1);
+> +	}
+> +}
+> diff --git a/drivers/net/ethernet/ti/cpsw_ale.h b/drivers/net/ethernet/ti/cpsw_ale.h
+> index 2cb76acc6d16..1e4e9a3dd234 100644
+> --- a/drivers/net/ethernet/ti/cpsw_ale.h
+> +++ b/drivers/net/ethernet/ti/cpsw_ale.h
+> @@ -193,5 +193,6 @@ int cpsw_ale_vlan_add_modify(struct cpsw_ale *ale, u16 vid, int port_mask,
+>  int cpsw_ale_vlan_del_modify(struct cpsw_ale *ale, u16 vid, int port_mask);
+>  void cpsw_ale_set_unreg_mcast(struct cpsw_ale *ale, int unreg_mcast_mask,
+>  			      bool add);
+> +void cpsw_ale_classifier_setup_default(struct cpsw_ale *ale, int num_rx_ch);
+>  
+>  #endif
+> 
+> -- 
+> 2.34.1
+> 
+> 
 
