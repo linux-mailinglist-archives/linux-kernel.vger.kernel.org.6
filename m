@@ -1,99 +1,90 @@
-Return-Path: <linux-kernel+bounces-235415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2AB391D4D2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 02:10:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 515B391D4D3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 02:11:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC6691C20A9B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 00:10:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 525AA1C20AD9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 00:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 522B3137E;
-	Mon,  1 Jul 2024 00:10:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 292C11366;
+	Mon,  1 Jul 2024 00:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hm95ZJmG"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="J3Y1lEDO"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A71633;
-	Mon,  1 Jul 2024 00:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8317BA32
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 00:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719792622; cv=none; b=g2JkZrbroiRvAXI6mDWPmUKWX4BJ2ic4OEg8Mx6NXxfES+jh6NEeEhNpdCgHdoafcSCHWbVkRvGC8Qme94TDFSho7zwndkCtZ2R9r3crTcNo8YOinD4aBsXBsqKZpHRtzyvpT6+bnJZMeliGlF9KKuRf1O92hTdEax5bl5Ilozc=
+	t=1719792656; cv=none; b=sLn+Jx+Ahxh3aCQRD1ONyz8iA+x3AjGKwjFhCEJt1+qvrTdL1xXyrGJMSfCtb2SusBtISMWejoqTYAtdDazvX5FSUfWWfI2IWkbxTkxVOYyS0C0m3gCfX5j8aefdUmQ/JGh8nkZkRnEMwyq4fINWWW6SaEg1r5hYJsdMZz41G4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719792622; c=relaxed/simple;
-	bh=nnClZwL7a9Lo3WGW0DdfJENLXrqDwfN4i6NjSsXCfhc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YN8YqVShrnVpJyp2VUC91y8c+cMvRhS166E2LtJROGtv4UbHdMMqfpGOGxZisp88YHE22GYwIR0F1pM2G4giUF+qvh43hLywxlpgL4RN2eypAnvua9u96gy4g58yp79/coyP6qVR7iXDCz7VuQR4MBy4KPpJ+vhCI0tMVr+BBtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hm95ZJmG; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52ce17f6835so269109e87.1;
-        Sun, 30 Jun 2024 17:10:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719792619; x=1720397419; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g2zppEwdRUP4lBbNN9dpO2QH9XHyegI1cIfNKuSEDlk=;
-        b=Hm95ZJmGBprIo/iuNj8yCSAvpCL2Vq4mds/bkLy8N7blLgdk7oiwErgl3xnw0ak/vB
-         +sjZW2xcxTxdkuA9mGBVAXu0jqWpdPh+dDepcdccHantP9W84qshm6K3xLe83mKRNdtj
-         1eXBSg+l/RPoc5/jPFFP7X3fBSOnbG0f5/SgD5VhYPL87W3TJOjnDphB62YwtMVKep80
-         7+YlHob9yrFvFQWCNGQiFg/neT563A69IMAYRWaEz0uKtq85la9VL+OQGPgAXtK4PkSm
-         KzmzotvPPUE8urw+MruKXMtsyaQXjHw/BOAnJThuVLzVJma1tNjo+pxLFKMTLxfnZfyb
-         /YFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719792619; x=1720397419;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g2zppEwdRUP4lBbNN9dpO2QH9XHyegI1cIfNKuSEDlk=;
-        b=JFEIMIadpeOBjXdwFRnHkuRdUEKj9bejYLMuPqfCPncI6b2ijuTYcvnISdMa84weoJ
-         wmqiWgwNzhJZnkIlt26KBW91szCHlMU50aOEDhf7Dzbl+iQRZiGFiRKOfwivEZPzGC6y
-         P+Z4mnGv7ZTCm/nbCOC9dT2lZYB63fQ3FnOiCsV1XcisOShGLVDt8tsb6nVFy6VFPcRN
-         vfeqK/CsKRByK5Oy+OrZ7NyplpCz2ge1lElWVHIkO/BibaV+pIvadlpv9bWJi56UdeB+
-         SfsnyLkISXP2P/sRjShgd3V7T7NQsGT9xlrJNUxl03+cSVVSU7Y3YNe24rvkGrVdLo+4
-         8MsA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTLSS8457WNaiwyqHHnKJpW/VS8DJTOFsgDWCWIGS89gxwWZnP/dtljaY7kwjhFJz62ANr6AFlaHFXrXt11KSeW5g+opG3KCqPUz0vc3RVJmy/viy+tVy5IpxTppcbdHuqZcQ1oE8pNOoUTEtiPmeCWYZvY4wRvKdl3m0FsMttWCYggjCzeJlA68KTStSkNRyDecuPD7BkzQ==
-X-Gm-Message-State: AOJu0YwiUBNc3hLsYTgN2vvsZYZ06SarAvOp7FHLl7Ft0CLHMkxRVxR1
-	3/2B/5xBlOTM6OXQwiC9RpldUg+X8ItyyMGH6p9bU/S5EvQjGGo+F9wTPaa5ikdZFZWJLyA1y9/
-	0xs8YYwASGqcWOi/k7seZtgJPiWY=
-X-Google-Smtp-Source: AGHT+IGfcLlbEM4SexKB3qvZxwtdSASEeJ4vyW8XH9MyjF6BNz8i77fKusEhzt5Z8hmMXUodZLIPP4wsLqpBG8aZWlQ=
-X-Received: by 2002:a2e:a7d5:0:b0:2ec:ca8:4897 with SMTP id
- 38308e7fff4ca-2ee5e6ca046mr27574861fa.4.1719792618943; Sun, 30 Jun 2024
- 17:10:18 -0700 (PDT)
+	s=arc-20240116; t=1719792656; c=relaxed/simple;
+	bh=MSDGdmCFNnXXOj6sst7sFQtnunwHzx06tOR+fw9RGKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZoYb3H2LuC8U4K/fCSoh3mkWXRSpTJ76ySuBT6wQ+iJTIYVb44owr0p5LQ5q+I9Oi78LXpSFOrjL/8DcDS8kIv6kxGTb6RvomMYBsJTgoESQIW0rlwd0sSnYLPH7+1ManVUM3E5Jl8IC3qwvSVvRsdKvcJhgu+BbieRllDes22Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=J3Y1lEDO; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: longman@redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1719792651;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m2RizITCd0YeA67LIVIxZJb2AgG5jun9KIygHofoiTg=;
+	b=J3Y1lEDOyKjBoFYxmSu0yQ+Z6ollIqwaOt79ZDq5aPfcKhKaDQcPUBsJw4nNEfQQ+M+okL
+	jUIgVkdrOMd7vk282xfAkzDGrVeG4Rb74f2CARna5YOUvZ+++iZpojsuY6Hmh0mPRySMAq
+	kXMVlDZsAhIdgtBtKk/BxUXoyRj3jfM=
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: linux-bcachefs@vger.kernel.org
+X-Envelope-To: peterz@infradead.org
+X-Envelope-To: mingo@redhat.com
+X-Envelope-To: will@kernel.org
+X-Envelope-To: boqun.feng@gmail.com
+Date: Sun, 30 Jun 2024 20:10:45 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Waiman Long <longman@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>
+Subject: Re: [PATCH] lockdep: lockdep_set_notrack_class()
+Message-ID: <uvf4ilncakodvwmu6kbzs4lrxgeegtanhyhsk52xj7foil65jm@p54wibff6bgc>
+References: <20240630051037.2785156-1-kent.overstreet@linux.dev>
+ <016f2bd0-a192-4ec5-9c4b-d48e8e001cd6@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240617-pci2_upstream-v6-0-e0821238f997@nxp.com> <20240617-pci2_upstream-v6-6-e0821238f997@nxp.com>
-In-Reply-To: <20240617-pci2_upstream-v6-6-e0821238f997@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Sun, 30 Jun 2024 21:10:07 -0300
-Message-ID: <CAOMZO5CpFB4yuZty6zkX0KyGfYvXyuSnmeJyH=pn7DiRPmGxJQ@mail.gmail.com>
-Subject: Re: [PATCH v6 06/10] PCI: imx6: Improve comment for workaround ERR010728
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>, Lucas Stach <l.stach@pengutronix.de>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	NXP Linux Team <linux-imx@nxp.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-pci@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <016f2bd0-a192-4ec5-9c4b-d48e8e001cd6@redhat.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Jun 17, 2024 at 5:17=E2=80=AFPM Frank Li <Frank.Li@nxp.com> wrote:
->
-> Improve comment about workaround ERR010727 by using official errata
+On Sun, Jun 30, 2024 at 06:08:21PM GMT, Waiman Long wrote:
+> On 6/30/24 01:10, Kent Overstreet wrote:
+> > Add a new helper to disable lockdep tracking entirely for a given class.
+> > 
+> > This is needed for bcachefs, which takes too many btree node locks for
+> > lockdep to track. Instead, we have a single lockdep_map for "btree_trans
+> > has any btree nodes locked", which makes more since given that we have
+> > centralized lock management and a cycle detector.
+> 
+> Could you explain a bit more what the current novalidate_class is lacking
+> WRT to the bcachefs lock? Is it excessive performance overhead or some bogus
+> lockdep warning?
 
-This should be  ERR010728, not  ERR010727.
+novalidate just switches off checking of lock ordering, but the fact
+that the locks are held is still tracked.
+
+bcachefs takes more btree node locks than lockdep can track, so I'm
+switching to a single lockdep map for "this btree_trans has any btree
+nodes locked" instead.
 
