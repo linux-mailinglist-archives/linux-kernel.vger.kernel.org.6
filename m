@@ -1,107 +1,159 @@
-Return-Path: <linux-kernel+bounces-236181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B3AE91DE7C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:57:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3F5091DE86
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:58:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 006DB1F22963
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:57:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46E4FB23840
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512B5126F0A;
-	Mon,  1 Jul 2024 11:57:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D49714AD3B;
+	Mon,  1 Jul 2024 11:58:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FYJ331cX"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="G5aEq+jm";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qft2T1tm"
+Received: from fout1-smtp.messagingengine.com (fout1-smtp.messagingengine.com [103.168.172.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8A984D02
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 11:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A01C84D02;
+	Mon,  1 Jul 2024 11:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719835026; cv=none; b=QMTkka/amGp9uMqfmE8vqlbNSrNK0P8P2e5X+zWDiAFdhZGXQrqU9/heXhnbIRKwROU+vHbBEpFgs9Nj18/xOvgArrmoTMuXOoJ/txgkoNagIWKKsChud3KVJXUY0/OKcbXpjNYaSs14zs+Igc74mF6yD+H8iPec39C4e7qFwVA=
+	t=1719835109; cv=none; b=umiKsA6HpgnC4qANi4JSV8GtqK0rRA1PcvBVYBeGWf1p1mS7IItduvTA2SDRKJCN7gwmyfcp+mOj3f6w1dRSvqXH/nrkrEUZBSTvfFSIPRgXpMJbvJwjjfc/AYk/JUKD+x3ilQwkdTPIb0rgHTzuJq2ri4Mle5a8t1tdquOV6fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719835026; c=relaxed/simple;
-	bh=nQkUCEyoNucsphDLXWSe/1YShtMDQlZ8d9pl7pAPNk8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uRliaz/wlxQZ9GsLB1DuOHNKZE/c+UM5FG3NLQ92gzLLF1aVMfSOsIlGbaiq5hiTkWfBkZYvL8vf0oxFQpnIN2efnFGBuWe7OuC4Q4jGbSXXrWywTM7asdRSYzYCWsBAMnX5rNzlHnmvuUVboYjBrGAHr1lSuQXKMcX604Fb1Wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FYJ331cX; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-367601ca463so1677020f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 04:57:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1719835023; x=1720439823; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qM6ozT6ipWpUx8fDizJzb5G2gQBWPUGL9xe3Ichxpek=;
-        b=FYJ331cX8EE44WCXWueM5+E44vSdkIbfP728djFFGh/c5jQMlAuPPSMu6dnjlluqbj
-         HOVEx7vUSDsMk6tRbrIFEO+uTahI8uc4Hz0Ez3nJRUu8vp8LFGXMa1XL/7VdeKyqsXJf
-         Tq2+1XH/qZjpum7JOIlk43YwdfuYltUsRi+PN8fsQX2fwvddOTywkwSKO7yhLH6SoxYz
-         YSWSED9t+mbzhrjB79Fhij1moae5TdP0aKjKohTG5LsqlGPElKmhogkMa01nGf4GOdez
-         EaRZlQlfaPPg2ZhDWtDddd/im7a7I2P7b6I5Y1A4tigDgkR+MBILg9h94AOEbcPlb7u8
-         1NBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719835023; x=1720439823;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qM6ozT6ipWpUx8fDizJzb5G2gQBWPUGL9xe3Ichxpek=;
-        b=idRt11fsidat7fuFA8PmuYQLhmPGZfc3Ur8CyCPCOu+Dkd48FGjUoiBD6dt/Wp1ihc
-         nl0BwVWOHmVhB9U/E+pyB4c5SjIS9IdWZC272okGGzdZ9wudLyvOkyfsWIIfQiDeL4tI
-         4nj9Q/8mt9eJ1LjTnVC5N0pFdxY96LLfJQ4PAHe2k5rCQ+aNd1yDJ9545CIr4Unu/8kM
-         mxA1gbPlsZSmkFnxliP7Hu1uZLQRQN0TJoM4tNorc56vhY+EFmD8VaYr4TW84RAJ2Mf1
-         Hrst+vNc4p/Qx7Lvvbg3faDhMZe9927MGNAifF8NRkzgeTt5gQJhGB2B/Hf8DqVpArbC
-         dx/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUVzI3OuwbMwxAZO0/4wBDtKpBUxBFgznkcz1P/ScnpUKEHfXpjD5muog98wTCEEQtuGr5DBV/3InBh9JtTALK+5+AxbAqT4+SDWBQ0
-X-Gm-Message-State: AOJu0YzE7R/T2IdcbkwFJ1wRe1E81dNcl5IXGJTaae6IzIrmjhKevpqX
-	Ly0rscmSjgJxoE82u997rNrtE71FT8PVX3E/XGoH8KEPbeTot0e1eqkjZRaUKuQ=
-X-Google-Smtp-Source: AGHT+IFYVSdRcV9MLSYbS5/vmHR/G4uYFaK3YDbIt8yGK5agQ58wvuLvzBnOMK0fuQtCapDBq2tqBA==
-X-Received: by 2002:adf:f6c2:0:b0:364:3ba5:c5af with SMTP id ffacd0b85a97d-3677572827amr3273332f8f.61.1719835023153;
-        Mon, 01 Jul 2024 04:57:03 -0700 (PDT)
-Received: from ?IPV6:2a10:bac0:b000:7471:9e35:9ca5:4e8a:d8cb? ([2a10:bac0:b000:7471:9e35:9ca5:4e8a:d8cb])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0d90casm9755883f8f.32.2024.07.01.04.57.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Jul 2024 04:57:02 -0700 (PDT)
-Message-ID: <e1c4fae6-dbc9-4b79-8dd6-9ca00bf2bf6e@suse.com>
-Date: Mon, 1 Jul 2024 14:57:01 +0300
+	s=arc-20240116; t=1719835109; c=relaxed/simple;
+	bh=WaV/uifT+ewSSQQt4FXzBE5fi9386OXucSBJ4NdlHxg=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=YrBL5Hw5ginkdT2LT/ScunyEh91N2vjBgME0wq2AuhCrMGtlBDF4+NCy/Q8F75Ci+ZzZIgWxVhom2Zd9NShc5aE6vsdr31oLsIWmWeDsqlH64AzoDLjUQ7MZySqOdBy/8DMryrzye7eitMKK/+2VHpDPmySsxGP6mGRqBoW0mIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=G5aEq+jm; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qft2T1tm; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 7AF251380463;
+	Mon,  1 Jul 2024 07:58:26 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Mon, 01 Jul 2024 07:58:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1719835106; x=1719921506; bh=xTKFbyMCes
+	YSqTGV3kNBw9DLS4BP7bP5n2sMbxKcREk=; b=G5aEq+jmJLeuDeV0mrL7Ml8cY7
+	9nWyr1HK4KhJYfPTaqFVqA4+bUYJObJisUcDybkcPMermDTU868P+bbZmyc0ghuw
+	R5DLJeJMdWWiaKci/VBvBSWxs4hy5ZW1qcmI9iZca3edwpUovEf/vhql9fSaFmiS
+	D1h3BrjoaE2X+s0SsUnxAYNflon6tnTQeOWY3nupbgWEkGzLjmS8SIJkdXbf8zR2
+	SFVFPSMMA3db5jkzqnSXH4c3q2zaB/r+gzBO01A+qj82aAdG8je7072ZmDRi/msd
+	Vvobyeocvxx+/UP1ZV86CXlhHGWA8qascKYcnIImd3UpyQXNRGop0o0cRP4A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1719835106; x=1719921506; bh=xTKFbyMCesYSqTGV3kNBw9DLS4BP
+	7bP5n2sMbxKcREk=; b=qft2T1tmF0gPXJxQcjqJ+4qMDmqirl2p6B6IORadaZ1D
+	pWI+i0TQJQkbGIODQmkDqEn0Z+ZWmIWrGruBUAE/qdvn4asyC9XSyTsB9dOdqoQJ
+	XgpJgkbxIPTfYqHwtPxv8l7KfkGpZb1st22hLpk7BCyNjCsxdyHsNVOlUW2ocXWl
+	XpuWmyTyhdZrfeMn0XMua3OlsWsmKq40vxBmQU2LrNTYWx0kjPBwKkWJC6ck5Y8C
+	ZpjBxfdfb7Wbzz88KTv8Ow3dcYG0zZHTFhYEJurQoggIbTvhKYyVMYQuZrctBqKR
+	Aef1ki5U5uQl2EXfTzXtWBkCGXZmKi4YIg1UXZhfrQ==
+X-ME-Sender: <xms:4ZmCZtUsbU2QX-zvIyWPJNmWEyzOzwCQ0_2vrxkGXVlPDBGY7Bcmxg>
+    <xme:4ZmCZtmQFWA4lE0IfzLNO97EeT5K7aGQE8mh1-AhB4j99UwA8ItqGQ51NolRDB7jJ
+    B3oz-uA60J0vx31SSs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudefgdeghecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
+    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
+    hnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:4ZmCZpb6vfZ-oV3D0qYPBc5RdopwhTRFByt7c6FNhRIE7e0I8jZ1lw>
+    <xmx:4ZmCZgXiMRn0_cjj35lltXsOr7swBAekdVNWy8iU9529ZQij8gNmfA>
+    <xmx:4ZmCZnl-LXr2HnkGZcIv-6hSFxVSSjA7elFAR9bOwl2hyDhBYIdWOg>
+    <xmx:4ZmCZtcrcuuz67vXwTxThdxLypZczJdZrQIGWr9jTBvBJXZF4M3yHg>
+    <xmx:4pmCZgehxJ9HzZqzR2KYamrvGgKCzJG7XJxoFR5Q5BHDLP3M75K3-9vU>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id C1BE1B6008D; Mon,  1 Jul 2024 07:58:25 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-566-g3812ddbbc-fm-20240627.001-g3812ddbb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/4] x86/cpufeatures: Remove
- {disabled,required}-features.h
-To: "Xin Li (Intel)" <xin@zytor.com>, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, will@kernel.org,
- peterz@infradead.org, akpm@linux-foundation.org, acme@kernel.org,
- namhyung@kernel.org, brgerst@gmail.com, andrew.cooper3@citrix.com
-References: <20240628174544.3118826-1-xin@zytor.com>
- <20240628174544.3118826-4-xin@zytor.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
-Content-Language: en-US
-In-Reply-To: <20240628174544.3118826-4-xin@zytor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Message-Id: <5f1f44be-80ad-4b4e-90a0-c2e4e8cd3dbf@app.fastmail.com>
+In-Reply-To: 
+ <CA+G9fYsk85UOsa0ijXcYRvvZLXEMQKe4phWhND+0qSNP36N5Tw@mail.gmail.com>
+References: 
+ <CA+G9fYsk85UOsa0ijXcYRvvZLXEMQKe4phWhND+0qSNP36N5Tw@mail.gmail.com>
+Date: Mon, 01 Jul 2024 13:58:05 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Naresh Kamboju" <naresh.kamboju@linaro.org>,
+ "open list" <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+ lkft-triage@lists.linaro.org
+Cc: "Jan Kara" <jack@suse.cz>, "Christian Brauner" <brauner@kernel.org>,
+ "Hugh Dickins" <hughd@google.com>, "Andrii Nakryiko" <andrii@kernel.org>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Dan Carpenter" <dan.carpenter@linaro.org>,
+ "Anders Roxell" <anders.roxell@linaro.org>
+Subject: Re: fs/proc/task_mmu.c:598:48: error: cast to pointer from integer of
+ different size
+Content-Type: text/plain
+
+On Mon, Jul 1, 2024, at 12:19, Naresh Kamboju wrote:
+> fs/proc/task_mmu.c: In function 'do_procmap_query':
+> fs/proc/task_mmu.c:598:48: error: cast to pointer from integer of
+> different size [-Werror=int-to-pointer-cast]
+>   598 |         if (karg.vma_name_size && copy_to_user((void __user
+> *)karg.vma_name_addr,
+>       |                                                ^
+> fs/proc/task_mmu.c:605:48: error: cast to pointer from integer of
+> different size [-Werror=int-to-pointer-cast]
+>   605 |         if (karg.build_id_size && copy_to_user((void __user
+> *)karg.build_id_addr,
+>       |                                                ^
+> cc1: all warnings being treated as errors
+>
+
+There is already a fix in linux-next:
+
+@@ -595,14 +595,14 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
+        query_vma_teardown(mm, vma);
+        mmput(mm);
+ 
+-       if (karg.vma_name_size && copy_to_user((void __user *)karg.vma_name_addr,
++       if (karg.vma_name_size && copy_to_user((void __user *)(uintptr_t)karg.vma_name_addr,
+                                               name, karg.vma_name_size)) {
+                kfree(name_buf);
+                return -EFAULT;
+        }
 
 
+This could be expressed slightly nicer using u64_to_user_ptr(),
+but functionally that is the same.
 
-On 28.06.24 г. 20:45 ч., Xin Li (Intel) wrote:
-> The functionalities of {disabled,required}-features.h are replaced
-> with the auto-generated header cpufeature_masks.h. Thus they are no
-> longer needed. So delete them.
-> 
-> None of the macros defined in {disabled,required}-features.h is used
-> in tools, delete them too.
-> 
-> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
+I also see a slight issue in the use of .compat_ioctl:
 
-Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
+ const struct file_operations proc_pid_maps_operations = {
+        .open           = pid_maps_open,
+        .read           = seq_read,
+        .llseek         = seq_lseek,
+        .release        = proc_map_release,
++       .unlocked_ioctl = procfs_procmap_ioctl,
++       .compat_ioctl   = procfs_procmap_ioctl,
+ };
+ 
+
+Since the argument is always a pointer, this should be
+
+       .compat_ioctl = compat_ptr_ioctl,
+
+In practice this is only relevant on 32-bit s390
+tasks to sanitize the pointer value.
+
+     Arnd
 
