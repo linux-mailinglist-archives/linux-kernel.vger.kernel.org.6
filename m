@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-236376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 309F891E14F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:53:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C0CB91E158
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:54:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 957391F232DC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:53:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2651B23D4B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:54:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154A615ECFF;
-	Mon,  1 Jul 2024 13:53:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 680BA15FCEC;
+	Mon,  1 Jul 2024 13:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="3W0Lp/0Q"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="PUYY55MY"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECBA15ECE1
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 13:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257EB15EFC2
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 13:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719841980; cv=none; b=YaIOoFNGdKtDsXw+0NIvGQVL7Bx/d2knypN4Df9ncWinJLODQjEHCGw/7+7HKGm+klhXY2oGs1XLpA167KxSuz4LeiZHI/zg32eJ5iyqdOBZ8KSyffyv/1eA2w804vYS/cuy8JFp3q+oYidMV/NHt3BPja4VJC4sbol11TUud6E=
+	t=1719842016; cv=none; b=QOsr3txlOTHKvlyzCeUXwKhbPp76FlPctMnfEpTs48H7VPuYlrKRj009x/7AaymcXE53j8pfFwjdMaGb1X3uqq0Boew4o3KR7q+JI2Ff/PpwwspvyQrqBGpbWh+c+Hq13oWtsg2v6G6p37ZAtTQXArPJAQTgPvtrY+T0YwnX9Jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719841980; c=relaxed/simple;
-	bh=+u+pc3mw7MNX9ssnTjjenF2CQwjyjcXJmawou8D+PRc=;
+	s=arc-20240116; t=1719842016; c=relaxed/simple;
+	bh=50ggolp/r0VZjqr5XlambBewvkAet5ErB4zOQJyxh4s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sMXKWmnNnpDxzCpgJNh++5SFPvZoysHIFLow/noutILHbpYYuS59yY3w6nN3gob5BaR1jsor7PG01Gpu5+RLWvA636S2N/Baz5sB48tTq8VDPgx3hFNNa44dIb5En9oxbTudI2N8GfxDLDMqBSpYYjY1iAaXPLaiArP6jqnWVww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=3W0Lp/0Q; arc=none smtp.client-ip=209.85.160.180
+	 Content-Type:Content-Disposition:In-Reply-To; b=ROQ+hc4pEhc6160SHjvFn1wh3SeOhz06BWDCB057XtExXiIc6FWstQgvxuBWqqosvADaGlywilQY3PqvmNHBfCxI/f7g3oGd8h1oXK/CI9M45E812syDIIaLL0mQhXDiLRRE0sWaBKClWi1YXJjzbs7SSrYHlu+Xjwlbkbu1HPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=PUYY55MY; arc=none smtp.client-ip=209.85.219.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-444fa159caeso26507721cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 06:52:57 -0700 (PDT)
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6b593387daaso31036976d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 06:53:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1719841976; x=1720446776; darn=vger.kernel.org;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1719842014; x=1720446814; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jKuw/nIkwEFc0H9vWonO0UW2rpxls958cLbHkMvMg2w=;
-        b=3W0Lp/0QyGZbV+4fF2oi7qRSJJMtIlvoI1Rab4qAbeCcwSNxwUVsMA8+UnR73QoF2w
-         9kRIIo35dmDI5wfqSPVjlHMmHP8TiSubCBr1cGqzk6GCXgsfJTi+lkNnHduxJxkGyDRT
-         W7J0D81D/+gSQp+wPPwwgrTlr2uwKaikQ5YqAQq/0kSWer0a7G7njsu5u0CkM1Icc6M6
-         Vv1brla3xbh604cKowMOPQ0mRNmu8MFHmf5v9MMyrYevi2Y5M2pqV0XfQ3/RLlA9swL5
-         OckPAx0TA2iOZ4TkklBk+rWD2pytZjONVH5aXzVmBpMOCP+9C7bRwYp9c6QxoDCAUAvG
-         43Cw==
+        bh=iGkmZLClwxRQ5wYzCN604PWlDaKRDeFDexxSEzqTfW0=;
+        b=PUYY55MYXkvrx2UHdaUSt95HukXAUnkcoP/huWKxY9+pXiKsdIVggdmLbt6dbgHSec
+         QHb1xmSOdYSWABIoHLk3xFNArEuq/Yw6n1L1YozH9xazcXNRsgwrZhsBOrHpDnNpMC+u
+         N72T7KtbSH97Td3eCb7IdR6PjSHoKDC5EqraCtef9kA3+KWBj43pulCtw7Bhq3dnuzqB
+         ME/UynyUh+UAMnvGN73mkF0R0b+Hu/rih6u7HIm4NOCnkwMJ9Y5G2k02mJOXymQMp+L5
+         vu6Jjawo1E9c9VNbnAOOltlYPjX943eNFX5g0K7W0053o9vVNxL2lpBaGcuJKTcz5EfX
+         BkOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719841976; x=1720446776;
+        d=1e100.net; s=20230601; t=1719842014; x=1720446814;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jKuw/nIkwEFc0H9vWonO0UW2rpxls958cLbHkMvMg2w=;
-        b=GIhUpXQ8mVUIUC9ed99gbTFhxe/qUdYjJ039tSRyFcnmMbxeBX18AluNiJfTwuNpev
-         NmTboIodsZW3xfnD0fmKKxGYnUTXQR57e9YuGPr5XJ+MzRYZKP957X44cw/nFdnDb2u9
-         Hot9IR/HHRjJa0MNBDRDotrkv9u8NSrD9GoAkkzC0X+Nx4Fhk7M43PM4zP+kTtE21SfR
-         RoOQYfgXrieVUrjkx2dV/Tzq3OeYRMCZLwOJ0sGIQBwsLaURdc00b3DmXLVPB+qdRV7d
-         nBcMs+rjFGrpkqqtKT4vGbtAS/buam7teZPXuCieQR7dApD6YbArjy5udFbE59Da0p4O
-         X2AA==
-X-Forwarded-Encrypted: i=1; AJvYcCVLGa7UxbKfMNzmco66f3KU1EU1jDh5kIiGPICS9eWe7oZFpKeY06muYIoh/AH8H2qD0t0Ju8U1uB51H0cbLAD32pgfjBKAIvKxPqkx
-X-Gm-Message-State: AOJu0YwkEwSEz+CzgS+HNxg0tzB7be4i1OdF8ylqUBumwEOzlcMpaWno
-	U2Rve39S25hlXm1VO1VZsdSlg8FDkaQMCcVDJYMuNHtYejhXQFVPAOjp5vS6OBg=
-X-Google-Smtp-Source: AGHT+IG0odLHf0JhbhZb8Muk3vgjQvMvDZGGoTkntSJ6AQwPL3He86crHRASswudCYGbceV8muYfdQ==
-X-Received: by 2002:ac8:7f12:0:b0:441:55dd:b4f3 with SMTP id d75a77b69052e-44662eb927emr81392241cf.63.1719841976260;
-        Mon, 01 Jul 2024 06:52:56 -0700 (PDT)
+        bh=iGkmZLClwxRQ5wYzCN604PWlDaKRDeFDexxSEzqTfW0=;
+        b=domLqXvGpHI4Tw5J3Zl3gGQVORktK7TVKDhnFIEJkAFLyUl0rZjiHlwRJcxBILN1ub
+         ID4psnfxDe+6FtgIheU7vfjVb8T8oLLAN6t52M3MC3nfr18pgEcVcldyS1u/9g1Qixml
+         9FKoP91FPcOuOOZC9m0P7vBcoDpmfZFEpCGOtm5qyLWx4rfNNHdVQ9XpteDjrOUWDSiV
+         K2njh3qeo92dukp50UVy3e0yC27GmFTVI9cdfn3cUHD3RlGd+ixGNdJYOjlJMtWW+heM
+         bk3stkXTsE9QgpWqMV58/kfwTIBATg7t1O0jr47kA9MBzh3Su9S1sG3BZ6d5bniyx86L
+         WQ6w==
+X-Forwarded-Encrypted: i=1; AJvYcCWTjsUrqMrrcf/NX7/kDQPNfCtxvj1mMFDsO518KPPS8PfoNggJQ+XYsqQOTu2tOpQ8XTRWOmR94VJiy8NLQ/6Wo8KxoGnleSUgrUkS
+X-Gm-Message-State: AOJu0YyPHEHr0t7TQuTWgw65HKZv5KW/S0OuR1S2Or0Dw294gyBpPcBP
+	xUOyDHWuj1s9dlraDOsRUafS71eJzXuTqc4vLm6QgklOcEQf6/Ydm1PVtKFLxkM=
+X-Google-Smtp-Source: AGHT+IHm2/95kxXclblhwH1XWI43VIUQy9+CryR0wDr5yVVClG9FOmbCdJsGBV8B1kk6bbVv/+DnBg==
+X-Received: by 2002:ad4:4ee4:0:b0:6b5:337b:da4e with SMTP id 6a1803df08f44-6b5a5483dd8mr141333876d6.32.1719842014105;
+        Mon, 01 Jul 2024 06:53:34 -0700 (PDT)
 Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-446513dbccfsm31269871cf.19.2024.07.01.06.52.55
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b59e564455sm33241616d6.42.2024.07.01.06.53.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 06:52:55 -0700 (PDT)
-Date: Mon, 1 Jul 2024 09:52:55 -0400
+        Mon, 01 Jul 2024 06:53:33 -0700 (PDT)
+Date: Mon, 1 Jul 2024 09:53:32 -0400
 From: Josef Bacik <josef@toxicpanda.com>
 To: Jeff Layton <jlayton@kernel.org>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -84,11 +84,9 @@ Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
 	linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
 	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
 	linux-mm@kvack.org, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH v2 11/11] Documentation: add a new file documenting
- multigrain timestamps
-Message-ID: <20240701135255.GC504479@perftesting>
+Subject: Re: [PATCH v2 00/11] fs: multigrain timestamp redux
+Message-ID: <20240701135332.GD504479@perftesting>
 References: <20240701-mgtime-v2-0-19d412a940d9@kernel.org>
- <20240701-mgtime-v2-11-19d412a940d9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,133 +95,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240701-mgtime-v2-11-19d412a940d9@kernel.org>
+In-Reply-To: <20240701-mgtime-v2-0-19d412a940d9@kernel.org>
 
-On Mon, Jul 01, 2024 at 06:26:47AM -0400, Jeff Layton wrote:
-> Add a high-level document that describes how multigrain timestamps work,
-> rationale for them, and some info about implementation and tradeoffs.
+On Mon, Jul 01, 2024 at 06:26:36AM -0400, Jeff Layton wrote:
+> This set is essentially unchanged from the last one, aside from the
+> new file in Documentation/. I had a review comment from Andi Kleen
+> suggesting that the ctime_floor should be per time_namespace, but I
+> think that's incorrect as the realtime clock is not namespaced.
+> 
+> At LSF/MM this year, we had a discussion about the inode change
+> attribute. At the time I mentioned that I thought I could salvage the
+> multigrain timestamp work that had to be reverted last year [1].  That
+> version had to be reverted because it was possible for a file to get a
+> coarse grained timestamp that appeared to be earlier than another file
+> that had recently gotten a fine-grained stamp.
+> 
+> This version corrects the problem by establishing a per-time_namespace
+> ctime_floor value that should prevent this from occurring. In the above
+> situation that was problematic before, the two files might end up with
+> the same timestamp value, but they won't appear to have been modified in
+> the wrong order.
+> 
+> That problem was discovered by the test-stat-time gnulib test. Note that
+> that test still fails on multigrain timestamps, but that's because its
+> method of determining the minimum delay that will show a timestamp
+> change will no longer work with multigrain timestamps. I have a patch to
+> change the testcase to use a different method that I've posted to the
+> bug-gnulib mailing list.
+> 
+> The big question with this set is whether the performance will be
+> suitable. The testing I've done seems to show performance parity with
+> multigrain timestamps enabled, but it's hard to rule this out regressing
+> some workload.
+> 
+> This set is based on top of Christian's vfs.misc branch (which has the
+> earlier change to track inode timestamps as discrete integers). If there
+> are no major objections, I'd like to let this soak in linux-next for a
+> bit to see if any problems shake out.
+> 
+> [1]: https://lore.kernel.org/linux-fsdevel/20230807-mgctime-v7-0-d1dec143a704@kernel.org/
 > 
 > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  Documentation/filesystems/multigrain-ts.rst | 126 ++++++++++++++++++++++++++++
->  1 file changed, 126 insertions(+)
-> 
-> diff --git a/Documentation/filesystems/multigrain-ts.rst b/Documentation/filesystems/multigrain-ts.rst
-> new file mode 100644
-> index 000000000000..beef7f79108c
-> --- /dev/null
-> +++ b/Documentation/filesystems/multigrain-ts.rst
-> @@ -0,0 +1,126 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +=====================
-> +Multigrain Timestamps
-> +=====================
-> +
-> +Introduction
-> +============
-> +Historically, the kernel has always used a coarse time values to stamp
-> +inodes. This value is updated on every jiffy, so any change that happens
-> +within that jiffy will end up with the same timestamp.
-> +
-> +When the kernel goes to stamp an inode (due to a read or write), it first gets
-> +the current time and then compares it to the existing timestamp(s) to see
-> +whether anything will change. If nothing changed, then it can avoid updating
-> +the inode's metadata.
-> +
-> +Coarse timestamps are therefore good from a performance standpoint, since they
-> +reduce the need for metadata updates, but bad from the standpoint of
-> +determining whether anything has changed, since a lot of things can happen in a
-> +jiffy.
-> +
-> +They are particularly troublesome with NFSv3, where unchanging timestamps can
-> +make it difficult to tell whether to invalidate caches. NFSv4 provides a
-> +dedicated change attribute that should always show a visible change, but not
-> +all filesystems implement this properly, and many just populating this with
-> +the ctime.
-> +
-> +Multigrain timestamps aim to remedy this by selectively using fine-grained
-> +timestamps when a file has had its timestamps queried recently, and the current
-> +coarse-grained time does not cause a change.
-> +
-> +Inode Timestamps
-> +================
-> +There are currently 3 timestamps in the inode that are updated to the current
-> +wallclock time on different activity:
-> +
-> +ctime:
-> +  The inode change time. This is stamped with the current time whenever
-> +  the inode's metadata is changed. Note that this value is not settable
-> +  from userland.
-> +
-> +mtime:
-> +  The inode modification time. This is stamped with the current time
-> +  any time a file's contents change.
-> +
-> +atime:
-> +  The inode access time. This is stamped whenever an inode's contents are
-> +  read. Widely considered to be a terrible mistake. Usually avoided with
-> +  options like noatime or relatime.
-> +
-> +Updating the mtime always implies a change to the ctime, but updating the
-> +atime due to a read request does not.
-> +
-> +Multigrain timestamps are only tracked for the ctime and the mtime. atimes are
-> +not affected and always use the coarse-grained value (subject to the floor).
-> +
-> +Inode Timestamp Ordering
-> +========================
-> +
-> +In addition just providing info about changes to individual files, file
-> +timestamps also serve an important purpose in applications like "make". These
-> +programs measure timestamps in order to determine whether source files might be
-> +newer than cached objects.
-> +
-> +Userland applications like make can only determine ordering based on
-> +operational boundaries. For a syscall those are the syscall entry and exit
-> +points. For io_uring or nfsd operations, that's the request submission and
-> +response. In the case of concurrent operations, userland can make no
-> +determination about the order in which things will occur.
-> +
-> +For instance, if a single thread modifies one file, and then another file in
-> +sequence, the second file must show an equal or later mtime than the first. The
-> +same is true if two threads are issuing similar operations that do not overlap
-> +in time.
-> +
-> +If however, two threads have racing syscalls that overlap in time, then there
-> +is no such guarantee, and the second file may appear to have been modified
-> +before, after or at the same time as the first, regardless of which one was
-> +submitted first.
-> +
-> +Multigrain Timestamps
-> +=====================
-> +Multigrain timestamps are aimed at ensuring that changes to a single file are
-> +always recognizeable, without violating the ordering guarantees when multiple
-> +different files are modified. This affects the mtime and the ctime, but the
-> +atime will always use coarse-grained timestamps.
-> +
-> +It uses the lowest-order bit in the timestamp as a flag that indicates whether
-> +the mtime or ctime have been queried. If either or both have, then the kernel
-> +takes special care to ensure the next timestamp update will display a visible
-> +change. This ensures tight cache coherency for use-cases like NFS, without
-> +sacrificing the benefits of reduced metadata updates when files aren't being
-> +watched.
-> +
-> +The ctime Floor Value
-> +=====================
-> +It's not sufficient to simply use fine or coarse-grained timestamps based on
-> +whether the mtime or ctime has been queried. A file could get a fine grained
-> +timestamp, and then a second file modified later could get a coarse-grained one
-> +that appears earlier than the first, which would break the kernel's timestamp
-> +ordering guarantees.
-> +
-> +To mitigate this problem, we maintain a per-time_namespace floor value that
 
-You dropped this bit in the series, so this isn't correct, should just be
+I have a few nits that need to be addressed, but you can add
 
-"we maintain a floor value"
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-Thanks,
+to the series once they're addressed.  Thanks,
 
 Josef
 
