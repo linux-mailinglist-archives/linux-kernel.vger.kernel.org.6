@@ -1,140 +1,148 @@
-Return-Path: <linux-kernel+bounces-236760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 604F291E6C3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:37:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5611491E6C6
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:39:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8573E1C21DD7
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:37:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE985B227FE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52C216EB6F;
-	Mon,  1 Jul 2024 17:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B9E16EB63;
+	Mon,  1 Jul 2024 17:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="fKxLvXOi";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="fKxLvXOi"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dqwZrc89"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C7C16D4E5;
-	Mon,  1 Jul 2024 17:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3DD377115;
+	Mon,  1 Jul 2024 17:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719855438; cv=none; b=Ht7AvWpdLmfEbQuzZheMvjD/yrDTUpXe6FRrw4yTo5sCZbgF418BRxp/K9eMOZ5/1ghowhreFu4X09VrLZilGNOx+jvsiqwhmrtbcDbUOenlUY0ZHGvOCwX9+HlGfaWwG+GDh6IejNzOGLuqDTCRZy1vSMuD1KbfDgFiiqIoyk0=
+	t=1719855537; cv=none; b=Nd72vNmSDH7Sx7uZ1DBRtdG0bJfewfpPGIRYMEw+Uq7UkWoUSCZD5IEfMLNX6EpxnEouqbNQq5mer5CIdnGQZqLofsdz6FC4m13s6kyXGaT2cUdDKxkH0ugbEFc5FG6vyb23OWjdFXSCmXwupc6zSDYgfUv9gMmyNw3tBBzBueM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719855438; c=relaxed/simple;
-	bh=hN6oSSRWYToPIMwG16+WPYiqy2arnc7nun29w+3bd4k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jbShyu6p4QhwSAJVFS7DKXmcb5EyVZ0uBwD2wgb1A58BB3/I2s/366jDG/95HOnO6b7Qc0gkVUs6VHjup3KzFnRzO94/6azYtF1nHWZZjCOCuGV0bizXA77+lsjMjhD2xJ23OPnZL/+jXjxgb6hJ5/4MvHGhKM++hOJSMlVVtoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=fKxLvXOi; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=fKxLvXOi; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8764621BFC;
-	Mon,  1 Jul 2024 17:37:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1719855433; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=XPfeObkmiABo3u/9oEUp18A+HOCjxx8ouUmmjFX6AXM=;
-	b=fKxLvXOiK4uiUV9uPUEwnWFbqBbhwZYHSKiNdLS3b6wF1/IOxJ6yH9iMEeoS/0i5iBtDy3
-	KhWbYHpEXAQlouAKHq4cI8gbP79hX/hajS2JD5VcnHP2pS4wO6T0WoqkCU9fQ6EUerJM/c
-	qs9LmmOiOx5s82FbhLbJlqoqF62QyI8=
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=fKxLvXOi
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1719855433; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=XPfeObkmiABo3u/9oEUp18A+HOCjxx8ouUmmjFX6AXM=;
-	b=fKxLvXOiK4uiUV9uPUEwnWFbqBbhwZYHSKiNdLS3b6wF1/IOxJ6yH9iMEeoS/0i5iBtDy3
-	KhWbYHpEXAQlouAKHq4cI8gbP79hX/hajS2JD5VcnHP2pS4wO6T0WoqkCU9fQ6EUerJM/c
-	qs9LmmOiOx5s82FbhLbJlqoqF62QyI8=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 80AE213800;
-	Mon,  1 Jul 2024 17:37:13 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id LVtiH0npgmaUKQAAD6G6ig
-	(envelope-from <dsterba@suse.com>); Mon, 01 Jul 2024 17:37:13 +0000
-From: David Sterba <dsterba@suse.com>
-To: torvalds@linux-foundation.org
-Cc: David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Btrfs fix for 6.10-rc7
-Date: Mon,  1 Jul 2024 19:36:54 +0200
-Message-ID: <cover.1719854274.git.dsterba@suse.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1719855537; c=relaxed/simple;
+	bh=kOBxA7IVGGFZ288KxierUcGnNHDFAU6FqOFGdWXU06Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=c7asEWohMHIxOL9wFcHjyMYoJt7w8V2UchAGXqDFqCVkCw3B8yomXh6BGReM/xTEFUF1xzEKiCJ4UUJwJK3LE3WZuxevmrKWvLxIJsEr1A1ma2twFua37pRr5Qy+/wpiyqeaIGolU3muq64slISxedKJg7Pyk4kM/moPHMH6Z/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dqwZrc89; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7178727da84so1703575a12.0;
+        Mon, 01 Jul 2024 10:38:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719855535; x=1720460335; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1uKjwg1PANLg7nylPVFAopF0C8gM3ML6WorgUYgDXvQ=;
+        b=dqwZrc89ZGcwFEylcusDQeMICl4y8a6ql+wzY/J+7joR9Cqvxw0x0HE/t/LQQ1+sYH
+         wkUT14YWVtboDksFyE4mx7Qn4HpsjLJteiYDmKACrd0IX9WlocSdemRwepulPUjKyVVN
+         bIOaltdOz6weLPwlmTu8HagdNaqgZZld5dYsgp9uGi/QjymyiwPxTFy0DGFDKee6w3NU
+         hWkkt/rAcySTwXMzvPJLYxxtPFxd4ULsbjGn5WvhH6o/Tyu8+xFk/+cZV16HBUiSwb/e
+         G03VeHfQRZjQSc6h+qatQWFbZPumMxjq3Oem7p+GrBC6NoVyMbIGKwy+eNS5CjiApfVG
+         xNXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719855535; x=1720460335;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1uKjwg1PANLg7nylPVFAopF0C8gM3ML6WorgUYgDXvQ=;
+        b=rVrhmVM2TW5dUNKl36ZhBQ2KzQzUN8V6ocXkog1/RPzmzrd3tWuSIJst4zm859gtyd
+         0LM6SBJhgYt49dLImYON2MygJCRplhu5idB3q3dC29x4CacefiHNdi7pFAo33yHL4Oar
+         9R/12BFiJGNZvw2wgCNHiZIw0HEQj90a790MpwdXjhAs4bs4ZifuoVXlc1Wf5+x5YIK0
+         JZ6PQmlnmXNTNtSsVbw1eRV8LuNMpv9my7/C2xAfygQ20ustUnrpEAID5GJQtJMmcEsc
+         94BDrVmxIEIco8z/NRGjcgZ9HFn8lJU8XAKqVgYQCOjhKTDyjGyf343RN3JFtsCD69Ti
+         OQQw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5godaG+jiRX7PnuKgq/Rke2Phbw29jwHZuRwO2yCTq0jwx6LZptamsOrZf0sGPgInek2UDGbspIAB4wDQow3/ZYZwx3pn6mbDyj36la8kJycWFIoR3hNS9Cp6PbLlVsF2jSjF6fNpxA==
+X-Gm-Message-State: AOJu0YxD5mq5ypEjyTrzZ/eXnPnp7ZRClDpaLIe0+pZwCA6/66N5KJ6s
+	eHu+8k8c/nudK6hsLG6QOyFs59PTYuVGyeZb0U9iJWBwDACrnDnE
+X-Google-Smtp-Source: AGHT+IHpWJR47zSzS3H651HaTKDxyE7g0j9sR2JBCxNxhPlcyEre14Sir2f97+266qrkhg/CQhxiSA==
+X-Received: by 2002:a05:6a20:1b23:b0:1be:d1fe:75dc with SMTP id adf61e73a8af0-1bef62786c3mr3940797637.57.1719855533463;
+        Mon, 01 Jul 2024 10:38:53 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:7783:69e6:8487:f6ab])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7080256d3c5sm6805517b3a.83.2024.07.01.10.38.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 10:38:53 -0700 (PDT)
+Date: Mon, 1 Jul 2024 10:38:50 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Martin Schiller <ms@dev.tdt.de>, Hauke Mehrtens <hauke@hauke-m.de>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] gpiolib: of: fix lookup quirk for MIPS Lantiq
+Message-ID: <ZoLpqv1PN08xHioh@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.com:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_THREE(0.00)[4];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 8764621BFC
-X-Spam-Flag: NO
-X-Spam-Score: -3.01
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi,
+As it turns out, there is a large number of out-of-tree DTSes (in
+OpenWrt project) that used to specify incorrect (active high) polarity
+for the Lantiq reset GPIO, so to keep compatibility while they are
+being updated a quirk for force the polarity low is needed. Luckily
+these old DTSes used nonstandard name for the property ("gpio-reset" vs
+"reset-gpios") so the quirk will not hurt if there are any new devices
+that need inverted polarity as they can specify the right polarity in
+their DTS when using the standard "reset-gpios" property.
 
-please pull the following branch. It contains a fixup for a recent fix
-that prevents an infinite loop during block group reclaim.
-Unfortunately it introduced an unsafe way of updating block group list
-and could race with relocation.  This could be hit on fast devices when
-relocation/balance does not have enough space.
+Additionally the condition to enable the transition from standard to
+non-standard reset GPIO property name was inverted and the replacement
+name for the property was not correct. Fix this as well.
 
-Thanks.
+Fixes: fbbbcd177a27 ("gpiolib: of: add quirk for locating reset lines with legacy bindings")
+Fixes: 90c2d2eb7ab5 ("MIPS: pci: lantiq: switch to using gpiod API")
+Reported-by: Martin Schiller <ms@dev.tdt.de>
+Acked-by: Martin Schiller <ms@dev.tdt.de>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
 
-----------------------------------------------------------------
-The following changes since commit a7e4c6a3031c74078dba7fa36239d0f4fe476c53:
+v2: collected acked-by, rebased on top of gpio-fixes-for-v6.10-rc6 
 
-  btrfs: qgroup: fix quota root leak after quota disable failure (2024-06-25 00:35:50 +0200)
+ drivers/gpio/gpiolib-of.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-are available in the Git repository at:
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index d75f6ee37028..38679cf1969f 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -202,6 +202,16 @@ static void of_gpio_try_fixup_polarity(const struct device_node *np,
+ 		 * helper, and be consistent with what other drivers do.
+ 		 */
+ 		{ "qi,lb60",		"rb-gpios",	true },
++#endif
++#if IS_ENABLED(CONFIG_PCI_LANTIQ)
++		/*
++		 * According to the PCI specification, the RST# pin is an
++		 * active-low signal. However, most of the device trees that
++		 * have been widely used for a long time incorrectly describe
++		 * reset GPIO as active-high, and were also using wrong name
++		 * for the property.
++		 */
++		{ "lantiq,pci-xway",	"gpio-reset",	false },
+ #endif
+ 	};
+ 	unsigned int i;
+@@ -504,9 +514,9 @@ static struct gpio_desc *of_find_gpio_rename(struct device_node *np,
+ 		{ "reset",	"reset-n-io",	"marvell,nfc-uart" },
+ 		{ "reset",	"reset-n-io",	"mrvl,nfc-uart" },
+ #endif
+-#if !IS_ENABLED(CONFIG_PCI_LANTIQ)
++#if IS_ENABLED(CONFIG_PCI_LANTIQ)
+ 		/* MIPS Lantiq PCI */
+-		{ "reset",	"gpios-reset",	"lantiq,pci-xway" },
++		{ "reset",	"gpio-reset",	"lantiq,pci-xway" },
+ #endif
+ 
+ 		/*
+-- 
+2.45.2.803.g4e1b14247a-goog
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.10-rc6-tag
-
-for you to fetch changes up to 48f091fd50b2eb33ae5eaea9ed3c4f81603acf38:
-
-  btrfs: fix adding block group to a reclaim list and the unused list during reclaim (2024-07-01 17:33:15 +0200)
-
-----------------------------------------------------------------
-Naohiro Aota (1):
-      btrfs: fix adding block group to a reclaim list and the unused list during reclaim
-
- fs/btrfs/block-group.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+-- 
+Dmitry
 
