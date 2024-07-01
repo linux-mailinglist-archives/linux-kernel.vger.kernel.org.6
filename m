@@ -1,128 +1,107 @@
-Return-Path: <linux-kernel+bounces-236343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7521791E0AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:27:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 168C191E0AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:27:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 006F4B27324
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:27:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A47B8B2746F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E235E15ECCF;
-	Mon,  1 Jul 2024 13:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B283815ECF6;
+	Mon,  1 Jul 2024 13:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tpko25GR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QuBfoSgI";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cFbegVUV"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B28D15E5DB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD5315E5D2;
 	Mon,  1 Jul 2024 13:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719840449; cv=none; b=ZhdLEB3PqFjQi9c5blZwTLkXIeIkXzs40sHImuVlPGW46mjq18maf+ATrldeFln0sE/LUwkHUrHQCnYm/JLMSDngTV+C+9phZnx+e7w3/5+ObqxjiVgEcizEvdLhUf7oh9FEEjyzg3igerbkpmEHQiV0vocaZT4iJYbAFYbv9rU=
+	t=1719840450; cv=none; b=KOMIqxKzipZ/3oAEBoQi8Ji3oXYgCGG4DTmI+hDGl1SPH0r7LAbg+q+QDM/clHGJfpfjw/SnDeC1pJMr12YW8t0Cm7uedP0PTn8M/epNJkcMkHJkuzG/IdKAu5Xpqc9Zb7Szj827+l0YHj7kSq9PpScxFlt6WbjsuVF6+2EDKuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719840449; c=relaxed/simple;
-	bh=RGVefZ3LYaLLES6iQhtUNZkddbn4IpZ6Q94Sq67kgt4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PIudK+RevOY+z1hluoCu/l1Ya/aymERAUFH/GtCcrrgnotO4M2GUxnHdN5aAQDAVaxgnlIQTeN1YdbUugLOOkXQBZNmd3Flwk2gRnwzr+uvF5ZkjdE8GcvRZ4B+PkgRa7VREUzWw34MiEjCHmf1K959HUkF+wBxWYcQOoUkRMs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tpko25GR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF916C32786;
-	Mon,  1 Jul 2024 13:27:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719840448;
-	bh=RGVefZ3LYaLLES6iQhtUNZkddbn4IpZ6Q94Sq67kgt4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=tpko25GRoyJ/wADgJ5KwFwp0I+1WiWqPc26GHZ7uIYP3vIqvBPZtiF4OEjdfDtz3i
-	 e2vTRJqoLnlf/priLn6gPLJfWGeye6dRY1qDeYyuQjnzRmvT+30ySfRdkJjmKtjGGV
-	 Wogc0IQcZUPOtlz4p0s2y3XDGvirxYXg2ZJseDDCeo1g5fBw2gn2vXjErvrkQYjeTk
-	 fOU83Cn7aCJGebLaYs5KmUa7tpvPO/9MBqvJrLjywBzq8ZEN9+zFhxtubV5irSa7wK
-	 8YjMADZn5Xexs+ujAZaTWugOreCTnuI1UksqPfgi5YtIpghQIuvU0DgL+fyGqSY6O9
-	 vVJIxBUpDRi8Q==
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ebe0a81dc8so40722061fa.2;
-        Mon, 01 Jul 2024 06:27:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUuN7u6TndhP+2C4DBTNhOWVfkr8DjzEvSVlJazuyZ4w+R1x4Vvbn8/Xz42GPYf9Z5k2kJ+mprELzsfm6CPe8LFTEe76YO9//M78vQeJNFMMpHTTO0pXOE5uspVI3RZhZeJcvKMIXnS
-X-Gm-Message-State: AOJu0YwRcYE75+4dvIdkK0M5Q3A4kL7R6K08NJzP7KagglSHP++TKT7r
-	j9X3VZAbhlmL5rNasFE0ZU+pZHuFfrKf3q1lcVsdPrnqb78iH/wdanUT+j1j5RyFeswAoda3Z87
-	y49MCJ1h5rgvLRytg49qRUl6GwYM=
-X-Google-Smtp-Source: AGHT+IFwckd+qOlAiDqjYBF2nZ+unD2z8gT4uWHTczXzYQpNgG0hMG6PX00odYf2BECd0DQqpCwr5y6PSlC5EJZ7g3g=
-X-Received: by 2002:a2e:300c:0:b0:2ec:4f01:2c0f with SMTP id
- 38308e7fff4ca-2ee5e3bf062mr45016221fa.26.1719840447042; Mon, 01 Jul 2024
- 06:27:27 -0700 (PDT)
+	s=arc-20240116; t=1719840450; c=relaxed/simple;
+	bh=XFseOVSjpwnaT1ZVAH2sByCNDyn2H2MigdIsn0urecw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bZlbq0n0KLPGa9Eo7rjuQzPp/RvBF1K7+zqwWGC2l/kXBE0gi7q3CFuOQcMVPK/odpx7JMpWqcLVHSi8bCkwtVOkLOms/P7xy27gvT73iEYGUFaX+x63TQTKVOEF0OSEGRybQ3vVjWgcGfV4cDn7LHRwtaGObVAxgwMVWr3zIYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QuBfoSgI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cFbegVUV; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 1 Jul 2024 15:27:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1719840447;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G5XhOnJAUUZRe8BHp4cEmQJvWpVeKRgpNdY1SzN+EFM=;
+	b=QuBfoSgIj4C/P54oaLhZum9IL8/k6IseZj7jIO2NtyQWn0rZ1X5QFwfz1W3823hdMESq8x
+	jxF/bWuifhzy7bzPTo306orujH/4jPkrVtaIbDsRwVUz4bzYt3ElaAGcKMQyndeHjB1zIs
+	smmp84tG9mGY8lt2am4Pe9mrvrO6BpwZ5Lqy+hsuXoXwaojHl3N8HnzLqqQw/RcigXKOu+
+	OLTRjBvjtnBOL9h8wlQQSDG/y+loTANapAIICQg+f0Bx1B6LjQ0CN/LvcNagwkRkjVIrlR
+	Z5dgru2ztvcUd319i4eZZ4JVSQ20pSbpWh2XLfiQ8UQlLZmY+CDSwceCuWYpLg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1719840447;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G5XhOnJAUUZRe8BHp4cEmQJvWpVeKRgpNdY1SzN+EFM=;
+	b=cFbegVUVkKcCA0U80m0dl1nv2AXp2k1orDr7uuBrIHTzKcMTrrPOksPq7KQyA+69GnV/Z5
+	aBitI/W+YwTD+pAA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Daniel Bristot de Oliveira <bristot@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
+	Marco Elver <elver@google.com>, Mark Rutland <mark.rutland@arm.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: Re: [PATCH v4 2/6] perf: Enqueue SIGTRAP always via task_work.
+Message-ID: <20240701132725.9_UHcpVA@linutronix.de>
+References: <20240624152732.1231678-1-bigeasy@linutronix.de>
+ <20240624152732.1231678-3-bigeasy@linutronix.de>
+ <20240701122829.GE20127@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620073205.1543145-1-ardb+git@google.com> <20240701124734.GFZoKlZhqnWJlz7LKb@fat_crate.local>
-In-Reply-To: <20240701124734.GFZoKlZhqnWJlz7LKb@fat_crate.local>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Mon, 1 Jul 2024 15:27:15 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXEHpezZS_jNoLQoTSKXZ0P8DxQFHNKRS2kkTC-G4MfG0w@mail.gmail.com>
-Message-ID: <CAMj1kXEHpezZS_jNoLQoTSKXZ0P8DxQFHNKRS2kkTC-G4MfG0w@mail.gmail.com>
-Subject: Re: [RFC PATCH] x86/efi: Drop support for fake EFI memory maps
-To: Borislav Petkov <bp@alien8.de>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-efi@vger.kernel.org, x86@kernel.org, 
-	linux-kernel@vger.kernel.org, dyoung@redhat.com, 
-	Dan Williams <dan.j.williams@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240701122829.GE20127@noisy.programming.kicks-ass.net>
 
-On Mon, 1 Jul 2024 at 14:47, Borislav Petkov <bp@alien8.de> wrote:
->
-> On Thu, Jun 20, 2024 at 09:32:05AM +0200, Ard Biesheuvel wrote:
-> > From: Ard Biesheuvel <ardb@kernel.org>
-> >
-> > Between kexec and confidential VM support, handling the EFI memory maps
-> > correctly on x86 is already proving to be rather difficult (as opposed
-> > to other EFI architectures which manage to never modify the EFI memory
-> > map to begin with)
-> >
-> > EFI fake memory map support is essentially a development hack (for
-> > testing new support for the 'special purpose' and 'more reliable' EFI
-> > memory attributes) that leaked into production code. The regions marked
-> > in this manner are not actually recognized as such by the firmware
-> > itself or the EFI stub (and never have), and marking memory as 'more
-> > reliable' seems rather futile if the underlying memory is just ordinary
-> > RAM.
-> >
-> > Marking memory as 'special purpose' in this way is also dubious, but may
-> > be in use in production code nonetheless. However, the same should be
-> > achievable by using the memmap= command line option with the ! operator.
-> >
-> > EFI fake memmap support is not enabled by any of the major distros
-> > (Debian, Fedora, SUSE, Ubuntu) and does not exist on other
-> > architectures, so let's drop support for it.
-> >
-> > Cc: Taku Izumi <izumi.taku@jp.fujitsu.com>
-> > Cc: Dan Williams <dan.j.williams@intel.com>
-> > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> > ---
-> >  Documentation/admin-guide/kernel-parameters.txt |  21 ---
-> >  arch/x86/Kconfig                                |  20 --
-> >  arch/x86/boot/compressed/kaslr.c                |  43 +----
-> >  arch/x86/include/asm/efi.h                      |  15 --
-> >  arch/x86/kernel/setup.c                         |   1 -
-> >  arch/x86/platform/efi/efi.c                     |   2 -
-> >  arch/x86/platform/efi/fake_mem.c                | 197 --------------------
-> >  arch/x86/platform/efi/memmap.c                  |   1 +
-> >  drivers/firmware/efi/libstub/x86-stub.c         |   2 +-
-> >  9 files changed, 11 insertions(+), 291 deletions(-)
->
-> I obviously like this:
->
-> Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
->
-> I don't see the author or anyone else objecting, I guess queue it?
->
+On 2024-07-01 14:28:29 [+0200], Peter Zijlstra wrote:
+> On Mon, Jun 24, 2024 at 05:15:15PM +0200, Sebastian Andrzej Siewior wrote:
+> > @@ -9735,18 +9719,28 @@ static int __perf_event_overflow(struct perf_event *event,
+> >  
+> >  		if (regs)
+> >  			pending_id = hash32_ptr((void *)instruction_pointer(regs)) ?: 1;
+> > -		if (!event->pending_sigtrap) {
+> > -			event->pending_sigtrap = pending_id;
+> > +
+> > +		if (!event->pending_work &&
+> > +		    !task_work_add(current, &event->pending_task, TWA_RESUME)) {
+> > +			event->pending_work = pending_id;
+> >  			local_inc(&event->ctx->nr_pending);
+> 
+> task_work_add() isn't NMI safe, at the very least the
+> kasan_record_aux_stack() thing needs to go. But the whole
+> set_notify_resume() thing also needs an audit.
 
-Thanks.
+oh. I just peeked and set_notify_resume() wouldn't survive the audit.
+Would you mind adding task_work_add_nmi() which is task_work_add(,
+TWA_NONE) without kasan_record_aux_stack()? The signal part would need
+to be moved the irq_work() below in the NMI case.
 
-> Or if you feel like you wanna give folks a full cycle, you could queue it for
-> the next MW...
->
-
-It's been in -next for ~10 days so I might just send it for the next
-cycle. We can always revert it if something gets broken.
+Sebastian
 
