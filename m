@@ -1,139 +1,151 @@
-Return-Path: <linux-kernel+bounces-235878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4C6491DAB5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:57:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C4EA91DABB
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:58:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 133991C22393
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:57:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E16DF285CD4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:58:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859BF12DD9B;
-	Mon,  1 Jul 2024 08:54:04 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE6613D63B;
+	Mon,  1 Jul 2024 08:54:47 +0000 (UTC)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35328615A
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 08:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31E213C821
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 08:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719824044; cv=none; b=ZjXkYNlO9phJBXADR1rNxrRDyuhMkYuRcM8yo9gYGK+NshqkEmWjC/SgLw4kQ++Eb+kov3EtspbESzvi2yM7+fZ5QafqZv2YlYMmnPmxuNEP80X21mYEQVf6ixOf9d29hjDc7UU8kA3uh65s3Rwf2UCOeG9tEFN9W7JPU7fey0Q=
+	t=1719824086; cv=none; b=NS67/NzyOfPxvm7SbQeGKyeE+/DqL7gdVOvLc20cKUUxds3m7w8A3H8T6nEFQMtmPYn5459sIyDQA+g1pted+qs7Vx1iOBCEowiAp64Qnuk3HkE/OibpgY6AgFDOSZfLBTg4n5cG9znsnxTkdd2paKgjMFAjqfRAc97UMixbMyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719824044; c=relaxed/simple;
-	bh=TqjaM7xt0ek5dDHAjepw5qMFWne6ltp/Ex5IKXsUvCE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=FBM8Jm1tfdNPhhNhZnpx488Q68D11F9NMvjyzPFyZSAhEVUheyMTZRNClOMoK6kNyGfVWk51G/2UZEOrYMo4EEQd/WUdzdtXDqqMXWIF/p61jIakMkgcN2NONZm02Pqu5q8hRK5RyrKgRXpdzN4ets9AN75f0ShYHilEj7Qp+sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7f63ce98003so98833539f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 01:54:02 -0700 (PDT)
+	s=arc-20240116; t=1719824086; c=relaxed/simple;
+	bh=9NxIL7IjJ+MjTfOCcfUkgAi3GetouhmyNiDMUfbAyyU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YwYxsfXg9XybCO7JS6xzL4lXCUB9fiaGPzy3Gg0HBKGr/xG9aYQKsrCvvW1/5i6sR5kzC1YYvZtSUnb6alok+G8VDdRpq6YcYTfpF9Yuo7i+CtZLhzmUssY99PXPaWkZYDDfzct77CXVLy96AkoNWtyfUUrXzv0ExmkkEF4FP0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-64f4fd64773so930727b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 01:54:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719824042; x=1720428842;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RDqqJsoTxHELNsp+DMkcgx+Y0MdUEPe6wiHKgIke+Tg=;
-        b=aB/KlgyvPZtyLq6cttinTnC/r7VS6ePJNH//WSzoDLZaZOvTdp3Ktt6pQRa+dP4eG3
-         DvbNWD8E75X8Kjn+Z4Te+xxnb47P/f38iAc+hLveRLfH0RXRbzZxO1NNX04o1i0yIH0m
-         368bDT6ULTBX6BUfvwSXEqdIiR+qL9CMzUiIimyDiGuvPR1E1mc4vBd2rxJsGUvgxa/7
-         0JOfeI4svznlHK0n5k9wCgQ1VBkb9GevnhivW839nRYtsoCT08gvOMSG3RqIsSPaABaR
-         ENV8LjgOV41O5ZyRhmiUpeXBVE/Of6nmUBgy6j+1rTTLv0kH+KQ8+1vPK3uwlQY6wgF6
-         uAJw==
-X-Gm-Message-State: AOJu0YywmOQixRgQkjSUoGF9NZTCXGd4HzBm/oa9c51GxtnG8fdvkdvp
-	5JJCCJivoctNsANzZqPJq+WDJDluwlldwB3sRl8DQTPhjjFMlKVoOBk4TS0a169G3JSLhaasshg
-	CJB8ms2ra4Cb5zFnkXwUUQLiO8s5Ov3WNxe4CvWdl+xVjwwSOjZHQNo4=
-X-Google-Smtp-Source: AGHT+IFmtK0G/r5Ob6nyiKfBVueWNNrNh6uwXSPCCPyJYKWykUTURtA2A5rG+LTd1p0alPwvKPDC1JT5VV8BqRofQ2CwtAzDSVIZ
+        d=1e100.net; s=20230601; t=1719824082; x=1720428882;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GRJ/sPxYk0gpST/B9ghvIkC+M8aByXNTXzLiqxdF79M=;
+        b=etpaU8ckHChUoyNeISKA3OrbdsH4e2CLTkmq3MekChLjS6GqYxVJaHqXyKCXIcGj8k
+         pud9MwQpd+e2qryAqlvR4bdZLRByu15NJFoYLsKtS4TOCN127XwCIY33HY4JywkryhCd
+         DWwuDc1W6bdGVPD35rnVgYvdmPyzE4tsZdVrxwIv6T3ehtPO8jGmaTFmLKkPlePzbLbo
+         Iw7NdudE44/aXwtf9cQvh47qs1CsURZ8mAUWPevKfAos++KsQueNK0Ozoe5AxHJyr5NW
+         qpaavyyPwe4pVuBUb185c0HT86KGoISRIc/d4eIknYGYWClxrWu+6B2H43MDU6Kx6GVM
+         egpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWI47FsrknYyN4NESslQGtl1Tm2m+T5v7mClKnQeLqDeI1nILIH+J37T/Y7QFDYWOu2/M4+eZcnESlOgf//lQezwzHkpcPnr2urIyAH
+X-Gm-Message-State: AOJu0YxgbKIpUxTBCPhLKZAhxcgfkxuTr1POBzIPKeboQVDYemr9XGL7
+	ghI6lIt4RiW1kJbf1jpaLdloIEQaMl2RdXz36JxNxlFrA5xxpmPNQxdwczTX
+X-Google-Smtp-Source: AGHT+IFQJ0TfxsIkZvNVVhQYUrCh252zwLKXOaMxuOTxg+rtUJn40JGP0CmcJKtcK2AQRa6/81S6cQ==
+X-Received: by 2002:a81:bf51:0:b0:64a:d9a1:db3f with SMTP id 00721157ae682-64c7114456fmr65260047b3.7.1719824082273;
+        Mon, 01 Jul 2024 01:54:42 -0700 (PDT)
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-64a9a23c0a4sm12870767b3.54.2024.07.01.01.54.41
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Jul 2024 01:54:41 -0700 (PDT)
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dff17fd97b3so2806950276.2
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 01:54:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW2qMuc7GyGnwV5lmLYvQgM0IJG2dVD8L8gUqW+59Ex1dBl5svrEY6fIfIUKW+PoGa9WC/95oL5zHpF1FnWuTisED5tmFrzC5el6L9l
+X-Received: by 2002:a81:440b:0:b0:627:972f:baba with SMTP id
+ 00721157ae682-64c71fc2105mr59079497b3.31.1719824081315; Mon, 01 Jul 2024
+ 01:54:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:9806:b0:4b9:be4c:d603 with SMTP id
- 8926c6da1cb9f-4bbb6e5b9d7mr314246173.4.1719824041858; Mon, 01 Jul 2024
- 01:54:01 -0700 (PDT)
-Date: Mon, 01 Jul 2024 01:54:01 -0700
-In-Reply-To: <20240701082944.17441-1-wojciech.gladysz@infogain.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000176977061c2bbdeb@google.com>
-Subject: Re: [syzbot] [ext4?] general protection fault in __block_commit_write
-From: syzbot <syzbot+18df508cf00a0598d9a6@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	wojciech.gladysz@infogain.com
+References: <20240627173530.460615-1-thuth@redhat.com> <571556ed-17d2-4bcc-bb1f-fd4f827829c6@suse.de>
+ <2108ac92-e241-4507-a759-c23de90d041e@redhat.com>
+In-Reply-To: <2108ac92-e241-4507-a759-c23de90d041e@redhat.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 1 Jul 2024 10:54:29 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWf3bE5UdFHoer_iVXeMwfqMpFeAFppo0dzyzL0zeU55A@mail.gmail.com>
+Message-ID: <CAMuHMdWf3bE5UdFHoer_iVXeMwfqMpFeAFppo0dzyzL0zeU55A@mail.gmail.com>
+Subject: Re: [PATCH] drm/fbdev-generic: Fix framebuffer on big endian devices
+To: Thomas Huth <thuth@redhat.com>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>, dri-devel@lists.freedesktop.org, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org, 
+	Javier Martinez Canillas <javierm@redhat.com>, Hamza Mahfooz <hamza.mahfooz@amd.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi Thomas,
 
-syzbot tried to test the proposed patch but the build/boot failed:
+On Mon, Jul 1, 2024 at 10:42=E2=80=AFAM Thomas Huth <thuth@redhat.com> wrot=
+e:
+> On 28/06/2024 08.07, Thomas Zimmermann wrote:
+> > Am 27.06.24 um 19:35 schrieb Thomas Huth:
+> >> Starting with kernel 6.7, the framebuffer text console is not working
+> >> anymore with the virtio-gpu device on s390x hosts. Such big endian fb
+> >> devices are usinga different pixel ordering than little endian devices=
+,
+> >> e.g. DRM_FORMAT_BGRX8888 instead of DRM_FORMAT_XRGB8888.
+> >>
+> >> This used to work fine as long as drm_client_buffer_addfb() was still
+> >> calling drm_mode_addfb() which called drm_driver_legacy_fb_format()
+> >> internally to get the right format. But drm_client_buffer_addfb() has
+> >> recently been reworked to call drm_mode_addfb2() instead with the
+> >> format value that has been passed to it as a parameter (see commit
+> >> 6ae2ff23aa43 ("drm/client: Convert drm_client_buffer_addfb() to
+> >> drm_mode_addfb2()").
+> >>
+> >> That format parameter is determined in drm_fbdev_generic_helper_fb_pro=
+be()
+> >> via the drm_mode_legacy_fb_format() function - which only generates
+> >> formats suitable for little endian devices. So to fix this issue
+> >> switch to drm_driver_legacy_fb_format() here instead to take the
+> >> device endianness into consideration.
+> >>
+> >> Fixes: 6ae2ff23aa43 ("drm/client: Convert drm_client_buffer_addfb() to
+> >> drm_mode_addfb2()")
+> >> Closes: https://issues.redhat.com/browse/RHEL-45158
+> >> Signed-off-by: Thomas Huth <thuth@redhat.com>
+> >
+> > Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
+> >
+> >
+> >> ---
+> >>   drivers/gpu/drm/drm_fbdev_generic.c | 3 ++-
+> >
+> > This file is now called drm_fbdev_ttm.c in drm-misc-next.
+>
+> Oh, ok, shall I send a v2 that is adjusted to that change, or can it be
+> fixed while applying my patch?
 
-failed to checkout kernel repo https://linux.googlesource.com/linux/kernel/git/torvalds/linux/---: failed to run ["git" "fetch" "--force" "5efaa37364b8874e2c0b1d9108beeed3d23b6a7c" "---"]: exit status 129
-error: unknown option `-'
-usage: git fetch [<options>] [<repository> [<refspec>...]]
-   or: git fetch [<options>] <group>
-   or: git fetch --multiple [<options>] [(<repository> | <group>)...]
-   or: git fetch --all [<options>]
+As this is a regression in mainline, which needs to be backported,
+too, it's best to apply your fix to v6.10-rc6, which does not have
+drm_fbdev_ttm.c yet.
 
-    -v, --verbose         be more verbose
-    -q, --quiet           be more quiet
-    --all                 fetch from all remotes
-    --set-upstream        set upstream for git pull/fetch
-    -a, --append          append to .git/FETCH_HEAD instead of overwriting
-    --atomic              use atomic transaction to update references
-    --upload-pack <path>  path to upload pack on remote end
-    -f, --force           force overwrite of local reference
-    -m, --multiple        fetch from multiple remotes
-    -t, --tags            fetch all tags and associated objects
-    -n                    do not fetch all tags (--no-tags)
-    -j, --jobs <n>        number of submodules fetched in parallel
-    --prefetch            modify the refspec to place all refs within refs/prefetch/
-    -p, --prune           prune remote-tracking branches no longer on remote
-    -P, --prune-tags      prune local tags no longer on remote and clobber changed tags
-    --recurse-submodules[=<on-demand>]
-                          control recursive fetching of submodules
-    --dry-run             dry run
-    --write-fetch-head    write fetched references to the FETCH_HEAD file
-    -k, --keep            keep downloaded pack
-    -u, --update-head-ok  allow updating of HEAD ref
-    --progress            force progress reporting
-    --depth <depth>       deepen history of shallow clone
-    --shallow-since <time>
-                          deepen history of shallow repository based on time
-    --shallow-exclude <revision>
-                          deepen history of shallow clone, excluding rev
-    --deepen <n>          deepen history of shallow clone
-    --unshallow           convert to a complete repository
-    --refetch             re-fetch without negotiating common commits
-    --update-shallow      accept refs that update .git/shallow
-    --refmap <refmap>     specify fetch refmap
-    -o, --server-option <server-specific>
-                          option to transmit
-    -4, --ipv4            use IPv4 addresses only
-    -6, --ipv6            use IPv6 addresses only
-    --negotiation-tip <revision>
-                          report that we have only objects reachable from this object
-    --negotiate-only      do not fetch a packfile; instead, print ancestors of negotiation tips
-    --filter <args>       object filtering
-    --auto-maintenance    run 'maintenance --auto' after fetching
-    --auto-gc             run 'maintenance --auto' after fetching
-    --show-forced-updates
-                          check for forced-updates on all updated branches
-    --write-commit-graph  write the commit-graph after fetching
-    --stdin               accept refspecs from stdin
+> > And a similar patch might be necessary for drm_fbdev_dma.c.
+>
+> Looks similar, indeed. Shall I send a patch for that one, too? ... I
+> currently don't have a setup for testing that, though...
 
+Obviously these need to be fixed, too.
 
+Gr{oetje,eeting}s,
 
+                        Geert
 
-Tested on:
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-commit:         [unknown 
-git tree:       https://linux.googlesource.com/linux/kernel/git/torvalds/linux ---
-kernel config:  https://syzkaller.appspot.com/x/.config?x=95dc1de8407c7270
-dashboard link: https://syzkaller.appspot.com/bug?extid=18df508cf00a0598d9a6
-compiler:       
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14a45512980000
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
