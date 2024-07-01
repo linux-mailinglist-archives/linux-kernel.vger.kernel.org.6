@@ -1,267 +1,350 @@
-Return-Path: <linux-kernel+bounces-235908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBC2291DB22
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:10:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FFF191DB26
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:11:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 528781F21251
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:10:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1480B2861C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:11:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871BB84D04;
-	Mon,  1 Jul 2024 09:10:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F43284A39;
+	Mon,  1 Jul 2024 09:11:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zWJt2t0w"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h4ctP++n"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84AE5C614
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 09:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9F05C614
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 09:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719825042; cv=none; b=XtMhUTwpULVg/IaQE1HE8OxlEAtgN06guu9zd0u12R3wE0kVObAQeXWFfQOekNsjKa74qQcZWlP8qKAhDj1aqSHmIdTv2x1h0fu4wLbqUEj+RvvdxIn1jo/LXn9PE75uXKr54+lCGkmHg1nKhVxr8Y79xka9pdt0l8/VX2Doz04=
+	t=1719825081; cv=none; b=V9iTnL7ouV3PtS4G5QJ9soHIcJtNTeIDterXzz4DZFGiRk3UCg2qYLjVypBHHNvyKtP7eemrV6nizz9KhTWlhs8mSaLUvBLAJfH8muE++O2ZGGhA8fo4CyPiPN4bK4tB/woWvuSUwrO6egFBJI3bO2ctw1cRVUanJmawZD2ldQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719825042; c=relaxed/simple;
-	bh=MihLrulO9FQtyvs5PM4koGS4EJy3DSirwHr1Ngd6tAM=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=uG85q30d26I4EYCUi0dzRZN2qJn5/Uktqdp/ckW0uqslC6v+XUZ99dOLjZYORkyvD2W/a1ZKsabBrPd48fU6dM5+M5kE/eUYmKWUSXOYyLn0wmPakQAw2U7GViX6gARE7VGWRcJbk9S7vykriC2rMrf9Bucsp346A1+JNqxBQG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zWJt2t0w; arc=none smtp.client-ip=209.85.167.50
+	s=arc-20240116; t=1719825081; c=relaxed/simple;
+	bh=ZZDuefkVybRKv7eLniy7SDH1/QwWLvpRP8veMGQDDDk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NGAvatGMAZKAEXnD7bz/Xa+esQx7CtzmFvwwXobU/p5MQbsdv2QU71HvwnRAswIqpBkMTkTbuHljGdHVXWexaJ2RqM9GdF9zwPHatRYqpnbNURTpTIIazViDduPrHjJq8lWXqSe84VqBHP0fjx64OCu/265Gqr8McZ90VbbPXgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h4ctP++n; arc=none smtp.client-ip=209.85.128.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52cf4ca8904so4314184e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 02:10:40 -0700 (PDT)
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-64ad8d7b804so21167787b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 02:11:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719825039; x=1720429839; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WmxwoN5WifjaiLHb4RF2OzomH1ffmSkrRHOoZR2aCx8=;
-        b=zWJt2t0weDnDDofh6PgypnbImIWrnv0r7qKGN3eSk/lxnT/SD3W982ABf9QS2jlkmW
-         fHN88i+Juke8j4c8GrPBraf3nR+FRzyuhdY3t4Hjg8W/O84Om1l21b2BZY089xrHtsFo
-         kt+PbA0/9nHOymKecQ914wyIwZmwJnmoWNuV24IVVl99pCFgJaufQTkL68r947lp6xBt
-         pJMeC8QKjt5VbkNzYWzICaBRZGrieg/lsG4doIXBGZVA1ClX5lKigLNSDLghD0dXECtR
-         iJcIVcSS0LFJLApU7+jtxMe01k3VTkr+60oZTk441Aa29d1lSKQa312RvWcTgLaDVx/I
-         5BGg==
+        d=linaro.org; s=google; t=1719825078; x=1720429878; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=279s14TPu3NAq9grtIdz6lApvIxsHo2tIujxIiLRJtk=;
+        b=h4ctP++nx3tXoOCGqUEPThF/0zOq8M1EfpcGyU2rprSf9Sb88bP6I4E0vTTM28k5Mm
+         nRceZQhH5A322QyTZAQjoq55dkISJLVMwbITP7n87t1dIe73z7CPhIG/v9/yb9g++kiN
+         WjFdiZ8ctypXHyMAX8TFamer+TwNhfTAT4HjOQzWhRQEnqcELTMeHVHoP8Ibugerul+x
+         vLGq3EKQgZ69+llF0z5YvGi8PQFVOmy8/b4kldiQygR7Ih1+PhLxhup+G/+nz6saxl+R
+         j0yI+vug9eq2qt+4wpyOBcr1zaE3zc2IIqqHOpNX6VBJLYwSiqfXKhJA48NpsMJumYL2
+         /IDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719825039; x=1720429839;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WmxwoN5WifjaiLHb4RF2OzomH1ffmSkrRHOoZR2aCx8=;
-        b=aKFwpOBZgsMHjqD44SlbQiytJza1prkujWBZm3mZ4gtTaHQX5I8C+pS+7p1TYqM4IM
-         jFq5ue/04rpUHlQWZ+S9Reof3AkwVbz32h5yQxnS2PkLa9gPQWHjxjGfSGz1ujNkCc/D
-         FRsk0LQQwVtMrtEFQHni9qm8E8TlgN+zzOrV2pzvp05pTSFz8UdKGrjw8awlfV6772XB
-         HniMaa7szNE4TyYuo+KrvbwPfa1aHx/hIGrKZqAtaxLNYonE6Nf7NbsymQ+al5veBv31
-         zj27FEKRQ1eP5wFlOTOi9WID1rukYymc2cpT2lZAOT5JJOsAmGY+tqF9gbCrO5acH1NO
-         2NKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVsbWa+Gtq0c4etmzVfp7Z1Zksmdip2PjQ+GDCVMUx4/nnQoTLoZ83NiAgeHBNa2/4XFUByRdKr7/qX+unVYTLy58GadeI1iN2Dm2mF
-X-Gm-Message-State: AOJu0YzERJph/KO3hAkSgPruRG0+/MJ9tnBP9nnxX6+Obi0pdyjFMRBt
-	QD5Rd4CsjEY3/v1fYeDN7BoOqAHwa/7iZYicNPGhE+yk2uG2lHz9Awgial+cSLQ=
-X-Google-Smtp-Source: AGHT+IEU8xp3goGxhTEutzBiuLEdZgqoKoixVNFadzR5iUuvIJM+GQ80X/3pH/R60oEG9o4bMBlLAw==
-X-Received: by 2002:a05:6512:39ca:b0:52c:e312:2082 with SMTP id 2adb3069b0e04-52e826febbamr3646811e87.54.1719825038326;
-        Mon, 01 Jul 2024 02:10:38 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:4719:99ea:652b:10d0? ([2a01:e0a:982:cbb0:4719:99ea:652b:10d0])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0cd687sm9494431f8f.14.2024.07.01.02.10.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Jul 2024 02:10:37 -0700 (PDT)
-Message-ID: <bd1c0c99-e394-4ad2-bc86-a277018b3ec0@linaro.org>
-Date: Mon, 1 Jul 2024 11:10:36 +0200
+        d=1e100.net; s=20230601; t=1719825078; x=1720429878;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=279s14TPu3NAq9grtIdz6lApvIxsHo2tIujxIiLRJtk=;
+        b=vLwSM3dUwMHeGnlU0+7zhJAe0kpCGCEDfgISk7FYkPpos+sxPzxQRqV2E/4Wu4sCXd
+         aJQxASK+nzXUUlPs0dzwEIYYNKA++543y0zYApAXhESMoFpgnbu/ZVc5znBkjIZ3qEjo
+         Mgui/kqkmqO/Oz+G9MaqWlZnKn8j6kcyBCkZxxCYH+TrXLn2osCuP8SnoPjCCEZIKKTV
+         dQgSAmt7KBf3ENkvhhOHrnFXuOYkA4UP6SkZ4OCqRgnOP+w95XKlxrYOahvgSGEHhRy2
+         gaOHhpq2Dwp+xc/zZCSbZ/U10PV1ynSdMWF2aEJ5/0yQGsudkn0baRVm/c2mu410BjsK
+         3Qzg==
+X-Forwarded-Encrypted: i=1; AJvYcCUSXUdtF690pUlkKuAtiVF6rnBAxEh3NsEx7RdpzlbNX1YyWpTul9SKobLeUg/QesZrVrWRhDcqYJjEcKYxbq9BZ/KKjil0xdCfibXJ
+X-Gm-Message-State: AOJu0YynJbyoABtnBem6CD+TV1wRXSVoBOl6+0UuhvU3ncgdPMnwmjYk
+	+nb8i6ludiQ8OOHrBMXTWvPRuOcH0NDHAGSppvuLRuvvnaXRug560TV+mFuyL9bFb0gcLIVx2XC
+	oyVflNeO19cwKjOs7BJ3xip12pMY9CzZIpzPUIQ==
+X-Google-Smtp-Source: AGHT+IEnkyIn8A8Q7D/dqG51zS65A3m2K6WhBC9Ohf/ZxxAQQg/JJmdkDQU6wzrdArQnROoMt2dP3o28EdVqFmRyS04=
+X-Received: by 2002:a05:690c:319:b0:618:90cc:bc4a with SMTP id
+ 00721157ae682-64af5a1ca8cmr46087537b3.26.1719825078412; Mon, 01 Jul 2024
+ 02:11:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 0/2] iio: frequency: add iio support for Amlogic clock
- measure
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, Kevin Hilman <khilman@baylibre.com>,
- linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-iio@vger.kernel.org, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>
-References: <20240624173105.909554-1-jbrunet@baylibre.com>
- <52fab9b5-2b44-49c0-8b90-cb2a74eb6633@linaro.org>
- <1jzfr9gxh4.fsf@starbuckisacylon.baylibre.com>
- <c092ec67-e384-411d-8885-665597547523@linaro.org>
- <1jv81xgmfc.fsf@starbuckisacylon.baylibre.com>
- <5da26c0e-75a7-4d5a-9eca-f88ecf369996@linaro.org>
- <1jjzi5a3ka.fsf@starbuckisacylon.baylibre.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <1jjzi5a3ka.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240620115245.31540-1-lvzhaoxiong@huaqin.corp-partner.google.com>
+ <20240620115245.31540-3-lvzhaoxiong@huaqin.corp-partner.google.com>
+ <bmmng663zqsc4xolkh6jdbu6yj637f3k6qbclxgi6fcmm4hv7z@i7ycd36flcha>
+ <CA+6=WdT80hcAW4f=UDcO2d3e+ODcRjAQBOUug7M6vgmtAEY1SA@mail.gmail.com> <CA+6=WdRSkQnx5qDn5rCzebEyjx-6Pz5ze0kE0oqvQ3uf5digMQ@mail.gmail.com>
+In-Reply-To: <CA+6=WdRSkQnx5qDn5rCzebEyjx-6Pz5ze0kE0oqvQ3uf5digMQ@mail.gmail.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Mon, 1 Jul 2024 12:11:05 +0300
+Message-ID: <CAA8EJposWO_ZXDp0rTSbAPfR0U+C35VjuigR+tZVd+80md+k=w@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] drm/panel: starry-er88577: add new panel driver
+To: zhaoxiong lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+Cc: dmitry.torokhov@gmail.com, robh@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, jikos@kernel.org, 
+	benjamin.tissoires@redhat.co, dianders@google.com, hsinyi@google.com, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 01/07/2024 11:01, Jerome Brunet wrote:
-> On Mon 01 Jul 2024 at 09:41, Neil Armstrong <neil.armstrong@linaro.org> wrote:
-> 
->> On 25/06/2024 15:51, Jerome Brunet wrote:
->>> On Tue 25 Jun 2024 at 15:18, Neil Armstrong <neil.armstrong@linaro.org> wrote:
->>>
->>>> On 25/06/2024 11:53, Jerome Brunet wrote:
->>>>> On Tue 25 Jun 2024 at 11:38, Neil Armstrong <neil.armstrong@linaro.org> wrote:
->>>>>
->>>>>> Hi,
->>>>>>
->>>>>> [+cc people from linux-msm]
->>>>>>
->>>>>> On 24/06/2024 19:31, Jerome Brunet wrote:
->>>>>>> Add support for the HW found in most Amlogic SoC dedicated to measure
->>>>>>> system clocks.
->>>>>>> This drivers aims to replace the one found in
->>>>>>> drivers/soc/amlogic/meson-clk-measure.c with following improvements:
->>>>>>> * Access to the measurements through the IIO API:
->>>>>>>       Easier re-use of the results in userspace and other drivers
->>>>>>> * Controllable scale with raw measurements
->>>>>>> * Higher precision with processed measurements
->>>>>>> Jerome Brunet (2):
->>>>>>>       dt-bindings: iio: frequency: add clock measure support
->>>>>>>       iio: frequency: add amlogic clock measure support
->>>>>>>      .../iio/frequency/amlogic,clk-msr-io.yaml     |  50 ++
->>>>>>>      drivers/iio/frequency/Kconfig                 |  15 +
->>>>>>>      drivers/iio/frequency/Makefile                |   1 +
->>>>>>>      drivers/iio/frequency/amlogic-clk-msr-io.c    | 802 ++++++++++++++++++
->>>>>>>      4 files changed, 868 insertions(+)
->>>>>>>      create mode 100644 Documentation/devicetree/bindings/iio/frequency/amlogic,clk-msr-io.yaml
->>>>>>>      create mode 100644 drivers/iio/frequency/amlogic-clk-msr-io.c
->>>>>>>
->>>>>>
->>>>>> While I really appreciate the effort, and the code looks cool, the clkmsr is really
->>>>>> a debug tool, and I'm not sure IIO is the right place for such debug tool ?
->>>>> The reason why I went through the trouble of doing an IIO port is
->>>>> because I need that for other purposes than debug. I need to to be able
->>>>> to check a frequency from another driver. I don't see a reason to invent
->>>>> another API when IIO provide a perfectly good one.
->>>>> The HW does measurements. IIO seems like the best place for it.
->>>>> For the record, I need this for a eARC support.
->>>>> eARC has a PLL that locks on incoming stream. eARC registers show wether
->>>>> the PLL is locked or not, but not at which rate. That information is
->>>>> needed in ASoC. Fortunately the eARC PLL is one of measured clock, which
->>>>> is a life saver in that case.
->>>>
->>>> This is a very interesting use-case, and quite weird nothing is provided
->>>> on the eARC side.
->>> Indeed.
->>>
->>>>
->>>> So yes it's definitely a valid use-case, but:
->>>> - we should keep the debugfs interface, perhaps move it in the iio driver ?
->>> I considered this initially but it would add a lot of boiler plate
->>> code to provide over debugfs exactly what iio already provides over
->>> sysfs. As you pointed out, the previous driver only provided debug
->>> information, the debugfs interface it provided is hardly a
->>> critical/stable one.
->>
->> I still don't see why it could add so much boilerplate, all the tables and
->> calculation fonction would be shared, only the debugfs clk_msr_show() and
->> clk_msr_summary_show() would be kept, all the rest would be common.
->>
->> I insist, please keep the debugfs interface for debug purposes. You don't
->> want to mess with IIO when you bring up new platforms with bare minimum
->> kernels.
-> 
-> I don't think that is going to change anything. It's not like IIO brings
-> any complexity or will be compiled out.
-> 
-> But since you insist, I'll add it in the next version as a separate patch.
-> 
->>
->>>
->>>> - we should keep a single compatible, so simply update the current bindings with iio cells
->>> Using a new compatible allows to split the memory region, making the
->>> interface between DT and driver a lot easier to implement seemlessly
->>> between old and new SoCs. Eventually it may allow to implement the duty
->>> part too.
->>
->> It's a problem for new platforms, you can introduce the split only for the
->> new ones, the impact on code won't high enough to justify new bindings.
->>
-> 
-> What you are requesting will introduce two drivers providing the same
-> compatible, unless you plan on removing the old one in a coordinated
-> way.
-> 
-> That's an unncessary churn. The old driver could stay there for a
-> while and platform slowly migrate. What you are requesting forcefully
-> migrates every consumer, assuming the old driver is compiled out.
-> 
-> This is an opportunity to more correctly describe the interface.
-> It does not break any DT rules, that is enough of a justification IMO.
+On Mon, 1 Jul 2024 at 09:26, zhaoxiong lv
+<lvzhaoxiong@huaqin.corp-partner.google.com> wrote:
+>
+> On Fri, Jun 21, 2024 at 9:43=E2=80=AFAM zhaoxiong lv
+> <lvzhaoxiong@huaqin.corp-partner.google.com> wrote:
+> >
+> > On Fri, Jun 21, 2024 at 3:56=E2=80=AFAM Dmitry Baryshkov
+> > <dmitry.baryshkov@linaro.org> wrote:
+> > >
+> > > On Thu, Jun 20, 2024 at 07:52:45PM GMT, Zhaoxiong Lv wrote:
+> > > > The bias IC of this starry-er88577 panel is placed
+> > > > on the panel side, so when the panel is powered on,
+> > > > there is no need to control AVDD and AVEE in the driver,
+> > > > only 3.3v and reset are needed.
+> > > >
+> > > > Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google=
+.com>
+> > > > ---
+> > > > Chage since V3:
+> > > > -  1. Adjust the ".clock" assignment format.
+> > > >
+> > > > v3: https://lore.kernel.org/all/20240614145609.25432-3-lvzhaoxiong@=
+huaqin.corp-partner.google.com/
+> > > >
+> > > > Chage since V3:
+> > > > -  Separate Starry-er88577 from the panel-kingdisplay-kd101ne3 driv=
+er.
+> > > > -  Use mipi_dsi_dcs_set_display_on_multi().
+> > > > -  Use mipi_dsi_dcs_exit_sleep_mode_multi() and mipi_dsi_msleep().
+> > > >
+> > > > v2: https://lore.kernel.org/all/20240601084528.22502-5-lvzhaoxiong@=
+huaqin.corp-partner.google.com/
+> > > >
+> > > > Chage since V2:
+> > > > -  Add compatible for Starry er88577 in panel-kingdisplay-kd101ne3 =
+drivers.
+> > > >
+> > > > ---
+> > > >  drivers/gpu/drm/panel/Kconfig                |   9 +
+> > > >  drivers/gpu/drm/panel/Makefile               |   1 +
+> > > >  drivers/gpu/drm/panel/panel-starry-er88577.c | 343 +++++++++++++++=
+++++
+> > > >  3 files changed, 353 insertions(+)
+> > > >  create mode 100644 drivers/gpu/drm/panel/panel-starry-er88577.c
+> > > >
+> > > > diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/=
+Kconfig
+> > > > index e54f6f5604ed..a52aa2552ab8 100644
+> > > > --- a/drivers/gpu/drm/panel/Kconfig
+> > > > +++ b/drivers/gpu/drm/panel/Kconfig
+> > > > @@ -781,6 +781,15 @@ config DRM_PANEL_SITRONIX_ST7789V
+> > > >         Say Y here if you want to enable support for the Sitronix
+> > > >         ST7789V controller for 240x320 LCD panels
+> > > >
+> > > > +config DRM_PANEL_STARRY_ER88577
+> > > > +     tristate "Starry er88577 panel"
+> > > > +     depends on OF
+> > > > +     depends on DRM_MIPI_DSI
+> > > > +     depends on BACKLIGHT_CLASS_DEVICE
+> > > > +     help
+> > > > +       Say Y if you want to enable support for panels based on the
+> > > > +       Starry er88577 controller.
+> > > > +
+> > > >  config DRM_PANEL_SONY_ACX565AKM
+> > > >       tristate "Sony ACX565AKM panel"
+> > > >       depends on GPIOLIB && OF && SPI
+> > > > diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel=
+/Makefile
+> > > > index f0203f6e02f4..ecd843a6dc6e 100644
+> > > > --- a/drivers/gpu/drm/panel/Makefile
+> > > > +++ b/drivers/gpu/drm/panel/Makefile
+> > > > @@ -81,6 +81,7 @@ obj-$(CONFIG_DRM_PANEL_SHARP_LS060T1SX01) +=3D pa=
+nel-sharp-ls060t1sx01.o
+> > > >  obj-$(CONFIG_DRM_PANEL_SITRONIX_ST7701) +=3D panel-sitronix-st7701=
+.o
+> > > >  obj-$(CONFIG_DRM_PANEL_SITRONIX_ST7703) +=3D panel-sitronix-st7703=
+.o
+> > > >  obj-$(CONFIG_DRM_PANEL_SITRONIX_ST7789V) +=3D panel-sitronix-st778=
+9v.o
+> > > > +obj-$(CONFIG_DRM_PANEL_STARRY_ER88577) +=3D panel-starry-er88577.o
+> > > >  obj-$(CONFIG_DRM_PANEL_SYNAPTICS_R63353) +=3D panel-synaptics-r633=
+53.o
+> > > >  obj-$(CONFIG_DRM_PANEL_SONY_ACX565AKM) +=3D panel-sony-acx565akm.o
+> > > >  obj-$(CONFIG_DRM_PANEL_SONY_TD4353_JDI) +=3D panel-sony-td4353-jdi=
+.o
+> > > > diff --git a/drivers/gpu/drm/panel/panel-starry-er88577.c b/drivers=
+/gpu/drm/panel/panel-starry-er88577.c
+> > > > new file mode 100644
+> > > > index 000000000000..e6088262ee69
+> > > > --- /dev/null
+> > > > +++ b/drivers/gpu/drm/panel/panel-starry-er88577.c
+> > > > @@ -0,0 +1,343 @@
+> > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > +/* Panels based on the ER88577 display controller.
+> > > > + * Author: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.co=
+m>
+> > > > + */
+> > > > +
+> > > > +#include <linux/delay.h>
+> > > > +#include <linux/gpio/consumer.h>
+> > > > +#include <linux/module.h>
+> > > > +#include <linux/of.h>
+> > > > +#include <linux/regulator/consumer.h>
+> > > > +
+> > > > +#include <drm/drm_connector.h>
+> > > > +#include <drm/drm_crtc.h>
+> > > > +#include <drm/drm_mipi_dsi.h>
+> > > > +#include <drm/drm_panel.h>
+> > > > +
+> > > > +#include <video/mipi_display.h>
+> > > > +#include <drm/drm_probe_helper.h>
+> > > > +
+> > > > +struct starry_panel;
+> > > > +
+> > > > +struct panel_desc {
+> > > > +     const struct drm_display_mode *modes;
+> > > > +     unsigned int bpc;
+> > > > +     unsigned long mode_flags;
+> > > > +     enum mipi_dsi_pixel_format format;
+> > > > +     const struct panel_init_cmd *init_cmds;
+> > > > +     int (*init)(struct starry_panel *starry);
+> > > > +     unsigned int lanes;
+> > > > +     bool discharge_on_disable;
+> > > > +     bool lp11_before_reset;
+> > > > +     unsigned int power_off_delay_ms;
+> > > > +};
+> > > > +
+> > > > +struct starry_panel {
+> > > > +     struct drm_panel base;
+> > > > +     struct mipi_dsi_device *dsi;
+> > > > +
+> > > > +     const struct panel_desc *desc;
+> > > > +
+> > > > +     enum drm_panel_orientation orientation;
+> > > > +     struct regulator *vccio;
+> > > > +     struct gpio_desc *reset;
+> > > > +};
+> > > > +
+> > > > +static int starry_er88577_init(struct starry_panel *starry)
+> > > > +{
+> > > > +     struct mipi_dsi_multi_context dsi_ctx =3D { .dsi =3D starry->=
+dsi };
+> > > > +
+> > > > +     /* T5:HWreset to init_code >=3D 120ms */
+> > > > +     mipi_dsi_msleep(dsi_ctx, 120);
+> > > > +
+> > > > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe0, 0xab, 0xba);
+> > > > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe1, 0xba, 0xab);
+> > > > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb1, 0x10, 0x01, 0x47=
+, 0xff);
+> > > > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb2, 0x0c, 0x14, 0x04=
+, 0x50, 0x50, 0x14);
+> > > > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb3, 0x56, 0x53, 0x00=
+);
+> > > > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb4, 0x33, 0x30, 0x04=
+);
+> > > > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb6, 0xb0, 0x00, 0x00=
+, 0x10, 0x00, 0x10, 0x00);
+> > > > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb8, 0x05, 0x12, 0x29=
+, 0x49, 0x40);
+> > > > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb9, 0x7c, 0x61, 0x4f=
+, 0x42, 0x3e, 0x2d, 0x31,
+> > > > +                                  0x1a, 0x33, 0x33, 0x33, 0x52, 0x=
+40, 0x47, 0x38, 0x34, 0x26,
+> > > > +                                  0x0e, 0x06, 0x7c, 0x61, 0x4f, 0x=
+42, 0x3e, 0x2d, 0x31, 0x1a,
+> > > > +                                  0x33, 0x33, 0x33, 0x52, 0x40, 0x=
+47, 0x38, 0x34, 0x26, 0x0e,
+> > > > +                                  0x06);
+> > > > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc0, 0xcc, 0x76, 0x12=
+, 0x34, 0x44, 0x44, 0x44,
+> > > > +                                  0x44, 0x98, 0x04, 0x98, 0x04, 0x=
+0f, 0x00, 0x00, 0xc1);
+> > > > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc1, 0x54, 0x94, 0x02=
+, 0x85, 0x9f, 0x00, 0x6f,
+> > > > +                                  0x00, 0x54, 0x00);
+> > > > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc2, 0x17, 0x09, 0x08=
+, 0x89, 0x08, 0x11, 0x22,
+> > > > +                                  0x20, 0x44, 0xff, 0x18, 0x00);
+> > > > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc3, 0x87, 0x47, 0x05=
+, 0x05, 0x1c, 0x1c, 0x1d,
+> > > > +                                  0x1d, 0x02, 0x1e, 0x1e, 0x1f, 0x=
+1f, 0x0f, 0x0f, 0x0d, 0x0d,
+> > > > +                                  0x13, 0x13, 0x11, 0x11, 0x24);
+> > > > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc4, 0x06, 0x06, 0x04=
+, 0x04, 0x1c, 0x1c, 0x1d,
+> > > > +                                  0x1d, 0x02, 0x1e, 0x1e, 0x1f, 0x=
+1f, 0x0e, 0x0e, 0x0c, 0x0c,
+> > > > +                                  0x12, 0x12, 0x10, 0x10, 0x24);
+> > > > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc8, 0x21, 0x00, 0x31=
+, 0x42, 0x34, 0x16);
+> > > > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xca, 0xcb, 0x43);
+> > > > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xcd, 0x0e, 0x4b, 0x4b=
+, 0x20, 0x19, 0x6b, 0x06,
+> > > > +                                  0xb3);
+> > > > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xd2, 0xe3, 0x2b, 0x38=
+, 0x08);
+> > > > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xd4, 0x00, 0x01, 0x00=
+, 0x0e, 0x04, 0x44, 0x08,
+> > > > +                                  0x10, 0x00, 0x00, 0x00);
+> > > > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe6, 0x80, 0x09, 0xff=
+, 0xff, 0xff, 0xff, 0xff,
+> > > > +                                  0xff);
+> > > > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf0, 0x12, 0x03, 0x20=
+, 0x00, 0xff);
+> > > > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf3, 0x00);
+> > >
+> > > NAK.
+> > >
+> > > This sequence looks _exactly_ like the sequence in
+> > > panel-boe-th101mb31ig002-28a.c.
+> > >
+> > Hi Dmity
+> >
+> > We checked the panel-boe-th101mb31ig002-28a.c driver. The init_code is
+> > indeed very similar, but the ICs seem to be different from the names,
+> > and our panels and timings are also different. Do you want us to add
+> > compatibility with Starry in this driver
+> > panel-boe-th101mb31ig002-28a.c?
+> >
+> > thanks
+> >
+> hi dmitry.baryshkov
+>
+> We tried to make modifications based on the
+> panel-boe-th101mb31ig002-28a.c driver, but we encountered some
+> problems.
+> For example, the panel-boe-th101mb31ig002-28a.c driver will get
+> "enable/reset" gpio in the probe() function, but our hardware design
+> only has "enable". This will cause an error to be returned in the
+> devm_gpiod_get function when we use this driver and the probe()
+> function will be interrupted.
+> How should we modify this? Can we re-judge the return value of the
+> devm_gpiod_get function?
 
-DT describes the Hardware, I don't see how the new bindings describes better
-the current hardware... tying the new bindings to a new driver is actually
-against the DT rules, the bindings thing is actually to avoid that.
-For PWM, bindings architecture was clearly wrong, but here, not really.
+If it is optional, then it should be devm_gpiod_get_optional().
 
-I still don't see the problem of migrating current users to the new driver
-using the current compatible, really, please explain what would be the problem ?
+>
+> thanks
+>
+> > > > +
+> > > > +     mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
+> > > > +
+> > > > +     mipi_dsi_msleep(dsi_ctx, 120);
+> > > > +
+> > > > +     mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
+> > > > +     mipi_dsi_msleep(dsi_ctx, 20);
+> > > > +
+> > > > +     return dsi_ctx.accum_err;
+> > >
+> > > --
+> > > With best wishes
+> > > Dmitry
 
-In any case you'll only need to add the #io-channel-cells to boards that would
-require frequency monitoring for eARC, for all the other boards you'll won't need it.
-So this property can safely be added as optional to the current bindings.
 
-Neil
 
-> 
->> Neil
->>
->>>
->>>> - for s4 & c3, it's ok to either add a second reg entry in the bindings
->>> Doing that for s4 and c3 only would still make a mess of offset handling
->>> the region because duty prepend the region on old SoC. The goal is to
->>> have an interface that seemlessly support both old and new SoCs.
->>>
->>>>
->>>> Neil
->>>>
->>>>> Everything that was available through the old driver still is, with more
->>>>> precision and more control.
->>>>>
->>>>>>
->>>>>> There's almost the same interface on qcom SoCs (https://github.com/linux-msm/debugcc) but
->>>>>> they chose to keep it in userspace until we find an appropriate way to expose
->>>>>> this from the kernel the right way.
->>>>>>
->>>>>> If it enabled us to monitor a frequency input for a product use-case, IIO would be
->>>>>> the appropriate interface, but AFAIK it's only internal clocks and thus I'm worried
->>>>>> it's not the best way to expose those clocks.
->>>>>>
->>>>>> Neil
->>>>>
->>>
-> 
-
+--=20
+With best wishes
+Dmitry
 
