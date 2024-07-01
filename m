@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-235637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A823B91D7C3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:57:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38D5691D7CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:58:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DF1F2856B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 05:57:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68CB61C22605
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 05:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F94445C18;
-	Mon,  1 Jul 2024 05:56:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C7E46436;
+	Mon,  1 Jul 2024 05:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OEz4M7Gs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jg1q0Pws"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440613D0C5;
-	Mon,  1 Jul 2024 05:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF78F383AC;
+	Mon,  1 Jul 2024 05:58:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719813418; cv=none; b=BcMRJmA+kIE+u6g4kHBmx4QwgBMiuOITSeYoianwVWFSsLT8xowZNvOCAg12fBFqvrGVEuXa2IjuJCha4C5BePF16M+FwuR0YVGpDJ1n4pUPDEn7cvZeeApQi/3D5B3/rVqqHcjPyUo2mMId+BCUsy/YyT6qOTq4N50yrHO/CUI=
+	t=1719813493; cv=none; b=U/BWJgP1IPdPIGUNYypgbhCddVrqn8OHKUqvIStDRUlWoRFNV8uiqZ7K3QEw0iJg24ikrZu3hUCfbLWaEL2Fs0FyDnfHBO7bj65Xs4g+Kg8nxHOlv8r3VdkHBJYAwem5G6dvBgGzKJbZkFvYIxFx6ZJQJcrr5DQqkgmWr2U8wj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719813418; c=relaxed/simple;
-	bh=ndCOuKt0DYt62n4PsC9t0wTAVT7ZtqIln7LC58W6I4A=;
+	s=arc-20240116; t=1719813493; c=relaxed/simple;
+	bh=EMwKRh9X5KAXNT4DR4ZK94kP0BMWhG9ZT78wnS0b3WM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Rey2fagR+OaDflUwbRsBtYTekcJeAx+hATSYnXUB1+HniK8l+jYYfY57ysVTTabs75MR0rYtTBeJjcXRMvgmE4wqQRM4FJxJC1IgBgveQLawiCGsIJR+lYXnKWlURwCXqcryN6vs0ua4LOyG58k89v9r2wJkX2arqFkZgNAqQ9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OEz4M7Gs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93291C116B1;
-	Mon,  1 Jul 2024 05:56:53 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=fNSmavznChfCJe9KEH/Eiop9DSMAg9k5GlFM2mfi6egtq+vZWEJOqUkNHEmxvGL8sBeGYDAkaPljGMzREXjbX1RiOLidJeWZ/e4eyNTDEY9TJE4Wy70hwSmciwWIYO2itj0mqqvBOYeMupKHMgu+M3YikKEGRvWw21Ttyl3HLls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jg1q0Pws; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4B4FC116B1;
+	Mon,  1 Jul 2024 05:58:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719813417;
-	bh=ndCOuKt0DYt62n4PsC9t0wTAVT7ZtqIln7LC58W6I4A=;
+	s=k20201202; t=1719813493;
+	bh=EMwKRh9X5KAXNT4DR4ZK94kP0BMWhG9ZT78wnS0b3WM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OEz4M7GsqkgUe7P6HitPdkxJx38RR0yVpqDA63AdiWvgJ/tel0McZJ3ACHFlafGrC
-	 9fP33DoCrQdGLtg9tvXxbdvIE8W99yz+J56nn1ufZOhyISWZbi/FPMm0zbKVBzf0hl
-	 vQhXyzGmEaeMqrGHgiwFYfUHvhmLLrCKIYkbIC1oDV1+tjGoxEioIsWb5sCQJBLgiO
-	 80z9aR7K2o2FVx660xyAO16RGHQsO86FyCsWbOnjgjaU+rpcgvtWX3Ag8OhtOdeNF+
-	 Il/w9u4xgoh+IrhRIFqLnQwjcGy5VoDt1zxLQIB55q5jcQI2WAWKIG0f3/MEka6808
-	 uqs9WaBtZCocQ==
-Message-ID: <f9a37a44-fd24-4e35-ba74-5664da0ff080@kernel.org>
-Date: Mon, 1 Jul 2024 07:56:50 +0200
+	b=jg1q0Pws46FsdAG6N8d2VrcHT1r6y9Zt+Y3ZysXhBaID5Hd9uyK+tfDyFG0l56dY9
+	 g+qDLiNNc0Tq0oZYIJjAWcciU7sJjFK/bgU+4qo3IXjkyEgL9ZoJW8EoNUl6T80YXA
+	 R7yfegItaMuiS9Pox/+LDgEqEwhSChXr7jTGOVsBkbGOcEsrOWpEKZGs8tjefy4jP3
+	 Nie7D4yoUrJyJNcswLvx0oYFn7mvWTYwOXzuc2Rx9Dt3oxRiX4VZcU2qrkwSFwhyCM
+	 ErjbdR2Ea71Mu+MsQBYhhb+h4p+5OBDl3HMcRyMxducd6RwjlGGJivplTasA7Q2gLo
+	 5i7dOESQKx9RQ==
+Message-ID: <e02dc084-1e69-4231-b191-3605c68b53f4@kernel.org>
+Date: Mon, 1 Jul 2024 07:58:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,18 +49,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings: arm: qcom: Add ASUS Vivobook S 15
-To: wuxilin123@gmail.com, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>,
- Johan Hovold <johan+linaro@kernel.org>,
- Elliot Berman <quic_eberman@quicinc.com>
-References: <20240701-asus-vivobook-s15-v4-0-ce7933b4d4e5@gmail.com>
- <20240701-asus-vivobook-s15-v4-1-ce7933b4d4e5@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 1/2] dt-bindings: mmc: nuvoton,ma35d1-sdhci: Document
+ MA35D1 SDHCI controller
+To: Shan-Chun Hung <shanchun1218@gmail.com>, ulf.hansson@linaro.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ adrian.hunter@intel.com, p.zabel@pengutronix.de, pbrobinson@gmail.com,
+ serghox@gmail.com, mcgrof@kernel.org,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, forbidden405@outlook.com,
+ tmaimon77@gmail.com, andy.shevchenko@gmail.com,
+ linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: ychuang3@nuvoton.com, schung@nuvoton.com
+References: <20240701003913.729428-1-shanchun1218@gmail.com>
+ <20240701003913.729428-2-shanchun1218@gmail.com>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -104,16 +107,30 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240701-asus-vivobook-s15-v4-1-ce7933b4d4e5@gmail.com>
+In-Reply-To: <20240701003913.729428-2-shanchun1218@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 01/07/2024 05:05, Xilin Wu via B4 Relay wrote:
-> From: Xilin Wu <wuxilin123@gmail.com>
+On 01/07/2024 02:39, Shan-Chun Hung wrote:
+> Add binding for Nuvoton MA35D1 SDHCI controller.
 > 
-> Add the compatible for this device.
+> Signed-off-by: Shan-Chun Hung <shanchun1218@gmail.com>
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+You ignored comment third time.
+
+NAK.
+
+<form letter>
+This is a friendly reminder during the review process.
+
+It seems my or other reviewer's previous comments were not fully
+addressed. Maybe the feedback got lost between the quotes, maybe you
+just forgot to apply it. Please go back to the previous discussion and
+either implement all requested changes or keep discussing them.
+
+Thank you.
+</form letter>
+
 
 Best regards,
 Krzysztof
