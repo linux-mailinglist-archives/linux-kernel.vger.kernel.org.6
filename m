@@ -1,126 +1,235 @@
-Return-Path: <linux-kernel+bounces-235996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B654091DC34
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:17:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC28C91DC36
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:18:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5305D1F22003
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:17:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09A501C20DD9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:18:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DD612C52E;
-	Mon,  1 Jul 2024 10:17:49 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E823D12D74E;
+	Mon,  1 Jul 2024 10:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E1c6YrYJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85ADB381D9
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 10:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D108381D9;
+	Mon,  1 Jul 2024 10:18:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719829068; cv=none; b=ZU/kIFTQpGiw3XgwFy1pxXxtCLcZEih+DSl7PV2kVe11srV53wMaG3368MTWEWXrZrNL6rE/Ubw3rV2ErhCPu1WjtDCz0mct12MxUY7TuTOZ1SLakgk95ezawbjdLCsasN3c/z3XK6d2x1ggzqZmD3pn4BKEj0PMYbRljsGX+m8=
+	t=1719829123; cv=none; b=ovDNWYKU3oBLRRV3fXbowDR2/cPFuyDaoWWqienDZXiUMxxuKpfPFH9Q6a6hYAc/LJcuxkBbMPOYjM1koBhUz9HcqRS5snrDWjUhVDuOJxUwOsD1JJyWJKCkgiYkQlGpO15VBKayMDxnTPJb/SIpIEMcMgiY0uhIU9jhCBObVBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719829068; c=relaxed/simple;
-	bh=gD5VNciUmya9nnktxztF3YVxZqyKDZW7Eo+EKHt/dOI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ZQmfFaMUFYCqPADcc+5s5+t86ZHeZOICZhGzA3bmZmvLJPFrGXP21IzpBpvBV5NEDtH4wqbso4fgakoM5A9UafTKrt6dZ7zGcPiTITnkG1l1s7PrQM6y+7EDICX5hRzlr9FN5vPyaw+lPW9tqIzlDbQzNZ9OFk5nwrdkNRPKQns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7f6218c0d68so321644239f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 03:17:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719829066; x=1720433866;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=brX9ipQBvZqJcUy+uAGuKNo04VrHpo2fWqw9e458zqU=;
-        b=iyiWxS1W16hZvoVzxmgti1OhWHhzbXA6cYKhUSCy993L51trJqibLBNhGhL/z5mY8g
-         31KTs7xlwLbweHPxjxZMYkRf+zl6nsWF8AF3j5U/aa0KXxwgK3zdtImjc+VFq33pWhtg
-         FpzQwmWv6ee2rteb9++d0q/+YREuDacENdCP8HARpJkFQWl34cLUv3RW+L46Xm8aZCMS
-         WyDLGQCg72LxsD5Vtz6xItpPESIXD7T4rmy8dC2HfMQ1ISyB3gOvwnP+ONMegkmHCWRO
-         m93mcwjhIvx4tN6cwC2W67LrhVvy20Dh+rx8dqUQFEzTYqq5rF+83rMQY/0cDypvEAg/
-         4kZA==
-X-Gm-Message-State: AOJu0YzwJdFgx0ffhmd5Xe7jPNAEd+QC9MoO4zNH7oJI19MaUNlgKFOf
-	gBRoLlLJSBUjrIWx5n+kZ+2QW/C0o0nWApJKEyaZFcbeF2pwnz5ZveNKKFb751Lp7sf7LMN3kFE
-	xK3xAzsaAtS1W4u0QavvtWBy4DE9zaqC69Mybke2JSfZVvSYHeZwpi5A=
-X-Google-Smtp-Source: AGHT+IESwWqAFL0WRbaHYTHTs5/LZCYswVwyly+ZCxAmQva/cgh8xqdYM1LnCtyXF26nEVhuR+4CwwjD47E8sPyfHZAPgwRTeNi8
+	s=arc-20240116; t=1719829123; c=relaxed/simple;
+	bh=ClI/GouLZgq9UgNAOwvIcA2hQFqeT2XM0Y1uG/u+g5I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UA2FkQyErAb3iLGpGaUN9is/sHjkV5nDH/88o3BxIMQ1lAUZKeHMbE7GuGzHuctC1zldBmUOLWDhQpr3LIKRMR3KjUaUY0YKTzAQW8BKmIKs7PVEID3qP/dXN53jbvvQ0bBHTAlzGPDuQIX/sMKPz8eDd7VZ3AMbB3KinYP780Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E1c6YrYJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BE07C116B1;
+	Mon,  1 Jul 2024 10:18:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719829122;
+	bh=ClI/GouLZgq9UgNAOwvIcA2hQFqeT2XM0Y1uG/u+g5I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E1c6YrYJ5LrQEyQatQV0jlyhxgbpgecIc74o5QU2Avzs+zQ/iQI51dJlqJVJqCD7B
+	 2yiuW+mkdEPbbs2nYAN3N+8W1Ml4D1m42/c2XSsABWPcTadtIiz8RREH8W8XvwMsqf
+	 R9C4xL/lSVTHJvoDnMOo5wrZ/t8rNbSZV111z2gwcaLE3WrG5ZpLb7L+fnsoqZ71Px
+	 CiM1lyR7ms0sgS5xW1n6Q0WdCOszij30OTVzOlPLnf10gEZI71RUcUqLvmXlDg0A3c
+	 Y1jI9/Mn8hUuvSJGUYxxA2wz2gwHNmVG4Jhs0kqd9itBgF8kB5Pz3olwtjXK5v1YWF
+	 djkFvhsoqXXzQ==
+Date: Mon, 1 Jul 2024 12:18:31 +0200
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	maz@kernel.org, anna-maria@linutronix.de, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com,
+	rdunlap@infradead.org, vidyas@nvidia.com,
+	ilpo.jarvinen@linux.intel.com, apatel@ventanamicro.com,
+	kevin.tian@intel.com, nipun.gupta@amd.com, den@valinux.co.jp,
+	andrew@lunn.ch, gregory.clement@bootlin.com,
+	sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org,
+	rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org,
+	lorenzo.pieralisi@arm.com, jgg@mellanox.com,
+	ammarfaizi2@gnuweeb.org, robin.murphy@arm.com, nm@ti.com,
+	kristo@kernel.org, vkoul@kernel.org, okaya@kernel.org,
+	agross@kernel.org, andersson@kernel.org, mark.rutland@arm.com,
+	shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com,
+	shivamurthy.shastri@linutronix.de
+Subject: Re: [patch V4 02/21] irqchip: Provide irq-msi-lib
+Message-ID: <ZoKCd5t5yoMkee0a@lpieralisi>
+References: <20240623142137.448898081@linutronix.de>
+ <20240623142234.840975799@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1511:b0:7f6:1b69:a0cc with SMTP id
- ca18e2360f4ac-7f62eeab21fmr29792939f.4.1719829065732; Mon, 01 Jul 2024
- 03:17:45 -0700 (PDT)
-Date: Mon, 01 Jul 2024 03:17:45 -0700
-In-Reply-To: <000000000000fb15d306134ae036@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000089ab17061c2ce84a@google.com>
-Subject: Re: [syzbot] [syzbot] [bpf?] [net?] KMSAN: uninit-value in bpf_prog_test_run_xdp
-From: syzbot <syzbot+6856926fbb5e9b794e5c@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240623142234.840975799@linutronix.de>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Sun, Jun 23, 2024 at 05:18:34PM +0200, Thomas Gleixner wrote:
 
-***
+[...]
 
-Subject: [syzbot] [bpf?] [net?] KMSAN: uninit-value in bpf_prog_test_run_xdp
-Author: wojciech.gladysz@infogain.com
+> diff --git a/drivers/irqchip/irq-msi-lib.c b/drivers/irqchip/irq-msi-lib.c
+> new file mode 100644
+> index 000000000000..acbccf8f7f5b
+> --- /dev/null
+> +++ b/drivers/irqchip/irq-msi-lib.c
+> @@ -0,0 +1,112 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +// Copyright (C) 2022 Linutronix GmbH
+> +// Copyright (C) 2022 Intel
+> +
+> +#include <linux/export.h>
+> +
+> +#include "irq-msi-lib.h"
+> +
+> +/**
+> + * msi_lib_init_dev_msi_info - Domain info setup for MSI domains
+> + * @dev:		The device for which the domain is created for
+> + * @domain:		The domain providing this callback
+> + * @real_parent:	The real parent domain of the domain to be initialized
+> + *			which might be a domain built on top of @domain or
+> + *			@domain itself
+> + * @info:		The domain info for the domain to be initialize
+> + *
+> + * This function is to be used for all types of MSI domains above the root
+> + * parent domain and any intermediates. The topmost parent domain specific
+> + * functionality is determined via @real_parent.
+> + *
+> + * All intermediate domains between the root and the device domain must
+> + * have either msi_parent_ops.init_dev_msi_info = msi_parent_init_dev_msi_info
+> + * or invoke it down the line.
+> + */
+> +bool msi_lib_init_dev_msi_info(struct device *dev, struct irq_domain *domain,
+> +			       struct irq_domain *real_parent,
+> +			       struct msi_domain_info *info)
+> +{
+> +	const struct msi_parent_ops *pops = real_parent->msi_parent_ops;
+> +
+> +	/*
+> +	 * MSI parent domain specific settings. For now there is only the
+> +	 * root parent domain, e.g. NEXUS, acting as a MSI parent, but it is
+> +	 * possible to stack MSI parents. See x86 vector -> irq remapping
+> +	 */
+> +	if (domain->bus_token == pops->bus_select_token) {
+> +		if (WARN_ON_ONCE(domain != real_parent))
+> +			return false;
+> +	} else {
+> +		WARN_ON_ONCE(1);
+> +		return false;
+> +	}
+> +
+> +	/* Parent ops available? */
+> +	if (WARN_ON_ONCE(!pops))
 
-#syz test: https://linux.googlesource.com/linux/kernel/git/torvalds/linux e478cf26c556e4ab572ab0ab2306c986901dcd61
+We have already dereferenced pops above, we should move this warning
+before we dereference it (ie checked devmsi-arm-v4-2 too - branch same
+comment applies there too).
 
----
- kernel/bpf/verifier.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+Thanks
+Lorenzo
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 36ef8e96787e..13a9c2e2908a 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -7146,8 +7146,8 @@ static int check_stack_range_initialized(
- 		 * reads. However, if raw_mode is not set, we'll do extra
- 		 * checks below.
- 		 */
--		bounds_check_type = BPF_WRITE;
--		clobber = true;
-+		clobber = !meta || meta->raw_mode;
-+		bounds_check_type = clobber ? BPF_WRITE : BPF_READ;
- 	} else {
- 		bounds_check_type = BPF_READ;
- 	}
-@@ -7230,8 +7230,7 @@ static int check_stack_range_initialized(
- 		stype = &state->stack[spi].slot_type[slot % BPF_REG_SIZE];
- 		if (*stype == STACK_MISC)
- 			goto mark;
--		if ((*stype == STACK_ZERO) ||
--		    (*stype == STACK_INVALID && env->allow_uninit_stack)) {
-+		if (*stype == STACK_ZERO) {
- 			if (clobber) {
- 				/* helper can write anything into the stack */
- 				*stype = STACK_MISC;
-@@ -8748,6 +8747,8 @@ static int check_func_arg(struct bpf_verifier_env *env, u32 arg,
- 		meta->map_uid = reg->map_uid;
- 		break;
- 	case ARG_PTR_TO_MAP_KEY:
-+		/* always mark read access */
-+		meta->raw_mode = false;
- 		/* bpf_map_xxx(..., map_ptr, ..., key) call:
- 		 * check that [key, key + map->key_size) are within
- 		 * stack limits and initialized
-@@ -8763,7 +8764,7 @@ static int check_func_arg(struct bpf_verifier_env *env, u32 arg,
- 		}
- 		err = check_helper_mem_access(env, regno,
- 					      meta->map_ptr->key_size, false,
--					      NULL);
-+					      meta);
- 		break;
- 	case ARG_PTR_TO_MAP_VALUE:
- 		if (type_may_be_null(arg_type) && register_is_null(reg))
--- 
-2.35.3
+> +		return false;
+> +
+> +	/* Is the target domain bus token supported? */
+> +	switch(info->bus_token) {
+> +	default:
+> +		/*
+> +		 * This should never be reached. See
+> +		 * msi_lib_irq_domain_select()
+> +		 */
+> +		WARN_ON_ONCE(1);
+> +		return false;
+> +	}
+> +
+> +	/*
+> +	 * Mask out the domain specific MSI feature flags which are not
+> +	 * supported by the real parent.
+> +	 */
+> +	info->flags			&= pops->supported_flags;
+> +	/* Enforce the required flags */
+> +	info->flags			|= pops->required_flags;
+> +
+> +	/* Chip updates for all child bus types */
+> +	if (!info->chip->irq_eoi)
+> +		info->chip->irq_eoi	= irq_chip_eoi_parent;
+> +
+> +	/*
+> +	 * The device MSI domain can never have a set affinity callback. It
+> +	 * always has to rely on the parent domain to handle affinity
+> +	 * settings. The device MSI domain just has to write the resulting
+> +	 * MSI message into the hardware which is the whole purpose of the
+> +	 * device MSI domain aside of mask/unmask which is provided e.g. by
+> +	 * PCI/MSI device domains.
+> +	 */
+> +	info->chip->irq_set_affinity	= msi_domain_set_affinity;
+> +	return true;
+> +}
+> +EXPORT_SYMBOL_GPL(msi_lib_init_dev_msi_info);
+> +
+> +/**
+> + * msi_lib_irq_domain_select - Shared select function for NEXUS domains
+> + * @d:		Pointer to the irq domain on which select is invoked
+> + * @fwspec:	Firmware spec describing what is searched
+> + * @bus_token:	The bus token for which a matching irq domain is looked up
+> + *
+> + * Returns:	%0 if @d is not what is being looked for
+> + *
+> + *		%1 if @d is either the domain which is directly searched for or
+> + *		   if @d is providing the parent MSI domain for the functionality
+> + *			 requested with @bus_token.
+> + */
+> +int msi_lib_irq_domain_select(struct irq_domain *d, struct irq_fwspec *fwspec,
+> +			      enum irq_domain_bus_token bus_token)
+> +{
+> +	const struct msi_parent_ops *ops = d->msi_parent_ops;
+> +	u32 busmask = BIT(bus_token);
+> +
+> +	if (fwspec->fwnode != d->fwnode || fwspec->param_count != 0)
+> +		return 0;
+> +
+> +	/* Handle pure domain searches */
+> +	if (bus_token == ops->bus_select_token)
+> +		return 1;
+> +
+> +	return ops && !!(ops->bus_select_mask & busmask);
+> +}
+> +EXPORT_SYMBOL_GPL(msi_lib_irq_domain_select);
+> diff --git a/drivers/irqchip/irq-msi-lib.h b/drivers/irqchip/irq-msi-lib.h
+> new file mode 100644
+> index 000000000000..f0706cc28264
+> --- /dev/null
+> +++ b/drivers/irqchip/irq-msi-lib.h
+> @@ -0,0 +1,19 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +// Copyright (C) 2022 Linutronix GmbH
+> +// Copyright (C) 2022 Intel
+> +
+> +#ifndef _DRIVERS_IRQCHIP_IRQ_MSI_LIB_H
+> +#define _DRIVERS_IRQCHIP_IRQ_MSI_LIB_H
+> +
+> +#include <linux/bits.h>
+> +#include <linux/irqdomain.h>
+> +#include <linux/msi.h>
+> +
+> +int msi_lib_irq_domain_select(struct irq_domain *d, struct irq_fwspec *fwspec,
+> +			      enum irq_domain_bus_token bus_token);
+> +
+> +bool msi_lib_init_dev_msi_info(struct device *dev, struct irq_domain *domain,
+> +			       struct irq_domain *real_parent,
+> +			       struct msi_domain_info *info);
+> +
+> +#endif /* _DRIVERS_IRQCHIP_IRQ_MSI_LIB_H */
+> -- 
+> 2.34.1
+> 
+> 
 
