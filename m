@@ -1,208 +1,128 @@
-Return-Path: <linux-kernel+bounces-236168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 145B291DE5B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:52:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1B3591DE5E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:53:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B7811F24CEA
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:52:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 695A5280F3D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:53:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70B713E41A;
-	Mon,  1 Jul 2024 11:52:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8C71148841;
+	Mon,  1 Jul 2024 11:53:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="Lns3VcSB";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KVfk/c8N"
-Received: from fout1-smtp.messagingengine.com (fout1-smtp.messagingengine.com [103.168.172.144])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BhewBGw3"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1AFE1422A6
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 11:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9119313E41A;
+	Mon,  1 Jul 2024 11:52:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719834738; cv=none; b=bunqfM90ETfGF0b+IAs6kNH4eDwZtwF9+QW9CoTnNatRRnHSdhfrz2vc5W4r954Cze9/wUXTaFdwK4NC00yFLQjyYLubN7F6xGGjULnSznKl4k1oaKnOVfZllf4d5T1dIu4utHObfvbQwr4Y92ND9Sxw3qeOjSfzQqKVkiFfoqI=
+	t=1719834780; cv=none; b=JuglEigjtgWLBcHkEuqHOs9xSYC57kAJK/1q1obl2LIqo3NbTQcbRlGsIWqnMGZUC8aplEeCQdsguFsCzG0JtrQardKLhmkSwjUFIvhFPYZADAIYdJFO63enE74yHiT9otL0gIYwQ1bFh0cUBuKZaQTXDO6NadGAWo3zDHl5mSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719834738; c=relaxed/simple;
-	bh=kNOY7/+Q/njqICMWa7+fJvzJfYXfzuWsQVLQL7JFPB4=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=Mp3mTxr9i5HRtRo+sQjmjD/vs4asN75Zq0/U6rqNJX3n74jlZU3xlmSUGdrYZ3dpi5R7c9T7pQbykfzNl7Y8lxbD7/T6tvYQD+zib2V/R3JrF7Z3FtGjLKgOhXZkkIYKIur+CKr9ZDd+M4X1myx9y99xuWwiXJFdPDd2xbSsxks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=Lns3VcSB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=KVfk/c8N; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfout.nyi.internal (Postfix) with ESMTP id DA8F513800E9;
-	Mon,  1 Jul 2024 07:52:15 -0400 (EDT)
-Received: from imap44 ([10.202.2.94])
-  by compute3.internal (MEProxy); Mon, 01 Jul 2024 07:52:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1719834735;
-	 x=1719921135; bh=yQ2Uekak3fLHx8n+LIQh8xrvvbDHZHUg0ffeSdLr49M=; b=
-	Lns3VcSBr6IuqkwNBwTJD/UceJam5b8r1ixsEwOmQ0AsYHx1HnmGCI5dK2XAPUpY
-	lzlBHrHOLQva4n3mqw7BsPCDVxf/ZLyqypIjY60cIxHtsK9eu2JOzzgTQRHAw2T4
-	37lt7zqdnoOyuQJjFJtKeR8r5b43qAbgdnscMa2+RRa2l1PO55Tjk+hyPmBTDN3m
-	4oYGK8mvxk9QvyVEL/tnrHYZ5qedtzuDGEhG6f0jfeN6RVTU0OyvcRJiCTSbDBjJ
-	/tftaeAgzuTX77wwxPWebdp24iQXf8rxci1Rd3/uBVPiimZcjivXhN6b/PZRBqZu
-	Nd4pcOstA9gmJ0Klm7DVdg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1719834735; x=
-	1719921135; bh=yQ2Uekak3fLHx8n+LIQh8xrvvbDHZHUg0ffeSdLr49M=; b=K
-	Vfk/c8NgtsC3hHOjxxyDQKD+ohYkwlhH1BTRPyTKL0KLswHAZwRMkk+RBFpSl7E9
-	k8JUE8L0IBDvebPTGrpo8r7leOJK6IE0kHTkj+FbnSuup4ORkbE7eLhaFeaGrCjv
-	ZYKNAK169pwEvpESioTE2cmxUWlkk03ZCctZQLcc2g33wK6VH4iu5+FG+vBvwyv1
-	5vE9WdVvfMVzf4zT9bpb9DDYvT7Poyicnnk+nowQxiDmjyMhBWWSj+jJT45c62hd
-	fJuE8Hf+cs3/PXwVARRAbGFATpQyBdYzp8LwrZ9ASB7tQbf8zj2Jce+15lI+XZBl
-	mC5oZ1RvZua/ASpPGAnGw==
-X-ME-Sender: <xms:b5iCZlrA3_kht3xIlMIa5p3iKfZrGCUpWBJaoLogFnyegBYYJOMXyw>
-    <xme:b5iCZnreAxLg4NsOHQ8BqcCFZFm0reYJ-HuWlPLlsVBjBVyUgw6kghNo4cJok2pBz
-    hhK7Yyc3bWsdELFDfo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudefgdeggecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedflfhi
-    rgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
-    eqnecuggftrfgrthhtvghrnhepudefgeeftedugeehffdtheefgfevffelfefghefhjeeu
-    geevtefhudduvdeihefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
-    hilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
-X-ME-Proxy: <xmx:b5iCZiOuXwHzp7BnRddIDrWIEMXTuPKOmgr1Y_g-I58MvY-QpUTZtg>
-    <xmx:b5iCZg4DWLPlw-lewLOlISxKY9sqhGrbDyIJVEBDKxMo2T5-8sMyYA>
-    <xmx:b5iCZk6lY6B8iIGO9ZzvDtfP8vMfiQMAxsJnsZ5ndRxpkSAdlLPBPQ>
-    <xmx:b5iCZogSwFkjfZe3H25_OmZ-u6V5PeANHk4awxEDaMeGeMOoGsotGg>
-    <xmx:b5iCZlEDzPh3jrUvmpyMCVlSvsJ9FqoO7bM5NRN6HHmbLkbktBRpb4UJ>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 160B836A0074; Mon,  1 Jul 2024 07:52:15 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-566-g3812ddbbc-fm-20240627.001-g3812ddbb
+	s=arc-20240116; t=1719834780; c=relaxed/simple;
+	bh=vC8Wg9uyPfH19TAKIkd6tsMzMiqvNHuFYvYVi4ccAu8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Vko81qaKBU86fG2DwzeMgv1YkG/pArwuGBw0u5r+ls+6HgYm9AuOYTW14cxSatlYOKIavvk/IPuS+0g+NW3wV27kR7HsAn1ZGhNa3t+47/P8ZKW4ikLTdMphSIYnqcBVEBCGWrAq26qcXzi6yYF6mC8OvcoR6i5g19qAJOGB7DY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BhewBGw3; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 461Ajnux032262;
+	Mon, 1 Jul 2024 11:52:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=rLzwaptejh6PMQlRjVqQkJ
+	NdM424sEKrpESq6j0uD6U=; b=BhewBGw3XqUnDb2T25zqmCLv+yGyvitpRRX1YF
+	ve/JFcV8unjHGi+qnyKqhC/0cKdxoJrPDfDsoiuPrp1NZXE6/mTdmYGpLkpp10uZ
+	vxnZw54bd8lSMqRAt6UeTIur2l3EcA1Q1qcQ6xKlt0neb90AsnNEUWRo/p6kzGC1
+	qGoLpjEyf3iWfWRhunrr/gwTNwBlPHZN2QmGRn0/KYzDlDFeFYxANbuFMLjCmQ3U
+	dqMntvBFYqRdDdBfAeqmMZ7UUYoqucRKmHtDRqJbUVv6ZBtUW1K2Q2syjLq1tnGh
+	Er6w9yCJGZw73+OCTIW+1KRUo6HYW9wthdyY3YPp4NM9Vskg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 402an743dp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 01 Jul 2024 11:52:50 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 461BqnuO016675
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 1 Jul 2024 11:52:49 GMT
+Received: from hu-ekangupt-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 1 Jul 2024 04:52:45 -0700
+From: Ekansh Gupta <quic_ekangupt@quicinc.com>
+To: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>
+CC: <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
+        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
+        <dri-devel@lists.freedesktop.org>, <arnd@arndb.de>,
+        stable
+	<stable@kernel.org>
+Subject: [PATCH v3] misc: fastrpc: Increase max user PD initmem size
+Date: Mon, 1 Jul 2024 17:22:37 +0530
+Message-ID: <20240701115237.371020-1-quic_ekangupt@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <e9465468-b931-4171-8961-0f1ecd4a227e@app.fastmail.com>
-In-Reply-To: <7e30177b-ff13-4fed-aa51-47a9cbd5d572@amd.com>
-References: <20240629052247.2653363-1-uwu@icenowy.me>
- <20240629052247.2653363-3-uwu@icenowy.me>
- <a143a2c3-c6f0-4537-acc6-94f229f14639@app.fastmail.com>
- <2760BA02-8FF8-4B29-BFE2-1322B5BFB6EC@icenowy.me>
- <7e30177b-ff13-4fed-aa51-47a9cbd5d572@amd.com>
-Date: Mon, 01 Jul 2024 12:52:00 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- "Icenowy Zheng" <uwu@icenowy.me>, "Huang Rui" <ray.huang@amd.com>,
- "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
- "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>,
- "David Airlie" <airlied@gmail.com>, "Daniel Vetter" <daniel@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 2/2] drm/ttm: downgrade cached to write_combined when snooping
- not available
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: kkIkvsmszgf-RRkCTuNayolp_gphQoU3
+X-Proofpoint-ORIG-GUID: kkIkvsmszgf-RRkCTuNayolp_gphQoU3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-01_09,2024-06-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ clxscore=1015 adultscore=0 malwarescore=0 mlxlogscore=999 suspectscore=0
+ phishscore=0 bulkscore=0 spamscore=0 impostorscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2407010091
 
+For user PD initialization, initmem is allocated and sent to DSP for
+initial memory requirements like shell loading. This size is passed
+by user space and is checked against a max size. For unsigned PD
+offloading requirement, more than 2MB size could be passed by user
+which would result in PD initialization failure. Increase the maximum
+size that can be passed py user for user PD initmem allocation. Any
+additional memory sent to DSP during PD init is used as the PD heap.
 
+Fixes: 7f1f481263c3 ("misc: fastrpc: check before loading process to the DSP")
+Cc: stable <stable@kernel.org>
+Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+---
+Changes in v2:
+  - Modified commit text.
+  - Removed size check instead of updating max file size.
+Changes in v3:
+  - Added bound check again with a higher max size definition.
+  - Modified commit text accordingly.
 
-=E5=9C=A82024=E5=B9=B47=E6=9C=881=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8B=E5=
-=8D=8812:40=EF=BC=8CChristian K=C3=B6nig=E5=86=99=E9=81=93=EF=BC=9A
-[...]
->
-> Ah, wait a second.
->
-> Such a thing as non-coherent PCIe implementation doesn't exist. The PC=
-Ie=20
-> specification makes it mandatory for memory access to be cache coheren=
-t.
+ drivers/misc/fastrpc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-There are some non-PCIe TTM GPU being hit by this pitfall, we have non-c=
-oherent
-Vivante GPU on some devices.
+diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+index 5204fda51da3..11a230af0b10 100644
+--- a/drivers/misc/fastrpc.c
++++ b/drivers/misc/fastrpc.c
+@@ -38,7 +38,7 @@
+ #define FASTRPC_INIT_HANDLE	1
+ #define FASTRPC_DSP_UTILITIES_HANDLE	2
+ #define FASTRPC_CTXID_MASK (0xFF0)
+-#define INIT_FILELEN_MAX (2 * 1024 * 1024)
++#define INIT_FILELEN_MAX (5 * 1024 * 1024)
+ #define INIT_FILE_NAMELEN_MAX (128)
+ #define FASTRPC_DEVICE_NAME	"fastrpc"
+ 
+-- 
+2.34.1
 
-Handling it at TTM core makes more sense on reducing per-driver effort o=
-n dealing
-platform issues.
-
->
-> There are a bunch of non-compliant PCIe implementations which have=20
-> broken cache coherency, but those explicitly violate the specification=20
-> and because of that are not supported.
-
-I don't really understand, "doesn't exist" and "bunch of" seems to be co=
-ntradicting
-with each other.
-
->
-> Regards,
-> Christian.
->
->>>
->>> Unfortunately I don't think we can safely ttm_cached to ttm_write_co=
-mnined, we've
->>> had enough drama with write combine behaviour on all different platf=
-orms.
->>>
->>> See drm_arch_can_wc_memory in drm_cache.h.
->>>
->> Yes this really sounds like an issue.
->>
->> Maybe the behavior of ttm_write_combined should furtherly be decided
->> by drm_arch_can_wc_memory() in case of quirks?
-
-IMO for DMA mappings, use dma_pgprot at mapping makes more sense :-)
-
-Thanks=20
-- Jiaxun
->>
->>> Thanks
->>>
->>>> +
->>>>   	return ttm_prot_from_caching(caching, tmp);
->>>>   }
->>>>   EXPORT_SYMBOL(ttm_io_prot);
->>>> diff --git a/drivers/gpu/drm/ttm/ttm_tt.c b/drivers/gpu/drm/ttm/ttm=
-_tt.c
->>>> index 7b00ddf0ce49f..3335df45fba5e 100644
->>>> --- a/drivers/gpu/drm/ttm/ttm_tt.c
->>>> +++ b/drivers/gpu/drm/ttm/ttm_tt.c
->>>> @@ -152,6 +152,10 @@ static void ttm_tt_init_fields(struct ttm_tt *=
-ttm,
->>>>   			       enum ttm_caching caching,
->>>>   			       unsigned long extra_pages)
->>>>   {
->>>> +	/* Downgrade cached mapping for non-snooping devices */
->>>> +	if (!bo->bdev->dma_coherent && caching =3D=3D ttm_cached)
->>>> +		caching =3D ttm_write_combined;
->>>> +
->>>>   	ttm->num_pages =3D (PAGE_ALIGN(bo->base.size) >> PAGE_SHIFT) + e=
-xtra_pages;
->>>>   	ttm->page_flags =3D page_flags;
->>>>   	ttm->dma_address =3D NULL;
->>>> diff --git a/include/drm/ttm/ttm_caching.h b/include/drm/ttm/ttm_ca=
-ching.h
->>>> index a18f43e93abab..f92d7911f50e4 100644
->>>> --- a/include/drm/ttm/ttm_caching.h
->>>> +++ b/include/drm/ttm/ttm_caching.h
->>>> @@ -47,7 +47,8 @@ enum ttm_caching {
->>>>
->>>>   	/**
->>>>   	 * @ttm_cached: Fully cached like normal system memory, requires=
- that
->>>> -	 * devices snoop the CPU cache on accesses.
->>>> +	 * devices snoop the CPU cache on accesses. Downgraded to
->>>> +	 * ttm_write_combined when the snooping capaiblity is missing.
->>>>   	 */
->>>>   	ttm_cached
->>>>   };
->>>> --=20
->>>> 2.45.2
-
---=20
-- Jiaxun
 
