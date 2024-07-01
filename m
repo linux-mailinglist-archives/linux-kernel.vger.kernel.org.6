@@ -1,61 +1,89 @@
-Return-Path: <linux-kernel+bounces-236763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6F8791E6CF
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:42:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66B7A91E6D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:46:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93C5B282C23
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:42:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98EC81C21BE9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE3E16EB7E;
-	Mon,  1 Jul 2024 17:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562FD16EB6A;
+	Mon,  1 Jul 2024 17:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uFFaeB79"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K+YPqWk8"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47E42A1D3;
-	Mon,  1 Jul 2024 17:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B00B15A85F;
+	Mon,  1 Jul 2024 17:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719855749; cv=none; b=mn/EA+J2WkkOPbaFQXO2oixrIo08jRtaJi5vqfqaNjp/JGdUcsoVSLQb3OHMlBZYwX3+wM0RkSzJ8YZC93pBVLMEGlmjHzTHxuB/b6tHXYeOwVfmuvj1x/wIYnvOfVeh/JCiJpMR+sKXYql4FN5TYTz9sRQG6IpvtoSCBld6R7k=
+	t=1719855974; cv=none; b=OuapL7ILKrGFxQL/ioks8Ckk59N8bxOoYinzqjMLw0W/O8a/1uEeiHZN+kUTKtCqoAx4YF+OrShXQoz3nKfa92diK/J+f+1gay8/JZedF/bAaSbDoZkGT84abJemfpaWO96hwi5/9OH9MJrusPquCp4oIOXY2zcCgJek+BXfKlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719855749; c=relaxed/simple;
-	bh=kGobKE6YPSAtDU0yZCkJD4Zf1Y01NAAOF9patzKGseU=;
+	s=arc-20240116; t=1719855974; c=relaxed/simple;
+	bh=wci4+W9GeP0U7in3LTGi+QSTAQK4rVss0pVpzAhOo/8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=thZNyhgR5MZwIHZ2RZVEK5Vym2USUhKLMvfJI89F+Bq4+jYsE0W7Mekie6bVvb6yVNzYdZpE0bOzF5nl+HOTWWUvYQ0XIKXw6t09lTyEzvldDw0QYosTDvCoxQma0wHRF0ND8CI3i8iFPgWk3L8kxsWlalGSJtb9zgRPmiId34Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uFFaeB79; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23CAAC116B1;
-	Mon,  1 Jul 2024 17:42:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719855749;
-	bh=kGobKE6YPSAtDU0yZCkJD4Zf1Y01NAAOF9patzKGseU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uFFaeB79x4Q5Q6wP8OEQ2Rhg9iZ1DipWUjM31+Yj65NCxeB9wAVT2uicuJWmyrzLQ
-	 LzQsDHTX63fzuRnmEqLNe/IsiSE2fR+tJTb1P4H5WM/x74eEf/QkXcDDGK4zL+LwTp
-	 +7HHZyW7CKY+xVBX83r/9j4rVGQOgNRHguEQB8IHKA3u8K+eLPGRZ0Dwd8gV5WI8nn
-	 BXBSUC6W3ajSXick61nAnMFpnFNxZYkA2Q7F9KBnZFNdFhI9ubGYN7SE1cvctNn5tb
-	 lY4rWyOM0OIqTK6OxWbhkt4HUm0ZbK2ioTpU9SQ8gHMrVCauI5CphSFdmDv0+ihJWJ
-	 CYUYOL116LLxg==
-Date: Mon, 1 Jul 2024 11:42:27 -0600
-From: Rob Herring <robh@kernel.org>
-To: Krishna Yarlagadda <kyarlagadda@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	thierry.reding@gmail.com, jonathanh@nvidia.com, krzk+dt@kernel.org,
-	conor+dt@kernel.org, corbet@lwn.net, andi.shyti@kernel.org,
-	wsa+renesas@sang-engineering.com, ulf.hansson@linaro.org,
-	adrian.hunter@intel.com, digetx@gmail.com, ldewangan@nvidia.com,
-	mkumard@nvidia.com
-Subject: Re: [RFC PATCH V2 04/12] dt-bindings: misc: tegra-i2c: config
- settings
-Message-ID: <20240701174227.GA148633-robh@kernel.org>
-References: <20240701151231.29425-1-kyarlagadda@nvidia.com>
- <20240701151231.29425-5-kyarlagadda@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BYHqC29fP8Aw2+vdcsEWPuV3+SkXn90paGGtTuaJcCbZUYHN52tNSslf4Ltqw3SOhvIYuHDgD9OHscbj47mtOoZoV+phnC/P8pUbvjQKpOncLUjx4VMttEDgR+mDeQxGqHeV9SroZgKM+OMQfoPTjkeaP5vBiI/tffMh7Bv0uKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K+YPqWk8; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-74840cb804dso805626a12.2;
+        Mon, 01 Jul 2024 10:46:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719855972; x=1720460772; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MDfU/E7NximEh+ePQe6fwwT9wo95bqQJ44SzFp5cz5U=;
+        b=K+YPqWk80xxz+sZUBbca4umtoVOtDPOGvSjBLmLBdmUEnxEcpq9Tyqnuau/pTl095Y
+         juMfsXHcQIozxTn2//Qr1t4jOE7pKqf7FOzNXzJgwbd91it9svaR99QtTZWlvOpMtvoL
+         oIUU51R92pPCH3fI2Ni7pBEgsew+nG0YMIgCaZabVoEnhA7Sq70SXlsCS2ujww/lF27D
+         eLDvqxrJwQynlkRimqcWMStFc9mnnp41kUYP5jqtahiyuV2IeVxLZ/rd7/ZHN2aItTbs
+         VnOW+GUKKAnrMfM73tzGnXeVzn5CskejGImycBeWXT9zIB/Y+xfiVvc6OoWfC5YAbRWU
+         nh5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719855972; x=1720460772;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MDfU/E7NximEh+ePQe6fwwT9wo95bqQJ44SzFp5cz5U=;
+        b=qJdmkMQRJf1+NPMMMniKBl9QFL20SRD7VniKv4TkguoDGIIGCnVb2NvH4eFCm9u36w
+         xhQ8P9mwS0/wwAe4cYQXqF+anmRWG5uOjdPeOIp4jQlI2HvwHePRiNpfKgxw9aMY2xrD
+         2SNbo/gNpPeIPdSZ06f5+2KiFw+H4Xj+h926+QQVO3OSxF+4s0QvKT/SAfxUGP85+Q+X
+         kKnai6PtjwCPpTxx1K3+RTSh14KNQrQ3N5fm70hI30OJmiuln8ymyFY+cLFoOe1dPDpG
+         FfdcXLGxJoO9TBH0VxQZuq6gs+ePhZjqp1CU8oct5Wa/I7VyB7U3PF71IPQsXcb+Wa5V
+         0P8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVxWM7ECmsNne9TvtDeB8JE5EoWBB+MZ+qPZECXAizINR5F2c7PtLSEOI4xik3JJ+YhM/EO+VLhMA+bpoC1S3QXgNRQHoKSIo6+bd2Ou8dDE7pIs2Y1IFy+nKVL+J7YzNW4YdQRR1tdE0mneEWm5fxZp/T8e9ALaGvBopH17x+3l2di1Yg+
+X-Gm-Message-State: AOJu0YyJUj+hmkS6y/QdiQeNfJmwjcTNTzEpPiDYCC1XSZv6X8wo/PFH
+	ECA9JOPeyG+tqUPHzGIS/M53u4PvNGO0pc09tjxoNoD7drii9vpD
+X-Google-Smtp-Source: AGHT+IGxkduV6KdRJoavHrAWCnQJOcYjJsCXh6tx2oOz1qYdldZJrbKnyQhvsHZgBt76YwOYDN5ExQ==
+X-Received: by 2002:a05:6a20:8425:b0:1be:cfb:cdd1 with SMTP id adf61e73a8af0-1bef61ed43cmr9494456637.39.1719855972221;
+        Mon, 01 Jul 2024 10:46:12 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:7783:69e6:8487:f6ab])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-708044b0b61sm7034232b3a.176.2024.07.01.10.46.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 10:46:11 -0700 (PDT)
+Date: Mon, 1 Jul 2024 10:46:09 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: utsav.agarwal@analog.com,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Arturs Artamonovs <arturs.artamonovs@analog.com>,
+	Vasileios Bimpikas <vasileios.bimpikas@analog.com>,
+	Oliver Gaskell <oliver.gaskell@analog.com>
+Subject: Re: [PATCH v4 2/2] dt-bindings: input: Update dtbinding for adp5588
+Message-ID: <ZoLrYTp2IUKFBvzq@google.com>
+References: <20240701-adp5588_gpio_support-v4-0-44bba0445e90@analog.com>
+ <20240701-adp5588_gpio_support-v4-2-44bba0445e90@analog.com>
+ <20240701-battalion-tacky-c52566b37a97@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,16 +92,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240701151231.29425-5-kyarlagadda@nvidia.com>
+In-Reply-To: <20240701-battalion-tacky-c52566b37a97@spud>
 
-On Mon, Jul 01, 2024 at 08:42:22PM +0530, Krishna Yarlagadda wrote:
-> I2C interface timing registers are configured using config setting
-> framework. List available field properties for Tegra I2C controllers.
+On Mon, Jul 01, 2024 at 04:46:12PM +0100, Conor Dooley wrote:
+> On Mon, Jul 01, 2024 at 04:04:51PM +0100, Utsav Agarwal via B4 Relay wrote:
+> > From: Utsav Agarwal <utsav.agarwal@analog.com>
+> > 
+> > Updating dt bindings for adp5588. Following properties are now made
+> > optional:
+> > 	- interrupts
+> > 	- keypad,num-rows
+> > 	- keypad,num-columns
+> > 	- linux,keymap
+> > The proposed new property "gpio-only" has been added as an optional
+> > property with an additional example.
+> 
+> I can see that as it is clear in the diff, but this doesn't explain why,
+> which is what you need to do in your commit message.
+> 
+> > 
+> > Signed-off-by: Utsav Agarwal <utsav.agarwal@analog.com>
+> > ---
+> >  .../devicetree/bindings/input/adi,adp5588.yaml     | 28 ++++++++++++++++++----
+> >  1 file changed, 24 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/input/adi,adp5588.yaml b/Documentation/devicetree/bindings/input/adi,adp5588.yaml
+> > index 26ea66834ae2..158fbf02cc16 100644
+> > --- a/Documentation/devicetree/bindings/input/adi,adp5588.yaml
+> > +++ b/Documentation/devicetree/bindings/input/adi,adp5588.yaml
+> > @@ -46,6 +46,11 @@ properties:
+> >    '#gpio-cells':
+> >      const: 2
+> >  
+> > +  gpio-only:
+> > +    description:
+> > +      This property applies if keypad,num-rows, keypad,num-columns and
+> > +      linux,keypad are not specified. All keys will be marked as gpio.
+> 
+> Why is a property required for this? Is the absence of the 3 keypad
+> properties not sufficient to determine that you're in this mode?
 
-How is I2C bus timing parameters specific to NVIDIA? Just because you 
-have more controls? No. That's no reason to invent a whole new way to 
-specify parameters. Extend what's already there and make it work for 
-anyone.
+Yes, I think it should be enough.
 
-Rob
+> 
+> 
+> >    interrupt-controller:
+> >      description:
+> >        This property applies if either keypad,num-rows lower than 8 or
+> > @@ -68,10 +73,6 @@ properties:
+> >  required:
+> >    - compatible
+> >    - reg
+> > -  - interrupts
+> 
+> I don't understand why interrupts is no longer required.
+
+I think it should be possible to use this chip as a GPIO controller but
+not an interrupt controller, in which case one does not have to wire up
+the interrupt line from it. However this requires much more elaborate
+binding description (i.e. no keys and no "interrupt-controller"
+property).
+
+Thanks.
+
+-- 
+Dmitry
 
