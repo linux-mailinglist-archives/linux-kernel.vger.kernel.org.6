@@ -1,276 +1,241 @@
-Return-Path: <linux-kernel+bounces-236109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BE9D91DD8F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:09:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B126291DD91
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:10:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EAA0283632
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:09:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3F8A1C21AD4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:10:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC43A13D242;
-	Mon,  1 Jul 2024 11:09:41 +0000 (UTC)
-Received: from mx2.zhaoxin.com (mx2.zhaoxin.com [203.110.167.99])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 581711422A6;
+	Mon,  1 Jul 2024 11:09:47 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3374413AA35
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 11:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.110.167.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F1F13E022;
+	Mon,  1 Jul 2024 11:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719832181; cv=none; b=ZrxfIEYPy0o7Ze2LNyGFyaTsQ0VxTYFK/2TZxY+tJsJsehvMiTiG85ynlC9s1UjRUZ/vZ99wwS+2IxGCf0Itcp/YUtRgj/0U8wfbG+OzwQWvUg1aD3CYBbkWv56BRG3IwGWTfx+wcU8CRfBwKPaIW6zIoubmRArRAWtN4KCCi/o=
+	t=1719832186; cv=none; b=cUDx4WjFtBurPjwsQVmIYOiZ6CmBld9MkqhvZkF0bk+ZE5NFGcjVOIQdSHDIrp42dmxlLaId69LXuqWtU7tbRM5mCGG8vgEmxVByNn7okrzItkCBKOlEvgkFak2L1MlCp7F6c7naKtANFG30A9StIgUMg2QXLCySQl/dEVJUjXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719832181; c=relaxed/simple;
-	bh=QWhAOknMbrY7rRqGy+yUZxAysV4mTx6t7CIYJcVhJ0A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Vyd+wDEna60E7V76W1zERZMrstaJQKb9+ZAK8Ni6u/kSgbkzyNewmkJOSaNkuvsQAgxTmlbEpOraLURRH3DfoikU01/g9HZI3DpE+rQJLT3gEAwS+lG0sHrRmV5lZdpapdFbwttImGb+Ka3yj2/87+1YYHOjpaFe4tnZ4EPigWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=203.110.167.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
-X-ASG-Debug-ID: 1719832167-1eb14e2e61c47f0001-xx1T2L
-Received: from ZXSHMBX3.zhaoxin.com (ZXSHMBX3.zhaoxin.com [10.28.252.165]) by mx2.zhaoxin.com with ESMTP id DBp4gzMym7EBFipn (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Mon, 01 Jul 2024 19:09:27 +0800 (CST)
-X-Barracuda-Envelope-From: TonyWWang-oc@zhaoxin.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.165
-Received: from ZXBJMBX03.zhaoxin.com (10.29.252.7) by ZXSHMBX3.zhaoxin.com
- (10.28.252.165) with Microsoft SMTP Server (version=TLS1_2,
+	s=arc-20240116; t=1719832186; c=relaxed/simple;
+	bh=IX+XA5uj0OK4F5RCJsG5Z4rg37XfVs0EJxNmkdceRO4=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aHFHnmmXABuSAbbZ/j1eIXWDsWWaC4iMIuHnzFPx+JB0moCat8eMrhKuDpBWzcywdvRvdXWsv8ukVNyelmCxuV95oI4sNWrK92U8RTL4jQf21xlcSsEe4Q5sFKvfOQubavzntFB6Xp/N9HjsUJSPh4ysduXbmtFC5J09EGXgiso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WCNb82ctNz6JB7Y;
+	Mon,  1 Jul 2024 19:09:08 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 06DB8140B2A;
+	Mon,  1 Jul 2024 19:09:41 +0800 (CST)
+Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 1 Jul
- 2024 19:09:27 +0800
-Received: from [10.32.57.242] (10.32.57.242) by ZXBJMBX03.zhaoxin.com
- (10.29.252.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 1 Jul
- 2024 19:09:24 +0800
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.165
-Message-ID: <93030e7f-dcd2-45dd-a3a2-efa0128753f1@zhaoxin.com>
-X-Barracuda-RBL-Trusted-Forwarder: 10.32.57.242
-Date: Mon, 1 Jul 2024 19:09:18 +0800
+ 2024 12:09:40 +0100
+Date: Mon, 1 Jul 2024 12:09:39 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Shradha Todi <shradha.t@samsung.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<manivannan.sadhasivam@linaro.org>, <lpieralisi@kernel.org>, <kw@linux.com>,
+	<robh@kernel.org>, <bhelgaas@google.com>, <jingoohan1@gmail.com>,
+	<fancer.lancer@gmail.com>, <yoshihiro.shimoda.uh@renesas.com>,
+	<conor.dooley@microchip.com>, <pankaj.dubey@samsung.com>,
+	<gost.dev@samsung.com>
+Subject: Re: [PATCH 2/3] PCI: debugfs: Add support for RASDES framework in
+ DWC
+Message-ID: <20240701120939.00002d76@Huawei.com>
+In-Reply-To: <20240625093813.112555-3-shradha.t@samsung.com>
+References: <20240625093813.112555-1-shradha.t@samsung.com>
+	<CGME20240625094443epcas5p3093ac786a7d0f09de5a3bba17bbd4458@epcas5p3.samsung.com>
+	<20240625093813.112555-3-shradha.t@samsung.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/hpet: Read HPET directly if panic in progress
-To: Thomas Gleixner <tglx@linutronix.de>, Dave Hansen <dave.hansen@intel.com>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>, <hpa@zytor.com>, <keescook@chromium.org>,
-	<tony.luck@intel.com>, <gpiccoli@igalia.com>, <mat.jonczyk@o2.pl>,
-	<rdunlap@infradead.org>, <alexandre.belloni@bootlin.com>,
-	<mario.limonciello@amd.com>, <yaolu@kylinos.cn>, <bhelgaas@google.com>,
-	<justinstitt@google.com>, <linux-kernel@vger.kernel.org>,
-	<linux-hardening@vger.kernel.org>
-X-ASG-Orig-Subj: Re: [PATCH] x86/hpet: Read HPET directly if panic in progress
-CC: <CobeChen@zhaoxin.com>, <TimGuo@zhaoxin.com>, <LeoLiu-oc@zhaoxin.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-References: <20240528063836.5248-1-TonyWWang-oc@zhaoxin.com>
- <50fc1bd3-909e-41c4-a991-9d81e32ef92c@intel.com> <87wmnda8mc.ffs@tglx>
-Content-Language: en-US
-From: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
-In-Reply-To: <87wmnda8mc.ffs@tglx>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ZXSHCAS1.zhaoxin.com (10.28.252.161) To
- ZXBJMBX03.zhaoxin.com (10.29.252.7)
-X-Barracuda-Connect: ZXSHMBX3.zhaoxin.com[10.28.252.165]
-X-Barracuda-Start-Time: 1719832167
-X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
-X-Barracuda-URL: https://10.28.252.36:4443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at zhaoxin.com
-X-Barracuda-Scan-Msg-Size: 7509
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
-X-Barracuda-Spam-Score: -2.02
-X-Barracuda-Spam-Status: No, SCORE=-2.02 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.127014
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------------------------
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
+
+On Tue, 25 Jun 2024 15:08:12 +0530
+Shradha Todi <shradha.t@samsung.com> wrote:
+
+> Add support to use the RASDES feature of DesignWare PCIe controller
+> using debugfs entries.
+>=20
+> RASDES is a vendor specific extended PCIe capability which reads the
+> current hardware internal state of PCIe device. Following primary
+> features are provided to userspace via debugfs:
+> - Debug registers
+> - Error injection
+> - Statistical counters
+>=20
+> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
+
+A few minor things inline.
+
+> +
+> +struct rasdes_info {
+> +	/* to store rasdes capability offset */
+> +	u32 ras_cap;
+> +	struct mutex dbg_mutex;
+
+Add a comment on what data this mutex protects.
+
+> +	struct dentry *rasdes;
+> +};
+
+> +struct err_inj {
+Very generic name is likely to bite in future if similar
+gets defined in a header. I'd at least prefix with dw_
+
+> +	const char *name;
+> +	/* values can be from group 0 - 6 */
+> +	u32 err_inj_group;
+> +	/* within each group there can be types */
+> +	u32 err_inj_type;
+> +	/* More details about the error */
+> +	u32 err_inj_12_31;
+> +};
 
 
+> +
+> +int dwc_pcie_rasdes_debugfs_init(struct dw_pcie *pci)
+> +{
+> +	struct device *dev =3D pci->dev;
+> +	int ras_cap;
+> +	struct rasdes_info *dump_info;
+> +	char dirname[DWC_DEBUGFS_MAX];
+> +	struct dentry *dir, *rasdes_debug, *rasdes_err_inj;
+> +	struct dentry *rasdes_event_counter, *rasdes_events;
+> +	int i;
 
-On 2024/5/29 06:12, Thomas Gleixner wrote:
-> 
-> 
-> [这封邮件来自外部发件人 谨防风险]
-> 
-> On Tue, May 28 2024 at 07:18, Dave Hansen wrote:
->> On 5/27/24 23:38, Tony W Wang-oc wrote:
->> ...> diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
->>> index c96ae8fee95e..ecadd0698d6a 100644
->>> --- a/arch/x86/kernel/hpet.c
->>> +++ b/arch/x86/kernel/hpet.c
->>> @@ -804,6 +804,12 @@ static u64 read_hpet(struct clocksource *cs)
->>>       if (in_nmi())
->>>               return (u64)hpet_readl(HPET_COUNTER);
->>>
->>> +    /*
->>> +     * Read HPET directly if panic in progress.
->>> +     */
->>> +    if (unlikely(atomic_read(&panic_cpu) != PANIC_CPU_INVALID))
->>> +            return (u64)hpet_readl(HPET_COUNTER);
->>> +
->>
->> There is literally one other piece of the code in the kernel doing
->> something similar: the printk() implementation.  There's no other
->> clocksource or timekeeping code that does this on any architecture.
->>
->> Why doesn't this problem apply to any other clock sources?
-> 
-> I principle it applies to any clocksource which needs a spinlock to
-> serialize access. HPET is not the only insanity here.
-> 
-> Think about i8253 :)
-> 
-> Most real clocksources, like TSC and the majority of the preferred clock
-> sources on other architectures are perfectly fine. They just read and be
-> done.
-> 
->> Why should the problem be fixed in the clock sources themselves?  Why
->> doesn't printk() deadlock on systems using the HPET?
-> 
-> Because regular printk()s are deferred to irq work when in NMI and
-> similar contexts, but that obviously does not apply to panic
-> situations. Also NMI is treated special even in the HPET code. See
-> below.
-> 
->> In other words, I think we should fix pstore to be more like printk
->> rather than hacking around this in each clock source.
-> 
-> pstore is perfectly fine. It uses a NMI safe time accessor function
-> which is then tripping over the HPET lock. That's really a HPET specific
-> problem.
-> 
-> Though what I read out of the changelog is that the MCE hits the same
-> CPU 'x' which holds the lock. But that's fairy tale material as you can
-> see in the patch above:
-> 
->          if (in_nmi())
->                  return (u64)hpet_readl(HPET_COUNTER);
-> 
-> For that particular case the dead lock, which would actually be a live
-> lock, cannot happen because in kernel MCEs are NMI class exceptions and
-> therefore in_nmi() evaluates to true and that new voodoo can't be
-> reached at all.
-> 
-> Now there are two other scenarios which really can make that happen:
-> 
->   1) A non-NMI class exception within the lock held region
-> 
->      CPU A
->      acquire(hpet_lock);
->      ...                 <- #PF, #GP, #DE, ... -> panic()
-> 
->      If any of that happens within that lock held section then the live
->      lock on the hpet_lock is the least of your worries. Seriously, I
->      don't care about this at all.
-> 
->   2) The actual scenario is:
-> 
->      CPU A                       CPU B
->      lock(hpet_lock)
->                                  MCE hits user space
->                                  ...
->                                  exc_machine_check_user()
->                                    irqentry_enter_from_user_mode(regs);
-> 
->      irqentry_enter_from_user_mode() obviously does not mark the
->      exception as NMI class, so in_nmi() evaluates to false. That would
->      actually dead lock if CPU A is not making progress and releases
->      hpet_lock.
-> 
->      Sounds unlikely to happen, right? But in reality it can because of
->      MCE broadcast. Assume that both CPUs go into MCE:
-> 
->      CPU A                       CPU B
->      lock(hpet_lock)
->                                  exc_machine_check_user()
->                                    irqentry_enter_from_user_mode();
->      exc_machine_check_kernel()    do_machine_check()
->        irqentry_nmi_enter();         mce_panic()
->        do_machine_check()            if (atomic_inc_return(&mce_panicked) > 1)
->          mce_panic()                     wait_for_panic(); <- Not taken
-> 
->          if (atomic_inc_return(&mce_panicked) > 1)
->              wait_for_panic(); <- Taken
-> 
->                                      ....
->                                      hpet_read()
-> 
->      -> Dead lock because in_nmi() evaluates to false on CPU B and CPU A
->         obviously can't release the lock.
-> 
+Perhaps combine with int ras_cap above.
 
-For this scenario, an experiment was designed for the printk:
-a, Install a driver module that repeatedly sending IPIs to multiple 
-cores to executes printk.
-b, Run a user-level testing tool like stream on all cores.
-c, Trigger a MCE hardware error.
-During burnin tests a-c, reproduce the following case:
+=46rom a quick look, I think this can get called from resume paths
+as well as initial setup which doesn't look like a safe thing to do.
+imx6_pcie_resume_irq()
+dw_pcie_setup_rc()
+dw_pcie_setup()
+dwc_pcie_rasdes_debugfs_init()
 
-CPU A                              CPU B
-printk()
-console_owner
-                                    exc_machine_check_user()
-                                      irqentry_enter_from_user_mode()
-exc_machine_check_kernel()           do_machine_check()
-   irqentry_nmi_enter()                 mce_panic()
-   do_machine_check()                     print_mce()
-                                            ...
-     ...                                    while(console_waiter)
-                                              cpu_relax(); <- deadloop
-     mce_timed_out() <-timeout
-       wait_for_panic()
-         panic("Panicing machine check CPU died");
 
-In this case CPU B is the monarch CPU in MCE handler, CPU B waiting to 
-be the console_owner and CPU A can't release the console_owner.
-So the monarch CPU B deadloop happened, as a result other CPU witch 
-waiting the monarch CPU timeout will call the panic function.
+> +	struct rasdes_priv *priv_tmp;
+> +
+> +	ras_cap =3D dw_pcie_find_vsec_capability(pci, DW_PCIE_RAS_DES_CAP);
+> +	if (!ras_cap) {
+> +		dev_err(dev, "No RASDES capability available\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	dump_info =3D devm_kzalloc(dev, sizeof(*dump_info), GFP_KERNEL);
+> +	if (!dump_info)
+> +		return -ENOMEM;
+> +
+> +	/* Create main directory for each platform driver */
+> +	sprintf(dirname, "pcie_dwc_%s", dev_name(dev));
 
-This problem is caused by the use of printk in the MCE handler.
+dev_name could in theory be huge.  I'd use snprintf() and check the
+result as more obviously correct.
 
-Actually, I found the comments for the MCE handler like:
-  * This is executed in #MC context not subject to normal locking rules.
-  * This implies that most kernel services cannot be safely used. Don't even
-  * think about putting a printk in there!
+> +	dir =3D debugfs_create_dir(dirname, NULL);
 
-Should consider not using printk in the MCE handler?
+Check for errors in all these.
 
-Sincerely!
-TonyWWang-oc
+> +
+> +	/* Create subdirectories for Debug, Error injection, Statistics */
+> +	rasdes_debug =3D debugfs_create_dir("rasdes_debug", dir);
+> +	rasdes_err_inj =3D debugfs_create_dir("rasdes_err_inj", dir);
+> +	rasdes_event_counter =3D debugfs_create_dir("rasdes_event_counter", dir=
+);
+> +
+> +	mutex_init(&dump_info->dbg_mutex);
+> +	dump_info->ras_cap =3D ras_cap;
+> +	dump_info->rasdes =3D dir;
+> +	pci->dump_info =3D dump_info;
+> +
+> +	/* Create debugfs files for Debug subdirectory */
+> +	dwc_debugfs_create(lane_detect);
+> +	dwc_debugfs_create(rx_valid);
+> +
+> +	/* Create debugfs files for Error injection subdirectory */
+> +	for (i =3D 0; i < ARRAY_SIZE(err_inj_list); i++) {
+> +		priv_tmp =3D devm_kzalloc(dev, sizeof(*priv_tmp), GFP_KERNEL);
+> +		if (!priv_tmp)
+> +			goto err;
+> +
+> +		priv_tmp->idx =3D i;
+> +		priv_tmp->pci =3D pci;
+> +		debugfs_create_file(err_inj_list[i].name, 0200,
+> +				    rasdes_err_inj, priv_tmp, &err_inj_ops);
+> +	}
+> +
+> +	/* Create debugfs files for Statistical counter subdirectory */
+> +	for (i =3D 0; i < ARRAY_SIZE(event_counters); i++) {
+> +		priv_tmp =3D devm_kzalloc(dev, sizeof(*priv_tmp), GFP_KERNEL);
+> +		if (!priv_tmp)
+> +			goto err;
+> +
+> +		priv_tmp->idx =3D i;
+> +		priv_tmp->pci =3D pci;
+> +		rasdes_events =3D debugfs_create_dir(event_counters[i].name,
+> +						   rasdes_event_counter);
+> +		if (event_counters[i].group_no =3D=3D 0) {
+> +			debugfs_create_file("lane_select", 0644, rasdes_events,
+> +					    priv_tmp, &cnt_lane_ops);
+> +		}
+> +		debugfs_create_file("counter_value", 0444, rasdes_events, priv_tmp,
+> +				    &cnt_val_ops);
+> +		debugfs_create_file("counter_enable", 0644, rasdes_events, priv_tmp,
+> +				    &cnt_en_ops);
+> +	}
+> +
+> +	return 0;
+> +err:
+> +	dwc_pcie_rasdes_debugfs_deinit(pci);
+> +	return -ENOMEM;
+> +}
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-debugfs.h b/drive=
+rs/pci/controller/dwc/pcie-designware-debugfs.h
+> new file mode 100644
+> index 000000000000..e69de29bb2d1
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/c=
+ontroller/dwc/pcie-designware.h
+> index 77686957a30d..9fa9f33e4ddb 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -223,6 +223,8 @@
+> =20
+>  #define PCIE_RAS_DES_EVENT_COUNTER_DATA		0xc
+> =20
+> +#define DW_PCIE_RAS_DES_CAP			0x2
 
-> So the proposed patch makes sense to some extent. But it only cures the
-> symptom. The real underlying questions are:
-> 
->    1) Should we provide a panic mode read callback for clocksources which
->       are affected by this?
-> 
->    2) Is it correct to claim that a MCE which hits user space and ends up in
->       mce_panic() is still just a regular exception or should we upgrade to
->       NMI class context when we enter mce_panic() or even go as far to
->       upgrade to NMI class context for any panic() invocation?
-> 
-> #1 Solves it at the clocksource level. It still needs HPET specific
->     changes.
-> 
-> #2 Solves a whole class of issues
-> 
->     ... while potentially introducing new ones :)
-> 
->     To me upgrading any panic() invocation to NMI class context makes a
->     lot of sense because in that case all bets are off.
-> 
->     in_nmi() is used in quite some places to avoid such problems. IOW,
->     that would kill a whole class of issues instead of "curing" the HPET
->     problem locally for the price of an extra conditional. Not that the
->     extra conditional matters much if HPET is the clocksource as that's
->     awfully slow anyway and I really don't care about that.
-> 
->     But I very much care about avoiding to sprinkle panic_cpu checks all
->     over the place.
-> 
-> Thanks,
-> 
->          tglx
+I'd be tempted to try and name that in a fashion that makes it clear it
+is a vsec capability ID.  Currently it sounds like a top level
+capability ID.
+
+> +
+>  /*
+>   * The default address offset between dbi_base and atu_base. Root contro=
+ller
+>   * drivers are not required to initialize atu_base if the offset matches=
+ this
+> @@ -410,6 +412,7 @@ struct dw_pcie {
+>  	struct reset_control_bulk_data	core_rsts[DW_PCIE_NUM_CORE_RSTS];
+>  	struct gpio_desc		*pe_rst;
+>  	bool			suspended;
+> +	void			*dump_info;
+>  };
+
+
 
