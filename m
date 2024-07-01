@@ -1,345 +1,505 @@
-Return-Path: <linux-kernel+bounces-235638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E78491D7CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:57:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6C6791D7D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:04:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEB972852F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 05:57:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 533D71F22A1D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 06:04:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A20482CD;
-	Mon,  1 Jul 2024 05:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jj9kkm6v"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7A34315D;
+	Mon,  1 Jul 2024 06:04:17 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D75A23A0;
-	Mon,  1 Jul 2024 05:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719813460; cv=fail; b=QHmiyYd8/YkUQCASxHbrV+sPr+lFBPwtQ59n0Y0Qi9DbnV9H/75sY81ddm8prAN/5jTT5HoX74zs0oE0i7c/HOY95OwM5cnvDipV/noDn6cmpyUBN/eD1CevEgRAEP42a1KzJRm2V2uoJadQdS1yv8Zcd/OMIgDmwi5Cbw49WTY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719813460; c=relaxed/simple;
-	bh=qMwW8WCZA9m1VzWlAFltz+8Ul0qAHeIGnqiC7ip9DV8=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=E+fARX5RmSC5F7l94Hqt90IwctZcq/7f4chfw9Gtp+0a0Is0gEvAk7NqabNnSaTSkMEhlUpi0Elh9WNP1ZLqve/Zh39eFjrPcs3SFvahyZwYNO9lsL9yhl1AkgwjIkPXAtSE/9Wk7WGqrnv+gQJwPg/uEANACJWaAYNrTHwCRFc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jj9kkm6v; arc=fail smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719813458; x=1751349458;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=qMwW8WCZA9m1VzWlAFltz+8Ul0qAHeIGnqiC7ip9DV8=;
-  b=Jj9kkm6vBT/lT7RaNPOpk+G0VjbF1faFwaExNN7oFiOb3TQdrYihIklF
-   kwE2pTNiaa9KpnNZqgvsLL2KFR9kopVlFhibfi1OcaIttWaz99RyLIgqH
-   JRg5T95aKxn1DER+YnwKDjABqASsJmPtQPbF3CICCTiYyuEHIuNV3dh3t
-   MAoM+zAxOBYq5N1/gsxAXKAJtfxEGRITBOAxg2AZzBJ12MxLqyR8yhxDF
-   70j2BNNG/kFtnvlvSMTegoJnB4KvJk39USOY0ycKzUmsKwjMuoeZHT9Jq
-   m9YrNA5VfCpbbXlR2s8NWkprXdOv7dQWG03PMYKLq/D4mu0nJlNINOlDS
-   A==;
-X-CSE-ConnectionGUID: QDwsm6LDS2SZKg7NZKEqHw==
-X-CSE-MsgGUID: CtMNg34UQP2f/CvVt/XQ+g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11119"; a="27535839"
-X-IronPort-AV: E=Sophos;i="6.09,175,1716274800"; 
-   d="scan'208";a="27535839"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2024 22:57:38 -0700
-X-CSE-ConnectionGUID: A+QQVdZrTIe7Qm3RxCA41A==
-X-CSE-MsgGUID: z2lSQzbqTbqYGEIHgMKGBQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,175,1716274800"; 
-   d="scan'208";a="46072742"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 30 Jun 2024 22:57:38 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sun, 30 Jun 2024 22:57:37 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sun, 30 Jun 2024 22:57:36 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Sun, 30 Jun 2024 22:57:36 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.43) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C836728F5;
+	Mon,  1 Jul 2024 06:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719813857; cv=none; b=daSGP+T2Y1iI2AKC+0AllP35X5cxUHKVx4kerYWEIfn/AYJ7n6KqAtTenRcy1yW9/9qqDdb6mpt0XfWoQchyUJugqSt6Rh/4brTDscsnMMBN735w/Zia9WlLVyWMZKo3CEBpfpZ+yCGgVjMuZYJinOZU6FMm6s8EUwm/3xxIl0U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719813857; c=relaxed/simple;
+	bh=ucEh5PwncncM9hfbwhuM2zagb1WN1B1X0ELVhKaUpM8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rZzlSwkkTkvtl7eR9DweyJv8s0HvWVmFmYDVs2gGbXEt9vfJkGMSA3EcMKanNzqlqKKaM99Xc67foixQON5ujzgXQS3AVg8CXFF+PNHFBF4fgaoQtoJukeaieL+2tGxjlpK0ZAeNvs7Co5KtySDhkjcRPMhOXnTl78xpsF4CqzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WCFk447sWzZh6B;
+	Mon,  1 Jul 2024 13:59:40 +0800 (CST)
+Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2ABD6140415;
+	Mon,  1 Jul 2024 14:04:11 +0800 (CST)
+Received: from localhost.localdomain (10.175.104.67) by
+ kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sun, 30 Jun 2024 22:57:36 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dbbcUWG4zkhFqDCdIkY5GT+Gsg270MWoBRgetbZTOiEbO8NdztUDqMLnqan5/+whIPH/oo0julsF2GphnEqrq2ZYLceMZuMg7PkjRIbW3G37WSB2zKfl5d7GGWrmaVA6mKbg5BBpMKZKOcgej2b4+KjLGQB+G34gPwTeF0dh8px8c1CZ/xICwsdsIw023pxhEnNFXF8SVxt/av0Kxo7Hrd7zyPHbxlBShwWSOUgzmx/ZBkYkjxZok2yOYL9MJRgkjk3pF6t0FVq1fFIHZVbqd6U2zUIbiCfunDLZHgnt+WP5vLwCaHHGDoVCigHno52TjfoDUzfvvzv1fJTPFtAg1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=P1KbVkHv7rOGajHIOMBVTYmkks13KjZapc1Q3kUEIpE=;
- b=lvareIDeW1FzRen4YGBIg8oZjeCY1gfqy5zizZfnPSf/MfM6vD4D3wy/6ca/qqp3VfSnWXvojeZHMi6lM2d3buwl6IT+yfJfyYS4BF/Rgnvb/wdaSgbIVww//KVHwb8k+jkHHm9/svMczWK2VkDDe7pSTHtkncGtrr0/v86eK/lkoM8PWzvmToRsrkUEu7+FFTKjlF6SALxQFgWFOYst+DaGcYcNINUC32rNd3gAechAH5FmqRzwHffL6BvPtAugrUpMJOFtqtuhr7j7X9TrCVXISF5o5XDqEuN4zmIBH1zcEISTUD+j5YKnKi8lRQqP70PFy7SYQlQJvPFdYUNOFA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7529.namprd11.prod.outlook.com (2603:10b6:8:141::20)
- by DS0PR11MB7622.namprd11.prod.outlook.com (2603:10b6:8:144::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.29; Mon, 1 Jul
- 2024 05:57:34 +0000
-Received: from DS0PR11MB7529.namprd11.prod.outlook.com
- ([fe80::d244:15cd:1060:941a]) by DS0PR11MB7529.namprd11.prod.outlook.com
- ([fe80::d244:15cd:1060:941a%3]) with mapi id 15.20.7719.022; Mon, 1 Jul 2024
- 05:57:34 +0000
-Message-ID: <e7006778-6ad5-4797-bdf5-4e1da1535a20@intel.com>
-Date: Mon, 1 Jul 2024 14:01:30 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] vfio: Get/put KVM only for the first/last
- vfio_df_open/close in cdev path
-To: Yan Zhao <yan.y.zhao@intel.com>
-CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<alex.williamson@redhat.com>, <kevin.tian@intel.com>, <jgg@nvidia.com>
-References: <20240628151845.22166-1-yan.y.zhao@intel.com>
- <5187229e-3f0f-4af3-b3f9-4debf68220fd@intel.com>
- <ZoJBuHuusbzeGoXZ@yzhao56-desk.sh.intel.com>
-Content-Language: en-US
-From: Yi Liu <yi.l.liu@intel.com>
-In-Reply-To: <ZoJBuHuusbzeGoXZ@yzhao56-desk.sh.intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SGAP274CA0006.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b6::18)
- To DS0PR11MB7529.namprd11.prod.outlook.com (2603:10b6:8:141::20)
+ 15.2.1544.11; Mon, 1 Jul 2024 14:04:10 +0800
+From: Zizhi Wo <wozizhi@huawei.com>
+To: <chandan.babu@oracle.com>, <djwong@kernel.org>, <dchinner@redhat.com>,
+	<wozizhi@huawei.com>, <osandov@fb.com>, <john.g.garry@oracle.com>
+CC: <linux-xfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yangerkun@huawei.com>
+Subject: [PATCH V5] xfs: Avoid races with cnt_btree lastrec updates
+Date: Mon, 1 Jul 2024 14:02:36 +0800
+Message-ID: <20240701060236.2221400-1-wozizhi@huawei.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7529:EE_|DS0PR11MB7622:EE_
-X-MS-Office365-Filtering-Correlation-Id: d3be0da3-649a-43a4-4533-08dc9992b3c5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?dG9xVDFTZHkzZjkvb2U3QmpTNFpxVDkwZG91dmhqWkdwV2djWUhtb3RaTjZY?=
- =?utf-8?B?bDNqRnlJaU9tTW5jUlRTVURCNEJsM2pWbXZnekJWelYzaTR6TUZvRFRWazRE?=
- =?utf-8?B?RnJNcytnNk14Q2IrN04ySmJhZzJXNWRpdW1mOFRFdnNiVFJlbWRTUjNzdDlG?=
- =?utf-8?B?S0xZK2M1a0ovdHd5dWRacldEa0pEZkE4bStJTjFoSFQwSWh2MGNkc0t4OXNC?=
- =?utf-8?B?eG81ejhOcnhFTittUjhaQ1BRZUwvT2JnbEVveXBQSWk3MnUraThnRHo5Z0hr?=
- =?utf-8?B?eFFnQ3FLbFdoK0pHZ1FiSDR4VWxqYWxxSVl6YzVRMk9GUzAxV1l1WUd6WkpC?=
- =?utf-8?B?M2RLYzc0NmxGdHU4bGN2ZFNwckE5MDNnWTBKQWtlbW9UN2pkRDkrdk9VMzNE?=
- =?utf-8?B?ZlNDcXZTWDYzQzlnVGJRSUxCNjU1SU85WlNLUFArc1V4d2QzTlo3ZzhwK0FN?=
- =?utf-8?B?dmZCajNhUWZaZmFIdkZTQ3AvODFXQUZGSlNWdzYvQkFSK3hRcGpRQ0NmZEgy?=
- =?utf-8?B?aGhIdTA1azJnd0pReEQ4Q09yVDk4YWd6YVNQVHdQNVBjcXBBUU83elRGK0ZZ?=
- =?utf-8?B?d2l1cDJHSkY0TmpGRG5UU3NjRmNSRGd1ZDdzcUNPOEhUc2w1N2xxVFBPWGJU?=
- =?utf-8?B?VnFXS3FOWnFvZy9yQW9LaUg3SndORDY1L2MybUQzeCtqdHJoV2M4OStHeW1S?=
- =?utf-8?B?Z3FyNTR3K295VUpBNk5oOGczREYyU2htNzVab1RlYzg2VExqSXNJR3ZLQ1R4?=
- =?utf-8?B?VFI4OEw1YzRJZEsyUWRuMVRhUWpGcnZuckxXazMwWk4zNWE0OTZLbWFGVEk0?=
- =?utf-8?B?RjN2SkZycWdXa1RSTmhkQ2RqeTY3TEM0YS8wUUtHcHdIdWpUanRKWXhMV3dy?=
- =?utf-8?B?ZWkxanUyanJDOVZtc2VnZjhNS1RIdnZBNzJ2V0FKZmNETC9iemQrTU8xK0V5?=
- =?utf-8?B?Rm83Uy8vdWFsa0txYUFISU1zV1NQWkNEeW93d3hiZE4wYnFPcWZCTU94ejU5?=
- =?utf-8?B?S3M0MHQxYVY4bGhidlRRUHZiZ2JpUzg2L2QwUmVsbHNacXpmQisrNm5mbDZY?=
- =?utf-8?B?QnRVQlNjVFI2UkxQYmpSTytMMGdyWGxhd1hHcDNOQ2sxYUdvcHIrbThKa3ps?=
- =?utf-8?B?TjFiUTNxajkzSXI0eVNFZlZQZkxqekpWT1pIZ1cwcWtZek1kZ0ZuR2szRThO?=
- =?utf-8?B?TkptUVcvVW1naW5VUUNMUGIxNkZwN0lKZFNJK2dVM0Mwb2FLZWxSQzJKK0dn?=
- =?utf-8?B?U244Q1NuNlF6M0I1NXBNc1EvdmdNam42UXpMQ25td09Wc2tBN1lDMlJYL1pT?=
- =?utf-8?B?VHdUZHBCWXdzMGxGenhxcVcrMXEyRXVSUnZHaFcxUEg4dXcrNXM0OVhmeGt5?=
- =?utf-8?B?QllQVnI5cEVySHg0QkthZkhSRFM3MmFzRHMycGRLUlQ5RDNZenZKSnNCcUtX?=
- =?utf-8?B?ZmtpMVl0YStOaHNuZXpwMVlDTDF6T3hQUFMwZUNSVU5VSVRrOVRpYWdnNndN?=
- =?utf-8?B?OUV6SWl0YmdiMlB5aTQ3dFNKV2VTeXYvRlF6MjkwQVArMzlPWEhIV2lCcEVz?=
- =?utf-8?B?akl4STJhellHc2NDUytUeDRjVHBzT25CZWptVUlHdllrbmpKVEpDVFArTU5Y?=
- =?utf-8?B?WlRLY2hTZjlEU1BBcXB4SFMxazN1RldIaFZWQXhHYzk1YmdJTCs0NnFheG40?=
- =?utf-8?B?M3lxblRobWVWeVh3VS9RdHNOampuL0RoTG1oaXl1LzZqQUJIQzQ3eFF6VFAw?=
- =?utf-8?B?cmdPWEN3L1dKSzJ0ODU1RkJvS2FURUszU3B4NlZHVjZCZDFkVmNyZ0IxbVF3?=
- =?utf-8?B?bUxrWjMwSnRjeGZqSjkzdz09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB7529.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dkkrenMvY0l2clMreEN4SFdQM2RCSndOSmY2cXR3KzF2K2V0ZDI4WkRvYzY0?=
- =?utf-8?B?R2oyRHJ5SHNralJkNlpNeGlReEJjYkk4aWhrSTAwbjlIWnR0Rm1LRTUzTG93?=
- =?utf-8?B?WnJsa3hxQ0kwZWNMckVDNnFNSDZ1K084ajBJOXI5aFozVnJFTStKMWxqK204?=
- =?utf-8?B?OTJwQnR6a1NxVWd6YzNzMWVudTYrSG5YSGNURGU3KzQ0cE00TXVTc0pmeFdT?=
- =?utf-8?B?WGJvVjEvNTVnTzhZcGFyM0tNNlBFN0pEL3Z1RWJPR2dOOG5ndEVneHY1eDRj?=
- =?utf-8?B?b1BVNHI3NzZkc0UxeXRNT01valRTSjdSdTVmUVR2TVduM1NzNjQwWlZZM2Yv?=
- =?utf-8?B?QzdIV2FaZ0VFazlOYjVyVjJvR2o1elFMYVBaRGZRU1BUNUZ5S0dLdGlKNHBp?=
- =?utf-8?B?M1pDL0lJcEk5eGFzQjk4azdZS3ltd1pTWjd3UHdpd1NWR0ZBLzBQWENEN0VW?=
- =?utf-8?B?dHRSZk9qWHdleXRKYjJFR2JkaFpEa3JFWkpDamJkNXpqVjdtZzF0bGFMZlVI?=
- =?utf-8?B?dDR3ZUhvMXduTFFJWVV1a09LaXpLZGlISjJtOVlmc09EKzV6N1FhOFpSdFg5?=
- =?utf-8?B?Ylh1UE5xNGJjUnlSazBVdzJYMlBuMDhPRkZXU0lQK0Z2STlTUDlCZFZOSWhY?=
- =?utf-8?B?YVNYazFid0JZTUx2Y1ZuVWJQK0NnbDI4MXoyUUtnUWxkK1BiSWdGT3ZXZUdi?=
- =?utf-8?B?L2I4L0kwNlg2RVY2cTNwTDB5VzFRdnZoYm1RdEdZT2tORkNsSUZqeFRVOGJQ?=
- =?utf-8?B?eXY2NzBDUVlvR2lZN1pzVEMyU3hDWUhwdFBFMVQ4eWtuTkxxMzNRa3FqLzl1?=
- =?utf-8?B?d2FVaGh4QVpma3VOUmxndmh3UmVnUVBKZmN2YXpSRlRwSUtaRG4waFNpQ1JV?=
- =?utf-8?B?T3JwbnkvZWxoaHA2TzNtSkQydEFnYllxOVhqT0crMjZBSUphOC9mQjNqd1Zi?=
- =?utf-8?B?cy9xNE5saFJudzJMWE11YkZtU2J2bGRBeDVydWIrS3VvdEUydWg4dFhOVURI?=
- =?utf-8?B?Y2x2dzlyRFl4eDJtS2lWMEdZZEVHYkRJUEhpUHVzY3UwaGdIWVg5NjlqZHh2?=
- =?utf-8?B?aGZ3T1ovcGRaL0RzaWFhZlhMMXVVdDlxMjZvdFQwZmdJc1hQQXdCTjJ0NEV0?=
- =?utf-8?B?Ykw1RTFxbmRBZDdXNFdJc1Qrd0R5cWlnU3dvQklTUk5aU3Z0Yldvb0lRVHdO?=
- =?utf-8?B?ZGMzM21FdVBPUzVMV0JVK25VV2p0eE9kem1hWWhuYzV1UzVueWx0emJha2Jr?=
- =?utf-8?B?djNYVGFORkJTKzZoRzNIOE91Y1ppa1F0Z3MyVEE5SXJmZVJoaVVZckszb0lx?=
- =?utf-8?B?ZXVqSkVOYi84Qy9PbjJzdEg4S0FoVGk4Q0xMd3Y3YjJVNGhCQlh5WUVjVHNF?=
- =?utf-8?B?V1ZRUXNqMVR0UTZiNzlyeC9vZ2h0dUpsVytqb3hLblplWDg0azJyT3FHdnZx?=
- =?utf-8?B?V25FYWg4dG9KendrdllTOWlYQzBpYmJXSk1XK3I0NFNXZHo1MHhVMlpRdmxl?=
- =?utf-8?B?SnlrUkVISzVDQVRBL1FDaHRQR3dqVWlOWE84QlpkclJEclk0Q0RxV21NRmxJ?=
- =?utf-8?B?WkdURjdjYnhYbkNsdkNwc1ZKSVJxY1pFRys4RVo0b3BHY01lYWo3ZXd1MTBq?=
- =?utf-8?B?ZUExbGg2QmM1Q3V6T0ZLUGNnQUhQV1doaUNiSGVmR3I2blAvNjZQeGU0K1Fa?=
- =?utf-8?B?WHkwNE9vcGN1bkVXZjA3VHZ1eDgvQ2VFK3VxUGt4WXRyVzFHSURjWUhPczQ3?=
- =?utf-8?B?WjFJSDFFaWlmQStnTmRSVjAyYVRFSEFQcWFGclh6bm1VSjNYTE9PNmcrTE41?=
- =?utf-8?B?dHg4R3ZRME1Jb091MDhuSm1xcFUxT0hUbmVJTm5VOVJUZVNZSkdDMUFuVFFs?=
- =?utf-8?B?TThrUnREb2F2MUV2YnljTGprVHVWZFNMQW50SHZQVTNpUG5RWGVTWDFSU0Qr?=
- =?utf-8?B?Vnp0bENkaUpvRnAzZXlONVNqUS9oRk9nT3ZPVk5Rd0o0VkZOeHFmRFJnOURx?=
- =?utf-8?B?Wk5HcXJ5SENOUkhIMVBRd1pwUjQzNmJ1cDZFQmpNUmxTMjFTS0pWdzZJQjRz?=
- =?utf-8?B?eDIxaGtteUk0N2ZhYmM1UUU3TmN6VVFTSmRxci9nV1FGUWJadktlZEFRWWdZ?=
- =?utf-8?Q?HkcHovmQTeWkhk1sR6AZ6tLdM?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: d3be0da3-649a-43a4-4533-08dc9992b3c5
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7529.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2024 05:57:34.1072
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: M0o4O5Rc8dXoV1Z1aFnuPAQ5ScxPlaWAgH9r1FDDOMgGujzbtlAHuzhIeNnROFBobXWS7Cy05ePw6LMfKXUBrQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7622
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemf100017.china.huawei.com (7.202.181.16)
 
-On 2024/7/1 13:42, Yan Zhao wrote:
-> On Mon, Jul 01, 2024 at 01:08:30PM +0800, Yi Liu wrote:
->> On 2024/6/28 23:18, Yan Zhao wrote:
->>> In the device cdev path, adjust the handling of the KVM reference count to
->>> only increment with the first vfio_df_open() and decrement after the final
->>> vfio_df_close(). This change addresses a KVM reference leak that occurs
->>> when a device cdev file is opened multiple times and attempts to bind to
->>> iommufd repeatedly.
->>>
->>> Currently, vfio_df_get_kvm_safe() is invoked prior to each vfio_df_open()
->>> in the cdev path during iommufd binding. The corresponding
->>> vfio_device_put_kvm() is executed either when iommufd is unbound or if an
->>> error occurs during the binding process.
->>>
->>> However, issues arise when a device binds to iommufd more than once. The
->>> second vfio_df_open() will fail during iommufd binding, and
->>> vfio_device_put_kvm() will be triggered, setting device->kvm to NULL.
->>> Consequently, when iommufd is unbound from the first successfully bound
->>> device, vfio_device_put_kvm() becomes ineffective, leading to a leak in the
->>> KVM reference count.
->>
->> Good catch!!!
->>
->>> Below is the calltrace that will be produced in this scenario when the KVM
->>> module is unloaded afterwards, reporting "BUG kvm_vcpu (Tainted: G S):
->>> Objects remaining in kvm_vcpu on __kmem_cache_shutdown()".
->>>
->>> Call Trace:
->>>    <TASK>
->>>    dump_stack_lvl+0x80/0xc0
->>>    slab_err+0xb0/0xf0
->>>    ? __kmem_cache_shutdown+0xc1/0x4e0
->>>    ? rcu_is_watching+0x11/0x50
->>>    ? lock_acquired+0x144/0x3c0
->>>    __kmem_cache_shutdown+0x1b7/0x4e0
->>>    kmem_cache_destroy+0xa6/0x260
->>>    kvm_exit+0x80/0xc0 [kvm]
->>>    vmx_exit+0xe/0x20 [kvm_intel]
->>>    __x64_sys_delete_module+0x143/0x250
->>>    ? ktime_get_coarse_real_ts64+0xd3/0xe0
->>>    ? syscall_trace_enter+0x143/0x210
->>>    do_syscall_64+0x6f/0x140
->>>    entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>>
->>> Fixes: 5fcc26969a16 ("vfio: Add VFIO_DEVICE_BIND_IOMMUFD")
->>> Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
->>> ---
->>>    drivers/vfio/device_cdev.c | 13 +++++++++----
->>>    1 file changed, 9 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/vfio/device_cdev.c b/drivers/vfio/device_cdev.c
->>> index bb1817bd4ff3..3b85d01d1b27 100644
->>> --- a/drivers/vfio/device_cdev.c
->>> +++ b/drivers/vfio/device_cdev.c
->>> @@ -65,6 +65,7 @@ long vfio_df_ioctl_bind_iommufd(struct vfio_device_file *df,
->>>    {
->>>    	struct vfio_device *device = df->device;
->>>    	struct vfio_device_bind_iommufd bind;
->>> +	bool put_kvm = false;
->>>    	unsigned long minsz;
->>>    	int ret;
->>> @@ -101,12 +102,15 @@ long vfio_df_ioctl_bind_iommufd(struct vfio_device_file *df,
->>>    	}
->>>    	/*
->>> -	 * Before the device open, get the KVM pointer currently
->>> +	 * Before the device's first open, get the KVM pointer currently
->>>    	 * associated with the device file (if there is) and obtain
->>> -	 * a reference.  This reference is held until device closed.
->>> +	 * a reference.  This reference is held until device's last closed.
->>>    	 * Save the pointer in the device for use by drivers.
->>>    	 */
->>> -	vfio_df_get_kvm_safe(df);
->>> +	if (device->open_count == 0) {
->>> +		vfio_df_get_kvm_safe(df);
->>> +		put_kvm = true;
->>> +	}
->>>    	ret = vfio_df_open(df);
->>>    	if (ret)
->>> @@ -129,7 +133,8 @@ long vfio_df_ioctl_bind_iommufd(struct vfio_device_file *df,
->>>    out_close_device:
->>>    	vfio_df_close(df);
->>>    out_put_kvm:
->>> -	vfio_device_put_kvm(device);
->>> +	if (put_kvm)
->>
->> you may use if (device->open_count == 0) as well here to save a bool.
->> Otherwise looks good to me.
-> Upon here, device->open_count is not necessarily 0 even for the first open.
-> The failure can be after a successful increment of device->open_count.
-> 
-> Maybe renaming "bool put_kvm" to "bool is_first_open" to save an assignment
-> in most common case?
->   
->> Reviewed-by: Yi Liu <yi.l.liu@intel.com>
-> Thanks:)
-> 
->>
->>> +		vfio_device_put_kvm(device);
->>>    	iommufd_ctx_put(df->iommufd);
->>>    	df->iommufd = NULL;
->>>    out_unlock:
->>>
->>> base-commit: 6ba59ff4227927d3a8530fc2973b80e94b54d58f
->>
->> BTW. The vfio_device_get_kvm_safe() is not supposed to be invoked multiple
->> times by design as the second call would override the device->put_kvm and
->> device->kvm. This does not change the put_kvm nor the kvm though. But not a
-> "kvm" may also be changed if the second bind is from a different VM.
-> 
+A concurrent file creation and little writing could unexpectedly return
+-ENOSPC error since there is a race window that the allocator could get
+the wrong agf->agf_longest.
 
-yep.
+Write file process steps:
+1) Find the entry that best meets the conditions, then calculate the start
+   address and length of the remaining part of the entry after allocation.
+2) Delete this entry and update the -current- agf->agf_longest.
+3) Insert the remaining unused parts of this entry based on the
+   calculations in 1), and update the agf->agf_longest again if necessary.
 
->> good thing anyghow. maybe worth a warn like below.
->>
->> diff --git a/drivers/vfio/vfio_main.c b/drivers/vfio/vfio_main.c
->> index ee72c0b61795..a4bead0e5820 100644
->> --- a/drivers/vfio/vfio_main.c
->> +++ b/drivers/vfio/vfio_main.c
->> @@ -408,6 +408,8 @@ void vfio_device_get_kvm_safe(struct vfio_device
->> *device, struct kvm *kvm)
->>   	if (!kvm)
->>   		return;
->>
->> +	WARN_ON(device->put_kvm || device->kvm);
-> Yes, better.
-> 
->>   	pfn = symbol_get(kvm_put_kvm);
->>   	if (WARN_ON(!pfn))
->>   		return;
->>
->> -- 
->> Regards,
->> Yi Liu
+Create file process steps:
+1) Check whether there are free inodes in the inode chunk.
+2) If there is no free inode, check whether there has space for creating
+   inode chunks, perform the no-lock judgment first.
+3) If the judgment succeeds, the judgment is performed again with agf lock
+   held. Otherwire, an error is returned directly.
 
+If the write process is in step 2) but not go to 3) yet, the create file
+process goes to 2) at this time, it may be mistaken for no space,
+resulting in the file system still has space but the file creation fails.
+
+We have sent two different commits to the community in order to fix this
+problem[1][2]. Unfortunately, both solutions have flaws. In [2], I
+discussed with Dave and Darrick, realized that a better solution to this
+problem requires the "last cnt record tracking" to be ripped out of the
+generic btree code. And surprisingly, Dave directly provided his fix code.
+This patch includes appropriate modifications based on his tmp-code to
+address this issue.
+
+The entire fix can be roughly divided into two parts:
+1) Delete the code related to lastrec-update in the generic btree code.
+2) Place the process of updating longest freespace with cntbt separately
+   to the end of the cntbt modifications. Move the cursor to the rightmost
+   firstly, and update the longest free extent based on the record.
+
+Note that we can not update the longest with xfs_alloc_get_rec() after
+find the longest record, as xfs_verify_agbno() may not pass because
+pag->block_count is updated on the outside. Therefore, use
+xfs_btree_get_rec() as a replacement.
+
+[1] https://lore.kernel.org/all/20240419061848.1032366-2-yebin10@huawei.com
+[2] https://lore.kernel.org/all/20240604071121.3981686-1-wozizhi@huawei.com
+
+Reported by: Ye Bin <yebin10@huawei.com>
+Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
+---
+ fs/xfs/libxfs/xfs_alloc.c       | 114 ++++++++++++++++++++++++++++++++
+ fs/xfs/libxfs/xfs_alloc_btree.c |  64 ------------------
+ fs/xfs/libxfs/xfs_btree.c       |  51 --------------
+ fs/xfs/libxfs/xfs_btree.h       |  16 +----
+ 4 files changed, 115 insertions(+), 130 deletions(-)
+
+diff --git a/fs/xfs/libxfs/xfs_alloc.c b/fs/xfs/libxfs/xfs_alloc.c
+index 6c55a6e88eba..88fceb7ef946 100644
+--- a/fs/xfs/libxfs/xfs_alloc.c
++++ b/fs/xfs/libxfs/xfs_alloc.c
+@@ -465,6 +465,97 @@ xfs_alloc_fix_len(
+ 	args->len = rlen;
+ }
+ 
++/*
++ * Determine if the cursor points to the block that contains the right-most
++ * block of records in the by-count btree. This block contains the largest
++ * contiguous free extent in the AG, so if we modify a record in this block we
++ * need to call xfs_alloc_fixup_longest() once the modifications are done to
++ * ensure the agf->agf_longest field is kept up to date with the longest free
++ * extent tracked by the by-count btree.
++ */
++static bool
++xfs_alloc_cursor_at_lastrec(
++	struct xfs_btree_cur	*cnt_cur)
++{
++	struct xfs_btree_block	*block;
++	union xfs_btree_ptr	ptr;
++	struct xfs_buf		*bp;
++
++	block = xfs_btree_get_block(cnt_cur, 0, &bp);
++
++	xfs_btree_get_sibling(cnt_cur, block, &ptr, XFS_BB_RIGHTSIB);
++	return xfs_btree_ptr_is_null(cnt_cur, &ptr);
++}
++
++/*
++ * Find the rightmost record of the cntbt, and return the longest free space
++ * recorded in it. Simply set both the block number and the length to their
++ * maximum values before searching.
++ */
++static int
++xfs_cntbt_longest(
++	struct xfs_btree_cur	*cnt_cur,
++	xfs_extlen_t		*longest)
++{
++	struct xfs_alloc_rec_incore irec;
++	union xfs_btree_rec	    *rec;
++	int			    stat = 0;
++	int			    error;
++
++	memset(&cnt_cur->bc_rec, 0xFF, sizeof(cnt_cur->bc_rec));
++	error = xfs_btree_lookup(cnt_cur, XFS_LOOKUP_LE, &stat);
++	if (error)
++		return error;
++	if (!stat) {
++		/* totally empty tree */
++		*longest = 0;
++		return 0;
++	}
++
++	error = xfs_btree_get_rec(cnt_cur, &rec, &stat);
++	if (error)
++		return error;
++	if (XFS_IS_CORRUPT(cnt_cur->bc_mp, !stat)) {
++		xfs_btree_mark_sick(cnt_cur);
++		return -EFSCORRUPTED;
++	}
++
++	xfs_alloc_btrec_to_irec(rec, &irec);
++	*longest = irec.ar_blockcount;
++	return 0;
++}
++
++/*
++ * Update the longest contiguous free extent in the AG from the by-count cursor
++ * that is passed to us. This should be done at the end of any allocation or
++ * freeing operation that touches the longest extent in the btree.
++ *
++ * Needing to update the longest extent can be determined by calling
++ * xfs_alloc_cursor_at_lastrec() after the cursor is positioned for record
++ * modification but before the modification begins.
++ */
++static int
++xfs_alloc_fixup_longest(
++	struct xfs_btree_cur	*cnt_cur)
++{
++	struct xfs_perag	*pag = cnt_cur->bc_ag.pag;
++	struct xfs_buf		*bp = cnt_cur->bc_ag.agbp;
++	struct xfs_agf		*agf = bp->b_addr;
++	xfs_extlen_t		longest = 0;
++	int			error;
++
++	/* Lookup last rec in order to update AGF. */
++	error = xfs_cntbt_longest(cnt_cur, &longest);
++	if (error)
++		return error;
++
++	pag->pagf_longest = longest;
++	agf->agf_longest = cpu_to_be32(pag->pagf_longest);
++	xfs_alloc_log_agf(cnt_cur->bc_tp, bp, XFS_AGF_LONGEST);
++
++	return 0;
++}
++
+ /*
+  * Update the two btrees, logically removing from freespace the extent
+  * starting at rbno, rlen blocks.  The extent is contained within the
+@@ -489,6 +580,7 @@ xfs_alloc_fixup_trees(
+ 	xfs_extlen_t	nflen1=0;	/* first new free length */
+ 	xfs_extlen_t	nflen2=0;	/* second new free length */
+ 	struct xfs_mount *mp;
++	bool		fixup_longest = false;
+ 
+ 	mp = cnt_cur->bc_mp;
+ 
+@@ -577,6 +669,10 @@ xfs_alloc_fixup_trees(
+ 		nfbno2 = rbno + rlen;
+ 		nflen2 = (fbno + flen) - nfbno2;
+ 	}
++
++	if (xfs_alloc_cursor_at_lastrec(cnt_cur))
++		fixup_longest = true;
++
+ 	/*
+ 	 * Delete the entry from the by-size btree.
+ 	 */
+@@ -654,6 +750,10 @@ xfs_alloc_fixup_trees(
+ 			return -EFSCORRUPTED;
+ 		}
+ 	}
++
++	if (fixup_longest)
++		return xfs_alloc_fixup_longest(cnt_cur);
++
+ 	return 0;
+ }
+ 
+@@ -1956,6 +2056,7 @@ xfs_free_ag_extent(
+ 	int				i;
+ 	int				error;
+ 	struct xfs_perag		*pag = agbp->b_pag;
++	bool				fixup_longest = false;
+ 
+ 	bno_cur = cnt_cur = NULL;
+ 	mp = tp->t_mountp;
+@@ -2219,8 +2320,13 @@ xfs_free_ag_extent(
+ 	}
+ 	xfs_btree_del_cursor(bno_cur, XFS_BTREE_NOERROR);
+ 	bno_cur = NULL;
++
+ 	/*
+ 	 * In all cases we need to insert the new freespace in the by-size tree.
++	 *
++	 * If this new freespace is being inserted in the block that contains
++	 * the largest free space in the btree, make sure we also fix up the
++	 * agf->agf-longest tracker field.
+ 	 */
+ 	if ((error = xfs_alloc_lookup_eq(cnt_cur, nbno, nlen, &i)))
+ 		goto error0;
+@@ -2229,6 +2335,8 @@ xfs_free_ag_extent(
+ 		error = -EFSCORRUPTED;
+ 		goto error0;
+ 	}
++	if (xfs_alloc_cursor_at_lastrec(cnt_cur))
++		fixup_longest = true;
+ 	if ((error = xfs_btree_insert(cnt_cur, &i)))
+ 		goto error0;
+ 	if (XFS_IS_CORRUPT(mp, i != 1)) {
+@@ -2236,6 +2344,12 @@ xfs_free_ag_extent(
+ 		error = -EFSCORRUPTED;
+ 		goto error0;
+ 	}
++	if (fixup_longest) {
++		error = xfs_alloc_fixup_longest(cnt_cur);
++		if (error)
++			goto error0;
++	}
++
+ 	xfs_btree_del_cursor(cnt_cur, XFS_BTREE_NOERROR);
+ 	cnt_cur = NULL;
+ 
+diff --git a/fs/xfs/libxfs/xfs_alloc_btree.c b/fs/xfs/libxfs/xfs_alloc_btree.c
+index 6ef5ddd89600..585e98e87ef9 100644
+--- a/fs/xfs/libxfs/xfs_alloc_btree.c
++++ b/fs/xfs/libxfs/xfs_alloc_btree.c
+@@ -115,67 +115,6 @@ xfs_allocbt_free_block(
+ 	return 0;
+ }
+ 
+-/*
+- * Update the longest extent in the AGF
+- */
+-STATIC void
+-xfs_allocbt_update_lastrec(
+-	struct xfs_btree_cur		*cur,
+-	const struct xfs_btree_block	*block,
+-	const union xfs_btree_rec	*rec,
+-	int				ptr,
+-	int				reason)
+-{
+-	struct xfs_agf		*agf = cur->bc_ag.agbp->b_addr;
+-	struct xfs_perag	*pag;
+-	__be32			len;
+-	int			numrecs;
+-
+-	ASSERT(!xfs_btree_is_bno(cur->bc_ops));
+-
+-	switch (reason) {
+-	case LASTREC_UPDATE:
+-		/*
+-		 * If this is the last leaf block and it's the last record,
+-		 * then update the size of the longest extent in the AG.
+-		 */
+-		if (ptr != xfs_btree_get_numrecs(block))
+-			return;
+-		len = rec->alloc.ar_blockcount;
+-		break;
+-	case LASTREC_INSREC:
+-		if (be32_to_cpu(rec->alloc.ar_blockcount) <=
+-		    be32_to_cpu(agf->agf_longest))
+-			return;
+-		len = rec->alloc.ar_blockcount;
+-		break;
+-	case LASTREC_DELREC:
+-		numrecs = xfs_btree_get_numrecs(block);
+-		if (ptr <= numrecs)
+-			return;
+-		ASSERT(ptr == numrecs + 1);
+-
+-		if (numrecs) {
+-			xfs_alloc_rec_t *rrp;
+-
+-			rrp = XFS_ALLOC_REC_ADDR(cur->bc_mp, block, numrecs);
+-			len = rrp->ar_blockcount;
+-		} else {
+-			len = 0;
+-		}
+-
+-		break;
+-	default:
+-		ASSERT(0);
+-		return;
+-	}
+-
+-	agf->agf_longest = len;
+-	pag = cur->bc_ag.agbp->b_pag;
+-	pag->pagf_longest = be32_to_cpu(len);
+-	xfs_alloc_log_agf(cur->bc_tp, cur->bc_ag.agbp, XFS_AGF_LONGEST);
+-}
+-
+ STATIC int
+ xfs_allocbt_get_minrecs(
+ 	struct xfs_btree_cur	*cur,
+@@ -493,7 +432,6 @@ const struct xfs_btree_ops xfs_bnobt_ops = {
+ 	.set_root		= xfs_allocbt_set_root,
+ 	.alloc_block		= xfs_allocbt_alloc_block,
+ 	.free_block		= xfs_allocbt_free_block,
+-	.update_lastrec		= xfs_allocbt_update_lastrec,
+ 	.get_minrecs		= xfs_allocbt_get_minrecs,
+ 	.get_maxrecs		= xfs_allocbt_get_maxrecs,
+ 	.init_key_from_rec	= xfs_allocbt_init_key_from_rec,
+@@ -511,7 +449,6 @@ const struct xfs_btree_ops xfs_bnobt_ops = {
+ const struct xfs_btree_ops xfs_cntbt_ops = {
+ 	.name			= "cnt",
+ 	.type			= XFS_BTREE_TYPE_AG,
+-	.geom_flags		= XFS_BTGEO_LASTREC_UPDATE,
+ 
+ 	.rec_len		= sizeof(xfs_alloc_rec_t),
+ 	.key_len		= sizeof(xfs_alloc_key_t),
+@@ -525,7 +462,6 @@ const struct xfs_btree_ops xfs_cntbt_ops = {
+ 	.set_root		= xfs_allocbt_set_root,
+ 	.alloc_block		= xfs_allocbt_alloc_block,
+ 	.free_block		= xfs_allocbt_free_block,
+-	.update_lastrec		= xfs_allocbt_update_lastrec,
+ 	.get_minrecs		= xfs_allocbt_get_minrecs,
+ 	.get_maxrecs		= xfs_allocbt_get_maxrecs,
+ 	.init_key_from_rec	= xfs_allocbt_init_key_from_rec,
+diff --git a/fs/xfs/libxfs/xfs_btree.c b/fs/xfs/libxfs/xfs_btree.c
+index d29547572a68..a5c4af148853 100644
+--- a/fs/xfs/libxfs/xfs_btree.c
++++ b/fs/xfs/libxfs/xfs_btree.c
+@@ -1331,30 +1331,6 @@ xfs_btree_init_block_cur(
+ 			xfs_btree_owner(cur));
+ }
+ 
+-/*
+- * Return true if ptr is the last record in the btree and
+- * we need to track updates to this record.  The decision
+- * will be further refined in the update_lastrec method.
+- */
+-STATIC int
+-xfs_btree_is_lastrec(
+-	struct xfs_btree_cur	*cur,
+-	struct xfs_btree_block	*block,
+-	int			level)
+-{
+-	union xfs_btree_ptr	ptr;
+-
+-	if (level > 0)
+-		return 0;
+-	if (!(cur->bc_ops->geom_flags & XFS_BTGEO_LASTREC_UPDATE))
+-		return 0;
+-
+-	xfs_btree_get_sibling(cur, block, &ptr, XFS_BB_RIGHTSIB);
+-	if (!xfs_btree_ptr_is_null(cur, &ptr))
+-		return 0;
+-	return 1;
+-}
+-
+ STATIC void
+ xfs_btree_buf_to_ptr(
+ 	struct xfs_btree_cur	*cur,
+@@ -2420,15 +2396,6 @@ xfs_btree_update(
+ 	xfs_btree_copy_recs(cur, rp, rec, 1);
+ 	xfs_btree_log_recs(cur, bp, ptr, ptr);
+ 
+-	/*
+-	 * If we are tracking the last record in the tree and
+-	 * we are at the far right edge of the tree, update it.
+-	 */
+-	if (xfs_btree_is_lastrec(cur, block, 0)) {
+-		cur->bc_ops->update_lastrec(cur, block, rec,
+-					    ptr, LASTREC_UPDATE);
+-	}
+-
+ 	/* Pass new key value up to our parent. */
+ 	if (xfs_btree_needs_key_update(cur, ptr)) {
+ 		error = xfs_btree_update_keys(cur, 0);
+@@ -3617,15 +3584,6 @@ xfs_btree_insrec(
+ 			goto error0;
+ 	}
+ 
+-	/*
+-	 * If we are tracking the last record in the tree and
+-	 * we are at the far right edge of the tree, update it.
+-	 */
+-	if (xfs_btree_is_lastrec(cur, block, level)) {
+-		cur->bc_ops->update_lastrec(cur, block, rec,
+-					    ptr, LASTREC_INSREC);
+-	}
+-
+ 	/*
+ 	 * Return the new block number, if any.
+ 	 * If there is one, give back a record value and a cursor too.
+@@ -3983,15 +3941,6 @@ xfs_btree_delrec(
+ 	xfs_btree_set_numrecs(block, --numrecs);
+ 	xfs_btree_log_block(cur, bp, XFS_BB_NUMRECS);
+ 
+-	/*
+-	 * If we are tracking the last record in the tree and
+-	 * we are at the far right edge of the tree, update it.
+-	 */
+-	if (xfs_btree_is_lastrec(cur, block, level)) {
+-		cur->bc_ops->update_lastrec(cur, block, NULL,
+-					    ptr, LASTREC_DELREC);
+-	}
+-
+ 	/*
+ 	 * We're at the root level.  First, shrink the root block in-memory.
+ 	 * Try to get rid of the next level down.  If we can't then there's
+diff --git a/fs/xfs/libxfs/xfs_btree.h b/fs/xfs/libxfs/xfs_btree.h
+index f93374278aa1..10b7ddc3b2b3 100644
+--- a/fs/xfs/libxfs/xfs_btree.h
++++ b/fs/xfs/libxfs/xfs_btree.h
+@@ -154,12 +154,6 @@ struct xfs_btree_ops {
+ 			       int *stat);
+ 	int	(*free_block)(struct xfs_btree_cur *cur, struct xfs_buf *bp);
+ 
+-	/* update last record information */
+-	void	(*update_lastrec)(struct xfs_btree_cur *cur,
+-				  const struct xfs_btree_block *block,
+-				  const union xfs_btree_rec *rec,
+-				  int ptr, int reason);
+-
+ 	/* records in block/level */
+ 	int	(*get_minrecs)(struct xfs_btree_cur *cur, int level);
+ 	int	(*get_maxrecs)(struct xfs_btree_cur *cur, int level);
+@@ -222,15 +216,7 @@ struct xfs_btree_ops {
+ };
+ 
+ /* btree geometry flags */
+-#define XFS_BTGEO_LASTREC_UPDATE	(1U << 0) /* track last rec externally */
+-#define XFS_BTGEO_OVERLAPPING		(1U << 1) /* overlapping intervals */
+-
+-/*
+- * Reasons for the update_lastrec method to be called.
+- */
+-#define LASTREC_UPDATE	0
+-#define LASTREC_INSREC	1
+-#define LASTREC_DELREC	2
++#define XFS_BTGEO_OVERLAPPING		(1U << 0) /* overlapping intervals */
+ 
+ 
+ union xfs_btree_irec {
 -- 
-Regards,
-Yi Liu
+2.39.2
+
 
