@@ -1,198 +1,341 @@
-Return-Path: <linux-kernel+bounces-236980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E087691E95A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 22:15:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 800D191E952
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 22:15:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95E7528309D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:15:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 040DA1F227D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:15:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E936A16F85A;
-	Mon,  1 Jul 2024 20:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3948F171647;
+	Mon,  1 Jul 2024 20:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="W5Eg3eUr"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2042.outbound.protection.outlook.com [40.107.21.42])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KaR7RtnY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B50D171671;
-	Mon,  1 Jul 2024 20:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719864910; cv=fail; b=brVAQ9/jkijxoN8sOP69Sv7j4dbSRC84hoJK+xug9iaCdw348K3pKh/giBLtLcP7jx6hy2WBxaxkRdKZl7arqLbLoFtFTrtoV2cw/ThDUlyZzuU8dSGPQJblrRA7JXCURoX7jhsnl28QxO6uU2KRicgngsMd2cki4zpPZ47OHMY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719864910; c=relaxed/simple;
-	bh=JByOaRcHNX2v1pdmxD8hqUOrTWdzv2e4Lo9tzabj3ko=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=J6jZPpD8PyDvHJIWhGqpVRzoLichAFcJsx5+wtR+WQJoZdg0Njg3iHblDM03EQrrx5k0pC6oCl5NIhwWDKedNM7CjrVGIZqv/M+NQigGi1UMvRcO3FQkpByPRqorBykCbq3CIvEbzvCVoKWv31BuczndtjqAxKMLB3YhCXja5NE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=W5Eg3eUr; arc=fail smtp.client-ip=40.107.21.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=e+DWFDHxl0vE/UBjFfdaga05nuam4bdAe1nxEs0Vkh9ZfMI00RdQHYWOORzVkXi28X6JuaUQMAknzvwvs0ELwCyVzeMharvw2+UgpTsME4A5LsTx2jzq9XOlBEK7NYj86spOI7psVY1dnlmADkdWtTa9fPYh//T9DBHRPM4HsYIkSC9xwFQHgq9P3mIc6uguBfe3xVxbV+t/kNukMWcDqCgy7GNLl0jLimTGrk6tq6wlPiqzIEh69zPbZ85GbV+T8MfmyFMxTQlDqIBsujG4803I3gKDwk0Nyj493qVgwmasgUTjnFpszERmgIrnH66ZvP+/4SAe1ZH6jsUqxYU51Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Cpo4L2aLEoX9C8ac42LXt9a4CSsNNF5qx7tVQyimK10=;
- b=KT1Qc/NYkEYSUJLqLWRU9JKNrigUPIotij03e3CN/TzI6W0taIEnLj60PYU5WMpXtRBG8t8cxN1irs6uIfu3W7RhQTpDO+wVz8RPgViQnSR+dAn3gxNkKPaLVJWPQNoFzqhiy+asLL0wdYk/ZEwYed9WNsQa5KXjUu46/iS/Ntg9jbdlZCGEONY9TOuw7sJsJ7qAgnTi1QBqWFLIOT/AdH24XU8ef6KWfA7FCif44lfai+IrsSukbwIZTHuIVD3rpI6/KBVAt4XW8MGf1nVn7pqgllkswhtZRD6zuVg/w1J2yziH1qVc9TGl2MDZ27uTdwhURaHAhJ/SSeSGOYRRJg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Cpo4L2aLEoX9C8ac42LXt9a4CSsNNF5qx7tVQyimK10=;
- b=W5Eg3eUrRMNz5iLgB+ReNpOIkt0lB8Vk9D56Yfdp6WAyCxsii9+XZCkgb8m+CYl/BN0iiFC0CVdBVa3sTReUk+ts/kWYdWzTNn0xVdAl5ItQZSvsEmYAbMB8gn/ao/21ctehZ+Rei6tLbJIbTB/xXH5W7HQXp8jR/uh65sLH7Ec=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AM9PR04MB8539.eurprd04.prod.outlook.com (2603:10a6:20b:436::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.29; Mon, 1 Jul
- 2024 20:15:06 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7719.029; Mon, 1 Jul 2024
- 20:15:06 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: Madalin Bucur <madalin.bucur@nxp.com>,
-	Sean Anderson <sean.anderson@seco.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31EF916E883;
+	Mon,  1 Jul 2024 20:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719864893; cv=none; b=A3kVfqza28ufor7ZB3KfriJsZ7O23AVGt43uXlPyfiTzgU2F8lAXLKJ2LD03XWRoTv7VGzrG1/yTKYAoSU7Ei56uQciVLiK/4vgrAyvAUi3ZK+pLL/kn8qiVgR4npGeJuqmybHOmg4Tfh87o2gH7sAbgreWIGZjya+QINtSnCnw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719864893; c=relaxed/simple;
+	bh=SA4K3xgEu/88eKSu6OgY1PEIsOG6R3VH6M5aRLz6n+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=peyUnJvcz8c+rGhJWCYtepQ6NE3xGU5UrAIuTofE82D5IZf0E7hsdntFyoktw8fxuzn3CrHhbpZlmCYDCIef+/uvIvC0tBzPNFgaX3ZJuO16SEBoPFRGkeTmntGI+5ZFPPsN6I0cbnnv5G0QXgG0gzqIaqSO7Ut+9PxuECbQ2z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KaR7RtnY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67B98C32781;
+	Mon,  1 Jul 2024 20:14:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719864892;
+	bh=SA4K3xgEu/88eKSu6OgY1PEIsOG6R3VH6M5aRLz6n+w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=KaR7RtnYNxNIGvsbbKRlsmYfNqjhEOb7oZVFybEYiVvYrBmFiAQj9EvwCdQg9AS6a
+	 eEFmRF7gugg5eLz0EXgxe04Q7FQfFYPrb84A5M/PO+nkGHVJuCA8feFsaAAj2GF7E5
+	 jzaEPfpYQVrZ0Xt4xtK7J0hc4vwv7b55BYW4z2n+GSGnbrDvT4VZmJutL1uNcGaOwO
+	 Nqu7i2wMtMRkdd7N5N9m64D/WprmPYkwJr4ySfC1NhV/ogsu8JyqrlBw8MaztcQbDt
+	 oExQi2ifVFQEAvi24OimvhnHsVwDHezpZr/xHJOgLUlUe1Qi7QomoDnARjLU/E4YqL
+	 MbMDPHjRbMWKw==
+Date: Mon, 1 Jul 2024 15:14:50 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	netdev@vger.kernel.org (open list:FREESCALE QORIQ DPAA FMAN DRIVER),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: imx@lists.linux.dev
-Subject: [PATCH v2 2/2] dt-bindings: net: fsl,fman: add ptimer-handle property
-Date: Mon,  1 Jul 2024 16:14:48 -0400
-Message-Id: <20240701201448.1901657-2-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240701201448.1901657-1-Frank.Li@nxp.com>
-References: <20240701201448.1901657-1-Frank.Li@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SJ2PR07CA0004.namprd07.prod.outlook.com
- (2603:10b6:a03:505::10) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Jingoo Han <jingoohan1@gmail.com>, quic_vbadigan@quicinc.com,
+	quic_skananth@quicinc.com, quic_nitegupt@quicinc.com,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 6/7] pci: qcom: Add support for start_link() &
+ stop_link()
+Message-ID: <20240701201450.GA14795@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM9PR04MB8539:EE_
-X-MS-Office365-Filtering-Correlation-Id: 57fb91d0-8a4c-4875-42f4-08dc9a0a7f87
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|366016|1800799024|376014|52116014|7416014|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?3BKmGtiimIJ52ONzOHNwPAWD66q96A0GQ8uHwZAdT3OQYyVE5ub7DCjgyXod?=
- =?us-ascii?Q?kJPslJlUvrb/dkzkK6MsE9xwBTVHlEefUJ0h/6DqJEYnHA0PfnQV8gbczJ8F?=
- =?us-ascii?Q?/AQmB6Goo7n/FuO8FW9Y+VeT9OleKljA8Mxm8ElX9DykWj7agZ0JIQao0SrH?=
- =?us-ascii?Q?GKW1i/vGVBZyAGpqPpOimcMdg2Ffd0CahwY+3lGmK7Eh58sut3EG4W4Ir17G?=
- =?us-ascii?Q?5eqJpQfRoXvbvU7CRGcFK1y9W7usgcL9bjTi6/iEGqgB5ROxDK0QYvZJLky6?=
- =?us-ascii?Q?uVOeustwGgwLVFfE4jh+FqV5FhQ1maQNbpYY0nUCg4eccWYMtFIVDPVQTkD3?=
- =?us-ascii?Q?aSgfC4+2bWG6lPH7OvVzxSSquhZh0YBcEwYDVq25LREcya7Sge3dZCrCj2x6?=
- =?us-ascii?Q?ZQoTYx/eBOwIw6Z359w9tQdTqCdcBB9I9FZWU/jJQJljZD5t9GnQ0Cq8G4HD?=
- =?us-ascii?Q?ndDG6Go93G4xeMD+D+TMvt8qG5EutoO466PZUIJqy76ZhLDG+d3HXHSL8+0F?=
- =?us-ascii?Q?uE2W3mNlIhgtYuk5eNVr6NnSbdwxCzSPSNfh5aCmpa5ANjJwSxddAMchdABq?=
- =?us-ascii?Q?7MWXygIIocnFLaKrpWq0q7Tz6vuigGBOOsEE5f6Bf4hHK6q1l/M+JTbiA6xi?=
- =?us-ascii?Q?gbXfQe+D1pB43z9x7BH8T0rbYroFOpmmZ1YUBH9IYCNqQW1gmG+XH8TEnjuY?=
- =?us-ascii?Q?+BzUZA7JBrIiW50aea2SxAiIiPhORgY5W21urvRqf2q+v/n6vh/tWQV00kr7?=
- =?us-ascii?Q?pBMWYkO+jcuANk8p5umkXWjJWvMfO7SpyHUFEv6/0Hpvmq2wAr0SIqkPjnvF?=
- =?us-ascii?Q?IOBBzRLA7AWanD/GaTH8SMF4SWj1djH49PNQdZI6Zo7dOBVdpqglraYiGV3g?=
- =?us-ascii?Q?1fVRaiiVcHdprdDaMy15GsV/cHxV9jvpiO6AbjeunXvek+W5Ha3LJ0D2fbF8?=
- =?us-ascii?Q?dZ+eAXtMGxJycDDM79fcNcXOgZs7lsKnuFDl1Wp8CblAFFbFnQyhwv8Lzynz?=
- =?us-ascii?Q?Lqjn7fF/kDKfLaWBGmmi9Xv/My49FXOumRUqWlq5YTDSLNRx7+ph4B1qIE91?=
- =?us-ascii?Q?+8OURS91FY9SgKfkN0pxRRHZsUEAAZvxg3artjCk0OGN/BTeCQNhoWZb5Dsy?=
- =?us-ascii?Q?UHjkAQrtT5aiYIese/2oJUbQ5DLNdkOFsJxcGME/P8cb5eVmI4nZcVIrXeSp?=
- =?us-ascii?Q?rNtJeyne5s8EFaIdqArWuYExUf2oGPSQh7/QzKHJRQ9H3ExV1ypnICqqISzV?=
- =?us-ascii?Q?BnKEncVuNBHvoM84pCk2vyBLZdQSukYeso14waZdPCk12xw31edFpRr2cLzk?=
- =?us-ascii?Q?1J35Jk3UJs1BiPuA0V16OmKL62bKT1liAl7NmiLw46HgAZSEqJuxc2LOItNN?=
- =?us-ascii?Q?NxJ6B+n/gZJCXPdaMPIXFznNfHR3iNIfP6sAT705V4pFgTkHBS3cC6hPEXan?=
- =?us-ascii?Q?v476+i/eBRI=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(7416014)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?MDNDH8mxA0q0B4+UG5K5LQDYr6t9Cr3X/ANhficsR1OFmn2Yi057onh6sgRk?=
- =?us-ascii?Q?scoeGYj8myHiCM8sRxl7yKNuEwD/HhWYziMwsvgAi3mLJSss06ovizF1QBB0?=
- =?us-ascii?Q?yaRQljQ87gcbZHJHyXF54rImJPF2jaz9HOdqCh2PenYS0daY0Gekv/vDp3jo?=
- =?us-ascii?Q?XEzfdPtksdUH/wDHDT6a181eiYtDFj1x3i1pX1PSdmQFre7yc+ditCvJSfTY?=
- =?us-ascii?Q?acG3epiEqqBKqc2QRcPy7Th/uI47FMmCGmwZGJvNTiKDpdsB5Qd8XlcaoR/x?=
- =?us-ascii?Q?F6e7REqzug3OMqd697a/1J7y4OdAXtvJla+Fr4n24QL8nJRcZFctfNcRDbGt?=
- =?us-ascii?Q?CSy4vF0sE47294M8VnLup3hZdC4o1PIFVsPX/lwWMyubUrp7cECt60EsrlJz?=
- =?us-ascii?Q?ZW+9jcHpz3XeMJj0G1ywNwO4Rj1uDuhlqfDq599Zz9Elj/DqxGbFY63eJeZs?=
- =?us-ascii?Q?iNiBoKPa25tnZBqEBtveDPjXZpQlNsVg+lnsYNfDoculkrJwi6tOyfqXYq1T?=
- =?us-ascii?Q?7Ma+Fgw03FLccU46sn8jOhpSduEtZmr5VxuKG6ySa06zNhY+iAnvXCD9HTB2?=
- =?us-ascii?Q?TUMLNZUuRAG827fWMkmx/QPJDW6d0EPKwWY+Fz2EVmGKCLOic00adn8EywUl?=
- =?us-ascii?Q?79Wmw0Rljg2Xp/B58a2vMpm0pNIpDlIAGsX6tO1ul+hZeTOULtpg5b3qP8f5?=
- =?us-ascii?Q?yzmzWWqyjyLPkiuuPLOXmQZfnHJ59eYq4QVkz3xRIFquGjdyEGrHOhtewbV+?=
- =?us-ascii?Q?29OP2IymZPFCo2MRzMCbpwMe0XJn8PIZFcsr+NkSIV7Gu9NdvuY5h/a2JPbW?=
- =?us-ascii?Q?8bGcu/FltCPn4buu4s+38IRslPKoIkgMbq55q/Xz7AdTYT9JnL3I0s45XTU3?=
- =?us-ascii?Q?P/8blsPrzAoFP+CkJ557yEjesux//G2tySZ8mvUrdhUCZpEypecWSrYeIVqQ?=
- =?us-ascii?Q?tzH6BI4RCi4lowLwpytAPgBSG0z9z8ba5Y8PQH8z1wqdJM90w2zBtqAO/d28?=
- =?us-ascii?Q?f75/sR4z5RaT3H69JGFtt6iRryJcbw+HXoIMZ8YJfkk0do3Ju/LagcK7XyIY?=
- =?us-ascii?Q?U+0/vxv4FSzxW1rdQKCBPIWvETX3bfTqaVUH1V4Ah52M0J37kMc7n0IdML/H?=
- =?us-ascii?Q?xFLxeFAeRTKAnGrQGn2V5mfuCiT8VcYCEZ8GvVwYtnEiZaRuTYQWeDYZb0zQ?=
- =?us-ascii?Q?2+adJYkON0Jc03zWpnmY25S0RqXA9qDqgU0lyER/XOtaFAykcWY3aLqEMTNw?=
- =?us-ascii?Q?ncpv85qn9oc0ybHjGJBfdAito0Kcde+1rww49Qa1LwxXU0vwcuepDqfa9HVn?=
- =?us-ascii?Q?a2/9jZOTJmNU7PyHJbzi3QkR/9jtlMg1a3ZVzJudhbFYu6CXv9mKSv1hUJRq?=
- =?us-ascii?Q?Hmlmvmbwr+77Y10ucA7QRxKRvoDvh+B/Ev8G5VgIEsJlE0dn81PzILT78PxZ?=
- =?us-ascii?Q?FXHA8yrLtxQNTYtoj0fitPafbTd3O2ZQhlw31J4ZsQ5nkQg0chgIZ+CNwV0Z?=
- =?us-ascii?Q?JIKUUBJwaVD4NlwmslCqA/54CAYJYVn1s5k4ydsKYD3aI9xxwJmAh3jj1PIC?=
- =?us-ascii?Q?X8aVd13FMVqsTqnEu+A=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 57fb91d0-8a4c-4875-42f4-08dc9a0a7f87
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2024 20:15:06.2884
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: b+SgRZwfsKQ3GYad4HI17Q1UwOiurv0YLsT5ChmR3Q978LfNHct3CYzwZf0enVLrLIo0k6wp4xNOi8SfkWmaRA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8539
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240626-qps615-v1-6-2ade7bd91e02@quicinc.com>
 
-Add ptimer-handle property to link to ptp-timer node handle.
-Fix below warning:
-arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dtb: fman@1a00000: 'ptimer-handle' do not match any of the regexes: '^ethernet@[a-f0-9]+$', '^mdio@[a-f0-9]+$', '^muram@[a-f0-9]+$', '^phc@[a-f0-9]+$', '^port@[a-f0-9]+$', 'pinctrl-[0-9]+'
+On Wed, Jun 26, 2024 at 06:07:54PM +0530, Krishna chaitanya chundru wrote:
+> In the stop_link() if the PCIe link is not up, disable LTSSM enable
+> bit to stop link training otherwise keep the link in D3cold.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
-Change from v1 to v2
-- Add Rob's review tag
----
- Documentation/devicetree/bindings/net/fsl,fman.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+s/disable LTSSM enable bit/clear LTSSM enable bit/ ?
 
-diff --git a/Documentation/devicetree/bindings/net/fsl,fman.yaml b/Documentation/devicetree/bindings/net/fsl,fman.yaml
-index f0261861f3cb2..9bbf39ef31a25 100644
---- a/Documentation/devicetree/bindings/net/fsl,fman.yaml
-+++ b/Documentation/devicetree/bindings/net/fsl,fman.yaml
-@@ -80,6 +80,10 @@ properties:
- 
-   dma-coherent: true
- 
-+  ptimer-handle:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: see ptp/fsl,ptp.yaml
-+
-   fsl,qman-channel-range:
-     $ref: /schemas/types.yaml#/definitions/uint32-array
-     description:
--- 
-2.34.1
+D3cold is a device state that could apply to a component on the other
+end of the link but doesn't apply directly to the link itself, AFAIK.
+I assume this would be L2 or L3 for the link.
 
+I think this would be easier to understand if you describe it as "if
+the link is up, do something; otherwise disable LTSSM" (similar
+comment in the code below).
+
+It would be helpful to explain *why* you want to do this.  So far this
+basically transcribes the C code but doesn't explain the benefit.
+
+> And in the start_link() the enable LTSSM bit if the resources are
+> turned on other wise do the all the initialization and then start
+> the link.
+> 
+> Introduce ltssm_disable function op to stop the link training.
+> 
+> Use a flag 'pci_pwrctl_turned_off" to indicate the resources are
+> turned off by the pci pwrctl framework.
+
+Match quote style (' vs ").
+
+> If the link is stopped using the stop_link() then just return with
+> doing anything in suspend and resume.
+
+Add blank line before signed-off-by.
+
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-qcom.c | 108 +++++++++++++++++++++++++++++----
+>  1 file changed, 97 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 14772edcf0d3..1ab3ffdb3914 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -37,6 +37,7 @@
+>  /* PARF registers */
+>  #define PARF_SYS_CTRL				0x00
+>  #define PARF_PM_CTRL				0x20
+> +#define PARF_PM_STTS				0x24
+>  #define PARF_PCS_DEEMPH				0x34
+>  #define PARF_PCS_SWING				0x38
+>  #define PARF_PHY_CTRL				0x40
+> @@ -83,6 +84,9 @@
+>  /* PARF_PM_CTRL register fields */
+>  #define REQ_NOT_ENTR_L1				BIT(5)
+>  
+> +/* PARF_PM_STTS register fields */
+> +#define PM_ENTER_L23				BIT(5)
+> +
+>  /* PARF_PCS_DEEMPH register fields */
+>  #define PCS_DEEMPH_TX_DEEMPH_GEN1(x)		FIELD_PREP(GENMASK(21, 16), x)
+>  #define PCS_DEEMPH_TX_DEEMPH_GEN2_3_5DB(x)	FIELD_PREP(GENMASK(13, 8), x)
+> @@ -126,6 +130,7 @@
+>  
+>  /* ELBI_SYS_CTRL register fields */
+>  #define ELBI_SYS_CTRL_LT_ENABLE			BIT(0)
+> +#define ELBI_SYS_CTRL_PME_TURNOFF_MSG		BIT(4)
+>  
+>  /* AXI_MSTR_RESP_COMP_CTRL0 register fields */
+>  #define CFG_REMOTE_RD_REQ_BRIDGE_SIZE_2K	0x4
+> @@ -228,6 +233,7 @@ struct qcom_pcie_ops {
+>  	void (*host_post_init)(struct qcom_pcie *pcie);
+>  	void (*deinit)(struct qcom_pcie *pcie);
+>  	void (*ltssm_enable)(struct qcom_pcie *pcie);
+> +	void (*ltssm_disable)(struct qcom_pcie *pcie);
+>  	int (*config_sid)(struct qcom_pcie *pcie);
+>  };
+>  
+> @@ -248,10 +254,13 @@ struct qcom_pcie {
+>  	const struct qcom_pcie_cfg *cfg;
+>  	struct dentry *debugfs;
+>  	bool suspended;
+> +	bool pci_pwrctl_turned_off;
+>  };
+>  
+>  #define to_qcom_pcie(x)		dev_get_drvdata((x)->dev)
+>  
+> +static void qcom_pcie_icc_update(struct qcom_pcie *pcie);
+> +
+>  static void qcom_ep_reset_assert(struct qcom_pcie *pcie)
+>  {
+>  	gpiod_set_value_cansleep(pcie->reset, 1);
+> @@ -266,17 +275,6 @@ static void qcom_ep_reset_deassert(struct qcom_pcie *pcie)
+>  	usleep_range(PERST_DELAY_US, PERST_DELAY_US + 500);
+>  }
+>  
+> -static int qcom_pcie_start_link(struct dw_pcie *pci)
+> -{
+> -	struct qcom_pcie *pcie = to_qcom_pcie(pci);
+> -
+> -	/* Enable Link Training state machine */
+> -	if (pcie->cfg->ops->ltssm_enable)
+> -		pcie->cfg->ops->ltssm_enable(pcie);
+> -
+> -	return 0;
+> -}
+> -
+>  static void qcom_pcie_clear_aspm_l0s(struct dw_pcie *pci)
+>  {
+>  	struct qcom_pcie *pcie = to_qcom_pcie(pci);
+> @@ -556,6 +554,15 @@ static int qcom_pcie_post_init_1_0_0(struct qcom_pcie *pcie)
+>  	return 0;
+>  }
+>  
+> +static void qcom_pcie_2_3_2_ltssm_disable(struct qcom_pcie *pcie)
+> +{
+> +	u32 val;
+> +
+> +	val = readl(pcie->parf + PARF_LTSSM);
+> +	val &= ~LTSSM_EN;
+> +	writel(val, pcie->parf + PARF_LTSSM);
+> +}
+> +
+>  static void qcom_pcie_2_3_2_ltssm_enable(struct qcom_pcie *pcie)
+>  {
+>  	u32 val;
+> @@ -1336,6 +1343,7 @@ static const struct qcom_pcie_ops ops_2_7_0 = {
+>  	.post_init = qcom_pcie_post_init_2_7_0,
+>  	.deinit = qcom_pcie_deinit_2_7_0,
+>  	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
+> +	.ltssm_disable = qcom_pcie_2_3_2_ltssm_disable,
+>  };
+>  
+>  /* Qcom IP rev.: 1.9.0 */
+> @@ -1346,6 +1354,7 @@ static const struct qcom_pcie_ops ops_1_9_0 = {
+>  	.host_post_init = qcom_pcie_host_post_init_2_7_0,
+>  	.deinit = qcom_pcie_deinit_2_7_0,
+>  	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
+> +	.ltssm_disable = qcom_pcie_2_3_2_ltssm_disable,
+>  	.config_sid = qcom_pcie_config_sid_1_9_0,
+>  };
+>  
+> @@ -1395,9 +1404,81 @@ static const struct qcom_pcie_cfg cfg_sc8280xp = {
+>  	.no_l0s = true,
+>  };
+>  
+> +static int qcom_pcie_turnoff_link(struct dw_pcie *pci)
+> +{
+> +	struct qcom_pcie *pcie = to_qcom_pcie(pci);
+> +	u32 ret_l23, val, ret;
+> +
+> +	if (!dw_pcie_link_up(pcie->pci)) {
+> +		if (pcie->cfg->ops->ltssm_disable)
+> +			pcie->cfg->ops->ltssm_disable(pcie);
+> +	} else {
+> +		writel(ELBI_SYS_CTRL_PME_TURNOFF_MSG, pcie->elbi + ELBI_SYS_CTRL);
+> +
+> +		ret_l23 = readl_poll_timeout(pcie->parf + PARF_PM_STTS, val,
+> +					     val & PM_ENTER_L23, 10000, 100000);
+> +		if (ret_l23) {
+> +			dev_err(pci->dev, "Failed to enter L2/L3\n");
+> +			return -ETIMEDOUT;
+> +		}
+> +
+> +		qcom_pcie_host_deinit(&pcie->pci->pp);
+> +
+> +		ret = icc_disable(pcie->icc_mem);
+> +		if (ret)
+> +			dev_err(pci->dev, "Failed to disable PCIe-MEM interconnect path: %d\n",
+> +				ret);
+> +
+> +		pcie->pci_pwrctl_turned_off = true;
+> +	}
+
+Can you invert the condition?  It's always a pain to read a negated
+condition:
+  
+  if (dw_pcie_link_up(pcie->pci)) {
+    ...
+  } else {
+    if (pcie->cfg->ops->ltssm_disable)
+      pcie->cfg->ops->ltssm_disable(pcie);
+  }
+
+Is there any race here between checking for link up and performing the
+action?  Does anything bad happen if the link goes down after you do
+the check but before you do the deinit?
+
+> +	return 0;
+> +}
+> +
+> +static int qcom_pcie_turnon_link(struct dw_pcie *pci)
+> +{
+> +	struct qcom_pcie *pcie = to_qcom_pcie(pci);
+> +
+> +	if (pcie->pci_pwrctl_turned_off) {
+> +		qcom_pcie_host_init(&pcie->pci->pp);
+> +
+> +		dw_pcie_setup_rc(&pcie->pci->pp);
+> +	}
+> +
+> +	if (pcie->cfg->ops->ltssm_enable)
+> +		pcie->cfg->ops->ltssm_enable(pcie);
+> +
+> +	/* Ignore the retval, the devices may come up later. */
+> +	dw_pcie_wait_for_link(pcie->pci);
+> +
+> +	qcom_pcie_icc_update(pcie);
+> +
+> +	pcie->pci_pwrctl_turned_off = false;
+> +
+> +	return 0;
+> +}
+> +
+> +static int qcom_pcie_start_link(struct dw_pcie *pci)
+> +{
+> +	return qcom_pcie_turnon_link(pci);
+> +}
+> +
+> +static void qcom_pcie_stop_link(struct dw_pcie *pci)
+> +{
+> +	struct qcom_pcie *pcie = to_qcom_pcie(pci);
+> +
+> +	if (!dw_pcie_link_up(pcie->pci))  {
+> +		if (pcie->cfg->ops->ltssm_disable)
+> +			pcie->cfg->ops->ltssm_disable(pcie);
+> +	} else {
+> +		qcom_pcie_turnoff_link(pci);
+> +	}
+
+I think this would be easier to read as:
+
+  if (dw_pcie_link_up(pcie->pci)) {
+    qcom_pcie_turnoff_link(pci);
+  } else {
+    if (pcie->cfg->ops->ltssm_disable)
+      pcie->cfg->ops->ltssm_disable(pcie);
+  }
+
+> +}
+> +
+>  static const struct dw_pcie_ops dw_pcie_ops = {
+>  	.link_up = qcom_pcie_link_up,
+>  	.start_link = qcom_pcie_start_link,
+> +	.stop_link = qcom_pcie_stop_link,
+>  };
+>  
+>  static int qcom_pcie_icc_init(struct qcom_pcie *pcie)
+> @@ -1604,6 +1685,8 @@ static int qcom_pcie_suspend_noirq(struct device *dev)
+>  	struct qcom_pcie *pcie = dev_get_drvdata(dev);
+>  	int ret;
+>  
+> +	if (pcie->pci_pwrctl_turned_off)
+> +		return 0;
+>  	/*
+>  	 * Set minimum bandwidth required to keep data path functional during
+>  	 * suspend.
+> @@ -1642,6 +1725,9 @@ static int qcom_pcie_resume_noirq(struct device *dev)
+>  	struct qcom_pcie *pcie = dev_get_drvdata(dev);
+>  	int ret;
+>  
+> +	if (pcie->pci_pwrctl_turned_off)
+> +		return 0;
+> +
+>  	if (pcie->suspended) {
+>  		ret = qcom_pcie_host_init(&pcie->pci->pp);
+>  		if (ret)
+> 
+> -- 
+> 2.42.0
+> 
 
