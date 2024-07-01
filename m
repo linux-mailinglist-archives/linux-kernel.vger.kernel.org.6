@@ -1,196 +1,128 @@
-Return-Path: <linux-kernel+bounces-236651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C86B91E565
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:31:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A2D891E564
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:31:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D88EC2810A4
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5687D282A48
 	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4C616DC27;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264F316DC21;
 	Mon,  1 Jul 2024 16:31:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H4F+tGQB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JT/7HuBB"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA0D16CD1E;
-	Mon,  1 Jul 2024 16:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D8B14D2AC;
+	Mon,  1 Jul 2024 16:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719851468; cv=none; b=QuihPWW1Oy0TnAvXr9rpz8weKlBHpptILsrPFoCq2Ayt88Tt547pWoGkjDhnNRsmkCM5L1om6pBQ30431cMqm7ORqnWgULGSER7UAEcyZpVpAwqf1DYTPctZi53IRGpfa09BM9bI7aWmBIyI+z9sEW9wBK3xIEcndG5Q4fj2KOQ=
+	t=1719851468; cv=none; b=kXDUotvwWLYc0BZGC9CXWhbu939XC9s9YCPaMXmwiydeJdwQ3nOCyav8t+Xulg2BnoNp+armnN9ADqzA+sa8g0oaseMRh3alrUuP++W+nCFJrSmDOqMncXBjzbPO4uk9SRrNv0qBr2EkIhbPTHJ/kLADrDUZbzjJjoFddveZfYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719851468; c=relaxed/simple;
-	bh=3+N9mukdDXyzFCGLQCqPnIa6llv8dipDxdiIJdfI2BM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KzlSOUdp+qNaEdXVXIkrAo9vM8+jbMF2MzEDQxwViZS6MXqrHQckO6UrftH2QV3gmNyjwzkwcJtc9rYcQAI8npJcvZqsyTtODlAiOcszSKFrxZdrJE5e3u9QvJNAwVt2WdB0HpaDgIl/mvRr92LqmLOt3puBxN6zMt+jqzj3SoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H4F+tGQB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C198C116B1;
-	Mon,  1 Jul 2024 16:31:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719851467;
-	bh=3+N9mukdDXyzFCGLQCqPnIa6llv8dipDxdiIJdfI2BM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H4F+tGQB8Hcw87QnKmezQg520Gcp5L4jM+vlgj/UvG/nEhKg/o+U8avYMj889kQ8g
-	 KIg7e1oHvlgRbaS0lVEGaX9Dpcz62o8QoQUDwCx2FMMYNUGNk2F2Tq9mvcLntsK7nb
-	 L1h+t+YpXW+ATKfe9HihuqDHd0V1dYx8Bjb1Ts6ySXWD40NBsiWcQrrkbWjtHMmfjt
-	 ON1nAkADPcHpVd8atehi1jgeZRXwizYT/9NejhyxvEpEF85JaxML+n6m0C/V0Mapwp
-	 NQoMb123Zw2J4sno25BdiU2/gmzOht3CR7t0U44mQEqALZpCB30da2WDJ7T4qkEij6
-	 SKBaTMmQ3lbhQ==
-Date: Mon, 1 Jul 2024 17:31:01 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: Charlie Jenkins <charlie@rivosinc.com>, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-sunxi@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>,
-	Andy Chiu <andy.chiu@sifive.com>,
-	Jessica Clarke <jrtc27@jrtc27.com>, peterlin@andestech.com
-Subject: Re: [PATCH v3 03/13] riscv: dts: allwinner: Add xtheadvector to the
- D1/D1s devicetree
-Message-ID: <20240701-pyromania-spinster-709a6c8cc460@spud>
-References: <20240619-xtheadvector-v3-0-bff39eb9668e@rivosinc.com>
- <20240619-xtheadvector-v3-3-bff39eb9668e@rivosinc.com>
- <0cc13581-5cc4-4a25-a943-7a896f42da4c@sifive.com>
- <20240701-prancing-outpost-3cbce791c554@spud>
- <7ab7d629-6993-4cad-b5b7-62bddfc74a49@sifive.com>
+	bh=9pyJvPtweb1UHSGE+8KU62A6fqLPa5bzsQ1lE0/LcU0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
+	 References:In-Reply-To; b=Oe+p993rJwVqp6DES6psMLXPU0By+Ozu7y4NzBH+g/1Lmy6DbYSJa39a32kM8f9O132Cvci6WrtbHozhd5qmlSunlfbi26kR+Fk4nBBPzUhZcz8ouxGDLEFr7v02Tnq4YQmncby86pgcflIn4XB5ZbOvztLhSP85phYGSm6aKmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JT/7HuBB; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A44F320005;
+	Mon,  1 Jul 2024 16:31:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1719851464;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9pyJvPtweb1UHSGE+8KU62A6fqLPa5bzsQ1lE0/LcU0=;
+	b=JT/7HuBBhBruZABWwdrYHaof3kr2CIBvYXpPf4wr1GJpwr2XbNjvzVtkA6rQqclFs+npbl
+	gc2aOIoAkc955HAVqHq3PVlT0wg1C2ifdZGqjfHAoitjZMFJz10P2mBcg7RvWo1mCAFNyO
+	8LvIvXHKMX0eJjHO2LpjkYtucxYBT0QLwjkAHVcgqVtB2zV4/MXLF592ysxzQny76lp2/F
+	T8GSDcl8cpKS+LT0L2xvE/P3Jyvqea0MhnNDDHh8cr5rDudb+el41fKz91s2JZ0FmValVS
+	pVYZJxGsaxTBTKy/qU3eXje4bitHxfHGONcwuL4T2EaDCarZ6QM9kTUJMLPS3g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="MRFAVKKck9xRQIr9"
-Content-Disposition: inline
-In-Reply-To: <7ab7d629-6993-4cad-b5b7-62bddfc74a49@sifive.com>
-
-
---MRFAVKKck9xRQIr9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 01 Jul 2024 18:31:03 +0200
+Message-Id: <D2ECGMYXJWZ9.GNRJ1NAG4MF8@bootlin.com>
+To: "Krzysztof Kozlowski" <krzk@kernel.org>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH 1/4] Revert "dt-bindings: clock: mobileye,eyeq5-clk: add
+ bindings"
+Cc: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Vladimir Kondratiev"
+ <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>
+X-Mailer: aerc 0.17.0
+References: <20240628-mbly-clk-v1-0-edb1e29ea4c1@bootlin.com>
+ <20240628-mbly-clk-v1-1-edb1e29ea4c1@bootlin.com>
+ <2846186f-a0e1-4cd3-85bf-f029053bf98c@kernel.org>
+In-Reply-To: <2846186f-a0e1-4cd3-85bf-f029053bf98c@kernel.org>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On Mon, Jul 01, 2024 at 11:11:55AM -0500, Samuel Holland wrote:
-> Hi Conor, Charlie,
->=20
-> On 2024-07-01 11:07 AM, Conor Dooley wrote:
-> > On Mon, Jul 01, 2024 at 10:27:01AM -0500, Samuel Holland wrote:
-> >> On 2024-06-19 6:57 PM, Charlie Jenkins wrote:
-> >>> The D1/D1s SoCs support xtheadvector so it can be included in the
-> >>> devicetree. Also include vlenb for the cpu.
-> >>>
-> >>> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> >>> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> >>> ---
-> >>>  arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi | 3 ++-
-> >>
-> >> The other C906/C910/C920-based SoCs need devicetree updates as well, a=
-lthough
-> >> they don't necessarily need to be part of this series:
-> >>
-> >>  - sophgo/cv18xx.dtsi
-> >>  - sophgo/sg2042-cpus.dtsi
-> >>  - thead/th1520.dtsi
+Hello Krzysztof,
+
+On Mon Jul 1, 2024 at 11:14 AM CEST, Krzysztof Kozlowski wrote:
+> On 28/06/2024 18:10, Th=C3=A9o Lebrun wrote:
+> > Switch from one sub-node per functionality in the system-controller to =
+a
+> > single node representing the entire OLB instance. This is the
+> > recommended approach for controllers handling many different
+> > functionalities; it is a single controller and should be represented by
+> > a single devicetree node.
 > >=20
-> > Yeah, I think I pointed that out before with the same "escape hatch" of
-> > it not needing to be in the same series.
+> > The clock bindings is removed and all properties will be described by:
+> > soc/mobileye/mobileye,eyeq5-olb.yaml
 > >=20
-> >>
-> >>>  1 file changed, 2 insertions(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi b/arch/ris=
-cv/boot/dts/allwinner/sun20i-d1s.dtsi
-> >>> index 64c3c2e6cbe0..6367112e614a 100644
-> >>> --- a/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi
-> >>> +++ b/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi
-> >>> @@ -27,7 +27,8 @@ cpu0: cpu@0 {
-> >>>  			riscv,isa =3D "rv64imafdc";
-> >>
-> >> The ISA string should be updated to keep it in sync with riscv,isa-ext=
-ensions.
-> >=20
-> > This probably looks like this cos I said that the kernel shouldn't parse
-> > vendor extensions from "riscv,isa". My rationale was that we have
-> > basically no control of what a vendor extension means in riscv,isa so=
-=20
-> > we shouldn't parse them from it (so marginally worse than standard
-> > extensions, where it means what the spec says except when it doesn't).
-> >=20
-> > Given how we implement the parsing, it also meant we weren't implying
-> > meanings for vendor extensions ACPI-land, where we also can't ensure the
-> > meanings or that they remain stable. That change is in a different
-> > series:
-> > https://patchwork.kernel.org/project/linux-riscv/patch/20240609-support=
-_vendor_extensions-v2-1-9a43f1fdcbb9@rivosinc.com/
-> >=20
-> > Although now that I think about it, this might break xandespmu... I
-> > dunno if the Andes guys switched over to using the new property outside
-> > of the single dts in the kernel tree using their SoC. We could
-> > potentially special-case that extension if they haven't - but my
-> > position on this mostly is that if you want to use vendor extensions you
-> > should not be using riscv,isa (even if the regex doesn't complain if you
-> > add them). I'd like to leave the code in the other patch as-is if we can
-> > help it.
-> >=20
-> > I added Yu Chien Peter Lin here, maybe they can let us know what they're
-> > doing.
->=20
-> OK, that makes sense to me. Then please ignore my original comment.
+> > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+>
+> This is v1, so where did this happen?
 
-Should the xandespmu thing be an issue, I'd suggest we just do something
-like the following, in place of the new switch arm added by Charlie:
+This is a split of the previous Mobileye EyeQ5 system-controller series.
 
-diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
-index ec4bff7a827c..bb99b4055ec2 100644
---- a/arch/riscv/kernel/cpufeature.c
-+++ b/arch/riscv/kernel/cpufeature.c
-@@ -628,6 +628,17 @@ static void __init riscv_parse_isa_string(const char *=
-isa, unsigned long *bitmap
- 		if (unlikely(ext_err))
- 			continue;
-=20
-+		if (*ext =3D=3D 'x' && acpi_disabled) {
-+			/*
-+			 * xandespmu predates this "rule", so special case it for
-+			 * hysterical raisins
-+			 */
-+			if (strncasecmp(ext, "xandespmu", ext_end - ext)) {
-+				pr_warn_once("Vendor extensions are ignored in riscv,isa. Use riscv,is=
-a-extensions instead.");
-+				break;
-+			}
-+		}
-+
- 		match_isa_ext(ext, ext_end, bitmap);
- 	}
- }
+I started my cover letter [4] by mentioning it. I should most probably
+have kept incrementing on the previous version number, sorry about
+that.
 
+Relevant extract from this series' cover letter:
 
---MRFAVKKck9xRQIr9
-Content-Type: application/pgp-signature; name="signature.asc"
+On Fri Jun 28, 2024 at 6:10 PM CEST, Th=C3=A9o Lebrun wrote:
+> This is a new iteration on the Mobileye system-controller series [0].
+> It has been split into separate series to facilitate merging.
+[...]
+> Related series are targeted at reset [1], pinctrl [2] and MIPS [3].
+[...]
+> [0]: https://lore.kernel.org/lkml/20240620-mbly-olb-v3-0-5f29f8ca289c@boo=
+tlin.com/
+> [1]: https://lore.kernel.org/lkml/20240628-mbly-reset-v1-0-2a8294fd4392@b=
+ootlin.com/
+> [2]: https://lore.kernel.org/lkml/20240628-mbly-pinctrl-v1-0-c878192d6b0a=
+@bootlin.com/
+> [3]: https://lore.kernel.org/lkml/20240628-mbly-mips-v1-0-f53f5e4c422b@bo=
+otlin.com/
 
------BEGIN PGP SIGNATURE-----
+Regards,
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoLZxAAKCRB4tDGHoIJi
-0vx9AP9TcSJwtzFrkZkNIG3vs0nSWuu1I+CFqCZfZtrYfWH8RQEAxGeKP2P/oodO
-cyCHRd/9NqDoz5j8eiXpnwlmjUtaKAk=
-=AA89
------END PGP SIGNATURE-----
+[4]: https://lore.kernel.org/lkml/20240628-mbly-clk-v1-0-edb1e29ea4c1@bootl=
+in.com/
 
---MRFAVKKck9xRQIr9--
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
