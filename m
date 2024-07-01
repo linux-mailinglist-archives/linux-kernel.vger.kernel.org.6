@@ -1,159 +1,177 @@
-Return-Path: <linux-kernel+bounces-236184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3F5091DE86
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:58:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80C7991DE89
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:59:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46E4FB23840
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:58:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00DDA1F224A3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D49714AD3B;
-	Mon,  1 Jul 2024 11:58:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8401514A4EF;
+	Mon,  1 Jul 2024 11:58:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="G5aEq+jm";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qft2T1tm"
-Received: from fout1-smtp.messagingengine.com (fout1-smtp.messagingengine.com [103.168.172.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="qbDC7GrZ"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A01C84D02;
-	Mon,  1 Jul 2024 11:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3107514D290
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 11:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719835109; cv=none; b=umiKsA6HpgnC4qANi4JSV8GtqK0rRA1PcvBVYBeGWf1p1mS7IItduvTA2SDRKJCN7gwmyfcp+mOj3f6w1dRSvqXH/nrkrEUZBSTvfFSIPRgXpMJbvJwjjfc/AYk/JUKD+x3ilQwkdTPIb0rgHTzuJq2ri4Mle5a8t1tdquOV6fc=
+	t=1719835124; cv=none; b=o6c8hGoK6ffpDyeBWjCTq7nnbthhZjk2x8o+57LQm0TzwbdCQPOLQohoUqoBzhEj67tQV80MVdsHwmVf6BywE2UTur6ES8S+ZQuRXkcSoAqu2E5juCwhj5u7buOp+qESYww81W2IYprMImVnv2w0L2xIV0RsHiS3WfVbC1QFGn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719835109; c=relaxed/simple;
-	bh=WaV/uifT+ewSSQQt4FXzBE5fi9386OXucSBJ4NdlHxg=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=YrBL5Hw5ginkdT2LT/ScunyEh91N2vjBgME0wq2AuhCrMGtlBDF4+NCy/Q8F75Ci+ZzZIgWxVhom2Zd9NShc5aE6vsdr31oLsIWmWeDsqlH64AzoDLjUQ7MZySqOdBy/8DMryrzye7eitMKK/+2VHpDPmySsxGP6mGRqBoW0mIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=G5aEq+jm; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qft2T1tm; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 7AF251380463;
-	Mon,  1 Jul 2024 07:58:26 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Mon, 01 Jul 2024 07:58:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1719835106; x=1719921506; bh=xTKFbyMCes
-	YSqTGV3kNBw9DLS4BP7bP5n2sMbxKcREk=; b=G5aEq+jmJLeuDeV0mrL7Ml8cY7
-	9nWyr1HK4KhJYfPTaqFVqA4+bUYJObJisUcDybkcPMermDTU868P+bbZmyc0ghuw
-	R5DLJeJMdWWiaKci/VBvBSWxs4hy5ZW1qcmI9iZca3edwpUovEf/vhql9fSaFmiS
-	D1h3BrjoaE2X+s0SsUnxAYNflon6tnTQeOWY3nupbgWEkGzLjmS8SIJkdXbf8zR2
-	SFVFPSMMA3db5jkzqnSXH4c3q2zaB/r+gzBO01A+qj82aAdG8je7072ZmDRi/msd
-	Vvobyeocvxx+/UP1ZV86CXlhHGWA8qascKYcnIImd3UpyQXNRGop0o0cRP4A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1719835106; x=1719921506; bh=xTKFbyMCesYSqTGV3kNBw9DLS4BP
-	7bP5n2sMbxKcREk=; b=qft2T1tmF0gPXJxQcjqJ+4qMDmqirl2p6B6IORadaZ1D
-	pWI+i0TQJQkbGIODQmkDqEn0Z+ZWmIWrGruBUAE/qdvn4asyC9XSyTsB9dOdqoQJ
-	XgpJgkbxIPTfYqHwtPxv8l7KfkGpZb1st22hLpk7BCyNjCsxdyHsNVOlUW2ocXWl
-	XpuWmyTyhdZrfeMn0XMua3OlsWsmKq40vxBmQU2LrNTYWx0kjPBwKkWJC6ck5Y8C
-	ZpjBxfdfb7Wbzz88KTv8Ow3dcYG0zZHTFhYEJurQoggIbTvhKYyVMYQuZrctBqKR
-	Aef1ki5U5uQl2EXfTzXtWBkCGXZmKi4YIg1UXZhfrQ==
-X-ME-Sender: <xms:4ZmCZtUsbU2QX-zvIyWPJNmWEyzOzwCQ0_2vrxkGXVlPDBGY7Bcmxg>
-    <xme:4ZmCZtmQFWA4lE0IfzLNO97EeT5K7aGQE8mh1-AhB4j99UwA8ItqGQ51NolRDB7jJ
-    B3oz-uA60J0vx31SSs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudefgdeghecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
-    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
-    hnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:4ZmCZpb6vfZ-oV3D0qYPBc5RdopwhTRFByt7c6FNhRIE7e0I8jZ1lw>
-    <xmx:4ZmCZgXiMRn0_cjj35lltXsOr7swBAekdVNWy8iU9529ZQij8gNmfA>
-    <xmx:4ZmCZnl-LXr2HnkGZcIv-6hSFxVSSjA7elFAR9bOwl2hyDhBYIdWOg>
-    <xmx:4ZmCZtcrcuuz67vXwTxThdxLypZczJdZrQIGWr9jTBvBJXZF4M3yHg>
-    <xmx:4pmCZgehxJ9HzZqzR2KYamrvGgKCzJG7XJxoFR5Q5BHDLP3M75K3-9vU>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id C1BE1B6008D; Mon,  1 Jul 2024 07:58:25 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-566-g3812ddbbc-fm-20240627.001-g3812ddbb
+	s=arc-20240116; t=1719835124; c=relaxed/simple;
+	bh=/nA58iNMwvVtAGqSYF3E2ixIjum0Lx9xpHzYk+CSGJo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MYR4Cl2K+n2SS9hX6duYyfkBfVHJ5KVALTcJout80m3ClxAkuj9VSPmOHvAoqsR9/dzsN1L5dGRX2gzCzhAbGES0LdGZCJ3DR0t4NgOA/292LpOB46GBjkPVXIH3hXcBrIvqwEbnXxvg2EWH+6sVzO98Jx86sCC87/o1O+00iAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=qbDC7GrZ; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a729d9d7086so636912866b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 04:58:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1719835119; x=1720439919; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IksdoqfXXoNA3l1EF7/U4rm+eTkM++3OsdHeCQcdlog=;
+        b=qbDC7GrZmSgub1ubG86KzOG+qaiA+xaVkCrMD/009yD7+Rf8bnbusguxbLNZkvcYIE
+         28+JrRubbWTkHPFPpN0IvjGLWFdeBiQBWfhBWT33+VLEYZUBshMsvneOHLEW5tUbBe0r
+         aLmrpE8w7r3kJWBQUnSX1CBjWePjK13PNgnyvtVmuRXhxckXc3xC1PjZcQn/eDbjKDwI
+         qiqTSnggevUVImjOFCSl2skk6S0RN/iJuYMAtHMI1Su0j5CQDozFuwbsR89b20HV2LoL
+         0eAbfjE5RyCfcAdsn2avnNp+SDf1K1mgD5MVAuFJMS0sbzg9hbfQrxdSAVT/g3eqiqXq
+         gi6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719835119; x=1720439919;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IksdoqfXXoNA3l1EF7/U4rm+eTkM++3OsdHeCQcdlog=;
+        b=NB6jHaz11ztr284avBN75V6n59CI36TV6KV3dXAosz4zi7F1pbmtTJx/aE0I5BCR4T
+         aTtIf1hlvBk37KdMDKNfq+WfwtS3hTopgwRFC5c7ib3aZDYG13KQQs3v5lJfrLb1XeJj
+         xokNSDau+gD9n1MzxBCi0V0LtIU4VoTvBRnjapst2RnWeYNToiYVVJmm+vrLr7bJBub6
+         +dSj3r4eUh8ZCAaJtEBWFUHtkYenjWk3vxCWaPeh1mMsNpgdi1dd9Fio91bhxhwBdON1
+         nhOL3oiWIC6nv8i/Sq2eBia+7iZCceBvJV4DIM4nLlF2j7zD6gbAvYQPMIHmV1bIJKoH
+         ci0A==
+X-Forwarded-Encrypted: i=1; AJvYcCXC0mFHCHxV/mrvBG1F3zQiro3Hu1Nb8csSQDxGl8AhLJ1SEQzTsW/g8bTAhQC89MRbXN+D26a2S5k+SnRFvkuRdTF+RMn/W6ZuMEb7
+X-Gm-Message-State: AOJu0YwQ5Fg4mcsVps7dRAL4mKexaS7tPSeJz861bA1wlQ1/dCSlSsU3
+	uXSUl0g2UN5Pat3vA6lEaB3clqMzHP3WRgrBQZHPQ9dM73xLLb4R7RH6RVMXTqN++jLAR8+/dGF
+	/3nvpzHPyFUVDMbyCP+P1ikN8qq+jf7rkX6LHmw==
+X-Google-Smtp-Source: AGHT+IF2OBW7kIrXE1UpSv50tCGPZtC+ETK4mqONVGqJACOHcLEzbhk5UFyau/lwX9nOtB0IRaHq1FCgCFisjtf323o=
+X-Received: by 2002:a17:907:9712:b0:a75:7a8:d70c with SMTP id
+ a640c23a62f3a-a751386eca4mr578971166b.4.1719835119427; Mon, 01 Jul 2024
+ 04:58:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <5f1f44be-80ad-4b4e-90a0-c2e4e8cd3dbf@app.fastmail.com>
-In-Reply-To: 
- <CA+G9fYsk85UOsa0ijXcYRvvZLXEMQKe4phWhND+0qSNP36N5Tw@mail.gmail.com>
-References: 
- <CA+G9fYsk85UOsa0ijXcYRvvZLXEMQKe4phWhND+0qSNP36N5Tw@mail.gmail.com>
-Date: Mon, 01 Jul 2024 13:58:05 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Naresh Kamboju" <naresh.kamboju@linaro.org>,
- "open list" <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
- lkft-triage@lists.linaro.org
-Cc: "Jan Kara" <jack@suse.cz>, "Christian Brauner" <brauner@kernel.org>,
- "Hugh Dickins" <hughd@google.com>, "Andrii Nakryiko" <andrii@kernel.org>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Dan Carpenter" <dan.carpenter@linaro.org>,
- "Anders Roxell" <anders.roxell@linaro.org>
-Subject: Re: fs/proc/task_mmu.c:598:48: error: cast to pointer from integer of
- different size
-Content-Type: text/plain
+References: <20240630110550.1731929-1-stuart.menefy@codasip.com>
+In-Reply-To: <20240630110550.1731929-1-stuart.menefy@codasip.com>
+From: Alexandre Ghiti <alexghiti@rivosinc.com>
+Date: Mon, 1 Jul 2024 13:58:27 +0200
+Message-ID: <CAHVXubg+aXS7-smmWS9LwUbAkpfGvet9Zk0UJs_AZhxV2vx6UQ@mail.gmail.com>
+Subject: Re: [PATCH v2] riscv: Extend sv39 linear mapping max size to 128G
+To: Stuart Menefy <stuart.menefy@codasip.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, linux-doc@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 1, 2024, at 12:19, Naresh Kamboju wrote:
-> fs/proc/task_mmu.c: In function 'do_procmap_query':
-> fs/proc/task_mmu.c:598:48: error: cast to pointer from integer of
-> different size [-Werror=int-to-pointer-cast]
->   598 |         if (karg.vma_name_size && copy_to_user((void __user
-> *)karg.vma_name_addr,
->       |                                                ^
-> fs/proc/task_mmu.c:605:48: error: cast to pointer from integer of
-> different size [-Werror=int-to-pointer-cast]
->   605 |         if (karg.build_id_size && copy_to_user((void __user
-> *)karg.build_id_addr,
->       |                                                ^
-> cc1: all warnings being treated as errors
+Hi Stuart,
+
+On Sun, Jun 30, 2024 at 1:06=E2=80=AFPM Stuart Menefy <stuart.menefy@codasi=
+p.com> wrote:
+>
+> This harmonizes all virtual addressing modes which can now all map
+> (PGDIR_SIZE * PTRS_PER_PGD) / 4 of physical memory.
+>
+> The RISCV implementation of KASAN requires that the boundary between
+> shallow mappings are aligned on an 8G boundary. In this case we need
+> VMALLOC_START to be 8G aligned. So although we only need to move the
+> start of the linear mapping down by 4GiB to allow 128GiB to be mapped,
+> we actually move it down by 8GiB (creating a 4GiB hole between the
+> linear mapping and KASAN shadow space) to maintain the alignment
+> requirement.
+>
+> Signed-off-by: Stuart Menefy <stuart.menefy@codasip.com>
+> ---
+>
+> Changes since V1:
+> This is a modified version of the patch posted by Alexandre Ghiti
+> <alexghiti@rivosinc.com> [1]. That version moved the start of the
+> liner mapping by 4GiB, but was subsequently found to trigger a problem
+> in the KASAN code [2]. By moving the start address by 8GiB alignment
+> requiremenents are maintained.
+>
+> [1] https://lore.kernel.org/linux-riscv/20240514133614.87813-1-alexghiti@=
+rivosinc.com/
+> [2] https://lore.kernel.org/linux-riscv/4011b34a-1b86-42c7-aaf6-3bd297149=
+f06@ghiti.fr/
+>
+> ---
+>  Documentation/arch/riscv/vm-layout.rst | 11 ++++++-----
+>  arch/riscv/include/asm/page.h          |  2 +-
+>  2 files changed, 7 insertions(+), 6 deletions(-)
+>
+> diff --git a/Documentation/arch/riscv/vm-layout.rst b/Documentation/arch/=
+riscv/vm-layout.rst
+> index e476b4386bd9..077b968dcc81 100644
+> --- a/Documentation/arch/riscv/vm-layout.rst
+> +++ b/Documentation/arch/riscv/vm-layout.rst
+> @@ -47,11 +47,12 @@ RISC-V Linux Kernel SV39
+>                                                                | Kernel-s=
+pace virtual memory, shared between all processes:
+>    ____________________________________________________________|_________=
+__________________________________________________
+>                      |            |                  |         |
+> -   ffffffc6fea00000 | -228    GB | ffffffc6feffffff |    6 MB | fixmap
+> -   ffffffc6ff000000 | -228    GB | ffffffc6ffffffff |   16 MB | PCI io
+> -   ffffffc700000000 | -228    GB | ffffffc7ffffffff |    4 GB | vmemmap
+> -   ffffffc800000000 | -224    GB | ffffffd7ffffffff |   64 GB | vmalloc/=
+ioremap space
+> -   ffffffd800000000 | -160    GB | fffffff6ffffffff |  124 GB | direct m=
+apping of all physical memory
+> +   ffffffc4fea00000 | -236    GB | ffffffc4feffffff |    6 MB | fixmap
+> +   ffffffc4ff000000 | -236    GB | ffffffc4ffffffff |   16 MB | PCI io
+> +   ffffffc500000000 | -236    GB | ffffffc5ffffffff |    4 GB | vmemmap
+> +   ffffffc600000000 | -232    GB | ffffffd5ffffffff |   64 GB | vmalloc/=
+ioremap space
+> +   ffffffd600000000 | -168    GB | fffffff5ffffffff |  128 GB | direct m=
+apping of all physical memory
+> +                    |            |                  |         |
+>     fffffff700000000 |  -36    GB | fffffffeffffffff |   32 GB | kasan
+>    __________________|____________|__________________|_________|_________=
+___________________________________________________
+>                                                                |
+> diff --git a/arch/riscv/include/asm/page.h b/arch/riscv/include/asm/page.=
+h
+> index 115ac98b8d72..81d47fbbd927 100644
+> --- a/arch/riscv/include/asm/page.h
+> +++ b/arch/riscv/include/asm/page.h
+> @@ -37,7 +37,7 @@
+>   * define the PAGE_OFFSET value for SV48 and SV39.
+>   */
+>  #define PAGE_OFFSET_L4         _AC(0xffffaf8000000000, UL)
+> -#define PAGE_OFFSET_L3         _AC(0xffffffd800000000, UL)
+> +#define PAGE_OFFSET_L3         _AC(0xffffffd600000000, UL)
+>  #else
+>  #define PAGE_OFFSET            _AC(CONFIG_PAGE_OFFSET, UL)
+>  #endif /* CONFIG_64BIT */
+> --
+> 2.43.0
 >
 
-There is already a fix in linux-next:
+So the issue was with my patch, sorry! Your fix makes sense so you can add:
 
-@@ -595,14 +595,14 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
-        query_vma_teardown(mm, vma);
-        mmput(mm);
- 
--       if (karg.vma_name_size && copy_to_user((void __user *)karg.vma_name_addr,
-+       if (karg.vma_name_size && copy_to_user((void __user *)(uintptr_t)karg.vma_name_addr,
-                                               name, karg.vma_name_size)) {
-                kfree(name_buf);
-                return -EFAULT;
-        }
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 
+Thanks,
 
-This could be expressed slightly nicer using u64_to_user_ptr(),
-but functionally that is the same.
-
-I also see a slight issue in the use of .compat_ioctl:
-
- const struct file_operations proc_pid_maps_operations = {
-        .open           = pid_maps_open,
-        .read           = seq_read,
-        .llseek         = seq_lseek,
-        .release        = proc_map_release,
-+       .unlocked_ioctl = procfs_procmap_ioctl,
-+       .compat_ioctl   = procfs_procmap_ioctl,
- };
- 
-
-Since the argument is always a pointer, this should be
-
-       .compat_ioctl = compat_ptr_ioctl,
-
-In practice this is only relevant on 32-bit s390
-tasks to sanitize the pointer value.
-
-     Arnd
+Alex
 
