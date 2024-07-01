@@ -1,110 +1,156 @@
-Return-Path: <linux-kernel+bounces-235938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FD9091DB80
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:33:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35CDB91DB84
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:33:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 181A81F23248
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:33:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCB1F1F21507
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C65F13B59F;
-	Mon,  1 Jul 2024 09:32:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01EF184E18;
+	Mon,  1 Jul 2024 09:33:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TVD9kKHW"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t+QxtkZR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC36A85628;
-	Mon,  1 Jul 2024 09:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A12CA35;
+	Mon,  1 Jul 2024 09:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719826335; cv=none; b=c3N4GFL5U7IxaDIPIOFLein4HJq5JCmH2VdMTs6pyULBFOr7xtr7i370Hrd4G5XwzCIF3VbVjY3YnACLLdM4/LUxjxE/WrsRWLXkJPG5/uYJ8bILT0bp8MWcKDXyapuyaPxQCbFWzb7bV5DAW2tCsEK401x6oaVcanFdK6t+OGg=
+	t=1719826411; cv=none; b=DLaOHTHlqQA0JkBWwJgVEeH/tUMhY0Pvjw05tRCuJx89i5p6ZQlMob0O+LO9wCvNMXTc6SGxBgzt8zXMon3YM8vMgouMp8p4pMpHb7CGBw+H/2nPSIcVriXBFR0OA6FEO1PABrVdrgvZNTYCYkGc9ryoeJdDMFV1vJOtza2g0XE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719826335; c=relaxed/simple;
-	bh=P7xTVsBROMSbcBq28yaSjSvLTrkppNQWNyDAJDykPnQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=uDg+4kQtH+5Y1ntwDV9w2MtGWFcm8GM1DkbSeLrhajxZ3J+wnMynqkdyevdniEQ6cIJPX3phYlg0lPT4QaOrGGFznY2TN5z6+adgRA8qwYRCmwbQJw0r/8b7UYG5O1fWoc4OkgJpWbPG26jYL1WmCTqE+1Bh7BAlHQ7dpziduCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=TVD9kKHW; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1719826331;
-	bh=qc2yv5cEQW2IMGQ0wARBrKGy7sIwV7LvyR5VAIiaePQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=TVD9kKHWl248pzwSV5hIcg2Vx5kjcQ0sOpjOyaRLsn3DVkW42DvsOtZ4xH1b3qjQ7
-	 17u6q1gNqQsmMT2N77SFPHYGzxNiH0+UocKxvjEW/0vebarsyrEBhuCIrQY14lNKMR
-	 b5aP9NZ5ywQvYvrk2PRLhnC3BJpi0edYWwyQKoDk402s/moW16qtBd8afMiRn01E6F
-	 h9E58OZlO7Kg667yaezolM1AbTWDNdPvdHLPZ/uaVTtpVLcpqnpHdpBC2/6pSwA7EG
-	 xN3cbG+70CGu40VZS2LcCFVMtKx9tgrSEEC6Oo7gBW88aonMKRmivo7c6m6YLZgrsw
-	 AaKE9Bne9amSg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WCLRH4Sg4z4xM7;
-	Mon,  1 Jul 2024 19:32:11 +1000 (AEST)
-Date: Mon, 1 Jul 2024 19:32:10 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires
- <benjamin.tissoires@redhat.com>
-Cc: Benjamin Tissoires <bentiss@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warnings after merge of the hid tree
-Message-ID: <20240701193210.7b105db8@canb.auug.org.au>
+	s=arc-20240116; t=1719826411; c=relaxed/simple;
+	bh=T7OwNpTVJdPd4FTNMLYtYpQmz6nnOJiH4DAvs8geivc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hxmN2icWl6Fwk5+Mip1MTNNA1wFFRbO+Nq8qFp0NVOrk7/rZY4/fGQtBkVybed6BG1PTaqBRRNMETiGzygArmfhhhyLR6wUDSUbS6NOTHJgfvbKYfcx+/1nK0uxND2Bgav1X+8eK/n9ZZrPtH+Tl3Og4oXyxOscoAdxw/1QPLEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t+QxtkZR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88DBDC116B1;
+	Mon,  1 Jul 2024 09:33:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719826410;
+	bh=T7OwNpTVJdPd4FTNMLYtYpQmz6nnOJiH4DAvs8geivc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t+QxtkZRPVCQxmQJ11CacOMN/RX4fdzwnaM+PQube9n2Hb7RsEtQeYlXarbdv69Ws
+	 y8fiY0KPrf9i3CLJKPhOXXiwsrwc77JoVmZCo5KgZcgtPhqqVupOQG9lrALar27XUh
+	 WSEybY5EVZIvYj/i1GNLDCTy3oEQEHWhr7RWeITNOUP/JV39JI8muWlFiWwvPFrVQy
+	 hJctoRxVY8F6Jfn9u+GM3E7xEyvajYwHtZ31p3T3d+f7SGXnuPpGfzmoGSbJ2zw1lR
+	 D2rkn9f4360dP+F4OTlrN/4C5JDjMK0zyvH2u/OFCVfhYR8tRWaaXv1/fNXkB8lhm6
+	 u4Vimnk+1w4oA==
+Date: Mon, 1 Jul 2024 10:33:25 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Kanak Shilledar <kanakshilledar@gmail.com>
+Cc: kanakshilledar111@protonmail.com, Serge Semin <fancer.lancer@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH] arch: riscv: thead: implement basic spi
+Message-ID: <20240701-unsnap-unhitched-a84476a719cd@spud>
+References: <20240630063845.116307-1-kanakshilledar@gmail.com>
+ <20240630-generous-carnation-c534f5d84a8a@spud>
+ <CAGLn_=vG09C49goRkbygZdYch8H1c_kw3p7ar9NGOrgpd0_MiA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/mdzmdgvBVF3pyOAv2SZtLx_";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="J2qMr9rpUpN31Eec"
+Content-Disposition: inline
+In-Reply-To: <CAGLn_=vG09C49goRkbygZdYch8H1c_kw3p7ar9NGOrgpd0_MiA@mail.gmail.com>
 
---Sig_/mdzmdgvBVF3pyOAv2SZtLx_
-Content-Type: text/plain; charset=US-ASCII
+
+--J2qMr9rpUpN31Eec
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Mon, Jul 01, 2024 at 02:43:46PM +0530, Kanak Shilledar wrote:
+> On Sun, Jun 30, 2024 at 7:22=E2=80=AFPM Conor Dooley <conor@kernel.org> w=
+rote:
+> >
+> > On Sun, Jun 30, 2024 at 12:08:20PM +0530, Kanak Shilledar wrote:
+> > > implemented basic spi support for TH1520 SoC.
+> > > created a fixed clock and a simple spi0 node.
+> > > updated the matching binding to include thead,th1520-spi as compatibl=
+e.
+> > > added a spidev device in devicetree which will utilise the spi0 node.
+> > > this is usually reserved for a SPI NOR flash which is left unpopulated
+> > > underneath the carrier board. I performed a SPI self loop test using
+> > > tools/spi/spidev_test.c and tried sending `\xDE\xAD\xBE\xEF` and veri=
+fied
+> > > it is being received correctly. i updated the of_device_id struct in
+> > > drivers/spi/spi-dw-mmio.c to include "thead,th1520-spi" as the compat=
+ible.
+> > > this patch also adds basic spi support on beaglev ahead which shares =
+the
+> > > same TH1520 SoC. i have only tested on LicheePi 4A.
+> > >
+> > > Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
+> > > ---
+> > >  .../devicetree/bindings/spi/snps,dw-apb-ssi.yaml |  4 ++++
+> > >  .../boot/dts/thead/th1520-beaglev-ahead.dts      |  9 +++++++++
+> > >  .../boot/dts/thead/th1520-lichee-module-4a.dtsi  |  4 ++++
+> > >  .../riscv/boot/dts/thead/th1520-lichee-pi-4a.dts | 10 ++++++++++
+> > >  arch/riscv/boot/dts/thead/th1520.dtsi            | 16 ++++++++++++++=
+++
+> > >  drivers/spi/spi-dw-mmio.c                        |  1 +
+> >
+> > This needs to be 3 different patches - one for the binding, one for the
+> > driver and a final one for the dts files.
+>=20
+> I will convert this into a patch set of 3 patch as you suggested.
+>=20
+> > > +
+> > > +&spi0 {
+> > > +     status =3D "okay";
+> > > +     spidev@0 {
+> >
+> > "spidev" is not a type of device, the nodename should match the type.
+> >
+> > > +             compatible =3D "rohm,dh2228fv";
+> > > +             reg =3D <0>;
+> > > +             spi-max-frequency =3D <500000>;
+> > > +     };
+> > > +};
+> >
+> > I'll put money on you not having a dh2228fv on this board. Document what
+> > you actually have on it please, not what allows you to probe the spidev
+> > driver in linux.
+>=20
+> Yes, you are right! Actually as per the vendor's kernel it should be a
+> "spi-nor" device from winbond.
+> I changed it to spidev for testing purposes. Shall I just leave it
+> with status =3D "okay" or add the node for
+> that spi-nor flash?
 
-After merging the hid tree, today's linux-next build (htmldocs) produced
-these warnings:
+If it isn't on the board, it shouldn't be in the devicetree. Please add
+the actual device that is here instead. If there's a board with nothing
+connected, then please don't add anything.
 
-Documentation/hid/hid-bpf:185: include/linux/hid_bpf.h:144: ERROR: Unexpect=
-ed indentation.
-Documentation/hid/hid-bpf:185: include/linux/hid_bpf.h:145: WARNING: Block =
-quote ends without a blank line; unexpected unindent.
-Documentation/hid/hid-bpf:185: include/linux/hid_bpf.h:147: ERROR: Unexpect=
-ed indentation.
-Documentation/hid/hid-bpf:185: include/linux/hid_bpf.h:167: ERROR: Unexpect=
-ed indentation.
+Thanks,
+Conor.
 
-Introduced by commits
-
-  8bd0488b5ea5 ("HID: bpf: add HID-BPF hooks for hid_hw_raw_requests")
-  9286675a2aed ("HID: bpf: add HID-BPF hooks for hid_hw_output_report")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/mdzmdgvBVF3pyOAv2SZtLx_
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--J2qMr9rpUpN31Eec
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaCd5oACgkQAVBC80lX
-0GwFIQf8COPVl/LJ1NDCPmQm037G/QUN7orpD2ZrerxiU6FNcY8iFq35wg5qSVYe
-8csv1WTtzCvYMlWCt3x9NV8dXDshvhj7oGgf91aK4+MIC7BjiX8Rb7vc97jNI9xR
-W3XfU35b6NdxerF1Wn5hAzEzoYLJsNZ9qHPR2/HyDQbCByUC+M4wupyLzFrevTiw
-crSm8nOKRluptAUmKY1iAFJWXbjtzMljFrkmx47hSEkv3oikha/eZrkvfbUh6YMa
-cyPyl7Kv/7RWkUriNoTbZIC/cnWG+im077RMmPOfHmAYQJqmmVfZUpycTDo8Zw5j
-teK+LO3R2wP1M0Dsi9viKUvjHFdqwg==
-=aECq
+iHQEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoJ35QAKCRB4tDGHoIJi
+0j8KAP9LwCJp3Y34VPmBSkqu5OK4PNlV/u7zd7GesQ6X3g9IfAD4vxPkDRFgIr0I
+//mB3acpuMdI2ele2BVcXagmZcbKCg==
+=EgMk
 -----END PGP SIGNATURE-----
 
---Sig_/mdzmdgvBVF3pyOAv2SZtLx_--
+--J2qMr9rpUpN31Eec--
 
