@@ -1,104 +1,159 @@
-Return-Path: <linux-kernel+bounces-236981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6273391E95F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 22:16:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F7E591E965
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 22:16:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DE6828310D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:16:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E46741F229B6
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB4A171664;
-	Mon,  1 Jul 2024 20:15:36 +0000 (UTC)
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596B7171E52;
+	Mon,  1 Jul 2024 20:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Q60WqDUi"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9693E17164F;
-	Mon,  1 Jul 2024 20:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E2017085A
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 20:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719864935; cv=none; b=m8zh8ODDatZ1BDxfX8k7rj7fSku+rc4zXYFRq+ClqUODbg6yHDZRwk8TokXb4UuR9yH/BvhyDXaZHHXaFcUoCc9x86L0iwo8fJr7bWopMlbGn5U8QqvV0b+34/wv1JGdiGV0Dw/AJkgeAAJ0uA0t9bahHCrPrD7ZIvSis3NFiuM=
+	t=1719864967; cv=none; b=Z0ch3iMweWoCi/glMiZNrM/S1fzUmbz9/KEJJYjqw/2qghz9qz7++ONfKsDR527qGHzMFw/quF4aORTuB0TBzIzx3y6oVS82j4+JDu8f65V/wICld74OdkokaXnHsBpDkjBSgk0dE3h/qvDvmyF642E0BO+/oj3UJGfJhMkZjew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719864935; c=relaxed/simple;
-	bh=haqSuc43ZKdTwzxqszlkPJZAfarR2WcjeVlMCGPNx8E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kbVWLXjQL/FUxtGnz0JOI7GnRVKs9gK6akhCPmB7hKzXX2ry3mjbS9VCsny8AnE3hiqFZRIE2UmqM1lSTU6suK7IiCpnMc5hrrVGlzJW6Hx42FpAcGKmlUGnUSxm0j+Lqw0fX83WWYDQkEQjCy4Oa2zwg+vZyeFPG08OUOnHnM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-71884eda768so1838645a12.1;
-        Mon, 01 Jul 2024 13:15:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719864934; x=1720469734;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1719864967; c=relaxed/simple;
+	bh=8BAeJrhfF4MjoWK6BCb1lGegZfneASgqj+Rvzy7n+rk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MiUSIiQcSngF7Qxg2JPraMt2TTNwUL9ShVVQufVpsgy+2qU42lkrc0ZuPjzUuD/bvOxK9JnU63rYD+0AhrRxGVTG6A3TUtmR9mTzPjs+aBV1mTGVpl883wQvu8XcsFDh5WzRjeCyCAu7ydNlF4+k6tVEbjwzsXx+6/Z7G/pINBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Q60WqDUi; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ec6635aa43so34132951fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 13:16:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719864963; x=1720469763; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2j+Tz+4CGQkLaX4HpFSIaU27Nh4EjelF5DvTJp9jbsY=;
-        b=WsAasg4bgpvxiC3hj5hBnjWqxWvxX3kC87YcDUz+FhXUhlT2oORysieSg5wVbjuZR2
-         f8980jQizBQUujSdmcYhOw+6LJqT90SPiNHgWNsFwjFdMs+OR4lHTR+DHBk6LcKdPLdx
-         PkwISsO1tfs6xJkGT3G65Tc/g6MKu0E3RTEq19AO22qTZ58/5dz38XGh/3cAveR/v7yF
-         MCOVP7UWlKI8i6ej3noEtNe2AyjkNO9tWePYnjm21lxFnumVOoHC/DWcizat5jsHkJ7G
-         JSQwZytF586rDLFKX9ubgJ3I4fOlip6uhh1uFkOHmiz2LAUX3bOu2o/rPIEkeCn1uvrq
-         La8w==
-X-Forwarded-Encrypted: i=1; AJvYcCVBecW9cGZmBULlXZiKPV0fgxH/cHlV6odriboSmiT20Kpv/0JVza2Q4aN+QAKK/hulxneBoV+G7SMbJ5tj/So8V05AVc90WTJSfkLHc2SzDKxNhCBAy7Mqf4AXTWJbQ7HJn5jsUCgh/Q==
-X-Gm-Message-State: AOJu0YxZ564npeSC/ydf6q5OyUDUm39In1NJhjQwu2/3hUBAq/tKxOg+
-	wYFB3j3u2eQbhF8u1gaCwXVNywugnmrFQ5pDBVcEiNQ/e4mPrQng66YWSmjm
-X-Google-Smtp-Source: AGHT+IEtrKjZ3bZr9WjpmBmSxq9gYazDR6r4WkvVTKp8WcAgkYXExVA2nDrltOsjKG5hlCR9snjkSw==
-X-Received: by 2002:a05:6a20:c91b:b0:1be:f090:7cd4 with SMTP id adf61e73a8af0-1bef6217150mr3626833637.61.1719864933849;
-        Mon, 01 Jul 2024 13:15:33 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70804a95402sm6954558b3a.198.2024.07.01.13.15.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 13:15:33 -0700 (PDT)
-Date: Tue, 2 Jul 2024 05:15:32 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Philipp Stanner <pstanner@redhat.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the pci tree
-Message-ID: <20240701201532.GA272504@rocinante>
-References: <20240701192453.3e4a0a3e@canb.auug.org.au>
- <20240701193748.GA13881@bhelgaas>
+        bh=L/7AZmTT+AVERGwwpJNjGUJrmrBTr7GP14K4O8EWIlY=;
+        b=Q60WqDUi3pqLWriq7fVrADnm2JxdRl9Qu/HKPaI6G+kwuZOdvFAHvcq8ce0veiz3J2
+         q5/3hS3OSDnCx5eT6fd5KXRqvPar4dHnHL3z0brtWdKRPeHmv19B13aIrIOVt6g8/vae
+         I+YVodCB6mnvzHE74vmPDmA7GYyE7LH/nShXNeyqxvZPFvMMG1FTgIPj+0t/tex6rurM
+         bC7As71en6Bv/3Jgs/VTgL2JPskQHrw0r1x7iJuzOiLbBAckdfdHGVhCU2lu/OzZjTZQ
+         cqqUwEwjsUFWTfCIBlVyHWJ2I2nxfVXRykaQfi0wfoKzfOFufq1BdOZ5KpzKC44MuiT+
+         mCHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719864963; x=1720469763;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L/7AZmTT+AVERGwwpJNjGUJrmrBTr7GP14K4O8EWIlY=;
+        b=Vu8uL7nS0Q3HpNtHhqiGNkpEIZmen38FBGphS7RHZZdg1hid86F7eaEs/MMGxYWYzZ
+         QdD82X1vbuBHgyGI0hB5raCtMNb1HnZWoDydthXYdg42wejnzun5jwOmlm2A4/RTG4nw
+         tm0AsObeJpdrxj3Bnm79bmUGApNhLozddoi1BoJvCscBWr2/lFTMJjYvtVmE94DP1tGI
+         +bjzaIPO4eJBi7wJRlbf4yfdVBO5CskXjTxV98qJOL8Ef82k7rNevHMUGd/kDSKrXbZO
+         y2bcivbTa7+n+ZTD4i0wcGQxACQoxuVWjeiQl0fVFnQR5ZTduE/GHkXigG6dvo8ofL1D
+         HSIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFRDh/V6Yv1PEPIMhCTFB7H+HzCtMNmSpF9BocyQYcuYNfKQ1GSk4u/J9aEN/fKfUbKctBmaCw+jBxuyCRcE5rYKY3VAFip6Yq+aPG
+X-Gm-Message-State: AOJu0Yxgb/K1ZBXdXNhUQ947qDWtSErKU7HtBjmCldR4NdAD+w72pUkI
+	CcmJYzN52t44obKuT7R7VdekB+CoiZG0OOTlZVagzrk8vOs1PX+eePH1r79I0DC0YwKKm8ScYmX
+	gCfxek41Hg6EMYIHxhYBm4zOJc8Aozprcen6U4A==
+X-Google-Smtp-Source: AGHT+IEKAZ0mm0RcxwgLcfbN1Y6EDGlhonP962JD5DjNt0v+wIWUTtByp8xBB5E9Sy3ozcPBuqs8cSZzA/gNt5LZ0dQ=
+X-Received: by 2002:a05:651c:b0b:b0:2ec:5c94:3d99 with SMTP id
+ 38308e7fff4ca-2ee5e3810b7mr44548691fa.2.1719864963002; Mon, 01 Jul 2024
+ 13:16:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240701193748.GA13881@bhelgaas>
+References: <20240627113948.25358-1-brgl@bgdev.pl> <20240627113948.25358-3-brgl@bgdev.pl>
+ <td5jbseo7gtu6d4xai6q2zkfmxw4ijimyiromrf52he5hze3w3@fd3kayixf4lw> <f416e06e-e354-4628-883b-07850f05e276@lunn.ch>
+In-Reply-To: <f416e06e-e354-4628-883b-07850f05e276@lunn.ch>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 1 Jul 2024 22:15:51 +0200
+Message-ID: <CAMRc=MdSte_7MSfR1DAH8fHpHWcOfgPX2SO9DR1UnXrgvMDbdg@mail.gmail.com>
+Subject: Re: [PATCH v2 net-next 2/2] net: stmmac: qcom-ethqos: add a DMA-reset
+ quirk for sa8775p-ride
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Andrew Halaney <ahalaney@redhat.com>, Vinod Koul <vkoul@kernel.org>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, 
+	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Thu, Jun 27, 2024 at 9:37=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
+>
+> On Thu, Jun 27, 2024 at 12:07:22PM -0500, Andrew Halaney wrote:
+> > On Thu, Jun 27, 2024 at 01:39:47PM GMT, Bartosz Golaszewski wrote:
+> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > >
+> > > On sa8775p-ride the RX clocks from the AQR115C PHY are not available =
+at
+> > > the time of the DMA reset so we need to loop TX clocks to RX and then
+> > > disable loopback after link-up. Use the existing callbacks to do it j=
+ust
+> > > for this board.
+> > >
+> > > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > Sorry, not being very helpful but trying to understand these changes
+> > and the general cleanup of stmmac... so I'll point out that I'm still
+> > confused by this based on Russell's last response:
+> > https://lore.kernel.org/netdev/ZnQLED%2FC3Opeim5q@shell.armlinux.org.uk=
+/
+> >
+> > Quote:
+> >
+> >     If you're using true Cisco SGMII, there are _no_ clocks transferred
+> >     between the PHY and PCS/MAC. There are two balanced pairs of data
+> >     lines and that is all - one for transmit and one for receive. So th=
+is
+> >     explanation doesn't make sense to me.
+> >
+>
+> Agreed. We need a deeper understanding of the clocking to find an
+> acceptable solution to this problem.
+>
+> Is the MAC extracting a clock from the SERDES lines?
+>
+> Is the PHY not driving the SERDES lines when there is no link?
+>
+> For RGMII PHYs, they often do have a clock output at 25 or 50MHz which
+> the MAC uses. And some PHY drivers need asking to not turn this clock
+> off.  Maybe we need the same here, by asking the PHY to keep the
+> SERDES lines running when there is no link?
+>
 
-[...]
-> > After merging the pci tree, today's linux-next build (htmldocs) produced
-> > this warning:
-> > 
-> > Documentation/driver-api/pci/pci:10: drivers/pci/devres.c:556: WARNING: Inline emphasis start-string without end-string.
-> > 
-> > Introduced by commit
-> > 
-> >   06fa2e1e9116 ("PCI: Deprecate pcim_iomap_table(), pcim_iomap_regions_request_all()")
-> 
-> I fixed by changing * to \* here:
-> 
->   * void __iomem \*mappy = pcim_iomap(pdev, bar, length);
+Yes, there are two 50MHz outputs on this PHY but they are not
+connected on this board.
 
-I wonder if the following hack would work too:
+> https://elixir.bootlin.com/linux/v6.10-rc5/source/include/linux/phy.h#L78=
+1
+>
+> I also wounder why this is not an issue with plain SGMII, rather than
+> overclocked SGMII? Maybe there is already a workaround for SGMII and
+> it just needs extended to this not quiet 2500BaseX mode.
+>
 
-  void __iomem * mappy = pcim_iomap(pdev, bar, length);
+Well, you pointed out that there is a DMA-reset-related workaround in
+place for ethqos so I tried to reuse it in this version. Does it
+count? :) We did establish that this mode has no in-band signalling,
+so we should be fine with the above solution after all.
 
-Separate the asterisks from the name, so that the parser will no longer try
-to make "mappy" bold.
+Also regarding the PHY mode: on a rather non-technical diagram I
+found, the four SGMII signals going to the MAC are referred to as 2.5G
+HSGMII, not OCSGMII but I'm not sure if that's just naming convention.
 
-Also, "mappy"... Philipp, this is so amazingly cringe. :)
+I'm still trying to get more info but it's taking time... :(
 
-    Krzysztof
+Bartosz
 
