@@ -1,158 +1,165 @@
-Return-Path: <linux-kernel+bounces-235929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0F3E91DB62
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:27:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFA9791DB65
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:27:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E205D1C226A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:27:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E6A2B24902
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C5984E15;
-	Mon,  1 Jul 2024 09:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EAA285279;
+	Mon,  1 Jul 2024 09:27:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ujXxo3s8"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nAkJXbnm"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8D01F937;
-	Mon,  1 Jul 2024 09:26:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF17D1F937;
+	Mon,  1 Jul 2024 09:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719826019; cv=none; b=nom5D1DqaRqb9fVGO7Md5kRF2lmlQXvhI8VTeEryhhzJZSRUyutW56gALdyOvNmyihla8u/h6oYfOkOs93qE3meNnR2a9ABGRqrkqAZi6Gs/7mpR/DO4n84Zos2Wdv/vIlKb03+RqAJjAsMj8+tWI6BTFzuIZG/y6zvgGK+OcYI=
+	t=1719826044; cv=none; b=m1y1D4OeVPl/KcUt8tdoBKpsFTQewOh5AUcyzxYohkXtmDdjpvf1IEvH6AECZq0o3VC2EPMP2pNZfqVLfkXBZB+4JFP5tni8tl7tywEq6Rn1AMsQAekpdchz9G9NMzdvTrkQw15iLIyOuKbM5J9x8+uh01xt92jeivAqFYG24nQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719826019; c=relaxed/simple;
-	bh=nrCkN3tD/QfQyR0fUVWHWZ+rTsMW7+5cNHHWacjAW38=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WqWQmE5zMI3LXYpJByppDUqyqIlYM9PwXA7CG+VI6uxJwmB6ItM5nsM1SVG5ZJvMJgutljVNEXNV1TtgHA9evfjffbfQORiMnuBEbspacXgy8cgrpE+iEn9QBb2VBtIHIzjCT8hYNxGtF3yL4LNuNWSBiuDA+WkgKJIeznbxZzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ujXxo3s8; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1719826016;
-	bh=nrCkN3tD/QfQyR0fUVWHWZ+rTsMW7+5cNHHWacjAW38=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ujXxo3s82tWF5ifLVJppUjgHuwuEcLY+AIlxVBed01+JtZQT+x6lRIEYVm74oVYSP
-	 RF1IRDlDKSaVLFhijNF524Y0jtck8keC2yQO63I4BZZTb3zSPYY6aHiA0WgDw5BYos
-	 TrRZJZVDjtjp8qahxsDZ1QIpOmyPs51+8ZRR/9p2/MKZDNiu43et4h6Vbnkez8Ql0A
-	 ljpu6A+FbSuh3uARKuSqOL5eGWalHD2fQe/3pDGiMvxX1L1d02Sx1JY6J6+XZSzARl
-	 3Ue/s3qSfJ0M6JdwMDFww8/r1mqdCI9/ukJCdNr42Ud8rWfzwCR5rKN6+JJfvCk2ch
-	 ZxRmQzGvlMJ+g==
-Received: from [100.74.67.65] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: jmassot)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id DECDA37804B2;
-	Mon,  1 Jul 2024 09:26:55 +0000 (UTC)
-Message-ID: <b51c6781-8c35-4945-abf4-21deedaefc06@collabora.com>
-Date: Mon, 1 Jul 2024 11:26:54 +0200
+	s=arc-20240116; t=1719826044; c=relaxed/simple;
+	bh=vq47BmXino7PCs8eUW0j5xRD1VaPNvwK1N3aeR9Gwa8=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AGEWdk5dKU89vp+euSrJ/HEaNTh47SC5pyVoR+n1LspD0PVhZ8jB5Qmg+msWuzJKmiND2CndqSk/PjIhUCzXH1iOXSZLFrf7yF3DcYnUp43n3aYdZkE+fxLNakrzUcRaWFva+VRcsJaeyXfB4/9LE22v6oWENTgCsPX81TkKY8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nAkJXbnm; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a75131ce948so190706266b.2;
+        Mon, 01 Jul 2024 02:27:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719826041; x=1720430841; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GNSWr+FyKGhJ2OQXJoCbpScKnqu6shkEuuJVrDaTSdY=;
+        b=nAkJXbnmcSjwAboazljc/vWijkp6S9VZWYVis7Q9rgubEMhvZ3s12iK2CaxGfFzZCc
+         weOjB1NBLedDtMZIRqqZqlLFYMrKEFsRvxgv38IyX9iTzz2JmsBx3IA7PUq3WN2fIs98
+         pfQc/y1K7un9EIYz6qW4w0vrEDq6WuUGeZ8tI6g1eK2x15DN+5P9xDvHvUSlUMwr6hO3
+         MGNzhVP5J5xMiqpqBIzaq0MI4eDVqJUV5nopK4Sb6Kl69O+pF4bU++c/DxyG2Yy5FRc5
+         dglddErIFPw9Fa2EpX5IRuXGDf9DpsL7fS2o7NqewFTv7MbiQFIhZgPcXJ4QctreaNmn
+         e4uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719826041; x=1720430841;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GNSWr+FyKGhJ2OQXJoCbpScKnqu6shkEuuJVrDaTSdY=;
+        b=LlmRjTmO+LrG4tVHQulPsRP25OkgzwXhFlMs8fqipjT44PNj49yyyR7o3yOE4ojr/L
+         pSqI222B4So9DiDhQbVRZd1tHc7IgJ275p24yAFZHOVOexe3rh3FyZOLBL71gIIeL7a4
+         m9c7e/uglNj9j6pFDQ+C2IhrJf/tHrxCKvReFvDhpSsfMGvX8nt/VoED4/f/41s2KKuK
+         caxYtRNCKINa10HeTVdUKzC6JSt9+o+zc2UdcFdEAHYJa8IS2KFk09LKH4kHL+1sJ8cf
+         0pEKZtd1/W/x1Td2TEUtg050qAolL9o1RSUi+ECC5Qyi572dZckVvS9dVkiTZRF8SQlJ
+         hW6A==
+X-Forwarded-Encrypted: i=1; AJvYcCVXK4V3dUaLVH0Hct173UYzYr6v571hUEg53prUj4uXnGVrqUfHqy78ZzJLOcSDNaRl1fTco7i3LlQ326tII6oI5kIqdM2AJKeaa+Rcs8QoXHqzMAffYJFT4vPNnzsxUQ3SdoxgeRs9MVmfOSU3ZG13l6kWI1cAf1wQIaEfQC34gbu+
+X-Gm-Message-State: AOJu0YzKx0Cb0DQ2Dkn648XFRL5MJ2/wrVWD4RQTQZcytJqAZyCqN0M/
+	KmQPwIpAkLOxH6m+pcbuNmxd96p0aJP1ykMrfPXOTgQhy+AhsH6T
+X-Google-Smtp-Source: AGHT+IHHAQ1CgfLrMvgretmQ6tRPHEg59qG3CngcvMyD0jZ/QYYIXkhwNMGqQeDhggogVEhSWuh2Tw==
+X-Received: by 2002:a17:906:db01:b0:a6f:5fa8:1b7 with SMTP id a640c23a62f3a-a751441a658mr436498966b.15.1719826040583;
+        Mon, 01 Jul 2024 02:27:20 -0700 (PDT)
+Received: from krava (37-188-135-196.red.o2.cz. [37.188.135.196])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72aaf63981sm309030866b.82.2024.07.01.02.27.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 02:27:20 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Mon, 1 Jul 2024 11:27:13 +0200
+To: Zhu Jun <zhujun2@cmss.chinamobile.com>
+Cc: daniel@iogearbox.net, andrii@kernel.org, ast@kernel.org,
+	bpf@vger.kernel.org, eddyz87@gmail.com, haoluo@google.com,
+	john.fastabend@gmail.com, kpsingh@kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	martin.lau@linux.dev, mykolal@fb.com, sdf@fomichev.me,
+	shuah@kernel.org, song@kernel.org, yonghong.song@linux.dev
+Subject: Re: [PATCH] selftests/bpf:fix a resource leak
+Message-ID: <ZoJ2cTg8-BgJ2KNg@krava>
+References: <847bcc7c-e54e-648a-be47-59e0a6d0853e@iogearbox.net>
+ <20240701021331.3057-1-zhujun2@cmss.chinamobile.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] media: i2c: max96714: coding style fixes
-To: Tommaso Merciai <tomm.merciai@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240628-gmsl2-drivers-style-fixup-v1-0-a4bb49f4c7a1@collabora.com>
- <20240628-gmsl2-drivers-style-fixup-v1-2-a4bb49f4c7a1@collabora.com>
- <ZoJU/2Ai0Bl/08Vt@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
-Content-Language: en-US
-From: Julien Massot <julien.massot@collabora.com>
-In-Reply-To: <ZoJU/2Ai0Bl/08Vt@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240701021331.3057-1-zhujun2@cmss.chinamobile.com>
 
-Hi Tommaso,
+On Sun, Jun 30, 2024 at 07:13:31PM -0700, Zhu Jun wrote:
+> The requested resources should be closed before return
+> in main(), otherwise resource leak will occur
+> 
+> Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
 
-On 7/1/24 9:04 AM, Tommaso Merciai wrote:
-> Hi Julien,
-> 
-> On Fri, Jun 28, 2024 at 02:29:28PM +0200, Julien Massot wrote:
->> Coding style fixes suggested by Sakari during the
->> driver review.
->>
->> Signed-off-by: Julien Massot <julien.massot@collabora.com>
->> ---
->>   drivers/media/i2c/max96714.c | 14 +++++++-------
->>   1 file changed, 7 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/media/i2c/max96714.c b/drivers/media/i2c/max96714.c
->> index c97de66631e0..c738908bf141 100644
->> --- a/drivers/media/i2c/max96714.c
->> +++ b/drivers/media/i2c/max96714.c
->> @@ -25,6 +25,7 @@
->>   #define MAX96714_NPORTS     2
->>   #define MAX96714_PAD_SINK   0
->>   #define MAX96714_PAD_SOURCE 1
->> +#define MAX96714_CSI_NLANES 4
->>   
->>   /* DEV */
->>   #define MAX96714_REG13                 CCI_REG8(0x0d)
->> @@ -724,8 +725,9 @@ static int max96714_init_tx_port(struct max96714_priv *priv)
->>   	 * Unused lanes need to be mapped as well to not have
->>   	 * the same lanes mapped twice.
->>   	 */
->> -	for (; lane < 4; lane++) {
->> -		unsigned int idx = find_first_zero_bit(&lanes_used, 4);
->> +	for (; lane < MAX96714_CSI_NLANES; lane++) {
->> +		unsigned int idx = find_first_zero_bit(&lanes_used,
->> +						       MAX96714_CSI_NLANES);
->>   
->>   		val |= idx << (lane * 2);
->>   		lanes_used |= BIT(idx);
->> @@ -757,9 +759,7 @@ static int max96714_rxport_disable_poc(struct max96714_priv *priv)
->>   static int max96714_parse_dt_txport(struct max96714_priv *priv)
->>   {
->>   	struct device *dev = &priv->client->dev;
->> -	struct v4l2_fwnode_endpoint vep = {
->> -		.bus_type = V4L2_MBUS_CSI2_DPHY
->> -	};
->> +	struct v4l2_fwnode_endpoint vep = { .bus_type = V4L2_MBUS_CSI2_DPHY };
->>   	struct fwnode_handle *ep_fwnode;
->>   	u32 num_data_lanes;
->>   	int ret;
->> @@ -791,14 +791,14 @@ static int max96714_parse_dt_txport(struct max96714_priv *priv)
->>   	}
->>   
->>   	num_data_lanes = vep.bus.mipi_csi2.num_data_lanes;
->> -	if (num_data_lanes < 1 || num_data_lanes > 4) {
->> +	if (num_data_lanes < 1 || num_data_lanes > MAX96714_CSI_NLANES) {
->>   		dev_err(dev,
->>   			"tx: invalid number of data lanes must be 1 to 4\n");
->>   		ret = -EINVAL;
->>   		goto err_free_vep;
->>   	}
->>   
->> -	memcpy(&priv->mipi_csi2, &vep.bus.mipi_csi2, sizeof(priv->mipi_csi2));
->> +	priv->mipi_csi2 = vep.bus.mipi_csi2;
->>   
->>   err_free_vep:
->>   	v4l2_fwnode_endpoint_free(&vep);
-> 
-> This Patch looks good to me.
-> Reviewed-by: Tommaso Merciai <tomm.merciai@gmail.com>
-> Tested-by: Tommaso Merciai <tomm.merciai@gmail.com>
-> 
-> Note:
-> I think we can fix also the following defines here, as a coding style
-> fixes. Maybe in another patch.
-> 
-> #define MAX96714_PATGEN_DE_CNT         CCI_REG16(0x25B)
-> #define MAX96714_PATGEN_CHKB_COLOR_A   CCI_REG24(0x25E)
-> 
-> I think hex numbers for regs must be lower case instead of upper case :)
+could you please send this not as reply but as a separate patch with v2
 
-Thanks for the test, I will send a v2 with these hex numbers in lower case.
+> ---
+>  tools/testing/selftests/bpf/test_sockmap.c | 15 +++++++++------
+>  1 file changed, 9 insertions(+), 6 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/bpf/test_sockmap.c b/tools/testing/selftests/bpf/test_sockmap.c
+> index a34e95040994..d51af986d9d8 100644
+> --- a/tools/testing/selftests/bpf/test_sockmap.c
+> +++ b/tools/testing/selftests/bpf/test_sockmap.c
+> @@ -2075,8 +2075,10 @@ int main(int argc, char **argv)
+>  
+>  	if (!cg_fd) {
+>  		cg_fd = cgroup_setup_and_join(CG_PATH);
+> -		if (cg_fd < 0)
+> -			return cg_fd;
+> +		if (cg_fd < 0) {
+> +			err = cg_fd;
+> +			goto out1;
+> +		}
+>  		cg_created = 1;
+>  	}
+>  
+> @@ -2092,7 +2094,7 @@ int main(int argc, char **argv)
+>  	if (err) {
+>  		fprintf(stderr, "populate program: (%s) %s\n",
+>  			bpf_file, strerror(errno));
+> -		return 1;
+> +		goto out;
+>  	}
+>  	running = 1;
+>  
+> @@ -2105,13 +2107,14 @@ int main(int argc, char **argv)
+>  
+>  	err = run_options(&options, cg_fd, test);
+>  out:
 
-Regards,
-Julien
+could we check for cg_fd >= 0 and have just one out label? like:
+
+out:
+	if (cg_fd >= 0)
+		close(cf_fd);
+	if (cg_created)
+		...
+
+thanks,
+jirka
+
+> +	close(cg_fd);
+> +	if (cg_created)
+> +		cleanup_cgroup_environment();
+> +out1:
+>  	if (options.whitelist)
+>  		free(options.whitelist);
+>  	if (options.blacklist)
+>  		free(options.blacklist);
+> -	close(cg_fd);
+> -	if (cg_created)
+> -		cleanup_cgroup_environment();
+>  	return err;
+>  }
+>  
+> -- 
+> 2.17.1
+> 
+> 
+> 
 
