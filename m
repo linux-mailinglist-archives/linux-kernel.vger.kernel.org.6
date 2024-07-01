@@ -1,105 +1,91 @@
-Return-Path: <linux-kernel+bounces-236453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83B2891E288
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:32:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 595ED91E25F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:26:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A49E1F27449
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:32:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C44C1B2407C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:26:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B8516C68D;
-	Mon,  1 Jul 2024 14:31:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC38A1662FA;
+	Mon,  1 Jul 2024 14:26:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="woHIJPTO"
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744A716849D;
-	Mon,  1 Jul 2024 14:31:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="OGuAEcFE"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDDD53D3BC;
+	Mon,  1 Jul 2024 14:26:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719844281; cv=none; b=oCe0WP1zLr9Dj7k+S+rnX2GiLrYRDUaVhFo5b0PYaanu173OljWeRv6vRAnUhMHXpRp82x94LrAeBul+lrcw1zLo+0VpxJzT2sTokMwnbSoiEylc7HPG9JQujhaK36BsDGQ5LDNMHp+wsvE/+CbBooVKnmmgmZ7h6t7h0JBcza0=
+	t=1719843975; cv=none; b=L/EzaYf75hE1ub+V1ptg7Ho3WhEHJIQkAMp59jJpMyEsun3NbONoyPAT+6wYDPmJT7T6or48WbMHQvudQoRUj4WLvhMK6Y9XIBvpSPHn6wbTSm/PwDZ2REhuM7IyQavW9tpgjng+ki3Z6w5ADKnMBy6ZDgUWV4yjGqPtDqy0zbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719844281; c=relaxed/simple;
-	bh=kh4fd2Tt1g3FgPpUUT16nQDDaDmCFVlh5X1PX3Rz9RU=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=nSCws6SAKRbZx8u+4a6m8Q0VDt1IJh9wcnKtyxzVGBjCQE5WAS0aSUrNOtlNSVP0unCSEJFo3pabTESGKW1Uw5c1Iyk4FZ2T/wCKRN9rmoB/hmeHLNQ7sIOjs/dDKw7eGZyhjT/3NkSwWQJwcSa8RyuPeB8Xa1DWFQXw0WAmvFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=woHIJPTO; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1719844268; bh=oig2jSCI3rDtVcLntOJD59bkVH+SVdUKsJBtU3A9NPg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=woHIJPTO5DRjvijRxgqfRyyE6eNzJxy3y5aP5Fq2WJDs17gcUF3EkUWLr6UfD+BJs
-	 jYs1z2gUcsNn0Gg/VMSRcoaimdNjweUaY/pUXgR4Zdc+ZoPuZAgNCkTDUECSlGnNrf
-	 1jNT3EwsY8sjT8OcMjOHJYgJZAP9CcXj4YxTiRZY=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
-	by newxmesmtplogicsvrsza10-0.qq.com (NewEsmtp) with SMTP
-	id 642386CC; Mon, 01 Jul 2024 22:25:02 +0800
-X-QQ-mid: xmsmtpt1719843902t011y0o3y
-Message-ID: <tencent_BE7AEE6C7C2D216CB8949CE8E6EE7ECC2C0A@qq.com>
-X-QQ-XMAILINFO: OCYbvBDBNb9r37I3PMSS14NyCwzK375aFroJL/YLh4ESeb9E/2KRMBm3bnUoev
-	 BsN9N0Q6AMJLVwj1FimcZvUyQNyqlBeu6FkSPuHzRXR7+fxTcSw1iPKuWQdE1nSKaGpjNspgO75Z
-	 A36YvFBGz1YNdjrvyBpUf8l6uh2hb/jvNGb0xm5Pmq0GHxLb98sgaBSy0P5EuYXj+SNDYr6/P1/q
-	 Q8+ipEes29TcweAPo0VxoYy+gaEaaV0ffbWLYVKGhFTpwpfTfGJwVOOrNupAzGS0wYP96qrWEQij
-	 4Q3h+L0zMcIzfJxc9Ep1m2Cx7aMVHyEZ+aXCjHE9qEDAy78bNhYEN0W6NmA25ND4/Kq0aSeuuWaA
-	 UF3Z8iKQu3CqR8ymtz+8q/Q6tNFi8fzsZb33NVHUTkaV+gyyWRnyModF0Qp1u2k+99pChZSbhoFN
-	 +tqMmXsY7nOZceJY1UFtMk5J06xIDsbbjCovAuQRFd4rq6TyOoEYF72VDsTqqDEf0mNHBK14R2sR
-	 +vUSPc/q6byPXidrTStGbXSjv/LfVDFSvLaRZzBU/3XM3kIswL7kR8+LFKOo3hJiog83OYeL3IgR
-	 FFo6iHMRACXWG/9rzrb7+JdvmqLdvf2Tzgj+XM7Jobhh3qtlikjz3MKKpLlNWOgVBX9a7A43znvV
-	 eJZKVlviHYA+VYZS5qt+yz4xgI3tsPfuDH+vZ3bfeOGabsC4/37V2o8IcFzSBe4ZXUAZh33E9AHS
-	 8w+4m+OscvCX/uJAdZ+W7+DA77SYWv+43Af04q8GyzI9hW1aN/xHxeFF1S/vAHP63pY59a/Ha/ny
-	 /h146ZVPDcWvxUmMw42V4d9hLOlIB4FPxowtMzJN78IOz9CTVxYdV7776tJF5Lu5GGfsZtgfyqVI
-	 hdthla8G9HJnLOSEViWZ4rTvhy145C0aim7NX+HNX3OwIslcipY7NTPV11D5Zjm7JGeMXLt8Ge
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+ae688d469e36fb5138d0@syzkaller.appspotmail.com
-Cc: adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	tytso@mit.edu
-Subject: [PATCH] ext4: No need to continue when the number of entries is 1
-Date: Mon,  1 Jul 2024 22:25:03 +0800
-X-OQ-MSGID: <20240701142502.2973881-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <00000000000075a135061c0480d0@google.com>
-References: <00000000000075a135061c0480d0@google.com>
+	s=arc-20240116; t=1719843975; c=relaxed/simple;
+	bh=tyXUokv7xNpsIGSP5ELpRgNWICH7u18dUF/zNyymBmI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CdSNGO7qGuAPZTeqUpADbFLlgjR1KieDZrJitiRKOwDpyOG8ZWF2cILB6jAlECKQHVfvjPeSx6QViL1e2/FiQ5wOXezgWzCwPce7WX42U0JvG6a6xV0+XPFZZU+QWHU2D5krdAylaoxyaKeAu185h4U+5bu4WWt2p+e4yL2IV80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=OGuAEcFE; arc=none smtp.client-ip=1.95.21.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=dEno6mHhFR5G5j7SXntEr/1pWDtwK/8nwORwa7dpaH0=;
+	b=OGuAEcFE6XaT95TB6J5r9c+FrJnA68Ii+Guzble791M+e0Pa2/5cHuhus/rNwb
+	BP5kMVNDNdCO7JFJOrgp7QigMfOZrhnfG8IkBKpbAyckwVsImjrJ3bTVzOAtdL8y
+	5BOvg5WgTbd3BPf197hD8PmPhaiYBo5G6nHRLWF5cw5MA=
+Received: from dragon (unknown [114.218.218.47])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgD3vwxavIJmPmcCAA--.6190S3;
+	Mon, 01 Jul 2024 22:25:32 +0800 (CST)
+Date: Mon, 1 Jul 2024 22:25:30 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Dong Aisheng <aisheng.dong@nxp.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v3 0/9] arm64: dts: imx8qm: add subsystem lvds and mipi
+Message-ID: <ZoK8WsnqxfIo6tAp@dragon>
+References: <20240614-imx8qm-dts-usb-v3-0-8ecc30678e1c@nxp.com>
+ <Zn0R2/lcgcSG03CM@dragon>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zn0R2/lcgcSG03CM@dragon>
+X-CM-TRANSID:M88vCgD3vwxavIJmPmcCAA--.6190S3
+X-Coremail-Antispam: 1Uf129KBjvdXoWrur4DWFykKr4fKF4DuryxGrg_yoW3GFb_uw
+	4aqF1kCw1UJw4fG3sYy3ZF9rWUKr92yr98Wry7Ww1qqr17Z3W0yF9Yqr4ruryktFWSvF4D
+	JF4Yqw4xJr45GjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU0zT5JUUUUU==
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCRwPZWZv-dtTeAAAs7
 
-When the number of entries mapped is 1, there is no need to split it.
+On Thu, Jun 27, 2024 at 03:16:43PM +0800, Shawn Guo wrote:
+> On Fri, Jun 14, 2024 at 11:06:24AM -0400, Frank Li wrote:
+> > Frank Li (9):
+> >       arm64: dts: imx8: add basic lvds0 and lvds1 subsystem
+> >       arm64: dts: imx8qm: add lvds subsystem
+> >       arm64: dts: imx8: add basic mipi subsystem
+> >       arm64: dts: imx8qm: add mipi subsystem
+> >       arm64: dts: imx8qm-mek: add cm4 remote-proc and related memory region
+> >       arm64: dts: imx8qm-mek: add pwm and i2c in lvds subsystem
+> >       arm64: dts: imx8qm-mek: add i2c in mipi[0,1] subsystem
+> >       arm64: dts: imx8qm-mek: fix gpio number for reg_usdhc2_vmmc
+> >       arm64: dts: imx8qm-mek: add usb 3.0 and related type C nodes
+> 
+> Applied all, thanks!
 
-Fixes: ac27a0ec112a ("[PATCH] ext4: initial copy of files from ext3")
-Reported-by: syzbot+ae688d469e36fb5138d0@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=ae688d469e36fb5138d0
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/ext4/namei.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Dropped the series due to the warnings reported by kernel test robot.
 
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index a630b27a4cc6..0a111274dc4a 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -2043,7 +2043,7 @@ static struct ext4_dir_entry_2 *do_split(handle_t *handle, struct inode *dir,
- 		split = count/2;
- 
- 	hash2 = map[split].hash;
--	continued = hash2 == map[split - 1].hash;
-+	continued = split > 0 ? hash2 == map[split - 1].hash : 0;
- 	dxtrace(printk(KERN_INFO "Split block %lu at %x, %i/%i\n",
- 			(unsigned long)dx_get_block(frame->at),
- 					hash2, split, count-split));
--- 
-2.43.0
+Shawn
 
 
