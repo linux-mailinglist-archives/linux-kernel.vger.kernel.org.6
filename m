@@ -1,117 +1,154 @@
-Return-Path: <linux-kernel+bounces-235859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA0AE91DA7D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:52:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0461A91DA61
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:48:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 656C4B225EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:52:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26F4C1C2102D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE34414BF8F;
-	Mon,  1 Jul 2024 08:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7636C12BF24;
+	Mon,  1 Jul 2024 08:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="V+qLUZ4G"
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zf7TKwRc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD13214B95A
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 08:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F92F83A14;
+	Mon,  1 Jul 2024 08:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719823717; cv=none; b=pxXF+M6pj0xnWAUEAMehfXcZvL6unQ9kyCSFGs+t7n2bH3VTjv5KsFqVgxRL1aMJQWPTg/5/RsgXmDyv5ii+mwmZ8QtLZyTKlCAditMqU7FO6pyPTMD0eH7vLSk2eZCowQadz0gEnqUQmh0szodnJw08CaT7IrE6Nwo0FBqBQ48=
+	t=1719823622; cv=none; b=pU3feRrIgBS67trekYfUBUxlmle5igxHdz3hwYAb6FznzY+GB1ZlZbeG/aBj0NaVCZfuCIyWnFeGm9/VVE6DfCSxhOud2B2gXsZ2/J3m1MWeMtdRF9CJ9tn9r8+HnOzCNYjn0jrBu5dZ/vLqHCH+ZekPIUxjt1DsL3+obSFr5cE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719823717; c=relaxed/simple;
-	bh=fcyiPkvEEKdWecEuJOIrUfCCsRSKdwvcoilRZcmvGGo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=V64rj+Y6kUd/cXr1cb8KZKUb1DF7s+WJQitoLcWlirPcxReCcPibX/8Pd2ASsEtWcTVM9vrEhWt+oBomaXc3KQwkAsG9XTDDOz4RgzIyNjcdkA14h6eqRB9nz7hUTcIRlniBH9LaH02zd2osGgC+rRcc15qunbZGvpYtpFG5tJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=V+qLUZ4G; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-25cd49906aeso382642fac.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 01:48:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1719823715; x=1720428515; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=StMJ2RtFXCKaoVJqaHkGOtRFp2kjcwvK/9x07Wn8pQQ=;
-        b=V+qLUZ4GIIrF45F6iucTWm5GCtC3/JlaRVHJV1mluKhVd3fH9gOzvL5rd4ib8DKX7L
-         ExYdNg9vjeOteHZM4NZwnx4kDVY7LKpHedblkfyAhuqTduhUvhbLQ+aTN1zpDuIRo1Ma
-         As8MZsThRMwALvnMcQ89JK2xiDKkMNkIi47mT0b1hH1ADKKgZWRyyVtLppwan9rL+oCh
-         mVCb65Brq4oVsshm4bk6RWTPwcqPLiR6dOa1QzbRuA1EIolPOiXu/SiezFcZZfAVHXaK
-         1bQVcYIg55vO0om8sSbNtycD9MtR3IJ+hDQls0zhX/yMdXro4aVMGYmItwB0OHYgtvQf
-         A0GQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719823715; x=1720428515;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=StMJ2RtFXCKaoVJqaHkGOtRFp2kjcwvK/9x07Wn8pQQ=;
-        b=qaXsqrErUY+lszf7F8BjztIQps29Zq9XvNqcY92uJyHIRySwyrXCFlElKg8ieD7Slq
-         EFKZj8UOSZT5nHpsWigGPnSpammhWxNaiEqiXPDS0ntrS6TAvZ+ynNu7F7oBn/F/rDt6
-         rNLaAFrIyt9PTn9wpNOEbk8cYuxmD9Vfc+jlhVjDKgSstPFBildxla3VK3eprqBKJeKu
-         mBhI/o4Wr2vg1ONwiAW5m59OLRLrEAAfCi5qewIX2bHtu3d3vMPbKQYshG8DYnHBWP/+
-         707aFT+r/sKTYkafqMSrVJJLsReOMsIvg5ZXSIMVRMGkhQWINbYAiNplucAUAOEWUoLe
-         uZjw==
-X-Forwarded-Encrypted: i=1; AJvYcCUaDMVhTx221eQhQwQiwVjbyf+pAbeKSeVWe0DsNzPD1luemE92fzk2NrBjYP8wfaeWK6H9q39SyDMFr0ARqrLW8YK4YqaRFpuRHjrv
-X-Gm-Message-State: AOJu0YwGSgALiMZQeXNCqTvfiySipcm4nbjqLTDjyOj40rvjQT2qv2PI
-	amhTUDZ1CLkTaUCZRv9HcUtDKdFL39ROucdSar0uB647B0dVEO9mI2kC5kYshpU=
-X-Google-Smtp-Source: AGHT+IFE3dKI9Tgl7EIyomU4IdVHY+PmwvfXhSbglMPZKAPvgX4/lADNKj6dPhxAruv+7V80kKXCBw==
-X-Received: by 2002:a05:6808:1a2a:b0:3d5:65c7:c26c with SMTP id 5614622812f47-3d6b549a9fcmr5659724b6e.4.1719823714723;
-        Mon, 01 Jul 2024 01:48:34 -0700 (PDT)
-Received: from C02DW0BEMD6R.bytedance.net ([139.177.225.241])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70804a7e7e0sm5932374b3a.204.2024.07.01.01.48.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 01:48:34 -0700 (PDT)
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-To: david@redhat.com,
-	hughd@google.com,
-	willy@infradead.org,
-	mgorman@suse.de,
-	muchun.song@linux.dev,
-	akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: [RFC PATCH 7/7] x86: select ARCH_SUPPORTS_PT_RECLAIM if X86_64
-Date: Mon,  1 Jul 2024 16:46:48 +0800
-Message-Id: <0f3aacc9707da962398de71c127e7771c6798062.1719570849.git.zhengqi.arch@bytedance.com>
-X-Mailer: git-send-email 2.24.3 (Apple Git-128)
-In-Reply-To: <cover.1719570849.git.zhengqi.arch@bytedance.com>
-References: <cover.1719570849.git.zhengqi.arch@bytedance.com>
+	s=arc-20240116; t=1719823622; c=relaxed/simple;
+	bh=eXt8DtOJVKFI5OlO3caEI0BK15ZG8stmVqrzhbjKqss=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H5r1NFzb2/oYxU9/7lXKIeww1xL2G259oAtrML5AiBJy/ydoJyFFddlhNEZGZIxDd5AYGQPVT0jhlTtF3glyNGzpurxt0or39z1K967BrppVfK1kVNqj7fdnWeo8rbjJArnpsRSpeKc9rwvb3I9SvsRrZ2NCTgk2L2wpazvI9Jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zf7TKwRc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62705C32786;
+	Mon,  1 Jul 2024 08:46:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719823622;
+	bh=eXt8DtOJVKFI5OlO3caEI0BK15ZG8stmVqrzhbjKqss=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Zf7TKwRc2X6XRQl0XWRgdmeDERAWtrlJq/KUFyHeYKkjJ56l8el4vKzxrESMehapS
+	 /s/V9WJh8betn6bi/8o7Q2bsSq15VtmKaZECAeCdjlQ7jxytCDCZhFftHMNzT91uj7
+	 /qkmlBpSNbQAfdgAy/PnemJNXauFo1dnKSKimqYCapmFPiz0kvXyecQBHxA4o4TR7U
+	 abg+XKrhdbGeZpfEA654A45qfkGVayK+Wn1OGZLLcv1Wn9wkhTkzOpj/ImcEymxerq
+	 8/noGzMCEjfSWAYSludiyM2hbAXrn9bkpiwluW3ZNvePjpAFHao8gOR6+jCl8OuxWf
+	 +6Zpp5kUG/wNw==
+Message-ID: <eeeb3f1f-5c77-4ca5-b996-17b968b7c2f0@kernel.org>
+Date: Mon, 1 Jul 2024 10:46:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/5] arm64: dts: rockchip: Add AP6275P wireless support
+ to Khadas Edge 2
+To: Jacobe Zang <jacobe.zang@wesion.com>, robh@kernel.org,
+ krzk+dt@kernel.org, heiko@sntech.de, kvalo@kernel.org, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, conor+dt@kernel.org
+Cc: efectn@protonmail.com, dsimic@manjaro.org, jagan@edgeble.ai,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ arend@broadcom.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+ megi@xff.cz, duoming@zju.edu.cn, bhelgaas@google.com,
+ minipli@grsecurity.net, brcm80211@lists.linux.dev,
+ brcm80211-dev-list.pdl@broadcom.com, nick@khadas.com
+References: <20240630073605.2164346-1-jacobe.zang@wesion.com>
+ <20240630073605.2164346-4-jacobe.zang@wesion.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240630073605.2164346-4-jacobe.zang@wesion.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Now, x86 has fully supported the CONFIG_PT_RECLAIM feature, and
-reclaiming PTE pages is profitable only on 64-bit systems, so select
-ARCH_SUPPORTS_PT_RECLAIM if X86_64.
+On 30/06/2024 09:36, Jacobe Zang wrote:
+> Khadas Edge2 uses the PCI-e Ampak AP6275P 2T2R Wi-Fi 6 module. The
+> pcie@0 node can be used as Bridge1, so the wifi@0 node is used as a
+> device under the Bridge1. As a PCIe device the wifi@0 can be probed
+> without compatible.
+> 
+> Co-developed-by: Muhammed Efe Cetin <efectn@protonmail.com>
+> Signed-off-by: Muhammed Efe Cetin <efectn@protonmail.com>
+> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
+> ---
+>  .../boot/dts/rockchip/rk3588s-khadas-edge2.dts    | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts b/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
+> index dbddfc3bb4641..8c152d587aefc 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
+> @@ -283,6 +283,21 @@ &pcie2x1l2 {
+>  	reset-gpios = <&gpio3 RK_PD1 GPIO_ACTIVE_HIGH>;
+>  	vpcie3v3-supply = <&vcc3v3_pcie_wl>;
+>  	status = "okay";
+> +
+> +	pcie@0,0 {
+> +		reg = <0x400000 0 0 0 0>;
+> +		#address-cells = <3>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +		device_type = "pci";
+> +		bus-range = <0x40 0x4f>;
+> +
+> +		wifi: wifi@0,0 {
 
-Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
----
- arch/x86/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Where is the compatible (again!)? Test your code - you will see your
+binding is a no-op.
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index cbe5fac4b9dd..23ccd7c30adc 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -313,6 +313,7 @@ config X86
- 	select FUNCTION_ALIGNMENT_4B
- 	imply IMA_SECURE_AND_OR_TRUSTED_BOOT    if EFI
- 	select HAVE_DYNAMIC_FTRACE_NO_PATCHABLE
-+	select ARCH_SUPPORTS_PT_RECLAIM		if X86_64
- 
- config INSTRUCTION_DECODER
- 	def_bool y
--- 
-2.20.1
+
+Best regards,
+Krzysztof
 
 
