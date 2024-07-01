@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-236494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E3DA91E2FA
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:57:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A069891E2FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:58:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BCFF1F22EDA
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:57:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09C52B25230
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B6516D4C9;
-	Mon,  1 Jul 2024 14:56:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C2416D9A5;
+	Mon,  1 Jul 2024 14:56:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DsKy32Ey"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fcSlIyyY"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DB116CD0C
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 14:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9324E16CD30
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 14:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719845812; cv=none; b=BJYlhPohCbZ1ZQxy0vOQQbRK1PjX33pquHaxpCt90BG9Pqxpv1sf9ny4zia4JKRjZvT7D4nHFoYFWeDI405D/NtPFXOq5hbvh5FjTqABbWEEw2Oo99xd2aFQoRPFEqf3hHzpZfvoqvksai46kOQ3Qiv1vHjT4cMDVDAqaEfDkVU=
+	t=1719845814; cv=none; b=SX3pPNU6Jen0wZh0APoBARXjhzti+UG3YBWvi0Z2g7kwBpPHYImTgJPJtMu41Cifuo00voG4dAkhaXNpSQCeZ0CxSiD2VS20tDozH1nD4bv9NPe6RyBZOzb4YwZdzknqOV2k8mHeaFxhroJ/JH7Patnyha0MrI23UszuReozM2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719845812; c=relaxed/simple;
-	bh=kb1FnQDn0ZT17ALs01+HilXnHppqjDF6c8veki67I7Y=;
+	s=arc-20240116; t=1719845814; c=relaxed/simple;
+	bh=8rvACG9Tldw0R7sQczKSuOfqyU9GkDAAi2aaVVlRDUg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LLbj23UcCG6ISaPhO1fh+DLyc+afUGgwl2/Nb3mRW7ZXReSaw1eu8o2KZLlcb28dzHo7znFEUSywhb9qfSIJYnTiDrn43Zxopkjx7GRrCBAk0AhutDv6cWdh5AuHVHi32YDOgfZLPfYIsdlJUPW7rqoXE8j8312wKR4j/X7j9ZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DsKy32Ey; arc=none smtp.client-ip=209.85.128.45
+	 In-Reply-To:To:Cc; b=UtBNLwRUtRjvP27OeE4jWFNPGS0EW1I8On3jlRsaI6L1OcKd+5NdVRXrz6fZaNrfn1ic4jXxaFWAAAiaYOBbYhvVjrbRy+rhSkxwE6p4HrW+73g1iOWQZfOPTRsTg0aZTW0uWDgwEz5spZzLzlah+F4aYv5u9uXpQF4poHnWjII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fcSlIyyY; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-425809eef0eso8808955e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 07:56:50 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52e7693c369so4081647e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 07:56:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719845809; x=1720450609; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1719845810; x=1720450610; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=RmnlXVSk8Bmi7VgmYcl1HcRpFD6VX2h6iLn8P1zKdUs=;
-        b=DsKy32EyPUv6ohllT8PacQta1TeOJ3SkHJ4wSd/9vzld2Zc343FQ8a+COjcUazFpc7
-         TXrJ0To8ofg45cqUeegH9w575w5jIf93UMgpoqo+m0ZA9NBSR7Bq/Hd59CQid6kpaSwE
-         TCvADIFFV8gYoRhOu4+/EEXH7Nya3NSicApPFJR4UQ3YkHnydynX74yZNXQE6aieV3Ut
-         gBqRpTCYrsj39gBCS6ypLmG0PYB3FvB6z2JVUynK3rbGJFgcx2e/Smcjj7VIkbeXjAMA
-         0PAUm2vG7N5mLTgPAPAa53xLP3L7glj+EAfYxilnYGSS0vKgvNXKaxJEwlgdBYKjzRQ8
-         CSOw==
+        bh=NUpi2VJkABStrX7HzvU2tGfXK2NmMthUnHbMUzSZqBo=;
+        b=fcSlIyyY3/ZbNi/1pyhM9FypXoihaBoNjOwaMtM33wvV2Mmc3SaYZN8tBBNHkgTdcX
+         C5MiZbO/YE9rlh71PuJcXiIH4rUJPjjOX9hT3bk5gSTakVGFr45xnG5qZCiTrknxH4DY
+         t2+WktPb3ijHiH7dtxVU4xcRxQqaPz6R3Ci1YOE+yAusF7gKPLWnhVdyygyHfxTYAPrW
+         Lh9lUEnliSfz230Qokp1UiEZrYZi/xFP/pcSWFyhDLm/KM83jhiVvKC3lDFBCGYEhz5U
+         ymJWWhowhT7PnxsEDdCXwjZH9whM449cI5rfB9am9XHlPHTT/LKSq0EEbKIsdIbp3oUW
+         Hj0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719845809; x=1720450609;
+        d=1e100.net; s=20230601; t=1719845810; x=1720450610;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RmnlXVSk8Bmi7VgmYcl1HcRpFD6VX2h6iLn8P1zKdUs=;
-        b=dVQteSo9NSQpkBqAQ+fKAC/s+gp/SZxJUSsy3MCXjQyNe/aUwfMOx3nzwvHieKBL+j
-         9Os2hmMi3YyhYXQGaQq/bd67nLW/VlqEdhM5sXtV+SlGjlk7bxOk3aKb4GW7x5jCor54
-         ijlPO83MFtUXYpb9rP52JizEBOhq9Yf7FzRsL3+rnRBIWwiooA9Gd/UEXkVTstwOT0aS
-         +eXNFggysEZmyqLvuTIWLLsDMQyfXbFk8MB1aO4LTcHIfmA2x3kDtu1p33TBI2ZM40kr
-         l550CNVXwhGF8eA6chOSSEdkww/8FBvn4wFmYnZCdrkSDJA7Dfjw64PZzT7yoBmcv5tL
-         oQEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUsMk6keCF4kfHoVLTsHm/xubhY1lNLpgD3Res79ytxu7ftv3EP+VXjR516pwQUMkduvgjGOFF1pbU04Talk+IWNxs8KD8FJi3BshgC
-X-Gm-Message-State: AOJu0YxNP1bga40zpo2+DS/K/Vz16aZZueZvfV/HdzjUq4vyuIowJCfh
-	M0TTzT4vGov0dS0m6DDw/I2VydtmYxSEtjA+CBs8LFIwHnZRpTXSN5odlN4g80MZwD+AwFlXD8i
-	0
-X-Google-Smtp-Source: AGHT+IGra1rN0CktmnXJF4vfHe896ROGlb3rDY4QCV/i7d+MRtIToMqbGMp6dcTl/zTwo3hzkxk+Sg==
-X-Received: by 2002:a05:600c:2255:b0:421:7b9d:5b9b with SMTP id 5b1f17b1804b1-4257a03022fmr47607455e9.15.1719845808875;
-        Mon, 01 Jul 2024 07:56:48 -0700 (PDT)
+        bh=NUpi2VJkABStrX7HzvU2tGfXK2NmMthUnHbMUzSZqBo=;
+        b=g9xZbu64ddSPCgzdvNj8cLAXR7hKJmyUS9WmEWsrqlmI+NvZ4TP5vhG5T5opJR2TQO
+         5M5jcBDw3fOJkK39t2E2PO1+XG6nfgVd5/NIALxnwOpssd1NxcZKsJpI4haNKdv/bfwg
+         51+sji3OYvt4REIMRrJrKj5W+NeEh/yVmI8/wKz4an8L7OWy5l4pDUc6XkQZ2c8CDRc1
+         W7S3CeXwpEblGrM9jSZPWSPDdy5bJ0O2a8etAX0e/vDFo6FOgpj47etTe3jNpXWUtS2m
+         1QhwyfhtyTX2cgjxGdxTvfICN/jT8HQuTFcny+GbKXWdV5VIV3tVPvtU0TJS56ZioT/r
+         exng==
+X-Forwarded-Encrypted: i=1; AJvYcCUsUgeg1wQlIvhYMvR6LsJ2M0ePhRY2mfF444poYXahWYey5rV7JwRzpQ4ftw3jMDH9smzRFgKBD6/Ql2cYmSQT7Hc3qoZ+UQ11wupb
+X-Gm-Message-State: AOJu0Yy8covRp5hmuf2IQW9CJkeOrxpEVQbLRjSarHWlQbqt6LopJ4Yy
+	VlN/sANKEYkza/hYw8YfrJKalAwY+tyjwqvtkKvzd5iqLhSJtXB1I8+IH0b2nUSmJT5ohCMvjdI
+	9
+X-Google-Smtp-Source: AGHT+IFFp745yEV965FCA9ZDSTzXceFaQmPua61KrHO+jS7pR48Zr2ItYavo6QP7EPy0qxYjywPA6Q==
+X-Received: by 2002:a05:6512:3b88:b0:52c:e180:4eba with SMTP id 2adb3069b0e04-52e8272ab82mr4811218e87.62.1719845810194;
+        Mon, 01 Jul 2024 07:56:50 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b0c0f99sm160062915e9.41.2024.07.01.07.56.47
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b0c0f99sm160062915e9.41.2024.07.01.07.56.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 07:56:48 -0700 (PDT)
+        Mon, 01 Jul 2024 07:56:49 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Mon, 01 Jul 2024 16:56:37 +0200
-Subject: [PATCH 4/7] ARM: dts: marvell: orion: align GPIO keys node name
- with bindings
+Date: Mon, 01 Jul 2024 16:56:38 +0200
+Subject: [PATCH 5/7] ARM: dts: marvell: orion: drop incorrect
+ address/size-cells in GPIO keys
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,7 +79,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240701-dts-marvell-cleanup-v1-4-4773bd20691a@linaro.org>
+Message-Id: <20240701-dts-marvell-cleanup-v1-5-4773bd20691a@linaro.org>
 References: <20240701-dts-marvell-cleanup-v1-0-4773bd20691a@linaro.org>
 In-Reply-To: <20240701-dts-marvell-cleanup-v1-0-4773bd20691a@linaro.org>
 To: Andrew Lunn <andrew@lunn.ch>, 
@@ -91,143 +91,106 @@ Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4380;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3473;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=kb1FnQDn0ZT17ALs01+HilXnHppqjDF6c8veki67I7Y=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmgsOm1UBLm7b69zUMX/zcTfKcYyhS1/iRpO2En
- +Uex+ylj8yJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZoLDpgAKCRDBN2bmhouD
- 144FD/4xlTp2kYFnF/dp6I0lBkqMMr4j5u9JWCbw/26hD3Oqy24gqwEtJJOoSIxn8cGbZV/S5o/
- 8vWFvPXXQToXoBGQMCvBfsZ6/eASPEvN3WApo/hg5Vgm2tRmXUAdIL8g+8TzXMpl0HGWhFOhyD2
- tlp+j82/ShcJPiTt7I7T2IOnTrulSfBaX3HCGqorljFL9aVP8+k57NRBvZ+x2DH8G+twa4IRPw5
- nGwygRHMpPbIKG1V+7JTQ7tXhppg/+zN6+CrxRuFv0E3Z1OOIXzE5VE2fKoQQIJ1qQgEzYaEm2k
- cKDZx/pA9c2lhYZmhrh3cvCfr+BXqKAm7Ak46Kdi9VEzfPf1zRgT4Y2pxZZ40bBQ7ppabmYdvxi
- NOBY3hLZCpLSqYWHiGfzP6XeeCwJqxqZ1bWeVtTe4g4D+gWbdLfeBcxMgMH6eRu8YlBjSNzRfwr
- rkerLlYETsBwmN9wUakwtDsjYfAVu2fG0N7xmGFqoYqV/HOrVsw3py7P5RU7WPlM4uKMbNRukGZ
- WKv85CR0c7+5IL8f1Ch+I4AfOej9aLnATT0HpdQPmSLleGlPUwxmwuKkwl+swVrljlEktJvuBDH
- 1dSN8JnfBCz9hHkMwo846IurWcibjKFmQGV0+qiVdc1av8+uLIgGpSY82bGnOq9fM6lXp5RTVC2
- 5a5rH6Lckm+4FsQ==
+ bh=8rvACG9Tldw0R7sQczKSuOfqyU9GkDAAi2aaVVlRDUg=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmgsOnYGPTqX0InmDJtlGWHZ8pHsKB+xFcgOmO+
+ c/3NIdFdkeJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZoLDpwAKCRDBN2bmhouD
+ 11YkD/0eImE54i7vier1CiQt2gmuahj1JbBKzyoZEacQ5RTErV27ttNXgFxKeillcW5MMDvd+z5
+ eSor3RtcGQzjfmVb/M8VPHV++mCZSVIk8mXv/L1Kju1MQPR+Sk8Zpzg1Vm62Qj7AZipqRLq/whJ
+ NgzIXIUF4z5L/rse9q2pAu/RwwCwsi2OUUgJLz1Zyibij4nH8nDYoqOkmCdw6hZzD6padk33++W
+ 9ZimJ+h1JdZ3nOVLMqlPscZYdgblIfAD56rMPsznAbP0WFO9bToz5Z/sFtQUNXO8JLBPZ5uRalh
+ aTEiRjYYiVMprk3wXbJa9aoT+dlPoJ7jC9oUTZxkjt0uRjrDmije4z2yKxLgZ98bJ7GdpNKD+L/
+ 7gfajGJw8UqtonIaSdW6QobEbfPcYjcCjfAzJSmPZPuEs9SqjIqngeHF83qJg2UKibhh1OjN3V6
+ eqD1wjKXalmsEnn7TXMgZcxbXnAg4rIThvpgHU+nTuW7jzKO/QC4QtSc7OmTzk0hNDW37dyI3p5
+ q1b6hiJ1PjIOKMu4FwRKYndL7q7z0jg6R8g9IYfED9biLtgwrN5hpBps3CLM5FgbCFx8q8YJcXY
+ z6L4h3aqYLbAxTdziYjw701T8cfaQOwAdNu4PtQSjEOhjdLQ7iMFL5Fy4VqFmrh0r37cOBFsYtB
+ zFqu1u4rZF6kpyQ==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Bindings expect the GPIO key node names to follow certain pattern, see
-dtbs_check warnings:
+Bindings do not allow address/size-cells in GPIO keys and the GPIO keys
+is not a bus, see dtbs_check warnings:
 
-  orion5x-lacie-d2-network.dtb: gpio-keys: 'front_button', 'power_rocker_sw_off', 'power_rocker_sw_on' do not match any of the regexes: '^(button|event|key|switch| ...
+  orion5x-lacie-ethernet-disk-mini-v2.dtb: gpio-keys: '#address-cells', '#size-cells' do not match any of the regexes: '^(button|event|key|switch|...
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- arch/arm/boot/dts/marvell/orion5x-lacie-d2-network.dts        | 7 ++++---
- arch/arm/boot/dts/marvell/orion5x-linkstation-lschl.dts       | 2 +-
- arch/arm/boot/dts/marvell/orion5x-lswsgl.dts                  | 7 ++++---
- arch/arm/boot/dts/marvell/orion5x-maxtor-shared-storage-2.dts | 5 +++--
- arch/arm/boot/dts/marvell/orion5x-netgear-wnr854t.dts         | 2 +-
- 5 files changed, 13 insertions(+), 10 deletions(-)
+ arch/arm/boot/dts/marvell/mvebu-linkstation-gpio-simple.dtsi      | 2 --
+ arch/arm/boot/dts/marvell/orion5x-lacie-d2-network.dts            | 2 --
+ arch/arm/boot/dts/marvell/orion5x-lacie-ethernet-disk-mini-v2.dts | 5 ++---
+ arch/arm/boot/dts/marvell/orion5x-lswsgl.dts                      | 2 --
+ arch/arm/boot/dts/marvell/orion5x-maxtor-shared-storage-2.dts     | 2 --
+ 5 files changed, 2 insertions(+), 11 deletions(-)
 
+diff --git a/arch/arm/boot/dts/marvell/mvebu-linkstation-gpio-simple.dtsi b/arch/arm/boot/dts/marvell/mvebu-linkstation-gpio-simple.dtsi
+index c2d87ba6190a..055ac754c5fd 100644
+--- a/arch/arm/boot/dts/marvell/mvebu-linkstation-gpio-simple.dtsi
++++ b/arch/arm/boot/dts/marvell/mvebu-linkstation-gpio-simple.dtsi
+@@ -48,8 +48,6 @@
+ / {
+ 	gpio_keys {
+ 		compatible = "gpio-keys";
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+ 		pinctrl-0 = <&pmx_power_switch>;
+ 		pinctrl-names = "default";
+ 
 diff --git a/arch/arm/boot/dts/marvell/orion5x-lacie-d2-network.dts b/arch/arm/boot/dts/marvell/orion5x-lacie-d2-network.dts
-index 03471d30bfd9..3d6c5af0e843 100644
+index 3d6c5af0e843..12a4aac2633e 100644
 --- a/arch/arm/boot/dts/marvell/orion5x-lacie-d2-network.dts
 +++ b/arch/arm/boot/dts/marvell/orion5x-lacie-d2-network.dts
-@@ -37,20 +37,21 @@ gpio-keys {
+@@ -35,8 +35,6 @@ gpio-keys {
+ 		compatible = "gpio-keys";
+ 		pinctrl-0 = <&pmx_buttons>;
  		pinctrl-names = "default";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		front_button {
-+
-+		button-front {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+ 
+ 		button-front {
  			label = "Front Push Button";
+diff --git a/arch/arm/boot/dts/marvell/orion5x-lacie-ethernet-disk-mini-v2.dts b/arch/arm/boot/dts/marvell/orion5x-lacie-ethernet-disk-mini-v2.dts
+index f17e25ac98dd..a7586370b1d5 100644
+--- a/arch/arm/boot/dts/marvell/orion5x-lacie-ethernet-disk-mini-v2.dts
++++ b/arch/arm/boot/dts/marvell/orion5x-lacie-ethernet-disk-mini-v2.dts
+@@ -39,9 +39,8 @@ gpio-keys {
+ 		compatible = "gpio-keys";
+ 		pinctrl-0 = <&pmx_power_button>;
+ 		pinctrl-names = "default";
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		button@1 {
++
++		button-1 {
+ 			label = "Power-on Switch";
  			linux,code = <KEY_POWER>;
  			gpios = <&gpio0 18 GPIO_ACTIVE_HIGH>;
- 		};
- 
--		power_rocker_sw_on {
-+		switch-power-rocker-sw-on {
- 			label = "Power rocker switch (on|auto)";
- 			linux,input-type = <5>; /* EV_SW */
- 			linux,code = <1>; /* D2NET_SWITCH_POWER_ON */
- 			gpios = <&gpio0 8 GPIO_ACTIVE_HIGH>;
- 		};
- 
--		power_rocker_sw_off {
-+		switch-power-rocker-sw-off {
- 			label = "Power rocker switch (auto|off)";
- 			linux,input-type = <5>; /* EV_SW */
- 			linux,code = <2>; /* D2NET_SWITCH_POWER_OFF */
-diff --git a/arch/arm/boot/dts/marvell/orion5x-linkstation-lschl.dts b/arch/arm/boot/dts/marvell/orion5x-linkstation-lschl.dts
-index ee751995c8d0..624b737a8be4 100644
---- a/arch/arm/boot/dts/marvell/orion5x-linkstation-lschl.dts
-+++ b/arch/arm/boot/dts/marvell/orion5x-linkstation-lschl.dts
-@@ -61,7 +61,7 @@ memory { /* 128 MB */
- 	};
- 
- 	gpio_keys {
--		func {
-+		func-button {
- 			label = "Function Button";
- 			linux,code = <KEY_OPTION>;
- 			gpios = <&gpio0 15 GPIO_ACTIVE_LOW>;
 diff --git a/arch/arm/boot/dts/marvell/orion5x-lswsgl.dts b/arch/arm/boot/dts/marvell/orion5x-lswsgl.dts
-index 2fbc17d6dfa4..e2829fb0c8b2 100644
+index e2829fb0c8b2..35dffb24b8b5 100644
 --- a/arch/arm/boot/dts/marvell/orion5x-lswsgl.dts
 +++ b/arch/arm/boot/dts/marvell/orion5x-lswsgl.dts
-@@ -76,20 +76,21 @@ gpio-keys {
+@@ -74,8 +74,6 @@ gpio-keys {
+ 		compatible = "gpio-keys";
+ 		pinctrl-0 = <&pmx_buttons>;
  		pinctrl-names = "default";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		func {
-+
-+		key-func {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+ 
+ 		key-func {
  			label = "Function Button";
- 			linux,code = <KEY_OPTION>;
- 			gpios = <&gpio0 15 GPIO_ACTIVE_LOW>;
- 		};
- 
--		power {
-+		key-power {
- 			label = "Power-on Switch";
- 			linux,input-type = <5>; /* EV_SW */
- 			linux,code = <KEY_RESERVED>; /* LSMINI_SW_POWER */
- 			gpios = <&gpio0 18 GPIO_ACTIVE_LOW>;
- 		};
- 
--		autopower {
-+		key-autopower {
- 			label = "Power-auto Switch";
- 			linux,input-type = <5>; /* EV_SW */
- 			linux,code = <KEY_ESC>; /* LSMINI_SW_AUTOPOWER */
 diff --git a/arch/arm/boot/dts/marvell/orion5x-maxtor-shared-storage-2.dts b/arch/arm/boot/dts/marvell/orion5x-maxtor-shared-storage-2.dts
-index d57859998350..90ce5fa883a4 100644
+index 90ce5fa883a4..cb1bd24b7ae3 100644
 --- a/arch/arm/boot/dts/marvell/orion5x-maxtor-shared-storage-2.dts
 +++ b/arch/arm/boot/dts/marvell/orion5x-maxtor-shared-storage-2.dts
-@@ -37,13 +37,14 @@ gpio-keys {
+@@ -35,8 +35,6 @@ gpio-keys {
+ 		compatible = "gpio-keys";
+ 		pinctrl-0 = <&pmx_buttons>;
  		pinctrl-names = "default";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		power {
-+
-+		key-power {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+ 
+ 		key-power {
  			label = "Power";
- 			linux,code = <KEY_POWER>;
- 			gpios = <&gpio0 11 GPIO_ACTIVE_LOW>;
- 		};
- 
--		reset {
-+		key-reset {
- 			label = "Reset";
- 			linux,code = <KEY_RESTART>;
- 			gpios = <&gpio0 12 GPIO_ACTIVE_LOW>;
-diff --git a/arch/arm/boot/dts/marvell/orion5x-netgear-wnr854t.dts b/arch/arm/boot/dts/marvell/orion5x-netgear-wnr854t.dts
-index fb203e7d37f5..d63ea15539aa 100644
---- a/arch/arm/boot/dts/marvell/orion5x-netgear-wnr854t.dts
-+++ b/arch/arm/boot/dts/marvell/orion5x-netgear-wnr854t.dts
-@@ -35,7 +35,7 @@ gpio-keys {
- 		pinctrl-0 = <&pmx_reset_button>;
- 		pinctrl-names = "default";
- 
--		reset {
-+		key-reset {
- 			label = "Reset Button";
- 			linux,code = <KEY_RESTART>;
- 			gpios = <&gpio0 1 GPIO_ACTIVE_LOW>;
 
 -- 
 2.43.0
