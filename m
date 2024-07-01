@@ -1,220 +1,175 @@
-Return-Path: <linux-kernel+bounces-236793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2590E91E72F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:10:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8395F91E731
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:11:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 569591C21A7F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:10:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4418B2836F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:11:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED4C416F0D6;
-	Mon,  1 Jul 2024 18:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB6A516EC11;
+	Mon,  1 Jul 2024 18:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SusoBvVD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FeseSx12"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C4916EC0E;
-	Mon,  1 Jul 2024 18:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012AB16EBEA
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 18:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719857424; cv=none; b=SeZGrZ013J5x9Migu1NgWIhn3X+Eg2ZNgtoN2a2bLbKQBBFpX3dWgSnOUe75pcqHJbN1lmIA2ESE7KFR93/PFCQjspPEgzPamP9NysPER4J1ughcGlBRBo/RPgd8KhrjSo/Kx21MOrOdviutMhO2TTx1Q7pE1GghUYEU4pQOwbw=
+	t=1719857449; cv=none; b=f+9BphB+7rhIkb4zxOFGfbeB4Cijr8IsT97Ge+lbtT+/Pkh1vHl/OvQq07PDwmKyqvkGxTyVUirdraa8dGQbKxaVjFPqAkk/tiqI8KdpADAbp3h9nWoaaJd5JLLR+fFtbAR4W4vavhTmCd/vRXEFAKNkKpgvBckW5NJlO2Wwzd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719857424; c=relaxed/simple;
-	bh=eVNbwkBJh9XuOU2A6GsGtGfEkDsOONhow0AIQJ9DdZk=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=mOs/zy1R0ARS3Ji6/NKtVMm2YICmwIvs/iYkOG65IXr5a5hxvok3WQuB9xyGfQt+XKsdeH2kSUFr3A4hmwBnDspXtDtP4YjGqG+b+HZKowFoLNH15p1sgm9s+VXnU3F+OZhlPMa6fffMOV126+fS8iUsjg5ED7Hgx/h8mDrlHHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SusoBvVD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C360C32781;
-	Mon,  1 Jul 2024 18:10:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719857424;
-	bh=eVNbwkBJh9XuOU2A6GsGtGfEkDsOONhow0AIQJ9DdZk=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=SusoBvVDgEe/XvEs1nZz2RoyTovRdI4a/gtIg41xDMCADAL1r61WIoIC9wtLoAVrX
-	 VZox49pJolI7Tntkd2AkHsUdWAqJw7370uCEA5Mm+V9gej4Y9vG6g3HPpZPYK6/ew5
-	 S/03vDS13nuW7j0z883CoXXFfNScb0SlUSn7AzXFasHNjqHnfTx3Pq8o2W8aSdwzfC
-	 J5RV6g3offolmlDmLMXCHKVYhaidnFflSHd+nUtXVC7l8slZZGqeRA3cF/iyGJQu2S
-	 SwALfD4hzBjoTnie2voI7cnAnDwKQ9k3wtkhJRkkgpVkd8JWQyi2vmk/vX49BztfLv
-	 bNubrfL96avHw==
-Date: Mon, 01 Jul 2024 12:10:23 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1719857449; c=relaxed/simple;
+	bh=ub7wy9wbVGLRWhSD/YbjKzEHraTvzBQPoST6f7ZZa6k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=RzXvkQawWHHvR96s2ZqgJThP9j8fL3UR6BG3uj6uvPBquvnzdbYNWoZ8qtRH8FJM8S/6AvS6f9LDGaJrD+/pytj5/spS7hgJw52O5i8p22fdCSwX36wmhhxQ8gQtywccFKAVz2aSEvLdoTzKf3jKx1MjwYHidjZQ88RxngEXSGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FeseSx12; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719857446;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JM1W3lT8X94kstTVgU0L4T7iVYaF/txP6qsNDPjlfkI=;
+	b=FeseSx122NVz1+eEm1ZYV9ofyXQKAGazdLxD0a+vDT8hksFJWWPhd5utuEDElxtMjqqUbq
+	8/1Pbd6RgQq7fhXrB7KGPxzqPrH4T1qYGXLeApwbkOrDO1HRBEkTuv+cIJ1n0YE8+3AFBp
+	G5I/EQMvBy/nEZyZMgarp7yAsWFU/BU=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-382-HmKSMqD2MvqWr_YFd2CCXg-1; Mon,
+ 01 Jul 2024 14:10:42 -0400
+X-MC-Unique: HmKSMqD2MvqWr_YFd2CCXg-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E74CC1955DCD;
+	Mon,  1 Jul 2024 18:10:39 +0000 (UTC)
+Received: from RHTRH0061144 (unknown [10.22.8.184])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9332A19560AE;
+	Mon,  1 Jul 2024 18:10:36 +0000 (UTC)
+From: Aaron Conole <aconole@redhat.com>
+To: Adrian Moreno <amorenoz@redhat.com>
+Cc: netdev@vger.kernel.org,  echaudro@redhat.com,  horms@kernel.org,
+  i.maximets@ovn.org,  dev@openvswitch.org,  Ido Schimmel
+ <idosch@nvidia.com>,  Yotam Gigi <yotam.gi@gmail.com>,  "David S. Miller"
+ <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
+ Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v7 04/10] net: psample: allow using rate as
+ probability
+In-Reply-To: <20240630195740.1469727-5-amorenoz@redhat.com> (Adrian Moreno's
+	message of "Sun, 30 Jun 2024 21:57:25 +0200")
+References: <20240630195740.1469727-1-amorenoz@redhat.com>
+	<20240630195740.1469727-5-amorenoz@redhat.com>
+Date: Mon, 01 Jul 2024 14:10:34 -0400
+Message-ID: <f7tplrxvv8l.fsf@redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Xilin Wu <wuxilin123@gmail.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- Elliot Berman <quic_eberman@quicinc.com>, 
- Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Johan Hovold <johan+linaro@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, linux-kernel@vger.kernel.org, 
- Abel Vesa <abel.vesa@linaro.org>
-In-Reply-To: <20240701-asus-vivobook-s15-v4-0-ce7933b4d4e5@gmail.com>
-References: <20240701-asus-vivobook-s15-v4-0-ce7933b4d4e5@gmail.com>
-Message-Id: <171985715858.313715.1322433289382972795.robh@kernel.org>
-Subject: Re: [PATCH v4 0/2] Introduce ASUS Vivobook S 15
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
+Adrian Moreno <amorenoz@redhat.com> writes:
 
-On Mon, 01 Jul 2024 11:05:16 +0800, Xilin Wu wrote:
-> ASUS Vivobook S 15 is a laptop based on the Qualcomm Snapdragon X Elite
-> SoC (X1E78100). This series adds initial support for the device.
-> 
-> Currently working features:
-> 
-> - CPU frequency scaling up to 3.4GHz
-> - NVMe storage on PCIe 6a (capable of Gen4x4, currently limited to Gen4x2)
-> - Keyboard and touchpad
-> - WCN7850 Wi-Fi
-> - Two Type-C ports on the left side
-> - internal eDP display
-> - ADSP and CDSP remoteprocs
-> 
-> Some features which can get working with out of tree patches:
-> 
-> - GPU [1]
-> - Bluetooth [2]
-> 
-> Notably not working features:
-> 
-> - Battery monitoring via battmgr
-> - Orientation switching and altmode on the Type-C ports (USB4 retimer driver needed?)
-> - Two USB Type-A ports on the right side (dwc3 multiport controller)
-> - Front camera
-> - SD card slot
-> - HDMI connector (using a Parade PS186 DP 1.4 to HDMI 2.0 converter)
-> - USB4 and the retimer (Parade PS8830?)
-> - Anything using the EC
-> 
-> Dump of the ACPI tables could be found here: [3]
-> 
-> [1] https://lore.kernel.org/all/20240623110753.141400-1-quic_akhilpo@quicinc.com/
-> [2] https://git.codelinaro.org/abel.vesa/linux/-/commits/topic/b4/x1e80100-bt
-> [3] https://github.com/aarch64-laptops/build/pull/103
-> 
-> Signed-off-by: Xilin Wu <wuxilin123@gmail.com>
+> Although not explicitly documented in the psample module itself, the
+> definition of PSAMPLE_ATTR_SAMPLE_RATE seems inherited from act_sample.
+>
+> Quoting tc-sample(8):
+> "RATE of 100 will lead to an average of one sampled packet out of every
+> 100 observed."
+>
+> With this semantics, the rates that we can express with an unsigned
+> 32-bits number are very unevenly distributed and concentrated towards
+> "sampling few packets".
+> For example, we can express a probability of 2.32E-8% but we
+> cannot express anything between 100% and 50%.
+>
+> For sampling applications that are capable of sampling a decent
+> amount of packets, this sampling rate semantics is not very useful.
+>
+> Add a new flag to the uAPI that indicates that the sampling rate is
+> expressed in scaled probability, this is:
+> - 0 is 0% probability, no packets get sampled.
+> - U32_MAX is 100% probability, all packets get sampled.
+>
+> Acked-by: Eelco Chaudron <echaudro@redhat.com>
+> Reviewed-by: Ido Schimmel <idosch@nvidia.com>
+> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
 > ---
-> Changes in v4:
-> - Fix usb hsphy vdd-supply (Abel)
-> - Link to v3: https://lore.kernel.org/r/20240630-asus-vivobook-s15-v3-0-bce7ca4d9683@gmail.com
-> 
-> Changes in v3:
-> - Add comment detailing pmic-glink connector mapping (Konrad)
-> - Minor changes in dts (Konrad)
-> - Link to v2: https://lore.kernel.org/r/20240628-asus-vivobook-s15-v1-0-92cb39f3f166@gmail.com
-> 
-> Changes in v2:
-> - Fix accidentally changed Makefile
-> - Link to v1: https://lore.kernel.org/r/20240628-asus-vivobook-s15-v1-0-2a1e4571b8ab@gmail.com
-> 
-> ---
-> Xilin Wu (2):
->       dt-bindings: arm: qcom: Add ASUS Vivobook S 15
->       arm64: dts: qcom: Add device tree for ASUS Vivobook S 15
-> 
->  Documentation/devicetree/bindings/arm/qcom.yaml    |   1 +
->  arch/arm64/boot/dts/qcom/Makefile                  |   1 +
->  .../boot/dts/qcom/x1e80100-asus-vivobook-s15.dts   | 616 +++++++++++++++++++++
->  3 files changed, 618 insertions(+)
-> ---
-> base-commit: 642a16ca7994a50d7de85715996a8ce171a5bdfb
-> change-id: 20240628-asus-vivobook-s15-72a497863168
-> 
-> Best regards,
-> --
-> Xilin Wu <wuxilin123@gmail.com>
-> 
-> 
-> 
 
+Reviewed-by: Aaron Conole <aconole@redhat.com>
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y qcom/x1e80100-asus-vivobook-s15.dtb' for 20240701-asus-vivobook-s15-v4-0-ce7933b4d4e5@gmail.com:
-
-arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dtb: domain-idle-states: cluster-sleep-0: 'idle-state-name' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/power/domain-idle-state.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dtb: domain-idle-states: cluster-sleep-1: 'idle-state-name' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/power/domain-idle-state.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dtb: thermal-sensor@c271000: compatible: 'oneOf' conditional failed, one must be fixed:
-	['qcom,x1e80100-tsens', 'qcom,tsens-v2'] is too long
-	'qcom,x1e80100-tsens' is not one of ['qcom,ipq8064-tsens', 'qcom,msm8960-tsens']
-	'qcom,x1e80100-tsens' is not one of ['qcom,mdm9607-tsens', 'qcom,msm8226-tsens', 'qcom,msm8909-tsens', 'qcom,msm8916-tsens', 'qcom,msm8939-tsens', 'qcom,msm8974-tsens']
-	'qcom,x1e80100-tsens' is not one of ['qcom,msm8956-tsens', 'qcom,msm8976-tsens', 'qcom,qcs404-tsens']
-	'qcom,x1e80100-tsens' is not one of ['qcom,msm8953-tsens', 'qcom,msm8996-tsens', 'qcom,msm8998-tsens', 'qcom,qcm2290-tsens', 'qcom,sa8775p-tsens', 'qcom,sc7180-tsens', 'qcom,sc7280-tsens', 'qcom,sc8180x-tsens', 'qcom,sc8280xp-tsens', 'qcom,sdm630-tsens', 'qcom,sdm845-tsens', 'qcom,sm6115-tsens', 'qcom,sm6350-tsens', 'qcom,sm6375-tsens', 'qcom,sm8150-tsens', 'qcom,sm8250-tsens', 'qcom,sm8350-tsens', 'qcom,sm8450-tsens', 'qcom,sm8550-tsens', 'qcom,sm8650-tsens']
-	'qcom,x1e80100-tsens' is not one of ['qcom,ipq8074-tsens']
-	'qcom,x1e80100-tsens' is not one of ['qcom,ipq9574-tsens']
-	'qcom,tsens-v0_1' was expected
-	'qcom,tsens-v1' was expected
-	'qcom,ipq8074-tsens' was expected
-	from schema $id: http://devicetree.org/schemas/thermal/qcom-tsens.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dtb: /soc@0/thermal-sensor@c271000: failed to match any schema with compatible: ['qcom,x1e80100-tsens', 'qcom,tsens-v2']
-arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dtb: thermal-sensor@c272000: compatible: 'oneOf' conditional failed, one must be fixed:
-	['qcom,x1e80100-tsens', 'qcom,tsens-v2'] is too long
-	'qcom,x1e80100-tsens' is not one of ['qcom,ipq8064-tsens', 'qcom,msm8960-tsens']
-	'qcom,x1e80100-tsens' is not one of ['qcom,mdm9607-tsens', 'qcom,msm8226-tsens', 'qcom,msm8909-tsens', 'qcom,msm8916-tsens', 'qcom,msm8939-tsens', 'qcom,msm8974-tsens']
-	'qcom,x1e80100-tsens' is not one of ['qcom,msm8956-tsens', 'qcom,msm8976-tsens', 'qcom,qcs404-tsens']
-	'qcom,x1e80100-tsens' is not one of ['qcom,msm8953-tsens', 'qcom,msm8996-tsens', 'qcom,msm8998-tsens', 'qcom,qcm2290-tsens', 'qcom,sa8775p-tsens', 'qcom,sc7180-tsens', 'qcom,sc7280-tsens', 'qcom,sc8180x-tsens', 'qcom,sc8280xp-tsens', 'qcom,sdm630-tsens', 'qcom,sdm845-tsens', 'qcom,sm6115-tsens', 'qcom,sm6350-tsens', 'qcom,sm6375-tsens', 'qcom,sm8150-tsens', 'qcom,sm8250-tsens', 'qcom,sm8350-tsens', 'qcom,sm8450-tsens', 'qcom,sm8550-tsens', 'qcom,sm8650-tsens']
-	'qcom,x1e80100-tsens' is not one of ['qcom,ipq8074-tsens']
-	'qcom,x1e80100-tsens' is not one of ['qcom,ipq9574-tsens']
-	'qcom,tsens-v0_1' was expected
-	'qcom,tsens-v1' was expected
-	'qcom,ipq8074-tsens' was expected
-	from schema $id: http://devicetree.org/schemas/thermal/qcom-tsens.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dtb: /soc@0/thermal-sensor@c272000: failed to match any schema with compatible: ['qcom,x1e80100-tsens', 'qcom,tsens-v2']
-arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dtb: thermal-sensor@c273000: compatible: 'oneOf' conditional failed, one must be fixed:
-	['qcom,x1e80100-tsens', 'qcom,tsens-v2'] is too long
-	'qcom,x1e80100-tsens' is not one of ['qcom,ipq8064-tsens', 'qcom,msm8960-tsens']
-	'qcom,x1e80100-tsens' is not one of ['qcom,mdm9607-tsens', 'qcom,msm8226-tsens', 'qcom,msm8909-tsens', 'qcom,msm8916-tsens', 'qcom,msm8939-tsens', 'qcom,msm8974-tsens']
-	'qcom,x1e80100-tsens' is not one of ['qcom,msm8956-tsens', 'qcom,msm8976-tsens', 'qcom,qcs404-tsens']
-	'qcom,x1e80100-tsens' is not one of ['qcom,msm8953-tsens', 'qcom,msm8996-tsens', 'qcom,msm8998-tsens', 'qcom,qcm2290-tsens', 'qcom,sa8775p-tsens', 'qcom,sc7180-tsens', 'qcom,sc7280-tsens', 'qcom,sc8180x-tsens', 'qcom,sc8280xp-tsens', 'qcom,sdm630-tsens', 'qcom,sdm845-tsens', 'qcom,sm6115-tsens', 'qcom,sm6350-tsens', 'qcom,sm6375-tsens', 'qcom,sm8150-tsens', 'qcom,sm8250-tsens', 'qcom,sm8350-tsens', 'qcom,sm8450-tsens', 'qcom,sm8550-tsens', 'qcom,sm8650-tsens']
-	'qcom,x1e80100-tsens' is not one of ['qcom,ipq8074-tsens']
-	'qcom,x1e80100-tsens' is not one of ['qcom,ipq9574-tsens']
-	'qcom,tsens-v0_1' was expected
-	'qcom,tsens-v1' was expected
-	'qcom,ipq8074-tsens' was expected
-	from schema $id: http://devicetree.org/schemas/thermal/qcom-tsens.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dtb: /soc@0/thermal-sensor@c273000: failed to match any schema with compatible: ['qcom,x1e80100-tsens', 'qcom,tsens-v2']
-arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dtb: thermal-sensor@c274000: compatible: 'oneOf' conditional failed, one must be fixed:
-	['qcom,x1e80100-tsens', 'qcom,tsens-v2'] is too long
-	'qcom,x1e80100-tsens' is not one of ['qcom,ipq8064-tsens', 'qcom,msm8960-tsens']
-	'qcom,x1e80100-tsens' is not one of ['qcom,mdm9607-tsens', 'qcom,msm8226-tsens', 'qcom,msm8909-tsens', 'qcom,msm8916-tsens', 'qcom,msm8939-tsens', 'qcom,msm8974-tsens']
-	'qcom,x1e80100-tsens' is not one of ['qcom,msm8956-tsens', 'qcom,msm8976-tsens', 'qcom,qcs404-tsens']
-	'qcom,x1e80100-tsens' is not one of ['qcom,msm8953-tsens', 'qcom,msm8996-tsens', 'qcom,msm8998-tsens', 'qcom,qcm2290-tsens', 'qcom,sa8775p-tsens', 'qcom,sc7180-tsens', 'qcom,sc7280-tsens', 'qcom,sc8180x-tsens', 'qcom,sc8280xp-tsens', 'qcom,sdm630-tsens', 'qcom,sdm845-tsens', 'qcom,sm6115-tsens', 'qcom,sm6350-tsens', 'qcom,sm6375-tsens', 'qcom,sm8150-tsens', 'qcom,sm8250-tsens', 'qcom,sm8350-tsens', 'qcom,sm8450-tsens', 'qcom,sm8550-tsens', 'qcom,sm8650-tsens']
-	'qcom,x1e80100-tsens' is not one of ['qcom,ipq8074-tsens']
-	'qcom,x1e80100-tsens' is not one of ['qcom,ipq9574-tsens']
-	'qcom,tsens-v0_1' was expected
-	'qcom,tsens-v1' was expected
-	'qcom,ipq8074-tsens' was expected
-	from schema $id: http://devicetree.org/schemas/thermal/qcom-tsens.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dtb: /soc@0/thermal-sensor@c274000: failed to match any schema with compatible: ['qcom,x1e80100-tsens', 'qcom,tsens-v2']
-arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dtb: pci@1bf8000: Unevaluated properties are not allowed ('vddpe-3v3-supply' was unexpected)
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dtb: usb@a2f8800: interrupt-names: ['pwr_event', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
-	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
-
-
-
-
+>  include/net/psample.h        |  3 ++-
+>  include/uapi/linux/psample.h | 10 +++++++++-
+>  net/psample/psample.c        |  3 +++
+>  3 files changed, 14 insertions(+), 2 deletions(-)
+>
+> diff --git a/include/net/psample.h b/include/net/psample.h
+> index 2ac71260a546..c52e9ebd88dd 100644
+> --- a/include/net/psample.h
+> +++ b/include/net/psample.h
+> @@ -24,7 +24,8 @@ struct psample_metadata {
+>  	u8 out_tc_valid:1,
+>  	   out_tc_occ_valid:1,
+>  	   latency_valid:1,
+> -	   unused:5;
+> +	   rate_as_probability:1,
+> +	   unused:4;
+>  	const u8 *user_cookie;
+>  	u32 user_cookie_len;
+>  };
+> diff --git a/include/uapi/linux/psample.h b/include/uapi/linux/psample.h
+> index e80637e1d97b..b765f0e81f20 100644
+> --- a/include/uapi/linux/psample.h
+> +++ b/include/uapi/linux/psample.h
+> @@ -8,7 +8,11 @@ enum {
+>  	PSAMPLE_ATTR_ORIGSIZE,
+>  	PSAMPLE_ATTR_SAMPLE_GROUP,
+>  	PSAMPLE_ATTR_GROUP_SEQ,
+> -	PSAMPLE_ATTR_SAMPLE_RATE,
+> +	PSAMPLE_ATTR_SAMPLE_RATE,	/* u32, ratio between observed and
+> +					 * sampled packets or scaled probability
+> +					 * if PSAMPLE_ATTR_SAMPLE_PROBABILITY
+> +					 * is set.
+> +					 */
+>  	PSAMPLE_ATTR_DATA,
+>  	PSAMPLE_ATTR_GROUP_REFCOUNT,
+>  	PSAMPLE_ATTR_TUNNEL,
+> @@ -20,6 +24,10 @@ enum {
+>  	PSAMPLE_ATTR_TIMESTAMP,		/* u64, nanoseconds */
+>  	PSAMPLE_ATTR_PROTO,		/* u16 */
+>  	PSAMPLE_ATTR_USER_COOKIE,	/* binary, user provided data */
+> +	PSAMPLE_ATTR_SAMPLE_PROBABILITY,/* no argument, interpret rate in
+> +					 * PSAMPLE_ATTR_SAMPLE_RATE as a
+> +					 * probability scaled 0 - U32_MAX.
+> +					 */
+>  
+>  	__PSAMPLE_ATTR_MAX
+>  };
+> diff --git a/net/psample/psample.c b/net/psample/psample.c
+> index 1c76f3e48dcd..f48b5b9cd409 100644
+> --- a/net/psample/psample.c
+> +++ b/net/psample/psample.c
+> @@ -497,6 +497,9 @@ void psample_sample_packet(struct psample_group *group, struct sk_buff *skb,
+>  		    md->user_cookie))
+>  		goto error;
+>  
+> +	if (md->rate_as_probability)
+> +		nla_put_flag(skb, PSAMPLE_ATTR_SAMPLE_PROBABILITY);
+> +
+>  	genlmsg_end(nl_skb, data);
+>  	genlmsg_multicast_netns(&psample_nl_family, group->net, nl_skb, 0,
+>  				PSAMPLE_NL_MCGRP_SAMPLE, GFP_ATOMIC);
 
 
