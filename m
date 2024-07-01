@@ -1,54 +1,51 @@
-Return-Path: <linux-kernel+bounces-236213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 941FB91DED0
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:13:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFA2291DED3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:13:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAB181C20F5F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:13:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FDB5B22AC9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41A114AD25;
-	Mon,  1 Jul 2024 12:12:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0170314A604;
+	Mon,  1 Jul 2024 12:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="XRx7kIbL"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="H7bMJYQo"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE8022066;
-	Mon,  1 Jul 2024 12:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E574664C6;
+	Mon,  1 Jul 2024 12:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719835977; cv=none; b=QZOtk1Ks0u9irXa8GhpIvs++7Zng7fHL4LHm0gjq3LKW4L5yFZUUe7CAN/OGRje1oVSiXoLkT5Z/AF2WSf/i0U1f9J49jTiD7Rxqj6JKA115P87RWjefi+oghxIODLTn3rv5mvNoGiP8vP5Fl9jHEu8wjVr9TdEjrtR4wHV3a6Y=
+	t=1719835988; cv=none; b=lz4VdTPcaUOHjHWFxAbJ7+ACCCDjglwxGw701swKfsqJ0yCy4ZjhYXJmvhD1LDISjYRQRqEr3/cbnES6r+GxeZ3TSfGj/rluie9+eFX2HMu73tPvB5VtZ4ODr7GVj3NmmGO0Cvo7wHq6rMEHYDRuAntudRR4TTPGbYS3DOC1hXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719835977; c=relaxed/simple;
-	bh=8pqS8Ajx7jf3KVnlDFP3xFvmDy2FXwv4PylF1RVd6NE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Vfd7M+FUYuTxVUeeFtAdqCo5bEQvOFoONOY6ttWs/wS3ElOR/UufJ7AfTQSDxaHGpK3+fy5ZrGC/HTjrAMhdDS5eiELaqQEdvY0jyhEdXgWThLMsZKIHaG6sjYhcEUKoIfQbgFCwQXjSkvfnJrkt67lTBAnZDriyQ/2kljYSM+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=XRx7kIbL; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719835958; x=1720440758; i=markus.elfring@web.de;
-	bh=XDSReHTPBLyXmOEtu/8phohbfWHRG0oRy8C/Bacjz68=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=XRx7kIbLjp4eiM498TMXYizXVzt5i8kPuWyyqjYVx1jSzmdnXaWjvRj7G4x6lu2U
-	 a0oIfBdwblYVjgXVxNPmGY8VPMJg+uSfZFH0Phd24KTRHsC0yhTTRzf7KJC+RY829
-	 cHaLeh/riOVfGrRCiec8427W9zZMjVGf+6IJBDXl8tccqJL/iqSjdeJMK8xsB//4V
-	 cvkC1Do6TE+94MR0PZTrHC5fSsAYX/+3rBO9tGx0gUQRwIuVTdtlkBHolR2J4Rys8
-	 kbpsDTVxdCzaJwsrZ5GO5w3wC09uTvZ3Ijoq3gRQ/I+bmSwuMTW2jhlb4Icz9i5oI
-	 ZdGv297qe0zGkoaf7g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mho04-1rtIrG2F5k-00pdm5; Mon, 01
- Jul 2024 14:12:38 +0200
-Message-ID: <e751f992-0510-478e-a714-6299e8650333@web.de>
-Date: Mon, 1 Jul 2024 14:12:33 +0200
+	s=arc-20240116; t=1719835988; c=relaxed/simple;
+	bh=Y4zVJ4xfJdxCJO2uOyRE9CjN3rspmO3rce9CIk7rvxE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kyIwajOgI6uwLdtCBT9hnPvSahDdRqu7+16RTxTSKvbjAqOTGxj1P5Ptl4upEKd0E7WqkLa8XRnF+V8u875RSD4aff0BkbYB9OD83TfdyNwO9Eb4qWuaLRvksTmahM/hctakLIDXYfnFSmVrMWXYHB1Lj6JbkC28HPdqBvDLUXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=H7bMJYQo; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:Reply-To:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=s0SQSY2/qlwdSn2Ne62QkwvKmp6lPNA13idmIDBlXko=;
+	t=1719835986; x=1720267986; b=H7bMJYQo+acxT/MFT40LuTU9RZ6ksOuW+VKrMjaNuW6/6mo
+	Q40czHwmGgT2gyCWjzbMLmErFgMvEXCIEHJgwRBH1QcMK7bHjBL23uMK0ThetwfZewmR/ef5AAK+f
+	9vk1Obx0ZJsDrrp43YZ3SzkC1oX0olIqVWRx/i21q2MFkfjK76sL3/OoaIAysHi3N3wRfzAMrr0Rv
+	UoRiK65dHEVBj3RO1lWk13G7bK7wNw9XynQSKJDrxp+Qsn0x8zu+WpxZ6YYE47WvNNL+tZToavrBL
+	JDHBwmkFw0f90JaBWgVbshS+w+2nDTSZNpS/A+PS1Pgdtf14ZJ6ZzI8V0LX5qbZw==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sOFtw-000089-AO; Mon, 01 Jul 2024 14:12:56 +0200
+Message-ID: <c93ab2cc-d8e9-41ba-9f56-51acb331ae38@leemhuis.info>
+Date: Mon, 1 Jul 2024 14:12:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,80 +53,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Haoxiang Li <make24@iscas.ac.cn>, megaraidlinux.pdl@broadcom.com,
- linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Chandrakanth patil <chandrakanth.patil@broadcom.com>,
- James Bottomley <James.Bottomley@HansenPartnership.com>,
- Kashyap Desai <kashyap.desai@broadcom.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Shivasharan Srikanteshwara <shivasharan.srikanteshwara@broadcom.com>,
- Sumit Saxena <sumit.saxena@broadcom.com>, Suraj Upadhyay <usuraj35@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240701034102.84207-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH] drivers: scsi: megaraid: Add missing check for
- dma_set_mask
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240701034102.84207-1-make24@iscas.ac.cn>
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+Subject: Re: Kernel hang caused by commit "can: m_can: Start/Cancel polling
+ timer together with interrupts"
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+ Markus Schneider-Pargmann <msp@baylibre.com>,
+ Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Tony Lindgren <tony@atomide.com>, Judith Mendez <jm@ti.com>,
+ linux-can@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux@ew.tq-group.com,
+ Linux kernel regressions list <regressions@lists.linux.dev>
+References: <e72771c75988a2460fa8b557b0e2d32e6894f75d.camel@ew.tq-group.com>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+In-Reply-To: <e72771c75988a2460fa8b557b0e2d32e6894f75d.camel@ew.tq-group.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:nqlPM28yXVNsz2mN0+RXvs0BOcKP4jxoTiJxM3Q01MTetMb/Xy3
- 9W4NHHocBl5b3PtGtgYtjCAaDVrDrwv1lJOgr1R0fSKFrKcOhkgp239EdGn5NG12U7taEGS
- bSmQZHlrUChc5MRcdRwmKwbt64hK+aih3Ty9w+FH8OzlTqwmrnWKeqZUeJ1MOPb+uf4Ue7I
- Ne9B3zXUN8JsPO65qYtZg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:hQ0MFYfpSRY=;t1qNq503LNmnGomSGZAJriFOe/9
- v7osqV01ZPMeZVp5Asc0uLWDxoELqqTgvIbRmrFZvARv7jsKYAKq64b7E/SyDQJrLWmkQmZPe
- fpiExYCMRVF2z6AMCSuCigQuEJTXrqlYluhtAMw5w9F4bPeR+fV9ujscNxfrwsae8eVCNjpB1
- uZ/wseZM54n5Jk8EDWuxVCTJjWT4Twke3ZAYu4ChbGJTYPw8zQviPNbDiVKcNjhURcrxhxWgE
- ehIhh96ppeHRknvC8VAlm8ccd4UIzkQDe0NvfOP9lys1fL0CXJjXYM6s4rtDgMVukKup+2V7x
- LhJD5xxAsS2ADhhyssi8hroD4Ug3XuxGFwTMjvd8QIbCPJWYT4p0N1ydfDtFSJjKd7yIQ4m+j
- AJ8xlBNQclctvrsXb5hwhb5+/EcR3QrITaHGKshgPhNaojggYyA2jnanJqeUolXvItMTG/DtN
- Rz+SnnCjbXG5faTiRg+DXYMcvmK/Q8JoFaNpV4A2DfQMiE0WetIgAT8gNtRZzwa394IYOOJ0g
- tRkMP16vNfOS5tQuApdebE7iFaVKkEjyAuKMF2ejDYCoLUSCEqGBNzZEUrZQSgC+kcZ9J3aDy
- /D+h000U94dm4ySMaVewLB3/Ci1mohXkXNqnfXoRCKzrNHJ5Qq138LAJjVtPXWDHFkW9FItkq
- gxOJuJs8YqGBwhRbdQFT5rv3Xp5VPz1Fta2W/ZT7PDEMntplGFXxHQvDQmI5INfFSz9SQOhsa
- pVDtin4Trieyb9tOlPhT0SxeAdd9/S+pIDZrFLCxpu59mYb4i28sj9N6hnz3qZFDEMThh1rWX
- hzGkp/v3qgOVAME9lrssoPv648HTiuiVA9bBNSbhxGbvU=
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1719835986;baec6e98;
+X-HE-SMSGID: 1sOFtw-000089-AO
 
-> pdev->dev cannot perform DMA properly if dma_set_mask() returns non-zero=
-.
+[CCing the regression list, as it should be in the loop for regressions:
+https://docs.kernel.org/admin-guide/reporting-regressions.html]
 
-Can a wording approach (like the following) become a part of a better chan=
-ge description?
+Hi, Thorsten here, the Linux kernel's regression tracker. Top-posting
+for once, to make this easily accessible to everyone.
 
-  Direct memory access can not be properly performed any more
-  after a dma_set_mask() call failed.
+Hmm, looks like there was not even a single reply to below regression
+report. But also seens Markus hasn't posted anything archived on Lore
+since about three weeks now, so he might be on vacation.
 
+Marc, do you might have an idea what's wrong with the culprit? Or do we
+expected Markus to be back in action soon?
 
-> Add check for dma_set_mask()
+Ciao, Thorsten
 
-How do you think about to avoid a repeated reference to a function name?
-
-
->                                  return the error if it fails.
-
-How can this happen after you did not store the return value (in the local=
- variable =E2=80=9Cerror=E2=80=9D)
-for further usage (according to your proposed source code adjustment)?
-
-
-=E2=80=A6
-> Signed-off-by: Haoxiang Li <make24@iscas.ac.cn>
-
-I find it interesting that another personal name is presented here.
-I noticed that some patches were published with the name =E2=80=9CMa Ke=E2=
-=80=9D previously.
-How will requirements be resolved for the Developer's Certificate of Origi=
-n?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n398
-
-
-How do you think about to use a summary phrase like =E2=80=9CComplete erro=
-r handling
-in megaraid_probe_one()=E2=80=9D?
-
-Regards,
-Markus
+On 18.06.24 18:12, Matthias Schiffer wrote:
+> Hi Markus,
+> 
+> we've found that recent kernels hang on the TI AM62x SoC (where no m_can interrupt is available and
+> thus the polling timer is used), always a few seconds after the CAN interfaces are set up.
+> 
+> I have bisected the issue to commit a163c5761019b ("can: m_can: Start/Cancel polling timer together
+> with interrupts"). Both master and 6.6 stable (which received a backport of the commit) are
+> affected. On 6.6 the commit is easy to revert, but on master a lot has happened on top of that
+> change.
+> 
+> As far as I can tell, the reason is that hrtimer_cancel() tries to cancel the timer synchronously,
+> which will deadlock when called from the hrtimer callback itself (hrtimer_callback -> m_can_isr ->
+> m_can_disable_all_interrupts -> hrtimer_cancel).
+> 
+> I can try to come up with a fix, but I think you are much more familiar with the driver code. Please
+> let me know if you need any more information.
+> 
+> Best regards,
+> Matthias
+> 
+> 
 
