@@ -1,296 +1,145 @@
-Return-Path: <linux-kernel+bounces-235607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1932091D755
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:16:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13BA391D75F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:21:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 651C1281023
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 05:15:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC2041F21013
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 05:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12BB36AF8;
-	Mon,  1 Jul 2024 05:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 207EB36AF8;
+	Mon,  1 Jul 2024 05:20:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e0qJzg/b"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IUrKrny0"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3631C33;
-	Mon,  1 Jul 2024 05:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF012A1C5;
+	Mon,  1 Jul 2024 05:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719810948; cv=none; b=llvoqp9WTTCSE+pAxncKTfabLpJ8Brt/c8wIIUQGsguCkMXIWQpljyn7YJFY4uN6wfsw+EcG4X3bg9wPGH+7dBwqUit52VAUHLntgT3v+vTVsZOmdkyzb7ovHoZia7KcOYVkCRWNcOyI0zrnwQYDI9e7Fyjij7cMXvsPJ/DM/lY=
+	t=1719811255; cv=none; b=dngedxgZ682gqUlxVhaIZ5wy/ZychZ+dG2tWwFL1GAkzg+KUOebxDEFyDZxRCT/GobY+YlrZMZs7Vm3srAitScgE5utNRdbcH3NRqTyaM/hlHMgeHhmMCr7tG3JDuUb/fP7ZovioqfQ3HDudvySyGJFjajN5y6cJw5z/TaNt4q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719810948; c=relaxed/simple;
-	bh=33LnhJ7+BqQZikbci+g6bJ6dGM6/pya/Tnvx+wHf3/o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=sOJEmW/nmKt9/nL2lwB/AXRFA18wNRBAUvljfhy/FolDaAKMrrnmbGCkeMsze8oQJErQr6x67C4287/Ob/3U6Ile03x5LgTELELaSSeooEhjjOcReDV8KyRJwSy/wDjDlxLxxDxtRM4Cu6/vFeeKrH+VA6sW9Jwg2es9l/anU4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e0qJzg/b; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719810947; x=1751346947;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=33LnhJ7+BqQZikbci+g6bJ6dGM6/pya/Tnvx+wHf3/o=;
-  b=e0qJzg/bAYQ9ItJEWSZgQKQZKwCAR4rVLN6AKAk0ANM+yi8FU9NsSRiu
-   m3Q5E5atmplHQliscOyBUAPTbDIVa4ZM8RD9Q0i4I92U7bO7vsQru+pEB
-   gQDQN2lnUmWbwyZOCVNEDWL7hTwUZTJFS5a8rGhekl3MGKf1Pv4XIzcy9
-   JRbcypcs2DDkURijwcjT8BGLbktDbl/+4ZmDckbCeqdlK51Hf13MHcFcW
-   EtO/P8Pm5gVxvm8+gA7uPTLfWjJfk8B65xULyl3Zu7XwCjiYu4ENw1eu9
-   HFrCHro14pM9cZUBjQAGw7AYlyMHUcXpm+VegDGiDHV53tjF+KJLzE6xl
-   w==;
-X-CSE-ConnectionGUID: Tr8CTBX1TCqwEDxLJFzRqw==
-X-CSE-MsgGUID: VHbIxnhnSZC2J2OkBrOUaQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11119"; a="17051618"
-X-IronPort-AV: E=Sophos;i="6.09,175,1716274800"; 
-   d="scan'208";a="17051618"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2024 22:15:47 -0700
-X-CSE-ConnectionGUID: tRBL+MYsRYyKY5Q3fRDiVA==
-X-CSE-MsgGUID: yXSuGEvLRIqOj0oi+miQLQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,175,1716274800"; 
-   d="scan'208";a="45803392"
-Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2024 22:15:40 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: "Ho-Ren (Jack) Chuang" <horen.chuang@linux.dev>
-Cc: "Jonathan Cameron" <Jonathan.Cameron@Huawei.com>,  "Gregory Price"
- <gourry.memverge@gmail.com>,  aneesh.kumar@linux.ibm.com,
-  mhocko@suse.com,  tj@kernel.org,  john@jagalactic.com,  "Eishan Mirakhur"
- <emirakhur@micron.com>,  "Vinicius Tavares Petrucci"
- <vtavarespetr@micron.com>,  "Ravis OpenSrc" <Ravis.OpenSrc@micron.com>,
-  "Alistair Popple" <apopple@nvidia.com>,  "Srinivasulu Thanneeru"
- <sthanneeru@micron.com>,  "SeongJae Park" <sj@kernel.org>,  "Rafael J.
- Wysocki" <rafael@kernel.org>,  Len Brown <lenb@kernel.org>,  Andrew Morton
- <akpm@linux-foundation.org>,  Dave Jiang <dave.jiang@intel.com>,  Dan
- Williams <dan.j.williams@intel.com>,  linux-acpi@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  linux-mm@kvack.org,  "Ho-Ren (Jack)
- Chuang" <horenc@vt.edu>,  "Ho-Ren (Jack) Chuang"
- <horenchuang@bytedance.com>,  "Ho-Ren (Jack) Chuang"
- <horenchuang@gmail.com>,  linux-cxl@vger.kernel.org,
-  qemu-devel@nongnu.org
-Subject: Re: [PATCH v2 1/1] memory tier: consolidate the initialization of
- memory tiers
-In-Reply-To: <20240628060925.303309-2-horen.chuang@linux.dev> (Ho-Ren Chuang's
-	message of "Fri, 28 Jun 2024 06:09:23 +0000")
-References: <20240628060925.303309-1-horen.chuang@linux.dev>
-	<20240628060925.303309-2-horen.chuang@linux.dev>
-Date: Mon, 01 Jul 2024 13:13:49 +0800
-Message-ID: <87tth9ofsi.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1719811255; c=relaxed/simple;
+	bh=6LnCD2tG9MglC4GbmgNZ44M74BV7r2pt5c2diZk8iks=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MdsmY16M7OamUn0cZF1vJOCdlg+9ILrJDgyjVVg6tfL34X2Ulfb9N/wHiopgPheAGIzk+BlmKBRT2fzwBCceBdnL+lQrxEJO1yURcy0QV+r/osEmC30XdvfyDPm8VaZD2Sofi7/M2wOirliNpnIADXDzt+V0s+ocNMNoi34aYuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IUrKrny0; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45UNLOof029716;
+	Mon, 1 Jul 2024 05:20:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4a2O7qrkxkzyH3gCgKnG6pbSAyFQPx3Yp+k6LjeNeb0=; b=IUrKrny00hFYmWet
+	IK9Drk+nEjxFI9smQP8xW4cMTOXPLW/bFe8pRgHSwXMrqLwWdkdwnbb0M2lh31SI
+	h6sHpvR2k4yNeH1VfMLwRWhgnTHVP7FC1jt0lgHDWNeyS+xAHQ7F7NUIGVixP7M7
+	UMiweT5GzNLLuaEkV5/BRK3w9ktCcE9Z067g8Fehwe5RapBHV9ykbkEYOiP6ySoF
+	owKxVshycgwDNteiqFJQkZTcZYLHcRE6n+5yV0gbi1y93vKnuOy3BRaZZ7FYUCVf
+	tjQGpC/yS70fAPOwUJ0YwT0U6vBRW3j8Ly7Dg/bymjuoEoVdGuY2XdpfWbf34jD7
+	9ruIQg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 402996k6j9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 01 Jul 2024 05:20:45 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4615Kiig013910
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 1 Jul 2024 05:20:44 GMT
+Received: from [10.204.65.49] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 30 Jun
+ 2024 22:20:41 -0700
+Message-ID: <2e616e9d-fc04-4826-b784-4c6ee45bfbc2@quicinc.com>
+Date: Mon, 1 Jul 2024 10:50:38 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] misc: fastrpc: Remove user PD initmem size check
+Content-Language: en-US
+To: Greg KH <gregkh@linuxfoundation.org>
+CC: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_bkumar@quicinc.com>, <linux-kernel@vger.kernel.org>,
+        <quic_chennak@quicinc.com>, <dri-devel@lists.freedesktop.org>,
+        <arnd@arndb.de>, stable <stable@kernel.org>
+References: <20240627060518.1510124-1-quic_ekangupt@quicinc.com>
+ <62dzilcvsp3efxpxulzkf6e62rzcrhp55k6yjk5fymkqthdfzw@yageexbx6ddz>
+ <f3d502ca-228e-4be4-b296-a9073975d34b@quicinc.com>
+ <a5e69a5e-b882-4f36-b023-f85da430fa2f@quicinc.com>
+ <2024062849-brunt-humvee-d338@gregkh>
+From: Ekansh Gupta <quic_ekangupt@quicinc.com>
+In-Reply-To: <2024062849-brunt-humvee-d338@gregkh>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 90s7PK4iyRa7AhEpbkdqklb4WD1SqIcT
+X-Proofpoint-ORIG-GUID: 90s7PK4iyRa7AhEpbkdqklb4WD1SqIcT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-01_04,2024-06-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
+ priorityscore=1501 bulkscore=0 phishscore=0 spamscore=0 lowpriorityscore=0
+ impostorscore=0 mlxscore=0 malwarescore=0 clxscore=1015 mlxlogscore=906
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2407010038
 
-Hi, Jack,
 
-"Ho-Ren (Jack) Chuang" <horen.chuang@linux.dev> writes:
 
-I suggest you to merge the [0/1] with the change log here.  [0/1]
-describes why do we need the patch.  The below text describes some
-details.  Just don't use "---" to separate them.  We need both parts in
-the final commit message.
-
-> If we simply move the set_node_memory_tier() from memory_tier_init()
-> to late_initcall(), it will result in HMAT not registering
-> the mt_adistance_algorithm callback function, because
-> set_node_memory_tier() is not performed during the memory tiering
-> initialization phase, leading to a lack of correct default_dram
-> information.
+On 6/28/2024 7:51 PM, Greg KH wrote:
+> On Fri, Jun 28, 2024 at 04:12:10PM +0530, Ekansh Gupta wrote:
+>>
+>> On 6/28/2024 3:59 PM, Ekansh Gupta wrote:
+>>> On 6/27/2024 4:43 PM, Dmitry Baryshkov wrote:
+>>>> On Thu, Jun 27, 2024 at 11:35:18AM GMT, Ekansh Gupta wrote:
+>>>>> For user PD initialization, initmem is allocated and sent to DSP for
+>>>>> initial memory requirements like shell loading. This size is passed
+>>>>> by user space and is checked against a max size. For unsigned PD
+>>>>> offloading, more than 2MB size could be passed by user which would
+>>>>> result in PD initialization failure. Remove the user PD initmem size
+>>>>> check and allow buffer allocation for user passed size. Any additional
+>>>>> memory sent to DSP during PD init is used as the PD heap.
+>>>> Would it allow malicious userspace to allocate big enough buffers and
+>>>> reduce the amount of memory available to the system? To other DSP
+>>>> programs?
+>>> The allocation here is happening from SMMU context bank which is uniquely assigned
+>>> to processes going to DSP. As per my understanding process can allocate maximum
+>>> 4GB of memory from the context bank and the memory availability will be taken care
+>>> by kernel memory management. Please correct me if my understanding is incorrect.
+>> Just wanted to add 1 question here:
+>> User space can also directly allocate memory. Wouldn't that be a problem if any malicious userspace
+>> allocated huge memory?
+> No, because any userspace program that takes up too much memory will be
+> killed by the kernel.
 >
-> Therefore, we introduced a nodemask to pass the information of the
-> default DRAM nodes. The reason for not choosing to reuse
-> default_dram_type->nodes is that it is not clean enough. So in the end,
-> we use a __initdata variable, which is a variable that is released once
-> initialization is complete, including both CPU and memory nodes for HMAT
-> to iterate through.
+> You can not have userspace tell the kernel to allocate 100Gb of memory,
+> as then the kernel is the one that just took it all up, and then
+> userspace applications will start to be killed off.
 >
-> Besides, since default_dram_type may be checked/used during the
-> initialization process of HMAT and drivers, it is better to keep the
-> allocation of default_dram_type in memory_tier_init().
-
-Why do we need it?  IIRC, we have deleted its usage in hmat.c.
-
-> Signed-off-by: Ho-Ren (Jack) Chuang <horenchuang@bytedance.com>
-> Suggested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> ---
->  drivers/acpi/numa/hmat.c     |  5 +--
->  include/linux/memory-tiers.h |  2 ++
->  mm/memory-tiers.c            | 59 +++++++++++++++---------------------
->  3 files changed, 28 insertions(+), 38 deletions(-)
+> You MUST bounds check your userspace-supplied memory requests.  Remember
+> the 4 words of kernel development:
 >
-> diff --git a/drivers/acpi/numa/hmat.c b/drivers/acpi/numa/hmat.c
-> index 2c8ccc91ebe6..a2f9e7a4b479 100644
-> --- a/drivers/acpi/numa/hmat.c
-> +++ b/drivers/acpi/numa/hmat.c
-> @@ -940,10 +940,7 @@ static int hmat_set_default_dram_perf(void)
->  	struct memory_target *target;
->  	struct access_coordinate *attrs;
->  
-> -	if (!default_dram_type)
-> -		return -EIO;
-> -
-> -	for_each_node_mask(nid, default_dram_type->nodes) {
-> +	for_each_node_mask(nid, default_dram_nodes) {
->  		pxm = node_to_pxm(nid);
->  		target = find_mem_target(pxm);
->  		if (!target)
-> diff --git a/include/linux/memory-tiers.h b/include/linux/memory-tiers.h
-> index 0d70788558f4..fa61ad9c4d75 100644
-> --- a/include/linux/memory-tiers.h
-> +++ b/include/linux/memory-tiers.h
-> @@ -38,6 +38,7 @@ struct access_coordinate;
->  #ifdef CONFIG_NUMA
->  extern bool numa_demotion_enabled;
->  extern struct memory_dev_type *default_dram_type;
+> 	All input is evil.
+Thanks for the detailed explanation, Greg. I'll remember this going forward.
 
-Can we remove the above line?
+For this change, I'll increase the max size limit to 5MB which is the requirement for
+unsigned PD to run on DSP.
 
-> +extern nodemask_t default_dram_nodes __initdata;
+--Ekansh
+> thanks,
+>
+> greg k-h
 
-We don't need to use __initdata in variable declaration.
-
->  struct memory_dev_type *alloc_memory_type(int adistance);
->  void put_memory_type(struct memory_dev_type *memtype);
->  void init_node_memory_type(int node, struct memory_dev_type *default_type);
-> @@ -76,6 +77,7 @@ static inline bool node_is_toptier(int node)
->  
->  #define numa_demotion_enabled	false
->  #define default_dram_type	NULL
-> +#define default_dram_nodes NODE_MASK_NONE
-
-Should we use <tab> after "default_dram_nodes"?
-
->  /*
->   * CONFIG_NUMA implementation returns non NULL error.
->   */
-> diff --git a/mm/memory-tiers.c b/mm/memory-tiers.c
-> index 6632102bd5c9..a19a90c3ad36 100644
-> --- a/mm/memory-tiers.c
-> +++ b/mm/memory-tiers.c
-> @@ -43,6 +43,7 @@ static LIST_HEAD(memory_tiers);
->  static LIST_HEAD(default_memory_types);
->  static struct node_memory_type_map node_memory_types[MAX_NUMNODES];
->  struct memory_dev_type *default_dram_type;
-> +nodemask_t default_dram_nodes __initdata = NODE_MASK_NONE;
->  
->  static const struct bus_type memory_tier_subsys = {
->  	.name = "memory_tiering",
-> @@ -671,28 +672,38 @@ EXPORT_SYMBOL_GPL(mt_put_memory_types);
->  
->  /*
->   * This is invoked via `late_initcall()` to initialize memory tiers for
-> - * CPU-less memory nodes after driver initialization, which is
-> - * expected to provide `adistance` algorithms.
-> + * memory nodes, both with and without CPUs. After the initialization of
-> + * firmware and devices, adistance algorithms are expected to be provided.
->   */
->  static int __init memory_tier_late_init(void)
->  {
->  	int nid;
-> +	struct memory_tier *memtier;
->  
-> +	get_online_mems();
->  	guard(mutex)(&memory_tier_lock);
-> +	/*
-> +	 * Look at all the existing and uninitialized N_MEMORY nodes and
-> +	 * add them to default memory tier or to a tier if we already have
-> +	 * memory types assigned.
-> +	 */
-
-If the memory type of the node has been assigned, we will skip it in the
-following code.  So, I think that we need to revise the comments.
-
->  	for_each_node_state(nid, N_MEMORY) {
->  		/*
-> -		 * Some device drivers may have initialized memory tiers
-> -		 * between `memory_tier_init()` and `memory_tier_late_init()`,
-> -		 * potentially bringing online memory nodes and
-> -		 * configuring memory tiers. Exclude them here.
-> +		 * Some device drivers may have initialized
-> +		 * memory tiers, potentially bringing memory nodes
-> +		 * online and configuring memory tiers.
-> +		 * Exclude them here.
->  		 */
->  		if (node_memory_types[nid].memtype)
->  			continue;
->  
-> -		set_node_memory_tier(nid);
-> +		memtier = set_node_memory_tier(nid);
-> +		if (IS_ERR(memtier))
-> +			/* Continue with memtiers we are able to setup. */
-> +			break;
->  	}
-> -
->  	establish_demotion_targets();
-> +	put_online_mems();
->  
->  	return 0;
->  }
-> @@ -875,8 +886,7 @@ static int __meminit memtier_hotplug_callback(struct notifier_block *self,
->  
->  static int __init memory_tier_init(void)
->  {
-> -	int ret, node;
-> -	struct memory_tier *memtier;
-> +	int ret;
->  
->  	ret = subsys_virtual_register(&memory_tier_subsys, NULL);
->  	if (ret)
-> @@ -887,7 +897,8 @@ static int __init memory_tier_init(void)
->  				GFP_KERNEL);
->  	WARN_ON(!node_demotion);
->  #endif
-> -	mutex_lock(&memory_tier_lock);
-> +
-> +	guard(mutex)(&memory_tier_lock);
->  	/*
->  	 * For now we can have 4 faster memory tiers with smaller adistance
->  	 * than default DRAM tier.
-> @@ -897,29 +908,9 @@ static int __init memory_tier_init(void)
->  	if (IS_ERR(default_dram_type))
->  		panic("%s() failed to allocate default DRAM tier\n", __func__);
->  
-> -	/*
-> -	 * Look at all the existing N_MEMORY nodes and add them to
-> -	 * default memory tier or to a tier if we already have memory
-> -	 * types assigned.
-> -	 */
-> -	for_each_node_state(node, N_MEMORY) {
-> -		if (!node_state(node, N_CPU))
-> -			/*
-> -			 * Defer memory tier initialization on
-> -			 * CPUless numa nodes. These will be initialized
-> -			 * after firmware and devices are initialized.
-> -			 */
-> -			continue;
-> -
-> -		memtier = set_node_memory_tier(node);
-> -		if (IS_ERR(memtier))
-> -			/*
-> -			 * Continue with memtiers we are able to setup
-> -			 */
-> -			break;
-> -	}
-> -	establish_demotion_targets();
-> -	mutex_unlock(&memory_tier_lock);
-> +	/* Record nodes with memory and CPU to set default DRAM performance. */
-> +	nodes_and(default_dram_nodes, node_states[N_MEMORY],
-> +		  node_states[N_CPU]);
->  
->  	hotplug_memory_notifier(memtier_hotplug_callback, MEMTIER_HOTPLUG_PRI);
->  	return 0;
-
---
-Best Regards,
-Huang, Ying
 
