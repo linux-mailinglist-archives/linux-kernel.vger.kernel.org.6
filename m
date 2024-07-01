@@ -1,99 +1,132 @@
-Return-Path: <linux-kernel+bounces-235669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7FFA91D829
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:40:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06F7391D82C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:41:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A6EC28616D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 06:40:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 394D11C20E76
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 06:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 757A8383AB;
-	Mon,  1 Jul 2024 06:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="FjuzUt4x"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC084C634;
+	Mon,  1 Jul 2024 06:41:17 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDEF4A0F
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 06:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A0A4A0F;
+	Mon,  1 Jul 2024 06:41:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719816027; cv=none; b=beejHVZz+972ybXT03CZVa1ENXR9ZkuJOURtNrUceBAw10n3AEdE8J7qT/vSGCKQ+8+BLpz6rs/bdPKIYefa1NfdG2QTH0cFVPny2HWOnaCgF6hdXGk0UVhZ6obWZF/0V3OdywNcqavzRFx8rPc4kLfYCxK+WdpUdw7Ujw9L3Ws=
+	t=1719816077; cv=none; b=mnLPBVLozrM+To6bfn0Q7wyC1Ajy08LFWvlEn7JRoa2Kp6kRgSCXiPmMSWbM5zfIMD8zmVJO9emFB1kLbt6WC7wRejAhcWwaj17fBfZg9BxDesJp3n7ipVDHQ1w0S2jmysWF99OMJXxHOkP21B5sQh03Is4XQzUsVWgsshRPdwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719816027; c=relaxed/simple;
-	bh=w/bD27FbT9dfXD0xVtt8O/vtTJE6hEYbgX0obX304/0=;
+	s=arc-20240116; t=1719816077; c=relaxed/simple;
+	bh=0giSCIxMHwaDnOvFpUqp4Y73M/ZlyG2EnIUwXN/iyRs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s3artD84Vi1YDcxXIYySfs/I5o+WxHFJccvLqR1YtOcJNDXbzjvgUK59js3g1TuTrVB03JCkGgg7QOcArZuOH0JB1SQZmcDNM10m2YrJrv6AaDe2amxYvNg9f6QWNrducze63dphCAh842a93Jqdy7jM+0LTnFfRyfLyGwF5/v0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=FjuzUt4x; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3463840E021F;
-	Mon,  1 Jul 2024 06:40:23 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id kDMs4mNFRqVZ; Mon,  1 Jul 2024 06:40:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1719816020; bh=uNPW7RWvc4Gi05J3X2xFF1c8MpeXPWJhF4rBi+qDDxI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FjuzUt4x5qCBi/K4DaljMHytND6Dyjb9ueyXpmz7i5IVu19+k66CxmZosAP/Rf5Zb
-	 m0NZ5gy9rDqCeV6ownVVND2XP3W9Mvsig4APlDibTPcELsxcf1RwkkE5X6ukL0AMn5
-	 ZCjLTHGnbzrVyndfPifJiZaRb15dE88uVa/Q4onFFAiM4qlCtl6+jC15HNy+9nBUwO
-	 B1v2nzDIUeyQRBHKfjSEHeYruvjErW69Jm9eKsPMn0H3rB7nG7AYgY+74CYRtVz0aH
-	 UKDdc1lqchOVMWTPogjSJ+2cNAyh9OBH/ccHuP6ylEC79SPo2swv35+r1HLdgEmpr4
-	 d3UGd+k7EeC4J1Qns23SfsdWS6koJ08sDCrI6bDGHrZIP56/1ca1cUqvcGsdaL4kKC
-	 W8VE+Tw1ta+HAwTLixXTiRLX6gYrDfbto9dpCk1hGeQ7+KXVWvstqIKiuWOyk2BhkQ
-	 yFVIFslQFAJkdxcLPMw+QWRlQIOAcfwbtrfwOwjuiUsRGSztXiTJEb6lHf13AZVpYZ
-	 WqpKK0Ayi6DqU6lwUXMP/L/b31d3drOhLT1tU2ibkngxW/85lnKbCvS6dRtKeV7D53
-	 bVymBZE7mHVdzy4Zt5BQRglZp1AJTrd8zDWegbnuAQnuiqkwCyAdX854qE79B7pwdO
-	 pZsV+Xu/j/ac09DjXpWCT+O0=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	 Content-Type:Content-Disposition:In-Reply-To; b=iqeaonjmTIhu+mDz0KK3rzoy5IMJdXSHBGNtXkLkLLVqbuyoxWV530PJMXg+hJjptL/G8aGiqU1OHn6ZEQhNv47qkgshCSD5Aw4GxmLkX+uSTtcF+9s1CJzndPp5bZnDiUMf3sv3HWq0/lyVxfnekK4eo4/zMQBRT/3uJ3SuTYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0D8B540E021B;
-	Mon,  1 Jul 2024 06:40:09 +0000 (UTC)
-Date: Mon, 1 Jul 2024 08:40:02 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Xin Li <xin3.li@intel.com>, linux-kernel@vger.kernel.org,
-	x86@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, peterz@infradead.org,
-	brgerst@gmail.com, chang.seok.bae@intel.com, jgross@suse.com
-Subject: Re: [PATCH v6 5/5] x86/gsseg: use the LKGS instruction if available
- for load_gs_index()
-Message-ID: <20240701064002.GBZoJPQg2IXSCRa4sN@fat_crate.local>
-References: <20230112072032.35626-1-xin3.li@intel.com>
- <20230112072032.35626-6-xin3.li@intel.com>
- <20240630160448.GAZoGCIHXRuBY8sLqW@fat_crate.local>
- <3A846C73-305E-4C55-B846-AC00657BA95B@zytor.com>
- <20240701060841.GAZoJH6XpJz6qyo-Lr@fat_crate.local>
- <38C69EA0-DB74-4D2A-ABB5-CB3F1D31FB0C@zytor.com>
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 0F4263000086C;
+	Mon,  1 Jul 2024 08:41:06 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 0371036558D; Mon,  1 Jul 2024 08:41:06 +0200 (CEST)
+Date: Mon, 1 Jul 2024 08:41:05 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Aditya Garg <gargaditya08@live.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+	Kerem Karabay <kekrby@gmail.com>,
+	Orlando Chamberlain <orlandoch.dev@gmail.com>
+Subject: Re: [PATCH v2] efi: libstub: add support for the apple_set_os
+ protocol
+Message-ID: <ZoJPgSlZJ3ZlU2zL@wunner.de>
+References: <75C90B50-9AB9-4F0A-B2CD-43427354D15C@live.com>
+ <ZoJAAifMqIDXdniv@wunner.de>
+ <CAMj1kXH3fvS259Y1mfYcKQbM2mUYbSfuf2ZiMXfFhjq-rzn5UA@mail.gmail.com>
+ <ZoJDuunseVIDua-m@wunner.de>
+ <CAMj1kXFKBsAXDLxinqiszH=6hEOjbJQL-nFgBsBceta4rUCN-w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <38C69EA0-DB74-4D2A-ABB5-CB3F1D31FB0C@zytor.com>
+In-Reply-To: <CAMj1kXFKBsAXDLxinqiszH=6hEOjbJQL-nFgBsBceta4rUCN-w@mail.gmail.com>
 
-On Sun, Jun 30, 2024 at 11:31:42PM -0700, H. Peter Anvin wrote:
-> Yes, all loads into a segment register are truncated to 16 bits.
+On Mon, Jul 01, 2024 at 07:56:04AM +0200, Ard Biesheuvel wrote:
+> On Mon, 1 Jul 2024 at 07:50, Lukas Wunner <lukas@wunner.de> wrote:
+> > On Mon, Jul 01, 2024 at 07:38:38AM +0200, Ard Biesheuvel wrote:
+> > > Any thoughts on whether this should depend on CONFIG_APPLE_GMUX or not?
+> >
+> > I tend towards *not* making it depend on CONFIG_APPLE_GMUX:
+> >
+> > * The gpu-switch utility Orlando linked to doesn't use the apple-gmux
+> >   driver.  (It changes EFI variables that influence to which GPU the
+> >   EFI driver will switch on next reboot.)
+> >
+> > * apple_set_os() has side effects beyond exposing the iGPU (such as
+> >   switching the keyboard+trackpad access method to SPI instead of USB).
+> >   If there are issues, they will be harder to debug if their occurrence
+> >   depends on a Kconfig option.
+> 
+> Understood. I agree that having fewer possible combinations is
+> strongly preferred.
+> 
+> However, this change affects all Intel Macs. Is the latter side effect
+> likely to cause any regressions on Intel Mac users that don't have two
+> GPUs to begin with?
 
-Right, but are we saying that somewhere explicitly or it is too obvious so
-that there's no need to?
+MacBook Air models introduced 2013/2014 will use SPI instead of USB
+to access the keyboard and trackpad.  And from a quick look, the
+applespi_tp_models[] array in drivers/input/keyboard/applespi.c
+seems to be missing the trackpad dimensions of those models.
+The driver may also need a quirk to work around missing properties
+in the DSDT on those models.  Back in 2018 someone tested apple_set_os()
+on such a machine and reported these issues, but the GitHub discussion
+to narrow them down and fix them fizzled out:
 
--- 
-Regards/Gruss,
-    Boris.
+https://github.com/cb22/macbook12-spi-driver/issues/65
 
-https://people.kernel.org/tglx/notes-about-netiquette
+The problem is that users of such models will generally run a
+distribution kernel which has CONFIG_APPLE_GMUX enabled,
+so constraining apple_set_os() to CONFIG_APPLE_GMUX won't help them.
+Also, there is no incentive to amend the applespi.c driver for
+affected machines if apple_set_os() is never called on them,
+which is regrettable.
+
+Another potential regression is that exposing the iGPU may consume
+more power.  Or maybe the i915 driver will autosuspend if the panel
+is not connected, I don't know.  Likewise there is no incentive to
+fix the issue if apple_set_os() is never run.
+
+I've also heard rumors that the EFI firmware configures different
+CPU frequency scaling parameters if apple_set_os() is called,
+but maybe Linux overwrites them anyway.  Apple never cared for Linux,
+so apple_set_os() basically just differentiates between macOS and
+Windows (via Boot Camp).  We generally choose to masquerade as macOS
+to get access to the full set of hardware features, not the crippled
+setup exposed to Windows.
+
+If you think that we absolutely need to avoid these potential regressions,
+a better approach than constraining to CONFIG_APPLE_GMUX would be to
+match DMI data for dual-GPU MacBook Pros.  I notice that the efistub
+has been amended with SMBIOS support through efi_get_smbios_record() +
+efi_get_smbios_string().  Would that get us to the laptop model name?
+If so that would seem to be a viable way to avoid or at least minimize
+regressions.
+
+Thanks,
+
+Lukas
 
