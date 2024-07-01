@@ -1,107 +1,137 @@
-Return-Path: <linux-kernel+bounces-235912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D29D191DB2C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:13:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 271B091DB30
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:13:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EA0E1C216D6
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:13:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA9D71F2224A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:13:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F4C84D13;
-	Mon,  1 Jul 2024 09:13:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50AC784D29;
+	Mon,  1 Jul 2024 09:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LmHfupoh"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WLxj+aOz"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9019A5C614;
-	Mon,  1 Jul 2024 09:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C55ED71747;
+	Mon,  1 Jul 2024 09:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719825194; cv=none; b=IHbD3XkwWdqAcbYnpq1nrhzorfzEJF/d8FtJ/kMrHd2pu4IdtR9RszucvbxZxu6kCNv87gW2DH6YfZt37vEuOtT9i0i2yAHs3JT+T09KN2UeGTKpOGn2RCal0gahMoJmtxaqnBvydwbKo9kzRGNHHgBhFHiniKIQT3KsjdrrG8M=
+	t=1719825206; cv=none; b=kBJEpMVO58wVPB6O8gjmAIuVWa5SeAnaf8acRvabWwgufvvrDdlrZF1ftawXTtZR+W1kQSuNPijOEzmteik65zUIizUJNLrvG0KUFEFcj+CJYiSCg6stGs70EHsEAdwxHlTeLVflq/0J8XzIMiXpkkSplDz7Rw+UHP9/O9Tdc5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719825194; c=relaxed/simple;
-	bh=lH6Op+NEqMEMhLVrlVLSaicKVq6DDK95y/ji3hzNK7w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=uT7ivgqrdHCQhxuZE61IfzkvRTqZy4gBO+Xvnot6VmIzkrMBsfdSoxBHNnD8a/x61wb/p59f2ZKuwvJUHU3WtCDFlKQqw6HtzCPjiMYvFB7FJcBcWsTN0WWWVkir9BnlDcq+aTzz7F4kTH0NwlNsJgA8BHTNeEG8INYtRrk7Eos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LmHfupoh; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4619D1GD062498;
-	Mon, 1 Jul 2024 04:13:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719825181;
-	bh=gJqfpGs0H64qLnpC4fB9AmSwexSr+s5EWCWrwDYrIYw=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=LmHfupoh1oy0fRMKIRgVGeISn6aev/W3pz1QSTfbjAdXO9Pe4n6pRZzheCOzTbfPS
-	 /tU4l0VV/G1zMrWywQmqz6t46tSWlLUavwDu82ubLLXT1L0boOpK1KgCzK/7NiZwhv
-	 nlgRtYhxZIsQv7XKu4hdhG5FwkBntahEkZBLLhTI=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4619D1ID090792
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 1 Jul 2024 04:13:01 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 1
- Jul 2024 04:13:00 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 1 Jul 2024 04:13:00 -0500
-Received: from [10.249.48.175] ([10.249.48.175])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4619D0qo023569;
-	Mon, 1 Jul 2024 04:13:00 -0500
-Message-ID: <3064a3cb-9153-3bd1-4c55-79e8911f029f@ti.com>
-Date: Mon, 1 Jul 2024 04:13:00 -0500
+	s=arc-20240116; t=1719825206; c=relaxed/simple;
+	bh=QbfrfuYBfk9vrk8xYLVM8k/QMogV1A4LDBze4ncEJmY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=M7RWG8VADwha+k1uw+qsFo7wfDnb5dpwoqMmIxSdqg2+GHd1TkRWh8ibojQANFQpSBUSxBKEinzVsDfjiO9F/Zyt6W1VsmlgAEIRF+HRV1xV5lO3qNow+F4/Wk0lnzqBjP0yrpm6EuXtNwS3Q5/rw9fGkXtAaTZdFOmOelYjDXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=WLxj+aOz; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1719825201;
+	bh=pntqiERvY5XH4mZl9gDPqfPzur6ofOBurt6MgCHU+uc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=WLxj+aOz6Z8ovaI9h5E6jIyilGP7PfeuwbHdrBxAn3FqmBmQtPKYudzvhPU8LxpA6
+	 dn5mkW16GhNL2WkBATgqLrsvGigyI4M9dz9JaLEYYvtQx3KmuizlWrrLUlLMMcP9up
+	 nMwOnb6Eh6wziqK4+eMKoh0xmzPTEQeDWNqYumDJiOeeUWTWpnPeep5C1gBCZFI+G5
+	 UsCy65Sm1dwIji2Nwm+igUauM0VgwXfaFmmgpvoPPxy/5a2HdDVfMhz4DvRE8bf/87
+	 FIznBh05NGyiG58iveGEGAPaPiL2xOvO9O4EaZoQGa1z7vN9SIWnB9cOxMSA4DyKBk
+	 BGf5J3OHtm9ag==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WCL1X0hnVz4wxs;
+	Mon,  1 Jul 2024 19:13:20 +1000 (AEST)
+Date: Mon, 1 Jul 2024 19:13:19 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dave Airlie <airlied@redhat.com>
+Cc: Ville =?UTF-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, DRI
+ <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the drm tree
+Message-ID: <20240701191319.087b227e@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 1/4] remoteproc: k3-r5: Fix IPC-only mode detection
-Content-Language: en-US
-To: Mathieu Poirier <mathieu.poirier@linaro.org>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>, "Andrew F. Davis" <afd@ti.com>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Philipp Zabel
-	<p.zabel@pengutronix.de>, Suman Anna <s-anna@ti.com>,
-        Thomas Petazzoni
-	<thomas.petazzoni@bootlin.com>,
-        Alexandre Belloni
-	<alexandre.belloni@bootlin.com>,
-        Udit Kumar <u-kumar1@ti.com>,
-        Thomas Richard
-	<thomas.richard@bootlin.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        =?UTF-8?Q?Th=c3=a9o_Lebrun?= <theo.lebrun@bootlin.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240621150058.319524-1-richard.genoud@bootlin.com>
- <20240621150058.319524-2-richard.genoud@bootlin.com> <Zn8UumUllbGS4/p9@p14s>
- <CANLsYkxFvci0o0ET4vOGTYp0P2xEdwU2q4V1SmNh=W83uj87rA@mail.gmail.com>
-From: Hari Nagalla <hnagalla@ti.com>
-In-Reply-To: <CANLsYkxFvci0o0ET4vOGTYp0P2xEdwU2q4V1SmNh=W83uj87rA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; boundary="Sig_/B/525Pd9aGGHMxX7KNdXK6F";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 6/28/24 14:58, Mathieu Poirier wrote:
->> This could lead in an incorrect IPC-only mode detection if reset line is
->> asserted (so reset_control_status() return > 0) and c_state != 0 and
->> halted == 0.
->> In this case, the old code would have detected an IPC-only mode instead
->> of a mismatched mode.
->>
-> Your assessment seems to be correct.  That said I'd like to have an RB or a TB
-> from someone in the TI delegation - guys please have a look.
-Agree with Richard's assessment, and the proposed fix looks good.
+--Sig_/B/525Pd9aGGHMxX7KNdXK6F
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by:
-Hari Nagalla <hnagalla@ti.com>
+Hi all,
+
+After merging the drm tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
+
+In file included from arch/powerpc/include/asm/mmu.h:144,
+                 from arch/powerpc/include/asm/paca.h:18,
+                 from arch/powerpc/include/asm/current.h:13,
+                 from include/linux/sched.h:12,
+                 from include/linux/ratelimit.h:6,
+                 from include/linux/dev_printk.h:16,
+                 from include/linux/device.h:15,
+                 from include/linux/dma-mapping.h:8,
+                 from drivers/gpu/drm/omapdrm/omap_gem.c:7:
+drivers/gpu/drm/omapdrm/omap_gem.c: In function 'omap_gem_pin_tiler':
+arch/powerpc/include/asm/page.h:25:33: error: conversion from 'long unsigne=
+d int' to 'u16' {aka 'short unsigned int'} changes value from '65536' to '0=
+' [-Werror=3Doverflow]
+   25 | #define PAGE_SIZE               (ASM_CONST(1) << PAGE_SHIFT)
+      |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/gpu/drm/omapdrm/omap_gem.c:758:42: note: in expansion of macro 'PAG=
+E_SIZE'
+  758 |                                          PAGE_SIZE);
+      |                                          ^~~~~~~~~
+drivers/gpu/drm/omapdrm/omap_gem.c: In function 'omap_gem_init':
+arch/powerpc/include/asm/page.h:25:33: error: conversion from 'long unsigne=
+d int' to 'u16' {aka 'short unsigned int'} changes value from '65536' to '0=
+' [-Werror=3Doverflow]
+   25 | #define PAGE_SIZE               (ASM_CONST(1) << PAGE_SHIFT)
+      |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/gpu/drm/omapdrm/omap_gem.c:1504:65: note: in expansion of macro 'PA=
+GE_SIZE'
+ 1504 |                         block =3D tiler_reserve_2d(fmts[i], w, h, P=
+AGE_SIZE);
+      |                                                                 ^~~=
+~~~~~~
+cc1: all warnings being treated as errors
+
+Exposed by commit
+
+  dc6fcaaba5a5 ("drm/omap: Allow build with COMPILE_TEST=3Dy")
+
+PowerPC 64 bit uses 64k pages.
+
+I have reverted that commit for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/B/525Pd9aGGHMxX7KNdXK6F
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaCcy8ACgkQAVBC80lX
+0GyEwQgAoOM0TkYVu4rVlwWtEHxMyN+WlQS3JRLPXW/xtjFnPJmZM2Mh6rXRqVxE
+eqizwXjGj5tp1mxEbV3D4DAvEFXv3+4z6WRfdZVVvDdiM8QfFhy0ilGoJRdSKAcR
+8Xpi41aQcLjuFMux1rJ6JKdFnQGQKoSHqBP4isEmyQwLIfxV+pR3d9kGAmtoFWLU
+/5yuRoeIWA9AkXTm9RIxAAeEcIwcqCJSmDSe1hjfuH0ZsbT4VmjKB+DIc0Ho1jLk
+a1pGL0fKvnvYqMGJX2sWpf70Ecrn1oCOHHs5C3oyqPv/p2ahc8l0HUhoPOkxsfVI
+7AKJ29wyLnsRbVQBQZ6m/dpiYxh3Sw==
+=OM/o
+-----END PGP SIGNATURE-----
+
+--Sig_/B/525Pd9aGGHMxX7KNdXK6F--
 
