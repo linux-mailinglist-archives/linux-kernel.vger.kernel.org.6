@@ -1,128 +1,119 @@
-Return-Path: <linux-kernel+bounces-236305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23AB391E038
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:06:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5DBD91E03B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:07:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5347D1C21983
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:06:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84C67283E70
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:07:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BCBF15ADA0;
-	Mon,  1 Jul 2024 13:06:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE3C15B0FD;
+	Mon,  1 Jul 2024 13:07:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="K0UZTwOZ"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vMQXEoBs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0EAB158D9F
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 13:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF0F2158D94;
+	Mon,  1 Jul 2024 13:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719839182; cv=none; b=IzHZ/mHS1p48ysQsT0aly19MV2AHEmYrD68LpzwqJT0ROaVw33DdrZ4BrLAW0ORZ+n/lyKWFfOurfatSxw9RliMtzuyAwV28ubGLEDy1MMMUx4k3iSJlSpyxoNc3cBHFs4q3AKZICOUk6aGM4G3AhCv96Gaxsady58YIIhBuy94=
+	t=1719839231; cv=none; b=rxXOVGUB7M1XqsyzN0m02x41WLLNPWX8SsPLDQ3uodzV72Nlbu3pQrSSLhvY0dGWsAkNEO27qMSE0bZyXoijBeVijNm4Onl/a1rk1KD806iah7c63HwbFSH1nPFr7cK0nvQKi0/heCauuZIDdAKMW/ygRsreD7xQGQvcPugFidY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719839182; c=relaxed/simple;
-	bh=oGYSrYWdqSlfP50f6B+7Y3qjHt/RSL9qLTDw292P7QQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WW3xhj2poAA8W43qJE+NNhK8kaBYUMQC124GKO4wRWPZptayvt6RmBcxVrxUzglU09ObyQTx8cPedFlzHO72awhMmsw3kQwG6IQtgp2YkYi83tNdLIWxwE8dqMdZePcbVffWX3/RZGmg0rRIoaRkwy/rN8TRVqaTagSnJmruqpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=K0UZTwOZ; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8624060003;
-	Mon,  1 Jul 2024 13:06:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1719839172;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EOigm+lmrrAayqgxGapMPlIg5+QAdA30qXZZ1VJ9MgE=;
-	b=K0UZTwOZRzVe/+8QVUPUZnI5ZqLpGOmEoiR6fE/1Rx9/9UTuImMOwsL+NqmPdV+5bEtId5
-	Xe4xlnXP/lWu4m7Yg6hOT//UyYZXc+BOwZGJRjJWgIKc4H8u9Xo7M8SRZnf33I1Z/Cq5HY
-	NVSJQ6rfOuneCzN75ViNv8l7ejHfAobZcxJxgqESVkUlLDVIrWSwxsf9M0CDUujUSGQjn+
-	s9wJ+dDY3nG0sMhiRxTSjo0vU8joRjIvU2QLPJlPk9ZwAfSay06ZhmQOO/Ef0Ss1lYWPpR
-	yKUsK3YJOPmEl5HAotX+HZZMFV9o8QzD/2P3BTz9fzSmnf0zcdMVIBMiI7krPg==
-Date: Mon, 1 Jul 2024 15:06:09 +0200
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>,
-	Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, rdunlap@infradead.org,
-	arthurgrillo@riseup.net, Jonathan Corbet <corbet@lwn.net>,
-	pekka.paalanen@haloniitty.fi
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
-	thomas.petazzoni@bootlin.com, seanpaul@google.com,
-	marcheu@google.com, nicolejadeyee@google.com,
-	Pekka Paalanen <pekka.paalanen@collabora.com>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>
-Subject: Re: [PATCH v8 00/17] drm/vkms: Reimplement line-per-line pixel
- conversion for plane reading
-Message-ID: <ZoKpwWaX4LGqLC04@louis-chauvet-laptop>
-Mail-Followup-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>,
-	Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, rdunlap@infradead.org,
-	arthurgrillo@riseup.net, Jonathan Corbet <corbet@lwn.net>,
-	pekka.paalanen@haloniitty.fi, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com,
-	miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com,
-	seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com,
-	Pekka Paalanen <pekka.paalanen@collabora.com>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>
-References: <20240516-yuv-v8-0-cf8d6f86430e@bootlin.com>
+	s=arc-20240116; t=1719839231; c=relaxed/simple;
+	bh=KZRB+pSu6/N8R0U+OKgLy44ngGed9mirUDVDYpgl0tI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AZmaqh07174DastNikLmXmThFfaz7xS3TH15J+VcFAZ+OmMvB4YQH+8m7uakMxLd/I8SEy3mmLhku/nBhVlg8e9ydG4dCSbmgD+ilBaiMbQo8dsWCk71wfhwTgiTDVy1B7YsmkSkonjhKRBJHLAjm5E77zjPyeAAa2RfJJx4W0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vMQXEoBs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63925C116B1;
+	Mon,  1 Jul 2024 13:07:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719839231;
+	bh=KZRB+pSu6/N8R0U+OKgLy44ngGed9mirUDVDYpgl0tI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=vMQXEoBsMCj/iryhGdhg2Pmml8yUbzzhmwLZOXI0+ty8s9fu80nQZFPEArxuBYrWj
+	 ETXO3zGUBCuUWTPxMJBIne0R+V/jZS2eApvaUaFs8pl3IEqyLECWjxCvQvqqRFtKEQ
+	 mcDXpf3WFCKFF4dOhGx77HCkiCxFfkxhYN6vkFYA9Q3mu/WX5U3U+tviyNqmXb85ug
+	 cQT/bDcOqxl9Mvr8he2EgHyOnGh7oiuvt/RWzU+kD2d/8xenT9GdI5hUsvEKPKyHSf
+	 mNnq4UDwoQYdllpH5qidGdIJ8ZZs5NszQNQ+CnVjIWwLHmOSlmvqy9kfAqfkuoYvE/
+	 NaULdh8Aapq0w==
+Message-ID: <c66d1b41-4698-4c37-8c42-da36167d95e8@kernel.org>
+Date: Mon, 1 Jul 2024 15:07:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240516-yuv-v8-0-cf8d6f86430e@bootlin.com>
-X-GND-Sasl: louis.chauvet@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: arm: fsl: add i.MX93 14x14 EVK board
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
+ s.hauer@pengutronix.de
+Cc: kernel@pengutronix.de, festevam@gmail.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, Peng Fan <peng.fan@nxp.com>
+References: <20240628121542.2000184-1-peng.fan@oss.nxp.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240628121542.2000184-1-peng.fan@oss.nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi everyone,
+On 28/06/2024 14:15, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> Add compatible string for i.MX93 14x14 EVK Board.
 
-I sent this iteration over a month ago, and I haven't received any 
-feedback since then. The same goes for the two other series [1] and [2], 
-which I sent after discussing with Melissa.
-
-I'm a bit surprised that nothing has been reviewed or merged, as Maíra 
-mentioned in [3] that she wanted to merge at least the first 11 patches. I 
-just checked, and this series applies to drm-misc-next. However, if you 
-encounter any issues, I can send a rebased version.
-
-As you can see, I have more series ready ([2], [3]), and I am working on 
-additional features (configfs [4], variable refresh rate, mst...). 
-However, I am currently waiting for feedback on this series before 
-proceeding further with the next topics.
-
-What should I do to move those series forward?
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
-Louis Chauvet
+Krzysztof
 
-[1]: https://lore.kernel.org/all/20240516-b4-new-color-formats-v1-0-74cf9fe07317@bootlin.com/
-[2]: https://lore.kernel.org/all/20240516-writeback_line_by_line-v1-0-7b2e3bf9f1c9@bootlin.com/
-[3]: https://lore.kernel.org/all/c83255f4-745e-43e6-98e0-2e89c31d569a@igalia.com/
-[4]: https://github.com/Fomys/linux/tree/b4/new-configfs
-
--- 
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
