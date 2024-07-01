@@ -1,75 +1,73 @@
-Return-Path: <linux-kernel+bounces-236614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E41C091E4E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:11:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BED6191E4EE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1338C1C218EA
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:11:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFD721C218B6
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C975D16D4F5;
-	Mon,  1 Jul 2024 16:11:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4197116D4F5;
+	Mon,  1 Jul 2024 16:12:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ayl0Ms6G"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="jO0vKBMF"
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A811EB2A;
-	Mon,  1 Jul 2024 16:11:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC5B43144
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 16:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719850299; cv=none; b=jNvdpd6JqOX5HlnX2f/5F2y2mT2MMo/EH4S6bJ5wZMf3DomF3azvFDK/NE47EQdphBho7YIUN28A9j6Am9V/jJ3oHLIbDtKfOvO6p5eyJsGgMrunCzDw8ggItxBdClWBncBGdf4tUQOmMMDkThIJj+RbOWc4Te7/VUv/lJd9ozQ=
+	t=1719850321; cv=none; b=VmeFyxnSNSVxEaKnZ7YOOYHtAAacd879s11gs6pvoHL4mtWXbeOZg7CjkmmjBcgoeHeM/yg6p+fOyZKT39Q3+13knBgdAxFcqc5cFD1aE9siiA0gujb9xdidqe9ungg6evSDCwWt18BEx7dBDScwget5CqgLSglT6hX77gBxE74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719850299; c=relaxed/simple;
-	bh=0TFTL2VmQr0dxcD2CU7cN8SoCIqPsJjtAg/sOk2qjZ0=;
+	s=arc-20240116; t=1719850321; c=relaxed/simple;
+	bh=qYf/mW8GGKN3S8wALYWRK3HzT9T7phHBWlVg81HJQ/M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gdp7NBr1qsAEoAL57VoqLUmOAofTMst98BxQN5cFTcQ2310pIBeFG+MvhrYtiXI1/w2G7G3a5wwMVVxg5uuWlr14UTmnKNTyPqGw7PHiCMC4Qn6toHGKEMYnvH9HtoUAdFqkTuVCuZJ21ewZzTfZflBlsy+yItjK+awDvitZSn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ayl0Ms6G; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2c722e54db8so2178750a91.2;
-        Mon, 01 Jul 2024 09:11:37 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=LbTaWsighDAgCbqDThamr+62Cn2kylhjuoBo6XXWD1YGYGeT9BvHfAhNpGtDGCmOmM4IkegvQyDlPKNUWBFD28/cAd3Xfv57VYW9Mssz9Kequ5fXi1plYstYCDoWzqEaxlaK3uPszmIfyt9ylYvGu2aNc8+d5XspUbu4s7u4UPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=jO0vKBMF; arc=none smtp.client-ip=209.85.167.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3d562882f4cso1856855b6e.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 09:11:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719850297; x=1720455097; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=r2bQVFLtKvwNRDTYmCMNC+Da1fLpCg7wL1mgkqFufVA=;
-        b=Ayl0Ms6GlSARaPqzrcpMKjcz/NjkOT7TAsLs6+iAp6ht3BI6hvOg8GxoXLYSJQznrF
-         ypRsIfVaRzxqliCkDnytMVQSx7RFL992pYsQjA/NCRSVrv9X8ZRMxaRSND1UxWvJtUxS
-         zkltRZO6CqBcqYLNEylI75lCU2exr9NV+gq/WZpgrUZoVYHvLjVWkgFZrKqCe3T4oiGd
-         1N3y3kxI7vWwASt3+GJgP/LW2lPfq0jiC0cl5hTnMXhmWHlNdY6ea6XU1ZsAIT2s8rOk
-         4rqKxRGO9AA5S5lhDjk/2krTfoBWh116qh+bd2f7sFsUDbs42sKrVTyRuULFtrENZIlY
-         I9bg==
+        d=sifive.com; s=google; t=1719850319; x=1720455119; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Gf3a5Pnrja8AHiv3n1YZ7CSp9kh7PHpbQf65ENC5dlQ=;
+        b=jO0vKBMF+2eV8p/oeVk0qY5HQmOPf2VAclbZDfo1675Yyh56BMHoK4RuPQ2GLSBu8N
+         d4TY6LYmFtb74yz3FeCX7acFeBMP2887ultwrfJTY1N05y9slHnjjgMEYeDWPhowRG7e
+         qKKBbocg+iomeIYspc05Pbaw/xv+ZNgnKCFcskDaSse+GD1xGqH7ikw+WhVGPD0zUkyT
+         1mEoK4IkY6pw+8BX6b3GIbB7umde4ZZlSmzzLaSfF4n4ptVxKj/6oN9I2bbyNpnccVlB
+         FHRqWEwxUF2k9kIby8Lc1tczzkpB7LNRCtPIgkhugqcE5awhCtJxgwajDE2noVcgAC4L
+         CHeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719850297; x=1720455097;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r2bQVFLtKvwNRDTYmCMNC+Da1fLpCg7wL1mgkqFufVA=;
-        b=FSxGlt5PSYsVlwehnDBrQq9X4gS14ssOA0SstzIB3F8zwV3slpRYocxDNz6PQbmdB2
-         l3pR9xsUZ9+tAohdSrTMwcInIzJ4ZMIsy6yNF2jndRC1SD5BPYtDdqWIxdFzCzauufqG
-         KV/oFbiMsIdD5uaoLVkSpOe0G3J0/d9cFrUjPOYy9YfxmrmdoZd0lfweSgWen9aC/G/3
-         7WVPAcvDbYl3GCQof30rQsSN+Yrmg6Ywslvxhr76foynPHJs1AMCRC2F/g7XT5+M819K
-         qUqNaqrUbGy4cVbahy/2KAvW1owRZuvYJiwCCGHGli6f9UUNknwNp3dNyV/l+tdVnTmA
-         4njw==
-X-Forwarded-Encrypted: i=1; AJvYcCX6L6m47fMik3lPH4pBWtJOtPxVkWh93Sjk170gr4VIcYHVJdktKpa0yBq0B8+KweTpkAngI1pO8kV84FiM4i5LgddwTvaS6k6ZEEt19VQpQctyuytP1VXu8IHm5/1atxKIYpeoqs8j9Myx9IyKrAP2I1cDgIqJZxSQhwvS0VqFmQAO5p7sT4mQ79TKKLLhVh7djVVhFKqSZ4RU6RI//d8=
-X-Gm-Message-State: AOJu0Yx0457eVf1AEIWDqEWrk73B/uz46eH+nWSciVLBs5PVBXZ8d6EG
-	PWC7WOosPF8Pmd/NmPquz0y09lEgKuEwDP2Wowem1S3can9kPqWx
-X-Google-Smtp-Source: AGHT+IEgi3BJ6wGJJlrFhvwlwzwbVax5wtS4iFCwmb2T8SAcNQB0KYX2PlWdgIyx2ER1awfla8R3cA==
-X-Received: by 2002:a17:90b:154:b0:2c2:fa5e:106a with SMTP id 98e67ed59e1d1-2c93d77cbdbmr4667542a91.48.1719850296685;
-        Mon, 01 Jul 2024 09:11:36 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91d3bc5a1sm6942412a91.36.2024.07.01.09.11.34
+        d=1e100.net; s=20230601; t=1719850319; x=1720455119;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Gf3a5Pnrja8AHiv3n1YZ7CSp9kh7PHpbQf65ENC5dlQ=;
+        b=iM9ZEuHYGKhIq9YX9oD+iiN4m14h5ZQ1uYvnkcYB+355SVtnSWlfINFhn78b2tgYL0
+         ZjzvmEmn6e1bExa62clLCWTtT9yWTl92ZI9KtMj8k/QJ7eX1t5KNrcAYsPmZT/YwEu/y
+         h/5zCkeP2PCSxs8BKV9bjIFbRyjqgBxwYeiSr7jlq77HKy/cnzIOqerR8xaNVFWzFHfM
+         a1VLESO77dHlNXF4c0mtX/5gdkqPSdafOTao3Q/4OFetpd6ZlEnxu9W+xsI/BhQuCmVX
+         Jx3vz0qbyt1Ym7CIR3rwwgbpJLisDr8kzhu9xpgL/OkTqQGgMfB8GXHIjbr0B/8NgJnG
+         T4bg==
+X-Forwarded-Encrypted: i=1; AJvYcCWT4x5/CEu2qV9wlU1fR+0ewOq9CGSPOvGLL5eQp+LM5ZeW2eGZU4JgrHVeIpgj1gW2RsOhlVV2utyEGcCDNPchqvKUYwAXSHWJgq3t
+X-Gm-Message-State: AOJu0YxjXfljdU4pViPD3gwb4VgwpG+zoe5H3hC4K4eFwGpLpYMU3kjO
+	HNhoqu5s+elH5nlRMvFH49APZ6O6g5x60C6J9Pe6leTxx3YFhhFN1babh8+TFdM=
+X-Google-Smtp-Source: AGHT+IEwPAYueYsYBU7iXqBEMRFmuAd1MLK051xLXmuVq1c5N6cvZaOPH+qJWxXVW1W7c7sUfLOy2Q==
+X-Received: by 2002:a05:6808:211b:b0:3d2:16c6:651a with SMTP id 5614622812f47-3d6b568709cmr9465278b6e.53.1719850318992;
+        Mon, 01 Jul 2024 09:11:58 -0700 (PDT)
+Received: from [100.64.0.1] ([147.124.94.167])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79d692945b4sm357969185a.57.2024.07.01.09.11.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Jul 2024 09:11:35 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <08c75bb9-7826-43e3-bffe-793a8542bdff@roeck-us.net>
-Date: Mon, 1 Jul 2024 09:11:33 -0700
+        Mon, 01 Jul 2024 09:11:58 -0700 (PDT)
+Message-ID: <7ab7d629-6993-4cad-b5b7-62bddfc74a49@sifive.com>
+Date: Mon, 1 Jul 2024 11:11:55 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,79 +75,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] hwmon: add MP5920 driver
-To: Alex Vdovydchenko <keromvp@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Sean Anderson <sean.anderson@linux.dev>,
- Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
- Delphine CC Chiu <Delphine_CC_Chiu@Wiwynn.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-i2c@vger.kernel.org, Alex Vdovydchenko <xzeol@yahoo.com>
-References: <20240701145603.1507516-1-xzeol@yahoo.com>
- <20240701145603.1507516-3-xzeol@yahoo.com>
+Subject: Re: [PATCH v3 03/13] riscv: dts: allwinner: Add xtheadvector to the
+ D1/D1s devicetree
+To: Conor Dooley <conor@kernel.org>, Charlie Jenkins <charlie@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
+ linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ Conor Dooley <conor.dooley@microchip.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Jonathan Corbet <corbet@lwn.net>,
+ Shuah Khan <shuah@kernel.org>, Guo Ren <guoren@kernel.org>,
+ Evan Green <evan@rivosinc.com>, Andy Chiu <andy.chiu@sifive.com>,
+ Jessica Clarke <jrtc27@jrtc27.com>, peterlin@andestech.com
+References: <20240619-xtheadvector-v3-0-bff39eb9668e@rivosinc.com>
+ <20240619-xtheadvector-v3-3-bff39eb9668e@rivosinc.com>
+ <0cc13581-5cc4-4a25-a943-7a896f42da4c@sifive.com>
+ <20240701-prancing-outpost-3cbce791c554@spud>
 Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20240701145603.1507516-3-xzeol@yahoo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Samuel Holland <samuel.holland@sifive.com>
+In-Reply-To: <20240701-prancing-outpost-3cbce791c554@spud>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 7/1/24 07:56, Alex Vdovydchenko wrote:
-> Add support for MPS Hot-Swap controller mp5920. This driver exposes
-> telemetry and limit value readings and writings.
+Hi Conor, Charlie,
+
+On 2024-07-01 11:07 AM, Conor Dooley wrote:
+> On Mon, Jul 01, 2024 at 10:27:01AM -0500, Samuel Holland wrote:
+>> On 2024-06-19 6:57 PM, Charlie Jenkins wrote:
+>>> The D1/D1s SoCs support xtheadvector so it can be included in the
+>>> devicetree. Also include vlenb for the cpu.
+>>>
+>>> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+>>> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+>>> ---
+>>>  arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi | 3 ++-
+>>
+>> The other C906/C910/C920-based SoCs need devicetree updates as well, although
+>> they don't necessarily need to be part of this series:
+>>
+>>  - sophgo/cv18xx.dtsi
+>>  - sophgo/sg2042-cpus.dtsi
+>>  - thead/th1520.dtsi
 > 
-> Signed-off-by: Alex Vdovydchenko <xzeol@yahoo.com>
+> Yeah, I think I pointed that out before with the same "escape hatch" of
+> it not needing to be in the same series.
+> 
+>>
+>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi b/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi
+>>> index 64c3c2e6cbe0..6367112e614a 100644
+>>> --- a/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi
+>>> +++ b/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi
+>>> @@ -27,7 +27,8 @@ cpu0: cpu@0 {
+>>>  			riscv,isa = "rv64imafdc";
+>>
+>> The ISA string should be updated to keep it in sync with riscv,isa-extensions.
+> 
+> This probably looks like this cos I said that the kernel shouldn't parse
+> vendor extensions from "riscv,isa". My rationale was that we have
+> basically no control of what a vendor extension means in riscv,isa so 
+> we shouldn't parse them from it (so marginally worse than standard
+> extensions, where it means what the spec says except when it doesn't).
+> 
+> Given how we implement the parsing, it also meant we weren't implying
+> meanings for vendor extensions ACPI-land, where we also can't ensure the
+> meanings or that they remain stable. That change is in a different
+> series:
+> https://patchwork.kernel.org/project/linux-riscv/patch/20240609-support_vendor_extensions-v2-1-9a43f1fdcbb9@rivosinc.com/
+> 
+> Although now that I think about it, this might break xandespmu... I
+> dunno if the Andes guys switched over to using the new property outside
+> of the single dts in the kernel tree using their SoC. We could
+> potentially special-case that extension if they haven't - but my
+> position on this mostly is that if you want to use vendor extensions you
+> should not be using riscv,isa (even if the regex doesn't complain if you
+> add them). I'd like to leave the code in the other patch as-is if we can
+> help it.
+> 
+> I added Yu Chien Peter Lin here, maybe they can let us know what they're
+> doing.
 
-checkpatch says:
+OK, that makes sense to me. Then please ignore my original comment.
 
-WARNING: From:/Signed-off-by: email address mismatch: 'From: Alex Vdovydchenko <keromvp@gmail.com>' != 'Signed-off-by: Alex Vdovydchenko <xzeol@yahoo.com>'
-
-You'll have to decide which address to use, and use it consistently.
-
-Thanks,
-Guenter
+Regards,
+Samuel
 
 
