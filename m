@@ -1,209 +1,170 @@
-Return-Path: <linux-kernel+bounces-235948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE45691DBA5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:40:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3923591DBA8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:41:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D4821F22B71
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:40:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1F04284E60
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B7A84E1E;
-	Mon,  1 Jul 2024 09:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D00C484FDF;
+	Mon,  1 Jul 2024 09:41:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dLRLmwBn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="IG5stIMf"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C3182D93;
-	Mon,  1 Jul 2024 09:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6885C524C9;
+	Mon,  1 Jul 2024 09:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719826848; cv=none; b=Zke3XqSapGlNArrmoVFEeEO3iRZ2v8jHJbg90GihqFn4WhKlzP2iRruT/7D6RD3JzaO4zVxrhs3gbkyWefdL9VB1Xk+DYB3MCu5R56CUYdBg6/fzi1N81ALSxMvIXPaz5Zz3lI2Q49L6Qutihp2+bposYOgSAaYwQQQs34llHiY=
+	t=1719826910; cv=none; b=Hi+m5g2hr4mMfQDF9lkr8GAUecy+EP7v2mhAtakLwqLPkKA4/W//VfKMNFR4rUWuZNesHVtzz1fjH/xFMFJ7K16H73XvaCwktq9nCAPyb0H2uK3GsSeVRjiUgT0pCDHlSSu3WDm6OmYtplRcjcDcRLQ2ECqf9ziQ2WmQXDTCzl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719826848; c=relaxed/simple;
-	bh=CUOg90BjhCDs8Ff2sVBIxrYihofVhKnPMI7dJZeTTnQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ETl0n36vQt183j7KC+ZUep4ZIORpzxPSkS5f1TnaYhhYF+RB23tCG7aQ1MihgmYUXOEmOsRGC8NSlVftnzJejJsWgmfmpvnyIahto1tX8VVJd9brH6zOL7IYqN3gd/oMeia0X2uGExYuEQzqdt3rjlmYgaz9fq6X1LenCIJdK8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dLRLmwBn; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719826846; x=1751362846;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=CUOg90BjhCDs8Ff2sVBIxrYihofVhKnPMI7dJZeTTnQ=;
-  b=dLRLmwBn25T9WQHaDuzeecVtkFCrn+W6vRPUtbPfWgrELN55fn5ij+7f
-   AOQdVDH1TpE6xZzjryq2IgyxNnLzYmlyTyuKoprWeKpSOPYCaeI2tdHJ9
-   x2jTcTKW3LlUBKqKxIYXRnFg0t2xaJpVQFX4rD9ZkbkIxcI8/CtrhjFc6
-   DQHuifqzx9uka3iYYn51oLtX/AQW4ylJihDZGEjHZwieWOcgHcPJXzEkm
-   iK8F4g9lRmL2wnYtSzwxYOzlUty1qSnsbmygpgYEPld7ky2QY87H4mlJd
-   jNWrLjW03Gu3TPtRQBtizW5MZCcQYmZLNDh9vROkE17pdZYurWkFzHZLO
-   A==;
-X-CSE-ConnectionGUID: PBcmVAMtQVSTu+qFk3QhGA==
-X-CSE-MsgGUID: hQBciPbbSLaH061VBMgb5g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11119"; a="27536937"
-X-IronPort-AV: E=Sophos;i="6.09,175,1716274800"; 
-   d="scan'208";a="27536937"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 02:40:46 -0700
-X-CSE-ConnectionGUID: uDcUiVMGS1q7manYMZlZQA==
-X-CSE-MsgGUID: EHHHR5tYTLe0Go53aI9PCQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,175,1716274800"; 
-   d="scan'208";a="50057056"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.19])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 02:40:45 -0700
-Message-ID: <fcb772ac7d5acbd475fa9316994e8b7410ac14a3.camel@linux.intel.com>
-Subject: Re: [PATCH 2/2] selftests/thermel/intel: conform the test to TAP
- output
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>, Shuah Khan
-	 <shuah@kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: kernel@collabora.com, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 01 Jul 2024 02:40:45 -0700
-In-Reply-To: <20240522170655.2879712-2-usama.anjum@collabora.com>
-References: <20240522170655.2879712-1-usama.anjum@collabora.com>
-	 <20240522170655.2879712-2-usama.anjum@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	s=arc-20240116; t=1719826910; c=relaxed/simple;
+	bh=W2FtqVZmFFmz8xYyngU16lTUGiuPORQT/UMAj+MDzMQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Z41hreFNfOsTC60MNMvyFNYe7oIotIXixIXRBuma176rkjsCBa6dRVQTisaew6iSClbOf6nNDrT9VS7faByYiWd1jflaXDteH5pWF7dpUQoSHWmaAjwVoUUl6FGdw5Zy18K2/6+sMe+lj/Lgp2Rh0IN+tIz7GkF3bC+uWf1wGzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=IG5stIMf; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4618DKUD028717;
+	Mon, 1 Jul 2024 11:41:39 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	NELJzmKSWmV5+LkugKpquX6gMQupWRQnNGEFr2cD8U8=; b=IG5stIMfKBFSYxkx
+	7QqpII60xQZcZnTDqy8WqZ1ovDPhgSFGPh7YTCxbUYg3WcJ5Qgd85sQyuYI6Yt24
+	ueaci4AfQwt8ls78jJQDZbR1hLNySVTkffAji48swu29UTXzYw7mKm2itcXTleB5
+	1ope08svXXExvTiVlkCgGMDGuqD2Kwm/ZQeESyRPfaiHaWHr7GJsuuEThVk1ColH
+	pvUPpy8q6YUwbXv/O7DvL+vAReineD+84vu+OCesf+HEIFi24uduo5wlO37C4TYD
+	rH4rw8wb+CMPcqM3KKrNAgF2E6W7QIwoh/KSyNvypwkaYb6d4lV/stwdKgjgiGy6
+	+9qT0Q==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 402uu0m4rw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 01 Jul 2024 11:41:38 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 2147540046;
+	Mon,  1 Jul 2024 11:41:33 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3E4552171FF;
+	Mon,  1 Jul 2024 11:41:14 +0200 (CEST)
+Received: from [10.252.5.127] (10.252.5.127) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 1 Jul
+ 2024 11:41:13 +0200
+Message-ID: <78644a85-9e42-8af7-778a-80383bc7c0f4@foss.st.com>
+Date: Mon, 1 Jul 2024 11:41:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: linux-next: build failure after merge of the drm tree
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Brown
+	<broonie@kernel.org>
+CC: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        Raphael
+ Gallais-Pou <raphael.gallais-pou@foss.st.com>,
+        Yannick Fertre
+	<yannick.fertre@foss.st.com>,
+        Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List
+	<linux-next@vger.kernel.org>
+References: <Zn8TKYDCOCtbbNH8@sirena.org.uk>
+ <2024063022-trapping-affidavit-56fd@gregkh>
+Content-Language: en-US
+From: Philippe CORNU <philippe.cornu@foss.st.com>
+In-Reply-To: <2024063022-trapping-affidavit-56fd@gregkh>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-01_08,2024-06-28_01,2024-05-17_01
 
-T24gV2VkLCAyMDI0LTA1LTIyIGF0IDEwOjA2IC0wNzAwLCBNdWhhbW1hZCBVc2FtYSBBbmp1bSB3
-cm90ZToKPiBDb25mb3JtIHRoZSBsYXlvdXQsIGluZm9ybWF0aW9uYWwgYW5kIHN0YXR1cyBtZXNz
-YWdlcyB0byBUQVAuIE5vCj4gZnVuY3Rpb25hbCBjaGFuZ2UgaXMgaW50ZW5kZWQgb3RoZXIgdGhh
-biB0aGUgbGF5b3V0IG9mIG91dHB1dAo+IG1lc3NhZ2VzLgo+IAo+IFNpZ25lZC1vZmYtYnk6IE11
-aGFtbWFkIFVzYW1hIEFuanVtIDx1c2FtYS5hbmp1bUBjb2xsYWJvcmEuY29tPgo+IC0tLQo+IMKg
-Li4uL2ludGVsL3Bvd2VyX2Zsb29yL3Bvd2VyX2Zsb29yX3Rlc3QuY8KgwqDCoMKgwqAgfCA2OCAr
-KysrKysrKy0tLS0tLS0tLQo+IC0tCj4gwqAxIGZpbGUgY2hhbmdlZCwgMjggaW5zZXJ0aW9ucygr
-KSwgNDAgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdAo+IGEvdG9vbHMvdGVzdGluZy9zZWxm
-dGVzdHMvdGhlcm1hbC9pbnRlbC9wb3dlcl9mbG9vci9wb3dlcl9mbG9vcl90ZXN0Lgo+IGMKPiBi
-L3Rvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL3RoZXJtYWwvaW50ZWwvcG93ZXJfZmxvb3IvcG93ZXJf
-Zmxvb3JfdGVzdC4KPiBjCj4gaW5kZXggMDMyNmIzOWExMWI5MS4uMTYyNmM2ZDkyZTYyMSAxMDA2
-NDQKPiAtLS0KPiBhL3Rvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL3RoZXJtYWwvaW50ZWwvcG93ZXJf
-Zmxvb3IvcG93ZXJfZmxvb3JfdGVzdC4KPiBjCj4gKysrCj4gYi90b29scy90ZXN0aW5nL3NlbGZ0
-ZXN0cy90aGVybWFsL2ludGVsL3Bvd2VyX2Zsb29yL3Bvd2VyX2Zsb29yX3Rlc3QuCj4gYwo+IEBA
-IC05LDYgKzksNyBAQAo+IMKgI2luY2x1ZGUgPGZjbnRsLmg+Cj4gwqAjaW5jbHVkZSA8cG9sbC5o
-Pgo+IMKgI2luY2x1ZGUgPHNpZ25hbC5oPgo+ICsjaW5jbHVkZSAiLi4vLi4vLi4va3NlbGZ0ZXN0
-LmgiCj4gwqAKPiDCoCNkZWZpbmUgUE9XRVJfRkxPT1JfRU5BQkxFX0FUVFJJQlVURQo+ICIvc3lz
-L2J1cy9wY2kvZGV2aWNlcy8wMDAwOjAwOjA0LjAvcG93ZXJfbGltaXRzL3Bvd2VyX2Zsb29yX2Vu
-YWJsZSIKPiDCoCNkZWZpbmUgUE9XRVJfRkxPT1JfU1RBVFVTX0FUVFJJQlVURcKgCj4gIi9zeXMv
-YnVzL3BjaS9kZXZpY2VzLzAwMDA6MDA6MDQuMC9wb3dlcl9saW1pdHMvcG93ZXJfZmxvb3Jfc3Rh
-dHVzIgo+IEBAIC0yMCwxNyArMjEsMTMgQEAgdm9pZCBwb3dlcl9mbG9vcl9leGl0KGludCBzaWdu
-dW0pCj4gwqDCoMKgwqDCoMKgwqDCoC8qIERpc2FibGUgZmVhdHVyZSB2aWEgc3lzZnMga25vYiAq
-Lwo+IMKgCj4gwqDCoMKgwqDCoMKgwqDCoGZkID0gb3BlbihQT1dFUl9GTE9PUl9FTkFCTEVfQVRU
-UklCVVRFLCBPX1JEV1IpOwo+IC3CoMKgwqDCoMKgwqDCoGlmIChmZCA8IDApIHsKPiAtwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcGVycm9yKCJVbmFibGUgdG8gb3BlbiBwb3dlciBmbG9v
-ciBlbmFibGUgZmlsZVxuIik7Cj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGV4aXQo
-MSk7Cj4gLcKgwqDCoMKgwqDCoMKgfQo+ICvCoMKgwqDCoMKgwqDCoGlmIChmZCA8IDApCj4gK8Kg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGtzZnRfZXhpdF9mYWlsX3BlcnJvcigiVW5hYmxl
-IHRvIG9wZW4gcG93ZXIgZmxvb3IKPiBlbmFibGUgZmlsZSIpOwo+IMKgCj4gLcKgwqDCoMKgwqDC
-oMKgaWYgKHdyaXRlKGZkLCAiMFxuIiwgMikgPCAwKSB7Cj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoHBlcnJvcigiQ2FuJyBkaXNhYmxlIHBvd2VyIGZsb29yIG5vdGlmaWNhdGlvbnNc
-biIpOwo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBleGl0KDEpOwo+IC3CoMKgwqDC
-oMKgwqDCoH0KPiArwqDCoMKgwqDCoMKgwqBpZiAod3JpdGUoZmQsICIwXG4iLCAyKSA8IDApCj4g
-K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGtzZnRfZXhpdF9mYWlsX3BlcnJvcigiQ2Fu
-JyBkaXNhYmxlIHBvd2VyIGZsb29yCj4gbm90aWZpY2F0aW9ucyIpOwo+IMKgCj4gLcKgwqDCoMKg
-wqDCoMKgcHJpbnRmKCJEaXNhYmxlZCBwb3dlciBmbG9vciBub3RpZmljYXRpb25zXG4iKTsKPiAr
-wqDCoMKgwqDCoMKgwqBrc2Z0X3ByaW50X21zZygiRGlzYWJsZWQgcG93ZXIgZmxvb3Igbm90aWZp
-Y2F0aW9uc1xuIik7Cj4gwqAKPiDCoMKgwqDCoMKgwqDCoMKgY2xvc2UoZmQpOwo+IMKgfQo+IEBA
-IC00MSw2ICszOCw5IEBAIGludCBtYWluKGludCBhcmdjLCBjaGFyICoqYXJndikKPiDCoMKgwqDC
-oMKgwqDCoMKgY2hhciBzdGF0dXNfc3RyWzNdOwo+IMKgwqDCoMKgwqDCoMKgwqBpbnQgZmQsIHJl
-dDsKPiDCoAo+ICvCoMKgwqDCoMKgwqDCoGtzZnRfcHJpbnRfaGVhZGVyKCk7Cj4gK8KgwqDCoMKg
-wqDCoMKga3NmdF9zZXRfcGxhbigxKTsKPiArCj4gwqDCoMKgwqDCoMKgwqDCoGlmIChzaWduYWwo
-U0lHSU5ULCBwb3dlcl9mbG9vcl9leGl0KSA9PSBTSUdfSUdOKQo+IMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgc2lnbmFsKFNJR0lOVCwgU0lHX0lHTik7Cj4gwqDCoMKgwqDCoMKgwqDC
-oGlmIChzaWduYWwoU0lHSFVQLCBwb3dlcl9mbG9vcl9leGl0KSA9PSBTSUdfSUdOKQo+IEBAIC01
-MCw1NyArNTAsNDUgQEAgaW50IG1haW4oaW50IGFyZ2MsIGNoYXIgKiphcmd2KQo+IMKgCj4gwqDC
-oMKgwqDCoMKgwqDCoC8qIEVuYWJsZSBmZWF0dXJlIHZpYSBzeXNmcyBrbm9iICovCj4gwqDCoMKg
-wqDCoMKgwqDCoGZkID0gb3BlbihQT1dFUl9GTE9PUl9FTkFCTEVfQVRUUklCVVRFLCBPX1JEV1Ip
-Owo+IC3CoMKgwqDCoMKgwqDCoGlmIChmZCA8IDApIHsKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgcGVycm9yKCJVbmFibGUgdG8gb3BlbiBwb3dlciBmbG9vciBlbmFibGUgZmlsZVxu
-Iik7Cj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGV4aXQoMSk7Cj4gLcKgwqDCoMKg
-wqDCoMKgfQo+ICvCoMKgwqDCoMKgwqDCoGlmIChmZCA8IDApCj4gK8KgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoGtzZnRfZXhpdF9mYWlsX3BlcnJvcigiVW5hYmxlIHRvIG9wZW4gcG93ZXIg
-Zmxvb3IKPiBlbmFibGUgZmlsZSIpOwo+IMKgCj4gLcKgwqDCoMKgwqDCoMKgaWYgKHdyaXRlKGZk
-LCAiMVxuIiwgMikgPCAwKSB7Cj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHBlcnJv
-cigiQ2FuJyBlbmFibGUgcG93ZXIgZmxvb3Igbm90aWZpY2F0aW9uc1xuIik7Cj4gLcKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoGV4aXQoMSk7Cj4gLcKgwqDCoMKgwqDCoMKgfQo+ICvCoMKg
-wqDCoMKgwqDCoGlmICh3cml0ZShmZCwgIjFcbiIsIDIpIDwgMCkKPiArwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKga3NmdF9leGl0X2ZhaWxfcGVycm9yKCJDYW4nIGVuYWJsZSBwb3dlciBm
-bG9vcgo+IG5vdGlmaWNhdGlvbnMiKTsKPiDCoAo+IMKgwqDCoMKgwqDCoMKgwqBjbG9zZShmZCk7
-Cj4gwqAKPiAtwqDCoMKgwqDCoMKgwqBwcmludGYoIkVuYWJsZWQgcG93ZXIgZmxvb3Igbm90aWZp
-Y2F0aW9uc1xuIik7Cj4gK8KgwqDCoMKgwqDCoMKga3NmdF9wcmludF9tc2coIkVuYWJsZWQgcG93
-ZXIgZmxvb3Igbm90aWZpY2F0aW9uc1xuIik7Cj4gwqAKPiDCoMKgwqDCoMKgwqDCoMKgd2hpbGUg
-KDEpIHsKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGZkID0gb3BlbihQT1dFUl9G
-TE9PUl9TVEFUVVNfQVRUUklCVVRFLCBPX1JET05MWSk7Cj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoGlmIChmZCA8IDApIHsKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoHBlcnJvcigiVW5hYmxlIHRvIHBvd2VyIGZsb29yIHN0YXR1cwo+IGZp
-bGVcbiIpOwo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-ZXhpdCgxKTsKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfQo+ICvCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqBpZiAoZmQgPCAwKQo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKga3NmdF9leGl0X2ZhaWxfcGVycm9yKCJVbmFibGUgdG8g
-cG93ZXIgZmxvb3IKPiBzdGF0dXMgZmlsZSIpOwo+IMKgCj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoGlmICgobHNlZWsoZmQsIDBMLCBTRUVLX1NFVCkpIDwgMCkgewo+IC3CoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgZnByaW50ZihzdGRlcnIsICJG
-YWlsZWQgdG8gc2V0IHBvaW50ZXIgdG8KPiBiZWdpbm5pbmdcbiIpOwo+IC3CoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgZXhpdCgxKTsKPiAtwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgfQo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBpZiAo
-KGxzZWVrKGZkLCAwTCwgU0VFS19TRVQpKSA8IDApCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBrc2Z0X2V4aXRfZmFpbF9wZXJyb3IoIkZhaWxlZCB0byBz
-ZXQgcG9pbnRlcgo+IHRvIGJlZ2lubmluZ1xuIik7Cj4gwqAKPiDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoGlmIChyZWFkKGZkLCBzdGF0dXNfc3RyLCBzaXplb2Yoc3RhdHVzX3N0cikp
-IDwgMCkgewo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-ZnByaW50ZihzdGRlcnIsICJGYWlsZWQgdG8gcmVhZCBmcm9tOiVzXG4iLAo+IC3CoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgUE9XRVJfRkxPT1JfU1RBVFVTX0FU
-VFJJQlVURSk7Cj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqBleGl0KDEpOwo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB9Cj4gK8KgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBrc2Z0X2V4aXRfZmFpbF9wZXJy
-b3Ioc3RkZXJyLCAiRmFpbGVkIHRvIHJlYWQKPiBmcm9tOiBwb3dlcl9mbG9vcl9zdGF0dXMiKTsK
-PiDCoAo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgdWZkLmZkID0gZmQ7Cj4gwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB1ZmQuZXZlbnRzID0gUE9MTFBSSTsKPiDCoAo+
-IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmV0ID0gcG9sbCgmdWZkLCAxLCAtMSk7
-Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBpZiAocmV0IDwgMCkgewo+IC3CoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcGVycm9yKCJwb2xsIGVy
-cm9yIik7Cj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBl
-eGl0KDEpOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-a3NmdF9leGl0X2ZhaWxfbXNnKCJQb2xsIGVycm9yXG4iKTsKPiDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoH0gZWxzZSBpZiAocmV0ID09IDApIHsKPiAtwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHByaW50ZigiUG9sbCBUaW1lb3V0XG4iKTsKPiAr
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGtzZnRfcHJpbnRf
-bXNnKCJQb2xsIFRpbWVvdXRcbiIpOwo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-fSBlbHNlIHsKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oGlmICgobHNlZWsoZmQsIDBMLCBTRUVLX1NFVCkpIDwgMCkgewo+IC3CoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGZwcmludGYoc3Rk
-ZXJyLCAiRmFpbGVkIHRvIHNldAo+IHBvaW50ZXIgdG8gYmVnaW5uaW5nXG4iKTsKPiAtwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBl
-eGl0KDEpOwo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-fQo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgaWYgKChs
-c2VlayhmZCwgMEwsIFNFRUtfU0VUKSkgPCAwKQo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGtzZnRfZXhpdF9mYWlsX21zZygi
-RmFpbGVkIHRvIHNldAo+IHBvaW50ZXIgdG8gYmVnaW5uaW5nXG4iKTsKPiDCoAo+IC3CoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgaWYgKHJlYWQoZmQsIHN0YXR1
-c19zdHIsIHNpemVvZihzdGF0dXNfc3RyKSkKPiA8IDApCj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgZXhpdCgwKTsKPiArwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGlmIChyZWFkKGZkLCBz
-dGF0dXNfc3RyLCBzaXplb2Yoc3RhdHVzX3N0cikpCj4gPCAwKSB7Cj4gK8KgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKga3NmdF90ZXN0
-X3Jlc3VsdF9wYXNzKCJTdWNjZXNzZnVsbHkKPiByZWFkXG4iKTsKU2FtZSBjb21tZW50IGFzIGZv
-ciAxLzIuCgpUaGFua3MsClNyaW5pdmFzCgo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGtzZnRfZmluaXNoZWQoKTsKPiArwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoH0KPiDCoAo+IC3CoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcHJpbnRmKCJwb3dlciBm
-bG9vciBzdGF0dXM6ICVzXG4iLAo+IHN0YXR1c19zdHIpOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKga3NmdF9wcmludF9tc2coInBvd2VyIGZsb29yIHN0
-YXR1czogJXNcbiIsCj4gc3RhdHVzX3N0cik7Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqB9Cj4gwqAKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGNsb3NlKGZkKTsK
-Cg==
+
+
+On 6/30/24 09:26, Greg Kroah-Hartman wrote:
+> On Fri, Jun 28, 2024 at 08:46:49PM +0100, Mark Brown wrote:
+>> Hi all,
+>>
+>> After merging the drm tree and then some other trees which seem to have
+>> allowed the driver to be built much later in the merge process today's
+>> linux-next build (x86_64 allmodconfig) failed like this:
+>>
+>> /tmp/next/build/drivers/gpu/drm/stm/lvds.c:1212:19: error: initialization of 'void (*)(struct platform_device *)' from incompatible pointer type 'int (*)(struct platform_device *)' [-Werror=incompatible-pointer-types]
+>>   1212 |         .remove = lvds_remove,
+>>        |                   ^~~~~~~~~~~
+>> /tmp/next/build/drivers/gpu/drm/stm/lvds.c:1212:19: note: (near initialization for 'lvds_platform_driver.<anonymous>.remove')
+>>
+>> Caused by commit
+>>
+>>    6597efcfc53585d5 ("drm/stm: Allow build with COMPILE_TEST=y")
+>>
+>> interacting with
+>>
+>>    aca1cbc1c9860e39 ("drm/stm: lvds: add new STM32 LVDS Display Interface Transmitter driver")
+>>    0edb555a65d1ef04 ("platform: Make platform_driver::remove() return void")
+>>
+>> I have applied the below fixup patch.
+>>
+>>  From 59a5e11f41e93512ca1a5aed36c1c396d175797d Mon Sep 17 00:00:00 2001
+>> From: Mark Brown <broonie@kernel.org>
+>> Date: Fri, 28 Jun 2024 20:45:16 +0100
+>> Subject: [PATCH] drm: Fix up STM LVDS driver for void remove() conversion
+>>
+>> Signed-off-by: Mark Brown <broonie@kernel.org>
+>> ---
+>>   drivers/gpu/drm/stm/lvds.c | 4 +---
+>>   1 file changed, 1 insertion(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/stm/lvds.c b/drivers/gpu/drm/stm/lvds.c
+>> index bfc8cb13fbc5c..2fa2c81784e97 100644
+>> --- a/drivers/gpu/drm/stm/lvds.c
+>> +++ b/drivers/gpu/drm/stm/lvds.c
+>> @@ -1186,15 +1186,13 @@ static int lvds_probe(struct platform_device *pdev)
+>>   	return ret;
+>>   }
+>>   
+>> -static int lvds_remove(struct platform_device *pdev)
+>> +static void lvds_remove(struct platform_device *pdev)
+>>   {
+>>   	struct stm_lvds *lvds = platform_get_drvdata(pdev);
+>>   
+>>   	lvds_pixel_clk_unregister(lvds);
+>>   
+>>   	drm_bridge_remove(&lvds->lvds_bridge);
+>> -
+>> -	return 0;
+>>   }
+>>   
+>>   static const struct of_device_id lvds_dt_ids[] = {
+>> -- 
+>> 2.39.2
+>>
+> 
+> Looks good, thanks!
+> 
+> greg k-h
+
+Hi Mark,
+Many thanks for this fix and all my apologies for having creating this 
+issue.
+What's next and how can I help?
+Philippe :-)
+ps: On my side, I am still trying to understand why I did not "catch" 
+this issue that looks "pretty big".
+
 
 
