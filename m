@@ -1,152 +1,98 @@
-Return-Path: <linux-kernel+bounces-236881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36B5F91E831
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:05:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95B0F91E836
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:05:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4AA51F22A1C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:05:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C851A1C22203
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:05:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C6616F278;
-	Mon,  1 Jul 2024 19:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBF116F292;
+	Mon,  1 Jul 2024 19:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2MyhNwXk"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IwNorOyf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9839C8C7
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 19:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3B2C8C7;
+	Mon,  1 Jul 2024 19:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719860704; cv=none; b=X2f8JxyTQ8e5xdjBLA8fn6OpX32e0G/T6LC+SQxq4jqOUb+GWTkwGELSOEeDu58pBze+5SyN7pSRAWCgmjXXGg0nNKMyigE6htq/JzaAXsSXL2L2f8TqOLjUWiMB6zCl4TlCdrI0whE/RhgrIjDKf180ls9yEc2zKVbtZfbxgec=
+	t=1719860718; cv=none; b=tL99DKrZUntmHao2RuIgcKWZkqGB7W5CH9wfKD/3Ie5Nwqq7p783QXGxldiKwhFbYJ29BJ3QsT0kYZGRltNHTqPEV+DUnYhWb2BpC7U59+Isd93Dp2VOjYOFR6zBoNnIGXmmJ8lSz1Oqj7zkNGhTAFYKCcvMhGyn0ECM8URLxW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719860704; c=relaxed/simple;
-	bh=8k0AtF9KiolyJWuK8HLhDCv/hmVhr/rBk1ct5cuT9AA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GhD/cofJJWc7rPhk7Gr9OHWiUaQ82XqneFpP+7zMFmj2Y+yjXI5dndT3wqRJOJggzfCiezXfxu0D8K50ANS+9/OiE7/XrC+zP0BHSX/9vYCcgD+JMuqUjxv9BcRLduZwxNkA0KGNVRWtt16QZLiKuV9kBDDqHICT7t/ImPtgHxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2MyhNwXk; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6b5031d696dso17973066d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 12:05:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719860702; x=1720465502; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1iyaJckUfwKLOavZsL0Dti/NvsfMxOg4fM60nbeLb3c=;
-        b=2MyhNwXkCa2AA3Z+FkWBFUSIczECBuY034xv2sUMnsVK1JAGLplHV/guNmfssGc5I1
-         D8a0j2y08JPde7IkGpN8LX30r6ezveA3/hMjlXq8zLe04mWt0qnAaEPrTDd2BA5v2l+6
-         Iv6dLD0aQ4owbIcrPfZLc6za9Tr+2iQ9eqqZvMOtORPI139I+ePbnZT4DFLnSJ0yCTX/
-         I/orwGmbJSNtOjqGr9Dob5WykAAa2DWlpbQrXkaBJxQatFPLN+TjE2bJtG1b6pQdCRRg
-         3423j6YO0fWBhsDvK3mvzQk7JxL7pIv0ng1zlCqmSW/aZyWSkjeH3DBPrQtlyq6xCOFw
-         myxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719860702; x=1720465502;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1iyaJckUfwKLOavZsL0Dti/NvsfMxOg4fM60nbeLb3c=;
-        b=cFU5+WQcub4XUSYSMz5ymN6KrGvbbDx0SAdVw/kEOr21zRur8Tu9SOxg7BoTUSKvcr
-         m7Qck0UM2ixn1zT6SgCpUhZ2CeznMqAf5FE2IGEXupRrrREUvkGOsZ6lHv1cWu29LjIE
-         DSPaT5OC9MFYo0GykunPy+FgyHJVoXvD7JgZZkcKtGr982fF4f/emv/VQhJY72sgqz8f
-         I26oCupYpP4qFBJOQsxeyqd083fMySQQ+7owaAbPzJJGU7WKzyj7zs9UP+DuNNBqsq30
-         N07+l9FnYFVX+KE4izrsSe7dpqhPWk/q0aGBGewhidm5DK4TUNQQIpyH+9IAsbAnAVQq
-         PdEA==
-X-Forwarded-Encrypted: i=1; AJvYcCXS54EG8CX5ge0K/njdquhbSP/7os/s3tSBfzgzAjhZxOL6QVT8mN/otJhm8kSTo6PhCRTPeRQgqknbZ5kWq+1t4roXhdwPM8rrEw3Q
-X-Gm-Message-State: AOJu0Yzn3IGkn+jo2k5In+XsWypY7B64LcGyjcWeEX/nIfPm+P2fpSKt
-	QwEJ5TAlOslku4YuO0heRWCOtNxHeoQE133ZXwZuuHVUdMTFMf6HtoZun3S9P87BNvPOcg59jP6
-	WYdaQibFQkjQyj/Pqi0K7WFif04mqXjl729fvc/hQB03OA9Nv3lGYN3hyYQ==
-X-Google-Smtp-Source: AGHT+IFMk/Fy8HmApu9Nagm7rkVtZNRgXI7ZtAkmxpMtHuX4P9lSyGrItN72Z9tf2GD9wH/LCrC3alUkG3t3FzAjxFY=
-X-Received: by 2002:ad4:5762:0:b0:6b5:413a:3f96 with SMTP id
- 6a1803df08f44-6b5b704f0e0mr82787156d6.10.1719860701461; Mon, 01 Jul 2024
- 12:05:01 -0700 (PDT)
+	s=arc-20240116; t=1719860718; c=relaxed/simple;
+	bh=loOnHwMBg9M4XS+nNRQF1gsL0DMqhFJUC65jQbSLJQk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LTOueykfa1H8oeuR4YPMmPv0WHi93OzKIKvho808HLOKi4sPcBVkC/yNdcUnrM0mjfhprXmfrLFRG9sJfsaryIw0o+38fRGxqgmnvfGuG+L7DJAN7n+9SO2Hl7Cp9ojCUaqpSyrtEMnlUUNy+N0ECzzdz5lUaooQgaefZgDSe4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IwNorOyf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEDD9C32781;
+	Mon,  1 Jul 2024 19:05:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719860718;
+	bh=loOnHwMBg9M4XS+nNRQF1gsL0DMqhFJUC65jQbSLJQk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=IwNorOyf8vRAMM5+BWhA6pgc1oGRd1BpgHsyAu7Z6bXbohhmbHKtPSlhwcq4CO06g
+	 wAITEWtmVG3MG1o8NeAFOCgHdYqEaKRa4hBnFsd37yRZOKKDq4feP6vORf2Wl8qrs8
+	 SGqCEi25KDpxiyKvCo3ERTbBMF+4BVu03KTxuJydn6gLfobaW0SPAD8bDz0Io1PVIn
+	 5DokqnfnEUUrsRonCm73P+ZaMnHKn97PSpy/WRI4k+9U/70bb7ndo0lg4u3dxTx4cH
+	 QK0OdHYsJ6I9FiINZ2mo21Ir4lkLFsRNT2JvhuV+o1DJIJWd3OL7W7EZlFbL0uBF9u
+	 eOD2lP/heDG1g==
+From: SeongJae Park <sj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Suren Baghdasaryan <surenb@google.com>,
+	linux-mm@kvack.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] Docs/mm: rename legacy docs to unsorted docs
+Date: Mon,  1 Jul 2024 12:05:08 -0700
+Message-Id: <20240701190512.49379-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240628003253.1694510-1-almasrymina@google.com>
- <20240628003253.1694510-3-almasrymina@google.com> <m27ce9cris.fsf@gmail.com>
-In-Reply-To: <m27ce9cris.fsf@gmail.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Mon, 1 Jul 2024 12:04:49 -0700
-Message-ID: <CAHS8izNM8TjJ1DU+7gzq-0kH=tVeM6j-QsaKk=2FHNDF6RLwnA@mail.gmail.com>
-Subject: Re: [PATCH net-next v15 02/14] net: netdev netlink api to bind
- dma-buf to a net device
-To: Donald Hunter <donald.hunter@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, 
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
-	Nikolay Aleksandrov <razor@blackwall.org>, Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, 
-	Shailend Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst <jeroendb@google.com>, 
-	Praveen Kaligineedi <pkaligineedi@google.com>, Stanislav Fomichev <sdf@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 28, 2024 at 3:10=E2=80=AFAM Donald Hunter <donald.hunter@gmail.=
-com> wrote:
->
-> Mina Almasry <almasrymina@google.com> writes:
-> > +  -
-> > +    name: bind-dmabuf
-> > +    attributes:
-> > +      -
-> > +        name: ifindex
-> > +        doc: netdev ifindex to bind the dma-buf to.
->
-> Minor nit:
->
-> The series uses a mix of dmabuf and dma-buf but the doc additions
-> (devmem.rst) consistently uses dmabuf. I think it would be helpful to be
-> consistent here and say 'devmem dmabuf' in the docstring to highlight
-> whos dmabuf it is and keep the generated netdev docs in alignment.
->
+The work for changing the memory mangement documentation outline has
+started from 2022.  For that, old documents have placed under new
+chapter, "Legacy Documentations".  The plan is to eventually move all
+old documentations into new outline, while asking new documents to be
+added on the new outline from the beginning.
 
-To be honest, even the dmabuf docs mixes 'dma-buf' and 'dmabuf', to my eye:
+However, it is unclear where on the new outline each document should be
+placed for some cases.  Meanwhile, the name ("legacy") makes readers
+feel the documents under the chapter might be outdated or not actively
+maintained.  The absence of clear criteria for new outline also makes
+new documents difficult to find where those should be placed.  A new
+document was put on the bottom of the new outline recently, apparently
+not based on a clear guideline but just because it is the bottom of the
+list.
 
-https://docs.kernel.org/driver-api/dma-buf.html
+Rename the "Legagy Documentation" chapter to "Unsorted Documentations"
+with minor fixups.
 
-I can edit these docs I'm adding so these are consistent.
+SeongJae Park (4):
+  Docs/mm/allocation-profiling: mark 'Theory of operation' as chapter
+  Docs/mm/index: Remove 'Memory Management Guide' chapter marker
+  Docs/mm/index: rename 'Legacy Documentation' to 'Unsorted
+    Documentation'
+  Docs/mm/index: move allocation profiling document to unsorted
+    documents chapter
 
-But on 'devmem dmabuf', not sure to be honest. Technically all dmabufs
-are supported, even non-devmem ones. I'm not sure non-devmem dmabufs
-are common at all, the only example I can think of is udmabuf whose
-primary user is qemu and testing, so it's somewhat implied that the
-dmabuf is devmem, and even if it isn't, it would be supported. I
-prefer to keep the docs saying just 'dmabuf' as technically all are
-supported. Maybe I should add a note about this somewhere in the
-dedicated docs.
+ Documentation/mm/allocation-profiling.rst |  1 -
+ Documentation/mm/index.rst                | 19 ++++++++-----------
+ 2 files changed, 8 insertions(+), 12 deletions(-)
 
---=20
-Thanks,
-Mina
+
+base-commit: 5dc709e59ba6486e519b22f86278c978b422a025
+-- 
+2.39.2
+
 
