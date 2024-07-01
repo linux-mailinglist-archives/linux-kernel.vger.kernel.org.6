@@ -1,147 +1,100 @@
-Return-Path: <linux-kernel+bounces-236248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F6E591DF69
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:35:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA9EB91DF73
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:37:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 967EB1C208A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:35:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B01F92817E3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB60B14D6F1;
-	Mon,  1 Jul 2024 12:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="pAfHIgjF"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0381014D714;
+	Mon,  1 Jul 2024 12:36:49 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB46386250
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 12:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8389113D24D;
+	Mon,  1 Jul 2024 12:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719837313; cv=none; b=oy1ndlS4YnUflJH46rQzv5/OgVe3NXkj7yBkCZpLaWgFHowklRLsN/6Iww0+w1a00IvfATwZi5aa9QugOYe/9xu4bnIuAgNO5XokcmaZCkgh1hkv6sR/HdjaZjgeUhjaiO3W9qXEJ8jNuolfPvcBXCeK7lvWoPWaJFJ7e+J59sU=
+	t=1719837408; cv=none; b=JhhGITkt9U9AHsNvHaXP1NpJ+z0S/1KlPupO8/Tkaa1TZcpjaiPR0jt274QVhN8hxh+2MUcS5DQoMXynHhAwr2fHIA8PHzEd0fWYSk9hx1DtS9mDBmjQ9+Ikjpt2//PBJXJq2dvUqlCRGX/fuNMywYmu0+sCzEPHl5viZrjnXl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719837313; c=relaxed/simple;
-	bh=mZeO1f7tTznVKqOD4SvW+UN628jwmIqb6IO7RYHEuNo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g2ZSP1B6mrmAGKqCIHA5Hhgb3tn72MboaJyu7+1GejW9WcSVqoaycRULFWJFw5fJnnI15h1JrKWZf4YGNLV80k6goForfhqQBz1ms0z00M0xyt+gPTwsFDVnsKWce/32XqK4jDBeTYIyFZR7UvE5z3rww63Ah703DpLxN/P8Nk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=pAfHIgjF; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f480624d0fso15575815ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 05:35:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1719837311; x=1720442111; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8Srvua/8GiZk2f1lRDes3KQDNlajTOwOOiszOgYhtkE=;
-        b=pAfHIgjFp9YUT8lsILQhKGdJNkOLEeH4L8svf4d7mBWVb59VOY3lbu9C/Z1NNsk2us
-         jvlz9Goy9AqnLoTwfqdsFBOUpoL48O0ve9S9guulN7+IwahnQLJRRdHbTwAklM5knKmb
-         jTRPBEv9DUtSETpgv1AVNa74gsPS2TR0+AGrrCjxn/XBceocNim3OrAIWAedMk6jZSfP
-         1sqaDRQYZ2LtmFjo+OE1LZxHtgz/e4kFrNGjZyNGQfwvs08n30ZwUosJfGYD9N6emHmk
-         UJkzRuJLYvs1ZFpPQ558CgrO03/VplZ9uVgHRZDMAg59xSH23RYkhcOgvYRoZbQPkbH6
-         tnxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719837311; x=1720442111;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8Srvua/8GiZk2f1lRDes3KQDNlajTOwOOiszOgYhtkE=;
-        b=wO/k7SunMqIEttfEjIz/cPLtpqFQLEGzI3gtZlvjTI0/WjgcLGvbxYsdEyPgx+418d
-         +EzSGTJF5A9znmOwp3S0tpv+RFk1+50HhqPXROHKQDrqvcRLmf6WeBXHEiNWQZvNtZsi
-         P3syeBo4y7hGIpyKtKTvS1jhJK1lnR4nnA5fgJzUSQlbtfS5+tFyvpbxBAMLydP19mDn
-         DOwNv0UaTqzl7RGfIOiFgPju+zwAly3bYm+HzkDJCNZC707SrQ6JqTo40kGj0wjVaFwE
-         mBro2KxgtVa22trVPc+j+JkGUwiP+osY/9dSPhce089BBBC3gmvxOR6dk0Qwig/+AJhE
-         kMog==
-X-Forwarded-Encrypted: i=1; AJvYcCWMLnlZY+yW/glTtjS2sdk8Qq248TjGC960crdEdj+C4t3qnW/3svh6Ao+/77RG1V9p2whdl068FxI4ucbJhCftnii/XvncLrHLUfKx
-X-Gm-Message-State: AOJu0YyJXBLVIA/AGKmvS2JDOufUSuQA/yY4HGtrAsiA7Px2yID6+tKg
-	3r6xcTR/ePJTYGdIwLLhObE1JYw2iNdM/+xBOW+pnZf5KKRamL5BbPxdnYLHmjQ=
-X-Google-Smtp-Source: AGHT+IEDTYyht4xal4sRk0Ri79tyKeyIeWLDUvtqY7rzls4XH1cjLoNZcE3nJnryOV0CB94f4AEujg==
-X-Received: by 2002:a17:902:cec5:b0:1fa:95d6:1584 with SMTP id d9443c01a7336-1fadbca398dmr31822695ad.37.1719837310840;
-        Mon, 01 Jul 2024 05:35:10 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac11d8cbbsm63560625ad.106.2024.07.01.05.35.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 05:35:10 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sOGFP-000KA4-33;
-	Mon, 01 Jul 2024 22:35:07 +1000
-Date: Mon, 1 Jul 2024 22:35:07 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
-	brauner@kernel.org, chandanbabu@kernel.org,
-	John Garry <john.g.garry@oracle.com>, jack@suse.cz,
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH -next v6 1/2] xfs: reserve blocks for truncating large
- realtime inode
-Message-ID: <ZoKie9aZV0sHIbA8@dread.disaster.area>
-References: <20240618142112.1315279-1-yi.zhang@huaweicloud.com>
- <20240618142112.1315279-2-yi.zhang@huaweicloud.com>
- <ZoIDVHaS8xjha1mA@dread.disaster.area>
- <b27977d3-3764-886d-7067-483cea203fbe@huaweicloud.com>
+	s=arc-20240116; t=1719837408; c=relaxed/simple;
+	bh=9fUYgRSSLM0EqhLoBFV5RoCv2A59Gccjs9G7Kxs8Ppw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Eq+hpWbEdLF860AgOGm9o96qUNixLU8VVhIAutJM0/0+G85wWa3RxT6Ehf5VgFAEYeGWgpObg0d7MmqMZh0QyKpoDCG+i3jdm6Ii30VFTDxUMX22dXBPNSOyPVmDusrvvnuEVd9IwvFU2VRBH53HclFNXRh/sgJaf83sZqHgceA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACED7C2BD10;
+	Mon,  1 Jul 2024 12:36:47 +0000 (UTC)
+From: Leon Romanovsky <leonro@nvidia.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
+ Mark Zhang <markzhang@nvidia.com>, netdev@vger.kernel.org, 
+ Paolo Abeni <pabeni@redhat.com>, Saeed Mahameed <saeedm@nvidia.com>, 
+ Tariq Toukan <tariqt@nvidia.com>
+In-Reply-To: <cover.1718553901.git.leon@kernel.org>
+References: <cover.1718553901.git.leon@kernel.org>
+Subject: Re: [PATCH rdma-next 00/12] Multi-plane support for mlx5
+Message-Id: <171983740416.330197.16009173038296516665.b4-ty@nvidia.com>
+Date: Mon, 01 Jul 2024 15:36:44 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b27977d3-3764-886d-7067-483cea203fbe@huaweicloud.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-13183
 
-On Mon, Jul 01, 2024 at 10:26:18AM +0800, Zhang Yi wrote:
-> On 2024/7/1 9:16, Dave Chinner wrote:
-> > On Tue, Jun 18, 2024 at 10:21:11PM +0800, Zhang Yi wrote:
-> >> @@ -917,7 +920,17 @@ xfs_setattr_size(
-> >>  			return error;
-> >>  	}
-> >>  
-> >> -	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_itruncate, 0, 0, 0, &tp);
-> >> +	/*
-> >> +	 * For realtime inode with more than one block rtextsize, we need the
-> >> +	 * block reservation for bmap btree block allocations/splits that can
-> >> +	 * happen since it could split the tail written extent and convert the
-> >> +	 * right beyond EOF one to unwritten.
-> >> +	 */
-> >> +	if (xfs_inode_has_bigrtalloc(ip))
-> >> +		resblks = XFS_DIOSTRAT_SPACE_RES(mp, 0);
-> > 
-> > .... should this be doing this generic check instead:
-> > 
-> > 	if (xfs_inode_alloc_unitsize(ip) > 1)
+
+On Sun, 16 Jun 2024 19:08:32 +0300, Leon Romanovsky wrote:
+> From: Leon Romanovsky <leonro@nvidia.com>
 > 
->         if (xfs_inode_alloc_unitsize(ip) > i_blocksize(inode)) ?
+> From Mark,
 > 
-> > 		resblks = XFS_DIOSTRAT_SPACE_RES(mp, 0);
-> > 
+> This patchset adds support to IB sub device and mlx5 implementation.
 > 
-> Yeah, it makes sense to me, but Christoph suggested to think about force
-> aligned allocations later, so I only dealt with the big RT inode case here.
-> I can revise it if John and Christoph don't object.
+> An IB sub device provides a subset of functionalists of it's parent.
+> Currently type "SMI" is supported: A SMI device provides SMI (QP0)
+> interface and shares same VPort with it's parent; It allows the subnet
+> manager to configure VPort through this interface when the parent
+> doesn't support SMI.
+> 
+> [...]
 
-Sorry, but I don't really care what either John or Christoph say on
-this matter: xfs_inode_has_bigrtalloc() is recently introduced
-technical debt that should not be propagated further.
+Applied, thanks!
 
-xfs_inode_has_bigrtalloc() needs to be replaced completely with
-xfs_inode_alloc_unitsize() and any conditional behaviour needed can
-be based on the return value from xfs_inode_alloc_unitsize(). That
-works for everything that has an allocation block size larger than
-one filesystem block, not just one specific RT case.
+[01/12] RDMA/core: Create "issm*" device nodes only when SMI is supported
+        https://git.kernel.org/rdma/rdma/c/50660c5197f52b
+[02/12] net/mlx5: mlx5_ifc update for multi-plane support
+        https://git.kernel.org/rdma/rdma/c/65528cfb21fdb6
+[03/12] RDMA/mlx5: Add support to multi-plane device and port
+        https://git.kernel.org/rdma/rdma/c/2a5db20fa53219
+[04/12] RDMA/core: Support IB sub device with type "SMI"
+        https://git.kernel.org/rdma/rdma/c/f3b5c2b823fbd8
+[05/12] RDMA: Set type of rdma_ah to IB for a SMI sub device
+        https://git.kernel.org/rdma/rdma/c/66862e38a557b3
+[06/12] RDMA/core: Create GSI QP only when CM is supported
+        https://git.kernel.org/rdma/rdma/c/6d4498d1745128
+[07/12] RDMA/mlx5: Support plane device and driver APIs to add and delete it
+        https://git.kernel.org/rdma/rdma/c/39351acd72e775
+[08/12] RDMA/nldev: Add support to add/delete a sub IB device through netlink
+        https://git.kernel.org/rdma/rdma/c/201dfa2d8129a6
+[09/12] RDMA/nldev: Add support to dump device type and parent device if exists
+        https://git.kernel.org/rdma/rdma/c/1bc00c7c0ae33e
+[10/12] RDMA/mlx5: Add plane index support when querying PTYS registers
+        https://git.kernel.org/rdma/rdma/c/d6caf3986716c3
+[11/12] net/mlx5: mlx5_ifc update for accessing ppcnt register of plane ports
+        https://git.kernel.org/rdma/rdma/c/db9e43f6580613
+[12/12] RDMA/mlx5: Support per-plane port IB counters by querying PPCNT register
+        https://git.kernel.org/rdma/rdma/c/ac3a5e5f01eb40
 
-Don't force John to have fix all these same RT bugs that are being
-fixed with xfs_inode_has_bigrtalloc() just because forced alignment
-stuff is not yet merged. Don't make John's life harder than it needs
-to be to get that stuff merged, and don't waste my time arguing
-about it: just fix the problem the right way the first time.
-
--Dave.
+Best regards,
 -- 
-Dave Chinner
-david@fromorbit.com
+Leon Romanovsky <leonro@nvidia.com>
+
 
