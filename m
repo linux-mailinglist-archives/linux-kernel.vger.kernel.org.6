@@ -1,105 +1,77 @@
-Return-Path: <linux-kernel+bounces-236474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE39391E2BD
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:49:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A153B91E2BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:49:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA066287831
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:49:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D35DB1C230E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:49:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76AA516D329;
-	Mon,  1 Jul 2024 14:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C8DE16C6BD;
+	Mon,  1 Jul 2024 14:48:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="afEDk/rb";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7lF3qe/G"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tb4vhXlR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754FB16C87D
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 14:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4A7B16C6B0
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 14:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719845300; cv=none; b=jFvTPL2JChNLF9Erv8bbawhA0k73QvW5yH1eRw2fky0i3zcLx5ACbmF35M9hbiC73vlcMT6q+h3+YiHjqp1CGJAQigUUxa+Wn7qG9fH0fjVcsrFbLztbGLCee60N+PyKoeXxZijCyvL7R63MyfNGXZ6N6QhvvtmkTdci4g86+DQ=
+	t=1719845307; cv=none; b=LYL5WTNKrd+UDwR+z1fEVFZ6Y3qXkXG5hjs9ZHI7gladQSl4lasfggMesdR6nVfVDqxtVsgGj9jyl+WcKAXUHnHTrHvRDd5Msp6jl+8qtoodmYWQ8xSqyw9s3B5AhcV6BIty7GgnIo2Bh365wBHnQtcjT5N+KqPPuEcsGzyjP+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719845300; c=relaxed/simple;
-	bh=SYgRVnPjsl630yilbuRnpGAUJeaIBV/+J0S/e1J3xB4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=goRR9Xm2JQdzzu583AlDnJXok1A8QZMXiXyfMWOXwtYE9kjaNV+kH5Aq7tJof3yMwkMUGo830plfOzAMgSbsRKsm05jglObSxdzgm44IpJ0Oqzy9uGIqARtQU0b8bPt4NyAob6vLJyswG+fW6G6BUEdMyXPhQz7EWMWTj19zpzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=afEDk/rb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7lF3qe/G; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Anna-Maria Behnsen <anna-maria@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1719845292;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4/vJimB/iMVWFrYIKeqjkuH/g4JlGpsOob2zAFNI3PY=;
-	b=afEDk/rbrrI3TN2JirF1W5wAkKg5qgrV/bqeLaa14n4719hBKwdBQnYapwcXceUXJuP5Zb
-	zEdWe6Oc5UpjjwqjBlq3IoaC9jaPaNFC9b6f9F0imTpzILy3t0SDya8P3QObhnDstp75+l
-	JTzbFF8FjvBqEx2FaBJ6XXJmcJaawpINeJppzgCo7lKEt5t8g7lLUmUMzIygIC00dSKqWo
-	pHcCpZNVQrFA/Ng0jND4cGwFFKLKlNastm+kclh24TQN3qu/S317MJVmZ69zFaJZqwuMI2
-	Rj1hmTxFiOmohzFVUU1YsO8FIu5BGm9Sv7xuCdG/JeaZnjWGwzbB0+JbtTh2WQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1719845292;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4/vJimB/iMVWFrYIKeqjkuH/g4JlGpsOob2zAFNI3PY=;
-	b=7lF3qe/Gi5hel0ByjhS9WLkzo8NBwtxjCb/iXBffg05nhxGDeNldUiWjXFQREwgYwmC/ZQ
-	QdMyo0L+ni9bbJAw==
-Date: Mon, 01 Jul 2024 16:47:58 +0200
-Subject: [PATCH 5/5] x86/vdso: Remove unused include
+	s=arc-20240116; t=1719845307; c=relaxed/simple;
+	bh=BLfunpm870UGqu8HJHmdD3DQQr7XTTLgfAxt12C1WPg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C+Cbm81j11vTyaXW5Argy1pjo0EmZOa2rX3wMQCVm1vY3t9l8MiIA0A7lf+lb1Xc966r3Bf+M6KozWVTsuqRjOJ5NSgMOJN1FE5uFdn3SFAJn5qP602da77Ouj0ZndCvilPQ253gxkrVtd1ijdLU9s4s3TH778u7YTvENSNz7oE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tb4vhXlR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 603E6C116B1;
+	Mon,  1 Jul 2024 14:48:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719845306;
+	bh=BLfunpm870UGqu8HJHmdD3DQQr7XTTLgfAxt12C1WPg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Tb4vhXlRDsizNW4xNEmjJZbEiu76JIpRUhN8mZ7LggCBD2TtS6ocm0Ox21YDJSYJa
+	 WTYhgT1AkXCz8nLLi5Q3uk5+FRr/Kt/8VfFwyBqmUgjo4cMc/T9y2UGIgenCQT7qsa
+	 RmbUG8OVwWOQMBTlSaXctHyRBnqOlTur4JOypdwhDccvpYJpYDmk28KSGylRNx2SFD
+	 B2D0SlISNu0ON7nzr5GXcTP83BaFrbfpvtc/T9xZeXICtQ6cMp0+NSrJH+9NEAAvz9
+	 +tTtchLFm7hVsIQMkGCWXQ0X2BfUf7VAF3P+sNrHNVEx5sJc8pW8dDhusBuT88wUii
+	 Y5MzAH0zSokAA==
+Date: Mon, 1 Jul 2024 15:48:22 +0100
+From: Will Deacon <will@kernel.org>
+To: Gowthami Thiagarajan <gthiagarajan@marvell.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	sgoutham@marvell.com, gcherian@marvell.com
+Subject: Re: [PATCH v5 0/3] Marvell Odyssey uncore performance monitor support
+Message-ID: <20240701144821.GA2754@willie-the-truck>
+References: <20240620131256.590903-1-gthiagarajan@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240701-vdso-cleanup-v1-5-36eb64e7ece2@linutronix.de>
-References: <20240701-vdso-cleanup-v1-0-36eb64e7ece2@linutronix.de>
-In-Reply-To: <20240701-vdso-cleanup-v1-0-36eb64e7ece2@linutronix.de>
-To: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
- Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
- "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, 
- Anna-Maria Behnsen <anna-maria@linutronix.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240620131256.590903-1-gthiagarajan@marvell.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Including hrtimer.h is not required and is probably a historical
-leftover. Remove it.
+On Thu, Jun 20, 2024 at 06:42:53PM +0530, Gowthami Thiagarajan wrote:
+> Odyssey is a 64 bit ARM based SoC with multiple performance monitor
+> units for various blocks.
+> 
+> This series of patches introduces support for uncore performance monitor
+> units (PMUs) on the Marvell Odyssey platform. The PMUs covered in this
+> series include the DDR PMU and LLC-TAD PMU.
 
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: x86@kernel.org
-Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
----
- arch/x86/include/asm/vdso/vsyscall.h | 1 -
- 1 file changed, 1 deletion(-)
+This series doesn't apply:
 
-diff --git a/arch/x86/include/asm/vdso/vsyscall.h b/arch/x86/include/asm/vdso/vsyscall.h
-index be199a9b2676..93226281b450 100644
---- a/arch/x86/include/asm/vdso/vsyscall.h
-+++ b/arch/x86/include/asm/vdso/vsyscall.h
-@@ -4,7 +4,6 @@
- 
- #ifndef __ASSEMBLY__
- 
--#include <linux/hrtimer.h>
- #include <linux/timekeeper_internal.h>
- #include <vdso/datapage.h>
- #include <asm/vgtod.h>
+	Applying: perf/marvell : Odyssey LLC-TAD performance monitor support
+	error: patch failed: drivers/perf/marvell_cn10k_tad_pmu.c:362
+	error: drivers/perf/marvell_cn10k_tad_pmu.c: patch does not apply
 
--- 
-2.39.2
-
+Will
 
