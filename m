@@ -1,106 +1,90 @@
-Return-Path: <linux-kernel+bounces-236358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C783091E10B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:45:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02A8C91E113
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:46:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C576D1C2151B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:45:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0477281983
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C766915ECD9;
-	Mon,  1 Jul 2024 13:45:08 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E7315ECD6;
+	Mon,  1 Jul 2024 13:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cSlOq3FG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A470115E5D3;
-	Mon,  1 Jul 2024 13:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E90B1EEF8;
+	Mon,  1 Jul 2024 13:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719841508; cv=none; b=F9XvdzJDJqtWo11KK+lIBWXE9t9KzHHXHjbA0cLWLdIoEqRwDPolhfCFGd6vPBrIGk+8S2djqPnyPaCRx/+AWL4QlcJYIuj2J7YktI6Be9puH0tAeUSPFI0ZzfJHVU/bFR/Jvl2hrFmT1QfUU3pLa5SGEPvIuNxGHqH5tt1a4EM=
+	t=1719841601; cv=none; b=kfehG14slVnTILjxp5S/oEh4We6y3LjQ7mpqJbCSRcgWjcZtduAS3a4MTL3Ej2F0klmz/OUCcDG+x6avjXzwti6KlrPa3uo6n4qNjLkRVhDL54xVSvSY6nZWq4FVyZAi6wmrddoKntqlztVywH+8hJQ6Aa0UGUPAw6UPPEL/N6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719841508; c=relaxed/simple;
-	bh=8yk7TzMBp8LQxMDCULwcQoiummuODihgQAn/T9L1wQY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BpgB2ejpz4tN8gVxCK1ReWe6Qz3v3Z2KpddUaULJaYAGTuWHZNU4ipT5Pds/ZO/X+HDtnl16YBfgbkc7t41n868LJhJ+1Ok4gsyzYp0aZg7kCh1ZQF7El3tL46DKx+il1l6A2fFU5usV+FxY25YhxwK8jDw4raAy3RHccgeXGmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 08337100DA1CB;
-	Mon,  1 Jul 2024 15:44:55 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id AEAC331F8C9; Mon,  1 Jul 2024 15:44:54 +0200 (CEST)
-Date: Mon, 1 Jul 2024 15:44:54 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Orlando Chamberlain <orlandoch.dev@gmail.com>
-Cc: ardb@kernel.org, gargaditya08@live.com, hdegoede@redhat.com,
-	kekrby@gmail.com, linux-efi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] efi: libstub: add support for the apple_set_os
- protocol
-Message-ID: <ZoKy1jeLC-FRLJgr@wunner.de>
-References: <ZoJcVf98MElXhMjT@wunner.de>
- <20240701231452.3d547e7f@redecorated-mbp>
+	s=arc-20240116; t=1719841601; c=relaxed/simple;
+	bh=Ya0S5zdi+7SsyR/6A/c4L3sTSewdGTHlOAshJGwLjKU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=txHs/9Uu6azgfAQvFTl/YNAAa7NfkI8laWLA30Mo+ukQB4v+KyU1f4Xkru622KSJ8Y/jjzCknJ6hYhsS9QbJ+eMkFPSNj2Xbmqc5mLIUQU2D76oGP4yH+RD+X4k8WnjZGAEaxNf2HwI+Qie/W6Qp1yave88w6ut0oKWzd/D03ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cSlOq3FG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48561C4AF0A;
+	Mon,  1 Jul 2024 13:46:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719841601;
+	bh=Ya0S5zdi+7SsyR/6A/c4L3sTSewdGTHlOAshJGwLjKU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=cSlOq3FG8SZuh4akDuACZJxd2A4gtLhs3pFh0tx9ufyM4qJRfpx6cixnhO0YyLMQU
+	 KqBFXcrk5WrmVgthXrf1PtMTtA1zDLMpgalrmgJESpgRzvFe7xDYx/4X9Kgv0daPor
+	 LO7xWI0dM6BKRXTaqiXkOVDwIBXSmOZmlXDBWGMKFiKYBLlVjoSqpHVErrHPNyaIps
+	 lSSBpSrWzJF5DjH1c/fKwqRr5TOoODrU72VH0b7TUbBbgbIvD1y9UL/pB4py5Rft+w
+	 fkC45O3nuqyL2XCH5h3gCPjojgsbHemesLXpoTiLkfX+TzidQlVeNL0PmrQXfJ1BT9
+	 fCbqiXyaNMWhg==
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Jiri Kosina <jikos@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+ Benjamin Tissoires <bentiss@kernel.org>
+Cc: linux-input@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>, 
+ Stephen Rothwell <sfr@canb.auug.org.au>, 
+ Mirsad Todorovac <mtodorovac69@gmail.com>
+In-Reply-To: <20240701-fix-cki-v2-0-20564e2e1393@kernel.org>
+References: <20240701-fix-cki-v2-0-20564e2e1393@kernel.org>
+Subject: Re: [PATCH v2 0/4] Fix warnings in for-6.11/bpf
+Message-Id: <171984159899.804118.13748285528625314885.b4-ty@kernel.org>
+Date: Mon, 01 Jul 2024 15:46:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240701231452.3d547e7f@redecorated-mbp>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.0
 
-On Mon, Jul 01, 2024 at 11:14:52PM +1000, Orlando Chamberlain wrote:
-> > FWIW, there would be only 6 models to match if this needs to be
-> > constrained to ones with dual GPUs:
-> >
-> > MacBookPro11,3
-> > MacBookPro11,5
-> > MacBookPro13,3
-> > MacBookPro14,3
-> > MacBookPro15,1
-> > MacBookPro16,1
+On Mon, 01 Jul 2024 14:39:48 +0200, Benjamin Tissoires wrote:
+> We had several complains in linux-next that there were warnings:
 > 
-> I know that at least these two also need it:
-> MacBookPro16,4
-> MacBookPro15,3
+> CKI was not happy: it was the same situation than in an early report
+> when HID-BPF was initially included: the automatically generated
+> vmlinux.h doesn't contain all of the required structs and the
+> compilation of the bpf program fails.
+> 
+> [...]
 
-Ah okay, thanks.  I went by the list in Wikipedia, disappointing
-that it apparently wasn't updated with those final T2 models:
+Applied to hid/hid.git (for-6.11/bpf), thanks!
 
-https://en.wikipedia.org/wiki/MacBook_Pro_(Intel-based)
+[1/4] selftests/hid: ensure CKI can compile our new tests on old kernels
+      https://git.kernel.org/hid/hid/c/fcdf830ea634
+[2/4] HID: bpf: fix gcc warning and unify __u64 into u64
+      https://git.kernel.org/hid/hid/c/762ced1630a9
+[3/4] HID: bpf: doc fixes for hid_hw_request() hooks
+      https://git.kernel.org/hid/hid/c/c79de517a226
+[4/4] HID: bpf: doc fixes for hid_hw_request() hooks
+      https://git.kernel.org/hid/hid/c/c79de517a226
 
+Cheers,
+-- 
+Benjamin Tissoires <bentiss@kernel.org>
 
-> I think there could be more older ones too. Apple has a list of
-> MacBookPros [0], but I don't know how many of the older models that
-> list 2 gpus on their "Tech Specs" pages need apple-set-os.
-
-No, Bruno Bierbaumer's page lists the MacBookPro11,3 and 11,5
-as the first models that need apple_set_os:
-
-https://github.com/0xbb/gpu-switch
-
-I'm still using a MacBookPro9,1 (last pre-retina) on a daily basis
-and apple_set_os isn't needed there.  Neither on the MacBookPro10,1
-(first retina).  Both were introduced mid 2012.
-
-
-> The original apple-set-os code was posted to the GRUB mailing list in
-> December 2013 [1] so maybe it was in 2013 that new dual GPU Macbooks
-> started needing apple-set-os?
-
-Yes, Haswell generation introduced Oct 2013 was the first one that
-needed it.
-
-Thanks,
-
-Lukas
 
