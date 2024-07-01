@@ -1,122 +1,149 @@
-Return-Path: <linux-kernel+bounces-235987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1124991DC18
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:09:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5E0091DC19
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:09:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24A111C216C9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:09:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77CF728275E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C35212D747;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBCB2135A65;
 	Mon,  1 Jul 2024 10:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BhtmeHKb"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l7QwhlzY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D263126F02
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 10:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E41412BF32;
+	Mon,  1 Jul 2024 10:08:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719828537; cv=none; b=uGI9bQyOb5PAp+qCoxrySzLOGk6dgybNZqCSfU2st57RQFme+yqUUhrbzMcb4ypfOABp68nnj/LPMssrNHALAu04SOggwQddG7i4yxncLFb/d2FpdLaDxhMujoCfhPRkjZHImNZZ1bB7kkOgZSjRLujzazQqDZLQeqpn89V+MrM=
+	t=1719828538; cv=none; b=u8gYvXrS7/91zTn6fiq4Q7LggCgk4vU2oJXTLcB3B+CyPOZD1+jWphdP55jm/xLdjowBtyrrArC2cgB1se0kXyLefoZlVB51nhZUB7lXFp2iRj/AFI+7JJLYDLasakXEXwwAom2h9su67v4i3c7pkj5DDGzHXQF4raqtKEn0ZiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719828537; c=relaxed/simple;
-	bh=Aa++gCLn3lD+NqzuYFw3VYIsdm8ZENJyZaQkJnhuZ7I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cunC8slxTxEOQ29bjI2wMm5zFz/DR9OGifhmqhdWauFQkuvwVX8zWdgkd7T4VM9JQLLlSjMibq2Uwtpf4qC+LvlcpXl21qQLYd2+cnHLC+KfTiyLdJbJJOISHk7DucHMTnlKONBxSAXguQZ2mnUv/a340xU0o7EjB9caRSc8ZeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BhtmeHKb; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6325b04c275so27857957b3.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 03:08:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719828535; x=1720433335; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=NycmgRDsq327D/ssa2zH2umzDutW5jKnX1XFk2AIiOQ=;
-        b=BhtmeHKbx7UCJOdCGlQI5WZyphmtyTgNXgMruzAXfr7c8kHkYCW3rrcqY0Yvlf5LB9
-         VY+xtgQEESVNUOV7J8bwOsqjJ9ptgWgObwHviZTYTDCvf4HPfi2sUYGfrfUSypgJF4bE
-         IcgQKY5H/3O8+7Dx7V8m7GvvEsZjeE1QakxvTTscKEe/rGYjXiLYIONIqO4QFJJR8DVx
-         WqjOBEd5kposlpy7wRi8jPdN6r7DCBTuzD+orwImXa3LkIeuDTdwLWqc5TEHu++UmNfd
-         B0GX5G6ngDC/isHkExBW2bjdv6roTggNWUfE9qtqY3Ly4gxyYWtKYD3lLil0IJFhGYsr
-         /OuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719828535; x=1720433335;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NycmgRDsq327D/ssa2zH2umzDutW5jKnX1XFk2AIiOQ=;
-        b=DIQ3xQRnLxLIN2EZ8fKb3IAVIrB26jggZOTmhDoRKj626nzFNm3WpOt7sVn8F3l7RW
-         +qtEwUgwYdhT6Kqy6/n6RYoxKIsRDEBhxDsCsNEjcl+X5KLrUhZu4yiUNKsx/LW9JDHK
-         HiaHp1rOpNOPWPDAx5kCpmRWxJOIBziyflRR1Mm6FbJOPzVVlhgTLPlJspaPbXiLYEYA
-         q5uEmMQTmQ3mwwEgU5jH9sSPreMmHoyk9t3W7Z3SQ9UQy0RW7D06RsmgroqsKFAOhKga
-         XM8sMRjO0m/v41PzTZyB3d4H22HgQ0krKhnq0t7H0ZIV1bysVGrL4wrWJATIFiz3lUKl
-         FUaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWWECmZI65Dj4fByoPjS7xj4xG6meo2f0z/8WvbL9L7zhOJ3TTJrKb6aKPLM9aeEXslJuGxMXs6pLhyrG8bFhTN0ItZuZ2PI4G3+O8U
-X-Gm-Message-State: AOJu0YwkNGxe51CNRH8NKPR3zjHoJ03Z8CZna7/fxRJdacBsSmrSoMPB
-	tOwrt470vnlchevwIS2mlIguquU7nvjTkP9G1xMBotYZVBTgLIP5iGzr2Mg72CCPUHRDiwavJDN
-	tRYs9FXI4SsH0b5NiMQFSqU0oUpIkya7k/Hptm/ObTTPl4ndoByVkNONmv0s=
-X-Google-Smtp-Source: AGHT+IGwi8WafEVjmBObOnzPp7tJ35c7X+EGOliYOe27SUZqWJxtxBxMEXMJreOS27yNOad4E5WT+Ba5yGrNIupy4u4=
-X-Received: by 2002:a81:c441:0:b0:61a:d4ea:b856 with SMTP id
- 00721157ae682-64c7277ca98mr42261657b3.40.1719828535353; Mon, 01 Jul 2024
- 03:08:55 -0700 (PDT)
+	s=arc-20240116; t=1719828538; c=relaxed/simple;
+	bh=jH3nearMFaAQlRhm+ugZS+3bjSfLjOJPX+r7dcSWXuM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r70D9LjTaicX3OJqGDtQSaY23BFynTDj9W5Mva2OLFWq0RAfv5bnmmHKKIzHeIBsuD3FpCZNMNmlO+Bpu5UqcF/NNIbUZIpkGE9zAnz3007VqUEZHbnuudiuLo0YM4C/6ZxBumBEsRTcDXSqhDzloR4c8IC5F9a2YJ7wOEg9AkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l7QwhlzY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20C37C116B1;
+	Mon,  1 Jul 2024 10:08:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719828537;
+	bh=jH3nearMFaAQlRhm+ugZS+3bjSfLjOJPX+r7dcSWXuM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l7QwhlzYmn5KN8z7OP0jBE/CimXzbBKWObFyuQAEkcdTdgfIoHwmbutcDW4QocKfc
+	 pls+raO8TxJdqu4mALYSqwhFeCFdgwBULoaf86ySStXqJtJJ80I0CQeslqPs6kIDAu
+	 c4tlIGEcVRgZ8euR4ZZqS/+DXWlxJWZnB6lO4DjWLzN7ZNNqTCjvK2zS+AhEbcSqhP
+	 /ILKBL2pLpPh8cckYr7l7txhpoarsQDELzwl2sBbGNbznFareoihFxb8HkOH3DRciX
+	 To13StKSg65vbY3+x8jL4gvuMTqm13e7iiP4tzZzZSW2EDr0kUyyOHsUGEisJzCgRX
+	 +C68+twjUjcVg==
+Date: Mon, 1 Jul 2024 19:08:53 +0900
+From: William Breathitt Gray <wbg@kernel.org>
+To: Vignesh Raghavendra <vigneshr@ti.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Nishanth Menon <nm@ti.com>,
+	Tero Kristo <kristo@kernel.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>, Judith Mendez <jm@ti.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>
+Subject: Re: linux-next: manual merge of the counter-next tree with the ti
+ tree
+Message-ID: <ZoKANeudCKsjjYDQ@ishi>
+References: <20240701163749.1cb88c8b@canb.auug.org.au>
+ <d595b624-ef18-4aac-ab2c-bd36a8c4de3d@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZnxhiKAYvoqNIywH@sirena.org.uk> <20240701172655.3db48d51@canb.auug.org.au>
-In-Reply-To: <20240701172655.3db48d51@canb.auug.org.au>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 1 Jul 2024 13:08:43 +0300
-Message-ID: <CAA8EJprxGyEK-1jXBJOmBT_+VDyEKD2DVN8shwan60GO5-dopg@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the rpmsg tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Mark Brown <broonie@kernel.org>, Chris Lew <quic_clew@quicinc.com>, 
-	Steev Klimaszewski <steev@kali.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nnREai9O/od+bX6T"
+Content-Disposition: inline
+In-Reply-To: <d595b624-ef18-4aac-ab2c-bd36a8c4de3d@ti.com>
 
-On Mon, 1 Jul 2024 at 10:26, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi Mark,
->
-> On Wed, 26 Jun 2024 19:44:24 +0100 Mark Brown <broonie@kernel.org> wrote:
-> >
+
+--nnREai9O/od+bX6T
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Jul 01, 2024 at 12:58:28PM +0530, Vignesh Raghavendra wrote:
+> Hi Will,
+>=20
+> On 01/07/24 12:07, Stephen Rothwell wrote:
 > > Hi all,
-> >
-> > After merging the rpmsg tree, today's linux-next build (KCONFIG_NAME)
-> > failed like this:
-> >
-> > ERROR: modpost: "__auxiliary_driver_register" [drivers/soc/qcom/qcom_pd_mapper.ko] undefined!
-> > ERROR: modpost: "servreg_loc_pfr_resp_ei" [drivers/soc/qcom/qcom_pd_mapper.ko] undefined!
-> > ERROR: modpost: "auxiliary_driver_unregister" [drivers/soc/qcom/qcom_pd_mapper.ko] undefined!
-> > ERROR: modpost: "servreg_get_domain_list_resp_ei" [drivers/soc/qcom/qcom_pd_mapper.ko] undefined!
-> > ERROR: modpost: "servreg_get_domain_list_req_ei" [drivers/soc/qcom/qcom_pd_mapper.ko] undefined!
-> > ERROR: modpost: "servreg_loc_pfr_req_ei" [drivers/soc/qcom/qcom_pd_mapper.ko] undefined!
-> > ERROR: modpost: "auxiliary_device_init" [drivers/remoteproc/qcom_common.ko] undefined!
-> > ERROR: modpost: "__auxiliary_device_add" [drivers/remoteproc/qcom_common.ko] undefined!
-> >
-> > Caused by commit
-> >
-> >   5b9f51b200dcb2c3924 ("remoteproc: qcom: enable in-kernel PD mapper")
-> >
-> > and likely others, I didn't look too hard.  I have used the tree from
-> > 20240625 instead.
->
-> I am still seeing this build failure in the arm multi_v7_defconfig build.
+> >=20
+> > Today's linux-next merge of the counter-next tree got a conflict in:
+> >=20
+> >   arch/arm64/boot/dts/ti/k3-am62p-main.dtsi
+> >=20
+> > between commits:
+> >=20
+> >   3ad6579f106d ("arm64: dts: ti: am62p: Rename am62p-{}.dtsi to am62p-j=
+722s-common-{}.dtsi")
+> >   77044cfb9346 ("arm64: dts: ti: k3-am62p-j722s: Move AM62P specific US=
+B1 to am62p-main.dtsi")
+> >   ed07d82f9e3e ("arm64: dts: ti: k3-am62p-j722s: Move SoC-specific node=
+ properties")
+> >   84935117f25f ("arm64: dts: ti: k3-am62p: Add gpio-ranges properties")
+> >=20
+> > from the ti tree and commit:
+> >=20
+> >   131eaf47c4c5 ("arm64: dts: ti: k3-am62p-main: Add eQEP nodes")
+>=20
+> Could you please drop from your tree "arm64: dts: ti: .." patches, these =
+need to go via TI SoC/arm64 tree.=20
+>=20
+> In particular
+>=20
+> 7fb9d8854fcf(Judith Mendez)6 hours ago  arm64: dts: ti: k3-am64x-sk: Enab=
+le eQEP
+> afdfe6439a6d(Judith Mendez)6 hours ago  arm64: dts: ti: k3-am64-main: Add=
+ eQEP nodes
+> 131eaf47c4c5(Judith Mendez)6 hours ago  arm64: dts: ti: k3-am62p-main: Ad=
+d eQEP nodes
+> ba5a251b1d53(Judith Mendez)6 hours ago  arm64: dts: ti: k3-am62a-main: Ad=
+d eQEP nodes
+> e2e1fce199b0(Judith Mendez)6 hours ago  arm64: dts: ti: k3-am62-main: Add=
+ eQEP nodes
+>=20
+> Thanks!
+>=20
+> >=20
+> > from the counter-next tree.
+> >=20
+> > I don't know how to fix this up, so I just dropped the latter chanhd
+> > for now.
+> >=20
+>=20
+>=20
+> --=20
+> Regards
+> Vignesh
 
-This should be fixed by
-https://lore.kernel.org/linux-arm-msm/20240626-qcom-pd-mapper-fix-deps-v1-0-644678dc4663@linaro.org/
-, hopefully Bjorn can pick it up.
+Hi Vignesh,
 
--- 
-With best wishes
-Dmitry
+I have now dropped the "arm64: dts: ti: ..." patches from my
+counter-next tree, I retained just the counter patches.
+
+Thanks,
+
+William Breathitt Gray
+
+--nnREai9O/od+bX6T
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZoKANQAKCRC1SFbKvhIj
+K1jgAQCAqfAEjD9q5+cUSla7wIXytQE8E3rqtODn5ITHc+ImlAD/ZOl6Qoipad8I
+FObVp6vumXMNs7gV8clo8HyJcs/cVg4=
+=IFSD
+-----END PGP SIGNATURE-----
+
+--nnREai9O/od+bX6T--
 
