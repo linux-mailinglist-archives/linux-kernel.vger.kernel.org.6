@@ -1,80 +1,51 @@
-Return-Path: <linux-kernel+bounces-235785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E98D91D99D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:04:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D37391D99F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:04:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E03841C22684
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:04:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED22A28510D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0E98248C;
-	Mon,  1 Jul 2024 08:03:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34E081AB6;
+	Mon,  1 Jul 2024 08:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JtJK2Ie5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="gjc2k6zc"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB09E5C614
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 08:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6EA61674;
+	Mon,  1 Jul 2024 08:04:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719821033; cv=none; b=T4IkLOpxvjyOg21hpHVTjkqHJAuHlUquUh+BURxeZz9ycgbGHd7u12eKrjNihUPAQqZhiBblRWMDbjMfAHJVPX7un5tMy/2+3XP5GJOHHAYls6+xxTKWYZ0gC0Ua6xyptCA8hdgsUTLFlYjsiqOtez+vKggR1dSrJlYhkcU4Fws=
+	t=1719821072; cv=none; b=UzokREN6i2RkNMq0xFu7MOk11hBJd8FRThKR75dr3WCmUnroRL90KojBS7TwjFbhI5R8C0VRSsdT3hF4lZzCEKVUBvG3KVziM2BKIMrWwljhABi+UtfLkJCU8NI3BUnz+nT+0fR/HQhXr2RkPrAl3SA7rJdUVNQkwpg2jo17rTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719821033; c=relaxed/simple;
-	bh=JxJ1zQf814o+SVDgj4eGoXFliTcMdrfjopYwUHZsANc=;
+	s=arc-20240116; t=1719821072; c=relaxed/simple;
+	bh=Sm87+MqQP6spLgCMYnAlIdJb/hFhBSlOaGQ6P6PPV9A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t+xQtmlPEvJhEi81M/bfFV5FET//13p6gz0e0SnzXIWW5nPo5Pt3ICr9VUDJdztTjC++8pEdbDDxISB2rLGtQ+ciqMe2bW3T2AeqYJ5KzRfH6BkoGtMQT/erWt6OKmbJt+kYdiyChm8ABussS+Wqy01tKbV5F2IC9z9wOPINArg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JtJK2Ie5; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719821030;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=zfO6c3CygsoyumKunvYygQ4i6coJEpJ84SAdNiJqg9o=;
-	b=JtJK2Ie5XVfwE21dl8u50fxVJXDzqJRhTHdXbYjUZ4JDsq9x63rFQwBeudoS/5Zd1WPBGk
-	RFgRX77+sdubN7ZyFsr1j5YQmAzB0ELUmaCkunXzgwAhnUg+HVLkWWmiJ81QsCB1IFHdVp
-	02ABvHAFvtu0Jpb0VUmf8fvhvDEVu08=
-Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
- [209.85.167.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-437-x2z3ux7YPEmwrSUfEcqc2A-1; Mon, 01 Jul 2024 04:03:49 -0400
-X-MC-Unique: x2z3ux7YPEmwrSUfEcqc2A-1
-Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3d72ad345e9so1660339b6e.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 01:03:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719821029; x=1720425829;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zfO6c3CygsoyumKunvYygQ4i6coJEpJ84SAdNiJqg9o=;
-        b=wK5UgmsscaRYBMvltKFRFH0IaQArxkpWfjZe9el1l79ouX0sizyK6/wvoKP1QocM9S
-         yXIAWvCbNBVCXcNbAm6RclTa0Pi6bLo3bVTUV8qcF+68pCEBUDBQJvSfAHwOuOzfODk0
-         pzRxFZWGHWqUV1AId6uI5vmQeboXSmFUqrtL4V2CTTYSf7Bza37EtyBWMi709YxgG7z3
-         nqBoy49a8OlAUOSuIUrA1AnbAIHDGJ0/X+3foC9800K3PY0/TQaKMwcZ1wXftYR7ga4d
-         /uYvbF7+vcFdqAyJPhOlqAvcO7omDcIrflqBHUFqCfTfcQRsbk9iVWtmS6wiF9DrCWr3
-         pKzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVG+PA8JG31kWfgHxeEp68OLlMHKU3fhNckn0W/GHygJml31i8zaI0mo9cF2YRMWQdP8Hul00Up0oV4z620JqaKtdmsaqelhxH7omaR
-X-Gm-Message-State: AOJu0YxJXqwvwAx9TyBwvKYzUh0Cq+E1rD3wlZk6BKeevNZm2P3+2Vzq
-	VXt2nHhQTh14XYFSdEb2Hd5mtUNlkR2fEbQCv19AKcAL98j7oW0mAUrKaaVL+ZQAoJXLSmh4SCb
-	nhzjozyIRM0GDzu4iaRTH920r0TAoC0LFx2RMLIVOKieFIlNpsdz/Lk5nNoOeDQ==
-X-Received: by 2002:a05:6808:130c:b0:3d6:3149:62ca with SMTP id 5614622812f47-3d6b4727133mr7066746b6e.37.1719821028926;
-        Mon, 01 Jul 2024 01:03:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGgHOl6bw8bKGTftUey9S5M5axlYjj/+8udPygCVz7O8ajt5fK0pEirYbWVsrICSd+NARE69A==
-X-Received: by 2002:a05:6808:130c:b0:3d6:3149:62ca with SMTP id 5614622812f47-3d6b4727133mr7066731b6e.37.1719821028561;
-        Mon, 01 Jul 2024 01:03:48 -0700 (PDT)
-Received: from ?IPV6:2403:580f:7fe0:0:ae49:39b9:2ee8:2187? (2403-580f-7fe0-0-ae49-39b9-2ee8-2187.ip6.aussiebb.net. [2403:580f:7fe0:0:ae49:39b9:2ee8:2187])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7080256c9dcsm5835235b3a.74.2024.07.01.01.03.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Jul 2024 01:03:48 -0700 (PDT)
-Message-ID: <91b851d5-4ca0-43b2-990a-bf147371828e@redhat.com>
-Date: Mon, 1 Jul 2024 16:03:41 +0800
+	 In-Reply-To:Content-Type; b=Q39CVJst5KD3VfxAm8HrKhPHpR7JEqqGuo66vOThqfiE1rmOcIDSEqA0coSDNWKYSc7TgJ1kygONGnsb0YrizcZILjK+iW66PEIpTXCHILRmn3/6cV9yttpV4+JzVdHpPm70rcO23nN1NM65XeYOECgN8fjF4Wz7CwRT/dxsLRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=gjc2k6zc; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=9/YONfSef0lT8ancw7u9V6qp8JgxuwwsqGvaUVaveMI=;
+	t=1719821070; x=1720253070; b=gjc2k6zclXmv8/lNrDLRWp0f6QV+NBUpeVrgYFlz2Ry+DmL
+	ktCVEBFUSG+HKFXj/azTX1JVtB9MbEhlvl4iibahxjm55u04OYcxOR0yT2ZU4kelbgiiD9IraMF15
+	pfB9oxYjiEMuJNv/lNNZBqTqFtJpOUCEzmq8SaT2ynsBGvanmfiYJm6BD548SSE5hidzKuBMGfFVm
+	83LBImVx2c4wi22gPm2WUp1DZHEU8Vx/aNXvwIbcZ4RLnMAqkF7YCEC3+dI+pn/S9yrPFqHYHOfGT
+	gZjt1s3rMaVpt2jK7sXyPQQiWcdMnGLYksGisXTRvBc0V3yok8pAxv85Q31wPRhw==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sOC1O-0000IS-6b; Mon, 01 Jul 2024 10:04:22 +0200
+Message-ID: <130518e2-d6dd-49ed-9cc2-ca9cdec93b98@leemhuis.info>
+Date: Mon, 1 Jul 2024 10:04:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,170 +53,89 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v3 1/1] fs/namespace: remove RCU sync for MNT_DETACH umount
-To: Christian Brauner <brauner@kernel.org>
-Cc: Alexander Larsson <alexl@redhat.com>, Jan Kara <jack@suse.cz>,
- Matthew Wilcox <willy@infradead.org>, Lucas Karpinski <lkarpins@redhat.com>,
- viro@zeniv.linux.org.uk, raven@themaw.net, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Eric Chanudet <echanude@redhat.com>
-References: <20240626201129.272750-2-lkarpins@redhat.com>
- <20240626201129.272750-3-lkarpins@redhat.com>
- <Znx-WGU5Wx6RaJyD@casper.infradead.org>
- <50512ec3-da6d-4140-9659-58e0514a4970@redhat.com>
- <20240627115418.lcnpctgailhlaffc@quack3>
- <20240627-abkassieren-grinsen-6ce528fe5526@brauner>
- <d1b449cb-7ff8-4953-84b9-04dd56ddb187@redhat.com>
- <20240628-gelingen-erben-0f6e14049e68@brauner>
- <CAL7ro1HtzvcuQbRpdtYAG1eK+0tekKYaTh-L_8FqHv_JrSFcZg@mail.gmail.com>
- <97cf3ef4-d2b4-4cb0-9e72-82ca42361b13@redhat.com>
- <20240701-zauber-holst-1ad7cadb02f9@brauner>
-Content-Language: en-US
-From: Ian Kent <ikent@redhat.com>
-Autocrypt: addr=ikent@redhat.com; keydata=
- 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
-In-Reply-To: <20240701-zauber-holst-1ad7cadb02f9@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] arm64: dts: mt7622: fix switch probe on bananapi-r64
+To: =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
+ Linux regressions mailing list <regressions@lists.linux.dev>,
+ Paolo Abeni <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Jakub Kicinski <kuba@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Daniel Golle <daniel@makrotopia.org>, frank-w@public-files.de,
+ Frank Wunderlich <linux@fw-web.de>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
+References: <20240516204847.171029-1-linux@fw-web.de>
+ <43aacd9d-b851-4100-8ccc-878ac6ae10f8@leemhuis.info>
+ <698cf562-1ca9-4aa3-be7e-a1474b612c5b@leemhuis.info>
+ <0cba095c-3d55-416a-a7ad-b359129731cf@arinc9.com>
+ <714da201-654b-4183-8e5e-8ff0b64fe621@leemhuis.info>
+ <2cac4cf68304e81abffbd9ff0387ee100323c2b7.camel@redhat.com>
+ <b49c801c-6628-40a6-8294-0876d8871ba7@leemhuis.info>
+ <e92c3ca0-c9be-44ac-a4fc-57ca5ebedbc5@leemhuis.info>
+ <1807a142-1534-4fa4-ad4b-d1c03af014c2@arinc9.com>
+ <58d8ddea-71cc-427a-94cc-a95f6bce61d2@collabora.com>
+ <16e9c06e-9908-455d-a387-614fefe5bcf8@arinc9.com>
+ <5e87d31c-b059-4f9a-93f7-dc87465ed14a@collabora.com>
+ <4416ef22-78cc-4ce5-b61d-69ff0903811e@arinc9.com>
+ <bd6b6929-d34d-4bd5-9cb0-bc8fe850ee46@leemhuis.info>
+ <af561268-9793-4b5d-aa0f-d09698fd6fb0@arinc9.com>
+ <750a60a6-4585-4bd2-97be-cf944e51fbdb@leemhuis.info>
+ <9c498e37-df8b-469e-818a-9b1c9f2b1a3c@collabora.com>
+ <cebb10b8-b0bf-4cb7-bba4-c3f941ba2b82@leemhuis.info>
+ <1aedb1d4-8dc3-4e17-aff1-7cc417465967@arinc9.com>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+In-Reply-To: <1aedb1d4-8dc3-4e17-aff1-7cc417465967@arinc9.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1719821070;5ecf728d;
+X-HE-SMSGID: 1sOC1O-0000IS-6b
 
+On 01.07.24 09:44, Arınç ÜNAL wrote:
+> On 01/07/2024 09:16, Linux regression tracking (Thorsten Leemhuis) wrote:
+>> [CCing the other net maintainers]
+>>
+>> On 25.06.24 10:51, AngeloGioacchino Del Regno wrote:
+>>> Il 25/06/24 07:56, Linux regression tracking (Thorsten Leemhuis) ha
+>>> scritto:
+>>>> On 17.06.24 13:08, Arınç ÜNAL wrote:
+>>>>> On 17/06/2024 11:33, Linux regression tracking (Thorsten Leemhuis)
+>>>>> wrote:
+>>>>> [...]
+>>>> It looks more and more like we are stuck here (or was there progress
+>>>> and
+>>>> I just missed it?) while the 6.10 final is slowly getting closer.
+>>>> Hence:
+>>>>
+>>>> AngeloGioacchino, should we ask the net maintainers to revert
+>>>> 868ff5f4944aa9 ("net: dsa: mt7530-mdio: read PHY address of switch from
+>>>> device tree") for now to resolve this regression? Reminder, there is
+>>>> nothing wrong with that commit per se afaik, it just exposes a problem
+>>>> that needs to be fixed first before it can be reapplied.
+>>>
+>>> To be clear on this: I asked for the commit to be fixed such that it
+>>> guarantees
+>>> backwards compatibility with older device trees.
+>>>
+>>> If no fix comes,
+>>
+>> I haven't see any since that mail, did you? If not, I think...
+>>
+>>> then I guess that we should ask them to revert this commit
+>>> until a fix is available.
+>>
+>> ...it's time to ask them for the revert to resolve this for -rc7 (and
+>> avoid a last minute revert), or what do you think?
+> 
+> This is quite frustrating. I absolutely won't consent to a revert. [...]
 
-On 1/7/24 13:50, Christian Brauner wrote:
->> I always thought the rcu delay was to ensure concurrent path walks "see" the
->>
->> umount not to ensure correct operation of the following mntput()(s).
->>
->>
->> Isn't the sequence of operations roughly, resolve path, lock, deatch,
->> release
->>
->> lock, rcu wait, mntput() subordinate mounts, put path.
-> The crucial bit is really that synchronize_rcu_expedited() ensures that
-> the final mntput() won't happen until path walk leaves RCU mode.
->
-> This allows caller's like legitimize_mnt() which are called with only
-> the RCU read-lock during lazy path walk to simple check for
-> MNT_SYNC_UMOUNT and see that the mnt is about to be killed. If they see
-> that this mount is MNT_SYNC_UMOUNT then they know that the mount won't
-> be freed until an RCU grace period is up and so they know that they can
-> simply put the reference count they took _without having to actually
-> call mntput()_.
->
-> Because if they did have to call mntput() they might end up shutting the
-> filesystem down instead of umount() and that will cause said EBUSY
-> errors I mentioned in my earlier mails.
+Reminder: try to not see a revert as a bad thing. It's just means "not
+ready yet, revert and we'll try again later" -- that's actually
+something Linus wrote just a few hours ago:
+https://lore.kernel.org/lkml/CAHk-=wgQMOscLeeA3QXOs97xOz_CTxdqJjpC20tJ-7bUdHWtSA@mail.gmail.com/
 
-Yes, I get that, the problem with this was always whether lockless path 
-walks
-
-would correctly see the mount had become invalid when being checked for
-
-legitimacy.
-
-
->
->>
->> So the mount gets detached in the critical section, then we wait followed by
->>
->> the mntput()(s). The catch is that not waiting might increase the likelyhood
->>
->> that concurrent path walks don't see the umount (so that possibly the umount
->>
->> goes away before the walks see the umount) but I'm not certain. What looks
->> to
->>
->> be as much of a problem is mntput() racing with a concurrent mount beacase
->> while
->>
->> the detach is done in the critical section the super block instance list
->> deletion
->>
->> is not and the wait will make the race possibility more likely. What's more
-> Concurrent mounters of the same filesystem will wait for each other via
-> grab_super(). That has it's own logic based on sb->s_active which goes
-> to zero when all mounts are gone.
-
-Yep, missed that, I'm too hasty, thanks for your patience.
-
-
->
->> mntput() delegates the mount cleanup (which deletes the list instance) to a
->>
->> workqueue job so this can also occur serially in a following mount command.
-> No, that only happens when it's a kthread. Regular umount() call goes
-> via task work which finishes before the caller returns to userspace
-> (same as closing files work).
-
-Umm, misread that, oops!
-
-
-Ian
-
->
->>
->> In fact I might have seen exactly this behavior in a recent xfs-tests run
->> where I
->>
->> was puzzled to see occasional EBUSY return on mounting of mounts that should
->> not
->>
->> have been in use following their umount.
-> That's usually very much other bugs. See commit 2ae4db5647d8 ("fs: don't
-> misleadingly warn during thaw operations") in vfs.fixes for example.
->
->>
->> So I think there are problems here but I don't think the removal of the wait
->> for
->>
->> lazy umount is the worst of it.
->>
->>
->> The question then becomes, to start with, how do we resolve this unjustified
->> EBUSY
->>
->> return. Perhaps a completion (used between the umount and mount system
->> calls) would
->>
->> work well here?
-> Again, this already exists deeper down the stack...
->
-
+Ciao, Thorsten
 
