@@ -1,274 +1,208 @@
-Return-Path: <linux-kernel+bounces-235599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1684091D72D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 06:43:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16C4391D734
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 06:46:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A0041C21FD4
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 04:43:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E917D1C21F96
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 04:46:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7019253365;
-	Mon,  1 Jul 2024 04:42:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3D32A1D3;
+	Mon,  1 Jul 2024 04:46:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JYbkvPCT"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C0Mxd4Ca"
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3064597B
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 04:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DBDE1EB39;
+	Mon,  1 Jul 2024 04:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719808966; cv=none; b=Qd2CnRV9ZAWXZ64qDwHqVVgYqYwnZFfl1cDVn6HordHKz5jrU2A1KAwESj4fI7JKCxnXLk5IFUBhqsvZ0CEX75QHheLjfAC4nGih5sN87UYU9p1yJ1eqgk6YHfm5lE21xvUuu2AIqHyvgojMBKS2zyK82lVOSQkFB/k33qlRyBA=
+	t=1719809166; cv=none; b=OpVah+XqHoRuW2pNeUVjG2lkzYk34B9avuj+pgwdx0YSmW+bWIsdOxNmmnNcgRRId0naf6kHnu6c/n3soTe+LQ5+ffse+I9nRPTGyIlWOCqKBP1XSFT9o6EQOP8agv2StLC6KB6ifZa5uk+C9akOHoPDp667DvYyyjBYTo1RLAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719808966; c=relaxed/simple;
-	bh=E1yTNX0dXLqWoEgNrMX++wv2NEf2cNCY9AWmz0zGb1c=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=JfUxyQqMpZgb9tSmV6bqQZjeWkkv1btzhIy32XUTZ9lyRdBubpb5kbkPZ7w8oPBjWE+ClN7SKf8H8RTUtQhX+pD6/DDOOzBpkQ1BoNgIwmsCMbkdAe1n5UqM1ihYRV0M1IYR1w2XCVsYfLDClVr0QZluFOQFZWlFlcJf0bEYBmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JYbkvPCT; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-71a56a55252so2448662a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 21:42:44 -0700 (PDT)
+	s=arc-20240116; t=1719809166; c=relaxed/simple;
+	bh=7s2rcqu7xBQJ8QdhLVAHbASj82JsmopJP5CTqWgZhcs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pK1/862oJJF/c+ysMwvcr7PxdVLDyRm3D7B1ereGsjYR3jdxkJ66mh5duv/+5049yWTJfvCl7Sadlb8S4J9hFsUJ6DIZieMtbpOaNy62b7QSgrRoydIA9IOWxcVZm1dmhys3nlEIu/z6PowGkJ6inXyHySHyHMBYusNzfCkIiVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C0Mxd4Ca; arc=none smtp.client-ip=209.85.217.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-48f8f50e3b2so2019682137.0;
+        Sun, 30 Jun 2024 21:46:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719808964; x=1720413764; darn=vger.kernel.org;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qpc0+W6wY0DZse4YqiD5xoHyNTb+DGq1jJFsO9RewJY=;
-        b=JYbkvPCTS25KAdGLH7pVkhPjjAlkzYr+WpMIU9qPHMnUhZ4ICf12TFmz0lWmmAuLqH
-         kGkZh3KAU6VKrNel271GmhsdxKdNHLYGMT5cI5smfbwfNBJjbUXHgQB1dPArvXSRMBZu
-         r6L7hltK7lQWwtJH0Y3yeI6tOfzVfCUFaYq9SKYRqqT3XpHd4GvPLrCTmf+KZmoDQQR3
-         stc/BE6tM4gEeQRzzxkAIUglRjy6NzARTQZ9jesrmI8gf7wq4M49hITNfU+ZQbUb1vS3
-         axaTgVtBWfvupEAO1OaCI1HChUq/6h2wXWgOW51Spl/iKd2p+amudR5hQdmqRPr/OLMJ
-         Mv8A==
+        d=gmail.com; s=20230601; t=1719809161; x=1720413961; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Cv9Gd02X1+nQfsgs4haBJsYpcDHScnZnVywlw35l2Ak=;
+        b=C0Mxd4CakcjmgYB+YBWDOezCIjSWb5yKmfbQjHpYko2z7BT2Pw2sf1APsdZBsaj9k4
+         3s3qQb9VimrfWeskBygPNOSRoPyJJ5H7CFAplZ2dvoZ5E6c3p0Na0sDn7qwAhPu4FiJP
+         Tg543+MtYQFh9ZpAVhnX7OOV/+dQZsZY71A8eDdZV8Ns/q4bRspQBQDduqMHJGn8voLb
+         gJAMODZkkrf6kjSUb9+sha6AMoOdAUimXzmdr6ZC0/KSrJwBg7ucsiuJrVD2wICGonnT
+         SV31Oka6cixLEn+TeQBR+C3RArbsYZKbhCSc/EqtEAsOHbCJY4nyvNcpGsOSKqgvBfEN
+         i25w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719808964; x=1720413764;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qpc0+W6wY0DZse4YqiD5xoHyNTb+DGq1jJFsO9RewJY=;
-        b=peXaKXuEuFusk0Fhhq0A5OiAviDdyl3DR+0N5RzXETtBk4c2+miZuxRi06nq4Kd8XO
-         aHlC0vtPMJRQTUoX/WLF7UOzf5XsyZkOZw3wRi2epitvo2zum1JBpJUFmDIb1JpTQi/o
-         yeGqMWzpglHdktfD4sOkurHsFmHEIF6wdwdbfLeK9QRpRYCH3wdkuxAxnWWMebWVs/bR
-         TP5abYO5dcD96nzsAqS/ks5QDbwN+HUTnt0Og28G2BwiBX3VEiRSXCxxit+dIMPlkoil
-         voB6xhTYsyXBhHqD5pOmSiBinLfsK/1VwocNmcj8kznEMulqf3J2V/ePfTPUIvC00JYu
-         Ze9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVJmWV7Wh9Kss/qIQQ3XqptHst39xAU2AAGm814R/ya/4xckKs1ebInRxi+K16/8wL/7Pv9YpgXM1Uh7yTrHav4uFe7p0SAzuVMi3sx
-X-Gm-Message-State: AOJu0YyHgywx3FyYhTjahTFb1/Uiv/fjlwQXt2swN65yBTrgadGZH90f
-	gcWpSAzTusY/VMXHGtwh19A4E6/nmZbs8weJXCX+rrWv5EeS63to7duSdD2qrhf9ZWgLRop4jkr
-	uM+y1nA==
-X-Google-Smtp-Source: AGHT+IGw+TlXIzVyrzKmNehwKL4ocMvf8JKml3ao1L9vvx3M6JYQQgnsvntxw6Ya/r18frr7R0Xwpt5wJqkL
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:7bcd:6ae9:263e:82ff])
- (user=irogers job=sendgmr) by 2002:a63:2b48:0:b0:6bc:b210:c1dd with SMTP id
- 41be03b00d2f7-73cfd125c80mr17613a12.8.1719808964338; Sun, 30 Jun 2024
- 21:42:44 -0700 (PDT)
-Date: Sun, 30 Jun 2024 21:42:36 -0700
-In-Reply-To: <20240701044236.475098-1-irogers@google.com>
-Message-Id: <20240701044236.475098-3-irogers@google.com>
+        d=1e100.net; s=20230601; t=1719809161; x=1720413961;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Cv9Gd02X1+nQfsgs4haBJsYpcDHScnZnVywlw35l2Ak=;
+        b=WxWfmClK63SK6HmHVeUQqLGbJZ7R32XJtFEG6lAPRD3UWMiXmbFB8q0enpLslbBJwn
+         fOjLQ+u7FqsnMqlK2vC16WF1bCUXC9mO6Q/2FHNWS41v/hFvP6YCuSYCmWD6LwpW2Eav
+         uNfz/z5DjVXE3Mhkz9Ye1uBjKhLIIsLbTvikBiuAapmzGig8NWw06FFR2anPOpD+iu09
+         1k4fMuBAvh8QOcNuuBTDzMfRq5N92B5vawRbdgOXae9GFJma9OXtNhEWsuFJh3wK5N5r
+         f3BjNJTDBZrJ+xrhKOpXGpZ7UcelhB94vflBm7hu3303Zf+y1jCFJclzjmGHCPhXNBR4
+         9IdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUcNQkBvL1S5b7szBBFnSneAUbLD4T5WGzLeaAn8siFpwPty+hkGRJc7deD4u0ie3DpSIfigmdheqvgFwKZ/4Ocy8yT2JO8nL0MMdebwn0vl5x0IvWczm3lqTWVlgB9NjMcDKz6vMvx
+X-Gm-Message-State: AOJu0YwqhjuqI+v3MTBkY9+or/iI46tW+zHyPBjkJ16PsqoXLK1z37cF
+	RO89SrsOglZyq2BZtCTwCwveOGolJdkxsPeQOAVX/LFSzjQq8U+MdIv+CbTOX04g1rdVFu2LBps
+	/LPfo7n/OMZOX3tYe/GS/4GTZwQs=
+X-Google-Smtp-Source: AGHT+IGxT49KKHkXJncBiPaxAdO1Ofy6deas1AHy2Mfu9KSsEAQLk0LbazzGKCYXXVvgARJXsojE/zqUyQYYFrTNS+4=
+X-Received: by 2002:a05:6102:126e:b0:48f:9645:62fd with SMTP id
+ ada2fe7eead31-48fae952e2amr2395203137.14.1719809161022; Sun, 30 Jun 2024
+ 21:46:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240701044236.475098-1-irogers@google.com>
-X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
-Subject: [PATCH v2 2/2] perf test: Display number of remaining tests
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@arm.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+MIME-Version: 1.0
+References: <75C90B50-9AB9-4F0A-B2CD-43427354D15C@live.com>
+In-Reply-To: <75C90B50-9AB9-4F0A-B2CD-43427354D15C@live.com>
+From: Orlando Chamberlain <orlandoch.dev@gmail.com>
+Date: Mon, 1 Jul 2024 14:45:49 +1000
+Message-ID: <CADfWnbbWDgYe6g_CkEmpwAMfZf2kWLE5khB0GSfhojfvDFu5sA@mail.gmail.com>
+Subject: Re: [PATCH v2] efi: libstub: add support for the apple_set_os protocol
+To: Aditya Garg <gargaditya08@live.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>, Hans de Goede <hdegoede@redhat.com>, Lukas Wunner <lukas@wunner.de>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, Kerem Karabay <kekrby@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Before polling or sleeping to wait for a test to complete, print out
-": Running (<num> remaining)" where the number of remaining tests is
-determined by iterating over the remaining tests and seeing which
-return true for check_if_command_finished. After the delay, erase the
-line and either update it with the new number of remaining tests, or
-print the test's result. This allows a user to know a test is running
-and in parallel mode (default) how many of the tests are waiting to
-complete. If color mode is disabled then avoid displaying the
-"Running" message.
+I've checked that this patch works for me when applied to 6.10-rc6.
+I can also use https://github.com/0xbb/gpu-switch to make the boot gpu
+the iGPU now.
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/tests/builtin-test.c | 77 ++++++++++++++++++++++-----------
- tools/perf/util/color.h         |  1 +
- 2 files changed, 53 insertions(+), 25 deletions(-)
+Tested-By: Orlando Chamberlain <orlandoch.dev@gmail.com> (MacBookPro16,1)
 
-diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
-index c3d84b67ca8e..23be9139f229 100644
---- a/tools/perf/tests/builtin-test.c
-+++ b/tools/perf/tests/builtin-test.c
-@@ -241,7 +241,10 @@ static int run_test_child(struct child_process *process)
- 	return -err;
- }
- 
--static int print_test_result(struct test_suite *t, int i, int subtest, int result, int width)
-+#define TEST_RUNNING -3
-+
-+static int print_test_result(struct test_suite *t, int i, int subtest, int result, int width,
-+			     int remaining)
- {
- 	if (has_subtests(t)) {
- 		int subw = width > 2 ? width - 2 : width;
-@@ -251,6 +254,9 @@ static int print_test_result(struct test_suite *t, int i, int subtest, int resul
- 		pr_info("%3d: %-*s:", i + 1, width, test_description(t, subtest));
- 
- 	switch (result) {
-+	case TEST_RUNNING:
-+		color_fprintf(stderr, PERF_COLOR_YELLOW, " Running (%d remaining)\n", remaining);
-+		break;
- 	case TEST_OK:
- 		pr_info(" Ok\n");
- 		break;
-@@ -272,13 +278,15 @@ static int print_test_result(struct test_suite *t, int i, int subtest, int resul
- 	return 0;
- }
- 
--static int finish_test(struct child_test *child_test, int width)
-+static int finish_test(struct child_test **child_tests, int running_test, int child_test_num,
-+		       int width)
- {
-+	struct child_test *child_test = child_tests[running_test];
- 	struct test_suite *t = child_test->test;
- 	int i = child_test->test_num;
- 	int subi = child_test->subtest;
- 	int err = child_test->process.err;
--	bool err_done = err <= 0;
-+	bool err_done = false;
- 	struct strbuf err_output = STRBUF_INIT;
- 	int ret;
- 
-@@ -293,7 +301,7 @@ static int finish_test(struct child_test *child_test, int width)
- 	 * Busy loop reading from the child's stdout/stderr that are set to be
- 	 * non-blocking until EOF.
- 	 */
--	if (!err_done)
-+	if (err > 0)
- 		fcntl(err, F_SETFL, O_NONBLOCK);
- 	if (verbose > 1) {
- 		if (has_subtests(t))
-@@ -307,29 +315,48 @@ static int finish_test(struct child_test *child_test, int width)
- 			  .events = POLLIN | POLLERR | POLLHUP | POLLNVAL,
- 			},
- 		};
--		char buf[512];
--		ssize_t len;
--
--		/* Poll to avoid excessive spinning, timeout set for 100ms. */
--		poll(pfds, ARRAY_SIZE(pfds), /*timeout=*/100);
--		if (!err_done && pfds[0].revents) {
--			errno = 0;
--			len = read(err, buf, sizeof(buf) - 1);
--
--			if (len <= 0) {
--				err_done = errno != EAGAIN;
--			} else {
--				buf[len] = '\0';
--				if (verbose > 1)
--					fprintf(stdout, "%s", buf);
--				else
-+		if (perf_use_color_default) {
-+			int tests_in_progress = running_test;
-+
-+			for (int y = running_test; y < child_test_num; y++) {
-+				if (check_if_command_finished(&child_tests[y]->process))
-+					tests_in_progress++;
-+			}
-+			print_test_result(t, i, subi, TEST_RUNNING, width,
-+					  child_test_num - tests_in_progress);
-+		}
-+
-+		err_done = true;
-+		if (err <= 0) {
-+			/* No child stderr to poll, sleep for 10ms for child to complete. */
-+			usleep(10 * 1000);
-+		} else {
-+			/* Poll to avoid excessive spinning, timeout set for 100ms. */
-+			poll(pfds, ARRAY_SIZE(pfds), /*timeout=*/100);
-+			if (pfds[0].revents) {
-+				char buf[512];
-+				ssize_t len;
-+
-+				len = read(err, buf, sizeof(buf) - 1);
-+
-+				if (len > 0) {
-+					err_done = false;
-+					buf[len] = '\0';
- 					strbuf_addstr(&err_output, buf);
-+				}
- 			}
- 		}
-+		if (err_done)
-+			err_done = check_if_command_finished(&child_test->process);
-+
-+		if (perf_use_color_default) {
-+			/* Erase "Running (.. remaining)" line printed before poll/sleep. */
-+			fprintf(debug_file(), PERF_COLOR_DELETE_LINE);
-+		}
- 	}
- 	/* Clean up child process. */
- 	ret = finish_command(&child_test->process);
--	if (verbose == 1 && ret == TEST_FAIL) {
-+	if (verbose > 1 || (verbose == 1 && ret == TEST_FAIL)) {
- 		/* Add header for test that was skipped above. */
- 		if (has_subtests(t))
- 			pr_info("%3d.%1d: %s:\n", i + 1, subi + 1, test_description(t, subi));
-@@ -338,7 +365,7 @@ static int finish_test(struct child_test *child_test, int width)
- 		fprintf(stderr, "%s", err_output.buf);
- 	}
- 	strbuf_release(&err_output);
--	print_test_result(t, i, subi, ret, width);
-+	print_test_result(t, i, subi, ret, width, /*remaining=*/0);
- 	if (err > 0)
- 		close(err);
- 	return 0;
-@@ -354,7 +381,7 @@ static int start_test(struct test_suite *test, int i, int subi, struct child_tes
- 		pr_debug("--- start ---\n");
- 		err = test_function(test, subi)(test, subi);
- 		pr_debug("---- end ----\n");
--		print_test_result(test, i, subi, err, width);
-+		print_test_result(test, i, subi, err, width, /*remaining=*/0);
- 		return 0;
- 	}
- 
-@@ -379,7 +406,7 @@ static int start_test(struct test_suite *test, int i, int subi, struct child_tes
- 	err = start_command(&(*child)->process);
- 	if (err || !sequential)
- 		return  err;
--	return finish_test(*child, width);
-+	return finish_test(child, /*running_test=*/0, /*child_test_num=*/1, width);
- }
- 
- #define for_each_test(j, k, t)					\
-@@ -464,7 +491,7 @@ static int __cmd_test(int argc, const char *argv[], struct intlist *skiplist)
- 	}
- 	for (i = 0; i < child_test_num; i++) {
- 		if (!sequential) {
--			int ret  = finish_test(child_tests[i], width);
-+			int ret  = finish_test(child_tests, i, child_test_num, width);
- 
- 			if (ret)
- 				return ret;
-diff --git a/tools/perf/util/color.h b/tools/perf/util/color.h
-index 01f7bed21c9b..4b9f8d5d4439 100644
---- a/tools/perf/util/color.h
-+++ b/tools/perf/util/color.h
-@@ -22,6 +22,7 @@
- #define MIN_GREEN	0.5
- #define MIN_RED		5.0
- 
-+#define PERF_COLOR_DELETE_LINE	"\033[A\33[2K\r"
- /*
-  * This variable stores the value of color.ui
-  */
--- 
-2.45.2.803.g4e1b14247a-goog
 
+On Mon, 1 Jul 2024 at 05:24, Aditya Garg <gargaditya08@live.com> wrote:
+>
+> From: Aditya Garg <gargaditya08@live.com>
+>
+> 0c18184de990 ("platform/x86: apple-gmux: support MMIO gmux on T2 Macs")
+> brought support for T2 Macs in apple-gmux. But in order to use dual GPU,
+> the integrated GPU has to be enabled. On such dual GPU EFI Macs, the EFI
+> stub needs to report that it is booting macOS in order to prevent the
+> firmware from disabling the iGPU.
+>
+> This patch is also applicable for some non T2 Intel Macs.
+>
+> Based on this patch for GRUB by Andreas Heider <andreas@heider.io>:
+> https://lists.gnu.org/archive/html/grub-devel/2013-12/msg00442.html
+>
+> Credits also goto Kerem Karabay <kekrby@gmail.com> for helping porting
+> the patch to the Linux kernel.
+>
+> Signed-off-by: Aditya Garg <gargaditya08@live.com>
+> ---
+>  drivers/firmware/efi/libstub/efistub.h  | 15 +++++++++++
+>  drivers/firmware/efi/libstub/x86-stub.c | 33 ++++++++++++++++++++++---
+>  include/linux/efi.h                     |  1 +
+>  3 files changed, 46 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/firmware/efi/libstub/efistub.h b/drivers/firmware/efi/libstub/efistub.h
+> index 27abb4ce0..4257a8b7c 100644
+> --- a/drivers/firmware/efi/libstub/efistub.h
+> +++ b/drivers/firmware/efi/libstub/efistub.h
+> @@ -825,6 +825,21 @@ union apple_properties_protocol {
+>         } mixed_mode;
+>  };
+>
+> +typedef union apple_set_os_protocol apple_set_os_protocol_t;
+> +
+> +union apple_set_os_protocol {
+> +       struct {
+> +               unsigned long version;
+> +               efi_status_t (__efiapi *set_os_version) (const char *);
+> +               efi_status_t (__efiapi *set_os_vendor) (const char *);
+> +       };
+> +       struct {
+> +               u32 version;
+> +               u32 set_os_version;
+> +               u32 set_os_vendor;
+> +       } mixed_mode;
+> +};
+> +
+>  typedef u32 efi_tcg2_event_log_format;
+>
+>  #define INITRD_EVENT_TAG_ID 0x8F3B22ECU
+> diff --git a/drivers/firmware/efi/libstub/x86-stub.c b/drivers/firmware/efi/libstub/x86-stub.c
+> index 1983fd3bf..1eea4f7ba 100644
+> --- a/drivers/firmware/efi/libstub/x86-stub.c
+> +++ b/drivers/firmware/efi/libstub/x86-stub.c
+> @@ -225,6 +225,30 @@ static void retrieve_apple_device_properties(struct boot_params *boot_params)
+>         }
+>  }
+>
+> +static void apple_set_os(void)
+> +{
+> +       efi_guid_t guid = APPLE_SET_OS_PROTOCOL_GUID;
+> +       apple_set_os_protocol_t *set_os;
+> +       efi_status_t status;
+> +
+> +       status = efi_bs_call(locate_protocol, &guid, NULL, (void **)&set_os);
+> +       if (status != EFI_SUCCESS)
+> +               return;
+> +
+> +       if (efi_table_attr(set_os, version) >= 2) {
+> +               status = efi_fn_call(set_os, set_os_vendor, "Apple Inc.");
+> +               if (status != EFI_SUCCESS)
+> +                       efi_err("Failed to set OS vendor via apple_set_os\n");
+> +       }
+> +
+> +       /* The version being set doesn't seem to matter */
+> +       if (efi_table_attr(set_os, version) > 0) {
+> +               status = efi_fn_call(set_os, set_os_version, "Mac OS X 10.9");
+> +               if (status != EFI_SUCCESS)
+> +                       efi_err("Failed to set OS version via apple_set_os\n");
+> +       }
+> +}
+> +
+>  efi_status_t efi_adjust_memory_range_protection(unsigned long start,
+>                                                 unsigned long size)
+>  {
+> @@ -335,9 +359,12 @@ static const efi_char16_t apple[] = L"Apple";
+>
+>  static void setup_quirks(struct boot_params *boot_params)
+>  {
+> -       if (IS_ENABLED(CONFIG_APPLE_PROPERTIES) &&
+> -           !memcmp(efistub_fw_vendor(), apple, sizeof(apple)))
+> -               retrieve_apple_device_properties(boot_params);
+> +       if (!memcmp(efistub_fw_vendor(), apple, sizeof(apple))) {
+> +               if (IS_ENABLED(CONFIG_APPLE_PROPERTIES)) {
+> +                       retrieve_apple_device_properties(boot_params);
+> +               }
+> +               apple_set_os();
+> +       }
+>  }
+>
+>  /*
+> diff --git a/include/linux/efi.h b/include/linux/efi.h
+> index 418e55545..e28873eb1 100644
+> --- a/include/linux/efi.h
+> +++ b/include/linux/efi.h
+> @@ -385,6 +385,7 @@ void efi_native_runtime_setup(void);
+>  #define EFI_MEMORY_ATTRIBUTES_TABLE_GUID       EFI_GUID(0xdcfa911d, 0x26eb, 0x469f,  0xa2, 0x20, 0x38, 0xb7, 0xdc, 0x46, 0x12, 0x20)
+>  #define EFI_CONSOLE_OUT_DEVICE_GUID            EFI_GUID(0xd3b36f2c, 0xd551, 0x11d4,  0x9a, 0x46, 0x00, 0x90, 0x27, 0x3f, 0xc1, 0x4d)
+>  #define APPLE_PROPERTIES_PROTOCOL_GUID         EFI_GUID(0x91bd12fe, 0xf6c3, 0x44fb,  0xa5, 0xb7, 0x51, 0x22, 0xab, 0x30, 0x3a, 0xe0)
+> +#define APPLE_SET_OS_PROTOCOL_GUID             EFI_GUID(0xc5c5da95, 0x7d5c, 0x45e6,  0xb2, 0xf1, 0x3f, 0xd5, 0x2b, 0xb1, 0x00, 0x77)
+>  #define EFI_TCG2_PROTOCOL_GUID                 EFI_GUID(0x607f766c, 0x7455, 0x42be,  0x93, 0x0b, 0xe4, 0xd7, 0x6d, 0xb2, 0x72, 0x0f)
+>  #define EFI_TCG2_FINAL_EVENTS_TABLE_GUID       EFI_GUID(0x1e2ed096, 0x30e2, 0x4254,  0xbd, 0x89, 0x86, 0x3b, 0xbe, 0xf8, 0x23, 0x25)
+>  #define EFI_LOAD_FILE_PROTOCOL_GUID            EFI_GUID(0x56ec3091, 0x954c, 0x11d2,  0x8e, 0x3f, 0x00, 0xa0, 0xc9, 0x69, 0x72, 0x3b)
+> --
+> 2.39.3 (Apple Git-146)
+>
 
