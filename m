@@ -1,476 +1,108 @@
-Return-Path: <linux-kernel+bounces-236120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAAA491DDB8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:21:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D355791DDBB
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:21:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B201B217EC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:21:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94442282000
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3216B14373A;
-	Mon,  1 Jul 2024 11:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C6OLsfOx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6906C13DBB3;
+	Mon,  1 Jul 2024 11:21:27 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B9D1422CE
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 11:20:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468EB12CDB0;
+	Mon,  1 Jul 2024 11:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719832850; cv=none; b=VeYMP5m8ruD0uc4LkIHSNpk9LY3RU5fp7/qdiwCu3AzTCNL9NiMa9xUUkfhh2v5IdyZnneEli1zrTu+5PK6YD61D2lc+WYbW/cEeBrknFrUp17nSOqPbbkubaWGu9d+yg9HSJAOPRnjK1TOKvnm1RpCjWW93aNtzaP8VR2wBLBI=
+	t=1719832887; cv=none; b=m1CKUhH+e/7RULwyHl/NUUltvoVm6o42jBxPsVlpGe10jcceWVSgzpz2cYYH1qEJL9w0LAslvEvj54zyTngOM9PY6+Rgly9Ct2XsfhYpx24G4xjLoNcbXevw5PmcrJYzxmLSWlyylnuy3JsysavbwdUu77e/GPamapCYT+vB71c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719832850; c=relaxed/simple;
-	bh=NSwcZo86tOSm2faPtLycodlFmTcALPoXvh4E64ZsC+4=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H8TpubMumyvdoo/ESo0Q8SPao/UJIIYd8GL8n5JK7OvGUFFIZNFEV4gi9iJaoGh/xydcUopjtK9cUQk+QiSGNHWVp6QRVc+V5dAiF4t73Uyg02fFIG76NHu0HkPahNFvYSTdsRvgngo5p4N1kK5jfTe+UPDmJKj043WBBeyD4JA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C6OLsfOx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A7D6C4AF0C;
-	Mon,  1 Jul 2024 11:20:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719832849;
-	bh=NSwcZo86tOSm2faPtLycodlFmTcALPoXvh4E64ZsC+4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=C6OLsfOxu3hQ33cphcacWiUvIbF/LE4ul+zpVGkBMY0iE98Nw43X2+5IqwHL4P8XB
-	 Pueyyc+NJ+7Svgc1K8M4Uu4r2OiY4YO0jIWKB1P3MAfQlr5AkUtfSIH2LbAu/jB0hB
-	 li+vRq/WNgrJUoXK3yl7Lg9DAp7cISRAnuXG6uf3O2X2qyP7lMAoCivHCUn/ODYh3q
-	 twyxb9sJRAzS9upLpZ37N6sMnEOEXXBWzRnRdgS0d/03Xwxl43sCW+WZaXKvMI08kG
-	 gF6FocybgDUr6HVGQQ9hmFHeoJACKPfiqfbVpodkwrQzpHiQaA6CESJb/OlEtaTDP5
-	 SVmdMTki7twqw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sOF5T-008lYA-49;
-	Mon, 01 Jul 2024 12:20:47 +0100
-Date: Mon, 01 Jul 2024 12:20:46 +0100
-Message-ID: <868qylicj5.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Nianyao Tang <tangnianyao@huawei.com>
-Cc: <tglx@linutronix.de>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>,
-	<guoyang2@huawei.com>,
-	<wangwudi@hisilicon.com>
-Subject: Re: [PATCH] irqchip/gic-v4: Fix vcpus racing for vpe->col_idx in vmapp and vmovp
-In-Reply-To: <20240701072305.4129823-1-tangnianyao@huawei.com>
-References: <20240701072305.4129823-1-tangnianyao@huawei.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1719832887; c=relaxed/simple;
+	bh=JOzJZ9bsQdjN0b6Bn+BCyZRD0ZGpRjDY8984P99UG+A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o+A9IrwyBl8Uezzg/s1XCP7OYKlowmz5z6IRcgERJilHAhY31Bt9uatCaYfIST51/D2J+4onW07IivsR/YFEHVYVCw4WwcN17/H2HZe+RhCT4sLSaEbPGOJAO4ceWrKPo7r5AmqQNTrUVoQf18A5C4NGgrwW+9fUJt3ihVy+NtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.97.1)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1sOF5m-000000006YZ-0Ekn;
+	Mon, 01 Jul 2024 11:21:06 +0000
+Date: Mon, 1 Jul 2024 12:20:59 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Sky Huang <SkyLake.Huang@mediatek.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Qingfang Deng <dqfext@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Steven Liu <Steven.Liu@mediatek.com>
+Subject: Re: [PATCH net-next v10 13/13] net: phy: mediatek: Remove
+ unnecessary outer parens of "supported_triggers" var
+Message-ID: <ZoKRDSVYD_JMhMqW@makrotopia.org>
+References: <20240701105417.19941-1-SkyLake.Huang@mediatek.com>
+ <20240701105417.19941-14-SkyLake.Huang@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: tangnianyao@huawei.com, tglx@linutronix.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, guoyang2@huawei.com, wangwudi@hisilicon.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240701105417.19941-14-SkyLake.Huang@mediatek.com>
 
-On Mon, 01 Jul 2024 08:23:05 +0100,
-Nianyao Tang <tangnianyao@huawei.com> wrote:
->=20
-> its_map_vm may modify vpe->col_idx without holding vpe->vpe_lock.
-> It would result in a vpe resident on one RD after vmovp to a different RD.
-> Or, a vpe maybe vmovp to a RD same as it is current mapped in vpe table.
->=20
-> On a 2-ITS, GICv4 enabled system, 32 vcpus deployed on cpu of collection 0
-> and 1. Two pci devices route VLPIs, using each of the ITS.
-> VPE ready to reside on RD1 may have such unexpected case because another
-> vcpu on other cpu is doing vmapp and modify his vpe->col_idx.
->=20
-> Unexpected Case 1:
-> RD                0                              1
->                                            vcpu_load
->                                            lock vpe_lock
->                                            vpe->col_idx =3D 1
->             its_map_vm
->             lock vmovp_lock
->                                            waiting vmovp_lock
->             vpe->col_idx =3D 0
->             (cpu0 is first online cpu)
->             vmapp vpe on col0
->             unlock vmovp_lock
->                                            lock vmovp_lock
->                                            vmovp vpe to col0
->                                            unlock vmovp_lock
->                                            vpe resident here fail to
->                                              receive VLPI!
->=20
-> Unexpected Case 2:
-> RD                0                              1
->             its_map_vm                     vcpu_load
->             lock vmovp_lock                lock vpe_lock
->             vpe->col_idx =3D 0
->                                            vpe->col_idx =3D 1
->             vmapp vpe on col1              waiting vmovp_lock
->             unlock vmovp_lock
->                                            lock vmovp_lock
->                                            vmovp vpe to col1
->                                            (target RD =3D=3D source RD!)
->                                            unlock vmovp_lock
-
-Why is this second case a problem? What is the conclusion? This commit
-message doesn't explain how you are solving it.
-
->=20
->=20
->=20
-> Signed-off-by: Nianyao Tang <tangnianyao@huawei.com>
+On Mon, Jul 01, 2024 at 06:54:17PM +0800, Sky Huang wrote:
+> From: "SkyLake.Huang" <skylake.huang@mediatek.com>
+> 
+> This patch removes unnecessary outer parens of "supported_triggers" vars
+> in mtk-ge.c & mtk-ge-soc.c to improve readability.
+> 
+> Signed-off-by: SkyLake.Huang <skylake.huang@mediatek.com>
 > ---
->  drivers/irqchip/irq-gic-v3-its.c | 18 +++++++++++++-----
->  1 file changed, 13 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v=
-3-its.c
-> index f99c0a86320b..adda9824e0e7 100644
-> --- a/drivers/irqchip/irq-gic-v3-its.c
-> +++ b/drivers/irqchip/irq-gic-v3-its.c
-> @@ -1794,11 +1794,15 @@ static bool gic_requires_eager_mapping(void)
->  static void its_map_vm(struct its_node *its, struct its_vm *vm)
->  {
->  	unsigned long flags;
-> +	bool vm_mapped_on_any_its =3D false;
-> +	int i;
-> =20
->  	if (gic_requires_eager_mapping())
->  		return;
-> =20
-> -	raw_spin_lock_irqsave(&vmovp_lock, flags);
-> +	for (i =3D 0; i < GICv4_ITS_LIST_MAX; i++)
-> +		if (vm->vlpi_count[i] > 0)
-> +			vm_mapped_on_any_its =3D true;
-
-What makes you think that dropping the vmovp lock is a good idea? What
-if you have a concurrent unmap?
-
-> =20
->  	/*
->  	 * If the VM wasn't mapped yet, iterate over the vpes and get
-> @@ -1813,15 +1817,19 @@ static void its_map_vm(struct its_node *its, stru=
-ct its_vm *vm)
->  			struct its_vpe *vpe =3D vm->vpes[i];
->  			struct irq_data *d =3D irq_get_irq_data(vpe->irq);
-> =20
-> -			/* Map the VPE to the first possible CPU */
-> -			vpe->col_idx =3D cpumask_first(cpu_online_mask);
-> +			raw_spin_lock_irqsave(&vpe->vpe_lock, flags);
-> +
-> +			if (!vm_mapped_on_any_its) {
-> +				/* Map the VPE to the first possible CPU */
-> +				vpe->col_idx =3D cpumask_first(cpu_online_mask);
-> +			}
-
-If the issue is that the target RD isn't initialised before we issue a
-VMAPP, then why not initialising it right from the start?
-
->  			its_send_vmapp(its, vpe, true);
->  			its_send_vinvall(its, vpe);
->  			irq_data_update_effective_affinity(d, cpumask_of(vpe->col_idx));
-> +
-> +			raw_spin_unlock_irqrestore(&vpe->vpe_lock, flags);
->  		}
->  	}
-> -
-> -	raw_spin_unlock_irqrestore(&vmovp_lock, flags);
+> diff --git a/drivers/net/phy/mediatek/mtk-ge.c b/drivers/net/phy/mediatek/mtk-ge.c
+> index 90f3990..050a4f7 100644
+> --- a/drivers/net/phy/mediatek/mtk-ge.c
+> +++ b/drivers/net/phy/mediatek/mtk-ge.c
+> @@ -152,14 +152,14 @@ static int mt753x_phy_led_brightness_set(struct phy_device *phydev,
 >  }
-> =20
->  static void its_unmap_vm(struct its_node *its, struct its_vm *vm)
+>  
+>  static const unsigned long supported_triggers =
+> -	(BIT(TRIGGER_NETDEV_FULL_DUPLEX) |
+> -	 BIT(TRIGGER_NETDEV_HALF_DUPLEX) |
+> -	 BIT(TRIGGER_NETDEV_LINK)        |
+> -	 BIT(TRIGGER_NETDEV_LINK_10)     |
+> -	 BIT(TRIGGER_NETDEV_LINK_100)    |
+> -	 BIT(TRIGGER_NETDEV_LINK_1000)   |
+> -	 BIT(TRIGGER_NETDEV_RX)          |
+> -	 BIT(TRIGGER_NETDEV_TX));
+> +	BIT(TRIGGER_NETDEV_FULL_DUPLEX) |
+> +	BIT(TRIGGER_NETDEV_HALF_DUPLEX) |
+> +	BIT(TRIGGER_NETDEV_LINK)        |
+> +	BIT(TRIGGER_NETDEV_LINK_10)     |
+> +	BIT(TRIGGER_NETDEV_LINK_100)    |
+> +	BIT(TRIGGER_NETDEV_LINK_1000)   |
+> +	BIT(TRIGGER_NETDEV_RX)          |
+> +	BIT(TRIGGER_NETDEV_TX);
 
-I don't think this patch makes much sense. It opens an even bigger
-race between map and unmap, and I really don't think we want that. The
-main issue is that you are trying to avoid fixing the root cause of
-the problem...
+Those lines are added within the same series by patch 06/13
+("net: phy: mediatek: Hook LED helper functions in mtk-ge.c").
+I get and like the idea of doing things one by one, but in this case
+instead of editing what you have just added, better move the commit
+removing the unnecessary parentheses somewhere before copying them to
+the mtk-ge.c driver in patch 6/13.
 
-The first course of action is to move the vpe->col_idx init and
-affinity update to activation time, which would make all
-implementations (v4 with and without VMOVP list, v4.1) behave the
-same. On its own, this solves the biggest issue.
-
-The other thing would be to ensure that this lazy VMAPP cannot take
-place concurrently with vcpu_load(). We can't take the VPE lock after
-the vmovp_lock, as this violates the lock ordering established in
-its_vpe_set_affinity(), which locks the VPE before doing anything else.
-
-A possibility would be to take *all* vpe locks *before* taking the
-vmovp lock, ensuring that vmapp sees something consistent. But that's
-potentially huge, and likely to cause stalls on a busy VM. Instead, a
-per-VM lock would do the trick and allow each VPE lock to be taken in
-turn.
-
-With that, we can fix the locking correctly, and make sure that
-vcpu_load and vmapp are mutually exclusive.
-
-I've written the small patch series below (compile-tested only).
-Please let me know how it fares for you.
-
-	M.
-
-=46rom a9857d782fc649bc08db953477bed9b8c3421118 Mon Sep 17 00:00:00 2001
-From: Marc Zyngier <maz@kernel.org>
-Date: Mon, 1 Jul 2024 10:39:19 +0100
-Subject: [PATCH 1/3] irqchip/gic-v4: Always configure affinity on VPE
- activation
-
-We currently have two paths to set the initial affinity of a VPE:
-
-- at activation time on GICv4 without the stupid VMOVP list, and
-  on GICv4.1
-
-- at map time for GICv4 with VMOVP list
-
-The latter location may end-up modifying the affinity of VPE
-that is currently running, making the results unpredictible.
-
-Instead, unify the two paths, making sure we only set the
-initial affinity at activation time.
-
-Signed-off-by: Marc Zyngier <maz@kernel.org>
----
- drivers/irqchip/irq-gic-v3-its.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-=
-its.c
-index 3c755d5dad6e6..a00c5e8c4ea65 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -1809,13 +1809,9 @@ static void its_map_vm(struct its_node *its, struct =
-its_vm *vm)
-=20
- 		for (i =3D 0; i < vm->nr_vpes; i++) {
- 			struct its_vpe *vpe =3D vm->vpes[i];
--			struct irq_data *d =3D irq_get_irq_data(vpe->irq);
-=20
--			/* Map the VPE to the first possible CPU */
--			vpe->col_idx =3D cpumask_first(cpu_online_mask);
- 			its_send_vmapp(its, vpe, true);
- 			its_send_vinvall(its, vpe);
--			irq_data_update_effective_affinity(d, cpumask_of(vpe->col_idx));
- 		}
- 	}
-=20
-@@ -4562,6 +4558,10 @@ static int its_vpe_irq_domain_activate(struct irq_do=
-main *domain,
- 	struct its_vpe *vpe =3D irq_data_get_irq_chip_data(d);
- 	struct its_node *its;
-=20
-+	/* Map the VPE to the first possible CPU */
-+	vpe->col_idx =3D cpumask_first(cpu_online_mask);
-+	irq_data_update_effective_affinity(d, cpumask_of(vpe->col_idx));
-+
- 	/*
- 	 * If we use the list map, we issue VMAPP on demand... Unless
- 	 * we're on a GICv4.1 and we eagerly map the VPE on all ITSs
-@@ -4570,9 +4570,6 @@ static int its_vpe_irq_domain_activate(struct irq_dom=
-ain *domain,
- 	if (!gic_requires_eager_mapping())
- 		return 0;
-=20
--	/* Map the VPE to the first possible CPU */
--	vpe->col_idx =3D cpumask_first(cpu_online_mask);
--
- 	list_for_each_entry(its, &its_nodes, entry) {
- 		if (!is_v4(its))
- 			continue;
-@@ -4581,8 +4578,6 @@ static int its_vpe_irq_domain_activate(struct irq_dom=
-ain *domain,
- 		its_send_vinvall(its, vpe);
- 	}
-=20
--	irq_data_update_effective_affinity(d, cpumask_of(vpe->col_idx));
--
- 	return 0;
- }
-=20
---=20
-2.39.2
-
-
-=46rom e3c53afb6b3b5e9e4dc5963f9f70350455e7e986 Mon Sep 17 00:00:00 2001
-From: Marc Zyngier <maz@kernel.org>
-Date: Mon, 1 Jul 2024 12:00:13 +0100
-Subject: [PATCH 2/3] irqchip/gic-v4: Substitute vmovp_lock for a per-VM lock
-
-vmovp_lock is abused in a number of cases to serialise updates
-to vlpi_count[] and deal with map/unmap of a VM to ITSs.
-
-Instead, provide such a lock and revisit the use of vlpi_count[]
-so that it is always wrapped in this per-VM vmapp_lock.
-
-Signed-off-by: Marc Zyngier <maz@kernel.org>
----
- drivers/irqchip/irq-gic-v3-its.c   | 21 +++++++++++----------
- include/linux/irqchip/arm-gic-v4.h |  5 +++++
- 2 files changed, 16 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-=
-its.c
-index a00c5e8c4ea65..7c37fbe97afbe 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -1338,6 +1338,11 @@ static void its_send_vmovp(struct its_vpe *vpe)
- 	 * Wall <-- Head.
- 	 */
- 	raw_spin_lock_irqsave(&vmovp_lock, flags);
-+	/*
-+	 * Protect against concurrent updates of the mapping state on
-+	 * individual VMs.
-+	 */
-+	raw_spin_lock(&vpe->its_vm->vmapp_lock);
-=20
- 	desc.its_vmovp_cmd.seq_num =3D vmovp_seq_num++;
- 	desc.its_vmovp_cmd.its_list =3D get_its_list(vpe->its_vm);
-@@ -1354,6 +1359,7 @@ static void its_send_vmovp(struct its_vpe *vpe)
- 		its_send_single_vcommand(its, its_build_vmovp_cmd, &desc);
- 	}
-=20
-+	raw_spin_unlock(&vpe->its_vm->vmapp_lock);
- 	raw_spin_unlock_irqrestore(&vmovp_lock, flags);
- }
-=20
-@@ -1791,12 +1797,10 @@ static bool gic_requires_eager_mapping(void)
-=20
- static void its_map_vm(struct its_node *its, struct its_vm *vm)
- {
--	unsigned long flags;
--
- 	if (gic_requires_eager_mapping())
- 		return;
-=20
--	raw_spin_lock_irqsave(&vmovp_lock, flags);
-+	guard(raw_spinlock_irqsave)(&vm->vmapp_lock);
-=20
- 	/*
- 	 * If the VM wasn't mapped yet, iterate over the vpes and get
-@@ -1814,19 +1818,15 @@ static void its_map_vm(struct its_node *its, struct=
- its_vm *vm)
- 			its_send_vinvall(its, vpe);
- 		}
- 	}
--
--	raw_spin_unlock_irqrestore(&vmovp_lock, flags);
- }
-=20
- static void its_unmap_vm(struct its_node *its, struct its_vm *vm)
- {
--	unsigned long flags;
--
- 	/* Not using the ITS list? Everything is always mapped. */
- 	if (gic_requires_eager_mapping())
- 		return;
-=20
--	raw_spin_lock_irqsave(&vmovp_lock, flags);
-+	guard(raw_spinlock_irqsave)(&vm->vmapp_lock);
-=20
- 	if (!--vm->vlpi_count[its->list_nr]) {
- 		int i;
-@@ -1834,8 +1834,6 @@ static void its_unmap_vm(struct its_node *its, struct=
- its_vm *vm)
- 		for (i =3D 0; i < vm->nr_vpes; i++)
- 			its_send_vmapp(its, vm->vpes[i], false);
- 	}
--
--	raw_spin_unlock_irqrestore(&vmovp_lock, flags);
- }
-=20
- static int its_vlpi_map(struct irq_data *d, struct its_cmd_info *info)
-@@ -3922,6 +3920,8 @@ static void its_vpe_invall(struct its_vpe *vpe)
- {
- 	struct its_node *its;
-=20
-+	guard(raw_spinlock_irqsave)(&vpe->its_vm->vmapp_lock);
-+
- 	list_for_each_entry(its, &its_nodes, entry) {
- 		if (!is_v4(its))
- 			continue;
-@@ -4527,6 +4527,7 @@ static int its_vpe_irq_domain_alloc(struct irq_domain=
- *domain, unsigned int virq
- 	vm->db_lpi_base =3D base;
- 	vm->nr_db_lpis =3D nr_ids;
- 	vm->vprop_page =3D vprop_page;
-+	raw_spin_lock_init(&vm->vmapp_lock);
-=20
- 	if (gic_rdists->has_rvpeid)
- 		irqchip =3D &its_vpe_4_1_irq_chip;
-diff --git a/include/linux/irqchip/arm-gic-v4.h b/include/linux/irqchip/arm=
--gic-v4.h
-index 2c63375bbd43f..ed879e03f4e64 100644
---- a/include/linux/irqchip/arm-gic-v4.h
-+++ b/include/linux/irqchip/arm-gic-v4.h
-@@ -25,6 +25,11 @@ struct its_vm {
- 	irq_hw_number_t		db_lpi_base;
- 	unsigned long		*db_bitmap;
- 	int			nr_db_lpis;
-+	/*
-+	 * Ensures mutual exclusion between updates to vlpi_count[]
-+	 * and map/unmap when using the ITSList mechanism.
-+	 */
-+	raw_spinlock_t		vmapp_lock;
- 	u32			vlpi_count[GICv4_ITS_LIST_MAX];
- };
-=20
---=20
-2.39.2
-
-
-=46rom b8092dce0312469a0ea03ada1da854f4ded80e2a Mon Sep 17 00:00:00 2001
-From: Marc Zyngier <maz@kernel.org>
-Date: Mon, 1 Jul 2024 12:03:22 +0100
-Subject: [PATCH 3/3] irqchip/gic-v4: Make sure a VPE is locked when VMAPP is
- issued
-
-In order to make sure that vpe->col_idx is correctly sampled
-when a VMAPP command is issued, we must hold the lock for the
-VPE. This is now possible since the introduction of the per-VM
-vmapp_lock, which can be taken before vpe_lock in the locking
-order.
-
-Signed-off-by: Marc Zyngier <maz@kernel.org>
----
- drivers/irqchip/irq-gic-v3-its.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-=
-its.c
-index 7c37fbe97afbe..0e1583a82d4e7 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -1814,7 +1814,9 @@ static void its_map_vm(struct its_node *its, struct i=
-ts_vm *vm)
- 		for (i =3D 0; i < vm->nr_vpes; i++) {
- 			struct its_vpe *vpe =3D vm->vpes[i];
-=20
-+			raw_spin_lock(&vpe->vpe_lock);
- 			its_send_vmapp(its, vpe, true);
-+			raw_spin_unlock(&vpe->vpe_lock);
- 			its_send_vinvall(its, vpe);
- 		}
- 	}
-@@ -1831,8 +1833,10 @@ static void its_unmap_vm(struct its_node *its, struc=
-t its_vm *vm)
- 	if (!--vm->vlpi_count[its->list_nr]) {
- 		int i;
-=20
--		for (i =3D 0; i < vm->nr_vpes; i++)
-+		for (i =3D 0; i < vm->nr_vpes; i++) {
-+			guard(raw_spinlock)(&vm->vpes[i]->vpe_lock);
- 			its_send_vmapp(its, vm->vpes[i], false);
-+		}
- 	}
- }
-=20
---=20
-2.39.2
-
-
---=20
-Without deviation from the norm, progress is not possible.
+All the rest looks good to me now.
 
