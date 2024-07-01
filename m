@@ -1,96 +1,166 @@
-Return-Path: <linux-kernel+bounces-235775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EEA891D980
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:55:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94C3991D984
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:57:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38A05280D5D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:55:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C49B11C214F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2227C7D3F5;
-	Mon,  1 Jul 2024 07:55:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43CF07D08D;
+	Mon,  1 Jul 2024 07:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KqQCyy3k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gdn8ECoS"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648615464A;
-	Mon,  1 Jul 2024 07:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD63137142;
+	Mon,  1 Jul 2024 07:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719820547; cv=none; b=fkHoj1kDxqSbSbGMSTQGYnRWih2uG0QakSMpTgPsu80tLsInw1dng/ugeTRAQ27aM+qbOwoh1agIO1qPzjLG6/XA4pGoJh0jTQLnFNcyMJLu5Q4dVC3vNdnfvXDY1VwFMXRk611dyoPC1QZHti9Hs461b7Mk+35/+30tjJ/hSjA=
+	t=1719820626; cv=none; b=iQqyAwaCXeCl3WNHrt6L1tksXU8syZHhEjjlqoGuw0JK8ocUOstj5mrncz+aQ+lAs2Djd1nJeBfU9kZEN+YyeaWOofUX2a79ZldUNb2EwCJCAfFXMyOvxtjjLQxQ/lU7G+NdBFPSw/BNpskvXL7MHHduYmNKELN31MFSJDTCal8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719820547; c=relaxed/simple;
-	bh=yirbH9irgYt6/XRtTOl5orPC0EZz/gg3DENiJrtong0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eXtl4xu9gAi56KX5bx0ODngTeaB8UtqgHsCwtuEFENEeCmBxod5THoLNV1/+1c2De3K+p/9Dv52vBdFp1ZfsETdD4Vj5V8E3KbzgenvtbWfl5U239wWkFl66E+QMQ5gEZEihjvuqpEAK4cnjCiV7KV7mTSYl0TM3iFd0Ztum3co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KqQCyy3k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CA34C116B1;
-	Mon,  1 Jul 2024 07:55:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719820546;
-	bh=yirbH9irgYt6/XRtTOl5orPC0EZz/gg3DENiJrtong0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KqQCyy3kSZu502YcYQKCXZHUJI8Y2WIhqE1a3Wf42Sa0V7FrkptQic73ud3Fz46cO
-	 DUl5pNiOXNVZfMxkJYiTPH28WEo8Pv9YHrG4dT9IJoV9/Lk1S5BkyAZrKr12+eIBG9
-	 uFjWkJlLi/ofIVtId3vuNjGeAC8wZxAvVLEzP6ga7K3EXOjsWCX9Hp07FZJmWEY82A
-	 qE0XIZrf5Q0l53G8qlIuzLTWl+fLEMhzg3sV9a/lC9ryanfVinb2Acv54QEVKJKnqh
-	 EFuOSq808Zc+vzMridfquTfGjjui1muzU39ePHKUO1VfulbsyEQWrl/92Fxa8hCR5p
-	 hVbWd3MXaSK+g==
-Date: Mon, 1 Jul 2024 09:55:42 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Fixes tag needs some work in the pci tree
-Message-ID: <ZoJg_k2En6bqQzA4@ryzen.lan>
-References: <20240701091320.64ea6091@canb.auug.org.au>
+	s=arc-20240116; t=1719820626; c=relaxed/simple;
+	bh=SgRYTTInf8ZvtLqlwSdFXZS4xKvDrT2mPrGB2EWF33M=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KTAsJNrl0GVTH/MbzwiDHG1p7J7BIkKdJouH5HYqRB9RwTMoONDOxI3NzGlhMeOnYKT7vpRe+JFHOt+V8dp6KGNykNuJbCDrhXvsUncxsbAicIJUBAtf/fyEqrx9fGtbjY8XNURU8dRaGKqw7n3Ffca6cvNgHqQUsoVh3yWwuyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gdn8ECoS; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52cdc4d221eso2890453e87.3;
+        Mon, 01 Jul 2024 00:57:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719820623; x=1720425423; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+05MK1kXai4oMRlN0UFzQqyVHePDjZHTYYHi6/JPEWk=;
+        b=gdn8ECoSEi42rbmkeMdT6qbIZ/2GH6Y4qnb6NePySE9t8GHh9FpLXE32ewQDAvrCjI
+         B1+l8TvEhfnrbsdgTqEHm0o361hAimpZf4GimlNJhiTAm/rHYdKg6NsLacJFRuhmNAX9
+         ByjUb79yv7UVwT2RDGb9rF/l1UcJGVu1XIn3hQQMRZP1iELUGOTx/YVMa7yLCxsi+GNP
+         jIpRlT47+FROq8uDjCyMIL1//3BOs4oFaGheDfvtTNjeb4LzjFbtcR1YLtonSSddXpMF
+         oP+5jPhrg2ZH+zzyomrGeY/TMYyAqWp9RxETBWNEpdYihP3rWVO7guBhxZgfcMGTjlEJ
+         H4Sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719820623; x=1720425423;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+05MK1kXai4oMRlN0UFzQqyVHePDjZHTYYHi6/JPEWk=;
+        b=tl6ULhuekGGM+7ju2P4VZZlqbdDO6FkAUBPDJyo7jJhOMpdkxw8qGcs+bJwgVx1I8g
+         /XPYGAiMo2Hvwwf31RorGJNjlUFQIWmOERiAi4EXQIAA6kDcLPZHPVy7BpXweu5TZwIc
+         98qZIP8dR6m+Ugxxmxr/7m/QrKgYOjstgvuvgctqbZrtveW17ptYi0zSHo7IDsz/HkRB
+         POPucA0fnGMolY+HUCMBT3JC/IPe4aTAACKUZfxMhkvRxUuYiFhM+60XvKLZWvnDQ9bu
+         Nqnd2+yQizz5d3RrPh+7I14pL4LUGzR+vst1fCYos1T65C/tGlP5YJbIW8QrhS3S/6h2
+         dZpw==
+X-Forwarded-Encrypted: i=1; AJvYcCUVtqzybTrudCSDs9L9oHZTihEfskWHLq/LUw/gkIemJBjMyQoz/uSaQSpR/LltjsP/fgGoUBELfSoVZM71mQV5NXs1rlkkTyNMlN9GawFAb4cV+8tPwQacKQq2VSBdBX5Rvd4LolmSeoArBzXGQ4pJGvop5uqDFTN8FnTVv6IVE0UtxRZDj904
+X-Gm-Message-State: AOJu0YxbJkdxGXRkPd65booDZIEqJCGLSdRwmE5m2kbHvpB5vCd0u5hv
+	p/tpVlwa76SQMqB323yZeoHbO4un89d2TrXhbIx990+A+w74JSqy
+X-Google-Smtp-Source: AGHT+IGCVIArH6otjWMlTKGGmfEh/kav/BXrAKZti4HR6dcditB1AIJw9P/0E6YGqWLyw+7l8hOhWQ==
+X-Received: by 2002:a05:6512:480c:b0:52d:b182:9664 with SMTP id 2adb3069b0e04-52e827398c7mr2293393e87.69.1719820620280;
+        Mon, 01 Jul 2024 00:57:00 -0700 (PDT)
+Received: from fedora ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab0ba53sm1236119e87.50.2024.07.01.00.56.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 00:56:59 -0700 (PDT)
+Date: Mon, 1 Jul 2024 10:56:49 +0300
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: [PATCH] watchdog: Add missing include for FIELD_*()
+Message-ID: <ZoJhQVF-U6sSJ_Sg@fedora>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="w8fIcGOUVCvHByY0"
+Content-Disposition: inline
+
+
+--w8fIcGOUVCvHByY0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240701091320.64ea6091@canb.auug.org.au>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 01, 2024 at 09:13:20AM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> In commit
-> 
->   aaf840725904 ("PCI: dw-rockchip: Depend on PCI_ENDPOINT if building endpoint mode support")
-> 
-> Fixes tag
-> 
->   Fixes: 9b2ba393b3a6 ("PCI: dw-rockchip: Add endpoint mode support")
-> 
-> has these problem(s):
-> 
->   - Target SHA1 does not exist
-> 
-> Maybe you meant
-> 
-> Fixes: 728538f5e806 ("PCI: dw-rockchip: Add endpoint mode support")
+The FIELD_PREP() and FIELD_GET() macros are defined in the
+linux/bitfield.h. Include this header to avoid missing the macro
+definitions.
+
+Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202406300817.hcJ9VtLf-lkp@int=
+el.com/
+
+---
+This patch is built on the ib-mfd-regulator-watchdog-v6.11 tag.
+These macros got included via some indirect route in my build
+config on v6.10-rc1 - but the lkp reported problem on some config.
+
+Please, let me know if this follow-up fix is Ok or if I should rather
+respin the:
+https://lore.kernel.org/all/20240627082555.GH2532839@google.com/
+with this fix. (I don't see much of potential bisecting problems if this
+fix still gets in the next release, as the watchdog code is behind a new
+Kconfig flag - but please let me know if I should re-spin whole series).
+---
+ drivers/watchdog/bd96801_wdt.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/watchdog/bd96801_wdt.c b/drivers/watchdog/bd96801_wdt.c
+index ff51f42ced2a..12b74fd2bc05 100644
+--- a/drivers/watchdog/bd96801_wdt.c
++++ b/drivers/watchdog/bd96801_wdt.c
+@@ -5,6 +5,7 @@
+  * ROHM BD96801 watchdog driver
+  */
+=20
++#include <linux/bitfield.h>
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
+ #include <linux/mfd/rohm-bd96801.h>
+
+base-commit: fcf1f960a6aa45a22efd4d49114c672ed305b85f
+--=20
+2.45.1
 
 
-Hello Stephen,
+--=20
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
 
-yes, that is correct.
-The branch was rebased so the SHA1 changed.
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =3D]=20
 
-Perhaps the maintainers could update the Fixes tag.
+--w8fIcGOUVCvHByY0
+Content-Type: application/pgp-signature; name="signature.asc"
 
-(Personally, I would just squash the small fix with the commit that it fixes.)
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmaCYT0ACgkQeFA3/03a
+ocU7Vwf+PTfgWjQlll+7y+IpErsbcIFKJ3tTFZjAoq2QK6d7WuQnmRSQfGTfQZDl
+SQ3hq/io3RicjVha+JC5TrBsv0HGJqfdcfYQ/iS3dzSSrUSnRa+oDfGNyREm1haM
+8adxdGYw3vGJFI6uvhZyIki6XH+E43CYaKeRKBe1TKoQmA5TIRT9Xyvve9qErMq/
+AmPD6p0yWMHoNTlA6WBcIFjq1hLuexR37mbOVS0mn44r4O+nG4ZZwX/4XbK+JKby
+ya3sWG6Ou/IyO/gwszvnq7IyMY+J1dnbMQvFAJARCyr2QWnktL9NZyMjoYcxI/rq
+F9d86MJB1Ga/ik0UHTl6nifiZ48krQ==
+=Buqp
+-----END PGP SIGNATURE-----
 
-Kind regards,
-Niklas
+--w8fIcGOUVCvHByY0--
 
