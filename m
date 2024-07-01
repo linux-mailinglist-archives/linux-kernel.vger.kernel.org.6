@@ -1,185 +1,107 @@
-Return-Path: <linux-kernel+bounces-235911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC7E591DB2B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:12:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D29D191DB2C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77DE5286131
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:12:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EA0E1C216D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D4F84DEB;
-	Mon,  1 Jul 2024 09:12:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F4C84D13;
+	Mon,  1 Jul 2024 09:13:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I5UIGNgT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LmHfupoh"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB073FB30;
-	Mon,  1 Jul 2024 09:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9019A5C614;
+	Mon,  1 Jul 2024 09:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719825142; cv=none; b=GMiuMSLpPCrfPYcJ26b0MarPjfnmPPuoySZXI9UJl5C2uzyWL4uzpc0vy06TXSZnAYLrkoRXZLue04rzwjH52foFLgsp9Gqp35hJujvPKxQ1QdKQ+F/O7t5Cw5KmSv2Je7GhVS/UtSCF3VTuavfOeispe6TTNv62WYc6OLagqgo=
+	t=1719825194; cv=none; b=IHbD3XkwWdqAcbYnpq1nrhzorfzEJF/d8FtJ/kMrHd2pu4IdtR9RszucvbxZxu6kCNv87gW2DH6YfZt37vEuOtT9i0i2yAHs3JT+T09KN2UeGTKpOGn2RCal0gahMoJmtxaqnBvydwbKo9kzRGNHHgBhFHiniKIQT3KsjdrrG8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719825142; c=relaxed/simple;
-	bh=RzQpp0xJj9M3KOAIbSgzAZIizL3V4r1DjTm2rLJHwsM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dEPJO9mMtQwhNEuvyvEbA4bijm44Wls1ewgeZ1w5jitmB0E6ONykgA7l3N9Urtmg22KVGVibV8V41Xjjs7CX9qXbh94jtnDw171tz2YxoaY4NujybhB4VQiEeVLeFZXubbs03772ei4zwfAUG6RPlVtXS6QN7qwbOqfCR/OdYsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I5UIGNgT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25B24C116B1;
-	Mon,  1 Jul 2024 09:12:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719825142;
-	bh=RzQpp0xJj9M3KOAIbSgzAZIizL3V4r1DjTm2rLJHwsM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=I5UIGNgTp6cjWh4RX8u5mP4D4dE2414rz2bsO6xLMxyLrhcZr68+3hlGnbMjTrV2T
-	 2YhevkPTE4j89xOAdbgW5XTox6V6RxW3OeWh00Ho8gxG5HoWfn8hVg1nTHbh0sRFao
-	 ws7XvzPi7xQjpBtZc3fFqOHjVBlbfdNQeIir14vKu3mCE0C3Mse4Yi7CexhIaZPAt/
-	 /SQAjDOh970C7GSQFWretbVJX+7w7LQMt0tELEjYr155UwVq58EEx406v9KQOt0Of8
-	 fvsLlixcQdyIR19p5/TQ3vIZzar4+JE/o1r0WhCuE3HNeQczyCHKzEcSLjNJBljUmW
-	 m+tSA9s12PedQ==
-Message-ID: <5d0950fd-dcd2-4996-aab0-0030f1911960@kernel.org>
-Date: Mon, 1 Jul 2024 11:12:13 +0200
+	s=arc-20240116; t=1719825194; c=relaxed/simple;
+	bh=lH6Op+NEqMEMhLVrlVLSaicKVq6DDK95y/ji3hzNK7w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uT7ivgqrdHCQhxuZE61IfzkvRTqZy4gBO+Xvnot6VmIzkrMBsfdSoxBHNnD8a/x61wb/p59f2ZKuwvJUHU3WtCDFlKQqw6HtzCPjiMYvFB7FJcBcWsTN0WWWVkir9BnlDcq+aTzz7F4kTH0NwlNsJgA8BHTNeEG8INYtRrk7Eos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LmHfupoh; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4619D1GD062498;
+	Mon, 1 Jul 2024 04:13:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719825181;
+	bh=gJqfpGs0H64qLnpC4fB9AmSwexSr+s5EWCWrwDYrIYw=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=LmHfupoh1oy0fRMKIRgVGeISn6aev/W3pz1QSTfbjAdXO9Pe4n6pRZzheCOzTbfPS
+	 /tU4l0VV/G1zMrWywQmqz6t46tSWlLUavwDu82ubLLXT1L0boOpK1KgCzK/7NiZwhv
+	 nlgRtYhxZIsQv7XKu4hdhG5FwkBntahEkZBLLhTI=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4619D1ID090792
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 1 Jul 2024 04:13:01 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 1
+ Jul 2024 04:13:00 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 1 Jul 2024 04:13:00 -0500
+Received: from [10.249.48.175] ([10.249.48.175])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4619D0qo023569;
+	Mon, 1 Jul 2024 04:13:00 -0500
+Message-ID: <3064a3cb-9153-3bd1-4c55-79e8911f029f@ti.com>
+Date: Mon, 1 Jul 2024 04:13:00 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/8] dt-bindings: PCI: Add Broadcom STB 7712 SOC,
- update maintainter
-To: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
- Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
- Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>,
- bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-rpi-kernel@lists.infradead.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-References: <20240628205430.24775-1-james.quinlan@broadcom.com>
- <20240628205430.24775-2-james.quinlan@broadcom.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 1/4] remoteproc: k3-r5: Fix IPC-only mode detection
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240628205430.24775-2-james.quinlan@broadcom.com>
-Content-Type: text/plain; charset=UTF-8
+To: Mathieu Poirier <mathieu.poirier@linaro.org>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>, "Andrew F. Davis" <afd@ti.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Philipp Zabel
+	<p.zabel@pengutronix.de>, Suman Anna <s-anna@ti.com>,
+        Thomas Petazzoni
+	<thomas.petazzoni@bootlin.com>,
+        Alexandre Belloni
+	<alexandre.belloni@bootlin.com>,
+        Udit Kumar <u-kumar1@ti.com>,
+        Thomas Richard
+	<thomas.richard@bootlin.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        =?UTF-8?Q?Th=c3=a9o_Lebrun?= <theo.lebrun@bootlin.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240621150058.319524-1-richard.genoud@bootlin.com>
+ <20240621150058.319524-2-richard.genoud@bootlin.com> <Zn8UumUllbGS4/p9@p14s>
+ <CANLsYkxFvci0o0ET4vOGTYp0P2xEdwU2q4V1SmNh=W83uj87rA@mail.gmail.com>
+From: Hari Nagalla <hnagalla@ti.com>
+In-Reply-To: <CANLsYkxFvci0o0ET4vOGTYp0P2xEdwU2q4V1SmNh=W83uj87rA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 28/06/2024 22:54, Jim Quinlan wrote:
-> - Update maintainer.
+On 6/28/24 14:58, Mathieu Poirier wrote:
+>> This could lead in an incorrect IPC-only mode detection if reset line is
+>> asserted (so reset_control_status() return > 0) and c_state != 0 and
+>> halted == 0.
+>> In this case, the old code would have detected an IPC-only mode instead
+>> of a mismatched mode.
+>>
+> Your assessment seems to be correct.  That said I'd like to have an RB or a TB
+> from someone in the TI delegation - guys please have a look.
+Agree with Richard's assessment, and the proposed fix looks good.
 
-Why?
-
-> - Adds a driver compatible string for the new STB SOC 7712
-> - Adds two new resets for the 7712: "bridge", for the
->   the bridge between the PCIe core and the memory bus;
->   and "swinit", the PCIe core reset.
-> 
-> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> ---
->  .../bindings/pci/brcm,stb-pcie.yaml           | 24 ++++++++++++++++++-
->  1 file changed, 23 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-> index 11f8ea33240c..f594fef343a1 100644
-> --- a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-> +++ b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-> @@ -7,12 +7,13 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
->  title: Brcmstb PCIe Host Controller
->  
->  maintainers:
-> -  - Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> +  - Jim Quinlan <james.quinlan@broadcom.com>
->  
->  properties:
->    compatible:
->      items:
->        - enum:
-> +          - brcm,bcm7712-pcie # STB sibling SOC of Raspberry Pi 5
-
-Why did you place it here? Isn't the list ordered?
-
->            - brcm,bcm2711-pcie # The Raspberry Pi 4
->            - brcm,bcm4908-pcie
->            - brcm,bcm7211-pcie # Broadcom STB version of RPi4
-> @@ -146,6 +147,27 @@ allOf:
->        required:
->          - resets
->          - reset-names
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: brcm,bcm7712-pcie
-> +    then:
-> +      properties:
-> +        resets:
-
-Fix the binding first - properties should be defined in top level
-"properties:" and then customized. Where are "resets"?
-
-> +          items:
-> +            - description: phandle pointing to the RESCAL reset controller
-
-Drop redundant text. There is no point in saying that phandle is a
-phandle. It's obvious. Say something which is not obvious.
-
-
-Best regards,
-Krzysztof
-
+Reviewed-by:
+Hari Nagalla <hnagalla@ti.com>
 
