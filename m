@@ -1,386 +1,349 @@
-Return-Path: <linux-kernel+bounces-236936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD1B991E8C9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:44:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BA4691E8CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:45:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99D46285C53
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:44:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DBDB1C2157F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:45:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03AFB16F903;
-	Mon,  1 Jul 2024 19:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF20D16F905;
+	Mon,  1 Jul 2024 19:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MIdkAes7"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MDiXREF1"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5EBB16F84F
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 19:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117FBBA34;
+	Mon,  1 Jul 2024 19:45:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719863070; cv=none; b=aIPbQ45/Uc17OogVKe2xIio0ZQzmPLsDvPt+fWk291SPa1VO5jDrCXMzxvrn66i4YPl1gVM40SAz58eb9n2RtoNsmNYOy0tNo140y8g3NY5jK3MQK8GrXA944ieJQx7zBBfL+4U2fWUgMMUnUZ198Ia1cfkaPJSHfZbj7nirsSQ=
+	t=1719863147; cv=none; b=Hi64zUViMsTR4hvE1JniMz655+oafDVnJ/up9K8FP6EQMmN9Qby0zqpWYFbYWd74t7I/vIdrITp54rc6ZUDakRoj+YyUmSPbLSbQEyT+31R96vQA0Ku6RiWcUp0IBHPKSfMfIj3hBTxoNgiEJHNNKnbNQ2Ive+Yb+gPGQLutrDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719863070; c=relaxed/simple;
-	bh=V+wB/ltGBrLU9N/H/am14HG/PuGa0tq8Vu6/n7Sz1DI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bEQuUL8QuXhbAJG2TsjD5QBOQ6dMxg7Ig6RWUqwlwBRWvQ56KBers18uSnbMx0odOXi9wbonfSAOK0ChrQxuAOO0A4xO/t8uUvg54zsIDlwp14WyeeZN1lUFVbNMv1H3IhsCMzqZ4MWNpkGj6nWd9Z1hNVy+Q8aVdLFWVtpcNfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MIdkAes7; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57d119fddd9so10385a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 12:44:28 -0700 (PDT)
+	s=arc-20240116; t=1719863147; c=relaxed/simple;
+	bh=r+TZIPV0IX3xZrcmP7EIdg1feSZXnSUQ2ZivOgo/dF8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aaGZ43XOfsHFUlSm5AmN1CThzUc0Cd/U2CIQ1L+RVyIh94LQeeq7q9qI8zFTw5gn4BURtPyve7jUVrn9hLxsnbK/GMVsRUACyl4AedI2yw6DvVJteJg/GQJaiquF8v0iwZaaF8mwUXrGGKm8UXAB5LSbTu0hNtD4r9xfwl/WzLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MDiXREF1; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70698bcd19eso2135779b3a.0;
+        Mon, 01 Jul 2024 12:45:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719863067; x=1720467867; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E2c/PpBc8IIOCEBBeHe6Yjk+A3PKmtwznWMLX77MwI0=;
-        b=MIdkAes7h/3u7GaLKuc1OPzjztKixZepSlSrbDO0F/n3YolkmMNc0S2IWewCk7cAuL
-         /WynF0mUqxFWmlU3JrDkW94npV4LVzf70Ky2h3OatDI3VnItje9i4Qx07C6oAKSZCOz0
-         V2zKMTIA6YEVV5ADYI9DtwBlyk/it+dJChqm/vbIWkHYGtA6HdNgc6tiHBKtpVYV7nj2
-         IzyysjfR3O8N8Mxm8lvMw3NsZXRlHJpM8DgmkJRYlBRYvKhdnR8+RF2EmY/HjohvnCVJ
-         p4/u0wJqytqj7yHJHF+DnS8ZbJSHSQCGLxn/w9hShNWynoj+c5JGLPEQ2ISb+VG8Oeq0
-         BYRg==
+        d=gmail.com; s=20230601; t=1719863145; x=1720467945; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fyCiRQ4jlKU3DWnl6AOcikAev1NqyEwx5B5Ry5Hs8Wc=;
+        b=MDiXREF1AHjdC2ATCPzWlTmW6zdQaN0C/CEtaixQDgEYzlIht9ZgqKpjgVFCwXWcGK
+         Wg1ZIreDTLUww97DQ8ymFA1lNLRsjAVtUI+HkQYKzwC6Pk5Y494ZA3qzpLbrwvqvoohY
+         enR/Z2x/wyGlP8+k6uQkVScnrqgXS1vFdXtuNYIw6WCk9gdWXjh9pFHGteFRRAILTZD6
+         L0oEon5F9BhIPCSrZhn/9tWZXQ6UMEFey732RsdesHPB0J2h2BC4DohWsSmTE1aioQY9
+         ZbwFOgBcfKgk8vTy97WZQyOHsKU1mhdWrxuUZsKikZRG7vUPwAw/AANSKT8mi1fhfsnQ
+         daUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719863067; x=1720467867;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E2c/PpBc8IIOCEBBeHe6Yjk+A3PKmtwznWMLX77MwI0=;
-        b=kNUMKKLh/wq2RORIenjzj3eEEZfTpTK9/DgItWdXFlMi1tKZkqxCSuJb+NshICpjtQ
-         LFkjIntDBiSOBcYSAO9gCAAC4GFUnVxOxwzuxCmjxyfBkzYDzxvgE55NI8hJzYnONc7G
-         olAT3h5TV6dWpEwwxfp4C0AZTzKbUpLgobVSv1ZvTu+8BDWzgWeW6aMGhXBVZxZ7YNLZ
-         Mi33Mk2jd75e9ffw/eitMps5Oq8xHyD4YLVFogkxv5ALIz6ng3HVkO+NFYeRaheoQwYJ
-         AHqDIUs+0XV8xT3ERRs8b3n4G+eWPDD1mn3intx6eM3nkhYOxxv33vjUCWbJxAjUpEsn
-         y2LQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUF48iapPGB7BAV6hlKMxrXBMDivwhhLIMH9yXobXQjXbzjlZMJO49hYYyKtrxuOj2ByIq6/hrVkc7R91O2f3yHOA2PBZaToV+62+Zc
-X-Gm-Message-State: AOJu0Yx1+ExjdYJT37uQAF2kwZ/JlyDqS4KB1jCP+s7Zu/iAochXoy3y
-	6Inea91qdkKo4ajuIKbI9dh0NSMUxLkzdAcWP0yjgV3PKUvx7p6/HlF0hDbyVuPZ4EJGCol/Kxx
-	G1ep6qeKhLw/V19utm1RPa519nUmJFCt0vvgY
-X-Google-Smtp-Source: AGHT+IGXyqeBH6uxaqA2835dXMeshEUVmsgRwXvBckmfmlcoRp+e/9eTxFThJp5T0ctjsPZfrI27AIoBuljktqA1qkM=
-X-Received: by 2002:a50:9f83:0:b0:58b:15e4:d786 with SMTP id
- 4fb4d7f45d1cf-58b15e4d929mr83573a12.5.1719863066884; Mon, 01 Jul 2024
- 12:44:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719863145; x=1720467945;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fyCiRQ4jlKU3DWnl6AOcikAev1NqyEwx5B5Ry5Hs8Wc=;
+        b=eqUnKsoWfhb7kzD9dgiE8WIBT1GBj2PiWhxJHY0LilFt1mDMYk2zyAKE/esXPRpw65
+         umHC+DQpdh7O9WV0elHusXVY/vAnGBfqM6Ko1f1xY8pqGONQB59SMz0tI0UFW5IfWcPy
+         06RMYNezDDXi0azJNgiZHsbYYxs9P/4k5FcNygy1Y7rTMe0r5R8mrOmdsmFWoClmGL9r
+         F8vpdvOvvJc7lU5kWcbRdB8IT1ius7ODMWCbqQyD5yYlaTKSfbXjZ2/aYfAjlFhor0pf
+         5WTBRrwBtFJJsQw4tRnWsCLcIFX0kE8s+LHEqXauClujAhTNIjOhkthCDxjYwkQHRt7m
+         m0yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXIsZL9CHNYYYtiBvNFxq6P6gZvZn/YKUO85zxKxrKLjd15mXCadOG92jrpAQy2DlKqGCBBaDfCsvrT4/LzDTDCN9VUBWU6tJ4KbEtcN+JrC/6kaOpHGixpUW0VE5t14XK/rwYSOsGVcQfaZCOT
+X-Gm-Message-State: AOJu0YzQa7CEMM3hF6Kz92TvQhdkU1XHTFiiSpxzwh/8TEcGjH7udPku
+	2Y5tTO1dNKPgZkt7RGWKQD4EWpK514+I31Cg6JA6IlYg9tI531iG
+X-Google-Smtp-Source: AGHT+IGNUZXkLnjSkjh9XqJ5zUB+wLK9dUOxzpITqk7ANnSwkXsL8gKv0Xhm/Hr1HL8u1kJYzMPerQ==
+X-Received: by 2002:a05:6a00:4fd4:b0:706:8cc6:7471 with SMTP id d2e1a72fcca58-70aaaf453eemr6018246b3a.34.1719863145076;
+        Mon, 01 Jul 2024 12:45:45 -0700 (PDT)
+Received: from localhost.localdomain ([118.32.98.101])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70804a95402sm6928746b3a.198.2024.07.01.12.45.42
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 01 Jul 2024 12:45:44 -0700 (PDT)
+From: Yunseong Kim <yskelg@gmail.com>
+To: Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: Austin Kim <austindh.kim@gmail.com>,
+	Yeoreum Yun <ppbuk5246@gmail.com>,
+	MichelleJin <shjy180909@gmail.com>,
+	linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Levi Yun <yeoreum.yun@arm.com>
+Subject: [PATCH] hci: fix double free in hci_req_sync
+Date: Tue,  2 Jul 2024 04:45:32 +0900
+Message-ID: <20240701194531.97576-2-yskelg@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240701162025.375134-1-robdclark@gmail.com> <20240701162025.375134-4-robdclark@gmail.com>
-In-Reply-To: <20240701162025.375134-4-robdclark@gmail.com>
-From: Pranjal Shrivastava <praan@google.com>
-Date: Tue, 2 Jul 2024 01:14:14 +0530
-Message-ID: <CAN6iL-Sc5mvFd1_PydZZ8m1VS7KtPHtO5QpyX38n3OcGSj9b_A@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] iommu/arm-smmu: Pretty-print context fault related regs
-To: Rob Clark <robdclark@gmail.com>
-Cc: iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	Stephen Boyd <swboyd@chromium.org>, Robin Murphy <robin.murphy@arm.com>, 
-	Rob Clark <robdclark@chromium.org>, Will Deacon <will@kernel.org>, Joerg Roedel <joro@8bytes.org>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Jerry Snitselaar <jsnitsel@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Georgi Djakov <quic_c_gdjako@quicinc.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 1, 2024 at 9:50=E2=80=AFPM Rob Clark <robdclark@gmail.com> wrot=
-e:
->
-> From: Rob Clark <robdclark@chromium.org>
->
-> Parse out the bitfields for easier-to-read fault messages.
->
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
-> ---
->  .../iommu/arm/arm-smmu/arm-smmu-qcom-debug.c  | 52 +++++---------
->  drivers/iommu/arm/arm-smmu/arm-smmu.c         | 70 +++++++++++++++----
->  drivers/iommu/arm/arm-smmu/arm-smmu.h         | 21 ++++++
->  3 files changed, 92 insertions(+), 51 deletions(-)
->
-> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c b/drivers/i=
-ommu/arm/arm-smmu/arm-smmu-qcom-debug.c
-> index 681fbdfc325d..ef93f825f11f 100644
-> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c
-> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c
-> @@ -383,64 +383,44 @@ irqreturn_t qcom_smmu_context_fault(int irq, void *=
-dev)
->         struct arm_smmu_domain *smmu_domain =3D dev;
->         struct io_pgtable_ops *ops =3D smmu_domain->pgtbl_ops;
->         struct arm_smmu_device *smmu =3D smmu_domain->smmu;
-> -       u32 fsr, fsynr, cbfrsynra, resume =3D 0;
-> +       struct arm_smmu_context_fault_info cfi;
-> +       u32 resume =3D 0;
->         int idx =3D smmu_domain->cfg.cbndx;
->         phys_addr_t phys_soft;
-> -       unsigned long iova;
->         int ret, tmp;
->
->         static DEFINE_RATELIMIT_STATE(_rs,
->                                       DEFAULT_RATELIMIT_INTERVAL,
->                                       DEFAULT_RATELIMIT_BURST);
->
-> -       fsr =3D arm_smmu_cb_read(smmu, idx, ARM_SMMU_CB_FSR);
-> -       if (!(fsr & ARM_SMMU_CB_FSR_FAULT))
-> -               return IRQ_NONE;
-> +       arm_smmu_read_context_fault_info(smmu, idx, &cfi);
->
-> -       fsynr =3D arm_smmu_cb_read(smmu, idx, ARM_SMMU_CB_FSYNR0);
-> -       iova =3D arm_smmu_cb_readq(smmu, idx, ARM_SMMU_CB_FAR);
-> -       cbfrsynra =3D arm_smmu_gr1_read(smmu, ARM_SMMU_GR1_CBFRSYNRA(idx)=
-);
-> +       if (!(cfi.fsr & ARM_SMMU_CB_FSR_FAULT))
-> +               return IRQ_NONE;
->
->         if (list_empty(&tbu_list)) {
-> -               ret =3D report_iommu_fault(&smmu_domain->domain, NULL, io=
-va,
-> -                                        fsynr & ARM_SMMU_CB_FSYNR0_WNR ?=
- IOMMU_FAULT_WRITE : IOMMU_FAULT_READ);
-> +               ret =3D report_iommu_fault(&smmu_domain->domain, NULL, cf=
-i.iova,
-> +                                        cfi.fsynr & ARM_SMMU_CB_FSYNR0_W=
-NR ? IOMMU_FAULT_WRITE : IOMMU_FAULT_READ);
->
->                 if (ret =3D=3D -ENOSYS)
-> -                       dev_err_ratelimited(smmu->dev,
-> -                                           "Unhandled context fault: fsr=
-=3D0x%x, iova=3D0x%08lx, fsynr=3D0x%x, cbfrsynra=3D0x%x, cb=3D%d\n",
-> -                                           fsr, iova, fsynr, cbfrsynra, =
-idx);
-> +                       arm_smmu_print_context_fault_info(smmu, idx, &cfi=
-);
->
-> -               arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_FSR, fsr);
-> +               arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_FSR, cfi.fsr);
->                 return IRQ_HANDLED;
->         }
->
-> -       phys_soft =3D ops->iova_to_phys(ops, iova);
-> +       phys_soft =3D ops->iova_to_phys(ops, cfi.iova);
->
-> -       tmp =3D report_iommu_fault(&smmu_domain->domain, NULL, iova,
-> -                                fsynr & ARM_SMMU_CB_FSYNR0_WNR ? IOMMU_F=
-AULT_WRITE : IOMMU_FAULT_READ);
-> +       tmp =3D report_iommu_fault(&smmu_domain->domain, NULL, cfi.iova,
-> +                                cfi.fsynr & ARM_SMMU_CB_FSYNR0_WNR ? IOM=
-MU_FAULT_WRITE : IOMMU_FAULT_READ);
->         if (!tmp || tmp =3D=3D -EBUSY) {
->                 ret =3D IRQ_HANDLED;
->                 resume =3D ARM_SMMU_RESUME_TERMINATE;
->         } else {
-> -               phys_addr_t phys_atos =3D qcom_smmu_verify_fault(smmu_dom=
-ain, iova, fsr);
-> +               phys_addr_t phys_atos =3D qcom_smmu_verify_fault(smmu_dom=
-ain, cfi.iova, cfi.fsr);
->
->                 if (__ratelimit(&_rs)) {
-> -                       dev_err(smmu->dev,
-> -                               "Unhandled context fault: fsr=3D0x%x, iov=
-a=3D0x%08lx, fsynr=3D0x%x, cbfrsynra=3D0x%x, cb=3D%d\n",
-> -                               fsr, iova, fsynr, cbfrsynra, idx);
-> -                       dev_err(smmu->dev,
-> -                               "FSR    =3D %08x [%s%s%s%s%s%s%s%s%s], SI=
-D=3D0x%x\n",
-> -                               fsr,
-> -                               (fsr & 0x02) ? "TF " : "",
-> -                               (fsr & 0x04) ? "AFF " : "",
-> -                               (fsr & 0x08) ? "PF " : "",
-> -                               (fsr & 0x10) ? "EF " : "",
-> -                               (fsr & 0x20) ? "TLBMCF " : "",
-> -                               (fsr & 0x40) ? "TLBLKF " : "",
-> -                               (fsr & 0x80) ? "MHF " : "",
-> -                               (fsr & 0x40000000) ? "SS " : "",
-> -                               (fsr & 0x80000000) ? "MULTI " : "",
-> -                               cbfrsynra);
-> +                       arm_smmu_print_context_fault_info(smmu, idx, &cfi=
-);
->
->                         dev_err(smmu->dev,
->                                 "soft iova-to-phys=3D%pa\n", &phys_soft);
-> @@ -474,10 +454,10 @@ irqreturn_t qcom_smmu_context_fault(int irq, void *=
-dev)
->          */
->         if (tmp !=3D -EBUSY) {
->                 /* Clear the faulting FSR */
-> -               arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_FSR, fsr);
-> +               arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_FSR, cfi.fsr);
->
->                 /* Retry or terminate any stalled transactions */
-> -               if (fsr & ARM_SMMU_CB_FSR_SS)
-> +               if (cfi.fsr & ARM_SMMU_CB_FSR_SS)
->                         arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_RESUME, =
-resume);
->         }
->
-> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/ar=
-m-smmu/arm-smmu.c
-> index 23cf91ac409b..79ec911ae151 100644
-> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
-> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
-> @@ -405,32 +405,72 @@ static const struct iommu_flush_ops arm_smmu_s2_tlb=
-_ops_v1 =3D {
->         .tlb_add_page   =3D arm_smmu_tlb_add_page_s2_v1,
->  };
->
-> +
-> +void arm_smmu_read_context_fault_info(struct arm_smmu_device *smmu, int =
-idx,
-> +                                     struct arm_smmu_context_fault_info =
-*cfi)
-> +{
-> +       cfi->iova =3D arm_smmu_cb_readq(smmu, idx, ARM_SMMU_CB_FAR);
-> +       cfi->fsr =3D arm_smmu_cb_read(smmu, idx, ARM_SMMU_CB_FSR);
-> +       cfi->fsynr =3D arm_smmu_cb_read(smmu, idx, ARM_SMMU_CB_FSYNR0);
-> +       cfi->cbfrsynra =3D arm_smmu_gr1_read(smmu, ARM_SMMU_GR1_CBFRSYNRA=
-(idx));
-> +}
-> +
-> +void arm_smmu_print_context_fault_info(struct arm_smmu_device *smmu, int=
- idx,
-> +                                      const struct arm_smmu_context_faul=
-t_info *cfi)
-> +{
-> +       dev_dbg(smmu->dev,
-> +               "Unhandled context fault: fsr=3D0x%x, iova=3D0x%08lx, fsy=
-nr=3D0x%x, cbfrsynra=3D0x%x, cb=3D%d\n",
-> +               cfi->fsr, cfi->iova, cfi->fsynr, cfi->cbfrsynra, idx);
-> +
-> +       dev_err(smmu->dev, "FSR    =3D %08x [%s%sFormat=3D%u%s%s%s%s%s%s%=
-s%s], SID=3D0x%x\n",
-> +               cfi->fsr,
-> +               (cfi->fsr & ARM_SMMU_CB_FSR_MULTI)  ? "MULTI " : "",
-> +               (cfi->fsr & ARM_SMMU_CB_FSR_SS)     ? "SS " : "",
-> +               (u32)FIELD_GET(ARM_SMMU_CB_FSR_FORMAT, cfi->fsr),
-> +               (cfi->fsr & ARM_SMMU_CB_FSR_UUT)    ? " UUT" : "",
-> +               (cfi->fsr & ARM_SMMU_CB_FSR_ASF)    ? " ASF" : "",
-> +               (cfi->fsr & ARM_SMMU_CB_FSR_TLBLKF) ? " TLBLKF" : "",
-> +               (cfi->fsr & ARM_SMMU_CB_FSR_TLBMCF) ? " TLBMCF" : "",
-> +               (cfi->fsr & ARM_SMMU_CB_FSR_EF)     ? " EF" : "",
-> +               (cfi->fsr & ARM_SMMU_CB_FSR_PF)     ? " PF" : "",
-> +               (cfi->fsr & ARM_SMMU_CB_FSR_AFF)    ? " AFF" : "",
-> +               (cfi->fsr & ARM_SMMU_CB_FSR_TF)     ? " TF" : "",
-> +               cfi->cbfrsynra);
-> +
-> +       dev_err(smmu->dev, "FSYNR0 =3D %08x [S1CBNDX=3D%u%s%s%s%s%s%s PLV=
-L=3D%u]\n",
-> +               cfi->fsynr,
-> +               (u32)FIELD_GET(ARM_SMMU_CB_FSYNR0_S1CBNDX, cfi->fsynr),
-> +               (cfi->fsynr & ARM_SMMU_CB_FSYNR0_AFR) ? " AFR" : "",
-> +               (cfi->fsynr & ARM_SMMU_CB_FSYNR0_PTWF) ? " PTWF" : "",
-> +               (cfi->fsynr & ARM_SMMU_CB_FSYNR0_NSATTR) ? " NSATTR" : ""=
-,
-> +               (cfi->fsynr & ARM_SMMU_CB_FSYNR0_IND) ? " IND" : "",
-> +               (cfi->fsynr & ARM_SMMU_CB_FSYNR0_PNU) ? " PNU" : "",
-> +               (cfi->fsynr & ARM_SMMU_CB_FSYNR0_WNR) ? " WNR" : "",
-> +               (u32)FIELD_GET(ARM_SMMU_CB_FSYNR0_PLVL, cfi->fsynr));
-> +}
-> +
->  static irqreturn_t arm_smmu_context_fault(int irq, void *dev)
->  {
-> -       u32 fsr, fsynr, cbfrsynra;
-> -       unsigned long iova;
-> +       struct arm_smmu_context_fault_info cfi;
->         struct arm_smmu_domain *smmu_domain =3D dev;
->         struct arm_smmu_device *smmu =3D smmu_domain->smmu;
-> +       static DEFINE_RATELIMIT_STATE(rs, DEFAULT_RATELIMIT_INTERVAL,
-> +                                     DEFAULT_RATELIMIT_BURST);
->         int idx =3D smmu_domain->cfg.cbndx;
->         int ret;
->
-> -       fsr =3D arm_smmu_cb_read(smmu, idx, ARM_SMMU_CB_FSR);
-> -       if (!(fsr & ARM_SMMU_CB_FSR_FAULT))
-> -               return IRQ_NONE;
-> +       arm_smmu_read_context_fault_info(smmu, idx, &cfi);
->
-> -       fsynr =3D arm_smmu_cb_read(smmu, idx, ARM_SMMU_CB_FSYNR0);
-> -       iova =3D arm_smmu_cb_readq(smmu, idx, ARM_SMMU_CB_FAR);
-> -       cbfrsynra =3D arm_smmu_gr1_read(smmu, ARM_SMMU_GR1_CBFRSYNRA(idx)=
-);
-> +       if (!(cfi.fsr & ARM_SMMU_CB_FSR_FAULT))
-> +               return IRQ_NONE;
->
-> -       ret =3D report_iommu_fault(&smmu_domain->domain, NULL, iova,
-> -               fsynr & ARM_SMMU_CB_FSYNR0_WNR ? IOMMU_FAULT_WRITE : IOMM=
-U_FAULT_READ);
-> +       ret =3D report_iommu_fault(&smmu_domain->domain, NULL, cfi.iova,
-> +               cfi.fsynr & ARM_SMMU_CB_FSYNR0_WNR ? IOMMU_FAULT_WRITE : =
-IOMMU_FAULT_READ);
->
-> -       if (ret =3D=3D -ENOSYS)
-> -               dev_err_ratelimited(smmu->dev,
-> -               "Unhandled context fault: fsr=3D0x%x, iova=3D0x%08lx, fsy=
-nr=3D0x%x, cbfrsynra=3D0x%x, cb=3D%d\n",
-> -                           fsr, iova, fsynr, cbfrsynra, idx);
-> +       if (ret =3D=3D -ENOSYS && __ratelimit(&rs))
-> +               arm_smmu_print_context_fault_info(smmu, idx, &cfi);
->
-> -       arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_FSR, fsr);
-> +       arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_FSR, cfi.fsr);
->         return IRQ_HANDLED;
->  }
->
-> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.h b/drivers/iommu/arm/ar=
-m-smmu/arm-smmu.h
-> index b04a00126a12..e2aeb511ae90 100644
-> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.h
-> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.h
-> @@ -198,6 +198,7 @@ enum arm_smmu_cbar_type {
->  #define ARM_SMMU_CB_FSR                        0x58
->  #define ARM_SMMU_CB_FSR_MULTI          BIT(31)
->  #define ARM_SMMU_CB_FSR_SS             BIT(30)
-> +#define ARM_SMMU_CB_FSR_FORMAT         GENMASK(10, 9)
->  #define ARM_SMMU_CB_FSR_UUT            BIT(8)
->  #define ARM_SMMU_CB_FSR_ASF            BIT(7)
->  #define ARM_SMMU_CB_FSR_TLBLKF         BIT(6)
-> @@ -223,7 +224,14 @@ enum arm_smmu_cbar_type {
->  #define ARM_SMMU_CB_FAR                        0x60
->
->  #define ARM_SMMU_CB_FSYNR0             0x68
-> +#define ARM_SMMU_CB_FSYNR0_PLVL                GENMASK(1, 0)
->  #define ARM_SMMU_CB_FSYNR0_WNR         BIT(4)
-> +#define ARM_SMMU_CB_FSYNR0_PNU         BIT(5)
-> +#define ARM_SMMU_CB_FSYNR0_IND         BIT(6)
-> +#define ARM_SMMU_CB_FSYNR0_NSATTR      BIT(8)
-> +#define ARM_SMMU_CB_FSYNR0_PTWF                BIT(10)
-> +#define ARM_SMMU_CB_FSYNR0_AFR         BIT(11)
-> +#define ARM_SMMU_CB_FSYNR0_S1CBNDX     GENMASK(23, 16)
->
->  #define ARM_SMMU_CB_FSYNR1             0x6c
->
-> @@ -533,4 +541,17 @@ struct arm_smmu_device *qcom_smmu_impl_init(struct a=
-rm_smmu_device *smmu);
->  void arm_smmu_write_context_bank(struct arm_smmu_device *smmu, int idx);
->  int arm_mmu500_reset(struct arm_smmu_device *smmu);
->
-> +struct arm_smmu_context_fault_info {
-> +       unsigned long iova;
-> +       u32 fsr;
-> +       u32 fsynr;
-> +       u32 cbfrsynra;
-> +};
+The approach taken to address the 'CVE-2024-35978' introduced another
+double-free vulnerability. commit 45d355a926ab
+("Bluetooth: Fix memory leak in hci_req_sync_complete()")
 
-Super Nit: (non-block) Let's define this with the structs above.
-Right below struct arm_smmu_master_cfg.
+'hdev->req_skb' double free scenario:
 
-> +
-> +void arm_smmu_read_context_fault_info(struct arm_smmu_device *smmu, int =
-idx,
-> +                                     struct arm_smmu_context_fault_info =
-*cfi);
-> +
-> +void arm_smmu_print_context_fault_info(struct arm_smmu_device *smmu, int=
- idx,
-> +                                      const struct arm_smmu_context_faul=
-t_info *cfi);
-> +
->  #endif /* _ARM_SMMU_H */
-> --
-> 2.45.2
->
-Reviewed-by: Pranjal Shrivastava <praan@google.com>
+ cpu1                        cpu2
+ ====                        ====
+ sock_ioctl
+ sock_do_ioctl
+ hci_sock_ioctl
+ hci_dev_cmd
+ hci_req_sync
+ __hci_req_sync              hci_rx_work
+ kfree_skb(hdev->req_skb)    hci_event_packet
+ (sleep)                     hci_req_sync_complete
+  \__ Longer times,          kfree_skb(hdev->req_skb)
+      reproduce well         hdev->req_skb = NULL
+
+The longer cpu1 sleep in '__hci_req_sync', the more reproducible it is.
+We've tested it by inserting the 'msleep()' function, and it's frequently
+at 1000ms, and It has been consistently reproducible at 2000ms.
+
+We confirmed the detection with various workloads that cause CPU1 to sleep.
+The call trace below is one of the KASAN has seen.
+
+Bluetooth: hci0: unexpected cc 0x0c38 length: 249 > 2
+==================================================================
+BUG: KASAN: slab-use-after-free in skb_release_data+0x7d8/0x8a0 home/paran/linux/net/core/skbuff.c:1119
+Write of size 1 at addr ffff00000947d3fe by task syz-executor.2/2010
+
+CPU: 1 PID: 2010 Comm: syz-executor.2 Not tainted
+6.10.0-rc4-00217-g35bb670d65fc-dirty #22 Hardware name: linux,dummy-virt (DT)
+Call trace:
+ dump_backtrace+0x318/0x348 home/paran/linux/arch/arm64/kernel/stacktrace.c:317
+ show_stack+0x4c/0x80 home/paran/linux/arch/arm64/kernel/stacktrace.c:324
+ __dump_stack home/paran/linux/lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x214/0x328 home/paran/linux/lib/dump_stack.c:114
+ print_address_description home/paran/linux/mm/kasan/report.c:377 [inline]
+ print_report+0x2ac/0x948 home/paran/linux/mm/kasan/report.c:488
+ kasan_report+0xc8/0x148 home/paran/linux/mm/kasan/report.c:601
+ __asan_report_store1_noabort+0x44/0x60 home/paran/linux/mm/kasan/report_generic.c:383
+ skb_release_data+0x7d8/0x8a0 home/paran/linux/net/core/skbuff.c:1119
+ skb_release_all+0x80/0xe0 home/paran/linux/net/core/skbuff.c:1173
+ __kfree_skb home/paran/linux/net/core/skbuff.c:1187 [inline]
+ kfree_skb_reason+0x138/0x3a8 home/paran/linux/net/core/skbuff.c:1223
+ __hci_req_sync+0x404/0x948 [bluetooth]
+ hci_req_sync+0xc0/0x138 [bluetooth]
+ hci_dev_cmd+0x33c/0xc18 [bluetooth]
+ hci_sock_ioctl+0x800/0xb68 [bluetooth]
+ sock_do_ioctl+0xfc/0x2e0 home/paran/linux/net/socket.c:1222
+ sock_ioctl+0x62c/0xab0 home/paran/linux/net/socket.c:1341
+ vfs_ioctl+0x90/0x140 home/paran/linux/fs/ioctl.c:51
+ __do_sys_ioctl home/paran/linux/fs/ioctl.c:907 [inline]
+ __se_sys_ioctl home/paran/linux/fs/ioctl.c:893 [inline]
+ __arm64_sys_ioctl+0x218/0x268 home/paran/linux/fs/ioctl.c:893
+ __invoke_syscall home/paran/linux/arch/arm64/kernel/syscall.c:34 [inline]
+ invoke_syscall+0xdc/0x460 home/paran/linux/arch/arm64/kernel/syscall.c:48
+ el0_svc_common.constprop.0+0x2d4/0x3e8 home/paran/linux/arch/arm64/kernel/syscall.c:133
+ do_el0_svc+0x60/0x98 home/paran/linux/arch/arm64/kernel/syscall.c:152
+ el0_svc+0xc4/0x240 home/paran/linux/arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x120/0x130 home/paran/linux/arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x190/0x198 home/paran/linux/arch/arm64/kernel/entry.S:598
+
+Allocated by task 577:
+ kasan_save_stack+0x48/0x90 home/paran/linux/mm/kasan/common.c:47
+ kasan_save_track+0x38/0x60 home/paran/linux/mm/kasan/common.c:68
+ kasan_save_alloc_info+0x64/0xc0 home/paran/linux/mm/kasan/generic.c:565
+ unpoison_slab_object home/paran/linux/mm/kasan/common.c:312 [inline]
+ __kasan_slab_alloc+0x100/0x110 home/paran/linux/mm/kasan/common.c:338
+ kasan_slab_alloc home/paran/linux/./include/linux/kasan.h:201 [inline]
+ slab_post_alloc_hook home/paran/linux/mm/slub.c:3941 [inline]
+ slab_alloc_node home/paran/linux/mm/slub.c:4001 [inline]
+ kmem_cache_alloc_noprof+0x2e8/0x630 home/paran/linux/mm/slub.c:4008
+ skb_clone+0x1a4/0x4d0 home/paran/linux/net/core/skbuff.c:2052
+ hci_cmd_work+0x78c/0x868 [bluetooth]
+ process_one_work home/paran/linux/kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0x9fc/0x1d98 home/paran/linux/kernel/workqueue.c:3312
+ worker_thread+0x57c/0xf98 home/paran/linux/kernel/workqueue.c:3393
+ kthread+0x3c8/0x478 home/paran/linux/kernel/kthread.c:389
+ ret_from_fork+0x10/0x20 home/paran/linux/arch/arm64/kernel/entry.S:860
+
+Freed by task 577:
+ kasan_save_stack+0x48/0x90 home/paran/linux/mm/kasan/common.c:47
+ kasan_save_track+0x38/0x60 home/paran/linux/mm/kasan/common.c:68
+ kasan_save_free_info+0x64/0xf0 home/paran/linux/mm/kasan/generic.c:579
+ poison_slab_object+0x168/0x270 home/paran/linux/mm/kasan/common.c:240
+ __kasan_slab_free+0x34/0xa0 home/paran/linux/mm/kasan/common.c:256
+ kasan_slab_free home/paran/linux/./include/linux/kasan.h:184 [inline]
+ slab_free_hook home/paran/linux/mm/slub.c:2196 [inline]
+ slab_free home/paran/linux/mm/slub.c:4437 [inline]
+ kmem_cache_free+0x20c/0x670 home/paran/linux/mm/slub.c:4512
+ kfree_skbmem+0x2b0/0x390 home/paran/linux/net/core/skbuff.c:1131
+ __kfree_skb home/paran/linux/net/core/skbuff.c:1188 [inline]
+ kfree_skb_reason+0x14c/0x3a8 home/paran/linux/net/core/skbuff.c:1223
+ hci_req_sync_complete+0x114/0x308 [bluetooth]
+ hci_event_packet+0xa10/0x12a0 [bluetooth]
+ hci_rx_work+0x4d8/0xa80 [bluetooth]
+ process_one_work home/paran/linux/kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0x9fc/0x1d98 home/paran/linux/kernel/workqueue.c:3312
+ worker_thread+0x57c/0xf98 home/paran/linux/kernel/workqueue.c:3393
+ kthread+0x3c8/0x478 home/paran/linux/kernel/kthread.c:389
+ ret_from_fork+0x10/0x20 home/paran/linux/arch/arm64/kernel/entry.S:860
+
+The buggy address belongs to the object at ffff00000947d380
+ which belongs to the cache skbuff_head_cache of size 232
+The buggy address is located 126 bytes inside of
+ freed 232-byte region [ffff00000947d380, ffff00000947d468)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x4947c
+head: order:1 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+memcg:ffff0000222a73b1
+flags: 0x3fffe0000000040(head|node=0|zone=0|lastcpupid=0x1ffff)
+page_type: 0xffffefff(slab)
+raw: 03fffe0000000040 ffff0000133a41c0 fffffdffc0e3a090 fffffdffc1069290
+raw: 0000000000000000 0000000000120012 00000001ffffefff ffff0000222a73b1
+head: 03fffe0000000040 ffff0000133a41c0 fffffdffc0e3a090 fffffdffc1069290
+head: 0000000000000000 0000000000120012 00000001ffffefff ffff0000222a73b1
+head: 03fffe0000000001 fffffdffc0251f01 ffffffffffffffff 0000000000000000
+head: 0000000000000002 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff00000947d280: 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc fc
+ ffff00000947d300: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff00000947d380: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                                ^
+ ffff00000947d400: fb fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc
+ ffff00000947d480: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
+We considered using the "hci_req_sync_lock" mutex, but concluded it
+wasn't a good solution due to the increased sleep intervals causing
+this issue. Instead, we introduced a spinlock member on 'struct hci_dev'.
+
+Since applying our patch, we have repeatedly run the same tests in 
+the syzkaller without encountering any issues.
+
+Link: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=89a32741f4217856066c198a4a7267bcdd1edd67
+Fixes: 45d355a926ab ("Bluetooth: Fix memory leak in hci_req_sync_complete()")
+Signed-off-by: Levi Yun <yeoreum.yun@arm.com>
+Signed-off-by: Yunseong Kim <yskelg@gmail.com>
+---
+ include/net/bluetooth/hci_core.h |  1 +
+ net/bluetooth/hci_core.c         |  1 +
+ net/bluetooth/hci_request.c      |  6 ++----
+ net/bluetooth/hci_request.h      |  9 +++++++++
+ net/bluetooth/hci_sync.c         | 13 +++----------
+ 5 files changed, 16 insertions(+), 14 deletions(-)
+
+diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/hci_core.h
+index c43716edf205..8b95061f063b 100644
+--- a/include/net/bluetooth/hci_core.h
++++ b/include/net/bluetooth/hci_core.h
+@@ -519,6 +519,7 @@ struct hci_dev {
+ 	struct sk_buff		*recv_event;
+ 
+ 	struct mutex		req_lock;
++	spinlock_t		req_skb_lock;
+ 	wait_queue_head_t	req_wait_q;
+ 	__u32			req_status;
+ 	__u32			req_result;
+diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
+index dd3b0f501018..138a6b19894d 100644
+--- a/net/bluetooth/hci_core.c
++++ b/net/bluetooth/hci_core.c
+@@ -2572,6 +2572,7 @@ struct hci_dev *hci_alloc_dev_priv(int sizeof_priv)
+ 
+ 	mutex_init(&hdev->lock);
+ 	mutex_init(&hdev->req_lock);
++	spin_lock_init(&hdev->req_skb_lock);
+ 
+ 	ida_init(&hdev->unset_handle_ida);
+ 
+diff --git a/net/bluetooth/hci_request.c b/net/bluetooth/hci_request.c
+index efea25eb56ce..6a109c1ad359 100644
+--- a/net/bluetooth/hci_request.c
++++ b/net/bluetooth/hci_request.c
+@@ -106,8 +106,7 @@ void hci_req_sync_complete(struct hci_dev *hdev, u8 result, u16 opcode,
+ 		hdev->req_result = result;
+ 		hdev->req_status = HCI_REQ_DONE;
+ 		if (skb) {
+-			kfree_skb(hdev->req_skb);
+-			hdev->req_skb = skb_get(skb);
++			hci_req_skb_release_and_set(hdev, skb_get(skb));
+ 		}
+ 		wake_up_interruptible(&hdev->req_wait_q);
+ 	}
+@@ -181,8 +180,7 @@ int __hci_req_sync(struct hci_dev *hdev, int (*func)(struct hci_request *req,
+ 		break;
+ 	}
+ 
+-	kfree_skb(hdev->req_skb);
+-	hdev->req_skb = NULL;
++	hci_req_skb_release_and_set(hdev, NULL);
+ 	hdev->req_status = hdev->req_result = 0;
+ 
+ 	bt_dev_dbg(hdev, "end: err %d", err);
+diff --git a/net/bluetooth/hci_request.h b/net/bluetooth/hci_request.h
+index c91f2838f542..6526c78443bc 100644
+--- a/net/bluetooth/hci_request.h
++++ b/net/bluetooth/hci_request.h
+@@ -28,6 +28,15 @@
+ 
+ #define hci_req_sync_lock(hdev)   mutex_lock(&hdev->req_lock)
+ #define hci_req_sync_unlock(hdev) mutex_unlock(&hdev->req_lock)
++#define hci_req_skb_release_and_set(hdev, val)		\
++({							\
++	if (hdev->req_skb) {				\
++		spin_lock(&hdev->req_skb_lock);		\
++		kfree_skb(hdev->req_skb);		\
++		hdev->req_skb = val;			\
++		spin_unlock(&hdev->req_skb_lock);	\
++	}						\
++})
+ 
+ struct hci_request {
+ 	struct hci_dev		*hdev;
+diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
+index a8a7d2b36870..25c8d858c82e 100644
+--- a/net/bluetooth/hci_sync.c
++++ b/net/bluetooth/hci_sync.c
+@@ -33,8 +33,7 @@ static void hci_cmd_sync_complete(struct hci_dev *hdev, u8 result, u16 opcode,
+ 	hdev->req_status = HCI_REQ_DONE;
+ 
+ 	/* Free the request command so it is not used as response */
+-	kfree_skb(hdev->req_skb);
+-	hdev->req_skb = NULL;
++	hci_req_skb_release_and_set(hdev, NULL);
+ 
+ 	if (skb) {
+ 		struct sock *sk = hci_skb_sk(skb);
+@@ -4935,10 +4934,7 @@ int hci_dev_open_sync(struct hci_dev *hdev)
+ 			hdev->sent_cmd = NULL;
+ 		}
+ 
+-		if (hdev->req_skb) {
+-			kfree_skb(hdev->req_skb);
+-			hdev->req_skb = NULL;
+-		}
++		hci_req_skb_release_and_set(hdev, NULL);
+ 
+ 		clear_bit(HCI_RUNNING, &hdev->flags);
+ 		hci_sock_dev_event(hdev, HCI_DEV_CLOSE);
+@@ -5100,10 +5096,7 @@ int hci_dev_close_sync(struct hci_dev *hdev)
+ 	}
+ 
+ 	/* Drop last request */
+-	if (hdev->req_skb) {
+-		kfree_skb(hdev->req_skb);
+-		hdev->req_skb = NULL;
+-	}
++	hci_req_skb_release_and_set(hdev, NULL);
+ 
+ 	clear_bit(HCI_RUNNING, &hdev->flags);
+ 	hci_sock_dev_event(hdev, HCI_DEV_CLOSE);
+-- 
+2.45.2
+
 
