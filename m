@@ -1,201 +1,113 @@
-Return-Path: <linux-kernel+bounces-236315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB69C91E055
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:13:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 397CC91E059
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:15:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CE26B221FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:13:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E82C52840CC
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C68315DBC0;
-	Mon,  1 Jul 2024 13:13:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C6215AAB8;
+	Mon,  1 Jul 2024 13:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZFxPA3i4"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UbOO7HMH"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2641EB2A
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 13:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E1F1DFD9;
+	Mon,  1 Jul 2024 13:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719839620; cv=none; b=V8XIE0xUerfiozHhj9MzCgIuVGM6rfZ25Dm0dmeeW9IdRZ7oQYPtj1Uft9esx2MA34fZDGGNounmuTjkxri2mqGPgvdf9nqO7UdRFgC6c1OVMF9sZ7XMeYKi7O2UI/feaRXdu350RCxtptQRHGD6zykSSi1sBdlY1NhPJxJKGD0=
+	t=1719839720; cv=none; b=F2AFM0CRaFBam9XK6p/eX9XCUBMWjsYqfXR+NGt6S76wJdd/jZrYByxzUi9i/GMM4+vUcgxKI+WvX4Bd+tQKVFoNQoJ4Pepu7w1cRK5Yq43dQ1D8JLFNQgjEBBtLsFsxsFbOHsPuwptdEBCh+2jOmWBaaX6+2kajjur1uQV854o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719839620; c=relaxed/simple;
-	bh=X1xqYcKxhEqksta9F6+PAgNFku7VwC9TA9WS5zubs+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M3z/X/e3hW9KnM9lJ6UJ3CgdFujBR+wArHbgh2QievA8xfjpIbAnnTX1TZT0HRNb9XdwvO5eJtHbp3nhtXG6DIYvXtwYkhAR7ANcbsO2IM6tZVuC1pSlUfV+ZHJoPSK0nFQAR+XEAbIWy2ujm5k7X1MT2dCos2joXWGR3HHfr4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZFxPA3i4; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ec002caf3eso47955581fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 06:13:37 -0700 (PDT)
+	s=arc-20240116; t=1719839720; c=relaxed/simple;
+	bh=544hdO4m+Yo09Ix1f8HVM+SryQd+PGyhysli3+nWtYU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type; b=DmcSDwjRDZf2Wmk7pLJj2JK+1Wgh4LKWvK1vKURXrV3v8UR9RvzLJp7f0adGIB7QAQ2PQGrVM76mA/v1cShBX6Uv26P5TJcIVbF/TVppG42rzcC5OqS+zvp+dfnl5Zb0C9VVFQompSi3KBUBTS2oQL/MasUwXMd0QltfR3RtQHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UbOO7HMH; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f9a78c6c5dso16040285ad.1;
+        Mon, 01 Jul 2024 06:15:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1719839616; x=1720444416; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=PMZrss2U3YMCU2gehj174wPWeOrCwWO2m+b4W1tpn9w=;
-        b=ZFxPA3i4lZMf+OIEmaZsN1sw6gE2vEmMhUATI24+hSvVe/1HYKXs/qYX6YES1narcY
-         rhz6xT99FJi8X0HG5ETcXyzHkqj0C6RjfUmI8KGly3b9Hfz/l2kvfLKiKNWtvlu+bBDK
-         pbS71fuIJKaV1gZT+q4nr9SxypzB6Ft5DSHo1dY6TpwFMhGs346yGXLK1DsecTM2T471
-         oENTb6UoKhdB6Cmd978Mh5KTEd0hhR3pCN4HqpmYYSJ4TKsTk9vEzq7V1kgPzq5PhimT
-         7keVl/OJoPjQbgrG3cvqA4+cCdMrq1Z+mzOrFUN8zniSl+F6z9vZzovlHSA8T2TUVCLg
-         RnGQ==
+        d=gmail.com; s=20230601; t=1719839718; x=1720444518; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:in-reply-to:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=544hdO4m+Yo09Ix1f8HVM+SryQd+PGyhysli3+nWtYU=;
+        b=UbOO7HMHQjs6xghw/8mhvNUvbyb64LCC4lS06nWWJavrlZWBdoJXpy0wFJp5VDrt0E
+         FDp5oIsRm1yM2uNmkUJ2knrfIB1wKZ952Zqsx1++w0v27AHQErBs0qcu/6xxgBx5FUqY
+         QQgPOMhTjCfrTU/y2V3PRZvvrYqGOL1j7oUVUFnnJLaVi76brlBb55Jwsq0mOWj6/MCN
+         TylQFwZG3fXJBRVz9yeRykulKBcqRQIpE2fQBk8bvEOQ/rJnGUazKX9wns9TeurBoJjJ
+         Pt2DE6Yr3klpJ4tYG8Wxq1C3blK6NXlkViC/xEAmwpLHcVl+vAe3OVBjdlW8G8KKnm1H
+         OKAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719839616; x=1720444416;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PMZrss2U3YMCU2gehj174wPWeOrCwWO2m+b4W1tpn9w=;
-        b=Om1L82amslWjQB3g6JVk3EOwNVu3StV4cJO8SV1EpJrl3f0MAVZ5NGKZABSwfObdlT
-         +p4+tc+CKvYDYCsgey5At0ohywYm/+mUiBf8InqAuyPtLWP5Knjgdket56X+UtxOYvjx
-         YIaLhQJ2tv1+gc8XK5LIJ+ArXH8SXNpt5urtk6SO7vpxaWtzFGb/PuzKxxvHLSCkMMTG
-         Ot4DwHglIVl2S6nNlmlQU4YAGtxzWcGX3jlaBDAv3WQD6X2pKb6wTqIKltdmSgqeoTSl
-         criqCv241NKAImYQShVabLwMTwwV4pMKw7wLPivzQ+3aEBVc7y/0EOfeJO/Gn9Cczj4w
-         4mVw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOn5hbNk9nGoNMxO2APfZkOMqZmPSaOnlA0/fUesl5vVdW6OWtG3y17hGCYeUfNzcJ4iDxhM414B5t0NZAyZTSjWo0QCiWVn8sWUin
-X-Gm-Message-State: AOJu0YzutUxjuj6SZaw6jhQc+6V9/siEVyaLXP91BWsac9TBgv9SXPMV
-	fQFP1Ia5K8UcBosXA/t3DOXQJWUyVGFcqIpo71MZ/ZjZ9UZC/2JOfhCS+44N45Y=
-X-Google-Smtp-Source: AGHT+IF+mb29Cx6OyDWYBUeFAC8VB1iv5b+zJARyMloC2bSs0QHLV080ePtRlc/xmjNtDKtCLGbgfw==
-X-Received: by 2002:a05:651c:103a:b0:2eb:eb96:c07d with SMTP id 38308e7fff4ca-2ee5e3936ffmr44184101fa.14.1719839616256;
-        Mon, 01 Jul 2024 06:13:36 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70804a9540fsm6393679b3a.216.2024.07.01.06.13.28
+        d=1e100.net; s=20230601; t=1719839718; x=1720444518;
+        h=content-transfer-encoding:mime-version:in-reply-to:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=544hdO4m+Yo09Ix1f8HVM+SryQd+PGyhysli3+nWtYU=;
+        b=NdXfTOfwujKgBM49Diyr8bXb+hYqJsATidNJiJLDh9CDA0DrpUEjiKOA8wyoqOihq+
+         i0gelQBlPetrJK8qOARu8g0NPaMaF0g5wNOn04KE5mWZ4A0hvI1IyJqxxZbzH5MXMnSK
+         WTYfK6eQ671VLSEGL4LUzNTVR0c3ordnWO/6ObEIEIbXG3iGiB+COmY9R1FHvQBuc2nY
+         EjNQTxYxVTXZIlT73pjwNLJ9AaNgsm+Awet2YVI64kSe63G6Op/dBwr9xEBlOz79yIHa
+         f4RIeNLIXsWKSDkeM33xXKE1CI2HZvVDwUD7yRI442GM8JezsDaUoIo3dN+K1U8j8lzw
+         7GRw==
+X-Forwarded-Encrypted: i=1; AJvYcCXexQWXIrVto7O0uP5vDvUuG21QsoeUsWCYZGYUmz0Qzp4Y5Gst36wpCqjKabIS1vc6PAHZGdPZSA9QvWyF0HydvMiB7HAVIHQdQJkbcqh7LWoDj8L9FU2xxLOBCurVzca4wGwhPJUg
+X-Gm-Message-State: AOJu0YyWUFf+CkB48Rd/u6ctojLBcgVVq/YyXZQTt7KqzWFVbTEefXZF
+	AjX1zI9JWMKGMQZVe4N386EmvAky768DVNixK85b6gfEqeTgFaEdTIPwIg==
+X-Google-Smtp-Source: AGHT+IFFN8wg4fbelccTURAYeNBoHJ1Drq8wevD15r5D0xHsU3RhfIznlMAFHdR7wGtBqZXliZxqKA==
+X-Received: by 2002:a17:902:a511:b0:1f9:b9ed:e84e with SMTP id d9443c01a7336-1fadbd08e34mr23626995ad.58.1719839718336;
+        Mon, 01 Jul 2024 06:15:18 -0700 (PDT)
+Received: from redecorated-mbp (121-45-106-167.tpgi.com.au. [121.45.106.167])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac10d15a9sm64544555ad.37.2024.07.01.06.15.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 06:13:35 -0700 (PDT)
-Date: Mon, 1 Jul 2024 15:13:23 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Miroslav Benes <mbenes@suse.cz>,
-	Sami Tolvanen <samitolvanen@google.com>, Song Liu <song@kernel.org>,
-	live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-	jpoimboe@kernel.org, jikos@kernel.org, joe.lawrence@redhat.com,
-	nathan@kernel.org, morbo@google.com, justinstitt@google.com,
-	thunder.leizhen@huawei.com, kees@kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH] kallsyms, livepatch: Fix livepatch with CONFIG_LTO_CLANG
-Message-ID: <ZoKrWU7Gif-7M4vL@pathway.suse.cz>
-References: <20240605032120.3179157-1-song@kernel.org>
- <alpine.LSU.2.21.2406071458531.29080@pobox.suse.cz>
- <CAPhsuW5th55V3PfskJvpG=4bwacKP8c8DpVYUyVUzt70KC7=gw@mail.gmail.com>
- <alpine.LSU.2.21.2406281420590.15826@pobox.suse.cz>
- <Zn70rQE1HkJ_2h6r@bombadil.infradead.org>
+        Mon, 01 Jul 2024 06:15:18 -0700 (PDT)
+Date: Mon, 1 Jul 2024 23:14:52 +1000
+From: Orlando Chamberlain <orlandoch.dev@gmail.com>
+To: lukas@wunner.de
+Cc: ardb@kernel.org, gargaditya08@live.com, hdegoede@redhat.com,
+ kekrby@gmail.com, linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] efi: libstub: add support for the apple_set_os
+ protocol
+Message-ID: <20240701231452.3d547e7f@redecorated-mbp>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.41; x86_64-pc-linux-gnu)
+In-Reply-To: <ZoJcVf98MElXhMjT@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zn70rQE1HkJ_2h6r@bombadil.infradead.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri 2024-06-28 10:36:45, Luis Chamberlain wrote:
-> On Fri, Jun 28, 2024 at 02:23:49PM +0200, Miroslav Benes wrote:
-> > On Fri, 7 Jun 2024, Song Liu wrote:
-> > 
-> > > Hi Miroslav,
-> > > 
-> > > Thanks for reviewing the patch!
-> > > 
-> > > On Fri, Jun 7, 2024 at 6:06 AM Miroslav Benes <mbenes@suse.cz> wrote:
-> > > >
-> > > > Hi,
-> > > >
-> > > > On Tue, 4 Jun 2024, Song Liu wrote:
-> > > >
-> > > > > With CONFIG_LTO_CLANG, the compiler may postfix symbols with .llvm.<hash>
-> > > > > to avoid symbol duplication. scripts/kallsyms.c sorted the symbols
-> > > > > without these postfixes. The default symbol lookup also removes these
-> > > > > postfixes before comparing symbols.
-> > > > >
-> > > > > On the other hand, livepatch need to look up symbols with the full names.
-> > > > > However, calling kallsyms_on_each_match_symbol with full name (with the
-> > > > > postfix) cannot find the symbol(s). As a result, we cannot livepatch
-> > > > > kernel functions with .llvm.<hash> postfix or kernel functions that use
-> > > > > relocation information to symbols with .llvm.<hash> postfixes.
-> > > > >
-> > > > > Fix this by calling kallsyms_on_each_match_symbol without the postfix;
-> > > > > and then match the full name (with postfix) in klp_match_callback.
-> > > > >
-> > > > > Signed-off-by: Song Liu <song@kernel.org>
-> > > > > ---
-> > > > >  include/linux/kallsyms.h | 13 +++++++++++++
-> > > > >  kernel/kallsyms.c        | 21 ++++++++++++++++-----
-> > > > >  kernel/livepatch/core.c  | 32 +++++++++++++++++++++++++++++++-
-> > > > >  3 files changed, 60 insertions(+), 6 deletions(-)
-> > > >
-> > > > I do not like much that something which seems to be kallsyms-internal is
-> > > > leaked out. You need to export cleanup_symbol_name() and there is now a
-> > > > lot of code outside. I would feel much more comfortable if it is all
-> > > > hidden from kallsyms users and kept there. Would it be possible?
-> > > 
-> > > I think it is possible. Currently, kallsyms_on_each_match_symbol matches
-> > > symbols without the postfix. We can add a variation or a parameter, so
-> > > that it matches the full name with post fix.
-> > 
-> > I think it might be better.
+> FWIW, there would be only 6 models to match if this needs to be
+> constrained to ones with dual GPUs:
+>
+> MacBookPro11,3
+> MacBookPro11,5
+> MacBookPro13,3
+> MacBookPro14,3
+> MacBookPro15,1
+> MacBookPro16,1
 
-Also, I agree that we need another variant of kallsyms_on_each_match_symbol()
-which would match the full name.
+I know that at least these two also need it:
+MacBookPro16,4
+MacBookPro15,3
 
-> > Luis, what is your take on this?
+I think there could be more older ones too. Apple has a list of
+MacBookPros [0], but I don't know how many of the older models that
+list 2 gpus on their "Tech Specs" pages need apple-set-os.
 
-[ Luis probably removed too much context here. IMHO, the following
-  sentence was talking about another problem in the original mail..
+The original apple-set-os code was posted to the GRUB mailing list in
+December 2013 [1] so maybe it was in 2013 that new dual GPU Macbooks
+started needing apple-set-os?
 
-> > If I am not mistaken, there was a patch set to address this. Luis might 
-> > remember more.
-
-I believe that Miroslav was talking about
-https://lore.kernel.org/all/20231204214635.2916691-1-alessandro.carminati@gmail.com/
-
-It is a patch solving the opposite problem. It allows to match
-an exact symbol even when there were more symbols of the same name.
-It would allow to get rid of the sympos.
+[0] https://support.apple.com/en-us/108052
+[1] https://lists.gnu.org/archive/html/grub-devel/2013-12/msg00442.html
 
 
-> Yeah this is a real issue outside of CONFIG_LTO_CLANG, Rust modules is
-> another example where instead of symbol names they want to use full
-> hashes. So, as I hinted to you Sami, can we knock two birds with one stone
-> here and move CONFIG_LTO_CLANG to use the same strategy as Rust so we
-> have two users instead of just one? Then we resolve this. In fact
-> what I suggested was even to allow even non-Rust, and in this case
-> even with gcc to enable this world. This gives much more wider scope
-> of testing / review / impact of these sorts of changes and world view
-> and it would resolve the Rust case, the live patch CONFIG_LTO_CLANG
-> world too.
-
-So, you suggest to search the symbols by a hash. Do I get it correctly?
-
-Well, it might bring back the original problem. I mean
-the commit 8b8e6b5d3b013b0 ("kallsyms: strip ThinLTO hashes from
-static functions") added cleanup_symbol_name() so that user-space
-tool do not need to take care of the "unstable" suffix.
-
-So, it seems that we have two use cases:
-
-   1. Some user-space tools want to ignore the extra suffix. I guess
-      that it is in the case when the suffix is added only because
-      the function was optimized.
-
-      It can't work if there are two different functions of the same
-      name. Otherwise, the user-space tool would not know which one
-      they are tracing.
-
-
-   2. There are other use-cases, including livepatching, where we
-      want to be 100% sure that we match the right symbol.
-
-      They want to match the full names. They even need to distinguish
-      symbols with the same name.
-
-
-IMHO, we need a separate API for each use-case.
-
-Best Regards,
-Petr
 
