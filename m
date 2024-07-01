@@ -1,95 +1,107 @@
-Return-Path: <linux-kernel+bounces-236565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D12591E416
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:28:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DB3C91E415
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:28:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF6B6283A1B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:28:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E7E71C2172D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C73E216D317;
-	Mon,  1 Jul 2024 15:28:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8459816CD0C;
+	Mon,  1 Jul 2024 15:28:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eFuyiac7"
-Received: from mail-pj1-f67.google.com (mail-pj1-f67.google.com [209.85.216.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nmTZzJpf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB12A16CD1D
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 15:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBEFA16132E;
+	Mon,  1 Jul 2024 15:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719847707; cv=none; b=upFCSGxDBVcT+HhePxTw+QsdnFPATSkKJF/zmfusjlYT5hM1QNJ07ZSjBwqRjk+zwXf7R8tlOb7uV0lwTWZm3/DTwaDNMGh4pFimvtcPDbkldBRvn2aZmzxJXTMdbt+z3SA68qiyx4WmZ4c972DA1ZAuU8fqnRcXgwRWCTTl1Jk=
+	t=1719847704; cv=none; b=ePXnp59zatSiSGB8tk4cBSmtZKwC9fdoVnwayChRr2n6qUZpwivREYqeroOkId3NEX0nLOjQtrKBnOatSQzkarGdW8KMIw2PROCPXuCzpCdUfU05SwkisLpJt4SWlL6UVo1taQxgJ3EKLhYOFdI1NKtLSGdgCMQIEcJ++x7o2Zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719847707; c=relaxed/simple;
-	bh=2WewFR0Y6Iu2bcPCVFDNmYojcNZnY6itjEZSRjBnzWo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OinZK0loAqae5JIRPE/TtUkZBdYMeFwWWaEKQJA7ah7HJKu3976q8dHcw8UEy5v8MRcw+MnvOteYTKhxgvLYTKi4XjR52dW1Vk3lViZq/DacIhYg9SwLh2K/e4xe2kyKQdavPScNuLgkXgxuB2g0e8usn1JFp590XtfRY5gBxz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eFuyiac7; arc=none smtp.client-ip=209.85.216.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f67.google.com with SMTP id 98e67ed59e1d1-2c7ecfc9e22so1868172a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 08:28:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719847705; x=1720452505; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2WewFR0Y6Iu2bcPCVFDNmYojcNZnY6itjEZSRjBnzWo=;
-        b=eFuyiac7wEKX+9SilURNOBkauR+8KJpj0M9hcqy0FmLvjovJMjjfgj+5I15TGGlGSx
-         Os5rIB/nkCbLQTYTx4zNuT9McUoZF/me8YSrLVjzeAchRbNWHEi5D7iZMH0yN25FGFdr
-         eowMDfWTlL7kwJsJNZT6SjyF9DpWZkGck/Kta8jt0NDEspPuWQsUGBCEiO9tjUpogd00
-         Ovuh0z4ya24sgQH2xo5eY0w8WHOf6P0kDvAnEnsbnweIvmihpok+kctc91dWPDl1HUVx
-         dnbHfxtEou8J/9MkNKh6gmmhgMxZUFwNXiq1HAJWJHlKzYtM7X7b0xLN/D/yOH5KiG3s
-         6JTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719847705; x=1720452505;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2WewFR0Y6Iu2bcPCVFDNmYojcNZnY6itjEZSRjBnzWo=;
-        b=bsZmPo7Pt9PpOjbKOQOMJC/sty+UHKazDTX4CmWV6KjcZYf3eLCNGNqQNJowfn8+LM
-         Q+Bors/EWxajb1o2g3Wn7mYxGT38TGSkIPuvlmD5aP4j/quvjL97w1XjVlQ5cGxCQPB6
-         Ynm2dIpVOmZKgF/LeHmnhG0Lomp/lqbknXEe2Km9PBA+lA+c4hYJ7cCi3scOJLyEOakX
-         iw26vgloLEnndM4TjNWfSDna0hSa1LmYV5hDKJ9j1HlJwdCwaeF7nrcaf3EkuNPjdLsa
-         FvVkX31dQb51KyWJuR0U0Dj6zQ97ZeWTxYJ0HhXbHtvr0l9RHgQLjV8Oun8mgNwMXWcW
-         cSfA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7Rcie+AVa3O95/ehq+NdF5xT//UPvNTAzfVZ+1d4rFzYkOTD2GIVcD4jXxIDKGF6ewkO/lkAH6d/9yWJpT6FIHkkh46KEQ/mAxfnl
-X-Gm-Message-State: AOJu0Yz9y9QOnAghgm2JR+FwpaI91nky7OhOChUCCjiL8KPJvCpjrJeY
-	+d9RQY9M043+ayA8L+8SP2qC3RcUGylPV/q4hPbyzoxgh8591HjP
-X-Google-Smtp-Source: AGHT+IEhMBsWJz4AA1BER3YQr9RPvpHjMxCGLD1Uz7xwquP+7xEZ3HnX9oQYVpNA3uqGF5uqVQXuAA==
-X-Received: by 2002:a17:90b:f84:b0:2c2:e45b:ecd with SMTP id 98e67ed59e1d1-2c93d70b2d4mr2947871a91.12.1719847705239;
-        Mon, 01 Jul 2024 08:28:25 -0700 (PDT)
-Received: from localhost.localdomain ([39.144.194.78])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91ce6e7easm6925232a91.25.2024.07.01.08.28.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 08:28:24 -0700 (PDT)
-From: luzhixing12345 <luzhixing12345@gmail.com>
-To: hasan3050@gmail.com
-Cc: dave.hansen@linux.intel.com,
-	hannes@cmpxchg.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	mgorman@techsingularity.net,
-	riel@surriel.com,
-	yang.shi@linux.alibaba.com,
-	ying.huang@intel.com
-Subject: Re: Transparent Page Placement for Tiered-Memory
-Date: Mon,  1 Jul 2024 23:28:13 +0800
-Message-Id: <20240701152813.19528-1-luzhixing12345@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20211130044922.42995-1-hasanalmaruf@fb.com>
-References: <20211130044922.42995-1-hasanalmaruf@fb.com>
+	s=arc-20240116; t=1719847704; c=relaxed/simple;
+	bh=zJG+h1pN9ClIxA4MuEYTWu+UyZIRuLS9ujKuZBOeNlE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=baE8zHJ7i6dJCF17sBei0rlszTLEBFvwgepZdmWoGMdaO6R649jsQXbWeiJYeS0pGJSnWGsoBceh/8vRLCUl9/S62I2tTI8y5PbPOGdHW02UcmeJboqLkwsX6rX7H1cPRCsIrBFmLpx+Ycc0cyV3xft27nqNmIY2e+FgwAMrXw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nmTZzJpf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A173CC116B1;
+	Mon,  1 Jul 2024 15:28:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719847704;
+	bh=zJG+h1pN9ClIxA4MuEYTWu+UyZIRuLS9ujKuZBOeNlE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nmTZzJpftcFzvBPlfk070+hDzb58S9IUzu/fAs68U8RPJUKbvD1R8JwSdu3rR12s6
+	 TKwPTfeFSemq/cbW2Ch680yCs6/HFcG9KTSUW8qkVMgmesRLX6/tPkW57g5kbNA9Om
+	 SPQ589hC20w0TJmaD+GDxhf2hEKlJLF64WZnf/TQ6Y1pCk+QQg6IItSYD4rhbdNmXF
+	 piuqQyuJ7b9apv8H3IoZ/9toimB8AJ5TbXgI/D3LA5SJuu1Pm55cDmOdVqdwXCkcFj
+	 9s6ZFxmCBT4ywetW+v7Tn9FUiEkXCJALg3NDRcUbMRSM/LnYzSZaNHs7uP4OW7RqDO
+	 PmLMJvYNLgfDQ==
+Date: Mon, 1 Jul 2024 16:28:18 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Vladimir Oltean <olteanv@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev, Kuldeep Singh <kuldeep.singh@nxp.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>
+Subject: Re: (subset) [PATCH v4 0/3] spi: fsl-dspi: Convert to yaml format
+ and use common SPI property
+Message-ID: <4ebbd545-0371-49d8-a19d-56303cf5c67a@sirena.org.uk>
+References: <20240624-ls_qspi-v4-0-3d1c6f5005bf@nxp.com>
+ <171984553050.67981.12522537296340689285.b4-ty@kernel.org>
+ <ZoLKN6a2qLXrR+oX@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2Uyv1VrnGHXBOUP3"
+Content-Disposition: inline
+In-Reply-To: <ZoLKN6a2qLXrR+oX@lizhi-Precision-Tower-5810>
+X-Cookie: Microwaves frizz your heir.
 
-Thanks,
-Lu, Zhixing
+
+--2Uyv1VrnGHXBOUP3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Mon, Jul 01, 2024 at 11:24:39AM -0400, Frank Li wrote:
+> On Mon, Jul 01, 2024 at 03:52:10PM +0100, Mark Brown wrote:
+
+> > If any updates are required or you are submitting further changes they
+> > should be sent as incremental updates against current git, existing
+> > patches will not be replaced.
+
+> Thank you very much, I sent out incremental update before this patch
+> applied since my one miss understand. Could you please check this?
+
+> https://lore.kernel.org/imx/20240627203308.476437-1-Frank.Li@nxp.com/
+
+As covered above please send an incremental patch with whatever changes
+were in the new version.
+
+--2Uyv1VrnGHXBOUP3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaCyxIACgkQJNaLcl1U
+h9B3Dgf/SIrxupQ7K4lT/QT3OpDmQBlJGu0P5Wy/9zYhW+weeAN2omnVKl6wBZ/Q
+r8gGMiBouJwOI67jH9hK27m4ZaR9OOYzgxtvqcZ0BhTHHLIqBdy33KcGx0lU334c
+rNCaMva+07MtNYVFLgjXST90eQHzzTW/JLJ0XLTAJSZjj4pQUTNjONGNn2C1Jsgh
+xWFgU538ZLuXq+XetznQyY+MnmoiSBrCLdtUURHQcA1HVOjJ2pSzN00qJoXV/rXH
+HGFcYi7b+YTgWshXkeS1AXppMvizWomoD2+rBMt/STttkQYjI3DggmkxONukE04J
+L8ti3LknvPtCTlT6WW24CBuPKkD5xA==
+=3LSH
+-----END PGP SIGNATURE-----
+
+--2Uyv1VrnGHXBOUP3--
 
