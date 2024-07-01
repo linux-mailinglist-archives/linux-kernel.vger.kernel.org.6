@@ -1,159 +1,196 @@
-Return-Path: <linux-kernel+bounces-236650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7117891E55E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:30:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C86B91E565
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:31:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1BA31C21450
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:30:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D88EC2810A4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF9D416D9C9;
-	Mon,  1 Jul 2024 16:30:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4C616DC27;
+	Mon,  1 Jul 2024 16:31:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sgvA1voj"
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H4F+tGQB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8DB4696
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 16:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA0D16CD1E;
+	Mon,  1 Jul 2024 16:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719851445; cv=none; b=l+0lJE7lGYmoiztz+W1EgtPhUmvejkyTaeyV9Q8UyV6PN00YGIms52Ih/vWdQ6BCB/fywDmdQgdTAtPAcw3MlM9dRbPHsX0Li0FCzEIdHx8Zx7tMqKzfAfNSk5HiuYdVy/txmwHoenUVQ3mHVYd1A5+zdN2HWpsAq58gi2rL6ZU=
+	t=1719851468; cv=none; b=QuihPWW1Oy0TnAvXr9rpz8weKlBHpptILsrPFoCq2Ayt88Tt547pWoGkjDhnNRsmkCM5L1om6pBQ30431cMqm7ORqnWgULGSER7UAEcyZpVpAwqf1DYTPctZi53IRGpfa09BM9bI7aWmBIyI+z9sEW9wBK3xIEcndG5Q4fj2KOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719851445; c=relaxed/simple;
-	bh=cyBZIZOlVW0uFuDers68bdrFwZZWvwcsCmsyVCP3NT0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qdHTEnVK39p9gDbK9t97t/4zt/V6xkfbUsG+TjGBgIt4106akBXcbgC2ea+92E9nqnQStD0MYJSBbDOwYYYZ4XXGP36zE62PKf3BFnYvK0fulTj2fiOnEgh1O85Hfrf7aRYLeI9cjr2h8ggAdP27usTfn4IDahQI1esB3N7K0OE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sgvA1voj; arc=none smtp.client-ip=209.85.167.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3d55db7863bso2176511b6e.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 09:30:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719851442; x=1720456242; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xG/yczWNA3S6agDnft2zlqDhiY2xh8cwDya0vX2WWTc=;
-        b=sgvA1voj2jNw7u/rqLSpGPhk6F4Ve0CDbLXDcIYPDSGFXR2ZICFVeuREQgYKE01ADi
-         vDzG2WXAkwf5VJhyTcQBVvsoicetQQX7rTalHkuDE6+ECoQpu+0f5L9s36QpAzXb2Ls8
-         8hJ9NuM8+FvNOC58PtvH88giqezWH/LAWfcrrY/CQBOzt19JGFj9GDXpvRiO77busi5h
-         ztKV5gC8gEJ/cmUjOnpD8iPso/cXfGoscegs+Cr7lUiOtq5sauPjNMsYwNUrmBbYbjmt
-         Obq/AKewgJhiAkMYG84jiDZc6BdPyDWIbTvwb2PF+Q0HUmj8gkvC0T73Xsekby2+jlJt
-         HLBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719851442; x=1720456242;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xG/yczWNA3S6agDnft2zlqDhiY2xh8cwDya0vX2WWTc=;
-        b=FpTPNvE8/phQJ/6uqQP/d5hZf7z3xrJzLJ0xUV0vaUuNhZ7H7G3vZO5/KF5we3lQom
-         IdOVVEuQXUr345f5gIKzqKc11rKuKXjzuQ5o4AgxTBusYjf/cnfTLalwNa5tlDgazlq0
-         594qYZQvnRc0ZxDS2nl1H8/fR+wvoVOnKHTkQ7mTaiCjzZy0I18lsowKXNp8JLN5qNPn
-         Q2dpZZJuY074VxpnWOKFucSkqM/zoEstbHAKDnMrWbpoGuDizkGmc5UH+wVE7uM3DcNV
-         HupwHNP4HUbO298jxdaHWDxz4lMDLmTwuHMBI1oR0kmh9IWCMcKcjjteo/zB6ak8YZoh
-         7WLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV7mgwVQ6c5cJtfXSbQNgk0Ao7/5i9o0igJU+WfglYTimzExOOT/tGfE3M6HiEMMgstCEivv6rv9vJQBf/EBfqzHbeZddEwDTWECwpI
-X-Gm-Message-State: AOJu0YzaBzxLSyaz2IlWefY2l8YeICMcMduT4ZneuOG7Kap8OPZiH9kV
-	iw1iKyw7WGrBMHsph65IAJitRwoji3ha4Mul50eCBShuHTP/zSM/C42TAKOz9hc=
-X-Google-Smtp-Source: AGHT+IGtjpg0CTkGUOVUT8tVr1x56kkLv8fO3EHB0uCgBbInRDqjQByQEmG74LyP6w9zbLghuwHLtQ==
-X-Received: by 2002:a05:6808:2288:b0:3d5:63f0:ee9e with SMTP id 5614622812f47-3d6b32e3fd9mr8133239b6e.20.1719851442481;
-        Mon, 01 Jul 2024 09:30:42 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:e8c6:2364:637f:c70e])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d62fa39edfsm1420328b6e.37.2024.07.01.09.30.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 09:30:41 -0700 (PDT)
-Date: Mon, 1 Jul 2024 18:30:38 +0200
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev,
-	Ronald =?iso-8859-1?Q?Tschal=E4r?= <ronald@innovation.ch>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: drivers/input/keyboard/applespi.c:1833 applespi_drain_writes() warn:
- mixing irqsave and irq
-Message-ID: <3e789ab9-ebfc-40a2-b90d-b8b55e0cfaac@suswa.mountain>
+	s=arc-20240116; t=1719851468; c=relaxed/simple;
+	bh=3+N9mukdDXyzFCGLQCqPnIa6llv8dipDxdiIJdfI2BM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KzlSOUdp+qNaEdXVXIkrAo9vM8+jbMF2MzEDQxwViZS6MXqrHQckO6UrftH2QV3gmNyjwzkwcJtc9rYcQAI8npJcvZqsyTtODlAiOcszSKFrxZdrJE5e3u9QvJNAwVt2WdB0HpaDgIl/mvRr92LqmLOt3puBxN6zMt+jqzj3SoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H4F+tGQB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C198C116B1;
+	Mon,  1 Jul 2024 16:31:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719851467;
+	bh=3+N9mukdDXyzFCGLQCqPnIa6llv8dipDxdiIJdfI2BM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H4F+tGQB8Hcw87QnKmezQg520Gcp5L4jM+vlgj/UvG/nEhKg/o+U8avYMj889kQ8g
+	 KIg7e1oHvlgRbaS0lVEGaX9Dpcz62o8QoQUDwCx2FMMYNUGNk2F2Tq9mvcLntsK7nb
+	 L1h+t+YpXW+ATKfe9HihuqDHd0V1dYx8Bjb1Ts6ySXWD40NBsiWcQrrkbWjtHMmfjt
+	 ON1nAkADPcHpVd8atehi1jgeZRXwizYT/9NejhyxvEpEF85JaxML+n6m0C/V0Mapwp
+	 NQoMb123Zw2J4sno25BdiU2/gmzOht3CR7t0U44mQEqALZpCB30da2WDJ7T4qkEij6
+	 SKBaTMmQ3lbhQ==
+Date: Mon, 1 Jul 2024 17:31:01 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Samuel Holland <samuel.holland@sifive.com>
+Cc: Charlie Jenkins <charlie@rivosinc.com>, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-sunxi@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>,
+	Andy Chiu <andy.chiu@sifive.com>,
+	Jessica Clarke <jrtc27@jrtc27.com>, peterlin@andestech.com
+Subject: Re: [PATCH v3 03/13] riscv: dts: allwinner: Add xtheadvector to the
+ D1/D1s devicetree
+Message-ID: <20240701-pyromania-spinster-709a6c8cc460@spud>
+References: <20240619-xtheadvector-v3-0-bff39eb9668e@rivosinc.com>
+ <20240619-xtheadvector-v3-3-bff39eb9668e@rivosinc.com>
+ <0cc13581-5cc4-4a25-a943-7a896f42da4c@sifive.com>
+ <20240701-prancing-outpost-3cbce791c554@spud>
+ <7ab7d629-6993-4cad-b5b7-62bddfc74a49@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="MRFAVKKck9xRQIr9"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <7ab7d629-6993-4cad-b5b7-62bddfc74a49@sifive.com>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   6d6444ba82053c716fb5ac83346202659023044e
-commit: 038b1a05eae6666b731920e46f47d8e2332e07ff Input: add Apple SPI keyboard and trackpad driver
-config: x86_64-randconfig-161-20240628 (https://download.01.org/0day-ci/archive/20240628/202406280337.1Av9qm8V-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202406280337.1Av9qm8V-lkp@intel.com/
+--MRFAVKKck9xRQIr9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-smatch warnings:
-drivers/input/keyboard/applespi.c:1833 applespi_drain_writes() warn: mixing irqsave and irq
-drivers/input/keyboard/applespi.c:1845 applespi_drain_reads() warn: mixing irqsave and irq
+On Mon, Jul 01, 2024 at 11:11:55AM -0500, Samuel Holland wrote:
+> Hi Conor, Charlie,
+>=20
+> On 2024-07-01 11:07 AM, Conor Dooley wrote:
+> > On Mon, Jul 01, 2024 at 10:27:01AM -0500, Samuel Holland wrote:
+> >> On 2024-06-19 6:57 PM, Charlie Jenkins wrote:
+> >>> The D1/D1s SoCs support xtheadvector so it can be included in the
+> >>> devicetree. Also include vlenb for the cpu.
+> >>>
+> >>> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> >>> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> >>> ---
+> >>>  arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi | 3 ++-
+> >>
+> >> The other C906/C910/C920-based SoCs need devicetree updates as well, a=
+lthough
+> >> they don't necessarily need to be part of this series:
+> >>
+> >>  - sophgo/cv18xx.dtsi
+> >>  - sophgo/sg2042-cpus.dtsi
+> >>  - thead/th1520.dtsi
+> >=20
+> > Yeah, I think I pointed that out before with the same "escape hatch" of
+> > it not needing to be in the same series.
+> >=20
+> >>
+> >>>  1 file changed, 2 insertions(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi b/arch/ris=
+cv/boot/dts/allwinner/sun20i-d1s.dtsi
+> >>> index 64c3c2e6cbe0..6367112e614a 100644
+> >>> --- a/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi
+> >>> +++ b/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi
+> >>> @@ -27,7 +27,8 @@ cpu0: cpu@0 {
+> >>>  			riscv,isa =3D "rv64imafdc";
+> >>
+> >> The ISA string should be updated to keep it in sync with riscv,isa-ext=
+ensions.
+> >=20
+> > This probably looks like this cos I said that the kernel shouldn't parse
+> > vendor extensions from "riscv,isa". My rationale was that we have
+> > basically no control of what a vendor extension means in riscv,isa so=
+=20
+> > we shouldn't parse them from it (so marginally worse than standard
+> > extensions, where it means what the spec says except when it doesn't).
+> >=20
+> > Given how we implement the parsing, it also meant we weren't implying
+> > meanings for vendor extensions ACPI-land, where we also can't ensure the
+> > meanings or that they remain stable. That change is in a different
+> > series:
+> > https://patchwork.kernel.org/project/linux-riscv/patch/20240609-support=
+_vendor_extensions-v2-1-9a43f1fdcbb9@rivosinc.com/
+> >=20
+> > Although now that I think about it, this might break xandespmu... I
+> > dunno if the Andes guys switched over to using the new property outside
+> > of the single dts in the kernel tree using their SoC. We could
+> > potentially special-case that extension if they haven't - but my
+> > position on this mostly is that if you want to use vendor extensions you
+> > should not be using riscv,isa (even if the regex doesn't complain if you
+> > add them). I'd like to leave the code in the other patch as-is if we can
+> > help it.
+> >=20
+> > I added Yu Chien Peter Lin here, maybe they can let us know what they're
+> > doing.
+>=20
+> OK, that makes sense to me. Then please ignore my original comment.
 
-vim +1833 drivers/input/keyboard/applespi.c
+Should the xandespmu thing be an issue, I'd suggest we just do something
+like the following, in place of the new switch arm added by Charlie:
 
-038b1a05eae666 Ronald Tschalär 2019-07-15  1826  static void applespi_drain_writes(struct applespi_data *applespi)
-038b1a05eae666 Ronald Tschalär 2019-07-15  1827  {
-038b1a05eae666 Ronald Tschalär 2019-07-15  1828  	unsigned long flags;
-038b1a05eae666 Ronald Tschalär 2019-07-15  1829  
-038b1a05eae666 Ronald Tschalär 2019-07-15  1830  	spin_lock_irqsave(&applespi->cmd_msg_lock, flags);
+diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+index ec4bff7a827c..bb99b4055ec2 100644
+--- a/arch/riscv/kernel/cpufeature.c
++++ b/arch/riscv/kernel/cpufeature.c
+@@ -628,6 +628,17 @@ static void __init riscv_parse_isa_string(const char *=
+isa, unsigned long *bitmap
+ 		if (unlikely(ext_err))
+ 			continue;
+=20
++		if (*ext =3D=3D 'x' && acpi_disabled) {
++			/*
++			 * xandespmu predates this "rule", so special case it for
++			 * hysterical raisins
++			 */
++			if (strncasecmp(ext, "xandespmu", ext_end - ext)) {
++				pr_warn_once("Vendor extensions are ignored in riscv,isa. Use riscv,is=
+a-extensions instead.");
++				break;
++			}
++		}
++
+ 		match_isa_ext(ext, ext_end, bitmap);
+ 	}
+ }
 
-_irqsave() sort of implies that potentially the caller has disabled IRQs,
-otherwise we would use spin_lock_irq() if we knew they hadn't disabled
-IRQs.
 
-038b1a05eae666 Ronald Tschalär 2019-07-15  1831  
-038b1a05eae666 Ronald Tschalär 2019-07-15  1832  	applespi->drain = true;
-038b1a05eae666 Ronald Tschalär 2019-07-15 @1833  	wait_event_lock_irq(applespi->drain_complete, !applespi->write_active,
-038b1a05eae666 Ronald Tschalär 2019-07-15  1834  			    applespi->cmd_msg_lock);
+--MRFAVKKck9xRQIr9
+Content-Type: application/pgp-signature; name="signature.asc"
 
-This will renable IRQs briefly and then disable them again.
+-----BEGIN PGP SIGNATURE-----
 
-038b1a05eae666 Ronald Tschalär 2019-07-15  1835  
-038b1a05eae666 Ronald Tschalär 2019-07-15  1836  	spin_unlock_irqrestore(&applespi->cmd_msg_lock, flags);
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoLZxAAKCRB4tDGHoIJi
+0vx9AP9TcSJwtzFrkZkNIG3vs0nSWuu1I+CFqCZfZtrYfWH8RQEAxGeKP2P/oodO
+cyCHRd/9NqDoz5j8eiXpnwlmjUtaKAk=
+=AA89
+-----END PGP SIGNATURE-----
 
-This will set them back to how they were at the start of the function.
-
-The issue is that if the caller really wanted IRQs disabled, then it's
-not necessarilly a good idea to enable them at all in the
-wait_event_lock_irq() macro.  I suspect that in real life no callers
-disable IRQs so it's not an issue.  But anyway, that's what the warning
-is about.
-
-I suspect that kbuild-bot has a 5 year cut off for warnings and if this
-had been a month older then kbuild-bot would have ignored it.  :P
-
-038b1a05eae666 Ronald Tschalär 2019-07-15  1837  }
-038b1a05eae666 Ronald Tschalär 2019-07-15  1838  
-038b1a05eae666 Ronald Tschalär 2019-07-15  1839  static void applespi_drain_reads(struct applespi_data *applespi)
-038b1a05eae666 Ronald Tschalär 2019-07-15  1840  {
-038b1a05eae666 Ronald Tschalär 2019-07-15  1841  	unsigned long flags;
-038b1a05eae666 Ronald Tschalär 2019-07-15  1842  
-038b1a05eae666 Ronald Tschalär 2019-07-15  1843  	spin_lock_irqsave(&applespi->cmd_msg_lock, flags);
-038b1a05eae666 Ronald Tschalär 2019-07-15  1844  
-038b1a05eae666 Ronald Tschalär 2019-07-15 @1845  	wait_event_lock_irq(applespi->drain_complete, !applespi->read_active,
-038b1a05eae666 Ronald Tschalär 2019-07-15  1846  			    applespi->cmd_msg_lock);
-038b1a05eae666 Ronald Tschalär 2019-07-15  1847  
-038b1a05eae666 Ronald Tschalär 2019-07-15  1848  	applespi->suspended = true;
-038b1a05eae666 Ronald Tschalär 2019-07-15  1849  
-038b1a05eae666 Ronald Tschalär 2019-07-15  1850  	spin_unlock_irqrestore(&applespi->cmd_msg_lock, flags);
-038b1a05eae666 Ronald Tschalär 2019-07-15  1851  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+--MRFAVKKck9xRQIr9--
 
