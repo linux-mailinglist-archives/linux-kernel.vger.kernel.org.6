@@ -1,73 +1,62 @@
-Return-Path: <linux-kernel+bounces-235805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9C6591D9E6
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:25:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6FD191D9EA
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:27:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5942C1F211D8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:25:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6C2D1C20C64
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:27:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28097824BD;
-	Mon,  1 Jul 2024 08:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4BD18287D;
+	Mon,  1 Jul 2024 08:27:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Hqt2utyx"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EDBJAGpq"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D631804A
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 08:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A9882498;
+	Mon,  1 Jul 2024 08:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719822342; cv=none; b=cvuyRaR20jMvwiyiClG1pSEzUM66znNuI3hG5oixILEltseeYpy8LN8ovMcHZGxFrc3dMfYSg20Y40gsVGyYfutdyYiUHRfv9BjLjoGiEhx9NACpc6LrQnmrXnEcOB/dzJbMes8F51r3HAWKPqWSpBf1lP6ljXGBYvJWRMGXDK0=
+	t=1719822431; cv=none; b=Xm0K44g1bFICnapdkJ8OZOdU2uexR73ZfhxFO3NdJhiIJaxrA/8ix1HxKJFOVlVXiqQaaRwOO9kdsRPuA0Mt93TMsSlRiEYe5xNromH13ijOf0F5mXqNs3EqrKe394bwaeSOVpgBC0CR4byU/cjEzBeqoFh3XvYBhu1NmGh7eTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719822342; c=relaxed/simple;
-	bh=gLUct8rcDDst3OiV93/SJPrz4/rOAOI63IiekwKP0h4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ODkCfJN+mKNvUtOE+7slpsSW7VuVIDwdSp8YqEBW/5f8fVqIVOo9jvle1diupn1hWHIS2LH9CmAZyLsZd1pJdOZ66+t54XFUWpQTshwSnwDtNAugmq2EDCTTyLKCtFlai2j+2Obf0KV6vCMp5NHv/PxkL1P4Vquz+dZIpkC22ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Hqt2utyx; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a724b3a32d2so294297366b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 01:25:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1719822338; x=1720427138; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=P2HT4hATmlGuJxaDUc5KV1URVwYIGXkgBvqpIWR1IlU=;
-        b=Hqt2utyx1mcgehbDSlrjLlPEfDzn0bI7qoos4YsSuVqOZ1upvKBY61KNbCBQH5ZctX
-         N2/6r7S40ORfdyEV/e0tWRiGhw6jSqYuiQJCJj6VM/ApZ6S7HOy21kxj1N4OJD0H/do/
-         B8r3BWOCMN5z7FaczXgfoymYZMtOH+dYCtpv9Ki4b1meLxk2Bc+nD5FaLPJrQD1sFlnO
-         I0fqLv3kycc2mW+kvlsHucwopXyntAKJszdKWC7JW5hAgN0ellIH2Wt0I73uMpDXLf5j
-         lWV6J+GzcCbid5GIzw6chEvbeP+GVr55cjS4onndd/hR2/cOQ1WSUvsqsqoVeGwPn+Zk
-         fYWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719822338; x=1720427138;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=P2HT4hATmlGuJxaDUc5KV1URVwYIGXkgBvqpIWR1IlU=;
-        b=gSGQXGfXah3DDesRytOQIzufIPG8YtL5ftP1rLFup2eZ25W7P+vF3V1cQE9UE4K2it
-         zunysXH76IqodF9hECI8WC0DhdnSWIQA/CGRAGLHmbok6Mz9j1nL/qlPTo5iIT+0mpuL
-         0zXAYLIAEFuGEYmpQHI+jqHWc3yAm7wjwmfPVg8AI6ytsYMk+7JX9NFEZCUabcy1tPF/
-         Y/vSXT166HLAqTFhS+t05CoaPM86EqNLSwwC5T3iVIdf+0aks7iyl4RlqrjoeEuAX8ZC
-         wvR+abkwcCZZCiZlSAK0fnNYlGfnbX6fIDF5hhBjbdWgJxP7F1qsm0SHFduz+LWChZ0M
-         YALg==
-X-Forwarded-Encrypted: i=1; AJvYcCXosKTdVPQOKefkiYmPvVvHl5JV8+9cqfHobuiy7CEXJY37Qk6wLc201Ef7fuy4sZZvP/UuCroU1tIptb6kV38k53PTpSPXLbSFTckD
-X-Gm-Message-State: AOJu0Yw+oOt+w6rGt6UV+j7kqZdNVRI5fXChNVJVi9KKDHejmtIbcGDQ
-	cWQP2DSm4CbzSSU5otdcefmpiDX5ghGztKsyB9YNo0S34Z7A9ZKvFNwLMionsP8=
-X-Google-Smtp-Source: AGHT+IFNIGavJzId+B0jfQxw7gW2PaPV3S5uawQ3l+IpGLodohtrkmAXLbHIsdTAntg4ZVBTEfEO8Q==
-X-Received: by 2002:a17:906:d78a:b0:a6e:ffa2:3cce with SMTP id a640c23a62f3a-a7514498cb1mr267074666b.41.1719822338499;
-        Mon, 01 Jul 2024 01:25:38 -0700 (PDT)
-Received: from ?IPV6:2003:e5:8729:4000:29eb:6d9d:3214:39d2? (p200300e58729400029eb6d9d321439d2.dip0.t-ipconnect.de. [2003:e5:8729:4000:29eb:6d9d:3214:39d2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72aaf18c99sm308790966b.2.2024.07.01.01.25.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Jul 2024 01:25:38 -0700 (PDT)
-Message-ID: <098c5197-bd3e-439a-ae4c-72e05a06a9a7@suse.com>
-Date: Mon, 1 Jul 2024 10:25:37 +0200
+	s=arc-20240116; t=1719822431; c=relaxed/simple;
+	bh=xd/U9dyUy2ulluTXx0L+6mSovqdM0nN4dV3wEoXcDZw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uOcSMC82ctfgyTy4K9HGwHxlbdPYyIwbxJgcBwa3Fq/T9hUswdpyqj08XJGQxbRnLXn9/JfdG1H4yAoTFT+U1eG4bkpBckcmGCt4PtTCZjw35suyvxEHvYpOmX99y5JAfs9ieKW5wavlSJ9odpCO54oh6TgKBV8mQlHKnML4SNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EDBJAGpq; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4618QwSb061709;
+	Mon, 1 Jul 2024 03:26:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719822418;
+	bh=dx5fKViDD8JtZlIf9rrAs7DN7RjC9vagC2aDKjhaS8k=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=EDBJAGpqEWuazqRsVqXrcWMS+3vlkLnrfKrFvuXpbnXKULs8J2y480q0sKHy1z+5A
+	 WCJfxaM0MqoWxgDXy9kOgmqJhnisTxM7USVMJbOFH/NTKz/Mi0rUoGE1dDS0IhX8Jq
+	 E/AgxCU9tEUqm7W34UdUS2Dy5IP8N4iogDCsfcn0=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4618Qvn6037759
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 1 Jul 2024 03:26:58 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 1
+ Jul 2024 03:26:57 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 1 Jul 2024 03:26:57 -0500
+Received: from [172.24.29.211] (lt5cd2489kgj.dhcp.ti.com [172.24.29.211])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4618Qr8G105771;
+	Mon, 1 Jul 2024 03:26:54 -0500
+Message-ID: <7bde6ad9-11c6-46ca-af92-9860dfbbbe3c@ti.com>
+Date: Mon, 1 Jul 2024 13:56:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,37 +64,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] x86/xen/time: Reduce Xen timer tick
-To: Frediano Ziglio <frediano.ziglio@cloud.com>,
- xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Cc: "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
- Dave Hansen <dave.hansen@linux.intel.com>, Borislav Petkov <bp@alien8.de>,
- Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>
-References: <20240619104015.30477-1-frediano.ziglio@cloud.com>
+Subject: Re: [PATCH] arm64: dts: ti: k3-j7xx: Change timer nodes status to
+ reserved
+To: Beleswar Padhi <b-padhi@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
+        Jayesh
+ Choudhary <j-choudhary@ti.com>
+CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <tony@atomide.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240607105559.771080-1-b-padhi@ti.com>
 Content-Language: en-US
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-In-Reply-To: <20240619104015.30477-1-frediano.ziglio@cloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: "Kumar, Udit" <u-kumar1@ti.com>
+In-Reply-To: <20240607105559.771080-1-b-padhi@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-
-On 19.06.24 12:40, Frediano Ziglio wrote:
-> Current timer tick is causing some deadline to fail.
-> The current high value constant was probably due to an old
-> bug in the Xen timer implementation causing errors if the
-> deadline was in the future.
-> 
-> This was fixed in Xen commit:
-> 19c6cbd90965 xen/vcpu: ignore VCPU_SSHOTTMR_future
-> 
-> Usage of VCPU_SSHOTTMR_future in Linux kernel was removed by:
-> c06b6d70feb3 xen/x86: don't lose event interrupts
-> 
-> Signed-off-by: Frediano Ziglio <frediano.ziglio@cloud.com>
-
-Reviewed-by: Juergen Gross <jgross@suse.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
 
-Juergen
+On 6/7/2024 4:25 PM, Beleswar Padhi wrote:
+> The remoteproc firmware like of R5F and DSPs in the MAIN voltage domain
+> use timers. Therefore, change the status of the timer nodes to
+> "reserved" to avoid any clash.
+>
+> This change is already incorporated for timer nodes in the MCU voltage
+> domain.
+>
+> Fixes: 835d04422f9d ("arm64: dts: ti: k3-j721s2: Add general purpose timers")
+>
+> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+> ---
+>   arch/arm64/boot/dts/ti/k3-j7200-main.dtsi  |  2 ++
+>   arch/arm64/boot/dts/ti/k3-j721e-main.dtsi  |  7 +++++++
+>   arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi |  6 ++++++
+>   arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi | 10 ++++++++++
+>   4 files changed, 25 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
+> index 9386bf3ef9f68..22351a4f3da6e 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
+> @@ -1254,6 +1254,7 @@ main_timer0: timer@2400000 {
+>   		assigned-clock-parents = <&k3_clks 49 2>;
+>   		power-domains = <&k3_pds 49 TI_SCI_PD_EXCLUSIVE>;
+>   		ti,timer-pwm;
+> +		status = "reserved";
+>   	};
+>   
+>   	main_timer1: timer@2410000 {
+> @@ -1266,6 +1267,7 @@ main_timer1: timer@2410000 {
+>   		assigned-clock-parents = <&k3_clks 50 2>, <&k3_clks 313 1>;
+>   		power-domains = <&k3_pds 50 TI_SCI_PD_EXCLUSIVE>;
+>   		ti,timer-pwm;
+> +		status = "reserved";
+>   	};
+>   
+>   	main_timer2: timer@2420000 {
 
+checked only on J7200, for Main MCU 1-0, Looks you need main_timer2 as 
+well to get it working
+
+Please verify on other SOCs as well for all firmwares, if some extra 
+nodes needs to be added
+
+
+> diff --git a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
+> index 0da785be80ff4..944bdbb98e910 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
+> [..]
 
