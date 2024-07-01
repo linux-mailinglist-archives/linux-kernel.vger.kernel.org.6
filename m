@@ -1,115 +1,181 @@
-Return-Path: <linux-kernel+bounces-237098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9D1191EB50
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 01:19:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E670991EB49
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 01:16:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EACC11C2149A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 23:19:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BD6F283456
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 23:16:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F75B173332;
-	Mon,  1 Jul 2024 23:19:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5186171652;
+	Mon,  1 Jul 2024 23:16:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rothwell.id.au header.i=@rothwell.id.au header.b="dqNO2QEQ"
-Received: from mail.rothwell.id.au (gimli.rothwell.id.au [103.230.158.156])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="S7+J/66n"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE1685C74;
-	Mon,  1 Jul 2024 23:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.230.158.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ACB438DD9;
+	Mon,  1 Jul 2024 23:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719875966; cv=none; b=bpJGFOxKAtrH5vjAQXAHigtx2AHHCUrVGJyii2s1Wr0N4LJE/tf71DgMSYGJvYEMci297isvmkw70akAq8N/TQ99W0fCPNLtQ/glfkWAbXA3L/UyWuO9W6dgtgW4hmUg+Ch0ERg8IuLWQCO7+q0f8pB+qbAg7J92YyxdpuvWmwI=
+	t=1719875787; cv=none; b=DZAOOtQ1yPg/hNCREPIN8O0OEzrEEV6xw06pRJHa02LphLISRRODXDca7eHpL7vFWJXxDV7OpQPYtYwK8MZZ+Yv9Z9bxQ9GiAXpZfLuOryfqIVgihIsvATwedBL3ZJhCVc1uwGmLBBNPeeUVphKaa05nHlRp4oQ7N9AKTX4onlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719875966; c=relaxed/simple;
-	bh=6/tUiMxEEZVfdLohUSs/3BaOuf1zNln8q9fpCuM06Kc=;
+	s=arc-20240116; t=1719875787; c=relaxed/simple;
+	bh=tSU39dZciMDb8sRhmnUcIch2vV1Fa5AdS7QF6XJHPJ8=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pkKRlopvzuCOLX9lpgCwR3Kr/6/gs+tUKkKu5RT3gDruWOenoJbTJ4ljOg2ecPtnl1cXvCXnYcy/GnbWyHkgGL0RW4eUATJNFrNtIiXCF9FoODx93oB4WTNxUv7Z7kQWzLrpits9A+ksKPUXhKFGE0UoXoubugbuHgHCd6mDTHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rothwell.id.au; spf=pass smtp.mailfrom=rothwell.id.au; dkim=pass (2048-bit key) header.d=rothwell.id.au header.i=@rothwell.id.au header.b=dqNO2QEQ; arc=none smtp.client-ip=103.230.158.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rothwell.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rothwell.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rothwell.id.au;
-	s=201702; t=1719875636;
-	bh=6/tUiMxEEZVfdLohUSs/3BaOuf1zNln8q9fpCuM06Kc=;
+	 MIME-Version:Content-Type; b=iG1G8wzXS0uHbSz1N0x4sHY2FWFdeat5BsQT0SzXAAebWEGDyYBnBF0xf/ax6PnqQ7IdDtA+CZt8fZ2EQ4MQEBRS1dPKb64B7rvOVieOWgPye2xXkYJK7T52nPyVb1gCOpY6HjT5gOB7GcAKX0ut7Dkit6rQ2hB+TFLiIBseQGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=S7+J/66n; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1719875775;
+	bh=Y8wHQu+h5olE2m0mvmAj9n3XXWT5DGPtyl9UEjbVIzY=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dqNO2QEQ4wU6DQb9b2r7VC7wPGiDRGBYueYdsaREgmgwaMXn7znvSIOVcDOUs3THG
-	 7T7+x3VxUSQCVF2ac1OxY9DMMU0CPIZPTyhfeHyJp0nfqoSmv0tiDa2FtopPbah46r
-	 4ei8AhhdNNHbqqWNvTgxY92mLl3+8juShENlQDrMOSfEYylYAOThhS5fL/pk/pcfG5
-	 W+O14L61Dxr8b+A5xOrHnVi5VXQEA6aZK/lpv1RkF2dkgSsD19iu5n+Cqy7tfunM8n
-	 DvrHUE5AZMOBoPOBnUENBcaqZ27shGCMuuZUKNSi5HhBlZuT8ua2dyj/GUexDs4e7p
-	 zOtjyjP4cIgsQ==
-Received: from authenticated.rothwell.id.au (localhost [127.0.0.1])
+	b=S7+J/66nJaCPaCOgTDPPPUJBYNj0XZ1xwsfXirzp99Pz3/6Wa+jGoX6GFXhSOBVvo
+	 9XSWs8wOMfzX6nG6f/wFeXzD9Y/x51/zm5BvY508UZ0m6zojXbXnb/5Y1A2WIWpsDt
+	 6wccVVskeFD3tgm6ovPaOf4qtuIyrCLHuFJfR7E+tFzIJYIWLnzOjWI1pHxxvgzfG7
+	 CeUfJtIxT0bxSOrcdOWaSuJfVYxR3Bxwv6WJ+HEueBl6HcoFjHPfQUvfwOaQ2qhsw2
+	 8NCHi5/WOOVaKebYM2HWYHGEgNFf1LtiAwDQI1kGDMlUUvNNYdrDlwryNNWRdq9cI/
+	 qXiJAAjFDdbOQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.rothwell.id.au (Postfix) with ESMTPSA id 4WChgR6p5vz3m;
-	Tue,  2 Jul 2024 09:13:55 +1000 (AEST)
-Date: Tue, 2 Jul 2024 09:13:54 +1000
-From: Stephen Rothwell <sfr@rothwell.id.au>
-To: Philippe CORNU <philippe.cornu@foss.st.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown
- <broonie@kernel.org>, Ville =?UTF-8?B?U3lyasOkbMOk?=
- <ville.syrjala@linux.intel.com>, Raphael Gallais-Pou
- <raphael.gallais-pou@foss.st.com>, Yannick Fertre
- <yannick.fertre@foss.st.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the drm tree
-Message-ID: <20240702091354.368f4d0f@oak>
-In-Reply-To: <78644a85-9e42-8af7-778a-80383bc7c0f4@foss.st.com>
-References: <Zn8TKYDCOCtbbNH8@sirena.org.uk>
-	<2024063022-trapping-affidavit-56fd@gregkh>
-	<78644a85-9e42-8af7-778a-80383bc7c0f4@foss.st.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-redhat-linux-gnu)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WChk7257bz4wcC;
+	Tue,  2 Jul 2024 09:16:14 +1000 (AEST)
+Date: Tue, 2 Jul 2024 09:16:14 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Mirsad Todorovac <mtodorovac69@gmail.com>, Mark Brown
+ <broonie@kernel.org>, Linux Kernel Build System
+ <linux-kbuild@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org
+Subject: Re: [PROBLEM linux-next] ERROR: modpost: "devm_qcom_tzmem_pool_new"
+ [drivers/firmware/qcom/qcom-scm.ko] undefined!
+Message-ID: <20240702091614.2334b182@canb.auug.org.au>
+In-Reply-To: <CAMRc=MczeH+ptirFQpFi968m+-4RoABa43M5VQUx4guZTZxLSw@mail.gmail.com>
+References: <9d1156b9-cdf1-44be-b65d-45b17c0b681e@gmail.com>
+	<CAMRc=MczeH+ptirFQpFi968m+-4RoABa43M5VQUx4guZTZxLSw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/IwlIge1b6sSr2u3Tklnf5m=";
+Content-Type: multipart/signed; boundary="Sig_/gEVH0E3.cizaTH.FlNpjhWH";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 
---Sig_/IwlIge1b6sSr2u3Tklnf5m=
-Content-Type: text/plain; charset=US-ASCII
+--Sig_/gEVH0E3.cizaTH.FlNpjhWH
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi Philippe,
+Hi Bart,
 
-On Mon, 1 Jul 2024 11:41:09 +0200 Philippe CORNU <philippe.cornu@foss.st.co=
-m> wrote:
+On Mon, 1 Jul 2024 09:33:47 +0200 Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 >
-> Many thanks for this fix and all my apologies for having creating this is=
-sue.
-> What's next and how can I help?
-> Philippe :-)
-> ps: On my side, I am still trying to understand why I did not "catch" thi=
-s issue that looks "pretty big".
+> On Fri, Jun 28, 2024 at 8:27=E2=80=AFPM Mirsad Todorovac <mtodorovac69@gm=
+ail.com> wrote:
+> >
+> > In vanilla linux-next next-20240627 branch, there seems to be a build e=
+rror with
+> > KCONFIG_SEED=3D0x44AB31A6.
+> >
+> > The error log is:
+> >
+> > ~/linux/kernel/linux-next$ time nice make -j 36 bindeb-pkg |& tee ../er=
+r-6.10-rc5-next-20240627-29.log; date
+> >   GEN     debian
+> > dpkg-buildpackage --build=3Dbinary --no-pre-clean --unsigned-changes -R=
+'make -f debian/rules' -j1 -a$(cat debian/arch)
+> > dpkg-buildpackage: info: source package linux-upstream
+> > dpkg-buildpackage: info: source version 6.10.0-rc5-38
+> > dpkg-buildpackage: info: source distribution jammy
+> > dpkg-buildpackage: info: source changed by marvin <marvin@defiant>
+> >  dpkg-source --before-build .
+> > dpkg-buildpackage: info: host architecture amd64
+> >  make -f debian/rules binary
+> > #
+> > # No change to .config
+> > #
+> > mkdir -p /home/marvin/linux/kernel/linux-next/tools/objtool && make O=
+=3D/home/marvin/linux/kernel/linux-next subdir=3Dtools/objtool --no-print-d=
+irectory -C objtool
+> > mkdir -p /home/marvin/linux/kernel/linux-next/tools/bpf/resolve_btfids =
+&& make O=3D/home/marvin/linux/kernel/linux-next subdir=3Dtools/bpf/resolve=
+_btfids --no-print-directory -C bpf/resolve_btfids
+> >   INSTALL libsubcmd_headers
+> >   INSTALL libsubcmd_headers
+> >   CALL    scripts/checksyscalls.sh
+> >   UPD     init/utsversion-tmp.h
+> >   CC      init/version.o
+> >   AR      init/built-in.a
+> >   CHK     kernel/kheaders_data.tar.xz
+> >   AR      built-in.a
+> >   AR      vmlinux.a
+> >   LD      vmlinux.o
+> >   OBJCOPY modules.builtin.modinfo
+> >   GEN     modules.builtin
+> >   MODPOST Module.symvers
+> > ERROR: modpost: "devm_qcom_tzmem_pool_new" [drivers/firmware/qcom/qcom-=
+scm.ko] undefined!
+> > make[5]: *** [scripts/Makefile.modpost:145: Module.symvers] Error 1
+> > make[4]: *** [Makefile:1886: modpost] Error 2
+> > make[3]: *** [debian/rules:74: build-arch] Error 2
+> > dpkg-buildpackage: error: make -f debian/rules binary subprocess return=
+ed exit status 2
+> > make[2]: *** [scripts/Makefile.package:121: bindeb-pkg] Error 2
+> > make[1]: *** [/home/marvin/linux/kernel/linux-next/Makefile:1555: binde=
+b-pkg] Error 2
+> > make: *** [Makefile:240: __sub-make] Error 2
+> >
+> > real    0m5.950s
+> > user    0m15.971s
+> > sys     0m10.430s
+> > Fri Jun 28 20:22:03 CEST 2024
+> > ~/linux/kernel/linux-next$
+> >
+> > Please find attached .config, just to be sure that we are talking about=
+ the same thing.
+> >
+> > Best regards,
+> > Mirsad Todorovac =20
+>=20
+> The fix for this is in the qcom tree[1] but I'm not sure why it still
+> hasn't been pulled into next. I don't see any notifications about
+> conflicts in next which could be the reason. Cc'ing Mark and Stephen.
+>=20
+> Bart
+>=20
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git/commit=
+/?h=3Dfor-next&id=3Dd96377892dd89bd4e7e5ae7293647f6bc7bddf7d
 
-There is nothing for you to do, this fails only when the drm tree is
-merged with the driver-core tree.
+The qcom tree has another build failure and so new versions of it have
+not been merged into linux-next since June 24.  Hopefully today the
+other build failure will be fixed.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/IwlIge1b6sSr2u3Tklnf5m=
+--Sig_/gEVH0E3.cizaTH.FlNpjhWH
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaDODIACgkQAVBC80lX
-0GxiYggAmNrd01vETqF3Cl//OxwLwb6AzwOKeSHv6DAX6EBTiYTZNejf9wqYXO5J
-abhhwJmcJKluKeyRsHuyO58EkYiz8BcPIcJs6/Qhnqjvbh2YEy4+JFPpXQpeCINl
-cQ5muInxTCTvB2l3YuKTiHCH+Lh6KUs2/BgNh7BV5epduwumLqOEFjFriZCtEn4g
-SXXHLNiMm2HviSva7lsihxVwKLho69OPsXdG9oMPjmQIhDJO5J44az3U8zHjrBu5
-hcZMfVS5TJk3yAeDsqTSSjdPpXOkAtJT9fm5aYVT9IdXCkJ3dsuyyyGWSMKJWifm
-Go4+Q0+p7Wnww97PIt3OlQuTR/D50A==
-=1gey
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaDOL4ACgkQAVBC80lX
+0GyGRQgAo2Wta0jZeIzedy6FN/CUQwgG42NjJmW9mHJypbFEi36DohRLHHpyqMsk
+gGfkxvRRuNbzbK5ES3ni2j0rfRt357l2uFYmMkfA52J0ZxyZ+taBpUiRELh1aTge
+1L0tGm5AOwoYY9md1AV4iUPgo9OFmVK9WVUPaJCPD/BEoWA8Gc4GBkm9vImay3ts
+zXnCZKXtq97Nbaa4i8mjaiP6LcP8zWAmqXDCurRGDdudwDehV6zLv7EhNQB4agn+
+0CyxQoWjgakbts/m5cD7KOEzbp3a1cq5nYFGKDxmcq2VGj5/qjUkRGnPJRMPXOg6
+Wq+HC70SBoGwThQMQPp6OZtHTkIq1w==
+=YIZu
 -----END PGP SIGNATURE-----
 
---Sig_/IwlIge1b6sSr2u3Tklnf5m=--
+--Sig_/gEVH0E3.cizaTH.FlNpjhWH--
 
