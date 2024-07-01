@@ -1,787 +1,242 @@
-Return-Path: <linux-kernel+bounces-236075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1FD391DD20
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:53:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 043A591DD25
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:54:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 709AE1F232F5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:53:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 227491C21939
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:54:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CCF14291E;
-	Mon,  1 Jul 2024 10:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4FA613212B;
+	Mon,  1 Jul 2024 10:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iq4UAF2o"
-Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Ski3Pk9X"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3CFE1420CC;
-	Mon,  1 Jul 2024 10:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E860247F60;
+	Mon,  1 Jul 2024 10:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719831194; cv=none; b=mgqLuBIE8/lUBrc2ZOMYjbSchieqANGx3j5WdlR5nM9xc16+qgNqJbog7vyV0UD4CB4RGgD6Q2a0SmTBRG/IYvZndmU+ib6J1YK/in65QylqeEq14bSPJmVA4BqzAAjTYwIPJD9J+dEmT1gk1tplA+jtGFqDCWenzFbKpZ6jcmc=
+	t=1719831270; cv=none; b=Eh6MkTk6xD/QFHNgN6sWXqUxrUFLw3Wa+6b7xQABP3v3iEuS40K9IJ51X827m+zhQ2C7eVRPo58p4unL7wB3y82HUppVy59LBr4k4OGMERsuEU+AjXd6iSyXpjNs7MFJEk+rNzz3WuCwjcCo/OEKGgkjhTjraUD+DF67YGkQDhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719831194; c=relaxed/simple;
-	bh=t2TZ/jpdHuhsOavVNh0rjpmcCIk5XOIoIkJnomVLo6s=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=T7XbH2BoNo0DN2UPZEXJZQ/3UJGzkFDLK3ZOQVzgQHOPKjSiVzKGZGLYAbT+6WZ+EAgP+2WFKJhSpiLbVEuWFiC4YisUKf/KRDpNQBT79UmOu3QbOOFRax2Kd/eF2cdT0BfD2WWxzmKrz6ybnrfa0gOCoBB9ChdqzMlfE9xqnmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iq4UAF2o; arc=none smtp.client-ip=209.85.210.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-70675977d0eso1612532b3a.0;
-        Mon, 01 Jul 2024 03:53:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719831192; x=1720435992; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=glAmVjyPMy30XVGgrS/xyY9e/sKaC+mQe8kwehiPMco=;
-        b=Iq4UAF2od4zlWG44qmJPzJFaE3P9FJi1TI8ckYh/GONnT5IenjIR0IdtuuCqSrPwaB
-         g/aTfzcejnuasc/Qw99qiFvsC5CK0MtfU7gC+I9OuKoSZOtqfJAfEpz+jP+oI1M8kNgN
-         HOxt0z478DcFYfzYUcXS5VY55ku1sfENZl311ld1l5hJEdrKBjgnYEwNLklr6YjoLv2x
-         bTS5eREFmjW4aNuAupn8IbtOJTojmB12mfY1GyG3t6RPinQ2Xt0bdra08f0iqnnIV4Lj
-         l0ztoabUMI8z4+IrJgElTXMjQAwz+wm8pgSDhPUs+8DO48g0uVjloKC+aQnU3mlpPC5d
-         5ufw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719831192; x=1720435992;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=glAmVjyPMy30XVGgrS/xyY9e/sKaC+mQe8kwehiPMco=;
-        b=gMC7IQWMTqTdBw6FhasNm2TgsPyQdBN4vfQ68onKD2SxTNGORpN0WXkZVEmU0fODJx
-         AFL7xFXboMP6P0+SC0y925cmF+dO38XDW4RQbGtw+3Ruz8F6Q2PZl5B5PZ8VAilBVA9v
-         xZEtWnjcFJ/bQmeMghc4ytTARgjSU1oU7kprMHztzp4QXTt6OqGQtozstTOrz3eHJXg6
-         9WLTXdT1UeVSpO90gcDQVYJjstizbOI10iH1JPV1ZEUqGyR14miwCzRJTbIsOKT/e69k
-         JflwFRN9Y5l4+SCKHq2ozuJ7u6zn/US2DY3Kpbm74n80eGC8zOMue0K8rtoXfxmCtSiY
-         aoMw==
-X-Forwarded-Encrypted: i=1; AJvYcCXenatOhuFGN8MAijOcmm7r0WhuipXn9fC5dxS3LmCoDQlWoLZo0jHmnyU9cUvLhgSd/xXNwwazx0pQBYiBkxvj5j9vbums/LiOdVDf
-X-Gm-Message-State: AOJu0YzpkrIXdakzVnupCMRBnqaOwJvAprUbI1fTD4MrLCiiCHJpAre0
-	960gZD/2P5UPwcbhTNc3MVrWvFJm49MvrfEhy/thVHaqMM5IsnX0
-X-Google-Smtp-Source: AGHT+IF1qB/f4/yHYDtViibIEZhRVwZO6zrKFfXnvcAbUMO7A8fcwRjcRN2RgbmjMnWr6y1K2GJKzA==
-X-Received: by 2002:a05:6a20:6da6:b0:1be:c5be:b475 with SMTP id adf61e73a8af0-1bef62488b5mr3173422637.40.1719831191519;
-        Mon, 01 Jul 2024 03:53:11 -0700 (PDT)
-Received: from localhost (66.112.216.249.16clouds.com. [66.112.216.249])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac157b3b7sm61251465ad.242.2024.07.01.03.53.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 03:53:11 -0700 (PDT)
-From: George Liu <liuxiwei1013@gmail.com>
-X-Google-Original-From: George Liu <liuxiwei@ieisystem.com>
-To: linux-aspeed@lists.ozlabs.org
-Cc: devicetree@vger.kernel.org,
-	openbmc@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	robh+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org,
-	joel@jms.id.au,
-	andrew@codeconstruct.com.au
-Subject: [PATCH v1 3/3] ARM: dts: aspeed: Add IEISystems NF5280M7 BMC machine
-Date: Mon,  1 Jul 2024 18:52:59 +0800
-Message-Id: <20240701105259.972135-3-liuxiwei@ieisystem.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240701105259.972135-1-liuxiwei@ieisystem.com>
-References: <20240701105259.972135-1-liuxiwei@ieisystem.com>
+	s=arc-20240116; t=1719831270; c=relaxed/simple;
+	bh=ppjLdLHzuDEHm6NdeIXTJFSDTtTDjSGnoLGD+kUffWo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l2xYCUVrfdju7ReTH5qm+MHJDaLuBajPaCTSObBYJkzED4ZlesmicezNqL5qoKF5iM43gAzZIEHp6N/4XU6T53B/xW3Jc8pZH8TFSZLc6LyuVQF+HdDMvXGwlz+Xb6XEVsjvbJrsOnvkSJqLgXyYYLQNVuYV9YfjmYMHuSqClJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Ski3Pk9X; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 44e862e6379811ef8b8f29950b90a568-20240701
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=gauL88KDzWToD5vjFViYG5yAMCDPPSVlJzlI5pS04mo=;
+	b=Ski3Pk9XO7kE3sPWrg9jhcqnYPmsWQ3bZlu8qZ49cK8LaxAKm9XoTJ3n0FI+qJ6nCVc0ZHAGR7T34Uh5EU8X5aT9MJACAjcBx3N3Ogc+CKvVWsfd0lamTr+yl2xCWPgZ1VkRIvDGSqFvXbBTQsw08hbU7v53k+7fZSrekPbDl7Q=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.40,REQID:d6b3156c-a7df-4326-9e64-b7cf608949f4,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:ba885a6,CLOUDID:eef6c444-a117-4f46-a956-71ffeac67bfa,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 44e862e6379811ef8b8f29950b90a568-20240701
+Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw01.mediatek.com
+	(envelope-from <skylake.huang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 2064660307; Mon, 01 Jul 2024 18:54:20 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Mon, 1 Jul 2024 18:54:19 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Mon, 1 Jul 2024 18:54:18 +0800
+From: Sky Huang <SkyLake.Huang@mediatek.com>
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Daniel Golle
+	<daniel@makrotopia.org>, Qingfang Deng <dqfext@gmail.com>, SkyLake Huang
+	<SkyLake.Huang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
+CC: Steven Liu <Steven.Liu@mediatek.com>, SkyLake.Huang
+	<skylake.huang@mediatek.com>
+Subject: [PATCH net-next v10 00/13] net: phy: mediatek: Introduce mtk-phy-lib and add 2.5Gphy support
+Date: Mon, 1 Jul 2024 18:54:04 +0800
+Message-ID: <20240701105417.19941-1-SkyLake.Huang@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-The IEISystems NF5280M7 is an x86 platform server with an
-AST2600-based BMC.
-This dts file provides a basic configuration for its OpenBMC
-development.
+From: "SkyLake.Huang" <skylake.huang@mediatek.com>
 
-Signed-off-by: George Liu <liuxiwei@ieisystem.com>
+This patch series integrate MediaTek's built-in Ethernet PHY helper functions
+into mtk-phy-lib and add more functions into it. Also, add support for 2.5Gphy
+on MT7988 SoC.
+
+Signed-off-by: SkyLake.Huang <skylake.huang@mediatek.com>
 ---
- arch/arm/boot/dts/aspeed/Makefile             |   1 +
- .../aspeed/aspeed-bmc-ieisystems-nf5280m7.dts | 659 ++++++++++++++++++
- 2 files changed, 660 insertions(+)
- create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-ieisystems-nf5280m7.dts
+Changes in v2:
+- Apply correct PATCH tag.
+- Break LED/Token ring/Extend-link-pulse-time features into 3 patches.
+- Fix contents according to v1 comments.
 
-diff --git a/arch/arm/boot/dts/aspeed/Makefile b/arch/arm/boot/dts/aspeed/Makefile
-index 5e3392621697..51531d494415 100644
---- a/arch/arm/boot/dts/aspeed/Makefile
-+++ b/arch/arm/boot/dts/aspeed/Makefile
-@@ -40,6 +40,7 @@ dtb-$(CONFIG_ARCH_ASPEED) += \
- 	aspeed-bmc-ibm-rainier-1s4u.dtb \
- 	aspeed-bmc-ibm-rainier-4u.dtb \
- 	aspeed-bmc-ibm-system1.dtb \
-+	aspeed-bmc-ieisystems-nf5280m7.dtb \
- 	aspeed-bmc-intel-s2600wf.dtb \
- 	aspeed-bmc-inspur-fp5280g2.dtb \
- 	aspeed-bmc-inspur-nf5280m6.dtb \
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-ieisystems-nf5280m7.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-ieisystems-nf5280m7.dts
-new file mode 100644
-index 000000000000..a17cf9cdba0e
---- /dev/null
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-ieisystems-nf5280m7.dts
-@@ -0,0 +1,659 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+// Copyright (c) 2023 IEISystems Corporation
-+
-+/dts-v1/;
-+
-+#include "aspeed-g6.dtsi"
-+#include <dt-bindings/gpio/aspeed-gpio.h>
-+#include <dt-bindings/leds/leds-pca955x.h>
-+#include <dt-bindings/i2c/i2c.h>
-+
-+/ {
-+	model = "NF5280M7 BMC";
-+	compatible = "ieisystems,nf5280m7-bmc", "aspeed,ast2600";
-+	aliases {
-+		i2c200 = &bus2_mux70_0;
-+		i2c500 = &bus5_mux00;
-+		i2c501 = &bus5_mux01;
-+		i2c600 = &i2c6s0ch0;
-+		i2c601 = &i2c6s0ch1;
-+		i2c602 = &i2c6s0ch2;
-+		i2c603 = &i2c6s0ch3;
-+		i2c604 = &i2c6s0ch4;
-+		i2c605 = &i2c6s0ch5;
-+		i2c606 = &i2c6s0ch6;
-+		i2c607 = &i2c6s0ch7;
-+		i2c610 = &i2c6s1ch0;
-+		i2c611 = &i2c6s1ch1;
-+		i2c612 = &i2c6s1ch2;
-+		i2c613 = &i2c6s1ch3;
-+		i2c614 = &i2c6s1ch4;
-+		i2c615 = &i2c6s1ch5;
-+		i2c616 = &i2c6s1ch6;
-+		i2c617 = &i2c6s1ch7;
-+		i2c620 = &i2c6s2ch0;
-+		i2c621 = &i2c6s2ch1;
-+		i2c622 = &i2c6s2ch2;
-+		i2c623 = &i2c6s2ch3;
-+		i2c624 = &i2c6s2ch4;
-+		i2c625 = &i2c6s2ch5;
-+		i2c626 = &i2c6s2ch6;
-+		i2c627 = &i2c6s2ch7;
-+	};
-+
-+	chosen {
-+		stdout-path = &uart5;
-+		bootargs = "console=ttyS4,115200n8 earlycon";
-+	};
-+
-+	memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x80000000 0x80000000>;
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		video_engine_memory: jpegbuffer {
-+			size = <0x02000000>;	/* 32M */
-+			alignment = <0x01000000>;
-+			compatible = "shared-dma-pool";
-+			reusable;
-+		};
-+
-+		vga_memory: frammebuffer {
-+			no-map;
-+			reg = <0x9ff00000 0x01000000>; /* 16M */
-+		};
-+	};
-+
-+	iio-hwmon {
-+		compatible = "iio-hwmon";
-+		io-channels = <&adc0 0>, <&adc0 1>, <&adc0 2>, <&adc0 3>,
-+                      <&adc0 4>, <&adc0 5>, <&adc0 6>, <&adc0 7>,
-+                      <&adc1 0>, <&adc1 1>, <&adc1 2>, <&adc1 3>,
-+                      <&adc1 4>, <&adc1 5>, <&adc1 6>, <&adc1 7>;
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		cpld {
-+			label = "cpld";
-+			gpios = <&gpio0 ASPEED_GPIO(N, 2) GPIO_ACTIVE_HIGH>;
-+			linux,code = <ASPEED_GPIO(N, 2)>;
-+		};
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		fan-fault {
-+			label = "fan-fault";
-+			gpios = <&gpio0 ASPEED_GPIO(B, 0) GPIO_ACTIVE_LOW>;
-+		};
-+
-+		system-hot {
-+			label = "system-hot";
-+			gpios = <&gpio0 ASPEED_GPIO(B, 1) GPIO_ACTIVE_LOW>;
-+		};
-+
-+		psu-fault {
-+			label = "psu-fault";
-+			gpios = <&gpio0 ASPEED_GPIO(B, 2) GPIO_ACTIVE_LOW>;
-+		};
-+
-+		heartbeat {
-+			label = "heartbeat";
-+			gpios = <&gpio0 ASPEED_GPIO(P, 7) GPIO_ACTIVE_LOW>;
-+		};
-+
-+		memory-fault {
-+			label = "memory-fault";
-+			gpios = <&gpio0 ASPEED_GPIO(Y, 2) GPIO_ACTIVE_LOW>;
-+		};
-+
-+		system-fault {
-+			label = "system-fault";
-+			gpios = <&gpio0 ASPEED_GPIO(Y, 3) GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+};
-+
-+&fmc {
-+	status = "okay";
-+	flash@0 {
-+		status = "okay";
-+		m25p,fast-read;
-+		label = "bmc";
-+		spi-max-frequency = <50000000>;
-+#include "openbmc-flash-layout-64.dtsi"
-+	};
-+	flash@1 {
-+		status = "okay";
-+		m25p,fast-read;
-+		label = "alt-bmc";
-+		spi-max-frequency = <50000000>;
-+#include "openbmc-flash-layout-64-alt.dtsi"
-+	};
-+};
-+
-+
-+&spi1 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_spi1_default>;
-+
-+	flash@0 {
-+		status = "okay";
-+		m25p,fast-read;
-+		label = "bios";
-+		spi-max-frequency = <50000000>;
-+	};
-+};
-+
-+&peci0 {
-+	status = "okay";
-+	gpios = <&gpio0 ASPEED_GPIO(F, 6) 0>;
-+
-+	peci-client@30 {
-+		compatible = "intel,peci-client";
-+		reg = <0x30>;
-+	};
-+
-+	peci-client@31 {
-+		compatible = "intel,peci-client";
-+		reg = <0x31>;
-+	};
-+};
-+
-+&gpio0 {
-+	status = "okay";
-+	gpio-line-names =
-+	/*A0-A7*/	"","","","","","","","",
-+	/*B0-B7*/	"","","","","","","","",
-+	/*C0-C7*/	"","","","","","","","",
-+	/*D0-D7*/	"","","","","","","","",
-+	/*E0-E7*/	"","","","","","","","",
-+	/*F0-F7*/	"","","","","","","","",
-+	/*G0-G7*/	"","","","","","","","",
-+	/*H0-H7*/	"","","","","","","","",
-+	/*I0-I7*/	"","","","","","POWER_OUT","RESET_OUT","",
-+	/*J0-J7*/	"","","","","","","","",
-+	/*K0-K7*/	"","","","","","","","",
-+	/*L0-L7*/	"","","","","","","","",
-+	/*M0-M7*/	"","","","","","","","",
-+	/*N0-N7*/	"","","","","","","","",
-+	/*O0-O7*/	"","","","","","","","",
-+	/*P0-P7*/	"RESET_BUTTON","","","NMI_BUTTON","NMI_OUT","","","",
-+	/*Q0-Q7*/	"","","","","","","","",
-+	/*R0-R7*/	"","","","","","","","",
-+	/*S0-S7*/	"","","","SIO_ONCONTROL","","","","",
-+	/*T0-T7*/	"","","","","","","","",
-+	/*U0-U7*/	"","","","","","","","",
-+	/*V0-V7*/	"","SIO_S5","POWER_BUTTON","","PS_PWROK","","","",
-+	/*W0-W7*/	"","","","","","","","",
-+	/*X0-X7*/	"","","POST_COMPLETE","","","","","",
-+	/*Y0-Y7*/	"","","","","","","","",
-+	/*Z0-Z7*/	"","","","","","","","";
-+};
-+
-+&kcs3 {
-+	aspeed,lpc-io-reg = <0xCA2>;
-+	status = "okay";
-+};
-+
-+&kcs4 {
-+	aspeed,lpc-io-reg = <0xCA4>;
-+	status = "okay";
-+};
-+
-+&lpc_snoop {
-+	snoop-ports = <0x80>;
-+	status = "okay";
-+};
-+
-+&mdio1 {
-+	status = "okay";
-+
-+	ethphy1: ethernet-phy@0 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <0>;
-+	};
-+};
-+
-+&mac2 {
-+	status = "okay";
-+
-+	phy-mode = "rgmii";
-+	phy-handle = <&ethphy1>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_rgmii3_default>;
-+};
-+
-+&mac3 {
-+	status = "okay";
-+
-+	phy-mode = "rmii";
-+	use-ncsi;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_rmii4_default>;
-+};
-+
-+&adc0 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_adc0_default &pinctrl_adc1_default
-+		&pinctrl_adc2_default &pinctrl_adc3_default
-+		&pinctrl_adc4_default &pinctrl_adc5_default
-+		&pinctrl_adc6_default &pinctrl_adc7_default>;
-+};
-+
-+&adc1 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_adc8_default &pinctrl_adc9_default
-+		&pinctrl_adc10_default &pinctrl_adc11_default
-+		&pinctrl_adc12_default &pinctrl_adc13_default
-+		&pinctrl_adc14_default &pinctrl_adc15_default>;
-+};
-+
-+&uart1 {
-+	status = "okay";
-+};
-+
-+&uart3 {
-+	status = "okay";
-+};
-+
-+&uart4 {
-+	status = "okay";
-+};
-+
-+&uart5 {
-+	status = "okay";
-+};
-+
-+&vuart1 {
-+	status = "okay";
-+};
-+
-+&i2c0 {
-+	multi-master;
-+	status = "okay";
-+};
-+
-+&i2c1 {
-+	multi-master;
-+	status = "okay";
-+
-+	eeprom@50 {
-+		compatible = "atmel,24c256";
-+		reg = <0x50>;
-+	};
-+};
-+
-+&i2c2 {
-+	status = "okay";
-+	pca9546@70{
-+		compatible = "nxp,pca9546";
-+		reg = <0x70>;
-+		bus2_mux70_0: i2c@2{
-+			reg = <0>;
-+			tmp112@49{
-+				compatible = "ti,tmp112";
-+				reg = <0x49>;
-+				label = "Inlet_Temp";
-+			};
-+			emc1413@4c{
-+				compatible = "microchip,emc1413";
-+				reg = <0x4c>;
-+				label = "Outlet_Temp";
-+			};
-+		};
-+	};
-+};
-+
-+&i2c4 {
-+	multi-master;
-+	status = "okay";
-+	ipmb0@10 {
-+		compatible = "ipmb-dev";
-+		reg = <(0x10 | I2C_OWN_SLAVE_ADDRESS)>;
-+		i2c-protocol;
-+	};
-+};
-+
-+&i2c5 {
-+	bus-frequency = <1000000>;
-+	multi-master;
-+	status = "okay";
-+	pca9546@70{
-+		compatible = "nxp,pca9546";
-+		reg = <0x70>;
-+		bus5_mux00: i2c@0 {
-+			reg = <0>;
-+			status = "okay";
-+			vrmp2888@76 {
-+				compatible = "mps,mp2888";
-+				reg = <0x76>;
-+			};
-+			vrmp2888@72 {
-+				compatible = "mps,mp2888";
-+				reg = <0x72>;
-+			};
-+			vrmp2888@62{
-+				compatible = "mps,mp2888";
-+				reg = <0x62>;
-+			};
-+		};
-+		bus5_mux01: i2c@1{
-+			reg = <1>;
-+			status = "okay";
-+			vrmp2888@76{
-+				compatible = "mps,mp2888";
-+				reg = <0x76>;
-+			};
-+			vrmp2888@72 {
-+				compatible = "mps,mp2888";
-+				reg = <0x72>;
-+			};
-+			vrmp2888@62{
-+				compatible = "mps,mp2888";
-+				reg = <0x62>;
-+			};
-+		};
-+		bus5_mux02: i2c@2{
-+			reg = <2>;
-+		};
-+		bus5_mux03: i2c@3{
-+			reg = <3>;
-+		};
-+	};
-+};
-+
-+&i2c6 {
-+	multi-master;
-+	status = "okay";
-+
-+	i2c-switch@70 {
-+		compatible = "nxp,pca9548";
-+		reg = <0x70>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		i2c6s0ch0: i2c@0 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0>;
-+
-+			eeprom@50 {
-+				compatible = "atmel,24c256";
-+				reg = <0x50>;
-+			};
-+			pca9548@71 {
-+				compatible = "nxp,pca9548";
-+				reg = <0x71>;
-+				i2c-mux-idle-disconnect;
-+
-+				i2c6s1ch0: i2c@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+				};
-+				i2c6s1ch1: i2c@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+				};
-+				i2c6s1ch2: i2c@2 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <2>;
-+				};
-+				i2c6s1ch3: i2c@3 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <3>;
-+				};
-+				i2c6s1ch4: i2c@4 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <4>;
-+				};
-+				i2c6s1ch5: i2c@5 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <5>;
-+				};
-+				i2c6s1ch6: i2c@6 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <6>;
-+				};
-+				i2c6s1ch7: i2c@7 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <7>;
-+				};
-+			};
-+
-+			pca9548@72 {
-+				compatible = "nxp,pca9548";
-+				reg = <0x72>;
-+				i2c-mux-idle-disconnect;
-+
-+				i2c6s2ch0: i2c@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+				};
-+				i2c6s2ch1: i2c@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+				};
-+				i2c6s2ch2: i2c@2 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <2>;
-+				};
-+				i2c6s2ch3: i2c@3 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <3>;
-+				};
-+				i2c6s2ch4: i2c@4 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <4>;
-+				};
-+				i2c6s2ch5: i2c@5 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <5>;
-+				};
-+				i2c6s2ch6: i2c@6 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <6>;
-+				};
-+				i2c6s2ch7: i2c@7 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <7>;
-+				};
-+			};
-+		};
-+		i2c6s0ch1: i2c@1 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <1>;
-+
-+			eeprom@50 {
-+				compatible = "atmel,24c256";
-+				reg = <0x50>;
-+			};
-+		};
-+		i2c6s0ch2: i2c@2 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <2>;
-+
-+			eeprom@50 {
-+				compatible = "atmel,24c256";
-+				reg = <0x50>;
-+			};
-+		};
-+		i2c6s0ch3: i2c@3 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <3>;
-+
-+			eeprom@50 {
-+				compatible = "atmel,24c256";
-+				reg = <0x50>;
-+			};
-+		};
-+		i2c6s0ch4: i2c@4 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <4>;
-+
-+			eeprom@50 {
-+				compatible = "atmel,24c256";
-+				reg = <0x50>;
-+			};
-+		};
-+		i2c6s0ch5: i2c@5 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <5>;
-+
-+			eeprom@50 {
-+				compatible = "atmel,24c256";
-+				reg = <0x50>;
-+			};
-+		};
-+		i2c6s0ch6: i2c@6 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <6>;
-+			eeprom@50 {
-+				compatible = "atmel,24c256";
-+				reg = <0x50>;
-+			};
-+		};
-+		i2c6s0ch7: i2c@7 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <7>;
-+
-+			eeprom@50 {
-+				compatible = "atmel,24c256";
-+				reg = <0x50>;
-+			};
-+		};
-+	};
-+};
-+
-+&i2c7 {
-+	multi-master;
-+	#retries = <3>;
-+	status = "okay";
-+
-+	adc128d818@1d {
-+		compatible = "ti,adc128d818";
-+		reg = <0x1d>;
-+		ti,mode = /bits/ 8 <0x01>;
-+	};
-+	adc128d818@1e {
-+		compatible = "ti,adc128d818";
-+		reg = <0x1e>;
-+		ti,mode = /bits/ 8 <0x01>;
-+	};
-+	adc128d818@2d {
-+		compatible = "ti,adc128d818";
-+		reg = <0x2d>;
-+		ti,mode = /bits/ 8 <0x01>;
-+	};
-+	ina226@45 {
-+		compatible = "ti,ina226";
-+		reg = <0x45>;
-+		shunt-resistor = <500>;
-+	};
-+};
-+
-+&i2c8 {
-+	multi-master;
-+	status = "okay";
-+};
-+
-+&i2c9 {
-+	multi-master;
-+	status = "okay";
-+};
-+
-+&i2c10 {
-+	status = "okay";
-+
-+	pca0: pca9555@21 {
-+		compatible = "nxp,pca9555";
-+		reg = <0x21>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		gpio-line-names =
-+			"", "", "", "",
-+			"", "",
-+			"FAN_PRSNT8_D_N", "FAN_PRSNT9_D_N",
-+			"", "",	"", "",
-+			"", "",	"", "";
-+	};
-+
-+	pca1: pca9555@22 {
-+		compatible = "nxp,pca9555";
-+		reg = <0x22>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		gpio-line-names = "FAN_PRSNT0_D_N", "FAN_PRSNT1_D_N",
-+			"FAN_PRSNT2_D_N", "FAN_PRSNT3_D_N",
-+			"FAN_PRSNT4_D_N", "FAN_PRSNT5_D_N",
-+			"FAN_PRSNT6_D_N", "FAN_PRSNT7_D_N",
-+			"", "",	"", "",
-+			"", "",	"", "";
-+	};
-+
-+};
-+
-+&i2c11 {
-+	status = "okay";
-+};
-+
-+&i2c12 {
-+	multi-master;
-+	status = "okay";
-+};
-+
-+&i2c13 {
-+	multi-master;
-+	status = "okay";
-+};
-+
-+&video {
-+	status = "okay";
-+	memory-region = <&video_engine_memory>;
-+};
-+
-+&vhub {
-+	status = "okay";
-+};
+Changes in v3:
+- Rebase code and now this patch series can apply to net-next tree.
+[PATCH 4/5]
+Refactor mtk_gphy_cl22_read_status() with genphy_read_status().
+[PATCH 5/5]
+1. Add range check for firmware.
+2. Fix c45_ids.mmds_present in probe function.
+3. Still use genphy_update_link() in read_status because
+genphy_c45_read_link() can't correct detect link on this phy.
+
+Changes in v4:
+[PATCH 4/5]
+1. Change extend_an_new_lp_cnt_limit()'s return type and all return values
+2. Refactor comments in extend_an_new_lp_cnt_limit()
+[PATCH 5/5]
+1. Move firmware loading function to mt798x_2p5ge_phy_load_fw()
+2. Add AN disable warning in mt798x_2p5ge_phy_config_aneg()
+3. Clarify the HDX comments in mt798x_2p5ge_phy_get_features()
+
+Changes in v5:
+- Fix syntax errors of comments in drivers/net/phy/mediatek/*
+[PATCH 1/5]
+- Change MEDIATEK_GE_SOC_PHY from bool back to tristate.
+[PATCH 5/5]
+1. Move md32_en_cfg_base & pmb_addr to local variables to achieve
+symmetric code.
+2. Print out firmware date code & version.
+3. Don't return error if LED pinctrl switching fails. Also, add
+comments to this unusual operations.
+4. Return -EOPNOTSUPP for AN off case in config_aneg().
+
+Changes in v6:
+- Re-arrange patch and changes description in cover letter.
+- Contraint code inside 80 columns wide.
+[PATCH 4/5]
+1. Add LP_DETECTED so extend_an_new_lp_cnt_limit() won't be called every
+time we poll the PHY for its status. It'll be called only when cable is
+plugged in and 1G training starts.
+2. Call phy_read_paged() instead of calling phy_select_page() &
+phy_restore_page() pair.
+[PATCH 5/5]
+1. Force casting (fw->data + MT7988_2P5GE_PMB_SIZE - 8) with __be16.
+2. Remove parens on RHS of "phydev->c45_ids.mmds_present |=".
+3. Add PHY_INTERFACE_MODE_INTERNAL check in
+mt798x_2p5ge_phy_get_rate_matching()
+4. Arrange local variables in reverse Xmas tree order.
+
+Changes in v7:
+[PATCH 5/5]
+1. Add phy mode check(PHY_INTERFACE_MODE_INTERNAL) in config_init().
+2. Always return RATE_MATCH_PAUSE in get_rate_matching().
+
+Changes in v8:
+- Make sure that each variables in drivers/net/phy/mediatek/* follows reverse
+Xmas tree order.
+- Split v7 patches in this way:
+[PATCH net-next v7 1/5] net: phy: mediatek: Re-organize MediaTek ethernet phy drivers
+  -> [PATCH net-next v8 01/13] net: phy: mediatek: Re-organize MediaTek ethernet phy drivers
+  -> [PATCH net-next v8 02/13] net: phy: mediatek: Fix spelling errors and rearrange variables
+[PATCH net-next v7 2/5] net: phy: mediatek: Move LED and read/write page helper functions into mtk phy lib
+  -> [PATCH net-next v8 03/13] net: phy: mediatek: Move LED helper functions into mtk phy lib
+  -> [PATCH net-next v8 04/13] net: phy: mediatek: Improve readability of mtk-phy-lib.c's mtk_phy_led_hw_ctrl_set()
+  -> [PATCH net-next v8 05/13] net: phy: mediatek: Integrate read/write page helper functions
+  -> [PATCH net-next v8 06/13] net: phy: mediatek: Hook LED helper functions in mtk-ge.c
+  -> [PATCH net-next v8 07/13] net: phy: mediatek: add MT7530 & MT7531's PHY ID macros
+  -> [PATCH net-next v8 08/13] net: phy: mediatek: Change mtk-ge-soc.c line wrapping
+[PATCH net-next v7 3/5] net: phy: mediatek: Add token ring access helper functions in mtk-phy-lib
+  -> [PATCH net-next v8 09/13] net: phy: mediatek: Add token ring access helper functions in mtk-phy-lib
+[PATCH net-next v7 4/5] net: phy: mediatek: Extend 1G TX/RX link pulse time
+  -> [PATCH net-next v8 10/13] net: phy: mediatek: Extend 1G TX/RX link pulse time
+[PATCH net-next v7 5/5] net: phy: add driver for built-in 2.5G ethernet PHY on MT7988
+  -> [PATCH net-next v8 11/13] net: phy: add driver for built-in 2.5G ethernet PHY on MT7988
+- Create another 2 patches to:
+  - fix alignment in callback functions declarations in mtk-ge.c & mtk-ge-soc.c
+  - Remove unnecessary outer parens of "supported_triggers" var
+- Replace token ring API, tr* & __tr* with mtk_tr* & __mtk_tr* and fix
+alignment.
+
+Changes in v9:
+[PATCH 03/13][PATCH 06/13][PATCH 11/13]
+- Add mtk_phy_led_num_dly_cfg helper function to check led number & set
+  delay on/off time.
+[PATCH 07/13][PATCH 12/13]
+- Remove "mt753x_phy_led_hw_is_supported," callback function hook in MT7530
+  part of mtk-ge.c
+[PATCH 09/13]
+- Replace EEE1000_SELECT_SIGNEL_DETECTION_FROM_DFE with
+  EEE1000_SELECT_SIGNAL_DETECTION_FROM_DFE. SIGNEL->SIGNAL.
+[PATCH 11/13]
+- Add MODULE_FIRMARE()
+- Replace "MT7988_2P5GE_PMB" with "MT7988_2P5GE_PMB_FW" so we can recognize
+  it literally.
+- Remove unused macro names:
+  1. BASE100T_STATUS_EXTEND
+  2. BASE1000T_STATUS_EXTEND
+  3. EXTEND_CTRL_AND_STATUS
+  4. PHY_AUX_DPX_MASK
+
+Changes in v10:
+[PATCH 11/13]
+- Move release_firmware() to correct position.
+- Return ret directly in mt798x_2p5ge_phy_load_fw().
+---
+SkyLake.Huang (13):
+  net: phy: mediatek: Re-organize MediaTek ethernet phy drivers
+  net: phy: mediatek: Fix spelling errors and rearrange variables
+  net: phy: mediatek: Move LED helper functions into mtk phy lib
+  net: phy: mediatek: Improve readability of mtk-phy-lib.c's
+    mtk_phy_led_hw_ctrl_set()
+  net: phy: mediatek: Integrate read/write page helper functions
+  net: phy: mediatek: Hook LED helper functions in mtk-ge.c
+  net: phy: mediatek: add MT7530 & MT7531's PHY ID macros
+  net: phy: mediatek: Change mtk-ge-soc.c line wrapping
+  net: phy: mediatek: Add token ring access helper functions in
+    mtk-phy-lib
+  net: phy: mediatek: Extend 1G TX/RX link pulse time
+  net: phy: add driver for built-in 2.5G ethernet PHY on MT7988
+  net: phy: mediatek: Fix alignment in callback functions' hook
+  net: phy: mediatek: Remove unnecessary outer parens of
+    "supported_triggers" var
+
+ MAINTAINERS                                   |   7 +-
+ drivers/net/phy/Kconfig                       |  17 +-
+ drivers/net/phy/Makefile                      |   3 +-
+ drivers/net/phy/mediatek-ge.c                 | 111 ---
+ drivers/net/phy/mediatek/Kconfig              |  38 +
+ drivers/net/phy/mediatek/Makefile             |   5 +
+ drivers/net/phy/mediatek/mtk-2p5ge.c          | 432 +++++++++++
+ .../mtk-ge-soc.c}                             | 693 ++++++++----------
+ drivers/net/phy/mediatek/mtk-ge.c             | 243 ++++++
+ drivers/net/phy/mediatek/mtk-phy-lib.c        | 450 ++++++++++++
+ drivers/net/phy/mediatek/mtk.h                | 119 +++
+ 11 files changed, 1586 insertions(+), 532 deletions(-)
+ delete mode 100644 drivers/net/phy/mediatek-ge.c
+ create mode 100644 drivers/net/phy/mediatek/Kconfig
+ create mode 100644 drivers/net/phy/mediatek/Makefile
+ create mode 100644 drivers/net/phy/mediatek/mtk-2p5ge.c
+ rename drivers/net/phy/{mediatek-ge-soc.c => mediatek/mtk-ge-soc.c} (73%)
+ create mode 100644 drivers/net/phy/mediatek/mtk-ge.c
+ create mode 100644 drivers/net/phy/mediatek/mtk-phy-lib.c
+ create mode 100644 drivers/net/phy/mediatek/mtk.h
+
 -- 
-2.34.1
+2.18.0
 
 
