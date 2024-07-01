@@ -1,272 +1,349 @@
-Return-Path: <linux-kernel+bounces-235881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 167E691DABF
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:58:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B90991DAC4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F1751F23284
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:58:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F24A28666B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB0F12C550;
-	Mon,  1 Jul 2024 08:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C5F84D13;
+	Mon,  1 Jul 2024 08:57:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SdgXWCDW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LM2v/xvA"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2014783A0D
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 08:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B6984037;
+	Mon,  1 Jul 2024 08:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719824190; cv=none; b=uSF/Ej2Ga9/ej4viOppzI2GfD1E4kXHpcY7VTn618mwMudq0AHrJtcpF0nPrZ7ymXAVcm35woDNJkWGQ8hgmMgR+vQlOx03GzeQTFNNgaQcc02el7LMtmytJTx8+8SqT6UFRKPWnAF8NG5nNLeg3cVV1KHJJfWpoqFZT2FSz/eY=
+	t=1719824250; cv=none; b=a8igWo4snuKu8ltHslOQaolrnnM0Y+9p/ZokhifmeEK0znmBr3bslKLCEvgboViC0wiLlzjGyLc8VtZVRn30YcvXF3GZZ4BazJEr/evn8hKYMs4XBVwepNDicQ1vPg/LCOQ84hiJNTUA3yH8rvqG3xvutCWAtDURZAtVOAu1UJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719824190; c=relaxed/simple;
-	bh=6zP324or3FXAFOO8Z7tWLyuOP09zs7+juy2xLJrsppQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jSv0UkDNWFVJH3xxM3otv1rvMiY1Yjk2EjyHSSWa22Y5nclqjS35PhmqjwiFrCiqXQMBte1+MenVzt1qjRNVM56bF3pmk6BG7HHy9X2QaWZIf6kCmNEeq+UDio4xf66gToAtlykJwis/IpNg1N06R42UYNkbdSNP0iL9fATDv6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SdgXWCDW; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719824187;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=prOrLzfU76m66ukvhw0tQ8YfV+62dZpBOHnYZcLd14Y=;
-	b=SdgXWCDWzVgy2cqlBiHqhzDG+rxNzrS9EahqMdg3hZ9qu+cqfmcTjINLxTFLVdDg/6dNvj
-	kV/5+mXN07xfYlTdmaSut0/yIth0PyKpQmr9UMP5PEDkl/lEqpGT7fh/I9TGRpvj2CpXZ4
-	m9T+kXv3po/EXBwbUnP6LE60eH995e4=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-388-0p2wUqm4P-uS9TUjCXUHkA-1; Mon, 01 Jul 2024 04:56:26 -0400
-X-MC-Unique: 0p2wUqm4P-uS9TUjCXUHkA-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a751edc86bdso91001766b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 01:56:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719824185; x=1720428985;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=prOrLzfU76m66ukvhw0tQ8YfV+62dZpBOHnYZcLd14Y=;
-        b=NmxjwdPeRbT24Puu11yUWnIYC5We+PQNrFpXUXJgvJFin+kvaqUtS3LN5xBrvRRyZ6
-         7tIQw4j83mxKkSY7zFWinXIl5cQtUCGwUlVbCle9l0Pia3WzUdrOAiZUNDzUwJcHUjfu
-         R89eZYyq9t3LqKWjipTz972mf+rJAHdDHcX0kWZwpg5fbsz/DLHCQeS0A/qX0dPd/l7N
-         hZj2SbPgnBHqacajIvFiecuKbj3XhOvG4NRDjUeaFQj/xrtw/rv4fi1+u294ziqTryQa
-         76BifkHbL9NRFDC+ENntwkmuyQpcHihRogtnTSptrixCnb+r1crf/U6KZSMVYQlkwa0m
-         +iTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV6FZHhXJN3BYgINZR5IhNDEdS0ZU+aCp813VE0BTQvA83sOGqZWRJIHHmKaWHUqDT3SMSp65rWi1RZfZhZBmBNNisvjjVKzMl/N7A6
-X-Gm-Message-State: AOJu0YwnyF28UWKfg/hVLTzjYI1Yoq9ek4daLN5yoMSCXrR4sXdUNczr
-	+xEq3WtDMPovfDpVQJvPeYYyhtc+xfIIpr8Llieg8K9ZpR2Kekejez7KMkeua440ugW27BdDOns
-	sN2vYqGHRPU5DCbmhPBcbFEpQvwGtDxY4gXig1JnF21Vdq94Fv9K0BDVhksZS8THiSDjd9w==
-X-Received: by 2002:a17:906:c14c:b0:a72:8c16:b1d1 with SMTP id a640c23a62f3a-a7514495889mr323767066b.51.1719824185460;
-        Mon, 01 Jul 2024 01:56:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEsv2Dx/Fh1RI653d0kZaTSGZhe8hYWnI6W4OlVT+5htZtpYH+SWgMqDMFe5bNUiaCdUwTLUA==
-X-Received: by 2002:a17:906:c14c:b0:a72:8c16:b1d1 with SMTP id a640c23a62f3a-a7514495889mr323765466b.51.1719824184981;
-        Mon, 01 Jul 2024 01:56:24 -0700 (PDT)
-Received: from [100.81.188.195] ([178.24.249.76])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ae5ac5b8sm301274666b.14.2024.07.01.01.56.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Jul 2024 01:56:24 -0700 (PDT)
-Message-ID: <23d9f708-b1fd-4b10-b755-b7ef6aa683e8@redhat.com>
-Date: Mon, 1 Jul 2024 10:56:23 +0200
+	s=arc-20240116; t=1719824250; c=relaxed/simple;
+	bh=VsuwJFzX4sE25IttFIL5itrdpII9oD4FbXeMLq78W+k=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LdH4mU3wt69UWFk1B8Jwe26en0D9W3/n44HXRT1+bXiIrb6VNwqgSXigKhYEpU5gYBafooAEj4eMke7wh5MIDBQeqtesoHXSthK319QzXPlnpnSriMFuJhoWAT9b02DTvC9W0PaSrH3jatzK4xJS2lpf0mqi3SLP7riafffl9Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LM2v/xvA; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=o4chuPjJhOwMaRcl3c10pgth9KRRgz5qWhP3IdOUpx0=; b=LM2v/xvA6pgBAd3rbdDV5h7+T9
+	pOiayXJKjGhmF/hKQeycJrsuiRlWxoqMwce3KeM6788bt4p7+lJ3eHSuHgAhJynRAzZYFF/OEEyrJ
+	WlrV/Z+ISnJVkGSxE2F8z76q0uUNOgTjWWmQ5HJ79+lrQDLHczbz3il0fZUeSY7WgTibMa89PXE7a
+	0g8I0g5sdGxjliKlAVP+qNSsvPfIvLx/2YfaalhVrq5OgvZT+nUBNdnAPlo0TL+laSjRr/a/OskgX
+	QTkD1qgD6SNnWmGbEV+lZAStShSgh20WO7cWJUu0ZAZXXKKvTTLtLWw3Mkf0ymNF7ja8k0pe6mDOT
+	DADmxz6A==;
+Received: from [2001:8b0:10b:5:8143:6283:9375:d9e] (helo=u3832b3a9db3152.ant.amazon.com)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sOCqg-0000000H9zT-34cp;
+	Mon, 01 Jul 2024 08:57:22 +0000
+Message-ID: <51087cd7149ce576aa166d32d051592b146ce2c4.camel@infradead.org>
+Subject: Re: [RFC PATCH v2] ptp: Add vDSO-style vmclock support
+From: David Woodhouse <dwmw2@infradead.org>
+To: Peter Hilber <peter.hilber@opensynergy.com>,
+ linux-kernel@vger.kernel.org,  virtualization@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org,  linux-rtc@vger.kernel.org, "Ridoux,
+ Julien" <ridouxj@amazon.com>,  virtio-dev@lists.linux.dev, "Luu, Ryan"
+ <rluu@amazon.com>
+Cc: "Christopher S. Hall" <christopher.s.hall@intel.com>, Jason Wang
+ <jasowang@redhat.com>, John Stultz <jstultz@google.com>, "Michael S.
+ Tsirkin" <mst@redhat.com>, netdev@vger.kernel.org, Richard Cochran
+ <richardcochran@gmail.com>, Stephen Boyd <sboyd@kernel.org>, Thomas
+ Gleixner <tglx@linutronix.de>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Marc
+ Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Daniel
+ Lezcano <daniel.lezcano@linaro.org>, Alessandro Zummo
+ <a.zummo@towertech.it>,  Alexandre Belloni <alexandre.belloni@bootlin.com>
+Date: Mon, 01 Jul 2024 09:57:21 +0100
+In-Reply-To: <BC212953-A043-4D65-ABF3-326DBF7F10F7@infradead.org>
+References: <20231218073849.35294-1-peter.hilber@opensynergy.com>
+	 <684eac07834699889fdb67be4cee09319c994a42.camel@infradead.org>
+	 <671a784b-234f-4be6-80bf-5135e257ed40@opensynergy.com>
+	 <db594efd5a5774748a9ef07cc86741f5a677bdbf.camel@infradead.org>
+	 <c0ae63fc88365c93d5401972683a41112c094704.camel@infradead.org>
+	 <4a0a240dffc21dde4d69179288547b945142259f.camel@infradead.org>
+	 <8d9d7ce2-4dd1-4f54-a468-79ef5970a708@opensynergy.com>
+	 <bdcafc76ea44db244b52f8a092287cb33950d5d6.camel@infradead.org>
+	 <db1113d5-a427-4eb7-b5d1-8174a71e63b6@opensynergy.com>
+	 <c69d7d380575e49bd9cb995e060d205fb41aef8f.camel@infradead.org>
+	 <2de9275f-b344-4a76-897b-52d5f4bdca59@opensynergy.com>
+	 <BC212953-A043-4D65-ABF3-326DBF7F10F7@infradead.org>
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
+	boundary="=-AjNV5g2OGp1xw371LssE"
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mm: add per-order mTHP split counters
-To: Barry Song <baohua@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>
-Cc: Lance Yang <ioworker0@gmail.com>, akpm@linux-foundation.org,
- baolin.wang@linux.alibaba.com, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20240424135148.30422-1-ioworker0@gmail.com>
- <20240424135148.30422-2-ioworker0@gmail.com>
- <a0f57d90-a556-4b19-a925-a82a81fbb067@arm.com>
- <CAGsJ_4xSKWXGY9TPS_kvhp7FALH16cyVnZu5FkHy3nN_hsZ_kQ@mail.gmail.com>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <CAGsJ_4xSKWXGY9TPS_kvhp7FALH16cyVnZu5FkHy3nN_hsZ_kQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 
-On 30.06.24 11:48, Barry Song wrote:
-> On Thu, Apr 25, 2024 at 3:41 AM Ryan Roberts <ryan.roberts@arm.com> wrote:
->>
->> + Barry
->>
->> On 24/04/2024 14:51, Lance Yang wrote:
->>> At present, the split counters in THP statistics no longer include
->>> PTE-mapped mTHP. Therefore, this commit introduces per-order mTHP split
->>> counters to monitor the frequency of mTHP splits. This will assist
->>> developers in better analyzing and optimizing system performance.
->>>
->>> /sys/kernel/mm/transparent_hugepage/hugepages-<size>/stats
->>>          split_page
->>>          split_page_failed
->>>          deferred_split_page
->>>
->>> Signed-off-by: Lance Yang <ioworker0@gmail.com>
->>> ---
->>>   include/linux/huge_mm.h |  3 +++
->>>   mm/huge_memory.c        | 14 ++++++++++++--
->>>   2 files changed, 15 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->>> index 56c7ea73090b..7b9c6590e1f7 100644
->>> --- a/include/linux/huge_mm.h
->>> +++ b/include/linux/huge_mm.h
->>> @@ -272,6 +272,9 @@ enum mthp_stat_item {
->>>        MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
->>>        MTHP_STAT_ANON_SWPOUT,
->>>        MTHP_STAT_ANON_SWPOUT_FALLBACK,
->>> +     MTHP_STAT_SPLIT_PAGE,
->>> +     MTHP_STAT_SPLIT_PAGE_FAILED,
->>> +     MTHP_STAT_DEFERRED_SPLIT_PAGE,
->>>        __MTHP_STAT_COUNT
->>>   };
->>>
->>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->>> index 055df5aac7c3..52db888e47a6 100644
->>> --- a/mm/huge_memory.c
->>> +++ b/mm/huge_memory.c
->>> @@ -557,6 +557,9 @@ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_ANON_FAULT_FALLBACK);
->>>   DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
->>>   DEFINE_MTHP_STAT_ATTR(anon_swpout, MTHP_STAT_ANON_SWPOUT);
->>>   DEFINE_MTHP_STAT_ATTR(anon_swpout_fallback, MTHP_STAT_ANON_SWPOUT_FALLBACK);
->>> +DEFINE_MTHP_STAT_ATTR(split_page, MTHP_STAT_SPLIT_PAGE);
->>> +DEFINE_MTHP_STAT_ATTR(split_page_failed, MTHP_STAT_SPLIT_PAGE_FAILED);
->>> +DEFINE_MTHP_STAT_ATTR(deferred_split_page, MTHP_STAT_DEFERRED_SPLIT_PAGE);
->>>
->>>   static struct attribute *stats_attrs[] = {
->>>        &anon_fault_alloc_attr.attr,
->>> @@ -564,6 +567,9 @@ static struct attribute *stats_attrs[] = {
->>>        &anon_fault_fallback_charge_attr.attr,
->>>        &anon_swpout_attr.attr,
->>>        &anon_swpout_fallback_attr.attr,
->>> +     &split_page_attr.attr,
->>> +     &split_page_failed_attr.attr,
->>> +     &deferred_split_page_attr.attr,
->>>        NULL,
->>>   };
->>>
->>> @@ -3083,7 +3089,7 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
->>>        XA_STATE_ORDER(xas, &folio->mapping->i_pages, folio->index, new_order);
->>>        struct anon_vma *anon_vma = NULL;
->>>        struct address_space *mapping = NULL;
->>> -     bool is_thp = folio_test_pmd_mappable(folio);
->>> +     int order = folio_order(folio);
->>>        int extra_pins, ret;
->>>        pgoff_t end;
->>>        bool is_hzp;
->>> @@ -3262,8 +3268,10 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
->>>                i_mmap_unlock_read(mapping);
->>>   out:
->>>        xas_destroy(&xas);
->>> -     if (is_thp)
->>> +     if (order >= HPAGE_PMD_ORDER)
->>>                count_vm_event(!ret ? THP_SPLIT_PAGE : THP_SPLIT_PAGE_FAILED);
->>> +     count_mthp_stat(order, !ret ? MTHP_STAT_SPLIT_PAGE :
->>> +                                   MTHP_STAT_SPLIT_PAGE_FAILED);
->>>        return ret;
->>>   }
->>>
->>> @@ -3327,6 +3335,8 @@ void deferred_split_folio(struct folio *folio)
->>>        if (list_empty(&folio->_deferred_list)) {
->>>                if (folio_test_pmd_mappable(folio))
->>>                        count_vm_event(THP_DEFERRED_SPLIT_PAGE);
->>> +             count_mthp_stat(folio_order(folio),
->>> +                             MTHP_STAT_DEFERRED_SPLIT_PAGE);
->>
->> There is a very long conversation with Barry about adding a 'global "mTHP became
->> partially mapped 1 or more processes" counter (inc only)', which terminates at
->> [1]. There is a lot of discussion about the required semantics around the need
->> for partial map to cover alignment and contiguity as well as whether all pages
->> are mapped, and to trigger once it becomes partial in at least 1 process.
->>
->> MTHP_STAT_DEFERRED_SPLIT_PAGE is giving much simpler semantics, but less
->> information as a result. Barry, what's your view here? I'm guessing this doesn't
->> quite solve what you are looking for?
-> 
-> This doesn't quite solve what I am looking for but I still think the
-> patch has its value.
-> 
-> I'm looking for a solution that can:
-> 
->    *  Count the amount of memory in the system for each mTHP size.
->    *  Determine how much memory for each mTHP size is partially unmapped.
-> 
-> For example, in a system with 16GB of memory, we might find that we have 3GB
-> of 64KB mTHP, and within that, 512MB is partially unmapped, potentially wasting
-> memory at this moment.  I'm uncertain whether Lance is interested in
-> this job :-)
-> 
-> Counting deferred_split remains valuable as it can signal whether the system is
-> experiencing significant partial unmapping.
 
-I'll note that, especially without subpage mapcounts, in the future we 
-won't have that information (how much is currently mapped) readily 
-available in all cases. To obtain that information on demand, we'd have 
-to scan page tables or walk the rmap.
+--=-AjNV5g2OGp1xw371LssE
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Something to keep in mind: we don't want to introduce counters that will 
-be expensive to maintain longterm.
+On Fri, 2024-06-28 at 22:27 +0100, David Woodhouse wrote:
+> On 28 June 2024 17:38:15 BST, Peter Hilber <peter.hilber@opensynergy.com>=
+ wrote:
+> > On 28.06.24 14:15, David Woodhouse wrote:
+> > > On Fri, 2024-06-28 at 13:33 +0200, Peter Hilber wrote:
+> > > > On 27.06.24 16:52, David Woodhouse wrote:
+> > > > > I already added a flags field, so this might look something like:
+> > > > >=20
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Smearing flags=
+. The UTC clock exposed through this structure
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * is only ever t=
+rue UTC, but a guest operating system may
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * choose to offe=
+r a monotonic smeared clock to its users. This
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * merely offers =
+a hint about what kind of smearing to perform,
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * for consistenc=
+y with systems in the nearby environment.
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+> > > > > #define VMCLOCK_FLAGS_SMEAR_UTC_SLS (1<<5) /* draft-kuhn-leapseco=
+nd-00.txt */
+> > > > >=20
+> > > > > (UTC-SLS is probably a bad example but are there formal definitio=
+ns for
+> > > > > anything else?)
+> > > >=20
+> > > > I think it could also be more generic, like flags for linear smeari=
+ng,
+> > > > cosine smearing(?), and smear_start_sec and smear_end_sec fields (r=
+elative
+> > > > to the leap second start). That could also represent UTC-SLS, and
+> > > > noon-to-noon, and it would be well-defined.
+> > > >=20
+> > > > This should reduce the likelihood that the guest doesn't know the s=
+mearing
+> > > > variant.
+> > >=20
+> > > I'm wary of making it too generic. That would seem to encourage a
+> > > *proliferation* of false "UTC-like" clocks.
+> > >=20
+> > > It's bad enough that we do smearing at all, let alone that we don't
+> > > have a single definition of how to do it.
+> > >=20
+> > > I made the smearing hint a full uint8_t instead of using bits in flag=
+s,
+> > > in the end. That gives us a full 255 ways of lying to users about wha=
+t
+> > > the time is, so we're unlikely to run out. And it's easy enough to ad=
+d
+> > > a new VMCLOCK_SMEARING_XXX type to the 'registry' for any new methods
+> > > that get invented.
+> > >=20
+> > >=20
+> >=20
+> > My concern is that the registry update may come after a driver has alre=
+ady
+> > been implemented, so that it may be hard to ensure that the smearing wh=
+ich
+> > has been chosen is actually implemented.
+>=20
+> Well yes, but why in the name of all that is holy would anyone want
+> to invent *new* ways to lie to users about the time? If we capture
+> the existing ones as we write this, surely it's a good thing that
+> there's a barrier to entry for adding more?
 
--- 
-Cheers,
+Ultimately though, this isn't the hill for me to die on. I'm pushing on
+that topic because I want to avoid the proliferation of *ambiguity*. If
+we have a precision clock, we should *know* what the time is.
 
-David / dhildenb
+So how about this proposal. I line up the fields in the proposed shared
+memory structure to match your virtio-rtc proposal, using 'subtype' as
+you proposed. But, instead of the 'subtype' being valid only for
+VIRTIO_RTC_CLOCK_UTC, we define a new top-level type for *smeared* UTC.
 
+So, you have:
+
++\begin{lstlisting}
++#define VIRTIO_RTC_CLOCK_UTC 0
++#define VIRTIO_RTC_CLOCK_TAI 1
++#define VIRTIO_RTC_CLOCK_MONO 2
++\end{lstlisting}
+
+I propose that you add
+
+#define VIRTIO_RTC_CLOCK_SMEARED_UTC 3
+
+If my proposed memory structure is subsumed into the virtio-rtc
+proposal we'd literally use the same names, but for the time being I'll
+update mine to:
+
+	/*
+	 * What time is exposed in the time_sec/time_frac_sec fields?
+	 */
+	uint8_t time_type;
+#define VMCLOCK_TIME_UTC		0	/* Since 1970-01-01 00:00:00z */
+#define VMCLOCK_TIME_TAI		1	/* Since 1970-01-01 00:00:00z */
+#define VMCLOCK_TIME_MONOTONIC		2	/* Since undefined epoch */
+#define VMCLOCK_TIME_INVALID		3	/* virtio-rtc uses this for smeared UTC */
+
+
+I can then use your smearing subtype values as the 'hint' field in the
+shared memory structure. You currently have:
+
++\begin{lstlisting}
++#define VIRTIO_RTC_SUBTYPE_STRICT 0
++#define VIRTIO_RTC_SUBTYPE_SMEAR 1
++#define VIRTIO_RTC_SUBTYPE_SMEAR_NOON_LINEAR 2
++#define VIRTIO_RTC_SUBTYPE_LEAP_UNSPECIFIED 3
++\end{lstlisting}
+
+I can certainly ensure that 'noon linear' has the same value. I don't
+think you need both 'SMEAR' and 'LEAP_UNSPECIFIED' though:
+
+
++\item VIRTIO_RTC_SUBTYPE_SMEAR deviates from the UTC standard by
++	smearing time in the vicinity of the leap second, in a not
++	precisely defined manner. This avoids clock steps due to UTC
++	leap seconds.
+
+...
+
++\item VIRTIO_RTC_SUBTYPE_LEAP_UNSPECIFIED may deviate from the UTC
++	standard w.r.t.\ leap second introduction in an unspecified
+way
++	(leap seconds may, or may not, be smeared).
+
+To the client, both of those just mean "for a day or so around a leap
+second event, you can't trust this device to know what the time is".
+There isn't any point in separating "does lie to you" from "might lie
+to you", surely? The guest can't do anything useful with that
+distinction. Let's drop SMEAR and keep only LEAP_UNSPECIFIED?
+
+And if you *really* want to parameterise it, I think that's a bad idea
+and it encourages the proliferation of different time "standards", but
+I'd probably just suck it up and do whatever you do because that's not
+strictly within the remit of my live-migration part.
+
+
+
+
+
+
+--=-AjNV5g2OGp1xw371LssE
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
+ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
+EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
+FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
+aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
+VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
+aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
+AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
+ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
+QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
+rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
+ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
+U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
+DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
+BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
+dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
+BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
+QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
+CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
+xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
+IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
+kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
+eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
+KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
+1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
+OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
+x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
+5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
+DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
+UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
+MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
+ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
+oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
+SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
+xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
+RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
+bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
+NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
+KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
+5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
+C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
+gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
+VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
+MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
+by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
+b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
+BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
+QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
+c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
+AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
+qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
+v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
+Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
+tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
+Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
+YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
+ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
+IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
+ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
+GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
+h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
+9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
+P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
+2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
+BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
+7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
+lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
+lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
+AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
+Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
+FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
+BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
+cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
+aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
+LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
+BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
+cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
+Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
+lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
+WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
+hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
+IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
+dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
+NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
+xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
+DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQwNzAxMDg1NzIxWjAvBgkqhkiG9w0BCQQxIgQg71q20LE+
+oWGAI0eN41o4z75WSO6G50vg2RF1FQzbGywwgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
+BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
+A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
+DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
+MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
+Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
+lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgBiaV2XBIh7IRfvrCRplBDS0cw+K0syKnNR
+O7bLA+gjFiUflk/zp/AsyOA1CKtavTWO7jBj28cCh1X6GafbzE6WeusqG6ImjRnUdkPAIUZ3OdMy
+yT37K2fW5SwCehNpBfwsh+wGRijZ/U+jRIMlNQIygUwxlIKac9+iXXxSeWrLhi58KD+KRj8RzAUA
+6GzA33e29SaYNICfFuMO/P7JTjgGP6kmv+t0LHo8YqW/zb8QKTXIRpIjHU6Zhu2o4AS1VgKGF3ph
+HjbjLSTNqUMtGwiLa/JXuJefDEFI/QvrbdBUuIHHI7kx85cFb8HndwqgxcRclOoPjfofch6jcY6/
+HngiqpjxTcw6UP9vGp2VODLRU+/cC2oSkfqit9VKaUIVvMy03o6y5dCjLQXeinxYgkbzgAnxo6IN
+ZtlbzuFZKHn+kRj4mh+VOSDLvXw2odgGEav7K74cBd+ggwQxKJ3PSN21bK2tRgZiK9QycvL481gy
+FyiumPQTWN3F/1s/Hp7+fdgurzD83znG0DxAsghCezW+Qk6w8jsOJ9+B4kcqTF4GP2s0DpqaKVTw
+rqouqg5d9ScqO7JdJXvneqbsqQGHdHxAL5OxIm3/dadYXt/8WLsvuslHgcsKkfD3Zhu4XKb49yIO
+mhcHMOYdSKiys94wOFIPYaffvmQtuGcnBR3JE8k51gAAAAAAAA==
+
+
+--=-AjNV5g2OGp1xw371LssE--
 
