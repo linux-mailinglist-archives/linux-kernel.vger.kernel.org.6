@@ -1,128 +1,235 @@
-Return-Path: <linux-kernel+bounces-236909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93B8C91E882
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:22:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C322A91E888
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:22:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 388F11F25F9D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:22:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDC701C21053
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21BAE16F82F;
-	Mon,  1 Jul 2024 19:22:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CF616F8E3;
+	Mon,  1 Jul 2024 19:22:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kYx3pWf3"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="jBCuKzMj"
+Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8FC15F3E0
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 19:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264DB16F278;
+	Mon,  1 Jul 2024 19:22:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719861740; cv=none; b=jVUFiV3nBLOeNAJNj6poLs3Yg806Ls7QDEW5L9cyKCP1WT5g6vDVixu3iUa1sEQKpYqPls+IRoXTjsyawJftSoTD8LuSIQaKNYw8ZDnUdUHtQ5lEXcui6ben+P8R7T+rzq56ml2hjuSChiYhmnh6aiie4rpoBFVXeXN+7GdCm0c=
+	t=1719861758; cv=none; b=oeVhG8ykbkUIiht/dkhib98ESFEWIUoKjKY9ApkmncUkWp/01ksIXOJ1nTO3Sa2HwnnyD/OkH0/rvkBOL4WBc/IiPE3Ba46EIARNd3MSdxRqexREz2KQK5iX9RQKet0CIrdvSQ5tf4I9kMmrmmqPOAi7PgIvksWEGbWRNKVe12w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719861740; c=relaxed/simple;
-	bh=jhRT1K6xV21Os/urlXYX84zmxP8MArFSxr/p511FRSM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yj/948OK+9tS4mAFYnF9Dyu/aQmCXn6tc+OP43kpc9ZiazKBW8qrhrb3Dvq1nO8k/Xz2iUUJGrhaFNA2wN54GO/11jK3vHFnKdmSYmlJSARIMgq7dXZzB3ut3ZIx6puoOmaWufPS8J2Gs0DtjORpc/pZ9OzA+91ZNQQ4iUSyOm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kYx3pWf3; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2c2dee9d9cfso2024104a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 12:22:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719861738; x=1720466538; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4aymU97a1sGvobGJ+atGeteP+/v1F5zejZr+FSZsxR0=;
-        b=kYx3pWf34TtSJmhV9AOJYgQKLXx+QSCqFrfE/vwbqmP3JCHadzEOGWV3s0xfxGd8EY
-         tkF1HEyBzUaG8tefRfGWRW3FBlkhdBdYNUz7okttbjM1etwI4fYB5N/WdrMMTVhckytZ
-         XCbHc4XWEfBYdeY59skXITUqI+fkNK1yqe1Bhs+xaqfP1sO/LzmyFx5V2xAy7RbOtHff
-         iqeThIBnYOzMcCgMatjobpCwHpxIOw8bZs6x3ny3JiG17i2jrk2kt8Yto+UO7TufByTl
-         DQlgHkmy7gRBD7VXRaOW6qmWSvk/h8tJZ2vqXID6P01wBqd9iwUL0EMPsFfOq6hbF6ax
-         76yQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719861738; x=1720466538;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4aymU97a1sGvobGJ+atGeteP+/v1F5zejZr+FSZsxR0=;
-        b=CvozJTWqcasc2/jNEm3hKvb9gHBPmQ2GBhrCbI1NuQqRK6XXuP0rhDmoO1TZRmORZe
-         1eNsLbAS958Q798LlSAzFxq4JjChuTU/DVfu+Cf/Iyddh1lAYoC1dmORJz8xhzXKNIIO
-         CrjqM1TErbVDT8RQMgCiPJ+6I3tjo7rXUtvu9bhivTjRk2IDDGZHIB0ocShS66GhCbCI
-         +EUXly3y+/M83fdETHKGZ3gXTsv44UunB4Tu6awU4ZYmwDrU1v9M9iiWzafll0vGqiUG
-         bzReBE7GPEJlVI4Kw41ARASVXwIml/D8PSXk9IQufo62NsrXHttls4sxF500ow+rAx4y
-         UMRA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOL7xLxHnyb4h8uFcV9kroOUZ2uD4bzZ1rjIFGUrB1XMxjH3ZNaVZIKh6ow8teaPEzTyavlZm924YZEwkVmyCZfmuT/9/z2sjdbxfW
-X-Gm-Message-State: AOJu0Ywy/kA5MROr6pHwzOwMxd5yEVMWDEPXsvxXa9CrkNAPOj30PfFP
-	kwwRx3qcu8EghRqvKFsdyE1uyb8r3cP8ncDcfznXQzp4OO11j8cLPniA/8Pxa1S3fy/JvaM3Iv3
-	5JFx1DWkur41DktXgZcGdOtOYVMY=
-X-Google-Smtp-Source: AGHT+IGWf9gM/yO+PqY/uzKDCywdTX9GVdifnKlIyO8850AhUVnit1KRSinpn8GzTYvf4biNxr3CAvdFFOwlgJrft6E=
-X-Received: by 2002:a17:90a:e617:b0:2c7:5622:bf40 with SMTP id
- 98e67ed59e1d1-2c93d6d4a69mr3298695a91.4.1719861738375; Mon, 01 Jul 2024
- 12:22:18 -0700 (PDT)
+	s=arc-20240116; t=1719861758; c=relaxed/simple;
+	bh=lWC6dIbWDly2CcGfLx/WDvuKm5OkyX/CfYLA1wFb040=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=LXr2ydXvKv1ix+gD1NXlQR93Oecsd54OVuzj0BxsvN5Z9QAAiSTPCMX6qNcBmzYGkipQLChb7bvdF9a+OqOpzXRj4p2OUTe8rcPyh9pYgYeQmlpd4yFkOiIZGrHmcmXGpXihjCC6R1eG8E4RM1iGPKQ8lR5sWIl/9thGydhVpbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=jBCuKzMj; arc=none smtp.client-ip=80.12.242.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.100.239] ([77.130.249.198])
+	by smtp.orange.fr with ESMTPA
+	id OMbXsqFR28cAtOMbXsjqTh; Mon, 01 Jul 2024 21:22:26 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1719861746;
+	bh=r5S9eLlZvmDguqOEMMdCQ+1RWefFjQZempUUq4HCebs=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To;
+	b=jBCuKzMjJB52awDCiIwRFUHMTRGx/pTt9IV61JWjyr02O38gQeYHKUnrAdexOqYXl
+	 oWvQECuIKVg2g71vQQGfB1DMNnGieZ6iD+/ZqaafEJlmznK2GQt8HT4h8/hyGL13r0
+	 uEQSUe1uCcrpIPwKJOUp3xsWDxUubr/h+qSDutZUEmTYrP+NaG0oMoNzi+rAxecnAn
+	 hVjYyK4v/IoIvI0wmwgHjM+MRCWtTP93J8a+FXg5hc+hRNVeumNawb6CTiNMcVO8yB
+	 3bqKfeE1fVhgYlOcgMGpkTF2o1Mg67DRSlMFTh7XW26ZIfnbpkanQSECiyNujBg3Cy
+	 8EWy7lPU/40gw==
+X-ME-Helo: [192.168.100.239]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 01 Jul 2024 21:22:26 +0200
+X-ME-IP: 77.130.249.198
+Message-ID: <1fa0f2d9-b193-4fcd-9074-2b68f09ad39c@wanadoo.fr>
+Date: Mon, 1 Jul 2024 21:22:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240701070454.106083-1-jiapeng.chong@linux.alibaba.com>
-In-Reply-To: <20240701070454.106083-1-jiapeng.chong@linux.alibaba.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 1 Jul 2024 15:22:06 -0400
-Message-ID: <CADnq5_P2KH0FioN-uQ0604mbbrprOs2TmgzuGX4S=J-goYTf3Q@mail.gmail.com>
-Subject: Re: [PATCH 4/4] drm/amd/display: Fix warning comparing pointer to 0
-To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-Cc: harry.wentland@amd.com, sunpeng.li@amd.com, Rodrigo.Siqueira@amd.com, 
-	alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com, 
-	airlied@gmail.com, daniel@ffwll.ch, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Abaci Robot <abaci@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH 6/6] media: qcom: camss: support for camss driver for
+ sc7280
+To: Vikram Sharma <quic_vikramsa@quicinc.com>, Robert Foss
+ <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Kapatrala Syed <akapatra@quicinc.com>,
+ Hariram Purushothaman <hariramp@quicinc.com>,
+ cros-qcom-dts-watchers@chromium.org, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Loic Poulain <loic.poulain@linaro.org>, Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-i2c@vger.kernel.org, Suresh Vankadara <quic_svankada@quicinc.com>,
+ Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
+References: <20240629-camss_first_post_linux_next-v1-0-bc798edabc3a@quicinc.com>
+ <20240629-camss_first_post_linux_next-v1-6-bc798edabc3a@quicinc.com>
+Content-Language: en-MW
+In-Reply-To: <20240629-camss_first_post_linux_next-v1-6-bc798edabc3a@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Applied the series.  Thanks!
-
-Alex
-
-On Mon, Jul 1, 2024 at 3:15=E2=80=AFAM Jiapeng Chong
-<jiapeng.chong@linux.alibaba.com> wrote:
->
-> Avoid pointer type value compared with 0 to make code clear.
->
-> ./drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_facto=
-ry.c:14:12-13: WARNING comparing pointer to 0.
->
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=3D9458
-> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Le 28/06/2024 à 20:32, Vikram Sharma a écrit :
+> From: Suresh Vankadara <quic_svankada@quicinc.com>
+> 
+> This change adds support for camss driver for sc7280 soc.
+> 
+> Signed-off-by: Suresh Vankadara <quic_svankada@quicinc.com>
+> Signed-off-by: Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
+> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
 > ---
->  .../amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_factory.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2=
-_core_factory.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/d=
-ml2_core_factory.c
-> index 1a0da8c6df5a..f56abe9ab919 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_f=
-actory.c
-> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_f=
-actory.c
-> @@ -11,7 +11,7 @@ bool dml2_core_create(enum dml2_project_id project_id, =
-struct dml2_core_instance
->  {
->         bool result =3D false;
->
-> -       if (out =3D=3D 0)
-> +       if (!out)
->                 return false;
->
->         memset(out, 0, sizeof(struct dml2_core_instance));
-> --
-> 2.20.1.7.g153144c
->
+
+Hi,
+
+...
+
+> -	if (camss->res->version == CAMSS_8250) {
+> +	switch (camss->res->version) {
+> +	case CAMSS_8250:
+>   		/* for titan 480, CSID registers are inside the VFE region,
+>   		 * between the VFE "top" and "bus" registers. this requires
+>   		 * VFE to be initialized before CSID
+> @@ -1040,10 +1041,19 @@ int msm_csid_subdev_init(struct camss *camss, struct csid_device *csid,
+>   		else
+>   			csid->base = csid->res->parent_dev_ops->get_base_address(camss, id)
+>   				 + VFE_480_CSID_OFFSET;
+> -	} else {
+> +		break;
+> +	case CAMSS_7280:
+
+Maybe, as said for other places by Bryan, keep it ordered (CAMSS_7280, 
+then CAMSS_8250)?
+
+> +		/* for titan 165, CSID registers are inside the VFE region,
+> +		 * between the VFE "top" and "bus" registers. this requires
+> +		 * VFE to be initialized before CSID
+> +		 */
+> +		csid->base = camss->vfe[id].base + VFE_165_CSID_OFFSET;
+> +		break;
+> +	default:
+>   		csid->base = devm_platform_ioremap_resource_byname(pdev, res->reg[0]);
+>   		if (IS_ERR(csid->base))
+>   			return PTR_ERR(csid->base);
+> +		break;
+>   	}
+>   
+>   	/* Interrupt */
+> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+> index df7e93a5a4f6..c7e507420732 100644
+> --- a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+> +++ b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+> @@ -510,6 +510,7 @@ static void csiphy_gen2_config_lanes(struct csiphy_device *csiphy,
+>   		array_size = ARRAY_SIZE(lane_regs_sdm845[0]);
+>   		break;
+>   	case CAMSS_8250:
+> +	case CAMSS_7280:
+>   		r = &lane_regs_sm8250[0][0];
+>   		array_size = ARRAY_SIZE(lane_regs_sm8250[0]);
+>   		break;
+> @@ -560,6 +561,7 @@ static bool csiphy_is_gen2(u32 version)
+>   	case CAMSS_845:
+>   	case CAMSS_8250:
+>   	case CAMSS_8280XP:
+> +	case CAMSS_7280:
+>   		ret = true;
+>   		break;
+>   	}
+> diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
+> index 83c5a36d071f..757e872b8eb8 100644
+> --- a/drivers/media/platform/qcom/camss/camss-vfe.c
+> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
+> @@ -338,6 +338,7 @@ static u32 vfe_src_pad_code(struct vfe_line *line, u32 sink_code,
+>   	case CAMSS_845:
+>   	case CAMSS_8250:
+>   	case CAMSS_8280XP:
+> +	case CAMSS_7280:
+
+Here as well.
+
+>   		switch (sink_code) {
+>   		case MEDIA_BUS_FMT_YUYV8_1X16:
+>   		{
+> @@ -1695,6 +1696,7 @@ static int vfe_bpl_align(struct vfe_device *vfe)
+>   	case CAMSS_845:
+>   	case CAMSS_8250:
+>   	case CAMSS_8280XP:
+> +	case CAMSS_7280:
+
+Here as well.
+
+>   		ret = 16;
+>   		break;
+>   	default:
+
+...
+
+> +static int camss_link_entities_v2(struct camss *camss)
+> +{
+> +	int i, j;
+> +	int ret;
+> +
+> +	for (i = 0; i < camss->res->csiphy_num; i++) {
+> +		for (j = 0; j < camss->res->csid_num; j++) {
+> +			ret = media_create_pad_link(&camss->csiphy[i].subdev.entity,
+> +						    MSM_CSIPHY_PAD_SRC,
+> +						    &camss->csid[j].subdev.entity,
+> +						    MSM_CSID_PAD_SINK,
+> +						    0);
+
+Should there be some error handling path here and below to free the 
+allocated resources?
+
+.link_entities seems to be new and I can't find it in my -next-20240627, 
+so I can't check myself if already handle in a way or another by the 
+framework.
+
+CJ
+
+
+> +			if (ret < 0) {
+> +				dev_err(camss->dev,
+> +					"Failed to link %s->%s entities: %d\n",
+> +					camss->csiphy[i].subdev.entity.name,
+> +					camss->csid[j].subdev.entity.name,
+> +					ret);
+> +				return ret;
+> +			}
+> +		}
+> +	}
+> +
+> +	for (i = 0; i < camss->res->csid_num; i++)
+> +		for (j = 0; j < camss->vfe[i].res->line_num; j++) {
+> +			struct v4l2_subdev *csid = &camss->csid[i].subdev;
+> +			struct v4l2_subdev *vfe = &camss->vfe[i].line[j].subdev;
+> +
+> +			ret = media_create_pad_link(&csid->entity,
+> +						    MSM_CSID_PAD_FIRST_SRC + j,
+> +						    &vfe->entity,
+> +						    MSM_VFE_PAD_SINK,
+> +						    0);
+> +			if (ret < 0) {
+> +				dev_err(camss->dev,
+> +					"Failed to link %s->%s entities: %d\n",
+> +					csid->entity.name,
+> +					vfe->entity.name,
+> +					ret);
+> +				return ret;
+> +			}
+> +		}
+> +	return 0;
+> +}
+
+...
+
 
