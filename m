@@ -1,118 +1,85 @@
-Return-Path: <linux-kernel+bounces-236480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18B5291E2D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:52:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB25091E2D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:52:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A8621C21AD2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:52:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6575328389E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F23016C6B0;
-	Mon,  1 Jul 2024 14:52:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 544E916C6AB;
+	Mon,  1 Jul 2024 14:52:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rnx8kpEK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oM/+2upB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78DAE14B95A;
-	Mon,  1 Jul 2024 14:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966A61607BC;
+	Mon,  1 Jul 2024 14:52:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719845533; cv=none; b=RnxPdCEkn5mximaWYXNn2/EIevEB1MbksUjFRnN/Ynj18udOfx2lGPDZRKYmR/sbVV63W2CORfzoqWELfVnu3C0UMp685iUC+k6L1ItNu9Jxq3BUiAI8SCsrt4fi9A1UNDQ6bnIyz0m4iGpGJVRny7VNCoY3TwDMhHiYvDGGmQE=
+	t=1719845557; cv=none; b=nshwp3sjRfEzrkaBqE9i/PK8Rhyn6hyRJ4SP8w4+EubXCc3BfZ6gLimmhaNJ9Ii+b25IiQ3NV32XPSWP0Hho3r1afoc3zi6ceoZKeDsc1px7GDA6dAbcLXM6sUoxEmk350ZHD9QwiVBxIiV9gY1MdU9SWvVl+e40fh89RzaFKZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719845533; c=relaxed/simple;
-	bh=5vB6rfS074k8h9NxKGPuRUpIHxHySANWovl75hV6ARg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=WIO55miZQzICITcYraJe9/gFNxYTVftS4wuS2UUiX7OPP0qR/6UsWEd06fLIt4ZcDo2Ps6b6JiCqfgm250WPbLfmLW/DxsQQp2JQfj/UGAVFvLvg9nuHh8m9s0cYdEPLzNwCpgV6dWjOsCcgQSwis9SIYWJ8yuQvd8cOtaTERWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rnx8kpEK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0750C116B1;
-	Mon,  1 Jul 2024 14:52:10 +0000 (UTC)
+	s=arc-20240116; t=1719845557; c=relaxed/simple;
+	bh=p9YfnGbtHLfEIX8p3mNY3/6BkKuqCdHuCCiSXutUbIo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uzxsQU81hfaEjYPmJ+KIoSDf0FvfKaUHZ1yKFl1UGO5/MXmrYJ36aaOrUmy4sKdiAAl9rb1ucuk+oX2KtUe7yH+qy90UCQsiW/QoUR1np6nc60gYYXFsacVeem5vSOqF3tougYtfIYK7aoDf57FfC1UjUcM2/RdmvjkiLy1zDc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oM/+2upB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC54DC116B1;
+	Mon,  1 Jul 2024 14:52:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719845533;
-	bh=5vB6rfS074k8h9NxKGPuRUpIHxHySANWovl75hV6ARg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Rnx8kpEK9JIDaxDHJudBcA0pbTOMeDB0ZuXyJYOJouuOP3Nl3kCNW9X5mJBieA+4k
-	 QSP6e3hN3/yZ/dM7XMRHRVKW/ugmtouL9wriUBK6BR5naVN+dmLnrrR66dlv2OTeRn
-	 tqFks+N0Mned2AzZCWhexR8hwPHqyd6ya6IYCFe2pycWlE0Pw/9v/GLrWnLeYhxc+I
-	 SodrOrPvwY3u15H19yBwJcIcapgQl+VHxeXBLvjuJXiIPsanR7xXcvXTL4EkvCMYCV
-	 SXB3o3VtmpLIJWFVIaLUkZhaxf0OoRyDWuz1Syg/pc2/QuNbIxaFcxU1CH6sUd2ihi
-	 Hd9Hs4ivYcZow==
-From: Mark Brown <broonie@kernel.org>
-To: Vladimir Oltean <olteanv@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Frank Li <Frank.Li@nxp.com>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- imx@lists.linux.dev, Kuldeep Singh <kuldeep.singh@nxp.com>, 
- Vladimir Oltean <vladimir.oltean@nxp.com>
-In-Reply-To: <20240624-ls_qspi-v4-0-3d1c6f5005bf@nxp.com>
-References: <20240624-ls_qspi-v4-0-3d1c6f5005bf@nxp.com>
-Subject: Re: (subset) [PATCH v4 0/3] spi: fsl-dspi: Convert to yaml format
- and use common SPI property
-Message-Id: <171984553050.67981.12522537296340689285.b4-ty@kernel.org>
-Date: Mon, 01 Jul 2024 15:52:10 +0100
+	s=k20201202; t=1719845557;
+	bh=p9YfnGbtHLfEIX8p3mNY3/6BkKuqCdHuCCiSXutUbIo=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=oM/+2upBDtZEj0r91Tqkmmg5mXJ6AoyvHu3pAqjHLI3lKmG2+YoGCGQS1//g2O37W
+	 XYoZel02aU09rtL4WEhgzxhYNEYIT//n5qMkHITDC4ndG09KPjUbuJEKW5ngBTnkEV
+	 geyPxQOC8eLbnHh8O9YllCmRf1UPK3a55VU/yuoNk/1BigWO4Nggoq06zxHdPDJQc6
+	 /Doso1JNA8cO6fecnaCmDV2eFQw1GKZxwNe4rTZogBiIJhlox1swQ8Zh2fkgklSssz
+	 Y4gkxxEeOtIIOfYFglBRYqgGKqov9GQ27BbRqLXrW9De1rQkbFNsa6DKduApzrWxdM
+	 JBwPXzlBBKZZQ==
+Message-ID: <656b319fc58683e399323b880722434467cf20f2.camel@kernel.org>
+Subject: Re: [PATCH] tpm: ibmvtpm: Call tpm2_sessions_init() to initialize
+ session support
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Stefan Berger <stefanb@linux.ibm.com>, linux-integrity@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org, mpe@ellerman.id.au, 
+	naveen.n.rao@linux.ibm.com
+Date: Mon, 01 Jul 2024 14:52:33 +0000
+In-Reply-To: <20240617193408.1234365-1-stefanb@linux.ibm.com>
+References: <20240617193408.1234365-1-stefanb@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-d4707
 
-On Mon, 24 Jun 2024 14:55:26 -0400, Frank Li wrote:
-> Convert fsl-dspi binding to to yaml format.
-> Using common SPI property spi-cs-setup-delay-ns and spi-cs-hold-delay-ns.
-> Update driver and ls1043 dts file.
-> 
-> To: Vladimir Oltean <olteanv@gmail.com>
-> To: Mark Brown <broonie@kernel.org>
-> To: Rob Herring <robh@kernel.org>
-> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> To: Conor Dooley <conor+dt@kernel.org>
-> To: Shawn Guo <shawnguo@kernel.org>
-> Cc: linux-spi@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: imx@lists.linux.dev
-> Cc: olteanv@gmail.com
-> 
-> [...]
+On Mon, 2024-06-17 at 15:34 -0400, Stefan Berger wrote:
+> Fix the following type of error message caused by a missing call to
+> tpm2_sessions_init() in the IBM vTPM driver:
+>=20
+> [=C2=A0=C2=A0=C2=A0 2.987131] tpm tpm0: tpm2_load_context: failed with a =
+TPM error 0x01C4
+> [=C2=A0=C2=A0=C2=A0 2.987140] ima: Error Communicating to TPM chip, resul=
+t: -14
+>=20
+> Fixes: d2add27cf2b8 ("tpm: Add NULL primary creation")
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 
-Applied to
+This is a bug in the hmac encryption. It should be robust enough
+to only be enabled if tpm_sessions_init() was called.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+It is fine to enable the feature IBM vTPM driver but definitely
+not as a bug fix.
 
-Thanks!
+Missed this one in the code review.
 
-[1/3] spi: fsl-dspi: use common proptery 'spi-cs-setup(hold)-delay-ns'
-      commit: 52e78777b6bfd4bc47448791a99d5f97c82ff81c
-[2/3] spi: dt-bindings: fsl-dspi: Convert to yaml format
-      commit: 94f19d076218a193d170da6d5ab2a87c080cc69c
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+BR, Jarkko
 
