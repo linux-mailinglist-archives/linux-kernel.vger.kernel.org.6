@@ -1,269 +1,140 @@
-Return-Path: <linux-kernel+bounces-236392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C196591E1A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:58:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0884091E1A1
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:58:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DC881F23501
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:58:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7A2B282036
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 240A815ECFF;
-	Mon,  1 Jul 2024 13:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0C515EFC5;
+	Mon,  1 Jul 2024 13:57:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="ZC6gWGLF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="UjAD1MdW"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D4415EFB0;
-	Mon,  1 Jul 2024 13:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6A415ECED
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 13:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719842301; cv=none; b=eN73GNa05TTjUdvxSXuH7Js6jQVo0j2/FCHhU6kk+ui+pbtdSS+t8eA5Eq0DCylTnOq0+V830scuGuraxBVFzuSyOD+IBqqiYT+/5iQuyTXSGHdQiv7KEVb7fOKFfW05N2GOYZHGppC5J1NuugoFbbV3HAL6hMwAY6Xlklni4eQ=
+	t=1719842279; cv=none; b=iBaGLBZnbF06Ncye4xR9wKjUf7PUuVIewhMa39Ir8N40Ej2vjDx4FWXZ/ndDdJLrDTdjAhKiKGqNieSttx36YzHNwBPPXVVz4cL90uMk0YShzxo2ngrLbWKXpVuRKBXAghrrd5v/1QXNjcu2wG1lyKz5ZYJ6ZUWsXmdr6Z4MVqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719842301; c=relaxed/simple;
-	bh=5jnp+kHd3g/+qHCFwDqIaPslwszjyFWsAceh3rFkPT4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EKalq1GDd39+YQLzx14fRYrmBmGXI/mX4zN13ggIrkqUX/Cxkuq4EPc7YAxTrNg3s48H64Jop9bSh4T4j/XTkVMMK8ftZ9bgXeWylEeyYzfjS460PEDXFVp6wfLowfKDbrCTgmZipAjTuwu/7SHo2Ua03lAWy7CThVZUpg2u2fI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=ZC6gWGLF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC0F9C4AF11;
-	Mon,  1 Jul 2024 13:58:19 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="ZC6gWGLF"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1719842299;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W1D7HNr+ZwtoxrFYBn1Uli4yI71rvOS/zftFZSDcwfM=;
-	b=ZC6gWGLFx2DP0ik4g2DrtBMMGi1ZOIHotBAdSmlkdOQ/BvJ/pnfprxm3eRMue0+EIpDuMs
-	Cpssw+UGuAauybC7BHqH3tEm2uvEPOVinGjJSkrmYsG6BSHXmaydV6p6EBsDDQR2dnAb8q
-	o6sgkWVEpl6NLtfdCMvws10Ylq05Bok=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 77d760b3 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Mon, 1 Jul 2024 13:58:19 +0000 (UTC)
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	tglx@linutronix.de
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
-	linux-crypto@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	x86@kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
-	Carlos O'Donell <carlos@redhat.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Jann Horn <jannh@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	David Hildenbrand <dhildenb@redhat.com>,
-	linux-mm@kvack.org
-Subject: [PATCH v19 1/5] mm: add VM_DROPPABLE for designating always lazily freeable mappings
-Date: Mon,  1 Jul 2024 15:57:55 +0200
-Message-ID: <20240701135801.3698-2-Jason@zx2c4.com>
-In-Reply-To: <20240701135801.3698-1-Jason@zx2c4.com>
-References: <20240701135801.3698-1-Jason@zx2c4.com>
+	s=arc-20240116; t=1719842279; c=relaxed/simple;
+	bh=5bZVvR1vGqe3shQqFbv0+LjthaAxHETmt9AxTBPdfpM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WBsFDePAQj21j5XD2xPvnO+g5EemnLS7ygWqh5BaNlQLLixAKvrVJ6dkB9cob9ekJGVj6RZC2fDJ2T20vxI8ffhF+3/3iOyMK64EVg3E2twvr5LEUSJ+PZfFAPC+DgjTrfOsjXxoRqjol3nEbaoXk4wwQMOJy8uTPpOJZYlDUXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=UjAD1MdW; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-444fd22b7e5so15586501cf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 06:57:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1719842277; x=1720447077; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rV5U0WPtHYnfXuDBYLc5s4yYVwR6Bdg00UaEphQS7H0=;
+        b=UjAD1MdWigMLeu5S6X4hW49fBPPSBYO6wyNP+4Kzajd7fplDBAf54NbCQp9TaVjrU5
+         +LIEDLi9dGm90uEKq4i/hd5KsN89n+C8PytW7/S2NqEMotAkORQq10C5rr7VPC9DHNA1
+         JHA0VtrHPDhnnOK0V/syrmCVBnBhCmgsHdgmi6FbjZgNNpwgB3eLK5pSlohucEKCrPrf
+         OAF5GWERcciTDAljNfrRyq2tFxW0TuUOLu9OFMmkXkH9IzS1+ex5dARfsG4jh2k4EBRt
+         VnPnTX61A/3mCxMHbpw4L2Jr3gTWpwATkvxsv6XEZSgNOZ9RPyNp0E3nm0SYXJWk/iZD
+         cMjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719842277; x=1720447077;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rV5U0WPtHYnfXuDBYLc5s4yYVwR6Bdg00UaEphQS7H0=;
+        b=a78L63l1tmcJFRUkFJg/v632FyRa4xzP4w5r8lg8YkoSZsUnQGlYLN4LSyjt5TaJr9
+         x/K66UhcdVM8uPtFcbVO06Gh0SrilROTVBuf6LimCVLw6yXiyuSBUq1JEJ8jPg386HfN
+         jqpfkrjLw2v08Eanh0WodkPmEUmq1CrfbCshKB0x+qzcs8QpF8g0BU0aNGQoFsOjj430
+         1Buoxe8Nx4tfkfRz5YgJafnSrFHuHpYM+IaFg9lxUZOjJkrrMIQZXl/hfXqNqsDNAWjy
+         yqdbsRTOjxmXGHkbg00YfEcvh1Pk99cGZGtQZeBIE0uz9cig3IenVEPm1h+vK959/MAT
+         FbTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWX3LtVLmLrJTTW172goJnTX8fCYkbuitOQxNUGJjcmSAA+JO9pyHbrhxKSspJX4ZDcrX6GkIPR9KZyDzmJEXKZ43iKOTAKWs4h3yXm
+X-Gm-Message-State: AOJu0Yzkn+CSjSAKj1qPcB9ypLZgK0wyycMHR2dXphJSNcFKL+DhxNpT
+	HZnLIqKOF6dE+IUq/Tm3b0XA5HkmdG9PyV+igAP/4unpiLpNhADvGlXg5vN3oPo=
+X-Google-Smtp-Source: AGHT+IEIRNK2BKMnKNMbWth0aqtgJwVvYvWXkAcG8gkkqCWr4kUzMCbCtLixRDiZgLrrivOcZAk4Rw==
+X-Received: by 2002:a05:622a:11d1:b0:445:3f1:4715 with SMTP id d75a77b69052e-44662debc04mr56963561cf.36.1719842276883;
+        Mon, 01 Jul 2024 06:57:56 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-446514b9d41sm31429171cf.88.2024.07.01.06.57.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 06:57:56 -0700 (PDT)
+Date: Mon, 1 Jul 2024 09:57:55 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Johannes Thumshirn <jth@kernel.org>
+Cc: Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: Re: [PATCH v3 1/5] btrfs: replace stripe extents
+Message-ID: <20240701135755.GE504479@perftesting>
+References: <20240701-b4-rst-updates-v3-0-e0437e1e04a6@kernel.org>
+ <20240701-b4-rst-updates-v3-1-e0437e1e04a6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240701-b4-rst-updates-v3-1-e0437e1e04a6@kernel.org>
 
-The vDSO getrandom() implementation works with a buffer allocated with a
-new system call that has certain requirements:
+On Mon, Jul 01, 2024 at 12:25:15PM +0200, Johannes Thumshirn wrote:
+> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> 
+> If we can't insert a stripe extent in the RAID stripe tree, because
+> the key that points to the specific position in the stripe tree is
+> already existing, we have to remove the item and then replace it by a
+> new item.
+> 
+> This can happen for example on device replace operations.
+> 
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> ---
+>  fs/btrfs/raid-stripe-tree.c | 34 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 34 insertions(+)
+> 
+> diff --git a/fs/btrfs/raid-stripe-tree.c b/fs/btrfs/raid-stripe-tree.c
+> index e6f7a234b8f6..3020820dd6e2 100644
+> --- a/fs/btrfs/raid-stripe-tree.c
+> +++ b/fs/btrfs/raid-stripe-tree.c
+> @@ -73,6 +73,37 @@ int btrfs_delete_raid_extent(struct btrfs_trans_handle *trans, u64 start, u64 le
+>  	return ret;
+>  }
+>  
+> +static int replace_raid_extent_item(struct btrfs_trans_handle *trans,
+> +				    struct btrfs_key *key,
+> +				    struct btrfs_stripe_extent *stripe_extent,
+> +				    const size_t item_size)
+> +{
+> +	struct btrfs_fs_info *fs_info = trans->fs_info;
+> +	struct btrfs_root *stripe_root = fs_info->stripe_root;
+> +	struct btrfs_path *path;
+> +	int ret;
+> +
+> +	path = btrfs_alloc_path();
+> +	if (!path)
+> +		return -ENOMEM;
+> +
+> +	ret = btrfs_search_slot(trans, stripe_root, key, path, -1, 1);
+> +	if (ret)
+> +		goto err;
 
-- It shouldn't be written to core dumps.
-  * Easy: VM_DONTDUMP.
-- It should be zeroed on fork.
-  * Easy: VM_WIPEONFORK.
+This will leak 1 and we'll get an awkward btrfs_abort_transaction() call.  This
+should be
 
-- It shouldn't be written to swap.
-  * Uh-oh: mlock is rlimited.
-  * Uh-oh: mlock isn't inherited by forks.
+if (ret) {
+	ret = (ret == 1) ? -ENOENT : ret;
+	goto err;
+}
 
-It turns out that the vDSO getrandom() function has three really nice
-characteristics that we can exploit to solve this problem:
+or whatever.  Thanks,
 
-1) Due to being wiped during fork(), the vDSO code is already robust to
-   having the contents of the pages it reads zeroed out midway through
-   the function's execution.
-
-2) In the absolute worst case of whatever contingency we're coding for,
-   we have the option to fallback to the getrandom() syscall, and
-   everything is fine.
-
-3) The buffers the function uses are only ever useful for a maximum of
-   60 seconds -- a sort of cache, rather than a long term allocation.
-
-These characteristics mean that we can introduce VM_DROPPABLE, which
-has the following semantics:
-
-a) It never is written out to swap.
-b) Under memory pressure, mm can just drop the pages (so that they're
-   zero when read back again).
-c) It is inherited by fork.
-d) It doesn't count against the mlock budget, since nothing is locked.
-
-This is fairly simple to implement, with the one snag that we have to
-use 64-bit VM_* flags, but this shouldn't be a problem, since the only
-consumers will probably be 64-bit anyway.
-
-This way, allocations used by vDSO getrandom() can use:
-
-    VM_DROPPABLE | VM_DONTDUMP | VM_WIPEONFORK | VM_NORESERVE
-
-And there will be no problem with using memory when not in use, not
-wiping on fork(), coredumps, or writing out to swap.
-
-Cc: linux-mm@kvack.org
-Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
----
- fs/proc/task_mmu.c             | 3 +++
- include/linux/mm.h             | 8 ++++++++
- include/trace/events/mmflags.h | 7 +++++++
- mm/Kconfig                     | 3 +++
- mm/mprotect.c                  | 2 +-
- mm/rmap.c                      | 8 +++++---
- 6 files changed, 27 insertions(+), 4 deletions(-)
-
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 71e5039d940d..b3bd8432f869 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -709,6 +709,9 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
- #endif
- #ifdef CONFIG_64BIT
- 		[ilog2(VM_SEALED)] = "sl",
-+#endif
-+#ifdef CONFIG_NEED_VM_DROPPABLE
-+		[ilog2(VM_DROPPABLE)]	= "dp",
- #endif
- 	};
- 	size_t i;
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index eb7c96d24ac0..92454a0272ce 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -321,12 +321,14 @@ extern unsigned int kobjsize(const void *objp);
- #define VM_HIGH_ARCH_BIT_3	35	/* bit only usable on 64-bit architectures */
- #define VM_HIGH_ARCH_BIT_4	36	/* bit only usable on 64-bit architectures */
- #define VM_HIGH_ARCH_BIT_5	37	/* bit only usable on 64-bit architectures */
-+#define VM_HIGH_ARCH_BIT_6	38	/* bit only usable on 64-bit architectures */
- #define VM_HIGH_ARCH_0	BIT(VM_HIGH_ARCH_BIT_0)
- #define VM_HIGH_ARCH_1	BIT(VM_HIGH_ARCH_BIT_1)
- #define VM_HIGH_ARCH_2	BIT(VM_HIGH_ARCH_BIT_2)
- #define VM_HIGH_ARCH_3	BIT(VM_HIGH_ARCH_BIT_3)
- #define VM_HIGH_ARCH_4	BIT(VM_HIGH_ARCH_BIT_4)
- #define VM_HIGH_ARCH_5	BIT(VM_HIGH_ARCH_BIT_5)
-+#define VM_HIGH_ARCH_6	BIT(VM_HIGH_ARCH_BIT_6)
- #endif /* CONFIG_ARCH_USES_HIGH_VMA_FLAGS */
- 
- #ifdef CONFIG_ARCH_HAS_PKEYS
-@@ -357,6 +359,12 @@ extern unsigned int kobjsize(const void *objp);
- # define VM_SHADOW_STACK	VM_NONE
- #endif
- 
-+#ifdef CONFIG_NEED_VM_DROPPABLE
-+# define VM_DROPPABLE		VM_HIGH_ARCH_6
-+#else
-+# define VM_DROPPABLE		VM_NONE
-+#endif
-+
- #if defined(CONFIG_X86)
- # define VM_PAT		VM_ARCH_1	/* PAT reserves whole VMA at once (x86) */
- #elif defined(CONFIG_PPC)
-diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflags.h
-index e46d6e82765e..fab7848df50a 100644
---- a/include/trace/events/mmflags.h
-+++ b/include/trace/events/mmflags.h
-@@ -165,6 +165,12 @@ IF_HAVE_PG_ARCH_X(arch_3)
- # define IF_HAVE_UFFD_MINOR(flag, name)
- #endif
- 
-+#ifdef CONFIG_NEED_VM_DROPPABLE
-+# define IF_HAVE_VM_DROPPABLE(flag, name) {flag, name},
-+#else
-+# define IF_HAVE_VM_DROPPABLE(flag, name)
-+#endif
-+
- #define __def_vmaflag_names						\
- 	{VM_READ,			"read"		},		\
- 	{VM_WRITE,			"write"		},		\
-@@ -197,6 +203,7 @@ IF_HAVE_VM_SOFTDIRTY(VM_SOFTDIRTY,	"softdirty"	)		\
- 	{VM_MIXEDMAP,			"mixedmap"	},		\
- 	{VM_HUGEPAGE,			"hugepage"	},		\
- 	{VM_NOHUGEPAGE,			"nohugepage"	},		\
-+IF_HAVE_VM_DROPPABLE(VM_DROPPABLE,	"droppable"	)		\
- 	{VM_MERGEABLE,			"mergeable"	}		\
- 
- #define show_vma_flags(flags)						\
-diff --git a/mm/Kconfig b/mm/Kconfig
-index b4cb45255a54..6cd65ea4b3ad 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -1056,6 +1056,9 @@ config ARCH_USES_HIGH_VMA_FLAGS
- 	bool
- config ARCH_HAS_PKEYS
- 	bool
-+config NEED_VM_DROPPABLE
-+	select ARCH_USES_HIGH_VMA_FLAGS
-+	bool
- 
- config ARCH_USES_PG_ARCH_X
- 	bool
-diff --git a/mm/mprotect.c b/mm/mprotect.c
-index 8c6cd8825273..57b8dad9adcc 100644
---- a/mm/mprotect.c
-+++ b/mm/mprotect.c
-@@ -623,7 +623,7 @@ mprotect_fixup(struct vma_iterator *vmi, struct mmu_gather *tlb,
- 				may_expand_vm(mm, oldflags, nrpages))
- 			return -ENOMEM;
- 		if (!(oldflags & (VM_ACCOUNT|VM_WRITE|VM_HUGETLB|
--						VM_SHARED|VM_NORESERVE))) {
-+				  VM_SHARED|VM_NORESERVE|VM_DROPPABLE))) {
- 			charged = nrpages;
- 			if (security_vm_enough_memory_mm(mm, charged))
- 				return -ENOMEM;
-diff --git a/mm/rmap.c b/mm/rmap.c
-index e8fc5ecb59b2..d873a3f06506 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1397,7 +1397,8 @@ void folio_add_new_anon_rmap(struct folio *folio, struct vm_area_struct *vma,
- 	VM_WARN_ON_FOLIO(folio_test_hugetlb(folio), folio);
- 	VM_BUG_ON_VMA(address < vma->vm_start ||
- 			address + (nr << PAGE_SHIFT) > vma->vm_end, vma);
--	__folio_set_swapbacked(folio);
-+	if (!(vma->vm_flags & VM_DROPPABLE))
-+		__folio_set_swapbacked(folio);
- 	__folio_set_anon(folio, vma, address, true);
- 
- 	if (likely(!folio_test_large(folio))) {
-@@ -1841,7 +1842,7 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
- 				 * plus the rmap(s) (dropped by discard:).
- 				 */
- 				if (ref_count == 1 + map_count &&
--				    !folio_test_dirty(folio)) {
-+				    (!folio_test_dirty(folio) || (vma->vm_flags & VM_DROPPABLE))) {
- 					dec_mm_counter(mm, MM_ANONPAGES);
- 					goto discard;
- 				}
-@@ -1851,7 +1852,8 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
- 				 * discarded. Remap the page to page table.
- 				 */
- 				set_pte_at(mm, address, pvmw.pte, pteval);
--				folio_set_swapbacked(folio);
-+				if (!(vma->vm_flags & VM_DROPPABLE))
-+					folio_set_swapbacked(folio);
- 				ret = false;
- 				page_vma_mapped_walk_done(&pvmw);
- 				break;
--- 
-2.45.2
-
+Josef
 
