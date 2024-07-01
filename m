@@ -1,50 +1,53 @@
-Return-Path: <linux-kernel+bounces-235566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A26D91D6B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 05:41:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA4EB91D6B4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 05:44:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10A81281F5D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 03:41:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B8FEB2165D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 03:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB9DC17BDA;
-	Mon,  1 Jul 2024 03:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3EA171CC;
+	Mon,  1 Jul 2024 03:44:15 +0000 (UTC)
 Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
 	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1691417BA1;
-	Mon,  1 Jul 2024 03:41:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26DA11863E;
+	Mon,  1 Jul 2024 03:44:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719805292; cv=none; b=OT0fo8/N2nUtVUsu9ZM/0Vyasg+79Mum3i8NunqpwCsrY/TF/NTQIdmUYzy/tA4qttbFok4TyUNi5QWTtvmhulRx1AiJf0bKpHzR4YUiHoy9PIGTRCWTg+XBvTd2PqLNGu26reYfv0MA1TQkjt7VzHRrqK2+zoO6nZtOdjQcz+8=
+	t=1719805455; cv=none; b=e4cq0IP2xdxk1KALaT8xuE/5dWcLuyzkRRcgvl1YeKqo1n1kSkvPPATG1zqpjOMpNwQE+DwMbP1wvFIxMKD61eq3XQAL4ixeCwWVeXytJBQHGIw3ZG1LPvHnf3gyW3q4j62arKzbG/rwU1+4n3teFsIkJplmw5ZbMTLiQAW6nC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719805292; c=relaxed/simple;
-	bh=vMp+dyWL80ubrUBPhCbTqoAKprQN22XbrirW9ZAPpVQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oBdp391tgwWw0STjrBdl5MiMnRUCQUVPWkGOaXIGi4HxDoZNqiAQCPNua0ndRK2mjOtz/cQ9GXjvotbBYutuTzb7BAPrpLw6AwW4PL4yZ1HSGjvkO9jQM785bANd1ZcaX8tfGkL6G6iElviladD/1/IldyHT2fRKdS6iUKuHm+4=
+	s=arc-20240116; t=1719805455; c=relaxed/simple;
+	bh=EmN0HyErxUi/t88ya0Y2EFToqI7LudU60sxfOsCokjw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D1kZLw8CiE/lfl6PijzVKPEVUI97GC50tAV4uqBSpzujYY/Rh1ithJ+p26PPzj8JHrpd3JJwwNvnJIMGiR+yKJ7qW2ccrz4Duikr///h/DU11t07RNc6rg9G8cQdsWFUCEtrOXmpDewtfPOhrkWUbtOUjKQKd+4yVwRMpxqusfc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [36.112.3.229])
-	by APP-01 (Coremail) with SMTP id qwCowAA3F0xRJYJmCrbwAA--.6578S2;
-	Mon, 01 Jul 2024 11:41:19 +0800 (CST)
-From: Haoxiang Li <make24@iscas.ac.cn>
-To: kashyap.desai@broadcom.com,
-	sumit.saxena@broadcom.com,
-	shivasharan.srikanteshwara@broadcom.com,
-	chandrakanth.patil@broadcom.com,
-	James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com,
-	usuraj35@gmail.com
-Cc: megaraidlinux.pdl@broadcom.com,
-	linux-scsi@vger.kernel.org,
+Received: from localhost (unknown [124.16.138.129])
+	by APP-01 (Coremail) with SMTP id qwCowACHtFXsJYJmN8rwAA--.5579S2;
+	Mon, 01 Jul 2024 11:43:40 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	james.clark@arm.com
+Cc: linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Haoxiang Li <make24@iscas.ac.cn>
-Subject: [PATCH] drivers: scsi: megaraid: Add missing check for dma_set_mask
-Date: Mon,  1 Jul 2024 11:41:02 +0800
-Message-Id: <20240701034102.84207-1-make24@iscas.ac.cn>
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] perf pmu: Remove unneeded semicolon
+Date: Mon,  1 Jul 2024 11:43:00 +0800
+Message-Id: <20240701034300.558886-1-nichen@iscas.ac.cn>
 X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -53,53 +56,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAA3F0xRJYJmCrbwAA--.6578S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrKr48XF4xGw4kZw1ktr4fZrb_yoWkXrbEg3
-	y2vF97Krs8tr1vk3y2krWavr9Yg39Yv34kuF1vgF92gFW7Aw1DG39xXFnxCF48ZanrCryI
-	yw15KrZ5Ar18XjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUba8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+X-CM-TRANSID:qwCowACHtFXsJYJmN8rwAA--.5579S2
+X-Coremail-Antispam: 1UD129KBjvdXoWruFW5Jw4xZr47Jw1DWw4kWFg_yoW3GFc_W3
+	Z7KFZIyr18JF95K3W7ArWrZFyrArW3uay8KFWqkr45GF4DJr4UXr4F9w4DAFy5Kw4qkFy7
+	K34rAFyUXrWakjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbVkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
 	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
-	1j6rxdM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
-	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JV
-	WxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
-	0VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFV
-	Cjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWl
-	x4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r
-	1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_
-	JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
-	sGvfC2KfnxnUUI43ZEXa7VUjiF4JUUUUU==
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+	Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
+	0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc2xSY4AK67AK6r48MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
+	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
+	b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
+	vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
+	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
+	nxnUUI43ZEXa7VUb2g4DUUUUU==
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-pdev->dev cannot perform DMA properly if dma_set_mask() returns non-zero.
-Add check for dma_set_mask() and return the error if it fails.
+Remove unneeded semicolon.
+This is detected by coccinelle.
 
-Fixes: ec090ef8cd1c ("scsi: megaraid: Remove pci-dma-compat wrapper API")
-Signed-off-by: Haoxiang Li <make24@iscas.ac.cn>
+Fixes: d9c5f5f94c2d ("perf pmu: Count sys and cpuid JSON events separately")
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 ---
- drivers/scsi/megaraid.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ tools/perf/util/pmu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/megaraid.c b/drivers/scsi/megaraid.c
-index 38976f94453e..5ddcba488c89 100644
---- a/drivers/scsi/megaraid.c
-+++ b/drivers/scsi/megaraid.c
-@@ -4406,10 +4406,12 @@ megaraid_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
+diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+index c94a91645b21..884eb23445e4 100644
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -1773,7 +1773,7 @@ size_t perf_pmu__num_events(struct perf_pmu *pmu)
+ 	size_t nr;
  
- 	/* Set the Mode of addressing to 64 bit if we can */
- 	if ((adapter->flag & BOARD_64BIT) && (sizeof(dma_addr_t) == 8)) {
--		dma_set_mask(&pdev->dev, DMA_BIT_MASK(64));
-+		if (dma_set_mask(&pdev->dev, DMA_BIT_MASK(64)))
-+			goto out_free_mbox;
- 		adapter->has_64bit_addr = 1;
- 	} else  {
--		dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
-+		if (dma_set_mask(&pdev->dev, DMA_BIT_MASK(32)))
-+			goto out_free_mbox;
- 		adapter->has_64bit_addr = 0;
- 	}
- 		
+ 	pmu_aliases_parse(pmu);
+-	nr = pmu->sysfs_aliases + pmu->sys_json_aliases;;
++	nr = pmu->sysfs_aliases + pmu->sys_json_aliases;
+ 
+ 	if (pmu->cpu_aliases_added)
+ 		 nr += pmu->cpu_json_aliases;
 -- 
 2.25.1
 
