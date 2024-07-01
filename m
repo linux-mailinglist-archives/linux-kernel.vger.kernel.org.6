@@ -1,179 +1,160 @@
-Return-Path: <linux-kernel+bounces-236750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7582291E6A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:30:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C17FE91E6AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:31:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B3AB1C22096
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:30:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E05C283A12
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:31:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22C016EB48;
-	Mon,  1 Jul 2024 17:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6355B16EB44;
+	Mon,  1 Jul 2024 17:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MHHVEhiC"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KlpfZODT"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613B246434;
-	Mon,  1 Jul 2024 17:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42DC028683
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 17:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719855023; cv=none; b=sbaUzkkvOiRuS45lXOmSIJIxvbZVMhglwgJ8TEme9cyGIRz1FYyaiIk71DnNA6+XcZfvmOrVdEyzx/Ofl7EmMhfUPhJP1FomT8UOcbFxfKUsspTv8YfQ5TTXyrJfPXC5P+bm/GyctBVozRJ/2K371lilPng2PFM+kYfH/bn9yAc=
+	t=1719855083; cv=none; b=tfuPTe7YX7SDWIlTd7ifQrYE30e+DD5ERnLYnnqSsq7zaftiJXCT3B6WctHgfoz01c0WFGPb3bPm8ObEeiu3LTqROxFzEhrimF5UaYcqsyOrtNaO4f5FNOAc7bweGzTEFN/3SwvSdCpuM7ElIgv9wp0SwJNiyAdEmwKX4YZlooM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719855023; c=relaxed/simple;
-	bh=9B3GeytStm6KQQcYRGClzHWWdF4lELSrsW7DZVhGry0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XoALporIhg70ZWJNOm7EWMpRYaQHez0rZ562oiYwLw10sU2fbQ6WOPWm/znQW7jV8fxgveC+S4ypncer0hnm01JMveKMjT83sleM265Ns0OIHo8Xw/GGka5CbuCEaJ3i7pdI/h3M0r50RWig0X0WQjGF6XlIUSyFavZ7twDi5a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MHHVEhiC; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1719855083; c=relaxed/simple;
+	bh=kLTpQjX3SiR8I8/5MQ6QATez9Q7Uz3p3ow5fadDaLzM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZkFX2YbArO6Fh0vk82Y9Bc1NcU822NsAhNKnncxoesPq/kjW77BA92cDpsgqPms4+9lIrWPq9dIlSCktFWg7wKB4bLl45nAoi0+77z2PgoayQ2Ha/4xMTM6gzU9yH0mlVsLBYjwWq0ZdQm9GH9jueaii+1i5dqmZuFuKjPCWY8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KlpfZODT; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7066c799382so2721319b3a.3;
-        Mon, 01 Jul 2024 10:30:22 -0700 (PDT)
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6b4ffc2a7abso24593176d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 10:31:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719855022; x=1720459822; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=uYSIMscRLzxdz7e0rxkejaGUQTT7AfQBN3YKjGG/1O8=;
-        b=MHHVEhiCUKGx3gwzdHZilZPzsgYOvZ9nE45PiqXoYPRytMqEP1OKBfnu9cuz4mOJB+
-         aHncHbmZcOBdwgwV2oEAIseYzOsvFgmdrceVfratqCg7JCc7T3+iDXQ6U0KXtRayUVIv
-         GSnOG4UCYAMSB1FIZ5gzPSRezf3l8AbAYJFUO2GHehoYkrcai0HNebD1TO8mgqx05SCE
-         Nm/Uu/xTkdEyjapbpWKWQ2wDfTeNN7ccl21MVppPNAZoLbhn5Ipin6xh2ODpPVkGr0N9
-         gjcnykDjNX2vVl+BAcB0eidSFOYVK0cxwCZECnS4NN8kCfWgT5mC/uWVCH6UHAGE4QA+
-         EPhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719855022; x=1720459822;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1719855081; x=1720459881; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uYSIMscRLzxdz7e0rxkejaGUQTT7AfQBN3YKjGG/1O8=;
-        b=pRD7vLI7CxQsZludnBpJm5hAdl5YOr6ZEMWbfGZ+khk+7hKQcLNLiGkliXyagKjZRz
-         3a1QgAEnVvcOy5kOPXhZVsqeghNnDaLmISsQok/Bn5EX5ZQxpQE4r6xP2qccNWak1J3h
-         sS6EpEnLIlkW+3HJr742gtSD9zlh1N48J51eUA0+3b0vxHgaWTyJJIGEElxzPJbNYTti
-         Ql4OFMKKp9sh0PXDanLhDXQd8zp99Aa4HjJhPLmeemkBF2lchJquSC0pNefIvlEs0w3f
-         pFePIsUFVoAv4bUFVXIMttxcARxtuH6GBXGEWcIFXfxBnr/62U1iXS6ei+7MXtoUZGkk
-         HedA==
-X-Forwarded-Encrypted: i=1; AJvYcCUjhK8UiCTbPROv/Eq7qI3l1ndaoGg1R+qrh1h452Gam5vV3wyQqmwfanQ9PvbY3WW6hKheKPC+pY7tPFirIpi3Dop0y5zlrYJRT1o=
-X-Gm-Message-State: AOJu0YwUmQ56P56yVZEB6Vl/hbGjn1UXeA4zikLK69KWVvXbKB8mjg8R
-	KDk/viRuiVAz/s/RRQ6MTGIumisYwJumQaYMDur9iFpm372DlQvD4PuXHg==
-X-Google-Smtp-Source: AGHT+IGxlI6ltNr75wSTpbDicqo6+EMHbJK+6H8aGeSTokG4V5NB2VpNUrfS+xX5GMlBXL89nHOU1A==
-X-Received: by 2002:a05:6a20:9191:b0:1be:d260:93c1 with SMTP id adf61e73a8af0-1bef60fce2bmr10607756637.9.1719855021584;
-        Mon, 01 Jul 2024 10:30:21 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac15693f3sm67524775ad.218.2024.07.01.10.30.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Jul 2024 10:30:21 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <1934f597-9133-4784-9a41-8808a1253376@roeck-us.net>
-Date: Mon, 1 Jul 2024 10:30:19 -0700
+        bh=IUzeLJ27BF4DSVucZzd+qxK6LhkWds+RiDklC+9YXMs=;
+        b=KlpfZODT/tXufwODjl8EVQR9pi6R45J2Lo2ZqCU9ectDlL8l2z9f3/+GbkOaV3QUzV
+         v76LDYo9TUktuAkn4aZucpgJlhHO7mQSt6vyzDIRqmxbrDqiVy0SFM5BZM1h4R0JDuEo
+         flMept9Hm1WK5BkQ/VoftfOfMOrkFME5PYd5Zp1H6wQa2NdA4EcRPJDOuno0jpzKwCP/
+         fnEE15W+FH273hhxd4D3gamd8Gv9deQF7VyaGnbT8gCG6pYaLvVhqb+l4RLtd2f/9Fou
+         EFgJHIAclD7uIAJHMILibbe60BrYiq1cgtjBplWnpig/mVKTe5qyB6a1gJXvfFwKJ7Fa
+         savg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719855081; x=1720459881;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IUzeLJ27BF4DSVucZzd+qxK6LhkWds+RiDklC+9YXMs=;
+        b=wIiib2v74IZHbejKpt84UkZGbmCYUGfG2Sb8Fgn+p0Ahru4zZap6aWLSMKEi/qH38z
+         iy28DLJXomQyUcfhQQdU0mPwVB7g79Mh6lmEAsS/UF7zeqtPxXlP3lfA9a4dnNsYqlyT
+         i7fk/mfh+mJZb4f6+0uOQBPWLbDRdpwIMT5cEkVOtRdG84tjG2rnnEfr7IMVy8JRrFzb
+         14V8JZCKCorcE8bIsuOqPR0+LTHbIpbuOZR03NC0IhDviRJNsayjswxepuGX3+4F2ZVA
+         Mo0DAGnr+sk0FbS37/mWQAflRvdAMUH98hUCYLvz6Cm0xh7cOdhgrODewZyYpC0i186L
+         yFoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVstDZmJNeROxunkBGY2g/r3rfrOzjRo16ynl4Dqi1X+0zNq7Q24lQRzSbaWctY0P62J450EWHBQ3ZJJNgyK8Uv3pTCKe4O0RlXx+Yt
+X-Gm-Message-State: AOJu0Yx8kayzUHFqxxZIyw7EuXQcpo3OzJh4rm8QdlVk51yXKnvAOH9D
+	oOhdfXnDIRYbWTilocaBcPzCWNmfzjWOgBWmxv6/gl5/QFiigghn
+X-Google-Smtp-Source: AGHT+IHmh0wwSaNGMs8t3cBhv0e6md7IzSeO/tTDzfrRE+QeUYMpvgDfBjSFleDJ0+DuTYdPoZdcjw==
+X-Received: by 2002:a05:6214:240e:b0:6b5:7e74:185 with SMTP id 6a1803df08f44-6b5b6f5a5bfmr114168236d6.30.1719855081246;
+        Mon, 01 Jul 2024 10:31:21 -0700 (PDT)
+Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b59e563230sm35300586d6.35.2024.07.01.10.31.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 10:31:20 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 676211200068;
+	Mon,  1 Jul 2024 13:31:20 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Mon, 01 Jul 2024 13:31:20 -0400
+X-ME-Sender: <xms:6OeCZvkUaYp9eIWMB1Ud86RL8p3KzyLIFdfl6ADNLmJ5tF0fGnoWmA>
+    <xme:6OeCZi3AF-OhouQFpxGZHnRlUozxVyMwADAqKe-skW4KhD5_zGXrWo2DNgclgoyR3
+    QZtcysKqyolnqI9XQ>
+X-ME-Received: <xmr:6OeCZlqZoS4DBmUDa5aw3fiNrvvJRWagUH6ZOxZhxcTjNYBRROs5VtDDG8tzPw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudefgdduuddvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
+    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
+    htthgvrhhnpeevgfdvheehleejieeujeehffdugfefgedvffdvueehgeekkeekiedvkeel
+    vedvhfenucffohhmrghinhepshihiihkrghllhgvrhdrrghpphhsphhothdrtghomhenuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhn
+    odhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejje
+    ekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhn
+    rghmvg
+X-ME-Proxy: <xmx:6OeCZnmTcLo-CGzlVX6hOKbulIKZunzX9wRAxiauE_Fa_Z0AMq6d4g>
+    <xmx:6OeCZt1EPaR7aUeXs4UHIdaUvxcGASme3Kelf6-8lV9Tyl2BHzUyjg>
+    <xmx:6OeCZmt8l5z9E0_AdXYHTLzbLsuLxAobk_lV2ErZytAGNa0dTI4ifA>
+    <xmx:6OeCZhWtibUwqkNE-H6w9HqbhdxY4XglfcS7HdIrJJpm8ApufA3eRA>
+    <xmx:6OeCZs1cLMvisJta3ZmTZI4AzdV8GpYaoC7NMw_7WGTN_nBXZkKIGEwP>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 1 Jul 2024 13:31:19 -0400 (EDT)
+Date: Mon, 1 Jul 2024 10:30:25 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: ahmed Ehab <bottaawesome633@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: lock classes
+Message-ID: <ZoLnsZ47vJNSuxa5@boqun-archlinux>
+References: <CA+6bSauVVgprKxB3f=Dgo0p5ZN0cyRAYATzGOe6CgsJ=Ai0trA@mail.gmail.com>
+ <6be3513e-67d8-4ead-b44a-e6dcdedfeaab@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/10] hwmon: (amc6821) Convert to use regmap
-To: Quentin Schulz <quentin.schulz@cherry.de>, linux-hwmon@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Farouk Bouabid <farouk.bouabid@cherry.de>
-References: <20240628151346.1152838-1-linux@roeck-us.net>
- <20240628151346.1152838-10-linux@roeck-us.net>
- <7a829bf2-c5f6-4234-a224-52328045f581@cherry.de>
- <13b73e86-fed0-4ef0-9815-eda765f2a70c@roeck-us.net>
- <7a1f2916-3e2b-45ee-9681-7327d7b1798a@cherry.de>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <7a1f2916-3e2b-45ee-9681-7327d7b1798a@cherry.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6be3513e-67d8-4ead-b44a-e6dcdedfeaab@paulmck-laptop>
 
-On 7/1/24 09:54, Quentin Schulz wrote:
-> Hi Guenter,
-> 
-> On 7/1/24 3:47 PM, Guenter Roeck wrote:
->> On 7/1/24 06:01, Quentin Schulz wrote:
->>
->>>> -#define AMC6821_CONF1_FDRC1        BIT(7)
->>>> +#define AMC6821_CONF1_FDRC1        BIT(6)
->>>
->>> This should have been squashed with a previous commit.
->>>
->>
->> Yes. I had found the bug but then fixed it in the wrong patch of the series.
->>
->> ...
->>>>   static ssize_t temp_show(struct device *dev, struct device_attribute *devattr,
->>>>                char *buf)
->>>>   {
->>>> -    struct amc6821_data *data = amc6821_update_device(dev);
->>>> +    struct amc6821_data *data = dev_get_drvdata(dev);
->>>>       int ix = to_sensor_dev_attr(devattr)->index;
->>>> +    u32 regval;
->>>
->>> Why not a u8 directly here? We know single reads are going to return a u8 so no need to store more?
->>>
->>
->> The parameter of regmap_read is a pointer to unsigned int.
->>
-> 
-> Eventually through the many indirections, because our regmap_config sets the size of values in registers to 8b, it's a u8. But it's not worth our time to optimize this.
-> 
-> EDIT: coming back to this after reading the rest... Wouldn't we have a possible endianness issue here? Especially with the int8_t cast or the sign_extend32 (wouldn't the sign bit be at a different index on LE/BE ?). Sorry for the question, endianness really isn't my cup of tea.
-> 
+On Mon, Jul 01, 2024 at 09:20:02AM -0700, Paul E. McKenney wrote:
 
-The underlying code does an implicit conversion. For example,  see
-regmap_smbus_byte_reg_read(). There is no endianness issue because
-the returned data is always in host endianness order. Sure, that
-could be big endian, but the sign bit is still in bit 7.
+Thanks, Paul.
 
-Thanks,
-Guenter
+> On Mon, Jul 01, 2024 at 03:52:44AM +0300, ahmed Ehab wrote:
+> > Hello sir,
+> > I am working on a bug reported by syzkaller
+> > https://syzkaller.appspot.com/bug?extid=d4200fc83fa03a684c6e . I am getting
+> > 2 classes with the same key but different address for the name(different
+> > name pointer but same content). The problem is that this info seems to be
+> > persisted in the vmlinux itself. Is there any place where I can read about
+> > how lock classes are persisted or something?
 
+You could start with code that initializes lockdep_map (which is
+corresponding to one lock instance), for this case, it's the
+init_rwsem(), and the name & key are linked to the lockdep_map in
+lockdep_init_map_type(). Eventually, usually at the first time a lock
+instance is used, it will register the lock class, where lockdep
+allocates a lock class and store the addresses of the key and name into
+it.
+
+So the problem here could be the string literals (i.e. the name
+"&ei->i_data_sem") got instanced twice.
+
+Regards,
+Boqun
+
+> 
+> Hello, Ahmed,
+> 
+> Adding Boqun and the list on CC in case others have better advice.
+> 
+> One possibility is that there is a lockdep_set_class_and_name() call
+> that is separating out locks that would by default be in the same
+> class.  See the use of this function in the rcu_init_one() function in
+> kernel/rcu/tree.c for one example use, in this case to create separate
+> lock classes for each level of the rcu_node tree.
+> 
+> There are a number of similar functions, including lockdep_set_class()
+> and lockdep_set_class_and_subclass().  These guys might well duplicate
+> the name, but I have never used them.  Me, I encode the level into
+> the name in order to have better lockdep diagnostics, but that is not
+> always practical.
+> 
+> 							Thanx, Paul
 
