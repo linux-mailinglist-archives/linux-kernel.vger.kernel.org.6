@@ -1,140 +1,158 @@
-Return-Path: <linux-kernel+bounces-236932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D00391E8BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:40:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EFAF91E8C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:42:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E2E41F22250
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:40:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 039D7284037
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17AD16F8E9;
-	Mon,  1 Jul 2024 19:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A5416F8E3;
+	Mon,  1 Jul 2024 19:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FVNE8Wog"
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="oLkUAGBV"
+Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2086.outbound.protection.outlook.com [40.92.103.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C7516D9BA
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 19:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719862812; cv=none; b=dyoLB+aoQlqBcDOZX/cPCjeOjvN2xL1guQEAC9EYfZMOA+zbodfh2TSPzAw7g4w/UAbse51Cwo0veGjox+8prTNuIXg54BAbHJr+8w2ZtpQ48b7dD+w9DWwwB7hRom9KP993ekyI0JmGIvPsHny/QfCU+rIQlxWQJ5zZ7tqsw2o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719862812; c=relaxed/simple;
-	bh=Osp/Q2MP0iI+oJriW8ZjrL3Eg4r3SKimzRBMLOLVGq0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Af54efQDq/kGW/kc9f3dXuXy3aCg305rGDup7DSuLHJEYjl7VvdX0x9r/FhkU7Vg2QP6OOojD0ZQ2bHXN1qaz+9IQiZG4CGiy3l/IMD8ECigl47hJD4Zoqc17VTmogEXOIYypij5pp6rbh1cnT0ySCW7YqHsOiKTH4B3CIrUvs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FVNE8Wog; arc=none smtp.client-ip=209.85.166.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-7f3ca9bc769so7669139f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 12:40:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1719862810; x=1720467610; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DAhhPyLlfY/a7RrnttMrssdLFe9/7+sNUUJTZ5aCBQ0=;
-        b=FVNE8Wog2pGzYfF/O6XlfJPF+D79v4UcmTyhowZ7Lo6jr1e/2/t0Pb5yXQy2rCx6PJ
-         YJgDk98h66ecO0grkQ9oz7NTNBq7oAAbFxV1P/Yqi++UaDzPkr4gAuxp9u6thARklVzI
-         Atu3IcmVuxEWSBfOHwZqovGTGeBFAxPRNDy48=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719862810; x=1720467610;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DAhhPyLlfY/a7RrnttMrssdLFe9/7+sNUUJTZ5aCBQ0=;
-        b=NSkjluFoJyB2jJUUNSJPJfjihnxVrAT8I85XZrbnPHs8QQXswfLVZCOnKjsdZdnKOB
-         OkLPRYORHfE6ZbIxgmt+lWJ/NKxxNhKsVqezs2WBjNvyKhbIeWm+0pVuxRbAF8aJP1TB
-         PIPcl0vlJTG1F7czVSX0MguR9b7fHAHLE7EOU/nAeYCZzq2kDRvMdxoA/xAR8CSvRMJ4
-         EcVE7IFkdpqFJeR8fNXxmq2D/LEgz6aI63HQ3XF8xRZjTwc19leaLvh+ZSfah/2kakoN
-         mjFP19RoYG9Hb93pze/dfR67gI1YT9B3jSvTE5ovXms3RwBobYw1l3kqEW6OaHM1p0rN
-         CPXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUp/gJmZnKYB+/0ru1kmEFQWqLQ3J0/CCKp2H8/Wz7eM07F3xqcZysmI9+SWkaLRvfmqKvrLBm5rxQiWGUHb2u1lFgTEg7oLQzMR+vT
-X-Gm-Message-State: AOJu0YyVQgKuaEGhq1by9A0lxvSiKR5hB3kN9hJdHNpEVg/vO3H+44kx
-	WJ/mc3cPCvf97BR9Ymt27XLA+xK0RAaGYpKD/KPjlGhZpaq13/+cUQ0VWULu0bI=
-X-Google-Smtp-Source: AGHT+IF8axZ2/vy/hXd0tRQ0/E+Tei2rSB81t2iyY6jdEbqmwfAm/hp1ooFCB8a4pZpHMxGxuu1nfQ==
-X-Received: by 2002:a5e:8908:0:b0:7f3:9ef8:30a4 with SMTP id ca18e2360f4ac-7f62ee595b8mr564143839f.1.1719862810525;
-        Mon, 01 Jul 2024 12:40:10 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4bb73dd4b82sm2406130173.42.2024.07.01.12.40.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Jul 2024 12:40:10 -0700 (PDT)
-Message-ID: <501954d6-3f0a-4f1e-863b-c60353435700@linuxfoundation.org>
-Date: Mon, 1 Jul 2024 13:40:09 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B60E16D9BA;
+	Mon,  1 Jul 2024 19:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719862964; cv=fail; b=jFp0znKqWd2SZpLsuLPhkeNJGKUwrjpeCbT/DzE0maxkn82di0YDxzhnYoOOhXK85wRJyI94IHQw5He1qchMEcL5XN/JZMqEjTffZAiqTyl5QSc8eRZdMl9wPdRpA8bnvh6bVpN5FrvzeGZF62eV/Ykcp9lSm7+DMrFozRFDj9U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719862964; c=relaxed/simple;
+	bh=RAvnN17HZpYue492q/YMWi1m6TbYF1SkRg9pEk81quI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=LbpWzQuKJaBD7/2jdp/inzGam+2Oe0IWQIu3jgLZB0gWwGNmTLG6U9fay49zXTyI8X1i1flwbp1VHytKNH4uN6N4rKbpJEG6VSMcC6++HVUwfPrd1jv/kyCnYpney40saFKqyCe31fEJcAUorbufy/sUYLtCpRx9++nIhdMY+ps=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=oLkUAGBV; arc=fail smtp.client-ip=40.92.103.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hzlmUEvqbQWQv2djekGenYO3y0zNjGJekIB4LrQVDDNVkBsaB2pdFq8jSSG8szcoMzDUEgu1E5Mh3XOxzDeq15F2lizbI0Pblfng4sG9QexFQwSVwpB5bIld4lcMLSkvePnHlYJGaWiVUrvVSIuF7J7vtg3lLT+X0B++3YTLkH9keuz3i6tE0O8MGWv4nBCwRrQF4jSe+5rSWUrL6/VRiM6+i7TwaVfebd7qVXfTx925H2ULAt0kJd/1fY8l5G11uobI4nOQ7Aj/LQbNqj1jKwrk7w2ru2jrNKaQIcIUDeMVSfodZxj4EZ7bD6Ye1gMJNEAY4cZaZdf3SACt7q/TUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RAvnN17HZpYue492q/YMWi1m6TbYF1SkRg9pEk81quI=;
+ b=IgJTOSHRvBn0XdHthK1d9vjq2ad1bqH7ddSOyuYCCJYvx/vm6ZwG4izuPWYx+NYHqaVAtx6RTyMhJAUPp2wJeaIZNv4Sz8bOrp27ap+biwAj2+i33Tbep1TrW6SZeCLdcK3FswJmEXc52A26uyihC+YaqI4Hcp/RLBFAJzdJ8FeXTfhiSwLIgZBL+r8MXSx7EV1CxGzETj7ckQ4FfhDrHKzwEvJb5YXU+cHWrcHVHIh1RAI25WsXDRTLVUTRsmPD//MzYvthLnJd0xBnDOYmoSU4nc83hDnxNZdrJhqKeccwRBeG9ZpiSJpMtdXTGGxSE0Ze3lNeirOVLtXsw9c68A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RAvnN17HZpYue492q/YMWi1m6TbYF1SkRg9pEk81quI=;
+ b=oLkUAGBVWotrA/FbteqjAsSzsCQiw8z0btfHbsdClFfaFbWyWeLsMuK0qZby87D23q3AK3cb5pRIdLufsjkN69HY4ClrB+ROcOfLcAk54wAJ7WHEP3YLVLOfEqc3V9+EceyyqCdxD9jai45m9gMnCvbeI2P3qPgvfM0aTVbB7d2yktlSvYxXuS/ON9uTJVe6G2mqQNw3GyNz1+9jbAtdxDIcfxCTiDB3Cy7jLHuOuz/gsIgYYBrm/JPTcSjgR/RNX7sbkTC579mQzYpGyGAolQ3BG5pQHJqR7hSD6CucR5DEZfQgDNh1sYwrEwEmF9BTbxr+mjPIj1XEeOyq4MYuRQ==
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
+ PN0P287MB1990.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:1be::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7719.32; Mon, 1 Jul 2024 19:42:37 +0000
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a%7]) with mapi id 15.20.7719.029; Mon, 1 Jul 2024
+ 19:42:37 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: Ard Biesheuvel <ardb+git@google.com>
+CC: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ard Biesheuvel
+	<ardb@kernel.org>, Hans de Goede <hdegoede@redhat.com>, Lukas Wunner
+	<lukas@wunner.de>, Kerem Karabay <kekrby@gmail.com>, Orlando Chamberlain
+	<orlandoch.dev@gmail.com>
+Subject: Re: [PATCH v3 0/2] efi/x86: Call set_os() protocol on dual GPU Macs
+Thread-Topic: [PATCH v3 0/2] efi/x86: Call set_os() protocol on dual GPU Macs
+Thread-Index: AQHay8BxbD/3780MxUWT4The9rzhebHiRiV0
+Date: Mon, 1 Jul 2024 19:42:36 +0000
+Message-ID:
+ <MA0P287MB0217C0F7E0B9F6FE8CA47BE8B8D32@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+References: <20240701140940.2340297-4-ardb+git@google.com>
+In-Reply-To: <20240701140940.2340297-4-ardb+git@google.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-IN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:
+ [FzU/UOv+4LsefLbUugMVPQilqYNZruikVb0hel7gKb+kvYOuufWyoaicMO9hAzKXUkzSDRGhxbw=]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MA0P287MB0217:EE_|PN0P287MB1990:EE_
+x-ms-office365-filtering-correlation-id: 2f1ecdff-747f-40cf-d7f6-08dc9a05f5cc
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199028|8060799006|102099032|3412199025|440099028;
+x-microsoft-antispam-message-info:
+ Q2CUPDWWTTZlqaCSAVOsgyAyx9tu2FB8TuJShqYYn/j9NjEg17OtKNUTIQzyzAYsc1AkyAed2zlRtC19d2Q7t/UjGsC96G7jY62YuB+Ps68ebx+FcXYPF5IuRpW1j3mRfrd2ScOBIZxIYf9GhCbUIVgi8coaPwgu4g9qIim9fj4wBQs1rnq744lTexzhlKVeEM1zZfovdBtv23lndatI7UYBQnbrqA2wFmvF5xFuwpSX2bg2EO9kXaTaLR2vuJhU8PjGJt+vb9FGMfBzaYfBjgghpFGP8VbHirfhvVUpi2K96W7voZLeakTLcA0iLCXE2k6kkWCta6YPFNSMIywd444JxOzfhtOYtWnDpfqNOiYyB30vucmgIHAqQCB6oUK1+szCUex5bQop7LkC0PKSqgZacMkfcHYMRfJBF13qsqwd4DBL+G5F7iY/82FwaRRTgKhYKbVRD6TMevROqEdBuLjb/cp1DqBrwFPz/Ihe4kIclwK9dNcxQcUWUS4Wq2rpWzD9SLe1gptnX++1pJuEHkv4nRTaWit2akZVFr4LxHCCrCwPHOGhCb4zbZtpjJOgcCQN7ZV0uOOfPsZGVLcQAEJWoJAwhd38MLXaP0Ag0LokZSSQRwtJnTCR/xSUa1pD
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?TUVJbTcrcWVGVHJ2Zll2Q2Fhd1hiS0c0Tmo4UjMzLy9NNXBFdXhXRit6bzVS?=
+ =?utf-8?B?T1V4a1Uza2JjWktUWmJWVFRaOTRaZnBQTVBXTVZ3V2RoeExKMjhxajdaaDNE?=
+ =?utf-8?B?YklKVElzS1FHVDYydWM3bmUyV1VlbEZheHg1TGVucTJEVThWUUJHTTR2ZVd4?=
+ =?utf-8?B?bVQzS1BMUFRSaWJkMk1lanVCUlRYcG1RT0pBd2ZnaU5wMS82dDlheHNadlZN?=
+ =?utf-8?B?d1VIaVJkdGxSampNYndYeXF6L0R1OWl0MnFxcWlSbjI4WEdGSzVqNVBEeFZU?=
+ =?utf-8?B?VHRjTjFNdjhzcnUrTFVRRklTQ1hjbU5wM3p5SzlKZHZnczJneENXcFlFbWVW?=
+ =?utf-8?B?ejMrNHRmajdBMStiUmRTSFc4VHk5ZTBNY1FkTEwvcUFxV25vOU5SSDViR2g3?=
+ =?utf-8?B?ZVB1Wnc0UlRmQkdFc1hxTlp1K0RNSVQxYmM5UldmVFVjSDUxZm54cTFsSVc1?=
+ =?utf-8?B?eDB0b2FjMkZWVkh6SC9BMFBEVFVuOUJTN3pJR2p6MmM3Snd5WEpuK3BRdTZB?=
+ =?utf-8?B?TTl6UU1Xc2RZdHhMNkVXblJ2ME1ZTmZwYkxMQlRIcWRWUy9kWGJjYjJmUkFj?=
+ =?utf-8?B?MytFM2FMck1BUzg1K3cwS0RPNjhURmxqN1Q2eUdaWmpEd3Y1dSs2d01LemtN?=
+ =?utf-8?B?MUtJZEtDRzRLTlpKczc2eSttalJRTXFqTlhuQkFPYkpaUFkyTkRKRkFPOStW?=
+ =?utf-8?B?UHFIR0FaZDYzVElQSU5uWTJJQXhPZ2hIM0hFa1RCcUFkbTNPd2d3cmFFd1No?=
+ =?utf-8?B?Nmc4MkVpMWU4RFlBV1gvbGRKREZsdzN4d25Vdy9hV05xbHlKZjJBRHhxVVNx?=
+ =?utf-8?B?VHJOY0pJbTBTeFBMZlgwNHM0TkozVFh4eENucTFvNXd0Y3BIWWYvbS8yT3V2?=
+ =?utf-8?B?SWpoZTZhd0J0NVNVcE80RzRWbnhyYWQ3U2pXcDJ1YkJDRDhGbnNPdlJIUTBM?=
+ =?utf-8?B?ZE1rWVJXc05zUjhBUVhxR00rWis5MkdYMEk0N0pMZzF3QnRVQnpzZnVIbmxS?=
+ =?utf-8?B?V2FrVTNxOE56ZkI1eE13Q2JlYkhFM2Z5UU8vV3N4ZTlNZXh5bDdlWXp5OU5t?=
+ =?utf-8?B?cGZabEdGb280Q2FqYmFHT0pXWGo1UXdrR1VWRENVY1JYTDhkQzduZWlPdVRw?=
+ =?utf-8?B?cG0wWmJGSWttR1hXNStSengzdUZjMmkzYW5JbWRqWWRXQ1F4TmhYcDNtbVh5?=
+ =?utf-8?B?WHFZRFBUYUNjN3BFc1RjUFpySTZmT0orRlMzWDRnLzRta3hneHVySEpyclNj?=
+ =?utf-8?B?UEliM05vYkg5Z1JSQW9iOG1DQzYzS0p2K09DL2hXSWx2S3N5TjZNbjFuUDZR?=
+ =?utf-8?B?clFJWUtaOFZhdjh0QzdqcEJpdGlFakJIeVlFc3FNNUJHRk9hOTl0WUNLUE1o?=
+ =?utf-8?B?TnNQNGwwSUhid3pBQlVOelh3Nk84NnVrRVcrWVNTOThVdjNQUkdIMUtqWWVG?=
+ =?utf-8?B?TWhoSnRBQUh0Vk9hdnhwVnVhdVFMS29HRTUwYWhJeG5Ca05TUXB2blNBZW05?=
+ =?utf-8?B?SWZCcFBPaXhJc2YzMmNKL284UHM4bGcxbzR6STAwVXM3QnJ4Ni9Tb0lhYVY1?=
+ =?utf-8?B?S24vNzRaN2FCWDBNMzVBWGdnOXRIVlRUTXFZdzFONXAvbE1LTmNXMjZKTmlX?=
+ =?utf-8?B?MVdBWStaazUrRGMzNEJNLzdQTWx5ek0rZjFsUmpWbjJ0NkszUkZPSUpNMEUv?=
+ =?utf-8?B?aWxseWtPMXdlODNPNkRtd3l1YTd1ZFVBcFFhNzMrdHgyZlpwL0VSdU92RHBp?=
+ =?utf-8?Q?0nylTHeMc8H9O8n4fI=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] cpupower: Make help command available for custom
- install dir
-To: Roman Storozhenko <romeusmeister@gmail.com>
-Cc: Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240627-fix-help-issue-v3-1-85318a3974e4@gmail.com>
- <c9df6637-6055-4668-b80b-a1a6e6be445e@linuxfoundation.org>
- <CALsPMBMeo5E9ZND0bPK089VHBZnybsigkvoC2r8BLCTjYt9QFA@mail.gmail.com>
- <f1261f1c-abbe-49e4-b0bb-b72af367da7f@linuxfoundation.org>
- <CALsPMBP42_oKJDegVQOzHUE00mie2Mh_aPyvyTUhgsnjQO1DDQ@mail.gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <CALsPMBP42_oKJDegVQOzHUE00mie2Mh_aPyvyTUhgsnjQO1DDQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-bafef.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2f1ecdff-747f-40cf-d7f6-08dc9a05f5cc
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jul 2024 19:42:36.8899
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB1990
 
-On 6/29/24 04:48, Roman Storozhenko wrote:
-> On Fri, Jun 28, 2024 at 9:45 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
->>
->> On 6/28/24 05:30, Roman Storozhenko wrote:
->>> On Thu, Jun 27, 2024 at 7:33 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
->>>>
->>>> On 6/27/24 01:49, Roman Storozhenko wrote:
->>>>> When the 'cpupower' utility installed in the custom dir, it fails to
->>>>> render appropriate help info for a particular subcommand:
->>>>> $ LD_LIBRARY_PATH=lib64/ bin/cpupower help monitor
->>>>> with error message like 'No manual entry for cpupower-monitor.1'
->>>>> The issue is that under the hood it calls 'exec' function with
->>>>> the following args: 'man cpupower-monitor.1'. In turn, 'man' search
->>>>> path is defined in '/etc/manpath.config'. Of course it contains only
->>>>> standard system man paths.
->>>>> Make subcommands help available for a user by setting up 'MANPATH'
->>>>> environment variable to the custom installation man pages dir. That
->>>>> variable value will be prepended to the man pages standard search paths
->>>>> as described in 'SEARCH PATH' section of MANPATH(5).
->>>>
->>>> What I am asking you is what happens when you set the MANPATH before
->>>> running the command?
->>>
->>> It adds the custom search path to the beginning of the MANPATH variable.
->>> I tested this case. All works as expected.
->>>
->>
->> Let's try again. What happens if you run the command with MANPATH set and
->> exported and then run the command. Can you send the output?
-> 
-> hedin@laptop:~/prj/cpupower/install/usr$ echo $MANPATH
-> /tmp/
-> hedin@laptop:~/prj/cpupower/install/usr$ LD_LIBRARY_PATH=lib64/
-> bin/cpupower help monitor
-> ...................
-> man output
-> ...................
-> hedin@laptop:~/prj/cpupower/install/usr$ echo $MANPATH
-> /tmp/
-> hedin@laptop:~/prj/cpupower/install/usr$
-> 
-
-Is this with your patch or mainline? Can you give cut and paste
-the man output here for the mainline coupower without your patch?
-
-thanks,
--- Shuah
-
+VGVzdGVkLWJ5OiBBZGl0eWEgR2FyZyA8Z2FyZ2FkaXR5YTA4QGxpdmUuY29tPg0KDQpUaGFua3Mg
+Zm9yIHRoZSBzdXBwb3J0IEFyZCA6KQ0KDQo+IE9uIDEgSnVsIDIwMjQsIGF0IDc6NDDigK9QTSwg
+QXJkIEJpZXNoZXV2ZWwgPGFyZGIrZ2l0QGdvb2dsZS5jb20+IHdyb3RlOg0KPiANCj4g77u/RnJv
+bTogQXJkIEJpZXNoZXV2ZWwgPGFyZGJAa2VybmVsLm9yZz4NCj4gDQo+IHYzOg0KPiAtIGFkZCBw
+YXRjaCB0byBtYWtlIHRoZSBTTUJJT1MgcHJvdG9jb2wgZ2x1ZSBjb2RlIGNvbXBhdGlibGUgd2l0
+aCBtaXhlZA0KPiAgbW9kZSBvbiB4ODYNCj4gLSB1cGRhdGUgQWRpdHlhJ3MgcGF0Y2ggdG8gbGlt
+aXQgdGhlIGVmZmVjdCB0byBkdWFsIEdQVSBNYWNzIHRoYXQgYXJlDQo+ICBrbm93biB0byByZXF1
+aXJlIHRoZSBzZXRfb3MoKSBjYWxscyBpbiBvcmRlciBmb3IgYm90aCBHUFVzIHRvIHJlbWFpbg0K
+PiAgYWN0aXZlIGFmdGVyIGJvb3QNCj4gLSBkcm9wIG1peGVkIG1vZGUgaGFuZGxpbmcgb2Ygc2V0
+X29zKCkgcHJvdG9jb2wsIGFuZCBkZXJlZmVyZW5jZSB0aGUNCj4gIHN0cnVjdCBtZW1iZXJzIGRp
+cmVjdGx5DQo+IA0KPiBDYzogQWRpdHlhIEdhcmcgPGdhcmdhZGl0eWEwOEBsaXZlLmNvbT4NCj4g
+Q2M6IEhhbnMgZGUgR29lZGUgPGhkZWdvZWRlQHJlZGhhdC5jb20+DQo+IENjOiBMdWthcyBXdW5u
+ZXIgPGx1a2FzQHd1bm5lci5kZT4NCj4gQ2M6IEtlcmVtIEthcmFiYXkgPGtla3JieUBnbWFpbC5j
+b20+DQo+IENjOiBPcmxhbmRvIENoYW1iZXJsYWluIDxvcmxhbmRvY2guZGV2QGdtYWlsLmNvbT4N
+Cj4gDQo+IEFkaXR5YSBHYXJnICgxKToNCj4gIHg4Ni9lZmlzdHViOiBDYWxsIEFwcGxlIHNldF9v
+cyBwcm90b2NvbCBvbiBkdWFsIEdQVSBJbnRlbCBNYWNzDQo+IA0KPiBBcmQgQmllc2hldXZlbCAo
+MSk6DQo+ICBlZmlzdHViL3g4NjogRW5hYmxlIFNNQklPUyBwcm90b2NvbCBoYW5kbGluZyBmb3Ig
+eDg2DQo+IA0KPiBkcml2ZXJzL2Zpcm13YXJlL2VmaS9saWJzdHViL01ha2VmaWxlICAgfCAgMiAr
+LQ0KPiBkcml2ZXJzL2Zpcm13YXJlL2VmaS9saWJzdHViL3NtYmlvcy5jICAgfCA0MiArKysrKysr
+Ky0tLS0NCj4gZHJpdmVycy9maXJtd2FyZS9lZmkvbGlic3R1Yi94ODYtc3R1Yi5jIHwgNzIgKysr
+KysrKysrKysrKysrKysrKy0NCj4gaW5jbHVkZS9saW51eC9lZmkuaCAgICAgICAgICAgICAgICAg
+ICAgIHwgIDEgKw0KPiA0IGZpbGVzIGNoYW5nZWQsIDk4IGluc2VydGlvbnMoKyksIDE5IGRlbGV0
+aW9ucygtKQ0KPiANCj4gLS0NCj4gMi40NS4yLjgwMy5nNGUxYjE0MjQ3YS1nb29nDQo+IA0K
 
