@@ -1,194 +1,114 @@
-Return-Path: <linux-kernel+bounces-237070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B921891EAB4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 00:06:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1CB891EAB6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 00:09:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D779283CBC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 22:06:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 688D9283DAB
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 22:09:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D95171E4B;
-	Mon,  1 Jul 2024 22:06:21 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A250B16F84D;
+	Mon,  1 Jul 2024 22:09:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GeL6kUYg"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CFB67C086
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 22:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC924F602
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 22:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719871580; cv=none; b=MSWbyv6tuocbLrFQDtb4YPI1QiVLlO9MjDgzHgsicBHdqY6qUBpJoDHAus9C6p9trM1KwFkEBABocxoqifmY9PEMGktFantrkNoiChiSkH1tyEAzHdqcWdYMmfCDPwUhVIZtMnHdbi4jRWXldUedJnwCila9hK/+quR8h8qTVwA=
+	t=1719871778; cv=none; b=ABaqxkloGh1zJpjT2upnjOkIIKlRGCdIBNqrBTTCYlEvN/W3JD1F9SVM0Y5TroxnGTiPmLsQi9qPb34d4/qwkRj2SrnJO/aNDicXUBVUhainG9V2Gib/UOckLy6o9Y5sJDAmoN9zh/dIHGSyVZdA5fBQu5N4ZCeSQAlCLzb5nzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719871580; c=relaxed/simple;
-	bh=/amQ3zaG0Voaax8MZ6Awgi9QGC3fLvJuYy3bJyQOMh8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=gnV7NM4G/hRkuYKhQCu7aLYYE+yui2XvqQ6O6eDFKIElXYH61MP1nmmJYHSqJ6K32UmcEq268n+A7D4eXwyT+39FTU/d4nj0CICBItAdoWUL9JobGldRC96B1qH5HlipcQ6qpqQbXup55TiXqjdnY4AWLUCKIZurNT6i6L82LPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7f4e270277cso306971639f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 15:06:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719871578; x=1720476378;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pK4372I5RZBtND3R4f8EVsxKlmv2omYFokbpeIbDVLc=;
-        b=FxOpdMR+J8XeIt69frir40zgnAIKEIN3gn1uahQa8t3T+eU1g8R4zcH0tzRXXDgQaD
-         WOwXqJm9yyUkkJUGI3Gd2b0IQerv+yTI9GmOiWnDyk8KOIU+1OIpp+n51Z3gNsh8eh/Y
-         /1UuE0slKllm+DJNFp0BxPHNOfRRXahCNNwnArFiZso+zaJqpDbo1xlIVwmHvjdQ7z3P
-         nsCs8GCZtPpWEeJiG+HHJ7Hkuiq9DyN3ziCB2UWIPxgpCk9KoYyj+7EKhvUDazl8GX3r
-         IfGmflAMhVK/Vomj9JiN8EVo0Orf3zWQkmgPK1S1VYEe2T4JGmuZfvsalMhR2fes/BWL
-         9WnA==
-X-Forwarded-Encrypted: i=1; AJvYcCW3BKlo8NADwQru7QKES0UwaCVQOgukhKTl/Kw/ijk19NifwfjtP9zufXvQIy0Sy2SUd9unZdaZ3UyxiHThezVUMZALTKOkSTg0+KZb
-X-Gm-Message-State: AOJu0YyJMIMR3HrXAWJ3TFTj2ML8CBYz86+4uwpjMlNlIqYMF9YMa2nw
-	OTFroXSbJQxAXoVou8eIB65WIVU2lmnMzTKG3bghpiM3VetyCafUB/jrHKxy131UU3KdSPIciOm
-	URO7ga4OF8714q7dbh4vVjq8wcIucoQfhAOUeAiYYWmvO4XckW7pf9LQ=
-X-Google-Smtp-Source: AGHT+IEy2Ao1feR4CNno+aEAC9qWbhnOOwQH9ujAypDFvcvVEvsLzIWNCRRoSsbwGY42/nss4LyApOIjk0Rh5aOEu+SumhtIwFvW
+	s=arc-20240116; t=1719871778; c=relaxed/simple;
+	bh=2U270ZnKbvvmn+Vv/Z1WUHk369WD8K9S7H2lKnDv9j0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cmz5rIqcM7kYOtR3I7KPxca1LPjyxeRaf42W3NbFWmguB2oWUgnkbQvzvoEYL4kSZ9+J4yW2VkQ62R/gcd1cBMrYLxMkNr34t+BdS/ckfiyxM9hBpzV9KorQdIwh2bXvDOR+N+/TsZidmr2IdEdDwgmcj2/Sb6Ve0PjZfMsiMWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GeL6kUYg; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 461JB8v2016199;
+	Mon, 1 Jul 2024 22:09:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=u3R9n/+0laa6Ph7ZHAds6e9tCONEwcE+ARW1fcbSQcM=; b=Ge
+	L6kUYg7Gg/YBmORvVuAvwVS1MZgAsCMigt9Gp26mYhrmxMmIizjJiorv2gKa5SO1
+	yM0L7iZmfbOU/IeoqfaLRsfuwInEQZLWFIp611w0pBBu7iu9M0DZCyExtA+Om7Ji
+	pHjNuVLzR7OUgXJB3Akvc8caED6yEAj45qbiE51lkPwHF88qmF69qsFWk/SqHZBt
+	AB8IQC7bq4hX3FUQSbTsiLpAQF50vsafTxhl3ze8RiJ1CpKZ4YiWebxLz48HsZt1
+	yK3p9uFhO04CWQw89w44eIJd5h3sbqEInicIwL0V4iTeFSyy7vXisdfhrywugSAG
+	busr3hXFLOClXNKi6O+g==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4029kh5ghn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 01 Jul 2024 22:09:32 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 461M9UeT013520
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 1 Jul 2024 22:09:30 GMT
+Received: from zijuhu-gv.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 1 Jul 2024 15:09:29 -0700
+From: Zijun Hu <quic_zijuhu@quicinc.com>
+To: <gregkh@linuxfoundation.org>, <rafael@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, Zijun Hu <quic_zijuhu@quicinc.com>
+Subject: [PATCH v3] devres: Initialize a uninitialized struct member
+Date: Tue, 2 Jul 2024 06:09:25 +0800
+Message-ID: <1719871765-14774-1-git-send-email-quic_zijuhu@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:b710:0:b0:376:2246:3b4b with SMTP id
- e9e14a558f8ab-37cbadfbd49mr2906965ab.1.1719871578161; Mon, 01 Jul 2024
- 15:06:18 -0700 (PDT)
-Date: Mon, 01 Jul 2024 15:06:18 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000079d168061c36ce83@google.com>
-Subject: [syzbot] [bpf?] [net?] stack segment fault in dev_hash_map_redirect
-From: syzbot <syzbot+c1e04a422bbc0f0f2921@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, davem@davemloft.net, eddyz87@gmail.com, 
-	haoluo@google.com, hawk@kernel.org, john.fastabend@gmail.com, 
-	jolsa@kernel.org, kpsingh@kernel.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, martin.lau@linux.dev, netdev@vger.kernel.org, 
-	sdf@fomichev.me, song@kernel.org, syzkaller-bugs@googlegroups.com, 
-	yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: cg2jY4UHFiDnOA4AH0EE1MlitszQmjtt
+X-Proofpoint-ORIG-GUID: cg2jY4UHFiDnOA4AH0EE1MlitszQmjtt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-01_21,2024-07-01_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=806
+ priorityscore=1501 suspectscore=0 adultscore=0 mlxscore=0 clxscore=1015
+ malwarescore=0 bulkscore=0 spamscore=0 impostorscore=0 lowpriorityscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407010165
 
-Hello,
+Initialize an uninitialized struct member for driver API
+devres_open_group().
 
-syzbot found the following issue on:
-
-HEAD commit:    74564adfd352 Add linux-next specific files for 20240701
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=163a0f1e980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=111e4e0e6fbde8f0
-dashboard link: https://syzkaller.appspot.com/bug?extid=c1e04a422bbc0f0f2921
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/04b8d7db78fb/disk-74564adf.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d996f4370003/vmlinux-74564adf.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/6e7e630054e7/bzImage-74564adf.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c1e04a422bbc0f0f2921@syzkaller.appspotmail.com
-
-Oops: stack segment: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 1 UID: 0 PID: 12368 Comm: syz.0.2084 Not tainted 6.10.0-rc6-next-20240701-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-RIP: 0010:bpf_net_ctx_get_ri include/linux/filter.h:788 [inline]
-RIP: 0010:__bpf_xdp_redirect_map include/linux/filter.h:1672 [inline]
-RIP: 0010:dev_hash_map_redirect+0x64/0x620 kernel/bpf/devmap.c:1027
-Code: 00 48 89 d8 48 c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 0f 9c 3d 00 48 8b 03 48 89 44 24 08 48 8d 58 38 48 89 dd 48 c1 ed 03 <42> 0f b6 44 3d 00 84 c0 0f 85 f5 03 00 00 44 8b 33 44 89 f6 83 e6
-RSP: 0018:ffffc900108f7958 EFLAGS: 00010202
-RAX: 0000000000000000 RBX: 0000000000000038 RCX: 0000000000040000
-RDX: ffffc90009834000 RSI: 00000000000001b9 RDI: 00000000000001ba
-RBP: 0000000000000007 R08: 0000000000000007 R09: ffffffff81b5e80f
-R10: 0000000000000004 R11: ffff888068e5da00 R12: 0000000000000008
-R13: 00000000108f79b0 R14: 0000000000000000 R15: dffffc0000000000
-FS:  00007fb7f29dc6c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 0000000078d4a000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- bpf_prog_ec9efaa32d58ce69+0x56/0x5a
- __bpf_prog_run include/linux/filter.h:691 [inline]
- bpf_prog_run_xdp include/net/xdp.h:514 [inline]
- tun_build_skb drivers/net/tun.c:1711 [inline]
- tun_get_user+0x3321/0x4560 drivers/net/tun.c:1819
- tun_chr_write_iter+0x113/0x1f0 drivers/net/tun.c:2048
- new_sync_write fs/read_write.c:497 [inline]
- vfs_write+0xa72/0xc90 fs/read_write.c:590
- ksys_write+0x1a0/0x2c0 fs/read_write.c:643
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fb7f1b7471f
-Code: 89 54 24 18 48 89 74 24 10 89 7c 24 08 e8 29 8c 02 00 48 8b 54 24 18 48 8b 74 24 10 41 89 c0 8b 7c 24 08 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 31 44 89 c7 48 89 44 24 08 e8 7c 8c 02 00 48
-RSP: 002b:00007fb7f29dc010 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007fb7f1d03fa0 RCX: 00007fb7f1b7471f
-RDX: 000000000000003a RSI: 0000000020000000 RDI: 00000000000000c8
-RBP: 00007fb7f1bf677e R08: 0000000000000000 R09: 0000000000000000
-R10: 000000000000003a R11: 0000000000000293 R12: 0000000000000000
-R13: 000000000000000b R14: 00007fb7f1d03fa0 R15: 00007ffc3bd4c628
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:bpf_net_ctx_get_ri include/linux/filter.h:788 [inline]
-RIP: 0010:__bpf_xdp_redirect_map include/linux/filter.h:1672 [inline]
-RIP: 0010:dev_hash_map_redirect+0x64/0x620 kernel/bpf/devmap.c:1027
-Code: 00 48 89 d8 48 c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 0f 9c 3d 00 48 8b 03 48 89 44 24 08 48 8d 58 38 48 89 dd 48 c1 ed 03 <42> 0f b6 44 3d 00 84 c0 0f 85 f5 03 00 00 44 8b 33 44 89 f6 83 e6
-RSP: 0018:ffffc900108f7958 EFLAGS: 00010202
-RAX: 0000000000000000 RBX: 0000000000000038 RCX: 0000000000040000
-RDX: ffffc90009834000 RSI: 00000000000001b9 RDI: 00000000000001ba
-RBP: 0000000000000007 R08: 0000000000000007 R09: ffffffff81b5e80f
-R10: 0000000000000004 R11: ffff888068e5da00 R12: 0000000000000008
-R13: 00000000108f79b0 R14: 0000000000000000 R15: dffffc0000000000
-FS:  00007fb7f29dc6c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 0000000078d4a000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	00 48 89             	add    %cl,-0x77(%rax)
-   3:	d8 48 c1             	fmuls  -0x3f(%rax)
-   6:	e8 03 42 80 3c       	call   0x3c80420e
-   b:	38 00                	cmp    %al,(%rax)
-   d:	74 08                	je     0x17
-   f:	48 89 df             	mov    %rbx,%rdi
-  12:	e8 0f 9c 3d 00       	call   0x3d9c26
-  17:	48 8b 03             	mov    (%rbx),%rax
-  1a:	48 89 44 24 08       	mov    %rax,0x8(%rsp)
-  1f:	48 8d 58 38          	lea    0x38(%rax),%rbx
-  23:	48 89 dd             	mov    %rbx,%rbp
-  26:	48 c1 ed 03          	shr    $0x3,%rbp
-* 2a:	42 0f b6 44 3d 00    	movzbl 0x0(%rbp,%r15,1),%eax <-- trapping instruction
-  30:	84 c0                	test   %al,%al
-  32:	0f 85 f5 03 00 00    	jne    0x42d
-  38:	44 8b 33             	mov    (%rbx),%r14d
-  3b:	44 89 f6             	mov    %r14d,%esi
-  3e:	83                   	.byte 0x83
-  3f:	e6                   	.byte 0xe6
-
-
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+V3: Correct mail address
+V2: Simplify fix by use = instead of memset() and commit message
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Previous discussion link:
+https://lore.kernel.org/lkml/1718629765-32720-1-git-send-email-quic_zijuhu@quicinc.com/
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+ drivers/base/devres.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+diff --git a/drivers/base/devres.c b/drivers/base/devres.c
+index 3df0025d12aa..3beedeaa0ffc 100644
+--- a/drivers/base/devres.c
++++ b/drivers/base/devres.c
+@@ -567,6 +567,7 @@ void * devres_open_group(struct device *dev, void *id, gfp_t gfp)
+ 	grp->id = grp;
+ 	if (id)
+ 		grp->id = id;
++	grp->color = 0;
+ 
+ 	spin_lock_irqsave(&dev->devres_lock, flags);
+ 	add_dr(dev, &grp->node[0]);
+-- 
+2.7.4
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
