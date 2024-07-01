@@ -1,47 +1,73 @@
-Return-Path: <linux-kernel+bounces-237102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7463191EB5B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 01:32:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E1FC91EB5D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 01:37:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A656E1C21E20
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 23:32:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97DE6B2196E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 23:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3ED3172BCC;
-	Mon,  1 Jul 2024 23:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B2E172BBA;
+	Mon,  1 Jul 2024 23:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T7zaLcu9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FoDh8gRj"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86222F29;
-	Mon,  1 Jul 2024 23:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA692F29;
+	Mon,  1 Jul 2024 23:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719876760; cv=none; b=ahz8YDmaidJK8Z3R3+elz3k75bshGPwrYpqYDeJgiIFqNwf7hmE82nHlNmzyybVTNCdw2DD7HNYPlyL5m6qYu/CVrtHi/PsbARu+2k+yfoxCilUrUgFDZPjL1d7dmjPJwQ0Da9SJRMDUaRaZ8t0Ddpw44DLerLyrwQSB1n8ElnY=
+	t=1719877052; cv=none; b=ohlmqbmeed1NFlvLSi7v1AMwkrC2PdNmJY1nH3hwh5gX/XTItWfWaxyi+SZTQHZoFYD71crMmzXgMosF9Ydp95DIYF6MRDD/T2+zu27CIccog//ZiyPsIRIuE/TIMu4Ah0oo16U6cXMc39Do0XBBfDBbdZvb9mBioaevxISWRAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719876760; c=relaxed/simple;
-	bh=QzziNSGKG9wOhMxJd38Ynxsrqkm6AIs2nSS0ifsTVog=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S693uPmBsHLWTtQHca9apXE2VoH5b8/1ASvxnpzuuooF4GHkqpYma3QqXjC9ot/sFIjlbSoXLZ/q870rxsGxtN6O94n1A4yjs6TNC3qgZl6QKo5jFgxj0ueL+SF0T0kP6jqwt8PYra/L1lVyaR/v9MsU30U2PYk8lb8kAfujx1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T7zaLcu9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3AFAC116B1;
-	Mon,  1 Jul 2024 23:32:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719876759;
-	bh=QzziNSGKG9wOhMxJd38Ynxsrqkm6AIs2nSS0ifsTVog=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=T7zaLcu9s5XC/DeDAErSiRbc6ErcdOdi6YtBox1oaQ8CvdieSQp08QD6Uqrbm5UFp
-	 apSNdEbMb08RteSKFwBhziX5XRIHZkPszZQSy3EjlE/kWzYSbCT3L2dqR74PAXve2T
-	 oQPO14h4BzFsyDItxEAJDjFodOFhbfUtrdBEBaOt+ex6L1Y1ZnwReg7mwQCtwe40hz
-	 ryhyZbFRsXamxXo6yMXIgrhz9DarV7SE2R3hMHR+9fevAv6Ew/fDrYArP5spqIxyO6
-	 EXIg9KOJdW6EQWb5xXJj9DgoWsI/gKmaqo8GArWxWhpiKcUzFjpUJMSlEy5zaZVmE0
-	 bhAPBhipApxrg==
-Message-ID: <a7b959ff-a041-4380-86dd-05cdbc11fab4@kernel.org>
-Date: Tue, 2 Jul 2024 02:32:32 +0300
+	s=arc-20240116; t=1719877052; c=relaxed/simple;
+	bh=NGznw/6tk2MYwtODVXtZggmSjcbrwXeOl93HZH/3O7M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=QkO0rP74PoPVJbhWOSGy9Sj0hQGgJChEup/xeJq1RwyeOmXMrk1GkdawPz3+39w6eAGGHVqgd/ObjB8F+Y7BlKNccgrJNqbVYLjNh8eS7Kw12yvLfu8C1+xl5SI9pUKQdwZS2UnGZDF6ils2hhrZK/yAmJAbYL9tGeT7E3hXWNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FoDh8gRj; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-361785bfa71so2535224f8f.2;
+        Mon, 01 Jul 2024 16:37:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719877049; x=1720481849; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=xvmT3TNt0Fdhi+g+gPYTR6CsT3eiKiWqFKv2tpAFT5E=;
+        b=FoDh8gRjvNa+xeME2hyPmSi//x1Ifh1qn4oGaGIBrMa19MqaM3JZP3OHoVIEv8caIR
+         I21DF4LjbMAnoSdcb7pxzdgwLAUPuQMfWXJBkRLbqN7hHl9qLoMnYN4pytg65oPpszFw
+         nGogBOsLq1mJP76j3Wrcp3pFWDWrTe02oQWhlH7mS4Vz2f/5w4TaQVcl9fWqxDjut+AS
+         TAKeoIJl1NnS93RzE2gQOPVxwFPFqaB1BxfwdzLJ5FR8uv0mtaxAzDY0u3Qra0sApUns
+         vZxi5dCnA8J1m+O2dQ3QTNgowKMHKy0kv3oOT8LP9coGj2wmdxmcbAwp0mzWSbF8ppZ5
+         uKyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719877049; x=1720481849;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xvmT3TNt0Fdhi+g+gPYTR6CsT3eiKiWqFKv2tpAFT5E=;
+        b=QTERaqJzSTycZI5zWRm5H1yW0r+6fFUZg9k8AcYBwcuAIsQM7ltTybTQdue3roQsPW
+         ZZ1F2XZr8Jk0bXtYn3sR374expMYEeho/tDJBmJssyu0JNCFU21pce3FsJyYDpODreep
+         52egzepU9c3KmFkf7sMgp1H9SoAKm/oQn8mFZGLLI1a2WjR1KGD4FDcNyJvRa7xQcvRl
+         m9LQf+VCG4NYu7aeWaCsdZpCxg1ZFQgNek7aZJFE/+omVwjXCDpg42u/EXZXTL/60E+R
+         YEd4Rw9e6bcmvw4wREJE6zynZ4kr4sl26BK5xTtBvV2YuCCduSZu8N2yvtkDj+vt0ICG
+         KkLw==
+X-Forwarded-Encrypted: i=1; AJvYcCVsoHxJ88YDUYPKclpy4RmgI4WqhfE1IupZS3ZYxuhe/uEcKPvZ6pz0m/ctKv/wMW9k/1iP8sfPs1RLhndQXwn4hZHnfgbOE3+xuIj8rQxqx+zgxN3ZomBfcgSTLNg1zCkSNYiBCsw=
+X-Gm-Message-State: AOJu0YwKSqIxSoCcllE3V94AQjsGjZWTywmWlDIVuWIpgZ86fKF3zYRW
+	S8jEPBfkIH4E3Cz8FUcjLGDL58F79F/sDrwcCtf7GCUekqrnFUyZ
+X-Google-Smtp-Source: AGHT+IHPFrvCMHljkF20XpweXAQN0HYEGI8aYZyCnYGxo76UEjRtnm8w5ItuLRMvPcn5FuLL6dlhKQ==
+X-Received: by 2002:a5d:5f91:0:b0:367:83e9:b4a5 with SMTP id ffacd0b85a97d-36783e9b614mr103057f8f.49.1719877048504;
+        Mon, 01 Jul 2024 16:37:28 -0700 (PDT)
+Received: from [192.168.42.238] ([148.252.146.204])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a102fd4sm11302073f8f.90.2024.07.01.16.37.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Jul 2024 16:37:28 -0700 (PDT)
+Message-ID: <67dfe3c3-091e-4b8d-a817-3d3594b1f0ef@gmail.com>
+Date: Tue, 2 Jul 2024 00:37:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,67 +75,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/4] interconnect: qcom: sc7280: enable QoS
- configuration
-To: Bjorn Andersson <andersson@kernel.org>,
- Odelu Kukatla <quic_okukatla@quicinc.com>
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Kees Cook <keescook@chromium.org>,
- cros-qcom-dts-watchers@chromium.org,
- "Gustavo A . R . Silva" <gustavoars@kernel.org>,
- linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org, quic_rlaggysh@quicinc.com,
- quic_mdtipton@quicinc.com
-References: <20240607173927.26321-1-quic_okukatla@quicinc.com>
- <20240607173927.26321-3-quic_okukatla@quicinc.com>
- <ciji6nlxn752ina4tmh6kwvek52nxpnguomqek6plwvwgvoqef@yrtexkpmn5br>
+Subject: Re: [syzbot] [io-uring?] WARNING in io_cqring_event_overflow (2)
+To: syzbot <syzbot+f7f9c893345c5c615d34@syzkaller.appspotmail.com>,
+ axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+References: <000000000000d82187061c35bef8@google.com>
 Content-Language: en-US
-From: Georgi Djakov <djakov@kernel.org>
-In-Reply-To: <ciji6nlxn752ina4tmh6kwvek52nxpnguomqek6plwvwgvoqef@yrtexkpmn5br>
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <000000000000d82187061c35bef8@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 1.07.24 19:42, Bjorn Andersson wrote:
-> On Fri, Jun 07, 2024 at 11:09:25PM GMT, Odelu Kukatla wrote:
->> Enable QoS configuration for master ports with predefined values
->> for priority and urgency forawrding.
->>
+On 7/1/24 21:50, syzbot wrote:
+> Hello,
 > 
-> This patch causes QCS6490 RB3Gen2 to hit a bus timeout and crash during
-> boot, unless the associated DeviceTree change (adding clocks) is
-> present.
+> syzbot found the following issue on:
 > 
-> The two patches are reaching linux-next, and hence mainline, through
-> different code paths we now have periods where rb3gen2 is not bootable.
-> But more importantly, devices with current .dtbs installed can not boot
-> the new kernel.
+> HEAD commit:    74564adfd352 Add linux-next specific files for 20240701
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=135c21d1980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=111e4e0e6fbde8f0
+> dashboard link: https://syzkaller.appspot.com/bug?extid=f7f9c893345c5c615d34
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 > 
+> Unfortunately, I don't have any reproducer for this issue yet.
 > 
-> It is not acceptable to introduce non-backwards compatible changes in
-> drivers (unless there's extraordinary reasons to do so).
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/04b8d7db78fb/disk-74564adf.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/d996f4370003/vmlinux-74564adf.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/6e7e630054e7/bzImage-74564adf.xz
 > 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+f7f9c893345c5c615d34@syzkaller.appspotmail.com
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 5145 at io_uring/io_uring.c:703 io_cqring_event_overflow+0x442/0x660 io_uring/io_uring.c:703
 
-Thanks for the report, Bjorn! The intent of the patches is to keep it
-backwards compatible. I think that the patch below should fix it.
-I'll try to validate it and get it merged.
+Makes sense, it needs locking around overflowing, will fix it
 
-BR,
-Georgi
 
--->8--
-diff --git a/drivers/interconnect/qcom/icc-rpmh.c b/drivers/interconnect/qcom/icc-rpmh.c
-index 93047defd5e2..487e562dbd22 100644
---- a/drivers/interconnect/qcom/icc-rpmh.c
-+++ b/drivers/interconnect/qcom/icc-rpmh.c
-@@ -311,7 +311,7 @@ int qcom_icc_rpmh_probe(struct platform_device *pdev)
-  		}
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 5145 Comm: kworker/0:4 Not tainted 6.10.0-rc6-next-20240701-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+> Workqueue: events io_fallback_req_func
+> RIP: 0010:io_cqring_event_overflow+0x442/0x660 io_uring/io_uring.c:703
+> Code: 0f 95 c0 48 83 c4 20 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc e8 ed ae ed fc 90 0f 0b 90 e9 c5 fc ff ff e8 df ae ed fc 90 <0f> 0b 90 e9 6e fc ff ff e8 d1 ae ed fc c6 05 f6 ea f3 0a 01 90 48
+> RSP: 0018:ffffc900040d7a08 EFLAGS: 00010293
+> RAX: ffffffff84a5cf11 RBX: 0000000000000000 RCX: ffff8880299bbc00
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: 0000000000000000 R08: ffffffff84a5cb74 R09: 0000000000000000
+> R10: dffffc0000000000 R11: ffffffff84a9f5d0 R12: ffff888021d0a000
+> R13: 0000000000000000 R14: ffff888021d0a000 R15: 0000000000000000
+> FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f4e669ff800 CR3: 000000002a360000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>   <TASK>
+>   __io_post_aux_cqe io_uring/io_uring.c:816 [inline]
+>   io_add_aux_cqe+0x27c/0x320 io_uring/io_uring.c:837
+>   io_msg_tw_complete+0x9d/0x4d0 io_uring/msg_ring.c:78
+>   io_fallback_req_func+0xce/0x1c0 io_uring/io_uring.c:256
+>   process_one_work kernel/workqueue.c:3224 [inline]
+>   process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3305
+>   worker_thread+0x86d/0xd40 kernel/workqueue.c:3383
+>   kthread+0x2f0/0x390 kernel/kthread.c:389
+>   ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:144
+>   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>   </TASK>
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
-  		qp->num_clks = devm_clk_bulk_get_all(qp->dev, &qp->clks);
--		if (qp->num_clks < 0) {
-+		if (qp->num_clks <= 0) {
-  			dev_info(dev, "Skipping QoS, failed to get clk: %d\n", qp->num_clks);
-  			goto skip_qos_config;
-  		}
+-- 
+Pavel Begunkov
 
