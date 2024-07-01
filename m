@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-236845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 249D991E7BD
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:37:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D29391E7BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:37:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D26872863FF
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:37:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC5851F21DF5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2AD16F8EF;
-	Mon,  1 Jul 2024 18:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15B816F0E4;
+	Mon,  1 Jul 2024 18:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h/ozxgse"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kIUprjZO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF6016F858;
-	Mon,  1 Jul 2024 18:36:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105BB16FF47;
+	Mon,  1 Jul 2024 18:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719859019; cv=none; b=ZZRkOXMuq/xMV7ZwZ0Zv+2+shSVtNAhmT+gvpSBPPPRT/DU0bpniH5VkQIS2z0nyouM45WG5Uv3XcV3e4NP2Fj4HkdTlE/WnTWIOIydUxIV+nOqlypArsZEzEDUYGzp9ni5UAfNF7n5eLB4Wn+bf5EVm72xktPyO2kDGfGC7aGc=
+	t=1719859024; cv=none; b=n1vZQBq8qU4pBWkqRRWqMcekkMSa7q2vjvsjPbGrLt7Odd9PvDVzOM1Y++bN9oi6ylrstJTUKrf0i26tmKJxIW+P6JjJXssVBCW8NIWD65Vh1NePU5/PO8DFwd1Au1mc9i89WJHtlrdKYDtXIWWoz9qRYEb315XT26xn90IbsCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719859019; c=relaxed/simple;
-	bh=rm8M/J0bYu0L+Ae9lzxK5fSlBMY0XQYEBrgyKIJ6aAU=;
+	s=arc-20240116; t=1719859024; c=relaxed/simple;
+	bh=tP2HDN4TTaXAnnWUMMPiix526ZI8EAisK4CECsr1ppc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=A53ei0oPhrpfuskKvoiCrFoHqAqbDwgRjfcEf5xzfeNN7dk7mk2ZUTYMmZRgVkV9C3mA+z236Fwtpm7NOtj1/PUdW6azLZ+J/a257ytNJUSYFZUc3kFUhaYUW3syz8/ZV4jiIkIuTtHEF7+KuKl7SBQNkYK7IXrgpsdwq3O0iyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h/ozxgse; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BF93C116B1;
-	Mon,  1 Jul 2024 18:36:55 +0000 (UTC)
+	 MIME-Version; b=gioZYe8ZG7WsoucDmlpZX94ORTuINsdGm3BE2oxV/E9BNloq7CBB3M4P//Ben0mGq5w7l1ImYugIOkadm8LqcxGPVyipfJ2Bcsb8si6i7xEoTQqacyb5fuKh2DtjpOvknEum6Hzg1roc6sBu6CWSJIm4wjlgPLZ3vRedn1RORQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kIUprjZO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4B17C4AF0A;
+	Mon,  1 Jul 2024 18:36:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719859019;
-	bh=rm8M/J0bYu0L+Ae9lzxK5fSlBMY0XQYEBrgyKIJ6aAU=;
+	s=k20201202; t=1719859023;
+	bh=tP2HDN4TTaXAnnWUMMPiix526ZI8EAisK4CECsr1ppc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=h/ozxgseXMekCcRSxI2x+cLzbgHBCb6CG0o7zxQwoNmyxk9yXucEQTDkx7zjcRJI/
-	 wYTEL9wej3+Ceqndq2VkRUZ1ETsjVhh52x4dl4/egKPcUeQ/jhr0cHIKAnDKh8EAVT
-	 gUHD33OmfHxoiq4UjVSWuMgLz4vyTsjE8PEqnsGmidzJO5SKrzfanQtjhqNwXLD/MB
-	 LUv+3fStNPXOwTo7ZY7EPCwHDJPc7dal+WCLJEOLLirLu00Q2CIpaA197HSrjQxoRd
-	 CPboo+OD5ShIBhU9s6f7dLKIR+xtM3JwXRFJ5CaaFvgPowTxZHNC17cEN7QffJce54
-	 +x1b2/fmnPxkQ==
+	b=kIUprjZO8piOWDu2TFZ1/ng5KmWLRXlQTziabtx1lcJ/Qax6DeJlUTcj6POglNAnH
+	 r+aJEwf/rXbwfzHJL+5tMi9QxnAVetsqvyaQU0mwvHYy9DO2fpzBm+DKzCFZ6PM/D6
+	 A7enPIRZOzpUMDqc4Ojur9hdIITkzutXGhkcWAoCmzBqh1uKwT5KB987K+796qlTW4
+	 ISHVn6334vZB8wSUfMbmW8cE8mOcu8MrDtHXikoWMZrHij0hjaMliPKUGT8O1lj7kD
+	 FkXUhQ4YfwZlG0cuyMrJEKfl612CGUD35n5On6jViAgFvJEyoGAlt1C6p4uHTQa9x6
+	 tBIY9dPBiDggA==
 From: Miguel Ojeda <ojeda@kernel.org>
 To: Miguel Ojeda <ojeda@kernel.org>,
 	Wedson Almeida Filho <wedsonaf@gmail.com>,
@@ -52,10 +52,14 @@ Cc: Boqun Feng <boqun.feng@gmail.com>,
 	Alice Ryhl <aliceryhl@google.com>,
 	rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: [PATCH 03/13] rust: allow `dead_code` for never constructed bindings
-Date: Mon,  1 Jul 2024 20:36:13 +0200
-Message-ID: <20240701183625.665574-4-ojeda@kernel.org>
+	patches@lists.linux.dev,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	linux-kbuild@vger.kernel.org
+Subject: [PATCH 04/13] rust: relax most deny-level lints to warnings
+Date: Mon,  1 Jul 2024 20:36:14 +0200
+Message-ID: <20240701183625.665574-5-ojeda@kernel.org>
 In-Reply-To: <20240701183625.665574-1-ojeda@kernel.org>
 References: <20240701183625.665574-1-ojeda@kernel.org>
 Precedence: bulk
@@ -66,64 +70,94 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Starting with the upcoming Rust 1.80.0 (since upstream commit 35130d7233e9
-("Detect pub structs never constructed and unused associated constants
-in traits")), the `dead_code` pass detects more cases, which triggers
-in the `bindings` crate:
+Since we are starting to support several Rust toolchains, lints (including
+Clippy ones) now may behave differently and lint groups may include
+new lints.
 
-    warning: struct `boot_params` is never constructed
-        --> rust/bindings/bindings_generated.rs:10684:12
-        |
-    10684 | pub struct boot_params {
-        |            ^^^^^^^^^^^
-        |
-        = note: `#[warn(dead_code)]` on by default
+Therefore, to maximize the chances a given version works, relax some
+deny-level lints to warnings. It may also make our lives a bit easier
+while developing new code or refactoring.
 
-As well as in the `uapi` one:
+To be clear, the requirements for in-tree code are still the same, since
+Rust code still needs to be warning-free (patches should be clean under
+`WERROR=y`) and the set of lints is not changed.
 
-    warning: struct `boot_params` is never constructed
-        --> rust/uapi/uapi_generated.rs:10392:12
-        |
-    10392 | pub struct boot_params {
-        |            ^^^^^^^^^^^
-        |
-        = note: `#[warn(dead_code)]` on by default
+`unsafe_op_in_unsafe_fn` is left unmodified, i.e. as an error, since
+1) it is simple enough that it should not have false positives (unlike
+e.g. `rust_2018_idioms`'s `explicit_outlives_requirements`) and 2) it is
+becoming the default in the language (warn-by-default in Rust 2024 [1] and
+ideally an error later on) and thus it should also be very well tested.
 
-These are all expected, since we do not use all the structs in the
-bindings that `bindgen` generates from the C headers.
-
-Therefore, allow them.
-
+Link: https://github.com/rust-lang/rust/pull/112038 [1]
 Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 ---
- rust/bindings/lib.rs | 1 +
- rust/uapi/lib.rs     | 1 +
- 2 files changed, 2 insertions(+)
+ Makefile      | 22 +++++++++++-----------
+ rust/Makefile |  4 ++--
+ 2 files changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/rust/bindings/lib.rs b/rust/bindings/lib.rs
-index 40ddaee50d8b..93a1a3fc97bc 100644
---- a/rust/bindings/lib.rs
-+++ b/rust/bindings/lib.rs
-@@ -24,6 +24,7 @@
-     unsafe_op_in_unsafe_fn
- )]
+diff --git a/Makefile b/Makefile
+index 4d36f943b3b1..056176a55d63 100644
+--- a/Makefile
++++ b/Makefile
+@@ -461,17 +461,17 @@ KBUILD_USERLDFLAGS := $(USERLDFLAGS)
+ # host programs.
+ export rust_common_flags := --edition=2021 \
+ 			    -Zbinary_dep_depinfo=y \
+-			    -Dunsafe_op_in_unsafe_fn -Drust_2018_idioms \
+-			    -Dunreachable_pub -Dnon_ascii_idents \
++			    -Dunsafe_op_in_unsafe_fn -Wrust_2018_idioms \
++			    -Wunreachable_pub -Wnon_ascii_idents \
+ 			    -Wmissing_docs \
+-			    -Drustdoc::missing_crate_level_docs \
+-			    -Dclippy::correctness -Dclippy::style \
+-			    -Dclippy::suspicious -Dclippy::complexity \
+-			    -Dclippy::perf \
+-			    -Dclippy::let_unit_value -Dclippy::mut_mut \
+-			    -Dclippy::needless_bitwise_bool \
+-			    -Dclippy::needless_continue \
+-			    -Dclippy::no_mangle_with_rust_abi \
++			    -Wrustdoc::missing_crate_level_docs \
++			    -Wclippy::correctness -Wclippy::style \
++			    -Wclippy::suspicious -Wclippy::complexity \
++			    -Wclippy::perf \
++			    -Wclippy::let_unit_value -Wclippy::mut_mut \
++			    -Wclippy::needless_bitwise_bool \
++			    -Wclippy::needless_continue \
++			    -Wclippy::no_mangle_with_rust_abi \
+ 			    -Wclippy::dbg_macro
  
-+#[allow(dead_code)]
- mod bindings_raw {
-     // Use glob import here to expose all helpers.
-     // Symbols defined within the module will take precedence to the glob import.
-diff --git a/rust/uapi/lib.rs b/rust/uapi/lib.rs
-index 0caad902ba40..80a00260e3e7 100644
---- a/rust/uapi/lib.rs
-+++ b/rust/uapi/lib.rs
-@@ -14,6 +14,7 @@
- #![cfg_attr(test, allow(unsafe_op_in_unsafe_fn))]
- #![allow(
-     clippy::all,
-+    dead_code,
-     missing_docs,
-     non_camel_case_types,
-     non_upper_case_globals,
+ KBUILD_HOSTCFLAGS   := $(KBUILD_USERHOSTCFLAGS) $(HOST_LFS_CFLAGS) $(HOSTCFLAGS)
+@@ -573,7 +573,7 @@ KBUILD_RUSTFLAGS := $(rust_common_flags) \
+ 		    -Csymbol-mangling-version=v0 \
+ 		    -Crelocation-model=static \
+ 		    -Zfunction-sections=n \
+-		    -Dclippy::float_arithmetic
++		    -Wclippy::float_arithmetic
+ 
+ KBUILD_AFLAGS_KERNEL :=
+ KBUILD_CFLAGS_KERNEL :=
+diff --git a/rust/Makefile b/rust/Makefile
+index f70d5e244fee..4c03e53d3084 100644
+--- a/rust/Makefile
++++ b/rust/Makefile
+@@ -421,7 +421,7 @@ ifneq ($(or $(CONFIG_ARM64),$(and $(CONFIG_RISCV),$(CONFIG_64BIT))),)
+ endif
+ 
+ $(obj)/core.o: private skip_clippy = 1
+-$(obj)/core.o: private skip_flags = -Dunreachable_pub
++$(obj)/core.o: private skip_flags = -Wunreachable_pub
+ $(obj)/core.o: private rustc_objcopy = $(foreach sym,$(redirect-intrinsics),--redefine-sym $(sym)=__rust$(sym))
+ $(obj)/core.o: private rustc_target_flags = $(core-cfgs)
+ $(obj)/core.o: $(RUST_LIB_SRC)/core/src/lib.rs FORCE
+@@ -435,7 +435,7 @@ $(obj)/compiler_builtins.o: $(src)/compiler_builtins.rs $(obj)/core.o FORCE
+ 	+$(call if_changed_dep,rustc_library)
+ 
+ $(obj)/alloc.o: private skip_clippy = 1
+-$(obj)/alloc.o: private skip_flags = -Dunreachable_pub
++$(obj)/alloc.o: private skip_flags = -Wunreachable_pub
+ $(obj)/alloc.o: private rustc_target_flags = $(alloc-cfgs)
+ $(obj)/alloc.o: $(RUST_LIB_SRC)/alloc/src/lib.rs $(obj)/compiler_builtins.o FORCE
+ 	+$(call if_changed_dep,rustc_library)
 -- 
 2.45.2
 
