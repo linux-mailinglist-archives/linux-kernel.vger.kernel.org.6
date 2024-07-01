@@ -1,125 +1,120 @@
-Return-Path: <linux-kernel+bounces-236079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75ED391DD2D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:56:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9576A91DD3B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:57:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39283281EC4
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:56:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4941A1F23556
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243D713D24D;
-	Mon,  1 Jul 2024 10:55:59 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2956313C80C;
+	Mon,  1 Jul 2024 10:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eeNxvYmV"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97E112C52E;
-	Mon,  1 Jul 2024 10:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D24C139CFE;
+	Mon,  1 Jul 2024 10:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719831358; cv=none; b=WFT+f50wxE8O1TJgtMJntbLyfzWjEkRd9j2aURJeeQX4yPcAQs28hR82zZJ2ER4gEDL/NF0gX0nD9T4H6loD/ICoYZEW8OFxJI49jY0BaHsoUP05YrWfolgEeirHGHAZSIjTC7bBy/9WrC6KvYzNDT/N8GAlLtotyb9uVEy2L00=
+	t=1719831441; cv=none; b=eD9+gmbQdZvSwCUOPYknRThf7oY9zZw4CFVXX7cKYLI1H8l/M31302vJARMP4holFLRe2KFIIQL+WtGnXpIHR7loSu8Hx1tOiSTshQ2qnnVHWsq8i42Iz4SNpmomEj28WGqHoutmscbSPamAWEoIM0SAi3MFC+o1FYuGumeXDv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719831358; c=relaxed/simple;
-	bh=QFvDw9N2Wh6HvHYkoYHsnmLrRrXdVnhx1uIqJJG9huc=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rF66RI7BAqE+lc8ccy/kEtiwDz3U2QAwnN3lbUhrtgd5iBbcyurNxG0dtjtL5Y8zcF7PNbvVzjrTyCbyy8QEY30B6PT+/TMELlW4VzUsJlDrIWUdj0jl0BPfHFkUf9iyvbmzUZE1FFOyKvfkcU4soBs3zCQC+xLqJeGf+Aa9HnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WCNGl1CJ2z6K60r;
-	Mon,  1 Jul 2024 18:54:55 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3CFEE1408F9;
-	Mon,  1 Jul 2024 18:55:52 +0800 (CST)
-Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 1 Jul
- 2024 11:55:51 +0100
-Date: Mon, 1 Jul 2024 11:55:50 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Shradha Todi <shradha.t@samsung.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<manivannan.sadhasivam@linaro.org>, <lpieralisi@kernel.org>, <kw@linux.com>,
-	<robh@kernel.org>, <bhelgaas@google.com>, <jingoohan1@gmail.com>,
-	<fancer.lancer@gmail.com>, <yoshihiro.shimoda.uh@renesas.com>,
-	<conor.dooley@microchip.com>, <pankaj.dubey@samsung.com>,
-	<gost.dev@samsung.com>
-Subject: Re: [PATCH 1/3] PCI: dwc: Add support for vendor specific
- capability search
-Message-ID: <20240701115550.00004200@Huawei.com>
-In-Reply-To: <20240625093813.112555-2-shradha.t@samsung.com>
-References: <20240625093813.112555-1-shradha.t@samsung.com>
-	<CGME20240625094438epcas5p2760f4d1537d86541940177543cea5aa8@epcas5p2.samsung.com>
-	<20240625093813.112555-2-shradha.t@samsung.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1719831441; c=relaxed/simple;
+	bh=JiofziG/xZtlyqRXDAzYHGYGfhs54iVEkwzYJYFNDjc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FsPMWQLqTc47Tfsu1QNgYBa3m+F0I9QeFafDD+byyg1RmHJBUeri+nwlaBk9cRR9ZEeh9Vz3aMAgrxHxu3mE8RUiKwgt9SUFHscNKUPzPTadmVeL9iJLCZNae2UW2XtMj7xgLPGNJtrW1YBIddw8c3qXaIvyGl45rPsUqiTNH6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eeNxvYmV; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 461AurGk031543;
+	Mon, 1 Jul 2024 10:57:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=J
+	iofziG/xZtlyqRXDAzYHGYGfhs54iVEkwzYJYFNDjc=; b=eeNxvYmVyDSH150XC
+	f/O+mGpnMsGveiSOxRyoT8SIAtODQYWqaS5FoBg9TEncUR0BTxsdOtZFpss8/WW4
+	DSj52UCHu+xpnZE5TKZt2HW/LjRmJ6kHIVZ1Q+e4T9biM1+0Ac4qt5aUXlN8+fAW
+	Oro+Ts/RWnsQ/9oWg7k6TfrJwrp31gnFY2gkWjlTJggc8tSTJard4E+TrZusHIFI
+	2QwgKiwmnZ7gYpPANR+2B/6THuKmsKpPA4gcZI3TuJtr3yj1WHajhANW7WEYKav8
+	LaezD0B3Rd05FToiciRy9VpTqQfm+8zfIzCeAdmR9BMw1tpWSwNCmWYbO6Y7fvbQ
+	tQ7IA==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 403tqv81r1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 01 Jul 2024 10:57:17 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4619USAE024091;
+	Mon, 1 Jul 2024 10:57:16 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 402ya36dv6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 01 Jul 2024 10:57:16 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 461AvCZD26739442
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 1 Jul 2024 10:57:14 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AF8695804B;
+	Mon,  1 Jul 2024 10:57:12 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 57F575805B;
+	Mon,  1 Jul 2024 10:57:10 +0000 (GMT)
+Received: from [9.171.47.124] (unknown [9.171.47.124])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  1 Jul 2024 10:57:10 +0000 (GMT)
+Message-ID: <2c2655ad-2a2a-4180-8a31-828a7531af1b@linux.ibm.com>
+Date: Mon, 1 Jul 2024 12:57:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] s390/dasd: add missing MODULE_DESCRIPTION() macros
+To: Jeff Johnson <quic_jjohnson@quicinc.com>,
+        Jan Hoeppner <hoeppner@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev
+ <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <20240615-md-s390-drivers-s390-block-dasd-v1-1-36b200f14344@quicinc.com>
+Content-Language: en-US
+From: Stefan Haberland <sth@linux.ibm.com>
+In-Reply-To: <20240615-md-s390-drivers-s390-block-dasd-v1-1-36b200f14344@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: D1xLR7T2PHM2C2vUe5sHmreK7F05PUyp
+X-Proofpoint-ORIG-GUID: D1xLR7T2PHM2C2vUe5sHmreK7F05PUyp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-01_09,2024-06-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ priorityscore=1501 mlxscore=0 lowpriorityscore=0 spamscore=0 clxscore=1011
+ phishscore=0 adultscore=0 impostorscore=0 suspectscore=0 bulkscore=0
+ mlxlogscore=829 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407010084
 
-On Tue, 25 Jun 2024 15:08:11 +0530
-Shradha Todi <shradha.t@samsung.com> wrote:
-
-> Add vendor specific extended configuration space capability search API
-> using struct dw_pcie pointer for DW controllers.
-> 
-> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
+Am 16.06.24 um 04:19 schrieb Jeff Johnson:
+> With ARCH=s390, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/s390/block/dasd_diag_mod.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/s390/block/dasd_eckd_mod.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/s390/block/dasd_fba_mod.o
+>
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 > ---
->  drivers/pci/controller/dwc/pcie-designware.c | 16 ++++++++++++++++
->  drivers/pci/controller/dwc/pcie-designware.h |  1 +
->  2 files changed, 17 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> index 250cf7f40b85..b74e4a97558e 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> @@ -275,6 +275,22 @@ static u16 dw_pcie_find_next_ext_capability(struct dw_pcie *pci, u16 start,
->  	return 0;
->  }
->  
-> +u16 dw_pcie_find_vsec_capability(struct dw_pcie *pci, u8 vsec_cap)
-> +{
-> +	u16 vsec = 0;
-> +	u32 header;
-> +
-> +	while ((vsec = dw_pcie_find_next_ext_capability(pci, vsec,
-> +					PCI_EXT_CAP_ID_VNDR))) {
 
-Trivial but one more set of outer brackets than makes sense here.
-
-> +		header = dw_pcie_readl_dbi(pci, vsec + PCI_VNDR_HEADER);
-> +		if (PCI_VNDR_HEADER_ID(header) == vsec_cap)
-> +			return vsec;
-> +	}
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(dw_pcie_find_vsec_capability);
-> +
->  u16 dw_pcie_find_ext_capability(struct dw_pcie *pci, u8 cap)
->  {
->  	return dw_pcie_find_next_ext_capability(pci, 0, cap);
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> index f8e5431a207b..77686957a30d 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> @@ -423,6 +423,7 @@ void dw_pcie_version_detect(struct dw_pcie *pci);
->  
->  u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap);
->  u16 dw_pcie_find_ext_capability(struct dw_pcie *pci, u8 cap);
-> +u16 dw_pcie_find_vsec_capability(struct dw_pcie *pci, u8 vsec_cap);
->  
->  int dw_pcie_read(void __iomem *addr, int size, u32 *val);
->  int dw_pcie_write(void __iomem *addr, int size, u32 val);
+Applied, thanks.
 
 
