@@ -1,55 +1,68 @@
-Return-Path: <linux-kernel+bounces-236989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5343491E97A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 22:20:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FEFD91E97C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 22:20:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0895F283DAB
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:20:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C19721C2218A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E3D171098;
-	Mon,  1 Jul 2024 20:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b="HmhKNPOw"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7764016F903;
+	Mon,  1 Jul 2024 20:19:46 +0000 (UTC)
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81D316DC09;
-	Mon,  1 Jul 2024 20:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C093316F85A;
+	Mon,  1 Jul 2024 20:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719865168; cv=none; b=bgghWvS8BbnyGKGoo2F6n2M2YRJCreQuYT6hrOwoRfPn4nbr3tD3+X5oUgbxOuSvyUD54TQvNRjycYoJPAxxOCi9OCy3JcLkDwRCN0oabC/FR10mwEW+lUGsxpYyH8lzfoW64B795nhaimze7iMdRa+2X1IGA/MukTz1r0gkkA4=
+	t=1719865186; cv=none; b=VfNfmq3vUur3W1uhFdR9Ln/TKo7GySE/ce3x/5OdRFE0bxYiq+R79HviyFnz4JeQ2HWfjQtz4eEuY2D2ap/cPxhM+kaWsolHbvyATazjN1nkXOi42VNmAulWHuY+LgDbIzhXE85qpM5mmMVtu74/kTgWKs07SZutwkhdHdMyfn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719865168; c=relaxed/simple;
-	bh=gsKQ77e1tlADzSbnSWiat/0iNCi3m7GzGXe9fFjYSxw=;
+	s=arc-20240116; t=1719865186; c=relaxed/simple;
+	bh=gtILim/HJ+ujvf7/kOaItzXfFZ51HgQjkvh01fOIx50=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D+0CbKPvGjUP2qnUm9+uu+eLrrO0sv53rB1O1V8LzP00yG81Rx8WaimPf0ExYPxCGnCY6gj9qiephR59CuhI/b0SWJRxtdBC9H+fkcLSqcdVY7rKaIBzqTNysiZpIpHUoUyiDztzoxik4H7zkd7OVS/UFw1dGGt9QtOJYhM/iTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de; spf=pass smtp.mailfrom=t-8ch.de; dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b=HmhKNPOw; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-8ch.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=t-8ch.de; s=mail;
-	t=1719865160; bh=gsKQ77e1tlADzSbnSWiat/0iNCi3m7GzGXe9fFjYSxw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HmhKNPOw6kk47KVdSlUqCTWVHjPceoEI5XQ9sarwSj19N6N5/+0cl2WMaLyI79VKy
-	 5Z3GlA0BYk/uhO8L3pVZ44VUeACuM1eG/6o+Oy8NvtJBp5bM9tQAy4wFtT6NFZEj7t
-	 h1txDjOmR0xz40Xoe3JU76H+aBwe1OJlRGBbhyek=
-Date: Mon, 1 Jul 2024 22:19:19 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
-To: Alex Vdovydchenko <keromvp@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Sean Anderson <sean.anderson@linux.dev>, Guenter Roeck <linux@roeck-us.net>, 
-	Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	Alex Vdovydchenko <xzeol@yahoo.com>
-Subject: Re: [PATCH v3 2/2] hwmon: add MP5920 driver
-Message-ID: <4fe460c7-4299-4e01-90f8-6720b7558ced@t-8ch.de>
-References: <20240701145603.1507516-1-xzeol@yahoo.com>
- <20240701145603.1507516-3-xzeol@yahoo.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bUyZ5D/+cJr08OHh+WsLFpEifx4NbKk1EBYDg/ujE9i6yhag+5/BOFQb9if1oReCrQX3T+BYUMl9r+brixog8uqXrLnfFnSexzjWkZXMX5ikUXuJNuwBUToCldCDl1HL4elaioLbl27GUJ6SDzIUHWvTAWvjFMLlV9rBks92T5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2c9357a2647so1679981a91.0;
+        Mon, 01 Jul 2024 13:19:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719865184; x=1720469984;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p7CPC45a6z8Ol07078t1kucZHx8bYtcfgFOovH1ePZg=;
+        b=sHMM4qb2L9q17hRCcG3WAL+MQB1qr/NWFTQvdv7mo2TNFl6rRWZm4Vfnk5IQ+AO0GR
+         awaMLC6+Mj7YMX/JHIrtC3E5WT4WnTrKbVrWxLD4QV55R0ZO02UhCiMOul7w7fuDNVi4
+         ZEVanwKmclfM6zApPr8N8+5shJxkFziKGWjw62L7zDnTNuuaX9nwBGg9pU7qZ9nv5iTn
+         py7eiyG3xs5GCIMtOGWDIe24h9mPElKZnrqwtYVMtaj7v6rK3MDGp9ATyLX+UyQ/ko2Z
+         NM8x77uomB3cydxgLBAIKtq6DGvAi96N+kF4EKzFPvyxZj/ueVrl1+Ni0SRYf9nk+OQm
+         j84A==
+X-Forwarded-Encrypted: i=1; AJvYcCUDmyHZzuSMLppxOTjqTDyCgk+14SR0kpWUNolru9dIs8F7Om8sN7B/XxVcSv2AZ70cDs5kxuL5I3gb8ec5X5Q95vLVcUSr2MZkg1T3HgpEUrGEnC+GqOCg9/C9Fz5rOnB8hXdxc9gLtA==
+X-Gm-Message-State: AOJu0YyhLzOU2p+5suzA4FtWmhQvT4Vk+VjM7xvvHrdG8HNRfDiGNrX7
+	SEuhpTOVGCZhgKtMIc3jBya+BDDBNeBpd0hFqowpa0Q33Sx3eol6
+X-Google-Smtp-Source: AGHT+IEJEbvlzvQOFT4pgucYd/khgtZxyiVbBGWZVUo+7PnVlJPOOL5Ta86DrxUKO5kNZN2yrkZx6w==
+X-Received: by 2002:a17:90a:dc09:b0:2c7:35f6:87e5 with SMTP id 98e67ed59e1d1-2c93d6ea810mr3583915a91.5.1719865183953;
+        Mon, 01 Jul 2024 13:19:43 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c9270c121fsm6882502a91.11.2024.07.01.13.19.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 13:19:43 -0700 (PDT)
+Date: Tue, 2 Jul 2024 05:19:42 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the pci tree
+Message-ID: <20240701201942.GC272504@rocinante>
+References: <20240701130108.63628d9f@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,266 +71,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240701145603.1507516-3-xzeol@yahoo.com>
+In-Reply-To: <20240701130108.63628d9f@canb.auug.org.au>
 
-On 2024-07-01 17:56:01+0000, Alex Vdovydchenko wrote:
-> Add support for MPS Hot-Swap controller mp5920. This driver exposes
-> telemetry and limit value readings and writings.
+Hello,
+
+> After merging the pci tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
 > 
-> Signed-off-by: Alex Vdovydchenko <xzeol@yahoo.com>
-> ---
->  Documentation/hwmon/index.rst  |  1 +
->  Documentation/hwmon/mp5920.rst | 91 +++++++++++++++++++++++++++++++++
->  drivers/hwmon/pmbus/Kconfig    |  9 ++++
->  drivers/hwmon/pmbus/Makefile   |  1 +
->  drivers/hwmon/pmbus/mp5920.c   | 93 ++++++++++++++++++++++++++++++++++
->  5 files changed, 195 insertions(+)
->  create mode 100644 Documentation/hwmon/mp5920.rst
->  create mode 100644 drivers/hwmon/pmbus/mp5920.c
+> drivers/pci/controller/dwc/pcie-designware-ep.c:818:6: error: redefinition of 'dw_pcie_ep_linkup'
+>   818 | void dw_pcie_ep_linkup(struct dw_pcie_ep *ep)
+>       |      ^~~~~~~~~~~~~~~~~
+> drivers/pci/controller/dwc/pcie-designware-ep.c:22:6: note: previous definition of 'dw_pcie_ep_linkup' with type 'void(struct dw_pcie_ep *)'
+>    22 | void dw_pcie_ep_linkup(struct dw_pcie_ep *ep)
+>       |      ^~~~~~~~~~~~~~~~~
 > 
-> diff --git a/Documentation/hwmon/index.rst b/Documentation/hwmon/index.rst
-> index e92a3d5c7..9eba7e402 100644
-> --- a/Documentation/hwmon/index.rst
-> +++ b/Documentation/hwmon/index.rst
-> @@ -168,6 +168,7 @@ Hardware Monitoring Kernel Drivers
->     mp2975
->     mp2993
->     mp5023
-> +   mp5920
->     mp5990
->     mp9941
->     mpq8785
-> --- /dev/null
-> +++ b/Documentation/hwmon/mp5920.rst
-> @@ -0,0 +1,91 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +Kernel driver mp5920
-> +====================
-> +
-> +Supported chips:
-> +
-> +  * MPS MP5920
-> +
-> +    Prefix: 'mp5920'
-> +
-> +  * Datasheet
-> +
-> +    Publicly available at the MPS website : https://www.monolithicpower.com/en/mp5920.html
-> +
-> +Authors:
-> +
-> +	Tony Ao <tony_ao@wiwynn.com>
-> +	Alex Vdovydchenko <xzeol@yahoo.com>
-> +
-> +Description
-> +-----------
-> +
-> +This driver implements support for Monolithic Power Systems, Inc. (MPS)
-> +MP5920 Hot-Swap Controller.
-> +
-> +Device compliant with:
-> +
-> +- PMBus rev 1.3 interface.
-> +
-> +Device supports direct and linear format for reading input voltage,
-> +output voltage, output current, input power and temperature.
-> +
-> +The driver exports the following attributes via the 'sysfs' files
-> +for input voltage:
-> +
-> +**in1_input**
-> +
-> +**in1_label**
-> +
-> +**in1_rated_max**
-> +
-> +**in1_rated_min**
-> +
-> +**in1_crit**
-> +
-> +**in1_alarm**
-> +
-> +The driver provides the following attributes for output voltage:
-> +
-> +**in2_input**
-> +
-> +**in2_label**
-> +
-> +**in2_rated_max**
-> +
-> +**in2_rated_min**
-> +
-> +**in2_alarm**
-> +
-> +The driver provides the following attributes for output current:
-> +
-> +**curr1_input**
-> +
-> +**curr1_label**
-> +
-> +**curr1_crit**
-> +
-> +**curr1_alarm**
-> +
-> +**curr1_rated_max**
-> +
-> +The driver provides the following attributes for input power:
-> +
-> +**power1_input**
-> +
-> +**power1_label**
-> +
-> +**power1_max**
-> +
-> +**power1_rated_max**
-> +
-> +The driver provides the following attributes for temperature:
-> +
-> +**temp1_input**
-> +
-> +**temp1_max**
-> +
-> +**temp1_crit**
-> +
-> +**temp1_alarm**
-> --- a/drivers/hwmon/pmbus/Kconfig
-> +++ b/drivers/hwmon/pmbus/Kconfig
-> @@ -371,6 +371,15 @@ config SENSORS_MP5023
->  	  This driver can also be built as a module. If so, the module will
->  	  be called mp5023.
->  
-> +config SENSORS_MP5920
-> +	tristate "MPS MP5920"
-> +	help
-> +	  If you say yes here you get hardware monitoring support for Monolithic
-> +	  MP5920.
-> +
-> +	  This driver can also be built as a module. If so, the module will
-> +	  be called mp5920.
-> +
->  config SENSORS_MP5990
->  	tristate "MPS MP5990"
->  	help
-> --- a/drivers/hwmon/pmbus/Makefile
-> +++ b/drivers/hwmon/pmbus/Makefile
-> @@ -39,6 +39,7 @@ obj-$(CONFIG_SENSORS_MP2888)	+= mp2888.o
->  obj-$(CONFIG_SENSORS_MP2975)	+= mp2975.o
->  obj-$(CONFIG_SENSORS_MP2993)	+= mp2993.o
->  obj-$(CONFIG_SENSORS_MP5023)	+= mp5023.o
-> +obj-$(CONFIG_SENSORS_MP5920)	+= mp5920.o
->  obj-$(CONFIG_SENSORS_MP5990)	+= mp5990.o
->  obj-$(CONFIG_SENSORS_MP9941)	+= mp9941.o
->  obj-$(CONFIG_SENSORS_MPQ7932)	+= mpq7932.o
-> --- /dev/null
-> +++ b/drivers/hwmon/pmbus/mp5920.c
-> @@ -0,0 +1,82 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +#include <linux/i2c.h>
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
-> +#include "pmbus.h"
-> +
-> +static struct pmbus_driver_info mp5920_info = {
-> +	.pages = 1,
-> +	.format[PSC_VOLTAGE_IN] = direct,
-> +	.format[PSC_VOLTAGE_OUT] = direct,
-> +	.format[PSC_CURRENT_OUT] = direct,
-> +	.format[PSC_POWER] = direct,
-> +	.format[PSC_TEMPERATURE] = direct,
-> +	.m[PSC_VOLTAGE_IN] = 2266,
-> +	.b[PSC_VOLTAGE_IN] = 0,
-> +	.R[PSC_VOLTAGE_IN] = -1,
-> +	.m[PSC_VOLTAGE_OUT] = 2266,
-> +	.b[PSC_VOLTAGE_OUT] = 0,
-> +	.R[PSC_VOLTAGE_OUT] = -1,
-> +	.m[PSC_CURRENT_OUT] = 546,
-> +	.b[PSC_CURRENT_OUT] = 0,
-> +	.R[PSC_CURRENT_OUT] = -2,
-> +	.m[PSC_POWER] = 5840,
-> +	.b[PSC_POWER] = 0,
-> +	.R[PSC_POWER] = -3,
-> +	.m[PSC_TEMPERATURE] = 1067,
-> +	.b[PSC_TEMPERATURE] = 20500,
-> +	.R[PSC_TEMPERATURE] = -2,
-> +	.func[0] = PMBUS_HAVE_VIN  | PMBUS_HAVE_VOUT |
-> +		PMBUS_HAVE_IOUT | PMBUS_HAVE_POUT |
-> +		PMBUS_HAVE_TEMP,
-> +};
-> +
-> +static int mp5920_probe(struct i2c_client *client)
-> +{
-> +	struct device *dev =  &client->dev;
-> +	int ret;
-> +	u8 buf[I2C_SMBUS_BLOCK_MAX + 1];
-> +
-> +	ret = i2c_smbus_read_block_data(client, PMBUS_MFR_MODEL, buf);
-
-If you do keep a custom call to i2c_smbus_read_block_data(),
-then you probably should also keep the call to i2c_check_functionality().
-
-> +	if (ret < 0) {
-> +		dev_err(dev, "Failed to read PMBUS_MFR_MODEL\n");
-> +		return ret;
-> +	}
-
-If you use dev_err_probe() that would be shorter:
-
-if (ret < 0)
-	return dev_err_probe(dev, ret, "Failed to read PMBUS_MFR_MODEL\n");
-
-> +	if (ret != 6 || strncmp(buf, "MP5920", 6)) {
-> +		buf[ret] = '\0';
-> +		dev_err(dev, "Model '%s' not supported\n", buf);
-
-The manual 0-byte termination and the size + 1 can be avoided by using
-
-dev_err_probe(dev, -ENODEV, "Model '%.*s' not supported\n", sizeof(buf), buf);
-
-> +		return -ENODEV;
-> +	}
-> +
-> +	return pmbus_do_probe(client, &mp5920_info);
-> +}
-> +
-> +static const struct of_device_id mp5920_of_match[] = {
-> +	{ .compatible = "mps,mp5920" },
-> +	{ }
-> +};
-> +
-> +MODULE_DEVICE_TABLE(of, mp5920_of_match);
-> +
-> +static const struct i2c_device_id mp5920_id[] = {
-> +	{ "mp5920" },
-> +	{ }
-> +};
-> +
-> +MODULE_DEVICE_TABLE(i2c, mp5920_id);
-> +
-> +static struct i2c_driver mp5920_driver = {
-> +	.driver = {
-> +			.name = "mp5920",
-> +			},
-
-Borked indentation.
-You can also use the shorter variant:
-	.driver.name = "mp5920",
-
-Where did the .driver.of_match_table go?
-
-> +	.probe = mp5920_probe,
-> +	.id_table = mp5920_id,
-> +};
-> +
-> +module_i2c_driver(mp5920_driver);
-> +
-> +MODULE_AUTHOR("Tony Ao <tony_ao@wiwynn.com>");
-> +MODULE_AUTHOR("Alex Vdovydchenko <xzeol@yahoo.com>");
-> +MODULE_DESCRIPTION("PMBus driver for MP5920 HSC");
-> +MODULE_LICENSE("GPL");
-> +MODULE_IMPORT_NS(PMBUS);
-> -- 
-> 2.43.0
+> Caused by commit
 > 
+>   9eba2f70362f ("PCI: dwc: ep: Remove dw_pcie_ep_init_notify() wrapper")
 > 
+> possibly because of an interaction with commit
+> 
+>   3d2e425263e2 ("PCI: dwc: ep: Add a generic dw_pcie_ep_linkdown() API to handle Link Down event")
+
+I will look into this shortly...
+ 
+> I have used the pci tree from next-20240628 for today.
+
+Got it.  Makes sense, thank you!
+
+	Krzysztof
 
