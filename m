@@ -1,54 +1,88 @@
-Return-Path: <linux-kernel+bounces-237035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D01191EA27
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 23:22:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D96191EA2B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 23:23:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB5581F21CF6
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:22:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C88D281D9C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:23:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C3016EB7E;
-	Mon,  1 Jul 2024 21:22:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4E316F8F8;
+	Mon,  1 Jul 2024 21:23:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pydKs1D9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h6ZuW//0"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEBAB83CC8
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 21:22:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901C42AD0C;
+	Mon,  1 Jul 2024 21:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719868970; cv=none; b=NbFEE5Bj5pRLZv4P4fSRNocgtWcP/YjVhVD53N+AyufCLsdEtJqub1OYjEiwQ0aZj4+/9pmb4OcAE06NNHhwwDqCySyEKvIdIQvd/9UTSgdhEmxCfgm+436thvHE3S6GEnm5L4Q5iskQFzmjl62xQeCAsYOqC1BqMoacle6xewo=
+	t=1719869017; cv=none; b=sAqECb2KnZnMU1OnvE7zYBLKYD86tswYqWRfQXmrb2v8dVBCYTaWmNWNE5c9FzNFyaKMbSW69k46IyYnPCsnCrqdSeadGJlmxtlZxM8R1UJGQkhf7RECqWYtJs0mxIx9yIwpmQjnkdnZlpoQJPZ3/PEW1VOfhzUTkpnvGALVJO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719868970; c=relaxed/simple;
-	bh=C6hwA9WiWjI0vwhBnyO0uhdnyGgmsDABKgj/1fPvRuc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FxPoT54kRfajABh2povuHl+nnNx6AsY5Ek6c7Ds2EZ0HT/Hoz2frHSy9u0HY3TnJ/LNdk8a2l2fkVV0XPBELTWaNUNSWAseSVnkwHKFB3gbMRQgxBrwyvM5JKVrFKU0zyvl+RyjwRS9N2qdL0rkUcvtrcWw9zRse2Z7cdEBRE8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pydKs1D9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09F6BC116B1;
-	Mon,  1 Jul 2024 21:22:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719868970;
-	bh=C6hwA9WiWjI0vwhBnyO0uhdnyGgmsDABKgj/1fPvRuc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=pydKs1D9zRPayuKgORFFuOehtBOUm8Pl4LE570qTwqeGQIoaqm2GCgpLW91pe0huJ
-	 KclKH0+GZODByg7VQK5PH4bh3LESJJjZ1r/7FeZgMa6zfU6EsIcin9FCUrpFVFBPG2
-	 kLZtY4/gw2Yq8WRkO0n7D6x45HLxbdN0zN9Z5kgSw6/yWYeXAwxQ4xw3cL+gwW7MbD
-	 F1DSD44cKn2QISdLgzfKDfKF+OOa2b+vc2HdgZjHzmZWOQEmqLJv9jEfxWbq9Ejn8F
-	 VqM9dpmNylbeL9qJPGX/uVuLSsfpLcwosnmxEmDCokaSqTUCPn31Fa/qX928KiiwCh
-	 xzVRgVrv7rWHA==
-From: SeongJae Park <sj@kernel.org>
-To: 
-Cc: SeongJae Park <sj@kernel.org>,
-	damon@lists.linuxdev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: DAMON Quaterly News Letter (2024 Q2)
-Date: Mon,  1 Jul 2024 14:22:44 -0700
-Message-Id: <20240701212244.52288-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1719869017; c=relaxed/simple;
+	bh=8qrfPf3F6v7hO0SCjLxB5J4FQJf/JokEiBuHsjg88IY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ttBdG9vARTWcVSU6D6aY6qSlNSTqSR2rXzDb/A7N4ZSJ0TBL87ZcZLIYuC93LAM5J6IWuHTqUAXg7s6LGvLYenhezzkU/ZTDQjBPRn/wD40DP7YDmt2xsYh2dzrkufVCwk/Z98OFcylJAYnOeQF2WUfv3aaeHtCJNa2iHoBPxGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h6ZuW//0; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2c8dc2bcb78so2542400a91.1;
+        Mon, 01 Jul 2024 14:23:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719869016; x=1720473816; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kgp7NHRVTqgOOQSOalpQlbnN69Db7Yr6qntJTF+0wVQ=;
+        b=h6ZuW//0jw9ZogK85OrGX7VsI7rGXjWLd4nCVYDuPbncDcNsuUsD75mc8KaLTj/nTn
+         OAx/L7Nvanc5PFIM0ImyPaNPAXO6B1cI+fQnarfX5oL55GRal70bQmvVIX7uMh2nm+am
+         F7VHB1OJryf1Rrsc/MGjK6pDPA7iH7qZXILfSgzx2PvNNUJaqhYo6e3XPaOQBG4p/Wbe
+         LXUgiC1h0L77u+UNCiw7ogHGxfvxGaGcd/cNbjv18UHHLyM1oukwvUy9bQotwKKLMic8
+         Q4wD/ujQKvm50SnGbFauew1M2EZwAt0BAccj0IsKYGWPtJKJvSWO9x8ya38uXqb3Z/RO
+         30/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719869016; x=1720473816;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kgp7NHRVTqgOOQSOalpQlbnN69Db7Yr6qntJTF+0wVQ=;
+        b=KHVscZTbgO4K0QMn79jrLoOKLC9KAcE9STXPTR19x9taYSAV8q74rw5tmkO1OAEY8k
+         wWrbuncc8gLm0VssYByPVcJC5QxxlSAF+Xqc3INbhe4QWyL9aTj3UanD9z0DNmkLfwzX
+         w7xWi9sEsjz0LQjF+TmEfZ3O2tbnH+rpBtgufLw9zCxe+RUzTGMIpUddxrn+vdZg6xBO
+         nptfnDDMoEM8MFyBlt1+wBPQrQ/PiN056A7NxCwusddMT7hLaN+AbVp+Q+MNVjDZZrTZ
+         J4c2zYdfpox2oGXLvqlD/52KSHAjd2oSRBbynxNBPTMY4snSMQtlwtRcrm2U5x6GaX1T
+         U5YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXopiwChPc76MiloKFb2IZzKWkJaaW0uEnOs+0fRzDYPm1/PBZa0XqiEXvaNPs/z3OQy4CGEJBRPALbWzG3tk8L3YXp1coXjHB1aKTv7GC7zyuz7hVyDQRa990Ha+j73a4nX+a2I+WrLTzLUQ==
+X-Gm-Message-State: AOJu0Ywsoywza8p7a3lv1CMiQCZPQHotC7uxIK2iOnKvCQOtwTkLRkL9
+	xAOdbOY2FQDJjYhvSWhDEVxmLb+t6EQ5PBfxRni7+cZcrRshaf8e
+X-Google-Smtp-Source: AGHT+IGEfZTBckuXSprd/rSjhMFhdz8yGzcw7MjpySN/S0Tzj8JLrZKwOBsz9eoR0yvCrECy77vyxw==
+X-Received: by 2002:a17:90b:4b48:b0:2c7:e24d:f695 with SMTP id 98e67ed59e1d1-2c93d715ec5mr5682410a91.12.1719869015621;
+        Mon, 01 Jul 2024 14:23:35 -0700 (PDT)
+Received: from localhost ([2a00:79e1:2e00:1301:e1c5:6354:b45d:8ffc])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91ce43303sm7263491a91.17.2024.07.01.14.23.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 14:23:34 -0700 (PDT)
+From: Rob Clark <robdclark@gmail.com>
+To: dri-devel@lists.freedesktop.org
+Cc: freedreno@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	Rob Clark <robdclark@chromium.org>,
+	kernel test robot <lkp@intel.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Sean Paul <sean@poorly.run>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] drm/msm/a6xx: Add missing __always_unused
+Date: Mon,  1 Jul 2024 14:23:29 -0700
+Message-ID: <20240701212330.426399-1-robdclark@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,92 +91,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hello DAMON community,
+From: Rob Clark <robdclark@chromium.org>
 
+The __build_asserts() function only exists to have a place to put
+build-time asserts.
 
-Time flies.  The second quater of 2024 has passed.  Let me take a time to look
-back what happened to DAMON community in the last three months and share my
-humble summary with this quaterly news letter.
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202407010401.rfunrBSx-lkp@intel.com/
+Signed-off-by: Rob Clark <robdclark@chromium.org>
+---
+ drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Highlights of Highlights
-========================
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+index bdafca7267a8..68ba9aed5506 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+@@ -1249,7 +1249,7 @@ static const struct adreno_info a7xx_gpus[] = {
+ };
+ DECLARE_ADRENO_GPULIST(a7xx);
+ 
+-static inline void __build_asserts(void)
++static inline __always_unused void __build_asserts(void)
+ {
+ 	BUILD_BUG_ON(a630_protect.count > a630_protect.count_max);
+ 	BUILD_BUG_ON(a650_protect.count > a650_protect.count_max);
+-- 
+2.45.2
 
-DAMON gained a feature [10] for CXL-based tiered memory management.  HacKerMaiL
-(hkml), a simple mailing tool that DAMON maintainer is developing, made an
-official commitment [12] to support DAMON community.  DAMON has presented and
-discussed with more people from OSSummit NA [4] and LSF/MM+BPF [7].  It will
-again be presented and discussed with more folks in September [10,13].
-
-Please read below for more highlights for each month.
-
-April 2024
-==========
-
-DAMO v2.2.8 has released [1] with memory footprint monitoring feature.
-
-DAMON news letter for 2024-Q1 has posted [2].
-
-Using Oracle's awesome kernel configs comparison tool, we found some dsitros
-that enable DAMON on their kernel [3].
-
-DAMON has presented[4] on Open Source Summit North America 2024.  The third
-in-person DAMON meetup has also held [5] on the conference.
-
-May 2024
-========
-
-Access/Contiguity-aware Memory Auto-scaling second RFC idea with example
-implementation is posted [6].
-
-DAMON's status and future plans have shared and discussed on LSFMM+BPF.  LWN's
-summary of the session is available [7].
-
-Memory managment subsystem pull request [8] for Linux 6.10-rc1 that contains
-DAMOS young page filter has merged.
-
-Beer/Coffee/Tea DAMON meetup has extended [9] for reservation-based ones.
-
-June 2024
-=========
-
-DAMON talk for Open Source Summit Europe 2024 has been accepted and
-scheduled [10].
-
-SK hynix' patch series titled "DAMON based tiered memory managment for CXL
-memory" has been merged [11] into mm-unstable tree.
-
-DAMON community got a simple mailing tool called HacKerMaiL (hkml), which is
-officially committed [12] to support the development workflow.
-
-A session for DAMON at kernel summit 2024 has proposed [13] .
-
-Previous news letters
-=====================
-
-- 2024 Q1: https://lore.kernel.org/20240402191224.92305-1-sj@kernel.org
-
-More Past DAMON News
-====================
-
-If you're interested in a humblie list of more DAMON events that happened in
-past and curated by DAMON maintainer, please reach out to the project site's
-news page [14].
-
-References
-==========
-
-[1] https://github.com/awslabs/damo/blob/v2.2.8/USAGE.md#recording-memory-footprints
-[2] https://lore.kernel.org/damon/20240402191224.92305-1-sj@kernel.org/
-[3] https://oracle.github.io/kconfigs/?config=UTS_RELEASE&config=DAMON
-[4] https://sched.co/1aBOg
-[5] https://sched.co/1cP4G
-[6] https://lore.kernel.org/20240512193657.79298-1-sj@kernel.org
-[7] https://lwn.net/Articles/973702/
-[8] https://lore.kernel.org/20240517192239.9285edd85f8ef893bb508a61@linux-foundation.org
-[9] https://lore.kernel.org/20240519163329.150340-1-sj@kernel.org
-[10] https://sched.co/1ej2S
-[11] https://lore.kernel.org/all/20240614185328.BA2C1C2BD10@smtp.kernel.org/
-[12] https://lore.kernel.org/20240621163626.74815-2-sj@kernel.org
-[13] https://lore.kernel.org/20240614175504.87365-1-sj@kernel.org/
-[14] https://sjp38.github.io/post/damon_news/
 
