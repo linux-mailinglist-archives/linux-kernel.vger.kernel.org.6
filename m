@@ -1,136 +1,112 @@
-Return-Path: <linux-kernel+bounces-236275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 759D591DFD2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:47:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5223591DFD0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:47:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A68AC1C22175
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:47:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F02801F23451
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:47:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E35615A85A;
-	Mon,  1 Jul 2024 12:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F4E15A851;
+	Mon,  1 Jul 2024 12:47:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fod4zyXD"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EX1nvOxp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805D115A489;
-	Mon,  1 Jul 2024 12:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E9E15A489;
+	Mon,  1 Jul 2024 12:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719838070; cv=none; b=FW/8x8wJP3N+CZ9NVN26Dnf4z/a4NCEDm+NRngKEcaLRn2gLJsVGCqOdsr8N5fsXoveoXot2vF3L0l9Nv5V+0T/G3k6yCiwM+tbRU6f7+mfzqlqte468ie9YR8lFiKIuob4W5Bbh6nP0+It84PowjtKSuqXs0XvA7mDtDqKHC30=
+	t=1719838060; cv=none; b=SkDVI5hlYD6NjktDNFNcpOr5kmkr1P4KbDYpIIMrinbr/Q9fpKG4pNj9KgSqOKkFkJL4ErXdVP+sHtzadUSnseQFArxxBi3H785zBzTj2tnCd++4SMl4jVZmg9zpnWWsSt48hqk94sVYadiA+KiiGxju9r5nyFw1k7OjgLnlZ78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719838070; c=relaxed/simple;
-	bh=VDrvM1mNNycSLr46cotV0IGqDY07uV4e6N5txQwbR+U=;
+	s=arc-20240116; t=1719838060; c=relaxed/simple;
+	bh=LfYQTMCfmMbGIovdjPNb6rCWeA4AeChPckEiZHS4laY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YCIU5dkscQAvJz81nnZ+uzS7WDWHjTbT5u3Sk7Ydb/F0y06v8GGS7tp3izTNUbIlpunrVPpLqZbyUNgoisugwHjupPmZeB2gJQ6xGoRpw2lzlVF4uSx5zECz6XOmlaKTyiHUn9n0lqnWz6oPz+Q9CAzA4/PU6+Oo9vQEg2Kvs1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fod4zyXD; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 35A6540E0192;
-	Mon,  1 Jul 2024 12:47:46 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id zPJQToXUX2ik; Mon,  1 Jul 2024 12:47:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1719838062; bh=TbAxV9gGDbBoe763AZSPI527n1RmfQjcPq5QtNxDKQk=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=dAtCLoUC+rDcgEezx3qV60tAlvKh9yEnjTGvNqH6+7UouNWlYwk599rIrXl2qczhFafwT1T7H4EjWzPLeVYN1prAJXOb+NznggJCMS1aegbqZDclHGKTxVA7N9afD5O71uIFEUH0AYCGEiwE2YarBdlylNT/NXt4vnWy2ZJkDrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EX1nvOxp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C6D7C32786;
+	Mon,  1 Jul 2024 12:47:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719838059;
+	bh=LfYQTMCfmMbGIovdjPNb6rCWeA4AeChPckEiZHS4laY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fod4zyXDDkA3k3eJcc7YbeYoEa+OUrZxXZgqVIOuXY5ehzu4Yg4oeJK4cuhodo3p5
-	 FChPndcRTW7QJDHU8mzQVHzGBOTaHnbk1Tq/jlFQyubqtielfyf7VUpyc0k/QdLUeC
-	 SaPh+disv2PTLh1D3YK/nETRoNPi+4y5j3It8jSfq0Xvm8R+YLbHiDZO5XzkVPt5/6
-	 B7u6HskvIYIoG06/Wt64buvSp1SqkNedOfektMnwYsBzfiYWvwCqf4fsVy8yTR8puD
-	 p8Ms3OQcMey0ORinGnYP3wyFYgtokFFt0lXgDfwWt6TL3R+eBE313KkEWRj/hH99RI
-	 NWdM/qlQu5U7LMGnkiN3tNV+Pc7EiS2OpZziWQQ0mwtQD2tH3MFcyebHqYctWsushB
-	 8H+7h+CUt7EzwPmOPSMmv4+63HfGAGrlE+PYJFESh1x1J3zD0AuCoKRJ7xDtJ/dy8h
-	 gINPgeO7pIGpEjimtnpv6gZDvinJiiYDsJ3Bt5foqeWoCfrN0d+0m/RuzZvE2h9rT5
-	 pgEihNlEUs2/Yck6w5GKb/05H1sdHk0Mce436JcgBwMMxex0biYg3fQSsy83wwahFR
-	 jkaUCFizHPgq/UduvaIJ7ogJnmzNjbrqGseIzX5OtZq0cqm/i9rxZ5tc1uK6oL1Fxd
-	 9AXal1l43mtmGkworNZrc4Ls=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EFEF240E019D;
-	Mon,  1 Jul 2024 12:47:34 +0000 (UTC)
-Date: Mon, 1 Jul 2024 14:47:34 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Ard Biesheuvel <ardb+git@google.com>
-Cc: linux-efi@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org,
-	dyoung@redhat.com, Dan Williams <dan.j.williams@intel.com>,
-	Ard Biesheuvel <ardb@kernel.org>
-Subject: Re: [RFC PATCH] x86/efi: Drop support for fake EFI memory maps
-Message-ID: <20240701124734.GFZoKlZhqnWJlz7LKb@fat_crate.local>
-References: <20240620073205.1543145-1-ardb+git@google.com>
+	b=EX1nvOxpwjmROiPDwmMaf2i/4KZEarkTkP2uaL++hxCyQP5dFxCtOUkbBdA5RKehE
+	 l/KdTXQF1gVv9Y6StTRp4EZG48AiZUmXEI76/iE5xf/AucSmCD7d9aGevX52EhRVmc
+	 q0IneWK85/Qfkr1dV1rZzppu4KnGQNV3iOOZYMFhReKieI/sYJ4KXIYGQtppnja5lE
+	 6rGZ3PsCR3ik9+AbnzFWePNcGqMpAR0Y1pZImCl+402Na9zm4kpuxu1uZNTJsfMSga
+	 KBr20GXD3lCPp15Y5LeBg2Iiq4L02MOBD6GiGMWeS1ukIt/TB698Ls/uHe73iHkRwd
+	 ojdmNskJL74Aw==
+Date: Mon, 1 Jul 2024 13:47:34 +0100
+From: Will Deacon <will@kernel.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	lkft-triage@lists.linaro.org,
+	Linux Regressions <regressions@lists.linux.dev>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Aishwarya TCV <Aishwarya.TCV@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Anders Roxell <anders.roxell@linaro.org>
+Subject: Re: Mainline: v6.10-rc6 boot failed across all arm64 devices
+Message-ID: <20240701124733.GB2095@willie-the-truck>
+References: <CA+G9fYsXsbHp+0cWoTjEhkpANOav=GLSjPx5ghtUY-FjMPyoSQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240620073205.1543145-1-ardb+git@google.com>
+In-Reply-To: <CA+G9fYsXsbHp+0cWoTjEhkpANOav=GLSjPx5ghtUY-FjMPyoSQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Thu, Jun 20, 2024 at 09:32:05AM +0200, Ard Biesheuvel wrote:
-> From: Ard Biesheuvel <ardb@kernel.org>
+Hi Naresh,
+
+This report is quite hard to follow, so just some minor comments which
+you can hopefully take on board to improve things in future:
+
+On Mon, Jul 01, 2024 at 05:28:29PM +0530, Naresh Kamboju wrote:
+> The mainline kernel v6.10-rc6 boot failed across all arm64 devices and
+> qemu-arm64 and no crash log found (earlycon) did not help.
 > 
-> Between kexec and confidential VM support, handling the EFI memory maps
-> correctly on x86 is already proving to be rather difficult (as opposed
-> to other EFI architectures which manage to never modify the EFI memory
-> map to begin with)
+> But the defconfig builds boot PASS.
 > 
-> EFI fake memory map support is essentially a development hack (for
-> testing new support for the 'special purpose' and 'more reliable' EFI
-> memory attributes) that leaked into production code. The regions marked
-> in this manner are not actually recognized as such by the firmware
-> itself or the EFI stub (and never have), and marking memory as 'more
-> reliable' seems rather futile if the underlying memory is just ordinary
-> RAM.
-> 
-> Marking memory as 'special purpose' in this way is also dubious, but may
-> be in use in production code nonetheless. However, the same should be
-> achievable by using the memmap= command line option with the ! operator.
-> 
-> EFI fake memmap support is not enabled by any of the major distros
-> (Debian, Fedora, SUSE, Ubuntu) and does not exist on other
-> architectures, so let's drop support for it.
-> 
-> Cc: Taku Izumi <izumi.taku@jp.fujitsu.com>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> ---
->  Documentation/admin-guide/kernel-parameters.txt |  21 ---
->  arch/x86/Kconfig                                |  20 --
->  arch/x86/boot/compressed/kaslr.c                |  43 +----
->  arch/x86/include/asm/efi.h                      |  15 --
->  arch/x86/kernel/setup.c                         |   1 -
->  arch/x86/platform/efi/efi.c                     |   2 -
->  arch/x86/platform/efi/fake_mem.c                | 197 --------------------
->  arch/x86/platform/efi/memmap.c                  |   1 +
->  drivers/firmware/efi/libstub/x86-stub.c         |   2 +-
->  9 files changed, 11 insertions(+), 291 deletions(-)
+> The boot problem is with defconfig + Extra Kconfigs and builds links
+> provided in the bottom of this email.
 
-I obviously like this:
+If I go to the bottom of the email, I see this:
 
-Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
+> Links:
+> -----
+>  - https://storage.tuxsuite.com/public/linaro/lkft/builds/2idWrbdtwMqpD9wx7IPRGJ7Dsx3/
+>  - https://storage.tuxsuite.com/public/linaro/lkft/builds/2idWrYDposdlRsS4jwF916a0qGE/
+>  - https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.10-rc6/testrun/24473346/suite/boot/test/gcc-13-lkftconfig-libgpiod/history/
+>  - https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.10-rc6/testrun/24473903/suite/boot/test/gcc-13-lkftconfig-rcutorture/history/
 
-I don't see the author or anyone else objecting, I guess queue it?
+but these are just random links without any context. The first two appear
+to be kernel build artifacts, but I can't tell:
 
-Or if you feel like you wanna give folks a full cycle, you could queue it for
-the next MW...
+  - Are both "good" or "bad"?
+  - What is the difference between them?
 
-Thx.
+If I look at the first of the last two links, click through to the
+"qemu-arm64" target and follow the "job_url" link, then I end up at:
 
--- 
-Regards/Gruss,
-    Boris.
+  https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2idWuAb51mcz7lO1BAj8Aw0BrNY
 
-https://people.kernel.org/tglx/notes-about-netiquette
+which has some empty logs and something from "TuxRun" which says:
+
+  {"error": "File not found"}
+
+It's very hard to know what to do with this :/
+
+Will
 
