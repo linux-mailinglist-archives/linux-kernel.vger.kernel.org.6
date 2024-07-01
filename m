@@ -1,232 +1,134 @@
-Return-Path: <linux-kernel+bounces-236288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9CBF91E001
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:57:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C16A91E002
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:57:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 477AFB255D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:57:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCF7B1C208EE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A1F315ADAD;
-	Mon,  1 Jul 2024 12:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QY2wzso3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A30CF15A873;
+	Mon,  1 Jul 2024 12:56:59 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6CC915990C
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 12:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3BD515A85E;
+	Mon,  1 Jul 2024 12:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719838609; cv=none; b=s56PVZGpugCetcwE6JN9IrE51Hh1aFuW7ng+3tiWhKHw2XfUxgiXZwOzUlYBIFb5Co8vj8r/ikv4pCVVWX11rCvs+L5qdv7Pv4IHebBYhjheD2omrth+tp+I0WRAOoBZTl6JZJugI2Mhg6Uh7UfSaHcmCqbyjOmmaWXBQ5F54N0=
+	t=1719838619; cv=none; b=YyVa8JLSJ7hTd29WyaLYpVY4IVklPZpXOw6nVgbJD/qggNOaH83pKIUNc+OcV4THQxC6NuD0f4e9bh1dxzhR1jrTR74J/AB47ow+WlsTJ71r8od7SGAvkpzwnqAxOdvv0NlBXPB88xfdDcqUpmRfUrFgQH6u3BQ65gtZ89C64qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719838609; c=relaxed/simple;
-	bh=kO+WM5ZQfB3Sr3j7wPI/DBlkW4XzSfrK+wt4u2ye5qw=;
-	h=From:References:MIME-Version:In-Reply-To:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E41I/2+vyI2GrwuB5eLiYb/DFys1TkIzuMsRMXMzHBhsHaPVn6hpYz40H6gmtc1tUemLcgaw87iUGV4xkEK+HeMqg+M1PssLCk79xrs8+PjIZ455Hzv0qHzpMDnYD6Bxuhofdg9lO2YigjAUQ3Sm2UT+12WKq/nhxLZHqLMryks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QY2wzso3; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719838606;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zt43OVF+seYKp8/P4tWeHcdZ3AJSUDh9yfiJyQfU2oc=;
-	b=QY2wzso3b9i0ccQvmaCgrBYKT3PIRKEGdKZ8//qiSHDU7yyOkUZWVa059+6X9LiGFIqz7f
-	aJ08vc+wkhZKOtOAQaCjI62RgxoYgB8INPPpMaxkuEfqF+9sOz8aW/SElohrwSVF60xk3R
-	ZxWMl2KjZ9jWpVWh4HlLvZg1GIoYHtQ=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-402-fgauoQkgOZyG1aXuIhTp3Q-1; Mon, 01 Jul 2024 08:56:45 -0400
-X-MC-Unique: fgauoQkgOZyG1aXuIhTp3Q-1
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6b50f078c46so42470136d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 05:56:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719838605; x=1720443405;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:in-reply-to
-         :mime-version:references:from:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Zt43OVF+seYKp8/P4tWeHcdZ3AJSUDh9yfiJyQfU2oc=;
-        b=K/761cZMtcG2kIX2CWNhPhMinRYwXrwayNt1o6N2DBDmbqGt3Gnar59y87jFg3NO8d
-         /1AytrPJ8qLHsXqdOo7ENEai/wSSfPt7s2dF/vZsN/Jk8xXo85EDZa8FAnnxwFGlM/iL
-         wR/hgExZfrvBCmesIi1DVMDRRbZQhpstXOdP5xXL7YRHzl7rV+hZzXxq6BmqDiS9vSRj
-         h7QGDzKEVrc3sh4Rn9aZ80xSzY3VkSRlWZ+z7a38ot+NzvO6p6aeWjp2TvcUM8Be2Y0x
-         /URhTxeWYGHIbhcQpdwJhX1KBb0Ep3MYvd3bqGWX06Cgmfy9sSWG0Uq1L5+lVQkulzff
-         yYcw==
-X-Forwarded-Encrypted: i=1; AJvYcCXeZXZkC+o0oa6jv0TG8XBVkDmDDvScyFcKqU3kq0zLOMb/45d5gJVM3+H7RB5TIlJ0rNBSsD84/LnMemlKVJwqd5n2zmwTsm3W5NCR
-X-Gm-Message-State: AOJu0Yxx0b54LUjIgbp6Oxw+dN6FXaEppFQ99q0yBA5FIdVhx0ZKK9Rw
-	qFe9JGZoHKWK4Lgz5GNi8dnHTtopF3XFdR/m4qdnR/3fYqcsbyoItzwyoVk3eQdA3HVHTBxW4YP
-	yjtgJ2eywBt5V6k6pZdLOxfNlglEysf4KAU7P9JhzTFfmfbqUHCIR7gTBz5zdgg5lciXamnKNH1
-	SnTh0mqkcoeVBEoE3WCNGMKdYjLFxYwOGAcen8
-X-Received: by 2002:ad4:5746:0:b0:6b5:613:5acd with SMTP id 6a1803df08f44-6b5b70c2d37mr94774796d6.31.1719838605099;
-        Mon, 01 Jul 2024 05:56:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH3iY1Jl12VKssIf8agLrYEh9ASyagHF2DXcPKx8Of865/H1uEmWA05jSdI6+6/dVfzpADg7B7+93zqaHY4MF0=
-X-Received: by 2002:ad4:5746:0:b0:6b5:613:5acd with SMTP id
- 6a1803df08f44-6b5b70c2d37mr94774616d6.31.1719838604782; Mon, 01 Jul 2024
- 05:56:44 -0700 (PDT)
-Received: from 311643009450 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 1 Jul 2024 12:56:43 +0000
-From: =?UTF-8?Q?Adri=C3=A1n_Moreno?= <amorenoz@redhat.com>
-References: <20240630195740.1469727-1-amorenoz@redhat.com> <20240630195740.1469727-6-amorenoz@redhat.com>
- <ZoKVtygkVYfaqjRI@localhost.localdomain>
+	s=arc-20240116; t=1719838619; c=relaxed/simple;
+	bh=+MksbpmNZkTOuDD7N1ZxQe+dsTMy5M+OjKLmGmGIUsA=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ui6IU4NtV011gWA/iC1lmpCyeFFkkhIXso2COY7TsPOd66BSuTdSunrq6tF/Jq18Fd/KPoMGDz8LtuU/clzbOyZffV7wmRkbQj9EsStWJcntOQl6Q0yGlg8/+worbIp4R1BGTiDY+BtetaxGkwFhP5mXHWeT/7sfrPLdHKphIPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WCQyN1y87z6K5vp;
+	Mon,  1 Jul 2024 20:55:56 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9B624140B33;
+	Mon,  1 Jul 2024 20:56:53 +0800 (CST)
+Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 1 Jul
+ 2024 13:56:53 +0100
+Date: Mon, 1 Jul 2024 13:56:51 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+CC: <linus.walleij@linaro.org>, <dan.carpenter@linaro.org>,
+	<linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <aisheng.dong@nxp.com>, <festevam@gmail.com>,
+	<shawnguo@kernel.org>, <kernel@pengutronix.de>,
+	<u.kleine-koenig@pengutronix.de>, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH V3 2/3] pinctrl: equilibrium: Use scope based
+ of_node_put() cleanups
+Message-ID: <20240701135651.0000768a@Huawei.com>
+In-Reply-To: <20240627131721.678727-3-peng.fan@oss.nxp.com>
+References: <20240627131721.678727-1-peng.fan@oss.nxp.com>
+	<20240627131721.678727-3-peng.fan@oss.nxp.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZoKVtygkVYfaqjRI@localhost.localdomain>
-Date: Mon, 1 Jul 2024 12:56:43 +0000
-Message-ID: <CAG=2xmMgJcir=mfQuybosg9C8j3Sx1V=Du0ObH1eT_SnBZ7nMg@mail.gmail.com>
-Subject: Re: [PATCH net-next v7 05/10] net: openvswitch: add psample action
-To: Michal Kubiak <michal.kubiak@intel.com>
-Cc: netdev@vger.kernel.org, aconole@redhat.com, echaudro@redhat.com, 
-	horms@kernel.org, i.maximets@ovn.org, dev@openvswitch.org, 
-	Donald Hunter <donald.hunter@gmail.com>, Jakub Kicinski <kuba@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Pravin B Shelar <pshelar@ovn.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Mon, Jul 01, 2024 at 01:40:39PM GMT, Michal Kubiak wrote:
-> On Sun, Jun 30, 2024 at 09:57:26PM +0200, Adrian Moreno wrote:
-> > Add support for a new action: psample.
-> >
-> > This action accepts a u32 group id and a variable-length cookie and use=
-s
-> > the psample multicast group to make the packet available for
-> > observability.
-> >
-> > The maximum length of the user-defined cookie is set to 16, same as
-> > tc_cookie, to discourage using cookies that will not be offloadable.
-> >
-> > Acked-by: Eelco Chaudron <echaudro@redhat.com>
-> > Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
-> > ---
-> >  Documentation/netlink/specs/ovs_flow.yaml | 17 ++++++++
-> >  include/uapi/linux/openvswitch.h          | 28 ++++++++++++++
-> >  net/openvswitch/Kconfig                   |  1 +
-> >  net/openvswitch/actions.c                 | 47 +++++++++++++++++++++++
-> >  net/openvswitch/flow_netlink.c            | 32 ++++++++++++++-
-> >  5 files changed, 124 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/netlink/specs/ovs_flow.yaml b/Documentation/=
-netlink/specs/ovs_flow.yaml
-> > index 4fdfc6b5cae9..46f5d1cd8a5f 100644
-> > --- a/Documentation/netlink/specs/ovs_flow.yaml
-> > +++ b/Documentation/netlink/specs/ovs_flow.yaml
-> > @@ -727,6 +727,12 @@ attribute-sets:
-> >          name: dec-ttl
-> >          type: nest
-> >          nested-attributes: dec-ttl-attrs
-> > +      -
-> > +        name: psample
-> > +        type: nest
-> > +        nested-attributes: psample-attrs
-> > +        doc: |
-> > +          Sends a packet sample to psample for external observation.
-> >    -
-> >      name: tunnel-key-attrs
-> >      enum-name: ovs-tunnel-key-attr
-> > @@ -938,6 +944,17 @@ attribute-sets:
-> >        -
-> >          name: gbp
-> >          type: u32
-> > +  -
-> > +    name: psample-attrs
-> > +    enum-name: ovs-psample-attr
-> > +    name-prefix: ovs-psample-attr-
-> > +    attributes:
-> > +      -
-> > +        name: group
-> > +        type: u32
-> > +      -
-> > +        name: cookie
-> > +        type: binary
-> >
-> >  operations:
-> >    name-prefix: ovs-flow-cmd-
-> > diff --git a/include/uapi/linux/openvswitch.h b/include/uapi/linux/open=
-vswitch.h
-> > index efc82c318fa2..3dd653748725 100644
-> > --- a/include/uapi/linux/openvswitch.h
-> > +++ b/include/uapi/linux/openvswitch.h
-> > @@ -914,6 +914,31 @@ struct check_pkt_len_arg {
-> >  };
-> >  #endif
-> >
-> > +#define OVS_PSAMPLE_COOKIE_MAX_SIZE 16
->
-> In your patch #2 you use "TC_COOKIE_MAX_SIZE" as an array size for your
-> cookie. I know that now OVS_PSAMPLE_COOKIE_MAX_SIZE =3D=3D TC_COOKIE_MAX_=
-SIZE,
-> so this size will be validated correctly.
-> But how likely is that those 2 constants will have different values in th=
-e
-> future?
-> Would it be reasonable to create more strict dependency between those
-> macros, e.g.:
->
-> #define OVS_PSAMPLE_COOKIE_MAX_SIZE TC_COOKIE_MAX_SIZE
->
-> or, at least, add a comment that the size shouldn't be bigger than
-> TC_COOKIE_MAX_SIZE?
-> I'm just considering the risk of exceeding the array from the patch #2 wh=
-en
-> somebody increases OVS_PSAMPLE_COOKIE_MAX_SIZE in the future.
->
-> Thanks,
-> Michal
->
+On Thu, 27 Jun 2024 21:17:20 +0800
+"Peng Fan (OSS)" <peng.fan@oss.nxp.com> wrote:
 
-Hi Michal,
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> Use scope based of_node_put() cleanup to simplify code.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/pinctrl/pinctrl-equilibrium.c | 21 +++++----------------
+>  1 file changed, 5 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-equilibrium.c b/drivers/pinctrl/pinctrl-equilibrium.c
+> index a6d089eaaae5..3a9a0f059090 100644
+> --- a/drivers/pinctrl/pinctrl-equilibrium.c
+> +++ b/drivers/pinctrl/pinctrl-equilibrium.c
+> @@ -588,7 +588,6 @@ static int funcs_utils(struct device *dev, struct pinfunction *funcs,
+>  		       unsigned int *nr_funcs, funcs_util_ops op)
+>  {
+>  	struct device_node *node = dev->of_node;
+> -	struct device_node *np;
+>  	struct property *prop;
+>  	const char *fn_name;
+>  	const char **groups;
+> @@ -596,7 +595,7 @@ static int funcs_utils(struct device *dev, struct pinfunction *funcs,
+>  	int i, j;
+>  
+>  	i = 0;
+> -	for_each_child_of_node(node, np) {
+> +	for_each_child_of_node_scoped(node, np) {
+>  		prop = of_find_property(np, "groups", NULL);
+>  		if (!prop)
+>  			continue;
+> @@ -635,7 +634,6 @@ static int funcs_utils(struct device *dev, struct pinfunction *funcs,
+>  			break;
+>  
+>  		default:
+> -			of_node_put(np);
+>  			return -EINVAL;
+>  		}
+>  		i++;
+> @@ -708,11 +706,10 @@ static int eqbr_build_groups(struct eqbr_pinctrl_drv_data *drvdata)
+>  	struct device_node *node = dev->of_node;
+>  	unsigned int *pins, *pinmux, pin_id, pinmux_id;
+>  	struct pingroup group, *grp = &group;
+> -	struct device_node *np;
+>  	struct property *prop;
+>  	int j, err;
+>  
+> -	for_each_child_of_node(node, np) {
+> +	for_each_child_of_node_scoped(node, np) {
+>  		prop = of_find_property(np, "groups", NULL);
+>  		if (!prop)
+>  			continue;
+> @@ -720,42 +717,35 @@ static int eqbr_build_groups(struct eqbr_pinctrl_drv_data *drvdata)
+>  		err = of_property_count_u32_elems(np, "pins");
+>  		if (err < 0) {
+>  			dev_err(dev, "No pins in the group: %s\n", prop->name);
+> -			of_node_put(np);
+Given I think this is only called from probe, return dev_err_probe() works
+nicely here as well.
 
-Thanks for sharing your thoughts.
-
-I tried to keep the dependency between both cookie sizes loose.
-
-I don't want a change in TC_COOKIE_MAX_SIZE to inadvertently modify
-OVS_PSAMPLE_COOKIE_MAX_SIZE because OVS might not need a bigger cookie
-and even if it does, backwards compatibility needs to be guaranteed:
-meaning OVS userspace will have to detect the new size and use it or
-fall back to a smaller cookie for older kernels. All this needs to be
-known and worked on in userspace.
-
-On the other hand, I intentionally made OVS's "psample" action as
-similar as possible to act_psample, including setting the same cookie
-size to begin with. The reason is that I think we should try to implement
-tc-flower offloading of this action using act_sample, plus 16 seemed a
-very reasonable max value.
-
-When we decide to support offloading the "psample" action, this must
-be done entirely in userspace. OVS must create a act_sample action
-(instead of the OVS "psample" one) via netlink. In no circumstances the
-openvswitch kmod interacts with tc directly.
-
-Now, back to your concern. If OVS_PSAMPLE_COOKIE_MAX_SIZE grows and
-TC_COOKIE_MAX_SIZE does not *and* we already support offloading this
-action to tc, the only consequence is that OVS userspace has a
-problem because the tc's netlink interface will reject cookies larger
-than TC_COOKIE_MAX_SIZE [1].
-This guarantees that the array in patch #2 is never overflown.
-
-OVS will have to deal with the different sizes and try to squeeze the
-data into TC_COOKIE_MAX_SIZE or fail to offload the action altogether.
-
-Psample does not have a size limit so different parts of the kernel can
-use psample with different internal max-sizes without any restriction.
-
-I hope this clears your concerns.
-
-[1] https://github.com/torvalds/linux/blob/master/net/sched/act_api.c#L1299
-
-Thanks.
-Adri=C3=A1n
-
+>  			return err;
+>  		}
+Either way,
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
