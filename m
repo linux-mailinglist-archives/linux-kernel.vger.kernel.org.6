@@ -1,205 +1,476 @@
-Return-Path: <linux-kernel+bounces-236119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FC8791DDB5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:21:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DAAA491DDB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:21:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6C46B21D93
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:20:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B201B217EC
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F12413DDA7;
-	Mon,  1 Jul 2024 11:20:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3216B14373A;
+	Mon,  1 Jul 2024 11:20:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nA9711lL"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C6OLsfOx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567571F949;
-	Mon,  1 Jul 2024 11:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719832847; cv=fail; b=sBv/8CsxPPnA4AsnR8RXP9uewPujdf7iCTq971n16nCwJQLKs9ErGfgecWJb90g2q7BuQzdJQkmgFgpDG6SiHX+JCJl3xeV5AFcFXl9/isQsomalvkL/OD7SpR0PeYLug7Er/nA0NdWWfx+kXekYtNhGX37yQJQEUEyjhIx33EQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719832847; c=relaxed/simple;
-	bh=29o62XbVDDAYuz8MCfTRnaq2W0uX1zA8QIX/P2ZxWrU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=fpHyZJqZnNJ53U2gAUIf4Xr0LPW/DMDD5++pGZi98BBKc7j9jL4qcP5cWo+pi5uAQVgh5e8pHtuj95Q4oyTX8oiRWeNHxrfB86vWwgdWTnRXuF66dFkzwa5L7fb22z/Q6GKtwyRQbJGAlaVphWAy0/VjRpCfiM0bbgjNsy9/434=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nA9711lL; arc=fail smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719832846; x=1751368846;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=29o62XbVDDAYuz8MCfTRnaq2W0uX1zA8QIX/P2ZxWrU=;
-  b=nA9711lLOQOgC4dZEzLDfJXaGJv9+ddCcft0tla5JxS04dtODknS4d24
-   7rmz72PP5s3VYb23EG0MoMA0mknQ3gSKDY+iQdaJsZoh0nkOyH7JVa5zd
-   n5lbun2OE+34Tc0XsK+CPdXptO/FpzsyCIkI2L11vD9s2me8iTMhzf8xp
-   plUeeIGeg5TzsCXVGA0trjMoat5FMIuVpKNu+nwgu6sDOMo6e51cOtmhM
-   PE8wPrpYdgTtswB+B0ckKo0HnvazU57inwFdj5GTZW3XY9bTKj7bjXfwg
-   jTGyIRgfOpkvxQDWsyC4DY6XTboSaiLdHai5OdObc43/5txBWidKxOMm0
-   w==;
-X-CSE-ConnectionGUID: fv4jP1WeQdO3ZrpUXq83CA==
-X-CSE-MsgGUID: ApVRIq6OSkCPI/BCtxgETw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11119"; a="34399031"
-X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
-   d="scan'208";a="34399031"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 04:20:45 -0700
-X-CSE-ConnectionGUID: gZnQWsyiS6uMNiRAN6ROGw==
-X-CSE-MsgGUID: sQXG9uBpThaRwA4yq/2dqw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
-   d="scan'208";a="45384795"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 01 Jul 2024 04:20:44 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 1 Jul 2024 04:20:44 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 1 Jul 2024 04:20:44 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.173)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 1 Jul 2024 04:20:43 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bp//b6qsZXtN+ScUok67TxCaTu2lv+KBdGckRMyi7Cw4D68y7x1d1QhFIkWBEExv8YT3gsbPu8ikSHaV2c2rZOB/+U/hRuMuOmurgxG/mhEF5Oo8UAVL1n/DzNvdg+GyYCWdGRWeqjJnO5FdDm96paR/A8uw3ojD+mcU2ofqYCtezHAQVetHFm5mCl84MsUK2KelPeQf4Vjc7k9CZxZWa9KyUcLEMjKbb0a94J9i6ppj+JFN9DZYYcRqcVCZRtRhTzP5VkUMYNxjIqCiWm2o89DTeiwUW/5QB10yaLZjlTeZJ91u88V+Tor1Gj+f1VkNlRh3Us0bvQtXCdTzehPBrA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ykEQVcQ0je2n6NY4lsyo1OmrJYp5nbCqxDqNPJTXxfI=;
- b=OA6hgOQbpxr2aniKVYCdt8jlPqMyq1xqxSD8A1RKhGgMuAydL5vbv06Ho5iWeQI/YuNHE+2nnOCY4D/i/Ek1slBkY5DLVBlmUVq0uAvYeGtvcFDI2qctLMQelQnHcjbM1dmkgUngVGSNt+VWKdr//dyP5/FRJJx+PYJ8ocVwlHGharSpT4s8A4JyTAwhQujZgXc8tLXuyztihbXM05tnIQpnryDLcvGhBK1LnJvskwlDynEW67Co4shyJcZ5wzjCgvkm/tRVaWnn90b5x136MrvnARh/hgm/TCcvDUvrAhgup/qMq3Fketmji++8Q/MSlh2raLISw5kbAwA9dx+uxw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH0PR11MB5782.namprd11.prod.outlook.com (2603:10b6:510:147::11)
- by SA2PR11MB4972.namprd11.prod.outlook.com (2603:10b6:806:fb::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.32; Mon, 1 Jul
- 2024 11:20:34 +0000
-Received: from PH0PR11MB5782.namprd11.prod.outlook.com
- ([fe80::9696:a886:f70a:4e01]) by PH0PR11MB5782.namprd11.prod.outlook.com
- ([fe80::9696:a886:f70a:4e01%7]) with mapi id 15.20.7698.038; Mon, 1 Jul 2024
- 11:20:34 +0000
-Date: Mon, 1 Jul 2024 13:20:22 +0200
-From: Michal Kubiak <michal.kubiak@intel.com>
-To: Adrian Moreno <amorenoz@redhat.com>
-CC: <netdev@vger.kernel.org>, <aconole@redhat.com>, <echaudro@redhat.com>,
-	<horms@kernel.org>, <i.maximets@ovn.org>, <dev@openvswitch.org>, Ido Schimmel
-	<idosch@nvidia.com>, Yotam Gigi <yotam.gi@gmail.com>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next v7 01/10] net: psample: add user cookie
-Message-ID: <ZoKQ9m9QXy8yIvhh@localhost.localdomain>
-References: <20240630195740.1469727-1-amorenoz@redhat.com>
- <20240630195740.1469727-2-amorenoz@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240630195740.1469727-2-amorenoz@redhat.com>
-X-ClientProxiedBy: MI2P293CA0014.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:45::13) To PH0PR11MB5782.namprd11.prod.outlook.com
- (2603:10b6:510:147::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B9D1422CE
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 11:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719832850; cv=none; b=VeYMP5m8ruD0uc4LkIHSNpk9LY3RU5fp7/qdiwCu3AzTCNL9NiMa9xUUkfhh2v5IdyZnneEli1zrTu+5PK6YD61D2lc+WYbW/cEeBrknFrUp17nSOqPbbkubaWGu9d+yg9HSJAOPRnjK1TOKvnm1RpCjWW93aNtzaP8VR2wBLBI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719832850; c=relaxed/simple;
+	bh=NSwcZo86tOSm2faPtLycodlFmTcALPoXvh4E64ZsC+4=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=H8TpubMumyvdoo/ESo0Q8SPao/UJIIYd8GL8n5JK7OvGUFFIZNFEV4gi9iJaoGh/xydcUopjtK9cUQk+QiSGNHWVp6QRVc+V5dAiF4t73Uyg02fFIG76NHu0HkPahNFvYSTdsRvgngo5p4N1kK5jfTe+UPDmJKj043WBBeyD4JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C6OLsfOx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A7D6C4AF0C;
+	Mon,  1 Jul 2024 11:20:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719832849;
+	bh=NSwcZo86tOSm2faPtLycodlFmTcALPoXvh4E64ZsC+4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=C6OLsfOxu3hQ33cphcacWiUvIbF/LE4ul+zpVGkBMY0iE98Nw43X2+5IqwHL4P8XB
+	 Pueyyc+NJ+7Svgc1K8M4Uu4r2OiY4YO0jIWKB1P3MAfQlr5AkUtfSIH2LbAu/jB0hB
+	 li+vRq/WNgrJUoXK3yl7Lg9DAp7cISRAnuXG6uf3O2X2qyP7lMAoCivHCUn/ODYh3q
+	 twyxb9sJRAzS9upLpZ37N6sMnEOEXXBWzRnRdgS0d/03Xwxl43sCW+WZaXKvMI08kG
+	 gF6FocybgDUr6HVGQQ9hmFHeoJACKPfiqfbVpodkwrQzpHiQaA6CESJb/OlEtaTDP5
+	 SVmdMTki7twqw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sOF5T-008lYA-49;
+	Mon, 01 Jul 2024 12:20:47 +0100
+Date: Mon, 01 Jul 2024 12:20:46 +0100
+Message-ID: <868qylicj5.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Nianyao Tang <tangnianyao@huawei.com>
+Cc: <tglx@linutronix.de>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>,
+	<guoyang2@huawei.com>,
+	<wangwudi@hisilicon.com>
+Subject: Re: [PATCH] irqchip/gic-v4: Fix vcpus racing for vpe->col_idx in vmapp and vmovp
+In-Reply-To: <20240701072305.4129823-1-tangnianyao@huawei.com>
+References: <20240701072305.4129823-1-tangnianyao@huawei.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR11MB5782:EE_|SA2PR11MB4972:EE_
-X-MS-Office365-Filtering-Correlation-Id: f869445e-058b-4968-54ed-08dc99bfd361
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?S5jSW8+3TmXDlJicuroED2JE3OFlc6JKzyfCvkuRnuMhq60z2Vn7RZK3oqhM?=
- =?us-ascii?Q?YxhKQE8KoI463iUkitzV+gpNjzrld/2bzWGON9IaV697+AiS1S6ONtIGkbX2?=
- =?us-ascii?Q?6HkWZU/Ur//HYS6XOj4I/4b6vz3G4PJlQh/yjTQq/pHgBJGKgLB63jX3Yncx?=
- =?us-ascii?Q?sCNBq+zvDcf6PhwJgnsN8IPmQRAJsL6XB1OHZsv+WU4hSZzZVPOhEk1aOU1j?=
- =?us-ascii?Q?QW3TmYy3OapYZLinx3MPG+pv5Vj1C0bBHKoPcVc8JeCYQ7psbKpvRpWBEaxb?=
- =?us-ascii?Q?Vl4/QUtSIquTZwFX3NWOW/q8roReqlkbjIGvKp1DFsP5/MbfEsuk4ZWkS79v?=
- =?us-ascii?Q?KMMeQrTWAp7JdPpghr//39mWjTeyrRqBLg1K4ByfwHYr8gYdlbmMArjhvZPR?=
- =?us-ascii?Q?XpTSDAx+D3nxSbiKnAd4OCb4f7e9rmj46ZgoibjZSxFMYrQAHi7FiDDCOCdM?=
- =?us-ascii?Q?7+xQOn/DaOTwZlbgzpxP1jHD3PYBlObRFhWRbiYoLWXWCXZizaBsIv5RO7RU?=
- =?us-ascii?Q?zCqxOuizHdk0WJqe4RobmFIVY5c2CM71FMf4+u6NbcEfnGYi41LFwUYq/083?=
- =?us-ascii?Q?aztv/D543cMTe6kXhwxMJSj7A2GUC3OEh53CKjECHW6rlx2TUnOmPSkL89kg?=
- =?us-ascii?Q?dvTg0N2PHXOgtfu2ILm2peWROtAq1DrMKzrjdvICKWFsvgy76W1hy0gvq07j?=
- =?us-ascii?Q?XdgZBbvc4K8d7+OHX1CNsLP6Sc2PoGIioJHkFP1hkWE1w7o8F4Fbn8ge2Mmx?=
- =?us-ascii?Q?d45K7bYFfELz5BRe43TtJxc0YPD/RLDEjGTBe1NBP0yNbK1U20pTZmEeOyGP?=
- =?us-ascii?Q?u70QU+d/aWAiZIYAYJR7jStGlXopGv5zcgGeKXZ8hyfbvz0QT1IgfzyubZfj?=
- =?us-ascii?Q?EyCDuKiB8woszR6N6ElEgD6DVCO38RIB7QEFXB+Las+Ek6+4xsHqQMrEUFhl?=
- =?us-ascii?Q?xQp4nXQlJKUOS8tTCG1bIemg0bJeT/suh72jqVx2K+T8mxdAhBJMse9yXr+9?=
- =?us-ascii?Q?n3bzvojIDAQpecOnIt+BqCgL+LhUQfz5EiCeJ5FVhiaipY6yBS6t0kBTj+JJ?=
- =?us-ascii?Q?3NF/H/jhWjeKiM54s+GzOWVy4a6H4yFFY9MSYy0xMQzj7Z4b7d5yKq1J1sD5?=
- =?us-ascii?Q?QlgkBgcLfwI096a1lAQThC7s5AXIdPeZcw+J8FHcQ1IH43S0LBDzRTjTkHyO?=
- =?us-ascii?Q?6e0hf7+eQiRNjaLAp1njiNlz4cNxlCxKDtCUYYcR0caRTL4hJ92iPjnOJrl1?=
- =?us-ascii?Q?mQqZ7Rg0O06uI/zdc2Yd1dxVh81t8S8OQG4RpnaGefDba7tbqGjUn/RhtZN0?=
- =?us-ascii?Q?OX5lE4hchOK/8vO6u4Sua0MxzKXUm2cmVCgFQyCuq9G6LQ=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR11MB5782.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?wnxE7PqPWtrJq35EFwXQPCjjSlAvQoghNZZ8fU3wWkZ78SPAyNKkwod54OSc?=
- =?us-ascii?Q?k/0nDzRfzARdYQCDaasedqx+nNFc2HW4qOycmKKj/g7jGtRRKlEeW/zz0AEr?=
- =?us-ascii?Q?SKQoIP6iazeOCqKJZKPWN3oxm08iOsDoAVKL218tIkrY1gXj6QQRq97zASnc?=
- =?us-ascii?Q?Z/x0RW3vM1oyXAJgJVWv7oBVxaUu2tcYUrtKlSNU0U0UZfZ2ZibD2QZQPqOF?=
- =?us-ascii?Q?jKcZNl3NOFHp2gGOetxOhKbiymLE3PpdA0DoMhiXZgvJrvFLDwn8/E9h1S+I?=
- =?us-ascii?Q?QIG6m8bpXc076BFGFh4ySjiQJ0jipTN3W4GJFbfuQ/hUucDUaiYqKBV9QnR2?=
- =?us-ascii?Q?uQnw4IA0rcheW2nmtUkoblRZ7v+MADFgd8AViMc16BVgkMrDeWGNgRwCklbG?=
- =?us-ascii?Q?we6TpTcnOMBe/TEacUPy+qu2LJrbzYEDki/lvuuVXBp4L6XB8YP6JVdQu+VU?=
- =?us-ascii?Q?eulm4vedpZap8NxvaUKv0tNq+tT0QYbxfhqOokT+9UDGwr1R1xXyM+7yETJN?=
- =?us-ascii?Q?1wivQ+lbPMwQGKExMbqFtQzcavj5kInjw8sSk4tvvvEw8bgZeVY0P6NoyJhe?=
- =?us-ascii?Q?gGD4d/qnzGg2jCBddyBqu6Pf7xiLEt3DN0EXUKqG0q+EU4id1kOEcH7vcXw/?=
- =?us-ascii?Q?qVb8DnVHSgKGVFuBOt0U3RXnBuAFHDN/rvdVTgYP7wYtSsHvuytnbteuNDY9?=
- =?us-ascii?Q?FD19y0vH3G40XQN8sUe9YpuxB4Uh5kkkw4jXSXweHo1F/LzdYNCMB6futhSO?=
- =?us-ascii?Q?bs0kuPfwQiMLgO83hG0MHCfLH2RlXApev9Pv5NApqjoty69nDbdAjKe0oP9r?=
- =?us-ascii?Q?7fycSbQbTfGiz3h6OKAeTOEfQQ+aXhMJrJxUssa+AS4JBp+zmyHmV4uvPF1b?=
- =?us-ascii?Q?o8fGWP0TXlIVEIAFp/Gj+Qn8YetiHVaisCaUir4c8vlvkE/SouQuLH9feGzi?=
- =?us-ascii?Q?bYbe8wMswxDSk9oyozkhkRry+wGqbEWfLuX5VkBTok3UOrful3kAidTu86HK?=
- =?us-ascii?Q?ZoflfOruKbMupYDE0qCxx8McX42eWXqJozuAj3aOBmxYYWNKuSFXxhhCX99b?=
- =?us-ascii?Q?k5IYuQgBCsgLvoJv9WeQuufzMR4Q4yQ7dTiK17uMWMsVCedrNf3MRBpscO1q?=
- =?us-ascii?Q?OW2tatxLwy1nLMCymuoNEVzGAQi0axTc0FIyvQyE7reX/HHMe5jTJJU8oFaH?=
- =?us-ascii?Q?CfFX4cIWu0bs2R7x9nQViqwhSQtWZvkqgnNFBL1nHcasCJAPNt3Uq7MLdxy/?=
- =?us-ascii?Q?tjz7Q7H3GNdap2BRxbXUHaNLQvDUZSl/D3i5iS3AM4d0E3RKPbTi3r7y+3T+?=
- =?us-ascii?Q?uXhw0s2/wVrzmGn4nFJIcZ0QPn5qwC9+LTQaUj54TavdInwmcAKWRs0ypSHx?=
- =?us-ascii?Q?6N7XTnj8wHszhX4ugneoPlqV/IOKPmGVvA4lDAhIwzyniOJuPj2awwFWOUHu?=
- =?us-ascii?Q?+OC5kJDN18gE6zlIaLyad/lwMoKXC8O5EdVG8utvD5XvoCC/rJ2KhiaVy2v3?=
- =?us-ascii?Q?uJkPKZ4eItcYk/2e/hi0StRMyCOOKyI5wE2bWeFr4cw7AUG5uqfVP1Kdje1F?=
- =?us-ascii?Q?yCbDQhyfhnwpnRmavdq9766FrjgDAb84OLT7Bq8INFRLM0gFdK8NyaeDMyMK?=
- =?us-ascii?Q?yA=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: f869445e-058b-4968-54ed-08dc99bfd361
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR11MB5782.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2024 11:20:34.5379
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2jluwf3hl99FfvR1nV34k8ZPdHqCjrNAF33R4OMG1GxSYZX/rhXW3bFe12B74dl+3pi/AHKsMl/IpWq8X0pKeg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4972
-X-OriginatorOrg: intel.com
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: tangnianyao@huawei.com, tglx@linutronix.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, guoyang2@huawei.com, wangwudi@hisilicon.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Sun, Jun 30, 2024 at 09:57:22PM +0200, Adrian Moreno wrote:
-> Add a user cookie to the sample metadata so that sample emitters can
-> provide more contextual information to samples.
-> 
-> If present, send the user cookie in a new attribute:
-> PSAMPLE_ATTR_USER_COOKIE.
-> 
-> Acked-by: Eelco Chaudron <echaudro@redhat.com>
-> Reviewed-by: Simon Horman <horms@kernel.org>
-> Reviewed-by: Ido Schimmel <idosch@nvidia.com>
-> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+On Mon, 01 Jul 2024 08:23:05 +0100,
+Nianyao Tang <tangnianyao@huawei.com> wrote:
+>=20
+> its_map_vm may modify vpe->col_idx without holding vpe->vpe_lock.
+> It would result in a vpe resident on one RD after vmovp to a different RD.
+> Or, a vpe maybe vmovp to a RD same as it is current mapped in vpe table.
+>=20
+> On a 2-ITS, GICv4 enabled system, 32 vcpus deployed on cpu of collection 0
+> and 1. Two pci devices route VLPIs, using each of the ITS.
+> VPE ready to reside on RD1 may have such unexpected case because another
+> vcpu on other cpu is doing vmapp and modify his vpe->col_idx.
+>=20
+> Unexpected Case 1:
+> RD                0                              1
+>                                            vcpu_load
+>                                            lock vpe_lock
+>                                            vpe->col_idx =3D 1
+>             its_map_vm
+>             lock vmovp_lock
+>                                            waiting vmovp_lock
+>             vpe->col_idx =3D 0
+>             (cpu0 is first online cpu)
+>             vmapp vpe on col0
+>             unlock vmovp_lock
+>                                            lock vmovp_lock
+>                                            vmovp vpe to col0
+>                                            unlock vmovp_lock
+>                                            vpe resident here fail to
+>                                              receive VLPI!
+>=20
+> Unexpected Case 2:
+> RD                0                              1
+>             its_map_vm                     vcpu_load
+>             lock vmovp_lock                lock vpe_lock
+>             vpe->col_idx =3D 0
+>                                            vpe->col_idx =3D 1
+>             vmapp vpe on col1              waiting vmovp_lock
+>             unlock vmovp_lock
+>                                            lock vmovp_lock
+>                                            vmovp vpe to col1
+>                                            (target RD =3D=3D source RD!)
+>                                            unlock vmovp_lock
+
+Why is this second case a problem? What is the conclusion? This commit
+message doesn't explain how you are solving it.
+
+>=20
+>=20
+>=20
+> Signed-off-by: Nianyao Tang <tangnianyao@huawei.com>
 > ---
-> 
+>  drivers/irqchip/irq-gic-v3-its.c | 18 +++++++++++++-----
+>  1 file changed, 13 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v=
+3-its.c
+> index f99c0a86320b..adda9824e0e7 100644
+> --- a/drivers/irqchip/irq-gic-v3-its.c
+> +++ b/drivers/irqchip/irq-gic-v3-its.c
+> @@ -1794,11 +1794,15 @@ static bool gic_requires_eager_mapping(void)
+>  static void its_map_vm(struct its_node *its, struct its_vm *vm)
+>  {
+>  	unsigned long flags;
+> +	bool vm_mapped_on_any_its =3D false;
+> +	int i;
+> =20
+>  	if (gic_requires_eager_mapping())
+>  		return;
+> =20
+> -	raw_spin_lock_irqsave(&vmovp_lock, flags);
+> +	for (i =3D 0; i < GICv4_ITS_LIST_MAX; i++)
+> +		if (vm->vlpi_count[i] > 0)
+> +			vm_mapped_on_any_its =3D true;
 
-Reviewed-by: Michal Kubiak <michal.kubiak@intel.com>
+What makes you think that dropping the vmovp lock is a good idea? What
+if you have a concurrent unmap?
+
+> =20
+>  	/*
+>  	 * If the VM wasn't mapped yet, iterate over the vpes and get
+> @@ -1813,15 +1817,19 @@ static void its_map_vm(struct its_node *its, stru=
+ct its_vm *vm)
+>  			struct its_vpe *vpe =3D vm->vpes[i];
+>  			struct irq_data *d =3D irq_get_irq_data(vpe->irq);
+> =20
+> -			/* Map the VPE to the first possible CPU */
+> -			vpe->col_idx =3D cpumask_first(cpu_online_mask);
+> +			raw_spin_lock_irqsave(&vpe->vpe_lock, flags);
+> +
+> +			if (!vm_mapped_on_any_its) {
+> +				/* Map the VPE to the first possible CPU */
+> +				vpe->col_idx =3D cpumask_first(cpu_online_mask);
+> +			}
+
+If the issue is that the target RD isn't initialised before we issue a
+VMAPP, then why not initialising it right from the start?
+
+>  			its_send_vmapp(its, vpe, true);
+>  			its_send_vinvall(its, vpe);
+>  			irq_data_update_effective_affinity(d, cpumask_of(vpe->col_idx));
+> +
+> +			raw_spin_unlock_irqrestore(&vpe->vpe_lock, flags);
+>  		}
+>  	}
+> -
+> -	raw_spin_unlock_irqrestore(&vmovp_lock, flags);
+>  }
+> =20
+>  static void its_unmap_vm(struct its_node *its, struct its_vm *vm)
+
+I don't think this patch makes much sense. It opens an even bigger
+race between map and unmap, and I really don't think we want that. The
+main issue is that you are trying to avoid fixing the root cause of
+the problem...
+
+The first course of action is to move the vpe->col_idx init and
+affinity update to activation time, which would make all
+implementations (v4 with and without VMOVP list, v4.1) behave the
+same. On its own, this solves the biggest issue.
+
+The other thing would be to ensure that this lazy VMAPP cannot take
+place concurrently with vcpu_load(). We can't take the VPE lock after
+the vmovp_lock, as this violates the lock ordering established in
+its_vpe_set_affinity(), which locks the VPE before doing anything else.
+
+A possibility would be to take *all* vpe locks *before* taking the
+vmovp lock, ensuring that vmapp sees something consistent. But that's
+potentially huge, and likely to cause stalls on a busy VM. Instead, a
+per-VM lock would do the trick and allow each VPE lock to be taken in
+turn.
+
+With that, we can fix the locking correctly, and make sure that
+vcpu_load and vmapp are mutually exclusive.
+
+I've written the small patch series below (compile-tested only).
+Please let me know how it fares for you.
+
+	M.
+
+=46rom a9857d782fc649bc08db953477bed9b8c3421118 Mon Sep 17 00:00:00 2001
+From: Marc Zyngier <maz@kernel.org>
+Date: Mon, 1 Jul 2024 10:39:19 +0100
+Subject: [PATCH 1/3] irqchip/gic-v4: Always configure affinity on VPE
+ activation
+
+We currently have two paths to set the initial affinity of a VPE:
+
+- at activation time on GICv4 without the stupid VMOVP list, and
+  on GICv4.1
+
+- at map time for GICv4 with VMOVP list
+
+The latter location may end-up modifying the affinity of VPE
+that is currently running, making the results unpredictible.
+
+Instead, unify the two paths, making sure we only set the
+initial affinity at activation time.
+
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+---
+ drivers/irqchip/irq-gic-v3-its.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-=
+its.c
+index 3c755d5dad6e6..a00c5e8c4ea65 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -1809,13 +1809,9 @@ static void its_map_vm(struct its_node *its, struct =
+its_vm *vm)
+=20
+ 		for (i =3D 0; i < vm->nr_vpes; i++) {
+ 			struct its_vpe *vpe =3D vm->vpes[i];
+-			struct irq_data *d =3D irq_get_irq_data(vpe->irq);
+=20
+-			/* Map the VPE to the first possible CPU */
+-			vpe->col_idx =3D cpumask_first(cpu_online_mask);
+ 			its_send_vmapp(its, vpe, true);
+ 			its_send_vinvall(its, vpe);
+-			irq_data_update_effective_affinity(d, cpumask_of(vpe->col_idx));
+ 		}
+ 	}
+=20
+@@ -4562,6 +4558,10 @@ static int its_vpe_irq_domain_activate(struct irq_do=
+main *domain,
+ 	struct its_vpe *vpe =3D irq_data_get_irq_chip_data(d);
+ 	struct its_node *its;
+=20
++	/* Map the VPE to the first possible CPU */
++	vpe->col_idx =3D cpumask_first(cpu_online_mask);
++	irq_data_update_effective_affinity(d, cpumask_of(vpe->col_idx));
++
+ 	/*
+ 	 * If we use the list map, we issue VMAPP on demand... Unless
+ 	 * we're on a GICv4.1 and we eagerly map the VPE on all ITSs
+@@ -4570,9 +4570,6 @@ static int its_vpe_irq_domain_activate(struct irq_dom=
+ain *domain,
+ 	if (!gic_requires_eager_mapping())
+ 		return 0;
+=20
+-	/* Map the VPE to the first possible CPU */
+-	vpe->col_idx =3D cpumask_first(cpu_online_mask);
+-
+ 	list_for_each_entry(its, &its_nodes, entry) {
+ 		if (!is_v4(its))
+ 			continue;
+@@ -4581,8 +4578,6 @@ static int its_vpe_irq_domain_activate(struct irq_dom=
+ain *domain,
+ 		its_send_vinvall(its, vpe);
+ 	}
+=20
+-	irq_data_update_effective_affinity(d, cpumask_of(vpe->col_idx));
+-
+ 	return 0;
+ }
+=20
+--=20
+2.39.2
+
+
+=46rom e3c53afb6b3b5e9e4dc5963f9f70350455e7e986 Mon Sep 17 00:00:00 2001
+From: Marc Zyngier <maz@kernel.org>
+Date: Mon, 1 Jul 2024 12:00:13 +0100
+Subject: [PATCH 2/3] irqchip/gic-v4: Substitute vmovp_lock for a per-VM lock
+
+vmovp_lock is abused in a number of cases to serialise updates
+to vlpi_count[] and deal with map/unmap of a VM to ITSs.
+
+Instead, provide such a lock and revisit the use of vlpi_count[]
+so that it is always wrapped in this per-VM vmapp_lock.
+
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+---
+ drivers/irqchip/irq-gic-v3-its.c   | 21 +++++++++++----------
+ include/linux/irqchip/arm-gic-v4.h |  5 +++++
+ 2 files changed, 16 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-=
+its.c
+index a00c5e8c4ea65..7c37fbe97afbe 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -1338,6 +1338,11 @@ static void its_send_vmovp(struct its_vpe *vpe)
+ 	 * Wall <-- Head.
+ 	 */
+ 	raw_spin_lock_irqsave(&vmovp_lock, flags);
++	/*
++	 * Protect against concurrent updates of the mapping state on
++	 * individual VMs.
++	 */
++	raw_spin_lock(&vpe->its_vm->vmapp_lock);
+=20
+ 	desc.its_vmovp_cmd.seq_num =3D vmovp_seq_num++;
+ 	desc.its_vmovp_cmd.its_list =3D get_its_list(vpe->its_vm);
+@@ -1354,6 +1359,7 @@ static void its_send_vmovp(struct its_vpe *vpe)
+ 		its_send_single_vcommand(its, its_build_vmovp_cmd, &desc);
+ 	}
+=20
++	raw_spin_unlock(&vpe->its_vm->vmapp_lock);
+ 	raw_spin_unlock_irqrestore(&vmovp_lock, flags);
+ }
+=20
+@@ -1791,12 +1797,10 @@ static bool gic_requires_eager_mapping(void)
+=20
+ static void its_map_vm(struct its_node *its, struct its_vm *vm)
+ {
+-	unsigned long flags;
+-
+ 	if (gic_requires_eager_mapping())
+ 		return;
+=20
+-	raw_spin_lock_irqsave(&vmovp_lock, flags);
++	guard(raw_spinlock_irqsave)(&vm->vmapp_lock);
+=20
+ 	/*
+ 	 * If the VM wasn't mapped yet, iterate over the vpes and get
+@@ -1814,19 +1818,15 @@ static void its_map_vm(struct its_node *its, struct=
+ its_vm *vm)
+ 			its_send_vinvall(its, vpe);
+ 		}
+ 	}
+-
+-	raw_spin_unlock_irqrestore(&vmovp_lock, flags);
+ }
+=20
+ static void its_unmap_vm(struct its_node *its, struct its_vm *vm)
+ {
+-	unsigned long flags;
+-
+ 	/* Not using the ITS list? Everything is always mapped. */
+ 	if (gic_requires_eager_mapping())
+ 		return;
+=20
+-	raw_spin_lock_irqsave(&vmovp_lock, flags);
++	guard(raw_spinlock_irqsave)(&vm->vmapp_lock);
+=20
+ 	if (!--vm->vlpi_count[its->list_nr]) {
+ 		int i;
+@@ -1834,8 +1834,6 @@ static void its_unmap_vm(struct its_node *its, struct=
+ its_vm *vm)
+ 		for (i =3D 0; i < vm->nr_vpes; i++)
+ 			its_send_vmapp(its, vm->vpes[i], false);
+ 	}
+-
+-	raw_spin_unlock_irqrestore(&vmovp_lock, flags);
+ }
+=20
+ static int its_vlpi_map(struct irq_data *d, struct its_cmd_info *info)
+@@ -3922,6 +3920,8 @@ static void its_vpe_invall(struct its_vpe *vpe)
+ {
+ 	struct its_node *its;
+=20
++	guard(raw_spinlock_irqsave)(&vpe->its_vm->vmapp_lock);
++
+ 	list_for_each_entry(its, &its_nodes, entry) {
+ 		if (!is_v4(its))
+ 			continue;
+@@ -4527,6 +4527,7 @@ static int its_vpe_irq_domain_alloc(struct irq_domain=
+ *domain, unsigned int virq
+ 	vm->db_lpi_base =3D base;
+ 	vm->nr_db_lpis =3D nr_ids;
+ 	vm->vprop_page =3D vprop_page;
++	raw_spin_lock_init(&vm->vmapp_lock);
+=20
+ 	if (gic_rdists->has_rvpeid)
+ 		irqchip =3D &its_vpe_4_1_irq_chip;
+diff --git a/include/linux/irqchip/arm-gic-v4.h b/include/linux/irqchip/arm=
+-gic-v4.h
+index 2c63375bbd43f..ed879e03f4e64 100644
+--- a/include/linux/irqchip/arm-gic-v4.h
++++ b/include/linux/irqchip/arm-gic-v4.h
+@@ -25,6 +25,11 @@ struct its_vm {
+ 	irq_hw_number_t		db_lpi_base;
+ 	unsigned long		*db_bitmap;
+ 	int			nr_db_lpis;
++	/*
++	 * Ensures mutual exclusion between updates to vlpi_count[]
++	 * and map/unmap when using the ITSList mechanism.
++	 */
++	raw_spinlock_t		vmapp_lock;
+ 	u32			vlpi_count[GICv4_ITS_LIST_MAX];
+ };
+=20
+--=20
+2.39.2
+
+
+=46rom b8092dce0312469a0ea03ada1da854f4ded80e2a Mon Sep 17 00:00:00 2001
+From: Marc Zyngier <maz@kernel.org>
+Date: Mon, 1 Jul 2024 12:03:22 +0100
+Subject: [PATCH 3/3] irqchip/gic-v4: Make sure a VPE is locked when VMAPP is
+ issued
+
+In order to make sure that vpe->col_idx is correctly sampled
+when a VMAPP command is issued, we must hold the lock for the
+VPE. This is now possible since the introduction of the per-VM
+vmapp_lock, which can be taken before vpe_lock in the locking
+order.
+
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+---
+ drivers/irqchip/irq-gic-v3-its.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-=
+its.c
+index 7c37fbe97afbe..0e1583a82d4e7 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -1814,7 +1814,9 @@ static void its_map_vm(struct its_node *its, struct i=
+ts_vm *vm)
+ 		for (i =3D 0; i < vm->nr_vpes; i++) {
+ 			struct its_vpe *vpe =3D vm->vpes[i];
+=20
++			raw_spin_lock(&vpe->vpe_lock);
+ 			its_send_vmapp(its, vpe, true);
++			raw_spin_unlock(&vpe->vpe_lock);
+ 			its_send_vinvall(its, vpe);
+ 		}
+ 	}
+@@ -1831,8 +1833,10 @@ static void its_unmap_vm(struct its_node *its, struc=
+t its_vm *vm)
+ 	if (!--vm->vlpi_count[its->list_nr]) {
+ 		int i;
+=20
+-		for (i =3D 0; i < vm->nr_vpes; i++)
++		for (i =3D 0; i < vm->nr_vpes; i++) {
++			guard(raw_spinlock)(&vm->vpes[i]->vpe_lock);
+ 			its_send_vmapp(its, vm->vpes[i], false);
++		}
+ 	}
+ }
+=20
+--=20
+2.39.2
+
+
+--=20
+Without deviation from the norm, progress is not possible.
 
