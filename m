@@ -1,123 +1,74 @@
-Return-Path: <linux-kernel+bounces-235789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CB9691D9AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:08:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B72A91D9AB
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:08:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C7A628540E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:08:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B2A21C21BF2
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12A4823AF;
-	Mon,  1 Jul 2024 08:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WH6ry1g+"
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7699F81ACA;
+	Mon,  1 Jul 2024 08:07:56 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8054347B4
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 08:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B489B39FF3
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 08:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719821291; cv=none; b=T5m+VB2h1uBLuGDEk8WTo8OXgQiIjVpdEfDRFC3O4TlOwOoea5K0eC22cVXpMGlQk++a50nf4yn5K3jdRe2XcZzBtN1k8yruz+W2wxcepgBxGJFRK3oWW9SbZV4OnxX7O6a3vhV23r83qO5j9KT/F5IsV5gI/k5m0cB4L1vC1O8=
+	t=1719821276; cv=none; b=MZ6ohQRSkU5yx6vlDqw65UaZqiavKjDr+TMj6oDw+ye8sbyuiDFHXM8IaXpJ029XuRsAB/n/dtcSYmpc2bOnoZUA//3TxnGuciLs4JC6dP35srzjWgEOmHg19Cwgk3oa7eH/Eo6obVc1SD3KsckoO0CQnBuZHfm9ooZe2eCn/5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719821291; c=relaxed/simple;
-	bh=VPRkoE3ztljhYb2mUym0oBvK660ieGuSjJxUH6lVx+E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cVLy9uquOVy8XGahPIXTxUKzJTqv42N288kGE7VUpMkKYGkTVAGhFme0SY3AqugYK/UKz8vznGtIHMo8ejFY1a9o1gU7ObJ/8DZV3HZ473Z7N1KYFH/UN6ewMtO999AAnCIi+la1ZgPRjiI+2uHv3UR2S4Aen/Vs72/eM9JnQzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WH6ry1g+; arc=none smtp.client-ip=209.85.221.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-4ef765e6dcaso763640e0c.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 01:08:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719821288; x=1720426088; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6aSwYtSpfHiZc4CsUqleqrbbtIAk9e+BSHL8NQ5ures=;
-        b=WH6ry1g+7aGovV9XFLs76HAQpAJfjStMaRjcZjPbDPOwlONnitHuJ24s9Tqh/a0uAY
-         odmIsU3M1p7/x4KMkeuuZWIMdxBvFzrsbiB7sMBZLSwVNIcpKQE7bXSno4bEvMeX5T15
-         Qd80jqz+vZOvm+LeRq7Zcf9KW94w3FihKXST8E5rLuA3IhtDq7zQdqmAEkAAEU5AWhzo
-         DmPyWA/HrwE//9qPjg3hCZCBhT56J1wWpu6Xf1f0pGJXN7qgm2hvIAs5mqCYAcktHP70
-         Buavt7xTwyMOwuicGxQ2toMZIfOfMDtiVpcJpc9y/1VmMnwNMWcYccuBR85HZariE8PM
-         h+0A==
+	s=arc-20240116; t=1719821276; c=relaxed/simple;
+	bh=Bz94elEHPz1zbjvcEHFc1YDv3mX8QFoL8smTwn7WggY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=WHqGOjeiQ5HcCrUksbxty9eNEmACH4mZMBr/ru8owA2/8Ti3xaAn8nmxZCu+VG3USg4jHBCpYXvueNTgx+GXcC4iLqqyYimZ6YZ6N5eEGWUmXUV7R7PTP/GGxNDd4LMsbO8Q0KLHc2+7KzBbDN3fpmdo2626xuK/DmDiBm5K02k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7f3ccfec801so283110739f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 01:07:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719821288; x=1720426088;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6aSwYtSpfHiZc4CsUqleqrbbtIAk9e+BSHL8NQ5ures=;
-        b=pdERLQHYgNiGcLg5PUf7biuhwKiXuZNW2PxfMHACPtXwxdHxHLqgBTRGNtZBadA5hP
-         y3ldmTpiXTdH5t4DKjpx07AYxQmdi0tx1JcN7bhD50Rkvk36H6i6HSD18JPFaIsFT3Sh
-         oWrwrN3sIbGLgbddNnEJnr431FIKCkUeAxb+9GyOaSpVtiUtvsa+EjuhcPS36n3N5eFc
-         64QgnMNEf63bGZGv8fXRHj3svR/tpm7FQdy0mcaBUdJv8fG76lt0Oxi92uNJ2sg6II90
-         MBRPFe0zJ6VSKhF4SZYamCGMKdXP5lzE+aUJF3aDxF01ZvIqUlqqxrM8xttqXyIB1LKK
-         9Bmw==
-X-Forwarded-Encrypted: i=1; AJvYcCUYCGtSyZ+43nqmphlc4AfMvwWG4Bh3a73xIzxeYaN634ck6S8v9d7mdjVGfGBZwHDHPRRDNPJGvpgkrIrwfhv1KpC8MV48VWHLZZyC
-X-Gm-Message-State: AOJu0YxcXYmJ8AiHi6LqGHInnmBOFKJVOpDp4Gl4prNoabGm1XcI6P+j
-	v2Uv+W3/mD3lAfrpcNFprP3+O4mbFDCdDU2C+JhdSyimxJoCFCHzvI7b/RS25ibJ7Qaj9ocb7pb
-	jk4ONhJdnkVdlQtUAX463gKeSi0bT1HutR+RM
-X-Google-Smtp-Source: AGHT+IFy0wXG91tZbiAf8hSc4kA1fz73JufSo3AsicBjchsYn+XC8+nuxiGgboitMYwn7yXgLuAcqQEtRy0zMy9Kcfo=
-X-Received: by 2002:a05:6122:4014:b0:4df:261c:fc0c with SMTP id
- 71dfb90a1353d-4f2a56f27e9mr2234065e0c.13.1719821287938; Mon, 01 Jul 2024
- 01:08:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719821274; x=1720426074;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bz94elEHPz1zbjvcEHFc1YDv3mX8QFoL8smTwn7WggY=;
+        b=hbGMxWiDOWl6i9Rsgu7imTo9EWanmdRPq54V6RWDbMrVoSZVdA3lX+bAKivXJw6nW5
+         nfqFHS4upCFJIuGUBVKH3EUTc+XfGBOqZiDZEKzIbl2tg788GA97wr1RWj57j8GxdLmp
+         LQ/qakEdj1g5IjyyqHbV3ZY1WWcRnFh8WOkQ130vZRZZL/GBMlnKnlVKKXr/AgFsr56Z
+         nJYe9/nNn9S9/KEkniib0XPnaR+zwQe/CasmS23H0Qn/71wgDaLYAkxssuqSDFgmYJC8
+         cD/lSiptPsLtbT4CJtUCHIjLiaqAZLRsbY6konSvyyHNDdblwMfhifWMc3sFX846VGTa
+         Suag==
+X-Forwarded-Encrypted: i=1; AJvYcCW7+gFf8BJY+qo7nauOmp3HvsOae2t7+eVzEIsI7JFm0z+joWdYfrPbwc3M4WrGJf5Tw8X6JbW0q6EB1082K8/Ayg7QUEv3bItH3shk
+X-Gm-Message-State: AOJu0Yx9r7eEK/EGN2hf3nicEOYUcKjHtk8FFSw5qO9q7ieuwBKQ04eN
+	mG3kXHsI2Dyt7vJsolYS1eFrJ1J/mWwUrDpkHrqnhLEo2F2F2b684kae5IrcPUd2c9OQ2vUhPKN
+	0a/NMyNQdH/gyxqwPfX+v5V5oMGQNfhdtSynWhuBiYoJTOvGWsYjEgeM=
+X-Google-Smtp-Source: AGHT+IGM+KRUlfdwC7sKMrEoWmEDCHPnF5A0mWRnAIL3AlDg7Dq3iCw4eQAyXOQXQyd7CMQSLs7AtOA6O6Ve7+pXeinV14HBjMKb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240630200135.224108-1-thorsten.blum@toblux.com>
-In-Reply-To: <20240630200135.224108-1-thorsten.blum@toblux.com>
-From: Marco Elver <elver@google.com>
-Date: Mon, 1 Jul 2024 10:07:29 +0200
-Message-ID: <CANpmjNMXOn_N=9CY2iGLC=r=FAP4J2EFJbwDsAEuhKydwh6wtg@mail.gmail.com>
-Subject: Re: [PATCH v3] kcsan: Use min() to fix Coccinelle warning
-To: Thorsten Blum <thorsten.blum@toblux.com>, "Paul E. McKenney" <paulmck@kernel.org>
-Cc: dvyukov@google.com, kasan-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, David.Laight@aculab.com
+X-Received: by 2002:a05:6602:2dc8:b0:7f3:c811:3389 with SMTP id
+ ca18e2360f4ac-7f62eea38bcmr39531039f.4.1719821273914; Mon, 01 Jul 2024
+ 01:07:53 -0700 (PDT)
+Date: Mon, 01 Jul 2024 01:07:53 -0700
+In-Reply-To: <20240701080749.12221-1-wojciech.gladysz@infogain.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001bf25e061c2b187e@google.com>
+Subject: Re: Test head for issue
+From: syzbot <syzbot+18df508cf00a0598d9a6@syzkaller.appspotmail.com>
+To: wojciech.gladysz@infogain.com
+Cc: wojciech.gladysz@infogain.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 30 Jun 2024 at 22:03, Thorsten Blum <thorsten.blum@toblux.com> wrote:
->
-> Fixes the following Coccinelle/coccicheck warning reported by
-> minmax.cocci:
->
->   WARNING opportunity for min()
->
-> Use size_t instead of int for the result of min().
->
-> Compile-tested with CONFIG_KCSAN=y.
->
-> Reviewed-by: Marco Elver <elver@google.com>
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-> ---
-> Changes in v2:
-> - Add const and remove redundant parentheses as suggested by Marco Elver
-> - Link to v1: https://lore.kernel.org/linux-kernel/20240623220606.134718-2-thorsten.blum@toblux.com/
->
-> Changes in v3:
-> - Remove const again after feedback from David Laight
+> #syz test: https://linux.googlesource.com/linux/kernel/git/torvalds/linux
 
-I think I was clear that the removal of const was not needed in this
-case, and my preference was to keep const.
+want either no args or 2 args (repo, branch), got 1
 
-While general and _constructive_ comments are helpful and appreciated,
-this level of nit-picking and bikeshedding about 'const' is a complete
-and utter waste of time. I'm sorry, but I'm rather allergic to this
-level of time-wasting.
-
-As KCSAN maintainer, I'm just going to say I prefer v2.
-
-> - Link to v2: https://lore.kernel.org/linux-kernel/20240624175727.88012-2-thorsten.blum@toblux.com/
-
-[+Cc Paul]
-
-Paul, if possible kindly pick v2 of this patch into the KCSAN tree:
-https://lore.kernel.org/linux-kernel/20240624175727.88012-2-thorsten.blum@toblux.com/
-
-Many thanks,
--- Marco
 
