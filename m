@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-236694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A83C91E5FB
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:55:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5993B91E5FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:56:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CD67B28B02
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:54:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 434EEB28E51
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:54:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A34B16DEAC;
-	Mon,  1 Jul 2024 16:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D1316DEA8;
+	Mon,  1 Jul 2024 16:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r/BEXppk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bT1aSnm+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE2616DC28
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 16:54:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 368E016DC30
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 16:54:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719852850; cv=none; b=XR0IKwRFmEcKX4fOYdOApHmneDxvk7CSl7oNhltCY3WwKBIkEq/JiJcN1mI5b5EDST92GQUsjeAD4O4keNw1VfPMZhCdmpjpqd7b+8p6qfVM0Zbd+I4zMriroUnAqDJLoLNA8DG0sy69c1JlQiwtzUubJDFhvzTUnB6d77L0NW8=
+	t=1719852865; cv=none; b=gg4z04BgD3PXJPHRQAI3zCbm0jAfD3ZEAr8TaOGJ/4rDxVHA8rqfLuytvdon5ZvzAUQ3RRxBL1DwW1qvMCooNiR45urMbsL1JbUJh6TZ4dF0/nQvBoX4YV/sAujmUEHhsvk+ktIxnlD1T4wCdi/2ma8CxVnH1v0KVMS8ns8763k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719852850; c=relaxed/simple;
-	bh=FAaYEYSLgLPbK/9pUqZ6l1cu5kPiyAYZYNlWpGsQNL0=;
+	s=arc-20240116; t=1719852865; c=relaxed/simple;
+	bh=/f7vZ/YxJaPpXZ+DGdBZ8F+NnAp9Vf6NH9JkOKDGbvQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n9o1b2DSJOGjue61knu6bLvmCHgmfewyyb/7fABu5YTAJzAkOVJVM6ifosIPZreUfYRobYpkH+aLN1ocGxeNCRwGD9LCC2RNFLBntXovpA9fknewj/ywuocVIU3UPdGthyiIfuc7+EQaTaStiuWcOeqwogoJ1LfRDIKFajJ+yLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r/BEXppk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C9C6C116B1;
-	Mon,  1 Jul 2024 16:54:08 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=uduadCP0DwKANVEKX7EE7CShRmnCl/x38KS2pQGRJv5T+R6kNvHTIpUX+cFeRbAMXsSXOrM4eEbKvDYF8sMy1JP8wKcGY4LRhMNuoiPEO69glypmuBGsiUzrxZn0Oe2uoxBYGnmp2YBd8VMV9QVlnQ1MHRgTaVVnVL0XQvZNh4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bT1aSnm+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76CA0C116B1;
+	Mon,  1 Jul 2024 16:54:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719852850;
-	bh=FAaYEYSLgLPbK/9pUqZ6l1cu5kPiyAYZYNlWpGsQNL0=;
+	s=k20201202; t=1719852863;
+	bh=/f7vZ/YxJaPpXZ+DGdBZ8F+NnAp9Vf6NH9JkOKDGbvQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=r/BEXppkPLUw+mf5DRddac/6u+SbehgnBH+AQ6dHFu/VzPvP4fQH62U0sbwkd940q
-	 E2DieWm5t6Xk/TdUpjK+wmy/zcexagx899i304HkoIwlJnBXisxl/2vJHDwj+J3BNH
-	 Sd5hJZZDreZs1V+JXmE7h7fnyAWTHjQLh7ECQq+OKwIgIM5ly8l1EEK6me5w04LNur
-	 lgwQVXM+c3my/N5R7LspJOAGG0Ji6sY+lO0TJHhQgoXAT7haXxW0BBrL4IhF5PTyVa
-	 tNmm6TM4Tf6+DZ2rVkhmBCUBh0vEvqY0EhGsbGcTCtWvSXIXy6MISmJ0RtRs3xM/NL
-	 yDAzzLRjUz9Lw==
-Message-ID: <ebb55bc2-3a6f-416f-8624-cf7ab2932983@kernel.org>
-Date: Mon, 1 Jul 2024 18:54:06 +0200
+	b=bT1aSnm+N6QvRe+DGTOqnpnabIjWT5ghym9rOW6+ZZcYKE9uTvoe7L1nog8vg/oJv
+	 EW5Wx4yK5XcOOaDUYl7Hnyt5vSRaS+xsG9qlAFf6qXpB5s/99lAlHdnPNU8tM4EVDg
+	 XgivBfegCe6cwweNe4nK6VBXWWTf0anyYVkyP8IvbtFIKQ0YvvDbNTKZFvw3OKhJye
+	 gV74w41Lbq4BMrUSyWGH1BFou8+X1aMkMJHKLo4EtWNXp4QeAxVwmlqs4ZT88yeHiT
+	 lgo4QxGIaCa1mZYfJkO+LpfNAJ2X59GZuSXHCcbbtyBTT4RuEyVgMLXjiUcguz/EfM
+	 dd+GSuyswn03Q==
+Message-ID: <2997a81a-2fb8-4d8d-a6f2-5d2f4d7c30d3@kernel.org>
+Date: Mon, 1 Jul 2024 18:54:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,13 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 31/53] nfc: mrvl: Simplify a create*_workqueue() call
+Subject: Re: [PATCH 52/53] nfc: nci: Simplify the create*_workqueue() calls
 To: Bart Van Assche <bvanassche@acm.org>, Tejun Heo <tj@kernel.org>
 Cc: Lai Jiangshan <jiangshanlai@gmail.com>,
  "Martin K . Petersen" <martin.petersen@oracle.com>,
- linux-kernel@vger.kernel.org
+ linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Ryosuke Yasuoka <ryasuoka@redhat.com>,
+ Fedor Pchelkin <pchelkin@ispras.ru>, Jeremy Cline <jeremy@jcline.org>,
+ Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 References: <20240630222904.627462-1-bvanassche@acm.org>
- <20240630222904.627462-32-bvanassche@acm.org>
+ <20240630222904.627462-53-bvanassche@acm.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -101,12 +105,12 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240630222904.627462-32-bvanassche@acm.org>
+In-Reply-To: <20240630222904.627462-53-bvanassche@acm.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 01/07/2024 00:26, Bart Van Assche wrote:
-> Pass a format string to create*_workqueue2() instead of formatting the
+On 01/07/2024 00:27, Bart Van Assche wrote:
+> Pass a format string to create*_workqueue() instead of formatting the
 > workqueue name before create*_workqueue() is called.
 > 
 > Signed-off-by: Bart Van Assche <bvanassche@acm.org>
