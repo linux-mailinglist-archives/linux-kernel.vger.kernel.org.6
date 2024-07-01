@@ -1,143 +1,112 @@
-Return-Path: <linux-kernel+bounces-235528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB52C91D639
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 04:39:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD56291D645
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 04:49:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 600AC1F218C9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 02:39:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 766241F21436
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 02:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79B9D535;
-	Mon,  1 Jul 2024 02:39:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA55C144;
+	Mon,  1 Jul 2024 02:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gfc4BvKw"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Ei9mi7B0"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95783BA20;
-	Mon,  1 Jul 2024 02:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5070B79FE
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 02:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719801550; cv=none; b=ZYzBNY4dvSS4sV1iNItm8+BWivGLMjUygpC34EwkXmVsYCYkhpn/qkR9zWmBU36SLLnuMwlU2qK4PMODG00Nb7hRAqsXfifjlus0bZflkhFh51SRurwmAWjlwUgqt5WWFhwjIEDC6bxtrk6qssuOpEXyTWJIXKQtTefuilqDzF4=
+	t=1719802166; cv=none; b=ETOPsPtxmir4KnqajAp4IpGsjLHsje/oZKBwPPzikSlfGIti8E09QqMt87mz5Q8t5OS0Kly7yM6aG6AqOtFTyTm4eCBTEla6oglCb/YuDDxHsRvgjgwpIfd0tWKpGZlG8TR0xqCLV05g0vQkSOFg2+HtbQHn8SGE0AZI0SG+OoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719801550; c=relaxed/simple;
-	bh=xzi07c7GKOJME/WHCQ/3gDV2INYWUviFigFkDt43Gj0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FTHjs0KfsijtNEq0K/281I5R2fBdO4xUFHe6FnM1P6BPL8i31dLvg78Vhh3dHWTUJJ27MUWM++ik2Xd4XCkiCFPmTah1p6YFxy/4sgsptMv/zL7WxE/gesiMvSTKSwaqtjVMsi+RqpPVFl+SY0fK/w1e3S3En9DAtICnGolWyIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gfc4BvKw; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-375af3538f2so13030635ab.3;
-        Sun, 30 Jun 2024 19:39:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719801548; x=1720406348; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y40QwGli4KT7ff1uF7HzZYK9rm2EfcOvxXXgg3mEqoo=;
-        b=gfc4BvKwtNjbhn612P3gd2BkPZDI4dQJqSIXo1mf8WUk7qluv7VV7AgTwsUVktOtJx
-         VxMz+uzkUSi7yD/G9RVzFMnwamfebBFXxvo2Dw++s8cR+G4hqn4QenlhuLKXn/0xvJHt
-         sfloPcLqCHF9/geABbT6M2Q6xI6B1oDIDC2P5nH7InBE3Bz+YK8YrFcKHoofeaLzUKl0
-         B8lRFXSP8zVwjViRQ65+EMjXckGthTdVsGxIOJFPBBdu8+133KkgxdgZVeL3x4DsLeF4
-         xS2ghLut41YgcaKmxPZwCZkiMnXg7PLJZtRcohOyEwgWRU2PLBsNNxjcZ0TmRTPKnys+
-         XulA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719801548; x=1720406348;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y40QwGli4KT7ff1uF7HzZYK9rm2EfcOvxXXgg3mEqoo=;
-        b=tUf1gRjZbz7fBrhBy9OE3QM839Ay4g/okK+GlR3oCijaYmhYfw3KPNemK70hBNzUqh
-         FC5UdvEQBZ04AE0mC/smov5Se+yOF+Y8HHvv450eARDBsbQFAZdfNK3kclNp+Toybvgk
-         G0zKRDPypvFfv3OCi+kNLw5x+1H4VBliCVe4cGGfURbztuq/MeXYK0qrsP7nTgLHLb3Z
-         itahnT3bFy/eZgtskS9IUOvtCAYYeE4V9sug4XSnjaWgJ2czog6prZ0uoy+PrB+kSTUT
-         XOedqBTzCuosRPz1jMiA/msZUworzYpmESPUqH0wJkUjjfmo4s7DfeV6uQxw7UcAPKq9
-         BCJA==
-X-Forwarded-Encrypted: i=1; AJvYcCVSskonn/NVRfbKQ00OJnoAiTMtTSha4Q/GOEsg8t901T4Ga3ou+jPQw4AR5Y4E5Km0RH2KmJ94YEdAgx7gaiTM6Krqv9J8TyxBGgPOUk2t6VJ3EOmyrkqZbwXMa5+3BR7XeRyh2Pu2AV182WForGACV3kcXuNhaeWf6iYIHDseYUSSPZ+J
-X-Gm-Message-State: AOJu0YzT20sN6zGNwzUVHJhXZxVs+MS5py4tbxu7XL+s4aTIjAave9cN
-	r7piWXEoI1EA0veyfEcnxbXboJwYM3g/S734Pk7lnOa/rvRzEfMxgHeV7CWmJwFsjsjL53Dg1tc
-	Xig8X5UL+NUEik32IbYpJyPfOAVE=
-X-Google-Smtp-Source: AGHT+IFl6hhIVwcNWvb7KuIdXA/G8P41RTV32LeQ6fy/SVP0IkTxdaNJCEE4hHhayovF9Ke2gw9gVLaBx7hagg/hTfU=
-X-Received: by 2002:a05:6e02:b46:b0:375:a4e5:1dc9 with SMTP id
- e9e14a558f8ab-37cd0913b1fmr60376685ab.4.1719801547584; Sun, 30 Jun 2024
- 19:39:07 -0700 (PDT)
+	s=arc-20240116; t=1719802166; c=relaxed/simple;
+	bh=keqjdE0I+X6l14hJzH5UBvrkJI7iwlUuj7mnK9jbMJI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=fuVQshgxkBojLNyx5d16MnKZe1LlH6DU6w7AYu5DMfUxBzwGyYT+nqm20lc2/E3BTV8rCTYpjcG5gnWYsS16MaTkapZif3GN9MCG/61sULw54dGtcPiFYBVkE2t5dRVf7q5DZ8xpZ533SRf5PSB/6XzdGca1vyZndUocgbb0HOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Ei9mi7B0; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: senozhatsky@chromium.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1719802159;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7mFxjC1U9/7JygpJdsg86O8Ayb0TyOCDXKOYMsrvCw0=;
+	b=Ei9mi7B0/RVD3/lgBL1ONKhW0K810nMsBJltQ6rAP5LVFw8dP2N3FIgV34ysxAFQj3yIMb
+	jQhuD/i0IcIjuJNuCFFBmLJX/ubb1qTzi5KIZs5Ew9usL2WCH1/AJmMResu6YJzlDbvinQ
+	zySfDA08FINQDopG7cM78XBatmiw8S8=
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: minchan@kernel.org
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+Message-ID: <8163966f-d31d-425c-97cb-3d18ab28ac1f@linux.dev>
+Date: Mon, 1 Jul 2024 10:49:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240626071202.7149-1-chancel.liu@nxp.com> <20240626071202.7149-2-chancel.liu@nxp.com>
-In-Reply-To: <20240626071202.7149-2-chancel.liu@nxp.com>
-From: Shengjiu Wang <shengjiu.wang@gmail.com>
-Date: Mon, 1 Jul 2024 10:38:56 +0800
-Message-ID: <CAA+D8ANH8+FBsatondzSfiVD0H0BweRdPLOmoPaBNW6gMFck_Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ASoC: fsl_rpmsg: Add support for i.MX95 platform
-To: Chancel Liu <chancel.liu@nxp.com>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, Xiubo.Lee@gmail.com, 
-	festevam@gmail.com, nicoleotsuka@gmail.com, perex@perex.cz, tiwai@suse.com, 
-	linux-sound@vger.kernel.org, alsa-devel@alsa-project.org, 
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/2] mm/zsmalloc: fix class per-fullness zspage counts
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Chengming Zhou <chengming.zhou@linux.dev>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: akpm@linux-foundation.org, minchan@kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20240627075959.611783-1-chengming.zhou@linux.dev>
+ <20240628005523.GC15925@google.com> <20240628010812.GD15925@google.com>
+ <caf4b05d-6adf-4976-9961-fa30d3a9969c@linux.dev>
+ <20240701013731.GA3232210@google.com>
+ <4f2a5cf1-3132-4bc6-965f-8dc5a8ffc05a@linux.dev>
+In-Reply-To: <4f2a5cf1-3132-4bc6-965f-8dc5a8ffc05a@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Jun 26, 2024 at 3:12=E2=80=AFPM Chancel Liu <chancel.liu@nxp.com> w=
-rote:
->
-> Add compatible string and specific soc data to support rpmsg sound card
-> on i.MX95 platform.
->
-> Signed-off-by: Chancel Liu <chancel.liu@nxp.com>
+On 2024/7/1 10:20, Chengming Zhou wrote:
+> On 2024/7/1 09:37, Sergey Senozhatsky wrote:
+>> On (24/06/28 11:19), Chengming Zhou wrote:
+>>> Andrew, could you please help to change the subject as Sergey asked?
+>>> Sorry, I should have noted these details in the changelog when I wrote
+>>> this subject.
+>>
+>> Chengming, can I ask you to resend these patches with a proper commit
+>> message?
+> 
+> Of course, will update and send later.
 
-Acked-by: Shengjiu Wang <shengjiu.wang@gmail.com>
+I just pulled mm/mm-unstable and ready to update, but find Andrew has 
+already helped to change the subject and commit message as below, which
+is great enough! Thanks!
 
-Best regards
-Shengjiu Wang
-> ---
->  sound/soc/fsl/fsl_rpmsg.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/sound/soc/fsl/fsl_rpmsg.c b/sound/soc/fsl/fsl_rpmsg.c
-> index bc41a0666856..467d6bc9f956 100644
-> --- a/sound/soc/fsl/fsl_rpmsg.c
-> +++ b/sound/soc/fsl/fsl_rpmsg.c
-> @@ -175,6 +175,14 @@ static const struct fsl_rpmsg_soc_data imx93_data =
-=3D {
->                    SNDRV_PCM_FMTBIT_S32_LE,
->  };
->
-> +static const struct fsl_rpmsg_soc_data imx95_data =3D {
-> +       .rates =3D SNDRV_PCM_RATE_16000 | SNDRV_PCM_RATE_32000 |
-> +                SNDRV_PCM_RATE_44100 | SNDRV_PCM_RATE_48000 |
-> +                SNDRV_PCM_RATE_88200 | SNDRV_PCM_RATE_96000,
-> +       .formats =3D SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S24_LE |
-> +                  SNDRV_PCM_FMTBIT_S32_LE,
-> +};
-> +
->  static const struct of_device_id fsl_rpmsg_ids[] =3D {
->         { .compatible =3D "fsl,imx7ulp-rpmsg-audio", .data =3D &imx7ulp_d=
-ata},
->         { .compatible =3D "fsl,imx8mm-rpmsg-audio", .data =3D &imx8mm_dat=
-a},
-> @@ -182,6 +190,7 @@ static const struct of_device_id fsl_rpmsg_ids[] =3D =
-{
->         { .compatible =3D "fsl,imx8mp-rpmsg-audio", .data =3D &imx8mp_dat=
-a},
->         { .compatible =3D "fsl,imx8ulp-rpmsg-audio", .data =3D &imx7ulp_d=
-ata},
->         { .compatible =3D "fsl,imx93-rpmsg-audio", .data =3D &imx93_data}=
-,
-> +       { .compatible =3D "fsl,imx95-rpmsg-audio", .data =3D &imx95_data}=
-,
->         { /* sentinel */ }
->  };
->  MODULE_DEVICE_TABLE(of, fsl_rpmsg_ids);
-> --
-> 2.43.0
->
+commit 84d0abc5905bbdf29dc7ff8083d21145d78a3ffe
+Author: Chengming Zhou <chengming.zhou@linux.dev>
+Date:   Thu Jun 27 15:59:58 2024 +0800
+
+     mm/zsmalloc: clarify class per-fullness zspage counts
+
+     We always use insert_zspage() and remove_zspage() to update zspage's
+     fullness location, which will account correctly.
+
+     But this special async free path use "splice" instead of 
+remove_zspage(),
+     so the per-fullness zspage count for ZS_INUSE_RATIO_0 won't decrease.
+
+     Clean things up by decreasing when iterate over the zspage free list.
+
+     This doesn't actually fix anything.  ZS_INUSE_RATIO_0 is just a
+     "placeholder" which is never used anywhere.
+
+     Link: 
+https://lkml.kernel.org/r/20240627075959.611783-1-chengming.zhou@linux.dev
+     Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
+     Cc: Minchan Kim <minchan@kernel.org>
+     Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
+     Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 
