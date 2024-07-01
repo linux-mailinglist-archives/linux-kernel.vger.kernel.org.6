@@ -1,144 +1,133 @@
-Return-Path: <linux-kernel+bounces-236286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C8EE91DFF7
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:54:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35EA291DFFF
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:56:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8849CB25397
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:54:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCF0E1F22370
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FA515A85F;
-	Mon,  1 Jul 2024 12:54:46 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A15615A873;
+	Mon,  1 Jul 2024 12:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eAf5da1L";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fzL8enEh"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00910145B09;
-	Mon,  1 Jul 2024 12:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63BC0145B09;
+	Mon,  1 Jul 2024 12:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719838486; cv=none; b=GZxGPJfpZ4D56DvGiux1o/uEtNm4RtHcFfa+SA75qWB/ERJ05Kj1e2naMpdTwGHmrvAn+ZrcLxrHTa/RFyG6Jh8B0Yn7JynMpRsBWBm9LMqoiThqhSP21EDhITKobeoLc/JFUF+MkzGLWBBYMZFhOA3zkpjMAitETZrFgekJUSs=
+	t=1719838608; cv=none; b=FMZQzuxkm8vG++wmwNTYMMjF9p9toAqRWfR4qNV0VoFkhEoae5aI4DJxmFPwFxBM3l4PCqk2J/Rm39z24WNKie+zz3MZi5Sw7jvPr8rpPIqxqJNJ9qSsSSJu978YBmS00TRFv4zZP5X1o0DY5+2rj0NAtMsSJ3yfwWBl5wpmKNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719838486; c=relaxed/simple;
-	bh=fpklSivkHqBgwZ+MA54wZ0oce/H9M9AHo8SsHJoYIEc=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Zyi9yismZyNjJvM4bLDLSIZ4k+c1rySarQDI4HL2gwrVImT7aSNPkeran4Sk310KgGYrbRx1jJ4N4g+AlOnEJhP7gG4GOAY4hQvqTa7LFTiyF8NAjGN8Tuhfa5Ig1RnZOXUHFpqeohIx/vo5B56BKr7jAxLg2CTJTwKjbBI+T7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WCQtq2TVNz6K9Wd;
-	Mon,  1 Jul 2024 20:52:51 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1D953140B3C;
-	Mon,  1 Jul 2024 20:54:41 +0800 (CST)
-Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 1 Jul
- 2024 13:54:40 +0100
-Date: Mon, 1 Jul 2024 13:54:40 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-CC: <linus.walleij@linaro.org>, <dan.carpenter@linaro.org>,
-	<linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <aisheng.dong@nxp.com>, <festevam@gmail.com>,
-	<shawnguo@kernel.org>, <kernel@pengutronix.de>,
-	<u.kleine-koenig@pengutronix.de>, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH V3 1/3] pinctrl: ti: iodelay: Use scope based
- of_node_put() cleanups
-Message-ID: <20240701135440.00004d67@Huawei.com>
-In-Reply-To: <20240627131721.678727-2-peng.fan@oss.nxp.com>
-References: <20240627131721.678727-1-peng.fan@oss.nxp.com>
-	<20240627131721.678727-2-peng.fan@oss.nxp.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1719838608; c=relaxed/simple;
+	bh=4abuYWviVGcFbfSub23I7YcPpLJIZ0K42garfyxmCmo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WwTmfpAFGdbPKUi3LD5vIFnZFUgSvcnRwo1RkSMgeXzDwZEBvavCpG3rK5ISkcn/jvHhcyms6YO8n6bkwoG01JyVXE6i1YU4jL4YsF/aFtLbf7hE1S/tV9CFJLSskAK8hFQCjE8ih8+q0KJy8KCLB3DgQTzTW/bE7QEptHKdV9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eAf5da1L; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fzL8enEh; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 1 Jul 2024 14:56:43 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1719838605;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dBApTZsHAhU7GXzgUJOuBx5pWY7Nk5ITlgRQcEs/IAc=;
+	b=eAf5da1LgJ4oE317XtUcQl8aRT2HlNCAp6sAyTYDBF5uw14Kv2+OnROj1GjN9mJncq4Hvf
+	N+BhsB8Z36XfeJAkO55fhONOUTc19XLVBMb4MU5PM/IYxpwkNg89yNyTINWqEAeVaQJd8n
+	QFmuwPRr7CYm+Ybg3tUBgJalNU4tm+aOU//N7wbMJOWmYLGJXBk3I5I4K+7zXmcoTW4mKF
+	7VGu5l4xvxyL1c7qGrYscaQ79JdWgs3DdoSq0tILBmeiZNukizOw5KzzDxh74rGVprHalO
+	eL5uDsx6+7bWammQbKaI2Jz2sX/Q4+lW4m3kact77PlNGNrli+EUYNkKPgMebw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1719838605;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dBApTZsHAhU7GXzgUJOuBx5pWY7Nk5ITlgRQcEs/IAc=;
+	b=fzL8enEhiUH9rZou/amr7qFMmFMc1kWGYvki/C7mlMajsDxuZVFxWyMwrbm07yK+N6StgI
+	D2xoCx1eCqPM36BA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Daniel Bristot de Oliveira <bristot@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
+	Marco Elver <elver@google.com>, Mark Rutland <mark.rutland@arm.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v4 3/6] perf: Shrink the size of the recursion counter.
+Message-ID: <20240701125643.kqJWwrhW@linutronix.de>
+References: <20240624152732.1231678-1-bigeasy@linutronix.de>
+ <20240624152732.1231678-4-bigeasy@linutronix.de>
+ <20240701123137.GF20127@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240701123137.GF20127@noisy.programming.kicks-ass.net>
 
-On Thu, 27 Jun 2024 21:17:19 +0800
-"Peng Fan (OSS)" <peng.fan@oss.nxp.com> wrote:
-
-> From: Peng Fan <peng.fan@nxp.com>
+On 2024-07-01 14:31:37 [+0200], Peter Zijlstra wrote:
+> On Mon, Jun 24, 2024 at 05:15:16PM +0200, Sebastian Andrzej Siewior wrote:
+> > There are four recursion counter, one for each context. The type of the
+> > counter is `int' but the counter is used as `bool' since it is only
+> > incremented if zero.
+> > 
+> > Reduce the type of the recursion counter to an unsigned char, keep the
+> > increment/ decrement operation.
 > 
-> Use scope based of_node_put() cleanup to simplify code.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-A couple of comments on additional cleanups - primarily
-using return dev_err_probe() - enabled by using scope based
-cleanup to avoid the goto dance.
+> Does this actually matter? Aren't u8 memops encoded by longer
+> instructions etc..
 
-Either way LGTM
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+The goal here isn't to reduce the opcodes but to add it to task_struct
+without making it larger by filling a hole.
 
-> ---
->  drivers/pinctrl/ti/pinctrl-ti-iodelay.c | 43 +++++++++----------------
->  1 file changed, 15 insertions(+), 28 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
-> index ef9758638501..f5e5a23d2226 100644
-> --- a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
-> +++ b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
-> @@ -822,53 +822,48 @@ MODULE_DEVICE_TABLE(of, ti_iodelay_of_match);
->  static int ti_iodelay_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> -	struct device_node *np = of_node_get(dev->of_node);
-> +	struct device_node *np __free(device_node) = of_node_get(dev->of_node);
->  	struct resource *res;
->  	struct ti_iodelay_device *iod;
-> -	int ret = 0;
-> +	int ret;
->  
->  	if (!np) {
-> -		ret = -EINVAL;
->  		dev_err(dev, "No OF node\n");
-> -		goto exit_out;
-> +		return -EINVAL;
-Whilst you are here can use more compact
-		return dev_err_probe(dev, -EINVAL, "No OF node\n");
-for all error prints in a probe() function.
-They do various nice things on deferred probe but are
-useful more generally.
+But since you made me look at assembly:
+old:
+     316b:       65 48 8b 15 00 00 00    mov    %gs:0x0(%rip),%rdx        # 3173 <perf_swevent_get_recursion_context+0x33>
+     3173:       1c ff                   sbb    $0xff,%al
+     3175:       48 0f be c8             movsbq %al,%rcx
+     3179:       48 8d 94 8a 00 00 00    lea    0x0(%rdx,%rcx,4),%rdx
+     3180:       00
+                         317d: R_X86_64_32S      .data..percpu+0x4c
+     3181:       8b 0a                   mov    (%rdx),%ecx
+     3183:       85 c9                   test   %ecx,%ecx
+     3185:       75 0e                   jne    3195 <perf_swevent_get_recursion_context+0x55>
+     3187:       c7 02 01 00 00 00       movl   $0x1,(%rdx)
+^^^
+     318d:       0f be c0                movsbl %al,%eax
 
->  	}
->  
->  	iod = devm_kzalloc(dev, sizeof(*iod), GFP_KERNEL);
-> -	if (!iod) {
-> -		ret = -ENOMEM;
-> -		goto exit_out;
-> -	}
-> +	if (!iod)
-> +		return -ENOMEM;
-> +
->  	iod->dev = dev;
->  	iod->reg_data = device_get_match_data(dev);
->  	if (!iod->reg_data) {
-> -		ret = -EINVAL;
->  		dev_err(dev, "No DATA match\n");
-> -		goto exit_out;
-> +		return -EINVAL;
+new:
+     2ff8:       1c ff                   sbb    $0xff,%al
+     2ffa:       81 e2 00 01 ff 00       and    $0xff0100,%edx
+     3000:       83 fa 01                cmp    $0x1,%edx
+     3003:       1c ff                   sbb    $0xff,%al
+     3005:       48 0f be d0             movsbq %al,%rdx
+     3009:       48 8d 94 11 00 00 00    lea    0x0(%rcx,%rdx,1),%rdx
+     3010:       00
+                         300d: R_X86_64_32S      .data..percpu+0x4c
+ 
+     3011:       80 3a 00                cmpb   $0x0,(%rdx)
+     3014:       75 0b                   jne    3021 <perf_swevent_get_recursion_context+0x51>
+     3016:       c6 02 01                movb   $0x1,(%rdx)
+^^^
+     3019:       0f be c0                movsbl %al,%eax
+     301c:       e9 00 00 00 00          jmp    3021 <perf_swevent_get_recursion_context+0x51>
 
-return dev_err_probe() works here as well and in 
-other cases below. It's an added bonus __free() magic often enables.
+So we do even save a few bytes. We could avoid the "movsbl" at 3019 by
+making the return type `unsigned char' ;)
 
-No idea why DATA is in capitals and to be honest it's not
-a particularly useful error message.  What data? :)
-
->  	}
-
-
->  }
->  
->  /**
-
+Sebastian
 
