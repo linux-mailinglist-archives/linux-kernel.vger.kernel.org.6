@@ -1,102 +1,185 @@
-Return-Path: <linux-kernel+bounces-235486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B50A591D5AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 03:13:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9922691D5B0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 03:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71635281189
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 01:13:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CECF1F21261
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 01:16:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6ABF8F62;
-	Mon,  1 Jul 2024 01:13:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF370522E;
+	Mon,  1 Jul 2024 01:16:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="UkSft1jN"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Tq0xx76s"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DAB8BEC;
-	Mon,  1 Jul 2024 01:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C319228F4
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 01:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719796403; cv=none; b=b4hbYtkttPVRpESc8Xca5MoDIMy1MSxcxbqSqNQD0WmVd81EQhUVDrNpqxN2lT9Y7Th/lS/UgkpLWCO5odlfaTbNSnjBF9gfWrDIGaPf1fBn4ibbvuFcqNa3QFip23aF/htZLpWrUT+seI9WoI6mpCQ3gAF/y92AMppfMJnGo7s=
+	t=1719796570; cv=none; b=h/gm93d7fNUh7QEQ6hnCLxr6KoQd/0u0wgnjWOBxjPYcEBfuejMZIGwoeVeny2fa2jTNVzjQwPSNnaH5iry18c9haPl8wLFuKuZfNNcy3PfbqDkGovFJ/Ut4WLSrjSPYbpRGtiLRU7WNOk6MxgjTpJfGhpnbjJA1ITTXJQU2noQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719796403; c=relaxed/simple;
-	bh=4Jvc+7ahpUiltNQJ4iSl5EUcG+vLi2fprklKXNSOOTk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=M25XomeS2B14vmBdx8XnvYpp03Mdm4G8Ahd6kNQvVTD6wwjEYRop+pxc7xA4PWFysyOQpA0YZTrRHd2plCRmAaX70ZrTW0zRvS2EBFPtsAMuJnQ38fZg8S/PvymssOkaOzgkEt2zticvg0EClnbCfqZSeqZmmtyyD/GU8HsNlFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=UkSft1jN; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1719796399;
-	bh=Vjwv6tTRyww9Y9OjY4kFwU5SCnflE4oAuKH1ZG27loU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=UkSft1jNgEruWMrk0xGMnGukrtBSkiZlk0PZzCdDrQBsMaViOE2sGoyxYQMotmvAj
-	 YKy0urU/8dbCvUORCShvudhIfaP412SLG+OOBKUjjNxodgViOVwSS769LoNi9YpIb5
-	 A25uqDItHrROSz9immQjPwb5hh9WqFIbB8WAay9aeBHuUCEpqEv6IG8FJfJ2NjoWmv
-	 h2xoQQc7pWrFL4xSWy1c6LXP5ZuUjFpe4cSltMAd0z/Nat8bfbQMwg+HTw8WiWKhF/
-	 oaR80lRccx4q/HSfUQ+wCv5PIzTCHi/oa/Q6aXMBp0CaM9Ov0d3uhAoiDZHjrmrfLN
-	 oVEupEvkHRe2Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WC7Mf6tzlz4wnr;
-	Mon,  1 Jul 2024 11:13:18 +1000 (AEST)
-Date: Mon, 1 Jul 2024 11:13:18 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@kernel.org>, Olof Johansson <olof@lixom.net>,
- Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the mediatek tree
-Message-ID: <20240701111318.675d8bcf@canb.auug.org.au>
+	s=arc-20240116; t=1719796570; c=relaxed/simple;
+	bh=uiod8Gdriil62+Shj/a8XEzFRx/9BbIC8xbxkPmFaC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dhEsIGt67w8QrQD0g++c4Gqs2Hp5uk7V16cHVjoH7ypBIXi6g7jgYGogwDQiJmS2aqv0WSgXU2Ltj7FATctLCJdDcmwvRFpW8bYWaWS4t/OrpG3uWKiohewyfmJEHQQsUz/p991TBOR8b8fdekGSWnmh10pfUiYeae8JJ0Cm/cY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=Tq0xx76s; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f9b523a15cso15300305ad.0
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 18:16:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1719796568; x=1720401368; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/WihJp7JnQZqE8Q3tF8oBlf+IYLcmEBJKiSEmeorD3A=;
+        b=Tq0xx76snsAIWJMCMefJNYzOBp9GG7RNOLUxwPazCWoYLgoANDrrWcP6HgdIL+oeug
+         pDE71+wtCa1gcj/Amc+Znc8cyO4LfIGEk+RvNkMFaC8lkMTsHE7kewe5MvzWt73vCmZs
+         p0dBkv0vqITqelFaatvkyFJWZbah1Qq9KZfRp9MOCV+0UMqw6IkYgOwe/nf6Ng8Tu9c3
+         f50tpf7XXFeupy8vHPoDt56fQG2BS1+ZocfhOXPrw2zYMFsCAFBadoRc5vvCJGB544T/
+         zMsoflyatVsi+UjBazXLYH56bQ9iq9aAj75YBxARxN/VHRlG+cpya3AkpJKxQ9OIezI5
+         w3tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719796568; x=1720401368;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/WihJp7JnQZqE8Q3tF8oBlf+IYLcmEBJKiSEmeorD3A=;
+        b=KjCml5c3PBcjGuCva2CRiyIaM40evaQKWRfC3HGNBgnTQJerXGFDTPVfDM6XU5I/EX
+         30/yctbml3u5OgH9dRmONHMCCK2ZzDGo1PigxePVV9Cz4hU7b2PgiR/dXI4qcs1Bs59h
+         i6qGC5nHrQ8xJoraVhUv643oAEHsaqN61rgqTFOFif/MxA5lQ0LyWdtEmsKRPrQ1cBFD
+         xDo1LgL96cWGhafisZh9pcvENkvsLcbl79Zk9VaPPaWLjy1VTECHZWqsFNY5IfHXBBCl
+         n8nVE1OHH/by5fA9Da4F2djph7DL42c3Vmlzg0bAMCHjso2IkmmqbyeQcxr9hvqvvOEs
+         tT+g==
+X-Forwarded-Encrypted: i=1; AJvYcCXBffuJpL1txrb9nIvx8zev5IXjYfW0uE8GsMPlCOl4VGtsOcKTlRIJ7ehPCc6m8xvq1c0a/C8gPbsPwcUzq8yYFqYjBsRXYGSnYoPA
+X-Gm-Message-State: AOJu0YyKFN9XgD6NqMnjFmWxL5c6wNTecS5Ko2XSsZyT58dsDeCkq664
+	VAplZaBOOFoQ7s+1LZpqQN3WqKseFhD/utDt5E2OemFWaSFnCj9AuJWly+6UnAI=
+X-Google-Smtp-Source: AGHT+IEMQ/nIAAwcy5E9ZtnDihQLkeNPAxdYq4I132s7wFI5weLcV6ze43XfRapwnaVRCEDFola+Jw==
+X-Received: by 2002:a17:903:1cb:b0:1f9:e2c0:d962 with SMTP id d9443c01a7336-1fac7f1b66fmr116097455ad.31.1719796567869;
+        Sun, 30 Jun 2024 18:16:07 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac10c8bb3sm52206465ad.46.2024.06.30.18.16.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 30 Jun 2024 18:16:07 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sO5eH-00HMwu-03;
+	Mon, 01 Jul 2024 11:16:05 +1000
+Date: Mon, 1 Jul 2024 11:16:05 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+	brauner@kernel.org, chandanbabu@kernel.org, jack@suse.cz,
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH -next v6 1/2] xfs: reserve blocks for truncating large
+ realtime inode
+Message-ID: <ZoIDVHaS8xjha1mA@dread.disaster.area>
+References: <20240618142112.1315279-1-yi.zhang@huaweicloud.com>
+ <20240618142112.1315279-2-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/smFqEEH.KjpmVuFN_jveMDB";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618142112.1315279-2-yi.zhang@huaweicloud.com>
 
---Sig_/smFqEEH.KjpmVuFN_jveMDB
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jun 18, 2024 at 10:21:11PM +0800, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> When unaligned truncate down a big realtime file, xfs_truncate_page()
+> only zeros out the tail EOF block, __xfs_bunmapi() should split the tail
+> written extent and convert the later one that beyond EOF block to
+> unwritten, but it couldn't work as expected now since the reserved block
+> is zero in xfs_setattr_size(), this could expose stale data just after
+> commit '943bc0882ceb ("iomap: don't increase i_size if it's not a write
+> operation")'.
+> 
+> If we truncate file that contains a large enough written extent:
+> 
+>      |<    rxext    >|<    rtext    >|
+>   ...WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+>         ^ (new EOF)      ^ old EOF
+> 
+> Since we only zeros out the tail of the EOF block, and
+> xfs_itruncate_extents()->..->__xfs_bunmapi() unmap the whole ailgned
+> extents, it becomes this state:
+> 
+>      |<    rxext    >|
+>   ...WWWzWWWWWWWWWWWWW
+>         ^ new EOF
+> 
+> Then if we do an extending write like this, the blocks in the previous
+> tail extent becomes stale:
+> 
+>      |<    rxext    >|
+>   ...WWWzSSSSSSSSSSSSS..........WWWWWWWWWWWWWWWWW
+>         ^ old EOF               ^ append start  ^ new EOF
+> 
+> Fix this by reserving XFS_DIOSTRAT_SPACE_RES blocks for big realtime
+> inode.
 
-Hi all,
+This same problem is going to happen with force aligned allocations,
+right? i.e. it is a result of having a allocation block size larger
+than one filesystem block?
 
-The following commits are also in the arm-soc tree as different commits
-(but the same patches):
+If so, then....
 
-  047ce9d9deea ("soc: mediatek: mtk-mutex: Add MDP_TCC0 mod to MT8188 mutex=
- table")
-  5d6ea873c931 ("soc: mediatek: Disable 9-bit alpha in ETHDR")
-  ac21fd549d09 ("soc: mtk-cmdq: Add cmdq_pkt_logic_command to support math =
-operation")
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/xfs/xfs_iops.c | 15 ++++++++++++++-
+>  1 file changed, 14 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index ff222827e550..a00dcbc77e12 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -17,6 +17,8 @@
+>  #include "xfs_da_btree.h"
+>  #include "xfs_attr.h"
+>  #include "xfs_trans.h"
+> +#include "xfs_trans_space.h"
+> +#include "xfs_bmap_btree.h"
+>  #include "xfs_trace.h"
+>  #include "xfs_icache.h"
+>  #include "xfs_symlink.h"
+> @@ -811,6 +813,7 @@ xfs_setattr_size(
+>  	struct xfs_trans	*tp;
+>  	int			error;
+>  	uint			lock_flags = 0;
+> +	uint			resblks = 0;
+>  	bool			did_zeroing = false;
+>  
+>  	xfs_assert_ilocked(ip, XFS_IOLOCK_EXCL | XFS_MMAPLOCK_EXCL);
+> @@ -917,7 +920,17 @@ xfs_setattr_size(
+>  			return error;
+>  	}
+>  
+> -	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_itruncate, 0, 0, 0, &tp);
+> +	/*
+> +	 * For realtime inode with more than one block rtextsize, we need the
+> +	 * block reservation for bmap btree block allocations/splits that can
+> +	 * happen since it could split the tail written extent and convert the
+> +	 * right beyond EOF one to unwritten.
+> +	 */
+> +	if (xfs_inode_has_bigrtalloc(ip))
+> +		resblks = XFS_DIOSTRAT_SPACE_RES(mp, 0);
 
---=20
-Cheers,
-Stephen Rothwell
+.... should this be doing this generic check instead:
 
---Sig_/smFqEEH.KjpmVuFN_jveMDB
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+	if (xfs_inode_alloc_unitsize(ip) > 1)
+		resblks = XFS_DIOSTRAT_SPACE_RES(mp, 0);
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaCAq4ACgkQAVBC80lX
-0GyZEAf/RAwGuGEoEvRfoiNOYkOqpK4hFY5yamX5bw7LI3CtxfA2ig5i3bmZ2l6b
-7mWcN+XH+ZduWO4Zmi9rQlpwrsxOQA4RoBMguWDl+Zlc4rAcRC7Ii4Yiy8UNwtw6
-xWurt/uaLabhhVqDoqiPQbQv074bg6FzR8UeoudxpRazX5/4R7kLiOJB5ChgSOL5
-6NRwBcbuZvKoGfiwnyiYFsbPid5xy/7EET96Jk+PRhmDAoIkMvj+E8aM6EqLOygw
-F4YW+qDEr2rrWA1WEKXcBnlTFq19jdujmyr7gHwy3lL6KvBREcLNmXzYU9uSgcnh
-SRVtpbP3n0hetDzSEp1368RXYDPIHg==
-=uZ0A
------END PGP SIGNATURE-----
-
---Sig_/smFqEEH.KjpmVuFN_jveMDB--
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
