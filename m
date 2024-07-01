@@ -1,137 +1,245 @@
-Return-Path: <linux-kernel+bounces-236047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91F6F91DCD7
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:36:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30B3F91DCD8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:37:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2F431C2134C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:36:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DED6C281E26
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A189E132113;
-	Mon,  1 Jul 2024 10:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC77254FB5;
+	Mon,  1 Jul 2024 10:36:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="cZc8hfSy"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CqkPDxWS"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3BC12D1FF;
-	Mon,  1 Jul 2024 10:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32AA8381D9
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 10:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719830113; cv=none; b=ZKA39wVLzoD46fvW1vkmEYfZpeIWYsX2HS/Z1EQj8BB6ijyK/18LFDyixrGzTUr7V+sA20Itti3LiUp5StjoJurQ/cT2cTBDLEmzVksdSkkSMElp5xifkfH/jSoBAP8D5L0J8E5d4gpomjlxWCURhlP+rFQR3JJQ31bhgH5EvrY=
+	t=1719830215; cv=none; b=gUQhUslLZZKvn5GA7hPIEQuvKlUnw9PcxypSHkF96pwvXYCHdUfP1kwQfy9NGROKFGRAK80+6/8uKSdU+cE6WBEIr53dBNo/hijA329a57dBi2xe2Oi7LsNrcIqtKkjzLRHywKHY7KVVwJ0wX/v2LDmB9eckYnEsojn/WxdyWOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719830113; c=relaxed/simple;
-	bh=Mmz+2dx5cpVS5YtvtPwVx6XaqDt1igMuihlv6awjfdE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JkV/Z3hgGcn9jPz6buiL8pdLOsF0vAhzlMLifPyV67IZNc/1Zmymcj+wdsWwsp/nuHJpixISzvGZmJvtGBbyzimtWl+nnZHDWkyJ06fblBPR9DhqeBzRbMmsXvj5IdQ7x06SHWwXhKUaqFXNPQ9bEZCGyizVjAl/H3blgmCIgdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=cZc8hfSy; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E633E40E0185;
-	Mon,  1 Jul 2024 10:35:08 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id dwLZEh2YD_WK; Mon,  1 Jul 2024 10:35:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1719830104; bh=NOuFjr/UlbKkvyJRgO/cJCw8YFOCfJg3myNEK+D6AQE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cZc8hfSygYueR24ymG5pqUJlSGGvNAW1ZVz5gtbvmGD5ZJ31KThUWiv/hOHEnm0mI
-	 VJY2+xX7iIPlEhYJsKmYhuAmo3KWmPHrJdvIIHU005m/VezRpeUF2u8aQjDtA0RPI7
-	 hsrfeav0VbUI6e6KaZyKwLW1+Bgd//EUL51GE4+SGgSf1+Hwem7fk5VCZyUVr48n93
-	 AQ0cr3J/LTXa21zq17sX+MCeqa/3dRKaWfqVR1XGiTI25zROHox9oTXaLj6OCJvzoX
-	 L7r8BpzOM5jqy5p2qNBGeiJp0LToakLt0L8tVJXZrUOnWUJxv5ocUR2z05T9pHyRfc
-	 9L308lRT23dR9Y812ZRETBFkXcAjqUv/Y8wYQaJMrlYnE2VCuJ+cH9Kfa7juy6yy/A
-	 vU3umSR4/IORLICozOuqch/OqpO1QXQa3TXw+qvmKOS8zdI7+YmTLFM7ts3MInpv9u
-	 w/HEEpPcLJvAc5OfnMIfengLTd8D+W8EP/IHMh0QDCeCbbxeymtYg/V3BoAPOnq/nX
-	 ewEO0f3ibpqb2Kajz8kEI0pBnea0T5RPZBmu9QxKWPTqQAhMKaFeMQnvH33vx4nLUA
-	 CI4x7vrm8nvaIM/HDQ4j3KGqYbGBHMbS02VCWrkzCQuhcsVYuIZq2a462RjLZw3ete
-	 jOaov9OgMF16R7uls9iZEOOg=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A22A240E019D;
-	Mon,  1 Jul 2024 10:34:56 +0000 (UTC)
-Date: Mon, 1 Jul 2024 12:34:51 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: [PATCH] Documentation/ABI/configfs-tsm: Fix an unexpected
- indentation silly
-Message-ID: <20240701103451.GDZoKGS5klAmgmXI6s@fat_crate.local>
-References: <20240701184557.4735ca3d@canb.auug.org.au>
+	s=arc-20240116; t=1719830215; c=relaxed/simple;
+	bh=SmUoB6lnw/BTLWfnj2d/zyp4M974K5zoQe5IX3fP9XU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mUsgr2b/keQZcu1GZlV5dAVxeEhSHM5GyQYOQqIj3tQdYRFUzPcjFcqrv+ff8kr+LgC7/g3pOpxNHvAbGfRzdIQV5roMrUqCTiEhXqE3MLVmXtrgajSGH/WbR9tfbNh/6XOe/1Weh5+IrohALeYs0i3WLhgNZvury1yboXkNoEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CqkPDxWS; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57d15b85a34so73674a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 03:36:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719830212; x=1720435012; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7TEtTsZBZ1gg5jFfBK9mVH7HjSHPH4E/ha4me09DcWo=;
+        b=CqkPDxWSped7Zlci4hM+HsJ/LVQ3rXlyjTZtUQ3mu793isdwB9k2zx0BUThHa+m/Wx
+         YaDMVK6Rba4mABNgXLL3T8Y4/xcPhU2dpuJSvqOJKVo3tAMSbzCqCQSk2qPAPwKbOMcz
+         o8X0zoooIXI0F3aK6H2FX95sL+fQrw5bkqWfcQQaOsC5kK6fGtDxksL2uzH836TyXMmS
+         fVvQN0pRwXMVVBMOcT9yM8zB5lz3oSp0pB9bQBqCZ+/qBlPz/cZmJUA13/w8EKcdFmNQ
+         WllDfUCHhalVhPnSGS83uYW61TYnwyFGCyjR+ttS9qIDvkSIQ0xAt9wjyUlOaJRZRuoh
+         shWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719830212; x=1720435012;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7TEtTsZBZ1gg5jFfBK9mVH7HjSHPH4E/ha4me09DcWo=;
+        b=CiTZNfWYHfgVqcbrmE93uUl33hYDOk2D62T4tcxNXMBTJUhcj8B+G7ObvZFEJVhAvX
+         o+AEfp9ArU0+KEdENngYXoSKMLxYqgZK8X17CbnBXG5ly1KMoxeNfvBMyoL9rqUNeDf7
+         Asp4s1I2ZN111PnHueEumbY1U0cG+e5NsEQWvfaTy2gaIa9AW5FG68EGPR8hy+OEPsf7
+         dj5uN/FuURESseubOf3P87Y6beBmvZytTz4MJ1yEBPNXNDxj69eGBojNB36vkwX0jAOH
+         XdfaLkH2a0CAESGFCOq1OV5pQIGTLxnbvY19OUmMqQnvpNdAQOe3fM7NcnrGoQtCEhiN
+         3KPw==
+X-Forwarded-Encrypted: i=1; AJvYcCXL81R5jvRLDtz8v+b583sej6wS6l/3SR6GbGde/BZaIcBBUu/Popz13eeTknAMI92Ad/3lXJC88MiCVVjzJ9RbLKOqC/oPYr5bKSsV
+X-Gm-Message-State: AOJu0YxmnjpIsLDQCASHCeBPNb38VbBtCeIqvtvUz7cXUoxWBFlNqR2j
+	719HfBLLeQW+ZBy2YwSUpf9i17k4b+BSa03h/iqk1xco6gVm1BUuluv31wn28VXBmTZst/hAoHV
+	Cv6QPzD8QmSYzhBbajJ+fD6/AosE=
+X-Google-Smtp-Source: AGHT+IGzIhwYmbHd37ApVUXuzPylQlY0wKvhrRXAISVqnBCHUoxXcKmFZqR5ql6Y2ZK1aZRanS5i95IG7hqeAerVoXc=
+X-Received: by 2002:a05:6402:d09:b0:57c:7599:2c67 with SMTP id
+ 4fb4d7f45d1cf-587a0bfdde8mr3961629a12.37.1719830212245; Mon, 01 Jul 2024
+ 03:36:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240701184557.4735ca3d@canb.auug.org.au>
+References: <20240628130750.73097-1-ioworker0@gmail.com> <20240628130750.73097-2-ioworker0@gmail.com>
+ <CAGsJ_4yF6ucmLpMpdfjEgZXB6CP7vQkidqfugsmo1vGiaUb97g@mail.gmail.com> <c0706b47-cdbc-4cff-bea8-e39ababc9b89@linux.alibaba.com>
+In-Reply-To: <c0706b47-cdbc-4cff-bea8-e39ababc9b89@linux.alibaba.com>
+From: Lance Yang <ioworker0@gmail.com>
+Date: Mon, 1 Jul 2024 18:36:41 +0800
+Message-ID: <CAK1f24nYew635T9O+bPepShXLEwDD2wAEN8s41NYBcQ58fYiNQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] mm: add per-order mTHP split counters
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org, dj456119@gmail.com, 
+	ryan.roberts@arm.com, david@redhat.com, shy828301@gmail.com, ziy@nvidia.com, 
+	libang.li@antgroup.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Mingzhe Yang <mingzhe.yang@ly.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 01, 2024 at 06:45:57PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the tip tree, today's linux-next build (htmldocs) produced
-> this warning:
-> 
-> Documentation/ABI/testing/configfs-tsm:97: ERROR: Unexpected indentation.
-> 
-> Introduced by commit
-> 
->   627dc671518b ("x86/sev: Extend the config-fs attestation support for an SVSM")
+Hi Baolin,
 
----
-From: "Borislav Petkov (AMD)" <bp@alien8.de>
+Thanks for taking time to review!
 
-Fix:
+On Mon, Jul 1, 2024 at 10:23=E2=80=AFAM Baolin Wang
+<baolin.wang@linux.alibaba.com> wrote:
+>
+>
+>
+> On 2024/7/1 08:02, Barry Song wrote:
+> > On Sat, Jun 29, 2024 at 1:09=E2=80=AFAM Lance Yang <ioworker0@gmail.com=
+> wrote:
+> >>
+> >> Currently, the split counters in THP statistics no longer include
+> >> PTE-mapped mTHP. Therefore, we propose introducing per-order mTHP spli=
+t
+> >> counters to monitor the frequency of mTHP splits. This will help devel=
+opers
+> >> better analyze and optimize system performance.
+> >>
+> >> /sys/kernel/mm/transparent_hugepage/hugepages-<size>/stats
+> >>          split
+> >>          split_failed
+> >>          split_deferred
+> >>
+> >> Signed-off-by: Mingzhe Yang <mingzhe.yang@ly.com>
+> >> Signed-off-by: Lance Yang <ioworker0@gmail.com>
+> >
+> > Personally, I'm not convinced that using a temporary variable order
+> > makes the code
+> > more readable. Functions like folio_test_pmd_mappable() seem more reada=
+ble to
+> > me. In any case, it's a minor issue.
+>
+> Yes, I have the same opinion as Barry. With that:
+> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
-  Documentation/ABI/testing/configfs-tsm:97: ERROR: Unexpected indentation
+Thanks again for your opinion!
+Lance
 
-when building htmldocs with sphinx. I can't say I'm loving those rigid
-sphinx rules but whatever, make it shut up.
-
-Fixes: 627dc671518b ("x86/sev: Extend the config-fs attestation support for an SVSM")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/r/20240701184557.4735ca3d@canb.auug.org.au
----
- Documentation/ABI/testing/configfs-tsm | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/Documentation/ABI/testing/configfs-tsm b/Documentation/ABI/testing/configfs-tsm
-index 1db2008f25f9..534408bc1408 100644
---- a/Documentation/ABI/testing/configfs-tsm
-+++ b/Documentation/ABI/testing/configfs-tsm
-@@ -103,8 +103,7 @@ Description:
- 		provider for TVMs, like SEV-SNP running under an SVSM.
- 		Specifying the service provider via this attribute will create
- 		an attestation report as specified by the service provider.
--		Currently supported service-providers are:
--			svsm
-+		The only currently supported service provider is "svsm".
- 
- 		For the "svsm" service provider, see the Secure VM Service Module
- 		for SEV-SNP Guests v1.00 Section 7. For the doc, search for
--- 
-2.43.0
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+>
+>
+> > Acked-by: Barry Song <baohua@kernel.org>
+> >
+> >> ---
+> >>   include/linux/huge_mm.h |  3 +++
+> >>   mm/huge_memory.c        | 19 ++++++++++++++-----
+> >>   2 files changed, 17 insertions(+), 5 deletions(-)
+> >>
+> >> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> >> index 212cca384d7e..cee3c5da8f0e 100644
+> >> --- a/include/linux/huge_mm.h
+> >> +++ b/include/linux/huge_mm.h
+> >> @@ -284,6 +284,9 @@ enum mthp_stat_item {
+> >>          MTHP_STAT_FILE_ALLOC,
+> >>          MTHP_STAT_FILE_FALLBACK,
+> >>          MTHP_STAT_FILE_FALLBACK_CHARGE,
+> >> +       MTHP_STAT_SPLIT,
+> >> +       MTHP_STAT_SPLIT_FAILED,
+> >> +       MTHP_STAT_SPLIT_DEFERRED,
+> >>          __MTHP_STAT_COUNT
+> >>   };
+> >>
+> >> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> >> index c7ce28f6b7f3..a633206375af 100644
+> >> --- a/mm/huge_memory.c
+> >> +++ b/mm/huge_memory.c
+> >> @@ -559,6 +559,9 @@ DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_S=
+WPOUT_FALLBACK);
+> >>   DEFINE_MTHP_STAT_ATTR(file_alloc, MTHP_STAT_FILE_ALLOC);
+> >>   DEFINE_MTHP_STAT_ATTR(file_fallback, MTHP_STAT_FILE_FALLBACK);
+> >>   DEFINE_MTHP_STAT_ATTR(file_fallback_charge, MTHP_STAT_FILE_FALLBACK_=
+CHARGE);
+> >> +DEFINE_MTHP_STAT_ATTR(split, MTHP_STAT_SPLIT);
+> >> +DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLIT_FAILED);
+> >> +DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
+> >>
+> >>   static struct attribute *stats_attrs[] =3D {
+> >>          &anon_fault_alloc_attr.attr,
+> >> @@ -569,6 +572,9 @@ static struct attribute *stats_attrs[] =3D {
+> >>          &file_alloc_attr.attr,
+> >>          &file_fallback_attr.attr,
+> >>          &file_fallback_charge_attr.attr,
+> >> +       &split_attr.attr,
+> >> +       &split_failed_attr.attr,
+> >> +       &split_deferred_attr.attr,
+> >>          NULL,
+> >>   };
+> >>
+> >> @@ -3068,7 +3074,7 @@ int split_huge_page_to_list_to_order(struct page=
+ *page, struct list_head *list,
+> >>          XA_STATE_ORDER(xas, &folio->mapping->i_pages, folio->index, n=
+ew_order);
+> >>          struct anon_vma *anon_vma =3D NULL;
+> >>          struct address_space *mapping =3D NULL;
+> >> -       bool is_thp =3D folio_test_pmd_mappable(folio);
+> >> +       int order =3D folio_order(folio);
+> >>          int extra_pins, ret;
+> >>          pgoff_t end;
+> >>          bool is_hzp;
+> >> @@ -3076,7 +3082,7 @@ int split_huge_page_to_list_to_order(struct page=
+ *page, struct list_head *list,
+> >>          VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
+> >>          VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
+> >>
+> >> -       if (new_order >=3D folio_order(folio))
+> >> +       if (new_order >=3D order)
+> >>                  return -EINVAL;
+> >>
+> >>          if (folio_test_anon(folio)) {
+> >> @@ -3253,8 +3259,9 @@ int split_huge_page_to_list_to_order(struct page=
+ *page, struct list_head *list,
+> >>                  i_mmap_unlock_read(mapping);
+> >>   out:
+> >>          xas_destroy(&xas);
+> >> -       if (is_thp)
+> >> +       if (order >=3D HPAGE_PMD_ORDER)
+> >>                  count_vm_event(!ret ? THP_SPLIT_PAGE : THP_SPLIT_PAGE=
+_FAILED);
+> >> +       count_mthp_stat(order, !ret ? MTHP_STAT_SPLIT : MTHP_STAT_SPLI=
+T_FAILED);
+> >>          return ret;
+> >>   }
+> >>
+> >> @@ -3278,13 +3285,14 @@ void deferred_split_folio(struct folio *folio)
+> >>   #ifdef CONFIG_MEMCG
+> >>          struct mem_cgroup *memcg =3D folio_memcg(folio);
+> >>   #endif
+> >> +       int order =3D folio_order(folio);
+> >>          unsigned long flags;
+> >>
+> >>          /*
+> >>           * Order 1 folios have no space for a deferred list, but we a=
+lso
+> >>           * won't waste much memory by not adding them to the deferred=
+ list.
+> >>           */
+> >> -       if (folio_order(folio) <=3D 1)
+> >> +       if (order <=3D 1)
+> >>                  return;
+> >>
+> >>          /*
+> >> @@ -3305,8 +3313,9 @@ void deferred_split_folio(struct folio *folio)
+> >>
+> >>          spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
+> >>          if (list_empty(&folio->_deferred_list)) {
+> >> -               if (folio_test_pmd_mappable(folio))
+> >> +               if (order >=3D HPAGE_PMD_ORDER)
+> >>                          count_vm_event(THP_DEFERRED_SPLIT_PAGE);
+> >> +               count_mthp_stat(order, MTHP_STAT_SPLIT_DEFERRED);
+> >>                  list_add_tail(&folio->_deferred_list, &ds_queue->spli=
+t_queue);
+> >>                  ds_queue->split_queue_len++;
+> >>   #ifdef CONFIG_MEMCG
+> >> --
+> >> 2.45.2
+> >>
 
