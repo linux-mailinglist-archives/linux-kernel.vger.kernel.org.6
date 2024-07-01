@@ -1,104 +1,119 @@
-Return-Path: <linux-kernel+bounces-237085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33CFD91EAF4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 00:48:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 782E191EAF6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 00:48:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4EE4B21DCF
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 22:48:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2368C1F21F19
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 22:48:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7593416EBE9;
-	Mon,  1 Jul 2024 22:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92334171E43;
+	Mon,  1 Jul 2024 22:48:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZVFKj0fG"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AHDu8+jk"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EBC917BA1
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 22:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71FE17BA1;
+	Mon,  1 Jul 2024 22:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719874095; cv=none; b=g1J3F6lgP/nRB/PllDHyqAmybO4r5/n4rIbPHcnAOpeVamqqNfxM3h492zjSwyicvYHreNB5lNUmcsrg/GM7iud+K62dibpAo2ZX3Pc107n36Lcwqhjck2OjLLl9FIKDTIE5e1oGh3TCchx8DgFpPkWU4qPt1ymnSktUD1HLw48=
+	t=1719874128; cv=none; b=ZjZ6owCipN1L8z0ZE3RXEmk8cepQT3DnFnjda4wgFrbSljW6rpOg35Ls2Mxl0rKqHs1zIEMgUcg7vpnKwNaYAmZsArvJvS4IGNKZJjBoOKf5+p8I4CQi6HVjoKDsYuQi6Jm9XdWdOeYnvYtmbWYt9v0K61li5d60isp2nJUxy4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719874095; c=relaxed/simple;
-	bh=6MXaW4rBJSURoUHK9Char7gU9U5q2rkIHGoL3aJyY8g=;
-	h=Message-ID:Date:MIME-Version:To:CC:From:Subject:Content-Type; b=IC7t8xQv29xkoA6lVTR8RhOG6aOB/VfBRzjt7b0Fm6sRIwbGZJkkyxG4bm51AIhPyPLUr2geHJcCpaxurI+erHA43DCb66MrV+BmXcnOvUXR0CwOm9MUG3r4YAlayGfMd9J0ME3ZEKfXhQqPj7O7lz4f8ZIxKLwvlbNmpyc8Sv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZVFKj0fG; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 461Jp0gp022894;
-	Mon, 1 Jul 2024 22:48:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=6MXaW4rBJSURoUHK9Char7
-	gU9U5q2rkIHGoL3aJyY8g=; b=ZVFKj0fGlozLMZfQxb3GRnmcFsfXQcGVMz8auc
-	iec6deAbnux7vt4qhRvJrclt2P+1ZgJKT2JQitT0waLkBfIgnaQSi09xKYh3qdni
-	xtlC5VakucdNJ5tj+mVUExLz2OuQc8qOsv39XBqBiw2V2R2L9Ga6NRifzVEa/XI7
-	z5rzePB/agibuBta3QNxEhzh/VtohZimfiBMQDOaKVANQhymvHInfSOsrhY4TEJt
-	BpJMz9ieb8fuj0wR+br5u4oC10ijfoSsSbA8Thksk/qEYVwDpW6X4MfzciV8NiAY
-	238D4/GjJwfgGgOrknhbgfX36gS/OwJzUzNQKRbh7lHIb61w==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40297rnqpw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 01 Jul 2024 22:48:09 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 461Mm8tP019062
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 1 Jul 2024 22:48:08 GMT
-Received: from [10.253.13.74] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 1 Jul 2024
- 15:48:07 -0700
-Message-ID: <d2a150dc-1bac-4be2-a19a-d9dc6296e810@quicinc.com>
-Date: Tue, 2 Jul 2024 06:48:04 +0800
+	s=arc-20240116; t=1719874128; c=relaxed/simple;
+	bh=/6Z/UAr2KgLqp347jHQwBD9sTujLQ/+JLX5OMYw3hw8=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Cc:Date:
+	 Message-Id:References:To; b=Gb5RWIzHP6HqS3KvNJI/ObFdPsHKWITgZEnY/rfapi43420WCCovmgPRQmcqYY+Oyih9uXoE3I8OWIw5vMOhwdsotTMg9bzfwYJMq9LuZMzRsPSCtLxnsgBOw5tC3ObmNT8LGIlD6fRNPKiwNTvJ0DtIeozw1LJDFuyUM0M0wcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AHDu8+jk; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7066a3229f4so2171362b3a.2;
+        Mon, 01 Jul 2024 15:48:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719874127; x=1720478927; darn=vger.kernel.org;
+        h=to:references:message-id:date:cc:in-reply-to:from:subject
+         :mime-version:content-transfer-encoding:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FdlVPgQAR+X09paap9HfMATsnRFfGeCHqlkO62FRPcs=;
+        b=AHDu8+jkE1dqghzR8TOIdrNns2K7FPieKwMDqNjL2zPQoFM+9ShR2CS7QqAssKOq2K
+         qfhh8kqiRvusRnaMcSUmE3xHqJsir/YpscDGVjvna+C5RfeoOQJWdmTC8ueMj0T3VXNk
+         3CIcFhkAKoj+bva+t8fUdDhIY2+JbComrMorPZZfdT13rGhGfhC715nnT5f4TkKs3xLH
+         Kb3+yq86WIZ87mvj8iNDFqW3I0605+ACUF7Asd10pAnwkYIEzsu0CJjUUUd8lSgkueHG
+         p1KVThjmRL3yNDkPaPE01WJbHD/oYox9BeH+2UeYaicQu5AwhifHRRsc9sVhbaFdfyvF
+         dMhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719874127; x=1720478927;
+        h=to:references:message-id:date:cc:in-reply-to:from:subject
+         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=FdlVPgQAR+X09paap9HfMATsnRFfGeCHqlkO62FRPcs=;
+        b=qgj6P8aDYVyI5EtGETzbim6bMTqKNeqy9udh9cKecyxd0jUHkicNrXxiuq+MC6onzH
+         80iIC4Ymt2M7RNwj2OrOVMHu93n8A1SN+b1QnPuEkK7T6Fk6KrbepOOfVkizIHQ1r/ZB
+         tCgIp0o2Iug4gSq8ErlQXos4UPrGlnJA5L27fEuulNtbVMG80CkeXP+K2fSFNFFSmJpG
+         JOsjpoNw1y/TIMjuAkLukJLBXD3ydcuAfrKRD6Tansi0fuK8E9Ka2bcmWPmDfU+aPUz9
+         vJoxf/CuW6eiiQaboM389dM8aYvMx5/o6hzB6308YEIeBcv8pu4tSmqt++G2UHBM6KG6
+         aPMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVIH6mPvmiX4rJoVKWPNOI1wdrEJfA35q5rMWIbwzjDsKF2gwgzjLr47ikQWso+rIzIJKAb7y2bRlPH8gToInJlAwWIci0Ims0sFIhRtmBFIVLzYmmeN0WtLHeB4JTOh0SANcfjSSHLdNA=
+X-Gm-Message-State: AOJu0Yzb6/e3q0Hn/s6Q5t1+0ilHsHclD4kaltMVnRGxsuNyU73n1aVZ
+	cb90lSNMA4hi8KySh55ciUEHKgAOPeGUMzNDuHL4HFJlsCWjYiEV
+X-Google-Smtp-Source: AGHT+IHFN4CHmBRJmSu3HUoM28FBmLYAzslqhKRbx5V+Mpzpac89oqKSSeVgLrGFTnQlhl4Ua+32Ow==
+X-Received: by 2002:a05:6a00:1acd:b0:706:334a:43d8 with SMTP id d2e1a72fcca58-70aaad26836mr6351092b3a.2.1719874126879;
+        Mon, 01 Jul 2024 15:48:46 -0700 (PDT)
+Received: from smtpclient.apple (121-45-106-167.tpgi.com.au. [121.45.106.167])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-708044af3b0sm7288776b3a.175.2024.07.01.15.48.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Jul 2024 15:48:46 -0700 (PDT)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: LKML <linux-kernel@vger.kernel.org>
-CC: Greg KH <gregkh@linuxfoundation.org>, <rafael@kernel.org>
-From: quic_zijuhu <quic_zijuhu@quicinc.com>
-Subject: Summarize my recent devres changes for code review and merging
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: NljuN05FytykKIdA4QElWHB1YPhPOywL
-X-Proofpoint-GUID: NljuN05FytykKIdA4QElWHB1YPhPOywL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-01_21,2024-07-01_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=755
- lowpriorityscore=0 clxscore=1015 mlxscore=0 suspectscore=0 spamscore=0
- adultscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407010169
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH] HID: apple: Add support for magic keyboard backlight on T2 Macs
+From: Orlando Chamberlain <orlandoch.dev@gmail.com>
+In-Reply-To: <MA0P287MB021782E3C0DEDB8FC65F1C35B8D32@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+Cc: Jiri Kosina <jikos@kernel.org>, bentiss@kernel.org,
+ linux-input@vger.kernel.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date: Tue, 2 Jul 2024 08:48:34 +1000
+Message-Id: <8DC4D384-1349-4C8A-848D-589BA25B15D2@gmail.com>
+References: <MA0P287MB021782E3C0DEDB8FC65F1C35B8D32@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+To: Aditya Garg <gargaditya08@live.com>
+X-Mailer: iPhone Mail (21F90)
 
-I would like to summarize my recent patches for devres as following:
 
-[PATCH v2] devres: Fix devm_krealloc() allocating memory with wrong size
-https://lore.kernel.org/lkml/1718537455-20208-1-git-send-email-quic_zijuhu@quicinc.com/
 
-[PATCH v1] devres: Fix memory leakage due to driver API devm_free_percpu()
-https://lore.kernel.org/lkml/1718804281-1796-1-git-send-email-quic_zijuhu@quicinc.com/
+> On 2 Jul 2024, at 4:19=E2=80=AFAM, Aditya Garg <gargaditya08@live.com> wro=
+te:
+> =EF=BB=BFApparently this patch is breaking touchbar functionality is some c=
+ases.
 
-[PATCH v1] devres: Correct code style for functions that return a
-pointer type
-https://lore.kernel.org/lkml/1718631689-11929-1-git-send-email-quic_zijuhu@quicinc.com/
+I think this is because apple_magic_backlight_init will return an error when=
+ it finds the touchbar interface, but this return value is not checked, so h=
+id-apple still binds to the touchbar backlight.
 
-[PATCH v3] devres: Initialize a uninitialized struct member
-https://lore.kernel.org/lkml/1719871765-14774-1-git-send-email-quic_zijuhu@quicinc.com/
+This should be fixable so I don't think we need to still have the separate d=
+river.
 
-[PATCH v2] devres: Simplify devm_percpu_match() implementation
-https://lore.kernel.org/lkml/1719871779-14818-1-git-send-email-quic_zijuhu@quicinc.com/
+>>=20
+>> static int apple_probe(struct hid_device *hdev,
+>>       const struct hid_device_id *id)
+>> {
+>> @@ -860,6 +940,9 @@ static int apple_probe(struct hid_device *hdev,
+>>   if (quirks & APPLE_BACKLIGHT_CTL)
+>>       apple_backlight_init(hdev);
+>>=20
+>> +    if (quirks & APPLE_MAGIC_BACKLIGHT)
+>> +        apple_magic_backlight_init(hdev);
+
+return value isn't checked here ^, we return 0 unconditionally below.
+
+>> +
+>>   return 0;
+>> }
 
