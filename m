@@ -1,85 +1,142 @@
-Return-Path: <linux-kernel+bounces-237009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87C7791E9CF
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 22:49:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ADDD91E9D1
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 22:50:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9A261C22F35
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:49:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36B0828325E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7132116F8EB;
-	Mon,  1 Jul 2024 20:49:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dlXoM50E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C07616FF5F;
+	Mon,  1 Jul 2024 20:50:23 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21551366;
-	Mon,  1 Jul 2024 20:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6F383CC7
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 20:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719866972; cv=none; b=ndrNtKYDDBC/Ew8IomnIMFyKU43nYEtG3DnmudzkjuwcqjaDAOF+kvFa20V9003LUlMC3SZ/cMdUvMFHgTMlh8klsS+SiUmbhBRHyn0wVeImqh5sF5Lt3eF7MEv9WwHjwQE1KNzv1nSGctNL6/a+5bKe4Fq2fcU+eBnuE4GL0CQ=
+	t=1719867023; cv=none; b=Xq4QZkIG+nNuJD/K+ujJESZ9W/P+WtRiVrKxG/aIvMCUPJ+NQe4favKPwAsS4krONhPpLNdDHIS9R8U4eujZmfdVqf4YavRXj2CepUA5dBQj78hrSxZ6Q5MxNdhJ5KDQZuie10OKOciCej2RAxCKASKegYXMK7tl50AJaddrVvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719866972; c=relaxed/simple;
-	bh=o37moTC+5VU1Fr6qsrcOG49psStRpz07mCbTVh78s7U=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=N91p7lNgz7OpfH923kWGDX9bQbIRS3Vw48rKpl9d7bot6AlTOK/U4NH0b+Opt0xcywM3sRU0N0WEVrM25EiNupFa74SRYNPh0lRH1skg+WrnddaS3SDMcl+eURtMgO6Ig5LyDZZADIKQ5xVpYYIjY0+Oz2GcwV+tcUjcNi4RkiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dlXoM50E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38276C32781;
-	Mon,  1 Jul 2024 20:49:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719866972;
-	bh=o37moTC+5VU1Fr6qsrcOG49psStRpz07mCbTVh78s7U=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=dlXoM50ET/DFPIP98MA4aGem9DZ33eTUGGpgQCjjqavEEEu2Ro6OrQFAmT4lqTD50
-	 cF8pPcsyihN7QN/ynIulJMOCoBGFV4l2eCCEXShkCHYVO4KxkUJg5K5B4vEifAZr7C
-	 ryG4aQGCvuKqU2awr2d8VW/pRDN2oflo7DBhQ6s6E0auDAjY4kpxgkEJZpSW1CzzZH
-	 JMO1qdD8jWOkHjbnKffN2/9naEEpQTYz/OQKViAahPG6afRRPaEMciyTmQarHU23/4
-	 mnnG9YbmIswv8s/ACvCSFZS6UYzpuSnsSqazmbVPE/7dj7ip7HM9B0Qea6dSxvh85E
-	 rQ3rmAjMHzbwQ==
-Message-ID: <d3d91a26f205925c4d0197fbd977a6d3.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1719867023; c=relaxed/simple;
+	bh=sDzE7YpPHR3LR6h3gGbdoVVS/FgXk55Zx2hqr+8phRA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=B8w1GeIxqiohZ6qrltM3TJadFxZEgLlDCVGKo/32aFyFDb21ZMPT3MZlpxLAnPtoMDXIHv2OTTJv1SxFJuF8plpVxCK9cswLkVuSJBQoerixjK2EuObLc3K5Pm7jNWPk3ljU0wWg+rdTUI7++M8sg3LtRHOiQ5KzzI24BjDObj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7f64d509eb3so31587739f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 13:50:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719867021; x=1720471821;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sgcjFW3XYMXRUsUyvo0nFUiGW8OYCo7Qnh7ViycLBS8=;
+        b=I4vOJzEEAHsFRcJBiP3ddA/mI+jyfUy2p+EtRWt77Cz84941n9H6JpEZAFiGIDsqLg
+         +x+d/cgvuHw0BoXM0HAYIQbXTjL0KVVXETW2LOM52Z0OC6FLqyLg/MCDGCxNr5QXkiGn
+         l8vilCghlM1jjuXRtUcw3SLEBK37lY/F4b0JWnys1h+7zHPOYpGx0MAZDLlFd7jcLVU7
+         daSNj+BbSZqbFjFDRX/dMUsrE7eUrdtaFBc9mhTWqS9XNIirw/21vQpcZHx0WLmm2LvZ
+         UAiUYEcRPNbobc8YJLmPBRZuKwSFuiVOIR88lpOeq8X+cmOvs1bMb+A6ZwEWQsO2FmW3
+         3dbg==
+X-Forwarded-Encrypted: i=1; AJvYcCXJbtHfLGII+KjUrpNmimv05acQJ/J8oo7zOH8cCMN8NlHLjLHSncFcXTC4xXIA0i5dlJTKpT+/R5ZeEv6HGh/3uEXjBxaXP1MGj/oF
+X-Gm-Message-State: AOJu0Yy0kAX8lVLzQ9hqLm4gLoFyx7saELa1Ztg0CZ7FQF96UiMms2mc
+	4Hr6D6Kncir9G5hJP+S4gNW+rgIhpTGQRC0VnvFZxgyY7B/X1rnLkXvM0hP0KjikALopmoBCb9Y
+	jn1X5Ibk7qq1pq+bUJm/7Ba2MRVaclRusX1jqGGFBND8892aAhHRONwQ=
+X-Google-Smtp-Source: AGHT+IECcA58JwTwKmPW9w3HsnoyKI8G9uHOhq/XgpAkFMrQg6ZCHsi88IFMOAM21hc/20xUT6xj6kmkBEKV/rbQxil0vQ9sdD3N
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240613120357.1043342-1-treapking@chromium.org>
-References: <20240613120357.1043342-1-treapking@chromium.org>
-Subject: Re: [PATCH] clk: mediatek: mt8183: Only enable runtime PM on mt8183-mfgcfg
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, Chen-Yu Tsai <wenst@chromium.org>, linux-clk@vger.kernel.org, Pin-yen Lin <treapking@chromium.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Pin-yen Lin <treapking@chromium.org>
-Date: Mon, 01 Jul 2024 13:49:30 -0700
-User-Agent: alot/0.10
+X-Received: by 2002:a05:6602:3426:b0:7f6:1f4c:96b6 with SMTP id
+ ca18e2360f4ac-7f62ee9d66emr47517939f.3.1719867020939; Mon, 01 Jul 2024
+ 13:50:20 -0700 (PDT)
+Date: Mon, 01 Jul 2024 13:50:20 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d82187061c35bef8@google.com>
+Subject: [syzbot] [io-uring?] WARNING in io_cqring_event_overflow (2)
+From: syzbot <syzbot+f7f9c893345c5c615d34@syzkaller.appspotmail.com>
+To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Quoting Pin-yen Lin (2024-06-13 05:02:28)
-> Commit 2f7b1d8b5505 ("clk: mediatek: Do a runtime PM get on controllers
-> during probe") enabled runtime PM for all mediatek clock controllers,
-> but this introduced an issue on the resume path.
->=20
-> If a device resumes earlier than the clock controller and calls
-> clk_prepare() when runtime PM is enabled on the controller, it will end
-> up calling clk_pm_runtime_get(). But the subsequent
-> pm_runtime_resume_and_get() call will fail because the runtime PM is
-> temporarily disabled during suspend.
->=20
-> To workaround this, introduce a need_runtime_pm flag and only enable it
-> on mt8183-mfgcfg, which is the driver that observed deadlock previously.
-> Hopefully mt8183-cfgcfg won't run into the issue at the resume stage
-> because the GPU should have stopped rendering before the system calls
-> suspend.
->=20
-> Fixes: 2f7b1d8b5505 ("clk: mediatek: Do a runtime PM get on controllers d=
-uring probe")
-> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
->=20
-> ---
+Hello,
 
-Applied to clk-fixes
+syzbot found the following issue on:
+
+HEAD commit:    74564adfd352 Add linux-next specific files for 20240701
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=135c21d1980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=111e4e0e6fbde8f0
+dashboard link: https://syzkaller.appspot.com/bug?extid=f7f9c893345c5c615d34
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/04b8d7db78fb/disk-74564adf.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d996f4370003/vmlinux-74564adf.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6e7e630054e7/bzImage-74564adf.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f7f9c893345c5c615d34@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5145 at io_uring/io_uring.c:703 io_cqring_event_overflow+0x442/0x660 io_uring/io_uring.c:703
+Modules linked in:
+CPU: 0 UID: 0 PID: 5145 Comm: kworker/0:4 Not tainted 6.10.0-rc6-next-20240701-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Workqueue: events io_fallback_req_func
+RIP: 0010:io_cqring_event_overflow+0x442/0x660 io_uring/io_uring.c:703
+Code: 0f 95 c0 48 83 c4 20 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc e8 ed ae ed fc 90 0f 0b 90 e9 c5 fc ff ff e8 df ae ed fc 90 <0f> 0b 90 e9 6e fc ff ff e8 d1 ae ed fc c6 05 f6 ea f3 0a 01 90 48
+RSP: 0018:ffffc900040d7a08 EFLAGS: 00010293
+RAX: ffffffff84a5cf11 RBX: 0000000000000000 RCX: ffff8880299bbc00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff84a5cb74 R09: 0000000000000000
+R10: dffffc0000000000 R11: ffffffff84a9f5d0 R12: ffff888021d0a000
+R13: 0000000000000000 R14: ffff888021d0a000 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f4e669ff800 CR3: 000000002a360000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __io_post_aux_cqe io_uring/io_uring.c:816 [inline]
+ io_add_aux_cqe+0x27c/0x320 io_uring/io_uring.c:837
+ io_msg_tw_complete+0x9d/0x4d0 io_uring/msg_ring.c:78
+ io_fallback_req_func+0xce/0x1c0 io_uring/io_uring.c:256
+ process_one_work kernel/workqueue.c:3224 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3305
+ worker_thread+0x86d/0xd40 kernel/workqueue.c:3383
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:144
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
