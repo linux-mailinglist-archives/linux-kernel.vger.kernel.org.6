@@ -1,85 +1,94 @@
-Return-Path: <linux-kernel+bounces-236555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1122E91E3EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:21:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 358CC91E3F2
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:22:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C14332856C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:21:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD4701F23616
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:22:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD7B716D4D4;
-	Mon,  1 Jul 2024 15:20:57 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1482F15A84A;
-	Mon,  1 Jul 2024 15:20:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B101D16C853;
+	Mon,  1 Jul 2024 15:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tuSKZcGD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14EB158D7F;
+	Mon,  1 Jul 2024 15:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719847257; cv=none; b=QqKLv16VSxxLfeNdzWDdWwArrdaXRsKjwNYSUInBM1Xt5rl3x+gvsRbxV1JpMGlbOYboScb6LAocvv/FM0mWL+Rzs69mTe2IdMEM3DA4ouyD1V9t+We1MYZMHV1Q9Gp/EqWSsrsWrNzhgz0RO6+KalwWzoXTNml5Zq1OavHFrII=
+	t=1719847367; cv=none; b=KVbJbQwlUUNfYL2CBeEiNcs9Uqoe4gfq8N8HNNiztx388mxaxh3wi/ivSKJixF1N+IEiE4uaw4wllqt4iTcvc48zQfXgS8pBW+rP9IpXqgXNPdXZ30M3dkFapL6F2B+jAaMmX52wnba8HiBxuxzHH4EYKugX5m0U9kS66vczZXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719847257; c=relaxed/simple;
-	bh=M4jwutQQg+w0C+F7XN38u/Gf9eVj0pBlhgXe61FHLHE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VU4DPA6YjttljH7rCoTu6U+OQq0+xFUdv7TaoyqN/rOB2L3z+wIwkzmMROsOKYL4Htq+ZNV/YGKHJBD7NAum1cOOputaLi8mBsv8SXt5MlDLjiGbl4zcj9UJc8B5EpIeobo0Gg7FYRPufWRlShStf/qJRd0U+pXJGS4E0uaCnAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8B4FC339;
-	Mon,  1 Jul 2024 08:21:20 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ADD903F73B;
-	Mon,  1 Jul 2024 08:20:54 -0700 (PDT)
-Date: Mon, 1 Jul 2024 16:20:52 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Luke Parkin <luke.parkin@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, sudeep.holla@arm.com,
-	cristian.marussi@arm.com
-Subject: Re: [PATCH 0/3] Add Per-transport SCMI debug statistics
-Message-ID: <ZoLJVKqx0erHdmyl@pluto>
-References: <20240701142851.1448515-1-luke.parkin@arm.com>
+	s=arc-20240116; t=1719847367; c=relaxed/simple;
+	bh=stsqNjcBtVTaNvoSI47EdoM4mGvxzLnZJvbW9mPkCtI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QKh/oXRiQCbXY73t/mrOtgg127Kr7glsBXi1E8+cYjMtoC34k3pfe9HbUHoVNQmFEuAUq8ntn+B4ConUChsG2t02ZarZ5NzXvlbYGVi6WDAPJoqrbingbu31R+OkzkEX9Pyyq3mMHRJvEYr4RGLsWw7vQZCFHex+IZVv++pAtKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tuSKZcGD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21A10C116B1;
+	Mon,  1 Jul 2024 15:22:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719847366;
+	bh=stsqNjcBtVTaNvoSI47EdoM4mGvxzLnZJvbW9mPkCtI=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=tuSKZcGD5JfgmUY/kbcDLt95zePIcfcCnlBKKRTLe7XtcyRXvFRlHYJGk4a7IAeXh
+	 XSUlmOFMVjHf/Qgj9aCCuBO5RVyTLsuTxxB/Q1s7mlOGlZmnrXcbYvza6/YEmAZEvc
+	 FlUEYTyOKWklRCGbf/GGXupL2TgmmwrV85x82iLokynwoQChODdTN/hfB18iJMi5+b
+	 ir9tsoFZZVtME3DeGFHXsvljfzFWBlLkeKcW34s4VpGA1rmdoO/yEIHcHr8ZAwLkUV
+	 DHTF5yRzeDe87GQ9SgvsOtQsCWBJZpkYp2Qrono1ohQ27yTZQvyTYozkssN+scvbwL
+	 oIh9PyTcKgNIg==
+Message-ID: <9f86a167074d9b522311715c567f1c19b88e3ad4.camel@kernel.org>
+Subject: Re: [PATCH] tpm: ibmvtpm: Call tpm2_sessions_init() to initialize
+ session support
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Linux regressions mailing list <regressions@lists.linux.dev>
+Cc: naveen.n.rao@linux.ibm.com, linux-kernel@vger.kernel.org, Stefan Berger
+	 <stefanb@linux.ibm.com>, linux-integrity@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org
+Date: Mon, 01 Jul 2024 15:22:42 +0000
+In-Reply-To: <55e8331d-4682-40df-9a1b-8a08dc5f6409@leemhuis.info>
+References: <20240617193408.1234365-1-stefanb@linux.ibm.com>
+	 <9e167f3e-cd81-45ab-bd34-939f516b05a4@linux.ibm.com>
+	 <55e8331d-4682-40df-9a1b-8a08dc5f6409@leemhuis.info>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240701142851.1448515-1-luke.parkin@arm.com>
 
-On Mon, Jul 01, 2024 at 03:28:48PM +0100, Luke Parkin wrote:
-> Hi,
-> 
+On Fri, 2024-06-28 at 17:00 +0200, Linux regression tracking (Thorsten Leem=
+huis) wrote:
+> [CCing the regression list]
+>=20
+> On 20.06.24 00:34, Stefan Berger wrote:
+> > Jarkko,
+> > =C2=A0 are you ok with this patch?
+>=20
+> Hmmm, hope I did not miss anythng, but looks like nothing happened for
+> about 10 days here. Hence:
+>=20
+> Jarkko, looks like some feedback from your side really would help to
+> find a path to get this regression resolved before 6.10 is released.
+>=20
+> Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
 
-Hi Luke,
+Sorry for latency, and except a bit more slow phase also during
+July because I'm most of this month on Holiday, except taking care
+6.11 release.
 
-thanks for taking a shot at this, a few comments down below and along
-this series.
+This really is a bug in the HMAC code not in the IBM driver as=20
+it should not break because of a new feature, i.e. this is only
+correct conclusions, give the "no regressions" rule.
 
-> This series adds support for tracking Arm SCMI statistics, [Patch 2]
-> A config option to enable this, [Patch 1] 
-> And in [Patch 3] a selection of new debugfs entries to present these statistics
-> 
-> These statistics are per transport instance, and will be a helpful resource when
-> debugging the SCMI and running tests.
-> 
-> Based on v6.9, Tested on Arm Juno [1]
-> 
+Since HMAC is by default only for x86_64 and it does not break
+defconfig's, we should take time and fix the actual issue.
 
-First of all a nitpick on commit messages themselves...when posting patches on a specific
-subsystem, the commit message "style" should align with the subsystem conventions:
-IOW all the patches in your series (beside this cover-letter) should be titled as:
-
-  firmware: arm_scmi: My patch starting with a capital letter
-
-as you can guess having a look at git log --oneline drivers/firmware/arm_scmi
-
-So please do this in V2 together with other reviews.
-
-Thanks,
-Cristian
+BR, Jarkko
 
