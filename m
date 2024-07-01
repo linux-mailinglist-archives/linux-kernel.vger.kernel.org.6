@@ -1,118 +1,120 @@
-Return-Path: <linux-kernel+bounces-236441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0484091E261
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:27:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A5FC91E269
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:28:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C5EFB2337A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:27:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D9902836DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E26D161337;
-	Mon,  1 Jul 2024 14:27:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D376168484;
+	Mon,  1 Jul 2024 14:28:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="R+R4IGwS"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jMHZp7Ao"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 114CC5382
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 14:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07DE15FA94;
+	Mon,  1 Jul 2024 14:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719844063; cv=none; b=FDGaSt/8V59HOK1dxX/tD2yGniyhPpQTu27L8wwxuTRPUI//QIwjzRDz6j5dRtUGS1awa0dnedWTfR8QWkA8YjuXhfCZYSZpRfZgTP8d9BO9HY/AyhVG65yx/ZUhXcDFq7vjumbjhccgu1B2adgu/u1AQ6KkfWI+qKeYEWG3XUA=
+	t=1719844086; cv=none; b=MlRoggHvesiR6CkG6dL1sJIyu0kLIaZZhnn7poA3ARW/xs0t0ccdc/rBgyMmZ34wiLGjwvlNp0UNOYk4j6Gzku/qekQLokCCXTql/Cs3YHM5foGDqHfehT6xgrzc90ub2KKq0TPH7xe2I/mmtWjRzRIj13WJJZC9xVLaoZL9ZGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719844063; c=relaxed/simple;
-	bh=VH9nZ7hQRRsC98svIZdC2URLJFqE0PnV6oEzShuSWEI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kB5/RrPi5thbDiZGtp1cile1dyHsS4T/BUwaMz9s/Q5ZSL70JMNMtP6MbRn1ZymvTBIknXlVOfYf4BqK4o3lcc3SzKSZA1qsi6zmW710TjFmvf5eqT36rKU8or8A8a700ow9M6Bn4TobD9F0SG3aT2rZ5a8EjyUDGuNB3Eg1Dgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=R+R4IGwS; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 25E9B40E019D;
-	Mon,  1 Jul 2024 14:27:39 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id bDY5-49uqcXg; Mon,  1 Jul 2024 14:27:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1719844056; bh=VSQjB6ex+TJQcIelpjJ2Xl+2a5w1z9t5nh7DFr06oWw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R+R4IGwSmqO1TjsHDbo4OTcYnHoOaEia3qkOzXZA5Ia0LrGZsTui304IupbXfDboA
-	 np930WDE3wNmbeqJ/cZyIiYoX2ZZbGbUSlaTmj1HjC9i2iAaQQFDg9QfpM/FVFldgM
-	 a/O3q3jntAO5Ggn+GgiqK8sSl2r8Dty8myvpq91CO21sl6oAGxy2Hy91JSbeLA6gK+
-	 mnL1tbwIoQtlvf+n84bKCowL+05MtXJueqKwM5RXVViIO3cFNFjhPMZ7godbuzfgl7
-	 MuNseVn5WuGYCykf4jByTe3AXRwFfbsb+ntFwRxrMVzfy+N+UOvV0ojYNqbkYyysw4
-	 AresIwIjXJCrqxyAy10o+lvWHfO/oNNCVuQOhxYGCenY9BKmFqQkrg/G5IihQdzW4v
-	 Zt3yCTWewOvTPqq7jC+7QT1tD4h9xzGeLt+/dESinjhSBc2yG5QvAPAKQqvgvBf1it
-	 CWWrBlgK+lDJOK3Lhbmt+Upi9/2GQ0zai6r/jThPRUyMQG4DypvTHwOFJ9XQSR+b1w
-	 o/D7zGIwOt79L8u4RQbxpN8dcQuSA+EW6g9eK6beA/k9v6u4Ii2SjQYSUoMpZwEO4u
-	 Kl+VE9g79EGDwpRqDrBavamfj0r7KaQj+cBxmi4gnxc1xUQdrIcWpwCO2osjh3JD/M
-	 y84EjG6/PnKSe2ZS/sVtnvqE=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9D33E40E0185;
-	Mon,  1 Jul 2024 14:27:10 +0000 (UTC)
-Date: Mon, 1 Jul 2024 16:27:04 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Steve Wahl <steve.wahl@hpe.com>
-Cc: Ashish Kalra <ashish.kalra@amd.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-	Pavin Joseph <me@pavinjoseph.com>,
-	Eric Hagberg <ehagberg@gmail.com>,
-	Simon Horman <horms@verge.net.au>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Dave Young <dyoung@redhat.com>, Sarah Brofeldt <srhb@dbc.dk>,
-	Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>,
-	Hou Wenlong <houwenlong.hwl@antgroup.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>, Yuntao Wang <ytcoode@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, Joerg Roedel <jroedel@suse.de>,
-	Michael Roth <michael.roth@amd.com>
-Subject: Re: [PATCH 0/3] Resolve problems with kexec identity mapping
-Message-ID: <20240701142704.GGZoK8uDt-2VVtclHl@fat_crate.local>
-References: <20240520183633.1457687-1-steve.wahl@hpe.com>
- <20240613152826.GKZmsQGnO3OthLH3Vu@fat_crate.local>
- <ZmsbZCF9rFzuB3rO@swahl-home.5wahls.com>
- <20240616202533.GDZm9KPZtpDKw5aXWX@fat_crate.local>
- <ZnBR6MgS-jzjgA8A@swahl-home.5wahls.com>
- <20240621131742.GEZnV9dn_0XVH0IZ58@fat_crate.local>
- <ZnmNKAE5qT48yhrI@swahl-home.5wahls.com>
+	s=arc-20240116; t=1719844086; c=relaxed/simple;
+	bh=U2qxBsfXII2keV16dyH70ENv6wOvqN2WYE0+zRxOMF0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qPa6OA+v9mXLzw1o3ssHZ5/CSOwX3BPkmbWhWpaUhjLed3hej66b/rKkjKOunr6kPlu7O/g/5CEmQ1Q0Ey9jmrjMbi18V/8WEuadSqMhoYj4P66Ao9Qqh7hhBij4dKIbQM/AT/C/zfAyUzujUxNFN5q134cvtQYFlr8o7SgMKag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jMHZp7Ao; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3C519C2BD10;
+	Mon,  1 Jul 2024 14:28:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719844086;
+	bh=U2qxBsfXII2keV16dyH70ENv6wOvqN2WYE0+zRxOMF0=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=jMHZp7AomwtWebSdCVJuYyC8YLCsKVlMo1trczl3QyvZssdw7/zMTa53c99pYiTH4
+	 D0fCSZuwAgGhbjKFIEyNmKniRjKcIzCqesrwaJ5gXMTNGNHTb7BIgE9PNSm1GSLj7U
+	 nl5Z8Xlje1GOTcjvBqeT+EEqtk0x73CZwJ+85/duFbQnh9myeAs1NBTutczXajhBeU
+	 qK1pdtly+UEAmUi0iM135jd1nXwCMqXllcJuJupI4pAHY86wdcPYBsD9YbY4VgInWc
+	 x0KDiYawitZl/MgSJEaMsSqYd8ZTCnrh13gKRn3hFjlkpTrcK4RuyZQxfQJNV/vmSO
+	 2nQq3XfoHJZVg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 216AFC2BD09;
+	Mon,  1 Jul 2024 14:28:06 +0000 (UTC)
+From: Luigi Leonardi via B4 Relay <devnull+luigi.leonardi.outlook.com@kernel.org>
+Subject: [PATCH net-next v2 0/2] vsock: avoid queuing on workqueue if
+ possible
+Date: Mon, 01 Jul 2024 16:28:01 +0200
+Message-Id: <20240701-pinna-v2-0-ac396d181f59@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZnmNKAE5qT48yhrI@swahl-home.5wahls.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPG8gmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHQUlJIzE
+ vPSU3UzU4B8JSMDIxMDcwND3YLMvLxEXTNDw1SLJLPklJREAyWg2oKi1LTMCrA50UoBjiHOHgp
+ 5qSW6eakVJUqxtbUAcKrvi2cAAAA=
+To: Stefan Hajnoczi <stefanha@redhat.com>, 
+ Stefano Garzarella <sgarzare@redhat.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: kvm@vger.kernel.org, virtualization@lists.linux.dev, 
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Luigi Leonardi <luigi.leonardi@outlook.com>, 
+ Marco Pinna <marco.pinn95@gmail.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1719844084; l=1421;
+ i=luigi.leonardi@outlook.com; s=20240626; h=from:subject:message-id;
+ bh=U2qxBsfXII2keV16dyH70ENv6wOvqN2WYE0+zRxOMF0=;
+ b=esDzwhcl7yJuEVfUWxslORjydGrepc2F2GuDVExEB8Nakxvmi/MOSRBrVWHlWsGJIu8pPkZ/n
+ w4JKJyQ4CbFApgzN4ddfo9bd/Qa4DXkDUPY6EnpQUF4z6hZ1mm30WMt
+X-Developer-Key: i=luigi.leonardi@outlook.com; a=ed25519;
+ pk=RYXD8JyCxGnx/izNc/6b3g3pgpohJMAI0LJ7ynxXzi8=
+X-Endpoint-Received: by B4 Relay for luigi.leonardi@outlook.com/20240626
+ with auth_id=177
+X-Original-From: Luigi Leonardi <luigi.leonardi@outlook.com>
+Reply-To: luigi.leonardi@outlook.com
 
-On Mon, Jun 24, 2024 at 10:13:44AM -0500, Steve Wahl wrote:
-> These accesses are a problem because they happen prior to establishing
-> the page fault interrupt handler that would mend the identity map.  I
-> know very little about the AMD SEV feature but reading the code I
-> think it may be required to do this before setting up that handler.
+This series introduces an optimization for vsock/virtio to reduce latency:
+When the guest sends a packet to the host, and the workqueue is empty,
+if there is enough space, the packet is put directly in the virtqueue.
 
-Yeah, from looking at it, we should be able to establish a #PF handler that
-early too but the devil's in the detail, especially in that early boot code.
+In this v2 I replaced a mutex_lock with a mutex_trylock because it was inside
+a RCU critical section. I also added a check on tx_run, so if the
+module is being removed the packet is not queued. I'd like to thank Stefano
+for reporting the tx_run issue.
 
-Lemme poke some things and people...
+v1->v2
+Applied all Stefano's suggestions:
+    - Minor code style changes
+    - Minor commit text rewrite
+Performed more experiments:
+     - Check if all the packets go directly to the vq (Matias' suggestion)
+     - Used iperf3 to see if there is any improvement in overall throughput
+      from guest to host
+     - Pinned the vhost process to a pCPU.
+     - Run fio using 512B payload
+Rebased on latest net-next
 
+Signed-off-by: Luigi Leonardi <luigi.leonardi@outlook.com>
+---
+Marco Pinna (2):
+      vsock/virtio: refactor virtio_transport_send_pkt_work
+      vsock/virtio: avoid enqueue packets when work queue is empty
+
+ net/vmw_vsock/virtio_transport.c | 171 +++++++++++++++++++++++++--------------
+ 1 file changed, 109 insertions(+), 62 deletions(-)
+---
+base-commit: 2e7b471121b09e7fa8ffb437bfa0e59d13f96053
+change-id: 20240701-pinna-611e8b6cdda0
+
+Best regards,
 -- 
-Regards/Gruss,
-    Boris.
+Luigi Leonardi <luigi.leonardi@outlook.com>
 
-https://people.kernel.org/tglx/notes-about-netiquette
+
 
