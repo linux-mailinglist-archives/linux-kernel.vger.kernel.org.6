@@ -1,127 +1,203 @@
-Return-Path: <linux-kernel+bounces-235783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA60291D999
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:03:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D640191D99B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:03:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 835F828480B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:03:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 115B21C22743
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20DF781AC6;
-	Mon,  1 Jul 2024 08:03:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B969C82899;
+	Mon,  1 Jul 2024 08:03:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="NISqy9QV"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FeNrl3GD"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A75D241C72
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 08:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563E6823AC;
+	Mon,  1 Jul 2024 08:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719821018; cv=none; b=mk1OnhtBUmyB9xo85J8Nkjwe1dcHu4mNNbad+xa09J8KO1cD4/InwdqKiRSyUInDO1HvprjgFSiWmOWB7i8Ls5hvjcPz1k5eaAKsuixZ7x/SWDT2Yti2PWJKz8Kwur8M/85Obcm9oje2q1tJ+oZmLzI2D1fRH1Ig+Z5Hr1DQRV4=
+	t=1719821022; cv=none; b=a7cP20tngKxhMS/fRxf9eVUsItBEXyiwxL6Cw3WRaj8EX2dQPGoXhvQIWaDmUUx4qUywxqiPGaa3+tPMLM/N+oo8vxt/h9bRDbFqkijHzMvz2Wx9ifpxVyQvJzmyVU9XsJ+m8/yZ1ljthl0TeEsLlR+vFZsEkGVavOVBC9K0DiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719821018; c=relaxed/simple;
-	bh=Shw1Th3WUaSnOFjbNI7at32oQOt0mlvfcwXzXPPaV4I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EIk+ryWdSZOks1bFgSJVKnCqX4U3ElLQ0Khp81936nsk+R7m+9UetZE4+eJMa1q1tPcODli+Si3DAZLICoBPXLkqEXKqayPOdTCRH7U+gGjSA4SoMlAkzplzw1b9nVrhz4cQ/skfQLKgmR5QJ9N/NLN3GWG1ODWE4x0nKmemPDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=NISqy9QV; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-362bc731810so2206677f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 01:03:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719821014; x=1720425814; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=b45V0iviWplF75Nx/Ur6UmqLyJXiIut90SMCIP5elJ0=;
-        b=NISqy9QVHWhB8aLx/k+DBbYwRo9cFPYh5gMoysMiQoB7icmpCEKwnRFUJf+9GQtKZD
-         K9zhYumI+kFHCwfchVnW1S2RzJ5jV+2C2wb6kfG4nO/X8tfLn/4sgPFmwj8857uicAIb
-         HJsqXAJtTdnlg2ct2QYbOxKuh5MuIwCYAhZhZmzPgKx6OUa0NX2XvweDv626OmukZCQD
-         i2vs4OrbfB7V9K/kcfZb+MI32ZMxzfcwjhmg442qagMXqLhN3Us5IMl7GhBSjJryR7YD
-         HDIb2uogg7iU5pEzIjF05fK/ZoIhF6vukGFeubJhgRXCyijcJPrrQy7IP5Tpa0hCorJz
-         Mixw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719821014; x=1720425814;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=b45V0iviWplF75Nx/Ur6UmqLyJXiIut90SMCIP5elJ0=;
-        b=omPpXPmAMK5g+Y0oGAY9NSciXmgk/aHug+TV8YZslSY7jkt12rkAC2xc/4SPPGgtbB
-         TePQ7Rmg/EHtyeMPUz4p26RT74pAb0PGYVDCaqb3Gm+itF9Lx7Ox025cps4o4Dl18RNF
-         nJ1BiBlFbMHAcJWUG5OstcA250jFBGYcqJSPYNAGFDdHT9NY9JIwUXAAXTB8aXiAk7Uv
-         aeVOdevyUQl96AG/IYvFd4ooJqbDsV35BZl502tdlabSOeVAGilFhcN3xq0NMv8Etjhk
-         XisKgaymNcZzHjP/WKP/bpYKr8E85gcjhpv/4kq8UYdQjlxCr5pDoyw79cjqanEb5YY2
-         1CRA==
-X-Forwarded-Encrypted: i=1; AJvYcCW25RRa8+Qkinmd0uSt/N6Hk2UraIqeO/Dp3rEMPudilYIWhgMPlZ+6QGqQeM87VrCJNBut32lLuZNZ3HeYbhxldLB4rL4mOZZOOqpj
-X-Gm-Message-State: AOJu0Yx33HNAqiQcXPAWNWMCZyOq/iPBxPVQSp6P+oJdubsdIM9HoB5X
-	0WVHFITlvTalgIk5MqaERpJRNmTiBgWNbefwS0AdoaH4eLCSXRW23MiNi1bXoXc=
-X-Google-Smtp-Source: AGHT+IFfMJT7UhgMv/q10eZW7BhycbYE7gDH2aVKPe6CX2HpFuRwhkf+IuOfRfdxzGiyl5aDicMa3w==
-X-Received: by 2002:adf:f18b:0:b0:361:dd0c:678 with SMTP id ffacd0b85a97d-367756bc471mr3480189f8f.36.1719821014086;
-        Mon, 01 Jul 2024 01:03:34 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:1c2d:13b2:676b:59c2])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0fba5asm9310049f8f.71.2024.07.01.01.03.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 01:03:33 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [RESEND PATCH net v2] net: phy: aquantia: add missing include guards
-Date: Mon,  1 Jul 2024 10:03:22 +0200
-Message-ID: <20240701080322.9569-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1719821022; c=relaxed/simple;
+	bh=cpfR32a1Lwgihev+XaLBCrXmsNWGxl02s+JaOudV2kY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Cf8OQFbPRLU6qsrepYTEHs3GeBB4Rvhe+6ZEobek2VHGTlBHii0ef3sNcf7iFmcyo6xFn5UVDxd7lwIJN5wD1wElOdSd/20s4kyptGvF6RZPX/voxMEmqXP/zOT0uU+fOPaeejsI+HZpwcPEJsSNlyr5a3hKkSSga3dk2nvrZX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FeNrl3GD; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B4D3D6000A;
+	Mon,  1 Jul 2024 08:03:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1719821012;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=i7zzaMOB3H3VIdafDhVchquQ2z/n9pIHHt5+1WtsEro=;
+	b=FeNrl3GD//bAi0NH6B9N3WqpFpWoApnZdNtqhHgKr3kn3KLHqy25zfeCOpx2NSX2ylOGy/
+	x7Z5ldiV+MB42KzeT/l1xinAt3RKAwG3rH+4J6q40TycHjN7bySkglZehsu5NrQtEZXf8X
+	WKliGpuvcj3Qi/PoW978+V4b5/bo63WCwHKSglRcdRuSwzHXcanKx/SDyQXAmwtTtQXnp9
+	pYwO3V1Lhyc4XXon3eJlh8pe1xA6XDtHn5PdFzOntpknkovMngzJyvOYSJlJBlpcT11tvx
+	nmAxdde/dR4yBKl1/EN2zF+nA/S/lr2P91TZcCptqmi14gIr63uXO17wHQfsDg==
+Message-ID: <99496000-a994-4641-861a-10cbb501910e@bootlin.com>
+Date: Mon, 1 Jul 2024 10:03:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] remoteproc: k3-r5: k3_r5_rproc_stop: code reorder
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Suman Anna <s-anna@ti.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Udit Kumar <u-kumar1@ti.com>, Thomas Richard <thomas.richard@bootlin.com>,
+ Gregory CLEMENT <gregory.clement@bootlin.com>, Hari Nagalla
+ <hnagalla@ti.com>, =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240621150058.319524-1-richard.genoud@bootlin.com>
+ <20240621150058.319524-4-richard.genoud@bootlin.com> <Zn8orCbTx9VtA9Em@p14s>
+Content-Language: en-US, fr
+From: Richard GENOUD <richard.genoud@bootlin.com>
+Organization: Bootlin
+In-Reply-To: <Zn8orCbTx9VtA9Em@p14s>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-GND-Sasl: richard.genoud@bootlin.com
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Le 28/06/2024 à 23:18, Mathieu Poirier a écrit :
+> On Fri, Jun 21, 2024 at 05:00:57PM +0200, Richard Genoud wrote:
+>> In the next commit, a RP_MBOX_SHUTDOWN message will be sent in
+>> k3_r5_rproc_stop() to the remote proc (in lockstep on not)
+>> Thus, the sanity check "do not allow core 0 to stop before core 1"
+>> should be moved at the beginning of the function so that the generic case
+>> can be dealt with.
+>>
+>> In order to have an easier patch to review, those actions are broke in
+>> two patches:
+>> - this patch: moving the sanity check at the beginning (No functional
+>>    change).
+>> - next patch: doing the real job (sending shutdown messages to remote
+>>    procs before halting them).
+>>
+>> Basically, we had:
+>> - cluster_mode actions
+>> - !cluster_mode sanity check
+>> - !cluster_mode actions
+>> And now:
+>> - !cluster_mode sanity check
+>> - cluster_mode actions
+>> - !cluster_mode actions
+>>
+>> Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
+>> ---
+>>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 24 ++++++++++++++----------
+>>   1 file changed, 14 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> index 1f18b08618c8..a2ead87952c7 100644
+>> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> @@ -636,16 +636,8 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+>>   	struct k3_r5_core *core1, *core = kproc->core;
+>>   	int ret;
+>>   
+>> -	/* halt all applicable cores */
+>> -	if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
+>> -		list_for_each_entry(core, &cluster->cores, elem) {
+>> -			ret = k3_r5_core_halt(core);
+>> -			if (ret) {
+>> -				core = list_prev_entry(core, elem);
+>> -				goto unroll_core_halt;
+>> -			}
+>> -		}
+>> -	} else {
+>> +
+>> +	if (cluster->mode != CLUSTER_MODE_LOCKSTEP) {
+>>   		/* do not allow core 0 to stop before core 1 */
+>>   		core1 = list_last_entry(&cluster->cores, struct k3_r5_core,
+>>   					elem);
+>> @@ -656,6 +648,18 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+>>   			ret = -EPERM;
+>>   			goto out;
+>>   		}
+>> +	}
+>> +
+>> +	/* halt all applicable cores */
+>> +	if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
+>> +		list_for_each_entry(core, &cluster->cores, elem) {
+>> +			ret = k3_r5_core_halt(core);
+>> +			if (ret) {
+>> +				core = list_prev_entry(core, elem);
+>> +				goto unroll_core_halt;
+>> +			}
+>> +		}
+>> +	} else {
+>>   
+>>   		ret = k3_r5_core_halt(core);
+>>   		if (ret)
+> 
+> With this patch, the "else" in this "if" condition is coupled with the "if" from
+> the lockstep mode, making the code extremaly hard to read.  The original code
+> has a k3_r5_core_halt() in both "if" conditions, making the condition
+> independent from one another.
+> 
+I'm not sure I understand what you mean.
+Anyway, I'm not happy with this diff, it doesn't reflect what was intended.
+(which is moving the check "core 0 should not be stop before core 1" at the beginning)
 
-The header is missing the include guards so add them.
+Tweaking around with the diff algorithms, I came with something way easier to read I think:
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Fixes: fb470f70fea7 ("net: phy: aquantia: add hwmon support")
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
-Changes since v1:
-- rebased on top of net/main
-
- drivers/net/phy/aquantia/aquantia.h | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/net/phy/aquantia/aquantia.h b/drivers/net/phy/aquantia/aquantia.h
-index 1c19ae74ad2b..4830b25e6c7d 100644
---- a/drivers/net/phy/aquantia/aquantia.h
-+++ b/drivers/net/phy/aquantia/aquantia.h
-@@ -6,6 +6,9 @@
-  * Author: Heiner Kallweit <hkallweit1@gmail.com>
-  */
- 
-+#ifndef AQUANTIA_H
-+#define AQUANTIA_H
+diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+index 1f18b08618c8..a2ead87952c7 100644
+--- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+@@ -636,6 +636,20 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+         struct k3_r5_core *core1, *core = kproc->core;
+         int ret;
+  
 +
- #include <linux/device.h>
- #include <linux/phy.h>
- 
-@@ -120,3 +123,5 @@ static inline int aqr_hwmon_probe(struct phy_device *phydev) { return 0; }
- #endif
- 
- int aqr_firmware_load(struct phy_device *phydev);
++       if (cluster->mode != CLUSTER_MODE_LOCKSTEP) {
++               /* do not allow core 0 to stop before core 1 */
++               core1 = list_last_entry(&cluster->cores, struct k3_r5_core,
++                                       elem);
++               if (core != core1 && core1->rproc->state != RPROC_OFFLINE &&
++                   core1->rproc->state != RPROC_SUSPENDED) {
++                       dev_err(dev, "%s: can not stop core 0 before core 1\n",
++                               __func__);
++                       ret = -EPERM;
++                       goto out;
++               }
++       }
 +
-+#endif /* AQUANTIA_H */
--- 
-2.43.0
+         /* halt all applicable cores */
+         if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
+                 list_for_each_entry(core, &cluster->cores, elem) {
+@@ -646,16 +660,6 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+                         }
+                 }
+         } else {
+-               /* do not allow core 0 to stop before core 1 */
+-               core1 = list_last_entry(&cluster->cores, struct k3_r5_core,
+-                                       elem);
+-               if (core != core1 && core1->rproc->state != RPROC_OFFLINE &&
+-                   core1->rproc->state != RPROC_SUSPENDED) {
+-                       dev_err(dev, "%s: can not stop core 0 before core 1\n",
+-                               __func__);
+-                       ret = -EPERM;
+-                       goto out;
+-               }
+  
+                 ret = k3_r5_core_halt(core);
+                 if (ret)
+
 
 
