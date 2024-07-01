@@ -1,136 +1,170 @@
-Return-Path: <linux-kernel+bounces-236597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3770C91E48F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:49:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2B8491E492
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:49:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D653A1F221D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:49:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E67171C23024
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:49:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57BA116D334;
-	Mon,  1 Jul 2024 15:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0D916D4D9;
+	Mon,  1 Jul 2024 15:49:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="TxpvVahb"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dn16aWsH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D4C3236
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 15:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DCB216D330;
+	Mon,  1 Jul 2024 15:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719848967; cv=none; b=SX5jjQ2n4U6jGS3un5iEiG+qNDrCmUGGSdPrsqQ7mJfHdHfhsIuQNrllgwsY2uFD+lbZI0a5+hJhn64Snpz43D4WV/Ys0M2JeQyLRZfIYUb4Pe8iAChlqqv/0NdD93esNSaGoNctl/R+9AVGnOb5EUuJ7Yhw2dnENh6VAEio6nc=
+	t=1719848984; cv=none; b=sE3oULdir/3r0ykws8k/1mTDPThf98dmTSJimTW4v6nLDLip68N2YtSdZSOmGlV9UBgBBh2blm8ijhbagnwtKoyCFm2Tt+HsGLSboiVba+gflpzubisdv2zCCQfnmbN1eSK41Bc5+FXdE4s1LCFG44vQ5mAC5TjMQZZGozHwAcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719848967; c=relaxed/simple;
-	bh=7wpTDCYkfM0h9G8p58hcJdgXA+PbS7WdaAYXL72gy+A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X5/3RQswbm/6WOnRS6H8EOU8QpCYK7omPgVybSjCvwlfJFJHXO0zEi1+LdwdQ2gJLfDoqyHnaEQ6x6tvL9SlMsJ/0areJztx9H/3zpH1idFHsRwbDL4RolsCcxB30RreE+uOqVgh8kG03gCc/mbOe+BHMpKgAJlQ3Kon3jejBIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=TxpvVahb; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6325b04c275so31901067b3.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 08:49:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1719848965; x=1720453765; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=umkqtCJW3Dg9JtpfzIAAg1v5vJehmts33cJFqn8dvR8=;
-        b=TxpvVahbrreOtYqdLCGsduPIeatSSJqrD0sRe9SrSNMVR4h1EfRwr2T8C+/TXTphey
-         1BvOTolUqFbaRFbJ3vB5fzv996sDKqXyIF4LHe8w/C+bfwwojFnWtd63R3dxhoW+LSUL
-         xDA1jnAK69sfslASgvaXKar/FVcP9oCchikDH9PKqlwdfIZ6jeI4c8PiDIdw9SKlbGPQ
-         nlt8KYun7Gp1zjHEC4JDa2huokwqPfoqTXWOuwFPT/J5LXbYer1i8aSIxhLsWcpW1VWN
-         9M48huni+ruHOgpD8eIlBQSX8sTaL0RBGMKzYRqziilz/VWdIlBiZgpUv8y30Y++hxtL
-         whww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719848965; x=1720453765;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=umkqtCJW3Dg9JtpfzIAAg1v5vJehmts33cJFqn8dvR8=;
-        b=i24pK9BafIy0uZ9sCsGX5G2N9c5Yy/a1IfH2wrXB+wvjf9YVvgd6m86zKVoOdnSE3z
-         K2RxTT4OvpBv+tyY1MAc4wtG/Y7z0jlq5waysftPrHur/Ez+FyiAP1pWiISSvA+sMeXh
-         QclX15L2sjzFbxCrwgacEytEtKmdRHU5KAthg7AEruefVUZN5209J3o6Idazw9kZTaGs
-         VoXstr4zVWbvrrrYx2wALY7oto1Eg+n7qxD7WNzQ1OEYDRhr73bIf8IR9Hto4eG/S8lI
-         1M7y5NJqBzp/c48nqc+9UvaeEYBq8DhX1OcYppJk92iLM/HNhsPR6KTwoAYs6xTGKd/7
-         ZC+A==
-X-Forwarded-Encrypted: i=1; AJvYcCWFa1ispoSM8P3Kth01An4B6ZcnYYRxyTcPPHccDDGxSE2l+CbjdvmbtXJ63KKHZz9r8lBhVAAbW7v6NsLz2roGpMcjMV4yHn1wHa8o
-X-Gm-Message-State: AOJu0YzG4Suw8nLmO81LYRfVgl1ARQCqEWg6rMk5l3VeO/MmitwNqENR
-	bj48R19vjbZjuir1S3AxPL7SteRQZ15jQ1JTR6KkyxJNldItxbafVTfBdaRRU/E=
-X-Google-Smtp-Source: AGHT+IGu9I2wc2U8NTdlZqwI73pTcvt2JvT2wJhK92JWQZzopvjsvNausRGAk2vO9Al2yPEEKQkmTw==
-X-Received: by 2002:a05:690c:710:b0:64b:8e82:1f9 with SMTP id 00721157ae682-64c7123bf4amr65310827b3.18.1719848965244;
-        Mon, 01 Jul 2024 08:49:25 -0700 (PDT)
-Received: from [100.64.0.1] ([147.124.94.167])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-64a9c405c9csm14034647b3.128.2024.07.01.08.49.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Jul 2024 08:49:24 -0700 (PDT)
-Message-ID: <54232f3e-4fea-4996-a90b-6de51e1c51e0@sifive.com>
-Date: Mon, 1 Jul 2024 10:49:23 -0500
+	s=arc-20240116; t=1719848984; c=relaxed/simple;
+	bh=FzHTzl2pM6bEFmyfIXnvBqB/szvNEUaYJUNet+Yhy60=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DLViBdiBDvDZsIRmlYupqS+ojmP24LcWy41F7i2ucohcjeTRdf3gyCWgw0lMQDr6NHgMDtMEpR8A+3emZW2umD6xkHFa44ee6hM3AmtgFqAmdLNBk8MIMEVep7MVzvX93vTae5HseyV0tCDEgBeDMdhV+7NnN5wtWSCWbGpw8iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dn16aWsH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24EC0C4AF13;
+	Mon,  1 Jul 2024 15:49:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719848984;
+	bh=FzHTzl2pM6bEFmyfIXnvBqB/szvNEUaYJUNet+Yhy60=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=dn16aWsHxZ9zj7/LYdbd5j4PuGmEiTb82mRlxgr9353O/WgDP33tFDSXkUEjYCQYV
+	 pnFprls6ofsRKYpZ+nbFVXJwoZ+KnB6yhVUMiHSrPMNMCJ+CthPL6YkXefL6VL8o+P
+	 59wZTA6KDLwuj+LSkp7YfT7oBNXQqvMgHNFDa54UDgrqJxU9UR/heu+9wXE3DPSDka
+	 ztQJhN42TQEMnFxSqtIOLGayWTGclfhEo7XFIQAt/RfshICT8Nrasf+xHuzFQvYRLC
+	 kDRRqZQMqG14k+lxNwSgymYqDvjnjWCnyT38lBTvJBdpyB+iPH518l0x9lWaJaoH6D
+	 mfoDXTCZ5gmIg==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52e7145c63cso3661077e87.0;
+        Mon, 01 Jul 2024 08:49:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUnTbGXbRmtbUv/SrSNy5YfHOiLueketpcn4gxnWsijOb7Iw7Fj7z4WLX6BRnYR1bGQYQTOsKw44fjxvbBmP+Tr3iiNSTBJx30RO7rFtyPTmso1bjaG2KfdqZCsvRFfRwm3XktW9u+vMuLI09i/Fw==
+X-Gm-Message-State: AOJu0YyDVeFhYKf8bXJcvihm6kxwrjC2CKTaA0pc65VXz1WFUtt4OeyL
+	AlwnhyqHSdYrTJZySy1ZKNlQRdKTjXorAWLu9VpwT/LclXHH0oobh4qFzTQNyHM3U+TDqEBstzp
+	y9fUb1gVsZ2uSU0dHZO4L6wIC0Q==
+X-Google-Smtp-Source: AGHT+IFDs+WM61neTl4W+/aa13iIaRUE/ScfGZW3qLo405X2mESySA3ctabmSZLxw4Jh7wo4i87xPoxH8UwNbBkhmvg=
+X-Received: by 2002:a05:6512:3ca9:b0:52e:8161:4ce6 with SMTP id
+ 2adb3069b0e04-52e825cb693mr1822851e87.25.1719848982454; Mon, 01 Jul 2024
+ 08:49:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 07/13] riscv: csr: Add CSR encodings for
- VCSR_VXRM/VCSR_VXSAT
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
- Heiko Stuebner <heiko@sntech.de>, Conor Dooley <conor@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Jonathan Corbet <corbet@lwn.net>,
- Shuah Khan <shuah@kernel.org>, Guo Ren <guoren@kernel.org>,
- Evan Green <evan@rivosinc.com>, Andy Chiu <andy.chiu@sifive.com>,
- Jessica Clarke <jrtc27@jrtc27.com>
-References: <20240619-xtheadvector-v3-0-bff39eb9668e@rivosinc.com>
- <20240619-xtheadvector-v3-7-bff39eb9668e@rivosinc.com>
-Content-Language: en-US
-From: Samuel Holland <samuel.holland@sifive.com>
-In-Reply-To: <20240619-xtheadvector-v3-7-bff39eb9668e@rivosinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240626-arm-pmu-3-9-icntr-v2-0-c9784b4f4065@kernel.org>
+ <20240626-arm-pmu-3-9-icntr-v2-6-c9784b4f4065@kernel.org> <86ikxuir2k.wl-maz@kernel.org>
+ <20240701135216.GD2250@willie-the-truck>
+In-Reply-To: <20240701135216.GD2250@willie-the-truck>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 1 Jul 2024 09:49:29 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKYstLZQy_VQTvg-285jj1mpH+4d9CVJ_1_iAus5_rTRA@mail.gmail.com>
+Message-ID: <CAL_JsqKYstLZQy_VQTvg-285jj1mpH+4d9CVJ_1_iAus5_rTRA@mail.gmail.com>
+Subject: Re: [PATCH v2 06/12] perf: arm_pmu: Remove event index to counter remapping
+To: Will Deacon <will@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>, Russell King <linux@armlinux.org.uk>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, James Clark <james.clark@arm.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, kvmarm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Charlie,
+On Mon, Jul 1, 2024 at 7:52=E2=80=AFAM Will Deacon <will@kernel.org> wrote:
+>
+> On Thu, Jun 27, 2024 at 12:05:23PM +0100, Marc Zyngier wrote:
+> > On Wed, 26 Jun 2024 23:32:30 +0100,
+> > "Rob Herring (Arm)" <robh@kernel.org> wrote:
+> > >
+> > > Xscale and Armv6 PMUs defined the cycle counter at 0 and event counte=
+rs
+> > > starting at 1 and had 1:1 event index to counter numbering. On Armv7 =
+and
+> > > later, this changed the cycle counter to 31 and event counters start =
+at
+> > > 0. The drivers for Armv7 and PMUv3 kept the old event index numbering
+> > > and introduced an event index to counter conversion. The conversion u=
+ses
+> > > masking to convert from event index to a counter number. This operati=
+on
+> > > relies on having at most 32 counters so that the cycle counter index =
+0
+> > > can be transformed to counter number 31.
+> > >
+> > > Armv9.4 adds support for an additional fixed function counter
+> > > (instructions) which increases possible counters to more than 32, and
+> > > the conversion won't work anymore as a simple subtract and mask. The
+> > > primary reason for the translation (other than history) seems to be t=
+o
+> > > have a contiguous mask of counters 0-N. Keeping that would result in
+> > > more complicated index to counter conversions. Instead, store a mask =
+of
+> > > available counters rather than just number of events. That provides m=
+ore
+> > > information in addition to the number of events.
+> > >
+> > > No (intended) functional changes.
+> > >
+> > > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> >
+> > [...]
+> >
+> > > diff --git a/include/linux/perf/arm_pmu.h b/include/linux/perf/arm_pm=
+u.h
+> > > index b3b34f6670cf..e5d6d204beab 100644
+> > > --- a/include/linux/perf/arm_pmu.h
+> > > +++ b/include/linux/perf/arm_pmu.h
+> > > @@ -96,7 +96,7 @@ struct arm_pmu {
+> > >     void            (*stop)(struct arm_pmu *);
+> > >     void            (*reset)(void *);
+> > >     int             (*map_event)(struct perf_event *event);
+> > > -   int             num_events;
+> > > +   DECLARE_BITMAP(cntr_mask, ARMPMU_MAX_HWEVENTS);
+> >
+> > I'm slightly worried by this, as this size is never used, let alone
+> > checked by the individual drivers. I can perfectly picture some new
+> > (non-architectural) PMU driver having more counters than that, and
+> > blindly setting bits outside of the allowed range.
+>
+> I tend to agree.
+>
+> > One way to make it a bit safer would be to add a helper replacing the
+> > various bitmap_set() calls, and enforcing that we never overflow this
+> > bitmap.
+>
+> Or perhaps wd could leave the 'num_events' field intact and allocate the
+> new bitmap dynamically?
+>
+> Rob -- what do you prefer? I think the rest of the series is ready to go.
 
-On 2024-06-19 6:57 PM, Charlie Jenkins wrote:
-> The VXRM vector csr for xtheadvector has an encoding of 0xa and VXSAT
-> has an encoding of 0x9.
-> 
-> Co-developed-by: Heiko Stuebner <heiko@sntech.de>
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> ---
->  arch/riscv/include/asm/csr.h | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
-> index 18e178d83401..9086639a3dde 100644
-> --- a/arch/riscv/include/asm/csr.h
-> +++ b/arch/riscv/include/asm/csr.h
-> @@ -220,6 +220,8 @@
->  #define VCSR_VXRM_MASK			3
->  #define VCSR_VXRM_SHIFT			1
->  #define VCSR_VXSAT_MASK			1
-> +#define VCSR_VXSAT			0x9
-> +#define VCSR_VXRM			0xa
+I think the list of places we're initializing cntr_mask is short
+enough to check and additions to arm_pmu users are rare enough I would
+not be too worried about it.
 
-These are normal CSR indexes, so the prefix should be just "CSR_".
+If anything, I think the issue is with the bitmap API in that it has
+no bounds checking. I'm sure it will get on someone's radar to fix at
+some point.
 
-Regards,
-Samuel
+But if we want to have something check, this is what I have:
 
->  
->  /* symbolic CSR names: */
->  #define CSR_CYCLE		0xc00
-> 
+static inline void armpmu_set_counter_mask(struct arm_pmu *pmu,
+                                          unsigned int start, unsigned int =
+nr)
+{
+       if (WARN_ON(start + nr > ARMPMU_MAX_HWEVENTS))
+               return;
+       bitmap_set(pmu->cntr_mask, start, nr);
+}
 
+Rob
 
