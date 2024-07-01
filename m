@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-235862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21A7291DA87
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:52:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 203F991DA89
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:53:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74D07B22DE7
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:52:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADC851F21E15
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D285A84A4D;
-	Mon,  1 Jul 2024 08:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A49D784D3F;
+	Mon,  1 Jul 2024 08:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SITYTDuB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hqPZ6ZRS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1503A839FE;
-	Mon,  1 Jul 2024 08:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E95E87BAF7;
+	Mon,  1 Jul 2024 08:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719823776; cv=none; b=ruQ7DvGV1UNBRGUJFpCS/OaOgx4Jp6d6HlEmvTyrDV3rnElpU1KghrVTsSkQhRZdZKK2z9w4Tfxn54hxQFPE8aO4Yrwur6xwEsWSqspD3IQYVib22SgKLhOuAmvEAAPritZgPBs8vjqC17pkw9QS8Xu1KdpJj6TdoNjE0twiEXA=
+	t=1719823823; cv=none; b=dnDhrVZPaDxXE0qhwlrsAC2iY6AjXLTYq97O+r6EHkUaHaViTxGutErFwl181FlDRNQeFuDdQ/rv5KlTstuJRoIejOaeBWOPQUvZaLJ2/DkahqYBmicCfy4PO1QHNDY1PdAz6fEUlKggoXhqprzIOgCqvu6JmIxE5D5Gi1cvCdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719823776; c=relaxed/simple;
-	bh=gRx8I7JNrYgeeWyLRMuDCb5U4qMprUikUw+lgCQ0Iqk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=owG+fTgssAS2/x5nIqgIRBky25+RkrWvkSAnqOSuWQotH8TX+ww2/R1t1RH5UpiJAVqo+p/FQD9J3qhb78MQ2UrnSNsgU5UIfwQZ8vBxmkWXrPbE8+aUvo82GUXSuvZV1Hye9k94nQtAgIgl9pRaERnbyHaS33i2th/AJqIbr48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SITYTDuB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB7D5C116B1;
-	Mon,  1 Jul 2024 08:49:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719823775;
-	bh=gRx8I7JNrYgeeWyLRMuDCb5U4qMprUikUw+lgCQ0Iqk=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=SITYTDuBYBjZmHBDshNQNXz8GoayFhGOtq5KHOrdaxcqHdU/OQjaFQoJ5JR+Zu/si
-	 UG7Eee1UoK5QImo+JYZOkd2zmEzpTgISR5NJtMDwJWf+/hzXQV8A0fopUf2kFhZ5Ek
-	 0g5F4SEQw6t+axL6BaSFX7OewNYEsMJtpFoOFZ6W+cBcEeMENuAHmoOevNS2/JjjMb
-	 MZEcxNNHC9vXHhmreJjNY41ID3qbjzr/S3bJq/SUyHfVuiQnow1m+jjzyatKTM6Rrs
-	 0JMdogYZIdnB6ppUpfYemf6ju3ZED7d+tSFOFcEnqun7/X0L8Za5lgXoLfNRGb/QIY
-	 //bf6umATx34g==
-Message-ID: <5da26249-0389-4a39-b1ad-fc8228d38986@kernel.org>
-Date: Mon, 1 Jul 2024 10:49:28 +0200
+	s=arc-20240116; t=1719823823; c=relaxed/simple;
+	bh=lDEozFRfTCwEKXHhCwMeLrpdH7bHbFFnfjg0uB9M5Ok=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YfqKqhH77ClBLA0gYgBpxppjrVJcOxJMlwm0N9NYFl406YLucFnG7lz6XgJapCFA/FwMPaS4xrTInc+ss/Ejzgyl2cFkZzFK2fUGzdwkS7E0wVo1FbSOFRhJIIeFp6xi8SOAPNWX1Oc2jO4UVRCVmZF3h45PKzBYAbfjFzZ2AsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hqPZ6ZRS; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719823822; x=1751359822;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=lDEozFRfTCwEKXHhCwMeLrpdH7bHbFFnfjg0uB9M5Ok=;
+  b=hqPZ6ZRSJpQ8Bc/MfDjdI79sC/bgcpgedVPUsY6yxFyCZNeqTKpZ9ntX
+   m1+gfLSY6OG5Q60USE1AGvGsSOSoSjYfRL87UGm+2dsjlR6tHDbR4YbAg
+   Uc8psISSRRj7RsjpvzebDkgr9nVBpCTwzQT431HRG3ziMHe94vIalotoE
+   SLrjbZWbQ8ZhFHqGThFm37XXdHOgSfDkVEy4m6Ky6v9xbG/ERptv7oPBu
+   6e2/S790fg52i3jOFghPp9TaF9BhzYrga4/nXi8Fvt6OxKBw6SvBgGYnk
+   Pb4jvi8Dnn3S5SRkZ30N68T+A4Gc+W6mpvma4gzsYTzDoD3HkRnW0AKxo
+   A==;
+X-CSE-ConnectionGUID: bRhSeLIZR8+dVDGpRddNtA==
+X-CSE-MsgGUID: qhtMX67wQlqTNa9O43+I+g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11119"; a="16770389"
+X-IronPort-AV: E=Sophos;i="6.09,175,1716274800"; 
+   d="scan'208";a="16770389"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 01:50:21 -0700
+X-CSE-ConnectionGUID: 83ZZ+qo/Qj2W8cdVYxPECA==
+X-CSE-MsgGUID: hQYQXUYaQSWbavLwd0gThA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,175,1716274800"; 
+   d="scan'208";a="45445134"
+Received: from aslawinx-mobl.ger.corp.intel.com (HELO [10.94.0.53]) ([10.94.0.53])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 01:50:19 -0700
+Message-ID: <326792b9-e706-4ab0-a1e8-cc48943e357d@linux.intel.com>
+Date: Mon, 1 Jul 2024 10:50:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,81 +66,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] dt-bindings: clock: mediatek: add syscon
- compatible for mt7622 pciesys
-To: Christian Marangi <ansuelsmth@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20240628105542.5456-1-ansuelsmth@gmail.com>
- <20240628105542.5456-2-ansuelsmth@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 1/3] ALSA: pcm: add support for 128kHz sample rate
+To: Jerome Brunet <jbrunet@baylibre.com>, Mark Brown <broonie@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>,
+ Jaroslav Kysela <perex@perex.cz>
+Cc: alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240628122429.2018059-1-jbrunet@baylibre.com>
+ <20240628122429.2018059-2-jbrunet@baylibre.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240628105542.5456-2-ansuelsmth@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
+ <amadeuszx.slawinski@linux.intel.com>
+In-Reply-To: <20240628122429.2018059-2-jbrunet@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 28/06/2024 12:55, Christian Marangi wrote:
-> Add required syscon compatible for mt7622 pciesys. This is required for
-> SATA interface as the regs are shared.
+On 6/28/2024 2:23 PM, Jerome Brunet wrote:
+> The usual sample rate possible on an SPDIF link are
+> 32k, 44.1k, 48k, 88.2k, 96k, 172.4k and 192k.
 > 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> With higher bandwidth variant, such as eARC, and the introduction of 8
+> channels mode, the spdif frame rate may be multiplied by 4. This happens
+> when the interface use an IEC958_SUBFRAME format.
+> 
+> The spdif 8 channel mode rate list is:
+> 128k, 176.4k, 192k, 352.8k, 384k, 705.4k and 768k.
+> 
+> All are already supported by ASLA expect for the 128kHz one.
+> Add support for it but do not insert it the SNDRV_PCM_RATE_8000_192000
+> macro. Doing so would silently add 128k support to a lot of HW which
+> probably do not support it.
+> 
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 > ---
-> Changes v2:
-> - Fix broken schema example
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+ From what I remember the recommendation is to not add new rates, but 
+use SNDRV_PCM_RATE_KNOT for all rates not included already.
 
 
