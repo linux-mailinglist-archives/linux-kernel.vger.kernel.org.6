@@ -1,93 +1,158 @@
-Return-Path: <linux-kernel+bounces-236360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A23291E116
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:47:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F0BA91E11A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:47:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAD941C21403
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:46:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAB2428277C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:47:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4822215EFB4;
-	Mon,  1 Jul 2024 13:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5360A15F311;
+	Mon,  1 Jul 2024 13:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="scHpz+h6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="rAqstR5h"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83B9715ECEA;
-	Mon,  1 Jul 2024 13:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4A515ECCF
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 13:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719841603; cv=none; b=TAatlxL3dwtvNAGa6xAEdFH+uca21wwZQETcCUUB1R/XVmMGYG3vXxtwhzBzjF/r8K7lF1lVCJFDBPNWfRRooAZ+YOPsGLQ3Sajc9FUdnYbV9gMZf9uji9AK4HtCILW18OJhYQ8BMb37lznpO4bB4v8IxjX4TmRYTTBw4ZpXnIY=
+	t=1719841617; cv=none; b=U2vJW/kipNaIGyeNvhiypHwYPBor+op7Kn1yOpTIdSScHq2iYIBvw8uaj3Gs7qDs80evAuj5WGq8KZ1RWk2k5c+XYXgXf5gccdox7NBuEz8fEYrkDySd5wcs5oC8Covc0+B9AfYUGqdj/cfdn8GAhnScpZXWjADyTKa7OUkNOT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719841603; c=relaxed/simple;
-	bh=yOQivT421DdQX+XSo94Vz7zP0uqqGn78GjmZjtGzag0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=STqons4msoPnMWCODFU5GQ78bixSE2KrwLhBgOeI/Kd2p8nbHfyjXTxSSyAAhsGxniZ/GAQFcti/Ri83j09DvwCmOs+yQj/jhQMR2mQEmsQ3ql60NVcYDZx/8jy8T5sGmW7tlhunrL9bBs84OGUzKqS8FNSThZOiQyr2Lb67FPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=scHpz+h6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85064C4AF0D;
-	Mon,  1 Jul 2024 13:46:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719841603;
-	bh=yOQivT421DdQX+XSo94Vz7zP0uqqGn78GjmZjtGzag0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=scHpz+h6Lz1YehXmBFKh9rL63zhAPmrNkaQr2mlu+DlDh8CooF5S1ErqqYVDbxg51
-	 NHFyanz6QNMKz71yWimnAeRmMFQdjYg4HZKPZKnRlxH3CVDmFRNIL0fwfkSWruNPyg
-	 k70H/9Rx3sOl/Q7o4aD88whsmSu1kq5B/94nrxhYrbac2DxGO453/IUO2tilh/UFBh
-	 01lri0KPw5QtNxD30/16l0d0JkaPYMhiw28nAfyEhnBlM5/N0b5pGuNqmmni9vA4TW
-	 RRb/eJ8Wa85oWK0LP/onAK8zkk5k1brI/P0XetMvTIUWR0pIZMeckWhK6yYvEXL3hj
-	 YCJHLEngYJGCg==
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
- bpf@vger.kernel.org, Peter Hutterer <peter.hutterer@who-t.net>, 
- =?utf-8?q?Jos=C3=A9_Exp=C3=B3sito?= <jose.exposito89@gmail.com>, 
- K S Iyer <kumar.s.iyer65@gmail.com>
-In-Reply-To: <20240627-import-bpf-v1-0-0dbcda4a5b1f@kernel.org>
-References: <20240627-import-bpf-v1-0-0dbcda4a5b1f@kernel.org>
-Subject: Re: [PATCH 0/6] HID: bpf: import some more fixes from udev-hid-bpf
-Message-Id: <171984160126.804118.1988566013648655002.b4-ty@kernel.org>
-Date: Mon, 01 Jul 2024 15:46:41 +0200
+	s=arc-20240116; t=1719841617; c=relaxed/simple;
+	bh=Ww3zO2BWA6CNrPfVjdCQ8/edKcVa8UvzDOn/+wZVrEM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IFUI9i+ZT6HcMst1eiqIa2X2x9X2mcDKX03OYd3maWa7sws0OCopWWewtR5Q/s0ZEk6fC0bCdK7m0JCB3wCdy69loF6aAp42ZRiH+7wg0gtK7H2DMDA6N/p1wLoUkh5qGzaVgwdH4I1Y5iM71nUJCgRSnL4FSU+QZ7f40CPmZb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=rAqstR5h; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6b05c9db85fso14177606d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 06:46:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1719841615; x=1720446415; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/7pK8M+T679Mr4Uw1+2PXZ/iLLD0jN5yzRREJHhd/M8=;
+        b=rAqstR5haeuwUowCfxCsQJIDf2qieHtgMh+/eTl2ebv8mkMM1HXvwROMApDpg6OG1m
+         RqgsLoF652BqZbYRaiiuBfUxYrkv6/Oz5JDzyZma2wEKP7wTY/o3LltyoHd5HUXIo4fl
+         0XSjC+XbKoPv58qG/XCotkfE7uut/wF1fCpRDqMY1MUEUtOwWDD6d7xy8pup9hVypChg
+         /eRTAcd3ablPgl7txgWWcymn5qj10yEu1EkddYON84Q+tIl3mjdQOtYRv73QjZ1EqjsU
+         IhU8ztbaR+NKHNO4lDc/gY6CB1waiKLXBNviHrfW4CRsj5QMny+jwXgvjjO4Td8ar6r0
+         dHwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719841615; x=1720446415;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/7pK8M+T679Mr4Uw1+2PXZ/iLLD0jN5yzRREJHhd/M8=;
+        b=O20WRtqewBPD5hbw1+EyuhwfmMeIltJtWvWyz4mwX+k6JQtv95Uw7DOfISky5k7RJl
+         HchuZcbzdGHAccdm9ClbTVkN6kQ3CyOuH8+0Rwlpb2dnAddKTjULJ610kCslbvLGcSN7
+         oM9kjw/l3AnWnvnL3vmbCx9OQhVcG3bKub0rOjkDMNCDC61edUUFDktm+LD5SdylZaOv
+         h4elUlX7mymTd7NknXBweIzTIyU78F9wqmjvAorNBaO7CRP8CxUBXLufS7IDuFPkhGg1
+         yjGw7JHdz2uNasPBNzG64vvjKN9+c7tLbPVFPUNudtO8RuH9+Zrd2fbGiHRny8IHjl8v
+         EXtg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZfmK4Tve03UbKbyszgsx4czZnNf8ojDMuzRbXkqDoO+NrpPLpAzixHkqiD/+g51AlDVCwZg/TCWYziQTcKPBiBsUJXy7rdh2IEvDu
+X-Gm-Message-State: AOJu0YyHvVjnXLP/Shv2Yb6+T0OdWjpKGzetT9QBsHAmhwlCJ8xdhsh0
+	sib0mgWH9kd37nrKJgrfsgXzHCMR3BgEJc/tloJkzGLW8mNEFsAWQgWsknstnCs=
+X-Google-Smtp-Source: AGHT+IG8OekqgNnErri1uZBaOEWN7EF2UDkAF5obMoo6PPyjxSiFbWfhXRMS/kv2BHuTbAr7oS5ICw==
+X-Received: by 2002:a05:6214:f03:b0:6b5:47b0:8f09 with SMTP id 6a1803df08f44-6b5b70cde0fmr83155356d6.36.1719841615063;
+        Mon, 01 Jul 2024 06:46:55 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b59e5f5f51sm33227276d6.75.2024.07.01.06.46.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 06:46:54 -0700 (PDT)
+Date: Mon, 1 Jul 2024 09:46:53 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
+	David Sterba <dsterba@suse.com>, Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andi Kleen <ak@linux.intel.com>, kernel-team@fb.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-mm@kvack.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH v2 07/11] xfs: switch to multigrain timestamps
+Message-ID: <20240701134653.GA504479@perftesting>
+References: <20240701-mgtime-v2-0-19d412a940d9@kernel.org>
+ <20240701-mgtime-v2-7-19d412a940d9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240701-mgtime-v2-7-19d412a940d9@kernel.org>
 
-On Thu, 27 Jun 2024 11:54:16 +0200, Benjamin Tissoires wrote:
-> This is a batch update to sync up the testing directory of udev-hid-bpf
-> and the kernel. The development happens there, and once we are happy,
-> we merge the bpf there, and then sync up with the kernel.
+On Mon, Jul 01, 2024 at 06:26:43AM -0400, Jeff Layton wrote:
+> Enable multigrain timestamps, which should ensure that there is an
+> apparent change to the timestamp whenever it has been written after
+> being actively observed via getattr.
 > 
-> I've added all of the signed-off by from the various authors, as we
-> require them there as well.
+> Also, anytime the mtime changes, the ctime must also change, and those
+> are now the only two options for xfs_trans_ichgtime. Have that function
+> unconditionally bump the ctime, and ASSERT that XFS_ICHGTIME_CHG is
+> always set.
 > 
-> [...]
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/xfs/libxfs/xfs_trans_inode.c | 6 +++---
+>  fs/xfs/xfs_iops.c               | 6 ++++--
+>  fs/xfs/xfs_super.c              | 2 +-
+>  3 files changed, 8 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/xfs/libxfs/xfs_trans_inode.c b/fs/xfs/libxfs/xfs_trans_inode.c
+> index 69fc5b981352..1f3639bbf5f0 100644
+> --- a/fs/xfs/libxfs/xfs_trans_inode.c
+> +++ b/fs/xfs/libxfs/xfs_trans_inode.c
+> @@ -62,12 +62,12 @@ xfs_trans_ichgtime(
+>  	ASSERT(tp);
+>  	xfs_assert_ilocked(ip, XFS_ILOCK_EXCL);
+>  
+> -	tv = current_time(inode);
+> +	/* If the mtime changes, then ctime must also change */
+> +	ASSERT(flags & XFS_ICHGTIME_CHG);
+>  
+> +	tv = inode_set_ctime_current(inode);
+>  	if (flags & XFS_ICHGTIME_MOD)
+>  		inode_set_mtime_to_ts(inode, tv);
+> -	if (flags & XFS_ICHGTIME_CHG)
+> -		inode_set_ctime_to_ts(inode, tv);
+>  	if (flags & XFS_ICHGTIME_CREATE)
+>  		ip->i_crtime = tv;
+>  }
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index ff222827e550..ed6e6d9507df 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -590,10 +590,12 @@ xfs_vn_getattr(
+>  	stat->gid = vfsgid_into_kgid(vfsgid);
+>  	stat->ino = ip->i_ino;
+>  	stat->atime = inode_get_atime(inode);
+> -	stat->mtime = inode_get_mtime(inode);
+> -	stat->ctime = inode_get_ctime(inode);
+> +
+> +	fill_mg_cmtime(stat, request_mask, inode);
+> +
+>  	stat->blocks = XFS_FSB_TO_BB(mp, ip->i_nblocks + ip->i_delayed_blks);
+>  
+> +
 
-Applied to hid/hid.git (for-6.11/bpf), thanks!
+Stray newline.  Thanks,
 
-[1/6] HID: bpf: Add a HID report composition helper macros
-      https://git.kernel.org/hid/hid/c/8a89db51873c
-[2/6] HID: bpf: add a driver for the Huion Inspiroy 2S (H641P)
-      https://git.kernel.org/hid/hid/c/09c555faedb8
-[3/6] HID: bpf: move the BIT() macro to hid_bpf_helpers.h
-      https://git.kernel.org/hid/hid/c/c4015aa7d8fa
-[4/6] HID: bpf: Add support for the XP-PEN Deco Mini 4
-      https://git.kernel.org/hid/hid/c/f03741540dba
-[5/6] HID: bpf: Add Huion Dial 2 bpf fixup
-      https://git.kernel.org/hid/hid/c/9b52d81115db
-[6/6] HID: bpf: Thrustmaster TCA Yoke Boeing joystick fix
-      https://git.kernel.org/hid/hid/c/f58e7f404da4
-
-Cheers,
--- 
-Benjamin Tissoires <bentiss@kernel.org>
-
+Josef
 
