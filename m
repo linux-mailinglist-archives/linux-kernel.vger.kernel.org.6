@@ -1,216 +1,130 @@
-Return-Path: <linux-kernel+bounces-235750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C899991D939
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:41:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDE7F91D944
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:44:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 052B31C21A8B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:41:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A74D1C21943
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3D382490;
-	Mon,  1 Jul 2024 07:41:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ACC278C63;
+	Mon,  1 Jul 2024 07:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sur3jpoC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8C854765;
-	Mon,  1 Jul 2024 07:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="VStLEhU1"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB5D376E6
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 07:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719819687; cv=none; b=FzP0vlG3qJ/wkWpj38ISmmVMvMVbePjJ1M4eOcKFbxkndkpoRmjaMd9ch/pQSipRocWTeeuPeqI5HyqVqromj3V64icxyF/CGO0dhY7YXwQEGDCeM5BOu4slQLdq7PTkHLD0OU7n5kX5ZKVO2t0502l6L8aeVmBfGCL4zFDHaDA=
+	t=1719819875; cv=none; b=VteGotgchG5hneXKl/zHqzQu+bn6wa5eeqOiCw1x2yRKM0/yRSsyBVoMzBNfgGdds01OA2yHccYp69NGbDpwXZh29lMp/I7hR8c2T53BKM6vO7K2St4k+rMpT2zRc3hpzVrI95p0N+JZlO9h/b1T6K7u/5KdFHP8FghZd4f/k3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719819687; c=relaxed/simple;
-	bh=+wsA5XhU7vHzqtmDMPNibGdTI6PoJMHM5FlgsYGU1gY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vzn0Q0dnXxv5xMLMF2BVRuzrCaFGawKmonO7fYg2i+fazAy26o/Rrhf4qigqgXKXVOsF/wmih/YGKlqxnsaTrnhL1sqAm6jSqkLU/w9KOnSqRsDWcufgZSH5+hLa1qu48Oh6QIX94YPC1Sujp9ObTPmHe3W6hTQ7XaYRWkPDHjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sur3jpoC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CABD8C116B1;
-	Mon,  1 Jul 2024 07:41:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719819687;
-	bh=+wsA5XhU7vHzqtmDMPNibGdTI6PoJMHM5FlgsYGU1gY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sur3jpoCFk0yR/fBO6PbEYvxHhdxnURxRKXgni58CM2Uwdp+Zmr1QkCIhVtjSjPXK
-	 yWybLwN79gYVty9KHJtVMdamNBIFNVgRJrRm5A1iZlPOFxKQgsoDujIyNLrGPrZmDS
-	 5fIPwtjEXeO/+wdr+FaXeIfatU9dHR89vf1cmaFW5yQxesljBELe/VleS/ngHibOrW
-	 Hgg5jPcEuVPc4UwA4sN5lsF5CHxz8ViULEA1xqeYojUSGNh7XSPYh65UFCyxbf35vD
-	 LY+rcQqkZ8eyIM5wNEJH363IRdXGx/+KqgNHRuM0LgyAvy71TB3OI07ndrkP3lE+3f
-	 ezfRRO9dme1bQ==
-Date: Mon, 1 Jul 2024 09:41:22 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, Jeff LaBundy <jeff@labundy.com>, 
+	s=arc-20240116; t=1719819875; c=relaxed/simple;
+	bh=tN7l8i682+OKNUhtIAMz0gv17+/bm1AJ56D0MW52aUc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=H10LLdfmjptDPTxawzK09heecgQlix7x2JFHaTes+b9khIeSIK/4cYQbfqeYPx46xMqeY4snRN5hY173dhw+mh6VnCiz+lU31d1A9O8fvJAsTT7P0XkjdHfaZDVAulF7MsB+hX8N5P+rvx8JM7QAudPAMLLi3ATmboSWW2Q11T4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=VStLEhU1; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:Reply-To:MIME-Version;
+	bh=x8gIqUvIEyIvWrLcnvnN8RgcwBPeQB4VF3UFpzQZusY=; b=VStLEhU1ASWq2
+	aiANfD5IZ3x66VWPwssGK0z6W7kfR/Z5WoQG8BK/SI11dVEZ0Jc3HvbL0XH+cskW
+	c2YxKiCrMv8/ScdHGZ6lfzF6Yv45TWuHq3p0SL/Te/FGBQw7X70FvPHN8Q08Donj
+	ZjlB0X1bIS+yC26gz12FRr9MLT6JGs=
+Received: from localhost.localdomain (unknown [223.104.212.168])
+	by gzga-smtp-mta-g2-3 (Coremail) with SMTP id _____wD3v3UpXoJmVPDIAw--.64400S2;
+	Mon, 01 Jul 2024 15:43:39 +0800 (CST)
+From: Ping Gan <jacky_gam_2001@163.com>
+To: sagi@grimberg.me,
+	hch@lst.de,
+	kch@nvidia.com,
+	linux-nvme@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] Input: simplify event handling logic
-Message-ID: <qevkkesgw7y2bypexmogght7iozo646vowjkovht5mplegzvnl@tzfffoaglijz>
-References: <20240701060553.869989-1-dmitry.torokhov@gmail.com>
- <20240701060553.869989-4-dmitry.torokhov@gmail.com>
+Cc: ping.gan@dell.com
+Subject: Re: [PATCH 0/2] nvmet: support polling task for RDMA and TCP
+Date: Mon,  1 Jul 2024 15:42:44 +0800
+Message-Id: <20240701074245.73348-1-jacky_gam_2001@163.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <0779b376-38e3-42ef-b32a-a9cfab2749f2@grimberg.me>
+References: <0779b376-38e3-42ef-b32a-a9cfab2749f2@grimberg.me>
+Reply-To: sagi@grimberg.me
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240701060553.869989-4-dmitry.torokhov@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3v3UpXoJmVPDIAw--.64400S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7tFW7JFWfWFWkWr45trykAFb_yoW8KF4xpF
+	WfJrZIkrs7urWrAw4vvayIgFya93say3y5Jw1fJ3y8t3yYvry2vr40gFyrWFsrCrnY9r1q
+	vFWDZ3Zru3WqyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U4a0dUUUUU=
+X-CM-SenderInfo: 5mdfy55bjdzsisqqiqqrwthudrp/1tbiSBYOKWXAmBtWegADsw
 
-On Jun 30 2024, Dmitry Torokhov wrote:
-> Streamline event handling code by providing batch implementations for
-> filtering and event processing and using them in place of the main
-> event handler, as needed, instead of having complex branching logic
-> in the middle of the event processing code.
-> 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->  drivers/input/input.c | 90 ++++++++++++++++++++++++-------------------
->  1 file changed, 51 insertions(+), 39 deletions(-)
-> 
-> diff --git a/drivers/input/input.c b/drivers/input/input.c
-> index 8434348faeac..eeb755cb12e7 100644
-> --- a/drivers/input/input.c
-> +++ b/drivers/input/input.c
-> @@ -99,41 +99,6 @@ static void input_stop_autorepeat(struct input_dev *dev)
->  	del_timer(&dev->timer);
->  }
->  
-> -/*
-> - * Pass event first through all filters and then, if event has not been
-> - * filtered out, through all open handles. This function is called with
-> - * dev->event_lock held and interrupts disabled.
-> - */
-> -static unsigned int input_to_handler(struct input_handle *handle,
-> -			struct input_value *vals, unsigned int count)
-> -{
-> -	struct input_handler *handler = handle->handler;
-> -	struct input_value *end = vals;
-> -	struct input_value *v;
-> -
-> -	if (handler->filter) {
-> -		for (v = vals; v != vals + count; v++) {
-> -			if (handler->filter(handle, v->type, v->code, v->value))
-> -				continue;
-> -			if (end != v)
-> -				*end = *v;
-> -			end++;
-> -		}
-> -		count = end - vals;
-> -	}
-> -
-> -	if (!count)
-> -		return 0;
-> -
-> -	if (handler->events)
-> -		handler->events(handle, vals, count);
-> -	else if (handler->event)
-> -		for (v = vals; v != vals + count; v++)
-> -			handler->event(handle, v->type, v->code, v->value);
-> -
-> -	return count;
-> -}
-> -
->  /*
->   * Pass values first through all filters and then, if event has not been
->   * filtered out, through all open handles. This function is called with
+>Hey Ping Gan,
+>
+>
+>On 26/06/2024 11:28, Ping Gan wrote:
+>> When running nvmf on SMP platform, current nvme target's RDMA and
+>> TCP use kworker to handle IO. But if there is other high workload
+>> in the system(eg: on kubernetes), the competition between the
+>> kworker and other workload is very radical. And since the kworker
+>> is scheduled by OS randomly, it's difficult to control OS resource
+>> and also tune the performance. If target support to use delicated
+>> polling task to handle IO, it's useful to control OS resource and
+>> gain good performance. So it makes sense to add polling task in
+>> rdma-rdma and rdma-tcp modules.
+>
+>This is NOT the way to go here.
+>
+>Both rdma and tcp are driven from workqueue context, which are bound 
+>workqueues.
+>
+>So there are two ways to go here:
+>1. Add generic port cpuset and use that to direct traffic to the 
+>appropriate set of cores
+>(i.e. select an appropriate comp_vector for rdma and add an appropriate 
+>steering rule
+>for tcp).
+>2. Add options to rdma/tcp to use UNBOUND workqueues, and allow users
+>to 
+>control
+>these UNBOUND workqueues cpumask via sysfs.
+>
+>(2) will not control interrupts to steer to other workloads cpus, but 
+>the handlers may
+>run on a set of dedicated cpus.
+>
+>(1) is a better solution, but harder to implement.
+>
+>You also should look into nvmet-fc as well (and nvmet-loop for that
+>matter).
 
-Nitpick: maybe that comment above input_pass_values() should also be
-amended now that the processing is more straightforward?
+hi Sagi Grimberg,
+Thanks for your reply, actually we had tried the first advice you
+suggested, but we found the performance was poor when using spdk 
+as initiator. You know this patch is not only resolving OS resource
+competition issue, but also the perf issue. We have analyzed if we
+still use workqueue(kworker) as target when initiator is polling 
+driver(eg: spdk), then workqueue/kworker target is the bottleneck 
+since every nvmf request may have a wait latency from queuing on 
+workqueue to begin processing, and the latency can be traced by wqlat 
+of bcc (https://github.com/iovisor/bcc/blob/master/tools/wqlat.py). 
+We think the latency is a disaster for the polling driver data plane,
+right? So we think adding a polling task mode on nvmet side to handle
+IO does really make sense; what's your opinion about this? And you
+mentioned we should also look into nvmet-fc, I agree with you.
+However currently we have no nvmf-fc's testbed; if we get the testbed,
+will do that. 
 
-> @@ -154,11 +119,12 @@ static void input_pass_values(struct input_dev *dev,
->  
->  	handle = rcu_dereference(dev->grab);
->  	if (handle) {
-> -		count = input_to_handler(handle, vals, count);
-> +		count = handle->handler->events(handle, vals, count);
->  	} else {
->  		list_for_each_entry_rcu(handle, &dev->h_list, d_node)
->  			if (handle->open) {
-> -				count = input_to_handler(handle, vals, count);
-> +				count = handle->handler->events(handle, vals,
-> +								count);
->  				if (!count)
->  					break;
->  			}
-> @@ -2537,6 +2503,47 @@ static int input_handler_check_methods(const struct input_handler *handler)
->  	return 0;
->  }
->  
-> +/*
-> + * An implementation of input_handler's events() method that simply
-> + * invokes handler->event() method for each event one by one.
-> + */
-> +static unsigned int input_handler_events_default(struct input_handle *handle,
-> +						 struct input_value *vals,
-> +						 unsigned int count)
-> +{
-> +	struct input_handler *handler = handle->handler;
-> +	struct input_value *v;
-> +
-> +	for (v = vals; v != vals + count; v++)
-> +		handler->event(handle, v->type, v->code, v->value);
-> +
-> +	return count;
-> +}
-> +
-> +/*
-> + * An implementation of input_handler's events() method that invokes
-> + * handler->filter() method for each event one by one and removes events
-> + * that were filtered out from the "vals" array.
-> + */
-> +static unsigned int input_handler_events_filter(struct input_handle *handle,
-> +						struct input_value *vals,
-> +						unsigned int count)
-> +{
-> +	struct input_handler *handler = handle->handler;
-> +	struct input_value *end = vals;
-> +	struct input_value *v;
-> +
-> +	for (v = vals; v != vals + count; v++) {
-> +		if (handler->filter(handle, v->type, v->code, v->value))
-> +			continue;
-> +		if (end != v)
-> +			*end = *v;
-> +		end++;
-> +	}
-> +
-> +	return end - vals;
-> +}
-> +
->  /**
->   * input_register_handler - register a new input handler
->   * @handler: handler to be registered
-> @@ -2554,12 +2561,17 @@ int input_register_handler(struct input_handler *handler)
->  	if (error)
->  		return error;
->  
-> +	INIT_LIST_HEAD(&handler->h_list);
-> +
-> +	if (handler->filter)
-> +		handler->events = input_handler_events_filter;
-> +	else if (handler->event)
-> +		handler->events = input_handler_events_default;
-> +
->  	error = mutex_lock_interruptible(&input_mutex);
->  	if (error)
->  		return error;
->  
-> -	INIT_LIST_HEAD(&handler->h_list);
-> -
->  	list_add_tail(&handler->node, &input_handler_list);
->  
->  	list_for_each_entry(dev, &input_dev_list, node)
-> -- 
-> 2.45.2.803.g4e1b14247a-goog
-> 
 
-Minor nitpick, but otherwise:
+Thanks,
+Ping
 
-Reviewed-by: Benjamin Tissoires <bentiss@kernel.org>
 
-Cheers,
-Benjamin
+
 
