@@ -1,40 +1,40 @@
-Return-Path: <linux-kernel+bounces-236383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E66E91E165
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:55:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64B6091E164
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:55:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C79D21F249F5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:55:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 197E2286C48
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD2B16079C;
-	Mon,  1 Jul 2024 13:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8720115FA90;
+	Mon,  1 Jul 2024 13:54:17 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A8115EFDC
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 13:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB6F15ECC6
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 13:54:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719842057; cv=none; b=QGrAO48GoX0E+J84GauUKTiPHzY7QPy4eH0A9XTk9B5Uf3Z3SM5RPjGjUUQDErFFoXhVVbs7bp9oYVf7V0eOc2JYyjt1xqJwurmz+RNpZR9AAzt5TIyWFE0+AgLB2S49Vd0JShrswVsZWNF5j5keKUzGT7YVoedhCN/MjG+0teY=
+	t=1719842057; cv=none; b=n7H6/oCRCvPeTR5QdzGrPi11bsCeuB2+6Qi4A9A0WvMPOsTovj9t+AlyCawcq9TKTjRtpzaZ1kA8rlS7NWB96ol3xNec5OSBKilpdkOKgrjkzs5WfCSFDmbkDi+Ic1CpDUwn+qM8XAsTIHhxfliNSX8lNqUlVUTGB74NzyS5NTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719842057; c=relaxed/simple;
-	bh=zHeI+GWSdz7PR0D30nDNzWXJoqqyXyai8DQT6s7xrdw=;
+	bh=mGAuCZgA2CcqrjhV6CHTOjJSYcLUjnH7A7J5jQMNJG0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=L4GUH3mYCWf2GvXuWU4KvE1gyM7FLmuz+WnL6687K8LZzpqp5xbRUdVr5TchE3r3ydx1xwxQiU01sntfoJETHnXQTi3mCWa0IMeM4VAAh5O5JKTUN6I6zcj0FYpSk7GLC8TpEm6OLkFiPol266vOtYgM+XwrKiH5InMLGDh2h0s=
+	 In-Reply-To:To:Cc; b=t5WdG0my8OHm2zzxLiQ5N3qdKJPBnhnrMpzRIPz82xxjXm/Xh7XGpNyqqpo+GV2DRW6M1rMQVBGzOFeyP/WzWl131CpuPgZupBdC1g7c4LA+P2Mneu05+yMVrAlZIKYFw3EU/wHngH1yyFMxLG/n4ZPK0uUFDV5hqto/aughiyY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
 	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
 	(envelope-from <m.felsch@pengutronix.de>)
-	id 1sOHTX-0001LY-37; Mon, 01 Jul 2024 15:53:47 +0200
+	id 1sOHTX-0001LY-6i; Mon, 01 Jul 2024 15:53:47 +0200
 From: Marco Felsch <m.felsch@pengutronix.de>
-Date: Mon, 01 Jul 2024 15:53:40 +0200
-Subject: [PATCH 1/9] mtd: core: add nvmem_write support
+Date: Mon, 01 Jul 2024 15:53:41 +0200
+Subject: [PATCH 2/9] mtd: add mtd_is_master helper
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -43,7 +43,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240701-b4-v6-10-topic-usbc-tcpci-v1-1-3fd5f4a193cc@pengutronix.de>
+Message-Id: <20240701-b4-v6-10-topic-usbc-tcpci-v1-2-3fd5f4a193cc@pengutronix.de>
 References: <20240701-b4-v6-10-topic-usbc-tcpci-v1-0-3fd5f4a193cc@pengutronix.de>
 In-Reply-To: <20240701-b4-v6-10-topic-usbc-tcpci-v1-0-3fd5f4a193cc@pengutronix.de>
 To: Miquel Raynal <miquel.raynal@bootlin.com>, 
@@ -84,53 +84,29 @@ X-SA-Exim-Mail-From: m.felsch@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-The MTD framework does support the NVMEM framework already but only the
-read support was implemented. This commit adds the write support if the
-MTD device supports writing (MTD_WRITEABLE is set).
+Provide a simple helper to make it easy to detect an master mtd device.
 
 Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
 ---
- drivers/mtd/mtdcore.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ include/linux/mtd/mtd.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
-index 724f917f91ba..dcd97e59425e 100644
---- a/drivers/mtd/mtdcore.c
-+++ b/drivers/mtd/mtdcore.c
-@@ -544,6 +544,20 @@ static int mtd_nvmem_reg_read(void *priv, unsigned int offset,
- 	return retlen == bytes ? 0 : -EIO;
+diff --git a/include/linux/mtd/mtd.h b/include/linux/mtd/mtd.h
+index 8d10d9d2e830..bf3fc2ea7230 100644
+--- a/include/linux/mtd/mtd.h
++++ b/include/linux/mtd/mtd.h
+@@ -408,6 +408,11 @@ static inline struct mtd_info *mtd_get_master(struct mtd_info *mtd)
+ 	return mtd;
  }
  
-+static int mtd_nvmem_reg_write(void *priv, unsigned int offset,
-+			       void *val, size_t bytes)
++static inline bool mtd_is_master(struct mtd_info *mtd)
 +{
-+	struct mtd_info *mtd = priv;
-+	size_t retlen;
-+	int err;
-+
-+	err = mtd_write(mtd, offset, bytes, &retlen, val);
-+	if (err && err != -EUCLEAN)
-+		return err;
-+
-+	return retlen == bytes ? 0 : -EIO;
++	return mtd->parent ? false : true;
 +}
 +
- static int mtd_nvmem_add(struct mtd_info *mtd)
+ static inline u64 mtd_get_master_ofs(struct mtd_info *mtd, u64 ofs)
  {
- 	struct device_node *node = mtd_get_of_node(mtd);
-@@ -555,10 +569,11 @@ static int mtd_nvmem_add(struct mtd_info *mtd)
- 	config.owner = THIS_MODULE;
- 	config.add_legacy_fixed_of_cells = of_device_is_compatible(node, "nvmem-cells");
- 	config.reg_read = mtd_nvmem_reg_read;
-+	config.reg_write = mtd_nvmem_reg_write;
- 	config.size = mtd->size;
- 	config.word_size = 1;
- 	config.stride = 1;
--	config.read_only = true;
-+	config.read_only = !(mtd->flags & MTD_WRITEABLE);
- 	config.root_only = true;
- 	config.ignore_wp = true;
- 	config.priv = mtd;
+ 	while (mtd->parent) {
 
 -- 
 2.39.2
