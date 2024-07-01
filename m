@@ -1,109 +1,87 @@
-Return-Path: <linux-kernel+bounces-235768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48BE591D96D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:51:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C83DD91D96F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:52:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7920F1C21D06
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:51:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 828EB283BCE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:52:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F6F81AC3;
-	Mon,  1 Jul 2024 07:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LFSdvMRN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4776678C63;
+	Mon,  1 Jul 2024 07:52:32 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5117180C15;
-	Mon,  1 Jul 2024 07:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7AC5464A
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 07:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719820295; cv=none; b=fFbqBS4Z4P6d/3JeX9BoOS78WBAMa0N8caRQPYK2x21nODVW/1sSJ8aWSWTmpTS9DfGBFE7EGtwa3cWNWUl6x4IJXvEnWh4Ql3XZnMClVd9VOmENgpTlb4TUnODbd7w6c/yLipynTBuDcJz1umWcJnW+uczFXjfV9umoYfOdO+M=
+	t=1719820351; cv=none; b=iOFMPggIfUp06c1DJlG0YmL3WsVptmb63dPwccrSPJr2idzOBrrqwhGXBDsRohdDkCfgGOCp0/g0dAveCZ43ouPsE1281nYtjuOn5Lkd8D3e4D/Fwk7asiroJjy4WsCI7KGz/v16nB5cQpzZ4PfDKKD7o6KVxFitTMMbqGrCg/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719820295; c=relaxed/simple;
-	bh=w3AW7dJjexsKSTEgmpkSgb3wySS8bdBRSNdMI06WEck=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kaCmTUU3aOuqfkM3x5oDUic0Yj5MLBeZsKViw6ViV7/8oFxevuukz1K9MQsDNKSnrQ9led497NMBPErbOqihTMLDdnatR3gz8I7sxUDid4SbZMi/EbcHybvdrW8qwrtjUD60wHw6iIuvcCQL2PT1mYmb2vBalhgBUaFMT4wEtnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LFSdvMRN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C79A2C4AF0C;
-	Mon,  1 Jul 2024 07:51:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719820294;
-	bh=w3AW7dJjexsKSTEgmpkSgb3wySS8bdBRSNdMI06WEck=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=LFSdvMRNNXbTZRlM0Lk4rPcHdPlw426EvmNJb4lIflF5FScv/MiIHMERGzjJZboe1
-	 KruMPAcqSZ71wkXEvYpVO5oMpov2d7S0wmH5XwgKlQySfFH/Hl3P+8sRGLy8wd7MW2
-	 jVc58LqPhIDdj+F5mh4svc35rVCxhLGX1We5RC3ydVURCda9HCqPi7Ecz650rPO/Qe
-	 dUCqrKALhp6KEZxcRYDo2V4kzzBmV5fVgYSKlpq5OLeDMbNdyI8Otw8xc/vdZzx53v
-	 f0DtzaMagbWVy3qtoT6/a/9TPdnECf/WR8ig8mPE87Bm+JgA0tt602Ief3jza3PcYd
-	 KIdFzYoil27Tg==
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ec408c6d94so27136911fa.3;
-        Mon, 01 Jul 2024 00:51:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXnI1uzTkBJeOsSiFWEzd2v2oKi1HZOy6Zl6WiFHSPS98rVL7sx21+9dK6XwSaIfyEUY8coblEFjA4uYEnJn/8EBry2RopjkjfTHbXkeZmUX/i74KME8rs/Y4rfqVK8zIxwVIbFE5KD
-X-Gm-Message-State: AOJu0YxWbbhrgX6Y7QuTb1RdDTlFJw6lmVhArfqVgiVvp100meqHGBPh
-	WX/eukJpnCHbRt89mPISqkCUeM56O3SiJU+13Iu2+tu7Z1v7GZMKEkKKJGVRhmmtoVG73LcWBFM
-	FVoQZ8uudlv8pWiGiOWUn5jvEqWU=
-X-Google-Smtp-Source: AGHT+IFdPX35Wske54n83HCpvKC4i4Mx4xBNDHqV0NdgRTla5v/JxTyd//0RbNOwf8ntwmVivFT3hrYY9i3v2YRmLp0=
-X-Received: by 2002:a05:651c:2c8:b0:2ec:5488:da with SMTP id
- 38308e7fff4ca-2ee5e6f2bd8mr27272391fa.40.1719820293131; Mon, 01 Jul 2024
- 00:51:33 -0700 (PDT)
+	s=arc-20240116; t=1719820351; c=relaxed/simple;
+	bh=/ryUKJdqaZfPKcS/2355ZyYtgwBGnJCoq926DFbJbv0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GU3NLzazOf2M+0cUyWxPaevoL3JBp/Fup5IxAg2gagZLisLdfN/IRcYgS6Dnvmr/0tLoM3AnoF6maVpSnOs5/H/dfqOEtth9+aH5b+2S16PLxW6rZ8ozed1mpjtUkMCqYi+38nrunhlpktraq0P3nkecLA8X6QJus6NFeNWsIfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 4617pgek064460;
+	Mon, 1 Jul 2024 15:51:42 +0800 (+08)
+	(envelope-from Yi.Sun@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4WCJ5k4V8Vz2KKCbl;
+	Mon,  1 Jul 2024 15:46:50 +0800 (CST)
+Received: from tj10379pcu.spreadtrum.com (10.5.32.15) by
+ BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Mon, 1 Jul 2024 15:51:40 +0800
+From: Yi Sun <yi.sun@unisoc.com>
+To: <sunyibuaa@gmail.com>, <tj@kernel.org>, <jiangshanlai@gmail.com>,
+        <jaegeuk@kernel.org>, <chao@kernel.org>
+CC: <ebiggers@google.com>, <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <kent.overstreet@linux.dev>,
+        <niuzhiguo84@gmail.com>, <Hao_hao.Wang@unisoc.com>,
+        <yunlongxing23@gmail.com>, <yi.sun@unisoc.com>
+Subject: [PATCH v2 0/2] new struct io_work and use it in f2fs fsverity work
+Date: Mon, 1 Jul 2024 15:51:36 +0800
+Message-ID: <20240701075138.1144575-1-yi.sun@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <75C90B50-9AB9-4F0A-B2CD-43427354D15C@live.com>
- <ZoJAAifMqIDXdniv@wunner.de> <CAMj1kXH3fvS259Y1mfYcKQbM2mUYbSfuf2ZiMXfFhjq-rzn5UA@mail.gmail.com>
- <ZoJDuunseVIDua-m@wunner.de> <CAMj1kXFKBsAXDLxinqiszH=6hEOjbJQL-nFgBsBceta4rUCN-w@mail.gmail.com>
- <ZoJPgSlZJ3ZlU2zL@wunner.de> <CAMj1kXHR+mCR5eibj23S26-PN6yLPD1uf9+H2fEEDhNWOh6TjA@mail.gmail.com>
- <ZoJeVWMU8yg4CRLl@wunner.de>
-In-Reply-To: <ZoJeVWMU8yg4CRLl@wunner.de>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Mon, 1 Jul 2024 09:51:21 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFRNrmyAtVaqHr+RWQ22+++u70eJ__brLjmJa0ocyc0Bw@mail.gmail.com>
-Message-ID: <CAMj1kXFRNrmyAtVaqHr+RWQ22+++u70eJ__brLjmJa0ocyc0Bw@mail.gmail.com>
-Subject: Re: [PATCH v2] efi: libstub: add support for the apple_set_os protocol
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Aditya Garg <gargaditya08@live.com>, Hans de Goede <hdegoede@redhat.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, Kerem Karabay <kekrby@gmail.com>, 
-	Orlando Chamberlain <orlandoch.dev@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL:SHSQR01.spreadtrum.com 4617pgek064460
 
-On Mon, 1 Jul 2024 at 09:44, Lukas Wunner <lukas@wunner.de> wrote:
->
-> On Mon, Jul 01, 2024 at 09:30:34AM +0200, Ard Biesheuvel wrote:
-> > Assuming that Intel Macs implement the EFI SMBIOS protocol, reusing
-> > the existing pieces should be rather straight-forward. Something like
-> > the below should work in that case (whitespace damage courtesy of
-> > gmail)
-> >
-> > Note that the smbios.c  libstub source file needs some changes to
-> > build correctly for x86 with CONFIG_EFI_MIXED=y, but I can take care
-> > of that.
->
-> Orlando, Aditya, could you test Ard's patch with CONFIG_EFI_MIXED=n?
->
+Many works will go to submit_bio(). In many cases, the default
+io priority of kworker cannot meet the real-time requirements of
+the work. Such as f2fs_verify_bio work.
 
-Yes, please test so we can check whether Intel Macs expose this
-protocol in the first place.
+If a high-task-priority process reads the verity-file, it is
+possible that the high-task-priority process will be slowly
+because the kworker's io priority is too low.
 
-Note that the following hunk is needed too:
+A new work struct containing io priority can solve this problem.
 
-diff --git a/drivers/firmware/efi/libstub/Makefile
-b/drivers/firmware/efi/libstub/Makefile
-index 06f0428a723c..1f32d6cf98d6 100644
---- a/drivers/firmware/efi/libstub/Makefile
-+++ b/drivers/firmware/efi/libstub/Makefile
-@@ -77,5 +77,5 @@
- lib-$(CONFIG_ARM)              += arm32-stub.o
- lib-$(CONFIG_ARM64)            += kaslr.o arm64.o arm64-stub.o smbios.o
--lib-$(CONFIG_X86)              += x86-stub.o
-+lib-$(CONFIG_X86)              += x86-stub.o smbios.o
- lib-$(CONFIG_X86_64)           += x86-5lvl.o
- lib-$(CONFIG_RISCV)            += kaslr.o riscv.o riscv-stub.o
+Yi Sun (2):
+  workqueue: new struct io_work
+  f2fs: set io priority for fsverity work
+
+ fs/f2fs/data.c            | 17 +++++++------
+ fs/f2fs/f2fs.h            |  1 +
+ fs/f2fs/verity.c          |  5 ++++
+ include/linux/workqueue.h | 47 ++++++++++++++++++++++++++++++++++++
+ kernel/workqueue.c        | 50 +++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 113 insertions(+), 7 deletions(-)
+
+-- 
+2.25.1
+
 
