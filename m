@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-236746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14A1391E699
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:26:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6A9B91E69C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:27:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFFAF1F23A54
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:26:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62956B22210
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:27:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6BF416EB4E;
-	Mon,  1 Jul 2024 17:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F41316EB57;
+	Mon,  1 Jul 2024 17:27:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PQ4cA+tR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gOuUFE2I"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64D9F4ED;
-	Mon,  1 Jul 2024 17:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C786C16D31E;
+	Mon,  1 Jul 2024 17:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719854789; cv=none; b=gfdr3lb8y52eIGS3g8S2OHn8u5GD4jg9ZtDcGPqE6u8K9JRWNQr/0B2Enny2rfW8WBdnLKirSMOdfDMIwmhFkENbD84ACGairRhp71R70WeNbrOxw06gT1cN7gs0zfK/ObToEwEokoZfyG9UfOaZboTi19q55VMJdjY+J//xPdI=
+	t=1719854857; cv=none; b=Nb5LkQ6vUT0e+JOOh2Ui+CBeqYlf6jnnV5sEfmDV237F5H4IyelEf4EVwc2Zq9IJH8igiFdmMdSka3Re17qJRanMAjGbP0jRvAUNfxw4B6Gw4bHSfI01lkSdsWgDFJ2atzPGw4jpmdWtqXKW9AYRNoy8VJ8SQ3fFkxAvsrGtRIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719854789; c=relaxed/simple;
-	bh=/tGI0wDh0FZOcJPLb7Y56quvwZ87KDaB9YsD6KJsBJo=;
+	s=arc-20240116; t=1719854857; c=relaxed/simple;
+	bh=WhySC+CWoDzq2eZaqyGSWY4XkTyZrFTCeeNH2YSu8oE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W1okmCaR+mi2UKefBF/QjcGu9M2b6dN7I3GWhWwaurkGfyCXHqi9zHEDMIP2Ar0qJoZv0IUYxR2oHZUBplnKecz0JDZd9ed3SxD5bruJFh5/Epy3AuqwBi9Fk6tL2p6iRT/GWDCoj8Sh1l/dtQRVDDoOf0/Et7n75gF/xOGU/QU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PQ4cA+tR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ABB8C116B1;
-	Mon,  1 Jul 2024 17:26:28 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y5Kq8O05b/rmYLMnAfB8S/ReJ5QHVSlY7NEo2DDfShOxE6rH/0LP4gEHGbYI0V+X19ojVtndmp3sauvoxD2vHoXoOizs/LNEEWFPLHxLXa55Qs8MqtNU3vD/q6iDzfWTGHJNU/hOo5ZtD8z4XWHokS/lbev34O4nwFh/XQm6Cy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gOuUFE2I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24720C116B1;
+	Mon,  1 Jul 2024 17:27:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719854788;
-	bh=/tGI0wDh0FZOcJPLb7Y56quvwZ87KDaB9YsD6KJsBJo=;
+	s=k20201202; t=1719854857;
+	bh=WhySC+CWoDzq2eZaqyGSWY4XkTyZrFTCeeNH2YSu8oE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PQ4cA+tRy28Qy+mS8NDV3R/k/RPTtjTv0F1HTGXrMq4iEJK4KKHTRd7GoRYgwX5lG
-	 uLaMdo0so/hPvkU6S6sY/5sc9b7ENF50WanUfPN61ywgAl0pq78R48Le2owseps3bK
-	 CpHbNjmCdx3Jw45NAiUKdFugGMl/S2dm/aS3t8qIYx1aeJOsq67lxmxzKW2WJ/Ua0B
-	 UmoobqynglxyVQ6nUigLQKEm9eWIvib/nS46anIph1bAXhWKF2RY7uX9qEXNWKavYe
-	 9Z8oYTWCSZurGIi0/5sXgeLuuPhB9SDmSNLfcPo8sXSnlh8xkDVZq5Mmd0GcC/pBS1
-	 dwbHG0/fSxrUA==
-Date: Mon, 1 Jul 2024 11:26:27 -0600
-From: Rob Herring <robh@kernel.org>
+	b=gOuUFE2IosfkrW4xYzcTId5L674CpOxtkB9KTj6mobFD08Co1NjyO9m8BpOT3gmFI
+	 X8EfygDahr0JkavhfcR8UafMgCxljoUctyHsV7ECFnUiM3m2gXCTdVp0LleybtEekA
+	 Af2Q2Q8pky/pEU2/LWLp1O6qb4bB+r0vzTCGaJK95Iwqq4a4Tyg5UPpdrbt5Xkizbp
+	 Hl3Ky2tzi7YVMSlbz25kuaQM4ecn4Xe9izWRl3YLyMopiOPqaD6ybAcUKOrHrG9K4P
+	 qy0paVhHPEyzP+l/yNWckCdpva3kDk9Tk3FuMex0SI/zqgfjgJ+ci0q8YXehtnEXHr
+	 PInpNJN/u7E7w==
+Date: Mon, 1 Jul 2024 11:27:36 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
 To: Frank Li <Frank.Li@nxp.com>
-Cc: Madalin Bucur <madalin.bucur@nxp.com>,
-	Sean Anderson <sean.anderson@seco.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+Cc: Conor Dooley <conor+dt@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
+	Madalin Bucur <madalin.bucur@nxp.com>,
+	Sean Anderson <sean.anderson@seco.com>, netdev@vger.kernel.org,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"open list:FREESCALE QORIQ DPAA FMAN DRIVER" <netdev@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/2] dt-bindings: net: fsl,fman: allow dma-coherence
+	linux-kernel@vger.kernel.org,
+	Richard Cochran <richardcochran@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, Paolo Abeni <pabeni@redhat.com>,
+	Eric Dumazet <edumazet@google.com>
+Subject: Re: [PATCH 2/2] dt-bindings: net: fsl,fman: add ptimer-handle
  property
-Message-ID: <20240701172627.GA141559-robh@kernel.org>
+Message-ID: <171985485502.144984.15918205840917891186.robh@kernel.org>
 References: <20240628213711.3114790-1-Frank.Li@nxp.com>
+ <20240628213711.3114790-2-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,38 +65,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240628213711.3114790-1-Frank.Li@nxp.com>
+In-Reply-To: <20240628213711.3114790-2-Frank.Li@nxp.com>
 
-On Fri, Jun 28, 2024 at 05:37:10PM -0400, Frank Li wrote:
-> Add dma-coherence property to fix below warning.
 
-'dma-coherent property' or 'DMA coherence property'.
-
-> arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var1.dtb: dma-controller@8380000: '#dma-cells' is a required property
-
-That doesn't look related...
-
->         from schema $id: http://devicetree.org/schemas/dma/fsl-qdma.yaml#
+On Fri, 28 Jun 2024 17:37:11 -0400, Frank Li wrote:
+> Add ptimer-handle property to link to ptp-timer node handle.
+> Fix below warning:
+> arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dtb: fman@1a00000: 'ptimer-handle' do not match any of the regexes: '^ethernet@[a-f0-9]+$', '^mdio@[a-f0-9]+$', '^muram@[a-f0-9]+$', '^phc@[a-f0-9]+$', '^port@[a-f0-9]+$', 'pinctrl-[0-9]+'
 > 
 > Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
->  Documentation/devicetree/bindings/net/fsl,fman.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+>  Documentation/devicetree/bindings/net/fsl,fman.yaml | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/net/fsl,fman.yaml b/Documentation/devicetree/bindings/net/fsl,fman.yaml
-> index 7908f67413dea..f0261861f3cb2 100644
-> --- a/Documentation/devicetree/bindings/net/fsl,fman.yaml
-> +++ b/Documentation/devicetree/bindings/net/fsl,fman.yaml
-> @@ -78,6 +78,8 @@ properties:
->        - description: The first element is associated with the event interrupts.
->        - description: the second element is associated with the error interrupts.
->  
-> +  dma-coherent: true
-> +
->    fsl,qman-channel-range:
->      $ref: /schemas/types.yaml#/definitions/uint32-array
->      description:
-> -- 
-> 2.34.1
-> 
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
 
