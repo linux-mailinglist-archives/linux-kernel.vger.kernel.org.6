@@ -1,79 +1,137 @@
-Return-Path: <linux-kernel+bounces-235790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E850E91D9AE
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:08:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61C1391D9A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:05:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A81EB22581
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:08:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BCC5284EC8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:05:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C172823AC;
-	Mon,  1 Jul 2024 08:08:43 +0000 (UTC)
-Received: from weierstrass.telenet-ops.be (weierstrass.telenet-ops.be [195.130.137.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2547E76F;
+	Mon,  1 Jul 2024 08:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2+E4fv1Z";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MBKuApQk"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C823681AB4
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 08:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1607261674
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 08:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719821322; cv=none; b=pk3Tl4qmcWssQcmIYl616MPWyy4vi3/x5kitRFXanuAv/ni4NYriZjf8n3l6u0LBTy/H3RDJkbNcZIwkcn7WalPYMuOvkirWDJuDyOWmmr2QfV//xconCfAn5rmOQx5umXhTiSAID7M+ofjBD3tAfEN/zgBB/orpvLBbPY9DXWI=
+	t=1719821140; cv=none; b=HSAtW4+tpepvUTxYUDmSBe1L5uK9WZ2G2zod7SgSWiYu6+ZjZFnTezLZnrGOM3x004Zrnv4FrzaOAHNdFFo23b8GXbdWkYrnDm1SGK3C6FqD4jIM+ReKFvOeIGIcFtXVR+sBjLj0PX2yd27EsvESYEFWGScz9dlZcV0d0XCRCWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719821322; c=relaxed/simple;
-	bh=CSsYmUBxfHc30L8B6vNlO22F5seUPiAqBtknMmFWbpE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=qT1tILhvG91PbaIzytgYnA+0ZykfI/lNSdnYM2cCOOkrLjbskr2sJWozlWdXH5lZuGq1ecyzpWB4JbVJe+8PMdlhfREHtz5vzjb66Ftatztwk/QHsbCvNjr5+DobynMV2/1EDyOZa95lv4gbl6mGSx16v6WyiP30pP3owKbhego=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-	by weierstrass.telenet-ops.be (Postfix) with ESMTPS id 4WCJRM2dJ4z4wxqt
-	for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 10:02:07 +0200 (CEST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:1c8a:3990:9784:a231])
-	by xavier.telenet-ops.be with bizsmtp
-	id i8202C00D4bcH3801820MT; Mon, 01 Jul 2024 10:02:00 +0200
-Received: from geert (helo=localhost)
-	by ramsan.of.borg with local-esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sOBz6-000l3a-9Q;
-	Mon, 01 Jul 2024 10:02:00 +0200
-Date: Mon, 1 Jul 2024 10:02:00 +0200 (CEST)
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: linux-kernel@vger.kernel.org
-cc: Arnd Bergmann <arnd@arndb.de>, linux-parisc@vger.kernel.org
-Subject: Re: Build regressions/improvements in v6.10-rc6
-In-Reply-To: <20240701072703.2941315-1-geert@linux-m68k.org>
-Message-ID: <bb1acd5b-1a20-646-8d99-12dcfa899c3@linux-m68k.org>
-References: <CAHk-=wgQMOscLeeA3QXOs97xOz_CTxdqJjpC20tJ-7bUdHWtSA@mail.gmail.com> <20240701072703.2941315-1-geert@linux-m68k.org>
+	s=arc-20240116; t=1719821140; c=relaxed/simple;
+	bh=w936zWrxp6gQ6PPvrdJeCp0eT2dQIZTyjScYat4O1Ys=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P76kU9yFM0jmyneNxMx+vdj8oZ7G+aNGyQss0f8LXK9Ub/+vjVW9ShQAFTAB/mlIITHfKHsG07apKA7K3eSeWgpElG957KMvxa/ziDOwdyOx0jEbJ0Z9mF136KIWEVyLZaP8Ls8Hn61Lspv9kPpyOn3DUdBQWzJUm5juwFGiiY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2+E4fv1Z; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MBKuApQk; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 1 Jul 2024 10:05:36 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1719821137;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CKfzw2ROY3stuRf89Jn2lC5lgD1irCU4YYPi/8S8KrA=;
+	b=2+E4fv1Z6SYruIg13wR86OOfrDEl3jGK5RgN7/7FKnp2rRMJjk+OtTV9ezcOT5J+ZkMEL5
+	NI+R9ra18yT+jO4bdKVBcpOW1+Ejhvj5/IQsNaUODXrpfLD/cuJZ/gBpnXTasBnjZPNk41
+	3QZNdHAWx0TI9zynoEAmx8eApWLhdK3oE8CzT5rnOPZzTJ73Co7OafJZT1H6icjClqVwv7
+	BYWke/gn6YI9YFsubr1xLRZxZT2exlrbzzUmhtEl1PU356BXbmJyomZ6SQeYjbkMg9CGx3
+	hizsVq4xzzTj0Rlo3xws8jThmwXmGHj4v099pIAzaYmbEE/HW1hVvxKVGrNmCw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1719821137;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CKfzw2ROY3stuRf89Jn2lC5lgD1irCU4YYPi/8S8KrA=;
+	b=MBKuApQkRCIX5zCUlU0ZFPl29CtPryLrkXjqQaUSKpKmhAXEJvDj86BwvmC7fhb9FGgQhc
+	GqeCkhi95DjJc3Cw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Ben Segall <bsegall@google.com>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Klara Modin <klarasmodin@gmail.com>, Mel Gorman <mgorman@suse.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [PATCH] sched/task_struct: Move alloc_tag to the end of the
+ struct.
+Message-ID: <20240701080536.nLclpYXN@linutronix.de>
+References: <20240621102750.oH9p1FQq@linutronix.de>
+ <20240628094944.QwcHkf8J@linutronix.de>
+ <ynstsvvvjonzkltu4iwedbmntwnnth7dmcvng3ccrtqv45bq3y@5p6amff7cjmw>
+ <20240628195553.G48MpeQ6@linutronix.de>
+ <w2qopormdwuh54vropw6sgvadnivjnrgvmpurud2cu6nannfj3@xxrs2r6qt7zi>
+ <20240630211142.kZAs9f0p@linutronix.de>
+ <jvkmjjqfo6w4arluq3ggwilfwucvg5ra273ziq5ov2e2hnrtck@x64ksn72qi3u>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <jvkmjjqfo6w4arluq3ggwilfwucvg5ra273ziq5ov2e2hnrtck@x64ksn72qi3u>
 
-On Mon, 1 Jul 2024, Geert Uytterhoeven wrote:
-> JFYI, when comparing v6.10-rc6[1] to v6.10-rc5[3], the summaries are:
->  - build errors: +1/-0
+On 2024-06-30 17:23:36 [-0400], Kent Overstreet wrote:
+> On Sun, Jun 30, 2024 at 11:11:42PM GMT, Sebastian Andrzej Siewior wrote:
+> > On 2024-06-28 16:20:27 [-0400], Kent Overstreet wrote:
+> > > > Kent, you said you didn't want it where it currently is. Fine. You =
+said
+> > > > you want it at the front next to `flags'. This isn't going to work =
+since
+> > > > there is no space left. You didn't make another suggestion or say h=
+ow to
+> > > > make room.
+> > >=20
+> > > It doesn't need to be on the exact same cacheline, just as near as you
+> > > can get it.
+> >=20
+> > the first possible thing would be somewhere after the scheduler.
+> > However, what difference does it make if it s two cache lines later or
+> > more?  I don't understand the requirement "closer".
+>=20
+> take advantage of CPU prefetching; CPUs will bring in more than just the
+> cacheline you touched because 64 bytes is small and it's cheap to fetch
+> from the same DRAM bank while it's open.
 
-   + /kisskb/src/include/linux/syscalls.h: error: conflicting types for 'sys_fanotify_mark'; have 'long int(int,  unsigned int,  u32,  u32,  int,  const char *)' {aka 'long int(int,  unsigned int,  unsigned int,  unsigned int,  int,  const char *)'}:  => 248:25
+Looking at the layout:
+|        unsigned int               flags;                /*    44     4 */
+|        unsigned int               ptrace;               /*    48     4 */
+|        int                        on_cpu;               /*    52     4 */
+|        struct __call_single_node  wake_entry;           /*    56    16 */
+|        /* --- cacheline 1 boundary (64 bytes) was 8 bytes ago --- */
+=E2=80=A6
+Starting with sched
+=E2=80=A6
+|        struct sched_statistics    stats __attribute__((__aligned__(64)));=
+ /*   704   256 */
+|
+|        /* XXX last struct has 32 bytes of padding */
+sched end, earliest spot imho
 
-parisc-gcc13/parisc-allmodconfig
+|        /* --- cacheline 15 boundary (960 bytes) --- */
+|        unsigned int               btrace_seq;           /*   960     4 */
 
-> [1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/22a40d14b572deb80c0648557f4bd502d7e83826/ (132 out of 138 configs)
-> [3] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/f2661062f16b2de5d7b6a5c42a9a5c96326b8454/ (132 out of 138 configs)
+If I add this before `btrace_seq' right after `stats' then it will be 14
+caches lines later or 912 bytes after. How big is this prefetch going to
+be?
 
-Gr{oetje,eeting}s,
-
- 						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
- 							    -- Linus Torvalds
+Sebastian
 
