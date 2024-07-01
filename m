@@ -1,112 +1,158 @@
-Return-Path: <linux-kernel+bounces-236877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9BEB91E80F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:59:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0913891E81E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:01:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAD0D1C21D43
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:59:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80ABB1F2368A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:01:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B2816F27D;
-	Mon,  1 Jul 2024 18:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB6516F849;
+	Mon,  1 Jul 2024 19:01:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="g+aCSeNT"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VUj8CS78"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F212A16F0E0
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 18:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2886315DBD6
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 19:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719860386; cv=none; b=fY/zYDuOEe4ZHHHFG57OI+FlgOy/CMoyGJNbvu9euq+opFGtO7uuYfvhkeeqDcMN2fKe1HkCpKVZZ/ox3FOMZSiSlZATK7tmYKNATZfztpPMio4mg800LLa7fT5kdWmiuVHGrv4mBBpGaLp5UmOcDPS90bjQQ3tzijc8iioAZO0=
+	t=1719860462; cv=none; b=WpLK3J5H+x9fAwjq8USZznqL1eyVIgOgVs2jC8vie+xWkgYCv//RRkfpa94emQyXDd9iqehsalzUX/juk8llAG8vC4aJoxKQiH9/1YQXm9O6MW1GwbZdx95d7vNMPwk4RumjAr/rwqIyJUFG+miqWkZRmIPq0unkiAjav9yfeNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719860386; c=relaxed/simple;
-	bh=GWNwjc5aspj1NrlHjJVs2xAQRtbM7J5giAv9cyFePwo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dmlkoD3RyRcELRRElABQz1ZGOEx3YO52zWkJG8GIw/qMHopXtOrq6HeCm63CQSkOnyj4lvkYX9W0+aZbJg85nf8jNAURshfqD9OC/Wk/YuIfViUgRAdBhK7GGrfsRis4G+5G9q8l9gTTYf4bJDIyzOxoNI+jcfaQY972oeDtnz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=g+aCSeNT; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: akpm@linux-foundation.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1719860382;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=smDq7+iTT1okj9ZvP29aA6Rct11y7oIiaW2hKTFwcKY=;
-	b=g+aCSeNThkUPOWTRUWoDOHDKYJhEIhoT1Modh/ERdIQOOU0GCpxLwtpkhZQxAPcacR/vcr
-	cAS/UU3mdgkpx00ba7FYHoelHULHQNTkc7cbhZQqhqmiBrTHofMpawis0RaUIKHdejQvX8
-	t8d2nrLzCnVUgVTY1u0SNyn3RSRC2Ow=
-X-Envelope-To: shakeel.butt@linux.dev
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: hannes@cmpxchg.org
-X-Envelope-To: mhocko@kernel.org
-X-Envelope-To: muchun.song@linux.dev
-X-Envelope-To: roman.gushchin@linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	Roman Gushchin <roman.gushchin@linux.dev>
-Subject: [PATCH 2/2] mm: memcg: add cache line padding to mem_cgroup_per_node
-Date: Mon,  1 Jul 2024 18:59:32 +0000
-Message-ID: <20240701185932.704807-2-roman.gushchin@linux.dev>
-In-Reply-To: <20240701185932.704807-1-roman.gushchin@linux.dev>
-References: <20240701185932.704807-1-roman.gushchin@linux.dev>
+	s=arc-20240116; t=1719860462; c=relaxed/simple;
+	bh=nBEjUU1jP0cTXpDAibWGkU5XKOL/L/nsa6YcOdFrVXQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RmggdHue7V4wJg9vbvaEg5iCusBq7v/IRy9ctcqrotXuGcNOqVlNOLNcxTzMoQMekQ0ep7+yuOD4CfSu9p3nvWgfJQwzHf6rGBubfi4fe8GrqtUpdqWgjXWwzUWuVoN7oBDKj+E1I9iD20pmw1soi01ytPHKH7j5/T5xEh1VYaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VUj8CS78; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-79c0b1eb94dso224014685a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 12:01:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719860459; x=1720465259; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R4LpFR6VRPZBJqkm7iRXIp87VCy5+OyuBQMHBVpgrKc=;
+        b=VUj8CS785cnwFWXu49a2yynTw9v5uBv7xV7sGzsKtbIvoTNL6XebeeShoCz1c7N9c6
+         QOGHor2VqLzp0K1m3SZv/SBZFaz2CHuoZ8oXsw9KXCDQBvxqwRikiIBLCAwCxlrGz2/X
+         hc5nYlLBRPdmRh7yHptNjyDMOkgHY7SjCvJS28YqP94iKO8zw4Mki7+1k4fCVqn2nprb
+         AiEC6vWgc/hFEkSr2d8vF6MUm+f6Rooj1daMQNmskdu5fEMYG+P6YjIjLh3es+Yqqrz7
+         2lha05Ab6XzuOpNcXnRqBElcdyOWL4r79CX5gf3ok4YE8CL5mfO8kfLJtqzYR8j0qAh1
+         t3Lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719860459; x=1720465259;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R4LpFR6VRPZBJqkm7iRXIp87VCy5+OyuBQMHBVpgrKc=;
+        b=jNDTfC9MsuKfK1FjS6/XOYHiDlF0U5j/6xkcbRe/qEUKAgvlABpiReOZUOcaizPSuN
+         tkjobjsJJBGP1I/OGME+THfuWClquNm5AbGptYzwvZBgEsY3T3rE4ip0Pspj0YjP9+qg
+         PDL4gyADqjS235ue5BwWXwfIEaSOA4jDJUcZ5lKQjHbuiK473a1QvibVzDPt7luNlfyz
+         yKm2tiZGWLWLliZTtgTgL+++fkPa35CKjgJIwychrxtHP15NlXbZpTp3XpUsMcahC4m8
+         EAoAS8kyr4Pzm1YVBTnqICm4+FHSDKUoNA+fadUKfjXtewykZH5/v1IxO+5u9wYMLFER
+         +IZg==
+X-Forwarded-Encrypted: i=1; AJvYcCXBv8ADpa35KUJTI+ONPhfVCc9kCw+N5485y2h+EpCWIoSXR5iBq/d+hA67qZUT1VsGndXTEpPJjEcEVJrNt7O8UKU8hg6ajk6siOQY
+X-Gm-Message-State: AOJu0YyUeRSVQ2/MaRNkeH731ko+2mcdTZkKH1Pv8gL9V3RDiCsxOrs7
+	ITwztVUTwFgAcsRiwm09JRRL1p8MCCKqSPOmbk8zdNoMRxxK07HJdirhx2o/YApB6k2N4cPxdWY
+	oWAVfgkO2mJtyphbf9Q/ml24DhbAqn58nTLWd
+X-Google-Smtp-Source: AGHT+IHqGzU9tZFX9QqaBsD++nA7soWtr02PwwhDHubls3yJUOnaqW81EaDVu4zWNv2Iw9IsPTEVGjOAs2RkVILAwGg=
+X-Received: by 2002:ad4:5c68:0:b0:6b5:4249:7c4 with SMTP id
+ 6a1803df08f44-6b5b7057b8emr78735846d6.2.1719860458778; Mon, 01 Jul 2024
+ 12:00:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20240628003253.1694510-1-almasrymina@google.com>
+ <20240628003253.1694510-13-almasrymina@google.com> <m234oxcraf.fsf@gmail.com>
+In-Reply-To: <m234oxcraf.fsf@gmail.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Mon, 1 Jul 2024 12:00:44 -0700
+Message-ID: <CAHS8izOUJMnCxK0ZfOOOZH0auNF_Kk+WVA=oTEzJe8mYHdonfA@mail.gmail.com>
+Subject: Re: [PATCH net-next v15 12/14] net: add devmem TCP documentation
+To: Donald Hunter <donald.hunter@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, 
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
+	Nikolay Aleksandrov <razor@blackwall.org>, Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, 
+	Shailend Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst <jeroendb@google.com>, 
+	Praveen Kaligineedi <pkaligineedi@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Memcg v1-specific fields serve a buffer function between read-mostly
-and update often parts of the mem_cgroup_per_node structure.
-If CONFIG_MEMCG_V1 is not set and these fields are not present,
-an explicit cacheline padding is needed.
+On Fri, Jun 28, 2024 at 3:10=E2=80=AFAM Donald Hunter <donald.hunter@gmail.=
+com> wrote:
+>
+> Mina Almasry <almasrymina@google.com> writes:
+> > +
+> > +The user must bind a dmabuf to any number of RX queues on a given NIC =
+using
+> > +the netlink API::
+> > +
+> > +     /* Bind dmabuf to NIC RX queue 15 */
+> > +     struct netdev_queue *queues;
+> > +     queues =3D malloc(sizeof(*queues) * 1);
+> > +
+> > +     queues[0]._present.type =3D 1;
+> > +     queues[0]._present.idx =3D 1;
+> > +     queues[0].type =3D NETDEV_RX_QUEUE_TYPE_RX;
+> > +     queues[0].idx =3D 15;
+> > +
+> > +     *ys =3D ynl_sock_create(&ynl_netdev_family, &yerr);
+> > +
+> > +     req =3D netdev_bind_rx_req_alloc();
+> > +     netdev_bind_rx_req_set_ifindex(req, 1 /* ifindex */);
+> > +     netdev_bind_rx_req_set_dmabuf_fd(req, dmabuf_fd);
+> > +     __netdev_bind_rx_req_set_queues(req, queues, n_queue_index);
+> > +
+> > +     rsp =3D netdev_bind_rx(*ys, req);
+> > +
+> > +     dmabuf_id =3D rsp->dmabuf_id;
+> > +
+> > +
+> > +The netlink API returns a dmabuf_id: a unique ID that refers to this d=
+mabuf
+> > +that has been bound.
+>
+> The docs don't mention the unbinding behaviour. Can you add the text
+> from the commit message for patch 3 ?
 
-Suggested-by: Shakeel Butt <shakeel.butt@linux.dev>
-Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
----
- include/linux/memcontrol.h | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Thanks, will do, if I end up sending another version of this with more
+feedback. If this gets merged I'll follow up with a patch updating the
+docs (there seems to be no other feedback at the moment).
 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 8b5b3ddeba05..60418934827c 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -95,14 +95,16 @@ struct mem_cgroup_per_node {
- #ifdef CONFIG_MEMCG_V1
- 	/*
- 	 * Memcg-v1 only stuff in middle as buffer between read mostly fields
--	 * and update often fields to avoid false sharing. Once v1 stuff is
--	 * moved in a separate struct, an explicit padding is needed.
-+	 * and update often fields to avoid false sharing. If v1 stuff is
-+	 * not present, an explicit padding is needed.
- 	 */
- 
- 	struct rb_node		tree_node;	/* RB tree node */
- 	unsigned long		usage_in_excess;/* Set to the value by which */
- 						/* the soft limit is exceeded*/
- 	bool			on_tree;
-+#else
-+	CACHELINE_PADDING(_pad1_);
- #endif
- 
- 	/* Fields which get updated often at the end. */
--- 
-2.45.2.803.g4e1b14247a-goog
-
+--=20
+Thanks,
+Mina
 
