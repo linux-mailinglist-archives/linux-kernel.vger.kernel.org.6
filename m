@@ -1,158 +1,168 @@
-Return-Path: <linux-kernel+bounces-236878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0913891E81E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:01:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63FD691E821
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:01:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80ABB1F2368A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:01:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9586B1C21BD6
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB6516F849;
-	Mon,  1 Jul 2024 19:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B0E16F27F;
+	Mon,  1 Jul 2024 19:01:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VUj8CS78"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="AHmdnpuj"
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2886315DBD6
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 19:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719860462; cv=none; b=WpLK3J5H+x9fAwjq8USZznqL1eyVIgOgVs2jC8vie+xWkgYCv//RRkfpa94emQyXDd9iqehsalzUX/juk8llAG8vC4aJoxKQiH9/1YQXm9O6MW1GwbZdx95d7vNMPwk4RumjAr/rwqIyJUFG+miqWkZRmIPq0unkiAjav9yfeNI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719860462; c=relaxed/simple;
-	bh=nBEjUU1jP0cTXpDAibWGkU5XKOL/L/nsa6YcOdFrVXQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RmggdHue7V4wJg9vbvaEg5iCusBq7v/IRy9ctcqrotXuGcNOqVlNOLNcxTzMoQMekQ0ep7+yuOD4CfSu9p3nvWgfJQwzHf6rGBubfi4fe8GrqtUpdqWgjXWwzUWuVoN7oBDKj+E1I9iD20pmw1soi01ytPHKH7j5/T5xEh1VYaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VUj8CS78; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-79c0b1eb94dso224014685a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 12:01:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719860459; x=1720465259; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R4LpFR6VRPZBJqkm7iRXIp87VCy5+OyuBQMHBVpgrKc=;
-        b=VUj8CS785cnwFWXu49a2yynTw9v5uBv7xV7sGzsKtbIvoTNL6XebeeShoCz1c7N9c6
-         QOGHor2VqLzp0K1m3SZv/SBZFaz2CHuoZ8oXsw9KXCDQBvxqwRikiIBLCAwCxlrGz2/X
-         hc5nYlLBRPdmRh7yHptNjyDMOkgHY7SjCvJS28YqP94iKO8zw4Mki7+1k4fCVqn2nprb
-         AiEC6vWgc/hFEkSr2d8vF6MUm+f6Rooj1daMQNmskdu5fEMYG+P6YjIjLh3es+Yqqrz7
-         2lha05Ab6XzuOpNcXnRqBElcdyOWL4r79CX5gf3ok4YE8CL5mfO8kfLJtqzYR8j0qAh1
-         t3Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719860459; x=1720465259;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R4LpFR6VRPZBJqkm7iRXIp87VCy5+OyuBQMHBVpgrKc=;
-        b=jNDTfC9MsuKfK1FjS6/XOYHiDlF0U5j/6xkcbRe/qEUKAgvlABpiReOZUOcaizPSuN
-         tkjobjsJJBGP1I/OGME+THfuWClquNm5AbGptYzwvZBgEsY3T3rE4ip0Pspj0YjP9+qg
-         PDL4gyADqjS235ue5BwWXwfIEaSOA4jDJUcZ5lKQjHbuiK473a1QvibVzDPt7luNlfyz
-         yKm2tiZGWLWLliZTtgTgL+++fkPa35CKjgJIwychrxtHP15NlXbZpTp3XpUsMcahC4m8
-         EAoAS8kyr4Pzm1YVBTnqICm4+FHSDKUoNA+fadUKfjXtewykZH5/v1IxO+5u9wYMLFER
-         +IZg==
-X-Forwarded-Encrypted: i=1; AJvYcCXBv8ADpa35KUJTI+ONPhfVCc9kCw+N5485y2h+EpCWIoSXR5iBq/d+hA67qZUT1VsGndXTEpPJjEcEVJrNt7O8UKU8hg6ajk6siOQY
-X-Gm-Message-State: AOJu0YyUeRSVQ2/MaRNkeH731ko+2mcdTZkKH1Pv8gL9V3RDiCsxOrs7
-	ITwztVUTwFgAcsRiwm09JRRL1p8MCCKqSPOmbk8zdNoMRxxK07HJdirhx2o/YApB6k2N4cPxdWY
-	oWAVfgkO2mJtyphbf9Q/ml24DhbAqn58nTLWd
-X-Google-Smtp-Source: AGHT+IHqGzU9tZFX9QqaBsD++nA7soWtr02PwwhDHubls3yJUOnaqW81EaDVu4zWNv2Iw9IsPTEVGjOAs2RkVILAwGg=
-X-Received: by 2002:ad4:5c68:0:b0:6b5:4249:7c4 with SMTP id
- 6a1803df08f44-6b5b7057b8emr78735846d6.2.1719860458778; Mon, 01 Jul 2024
- 12:00:58 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82C315DBD6;
+	Mon,  1 Jul 2024 19:01:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719860474; cv=pass; b=ex/HgGqDFi1qVv1oWnzM2aElM5TCPbOlEjqoWgeBpcmhgSXEBjx3K0LQTpaeU0R8Kww8mhocG284MrxZwATO4UYB+hZq40ROUPijEXqMljm+H1DHAKFwew2P3/arlQ+g3j6YqiHdQH/soAykceuWqXsSpGEfFMUX2bBJjRGkW7E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719860474; c=relaxed/simple;
+	bh=16Iug4X6vDTiEMG2MnMQffFlRMNdyP9SlE5oswGewJ0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=gbJ4jsYl7RSAVcST8rTB/m/qGYe3yhfGnVxW2CjBqVtagBubkBIR59ZwAGzXM4FLtKxDB3g8ybo8RQeSiOD3+zNq/POcYH+I8vVTEm7QBVuLN6kbgpYrseZESCOzRYYbIyBmV7h8dioC8l5YgnLAysRQcdNSM3pFhZJUkPaRNkw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=AHmdnpuj; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from localhost (83-245-197-232.elisa-laajakaista.fi [83.245.197.232])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sakkinen)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4WCb3m67tPz49Px4;
+	Mon,  1 Jul 2024 22:01:08 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1719860469;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UFdKNGhm4fd8mnyMx9lxPsPdnIHGKCX9D2T3jRpMtYE=;
+	b=AHmdnpuj8lmOtNhL3gAT8QJLEvyjQEUuoZBoVBkA4WgW73DHusAH5w0OqP80s1n02VXeQ1
+	1gMFlEptPp2M4kmowJwlJmRmVO9Pr5O+GIkWJaGhigJrQblMRu+TfIEl07Uh5Z0BfQO45Z
+	B9nRUF5zjNHmgcgw2qHn6kvmyrB2kyPdX18ivLNxmUbPJjFr5XtxKxhp865UwMcwFASO7H
+	6bldFr63vqXWH5eAOsZ6F19UgGrxqZLIXYM8yzu6dfy17zTNaBHTMSMyCSg14NbDe6B7rG
+	92tyiypkuA/I/4MW8CPtmRIszhFCh4nurRpWdAaWLfumOxZaIlITcnsyPsyIiQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=lahtoruutu; t=1719860469;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UFdKNGhm4fd8mnyMx9lxPsPdnIHGKCX9D2T3jRpMtYE=;
+	b=FXdDSELbvygc9gHUh3yf7nk6ZqCnWoTOduv/JYdx14r4rIQpOSbBgwj9kZZjoMZJH8oo8p
+	tYRATjKIjl/NO94nEqnaeWl46O9371lewkx8amRioASmUvsR0AHDDzeYqeXVkcWR/x7xOD
+	Utg5WzlhNU6L8sKJJeT9N/Yf2MXnDlefQWwiziUH/qBY4iOO0voenBz4TFn275tstwJq+N
+	jpnLzaYEEtUXs132EDCdQctWTtZWn/3Jfq4VljE0omm4d/1OhujvA3HEQZphFz2ERPuwIX
+	/VEX33vlp+DhZEpegPyPqzThzk/r1GQcO2HDMzRgUl1MnjFAwpVEw6nEa+F0ZA==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sakkinen smtp.mailfrom=jarkko.sakkinen@iki.fi
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1719860469; a=rsa-sha256;
+	cv=none;
+	b=euy5uRNFCw3n+A+4ytH7y3KTDtLNi1T7vNWTo/z60oI1vmplp8hKBnCkGRixS1wjyxySjX
+	Vv04H+Qd3uxY++tIFJAmF7JrkVXTd9/hi2LsICWY8WmCn78DhF8wck/nN5xCnJsc2Xp77P
+	MffjvI4nGyxs2TSiAaJCSIFm2rIKm6H+AjXe8v65ukQoXRFD/GtyfnJbSlvhOuvD0y3ekl
+	I1xgux0IZdV9KQY/0AA8rK47eG5R1V2/j9MifSGwYw6ztI8tCWFhrtYVonddJ5cOKQa0Yq
+	JerJCbJPwh6JnYmZd0c9evU+PURs3m/2Po6JojHOETtFXvmcLLdO2e5SgY9IYw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240628003253.1694510-1-almasrymina@google.com>
- <20240628003253.1694510-13-almasrymina@google.com> <m234oxcraf.fsf@gmail.com>
-In-Reply-To: <m234oxcraf.fsf@gmail.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Mon, 1 Jul 2024 12:00:44 -0700
-Message-ID: <CAHS8izOUJMnCxK0ZfOOOZH0auNF_Kk+WVA=oTEzJe8mYHdonfA@mail.gmail.com>
-Subject: Re: [PATCH net-next v15 12/14] net: add devmem TCP documentation
-To: Donald Hunter <donald.hunter@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, 
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
-	Nikolay Aleksandrov <razor@blackwall.org>, Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, 
-	Shailend Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst <jeroendb@google.com>, 
-	Praveen Kaligineedi <pkaligineedi@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 01 Jul 2024 19:01:08 +0000
+Message-Id: <D2EFNJTR80JS.1RW91OVY1UH1N@iki.fi>
+From: "Jarkko Sakkinen" <jarkko.sakkinen@iki.fi>
+To: "Stefan Berger" <stefanb@linux.ibm.com>, "Jarkko Sakkinen"
+ <jarkko@kernel.org>, "Linux regressions mailing list"
+ <regressions@lists.linux.dev>
+Cc: <naveen.n.rao@linux.ibm.com>, <linux-kernel@vger.kernel.org>,
+ <linux-integrity@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCH] tpm: ibmvtpm: Call tpm2_sessions_init() to initialize
+ session support
+X-Mailer: aerc 0.17.0
+References: <20240617193408.1234365-1-stefanb@linux.ibm.com>
+ <9e167f3e-cd81-45ab-bd34-939f516b05a4@linux.ibm.com>
+ <55e8331d-4682-40df-9a1b-8a08dc5f6409@leemhuis.info>
+ <9f86a167074d9b522311715c567f1c19b88e3ad4.camel@kernel.org>
+ <53d96a8b-26ef-46a3-9b68-3d791613e47c@linux.ibm.com>
+In-Reply-To: <53d96a8b-26ef-46a3-9b68-3d791613e47c@linux.ibm.com>
 
-On Fri, Jun 28, 2024 at 3:10=E2=80=AFAM Donald Hunter <donald.hunter@gmail.=
-com> wrote:
+On Mon Jul 1, 2024 at 6:29 PM UTC, Stefan Berger wrote:
 >
-> Mina Almasry <almasrymina@google.com> writes:
-> > +
-> > +The user must bind a dmabuf to any number of RX queues on a given NIC =
-using
-> > +the netlink API::
-> > +
-> > +     /* Bind dmabuf to NIC RX queue 15 */
-> > +     struct netdev_queue *queues;
-> > +     queues =3D malloc(sizeof(*queues) * 1);
-> > +
-> > +     queues[0]._present.type =3D 1;
-> > +     queues[0]._present.idx =3D 1;
-> > +     queues[0].type =3D NETDEV_RX_QUEUE_TYPE_RX;
-> > +     queues[0].idx =3D 15;
-> > +
-> > +     *ys =3D ynl_sock_create(&ynl_netdev_family, &yerr);
-> > +
-> > +     req =3D netdev_bind_rx_req_alloc();
-> > +     netdev_bind_rx_req_set_ifindex(req, 1 /* ifindex */);
-> > +     netdev_bind_rx_req_set_dmabuf_fd(req, dmabuf_fd);
-> > +     __netdev_bind_rx_req_set_queues(req, queues, n_queue_index);
-> > +
-> > +     rsp =3D netdev_bind_rx(*ys, req);
-> > +
-> > +     dmabuf_id =3D rsp->dmabuf_id;
-> > +
-> > +
-> > +The netlink API returns a dmabuf_id: a unique ID that refers to this d=
-mabuf
-> > +that has been bound.
 >
-> The docs don't mention the unbinding behaviour. Can you add the text
-> from the commit message for patch 3 ?
+> On 7/1/24 11:22, Jarkko Sakkinen wrote:
+> > On Fri, 2024-06-28 at 17:00 +0200, Linux regression tracking (Thorsten =
+Leemhuis) wrote:
+> >> [CCing the regression list]
+> >>
+> >> On 20.06.24 00:34, Stefan Berger wrote:
+> >>> Jarkko,
+> >>>  =C2=A0 are you ok with this patch?
+> >>
+> >> Hmmm, hope I did not miss anythng, but looks like nothing happened for
+> >> about 10 days here. Hence:
+> >>
+> >> Jarkko, looks like some feedback from your side really would help to
+> >> find a path to get this regression resolved before 6.10 is released.
+> >>
+> >> Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' ha=
+t)
+> >=20
+> > Sorry for latency, and except a bit more slow phase also during
+> > July because I'm most of this month on Holiday, except taking care
+> > 6.11 release.
+> >=20
+> > This really is a bug in the HMAC code not in the IBM driver as
+> > it should not break because of a new feature, i.e. this is only
+> > correct conclusions, give the "no regressions" rule.
+> >=20
+> > Since HMAC is by default only for x86_64 and it does not break
+> > defconfig's, we should take time and fix the actual issue.
+>
+> It was enabled it on my ppc64 system after a git pull -- at least I did=
+=20
+> not enable it explicitly. Besides that others can enable it on any arch=
+=20
+> unless you now change the 'default x86_64' to a 'depends x86_64' iiuc=20
+> otherwise the usage of a Fixes: , as I used in my patch, would be justifi=
+ed.
+>
+> config TCG_TPM2_HMAC
+> 	bool "Use HMAC and encrypted transactions on the TPM bus"
+> 	default X86_64
+> 	select CRYPTO_ECDH
+> 	select CRYPTO_LIB_AESCFB
+> 	select CRYPTO_LIB_SHA256
+>
+> https://elixir.bootlin.com/linux/v6.10-rc6/source/drivers/char/tpm/Kconfi=
+g
 
-Thanks, will do, if I end up sending another version of this with more
-feedback. If this gets merged I'll follow up with a patch updating the
-docs (there seems to be no other feedback at the moment).
+Yep, it is still a bug, and unmodified IBM vtpm driver must be expected
+to work. I was merely saying that there is some window to  fix it properly
+instead of duct tape since it is not yet widely enable feature.
 
---=20
-Thanks,
-Mina
+I was shocked to see that the implementation has absolutely no checks
+whether chip->auth was allocated. I mean anything that would cause
+tpm2_sessions_init() not called could trigger null dereference.
+
+So can you test this and see how your test hardware behaves:
+
+https://lore.kernel.org/linux-integrity/20240701170735.109583-1-jarkko@kern=
+el.org/T/#u
+
+I'll modify it accrodingly if problems persist. Please put your feedback
+over there. I cannot anything but compile test so it could be that
+I've ignored something.
+
+BR, Jarkko
 
