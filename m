@@ -1,55 +1,61 @@
-Return-Path: <linux-kernel+bounces-235735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94DA191D912
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:36:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CF3B91D915
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:37:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C47481C20FF6
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:36:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EBA5B21D78
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B29C82899;
-	Mon,  1 Jul 2024 07:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E48823B8;
+	Mon,  1 Jul 2024 07:36:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="urTlMEjt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vNEyY+36"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864ED7E110;
-	Mon,  1 Jul 2024 07:36:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373347D3F5;
+	Mon,  1 Jul 2024 07:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719819373; cv=none; b=Cug4ov5UZWaUA/5w/28XpwZNNTHzHwVh8XncdDGSItZrf7O9NxbNCcPTP/ehIC/yzqYJ5xc40vFYTCPwhxfSX+YzLMODM5SRqJcRNq2p2q0F0QByFKJ8GITD8DzRw/Ge77DgLLvubJy23eo6e7Rq/aslbft8Sg8qYLObTiiVF/I=
+	t=1719819385; cv=none; b=LWN3ryE6rX4i/VMTULdnh5cS7mznKWt76fTg9yo7T7bZQjj6KWkCibPVZ4U4IxYD+Hhf7VEHhEl+vNOjrd8RSYhpNlTrNq7YxyaK0mtZFnycbcEMnRtlF/zj4qsH/JnJ3EuwBY0ZLV+4SLjH0UvFUa15SanlUsFEH7Xur9u3Inc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719819373; c=relaxed/simple;
-	bh=rQ/PY2VWUnfw+FYccw7ARj24Suz8u/p2eHcFrTdUxtM=;
+	s=arc-20240116; t=1719819385; c=relaxed/simple;
+	bh=px1yy7Z0jvbfD7zHRJ8pBffic+N5n2KmHRwKVlQqzI4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=db5JyF8ulk0GVjx+Mgixmvf6wjofJqS2pJbbXQVJ0ky/QqUauNygex7gg++H0mpVe5JfoiuByFtAdvEGyaHsQr2PPiY4XRRRIJo9qHIgkb7dHXQ5W6NyAyEDF4f+vf6lI5D9cOllWerKllTcE6Gr5DMO9oGRmwQDXzYFSylBmqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=urTlMEjt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9816C32781;
-	Mon,  1 Jul 2024 07:36:11 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=O9xZDaBEOVm4pA2HUw7ZUUBq7yfxmYdilqBocqRBvUkES/QV8WTn7GuQJbAyYcZf2K+xiCKbqGUIyAKp5UPQm2d5PnZW387FLyhs+xlIJnYPVhh5S6oBEaB3vn79eikmh01RS3qH63lIhPAfs53RXxaG2yaziVqn/Z2cjFwsQp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vNEyY+36; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEC35C116B1;
+	Mon,  1 Jul 2024 07:36:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719819373;
-	bh=rQ/PY2VWUnfw+FYccw7ARj24Suz8u/p2eHcFrTdUxtM=;
+	s=k20201202; t=1719819384;
+	bh=px1yy7Z0jvbfD7zHRJ8pBffic+N5n2KmHRwKVlQqzI4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=urTlMEjtjrSXwML7JT5Ik5qC4AoYE66mey2RAIvFIvOrJc/8VCfznEkr1kDpTe0dz
-	 YXa93ElZSjzMzOn/e8F0L6L51SH+kgSb8J30PM+KaGhxEQ3jQ27HhN+OwoP0WaSXZK
-	 ZoF+JxbtdDpzIkYjWOGOd1jy6humGZtLbp8w25StfKKvkes7bq2p3bsesDJ0mpSuAF
-	 rKXEdcPAzfi7bMPHmFtBkxshZhHG3U5Fjie1wJXQnXiB/EcTa9Mqw6a/sBVauXUlPF
-	 O2OtxxTiWqVGWGCZ2VlnMhKpqYB97SB6OUyXRKSeB+Q/HVcTumang1+xTkzuOGMs3N
-	 DcM1TrxNuXREQ==
-Date: Mon, 1 Jul 2024 09:36:08 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, Jeff LaBundy <jeff@labundy.com>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] Input: make sure input handlers define only one
- processing method
-Message-ID: <cg35cp36opttnr2jgsqda2gsgqdn6vplc2pq3n3of3e356igua@vei6pdsw25si>
-References: <20240701060553.869989-1-dmitry.torokhov@gmail.com>
- <20240701060553.869989-2-dmitry.torokhov@gmail.com>
+	b=vNEyY+367dwIQ4Y+RQbQDFYTewb4A6c2VmZjaNafYmE9g/MyGKYGGAdtVzvb99z7z
+	 wQ1WSD+PrjkSZUXkNJ8GwaKZ/P2Bp1om8ZG4w0bGQyUsq7AUeWk393/ynO9lOlxGaq
+	 Wsor3gVG7RwklvJHwcNUnJgiJDIG6TBNLa8k1pXLb34+cCr073WUvV5Bb9Ycr+BCxG
+	 aya9j7HvArJBlYh0I1hzh7KYUTmg0H6m2Q8OFatoZJjyaAQ38vOKJc+6Sl75zLycp+
+	 cjRnp23tFRZS5e5uvbdIjl8sxjQq7J3yUOFN0rBQMNvIUq37PQ33CEZA2ZcoDSjuQp
+	 z5YzM3jpz/f+A==
+Date: Mon, 1 Jul 2024 08:36:19 +0100
+From: Simon Horman <horms@kernel.org>
+To: Roger Quadros <rogerq@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Julien Panis <jpanis@baylibre.com>, Andrew Lunn <andrew@lunn.ch>,
+	srk@ti.com, vigneshr@ti.com, danishanwar@ti.com,
+	pekka Varis <p-varis@ti.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+Subject: Re: [PATCH net-next v2 3/7] net: ethernet: ti: cpsw_ale: use
+ regfields for number of Entries and Policers
+Message-ID: <20240701073619.GM17134@kernel.org>
+References: <20240628-am65-cpsw-multi-rx-v2-0-c399cb77db56@kernel.org>
+ <20240628-am65-cpsw-multi-rx-v2-3-c399cb77db56@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,100 +64,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240701060553.869989-2-dmitry.torokhov@gmail.com>
+In-Reply-To: <20240628-am65-cpsw-multi-rx-v2-3-c399cb77db56@kernel.org>
 
-Hi Dmitry,
-
-On Jun 30 2024, Dmitry Torokhov wrote:
-> Input core expects input handlers to be either filters, or regular
-> handlers, but not both. Additionally, for regular handlers it does
-> not make sense to define both single event method and batch method.
+On Fri, Jun 28, 2024 at 03:01:52PM +0300, Roger Quadros wrote:
+> Use regfields for number of ALE Entries and Policers.
 > 
-> Refuse registering handler if it defines more than one method.
+> The variants that support Policers/Classifiers have the number
+> of policers encoded in the ALE_STATUS register.
 > 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->  drivers/input/input.c | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
+> Use that and show the number of Policers in the ALE info message.
 > 
-> diff --git a/drivers/input/input.c b/drivers/input/input.c
-> index fd4997ba263c..8434348faeac 100644
-> --- a/drivers/input/input.c
-> +++ b/drivers/input/input.c
-> @@ -2517,6 +2517,26 @@ void input_unregister_device(struct input_dev *dev)
->  }
->  EXPORT_SYMBOL(input_unregister_device);
->  
-> +static int input_handler_check_methods(const struct input_handler *handler)
-> +{
-> +	int count = 0;
-> +
-> +	if (handler->filter)
-> +		count++;
-> +	if (handler->events)
-> +		count++;
-> +	if (handler->event)
-> +		count++;
-> +
-> +	if (count != 1) {
+> Signed-off-by: Roger Quadros <rogerq@kernel.org>
 
-Am I missing some upstream commit? I have the following:
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-in drivers/input/evdev.c:
-
-static struct input_handler evdev_handler = {
-	.event		= evdev_event,
-	.events		= evdev_events,
-	.connect	= evdev_connect,
-	.disconnect	= evdev_disconnect,
-	.legacy_minors	= true,
-	.minor		= EVDEV_MINOR_BASE,
-	.name		= "evdev",
-	.id_table	= evdev_ids,
-};
-
-So here count should be 2 and evdev would be rejected?
-
-And in drivers/tty/serial/kgdboc.c:
-
-static struct input_handler kgdboc_reset_handler = {
-	.connect	= kgdboc_reset_connect,
-	.disconnect	= kgdboc_reset_disconnect,
-	.name		= "kgdboc_reset",
-	.id_table	= kgdboc_reset_ids,
-};
-
-here count would be 0 and kgdboc would also be rejected.
-
-I agree on the intent of the patch, but these couple of input handlers
-should be fixed if they are not already.
-
-Cheers,
-Benjamin
-
-> +		pr_err("%s: only one event processing method should be defined (%s)\n",
-> +		       __func__, handler->name);
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  /**
->   * input_register_handler - register a new input handler
->   * @handler: handler to be registered
-> @@ -2530,6 +2550,10 @@ int input_register_handler(struct input_handler *handler)
->  	struct input_dev *dev;
->  	int error;
->  
-> +	error = input_handler_check_methods(handler);
-> +	if (error)
-> +		return error;
-> +
->  	error = mutex_lock_interruptible(&input_mutex);
->  	if (error)
->  		return error;
-> -- 
-> 2.45.2.803.g4e1b14247a-goog
-> 
 
