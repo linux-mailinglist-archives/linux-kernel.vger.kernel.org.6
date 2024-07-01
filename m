@@ -1,61 +1,55 @@
-Return-Path: <linux-kernel+bounces-235738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1356791D91B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:37:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B504D91D91D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:37:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C35722822E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:37:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EF8A28173D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41B1582C6B;
-	Mon,  1 Jul 2024 07:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1709676034;
+	Mon,  1 Jul 2024 07:37:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qX+S8bFY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kjv+8yOT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F34D7CF39;
-	Mon,  1 Jul 2024 07:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55889502BD;
+	Mon,  1 Jul 2024 07:37:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719819415; cv=none; b=sgKMhNnk265oPeX39HBUakI8gIC5I9YGioQ3+R8Ojl8vhndETLXF9QGOqqFgAO+AKcd5FzBaxWle5Te4TqRvK+4TX0hsQs3dxlNXzDrCHynGTM632rMRJ27m0ijDstfymfqe7qY8MRktKdFQBshQw1YZolX/1rmKD2HKm8cgAjU=
+	t=1719819464; cv=none; b=VhRHLboCgWgjGtp7CCTAIcdtsewczUP2ABxtlsBOuY34V8hROz+TYcDsx4QRnWZ5t81BOFq7/5p9c12tE4R6kryFnK4YniCDk8sP5dgoG7R5eZ0BPya4AAI+RQbhTPRc+VjPU4m+fKr90ZZ/+eM4BKdJVGzuBsxtURPZg4qoOBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719819415; c=relaxed/simple;
-	bh=1ezVShk5sCBChJ0iV0z8OtUkC4EXC1HgqTAAEte11eM=;
+	s=arc-20240116; t=1719819464; c=relaxed/simple;
+	bh=BhAlKVTvL5abtou59jRZCxb5CQYI4SDdsUJnyIVDGfc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pB56CRSNrrGX83BaAIDSN+xM7eY8ukBtVsPiWOTrh4yIWtxygrM4nimRGPsJr4goW8wtNlm6NgSbryosoKrnzFxnWYysIwFQ/ylUYBIDTgDQx6l5GYDqbrbI6xrw8QNw/ImS6Y1YYWZHofrn1dTcOqvGcx3YA1XmrMKNbYH75e0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qX+S8bFY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C14DC116B1;
-	Mon,  1 Jul 2024 07:36:52 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=cLE0E81sIa/nu0+3AR6asBp+QQOXuGAA9JdqRTbCEeOUgxpr+yKh8iVckbW7TZian41Myv7ntGOCNpHNxcolMdIFQW6+k1SJzJwkjeo4rsQsLUAAqWPbSSOZqRve9weWE0c/3Z22Qvk9OGnB653Wjn8VvyxQsmHbwCziG0U3RZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kjv+8yOT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2D43C116B1;
+	Mon,  1 Jul 2024 07:37:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719819415;
-	bh=1ezVShk5sCBChJ0iV0z8OtUkC4EXC1HgqTAAEte11eM=;
+	s=k20201202; t=1719819463;
+	bh=BhAlKVTvL5abtou59jRZCxb5CQYI4SDdsUJnyIVDGfc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qX+S8bFYG7Gmz56fZzp3yyNzO9QPWUpA8E0ShaDLxjbP8kbpPZIoce4iy6jg7vb8k
-	 hCCkV0QUFYKtBqtF0V/fTMdyK4bVhaPfFwF/etP4FkUgSzrxF9AMYb00AzTlBBMAr/
-	 VHuTOOSHMDs8n5uG1EhGz34Gob99Erl8xQrFRLe8Llq8FfbnnOQiRSbd55SmESDfmc
-	 FlLrH4CT54Ghpf8XzW4pB0MTahSCbD2Hxw09SMEuXmI96IhI3eTIAxII40nk7yX9fK
-	 r9dFDyP9BNKYSEAVhqpq/iIYmng/d7UT/+6a67NHPtvahrbBRbOlDV/6zh5k6a3KJ7
-	 1WVFIspgS9niA==
-Date: Mon, 1 Jul 2024 08:36:50 +0100
-From: Simon Horman <horms@kernel.org>
-To: Roger Quadros <rogerq@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>,
-	Julien Panis <jpanis@baylibre.com>, Andrew Lunn <andrew@lunn.ch>,
-	srk@ti.com, vigneshr@ti.com, danishanwar@ti.com,
-	pekka Varis <p-varis@ti.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: Re: [PATCH net-next v2 7/7] net: ethernet: ti: am65-cpsw: setup
- priority to flow mapping
-Message-ID: <20240701073650.GO17134@kernel.org>
-References: <20240628-am65-cpsw-multi-rx-v2-0-c399cb77db56@kernel.org>
- <20240628-am65-cpsw-multi-rx-v2-7-c399cb77db56@kernel.org>
+	b=Kjv+8yOTH5/hmwJ+NSJFlV3tVGsbWPxsX/pfT9mE9y8ZEZbWXxovE+YV3ecWhdiUg
+	 Z12OJQn9x328QP3mE8YrIJ7f7mTRPfmnhw5hUdcJEwHi9uivDpdolgqS1qfjfwfLDl
+	 a0jQdhYM7qy8gGn5XLnLwPhbveSxQmBYyhpHXJOLAYO9hTEVJWx+kp166W0SymCLS2
+	 VYN0qbgCOaNjcI1I5DXwKYeVeX+YQi5+vBKt744c015NSmY4Uit00M28nvwAaiCBjr
+	 j9yhhxunWYABQGGOBMN1IkXySbRLfA9/GDRKz/hR2LPTFCrOhL9OitX3pIqgdRoHcE
+	 ahY6Hp+ruXFUA==
+Date: Mon, 1 Jul 2024 09:37:39 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, Jeff LaBundy <jeff@labundy.com>, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] Input: make events() method return number of events
+ processed
+Message-ID: <my7tmdbjskljxhp5vdu6cervetpwvalqmgeg3g4yfgzxereqqx@cidajfox7dzr>
+References: <20240701060553.869989-1-dmitry.torokhov@gmail.com>
+ <20240701060553.869989-3-dmitry.torokhov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,18 +58,74 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240628-am65-cpsw-multi-rx-v2-7-c399cb77db56@kernel.org>
+In-Reply-To: <20240701060553.869989-3-dmitry.torokhov@gmail.com>
 
-On Fri, Jun 28, 2024 at 03:01:56PM +0300, Roger Quadros wrote:
-> Now that we support multiple RX queues, enable default priority
-> to flow mapping so that higher priority packets come on higher
-> channels (flows).
+On Jun 30 2024, Dmitry Torokhov wrote:
+> In preparation to consolidating filtering and event processing in the
+> input core change events() method to return number of events processed
+> by it.
 > 
-> The Classifier checks for PCP/DSCP priority in the packet and
-> routes them to the appropriate flow.
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
+>  drivers/input/evdev.c | 6 ++++--
+>  include/linux/input.h | 7 ++++---
+>  2 files changed, 8 insertions(+), 5 deletions(-)
 > 
-> Signed-off-by: Roger Quadros <rogerq@kernel.org>
+> diff --git a/drivers/input/evdev.c b/drivers/input/evdev.c
+> index 51e0c4954600..c8eca8cdb976 100644
+> --- a/drivers/input/evdev.c
+> +++ b/drivers/input/evdev.c
+> @@ -288,8 +288,8 @@ static void evdev_pass_values(struct evdev_client *client,
+>  /*
+>   * Pass incoming events to all connected clients.
+>   */
+> -static void evdev_events(struct input_handle *handle,
+> -			 const struct input_value *vals, unsigned int count)
+> +static unsigned int evdev_events(struct input_handle *handle,
+> +				 struct input_value *vals, unsigned int count)
+>  {
+>  	struct evdev *evdev = handle->private;
+>  	struct evdev_client *client;
+> @@ -306,6 +306,8 @@ static void evdev_events(struct input_handle *handle,
+>  			evdev_pass_values(client, vals, count, ev_time);
+>  
+>  	rcu_read_unlock();
+> +
+> +	return count;
+>  }
+>  
+>  /*
+> diff --git a/include/linux/input.h b/include/linux/input.h
+> index c22ac465254b..89a0be6ee0e2 100644
+> --- a/include/linux/input.h
+> +++ b/include/linux/input.h
+> @@ -275,7 +275,8 @@ struct input_handle;
+>   *	it may not sleep
+>   * @events: event sequence handler. This method is being called by
+>   *	input core with interrupts disabled and dev->event_lock
+> - *	spinlock held and so it may not sleep
+> + *	spinlock held and so it may not sleep. The method must return
+> + *	number of events passed to it.
+>   * @filter: similar to @event; separates normal event handlers from
+>   *	"filters".
+>   * @match: called after comparing device's id with handler's id_table
+> @@ -312,8 +313,8 @@ struct input_handler {
+>  	void *private;
+>  
+>  	void (*event)(struct input_handle *handle, unsigned int type, unsigned int code, int value);
+> -	void (*events)(struct input_handle *handle,
+> -		       const struct input_value *vals, unsigned int count);
+> +	unsigned int (*events)(struct input_handle *handle,
+> +			       struct input_value *vals, unsigned int count);
+>  	bool (*filter)(struct input_handle *handle, unsigned int type, unsigned int code, int value);
+>  	bool (*match)(struct input_handler *handler, struct input_dev *dev);
+>  	int (*connect)(struct input_handler *handler, struct input_dev *dev, const struct input_device_id *id);
+> -- 
+> 2.45.2.803.g4e1b14247a-goog
+> 
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Reviewed-by: Benjamin Tissoires <bentiss@kernel.org>
 
+Cheers,
+Benjamin
 
