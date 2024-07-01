@@ -1,217 +1,221 @@
-Return-Path: <linux-kernel+bounces-235982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C856C91DC05
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:03:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6816B91DBFB
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:02:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EC3428439E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:03:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E740A1F256ED
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8697F12C52E;
-	Mon,  1 Jul 2024 10:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D44612B163;
+	Mon,  1 Jul 2024 10:02:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZGITFEOq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="A6X+9638"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC2612BF30;
-	Mon,  1 Jul 2024 10:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F8446436;
+	Mon,  1 Jul 2024 10:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719828201; cv=none; b=SWpFByyzpduKCCL8nuKmSKpRUuECYCxm9HYMF7hCyEzbL184slsxy01NdYPXdIFUqJTxDwYtKd77bfSb2K5E1Pxkn5cuCyCffnbfEWVokOM561+LMUK+MykPl7VeoLmqW+qr4qvYrzBn2r77Meclo2Q1yubKuQ2ITAuAClldEvg=
+	t=1719828154; cv=none; b=maDOaQMVBefIWsMhXx1ytm0sCd5CX2O8nQZtY67J9u3sxVhkh1U0h6sLHtiQRdsd7GTRRRr7T6hoDFyIvLkZ1zXBp6xScyt4hsqwJvwAwoTmDQ2jdwxDxSNyEKA1TTs3R1NoPqe3MeSCBCVO1HF+Xa93ExSp61wv9yG8fUVEeRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719828201; c=relaxed/simple;
-	bh=IHzImYBvS+r2Fb9vRJHdboMmTujqYSOlMOmKDtVxjSE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NamhzAbIYcGh7AQthBMxsbWt7rTItNq+w1SgCNccOTGrspCVbdBYRuZ36nA2guQ3/ASrqijAxaj4UAnGkYp4EnumP4kjW5a/4cF+17ZOe2Q9wE49YfGKi1hglo8eTvoeCWd/QEU/c3HwaRMWB6kLdtz/6K/NzDZMKGw9haSBDyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZGITFEOq; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719828200; x=1751364200;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=IHzImYBvS+r2Fb9vRJHdboMmTujqYSOlMOmKDtVxjSE=;
-  b=ZGITFEOqTMge5BJjpGpnqykS3XJZTGp4Flrp3ROP5drMFANMgddwx4YW
-   aKe0twN7q+waFEbq6xmZ+6nMo0lrzZ1+HwzMpy5Nogz8oICMgVbBsm8Em
-   5ntzAAENdn0eH55RhkiXdd9f+vBPg84Tv8wG/XzP8+vdoSkfWIrOKUBL+
-   qZ8y78F+1+Thlhevjx/YJaobpgINUkP9ylPjUJM6RDxW/zOIBobojxjKI
-   dzamS61VSO46FJ28ge4CnzgbwSuY0oDv3E3Kl7NpgDwnLKRCYp++nmCTV
-   jlaXTBRzB9XZ6WuwwjT5Ze5ovIbJ0iJNTaFPCo/q5JHmS4TIBY7xeqt+b
-   g==;
-X-CSE-ConnectionGUID: tLtvLf/YT2WxkYYqLWGdbw==
-X-CSE-MsgGUID: 6swt6iXURZaRg1CavVdUFQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11119"; a="16783848"
-X-IronPort-AV: E=Sophos;i="6.09,175,1716274800"; 
-   d="scan'208";a="16783848"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 03:03:19 -0700
-X-CSE-ConnectionGUID: Anw2rhvOSD6NgytuqK2ETQ==
-X-CSE-MsgGUID: e35sdeIxRzmdQoUVKrLERw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,175,1716274800"; 
-   d="scan'208";a="68696797"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 03:03:18 -0700
-Received: from mohdfai2-iLBPG12-1.png.intel.com (mohdfai2-iLBPG12-1.png.intel.com [10.88.227.73])
-	by linux.intel.com (Postfix) with ESMTP id D0DA720B5702;
-	Mon,  1 Jul 2024 03:03:14 -0700 (PDT)
-From: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
-To: "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jesse Brandeburg <jesse.brandeburg@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Cc: intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
-Subject: [PATCH iwl-net v1 1/1] igc: Fix packet still tx after gate close by reducing i226 MAC retry buffer
-Date: Mon,  1 Jul 2024 06:00:58 -0400
-Message-Id: <20240701100058.3301229-1-faizal.abdul.rahim@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1719828154; c=relaxed/simple;
+	bh=qpqOlNCc6pE+Az7x1zOSWa1Hy2UVVKTtKCMN0PvJV2c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kYIe7Ku8J/Lvw/3rZzMZXXGn/8A1JgAdqxgKH34D0hXEOEzGqNF6K6oveaPP3w63vhCXF+7PZmsfr8DJWjXUzjCnXSPi4uIkPrR+Z44SNSszwxrt1RP5BCBlS4BEHQT2e1gd+6LJvkZGp1fTJEyTvrZmM+V1IR+Q0xUwh/umgU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=A6X+9638; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=DJ9+LxV54Ieb6gRSrHFlDXvJdhuQToWOdrkYwkWiAjg=;
+	t=1719828152; x=1720260152; b=A6X+9638Ee5F083A/4TnUMgo2C6rHZSIH062qgydb+xzkYN
+	P1fNquUmSUvWkdGzAB2jIPDgfo7kQaWFCPkHeK7EdYvD2tbFRGUFatoqiAAAqkA2dl4TSSiPomCU3
+	6+Kc/lp1tcTj3a77P++OiuK0tRCpOIti8jR3XwqwpHp5omH9RjAqHSxknS4JkGFqri4wrF3DcDHJB
+	osahfQd8pQhKVj+evon6Vbn5jE8vy9MJ3EBzzrbY9608qpVkAbUsUTfIBYElXA8ztTglV1M38w+Sp
+	nwnvFv3aQaj2eCFCfHrg5nkCzUwqCcygiYcjgP/sR5Yv4spJ/x0/I8zRBgXrHwXg==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sODrZ-0007Nt-U6; Mon, 01 Jul 2024 12:02:22 +0200
+Message-ID: <e0d95288-17b4-4286-8084-95f496603ada@leemhuis.info>
+Date: Mon, 1 Jul 2024 12:02:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [REGRESSION] QXL display malfunction
+To: "Kaplan, David" <David.Kaplan@amd.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ Linux regressions mailing list <regressions@lists.linux.dev>
+Cc: "Petkov, Borislav" <Borislav.Petkov@amd.com>,
+ "zack.rusin@broadcom.com" <zack.rusin@broadcom.com>,
+ "dmitry.osipenko@collabora.com" <dmitry.osipenko@collabora.com>,
+ "Koenig, Christian" <Christian.Koenig@amd.com>,
+ Dave Airlie <airlied@redhat.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ ML dri-devel <dri-devel@lists.freedesktop.org>,
+ "spice-devel@lists.freedesktop.org" <spice-devel@lists.freedesktop.org>,
+ "virtualization@lists.linux.dev" <virtualization@lists.linux.dev>
+References: <DS7PR12MB576622398096CB650FF6AF4294FF2@DS7PR12MB5766.namprd12.prod.outlook.com>
+ <DS7PR12MB57665F9F4BDF0598D7CC53DD94FF2@DS7PR12MB5766.namprd12.prod.outlook.com>
+ <67b279c7-1b65-46be-baa2-06794b47b9d1@leemhuis.info>
+ <ab0fb17d-0f96-4ee6-8b21-65d02bb02655@suse.de>
+ <DS7PR12MB57662053B081FBD62213016B94C22@DS7PR12MB5766.namprd12.prod.outlook.com>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+In-Reply-To: <DS7PR12MB57662053B081FBD62213016B94C22@DS7PR12MB5766.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1719828152;8b6a32e2;
+X-HE-SMSGID: 1sODrZ-0007Nt-U6
 
-AVNU testing uncovered that even when the taprio gate is closed,
-some packets still transmit.
+Hi, Thorsten here, the Linux kernel's regression tracker. Top-posting
+for once, to make this easily accessible to everyone.
 
-A known i225/6 hardware errata states traffic might overflow the planned
-QBV window. This happens because MAC maintains an internal buffer,
-primarily for supporting half duplex retries. Therefore, when
-the gate closes, residual MAC data in the buffer may still transmit.
+Thomas, was there some progress wrt to fixing below regression? I might
+have missed something, but from here it looks like this fall through the
+cracks.
 
-To mitigate this for i226, reduce the MAC's internal buffer from
-192 bytes to 88 bytes by modifying the RETX_CTL register value.
-This follows guidelines from:
+Makes me wonder if we should temporarily revert this for now to fix this
+for rc7 and ensure things get at least one week of testing before the final.
 
-a) Ethernet Controller I225/I22 Spec Update Rev 2.1 Errata Item 9:
-   TSN: Packet Transmission Might Cross Qbv Window
-b) I225/6 SW User Manual Rev 1.2.4: Section 8.11.5 Retry Buffer Control
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+If I did something stupid, please tell me, as explained on that page.
 
-Test Steps:
-1. Send taprio cmd to board A
-tc qdisc replace dev enp1s0 parent root handle 100 taprio \
-num_tc 4 \
-map 3 2 1 0 3 3 3 3 3 3 3 3 3 3 3 3 \
-queues 1@0 1@1 1@2 1@3 \
-base-time 0 \
-sched-entry S 0x07 500000 \
-sched-entry S 0x0f 500000 \
-flags 0x2 \
-txtime-delay 0
+#regzbot poke
 
-- Note that for TC3, gate opens for 500us and close for another 500us
-
-3. Take tcpdump log on Board B
-
-4. Send udp packets via UDP tai app from Board A to Board B
-
-5. Analyze tcpdump log via wireshark log on Board B
-- Observed that the total time from the first to the last packet
-received during one cycle for TC3 does not exceed 500us
-
-Signed-off-by: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
----
- drivers/net/ethernet/intel/igc/igc_defines.h |  6 ++++
- drivers/net/ethernet/intel/igc/igc_tsn.c     | 34 ++++++++++++++++++++
- 2 files changed, 40 insertions(+)
-
-diff --git a/drivers/net/ethernet/intel/igc/igc_defines.h b/drivers/net/ethernet/intel/igc/igc_defines.h
-index 5f92b3c7c3d4..511384f3ec5c 100644
---- a/drivers/net/ethernet/intel/igc/igc_defines.h
-+++ b/drivers/net/ethernet/intel/igc/igc_defines.h
-@@ -404,6 +404,12 @@
- #define IGC_DTXMXPKTSZ_TSN	0x19 /* 1600 bytes of max TX DMA packet size */
- #define IGC_DTXMXPKTSZ_DEFAULT	0x98 /* 9728-byte Jumbo frames */
- 
-+/* Retry Buffer Control */
-+#define IGC_RETX_CTL			0x041C
-+#define IGC_RETX_CTL_WATERMARK_MASK	0xF
-+#define IGC_RETX_CTL_QBVFULLTH_SHIFT	8 /* QBV Retry Buffer Full Threshold */
-+#define IGC_RETX_CTL_QBVFULLEN	0x1000 /* Enable QBV Retry Buffer Full Threshold */
-+
- /* Transmit Scheduling Latency */
- /* Latency between transmission scheduling (LaunchTime) and the time
-  * the packet is transmitted to the network in nanosecond.
-diff --git a/drivers/net/ethernet/intel/igc/igc_tsn.c b/drivers/net/ethernet/intel/igc/igc_tsn.c
-index 22cefb1eeedf..c97d908cecc5 100644
---- a/drivers/net/ethernet/intel/igc/igc_tsn.c
-+++ b/drivers/net/ethernet/intel/igc/igc_tsn.c
-@@ -78,6 +78,15 @@ void igc_tsn_adjust_txtime_offset(struct igc_adapter *adapter)
- 	wr32(IGC_GTXOFFSET, txoffset);
- }
- 
-+static void igc_tsn_restore_retx_default(struct igc_adapter *adapter)
-+{
-+	struct igc_hw *hw = &adapter->hw;
-+	u32 retxctl;
-+
-+	retxctl = rd32(IGC_RETX_CTL) & IGC_RETX_CTL_WATERMARK_MASK;
-+	wr32(IGC_RETX_CTL, retxctl);
-+}
-+
- /* Returns the TSN specific registers to their default values after
-  * the adapter is reset.
-  */
-@@ -91,6 +100,9 @@ static int igc_tsn_disable_offload(struct igc_adapter *adapter)
- 	wr32(IGC_TXPBS, I225_TXPBSIZE_DEFAULT);
- 	wr32(IGC_DTXMXPKTSZ, IGC_DTXMXPKTSZ_DEFAULT);
- 
-+	if (igc_is_device_id_i226(hw))
-+		igc_tsn_restore_retx_default(adapter);
-+
- 	tqavctrl = rd32(IGC_TQAVCTRL);
- 	tqavctrl &= ~(IGC_TQAVCTRL_TRANSMIT_MODE_TSN |
- 		      IGC_TQAVCTRL_ENHANCED_QAV | IGC_TQAVCTRL_FUTSCDDIS);
-@@ -111,6 +123,25 @@ static int igc_tsn_disable_offload(struct igc_adapter *adapter)
- 	return 0;
- }
- 
-+/* To partially fix i226 HW errata, reduce MAC internal buffering from 192 Bytes
-+ * to 88 Bytes by setting RETX_CTL register using the recommendation from:
-+ * a) Ethernet Controller I225/I22 Specification Update Rev 2.1
-+ *    Item 9: TSN: Packet Transmission Might Cross the Qbv Window
-+ * b) I225/6 SW User Manual Rev 1.2.4: Section 8.11.5 Retry Buffer Control
-+ */
-+static void igc_tsn_set_retx_qbvfullth(struct igc_adapter *adapter)
-+{
-+	struct igc_hw *hw = &adapter->hw;
-+	u32 retxctl, watermark;
-+
-+	retxctl = rd32(IGC_RETX_CTL);
-+	watermark = retxctl & IGC_RETX_CTL_WATERMARK_MASK;
-+	/* Set QBVFULLTH value using watermark and set QBVFULLEN */
-+	retxctl |= (watermark << IGC_RETX_CTL_QBVFULLTH_SHIFT) |
-+		   IGC_RETX_CTL_QBVFULLEN;
-+	wr32(IGC_RETX_CTL, retxctl);
-+}
-+
- static int igc_tsn_enable_offload(struct igc_adapter *adapter)
- {
- 	struct igc_hw *hw = &adapter->hw;
-@@ -123,6 +154,9 @@ static int igc_tsn_enable_offload(struct igc_adapter *adapter)
- 	wr32(IGC_DTXMXPKTSZ, IGC_DTXMXPKTSZ_TSN);
- 	wr32(IGC_TXPBS, IGC_TXPBSIZE_TSN);
- 
-+	if (igc_is_device_id_i226(hw))
-+		igc_tsn_set_retx_qbvfullth(adapter);
-+
- 	for (i = 0; i < adapter->num_tx_queues; i++) {
- 		struct igc_ring *ring = adapter->tx_ring[i];
- 		u32 txqctl = 0;
--- 
-2.25.1
-
+On 14.06.24 15:45, Kaplan, David wrote:
+> [AMD Official Use Only - AMD Internal Distribution Only]
+> 
+>> -----Original Message-----
+>> From: Thomas Zimmermann <tzimmermann@suse.de>
+>> Sent: Wednesday, June 12, 2024 9:26 AM
+>> To: Linux regressions mailing list <regressions@lists.linux.dev>
+>> Cc: Petkov, Borislav <Borislav.Petkov@amd.com>;
+>> zack.rusin@broadcom.com; dmitry.osipenko@collabora.com; Kaplan, David
+>> <David.Kaplan@amd.com>; Koenig, Christian <Christian.Koenig@amd.com>;
+>> Dave Airlie <airlied@redhat.com>; Maarten Lankhorst
+>> <maarten.lankhorst@linux.intel.com>; Maxime Ripard
+>> <mripard@kernel.org>; LKML <linux-kernel@vger.kernel.org>; ML dri-devel
+>> <dri-devel@lists.freedesktop.org>; spice-devel@lists.freedesktop.org;
+>> virtualization@lists.linux.dev
+>> Subject: Re: [REGRESSION] QXL display malfunction
+>>
+>> Caution: This message originated from an External Source. Use proper
+>> caution when opening attachments, clicking links, or responding.
+>>
+>>
+>> Hi
+>>
+>> Am 12.06.24 um 14:41 schrieb Linux regression tracking (Thorsten Leemhuis):
+>>> [CCing a few more people and lists that get_maintainers pointed out
+>>> for qxl]
+>>>
+>>> Hi, Thorsten here, the Linux kernel's regression tracker. Top-posting
+>>> for once, to make this easily accessible to everyone.
+>>>
+>>> Thomas, from here it looks like this report that apparently is caused
+>>> by a change of yours that went into 6.10-rc1 (b33651a5c98dbd
+>>> ("drm/qxl: Do not pin buffer objects for vmap")) fell through the
+>>> cracks. Or was progress made to resolve this and I just missed this?
+>>>
+>>> Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker'
+>>> hat)
+>>> --
+>>> Everything you wanna know about Linux kernel regression tracking:
+>>> https://linux-regtracking.leemhuis.info/about/#tldr
+>>> If I did something stupid, please tell me, as explained on that page.
+>>>
+>>> #regzbot poke
+>>>
+>>>
+>>> On 03.06.24 04:29, Kaplan, David wrote:
+>>>>> -----Original Message-----
+>>>>> From: Kaplan, David
+>>>>> Sent: Sunday, June 2, 2024 9:25 PM
+>>>>> To: tzimmermann@suse.de; dmitry.osipenko@collabora.com; Koenig,
+>>>>> Christian <Christian.Koenig@amd.com>; zach.rusin@broadcom.com
+>>>>> Cc: Petkov, Borislav <Borislav.Petkov@amd.com>;
+>>>>> regressions@list.linux.dev
+>>>>> Subject: [REGRESSION] QXL display malfunction
+>>>>>
+>>>>> Hi,
+>>>>>
+>>>>> I am running an Ubuntu 19.10 VM with a tip kernel using QXL video
+>>>>> and I've observed the VM graphics often malfunction after boot,
+>>>>> sometimes failing to load the Ubuntu desktop or even immediately
+>> shutting the guest down.
+>>>>> When it does load, the guest dmesg log often contains errors like
+>>>>>
+>>>>> [    4.303586] [drm:drm_atomic_helper_commit_planes] *ERROR* head
+>> 1
+>>>>> wrong: 65376256x16777216+0+0
+>>>>> [    4.586883] [drm:drm_atomic_helper_commit_planes] *ERROR* head
+>> 1
+>>>>> wrong: 65376256x16777216+0+0
+>>>>> [    4.904036] [drm:drm_atomic_helper_commit_planes] *ERROR* head
+>> 1
+>>>>> wrong: 65335296x16777216+0+0
+>>
+>> I don't see how these messages are related. Did they already appear before
+>> the broken commit was there?
+> 
+> No, I did not observe them prior to the broken commit.
+> 
+>>
+>>>>> [    5.374347] [drm:qxl_release_from_id_locked] *ERROR* failed to find
+>> id in
+>>>>> release_idr
+>>
+>> Is there only one such message in the log? Or multiple/frequent ones.
+> 
+> I would usually only see one.
+> 
+>>
+>> Could you provide a stack trace of what happens before?
+> 
+> Here's the top of a backtrace when the error occurs:
+> #0  qxl_release_from_id_locked (qdev=qdev@entry=0xffff88810126e000, id=id@entry=262151)
+>     at drivers/gpu/drm/qxl/qxl_release.c:373
+> #1  0xffffffff819f5b6a in qxl_garbage_collect (qdev=0xffff88810126e000)
+>     at drivers/gpu/drm/qxl/qxl_cmd.c:222
+> #2  0xffffffff810e3aa8 in process_one_work (worker=worker@entry=0xffff888101680300,
+>     work=0xffff88810126f340) at kernel/workqueue.c:3231
+> #3  0xffffffff810e6281 in process_scheduled_works (worker=<optimized out>)
+>     at kernel/workqueue.c:3312
+> #4  worker_thread (__worker=0xffff888101680300) at kernel/workqueue.c:3393
+> 
+>>
+>> We sometimes draw into the buffer object from the CPU. For accessing the
+>> buffer object's pages from the CPU, only a vmap operation should be
+>> necessary. It appears as if qxl also requires a pin. My guess is that the pin
+>> inserts the buffer-object's host-side pages and the code around
+>> qxl_release_from_id_locked() appears to be garbage-collecting them.
+>> Hence without the pin, the GC complains about inconsistent state.
+>>>>>
+>>>>> I bisected the issue down to "drm/qxl: Do not pin buffer objects for
+>> vmap"
+>>>>> (b33651a5c98dbd5a919219d8c129d0674ef74299).
+>>
+>> Thanks for bisecting. Does it work if you revert that commit?
+> 
+> Yes
+> 
+> Thanks --David Kaplan
 
