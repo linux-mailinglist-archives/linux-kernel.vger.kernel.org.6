@@ -1,128 +1,89 @@
-Return-Path: <linux-kernel+bounces-235898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C896491DB0A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:06:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EC4E91DB0C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:06:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66F9DB213E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:06:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EDD41F21FA8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:06:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F319F84D12;
-	Mon,  1 Jul 2024 09:06:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EF445C614;
-	Mon,  1 Jul 2024 09:06:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9637185279;
+	Mon,  1 Jul 2024 09:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="j1DEXGds"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE74D84A30;
+	Mon,  1 Jul 2024 09:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719824769; cv=none; b=fbu6zEErh/mhtFL0ezM7IDwz6KtGIDnb+xb50v7//OjKaswAEF4O1mXOk6TH8beSbbFQkKW7CrXN9vbN0q/R5UhLN/OOP2nrUP8njrIEpuKCwrPf3e5cEOB9n6PCmi26CEUGNx5ci8xwBiOO8fvJibqBGySF4nn/O4E8xcBjzow=
+	t=1719824777; cv=none; b=H5CuSUISplx6NyMcgSgOinZhb5r69DC9OPbNEDjKARATGeh6qjm9JWfi81h3RlpXQfT19du2cc29IJKCGCNqGWJ5uS69P0jMpQOFHhkaw+rVny8wYMFPj7AxQY7xnZNv3gUZ+pfNKf0uFr+6HDgVpF5WWw+Q36XJ2HDlgdw6VX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719824769; c=relaxed/simple;
-	bh=Fi10tkzUGz0fvpYCWE6tHxTsJkVRF2+Ox7u6M/6vt4E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RmVzVezZ2o7npokWxfGU/8ktDeQoaqaVX6cTQxFaJ60KjyUEj3AbPq7pQ5GLgIMnpfTsG7goItcsI75rAkxa/8Ph30PphEtq/aIoE1iS6d8i8dyzzQNFbhN8BJAUjf8CmGrQsQR36lK0Ohx4An+Rlq8zEdUIBasRH2hgj+U8IVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8627C339;
-	Mon,  1 Jul 2024 02:06:31 -0700 (PDT)
-Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D25783F766;
-	Mon,  1 Jul 2024 02:06:04 -0700 (PDT)
-Date: Mon, 1 Jul 2024 10:06:00 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: firmware: arm,scmi: introduce property
- mbox-rx-timeout-ms
-Message-ID: <ZoJxeFxErmM8Gec3@bogus>
-References: <20240621-scmi-mailbox-v1-v1-0-8ed450735f46@nxp.com>
- <20240621-scmi-mailbox-v1-v1-1-8ed450735f46@nxp.com>
- <20240627214645.GA614300-robh@kernel.org>
- <AM6PR04MB59415F7793F4D15CCCB7388B88D72@AM6PR04MB5941.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1719824777; c=relaxed/simple;
+	bh=lHTxC+saNwomHSdQ9/N0PF0JUGiXX9fKozXCfNEoZtY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RvVjJzm+HlkDO77wdrNUOE6u7pnzo7kEkPLbge8PUAmz2nJuHEAvdXU6Boxcww3jJhkVJ6qJwBmoChageSZbhdY9ds5BGMbXb+j51QtkCNHyR0XFyCNZd7JD7/+E0Eq8YH/Vqsl39NjZIGgHN4yexYTH38dyV0LEtEui2ZBb4Yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=j1DEXGds; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1719824772; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=3lCDxI9hX7IFUfqrckpaMfqXdk5NsVJ2mROyHOZx4/s=;
+	b=j1DEXGdsJCI01MQKkT7MjYKBDuIhb8z5CVRYTLKAxraILJjxmCcErz/IZzaBA30t5DToD/kmvQj3ot2/o9pZ9ZkteIojHI8B3gLO5kGvtfCpD2JHP7Vki6EGHCdwFJW50HTly0pvKc3b62SiRGEq9UirpQ43LwuajwWIrdTtNcI=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033023225041;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0W9cYQiW_1719824764;
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0W9cYQiW_1719824764)
+          by smtp.aliyun-inc.com;
+          Mon, 01 Jul 2024 17:06:11 +0800
+From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To: James.Bottomley@HansenPartnership.com
+Cc: martin.petersen@oracle.com,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH] scsi: sd: Fix unsigned expression compared with zero
+Date: Mon,  1 Jul 2024 17:06:03 +0800
+Message-Id: <20240701090603.127783-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM6PR04MB59415F7793F4D15CCCB7388B88D72@AM6PR04MB5941.eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 27, 2024 at 11:17:49PM +0000, Peng Fan wrote:
-> > Subject: Re: [PATCH 1/2] dt-bindings: firmware: arm,scmi: introduce
-> > property mbox-rx-timeout-ms
-> >
-> > On Fri, Jun 21, 2024 at 08:46:57PM +0800, Peng Fan (OSS) wrote:
-> > > From: Peng Fan <peng.fan@nxp.com>
-> > >
-> > > System Controller Management Interface(SCMI) firmwares might
-> > have
-> > > different designs by SCMI firmware developers. So the maximum
-> > receive
-> > > channel timeout value might also varies in the various designs.
-> > >
-> > > So introduce property mbox-rx-timeout-ms to let each platform could
-> > > set its own timeout value in device tree.
-> > >
-> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > > ---
-> > >  Documentation/devicetree/bindings/firmware/arm,scmi.yaml | 6
-> > ++++++
-> > >  1 file changed, 6 insertions(+)
-> > >
-> > > diff --git
-> > a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> > > b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> > > index 4d823f3b1f0e..d6cc2bf4c819 100644
-> > > --- a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> > > +++ b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> > > @@ -121,6 +121,12 @@ properties:
-> > >        atomic mode of operation, even if requested.
-> > >      default: 0
-> > >
-> > > +  max-rx-timeout-ms:
-> > > +    description:
-> > > +      An optional time value, expressed in milliseconds, representing,
-> > on this
-> > > +      platform, the mailbox maximum timeout value for receive
-> > channel.
-> >
-> > "on this platform"? Doesn't every property apply to the given platform?
->
-> Yeah, apply to all the use mailbox.
->
-> >
-> > > +    default: 0
-> >
-> > 0 means no timeout or response is instant?
->
-> I should use 30ms same as what the driver currently use.
->
+The return value from the call to scsi_execute_cmd() is int. However, the
+return value is being assigned to an unsigned int variable 'the_result',
+so making 'the_result' an int.
 
-That sounds very wrong to me. The binding is independent of current driver
-behaviour. How the driver handles the case of default 0 value is different
-from what the default value in the DT means IMO. You can't just set a default
-value in the DT binding based on the current driver setting.
+./drivers/scsi/sd.c:2333:6-16: WARNING: Unsigned expression compared with zero: the_result > 0.
 
-We can always say since it is optional, absence of it is what driver handles
-as 30ms. 0ms is impossible or incorrect value as transport involves some
-delay even if it is in terms of uS. So I prefer to set a value of > 0 in DT
-and make that a requirement.
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9463
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+---
+ drivers/scsi/sd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---
-Regards,
-Sudeep
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index 979795dad62b..ade8c6cca295 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -2396,7 +2396,7 @@ sd_spinup_disk(struct scsi_disk *sdkp)
+ 	static const u8 cmd[10] = { TEST_UNIT_READY };
+ 	unsigned long spintime_expire = 0;
+ 	int spintime, sense_valid = 0;
+-	unsigned int the_result;
++	int the_result;
+ 	struct scsi_sense_hdr sshdr;
+ 	struct scsi_failure failure_defs[] = {
+ 		/* Do not retry Medium Not Present */
+-- 
+2.20.1.7.g153144c
+
 
