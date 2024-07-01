@@ -1,238 +1,219 @@
-Return-Path: <linux-kernel+bounces-236559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D8C891E403
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:25:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ABFB291E406
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:25:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54D501C21D8D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:25:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE45D1C2162C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C05416D322;
-	Mon,  1 Jul 2024 15:24:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74FA16C84F;
+	Mon,  1 Jul 2024 15:24:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eYVMLLHU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3P9wJM2V";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eYVMLLHU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3P9wJM2V"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="IrxnJbsk"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2084.outbound.protection.outlook.com [40.107.21.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B165453AC;
-	Mon,  1 Jul 2024 15:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719847486; cv=none; b=aPDcPuwbqc9mNK2WgXe+j4OgmI16cwBWHagxs2J/YpBY9NvH4AdmW9SiJhF5OEYe39B3ESyVB32mL895i+rWSVe7oNXbZtkJmtB1yeQWuiIV8FlyxE+QFXS2A+bqTQVJFtZlJdFygAS+C9q6B4RK6x1XtaWRZvzmiT4x7re+Ctw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719847486; c=relaxed/simple;
-	bh=A4X/8zuLwhQlbEDJM8qv3feEW02PFnloz6FKlPPEy+k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KCkkY3DbvJ618Z0IYas3yR1B5FG2P5i0N9eglcScrLdzp1/KWG/+RrPai5CESdhlbq6Lhkpv/9JarKCNBKJCz0VQ0goFWeUv27s+f7ZuGc2j+liwen2mL8Yb+M+/2KIBFwmfxGUhxsRrwWCW41txpBKGMkObLlYwn6wlNCIQvds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eYVMLLHU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3P9wJM2V; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eYVMLLHU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3P9wJM2V; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B3EC6219B9;
-	Mon,  1 Jul 2024 15:24:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719847482;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Cj7Ce9Ym/sfb2sDvLTmuCL9ctsqC7G9CNBaQC/7mpWM=;
-	b=eYVMLLHUiywmTNc4rCPjIViO/DXO6iAHpwDw3qE1A+yHT4hB7jZHK1vNq4S3Qya2hj8Nzx
-	nnM1jC+Thkp777m+eNkDMsAptyMFvtINhgXBUlkLuEiIXUCDqLLCtepT1ZBwH4WW+6Hltb
-	BzJbls++BS91/poXGjWflmBHtxstYC8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719847482;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Cj7Ce9Ym/sfb2sDvLTmuCL9ctsqC7G9CNBaQC/7mpWM=;
-	b=3P9wJM2V7xu/1owrLE9QMz9guXL/Sm7CRWt/qRwbHWrdRhAzDyrohNPLfez4VmKwn2ohzV
-	q4G6XkTbAnBbldCA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719847482;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Cj7Ce9Ym/sfb2sDvLTmuCL9ctsqC7G9CNBaQC/7mpWM=;
-	b=eYVMLLHUiywmTNc4rCPjIViO/DXO6iAHpwDw3qE1A+yHT4hB7jZHK1vNq4S3Qya2hj8Nzx
-	nnM1jC+Thkp777m+eNkDMsAptyMFvtINhgXBUlkLuEiIXUCDqLLCtepT1ZBwH4WW+6Hltb
-	BzJbls++BS91/poXGjWflmBHtxstYC8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719847482;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Cj7Ce9Ym/sfb2sDvLTmuCL9ctsqC7G9CNBaQC/7mpWM=;
-	b=3P9wJM2V7xu/1owrLE9QMz9guXL/Sm7CRWt/qRwbHWrdRhAzDyrohNPLfez4VmKwn2ohzV
-	q4G6XkTbAnBbldCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6A55613800;
-	Mon,  1 Jul 2024 15:24:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 9mq8GTrKgmZuAgAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Mon, 01 Jul 2024 15:24:42 +0000
-Date: Mon, 1 Jul 2024 17:24:37 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Josef Bacik <josef@toxicpanda.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
-	David Sterba <dsterba@suse.com>, Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andi Kleen <ak@linux.intel.com>, kernel-team@fb.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-mm@kvack.org, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH v2 09/11] btrfs: convert to multigrain timestamps
-Message-ID: <20240701152437.GE21023@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20240701-mgtime-v2-0-19d412a940d9@kernel.org>
- <20240701-mgtime-v2-9-19d412a940d9@kernel.org>
- <20240701134936.GB504479@perftesting>
- <ec952d79bbe19d80a7aff495e9784c60a1a1e668.camel@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8AEE53AC;
+	Mon,  1 Jul 2024 15:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719847495; cv=fail; b=QZjDDSLdqOOveUg5i7pz6D4Mqw4cIu0n7LuXCJYxC4PLFY2F2uodypsM+ofUzTZeP9gA9H7twYGWFbtPSAjlzMaVQTHKoRQp3nB/m7KWCntr0iVj2fSAr+NWla9EH1mBi1Wb9vhKj1S2BqzNjuZ8S82ols87+V89/8I0oYcGUT0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719847495; c=relaxed/simple;
+	bh=XrtnskymWlrNdhzTE9O2GC2vycMTMIN1ewR94+3iC7U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=MYehsatEX5yiqU0pgMa+JNPznGN/H2DESKdYUmRk94Eblo3eemzCjOVsKpqfWkISAnCyPRlFwvfMyXXpa6sJEJiWUy55R89rvQI1mK3B1ykwIfbatc8G7hhJ+28Peu6hcxuzmjwHr0xHBj0AqJ6MmmI/vQsFQkqUrngSWWJ9Vf4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=IrxnJbsk; arc=fail smtp.client-ip=40.107.21.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ERIncN+pjAiUMrCkRA964uPdEMFgUAR36cMsg27uRhbTSXd3k06RGi7ypE5iyZEr6fIQEOiVxFuqkLYVEcZqqUJEHcZ2IHq9I4IZYIJAPBChwQTqpel3uRu0DRDbvkZ5hrds6tnnxxmiqjNxVY2hro9kXbBw55eImgyoU5Crsrz/APOpyE1ryD64VG1sdvphftnforwQXOxsrRrp+JZGzYqa7NLS8hXKhBh9RRLo7hrQHtVe938QgeLO97JMZJOop0My6bIv3TFwqcHxF7g9XQqzBhLoPbl6dh3axAbQOF/rMQLhLBwu27+FL95g7flkqbUK/BY3Ft2UJy26FLys7g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ramfOSs1HSP7r89s/jeK59wtK9VBqzziercSpo9rhy0=;
+ b=I9962RDz8DSov2dmB5UOZMyqzW6IyxI/LqoeFA7AnOiPshbSyiaWp9jjrF5rr+4V9G+WincpQh2uZAQ5k1BoWqpYy7SpaqBzz4s3AwL31O/MFNNphU7z3oJZFfgBxeeg1kgxI/yfIB60c3GrFQdB0Mf5uP/I1/HFVwfeDl5Fgfj/hLOnxQvvCd/mqVzANNbN1OT9rDGnxDCc779DaQq+M2scEPljWeUToenEGiuibRVBMDI6bHgYSFsqXsRn6AGcKd0/6195ACGeXygwYd3q9Hfk30aC+kLd5GvXwC4z18xB7FWi8awDV3Bj5sksimN23E8FXliHp83flCS1NfVAyw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ramfOSs1HSP7r89s/jeK59wtK9VBqzziercSpo9rhy0=;
+ b=IrxnJbskm3JHBQymZd452RgX0HmmVnoTSuIQwiK31v4qAZdU+JgcfLCT72Km+43vGT7jfgH+dUlTSv7MkqScRqR30mBRmqJOesDiopjksdsq6pU3kobYO0d72l9E/059TL4b4CxRHf0KT2lrhvjWrp2EtucpYTpmthXIynbXGFU=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DB9PR04MB8410.eurprd04.prod.outlook.com (2603:10a6:10:24b::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.29; Mon, 1 Jul
+ 2024 15:24:49 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7719.022; Mon, 1 Jul 2024
+ 15:24:49 +0000
+Date: Mon, 1 Jul 2024 11:24:39 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Vladimir Oltean <olteanv@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev, Kuldeep Singh <kuldeep.singh@nxp.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>
+Subject: Re: (subset) [PATCH v4 0/3] spi: fsl-dspi: Convert to yaml format
+ and use common SPI property
+Message-ID: <ZoLKN6a2qLXrR+oX@lizhi-Precision-Tower-5810>
+References: <20240624-ls_qspi-v4-0-3d1c6f5005bf@nxp.com>
+ <171984553050.67981.12522537296340689285.b4-ty@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <171984553050.67981.12522537296340689285.b4-ty@kernel.org>
+X-ClientProxiedBy: BY5PR04CA0017.namprd04.prod.outlook.com
+ (2603:10b6:a03:1d0::27) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ec952d79bbe19d80a7aff495e9784c60a1a1e668.camel@kernel.org>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_TWELVE(0.00)[26];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	R_RATELIMIT(0.00)[to_ip_from(RLkafno779cm49o166uw1xdisb)];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Spam-Level: 
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DB9PR04MB8410:EE_
+X-MS-Office365-Filtering-Correlation-Id: ac820209-a560-4f2c-8d99-08dc99e1f275
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?RKBDAbeta6K9AkuD8Wp2Z9AQAV6Ek5zcaOERWQkHlnG+G+bqhwPDj/2aEpOk?=
+ =?us-ascii?Q?2fk00Hm34AndOzZJOc5lLrJSroPlPohEUhWYaii2EkzwEYvXNyRwxDQ37nXc?=
+ =?us-ascii?Q?oKx4779KnKes70R955p7y0PgWwm1sswddmtz0PFeFwQ+nz4JA7OhMTLtCPs+?=
+ =?us-ascii?Q?THrFAsFPZ0XQ4MhycjvbHIKv+9rhKCOqC2hI1tZ1QnLa+E5gaGPtq0XQ6WHW?=
+ =?us-ascii?Q?oGHU3wGqUDboo769dn3Nw1jSdSU1HxzmOiYnjPemyzcYDO/BeV1YjIOgpV2J?=
+ =?us-ascii?Q?x6MlGNORA3psi/GJ/xH8ImPo3jvEpTIJ8HQa5g8hbXqRpDOIuwGMbBfPmOk4?=
+ =?us-ascii?Q?NyHLsLS/bS13te5D5rfKElqc7TFKCSYtCnMGIC7r9x5JZgrajuwrtcHyarbd?=
+ =?us-ascii?Q?pVl9WmVGWdEb6Yj+P7vJjRxV59lear7qB8o7Ozs+/qnzpwnPFyORLMubUDSB?=
+ =?us-ascii?Q?BD66XM/lp6kU7E6sKnryfyTHhlWz8wqDh2V1iyQpDUd6lFBF+7lrrE+lK+Ee?=
+ =?us-ascii?Q?mEsGFv4WXLXMn6YhdDhPI3mstEjyUe/Nsp4ZgOAgjFj4v+tHQQNJEQmdI+Id?=
+ =?us-ascii?Q?C0IW3qdd7sQjYcm/czlzSuxM7EmtXeZK2im72OkzighGP/PYjb9lDXFgYaaJ?=
+ =?us-ascii?Q?3gkNWzcjBBQI4/xpVxnIb3XIOtQ1E96dHclNMay7egu+KID8xYIH6aHfXTvz?=
+ =?us-ascii?Q?rk/0cVQNnFKwIAFE3wSMxarKgKl8rSYJZOHAd2sYo9eg9fxUDPg+B8aM5DL4?=
+ =?us-ascii?Q?pfaR5pPCiAyT3JzG7O4RrYxXX1bNu1RCIgcVD+ZKOIBIOLxkookgbM0t79Iu?=
+ =?us-ascii?Q?xSYlC4MxqHhm0rWTs4o+ya9sBSDZvzvGe/iODpfGKzAMteGtdif1tLlrf0pZ?=
+ =?us-ascii?Q?j9wmOdqXIanVwKbfRHDWQJojnhRzquIgLdyRV9ApjllwtXcIZzbfj0c3lLXT?=
+ =?us-ascii?Q?jueNYEIYvvq81b7XWzn2qXH3+P+4z0rGBrqaeoxJQlXbB9vsw6Qsnp5QptUE?=
+ =?us-ascii?Q?hG0847pv97XiBHnVXnDcRw18+Sd+KK9RzsXw0w38cGImBw5exLRsGhKy8kOt?=
+ =?us-ascii?Q?ajb3nJU9wduC239updDCxS7QRYa50LejwNzKmtDUlj14cuO3mk6gFnKDO+gK?=
+ =?us-ascii?Q?b8MW7U9E5geclyYtU5jnG9SCtbyDQf3ciMuLbjI003LYA9kdst/LPQqBqwMr?=
+ =?us-ascii?Q?Kc2b2vnUDrhEbX2u7YEQi1YKWD0UxEXmQ9n2qCjaM7CGm3AiuR0P/kEclX+G?=
+ =?us-ascii?Q?hZM/oZtEEGRtFgDfIGEWA4mFJycO23QRHZq5ceVKmfXGWk9caPSs+dJTQqMc?=
+ =?us-ascii?Q?jnFJOBavvDI0xgskRVsl8sN5Re1HX/+AFb6D2WnXMqoIiTC+EzB67pdXVYHp?=
+ =?us-ascii?Q?pIc3n+Q=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?MNlzjc734/xCb6PZiKP3auTG+eSACIOjQQcIwvdQ5FbQ3kS2BtqqUpBSZp+I?=
+ =?us-ascii?Q?7D0tdGtex1rIGSf+d0q1WCO9gvLxiZg+Mhw0hDgOJlYENKZFKQXwrZ39gcko?=
+ =?us-ascii?Q?xl2qxXRZrWuGbVFjOro2q2dNMfMXo37+ivOUsGKJCDR6t3cCRsLgURsBINtT?=
+ =?us-ascii?Q?ztgpKWT5KgnUHMH3kXZJvwP0o0u1LNvTQZKG3PiaMHdb1vnT1qx5RF+7YozC?=
+ =?us-ascii?Q?F36fovuSgrsupMNOJeLnKTsjobm2s/d5hChiTDuNBe1PixXpL2wqhe3GYHnN?=
+ =?us-ascii?Q?CNKDOXuAJ/vM10j5IUgIF2Ccgq7D/kLnVyIYLZ888oBVN9DVLnIvYPVIR0Fq?=
+ =?us-ascii?Q?Yxt1SoHyMqJfuwJo5V5d2NFjjpkka7pX/9fOPXeRE4fNfCKERL+Rrly+5Z/a?=
+ =?us-ascii?Q?B2EPSOfNC7R6rIuV7rlt/63i2fzZUEP8LtseZKMmGTYzvgl9ENa79SXyfTko?=
+ =?us-ascii?Q?fOzKRpqp8NXmMMMxsEPGdJCReNNVtRShAbfwC+3NaF6DHgBOSObq3lDjqCKz?=
+ =?us-ascii?Q?EjbQMukm2p7e+sZBcmv9HhfYbgZnA9/m31gdFEdktB7GSbFkoieVjvUfUeEw?=
+ =?us-ascii?Q?M5XCYiloVE0HLw41WAl6QlpNx1goJt5dG+hCqUr/2daDUF93VY+4kNmgLj9g?=
+ =?us-ascii?Q?Vgl9aMnVAOb70MYOAPBM4x4rMGBdDb/dlcAMc03F8c69+pTuu2CKdmcizco0?=
+ =?us-ascii?Q?3Lu0LgHGqO85l3t6H22sQFHysMPVBx32alzDBzt4Ma5nhUIrx+jZ8WZqaESU?=
+ =?us-ascii?Q?NRlpDQkni35akG0MzXCG+F9ulcXWGrAMq5py+vVzDCLD+13vOxQArtnamGwV?=
+ =?us-ascii?Q?U8Tkj21tuT8HYrp/UDcyPozSszdKJ+Klk4E2etsXWdka1OdHZNFMPAha5BS2?=
+ =?us-ascii?Q?Y8ioebEvbT73tV7MHV8RuFrb2FkXYd8sEXZrp3dYdje01e7H8qEy7IaDhUuP?=
+ =?us-ascii?Q?Q/c3FI0v39Cjh1m1rXE6KBh7fAMESh0X+ryyMR6QSqZHjaLZtydXII9XP70Q?=
+ =?us-ascii?Q?7jSl3tCy0DCEOHUdCB/V/d3SmWt2scLT+BYUvFfsoVgsWBG5LvF8MktNy9VE?=
+ =?us-ascii?Q?2u/PJYd5kGbU8w/lJI7LHqBfww1F4Vort5ltuwS4NiV6a+hmknIn6ejhFoet?=
+ =?us-ascii?Q?IwekxkoWx4NxQQv38jN4wHxfCjZyveL6jT1U+b8Yw9ccWSgJPHKf+3PIEZrm?=
+ =?us-ascii?Q?nUKNIws02Fr6f1oid8Pd6TnwCqCT3JYaZwb8wiyQmHe0g2Bo3LcRKneprq86?=
+ =?us-ascii?Q?qQswCjyXQtzUdM4mqvwfnZ/xgKdxgC9FthtjUe+8hmy480U7mL29irPMcWKI?=
+ =?us-ascii?Q?VnvJnFyU3SQVAsHBI8p2I6e4ovPsTzY53G/Pe8L1sLjY8QpU+mDF+dO4+lcr?=
+ =?us-ascii?Q?53nhK35v6QG9W4WE2fMHFMQKqEzLjbl9zPR0F3Ub9Vqmqi+uOIGlLZogOQqj?=
+ =?us-ascii?Q?D5qFrmXad6lLDcLT6sEl/ui2GOQrhxwFG6I65wPZi/613+l+5k28Rq+WKRKG?=
+ =?us-ascii?Q?3C6vTjYmD38k4uMw9AVZ8sDzZJffoZYN/6le12mvzhnLNYfqtwoO0TIhiPAN?=
+ =?us-ascii?Q?wTP9EA61Aj/HisdFdM26VXA5i9sZoQNokj22e/hX?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ac820209-a560-4f2c-8d99-08dc99e1f275
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2024 15:24:49.5535
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GQX6qK7BCFjorZVeWSHeQosJ1AIa69JF7FmswyzAqITKPdaBplxO2HhF2FBX37gbPtoeLHIMsxjrRHbOAfcS7A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8410
 
-On Mon, Jul 01, 2024 at 09:57:43AM -0400, Jeff Layton wrote:
-> On Mon, 2024-07-01 at 09:49 -0400, Josef Bacik wrote:
-> > On Mon, Jul 01, 2024 at 06:26:45AM -0400, Jeff Layton wrote:
-> > > Enable multigrain timestamps, which should ensure that there is an
-> > > apparent change to the timestamp whenever it has been written after
-> > > being actively observed via getattr.
-> > > 
-> > > Beyond enabling the FS_MGTIME flag, this patch eliminates
-> > > update_time_for_write, which goes to great pains to avoid in-memory
-> > > stores. Just have it overwrite the timestamps unconditionally.
-> > > 
-> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > ---
-> > >  fs/btrfs/file.c  | 25 ++++---------------------
-> > >  fs/btrfs/super.c |  3 ++-
-> > >  2 files changed, 6 insertions(+), 22 deletions(-)
-> > > 
-> > > diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-> > > index d90138683a0a..409628c0c3cc 100644
-> > > --- a/fs/btrfs/file.c
-> > > +++ b/fs/btrfs/file.c
-> > > @@ -1120,26 +1120,6 @@ void btrfs_check_nocow_unlock(struct
-> > > btrfs_inode *inode)
-> > >  	btrfs_drew_write_unlock(&inode->root->snapshot_lock);
-> > >  }
-> > >  
-> > > -static void update_time_for_write(struct inode *inode)
-> > > -{
-> > > -	struct timespec64 now, ts;
-> > > -
-> > > -	if (IS_NOCMTIME(inode))
-> > > -		return;
-> > > -
-> > > -	now = current_time(inode);
-> > > -	ts = inode_get_mtime(inode);
-> > > -	if (!timespec64_equal(&ts, &now))
-> > > -		inode_set_mtime_to_ts(inode, now);
-> > > -
-> > > -	ts = inode_get_ctime(inode);
-> > > -	if (!timespec64_equal(&ts, &now))
-> > > -		inode_set_ctime_to_ts(inode, now);
-> > > -
-> > > -	if (IS_I_VERSION(inode))
-> > > -		inode_inc_iversion(inode);
-> > > -}
-> > > -
-> > >  static int btrfs_write_check(struct kiocb *iocb, struct iov_iter
-> > > *from,
-> > >  			     size_t count)
-> > >  {
-> > > @@ -1171,7 +1151,10 @@ static int btrfs_write_check(struct kiocb
-> > > *iocb, struct iov_iter *from,
-> > >  	 * need to start yet another transaction to update the
-> > > inode as we will
-> > >  	 * update the inode when we finish writing whatever data
-> > > we write.
-> > >  	 */
-> > > -	update_time_for_write(inode);
-> > > +	if (!IS_NOCMTIME(inode)) {
-> > > +		inode_set_mtime_to_ts(inode,
-> > > inode_set_ctime_current(inode));
-> > > +		inode_inc_iversion(inode);
+On Mon, Jul 01, 2024 at 03:52:10PM +0100, Mark Brown wrote:
+> On Mon, 24 Jun 2024 14:55:26 -0400, Frank Li wrote:
+> > Convert fsl-dspi binding to to yaml format.
+> > Using common SPI property spi-cs-setup-delay-ns and spi-cs-hold-delay-ns.
+> > Update driver and ls1043 dts file.
 > > 
-> > You've dropped the
+> > To: Vladimir Oltean <olteanv@gmail.com>
+> > To: Mark Brown <broonie@kernel.org>
+> > To: Rob Herring <robh@kernel.org>
+> > To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> > To: Conor Dooley <conor+dt@kernel.org>
+> > To: Shawn Guo <shawnguo@kernel.org>
+> > Cc: linux-spi@vger.kernel.org
+> > Cc: linux-kernel@vger.kernel.org
+> > Cc: devicetree@vger.kernel.org
+> > Cc: linux-arm-kernel@lists.infradead.org
+> > Cc: imx@lists.linux.dev
+> > Cc: olteanv@gmail.com
 > > 
-> > if (IS_I_VERSION(inode))
-> > 
-> > check here, and it doesn't appear to be in inode_inc_iversion.  Is
-> > there a
-> > reason for this?  Thanks,
-> > 
+> > [...]
 > 
-> AFAICT, btrfs always sets SB_I_VERSION. Are there any cases where it
-> isn't? If so, then I can put this check back. I'll make a note about it
-> in the changelog if not.
+> Applied to
+> 
+>    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+> 
+> Thanks!
+> 
+> [1/3] spi: fsl-dspi: use common proptery 'spi-cs-setup(hold)-delay-ns'
+>       commit: 52e78777b6bfd4bc47448791a99d5f97c82ff81c
+> [2/3] spi: dt-bindings: fsl-dspi: Convert to yaml format
+>       commit: 94f19d076218a193d170da6d5ab2a87c080cc69c
+> 
+> All being well this means that it will be integrated into the linux-next
+> tree (usually sometime in the next 24 hours) and sent to Linus during
+> the next merge window (or sooner if it is a bug fix), however if
+> problems are discovered then the patch may be dropped or reverted.
+> 
+> You may get further e-mails resulting from automated or manual testing
+> and review of the tree, please engage with people reporting problems and
+> send followup patches addressing any issues that are reported if needed.
+> 
+> If any updates are required or you are submitting further changes they
+> should be sent as incremental updates against current git, existing
+> patches will not be replaced.
+> 
+> Please add any relevant lists and maintainers to the CCs when replying
+> to this mail.
 
-Yes it's always set and I don't see anything in the generic code that
-would unset it so it's safe to drop the IS_I_VERSION check.
+Thank you very much, I sent out incremental update before this patch
+applied since my one miss understand. Could you please check this?
 
-The check was originally added in November 2012 by 6c760c072403f4
-("Btrfs: do not call file_update_time in aio_write") and then moved a
-few times. Enabling the super block flags was added in May 2012 by
-0c4d2d95d06e92 ("Btrfs: use i_version instead of our own sequence") so
-the check was not necessary from the beginning.
+https://lore.kernel.org/imx/20240627203308.476437-1-Frank.Li@nxp.com/
+
+Frank
+
+> 
+> Thanks,
+> Mark
+> 
 
