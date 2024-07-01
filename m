@@ -1,113 +1,124 @@
-Return-Path: <linux-kernel+bounces-235469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A44F91D577
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 02:25:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FF0491D579
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 02:25:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00C521F2159F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 00:25:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEF2F280F41
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 00:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F2A15E5D4;
-	Mon,  1 Jul 2024 00:15:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D12402CA2;
+	Mon,  1 Jul 2024 00:16:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cRCj+a/o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="UIz7LUZ1"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD0815E5B5;
-	Mon,  1 Jul 2024 00:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0E5184D;
+	Mon,  1 Jul 2024 00:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719792929; cv=none; b=JpSdipjGi3NsaVucyWgqX/E7lzwq09bY792V+5usYL4wpx345ipP+Goy2JL7ABIJa3lGuN2ydfJxKbRl92rdyKWGv6y601sjvCeDbPPbNDjJWajZVweSyld7jT2PWPmMJQzXF8CysWxMuxJYADAqxvYrfOZSZ7E8k/h3vfdz0K8=
+	t=1719793009; cv=none; b=nN4BsfIt5Lwa+9C6mvMSb/ZebKMpsl/dK+hpb7d4F6VS5HHAHN1cAYIOvbv1i92rzX3PM5K7CkIz/P5RS3MYAuA5y2DNa0a6K87/iTxgodGmlVGLnwevpCpXgcwkRPHXEirIVWEHmfowU1wtR92vns9Sm8PVmKx82OqxWV3Uj34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719792929; c=relaxed/simple;
-	bh=bOqZL3nocXZv75amT86xjTri92MhjmQSpmYnYvlqLlk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=on7bwgLKIjAiGEq9/Jw5Xu/hfYnEgRWlCsxhlG6dTGx/gMPmkNON/b8AkZUCTiFnymQE3JhuKNf3JoIuS23rd87O8R5c5iEFmI9oR+jPutgLw8RyylwSvQ7PQ/X10VMMIh8zuG03o1Sd12DzG05NtXWIRaPQjaVfvuNKkPUbv+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cRCj+a/o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12CC7C2BD10;
-	Mon,  1 Jul 2024 00:15:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719792929;
-	bh=bOqZL3nocXZv75amT86xjTri92MhjmQSpmYnYvlqLlk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=cRCj+a/oiksTQSL04gxtQ84xzqzD75dfXC0nzNApNy+mkIiJZE1BhQrmfpKUd3omr
-	 kb4YKnEuNgrNqTxBDfG+kR3k5M1BPbokHTGuIs6jA/JF1FCUfYhSs15l4Shr5B5t2g
-	 qHEvrNG08y7hq0/bPQJVcY4BGIOiPvq6ufHQjTnI5C9vxHJlWQ+UCBOTiZYkC4wItb
-	 B15whA3h4t2HkQBAOZ9Ke3rFw5fyiXShG2fgNlRw4JvicwFfic4xSNNcpXTSjuKXNC
-	 sBgrkHC975UVj/9vM64csFpdauZBVYyOuZ/jHpwxTse2CwYFpH5jtzIiJUeDtdSzKT
-	 v4YTkP0SYEWkg==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Dmitry Antipov <dmantipov@yandex.ru>,
-	syzbot+253cd2d2491df77c93ac@syzkaller.appspotmail.com,
-	Johannes Berg <johannes.berg@intel.com>,
-	Sasha Levin <sashal@kernel.org>,
-	johannes@sipsolutions.net,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-wireless@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19] wifi: cfg80211: wext: add extra SIOCSIWSCAN data check
-Date: Sun, 30 Jun 2024 20:15:26 -0400
-Message-ID: <20240701001526.2921645-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1719793009; c=relaxed/simple;
+	bh=Shv05OIrt4jOySfzRW6mAphbqW67+QmTPRb24yysNJE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=L0GbF5H0Y3GJ9gm5QgLkMnDa+Ju8rIeICOgv5gcqpav5H+mexkoKorVI6E1K5L43JBv6s+o15t+e5hCdxzIDndoQHFp4qQ6Qjlo/rhcFVEGFRPl43ZDChOkUbWgydHm+i0BEQD4RhbNYVauaL1PCflYqUVIUfW8SB+3C+2/nbD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=UIz7LUZ1; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1719793003;
+	bh=ObtFuimfQEVuHfXYdkPCbgWg0Y5Fn66sqBdhV3hm14o=;
+	h=Date:From:To:Cc:Subject:From;
+	b=UIz7LUZ1h7YW1RG1oYGZHEhcgRtXrduzeNY/Frgdg9/0X4orcwHnwc0P4kE7toz9r
+	 f5Uo3rP9z4kB7/diPLaFxsGkD/A8SdrB+pw2t8HqjSbTU2JYPqvHpR9CoKvjl8kKCH
+	 1+6DmP56Q+nXvs5j32vT1BunqYv0x6Xos6uU4b7L28l+31i44jpc0gvJABnfmTXn4l
+	 QvOb5e7MMScNkQs34eXHJphDlpOeRLS1Wek08ZQJoNxnGeNzP8+7gaQ8lHYjfXj+zw
+	 53P9RrIAxZNQvRtn+OsCoRAwaCu+OD36Bt8XSgYbbb3TEYHtBBpuIHusPDsHlbG+JP
+	 zPyuIMjRrqoNA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WC66L42hbz4x0C;
+	Mon,  1 Jul 2024 10:16:42 +1000 (AEST)
+Date: Mon, 1 Jul 2024 10:16:41 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Yang Shi <yang@os.amperecomputing.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the mm-hotfixes tree
+Message-ID: <20240701101641.4fea0ac2@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 4.19.316
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/vq9dRb+TmbBpSR9h=2Fdoy9";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-From: Dmitry Antipov <dmantipov@yandex.ru>
+--Sig_/vq9dRb+TmbBpSR9h=2Fdoy9
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-[ Upstream commit 6ef09cdc5ba0f93826c09d810c141a8d103a80fc ]
+Hi all,
 
-In 'cfg80211_wext_siwscan()', add extra check whether number of
-channels passed via 'ioctl(sock, SIOCSIWSCAN, ...)' doesn't exceed
-IW_MAX_FREQUENCIES and reject invalid request with -EINVAL otherwise.
+After merging the mm-hotfixes tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Reported-by: syzbot+253cd2d2491df77c93ac@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=253cd2d2491df77c93ac
-Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
-Link: https://msgid.link/20240531032010.451295-1-dmantipov@yandex.ru
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- net/wireless/scan.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+mm/gup.c: In function 'gup_hugepte':
+mm/gup.c:474:25: error: implicit declaration of function 'try_grab_folio_fa=
+st'; did you mean 'try_grab_folio'? [-Werror=3Dimplicit-function-declaratio=
+n]
+  474 |                 folio =3D try_grab_folio_fast(page, refs, flags);
+      |                         ^~~~~~~~~~~~~~~~~~~
+      |                         try_grab_folio
+mm/gup.c:474:23: warning: assignment to 'struct folio *' from 'int' makes p=
+ointer from integer without a cast [-Wint-conversion]
+  474 |                 folio =3D try_grab_folio_fast(page, refs, flags);
+      |                       ^
+mm/gup.c: At top level:
+mm/gup.c:2747:22: error: conflicting types for 'try_grab_folio_fast'; have =
+'struct folio *(struct page *, int,  unsigned int)'
+ 2747 | static struct folio *try_grab_folio_fast(struct page *page, int ref=
+s,
+      |                      ^~~~~~~~~~~~~~~~~~~
+mm/gup.c:474:25: note: previous implicit declaration of 'try_grab_folio_fas=
+t' with type 'int()'
+  474 |                 folio =3D try_grab_folio_fast(page, refs, flags);
+      |                         ^~~~~~~~~~~~~~~~~~~
+cc1: some warnings being treated as errors
 
-diff --git a/net/wireless/scan.c b/net/wireless/scan.c
-index dacb9ceee3efd..0dc27703443c8 100644
---- a/net/wireless/scan.c
-+++ b/net/wireless/scan.c
-@@ -1405,10 +1405,14 @@ int cfg80211_wext_siwscan(struct net_device *dev,
- 	wiphy = &rdev->wiphy;
- 
- 	/* Determine number of channels, needed to allocate creq */
--	if (wreq && wreq->num_channels)
-+	if (wreq && wreq->num_channels) {
-+		/* Passed from userspace so should be checked */
-+		if (unlikely(wreq->num_channels > IW_MAX_FREQUENCIES))
-+			return -EINVAL;
- 		n_channels = wreq->num_channels;
--	else
-+	} else {
- 		n_channels = ieee80211_get_num_supported_channels(wiphy);
-+	}
- 
- 	creq = kzalloc(sizeof(*creq) + sizeof(struct cfg80211_ssid) +
- 		       n_channels * sizeof(void *),
--- 
-2.43.0
+Caused by commit
 
+  5f408bfe0d13 ("mm: gup: stop abusing try_grab_folio")
+
+I have reverted that commit for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/vq9dRb+TmbBpSR9h=2Fdoy9
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaB9WkACgkQAVBC80lX
+0Gzlowf+ISjNlFGRzqsS2AViJXmhi2+OaqUnV6kN1Yry4NIzi9lr1fXp0U0G97lK
+BEUpOLAhRzS1hKczPZZo2wHzxPhy/Ft5nSCwKhrCaYDMP1fuBTN36RFNuTY5JQc9
+95zAohd0gEBY/Z+n8WlhrpxZMf3+DYsffqXi6CDvs5wWf3V7GjuM9pyhTs0kt2HD
+0+H/MwVIzFyhP8MUVS6yloegM0QwKFYZHztsXjf4giY6umXth8hBCL5gsmEN5c/E
+De+iimEGzBIBpQoAjqIBebkY1q17vMf7tAwsNm9xvARoR00+oq3ywzTZlOFauVV1
+kyGCh3ZjA0X4v3WdPBTwS/nvJ4Sk1A==
+=6FC3
+-----END PGP SIGNATURE-----
+
+--Sig_/vq9dRb+TmbBpSR9h=2Fdoy9--
 
