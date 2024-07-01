@@ -1,131 +1,84 @@
-Return-Path: <linux-kernel+bounces-236505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA11191E327
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:02:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C30291E32A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:02:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DF541F21B71
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:02:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57947287D7F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:02:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9464B16C860;
-	Mon,  1 Jul 2024 15:02:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 188C316CD0C;
+	Mon,  1 Jul 2024 15:02:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="l7Ed4EuO"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L0RxSM2L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC1C16B739;
-	Mon,  1 Jul 2024 15:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5779016B739;
+	Mon,  1 Jul 2024 15:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719846130; cv=none; b=n6sWp57tyTvtK/Ej06dbR9qV8tAGa3LjkAx7h3hc1in373KY6AD8+dNY7apR9vi0klD753EnkldoYv+Iw1jX6RNUkn82pQTSJeuSTLmjFrKsN+evf4vLR79p3qlvzQDXdW++NFyVZIjxD31R6P9PJcq/NY2kPOStmiZsagAWNQk=
+	t=1719846135; cv=none; b=ADwLSw8PgmWmNI/m+wJ753vNPoTKqx2Rxtoh4xmHWdRGI+Hy1qfZDuXs+2gxq0nd7HSR+MJofKIRh7SVxwiUF0tZU5ZwAVyxuTitwqzb6xtqIDHUi5ySyUWdHoakiFqyiLtStdK2TLvoJsKBAfsoeVcUuCIMQ6jqVc0TEJPZz90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719846130; c=relaxed/simple;
-	bh=sfrTo7hyYfbzhRNUPumhmPzam6O6qfhQMqEfifc7xkA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D/+CZXMIN3e3wU/qry9mQMmWX7ry7fepvlN549+FNKyKb+xz71d+yQuR3P/sAXEGcRqyVKFAOsj3UKvMLGjizCnoxr8lMM8IRWDkPqg6xtQRr3xAkWwNRuXSfsGcJE5OHmSc04HyzM+5PCb5LEyQKQKBtcjTH7loui0VL7SvnVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=l7Ed4EuO; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=QewlYFdkXVk4y5FaBk6eYx20wWM+U6iYtyuvzVLFNAg=; b=l7Ed4EuOOarcvuAxcQtXJqO9hk
-	2i8hO3/kBgNa2My0ptHeiIB3ru4xpKAw1w/QIM6WyVgVs95DVUZnfCUD+SZ3LBtYLDaufsfEw0gZU
-	meJ64K6Ume5c6V5UhisntVi/KJGuNbmosaIZd7UzahkWE5dtgvJFEWDJmLUVDLM52tBhTfj1gxS1e
-	1+N9FNlkcPzM8CiwKepLw5Ds1+DO3JbiYaONzPeBVSAGk7iShHT6UfrY6cYfGk+SzMN30RGRrjYhg
-	bSbZFKrptV63SFAaWKMUwOF7iP1vjMv6J7YyjfEV56moU8dLF8KxqapMpI2WRqFOoNd/JCN2oyH8g
-	2rPbLaog==;
-Received: from [50.53.4.147] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sOIXX-00000003qAO-1wcY;
-	Mon, 01 Jul 2024 15:01:59 +0000
-Message-ID: <047579c5-582a-46ac-8967-e9ca9a90cea7@infradead.org>
-Date: Mon, 1 Jul 2024 08:01:58 -0700
+	s=arc-20240116; t=1719846135; c=relaxed/simple;
+	bh=uqathgmbSM8m38d4fIzNW2zu9IWw8l+lf1vgqx51hdI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=E2Khj+hz1kOji6eMSp8Jf/BzuBQwCr/LjyfUXkCH9YRt8qv1pq8ipUJUUo86c4Z8JEcCKZLCjCGt8f3pnC7IE9ItP5Z9TFZACDn2tQlLhLMKzlN3+knljYBBlCLDAlOUXo/8QxeaawdhwPg8ovM2yL89azvYnzfvlY5VBYS+81I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L0RxSM2L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB399C116B1;
+	Mon,  1 Jul 2024 15:02:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719846135;
+	bh=uqathgmbSM8m38d4fIzNW2zu9IWw8l+lf1vgqx51hdI=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=L0RxSM2LYiElQtH9cBnJze28HtH8IHUmgu1ONOjYMSOKEwIKjzO0m9lR+Kd0B36e+
+	 uQSnFPFSmT2IDyB3FXFCoREBIiy4BVs4yEn2cKkesaMvtGrtlRMEgMO3mCU5m6pRwr
+	 NdPDwX0ooaW+yOV5PJZP8aqihKNggSlyfcMOlyOXyR5MGUuF5O30qOG0JzSVikjuAF
+	 hMVx4bXxGsnGs0hgU4pscRKQGzjxTAkyvtH8aqlMl3yaWm1pD1EsCmHZDCpGxvVlrE
+	 RIlvAb9qJszX62Oc6S8gmv3FYRtRbpbifFJQUol73w7c+sWKP3rfgMhxJxoQQQqxIi
+	 6s4quqyjbao0Q==
+Message-ID: <0c5445a5142612fa617fef91cb85fa7ed174447f.camel@kernel.org>
+Subject: Re: [PATCH v1] tpm_tis_spi: add missing attpm20p SPI device ID entry
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Vitor Soares <ivitro@gmail.com>, Peter Huewe <peterhuewe@gmx.de>, Jason
+ Gunthorpe <jgg@ziepe.ca>, Lukas Wunner <lukas@wunner.de>
+Cc: Vitor Soares <vitor.soares@toradex.com>,
+ linux-integrity@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+Date: Mon, 01 Jul 2024 15:02:11 +0000
+In-Reply-To: <20240621095045.1536920-1-ivitro@gmail.com>
+References: <20240621095045.1536920-1-ivitro@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] cgroup/misc: Introduce misc.peak
-To: Xiu Jianfeng <xiujianfeng@huawei.com>, tj@kernel.org,
- lizefan.x@bytedance.com, hannes@cmpxchg.org, corbet@lwn.net,
- kamalesh.babulal@oracle.com, haitao.huang@linux.intel.com
-Cc: cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240701125259.2611466-1-xiujianfeng@huawei.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240701125259.2611466-1-xiujianfeng@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-Hi--
+On Fri, 2024-06-21 at 10:50 +0100, Vitor Soares wrote:
+> From: Vitor Soares <vitor.soares@toradex.com>
+>=20
+> "atmel,attpm20p" DT compatible is missing its SPI device ID entry, not
+> allowing module autoloading and leading to the following message:
+>=20
+> =C2=A0 "SPI driver tpm_tis_spi has no spi_device_id for atmel,attpm20p"
+>=20
+> Based on:
+> =C2=A0 commit 7eba41fe8c7b ("tpm_tis_spi: Add missing SPI ID")
+>=20
+> Fix this by adding the corresponding "attpm20p" spi_device_id entry.
+>=20
+> Fixes: 3c45308c44ed ("tpm_tis_spi: Add compatible string atmel,attpm20p")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
 
-On 7/1/24 5:52 AM, Xiu Jianfeng wrote:
-> Introduce misc.peak to record the historical maximum usage of the
-> resource, as in some scenarios the value of misc.max could be
-> adjusted based on the peak usage of the resource.
-> 
-> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
-> ---
->  Documentation/admin-guide/cgroup-v2.rst |  9 ++++++++
->  include/linux/misc_cgroup.h             |  2 ++
->  kernel/cgroup/misc.c                    | 29 +++++++++++++++++++++++++
->  3 files changed, 40 insertions(+)
-> 
-> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-> index ae0fdb6fc618..48ae30f2d9ab 100644
-> --- a/Documentation/admin-guide/cgroup-v2.rst
-> +++ b/Documentation/admin-guide/cgroup-v2.rst
-> @@ -2646,6 +2646,15 @@ Miscellaneous controller provides 3 interface files. If two misc resources (res_
->  	  res_a 3
->  	  res_b 0
->  
-> +  misc.peak
-> +        A read-only flat-keyed file shown in the all cgroups.  It shows
+This is not a bug fix. This is a feature.
 
-	                               shown in all cgroups. It shows
-
-> +        the historical maximum usage of the resources in the cgroup and
-> +        its children.::
-> +
-> +	  $ cat misc.peak
-> +	  res_a 10
-> +	  res_b 8
-> +
->    misc.max
->          A read-write flat-keyed file shown in the non root cgroups. Allowed
->          maximum usage of the resources in the cgroup and its children.::
-> diff --git a/include/linux/misc_cgroup.h b/include/linux/misc_cgroup.h
-> index e799b1f8d05b..8aa69818291e 100644
-> --- a/include/linux/misc_cgroup.h
-> +++ b/include/linux/misc_cgroup.h
-> @@ -30,11 +30,13 @@ struct misc_cg;
->  /**
->   * struct misc_res: Per cgroup per misc type resource
->   * @max: Maximum limit on the resource.
-> + * $watermark: Historical maximum usage of the resource.
-
-      @watermark:
-
->   * @usage: Current usage of the resource.
->   * @events: Number of times, the resource limit exceeded.
->   */
->  struct misc_res {
->  	u64 max;
-> +	u64 watermark;
->  	atomic64_t usage;
->  	atomic64_t events;
->  };
-
-
--- 
-~Randy
+BR, Jarkko
 
