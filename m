@@ -1,197 +1,145 @@
-Return-Path: <linux-kernel+bounces-235726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65BE491D8F5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:30:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39C8191D8F9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:31:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E78261F21799
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:30:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AFD61C21044
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6382AEE4;
-	Mon,  1 Jul 2024 07:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC20811FE;
+	Mon,  1 Jul 2024 07:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pdKP4unF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0GKKsGK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8013BBF0;
-	Mon,  1 Jul 2024 07:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868C179B87;
+	Mon,  1 Jul 2024 07:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719819047; cv=none; b=EwvKGpDdB0RlpUIh672EEaB33BzSr/1K1J0/wYUrZqPAFlDlUFBR4WtuG+CYOugCuGgTnuMogEif1m3KzGEwwN9cxIyUqD4i1DA4udjMg2gdXlzwzkHlFW9gAyQjwqTHRl4ZQ6fP70vH4RoczTOORPFSgsaInBxlmITe/ZNjUWc=
+	t=1719819050; cv=none; b=cNDLGCwpK+y24va/RmyJoIcUnP78hTa0v0oGxL1NMO1ZUpZpSrDdmri3nhBIFggTF7VH7jvtcfpJHDaDm//2g8kbo+ojh03wYELhvz+eRAGLwVnCTq1oy7l/ODVZnn+o7kuQR5wYyhV38flPC83XeIoOKQh0ETwQycff3CTBJRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719819047; c=relaxed/simple;
-	bh=drodiIgiYnO2s+57jzo8wdNfJyEo/4DESiws+t+4NHI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F7lrT3mEvpYpEdvgCj3Wfga/LOV9SOU4gVbz4LKqyh0NSjGuytugnpDVKq2LJ9YyJa73cuPwkgat9IzPpZIwy9SWGEPFCeJEAUToXhMU74+I5rZKLjSzJrnWqerhfa795s2zlYCXpWcvyW15FozWNeLroC5sGO2rNqMGyRgSxCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pdKP4unF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5078EC4AF0A;
-	Mon,  1 Jul 2024 07:30:47 +0000 (UTC)
+	s=arc-20240116; t=1719819050; c=relaxed/simple;
+	bh=ZuHZ0mDU/PBddzYb7XFFNVc2cHaRbiJe+WckxgbtiMw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QEZ/7ZUqZeRKZnsNn/hcOpnAmmbMDEBPB6rEMLtClfCh5y2cPEQAhKSa3EMaQi+VBPBOerB+YHrUHBPRliYswYi6uTkYnBglFJpBhA7i0nl02LHtRZ+0LA0EvT2NTQXG5ZEivtp4BON11Nir2FQA/81jMRRDAkAGhtI8vuCgQVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V0GKKsGK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C26AC116B1;
+	Mon,  1 Jul 2024 07:30:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719819047;
-	bh=drodiIgiYnO2s+57jzo8wdNfJyEo/4DESiws+t+4NHI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=pdKP4unFdwQTKkWDlSMczEgdTBKoKpYqSl0G3geaBDG44CjWVFQYOm/RwFF1u4QLU
-	 u83XB52wt612QfFMiOuq2+Lt2+WxTQQtp/5ezsBxDM/QzxZ3t/8x4/D2mPTxoTVKjr
-	 HCthsIyOYEy9rbTnc+sieBYE1LOzd+UEdUbsCnabWWe5dr28p/xUDPELa3GQa482Bu
-	 KpNz4nDhvzZO1yzVvqzVXqxmRE1JWpnDS7MqYwyi8F4J+jQiJJk1HZ/Y7yy338Arsc
-	 GT3T6e+yDfL9Fc8+LR9vsXwVg+ya2rW2QnHZ2jO7dPbTFpmeGUR2tFi8C3NFjfeboD
-	 5wIcUj5LBZziw==
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2eaa89464a3so27852341fa.3;
-        Mon, 01 Jul 2024 00:30:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX+fS0x2jg3sOXvtOGmynHIYD59PAtPoBZkKr3JXAwKlxe02QB6WLnlktg7tgcatCLy+RdSCuEkBb4vCcAtlPm/SViS3yhQT6tNc0SrABpV+QTaE6UW0sQq9lSd1P3b/5HHywHrqlR4
-X-Gm-Message-State: AOJu0YyWra6poMKJz3hiMCwdgos23SStMoOmPtj9q3Qa6W3oZJseqFEP
-	SI/Xmp8MdjiW1Zdrl/Jr2q7pow2X3j0gjxD57XNsFkFP9Fdit8wh23lMdFFqvEk6hmdzMogY/PC
-	axRISUdf3R9JJMmxJbpvApKlgknQ=
-X-Google-Smtp-Source: AGHT+IEzeM7h60JTZVY17l/NAbDgncLQwTcnVey92w5fkczN4E6zz38U5jWgpR3TYqr1XOWjwjZrbbmXJSDZ1q9pB2o=
-X-Received: by 2002:a2e:96d4:0:b0:2ec:500c:b2de with SMTP id
- 38308e7fff4ca-2ee5e38122dmr25862601fa.7.1719819045518; Mon, 01 Jul 2024
- 00:30:45 -0700 (PDT)
+	s=k20201202; t=1719819050;
+	bh=ZuHZ0mDU/PBddzYb7XFFNVc2cHaRbiJe+WckxgbtiMw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=V0GKKsGKYQxTluOnGIeCgHWXGnIpA0RFOs/luelwQUxUs8aAr6cVtu50mzMS5WZlt
+	 VKasGGiKHD8NDnYJ/BtlrbMnBtSxK9r0PH7PdDzytEGPo8tBVyGzKh1iAW7Vg9u1Jr
+	 mIgWkxSmx5B7g579bQbrHZlggfKqAmG4FPag9JZI0jnXMD3791hNI9Q+pN5saSuMSf
+	 rv3eb8JSaGd4FOnFoC5HQzIhNmRcQrI/+USTtkylCJuixUWtq6EkIH9BjUKdvGL54m
+	 eBMXSKU4kQdUkPcrw8R3V8XPwll1cN15vTj+NRqckEh57BSiLtjSCzqQ6sa+L/E1Zf
+	 sAOjlDpw5M0yQ==
+Message-ID: <539610b5-52e7-424a-81cc-22c8789b1333@kernel.org>
+Date: Mon, 1 Jul 2024 09:30:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <75C90B50-9AB9-4F0A-B2CD-43427354D15C@live.com>
- <ZoJAAifMqIDXdniv@wunner.de> <CAMj1kXH3fvS259Y1mfYcKQbM2mUYbSfuf2ZiMXfFhjq-rzn5UA@mail.gmail.com>
- <ZoJDuunseVIDua-m@wunner.de> <CAMj1kXFKBsAXDLxinqiszH=6hEOjbJQL-nFgBsBceta4rUCN-w@mail.gmail.com>
- <ZoJPgSlZJ3ZlU2zL@wunner.de>
-In-Reply-To: <ZoJPgSlZJ3ZlU2zL@wunner.de>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Mon, 1 Jul 2024 09:30:34 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXHR+mCR5eibj23S26-PN6yLPD1uf9+H2fEEDhNWOh6TjA@mail.gmail.com>
-Message-ID: <CAMj1kXHR+mCR5eibj23S26-PN6yLPD1uf9+H2fEEDhNWOh6TjA@mail.gmail.com>
-Subject: Re: [PATCH v2] efi: libstub: add support for the apple_set_os protocol
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Aditya Garg <gargaditya08@live.com>, Hans de Goede <hdegoede@redhat.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, Kerem Karabay <kekrby@gmail.com>, 
-	Orlando Chamberlain <orlandoch.dev@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/2] dt-bindings: cros-ec-keyboard: Add keyboard matrix
+ v3.0
+To: Daisuke Nojiri <dnojiri@chromium.org>
+Cc: Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
+ Guenter Roeck <groeck@chromium.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+ Reka Norman <rekanorman@chromium.org>, Pavan Holla <pholla@chromium.org>,
+ Abhishek Pandit-Subedi <abhishekpandit@google.com>,
+ Gwendal Grignou <gwendal@chromium.org>,
+ Ching-Kang Yen <chingkang@chromium.org>, Lukasz Majczak <lma@chromium.org>,
+ Prashant Malani <pmalani@chromium.org>, Stephen Boyd <swboyd@chromium.org>,
+ chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-input@vger.kernel.org, devicetree@vger.kernel.org
+References: <cover.1719691604.git.dnojiri@chromium.org>
+ <9544ef0e9911dbe8f5e2fcd7123adc20a0a2f7f2.1719691604.git.dnojiri@chromium.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <9544ef0e9911dbe8f5e2fcd7123adc20a0a2f7f2.1719691604.git.dnojiri@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 1 Jul 2024 at 08:41, Lukas Wunner <lukas@wunner.de> wrote:
->
-> On Mon, Jul 01, 2024 at 07:56:04AM +0200, Ard Biesheuvel wrote:
-> > On Mon, 1 Jul 2024 at 07:50, Lukas Wunner <lukas@wunner.de> wrote:
-> > > On Mon, Jul 01, 2024 at 07:38:38AM +0200, Ard Biesheuvel wrote:
-> > > > Any thoughts on whether this should depend on CONFIG_APPLE_GMUX or not?
-> > >
-> > > I tend towards *not* making it depend on CONFIG_APPLE_GMUX:
-> > >
-...
-> > > * apple_set_os() has side effects beyond exposing the iGPU (such as
-> > >   switching the keyboard+trackpad access method to SPI instead of USB).
-> > >   If there are issues, they will be harder to debug if their occurrence
-> > >   depends on a Kconfig option.
-> >
-...
-> > Is the latter side effect
-> > likely to cause any regressions on Intel Mac users that don't have two
-> > GPUs to begin with?
->
-> MacBook Air models introduced 2013/2014 will use SPI instead of USB
-> to access the keyboard and trackpad.  And from a quick look, the
-> applespi_tp_models[] array in drivers/input/keyboard/applespi.c
-> seems to be missing the trackpad dimensions of those models.
-> The driver may also need a quirk to work around missing properties
-> in the DSDT on those models.  Back in 2018 someone tested apple_set_os()
-> on such a machine and reported these issues, but the GitHub discussion
-> to narrow them down and fix them fizzled out:
->
-> https://github.com/cb22/macbook12-spi-driver/issues/65
->
-> The problem is that users of such models will generally run a
-> distribution kernel which has CONFIG_APPLE_GMUX enabled,
-> so constraining apple_set_os() to CONFIG_APPLE_GMUX won't help them.
-> Also, there is no incentive to amend the applespi.c driver for
-> affected machines if apple_set_os() is never called on them,
-> which is regrettable.
->
-> Another potential regression is that exposing the iGPU may consume
-> more power.  Or maybe the i915 driver will autosuspend if the panel
-> is not connected, I don't know.  Likewise there is no incentive to
-> fix the issue if apple_set_os() is never run.
->
-> I've also heard rumors that the EFI firmware configures different
-> CPU frequency scaling parameters if apple_set_os() is called,
-> but maybe Linux overwrites them anyway.  Apple never cared for Linux,
-> so apple_set_os() basically just differentiates between macOS and
-> Windows (via Boot Camp).  We generally choose to masquerade as macOS
-> to get access to the full set of hardware features, not the crippled
-> setup exposed to Windows.
->
-> If you think that we absolutely need to avoid these potential regressions,
-> a better approach than constraining to CONFIG_APPLE_GMUX would be to
-> match DMI data for dual-GPU MacBook Pros.  I notice that the efistub
-> has been amended with SMBIOS support through efi_get_smbios_record() +
-> efi_get_smbios_string().  Would that get us to the laptop model name?
-> If so that would seem to be a viable way to avoid or at least minimize
-> regressions.
->
+On 29/06/2024 22:11, Daisuke Nojiri wrote:
+> Add support for keyboard matrix version 3.0, which reduces keyboard
+> ghosting.
+> 
+> Signed-off-by: Daisuke Nojiri <dnojiri@chromium.org>
 
-DMI matching would be a nice way to apply this change only to systems
-that have a need for it, without manual intervention via a command
-line switch.
+<form letter>
+This is a friendly reminder during the review process.
 
-Assuming that Intel Macs implement the EFI SMBIOS protocol, reusing
-the existing pieces should be rather straight-forward. Something like
-the below should work in that case (whitespace damage courtesy of
-gmail)
+It looks like you received a tag and forgot to add it.
 
-Note that the smbios.c  libstub source file needs some changes to
-build correctly for x86 with CONFIG_EFI_MIXED=y, but I can take care
-of that.
+If you do not know the process, here is a short explanation:
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tag is "received", when
+provided in a message replied to you on the mailing list. Tools like b4
+can help here. However, there's no need to repost patches *only* to add
+the tags. The upstream maintainer will do that for tags received on the
+version they apply.
 
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
 
+If a tag was not added on purpose, please state why and what changed.
+</form letter>
 
-diff --git a/drivers/firmware/efi/libstub/x86-stub.c
-b/drivers/firmware/efi/libstub/x86-stub.c
-index 250c964e93ee..826756c02657 100644
---- a/drivers/firmware/efi/libstub/x86-stub.c
-+++ b/drivers/firmware/efi/libstub/x86-stub.c
-@@ -225,12 +225,39 @@ static void
-retrieve_apple_device_properties(struct boot_params *boot_params)
-        }
- }
+Best regards,
+Krzysztof
 
-+static bool apple_match_product_name(void)
-+{
-+       static const char type1_matches[][16] = {
-+               "MacBookPro16,1",
-+       };
-+       const struct efi_smbios_type1_record *record;
-+       const u8 *product;
-+
-+       record = (struct efi_smbios_type1_record *)efi_get_smbios_record(1);
-+       if (!record)
-+               return false;
-+
-+       product = efi_get_smbios_string(&record->header, 1, product_name);
-+       if (!product)
-+               return false;
-+
-+       for (int i = 0; i < ARRAY_SIZE(type1_matches); i++) {
-+               if (!strcmp(product, type1_matches[i]))
-+                       return true;
-+       }
-+
-+       return false;
-+}
-+
- static void apple_set_os(void)
- {
-        efi_guid_t guid = APPLE_SET_OS_PROTOCOL_GUID;
-        apple_set_os_protocol_t *set_os;
-        efi_status_t status;
-
-+       if (!apple_match_product_name())
-+               return;
-+
-        status = efi_bs_call(locate_protocol, &guid, NULL, (void **)&set_os);
-        if (status != EFI_SUCCESS)
-                return;
 
