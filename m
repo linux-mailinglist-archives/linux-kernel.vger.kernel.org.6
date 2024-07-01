@@ -1,743 +1,254 @@
-Return-Path: <linux-kernel+bounces-235548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A348B91D676
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 05:06:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8738691D67D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 05:10:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BECF281A0B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 03:05:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 325FC281961
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 03:10:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E161A208A4;
-	Mon,  1 Jul 2024 03:05:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E647FEAD0;
+	Mon,  1 Jul 2024 03:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F8WkM4mb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="E7r0+06i";
+	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="I9HSTf88"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90CF3BA20;
-	Mon,  1 Jul 2024 03:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719803133; cv=none; b=nwuVQk5iQKEdHXB6nsUwXgqNcGwpYa0WoByLdLez2UmvPyZYfLzUdzxoGCHS3NKMjmr0kN/5uVOSyFgrHFvuCHVA9vXv6LSXWke29egmexFpLY2Mft+WMp/RmON+TaLDX/jqEpp6BuqS2dvQrDDRyG7PPioXebpvL2UirNi4zGQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719803133; c=relaxed/simple;
-	bh=5rwJE41EthYumzTRGUtIMN8v3YI9KU5s83bHciR5feg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nUJjZjXpmNNfK4+fCM0I2rbvMb0IGOdr9mTpshc6NyonofMVBjkYwgEN5pIXOhHJZLp2vZP8oOwZuiB1on9kM4La8piFs2SIMugZm5xMElcaETKY/fkl44NlJS7pncIVJiWdWPCThx1YSw4rtRZCZM5OG/E7rpXq91P/wbqqy8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F8WkM4mb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3338EC4AF0C;
-	Mon,  1 Jul 2024 03:05:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719803133;
-	bh=5rwJE41EthYumzTRGUtIMN8v3YI9KU5s83bHciR5feg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=F8WkM4mbXKOvcs1jq/FIU3ByZmlYfjNJ2R25JpeKJbzjkqOk83M7TuwicCtfnzZbG
-	 xZyBBja+fEtb2eNFbRVQWUdad5sKH952a3+UarGhYztGoduaEo8rKgD+H/kVbLEYQF
-	 xNYbUWelMFYVTcxvQzhWaz8aIbT/K2Nb5btg9dwDMhYYbaToBBKYgKbIszkmrej5J2
-	 C0jRJ34qe2uHcbDhqhJbFXfRS9HoXRXwp/8pATD/RabLAzdh9XbpAA/77AIsYHLi7Q
-	 nbo8kAyrxFoKr0EAXamxIjbsIy2Ly8ov9vv6bvcJvgiNbiKAqU7EK7NvZHyyLEqoUC
-	 hJvU/SIFg6F0A==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D6C9C3065C;
-	Mon,  1 Jul 2024 03:05:33 +0000 (UTC)
-From: Xilin Wu via B4 Relay <devnull+wuxilin123.gmail.com@kernel.org>
-Date: Mon, 01 Jul 2024 11:05:18 +0800
-Subject: [PATCH v4 2/2] arm64: dts: qcom: Add device tree for ASUS Vivobook
- S 15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD648C1E
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 03:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=60.244.123.138
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719803428; cv=fail; b=etJ7WpWxxVeDAzdP1trrvPf2ofha3USGmgUHqy+2eIgLnMw+CkOZnEtRwFlfBViR7xKw0M8E0sZWGzULkdFDfnpH3H8KfiOejnJyjAeLhbngqD3TKKyUgV/55GwxYfbS+w9rZWz3OPI5hMi3EDj0CEs8FwNPoBZcmkTHD928vmg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719803428; c=relaxed/simple;
+	bh=fCsstC29dplaeQpcwYU5MPiDSFGTKtXneuwor0Mvkqg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=VQbYbHnCSwaJ9xVVEsjWGr35fcL2Q7aII5dH3UO9MW4uuUHFywtds9TuhL1ZGhrHtB1X7CaBsVLOePhZsTYur3LEaiGpcaWwNGeh/uh93T9WU9vyzC+hMvW6+IpRMmivLHb+xSa7MjcyEyLXRjlhVrK0OPMEeT19VY2dLXdpqR4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=E7r0+06i; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=I9HSTf88; arc=fail smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 7010fb5e375711ef8b8f29950b90a568-20240701
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=fCsstC29dplaeQpcwYU5MPiDSFGTKtXneuwor0Mvkqg=;
+	b=E7r0+06iSR/dpT+sJtQ2YWyS68S8TMNK4BiTBKy7wE4D++8w+6MkgLyYZLIohVjypYPah0PBfYQXNE7FGGHO4TEyjKwgNyI7dqLG/y4NVMSFURnbiMl2WpjtIBwLFcWo+SqqjvRyvLVUo8IRWB6g/Dv5zjVQGUJ8VOMhytFONz4=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.40,REQID:f34ec54e-dbf2-4ea2-b5bb-41ae5b54cc28,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:ba885a6,CLOUDID:4098bf44-a117-4f46-a956-71ffeac67bfa,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 7010fb5e375711ef8b8f29950b90a568-20240701
+Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw01.mediatek.com
+	(envelope-from <ck.hu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1363488721; Mon, 01 Jul 2024 11:10:15 +0800
+Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
+ mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Mon, 1 Jul 2024 11:10:14 +0800
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (172.21.101.237)
+ by mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Mon, 1 Jul 2024 11:10:13 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nvLzDQT1Looh4zmz1xkYYT2EUdgBxmbt7X6BkF2d7+WxkBUuWUtflur2hbLQB9Zse1ACoh9l1anbuzBR6CqL2wu5eqe0y1JgLegJujdzt/RD4bS7IJ4nFvyD7+6IKxYPUPFeFhz9ajTYJY6Ge3jOSyT3fA3ocPDwhppCbx6qT95xr/DB0IiYRWcAapyHcuNTJ3pcU0J+ObJJtT2rhACBfLl6d1wOf6H4VLYALnmzqmEPyye7v3B4VJCQzA0iEFJuyoLq2jEME5py84WdE0/EdrX58IA3z8mBbqX82NxxOoVpie2EGBwrTliYO5TrSHMiSwLh9p90fnL3WH28LvQldg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fCsstC29dplaeQpcwYU5MPiDSFGTKtXneuwor0Mvkqg=;
+ b=nAzgNCNhpLkntX86kqrN8VkteqWjzXstbHFXIMvQac4FJYDiD91ejIJddWcYiGifGqQU4xMVIfH7tecOjhnd91tyiKbjFBc1KeJYgdRCKQoftTckA8EH8un6tOwWZwOqQzH+62WablumkhytpFe8myhwKNIn+QwSVDhOkM3z1byioL1wPFehgULNibXeyK5cZvMJqENq+UG4jmn2qKFchSSpoBEy6U11w3D6UZkSgRT8s/JAEw7K9tmQPoZqCfk25XLc8UrIQsLAt8JcAWZ5Wcryv7+oXd+HYxZhvPCsMu/llY8MkV94htlkkGA7Eia0fFvO+bxijAKCIJcCBCrRPA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
+ dkim=pass header.d=mediatek.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fCsstC29dplaeQpcwYU5MPiDSFGTKtXneuwor0Mvkqg=;
+ b=I9HSTf88vby7pd8f3qvfog37AAsyynxdoalF9AU1RWVKVga+ewZuASzbBlZSCRpDzOe95F3QijrvCDKJ5rUNo5Ux0rHEnkGrOOcsDeOuJgLa11ObywiplqfIdGkO4GASN/WCjYi+76mh9ygcFo7LYB0yobQ7plgB+Fz/dOEkDUw=
+Received: from TYZPR03MB6624.apcprd03.prod.outlook.com (2603:1096:400:1f4::13)
+ by TYZPR03MB7395.apcprd03.prod.outlook.com (2603:1096:400:420::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.29; Mon, 1 Jul
+ 2024 03:10:11 +0000
+Received: from TYZPR03MB6624.apcprd03.prod.outlook.com
+ ([fe80::9ce6:1e85:c4a7:2a54]) by TYZPR03MB6624.apcprd03.prod.outlook.com
+ ([fe80::9ce6:1e85:c4a7:2a54%6]) with mapi id 15.20.7719.028; Mon, 1 Jul 2024
+ 03:10:11 +0000
+From: =?utf-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
+To: "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	=?utf-8?B?U2hhd24gU3VuZyAo5a6L5a2d6KyZKQ==?= <Shawn.Sung@mediatek.com>,
+	"airlied@gmail.com" <airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>,
+	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
+	"angelogioacchino.delregno@collabora.com"
+	<angelogioacchino.delregno@collabora.com>, "matthias.bgg@gmail.com"
+	<matthias.bgg@gmail.com>
+CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 2/5] drm/mediatek: Support "None" blending in Mixer
+Thread-Topic: [PATCH 2/5] drm/mediatek: Support "None" blending in Mixer
+Thread-Index: AQHawm4CehGZ7j4H80uVSodFizERF7HhQ4EA
+Date: Mon, 1 Jul 2024 03:10:11 +0000
+Message-ID: <2bcb715c19c8445746a00bcd4b633ceb42c286a1.camel@mediatek.com>
+References: <20240620-blend-v1-0-72670072ca20@mediatek.com>
+	 <20240620-blend-v1-2-72670072ca20@mediatek.com>
+In-Reply-To: <20240620-blend-v1-2-72670072ca20@mediatek.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mediatek.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYZPR03MB6624:EE_|TYZPR03MB7395:EE_
+x-ms-office365-filtering-correlation-id: 4b5d06c0-55e6-4e94-ba18-08dc997b51ff
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?OW40OTlIeFFvMS9pcjZXU1YvRjhWdjVnTWhUd0ZnSUZnZGZ3ZklvbFVtV24v?=
+ =?utf-8?B?UmcrcWRXNG5oQ25xcnh0UUVESzZDYTVBYWdObXdOd1M3Wk9Xem55bXVVNHNa?=
+ =?utf-8?B?RnVFNWE2d2N1KzBtMWdYMllrVnpMNE1GM1A5K1VBd2I2bngwa1I0Y1NQRFVm?=
+ =?utf-8?B?WHF6eFBpVGIwY2NPTFI2Y1Fma0s2VUNDZ2l4VWpPdUFYOTMxNGloc2tIaEkx?=
+ =?utf-8?B?enVzNEFmczFKZlBXT2ZBQjZzQUpZTm91V3VJK3prN29ZbU1uTUtidkl1K1g2?=
+ =?utf-8?B?NllLR3hFeEtsL0RkVE14NUIzQUdUcFJLcG1aWnVTT3d6Um42N3hCQ3BqdVNP?=
+ =?utf-8?B?YVNabkR4L2RqVGt1YVoyNEl1N1Vack9PZ0JMSVpSLzBOZ0pRaU5PZXFyaDlE?=
+ =?utf-8?B?bW5EYWhCOXVBTWhpM1U3UHpRSlBadll5U2ZYalpBZllUV0l6N3VId0trS2d4?=
+ =?utf-8?B?dlBkMzVERm1wQUFRWDhHRlFJcU9nNGRuc01qb0dUbmxHUGV2SFRxd0lyODVy?=
+ =?utf-8?B?VWk4ODFkeWhHTGFtWWhaV0U0c3QzbjhoL1JEalZUQ25uOUF6VVBwUllDaExo?=
+ =?utf-8?B?MnV4cEhxRXFHYmR1bnZpQnVyenBXeEJaMXhTMjhHWkU3b1JGTk5GYWdkRXNN?=
+ =?utf-8?B?OTBwSUtWd0FLVFUvUXVadGhUNk02Ui82QU1yVzRPUnBCN3prRkd0U2ZaUS9I?=
+ =?utf-8?B?bEVVSzNSODhXWmVHNEQrZWxtbnRoeHRZT1c2WGtLK1lJZ20xbXNYMWpSOFli?=
+ =?utf-8?B?WW9PbTJaUVJVZzgxSVlFRlV0aEFJemNQc3MzUEhDc0tiRVNvbEZjelF5dmdV?=
+ =?utf-8?B?SHRLano0YzYrOEpPU1lNc0ZrZTZySUVhdE5UUUVEMjBPWmwrZVRNY29pV3JS?=
+ =?utf-8?B?b2FmbUFxQkR5OGNFNjFTZWI4QzBMUkdPVG5zd1RxanlLYSs3WWt5QkJkYTZW?=
+ =?utf-8?B?am5HU1M1ejc5RnRLK1c2UkllS28zYkpMNE96eDdMK3oySi9iZkV2V081dnBs?=
+ =?utf-8?B?T0VSaGtoZUloZ1JSVTgvZHQ2Z2tCV2UweGk1NzRabWk0SG5SV2J5ekllV1lU?=
+ =?utf-8?B?NXJCMWwydk5QZWhxcWRmS0YxdGltVDVDSVo0VWxZMXhyVUkvbEtNdFpSM2Rz?=
+ =?utf-8?B?ZHFwa1h6eUU0Y2d2eDJua1E4WThPVWFsQnZJMm1WWXdNbEI3WGlzVUxYVEs4?=
+ =?utf-8?B?aHRuQVhuQi9WRTJza3JyUUc3b1FlSjd4Rzg3UjNnWmY1K2xEcllIMFdEeW1q?=
+ =?utf-8?B?Ky9KL0hYaVZ3L0VXc2FSSmlUR0Zxd3NTKzRRTFJNeWJZaS83ZW0yT0FoMXg1?=
+ =?utf-8?B?amd2NVpnTmxBL3lKMTNDdmRjYnIrNGhsM0NLUFk0YmtTZlRDNkNPVVRvaG4v?=
+ =?utf-8?B?ZUcwT2ZyTUFNeGY1UFc2SkY2aXdmbURIS0pQd3dudjFRZW5hVVE1czF4aCtr?=
+ =?utf-8?B?TjZQOWNvYkU1UnVlUkhuaTJkeFprMnFVTFdmd3YzSkI0RkQrWDh3aFBQZmRT?=
+ =?utf-8?B?YXh2cmRtU3J6VWFIZnhrNUtOZWNoSDVpSVJyQjNZRTFYWFI3T1gwWTV3OEdT?=
+ =?utf-8?B?V2Qxdy9UR0R0RkliMU9rb3hmQ0VLdTJtUTk3M0x3cjZIMW5vckRYeU9FR1h0?=
+ =?utf-8?B?eVppdVJFODk3L05YZEgxVmxaMG5GaTlqY2dtWlR1Z0RPeFNmeWNsUkpFR2xU?=
+ =?utf-8?B?c0k2Y2xISmhXUS9SZFpIWU1jcHBSRG8wK1VxT0hNZEtDL2VKYXRhVitBMmg4?=
+ =?utf-8?B?cnpkSGw5NW1QWG5OMVJQTEM3RE5pRkxnODRSbFZDTlJwRkFzTDNoYlo0Ulp1?=
+ =?utf-8?B?UHZVdE1Pek5sU2xDWjJTYnpNZXcvUTR3YVFvZzVJNDVkckNIcmEyS290L0Rx?=
+ =?utf-8?B?U1RlYmNWMERHdUxVdkl4ZGJBUnFpcGlLd1ZWb2hLNXgvUVE9PQ==?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6624.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Rm5lNURhS3JITEdFSk1UdGZVOTlmdUF0RjNSajZLZW0wQjZSQVliTVgwd1VI?=
+ =?utf-8?B?Ni9NbkwvMDJPaTAvdkdGVG5icVVOWU5pemhXbWlUdU5QcUtGZS9CRGpGVUxV?=
+ =?utf-8?B?N2xTamJLN1VxazdSSlZwTmZheGhiRUd1NzhHdTMxUVpRVzFpdnVyNmFUTHo2?=
+ =?utf-8?B?V0Z5VXQvRjZZSTdEM1JtL29OYTF6R2l5c3NkTk5VcGJ5UE1JSHA1QzNkalY2?=
+ =?utf-8?B?eHA1a0ZyMHFwd2RNQ2kxQjlBV2lqc1lteXUwaDJiNXVocVZJSlRMOVJXWDls?=
+ =?utf-8?B?SnkwWFlrQTJZbTVmUWo5UG5mZW9SVGRBek9Ub3hvOTloUzlQaW5DVkhRMkZj?=
+ =?utf-8?B?MG9xa3dmWFM3ZFB2dkJrYXU5NXNjM1NIOFo0ekgyVjJxOWcxeHFnaUg4WWkz?=
+ =?utf-8?B?QkdRMmd3SXdHeno3MHpvSURzVUVWZWpwOEJOQ2FqKzZsb2lTbWRYTGcrS3Nm?=
+ =?utf-8?B?UDlMRm5Gc3c0dXd6Q0FlemZ4OFR0S0JEcTdXMytRbVlybDJQNVVPODNCVy9U?=
+ =?utf-8?B?cWV6bnF2TVI3bXJDUWpvMHhnYVA4aEdYNTIxRzl3bTNXdTUwN1N6aVAvRW9w?=
+ =?utf-8?B?Wkxoc3pvcElIb3A4QmZHYzlwY0ZXQmVxYUtraUxGS082RWhSVmdUTEFGQVRU?=
+ =?utf-8?B?d0pXR0JVcFp3NkJndExCQk1LSTIweS9wNzNQcHBaUTl0Yno1VVJWUzVLWEZV?=
+ =?utf-8?B?VmxvV1FxaUkraEd0RjJ0LzJKU0lSUnlSeGhGQkx4dUFiOWpzcGRkelVOSmN4?=
+ =?utf-8?B?dmVneUxKRmE0TGYzWTU2NExYTDJtL3pMUHJscnNjc0hrOHhUSlcwTVZxNzRT?=
+ =?utf-8?B?UlB3cyswMFdFcHd4VmZia3pXQUNtMmI3c0dtRU5lTXEraDdYbTdrbWJBTXZw?=
+ =?utf-8?B?WVY3cW55QldqTDFrOEw5aldnclpNbnVId3V5VjhYeXMyd2dsamV2MzZEUHI2?=
+ =?utf-8?B?bERlclE3VXo1Wmc0R3BWU1JOTzNpak1sL25CNjJmbklIanE3ai80SEZ6WnJL?=
+ =?utf-8?B?Qzd4QmZucXB3R3R4eVZ3UzM3NHJNVTVrbEpsZzhOYXdvNjcwaEV2Tmx2YWsz?=
+ =?utf-8?B?T2ZVQ0EwRmZaL0pEMTYrbEgvZ2JkRk9zWllCNjhxRXMyeUVTbVMwdDVoTGZp?=
+ =?utf-8?B?d2N6c09UQUlkellCZXUveVpJNzZUWEF3UTB4R1JJbzFYSDFFSkppM3BUeTcr?=
+ =?utf-8?B?V2JudXJtZ1d4WTJuN3UyWjNRZVViYW5yQ3p6dVREOE5CbFNPTWVoanB6Z3ZP?=
+ =?utf-8?B?ZlN5THp5clhLWUhoOFBiZGQyVm51a1kwNHVkbmZGRVBvVVI4RkF5WGdUdHZ3?=
+ =?utf-8?B?ZGJ3RFpnMENiTDU0dkZiWGlDQmRGUW5Td05wUmRRclUvN01LQ2YxRjdpbW95?=
+ =?utf-8?B?bVZzOWVhaFk4U01DRmhHeTlpVGhyVDlHSS85VXdCdWljVnZ0c29kMjAwTHUx?=
+ =?utf-8?B?UE41ekwweE1pdlVYRnRxRnI1eW1teVhaWC9GbUlDaHVMN0t4aEMvZmkvakFU?=
+ =?utf-8?B?empOWFZQcEZYZmFsb1Y5RitrWHJpRXpkSzMwWCt4bDM3RG40dmZncHlrVFR4?=
+ =?utf-8?B?ci80MWJqM1Q5a2c0eEE2dnNRTXI4K1RRWUl6K2hHdzJBL2hvaFdvVnFQVCtk?=
+ =?utf-8?B?TTcrOUZUVUtQNTd6Z1pXZllSb2h3MWdSc0xFUmFzTUNYN05jdWxCWExGd3BS?=
+ =?utf-8?B?dXExMHpSd01WQnUxVXpiMm9tODBvWmdtRGhsMW1OZVlCRjBiSmRKeGY3ZUR2?=
+ =?utf-8?B?RFdkckNPNncyVXNQSkRwRURaSWNiOGllUEtiK0NBcTdreG1wYmZ5WGt4NGdn?=
+ =?utf-8?B?TWF1Y0M3c2o1d2VBUE5yT2RVeHNNMGZPUUFlUGlnVGl2NU52U2RkcXd3V3Ba?=
+ =?utf-8?B?S3lYN1Z5eG54Q3VMWkdraEV3QWlpYkJSVjlkL3JtVTNXakloSURpR3NxSWZy?=
+ =?utf-8?B?U3NMK1ZhVXFad1VreGdBb0RMcXRES2VjTkxWQzhWbnhzbVMxQVZzSWxXODRy?=
+ =?utf-8?B?b09qYy9QTzdhYXNnaWwzZUZCcFpWV3FWcGFzb0tVSW9GMDBIaXRXRmNBdERF?=
+ =?utf-8?B?NmkzczQrZFNtOVZXYlRLTHFYMnM1QVZvcFJKMjJVZTlXcE1FajU4djdIZnlI?=
+ =?utf-8?Q?oyNPj6/22tooqqayyZmaaIB++?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <82BF1118F87F1745AB626D847DD30E9F@apcprd03.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240701-asus-vivobook-s15-v4-2-ce7933b4d4e5@gmail.com>
-References: <20240701-asus-vivobook-s15-v4-0-ce7933b4d4e5@gmail.com>
-In-Reply-To: <20240701-asus-vivobook-s15-v4-0-ce7933b4d4e5@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>, 
- Johan Hovold <johan+linaro@kernel.org>, 
- Elliot Berman <quic_eberman@quicinc.com>, Xilin Wu <wuxilin123@gmail.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1719803130; l=14928;
- i=wuxilin123@gmail.com; s=20240424; h=from:subject:message-id;
- bh=x8hIarLp8uH9Z8x3Ozfc83gcLdq4zx2PkBhMtm8+aRI=;
- b=8itVryD78FkD1Nl8NQmEWnqPwNAK8z5L24yCxEgbNJ/KuKqCpgz8W6skeL7jTZdV86MK/QGSy
- Lkro1PTN+MvB2xoPAUGAzU1Q1lRoOzMgUgTPYBCDak2ux+mwu3P83SK
-X-Developer-Key: i=wuxilin123@gmail.com; a=ed25519;
- pk=vPnxeJnlD/PfEbyQPZzaay5ezxI/lMrke7qXy31lSM8=
-X-Endpoint-Received: by B4 Relay for wuxilin123@gmail.com/20240424 with
- auth_id=157
-X-Original-From: Xilin Wu <wuxilin123@gmail.com>
-Reply-To: wuxilin123@gmail.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6624.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4b5d06c0-55e6-4e94-ba18-08dc997b51ff
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jul 2024 03:10:11.5129
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 16SexT6ms0e/C2wAKoHeGFOD2caHAmYogbKKsL+YJY+rgsZNY9SjB6ZVi3scKtsWyFM9McOIsGUESGqcAbu3lA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR03MB7395
 
-From: Xilin Wu <wuxilin123@gmail.com>
-
-ASUS Vivobook S 15 is a laptop based on the Qualcomm Snapdragon X Elite
-SoC (X1E78100).
-
-Add the device tree for the laptop with support for the following features:
-
-- CPU frequency scaling up to 3.4GHz
-- NVMe storage on PCIe 6a (capable of Gen4x4, currently limited to Gen4x2)
-- Keyboard and touchpad
-- WCN7850 Wi-Fi
-- Two Type-C ports on the left side (USB3 only in one orientation)
-- internal eDP display
-- ADSP and CDSP remoteprocs
-
-Further details could be found in the cover letter.
-
-Signed-off-by: Xilin Wu <wuxilin123@gmail.com>
----
- arch/arm64/boot/dts/qcom/Makefile                  |   1 +
- .../boot/dts/qcom/x1e80100-asus-vivobook-s15.dts   | 616 +++++++++++++++++++++
- 2 files changed, 617 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index 5576c7d6ea06..fe08b6be565d 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -258,5 +258,6 @@ dtb-$(CONFIG_ARCH_QCOM)	+= sm8650-hdk-display-card.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm8650-hdk.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm8650-mtp.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm8650-qrd.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-asus-vivobook-s15.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-crd.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-qcp.dtb
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-new file mode 100644
-index 000000000000..7fb980fcb307
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-@@ -0,0 +1,616 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-+ * Copyright (c) 2024, Xilin Wu <wuxilin123@gmail.com>
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-+
-+#include "x1e80100.dtsi"
-+#include "x1e80100-pmics.dtsi"
-+
-+/ {
-+	model = "ASUS Vivobook S 15";
-+	compatible = "asus,vivobook-s15", "qcom,x1e80100";
-+	chassis-type = "laptop";
-+
-+	pmic-glink {
-+		compatible = "qcom,x1e80100-pmic-glink",
-+			     "qcom,sm8550-pmic-glink",
-+			     "qcom,pmic-glink";
-+		orientation-gpios = <&tlmm 121 GPIO_ACTIVE_HIGH>,
-+				    <&tlmm 123 GPIO_ACTIVE_HIGH>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		/* Left-side port, closer to the screen */
-+		connector@0 {
-+			compatible = "usb-c-connector";
-+			reg = <0>;
-+			power-role = "dual";
-+			data-role = "dual";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					pmic_glink_ss0_hs_in: endpoint {
-+						remote-endpoint = <&usb_1_ss0_dwc3_hs>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					pmic_glink_ss0_ss_in: endpoint {
-+						remote-endpoint = <&usb_1_ss0_qmpphy_out>;
-+					};
-+				};
-+			};
-+		};
-+
-+		/* Left-side port, farther from the screen */
-+		connector@1 {
-+			compatible = "usb-c-connector";
-+			reg = <1>;
-+			power-role = "dual";
-+			data-role = "dual";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					pmic_glink_ss1_hs_in: endpoint {
-+						remote-endpoint = <&usb_1_ss1_dwc3_hs>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					pmic_glink_ss1_ss_in: endpoint {
-+						remote-endpoint = <&usb_1_ss1_qmpphy_out>;
-+					};
-+				};
-+			};
-+		};
-+	};
-+
-+	reserved-memory {
-+		linux,cma {
-+			compatible = "shared-dma-pool";
-+			size = <0x0 0x8000000>;
-+			reusable;
-+			linux,cma-default;
-+		};
-+	};
-+
-+	vph_pwr: vph-pwr-regulator {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "vph_pwr";
-+		regulator-min-microvolt = <3700000>;
-+		regulator-max-microvolt = <3700000>;
-+
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
-+	vreg_edp_3p3: regulator-edp-3p3 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_EDP_3P3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&tlmm 70 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&edp_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
-+	vreg_nvme: regulator-nvme {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_NVME_3P3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&tlmm 18 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&nvme_reg_en>;
-+		pinctrl-names = "default";
-+	};
-+};
-+
-+&apps_rsc {
-+	regulators-0 {
-+		compatible = "qcom,pm8550-rpmh-regulators";
-+		qcom,pmic-id = "b";
-+
-+		vdd-bob1-supply = <&vph_pwr>;
-+		vdd-bob2-supply = <&vph_pwr>;
-+		vdd-l1-l4-l10-supply = <&vreg_s4c_1p8>;
-+		vdd-l2-l13-l14-supply = <&vreg_bob1>;
-+		vdd-l5-l16-supply = <&vreg_bob1>;
-+		vdd-l6-l7-supply = <&vreg_bob2>;
-+		vdd-l8-l9-supply = <&vreg_bob1>;
-+		vdd-l12-supply = <&vreg_s5j_1p2>;
-+		vdd-l15-supply = <&vreg_s4c_1p8>;
-+		vdd-l17-supply = <&vreg_bob2>;
-+
-+		vreg_bob1: bob1 {
-+			regulator-name = "vreg_bob1";
-+			regulator-min-microvolt = <3008000>;
-+			regulator-max-microvolt = <3960000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_bob2: bob2 {
-+			regulator-name = "vreg_bob2";
-+			regulator-min-microvolt = <2504000>;
-+			regulator-max-microvolt = <3008000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l2b_3p0: ldo2 {
-+			regulator-name = "vreg_l2b_3p0";
-+			regulator-min-microvolt = <3072000>;
-+			regulator-max-microvolt = <3100000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l14b_3p0: ldo14 {
-+			regulator-name = "vreg_l14b_3p0";
-+			regulator-min-microvolt = <3072000>;
-+			regulator-max-microvolt = <3072000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+	};
-+
-+	regulators-1 {
-+		compatible = "qcom,pm8550ve-rpmh-regulators";
-+		qcom,pmic-id = "c";
-+
-+		vdd-l1-supply = <&vreg_s5j_1p2>;
-+		vdd-l2-supply = <&vreg_s1f_0p7>;
-+		vdd-l3-supply = <&vreg_s1f_0p7>;
-+		vdd-s4-supply = <&vph_pwr>;
-+
-+		vreg_s4c_1p8: smps4 {
-+			regulator-name = "vreg_s4c_1p8";
-+			regulator-min-microvolt = <1856000>;
-+			regulator-max-microvolt = <2000000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+	};
-+
-+	regulators-2 {
-+		compatible = "qcom,pmc8380-rpmh-regulators";
-+		qcom,pmic-id = "d";
-+
-+		vdd-l1-supply = <&vreg_s1f_0p7>;
-+		vdd-l2-supply = <&vreg_s1f_0p7>;
-+		vdd-l3-supply = <&vreg_s4c_1p8>;
-+		vdd-s1-supply = <&vph_pwr>;
-+
-+		vreg_l1d_0p8: ldo1 {
-+			regulator-name = "vreg_l1d_0p8";
-+			regulator-min-microvolt = <880000>;
-+			regulator-max-microvolt = <920000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l2d_0p9: ldo2 {
-+			regulator-name = "vreg_l2d_0p9";
-+			regulator-min-microvolt = <912000>;
-+			regulator-max-microvolt = <920000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l3d_1p8: ldo3 {
-+			regulator-name = "vreg_l3d_1p8";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+	};
-+
-+	regulators-3 {
-+		compatible = "qcom,pmc8380-rpmh-regulators";
-+		qcom,pmic-id = "e";
-+
-+		vdd-l2-supply = <&vreg_s1f_0p7>;
-+		vdd-l3-supply = <&vreg_s5j_1p2>;
-+
-+		vreg_l2e_0p8: ldo2 {
-+			regulator-name = "vreg_l2e_0p8";
-+			regulator-min-microvolt = <880000>;
-+			regulator-max-microvolt = <920000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l3e_1p2: ldo3 {
-+			regulator-name = "vreg_l3e_1p2";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+	};
-+
-+	regulators-4 {
-+		compatible = "qcom,pmc8380-rpmh-regulators";
-+		qcom,pmic-id = "f";
-+
-+		vdd-l1-supply = <&vreg_s5j_1p2>;
-+		vdd-l2-supply = <&vreg_s5j_1p2>;
-+		vdd-l3-supply = <&vreg_s5j_1p2>;
-+		vdd-s1-supply = <&vph_pwr>;
-+
-+		vreg_s1f_0p7: smps1 {
-+			regulator-name = "vreg_s1f_0p7";
-+			regulator-min-microvolt = <700000>;
-+			regulator-max-microvolt = <1100000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+	};
-+
-+	regulators-6 {
-+		compatible = "qcom,pm8550ve-rpmh-regulators";
-+		qcom,pmic-id = "i";
-+
-+		vdd-l1-supply = <&vreg_s4c_1p8>;
-+		vdd-l2-supply = <&vreg_s5j_1p2>;
-+		vdd-l3-supply = <&vreg_s1f_0p7>;
-+		vdd-s1-supply = <&vph_pwr>;
-+		vdd-s2-supply = <&vph_pwr>;
-+	};
-+
-+	regulators-7 {
-+		compatible = "qcom,pm8550ve-rpmh-regulators";
-+		qcom,pmic-id = "j";
-+
-+		vdd-l1-supply = <&vreg_s1f_0p7>;
-+		vdd-l2-supply = <&vreg_s5j_1p2>;
-+		vdd-l3-supply = <&vreg_s1f_0p7>;
-+		vdd-s5-supply = <&vph_pwr>;
-+
-+		vreg_s5j_1p2: smps5 {
-+			regulator-name = "vreg_s5j_1p2";
-+			regulator-min-microvolt = <1256000>;
-+			regulator-max-microvolt = <1304000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l1j_0p8: ldo1 {
-+			regulator-name = "vreg_l1j_0p8";
-+			regulator-min-microvolt = <880000>;
-+			regulator-max-microvolt = <920000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l2j_1p2: ldo2 {
-+			regulator-name = "vreg_l2j_1p2";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l3j_0p8: ldo3 {
-+			regulator-name = "vreg_l3j_0p8";
-+			regulator-min-microvolt = <880000>;
-+			regulator-max-microvolt = <920000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+	};
-+};
-+
-+&i2c0 {
-+	clock-frequency = <400000>;
-+	status = "okay";
-+
-+	touchpad@15 {
-+		compatible = "hid-over-i2c";
-+		reg = <0x15>;
-+
-+		hid-descr-addr = <0x1>;
-+		interrupts-extended = <&tlmm 3 IRQ_TYPE_LEVEL_LOW>;
-+
-+		pinctrl-0 = <&tpad_default>;
-+		pinctrl-names = "default";
-+
-+		wakeup-source;
-+	};
-+};
-+
-+&i2c1 {
-+	clock-frequency = <400000>;
-+	status = "okay";
-+
-+	/* PS8830 USB4 Retimer? @ 0x8 */
-+};
-+
-+&i2c3 {
-+	clock-frequency = <400000>;
-+	status = "okay";
-+
-+	/* PS8830 USB4 Retimer? @ 0x8 */
-+};
-+
-+&i2c5 {
-+	clock-frequency = <400000>;
-+	status = "okay";
-+
-+	keyboard@3a {
-+		compatible = "hid-over-i2c";
-+		reg = <0x3a>;
-+
-+		hid-descr-addr = <0x1>;
-+		interrupts-extended = <&tlmm 67 IRQ_TYPE_LEVEL_LOW>;
-+
-+		pinctrl-0 = <&kybd_default>;
-+		pinctrl-names = "default";
-+
-+		wakeup-source;
-+	};
-+
-+	/* EC? @ 0x5b, 0x76 */
-+};
-+
-+&i2c7 {
-+	clock-frequency = <400000>;
-+	status = "okay";
-+
-+	/* PS8830 USB4 Retimer? @ 0x8 */
-+};
-+
-+&mdss {
-+	status = "okay";
-+};
-+
-+&mdss_dp3 {
-+	compatible = "qcom,x1e80100-dp";
-+	/delete-property/ #sound-dai-cells;
-+
-+	status = "okay";
-+
-+	aux-bus {
-+		panel {
-+			compatible = "edp-panel";
-+			power-supply = <&vreg_edp_3p3>;
-+
-+			port {
-+				edp_panel_in: endpoint {
-+					remote-endpoint = <&mdss_dp3_out>;
-+				};
-+			};
-+		};
-+	};
-+
-+	ports {
-+		port@1 {
-+			reg = <1>;
-+
-+			mdss_dp3_out: endpoint {
-+				data-lanes = <0 1 2 3>;
-+				link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
-+
-+				remote-endpoint = <&edp_panel_in>;
-+			};
-+		};
-+	};
-+};
-+
-+&mdss_dp3_phy {
-+	vdda-phy-supply = <&vreg_l3j_0p8>;
-+	vdda-pll-supply = <&vreg_l2j_1p2>;
-+
-+	status = "okay";
-+};
-+
-+&pcie4 {
-+	status = "okay";
-+};
-+
-+&pcie4_phy {
-+	vdda-phy-supply = <&vreg_l3j_0p8>;
-+	vdda-pll-supply = <&vreg_l3e_1p2>;
-+
-+	status = "okay";
-+};
-+
-+&pcie6a {
-+	perst-gpios = <&tlmm 152 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 154 GPIO_ACTIVE_LOW>;
-+
-+	vddpe-3v3-supply = <&vreg_nvme>;
-+
-+	pinctrl-0 = <&pcie6a_default>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&pcie6a_phy {
-+	vdda-phy-supply = <&vreg_l1d_0p8>;
-+	vdda-pll-supply = <&vreg_l2j_1p2>;
-+
-+	status = "okay";
-+};
-+
-+&qupv3_0 {
-+	status = "okay";
-+};
-+
-+&qupv3_1 {
-+	status = "okay";
-+};
-+
-+&qupv3_2 {
-+	status = "okay";
-+};
-+
-+&remoteproc_adsp {
-+	firmware-name = "qcom/x1e80100/ASUSTeK/vivobook-s15/qcadsp8380.mbn",
-+			"qcom/x1e80100/ASUSTeK/vivobook-s15/adsp_dtbs.elf";
-+
-+	status = "okay";
-+};
-+
-+&remoteproc_cdsp {
-+	firmware-name = "qcom/x1e80100/ASUSTeK/vivobook-s15/qccdsp8380.mbn",
-+			"qcom/x1e80100/ASUSTeK/vivobook-s15/cdsp_dtbs.elf";
-+
-+	status = "okay";
-+};
-+
-+&smb2360_0_eusb2_repeater {
-+	vdd18-supply = <&vreg_l3d_1p8>;
-+	vdd3-supply = <&vreg_l2b_3p0>;
-+};
-+
-+&smb2360_1_eusb2_repeater {
-+	vdd18-supply = <&vreg_l3d_1p8>;
-+	vdd3-supply = <&vreg_l14b_3p0>;
-+};
-+
-+&smb2360_2 {
-+	status = "disabled";
-+};
-+
-+&tlmm {
-+	gpio-reserved-ranges = <34 2>, /* Unused */
-+			       <44 4>, /* SPI (TPM) */
-+			       <238 1>; /* UFS Reset */
-+
-+	edp_reg_en: edp-reg-en-state {
-+		pins = "gpio70";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		bias-disable;
-+	};
-+
-+	kybd_default: kybd-default-state {
-+		pins = "gpio67";
-+		function = "gpio";
-+		bias-disable;
-+	};
-+
-+	nvme_reg_en: nvme-reg-en-state {
-+		pins = "gpio18";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	pcie6a_default: pcie2a-default-state {
-+		clkreq-n-pins {
-+			pins = "gpio153";
-+			function = "pcie6a_clk";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+
-+		perst-n-pins {
-+			pins = "gpio152";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-down;
-+		};
-+
-+		wake-n-pins {
-+			pins = "gpio154";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+	};
-+
-+	tpad_default: tpad-default-state {
-+		pins = "gpio3";
-+		function = "gpio";
-+		bias-disable;
-+	};
-+};
-+
-+&usb_1_ss0_hsphy {
-+	vdd-supply = <&vreg_l3j_0p8>;
-+	vdda12-supply = <&vreg_l2j_1p2>;
-+
-+	phys = <&smb2360_0_eusb2_repeater>;
-+
-+	status = "okay";
-+};
-+
-+&usb_1_ss0_qmpphy {
-+	vdda-phy-supply = <&vreg_l3e_1p2>;
-+	vdda-pll-supply = <&vreg_l1j_0p8>;
-+
-+	orientation-switch;
-+
-+	status = "okay";
-+};
-+
-+&usb_1_ss0 {
-+	status = "okay";
-+};
-+
-+&usb_1_ss0_dwc3 {
-+	dr_mode = "host";
-+};
-+
-+&usb_1_ss0_dwc3_hs {
-+	remote-endpoint = <&pmic_glink_ss0_hs_in>;
-+};
-+
-+&usb_1_ss0_qmpphy_out {
-+	remote-endpoint = <&pmic_glink_ss0_ss_in>;
-+};
-+
-+&usb_1_ss1_hsphy {
-+	vdd-supply = <&vreg_l3j_0p8>;
-+	vdda12-supply = <&vreg_l2j_1p2>;
-+
-+	phys = <&smb2360_1_eusb2_repeater>;
-+
-+	status = "okay";
-+};
-+
-+&usb_1_ss1_qmpphy {
-+	vdda-phy-supply = <&vreg_l3e_1p2>;
-+	vdda-pll-supply = <&vreg_l2d_0p9>;
-+
-+	orientation-switch;
-+
-+	status = "okay";
-+};
-+
-+&usb_1_ss1 {
-+	status = "okay";
-+};
-+
-+&usb_1_ss1_dwc3 {
-+	dr_mode = "host";
-+};
-+
-+&usb_1_ss1_dwc3_hs {
-+	remote-endpoint = <&pmic_glink_ss1_hs_in>;
-+};
-+
-+&usb_1_ss1_qmpphy_out {
-+	remote-endpoint = <&pmic_glink_ss1_ss_in>;
-+};
-
--- 
-2.45.2
-
-
+SGksIFNoYXduOg0KDQpPbiBUaHUsIDIwMjQtMDYtMjAgYXQgMDE6MjcgKzA4MDAsIEhzaWFvIENo
+aWVuIFN1bmcgdmlhIEI0IFJlbGF5IHdyb3RlOg0KPiAgCSANCj4gRXh0ZXJuYWwgZW1haWwgOiBQ
+bGVhc2UgZG8gbm90IGNsaWNrIGxpbmtzIG9yIG9wZW4gYXR0YWNobWVudHMgdW50aWwgeW91IGhh
+dmUgdmVyaWZpZWQgdGhlIHNlbmRlciBvciB0aGUgY29udGVudC4NCj4gIEZyb206IEhzaWFvIENo
+aWVuIFN1bmcgPHNoYXduLnN1bmdAbWVkaWF0ZWsuY29tPg0KPiANCj4gU3VwcG9ydCAiTm9uZSIg
+YWxwaGEgYmxlbmRpbmcgbW9kZSBvbiBNZWRpYVRlaydzIGNoaXBzLg0KPiANCj4gU2lnbmVkLW9m
+Zi1ieTogSHNpYW8gQ2hpZW4gU3VuZyA8c2hhd24uc3VuZ0BtZWRpYXRlay5jb20+DQo+IC0tLQ0K
+PiAgZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19ldGhkci5jIHwgMTMgKysrKysrKysrKy0t
+LQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pDQo+
+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19ldGhkci5jIGIv
+ZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19ldGhkci5jDQo+IGluZGV4IDM2MDIxY2I4ZGY2
+Mi4uNDhiNzE0OTk0NDkyIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsv
+bXRrX2V0aGRyLmMNCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19ldGhkci5j
+DQo+IEBAIC0zLDYgKzMsNyBAQA0KPiAgICogQ29weXJpZ2h0IChjKSAyMDIxIE1lZGlhVGVrIElu
+Yy4NCj4gICAqLw0KPiAgDQo+ICsjaW5jbHVkZSA8ZHJtL2RybV9ibGVuZC5oPg0KPiAgI2luY2x1
+ZGUgPGRybS9kcm1fZm91cmNjLmg+DQo+ICAjaW5jbHVkZSA8ZHJtL2RybV9mcmFtZWJ1ZmZlci5o
+Pg0KPiAgI2luY2x1ZGUgPGxpbnV4L2Nsay5oPg0KPiBAQCAtMzUsNiArMzYsNyBAQA0KPiAgI2Rl
+ZmluZSBNSVhfU1JDX0wwX0VOQklUKDApDQo+ICAjZGVmaW5lIE1JWF9MX1NSQ19DT04obikoMHgy
+OCArIDB4MTggKiAobikpDQo+ICAjZGVmaW5lIE5PTl9QUkVNVUxUSV9TT1VSQ0UoMiA8PCAxMikN
+Cj4gKyNkZWZpbmUgUFJFTVVMVElfU09VUkNFKDMgPDwgMTIpDQo+ICAjZGVmaW5lIE1JWF9MX1NS
+Q19TSVpFKG4pKDB4MzAgKyAweDE4ICogKG4pKQ0KPiAgI2RlZmluZSBNSVhfTF9TUkNfT0ZGU0VU
+KG4pKDB4MzQgKyAweDE4ICogKG4pKQ0KPiAgI2RlZmluZSBNSVhfRlVOQ19EQ00wMHgxMjANCj4g
+QEAgLTE3NSw3ICsxNzcsMTMgQEAgdm9pZCBtdGtfZXRoZHJfbGF5ZXJfY29uZmlnKHN0cnVjdCBk
+ZXZpY2UgKmRldiwgdW5zaWduZWQgaW50IGlkeCwNCj4gIGFscGhhX2NvbiB8PSBzdGF0ZS0+YmFz
+ZS5hbHBoYSAmIE1JWEVSX0FMUEhBOw0KPiAgfQ0KPiAgDQo+IC1pZiAoc3RhdGUtPmJhc2UuZmIg
+JiYgIXN0YXRlLT5iYXNlLmZiLT5mb3JtYXQtPmhhc19hbHBoYSkgew0KPiAraWYgKHN0YXRlLT5i
+YXNlLnBpeGVsX2JsZW5kX21vZGUgPT0gRFJNX01PREVfQkxFTkRfUElYRUxfTk9ORSkNCj4gK2Fs
+cGhhX2NvbiB8PSBQUkVNVUxUSV9TT1VSQ0U7DQoNClRvIHN1cHBvcnQgRFJNX01PREVfQkxFTkRf
+UElYRUxfTk9ORSwgSSB0aGluayBpZ25vcmUgcGl4ZWwgYWxwaGEgaXMgZW5vdWdoLiBXaHkgbmVl
+ZCB0aGlzIHNldHRpbmc/DQoNClJlZ2FyZHMsDQpDSw0KDQo+ICtlbHNlDQo+ICthbHBoYV9jb24g
+fD0gTk9OX1BSRU1VTFRJX1NPVVJDRTsNCj4gKw0KPiAraWYgKChzdGF0ZS0+YmFzZS5mYiAmJiAh
+c3RhdGUtPmJhc2UuZmItPmZvcm1hdC0+aGFzX2FscGhhKSB8fA0KPiArICAgIHN0YXRlLT5iYXNl
+LnBpeGVsX2JsZW5kX21vZGUgPT0gRFJNX01PREVfQkxFTkRfUElYRUxfTk9ORSkgew0KPiAgLyoN
+Cj4gICAqIE1peGVyIGRvZXNuJ3Qgc3VwcG9ydCBDT05TVF9CTEQgbW9kZSwNCj4gICAqIHVzZSBh
+IHRyaWNrIHRvIG1ha2UgdGhlIG91dHB1dCBlcXVpdmFsZW50DQo+IEBAIC0xOTEsOCArMTk5LDcg
+QEAgdm9pZCBtdGtfZXRoZHJfbGF5ZXJfY29uZmlnKHN0cnVjdCBkZXZpY2UgKmRldiwgdW5zaWdu
+ZWQgaW50IGlkeCwNCj4gIG10a19kZHBfd3JpdGUoY21kcV9wa3QsIHBlbmRpbmctPmhlaWdodCA8
+PCAxNiB8IGFsaWduX3dpZHRoLCAmbWl4ZXItPmNtZHFfYmFzZSwNCj4gICAgICAgIG1peGVyLT5y
+ZWdzLCBNSVhfTF9TUkNfU0laRShpZHgpKTsNCj4gIG10a19kZHBfd3JpdGUoY21kcV9wa3QsIG9m
+ZnNldCwgJm1peGVyLT5jbWRxX2Jhc2UsIG1peGVyLT5yZWdzLCBNSVhfTF9TUkNfT0ZGU0VUKGlk
+eCkpOw0KPiAtbXRrX2RkcF93cml0ZV9tYXNrKGNtZHFfcGt0LCBhbHBoYV9jb24sICZtaXhlci0+
+Y21kcV9iYXNlLCBtaXhlci0+cmVncywgTUlYX0xfU1JDX0NPTihpZHgpLA0KPiAtICAgMHgxZmYp
+Ow0KPiArbXRrX2RkcF93cml0ZShjbWRxX3BrdCwgYWxwaGFfY29uLCAmbWl4ZXItPmNtZHFfYmFz
+ZSwgbWl4ZXItPnJlZ3MsIE1JWF9MX1NSQ19DT04oaWR4KSk7DQo+ICBtdGtfZGRwX3dyaXRlX21h
+c2soY21kcV9wa3QsIEJJVChpZHgpLCAmbWl4ZXItPmNtZHFfYmFzZSwgbWl4ZXItPnJlZ3MsIE1J
+WF9TUkNfQ09OLA0KPiAgICAgQklUKGlkeCkpOw0KPiAgfQ0KPiANCj4gLS0gDQo+IEdpdC0xNDYp
+DQo+IA0KPiANCj4gDQo=
 
