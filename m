@@ -1,134 +1,95 @@
-Return-Path: <linux-kernel+bounces-236289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C16A91E002
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:57:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A2F891E00F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:00:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCF7B1C208EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:57:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE925284145
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:00:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A30CF15A873;
-	Mon,  1 Jul 2024 12:56:59 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3BD515A85E;
-	Mon,  1 Jul 2024 12:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3802D15CD76;
+	Mon,  1 Jul 2024 13:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="hRVUXR67"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4CF1494C4;
+	Mon,  1 Jul 2024 13:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719838619; cv=none; b=YyVa8JLSJ7hTd29WyaLYpVY4IVklPZpXOw6nVgbJD/qggNOaH83pKIUNc+OcV4THQxC6NuD0f4e9bh1dxzhR1jrTR74J/AB47ow+WlsTJ71r8od7SGAvkpzwnqAxOdvv0NlBXPB88xfdDcqUpmRfUrFgQH6u3BQ65gtZ89C64qs=
+	t=1719838812; cv=none; b=js4HINOig4Z/fwPTi1Jnjq7Fzu+frnhHpqCPML3UeZUL70OOcOA4nJGqSdUKW7W4enCk4+ZedCyYZQWzSPGX7Z/IMQJiHCYBBeAiiQx134ydiVgTKgnpSjJrWfJw+I6S/jM3nt2gzwhUNXPsqbATuVBwC9kJZG5R6KW/HX7VLcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719838619; c=relaxed/simple;
-	bh=+MksbpmNZkTOuDD7N1ZxQe+dsTMy5M+OjKLmGmGIUsA=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ui6IU4NtV011gWA/iC1lmpCyeFFkkhIXso2COY7TsPOd66BSuTdSunrq6tF/Jq18Fd/KPoMGDz8LtuU/clzbOyZffV7wmRkbQj9EsStWJcntOQl6Q0yGlg8/+worbIp4R1BGTiDY+BtetaxGkwFhP5mXHWeT/7sfrPLdHKphIPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WCQyN1y87z6K5vp;
-	Mon,  1 Jul 2024 20:55:56 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9B624140B33;
-	Mon,  1 Jul 2024 20:56:53 +0800 (CST)
-Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 1 Jul
- 2024 13:56:53 +0100
-Date: Mon, 1 Jul 2024 13:56:51 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-CC: <linus.walleij@linaro.org>, <dan.carpenter@linaro.org>,
-	<linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <aisheng.dong@nxp.com>, <festevam@gmail.com>,
-	<shawnguo@kernel.org>, <kernel@pengutronix.de>,
-	<u.kleine-koenig@pengutronix.de>, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH V3 2/3] pinctrl: equilibrium: Use scope based
- of_node_put() cleanups
-Message-ID: <20240701135651.0000768a@Huawei.com>
-In-Reply-To: <20240627131721.678727-3-peng.fan@oss.nxp.com>
-References: <20240627131721.678727-1-peng.fan@oss.nxp.com>
-	<20240627131721.678727-3-peng.fan@oss.nxp.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1719838812; c=relaxed/simple;
+	bh=ITGX7Stlw8dzd9bmuhRa3MyV3QI/GXD46NJenfRsj6s=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=TOikn6BRX7YE4BNIxo8spcfyZO8p08IDg8J9mdFTNwQQsjcqCbN4dwWiP4IAwxHJzlmAHrC40I00Jnl56pm4pLP3wVvwCeX2Lq3GuKIB4ij8nlzf6Vvyvpmc2mn679fSs6xkuBqVWNTjflNdbApXPELV0RJ5kPYOBGeIdDL6oL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=hRVUXR67; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net (linux.microsoft.com [13.77.154.182])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 1EFCA20B7001;
+	Mon,  1 Jul 2024 06:00:05 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1EFCA20B7001
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1719838805;
+	bh=FHqAa907jkzY7G6B8Oe34LyCXVloQKb7sP0mxWAiaJ4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hRVUXR67abHQ0+QLXCCCNtj6WuxQRr1HpAKrF8RjN8+YJg6i7ZZ6L1lKCzxIu9Jou
+	 sMAQpgvSqdXJooIJg6BGo9o1jrm9Cxv4jn8t1PsiipasiDN7gwa4aWy5HBK5Llj3gR
+	 69MNb7nqTDhhfoc6lUbt323Y8EuF+8/Jnvz5IOXs=
+From: Konstantin Taranov <kotaranov@linux.microsoft.com>
+To: kotaranov@microsoft.com,
+	pabeni@redhat.com,
+	haiyangz@microsoft.com,
+	kys@microsoft.com,
+	edumazet@google.com,
+	kuba@kernel.org,
+	davem@davemloft.net,
+	decui@microsoft.com,
+	wei.liu@kernel.org,
+	sharmaajay@microsoft.com,
+	longli@microsoft.com,
+	jgg@ziepe.ca,
+	leon@kernel.org
+Cc: linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH net-next v2 0/2] Provide master netdev to mana_ib
+Date: Mon,  1 Jul 2024 05:58:54 -0700
+Message-Id: <1719838736-20338-1-git-send-email-kotaranov@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Thu, 27 Jun 2024 21:17:20 +0800
-"Peng Fan (OSS)" <peng.fan@oss.nxp.com> wrote:
+From: Konstantin Taranov <kotaranov@microsoft.com>
 
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> Use scope based of_node_put() cleanup to simplify code.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/pinctrl/pinctrl-equilibrium.c | 21 +++++----------------
->  1 file changed, 5 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-equilibrium.c b/drivers/pinctrl/pinctrl-equilibrium.c
-> index a6d089eaaae5..3a9a0f059090 100644
-> --- a/drivers/pinctrl/pinctrl-equilibrium.c
-> +++ b/drivers/pinctrl/pinctrl-equilibrium.c
-> @@ -588,7 +588,6 @@ static int funcs_utils(struct device *dev, struct pinfunction *funcs,
->  		       unsigned int *nr_funcs, funcs_util_ops op)
->  {
->  	struct device_node *node = dev->of_node;
-> -	struct device_node *np;
->  	struct property *prop;
->  	const char *fn_name;
->  	const char **groups;
-> @@ -596,7 +595,7 @@ static int funcs_utils(struct device *dev, struct pinfunction *funcs,
->  	int i, j;
->  
->  	i = 0;
-> -	for_each_child_of_node(node, np) {
-> +	for_each_child_of_node_scoped(node, np) {
->  		prop = of_find_property(np, "groups", NULL);
->  		if (!prop)
->  			continue;
-> @@ -635,7 +634,6 @@ static int funcs_utils(struct device *dev, struct pinfunction *funcs,
->  			break;
->  
->  		default:
-> -			of_node_put(np);
->  			return -EINVAL;
->  		}
->  		i++;
-> @@ -708,11 +706,10 @@ static int eqbr_build_groups(struct eqbr_pinctrl_drv_data *drvdata)
->  	struct device_node *node = dev->of_node;
->  	unsigned int *pins, *pinmux, pin_id, pinmux_id;
->  	struct pingroup group, *grp = &group;
-> -	struct device_node *np;
->  	struct property *prop;
->  	int j, err;
->  
-> -	for_each_child_of_node(node, np) {
-> +	for_each_child_of_node_scoped(node, np) {
->  		prop = of_find_property(np, "groups", NULL);
->  		if (!prop)
->  			continue;
-> @@ -720,42 +717,35 @@ static int eqbr_build_groups(struct eqbr_pinctrl_drv_data *drvdata)
->  		err = of_property_count_u32_elems(np, "pins");
->  		if (err < 0) {
->  			dev_err(dev, "No pins in the group: %s\n", prop->name);
-> -			of_node_put(np);
-Given I think this is only called from probe, return dev_err_probe() works
-nicely here as well.
+This patch series aims to allow mana_ib to get master netdev
+from mana. In the netvsc deployment, the VF netdev is enslaved
+by netvsc and the upper device should be considered for the network
+state. In the baremetal case, the VF netdev is a master device.
 
->  			return err;
->  		}
-Either way,
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+I would appreciate if I could get Acks on it from:
+* netvsc maintainers (e.g., Haiyang)
+* net maintainers (e.g., Jakub, David, Eric, Paolo)
+
+v1 -> v2:
+Leon Romanovsky asked to make a helper in the net/mana and get
+acks from net maintainers.
+
+Konstantin Taranov (2):
+  net: mana: introduce helper to get a master netdev
+  RDMA/mana_ib: Set correct device into ib
+
+ drivers/infiniband/hw/mana/device.c           | 16 ++++++++--------
+ drivers/net/ethernet/microsoft/mana/mana_en.c | 18 ++++++++++++++++++
+ include/net/mana/mana.h                       |  2 ++
+ 3 files changed, 28 insertions(+), 8 deletions(-)
+
+-- 
+2.43.0
+
 
