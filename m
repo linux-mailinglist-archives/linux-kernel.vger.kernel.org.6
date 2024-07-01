@@ -1,87 +1,46 @@
-Return-Path: <linux-kernel+bounces-236637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED10191E537
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:22:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C482A91E539
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:22:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A99F52830F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:22:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 028FB1C21641
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:22:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32AEF16DC3D;
-	Mon,  1 Jul 2024 16:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KxvajOjk"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0378716D9B7;
-	Mon,  1 Jul 2024 16:21:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F1016DEAA;
+	Mon,  1 Jul 2024 16:21:43 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450D816D9C5;
+	Mon,  1 Jul 2024 16:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719850890; cv=none; b=mB6geNGKvrb/LwSYMV1NZOaTfoR9ery9QdnBZnoimNYaev2kx3bd8JgQEBU7hicKQwJG/q+Oxz1l9858KomRo0U97R/ITRF0Iz7vMTGvLSIS9p2/osd3ZbXwSofo37PjmEFC6yYW8SpJL829GC4hoFTIR0MoVupoR/gBmC4R6Mw=
+	t=1719850902; cv=none; b=CN/1VsHGdUwV+OsfzXS0xgdgnHDJ9fVOTHoB4qdtjtl6tVyIOKjDgWuqro71YNm++wPOBXDNrlaGX1R83/RU6+akb5FEcmMTrEZPPS8cL/9rCrbMfgiaF+bOlaJk74H/0h2Lkdu4uAjZ9e0obOuGjDRaZwcDaDsL7fcH/bnLepo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719850890; c=relaxed/simple;
-	bh=5aHOtGJJ2Y5Pc+Kx8K9gLM0fxXIvzccg70ioxAvbKW4=;
+	s=arc-20240116; t=1719850902; c=relaxed/simple;
+	bh=M6IYo8b0Q1XF3SwYUmG4CG4tqJzC1dEx44Swa5frpZo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XeAcyDyXBalmH6UQMIFHm+iXFBzOtsbRN7pXgcYVfur6rrohnDVXnOIHzc8/UL+YK7PwzFuErCwVD4D3ppahACiqVfrWHwkgTNyayt5TlCsK01byFNpvxbk18wFHoIA5XdoftgE8EcXcnu3RgB5rQW0S+o1iGWWMUvszyc/OO4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KxvajOjk; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52e829086f3so2813867e87.3;
-        Mon, 01 Jul 2024 09:21:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719850887; x=1720455687; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1hgz/vfvdIIstVkRxWKHH4AxdmLyZ5LWQUHyNfrig1A=;
-        b=KxvajOjkmNghFfHGB0NcajkeAQpEtu9tTYJ6qYqBDQ+qRxCDzyIfrCQWTrOK9GbHEX
-         cl/WPG/P9zLGKgaWNOgcBR7fHSLKJO9b/1rd0xVX92pBP9wW1sP7665rI1eR0untWm4X
-         8s4hf0rG1L9hiZaPTOzJEhdx4yHk9WSXUN2FGXcHlxhVGGZaETd0Sg0CusMIHCvf7U+z
-         sxBNsZN5M2mcwkBwMnxYfY2WoxhQDbWqoiEBIS5N/ClA65XkRpWHe4s3bL50ryyTIn8A
-         1usUMfj/xeLcN+9XjoMkK6YEucfJ3kAjRjWTvrCRyTVi6kmVDupQKbXbPn5J4GUZM7qw
-         bhAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719850887; x=1720455687;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1hgz/vfvdIIstVkRxWKHH4AxdmLyZ5LWQUHyNfrig1A=;
-        b=cd1ymGkT7ZMBjUFtv16dRatSI7FNxuSmT0fSBhLO8DSA04pL7rXsYuvxH6dcbTGiXO
-         Pho9CMO5VKNdIvJYE/7QUM1lZIwVwxeB1feWg6Lu4BCAsFxOS8y/CcCEUzQd7oDmLfUF
-         JyuQvsO4zM0Wh9Y32Q4hPO76O63NP0UnLqot7UzFezIORcgZD++m9VuFo1avGXh3v4Hl
-         lTylBcOt2Yy/uP+6q6DvKGE9FTv1E/CaWYVOKxQUVmcCzHtS4ceh1YYtEkxPh8As30B7
-         1sCh/F/mgaa/Bolz0zZJ+NpZakq3EKVJ2mVGEx9qQ1sH5BGceF/k2Gwg38WHOFuXkE1q
-         QAXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVoTd4RtsCy43+k9YBtB55fU8jv2XcmJgXSjtXTqZ8e9lppSuSCc1CHGO96FUZ6+4bE4rQzKsUI5VdOpaXyU3Xiw+s/uLr2BsMKG6p5ffdg43U0gvxPcsaUYaIfMBuMCCh9Hb0/
-X-Gm-Message-State: AOJu0YyjM13q6JazGVA1YlhV2eV//3PlcAUglCcirRL3E3/aJZWgTxYE
-	E9QvblMLImXpMXCPJoZZD3+7vdRB3C1QUcqmaJ7Xb2K94I2gFDBt
-X-Google-Smtp-Source: AGHT+IHQQCCynAPYl6LXUvW6APyHqE9berK0UtiI5jg1zfVojn7CuH1WrDqZGKkIjixJza673C2nkA==
-X-Received: by 2002:a05:6512:33c8:b0:52c:c9b6:df0f with SMTP id 2adb3069b0e04-52e82733f9dmr3934002e87.61.1719850886847;
-        Mon, 01 Jul 2024 09:21:26 -0700 (PDT)
-Received: from skbuf ([79.115.210.53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0fba0bsm10433428f8f.69.2024.07.01.09.21.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 09:21:26 -0700 (PDT)
-Date: Mon, 1 Jul 2024 19:21:23 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>, Andrew Lunn <andrew@lunn.ch>,
-	Eric Dumazet <edumazet@google.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Arun Ramadoss <arun.ramadoss@microchip.com>,
-	Lucas Stach <l.stach@pengutronix.de>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com
-Subject: Re: [PATCH net-next v2 3/3] net: dsa: microchip: lan937x: disable
- VPHY support
-Message-ID: <20240701162123.bj2lgsrouik3xtj3@skbuf>
-References: <20240701085343.3042567-1-o.rempel@pengutronix.de>
- <20240701085343.3042567-3-o.rempel@pengutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pR4+B7NjucZ6OZMBUaUCO8iMOt47qk1gaGgDb9HRlQ9AxC4KizoXX9YegmFdWKGAglDSuWjpLDawR9fVLTGm81aQt3KNfGJWI3zXJn9idxEyBtXFQ1ZKWDYMVqD+gsoowFdc2UgjeOyXrbaIjF9a+v8e3EjCqX9JC3obBTVEAtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 975CC339;
+	Mon,  1 Jul 2024 09:22:05 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BDD453F73B;
+	Mon,  1 Jul 2024 09:21:39 -0700 (PDT)
+Date: Mon, 1 Jul 2024 17:21:37 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Luke Parkin <luke.parkin@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org, sudeep.holla@arm.com,
+	cristian.marussi@arm.com
+Subject: Re: [PATCH 0/3] Add Per-transport SCMI debug statistics
+Message-ID: <ZoLXkWur5TZaQzkm@pluto>
+References: <20240701142851.1448515-1-luke.parkin@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,39 +49,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240701085343.3042567-3-o.rempel@pengutronix.de>
+In-Reply-To: <20240701142851.1448515-1-luke.parkin@arm.com>
 
-On Mon, Jul 01, 2024 at 10:53:43AM +0200, Oleksij Rempel wrote:
-> From: Lucas Stach <l.stach@pengutronix.de>
+On Mon, Jul 01, 2024 at 03:28:48PM +0100, Luke Parkin wrote:
+> Hi,
 > 
-> As described by the microchip article "LAN937X - The required
-> configuration for the external MAC port to operate at RGMII-to-RGMII
-> 1Gbps link speed." [1]:
+> This series adds support for tracking Arm SCMI statistics, [Patch 2]
+> A config option to enable this, [Patch 1] 
+> And in [Patch 3] a selection of new debugfs entries to present these statistics
 > 
-> "When VPHY is enabled, the auto-negotiation process following IEEE 802.3
-> standard will be triggered and will result in RGMII-to-RGMII signal
-> failure on the interface because VPHY will try to poll the PHY status
-> that is not available in the scenario of RGMII-to-RGMII connection
-> (normally the link partner is usually an external processor).
+> These statistics are per transport instance, and will be a helpful resource when
+> debugging the SCMI and running tests.
 > 
-> Note that when VPHY fails on accessing PHY registers, it will fall back
-> to 100Mbps speed, it indicates disabling VPHY is optional if you only
-> need the port to link at 100Mbps speed.
+> Based on v6.9, Tested on Arm Juno [1]
 > 
-> Again, VPHY must and can only be disabled by writing VPHY_DISABLE bit in
-> the register below as there is no strapping pin for the control."
+> Thanks,
+> Luke
 > 
-> This patch was tested on LAN9372, so far it seems to not to affect VPHY
-> based clock crossing optimization for the ports with integrated PHYs.
+> [1]: https://www.arm.com/products/development-tools/development-boards/juno-arm-dev-platform
 > 
-> [1]: https://microchip.my.site.com/s/article/LAN937X-The-required-configuration-for-the-external-MAC-port-to-operate-at-RGMII-to-RGMII-1Gbps-link-speed
+> Luke Parkin (3):
+>   Add Kconfig option for scmi debug statistics
+>   Track basic SCMI statistics
+>   Create debugfs files for statistics
 > 
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> ---
-> changes v2:
-> - reword the comment and link microchip article
-> ---
+>  drivers/firmware/arm_scmi/Kconfig  | 10 +++++
+>  drivers/firmware/arm_scmi/driver.c | 61 +++++++++++++++++++++++++++++-
+>  2 files changed, 69 insertions(+), 2 deletions(-)
+> 
 
-Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
+All in all, seems to me a good start, please address or dispute my (and
+possibly other reviewers) observations in V2.
+
+Thanks,
+Cristian
 
