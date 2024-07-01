@@ -1,108 +1,84 @@
-Return-Path: <linux-kernel+bounces-235468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A830091D572
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 02:24:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6649991D573
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 02:24:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB1011C20A88
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A337280E75
 	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 00:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D63013AA35;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5F481726;
 	Mon,  1 Jul 2024 00:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iD+Wlrue"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OKulUFop"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8646A15D5A4;
-	Mon,  1 Jul 2024 00:15:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8642115CD7F
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 00:15:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719792926; cv=none; b=h0tNGWwwHgG83M7rP57OqXnUjzicuN9JGQ/k3JvKJsErvYVQ7v0Lvd2H4GICRTMlkGkR3+qRcpMpbtiQBnZNU5Wk27+IVZJsbNygt+U3LCTuzBY2a2h8Cu9VP8W99OPmOsZhUqmZYEcKzzyKljmDTpgaV1nT/MwneWtbiStvQso=
+	t=1719792926; cv=none; b=UTSo49uVq/OTkNFVs6ZmzjUFshG8GTxvQY1fn4nTZg+Uxq4opof0JdA8iyl43tRWGHBRMbVe8Ijdn87YXDVB1fYHG7PqeYxlgD5YyO9a33f5+ISnaqmAhSGSGmFHw8wDZgvrGAhO7S89bFJ3zlYdJmmC2PzVufGomP31AQJ/QRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719792926; c=relaxed/simple;
-	bh=W4XKRM96NfZEDgWXn2Q2vfdWEruHWoR+teSwyVUiCIo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r8raPQorRxhKNxDuu47uy1Gu87rXlTmOqBMYlRIsTEsIcQhwV2IjJMysONQVSmIBq5jAzYMNva/aZewUwYTJpLYlJqOLqTJ20iTajBznByREvHKLWBJsnbGeH1T+YyeAuLk1QWUJ5iM5sBbaBb8QLeBcFVZAuT8CdkHQXvZlUNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iD+Wlrue; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D3BDC32786;
+	bh=0FS5iDfdIF15d3pUk3us0GGQ1UCBqx2uK0p4uMf+sOE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bhU3U2oo8P3gPAGJdnZHIESWYFN8Edjt5okJwUPjwUuphujlEJwEMlsjxyGbEGuaxLcjmFZHSAM6F2+oMVig6XkvKYJ+dxAy02CohXXH2sx9shnToRSfsUqapF5rz2VrEUXCCX8aJwYQh8HmY+KYgfV2e/sWLzeQP2571NW94Ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OKulUFop; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31FABC4AF0A;
 	Mon,  1 Jul 2024 00:15:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719792926;
-	bh=W4XKRM96NfZEDgWXn2Q2vfdWEruHWoR+teSwyVUiCIo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iD+WlrueB1Jp6lwm3dUDc6fSXfjg6VVt19TgUH55092Gk+bznnim0HpjpqQrEYfmp
-	 XwowNVySHOmvo/4Ka8/48KQ9xcEuzn+SvhK2UHwq70E5Ygtod/fqsdIM1AFYbs5jXx
-	 VVw3SSbNpNQVL7NBUIHNCXz7sclc1Nfluhkr6NICocX7XNCKmZsm8p6OpTMevCyShi
-	 vqp92ABEqO1IKcJKgBN48BVopDRQegOp2h1eT0kn4ZP5qPkM/3s0F7xkbC/VWqTS/O
-	 WWI5iahwgjFaCCNR9+Fjm2Rfr0rTHEl6fSWElDdIrcaycZEwJsGeew3hwS/sdBsPr0
-	 +GIGlK1oqy5xw==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Sasha Levin <sashal@kernel.org>,
-	geert@linux-m68k.org,
-	peterz@infradead.org,
-	tglx@linutronix.de,
-	brauner@kernel.org,
-	sohil.mehta@intel.com,
-	casey@schaufler-ca.com,
-	palmer@sifive.com,
-	mszeredi@redhat.com,
-	linux-mips@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 4/4] mips: fix compat_sys_lseek syscall
-Date: Sun, 30 Jun 2024 20:15:09 -0400
-Message-ID: <20240701001514.2921545-4-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240701001514.2921545-1-sashal@kernel.org>
-References: <20240701001514.2921545-1-sashal@kernel.org>
+	s=k20201202; t=1719792925;
+	bh=0FS5iDfdIF15d3pUk3us0GGQ1UCBqx2uK0p4uMf+sOE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OKulUFop4ZiIt4HyNK0JD6oAOC3VwMSvnRoXl5jur9iA736IfJe2yFA98gjTuzxdW
+	 TmdmfBFQPUnXmG9OaXGgxAAQ0GAkLPOO9kTYiPi8Q1yTQCcHXgNyRFRrZzd3clQRLT
+	 exARznRmAiwBBmqrRWlPH1P3gpnecUXo2tcYHBcLA0xgO0yEwUh1/PM6VrwpRW6vKj
+	 JkO9w18Vw6rssnmeVX1488ENQ/AZmVwEGI7vOd/h1LiKYlyfxAafZBdms61ZEUFvX3
+	 Mt+AiHXlfymwVMLPFkXo9gjRobiCWaUSaxrB6IyhsQcYfzeGC8jVQBq+YCXappQ7S9
+	 oX6klBmBuxnhw==
+Message-ID: <21e74654-566f-42ca-9d48-377555dba11c@kernel.org>
+Date: Mon, 1 Jul 2024 09:15:23 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.278
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 33/53] scsi: libsas: Simplify the create*_workqueue()
+ calls
+To: Bart Van Assche <bvanassche@acm.org>, Tejun Heo <tj@kernel.org>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>,
+ linux-kernel@vger.kernel.org,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ John Garry <john.g.garry@oracle.com>, Jason Yan <yanaijie@huawei.com>
+References: <20240630222904.627462-1-bvanassche@acm.org>
+ <20240630222904.627462-34-bvanassche@acm.org>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20240630222904.627462-34-bvanassche@acm.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Arnd Bergmann <arnd@arndb.de>
+On 7/1/24 07:26, Bart Van Assche wrote:
+> Pass a format string to create*_workqueue2() instead of formatting the
+> workqueue name before create*_workqueue() is called.
+> 
+> Cc: Martin K. Petersen <martin.petersen@oracle.com>
+> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 
-[ Upstream commit 0d5679a0aae2d8cda72169452c32e5cb88a7ab33 ]
+Looks good.
 
-This is almost compatible, but passing a negative offset should result
-in a EINVAL error, but on mips o32 compat mode would seek to a large
-32-bit byte offset.
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
 
-Use compat_sys_lseek() to correctly sign-extend the argument.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/mips/kernel/syscalls/syscall_o32.tbl | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
-index 353539ea4140a..5f2c2636e7a4f 100644
---- a/arch/mips/kernel/syscalls/syscall_o32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
-@@ -27,7 +27,7 @@
- 17	o32	break				sys_ni_syscall
- # 18 was sys_stat
- 18	o32	unused18			sys_ni_syscall
--19	o32	lseek				sys_lseek
-+19	o32	lseek				sys_lseek			compat_sys_lseek
- 20	o32	getpid				sys_getpid
- 21	o32	mount				sys_mount			compat_sys_mount
- 22	o32	umount				sys_oldumount
 -- 
-2.43.0
+Damien Le Moal
+Western Digital Research
 
 
