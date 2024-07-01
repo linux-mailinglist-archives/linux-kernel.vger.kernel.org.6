@@ -1,67 +1,56 @@
-Return-Path: <linux-kernel+bounces-236730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CE0091E66A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:17:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C012C91E66D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:19:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79FD91C2275C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:17:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 685FC1F24C3A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9EA616E88B;
-	Mon,  1 Jul 2024 17:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87BAE16E88B;
+	Mon,  1 Jul 2024 17:19:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bolHJ7sr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V2lklDO2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3267014B947;
-	Mon,  1 Jul 2024 17:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E3116DED9;
+	Mon,  1 Jul 2024 17:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719854269; cv=none; b=P5yWlM+SnV1gkW41gmCHbnSTbld8iMaDi9sPrgPtNJxnkGlQ82ViU6IhZgdPZYDhw8FPh221BCK1hohbJ3yOQbvRcPINCQO9hA9PlqoP0Y4KBwQorQhLtR8dMoXSEU2vko1y4tz9TEl1GbGEwBgAk4XEFk8QpQXK84K/ykbaUKI=
+	t=1719854343; cv=none; b=KQp7joUm/Rwx5G+NyqfwnZHJ6r8wU4hRGJvGPDbqLyXJxHEJIglChTdE5LCNSHMHXrCosN7IzLfXWgFTuc7Ogdr+mG2/WAgwGCqHy3No4poLnQQXavg6OQymwoieZXGuTt9WDsWkd6qyI05o2W0M6hjRmB1qd2bnblWdNWAu7o8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719854269; c=relaxed/simple;
-	bh=wcPmXYJTY/CZ/O9Vqbj7WeF4g6HD757l9DFr+Lr3X9Y=;
+	s=arc-20240116; t=1719854343; c=relaxed/simple;
+	bh=jfPimOmSjEMqU8jUtPaSvvnKNg03jPMcCI32o609gz0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jozwk3RnL8d2D1NFXTxf8eY0Q95E6TonH3+TRSQUVRLk25tGfP5GDlZFSRj+1d4Ju8IMfR3EZqUKjHiIjKlQNNrQaDGLDhrwoxzWYSDIBRU22YTnE3RbnpybqgzIhno3mJCu0TvacR5ANGd1TKQPkSkDoJegX2vwd8pZY0s5JlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bolHJ7sr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EFA6C32781;
-	Mon,  1 Jul 2024 17:17:48 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=WcoDDEVejDSRzMj6iAthrVl3Nf+p+qMjfCQtkntLrwth+skSwqb9dW3eNzM81AHWHS1f8WO5QoyvDZlc7X/YGDHye1KI/VN1jkzcRQk+BZPGbfUAbMtumcjom5bWkTaJ6S5VD+Sosre4y3d/J0YDK1SFYYwzKRBSQBJK8k4yot8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V2lklDO2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46C7DC116B1;
+	Mon,  1 Jul 2024 17:19:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719854268;
-	bh=wcPmXYJTY/CZ/O9Vqbj7WeF4g6HD757l9DFr+Lr3X9Y=;
+	s=k20201202; t=1719854343;
+	bh=jfPimOmSjEMqU8jUtPaSvvnKNg03jPMcCI32o609gz0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bolHJ7srqPaWrIl0M7Fhi0mOI0NKVup0Hn+YS7KAXpRUutabBFd/cH9HhGpudTeV/
-	 uv7e/pJWjXF0xIqIObZEzLmCVLiROKFrGY9DclRq3vLFsIUpgSqiHA0cZI98b2e+4Z
-	 9NR7tE9tBEhkO/K/FxFFvCqoNoeVsQTtxPBWrGQA/qfrasM5+dcfBILq8bafUqDlb+
-	 3nN9ZqhY/IiImL76A6ncDncuO2j6H7FX9HwEVXiGc2kMJobxe4BipfR3drCZjsKz/a
-	 rdnYQUqY5DTQYSGdHyEPhwLSnmdKgle8x7vli2BEMW9E1E1L4giRA11pdFU06OqdZl
-	 WyauZ5knxF9Rw==
-Date: Mon, 1 Jul 2024 11:17:47 -0600
-From: Rob Herring <robh@kernel.org>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	lars@metafoo.de, krzk+dt@kernel.org, conor+dt@kernel.org,
-	matthias.bgg@gmail.com, lee@kernel.org, andy@kernel.org,
-	nuno.sa@analog.com, bigunclemax@gmail.com, dlechner@baylibre.com,
-	marius.cristea@microchip.com, marcelo.schmitt@analog.com,
-	fr0st61te@gmail.com, mitrutzceclan@gmail.com,
-	mike.looijmans@topic.nl, marcus.folkesson@gmail.com,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, andy.shevchenko@gmail.com,
-	kernel@collabora.com
-Subject: Re: [PATCH v2 1/5] dt-bindings: iio: adc: Add MediaTek MT6359 PMIC
- AUXADC
-Message-ID: <20240701171747.GA133215-robh@kernel.org>
-References: <20240604123008.327424-1-angelogioacchino.delregno@collabora.com>
- <20240604123008.327424-2-angelogioacchino.delregno@collabora.com>
- <20240605235239.GA3455504-robh@kernel.org>
- <e71a38a9-7a92-4156-a7f0-52f71d461d61@collabora.com>
- <20240617203314.641e84a9@jic23-huawei>
+	b=V2lklDO2di+BTzo5RvvBTWW2HzjtEO2JXbKTQZ6flHJIZMzGoX9izGaF4Kg+faIPI
+	 BUrU8rpEzrOucWUAS6IhS9d8jEHUQOsza+XVOiQVqROY8981IkJNkPOp/w9kyWRyMw
+	 x7E/OVKPsBHYLV81PRfHkDlqqvu9FxhzGabowjWbXLeMj+IzyhMS5ycoyiGWkbZ+T1
+	 s0igyDVSlwcbvC0LNYplySjHPI90O/T993pFkNr+w/b9ppIZtZOEfQ1se578+shlGV
+	 VQo1g2UPi0SR5+nHuhir+2AwRJKeekKmwx+pYEJQc1G/AbJnQikpj3aFYyLhaArcNv
+	 J62xyT9qlmwPQ==
+Date: Mon, 1 Jul 2024 10:19:01 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Dave Airlie <airlied@redhat.com>,
+	Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
+	DRI <dri-devel@lists.freedesktop.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the drm tree
+Message-ID: <20240701171901.GA882812@thelio-3990X>
+References: <20240701191319.087b227e@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,85 +59,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240617203314.641e84a9@jic23-huawei>
+In-Reply-To: <20240701191319.087b227e@canb.auug.org.au>
 
-On Mon, Jun 17, 2024 at 08:33:14PM +0100, Jonathan Cameron wrote:
-> On Mon, 10 Jun 2024 10:00:55 +0200
-> AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com> wrote:
+On Mon, Jul 01, 2024 at 07:13:19PM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> > Il 06/06/24 01:52, Rob Herring ha scritto:
-> > > On Tue, Jun 04, 2024 at 02:30:04PM +0200, AngeloGioacchino Del Regno wrote:  
-> > >> Add a new binding for the MT6350 Series (MT6357/8/9) PMIC AUXADC,
-> > >> providing various ADC channels for both internal temperatures and
-> > >> voltages, audio accessory detection (hp/mic/hp+mic and buttons,
-> > >> usually on a 3.5mm jack) other than some basic battery statistics
-> > >> on boards where the battery is managed by this PMIC.
-> > >>
-> > >> Also add the necessary dt-binding headers for devicetree consumers.
-> > >>
-> > >> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> > >> ---
-> > >>   .../iio/adc/mediatek,mt6359-auxadc.yaml       | 33 +++++++++++++++++++
-> > >>   .../iio/adc/mediatek,mt6357-auxadc.h          | 21 ++++++++++++
-> > >>   .../iio/adc/mediatek,mt6358-auxadc.h          | 22 +++++++++++++
-> > >>   .../iio/adc/mediatek,mt6359-auxadc.h          | 22 +++++++++++++
-> > >>   4 files changed, 98 insertions(+)
-> > >>   create mode 100644 Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml
-> > >>   create mode 100644 include/dt-bindings/iio/adc/mediatek,mt6357-auxadc.h
-> > >>   create mode 100644 include/dt-bindings/iio/adc/mediatek,mt6358-auxadc.h
-> > >>   create mode 100644 include/dt-bindings/iio/adc/mediatek,mt6359-auxadc.h
-> > >>
-> > >> diff --git a/Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml b/Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml
-> > >> new file mode 100644
-> > >> index 000000000000..6497c416094d
-> > >> --- /dev/null
-> > >> +++ b/Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml
-> > >> @@ -0,0 +1,33 @@
-> > >> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > >> +%YAML 1.2
-> > >> +---
-> > >> +$id: http://devicetree.org/schemas/iio/adc/mediatek,mt6359-auxadc.yaml#
-> > >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > >> +
-> > >> +title: MediaTek MT6350 series PMIC AUXADC
-> > >> +
-> > >> +maintainers:
-> > >> +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> > >> +
-> > >> +description:
-> > >> +  The Auxiliary Analog/Digital Converter (AUXADC) is an ADC found
-> > >> +  in some MediaTek PMICs, performing various PMIC related measurements
-> > >> +  such as battery and PMIC internal voltage regulators temperatures,
-> > >> +  accessory detection resistance (usually, for a 3.5mm audio jack)
-> > >> +  other than voltages for various PMIC internal components.
-> > >> +
-> > >> +properties:
-> > >> +  compatible:
-> > >> +    enum:
-> > >> +      - mediatek,mt6357-auxadc
-> > >> +      - mediatek,mt6358-auxadc
-> > >> +      - mediatek,mt6359-auxadc
-> > >> +
-> > >> +  "#io-channel-cells":
-> > >> +    const: 1  
-> > > 
-> > > Why do you need a node here? Just add #io-channel-cells to the parent
-> > > node.
-> > >   
-> > 
-> > Because some boards will want to avoid probing the related driver, as that will
-> > trigger a reset and this may not play well with ECs (namely, some Chromebooks),
-> > which are reading the same AUXADC block.
-> > 
-> > If I avoid using a new node, instead of just using `status`, I'll have to add a
-> > "mediatek,disable-auxadc" property to the parent node, which isn't pretty...
+> After merging the drm tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
 > 
-> Rob, does this answer the question to your satisfaction?
+> In file included from arch/powerpc/include/asm/mmu.h:144,
+>                  from arch/powerpc/include/asm/paca.h:18,
+>                  from arch/powerpc/include/asm/current.h:13,
+>                  from include/linux/sched.h:12,
+>                  from include/linux/ratelimit.h:6,
+>                  from include/linux/dev_printk.h:16,
+>                  from include/linux/device.h:15,
+>                  from include/linux/dma-mapping.h:8,
+>                  from drivers/gpu/drm/omapdrm/omap_gem.c:7:
+> drivers/gpu/drm/omapdrm/omap_gem.c: In function 'omap_gem_pin_tiler':
+> arch/powerpc/include/asm/page.h:25:33: error: conversion from 'long unsigned int' to 'u16' {aka 'short unsigned int'} changes value from '65536' to '0' [-Werror=overflow]
+>    25 | #define PAGE_SIZE               (ASM_CONST(1) << PAGE_SHIFT)
+>       |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/gpu/drm/omapdrm/omap_gem.c:758:42: note: in expansion of macro 'PAGE_SIZE'
+>   758 |                                          PAGE_SIZE);
+>       |                                          ^~~~~~~~~
+> drivers/gpu/drm/omapdrm/omap_gem.c: In function 'omap_gem_init':
+> arch/powerpc/include/asm/page.h:25:33: error: conversion from 'long unsigned int' to 'u16' {aka 'short unsigned int'} changes value from '65536' to '0' [-Werror=overflow]
+>    25 | #define PAGE_SIZE               (ASM_CONST(1) << PAGE_SHIFT)
+>       |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/gpu/drm/omapdrm/omap_gem.c:1504:65: note: in expansion of macro 'PAGE_SIZE'
+>  1504 |                         block = tiler_reserve_2d(fmts[i], w, h, PAGE_SIZE);
+>       |                                                                 ^~~~~~~~~
+> cc1: all warnings being treated as errors
 > 
-> If you are fine with this I'd like to queue it up (with the typo in one of the
-> patch descriptions that Andy caught fixed up).
+> Exposed by commit
+> 
+>   dc6fcaaba5a5 ("drm/omap: Allow build with COMPILE_TEST=y")
+> 
+> PowerPC 64 bit uses 64k pages.
+> 
+> I have reverted that commit for today.
 
-Yes.
+FWIW, I sent a patch to address this in a bit of a more targeted manner
+over a week ago:
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+https://lore.kernel.org/20240620-omapdrm-restrict-compile-test-to-sub-64kb-page-size-v1-1-5e56de71ffca@kernel.org/
+
+Although somehow, I left off Ville from that patch :/
+
+Cheers,
+Nathan
 
