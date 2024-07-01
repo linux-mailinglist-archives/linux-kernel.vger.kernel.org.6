@@ -1,225 +1,119 @@
-Return-Path: <linux-kernel+bounces-236838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B60A691E7AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:34:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F378791E7B2
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:35:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28EF2B239BE
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:34:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 308601C2234C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E3716F27A;
-	Mon,  1 Jul 2024 18:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Arg4wOvc"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C343D16F282;
+	Mon,  1 Jul 2024 18:34:25 +0000 (UTC)
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B8616F282
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 18:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EBEF16C844;
+	Mon,  1 Jul 2024 18:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719858854; cv=none; b=SpDUlYfAAMWnRemoVEBoMvfRr2rH7cbdNhvzayXCCL4YhQym6eWUoJqNEgvq3exJ3c7hPjLIvOczJDEu6j3kCgeJcZxgITkS/iwicN73pCw4NSykD6nIu9m8rJ96Dpf4dYPDBRfWALnejT/H8aDWEhYi1sYvNVaeTXcRWU0Tj1Q=
+	t=1719858865; cv=none; b=bLk96bPx9kLqaj24cr9RDpDaXuvzXw2UDWY8aZEazXzMD/W8JoTJFNDlXkixN5SHObVA/oRJsM9gDH35r51Cn/QEJpUXIHJ1npMx5AgYEbRwN+D4glOlnpjxzwZ+O1mlu8H7ggwyDrrh5aG7BkI4CNoYmgEqOBURDKdrsPmhj2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719858854; c=relaxed/simple;
-	bh=AlleWO7seezdRQOko8HA4kvBQETQ1mo34KZ8VJew1fM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SJs0qqaO1sKUwIz/rk9qISrOvRzBC7TUv2gME9nC5aU2qic6b1YXdFBMeipajFZOWFGwl6XWNb9OcK/M0bCq7qJoDt7ATztZ9AqZSK+X1kx5JUyckx5gQVVBK38nKIzpBEBRGHE3a8XkvtCzzKZDoDLWkMerAML6f5CpECrS6W0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Arg4wOvc; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52e743307a2so3809479e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 11:34:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719858851; x=1720463651; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UlMQ98Rr8Ts5zoOoR0fpYPnoRARBs+uq2fu6Ocdpreg=;
-        b=Arg4wOvcWE8W8yApgZ0wQMHK7a6SpPdMOyMK6XEOabIRe2d9uI5VQ1IHn+4tDUylkj
-         9iV2Wwk1NsEKC05Zqbwh63xgZChHtLyYqOCAgxABq0CcUCprPVCxk4NVI2CUHy/cCNBE
-         SrhFlfISi03fECa+OBWznrfHiuyP/Kp1oAL4JRi9+mLmKzgCMw6rQgLnJiGCUDfO6eC9
-         dQJtXFd9lYCiOki7q/cal1OPLVjsebYG0UlLROZklymG0VhcyjTyoYfzQ1h3r/qhztNE
-         /WfZx8kHj155n4S903LmCcTNZBkmAWk17UlK6Ixh1AQPJjaCfKOelx3ztiukZ/f4oxzx
-         CpsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719858851; x=1720463651;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UlMQ98Rr8Ts5zoOoR0fpYPnoRARBs+uq2fu6Ocdpreg=;
-        b=Lh5UrDo9ZoNu5HTNKfMuK3VEH+0sfrK2SkPaKame4FJ/0zUe+mV8KzNnPuTwjn8LKx
-         eS6FqqjEWRU1a+SrxlzEu6hRLtYzVFV7iqSXJ/gwI0Iu5aysIUXD7DXAQL5hK8VWBDvH
-         PUrpeJfvKGcJjf4jdgWgFh2aSZhmIkiBr9jpXD7f+pLgK/jdMYzgOhIdV4167AOHk4g7
-         XmQOABn1IKuNuwDVpvV3cN66gmjID3OTsuNkfjb5wRelkjkwAgUg30uFnV4Kxjtu9Bin
-         1TkW/miBGUP1M/xn//pE8qEzk0MjRyOcUwIPq6ckqYKK4aI72iNI68TcgkiDlgk8PJhz
-         ebOA==
-X-Forwarded-Encrypted: i=1; AJvYcCURcMwxy53kYu17d46YUMhGBVi2iUDdyP8yVH74Ek2Ni24L9LdbKIoTYnd1SrAEM+k5joPlWVOnn53i2y/E3OTfl5M1qjoWNupopmQu
-X-Gm-Message-State: AOJu0YxxSoH58SgsqeCiOan4KA/iZkPnRQ/waAoeu3ZSy1xcBlRlI/R8
-	UHUnkKNBtnNaEUnyiI+Q1305RzXyBlnts3+9tDS9guRzgqTORQJryJt+q/YlT+U=
-X-Google-Smtp-Source: AGHT+IF85zrSDvg5F1wY2TkxPxIK+nbL8qBZtByDVmsAVS6fcE3x5dghVoObnWk5Od3sYp3KGPLBAQ==
-X-Received: by 2002:a05:6512:3d86:b0:52c:e086:7953 with SMTP id 2adb3069b0e04-52e8264df6amr5042600e87.4.1719858849378;
-        Mon, 01 Jul 2024 11:34:09 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab2eae5sm1526774e87.212.2024.07.01.11.34.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 11:34:08 -0700 (PDT)
-Date: Mon, 1 Jul 2024 21:34:07 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-Cc: robdclark@gmail.com, will@kernel.org, robin.murphy@arm.com, 
-	joro@8bytes.org, jgg@ziepe.ca, jsnitsel@redhat.com, robh@kernel.org, 
-	krzysztof.kozlowski@linaro.org, quic_c_gdjako@quicinc.com, konrad.dybcio@linaro.org, 
-	iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v13 4/6] iommu/arm-smmu: add ACTLR data and support for
- SM8550
-Message-ID: <ueuhu5xfzp2rnuxzeqqd6cho476adidztgx7oq2tbiufauv6h4@obblpxvqwnno>
-References: <20240628140435.1652374-1-quic_bibekkum@quicinc.com>
- <20240628140435.1652374-5-quic_bibekkum@quicinc.com>
+	s=arc-20240116; t=1719858865; c=relaxed/simple;
+	bh=qnBhsbC4WESNiDDc/d77ys1TcQzeK/0ng/S3oNQv8JA=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=NiyzFLUDOQOtrS/GvfEaJmQyjbYWX6AeoEsGap5ltGjRYQihNQlCSAdXUtl8J3fDsvsQgRpHIuvDCCK+DPWpoGxZNEadoLmUzuBHDQk1TScnzXoaovGO0QJ7XVgSn1yfuS7OUNyLE5fiBJ3JQbPf/wuV5sgN10qdhgDB583vT3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org; spf=pass smtp.mailfrom=ovn.org; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ovn.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 413AEC0005;
+	Mon,  1 Jul 2024 18:34:18 +0000 (UTC)
+Message-ID: <79258c61-9658-4f9b-b564-f2e14440a7c5@ovn.org>
+Date: Mon, 1 Jul 2024 20:34:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240628140435.1652374-5-quic_bibekkum@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Cc: i.maximets@ovn.org, aconole@redhat.com, echaudro@redhat.com,
+ horms@kernel.org, dev@openvswitch.org, Pravin B Shelar <pshelar@ovn.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v7 10/10] selftests: openvswitch: add psample
+ test
+To: Adrian Moreno <amorenoz@redhat.com>, netdev@vger.kernel.org
+References: <20240630195740.1469727-1-amorenoz@redhat.com>
+ <20240630195740.1469727-11-amorenoz@redhat.com>
+Content-Language: en-US
+From: Ilya Maximets <i.maximets@ovn.org>
+Autocrypt: addr=i.maximets@ovn.org; keydata=
+ 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
+In-Reply-To: <20240630195740.1469727-11-amorenoz@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: i.maximets@ovn.org
 
-On Fri, Jun 28, 2024 at 07:34:33PM GMT, Bibek Kumar Patro wrote:
-> Add ACTLR data table for SM8550 along with support for
-> same including SM8550 specific implementation operations.
+On 6/30/24 21:57, Adrian Moreno wrote:
+> Add a test to verify sampling packets via psample works.
 > 
-> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+> In order to do that, create a subcommand in ovs-dpctl.py to listen to
+> on the psample multicast group and print samples.
+> 
+> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
 > ---
->  drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 89 ++++++++++++++++++++++
->  1 file changed, 89 insertions(+)
-> 
-> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> index 77c9abffe07d..b4521471ffe9 100644
-> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> @@ -23,6 +23,85 @@
-> 
->  #define CPRE			(1 << 1)
->  #define CMTLB			(1 << 0)
-> +#define PREFETCH_SHIFT		8
-> +#define PREFETCH_DEFAULT	0
-> +#define PREFETCH_SHALLOW	(1 << PREFETCH_SHIFT)
-> +#define PREFETCH_MODERATE	(2 << PREFETCH_SHIFT)
-> +#define PREFETCH_DEEP		(3 << PREFETCH_SHIFT)
-> +
-> +static const struct actlr_config sm8550_apps_actlr_cfg[] = {
-> +	{ 0x18a0, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
-> +	{ 0x18e0, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
-> +	{ 0x0800, 0x0020, PREFETCH_DEFAULT | CMTLB },
-> +	{ 0x1800, 0x00c0, PREFETCH_DEFAULT | CMTLB },
-> +	{ 0x1820, 0x0000, PREFETCH_DEFAULT | CMTLB },
-> +	{ 0x1860, 0x0000, PREFETCH_DEFAULT | CMTLB },
-> +	{ 0x0c01, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
+>  .../selftests/net/openvswitch/openvswitch.sh  | 115 +++++++++++++++++-
+>  .../selftests/net/openvswitch/ovs-dpctl.py    |  73 ++++++++++-
+>  2 files changed, 182 insertions(+), 6 deletions(-)
 
-- Please keep the list sorted
-- Please comment, which devices use these settings.
 
-> +	{ 0x0c02, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x0c03, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x0c04, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x0c05, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x0c06, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x0c07, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x0c08, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x0c09, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x0c0c, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x0c0d, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x0c0e, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x0c0f, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x1961, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x1962, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x1963, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x1964, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x1965, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x1966, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x1967, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x1968, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x1969, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x196c, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x196d, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x196e, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x196f, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x19c1, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x19c2, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x19c3, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x19c4, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x19c5, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x19c6, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x19c7, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x19c8, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x19c9, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x19cc, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x19cd, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x19ce, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x19cf, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
-> +	{ 0x1c00, 0x0002, PREFETCH_SHALLOW | CPRE | CMTLB },
-> +	{ 0x1c01, 0x0000, PREFETCH_DEFAULT | CMTLB },
-> +	{ 0x1920, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
-> +	{ 0x1923, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
-> +	{ 0x1924, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
-> +	{ 0x1940, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
-> +	{ 0x1941, 0x0004, PREFETCH_SHALLOW | CPRE | CMTLB },
-> +	{ 0x1943, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
-> +	{ 0x1944, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
-> +	{ 0x1947, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
-> +};
-> +
-> +static const struct actlr_config sm8550_gfx_actlr_cfg[] = {
-> +	{ 0x0000, 0x03ff, PREFETCH_DEEP | CPRE | CMTLB },
-> +};
-> +
-> +static const struct actlr_variant sm8550_actlr[] = {
-> +	{
-> +		.io_start = 0x15000000,
-> +		.actlrcfg = sm8550_apps_actlr_cfg,
-> +		.num_actlrcfg = ARRAY_SIZE(sm8550_apps_actlr_cfg)
-> +	}, {
-> +		.io_start = 0x03da0000,
-> +		.actlrcfg = sm8550_gfx_actlr_cfg,
-> +		.num_actlrcfg = ARRAY_SIZE(sm8550_gfx_actlr_cfg)
-> +	},
-> +};
-> 
->  static struct qcom_smmu *to_qcom_smmu(struct arm_smmu_device *smmu)
->  {
-> @@ -606,6 +685,15 @@ static const struct qcom_smmu_match_data sdm845_smmu_500_data = {
->  	/* Also no debug configuration. */
->  };
-> 
-> +
-> +static const struct qcom_smmu_match_data sm8550_smmu_500_impl0_data = {
-> +	.impl = &qcom_smmu_500_impl,
-> +	.adreno_impl = &qcom_adreno_smmu_500_impl,
-> +	.cfg = &qcom_smmu_impl0_cfg,
-> +	.actlrvar = sm8550_actlr,
-> +	.num_smmu = ARRAY_SIZE(sm8550_actlr),
-> +};
-> +
->  static const struct qcom_smmu_match_data qcom_smmu_500_impl0_data = {
->  	.impl = &qcom_smmu_500_impl,
->  	.adreno_impl = &qcom_adreno_smmu_500_impl,
-> @@ -640,6 +728,7 @@ static const struct of_device_id __maybe_unused qcom_smmu_impl_of_match[] = {
->  	{ .compatible = "qcom,sm8250-smmu-500", .data = &qcom_smmu_500_impl0_data },
->  	{ .compatible = "qcom,sm8350-smmu-500", .data = &qcom_smmu_500_impl0_data },
->  	{ .compatible = "qcom,sm8450-smmu-500", .data = &qcom_smmu_500_impl0_data },
-> +	{ .compatible = "qcom,sm8550-smmu-500", .data = &sm8550_smmu_500_impl0_data },
->  	{ .compatible = "qcom,smmu-500", .data = &qcom_smmu_500_impl0_data },
->  	{ }
->  };
-> --
-> 2.34.1
-> 
+This version seems to work correctly with and without arguments.
 
--- 
-With best wishes
-Dmitry
+Tested-by: Ilya Maximets <i.maximets@ovn.org>
 
