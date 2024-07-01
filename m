@@ -1,170 +1,100 @@
-Return-Path: <linux-kernel+bounces-236598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B8491E492
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:49:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89B2691E4A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:50:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E67171C23024
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:49:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D4CE1F21358
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:50:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0D916D4D9;
-	Mon,  1 Jul 2024 15:49:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C6716D9AF;
+	Mon,  1 Jul 2024 15:50:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dn16aWsH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="B/uYVcS2"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DCB216D330;
-	Mon,  1 Jul 2024 15:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1558716D4E2
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 15:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719848984; cv=none; b=sE3oULdir/3r0ykws8k/1mTDPThf98dmTSJimTW4v6nLDLip68N2YtSdZSOmGlV9UBgBBh2blm8ijhbagnwtKoyCFm2Tt+HsGLSboiVba+gflpzubisdv2zCCQfnmbN1eSK41Bc5+FXdE4s1LCFG44vQ5mAC5TjMQZZGozHwAcM=
+	t=1719849021; cv=none; b=c0JnMs6430JiUlLPK1rRjCug7gnwohafANGHIUjD3hJ1vdZ+TIdripgSgH27w9yF1Y+JzOneetNuIR/dGNROfcAylBuivopasWNMK3dZrKK+SiesX1WXxluKCmqg1EP8ntS5BSNa7AmtFGKEShhApV5lcWTHrgMdQTcK6cl4YEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719848984; c=relaxed/simple;
-	bh=FzHTzl2pM6bEFmyfIXnvBqB/szvNEUaYJUNet+Yhy60=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DLViBdiBDvDZsIRmlYupqS+ojmP24LcWy41F7i2ucohcjeTRdf3gyCWgw0lMQDr6NHgMDtMEpR8A+3emZW2umD6xkHFa44ee6hM3AmtgFqAmdLNBk8MIMEVep7MVzvX93vTae5HseyV0tCDEgBeDMdhV+7NnN5wtWSCWbGpw8iM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dn16aWsH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24EC0C4AF13;
-	Mon,  1 Jul 2024 15:49:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719848984;
-	bh=FzHTzl2pM6bEFmyfIXnvBqB/szvNEUaYJUNet+Yhy60=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=dn16aWsHxZ9zj7/LYdbd5j4PuGmEiTb82mRlxgr9353O/WgDP33tFDSXkUEjYCQYV
-	 pnFprls6ofsRKYpZ+nbFVXJwoZ+KnB6yhVUMiHSrPMNMCJ+CthPL6YkXefL6VL8o+P
-	 59wZTA6KDLwuj+LSkp7YfT7oBNXQqvMgHNFDa54UDgrqJxU9UR/heu+9wXE3DPSDka
-	 ztQJhN42TQEMnFxSqtIOLGayWTGclfhEo7XFIQAt/RfshICT8Nrasf+xHuzFQvYRLC
-	 kDRRqZQMqG14k+lxNwSgymYqDvjnjWCnyT38lBTvJBdpyB+iPH518l0x9lWaJaoH6D
-	 mfoDXTCZ5gmIg==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52e7145c63cso3661077e87.0;
-        Mon, 01 Jul 2024 08:49:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUnTbGXbRmtbUv/SrSNy5YfHOiLueketpcn4gxnWsijOb7Iw7Fj7z4WLX6BRnYR1bGQYQTOsKw44fjxvbBmP+Tr3iiNSTBJx30RO7rFtyPTmso1bjaG2KfdqZCsvRFfRwm3XktW9u+vMuLI09i/Fw==
-X-Gm-Message-State: AOJu0YyDVeFhYKf8bXJcvihm6kxwrjC2CKTaA0pc65VXz1WFUtt4OeyL
-	AlwnhyqHSdYrTJZySy1ZKNlQRdKTjXorAWLu9VpwT/LclXHH0oobh4qFzTQNyHM3U+TDqEBstzp
-	y9fUb1gVsZ2uSU0dHZO4L6wIC0Q==
-X-Google-Smtp-Source: AGHT+IFDs+WM61neTl4W+/aa13iIaRUE/ScfGZW3qLo405X2mESySA3ctabmSZLxw4Jh7wo4i87xPoxH8UwNbBkhmvg=
-X-Received: by 2002:a05:6512:3ca9:b0:52e:8161:4ce6 with SMTP id
- 2adb3069b0e04-52e825cb693mr1822851e87.25.1719848982454; Mon, 01 Jul 2024
- 08:49:42 -0700 (PDT)
+	s=arc-20240116; t=1719849021; c=relaxed/simple;
+	bh=Qk8oUFF+A4W1ahD6THSI/ajDbhSQB7YK+eadVO8mj2A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GB6q/45n0gsCZ9q9jZGfVCB4v4QMO3uWupWf3e18iEGZ2BGkZru6Zo7RPkE0Z7oDeT0UdcxFTTkLyk7pVkDuafxV2GoyrEZfG943c+w/tbBDsiRgspgRVzMt6zHEjXttIOt5HlcrRTJgiWIJcngWudwz87CN6cc/MWVGb/4g9Rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=B/uYVcS2; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2eaa89464a3so33309841fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 08:50:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1719849017; x=1720453817; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1DNku0/oWyFaFP/Y9JNMp4HONNLih0gP4BElhknkFCs=;
+        b=B/uYVcS2VgUTe6VXURqm3Efqr85ns5tWkWoMqZP0Az+RKFSAT+/9V5hUS7pvMKIxHD
+         bGN9XuYCSpUlr9DIsDGEPbXIr2WnUXdbev1GchFdIAxzwgPz93OH0X7JFS1jMeXRKYB/
+         qO/9XstBjthJ5nXJMPRlCmHUzZExPoSrXrk0ItiMvCSi0bgl6V/daDRo1zGxGiUh6GVT
+         49AdCGkMkAMiXEdpEVZmt1o4k1Xw+UFOrmpWLYmIC7YRdH4dcDm8xb9ZCvXezBOtHEJY
+         WoDiqXdQ7e2fdGRX1MbpfyaSYUel35r7UqU9yvEjVEsGgNrSvfEBT5dz3ZYn1xjIdrAJ
+         W11Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719849017; x=1720453817;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1DNku0/oWyFaFP/Y9JNMp4HONNLih0gP4BElhknkFCs=;
+        b=khKnbAFMKdwncQm9N0ap4zIgiJq6eq4184/V92EsF2nLJOZnP7DQH364KoxwqTCbUP
+         5q1gygwFhr2UUmBUZvPmbCrC2mS6Ku26YWXNXq2kV48I4znjOaZxMPVmt2rQAwyGylCG
+         Ymm05fsesc6JxAvQQ9CUSGpM1Fe7Egb7UbzUXN1aYkE0EWRwEtNMsADKdN6f18TSzRxW
+         hwxBpZJXMSLR/U04CqQdeEpkBQgWIHrQPgKbiVmOdefCOwyS0ccDuuK45NfPIu4L7k8o
+         qEv4Cbs6gIhl/Q++oSsYcJO5OCcLSehl7KdrXmEk7Kei6lnwHVfdycEelRmSH5BVpo3X
+         TetQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWxqL/yu88pS/aK1n47mLmw040p1+QramhAEerZAUE4HaiKxNB1vy+Q2k7zDyDLwZMi6m2cljJ0xnITuQPmmd5g1N8T3THXk+w5fFCD
+X-Gm-Message-State: AOJu0Yw2bmjjcFOK2D5Wa2rCcE0nWzZ0bts+akodY5MfexrGhkxg5LTS
+	gM7NJXBmZN10BejiIj6pDWFxNfmOOEITOEa/+wv6+7DumFYczRvGRLpEHMS49yY=
+X-Google-Smtp-Source: AGHT+IH0ZVnB39TMB6oazNb4dsuEITV59qCGirhuXUBkT4kEZEs1fXv/9Fdu/JEanJrzEidB5JsXJA==
+X-Received: by 2002:a2e:bcc1:0:b0:2ee:6a72:f006 with SMTP id 38308e7fff4ca-2ee6a72f0e6mr27541801fa.21.1719849017311;
+        Mon, 01 Jul 2024 08:50:17 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac11d9685sm66381265ad.111.2024.07.01.08.50.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 08:50:16 -0700 (PDT)
+Date: Mon, 1 Jul 2024 17:50:07 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, linux-serial@vger.kernel.org
+Subject: Re: [PATCH printk v2 15/18] tty: sysfs: Add nbcon support for
+ 'active'
+Message-ID: <ZoLQL6rdDM7Iv0Dk@pathway.suse.cz>
+References: <20240603232453.33992-1-john.ogness@linutronix.de>
+ <20240603232453.33992-16-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240626-arm-pmu-3-9-icntr-v2-0-c9784b4f4065@kernel.org>
- <20240626-arm-pmu-3-9-icntr-v2-6-c9784b4f4065@kernel.org> <86ikxuir2k.wl-maz@kernel.org>
- <20240701135216.GD2250@willie-the-truck>
-In-Reply-To: <20240701135216.GD2250@willie-the-truck>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 1 Jul 2024 09:49:29 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKYstLZQy_VQTvg-285jj1mpH+4d9CVJ_1_iAus5_rTRA@mail.gmail.com>
-Message-ID: <CAL_JsqKYstLZQy_VQTvg-285jj1mpH+4d9CVJ_1_iAus5_rTRA@mail.gmail.com>
-Subject: Re: [PATCH v2 06/12] perf: arm_pmu: Remove event index to counter remapping
-To: Will Deacon <will@kernel.org>
-Cc: Marc Zyngier <maz@kernel.org>, Russell King <linux@armlinux.org.uk>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, James Clark <james.clark@arm.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, kvmarm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603232453.33992-16-john.ogness@linutronix.de>
 
-On Mon, Jul 1, 2024 at 7:52=E2=80=AFAM Will Deacon <will@kernel.org> wrote:
->
-> On Thu, Jun 27, 2024 at 12:05:23PM +0100, Marc Zyngier wrote:
-> > On Wed, 26 Jun 2024 23:32:30 +0100,
-> > "Rob Herring (Arm)" <robh@kernel.org> wrote:
-> > >
-> > > Xscale and Armv6 PMUs defined the cycle counter at 0 and event counte=
-rs
-> > > starting at 1 and had 1:1 event index to counter numbering. On Armv7 =
-and
-> > > later, this changed the cycle counter to 31 and event counters start =
-at
-> > > 0. The drivers for Armv7 and PMUv3 kept the old event index numbering
-> > > and introduced an event index to counter conversion. The conversion u=
-ses
-> > > masking to convert from event index to a counter number. This operati=
-on
-> > > relies on having at most 32 counters so that the cycle counter index =
-0
-> > > can be transformed to counter number 31.
-> > >
-> > > Armv9.4 adds support for an additional fixed function counter
-> > > (instructions) which increases possible counters to more than 32, and
-> > > the conversion won't work anymore as a simple subtract and mask. The
-> > > primary reason for the translation (other than history) seems to be t=
-o
-> > > have a contiguous mask of counters 0-N. Keeping that would result in
-> > > more complicated index to counter conversions. Instead, store a mask =
-of
-> > > available counters rather than just number of events. That provides m=
-ore
-> > > information in addition to the number of events.
-> > >
-> > > No (intended) functional changes.
-> > >
-> > > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> >
-> > [...]
-> >
-> > > diff --git a/include/linux/perf/arm_pmu.h b/include/linux/perf/arm_pm=
-u.h
-> > > index b3b34f6670cf..e5d6d204beab 100644
-> > > --- a/include/linux/perf/arm_pmu.h
-> > > +++ b/include/linux/perf/arm_pmu.h
-> > > @@ -96,7 +96,7 @@ struct arm_pmu {
-> > >     void            (*stop)(struct arm_pmu *);
-> > >     void            (*reset)(void *);
-> > >     int             (*map_event)(struct perf_event *event);
-> > > -   int             num_events;
-> > > +   DECLARE_BITMAP(cntr_mask, ARMPMU_MAX_HWEVENTS);
-> >
-> > I'm slightly worried by this, as this size is never used, let alone
-> > checked by the individual drivers. I can perfectly picture some new
-> > (non-architectural) PMU driver having more counters than that, and
-> > blindly setting bits outside of the allowed range.
->
-> I tend to agree.
->
-> > One way to make it a bit safer would be to add a helper replacing the
-> > various bitmap_set() calls, and enforcing that we never overflow this
-> > bitmap.
->
-> Or perhaps wd could leave the 'num_events' field intact and allocate the
-> new bitmap dynamically?
->
-> Rob -- what do you prefer? I think the rest of the series is ready to go.
+On Tue 2024-06-04 01:30:50, John Ogness wrote:
+> Allow the 'active' attribute to list nbcon consoles.
+> 
+> Signed-off-by: John Ogness <john.ogness@linutronix.de>
 
-I think the list of places we're initializing cntr_mask is short
-enough to check and additions to arm_pmu users are rare enough I would
-not be too worried about it.
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-If anything, I think the issue is with the bitmap API in that it has
-no bounds checking. I'm sure it will get on someone's radar to fix at
-some point.
-
-But if we want to have something check, this is what I have:
-
-static inline void armpmu_set_counter_mask(struct arm_pmu *pmu,
-                                          unsigned int start, unsigned int =
-nr)
-{
-       if (WARN_ON(start + nr > ARMPMU_MAX_HWEVENTS))
-               return;
-       bitmap_set(pmu->cntr_mask, start, nr);
-}
-
-Rob
+Best Regards,
+Petr
 
