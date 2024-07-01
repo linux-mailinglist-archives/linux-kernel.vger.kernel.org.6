@@ -1,107 +1,296 @@
-Return-Path: <linux-kernel+bounces-235606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCEF691D74E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:11:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1932091D755
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:16:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13A361C20DC3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 05:11:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 651C1281023
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 05:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246422C697;
-	Mon,  1 Jul 2024 05:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12BB36AF8;
+	Mon,  1 Jul 2024 05:15:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eWeEG5Z2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e0qJzg/b"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C27A17C61;
-	Mon,  1 Jul 2024 05:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3631C33;
+	Mon,  1 Jul 2024 05:15:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719810695; cv=none; b=GI1GdOaORRo1K63NFcvvyQTtfBFlmLvSyKuK5nEEF3A8/tolD2f6esARQZF45pH/NwKS6+41erKIfMM/2DTq67Lff92QyEAB6huQ85Q2pQRqtFitJcWP24nXrkVfy3R98LOy7UdWeW1snUVVkqllJgyJe/aeO5Ln5D50WhsDM5I=
+	t=1719810948; cv=none; b=llvoqp9WTTCSE+pAxncKTfabLpJ8Brt/c8wIIUQGsguCkMXIWQpljyn7YJFY4uN6wfsw+EcG4X3bg9wPGH+7dBwqUit52VAUHLntgT3v+vTVsZOmdkyzb7ovHoZia7KcOYVkCRWNcOyI0zrnwQYDI9e7Fyjij7cMXvsPJ/DM/lY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719810695; c=relaxed/simple;
-	bh=/xu6j3mzqMxyt5btghD36ts3zTipK1aGMS2i3uL+PWA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KzSNn71Z/sJ/a6F8zTWCmvcjKbCh735LKzpO8wcKQokOlDOvxZIKOLXJ752lzZQzQ/kZns4jiqGs4Py5iFtM+MYFm3Q2cTmLerAQmuuSlWQCIFuS3jR710RCjfZkiCuYWfyud9uUxrTg/0M3lj4k+E5nKltRmTE3TcMBUfD1qH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eWeEG5Z2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1044C4AF0E;
-	Mon,  1 Jul 2024 05:11:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719810694;
-	bh=/xu6j3mzqMxyt5btghD36ts3zTipK1aGMS2i3uL+PWA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=eWeEG5Z2eL3gJVhqW4496zBJQSEW7A3jtOblVBN25VuzMlJRdS6Bj0qcHWEa4ZGWm
-	 OniUzn4kI3nwFoA3EUjNsnjNIa8YhBAQehPuIyH0G0RsdmXdrWakgbpQOlZ9sassTZ
-	 5d3PCFUcG8UBoiWXghUT0aimSDFY6nZjSJSQ5oIurGZor620yRGnBz7JZ9hggFYGPM
-	 Myy58jhVwI41kHpMi6otKUf41dfTuuBU05rnKWKkep7XytNYyFbVAh6Ru6VBxWTmwe
-	 hfrs+REbVrHXh3RnIQqa1YvMYtGMPxbk482Ulyt3XuvSPFJVA8HyHlK7p+/VEZoCph
-	 F55UjEZMHLJQA==
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ec59193468so20720921fa.1;
-        Sun, 30 Jun 2024 22:11:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV5GF7zAVc4K+kne4QUr5igXBllPnf1uz8maehx7Yk6eTUAg6/OhnPaF14qTgBLVeFNQpSIHI1TMmdFWjF9TMlqjJyrIDK+3pjTxAH6GkvClmYpsie944HRp5rK2bhl6fRbOa+e77K7
-X-Gm-Message-State: AOJu0YwlV9vpkmXn2KE81zqrObOISZPQ41LM9Sw5WDChnX+e3eiPGCjc
-	v7nQxiHNv8qn63ofXfwyFNsJ16XFTRgv8cLhKWjbk4J4NefjMxrbJBd2F8Q3aJcenlZIunaSd5C
-	c78uQZZbc/7gv6B0YrafcYmvou/M=
-X-Google-Smtp-Source: AGHT+IHx98RloeGcgZXJescxkH/qiEue+hEQSGzRXj+bZiMFYS37FwdPAUkewrHUBw2iodsw9bJI2DJbMzJ3ExBFPn0=
-X-Received: by 2002:a2e:a484:0:b0:2ec:5f11:4f6b with SMTP id
- 38308e7fff4ca-2ee5e37fa82mr11324111fa.10.1719810693008; Sun, 30 Jun 2024
- 22:11:33 -0700 (PDT)
+	s=arc-20240116; t=1719810948; c=relaxed/simple;
+	bh=33LnhJ7+BqQZikbci+g6bJ6dGM6/pya/Tnvx+wHf3/o=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=sOJEmW/nmKt9/nL2lwB/AXRFA18wNRBAUvljfhy/FolDaAKMrrnmbGCkeMsze8oQJErQr6x67C4287/Ob/3U6Ile03x5LgTELELaSSeooEhjjOcReDV8KyRJwSy/wDjDlxLxxDxtRM4Cu6/vFeeKrH+VA6sW9Jwg2es9l/anU4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e0qJzg/b; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719810947; x=1751346947;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=33LnhJ7+BqQZikbci+g6bJ6dGM6/pya/Tnvx+wHf3/o=;
+  b=e0qJzg/bAYQ9ItJEWSZgQKQZKwCAR4rVLN6AKAk0ANM+yi8FU9NsSRiu
+   m3Q5E5atmplHQliscOyBUAPTbDIVa4ZM8RD9Q0i4I92U7bO7vsQru+pEB
+   gQDQN2lnUmWbwyZOCVNEDWL7hTwUZTJFS5a8rGhekl3MGKf1Pv4XIzcy9
+   JRbcypcs2DDkURijwcjT8BGLbktDbl/+4ZmDckbCeqdlK51Hf13MHcFcW
+   EtO/P8Pm5gVxvm8+gA7uPTLfWjJfk8B65xULyl3Zu7XwCjiYu4ENw1eu9
+   HFrCHro14pM9cZUBjQAGw7AYlyMHUcXpm+VegDGiDHV53tjF+KJLzE6xl
+   w==;
+X-CSE-ConnectionGUID: Tr8CTBX1TCqwEDxLJFzRqw==
+X-CSE-MsgGUID: VHbIxnhnSZC2J2OkBrOUaQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11119"; a="17051618"
+X-IronPort-AV: E=Sophos;i="6.09,175,1716274800"; 
+   d="scan'208";a="17051618"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2024 22:15:47 -0700
+X-CSE-ConnectionGUID: tRBL+MYsRYyKY5Q3fRDiVA==
+X-CSE-MsgGUID: yXSuGEvLRIqOj0oi+miQLQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,175,1716274800"; 
+   d="scan'208";a="45803392"
+Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2024 22:15:40 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: "Ho-Ren (Jack) Chuang" <horen.chuang@linux.dev>
+Cc: "Jonathan Cameron" <Jonathan.Cameron@Huawei.com>,  "Gregory Price"
+ <gourry.memverge@gmail.com>,  aneesh.kumar@linux.ibm.com,
+  mhocko@suse.com,  tj@kernel.org,  john@jagalactic.com,  "Eishan Mirakhur"
+ <emirakhur@micron.com>,  "Vinicius Tavares Petrucci"
+ <vtavarespetr@micron.com>,  "Ravis OpenSrc" <Ravis.OpenSrc@micron.com>,
+  "Alistair Popple" <apopple@nvidia.com>,  "Srinivasulu Thanneeru"
+ <sthanneeru@micron.com>,  "SeongJae Park" <sj@kernel.org>,  "Rafael J.
+ Wysocki" <rafael@kernel.org>,  Len Brown <lenb@kernel.org>,  Andrew Morton
+ <akpm@linux-foundation.org>,  Dave Jiang <dave.jiang@intel.com>,  Dan
+ Williams <dan.j.williams@intel.com>,  linux-acpi@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  linux-mm@kvack.org,  "Ho-Ren (Jack)
+ Chuang" <horenc@vt.edu>,  "Ho-Ren (Jack) Chuang"
+ <horenchuang@bytedance.com>,  "Ho-Ren (Jack) Chuang"
+ <horenchuang@gmail.com>,  linux-cxl@vger.kernel.org,
+  qemu-devel@nongnu.org
+Subject: Re: [PATCH v2 1/1] memory tier: consolidate the initialization of
+ memory tiers
+In-Reply-To: <20240628060925.303309-2-horen.chuang@linux.dev> (Ho-Ren Chuang's
+	message of "Fri, 28 Jun 2024 06:09:23 +0000")
+References: <20240628060925.303309-1-horen.chuang@linux.dev>
+	<20240628060925.303309-2-horen.chuang@linux.dev>
+Date: Mon, 01 Jul 2024 13:13:49 +0800
+Message-ID: <87tth9ofsi.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <75C90B50-9AB9-4F0A-B2CD-43427354D15C@live.com> <CADfWnbbWDgYe6g_CkEmpwAMfZf2kWLE5khB0GSfhojfvDFu5sA@mail.gmail.com>
-In-Reply-To: <CADfWnbbWDgYe6g_CkEmpwAMfZf2kWLE5khB0GSfhojfvDFu5sA@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Mon, 1 Jul 2024 07:11:22 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFuKstumJnygLi_hhu+6OrtjrPEX+SX=GELrU4sthAV7A@mail.gmail.com>
-Message-ID: <CAMj1kXFuKstumJnygLi_hhu+6OrtjrPEX+SX=GELrU4sthAV7A@mail.gmail.com>
-Subject: Re: [PATCH v2] efi: libstub: add support for the apple_set_os protocol
-To: Orlando Chamberlain <orlandoch.dev@gmail.com>
-Cc: Aditya Garg <gargaditya08@live.com>, Hans de Goede <hdegoede@redhat.com>, 
-	Lukas Wunner <lukas@wunner.de>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, Kerem Karabay <kekrby@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ascii
 
-On Mon, 1 Jul 2024 at 06:46, Orlando Chamberlain
-<orlandoch.dev@gmail.com> wrote:
->
->
-> On Mon, 1 Jul 2024 at 05:24, Aditya Garg <gargaditya08@live.com> wrote:
-> >
-> > From: Aditya Garg <gargaditya08@live.com>
-> >
-> > 0c18184de990 ("platform/x86: apple-gmux: support MMIO gmux on T2 Macs")
-> > brought support for T2 Macs in apple-gmux. But in order to use dual GPU,
-> > the integrated GPU has to be enabled. On such dual GPU EFI Macs, the EFI
-> > stub needs to report that it is booting macOS in order to prevent the
-> > firmware from disabling the iGPU.
-> >
-> > This patch is also applicable for some non T2 Intel Macs.
-> >
-> > Based on this patch for GRUB by Andreas Heider <andreas@heider.io>:
-> > https://lists.gnu.org/archive/html/grub-devel/2013-12/msg00442.html
-> >
-> > Credits also goto Kerem Karabay <kekrby@gmail.com> for helping porting
-> > the patch to the Linux kernel.
-> >
-> > Signed-off-by: Aditya Garg <gargaditya08@live.com>
+Hi, Jack,
 
-> I've checked that this patch works for me when applied to 6.10-rc6.
-> I can also use https://github.com/0xbb/gpu-switch to make the boot gpu
-> the iGPU now.
->
-> Tested-By: Orlando Chamberlain <orlandoch.dev@gmail.com> (MacBookPro16,1)
->
+"Ho-Ren (Jack) Chuang" <horen.chuang@linux.dev> writes:
 
-Thanks.
+I suggest you to merge the [0/1] with the change log here.  [0/1]
+describes why do we need the patch.  The below text describes some
+details.  Just don't use "---" to separate them.  We need both parts in
+the final commit message.
 
-Is there any point to making this set_os() call if CONFIG_APPLE_GMUX
-is not enabled?
+> If we simply move the set_node_memory_tier() from memory_tier_init()
+> to late_initcall(), it will result in HMAT not registering
+> the mt_adistance_algorithm callback function, because
+> set_node_memory_tier() is not performed during the memory tiering
+> initialization phase, leading to a lack of correct default_dram
+> information.
+>
+> Therefore, we introduced a nodemask to pass the information of the
+> default DRAM nodes. The reason for not choosing to reuse
+> default_dram_type->nodes is that it is not clean enough. So in the end,
+> we use a __initdata variable, which is a variable that is released once
+> initialization is complete, including both CPU and memory nodes for HMAT
+> to iterate through.
+>
+> Besides, since default_dram_type may be checked/used during the
+> initialization process of HMAT and drivers, it is better to keep the
+> allocation of default_dram_type in memory_tier_init().
+
+Why do we need it?  IIRC, we have deleted its usage in hmat.c.
+
+> Signed-off-by: Ho-Ren (Jack) Chuang <horenchuang@bytedance.com>
+> Suggested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> ---
+>  drivers/acpi/numa/hmat.c     |  5 +--
+>  include/linux/memory-tiers.h |  2 ++
+>  mm/memory-tiers.c            | 59 +++++++++++++++---------------------
+>  3 files changed, 28 insertions(+), 38 deletions(-)
+>
+> diff --git a/drivers/acpi/numa/hmat.c b/drivers/acpi/numa/hmat.c
+> index 2c8ccc91ebe6..a2f9e7a4b479 100644
+> --- a/drivers/acpi/numa/hmat.c
+> +++ b/drivers/acpi/numa/hmat.c
+> @@ -940,10 +940,7 @@ static int hmat_set_default_dram_perf(void)
+>  	struct memory_target *target;
+>  	struct access_coordinate *attrs;
+>  
+> -	if (!default_dram_type)
+> -		return -EIO;
+> -
+> -	for_each_node_mask(nid, default_dram_type->nodes) {
+> +	for_each_node_mask(nid, default_dram_nodes) {
+>  		pxm = node_to_pxm(nid);
+>  		target = find_mem_target(pxm);
+>  		if (!target)
+> diff --git a/include/linux/memory-tiers.h b/include/linux/memory-tiers.h
+> index 0d70788558f4..fa61ad9c4d75 100644
+> --- a/include/linux/memory-tiers.h
+> +++ b/include/linux/memory-tiers.h
+> @@ -38,6 +38,7 @@ struct access_coordinate;
+>  #ifdef CONFIG_NUMA
+>  extern bool numa_demotion_enabled;
+>  extern struct memory_dev_type *default_dram_type;
+
+Can we remove the above line?
+
+> +extern nodemask_t default_dram_nodes __initdata;
+
+We don't need to use __initdata in variable declaration.
+
+>  struct memory_dev_type *alloc_memory_type(int adistance);
+>  void put_memory_type(struct memory_dev_type *memtype);
+>  void init_node_memory_type(int node, struct memory_dev_type *default_type);
+> @@ -76,6 +77,7 @@ static inline bool node_is_toptier(int node)
+>  
+>  #define numa_demotion_enabled	false
+>  #define default_dram_type	NULL
+> +#define default_dram_nodes NODE_MASK_NONE
+
+Should we use <tab> after "default_dram_nodes"?
+
+>  /*
+>   * CONFIG_NUMA implementation returns non NULL error.
+>   */
+> diff --git a/mm/memory-tiers.c b/mm/memory-tiers.c
+> index 6632102bd5c9..a19a90c3ad36 100644
+> --- a/mm/memory-tiers.c
+> +++ b/mm/memory-tiers.c
+> @@ -43,6 +43,7 @@ static LIST_HEAD(memory_tiers);
+>  static LIST_HEAD(default_memory_types);
+>  static struct node_memory_type_map node_memory_types[MAX_NUMNODES];
+>  struct memory_dev_type *default_dram_type;
+> +nodemask_t default_dram_nodes __initdata = NODE_MASK_NONE;
+>  
+>  static const struct bus_type memory_tier_subsys = {
+>  	.name = "memory_tiering",
+> @@ -671,28 +672,38 @@ EXPORT_SYMBOL_GPL(mt_put_memory_types);
+>  
+>  /*
+>   * This is invoked via `late_initcall()` to initialize memory tiers for
+> - * CPU-less memory nodes after driver initialization, which is
+> - * expected to provide `adistance` algorithms.
+> + * memory nodes, both with and without CPUs. After the initialization of
+> + * firmware and devices, adistance algorithms are expected to be provided.
+>   */
+>  static int __init memory_tier_late_init(void)
+>  {
+>  	int nid;
+> +	struct memory_tier *memtier;
+>  
+> +	get_online_mems();
+>  	guard(mutex)(&memory_tier_lock);
+> +	/*
+> +	 * Look at all the existing and uninitialized N_MEMORY nodes and
+> +	 * add them to default memory tier or to a tier if we already have
+> +	 * memory types assigned.
+> +	 */
+
+If the memory type of the node has been assigned, we will skip it in the
+following code.  So, I think that we need to revise the comments.
+
+>  	for_each_node_state(nid, N_MEMORY) {
+>  		/*
+> -		 * Some device drivers may have initialized memory tiers
+> -		 * between `memory_tier_init()` and `memory_tier_late_init()`,
+> -		 * potentially bringing online memory nodes and
+> -		 * configuring memory tiers. Exclude them here.
+> +		 * Some device drivers may have initialized
+> +		 * memory tiers, potentially bringing memory nodes
+> +		 * online and configuring memory tiers.
+> +		 * Exclude them here.
+>  		 */
+>  		if (node_memory_types[nid].memtype)
+>  			continue;
+>  
+> -		set_node_memory_tier(nid);
+> +		memtier = set_node_memory_tier(nid);
+> +		if (IS_ERR(memtier))
+> +			/* Continue with memtiers we are able to setup. */
+> +			break;
+>  	}
+> -
+>  	establish_demotion_targets();
+> +	put_online_mems();
+>  
+>  	return 0;
+>  }
+> @@ -875,8 +886,7 @@ static int __meminit memtier_hotplug_callback(struct notifier_block *self,
+>  
+>  static int __init memory_tier_init(void)
+>  {
+> -	int ret, node;
+> -	struct memory_tier *memtier;
+> +	int ret;
+>  
+>  	ret = subsys_virtual_register(&memory_tier_subsys, NULL);
+>  	if (ret)
+> @@ -887,7 +897,8 @@ static int __init memory_tier_init(void)
+>  				GFP_KERNEL);
+>  	WARN_ON(!node_demotion);
+>  #endif
+> -	mutex_lock(&memory_tier_lock);
+> +
+> +	guard(mutex)(&memory_tier_lock);
+>  	/*
+>  	 * For now we can have 4 faster memory tiers with smaller adistance
+>  	 * than default DRAM tier.
+> @@ -897,29 +908,9 @@ static int __init memory_tier_init(void)
+>  	if (IS_ERR(default_dram_type))
+>  		panic("%s() failed to allocate default DRAM tier\n", __func__);
+>  
+> -	/*
+> -	 * Look at all the existing N_MEMORY nodes and add them to
+> -	 * default memory tier or to a tier if we already have memory
+> -	 * types assigned.
+> -	 */
+> -	for_each_node_state(node, N_MEMORY) {
+> -		if (!node_state(node, N_CPU))
+> -			/*
+> -			 * Defer memory tier initialization on
+> -			 * CPUless numa nodes. These will be initialized
+> -			 * after firmware and devices are initialized.
+> -			 */
+> -			continue;
+> -
+> -		memtier = set_node_memory_tier(node);
+> -		if (IS_ERR(memtier))
+> -			/*
+> -			 * Continue with memtiers we are able to setup
+> -			 */
+> -			break;
+> -	}
+> -	establish_demotion_targets();
+> -	mutex_unlock(&memory_tier_lock);
+> +	/* Record nodes with memory and CPU to set default DRAM performance. */
+> +	nodes_and(default_dram_nodes, node_states[N_MEMORY],
+> +		  node_states[N_CPU]);
+>  
+>  	hotplug_memory_notifier(memtier_hotplug_callback, MEMTIER_HOTPLUG_PRI);
+>  	return 0;
+
+--
+Best Regards,
+Huang, Ying
 
