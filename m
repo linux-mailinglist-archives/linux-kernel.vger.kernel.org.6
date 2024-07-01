@@ -1,103 +1,156 @@
-Return-Path: <linux-kernel+bounces-236700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6D6991E61A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:00:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3040891E616
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:59:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F2DCB281FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:58:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D84491F251D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E63816DEC8;
-	Mon,  1 Jul 2024 16:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE5116DED1;
+	Mon,  1 Jul 2024 16:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o40lU3+q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Inzjp2EA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6337216EB5B;
-	Mon,  1 Jul 2024 16:58:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212B943144;
+	Mon,  1 Jul 2024 16:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719853090; cv=none; b=ghktExruRs94YHokEAvFJYm6U6+DWcgS7PiaPVfPI+wNH+5N+piR/SgzkudnMTeVc+b0qwrCwBV27+8fYz1g01IOjXUhJyiC9fRsVvfNITtN/rtc6ujtA8t9KLbnNiZWBX3TXWVddbQCSHT2KhcFLVAkyjC9qMR2TM8gJYyzQzo=
+	t=1719853177; cv=none; b=gQIEJ1B0q9aZv/13ey1bAxZUnE37pYdbivf/CZBnDFlCdS91e6J3zXciZVBZgygM0gb1oY5Bahp6AhW5oRE/ZivcafrvEHMtcjswrNBAvAHaONWb3cuixApfJqqLVNEyFfpY+jnb8WdxTpEpBJ5Y+NGAoQf7O5ayBhhRfICzb60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719853090; c=relaxed/simple;
-	bh=TgmAawkvwnXSaXC3mxIRK84/4eKNm+uRnN4qvy+cKlI=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=bJMyBIIaeo6Uo+jJISqsk5YDq+cILFozjVin5sNVIFlvqlWsjs36xFjwyh5vaDeTmvxp/jyvpN55TF63dzZnZd6z0r3fQw3RAhVboNZ8IVy5cmdJMfMln+pXgvrYX/qytErXuzipj3saONA5ovgN6MLQM2K02CPIrbPUkiLe02o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o40lU3+q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6C74C4AF17;
-	Mon,  1 Jul 2024 16:58:09 +0000 (UTC)
+	s=arc-20240116; t=1719853177; c=relaxed/simple;
+	bh=zUGL8isiXEnqzL1HE8Wbu1BcaCkPiWfaa1HJedHH6p8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WmmRWqc+lZJQkfh3jRN2iHmVyIIZS0QZQkO/8q/bDH5lk2Xij48SZh/z/DUl6EejU3rz7lZDlLgLBvWCCiGO6+gvjzjrM7iATHhaLc6goBUEKD2McQVzj2VWURmdhAMGYP4pPmsqOYX0i989UABhuQgyciq2PISTck8Apu9yZBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Inzjp2EA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87DD1C4AF10;
+	Mon,  1 Jul 2024 16:59:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719853090;
-	bh=TgmAawkvwnXSaXC3mxIRK84/4eKNm+uRnN4qvy+cKlI=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=o40lU3+quYwLTPcZr5Op6ZbcFXx5yUk+bUVd6zcwa4O3TrQ0I+DJQ1dID4dr+f2HM
-	 E0AywnRbTLZqkV86bmlbKZDSlVAyVNIrnkwuI1UYKfHbO6CKkheWvEgNbTdARkhM93
-	 PMZxaeHvXoqt1eOEBcksQwMIBHuoVGbRCwyJuHYDt0FwCJhY+Ag3JJoppTAmg/KqPE
-	 xScpOljMwBJIbDAMlJiFtWNluw3/Qjt31p1ZwokgNQaysa0bZGlA5aplVMz9WOhioR
-	 BVUlhWMTJZjmLvj5kMRPOe0F4hPCsI/WWVJhaB79d0hHGnyiHcWLy0lbw2v+YsbaUT
-	 6KQpjByW83Cmg==
-Date: Mon, 01 Jul 2024 10:58:09 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1719853176;
+	bh=zUGL8isiXEnqzL1HE8Wbu1BcaCkPiWfaa1HJedHH6p8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Inzjp2EADF0fqQJi+DIeZB0Hwvma8nd533uc3N9Obi5CIwYMOuaVGDp2QugqPB3vy
+	 7Hn96cPBcaonYothTe9+nN6ARzXqjQ1mH2lnDUMdjziOIJtIBSen2fdxiFZlJBd8/z
+	 Ns1c8ouDcQlsIXREerT0KIvU8UpHZWvmmqPHCRLHMms2k1+KDudg0shTmrDcrq0yDi
+	 0iBwc0FqR0Ji+nr/i8z+3L0EzJl5glRjqarpnY6h9NX6dlhedz0zTRU6XVA6iuijg8
+	 rfNA9Y2mVWiSAUVRrM+aoiFcSlvsgL/AcAQyyIxLj3LKxgwodcjP9OZle1rzO5y/L9
+	 JVYgtfPHiMZkA==
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-24c5ec50da1so453333fac.3;
+        Mon, 01 Jul 2024 09:59:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWWXOmbCCDbM/4bLefCz3SOVqzKnor3SD94w0pVhMIlbqfk09sKCMs8X3wGd+UZLotSzwgxRObXr0Sl+bGffEQx55SSIrMXkit+VceXAWj5rKtv8TDrJL/1hwB50nWohvZI+A7ajkE=
+X-Gm-Message-State: AOJu0YxeqFcLZecWCSh6qVTB7P2RBuZYJw7pDYIm2YLC3KIkrjjEDnNW
+	IELrFy7dtD/gpB66T+7E6MaXet0AtsI/Yyiu6UCDBNQk2Vu1LFdHz65HMYeYJb32wVUWFfrIyrn
+	1HaS16f915Wkaa77omEiX+0QSYiw=
+X-Google-Smtp-Source: AGHT+IFoPgW50EvjNW4Q1RLKjT3T97gSHyMry3rat4zYIOxXZ83z/B+T4onbyQO++EPGBuprRtcQmiqwGw4HC4uuV+E=
+X-Received: by 2002:a05:6870:8192:b0:24f:e599:9168 with SMTP id
+ 586e51a60fabf-25db33732ffmr6149076fac.1.1719853175725; Mon, 01 Jul 2024
+ 09:59:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Krishna Yarlagadda <kyarlagadda@nvidia.com>
-Cc: ldewangan@nvidia.com, digetx@gmail.com, adrian.hunter@intel.com, 
- mkumard@nvidia.com, thierry.reding@gmail.com, jonathanh@nvidia.com, 
- conor+dt@kernel.org, andi.shyti@kernel.org, ulf.hansson@linaro.org, 
- wsa+renesas@sang-engineering.com, krzk+dt@kernel.org, 
- linux-tegra@vger.kernel.org, corbet@lwn.net, devicetree@vger.kernel.org, 
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-mmc@vger.kernel.org, linux-i2c@vger.kernel.org
-In-Reply-To: <20240701151231.29425-6-kyarlagadda@nvidia.com>
-References: <20240701151231.29425-1-kyarlagadda@nvidia.com>
- <20240701151231.29425-6-kyarlagadda@nvidia.com>
-Message-Id: <171985308638.97930.5431807770986392243.robh@kernel.org>
-Subject: Re: [RFC PATCH V2 05/12] dt-bindings: i2c: tegra-i2c: reference to
- config
+References: <20240628095955.34096-1-christian.loehle@arm.com>
+ <20240628095955.34096-4-christian.loehle@arm.com> <CAJZ5v0jaEt2yo9OvYqpzfcbPtAvTk63tKXjm6QCi7zeKuU2SUA@mail.gmail.com>
+ <c40acf72-010f-4a8b-80e4-33f133ba266b@arm.com>
+In-Reply-To: <c40acf72-010f-4a8b-80e4-33f133ba266b@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 1 Jul 2024 18:59:24 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hCANG0JBVcLgVkuS9N5Vb=sLVFtdZiJD8HYSQoX8NZgg@mail.gmail.com>
+Message-ID: <CAJZ5v0hCANG0JBVcLgVkuS9N5Vb=sLVFtdZiJD8HYSQoX8NZgg@mail.gmail.com>
+Subject: Re: [PATCHv4 3/3] cpuidle: teo: Don't count non-existent intercepts
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, vincent.guittot@linaro.org, qyousef@layalina.io, 
+	peterz@infradead.org, daniel.lezcano@linaro.org, ulf.hansson@linaro.org, 
+	anna-maria@linutronix.de, dsmythies@telus.net, kajetan.puchalski@arm.com, 
+	lukasz.luba@arm.com, dietmar.eggemann@arm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On Mon, 01 Jul 2024 20:42:23 +0530, Krishna Yarlagadda wrote:
-> I2C interface timing registers are configured using config setting
-> framework. Add reference to I2C config settings.
-> 
-> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+On Sat, Jun 29, 2024 at 10:22=E2=80=AFAM Christian Loehle
+<christian.loehle@arm.com> wrote:
+>
+> When bailing out early, teo will not query the sleep length anymore
+> since commit 6da8f9ba5a87 ("cpuidle: teo:
+> Skip tick_nohz_get_sleep_length() call in some cases") with an
+> expected sleep_length_ns value of KTIME_MAX.
+> This lead to state0 accumulating lots of 'intercepts' because
+> the actually measured sleep length was < KTIME_MAX, so query the sleep
+> length instead for teo to recognize if it still is in an
+> intercept-likely scenario without alternating between the two modes.
+>
+> Fundamentally we can only do one of the two:
+> 1. Skip sleep_length_ns query when we think intercept is likely
+> 2. Have accurate data if sleep_length_ns is actually intercepted when
+> we believe it is currently intercepted.
+>
+> Previously teo did the former while this patch chooses the latter as
+> the additional time it takes to query the sleep length was found to be
+> negligible and the variants of option 1 (count all unknowns as misses
+> or count all unknown as hits) had significant regressions (as misses
+> had lots of too shallow idle state selections and as hits had terrible
+> performance in intercept-heavy workloads).
+>
+> Fixes: 6da8f9ba5a87 ("cpuidle: teo: Skip tick_nohz_get_sleep_length() cal=
+l in some cases")
+> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
 > ---
->  .../devicetree/bindings/i2c/nvidia,tegra20-i2c.yaml          | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
+> v4: Skip constraint check if intercept logic selects state0
+>
+>  drivers/cpuidle/governors/teo.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+>
+> diff --git a/drivers/cpuidle/governors/teo.c b/drivers/cpuidle/governors/=
+teo.c
+> index 200a3598cbcf..6dc44197a80e 100644
+> --- a/drivers/cpuidle/governors/teo.c
+> +++ b/drivers/cpuidle/governors/teo.c
+> @@ -287,6 +287,7 @@ static int teo_select(struct cpuidle_driver *drv, str=
+uct cpuidle_device *dev,
+>         unsigned int hit_sum =3D 0;
+>         int constraint_idx =3D 0;
+>         int idx0 =3D 0, idx =3D -1;
+> +       int prev_intercept_idx;
+>         s64 duration_ns;
+>         int i;
+>
+> @@ -364,6 +365,7 @@ static int teo_select(struct cpuidle_driver *drv, str=
+uct cpuidle_device *dev,
+>          * all of the deeper states a shallower idle state is likely to b=
+e a
+>          * better choice.
+>          */
+> +       prev_intercept_idx =3D idx;
+>         if (2 * idx_intercept_sum > cpu_data->total - idx_hit_sum) {
+>                 int first_suitable_idx =3D idx;
+>
+> @@ -415,6 +417,15 @@ static int teo_select(struct cpuidle_driver *drv, st=
+ruct cpuidle_device *dev,
+>                         first_suitable_idx =3D i;
+>                 }
+>         }
+> +       if (!idx && prev_intercept_idx) {
+> +               /*
+> +                * We have to query the sleep length here otherwise we do=
+n't
+> +                * know after wakeup if our guess was correct.
+> +                */
+> +               duration_ns =3D tick_nohz_get_sleep_length(&delta_tick);
+> +               cpu_data->sleep_length_ns =3D duration_ns;
+> +               goto out_tick;
+> +       }
+>
+>         /*
+>          * If there is a latency constraint, it may be necessary to selec=
+t an
+> --
 
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.yaml: config-settings: missing type definition
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240701151231.29425-6-kyarlagadda@nvidia.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Applied as 6.11 material, thanks!
 
