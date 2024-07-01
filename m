@@ -1,152 +1,141 @@
-Return-Path: <linux-kernel+bounces-235914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66CC591DB33
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:14:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DDBE91DB38
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:14:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 215B128368A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:14:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EA531C20C90
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:14:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B9D84DEB;
-	Mon,  1 Jul 2024 09:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J0tU8KzQ"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3EE5C614;
-	Mon,  1 Jul 2024 09:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A7384D12;
+	Mon,  1 Jul 2024 09:14:40 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 066EB43AD2
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 09:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719825241; cv=none; b=W2aK8ml/p4azJzkpVmRyUI2YVms5Yv7bISy71Ce0cIrDxR9uL7QjZ61Kp5oTnciNBUzkXfcaSa9LIoM0rE9KXn1Bw07yXdG7gDFxzwtXUmyCzBy5CnIDC/4OiYkp95W6x/iKY+puoxrqGm4Kv2rl1d3e12JLR9oxiSL33qai+hY=
+	t=1719825280; cv=none; b=Ia7rKwybF8h/YPKJWYyYvS0UozXCs0pnhi1cJDA/a/8pytPZQUFNxAgvjM1DwSKapqQDsTYsCiqVrpQ1xyrw7VWbHyGBmxabfNjVDArrWxWxvHauZS7dzDEt6ZV+e9cuAQ5KuhQRlVsL8k0b7svVf0FedDcEj4B0xZ0q7ItPVTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719825241; c=relaxed/simple;
-	bh=5M05sXLCyxfg8FrspN+JZIvtVy+y3Gx64WOQcMp5378=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AGCnnGEnwoPurbZ4IpobiEKwAlav0sVNNCX4s3gmyeIXKvGfvR6irqrPXS1fPZj+FsP5XAPz8fSeIRQqU93DTDq7+b6ntA+csxt31wcC/w8/VyT7siXjU83xqyy4VwHaSyu1mVrb5Jzknv9AduPobVSof1YTzAbXYpGievDsE2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J0tU8KzQ; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57d20d89748so3012825a12.0;
-        Mon, 01 Jul 2024 02:14:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719825239; x=1720430039; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DxlECmQDcJb37f5C6V8ZGBnHo3bHH3o9P+OxX8YRfxo=;
-        b=J0tU8KzQS54QrnHX83Agqazn8w2xrF/vh6LXdJwXaMSrztSMlnLIBozLhMbzQeU6Fp
-         +mLdQziR/CWvnUUDEMISN5e27qS0a9G+O8mRxAPsrT0y/0e5RWGyby1HE+mqc3iJPNJ0
-         0MV4qVX8VyhV+OA/JS4PtRSKtyek8eKfVW5TE7eDj2nFXe/W+hZ+7vJj8TwW99wo7Sxs
-         MuRsCX8R8775qn5NkBhCLZ1o6kZ8cL6dxgpx6ntlIEgAm+MU6UldTKFlHDs+RIURiyag
-         /0UGr+l39zsAEuBsE8740XX8MqA00R2NxjdSdKVcewgsGVBjWqu5FgRTJTlG3N/FPwlI
-         epJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719825239; x=1720430039;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DxlECmQDcJb37f5C6V8ZGBnHo3bHH3o9P+OxX8YRfxo=;
-        b=pL4nj9+uf2DiGH5/TLVEN7qpFvNGzDMNdnnSAtn4GyNvGwfZxit0WlSAt5QV4ovR4y
-         WrHUmm5UgUdl/A04Bv9D0FL7QVWh1wrJAz+5CZ5T3xEPazw37HYcVMTbHDPuStaqPRM6
-         xPJZrpJDOAFqplBG+auiZxIuqZTpha41DFnvNXnSU0xsGNxbThkK04WNKPG/hmHNiics
-         wvh3W/JtbOEvlFwsMt/4/rvLHl4XYii5p8rGP4xMEpm5OjDitTfQJOI48wqVBWb6OvSb
-         FEHIRQ/zRiSyLRWK1IB+pw/6A01q6vurux7KdP6BClaDFcD9zBoJXHwv1gniBcBQmQsm
-         4u7g==
-X-Forwarded-Encrypted: i=1; AJvYcCWiYgcluNeoNj9eL6O9K2bNtxux6JJ2be89arHIt6YoGDCGIvduQ/3RS0mQ6jx5YWlrigGnE8n4RszB1rPF3sDHZuPHVnJCmH/CirTchXTWmtq4I6hVCa0XpGDuQvAmaUqFqQixzs59DwZJJ6l5W/XBDwFTobGRslN73uU1z1AXRQQn4w==
-X-Gm-Message-State: AOJu0Yx/vjFGf/jhBOyN55xkSJLPXz0Fy1746MkCXMs4BgpoEK0pKAQn
-	v87bBXYxCE+Yl61SlEmOxDi+L48ToXfLvgs2qMBIR53JVh4MgSjEdgN1wUwv3Dpm+dEwJzl3I0Q
-	2WXuSWokmwkQjl54ANw+n+3SPooc=
-X-Google-Smtp-Source: AGHT+IG4BaSbK+P09EoyYL8rR1buS3SjQd+OPB1e8j9B6v/dLubPk8we/fGolu3MGxMZLsJbPDat8V6n12a54ElCSvI=
-X-Received: by 2002:a05:6402:440a:b0:57c:b7c3:99f1 with SMTP id
- 4fb4d7f45d1cf-5879f59a549mr3114841a12.11.1719825238336; Mon, 01 Jul 2024
- 02:13:58 -0700 (PDT)
+	s=arc-20240116; t=1719825280; c=relaxed/simple;
+	bh=kw1IJZWIxeTgiurf3kOwpvy8kXCFRwNqIzsE5VfG4Mg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MSVqEymqcXGFukAxG8pdqyhTi/qPb1FWmJhRTwQpXUA6fMAfJmVh0LbLDg46lTdwGWH4nGuxhwj+Ot9wBi7+L1/5bxqpIiHx+Q01n/J2vSfiA0h1hB2aiWoGF97Gy/DGaIRXqttlnIeiu2PwFWdFkFF4ea34rbCVtwECF3MVDBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1198F339;
+	Mon,  1 Jul 2024 02:15:02 -0700 (PDT)
+Received: from [10.57.72.41] (unknown [10.57.72.41])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5F3A23F766;
+	Mon,  1 Jul 2024 02:14:35 -0700 (PDT)
+Message-ID: <2e0a1554-d24f-4d0d-860b-0c2cf05eb8da@arm.com>
+Date: Mon, 1 Jul 2024 10:14:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240630063845.116307-1-kanakshilledar@gmail.com> <20240630-generous-carnation-c534f5d84a8a@spud>
-In-Reply-To: <20240630-generous-carnation-c534f5d84a8a@spud>
-From: Kanak Shilledar <kanakshilledar@gmail.com>
-Date: Mon, 1 Jul 2024 14:43:46 +0530
-Message-ID: <CAGLn_=vG09C49goRkbygZdYch8H1c_kw3p7ar9NGOrgpd0_MiA@mail.gmail.com>
-Subject: Re: [PATCH] arch: riscv: thead: implement basic spi
-To: Conor Dooley <conor@kernel.org>
-Cc: kanakshilledar111@protonmail.com, Serge Semin <fancer.lancer@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, linux-spi@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] support "THPeligible" semantics for mTHP with anonymous
+ shmem
+Content-Language: en-GB
+To: David Hildenbrand <david@redhat.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Bang Li
+ <libang.li@antgroup.com>, hughd@google.com, akpm@linux-foundation.org
+Cc: wangkefeng.wang@huawei.com, ziy@nvidia.com, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20240628104926.34209-1-libang.li@antgroup.com>
+ <4b38db15-0716-4ffb-a38b-bd6250eb93da@arm.com>
+ <4d54880e-03f4-460a-94b9-e21b8ad13119@linux.alibaba.com>
+ <516aa6b3-617c-4642-b12b-0c5f5b33d1c9@arm.com>
+ <597ac51e-3f27-4606-8647-395bb4e60df4@redhat.com>
+ <6f68fb9d-3039-4e38-bc08-44948a1dae4d@arm.com>
+ <992cdbf9-80df-4a91-aea6-f16789c5afd7@redhat.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <992cdbf9-80df-4a91-aea6-f16789c5afd7@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sun, Jun 30, 2024 at 7:22=E2=80=AFPM Conor Dooley <conor@kernel.org> wro=
-te:
->
-> On Sun, Jun 30, 2024 at 12:08:20PM +0530, Kanak Shilledar wrote:
-> > implemented basic spi support for TH1520 SoC.
-> > created a fixed clock and a simple spi0 node.
-> > updated the matching binding to include thead,th1520-spi as compatible.
-> > added a spidev device in devicetree which will utilise the spi0 node.
-> > this is usually reserved for a SPI NOR flash which is left unpopulated
-> > underneath the carrier board. I performed a SPI self loop test using
-> > tools/spi/spidev_test.c and tried sending `\xDE\xAD\xBE\xEF` and verifi=
-ed
-> > it is being received correctly. i updated the of_device_id struct in
-> > drivers/spi/spi-dw-mmio.c to include "thead,th1520-spi" as the compatib=
-le.
-> > this patch also adds basic spi support on beaglev ahead which shares th=
-e
-> > same TH1520 SoC. i have only tested on LicheePi 4A.
-> >
-> > Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
-> > ---
-> >  .../devicetree/bindings/spi/snps,dw-apb-ssi.yaml |  4 ++++
-> >  .../boot/dts/thead/th1520-beaglev-ahead.dts      |  9 +++++++++
-> >  .../boot/dts/thead/th1520-lichee-module-4a.dtsi  |  4 ++++
-> >  .../riscv/boot/dts/thead/th1520-lichee-pi-4a.dts | 10 ++++++++++
-> >  arch/riscv/boot/dts/thead/th1520.dtsi            | 16 ++++++++++++++++
-> >  drivers/spi/spi-dw-mmio.c                        |  1 +
->
-> This needs to be 3 different patches - one for the binding, one for the
-> driver and a final one for the dts files.
+On 01/07/2024 09:57, David Hildenbrand wrote:
+> On 01.07.24 10:50, Ryan Roberts wrote:
+>> On 01/07/2024 09:48, David Hildenbrand wrote:
+>>> On 01.07.24 10:40, Ryan Roberts wrote:
+>>>> On 01/07/2024 09:33, Baolin Wang wrote:
+>>>>>
+>>>>>
+>>>>> On 2024/7/1 15:55, Ryan Roberts wrote:
+>>>>>> On 28/06/2024 11:49, Bang Li wrote:
+>>>>>>> After the commit 7fb1b252afb5 ("mm: shmem: add mTHP support for
+>>>>>>> anonymous shmem"), we can configure different policies through
+>>>>>>> the multi-size THP sysfs interface for anonymous shmem. But
+>>>>>>> currently "THPeligible" indicates only whether the mapping is
+>>>>>>> eligible for allocating THP-pages as well as the THP is PMD
+>>>>>>> mappable or not for anonymous shmem, we need to support semantics
+>>>>>>> for mTHP with anonymous shmem similar to those for mTHP with
+>>>>>>> anonymous memory.
+>>>>>>>
+>>>>>>> Signed-off-by: Bang Li <libang.li@antgroup.com>
+>>>>>>> ---
+>>>>>>>     fs/proc/task_mmu.c      | 10 +++++++---
+>>>>>>>     include/linux/huge_mm.h | 11 +++++++++++
+>>>>>>>     mm/shmem.c              |  9 +--------
+>>>>>>>     3 files changed, 19 insertions(+), 11 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+>>>>>>> index 93fb2c61b154..09b5db356886 100644
+>>>>>>> --- a/fs/proc/task_mmu.c
+>>>>>>> +++ b/fs/proc/task_mmu.c
+>>>>>>> @@ -870,6 +870,7 @@ static int show_smap(struct seq_file *m, void *v)
+>>>>>>>     {
+>>>>>>>         struct vm_area_struct *vma = v;
+>>>>>>>         struct mem_size_stats mss = {};
+>>>>>>> +    bool thp_eligible;
+>>>>>>>           smap_gather_stats(vma, &mss, 0);
+>>>>>>>     @@ -882,9 +883,12 @@ static int show_smap(struct seq_file *m, void *v)
+>>>>>>>           __show_smap(m, &mss, false);
+>>>>>>>     -    seq_printf(m, "THPeligible:    %8u\n",
+>>>>>>> -           !!thp_vma_allowable_orders(vma, vma->vm_flags,
+>>>>>>> -               TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL));
+>>>>>>> +    thp_eligible = !!thp_vma_allowable_orders(vma, vma->vm_flags,
+>>>>>>> +                        TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL);
+>>>>>>> +    if (vma_is_anon_shmem(vma))
+>>>>>>> +        thp_eligible =
+>>>>>>> !!shmem_allowable_huge_orders(file_inode(vma->vm_file),
+>>>>>>> +                            vma, vma->vm_pgoff, thp_eligible);
+>>>>>>
+>>>>>> Afraid I haven't been following the shmem mTHP support work as much as I
+>>>>>> would
+>>>>>> have liked, but is there a reason why we need a separate function for shmem?
+>>>>>
+>>>>> Since shmem_allowable_huge_orders() only uses shmem specific logic to
+>>>>> determine
+>>>>> if huge orders are allowable, there is no need to complicate the
+>>>>> thp_vma_allowable_orders() function by adding more shmem related logic, making
+>>>>> it more bloated. In my view, providing a dedicated helper
+>>>>> shmem_allowable_huge_orders(), specifically for shmem, simplifies the logic.
+>>>>
+>>>> My point was really that a single interface (thp_vma_allowable_orders)
+>>>> should be
+>>>> used to get this information. I have no strong opinon on how the implementation
+>>>> of that interface looks. What you suggest below seems perfectly reasonable
+>>>> to me.
+>>>
+>>> Right. thp_vma_allowable_orders() might require some care as discussed in other
+>>> context (cleanly separate dax and shmem handling/orders). But that would be
+>>> follow-up cleanups.
+>>
+>> Are you planning to do that, or do you want me to send a patch?
+> 
+> I'm planning on looking into some details, especially the interaction with large
+> folios in the pagecache. I'll let you know once I have a better idea what
+> actually should be done :)
 
-I will convert this into a patch set of 3 patch as you suggested.
+OK great - I'll scrub it from my todo list... really getting things done today :)
 
-> > +
-> > +&spi0 {
-> > +     status =3D "okay";
-> > +     spidev@0 {
->
-> "spidev" is not a type of device, the nodename should match the type.
->
-> > +             compatible =3D "rohm,dh2228fv";
-> > +             reg =3D <0>;
-> > +             spi-max-frequency =3D <500000>;
-> > +     };
-> > +};
->
-> I'll put money on you not having a dh2228fv on this board. Document what
-> you actually have on it please, not what allows you to probe the spidev
-> driver in linux.
 
-Yes, you are right! Actually as per the vendor's kernel it should be a
-"spi-nor" device from winbond.
-I changed it to spidev for testing purposes. Shall I just leave it
-with status =3D "okay" or add the node for
-that spi-nor flash?
-
-> Thanks,
-> Conor.
-
-Thanks and Regards,
-Kanak Shilledar
 
