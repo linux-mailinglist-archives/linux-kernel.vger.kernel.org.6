@@ -1,78 +1,56 @@
-Return-Path: <linux-kernel+bounces-237032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A549391EA13
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 23:15:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31A1291EA1C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 23:16:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EEA8AB21427
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:15:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97064B21E34
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8767C83CC8;
-	Mon,  1 Jul 2024 21:15:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0126128812;
+	Mon,  1 Jul 2024 21:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G8Xgi+ej"
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yso9//ac"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638532BB05
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 21:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC41E2BB05;
+	Mon,  1 Jul 2024 21:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719868523; cv=none; b=olynnAT9bYyplSiv5Xjquvm167JYHu7XhRR25N8XrYqrRPfClm5xoTq1+FNNxREWflJQ1lJAb7IQ0BP0J1EuJcL49JL7Aew0nPB4qeBVKqUiuSlKcA/Vv1LuYoIYpJUZUKfszgjf1UGeIYp9lKrDTJwljkI8whZNeBFKRBBpqH4=
+	t=1719868553; cv=none; b=q88OgD83qqjmvCpZlYuVbQvX4K/uJAjqbdqo7FqSmI1nzLzmfv8Z6dqguqWtkU3Yn9H3KW5ogHFp8r8VxvfG8A25wcb2E5d61FT3Wrfed1pLYrjuLBzFAJyJgRPSGVkSWlor8lf5L53qhJcPx48Bhv3lTuuBpVU0coub6q+O79w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719868523; c=relaxed/simple;
-	bh=b4iFMOwsvk1yyy4eIIH6phVK+v4nAT3kLac1lMQPGZ0=;
+	s=arc-20240116; t=1719868553; c=relaxed/simple;
+	bh=Wo2ziZrHiwxQRp5NYky+UVW8r6uc3a/mGH6kieet5fo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jAg3CSiet2asX8EHo25A2jQG84SHkKylLOpHI9IK0uXmUhTe5hJVeO7C1/NIhowe4yhJQKRCFBERHZgNXpqRYWSyH+WjEQCWO2Vbko6EZmkjjSY/KMbH0eJGEcCQUrI/jH4iUrseKEEAWtc7eBVVPAZF6TIV0ccftTnSproQGOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G8Xgi+ej; arc=none smtp.client-ip=209.85.167.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3d55f198f1eso1758762b6e.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 14:15:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719868521; x=1720473321; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SWlZpA9w0jHOBVI29bT6ToqLRafNc0gupNX61H+Tj74=;
-        b=G8Xgi+ejlTey1nT2Coub+ipXzOxYPtbN1EaEqToJYuVsMfatZ5oFe+E3/lfRV7of0M
-         tvOY+VAnLakS0fanPi4bY0rpUme4L3zOHmTtdLRIEcKqP0vLpLl5GyW094EQF0jmirWY
-         Rcc771x/8ZNED65g8Zetid6u34AfgVT9FgDotQQGpw+D7UtdDshqZYqkVJCdgBHFJG52
-         kOKft88vKibu3Rv7y+bjB0hfwFmNPFosXGMPIUdWFQSZtpzIX8AVhkbcBIlUstWb8WXL
-         ZiieP/i7BMYHth44EwM3O4eFFtb3koLE5jRH+VkCL1H83QM59sCRjQ7n/7bvlNVOHdIi
-         NYrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719868521; x=1720473321;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SWlZpA9w0jHOBVI29bT6ToqLRafNc0gupNX61H+Tj74=;
-        b=WHgJ4Ta1RjMR0JQPB31U9i6QK2VQxO+TuE+lgZHE7Dx6xrFvHpkeUnAiQ1lfrOPhgD
-         ujYJ9I2W9GXGDS1KhhE+3CRn5zfslCL+wNudowRoF72GzfmqRL4SpliylqQo0eNRSDOv
-         k+EFiKHvQdM5rwxYeEagdtlvPo3VbOTNPcIm4UORKROpv5kiU4xpNjzPeo3TDF+Pr/9/
-         xvVfyZCLGg/+Q9ntSR4eDxqYIgp9nGpGQkCppwCZ/aKBIJvPd+ng2XFoXPbcyTlZn3E3
-         Rz1lxY+/zDj0HrSQebnFRpG1FDJK1igy4YSHcVzuG1vzUUlZLLBjr6ZgXkA66rqCLpfU
-         +ZXQ==
-X-Gm-Message-State: AOJu0YxrQ3feRxDaqb7Ct4wYQ1JsknWyxSPDsksgQhtL0GZ8WheMdcqS
-	He3Jfr1r0rjVIgVZEkTFwRMKh1l0bn7qTy7L48I6tREsNzcAUYRs7e6csQ==
-X-Google-Smtp-Source: AGHT+IFwsW3hWWkrZhat9jTx1KbBCXiKdjnnJHyxOrO7nVUQPwqBVuJ0EcOgH4GNBq8+SxQHgTyi9A==
-X-Received: by 2002:a05:6808:2004:b0:3d5:4213:82a0 with SMTP id 5614622812f47-3d6b4de241fmr10476108b6e.45.1719868521304;
-        Mon, 01 Jul 2024 14:15:21 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-72c69b54d31sm5446722a12.19.2024.07.01.14.15.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 14:15:20 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Mon, 1 Jul 2024 14:15:19 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Linux 6.10-rc6
-Message-ID: <096d3129-0160-42b0-aa56-a27c6d19e44b@roeck-us.net>
-References: <CAHk-=wgQMOscLeeA3QXOs97xOz_CTxdqJjpC20tJ-7bUdHWtSA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=djB0G5wkloGgxrB1liMmX3u01AAUWvAUQr40SFOrhaQf+ebTUpWaD4sdN2w05p5+UA2l07nN24HSP3pYJpHL5hjPeQf8sovaTFzWjK5nf/Kbb6XhXceUhjYGV7VUbaUz6vDazuIJnaAcS8SyQHAKkh9paYzm2RY7Wrz0XfCJTIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yso9//ac; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7E26C116B1;
+	Mon,  1 Jul 2024 21:15:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719868552;
+	bh=Wo2ziZrHiwxQRp5NYky+UVW8r6uc3a/mGH6kieet5fo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Yso9//acMVkR7YN4aYSEyRKdX9EKHa3lnj5TRPJsg2b4NdR0CnayyicXTMOuEUGhg
+	 ftIpGAl58WMqP5ctFIKOSMixh/s2TczsGF0ZsHzoxlCVsncXd8hV4cB2sY93x1f1TQ
+	 qWarQtafiQP61j0Sy73cbppBvuLavvO0ILEdxcHPslF7yk2JwMk70zfkGI7fKB9bxp
+	 los63zCqKye6JjuphkUdkHlXH/jixUztTCiBEjXsSW1zF+nVwWBClENhgk4PUHA2XP
+	 kzqpadH+rfTjVyPO5TbK1K3pYsmR/+IFY4u+agJrF5NtrU+0mtAWkmQMjjqkK5KIWq
+	 5hq3Di8G0DfUQ==
+Date: Mon, 1 Jul 2024 23:15:47 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Igor Pylypiv <ipylypiv@google.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v4 2/8] ata: libata-scsi: Do not overwrite valid sense
+ data when CK_COND=1
+Message-ID: <ZoMcg_iuibiqw0zu@ryzen.lan>
+References: <20240701195758.1045917-1-ipylypiv@google.com>
+ <20240701195758.1045917-3-ipylypiv@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,31 +59,246 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wgQMOscLeeA3QXOs97xOz_CTxdqJjpC20tJ-7bUdHWtSA@mail.gmail.com>
+In-Reply-To: <20240701195758.1045917-3-ipylypiv@google.com>
 
-On Sun, Jun 30, 2024 at 02:55:16PM -0700, Linus Torvalds wrote:
-> This release continues to be fairly calm, and rc6 looks pretty small.
-> It's also entirely just random small fixes spread all over, with no
-> bigger pattern.
+On Mon, Jul 01, 2024 at 07:57:52PM +0000, Igor Pylypiv wrote:
+> Current ata_gen_passthru_sense() code performs two actions:
+> 1. Generates sense data based on the ATA 'status' and ATA 'error' fields.
+> 2. Populates "ATA Status Return sense data descriptor" / "Fixed format
+>    sense data" with ATA taskfile fields.
 > 
-> Mostly drivers, but we've got some random arch fixlets from Arnd
-> (mostly compat syscall stuff), we've got some filesystem fixes (yes,
-> bcachefs again), some bpf stuff with selftests etc.
+> The problem is that #1 generates sense data even when a valid sense data
+> is already present (ATA_QCFLAG_SENSE_VALID is set). Factoring out #2 into
+> a separate function allows us to generate sense data only when there is
+> no valid sense data (ATA_QCFLAG_SENSE_VALID is not set).
 > 
-> Nothing really stands out, with the possible exception of a series of
-> tty/serial reverts ("not ready yet, revert and we'll try again
-> later").
+> As a bonus, we can now delete a FIXME comment in atapi_qc_complete()
+> which states that we don't want to translate taskfile registers into
+> sense descriptors for ATAPI.
+> 
+> Cc: stable@vger.kernel.org # 4.19+
+> Reviewed-by: Hannes Reinecke <hare@suse.de>
+> Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+> Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
+> ---
+>  drivers/ata/libata-scsi.c | 158 +++++++++++++++++++++-----------------
+>  1 file changed, 86 insertions(+), 72 deletions(-)
+> 
+> diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+> index a9e44ad4c2de..26b1263f5c7c 100644
+> --- a/drivers/ata/libata-scsi.c
+> +++ b/drivers/ata/libata-scsi.c
+> @@ -230,6 +230,80 @@ void ata_scsi_set_sense_information(struct ata_device *dev,
+>  				   SCSI_SENSE_BUFFERSIZE, information);
+>  }
+>  
+> +/**
+> + *	ata_scsi_set_passthru_sense_fields - Set ATA fields in sense buffer
+> + *	@qc: ATA PASS-THROUGH command.
+> + *
+> + *	Populates "ATA Status Return sense data descriptor" / "Fixed format
+> + *	sense data" with ATA taskfile fields.
+> + *
+> + *	LOCKING:
+> + *	None.
+> + */
+> +static void ata_scsi_set_passthru_sense_fields(struct ata_queued_cmd *qc)
+> +{
+> +	struct scsi_cmnd *cmd = qc->scsicmd;
+> +	struct ata_taskfile *tf = &qc->result_tf;
+> +	unsigned char *sb = cmd->sense_buffer;
+> +
+> +	if ((sb[0] & 0x7f) >= 0x72) {
+> +		unsigned char *desc;
+> +		u8 len;
+> +
+> +		/* descriptor format */
+> +		len = sb[7];
+> +		desc = (char *)scsi_sense_desc_find(sb, len + 8, 9);
+> +		if (!desc) {
+> +			if (SCSI_SENSE_BUFFERSIZE < len + 14)
+> +				return;
+> +			sb[7] = len + 14;
+> +			desc = sb + 8 + len;
+> +		}
+> +		desc[0] = 9;
+> +		desc[1] = 12;
+> +		/*
+> +		 * Copy registers into sense buffer.
+> +		 */
+> +		desc[2] = 0x00;
+> +		desc[3] = tf->error;
+> +		desc[5] = tf->nsect;
+> +		desc[7] = tf->lbal;
+> +		desc[9] = tf->lbam;
+> +		desc[11] = tf->lbah;
+> +		desc[12] = tf->device;
+> +		desc[13] = tf->status;
+> +
+> +		/*
+> +		 * Fill in Extend bit, and the high order bytes
+> +		 * if applicable.
+> +		 */
+> +		if (tf->flags & ATA_TFLAG_LBA48) {
+> +			desc[2] |= 0x01;
+> +			desc[4] = tf->hob_nsect;
+> +			desc[6] = tf->hob_lbal;
+> +			desc[8] = tf->hob_lbam;
+> +			desc[10] = tf->hob_lbah;
+> +		}
+> +	} else {
+> +		/* Fixed sense format */
+> +		sb[0] |= 0x80;
+> +		sb[3] = tf->error;
+> +		sb[4] = tf->status;
+> +		sb[5] = tf->device;
+> +		sb[6] = tf->nsect;
+> +		if (tf->flags & ATA_TFLAG_LBA48)  {
+> +			sb[8] |= 0x80;
+> +			if (tf->hob_nsect)
+> +				sb[8] |= 0x40;
+> +			if (tf->hob_lbal || tf->hob_lbam || tf->hob_lbah)
+> +				sb[8] |= 0x20;
+> +		}
+> +		sb[9] = tf->lbal;
+> +		sb[10] = tf->lbam;
+> +		sb[11] = tf->lbah;
+> +	}
+> +}
+> +
+>  static void ata_scsi_set_invalid_field(struct ata_device *dev,
+>  				       struct scsi_cmnd *cmd, u16 field, u8 bit)
+>  {
+> @@ -837,10 +911,8 @@ static void ata_to_sense_error(unsigned id, u8 drv_stat, u8 drv_err, u8 *sk,
+>   *	ata_gen_passthru_sense - Generate check condition sense block.
+>   *	@qc: Command that completed.
+>   *
+> - *	This function is specific to the ATA descriptor format sense
+> - *	block specified for the ATA pass through commands.  Regardless
+> - *	of whether the command errored or not, return a sense
+> - *	block. Copy all controller registers into the sense
+> + *	This function is specific to the ATA pass through commands.
+> + *	Regardless of whether the command errored or not, return a sense
+>   *	block. If there was no error, we get the request from an ATA
+>   *	passthrough command, so we use the following sense data:
+>   *	sk = RECOVERED ERROR
+> @@ -875,63 +947,6 @@ static void ata_gen_passthru_sense(struct ata_queued_cmd *qc)
+>  		 */
+>  		scsi_build_sense(cmd, 1, RECOVERED_ERROR, 0, 0x1D);
+>  	}
+> -
+> -	if ((sb[0] & 0x7f) >= 0x72) {
+> -		unsigned char *desc;
+> -		u8 len;
+> -
+> -		/* descriptor format */
+> -		len = sb[7];
+> -		desc = (char *)scsi_sense_desc_find(sb, len + 8, 9);
+> -		if (!desc) {
+> -			if (SCSI_SENSE_BUFFERSIZE < len + 14)
+> -				return;
+> -			sb[7] = len + 14;
+> -			desc = sb + 8 + len;
+> -		}
+> -		desc[0] = 9;
+> -		desc[1] = 12;
+> -		/*
+> -		 * Copy registers into sense buffer.
+> -		 */
+> -		desc[2] = 0x00;
+> -		desc[3] = tf->error;
+> -		desc[5] = tf->nsect;
+> -		desc[7] = tf->lbal;
+> -		desc[9] = tf->lbam;
+> -		desc[11] = tf->lbah;
+> -		desc[12] = tf->device;
+> -		desc[13] = tf->status;
+> -
+> -		/*
+> -		 * Fill in Extend bit, and the high order bytes
+> -		 * if applicable.
+> -		 */
+> -		if (tf->flags & ATA_TFLAG_LBA48) {
+> -			desc[2] |= 0x01;
+> -			desc[4] = tf->hob_nsect;
+> -			desc[6] = tf->hob_lbal;
+> -			desc[8] = tf->hob_lbam;
+> -			desc[10] = tf->hob_lbah;
+> -		}
+> -	} else {
+> -		/* Fixed sense format */
+> -		sb[0] |= 0x80;
+> -		sb[3] = tf->error;
+> -		sb[4] = tf->status;
+> -		sb[5] = tf->device;
+> -		sb[6] = tf->nsect;
+> -		if (tf->flags & ATA_TFLAG_LBA48)  {
+> -			sb[8] |= 0x80;
+> -			if (tf->hob_nsect)
+> -				sb[8] |= 0x40;
+> -			if (tf->hob_lbal || tf->hob_lbam || tf->hob_lbah)
+> -				sb[8] |= 0x20;
+> -		}
+> -		sb[9] = tf->lbal;
+> -		sb[10] = tf->lbam;
+> -		sb[11] = tf->lbah;
+> -	}
+>  }
+>  
+>  /**
+> @@ -1634,6 +1649,8 @@ static void ata_scsi_qc_complete(struct ata_queued_cmd *qc)
+>  	u8 *cdb = cmd->cmnd;
+>  	int need_sense = (qc->err_mask != 0) &&
+>  		!(qc->flags & ATA_QCFLAG_SENSE_VALID);
+> +	int need_passthru_sense = (qc->err_mask != 0) ||
+> +		(qc->flags & ATA_QCFLAG_SENSE_VALID);
+>  
+>  	/* For ATA pass thru (SAT) commands, generate a sense block if
+>  	 * user mandated it or if there's an error.  Note that if we
+> @@ -1645,13 +1662,16 @@ static void ata_scsi_qc_complete(struct ata_queued_cmd *qc)
+>  	 * asc,ascq = ATA PASS-THROUGH INFORMATION AVAILABLE
+>  	 */
+>  	if (((cdb[0] == ATA_16) || (cdb[0] == ATA_12)) &&
+> -	    ((cdb[2] & 0x20) || need_sense))
+> -		ata_gen_passthru_sense(qc);
+> -	else if (need_sense)
+> +	    ((cdb[2] & 0x20) || need_passthru_sense)) {
+> +		if (!(qc->flags & ATA_QCFLAG_SENSE_VALID))
+> +			ata_gen_passthru_sense(qc);
+> +		ata_scsi_set_passthru_sense_fields(qc);
+> +	} else if (need_sense) {
+>  		ata_gen_ata_sense(qc);
+> -	else
+> +	} else {
+>  		/* Keep the SCSI ML and status byte, clear host byte. */
+>  		cmd->result &= 0x0000ffff;
+> +	}
+>  
+>  	ata_qc_done(qc);
+>  }
+> @@ -2590,14 +2610,8 @@ static void atapi_qc_complete(struct ata_queued_cmd *qc)
+>  	/* handle completion from EH */
+>  	if (unlikely(err_mask || qc->flags & ATA_QCFLAG_SENSE_VALID)) {
+>  
+> -		if (!(qc->flags & ATA_QCFLAG_SENSE_VALID)) {
+> -			/* FIXME: not quite right; we don't want the
+> -			 * translation of taskfile registers into a
+> -			 * sense descriptors, since that's only
+> -			 * correct for ATA, not ATAPI
+> -			 */
+> +		if (!(qc->flags & ATA_QCFLAG_SENSE_VALID))
+>  			ata_gen_passthru_sense(qc);
+> -		}
+>  
+>  		/* SCSI EH automatically locks door if sdev->locked is
+>  		 * set.  Sometimes door lock request continues to
+> -- 
+> 2.45.2.803.g4e1b14247a-goog
 > 
 
-Build results:
-	total: 158 pass: 158 fail: 0
-Qemu test results:
-	total: 532 pass: 532 fail: 0
-Unit test results:
-	pass: 272796 fail: 0
+Reviewed-by: Niklas Cassel <cassel@kernel.org>
 
-Ok, I admit, I am cheating: This is for v6.10-rc6-41-g9903efbddba0,
-where the parisc build failure seen in v6.10-rc6 has been fixed.
+However: I really think that this patch should be squashed with patch 8/8.
 
-Guenter
+For more details, see my reply to patch 8/8.
 
