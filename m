@@ -1,121 +1,161 @@
-Return-Path: <linux-kernel+bounces-236406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D83991E1D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:05:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 187F191E1D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:05:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70D401C23376
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:05:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C06951F241CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:05:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04F015F412;
-	Mon,  1 Jul 2024 14:05:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A7315FCF5;
+	Mon,  1 Jul 2024 14:05:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="H/ouHzEV"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IelUclHL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCADB15FA61;
-	Mon,  1 Jul 2024 14:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C8915FA84;
+	Mon,  1 Jul 2024 14:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719842726; cv=none; b=dxHXhlpWfYJMd6V8WYTYdG8/+Q86yTfisx7yUkROZmIgPGob6FdJVubQ9Ur/nptWn4AgMkrFX7nZEUrZJxTSL8cObseoAxnJNh54/RntrCmsU8467KK5VBfyGLJu1iWDTEGtkZqguIc879ygr8WqLXDPWK0a8CmWTk4W7lV0Po8=
+	t=1719842727; cv=none; b=Rae/gYzg2RYN4qNyi/YrdYwW5cjmZDhuW1O7nl5kw4z/m7aPEQt9if+Gn/tIH4AdMBslBLT9pHbmul7fQUSuM/yD9t6YuoN9qajDvnpnh+mLYMfwsE5nzIqvgGJzI3LJy10nOCKK70J7i3R9HrMz35kW1+J1/uAqyDoTWxT7FZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719842726; c=relaxed/simple;
-	bh=P7mHMYINrxetobn9ZViIRylKEP14vvmxEG4jiK7LAww=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pl9mkOfYpheG51Rjlfh/DYp4jBS/ezyl5eheBqTob2XX0vPE6ca9giD/M6E5vxn3Osjnx1357xoFIs17bjW5d5Cw4T4ulnPpBLSgs8E2XLpR/FK5Lj326iPSBPTKEZcWbIODETM2n/015UNvHFG+9TRZatJ3rZM/hDY5xJUzyDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=H/ouHzEV; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 461Ar1u1016968;
-	Mon, 1 Jul 2024 14:05:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8yEHUL1+8lG8dOzQpz4+tSx6KmesEvcgYDIBanPw4yw=; b=H/ouHzEVtUjUWr0+
-	1LTP5rt/Gm2V63hfHhRSi8nJLfYfAhvKIxklSC1kWoP7ajWsA1IsfY6jz1pa/R4i
-	fM23R1AW2lmthl8ElU46Lavgz5+mx2iOTZZQ3iMJpgNBttFfFUuDc+Cz99qCaVzK
-	1BYLsWL2U5jSlpYW+UCECgwUdgFYUG4yRh4TEd/lGvb6XZYoJ9RvcjQKVyoEiow6
-	88nlyWnAvhGQZ4osK3MxH15+SCKGpB6djAmhIv2EPnZTVDk84VaHNOZ/CotUXWDP
-	sc5kUC0EGc1bjrPDeGCfGet9+i0wSVMszDZaT09AEBB2LFu0IjfsIT4M6sAuinit
-	VEJtZw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 402bj8475j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 01 Jul 2024 14:05:02 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 461E51NS030326
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 1 Jul 2024 14:05:01 GMT
-Received: from [10.204.78.151] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 1 Jul 2024
- 07:04:58 -0700
-Message-ID: <a8a670f9-f03f-eff8-5cb2-b40b06267bc6@quicinc.com>
-Date: Mon, 1 Jul 2024 19:34:51 +0530
+	s=arc-20240116; t=1719842727; c=relaxed/simple;
+	bh=3z7Nyih4klomXUbQ7PdjR2cY+MU5YAkFW2gKQkAGdis=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QxGh9kWHPkGLr94QLnAOm0TGDC7P/dGz0J6qXMCUjREr6w+2oalSgK7i4gJT9580oxYKMR/M5IfSoIvb1DfsKhNQahSA+ug2JpMz+1xbfBw0Xk0hgAJrzOSwAb3ErelgoP0QPagMT7XLt4G15g7f4mc1E2jmhH0xiI+RPOTwAXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IelUclHL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6613BC116B1;
+	Mon,  1 Jul 2024 14:05:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719842726;
+	bh=3z7Nyih4klomXUbQ7PdjR2cY+MU5YAkFW2gKQkAGdis=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IelUclHLBKmH/CQ1eHdRciWb6yKC9Ex/W+yqaBRUGCDDPmIVbju1SQgHfL+JRC38g
+	 1MkB/gtU8Ml9QsNa2gkU9T2l+kaz5vvwT9VBybApM0NYkcCLnRpK2jPu6U+E0TD/fy
+	 Z9gMLVGMNITnWZM2G7os5H/nMwDigx+OZ+hpvQP46SLCzNAFsuTFM8g675o0eIJECw
+	 hThpLWmk3m5OwJpiwTyEqDqhocPwHRPRucGYu4VdbqvL03whaiAM28TrxJ3Zd2M+4g
+	 VCEA9lq/r3uyTm5yE1SyfIDDlJhSaKrYV55DU0h+p/sGm//ELBZn1GttvlBs/jSTCl
+	 9V0Ff+2WSjPEg==
+Date: Mon, 1 Jul 2024 15:05:21 +0100
+From: Will Deacon <will@kernel.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Frank Li <Frank.li@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-cxl@vger.kernel.org, imx@lists.linux.dev,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] perf: add missing MODULE_DESCRIPTION() macros
+Message-ID: <20240701140521.GF2250@willie-the-truck>
+References: <20240620-md-drivers-perf-v2-1-1f88f8a08e48@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v1 3/3] ASoC: codecs: wcd937x: Remove separate handling
- for vdd-buck supply
-Content-Language: en-US
-To: Mark Brown <broonie@kernel.org>
-CC: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Prasad Kumpatla <quic_pkumpatl@quicinc.com>,
-        <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_rohkumar@quicinc.com>
-References: <20240628101143.1508513-1-quic_mohs@quicinc.com>
- <20240628101143.1508513-4-quic_mohs@quicinc.com>
- <53015d64-a194-4596-8950-a55b4b0e429a@sirena.org.uk>
-From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-In-Reply-To: <53015d64-a194-4596-8950-a55b4b0e429a@sirena.org.uk>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 4z7-36iqK6WtMQCuMu3R855gofjn0oUO
-X-Proofpoint-GUID: 4z7-36iqK6WtMQCuMu3R855gofjn0oUO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-01_12,2024-06-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- spamscore=0 suspectscore=0 mlxlogscore=734 mlxscore=0 priorityscore=1501
- malwarescore=0 adultscore=0 bulkscore=0 phishscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2407010108
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240620-md-drivers-perf-v2-1-1f88f8a08e48@quicinc.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On 6/28/2024 6:12 PM, Mark Brown wrote:
-> On Fri, Jun 28, 2024 at 03:41:43PM +0530, Mohammad Rafi Shaik wrote:
+On Thu, Jun 20, 2024 at 06:46:09PM -0700, Jeff Johnson wrote:
+> With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm-ccn.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/fsl_imx8_ddr_perf.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/marvell_cn10k_ddr_pmu.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/arm_cspmu_module.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/nvidia_cspmu.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/ampere_cspmu.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/cxl_pmu.o
 > 
-Thanks for the review.
->> Replace free_irq() with devm_free_irq() because irq have been requested
->> wth devm_request_threaded_irq().
+> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
+> files which have a MODULE_LICENSE().
 > 
-> This seems like an unrelated change, and TBH if explict frees are
-> required I'd question if devm_ should be being used in the first place.
+> This includes drivers/perf/hisilicon/hisi_uncore_pmu.c which, although
+> it did not produce a warning with the x86 allmodconfig configuration,
+> may cause this warning with arm64 configurations.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+> Changes in v2:
+> - Updated hisi_uncore_pmu.c description per Yicong Yang
+> - Link to v1: https://lore.kernel.org/r/20240611-md-drivers-perf-v1-1-c001bae6da5c@quicinc.com
+> ---
+>  drivers/perf/arm-ccn.c                   | 1 +
+>  drivers/perf/arm_cspmu/ampere_cspmu.c    | 1 +
+>  drivers/perf/arm_cspmu/arm_cspmu.c       | 1 +
+>  drivers/perf/arm_cspmu/nvidia_cspmu.c    | 1 +
+>  drivers/perf/cxl_pmu.c                   | 1 +
+>  drivers/perf/fsl_imx8_ddr_perf.c         | 1 +
+>  drivers/perf/hisilicon/hisi_uncore_pmu.c | 1 +
+>  drivers/perf/marvell_cn10k_ddr_pmu.c     | 1 +
+>  8 files changed, 8 insertions(+)
+> 
+> diff --git a/drivers/perf/arm-ccn.c b/drivers/perf/arm-ccn.c
+> index 86ef31ac7503..65f4882531db 100644
+> --- a/drivers/perf/arm-ccn.c
+> +++ b/drivers/perf/arm-ccn.c
+> @@ -1561,4 +1561,5 @@ module_init(arm_ccn_init);
+>  module_exit(arm_ccn_exit);
+>  
+>  MODULE_AUTHOR("Pawel Moll <pawel.moll@arm.com>");
+> +MODULE_DESCRIPTION("ARM CCN (Cache Coherent Network) driver support");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/perf/arm_cspmu/ampere_cspmu.c b/drivers/perf/arm_cspmu/ampere_cspmu.c
+> index f146a455e838..426b3cfcb52e 100644
+> --- a/drivers/perf/arm_cspmu/ampere_cspmu.c
+> +++ b/drivers/perf/arm_cspmu/ampere_cspmu.c
+> @@ -269,4 +269,5 @@ static void __exit ampere_cspmu_exit(void)
+>  module_init(ampere_cspmu_init);
+>  module_exit(ampere_cspmu_exit);
+>  
+> +MODULE_DESCRIPTION("Ampere SoC PMU (Performance Monitor Unit) driver");
 
-okay, will remove this specific change from patch change.
+Curious: why do you expand the PMU acronym here, but not for any of the
+other drivers? If we're going to add these strings to all the drivers in
+one go, then it would good to be consistent.
 
-Based on review comments added devm_free_irq().
+>  MODULE_LICENSE("GPL");
+> diff --git a/drivers/perf/arm_cspmu/arm_cspmu.c b/drivers/perf/arm_cspmu/arm_cspmu.c
+> index c318dc909767..c21c564840d6 100644
+> --- a/drivers/perf/arm_cspmu/arm_cspmu.c
+> +++ b/drivers/perf/arm_cspmu/arm_cspmu.c
+> @@ -1427,4 +1427,5 @@ EXPORT_SYMBOL_GPL(arm_cspmu_impl_unregister);
+>  module_init(arm_cspmu_init);
+>  module_exit(arm_cspmu_exit);
+>  
+> +MODULE_DESCRIPTION("ARM CoreSight Architecture PMU driver");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.c b/drivers/perf/arm_cspmu/nvidia_cspmu.c
+> index 5b84b701ad62..0dea47e48ac5 100644
+> --- a/drivers/perf/arm_cspmu/nvidia_cspmu.c
+> +++ b/drivers/perf/arm_cspmu/nvidia_cspmu.c
+> @@ -417,4 +417,5 @@ static void __exit nvidia_cspmu_exit(void)
+>  module_init(nvidia_cspmu_init);
+>  module_exit(nvidia_cspmu_exit);
+>  
+> +MODULE_DESCRIPTION("NVIDIA Coresight Architecture PMU driver");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/perf/cxl_pmu.c b/drivers/perf/cxl_pmu.c
+> index 1f93a66eff5b..8b6ce9ea5a55 100644
+> --- a/drivers/perf/cxl_pmu.c
+> +++ b/drivers/perf/cxl_pmu.c
+> @@ -972,6 +972,7 @@ static __exit void cxl_pmu_exit(void)
+>  	cpuhp_remove_multi_state(cxl_pmu_cpuhp_state_num);
+>  }
+>  
+> +MODULE_DESCRIPTION("CXL Performance Monitoring Unit driver");
 
-https://lore.kernel.org/all/f741630e-f9e8-45e1-b3e2-4866f0baeac2@sirena.org.uk/
+Similarly here, we now have a conflicting expansion of the acronym.
 
-Thanks and Regards,
-Rafi.
-
-
-
-
+Will
 
