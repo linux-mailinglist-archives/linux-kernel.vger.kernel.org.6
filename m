@@ -1,147 +1,235 @@
-Return-Path: <linux-kernel+bounces-236172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48BC691DE67
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:53:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BA1691DE6C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:55:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AF2A1C21060
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:53:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCCA3B22DE4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DBCB1494C1;
-	Mon,  1 Jul 2024 11:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qo1sjpAz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22CB149DE8;
+	Mon,  1 Jul 2024 11:54:52 +0000 (UTC)
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9FC784A27;
-	Mon,  1 Jul 2024 11:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553C9762C1;
+	Mon,  1 Jul 2024 11:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719834830; cv=none; b=ny8gVEtPhsyHxNVLnBCB8/C6srLNYzMQ72N21VWMz44CwKwFk7Uv+wnYTL8dA99n/GPfYKHFq51sT8MUdwnVi/BsJ86cF0lNti0zb2qZ3rQ+I92bklvEZVTaUlB6HLy5i/oKEdUmw08nPy7EK6MM56sE+FNolQZTJ/brHRM2JPg=
+	t=1719834892; cv=none; b=YlR7h3af1BlPfJXpUlMu7LtnLMNUJuyjU/Nyph231XZ05JxSqc4z0nMcJQ0AYPaKPP8Gshy54ryS5V9pT+bQtpWiNDpvbbNf4OjK+maFOi7odiGDFcAIky/8wpUUyQUVFnfIouuVGeaE573HuoRI6uBm7/XhXy6dB9esUue496o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719834830; c=relaxed/simple;
-	bh=mqgE7SL/Jeft4M3I22xP2/ls1oy79EICfoclKw6lKEM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O4DZLR1bcj28BqnQI+QY7/+kKWYNeyE/XAliSU0cSfDdU0j8bE3u68k+u3Sq9exD3iuMYnlbRDbQzupGN3SabymnqDoehtPCqWug7b0CBp0640Ynxt6MZOc30FSmntobCcYU+RwBSIaO7B6Ae+E32ADPZaBwfEK4JuGLLpfNzVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qo1sjpAz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93960C116B1;
-	Mon,  1 Jul 2024 11:53:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719834830;
-	bh=mqgE7SL/Jeft4M3I22xP2/ls1oy79EICfoclKw6lKEM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Qo1sjpAzpPsBHVNkE+9ffujZLONFYMwQW1MvvvocMZNdVi7Q9wL1ffQIuO53g4h1l
-	 wcZx2uloVo7jXjgwUaDvN3ro8xttDaLvwn6h2HCy4hFOUL6QN2wM558l7Cyws44+E9
-	 Yq+dYhZT+QkwB5aVox8QdLR7q+VYKiyyq2pM1bQeu6v9eyTXzFLLT7hnzx/Qbc41iq
-	 TH8r1IXzcq8wdjWLsasgBjUTR69ZeI3MZSyvBVLoRvg0Ni4kNg4qoApt592F2iyQNh
-	 Yfy2fIaqStQ57RaXizzyd2uXSUE2k0te4xMtw6ehYAALTmhUunKaW5I5DJ5H88rG9k
-	 eZdCEUBjPzr0Q==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs fixes
-Date: Mon,  1 Jul 2024 13:53:22 +0200
-Message-ID: <20240701-vfs-fixes-7af8db39cee3@brauner>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1719834892; c=relaxed/simple;
+	bh=zjj4yxxKqft/jldp99aiyySCWIRrEUfUDFuf+9XriBY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KwHeBrqS2ACFG1d8kXLHaX4ZH2hk18Sx/M/gsSPSGmWCn5m7/Izkgc9tZ6pwbKu9qXOwcFY3KWNA+nL6XKxDCOp7Upuq/TilprPoHOMic+7fBACySjWGCHOHTXfepQXANtCuGdGHBHQcLhHpnnyvBskLl3kZXtS2HsA3sbkHA0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 461BsAylD3804315, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 461BsAylD3804315
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 1 Jul 2024 19:54:10 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 1 Jul 2024 19:54:11 +0800
+Received: from RTDOMAIN (172.21.210.160) by RTEXMBS04.realtek.com.tw
+ (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Mon, 1 Jul
+ 2024 19:54:10 +0800
+From: Justin Lai <justinlai0215@realtek.com>
+To: <kuba@kernel.org>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <andrew@lunn.ch>, <jiri@resnulli.us>, <horms@kernel.org>,
+        <rkannoth@marvell.com>, <jdamato@fastly.com>, <pkshih@realtek.com>,
+        <larry.chiu@realtek.com>, "Justin
+ Lai" <justinlai0215@realtek.com>
+Subject: [PATCH net-next v22 00/13] Add Realtek automotive PCIe driver
+Date: Mon, 1 Jul 2024 19:53:50 +0800
+Message-ID: <20240701115403.7087-1-justinlai0215@realtek.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3258; i=brauner@kernel.org; h=from:subject:message-id; bh=mqgE7SL/Jeft4M3I22xP2/ls1oy79EICfoclKw6lKEM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ1zdi9q2j5+mMPmHV3ZNv552W9W+OypeSoSPX1zy3Lz ZpVd33Y21HKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRmCuMDIuYvpTrK1WWX+py us24+tjxCH6eD5zSMhLm+upeCdbLahh+s6V57HoWb7Y6N7Y0xIz/SJ8I3/fyk7rJdtvLP5361dj LCQA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: RTEXH36506.realtek.com.tw (172.21.6.27) To
+ RTEXMBS04.realtek.com.tw (172.21.6.97)
 
-Hey Linus,
+This series includes adding realtek automotive ethernet driver
+and adding rtase ethernet driver entry in MAINTAINERS file.
 
-/* Summary */
-This contains fixes for this merge window:
+This ethernet device driver for the PCIe interface of 
+Realtek Automotive Ethernet Switch,applicable to 
+RTL9054, RTL9068, RTL9072, RTL9075, RTL9068, RTL9071.
 
-Misc:
-- Don't misleadingly warn during filesystem thaw operations. It's possible that
-  a block device which was frozen before it was mounted can cause a failing
-  thaw operation if someone concurrently tried to mount it while that thaw
-  operation was issued and the device had already been temporarily claimed for
-  the mount (The mount will of course be aborted because the device is frozen).
+v1 -> v2:
+- Remove redundent debug message.
+- Modify coding rule.
+- Remove other function codes not related to netdev.
 
-netfs:
-- Fix io_uring based write-through. Make sure that the total request length is
-  correctly set.
-- Fix partial writes to folio tail.
-- Remove some xarray helpers that were intended for bounce buffers which got
-  defered to a later patch series.
-- Make netfs_page_mkwrite() whether folio->mapping is vallid after acquiring
-  the folio lock.
-- Make netfs_page_mkrite() flush conflicting data instead of waiting.
+v2 -> v3:
+- Remove SR-IOV function - We will add the SR-IOV function together when
+uploading the vf driver in the future.
+- Remove other unnecessary code and macro.
 
-fsnotify:
-- Ensure that fsnotify creation events are generated before fsnotify open
-  events when a file is created via ->atomic_open(). The ordering was broken
-  before.
-- Ensure that no fsnotify events are generated for O_PATH file descriptors.
-  While no fsnotify open events were generated, fsnotify close events were.
-  Make it consistent and don't produce any.
+v3 -> v4:
+- Remove function prototype - Our driver does not use recursion, so we
+have reordered the code and removed the function prototypes.
+- Define macro precisely - Improve macro code readability to make the
+source code cleaner.
 
-/* Testing */
-clang: Debian clang version 16.0.6 (27)
-gcc: (Debian 13.2.0-25) 13.2.0
+v4 -> v5:
+- Modify ethtool function - Remove some unnecessary code.
+- Don't use inline function - Let the compiler decide.
 
-All patches are based on v6.10-rc3. No build failures or warnings were observed.
+v5 -> v6:
+- Some old macro definitions have been removed and replaced with the
+lastest usage.
+- Replace s32 with int to ensure consistency.
+- Clearly point out the objects of the service and remove unnecessary
+struct.
 
-/* Conflicts */
-No known conflicts.
+v6 -> v7:
+- Split this driver into multiple patches.
+- Reorganize this driver code and remove redundant code to make this
+driver more concise.
 
-The following changes since commit 83a7eefedc9b56fe7bfeff13b6c7356688ffa670:
+v7 -> v8:
+- Add the function to calculate time mitigation and the function to
+calculate packet number mitigation. Users can use these two functions
+to calculate the reg value that needs to be set for the mitigation value
+they want to set.
+- This device is usually used in automotive embedded systems. The page
+pool api will use more memory in receiving packets and requires more
+verification, so we currently do not plan to use it in this patch.
 
-  Linux 6.10-rc3 (2024-06-09 14:19:43 -0700)
+v8 -> v9:
+- Declare functions that are not extern as static functions and increase
+the size of the character array named name in the rtase_int_vector struct
+to correct the build warning noticed by the kernel test robot.
 
-are available in the Git repository at:
+v9 -> v10:
+- Currently we change to use the page pool api. However, when we allocate
+more than one page to an rx buffer, it will cause system errors
+in some cases. Therefore, we set the rx buffer to fixed size with 3776
+(PAGE_SIZE - SKB_DATA_ALIGN(sizeof(skb_shared_info) )), and the maximum
+value of mtu is set to 3754(rx buffer size - VLAN_ETH_HLEN - ETH_FCS_LEN).
+- When ndo_tx_timeout is called, it will dump some device information,
+which can be used for debugging.
+- When the mtu is greater than 1500, the device supports checksums
+but not TSO.
+- Fix compiler warnning.
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.10-rc7.fixes
+v10 -> v11:
+- Added error handling of rtase_init_ring().
+- Modify the error related to asymmetric pause in rtase_get_settings.
+- Fix compiler error.
 
-for you to fetch changes up to 9d66154f73b7c7007c3be1113dfb50b99b791f8f:
+v11 -> v12:
+- Use pm_sleep_ptr and related macros.
+- Remove multicast filter limit.
+- Remove VLAN support and CBS offload functions.
+- Remove redundent code.
+- Fix compiler warnning.
 
-  netfs: Fix netfs_page_mkwrite() to flush conflicting data, not wait (2024-06-26 14:19:08 +0200)
+v12 -> v13:
+- Fixed the compiler warning of unuse rtase_suspend() and rtase_resume()
+when there is no define CONFIG_PM_SLEEP.
 
-Please consider pulling these changes from the signed vfs-6.10-rc7.fixes tag.
+v13 -> v14:
+- Remove unuse include.
+- call eth_hw_addr_random() to generate random MAC and set device flag
+- use pci_enable_msix_exact() instead of pci_enable_msix_range()
+- If dev->dma_mask is non-NULL, dma_set_mask_and_coherent with a 64-bit
+mask will never fail, so remove the part that determines the 32-bit mask.
+- set dev->pcpu_stat_type before register_netdev() and core will allocate
+stats.
+- call NAPI instance at the right location
 
-Thanks!
-Christian
+v14 -> v15:
+- In rtase_open, when the request interrupt fails, all request interrupts
+are freed.
+- When calling netif_device_detach, there is no need to call
+netif_stop_queue.
+- Call netif_tx_disable() instead of stop_queue(), it takes the tx lock so
+there is no need to worry about the packets being transmitted.
+- In rtase_tx_handler, napi budget is no longer used, but a customized
+tx budget is used.
+- Use the start / stop macros from include/net/netdev_queues.h.
+- Remove redundent code.
 
-----------------------------------------------------------------
-vfs-6.10-rc7.fixes
+v15 -> v16:
+- Re-upload v15 patch set
 
-----------------------------------------------------------------
-Christian Brauner (1):
-      fs: don't misleadingly warn during thaw operations
+v16 -> v17:
+- Prefix the names of some rtase-specific macros, structs, and enums.
+- Fix the abnormal problem when returning page_pool resources.
 
-David Howells (5):
-      netfs: Fix io_uring based write-through
-      netfs: Fix early issue of write op on partial write to folio tail
-      netfs: Delete some xarray-wangling functions that aren't used
-      netfs: Fix netfs_page_mkwrite() to check folio->mapping is valid
-      netfs: Fix netfs_page_mkwrite() to flush conflicting data, not wait
+v17 -> v18:
+- Limit the width of each line to 80 colums.
+- Use reverse xmas tree order.
+- Modify the error handling of rtase_alloc_msix and rtase_alloc_interrupt.
 
-Jan Kara (1):
-      fsnotify: Do not generate events for O_PATH file descriptors
+v18 -> v19:
+- Use dma_wmb() instead of wmb() to ensure the order of access
+instructions for a memory shared by DMA and CPU.
+- Add error message when allocate dma memory fails.
+- Add .get_eth_mac_stats function to report hardware information.
+- Remove .get_ethtool_stats function.
+- In rtase_tx_csum, when the packet is not ipv6 or ipv4, a warning will
+no longer be issued.
 
-NeilBrown (1):
-      vfs: generate FS_CREATE before FS_OPEN when ->atomic_open used.
+v19 -> v20:
+- Modify the description of switch architecture.
 
- fs/namei.c                | 10 ++++--
- fs/netfs/buffered_write.c | 12 +++++--
- fs/netfs/direct_write.c   |  3 +-
- fs/netfs/internal.h       |  9 ------
- fs/netfs/misc.c           | 81 -----------------------------------------------
- fs/netfs/write_issue.c    |  2 +-
- fs/open.c                 | 22 +++++++++----
- fs/super.c                | 11 ++++++-
- include/linux/fsnotify.h  |  8 ++++-
- 9 files changed, 52 insertions(+), 106 deletions(-)
+v20 -> v21:
+- Remove the 16b packet statistics and 32b byte statistics report.
+- Remove all parts that use struct net_device_stats stats, and instead
+store the necessary counter fields in struct rtase_private.
+- Modify the handling method of allocation failure in rtase_alloc_desc().
+- Remove redundant conditionals and parentheses.
+- Keep the message in the single line.
+- Assign the required feature to dev->feature and dev->hw_feature at once.
+- Single statement does not need to use braces.
+
+v21 -> v22:
+- Fix the warning when building the driver.
+
+Justin Lai (13):
+  rtase: Add support for a pci table in this module
+  rtase: Implement the .ndo_open function
+  rtase: Implement the rtase_down function
+  rtase: Implement the interrupt routine and rtase_poll
+  rtase: Implement hardware configuration function
+  rtase: Implement .ndo_start_xmit function
+  rtase: Implement a function to receive packets
+  rtase: Implement net_device_ops
+  rtase: Implement pci_driver suspend and resume function
+  rtase: Implement ethtool function
+  rtase: Add a Makefile in the rtase folder
+  realtek: Update the Makefile and Kconfig in the realtek folder
+  MAINTAINERS: Add the rtase ethernet driver entry
+
+ MAINTAINERS                                   |    7 +
+ drivers/net/ethernet/realtek/Kconfig          |   19 +
+ drivers/net/ethernet/realtek/Makefile         |    1 +
+ drivers/net/ethernet/realtek/rtase/Makefile   |   10 +
+ drivers/net/ethernet/realtek/rtase/rtase.h    |  338 +++
+ .../net/ethernet/realtek/rtase/rtase_main.c   | 2340 +++++++++++++++++
+ 6 files changed, 2715 insertions(+)
+ create mode 100644 drivers/net/ethernet/realtek/rtase/Makefile
+ create mode 100755 drivers/net/ethernet/realtek/rtase/rtase.h
+ create mode 100755 drivers/net/ethernet/realtek/rtase/rtase_main.c
+
+-- 
+2.34.1
+
 
