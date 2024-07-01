@@ -1,116 +1,164 @@
-Return-Path: <linux-kernel+bounces-236398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4AF291E1BF
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:00:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC39991E1C6
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:02:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 259D8B22807
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:00:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5517DB2681E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:01:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261093D3BC;
-	Mon,  1 Jul 2024 14:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 769E83D72;
+	Mon,  1 Jul 2024 14:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="fSv+muiq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="r+sBtxYi"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A2C14AD36;
-	Mon,  1 Jul 2024 14:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968B014374E
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 14:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719842413; cv=none; b=es6h+zxrS5h5DHHhOs+FjyKQE/EcYknP0ItbFy/8ke9lTsv/O+ZqZ2p4DV2uzNwMOV2Bi2lnL3YB12u7sJ0x6L39bRo6TsPZSpTlBCh6/yZffJ8f2DCTlM/CJeDHziSdyIgMn2wU1FNFwyNu+KeeMaRcXz4v8Ovp68C4OVK71CQ=
+	t=1719842511; cv=none; b=njlf7BahheyxdswfzPaJmkTNQqVZImiuKz1tRI6JE2lf7J7tVaRjEVpDQ45ANI6lY6qfMdODOQIiA+fr8CjDabxMEPEzd3ehvI/kxIf5tOFO86QFrrMBhU0xbZC72oO2m6ZxA03Z/RRg5OeMEiy1Db4wJu5Hc6aU03MZ1fDceGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719842413; c=relaxed/simple;
-	bh=qTEQjVk0tKxOKX1m6lN2tYIgvkZrJ7LGYmq75GF9S9o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YYSoSUDJnUo1KPheDHnfvLVUqt70vwbXVjdy7ZvSMKuH3Yqjy+RPxnYuxCru0mD0JajiGYZbA8PO1+FRmYaJ/DGTcVNCrRXuxG8Mf8joxHu7aeRnVJQEQKahF3yljC86nWM36/RhWRhxIW6c4VSGqF4BaWlp9gVAoybjxahLB3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=fSv+muiq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81907C4AF0D;
-	Mon,  1 Jul 2024 14:00:12 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="fSv+muiq"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1719842409;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZItOz8mD+QC05vJ9N7C1vvN7W60Qy3m66+OR2/u/3EU=;
-	b=fSv+muiqQJqN3a6x1gkiA6fJvKljNCDkfK5dya7Gt0NNaqUE+9a8Cpz4uC/55j3ttKFp05
-	F9bza5WFJuchyRT2tGaJawPbMLflS945YXKSgg1mNBjffwxBtpQbmfkOWQS5M5nEc92GS2
-	8UhqVk0+Pr2JE1sJdxCDLurUYZrOt3Q=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 9e4c9795 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Mon, 1 Jul 2024 14:00:08 +0000 (UTC)
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5c2284616f7so2019931eaf.1;
-        Mon, 01 Jul 2024 07:00:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVSLkXkdWsAhjSs7bOLtbGAXoyj17HxNERaZXBTAfMPg2Vfp3iE/6M4GrOc3NQjIJR0M/uIyC9y5rLiLuWvaDU9T+HOCnf/W0yq19h6KxjSUbwyjZEjy1Nqisplx3VnXXJWSyhzku7QAprPBfA+PGrRkyHnKy4lKjutcqYl61PtQtUlVl6c
-X-Gm-Message-State: AOJu0YzoUBUOHXB/gS6KHqS5mluPL0OxQ6BsW1jJrcmJFUl6p/Wyf+cp
-	wQCTVA3hEQJRWo9U2zlheyTS/WaDtzSNFPfBRfBSJ+FpJnK7r7/phlcio6qYPMeE2ix/4hTaPMs
-	w9RSXIsaLWFMtVJms8Zi8nkNuYuU=
-X-Google-Smtp-Source: AGHT+IE1jxyGiueUEPSswOQsUIiXDbT8crZPdJRtiuqOnv85BhhtzLC+FOcAwhNrOHuWJUxUmx2IxcgL+w6Ca0JK8c0=
-X-Received: by 2002:a05:6870:4153:b0:25d:5f08:6b0b with SMTP id
- 586e51a60fabf-25db3414cfcmr5460274fac.18.1719842406764; Mon, 01 Jul 2024
- 07:00:06 -0700 (PDT)
+	s=arc-20240116; t=1719842511; c=relaxed/simple;
+	bh=3reg4i/O4YiAE5aKRVANGYOBm/8AOHKu8/Lh8yOWM1w=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=gQMbiNbTJzpm+lR4mjWhQQTosLicue/v+nHih+PsAgYZJtYeZsmovXOTjp/3DomJO34IGysg2pmdth3rh9RTiZ8XdIBMbZWD0d964kb1SYunVugOJEeQ7Yj+qODHgVBUZD1qEnhiqraLX20NLCGX1en/MXT10XW0JofpPwbIH7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=r+sBtxYi; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 461E0EUt074153;
+	Mon, 1 Jul 2024 09:00:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719842414;
+	bh=jjxKQjXPGDBo7KD1g9SLb7Db/+v0i0QFj/MuvZQRvGE=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To;
+	b=r+sBtxYiyUPBmKIZZ+6Li8yXVLl8t//deqhOz+TkK1RE0sVS9TD9AEtgfU1DTkwy5
+	 g4hJ5tWBXY3HHX2Mq59rXbviXtUpxwne2CBnsjsi3deohEZ5Luq27mtf7wWxWbw0PC
+	 Yrc8Drq7UJboRayPxaXqR0D/54nuCIt8GT/e1doU=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 461E0ETD003409
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 1 Jul 2024 09:00:14 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 1
+ Jul 2024 09:00:13 -0500
+Received: from DLEE101.ent.ti.com ([fe80::91ee:60bc:bfb7:851c]) by
+ DLEE101.ent.ti.com ([fe80::91ee:60bc:bfb7:851c%18]) with mapi id
+ 15.01.2507.023; Mon, 1 Jul 2024 09:00:13 -0500
+From: "Ding, Shenghao" <shenghao-ding@ti.com>
+To: Mark Brown <broonie@kernel.org>
+CC: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "perex@perex.cz"
+	<perex@perex.cz>,
+        "pierre-louis.bossart@linux.intel.com"
+	<pierre-louis.bossart@linux.intel.com>,
+        "13916275206@139.com"
+	<13916275206@139.com>,
+        "zhourui@huaqin.com" <zhourui@huaqin.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "Salazar, Ivan"
+	<i-salazar@ti.com>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "Chadha, Jasjot Singh" <j-chadha@ti.com>,
+        "liam.r.girdwood@intel.com" <liam.r.girdwood@intel.com>,
+        "Yue, Jaden"
+	<jaden-yue@ti.com>,
+        "yung-chuan.liao@linux.intel.com"
+	<yung-chuan.liao@linux.intel.com>,
+        "Rao, Dipa" <dipa@ti.com>, "yuhsuan@google.com" <yuhsuan@google.com>,
+        "Lo, Henry" <henry.lo@ti.com>, "tiwai@suse.de" <tiwai@suse.de>,
+        "Xu, Baojun" <baojun.xu@ti.com>, "soyer@irl.hu" <soyer@irl.hu>,
+        "Baojun.Xu@fpt.com" <Baojun.Xu@fpt.com>,
+        "judyhsiao@google.com" <judyhsiao@google.com>,
+        "Navada Kanyana, Mukund"
+	<navada@ti.com>,
+        "cujomalainey@google.com" <cujomalainey@google.com>,
+        "Kutty,
+ Aanya" <aanya@ti.com>,
+        "Mahmud, Nayeem" <nayeem.mahmud@ti.com>,
+        "savyasanchi.shukla@netradyne.com" <savyasanchi.shukla@netradyne.com>,
+        "flaviopr@microsoft.com" <flaviopr@microsoft.com>,
+        "Ji, Jesse"
+	<jesse-ji@ti.com>,
+        "darren.ye@mediatek.com" <darren.ye@mediatek.com>
+Subject: RE: [EXTERNAL] Re: [PATCH v1] ASoc: tas2781: Add name_prefix as the
+ prefix name of DSP firmwares and calibrated data files
+Thread-Topic: [EXTERNAL] Re: [PATCH v1] ASoc: tas2781: Add name_prefix as the
+ prefix name of DSP firmwares and calibrated data files
+Thread-Index: AQHaygy3zqcBdt6oi0KleesuzWGEKLHiIqwA///EuhA=
+Date: Mon, 1 Jul 2024 14:00:13 +0000
+Message-ID: <664b818a177f4403bd60c3d4cd0bf4d1@ti.com>
+References: <20240629101112.628-1-shenghao-ding@ti.com>
+ <8245d8e7-3ff0-4f05-9f99-666e9693603f@sirena.org.uk>
+In-Reply-To: <8245d8e7-3ff0-4f05-9f99-666e9693603f@sirena.org.uk>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-exclaimer-md-config: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620005339.1273434-1-Jason@zx2c4.com> <20240620005339.1273434-3-Jason@zx2c4.com>
- <20240620.020423-puny.wheat.mobile.arm-1wWnJHwWYyAl@cyphar.com>
- <ZnQeCRjgNXEAQjEo@zx2c4.com> <87v81txjb7.ffs@tglx> <Zn7D_YBC2SXTa_jX@zx2c4.com>
- <ZoKYoBp_bSRP_fqn@zx2c4.com>
-In-Reply-To: <ZoKYoBp_bSRP_fqn@zx2c4.com>
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date: Mon, 1 Jul 2024 15:59:55 +0200
-X-Gmail-Original-Message-ID: <CAHmME9p-VTJnwCJK7qko_k4X=L_WqiCk9vrif=GbpJE3ZPP1PA@mail.gmail.com>
-Message-ID: <CAHmME9p-VTJnwCJK7qko_k4X=L_WqiCk9vrif=GbpJE3ZPP1PA@mail.gmail.com>
-Subject: Re: [PATCH v18 2/5] random: add vgetrandom_alloc() syscall
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Aleksa Sarai <cyphar@cyphar.com>, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev, linux-crypto@vger.kernel.org, 
-	linux-api@vger.kernel.org, x86@kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>, "Carlos O'Donell" <carlos@redhat.com>, 
-	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>, 
-	Christian Brauner <brauner@kernel.org>, David Hildenbrand <dhildenb@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 1, 2024 at 1:53=E2=80=AFPM Jason A. Donenfeld <Jason@zx2c4.com>=
- wrote:
->
-> On Fri, Jun 28, 2024 at 04:09:01PM +0200, Jason A. Donenfeld wrote:
-> > fine. Also I used u32 there for the two smaller arguments, but maybe
-> > that's silly and we should go straight to u64?
->
-> Judging by `struct clone_args`, it looks like I've got to use
-> __aligned_u64 for every argument:
->
->     struct clone_args {
->         __aligned_u64 flags;
->         __aligned_u64 pidfd;
->         __aligned_u64 child_tid;
->         __aligned_u64 parent_tid;
->         __aligned_u64 exit_signal;
->         __aligned_u64 stack;
->         __aligned_u64 stack_size;
->         __aligned_u64 tls;
->         __aligned_u64 set_tid;
->         __aligned_u64 set_tid_size;
->         __aligned_u64 cgroup;
->     };
->     #define CLONE_ARGS_SIZE_VER0 64 /* sizeof first published struct */
->     #define CLONE_ARGS_SIZE_VER1 80 /* sizeof second published struct */
->     #define CLONE_ARGS_SIZE_VER2 88 /* sizeof third published struct */
->
-> So okay, I'll do that, and will have an ARGS_SIZE_VER0 macro too.
+Hi Brown
+Thanks for your comment.
 
-This is now covered by v19 of this patchset:
-https://lore.kernel.org/lkml/20240701135801.3698-1-Jason@zx2c4.com/
+> -----Original Message-----
+> From: Mark Brown <broonie@kernel.org>
+> Sent: Monday, July 1, 2024 8:23 PM
+> To: Ding, Shenghao <shenghao-ding@ti.com>
+> Cc: andriy.shevchenko@linux.intel.com; lgirdwood@gmail.com;
+> perex@perex.cz; pierre-louis.bossart@linux.intel.com;
+> 13916275206@139.com; zhourui@huaqin.com; alsa-devel@alsa-project.org;
+> Salazar, Ivan <i-salazar@ti.com>; linux-kernel@vger.kernel.org; Chadha,
+> Jasjot Singh <j-chadha@ti.com>; liam.r.girdwood@intel.com; Yue, Jaden
+> <jaden-yue@ti.com>; yung-chuan.liao@linux.intel.com; Rao, Dipa
+> <dipa@ti.com>; yuhsuan@google.com; Lo, Henry <henry.lo@ti.com>;
+> tiwai@suse.de; Xu, Baojun <baojun.xu@ti.com>; soyer@irl.hu;
+> Baojun.Xu@fpt.com; judyhsiao@google.com; Navada Kanyana, Mukund
+> <navada@ti.com>; cujomalainey@google.com; Kutty, Aanya
+> <aanya@ti.com>; Mahmud, Nayeem <nayeem.mahmud@ti.com>;
+> savyasanchi.shukla@netradyne.com; flaviopr@microsoft.com; Ji, Jesse
+> <jesse-ji@ti.com>; darren.ye@mediatek.com
+> Subject: [EXTERNAL] Re: [PATCH v1] ASoc: tas2781: Add name_prefix as the
+> prefix name of DSP firmwares and calibrated data files
+>=20
+> On Sat, Jun 29, 2024 at 06:11:10PM +0800, Shenghao Ding wrote:
+>=20
+> >  	tas_priv->fw_state =3D TASDEVICE_RCA_FW_OK;
+> > -	scnprintf(tas_priv->coef_binaryname, 64, "%s_coef.bin",
+> > -		tas_priv->dev_name);
+> > +	if (tas_priv->name_prefix)
+> > +		scnprintf(tas_priv->rca_binaryname, 64, "%s-%s_coef.bin",
+> > +			tas_priv->name_prefix, tas_priv->dev_name);
+> > +	else
+> > +		scnprintf(tas_priv->coef_binaryname, 64, "%s_coef.bin",
+> > +			tas_priv->dev_name);
+>=20
+> I'll apply this but I do wonder if it's worth falling back to trying to l=
+oad the
+> unprefixed name if we fail to load the prefixed one.
+If fail to load dsp firmware, the driver won't load unprefixed name firmwar=
+e,=20
+but switch tas2563/tas2781 to bypass-dsp mode automatically.
+In this mode, smartamp become simple amp.
+These day, I met a case from one of my customers, they put 2 pieces of tas2=
+563,=20
+and 2 pieces of tas2781 in the same i2c bus. In order to identify tas2563 a=
+nd=20
+tas2781, I think name_prefix is a good solution for this case.
+Looking forward to your comment. Thanks.
 
