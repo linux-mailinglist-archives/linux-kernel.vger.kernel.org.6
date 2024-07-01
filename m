@@ -1,125 +1,108 @@
-Return-Path: <linux-kernel+bounces-235534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8D2991D64A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 04:50:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3452091D64E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 04:51:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA9051C2110A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 02:50:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4694B20DD7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 02:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 168CCC147;
-	Mon,  1 Jul 2024 02:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB43C8C7;
+	Mon,  1 Jul 2024 02:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="G/iomdoR"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ILuBuc8E"
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0CE5680
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 02:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97FD3B674
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 02:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719802252; cv=none; b=pkjg91QHKzBBIQHTwGjFfaQrcFBxqjaeYY1V59MmDQLi6Fh/u3ihCAKcXr1U6SIMYwpkVaNz9ISFL5oSpp001SsRA2fDWmQRnhapXhfVvd29iiZJnyhGedORc2dR1+ccvF+Vyr00TcdzD8pYRebr9DqRaozHms7LmjBNcLaMCws=
+	t=1719802307; cv=none; b=cw8Q+/j+WZJPDp0S9x2rB8ZKJAU86sFytcIZaqLWWrWV/6o9iLC1hxH8GytJaz+G0y3cLNjKqQ/B4h8jzg8qN0oMW43YqHkY7I5tRtxGSHiyenALs9NXBWxV/Die5dHebq6sanmP66Ry7w0MWK5hhhRp8fakIrXy34jonI4/iM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719802252; c=relaxed/simple;
-	bh=PhxB7h9+rAVsxPxv3weZala7Ei1zrbTh6VfYRngV/3k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tjUwV7XWIDt+Eg5AH24Cm6zlPEeLe0J4jwN4d0AKdQfHzYT+w9cdedOM7Nd3mKA+m/Qvi0a6oIRWxHGBD+WaDxggh4vRC3LVDfTvVVPRHdUIfMqzQhs+Cryo8qJmYff9wZNRVichCHqV5shSRturaT2v743E8VpHMVaYv/lIxtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=G/iomdoR; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1719802247; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=dKbWEdikIBy/xGxcnPx9urGn8RKhAvsJQ96ZeCNi8Xw=;
-	b=G/iomdoRyIt7dc7uaTcSNVJ6bfV0e78xFnPLabezIRjqsfb7kL6/UBLttibp1QHPqzW4ycP/xPThC1QJMXcYhu6q5Zz4X6SYvBJifbOcSHJItQvejK1coKCRDC7xi1ai7cl4StWbEnXhrUdIvBso4OH3apC5yyTCQf526lc4RBU=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045075189;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0W9XECIo_1719802230;
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0W9XECIo_1719802230)
-          by smtp.aliyun-inc.com;
-          Mon, 01 Jul 2024 10:50:46 +0800
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To: harry.wentland@amd.com
-Cc: sunpeng.li@amd.com,
-	Rodrigo.Siqueira@amd.com,
-	alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	Xinhui.Pan@amd.com,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH] drm/amd/display: Fix unsigned comparison with less than zero
-Date: Mon,  1 Jul 2024 10:50:28 +0800
-Message-Id: <20240701025028.36072-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1.7.g153144c
+	s=arc-20240116; t=1719802307; c=relaxed/simple;
+	bh=xQBKwuHTZDkOLyXcoPralgpNTJ2EI3xxl7Tj0G/Albc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uuWk+APG0x0TJc5FP/3umvzBG8amVrB2gj67jzwrSAkbgDf5fTCvd9c/tYTUJQs5ATWf5O7vgsAYyKkI3My0mqxBp3AUwhydd2SZnnAmmvtEIoAoCxeBEpSqerBzv16gtkB5n/24NMqzBPvx+6UlXIazaghNhI7DVEj40edwhQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ILuBuc8E; arc=none smtp.client-ip=209.85.167.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3d5d7fa3485so1793646b6e.1
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 19:51:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719802304; x=1720407104; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V39eAx4kANWlVQNdFUZ9TVyUf31mvbQKiJoxQmRftzQ=;
+        b=ILuBuc8Ern8mY+DhaAyiuBRQ1PNWaPDwy9WpUgqEQ5Zixc4ZXLbw5G5oTlJC9MNXoQ
+         cGUHrsO8wb5m3z+h93q6hXgnjhzP72sMExlzEdm8oIaKcMCeq3DPUZTlLaA2Ud/pKd0S
+         oUx8kVtkvQOQZ9+UKxh5NKqGklb9QQGYZZ+JyB2PrZh82qTMOb0tNWZcQ19nShVRk7y7
+         qd20vlgW5osHFux3DUEPI/Jnce8m6ORtyZV4fNFJS3wLYK9wFZKftkw+ZpE1RGvcfnjs
+         8HIWmA1m1qYF1aLWuDZyb8i2ZYdd75TaddBp/g2ZSbNmFVeGCgCcXuHz4LNWyH9OQkRS
+         NSoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719802304; x=1720407104;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V39eAx4kANWlVQNdFUZ9TVyUf31mvbQKiJoxQmRftzQ=;
+        b=iUx9HAqonJdDYKS1dSbaXt9q3t1oHCYyspRvSfUmK1yFDNGHeVIMvU64dXNvikKXNj
+         0WpuTSkG9AFD36Bmua8bw4oCG6PaQUTSNxD9eg6JU2kqlJ3p7F63HjgEsQtOdKEc2n/S
+         VnSpNokifxLTfTvJlLUZJ9cdrFd1UYNb50rPDGQZqFLJkVFHfrFyCKDsNoP8La5Sj9Y0
+         psBI63F9buVId1lh/r9I5tseaVFtx5Q6F3jaotWDLY7diojz47x0DA8xgLaVesT0vrK3
+         ZwqcHphqYueT3HOUhYOQPs2OEUJEBJHVehWAZL2xMxu1dj33HyYrU+BKYeZzw439JaVg
+         6FDA==
+X-Forwarded-Encrypted: i=1; AJvYcCVv+BxJCPAjYlxwWyGpZTOJufgtScvXGwknBvX0n8Ai2My4ka4ThPBcTQ4bMWZ2GXwdJj62Cg2tcPIzlZTEsSgFvkXbUkp9XAdGc5kw
+X-Gm-Message-State: AOJu0Yy9b90UatH1atapYTaUNLtr486PuTgK/Y1DtcTnZiv1yd8M+1Dg
+	PAeIMPP7azXPIg2MckkDKqE/V94bnYuNmze4GV4kSQD8use6h8nC29yHiwNpaW/T09+apnq527H
+	BMjttj5wCYGwxzH8ilwoLOONQ+ydcb4Eq
+X-Google-Smtp-Source: AGHT+IHTVydBI5xXnmjajwu2cozvTf1QqoVrktjE/za9Jnsk9pfxNIviUGX5ls3zf6626o0W/oAUrMMbwMLUyA+W/XI=
+X-Received: by 2002:a05:6808:218e:b0:3d5:6446:3407 with SMTP id
+ 5614622812f47-3d6b4de2f1dmr7542122b6e.47.1719802304593; Sun, 30 Jun 2024
+ 19:51:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240630222904.627462-1-bvanassche@acm.org> <20240630222904.627462-2-bvanassche@acm.org>
+In-Reply-To: <20240630222904.627462-2-bvanassche@acm.org>
+From: Lai Jiangshan <jiangshanlai@gmail.com>
+Date: Mon, 1 Jul 2024 10:51:32 +0800
+Message-ID: <CAJhGHyCsypVP7VgsNKdQ=rn0hqiJOzSS9p_OGio6k-S2idaLtA@mail.gmail.com>
+Subject: Re: [PATCH 01/53] workqueue: Introduce the create*_workqueue2() macros
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Tejun Heo <tj@kernel.org>, "Martin K . Petersen" <martin.petersen@oracle.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The return value from the call to dml21_find_dc_pipes_for_plane() is int.
-However, the return value is being assigned to an unsigned int variable
-'num_pipes', the condition if(num_pipes <= 0) is not rigorous enough,
-so making 'num_pipes' an int.
+Hello
 
-./drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_wrapper.c:318:6-15: WARNING: Unsigned expression compared with zero: num_pipes <= 0.
-./drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_wrapper.c:360:6-15: WARNING: Unsigned expression compared with zero: num_pipes <= 0.
+On Mon, Jul 1, 2024 at 6:29=E2=80=AFAM Bart Van Assche <bvanassche@acm.org>=
+ wrote:
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9454
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
- .../drm/amd/display/dc/dml2/dml21/dml21_wrapper.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+> --- a/include/linux/workqueue.h
+> +++ b/include/linux/workqueue.h
+> @@ -525,11 +525,20 @@ alloc_workqueue(const char *fmt, unsigned int flags=
+, int max_active, ...);
+>
+>  #define create_workqueue(name)                                         \
+>         alloc_workqueue("%s", __WQ_LEGACY | WQ_MEM_RECLAIM, 1, (name))
+> +#define create_workqueue2(fmt, args...) \
+> +       alloc_workqueue(fmt, __WQ_LEGACY | WQ_MEM_RECLAIM, 1, ##args)
+>  #define create_freezable_workqueue(name)                               \
+>         alloc_workqueue("%s", __WQ_LEGACY | WQ_FREEZABLE | WQ_UNBOUND | \
+>                         WQ_MEM_RECLAIM, 1, (name))
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_wrapper.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_wrapper.c
-index c310354cd5fc..9d96a31419fa 100644
---- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_wrapper.c
-+++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_wrapper.c
-@@ -280,7 +280,8 @@ bool dml21_validate(const struct dc *in_dc, struct dc_state *context, struct dml
- 
- void dml21_prepare_mcache_programming(struct dc *in_dc, struct dc_state *context, struct dml2_context *dml_ctx)
- {
--	unsigned int num_pipes, dml_prog_idx, dml_phantom_prog_idx, dc_pipe_index;
-+	unsigned int dml_prog_idx, dml_phantom_prog_idx, dc_pipe_index;
-+	int num_pipes;
- 	struct pipe_ctx *dc_main_pipes[__DML2_WRAPPER_MAX_STREAMS_PLANES__];
- 	struct pipe_ctx *dc_phantom_pipes[__DML2_WRAPPER_MAX_STREAMS_PLANES__] = {0};
- 
-@@ -314,10 +315,8 @@ void dml21_prepare_mcache_programming(struct dc *in_dc, struct dc_state *context
- 		}
- 
- 		num_pipes = dml21_find_dc_pipes_for_plane(in_dc, context, dml_ctx, dc_main_pipes, dc_phantom_pipes, dml_prog_idx);
--
--		if (num_pipes <= 0 ||
--				dc_main_pipes[0]->stream == NULL ||
--				dc_main_pipes[0]->plane_state == NULL)
-+		if (num_pipes <= 0 || dc_main_pipes[0]->stream == NULL ||
-+		    dc_main_pipes[0]->plane_state == NULL)
- 			continue;
- 
- 		/* get config for each pipe */
-@@ -356,10 +355,8 @@ void dml21_prepare_mcache_programming(struct dc *in_dc, struct dc_state *context
- 		pln_prog = &dml_ctx->v21.mode_programming.programming->plane_programming[dml_prog_idx];
- 
- 		num_pipes = dml21_find_dc_pipes_for_plane(in_dc, context, dml_ctx, dc_main_pipes, dc_phantom_pipes, dml_prog_idx);
--
--		if (num_pipes <= 0 ||
--				dc_main_pipes[0]->stream == NULL ||
--				dc_main_pipes[0]->plane_state == NULL)
-+		if (num_pipes <= 0 || dc_main_pipes[0]->stream == NULL ||
-+		    dc_main_pipes[0]->plane_state == NULL)
- 			continue;
- 
- 		/* get config for each pipe */
--- 
-2.20.1.7.g153144c
+Is there any possible preprocessor hack to avoid the renaming of the functi=
+ons?
 
+Thanks
+Lai
 
