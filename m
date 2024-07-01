@@ -1,156 +1,116 @@
-Return-Path: <linux-kernel+bounces-236701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3040891E616
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:59:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D003A91E619
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:59:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D84491F251D0
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:59:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0ECEA1C20BC5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE5116DED1;
-	Mon,  1 Jul 2024 16:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB8E716DED9;
+	Mon,  1 Jul 2024 16:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Inzjp2EA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="GrwAMY1t"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212B943144;
-	Mon,  1 Jul 2024 16:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8E016DC3A;
+	Mon,  1 Jul 2024 16:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719853177; cv=none; b=gQIEJ1B0q9aZv/13ey1bAxZUnE37pYdbivf/CZBnDFlCdS91e6J3zXciZVBZgygM0gb1oY5Bahp6AhW5oRE/ZivcafrvEHMtcjswrNBAvAHaONWb3cuixApfJqqLVNEyFfpY+jnb8WdxTpEpBJ5Y+NGAoQf7O5ayBhhRfICzb60=
+	t=1719853187; cv=none; b=pvi49k7lqt1gmZk9cAhf5eAVIN2owaKs5raq5sMWzFjuDcAToHGi+EAOvA8v4skaoxmA5CiSZ+AbFOfIfp9mAkFR/RrLNkip9TMdo5+TGLi1fELJb829pifJSCtjEJOqUyzojRPtsN0wiIZzoRCD5r7312MGl1E+YOoAAaVnyZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719853177; c=relaxed/simple;
-	bh=zUGL8isiXEnqzL1HE8Wbu1BcaCkPiWfaa1HJedHH6p8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WmmRWqc+lZJQkfh3jRN2iHmVyIIZS0QZQkO/8q/bDH5lk2Xij48SZh/z/DUl6EejU3rz7lZDlLgLBvWCCiGO6+gvjzjrM7iATHhaLc6goBUEKD2McQVzj2VWURmdhAMGYP4pPmsqOYX0i989UABhuQgyciq2PISTck8Apu9yZBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Inzjp2EA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87DD1C4AF10;
-	Mon,  1 Jul 2024 16:59:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719853176;
-	bh=zUGL8isiXEnqzL1HE8Wbu1BcaCkPiWfaa1HJedHH6p8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Inzjp2EADF0fqQJi+DIeZB0Hwvma8nd533uc3N9Obi5CIwYMOuaVGDp2QugqPB3vy
-	 7Hn96cPBcaonYothTe9+nN6ARzXqjQ1mH2lnDUMdjziOIJtIBSen2fdxiFZlJBd8/z
-	 Ns1c8ouDcQlsIXREerT0KIvU8UpHZWvmmqPHCRLHMms2k1+KDudg0shTmrDcrq0yDi
-	 0iBwc0FqR0Ji+nr/i8z+3L0EzJl5glRjqarpnY6h9NX6dlhedz0zTRU6XVA6iuijg8
-	 rfNA9Y2mVWiSAUVRrM+aoiFcSlvsgL/AcAQyyIxLj3LKxgwodcjP9OZle1rzO5y/L9
-	 JVYgtfPHiMZkA==
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-24c5ec50da1so453333fac.3;
-        Mon, 01 Jul 2024 09:59:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWWXOmbCCDbM/4bLefCz3SOVqzKnor3SD94w0pVhMIlbqfk09sKCMs8X3wGd+UZLotSzwgxRObXr0Sl+bGffEQx55SSIrMXkit+VceXAWj5rKtv8TDrJL/1hwB50nWohvZI+A7ajkE=
-X-Gm-Message-State: AOJu0YxeqFcLZecWCSh6qVTB7P2RBuZYJw7pDYIm2YLC3KIkrjjEDnNW
-	IELrFy7dtD/gpB66T+7E6MaXet0AtsI/Yyiu6UCDBNQk2Vu1LFdHz65HMYeYJb32wVUWFfrIyrn
-	1HaS16f915Wkaa77omEiX+0QSYiw=
-X-Google-Smtp-Source: AGHT+IFoPgW50EvjNW4Q1RLKjT3T97gSHyMry3rat4zYIOxXZ83z/B+T4onbyQO++EPGBuprRtcQmiqwGw4HC4uuV+E=
-X-Received: by 2002:a05:6870:8192:b0:24f:e599:9168 with SMTP id
- 586e51a60fabf-25db33732ffmr6149076fac.1.1719853175725; Mon, 01 Jul 2024
- 09:59:35 -0700 (PDT)
+	s=arc-20240116; t=1719853187; c=relaxed/simple;
+	bh=qLOncLYdHHqUTVbR/vRD88gj1EJwz2NYAlt0A0GlEcs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LT449qC/EJr3pwufVW2z0I9tmZG1Wh+liBvIFzlHtpJNbM7oXqwMlB6+8z41oVIiW1vI/yPwbMCUIunW0r3NKQvdQay1nznidhkTK0pa5HrUOtinhKQKgCwDOZjFKHwBFeSmAvLMAdGNLthAk3Y0d9DAg90i5JrfwXlOt4lpeOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=GrwAMY1t; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C512140E021B;
+	Mon,  1 Jul 2024 16:59:42 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id nO3_FysZ_Po1; Mon,  1 Jul 2024 16:59:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1719853179; bh=h6U1lRkSQ02qZbv9tBPVD0ljz8FvKEtI/USLEALXRpM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GrwAMY1tw24nUlPeEhLbKjeKvTKm/Q2IE6nYy+oFdJdcC0oD0i66WfMRjn4WptKiK
+	 sniZ99THDAU7f8zkNp2K5x9+ILIR3qBfDE7zWd/JMHP0kB74UP6H6E2L5Y9xJjG0Y9
+	 oLtJPI91WNlu0M7++3GGIKY21sTADUJvn1ZM5vL18Vx2l5Nlti070sNs3kLNSiLpTg
+	 3EmFsXQqyHPHtrxbJCxmk4xrVlPpYZNrPvION77m4r2DcfxJrtKVYbdWACfW/evyrO
+	 OWF32irHl1rZgszFgifH3nURFLplRAJVFSVno3ioL4gkyo6KSKAFcjr9Ee6lByCSiX
+	 K64RYakYTA9LjVQm54rcvy+YWao2G2Xn4yuMeqpYOiOWKNsxwlbL/rNVwhpgV0nalt
+	 8uc3icZqDQF48io0+kDsiahnCbiDlsYpPH01t/bqA18UJwtvygnZxZYtYDQ45GEAtt
+	 yQ0YKmToSH16ejATAcHPlXHajADwBCzKQzOZCqfcMpfTwmgB9LoXtipCIlkheLkApC
+	 QHDdlAhe3vcjih/C8uHR07UDyLwlTA70xSc7sJBf9S0lKE/uX1ZqHQceuCIfO3RzjQ
+	 omsH28rU54t2Q0dK2kWDLTNTGHO6w2blZY0/+/tl5l6hsniDuFngNGL5LThFKwo4qp
+	 RVcLMBDk15MonisyTk7RCoOs=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 22E5E40E0192;
+	Mon,  1 Jul 2024 16:59:32 +0000 (UTC)
+Date: Mon, 1 Jul 2024 18:59:26 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: John Allen <john.allen@amd.com>
+Cc: rafael@kernel.org, lenb@kernel.org, yazen.ghannam@amd.com,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-edac@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] RAS/AMD/ATL: Translate normalized to system
+ physical addresses using PRM
+Message-ID: <20240701165926.GIZoLgbknHklmJ143Z@fat_crate.local>
+References: <20240506174721.72018-1-john.allen@amd.com>
+ <20240506174721.72018-3-john.allen@amd.com>
+ <20240628074522.GDZn5qEkTXG0EvQ4Lv@fat_crate.local>
+ <ZoLYCJVfoRLJbGtW@AUS-L1-JOHALLEN.amd.com>
+ <20240701163424.GHZoLakCmNflWa_Lzm@fat_crate.local>
+ <ZoLct9pSnqXm4OFd@AUS-L1-JOHALLEN.amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240628095955.34096-1-christian.loehle@arm.com>
- <20240628095955.34096-4-christian.loehle@arm.com> <CAJZ5v0jaEt2yo9OvYqpzfcbPtAvTk63tKXjm6QCi7zeKuU2SUA@mail.gmail.com>
- <c40acf72-010f-4a8b-80e4-33f133ba266b@arm.com>
-In-Reply-To: <c40acf72-010f-4a8b-80e4-33f133ba266b@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 1 Jul 2024 18:59:24 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hCANG0JBVcLgVkuS9N5Vb=sLVFtdZiJD8HYSQoX8NZgg@mail.gmail.com>
-Message-ID: <CAJZ5v0hCANG0JBVcLgVkuS9N5Vb=sLVFtdZiJD8HYSQoX8NZgg@mail.gmail.com>
-Subject: Re: [PATCHv4 3/3] cpuidle: teo: Don't count non-existent intercepts
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, vincent.guittot@linaro.org, qyousef@layalina.io, 
-	peterz@infradead.org, daniel.lezcano@linaro.org, ulf.hansson@linaro.org, 
-	anna-maria@linutronix.de, dsmythies@telus.net, kajetan.puchalski@arm.com, 
-	lukasz.luba@arm.com, dietmar.eggemann@arm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZoLct9pSnqXm4OFd@AUS-L1-JOHALLEN.amd.com>
 
-On Sat, Jun 29, 2024 at 10:22=E2=80=AFAM Christian Loehle
-<christian.loehle@arm.com> wrote:
->
-> When bailing out early, teo will not query the sleep length anymore
-> since commit 6da8f9ba5a87 ("cpuidle: teo:
-> Skip tick_nohz_get_sleep_length() call in some cases") with an
-> expected sleep_length_ns value of KTIME_MAX.
-> This lead to state0 accumulating lots of 'intercepts' because
-> the actually measured sleep length was < KTIME_MAX, so query the sleep
-> length instead for teo to recognize if it still is in an
-> intercept-likely scenario without alternating between the two modes.
->
-> Fundamentally we can only do one of the two:
-> 1. Skip sleep_length_ns query when we think intercept is likely
-> 2. Have accurate data if sleep_length_ns is actually intercepted when
-> we believe it is currently intercepted.
->
-> Previously teo did the former while this patch chooses the latter as
-> the additional time it takes to query the sleep length was found to be
-> negligible and the variants of option 1 (count all unknowns as misses
-> or count all unknown as hits) had significant regressions (as misses
-> had lots of too shallow idle state selections and as hits had terrible
-> performance in intercept-heavy workloads).
->
-> Fixes: 6da8f9ba5a87 ("cpuidle: teo: Skip tick_nohz_get_sleep_length() cal=
-l in some cases")
-> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
-> ---
-> v4: Skip constraint check if intercept logic selects state0
->
->  drivers/cpuidle/governors/teo.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->
-> diff --git a/drivers/cpuidle/governors/teo.c b/drivers/cpuidle/governors/=
-teo.c
-> index 200a3598cbcf..6dc44197a80e 100644
-> --- a/drivers/cpuidle/governors/teo.c
-> +++ b/drivers/cpuidle/governors/teo.c
-> @@ -287,6 +287,7 @@ static int teo_select(struct cpuidle_driver *drv, str=
-uct cpuidle_device *dev,
->         unsigned int hit_sum =3D 0;
->         int constraint_idx =3D 0;
->         int idx0 =3D 0, idx =3D -1;
-> +       int prev_intercept_idx;
->         s64 duration_ns;
->         int i;
->
-> @@ -364,6 +365,7 @@ static int teo_select(struct cpuidle_driver *drv, str=
-uct cpuidle_device *dev,
->          * all of the deeper states a shallower idle state is likely to b=
-e a
->          * better choice.
->          */
-> +       prev_intercept_idx =3D idx;
->         if (2 * idx_intercept_sum > cpu_data->total - idx_hit_sum) {
->                 int first_suitable_idx =3D idx;
->
-> @@ -415,6 +417,15 @@ static int teo_select(struct cpuidle_driver *drv, st=
-ruct cpuidle_device *dev,
->                         first_suitable_idx =3D i;
->                 }
->         }
-> +       if (!idx && prev_intercept_idx) {
-> +               /*
-> +                * We have to query the sleep length here otherwise we do=
-n't
-> +                * know after wakeup if our guess was correct.
-> +                */
-> +               duration_ns =3D tick_nohz_get_sleep_length(&delta_tick);
-> +               cpu_data->sleep_length_ns =3D duration_ns;
-> +               goto out_tick;
-> +       }
->
->         /*
->          * If there is a latency constraint, it may be necessary to selec=
-t an
-> --
+On Mon, Jul 01, 2024 at 11:43:35AM -0500, John Allen wrote:
+> This is because the spec defines different param buffer structures for
+> different types of translation. We can call this just param_buffer for
+> now, but would need to be renamed if/when we add use cases for the other
+> translation handlers. My preference would be to sort of future-proof
+> the name now, but I don't have an issue calling it param_buffer now and
+> changing it later if that's what you'd prefer.
 
-Applied as 6.11 material, thanks!
+Sure:
+
+/*
+ * PRM parameter buffer - normalized to system physical address, as described
+ * in the section "PRM Parameter Buffer" in the aforementioned spec.
+ */
+struct norm_to_spa_param_buf {
+	...
+} __packed;
+
+and you'll have to mention the spec in the prm.c file, at the top.
+
+This way readers can immediately map it to the place in the spec.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
