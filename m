@@ -1,113 +1,137 @@
-Return-Path: <linux-kernel+bounces-236669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 954D591E595
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:43:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7D6791E5A5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:44:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51630281F69
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:43:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E959E1C21B79
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:44:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 292AB16DEC7;
-	Mon,  1 Jul 2024 16:42:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A7316E875;
+	Mon,  1 Jul 2024 16:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="N3eHAXGe"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PA7lOMC2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127FA16DEB4
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 16:42:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA6116DC1D;
+	Mon,  1 Jul 2024 16:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719852175; cv=none; b=ZjjLKefNltsRX0RlTLpn6hHhyiIMsw/2fZ1ejMySsUnMNWpKoDFCFPPIWpZscL9vW+IU/7i3oOHLY4tDbydLUhMJPfHES/eiWvFEz+CcMhHmGXNBgVu5aH1ai3SF3g1zv1blm85O/S/9z0BVn+NhgAjiv2coC1i5bxr9DXl4Qbs=
+	t=1719852227; cv=none; b=Ak6RAooBXBP0ADtDNPTHcq/p8LSAG4ZxZZ8YZkkFWo+HJdb5RdK8xyw7IEhILT53SK1oAbL9IsnVZp4KqFWeZrBsr6C+kwQgpfhNITTnZ8v7G+ZNpYrQmXGK6zyOquFIIjDZN37VhXjmeblEKyFLp5nZ4G6LLnqBYV02pnIVoCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719852175; c=relaxed/simple;
-	bh=PZPszu38C9qjHBErM1SkImmwDbA/mBUiPyCRRw7EAeo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Aq2HobPKjkJiJEQggVcs9WM74ZWt0fdut4HiXJ2gxGkovsZZJ6xCjQuvrDC+yMeVff0MaYxOan+MoIWdkSv7H/IYHckl1x/1EUqlPqaSLAMKSvx7DhJjHP4zj7NwHIvJMCCUu/jUmLxkfv1vEOlHHi/kajEGaxeZXDr5+NBDWw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=N3eHAXGe; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4WCX0F3MqjzlnNFn;
-	Mon,  1 Jul 2024 16:42:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1719852172; x=1722444173; bh=88w72/yhcBtkcYIHH4laK8V+
-	I9JZOPcRykHIFahc//4=; b=N3eHAXGeds+g5rneafIf9NF7woZLwFdK7OPlk+La
-	/MBRSNkV9Ge3K41tvXkkjyDrwsz+y9gxr4XGF/Jxsi2ArgxpslhKUmZiKCOzkkk5
-	m7ArEUdPVYxJJ880MjGJQdA5cf6c35Z1hg3Dn1zyKEfFpKnq4XmcpUW/zL6h6MJu
-	Sp7MxC9cKuv8v9FOjgl63dJKYBErOvTO7iBtwVe+/2dtkuOZvdgELdJiYsQyFE/q
-	Z1eCmy22ft3PH2Z6G2bvu12ooc2rBdr5+SAUunzOb0QMCJXs2Jx3olBfDMwXwUpV
-	vwy3YZmvOfFp+qiPxXU09viSSAV0ZG0f9c2ZZeODWyCBxQ==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id t5zoGWQ9OUPC; Mon,  1 Jul 2024 16:42:52 +0000 (UTC)
-Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4WCX0C3tdrzlnNFk;
-	Mon,  1 Jul 2024 16:42:51 +0000 (UTC)
-Message-ID: <3302014f-6ee0-452a-a6a5-dea6fcc37542@acm.org>
-Date: Mon, 1 Jul 2024 09:42:50 -0700
+	s=arc-20240116; t=1719852227; c=relaxed/simple;
+	bh=RhesN34OZXRCLFEIbStTuwHzFvllKCOmzyEKt6ScGKQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JnXMfylrvWPGoDkPIX2b/oVMWUoLaQ3SVqUziY5B9YXvfrRyjOGV7fZgRtfbKTA7i90vIn7bLMIdiLrV7zllJwHcYDKL086/rAjyu9UkkRPavCMGB3xytiVhZNStbNuNM089K6iAlkSCe/rNzyXez10yI1DwkHbgXTEHQOAepwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PA7lOMC2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19736C4AF0D;
+	Mon,  1 Jul 2024 16:43:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719852227;
+	bh=RhesN34OZXRCLFEIbStTuwHzFvllKCOmzyEKt6ScGKQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=PA7lOMC2yeT5jHq4YyMbgHj+ebNMg5lGTkbWWSUdr+Vp0Lv7dXhP4eHYPkazqLK+W
+	 DAqKl3xuorgsLurLjSt8NruWVqV1BtvSVUXft3JWmux9S0Qa8S38Obs4yAPrQ8DL2M
+	 Re/wxgG+ko3t1z/p0edpbgA5l62Ty8eW+Y8DJe4tBE/ypxtQH5G0TUerwgMbJ8oLwg
+	 CRnGI/LYdDbQXV4TAXGHif4OKddS1ZGPR1AEkF+6tIeLzysR7KNG10ScFYDPPuWuc5
+	 3f7RQa0TJOrjCOFqLQDHQpxdLoEVy9X7iAHo4TnY+GqpcLhtRAKUWpOu7a8i8xNVKO
+	 V/b/1WQTXErDA==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52cd87277d8so3274884e87.2;
+        Mon, 01 Jul 2024 09:43:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXorbEBLUZFDySvziAjLIeZiQSxyibAuzqK9a86vSLXKk/i5xYKfgYMpXtbLz4N90mTuYgRvRmdwsXOXN92ry9Zu/Z6aUPU5ttMzpKVWm5pmYK/A+ptQ9Q8m8yRns6hcOOgFxl51AgGPA==
+X-Gm-Message-State: AOJu0YwjycOvMf4R31LSyb2JoIC8VBlYti9SWY3WEYPLu8u02y0bJeSN
+	cXIt/K5K5Eqebv6OsPcMKHACxBA61tRSmxB83l0clyprCOa9SF7eaHaFtWudO8ip47lw4zbBfM0
+	HV8HxxiqcbZLD1Timgj/a48OdtA==
+X-Google-Smtp-Source: AGHT+IFG5Mq0obsNWQtCBZPRbzAd+loy81MuYfKp3AnfwKzL/l+yMY2HM7soGl/xhylLHC0NirhzM3BijXPSGg4CMbw=
+X-Received: by 2002:a19:c214:0:b0:52c:e132:799f with SMTP id
+ 2adb3069b0e04-52e82691aa8mr3365838e87.31.1719852225386; Mon, 01 Jul 2024
+ 09:43:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/53] workqueue: Introduce the create*_workqueue2()
- macros
-To: Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: Tejun Heo <tj@kernel.org>,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- linux-kernel@vger.kernel.org
-References: <20240630222904.627462-1-bvanassche@acm.org>
- <20240630222904.627462-2-bvanassche@acm.org>
- <CAJhGHyCsypVP7VgsNKdQ=rn0hqiJOzSS9p_OGio6k-S2idaLtA@mail.gmail.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <CAJhGHyCsypVP7VgsNKdQ=rn0hqiJOzSS9p_OGio6k-S2idaLtA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <20240626202533.2182846-1-Frank.Li@nxp.com> <20240626202533.2182846-3-Frank.Li@nxp.com>
+In-Reply-To: <20240626202533.2182846-3-Frank.Li@nxp.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 1 Jul 2024 10:43:32 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+YpLk4E-Sk7otOtbZo8FKYb-9GuPC1ie3aRauP=7_1HA@mail.gmail.com>
+Message-ID: <CAL_Jsq+YpLk4E-Sk7otOtbZo8FKYb-9GuPC1ie3aRauP=7_1HA@mail.gmail.com>
+Subject: Re: [PATCH v2 02/13] arm64: dts: layerscape: add platform special
+ compatible string for gpio
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, 
+	"moderated list:ARM/FREESCALE LAYERSCAPE ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	imx@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On 6/30/24 7:51 PM, Lai Jiangshan wrote:
-> On Mon, Jul 1, 2024 at 6:29=E2=80=AFAM Bart Van Assche <bvanassche@acm.=
-org> wrote:
->=20
->> --- a/include/linux/workqueue.h
->> +++ b/include/linux/workqueue.h
->> @@ -525,11 +525,20 @@ alloc_workqueue(const char *fmt, unsigned int fl=
-ags, int max_active, ...);
->>
->>   #define create_workqueue(name)                                      =
-   \
->>          alloc_workqueue("%s", __WQ_LEGACY | WQ_MEM_RECLAIM, 1, (name)=
-)
->> +#define create_workqueue2(fmt, args...) \
->> +       alloc_workqueue(fmt, __WQ_LEGACY | WQ_MEM_RECLAIM, 1, ##args)
->>   #define create_freezable_workqueue(name)                            =
-   \
->>          alloc_workqueue("%s", __WQ_LEGACY | WQ_FREEZABLE | WQ_UNBOUND=
- | \
->>                          WQ_MEM_RECLAIM, 1, (name))
->=20
-> Is there any possible preprocessor hack to avoid the renaming of the fu=
-nctions?
+On Wed, Jun 26, 2024 at 2:26=E2=80=AFPM Frank Li <Frank.Li@nxp.com> wrote:
+>
+> Add platform special compatible string for all gpio controller to fix
+> below warning.
+>
+>  gpio@2300000: compatible: 'oneOf' conditional failed, one must be fixed:
+>         ['fsl,qoriq-gpio'] is too short
+>         'fsl,qoriq-gpio' is not one of ['fsl,mpc5121-gpio', 'fsl,mpc5125-=
+gpio', 'fsl,mpc8349-gpio', 'fsl,mpc8572-gpio', 'fsl,mpc8610-gpio', 'fsl,pq3=
+-gpio']
+>         'fsl,qoriq-gpio' is not one of ['fsl,ls1021a-gpio', 'fsl,ls1028a-=
+gpio', 'fsl,ls1043a-gpio', 'fsl,ls1088a-gpio', 'fsl,ls2080a-gpio']
+>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi | 4 ++--
+>  arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi | 8 ++++----
+>  arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi | 8 ++++----
+>  3 files changed, 10 insertions(+), 10 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi b/arch/arm64/=
+boot/dts/freescale/fsl-ls1012a.dtsi
+> index 2e1cddc11bf47..1b6ab9550cce9 100644
+> --- a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
+> @@ -407,7 +407,7 @@ duart1: serial@21c0600 {
+>                 };
+>
+>                 gpio0: gpio@2300000 {
+> -                       compatible =3D "fsl,qoriq-gpio";
+> +                       compatible =3D "fsl,ls1021a-gpio", "fsl,qoriq-gpi=
+o";
+>                         reg =3D <0x0 0x2300000 0x0 0x10000>;
+>                         interrupts =3D <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>;
+>                         gpio-controller;
+> @@ -417,7 +417,7 @@ gpio0: gpio@2300000 {
+>                 };
+>
+>                 gpio1: gpio@2310000 {
+> -                       compatible =3D "fsl,qoriq-gpio";
+> +                       compatible =3D "fsl,ls1021a-gpio", "fsl,qoriq-gpi=
+o";
+>                         reg =3D <0x0 0x2310000 0x0 0x10000>;
+>                         interrupts =3D <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
+>                         gpio-controller;
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi b/arch/arm64/=
+boot/dts/freescale/fsl-ls1046a.dtsi
+> index f8c9489507e7a..524b44f424272 100644
+> --- a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
+> @@ -589,7 +589,7 @@ duart3: serial@21d0600 {
+>                 };
+>
+>                 gpio0: gpio@2300000 {
+> -                       compatible =3D "fsl,qoriq-gpio";
+> +                       compatible =3D "fsl,ls1046a-gpio", "fsl,qoriq-gpi=
+o";
 
-Thanks Lai for having taken a look. As one can see here the last patch=20
-of this patch series renames create_workqueue2() back to=20
-create_workqueue():=20
-https://lore.kernel.org/linux-kernel/20240630222904.627462-1-bvanassche@a=
-cm.org/
+ls1046a isn't documented.
 
-Bart.
+Rob
 
