@@ -1,89 +1,120 @@
-Return-Path: <linux-kernel+bounces-236629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D5A091E522
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:20:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCC7A91E52D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:21:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8207281307
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:20:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEFB91C21A6B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47BBE16D9DD;
-	Mon,  1 Jul 2024 16:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8727816D4F1;
+	Mon,  1 Jul 2024 16:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F9YH8Quu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KAIotl5R"
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8856813C908
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 16:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82CD516631C;
+	Mon,  1 Jul 2024 16:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719850803; cv=none; b=BlZpX5+4DDRUhm/6no0DscCVqj7g+JDyvGHITqOdOv7KHJ6oknJfvnmiR3okXJbEDxV238qgR/D+2E68EmdVoqNmpqKonPlBEvtUK8hP0oXIzWDDHXQYAqL+P57Me5lux0TrRP2cpjhyoc5Te0+HgFlJ8mofLWqNxi+uXZOvrDY=
+	t=1719850841; cv=none; b=IYzHCKEvoxrnBKxTeHyUUoZt+mo+dPj8hzWAlrpgtdOyFW+v8Q61ce+EWGkV3s0q5+JGvmGm8d8cVRcwjTmCrHQ0B1mTg2dD4cdKufsm2hf2bRGFXOfTQ0WlSnKHQKN9Jjt8hCAhnWBbYAf+K6vxylA0lLjRonV9yDivIcSuBgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719850803; c=relaxed/simple;
-	bh=6v5gXKcxmjcxQ4439qKhy37oGLZvAmn2mPc6DIj+XTk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pdlSeu+4Z6iPmNnIThneH4YCWknbMq9BA9dszB6xaVFo/D+ARVDSsYM8fweWGEQRdrMS1ppUj58Em6pJZMdgQvCtKuXswTOScgzBl2dxAYIze1OaKkJzhkywsms60fdtQk98vrAUy+8jEdepT2K3iJy3hldlfbWz3otarMkCUwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F9YH8Quu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22574C2BD10;
-	Mon,  1 Jul 2024 16:20:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719850803;
-	bh=6v5gXKcxmjcxQ4439qKhy37oGLZvAmn2mPc6DIj+XTk=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=F9YH8Quuq0khYdkNJTxjDF/vRfVki8fcUL947x+poUBYjck3hqLKf3Majz4LDUnxv
-	 LamBwmSkMqL9KujM5XsbOQ3MGdG1evCFAAqZnX08vnQNPONWLysVKr4dcE++gRBWtN
-	 hC5NNant63Di7M3jYp8kKfiKTMHrr7rbCHYr5HIKz3bCvP40JJEmQi7n8jifTBL1rj
-	 IVYufhKbwRKYsIC/6opqht2ERQ2YkyjmTVbGjoUgqHwXrwd9qKYl4F4Y1Ji/25UKpV
-	 /TXZKifCl0XjHqLZu6DSl0FQ3QmI8Z+/bE3u+0ykdBXySmAvgYpXvgpqRkuZ2VIQ6o
-	 Ccfjr9/UmhPUw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id C240CCE0AD3; Mon,  1 Jul 2024 09:20:02 -0700 (PDT)
-Date: Mon, 1 Jul 2024 09:20:02 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: ahmed Ehab <bottaawesome633@gmail.com>
-Cc: boqun.feng@gmail.com, linux-kernel@vger.kernel.org
-Subject: Re: lock classes
-Message-ID: <6be3513e-67d8-4ead-b44a-e6dcdedfeaab@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <CA+6bSauVVgprKxB3f=Dgo0p5ZN0cyRAYATzGOe6CgsJ=Ai0trA@mail.gmail.com>
+	s=arc-20240116; t=1719850841; c=relaxed/simple;
+	bh=IW8RGWfl2BlHpimDXAA7bRLiZRlSAdHOFyJ5cLC8y/k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F4C6nluzKJ8DoEOEKgIdpMS7Jl6ZdGPr4X5JGOJzbaih3Z/WOOGwaitO/vwLw9wPCncMsByc1h5+3l6alQ/u/8dr7+qf2FIkKCBT56aDRrGn5LyErn99P0IV/ig86otlvhn+tfhe1X8kU95p/s5Q3K+akGjY1Ai7eBd1RQ+5JhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KAIotl5R; arc=none smtp.client-ip=209.85.161.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5b97a071c92so1524930eaf.1;
+        Mon, 01 Jul 2024 09:20:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719850839; x=1720455639; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=q1jhsbzsQSOicdV37XZ9var/nTBpCYxPxtGqd7ndFu8=;
+        b=KAIotl5R7epRM9+HR6snTCVFJKjuragodVg+WXICWpVmZ8viARwyZxFzxyS3YG1aFq
+         eU3iOtoWGcHEJWkcI0HbcFkgikjVjTJwBRcSdcVsvWVUiWuuFEznB6c8MwvO+2G1+SW+
+         DeFEmMq5gUHPso7QDYjZZCFYV4Gqp1onMWNKEtvWuLqVSMTveJkakIHv+R0HZ8UDidQW
+         0stTD3WaLtCvOEeSvMxIAWPpnYGBE235YVoUR5M0yL3+wXZ0XpOzIpr/cpYNl5OBmlIV
+         xfJwedetOPV6w+MISEBYRTnUuEz+sEyUZHxzhsv4bgwQN2VKcMs3rg2Z3J4J+9um/9F1
+         JQDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719850839; x=1720455639;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=q1jhsbzsQSOicdV37XZ9var/nTBpCYxPxtGqd7ndFu8=;
+        b=iorBjTKC3ODXSAPE185YKoohBMLA6yrOKX7igElWF8JMG9rJnMSLuI3MBv+GI5I+1r
+         YdAJNlRQPhyt/xXYEQ7e5B30plk7zlvkFMQLRfoZvb8qxsrj2/A8x1YBUDzW1VC8oMwn
+         AekO5c7ZWICW+/yENw9KSX0/pSIrdKAFBVThbJ2k5FLBHZmNsv97o2SYIoW5jqx6C66p
+         1wmEdDl0gI0p0sb8DsL09jBKBPw+dRwHZurWoAGECKxvpQeEZpS77U1A3SLDbjuQKTLB
+         5vq0Vi+ASdi1yZ0I9SZyWAE/SazX7xVXWMg2fhaAONVw1Z1TWpkFiSzoz+rDfl2cFRlG
+         do6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUWEqMwajae2tuDTPoRNibKEleYuje6UIY5OzcdgRp2eOsqKI0ujHIoxrRQwrQEWGoyXZJD3cTCxit2yLwNl1+vaDpwKWdTbjj5fVns5kP+W2bIJkfhzwqdMHIYvmrrI2ql10OMTmuosXBOyEhNM7RS0F1xK6gQAHRv/rTY3THooewIjg==
+X-Gm-Message-State: AOJu0Yw+/GLVcjLqbxx5hwawExRUed0TArnrmvldq3FvrZeFKvuQBZQD
+	mVvSVV93vEw2aP1i0tQZzQThuaPwOfaKSzB5sd44hiEkd9T4m9fy
+X-Google-Smtp-Source: AGHT+IE7cvLNIICXLZ+ApTE7+JEq/r4+y8wOtGf3rrz7GsGFtHfKDk9f6EPS0mmgXO+f7YcF9Yy4cw==
+X-Received: by 2002:a05:6358:6f93:b0:1a6:72f2:4d03 with SMTP id e5c5f4694b2df-1a6acd61133mr706254455d.9.1719850839491;
+        Mon, 01 Jul 2024 09:20:39 -0700 (PDT)
+Received: from localhost ([2a00:79e1:2e00:1301:e1c5:6354:b45d:8ffc])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-72c6a8dbb2fsm4452022a12.31.2024.07.01.09.20.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 09:20:38 -0700 (PDT)
+From: Rob Clark <robdclark@gmail.com>
+To: iommu@lists.linux.dev
+Cc: linux-arm-msm@vger.kernel.org,
+	Stephen Boyd <swboyd@chromium.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Pranjal Shrivastava <praan@google.com>,
+	Rob Clark <robdclark@chromium.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Georgi Djakov <quic_c_gdjako@quicinc.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Jerry Snitselaar <jsnitsel@redhat.com>,
+	Joerg Roedel <jroedel@suse.de>,
+	Krishna Reddy <vdumpa@nvidia.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM SMMU DRIVERS),
+	linux-kernel@vger.kernel.org (open list),
+	linux-pm@vger.kernel.org (open list:POWER MANAGEMENT CORE),
+	linux-tegra@vger.kernel.org (open list:TEGRA IOMMU DRIVERS),
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Will Deacon <will@kernel.org>
+Subject: [PATCH v3 0/3] iommu/arm-smmu: Prettyify context fault messages
+Date: Mon,  1 Jul 2024 09:20:09 -0700
+Message-ID: <20240701162025.375134-1-robdclark@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+6bSauVVgprKxB3f=Dgo0p5ZN0cyRAYATzGOe6CgsJ=Ai0trA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 01, 2024 at 03:52:44AM +0300, ahmed Ehab wrote:
-> Hello sir,
-> I am working on a bug reported by syzkaller
-> https://syzkaller.appspot.com/bug?extid=d4200fc83fa03a684c6e . I am getting
-> 2 classes with the same key but different address for the name(different
-> name pointer but same content). The problem is that this info seems to be
-> persisted in the vmlinux itself. Is there any place where I can read about
-> how lock classes are persisted or something?
+From: Rob Clark <robdclark@chromium.org>
 
-Hello, Ahmed,
+v3: Split out the reg bitfield renaming, rework
+    print_context_fault_info() helper
 
-Adding Boqun and the list on CC in case others have better advice.
+Rob Clark (3):
+  iommu/arm-smmu: Add CB prefix to register bitfields
+  iommu/arm-smmu-qcom-debug: Do not print for handled faults
+  iommu/arm-smmu: Pretty-print context fault related regs
 
-One possibility is that there is a lockdep_set_class_and_name() call
-that is separating out locks that would by default be in the same
-class.  See the use of this function in the rcu_init_one() function in
-kernel/rcu/tree.c for one example use, in this case to create separate
-lock classes for each level of the rcu_node tree.
+ drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c  |  2 +-
+ .../iommu/arm/arm-smmu/arm-smmu-qcom-debug.c  | 66 ++++++-----------
+ drivers/iommu/arm/arm-smmu/arm-smmu.c         | 74 ++++++++++++++-----
+ drivers/iommu/arm/arm-smmu/arm-smmu.h         | 71 +++++++++++-------
+ drivers/iommu/arm/arm-smmu/qcom_iommu.c       |  4 +-
+ 5 files changed, 127 insertions(+), 90 deletions(-)
 
-There are a number of similar functions, including lockdep_set_class()
-and lockdep_set_class_and_subclass().  These guys might well duplicate
-the name, but I have never used them.  Me, I encode the level into
-the name in order to have better lockdep diagnostics, but that is not
-always practical.
+-- 
+2.45.2
 
-							Thanx, Paul
 
