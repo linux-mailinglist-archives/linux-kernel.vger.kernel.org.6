@@ -1,101 +1,123 @@
-Return-Path: <linux-kernel+bounces-236583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4596491E451
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:39:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7D4791E437
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:34:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC4C11F24A46
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:39:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 835BC1F2215D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0568116D4CE;
-	Mon,  1 Jul 2024 15:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18AF416CD28;
+	Mon,  1 Jul 2024 15:34:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l46ptC4F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eW64tHs7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30ACB16CD03;
-	Mon,  1 Jul 2024 15:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D5628F4;
+	Mon,  1 Jul 2024 15:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719848348; cv=none; b=ese8iyJz/3STI5CkblYEnIMyH4N9oAK4+WEOJRI8m13PA8zjHC91MfTPw5/aRUI6SjFz6SjPD7p3hMxZGdw+69iWxuSjKi5jKy6jWbY/t4qOXOWcNzY8HYjiR+uPQmHfotbhlRD4r1/7jw4kzrEJnblq5Q3aeRs1NiC7EsLO20Q=
+	t=1719848086; cv=none; b=jDnjx5FpHxHOI8gajn/llJTrOF4+riEuA252mxM2551ONlC4NyENTGAdXZgwvXaNYklAG482tqAL4bRYy8nvRSMkSVwYv6ctJ/fUj+ofnLHS0kTL+NyX+6FXQfoRSXIePzkWo8s8G5/OcPwn7S7uW34i/0wrc8xyjk2QhKZORAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719848348; c=relaxed/simple;
-	bh=CDbBeTvr+5wXXFfoeHEpMAUlbiSssKcGL82z6iSD4AU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=doTx2F05IEfxdP7IONtlhl3WL3csxKna+9R8RhFseQ4WCV5l9N9eITy3tHudG0FtjE4Zt5TQQ9gxN1hYGKfK7qIlOZN9225VV4EmQjvB8sT62fI1HcX5duOYSSVAkgtvfgVaKDSfuGXEumQKqn7krz4el2YwgbDAWKZr8brhc/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l46ptC4F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C64C5C116B1;
-	Mon,  1 Jul 2024 15:39:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719848347;
-	bh=CDbBeTvr+5wXXFfoeHEpMAUlbiSssKcGL82z6iSD4AU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l46ptC4FnytzBDrRTiI8bdZeLXfZ/OOkiV2dJLYek3WJy798DwuCGPq1Jnese3bY4
-	 ci6cAE9Ld7TwCvCx1RPIG4McMNKrwm4lLCtHPLW+u6pAHjqBzB8HKev3jFcAyHx8Vm
-	 XUtHDM4nAgNYpe3cllG9KYS3tKtSQYocl6CSqnm97s5i9ca/CZ9kSpcCF3rFUjBidE
-	 jU9OF3ULjEsj5l1vcKpexfAdZpKWyBjXO1G6J+/2ZSf5vGlBedTzHBJi9qaHKAGrpt
-	 CUNN5Ansmav+fHoHAwH7CCfv3kO0g6vc1p7dUSrEDkxqVb5k7bro2ok8EBCGLOQc2B
-	 8JzKSwZs9BjEA==
-Date: Mon, 1 Jul 2024 08:39:07 -0700
-From: Kees Cook <kees@kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Simon Horman <horms@kernel.org>,
-	Peter Hilber <peter.hilber@opensynergy.com>,
-	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
-	"Ridoux, Julien" <ridouxj@amazon.com>, virtio-dev@lists.linux.dev,
-	"Luu, Ryan" <rluu@amazon.com>,
-	"Christopher S. Hall" <christopher.s.hall@intel.com>,
-	Jason Wang <jasowang@redhat.com>, John Stultz <jstultz@google.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>, netdev@vger.kernel.org,
-	Richard Cochran <richardcochran@gmail.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-hardening@vger.kernel.org
-Subject: Re: [RFC PATCH v2] ptp: Add vDSO-style vmclock support
-Message-ID: <202407010838.D45C67B86@keescook>
-References: <20231218073849.35294-1-peter.hilber@opensynergy.com>
- <684eac07834699889fdb67be4cee09319c994a42.camel@infradead.org>
- <671a784b-234f-4be6-80bf-5135e257ed40@opensynergy.com>
- <db594efd5a5774748a9ef07cc86741f5a677bdbf.camel@infradead.org>
- <c0ae63fc88365c93d5401972683a41112c094704.camel@infradead.org>
- <4a0a240dffc21dde4d69179288547b945142259f.camel@infradead.org>
- <20240630132859.GC17134@kernel.org>
- <4d49e640143a557861a75a65678485965611b638.camel@infradead.org>
+	s=arc-20240116; t=1719848086; c=relaxed/simple;
+	bh=iq8bWnF6w36ZZ3oKBLDL7Q66Va//VDQRpFTyD5AraCo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RnT1wDuNTktSuScjWDngLrPqb/FpAPbOeEt5NqWlIQX7s+tfdE9hE0I8XydPEoJz1pmmUSGNV3IUvEYadUcOo57ZmMHUBJHwkKP7AdPf4c0vWV+DNpuucfDl2aOfGfHrf8fHmRkqp1qAEDS3gftdAsvDSAVk4VH35YBgB9EhJMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eW64tHs7; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719848084; x=1751384084;
+  h=date:from:to:cc:subject:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=iq8bWnF6w36ZZ3oKBLDL7Q66Va//VDQRpFTyD5AraCo=;
+  b=eW64tHs7rEe1TdVUZRaLDRCc/bXFVf9LuGFNkqez9CQUAkMxeDxDPJnX
+   +usxlRBqxJTjjaGdDATFHPPvpHryFFtSsolsJSOM1HSWmrfhQWOQqk7YA
+   jbgJSJjMZ8mZVymG6Q96YJm4kBvL4CLSfzy9QCSUVQilOmeS/xf/z7lpF
+   7Focolt2bhn+g21hp0sucOQ/32fUwK9BzYx2+vxB0JjydFT5rIP0kvsaW
+   Efp5Hw3yKYAB1vt0h7Fo9f50APFzWOvoHMMgvJGexDNQOrei58gt8bcJH
+   SBfh2Y4cguOLQojl5ZHAZCgBGPTm+kZ5jm7/OqQbITSynzovECJQGpBxX
+   A==;
+X-CSE-ConnectionGUID: o5KnzWbJRoaa5bdlmehGXw==
+X-CSE-MsgGUID: v5om0M9TRwGLtAK5OvzHEw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="34527578"
+X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
+   d="scan'208";a="34527578"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 08:34:43 -0700
+X-CSE-ConnectionGUID: YfCSuWqcRQ+x9qFnKqd/Gw==
+X-CSE-MsgGUID: Y6xwroDyRqScS3SLIcaBvw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
+   d="scan'208";a="50446989"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.54.39.125])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 08:34:44 -0700
+Date: Mon, 1 Jul 2024 08:39:56 -0700
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+To: Xin Li <xin@zytor.com>
+Cc: X86 Kernel <x86@kernel.org>, Sean Christopherson <seanjc@google.com>,
+ LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Dave Hansen <dave.hansen@intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Ingo
+ Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Xin Li
+ <xin3.li@intel.com>, linux-perf-users@vger.kernel.org, Peter Zijlstra
+ <peterz@infradead.org>, Paolo Bonzini <pbonzini@redhat.com>, Tony Luck
+ <tony.luck@intel.com>, Andy Lutomirski <luto@kernel.org>, acme@kernel.org,
+ kan.liang@linux.intel.com, Andi Kleen <andi.kleen@intel.com>, "Mehta,
+ Sohil" <sohil.mehta@intel.com>, Zeng Guang <guang.zeng@intel.com>,
+ jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v3 06/11] KVM: VMX: Expand FRED kvm entry with event
+ data
+Message-ID: <20240701083956.4460bb06@jacob-builder>
+In-Reply-To: <d385c639-d2b1-4068-b386-98c456265926@zytor.com>
+References: <20240628201839.673086-1-jacob.jun.pan@linux.intel.com>
+	<20240628201839.673086-7-jacob.jun.pan@linux.intel.com>
+	<d385c639-d2b1-4068-b386-98c456265926@zytor.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4d49e640143a557861a75a65678485965611b638.camel@infradead.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 01, 2024 at 09:02:38AM +0100, David Woodhouse wrote:
-> On Sun, 2024-06-30 at 14:28 +0100, Simon Horman wrote:
+
+On Fri, 28 Jun 2024 21:01:28 -0700, Xin Li <xin@zytor.com> wrote:
+
+> On 6/28/2024 1:18 PM, Jacob Pan wrote:
+> > From: Zeng Guang <guang.zeng@intel.com>
 > > 
-> > W=1 allmodconfig builds with gcc-13 flag the following.
-> > Reading the documentation of strncpy() in fortify-string.h,
-> > I wonder if strscpy() would be more appropriate in this case.
+> > For VM exits caused by events (NMI, #DB, and #PF) delivered by FRED, the
+> > event data is saved in the exit-qualification field. (FRED spec.
+> > 10.6.2)  
 > 
-> It's never going to matter in practice, as the buffer is 32 bytes, so
-> "vmclock%d" would never get to the end even if was a 64-bit integer.
+> I don't like mentioning #DB/#PF here, they belong to the guest that was 
+> running, and KVM handles them.
+It is part of the spec.
+
+> While NMIs belong to host, and the host NMI handler needs event data
+> saved in VMCS in NMI induced VM exits.
 > 
-> But as a matter of hygiene and best practice, yes strscpy() would be
-> more appropriate. Fixed in git, thanks.
+> Or you paint a full picture.
+I will add your explanation that #DB/#PF belong to the guest so readers can
+get a full picture of both usage and spec.
+> 
+> > Expand FRED KVM entry interface to include the event data obtained from
+> > the exit qualification.
+> > 
+> > Signed-off-by: Zeng Guang <guang.zeng@intel.com>
+> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>  
+> 
 
-Thanks! You can even use the 2-argument version. :)
 
--- 
-Kees Cook
+Thanks,
+
+Jacob
 
