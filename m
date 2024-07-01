@@ -1,196 +1,110 @@
-Return-Path: <linux-kernel+bounces-235813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2B7A91D9FB
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:33:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20EBB91D9FE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:33:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38ED9B23143
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:33:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B49F6B210A5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:33:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3F09824AF;
-	Mon,  1 Jul 2024 08:33:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05E683A17;
+	Mon,  1 Jul 2024 08:33:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="eYd9C5+K"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J5QgfmyB"
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C912C6BB;
-	Mon,  1 Jul 2024 08:33:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0EFE39FCF
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 08:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719822800; cv=none; b=K+96CLRxrzyjYxMQouBtDweSGZKd4vbzPr0uDFOfi6mhDwjFBG1K1qXwmxHvY6H98zQ8XRvsedb6nMFWRfVKxk5yBZpkAlueTEvdv6su6WInM3jKHpXzjrTPkGUK0m/1YCXSRJeJJGyObI+Mfxnnl68pV2kPS//yue1ufmztnE0=
+	t=1719822808; cv=none; b=j8qtidSeThgi8eM2zbgZLID/NklO7n77nQTMa5YUXruWUuS4nQfdm0hv3G028Al2vUCf6w1/H0EC0kavd8w4Crd2qgKNRBPxWLlm71fI2yCvmscNqL2htIBxc+Zh5Fwa4mtkqEzbRLc6R8e1ptLL1y4KIEvSQpC/GmaiMLVkVGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719822800; c=relaxed/simple;
-	bh=KJK9NggzMkpfJ3LPI28wGASdmgxIriUy+xQWzpaXGQY=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ipia4v+UgYYQ4fN4kfbgFd5aYOc7ARHJ+QPDOunnmR+06YV1i/BwOEdrmTUBZXdLJnvUGS/bG+6E1Vqw3ZpUtL5FsPxWFPxXXwc18+SZ5MfqIur7wIiwMOX42JC+zx6f9NMcghWl+b+FDnO5rHkq6vFhzAAt7JMDqGLDU0WjWrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=eYd9C5+K; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1719822796;
-	bh=KJK9NggzMkpfJ3LPI28wGASdmgxIriUy+xQWzpaXGQY=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=eYd9C5+KXuppOBjQ6nsOw3yaGVfV0BRaXjFaqZTtjK9pc3Q7mnWNbW3Jn66PLron9
-	 LAqaovV4cGwx3yYnJX2rh+I770R5vKjWu+cXrENlirWih1I3qhD9hEn+tZwsn3EJkd
-	 vbdrWOb+9Dr7zGWFdJEN2Fn65Jfr2e57jAPlCcAHDZKcI0Y4glZdgGPlbMk4X2iF5W
-	 mcN7k4ha+Jd2S4BWOk0lOJUanvA8luW8qZzcZwqUvV+AsZ7oi6HZsPA4BhmK6XYtKz
-	 Mj5ZLRDF1TcnkDELjR9gndSC1jrvGM9VUFc9OL3vYHILjdinMD6UINNlKxfHT+dB7X
-	 syRmFbiOp+ZDQ==
-Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 6507C3782109;
-	Mon,  1 Jul 2024 08:33:12 +0000 (UTC)
-Message-ID: <f7d8502e-21b8-43f9-ad81-dbbe07df5300@collabora.com>
-Date: Mon, 1 Jul 2024 13:33:08 +0500
+	s=arc-20240116; t=1719822808; c=relaxed/simple;
+	bh=hQ3wIo8jfp+1QpIFa1TH6fMJr5lMyi6hFqlV4E+krQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WDbCuZJJ68bTD1OStcPYT5A/+ap5COTYmv+YdAugeQULaMiIg+Nx64uEFIpngikLxs6rbqhToFxVHtMVehJPD+PJkNrkSr6g4451K/xEk1psSM9SMJl4V8VysK1L4hLHne0I6Fp2eWx8zjn9ec+pC435jXblVG3uTq5GAgcMX8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J5QgfmyB; arc=none smtp.client-ip=209.85.167.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3d561d685e7so2032607b6e.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 01:33:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719822805; x=1720427605; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=plmjyndby8wCrQ0dzhsOGEIbNYKVIMLD81+XwlR3F9w=;
+        b=J5QgfmyBoeorJkdPqoFp/l1yjZR+g9jGrNHMV60lcxA7aP4+p+/wSXJPZJnIjmjgrR
+         feW1hPvaTGbIbuOzyDJO9G1VYh1dfdkqponINWu4NfKvkf3NRjZH3hCuZStGx7UOBQz/
+         oVtcBEHpsYO2zWTIlp7qXKsomqbl/M/ZwnqF6ntFBmqy5uvqKJmX29IDFbqt60ckBJUn
+         OFTBKlUsT079gl7t8AM/EeeXQ7BFrOcJ48JY3CdNB+Q0CcP9yUtZe4UyrSkPJB3Dkq/Z
+         cf4faQNQMPn+RZz3Um9kbHS8aoP8QExhIB4ubNCfnmshpN4s6x4Ylwlw/lAW4/GjUQOh
+         tJaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719822805; x=1720427605;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=plmjyndby8wCrQ0dzhsOGEIbNYKVIMLD81+XwlR3F9w=;
+        b=sfXriDz8CEQ/5pI5iffHEoOeYlCj1ajSvaYLTDvyXLixuWwaECxHKqSbziQ/rsKSHn
+         5U++537kTYrSkMYKDZ775rWl8Yz7XqsQm54pz6T3YPy8uvd4uaisJDLSeUoHvUAu6vYa
+         3TAQeXQ4uoP1NDZHeCIZ/fyp6qp182GxHUB0Yu3Dj7VUOlHdKAFxnDIby1/y0yHSkzv8
+         WUIqr7g8k43vQ1WhsVm8A2+idZRAgjjChxkQNHQz1+xeZSM0IpYBGbqmetdfTyWwgQTO
+         miBPDiDBCYjLzW15jG+P5DiJn5RdWT2k/EgnUXUdV4gXCQ7VVgJK6yFY+Ca0tLtSrhr4
+         NkTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXyvmLYwVMsLIYZC7Tub8l60Q5ruoT6xszMY0sR3z5cxSohCH1Wk+MqfaMg1xiij/2clcTTFZT7ZYRAxDxtwxDEnio9ituEKbjVwsHe
+X-Gm-Message-State: AOJu0Yy57UNKhXUDS4J82lTC8Kcsd6BvOfW0HDqk5YonQXWpDNP0QQ8P
+	1oOGTlfb5fQFjMZya5iHiy0KZVWTdrtP5HTClzE4has2piRvzClJLWUydtq89Js=
+X-Google-Smtp-Source: AGHT+IE1oWZE1bOQ7gPCQ6D2Kkco7qOvhQLh2xnubHsY9YThCuK7aoKubwEBd7IojI4Hbf8ohqHZIQ==
+X-Received: by 2002:a05:6808:14ca:b0:3d6:31eb:69b1 with SMTP id 5614622812f47-3d6b54975afmr7594905b6e.58.1719822803407;
+        Mon, 01 Jul 2024 01:33:23 -0700 (PDT)
+Received: from localhost ([122.172.82.13])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70803ecf63esm5885051b3a.123.2024.07.01.01.33.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 01:33:22 -0700 (PDT)
+Date: Mon, 1 Jul 2024 14:03:20 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: powerpc: add missing MODULE_DESCRIPTION() macros
+Message-ID: <20240701083320.c3r4aussa4qojewq@vireshk-i7>
+References: <20240614-md-powerpc-drivers-cpufreq-v1-1-de4034d87fd2@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, kernel@collabora.com,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH] selftests: firmware: conform test to TAP
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Kees Cook <keescook@chromium.org>
-References: <20240520163759.1427653-1-usama.anjum@collabora.com>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <20240520163759.1427653-1-usama.anjum@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240614-md-powerpc-drivers-cpufreq-v1-1-de4034d87fd2@quicinc.com>
 
-Adding missing maintainer and reviser.
+On 14-06-24, 23:08, Jeff Johnson wrote:
+> With ARCH=powerpc, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cpufreq/ppc-cbe-cpufreq.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cpufreq/powernv-cpufreq.o
+> 
+> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
+> files which have a MODULE_LICENSE().
+> 
+> This includes three additional files which, although they did not
+> produce a warning with the powerpc allmodconfig configuration, may
+> cause this warning with specific options enabled in the kernel
+> configuration.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-On 5/20/24 9:37 PM, Muhammad Usama Anjum wrote:
-> Conform the layout, informational and status messages to TAP. No
-> functional change is intended other than the layout of output messages.
-> Without using TAP messages, the passed/failed/skip test names cannot be
-> found. This is a prepartory patch, more patches will be sent to comform
-> the test completely.
-> 
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> ---
->  .../selftests/firmware/fw_run_tests.sh        | 63 ++++++++++++-------
->  1 file changed, 40 insertions(+), 23 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/firmware/fw_run_tests.sh b/tools/testing/selftests/firmware/fw_run_tests.sh
-> index f6d95a2d51249..5063c75345680 100755
-> --- a/tools/testing/selftests/firmware/fw_run_tests.sh
-> +++ b/tools/testing/selftests/firmware/fw_run_tests.sh
-> @@ -6,6 +6,9 @@
->  
->  set -e
->  
-> +DIR="$(dirname $(readlink -f "$0"))"
-> +source "${DIR}"/../kselftest/ktap_helpers.sh
-> +
->  TEST_DIR=$(dirname $0)
->  source $TEST_DIR/fw_lib.sh
->  
-> @@ -26,54 +29,68 @@ run_tests()
->  	proc_set_force_sysfs_fallback $1
->  	proc_set_ignore_sysfs_fallback $2
->  	$TEST_DIR/fw_upload.sh
-> +
-> +	ktap_test_pass "Completed"
->  }
->  
->  run_test_config_0001()
->  {
-> -	echo "-----------------------------------------------------"
-> -	echo "Running kernel configuration test 1 -- rare"
-> -	echo "Emulates:"
-> -	echo "CONFIG_FW_LOADER=y"
-> -	echo "CONFIG_FW_LOADER_USER_HELPER=n"
-> -	echo "CONFIG_FW_LOADER_USER_HELPER_FALLBACK=n"
-> +	ktap_print_msg "-----------------------------------------------------"
-> +	ktap_print_msg "Running kernel configuration test 1 -- rare"
-> +	ktap_print_msg "Emulates:"
-> +	ktap_print_msg "CONFIG_FW_LOADER=y"
-> +	ktap_print_msg "CONFIG_FW_LOADER_USER_HELPER=n"
-> +	ktap_print_msg "CONFIG_FW_LOADER_USER_HELPER_FALLBACK=n"
->  	run_tests 0 1
->  }
->  
->  run_test_config_0002()
->  {
-> -	echo "-----------------------------------------------------"
-> -	echo "Running kernel configuration test 2 -- distro"
-> -	echo "Emulates:"
-> -	echo "CONFIG_FW_LOADER=y"
-> -	echo "CONFIG_FW_LOADER_USER_HELPER=y"
-> -	echo "CONFIG_FW_LOADER_USER_HELPER_FALLBACK=n"
-> +	ktap_print_msg "-----------------------------------------------------"
-> +	ktap_print_msg "Running kernel configuration test 2 -- distro"
-> +	ktap_print_msg "Emulates:"
-> +	ktap_print_msg "CONFIG_FW_LOADER=y"
-> +	ktap_print_msg "CONFIG_FW_LOADER_USER_HELPER=y"
-> +	ktap_print_msg "CONFIG_FW_LOADER_USER_HELPER_FALLBACK=n"
->  	proc_set_ignore_sysfs_fallback 0
->  	run_tests 0 0
->  }
->  
->  run_test_config_0003()
->  {
-> -	echo "-----------------------------------------------------"
-> -	echo "Running kernel configuration test 3 -- android"
-> -	echo "Emulates:"
-> -	echo "CONFIG_FW_LOADER=y"
-> -	echo "CONFIG_FW_LOADER_USER_HELPER=y"
-> -	echo "CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y"
-> +	ktap_print_msg "-----------------------------------------------------"
-> +	ktap_print_msg "Running kernel configuration test 3 -- android"
-> +	ktap_print_msg "Emulates:"
-> +	ktap_print_msg "CONFIG_FW_LOADER=y"
-> +	ktap_print_msg "CONFIG_FW_LOADER_USER_HELPER=y"
-> +	ktap_print_msg "CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y"
->  	run_tests 1 0
->  }
->  
-> +ktap_print_header
-> +
->  check_mods
->  check_setup
->  
-> -echo "Running namespace test: "
-> -$TEST_DIR/fw_namespace $DIR/trigger_request
-> -echo "OK"
-> -
->  if [ -f $FW_FORCE_SYSFS_FALLBACK ]; then
-> +	ktap_set_plan "4"
-> +
->  	run_test_config_0001
->  	run_test_config_0002
->  	run_test_config_0003
->  else
-> -	echo "Running basic kernel configuration, working with your config"
-> +	ktap_set_plan "2"
-> +
-> +	ktap_print_msg "Running basic kernel configuration, working with your config"
->  	run_tests
->  fi
-> +
-> +ktap_print_msg "Running namespace test: "
-> +$TEST_DIR/fw_namespace $DIR/trigger_request
-> +if [ $? -eq 0 ]; then
-> +    ktap_test_pass "fw_namespace completed successfully"
-> +else
-> +    ktap_test_fail "fw_namespace failed"
-> +fi
-> +
-> +ktap_finished
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
 -- 
-BR,
-Muhammad Usama Anjum
+viresh
 
