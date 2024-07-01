@@ -1,158 +1,205 @@
-Return-Path: <linux-kernel+bounces-236711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3A9791E630
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:07:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BD3D91E633
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:07:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0130A1C21CEB
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:07:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCC9D1F23DB3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BDA016E868;
-	Mon,  1 Jul 2024 17:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A1MvCpoT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA7A16DEC8;
-	Mon,  1 Jul 2024 17:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B305A16E86F;
+	Mon,  1 Jul 2024 17:07:17 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E08F16DED2;
+	Mon,  1 Jul 2024 17:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719853617; cv=none; b=XGwEl5JBtYHgCrDLYHsCn04LQ1sW2YiUUS/Nphdz6ZeS8OQrU9H+HhvkeIrzbeDf3o7rB3ERQ8UOKor62xwqEPrB5KyC5IMbkU8rTqWLQaHkO4Zf/QBc+bbOWk+mlWrhimikVBvbV5tpLVcSKhSXTNYV6O+4uhi/m4V7vfqdxfs=
+	t=1719853637; cv=none; b=eUrbTcWNnLkvuXz7qCsNNAUGrSTydkAxw5BunKkxkUY7TOKjr0nczcK6+3OhHg/qacj12b6JY6CuTUrgl1Sh7L5tL7BSwnEOP2iYpSPN7lCRtOT0QfUnxL4D0FuaByDpKqV72JhvnVhW23yRNoAvrMoudfgMrv4d5qTTeHHwg6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719853617; c=relaxed/simple;
-	bh=2MHUMtUTr2rUtINqeV5IrNWFoQd81TAN0bY26G+DKoI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h9JUBeK13VyWKwO4p8c5bTOjFiqnur222S9qVqV05x8RU/a2DzUmvSEwxFAdecpgKet9urLH4hwGNsuGt0/dC32kRa2LPyL7H8kgvLRwFP/Fj1dFpN/XvgHXrIMG9M1AaPBhWH4IFvLAgkdqZ3IJbQ1vmXDqJ2EMsmeD6uR/37Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A1MvCpoT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DE90C32786;
-	Mon,  1 Jul 2024 17:06:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719853617;
-	bh=2MHUMtUTr2rUtINqeV5IrNWFoQd81TAN0bY26G+DKoI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=A1MvCpoTKaLOQfFZUdGfxwjJZFH6PulvN5kioPxVuWXm2Q6uX1H/064U/jby+kadS
-	 Tfwzz+VLat2rqIpkZHoAQchWcTyj8Woe8Z3u3pFsfE7a9Bh2GU4amkQpnI826XNIym
-	 QY7t9uuCfVwd1Z4D6ZmYuWfk0A3eVTKH6BRx0vOeNMCmFq4uQyi6N5QQbWL+FLYXc9
-	 M5pIQP1vvoFgzXCTZ7mBJ2RsG59VaPscFbrYDAbSEjZdjHxnMgOMtuHTcCkNrJtlAz
-	 MuezoDNOE8se+93zsm/SwC0MTVzJzpBwPCexoDlTaBIRlJ6YwIVBLGxdmBm/UnBPLI
-	 Tnrk9p0d0onJw==
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-25cb022c0e6so421062fac.0;
-        Mon, 01 Jul 2024 10:06:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX0WexqW3K4G1FGJdRo7mnleH9f8RRzBDloSshVTrIkTxz61WA6qa+5BQ6qSutkhGQ6c1ATHFY1UD4zH2BQGAHA+VuDBbkSnpjYpxk1p3m4Yo7AQ1UmF47gxa0cF/dMNLhhOY8zk34=
-X-Gm-Message-State: AOJu0YwmWW8VRX0+7OUM2uoKF2l4dvfTAmvFgCAZLdBs/xfRoNQpYDMh
-	f7Mq13sTqPBXrX1KNxlKXE7Qm8WEdu1IxQoLEKcBiAtdeNUmGVZ6GQmdChy5/8yP5TGfdeal8Ui
-	1yZhwz8u/G8Cj3sRPqXh9AFHICxc=
-X-Google-Smtp-Source: AGHT+IEyPvXu/dDq0QuY+drlNclWMjinscF8HzLFNro78MKqrQbiyKMolAUvlrXEuV5qtJNQyhjVYzMi23lOxek8EeU=
-X-Received: by 2002:a05:6870:9629:b0:25c:ad1f:b335 with SMTP id
- 586e51a60fabf-25db363c020mr6276623fac.4.1719853616592; Mon, 01 Jul 2024
- 10:06:56 -0700 (PDT)
+	s=arc-20240116; t=1719853637; c=relaxed/simple;
+	bh=DN/KxO3dGV/2vXtnLWfIBRZu9oosw0hZsA3V8O/408w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t8ugyzcp+db+yLcRxNtliQv9zkLoKnlGxbpTneISXM7x2artsB0TegYDQBFfJH8SljaaaBHsppkdQcyV8CpH3qYX5kjq86EJXL6mfcz0l0V1mY5s37av9SBRD5yMYxmm7U9meWvOJVjjfnCaZzH0WXs2Ldv/sLqbG0NYeS+L3yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B6209339;
+	Mon,  1 Jul 2024 10:07:39 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 846AD3F766;
+	Mon,  1 Jul 2024 10:07:11 -0700 (PDT)
+Date: Mon, 1 Jul 2024 18:07:09 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Russell King <linux@armlinux.org.uk>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	James Clark <james.clark@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, kvmarm@lists.linux.dev
+Subject: Re: [PATCH v2 10/12] arm64: perf/kvm: Use a common PMU cycle counter
+ define
+Message-ID: <ZoLiPaTi3b52nCKh@J2N7QTR9R3>
+References: <20240626-arm-pmu-3-9-icntr-v2-0-c9784b4f4065@kernel.org>
+ <20240626-arm-pmu-3-9-icntr-v2-10-c9784b4f4065@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <tencent_2ACBECB5B8EF2442CE608CE48F8E6131CC09@qq.com>
-In-Reply-To: <tencent_2ACBECB5B8EF2442CE608CE48F8E6131CC09@qq.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 1 Jul 2024 19:06:45 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ioSZaB39Xb5W7R4Y5b6chYNnU0qTy6feVaY8-ucm0dqg@mail.gmail.com>
-Message-ID: <CAJZ5v0ioSZaB39Xb5W7R4Y5b6chYNnU0qTy6feVaY8-ucm0dqg@mail.gmail.com>
-Subject: Re: [PATCH] drivers/cpuidle: Fix guest_halt_poll_ns failed to take effect
-To: ysay <570260087@qq.com>
-Cc: rafael@kernel.org, daniel.lezcano@linaro.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ysay <ysaydong@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240626-arm-pmu-3-9-icntr-v2-10-c9784b4f4065@kernel.org>
 
-On Fri, Jun 28, 2024 at 11:01=E2=80=AFAM ysay <570260087@qq.com> wrote:
->
-> From: ysay <ysaydong@gmail.com>
->
-> When guest_halt_poll_allow_shrink=3DN,setting guest_halt_poll_ns
-> from a large value to 0 does not reset the CPU polling time,
-> despite guest_halt_poll_ns being intended as a mandatory maximum
-> time limit.
->
-> The problem was situated in the adjust_poll_limit() within
-> drivers/cpuidle/governors/haltpoll.c:79.
->
-> Specifically, when guest_halt_poll_allow_shrink was set to N,
-> resetting guest_halt_poll_ns to zero did not lead to executing any
-> section of code that adjusts dev->poll_limit_ns.
->
-> The issue has been resolved by relocating the check and assignment for
-> dev->poll_limit_ns outside of the conditional block.
-> This ensures that every modification to guest_halt_poll_ns
-> properly influences the CPU polling time.
->
-> Signed-off-by: ysay <ysaydong@gmail.com>
-
-This should carry a Fixes: tag pointing to the commit fixed by it.
-
-Also, is it -stable material?
-
+On Wed, Jun 26, 2024 at 04:32:34PM -0600, Rob Herring (Arm) wrote:
+> The PMUv3 and KVM code each have a define for the PMU cycle counter
+> index. Move KVM's define to a shared location and use it for PMUv3
+> driver.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 > ---
->  drivers/cpuidle/governors/haltpoll.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/cpuidle/governors/haltpoll.c b/drivers/cpuidle/gover=
-nors/haltpoll.c
-> index 663b7f164..99c6260d7 100644
-> --- a/drivers/cpuidle/governors/haltpoll.c
-> +++ b/drivers/cpuidle/governors/haltpoll.c
-> @@ -78,26 +78,22 @@ static int haltpoll_select(struct cpuidle_driver *drv=
-,
->
->  static void adjust_poll_limit(struct cpuidle_device *dev, u64 block_ns)
->  {
-> -       unsigned int val;
-> +       unsigned int val =3D dev->poll_limit_ns;
->
->         /* Grow cpu_halt_poll_us if
->          * cpu_halt_poll_us < block_ns < guest_halt_poll_us
->          */
->         if (block_ns > dev->poll_limit_ns && block_ns <=3D guest_halt_pol=
-l_ns) {
-> -               val =3D dev->poll_limit_ns * guest_halt_poll_grow;
-> +               val *=3D guest_halt_poll_grow;
->
->                 if (val < guest_halt_poll_grow_start)
->                         val =3D guest_halt_poll_grow_start;
-> -               if (val > guest_halt_poll_ns)
-> -                       val =3D guest_halt_poll_ns;
->
->                 trace_guest_halt_poll_ns_grow(val, dev->poll_limit_ns);
-> -               dev->poll_limit_ns =3D val;
->         } else if (block_ns > guest_halt_poll_ns &&
->                    guest_halt_poll_allow_shrink) {
->                 unsigned int shrink =3D guest_halt_poll_shrink;
->
-> -               val =3D dev->poll_limit_ns;
->                 if (shrink =3D=3D 0) {
->                         val =3D 0;
->                 } else {
-> @@ -108,8 +104,12 @@ static void adjust_poll_limit(struct cpuidle_device =
-*dev, u64 block_ns)
->                 }
->
->                 trace_guest_halt_poll_ns_shrink(val, dev->poll_limit_ns);
-> -               dev->poll_limit_ns =3D val;
->         }
+> v2:
+>  - Move ARMV8_PMU_CYCLE_IDX to linux/perf/arm_pmuv3.h
+> ---
+>  arch/arm64/kvm/sys_regs.c      |  1 +
+>  drivers/perf/arm_pmuv3.c       | 19 +++++++------------
+>  include/kvm/arm_pmu.h          |  1 -
+>  include/linux/perf/arm_pmuv3.h |  3 +++
+>  4 files changed, 11 insertions(+), 13 deletions(-)
+
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+
+Mark.
+
+> 
+> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+> index f8b5db48ea8a..22393ae7ce14 100644
+> --- a/arch/arm64/kvm/sys_regs.c
+> +++ b/arch/arm64/kvm/sys_regs.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/printk.h>
+>  #include <linux/uaccess.h>
+>  
+> +#include <asm/arm_pmuv3.h>
+>  #include <asm/cacheflush.h>
+>  #include <asm/cputype.h>
+>  #include <asm/debug-monitors.h>
+> diff --git a/drivers/perf/arm_pmuv3.c b/drivers/perf/arm_pmuv3.c
+> index f771242168f1..f58dff49ea7d 100644
+> --- a/drivers/perf/arm_pmuv3.c
+> +++ b/drivers/perf/arm_pmuv3.c
+> @@ -451,11 +451,6 @@ static const struct attribute_group armv8_pmuv3_caps_attr_group = {
+>  	.attrs = armv8_pmuv3_caps_attrs,
+>  };
+>  
+> -/*
+> - * Perf Events' indices
+> - */
+> -#define	ARMV8_IDX_CYCLE_COUNTER	31
+> -
+>  /*
+>   * We unconditionally enable ARMv8.5-PMU long event counter support
+>   * (64-bit events) where supported. Indicate if this arm_pmu has long
+> @@ -574,7 +569,7 @@ static u64 armv8pmu_read_counter(struct perf_event *event)
+>  	int idx = hwc->idx;
+>  	u64 value;
+>  
+> -	if (idx == ARMV8_IDX_CYCLE_COUNTER)
+> +	if (idx == ARMV8_PMU_CYCLE_IDX)
+>  		value = read_pmccntr();
+>  	else
+>  		value = armv8pmu_read_hw_counter(event);
+> @@ -607,7 +602,7 @@ static void armv8pmu_write_counter(struct perf_event *event, u64 value)
+>  
+>  	value = armv8pmu_bias_long_counter(event, value);
+>  
+> -	if (idx == ARMV8_IDX_CYCLE_COUNTER)
+> +	if (idx == ARMV8_PMU_CYCLE_IDX)
+>  		write_pmccntr(value);
+>  	else
+>  		armv8pmu_write_hw_counter(event, value);
+> @@ -644,7 +639,7 @@ static void armv8pmu_write_event_type(struct perf_event *event)
+>  		armv8pmu_write_evtype(idx - 1, hwc->config_base);
+>  		armv8pmu_write_evtype(idx, chain_evt);
+>  	} else {
+> -		if (idx == ARMV8_IDX_CYCLE_COUNTER)
+> +		if (idx == ARMV8_PMU_CYCLE_IDX)
+>  			write_pmccfiltr(hwc->config_base);
+>  		else
+>  			armv8pmu_write_evtype(idx, hwc->config_base);
+> @@ -772,7 +767,7 @@ static void armv8pmu_enable_user_access(struct arm_pmu *cpu_pmu)
+>  	/* Clear any unused counters to avoid leaking their contents */
+>  	for_each_andnot_bit(i, cpu_pmu->cntr_mask, cpuc->used_mask,
+>  			    ARMPMU_MAX_HWEVENTS) {
+> -		if (i == ARMV8_IDX_CYCLE_COUNTER)
+> +		if (i == ARMV8_PMU_CYCLE_IDX)
+>  			write_pmccntr(0);
+>  		else
+>  			armv8pmu_write_evcntr(i, 0);
+> @@ -933,8 +928,8 @@ static int armv8pmu_get_event_idx(struct pmu_hw_events *cpuc,
+>  	/* Always prefer to place a cycle counter into the cycle counter. */
+>  	if ((evtype == ARMV8_PMUV3_PERFCTR_CPU_CYCLES) &&
+>  	    !armv8pmu_event_get_threshold(&event->attr)) {
+> -		if (!test_and_set_bit(ARMV8_IDX_CYCLE_COUNTER, cpuc->used_mask))
+> -			return ARMV8_IDX_CYCLE_COUNTER;
+> +		if (!test_and_set_bit(ARMV8_PMU_CYCLE_IDX, cpuc->used_mask))
+> +			return ARMV8_PMU_CYCLE_IDX;
+>  		else if (armv8pmu_event_is_64bit(event) &&
+>  			   armv8pmu_event_want_user_access(event) &&
+>  			   !armv8pmu_has_long_event(cpu_pmu))
+> @@ -1196,7 +1191,7 @@ static void __armv8pmu_probe_pmu(void *info)
+>  		   0, FIELD_GET(ARMV8_PMU_PMCR_N, armv8pmu_pmcr_read()));
+>  
+>  	/* Add the CPU cycles counter */
+> -	set_bit(ARMV8_IDX_CYCLE_COUNTER, cpu_pmu->cntr_mask);
+> +	set_bit(ARMV8_PMU_CYCLE_IDX, cpu_pmu->cntr_mask);
+>  
+>  	pmceid[0] = pmceid_raw[0] = read_pmceid0();
+>  	pmceid[1] = pmceid_raw[1] = read_pmceid1();
+> diff --git a/include/kvm/arm_pmu.h b/include/kvm/arm_pmu.h
+> index 334d7c5503cf..871067fb2616 100644
+> --- a/include/kvm/arm_pmu.h
+> +++ b/include/kvm/arm_pmu.h
+> @@ -10,7 +10,6 @@
+>  #include <linux/perf_event.h>
+>  #include <linux/perf/arm_pmuv3.h>
+>  
+> -#define ARMV8_PMU_CYCLE_IDX		(ARMV8_PMU_MAX_COUNTERS - 1)
+>  
+>  #if IS_ENABLED(CONFIG_HW_PERF_EVENTS) && IS_ENABLED(CONFIG_KVM)
+>  struct kvm_pmc {
+> diff --git a/include/linux/perf/arm_pmuv3.h b/include/linux/perf/arm_pmuv3.h
+> index 792b8e10b72a..f4ec76f725a3 100644
+> --- a/include/linux/perf/arm_pmuv3.h
+> +++ b/include/linux/perf/arm_pmuv3.h
+> @@ -9,6 +9,9 @@
+>  #define ARMV8_PMU_MAX_GENERAL_COUNTERS	31
+>  #define ARMV8_PMU_MAX_COUNTERS	32
+>  
+> +#define ARMV8_PMU_CYCLE_IDX		31
 > +
-> +       if (val > guest_halt_poll_ns)
-> +               val =3D guest_halt_poll_ns;
 > +
-> +       dev->poll_limit_ns =3D val;
->  }
->
->  /**
-> --
-> 2.43.5
->
->
+>  /*
+>   * Common architectural and microarchitectural event numbers.
+>   */
+> 
+> -- 
+> 2.43.0
+> 
 
