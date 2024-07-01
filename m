@@ -1,169 +1,161 @@
-Return-Path: <linux-kernel+bounces-236591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24B3C91E471
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:45:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A95591E46B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:44:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C69811F24F5C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:45:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC3AA1C2207B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72A916D333;
-	Mon,  1 Jul 2024 15:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VqwB0xnf"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFC316D321;
+	Mon,  1 Jul 2024 15:44:26 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8DF43236;
-	Mon,  1 Jul 2024 15:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD62716CD3B
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 15:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719848742; cv=none; b=eWMZo+PDxnJ63Nvz4iU2RmihSQtqzkLDmwAcIa2m9DELnio5IXrjJY4+A+ZshbC9uA27X2bKyaG/S7Fns38Yb/kRGNomeFsJaei8jKaKqWPoOT7M77BTw52wvc3WUXhLnDzxU1Ip5QNQDUKQ8DpP0HYZREOeXVF2xSCiymwaido=
+	t=1719848666; cv=none; b=e7SfZSp8J11bwxncnsQ87EFJvrDz16UA0+esMqc/xT9HBpxrfTekDB99zrrczxUX6rNRojiOZfuJ/Qu/XL4/L0CKiuguZZIjXO/fyNj6xHubyn6OxnNh1pWGcKA4jlBLOMqW+V7AvP3LizyIaXuOepoCc+f4UNt2bw8zh5/4p4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719848742; c=relaxed/simple;
-	bh=BJpuF+qN2H4D94Lbn1oafgSP8JlPrN6rF7Z5AJ15Y2c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CJaymk7YtaoTHcCZKoxXa73wIGbyh/gWzrqL7EVouL2jeSo+m3GNrybnTub5a3Flfs1mwYuhgW9pCNxdyqTKHTKp0VxD1yorhCx2YGTBW5hjStlP0lHj6zxOqpoYTUkTSJPszEqt9S8ClTu3Tjultru5uz+vMgzjlIckbwRMeZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VqwB0xnf; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f65a3abd01so22809805ad.3;
-        Mon, 01 Jul 2024 08:45:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719848740; x=1720453540; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lio9CZj2DNKDmTsJ4lv8p6+SlBWYp6xlhdzI8/xHICA=;
-        b=VqwB0xnf7whWAs7HI2CRUwTUEY0AQVw4LC8PllFZ48wEdZxDmuSmlvMVaYlZFkCyPf
-         vRU38Ls0WIvyFm75cyyJzrELwptR2Gqb9HnAQuqYWBn39z7pLXvwqYNbPi7vWy6WyZIf
-         8hlO2APJWFes2L3ePxsNc1CJz+ow0PyrgW0RwmqRPEVLcxVdoTUN2UF9YoCBL7T71Y/M
-         Ft1RhQJW+9fYArqasF0zOlosdvpKKbqocTGj3c/Zw6Qs07X7gg2jKIiO8wWxmTDZLCSD
-         G8gwl1Lr55AFcHlxK146I53ML9I0pj/jRwrnw09ujBQO52E1hrnpSOfVDtfunWylycw5
-         xCcA==
+	s=arc-20240116; t=1719848666; c=relaxed/simple;
+	bh=K4eyQnUx0kIdBVBeY6hpor406xm6lDTO5su5CG9C4kw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=SCl1K232DgUxXpYLh7SqwkA0BiGmpcrwH6YZt5TpHfwekOUavhTmzHss8oyOsfbRC1Uj/axhZ0whq6XyF+HgLF14TxHbytMdk+Xr1XT7zZfLHlzjudtZNpByGcm/8zwIRZkHN/gXywaXp0GnIVfFZcSUmXQh01tB9T1HSyZCRXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7f3d2fd6ad6so355829439f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 08:44:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719848740; x=1720453540;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Lio9CZj2DNKDmTsJ4lv8p6+SlBWYp6xlhdzI8/xHICA=;
-        b=X7m6HrY8726e7BNh6zrFAqJfKTlADZLkL6F9jn6UIPUankk98FjDE66b7ZQAiWRog5
-         VprwqNvWqFJbmwW9A1Nuw1XGLJJnAWGeQlJY3y8gOhodGoFEIYbjQNe4Q4ccLYNS3/qk
-         1W5KsC1uByKE63bMuzuJCh1lKyKLLiolpvR/6xYB2cscRGPHboL7ZEReRxTpvRBwRh53
-         WzWmNk7XbBG2cP1m+tkus4GBijeBrSHZumSzhLqrAedwmGPzMYRsTfaT6OedLsD1DzKZ
-         zQAmLAfvV+2DPXTGzPp6m5asIHoq4Xxh51WL60qf6UQb2tZDA1W/ED8aDK7MnL9bQ/3W
-         uRbw==
-X-Forwarded-Encrypted: i=1; AJvYcCVI8MnutgySLXfJ51ukuTB+k+yasNXqM4UYI+3x634g0pZCqFusiLM9Wu2KhwEhx00879ZtQaodEmuzsgD1vZ2Yj3omfzdFzjCW3wxVlS5M6Uo480+ZH+m5TntHM3o2SzObeiGs
-X-Gm-Message-State: AOJu0YzykpgoS2znhuYqov3R5x1jtA+MWZIGOpLIAnQ1WiXw9ZSlvqCe
-	wET1VM59Ur0tPwNpCnpij6ushP5KAurhQX8rTfpdbF5/Np+rI+xF
-X-Google-Smtp-Source: AGHT+IFYA8L69xtE66AmoGnWuf+uQ1nNG56C9lr5DaOcRK4zk3BwYIAH3sUuuKnt54HFH2juPFCubA==
-X-Received: by 2002:a17:902:d50c:b0:1f8:64e2:73e4 with SMTP id d9443c01a7336-1fadbc74991mr51183845ad.21.1719848740067;
-        Mon, 01 Jul 2024 08:45:40 -0700 (PDT)
-Received: from peter-bmc.dhcpserver.bu9bmc.local (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac15694ecsm66393055ad.226.2024.07.01.08.45.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 08:45:39 -0700 (PDT)
-From: Peter Yin <peteryin.openbmc@gmail.com>
-To: patrick@stwcx.xyz,
-	amithash@meta.com,
-	Samuel Mendoza-Jonas <sam@mendozajonas.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: cosmo.chou@quantatw.com
-Subject: [PATCH v1 1/1] net/ncsi: specify maximum package to probe
-Date: Mon,  1 Jul 2024 23:43:36 +0800
-Message-Id: <20240701154336.3536924-1-peteryin.openbmc@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        d=1e100.net; s=20230601; t=1719848664; x=1720453464;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4rg1E0h6guq4gzEPuKz1P5rN3rYVXsGARPLmXIRKjTg=;
+        b=S1M5HTlhXSu6FDQIaqQRkbP+mgrXeWLhrMkeNja408OBEmrrHUev2lRsXaMnoGegAg
+         tocNN2YDknxrrz/dmjPlwvbcfgT8xeJdbMP+21jlIQ+sIQ0q9lWZLrME7NH3eAq7aUti
+         MINrGAZnwnBJcVs6N+7ZcpPX3l6TrX3YJl3aMBUe90oqR6ev+VbuRKld1L+E/q7PKm6Z
+         KYT2OcEt85Ho+KpKFwmIGHLkEWLmAbkdYMBWF+c3TQQY+CpBWHw1AKlnSn8olXixyJWh
+         XfmcTLsH5cQHPslsfcBolqDL9kzvC0tYJxi1Zk44WTMxPLiTTyEzrYtiyHft4dx0SjOs
+         kmjw==
+X-Forwarded-Encrypted: i=1; AJvYcCUInILlhj9QL+fPOQs0o/ExaLmI4ftncC2mmmtZXtRA2UpN1i+AwjaNgAR1wOX93eXnyrdMdPl2dvnR65WiQrvHydx8uaZc0myLuFjX
+X-Gm-Message-State: AOJu0YxyaKbH+dN04mxyqok682BsyteZUHewSEsS+Bc055uooACX5eMm
+	rzlNi6L9IoDRPrWP91ZratLEmJEr6aSMjCY7tTZCEWwyRa1189qECp4SohFR6tVWiD//0K5t0LD
+	8m2b2FT4Ar3R1ru9V29DhXOMDKthn47/kmhiB484b9ngpjOcyv0ZMH08=
+X-Google-Smtp-Source: AGHT+IEI5HWv5TeGep4krN2FDTOO8wyUuKgs26NZDZnLtnNccSmqpjMe12wLlkU4uXLe0lMMS+HMb3uD/zsPIN0kf8Y4Fxe/wkR+
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:24cb:b0:4b9:afd1:d4f8 with SMTP id
+ 8926c6da1cb9f-4bbb6b9ae09mr579739173.2.1719848663841; Mon, 01 Jul 2024
+ 08:44:23 -0700 (PDT)
+Date: Mon, 01 Jul 2024 08:44:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ad0d6e061c317852@google.com>
+Subject: [syzbot] [bcachefs?] WARNING: ODEBUG bug in delete_node (2)
+From: syzbot <syzbot+8771878f9b32e4731b79@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Most NICs have a single package. For OCP3.0 NICs, the package ID is
-determined by the slot ID. Probing all 8 package IDs is usually
-unnecessary. To reduce probe time, add properties to specify the
-maximum number of packages.
+Hello,
 
-Signed-off-by: Cosmo Chou <cosmo.chou@quantatw.com>
-Signed-off-by: Peter Yin <peteryin.openbmc@gmail.com>
+syzbot found the following issue on:
+
+HEAD commit:    22a40d14b572 Linux 6.10-rc6
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10624699980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1ace69f521989b1f
+dashboard link: https://syzkaller.appspot.com/bug?extid=8771878f9b32e4731b79
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/d8763ab76416/disk-22a40d14.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f4fc1fb5933b/vmlinux-22a40d14.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/66b91c8c2a1c/bzImage-22a40d14.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8771878f9b32e4731b79@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+ODEBUG: activate active (active state 0) object: ffff888061b5aed8 object type: rcu_head hint: 0x0
+WARNING: CPU: 1 PID: 5226 at lib/debugobjects.c:517 debug_print_object+0x17a/0x1f0 lib/debugobjects.c:514
+Modules linked in:
+CPU: 1 PID: 5226 Comm: syz.3.12 Not tainted 6.10.0-rc6-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+RIP: 0010:debug_print_object+0x17a/0x1f0 lib/debugobjects.c:514
+Code: e8 cb a9 4a fd 4c 8b 0b 48 c7 c7 80 20 1f 8c 48 8b 74 24 08 48 89 ea 44 89 e1 4d 89 f8 ff 34 24 e8 0b 6c aa fc 48 83 c4 08 90 <0f> 0b 90 90 ff 05 3c 6d fe 0a 48 83 c4 10 5b 41 5c 41 5d 41 5e 41
+RSP: 0018:ffffc900047e78b8 EFLAGS: 00010286
+RAX: df2335102b84e500 RBX: ffffffff8bcbd3e0 RCX: 0000000000040000
+RDX: ffffc90009f1c000 RSI: 000000000003ffff RDI: 0000000000040000
+RBP: ffffffff8c1f2200 R08: ffffffff81585742 R09: fffffbfff1c39994
+R10: dffffc0000000000 R11: fffffbfff1c39994 R12: 0000000000000000
+R13: ffffffff8c1f2118 R14: dffffc0000000000 R15: ffff888061b5aed8
+FS:  00007f202ffff6c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f62c5f6d000 CR3: 000000007e0ea000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ debug_object_activate+0x357/0x510 lib/debugobjects.c:732
+ debug_rcu_head_queue kernel/rcu/rcu.h:227 [inline]
+ __call_rcu_common kernel/rcu/tree.c:3057 [inline]
+ call_rcu+0x97/0xa70 kernel/rcu/tree.c:3176
+ radix_tree_node_free lib/radix-tree.c:310 [inline]
+ delete_node+0x1ac/0x770 lib/radix-tree.c:573
+ radix_tree_delete_item+0x2e0/0x3f0 lib/radix-tree.c:1430
+ __bch2_fs_stop+0x230/0x540 fs/bcachefs/super.c:626
+ generic_shutdown_super+0x136/0x2d0 fs/super.c:642
+ bch2_kill_sb+0x41/0x50 fs/bcachefs/fs.c:2044
+ deactivate_locked_super+0xc4/0x130 fs/super.c:473
+ cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1267
+ task_work_run+0x24f/0x310 kernel/task_work.c:180
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x168/0x360 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f203057729a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 7e 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f202fffee78 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffec RBX: 00007f202fffef00 RCX: 00007f203057729a
+RDX: 000000002000fec0 RSI: 000000002000ff00 RDI: 00007f202fffeec0
+RBP: 000000002000fec0 R08: 00007f202fffef00 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000206 R12: 000000002000ff00
+R13: 00007f202fffeec0 R14: 000000000000fe88 R15: 0000000020000100
+ </TASK>
+
+
 ---
- net/ncsi/internal.h    |  1 +
- net/ncsi/ncsi-manage.c | 16 ++++++++++++----
- 2 files changed, 13 insertions(+), 4 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/net/ncsi/internal.h b/net/ncsi/internal.h
-index ef0f8f73826f..bd7ad0bf803f 100644
---- a/net/ncsi/internal.h
-+++ b/net/ncsi/internal.h
-@@ -341,6 +341,7 @@ struct ncsi_dev_priv {
- #define NCSI_MAX_VLAN_VIDS	15
- 	struct list_head    vlan_vids;       /* List of active VLAN IDs */
- 
-+	unsigned int        max_package;     /* Num of packages to probe   */
- 	bool                multi_package;   /* Enable multiple packages   */
- 	bool                mlx_multi_host;  /* Enable multi host Mellanox */
- 	u32                 package_whitelist; /* Packages to configure    */
-diff --git a/net/ncsi/ncsi-manage.c b/net/ncsi/ncsi-manage.c
-index 5ecf611c8820..159943ee1317 100644
---- a/net/ncsi/ncsi-manage.c
-+++ b/net/ncsi/ncsi-manage.c
-@@ -1358,12 +1358,12 @@ static void ncsi_probe_channel(struct ncsi_dev_priv *ndp)
- 		nd->state = ncsi_dev_state_probe_deselect;
- 		fallthrough;
- 	case ncsi_dev_state_probe_deselect:
--		ndp->pending_req_num = 8;
-+		ndp->pending_req_num = ndp->max_package;
- 
- 		/* Deselect all possible packages */
- 		nca.type = NCSI_PKT_CMD_DP;
- 		nca.channel = NCSI_RESERVED_CHANNEL;
--		for (index = 0; index < 8; index++) {
-+		for (index = 0; index < ndp->max_package; index++) {
- 			nca.package = index;
- 			ret = ncsi_xmit_cmd(&nca);
- 			if (ret)
-@@ -1491,7 +1491,7 @@ static void ncsi_probe_channel(struct ncsi_dev_priv *ndp)
- 
- 		/* Probe next package */
- 		ndp->package_probe_id++;
--		if (ndp->package_probe_id >= 8) {
-+		if (ndp->package_probe_id >= ndp->max_package) {
- 			/* Probe finished */
- 			ndp->flags |= NCSI_DEV_PROBED;
- 			break;
-@@ -1746,7 +1746,7 @@ struct ncsi_dev *ncsi_register_dev(struct net_device *dev,
- 	struct platform_device *pdev;
- 	struct device_node *np;
- 	unsigned long flags;
--	int i;
-+	int i, ret;
- 
- 	/* Check if the device has been registered or not */
- 	nd = ncsi_find_dev(dev);
-@@ -1795,6 +1795,14 @@ struct ncsi_dev *ncsi_register_dev(struct net_device *dev,
- 		if (np && (of_property_read_bool(np, "mellanox,multi-host") ||
- 			   of_property_read_bool(np, "mlx,multi-host")))
- 			ndp->mlx_multi_host = true;
-+
-+		if (np) {
-+			ret = of_property_read_u32(np, "ncsi-package",
-+						   &ndp->max_package);
-+			if (ret || !ndp->max_package ||
-+			    ndp->max_package > NCSI_MAX_PACKAGE)
-+				ndp->max_package = NCSI_MAX_PACKAGE;
-+		}
- 	}
- 
- 	return nd;
--- 
-2.25.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
