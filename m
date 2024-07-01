@@ -1,189 +1,136 @@
-Return-Path: <linux-kernel+bounces-236418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B817691E1F4
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:11:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22A9491E1FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:12:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33A8DB22629
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:11:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2951B24BB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6926160865;
-	Mon,  1 Jul 2024 14:11:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88BBC161900;
+	Mon,  1 Jul 2024 14:12:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WxvKCFyf"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bx6gl0u0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC6D1607AD;
-	Mon,  1 Jul 2024 14:11:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F63215E5A6;
+	Mon,  1 Jul 2024 14:12:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719843082; cv=none; b=KZs+tsC405d4F2bpNBd0tR0ccc1IIic/gvnYv/KpBe29tVXY631xqtZPDyZ30qOxTcIcj5NV/cbJpyZwcPzY/LF2I5leE4Z+e/pVHbYW7tQeK4QRmmJ2Njxgn/9bTESgLsmRJXGELndfznwx8wVpKWPLzxmOCUcOvnxDaGKM1mQ=
+	t=1719843153; cv=none; b=AWpDw4D2yabVnV19QO82sTjVeSWTTkU+Nvp3AnkAFeKKIhEsYUEc9B3JKGjukhoYj9Dw6c045GUXjy72t8qwWcQOBK9dXbtRycLedAuMajJTfDZqBD3rP5G3UlIIMgD+ht8pqM6YAyjxWm+bkMmpHwpY4Nmrfq9mmeKlfr7upqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719843082; c=relaxed/simple;
-	bh=6CEOtsGrhFPLDoewzW5lq5jt//qvPQJNQo5z1GQLZLE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kTb+X+x/orxLyDKGWVmnmsQ+EnlkX8jufRQWu9rve5J4CY5+xKzPKGZ0+qv1IDrJNk6RfWHHDklR7RJmeeAdA7uQLuMiBr+1GOEjw7GxjOYTkfV+2iYDEzRK1DUTihC/ZnzskyS8CZzadFz9CZwf2yk0D4DoJ/fNXze5WTYfdBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WxvKCFyf; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70683d96d0eso1680211b3a.0;
-        Mon, 01 Jul 2024 07:11:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719843079; x=1720447879; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=pu5CC5vhF/R0A2vVFkwivIsgk4tWVCJcrZSVx6Dp8AY=;
-        b=WxvKCFyfrUBq1hRJ5/zY0KqKkyNYpz7ug9HdVjV6W8YlKOgP/2l4KNKvTQc+3/p5Mo
-         XIJvfkP3yzaUCfSu072iyDjGzOMPnDvdusBleZOBivEzgwdJd76iigJot4y57aH7qnIF
-         teHLEtAtXTUgE3NsBMIYrhwlc2v+v82UMpCXAjqBZ31fET/yRc6yxveiDIcr0Qde/Fyi
-         +KNgFbn/NDdfTNnla8ZDUE9BTikXXYl/hVmgVIHS+yvXCYD0c6MpQGhBkmEvkzS1//OP
-         V3fuVb9WLoz2ZcDIToAIpTf2nXTVADfSbxzyT9+Bam4lH/Om3q2JT1M8OlhMJDTdbE+3
-         cT2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719843079; x=1720447879;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pu5CC5vhF/R0A2vVFkwivIsgk4tWVCJcrZSVx6Dp8AY=;
-        b=GJeYZB4oht0f0W1LFOtyBsyIQfHq8JxXgpabhQZIDoXxhU6qInzpLYpyII4LPBIjMY
-         JdwBLMdbPyoUpJBBfEuc2Zr12e3AnK22XRDy0q3VC3GvN/PD651kN5XPGYpqQ9bm9sKt
-         8Jvzt5ehlx6N81y814wDsKWxu+yL9d6EW1nbxPKs41/BVeR6haqw45ZRwBFdfuzQChZ6
-         jww2KQHZ5NuUdYneAMDj4O0VHkItU/zSQmxGIYhBevc+oIAWXYUSd4moyEn4WZJVveBX
-         bew3rDbSQJWAexOIpxwVO3w0Qg+2+FDgyVUtV8Doyq0FNqbtajJDX3Vvh3T0+flYGWvJ
-         GiaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6uliDsYMjFm1ExBUZur1Sk2YZcboFypoZi7YVjwWHPnOX3Nmo8xwy29lvFZeBYsSaVoWp3UmdkotOOKag6J6McPsvz4Tm+KFEQ1I=
-X-Gm-Message-State: AOJu0YxJ5dqzFU1/t7mUgHCsC1qfjVkggbTT1EKl2mv5VnVxKYjakkzU
-	LRIGs+K4nzKbp/La5LWvNNcT/edooBtsXhEtisODz7hj82C2vASzDm7JGg==
-X-Google-Smtp-Source: AGHT+IEGlifLhxAvN00wV7XN6aNF3blGFC0qmHDyTVxyMc5RCf9DpQVGC7hhtZV9r2oocj7wua513A==
-X-Received: by 2002:a05:6a00:1944:b0:6e7:20a7:9fc0 with SMTP id d2e1a72fcca58-70aaaf1de5cmr4668059b3a.34.1719843078646;
-        Mon, 01 Jul 2024 07:11:18 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-708044ae297sm6533531b3a.155.2024.07.01.07.11.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Jul 2024 07:11:17 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <9fce6789-edc8-4c44-89c0-ae4ca3ec3315@roeck-us.net>
-Date: Mon, 1 Jul 2024 07:11:16 -0700
+	s=arc-20240116; t=1719843153; c=relaxed/simple;
+	bh=1VVWwQxpbYpxgTGynZjIRizmv2vMmvHZ76g/uhUNoXw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DbQjITkpBzwUGgslzg1pvc3threVNDOtfsKznridTMqOi5Kt4drcQ299g2X6gYM9XgQOvkGwazjCjMXMMTXAaRYvKC1TK6Yqfj+jYI3ZZBQp/Xmsyq+u0fZwQUihGrM/GPOC7i8QQ5Wf5gt1f4Jf6hTo2a6LddUhA7r6fsXIXIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bx6gl0u0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4F24C116B1;
+	Mon,  1 Jul 2024 14:12:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719843153;
+	bh=1VVWwQxpbYpxgTGynZjIRizmv2vMmvHZ76g/uhUNoXw=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=Bx6gl0u0KpVIjrIpzrfYuY6WoBWEJEEFsy7b/cg2a/dYiOrt9fM/DJGDrY4QzS/z2
+	 BtJ2c2Y8K4NKN+etRhqcUQVzjCCN2h5D7xdOOXxL5/4RUam5MFz6a5hFvUmmHrbjSW
+	 GBdgrvmiHCBMiiPg8KwsHfBQSvqTTXGjspMQ8+oIkERaDsrnslkOSLiNDBbJCCVNht
+	 /HKEoG8hniCJoiHW0rvXZ6VGbyPTaEMa8dRiFPRr0P5g4yDZ+n/Rir8GoP0agHiEDr
+	 zbOJgH3sUJKUT1OpmSMSjDXDkXEvDtLAmCs0lSDgEg0QZPn/+DDoPCdTUZUf/Qmq/8
+	 RZQkXLVyvBeww==
+Message-ID: <1c3cee9f7ef81e1da09e0c7b4ee1e47dc9161a75.camel@kernel.org>
+Subject: Re: [PATCH v2 00/11] fs: multigrain timestamp redux
+From: Jeff Layton <jlayton@kernel.org>
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Steven Rostedt
+ <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, Chandan Babu R
+ <chandan.babu@oracle.com>, "Darrick J. Wong" <djwong@kernel.org>, Theodore
+ Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Chris
+ Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, Hugh Dickins
+ <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen
+ <ak@linux.intel.com>,  kernel-team@fb.com, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  linux-trace-kernel@vger.kernel.org,
+ linux-xfs@vger.kernel.org,  linux-ext4@vger.kernel.org,
+ linux-btrfs@vger.kernel.org, linux-mm@kvack.org,  linux-nfs@vger.kernel.org
+Date: Mon, 01 Jul 2024 10:12:29 -0400
+In-Reply-To: <20240701135332.GD504479@perftesting>
+References: <20240701-mgtime-v2-0-19d412a940d9@kernel.org>
+	 <20240701135332.GD504479@perftesting>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxwn8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1WvegyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqVT2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtVYrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8snVluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQcDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQfCBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sELZH+yWr9LQZEwARAQABtCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozzuxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedY
+	xp8+9eiVUNpxF4SiU4i9JDfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRDCHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1gYy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVVAaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJOaEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhpf8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+mQZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65ke5Ag0ETpXRPAEQAJkVmzCmF+IEenf9a2nZRXMluJohnfl2wCMmw5qNzyk0f+mYuTwTCpw7BE2H0yXk4ZfAuA+xdj14K0A1Dj52j/fKRuDqoNAhQe0b6ipo85Sz98G+XnmQOMeFVp5G1Z7r/QP/nus3mXvtFsu9lLSjMA0cam2NLDt7vx3l9kUYlQBhyIE7/DkKg+3fdqRg7qJoMHNcODtQY+n3hMyaVpplJ/l0DdQDbRSZi5AzDM3DWZEShhuP6/E2LN4O3xWnZukEiz688d1ppl7vBZO9wBql6Ft9Og74diZrTN6lXGGjEWRvO55h6ijMsLCLNDRAVehPhZvSlPldtUuvhZLAjdWpwmzbRIwgoQcO51aWeKthpcpj8feDdKdlVjvJO9fgFD5kqZQiErRVPpB7VzA/pYV5Mdy7GMbPjmO0IpoL0tVZ8JvUzUZXB3ErS/dJflvboAAQeLpLCkQjqZiQ/D
+	CmgJCrBJst9Xc7YsKKS379Tc3GU33HNSpaOxs2NwfzoesyjKU+P35czvXWTtj7KVVSj3SgzzFk+gLx8y2Nvt9iESdZ1Ustv8tipDsGcvIZ43MQwqU9YbLg8k4V9ch+Mo8SE+C0jyZYDCE2ZGf3OztvtSYMsTnF6/luzVyej1AFVYjKHORzNoTwdHUeC+9/07GO0bMYTPXYvJ/vxBFm3oniXyhgb5FtABEBAAGJAh8EGAECAAkFAk6V0TwCGwwACgkQAA5oQRlWghXhZRAAyycZ2DDyXh2bMYvI8uHgCbeXfL3QCvcw2XoZTH2l2umPiTzrCsDJhgwZfG9BDyOHaYhPasd5qgrUBtjjUiNKjVM+Cx1DnieR0dZWafnqGv682avPblfi70XXr2juRE/fSZoZkyZhm+nsLuIcXTnzY4D572JGrpRMTpNpGmitBdh1l/9O7Fb64uLOtA5Qj5jcHHOjL0DZpjmFWYKlSAHmURHrE8M0qRryQXvlhoQxlJR4nvQrjOPMsqWD5F9mcRyowOzr8amasLv43w92rD2nHoBK6rbFE/qC7AAjABEsZq8+TQmueN0maIXUQu7TBzejsEbV0i29z+kkrjU2NmK5pcxgAtehVxpZJ14LqmN6E0suTtzjNT1eMoqOPrMSx+6vOCIuvJ/MVYnQgHhjtPPnU86mebTY5Loy9YfJAC2EVpxtcCbx2KiwErTndEyWL+GL53LuScUD7tW8vYbGIp4RlnUgPLbqpgssq2gwYO9m75FGuKuB2+2bCGajqalid5nzeq9v7cYLLRgArJfOIBWZrHy2m0C+pFu9DSuV6SNr2dvMQUv1V58h0FaSOxHVQnJdnoHn13g/CKKvyg2EMrMt/EfcXgvDwQbnG9we4xJiWOIOcsvrWcB6C6lWBDA+In7w7SXnnokkZWuOsJdJQdmwlWC5L5ln9xgfr/4mOY38B0U=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/10] hwmon: (amc6821) Make reading and writing fan speed
- limits consistent
-To: Quentin Schulz <quentin.schulz@cherry.de>, linux-hwmon@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Farouk Bouabid <farouk.bouabid@cherry.de>
-References: <20240628151346.1152838-1-linux@roeck-us.net>
- <20240628151346.1152838-3-linux@roeck-us.net>
- <615377cf-99bb-4159-b072-7992ccddf09d@cherry.de>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
- RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
- nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
- 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
- gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
- IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
- kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
- VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
- jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
- BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
- ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
- CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAlVcphcFCRmg06EACgkQyx8mb86fmYFg0RAA
- nzXJzuPkLJaOmSIzPAqqnutACchT/meCOgMEpS5oLf6xn5ySZkl23OxuhpMZTVX+49c9pvBx
- hpvl5bCWFu5qC1jC2eWRYU+aZZE4sxMaAGeWenQJsiG9lP8wkfCJP3ockNu0ZXXAXwIbY1O1
- c+l11zQkZw89zNgWgKobKzrDMBFOYtAh0pAInZ9TSn7oA4Ctejouo5wUugmk8MrDtUVXmEA9
- 7f9fgKYSwl/H7dfKKsS1bDOpyJlqhEAH94BHJdK/b1tzwJCFAXFhMlmlbYEk8kWjcxQgDWMu
- GAthQzSuAyhqyZwFcOlMCNbAcTSQawSo3B9yM9mHJne5RrAbVz4TWLnEaX8gA5xK3uCNCeyI
- sqYuzA4OzcMwnnTASvzsGZoYHTFP3DQwf2nzxD6yBGCfwNGIYfS0i8YN8XcBgEcDFMWpOQhT
- Pu3HeztMnF3HXrc0t7e5rDW9zCh3k2PA6D2NV4fews9KDFhLlTfCVzf0PS1dRVVWM+4jVl6l
- HRIAgWp+2/f8dx5vPc4Ycp4IsZN0l1h9uT7qm1KTwz+sSl1zOqKD/BpfGNZfLRRxrXthvvY8
- BltcuZ4+PGFTcRkMytUbMDFMF9Cjd2W9dXD35PEtvj8wnEyzIos8bbgtLrGTv/SYhmPpahJA
- l8hPhYvmAvpOmusUUyB30StsHIU2LLccUPPOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
- 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
- pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
- J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
- pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
- 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
- ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
- I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
- nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
- HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
- JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAlVcpi8FCRmg08MACgkQyx8mb86fmYHNRQ/+
- J0OZsBYP4leJvQF8lx9zif+v4ZY/6C9tTcUv/KNAE5leyrD4IKbnV4PnbrVhjq861it/zRQW
- cFpWQszZyWRwNPWUUz7ejmm9lAwPbr8xWT4qMSA43VKQ7ZCeTQJ4TC8kjqtcbw41SjkjrcTG
- wF52zFO4bOWyovVAPncvV9eGA/vtnd3xEZXQiSt91kBSqK28yjxAqK/c3G6i7IX2rg6pzgqh
- hiH3/1qM2M/LSuqAv0Rwrt/k+pZXE+B4Ud42hwmMr0TfhNxG+X7YKvjKC+SjPjqp0CaztQ0H
- nsDLSLElVROxCd9m8CAUuHplgmR3seYCOrT4jriMFBtKNPtj2EE4DNV4s7k0Zy+6iRQ8G8ng
- QjsSqYJx8iAR8JRB7Gm2rQOMv8lSRdjva++GT0VLXtHULdlzg8VjDnFZ3lfz5PWEOeIMk7Rj
- trjv82EZtrhLuLjHRCaG50OOm0hwPSk1J64R8O3HjSLdertmw7eyAYOo4RuWJguYMg5DRnBk
- WkRwrSuCn7UG+qVWZeKEsFKFOkynOs3pVbcbq1pxbhk3TRWCGRU5JolI4ohy/7JV1TVbjiDI
- HP/aVnm6NC8of26P40Pg8EdAhajZnHHjA7FrJXsy3cyIGqvg9os4rNkUWmrCfLLsZDHD8FnU
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <615377cf-99bb-4159-b072-7992ccddf09d@cherry.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-On 7/1/24 04:05, Quentin Schulz wrote:
-> Hi Guenter,
-> 
-> On 6/28/24 5:13 PM, Guenter Roeck wrote:
->> The default value of the maximum fan speed limit register is 0,
->> essentially translating to an unlimited fan speed. When reading
->> the limit, a value of 0 is reported in this case. However, writing
->> a value of 0 results in writing a value of 0xffff into the register,
->> which is inconsistent.
->>  > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
->> ---
->>   drivers/hwmon/amc6821.c | 6 +++---
->>   1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/hwmon/amc6821.c b/drivers/hwmon/amc6821.c
->> index 3c614a0bd192..e37257ae1a6b 100644
->> --- a/drivers/hwmon/amc6821.c
->> +++ b/drivers/hwmon/amc6821.c
->> @@ -601,7 +601,7 @@ static ssize_t fan_show(struct device *dev, struct device_attribute *devattr,
->>       struct amc6821_data *data = amc6821_update_device(dev);
->>       int ix = to_sensor_dev_attr(devattr)->index;
->>       if (0 == data->fan[ix])
->> -        return sprintf(buf, "0");
->> +        return sprintf(buf, "6000000");
->>       return sprintf(buf, "%d\n", (int)(6000000 / data->fan[ix]));
->>   }
->> @@ -625,10 +625,10 @@ static ssize_t fan_store(struct device *dev, struct device_attribute *attr,
->>       int ret = kstrtol(buf, 10, &val);
->>       if (ret)
->>           return ret;
->> -    val = 1 > val ? 0xFFFF : 6000000/val;
->> +    val = val < 1 ? 0xFFFF : 6000000 / val;
->>       mutex_lock(&data->update_lock);
->> -    data->fan[ix] = (u16) clamp_val(val, 1, 0xFFFF);
->> +    data->fan[ix] = (u16)clamp_val(val, 0, 0xFFFF);
-> 
-> This is an unrelated change I believe and I would therefore have this in its own commit with proper documentation in the commit log. Indeed:
-> 
-> 1- Change in fan_show handles the default 0x0 register value (which can only currently be achieved via the default value of the registers)
-> 2- Allow (re-)setting unlimited fan speed by allowing the user to pass 6000001+ instead of clamping it to 6000000 RPM.
-> 
+On Mon, 2024-07-01 at 09:53 -0400, Josef Bacik wrote:
+> On Mon, Jul 01, 2024 at 06:26:36AM -0400, Jeff Layton wrote:
+> > This set is essentially unchanged from the last one, aside from the
+> > new file in Documentation/. I had a review comment from Andi Kleen
+> > suggesting that the ctime_floor should be per time_namespace, but I
+> > think that's incorrect as the realtime clock is not namespaced.
+> >=20
+> > At LSF/MM this year, we had a discussion about the inode change
+> > attribute. At the time I mentioned that I thought I could salvage the
+> > multigrain timestamp work that had to be reverted last year [1].=C2=A0 =
+That
+> > version had to be reverted because it was possible for a file to get a
+> > coarse grained timestamp that appeared to be earlier than another file
+> > that had recently gotten a fine-grained stamp.
+> >=20
+> > This version corrects the problem by establishing a per-time_namespace
+> > ctime_floor value that should prevent this from occurring. In the above
+> > situation that was problematic before, the two files might end up with
+> > the same timestamp value, but they won't appear to have been modified i=
+n
+> > the wrong order.
+> >=20
+> > That problem was discovered by the test-stat-time gnulib test. Note tha=
+t
+> > that test still fails on multigrain timestamps, but that's because its
+> > method of determining the minimum delay that will show a timestamp
+> > change will no longer work with multigrain timestamps. I have a patch t=
+o
+> > change the testcase to use a different method that I've posted to the
+> > bug-gnulib mailing list.
+> >=20
+> > The big question with this set is whether the performance will be
+> > suitable. The testing I've done seems to show performance parity with
+> > multigrain timestamps enabled, but it's hard to rule this out regressin=
+g
+> > some workload.
+> >=20
+> > This set is based on top of Christian's vfs.misc branch (which has the
+> > earlier change to track inode timestamps as discrete integers). If ther=
+e
+> > are no major objections, I'd like to let this soak in linux-next for a
+> > bit to see if any problems shake out.
+> >=20
+> > [1]: https://lore.kernel.org/linux-fsdevel/20230807-mgctime-v7-0-d1dec1=
+43a704@kernel.org/
+> >=20
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+>=20
+> I have a few nits that need to be addressed, but you can add
+>=20
+> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+>=20
+> to the series once they're addressed.=C2=A0 Thanks,
+>=20
 
-Both changes are related.
-
-The whole point of this commit is to report and permit consistent values when
-the register value is 0. But you do have a point - reading it after my changes
-returns 6000000, but writing the same value sets the register to 1. So I think
-the proper change would be to display 6000001 as speed if the register value is
-0, and provide a more detailed explanation. Would that address your concerns ?
-
-Thanks,
-Guenter
-
+Thanks! Fixed them up in my tree. I left the IS_I_VERSION check out as
+well, and added a note to the changelog on the btrfs patch.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
