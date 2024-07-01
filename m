@@ -1,401 +1,238 @@
-Return-Path: <linux-kernel+bounces-236871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5890F91E7FE
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:52:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67B1A91E7FB
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:52:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AC1F1C21D1D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:52:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26308282FB2
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033AB16F0CE;
-	Mon,  1 Jul 2024 18:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0098416F82F;
+	Mon,  1 Jul 2024 18:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="GND6Rz4w"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="rMSvNY5p"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2046.outbound.protection.outlook.com [40.107.22.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A6616F27A
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 18:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719859953; cv=none; b=KM9WaE5KZnfmVDTx6f7LO3pydU2W6RnwmSiwAJJ4qsCNzQd6y4fMB/41vw72mrl0kTddJ+ekzqwhBQ335mUk+z+QAILFhyvENMwBNrMwItXqMlJHrneBM1JPfHAVY/EtBgacn47dsXgo2w7ARLlBJuXrQLN4NnMguQK5wRoCJOo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719859953; c=relaxed/simple;
-	bh=/BiC8dtj6424ZVJcKmrQzSwSXMxQHlV28F8qe9OuTic=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gAH5qUSrP6/sqs5mofVbDTeqCEl3ZS3GPeiDyEOpVvqNlcmE8NX0NT3SH7Nwtplro5uUlgxUQ0j1g+/vd/9QdNwxO6p6j1r60Cn6PY4N1nwikra8QVHTmxZ71P72GeEzNYeX8rznmAzm3O+3VIYmXUF3CjGEUUeUp4afzgV3JHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=GND6Rz4w; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-6e7b121be30so1789451a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 11:52:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1719859949; x=1720464749; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o7ga8f6sjus3/pF6/pQYF6Kn0B235BOis1noItMLTHA=;
-        b=GND6Rz4wLClBsRRRTY4GxbJt9b3+jTzKBB5V/CmkE28cril99dRVgifA1atCol3nzB
-         SMkgFDqugN6C8HUsu70PswSm6g+MKshl1+wl1Z0kw0aVp+fmbwcbaAbqc8xEYlSSjjsK
-         hZiaFqyI43Pth+kdozuoC2/Z50Nturn6dhreMxQdUR+Fcgw1yVp3le3WkdbtiiQhOkJD
-         eQyIXhoGbjJVcTa5lVAQOnL21vwugUyA7np9d7+k+I7nb+ne4tZpFTeQ1EsBeRWGgPtp
-         Logi4aIEJhoReZnd2cE5Dt0qANuK5qdYEJzrtcRIK0Fyikuha20o40KkqkLQW5Bxfy41
-         CnvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719859949; x=1720464749;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o7ga8f6sjus3/pF6/pQYF6Kn0B235BOis1noItMLTHA=;
-        b=CpGWTjSyiWv3Px8YN8EJFMWiJUOFBum9/1+JbvHvriDhprzwi90B4cZzblWnBIIWc1
-         Gz1rfePwW592tkxif1nVrR/UatXHa+OsKGFrXhZoaGBSlhnUudJd0b27aeyiU+QV8fHP
-         c6Gcafwg/FylNOvUAiw7MN3wyJOGvsPu0zoTjdTiphDqzYjR52dSNEXo1PrpQN9h5HHY
-         alKTtJONCY2PfogXfz9DwNoA+XNbci1srJx3BxRsw/O7rFHOBhmk4yPz7sRBjOeNRZAE
-         zqk09QlmMDGw4LMbI49JNkS29RASqlpAmvELScn66E7SH2C//clyvmD21GYe4XFNBzb9
-         adWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXxP0R5DwFY74oxycr77wn0xy2jg3Ua5ZRToopjo7h6/TyPn58AjQJc2SAEQS9EqH2r2C+dKv6XcssutxfgVCXVqDYu+33ovcsFAsCv
-X-Gm-Message-State: AOJu0YzZ+29+wHgl68Iu+X/y7Fi/y/kfMg1PutpM2StOS7q8Y0VXc7WU
-	Ybg8Zv/xUSOL3wt5fRG1pjSngzD4aL6rgT6QcIMREMALF9E3DKoI97jfJu7sCms=
-X-Google-Smtp-Source: AGHT+IGcH0CpqPMsLOuGz5KxlnxLc6xQ6aLgSzqAFRR2NDXP2KKVJ1RBIMMsbs8u5NIC7eMylnsUiw==
-X-Received: by 2002:a05:6a20:9145:b0:1be:6387:b766 with SMTP id adf61e73a8af0-1bef60fedacmr6262081637.16.1719859949443;
-        Mon, 01 Jul 2024 11:52:29 -0700 (PDT)
-Received: from jesse-desktop.. (pool-108-26-179-17.bstnma.fios.verizon.net. [108.26.179.17])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac10d1ccesm69883375ad.20.2024.07.01.11.52.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 11:52:29 -0700 (PDT)
-From: Jesse Taube <jesse@rivosinc.com>
-To: linux-riscv@lists.infradead.org
-Cc: Ard Biesheuvel <ardb@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Jesse Taube <jesse@rivosinc.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Wende Tan <twd2.me@gmail.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>,
-	"Mike Rapoport (IBM)" <rppt@kernel.org>,
-	"Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH v3 4/4] RISC-V: Use Zkr to seed KASLR base address
-Date: Mon,  1 Jul 2024 14:51:32 -0400
-Message-ID: <20240701185132.319995-5-jesse@rivosinc.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240701185132.319995-1-jesse@rivosinc.com>
-References: <20240701185132.319995-1-jesse@rivosinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB82916EB6D;
+	Mon,  1 Jul 2024 18:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719859920; cv=fail; b=dfBVhKXYs3LZgtSg8jHtKNigPhsQr7+9N8FztSzoR8wjZQoPHa3WvGpVHxCc7ywUpqyKJrCDrpdfaeBfcx/Z97ya1SR3HBp6M6ZnC31US8ipFDgEXj86F/SH3HzeKGosHASZS9G1PgMgZE9AtRTL5morKv+Tm5w+rkdKeH85P0k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719859920; c=relaxed/simple;
+	bh=ZJ6jxKPg4OdHI8GJ5mANK2TuJX5oAG5WHEBWi1DRRJ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=mkebQGfU2KfOzhIjeItIpvSuSlKVbmK+AudDrQocjo7Fc88CGj9d1qBd+71rpaHARLdA+Giw8auKXSXrJJvU+6wI5BrMymXrLHs9vmf2ENXe7XS/ZUPOB0xCO/UsGfm/rxko1bJj2GDHZDZho0/YdYy0SExPyUs/SCr+8xRTgyQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=rMSvNY5p; arc=fail smtp.client-ip=40.107.22.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QNRqxgXIFmsoOoHUAp8ODl6BfWub9Jd3fiuIfti1S+uRpNMESm1K7ZiefQbj4YDxiUZfFSIVjFOeZOc/SDAnQw6NSRW4dWdDDEXJT3of44KjERiByt8crRjCkeTbAEz2VZGU1e0odEFlfxwOdf053Fy4UMFF16CSrbAuK6+5jg7dIiRc+Zp+Yq1fzpEK5K9Fa+oV6LYspSWWtHjWc9xT9Lc+SMKY2nge4wBlSI/hUpIZM4sXxA4gPSegHSKfmO5xEf+3EqRB7Yo1GdIFe+NbZ1D36BgeIA93eQuukU7NKN5FmTnwMMMmvWYVqC+4V7ZEg68pcadLHIF5iY8+zVFQxg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OMbdFeSElON8leQlnmavt4zbf+os+dMhPQmVkzETxLU=;
+ b=LHYJJfXhZoMrpk41j/3XIEKuhPnRc+5ddYPrrMgdt41Gwf2ngEu/zSyZK9nTmpaTGpRvtFSvqyDGz8yr2cYmipHgTNzFKav8pmQkWts8Tcdc56QJ3H2m5NCmtK9GmJmpkbNDgpnhqtPLOU5aHB3kWMl5i6Zx7aNyL1Q7ZmWQx3wa58ZFtOaDGoisGlfq4ChXzfyo0ppWOM/jSnYN6J39FAqgGXdnFTgWtgjrCoa18O3M0CvVAxaNFVqK4ivY8k/xsPWjLdaYutSH7XPInIuCDWSytpVginLtcpMB6S8ZnekGfrJDVVj1Kx1YEThbDIDaNjLFx03CddxKG7ETdRMMAA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OMbdFeSElON8leQlnmavt4zbf+os+dMhPQmVkzETxLU=;
+ b=rMSvNY5p/7BmBfzexTD4A6zaO7MEnp46znRZSUh0OK8kw2P37vElFb5KeViDiY4JsC6nxkwF+DDQNCzP7/pGuNboQKydbgrj/5m03o0bK5KVgyU1E7H5B/HG4d0zn7PFNozP86yXFBNTfEmbSfCb1cNqWftMvP9BDbENfQx5aho=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by VI1PR04MB6992.eurprd04.prod.outlook.com (2603:10a6:803:139::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.34; Mon, 1 Jul
+ 2024 18:51:56 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7719.029; Mon, 1 Jul 2024
+ 18:51:55 +0000
+Date: Mon, 1 Jul 2024 14:51:49 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Shawn Guo <shawnguo@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"moderated list:ARM/FREESCALE LAYERSCAPE ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH v2 02/13] arm64: dts: layerscape: add platform special
+ compatible string for gpio
+Message-ID: <ZoL6xVdj/rEgK0H/@lizhi-Precision-Tower-5810>
+References: <20240626202533.2182846-1-Frank.Li@nxp.com>
+ <20240626202533.2182846-3-Frank.Li@nxp.com>
+ <CAL_Jsq+YpLk4E-Sk7otOtbZo8FKYb-9GuPC1ie3aRauP=7_1HA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL_Jsq+YpLk4E-Sk7otOtbZo8FKYb-9GuPC1ie3aRauP=7_1HA@mail.gmail.com>
+X-ClientProxiedBy: SJ0PR13CA0178.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c7::33) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI1PR04MB6992:EE_
+X-MS-Office365-Filtering-Correlation-Id: 33be159a-e7af-4348-d9a4-08dc99fee114
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|1800799024|366016|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dzdZRis3aldSYVNnVm9HOUFFU1V6RTA4alkrakxpVTlnNURsN0k5cThOVzIx?=
+ =?utf-8?B?dTF3c1JSd2J6b0MxVGo1Y1d5ME1kR0J4U1R6UHQvMitZRVVTKzJHYmdkTnRt?=
+ =?utf-8?B?bVlBMVhHMkxNNE5PTVJOeGJCVk9KMVNaWkNQOWhhL3VIRk5sUHR3cjFZeURT?=
+ =?utf-8?B?OHk0WTZKMWJFS0RHQnMvOWtOcmlLZTh0NUczWlczWjM2NzlSRUx6VkFWbUpz?=
+ =?utf-8?B?aGJxTys3OEh1K011cTlRQmRmODJBWEF5T01RczVia1BpQUNBb3I3d0JUSWZv?=
+ =?utf-8?B?M1NqWWFxbTZWYUx3SUNxSjNYblBTNW1iTUV4VkxpV3M1aXBDc2JINTlrV1E5?=
+ =?utf-8?B?YXJNM0wzd0FPTWFWSFkwMVl6ejF1TlJreHRDMG5xRUU3YkdWNFdpcDZLQzVO?=
+ =?utf-8?B?YW9lblQzR28vY2tTV21lZDQzTWp6NlpuT1FaYXNoWnkvaWZ6Vm5yd25ud3Uv?=
+ =?utf-8?B?ZHcxeTFwMTMyK3BJNDh4RGJ4U0lQREEyeUlNNnVoMDZoS3d4TzltS1dwOXpD?=
+ =?utf-8?B?dml3Zm1odlV2SlhuakRyS3Z0QmNPNkxNWXZra2tnV2R1alQxakJKWDEyMlIz?=
+ =?utf-8?B?TW55NFNDQjlyWG5BY2w2QTNUR0swZkNPOFdLelBlUEFJSSs4L2pnS3pFTkNV?=
+ =?utf-8?B?WGVFTHpYQXNxNHQ5Mjh4a1J0WkRvYU16dnMyWHNlbm5GTThmL2xWLzd1dmFF?=
+ =?utf-8?B?c1NEWmRyeWRJR211WlY5UUx6M2VvTHFLRXk1cGhsWEhleEhJNkFoVHdFeEdE?=
+ =?utf-8?B?dytUQWRUbDdjYmwxOVU2Y2VqSGdsRUJRZmt1QmV2UGliVXRsd0NlTXd2RmtY?=
+ =?utf-8?B?dHVQVGhNZFdrRS9MMVVpT0ZhZjNDWUt5dnNIZDU4bFVPRVJIQ3g0M2U0QURM?=
+ =?utf-8?B?Ty9HY0lWSWg0WlYxcnRPOVVhS0NjSExUN2NyQmxPR3BhWDNtUEg5Y3Z3enMy?=
+ =?utf-8?B?aUlOQ21VUHRpcm1xNW5OM2U2cGR4aU9nbDIrU3B4a0ZSUk1yUmVrQXJPWWMx?=
+ =?utf-8?B?Uy9CYlBMVmdZSG44WFljM0ZPQTd4c1gyWnlkRjdjS1JGMXhXbWxrVTYreEhY?=
+ =?utf-8?B?aEF0di9Kb3hxclI2WVU2TE1nTnZkSFVKc3N6ckZzamEvOXE1cWVDWFhTN0pV?=
+ =?utf-8?B?eDAzRlp4ME9wVmxxSXhiN0VKcU9Ta3JDVTJGYTFNSStBNzUvblJYYmpCdVl3?=
+ =?utf-8?B?bC9qdVFhWm9Uc0lpckVtZ3Ztc0NyL0pXbDFENDRpKzlnZXp4ejhYMlluSUUy?=
+ =?utf-8?B?Ym9BNmpvNlB1aGtybC9jRWdYTWU5YmpLQ2Uzb2JOdDlUS1BSbktpelk3UDNN?=
+ =?utf-8?B?d0N0ZTFCZUh6bS9FKzRpWGlXN0piNlI4clQyK0lneUNpUTR2U3FuN3VWcGxk?=
+ =?utf-8?B?djJodlZtMFJ4WUhqL2s0dk85UHU5MllvaDVxMWtPMkZFWU5aaUcxdi9RU3U5?=
+ =?utf-8?B?YktlRkJCQ0pjOFp4WGxid0dHdGMrM1NDbGhuWm1UOW9Kcm5FVk1YNGJTL1RR?=
+ =?utf-8?B?TWVkSWtiZkZDSWJOb011VGw2OUtSaS9KckdzVnNMOU5vbFZ4bnJ1MHRrMTVK?=
+ =?utf-8?B?WDNBODZMYXE5MnIwNzJrN0RpRkhXN2tWcTNEa1c3eElzYVNuK3JQaEZYUEdQ?=
+ =?utf-8?B?S1gwbGtsRG9CWnZKSXAxcEM3VWhDYkRhMmNqVE9FR3N6emY5L2w2U1Vld0ZM?=
+ =?utf-8?B?b2ZBMGwzYXNpSnc2aTMwTGVnem5WTzdoZVhPdlRKbXpyYmsrdVJxbjJFMTJn?=
+ =?utf-8?B?U0FJUC9CK2RhejdtTGVUUTkrUkVIempROS8vS25laHhPU1lDOFZWdGlFM2JN?=
+ =?utf-8?B?dVY5WnRzUzFPdks3dHNtbGJqeW81UGFBdGlraEsveWhqenBpSFdqaWg1cDkv?=
+ =?utf-8?B?OGxIOEFxU1oveFFudUs2YXo5MmVEd0pITnY3R3dDQU1kUFE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(366016)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Ny95bFBUeUtxQW5mWkd3NjJzeXc0bTFydXdiRHNEVTczKzl6amNUZ3pPSkR5?=
+ =?utf-8?B?L0ZLWmIwVlBLUXk3WUN4aXo5NHZwNFJQRkpsUnNzWExwSVJFL0tkN0x3aGJl?=
+ =?utf-8?B?WmJ4Z2RpdnJIOEdzVDZZajhxMkRRRXZrRzdJSzMybFBCK3hqL2JXd09qUWYw?=
+ =?utf-8?B?dG1vaFcxbXdHR1ZMSUFZZ0Q1ZjJjMlNSNERvbDdmVTZxVTRnN1Q0ZlFNTlkz?=
+ =?utf-8?B?ZkZYVG42SnpramF6S0l6cUYrdXZOOXNoYkUrb1pSV3l1MSswaWdLRmFGL3NF?=
+ =?utf-8?B?ZWYwazFOaWpRVWtQZloxNFdWRTI2MTNpOGVQV3E4SCtUUjhBbjZxNlBiNmtX?=
+ =?utf-8?B?YW5BLy9sUjF0UVlWMHEvaUtmbVMxY1B4cGpjcmVhQVAzY2xPYUZCOVVxTDc5?=
+ =?utf-8?B?cWlWeG9UZlVPQmVRZFI4SE9xajZPcnhxYjN3MHFzU24zdXF0V1gxR0U3NGw2?=
+ =?utf-8?B?eHhpQmFpQmJsd0ZjdTJJVmI1VDhiVUJsQ3VEekI0S3Rla0o4Q1VvNGUrMGkz?=
+ =?utf-8?B?Tm9JSC9lSGI1dTUwQW01MjdGYXRnWGdaZmZtUDFLb1ZkT1MrWCtDb0wzd01V?=
+ =?utf-8?B?K2hBNDdiNmpYQVlsMytFa0pVTXJybmhpeVFQQVlma1JWQ1FwR3l2SXFvZFZ6?=
+ =?utf-8?B?aHBvdXRzYWlwNXJ3SEJ5WFVwMmdLQlYvRU9rZGtqenAyQmRMMTBYS0VuYXJP?=
+ =?utf-8?B?b0w2WmVyUW9nUjFEalpjR3R6eElhQk9CaGdqSzhaNTlTOTBIOEFKVS9qZXg2?=
+ =?utf-8?B?akl4L0Nmbkl1NG1UcjkxTzdxdUNVbEhDekxoOEdRcG5WYzJhTlBOV1NxZUhQ?=
+ =?utf-8?B?Si9rMkxnUTZIeWwrR01VcVUzbW50dzZlYjdWSFFOUWR6LzVTMVZrZjFpVUgv?=
+ =?utf-8?B?SCtscW9hTlBiMnAyWWsyQXBtelIzV0RUVks1STlpM3V0V0pVWXh4M2xjV0ln?=
+ =?utf-8?B?bTdGTjdXL3ZoVHNtVC9MWmJTUHBjOHJ0aFoxWmJOMG1JU2pYcFZLSUZoL0hq?=
+ =?utf-8?B?VDI5RlF1OWNBRHFBd2dWQnp5aWdwYVRBNytIemZtd09pTDd5NElZSy9pbW5K?=
+ =?utf-8?B?UXFsRkhOMnZRRDZPeUtvUmV6Wm1yZ0hQa2ZyeXNnWUdKbjdkTzVKTncvNGVk?=
+ =?utf-8?B?QmNINTRudkNDZVpydGZMSzJtdzdsSGJGTjhSeWpxV1YrRFF2ZFdJR28reXJs?=
+ =?utf-8?B?RDFIMU5VZVlFcU81ZGhnV1JPejZKUHRoVVllTy85ZW5HbjRocFcrOS9KaUho?=
+ =?utf-8?B?SUx1azNybTVkWFBPUUVNNmZIdDdocjFtRHpERDhvS0JIay9UWmZSMGJLMTdi?=
+ =?utf-8?B?TTJyUVhHdWJjS1JFQ20wNEpKT1pRQ245dXg4bDhrcmtTYUd4VGdxckRDNlRr?=
+ =?utf-8?B?TUJjWk5NbGRjV1V3VzJ0cXJJOEVOaTZKOEcxQ25iYm5mM1VsUXhXSTdSNFB6?=
+ =?utf-8?B?QWhjeGlNc3piZE5SRGRMbVM4NVJhL3dHcm0zbk1NQ280R2N3K2Z0eVNuWkNx?=
+ =?utf-8?B?Vm02bVhmdCs3VStOSXJWejFaWk85ZXZMVVU2U3Ntd1VNY0x3MHJyVEw3emRQ?=
+ =?utf-8?B?QW4zYTZmZm4raHRObjhiNEx4L0JGcDJHa0Q4N1JHdnd6RHNBM2FJSndkSEJY?=
+ =?utf-8?B?SlRSenZNcTVtOVgzcWdRREJRTEdkbW9NeGZjcXBtZ0hJT2tkQWNKK0pRdll1?=
+ =?utf-8?B?SkFyWDVuakJXSlNQaG1kaG9RejNsZjRmSjlXdDJpSGZkRlRra2lkZFFJM2lG?=
+ =?utf-8?B?dFErSEtRcVZiMVIrNGQzVEIwREJiVTRwZ1JhT0xhbnByNkp4Qit4eVlTRjdN?=
+ =?utf-8?B?R1BPa21ubUxDUFJCNjdoVTdKOHpRTG5zbXN3aEtCdWZESWEvTU9CRU9aclFJ?=
+ =?utf-8?B?eW95RE8vUGNvazdjTmZDTEVEZFVUcTBJTEllU3MxQVVqb0gwMGM4K0JpOU4v?=
+ =?utf-8?B?Vzg0SytiNzZ2QnN5YnBWeWtOMUdNaEcyVFJGNHFHUDhRZjJjMUx3YkxvMU5P?=
+ =?utf-8?B?QU9qSWpLaDdJMGwzRE45dm1CeXZzclF3eWZRZjhkcnpaUGJIdVVFRDlYR3JT?=
+ =?utf-8?B?b3EybGNXRmlYUXViMis3V0ZEd3F0NDhnK1YxOU9MZU90cng2WXA5ZzNwYnY2?=
+ =?utf-8?Q?gTXk=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 33be159a-e7af-4348-d9a4-08dc99fee114
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2024 18:51:55.8807
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Xdcc84DHMOZG5w0R3wLixK7eWugH3OA4c6a3rqxb85vMThXH1e2Nq3YhfACSURjAFn0J4THfstZdo0hXrH23nQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6992
 
-Parse the device tree for Zkr in the isa string.
-If Zkr is present, use it to seed the kernel base address.
+On Mon, Jul 01, 2024 at 10:43:32AM -0600, Rob Herring wrote:
+> On Wed, Jun 26, 2024 at 2:26 PM Frank Li <Frank.Li@nxp.com> wrote:
+> >
+> > Add platform special compatible string for all gpio controller to fix
+> > below warning.
+> >
+> >  gpio@2300000: compatible: 'oneOf' conditional failed, one must be fixed:
+> >         ['fsl,qoriq-gpio'] is too short
+> >         'fsl,qoriq-gpio' is not one of ['fsl,mpc5121-gpio', 'fsl,mpc5125-gpio', 'fsl,mpc8349-gpio', 'fsl,mpc8572-gpio', 'fsl,mpc8610-gpio', 'fsl,pq3-gpio']
+> >         'fsl,qoriq-gpio' is not one of ['fsl,ls1021a-gpio', 'fsl,ls1028a-gpio', 'fsl,ls1043a-gpio', 'fsl,ls1088a-gpio', 'fsl,ls2080a-gpio']
+> >
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > ---
+> >  arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi | 4 ++--
+> >  arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi | 8 ++++----
+> >  arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi | 8 ++++----
+> >  3 files changed, 10 insertions(+), 10 deletions(-)
+> >
+> > diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
+> > index 2e1cddc11bf47..1b6ab9550cce9 100644
+> > --- a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
+> > +++ b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
+> > @@ -407,7 +407,7 @@ duart1: serial@21c0600 {
+> >                 };
+> >
+> >                 gpio0: gpio@2300000 {
+> > -                       compatible = "fsl,qoriq-gpio";
+> > +                       compatible = "fsl,ls1021a-gpio", "fsl,qoriq-gpio";
+> >                         reg = <0x0 0x2300000 0x0 0x10000>;
+> >                         interrupts = <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>;
+> >                         gpio-controller;
+> > @@ -417,7 +417,7 @@ gpio0: gpio@2300000 {
+> >                 };
+> >
+> >                 gpio1: gpio@2310000 {
+> > -                       compatible = "fsl,qoriq-gpio";
+> > +                       compatible = "fsl,ls1021a-gpio", "fsl,qoriq-gpio";
+> >                         reg = <0x0 0x2310000 0x0 0x10000>;
+> >                         interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
+> >                         gpio-controller;
+> > diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
+> > index f8c9489507e7a..524b44f424272 100644
+> > --- a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
+> > +++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
+> > @@ -589,7 +589,7 @@ duart3: serial@21d0600 {
+> >                 };
+> >
+> >                 gpio0: gpio@2300000 {
+> > -                       compatible = "fsl,qoriq-gpio";
+> > +                       compatible = "fsl,ls1046a-gpio", "fsl,qoriq-gpio";
+> 
+> ls1046a isn't documented.
 
-On an ACPI system, as of this commit, there is no easy way to check if
-Zkr is present. Blindly running the instruction isn't an option as;
-we have to be able to trust the firmware.
+Sorry, there are local dt-binding update patch, which I forget sent out.
+So I have not found this problem when I sent out dts change.
 
-Signed-off-by: Jesse Taube <jesse@rivosinc.com>
----
-V1 -> V2:
- - Almost entire rewrite
-V2 -> V3:
- - Dont parse iscv,isa-base
- - Move fdt_early_match_extension_isa in pi.h under comment
- - Only check enabled cpus
- - Rename early_isa_str to fdt_early_match_extension_isa
- - Rename get_ext_named to early_cpu_isa_ext_available
- - Rewrite isa_string_contains
- - Update commit description
- - Use fdt_stringlist_contains for riscv,isa-extensions
----
- arch/riscv/kernel/pi/Makefile           |   2 +-
- arch/riscv/kernel/pi/archrandom_early.c |  30 +++++
- arch/riscv/kernel/pi/fdt_early.c        | 160 ++++++++++++++++++++++++
- arch/riscv/kernel/pi/pi.h               |   3 +
- arch/riscv/mm/init.c                    |   5 +-
- 5 files changed, 198 insertions(+), 2 deletions(-)
- create mode 100644 arch/riscv/kernel/pi/archrandom_early.c
+Frank 
 
-diff --git a/arch/riscv/kernel/pi/Makefile b/arch/riscv/kernel/pi/Makefile
-index 1ef7584be0c3..dba902f2a538 100644
---- a/arch/riscv/kernel/pi/Makefile
-+++ b/arch/riscv/kernel/pi/Makefile
-@@ -33,5 +33,5 @@ $(obj)/string.o: $(srctree)/lib/string.c FORCE
- $(obj)/ctype.o: $(srctree)/lib/ctype.c FORCE
- 	$(call if_changed_rule,cc_o_c)
- 
--obj-y		:= cmdline_early.pi.o fdt_early.pi.o string.pi.o ctype.pi.o lib-fdt.pi.o lib-fdt_ro.pi.o
-+obj-y		:= cmdline_early.pi.o fdt_early.pi.o string.pi.o ctype.pi.o lib-fdt.pi.o lib-fdt_ro.pi.o archrandom_early.pi.o
- extra-y		:= $(patsubst %.pi.o,%.o,$(obj-y))
-diff --git a/arch/riscv/kernel/pi/archrandom_early.c b/arch/riscv/kernel/pi/archrandom_early.c
-new file mode 100644
-index 000000000000..3f05d3cf3b7b
---- /dev/null
-+++ b/arch/riscv/kernel/pi/archrandom_early.c
-@@ -0,0 +1,30 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include <asm/csr.h>
-+#include <linux/processor.h>
-+
-+#include "pi.h"
-+
-+/*
-+ * To avoid rewriting code include asm/archrandom.h and create macros
-+ * for the functions that won't be included.
-+ */
-+#undef riscv_has_extension_unlikely
-+#define riscv_has_extension_likely(...) false
-+#undef pr_err_once
-+#define pr_err_once(...)
-+
-+#include <asm/archrandom.h>
-+
-+u64 get_kaslr_seed_zkr(const uintptr_t dtb_pa)
-+{
-+	unsigned long seed = 0;
-+
-+	if (!fdt_early_match_extension_isa((const void *)dtb_pa, "zkr"))
-+		return 0;
-+
-+	if (!csr_seed_long(&seed))
-+		return 0;
-+
-+	return seed;
-+}
-diff --git a/arch/riscv/kernel/pi/fdt_early.c b/arch/riscv/kernel/pi/fdt_early.c
-index 40ee299702bf..49ff5360bf87 100644
---- a/arch/riscv/kernel/pi/fdt_early.c
-+++ b/arch/riscv/kernel/pi/fdt_early.c
-@@ -2,6 +2,7 @@
- #include <linux/types.h>
- #include <linux/init.h>
- #include <linux/libfdt.h>
-+#include <linux/ctype.h>
- 
- #include "pi.h"
- 
-@@ -23,3 +24,162 @@ u64 get_kaslr_seed(uintptr_t dtb_pa)
- 	*prop = 0;
- 	return ret;
- }
-+
-+/**
-+ *  fdt_device_is_available - check if a device is available for use
-+ *
-+ * @fdt: pointer to the device tree blob
-+ * @node: offset of the node whose property to find
-+ *
-+ *  Returns true if the status property is absent or set to "okay" or "ok",
-+ *  false otherwise
-+ */
-+static bool fdt_device_is_available(const void *fdt, int node)
-+{
-+	const char *status;
-+	int statlen;
-+
-+	status = fdt_getprop(fdt, node, "status", &statlen);
-+	if (!status)
-+		return true;
-+
-+	if (statlen > 0) {
-+		if (!strcmp(status, "okay") || !strcmp(status, "ok"))
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
-+/* Copy of fdt_nodename_eq_ */
-+static int fdt_node_name_eq(const void *fdt, int offset,
-+			    const char *s)
-+{
-+	int olen;
-+	int len = strlen(s);
-+	const char *p = fdt_get_name(fdt, offset, &olen);
-+
-+	if (!p || olen < len)
-+		/* short match */
-+		return 0;
-+
-+	if (memcmp(p, s, len) != 0)
-+		return 0;
-+
-+	if (p[len] == '\0')
-+		return 1;
-+	else if (!memchr(s, '@', len) && (p[len] == '@'))
-+		return 1;
-+	else
-+		return 0;
-+}
-+
-+/**
-+ *  isa_string_contains - check if isa string contains an extension
-+ *
-+ * @isa_str: isa string to search
-+ * @ext_name: the extension to search for
-+ *
-+ *  Returns true if the extension is in the given isa string,
-+ *  false otherwise
-+ */
-+static bool isa_string_contains(const char *isa_str, const char *ext_name)
-+{
-+	size_t i, single_end, len = strlen(ext_name);
-+	char ext_end;
-+
-+	/* Error must contain rv32/64 */
-+	if (strlen(isa_str) < 4)
-+		return false;
-+
-+	if (len == 1) {
-+		single_end = strcspn(isa_str, "sSxXzZ");
-+		/* Search for single chars between rv32/64 and multi-letter extensions */
-+		for (i = 4; i < single_end; i++) {
-+			if (tolower(isa_str[i]) == ext_name[0])
-+				return true;
-+		}
-+		return false;
-+	}
-+
-+	/* Skip to start of multi-letter extensions */
-+	isa_str = strpbrk(isa_str, "sSxXzZ");
-+	while (isa_str) {
-+		if (strncasecmp(isa_str, ext_name, len) == 0) {
-+			ext_end = isa_str[len];
-+			/* Check if matches the whole extension excluding version. */
-+			if (ext_end == '\0' || ext_end == '_' || isdigit(ext_end))
-+				return true;
-+		}
-+		/* Multi-letter extensions must be split from other multi-letter
-+		 * extensions with an "_", the end of a multi-letter extension will
-+		 * either be the null character or the "_" at the start of the next
-+		 * multi-letter extension.
-+		 */
-+		isa_str = strchr(isa_str, '_');
-+		if (isa_str)
-+			isa_str++;
-+	}
-+
-+	return false;
-+}
-+
-+/**
-+ *  early_cpu_isa_ext_available - check if cpu node has an extension
-+ *
-+ * @fdt: pointer to the device tree blob
-+ * @node: offset of the cpu node
-+ * @ext_name: the extension to search for
-+ *
-+ *  Returns true if the cpu node has the extension,
-+ *  false otherwise
-+ */
-+static bool early_cpu_isa_ext_available(const void *fdt, int node, const char *ext_name)
-+{
-+	const void *prop;
-+	int len;
-+
-+	prop = fdt_getprop(fdt, node, "riscv,isa-extensions", &len);
-+	if (prop && fdt_stringlist_contains(prop, len, ext_name))
-+		return true;
-+
-+	prop = fdt_getprop(fdt, node, "riscv,isa", &len);
-+	if (prop && isa_string_contains(prop, ext_name))
-+		return true;
-+
-+	return false;
-+}
-+
-+/**
-+ *  fdt_early_match_extension_isa - check if all cpu nodes have an extension
-+ *
-+ * @fdt: pointer to the device tree blob
-+ * @ext_name: the extension to search for
-+ *
-+ *  Returns true if the all available the cpu nodes have the extension,
-+ *  false otherwise
-+ */
-+bool fdt_early_match_extension_isa(const void *fdt, const char *ext_name)
-+{
-+	int node, parent;
-+	bool ret = false;
-+
-+	parent = fdt_path_offset(fdt, "/cpus");
-+	if (parent < 0)
-+		return false;
-+
-+	fdt_for_each_subnode(node, fdt, parent) {
-+		if (!fdt_node_name_eq(fdt, node, "cpu"))
-+			continue;
-+
-+		if (!fdt_device_is_available(fdt, node))
-+			continue;
-+
-+		if (!early_cpu_isa_ext_available(fdt, node, ext_name))
-+			return false;
-+
-+		ret = true;
-+	}
-+
-+	return ret;
-+}
-diff --git a/arch/riscv/kernel/pi/pi.h b/arch/riscv/kernel/pi/pi.h
-index 493c8cb7c0e6..21141d84fea6 100644
---- a/arch/riscv/kernel/pi/pi.h
-+++ b/arch/riscv/kernel/pi/pi.h
-@@ -11,7 +11,10 @@
-  */
- 
- u64 get_kaslr_seed(uintptr_t dtb_pa);
-+u64 get_kaslr_seed_zkr(const uintptr_t dtb_pa);
- bool set_nokaslr_from_cmdline(uintptr_t dtb_pa);
- u64 set_satp_mode_from_cmdline(uintptr_t dtb_pa);
- 
-+bool fdt_early_match_extension_isa(const void *fdt, const char *ext_name);
-+
- #endif /* _RISCV_PI_H_ */
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index 9940171c79f0..bfb068dc4a64 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -1025,6 +1025,7 @@ static void __init pt_ops_set_late(void)
- #ifdef CONFIG_RANDOMIZE_BASE
- extern bool __init __pi_set_nokaslr_from_cmdline(uintptr_t dtb_pa);
- extern u64 __init __pi_get_kaslr_seed(uintptr_t dtb_pa);
-+extern u64 __init __pi_get_kaslr_seed_zkr(const uintptr_t dtb_pa);
- 
- static int __init print_nokaslr(char *p)
- {
-@@ -1045,10 +1046,12 @@ asmlinkage void __init setup_vm(uintptr_t dtb_pa)
- 
- #ifdef CONFIG_RANDOMIZE_BASE
- 	if (!__pi_set_nokaslr_from_cmdline(dtb_pa)) {
--		u64 kaslr_seed = __pi_get_kaslr_seed(dtb_pa);
-+		u64 kaslr_seed = __pi_get_kaslr_seed_zkr(dtb_pa);
- 		u32 kernel_size = (uintptr_t)(&_end) - (uintptr_t)(&_start);
- 		u32 nr_pos;
- 
-+		if (kaslr_seed == 0)
-+			kaslr_seed = __pi_get_kaslr_seed(dtb_pa);
- 		/*
- 		 * Compute the number of positions available: we are limited
- 		 * by the early page table that only has one PUD and we must
--- 
-2.45.2
-
+> 
+> Rob
 
