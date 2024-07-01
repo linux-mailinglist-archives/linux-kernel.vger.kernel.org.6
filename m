@@ -1,93 +1,137 @@
-Return-Path: <linux-kernel+bounces-236714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD3191E63A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:08:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B46C891E63C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:09:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CED91C21B11
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:08:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7565B284326
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898C216C6B4;
-	Mon,  1 Jul 2024 17:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C7916E873;
+	Mon,  1 Jul 2024 17:08:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="aIEfUO2C"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F2jnUjY0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ABA516631C;
-	Mon,  1 Jul 2024 17:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D0216631C;
+	Mon,  1 Jul 2024 17:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719853722; cv=none; b=lZlJKFVYdyNe+pGs5X1d4W7R8qwrBMt8LS8RblgVOhNehRZ5h/PMudIffnFdXjzX4qD/CsxogLcbcMMYRce3tmqXqpBCyujzAuKD3PQ6KGGLmCSgkLiqGJ88+NuzkzHCRzZuUVxvoCZzlamPch6ac5MFhia9aQWDMuLEqTAjTYQ=
+	t=1719853733; cv=none; b=X0BszuGLPRxaErRg6lyrDZ5FBJYZmPqLD7o080rR8oxBG29p5wI07/U+k7TUan+KrykSTa1I5NDqlSnrFJZYs7N3USMBG6hPNec1vwgue+e4NkM9k93UbT1e/r41KZnf9tfYmf223RDdAMObNZKYKkcoAEFxy3QFiSTOx+lUraI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719853722; c=relaxed/simple;
-	bh=LR+3P7CDYYJd7E55GaXBx3JFMH0DDOv1JfGvEou71b4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PUA3eX40n9y8UPO9jGrs8lUFfNPswvk0tgm1sYmwpRxsNRTLwuAKcdX545j1sp26w9B3HvzLoXnhJ1LXW27i5hElE2I4Hw0e+PZqZrfIm1tAI7nRfEYGeLucwxXFiqtAnjDICzGTkTWXde/1KznxrnGWuTNCpvnJXYhllpvGyQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=aIEfUO2C; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4WCXZ03nTczlnNFJ;
-	Mon,  1 Jul 2024 17:08:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1719853718; x=1722445719; bh=LR+3P7CDYYJd7E55GaXBx3JF
-	MH0DDOv1JfGvEou71b4=; b=aIEfUO2Cc3UNs1KSNjUYxHiOyj/5i4T85hKK9rny
-	dEL9Tt2s4lrXt1Omt/mU3Ah808HkBzYMlcVYbZ+c2HF4lnmvfcNqyvFkiykmz+Lf
-	78rsZrBXhWs/ChquTtT3vyLj/akMHCoQj507oZrkPrRv3UyYeb2HDRkqxltFUAj/
-	Quym+RS+NFnP0JzHEymdLN7o0S1SL+hs3MwzQqaGPZWFelC45cNqc5iPudsdwU4z
-	eOj+MzmBkHWQ4ilgue90QciuJ5j1qwB0Iu3AY8f5cGF550C9Sd9kdNUegKnlrm0K
-	Ch7ohLceeyoYLB5xvD93T1Ahfpo8+8XevNUDu5vM0UG4pQ==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id n8iCso7WLsmh; Mon,  1 Jul 2024 17:08:38 +0000 (UTC)
-Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4WCXYx15tkzlmb8s;
-	Mon,  1 Jul 2024 17:08:36 +0000 (UTC)
-Message-ID: <f3e253f5-ece4-4ffe-9112-cd763a0f1ce5@acm.org>
-Date: Mon, 1 Jul 2024 10:08:34 -0700
+	s=arc-20240116; t=1719853733; c=relaxed/simple;
+	bh=zsbuHy5w3OfgJ0azDM2BXoti/8qlEfU9xPQTRcEHelw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=De3fillKepmd6Dvu88Xa2HIpwgXoPIqoR2vfDqNeVhnECV5dls8hqIIZDzeU45wasvCGXf/LPo0/AHmjG7inLOi1VRtrWYjPuWtpYVfmohQlG6vpdx3/tbMPDmHEYZ88ZqOllGBUCIwN6vM69KwhM64kj2guqgl7Vg2FokCS4aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F2jnUjY0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCD7FC116B1;
+	Mon,  1 Jul 2024 17:08:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719853732;
+	bh=zsbuHy5w3OfgJ0azDM2BXoti/8qlEfU9xPQTRcEHelw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=F2jnUjY0VX/mlOYaaaNOahMAfD4fMzU2DiWaZErPsQyjNQ54vosqhObE2Br7YSC6C
+	 XhzIXAZNPVuU9frlgBdRX2VyQUK6CIBtiXPdJKn6iuGrYIzBtw8rYLsHhWCLaiZjkb
+	 pSOHU3AuRZjehR/LRU0C+OBApkLKBRdvEf2o3wi/1TzazaaTFs5s/YbxP66zS0HHAr
+	 txWK8GIpyb3UBLSfAJbGNjTc68vTU/6u3USm+lkml5zwU4dp61haT9SzTz519ruHiu
+	 mOb46CW+BdcTCdxnyp7QevmaEogoZUIwtlHXrXij1LhDq/F5Vd7de1fyKiOvBhF7M/
+	 6nNjV8zO7HnDA==
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-25cd2b51fd3so429436fac.3;
+        Mon, 01 Jul 2024 10:08:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX2+p8AwhpO+OnofTGUeYndZ8l/QUYstLZP/0FmO97FAjsz33caxHAqVYEW9CtOwkWnYnv2jOp1MP3TNnc1599FiwN8GnNIMDp1S59sidLG5A4Wd/jWWD/cn9W4LNipX7B0efIFnHsqA23HFUplFZ6yvaGWGi7uKW0QC6EpRhcNc9Ong0MYuoP5
+X-Gm-Message-State: AOJu0YwvVtdxRnQ9KbhfcBmYC6C3Z9+z5cc4mDz+4DoE3iBSMhD2L/hu
+	uF1gdi4JgevETCbPU5eFvc5rWVuD+AbCX9y3QQBiKn3zKIInOrfcqB69YSqD9tigMYk0sfbH2n8
+	JflY4d0lBgcjxkZtgP5bnlfkR0jU=
+X-Google-Smtp-Source: AGHT+IHR4xtavs3WYiLzujF4aoqo2c9S9zl3NErTsshLspZCJKaUFkpOeuqq5NUryZB+mKUEOJsqiLWQefG2dVeChEg=
+X-Received: by 2002:a05:6871:71e:b0:25d:707d:2550 with SMTP id
+ 586e51a60fabf-25db344441amr6479512fac.2.1719853732094; Mon, 01 Jul 2024
+ 10:08:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: sd: Fix unsigned expression compared with zero
-To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
- James.Bottomley@HansenPartnership.com
-Cc: martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
-References: <20240701090603.127783-1-jiapeng.chong@linux.alibaba.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240701090603.127783-1-jiapeng.chong@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240627-add-cpu-type-v2-0-f927bde83ad0@linux.intel.com> <20240627-add-cpu-type-v2-2-f927bde83ad0@linux.intel.com>
+In-Reply-To: <20240627-add-cpu-type-v2-2-f927bde83ad0@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 1 Jul 2024 19:08:41 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0g+ih6Yh3su58Wrj+p04vr_4nmcJc41O-8_OCyzVQFKpA@mail.gmail.com>
+Message-ID: <CAJZ5v0g+ih6Yh3su58Wrj+p04vr_4nmcJc41O-8_OCyzVQFKpA@mail.gmail.com>
+Subject: Re: [PATCH PATCH v2 2/9] cpufreq: intel_pstate: Use topology_cpu_type()
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	daniel.sneddon@linux.intel.com, tony.luck@intel.com, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, 
+	"Liang, Kan" <kan.liang@linux.intel.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
+	Brice Goglin <brice.goglin@gmail.com>, Mario Limonciello <mario.limonciello@amd.com>, 
+	Perry Yuan <Perry.Yuan@amd.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/1/24 2:06 AM, Jiapeng Chong wrote:
-> The return value from the call to scsi_execute_cmd() is int. However, the
-> return value is being assigned to an unsigned int variable 'the_result',
-> so making 'the_result' an int.
+On Thu, Jun 27, 2024 at 10:44=E2=80=AFPM Pawan Gupta
+<pawan.kumar.gupta@linux.intel.com> wrote:
+>
+> Intel pstate driver uses hybrid_get_type() to get the cpu-type of a given
+> CPU. It uses smp_call_function_single() which is sub-optimal. Avoid it by
+> using topology_hw_cpu_type(cpu) that returns the cached cpu-type.
+>
+> Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+> Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 
-Please explain the full effect of this patch in the patch description. I
-think this patch causes a potential read of uninitialized data (sshdr)
-to be skipped if scsi_execute_cmd() returns a negative value. Do you
-agree with this?
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Thanks,
+and I'm assuming that it will be routed along with the rest of the series.
 
-Bart.
+Thanks!
 
+> ---
+>  drivers/cpufreq/intel_pstate.c | 14 +++-----------
+>  1 file changed, 3 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstat=
+e.c
+> index 15de5e3d96fd..0a1e832c7536 100644
+> --- a/drivers/cpufreq/intel_pstate.c
+> +++ b/drivers/cpufreq/intel_pstate.c
+> @@ -1956,24 +1956,16 @@ static int knl_get_turbo_pstate(int cpu)
+>         return ret;
+>  }
+>
+> -static void hybrid_get_type(void *data)
+> -{
+> -       u8 *cpu_type =3D data;
+> -
+> -       *cpu_type =3D get_this_hybrid_cpu_type();
+> -}
+> -
+>  static int hwp_get_cpu_scaling(int cpu)
+>  {
+> -       u8 cpu_type =3D 0;
+> +       u8 cpu_type =3D topology_hw_cpu_type(cpu);
+>
+> -       smp_call_function_single(cpu, hybrid_get_type, &cpu_type, 1);
+>         /* P-cores have a smaller perf level-to-freqency scaling factor. =
+*/
+> -       if (cpu_type =3D=3D 0x40)
+> +       if (cpu_type =3D=3D X86_HW_CPU_TYPE_INTEL_CORE)
+>                 return hybrid_scaling_factor;
+>
+>         /* Use default core scaling for E-cores */
+> -       if (cpu_type =3D=3D 0x20)
+> +       if (cpu_type =3D=3D X86_HW_CPU_TYPE_INTEL_ATOM)
+>                 return core_get_scaling();
+>
+>         /*
+>
+> --
 
