@@ -1,133 +1,232 @@
-Return-Path: <linux-kernel+bounces-236287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35EA291DFFF
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:56:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9CBF91E001
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:57:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCF0E1F22370
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:56:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 477AFB255D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A15615A873;
-	Mon,  1 Jul 2024 12:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A1F315ADAD;
+	Mon,  1 Jul 2024 12:56:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eAf5da1L";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fzL8enEh"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QY2wzso3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63BC0145B09;
-	Mon,  1 Jul 2024 12:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6CC915990C
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 12:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719838608; cv=none; b=FMZQzuxkm8vG++wmwNTYMMjF9p9toAqRWfR4qNV0VoFkhEoae5aI4DJxmFPwFxBM3l4PCqk2J/Rm39z24WNKie+zz3MZi5Sw7jvPr8rpPIqxqJNJ9qSsSSJu978YBmS00TRFv4zZP5X1o0DY5+2rj0NAtMsSJ3yfwWBl5wpmKNY=
+	t=1719838609; cv=none; b=s56PVZGpugCetcwE6JN9IrE51Hh1aFuW7ng+3tiWhKHw2XfUxgiXZwOzUlYBIFb5Co8vj8r/ikv4pCVVWX11rCvs+L5qdv7Pv4IHebBYhjheD2omrth+tp+I0WRAOoBZTl6JZJugI2Mhg6Uh7UfSaHcmCqbyjOmmaWXBQ5F54N0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719838608; c=relaxed/simple;
-	bh=4abuYWviVGcFbfSub23I7YcPpLJIZ0K42garfyxmCmo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WwTmfpAFGdbPKUi3LD5vIFnZFUgSvcnRwo1RkSMgeXzDwZEBvavCpG3rK5ISkcn/jvHhcyms6YO8n6bkwoG01JyVXE6i1YU4jL4YsF/aFtLbf7hE1S/tV9CFJLSskAK8hFQCjE8ih8+q0KJy8KCLB3DgQTzTW/bE7QEptHKdV9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eAf5da1L; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fzL8enEh; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 1 Jul 2024 14:56:43 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1719838605;
+	s=arc-20240116; t=1719838609; c=relaxed/simple;
+	bh=kO+WM5ZQfB3Sr3j7wPI/DBlkW4XzSfrK+wt4u2ye5qw=;
+	h=From:References:MIME-Version:In-Reply-To:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E41I/2+vyI2GrwuB5eLiYb/DFys1TkIzuMsRMXMzHBhsHaPVn6hpYz40H6gmtc1tUemLcgaw87iUGV4xkEK+HeMqg+M1PssLCk79xrs8+PjIZ455Hzv0qHzpMDnYD6Bxuhofdg9lO2YigjAUQ3Sm2UT+12WKq/nhxLZHqLMryks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QY2wzso3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719838606;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=dBApTZsHAhU7GXzgUJOuBx5pWY7Nk5ITlgRQcEs/IAc=;
-	b=eAf5da1LgJ4oE317XtUcQl8aRT2HlNCAp6sAyTYDBF5uw14Kv2+OnROj1GjN9mJncq4Hvf
-	N+BhsB8Z36XfeJAkO55fhONOUTc19XLVBMb4MU5PM/IYxpwkNg89yNyTINWqEAeVaQJd8n
-	QFmuwPRr7CYm+Ybg3tUBgJalNU4tm+aOU//N7wbMJOWmYLGJXBk3I5I4K+7zXmcoTW4mKF
-	7VGu5l4xvxyL1c7qGrYscaQ79JdWgs3DdoSq0tILBmeiZNukizOw5KzzDxh74rGVprHalO
-	eL5uDsx6+7bWammQbKaI2Jz2sX/Q4+lW4m3kact77PlNGNrli+EUYNkKPgMebw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1719838605;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dBApTZsHAhU7GXzgUJOuBx5pWY7Nk5ITlgRQcEs/IAc=;
-	b=fzL8enEhiUH9rZou/amr7qFMmFMc1kWGYvki/C7mlMajsDxuZVFxWyMwrbm07yK+N6StgI
-	D2xoCx1eCqPM36BA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Daniel Bristot de Oliveira <bristot@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
-	Marco Elver <elver@google.com>, Mark Rutland <mark.rutland@arm.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v4 3/6] perf: Shrink the size of the recursion counter.
-Message-ID: <20240701125643.kqJWwrhW@linutronix.de>
-References: <20240624152732.1231678-1-bigeasy@linutronix.de>
- <20240624152732.1231678-4-bigeasy@linutronix.de>
- <20240701123137.GF20127@noisy.programming.kicks-ass.net>
+	bh=Zt43OVF+seYKp8/P4tWeHcdZ3AJSUDh9yfiJyQfU2oc=;
+	b=QY2wzso3b9i0ccQvmaCgrBYKT3PIRKEGdKZ8//qiSHDU7yyOkUZWVa059+6X9LiGFIqz7f
+	aJ08vc+wkhZKOtOAQaCjI62RgxoYgB8INPPpMaxkuEfqF+9sOz8aW/SElohrwSVF60xk3R
+	ZxWMl2KjZ9jWpVWh4HlLvZg1GIoYHtQ=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-402-fgauoQkgOZyG1aXuIhTp3Q-1; Mon, 01 Jul 2024 08:56:45 -0400
+X-MC-Unique: fgauoQkgOZyG1aXuIhTp3Q-1
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6b50f078c46so42470136d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 05:56:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719838605; x=1720443405;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:in-reply-to
+         :mime-version:references:from:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Zt43OVF+seYKp8/P4tWeHcdZ3AJSUDh9yfiJyQfU2oc=;
+        b=K/761cZMtcG2kIX2CWNhPhMinRYwXrwayNt1o6N2DBDmbqGt3Gnar59y87jFg3NO8d
+         /1AytrPJ8qLHsXqdOo7ENEai/wSSfPt7s2dF/vZsN/Jk8xXo85EDZa8FAnnxwFGlM/iL
+         wR/hgExZfrvBCmesIi1DVMDRRbZQhpstXOdP5xXL7YRHzl7rV+hZzXxq6BmqDiS9vSRj
+         h7QGDzKEVrc3sh4Rn9aZ80xSzY3VkSRlWZ+z7a38ot+NzvO6p6aeWjp2TvcUM8Be2Y0x
+         /URhTxeWYGHIbhcQpdwJhX1KBb0Ep3MYvd3bqGWX06Cgmfy9sSWG0Uq1L5+lVQkulzff
+         yYcw==
+X-Forwarded-Encrypted: i=1; AJvYcCXeZXZkC+o0oa6jv0TG8XBVkDmDDvScyFcKqU3kq0zLOMb/45d5gJVM3+H7RB5TIlJ0rNBSsD84/LnMemlKVJwqd5n2zmwTsm3W5NCR
+X-Gm-Message-State: AOJu0Yxx0b54LUjIgbp6Oxw+dN6FXaEppFQ99q0yBA5FIdVhx0ZKK9Rw
+	qFe9JGZoHKWK4Lgz5GNi8dnHTtopF3XFdR/m4qdnR/3fYqcsbyoItzwyoVk3eQdA3HVHTBxW4YP
+	yjtgJ2eywBt5V6k6pZdLOxfNlglEysf4KAU7P9JhzTFfmfbqUHCIR7gTBz5zdgg5lciXamnKNH1
+	SnTh0mqkcoeVBEoE3WCNGMKdYjLFxYwOGAcen8
+X-Received: by 2002:ad4:5746:0:b0:6b5:613:5acd with SMTP id 6a1803df08f44-6b5b70c2d37mr94774796d6.31.1719838605099;
+        Mon, 01 Jul 2024 05:56:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH3iY1Jl12VKssIf8agLrYEh9ASyagHF2DXcPKx8Of865/H1uEmWA05jSdI6+6/dVfzpADg7B7+93zqaHY4MF0=
+X-Received: by 2002:ad4:5746:0:b0:6b5:613:5acd with SMTP id
+ 6a1803df08f44-6b5b70c2d37mr94774616d6.31.1719838604782; Mon, 01 Jul 2024
+ 05:56:44 -0700 (PDT)
+Received: from 311643009450 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 1 Jul 2024 12:56:43 +0000
+From: =?UTF-8?Q?Adri=C3=A1n_Moreno?= <amorenoz@redhat.com>
+References: <20240630195740.1469727-1-amorenoz@redhat.com> <20240630195740.1469727-6-amorenoz@redhat.com>
+ <ZoKVtygkVYfaqjRI@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240701123137.GF20127@noisy.programming.kicks-ass.net>
+In-Reply-To: <ZoKVtygkVYfaqjRI@localhost.localdomain>
+Date: Mon, 1 Jul 2024 12:56:43 +0000
+Message-ID: <CAG=2xmMgJcir=mfQuybosg9C8j3Sx1V=Du0ObH1eT_SnBZ7nMg@mail.gmail.com>
+Subject: Re: [PATCH net-next v7 05/10] net: openvswitch: add psample action
+To: Michal Kubiak <michal.kubiak@intel.com>
+Cc: netdev@vger.kernel.org, aconole@redhat.com, echaudro@redhat.com, 
+	horms@kernel.org, i.maximets@ovn.org, dev@openvswitch.org, 
+	Donald Hunter <donald.hunter@gmail.com>, Jakub Kicinski <kuba@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Pravin B Shelar <pshelar@ovn.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-07-01 14:31:37 [+0200], Peter Zijlstra wrote:
-> On Mon, Jun 24, 2024 at 05:15:16PM +0200, Sebastian Andrzej Siewior wrote:
-> > There are four recursion counter, one for each context. The type of the
-> > counter is `int' but the counter is used as `bool' since it is only
-> > incremented if zero.
-> > 
-> > Reduce the type of the recursion counter to an unsigned char, keep the
-> > increment/ decrement operation.
-> 
-> Does this actually matter? Aren't u8 memops encoded by longer
-> instructions etc..
+On Mon, Jul 01, 2024 at 01:40:39PM GMT, Michal Kubiak wrote:
+> On Sun, Jun 30, 2024 at 09:57:26PM +0200, Adrian Moreno wrote:
+> > Add support for a new action: psample.
+> >
+> > This action accepts a u32 group id and a variable-length cookie and use=
+s
+> > the psample multicast group to make the packet available for
+> > observability.
+> >
+> > The maximum length of the user-defined cookie is set to 16, same as
+> > tc_cookie, to discourage using cookies that will not be offloadable.
+> >
+> > Acked-by: Eelco Chaudron <echaudro@redhat.com>
+> > Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+> > ---
+> >  Documentation/netlink/specs/ovs_flow.yaml | 17 ++++++++
+> >  include/uapi/linux/openvswitch.h          | 28 ++++++++++++++
+> >  net/openvswitch/Kconfig                   |  1 +
+> >  net/openvswitch/actions.c                 | 47 +++++++++++++++++++++++
+> >  net/openvswitch/flow_netlink.c            | 32 ++++++++++++++-
+> >  5 files changed, 124 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/netlink/specs/ovs_flow.yaml b/Documentation/=
+netlink/specs/ovs_flow.yaml
+> > index 4fdfc6b5cae9..46f5d1cd8a5f 100644
+> > --- a/Documentation/netlink/specs/ovs_flow.yaml
+> > +++ b/Documentation/netlink/specs/ovs_flow.yaml
+> > @@ -727,6 +727,12 @@ attribute-sets:
+> >          name: dec-ttl
+> >          type: nest
+> >          nested-attributes: dec-ttl-attrs
+> > +      -
+> > +        name: psample
+> > +        type: nest
+> > +        nested-attributes: psample-attrs
+> > +        doc: |
+> > +          Sends a packet sample to psample for external observation.
+> >    -
+> >      name: tunnel-key-attrs
+> >      enum-name: ovs-tunnel-key-attr
+> > @@ -938,6 +944,17 @@ attribute-sets:
+> >        -
+> >          name: gbp
+> >          type: u32
+> > +  -
+> > +    name: psample-attrs
+> > +    enum-name: ovs-psample-attr
+> > +    name-prefix: ovs-psample-attr-
+> > +    attributes:
+> > +      -
+> > +        name: group
+> > +        type: u32
+> > +      -
+> > +        name: cookie
+> > +        type: binary
+> >
+> >  operations:
+> >    name-prefix: ovs-flow-cmd-
+> > diff --git a/include/uapi/linux/openvswitch.h b/include/uapi/linux/open=
+vswitch.h
+> > index efc82c318fa2..3dd653748725 100644
+> > --- a/include/uapi/linux/openvswitch.h
+> > +++ b/include/uapi/linux/openvswitch.h
+> > @@ -914,6 +914,31 @@ struct check_pkt_len_arg {
+> >  };
+> >  #endif
+> >
+> > +#define OVS_PSAMPLE_COOKIE_MAX_SIZE 16
+>
+> In your patch #2 you use "TC_COOKIE_MAX_SIZE" as an array size for your
+> cookie. I know that now OVS_PSAMPLE_COOKIE_MAX_SIZE =3D=3D TC_COOKIE_MAX_=
+SIZE,
+> so this size will be validated correctly.
+> But how likely is that those 2 constants will have different values in th=
+e
+> future?
+> Would it be reasonable to create more strict dependency between those
+> macros, e.g.:
+>
+> #define OVS_PSAMPLE_COOKIE_MAX_SIZE TC_COOKIE_MAX_SIZE
+>
+> or, at least, add a comment that the size shouldn't be bigger than
+> TC_COOKIE_MAX_SIZE?
+> I'm just considering the risk of exceeding the array from the patch #2 wh=
+en
+> somebody increases OVS_PSAMPLE_COOKIE_MAX_SIZE in the future.
+>
+> Thanks,
+> Michal
+>
 
-The goal here isn't to reduce the opcodes but to add it to task_struct
-without making it larger by filling a hole.
+Hi Michal,
 
-But since you made me look at assembly:
-old:
-     316b:       65 48 8b 15 00 00 00    mov    %gs:0x0(%rip),%rdx        # 3173 <perf_swevent_get_recursion_context+0x33>
-     3173:       1c ff                   sbb    $0xff,%al
-     3175:       48 0f be c8             movsbq %al,%rcx
-     3179:       48 8d 94 8a 00 00 00    lea    0x0(%rdx,%rcx,4),%rdx
-     3180:       00
-                         317d: R_X86_64_32S      .data..percpu+0x4c
-     3181:       8b 0a                   mov    (%rdx),%ecx
-     3183:       85 c9                   test   %ecx,%ecx
-     3185:       75 0e                   jne    3195 <perf_swevent_get_recursion_context+0x55>
-     3187:       c7 02 01 00 00 00       movl   $0x1,(%rdx)
-^^^
-     318d:       0f be c0                movsbl %al,%eax
+Thanks for sharing your thoughts.
 
-new:
-     2ff8:       1c ff                   sbb    $0xff,%al
-     2ffa:       81 e2 00 01 ff 00       and    $0xff0100,%edx
-     3000:       83 fa 01                cmp    $0x1,%edx
-     3003:       1c ff                   sbb    $0xff,%al
-     3005:       48 0f be d0             movsbq %al,%rdx
-     3009:       48 8d 94 11 00 00 00    lea    0x0(%rcx,%rdx,1),%rdx
-     3010:       00
-                         300d: R_X86_64_32S      .data..percpu+0x4c
- 
-     3011:       80 3a 00                cmpb   $0x0,(%rdx)
-     3014:       75 0b                   jne    3021 <perf_swevent_get_recursion_context+0x51>
-     3016:       c6 02 01                movb   $0x1,(%rdx)
-^^^
-     3019:       0f be c0                movsbl %al,%eax
-     301c:       e9 00 00 00 00          jmp    3021 <perf_swevent_get_recursion_context+0x51>
+I tried to keep the dependency between both cookie sizes loose.
 
-So we do even save a few bytes. We could avoid the "movsbl" at 3019 by
-making the return type `unsigned char' ;)
+I don't want a change in TC_COOKIE_MAX_SIZE to inadvertently modify
+OVS_PSAMPLE_COOKIE_MAX_SIZE because OVS might not need a bigger cookie
+and even if it does, backwards compatibility needs to be guaranteed:
+meaning OVS userspace will have to detect the new size and use it or
+fall back to a smaller cookie for older kernels. All this needs to be
+known and worked on in userspace.
 
-Sebastian
+On the other hand, I intentionally made OVS's "psample" action as
+similar as possible to act_psample, including setting the same cookie
+size to begin with. The reason is that I think we should try to implement
+tc-flower offloading of this action using act_sample, plus 16 seemed a
+very reasonable max value.
+
+When we decide to support offloading the "psample" action, this must
+be done entirely in userspace. OVS must create a act_sample action
+(instead of the OVS "psample" one) via netlink. In no circumstances the
+openvswitch kmod interacts with tc directly.
+
+Now, back to your concern. If OVS_PSAMPLE_COOKIE_MAX_SIZE grows and
+TC_COOKIE_MAX_SIZE does not *and* we already support offloading this
+action to tc, the only consequence is that OVS userspace has a
+problem because the tc's netlink interface will reject cookies larger
+than TC_COOKIE_MAX_SIZE [1].
+This guarantees that the array in patch #2 is never overflown.
+
+OVS will have to deal with the different sizes and try to squeeze the
+data into TC_COOKIE_MAX_SIZE or fail to offload the action altogether.
+
+Psample does not have a size limit so different parts of the kernel can
+use psample with different internal max-sizes without any restriction.
+
+I hope this clears your concerns.
+
+[1] https://github.com/torvalds/linux/blob/master/net/sched/act_api.c#L1299
+
+Thanks.
+Adri=C3=A1n
+
 
