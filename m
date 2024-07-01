@@ -1,247 +1,158 @@
-Return-Path: <linux-kernel+bounces-235507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEC7091D5F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 04:11:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5225C91D5F9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 04:14:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7E2EB2109E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 02:11:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFF772819D1
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 02:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3031E79F9;
-	Mon,  1 Jul 2024 02:11:50 +0000 (UTC)
-Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [118.143.206.90])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE3B1366
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 02:11:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.143.206.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 541FE22F03;
+	Mon,  1 Jul 2024 02:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Dv9VK0Kx"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF2C171C9;
+	Mon,  1 Jul 2024 02:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719799909; cv=none; b=r6X3zNfdqawbov3g1Ki51HMMiwvFJQnaXvYIcVOwVNROHMglFF62OonBo+4YdGVV95CQCBmpBvRDVxugYaYGNUtjWTCe6mffnR22r4UpuA4Djzijgh0on98Tz18TaQYhYssX73JZ3xSHH/rYuIjAfCQcuhciEmzdZlG+x3ipzUs=
+	t=1719799997; cv=none; b=JGa6p6CYYikf1jT7LQ14oeFqamaI1uQUIg1s5z0WdXRABD0HXYg/QmMTt8+Sqrn1lFJZTG4ogXR3cD6GfHabflOCgTpm3o3ceFWavbxhKO2L9GqonA8bgKLybjoCp60K0BA28IytxjP83AxQmVQnKy6Q9zfITLVUO7axAOa7DdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719799909; c=relaxed/simple;
-	bh=ipxFb/TYfjlF6w2LfzLRfefmqCm7r+03ksiumd/71uY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=JZPrqZFnCOKk7d7mAst5j2gtDIeMpK2slfVUVCaZ96O9+1xUSwyCVMe2HwqRZQ0LZgxPeXmEBbEuCPtKjK/2LjbvQnnAgJhIFxwbs6EN5TIfKSC5GDNe8J4ffXqL+O7usWsyAzC+PClCLA74Ku9WINQ6QRiu8+BTM7DrJCiWayU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=118.143.206.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
-X-CSE-ConnectionGUID: cwpARdKPRW6YBdOCpXX8Nw==
-X-CSE-MsgGUID: 75r0jFp/QXaZTTGYAsy0ag==
-X-IronPort-AV: E=Sophos;i="6.09,175,1716220800"; 
-   d="scan'208";a="89537910"
-From: =?utf-8?B?5pyx5oG65Lm+?= <zhukaiqian@xiaomi.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner
-	<tglx@linutronix.de>, =?utf-8?B?5byg5ZiJ5Lyf?= <zhangjiawei8@xiaomi.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	=?utf-8?B?546L6Z+s?= <lingyue@xiaomi.com>, =?utf-8?B?54aK5Lqu?=
-	<xiongliang@xiaomi.com>, "isaacmanjarres@google.com"
-	<isaacmanjarres@google.com>, Frederic Weisbecker <frederic@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>, =?utf-8?B?5qKB5Lyf6bmP?=
-	<weipengliang@xiaomi.com>, =?utf-8?B?57+B6YeR6aOe?= <wengjinfei@xiaomi.com>
-Subject: RE: [External Mail]Re: Race condition when replacing the broadcast
- timer
-Thread-Topic: [External Mail]Re: Race condition when replacing the broadcast
- timer
-Thread-Index: AdrHa8Ctven+S08/SKWKg8CfgMneBAA1hJcAAC8tusD//9S3gP/7HaEw
-Date: Mon, 1 Jul 2024 02:11:36 +0000
-Message-ID: <bc1a086b932f454f9379c49221983675@xiaomi.com>
-References: <042520850d394f0bb0004a226db63d0d@xiaomi.com>
- <87o77m1v9r.ffs@tglx> <b07f9746a58d46919b1600b22f5dff05@xiaomi.com>
- <835d5847-1aa0-4852-89c7-6a6996b3eb65@linaro.org>
-In-Reply-To: <835d5847-1aa0-4852-89c7-6a6996b3eb65@linaro.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1719799997; c=relaxed/simple;
+	bh=92AGGsrcbotljDKeMUOW1yDTBBo1NNwetVgmd8RhVRo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YeQNCB8cei0L5xndVV1u+F3RGA4hr00N4Sq7D8c8d0h2yx0E862Y9ZacksLqbrif0roIe/JNp7TySBZnJe7Psm0O9X0hQOWip8SA8uF+73vnqTU6Q6c13AyBobISNJXi71TQoLaEBYRnT0NO+nvtwho/Qu0fv+SyfQm/bqyxPy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Dv9VK0Kx; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=qOVWR
+	6aXQqry3nItjJ+e8OBR8po78qC5/g5g+JfJjCI=; b=Dv9VK0KxkmIm3q8vlu8S3
+	FYk+DNS92yV5sq07dLJI6MBIbfOlRVWSa4McQetZLPP/Vb76Fj18whHGrXK1O7/y
+	kZsES1jwlzwt1yjFma73VbhP8H77wgQ7TasybTrZOoSOEa8YMxFg9D6nitdcaOS4
+	u9vN3hfLB4+2w6VXJ/5hts=
+Received: from localhost.localdomain (unknown [223.104.68.114])
+	by gzga-smtp-mta-g3-3 (Coremail) with SMTP id _____wD3v0uFEIJm1iKSBA--.55558S2;
+	Mon, 01 Jul 2024 10:12:22 +0800 (CST)
+From: Slark Xiao <slark_xiao@163.com>
+To: manivannan.sadhasivam@linaro.org,
+	loic.poulain@linaro.org,
+	ryazanov.s.a@gmail.com,
+	johannes@sipsolutions.net,
+	quic_jhugo@quicinc.com
+Cc: netdev@vger.kernel.org,
+	mhi@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Slark Xiao <slark_xiao@163.com>
+Subject: [PATCH v4 1/3] bus: mhi: host: Add Foxconn SDX72 related support
+Date: Mon,  1 Jul 2024 10:12:14 +0800
+Message-Id: <20240701021216.17734-1-slark_xiao@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3v0uFEIJm1iKSBA--.55558S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxur15Kry7Zw47JF4rKw4UArb_yoW5KrykpF
+	s3Z3yUta1kJFWrKFW8A34DG3Z5GrsxCr93KFnrKw1Igw1Yy3yYqFZ7K342kryYy3sFqryS
+	yF95WFy293ZrJF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRijjhUUUUU=
+X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiRwcPZGV4KDQrogAAsj
 
-K0ppYXdlaQ0KDQpKaWF3ZWksDQpQbGVhc2UgdXBkYXRlIGhlcmUgd2hlbiB5b3UgaGF2ZSB0aGUg
-dGVzdCByZXN1bHQNCg0KDQotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogRGFuaWVs
-IExlemNhbm8gPGRhbmllbC5sZXpjYW5vQGxpbmFyby5vcmc+DQpTZW50OiBGcmlkYXksIEp1bmUg
-MjgsIDIwMjQgMzoyMyBQTQ0KVG86IOacseaBuuS5viA8emh1a2FpcWlhbkB4aWFvbWkuY29tPjsg
-VGhvbWFzIEdsZWl4bmVyIDx0Z2x4QGxpbnV0cm9uaXguZGU+DQpDYzogbGludXgta2VybmVsQHZn
-ZXIua2VybmVsLm9yZzsg546L6Z+sIDxsaW5neXVlQHhpYW9taS5jb20+OyDnhorkuq4gPHhpb25n
-bGlhbmdAeGlhb21pLmNvbT47IGlzYWFjbWFuamFycmVzQGdvb2dsZS5jb207IEZyZWRlcmljIFdl
-aXNiZWNrZXIgPGZyZWRlcmljQGtlcm5lbC5vcmc+OyBBbm5hLU1hcmlhIEJlaG5zZW4gPGFubmEt
-bWFyaWFAbGludXRyb25peC5kZT4NClN1YmplY3Q6IFJlOiBbRXh0ZXJuYWwgTWFpbF1SZTogUmFj
-ZSBjb25kaXRpb24gd2hlbiByZXBsYWNpbmcgdGhlIGJyb2FkY2FzdCB0aW1lcg0KDQpb5aSW6YOo
-6YKu5Lu2XSDmraTpgq7ku7bmnaXmupDkuo7lsI/nsbPlhazlj7jlpJbpg6jvvIzor7fosKjmhY7l
-pITnkIbjgILoi6Xlr7npgq7ku7blronlhajmgKflrZjnlpHvvIzor7flsIbpgq7ku7bovazlj5Hn
-u5ltaXNlY0B4aWFvbWkuY29t6L+b6KGM5Y+N6aaIDQoNCk9uIDI4LzA2LzIwMjQgMDM6NTksIOac
-seaBuuS5viB3cm90ZToNCj4gVGhhbmtzIGZvciB0aGUgZmFzdCByZXBseS4NCj4gTWF5IEkga25v
-dyB3aGVuIHRoZXJlJ2xsIGJlIGEgZm9ybWFsIHBhdGNoIG9uIHRoZSBtYWlubGluZT8NCg0KRG8g
-eW91IGNvbmZpcm0gdGhlIHBhdGNoIGZpeGVzIHRoZSBpc3N1ZSA/DQoNCg0KPiAtLS0tLU9yaWdp
-bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBUaG9tYXMgR2xlaXhuZXIgPHRnbHhAbGludXRyb25p
-eC5kZT4NCj4gU2VudDogVGh1cnNkYXksIEp1bmUgMjcsIDIwMjQgNzoyNyBQTQ0KPiBUbzog5pyx
-5oG65Lm+IDx6aHVrYWlxaWFuQHhpYW9taS5jb20+OyBEYW5pZWwgTGV6Y2Fubw0KPiA8ZGFuaWVs
-LmxlemNhbm9AbGluYXJvLm9yZz4NCj4gQ2M6IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7
-IOeOi+mfrCA8bGluZ3l1ZUB4aWFvbWkuY29tPjsg54aK5LquDQo+IDx4aW9uZ2xpYW5nQHhpYW9t
-aS5jb20+OyBpc2FhY21hbmphcnJlc0Bnb29nbGUuY29tOyBGcmVkZXJpYw0KPiBXZWlzYmVja2Vy
-IDxmcmVkZXJpY0BrZXJuZWwub3JnPjsgQW5uYS1NYXJpYSBCZWhuc2VuDQo+IDxhbm5hLW1hcmlh
-QGxpbnV0cm9uaXguZGU+DQo+IFN1YmplY3Q6IFtFeHRlcm5hbCBNYWlsXVJlOiBSYWNlIGNvbmRp
-dGlvbiB3aGVuIHJlcGxhY2luZyB0aGUNCj4gYnJvYWRjYXN0IHRpbWVyDQo+DQo+IFvlpJbpg6jp
-gq7ku7ZdIOatpOmCruS7tuadpea6kOS6juWwj+exs+WFrOWPuOWklumDqO+8jOivt+iwqOaFjuWk
-hOeQhuOAguiLpeWvuemCruS7tuWuieWFqOaAp+WtmOeWke+8jOivt+WwhumCruS7tui9rOWPkee7
-mW1pc2VjQHhpYW9taS5jb23ov5vooYzlj43ppogNCj4NCj4gT24gV2VkLCBKdW4gMjYgMjAyNCBh
-dCAwMjoxNywg5pyx5oG65Lm+IHdyb3RlOg0KPj4gV2UgZmluZCBhIHBvc3NpYmxlIHJhY2UgY29u
-ZGl0aW9uIHdoZW4gcmVwbGFjaW5nIHRoZSBicm9hZGNhc3QgdGltZXIuDQo+PiBIZXJlIGlzIGhv
-dyB0aGUgcmFjZSBoYXBwZW5kLA0KPg0KPj4gMS4gSW4gdGhyZWFkIDAsIF9fX3RpY2tfYnJvYWRj
-YXN0X29uZXNob3RfY29udHJvbCwgdGltZXIgMCBhcyBhDQo+PiBicm9hZGNhc3QgdGltZXIgaXMg
-dXBkYXRpbmcgdGhlIG5leHRfZXZlbnQuDQo+DQo+PiAyLiBJbiB0aHJlYWQgMSwgdGlja19pbnN0
-YWxsX2Jyb2FkY2FzdF9kZXZpY2UsIHRpbWVyIDAgaXMgZ29pbmcgdG8gYmUNCj4+IHJlcGxhY2Vk
-IGJ5IGEgbmV3IHRpbWVyIDEuDQo+DQo+PiAzLiBJZiB0aHJlYWQgMCBnZXRzIHRoZSBicm9hZGNh
-c3QgdGltZXIgZmlyc3QsIGl0IHdvdWxkIGhhdmUgdGhlIG9sZA0KPj4gdGltZXIgcmV0dXJuZWQg
-KHRpbWVyIDApLiBXaGVuIHRocmVhZCAxIHNodXRzIHRoZSBvbGQgdGltZXIgZG93biBhbmQNCj4+
-IG1hcmtzIGl0IGFzIGRldGFjaGVkLCBUaHJlYWQgMCBzdGlsbCBoYXZlIHRoZSBjaGFuY2UgdG8g
-cmUtZW5hYmxlIHRoZQ0KPj4gb2xkIHRpbWVyIHdpdGggYSBub29wIGhhbmRsZXIgaWYgaXQgZXhl
-Y3V0ZXMgc2xvd2VyIHRoYW4gdGhyZWFkIDEuDQo+DQo+PiA0LiBBcyB0aGUgb2xkIHRpbWVyIGlz
-IGJpbmRlZCB0byBhIENQVSwgd2hlbiBwbHVnIG91dCB0aGF0IENQVSwNCj4+IGtlcm5lbCBmYWls
-cyBhdCBjbG9ja2V2ZW50cy5jOjY1Mw0KPg0KPiBDbGVhcmx5IHRpY2tfaW5zdGFsbF9icm9hZGNh
-c3RfZGV2aWNlKCkgbGFja3Mgc2VyaWFsaXphdGlvbi4NCj4NCj4gVGhlIHVudGVzdGVkIHBhdGNo
-IGJlbG93IHNob3VsZCBjdXJlIHRoYXQuDQo+DQo+IFRoYW5rcywNCj4NCj4gICAgICAgICAgdGds
-eA0KPiAtLS0NCj4gICBrZXJuZWwvdGltZS9jbG9ja2V2ZW50cy5jICAgIHwgICAzMSArKysrKysr
-KysrKysrKysrKysrLS0tLS0tLS0tLS0tDQo+ICAga2VybmVsL3RpbWUvdGljay1icm9hZGNhc3Qu
-YyB8ICAgMzYgKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tDQo+ICAga2VybmVs
-L3RpbWUvdGljay1pbnRlcm5hbC5oICB8ICAgIDIgKysNCj4gICAzIGZpbGVzIGNoYW5nZWQsIDQz
-IGluc2VydGlvbnMoKyksIDI2IGRlbGV0aW9ucygtKQ0KPg0KPiAtLS0gYS9rZXJuZWwvdGltZS9j
-bG9ja2V2ZW50cy5jDQo+ICsrKyBiL2tlcm5lbC90aW1lL2Nsb2NrZXZlbnRzLmMNCj4gQEAgLTU1
-NywyMyArNTU3LDE0IEBAIHZvaWQgY2xvY2tldmVudHNfaGFuZGxlX25vb3Aoc3RydWN0IGNsb2Mg
-IHsgIH0NCj4NCj4gLS8qKg0KPiAtICogY2xvY2tldmVudHNfZXhjaGFuZ2VfZGV2aWNlIC0gcmVs
-ZWFzZSBhbmQgcmVxdWVzdCBjbG9jayBkZXZpY2VzDQo+IC0gKiBAb2xkOiAgICAgICBkZXZpY2Ug
-dG8gcmVsZWFzZSAoY2FuIGJlIE5VTEwpDQo+IC0gKiBAbmV3OiAgICAgICBkZXZpY2UgdG8gcmVx
-dWVzdCAoY2FuIGJlIE5VTEwpDQo+IC0gKg0KPiAtICogQ2FsbGVkIGZyb20gdmFyaW91cyB0aWNr
-IGZ1bmN0aW9ucyB3aXRoIGNsb2NrZXZlbnRzX2xvY2sgaGVsZCBhbmQNCj4gLSAqIGludGVycnVw
-dHMgZGlzYWJsZWQuDQo+IC0gKi8NCj4gLXZvaWQgY2xvY2tldmVudHNfZXhjaGFuZ2VfZGV2aWNl
-KHN0cnVjdCBjbG9ja19ldmVudF9kZXZpY2UgKm9sZCwNCj4gLSAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgc3RydWN0IGNsb2NrX2V2ZW50X2RldmljZSAqbmV3KQ0KPiArdm9pZCBfX2Ns
-b2NrZXZlbnRzX2V4Y2hhbmdlX2RldmljZShzdHJ1Y3QgY2xvY2tfZXZlbnRfZGV2aWNlICpvbGQs
-DQo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IGNsb2NrX2V2ZW50
-X2RldmljZSAqbmV3KQ0KPiAgIHsNCj4gICAgICAgICAgLyoNCj4gICAgICAgICAgICogQ2FsbGVy
-IHJlbGVhc2VzIGEgY2xvY2sgZXZlbnQgZGV2aWNlLiBXZSBxdWV1ZSBpdCBpbnRvIHRoZQ0KPiAg
-ICAgICAgICAgKiByZWxlYXNlZCBsaXN0IGFuZCBkbyBhIG5vdGlmeSBhZGQgbGF0ZXIuDQo+ICAg
-ICAgICAgICAqLw0KPiAgICAgICAgICBpZiAob2xkKSB7DQo+IC0gICAgICAgICAgICAgICBtb2R1
-bGVfcHV0KG9sZC0+b3duZXIpOw0KPiAgICAgICAgICAgICAgICAgIGNsb2NrZXZlbnRzX3N3aXRj
-aF9zdGF0ZShvbGQsIENMT0NLX0VWVF9TVEFURV9ERVRBQ0hFRCk7DQo+ICAgICAgICAgICAgICAg
-ICAgbGlzdF9tb3ZlKCZvbGQtPmxpc3QsICZjbG9ja2V2ZW50c19yZWxlYXNlZCk7DQo+ICAgICAg
-ICAgIH0NCj4gQEAgLTU4NSw2ICs1NzYsMjIgQEAgdm9pZCBjbG9ja2V2ZW50c19leGNoYW5nZV9k
-ZXZpY2Uoc3RydWN0DQo+ICAgfQ0KPg0KPiAgIC8qKg0KPiArICogY2xvY2tldmVudHNfZXhjaGFu
-Z2VfZGV2aWNlIC0gcmVsZWFzZSBhbmQgcmVxdWVzdCBjbG9jayBkZXZpY2VzDQo+ICsgKiBAb2xk
-OiAgICAgICBkZXZpY2UgdG8gcmVsZWFzZSAoY2FuIGJlIE5VTEwpDQo+ICsgKiBAbmV3OiAgICAg
-ICBkZXZpY2UgdG8gcmVxdWVzdCAoY2FuIGJlIE5VTEwpDQo+ICsgKg0KPiArICogQ2FsbGVkIGZy
-b20gdmFyaW91cyB0aWNrIGZ1bmN0aW9ucyB3aXRoIGNsb2NrZXZlbnRzX2xvY2sgaGVsZCBhbmQN
-Cj4gKyAqIGludGVycnVwdHMgZGlzYWJsZWQuDQo+ICsgKi8NCj4gK3ZvaWQgY2xvY2tldmVudHNf
-ZXhjaGFuZ2VfZGV2aWNlKHN0cnVjdCBjbG9ja19ldmVudF9kZXZpY2UgKm9sZCwNCj4gKyAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IGNsb2NrX2V2ZW50X2RldmljZSAqbmV3
-KSB7DQo+ICsgICAgICAgaWYgKG9sZCkNCj4gKyAgICAgICAgICAgICAgIG1vZHVsZV9wdXQob2xk
-LT5vd25lcik7DQo+ICsgICAgICAgX19jbG9ja2V2ZW50c19leGNoYW5nZV9kZXZpY2Uob2xkLCBu
-ZXcpOyB9DQo+ICsNCj4gKy8qKg0KPiAgICAqIGNsb2NrZXZlbnRzX3N1c3BlbmQgLSBzdXNwZW5k
-IGNsb2NrIGRldmljZXMNCj4gICAgKi8NCj4gICB2b2lkIGNsb2NrZXZlbnRzX3N1c3BlbmQodm9p
-ZCkNCj4gQEAgLTY1MCw3ICs2NTcsNyBAQCB2b2lkIHRpY2tfY2xlYW51cF9kZWFkX2NwdShpbnQg
-Y3B1KQ0KPiAgICAgICAgICAgICAgICAgIGlmIChjcHVtYXNrX3Rlc3RfY3B1KGNwdSwgZGV2LT5j
-cHVtYXNrKSAmJg0KPiAgICAgICAgICAgICAgICAgICAgICBjcHVtYXNrX3dlaWdodChkZXYtPmNw
-dW1hc2spID09IDEgJiYNCj4gICAgICAgICAgICAgICAgICAgICAgIXRpY2tfaXNfYnJvYWRjYXN0
-X2RldmljZShkZXYpKSB7DQo+IC0gICAgICAgICAgICAgICAgICAgICAgIEJVR19PTighY2xvY2tl
-dmVudF9zdGF0ZV9kZXRhY2hlZChkZXYpKTsNCj4gKyAgICAgICAgICAgICAgICAgICAgICAgV0FS
-Tl9PTighY2xvY2tldmVudF9zdGF0ZV9kZXRhY2hlZChkZXYpKTsNCj4gICAgICAgICAgICAgICAg
-ICAgICAgICAgIGxpc3RfZGVsKCZkZXYtPmxpc3QpOw0KPiAgICAgICAgICAgICAgICAgIH0NCj4g
-ICAgICAgICAgfQ0KPiAtLS0gYS9rZXJuZWwvdGltZS90aWNrLWJyb2FkY2FzdC5jDQo+ICsrKyBi
-L2tlcm5lbC90aW1lL3RpY2stYnJvYWRjYXN0LmMNCj4gQEAgLTE2MiwyMyArMTYyLDMxIEBAIHN0
-YXRpYyBib29sIHRpY2tfc2V0X29uZXNob3Rfd2FrZXVwX2RldmkNCj4gICAgKi8NCj4gICB2b2lk
-IHRpY2tfaW5zdGFsbF9icm9hZGNhc3RfZGV2aWNlKHN0cnVjdCBjbG9ja19ldmVudF9kZXZpY2Ug
-KmRldiwgaW50IGNwdSkgIHsNCj4gLSAgICAgICBzdHJ1Y3QgY2xvY2tfZXZlbnRfZGV2aWNlICpj
-dXIgPSB0aWNrX2Jyb2FkY2FzdF9kZXZpY2UuZXZ0ZGV2Ow0KPiArICAgICAgIHN0cnVjdCBjbG9j
-a19ldmVudF9kZXZpY2UgKmN1cjsNCj4NCj4gLSAgICAgICBpZiAodGlja19zZXRfb25lc2hvdF93
-YWtldXBfZGV2aWNlKGRldiwgY3B1KSkNCj4gLSAgICAgICAgICAgICAgIHJldHVybjsNCj4gKyAg
-ICAgICBzY29wZWRfZ3VhcmQocmF3X3NwaW5sb2NrX2lycXNhdmUsICZ0aWNrX2Jyb2FkY2FzdF9s
-b2NrKSB7DQo+DQo+IC0gICAgICAgaWYgKCF0aWNrX2NoZWNrX2Jyb2FkY2FzdF9kZXZpY2UoY3Vy
-LCBkZXYpKQ0KPiAtICAgICAgICAgICAgICAgcmV0dXJuOw0KPiArICAgICAgICAgICAgICAgaWYg
-KHRpY2tfc2V0X29uZXNob3Rfd2FrZXVwX2RldmljZShkZXYsIGNwdSkpDQo+ICsgICAgICAgICAg
-ICAgICAgICAgICAgIHJldHVybjsNCj4NCj4gLSAgICAgICBpZiAoIXRyeV9tb2R1bGVfZ2V0KGRl
-di0+b3duZXIpKQ0KPiAtICAgICAgICAgICAgICAgcmV0dXJuOw0KPiArICAgICAgICAgICAgICAg
-Y3VyID0gdGlja19icm9hZGNhc3RfZGV2aWNlLmV2dGRldjsNCj4gKyAgICAgICAgICAgICAgIGlm
-ICghdGlja19jaGVja19icm9hZGNhc3RfZGV2aWNlKGN1ciwgZGV2KSkNCj4gKyAgICAgICAgICAg
-ICAgICAgICAgICAgcmV0dXJuOw0KPg0KPiAtICAgICAgIGNsb2NrZXZlbnRzX2V4Y2hhbmdlX2Rl
-dmljZShjdXIsIGRldik7DQo+ICsgICAgICAgICAgICAgICBpZiAoIXRyeV9tb2R1bGVfZ2V0KGRl
-di0+b3duZXIpKQ0KPiArICAgICAgICAgICAgICAgICAgICAgICByZXR1cm47DQo+ICsNCj4gKyAg
-ICAgICAgICAgICAgIF9fY2xvY2tldmVudHNfZXhjaGFuZ2VfZGV2aWNlKGN1ciwgZGV2KTsNCj4g
-KyAgICAgICAgICAgICAgIGlmIChjdXIpDQo+ICsgICAgICAgICAgICAgICAgICAgICAgIGN1ci0+
-ZXZlbnRfaGFuZGxlciA9IGNsb2NrZXZlbnRzX2hhbmRsZV9ub29wOw0KPiArICAgICAgICAgICAg
-ICAgV1JJVEVfT05DRSh0aWNrX2Jyb2FkY2FzdF9kZXZpY2UuZXZ0ZGV2LCBkZXYpOw0KPiArICAg
-ICAgICAgICAgICAgaWYgKCFjcHVtYXNrX2VtcHR5KHRpY2tfYnJvYWRjYXN0X21hc2spKQ0KPiAr
-ICAgICAgICAgICAgICAgICAgICAgICB0aWNrX2Jyb2FkY2FzdF9zdGFydF9wZXJpb2RpYyhkZXYp
-Ow0KPiArICAgICAgIH0NCj4gKw0KPiArICAgICAgIC8qIE1vZHVsZSByZWxlYXNlIG11c3QgYmUg
-b3V0c2lkZSBvZiB0aGUgbG9jayAqLw0KPiAgICAgICAgICBpZiAoY3VyKQ0KPiAtICAgICAgICAg
-ICAgICAgY3VyLT5ldmVudF9oYW5kbGVyID0gY2xvY2tldmVudHNfaGFuZGxlX25vb3A7DQo+IC0g
-ICAgICAgdGlja19icm9hZGNhc3RfZGV2aWNlLmV2dGRldiA9IGRldjsNCj4gLSAgICAgICBpZiAo
-IWNwdW1hc2tfZW1wdHkodGlja19icm9hZGNhc3RfbWFzaykpDQo+IC0gICAgICAgICAgICAgICB0
-aWNrX2Jyb2FkY2FzdF9zdGFydF9wZXJpb2RpYyhkZXYpOw0KPiArICAgICAgICAgICAgICAgbW9k
-dWxlX3B1dChvbGQtPm93bmVyKTsNCj4NCj4gICAgICAgICAgaWYgKCEoZGV2LT5mZWF0dXJlcyAm
-IENMT0NLX0VWVF9GRUFUX09ORVNIT1QpKQ0KPiAgICAgICAgICAgICAgICAgIHJldHVybjsNCj4g
-QEAgLTExODUsNyArMTE5Myw3IEBAIGludCB0aWNrX2Jyb2FkY2FzdF9vbmVzaG90X2FjdGl2ZSh2
-b2lkKQ0KPiAgICAqLw0KPiAgIGJvb2wgdGlja19icm9hZGNhc3Rfb25lc2hvdF9hdmFpbGFibGUo
-dm9pZCkNCj4gICB7DQo+IC0gICAgICAgc3RydWN0IGNsb2NrX2V2ZW50X2RldmljZSAqYmMgPSB0
-aWNrX2Jyb2FkY2FzdF9kZXZpY2UuZXZ0ZGV2Ow0KPiArICAgICAgIHN0cnVjdCBjbG9ja19ldmVu
-dF9kZXZpY2UgKmJjID0NCj4gKyBSRUFEX09OQ0UodGlja19icm9hZGNhc3RfZGV2aWNlLmV2dGRl
-dik7DQo+DQo+ICAgICAgICAgIHJldHVybiBiYyA/IGJjLT5mZWF0dXJlcyAmIENMT0NLX0VWVF9G
-RUFUX09ORVNIT1QgOiBmYWxzZTsgIH0gQEAgLTExOTMsNyArMTIwMSw3IEBAIGJvb2wgdGlja19i
-cm9hZGNhc3Rfb25lc2hvdF9hdmFpbGFibGUodm8NCj4gICAjZWxzZQ0KPiAgIGludCBfX3RpY2tf
-YnJvYWRjYXN0X29uZXNob3RfY29udHJvbChlbnVtIHRpY2tfYnJvYWRjYXN0X3N0YXRlIHN0YXRl
-KSAgew0KPiAtICAgICAgIHN0cnVjdCBjbG9ja19ldmVudF9kZXZpY2UgKmJjID0gdGlja19icm9h
-ZGNhc3RfZGV2aWNlLmV2dGRldjsNCj4gKyAgICAgICBzdHJ1Y3QgY2xvY2tfZXZlbnRfZGV2aWNl
-ICpiYyA9DQo+ICsgUkVBRF9PTkNFKHRpY2tfYnJvYWRjYXN0X2RldmljZS5ldnRkZXYpOw0KPg0K
-PiAgICAgICAgICBpZiAoIWJjIHx8IChiYy0+ZmVhdHVyZXMgJiBDTE9DS19FVlRfRkVBVF9IUlRJ
-TUVSKSkNCj4gICAgICAgICAgICAgICAgICByZXR1cm4gLUVCVVNZOw0KPiAtLS0gYS9rZXJuZWwv
-dGltZS90aWNrLWludGVybmFsLmgNCj4gKysrIGIva2VybmVsL3RpbWUvdGljay1pbnRlcm5hbC5o
-DQo+IEBAIC01Myw2ICs1Myw4IEBAIHN0YXRpYyBpbmxpbmUgdm9pZCBjbG9ja2V2ZW50X3NldF9z
-dGF0ZSggIH0NCj4NCj4gICBleHRlcm4gdm9pZCBjbG9ja2V2ZW50c19zaHV0ZG93bihzdHJ1Y3Qg
-Y2xvY2tfZXZlbnRfZGV2aWNlICpkZXYpOw0KPiArZXh0ZXJuIHZvaWQgX19jbG9ja2V2ZW50c19l
-eGNoYW5nZV9kZXZpY2Uoc3RydWN0IGNsb2NrX2V2ZW50X2RldmljZSAqb2xkLA0KPiArICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgY2xvY2tfZXZlbnRfZGV2
-aWNlDQo+ICsqbmV3KTsNCj4gICBleHRlcm4gdm9pZCBjbG9ja2V2ZW50c19leGNoYW5nZV9kZXZp
-Y2Uoc3RydWN0IGNsb2NrX2V2ZW50X2RldmljZSAqb2xkLA0KPiAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBjbG9ja19ldmVudF9kZXZpY2UNCj4gKm5ldyk7
-ICBleHRlcm4gdm9pZCBjbG9ja2V2ZW50c19zd2l0Y2hfc3RhdGUoc3RydWN0IGNsb2NrX2V2ZW50
-X2RldmljZQ0KPiAqZGV2LA0KPiAjLyoqKioqKuacrOmCruS7tuWPiuWFtumZhOS7tuWQq+acieWw
-j+exs+WFrOWPuOeahOS/neWvhuS/oeaBr++8jOS7hemZkOS6juWPkemAgee7meS4iumdouWcsOWd
-gOS4reWIl+WHuueahOS4quS6uuaIlue+pOe7hOOAguemgeatouS7u+S9leWFtuS7luS6uuS7peS7
-u+S9leW9ouW8j+S9v+eUqO+8iOWMheaLrOS9huS4jemZkOS6juWFqOmDqA0KPiDmiJbpg6jliIbl
-nLDms4TpnLLjgIHlpI3liLbjgIHmiJbmlaPlj5HvvInmnKzpgq7ku7bkuK3nmoTkv6Hmga/jgILl
-poLmnpzmgqjplJnmlLbkuobmnKzpgq7ku7bvvIzor7fmgqjnq4vljbPnlLXor53miJbpgq7ku7bp
-gJrnn6Xlj5Hku7bkurrlubbliKDpmaTmnKzpgq7ku7bvvIEgVGhpcyBlLW1haWwgYW5kDQo+IGl0
-cyBhdHRhY2htZW50cyBjb250YWluIGNvbmZpZGVudGlhbCBpbmZvcm1hdGlvbiBmcm9tIFhJQU9N
-SSwgd2hpY2ggaXMNCj4gaW50ZW5kZWQgb25seSBmb3IgdGhlIHBlcnNvbiBvciBlbnRpdHkgd2hv
-c2UgYWRkcmVzcyBpcyBsaXN0ZWQgYWJvdmUuDQo+IEFueSB1c2Ugb2YgdGhlIGluZm9ybWF0aW9u
-IGNvbnRhaW5lZCBoZXJlaW4gaW4gYW55IHdheSAoaW5jbHVkaW5nLCBidXQNCj4gbm90IGxpbWl0
-ZWQgdG8sIHRvdGFsIG9yIHBhcnRpYWwgZGlzY2xvc3VyZSwgcmVwcm9kdWN0aW9uLCBvcg0KPiBk
-aXNzZW1pbmF0aW9uKSBieSBwZXJzb25zIG90aGVyIHRoYW4gdGhlIGludGVuZGVkIHJlY2lwaWVu
-dChzKSBpcw0KPiBwcm9oaWJpdGVkLiBJZiB5b3UgcmVjZWl2ZSB0aGlzIGUtbWFpbCBpbiBlcnJv
-ciwgcGxlYXNlIG5vdGlmeSB0aGUNCj4gc2VuZGVyIGJ5IHBob25lIG9yIGVtYWlsIGltbWVkaWF0
-ZWx5IGFuZCBkZWxldGUgaXQhKioqKioqLyMNCg0KLS0NCjxodHRwOi8vd3d3LmxpbmFyby5vcmcv
-PiBMaW5hcm8ub3JnIOKUgiBPcGVuIHNvdXJjZSBzb2Z0d2FyZSBmb3IgQVJNIFNvQ3MNCg0KRm9s
-bG93IExpbmFybzogIDxodHRwOi8vd3d3LmZhY2Vib29rLmNvbS9wYWdlcy9MaW5hcm8+IEZhY2Vi
-b29rIHwgPGh0dHA6Ly90d2l0dGVyLmNvbS8jIS9saW5hcm9vcmc+IFR3aXR0ZXIgfCA8aHR0cDov
-L3d3dy5saW5hcm8ub3JnL2xpbmFyby1ibG9nLz4gQmxvZw0KDQojLyoqKioqKuacrOmCruS7tuWP
-iuWFtumZhOS7tuWQq+acieWwj+exs+WFrOWPuOeahOS/neWvhuS/oeaBr++8jOS7hemZkOS6juWP
-kemAgee7meS4iumdouWcsOWdgOS4reWIl+WHuueahOS4quS6uuaIlue+pOe7hOOAguemgeatouS7
-u+S9leWFtuS7luS6uuS7peS7u+S9leW9ouW8j+S9v+eUqO+8iOWMheaLrOS9huS4jemZkOS6juWF
-qOmDqOaIlumDqOWIhuWcsOazhOmcsuOAgeWkjeWItuOAgeaIluaVo+WPke+8ieacrOmCruS7tuS4
-reeahOS/oeaBr+OAguWmguaenOaCqOmUmeaUtuS6huacrOmCruS7tu+8jOivt+aCqOeri+WNs+eU
-teivneaIlumCruS7tumAmuefpeWPkeS7tuS6uuW5tuWIoOmZpOacrOmCruS7tu+8gSBUaGlzIGUt
-bWFpbCBhbmQgaXRzIGF0dGFjaG1lbnRzIGNvbnRhaW4gY29uZmlkZW50aWFsIGluZm9ybWF0aW9u
-IGZyb20gWElBT01JLCB3aGljaCBpcyBpbnRlbmRlZCBvbmx5IGZvciB0aGUgcGVyc29uIG9yIGVu
-dGl0eSB3aG9zZSBhZGRyZXNzIGlzIGxpc3RlZCBhYm92ZS4gQW55IHVzZSBvZiB0aGUgaW5mb3Jt
-YXRpb24gY29udGFpbmVkIGhlcmVpbiBpbiBhbnkgd2F5IChpbmNsdWRpbmcsIGJ1dCBub3QgbGlt
-aXRlZCB0bywgdG90YWwgb3IgcGFydGlhbCBkaXNjbG9zdXJlLCByZXByb2R1Y3Rpb24sIG9yIGRp
-c3NlbWluYXRpb24pIGJ5IHBlcnNvbnMgb3RoZXIgdGhhbiB0aGUgaW50ZW5kZWQgcmVjaXBpZW50
-KHMpIGlzIHByb2hpYml0ZWQuIElmIHlvdSByZWNlaXZlIHRoaXMgZS1tYWlsIGluIGVycm9yLCBw
-bGVhc2Ugbm90aWZ5IHRoZSBzZW5kZXIgYnkgcGhvbmUgb3IgZW1haWwgaW1tZWRpYXRlbHkgYW5k
-IGRlbGV0ZSBpdCEqKioqKiovIw0K
+Align with Qcom SDX72, add ready timeout item for Foxconn SDX72.
+And also, add firehose support since SDX72.
+
+Signed-off-by: Slark Xiao <slark_xiao@163.com>
+---
+v2: (1). Update the edl file path and name (2). Set SDX72 support
+trigger edl mode by default
+v3: Divide into 2 parts for Foxconn sdx72 platform
+---
+ drivers/bus/mhi/host/pci_generic.c | 43 ++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+
+diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+index 35ae7cd0711f..1fb1c2f2fe12 100644
+--- a/drivers/bus/mhi/host/pci_generic.c
++++ b/drivers/bus/mhi/host/pci_generic.c
+@@ -399,6 +399,8 @@ static const struct mhi_channel_config mhi_foxconn_sdx55_channels[] = {
+ 	MHI_CHANNEL_CONFIG_DL(13, "MBIM", 32, 0),
+ 	MHI_CHANNEL_CONFIG_UL(32, "DUN", 32, 0),
+ 	MHI_CHANNEL_CONFIG_DL(33, "DUN", 32, 0),
++	MHI_CHANNEL_CONFIG_UL_FP(34, "FIREHOSE", 32, 0),
++	MHI_CHANNEL_CONFIG_DL_FP(35, "FIREHOSE", 32, 0),
+ 	MHI_CHANNEL_CONFIG_HW_UL(100, "IP_HW0_MBIM", 128, 2),
+ 	MHI_CHANNEL_CONFIG_HW_DL(101, "IP_HW0_MBIM", 128, 3),
+ };
+@@ -419,6 +421,16 @@ static const struct mhi_controller_config modem_foxconn_sdx55_config = {
+ 	.event_cfg = mhi_foxconn_sdx55_events,
+ };
+ 
++static const struct mhi_controller_config modem_foxconn_sdx72_config = {
++	.max_channels = 128,
++	.timeout_ms = 20000,
++	.ready_timeout_ms = 50000,
++	.num_channels = ARRAY_SIZE(mhi_foxconn_sdx55_channels),
++	.ch_cfg = mhi_foxconn_sdx55_channels,
++	.num_events = ARRAY_SIZE(mhi_foxconn_sdx55_events),
++	.event_cfg = mhi_foxconn_sdx55_events,
++};
++
+ static const struct mhi_pci_dev_info mhi_foxconn_sdx55_info = {
+ 	.name = "foxconn-sdx55",
+ 	.fw = "qcom/sdx55m/sbl1.mbn",
+@@ -488,6 +500,28 @@ static const struct mhi_pci_dev_info mhi_foxconn_dw5932e_info = {
+ 	.sideband_wake = false,
+ };
+ 
++static const struct mhi_pci_dev_info mhi_foxconn_t99w515_info = {
++	.name = "foxconn-t99w515",
++	.edl = "fox/sdx72m/edl.mbn",
++	.edl_trigger = true,
++	.config = &modem_foxconn_sdx72_config,
++	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
++	.dma_data_width = 32,
++	.mru_default = 32768,
++	.sideband_wake = false,
++};
++
++static const struct mhi_pci_dev_info mhi_foxconn_dw5934e_info = {
++	.name = "foxconn-dw5934e",
++	.edl = "fox/sdx72m/edl.mbn",
++	.edl_trigger = true,
++	.config = &modem_foxconn_sdx72_config,
++	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
++	.dma_data_width = 32,
++	.mru_default = 32768,
++	.sideband_wake = false,
++};
++
+ static const struct mhi_channel_config mhi_mv3x_channels[] = {
+ 	MHI_CHANNEL_CONFIG_UL(0, "LOOPBACK", 64, 0),
+ 	MHI_CHANNEL_CONFIG_DL(1, "LOOPBACK", 64, 0),
+@@ -720,6 +754,15 @@ static const struct pci_device_id mhi_pci_id_table[] = {
+ 	/* DW5932e (sdx62), Non-eSIM */
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe0f9),
+ 		.driver_data = (kernel_ulong_t) &mhi_foxconn_dw5932e_info },
++	/* T99W515 (sdx72) */
++	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe118),
++		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w515_info },
++	/* DW5934e(sdx72), With eSIM */
++	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe11d),
++		.driver_data = (kernel_ulong_t) &mhi_foxconn_dw5934e_info },
++	/* DW5934e(sdx72), Non-eSIM */
++	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe11e),
++		.driver_data = (kernel_ulong_t) &mhi_foxconn_dw5934e_info },
+ 	/* MV31-W (Cinterion) */
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_THALES, 0x00b3),
+ 		.driver_data = (kernel_ulong_t) &mhi_mv31_info },
+-- 
+2.25.1
+
 
