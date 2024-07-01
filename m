@@ -1,196 +1,148 @@
-Return-Path: <linux-kernel+bounces-235823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 044F491DA21
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:40:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31E7E91DA28
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:40:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34A0C1C2134F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:40:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBE1A1F2239C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2699182C6C;
-	Mon,  1 Jul 2024 08:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC3F824BD;
+	Mon,  1 Jul 2024 08:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="EvSN6yFh"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="d+4eF9Pm"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E51189476;
-	Mon,  1 Jul 2024 08:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9005839F4;
+	Mon,  1 Jul 2024 08:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719823213; cv=none; b=BsYw6vGJiDsEVwDc1wyMIosw6jzBVhz9Tr4Ak4q/ak+b4yl31KAqdrC6zKNCgJTgzqmRwAlX0DP/zxWY5IvZkdQqVdROoifkRB2oCmNLMYhSCktehXbj54ch81DutHSD9oVgV4GA7F1+w1CUHlqCZ9WhKPsh/bJgbcMoLvsMwxc=
+	t=1719823234; cv=none; b=rD8k06mDFxncuNLhRvhk/Agz8dbJfJFIWZa1NmzbQNCx0gCRobqb4OBjH5GRX29jZllAG7XjRiYYkX0Xw2R08ZqxCvVQypOFln86CPspi7dmPUWozpJj1Z1EzCaHgKmuiOHD1jIbvKy1HebsKuGFZvYDQLilQnzsHejGmCzRF0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719823213; c=relaxed/simple;
-	bh=4/wnA+uYiqjt5dkDOrTLUlO0OCPO7YjRQj9M+itRiUI=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=RB+a4ZSLh+HCL7eTM6tXzlbBO3k7dxvGFCxKvZ73QuQJhgBPmAIPAvMumVvO3Q1Ry/8js/1/ArQMjqbGJ4eZCG80ioqVOyAdkeFSSpf6KaITKC+sZvGkQOoICD4I4SjGmT66w9zQYQXU0sDsu1YUycK3xzHJRZs8GAhcSiWp0sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=EvSN6yFh; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1719823210;
-	bh=4/wnA+uYiqjt5dkDOrTLUlO0OCPO7YjRQj9M+itRiUI=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=EvSN6yFhvZRL9rfBJCdg2n+Y/ZAVX4kJI42bWMdnQXpjCYIk1oUoEcBM0lnSDse7v
-	 59r9B//RkTZAu3AW827Vxi/iZOToYgvzbYq+LrbaNriDR6E7e23XH9OLIEmicQ1mMp
-	 imOv/eS8RlTrYhE9PwPnDhJ0wvNEt6laN9R93rWiEZ5TbmoXe/fJG8LA+nKSVjve8V
-	 u1Juojgi2etSU3Z+16ru/QP9cmmiKiyvDEjXgegdxFiE/A0ObFvluMOG600iCavliB
-	 W1PXlXUoUcD6FvEbdh1yaln42sg9Rr/hDqprwvciEvtqxwv0qV4bWLNMCR0fmkszat
-	 4gcSuEPiWbKtA==
-Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 824E03782109;
-	Mon,  1 Jul 2024 08:40:07 +0000 (UTC)
-Message-ID: <af21c2d7-46ce-4a18-88a5-c0d4bccaf1dc@collabora.com>
-Date: Mon, 1 Jul 2024 13:40:03 +0500
+	s=arc-20240116; t=1719823234; c=relaxed/simple;
+	bh=lQDakvkuTP95XC9nGbLvBkMLIuh0XUah0cZPHLuoKsE=;
+	h=From:Subject:To:CC:References:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=aFlIIBZlKUAQylQH5xpS1T6D7BD82WQS1Hn2OvUTP/I+9LBfmvdY/lb/Y/13tF7FGZ/A47tFobpns8tELYZ1DfrkXSyw7LWu+JhcVXdNxfdmdfAr9aX43HO22+U2Z6a+ckilieITyQRpKlPbWqe/HSBsrm7XZcBpeIEkAaKcme8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=d+4eF9Pm; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45ULuuvT006937;
+	Mon, 1 Jul 2024 08:40:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ILgMAm3EqPPh0KqXEOvCXs48fV2I2eMWHuby+dIR9PY=; b=d+4eF9PmHd5p3WEU
+	0raCfLW2iM/UaunLmOj/TPp9ymzWT+XPW94xCgam/rhbE3gJUB10Z9S1kX6POIG0
+	c37+Z1KJjVBfTDX0V9L/rNTEBFlv8rZ4xrLk9pghRkljBnbH5OX/dOVaiw+350nW
+	tXa+oy8RBSADea6SVlFM+/YaZGTvr6rLwIKVYTtqXd8CUK6eE7rTiB5VOaIk+kt+
+	ktPbmiyAhGvdqMVbw/G0wdShoAu0e4hXVPiQkU2TcKZa8xKDBcNeHxsE/fneOLEJ
+	muZich7gjc8IZ85XLetkfrsFveOU7DMRBu+bTN4VI+Q7UMkOs8D+yH+WciMqNIXB
+	I1Gbcw==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 402bejk8vj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 01 Jul 2024 08:40:28 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4618eRqi007170
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 1 Jul 2024 08:40:27 GMT
+Received: from [10.214.66.219] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 1 Jul 2024
+ 01:40:23 -0700
+From: Naina Mehta <quic_nainmeht@quicinc.com>
+Subject: Re: [PATCH v3 3/5] arm64: dts: qcom: sdx75: update reserved memory
+ regions for mpss
+To: Konrad Dybcio <konrad.dybcio@linaro.org>, <andersson@kernel.org>,
+        <mathieu.poirier@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <manivannan.sadhasivam@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240618131342.103995-1-quic_nainmeht@quicinc.com>
+ <20240618131342.103995-4-quic_nainmeht@quicinc.com>
+ <e5b7a888-8ca3-463a-a2de-cf719e58d7a0@linaro.org>
+ <c186bd2e-a132-fbe6-2212-dcdb93a6c14a@quicinc.com>
+ <45c95955-51a7-489f-993e-252e8bd63dbd@linaro.org>
+Message-ID: <fc7e3c93-1a79-6911-04c2-19ddc7e298cb@quicinc.com>
+Date: Mon, 1 Jul 2024 14:10:20 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, kernel@collabora.com,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH] selftests: tpm2: conform test to TAP output
-To: Jarkko Sakkinen <jarkko@kernel.org>
-References: <20240426091435.2742024-1-usama.anjum@collabora.com>
- <4fb5ad2e-cc9f-4ad6-94a5-7de9f503ab94@collabora.com>
+In-Reply-To: <45c95955-51a7-489f-993e-252e8bd63dbd@linaro.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <4fb5ad2e-cc9f-4ad6-94a5-7de9f503ab94@collabora.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: rAgPgtuWnVBKcgr4r2NkUCMxJbSIA-Le
+X-Proofpoint-ORIG-GUID: rAgPgtuWnVBKcgr4r2NkUCMxJbSIA-Le
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-01_07,2024-06-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ impostorscore=0 spamscore=0 clxscore=1015 mlxscore=0 suspectscore=0
+ bulkscore=0 adultscore=0 lowpriorityscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407010066
 
-Adding Jarkko
 
-On 5/28/24 10:05 AM, Muhammad Usama Anjum wrote:
-> Kind reminder
+
+On 6/26/2024 9:12 PM, Konrad Dybcio wrote:
+> On 24.06.2024 1:21 PM, Naina Mehta wrote:
+>>
+>>
+>> On 6/18/2024 7:08 PM, Konrad Dybcio wrote:
+>>>
+>>>
+>>> On 6/18/24 15:13, Naina Mehta wrote:
+>>>> Rename qdss@88800000 memory region as qlink_logging memory region
+>>>> and add qdss_mem memory region at address of 0x88500000.
+>>>> Split mpss_dsmharq_mem region into 2 separate regions and
+>>>> reduce the size of mpssadsp_mem region.
+>>>>
+>>>> Signed-off-by: Naina Mehta <quic_nainmeht@quicinc.com>
+>>>> ---
+>>>
+>>> Alright, we're getting somewhere. The commit message should however motivate
+>>> why such changes are necessary. For all we know, the splitting in two is
+>>> currently done for no reason, as qdss_mem and qlink_logging_mem are contiguous
+>>> - does the firmware have some expectations about them being separate?
+>>>
+>>
+>> Since different DSM region size is required for different modem firmware, mpss_dsmharq_mem region being split into 2 separate regions.
+>> This would provide the flexibility to remove the region which is
+>> not required for a particular platform.
+>> qlink_logging is being added at the memory region at the address of
+>> 0x88800000 as the region is being used by modem firmware.
 > 
-> On 4/26/24 2:14 PM, Muhammad Usama Anjum wrote:
->> The python unittest is being used for executing tests. TAP output
->> cannot be added in the unittest framework. The python unittest is being
->> run from a script. Add the output TAP logs to the script. Add "#"
->> prefix to the python unittest output which will mark all output as
->> informational TAP messages. Check exit status of the python unittest to
->> decide if test passed or failed. Not sure why but python unittest
->> outputs logs in stderr. So redirect the logs to stdout and then add
->> prefix.
->>
->> Specify the bash explicitly instead of sh to run these tests as all of
->> the kselftests are shifting towards using bash explicitly. Some
->> interpreters have different syntax and cause issues.
->>
->> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->> ---
->>  tools/testing/selftests/tpm2/test_async.sh | 24 ++++++++++++++++------
->>  tools/testing/selftests/tpm2/test_smoke.sh | 19 ++++++++++++++---
->>  tools/testing/selftests/tpm2/test_space.sh | 19 ++++++++++++++---
->>  3 files changed, 50 insertions(+), 12 deletions(-)
->>
->> diff --git a/tools/testing/selftests/tpm2/test_async.sh b/tools/testing/selftests/tpm2/test_async.sh
->> index 43bf5bd772fd4..0e6e5d9d649fb 100755
->> --- a/tools/testing/selftests/tpm2/test_async.sh
->> +++ b/tools/testing/selftests/tpm2/test_async.sh
->> @@ -1,10 +1,22 @@
->> -#!/bin/sh
->> +#!/bin/bash
->>  # SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
->>  
->> -# Kselftest framework requirement - SKIP code is 4.
->> -ksft_skip=4
->> +DIR="$(dirname $(readlink -f "$0"))"
->> +source "${DIR}"/../kselftest/ktap_helpers.sh
->>  
->> -[ -e /dev/tpm0 ] || exit $ksft_skip
->> -[ -e /dev/tpmrm0 ] || exit $ksft_skip
->> +ktap_print_header
->>  
->> -python3 -m unittest -v tpm2_tests.AsyncTest
->> +[ -e /dev/tpm0 ] || ktap_finished
->> +[ -e /dev/tpmrm0 ] || ktap_finished
->> +
->> +ktap_set_plan 1
->> +
->> +python3 -m unittest -v tpm2_tests.AsyncTest 2>&1 | sed "s/^/# /"
->> +
->> +if [ ${PIPESTATUS[0]} -eq $ksft_pass ]; then
->> +	ktap_test_pass "tpm2_tests.AsyncTest"
->> +else
->> +	ktap_test_fail "tpm2_tests.AsyncTest"
->> +fi
->> +
->> +ktap_finished
->> diff --git a/tools/testing/selftests/tpm2/test_smoke.sh b/tools/testing/selftests/tpm2/test_smoke.sh
->> index 58af963e5b55a..2219a180de91d 100755
->> --- a/tools/testing/selftests/tpm2/test_smoke.sh
->> +++ b/tools/testing/selftests/tpm2/test_smoke.sh
->> @@ -1,9 +1,22 @@
->> -#!/bin/sh
->> +#!/bin/bash
->>  # SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
->>  
->>  # Kselftest framework requirement - SKIP code is 4.
->> -ksft_skip=4
->> +DIR="$(dirname $(readlink -f "$0"))"
->> +source "${DIR}"/../kselftest/ktap_helpers.sh
->> +
->> +ktap_print_header
->>  
->>  [ -e /dev/tpm0 ] || exit $ksft_skip
->>  
->> -python3 -m unittest -v tpm2_tests.SmokeTest
->> +ktap_set_plan 1
->> +
->> +python3 -m unittest -v tpm2_tests.SmokeTest 2>&1 | sed "s/^/# /"
->> +
->> +if [ ${PIPESTATUS[0]} -eq $ksft_pass ]; then
->> +	ktap_test_pass "tpm2_tests.AsyncTest"
->> +else
->> +	ktap_test_fail "tpm2_tests.AsyncTest"
->> +fi
->> +
->> +ktap_finished
->> diff --git a/tools/testing/selftests/tpm2/test_space.sh b/tools/testing/selftests/tpm2/test_space.sh
->> index 04c47b13fe8ac..6a55d13d74983 100755
->> --- a/tools/testing/selftests/tpm2/test_space.sh
->> +++ b/tools/testing/selftests/tpm2/test_space.sh
->> @@ -1,9 +1,22 @@
->> -#!/bin/sh
->> +#!/bin/bash
->>  # SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
->>  
->>  # Kselftest framework requirement - SKIP code is 4.
->> -ksft_skip=4
->> +DIR="$(dirname $(readlink -f "$0"))"
->> +source "${DIR}"/../kselftest/ktap_helpers.sh
->> +
->> +ktap_print_header
->>  
->>  [ -e /dev/tpmrm0 ] || exit $ksft_skip
->>  
->> -python3 -m unittest -v tpm2_tests.SpaceTest
->> +ktap_set_plan 1
->> +
->> +python3 -m unittest -v tpm2_tests.SpaceTest 2>&1 | sed "s/^/# /"
->> +
->> +if [ ${PIPESTATUS[0]} -eq $ksft_pass ]; then
->> +	ktap_test_pass "tpm2_tests.AsyncTest"
->> +else
->> +	ktap_test_fail "tpm2_tests.AsyncTest"
->> +fi
->> +
->> +ktap_finished
+> Ok, now put that in the commit message :)
+> 
+> And I suppose:
+> 
+> "This would provide the flexibility to remove the region which is not
+> required for a particular platform." - but you still pass both to the
+> remoteproc in patch 4. Are these regions mutually exclusive?
 > 
 
--- 
-BR,
-Muhammad Usama Anjum
+Yes, for IDP platform, we are using both the DSM regions.
+Based on the modem firmware either both the regions have to be used or 
+only mpss_dsm_mem has to be used.
+
+Regards,
+Naina
+
+> Konrad
+> 
 
