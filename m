@@ -1,184 +1,136 @@
-Return-Path: <linux-kernel+bounces-236596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 170C791E48C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:48:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3770C91E48F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:49:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D9E81F253C1
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:48:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D653A1F221D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C5416D32E;
-	Mon,  1 Jul 2024 15:48:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57BA116D334;
+	Mon,  1 Jul 2024 15:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uGIasQMv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="TxpvVahb"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6EAF3236;
-	Mon,  1 Jul 2024 15:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D4C3236
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 15:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719848888; cv=none; b=HEa+h8AuEbRp5kLct2QCD0+xt+zeqsKVpAFziB2+HFwVvkeR9E3z+mCgW3e8gnWc72URUKG++hoiZwu8sOhDEOqXU60zUNjQrYHLk/ToCkkDvsgg/Red3zn6sInye/ZoSdixu3qbpSdslC+HRoYaj4SToz9KUL6JEESW2BAu9hU=
+	t=1719848967; cv=none; b=SX5jjQ2n4U6jGS3un5iEiG+qNDrCmUGGSdPrsqQ7mJfHdHfhsIuQNrllgwsY2uFD+lbZI0a5+hJhn64Snpz43D4WV/Ys0M2JeQyLRZfIYUb4Pe8iAChlqqv/0NdD93esNSaGoNctl/R+9AVGnOb5EUuJ7Yhw2dnENh6VAEio6nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719848888; c=relaxed/simple;
-	bh=/VH/3Ey/xG35l3GHO0Mz0W9la2fMePm/3Z9rnD2V+4E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F6QA3jpTIs9cq1oz0Lz9BbEjKzuDX76jDeRcUoCeUiFktVXMM+fB62LhDwvOzy2LETQPSUjprHTA+GinAdjH4kZpw2Wl8rHoGi+RwVt2mvVgBjmOLqcvOWf5CusC7Z0gE3UDVomFtMfMtl+z4VZqbb07rvyQz2G1O88H27NVQVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uGIasQMv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 497E5C32786;
-	Mon,  1 Jul 2024 15:48:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719848888;
-	bh=/VH/3Ey/xG35l3GHO0Mz0W9la2fMePm/3Z9rnD2V+4E=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=uGIasQMvuXMBB49ZwGgSdjKkJ8GxSNlpuI/4jSIxI+HVxLyA6ba5Ft2v0vltED1tp
-	 wSrRbiA4FvUw2kc4/flO1/Uu7Bz0DpJ29MgGk8dHIPAC+/OVk70MVuSTwyEiK5iZNG
-	 6GlAyJIyuRxnm2n6cIYQf/kTk9Z4szxmy/JShyIVkh0Nb9x/i6D9bvIufSSjLnOWWH
-	 h0f03dCuywssH1NZAzEIEZBODP2/YJt/Qu0zJIw4UKtHzxHUk2cTT9zwOoXRMDZ8vR
-	 It/Etw85yrhQWGZ3l0pJ9tz+e+0sdN+Fw36ZsINa4ta0UHKRlrwYLxFqMN+O0c4ZNK
-	 G/wYP4mApcpfw==
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-25cc44857a1so335434fac.3;
-        Mon, 01 Jul 2024 08:48:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVWfLnGrvcIJyBtHtSO2hmnQ/BYmeXzejqZnpgDep1DIZI6oE3+RdGsPQxcsEAkjU2S6UulIYy9k1M8i9jo82XcAreS0cTfmwrzYedxvvxic3NpD8EV8m1CDv0311etLeVKK/z6lCrRP27lMDcLBnW4CoLyM++WrgIOTcZZVgZKR+pZ
-X-Gm-Message-State: AOJu0Yy25keq0x7YIKLJvl7U4LExnUAzJYmU7fS7v2Qg93pwxsm6K5Dq
-	HZhkPnTDbl2ZOkKVkAZUuJORooyPiWooc9k0haBHpopk3GicBtamT4iCxtRGEBBIekUeGS1EJIw
-	SzCfwf/+iZGi7IjqkR2VXzVonvC8=
-X-Google-Smtp-Source: AGHT+IH/fEob6+VKSIrt2TPZFzQS/Lx2tB+/dy8MJsM5vB+GatoWKl4OltK48wxmENCyhWXyGLXsRaNEcgrxy/sWOm0=
-X-Received: by 2002:a05:6870:b155:b0:254:d417:351f with SMTP id
- 586e51a60fabf-25db338f8f9mr6474785fac.1.1719848887517; Mon, 01 Jul 2024
- 08:48:07 -0700 (PDT)
+	s=arc-20240116; t=1719848967; c=relaxed/simple;
+	bh=7wpTDCYkfM0h9G8p58hcJdgXA+PbS7WdaAYXL72gy+A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X5/3RQswbm/6WOnRS6H8EOU8QpCYK7omPgVybSjCvwlfJFJHXO0zEi1+LdwdQ2gJLfDoqyHnaEQ6x6tvL9SlMsJ/0areJztx9H/3zpH1idFHsRwbDL4RolsCcxB30RreE+uOqVgh8kG03gCc/mbOe+BHMpKgAJlQ3Kon3jejBIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=TxpvVahb; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6325b04c275so31901067b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 08:49:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1719848965; x=1720453765; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=umkqtCJW3Dg9JtpfzIAAg1v5vJehmts33cJFqn8dvR8=;
+        b=TxpvVahbrreOtYqdLCGsduPIeatSSJqrD0sRe9SrSNMVR4h1EfRwr2T8C+/TXTphey
+         1BvOTolUqFbaRFbJ3vB5fzv996sDKqXyIF4LHe8w/C+bfwwojFnWtd63R3dxhoW+LSUL
+         xDA1jnAK69sfslASgvaXKar/FVcP9oCchikDH9PKqlwdfIZ6jeI4c8PiDIdw9SKlbGPQ
+         nlt8KYun7Gp1zjHEC4JDa2huokwqPfoqTXWOuwFPT/J5LXbYer1i8aSIxhLsWcpW1VWN
+         9M48huni+ruHOgpD8eIlBQSX8sTaL0RBGMKzYRqziilz/VWdIlBiZgpUv8y30Y++hxtL
+         whww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719848965; x=1720453765;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=umkqtCJW3Dg9JtpfzIAAg1v5vJehmts33cJFqn8dvR8=;
+        b=i24pK9BafIy0uZ9sCsGX5G2N9c5Yy/a1IfH2wrXB+wvjf9YVvgd6m86zKVoOdnSE3z
+         K2RxTT4OvpBv+tyY1MAc4wtG/Y7z0jlq5waysftPrHur/Ez+FyiAP1pWiISSvA+sMeXh
+         QclX15L2sjzFbxCrwgacEytEtKmdRHU5KAthg7AEruefVUZN5209J3o6Idazw9kZTaGs
+         VoXstr4zVWbvrrrYx2wALY7oto1Eg+n7qxD7WNzQ1OEYDRhr73bIf8IR9Hto4eG/S8lI
+         1M7y5NJqBzp/c48nqc+9UvaeEYBq8DhX1OcYppJk92iLM/HNhsPR6KTwoAYs6xTGKd/7
+         ZC+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWFa1ispoSM8P3Kth01An4B6ZcnYYRxyTcPPHccDDGxSE2l+CbjdvmbtXJ63KKHZz9r8lBhVAAbW7v6NsLz2roGpMcjMV4yHn1wHa8o
+X-Gm-Message-State: AOJu0YzG4Suw8nLmO81LYRfVgl1ARQCqEWg6rMk5l3VeO/MmitwNqENR
+	bj48R19vjbZjuir1S3AxPL7SteRQZ15jQ1JTR6KkyxJNldItxbafVTfBdaRRU/E=
+X-Google-Smtp-Source: AGHT+IGu9I2wc2U8NTdlZqwI73pTcvt2JvT2wJhK92JWQZzopvjsvNausRGAk2vO9Al2yPEEKQkmTw==
+X-Received: by 2002:a05:690c:710:b0:64b:8e82:1f9 with SMTP id 00721157ae682-64c7123bf4amr65310827b3.18.1719848965244;
+        Mon, 01 Jul 2024 08:49:25 -0700 (PDT)
+Received: from [100.64.0.1] ([147.124.94.167])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-64a9c405c9csm14034647b3.128.2024.07.01.08.49.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Jul 2024 08:49:24 -0700 (PDT)
+Message-ID: <54232f3e-4fea-4996-a90b-6de51e1c51e0@sifive.com>
+Date: Mon, 1 Jul 2024 10:49:23 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240627085451.3813989-1-daniel.lezcano@linaro.org>
- <CAJZ5v0iO6MrX3QxAu4Wj4grUL2g7gPPXO3f8PFmZBot-Ud32TQ@mail.gmail.com> <9c2971dd-2f2d-426f-9107-eae93d5dd554@linaro.org>
-In-Reply-To: <9c2971dd-2f2d-426f-9107-eae93d5dd554@linaro.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 1 Jul 2024 17:47:56 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ip9P7uD76i-SDxpea1Qj_8vgqhQ-jJt2h5iqYsMUaCzg@mail.gmail.com>
-Message-ID: <CAJZ5v0ip9P7uD76i-SDxpea1Qj_8vgqhQ-jJt2h5iqYsMUaCzg@mail.gmail.com>
-Subject: Re: [PATCH] thermal/core: Introduce user trip points
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 07/13] riscv: csr: Add CSR encodings for
+ VCSR_VXRM/VCSR_VXSAT
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
+ linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ Heiko Stuebner <heiko@sntech.de>, Conor Dooley <conor@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Jonathan Corbet <corbet@lwn.net>,
+ Shuah Khan <shuah@kernel.org>, Guo Ren <guoren@kernel.org>,
+ Evan Green <evan@rivosinc.com>, Andy Chiu <andy.chiu@sifive.com>,
+ Jessica Clarke <jrtc27@jrtc27.com>
+References: <20240619-xtheadvector-v3-0-bff39eb9668e@rivosinc.com>
+ <20240619-xtheadvector-v3-7-bff39eb9668e@rivosinc.com>
+Content-Language: en-US
+From: Samuel Holland <samuel.holland@sifive.com>
+In-Reply-To: <20240619-xtheadvector-v3-7-bff39eb9668e@rivosinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 1, 2024 at 5:13=E2=80=AFPM Daniel Lezcano <daniel.lezcano@linar=
-o.org> wrote:
->
-> On 28/06/2024 15:56, Rafael J. Wysocki wrote:
-> > On Thu, Jun 27, 2024 at 10:55=E2=80=AFAM Daniel Lezcano
-> > <daniel.lezcano@linaro.org> wrote:
-> >>
-> >> Currently the thermal framework has 4 trip point types:
-> >>
-> >> - active : basically for fans (or anything requiring energy to cool
-> >>    down)
-> >>
-> >> - passive : a performance limiter
-> >>
-> >> - hot : for a last action before reaching critical
-> >>
-> >> - critical : a without return threshold leading to a system shutdown
-> >>
-> >> A thermal zone monitors the temperature regarding these trip
-> >> points. The old way to do that is actively polling the temperature
-> >> which is very bad for embedded systems, especially mobile and it is
-> >> even worse today as we can have more than fifty thermal zones. The
-> >> modern way is to rely on the driver to send an interrupt when the trip
-> >> points are crossed, so the system can sleep while the temperature
-> >> monitoring is offloaded to a dedicated hardware.
-> >>
-> >> However, the thermal aspect is also managed from userspace to protect
-> >> the user, especially tracking down the skin temperature sensor. The
-> >> logic is more complex than what we found in the kernel because it
-> >> needs multiple sources indicating the thermal situation of the entire
-> >> system.
-> >>
-> >> For this reason it needs to setup trip points at different levels in
-> >> order to get informed about what is going on with some thermal zones
-> >> when running some specific application.
-> >>
-> >> For instance, the skin temperature must be limited to 43=C2=B0C on a l=
-ong
-> >> run but can go to 48=C2=B0C for 10 minutes, or 60=C2=B0C for 1 minute.
-> >>
-> >> The thermal engine must then rely on trip points to monitor those
-> >> temperatures. Unfortunately, today there is only 'active' and
-> >> 'passive' trip points which has a specific meaning for the kernel, not
-> >> the userspace. That leads to hacks in different platforms for mobile
-> >> and embedded systems where 'active' trip points are used to send
-> >> notification to the userspace. This is obviously not right because
-> >> these trip are handled by the kernel.
-> >>
-> >> This patch introduces the 'user' trip point type where its semantic is
-> >> simple: do nothing at the kernel level, just send a notification to
-> >> the user space.
-> >>
-> >> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> >> ---
-> >>   .../devicetree/bindings/thermal/thermal-zones.yaml        | 1 +
-> >>   drivers/thermal/thermal_core.c                            | 8 ++++++=
-++
-> >>   drivers/thermal/thermal_of.c                              | 1 +
-> >>   drivers/thermal/thermal_trace.h                           | 4 +++-
-> >>   drivers/thermal/thermal_trip.c                            | 1 +
-> >>   include/uapi/linux/thermal.h                              | 1 +
-> >>   6 files changed, 15 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/thermal/thermal-zones.y=
-aml b/Documentation/devicetree/bindings/thermal/thermal-zones.yaml
-> >> index 68398e7e8655..cb9ea54a192e 100644
-> >> --- a/Documentation/devicetree/bindings/thermal/thermal-zones.yaml
-> >> +++ b/Documentation/devicetree/bindings/thermal/thermal-zones.yaml
-> >> @@ -153,6 +153,7 @@ patternProperties:
-> >>                 type:
-> >>                   $ref: /schemas/types.yaml#/definitions/string
-> >>                   enum:
-> >> +                  - user     # enable user notification
-> >>                     - active   # enable active cooling e.g. fans
-> >>                     - passive  # enable passive cooling e.g. throttlin=
-g cpu
-> >>                     - hot      # send notification to driver
-> >> diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_=
-core.c
-> >> index 2aa04c46a425..506f880d9aa9 100644
-> >> --- a/drivers/thermal/thermal_core.c
-> >> +++ b/drivers/thermal/thermal_core.c
-> >> @@ -734,6 +734,14 @@ int thermal_bind_cdev_to_trip(struct thermal_zone=
-_device *tz,
-> >>          if (tz !=3D pos1 || cdev !=3D pos2)
-> >>                  return -EINVAL;
-> >>
-> >> +       /*
-> >> +        * It is not allowed to bind a cooling device with a trip
-> >> +        * point user type because no mitigation should happen from
-> >> +        * the kernel with these trip points
-> >> +        */
-> >> +       if (trip->type =3D=3D THERMAL_TRIP_USER)
-> >> +               return -EINVAL;
-> >
-> > Maybe print a debug message when bailing out here?
->
-> After thinking a bit about the message, it sounds to me that is a really
-> an error in the firmware if we end up binding an 'user' trip point.
->
-> What about the following message:
->
-> dev_err(tz->device, "Trying to bind the cooling device '%s' with an
-> 'user' trip point id=3D%d", cdev->type, trip->id);
+Hi Charlie,
 
-s/an// I think.
+On 2024-06-19 6:57 PM, Charlie Jenkins wrote:
+> The VXRM vector csr for xtheadvector has an encoding of 0xa and VXSAT
+> has an encoding of 0x9.
+> 
+> Co-developed-by: Heiko Stuebner <heiko@sntech.de>
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> ---
+>  arch/riscv/include/asm/csr.h | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
+> index 18e178d83401..9086639a3dde 100644
+> --- a/arch/riscv/include/asm/csr.h
+> +++ b/arch/riscv/include/asm/csr.h
+> @@ -220,6 +220,8 @@
+>  #define VCSR_VXRM_MASK			3
+>  #define VCSR_VXRM_SHIFT			1
+>  #define VCSR_VXSAT_MASK			1
+> +#define VCSR_VXSAT			0x9
+> +#define VCSR_VXRM			0xa
 
-Also I wouldn't use dev_err() as it indicates a kernel issue.  Maybe
-dev_info(tz->device, FW_BUG ...)?
+These are normal CSR indexes, so the prefix should be just "CSR_".
+
+Regards,
+Samuel
+
+>  
+>  /* symbolic CSR names: */
+>  #define CSR_CYCLE		0xc00
+> 
+
 
