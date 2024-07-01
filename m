@@ -1,188 +1,148 @@
-Return-Path: <linux-kernel+bounces-236246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A662091DF5A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:33:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E97991DF62
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:34:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC3531C2110F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:33:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 175F728208D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C157414D430;
-	Mon,  1 Jul 2024 12:33:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1527014D430;
+	Mon,  1 Jul 2024 12:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="d58UWAuG"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UpqgutNQ"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AC0714B08E
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 12:33:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73AA586250
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 12:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719837199; cv=none; b=GbRu6a21xThc21Gj2fv2Rd2ozALyi1/P6fYRhxrgWQjFq4ubIwpevWMcrchARKHQT9CSAVvOUJdVZpOXg2MIWLPlzmgoTRbVMi530SccLSDIzOZyAugncZ7n9/eHypZcNh1UrFWcYhObWO6cOIAEdjEgOkuUrRb1HIcPk/aqZAA=
+	t=1719837251; cv=none; b=dkt+NHHr7NxM97Cq7pwsN0H7R4k9q7n2VSgKG8cQrayBaN777woN7AvIjnYSExQbbRIaeX2zXqJMl6lcvhh9rNvzxfG/riqy3I8wav4tGgchWEcRQRb4Ei7ANa9Z0OXF84yYlM1oHPuVdLBUXrqdb07Kh+ZOt/0DLuJjea3KcxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719837199; c=relaxed/simple;
-	bh=tFDvO15Mebnvmfdq0XPYH2VtssE1jRAQuVZNBRHfY/0=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UBhWsJ7avGJI/gRxwwIyQHTd9d6G+LpNN8ugB1AVx47Gf7G7gI2SmqO35NLD6Q8fs8xZhCk8ReEgXnJsCb+18aVGYiyzHjJqbgpbJPlVCXvZC9GHbQFeApXBsis1njSswP2sgBQ3sC1RH7ld36zXOdsV6d6rt1z4P6+eJVzfZSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=d58UWAuG; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id C9EE63F919
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 12:33:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1719837195;
-	bh=d0e/e2pXlpxb22nPKrMuU5Hax3H7AOyGMYL3diD46zE=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=d58UWAuG4qx2AGva5p2nBSw9vPujmE18aaXtvS08C4Xxt3ErMELnDY2XyAW/yT/0H
-	 8ghJ79gQu4EDcE1p19nVVv9EUV/k+yWrujDM9jcT3pf8ZYAHCNtNAkhlzJRBZkvtdZ
-	 xnvrOxMs1GDO7vE2lwDjxwepTff/npUAnLCY880fdERbuR7AGpcTdUcn/1w3u0ljlR
-	 NXVd1t9tMcw+KR/DjB9akR0j1AGGvZ4HvUWObSWqLXBX5OLVNCCmy3a+IMm/O7VLeg
-	 N85qkXLc+EQ2XHHYwwXiqCZ++BgDKX1xwsQSESXVkm89Z5GLz10qoibvtBaUQGyKtA
-	 lbMeSQ5bTcNpw==
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-43fb02db6d2so38875751cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 05:33:15 -0700 (PDT)
+	s=arc-20240116; t=1719837251; c=relaxed/simple;
+	bh=kt7z8+rEOdJwKmgSycNoh2R+LGoo0w5oUmgkQgFW4P8=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=lkIcdsshCDk9I646q1iJC0zk6IroTIF0+UvU2k1Nx8dORbor20c1ayQxCkG/nEaZeZ56Vp6i0vSgrGGJAf1cdnjxebnykbr2iuMsCQbH0oCfZLgx/CyAY7OI1WX3CEEG0hbMVJRvua0LV2VHvDxoagyiC42k5sbJ1ua0hXlwR+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UpqgutNQ; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3627ef1fc07so1754844f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 05:34:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719837247; x=1720442047; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a287NlBt1es5eAg2uwHXF+qjhDTjmaYvEUEHcHWzfuk=;
+        b=UpqgutNQeO5Q92x3IGAiM/ML8pUfh+d+oqKLPE8yHV+7loyKqmaD8eW+vmmgT01ykE
+         PuRi0s79VL/OuG5MELoaCcdCcMZnvoYI6QNluPh95J6chBZToSgE1BnjuSEU9SQWpLES
+         gg9PN378ZivNxJCDr9VW/aqGvvKrqkSAgurU6YkT5qCwm+3o/h8WGd9nM3cK5SzY0Wzp
+         xfvE3lQe91h+iSs069cvzADUJACSpOvYUUR30rSW2LqyEf+qlzvUZ8gE5qA1L6sgmxND
+         hfFYF8TgoqrJANQkv8uWlDJc1ZXisAH7jQY9qY0LdX4+72ZV4QLbxi0tIXXGtIiP0QY3
+         RAww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719837193; x=1720441993;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d0e/e2pXlpxb22nPKrMuU5Hax3H7AOyGMYL3diD46zE=;
-        b=GyDqKJsZEb2tbceLHQkOgJX/AlvWSD+UL1N55wSdkdoPM5NzCmllpEXpg8lRPcDiKF
-         fk2x88rarHB6JSL63o6ZFU0I1BEHyZEfA5jvFSAOaHRB1RUO4zKqBXdJp7sRNanhYCWu
-         qFM4faoRc3uSZ4mLln+aZ0Gtha5iADHtERRU38ragsWXxUUFQoVzzLri5oEAx74qE3kZ
-         kZIuN17xJX1QzHVZ3WVoakmXhADDeEcqawFGLMX2WsH4TZcTIpRiD/LGntzw1lRaEyz8
-         V0ormhSoEbsH2uy1cZOOv+ZBiGLMQci/IezH2QtIecr3mQNoqFQfFStVYsNvsCTj6zDB
-         dytA==
-X-Gm-Message-State: AOJu0YxtcV18vaT20HyxbJFSXx7x3o8ybLWzcz6pE/k7qs8RJz94UQcU
-	6h8ryqF507F7Gxs1+/dAOOAt59F1+EYmMn31cra0FiFkDXh25PnJ3+qkyTsHao8P6L5uTUBwv7Q
-	HXJaRvw/a8o7IBKFTZQFASc6VqGsOcqu1AviBR9S1+5VpnG4xJegnY2Sudv7anFS5XJIeI6dJMf
-	G8YsaaPO+RCnb40JslZCrnjAhe7PaT/+fJgE7wNHt3Mud68eCH+8n+
-X-Received: by 2002:a05:622a:188e:b0:43f:ee9d:c2ce with SMTP id d75a77b69052e-44662e6a81cmr77375021cf.45.1719837193094;
-        Mon, 01 Jul 2024 05:33:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHh4KuzfoIjzU8YO1Hl9u0fOt1wzZ3+gb6jLWL+lbAdzwOQZo03t1//Q2PkHrWASmLQlr+nTGkCz6Z3Ea4CYF8=
-X-Received: by 2002:a05:622a:188e:b0:43f:ee9d:c2ce with SMTP id
- d75a77b69052e-44662e6a81cmr77374811cf.45.1719837192686; Mon, 01 Jul 2024
- 05:33:12 -0700 (PDT)
-Received: from 348282803490 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 1 Jul 2024 12:33:10 +0000
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-In-Reply-To: <CAJM55Z9xF6_WCcg02xJJfu=UCOj=4m64BXvJTaV4vX09WLhc0w@mail.gmail.com>
-References: <20240103132852.298964-1-emil.renner.berthing@canonical.com>
- <20240103132852.298964-2-emil.renner.berthing@canonical.com>
- <20240115173657.GA999912-robh@kernel.org> <CAJM55Z9xF6_WCcg02xJJfu=UCOj=4m64BXvJTaV4vX09WLhc0w@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1719837247; x=1720442047;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=a287NlBt1es5eAg2uwHXF+qjhDTjmaYvEUEHcHWzfuk=;
+        b=JdmMW/b6Z1oyOhiyciZ3tQ0Y28nLDmjLSynjxMd7UaFJOg4pkLkeOEEi9+NWC8DYbC
+         2KSa7DdOE1CCLVtXlyKYy3vYqqGEtoZYPFWfK6vaoq9UDhMw2DEVjq8tclr6RPZanK+6
+         /ipkEOeTCf8e4RjXtCvNPM0sY5fcYTwdnEhZr9qIVnJrLa0NoYj+SgHm4sJJR3YIvvjZ
+         dULQ5u8JmagsYHGNTtSSP1ZBSODkx9Mf8/WmY3NxP+vkwyRGQexnBwQg9Hv2cii64p1c
+         lZLzamdMVFlNorPKziXsi1imwc/KUvEaM5nKMeP1BIap+4ujwPtnUcdkIkwPlA6vmjno
+         UgVw==
+X-Forwarded-Encrypted: i=1; AJvYcCWUN1GsiP5GHsFPPxfbW8ZQkwQJDd5X507LabeyiTP4fuByeeKxbMag1q/vsRWCSTEBHxgVqeaFb4XCRlHmAZQYdUoGCHcQVno1vIDJ
+X-Gm-Message-State: AOJu0Yx3yefBaeOyZBg8d5uM0Nchz/EdAKcwAs2PUVLwuaQzKQ7fJNON
+	k8ydrifQwO5PUc6NzlvKu+27HmG6GmtnwV0zRERWjxbXBkSu+6AUP47k/18297o=
+X-Google-Smtp-Source: AGHT+IFquMweWu7uygXTunNKJ/3190b7nlrlnjvn4mIs9Yb0+U9p0r5GPfWyirnYIWqlNKr3yAsNKA==
+X-Received: by 2002:a05:6000:1fa8:b0:366:e9b8:784f with SMTP id ffacd0b85a97d-367756c6fabmr3539122f8f.32.1719837246509;
+        Mon, 01 Jul 2024 05:34:06 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:ffea:206f:fd2e:ac5c? ([2a01:e0a:982:cbb0:ffea:206f:fd2e:ac5c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0cd4f4sm9983016f8f.13.2024.07.01.05.34.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Jul 2024 05:34:05 -0700 (PDT)
+Message-ID: <34b3617f-3663-40c8-a738-237dd4bd6c54@linaro.org>
+Date: Mon, 1 Jul 2024 14:34:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Mon, 1 Jul 2024 12:33:10 +0000
-Message-ID: <CAJM55Z-ds0ZtFCKnpFyGnWidSjj6eORW+5gBPBjdidJxSLynwA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/8] dt-bindings: pinctrl: Add thead,th1520-pinctrl bindings
-To: Rob Herring <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	Linus Walleij <linus.walleij@linaro.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Drew Fustini <dfustini@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH] ASoC: codecs: wcd939x: Fix typec mux and switch leak
+ during device removal
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+References: <20240701122616.414158-1-krzysztof.kozlowski@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240701122616.414158-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Emil Renner Berthing wrote:
-> Rob Herring wrote:
-> > On Wed, Jan 03, 2024 at 02:28:38PM +0100, Emil Renner Berthing wrote:
-> > > Add bindings for the pin controllers on the T-Head TH1520 RISC-V SoC.
-> > >
-> > > Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-> > > ---
-> > >  .../pinctrl/thead,th1520-pinctrl.yaml         | 372 ++++++++++++++++++
-> > >  1 file changed, 372 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml
-> > > new file mode 100644
-> > > index 000000000000..d3ad7a7cfdd1
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml
-> > > @@ -0,0 +1,372 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/pinctrl/thead,th1520-pinctrl.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: T-Head TH1520 SoC pin controller
-> > > +
-> > > +maintainers:
-> > > +  - Emil Renner Berthing <emil.renner.berthing@canonical.com>
-> > > +
-> > > +description: |
-> > > +  Pinmux and pinconf controller in the T-Head TH1520 RISC-V SoC.
-> > > +
-> > > +  The TH1520 has 3 groups of pads each controlled from different memory ranges.
-> > > +  Confusingly the memory ranges are named
-> > > +    PADCTRL_AOSYS  -> PAD Group 1
-> > > +    PADCTRL1_APSYS -> PAD Group 2
-> > > +    PADCTRL0_APSYS -> PAD Group 3
-> > > +
-> > > +  Each pad can be muxed individually to up to 6 different functions. For most
-> > > +  pads only a few of those 6 configurations are valid though, and a few pads in
-> > > +  group 1 does not support muxing at all.
-> > > +
-> > > +  Pinconf is fairly regular except for a few pads in group 1 that either can't
-> > > +  be configured or has some special functions. The rest have configurable drive
-> > > +  strength, input enable, schmitt trigger, slew rate, pull-up and pull-down in
-> > > +  addition to a special strong pull up.
-> > > +
-> > > +  Certain pads in group 1 can be muxed to AUDIO_PA0 - AUDIO_PA30 functions and
-> > > +  are then meant to be used by the audio co-processor. Each such pad can then
-> > > +  be further muxed to either audio GPIO or one of 4 functions such as UART, I2C
-> > > +  and I2S. If the audio pad is muxed to one of the 4 functions then pinconf is
-> > > +  also configured in different registers. All of this is done from a different
-> > > +  AUDIO_IOCTRL memory range and is left to the audio co-processor for now.
-> >
-> > It is still not clear to me if each instance is a different programming
-> > model or the same with just different connections. The latter should
-> > be the same compatible string. That needs to be answered in *this*
-> > patch, not a reply.
->
-> Hi Rob,
->
-> Sorry for the late response. I honestly don't know exactly what you mean by
-> differenty programming models and what the difference is, so I'll need a bit of
-> help with what you want me to write here.
->
-> Any driver for the TH1520 SoC (not just Linux) would need some way to discern
-> between the 3 pin controllers so they know how many pins to control and what
-> pinmux settings are valid. Basically they'd need the data in the three
-> th1520_group{1,2,3}_pins arrays in the driver and a way to know which of them
-> to use.
->
-> https://lore.kernel.org/linux-riscv/20240103132852.298964-3-emil.renner.berthing@canonical.com/
->
-> Another solution would be to just have one compatible value, and then let the
-> driver figure out which of the 3 pin controllers it's probing from the base
-> physical memory address. That would work fine.
->
-> A third solution would be to encode the data in those three arrays into the
-> device tree, but I thought we didn't want to encode register information in
-> device trees.
+On 01/07/2024 14:26, Krzysztof Kozlowski wrote:
+> Driver does not unregister typec structures (typec_mux_dev and
+> typec_switch_desc) during removal leading to leaks.  Fix this by moving
+> typec registering parts to separate function and using devm interface to
+> release them.  This also makes code a bit simpler:
+>   - Smaller probe() function with less error paths and no #ifdefs,
+>   - No need to store typec_mux_dev and typec_switch_desc in driver state
+>     container structure.
+> 
+> Cc: <stable@vger.kernel.org>
+> Fixes: 10f514bd172a ("ASoC: codecs: Add WCD939x Codec driver")
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> ---
+> 
+> Not tested on hardware.
+> ---
+>   sound/soc/codecs/wcd939x.c | 113 ++++++++++++++++++++++---------------
+>   1 file changed, 66 insertions(+), 47 deletions(-)
+> 
 
-Hi Rob,
+<snip>
 
-Any chance you could give me some advice on this, or should I just send it
-again as is?
+Looks good!
 
-Other patchsets depend on this. Eg.:
-https://lore.kernel.org/all/20240618-i2c-th1520-v3-0-3042590a16b1@bootlin.com/
 
-/Emil
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+
 
