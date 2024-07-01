@@ -1,150 +1,83 @@
-Return-Path: <linux-kernel+bounces-235778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 454C991D98D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:02:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9DF591D990
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:02:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3FAF283EEC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:02:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 838D9283F4D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:02:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FFAD7E76F;
-	Mon,  1 Jul 2024 08:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA2F78C8D;
+	Mon,  1 Jul 2024 08:02:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="NPa412Fr"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="XsQKAynZ"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF251EB39;
-	Mon,  1 Jul 2024 08:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 542EF41C92
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 08:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719820915; cv=none; b=OK6kWvZvgUKadd7F5PmxleY5NgJYRh5nzYk9liprDaCov70LPU9RDlHrxpXElgxzIJZi3oaHMAtaTMrgqH2KDdBCg25+IgSqIJesqfzGCOzIlOv7OC7h5zFy0wXSFNXlEYwAkRwfts4dhRsQIm09R65w18HV5qwVQ40Nr4MGhNY=
+	t=1719820955; cv=none; b=KLls0+dPuQ8MYqNX3Z361e+bFcrKK6S7L6ngnWDpFkQRCb1Arpwx6TgOmI1OkmFH+MxkjzQbtNuY3e2iUCD39ierIYhUZIDHohdM5O44soTulf+/AlyoX7zbfBhzQahpQ1CyZTdl8gJ6lUPaWKIg6f3i08jQbMNsatM+AfXsTvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719820915; c=relaxed/simple;
-	bh=vHZsiYbVuLK8PNijbZkO2ITL1Z6pcGf5q74vYq9jzEg=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=hCLiEDj95tJZKQnGRa63VbtuGzSVmcYoDMqIrXmQMlE7xmSiFiPzq0lJbPV6c7WtU7E7kVZmLI+OiSXFkP8IVvsvEgDdVqlVLcBggiRa8iksnaMddyJ9Bx/opR0KnKKXTrP2H1LIVTD8r7CmiCNBOP+o6GYmKt1VE3z/4W146fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=NPa412Fr; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719820885; x=1720425685; i=markus.elfring@web.de;
-	bh=XMjo85fqdujP80T25ZWnN55NRa54zLobA87TTomVDrA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=NPa412FrmCBZuIGal3jrn9O06XHbIqxQWQevki1VbsLVJ5rDdS6/Q0xok3Bjorzf
-	 DIsJJC8QA2gO6r4GDPoa2GVAvuDmcyTdjIsSAAfwUG8Mmpmzlk7UPQolAwfWsuBZ4
-	 aomV3oiNogFm6VXjc3jQG2QoSVUkA4RR+HuvGvm8LkMHnP16cjeRX7Nc8achUdpiG
-	 HqFENMiIq8zB8IvaCRzYuam/VUOMzgmcw8b5zb4BgJbK76kPGfqfpqWOrwfOMP/yP
-	 2IIwfhbmiMn9BXmjt8QaMrxfCx4rU/31Zwol+5wXTeALBCnwHWAU3isDvuzDLfZen
-	 KO9MHMcAu21h7WpPjg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MsaS7-1s8aw22d59-00zkZa; Mon, 01
- Jul 2024 10:01:25 +0200
-Message-ID: <a194b5d3-d3f8-48a4-a010-d98381107b80@web.de>
-Date: Mon, 1 Jul 2024 10:01:13 +0200
+	s=arc-20240116; t=1719820955; c=relaxed/simple;
+	bh=PBSMLOm5Po8X5BwRqt/ewbQVdKOLBiM1iMUfzgSaeE8=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=qoIRJuMGkJO7z01rlMGtJdoCCPJ/JLbRxDInuLTpCsSR8yB5tn2i+nsT+qFdbDmQ3Pu7KWgCR+4RXKaq11j9UX85X+ECseZJbJrIzEf8dmzh5EJfycP/ygbKm036AsEZEwSr/QmZ+1IJxTOVN5i8jIILY79zwiL99RMlAL++ZG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=XsQKAynZ; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 46181sW3014026
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 1 Jul 2024 01:01:55 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 46181sW3014026
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024061501; t=1719820916;
+	bh=PBSMLOm5Po8X5BwRqt/ewbQVdKOLBiM1iMUfzgSaeE8=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=XsQKAynZfzx02V+lKhBtRhb5pwyLodkc9VWPdrFSU1ivU8o0L5t8TcMOgA3/ASIPG
+	 WnYEC7tMvBBtODiXwfjNFupzSOnuL7R+iYQDff/yutQG15niID5UQX+9xU5aRXvJSz
+	 kblOy019gXRmPniqGTvzicvmed6JqBIzX0TPQoPqZ5H7ZsSJhtBWun3ocVbfBbGgUk
+	 CSyJcpdlUo+f3MI2dtpOxseZ3v7OZEMp8ChbKrbpUF0+aY7+3cEqgt1uKM7AQ94ON7
+	 43SJhs/fiMEhkmtFmDQ8YbPcOFsnkXXfgraks6G3MR0c5KX1ZhGuKiccbK7Vg9fCE9
+	 uHKwVs0suHCFQ==
+Date: Mon, 01 Jul 2024 01:01:54 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Borislav Petkov <bp@alien8.de>
+CC: Xin Li <xin3.li@intel.com>, linux-kernel@vger.kernel.org, x86@kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+        peterz@infradead.org, brgerst@gmail.com, chang.seok.bae@intel.com,
+        jgross@suse.com
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v6_5/5=5D_x86/gsseg=3A_use_the_LKGS_?=
+ =?US-ASCII?Q?instruction_if_available_for_load=5Fgs=5Findex=28=29?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20240701064002.GBZoJPQg2IXSCRa4sN@fat_crate.local>
+References: <20230112072032.35626-1-xin3.li@intel.com> <20230112072032.35626-6-xin3.li@intel.com> <20240630160448.GAZoGCIHXRuBY8sLqW@fat_crate.local> <3A846C73-305E-4C55-B846-AC00657BA95B@zytor.com> <20240701060841.GAZoJH6XpJz6qyo-Lr@fat_crate.local> <38C69EA0-DB74-4D2A-ABB5-CB3F1D31FB0C@zytor.com> <20240701064002.GBZoJPQg2IXSCRa4sN@fat_crate.local>
+Message-ID: <2B27D0A2-B1D0-4347-8587-DCFDB05BF683@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Ma Ke <make24@iscas.ac.cn>, linux-kselftest@vger.kernel.org,
- Amer Al Shanawany <amer.shanawany@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski
- <luto@kernel.org>, Kees Cook <kees@kernel.org>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Shuah Khan <shuah@kernel.org>,
- Swarup Laxman Kotiaklapudi <swarupkotikalapudi@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Julia Lawall <julia.lawall@inria.fr>
-References: <20240630130038.3671507-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH v3] selftests/capabilities: Fix possible file leak in
- copy_fromat_to
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240630130038.3671507-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ITtbtaJRixQcC4ydQvWAh70vkNkfeTcFFOSJ+GWUnF3ZF7ZPydo
- iv9KGBeu0yaw+ZcByKAnvwFn1SaSqT3D+ij7Wdqfz5ToAAYq4q2lBfPHH1OW4wjEBPuFoqb
- Zjl96yT1l3VpqNWijbS5KiGTMPWlDnbniWZkJsiJ5+S4imLHpSiU0SzzIpTgq7wNBmdaj0F
- LI4AEC1n+35wXxG9SIHQQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:y2osiQM7q8c=;1aLLusO+miy302MIfA0gbIrnF0A
- BRAcS6kQibZuLPI9SQ0XEz/rYmslI66qtnLOpXUsiAy7IbSMEFdYV9HXNcxCp7JA9FEldlm1M
- 0WsRd1pCBE7x9vhZ8iNqqbatNkGl7Tv0oxaV82ERi8WALuJq3xwBvHFyTEI0Iz8kHsu5g6LCC
- FiMQfO6YPgsnNgH1t7fvYTvOVDvetlxQX7ep7U4lIjvTopnZN11u3fnskr8i5ci/JnTDG/bVw
- a67A2Zhk68LHUmq4qqSbf4gYM03eKhjpKxQLyMHFRzA3av6ZvX1vGlwX5G4nHuAoxULXmBi2g
- trlpVc6L5i1qn5vNpIgHgfxIEGDTpf2yyJAhSIHGLYD6NlmSf6CuzwGIwH7Tl91cxrpYKe5Md
- yCOIt+G7zSL/w/l3cU17iBSzBxLVIqClb332iWI/K3nJRl5kX/ervhyzOpIH7xWVJlpMQh0oX
- ClLYQmjboR9CXPMaN6jvGUnwrGlBeQbSLu0onZYWxm77JSUHTl1RcFRixBU4mdYihFFK0V0XR
- E8ux8/AO8yhjNLVKvJmXZP924bnxTJAP8rpU/oLMnIYQhf6APShgNcia7UT61/61nNKhcTG0e
- C6XRYeT7g245SMYwmK18EmMsLOmqiXorWhZ9/ZAAxeaTnnQiHYSGoo9C+rE4PGBtyh1n8MZsv
- bAhr/cB/Q/LV3sKgWgaca0KsqGyfjo/yOx9rc1ZeT99fAwQzlmISheez54jY3hWfTi7yL3Bv9
- cDzzTxK8dGTFxrE7K+/tY6XborgX6KN2CDEt4cRuvIgKli+ww3DD417AmzNzoODKt3nCe5kY6
- CJ5zeKTCTrRHKbP9ZFASljiv1+fJzQ5XXgzzkzDfcHdQ8=
 
->                                        =E2=80=A6 openat() and open() ini=
-tialize
-> 'from' and 'to', and only 'from' validated with 'if' statement.
+On June 30, 2024 11:40:02 PM PDT, Borislav Petkov <bp@alien8=2Ede> wrote:
+>On Sun, Jun 30, 2024 at 11:31:42PM -0700, H=2E Peter Anvin wrote:
+>> Yes, all loads into a segment register are truncated to 16 bits=2E
+>
+>Right, but are we saying that somewhere explicitly or it is too obvious s=
+o
+>that there's no need to?
+>
 
-Why do you find such information helpful?
-
-
->                                                                 If the
-> initialization of variable 'to' fails,
-
-The variable assignment will usually succeed.
-A stored return value would eventually indicate a failed function call.
-
-
->                                        we should better check the value
-> of 'to' and close 'from' to avoid possible file leak. Improve the checki=
-ng
-> of 'from' additionally.
-
-Please split desired changes into separate update steps.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n168
-
-
-How do you think about to use a summary phrase like =E2=80=9CComplete erro=
-r handling
-in copy_fromat_to()=E2=80=9D?
-
-
-Under which circumstances would you become interested to take remaining
-patch review concerns better into account?
-
-
-=E2=80=A6
-> ---
-> Changes in v3:
-> - Thank you for your interest in our vulnerability detection method. We
-> extract vulnerability characteristics from a known vulnerability and mat=
-ch
-> the same characteristics in the project code. As our work is still in
-> progress, we are not able to disclose it at this time. =E2=80=A6
-
-* In which time range do you plan to publish an official announcement?
-
-* Will similar software research approaches be discussed further?
-
-
-> - found by customized static analysis tool.
-> ---
-
-Would you like to replace a duplicate marker line by a blank line?
-
-
-Regards,
-Markus
+I don't know=2E It is stated in a number of places, but I don't know if it=
+ is explicit in *this* specific context=2E
 
