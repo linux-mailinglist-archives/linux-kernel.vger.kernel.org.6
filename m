@@ -1,165 +1,189 @@
-Return-Path: <linux-kernel+bounces-236758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FAE991E6BA
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:35:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B98891E6C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:37:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DDAA285AE6
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:35:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99570B21067
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C8716EB57;
-	Mon,  1 Jul 2024 17:35:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F13A16EB6E;
+	Mon,  1 Jul 2024 17:36:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UWufiPya"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GAQem2J7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 204162C6A3;
-	Mon,  1 Jul 2024 17:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6208277115;
+	Mon,  1 Jul 2024 17:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719855311; cv=none; b=J7O+uC/gq0yDW++1IZjCRMPPYGM8y7z4AjARVFW8sZT77RoqtAikzeZ07mF+7knCYf2OdOOe8ip4aq25O4JMpJ+j4ZOyXLs/Q58NnJU8oF96MH+TffPwMWuNNM5iqGhPWqjIyJlp61dDqcKCFN+AM+qez8E0OtMvmJjR8gsFzx8=
+	t=1719855414; cv=none; b=XHCdNfoP/z4sKMwgw3dHtMhNGzcS4ofiQKcBEeyr6UdQfaUTclsvIT0VVvjfpsntohP5jWMyE5zMQp6OnQLRcW4NX2rx5PT1zmn4yPkVNLX4xm/TQZEjK6bjRqn44TfV6XvmxUW2AJlQCrXI3p70SpZbCfB0a4g+uTymNiKRrME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719855311; c=relaxed/simple;
-	bh=eMUK88Zxgj9+wIAa/RNuw5n5b2uHuTug1Nf7Cn4jkuQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HZx11RUwdiGTTPn3j7rmKmE2ju2uM1GMPS/wLVjTGDkNk7hc8CXsrM3PeHX40dhWyiwOYm9S8bL+LV5kHa5r5y8vKvu1sGF/oc3Ja2UX6sjjsSehSXXd24zB7fcyR0dqlXbGWMLVzV5B1/jr2NcPBJ1zcHb4uEOQqD1xKMN6nK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UWufiPya; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f6a837e9a3so12966795ad.1;
-        Mon, 01 Jul 2024 10:35:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719855309; x=1720460109; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=RQx4TbyfLwOkNp0Df3+N76RXmylTlUXtbSxzOj9UZLY=;
-        b=UWufiPyaT87w202dv/0IGxRfhYs5DZ/dETN8opZMboM8HsuOmOdQLRkGqXP2kPfnSg
-         834+4fcsq80+6s0oyYSdmvRxlTOH+tuc+TSPeb1TGy5rtZyUI76n060RZZTsH3q7pWX4
-         sKly9QGcWyZda3OYhxNCKMU74fjAO4mbnoQRBqnFig7bSut3H+x++hc/slxp+T/sAHq5
-         nPCPzi+1TQ6PVS9OlSlJ1N8jsiCwH5cBUYuM+M8QO2x/xwo5OwCyGjdrd04ArasJa5OF
-         t1Z4BIaKm3XP2xDUAeqO8/famcWGNlBHOcg3seIpjen4BPOsMETRKfQOKldkKAIQpqZx
-         Qziw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719855309; x=1720460109;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RQx4TbyfLwOkNp0Df3+N76RXmylTlUXtbSxzOj9UZLY=;
-        b=sJpwm0u8Ko2e4cQ9BCtz3CVxMJPr2RetPXV0TDQ3ANfC8QOkAZ+CXXpYLBGKTenlV9
-         nOE5UHmFHwI8YuMEud1dqPffiCH0MNsfiIR4cF9tCNwCbePg8QnIa3YA0ZHN8cPjMEvJ
-         QX3XaznVcbz2FuKxtKplWHEfbxCEi7w0fHb+pkdo/ubgROvCBmwT/6Jslr8tR2JwEtue
-         sUa46SFKsvb//IKsG2vOFB4aFtGeQzF49OZNd/BEtoVYudmJx3EEkcFaWDHXkOO4Js9F
-         EBdCqN+5oyYzNsT5xi9zH+whUR7ZeQXiWxaQnzJODGxensiPpocBKroaeQ6n+JSbEBq4
-         lhvg==
-X-Forwarded-Encrypted: i=1; AJvYcCU04zXb6zXdarMWRgaVuh9asHL/QG/LFfMVPIKJ6NE7tPe+0FriFusAe85hPtTZfUYLWQATgLRSMG61Gj7SJI6rMtKBAnbddRaQyl/kjK/A8GSeGppRbB4GATDL3bLtHfg3Cu0Vkkw52Q==
-X-Gm-Message-State: AOJu0YzbvJw5iI6Y/Q+kBWsWGO/SQJdVOzYjE+v1i2lBiu8xn637SGhD
-	vE5lKOrSmZ7Gge6zy1EG1TUxhbHcpztiXttrya3bTn4WaVH0OZxc
-X-Google-Smtp-Source: AGHT+IFAVJ5SdjIF+PfjyJWd/aIl/4j+3YMMSQNnLMcOITt1gru8XX6BPfPPlJiePPoEy6aZ+bgKCA==
-X-Received: by 2002:a17:903:1104:b0:1fa:1dd8:947a with SMTP id d9443c01a7336-1fadbce7b67mr32326255ad.46.1719855309050;
-        Mon, 01 Jul 2024 10:35:09 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:7783:69e6:8487:f6ab])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac10d20c1sm67522405ad.30.2024.07.01.10.35.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 10:35:08 -0700 (PDT)
-Date: Mon, 1 Jul 2024 10:35:06 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Martin Schiller <ms@dev.tdt.de>, Hauke Mehrtens <hauke@hauke-m.de>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpiolib: of: fix lookup quirk for MIPS Lantiq
-Message-ID: <ZoLoyjBa6xY85YBv@google.com>
-References: <Zn8CZ47e3LFncrDP@google.com>
- <CAMRc=McMn6k7QMXLHphNS03BtO=i9xKBwxa71MeVXhtNSFdiXA@mail.gmail.com>
+	s=arc-20240116; t=1719855414; c=relaxed/simple;
+	bh=AJ43U8TxBFG1R0W4PvfAZW+pIgCbJ/wmU+LmsAUrYjU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WH2iT0gGPn6LvVv8rgvk6FBaSaE2fs5T6MDhWLdR/KoxzcPz8NX1r2B1xGNMDf7PtNyH6Pa1nQoRnPvBkkU/7R2IG8zu2erw/K2yMV62tBSpf6nl9L5f9o4Z3DWS4uKjiG1QglybVBUwfwVsSVpCUQDLgDZvTGTHIMtGstcmP10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GAQem2J7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E90DCC4AF12;
+	Mon,  1 Jul 2024 17:36:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719855413;
+	bh=AJ43U8TxBFG1R0W4PvfAZW+pIgCbJ/wmU+LmsAUrYjU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GAQem2J7raFxA9lVH1y/ketnYyyQZqQuNgSlgcormbdqA2tFRR6DN/a/dm9X5gmE4
+	 C0tl9VQBQr8ZDrVNlCp9IGe6wnCBdQnJtbnRlVPcbeFOMzQE/djT5Ol/0ThKZ0iviR
+	 QTA1LIEvrrAJqitmAGmvFuTQ2OzGd2+tM8H0K195ySIgZ1C+f8oesPwR74lZsLzAmR
+	 uwB9V+PJuHLxarOivu9iQkb59MHjnE98JlrR814m9MkBiIOizRrhpWg1/KQphZl4oY
+	 g1cDEZA8Leus4rSBd+V8R4IxckGHbR5CLU0/MW+gp8syg1YkVybnyCorrkddk55gLr
+	 O0Mg0T3/IxMHg==
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5c411d037b3so81915eaf.2;
+        Mon, 01 Jul 2024 10:36:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV1Ul/XM1yTV2HwuuOAvoDbYYOM9CngT608aMReZF1JyfEnlk3Y8//1dqAwKwEdEKl1D1GuNkANUExULrL/gEBu7czI0G3oLnalSqAOYGfOtE4rG5DRTH/10zrSaEQdBoWGH5UWUOdhU5XZT6/lGnEk7G9wLUTqe45FQs85UBx7WA==
+X-Gm-Message-State: AOJu0Ywz+OgTOEQwVSfTRT0i3NqVGxjS9cxj7AX1Ow5JJoRV1R9bYJtU
+	lzYif4zRT7pQjgVJorTF7nj72H8RSFCbRkConiA46bX/GqfbgRRmk66vBHupTfXTqQ1bvOcPyxF
+	++d+a9x8tFK/JB+Io4hEvQ0OWQ4o=
+X-Google-Smtp-Source: AGHT+IHwSaJ1hicMo5mBvoWp89o0ASG0KBJLQ81cNcOTGZ3yBfDdae3nh4KtC0AqPvla0OZvfnqwU4SaJJoAWy55Gc8=
+X-Received: by 2002:a4a:c914:0:b0:5ba:ca86:a025 with SMTP id
+ 006d021491bc7-5c438d51dfcmr5664269eaf.0.1719855412448; Mon, 01 Jul 2024
+ 10:36:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=McMn6k7QMXLHphNS03BtO=i9xKBwxa71MeVXhtNSFdiXA@mail.gmail.com>
+References: <46742c5a-5df4-46d1-bf5f-b74067866fec@amd.com> <20240701161039.80008-1-visitorckw@gmail.com>
+In-Reply-To: <20240701161039.80008-1-visitorckw@gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 1 Jul 2024 19:36:40 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iY=S+WKWvDAAWxLcOwvpOG5Cck1gQv4p+FfW1Nca0Yqw@mail.gmail.com>
+Message-ID: <CAJZ5v0iY=S+WKWvDAAWxLcOwvpOG5Cck1gQv4p+FfW1Nca0Yqw@mail.gmail.com>
+Subject: Re: [PATCH v3] ACPI: processor_idle: Fix invalid comparison with
+ insertion sort for latency
+To: Kuan-Wei Chiu <visitorckw@gmail.com>
+Cc: rafael@kernel.org, lenb@kernel.org, mario.limonciello@amd.com, 
+	akpm@linux-foundation.org, jserv@ccns.ncku.edu.tw, alexdeucher@gmail.com, 
+	belegdol@gmail.com, regressions@leemhuis.info, linux-acpi@vger.kernel.org, 
+	regressions@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 01, 2024 at 10:51:00AM +0200, Bartosz Golaszewski wrote:
-> On Fri, Jun 28, 2024 at 8:35 PM Dmitry Torokhov
-> <dmitry.torokhov@gmail.com> wrote:
-> >
-> > As it turns out, there is a large number of out-of-tree DTSes (in
-> > OpenWrt project) that used to specify incorrect (active high) polarity
-> > for the Lantiq reset GPIO, so to keep compatibility while they are
-> > being updated a quirk for force the polarity low is needed. Luckily
-> > these old DTSes used nonstandard name for the property ("gpio-reset" vs
-> > "reset-gpios") so the quirk will not hurt if there are any new devices
-> > that need inverted polarity as they can specify the right polarity in
-> > their DTS when using the standard "reset-gpios" property.
-> >
-> > Additionally the condition to enable the translation from standard to
-> > non-standard reset GPIO property name was inverted and the replacement
-> > name for the property was not correct. Fix this as well.
-> >
-> > Fixes: fbbbcd177a27 ("gpiolib: of: add quirk for locating reset lines with legacy bindings")
-> > Fixes: 90c2d2eb7ab5 ("MIPS: pci: lantiq: switch to using gpiod API")
-> > Reported-by: Martin Schiller <ms@dev.tdt.de>
-> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > ---
-> >  drivers/gpio/gpiolib-of.c | 14 ++++++++++++--
-> >  1 file changed, 12 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-> > index 59c7f8a2431a..d21085830632 100644
-> > --- a/drivers/gpio/gpiolib-of.c
-> > +++ b/drivers/gpio/gpiolib-of.c
-> > @@ -203,6 +203,16 @@ static void of_gpio_try_fixup_polarity(const struct device_node *np,
-> >                  */
-> >                 { "qi,lb60",            "rb-gpios",     true },
-> >  #endif
-> > +#if IS_ENABLED(CONFIG_PCI_LANTIQ)
-> > +               /*
-> > +                * According to the PCI specification, the RST# pin is an
-> > +                * active-low signal. However, most of the device trees that
-> > +                * have been widely used for a long time incorrectly describe
-> > +                * reset GPIO as active-high, and were also using wrong name
-> > +                * for the property.
-> > +                */
-> > +               { "lantiq,pci-xway",    "gpio-reset",   false },
-> > +#endif
-> >  #if IS_ENABLED(CONFIG_TOUCHSCREEN_TSC2005)
-> >                 /*
-> >                  * DTS for Nokia N900 incorrectly specified "active high"
-> > @@ -512,9 +522,9 @@ static struct gpio_desc *of_find_gpio_rename(struct device_node *np,
-> >                 { "reset",      "reset-n-io",   "marvell,nfc-uart" },
-> >                 { "reset",      "reset-n-io",   "mrvl,nfc-uart" },
-> >  #endif
-> > -#if !IS_ENABLED(CONFIG_PCI_LANTIQ)
-> > +#if IS_ENABLED(CONFIG_PCI_LANTIQ)
-> >                 /* MIPS Lantiq PCI */
-> > -               { "reset",      "gpios-reset",  "lantiq,pci-xway" },
-> > +               { "reset",      "gpio-reset",   "lantiq,pci-xway" },
-> >  #endif
-> >
-> >                 /*
-> > --
-> > 2.45.2.803.g4e1b14247a-goog
-> >
-> >
-> > --
-> > Dmitry
-> 
-> Can you rebase it on top of v6.10-rc6? It doesn't apply to my fixes branch.
+On Mon, Jul 1, 2024 at 6:10=E2=80=AFPM Kuan-Wei Chiu <visitorckw@gmail.com>=
+ wrote:
+>
+> The acpi_cst_latency_cmp comparison function currently used for sorting
+> C-state latencies does not satisfy transitivity, causing incorrect
+> sorting results. Specifically, if there are two valid acpi_processor_cx
+> elements A and B and one invalid element C, it may occur that A < B,
+> A =3D C, and B =3D C. Sorting algorithms assume that if A < B and A =3D C=
+,
+> then C < B, leading to incorrect ordering.
+>
+> Given the small size of the array (<=3D8), we replace the library sort
+> function with a simple insertion sort that properly ignores invalid
+> elements and sorts valid ones based on latency. This change ensures
+> correct ordering of the C-state latencies.
+>
+> Fixes: 65ea8f2c6e23 ("ACPI: processor idle: Fix up C-state latency if not=
+ ordered")
+> Cc: stable@vger.kernel.org
+> Reported-by: Julian Sikorski <belegdol@gmail.com>
+> Closes: https://lore.kernel.org/lkml/70674dc7-5586-4183-8953-8095567e73df=
+@gmail.com/
+> Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> ---
+> v2 -> v3:
+> - Remove #include <linux/sort.h>
+> - Cc @stable
+>
+> Note: I only performed a build test and a simple unit test to ensure
+>       the latency of valid elements is correctly sorted in the randomly
+>           generated data.
+>
+>  drivers/acpi/processor_idle.c | 36 ++++++++++++++---------------------
+>  1 file changed, 14 insertions(+), 22 deletions(-)
+>
+> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.=
+c
+> index bd6a7857ce05..17cc81340b4b 100644
+> --- a/drivers/acpi/processor_idle.c
+> +++ b/drivers/acpi/processor_idle.c
+> @@ -16,7 +16,6 @@
+>  #include <linux/acpi.h>
+>  #include <linux/dmi.h>
+>  #include <linux/sched.h>       /* need_resched() */
+> -#include <linux/sort.h>
+>  #include <linux/tick.h>
+>  #include <linux/cpuidle.h>
+>  #include <linux/cpu.h>
+> @@ -386,25 +385,21 @@ static void acpi_processor_power_verify_c3(struct a=
+cpi_processor *pr,
+>         acpi_write_bit_register(ACPI_BITREG_BUS_MASTER_RLD, 1);
+>  }
+>
+> -static int acpi_cst_latency_cmp(const void *a, const void *b)
+> +static void acpi_cst_latency_sort(struct acpi_processor_cx *arr, size_t =
+length)
 
-Ah, yes, I had another quirk to TSC2005 in my tree that gave the
-conflict.
+s/arr/states/ please.
 
-Thanks.
+>  {
+> -       const struct acpi_processor_cx *x =3D a, *y =3D b;
+> +       int i, j, k;
+>
+> -       if (!(x->valid && y->valid))
+> -               return 0;
+> -       if (x->latency > y->latency)
+> -               return 1;
+> -       if (x->latency < y->latency)
+> -               return -1;
+> -       return 0;
+> -}
+> -static void acpi_cst_latency_swap(void *a, void *b, int n)
+> -{
+> -       struct acpi_processor_cx *x =3D a, *y =3D b;
+> -
+> -       if (!(x->valid && y->valid))
+> -               return;
+> -       swap(x->latency, y->latency);
+> +       for (i =3D 1; i < length; i++) {
+> +               if (!arr[i].valid)
+> +                       continue;
 
--- 
-Dmitry
+Please add an empty line here (and analogously below).
+
+> +               for (j =3D i - 1, k =3D i; j >=3D 0; j--) {
+> +                       if (!arr[j].valid)
+> +                               continue;
+> +                       if (arr[j].latency > arr[k].latency)
+> +                               swap(arr[j].latency, arr[k].latency);
+
+And here.
+
+> +                       k =3D j;
+> +               }
+> +       }
+>  }
+>
+>  static int acpi_processor_power_verify(struct acpi_processor *pr)
+> @@ -449,10 +444,7 @@ static int acpi_processor_power_verify(struct acpi_p=
+rocessor *pr)
+>
+>         if (buggy_latency) {
+>                 pr_notice("FW issue: working around C-state latencies out=
+ of order\n");
+> -               sort(&pr->power.states[1], max_cstate,
+> -                    sizeof(struct acpi_processor_cx),
+> -                    acpi_cst_latency_cmp,
+> -                    acpi_cst_latency_swap);
+> +               acpi_cst_latency_sort(&pr->power.states[1], max_cstate);
+>         }
+>
+>         lapic_timer_propagate_broadcast(pr);
+> --
 
