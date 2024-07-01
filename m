@@ -1,349 +1,223 @@
-Return-Path: <linux-kernel+bounces-235882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B90991DAC4
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:58:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01BE791DAC5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F24A28666B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:58:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD032286B50
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C5F84D13;
-	Mon,  1 Jul 2024 08:57:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41FA585656;
+	Mon,  1 Jul 2024 08:57:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LM2v/xvA"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fr/WkZMN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B6984037;
-	Mon,  1 Jul 2024 08:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D1D839F7
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 08:57:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719824250; cv=none; b=a8igWo4snuKu8ltHslOQaolrnnM0Y+9p/ZokhifmeEK0znmBr3bslKLCEvgboViC0wiLlzjGyLc8VtZVRn30YcvXF3GZZ4BazJEr/evn8hKYMs4XBVwepNDicQ1vPg/LCOQ84hiJNTUA3yH8rvqG3xvutCWAtDURZAtVOAu1UJI=
+	t=1719824277; cv=none; b=Q5ZVZAEbtnSbTCNQ7pJimpSqJNSWlC3lu/odR4TERV5CH6rRN5OrekbgOhl/pBOMn+T/CRf0+WheA6QFmtVTIfsZCc8PYYF3sjcxIeORTghEifvMn6J7rBuZpFJuNt7AoxI49SKq63jYKnXN3wOQ2dkxDv+08wlSLEGVvgn/hdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719824250; c=relaxed/simple;
-	bh=VsuwJFzX4sE25IttFIL5itrdpII9oD4FbXeMLq78W+k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LdH4mU3wt69UWFk1B8Jwe26en0D9W3/n44HXRT1+bXiIrb6VNwqgSXigKhYEpU5gYBafooAEj4eMke7wh5MIDBQeqtesoHXSthK319QzXPlnpnSriMFuJhoWAT9b02DTvC9W0PaSrH3jatzK4xJS2lpf0mqi3SLP7riafffl9Us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LM2v/xvA; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=o4chuPjJhOwMaRcl3c10pgth9KRRgz5qWhP3IdOUpx0=; b=LM2v/xvA6pgBAd3rbdDV5h7+T9
-	pOiayXJKjGhmF/hKQeycJrsuiRlWxoqMwce3KeM6788bt4p7+lJ3eHSuHgAhJynRAzZYFF/OEEyrJ
-	WlrV/Z+ISnJVkGSxE2F8z76q0uUNOgTjWWmQ5HJ79+lrQDLHczbz3il0fZUeSY7WgTibMa89PXE7a
-	0g8I0g5sdGxjliKlAVP+qNSsvPfIvLx/2YfaalhVrq5OgvZT+nUBNdnAPlo0TL+laSjRr/a/OskgX
-	QTkD1qgD6SNnWmGbEV+lZAStShSgh20WO7cWJUu0ZAZXXKKvTTLtLWw3Mkf0ymNF7ja8k0pe6mDOT
-	DADmxz6A==;
-Received: from [2001:8b0:10b:5:8143:6283:9375:d9e] (helo=u3832b3a9db3152.ant.amazon.com)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sOCqg-0000000H9zT-34cp;
-	Mon, 01 Jul 2024 08:57:22 +0000
-Message-ID: <51087cd7149ce576aa166d32d051592b146ce2c4.camel@infradead.org>
-Subject: Re: [RFC PATCH v2] ptp: Add vDSO-style vmclock support
-From: David Woodhouse <dwmw2@infradead.org>
-To: Peter Hilber <peter.hilber@opensynergy.com>,
- linux-kernel@vger.kernel.org,  virtualization@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org,  linux-rtc@vger.kernel.org, "Ridoux,
- Julien" <ridouxj@amazon.com>,  virtio-dev@lists.linux.dev, "Luu, Ryan"
- <rluu@amazon.com>
-Cc: "Christopher S. Hall" <christopher.s.hall@intel.com>, Jason Wang
- <jasowang@redhat.com>, John Stultz <jstultz@google.com>, "Michael S.
- Tsirkin" <mst@redhat.com>, netdev@vger.kernel.org, Richard Cochran
- <richardcochran@gmail.com>, Stephen Boyd <sboyd@kernel.org>, Thomas
- Gleixner <tglx@linutronix.de>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Marc
- Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Daniel
- Lezcano <daniel.lezcano@linaro.org>, Alessandro Zummo
- <a.zummo@towertech.it>,  Alexandre Belloni <alexandre.belloni@bootlin.com>
-Date: Mon, 01 Jul 2024 09:57:21 +0100
-In-Reply-To: <BC212953-A043-4D65-ABF3-326DBF7F10F7@infradead.org>
-References: <20231218073849.35294-1-peter.hilber@opensynergy.com>
-	 <684eac07834699889fdb67be4cee09319c994a42.camel@infradead.org>
-	 <671a784b-234f-4be6-80bf-5135e257ed40@opensynergy.com>
-	 <db594efd5a5774748a9ef07cc86741f5a677bdbf.camel@infradead.org>
-	 <c0ae63fc88365c93d5401972683a41112c094704.camel@infradead.org>
-	 <4a0a240dffc21dde4d69179288547b945142259f.camel@infradead.org>
-	 <8d9d7ce2-4dd1-4f54-a468-79ef5970a708@opensynergy.com>
-	 <bdcafc76ea44db244b52f8a092287cb33950d5d6.camel@infradead.org>
-	 <db1113d5-a427-4eb7-b5d1-8174a71e63b6@opensynergy.com>
-	 <c69d7d380575e49bd9cb995e060d205fb41aef8f.camel@infradead.org>
-	 <2de9275f-b344-4a76-897b-52d5f4bdca59@opensynergy.com>
-	 <BC212953-A043-4D65-ABF3-326DBF7F10F7@infradead.org>
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
-	boundary="=-AjNV5g2OGp1xw371LssE"
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1719824277; c=relaxed/simple;
+	bh=XtQ7Dk4G04HBYx17Kd6QETpRN5kgHBAYhDLsC1KbziQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OagqaWUAIGUmc42SL+kebcQgenxaUixFXgj9Nvczje+VRe/AnF1MoPF3Ti0+4Ii4ReW6AME2SbZmm1gk+DmeWPRz5G18kzPz1Uaj1CKihh2mhVyd0cgvaYzsyIqF9wZLV9j5CTmCafqBMiTqAwOKZ02JYflhiEmr0G7azHmxOAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fr/WkZMN; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719824274;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=LZI8SncX1/n/FMeJ2PL2SGP7FZv3xpQuNunFwEeaCBs=;
+	b=fr/WkZMNYGZ+tTVVYdHCxvvGQAycz9un9j7vSO8sC40MyuHOQ9iz+FMIWthpMJPDYqTgaT
+	1psULb8JTFUlfA+Di7+eRIi0l8EfbWoumQlcPmKZcFX6FoGZtBFMl4ZiAncghOrcp6qBJs
+	AUbGY09nbSv0ZGyDJxx439UKrD6H4XA=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-20-oskMA3ePMF-aOEYIxZTVVA-1; Mon, 01 Jul 2024 04:57:52 -0400
+X-MC-Unique: oskMA3ePMF-aOEYIxZTVVA-1
+Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-57cad6e94e5so1940111a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 01:57:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719824272; x=1720429072;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=LZI8SncX1/n/FMeJ2PL2SGP7FZv3xpQuNunFwEeaCBs=;
+        b=n0lOGCr1gwvDKlxjporhsjkhL7096ml9YZdKOeVh6K6+W9SfDNK4C8JXhs4zD4Aml1
+         2YZtxAiy/KXFqzc3e8JMqMVjMRT9vKbNV+eS7fszCLdfdWDC+YYQ2xfaD7fE1zK67AJR
+         gDLhQtnvn4+cOwQABtBt6qh1W54uPK8O3gdnyck1K2uW19Z+6c+VO26sOScgX92eCKHP
+         To/4sSvFS7TlbVKEZZR8p+Tllymwsxclsjy4u9Bz6RkxmD4mWELMbTgd2veZ1KIPNJMg
+         sxqH68LsXFS9/EbGKSzT8MasOAmfIrlM5wu888i6YFKx0/HHEemdAGmmDXdVY1Dycn/X
+         5EbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVsAkp9fALarxa1iUwkHy2a9CSlKzaCQVQHyhO2ZMvjobJbkDOLz1fwpPlE31zfOtrU+9Gvq+7fNtcsqY+FLLUVzTIdoh9r/6ozld8P
+X-Gm-Message-State: AOJu0YzG4nom+v+T50ZrdaRFMMGX0S3Ekv46PIuEWuGByOar/QGbqMCR
+	F+wtpcUB/UcV9jvhu4tbNpO1iTIGUbmfGBIA7A3yK7T+S8NY7cWS1UfRt4lOrXgi9YKFGOln2Nk
+	czvYVXIy101LLpSQaxdgFzpYnv8BmHATrOsYBY7JnFsaVo0vTaPna+MST+gEc7g==
+X-Received: by 2002:a05:6402:3512:b0:57d:1d79:45b7 with SMTP id 4fb4d7f45d1cf-587a053d9f3mr3140192a12.29.1719824271771;
+        Mon, 01 Jul 2024 01:57:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFhuskY2jpqnXAMiCH+ztFwptLwTTk7Ub/sKIkIXMzgIsSHgGTWpW86QHPOoNRn1WZDcaP5lA==
+X-Received: by 2002:a05:6402:3512:b0:57d:1d79:45b7 with SMTP id 4fb4d7f45d1cf-587a053d9f3mr3139644a12.29.1719824252454;
+        Mon, 01 Jul 2024 01:57:32 -0700 (PDT)
+Received: from [100.81.188.195] ([178.24.249.76])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5861324f069sm4236982a12.33.2024.07.01.01.57.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Jul 2024 01:57:32 -0700 (PDT)
+Message-ID: <992cdbf9-80df-4a91-aea6-f16789c5afd7@redhat.com>
+Date: Mon, 1 Jul 2024 10:57:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] support "THPeligible" semantics for mTHP with anonymous
+ shmem
+To: Ryan Roberts <ryan.roberts@arm.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Bang Li
+ <libang.li@antgroup.com>, hughd@google.com, akpm@linux-foundation.org
+Cc: wangkefeng.wang@huawei.com, ziy@nvidia.com, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20240628104926.34209-1-libang.li@antgroup.com>
+ <4b38db15-0716-4ffb-a38b-bd6250eb93da@arm.com>
+ <4d54880e-03f4-460a-94b9-e21b8ad13119@linux.alibaba.com>
+ <516aa6b3-617c-4642-b12b-0c5f5b33d1c9@arm.com>
+ <597ac51e-3f27-4606-8647-395bb4e60df4@redhat.com>
+ <6f68fb9d-3039-4e38-bc08-44948a1dae4d@arm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <6f68fb9d-3039-4e38-bc08-44948a1dae4d@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+On 01.07.24 10:50, Ryan Roberts wrote:
+> On 01/07/2024 09:48, David Hildenbrand wrote:
+>> On 01.07.24 10:40, Ryan Roberts wrote:
+>>> On 01/07/2024 09:33, Baolin Wang wrote:
+>>>>
+>>>>
+>>>> On 2024/7/1 15:55, Ryan Roberts wrote:
+>>>>> On 28/06/2024 11:49, Bang Li wrote:
+>>>>>> After the commit 7fb1b252afb5 ("mm: shmem: add mTHP support for
+>>>>>> anonymous shmem"), we can configure different policies through
+>>>>>> the multi-size THP sysfs interface for anonymous shmem. But
+>>>>>> currently "THPeligible" indicates only whether the mapping is
+>>>>>> eligible for allocating THP-pages as well as the THP is PMD
+>>>>>> mappable or not for anonymous shmem, we need to support semantics
+>>>>>> for mTHP with anonymous shmem similar to those for mTHP with
+>>>>>> anonymous memory.
+>>>>>>
+>>>>>> Signed-off-by: Bang Li <libang.li@antgroup.com>
+>>>>>> ---
+>>>>>>     fs/proc/task_mmu.c      | 10 +++++++---
+>>>>>>     include/linux/huge_mm.h | 11 +++++++++++
+>>>>>>     mm/shmem.c              |  9 +--------
+>>>>>>     3 files changed, 19 insertions(+), 11 deletions(-)
+>>>>>>
+>>>>>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+>>>>>> index 93fb2c61b154..09b5db356886 100644
+>>>>>> --- a/fs/proc/task_mmu.c
+>>>>>> +++ b/fs/proc/task_mmu.c
+>>>>>> @@ -870,6 +870,7 @@ static int show_smap(struct seq_file *m, void *v)
+>>>>>>     {
+>>>>>>         struct vm_area_struct *vma = v;
+>>>>>>         struct mem_size_stats mss = {};
+>>>>>> +    bool thp_eligible;
+>>>>>>           smap_gather_stats(vma, &mss, 0);
+>>>>>>     @@ -882,9 +883,12 @@ static int show_smap(struct seq_file *m, void *v)
+>>>>>>           __show_smap(m, &mss, false);
+>>>>>>     -    seq_printf(m, "THPeligible:    %8u\n",
+>>>>>> -           !!thp_vma_allowable_orders(vma, vma->vm_flags,
+>>>>>> -               TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL));
+>>>>>> +    thp_eligible = !!thp_vma_allowable_orders(vma, vma->vm_flags,
+>>>>>> +                        TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL);
+>>>>>> +    if (vma_is_anon_shmem(vma))
+>>>>>> +        thp_eligible =
+>>>>>> !!shmem_allowable_huge_orders(file_inode(vma->vm_file),
+>>>>>> +                            vma, vma->vm_pgoff, thp_eligible);
+>>>>>
+>>>>> Afraid I haven't been following the shmem mTHP support work as much as I would
+>>>>> have liked, but is there a reason why we need a separate function for shmem?
+>>>>
+>>>> Since shmem_allowable_huge_orders() only uses shmem specific logic to determine
+>>>> if huge orders are allowable, there is no need to complicate the
+>>>> thp_vma_allowable_orders() function by adding more shmem related logic, making
+>>>> it more bloated. In my view, providing a dedicated helper
+>>>> shmem_allowable_huge_orders(), specifically for shmem, simplifies the logic.
+>>>
+>>> My point was really that a single interface (thp_vma_allowable_orders) should be
+>>> used to get this information. I have no strong opinon on how the implementation
+>>> of that interface looks. What you suggest below seems perfectly reasonable to me.
+>>
+>> Right. thp_vma_allowable_orders() might require some care as discussed in other
+>> context (cleanly separate dax and shmem handling/orders). But that would be
+>> follow-up cleanups.
+> 
+> Are you planning to do that, or do you want me to send a patch?
 
---=-AjNV5g2OGp1xw371LssE
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+I'm planning on looking into some details, especially the interaction 
+with large folios in the pagecache. I'll let you know once I have a 
+better idea what actually should be done :)
 
-On Fri, 2024-06-28 at 22:27 +0100, David Woodhouse wrote:
-> On 28 June 2024 17:38:15 BST, Peter Hilber <peter.hilber@opensynergy.com>=
- wrote:
-> > On 28.06.24 14:15, David Woodhouse wrote:
-> > > On Fri, 2024-06-28 at 13:33 +0200, Peter Hilber wrote:
-> > > > On 27.06.24 16:52, David Woodhouse wrote:
-> > > > > I already added a flags field, so this might look something like:
-> > > > >=20
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Smearing flags=
-. The UTC clock exposed through this structure
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * is only ever t=
-rue UTC, but a guest operating system may
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * choose to offe=
-r a monotonic smeared clock to its users. This
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * merely offers =
-a hint about what kind of smearing to perform,
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * for consistenc=
-y with systems in the nearby environment.
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
-> > > > > #define VMCLOCK_FLAGS_SMEAR_UTC_SLS (1<<5) /* draft-kuhn-leapseco=
-nd-00.txt */
-> > > > >=20
-> > > > > (UTC-SLS is probably a bad example but are there formal definitio=
-ns for
-> > > > > anything else?)
-> > > >=20
-> > > > I think it could also be more generic, like flags for linear smeari=
-ng,
-> > > > cosine smearing(?), and smear_start_sec and smear_end_sec fields (r=
-elative
-> > > > to the leap second start). That could also represent UTC-SLS, and
-> > > > noon-to-noon, and it would be well-defined.
-> > > >=20
-> > > > This should reduce the likelihood that the guest doesn't know the s=
-mearing
-> > > > variant.
-> > >=20
-> > > I'm wary of making it too generic. That would seem to encourage a
-> > > *proliferation* of false "UTC-like" clocks.
-> > >=20
-> > > It's bad enough that we do smearing at all, let alone that we don't
-> > > have a single definition of how to do it.
-> > >=20
-> > > I made the smearing hint a full uint8_t instead of using bits in flag=
-s,
-> > > in the end. That gives us a full 255 ways of lying to users about wha=
-t
-> > > the time is, so we're unlikely to run out. And it's easy enough to ad=
-d
-> > > a new VMCLOCK_SMEARING_XXX type to the 'registry' for any new methods
-> > > that get invented.
-> > >=20
-> > >=20
-> >=20
-> > My concern is that the registry update may come after a driver has alre=
-ady
-> > been implemented, so that it may be hard to ensure that the smearing wh=
-ich
-> > has been chosen is actually implemented.
->=20
-> Well yes, but why in the name of all that is holy would anyone want
-> to invent *new* ways to lie to users about the time? If we capture
-> the existing ones as we write this, surely it's a good thing that
-> there's a barrier to entry for adding more?
+-- 
+Cheers,
 
-Ultimately though, this isn't the hill for me to die on. I'm pushing on
-that topic because I want to avoid the proliferation of *ambiguity*. If
-we have a precision clock, we should *know* what the time is.
+David / dhildenb
 
-So how about this proposal. I line up the fields in the proposed shared
-memory structure to match your virtio-rtc proposal, using 'subtype' as
-you proposed. But, instead of the 'subtype' being valid only for
-VIRTIO_RTC_CLOCK_UTC, we define a new top-level type for *smeared* UTC.
-
-So, you have:
-
-+\begin{lstlisting}
-+#define VIRTIO_RTC_CLOCK_UTC 0
-+#define VIRTIO_RTC_CLOCK_TAI 1
-+#define VIRTIO_RTC_CLOCK_MONO 2
-+\end{lstlisting}
-
-I propose that you add
-
-#define VIRTIO_RTC_CLOCK_SMEARED_UTC 3
-
-If my proposed memory structure is subsumed into the virtio-rtc
-proposal we'd literally use the same names, but for the time being I'll
-update mine to:
-
-	/*
-	 * What time is exposed in the time_sec/time_frac_sec fields?
-	 */
-	uint8_t time_type;
-#define VMCLOCK_TIME_UTC		0	/* Since 1970-01-01 00:00:00z */
-#define VMCLOCK_TIME_TAI		1	/* Since 1970-01-01 00:00:00z */
-#define VMCLOCK_TIME_MONOTONIC		2	/* Since undefined epoch */
-#define VMCLOCK_TIME_INVALID		3	/* virtio-rtc uses this for smeared UTC */
-
-
-I can then use your smearing subtype values as the 'hint' field in the
-shared memory structure. You currently have:
-
-+\begin{lstlisting}
-+#define VIRTIO_RTC_SUBTYPE_STRICT 0
-+#define VIRTIO_RTC_SUBTYPE_SMEAR 1
-+#define VIRTIO_RTC_SUBTYPE_SMEAR_NOON_LINEAR 2
-+#define VIRTIO_RTC_SUBTYPE_LEAP_UNSPECIFIED 3
-+\end{lstlisting}
-
-I can certainly ensure that 'noon linear' has the same value. I don't
-think you need both 'SMEAR' and 'LEAP_UNSPECIFIED' though:
-
-
-+\item VIRTIO_RTC_SUBTYPE_SMEAR deviates from the UTC standard by
-+	smearing time in the vicinity of the leap second, in a not
-+	precisely defined manner. This avoids clock steps due to UTC
-+	leap seconds.
-
-...
-
-+\item VIRTIO_RTC_SUBTYPE_LEAP_UNSPECIFIED may deviate from the UTC
-+	standard w.r.t.\ leap second introduction in an unspecified
-way
-+	(leap seconds may, or may not, be smeared).
-
-To the client, both of those just mean "for a day or so around a leap
-second event, you can't trust this device to know what the time is".
-There isn't any point in separating "does lie to you" from "might lie
-to you", surely? The guest can't do anything useful with that
-distinction. Let's drop SMEAR and keep only LEAP_UNSPECIFIED?
-
-And if you *really* want to parameterise it, I think that's a bad idea
-and it encourages the proliferation of different time "standards", but
-I'd probably just suck it up and do whatever you do because that's not
-strictly within the remit of my live-migration part.
-
-
-
-
-
-
---=-AjNV5g2OGp1xw371LssE
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
-ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
-EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
-FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
-aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
-VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
-aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
-AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
-ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
-QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
-rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
-ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
-U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
-DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
-BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
-dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
-BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
-QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
-CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
-xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
-IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
-kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
-eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
-KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
-1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
-OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
-x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
-5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
-DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
-UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
-MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
-ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
-oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
-SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
-xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
-RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
-bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
-NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
-KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
-5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
-C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
-gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
-VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
-MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
-by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
-b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
-BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
-QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
-c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
-AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
-qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
-v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
-Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
-tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
-Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
-YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
-ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
-IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
-ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
-GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
-h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
-9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
-P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
-2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
-BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
-7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
-lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
-lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
-AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
-Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
-FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
-BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
-cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
-aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
-LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
-BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
-cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
-Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
-lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
-WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
-hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
-IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
-dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
-NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
-xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
-DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQwNzAxMDg1NzIxWjAvBgkqhkiG9w0BCQQxIgQg71q20LE+
-oWGAI0eN41o4z75WSO6G50vg2RF1FQzbGywwgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
-BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
-A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
-DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
-MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
-Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
-lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgBiaV2XBIh7IRfvrCRplBDS0cw+K0syKnNR
-O7bLA+gjFiUflk/zp/AsyOA1CKtavTWO7jBj28cCh1X6GafbzE6WeusqG6ImjRnUdkPAIUZ3OdMy
-yT37K2fW5SwCehNpBfwsh+wGRijZ/U+jRIMlNQIygUwxlIKac9+iXXxSeWrLhi58KD+KRj8RzAUA
-6GzA33e29SaYNICfFuMO/P7JTjgGP6kmv+t0LHo8YqW/zb8QKTXIRpIjHU6Zhu2o4AS1VgKGF3ph
-HjbjLSTNqUMtGwiLa/JXuJefDEFI/QvrbdBUuIHHI7kx85cFb8HndwqgxcRclOoPjfofch6jcY6/
-HngiqpjxTcw6UP9vGp2VODLRU+/cC2oSkfqit9VKaUIVvMy03o6y5dCjLQXeinxYgkbzgAnxo6IN
-ZtlbzuFZKHn+kRj4mh+VOSDLvXw2odgGEav7K74cBd+ggwQxKJ3PSN21bK2tRgZiK9QycvL481gy
-FyiumPQTWN3F/1s/Hp7+fdgurzD83znG0DxAsghCezW+Qk6w8jsOJ9+B4kcqTF4GP2s0DpqaKVTw
-rqouqg5d9ScqO7JdJXvneqbsqQGHdHxAL5OxIm3/dadYXt/8WLsvuslHgcsKkfD3Zhu4XKb49yIO
-mhcHMOYdSKiys94wOFIPYaffvmQtuGcnBR3JE8k51gAAAAAAAA==
-
-
---=-AjNV5g2OGp1xw371LssE--
 
