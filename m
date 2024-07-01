@@ -1,199 +1,174 @@
-Return-Path: <linux-kernel+bounces-236270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5C0791DFB5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:45:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CCB391DFCA
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2E3E283AC2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:45:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE886283F41
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1744B15A85D;
-	Mon,  1 Jul 2024 12:45:02 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DFBB15A86E;
+	Mon,  1 Jul 2024 12:46:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ik5yZTtU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C02B15667C;
-	Mon,  1 Jul 2024 12:44:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61EA4811;
+	Mon,  1 Jul 2024 12:46:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719837901; cv=none; b=KFdS4BCzTK/zWDoOzpAhtgXGpg+0gkU6zN4homlk1Qi4RCqO/+lVNQB9QQke42ii0wWVmeLm7lVZ2eBQsVs3xkVnfq6+xzin3vo11qgN6BlJmHEf6OM1Gyi+T6hIKcfUOv4Q9D5zAKnlDSbQAfcMoa5N7MfnpQREtphGEzAbarI=
+	t=1719837981; cv=none; b=cvx0kkvxGKyQwur3E/I+ZlrslsTHcA2Iud1SZNILJWkn07AUmIFUjeF/5Ob4v4WVmF8pUE/BSzAmIfprrSICcGqOnFbubt9XTMVDhY3wXftJCNruWVn/8bKWOXkQeWG1trU92LghqK0zbXF9u2iKuklI3ksQ8COejrkqLKbrusc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719837901; c=relaxed/simple;
-	bh=cQylj+EjYj/7INTgdTr0BduS9Kod/JnlXfO3nV7qH2s=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sYEDLhmP9KXN5UomieItUO1DnesNO4IiWqr7R7v9UgUxh6W2o3rNvS+bvTJPyX0eY/UArGfwZdW3sjKwn13iwO0ItP/nvPLIOM6NDa0Xa/icDHb89PSGSCVI0s6b7VBQLMElP/qwsZlLu15dObeUv9UaRV3+ootjdaNsCFEXyIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WCQhX4zHkz6K6tY;
-	Mon,  1 Jul 2024 20:43:56 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 081061404FC;
-	Mon,  1 Jul 2024 20:44:54 +0800 (CST)
-Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 1 Jul
- 2024 13:44:53 +0100
-Date: Mon, 1 Jul 2024 13:44:52 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-CC: <jic23@kernel.org>, <dpfrey@gmail.com>, <himanshujha199640@gmail.com>,
-	<lars@metafoo.de>, <linux-iio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <mike.looijmans@topic.nl>
-Subject: Re: [PATCH v3 00/15] iio: chemical: bme680: Driver cleanup
-Message-ID: <20240701134452.00003f1d@Huawei.com>
-In-Reply-To: <20240630202640.GA185141@vamoiridPC>
-References: <20240609233826.330516-1-vassilisamir@gmail.com>
-	<20240630202640.GA185141@vamoiridPC>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1719837981; c=relaxed/simple;
+	bh=5Go4iu06W4P/5NpWX8+tSflVUT2oZD0yzvVFwiclK2E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q56frofzmfYDtK0LtUrukBCf3oFa6SHnDd3l1DJUE67ufKGBj8xsMLQnu9KfcsqmvjjfsdABni16b7C+3+Gt/SNo0WoQFOEVPRc2zpHT/ID719HQJ3448o3b7yw1XirugcWodDDAHvFADmWHu1oHCpWxIl9zuQJVmfEJlYoI8Ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ik5yZTtU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86763C116B1;
+	Mon,  1 Jul 2024 12:46:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719837981;
+	bh=5Go4iu06W4P/5NpWX8+tSflVUT2oZD0yzvVFwiclK2E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ik5yZTtUFrKm7RPJ5OF5iiaFQA81/P+fEes2nK/0yeZS78oK8K3j0gALFCkSSVomt
+	 KFWCMwHf5PmnF0xbQIVIfvixR3vMj/vVIViybWILJ/+57onv9pRCTLc6ECO6eZdjod
+	 0SiuL+mJuJ3nXo8pgeCJdUexpPCH7fsQf9nKOvC/1yI/oRe3lgQoyk3CZXdWd0Kmzt
+	 Y9uKFGBajkZikDzrGVCOI/SjZWw0ooqx5ZQ3jHjNUBNYQJiBUUC4VNKx2y5OCrPhw5
+	 wlMVJa8faqIe5R8lh5e7FWetZg1U9rkZ+m+GZkEx59/rCMDCkIQbf06pKqz7n6neI3
+	 YesKoL0LRAdWg==
+Date: Mon, 1 Jul 2024 15:46:17 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Omer Shpigelman <oshpigelman@habana.ai>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"ogabbay@kernel.org" <ogabbay@kernel.org>,
+	Zvika Yehudai <zyehudai@habana.ai>
+Subject: Re: [PATCH 11/15] RDMA/hbl: add habanalabs RDMA driver
+Message-ID: <20240701124617.GD13195@unreal>
+References: <20240613191828.GJ4966@unreal>
+ <fbb34afa-8a38-4124-9384-9b858ce2c4e5@habana.ai>
+ <20240617190429.GB4025@unreal>
+ <461bf44e-fd2f-4c8b-bc41-48d48e5a7fcb@habana.ai>
+ <20240618125842.GG4025@unreal>
+ <b4bda963-7026-4037-83e6-de74728569bd@habana.ai>
+ <20240619105219.GO4025@unreal>
+ <a5554266-55b7-4e96-b226-b686b8a6af89@habana.ai>
+ <20240630132911.GB176465@unreal>
+ <a19d80d4-e452-461c-a060-2c94030301a7@habana.ai>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a19d80d4-e452-461c-a060-2c94030301a7@habana.ai>
 
-On Sun, 30 Jun 2024 22:26:40 +0200
-Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-
-> On Mon, Jun 10, 2024 at 01:38:11AM +0200, Vasileios Amoiridis wrote:
-> > Based on fixes-togreg as the 4 first commits are already applied
+On Mon, Jul 01, 2024 at 10:46:48AM +0000, Omer Shpigelman wrote:
+> On 6/30/24 16:29, Leon Romanovsky wrote:
+> > On Fri, Jun 28, 2024 at 10:24:32AM +0000, Omer Shpigelman wrote:
+> >> On 6/19/24 13:52, Leon Romanovsky wrote:
+> >>> On Wed, Jun 19, 2024 at 09:27:54AM +0000, Omer Shpigelman wrote:
+> >>>> On 6/18/24 15:58, Leon Romanovsky wrote:
+> >>>>> On Tue, Jun 18, 2024 at 11:08:34AM +0000, Omer Shpigelman wrote:
+> >>>>>> On 6/17/24 22:04, Leon Romanovsky wrote:
+> >>>>>>> [Some people who received this message don't often get email from leon@kernel.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+> >>>>>>>
+> >>>>>>> On Mon, Jun 17, 2024 at 05:43:49PM +0000, Omer Shpigelman wrote:
+> >>>>>>>> On 6/13/24 22:18, Leon Romanovsky wrote:
+> >>>>>>>>> [Some people who received this message don't often get email from leon@kernel.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+> >>>>>>>>>
+> >>>>>>>>> On Thu, Jun 13, 2024 at 11:22:04AM +0300, Omer Shpigelman wrote:
+> >>>>>>>>>> Add an RDMA driver of Gaudi ASICs family for AI scaling.
+> >>>>>>>>>> The driver itself is agnostic to the ASIC in action, it operates according
+> >>>>>>>>>> to the capabilities that were passed on device initialization.
+> >>>>>>>>>> The device is initialized by the hbl_cn driver via auxiliary bus.
+> >>>>>>>>>> The driver also supports QP resource tracking and port/device HW counters.
+> >>>>>>>>>>
+> >>>>>>>>>> Signed-off-by: Omer Shpigelman <oshpigelman@habana.ai>
+> >>>>>>>>>> Co-developed-by: Abhilash K V <kvabhilash@habana.ai>
+> >>>>>>>>>> Signed-off-by: Abhilash K V <kvabhilash@habana.ai>
+> >>>>>>>>>> Co-developed-by: Andrey Agranovich <aagranovich@habana.ai>
+> >>>>>>>>>> Signed-off-by: Andrey Agranovich <aagranovich@habana.ai>
+> >>>>>>>>>> Co-developed-by: Bharat Jauhari <bjauhari@habana.ai>
+> >>>>>>>>>> Signed-off-by: Bharat Jauhari <bjauhari@habana.ai>
+> >>>>>>>>>> Co-developed-by: David Meriin <dmeriin@habana.ai>
+> >>>>>>>>>> Signed-off-by: David Meriin <dmeriin@habana.ai>
+> >>>>>>>>>> Co-developed-by: Sagiv Ozeri <sozeri@habana.ai>
+> >>>>>>>>>> Signed-off-by: Sagiv Ozeri <sozeri@habana.ai>
+> >>>>>>>>>> Co-developed-by: Zvika Yehudai <zyehudai@habana.ai>
+> >>>>>>>>>> Signed-off-by: Zvika Yehudai <zyehudai@habana.ai>
+> >>>>>>>>>
+> >>
+> >> <...>
+> >>
+> >>>> mlx5 IB driver doesn't export any symbol that is used by the core driver,
+> >>>> that's why the core driver can be loaded without the IB driver (althought
+> >>>> you'll get circular dependency if you would export).
+> >>>
+> >>> Yes, IB and ETH drivers are "users" of core driver. As RDMA maintainer,
+> >>> I'm reluctant to accept code that exports symbols from IB drivers to
+> >>> other subsystems. We have drivers/infiniband/core/ for that.
+> >>>
+> >>
+> >> We need the core driver to access the IB driver (and to the ETH driver as
+> >> well). As you wrote, we can't use exported symbols from our IB driver nor
+> >> rely on function pointers, but what about providing the core driver an ops
+> >> structure? meaning exporting a register function from the core driver that
+> >> should be called by the IB driver during auxiliary device probe.
+> >> Something like:
+> >>
+> >> int hbl_cn_register_ib_aux_dev(struct auxiliary_device *adev,
+> >> 			       struct hbl_ib_ops *ops)
+> >> {
+> >> ...
+> >> }
+> >> EXPORT_SYMBOL(hbl_cn_register_ib_aux_dev);
+> >>
+> >> That's how only the parent driver exports symbols to the son driver so the
+> >> IB driver is a "user" of the core driver and so we count on the internal
+> >> module reference counter. But we also get the ability to access the IB
+> >> driver from the core driver (to report a HW error for example).
 > > 
-> > Patch 1/15: Added comment for explanation of what mutex is used for
+> > Before you are talking about solutions, please explain in technical
+> > terms why you absolutely need to access IB from core driver and any
+> > other possible way is not possible.
 > > 
-> > Patch 2/15: Removed fixes tag
-> > 
-> > Patch 3-15/15: Reworded the commit messages to come close to convention
-> > 	       of 75 chars per line.
-> > 
-> > v2: https://lore.kernel.org/linux-iio/20240606212313.207550-1-vassilisamir@gmail.com/
-> > 
-> > Patch 4/19:
-> > 	- Combined the bme680_conversion_time_us() and bme680_wait_for_eoc()
-> > 	  into one function.
-> > 	- Added better comment for the calculation.
-> > 	- Added checks in the bme680_wait_for_eoc() function.
-> > 
-> > Patch 5/19:
-> > 	- Fixed typo in commit message.
-> > 
-> > Patch 6/19:
-> > 	- Added a fixes tag since without the mutexes, read operations can be
-> > 	  broken.
-> > 
-> > Patch 10/19:
-> > 	- Converted shifting operation to FIELD_GET()
-> > 
-> > Patch 11/19:
-> > 	- Changed convention from &data->bufer[0] to data->buffer.
-> > 	- Removed IIO_DMA_MINALIGN as it is not needed anymore.
-> > 
-> > Patch 13/19:
-> > 	- Removed IIO_DMA_MINALIGN
-> > 
-> > Patch 14/19:
-> > 	- Splitted from Patch v1 14/19
-> > 
-> > Patch 15/19:
-> > 	- Splitted from Patch v1 14/19
-> > 
-> > Patch 16/19: **NEW**
-> > 	- Use dev_err_probe() where applicable.
-> > 
-> > v1: https://lore.kernel.org/linux-iio/20240527183805.311501-1-vassilisamir@gmail.com/
-> > 
-> > This started as a series to add support for buffers and the new
-> > BME688 but it ended up being just a cleaning series. These might
-> > be quite some patches for such a thing but I feel that they are
-> > are well split, in order to allow for better review.
-> > 
-> > The patches are mostly small changes but essential for the correct use
-> > of the driver. The first patches looked like fixes that should be
-> > marked for the stable. Patches [11,17/17] might be a bit bigger but 11/17
-> > is quite straightforward and 17/17 is basically a duplication of a
-> > very similar commit coming from the BMP280 driver [1].
-> > 
-> > In general, the datasheet [2] of the driver is not very descriptive,
-> > and it redirects the user to the BME68x Sensor API [3]. All the things
-> > that were identified from the BME68x Sensor API have been marked with
-> > links to the original locations of the GitHub code. If this is too much
-> > and we don't want this type of information on the commit message, please
-> > let me know and I will fix it.
-> > 
-> > [1]: https://lore.kernel.org/linux-iio/20240512230524.53990-1-vassilisamir@gmail.com/T/#mc6f814e9a4f8c2b39015909d174c7013b3648b9b
-> > [2]: https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme680-ds001.pdf
-> > [3]: https://github.com/boschsensortec/BME68x_SensorAPI/tree/master
-> > 
-> > 
-> > Vasileios Amoiridis (15):
-> >   iio: chemical: bme680: Fix read/write ops to device by adding mutexes
-> >   iio: chemical: bme680: Fix typo in define
-> >   iio: chemical: bme680: Drop unnecessary casts and correct adc data
-> >     types
-> >   iio: chemical: bme680: Remove remaining ACPI-only stuff
-> >   iio: chemical: bme680: Sort headers alphabetically
-> >   iio: chemical: bme680: Remove duplicate register read
-> >   iio: chemical: bme680: Use bulk reads for calibration data
-> >   iio: chemical: bme680: Allocate IIO device before chip initialization
-> >   iio: chemical: bme680: Add read buffers in read/write buffer union
-> >   iio: chemical: bme680: Make error checks consistent
-> >   iio: chemical: bme680: Modify startup procedure
-> >   iio: chemical: bme680: Move probe errors to dev_err_probe()
-> >   iio: chemical: bme680: Remove redundant gas configuration
-> >   iio: chemical: bme680: Move forced mode setup in ->read_raw()
-> >   iio: chemical: bme680: Refactorize reading functions
-> > 
-> >  drivers/iio/chemical/bme680.h      |  41 +-
-> >  drivers/iio/chemical/bme680_core.c | 631 +++++++++++++----------------
-> >  2 files changed, 291 insertions(+), 381 deletions(-)
-> > 
-> > 
-> > base-commit: 4241665e6ea063a9c1d734de790121a71db763fc
-> > -- 
-> > 2.25.1
-> >   
+> > Thanks
 > 
-> Hi Jonathan,
-> 
-> It's been three weeks so I am just checking-in here, to be sure that this
-> series was not lost in the countless e-mails that you receive. Totally
-> understand the summer time on top, so no hurry at all, just checking in
-> that it is not lost! :) Thanks for the amazing job with the reviews
-> though anyways! :)
+> First of all, as a general assumption, everything we do today can also be
+> done with unidirectional drivers communication only. If the parent driver
+> cannot access the son driver directly, then we can have a blocking command
+> queue on the parent side that the parent driver will push to it and the
+> son driver will fetch from it, execute the command and unblock the parent.
+> That will work but it adds complexity which I'm not sure that is needed.
+> The second point is not necessarily about the direction of the
+> communication but more about generally using function pointers rather than
+> exported symbols - we have 2 flavors of functions for inter driver
+> communications: common functions and ASIC specific functions. The ASIC
+> specific functions are exposed and initialized per ASIC. If we convert
+> them to EXPORT_SYMBOLs then we expose ASIC specific functions regardless
+> of the ASIC in action.
+> Again, that will work but seems unnecessary. We can check the ASIC type
+> that was passed in each exported function and fail if a wrong ASIC type
+> was used, but it seems to me like an incorrect approach to use exported
+> symbols for ASIC specific communication. EXPORT_SYMBOLs were meant to be
+> used for driver level communication, not for utilizing device specific
+> capabilities. For that, an ops struct seems more appropriate.
+> That's why I'm suggesting to combine both exported symbols and function
+> pointers.
 
-Hi,
+Thanks for the explanation. I understand your concerns, but I don't see
+any technical justification for the need to access IB driver from the
+core.
 
-It's stalled because of a tree management issue - that is the first
-few patches were going through fixes-togreg and I'd like to keep
-the merge fun simple which means they have to end up upstream and
-back in char-misc/char-misc-next which I then rebase on after
-an IIO pull request.
-
-They are in char-misc-next as of about 45 mins ago.
-
-It'll be a bit tight for this cycle but my plan is 2 more pull requests
-with the last one at risk because of timing.  This stuff can only be
-in that final pull request.
-
-Once it's all in place I will take a final look for but not anticipating
-needing any changes.
-
-Jonathan
-
-
-
-> 
-> Cheers,
-> Vasilis
-> 
-
+Thanks
 
