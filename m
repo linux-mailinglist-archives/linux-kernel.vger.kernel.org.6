@@ -1,75 +1,111 @@
-Return-Path: <linux-kernel+bounces-236271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B11C91DFB8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:46:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FF6C91DF2C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:27:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C02CDB22E02
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:46:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91204B21882
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:27:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6BFF15AAC2;
-	Mon,  1 Jul 2024 12:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF7F614BF8F;
+	Mon,  1 Jul 2024 12:27:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="sIMAuXXi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hb26X+hW"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198DA7F9
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 12:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C49214B09F
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 12:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719837920; cv=none; b=Qz9djhNSmSxNb5drZq2tNefa2s6Fq33BaD1qbUw9KItw/fTVMl6440jnCi8bYdole3MVkSCXFpqo8C5Q9yLC2RO/OeizQ12iVMABW3NrKdcN3aExCiuZW/Di80jdvIZL3Ulu1UULi8a5Bq7iAmfsABCkDV29eas9cCUk0KRyEyw=
+	t=1719836864; cv=none; b=odJihGurTsT8KodX2ZpcfC4EWKn6409GngJKGaokFMilACa6Y1Pj/bTZQ9iMjJywrccGAUNI4OrNTWWMfywW7Jtm1fwgzW1xGJWM1m1Y5QSJTt3clQ8FSoRMP0VrHO701Amlb070hXsiVQdF76143NmOQfl8JuZQqeH4wOXqsPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719837920; c=relaxed/simple;
-	bh=mcsm+deKAsfjotatoCY43zzx8qAarB1cncwtOYmoE5E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hh9saphAY6Ho52L6gdvVKiO4dPpxws4uzHnSmiFCVlpXvKE3wD+8BqBZydBYFgrKhUPvxvZu7CskuuaOLb84ZPrUbxKloscSq14ii8CQFeM8tTAWBIk7PnTCPLmAJvd1KcS8ZnRqagoKltXpM9gXmsUxcOWE8KIgKwKslz8QsjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=sIMAuXXi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74C3DC32786;
-	Mon,  1 Jul 2024 12:45:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1719837919;
-	bh=mcsm+deKAsfjotatoCY43zzx8qAarB1cncwtOYmoE5E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sIMAuXXin+3XP14RmiXZse6QmoojSzhAhVNx977D7LRV1aUwuXXsPVKcPY0MklDDn
-	 nMcFphel2Ljruvv26XvXHEPdUdWrTwd+Bm7FqznD3lX/KIpr6kPPfgq0cKjrhi7KA3
-	 4YAhGd78lMNmMy8LG6CYnSmNSd7TlpPqgIm0/0PA=
-Date: Mon, 1 Jul 2024 14:27:04 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jari Ruusu <jariruusu@protonmail.com>
-Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: Stable linux-5.10.x regression triggered by MDS mitigation
-Message-ID: <2024070152-unpaired-trouble-2632@gregkh>
-References: <IdYcxU6x6xuUqUg8cliJUnucfwfTO29TrKIlLGCCYbbIr1EQnP0ZAtTxdAM2hp5e5Gny_acIN3OFDS6v0sazocnZZ1UBaINEJ0HoDnbasSI=@protonmail.com>
- <20240624170921.mep2x6pg4aiui4wh@desk>
- <yVXwe8gvgmPADpRB6lXlicS2fcHoV5OHHxyuFbB_MEleRPD7-KhGe5VtORejtPe-KCkT8Uhcg5d7-IBw4Ojb4H7z5LQxoZylSmJ8KNL3A8o=@protonmail.com>
- <20240625180150.7awxiyvmztcuu4pw@desk>
- <eK0mvc1FJknv3ZTg6opsYgeqRGgQCTFIQ-gdp5k0KdB3EsY-dL7cKmKvsG93qcTKvPQhrjkbRTrI32YK-AqMXcqiKqLetkLeDnn_b5qs7AA=@protonmail.com>
+	s=arc-20240116; t=1719836864; c=relaxed/simple;
+	bh=DKtxpPgVNtsn7K3hHeygsIzw1BFxEqTpvfTeM+AQT+s=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=pFHRtdWFNG9yEH0Sgp3Z0rI4So924Dpo0PLSr/PnpCskOw7Y0RpvC4WhmBaT3qdGjL2/SV/wESknv6v9o9XRtgNRSCfSrGAthp/Vno7RKvGhEUdVCbhaQZaWicAVe9ih24VicZ/T45ZTaBMnOgISKrheT9t10F2QG+2FEq0d8Eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Hb26X+hW; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-365663f51adso1823015f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 05:27:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719836861; x=1720441661; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IbKJ1+fHrcfsxoNPssv5ufXQjSB4NnSOZ79R2VobUDs=;
+        b=Hb26X+hWtdxku4kNvWXx2QTDnVXqfsxei5cJwNrLYvRB8BZ2vid8FHRGW1/UnU27Wn
+         xe2aq0si6KQ8yIUcNgEjjh5rzdVDR6IYF96DmAPlgqLQmQBUMvX4TObcGPOu6GDpTXlN
+         oOW5mq81QcpjRsP1Qo+Jg0xXqhSwcjw/uRZyAnridOfHTyifQzJIEQjIJUUesdsleCxS
+         gS85qnhb6qErGTozxsyGFvGWCKuZ87UXCRvzp7CVnI+hhARkLLHSQP5/+ViLCr3PedNR
+         MoxMmgkpqTs0ZWawGcL8g3j2ioyAh8atXsCfki+ZrFBNAPau9Fai1b/s8I+fsR8sajDj
+         kRBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719836861; x=1720441661;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IbKJ1+fHrcfsxoNPssv5ufXQjSB4NnSOZ79R2VobUDs=;
+        b=XE0U+5yyxz5yzqSwnMJbDEpF+zCMHooC1jNsBeqRCSbUPVQbVppxl2p7/uJqzonvwe
+         Aqbf9VsaIt3gF1wZFgwrl0d8+pcyHucGs66Jb/fdQ9YvvNXUIrjtG+MHSjRDOmYL2ixQ
+         psPDRpMwQzoZo+SZ7di33s0Fy6O67bTkiL6/udpoiRGAhA4wnh3RYitq8zvCJH60Wdka
+         LZmWV2H/f7jJLtYd6x3/F3/tJfiYDvJdeZg6xlS9h/FsDUmrfIu3bwSq9+sZ46AzxKY5
+         RRJKcznIuWujpfBM0Sezz3JM2V9x7ymDLmfGzntlw8WnwE0wZOWnc3vx9uOQQISn6ckL
+         8mpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhw48Vm7Ku+rgI2h1Gg6x+PYx/z0rpg+UvuKjCdU4KhwdnKxk/xt5jRE7uLWZo4UhhA3qp3hy48f2tNCLO41YQ/Z4rBFLoxBZNI3AL
+X-Gm-Message-State: AOJu0YwHXtbw51xY0aMgfB702F9gcDTxZ9kDEUXxJRTQbOpKZTRhvX8d
+	dc64SiRT/oeZO5xoNQHe2UbSBFrlKK30gSpa5rmQTtKz8ImAUoyPHSwnPXgSeNCjMr/ssNWy8kr
+	R
+X-Google-Smtp-Source: AGHT+IFH35xxvg5N4AtgQdVncudDweLagl90Mb/QWe2ODsQ64shBW9nGUOgVWRgqPVDQN+ts6wv3Yw==
+X-Received: by 2002:adf:ab17:0:b0:364:a733:74de with SMTP id ffacd0b85a97d-367756a9394mr3104569f8f.28.1719836860636;
+        Mon, 01 Jul 2024 05:27:40 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0d90d5sm9961414f8f.31.2024.07.01.05.27.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 05:27:39 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: =?utf-8?q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Sam Protsenko <semen.protsenko@linaro.org>
+Cc: Anand Moon <linux.amoon@gmail.com>, Olivia Mackall <olivia@selenic.com>, 
+ Herbert Xu <herbert@gondor.apana.org.au>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org, 
+ linux-crypto@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240618204523.9563-8-semen.protsenko@linaro.org>
+References: <20240618204523.9563-1-semen.protsenko@linaro.org>
+ <20240618204523.9563-8-semen.protsenko@linaro.org>
+Subject: Re: (subset) [PATCH v2 7/7] arm64: dts: exynos850: Enable TRNG
+Message-Id: <171983685912.414640.3760379043384228947.b4-ty@linaro.org>
+Date: Mon, 01 Jul 2024 14:27:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eK0mvc1FJknv3ZTg6opsYgeqRGgQCTFIQ-gdp5k0KdB3EsY-dL7cKmKvsG93qcTKvPQhrjkbRTrI32YK-AqMXcqiKqLetkLeDnn_b5qs7AA=@protonmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.0
 
-On Wed, Jun 26, 2024 at 01:02:35PM +0000, Jari Ruusu wrote:
-> On Tuesday, June 25th, 2024 at 21:01, Pawan Gupta <pawan.kumar.gupta@linux.intel.com> wrote:
-> > Thanks for pointing this out, CLEAR_CPU_BUFFERS should happen before POPFL.
-> > Below patch moves it before POPFL and also adds a safer version that
-> > switches to KERNEL_DS before executing VERW. This should ensure VERW works
-> > in all cases:
+
+On Tue, 18 Jun 2024 15:45:23 -0500, Sam Protsenko wrote:
+> Add True Random Number Generator (TRNG) node to Exynos850 SoC dtsi.
 > 
-> Your patch looks OK to me. Thanks.
-> Tested on linux-5.10.220 inside 32-bit VM.
+> 
 
-Great!  Hopefully someone submits this to the stable tree so we can
-accept it...
+Applied, thanks!
+
+[7/7] arm64: dts: exynos850: Enable TRNG
+      https://git.kernel.org/krzk/linux/c/64c7ea42fcc2b972fc8d108642f4b8fabf0999c3
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
