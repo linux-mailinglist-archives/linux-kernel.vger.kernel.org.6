@@ -1,116 +1,149 @@
-Return-Path: <linux-kernel+bounces-236605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA99591E4BB
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:02:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABEE391E4C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:07:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07C6E1C21A2D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:02:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 677A3283B1A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:06:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D2016CD1E;
-	Mon,  1 Jul 2024 16:01:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A1E16D4D4;
+	Mon,  1 Jul 2024 16:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Lq1jIc6+"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="GbO6gM1T"
+Received: from cockroach.ash.relay.mailchannels.net (cockroach.ash.relay.mailchannels.net [23.83.222.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92703142624;
-	Mon,  1 Jul 2024 16:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719849717; cv=none; b=Src3Vg0h1Uk49m7LdXkp28+9rY+oJ8er5G/hNb/TvBL5cCgbYUQRoky9dYp/RTHArcxSq+PM3YgpeT6N/qz3MBhv3dt/7mL4SHa1vs/pUmTqnw8xwVUivJ2iyeZNFPPTPSsKLSRq4EjSOIMByTVDjjSiPw6wI4137LJgUHn8Njk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719849717; c=relaxed/simple;
-	bh=hOVgztX5aRZUelBLzXKsUa1jcr3sRcfH4cpgfhepbB8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TufXD4W5gFn5Vum4jvv4bX0Y7XSE7xWIISkpMbAhA4HVcO31LAU3pFhvzEfhx6FJbQGZ3ycJiAuHojJrYHbGgSdPj4OMYNE8rwE8SyrGYVVjA6KtnbYRyQ6mKItHa9sv8JbAB5oJz9wr9n4lnlXuK9pu5k0cFMeN009uSZMcf54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Lq1jIc6+; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 461G1i5e099906;
-	Mon, 1 Jul 2024 11:01:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719849704;
-	bh=EPp252fPRm63KzgIuXGKRMLf5I8ys+FPMN5TgPmJFpY=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=Lq1jIc6+sKfDvZJMC/JGtw+OfcYutbejuFiybFcEbuw7XlkxfWF+wmfkXvw0w5XGm
-	 zsyObdbpLnGfYmfAIdS3FYlOs2caFfB6yT1nlC+zFEhcENjXzYwnG2j73mmEVzuCAY
-	 tvAvptvNVeeMeL7dmN9M3fdkrBzjUafewtRn7pbo=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 461G1iKT075898
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 1 Jul 2024 11:01:44 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 1
- Jul 2024 11:01:44 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 1 Jul 2024 11:01:44 -0500
-Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.227.94])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 461G1eQT061733;
-	Mon, 1 Jul 2024 11:01:41 -0500
-From: Vignesh Raghavendra <vigneshr@ti.com>
-To: Nishanth Menon <nm@ti.com>, Kamlesh Gurudasani <kamlesh@ti.com>
-CC: Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Jayesh
- Choudhary <j-choudhary@ti.com>
-Subject: Re: [PATCH v2] arm64: dts: ti: k3-am62a-main: Enable crypto accelerator
-Date: Mon, 1 Jul 2024 21:31:39 +0530
-Message-ID: <171984950176.3152309.8066747674925594460.b4-ty@ti.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240617-crytpo-am62a-v2-1-dc7a14f2635b@ti.com>
-References: <20240617-crytpo-am62a-v2-1-dc7a14f2635b@ti.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239631EB2A;
+	Mon,  1 Jul 2024 16:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.222.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719850012; cv=pass; b=NDDzLFgh0KUMWEzcagf9G/JZ//47FxLiBXDaXBM0crS8K6Yi953lGZNKI0J3AZbBvmRpRE7mWYvrqr0r38XfWCnMZip06PFtXjEcwQvyxImM86QfMzItmWq3XRZHylcZGhwu39w6UOATdTLbEDcPOH9v+rSOkOBcORF5HTQgVGA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719850012; c=relaxed/simple;
+	bh=Fmfy/xanfD84Dr+3FY7udGrsBHHaal7DeaKVvneRcQ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ujqJCJdjYtWqNcZtOks2dsaEEcPCOzt81g5EzAXKUEJkpqXrdKnwnlST/M0TDOiqashvxz0eRSACEyrRBWSuAQObZsW4Mn0otVwe7tpBX8q/RMqn+AGmfpraj+ebSydRLG+HYGpe1YQM3Ca6WSKrtgfJPWsNU5Dm6Cdl1MesSf4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=GbO6gM1T; arc=pass smtp.client-ip=23.83.222.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id D2A325C0F88;
+	Mon,  1 Jul 2024 15:49:36 +0000 (UTC)
+Received: from pdx1-sub0-mail-a313.dreamhost.com (unknown [127.0.0.6])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 5EBEC5C1B6A;
+	Mon,  1 Jul 2024 15:49:36 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1719848976; a=rsa-sha256;
+	cv=none;
+	b=K3vskIPsaEkbKlZ+39JXhK2UUI9c/I3mL84BX9hqW/MatdflI6hMygskfFIILcGFVUMLHb
+	DsaLsVfmmWMe2L8pOkMT3cvuuucNtBB/CFwS/N+urnbaMe90kAJCHgDgx1PZPLIo3vH+JT
+	774vGH7aqG3Ya1x2zyqBRYJo+0OOLcWxnrYtns5S8ddCQZQWy87EtvCfzzSs49BsI1tAhx
+	R7x2QbO4qic2iGRLIc/dk1H0gTHwOGCyRCQY0/uYMCUYxWfLngybshkrW6kY31NVASrNlk
+	tVi4NFff2eLK5usRIHEIgvXucirX7M+5nWGhGtz0AL25tXtDDDi4ORMFoQZjLw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1719848976;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=Fmfy/xanfD84Dr+3FY7udGrsBHHaal7DeaKVvneRcQ4=;
+	b=M8RCE8/eGI+8lYvaBh9/XG4LZtfhlorho7k8uust2TmjWqFZ7djUm5JMiZkW4pFkhO9gX/
+	oopT+wlqQDrfyV00tkpANt/ItefZ++fq/CQ+KQnDEEwDKXQkjq4QofcIXyI00zrBvyWpxa
+	jo1jLDUdf97EONHenuAVimJxlEgMBSMUJNNN9WtFDdkBe9ylZ/Ovg2O9kapcGRHOrFh2eW
+	H8F5WiLO6FmlYTBgeVO0y0G24+nkCqalAAqPnCWxuOzc9/6YzP/UOSCz6eb/tII9Z1hU+k
+	0+nbcK71431LPCwdBZhJ2VEl5koHjE//83Zra6x0vew838l/zCQ82hxd2k+qGA==
+ARC-Authentication-Results: i=1;
+	rspamd-79677bdb95-txlxl;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
+X-MailChannels-Auth-Id: dreamhost
+X-Stupid-Relation: 0e9670cc4fdd7ace_1719848976681_3504571096
+X-MC-Loop-Signature: 1719848976681:2275360465
+X-MC-Ingress-Time: 1719848976680
+Received: from pdx1-sub0-mail-a313.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.104.90.83 (trex/6.9.2);
+	Mon, 01 Jul 2024 15:49:36 +0000
+Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dave@stgolabs.net)
+	by pdx1-sub0-mail-a313.dreamhost.com (Postfix) with ESMTPSA id 4WCVpl55DTz5y;
+	Mon,  1 Jul 2024 08:49:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
+	s=dreamhost; t=1719848976;
+	bh=Fmfy/xanfD84Dr+3FY7udGrsBHHaal7DeaKVvneRcQ4=;
+	h=Date:From:To:Cc:Subject:Content-Type;
+	b=GbO6gM1TUlIgx0XWcNmx8hQX4Uwm9UOl6c8eklzCcOncOSox/lpk8Ihk4/BNrfZJm
+	 RfLL1BjXNuVK8jaRnfKR0Xd6x2n+D3pB+ezdUdEk5I3KLsUCvoXOiGEYPg6Ktwhgzq
+	 zambJdDfJ3hL/MO+VSiejOMg7FqU0W4zHvhvV55lPMKeGqBFk7oNnIRhMUtkV12EEf
+	 zJjYgd3jKp1iTFpW2y3jyFblToD8YEp2AToRlpLZ2l0tjq6uIqjivpJbQ0GSAewxwJ
+	 faIkasgt9BrmuEF7AkmuAo0NzKd4mHlCwatbk1BBxFBdF6EkmMhjB7qeLMW3ZF4+EF
+	 KN00jJMBNkJRg==
+Date: Mon, 1 Jul 2024 08:49:32 -0700
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+Cc: Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org
+Subject: Re: [PATCH v2] cxl/acpi: Warn on mixed CXL VH and RCH/RCD Hierarchy
+Message-ID: <20240701154932.ch7b75m5xp62oly7@offworld>
+References: <20240628175535.272472-1-fabio.m.de.francesco@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20240628175535.272472-1-fabio.m.de.francesco@linux.intel.com>
+User-Agent: NeoMutt/20220429
 
-Hi Kamlesh Gurudasani,
+On Fri, 28 Jun 2024, Fabio M. De Francesco wrote:
 
-On Tue, 18 Jun 2024 18:11:13 +0530, Kamlesh Gurudasani wrote:
-> Add the node for sa3ul crypto accelerator.
-> 
-> 
+>Each Host Bridge instance has a corresponding CXL Host Bridge Structure
+>(CHBS) ACPI table that identifies its capabilities. CHBS tables can be
+>two types (CXL 3.1 Table 9-21): The PCIe Root Complex Register Block
+>(RCRB) and CXL Host Bridge Component Registers (CHBCR).
+>
+>If a Host Bridge is attached to a device that is operating in Restricted
+>CXL Device Mode (RCD), BIOS publishes an RCRB with the base address of
+>registers that describe its capabilities (CXL 3.1 sec. 9.11).
+>
+>Instead, the new (CXL 2.0+) Component registers can only be accessed
+>by means of a base address published with a CHBCR (CXL 3.1 sec. 9.12).
+>
+>If an eRCD (a device that forces the host-bridge into CXL 1.1 Restricted
+>CXL Host mode) is attached to a CXL 2.0+ Host-Bridge, the current CXL
+>specification does not define a mechanism for finding CXL-2.0-only
+>root-port component registers like HDM decoders and Extended Security
+>capability.
+>
+>An algorithm to locate a CHBCR associated with an RCRB, would be too
+>invasive to land without some concrete motivation.
+>
+>Therefore, just print a message to inform of unsupported config.
+>
+>Count how many different CHBS "Version" types are detected by
+>cxl_get_chbs_iter(). Then make cxl_get_chbs() print a warning if that sum
+>is greater than 1.
+>
+>Tested-by: Alison Schofield <alison.schofield@intel.com>
+>Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
 
-I have applied the following to branch ti-k3-dts-next on [1].
-Thank you!
-
-[1/1] arm64: dts: ti: k3-am62a-main: Enable crypto accelerator
-      commit: 11926848eb550ea3018ad9e14761785a6f7f25df
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
---
-Vignesh
-
+Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
 
