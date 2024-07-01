@@ -1,219 +1,254 @@
-Return-Path: <linux-kernel+bounces-236581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 419AE91E44D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:38:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C33E891E46D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:44:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBC461F247EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:38:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46982B25C2B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2829616D317;
-	Mon,  1 Jul 2024 15:38:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C1016D308;
+	Mon,  1 Jul 2024 15:38:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eA9wc509"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ngd84U3V"
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89BA9376E7;
-	Mon,  1 Jul 2024 15:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB9816CD03
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 15:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719848321; cv=none; b=Dv9jDx8mOl4BI0yWQhdZvL+fdUX77rDvNvtV08IdDn22971q15BHrVKFsmbQE6wbdRz4ksumTd5HrGq70tozMtDIqok4iB7dGNs3swE0U4Xvmzgp2rrhmhS2iQKKquKM3ax5rMmjRVqSc4YUhneeAW4DAgNNgspSkYDWNmMacGU=
+	t=1719848333; cv=none; b=ZDJj9Qvy+e48+RP/NWvlArF3D+35o8IXhS9kzDrKGg60f5GPKWeyRbZMHRGCCneLd9C9EmplOxpizHrfffou3pMQDvAtXnej+J6hC2EK4mJzjgt43OIGD9628E3DQQD0gyeBFuf1woxoLz5WqiyryNFCbsdDq3as/q9i8y/hpC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719848321; c=relaxed/simple;
-	bh=qGZSUpncTlrSVUhF9e8WztlZO/H62XIR+WPrDBCFjoA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sa5DoeJo2qNzip/k/92hvWC9mG2qbEBl1vd+JDqdLjFu1RNt6FXynpsEuFl9CP5Oetu1GCGtdBFy0MBSH5SOiigrjH3wBzom1PIw7wxl9TfrpM3JBSsbegavhX6IM52MqxVU313Q+szrnPguriIfS7wOOp4zQfl8XT197xYhbCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eA9wc509; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4619pLsX006850;
-	Mon, 1 Jul 2024 15:38:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	WQNu3HGwsBvw34NNAmVNukSruR+Bp7trDgkn2Im5fCM=; b=eA9wc509jjj1vmb7
-	eJA99ekbRO0RoJQiYpvDmWq9Ty9eAd4uA5A6oyYD/804DzfK11z0Bxey24jAVPyT
-	o+HPf31DGemAFOSYWJzQydDMB30D8ldG4qsVSE+25DS0F6L6ghVbHknsSafL3n+M
-	J+7A530TrI5vtQ5GXPK32JzgeO3QPK9BtkKZGfbxzySYxQ0LrmzCr2S3IWEROc8V
-	fZH+AZesPQbdTlUdvRsBfi8Y+I4r24MagnDUBBG9Ag6TO3Sl7A+GowtMGQzfALDh
-	WcWVzccrNxpXU6YulGeg9V/3x8LDAoAyl4HSK77SM4uNKsrnbvUBxupBRJCeuNXg
-	2Q+NaQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4027mnmyw7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 01 Jul 2024 15:38:05 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 461Fc4Ff017655
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 1 Jul 2024 15:38:04 GMT
-Received: from [10.48.245.148] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 1 Jul 2024
- 08:38:03 -0700
-Message-ID: <aac18765-4278-4ce0-a0f9-d249ba1d6872@quicinc.com>
-Date: Mon, 1 Jul 2024 08:38:02 -0700
+	s=arc-20240116; t=1719848333; c=relaxed/simple;
+	bh=pbAYGwLE28gr9TrbbRP3f1it1/8qq5WYo0QBVGXRCWM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=lOqgjN9eBCNcyS5YqsukviTE+6wrBL5p/K9eo3IWx7VsToTfOiYIttW2oNUhta2xhQMZd2b4/GDiWrffL5+0BWrqUxi1W1tNKey+KgjW0dT6MJNtftxfdqD5YIwrLzsGTSlLsTfhL8k0FiVv49pALeYo0FmtkkTMj3TLoOR1k1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ngd84U3V; arc=none smtp.client-ip=209.85.210.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-702003e213eso1487352a34.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 08:38:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719848330; x=1720453130; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GXUwAGiGhOwC1MFGaBHZYnH2eCKcomc9xabHa+31ciY=;
+        b=ngd84U3V0L/S2O2uqDaXu0SBCL485+E27oXIfu5zB6sy50qf1oOBijBlQYSrQjInGH
+         4jOqk1iPFnYyiwrNwnvx5K6fXUZsPDfFbxH2F9yBWwFXCZ+JDV0GnrfU4I7ZulUwbYM5
+         tJa5vDkwVYM1BpmPAk+32Rg1+KxB0HEBBr/Yach8G4ppQFNEROpaOGbLTzAbHIGPYar9
+         hjyT84yyvIL++mYG+EdwdpQEv94xE5IvDy77uBXtXPBeoNFVjkIc3mwEwpO+UD+4r3XE
+         QvCE+6FOWvHqOQpHPY9j71poEPK8a7I/UIuhLv/PaarAZ9lYPt9/4TxSksl2je7QiioE
+         8XTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719848330; x=1720453130;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GXUwAGiGhOwC1MFGaBHZYnH2eCKcomc9xabHa+31ciY=;
+        b=JOm6m2wQZr46AvJQfP7A3sOkbgp55vhoWZo6hTCXP9w/u+y8lrkdXJO5nwSBrWABI1
+         4GG5UVEKIAtUMp3L05Sf014B4MWI59tljG6AoTvZaGLlTCeXvA9twYGfrjDEUDqlqa76
+         q2HCe/xtel21TX1QxVf4cWHXbe3BElzdd7BVp+MBJyY4uNWEkeCfxY48iRTYkUIOL1Zi
+         vYaQEhg4fEyBinBTp2BwqNnx+Xj33V72jd+CoDYoDsco5PyoUyapkekEK4/0YW8IU+aN
+         u8wmiT92owpdHYrhr5ohhLXOQJ7+cPbVYv2v7tVUuz4vINWTFxXRiCMWV3CYAe5u+f44
+         0agw==
+X-Forwarded-Encrypted: i=1; AJvYcCXaIHVg/qXYLAZ1p/tvwj1xe36ailQKyxwK9n8cShsPsCbq/0dreXFw0ypSzoXZTsFiHosgP61ojTb3Lqsui5aWaG3cBZ03mtz4lKpA
+X-Gm-Message-State: AOJu0YyJkvNgonfm3wEINIjTki6ZTb1kj4iMs7eF0dno+sozEWEsQJEy
+	jIisDFB6Bpg0a05sZSneRSlEOIUu+Gl4ZOrMmDIJTyjsmpRu6IkSp5bdBUf+53A=
+X-Google-Smtp-Source: AGHT+IH2RZ/mNHf0OSJ/upQaUsA6zNyNbfJvqFRCnyP+riRpPNyhbZZNFy45+vCDbGN1vOGnwT6Y8g==
+X-Received: by 2002:a9d:6956:0:b0:700:d3ec:3633 with SMTP id 46e09a7af769-70207650f3emr7791302a34.8.1719848329647;
+        Mon, 01 Jul 2024 08:38:49 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:e8c6:2364:637f:c70e])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-701f7a98ab2sm1292101a34.9.2024.07.01.08.38.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 08:38:48 -0700 (PDT)
+Date: Mon, 1 Jul 2024 17:38:47 +0200
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Andreas Gruenbacher <agruenba@redhat.com>
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: fs/gfs2/log.c:1158 gfs2_log_flush() error: we previously assumed
+ 'sdp->sd_jdesc' could be null (see line 1111)
+Message-ID: <151ef3e4-abee-4627-9669-038b1d95c2d3@suswa.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] perf: add missing MODULE_DESCRIPTION() macros
-To: Will Deacon <will@kernel.org>
-CC: Mark Rutland <mark.rutland@arm.com>,
-        Jonathan Cameron
-	<jonathan.cameron@huawei.com>,
-        Frank Li <Frank.li@nxp.com>, Shawn Guo
-	<shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix
- Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Yicong Yang <yangyicong@hisilicon.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-cxl@vger.kernel.org>, <imx@lists.linux.dev>,
-        <kernel-janitors@vger.kernel.org>
-References: <20240620-md-drivers-perf-v2-1-1f88f8a08e48@quicinc.com>
- <20240701140521.GF2250@willie-the-truck>
-Content-Language: en-US
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240701140521.GF2250@willie-the-truck>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: BbcI1LKTv-uvKs_nmSQ5TkuqOvGmHLkU
-X-Proofpoint-GUID: BbcI1LKTv-uvKs_nmSQ5TkuqOvGmHLkU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-01_15,2024-07-01_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- spamscore=0 malwarescore=0 adultscore=0 priorityscore=1501
- lowpriorityscore=0 phishscore=0 mlxscore=0 suspectscore=0 clxscore=1015
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407010120
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 7/1/2024 7:05 AM, Will Deacon wrote:
-> On Thu, Jun 20, 2024 at 06:46:09PM -0700, Jeff Johnson wrote:
->> With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm-ccn.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/fsl_imx8_ddr_perf.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/marvell_cn10k_ddr_pmu.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/arm_cspmu_module.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/nvidia_cspmu.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/ampere_cspmu.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/cxl_pmu.o
->>
->> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
->> files which have a MODULE_LICENSE().
->>
->> This includes drivers/perf/hisilicon/hisi_uncore_pmu.c which, although
->> it did not produce a warning with the x86 allmodconfig configuration,
->> may cause this warning with arm64 configurations.
->>
->> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->> ---
->> Changes in v2:
->> - Updated hisi_uncore_pmu.c description per Yicong Yang
->> - Link to v1: https://lore.kernel.org/r/20240611-md-drivers-perf-v1-1-c001bae6da5c@quicinc.com
->> ---
->>  drivers/perf/arm-ccn.c                   | 1 +
->>  drivers/perf/arm_cspmu/ampere_cspmu.c    | 1 +
->>  drivers/perf/arm_cspmu/arm_cspmu.c       | 1 +
->>  drivers/perf/arm_cspmu/nvidia_cspmu.c    | 1 +
->>  drivers/perf/cxl_pmu.c                   | 1 +
->>  drivers/perf/fsl_imx8_ddr_perf.c         | 1 +
->>  drivers/perf/hisilicon/hisi_uncore_pmu.c | 1 +
->>  drivers/perf/marvell_cn10k_ddr_pmu.c     | 1 +
->>  8 files changed, 8 insertions(+)
->>
->> diff --git a/drivers/perf/arm-ccn.c b/drivers/perf/arm-ccn.c
->> index 86ef31ac7503..65f4882531db 100644
->> --- a/drivers/perf/arm-ccn.c
->> +++ b/drivers/perf/arm-ccn.c
->> @@ -1561,4 +1561,5 @@ module_init(arm_ccn_init);
->>  module_exit(arm_ccn_exit);
->>  
->>  MODULE_AUTHOR("Pawel Moll <pawel.moll@arm.com>");
->> +MODULE_DESCRIPTION("ARM CCN (Cache Coherent Network) driver support");
->>  MODULE_LICENSE("GPL v2");
->> diff --git a/drivers/perf/arm_cspmu/ampere_cspmu.c b/drivers/perf/arm_cspmu/ampere_cspmu.c
->> index f146a455e838..426b3cfcb52e 100644
->> --- a/drivers/perf/arm_cspmu/ampere_cspmu.c
->> +++ b/drivers/perf/arm_cspmu/ampere_cspmu.c
->> @@ -269,4 +269,5 @@ static void __exit ampere_cspmu_exit(void)
->>  module_init(ampere_cspmu_init);
->>  module_exit(ampere_cspmu_exit);
->>  
->> +MODULE_DESCRIPTION("Ampere SoC PMU (Performance Monitor Unit) driver");
-> 
-> Curious: why do you expand the PMU acronym here, but not for any of the
-> other drivers? If we're going to add these strings to all the drivers in
-> one go, then it would good to be consistent.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   55027e689933ba2e64f3d245fb1ff185b3e7fc81
+commit: 35264909e9d1973ab9aaa2a1b07cda70f12bb828 gfs2: Fix NULL pointer dereference in gfs2_log_flush
+config: um-randconfig-r071-20240623 (https://download.01.org/0day-ci/archive/20240625/202406250943.QhOuua0F-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project ad79a14c9e5ec4a369eed4adf567c22cc029863f)
 
-Since I'm modifying hundreds of files treewide, I'm not spending much time on
-individual files. In most cases I've taken these descriptions directly from
-code comments, Kconfig descriptions, or git logs.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202406250943.QhOuua0F-lkp@intel.com/
 
-This description was derived from the prologue comment in ampere_cspmu.c (I
-added "driver"):
-/*
- * Ampere SoC PMU (Performance Monitor Unit)
- *
- * Copyright (c) 2023, Ampere Computing LLC
- */
+smatch warnings:
+fs/gfs2/log.c:1158 gfs2_log_flush() error: we previously assumed 'sdp->sd_jdesc' could be null (see line 1111)
 
+vim +1158 fs/gfs2/log.c
 
-> 
->>  MODULE_LICENSE("GPL");
->> diff --git a/drivers/perf/arm_cspmu/arm_cspmu.c b/drivers/perf/arm_cspmu/arm_cspmu.c
->> index c318dc909767..c21c564840d6 100644
->> --- a/drivers/perf/arm_cspmu/arm_cspmu.c
->> +++ b/drivers/perf/arm_cspmu/arm_cspmu.c
->> @@ -1427,4 +1427,5 @@ EXPORT_SYMBOL_GPL(arm_cspmu_impl_unregister);
->>  module_init(arm_cspmu_init);
->>  module_exit(arm_cspmu_exit);
->>  
->> +MODULE_DESCRIPTION("ARM CoreSight Architecture PMU driver");
+c1696fb85d3319 Bob Peterson        2018-01-17  1040  void gfs2_log_flush(struct gfs2_sbd *sdp, struct gfs2_glock *gl, u32 flags)
+b3b94faa5fe596 David Teigland      2006-01-16  1041  {
+2ca0c2fbf3ed7f Bob Peterson        2019-11-13  1042  	struct gfs2_trans *tr = NULL;
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1043  	unsigned int reserved_blocks = 0, used_blocks = 0;
+5432af15f8772d Andreas Gruenbacher 2022-08-18  1044  	bool frozen = test_bit(SDF_FROZEN, &sdp->sd_flags);
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1045  	unsigned int first_log_head;
+2129b4288852cf Andreas Gruenbacher 2020-12-17  1046  	unsigned int reserved_revokes = 0;
+b3b94faa5fe596 David Teigland      2006-01-16  1047  
+484adff8a06cb5 Steven Whitehouse   2006-03-29  1048  	down_write(&sdp->sd_log_flush_lock);
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1049  	trace_gfs2_log_flush(sdp, 1, flags);
+b3b94faa5fe596 David Teigland      2006-01-16  1050  
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1051  repeat:
+2ca0c2fbf3ed7f Bob Peterson        2019-11-13  1052  	/*
+2ca0c2fbf3ed7f Bob Peterson        2019-11-13  1053  	 * Do this check while holding the log_flush_lock to prevent new
+2ca0c2fbf3ed7f Bob Peterson        2019-11-13  1054  	 * buffers from being added to the ail via gfs2_pin()
+2ca0c2fbf3ed7f Bob Peterson        2019-11-13  1055  	 */
+4d927b03a68846 Andreas Gruenbacher 2023-12-20  1056  	if (gfs2_withdrawing_or_withdrawn(sdp) ||
+4d927b03a68846 Andreas Gruenbacher 2023-12-20  1057  	    !test_bit(SDF_JOURNAL_LIVE, &sdp->sd_flags))
+2ca0c2fbf3ed7f Bob Peterson        2019-11-13  1058  		goto out;
+2ca0c2fbf3ed7f Bob Peterson        2019-11-13  1059  
+2bcd610d2fdea6 Steven Whitehouse   2007-11-08  1060  	/* Log might have been flushed while we waited for the flush lock */
+5a61ae1402f152 Andreas Gruenbacher 2020-08-28  1061  	if (gl && !test_bit(GLF_LFLUSH, &gl->gl_flags))
+5a61ae1402f152 Andreas Gruenbacher 2020-08-28  1062  		goto out;
+f55ab26a8f92a2 Steven Whitehouse   2006-02-21  1063  
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1064  	first_log_head = sdp->sd_log_head;
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1065  	sdp->sd_log_flush_head = first_log_head;
+400ac52e805bb6 Benjamin Marzinski  2015-12-09  1066  
+16ca9412d80181 Benjamin Marzinski  2013-04-05  1067  	tr = sdp->sd_log_tr;
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1068  	if (tr || sdp->sd_log_num_revoke) {
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1069  		if (reserved_blocks)
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1070  			gfs2_log_release(sdp, reserved_blocks);
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1071  		reserved_blocks = sdp->sd_log_blks_reserved;
+2129b4288852cf Andreas Gruenbacher 2020-12-17  1072  		reserved_revokes = sdp->sd_log_num_revoke;
+16ca9412d80181 Benjamin Marzinski  2013-04-05  1073  		if (tr) {
+16ca9412d80181 Benjamin Marzinski  2013-04-05  1074  			sdp->sd_log_tr = NULL;
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1075  			tr->tr_first = first_log_head;
+5432af15f8772d Andreas Gruenbacher 2022-08-18  1076  			if (unlikely(frozen)) {
+ca399c96e96e3f Bob Peterson        2020-01-08  1077  				if (gfs2_assert_withdraw_delayed(sdp,
+ca399c96e96e3f Bob Peterson        2020-01-08  1078  				       !tr->tr_num_buf_new && !tr->tr_num_databuf_new))
+5a61ae1402f152 Andreas Gruenbacher 2020-08-28  1079  					goto out_withdraw;
+16ca9412d80181 Benjamin Marzinski  2013-04-05  1080  			}
+2129b4288852cf Andreas Gruenbacher 2020-12-17  1081  		}
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1082  	} else if (!reserved_blocks) {
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1083  		unsigned int taboo_blocks = GFS2_LOG_FLUSH_MIN_BLOCKS;
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1084  
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1085  		reserved_blocks = GFS2_LOG_FLUSH_MIN_BLOCKS;
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1086  		if (current == sdp->sd_logd_process)
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1087  			taboo_blocks = 0;
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1088  
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1089  		if (!__gfs2_log_try_reserve(sdp, reserved_blocks, taboo_blocks)) {
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1090  			up_write(&sdp->sd_log_flush_lock);
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1091  			__gfs2_log_reserve(sdp, reserved_blocks, taboo_blocks);
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1092  			down_write(&sdp->sd_log_flush_lock);
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1093  			goto repeat;
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1094  		}
+2129b4288852cf Andreas Gruenbacher 2020-12-17  1095  		BUG_ON(sdp->sd_log_num_revoke);
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1096  	}
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1097  
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1098  	if (flags & GFS2_LOG_HEAD_FLUSH_SHUTDOWN)
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1099  		clear_bit(SDF_JOURNAL_LIVE, &sdp->sd_flags);
+f55ab26a8f92a2 Steven Whitehouse   2006-02-21  1100  
+5432af15f8772d Andreas Gruenbacher 2022-08-18  1101  	if (unlikely(frozen))
+2129b4288852cf Andreas Gruenbacher 2020-12-17  1102  		if (gfs2_assert_withdraw_delayed(sdp, !reserved_revokes))
+5a61ae1402f152 Andreas Gruenbacher 2020-08-28  1103  			goto out_withdraw;
+b3b94faa5fe596 David Teigland      2006-01-16  1104  
+d7b616e252b125 Steven Whitehouse   2007-09-02  1105  	gfs2_ordered_write(sdp);
+4d927b03a68846 Andreas Gruenbacher 2023-12-20  1106  	if (gfs2_withdrawing_or_withdrawn(sdp))
+5a61ae1402f152 Andreas Gruenbacher 2020-08-28  1107  		goto out_withdraw;
+d69a3c6561362a Steven Whitehouse   2014-02-21  1108  	lops_before_commit(sdp, tr);
+4d927b03a68846 Andreas Gruenbacher 2023-12-20  1109  	if (gfs2_withdrawing_or_withdrawn(sdp))
+5a61ae1402f152 Andreas Gruenbacher 2020-08-28  1110  		goto out_withdraw;
+35264909e9d197 Andreas Gruenbacher 2024-03-11 @1111  	if (sdp->sd_jdesc)
 
-compare to prologue for this file:
-/*
- * ARM CoreSight Architecture PMU driver.
- *
+Is this check really required?
 
->>  MODULE_LICENSE("GPL v2");
->> diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.c b/drivers/perf/arm_cspmu/nvidia_cspmu.c
->> index 5b84b701ad62..0dea47e48ac5 100644
->> --- a/drivers/perf/arm_cspmu/nvidia_cspmu.c
->> +++ b/drivers/perf/arm_cspmu/nvidia_cspmu.c
->> @@ -417,4 +417,5 @@ static void __exit nvidia_cspmu_exit(void)
->>  module_init(nvidia_cspmu_init);
->>  module_exit(nvidia_cspmu_exit);
->>  
->> +MODULE_DESCRIPTION("NVIDIA Coresight Architecture PMU driver");
->>  MODULE_LICENSE("GPL v2");
->> diff --git a/drivers/perf/cxl_pmu.c b/drivers/perf/cxl_pmu.c
->> index 1f93a66eff5b..8b6ce9ea5a55 100644
->> --- a/drivers/perf/cxl_pmu.c
->> +++ b/drivers/perf/cxl_pmu.c
->> @@ -972,6 +972,7 @@ static __exit void cxl_pmu_exit(void)
->>  	cpuhp_remove_multi_state(cxl_pmu_cpuhp_state_num);
->>  }
->>  
->> +MODULE_DESCRIPTION("CXL Performance Monitoring Unit driver");
-> 
-> Similarly here, we now have a conflicting expansion of the acronym.
+82218943058d5e Bob Peterson        2021-01-21  1112  		gfs2_log_submit_bio(&sdp->sd_jdesc->jd_log_bio, REQ_OP_WRITE);
+4d927b03a68846 Andreas Gruenbacher 2023-12-20  1113  	if (gfs2_withdrawing_or_withdrawn(sdp))
+5a61ae1402f152 Andreas Gruenbacher 2020-08-28  1114  		goto out_withdraw;
+d7b616e252b125 Steven Whitehouse   2007-09-02  1115  
+34cc1781c2ae92 Steven Whitehouse   2012-03-09  1116  	if (sdp->sd_log_head != sdp->sd_log_flush_head) {
+c1696fb85d3319 Bob Peterson        2018-01-17  1117  		log_write_header(sdp, flags);
+5cb738b5fbd2f3 Andreas Gruenbacher 2020-12-19  1118  	} else if (sdp->sd_log_tail != sdp->sd_log_flush_tail && !sdp->sd_log_idle) {
+c1696fb85d3319 Bob Peterson        2018-01-17  1119  		log_write_header(sdp, flags);
+2332c4435bb733 Robert Peterson     2007-06-18  1120  	}
+4d927b03a68846 Andreas Gruenbacher 2023-12-20  1121  	if (gfs2_withdrawing_or_withdrawn(sdp))
+5a61ae1402f152 Andreas Gruenbacher 2020-08-28  1122  		goto out_withdraw;
+16ca9412d80181 Benjamin Marzinski  2013-04-05  1123  	lops_after_commit(sdp, tr);
+b09e593d799560 Steven Whitehouse   2006-04-07  1124  
+fe1a698ffef5af Steven Whitehouse   2006-10-11  1125  	gfs2_log_lock(sdp);
+faa31ce85f626d Steven Whitehouse   2006-09-13  1126  	sdp->sd_log_blks_reserved = 0;
+b3b94faa5fe596 David Teigland      2006-01-16  1127  
+d6a079e82efd5f Dave Chinner        2011-03-11  1128  	spin_lock(&sdp->sd_ail_lock);
+16ca9412d80181 Benjamin Marzinski  2013-04-05  1129  	if (tr && !list_empty(&tr->tr_ail1_list)) {
+16ca9412d80181 Benjamin Marzinski  2013-04-05  1130  		list_add(&tr->tr_list, &sdp->sd_ail1_list);
+16ca9412d80181 Benjamin Marzinski  2013-04-05  1131  		tr = NULL;
+b3b94faa5fe596 David Teigland      2006-01-16  1132  	}
+d6a079e82efd5f Dave Chinner        2011-03-11  1133  	spin_unlock(&sdp->sd_ail_lock);
+b3b94faa5fe596 David Teigland      2006-01-16  1134  	gfs2_log_unlock(sdp);
+24972557b12ce8 Benjamin Marzinski  2014-05-01  1135  
+c1696fb85d3319 Bob Peterson        2018-01-17  1136  	if (!(flags & GFS2_LOG_HEAD_FLUSH_NORMAL)) {
+24972557b12ce8 Benjamin Marzinski  2014-05-01  1137  		if (!sdp->sd_log_idle) {
+d5dc3d9677394d Bob Peterson        2020-05-22  1138  			empty_ail1_list(sdp);
+4d927b03a68846 Andreas Gruenbacher 2023-12-20  1139  			if (gfs2_withdrawing_or_withdrawn(sdp))
+5a61ae1402f152 Andreas Gruenbacher 2020-08-28  1140  				goto out_withdraw;
+c1696fb85d3319 Bob Peterson        2018-01-17  1141  			log_write_header(sdp, flags);
+24972557b12ce8 Benjamin Marzinski  2014-05-01  1142  		}
+c1696fb85d3319 Bob Peterson        2018-01-17  1143  		if (flags & (GFS2_LOG_HEAD_FLUSH_SHUTDOWN |
+c1696fb85d3319 Bob Peterson        2018-01-17  1144  			     GFS2_LOG_HEAD_FLUSH_FREEZE))
+24972557b12ce8 Benjamin Marzinski  2014-05-01  1145  			gfs2_log_shutdown(sdp);
+24972557b12ce8 Benjamin Marzinski  2014-05-01  1146  	}
+24972557b12ce8 Benjamin Marzinski  2014-05-01  1147  
+5a61ae1402f152 Andreas Gruenbacher 2020-08-28  1148  out_end:
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1149  	used_blocks = log_distance(sdp, sdp->sd_log_flush_head, first_log_head);
+2129b4288852cf Andreas Gruenbacher 2020-12-17  1150  	reserved_revokes += atomic_read(&sdp->sd_log_revokes_available);
+2129b4288852cf Andreas Gruenbacher 2020-12-17  1151  	atomic_set(&sdp->sd_log_revokes_available, sdp->sd_ldptrs);
+2129b4288852cf Andreas Gruenbacher 2020-12-17  1152  	gfs2_assert_withdraw(sdp, reserved_revokes % sdp->sd_inptrs == sdp->sd_ldptrs);
+2129b4288852cf Andreas Gruenbacher 2020-12-17  1153  	if (reserved_revokes > sdp->sd_ldptrs)
+2129b4288852cf Andreas Gruenbacher 2020-12-17  1154  		reserved_blocks += (reserved_revokes - sdp->sd_ldptrs) / sdp->sd_inptrs;
+30fe70a85a909a Bob Peterson        2019-11-13  1155  out:
+2129b4288852cf Andreas Gruenbacher 2020-12-17  1156  	if (used_blocks != reserved_blocks) {
+2129b4288852cf Andreas Gruenbacher 2020-12-17  1157  		gfs2_assert_withdraw_delayed(sdp, used_blocks < reserved_blocks);
+fe3e397668775e Andreas Gruenbacher 2020-12-10 @1158  		gfs2_log_release(sdp, reserved_blocks - used_blocks);
+                                                                                 ^^^
+Because gfs2_log_release() dereferences sdp->sd_jdesc without checking.
 
-I'll make them consistent in the MODULE_DESCRIPTION()s.
-Do you have a preference for expanding or not expanding?
+2129b4288852cf Andreas Gruenbacher 2020-12-17  1159  	}
+5a61ae1402f152 Andreas Gruenbacher 2020-08-28  1160  	up_write(&sdp->sd_log_flush_lock);
+5a61ae1402f152 Andreas Gruenbacher 2020-08-28  1161  	gfs2_trans_free(sdp, tr);
+5a61ae1402f152 Andreas Gruenbacher 2020-08-28  1162  	if (gfs2_withdrawing(sdp))
+5a61ae1402f152 Andreas Gruenbacher 2020-08-28  1163  		gfs2_withdraw(sdp);
+fe3e397668775e Andreas Gruenbacher 2020-12-10  1164  	trace_gfs2_log_flush(sdp, 0, flags);
+5a61ae1402f152 Andreas Gruenbacher 2020-08-28  1165  	return;
+5a61ae1402f152 Andreas Gruenbacher 2020-08-28  1166  
+5a61ae1402f152 Andreas Gruenbacher 2020-08-28  1167  out_withdraw:
+462582b99b6079 Bob Peterson        2020-08-21  1168  	trans_drain(tr);
+58e08e8d83ab03 Bob Peterson        2020-06-09  1169  	/**
+58e08e8d83ab03 Bob Peterson        2020-06-09  1170  	 * If the tr_list is empty, we're withdrawing during a log
+58e08e8d83ab03 Bob Peterson        2020-06-09  1171  	 * flush that targets a transaction, but the transaction was
+58e08e8d83ab03 Bob Peterson        2020-06-09  1172  	 * never queued onto any of the ail lists. Here we add it to
+58e08e8d83ab03 Bob Peterson        2020-06-09  1173  	 * ail1 just so that ail_drain() will find and free it.
+58e08e8d83ab03 Bob Peterson        2020-06-09  1174  	 */
+58e08e8d83ab03 Bob Peterson        2020-06-09  1175  	spin_lock(&sdp->sd_ail_lock);
+58e08e8d83ab03 Bob Peterson        2020-06-09  1176  	if (tr && list_empty(&tr->tr_list))
+58e08e8d83ab03 Bob Peterson        2020-06-09  1177  		list_add(&tr->tr_list, &sdp->sd_ail1_list);
+58e08e8d83ab03 Bob Peterson        2020-06-09  1178  	spin_unlock(&sdp->sd_ail_lock);
+2ca0c2fbf3ed7f Bob Peterson        2019-11-13  1179  	tr = NULL;
+5a61ae1402f152 Andreas Gruenbacher 2020-08-28  1180  	goto out_end;
+b3b94faa5fe596 David Teigland      2006-01-16  1181  }
 
-/jeff
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
