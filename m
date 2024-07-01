@@ -1,84 +1,59 @@
-Return-Path: <linux-kernel+bounces-236435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2318691E247
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:22:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C24391E24A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:22:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC1E7286E00
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:22:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E14EC1F25FF0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AF3316133C;
-	Mon,  1 Jul 2024 14:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4F79161916;
+	Mon,  1 Jul 2024 14:22:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DBJn6iiA"
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T2Np0kiw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED243D3BC
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 14:22:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1485D3D3BC;
+	Mon,  1 Jul 2024 14:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719843724; cv=none; b=lk3U2Ua42VzBtq0FhAUw+u+MuGZ1Ql2jxRZ3rbi2A4e3+sihgRO+NbNTY9b26/ZwDV2Vyuew7a2VbkbRZ4uw6FZFkBj4+IMCnYcycTH9hoyGOTYaHFI9W8B0iE4x9Zo6Yh0gfH3CSsmW7bh88cYcdQH53H6EUIhUXtT+56bSqQM=
+	t=1719843750; cv=none; b=n9NlXrmkywy1khHEv3RhxpG+UOgYwXIC6vcs3oFauNKlAwitHV0RHiLz9TpxWmtfRsfktLnQahsv2W4e2qtDT/RW+gUAGOgP4fqhvtlosEV3uB05qyYx9ASABboQInp79Su4Crec4f9WdxbnhYgFuG6P+3XVfIoKmoflK9oAy3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719843724; c=relaxed/simple;
-	bh=LxtuEpJdzPr3oQLvmbS2EaRpqRT1WsjVufXNSet/JJ8=;
+	s=arc-20240116; t=1719843750; c=relaxed/simple;
+	bh=eROdfnaAt0I1lw6qi3i+9FPGXr4ZyqLymMFA3Dp2S20=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ELRCoz1a/uMPtIIPE1X0rmCbswVsD4WPa4x5mVdiDR8bHN2TUcrtbRopD2tuEOtt2mOF8oqXBND3gPbBhuqaCJC7CBR+UHZhBFIE6lmOLb2roS/+fmWxqUDR5L3VTPFFOlfZi55omrGrhzlnWnXKefbfOzZoZF4x3nZLGuPXLac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DBJn6iiA; arc=none smtp.client-ip=209.85.161.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5c219c54800so1466913eaf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 07:22:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719843721; x=1720448521; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=K03ObKsb30WbBMyJmbDqIqKU1C0pbAUrdm8Q0M5cO7E=;
-        b=DBJn6iiA+Z4zfHYauu4eakrGIkjCctb5g8yj+KA+LF0cBpvfTvbEwkfvBfIikHJlvQ
-         ud5kXKyVgZXwjm9KlWn32Ft1Qe1W0NS/NiNtZs6NsmprYDilhJvT80X7mq4P+t+q0lAQ
-         VW64OdobOL34jN1Qidjs3ZWbBV50xSlhRhuzUJZZgx4/BUPaCX3/ou3Wns/BT33bUiL0
-         JbShdXmPVeSpct7vvTrBNqTsrnVz/muwTtCDIdzjIEc3fLJqNEeUywG/5QVS/lYWxcIe
-         q9/pJo1zV0sL0KAkzkWE91hXiAXrxIdXhSsoXK9ZPcUHB3DbXCE3oZi0qnQo/OvOD0Yx
-         u8qA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719843721; x=1720448521;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K03ObKsb30WbBMyJmbDqIqKU1C0pbAUrdm8Q0M5cO7E=;
-        b=tbNdTBKW9llde3P7XM1ZhAZ/YspJ43xr/fieSMUXyqA6Ix2fTamXcvJ2r7bmyLpa5I
-         Lju7Jlr4owvL37/FVhIeu+/R+7qrU6lyD9SEA3Dr8FLpMVH7SReP71EPpVL6h0wpnQxQ
-         PaEawHIFSdMBM4gz5Ri87j+KN40rx93TthAUjhtRyGC9zFe1rib1b3cwSTSm8AyEbYp5
-         MA+HjIZFBaxLfSPbHlc83ojuBz12HjrthrQtIJqrCf8mLFPlMaPthNzaPUtDrjR/mgnD
-         6nS49Si2BV2VStqyHRKk4wJJwwUNVP1bat78UQa9Bfj2zUqmSzuGU7SylcJKYrO7JsAS
-         UXhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXD06hBl3R2KEvityvnc6KuFeO8q1Lj/TX8gb96Mu50oRLUCAigIP07KsqHmHzrk/IV4d2JGGWv88+1Ano9OcvklS9rv81NfJSqktnw
-X-Gm-Message-State: AOJu0YypC3JerEicHe/X6NS0cv+YFR0w/um8DrwBGzQ78tKO98MGSvHR
-	GcBvGT7BlIV/Sn6hbcJZiUPx04cGTwl/KWldNplVyApFxu4OjuuhpH6KxY2vLBA=
-X-Google-Smtp-Source: AGHT+IElmVojqqFPd7WLZo0rySoK5/PWWVDrfwUNFIIu56dR1A+tJUy5Ehoq4+320Cw3qTfUiDaGJQ==
-X-Received: by 2002:a4a:b246:0:b0:5c4:4787:1d4 with SMTP id 006d021491bc7-5c447870301mr3948738eaf.5.1719843721139;
-        Mon, 01 Jul 2024 07:22:01 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:e8c6:2364:637f:c70e])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5c414835d09sm1028326eaf.11.2024.07.01.07.22.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 07:22:00 -0700 (PDT)
-Date: Mon, 1 Jul 2024 16:21:58 +0200
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Aleksandr Mishin <amishin@t-argos.ru>
-Cc: Martyn Welch <martyn.welch@gefanuc.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Soumya Negi <soumya.negi97@gmail.com>,
-	Michael Straube <straube.linux@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
-	lvc-project@linuxtesting.org
-Subject: Re: [PATCH v2] staging: vme_user: Validate geoid value used for VME
- window address
-Message-ID: <d5ac7346-f8ad-43b7-a794-9b7a55fedc3c@suswa.mountain>
-References: <9ccf4b68-acd0-465b-a5dd-4aa4569da9ce@suswa.mountain>
- <20240625095804.11336-1-amishin@t-argos.ru>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HNhzE63O2EdVcTsMfzOETf/yN3I4rOwATn702cIr2NL8Z2XBKJW3zrDC80bgKRo8Mgrl1vAIwaxhzPsd4N5WW7cK9ThNRoLKaJCTnAUbTevGVrbjHk9s7yiRJCsXqbyRrQYYWFaHcsdcw4+gQyrgCOPakyViC3TmfZ68fUJkudw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T2Np0kiw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98439C116B1;
+	Mon,  1 Jul 2024 14:22:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719843749;
+	bh=eROdfnaAt0I1lw6qi3i+9FPGXr4ZyqLymMFA3Dp2S20=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T2Np0kiwPfQiwXvzGNJlmcPmZ1/GHOcJHhjnfEQwhABH1VrapDa37MJTxJM8e6zP6
+	 mgv/rRiqb8R/HNcrKP7vcORZ530T/XVQXwszxMidBYQnLeWncWBzs3ihlcxGcZr4Sh
+	 CA+iKRl+w2PfNEhm39u2cwDsK6Vor9QByI79LkhKGkumGjKV0Xjbo5QN6lq5n1SeyO
+	 VcE0yh1cw0Ma3jONw6DRIqpWoEOgQ4BfxBbT0mUH30VKDn0Du9b/KbjulG8AGbZFte
+	 QqhZKlP/IvihTgXq7wCFqujgnq1XK01b/carQluHLITjZS9MgTmDUrJdI/gJm4cO9i
+	 xNYfqUFKqoVrQ==
+Date: Mon, 1 Jul 2024 15:22:23 +0100
+From: Will Deacon <will@kernel.org>
+To: Yicong Yang <yangyicong@huawei.com>
+Cc: mark.rutland@arm.com, acme@kernel.org, namhyung@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	peterz@infradead.org, mingo@redhat.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, james.clark@arm.com, dongli.zhang@oracle.com,
+	jonathan.cameron@huawei.com, prime.zeng@hisilicon.com,
+	linuxarm@huawei.com, yangyicong@hisilicon.com
+Subject: Re: [PATCH 0/3] Perf avoid opening events on offline CPUs
+Message-ID: <20240701142222.GA2691@willie-the-truck>
+References: <20240603092812.46616-1-yangyicong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,35 +62,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240625095804.11336-1-amishin@t-argos.ru>
+In-Reply-To: <20240603092812.46616-1-yangyicong@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Tue, Jun 25, 2024 at 12:58:04PM +0300, Aleksandr Mishin wrote:
-> The address of VME window is either set by jumpers (VME64) or derived from
-> the slot number (geographical addressing, VME64x) with the formula:
-> address = slot# * 0x80000
-> https://indico.cern.ch/event/68278/contributions/1234555/attachments/
-> 1024465/1458672/VMEbus.pdf
+On Mon, Jun 03, 2024 at 05:28:09PM +0800, Yicong Yang wrote:
+> From: Yicong Yang <yangyicong@hisilicon.com>
 > 
-> slot# value can be set from module parameter 'geoid' which can contain any
-> value. In this case the value of an arithmetic expression 'slot# * 0x80000'
-> is a subject to overflow because its operands are not cast to a larger data
-> type before performing arithmetic.
+> If user doesn't specify the CPUs, perf will try to open events on CPUs
+> of the PMU which is initialized from the PMU's "cpumask" or "cpus" sysfs
+> attributes if provided. But we doesn't check whether the CPUs provided
+> by the PMU are all online. So we may open events on offline CPUs if PMU
+> driver provide offline CPUs and then we'll be rejected by the kernel:
 > 
-> Validate the provided geoid value using the Geographic Addr Mask.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> 
-> Fixes: d22b8ed9a3b0 ("Staging: vme: add Tundra TSI148 VME-PCI Bridge driver")
-> Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
-> ---
-> v1->v2: Move geoid validation to the probe() function as suggested by Dan
+> [root@localhost yang]# echo 0 > /sys/devices/system/cpu/cpu0/online
+> [root@localhost yang]# ./perf_static stat -e armv8_pmuv3_0/cycles/ --timeout 100
+> Error:
+> The sys_perf_event_open() syscall returned with 19 (No such device) for event (cpu-clock).
+> /bin/dmesg | grep -i perf may provide additional information.
 
-Yeah, I think this works.
+I still don't see the value in this. CPUs can come and go asynchronously,
+so this is all horribly racy. Furthermore, there are other (racy) ways
+to find out which CPUs are online and whatever we do in the kernel now
+isn't going to help userspace running on older kernels.
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-regards,
-dan carpenter
-
+Will
 
