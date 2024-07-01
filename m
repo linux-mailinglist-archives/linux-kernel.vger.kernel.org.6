@@ -1,144 +1,218 @@
-Return-Path: <linux-kernel+bounces-236163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C3C691DE4A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:47:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2224291DE51
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:48:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A012287D28
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:47:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 682E6B22424
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD4514387A;
-	Mon,  1 Jul 2024 11:47:06 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4BD839FD0
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 11:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 404C01494B8;
+	Mon,  1 Jul 2024 11:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vcERIxBu"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E717C770E6
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 11:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719834425; cv=none; b=IwJjwmOKbyZWFtBu81AM3dbFUwiE75LKiwC4UkRBMDSPQlg4GPbvX+Q9DCTQISzGzUfE0nbqSZG0VX7exlRF7+BkaP6QkjoRagdc5oJTHjXbjaMOnlj0OAoQQX6A6mdx6ZeYrre8FagcH+jIsqr4B6QG3z7KY5MVaZ5f8mrvWyI=
+	t=1719834474; cv=none; b=auuNZjFCxDTHk34f6Y60n3fJfbW2Yza5kWMSW9X1UOKXpbxS3BmXffEo3G9AuvGbwN1xZAUW3dwWL44AM8p10s9PaAG9gwS7MjXUxbsPnX01thXbkSGeVRyHksYCDmeBR+TNBi5UnPo0qrMEG40Yp7JQ+mpgr6HF48rW1qs5EAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719834425; c=relaxed/simple;
-	bh=QbMeO0zCEIjsw7BElAH3ADx8DVUzqr7ztJ+td4iFcjY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GZyJZHUV6KhxuNiOUTk0kCQnXreb0K3v6cY/ITuZXKdIAhf+Ez7P8Cq48l30mUD7lJACcV3hvuqsGzFEuMl7fyCOmqIGe2E3zogtuiy0+09+gDDSnKu7CiMXQ4LAbboy90FtOJ9BJ877aOief4+Fr5vOZ6IqyuhC2yCeNI1p2Wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC80B339;
-	Mon,  1 Jul 2024 04:47:26 -0700 (PDT)
-Received: from [10.57.72.41] (unknown [10.57.72.41])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1A8F63F762;
-	Mon,  1 Jul 2024 04:46:58 -0700 (PDT)
-Message-ID: <9bbbf8be-a197-476d-b491-92c9e31e8119@arm.com>
-Date: Mon, 1 Jul 2024 12:46:57 +0100
+	s=arc-20240116; t=1719834474; c=relaxed/simple;
+	bh=jiWVBvlci6pg3oJ+xWBRBIfbjSaD2vYzPxE1uip87Pw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JctVLly+Bm8NkpUEGeK/N0k3YLMOD8zZJLWPPPkS+5LXVctUqLvGiOn1AahPre9FjyLhiF7sW5sP+fpazi5iy5EIRQ+r/Sln5dIYRWqpengkrAybIZlRlaOLq60B/I4VtqchHJtvysoY42ChadiR1fN5phu/SJqH42JPkv8Of/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vcERIxBu; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7067a2e9607so2266160b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 04:47:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719834471; x=1720439271; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vi7uBT1zGBUytAU1JAG3iLk2sulQaLB7Dq+BxdOsfHM=;
+        b=vcERIxBu0xd5g4IpMJl4OnjdSwsr7rK3jJt6Fr/LtUsqHAzLVMhWQnD5tQacKnt0Ns
+         w7hoPcm8HONBQaHUbdW3dWLvpGWDpsOtyHEwWbbPfigMkSrX8+/iI8MacalFJcz8J3rN
+         MlERqwYN8ERrX5OkKjJLOn5RtovDoQG90ahTwkgKa63dJC5VN88ak3bFk2wEqNDYxI0p
+         Phc+y7Ig47C67CaP/YWrBvxpIwa/TNbrVBBX9dNcvAH1YbOZ8CctzKl6IfqX2WGHPv0i
+         EtDndWA9oC6ew2O3zNXzpQRJcXtDEZcgydLwA7hDYqZGv3TdbsjtwHO4uh1Hm64yDaj2
+         MkCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719834471; x=1720439271;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vi7uBT1zGBUytAU1JAG3iLk2sulQaLB7Dq+BxdOsfHM=;
+        b=igo/uPGK7ZgkMeVX349nm3FCkomHil1VUuvbXXMmYhNMVktf67oxSge1VbT0HTGY3t
+         Ykf8qLy/wiiTWnOtkZCmyZVSiyw11OYIoopiwi2PfnarSQx7eVjQOMRV69+7tOVCsn+/
+         YGooQ8LV3i8GF1IvGMIjdas75HW6vTc8/ERVfqBFkHocbbhZFHjHjH+uuia5+iGStFLy
+         0JjDTC5AqYGZ1px41OAi23K5DivZMvrr7P6iVVqusZy+HlCey+SHsTM6vstuxA0PgElM
+         InbILfsIeLLpUL9KQrmhONANDZVpKjios1FEYxHvscxZKP673zuRdjOaLUBxZATHoPxR
+         nAKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWacVdHAh5VgoxA08nux+1Gel/jKwnIiG5EGjnrmn5tData7wsqtnt0HTnpHBQcauhftmHy96vP94YDwgQ1NIV1ilEPeK2qv4MzpPzl
+X-Gm-Message-State: AOJu0YxBfbLjAEjVDimJajY4qzG+jLfPYVf2/FE9Qm9JdcIde5kCHyoD
+	AyL+fej/k/Cuu0uXbTPFI3sIhlLzj5fjWLLyJ2DpWsgCM2YQPDh3aeVouri/Gj/OYt2qIjr4g3k
+	i
+X-Google-Smtp-Source: AGHT+IGOn8fZU80VMtXzaPnMUv7YL/QK2W3TGTcOrKEGGFell07/QenRkEBPEcSm5E5/EzY3PGFhNA==
+X-Received: by 2002:a05:6a20:4303:b0:1bd:18ee:f145 with SMTP id adf61e73a8af0-1bef60ee5e3mr8481395637.1.1719834471025;
+        Mon, 01 Jul 2024 04:47:51 -0700 (PDT)
+Received: from localhost ([122.172.82.13])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91ce1c396sm6598209a91.4.2024.07.01.04.47.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 04:47:50 -0700 (PDT)
+Date: Mon, 1 Jul 2024 17:17:48 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>, Nikunj Kela <nkela@quicinc.com>,
+	Prasad Sodagudi <psodagud@quicinc.com>, linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] OPP: Fix support for required OPPs for multiple PM
+ domains
+Message-ID: <20240701114748.hodf6pngk7opx373@vireshk-i7>
+References: <20240618155013.323322-1-ulf.hansson@linaro.org>
+ <20240625105425.pkociumt4biv4j36@vireshk-i7>
+ <CAPDyKFpLfBjozpcOzKp4jngkYenqSdpmejvCK37XvE1-WbBY2g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] mm: add docs for per-order mTHP split counters
-Content-Language: en-GB
-To: Lance Yang <ioworker0@gmail.com>
-Cc: akpm@linux-foundation.org, dj456119@gmail.com, 21cnbao@gmail.com,
- david@redhat.com, shy828301@gmail.com, ziy@nvidia.com,
- libang.li@antgroup.com, baolin.wang@linux.alibaba.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Mingzhe Yang <mingzhe.yang@ly.com>
-References: <20240628130750.73097-1-ioworker0@gmail.com>
- <20240628130750.73097-3-ioworker0@gmail.com>
- <13dcf4be-8c5f-4697-adc1-b68c3da82d78@arm.com>
- <CAK1f24msC9T2vN6wJPNfMFgG7RsXf7CML-P2fxwkY73969ZAhQ@mail.gmail.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <CAK1f24msC9T2vN6wJPNfMFgG7RsXf7CML-P2fxwkY73969ZAhQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFpLfBjozpcOzKp4jngkYenqSdpmejvCK37XvE1-WbBY2g@mail.gmail.com>
 
-On 01/07/2024 11:50, Lance Yang wrote:
-> On Mon, Jul 1, 2024 at 4:31 PM Ryan Roberts <ryan.roberts@arm.com> wrote:
->>
->> On 28/06/2024 14:07, Lance Yang wrote:
->>> This commit introduces documentation for mTHP split counters in
->>> transhuge.rst.
->>>
->>> Signed-off-by: Mingzhe Yang <mingzhe.yang@ly.com>
->>> Signed-off-by: Lance Yang <ioworker0@gmail.com>
->>> ---
->>>  Documentation/admin-guide/mm/transhuge.rst | 16 ++++++++++++++++
->>>  1 file changed, 16 insertions(+)
->>>
->>> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
->>> index 1f72b00af5d3..709fe10b60f4 100644
->>> --- a/Documentation/admin-guide/mm/transhuge.rst
->>> +++ b/Documentation/admin-guide/mm/transhuge.rst
->>> @@ -514,6 +514,22 @@ file_fallback_charge
->>>       falls back to using small pages even though the allocation was
->>>       successful.
->>
->>
->> I note at the top of this section there is a note:
->>
->> Monitoring usage
->> ================
->>
->> .. note::
->>    Currently the below counters only record events relating to
->>    PMD-sized THP. Events relating to other THP sizes are not included.
->>
->> Which is out of date, now that we support mTHP stats. Perhaps it should be removed?
+On 29-06-24, 11:09, Ulf Hansson wrote:
+> I get your point, but I am not sure I agree with it.
 > 
-> Good catch! Let's remove that in this patch ;)
-> 
->>
->>>
->>> +split
->>> +     is incremented every time a huge page is successfully split into
->>> +     base pages. This can happen for a variety of reasons but a common
->>> +     reason is that a huge page is old and is being reclaimed.
->>> +     This action implies splitting any block mappings into PTEs.
->>
->> Now that I'm reading this, I'm reminded that Yang Shi suggested at LSFMM that a
->> potential aid so solving the swap-out fragmentation problem is to split high
->> orders to lower (but not 0) orders. I don't know if we would take that route,
->> but in principle it sounds like splitting mTHP to smaller mTHP might be
->> something we want some day. I wonder if we should spec this counter to also
->> include splits to smaller orders and not just splits to base pages?
->>
->> Actually looking at the code, I think split_huge_page_to_list_to_order(order>0)
->> would already increment this counter without actually splitting to base pages.
->> So the documantation should probably just reflect that.
-> 
-> Yep, you're right.
-> 
-> It’s important that the documentation reflects that to ensure consistency.
-> 
-> How about "...  is successfully split into smaller orders. This can..."?
+> For the required-opps, the only existing use case is power/perf
+> domains with performance-states, so why make the code more complicated
+> than it needs to be?
 
-fine by me.
+That is a fair argument generally, i.e. keep things as simple as we
+can, but this is a bit different. We are talking about setting the
+(required) OPP for a device (parent genpd) here and it should follow
+the full path.
 
-> 
-> Thanks,
-> Lance
-> 
->>
->>> +
->>> +split_failed
->>> +     is incremented if kernel fails to split huge
->>> +     page. This can happen if the page was pinned by somebody.
->>> +
->>> +split_deferred
->>> +     is incremented when a huge page is put onto split
->>> +     queue. This happens when a huge page is partially unmapped and
->>> +     splitting it would free up some memory. Pages on split queue are
->>> +     going to be split under memory pressure.
->>> +
->>>  As the system ages, allocating huge pages may be expensive as the
->>>  system uses memory compaction to copy data around memory to free a
->>>  huge page for use. There are some counters in ``/proc/vmstat`` to help
->>
+Even in case of genpds we may want to configure more properties and
+not just vote, like bandwidth, regulator, clk, etc. And so I would
+really like to set the OPP in a standard way, no matter what.
 
+> No, that's not correct. Let me try to elaborate on my setup, which is
+> very similar to a use case on a Tegra platform.
+
+Thanks, I wasn't thinking about this setup earlier.
+
+> pd_perf0: pd-perf0 {
+>     #power-domain-cells = <0>;
+>     operating-points-v2 = <&opp_table_pd_perf0>;
+> };
+> 
+> //Note: no opp-table
+> pd_power4: pd-power4 {
+>     #power-domain-cells = <0>;
+>      power-domains = <&pd_perf0>;
+> };
+> 
+> //Note: no opp-table
+> pd_power5: pd-power5 {
+>      #power-domain-cells = <0>;
+>      power-domains = <&pd_perf0>;
+> };
+> 
+> //Note: The opp_table_pm_test10 are having required-opps pointing to
+> pd_perf0's opp-table.
+> pm_test10 {
+>     ...
+>     power-domains = <&pd_power4>, <&pd_power5>;
+>     power-domain-names = "perf4", "perf5";
+>     operating-points-v2 = <&opp_table_pm_test10>;
+> };
+
+
+> In the use case above, we end up never voting on pd_power5.
+ 
+> The DT parsing of the required-opps is already complicated and there
+> seems to be endless new corner-cases showing up. Maybe we can fix this
+> too, but perhaps we should simply take a step back and go for
+> simplifications instead?
+
+I truly believe that keeping a standard way of updating OPPs is the
+right way to go and that will only prevent complicated corner cases
+coming later on.
+
+What about this patch instead ?
+
+diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+index 5f4598246a87..2086292f8355 100644
+--- a/drivers/opp/core.c
++++ b/drivers/opp/core.c
+@@ -1091,7 +1091,8 @@ static int _set_required_opps(struct device *dev, struct opp_table *opp_table,
+ 		if (devs[index]) {
+ 			required_opp = opp ? opp->required_opps[index] : NULL;
+ 
+-			ret = dev_pm_opp_set_opp(devs[index], required_opp);
++			/* Set required OPPs forcefully */
++			ret = dev_pm_opp_set_opp_forced(devs[index], required_opp, true);
+ 			if (ret)
+ 				return ret;
+ 		}
+@@ -1365,17 +1366,8 @@ int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq)
+ }
+ EXPORT_SYMBOL_GPL(dev_pm_opp_set_rate);
+ 
+-/**
+- * dev_pm_opp_set_opp() - Configure device for OPP
+- * @dev: device for which we do this operation
+- * @opp: OPP to set to
+- *
+- * This configures the device based on the properties of the OPP passed to this
+- * routine.
+- *
+- * Return: 0 on success, a negative error number otherwise.
+- */
+-int dev_pm_opp_set_opp(struct device *dev, struct dev_pm_opp *opp)
++static int dev_pm_opp_set_opp_forced(struct device *dev, struct dev_pm_opp *opp,
++				     bool forced)
+ {
+ 	struct opp_table *opp_table;
+ 	int ret;
+@@ -1386,11 +1378,25 @@ int dev_pm_opp_set_opp(struct device *dev, struct dev_pm_opp *opp)
+ 		return PTR_ERR(opp_table);
+ 	}
+ 
+-	ret = _set_opp(dev, opp_table, opp, NULL, false);
++	ret = _set_opp(dev, opp_table, opp, NULL, forced);
+ 	dev_pm_opp_put_opp_table(opp_table);
+ 
+ 	return ret;
+ }
++/**
++ * dev_pm_opp_set_opp() - Configure device for OPP
++ * @dev: device for which we do this operation
++ * @opp: OPP to set to
++ *
++ * This configures the device based on the properties of the OPP passed to this
++ * routine.
++ *
++ * Return: 0 on success, a negative error number otherwise.
++ */
++int dev_pm_opp_set_opp(struct device *dev, struct dev_pm_opp *opp)
++{
++	return dev_pm_opp_set_opp_forced(dev, opp, false);
++}
+ EXPORT_SYMBOL_GPL(dev_pm_opp_set_opp);
+ 
+ /* OPP-dev Helpers */
+
+-- 
+viresh
 
