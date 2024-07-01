@@ -1,153 +1,79 @@
-Return-Path: <linux-kernel+bounces-236655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A052291E56E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:33:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F86591E582
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:40:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B878283F1E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:33:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51BAB1C2088F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4492916D9D4;
-	Mon,  1 Jul 2024 16:33:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B77316DC0B;
+	Mon,  1 Jul 2024 16:40:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iUK8THQs"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="0rtPCNzx"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84EF14D2AC;
-	Mon,  1 Jul 2024 16:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B751016D9AB;
+	Mon,  1 Jul 2024 16:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719851617; cv=none; b=aVmsrsJp9tCACyWUtPtl/Vbob6vNHIlJH//vcUhzUjL+MiWQX2iARZJietpS7+CPz6qORQnIskzG2yhIJg4j+qjiWGLe/AIN0KZUnoAwMpMqTCkUMDGy8SxnNmM3+Gs4GxsjXs7d586FDCOhI4Ohc+vzOt4jjxwqzEdj8zxFidg=
+	t=1719852035; cv=none; b=s57wvG9vQ2f4kizdws6oMbamC4Tt3e5WrSmU1SB9WrIcS/CNKOr474pEf+Sw7qF4HBfnSAjz3315DoXjPDRF3wDI4ZMlueEuUfTo0X5VTcADIRfluhV3Qt2T11ace+QiCPM8w9MzpHp7un6gOMwiUbEErJlOs/Y9xrxAoxygl30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719851617; c=relaxed/simple;
-	bh=jbP1tKebowex1to7GOL6gesMVgJqYoDaSfBtDnkom/w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PEJnuVf+mift7gOvKoSYZskkobZT+89gIi0fGVijpGPljTLOf7x84q3hwRAG/Uj2Y5XAkJT+NE6Kyr1aJmKTCmTQHCqemW2z89ymCWdCWlD11XruMO5k9dAu/kAmUkbCfXs4HzPsypR09zynXPIHTRsebhQSGTa2nQO9Od//u9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iUK8THQs; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719851616; x=1751387616;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=jbP1tKebowex1to7GOL6gesMVgJqYoDaSfBtDnkom/w=;
-  b=iUK8THQsasnKU+mAVitqkPwawNUGu/xZEbinh3VfN2KcHVG2ibdydxc3
-   Ro+V70ECOuNyi2CaVJWpBV5TzResCEPY6fyRWI0MlSxuAs8Tnpn7zc2RW
-   uzm1rOeBYCzNWjTjjG5hM+6uXPnRiPdygPPvnux+5dc1Q7y2nFx7Xvtbt
-   7AH8tNu4nco75ezrPMCUz2AqP5t28+brkCQjDrHaYlk7HpI3L6PXN8v2u
-   Evk8IHNOyy829Rf5v1YDQx3u+8lE41fh5BdjErlXzYtKiC3PcrN1kqcN+
-   o836+IjKKLGyjvc+fk2RADegCFX4gK6lARaUvxzPLFwAn2sQ6CodBN2jU
-   A==;
-X-CSE-ConnectionGUID: 4GIRvZ0ERfikS8sVmf17jA==
-X-CSE-MsgGUID: 3e8x+xFAQmW+bk0UQwRwBQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="17120641"
-X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
-   d="scan'208";a="17120641"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 09:33:35 -0700
-X-CSE-ConnectionGUID: NvlDRiKRSAig7f0SKFg6NQ==
-X-CSE-MsgGUID: axg3MeE2TzSF4iHtuDdYbg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
-   d="scan'208";a="46238427"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.54.39.125])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 09:33:35 -0700
-Date: Mon, 1 Jul 2024 09:38:47 -0700
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-To: Xin Li <xin@zytor.com>
-Cc: X86 Kernel <x86@kernel.org>, Sean Christopherson <seanjc@google.com>,
- LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Dave Hansen <dave.hansen@intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Xin Li
- <xin3.li@intel.com>, linux-perf-users@vger.kernel.org, Peter Zijlstra
- <peterz@infradead.org>, Paolo Bonzini <pbonzini@redhat.com>, Tony Luck
- <tony.luck@intel.com>, Andy Lutomirski <luto@kernel.org>, acme@kernel.org,
- kan.liang@linux.intel.com, Andi Kleen <andi.kleen@intel.com>, "Mehta,
- Sohil" <sohil.mehta@intel.com>, Zeng Guang <guang.zeng@intel.com>,
- jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v3 11/11] KVM: X86: Use common code for PV IPIs in linux
- guest
-Message-ID: <20240701093847.3f875868@jacob-builder>
-In-Reply-To: <ca060eaf-0ace-4a8e-af86-a45b6f32340e@zytor.com>
-References: <20240628201839.673086-1-jacob.jun.pan@linux.intel.com>
-	<20240628201839.673086-12-jacob.jun.pan@linux.intel.com>
-	<ca060eaf-0ace-4a8e-af86-a45b6f32340e@zytor.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719852035; c=relaxed/simple;
+	bh=InQxmdhcbdfStQupraNJHb78LhJpdvpvopFz87PBFRA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bcbEGiLgBvE7tn8v6X8YdUXWeZzyFOhjAKgaprLXy0H1i+5Ne6ZS1OVnIRKhtnm8CgirKiUSCrh+IVX20FGVD+pHcBFwMsZacEO4WxoVRtMG3+Tkve50FUn5IyELJBb/e9o6O9E3yXK3CX2KzxU4cEzUX7g3MNKL6UaOXIytLog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=0rtPCNzx; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=9XVDAay2T0LhiNCcdccMadV7DGJ/vCEpdZXpqYEeP0s=; b=0rtPCNzxa/DXGjv0dhO/ArY4FJ
+	EwXr8+pHClbKJgI5B8V6AXqD6OMDtEAhSZQm6G1kNkVdVwOXNe/SCK8WRmxqz297iHFPkchjXAraD
+	VUqGGWs3kZqUnZvzAFZ7FufftydCZ8oZqZMtNM1pXXC1pjaojn2Fp0r8Jffeu2Oa0sfU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sOK4m-001YxR-Ow; Mon, 01 Jul 2024 18:40:24 +0200
+Date: Mon, 1 Jul 2024 18:40:24 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Romain Gantois <romain.gantois@bootlin.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 1/6] net: phy: dp83869: Disable autonegotiation
+ in RGMII/1000Base-X mode
+Message-ID: <a244ce05-28a1-47b7-9093-12899f2c447f@lunn.ch>
+References: <20240701-b4-dp83869-sfp-v1-0-a71d6d0ad5f8@bootlin.com>
+ <20240701-b4-dp83869-sfp-v1-1-a71d6d0ad5f8@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240701-b4-dp83869-sfp-v1-1-a71d6d0ad5f8@bootlin.com>
 
-
-On Sat, 29 Jun 2024 11:38:10 -0700, Xin Li <xin@zytor.com> wrote:
-
-> On 6/28/2024 1:18 PM, Jacob Pan wrote:
-> > Paravirtual apic hooks to enable PV IPIs for KVM if the "send IPI"  
+On Mon, Jul 01, 2024 at 10:51:03AM +0200, Romain Gantois wrote:
+> Currently, the DP83869 driver only disables autonegotiation in fiber
+> configurations for 100Base-FX mode. However, the DP83869 PHY does not
+> support autonegotiation in any of its fiber modes.
 > 
-> s/Paravirtual apic/Paravirtualize APIC/
+> Disable autonegotiation for all fiber modes.
 
-Paravirtual APIC makes sense to me. This is also the same language used in
-previous commits.
+I'm assuming to does work in copper mode?
 
-How about:
-
-"The paravirtual APIC hooks in KVM, some of which are used for sending PV
-IPIs, can reuse common code for ICR preparation. This shared code also
-encompasses NMI-source reporting when in effect."
-
-> > hypercall is available. Reuse common code for ICR preparation which
-> > covers NMI-source reporting if in effect.  
-> 
-> I see a lot of "NMI source". Should we use "NMI-source" in all places?
-Not really, here NMI-source is a compound modifier before noun "reporting".
-
-For other places, hyphen(-) is not needed if it is just a noun. e.g.
-"partial due to unknown NMI sources"
-
-I will go through the patchset to make sure they are consistent.
-
-> > 
-> > Originally-by: Zeng Guang <guang.zeng@intel.com>
-> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > ---
-> >   arch/x86/kernel/kvm.c | 10 +---------
-> >   1 file changed, 1 insertion(+), 9 deletions(-)
-> > 
-> > diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-> > index 263f8aed4e2c..a45d60aa0302 100644
-> > --- a/arch/x86/kernel/kvm.c
-> > +++ b/arch/x86/kernel/kvm.c
-> > @@ -516,15 +516,7 @@ static void __send_ipi_mask(const struct cpumask
-> > *mask, int vector) 
-> >   	local_irq_save(flags);
-> >   
-> > -	switch (vector) {
-> > -	default:
-> > -		icr = APIC_DM_FIXED | vector;
-> > -		break;
-> > -	case NMI_VECTOR:
-> > -		icr = APIC_DM_NMI;
-> > -		break;
-> > -	}
-> > -
-> > +	icr = __prepare_ICR(0, vector, 0);
-> >   	for_each_cpu(cpu, mask) {
-> >   		apic_id = per_cpu(x86_cpu_to_apicid, cpu);
-> >   		if (!ipi_bitmap) {  
-> 
-
-
-Thanks,
-
-Jacob
+    Andrew
 
