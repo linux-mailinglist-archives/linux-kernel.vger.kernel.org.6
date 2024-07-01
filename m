@@ -1,112 +1,93 @@
-Return-Path: <linux-kernel+bounces-236922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 490FB91E8A0
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:29:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C982C91E8A5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E42231F24D1D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:29:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B651285CB6
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F5D17334F;
-	Mon,  1 Jul 2024 19:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X4uyulKb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474FC16FF48;
+	Mon,  1 Jul 2024 19:28:37 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0195172BD1;
-	Mon,  1 Jul 2024 19:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF4616F914;
+	Mon,  1 Jul 2024 19:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719862038; cv=none; b=VODGaWEuDdCX+JRqS0gf0r8dun5Wpfouzy1HjNiDDkOEEl7B8GoHpfDS4Zb4ANFpNejhW5sjCBe4I3nQiXeq6GphWxyZ/3xacQdUzgHnFZ7+ba1cpxfjzncGwbOnbm1xMKDv2EywZN9jC448kkAaN1GOY9+toHxgCivV6zSpGZs=
+	t=1719862116; cv=none; b=i8GnfeFn8ylaE1dOX8N0DNLdiJW/aeIliLSrOQ5oSUJe5AdfHx2gVivmOG8SgUf17VRfHaIBmLmtffpL5cDrvmQ0OAdEQp8kPNZfuSXpPeXbeuHsg16gNcgMmtatLkKq6K2/NC21c6TM5ZIAy/ydAzGh2DgZEf08xWjGQqdl2rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719862038; c=relaxed/simple;
-	bh=fBlkxk1Ff29Zv5hf2sNJnmiHJF0MltvzTSJLNhDvsG8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=C1LCS26pfOteAuIrFxPbjbCFXYyN7nGti7dHfZhwSwZxDjkNlTvX5Qszb1AvXSEZfXn3ZSM5JJHuTTwaXP4yjPeHEwtFsz4yQ9Ci4cQRz4M1vCZZsjfNSyQz++au13K0O8IpW8V4SFtO/TVp41oD9hC7T59jeIA3wr8X4w5aPuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X4uyulKb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BA6FC32786;
-	Mon,  1 Jul 2024 19:27:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719862037;
-	bh=fBlkxk1Ff29Zv5hf2sNJnmiHJF0MltvzTSJLNhDvsG8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=X4uyulKbdcl37BYLf/rxxpfmLRRiHxgo0DdJC/AznGxFaPaD2j5tC1707zu7MB4m+
-	 oJHVeSBr7Hsz/iQ3j/bCS+ZvrNDhcRNnbYDp38oh1BejNsY6D2hqBEd7NFK9vT7oPL
-	 F9tXsQ2/A3l7gcSZ0M8xHvwtA/eaBmHnRDfcG8tEVoGMwvD/AvmZpVT3QDVEMiZ+1r
-	 NTLTFMinIq0OI2PmAO8xdUtoayV+W+xeFoncTB63jXwm2TR/4ALWSu+g6IBJW38x1P
-	 4iPYzXgQ/QfldH4VQCg/4E/SXPmzn6KWDXXGiOWQGfl6aYfF94MwLNs97Pu3CFNO6b
-	 AFaxzonaM27Cg==
-From: SeongJae Park <sj@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 9/9] Docs/mm/damon/index: add links to admin-guide doc
-Date: Mon,  1 Jul 2024 12:27:06 -0700
-Message-Id: <20240701192706.51415-10-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240701192706.51415-1-sj@kernel.org>
-References: <20240701192706.51415-1-sj@kernel.org>
+	s=arc-20240116; t=1719862116; c=relaxed/simple;
+	bh=QOtHbplpXCj5IzyYIvxEHL7NzC/0t8Gv57xJ5XashPQ=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jG6rylUtxS7VypVAonF4AFfErzSVbHMnMFLgV95JjSaHwQM2pED9GWyZhO5P8LtS69fU4pg+xl9W6/IWBZtygwueLTYhR2a148WAFUmlDxXauopBrByI8gPNen0cGCSpNMOAAXTxSkJkhHoUkkfgkdEFOpx/Bz+JRbHbXREa7Lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.97.1)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1sOMhJ-000000000Vo-1Tfb;
+	Mon, 01 Jul 2024 19:28:21 +0000
+Date: Mon, 1 Jul 2024 20:28:14 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
+	Mark Lee <Mark-MC.Lee@mediatek.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Elad Yifee <eladwf@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH net-next] net: ethernet: mediatek: Allow gaps in MAC
+ allocation
+Message-ID: <379ae584cea112db60f4ada79c7e5ba4f3364a64.1719862038.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Readers of DAMON subsystem documents index would want to further learn
-how they can use DAMON from the user-space.  Add the link to the admin
-guide.
+Some devices with MediaTek SoCs don't use the first but only the second
+MAC in the chip. Especially with MT7981 which got a built-in 1GE PHY
+connected to the second MAC this is quite common.
+Make sure to reset and enable PSE also in those cases by skipping gaps
+using 'continue' instead of aborting the loop using 'break'.
 
-Signed-off-by: SeongJae Park <sj@kernel.org>
+Fixes: dee4dd10c79a ("net: ethernet: mtk_eth_soc: ppe: add support for multiple PPEs")
+Suggested-by: Elad Yifee <eladwf@gmail.com>
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 ---
- Documentation/mm/damon/index.rst | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+Note that this should go to 'net-next' because the commit being fixed
+isn't yet part of the 'net' tree.
 
-diff --git a/Documentation/mm/damon/index.rst b/Documentation/mm/damon/index.rst
-index 3d3b345d8889..dafd6d028924 100644
---- a/Documentation/mm/damon/index.rst
-+++ b/Documentation/mm/damon/index.rst
-@@ -16,16 +16,16 @@ monitoring :ref:`mechanisms <damon_design_monitoring>` of DAMON make it
-    of the size of target workloads).
+ drivers/net/ethernet/mediatek/mtk_eth_soc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+index 13d78d9b3197..2529b5b607c8 100644
+--- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
++++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+@@ -3396,7 +3396,7 @@ static int mtk_open(struct net_device *dev)
  
- Using this framework, therefore, the kernel can operate system in an
--access-aware fashion.  Because the features are also exposed to the user space,
--users who have special information about their workloads can write personalized
--applications for better understanding and optimizations of their workloads and
--systems.
-+access-aware fashion.  Because the features are also exposed to the :doc:`user
-+space </admin-guide/mm/damon/index>`, users who have special information about
-+their workloads can write personalized applications for better understanding
-+and optimizations of their workloads and systems.
+ 		for (i = 0; i < MTK_MAX_DEVS; i++) {
+ 			if (!eth->netdev[i])
+-				break;
++				continue;
  
- For easier development of such systems, DAMON provides a feature called
- :ref:`DAMOS <damon_design_damos>` (DAMon-based Operation Schemes) in addition
--to the monitoring.  Using the feature, DAMON users in both kernel and user
--spaces can do access-aware system operations with no code but simple
--configurations.
-+to the monitoring.  Using the feature, DAMON users in both kernel and :doc:`user
-+spaces </admin-guide/mm/damon/index>` can do access-aware system operations
-+with no code but simple configurations.
- 
- .. toctree::
-    :maxdepth: 2
-@@ -34,3 +34,6 @@ configurations.
-    design
-    api
-    maintainer-profile
-+
-+To utilize and control DAMON from the user-space, please refer to the
-+administration :doc:`guide </admin-guide/mm/damon/index>`.
+ 			target_mac = netdev_priv(eth->netdev[i]);
+ 			if (!soc->offload_version) {
 -- 
-2.39.2
-
+2.45.2
 
