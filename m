@@ -1,134 +1,137 @@
-Return-Path: <linux-kernel+bounces-236716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE66291E63D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:09:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59ABB91E640
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:10:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 182761C21466
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:09:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15ACA283473
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33FA116E868;
-	Mon,  1 Jul 2024 17:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZC7OWLYS"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D529E16C697;
-	Mon,  1 Jul 2024 17:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F82416EB46;
+	Mon,  1 Jul 2024 17:09:44 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85F116E883;
+	Mon,  1 Jul 2024 17:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719853779; cv=none; b=utccVIDYc3AXgMwGFZPigx7SMvd7Hobfp7SycOV+kahnQeqdGeOW8vGmLdWsOtnQflZmGWhum4S1mU58FHGOcgWF4F9Z/egMZU0tRj317rkAVI8vWfr+T9C1kjpaeYxNmvDAptAWKXsDiXVCttLMAgOKA4tw/Zqkufv28V5tUKQ=
+	t=1719853783; cv=none; b=ONHapKgixoJMXXhkaxehQoN6vqF+/10nHcNWLiQPrr7QJonyFDZkjIYQ2yT0+/kUNWSGOdy+2tpPr0WyDfkOOYz9abC7O+usG89XPdWeo2GBM2VfV7tHsrOiCnsBvb+YTNYWbMOyBGASXuuYAlSUcRTfJGsh+PLCnJy4/uXLjFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719853779; c=relaxed/simple;
-	bh=gVhmfdnxbOOPgeFRaCg9Ymh4Zpg0f7AXBtcggt+t08M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FdMWfm3u5Eey55a/8fhEY2bNuNNFT3AEF/ytekaZK808gY8oXJduRjwIbC5O7exR3/k769DftVUFzUXTzIp9vIh6mm2I5Wtky0XdEzh1ogYIthIJSuOGOBGFA4MrXi41z6zaWYkLTSxMSHeB2xYAJYbLT0U1OLopbQlWJAhwOYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZC7OWLYS; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52cdbc20faeso4696941e87.1;
-        Mon, 01 Jul 2024 10:09:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719853776; x=1720458576; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=x2AvaZ/UqlvKRYfAtV7P9vybf13O6HOVkfDtPt1cvUk=;
-        b=ZC7OWLYS4TtFg73E4SuJ5mjHxOlo8/FFhf8FcgIqXFZyMVvufjpCT2zhyYLHF/fHoq
-         4Mz7hI+NioDVC4Bvnrl7/2aTloAHrkLwQnb3oHFIeiuDjYy9Gi5pjaXFJcZmcmsmXaeV
-         UxwHchAsSCdeNRzH2dRTgH3Umcv9ylH0cf+2Obs8YZC6bNc2al4S5qngi4sL870Lym0w
-         EEe8JiSY+47fagUZaTxXwd0cd3fLWriRTeySE7DJMcEWMC5lPXArTZEnZpJ8QnTdbJWu
-         eZf04YiNw8MRHinqo1/rY6+Se3Z0gZbmseoNqEk2MuYj7WE9kF3C6dpq5PcxSWI00aXa
-         JWKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719853776; x=1720458576;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=x2AvaZ/UqlvKRYfAtV7P9vybf13O6HOVkfDtPt1cvUk=;
-        b=oAaoHDid+9zVzjQSZjLrGi4w+tIyC2/f0FFBxaRBgceiKXFivVDojEs8PznnAjOcq+
-         r+KkGxlY8grwCNsqTyzBuDqeZp2kBgIsBk04z5to8CcU1JzZk7vVBWYb6Fv9775xyXdH
-         tfYN07F57ChcvxTr7c6/themttXanDAn04nB9IxD+JN1Do/ouJbRegPiEubBbHD3HGq3
-         p2HwhQBm6OL+3aZpguOEBvvtLhOfaGxpXUpJgWqbOaCX9Mxh82Ok/XExTGa2EDaFiLx0
-         +5Rjqs+s0o65Ne3C8s1Xe94amid8TwxdPRupDJeUtyVOhQyWsKWJMAZg2RKxGvMLIyFj
-         b+Ww==
-X-Forwarded-Encrypted: i=1; AJvYcCUnm2Gc5jgU8oeQRFIA8og1zI3EY/lh6ktKTRuMipW20ATbULFcFsW9NgA/UwK7Y1YAsPatgucLsMzQ3O/38OP7+CQV+ha8D1kGaBKW6QFHpsIFGkEl2IcDLkTijdeRb5USBVFYG+XnPQ==
-X-Gm-Message-State: AOJu0YzSVcsiXl5uTmaiN3FgqTidAEGfexpnVgtV7DuKcbFiNxLFrMhZ
-	EboFItOI5+2u25zsXjT12YloI6GmJ7q09cE020IP8mM2ZXkzH+Kl9QpqP1VRgBODA/1zJlyF+/F
-	kizHSf/qUee0Him+02aeIFkjhHQ==
-X-Google-Smtp-Source: AGHT+IGYYNCj47g6ucYfUx88jylfxwmzthcbBunBR6FSqs2Zy9xB27gXOmjZv5e2f+ERX7Yl2NsAnugoE22lg1LI1Pg=
-X-Received: by 2002:a05:6512:3b12:b0:52c:e17c:3753 with SMTP id
- 2adb3069b0e04-52e82647353mr4096272e87.5.1719853775769; Mon, 01 Jul 2024
- 10:09:35 -0700 (PDT)
+	s=arc-20240116; t=1719853783; c=relaxed/simple;
+	bh=/0P36xAcbDr1Y49JaZRQ1aDkbz3B2ByND+s9thhdz6o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=orwQdTs4co9AT/ggE083ofTiUSuMWAqExrtAuBeG/bXEd/UE3+pZRrmX358tJqbV1w+neZhW9D4TfGidFgJdY4zn6WEcD8ULXSf+1iwtnkSGpzTc9D3zYcfAkbwe0G8Z08kZ9YFdtRc8GouCbhyFOk2sZBF5arTAsFAksxH6h4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 13A7C339;
+	Mon,  1 Jul 2024 10:10:06 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0F5003F766;
+	Mon,  1 Jul 2024 10:09:37 -0700 (PDT)
+Date: Mon, 1 Jul 2024 18:09:35 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Russell King <linux@armlinux.org.uk>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	James Clark <james.clark@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, kvmarm@lists.linux.dev
+Subject: Re: [PATCH v2 01/12] perf: arm_pmuv3: Avoid assigning fixed cycle
+ counter with threshold
+Message-ID: <ZoLiz5FoPsd89p5E@J2N7QTR9R3>
+References: <20240626-arm-pmu-3-9-icntr-v2-0-c9784b4f4065@kernel.org>
+ <20240626-arm-pmu-3-9-icntr-v2-1-c9784b4f4065@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240629103914.161530-1-erezgeva@nwtime.org> <20240629103914.161530-4-erezgeva@nwtime.org>
- <1c457520-07b7-4bde-b040-e8bca959a4f5@linaro.org> <CANeKEMOODBNZA6efh0E0Ga_KaVs5Y3WLcUftRhNwYHhnXO=GNw@mail.gmail.com>
- <CANeKEMO42rJt5Ob4_HDcZ3eEMvuMOPvRaFaLwL8SA65NtxSV7A@mail.gmail.com> <1d56c3b2-7adf-45b9-a509-956340f3f17b@linaro.org>
-In-Reply-To: <1d56c3b2-7adf-45b9-a509-956340f3f17b@linaro.org>
-From: Erez <erezgeva2@gmail.com>
-Date: Mon, 1 Jul 2024 19:08:57 +0200
-Message-ID: <CANeKEMMe-Onpn7xWQHgWz1Ps_uQPEMa7HrKA00HpoKjG+DCJNQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] dt-bindings: mtd: macronix,mx25l12833f: add
- SPI-NOR chip
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Esben Haabendal <esben@geanix.com>, Erez Geva <erezgeva@nwtime.org>, linux-mtd@lists.infradead.org, 
-	Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, linux-kernel@vger.kernel.org, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240626-arm-pmu-3-9-icntr-v2-1-c9784b4f4065@kernel.org>
 
-On Mon, 1 Jul 2024 at 12:15, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
->
->
->
-> On 7/1/24 10:46 AM, Erez wrote:
-> > When using mx25l12805d, we do not read SFDP.
-> > As it uses the no-SFDP flags.
-> > When using mx25l12833f hardware with mx25l12805d driver, it did not
-> > try to read the SFDP.
-> > Yet mx25l12833f does have SFDP, when I remove the no-SFDP flags, the
-> > driver fetch the SFDP.
-> >
-> > Secondly SFDP does not contain OTP information.
-> >
-> > mx25l12805d has two OTP regions of 128 KiB and 384 KiB (yes asymmetric).
-> > While mx25l12833f has two OTP regions of 512 KiB.
-> >
-> > How do we handle it?
->
-> You would first try to parse SFDP and initialize the flash based on
-> SFDP. If there's no SFDP then you fallback to the flags declared at
-> flash declaration. Esben had a try recently, see [1]. I don't know if
-> there's any progress in that direction.
->
-> Also, you haven't mentioned anything about the testing. Do you have the
-> flash?
->
-> [1]
-> https://lore.kernel.org/linux-mtd/20240603-macronix-mx25l3205d-fixups-v2-0-ff98da26835c@geanix.com/
+On Wed, Jun 26, 2024 at 04:32:25PM -0600, Rob Herring (Arm) wrote:
+> If the user has requested a counting threshold for the CPU cycles event,
+> then the fixed cycle counter can't be assigned as it lacks threshold
+> support. Currently, the thresholds will work or not randomly depending
+> on which counter the event is assigned.
+> 
+> While using thresholds for CPU cycles doesn't make much sense, it can be
+> useful for testing purposes.
+> 
+> Fixes: 816c26754447 ("arm64: perf: Add support for event counting threshold")
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-Looking at "mtd: spi-nor: macronix: workaround for device id re-use"
-I guess it can be applied to all Macronix devices.
-Adding something like the following in macronix_nor_default_init():
+Acked-by: Mark Rutland <mark.rutland@arm.com>
 
-if (info>no_sfdp_flags)
-    info>no_sfdp_flags |= SPI_NOR_TRY_SFDP
+Mark.
 
-It seems Macronix did many reuse of IDs.
-I saw it with "mx25l12833f" reusing "mx25l12805d".
-And Esben saw it with MX25L3233F reusing "MX25L3205D".
-
-The only thing I notice is the flash using the same size.
-A sort of "backward" compatible.
-
-Erez
+> ---
+> This should go to 6.10 and stable. It is also a dependency for ICNTR
+> support.
+> 
+> v2:
+>  - Add and use armv8pmu_event_get_threshold() helper.
+> 
+> v1: https://lore.kernel.org/all/20240611155012.2286044-1-robh@kernel.org/
+> ---
+>  drivers/perf/arm_pmuv3.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/perf/arm_pmuv3.c b/drivers/perf/arm_pmuv3.c
+> index 23fa6c5da82c..8ed5c3358920 100644
+> --- a/drivers/perf/arm_pmuv3.c
+> +++ b/drivers/perf/arm_pmuv3.c
+> @@ -338,6 +338,11 @@ static bool armv8pmu_event_want_user_access(struct perf_event *event)
+>  	return ATTR_CFG_GET_FLD(&event->attr, rdpmc);
+>  }
+>  
+> +static u32 armv8pmu_event_get_threshold(struct perf_event_attr *attr)
+> +{
+> +	return ATTR_CFG_GET_FLD(attr, threshold);
+> +}
+> +
+>  static u8 armv8pmu_event_threshold_control(struct perf_event_attr *attr)
+>  {
+>  	u8 th_compare = ATTR_CFG_GET_FLD(attr, threshold_compare);
+> @@ -941,7 +946,8 @@ static int armv8pmu_get_event_idx(struct pmu_hw_events *cpuc,
+>  	unsigned long evtype = hwc->config_base & ARMV8_PMU_EVTYPE_EVENT;
+>  
+>  	/* Always prefer to place a cycle counter into the cycle counter. */
+> -	if (evtype == ARMV8_PMUV3_PERFCTR_CPU_CYCLES) {
+> +	if ((evtype == ARMV8_PMUV3_PERFCTR_CPU_CYCLES) &&
+> +	    !armv8pmu_event_get_threshold(&event->attr)) {
+>  		if (!test_and_set_bit(ARMV8_IDX_CYCLE_COUNTER, cpuc->used_mask))
+>  			return ARMV8_IDX_CYCLE_COUNTER;
+>  		else if (armv8pmu_event_is_64bit(event) &&
+> @@ -1033,7 +1039,7 @@ static int armv8pmu_set_event_filter(struct hw_perf_event *event,
+>  	 * If FEAT_PMUv3_TH isn't implemented, then THWIDTH (threshold_max) will
+>  	 * be 0 and will also trigger this check, preventing it from being used.
+>  	 */
+> -	th = ATTR_CFG_GET_FLD(attr, threshold);
+> +	th = armv8pmu_event_get_threshold(attr);
+>  	if (th > threshold_max(cpu_pmu)) {
+>  		pr_debug("PMU event threshold exceeds max value\n");
+>  		return -EINVAL;
+> 
+> -- 
+> 2.43.0
+> 
 
