@@ -1,128 +1,291 @@
-Return-Path: <linux-kernel+bounces-235724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C7D791D8F1
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:29:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A46291D8F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:30:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6ED5B1C20E27
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:29:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A27F1F21ABC
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5FC8287A;
-	Mon,  1 Jul 2024 07:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EFB76F2F1;
+	Mon,  1 Jul 2024 07:30:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="WEcBWxIc"
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="XStTZMlw"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E6F7E0F0
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 07:29:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039601B809;
+	Mon,  1 Jul 2024 07:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719818965; cv=none; b=TJHRw1Ae17OIe56277QYUCI2GFceLVmRkNmatTjpyq2/GdrzibsV/pDpZmh6MiaphpXiWE46LGYxLTgxhunMIdLXD2CGhtOS57DpQfP8GzoXw1uW5LCOVuJstrBYDXu1L+FK1cVyUV9VOBXtvN3EfdXtqtvFjpgjPWqkcHU/H2U=
+	t=1719819026; cv=none; b=YMIzOOLMqIKIZ/FStqRJFnvwt/ntfhomGIl1UfTLSwp+f6ELGR6AbttWWTPvzqE5gEYML5QWvOqp5ZSEOJi0FCFrOMYdFtZQm60rmADpEjwx3QM9HvOwK0RnNkZZ6WTpU0JyAn1XY+2+4uB8doEW6IB4XjIF/MpRjgHYPWD4mvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719818965; c=relaxed/simple;
-	bh=o4IG1Ydtzsj6A/FLUwqxoG7igH8yPVKoxmt7Uos0s40=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gKdbyAwBz44k9BP8l49fAnWKcN1pCKfxyw37j6T6v+NEZhsRe5pav5WkR4LOmVWaXulV3Ok/VIQ2T3tM/9L1pFlTDJftR3j2YxcCM2xq46+EZ8WBDjqfOSanM8Nrj4Ytm+uKcWkPOeZJEvA4knRhqtQXjbc1A3YhXet78nmdGN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=WEcBWxIc; arc=none smtp.client-ip=209.85.167.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3d561d685e7so2003159b6e.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 00:29:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1719818963; x=1720423763; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WIwvidCJhYXXjv9fs8E48O/N337p1plrTXtjqFhBKIQ=;
-        b=WEcBWxIcKxJwIkzDCau0tNXr/CPyTjt5dD5AZ9VmOzl18Aiw3w+PXusAaa/3PC424a
-         Gn1ps532BSzyD4N6KhU3UuGo7eOx/6aooDrCKJqEHL9XIk8P69F1JEI1SWhbw6wI+oqf
-         c/8h27laPLGOh+WIjUcMj6o++PeIHOIUOai1qFdK+JNaxYuQrsn5ncsgYoDOG38FMFkO
-         RBeVD22KD70AV/qnO3GQQ9CHVuztA3BepoX1Zgjkth+lUwDyCc/sDuPyr9Sen+WPDA5g
-         NIV/L/S93vG6cIwVR3GMOBpTpB+ZBfIGgsLB3w+mFhW3qAi+Q6A7MHK3NKlRxU8rgR7r
-         bE4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719818963; x=1720423763;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WIwvidCJhYXXjv9fs8E48O/N337p1plrTXtjqFhBKIQ=;
-        b=m3IzeKfvUetkffqxiGdkiz2EilBtP9Xsgnzun3zr+sSZvbJ4QGT54SqbFVRRsIoa0F
-         W6lAGBRXddqDaxZMCFC5amopRPfwcnfXl/UU+F2LhzCwdAGi3br4Y5eoRGjpwQVSM4Yk
-         l8g+LwvwZ1hh3LhE3csWlZTTXwGFsXizyOBxVmOHgaDo30o9U5mrmWQp3GMaInA4k5XD
-         EnNQxr4qiVu3TJkkeU6gIbseBbr9QAiDfKQN3InvKPk2HIVj1t5WEUkAdFkrfh3RM5Am
-         zZ5YkS4lWMu8t36MAt62ZKCwSRSloqUlGvk2hnRvk2U6iT/FITfd34AiPZEVLI6O+sw0
-         I1GQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/W8GhN1/lviHBXiJKST+grZBN1XIvcaL1DjCIHHF7YGDfCTt6LJLdAt51tm7wxI1Obkwi11+P8SgA6k3oZp/sSaGizXoxYeE2ywuX
-X-Gm-Message-State: AOJu0Yx1YV8IYnLBhqeM9duEfX0rNbIJfH5aL3CII+eYiCxPePbT48S0
-	A3OGOHPQISVCh8FLSHUqEbPWUdbzq/MqWCapFUIKPrWwnXjueZ6/ZXOm93j3v20=
-X-Google-Smtp-Source: AGHT+IHRz1SHHY+TmlIy6IZBZFwaBFuAJ4rZWriiRFCwuK0Ao+rNzMBXMsAGPD3T1rYs7tmFaCwRjQ==
-X-Received: by 2002:a05:6808:159c:b0:3d6:324b:ddc7 with SMTP id 5614622812f47-3d6b35ca407mr8326356b6e.28.1719818963388;
-        Mon, 01 Jul 2024 00:29:23 -0700 (PDT)
-Received: from J9GPGXL7NT.bytedance.net ([61.213.176.58])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70803ecf757sm5779337b3a.104.2024.07.01.00.29.18
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 01 Jul 2024 00:29:23 -0700 (PDT)
-From: Xu Lu <luxu.kernel@bytedance.com>
-To: tjeznach@rivosinc.com,
-	joro@8bytes.org,
-	will@kernel.org,
-	robin.murphy@arm.com,
-	paul.walmsley@sifive.com
-Cc: palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	apatel@ventanamicro.com,
-	sunilvl@ventanamicro.com,
-	iommu@lists.linux.dev,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux@rivosinc.com,
-	baolu.lu@linux.intel.com,
-	lihangjing@bytedance.com,
-	xieyongji@bytedance.com,
-	Xu Lu <luxu.kernel@bytedance.com>
-Subject: [PATCH 1/1] iommu/riscv: Support sharing irq lines between iommu queues
-Date: Mon,  1 Jul 2024 15:29:08 +0800
-Message-Id: <20240701072908.25503-2-luxu.kernel@bytedance.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
-In-Reply-To: <20240701072908.25503-1-luxu.kernel@bytedance.com>
-References: <20240701072908.25503-1-luxu.kernel@bytedance.com>
+	s=arc-20240116; t=1719819026; c=relaxed/simple;
+	bh=6QpzKrdq9hDHzpEtzW51Klv7nB30HfBbSH5puIaCmf0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eizY8dCfQPVHCTVdwbjMLdLiyuTJ2tOt3Alp/GViiJEMziSjOZsYQr8jbOMQZNGglVY/c8N7m+O0iQsyXjl6OxxgOgasaM8WSXfWkdNRsKnVboYU8IXKpkV2LiidaDJN7aYwualjyg/9vTkbdjXfGHF5B0cYjTgXrimwxPP0dmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=XStTZMlw; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 91945E0002;
+	Mon,  1 Jul 2024 07:30:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1719819015;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6xQac1g+CPH16xgQBI2BybKdUvmhLG35nudFFtpCgzc=;
+	b=XStTZMlwjzx/eG1nbTGu5KT8s+ohiub9+2FtDqSIDpga2Wh1MDgoT35YaoERGMloznsIzP
+	8Q9Y0ejrko1WQL6CN+HeaK5i4g2tNLp3NlsiUyCSQefln8cGXLEDHj8prBIqGVipvu8Xq3
+	3RezTrDb7DxEklw/MM4TEyL4H6k+A4hY9iGvdr0yvhlrOrHNY33A+nPJwt9j0pzNUFU63n
+	p8qlRASIwcPR0owH3XLdR5+zBpxEvL9XQXSSCW/5Ah2BCuK+lj+I3Rmuzl3XiloPdGkGfE
+	8QsDY5Q9HAgo0ELRXQ7MmxnW4Lr3qBV36FVHNMkd8WRX5KGPegpo1X7ibq+wAA==
+Message-ID: <ec73b430-1d63-4c77-8420-170c7727d454@bootlin.com>
+Date: Mon, 1 Jul 2024 09:30:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] remoteproc: k3-r5: Introduce PM suspend/resume
+ handlers
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Suman Anna <s-anna@ti.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Udit Kumar <u-kumar1@ti.com>, Thomas Richard <thomas.richard@bootlin.com>,
+ Gregory CLEMENT <gregory.clement@bootlin.com>, Hari Nagalla
+ <hnagalla@ti.com>, =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240621150058.319524-1-richard.genoud@bootlin.com>
+ <20240621150058.319524-3-richard.genoud@bootlin.com> <Zn8htULTLxyfMiWk@p14s>
+From: Richard GENOUD <richard.genoud@bootlin.com>
+Content-Language: en-US, fr
+Organization: Bootlin
+In-Reply-To: <Zn8htULTLxyfMiWk@p14s>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-GND-Sasl: richard.genoud@bootlin.com
 
-When the number of wired interrupt lines is less than the number of
-iommu queues, we should assign one irq line for several queues and
-configure csr icvec accordingly.
+Le 28/06/2024 à 22:48, Mathieu Poirier a écrit :
+> On Fri, Jun 21, 2024 at 05:00:56PM +0200, Richard Genoud wrote:
+>> This patch adds the support for system suspend/resume to the ti_k3_R5
+>> remoteproc driver.
+>>
+>> In order to save maximum power, the approach here is to shutdown
+>> completely the cores that were started by the kernel (i.e. those in
+>> RUNNING state).
+>> Those which were started before the kernel (in attached mode) will be
+>> detached.
+>>
+>> The pm_notifier mechanism is used here because the remote procs firmwares
+>> have to be reloaded at resume, and thus the driver must have access to
+>> the file system were the firmware is stored.
+>>
+>> On suspend, the running remote procs are stopped, the attached remote
+>> procs are detached and processor control released.
+>>
+>> On resume, the reverse operation is done.
+>>
+>> Based on work from: Hari Nagalla <hnagalla@ti.com>
+>>
+>> Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
+>> ---
+>>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 123 ++++++++++++++++++++++-
+>>   1 file changed, 121 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> index 39a47540c590..1f18b08618c8 100644
+>> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> @@ -20,6 +20,7 @@
+>>   #include <linux/platform_device.h>
+>>   #include <linux/pm_runtime.h>
+>>   #include <linux/remoteproc.h>
+>> +#include <linux/suspend.h>
+>>   #include <linux/reset.h>
+>>   #include <linux/slab.h>
+>>   
+>> @@ -112,6 +113,7 @@ struct k3_r5_cluster {
+>>   	struct list_head cores;
+>>   	wait_queue_head_t core_transition;
+>>   	const struct k3_r5_soc_data *soc_data;
+>> +	struct notifier_block pm_notifier;
+>>   };
+>>   
+>>   /**
+>> @@ -577,7 +579,8 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+>>   		/* do not allow core 1 to start before core 0 */
+>>   		core0 = list_first_entry(&cluster->cores, struct k3_r5_core,
+>>   					 elem);
+>> -		if (core != core0 && core0->rproc->state == RPROC_OFFLINE) {
+>> +		if (core != core0 && (core0->rproc->state == RPROC_OFFLINE ||
+>> +				      core0->rproc->state == RPROC_SUSPENDED)) {
+> 
+> If I understand correctly, this is to address a possible race condition between
+> user space wanting to start core1 via sysfs while the system is being suspended.
+> Is this correct?  If so, please add a comment to explain what is going on.
+> Otherwise a comment is obviously needed.
+Yes, you're right, I'll add a comment on the race condition at suspend.
 
-Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
----
- drivers/iommu/riscv/iommu-platform.c | 4 ++++
- 1 file changed, 4 insertions(+)
+> 
+>>   			dev_err(dev, "%s: can not start core 1 before core 0\n",
+>>   				__func__);
+>>   			ret = -EPERM;
+>> @@ -646,7 +649,8 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+>>   		/* do not allow core 0 to stop before core 1 */
+>>   		core1 = list_last_entry(&cluster->cores, struct k3_r5_core,
+>>   					elem);
+>> -		if (core != core1 && core1->rproc->state != RPROC_OFFLINE) {
+>> +		if (core != core1 && core1->rproc->state != RPROC_OFFLINE &&
+>> +		    core1->rproc->state != RPROC_SUSPENDED) {
+>>   			dev_err(dev, "%s: can not stop core 0 before core 1\n",
+>>   				__func__);
+>>   			ret = -EPERM;
+>> @@ -1238,6 +1242,117 @@ static int k3_r5_rproc_configure_mode(struct k3_r5_rproc *kproc)
+>>   	return ret;
+>>   }
+>>   
+>> +static int k3_r5_rproc_suspend(struct k3_r5_rproc *kproc)
+>> +{
+>> +	unsigned int rproc_state = kproc->rproc->state;
+>> +	int ret;
+>> +
+>> +	if (rproc_state != RPROC_RUNNING && rproc_state != RPROC_ATTACHED)
+>> +		return 0;
+>> +
+>> +	if (rproc_state == RPROC_RUNNING)
+>> +		ret = rproc_shutdown(kproc->rproc);
+>> +	else
+>> +		ret = rproc_detach(kproc->rproc);
+>> +
+>> +	if (ret) {
+>> +		dev_err(kproc->dev, "Failed to %s rproc (%d)\n",
+>> +			(rproc_state == RPROC_RUNNING) ? "shutdown" : "detach",
+>> +			ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	kproc->rproc->state = RPROC_SUSPENDED;
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static int k3_r5_rproc_resume(struct k3_r5_rproc *kproc)
+>> +{
+>> +	int ret;
+>> +
+>> +	if (kproc->rproc->state != RPROC_SUSPENDED)
+>> +		return 0;
+>> +
+>> +	ret = k3_r5_rproc_configure_mode(kproc);
+>> +	if (ret < 0)
+>> +		return -EBUSY;
+>> +
+>> +	/*
+>> +	 * ret > 0 for IPC-only mode
+>> +	 * ret == 0 for remote proc mode
+>> +	 */
+>> +	if (ret == 0) {
+>> +		/*
+>> +		 * remote proc looses its configuration when powered off.
+>> +		 * So, we have to configure it again on resume.
+>> +		 */
+>> +		ret = k3_r5_rproc_configure(kproc);
+>> +		if (ret < 0) {
+>> +			dev_err(kproc->dev, "k3_r5_rproc_configure failed (%d)\n", ret);
+>> +			return -EBUSY;
+>> +		}
+>> +	}
+>> +
+>> +	return rproc_boot(kproc->rproc);
+>> +}
+>> +
+>> +static int k3_r5_cluster_pm_notifier_call(struct notifier_block *bl,
+>> +					  unsigned long state, void *unused)
+>> +{
+>> +	struct k3_r5_cluster *cluster = container_of(bl, struct k3_r5_cluster,
+>> +						     pm_notifier);
+>> +	struct k3_r5_core *core;
+>> +	int ret;
+>> +
+>> +	switch (state) {
+>> +	case PM_HIBERNATION_PREPARE:
+>> +	case PM_RESTORE_PREPARE:
+>> +	case PM_SUSPEND_PREPARE:
+>> +		/* core1 should be suspended before core0 */
+>> +		list_for_each_entry_reverse(core, &cluster->cores, elem) {
+>> +			/*
+>> +			 * In LOCKSTEP mode, rproc is allocated only for
+>> +			 * core0
+>> +			 */
+>> +			if (core->rproc) {
+>> +				ret = k3_r5_rproc_suspend(core->rproc->priv);
+>> +				if (ret)
+>> +					dev_warn(core->dev,
+>> +						 "k3_r5_rproc_suspend failed (%d)\n", ret);
+>> +			}
+>> +
+>> +			ret = ti_sci_proc_release(core->tsp);
+>> +			if (ret)
+>> +				dev_warn(core->dev, "ti_sci_proc_release failed (%d)\n", ret);
+>> +		}
+>> +		break;
+>> +	case PM_POST_HIBERNATION:
+>> +	case PM_POST_RESTORE:
+>> +	case PM_POST_SUSPEND:
+>> +		/* core0 should be started before core1 */
+>> +		list_for_each_entry(core, &cluster->cores, elem) {
+>> +			ret = ti_sci_proc_request(core->tsp);
+>> +			if (ret)
+>> +				dev_warn(core->dev, "ti_sci_proc_request failed (%d)\n", ret);
+>> +
+>> +			/*
+>> +			 * In LOCKSTEP mode, rproc is allocated only for
+>> +			 * core0
+>> +			 */
+>> +			if (core->rproc) {
+>> +				ret = k3_r5_rproc_resume(core->rproc->priv);
+>> +				if (ret)
+>> +					dev_warn(core->dev,
+>> +						 "k3_r5_rproc_resume failed (%d)\n", ret);
+>> +			}
+>> +		}
+>> +		break;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>   static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
+>>   {
+>>   	struct k3_r5_cluster *cluster = platform_get_drvdata(pdev);
+>> @@ -1336,6 +1451,9 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
+>>   		}
+>>   	}
+>>   
+>> +	cluster->pm_notifier.notifier_call = k3_r5_cluster_pm_notifier_call;
+>> +	register_pm_notifier(&cluster->pm_notifier);
+>> +
+>>   	return 0;
+>>   
+>>   err_split:
+>> @@ -1402,6 +1520,7 @@ static void k3_r5_cluster_rproc_exit(void *data)
+>>   		rproc_free(rproc);
+>>   		core->rproc = NULL;
+>>   	}
+>> +	unregister_pm_notifier(&cluster->pm_notifier);
+>>   }
+>>   
+>>   static int k3_r5_core_of_get_internal_memories(struct platform_device *pdev,
 
-diff --git a/drivers/iommu/riscv/iommu-platform.c b/drivers/iommu/riscv/iommu-platform.c
-index da336863f152..1d0af1260d5b 100644
---- a/drivers/iommu/riscv/iommu-platform.c
-+++ b/drivers/iommu/riscv/iommu-platform.c
-@@ -60,6 +60,10 @@ static int riscv_iommu_platform_probe(struct platform_device *pdev)
- 	for (vec = 0; vec < iommu->irqs_count; vec++)
- 		iommu->irqs[vec] = platform_get_irq(pdev, vec);
- 
-+	for (vec = iommu->irqs_count; vec < RISCV_IOMMU_INTR_COUNT; vec++)
-+		iommu->irqs[vec] = platform_get_irq(pdev,
-+						    (vec % iommu->irqs_count));
-+
- 	/* Enable wire-signaled interrupts, fctl.WSI */
- 	if (!(iommu->fctl & RISCV_IOMMU_FCTL_WSI)) {
- 		iommu->fctl |= RISCV_IOMMU_FCTL_WSI;
--- 
-2.20.1
+Thanks !
 
 
