@@ -1,243 +1,129 @@
-Return-Path: <linux-kernel+bounces-236680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EA4591E5BB
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:48:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F84091E5BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:49:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4518A2830CA
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:48:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A855C1F2408B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:49:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4134416DC31;
-	Mon,  1 Jul 2024 16:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C248716DC15;
+	Mon,  1 Jul 2024 16:49:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IDnjhqWO"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GnXtAKHz"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D602A18635;
-	Mon,  1 Jul 2024 16:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70505157E88
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 16:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719852524; cv=none; b=daLunvMIycYpUNrG+VRcvUWCtxzGngw3FfGKse+G/X8/Xubr1jDd6L294ll54dYFrhmdrACZBw5MuhC4yu9f11VB1IU6CujruWAdwOYW/DKhJ5FEd4ycMXB+v8+2WYTfG/d4HRVhu+OJ5+Vexz/oT/PsofulG6KYj0rTUYWWkyY=
+	t=1719852564; cv=none; b=llvFE+PpK5oidJORxCnuGP7YeMOfLh5xjZZicKCKhfHvrahoB5c+fRpTbaCO+0weJAmj8bR29GT3ht+BlrguGN8uVnNDm13AIPi/YwsLGngqeg2ZmXneKCD2YSUR6yjm3o63j3TQSyRMCLcIwpvVr7Z0HzEbgtUwLkt8wdVPWac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719852524; c=relaxed/simple;
-	bh=QHRVNjo6eJMLb6/mFBCitJ/AZOeixGtTyCV3hrFGq5A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ah6YiLkH2pyi6H1GPAesDBZK2mJHkSVriN9T/WUxAD+g8nkzNp9H2W3h3V/YIJ9vfnb2+e0uzfSCzB5Ah4t1wyvlOUC2DhjkpyDgElU52sYBr76ADvJvOHtaysPUDG7ya5MW+LB/f0C7snU872Xiv7S2oi3zWm6zU039Mr5H49Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IDnjhqWO; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1BC54FF805;
-	Mon,  1 Jul 2024 16:48:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1719852516;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K4DfwZvTx3ILvmJeXn6XCc8XKI3AWEVwJse2C+CTb5M=;
-	b=IDnjhqWOSvaOBBFxLGcG7EFB9hoyympmZXhAx2n8opAgwoSnH3dI7tzzL/b5AQnsrJ9RPY
-	pT/QicXRYTUpEIzaAeDpCcK/Z76FBKGIvo6TvaPNMMbYYHl3rUZc3r7pvij9i7lBsbD94N
-	CPOEpBZoEInv4xvqFR3FI96gALSoDmjfKmHDLohCeaU1ObfzGkRAIzkwcCdKkXNsl654CN
-	0GZP5UOXJrmlmJNBiE2r4RxW0KKFGZAlfOM8MWlCO0JIhHzlA8a9K2pplpOWL4ybQ2OyX5
-	WC1xO/exFcZP8v36Nu3d+n13UPDUNSzzBrYpHf78lfFVBi3z38nZooymeTIEsQ==
-Message-ID: <e1d6913d-bf6f-4403-bf55-6806ed690935@bootlin.com>
-Date: Mon, 1 Jul 2024 18:48:35 +0200
+	s=arc-20240116; t=1719852564; c=relaxed/simple;
+	bh=ogY8eksTgOJEzLHcJSsQlFUjVUlsR7AprxV7ks4rpY4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GEDrd7KJD2pbbfB+yUoUHJVIA9iyTIjgUmdVFu1+zUv/z0kXshTjXrkqYrgK4qCw59Uo3ql3cupsWrXFsEIE+QlKb9e70dQ615FCX4/f1TkvLcW/OAC2IlP6ZHUGVnNka9q93edlHcdcgfuMUB85p2BodDsMkSteFg9w2kuHSnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GnXtAKHz; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ebec2f11b7so36269571fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 09:49:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719852560; x=1720457360; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jmslyL3Yn8FM3/FwJClSS40SS89bOK/NcyYZfwBo1Ic=;
+        b=GnXtAKHzPTyZUfjaN9jIdCOaqgkLLjiWwpomv12iuzkd6qY6MZLA3wGymbIvwCUoW5
+         LrbSWByb76TQEDy9aZRH9JG+EbcnNPtsQODfJgoavp0bUqYm3ZRb8+5w2eU386lwa9D6
+         RS32SX9kCebSqWcIXzibR16F2JsHJG0xzq2+HjFzqOaNHwnzOxW07FhuYtaD8pYWVIz7
+         ed+t1aVJMfHoIqyT+d8L5GTQxw5JVJOAIN5wHhFIO8qc7Ext9B3hoJ+XurcUSkqN+OTI
+         Om8v6s9iYOZ28leERN9zPffRbHfTWJBBWZ0Ha2FHfLxNAFFVHwTlgVds6fex4UT6TFSg
+         8X0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719852560; x=1720457360;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jmslyL3Yn8FM3/FwJClSS40SS89bOK/NcyYZfwBo1Ic=;
+        b=Fcg/c/seHESBDrg4IRryE8G+BdVsdZSjrH8V/aKCHLgmvQ98JPvoVVCHU6i8bAtMkO
+         gVon1oiLJublQXiY31VIqDLqr152TRgLZUA2pR4S4PQz6Le1llT2nVo6dHJAQdWHZkwU
+         w41dQmRzk9HEuRPTr6bMOnBAvX603dkmNxqsubAs28DRSPGGoqS+MG3miHo+r4/TfvbU
+         ge2M6jLyErZ4TvEmEiKuNux5Ckw9rLTzGw/6RjsfJ6h+IhEzPFY3DClMH0OLPPr0M1/c
+         XBXzERGKq+B4VpV3w/CbVVslVM4EVR4SYWavmDMDOd7OgE71qLubkdzzJ6X5hcwRynAP
+         43jA==
+X-Forwarded-Encrypted: i=1; AJvYcCWj11Q80hALf6FNgeGBpfI49qkZyuRr194CNof4m6WKJQZx/1t3sRn+5bOxwqMuTJ1vlVIEhTmg5FPVtOGaGklGLtGsT/mC8rqVMSbb
+X-Gm-Message-State: AOJu0YxURxCGMoiQrDmcl/zWUedcs66LICA2099uio3Jxup5OBGI0Sas
+	sPih/GLTNiybRvbQS+zR4z6UuTp1o0nrigV/i9zIP0E37dafdzZNnymPeCVRAQQ=
+X-Google-Smtp-Source: AGHT+IGj4DUhd8pV8+1mduRvo0vDVwumXm4bICtrXZb7XCpM/RKei3IVsk5mGhfTZVB0zL0SL0HWtw==
+X-Received: by 2002:a2e:9e15:0:b0:2ee:5a38:751a with SMTP id 38308e7fff4ca-2ee5e3759d8mr38050791fa.28.1719852559568;
+        Mon, 01 Jul 2024 09:49:19 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af5b8e2sm161211505e9.16.2024.07.01.09.49.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 09:49:19 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	openbmc@lists.ozlabs.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] ARM: dts: nuvoton: wpcm450: align LED and GPIO keys node name with bindings
+Date: Mon,  1 Jul 2024 18:49:15 +0200
+Message-ID: <20240701164915.577068-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] remoteproc: k3-r5: support for graceful stop of
- remote cores
-To: Andrew Davis <afd@ti.com>, Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Suman Anna <s-anna@ti.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Udit Kumar <u-kumar1@ti.com>, Thomas Richard <thomas.richard@bootlin.com>,
- Gregory CLEMENT <gregory.clement@bootlin.com>, Hari Nagalla
- <hnagalla@ti.com>, =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
- linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240621150058.319524-1-richard.genoud@bootlin.com>
- <20240621150058.319524-5-richard.genoud@bootlin.com>
- <33d97f00-dd9a-4643-8210-859c2ab38a97@ti.com>
-From: Richard GENOUD <richard.genoud@bootlin.com>
-Content-Language: en-US, fr
-Organization: Bootlin
-In-Reply-To: <33d97f00-dd9a-4643-8210-859c2ab38a97@ti.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: richard.genoud@bootlin.com
 
-Le 29/06/2024 à 00:50, Andrew Davis a écrit :
-> On 6/21/24 10:00 AM, Richard Genoud wrote:
->> Introduce software IPC handshake between the K3-R5 remote proc driver
->> and the R5 MCU to gracefully stop/reset the remote core.
->>
->> Upon a stop request, K3-R5 remote proc driver sends a RP_MBOX_SHUTDOWN
->> mailbox message to the remote R5 core.
->> The remote core is expected to:
->> - relinquish all the resources acquired through Device Manager (DM)
->> - disable its interrupts
->> - send back a mailbox acknowledgment RP_MBOX_SHUDOWN_ACK
->> - enter WFI state.
->>
->> Meanwhile, the K3-R5 remote proc driver does:
->> - wait for the RP_MBOX_SHUTDOWN_ACK from the remote core
->> - wait for the remote proc to enter WFI state
->> - reset the remote core through device manager
->>
->> Based on work from: Hari Nagalla <hnagalla@ti.com>
->>
->> Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
->> ---
->>   drivers/remoteproc/omap_remoteproc.h     |  9 +++++-
->>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 40 ++++++++++++++++++++++++
->>   2 files changed, 48 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/remoteproc/omap_remoteproc.h 
->> b/drivers/remoteproc/omap_remoteproc.h
->> index 828e13256c02..c008f11fa2a4 100644
->> --- a/drivers/remoteproc/omap_remoteproc.h
->> +++ b/drivers/remoteproc/omap_remoteproc.h
->> @@ -42,6 +42,11 @@
->>    * @RP_MBOX_SUSPEND_CANCEL: a cancel suspend response from a remote 
->> processor
->>    * on a suspend request
->>    *
->> + * @RP_MBOX_SHUTDOWN: shutdown request for the remote processor
->> + *
->> + * @RP_MBOX_SHUTDOWN_ACK: successful response from remote processor 
->> for a
->> + * shutdown request. The remote processor should be in WFI state 
->> short after.
->> + *
->>    * Introduce new message definitions if any here.
->>    *
->>    * @RP_MBOX_END_MSG: Indicates end of known/defined messages from 
->> remote core
->> @@ -59,7 +64,9 @@ enum omap_rp_mbox_messages {
->>       RP_MBOX_SUSPEND_SYSTEM    = 0xFFFFFF11,
->>       RP_MBOX_SUSPEND_ACK    = 0xFFFFFF12,
->>       RP_MBOX_SUSPEND_CANCEL    = 0xFFFFFF13,
->> -    RP_MBOX_END_MSG        = 0xFFFFFF14,
->> +    RP_MBOX_SHUTDOWN    = 0xFFFFFF14,
->> +    RP_MBOX_SHUTDOWN_ACK    = 0xFFFFFF15,
->> +    RP_MBOX_END_MSG        = 0xFFFFFF16,
->>   };
->>   #endif /* _OMAP_RPMSG_H */
->> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c 
->> b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> index a2ead87952c7..918a15e1dd9a 100644
->> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> @@ -21,6 +21,7 @@
->>   #include <linux/pm_runtime.h>
->>   #include <linux/remoteproc.h>
->>   #include <linux/suspend.h>
->> +#include <linux/iopoll.h>
->>   #include <linux/reset.h>
->>   #include <linux/slab.h>
->> @@ -172,8 +173,23 @@ struct k3_r5_rproc {
->>       struct k3_r5_core *core;
->>       struct k3_r5_mem *rmem;
->>       int num_rmems;
->> +    struct completion shutdown_complete;
->>   };
->> +/*
->> + * This will return true if the remote core is in Wait For Interrupt 
->> state.
->> + */
->> +static bool k3_r5_is_core_in_wfi(struct k3_r5_core *core)
->> +{
->> +    int ret;
->> +    u64 boot_vec;
->> +    u32 cfg, ctrl, stat;
->> +
->> +    ret = ti_sci_proc_get_status(core->tsp, &boot_vec, &cfg, &ctrl, 
->> &stat);
->> +
->> +    return !ret ? !!(stat & PROC_BOOT_STATUS_FLAG_R5_WFI) : false;
-> 
-> Too fancy for me :) Just return if (ret) right after get_status().
-Ok, too much punctuation :)
+Bindings expect the LED and GPIO keys node names to follow certain
+pattern, see dtbs_check warnings:
 
-> 
-> Looks like this function is called in a polling loop, if
-> ti_sci_proc_get_status() fails once, it won't get better,
-> no need to keep checking, we should just error out of
-> the polling loop.
-Ok
+  nuvoton-wpcm450-supermicro-x9sci-ln4f.dtb: gpio-keys: 'uid' does not match any of the regexes: '^(button|event|key|switch|(button|event|key|switch)...
 
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../dts/nuvoton/nuvoton-wpcm450-supermicro-x9sci-ln4f.dts   | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Thanks !
-> 
-> Andrew
-> 
->> +}
->> +
->>   /**
->>    * k3_r5_rproc_mbox_callback() - inbound mailbox message handler
->>    * @client: mailbox client pointer used for requesting the mailbox 
->> channel
->> @@ -209,6 +225,10 @@ static void k3_r5_rproc_mbox_callback(struct 
->> mbox_client *client, void *data)
->>       case RP_MBOX_ECHO_REPLY:
->>           dev_info(dev, "received echo reply from %s\n", name);
->>           break;
->> +    case RP_MBOX_SHUTDOWN_ACK:
->> +        dev_dbg(dev, "received shutdown_ack from %s\n", name);
->> +        complete(&kproc->shutdown_complete);
->> +        break;
->>       default:
->>           /* silently handle all other valid messages */
->>           if (msg >= RP_MBOX_READY && msg < RP_MBOX_END_MSG)
->> @@ -634,6 +654,7 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
->>       struct k3_r5_cluster *cluster = kproc->cluster;
->>       struct device *dev = kproc->dev;
->>       struct k3_r5_core *core1, *core = kproc->core;
->> +    bool wfi;
->>       int ret;
->> @@ -650,6 +671,24 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
->>           }
->>       }
->> +    /* Send SHUTDOWN message to remote proc */
->> +    reinit_completion(&kproc->shutdown_complete);
->> +    ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_SHUTDOWN);
->> +    if (ret < 0) {
->> +        dev_err(dev, "Sending SHUTDOWN message failed: %d. Halting 
->> core anyway.\n", ret);
->> +    } else {
->> +        ret = wait_for_completion_timeout(&kproc->shutdown_complete,
->> +                          msecs_to_jiffies(1000));
->> +        if (ret == 0) {
->> +            dev_err(dev, "Timeout waiting SHUTDOWN_ACK message. 
->> Halting core anyway.\n");
->> +        } else {
->> +            ret = readx_poll_timeout(k3_r5_is_core_in_wfi, core,
->> +                         wfi, wfi, 200, 2000);
->> +            if (ret)
->> +                dev_err(dev, "Timeout waiting for remote proc to be 
->> in WFI state. Halting core anyway.\n");
->> +        }
->> +    }
->> +
->>       /* halt all applicable cores */
->>       if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
->>           list_for_each_entry(core, &cluster->cores, elem) {
->> @@ -1410,6 +1449,7 @@ static int k3_r5_cluster_rproc_init(struct 
->> platform_device *pdev)
->>               goto err_config;
->>           }
->> +        init_completion(&kproc->shutdown_complete);
->>   init_rmem:
->>           k3_r5_adjust_tcm_sizes(kproc);
->>
+diff --git a/arch/arm/boot/dts/nuvoton/nuvoton-wpcm450-supermicro-x9sci-ln4f.dts b/arch/arm/boot/dts/nuvoton/nuvoton-wpcm450-supermicro-x9sci-ln4f.dts
+index b78c116cbc18..edb907f740bf 100644
+--- a/arch/arm/boot/dts/nuvoton/nuvoton-wpcm450-supermicro-x9sci-ln4f.dts
++++ b/arch/arm/boot/dts/nuvoton/nuvoton-wpcm450-supermicro-x9sci-ln4f.dts
+@@ -34,7 +34,7 @@ gpio-keys {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&key_pins>;
+ 
+-		uid {
++		button-uid {
+ 			label = "UID button";
+ 			linux,code = <KEY_HOME>;
+ 			gpios = <&gpio0 14 GPIO_ACTIVE_HIGH>;
+@@ -46,12 +46,12 @@ gpio-leds {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&led_pins>;
+ 
+-		uid {
++		led-uid {
+ 			label = "UID";
+ 			gpios = <&gpio1 7 GPIO_ACTIVE_HIGH>;
+ 		};
+ 
+-		heartbeat {
++		led-heartbeat {
+ 			label = "heartbeat";
+ 			gpios = <&gpio1 4 GPIO_ACTIVE_LOW>;
+ 		};
+-- 
+2.43.0
 
 
