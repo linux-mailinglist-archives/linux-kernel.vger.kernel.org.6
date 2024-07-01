@@ -1,92 +1,128 @@
-Return-Path: <linux-kernel+bounces-236342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9855091E0A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:27:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7521791E0AD
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:27:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 446922817D2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:27:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 006F4B27324
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B75815E5CC;
-	Mon,  1 Jul 2024 13:27:05 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E235E15ECCF;
+	Mon,  1 Jul 2024 13:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tpko25GR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BEBF46525
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 13:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B28D15E5DB;
+	Mon,  1 Jul 2024 13:27:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719840424; cv=none; b=oHhQ6r7oH0WZBovUvwAg56RgMsUMTUB6S1TVJIXRiAUCZhP2L1j1cnDbgQXBNFgm6b02Ruxwt+oDXxEuerymm8yDZkVrVsMWIcapn+GP9c7jBGb2HgwoggG7Nby8zY/vXs2t6pV1BzZtqzlBbp/+ByVTVuB8Q7Jak99LR5D6Fmo=
+	t=1719840449; cv=none; b=ZhdLEB3PqFjQi9c5blZwTLkXIeIkXzs40sHImuVlPGW46mjq18maf+ATrldeFln0sE/LUwkHUrHQCnYm/JLMSDngTV+C+9phZnx+e7w3/5+ObqxjiVgEcizEvdLhUf7oh9FEEjyzg3igerbkpmEHQiV0vocaZT4iJYbAFYbv9rU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719840424; c=relaxed/simple;
-	bh=7o7h3aRw1fKVF58BGr7QHkMeysXzUN2BOyk2uThEnDY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=jj9U2qOhFoOx9Gqg9V4LPQemm7Huw112uy5mmkB03seGCc5/VZ0ETDPxrjnaswyZWgF0XywkibpKu/xnX5wc/ekNkQ2cO1COtMDHMj9Q8JLaaVPDrSWbE4m7qbwVAJt8fBzAD6xEy3vKbhN8hPwjejnRoLkwVevEuuLrs33s5+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7e94cac3c71so325080939f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 06:27:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719840423; x=1720445223;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=K2fXiBu3B3/TGnIrsagutCSvt+rDbPq9f3lVsrIU9l0=;
-        b=O2fjSlFlFD46uJxUU3ToqmqBAcl8W3Pfc7MmjDQ6VdTYnSOj/KQLiFn+T62OnY3u1R
-         Nr2BeM0PdUuMbc1+hIBBq0RaHlNZyGpV0nI2DHpA21gv+8lw6fFy4T8zLIXuoqm5A58t
-         4PiiEtgCxtJmRNpPikyPQxioy0XL9KBK762gNhcvY3NLptqnP8MAIuaApJONMeM9PHkf
-         iXQAL4VhH9yIM0XuhhpBGhIUrmer3E7zlwobc7pAhTbpJWOtf4gmonj2naToMLkPEBo3
-         3mydgigkpnY1rKIF35ZoXG2raAnfcdFcaZZFARmJCFW/FwqnWP4LzDYb5reIldjUw7jS
-         EIPA==
-X-Gm-Message-State: AOJu0YxZEtTKyjXlFotr0T1R6muZN0nuLh7618Mp0JHot+NLWXsoyI1Q
-	5YaFqXIB2RqsPQZXJ5WomSbFy/z+do/cvynILqURwQgM8gl1eI2KrJGv6Be9URWRLERYDqBEcV7
-	RUCPGFwwdOUHHiv7x3X7pt2xVdjRQ2FC2JULbt2b0lzK9TQhg6FSizPQ=
-X-Google-Smtp-Source: AGHT+IHHR1AXoNnTFDicfcsA2PapQH5FuIxJ5sLQr0laA2srWPYtal0EKlPtyCufKgG8gf7IMp+4Eq6mMbYYGnHu8ylrSefQp6wl
+	s=arc-20240116; t=1719840449; c=relaxed/simple;
+	bh=RGVefZ3LYaLLES6iQhtUNZkddbn4IpZ6Q94Sq67kgt4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PIudK+RevOY+z1hluoCu/l1Ya/aymERAUFH/GtCcrrgnotO4M2GUxnHdN5aAQDAVaxgnlIQTeN1YdbUugLOOkXQBZNmd3Flwk2gRnwzr+uvF5ZkjdE8GcvRZ4B+PkgRa7VREUzWw34MiEjCHmf1K959HUkF+wBxWYcQOoUkRMs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tpko25GR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF916C32786;
+	Mon,  1 Jul 2024 13:27:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719840448;
+	bh=RGVefZ3LYaLLES6iQhtUNZkddbn4IpZ6Q94Sq67kgt4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=tpko25GRoyJ/wADgJ5KwFwp0I+1WiWqPc26GHZ7uIYP3vIqvBPZtiF4OEjdfDtz3i
+	 e2vTRJqoLnlf/priLn6gPLJfWGeye6dRY1qDeYyuQjnzRmvT+30ySfRdkJjmKtjGGV
+	 Wogc0IQcZUPOtlz4p0s2y3XDGvirxYXg2ZJseDDCeo1g5fBw2gn2vXjErvrkQYjeTk
+	 fOU83Cn7aCJGebLaYs5KmUa7tpvPO/9MBqvJrLjywBzq8ZEN9+zFhxtubV5irSa7wK
+	 8YjMADZn5Xexs+ujAZaTWugOreCTnuI1UksqPfgi5YtIpghQIuvU0DgL+fyGqSY6O9
+	 vVJIxBUpDRi8Q==
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ebe0a81dc8so40722061fa.2;
+        Mon, 01 Jul 2024 06:27:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUuN7u6TndhP+2C4DBTNhOWVfkr8DjzEvSVlJazuyZ4w+R1x4Vvbn8/Xz42GPYf9Z5k2kJ+mprELzsfm6CPe8LFTEe76YO9//M78vQeJNFMMpHTTO0pXOE5uspVI3RZhZeJcvKMIXnS
+X-Gm-Message-State: AOJu0YwRcYE75+4dvIdkK0M5Q3A4kL7R6K08NJzP7KagglSHP++TKT7r
+	j9X3VZAbhlmL5rNasFE0ZU+pZHuFfrKf3q1lcVsdPrnqb78iH/wdanUT+j1j5RyFeswAoda3Z87
+	y49MCJ1h5rgvLRytg49qRUl6GwYM=
+X-Google-Smtp-Source: AGHT+IFwckd+qOlAiDqjYBF2nZ+unD2z8gT4uWHTczXzYQpNgG0hMG6PX00odYf2BECd0DQqpCwr5y6PSlC5EJZ7g3g=
+X-Received: by 2002:a2e:300c:0:b0:2ec:4f01:2c0f with SMTP id
+ 38308e7fff4ca-2ee5e3bf062mr45016221fa.26.1719840447042; Mon, 01 Jul 2024
+ 06:27:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:15c2:b0:7eb:80e5:b5e2 with SMTP id
- ca18e2360f4ac-7f62ee8e547mr45386139f.2.1719840422758; Mon, 01 Jul 2024
- 06:27:02 -0700 (PDT)
-Date: Mon, 01 Jul 2024 06:27:02 -0700
-In-Reply-To: <20240701130014.9207-1-wojciech.gladysz@infogain.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007819d1061c2f8d46@google.com>
-Subject: Re: [syzbot] [bpf?] [net?] KMSAN: uninit-value in dev_map_hash_lookup_elem
-From: syzbot <syzbot+80cf9d55d6fd2d6a9838@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	wojciech.gladysz@infogain.com
+References: <20240620073205.1543145-1-ardb+git@google.com> <20240701124734.GFZoKlZhqnWJlz7LKb@fat_crate.local>
+In-Reply-To: <20240701124734.GFZoKlZhqnWJlz7LKb@fat_crate.local>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 1 Jul 2024 15:27:15 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXEHpezZS_jNoLQoTSKXZ0P8DxQFHNKRS2kkTC-G4MfG0w@mail.gmail.com>
+Message-ID: <CAMj1kXEHpezZS_jNoLQoTSKXZ0P8DxQFHNKRS2kkTC-G4MfG0w@mail.gmail.com>
+Subject: Re: [RFC PATCH] x86/efi: Drop support for fake EFI memory maps
+To: Borislav Petkov <bp@alien8.de>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-efi@vger.kernel.org, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, dyoung@redhat.com, 
+	Dan Williams <dan.j.williams@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Mon, 1 Jul 2024 at 14:47, Borislav Petkov <bp@alien8.de> wrote:
+>
+> On Thu, Jun 20, 2024 at 09:32:05AM +0200, Ard Biesheuvel wrote:
+> > From: Ard Biesheuvel <ardb@kernel.org>
+> >
+> > Between kexec and confidential VM support, handling the EFI memory maps
+> > correctly on x86 is already proving to be rather difficult (as opposed
+> > to other EFI architectures which manage to never modify the EFI memory
+> > map to begin with)
+> >
+> > EFI fake memory map support is essentially a development hack (for
+> > testing new support for the 'special purpose' and 'more reliable' EFI
+> > memory attributes) that leaked into production code. The regions marked
+> > in this manner are not actually recognized as such by the firmware
+> > itself or the EFI stub (and never have), and marking memory as 'more
+> > reliable' seems rather futile if the underlying memory is just ordinary
+> > RAM.
+> >
+> > Marking memory as 'special purpose' in this way is also dubious, but may
+> > be in use in production code nonetheless. However, the same should be
+> > achievable by using the memmap= command line option with the ! operator.
+> >
+> > EFI fake memmap support is not enabled by any of the major distros
+> > (Debian, Fedora, SUSE, Ubuntu) and does not exist on other
+> > architectures, so let's drop support for it.
+> >
+> > Cc: Taku Izumi <izumi.taku@jp.fujitsu.com>
+> > Cc: Dan Williams <dan.j.williams@intel.com>
+> > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> > ---
+> >  Documentation/admin-guide/kernel-parameters.txt |  21 ---
+> >  arch/x86/Kconfig                                |  20 --
+> >  arch/x86/boot/compressed/kaslr.c                |  43 +----
+> >  arch/x86/include/asm/efi.h                      |  15 --
+> >  arch/x86/kernel/setup.c                         |   1 -
+> >  arch/x86/platform/efi/efi.c                     |   2 -
+> >  arch/x86/platform/efi/fake_mem.c                | 197 --------------------
+> >  arch/x86/platform/efi/memmap.c                  |   1 +
+> >  drivers/firmware/efi/libstub/x86-stub.c         |   2 +-
+> >  9 files changed, 11 insertions(+), 291 deletions(-)
+>
+> I obviously like this:
+>
+> Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
+>
+> I don't see the author or anyone else objecting, I guess queue it?
+>
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-SYZFAIL: NL802154_CMD_SET_SHORT_ADDR failed
+Thanks.
 
-2024/07/01 13:26:53 ignoring optional flag "sandboxArg"="0"
-2024/07/01 13:26:54 parsed 1 programs
-2024/07/01 13:26:55 [FATAL] failed to run ["./syz-executor" "setup" "fault" "binfmt_misc" "usb" "802154" "swap"]: exit status 67
-mkdir(/syzcgroup) failed: 17
-mount(binfmt_misc) failed: 16
-SYZFAIL: NL802154_CMD_SET_SHORT_ADDR failed
- (errno 16: Device or resource busy)
+> Or if you feel like you wanna give folks a full cycle, you could queue it for
+> the next MW...
+>
 
-
-Tested on:
-
-commit:         e478cf26 Merge branch 'bpf-fix-a-couple-of-test-failur..
-git tree:       https://linux.googlesource.com/linux/kernel/git/torvalds/linux
-console output: https://syzkaller.appspot.com/x/log.txt?x=1780d2b9980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2ad6a8768920dd4b
-dashboard link: https://syzkaller.appspot.com/bug?extid=80cf9d55d6fd2d6a9838
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12b40476980000
-
+It's been in -next for ~10 days so I might just send it for the next
+cycle. We can always revert it if something gets broken.
 
