@@ -1,104 +1,130 @@
-Return-Path: <linux-kernel+bounces-235932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1877B91DB6E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:30:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CB7E91DB72
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:31:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6A48283336
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:30:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DA861C23017
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA1353804;
-	Mon,  1 Jul 2024 09:30:44 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F55982C63;
+	Mon,  1 Jul 2024 09:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="H/D+Q2VC"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65642C859
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 09:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5842C859;
+	Mon,  1 Jul 2024 09:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719826243; cv=none; b=M1M2WvHP68RHO00+0K/evWTAOs2xhsrVw/caD8uXRTE5Gv37RIv2H6rWc4VctpQUesD0sBUszH0jZdYc+ck079nRluhXt+A4tRmWCT5QXiD8MRP/GbcejCUI2HoTI/ZT0QXSnr1IqajMVQtrw6yBL9N5fyoIxCAK3fRJE3mWAU0=
+	t=1719826272; cv=none; b=lNqqlkjD5ME3IIloUL1b0yVqhjmhlSJ5vvXWnv4XeaZHQIDtgIW/gxVfxSE6Wf10iatJUT/lLOIeU6pUu6N34O8BSMRheSeXR+jslUHCjht3zhvp2wMclQHfm3gdANIUnwIwG0q5ARU+PMINz5m6ZJHXjvsbxVqMtFrF6vaM6+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719826243; c=relaxed/simple;
-	bh=bXS05YXP29lYledT5VQ7UD9ves+9A8eAVmV+KKJbQtw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SHtjB7DSdPjpPJOzTCUvCEk7lY1S8ll/wqkp1uibwTJGGR6fzO2bdQ26ifafGLMmnnzFEapAUNxIDA9DnsseVFuvR7+ySNI+WRTrcWtWoynP4o2hmelq8MTS/eTwpit6/WRakISgwm7QMrKBLWAU5ioGTfcDSzsfc5jym/rlUW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1sODMj-00022u-9n; Mon, 01 Jul 2024 11:30:29 +0200
-Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1sODMi-006L4k-Jt; Mon, 01 Jul 2024 11:30:28 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1sODMi-000PmG-1m;
-	Mon, 01 Jul 2024 11:30:28 +0200
-Message-ID: <7dbda1952c9e873823d4e6d2a9534f1b3b945c4a.camel@pengutronix.de>
-Subject: Re: [PATCH] media: imx-pxp: Rewrite coeff expression
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Ricardo Ribalda <ribalda@chromium.org>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>
-Cc: linux-media@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Hans
- Verkuil <hverkuil-cisco@xs4all.nl>
-Date: Mon, 01 Jul 2024 11:30:28 +0200
-In-Reply-To: <20240628-gcc5-v1-1-7cd56f04a6a8@chromium.org>
-References: <20240628-gcc5-v1-1-7cd56f04a6a8@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1719826272; c=relaxed/simple;
+	bh=U9zvGVR6EM9VmPPgkNfEiRVaS2I3tAhr6eAPgnKQLfY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=ZSLtGfxyNSgSKfqCErz3g5wAU+Z9wMonWxpX3KZItzS3hJEwqJBySXxi2LILAQMle2ldm2GcetjMZ2oBCFnYk5p5c8iLoSGlXCpFeuI7Z/pCeoPbphMYgNpk2TTBqjozXd5BzIkcoR7da/FRtnfjKnS8XCPRPWRup4nIuT/fZIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=H/D+Q2VC; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719826236; x=1720431036; i=markus.elfring@web.de;
+	bh=0n79Gfup/hAkeMvlN7WvUCrlNjugDCmGLSow+BGQudY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=H/D+Q2VCEGNpgZjCQoz5qfWGbAGoxvEpb3BnHr6WhxJa238nWq3xEx3tNKKhrcsX
+	 +vqj7W5CY2Rq3U/4a7WqR3ZMyIF1AG9hlc9OpUvQ+gnb2GaHRCKw5EhsE/1c3JAH/
+	 uuisi/h97NoYLKf/IvE34dwAJ28Af+bZdBJfa5n+3RtqKb+MCTYg0ODQNsKhiyPN8
+	 C1Q7Uj2iTFcUNxar2lfbCpCnQuI/dYvpfTz+lrJNDtU0i5BN+HM45K2XzbWE+szjZ
+	 kDXtkQIf0RHI2HywE3mEDtqW6LNxjE94eQkrJQ2HkN7RR7QPhMcxEdiMazPZ8cAyM
+	 el8AMWLxoNGPgZaaWw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N0Zns-1sCABs1tOm-018I67; Mon, 01
+ Jul 2024 11:30:36 +0200
+Message-ID: <6e5dffe8-69fa-4d91-8cf1-136265bb5500@web.de>
+Date: Mon, 1 Jul 2024 11:30:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+To: Haoxiang Li <make24@iscas.ac.cn>, linux-hyperv@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Andrea Parri <parri.andrea@gmail.com>,
+ Dexuan Cui <decui@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>,
+ "K. Y. Srinivasan" <kys@microsoft.com>,
+ Michael Kelley <mikelley@microsoft.com>, Wei Liu <wei.liu@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240701023059.83616-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH] Drivers: hv: vmbus: Add missing check for dma_set_mask in
+ vmbus_device_register()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240701023059.83616-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:oj/fHA+sMZUu4U5nVZUuyMGcCxNNLJ8V8FmFWYOwlpnsBvPbOmw
+ VsYOXmr6EXKAUde4IUSN+xXPQALYyhWCkF0W683c21KV5aqbdt0EBckVJlJgq8o9e/PCZDG
+ 0b1a23dmIcN417xhKaQDL5VJjuPqc8rr0mnPYxDkJ95lvnpAfK1nzEU58aJiWW9kJBFw8D4
+ bBJxD4aZjN9Ytf3WPvylQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:nqZCyd0z8HM=;0q72lLX8mmvOxhJ5Agdviowh1UU
+ TkZ+qORi6u9sNW+4yjdp8/Qc/VkOHdQREMhCtOSzkkwUR0Za11AoxuIgLcPrAWnNuOGrxj+m3
+ HDJqzCBm2VF18Xh7yQxzL/MWk3bHFptjN2dyJc1qwMkRV3mJPiu8e/+9MNpCLq0cIK28Ciob6
+ iUro3RzxdrUf5eJmENHJsJRY7xfxvyzMXy0X9UhYprRTzNuPbq4irRQIucQIXXlvK2YhsH44B
+ a/e7PYhATvE2AjCQwRDctxldwgSiYlNzmbO9+QRn/IMXpwcLMysORi2t01JXVz8Ege0fjaEVk
+ Bo8vb61rlzu3LWVdpaq/hrb1zFPGaoZzcOKrKRs3ke0mOnUhpYMu78LL4wELLxQXANx2uuIi5
+ wgsXhnw4W9i1bIM1z/s1VHqlhPfuAF2qYGJqxsomihXlNGJ5HsCJbNOnEvgkrJv3vIf0liRkP
+ kFbec3C/kdMDPsEhUl1Au5TurYB3crGwDo9q/noyYKUnBLyASdyi/ueormOitoDno4MRLgl89
+ UeAGZDcBxQVIdn8pW3E7BP7ChwolkTyB3076Jwp8Pvz8TD/M3cnjt01KAsFnVZst4uaZwQSRu
+ ff8VLNpwAB7quC53cDfEWFw06vPbozchbvhZZYbH0qnXOfp4fMRbEi4sQb9dFk9//aoLaRzTO
+ ZK/nhPEujrgiMHPQej/Fhkes1P8DkPBIm9nRlyrjJcjGNJ9nFupamutkf07eWk0EJnAMZsHKD
+ Ip1XfG+JDzgZTF+72VMX6kVSApklwi7TOF0KjXZdac+eVfrXYCMlWi/Y8IcCWXZp3nand/kRF
+ BXgAmp2bB1YulO80ylQZL7XznVi0cAmSLzmTMEsYknD3U=
 
-On Fr, 2024-06-28 at 15:11 +0000, Ricardo Ribalda wrote:
-> GCC5 cannot figure out that the expressions are constant, and that
-> triggers a build failure. Rewrite the expressions.
->=20
-> The following gcc5 error is workaround:
->=20
->  #define BM_PXP_CSC1_COEF0_YCBCR_MODE 0x80000000
->                                       ^
->     BM_PXP_CSC1_COEF0_YCBCR_MODE |
->     ^
->  #define BM_PXP_CSC1_COEF0_YCBCR_MODE 0x80000000
->                                       ^
->=20
-> drivers/media/platform/nxp/imx-pxp.c: In function 'pxp_setup_csc':
-> drivers/media/platform/nxp/imx-pxp.h:582:38: error: initializer element i=
-s not constant
-> drivers/media/platform/nxp/imx-pxp.c:374:4: note: in expansion of macro '=
-BM_PXP_CSC1_COEF0_YCBCR_MODE'
-> drivers/media/platform/nxp/imx-pxp.h:582:38: note: (near initialization f=
-or 'csc1_coef_bt601_lim[0]')
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> child_device_obj->device cannot perform DMA properly if dma_set_mask()
+> returns non-zero. =E2=80=A6
 
-Can you elaborate on how this is triggered?
+Another wording suggestion:
+  Direct memory access can not be properly performed any more
+  after a dma_set_mask() call failed.
 
-At least I couldn't reproduce this by just copy & pasting the
-csc1_coef_bt601_lim initializer and the required macros into gcc 5.4 on
-godbolt.
 
-Can this be fixed by using GENMASK / FIELD_PREP instead?
+See also:
+https://elixir.bootlin.com/linux/v6.10-rc6/source/kernel/dma/mapping.c#L80=
+4
 
-regards
-Philipp
+
+>      =E2=80=A6 child_device_obj->device is not initialized here, so use =
+kfree() to
+> free child_device_obj->device.
+
+How did you come to the conclusion that meaningful data processing
+would still be possible according to such information?
+
+
+=E2=80=A6
+> Signed-off-by: Haoxiang Li <make24@iscas.ac.cn>
+
+I find it interesting that another personal name is presented here.
+I noticed that some patches were published with the name =E2=80=9CMa Ke=E2=
+=80=9D previously.
+How will requirements be resolved for the Developer's Certificate of Origi=
+n?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n398
+
+
+Would you like to append parentheses to another function name in the summa=
+ry phrase?
+
+Regards,
+Markus
 
