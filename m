@@ -1,107 +1,114 @@
-Return-Path: <linux-kernel+bounces-236564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DB3C91E415
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:28:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4943691E419
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:28:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E7E71C2172D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:28:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F377B1F2335F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:28:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8459816CD0C;
-	Mon,  1 Jul 2024 15:28:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44B516CD0C;
+	Mon,  1 Jul 2024 15:28:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nmTZzJpf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iDAA0GKr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBEFA16132E;
-	Mon,  1 Jul 2024 15:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C14116CD04;
+	Mon,  1 Jul 2024 15:28:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719847704; cv=none; b=ePXnp59zatSiSGB8tk4cBSmtZKwC9fdoVnwayChRr2n6qUZpwivREYqeroOkId3NEX0nLOjQtrKBnOatSQzkarGdW8KMIw2PROCPXuCzpCdUfU05SwkisLpJt4SWlL6UVo1taQxgJ3EKLhYOFdI1NKtLSGdgCMQIEcJ++x7o2Zw=
+	t=1719847727; cv=none; b=iNdUywGqqcXs1bkRAF0mOcwC/DxekpRoIwuz7TZzzBZi77Qw7vAovMkx/tFB02dzUcv5gDIdkwACRn2oZQA4RDhE2MzVvbC5M/MBCBz6cCeqFrBRdnMobTMLq+7G+HhSE6cBhqsG9J+2lCuI6lmypIrccf3lsknctJPTei2rSzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719847704; c=relaxed/simple;
-	bh=zJG+h1pN9ClIxA4MuEYTWu+UyZIRuLS9ujKuZBOeNlE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=baE8zHJ7i6dJCF17sBei0rlszTLEBFvwgepZdmWoGMdaO6R649jsQXbWeiJYeS0pGJSnWGsoBceh/8vRLCUl9/S62I2tTI8y5PbPOGdHW02UcmeJboqLkwsX6rX7H1cPRCsIrBFmLpx+Ycc0cyV3xft27nqNmIY2e+FgwAMrXw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nmTZzJpf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A173CC116B1;
-	Mon,  1 Jul 2024 15:28:21 +0000 (UTC)
+	s=arc-20240116; t=1719847727; c=relaxed/simple;
+	bh=7pFQCZF0TK7ge4TJfBJVjPmPKLYdXcSUa4GgK0+Inco=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Le3orR4YI6ztioLd8qUZICkv8DnCNd1SpjpzdnNNSiYGPxamEmjz3hP70nOA3xz8XFpLUTZ/U9KjCUpmxG/aXwK+tyjTSlU2/56ZnxczBHu1yO6dL5QoGhMYpBnsUBjvw/8ZGSb0Q6LwjTEiZNoTQ2yIjXoCp+7d+oV5xfDvY7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iDAA0GKr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40FF4C32781;
+	Mon,  1 Jul 2024 15:28:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719847704;
-	bh=zJG+h1pN9ClIxA4MuEYTWu+UyZIRuLS9ujKuZBOeNlE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nmTZzJpftcFzvBPlfk070+hDzb58S9IUzu/fAs68U8RPJUKbvD1R8JwSdu3rR12s6
-	 TKwPTfeFSemq/cbW2Ch680yCs6/HFcG9KTSUW8qkVMgmesRLX6/tPkW57g5kbNA9Om
-	 SPQ589hC20w0TJmaD+GDxhf2hEKlJLF64WZnf/TQ6Y1pCk+QQg6IItSYD4rhbdNmXF
-	 piuqQyuJ7b9apv8H3IoZ/9toimB8AJ5TbXgI/D3LA5SJuu1Pm55cDmOdVqdwXCkcFj
-	 9s6ZFxmCBT4ywetW+v7Tn9FUiEkXCJALg3NDRcUbMRSM/LnYzSZaNHs7uP4OW7RqDO
-	 PmLMJvYNLgfDQ==
-Date: Mon, 1 Jul 2024 16:28:18 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Vladimir Oltean <olteanv@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, Kuldeep Singh <kuldeep.singh@nxp.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>
-Subject: Re: (subset) [PATCH v4 0/3] spi: fsl-dspi: Convert to yaml format
- and use common SPI property
-Message-ID: <4ebbd545-0371-49d8-a19d-56303cf5c67a@sirena.org.uk>
-References: <20240624-ls_qspi-v4-0-3d1c6f5005bf@nxp.com>
- <171984553050.67981.12522537296340689285.b4-ty@kernel.org>
- <ZoLKN6a2qLXrR+oX@lizhi-Precision-Tower-5810>
+	s=k20201202; t=1719847726;
+	bh=7pFQCZF0TK7ge4TJfBJVjPmPKLYdXcSUa4GgK0+Inco=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=iDAA0GKre8S1rv2bMacDuuz2ODoaSPjEuD96mYfLOPDuzZ/5KvMA+q7qJvBiOCVxg
+	 pvhUP5VLVb4z0cT5i/DdKiWJxS14MUBW9va92DXZBLdbbXM6PWJRTrvbskG9cB04LJ
+	 thla3/hQgZJb3nSTR5n15pSIPW0i7Vuw3a9CpmoAe8tnY2k+lA3Ok8Uufq3Q5gcxrP
+	 QBwijG7Ji2owD2rDC+xisECkvw6iEY4zKEwvNFPFiIUNI1F8MKpPRwwQsK295TQzXg
+	 gMiWAL8pmkDbGxnMufrKwkABNDN/YQf0dhOnuiVny5DV/h6DAq88Kjvmr4TB3njG+i
+	 ZclkeNVPBQBFg==
+Message-ID: <c1cffcdc24c5689b6f9e93f3259480d1e28a46d2.camel@kernel.org>
+Subject: Re: [PATCH v1] tpm_tis_spi: add missing attpm20p SPI device ID entry
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Vitor Soares <ivitro@gmail.com>, Peter Huewe <peterhuewe@gmx.de>, Jason
+ Gunthorpe <jgg@ziepe.ca>, Lukas Wunner <lukas@wunner.de>, Vitor Soares
+ <vitor.soares@toradex.com>,  linux-integrity@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  stable@vger.kernel.org
+Date: Mon, 01 Jul 2024 15:28:43 +0000
+In-Reply-To: <b565856a28cff8e01fc1dbb6a776067a3467af9c.camel@kernel.org>
+References: <20240621095045.1536920-1-ivitro@gmail.com>
+	 <0c5445a5142612fa617fef91cb85fa7ed174447f.camel@kernel.org>
+	 <20240701151436.GA41530@francesco-nb>
+	 <b565856a28cff8e01fc1dbb6a776067a3467af9c.camel@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2Uyv1VrnGHXBOUP3"
-Content-Disposition: inline
-In-Reply-To: <ZoLKN6a2qLXrR+oX@lizhi-Precision-Tower-5810>
-X-Cookie: Microwaves frizz your heir.
 
+On Mon, 2024-07-01 at 15:27 +0000, Jarkko Sakkinen wrote:
+> On Mon, 2024-07-01 at 17:14 +0200, Francesco Dolcini wrote:
+> > On Mon, Jul 01, 2024 at 03:02:11PM +0000, Jarkko Sakkinen wrote:
+> > > On Fri, 2024-06-21 at 10:50 +0100, Vitor Soares wrote:
+> > > > From: Vitor Soares <vitor.soares@toradex.com>
+> > > >=20
+> > > > "atmel,attpm20p" DT compatible is missing its SPI device ID entry, =
+not
+> > > > allowing module autoloading and leading to the following message:
+> > > >=20
+> > > > =C2=A0 "SPI driver tpm_tis_spi has no spi_device_id for atmel,attpm=
+20p"
+> > > >=20
+> > > > Based on:
+> > > > =C2=A0 commit 7eba41fe8c7b ("tpm_tis_spi: Add missing SPI ID")
+> > > >=20
+> > > > Fix this by adding the corresponding "attpm20p" spi_device_id entry=
+.
+> > > >=20
+> > > > Fixes: 3c45308c44ed ("tpm_tis_spi: Add compatible string atmel,attp=
+m20p")
+> > > > Cc: stable@vger.kernel.org
+> > > > Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
+> > >=20
+> > > This is not a bug fix. This is a feature.
+> >=20
+> > I believe that some maintainer have a different view on this kind of
+> > patches compared to you, adding new device id would be material for
+> > stable, or this specific issue preventing module auto loading.
+> >=20
+> > I noticed that this specific view is not new from you, see
+> > https://lore.kernel.org/all/CY54PJM8KY92.UOCXW1JQUVF7@suppilovahvero/.
+> >=20
+> > With that said, I am ok with it.
+> >=20
+> > Do you want a new patch version without Fixes/Cc:stable tags or you can
+> > remove those while applying?
+> >=20
+> > Francesco
+>=20
+> Hmm... OK, I'll apply this version, I see your point here!
+>=20
+> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
---2Uyv1VrnGHXBOUP3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Should be soon available in -next.
 
-On Mon, Jul 01, 2024 at 11:24:39AM -0400, Frank Li wrote:
-> On Mon, Jul 01, 2024 at 03:52:10PM +0100, Mark Brown wrote:
-
-> > If any updates are required or you are submitting further changes they
-> > should be sent as incremental updates against current git, existing
-> > patches will not be replaced.
-
-> Thank you very much, I sent out incremental update before this patch
-> applied since my one miss understand. Could you please check this?
-
-> https://lore.kernel.org/imx/20240627203308.476437-1-Frank.Li@nxp.com/
-
-As covered above please send an incremental patch with whatever changes
-were in the new version.
-
---2Uyv1VrnGHXBOUP3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaCyxIACgkQJNaLcl1U
-h9B3Dgf/SIrxupQ7K4lT/QT3OpDmQBlJGu0P5Wy/9zYhW+weeAN2omnVKl6wBZ/Q
-r8gGMiBouJwOI67jH9hK27m4ZaR9OOYzgxtvqcZ0BhTHHLIqBdy33KcGx0lU334c
-rNCaMva+07MtNYVFLgjXST90eQHzzTW/JLJ0XLTAJSZjj4pQUTNjONGNn2C1Jsgh
-xWFgU538ZLuXq+XetznQyY+MnmoiSBrCLdtUURHQcA1HVOjJ2pSzN00qJoXV/rXH
-HGFcYi7b+YTgWshXkeS1AXppMvizWomoD2+rBMt/STttkQYjI3DggmkxONukE04J
-L8ti3LknvPtCTlT6WW24CBuPKkD5xA==
-=3LSH
------END PGP SIGNATURE-----
-
---2Uyv1VrnGHXBOUP3--
+BR, Jarkko
 
