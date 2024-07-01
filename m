@@ -1,75 +1,76 @@
-Return-Path: <linux-kernel+bounces-235747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F02D91D92E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:41:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A632791D933
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:41:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9611F1F22368
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:41:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8E4AB21D11
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB7D684D12;
-	Mon,  1 Jul 2024 07:39:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2968185C5E;
+	Mon,  1 Jul 2024 07:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wNj5/uXr"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PhXcidIB"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C28F839FE
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 07:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8874084A31
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 07:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719819595; cv=none; b=iR+94lP1vv6QiwuDH92GWGhlzW9vgwCFpZpwDO7LsYLvRi/LkCPuXc0+pvBx3JIhXrAJ2UQOTJigwFDR8CQ7KFwYzJ7wdxTUdYYs9k9ok0h5gTuwZNmHgqAPIU7crbgCE5BBTAtTxf9K8lu5fv3adrLhiX962eB6cOvyLKPcRjQ=
+	t=1719819597; cv=none; b=D9+fjPICgzzzgtZmhC6qwuFNNKiXTbnN5DvfQS1TR99mQUgTP/IvjulpdBf8Mk7LgjWnS+esXN2+JK/aLlxVT0pfe2sufjBCT3MBda+9hORDk3ZijLZkSpOkbeNHioAXOmKSW85jADWV9y8vvXze/O0/KiwKizBuEpT/MBffk78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719819595; c=relaxed/simple;
-	bh=x29wiXWpg6jxb2D1xLhsOVHl1vLxmaL7w/bv/sExbXA=;
+	s=arc-20240116; t=1719819597; c=relaxed/simple;
+	bh=mHTTaZNpcGoV/mUxNlKDTFQQYgAom9YHnI/rebyFS7Q=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KM1IIoeWYpb0LwH9fPr+atJ8bZ/FpXNp1HX7D2ToD8CunM4VnFEbkpqQrI6KqaNga8QCnK+jaA/7Pv5dtJ5IDHmhUntrt+QCzLXOqKBJwFdiHV2apekhL489SoTIbLmT1MlKX096sMDe52Y7+IwRJmK7HIiCS8FBgYZa96V8IUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wNj5/uXr; arc=none smtp.client-ip=209.85.221.44
+	 In-Reply-To:To:Cc; b=fjDmOsz80wz6b5r2nKTxbHrwDIwEFGwhNXs5jmMEk0lc9DtLGYT3SK3CwjJ1wa/FATuExB8Qnqi7Kyve8efz4q5Oj8vPwJtEiG212stQh32bR9ObtBRm2QfvSino4AiS3EAss49ibay2rdkOKCwwEqzi9UJ2lVKQAZWMJyh/g9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PhXcidIB; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-364ff42999eso731503f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 00:39:53 -0700 (PDT)
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3674e1931b7so1896621f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 00:39:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719819592; x=1720424392; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1719819594; x=1720424394; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=JlFPWXG6JCmSDQcnpPbHIJV1hXvd50IYEdMdlRm8NpE=;
-        b=wNj5/uXr4Symqe79zf+Tw1xUY5rayAtkc1NCLs6OiYE/y3nmiNOFZ79Q040cozoRz0
-         x9utJdKhDfuPuWV8KToHh+CE2K5TtkDUtgOIcnLK0y0EKwpxqP2umiZASdTGS8dw7mjO
-         syiiDfLjd3DNusumHesQnqM4lZeW4uEVcSQsJSw/PxPZp2PKlQA0l7vFu2+X6GgQHvyN
-         OXZM1HiD9o+JnkfWp2UCmiI87nQBvvgf0I3d4/2856s1JaGmxW4KkLkDnBPXNoJVzCYD
-         HnYF2JJSRWJ5W0zl/JEEc/XEHzJY/TkiLkkDwn/42+/4ZfhHIMlMNWO8BDacEK6taJQ4
-         j8OQ==
+        bh=LkhZEX+m4yRFERQhljwkeNudJNH97Tx+yLOdy4DNmag=;
+        b=PhXcidIBQYT9Kbag+uEEEp6fuwRteJgOY7oV5HZanr1XlMaKWwUiimxNAgrSlpAbuE
+         8eW3QiIUKxjvTMAqioVvUgy9O+6xYspxRqyHVrWbZkBLpESMlm8/9LLz3JLYHPBLfcOJ
+         TGb25JVfhbJKqT/kcccg1A0MGdqxRLzzZPjQnNUbr1l8lNhudrQnEZCo9N9+7zTWiYCL
+         plEoNXL6KJUA2r7gp+J4tz22bNMoHaDV1OY7/gmbhCFFDSYkkrrAhMZZq9p6bJiiZRko
+         +kacKje6kazcefR0XXVhgVzQqBxFgTdQUHffQfWeaB+QjkqUUUGOnoAlWxQBXgM14ONh
+         MtNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719819592; x=1720424392;
+        d=1e100.net; s=20230601; t=1719819594; x=1720424394;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JlFPWXG6JCmSDQcnpPbHIJV1hXvd50IYEdMdlRm8NpE=;
-        b=YsNaltP/w6bj4SFI6qvH9tSpkUfhRK2KvAX7n3QYBh/s0kGb/lvWTt/sh9Y5YRozO/
-         E/v+zDfAPm8Pt7RvD/cablWTdb4eXnRnGXJBK6ujrnhKrhNcx/SCutQIqiclOKc0wfWP
-         7Qvg71+wd0PCY8txId5/BiZqq1QcUEpOUfXzDBrxsS5PX+JLuAU3FHNLKOJeiFS+p8dt
-         SNRukvXtxVpN6/bniquTscWi6JDQjNSKnwr0TRQmFFjAMJ6LFh3qzOAnFdxCt5x8P9Ts
-         VzcmMWzDy3KKED9DHpnR0/+xvNeeLGKapPz+xyshuFNDD+ImkGyG70Gt7mpz+cIN55cv
-         RbpA==
-X-Forwarded-Encrypted: i=1; AJvYcCVjWfHBUbPOz3RQrN+GzGjmDcNwguaDAfKJyLvm1/Ct/NP2qb3rtioz/FLrnGXYzKK/imbz7IELq3HGk1W9jNLR8IUp55ysJJ3cE0Py
-X-Gm-Message-State: AOJu0Yw7yrcLZfWLSs+MtCLRRYR+M9BlKAAQMBLMjy6TG07oQMSx/s98
-	eSj5BT4EbdKILthBYoWX8WC3uN0jbGRFb6ev+vvMXDSKDt6EtCiiD7+NhnhLhIw=
-X-Google-Smtp-Source: AGHT+IHHtHxDqWdH128hQmSA0cf68mmpNc9DRTecEH9In5YhAxmj+nZy5eqG4zRev1smLhlwMVcEcg==
-X-Received: by 2002:adf:ce0a:0:b0:364:29ce:b14e with SMTP id ffacd0b85a97d-367757307aemr4223694f8f.69.1719819592610;
-        Mon, 01 Jul 2024 00:39:52 -0700 (PDT)
+        bh=LkhZEX+m4yRFERQhljwkeNudJNH97Tx+yLOdy4DNmag=;
+        b=aIbiNezmRHWlwose9APXk5GCDkxGGbwMOEciqV/evDoiwqXSdYO+X7iFsRHSQuJViY
+         EIHt6Dz36FlNOM4yVxta4bjv9LQtNYqqKCF0CA1r/IGY9AKllooP1nsXCRnCBOhMkRtW
+         bjcCEpaloFl6Of514gmHxk9tsU5TF20CWtXMdHnWjnPmqiZIn85CjDLIsbWwlXtRB860
+         A18RRaO+fsmRYrcmRKAFDlsBHp0EFoYZJvcBmRUBrliT/FQMU2DMsURJ/0m8r3sFmrL6
+         Pf1Mt4sGxeIdBoaULUlR6aev4lkrgzs8fsrh3vzuqdhD8tdQVTzU7FepHhQ5oM4ZpH/k
+         Fijg==
+X-Forwarded-Encrypted: i=1; AJvYcCU0SO8nVuQ+KT0j1vHTRAHiC/K/sHVHhKgsgIUxiiZL/4UnICWxWjcnK4Frf7EQj+lDmgVxu2C3+ttXJgSEofM6cS7RqFvPvyVOYjaw
+X-Gm-Message-State: AOJu0YzKeFpqXwUIHnztMoU5GeDnLwsr9Nvg9C4ODBHONyYqBncMb0+u
+	kiwHS+FCuPhkLBxbWvGvOZr9VphlAnPcKVCF52QhLDxtFYlHg5Z8xsx52DXTHL4tSCrMJjDuyCl
+	0
+X-Google-Smtp-Source: AGHT+IELAP7OOkaVhC6selMuvtx3yRVOwXrHRpbUfCYh3qaNYGybZnve/dhn7uV2G1WhEKJKJ5oHWw==
+X-Received: by 2002:adf:f48e:0:b0:360:8537:ce27 with SMTP id ffacd0b85a97d-367756e5165mr3354107f8f.42.1719819594023;
+        Mon, 01 Jul 2024 00:39:54 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0fb9absm9279936f8f.80.2024.07.01.00.39.51
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0fb9absm9279936f8f.80.2024.07.01.00.39.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 00:39:52 -0700 (PDT)
+        Mon, 01 Jul 2024 00:39:53 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Mon, 01 Jul 2024 09:39:37 +0200
-Subject: [PATCH v3 5/6] ASoC: codecs: lpass-rx-macro: Use unsigned for
- number of widgets
+Date: Mon, 01 Jul 2024 09:39:38 +0200
+Subject: [PATCH v3 6/6] ASoC: codecs: lpass-wsa-macro: Simplify with
+ cleanup.h
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +79,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240701-b4-qcom-audio-lpass-codec-cleanups-v3-5-6d98d4dd1ef5@linaro.org>
+Message-Id: <20240701-b4-qcom-audio-lpass-codec-cleanups-v3-6-6d98d4dd1ef5@linaro.org>
 References: <20240701-b4-qcom-audio-lpass-codec-cleanups-v3-0-6d98d4dd1ef5@linaro.org>
 In-Reply-To: <20240701-b4-qcom-audio-lpass-codec-cleanups-v3-0-6d98d4dd1ef5@linaro.org>
 To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
@@ -87,51 +88,119 @@ To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
  Takashi Iwai <tiwai@suse.com>
 Cc: alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org, 
  linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1007;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3389;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=x29wiXWpg6jxb2D1xLhsOVHl1vLxmaL7w/bv/sExbXA=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmgl0/b6W/jgS8oAl3i/WUq1uwI+lyOS8exPUTa
- 7WelHm2nIOJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZoJdPwAKCRDBN2bmhouD
- 17wJD/4nCEib+5DqPEHKrWFzzhh4Pm8WGZESnEx+zYlUmkRVYwHgyrsI4Mx532DRm3x1JpagKWI
- NNv5xvIOQARUI82dK92tuAaNW1qkThmKV6PIVa+Du38dXD0izYl7MYjaX+uJhODQwLiHXDioanX
- KpTfALvKiVIxq0CV19/BTcBNozPiWxCsCDd2TpnhKcCxes6uHEuU+5+5duoAh9YSqvOc+aOvl2J
- k+JTKgo7R4nN21KhbN+1I9KcV4CsLI/ctn5ck0fMzA0u8qs3dvDI2WbunOPZ5HDm8mPEO6K4Pyt
- CHe+AMqDcnb7v2LAwoD1HcXcGkKPFkBkKQ3JNZtBUB1Eqgrs889RAjPURnmPg56a0Frp261pnKb
- lx05CvmKdZ/BlXGt5Uig+hIaIB7HR45/DLoweL8UVXsZlUlDwhTneAwC9T34dCksGINAGffk3OP
- Q40wmTWZ4CS5nMZQoogd9DKazRdeQ165EUe4eBh+FUJOpJ1NQLPoJE5fkxvCYxrehrZCuAwB0ny
- 0GBdeBEWnA9t76TFcHt1c9HajeZ/57VAj6tprxMXq+It1J5C4UPp1zLaqss1o6ifvwVn1JELSJy
- fu38XyflpmvvHQra2o8VTeRd3BIHJ1bWKIQJXt4Em0MHDhTlXrnKEIasb5IYpDW7pwRQ0Xs9j9U
- CnbTb6iGmhl1w4g==
+ bh=mHTTaZNpcGoV/mUxNlKDTFQQYgAom9YHnI/rebyFS7Q=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmgl1AQS92yL9416c8UVe+w7/0WkAuH7E1cdUAC
+ ++EDTJccBuJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZoJdQAAKCRDBN2bmhouD
+ 1wEfD/wIHxe8tcpCX1EmCOcXJt2sUUnucJDFR+nNQ+DNVcA7ZufKmvMsEHQ1Mi7g7Ju0uhaRR9J
+ DU9kt5wS350/08AZerCK99VA1Og8ddZwmAZ/gJoQXzKowQyjbwMw0gLheSEWkr1i1t3vJGpQNnS
+ NbN/Gjg+IVHxrOCKgq68825mk5Q7v5WWM76u2201s4xIcSWajthZDoY6TM0C3x1rFsFckGBbvnc
+ 5zaPV8b5+UENozlrb2tSuKcDpoCJ2WS5MmmfkDhRzya23JADD3/shIZOzt26mrGnItt5ZRS7az0
+ BQMFrrPRyYkc4GD1Po0YF72bdvPUTLyEt67WmKIlnnDUcOWe9kH4sE/Aey/+/JfURjkho0uEHpZ
+ l6v9dHxXFMK2v9T5MMsh2IHA4sxRxyF0329W8cHUOFMMe/UM/KKXJPBkB1VbVacSukanSyyPt5D
+ fVVisrQTdJbZWNdnCKCOXi0OEFBMr5m08sg0Oqn45wxTywy0E9yuuOHE5P9YXKnoQy5QhgDiS67
+ zJfBW//uMxxbHNeFS9UMCc2/7Jv6hWt70uKbtsAM0D3/faMH1AZrVwbv0CbRiIrn4PGdZsVMLPz
+ zqXSAD0WJtPyD1Y3i1yIeqy09EzyrfW66qIKWYsncv5VcNTY3+3lv1axz1fX3DfXqPbMniYeF1y
+ ydRmGBLBBIPO6Ng==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Driver uses ARRAY_SIZE() to get number of widgets later passed to
-snd_soc_dapm_new_controls(), which is an 'unsigned int'.
+Driver's probe() has two allocations which are needed only within the
+probe() itself - for devm_regmap_init_mmio().
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Usage of devm interface is a bit misleading here, because these can be
+freed right after each scope finishes.
+
+This makes the code a bit more obvious and self documenting.
+
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- sound/soc/codecs/lpass-rx-macro.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/lpass-rx-macro.c b/sound/soc/codecs/lpass-rx-macro.c
-index d4d7e02db83f..ce42749660c8 100644
---- a/sound/soc/codecs/lpass-rx-macro.c
-+++ b/sound/soc/codecs/lpass-rx-macro.c
-@@ -3612,8 +3612,8 @@ static int rx_macro_component_probe(struct snd_soc_component *component)
- 	struct rx_macro *rx = snd_soc_component_get_drvdata(component);
- 	const struct snd_soc_dapm_widget *widgets;
- 	const struct snd_kcontrol_new *controls;
--	unsigned int num_controls;
--	int ret, num_widgets;
-+	unsigned int num_controls, num_widgets;
-+	int ret;
+---
+
+Changes in v2:
+1. New patch
+---
+ sound/soc/codecs/lpass-wsa-macro.c | 22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
+
+diff --git a/sound/soc/codecs/lpass-wsa-macro.c b/sound/soc/codecs/lpass-wsa-macro.c
+index b4e7139bac61..73a588289408 100644
+--- a/sound/soc/codecs/lpass-wsa-macro.c
++++ b/sound/soc/codecs/lpass-wsa-macro.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ // Copyright (c) 2018-2020, The Linux Foundation. All rights reserved.
  
- 	snd_soc_component_init_regmap(component, rx->regmap);
++#include <linux/cleanup.h>
+ #include <linux/module.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
+@@ -2725,8 +2726,6 @@ static const struct snd_soc_component_driver wsa_macro_component_drv = {
+ static int wsa_macro_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+-	struct reg_default *reg_defaults;
+-	struct regmap_config *reg_config;
+ 	struct wsa_macro *wsa;
+ 	kernel_ulong_t flags;
+ 	void __iomem *base;
+@@ -2765,6 +2764,8 @@ static int wsa_macro_probe(struct platform_device *pdev)
+ 		return PTR_ERR(base);
  
+ 	wsa->codec_version = lpass_macro_get_codec_version();
++	struct reg_default *reg_defaults __free(kfree) = NULL;
++
+ 	switch (wsa->codec_version) {
+ 	case LPASS_CODEC_VERSION_1_0:
+ 	case LPASS_CODEC_VERSION_1_1:
+@@ -2773,9 +2774,8 @@ static int wsa_macro_probe(struct platform_device *pdev)
+ 	case LPASS_CODEC_VERSION_2_1:
+ 		wsa->reg_layout = &wsa_codec_v2_1;
+ 		def_count = ARRAY_SIZE(wsa_defaults) + ARRAY_SIZE(wsa_defaults_v2_1);
+-		reg_defaults = devm_kmalloc_array(dev, def_count,
+-						  sizeof(*reg_defaults),
+-						  GFP_KERNEL);
++		reg_defaults = kmalloc_array(def_count, sizeof(*reg_defaults),
++					     GFP_KERNEL);
+ 		if (!reg_defaults)
+ 			return -ENOMEM;
+ 		memcpy(&reg_defaults[0], wsa_defaults, sizeof(wsa_defaults));
+@@ -2789,9 +2789,8 @@ static int wsa_macro_probe(struct platform_device *pdev)
+ 	case LPASS_CODEC_VERSION_2_8:
+ 		wsa->reg_layout = &wsa_codec_v2_5;
+ 		def_count = ARRAY_SIZE(wsa_defaults) + ARRAY_SIZE(wsa_defaults_v2_5);
+-		reg_defaults = devm_kmalloc_array(dev, def_count,
+-						  sizeof(*reg_defaults),
+-						  GFP_KERNEL);
++		reg_defaults = kmalloc_array(def_count, sizeof(*reg_defaults),
++					     GFP_KERNEL);
+ 		if (!reg_defaults)
+ 			return -ENOMEM;
+ 		memcpy(&reg_defaults[0], wsa_defaults, sizeof(wsa_defaults));
+@@ -2804,8 +2803,9 @@ static int wsa_macro_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	reg_config = devm_kmemdup(dev, &wsa_regmap_config,
+-				  sizeof(*reg_config), GFP_KERNEL);
++	struct regmap_config *reg_config __free(kfree) = kmemdup(&wsa_regmap_config,
++								 sizeof(*reg_config),
++								 GFP_KERNEL);
+ 	if (!reg_config)
+ 		return -ENOMEM;
+ 
+@@ -2816,8 +2816,6 @@ static int wsa_macro_probe(struct platform_device *pdev)
+ 	if (IS_ERR(wsa->regmap))
+ 		return PTR_ERR(wsa->regmap);
+ 
+-	devm_kfree(dev, reg_config);
+-	devm_kfree(dev, reg_defaults);
+ 	dev_set_drvdata(dev, wsa);
+ 
+ 	wsa->dev = dev;
 
 -- 
 2.43.0
