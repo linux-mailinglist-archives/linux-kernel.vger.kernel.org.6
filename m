@@ -1,80 +1,83 @@
-Return-Path: <linux-kernel+bounces-236837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22BA791E7AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:34:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B60A691E7AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:34:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4568C1C22A30
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:34:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28EF2B239BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D310016F0C1;
-	Mon,  1 Jul 2024 18:34:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E3716F27A;
+	Mon,  1 Jul 2024 18:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BNwWMI+n"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Arg4wOvc"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D367716EB67
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 18:34:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B8616F282
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 18:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719858849; cv=none; b=RUkl5taRrvk48XJY7bffiFPZ8FBQZYDQLlNVi0sUGfkSFVgQjjd/aPxwKp83/7Jrj8Glr+pinKBBzFHo2cXKbplpYgezwPojGD24x4qw81iweobUSSfUeXaoPQxEu/t4xES/Gp0Np+Y22pXv0skxtfYqSC/MYb/jRcbMvdXCNmk=
+	t=1719858854; cv=none; b=SpDUlYfAAMWnRemoVEBoMvfRr2rH7cbdNhvzayXCCL4YhQym6eWUoJqNEgvq3exJ3c7hPjLIvOczJDEu6j3kCgeJcZxgITkS/iwicN73pCw4NSykD6nIu9m8rJ96Dpf4dYPDBRfWALnejT/H8aDWEhYi1sYvNVaeTXcRWU0Tj1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719858849; c=relaxed/simple;
-	bh=4y9oP0WlGIH3k3oJpLsN3TV9687VpTW/RDrYJVRNngo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=GayNV64UaFieSZS4fHVgNQgn9vjCFysz/GIl8svjImgOt0IGK2TtVa9nNyFK4Q9QnWYs2ZLGEsDwqXi7Yf/RhBhMjYfkFn5prhiXzQJZ5WY7o7IteNUkgZU0v1RWanDheOtur9U/hRkf5boeuO24uD6TWaq91wg/edzwYY4EdCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BNwWMI+n; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719858847; x=1751394847;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=4y9oP0WlGIH3k3oJpLsN3TV9687VpTW/RDrYJVRNngo=;
-  b=BNwWMI+nFZOWffR2vgQZE5pdFu7oFghRHdZb2WIBEmcBpxKhufSTZKq4
-   3i3pC3M39y2ODEnxMwp47tMG7fqAiaMLgO9Ip2gdR1wPBF4mJkFuOi+r2
-   vj2rk4PNiwBH0e/8KOq9fTyXwrCi/Umm00drWq8skqRJ1+ChBpaALJBAd
-   YjH7O5JnG1rdP06yI0Dj1qx3Bi7S+qt+pZ6uusqmLwcOuDKQ2WABX71Vs
-   xbUifbzc3HchqvR3WLM7maibUNW6MWpgDxY9xjBraijAadhRn75ECy6fM
-   vRxar7Hfm+14u5Si4D2ixNw9kFf8tgECkqN83HzsDbAs5bLBlJYgR2HrD
-   A==;
-X-CSE-ConnectionGUID: ZRsLdCyvQmm/0nl+yMvRnw==
-X-CSE-MsgGUID: gaN0RvoeTfigLDtLu44L8A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="17136337"
-X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
-   d="scan'208";a="17136337"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 11:34:06 -0700
-X-CSE-ConnectionGUID: Xf+bzlsaRX+cJKwHo3NuNA==
-X-CSE-MsgGUID: 8ACbuJQKQHO2se8NkLHinQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
-   d="scan'208";a="45695455"
-Received: from aadeosun-mobl.amr.corp.intel.com (HELO desk) ([10.209.8.130])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 11:34:05 -0700
-Date: Mon, 1 Jul 2024 11:34:04 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	Robert Gill <rtgill82@gmail.com>,
-	Jari Ruusu <jariruusu@protonmail.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
-	antonio.gomez.iglesias@linux.intel.com,
-	daniel.sneddon@linux.intel.com
-Subject: [PATCH v3] x86/entry_32: Move CLEAR_CPU_BUFFERS before restoring
- segments
-Message-ID: <20240701-fix-dosemu-vm86-v3-1-b1969532c75a@linux.intel.com>
-X-B4-Tracking: v=1; b=H4sIAM71gmYC/3XNwQ6DIAyA4VcxnIcRUMCd9h7LDkbqbKJgQImL8
- d2HXnYwO/5N+3UjATxCIPdsIx4iBnQ2hbhlpO0b+waKJjXhBS+Lkkva4UqNCzAuNI5aUmMYY03
- BlFBA0tXkIa2c4vOVuscwO/85H0R2TP9bkVFGtW41l43ohNKPAe2y5mhnGPLWjeQQI/8pkqurw
- pNiqkrVnaw1KHVV9n3/Al5G5Ln6AAAA
-X-Mailer: b4 0.12.3
+	s=arc-20240116; t=1719858854; c=relaxed/simple;
+	bh=AlleWO7seezdRQOko8HA4kvBQETQ1mo34KZ8VJew1fM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SJs0qqaO1sKUwIz/rk9qISrOvRzBC7TUv2gME9nC5aU2qic6b1YXdFBMeipajFZOWFGwl6XWNb9OcK/M0bCq7qJoDt7ATztZ9AqZSK+X1kx5JUyckx5gQVVBK38nKIzpBEBRGHE3a8XkvtCzzKZDoDLWkMerAML6f5CpECrS6W0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Arg4wOvc; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52e743307a2so3809479e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 11:34:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719858851; x=1720463651; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UlMQ98Rr8Ts5zoOoR0fpYPnoRARBs+uq2fu6Ocdpreg=;
+        b=Arg4wOvcWE8W8yApgZ0wQMHK7a6SpPdMOyMK6XEOabIRe2d9uI5VQ1IHn+4tDUylkj
+         9iV2Wwk1NsEKC05Zqbwh63xgZChHtLyYqOCAgxABq0CcUCprPVCxk4NVI2CUHy/cCNBE
+         SrhFlfISi03fECa+OBWznrfHiuyP/Kp1oAL4JRi9+mLmKzgCMw6rQgLnJiGCUDfO6eC9
+         dQJtXFd9lYCiOki7q/cal1OPLVjsebYG0UlLROZklymG0VhcyjTyoYfzQ1h3r/qhztNE
+         /WfZx8kHj155n4S903LmCcTNZBkmAWk17UlK6Ixh1AQPJjaCfKOelx3ztiukZ/f4oxzx
+         CpsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719858851; x=1720463651;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UlMQ98Rr8Ts5zoOoR0fpYPnoRARBs+uq2fu6Ocdpreg=;
+        b=Lh5UrDo9ZoNu5HTNKfMuK3VEH+0sfrK2SkPaKame4FJ/0zUe+mV8KzNnPuTwjn8LKx
+         eS6FqqjEWRU1a+SrxlzEu6hRLtYzVFV7iqSXJ/gwI0Iu5aysIUXD7DXAQL5hK8VWBDvH
+         PUrpeJfvKGcJjf4jdgWgFh2aSZhmIkiBr9jpXD7f+pLgK/jdMYzgOhIdV4167AOHk4g7
+         XmQOABn1IKuNuwDVpvV3cN66gmjID3OTsuNkfjb5wRelkjkwAgUg30uFnV4Kxjtu9Bin
+         1TkW/miBGUP1M/xn//pE8qEzk0MjRyOcUwIPq6ckqYKK4aI72iNI68TcgkiDlgk8PJhz
+         ebOA==
+X-Forwarded-Encrypted: i=1; AJvYcCURcMwxy53kYu17d46YUMhGBVi2iUDdyP8yVH74Ek2Ni24L9LdbKIoTYnd1SrAEM+k5joPlWVOnn53i2y/E3OTfl5M1qjoWNupopmQu
+X-Gm-Message-State: AOJu0YxxSoH58SgsqeCiOan4KA/iZkPnRQ/waAoeu3ZSy1xcBlRlI/R8
+	UHUnkKNBtnNaEUnyiI+Q1305RzXyBlnts3+9tDS9guRzgqTORQJryJt+q/YlT+U=
+X-Google-Smtp-Source: AGHT+IF85zrSDvg5F1wY2TkxPxIK+nbL8qBZtByDVmsAVS6fcE3x5dghVoObnWk5Od3sYp3KGPLBAQ==
+X-Received: by 2002:a05:6512:3d86:b0:52c:e086:7953 with SMTP id 2adb3069b0e04-52e8264df6amr5042600e87.4.1719858849378;
+        Mon, 01 Jul 2024 11:34:09 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab2eae5sm1526774e87.212.2024.07.01.11.34.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 11:34:08 -0700 (PDT)
+Date: Mon, 1 Jul 2024 21:34:07 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+Cc: robdclark@gmail.com, will@kernel.org, robin.murphy@arm.com, 
+	joro@8bytes.org, jgg@ziepe.ca, jsnitsel@redhat.com, robh@kernel.org, 
+	krzysztof.kozlowski@linaro.org, quic_c_gdjako@quicinc.com, konrad.dybcio@linaro.org, 
+	iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v13 4/6] iommu/arm-smmu: add ACTLR data and support for
+ SM8550
+Message-ID: <ueuhu5xfzp2rnuxzeqqd6cho476adidztgx7oq2tbiufauv6h4@obblpxvqwnno>
+References: <20240628140435.1652374-1-quic_bibekkum@quicinc.com>
+ <20240628140435.1652374-5-quic_bibekkum@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,205 +86,140 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240628140435.1652374-5-quic_bibekkum@quicinc.com>
 
-Robert Gill reported below #GP when dosemu software was executing vm86()
-system call:
+On Fri, Jun 28, 2024 at 07:34:33PM GMT, Bibek Kumar Patro wrote:
+> Add ACTLR data table for SM8550 along with support for
+> same including SM8550 specific implementation operations.
+> 
+> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+> ---
+>  drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 89 ++++++++++++++++++++++
+>  1 file changed, 89 insertions(+)
+> 
+> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> index 77c9abffe07d..b4521471ffe9 100644
+> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> @@ -23,6 +23,85 @@
+> 
+>  #define CPRE			(1 << 1)
+>  #define CMTLB			(1 << 0)
+> +#define PREFETCH_SHIFT		8
+> +#define PREFETCH_DEFAULT	0
+> +#define PREFETCH_SHALLOW	(1 << PREFETCH_SHIFT)
+> +#define PREFETCH_MODERATE	(2 << PREFETCH_SHIFT)
+> +#define PREFETCH_DEEP		(3 << PREFETCH_SHIFT)
+> +
+> +static const struct actlr_config sm8550_apps_actlr_cfg[] = {
+> +	{ 0x18a0, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
+> +	{ 0x18e0, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
+> +	{ 0x0800, 0x0020, PREFETCH_DEFAULT | CMTLB },
+> +	{ 0x1800, 0x00c0, PREFETCH_DEFAULT | CMTLB },
+> +	{ 0x1820, 0x0000, PREFETCH_DEFAULT | CMTLB },
+> +	{ 0x1860, 0x0000, PREFETCH_DEFAULT | CMTLB },
+> +	{ 0x0c01, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
 
-  general protection fault: 0000 [#1] PREEMPT SMP
-  CPU: 4 PID: 4610 Comm: dosemu.bin Not tainted 6.6.21-gentoo-x86 #1
-  Hardware name: Dell Inc. PowerEdge 1950/0H723K, BIOS 2.7.0 10/30/2010
-  EIP: restore_all_switch_stack+0xbe/0xcf
-  EAX: 00000000 EBX: 00000000 ECX: 00000000 EDX: 00000000
-  ESI: 00000000 EDI: 00000000 EBP: 00000000 ESP: ff8affdc
-  DS: 0000 ES: 0000 FS: 0000 GS: 0033 SS: 0068 EFLAGS: 00010046
-  CR0: 80050033 CR2: 00c2101c CR3: 04b6d000 CR4: 000406d0
-  Call Trace:
-   show_regs+0x70/0x78
-   die_addr+0x29/0x70
-   exc_general_protection+0x13c/0x348
-   exc_bounds+0x98/0x98
-   handle_exception+0x14d/0x14d
-   exc_bounds+0x98/0x98
-   restore_all_switch_stack+0xbe/0xcf
-   exc_bounds+0x98/0x98
-   restore_all_switch_stack+0xbe/0xcf
+- Please keep the list sorted
+- Please comment, which devices use these settings.
 
-This only happens when VERW based mitigations like MDS, RFDS are enabled.
-This is because segment registers with an arbitrary user value can result
-in #GP when executing VERW. Intel SDM vol. 2C documents the following
-behavior for VERW instruction:
+> +	{ 0x0c02, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x0c03, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x0c04, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x0c05, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x0c06, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x0c07, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x0c08, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x0c09, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x0c0c, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x0c0d, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x0c0e, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x0c0f, 0x0020, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x1961, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x1962, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x1963, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x1964, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x1965, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x1966, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x1967, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x1968, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x1969, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x196c, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x196d, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x196e, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x196f, 0x0000, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x19c1, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x19c2, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x19c3, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x19c4, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x19c5, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x19c6, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x19c7, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x19c8, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x19c9, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x19cc, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x19cd, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x19ce, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x19cf, 0x0010, PREFETCH_DEEP | CPRE | CMTLB },
+> +	{ 0x1c00, 0x0002, PREFETCH_SHALLOW | CPRE | CMTLB },
+> +	{ 0x1c01, 0x0000, PREFETCH_DEFAULT | CMTLB },
+> +	{ 0x1920, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
+> +	{ 0x1923, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
+> +	{ 0x1924, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
+> +	{ 0x1940, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
+> +	{ 0x1941, 0x0004, PREFETCH_SHALLOW | CPRE | CMTLB },
+> +	{ 0x1943, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
+> +	{ 0x1944, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
+> +	{ 0x1947, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
+> +};
+> +
+> +static const struct actlr_config sm8550_gfx_actlr_cfg[] = {
+> +	{ 0x0000, 0x03ff, PREFETCH_DEEP | CPRE | CMTLB },
+> +};
+> +
+> +static const struct actlr_variant sm8550_actlr[] = {
+> +	{
+> +		.io_start = 0x15000000,
+> +		.actlrcfg = sm8550_apps_actlr_cfg,
+> +		.num_actlrcfg = ARRAY_SIZE(sm8550_apps_actlr_cfg)
+> +	}, {
+> +		.io_start = 0x03da0000,
+> +		.actlrcfg = sm8550_gfx_actlr_cfg,
+> +		.num_actlrcfg = ARRAY_SIZE(sm8550_gfx_actlr_cfg)
+> +	},
+> +};
+> 
+>  static struct qcom_smmu *to_qcom_smmu(struct arm_smmu_device *smmu)
+>  {
+> @@ -606,6 +685,15 @@ static const struct qcom_smmu_match_data sdm845_smmu_500_data = {
+>  	/* Also no debug configuration. */
+>  };
+> 
+> +
+> +static const struct qcom_smmu_match_data sm8550_smmu_500_impl0_data = {
+> +	.impl = &qcom_smmu_500_impl,
+> +	.adreno_impl = &qcom_adreno_smmu_500_impl,
+> +	.cfg = &qcom_smmu_impl0_cfg,
+> +	.actlrvar = sm8550_actlr,
+> +	.num_smmu = ARRAY_SIZE(sm8550_actlr),
+> +};
+> +
+>  static const struct qcom_smmu_match_data qcom_smmu_500_impl0_data = {
+>  	.impl = &qcom_smmu_500_impl,
+>  	.adreno_impl = &qcom_adreno_smmu_500_impl,
+> @@ -640,6 +728,7 @@ static const struct of_device_id __maybe_unused qcom_smmu_impl_of_match[] = {
+>  	{ .compatible = "qcom,sm8250-smmu-500", .data = &qcom_smmu_500_impl0_data },
+>  	{ .compatible = "qcom,sm8350-smmu-500", .data = &qcom_smmu_500_impl0_data },
+>  	{ .compatible = "qcom,sm8450-smmu-500", .data = &qcom_smmu_500_impl0_data },
+> +	{ .compatible = "qcom,sm8550-smmu-500", .data = &sm8550_smmu_500_impl0_data },
+>  	{ .compatible = "qcom,smmu-500", .data = &qcom_smmu_500_impl0_data },
+>  	{ }
+>  };
+> --
+> 2.34.1
+> 
 
-  #GP(0) - If a memory operand effective address is outside the CS, DS, ES,
-	   FS, or GS segment limit.
-
-CLEAR_CPU_BUFFERS macro executes VERW instruction before returning to user
-space. Move CLEAR_CPU_BUFFERS to the macro RESTORE_REGS such that VERW is
-executed before user segments are restored. In the opportunistic SYSEXIT
-path use CLEAR_CPU_BUFFERS_SAFE that uses %ss instead.
-
-Below are the locations where CLEAR_CPU_BUFFERS* is currently being used:
-
-* entry_INT80_32(), entry_SYSENTER_32() and interrupts (via
-  handle_exception_return) do:
-
-restore_all_switch_stack:
-  [...]
-  RESTORE_REGS pop=4 clear_cpu_buf=1
-   pop    %ebx
-   pop    %ecx
-   pop    %edx
-   pop    %esi
-   pop    %edi
-   pop    %ebp
-   pop    %eax
-   verw   0xc0fc92c0       <-------------
-   pop    %ds
-   pop    %es
-   pop    %fs
-
-* Opportunistic SYSEXIT explicitly does CLEAR_CPU_BUFFERS_SAFE:
-
-   [...]
-   verw   %ss:0xc0fc92c0  <-------------
-   btrl   $0x9,(%esp)
-   popf
-   pop    %eax
-   sti
-   sysexit
-
-* NMIs use RESTORE_ALL_NMI -> RESTORE_REGS:
-
-   nmi_return:
-   [...]
-   RESTORE_ALL_NMI cr3_reg=%edi
-   jmp    0xc0fb22e0 <asm_exc_nmi+612>
-   test   $0x1000,%edi
-   je     0xc0fb22e0 <asm_exc_nmi+612>
-   mov    %edi,%cr3
-   pop    %ebx
-   pop    %ecx
-   pop    %edx
-   pop    %esi
-   pop    %edi
-   pop    %ebp
-   pop    %eax
-   verw   0xc0fc92c0      <-------------
-   pop    %ds
-   pop    %es
-   pop    %fs
-
-Fixes: a0e2dab44d22 ("x86/entry_32: Add VERW just before userspace transition")
-Cc: stable@vger.kernel.org # 5.10+
-Reported-by: Robert Gill <rtgill82@gmail.com>
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218707
-Closes: https://lore.kernel.org/all/8c77ccfd-d561-45a1-8ed5-6b75212c7a58@leemhuis.info/
-Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
-Suggested-by: Brian Gerst <brgerst@gmail.com> # Use %ss
-Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
----
-v3:
-- Simplify CLEAR_CPU_BUFFERS_SAFE by using %ss instead of %ds (Brian).
-- Do verw before popf in SYSEXIT path (Jari).
-
-v2: https://lore.kernel.org/r/20240627-fix-dosemu-vm86-v2-1-d5579f698e77@linux.intel.com
-- Safe guard against any other system calls like vm86() that might change %ds (Dave).
-
-v1: https://lore.kernel.org/r/20240426-fix-dosemu-vm86-v1-1-88c826a3f378@linux.intel.com
----
- arch/x86/entry/entry_32.S | 28 ++++++++++++++++++++++------
- 1 file changed, 22 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index d3a814efbff6..6a135478dc2e 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -253,6 +253,17 @@
- .Lend_\@:
- .endm
- 
-+/*
-+ * Safer version of CLEAR_CPU_BUFFERS that uses %ss to reference VERW operand
-+ * mds_verw_sel. This ensures VERW will not #GP for an arbitrary user %ds
-+ * value.
-+ */
-+.macro CLEAR_CPU_BUFFERS_SAFE
-+	ALTERNATIVE "jmp .Lskip_verw\@", "", X86_FEATURE_CLEAR_CPU_BUF
-+	verw	%ss:_ASM_RIP(mds_verw_sel)
-+.Lskip_verw\@:
-+.endm
-+
- .macro RESTORE_INT_REGS
- 	popl	%ebx
- 	popl	%ecx
-@@ -263,8 +274,15 @@
- 	popl	%eax
- .endm
- 
--.macro RESTORE_REGS pop=0
-+.macro RESTORE_REGS pop=0 clear_cpu_buf=0
- 	RESTORE_INT_REGS
-+	/*
-+	 * CLEAR_CPU_BUFFERS must be done before restoring segment
-+	 * registers to avoid #GP when executing VERW with user %ds.
-+	 */
-+	.if \clear_cpu_buf
-+	CLEAR_CPU_BUFFERS
-+	.endif
- 1:	popl	%ds
- 2:	popl	%es
- 3:	popl	%fs
-@@ -299,7 +317,7 @@
- 
- 	BUG_IF_WRONG_CR3
- 
--	RESTORE_REGS pop=\pop
-+	RESTORE_REGS pop=\pop clear_cpu_buf=1
- .endm
- 
- .macro CHECK_AND_APPLY_ESPFIX
-@@ -871,6 +889,7 @@ SYM_FUNC_START(entry_SYSENTER_32)
- 
- 	/* Now ready to switch the cr3 */
- 	SWITCH_TO_USER_CR3 scratch_reg=%eax
-+	CLEAR_CPU_BUFFERS_SAFE
- 
- 	/*
- 	 * Restore all flags except IF. (We restore IF separately because
-@@ -881,7 +900,6 @@ SYM_FUNC_START(entry_SYSENTER_32)
- 	BUG_IF_WRONG_CR3 no_user_check=1
- 	popfl
- 	popl	%eax
--	CLEAR_CPU_BUFFERS
- 
- 	/*
- 	 * Return back to the vDSO, which will pop ecx and edx.
-@@ -950,8 +968,7 @@ restore_all_switch_stack:
- 	BUG_IF_WRONG_CR3
- 
- 	/* Restore user state */
--	RESTORE_REGS pop=4			# skip orig_eax/error_code
--	CLEAR_CPU_BUFFERS
-+	RESTORE_REGS pop=4 clear_cpu_buf=1	# skip orig_eax/error_code
- .Lirq_return:
- 	/*
- 	 * ARCH_HAS_MEMBARRIER_SYNC_CORE rely on IRET core serialization
-@@ -1144,7 +1161,6 @@ SYM_CODE_START(asm_exc_nmi)
- 
- 	/* Not on SYSENTER stack. */
- 	call	exc_nmi
--	CLEAR_CPU_BUFFERS
- 	jmp	.Lnmi_return
- 
- .Lnmi_from_sysenter_stack:
-
----
-base-commit: f2661062f16b2de5d7b6a5c42a9a5c96326b8454
-change-id: 20240426-fix-dosemu-vm86-dd111a01737e
-
-Best regards,
 -- 
-Thanks,
-Pawan
-
-
+With best wishes
+Dmitry
 
