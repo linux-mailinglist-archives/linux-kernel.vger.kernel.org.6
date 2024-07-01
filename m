@@ -1,39 +1,54 @@
-Return-Path: <linux-kernel+bounces-235826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 260A891DA29
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:41:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5C1B91DA30
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:41:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 849C11F2239D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:41:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 806B32821F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A679E82D91;
-	Mon,  1 Jul 2024 08:40:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B4582C6C
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 08:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E643383CDE;
+	Mon,  1 Jul 2024 08:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="D7ro7b9K"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1F483CC7;
+	Mon,  1 Jul 2024 08:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719823241; cv=none; b=BSDBeHhLVHwrcemIfYeui+u48Sc//vDoQ1u/ubojpFwhRKBvDnMijYha/4kGEOrsai3YphaM0J2TnAvh8YamHmx9tn/i7NYzg7FbOWwOVw23wANnTpI6jDzGi+OWlty04We/XlEqE9E0Na3wjsvLFIgmnC/xbqiD1cU15+vxat8=
+	t=1719823265; cv=none; b=cl9xzrjsl3ZWutnLRxqo6OfM8hqgVzyNRHQIwC7X6HuYBfi+Q727B7YDeNQ2GOTeauKSwPwKu35bx0eS37maCEQrCvImhRGE5MqRJsz+NWN4XwHEiabYKQGdpusONyAKKDCvsjFhSbc+qqbm9TmNEtiuOMQZgOkI8sakZh83D4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719823241; c=relaxed/simple;
-	bh=ZypCh53St70/iDwLmK0LimJkap2qCPTKgx83lJROPDc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hMygYvCUdqAJqW7BpgzpBN4jcaNkM/4gp+bI6diWCGH8TPOhRTE7+JdtB5xD+Q5liwej0IgXlitmGzKSkjsaG4jveoQC5tMFLPDyYdUtpKWiVSS55otasg73VdTvcHyXNhaOG7qDXw+iFwpuuuE5LupgNehJg3opwVvrbSkDHkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 57C9F339;
-	Mon,  1 Jul 2024 01:41:02 -0700 (PDT)
-Received: from [10.57.72.41] (unknown [10.57.72.41])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D38A83F766;
-	Mon,  1 Jul 2024 01:40:35 -0700 (PDT)
-Message-ID: <516aa6b3-617c-4642-b12b-0c5f5b33d1c9@arm.com>
-Date: Mon, 1 Jul 2024 09:40:34 +0100
+	s=arc-20240116; t=1719823265; c=relaxed/simple;
+	bh=O7/N2xAgN5KMJnrraKivEWkngEmOWMs9C+6n1akqfwQ=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Sbu2bgFZO1jY1tOhoaYSCJFCCdjPpzBPTPcmq898nW3OvLsSuF/nhOrn6tGCpETGb4XHDcZZc3kl4PyQnDKMvaoFojEEBht+gWw9TaemhkRWvccQOf/nqnCKZYSpQIpogIfCazLCbgyutxJjpEYTqEVOkAZoWSqgysg+sQ2OUsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=D7ro7b9K; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1719823262;
+	bh=O7/N2xAgN5KMJnrraKivEWkngEmOWMs9C+6n1akqfwQ=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=D7ro7b9KUPYyxLemYufQPSOrjl6IjUTUuLLYqIzQmYacRvHbGfO7ZjMYX+YG4JiGa
+	 lkr9GnI4jE0rz9cEew5hZ9NlZS+e7haV1c43cJQt99IzkL7umtisIRfYh/2B3E0hDB
+	 jyihkeScS4cFtGgGAEm0cMseofI/xHb2I51q9TM90g8nYxbQPHADIk6nQK3qolWXm0
+	 NMcTVSja27gsHFUhcJ2/9Pt28V8J/2nMpERMVIYyMr4R22cBdz8yDDmBSCHUjbL9mM
+	 HB8IwF7vTCq/rzy9YX1B/ouhnPyTUoBYjC6N25oaTxWkbbyEY5WyWTLBoC6MgHT/3T
+	 zpC8jCycstfsw==
+Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 45365378210B;
+	Mon,  1 Jul 2024 08:40:55 +0000 (UTC)
+Message-ID: <599d722c-6d34-42dd-bdfd-5cc862d1c8b4@collabora.com>
+Date: Mon, 1 Jul 2024 13:40:51 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,171 +56,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] support "THPeligible" semantics for mTHP with anonymous
- shmem
-Content-Language: en-GB
-To: Baolin Wang <baolin.wang@linux.alibaba.com>,
- Bang Li <libang.li@antgroup.com>, hughd@google.com, akpm@linux-foundation.org
-Cc: david@redhat.com, wangkefeng.wang@huawei.com, ziy@nvidia.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240628104926.34209-1-libang.li@antgroup.com>
- <4b38db15-0716-4ffb-a38b-bd6250eb93da@arm.com>
- <4d54880e-03f4-460a-94b9-e21b8ad13119@linux.alibaba.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <4d54880e-03f4-460a-94b9-e21b8ad13119@linux.alibaba.com>
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, kernel@collabora.com,
+ linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] selftests: arm64: tags_test: conform test to TAP
+ output
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Shuah Khan <shuah@kernel.org>, Kunwu Chan <chentao@kylinos.cn>,
+ Mark Brown <broonie@kernel.org>
+References: <20240602132502.4186771-1-usama.anjum@collabora.com>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <20240602132502.4186771-1-usama.anjum@collabora.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 01/07/2024 09:33, Baolin Wang wrote:
-> 
-> 
-> On 2024/7/1 15:55, Ryan Roberts wrote:
->> On 28/06/2024 11:49, Bang Li wrote:
->>> After the commit 7fb1b252afb5 ("mm: shmem: add mTHP support for
->>> anonymous shmem"), we can configure different policies through
->>> the multi-size THP sysfs interface for anonymous shmem. But
->>> currently "THPeligible" indicates only whether the mapping is
->>> eligible for allocating THP-pages as well as the THP is PMD
->>> mappable or not for anonymous shmem, we need to support semantics
->>> for mTHP with anonymous shmem similar to those for mTHP with
->>> anonymous memory.
->>>
->>> Signed-off-by: Bang Li <libang.li@antgroup.com>
->>> ---
->>>   fs/proc/task_mmu.c      | 10 +++++++---
->>>   include/linux/huge_mm.h | 11 +++++++++++
->>>   mm/shmem.c              |  9 +--------
->>>   3 files changed, 19 insertions(+), 11 deletions(-)
->>>
->>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
->>> index 93fb2c61b154..09b5db356886 100644
->>> --- a/fs/proc/task_mmu.c
->>> +++ b/fs/proc/task_mmu.c
->>> @@ -870,6 +870,7 @@ static int show_smap(struct seq_file *m, void *v)
->>>   {
->>>       struct vm_area_struct *vma = v;
->>>       struct mem_size_stats mss = {};
->>> +    bool thp_eligible;
->>>         smap_gather_stats(vma, &mss, 0);
->>>   @@ -882,9 +883,12 @@ static int show_smap(struct seq_file *m, void *v)
->>>         __show_smap(m, &mss, false);
->>>   -    seq_printf(m, "THPeligible:    %8u\n",
->>> -           !!thp_vma_allowable_orders(vma, vma->vm_flags,
->>> -               TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL));
->>> +    thp_eligible = !!thp_vma_allowable_orders(vma, vma->vm_flags,
->>> +                        TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL);
->>> +    if (vma_is_anon_shmem(vma))
->>> +        thp_eligible = !!shmem_allowable_huge_orders(file_inode(vma->vm_file),
->>> +                            vma, vma->vm_pgoff, thp_eligible);
->>
->> Afraid I haven't been following the shmem mTHP support work as much as I would
->> have liked, but is there a reason why we need a separate function for shmem?
-> 
-> Since shmem_allowable_huge_orders() only uses shmem specific logic to determine
-> if huge orders are allowable, there is no need to complicate the
-> thp_vma_allowable_orders() function by adding more shmem related logic, making
-> it more bloated. In my view, providing a dedicated helper
-> shmem_allowable_huge_orders(), specifically for shmem, simplifies the logic.
+Soft reminder
 
-My point was really that a single interface (thp_vma_allowable_orders) should be
-used to get this information. I have no strong opinon on how the implementation
-of that interface looks. What you suggest below seems perfectly reasonable to me.
-
+On 6/2/24 6:24 PM, Muhammad Usama Anjum wrote:
+> Conform the layout, informational and status messages to TAP. No
+> functional change is intended other than the layout of output messages.
 > 
-> IIUC, I agree with David's suggestion that the shmem_allowable_huge_orders()
-> helper function could be used in thp_vma_allowable_orders() to support shmem
-> mTHP. Something like:
-
-I hadn't seen David's suggestion until after I sent my mail. But I think we are
-both suggesting the same thing.
-
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> ---
+>  tools/testing/selftests/arm64/tags/tags_test.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 > 
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index c7ce28f6b7f3..9677fe6cf478 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -151,10 +151,13 @@ unsigned long __thp_vma_allowable_orders(struct
-> vm_area_struct *vma,
->          * Must be done before hugepage flags check since shmem has its
->          * own flags.
->          */
-> -       if (!in_pf && shmem_file(vma->vm_file))
-> -               return shmem_is_huge(file_inode(vma->vm_file), vma->vm_pgoff,
-> -                                    !enforce_sysfs, vma->vm_mm, vm_flags)
-> -                       ? orders : 0;
-> +       if (!in_pf && shmem_file(vma->vm_file)) {
-> +               bool global_huge = shmem_is_huge(file_inode(vma->vm_file),
-> vma->vm_pgoff,
-> +                                    !enforce_sysfs, vma->vm_mm, vm_flags);
+> diff --git a/tools/testing/selftests/arm64/tags/tags_test.c b/tools/testing/selftests/arm64/tags/tags_test.c
+> index 955f87c1170d7..8ae26e496c89c 100644
+> --- a/tools/testing/selftests/arm64/tags/tags_test.c
+> +++ b/tools/testing/selftests/arm64/tags/tags_test.c
+> @@ -17,19 +17,21 @@ int main(void)
+>  	static int tbi_enabled = 0;
+>  	unsigned long tag = 0;
+>  	struct utsname *ptr;
+> -	int err;
 > +
-> +               return shmem_allowable_huge_orders(file_inode(vma->vm_file),
-> +                                       vma, vma->vm_pgoff, global_huge);
-> +       }
-> 
->         if (!vma_is_anonymous(vma)) {
->                 /*
-> 
->> Couldn't (shouldn't) thp_vma_allowable_orders() be taught to handle shmem too?
->>
->>> +    seq_printf(m, "THPeligible:    %8u\n", thp_eligible);
->>>         if (arch_pkeys_enabled())
->>>           seq_printf(m, "ProtectionKey:  %8u\n", vma_pkey(vma));
->>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->>> index 212cca384d7e..f87136f38aa1 100644
->>> --- a/include/linux/huge_mm.h
->>> +++ b/include/linux/huge_mm.h
->>> @@ -267,6 +267,10 @@ unsigned long thp_vma_allowable_orders(struct
->>> vm_area_struct *vma,
->>>       return __thp_vma_allowable_orders(vma, vm_flags, tva_flags, orders);
->>>   }
->>>   +unsigned long shmem_allowable_huge_orders(struct inode *inode,
->>> +                struct vm_area_struct *vma, pgoff_t index,
->>> +                bool global_huge);
->>> +
->>>   struct thpsize {
->>>       struct kobject kobj;
->>>       struct list_head node;
->>> @@ -460,6 +464,13 @@ static inline unsigned long
->>> thp_vma_allowable_orders(struct vm_area_struct *vma,
->>>       return 0;
->>>   }
->>>   +static inline unsigned long shmem_allowable_huge_orders(struct inode *inode,
->>> +                struct vm_area_struct *vma, pgoff_t index,
->>> +                bool global_huge)
->>> +{
->>> +    return 0;
->>> +}
->>> +
->>>   #define transparent_hugepage_flags 0UL
->>>     #define thp_get_unmapped_area    NULL
->>> diff --git a/mm/shmem.c b/mm/shmem.c
->>> index d495c0701a83..aa85df9c662a 100644
->>> --- a/mm/shmem.c
->>> +++ b/mm/shmem.c
->>> @@ -1622,7 +1622,7 @@ static gfp_t limit_gfp_mask(gfp_t huge_gfp, gfp_t
->>> limit_gfp)
->>>   }
->>>     #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->>> -static unsigned long shmem_allowable_huge_orders(struct inode *inode,
->>> +unsigned long shmem_allowable_huge_orders(struct inode *inode,
->>>                   struct vm_area_struct *vma, pgoff_t index,
->>>                   bool global_huge)
->>>   {
->>> @@ -1707,13 +1707,6 @@ static unsigned long shmem_suitable_orders(struct
->>> inode *inode, struct vm_fault
->>>       return orders;
->>>   }
->>>   #else
->>> -static unsigned long shmem_allowable_huge_orders(struct inode *inode,
->>> -                struct vm_area_struct *vma, pgoff_t index,
->>> -                bool global_huge)
->>> -{
->>> -    return 0;
->>> -}
->>> -
->>>   static unsigned long shmem_suitable_orders(struct inode *inode, struct
->>> vm_fault *vmf,
->>>                          struct address_space *mapping, pgoff_t index,
->>>                          unsigned long orders)
+> +	ksft_print_header();
+> +	ksft_set_plan(1);
+>  
+>  	if (prctl(PR_SET_TAGGED_ADDR_CTRL, PR_TAGGED_ADDR_ENABLE, 0, 0, 0) == 0)
+>  		tbi_enabled = 1;
+>  	ptr = (struct utsname *)malloc(sizeof(*ptr));
+>  	if (!ptr)
+> -		ksft_exit_fail_msg("Failed to allocate utsname buffer\n");
+> +		ksft_exit_fail_perror("Failed to allocate utsname buffer");
+>  
+>  	if (tbi_enabled)
+>  		tag = 0x42;
+>  	ptr = (struct utsname *)SET_TAG(ptr, tag);
+> -	err = uname(ptr);
+> +	ksft_test_result(!uname(ptr), "Syscall successful with tagged address\n");
+>  	free(ptr);
+>  
+> -	return err;
+> +	ksft_finished();
+>  }
 
+-- 
+BR,
+Muhammad Usama Anjum
 
