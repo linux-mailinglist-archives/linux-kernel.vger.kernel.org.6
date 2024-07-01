@@ -1,47 +1,87 @@
-Return-Path: <linux-kernel+bounces-236573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE40291E434
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:33:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 358FB91E435
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:33:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF8E91C22BCE
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:33:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5E2E1F2232B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:33:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FDF716D9B3;
-	Mon,  1 Jul 2024 15:32:45 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D8A16D4C6;
-	Mon,  1 Jul 2024 15:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306E816CD2A;
+	Mon,  1 Jul 2024 15:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YWww/ma6"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0961E28F4
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 15:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719847965; cv=none; b=jvKLApgolcQ+ho2K8zYzux7iWlevjVYwBxysCY3zrFvlXYZHT8gq9beLA3qBytkOpkmkUEf3+GBDvKBXf2T1x8E5JH/FbGiwl1F/blxagKDTClc41h0CWHUTQl/Z9EJnLLz3cNta/68KaLRgFY5F9IwiYSWq9BHcTUTNALm+Nzk=
+	t=1719848019; cv=none; b=P983Upgl57vxZh+3CxQrN3Iuo9CCqvXpfixmSVqU6d9I/eAx8HlqluA7jyvaxBnO/srt2WcIJt9Rjp6hw2UdkUI96JeBm1ROcKYB2BnMxcBn0GnZ6A3sQ7HBk4P2X3EYHDq/GqhtN7hQj9zjBNqPz77FiPg68n5cA6ev8XH16E8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719847965; c=relaxed/simple;
-	bh=szQdPiyo9yNxRagpcSjdtxIPW5x4G5ULZpn487xWoFA=;
+	s=arc-20240116; t=1719848019; c=relaxed/simple;
+	bh=/rzIGcl+EawX5xeAIo09+kQuMmPfnSkoh236ozH+F0I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GIBTKJaKyPapvR3tm9C4zlCDcb1KQ9ENiEX6rNVFZvc2vcfz74e8oEmDafmZq0OfmMKidjJ5ytajgLXHmFUL0BFfBtm8ehYmicdR+E7AILJdxqVgIQm+aH+6Xo5JqDEFmMLKPcCvzRTm66Amdj+XJktY+MQCEkFLRgmi/aaIVpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A5AED339;
-	Mon,  1 Jul 2024 08:33:07 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CC6433F73B;
-	Mon,  1 Jul 2024 08:32:41 -0700 (PDT)
-Date: Mon, 1 Jul 2024 16:32:39 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Luke Parkin <luke.parkin@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, sudeep.holla@arm.com,
-	cristian.marussi@arm.com
-Subject: Re: [PATCH 1/3] Add Kconfig option for scmi debug statistics
-Message-ID: <ZoLMF5AFa60iefpA@pluto>
-References: <20240701142851.1448515-1-luke.parkin@arm.com>
- <20240701142851.1448515-2-luke.parkin@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qRSqVGT8WxlwqvLVi0Kb1QfqLLg7fE7VbrGlF/+7TCcA3g+ATGAdwWtP52E+FB57NvUAPagBpBopTmOcXR26PmjIMu53PE7GfGDrKWJsODLvbQKIXgvF0TJ2SCurQj83EmkBKJ9wpHlSb6fjT4Zf/c8RK01n35FY+GC4wDbpRyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YWww/ma6; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ec61eeed8eso39079781fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 08:33:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1719848014; x=1720452814; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PSEsfiIduoMSYnAdmjobGnIBcHy7WCzxH+uV65l0j+0=;
+        b=YWww/ma6z/jyrRB9SERsyUlLe5ucrNKZmSFekYicfB8/IH2nRPJm0K/UdsVbI5aJr/
+         EVYn+2mFik1OJos6BRaRw08/lwCFaADcBdwjTdGDOhmhJH60qwi/fmehw5QX454VuwfU
+         iIvmouUBTgHxbRxzQLenpONjt0A3fP11BEO/XQgjixqh267Q+TzARsXUq5QKLjw2g6B9
+         /m0N4F9K41xxN+HxicgEnhRbBM4Clevz3DTRnrkJbhWGPaS0o43HHtG3yyRqWq0BoVU0
+         5nXd5wwzA5G1llsOKBgRvgmyd3wsglQRb+K9TfjCw+ZT1FJB+KtqMmBMkAB/voV3QKSE
+         Xn4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719848014; x=1720452814;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PSEsfiIduoMSYnAdmjobGnIBcHy7WCzxH+uV65l0j+0=;
+        b=gYhLjf1+fBFhBvnV27m5wO858YH1fOa09mqiC9zljhyJIOPTl27INbZ64pIx3EEzL3
+         b6AGyvxNTAlQWMDgLgHyAjhZKQpjfgydPJZL3ExL0PlAEcc5Q7aWQlwrKKaXIYyuLOCP
+         X07xpBEHxMSqKzd5giqRBJJrLmqLcmDiaE+vcrRF1A0iZhMoaFp61ci92qYd1+tdKEQr
+         fugmkWmyLZcYsbyHdLQR7zdPsZIDspYxkIVxhoUTwuJHjHLzoibyU77K4PuSVs3+a8mR
+         Y8XWqVajf7OTM8ASABB0ACtMOFRZh7E1qeduBoIMQQaq8vCCiGiYTW15eIlTQgN4QGfU
+         6EqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVJ5H/iCexhCrJJqKbu/LPGOGzO04HRQ/32Q/9xqMHzQfGKgPsr33UDBYpvNwp2JZrNLpQRF4cf2fINTX/heFD1zLfAyO2eFHGGSqqi
+X-Gm-Message-State: AOJu0YxhKSN3yhnDqF0ISPtQvSnpHwgCCT13vB8L3YANxquO7bkoDpdC
+	0vHYVTwwmV1//YRDrqpS+ZuYuqdLuyWKrk+SSJjTA7nL5etOe95M0okZhRdJ3kIZoYQnd2qbFpt
+	a
+X-Google-Smtp-Source: AGHT+IEUgHtWdqwGOHvvW6PWQm/0rPo7mTo0TqKawefzKpu+qv9w8VFcNWVj+sQbUQ5O0VQb7CfI2Q==
+X-Received: by 2002:a2e:9509:0:b0:2ee:494c:c3d3 with SMTP id 38308e7fff4ca-2ee5e6bca4cmr38923251fa.43.1719848014117;
+        Mon, 01 Jul 2024 08:33:34 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70803ecfc61sm6665390b3a.132.2024.07.01.08.33.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 08:33:33 -0700 (PDT)
+Date: Mon, 1 Jul 2024 17:33:25 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH printk v2 12/18] printk: Add kthread for all legacy
+ consoles
+Message-ID: <ZoLMRQhrwZnWMuj9@pathway.suse.cz>
+References: <20240603232453.33992-1-john.ogness@linutronix.de>
+ <20240603232453.33992-13-john.ogness@linutronix.de>
+ <Zn6iq3n2ggL138Gs@pathway.suse.cz>
+ <87cyo1xnmw.fsf@jogness.linutronix.de>
+ <Zn67hDCEHdgtYPv3@pathway.suse.cz>
+ <877ce9xim6.fsf@jogness.linutronix.de>
+ <874j9dxdr0.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,49 +90,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240701142851.1448515-2-luke.parkin@arm.com>
+In-Reply-To: <874j9dxdr0.fsf@jogness.linutronix.de>
 
-On Mon, Jul 01, 2024 at 03:28:49PM +0100, Luke Parkin wrote:
-> Add a new config option for statistic tracking in SCMI subsystem.
+On Fri 2024-06-28 18:02:19, John Ogness wrote:
+> Hi Petr,
 > 
-> Signed-off-by: Luke Parkin <luke.parkin@arm.com>
-> ---
->  drivers/firmware/arm_scmi/Kconfig | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+> Your comments are sending me into deep thought about this
+> situation. Some more comments from me...
 > 
+> On 2024-06-28, John Ogness <john.ogness@linutronix.de> wrote:
+> > On PREEMPT_RT, legacy consoles are not allowed to print from
+> > non-preemptible contexts because they use spinlocks (rtmutexes).
+> 
+> The above statement is not true for legacy _boot_ consoles
+> (earlycon/earlyprintk). These are lockless and are intended to execute
+> from any context (except NMI due to semaphore limitations).
+> 
+> I hate boot consoles because they don't use the Linux driver model and
+> rely fully on external synchronization. This has made the rework very
+> difficult and is actually the core reason why our work was reverted back
+> in 5.19-rc4. But for debugging early boot problems, they are quite
+> useful.
+>
+> I have a new proposal. What if we allow boot consoles to always print in
+> the caller context (for any preemption model)? I hacked a quick test
+> together by providing console_flush_all() an extra argument for printing
+> _only_ on boot consoles. Then in vprintk_emit(), I always do a
+> boot-console-only-flush (under console_trylock) after storing the record
+> in the ringbuffer.
+> 
+> For PREEMPT_RT this is horrible. But I am OK with mandating that RT
+> scheduling cannot be guaranteed with boot consoles (just as it is
+> currently mandated that RT scheduling cannot be guaranteed in emergency
+> situations). Since the boot consoles are lockless, they pose no deadlock
+> threat to RT.
 
-Hi,
+Is this really the case for all boot consoles?
 
-> diff --git a/drivers/firmware/arm_scmi/Kconfig b/drivers/firmware/arm_scmi/Kconfig
-> index aa5842be19b2..fac50fd0be72 100644
-> --- a/drivers/firmware/arm_scmi/Kconfig
-> +++ b/drivers/firmware/arm_scmi/Kconfig
-> @@ -55,6 +55,16 @@ config ARM_SCMI_RAW_MODE_SUPPORT_COEX
->  	  operate normally, thing which could make an SCMI test suite using the
->  	  SCMI Raw mode support unreliable. If unsure, say N.
->  
-> +config ARM_SCMI_DEBUG_STATISTICS
-> +	bool "Enable SCMI Raw mode statistic tracking"
+I had the feeling that some boot consoles actually used port->lock.
+And for example, register_earlycon() is initializing this spin lock.
 
-I would add also a depends on DEBUG_FS like in RAW...and maybe in the
-future move such all of such depends on ARM_SCMI_NEED_DEBUGFS
-instead...but for now it is easier and less potentially disruptive to
-the build to just add a depends here.
+> This has some nice features:
+> 
+> - We get early debugging in all preemption models.
 
-> +	select ARM_SCMI_NEED_DEBUGFS
-> +	help
-> +	  Enables statistic tracking for the SCMI subsystem.
-> +
-> +	  Enable this option to create a new debugfs directory which contains
-> +	  several useful statistics on various SCMI features. This can be useful
-> +	  for debugging and SCMI monitoring. If unsure, say N.
-> +
+It would be great.
 
-Moreover you should move this Kconfig patch after the patches in the
-series that includes the logic underneath this...here really you are
-defining some option that, if enabled, at this point it really still
-does NOT enable anything.
+> - We get true synchronous printing when using boot consoles (which
+>   should make peterz happy).
 
-Thanks,
-Cristian
+Well, Peter's mode is really special because it is done without
+the console_lock(). Every printk() is flushing its own message
+to the console. Parallel printk()'s are busy waiting for each other.
+
+> - Boot consoles are then horrible enough that options such as
+>   "keep_bootcon" will really be avoided unless debugging kernel issues.
+> 
+> >From the tests I have run so far, it looks good.
+> 
+> Looking to the future, I think this would also provide an excellent
+> foundation for the "sync" console option I would like. For nbcon
+> consoles with the "sync" option specified, it would work the same way,
+> flushing boot consoles and nbcon consoles directly in vprintk_emit().
+
+The sync mode would be nice.
+
+Just to be sure. I guess that you are talking about a sync mode
+using some trylock mechanism where the current owner would be
+responsible for flushing everything.
+
+Peter Zijlstra's mode (serialized printk()) is easy to implement
+and might be needed in some situations. But I am not sure if
+it would be good enough for most other users preferring the
+current "synchronous" output.
+
+Well, let's see what people request after they get some experience
+with the first nbcon consoles and kthreads.
+
+Best Regards,
+Petr
+
 
