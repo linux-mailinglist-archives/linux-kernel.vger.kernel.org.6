@@ -1,137 +1,138 @@
-Return-Path: <linux-kernel+bounces-235480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6186391D59A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 03:02:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C964791D59B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 03:05:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF62F2811F5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 01:02:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68D1E1F211BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 01:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850198C09;
-	Mon,  1 Jul 2024 01:02:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B704C69;
+	Mon,  1 Jul 2024 01:05:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="r2T1h3Ex"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=infineon.com header.i=@infineon.com header.b="K0nuT5wc"
+Received: from smtp2.infineon.com (smtp2.infineon.com [217.10.52.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C88B847B;
-	Mon,  1 Jul 2024 01:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060511388;
+	Mon,  1 Jul 2024 01:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.10.52.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719795723; cv=none; b=QDR1z0WiVoKn3p2Wi4tbSbera4tUBt1tPb2uDM9z9FcnMxIcWTd3IuDTvOF1KGpr94QrzwT2nKMxZcVS8nZXRy/zfOyfgEIwVRF3+XPO+JdyqqSqMGtZGnIgEjcuv6h+NXwx64WXJf587wKOr1n1ZOA7APZcIlgvvGX4DBNXOcc=
+	t=1719795906; cv=none; b=Y3zKUb6xbUGfP86IqVLY3omklue+FeinxXL8TYfcddqJrAuMN30Issvfh9XI9q073J7/nfHIJMf9/EwBovPHMqRJVAylnPvY+SCuzTeFIDBEiwYFKLS8hhj6eLiSGwktz5y4d37H3UV8GZDB0z5EO69onpvmhlqOdYwKJ1e320g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719795723; c=relaxed/simple;
-	bh=xf6c8fGXpfBatazEilvd0KFIn3ONZFBvIfq2B05C48g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=as2V5fB37UeXSjjVJA86S79rZt8/4D2BUUTir9NW8tzUDH/PltXwczzrfDstwqwbAKi52oDKzJZA7nuKDj3ybSKtnBsEP8Zdtvsas+1JNNG/bx/oTA0V9rT48Qu6jj3c5dEo0ggfp2g7EduzTKe6OlefT/wv0JX/cisSglx9IAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=r2T1h3Ex; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1719795720;
-	bh=CAuAcqS+lkUWa/7ILC0BW4+iqtqGg9F3vnxXm+SZzXM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=r2T1h3Ex7VDf4trm9ObjDwXXf651mCtKWzXT0pQybliE9KfVWejO7bCNwMay7kKWB
-	 35GwNMHF0+EMmoWcsyT472TMqxJwBwtCBfmvJ+0qXYMNfZ+giImy9wYoHZYAMUckNw
-	 AtyOAGjae901Gke06iyx1efc5Xu/Q0pSzaQAbIZU63gAmtuREgaNGpChimhsqA4yKB
-	 HRfwDYdQniWuZfP20KSemlyuGP4TTuvvc+a4fuoCMKN8yQNY1VRYAKLzWwdQIDN9f8
-	 72oO0pGugPVCPj6ML6t7Fl4sd8ZSY8Unogzk9xZYCJXFWmdo/je63POGoB7r2AZubG
-	 /y2pyN4Obm27Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WC76c046lz4wbp;
-	Mon,  1 Jul 2024 11:01:59 +1000 (AEST)
-Date: Mon, 1 Jul 2024 11:01:59 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Yang Shi <yang@os.amperecomputing.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the mm-hotfixes tree
-Message-ID: <20240701110159.216a8d1f@canb.auug.org.au>
-In-Reply-To: <20240701101641.4fea0ac2@canb.auug.org.au>
-References: <20240701101641.4fea0ac2@canb.auug.org.au>
+	s=arc-20240116; t=1719795906; c=relaxed/simple;
+	bh=zt88BMcCBRpJY29U2eW/EnAJhUpbDlG0WddY4Dm+gzc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Jd3+Rvdz0Y6IJyjMTv9NOfLXMeXUdfqTCtWYK9e+TnEj8ieK7gnNwQ0+G2h7jYbUt5zQlIG233TTFadqfONgNlpTDkwXBLczJQ8xONIoKP3XNhT0X1wzl9CU8Q79fjB8JRzZHBqocQ6Kv80ECyCdn9rVBG1H6XKimQKHOXydgg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infineon.com; spf=pass smtp.mailfrom=infineon.com; dkim=pass (1024-bit key) header.d=infineon.com header.i=@infineon.com header.b=K0nuT5wc; arc=none smtp.client-ip=217.10.52.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infineon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infineon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=infineon.com; i=@infineon.com; q=dns/txt; s=IFXMAIL;
+  t=1719795905; x=1751331905;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=zt88BMcCBRpJY29U2eW/EnAJhUpbDlG0WddY4Dm+gzc=;
+  b=K0nuT5wcP04NyUwmnuuRAQ+uCGT6Ib05uvJz/3c9xyxsm7Z5k8QK9qc5
+   9g5n0jpym2w33CP7/56VpgaJ/VWfqzYDQzRbDp/ei9JhaiYQGZcX8Z3Wk
+   eNMDMAhQK3FscqAF9tAdUvb7fdkV0KsKGBGdR1CzPFc33XfV/wDc1rjEo
+   g=;
+X-IronPort-AV: E=McAfee;i="6700,10204,11119"; a="80217184"
+X-IronPort-AV: E=Sophos;i="6.09,175,1716242400"; 
+   d="scan'208";a="80217184"
+Received: from unknown (HELO MUCSE814.infineon.com) ([172.23.29.40])
+  by smtp2.infineon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 03:04:56 +0200
+Received: from MUCSE833.infineon.com (172.23.7.105) by MUCSE814.infineon.com
+ (172.23.29.40) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Mon, 1 Jul
+ 2024 03:04:55 +0200
+Received: from MUCSE832.infineon.com (172.23.7.104) by MUCSE833.infineon.com
+ (172.23.7.105) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Mon, 1 Jul
+ 2024 03:04:55 +0200
+Received: from MUCSE832.infineon.com ([fe80::df7:95e8:60bd:7478]) by
+ MUCSE832.infineon.com ([fe80::df7:95e8:60bd:7478%15]) with mapi id
+ 15.02.1258.034; Mon, 1 Jul 2024 03:04:55 +0200
+From: <Nobuaki.Tsunashima@infineon.com>
+To: <luiz.dentz@gmail.com>
+CC: <marcel@holtmann.org>, <linux-bluetooth@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v4] Bluetooth: btbcm: Apply
+ HCI_QUIRK_BROKEN_READ_TRANSMIT_POWER to CYW4373
+Thread-Topic: [PATCH v4] Bluetooth: btbcm: Apply
+ HCI_QUIRK_BROKEN_READ_TRANSMIT_POWER to CYW4373
+Thread-Index: AQHarXodRFaIWgJslEGA5+113yeWdrGmousAgAOzr9CAMussgIAEB17A
+Date: Mon, 1 Jul 2024 01:04:54 +0000
+Message-ID: <3ae77d91542241eb9b1f4c7428ee52cd@infineon.com>
+References: <20240524013127.434500-1-nobuaki.tsunashima@infineon.com>
+ <CABBYNZ+yvQL0KBagUXtzrBUFmFxp-ek_5aFDJNVyUKsA-xJ-Zg@mail.gmail.com>
+ <f7a5e281c48b4232a4ba74022dd3f83a@infineon.com>
+ <CABBYNZKjUY2XVf2yu95ECggZb1xJ0SAneKqMNSnAGGfgRTs02g@mail.gmail.com>
+In-Reply-To: <CABBYNZKjUY2XVf2yu95ECggZb1xJ0SAneKqMNSnAGGfgRTs02g@mail.gmail.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/X0gLt73.20zC2b2QN/=UpdC";
- protocol="application/pgp-signature"; micalg=pgp-sha256
 
---Sig_/X0gLt73.20zC2b2QN/=UpdC
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-On Mon, 1 Jul 2024 10:16:41 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> After merging the mm-hotfixes tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
->=20
-> mm/gup.c: In function 'gup_hugepte':
-> mm/gup.c:474:25: error: implicit declaration of function 'try_grab_folio_=
-fast'; did you mean 'try_grab_folio'? [-Werror=3Dimplicit-function-declarat=
-ion]
->   474 |                 folio =3D try_grab_folio_fast(page, refs, flags);
->       |                         ^~~~~~~~~~~~~~~~~~~
->       |                         try_grab_folio
-> mm/gup.c:474:23: warning: assignment to 'struct folio *' from 'int' makes=
- pointer from integer without a cast [-Wint-conversion]
->   474 |                 folio =3D try_grab_folio_fast(page, refs, flags);
->       |                       ^
-> mm/gup.c: At top level:
-> mm/gup.c:2747:22: error: conflicting types for 'try_grab_folio_fast'; hav=
-e 'struct folio *(struct page *, int,  unsigned int)'
->  2747 | static struct folio *try_grab_folio_fast(struct page *page, int r=
-efs,
->       |                      ^~~~~~~~~~~~~~~~~~~
-> mm/gup.c:474:25: note: previous implicit declaration of 'try_grab_folio_f=
-ast' with type 'int()'
->   474 |                 folio =3D try_grab_folio_fast(page, refs, flags);
->       |                         ^~~~~~~~~~~~~~~~~~~
-> cc1: some warnings being treated as errors
->=20
-> Caused by commit
->=20
->   5f408bfe0d13 ("mm: gup: stop abusing try_grab_folio")
->=20
-> I have reverted that commit for today.
-
-And I also had to revert commit
-
-  52cca85b0ebf ("mm-gup-introduce-memfd_pin_folios-for-pinning-memfd-folios=
--fix")
-
-from the mm-unstable branch of the mm tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/X0gLt73.20zC2b2QN/=UpdC
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaCAAcACgkQAVBC80lX
-0GxcWwgAldXuJUqIlFpf5b+rbBaxD39WrHO0mMg9M2pXEhPa/zzL+PdU1V1bbWHl
-TcPJaHYPsudkfJklXW8eahX/yl9vhf6A3oEZKPl5xyo0bYdVdLkKl/fjYWvJ6HR4
-zrFYPajKQjx18T9H2Vh7mX3s8E5ts5M86nicLb6/gy8vwoFDOjS+KlHkTkWwREBZ
-zgXG3aYdeK9mvQZWqL+xkm/A2AV2Nsz9jT+d9R5j78hZRVH/rWgnpMCv8IQCkJDi
-apySZP9kUoj3F5u2jv93GFTxxAAC2ofieuu3DBBxDipFJk+bmfYF3uZ1/h+Msv9X
-qpHxahUtm6osSGfHIACiXp6lk1psiQ==
-=4UPw
------END PGP SIGNATURE-----
-
---Sig_/X0gLt73.20zC2b2QN/=UpdC--
+SGkgTHVpeiwNCg0KVGhhbmtzIGZvciB5b3VyIGNvbW1lbnQuDQoNCj4gT2ssIGJ1dCBJIHN0aWxs
+IGNvbnNpZGVyIHJld29ya2luZyB0aGVzZSB0byB1c2Ugc2tiX3B1bGxfZGF0YS4NCg0KTm93LCBJ
+IHJlY29uc2lkZXIgYW5kIGZvdW5kIHRoZSBza2JfcHVsbF9kYXRhIGlzIG1vcmUgY29udmVuaWVu
+dCByYXRoZXIgdGhhbiBkaXJlY3RseSBhY2Nlc3NpbmcgdG8gc2tiLT5kYXRhLg0KQXMgSSBhbSBv
+biBidXNpbmVzcyB0cmlwIG9uIGEgZmV3IGRheXMsIEkgd2lsbCBzdWJtaXQgbmV3IHBhdGNoIGFm
+dGVyIEkgY29tZSBiYWNrLg0KDQpSZWdhcmRzLA0KTm9idWFraSBUc3VuYXNoaW1hDQoNCi0tLS0t
+T3JpZ2luYWwgTWVzc2FnZS0tLS0tDQpGcm9tOiBMdWl6IEF1Z3VzdG8gdm9uIERlbnR6IDxsdWl6
+LmRlbnR6QGdtYWlsLmNvbT4gDQpTZW50OiBGcmlkYXksIEp1bmUgMjgsIDIwMjQgMTA6MjkgUE0N
+ClRvOiBUc3VuYXNoaW1hIE5vYnVha2kgKFNNRCBDMyBKUCBSTSBXTFMgQUUpIDxOb2J1YWtpLlRz
+dW5hc2hpbWFAaW5maW5lb24uY29tPg0KQ2M6IG1hcmNlbEBob2x0bWFubi5vcmc7IGxpbnV4LWJs
+dWV0b290aEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNClN1
+YmplY3Q6IFJlOiBbUEFUQ0ggdjRdIEJsdWV0b290aDogYnRiY206IEFwcGx5IEhDSV9RVUlSS19C
+Uk9LRU5fUkVBRF9UUkFOU01JVF9QT1dFUiB0byBDWVc0MzczDQoNCkNhdXRpb246IFRoaXMgZS1t
+YWlsIG9yaWdpbmF0ZWQgb3V0c2lkZSBJbmZpbmVvbiBUZWNobm9sb2dpZXMuIFBsZWFzZSBiZSBj
+YXV0aW91cyB3aGVuIHNoYXJpbmcgaW5mb3JtYXRpb24gb3Igb3BlbmluZyBhdHRhY2htZW50cyBl
+c3BlY2lhbGx5IGZyb20gdW5rbm93biBzZW5kZXJzLiBSZWZlciB0byBvdXIgaW50cmFuZXQgZ3Vp
+ZGU8aHR0cHM6Ly9pbnRyYW5ldC1jb250ZW50LmluZmluZW9uLmNvbS9leHBsb3JlL2Fib3V0aW5m
+aW5lb24vcnVsZXMvaW5mb3JtYXRpb25zZWN1cml0eS91Zy9Tb2NpYWxFbmdpbmVlcmluZy9QYWdl
+cy9Tb2NpYWxFbmdpbmVlcmluZ0VsZW1lbnRzX2VuLmFzcHg+IHRvIGhlbHAgeW91IGlkZW50aWZ5
+IFBoaXNoaW5nIGVtYWlsLg0KDQoNCg0KSGksDQoNCk9uIFN1biwgTWF5IDI2LCAyMDI0IGF0IDk6
+NTnigK9QTSA8Tm9idWFraS5Uc3VuYXNoaW1hQGluZmluZW9uLmNvbT4gd3JvdGU6DQo+DQo+IEhp
+IEx1aXosDQo+DQo+IFRoYW5rcyBmb3IgeW91ciByZXZpZXcuDQo+DQo+ID4+ICBzdGF0aWMgaW50
+IGJ0YmNtX3JlYWRfaW5mbyhzdHJ1Y3QgaGNpX2RldiAqaGRldikgIHsNCj4gPj4gICAgICAgICBz
+dHJ1Y3Qgc2tfYnVmZiAqc2tiOw0KPiA+PiArICAgICAgIHU4IGNoaXBfaWQ7DQo+ID4+ICsgICAg
+ICAgdTE2IGJhc2VsaW5lOw0KPiA+Pg0KPiA+PiAgICAgICAgIC8qIFJlYWQgVmVyYm9zZSBDb25m
+aWcgVmVyc2lvbiBJbmZvICovDQo+ID4+ICAgICAgICAgc2tiID0gYnRiY21fcmVhZF92ZXJib3Nl
+X2NvbmZpZyhoZGV2KTsNCj4gPj4gICAgICAgICBpZiAoSVNfRVJSKHNrYikpDQo+ID4+ICAgICAg
+ICAgICAgICAgICByZXR1cm4gUFRSX0VSUihza2IpOw0KPiA+PiAtDQo+ID4+ICsgICAgICAgY2hp
+cF9pZCA9IHNrYi0+ZGF0YVsxXTsNCj4gPj4gKyAgICAgICBiYXNlbGluZSA9IHNrYi0+ZGF0YVsz
+XSB8IChza2ItPmRhdGFbNF0gPDwgOCk7DQo+ID4NCj4gPlRoaXMgaXMgbm90IHJlYWxseSBzYWZl
+LCB5b3Ugc2hvdWxkbid0IGF0dGVtcHQgdG8gYWNjZXNzIHNrYi0+ZGF0YSB3aXRob3V0IGZpcnN0
+IGNoZWNraW5nIHNrYi0+bGVuLCBhY3R1YWxseSBpdCB3b3VsZCBiZSBtdWNoIGJldHRlciB0aGF0
+ID55b3Ugd291bGQgdXNlIHNrYl9wdWxsX2RhdGEgd2hpY2ggZG9lcyBza2ItPmxlbiBjaGVjayBi
+ZWZvcmUgcHVsbGluZyBkYXRhLg0KPg0KPiBJIHRoaW5rIGl0IGNvdWxkIGJlIHNhZmUgYmVjYXVz
+ZSBpdHMgbGVuZ3RoIGlzIGNoZWNrZWQgaW5zaWRlIGJ0YmNtX3JlYWRfdmVyYm9zZV9jb25maWco
+KSBhcyBiZWxvdy4NCj4gUGxlYXNlIGxldCBtZSBrbm93IGlmIGZ1cnRoZXIgY2hlY2tpbmcgaXMg
+bmVlZGVkLg0KPg0KPiA+Pj4NCj4gc3RhdGljIHN0cnVjdCBza19idWZmICpidGJjbV9yZWFkX3Zl
+cmJvc2VfY29uZmlnKHN0cnVjdCBoY2lfZGV2ICpoZGV2KSANCj4gew0KPiAgICAgICAgIHN0cnVj
+dCBza19idWZmICpza2I7DQo+DQo+ICAgICAgICAgc2tiID0gX19oY2lfY21kX3N5bmMoaGRldiwg
+MHhmYzc5LCAwLCBOVUxMLCBIQ0lfSU5JVF9USU1FT1VUKTsNCj4gICAgICAgICBpZiAoSVNfRVJS
+KHNrYikpIHsNCj4gICAgICAgICAgICAgICAgIGJ0X2Rldl9lcnIoaGRldiwgIkJDTTogUmVhZCB2
+ZXJib3NlIGNvbmZpZyBpbmZvIGZhaWxlZCAoJWxkKSIsDQo+ICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIFBUUl9FUlIoc2tiKSk7DQo+ICAgICAgICAgICAgICAgICByZXR1cm4gc2tiOw0KPiAg
+ICAgICAgIH0NCj4NCj4gICAgICAgICBpZiAoc2tiLT5sZW4gIT0gNykgew0KPiAgICAgICAgICAg
+ICAgICAgYnRfZGV2X2VycihoZGV2LCAiQkNNOiBWZXJib3NlIGNvbmZpZyBsZW5ndGggbWlzbWF0
+Y2giKTsNCj4gICAgICAgICAgICAgICAgIGtmcmVlX3NrYihza2IpOw0KPiAgICAgICAgICAgICAg
+ICAgcmV0dXJuIEVSUl9QVFIoLUVJTyk7DQo+ICAgICAgICAgfQ0KPg0KPiAgICAgICAgIHJldHVy
+biBza2I7DQo+IH0NCj4gPDw8DQoNCk9rLCBidXQgSSBzdGlsbCBjb25zaWRlciByZXdvcmtpbmcg
+dGhlc2UgdG8gdXNlIHNrYl9wdWxsX2RhdGEuDQoNCj4gQmVzdCBSZWdhcmRzLA0KPiBOb2J1YWtp
+IFRzdW5hc2hpbWENCj4NCg0KDQotLQ0KTHVpeiBBdWd1c3RvIHZvbiBEZW50eg0K
 
