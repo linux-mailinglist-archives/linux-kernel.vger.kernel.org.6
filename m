@@ -1,59 +1,68 @@
-Return-Path: <linux-kernel+bounces-236121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D355791DDBB
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:21:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48F8C91DDC1
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:23:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94442282000
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:21:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB13C1F22B28
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6906C13DBB3;
-	Mon,  1 Jul 2024 11:21:27 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3AC413E022;
+	Mon,  1 Jul 2024 11:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="sWSGXNHd"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468EB12CDB0;
-	Mon,  1 Jul 2024 11:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F21376E7;
+	Mon,  1 Jul 2024 11:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719832887; cv=none; b=m1CKUhH+e/7RULwyHl/NUUltvoVm6o42jBxPsVlpGe10jcceWVSgzpz2cYYH1qEJL9w0LAslvEvj54zyTngOM9PY6+Rgly9Ct2XsfhYpx24G4xjLoNcbXevw5PmcrJYzxmLSWlyylnuy3JsysavbwdUu77e/GPamapCYT+vB71c=
+	t=1719832970; cv=none; b=bj7gGWswuVrkS5pQWw/2It7bNisTopbl7DJOOUCIO5S42pOjAUmRTjqDQdgAe64J/xXmMVShGrqEQbzWf0CzZt9GoGNrUJm1P5A1W9Hyx+y1xYpY09QqTGgHlEeKT+qn7ekdMdBtVP1cEBQuD/siKJQMMs9dxsYrfwVLLgvU5iM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719832887; c=relaxed/simple;
-	bh=JOzJZ9bsQdjN0b6Bn+BCyZRD0ZGpRjDY8984P99UG+A=;
+	s=arc-20240116; t=1719832970; c=relaxed/simple;
+	bh=PdZjdKVsTo8BInxtMoeikZhosQ+YMPeygOn+mRKQJlQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o+A9IrwyBl8Uezzg/s1XCP7OYKlowmz5z6IRcgERJilHAhY31Bt9uatCaYfIST51/D2J+4onW07IivsR/YFEHVYVCw4WwcN17/H2HZe+RhCT4sLSaEbPGOJAO4ceWrKPo7r5AmqQNTrUVoQf18A5C4NGgrwW+9fUJt3ihVy+NtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.97.1)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1sOF5m-000000006YZ-0Ekn;
-	Mon, 01 Jul 2024 11:21:06 +0000
-Date: Mon, 1 Jul 2024 12:20:59 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Sky Huang <SkyLake.Huang@mediatek.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Qingfang Deng <dqfext@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Steven Liu <Steven.Liu@mediatek.com>
-Subject: Re: [PATCH net-next v10 13/13] net: phy: mediatek: Remove
- unnecessary outer parens of "supported_triggers" var
-Message-ID: <ZoKRDSVYD_JMhMqW@makrotopia.org>
-References: <20240701105417.19941-1-SkyLake.Huang@mediatek.com>
- <20240701105417.19941-14-SkyLake.Huang@mediatek.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vz+J33PQvGXLXnc99o06yIxd/HCPPEcSIwpPxD1S5+3mD/4V2/FiUzt9ENS+ImmVHajfQpRApvFsKgpxuP6UqtDipPm6X92oQaQ6dZzN0R6QonnKsuJNQAZ8O8e2xNCT6dW4egVrvSWRHkNUfD7QGznjcrg57hiP/x11HpMbrkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=sWSGXNHd; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4WCNtj20JGz9stQ;
+	Mon,  1 Jul 2024 13:22:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1719832957;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RnAj7fu/gnOEMmtPn1UH5DlbH0qYTyY/NJtePcvvPoQ=;
+	b=sWSGXNHdaOe+lh8vuyr7s9Prmk0ZUfC1xrL0pUTCn0fBww1tZtrnHprqu2iNl82i4lze6J
+	sd0/9Mc1QDz0c7zqRC8YW1Jo+Zof/qKj+F7ISUotsntAv+U5xkE9nPhp0xlypYYGw//5/l
+	ZDpVRwFdb0spyAXGZx3pHsBfCydB45nbE9LhE0J9kleP8jo6TcnDmevkIeLqd6taS6Rkfl
+	d9ROd6QpXaqbOwCofoJ8GG6mEVN70BuTSLGsd7qlKm6qXYrSW5CBhXmnmShgkbdq0bKCzG
+	K58sRCdijvxw+18RQ3f0vNe/odXTJR1//vBJovUnD+7fqWvbJBf6PYiJ/YpfRg==
+Date: Mon, 1 Jul 2024 11:22:30 +0000
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: willy@infradead.org, chandan.babu@oracle.com, djwong@kernel.org,
+	brauner@kernel.org, akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
+	linux-mm@kvack.org, john.g.garry@oracle.com,
+	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
+	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org, hch@lst.de, Zi Yan <zi.yan@sent.com>
+Subject: Re: [PATCH v8 06/10] iomap: fix iomap_dio_zero() for fs bs > system
+ page size
+Message-ID: <20240701112230.st6petb4sf7fs4ks@quentin>
+References: <20240625114420.719014-1-kernel@pankajraghav.com>
+ <20240625114420.719014-7-kernel@pankajraghav.com>
+ <ZoIWVthXmtZKesSO@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,47 +71,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240701105417.19941-14-SkyLake.Huang@mediatek.com>
+In-Reply-To: <ZoIWVthXmtZKesSO@dread.disaster.area>
+X-Rspamd-Queue-Id: 4WCNtj20JGz9stQ
 
-On Mon, Jul 01, 2024 at 06:54:17PM +0800, Sky Huang wrote:
-> From: "SkyLake.Huang" <skylake.huang@mediatek.com>
+On Mon, Jul 01, 2024 at 12:37:10PM +1000, Dave Chinner wrote:
+> On Tue, Jun 25, 2024 at 11:44:16AM +0000, Pankaj Raghav (Samsung) wrote:
+> > From: Pankaj Raghav <p.raghav@samsung.com>
+> > 
+> > iomap_dio_zero() will pad a fs block with zeroes if the direct IO size
+> > < fs block size. iomap_dio_zero() has an implicit assumption that fs block
+> > size < page_size. This is true for most filesystems at the moment.
+> > 
+> > If the block size > page size, this will send the contents of the page
+> > next to zero page(as len > PAGE_SIZE) to the underlying block device,
+> > causing FS corruption.
+> > 
+> > iomap is a generic infrastructure and it should not make any assumptions
+> > about the fs block size and the page size of the system.
+> > 
+> > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> > Reviewed-by: Hannes Reinecke <hare@suse.de>
 > 
-> This patch removes unnecessary outer parens of "supported_triggers" vars
-> in mtk-ge.c & mtk-ge-soc.c to improve readability.
+> Looks fine, so:
 > 
-> Signed-off-by: SkyLake.Huang <skylake.huang@mediatek.com>
-> ---
-> diff --git a/drivers/net/phy/mediatek/mtk-ge.c b/drivers/net/phy/mediatek/mtk-ge.c
-> index 90f3990..050a4f7 100644
-> --- a/drivers/net/phy/mediatek/mtk-ge.c
-> +++ b/drivers/net/phy/mediatek/mtk-ge.c
-> @@ -152,14 +152,14 @@ static int mt753x_phy_led_brightness_set(struct phy_device *phydev,
->  }
->  
->  static const unsigned long supported_triggers =
-> -	(BIT(TRIGGER_NETDEV_FULL_DUPLEX) |
-> -	 BIT(TRIGGER_NETDEV_HALF_DUPLEX) |
-> -	 BIT(TRIGGER_NETDEV_LINK)        |
-> -	 BIT(TRIGGER_NETDEV_LINK_10)     |
-> -	 BIT(TRIGGER_NETDEV_LINK_100)    |
-> -	 BIT(TRIGGER_NETDEV_LINK_1000)   |
-> -	 BIT(TRIGGER_NETDEV_RX)          |
-> -	 BIT(TRIGGER_NETDEV_TX));
-> +	BIT(TRIGGER_NETDEV_FULL_DUPLEX) |
-> +	BIT(TRIGGER_NETDEV_HALF_DUPLEX) |
-> +	BIT(TRIGGER_NETDEV_LINK)        |
-> +	BIT(TRIGGER_NETDEV_LINK_10)     |
-> +	BIT(TRIGGER_NETDEV_LINK_100)    |
-> +	BIT(TRIGGER_NETDEV_LINK_1000)   |
-> +	BIT(TRIGGER_NETDEV_RX)          |
-> +	BIT(TRIGGER_NETDEV_TX);
+> Reviewed-by: Dave Chinner <dchinner@redhat.com>
+Thanks!
+> 
+> but....
+> 
+> > +
+> > +	if (!zero_page_64k)
+> > +		return -ENOMEM;
+> > +
+> > +	set_memory_ro((unsigned long)page_address(zero_page_64k),
+> > +		      1U << ZERO_PAGE_64K_ORDER);
+>                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+> isn't that just ZERO_PAGE_64K_SIZE?
 
-Those lines are added within the same series by patch 06/13
-("net: phy: mediatek: Hook LED helper functions in mtk-ge.c").
-I get and like the idea of doing things one by one, but in this case
-instead of editing what you have just added, better move the commit
-removing the unnecessary parentheses somewhere before copying them to
-the mtk-ge.c driver in patch 6/13.
+Nope, set_memory_ro takes numbers of pages and not size in bytes :)
 
-All the rest looks good to me now.
+> 
+> -Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
 
