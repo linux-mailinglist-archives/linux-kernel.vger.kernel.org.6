@@ -1,80 +1,99 @@
-Return-Path: <linux-kernel+bounces-236258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF29F91DF96
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:41:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 385A791DF99
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:42:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B9C3B21E11
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:41:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 956EEB23421
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:42:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C25158D8E;
-	Mon,  1 Jul 2024 12:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6551115921D;
+	Mon,  1 Jul 2024 12:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="trZIL0BK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VOrGFwGG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03380155381;
-	Mon,  1 Jul 2024 12:41:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7450158DDD;
+	Mon,  1 Jul 2024 12:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719837695; cv=none; b=Ze1eu+8p8avzrm8Q+2ifLjMuuhvCH7px+rqHROztj/QQTiIV3EFYhvEisz/aCjp0lVz+JhL+rj/vufQevuQtJZ6FSp0LFHuCxss/QKn6+NJjAP5sR7S8ZhrFp/R2Ll53XbIYFDTCYGUQCO2b+FryulrLBoFGfeW/nbCg2vkDOiY=
+	t=1719837715; cv=none; b=I15rFh+wR10o/I/DB6su0DPCTPsP/epAreJKq+Hj2NVR4X1jYDOFhbDaNXSExXzB/8BufVZcWnHTTZui93RJSV8w1NqDe0KHHQLuaq4nVhw4mdNvuDJyCgjdlpju6T5uQVpBto6fthBkovAdt+U/KyHlDaTNFPNovFTrnF55xVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719837695; c=relaxed/simple;
-	bh=2XGvcU7k1hxtC3sQ09ccIGgApehgIwkVz/hTthBLTFE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iNNq+oiEIY8P8dgvu+KzI0imhn1u8Ok9UAhtxvSnwfjmAWc2M6ikAtTty5SAVwP+0vktuYSe62eV3oZ08nzfGdS0hqqfyt7JIh6yPacAue+cHJHRfD8kyBhFshp4xsjsakxBmbPVihBU/TiT+TM/Q+oB/7W0f6lHdHdTXkWSqEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=trZIL0BK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96470C116B1;
-	Mon,  1 Jul 2024 12:41:32 +0000 (UTC)
+	s=arc-20240116; t=1719837715; c=relaxed/simple;
+	bh=ihcaF3I5EST7/gh26RJbcWXrvF2VUf3XZhHK396ADEY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q4Uhs2xzBMI397LtT600R/fVYOwjma/nNrFBUpBxaQqOY7KXP6tU8l5LGMCBLq/Zyk8aSbjTLdYiUfCAs/YjWRHDO5iPNM50SPvgjwL5/l9jpTTf1oFhvwGnfrojFuAA2h8yIhd520Aj9wzXor4aGhTf5XNW4g6iLhlscvcg5x8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VOrGFwGG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05CB6C116B1;
+	Mon,  1 Jul 2024 12:41:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719837694;
-	bh=2XGvcU7k1hxtC3sQ09ccIGgApehgIwkVz/hTthBLTFE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=trZIL0BK0C9mZnXmIALq7MqdVJ1QG6eo28lTVMZMrFJLZaVUW+TtY5goMQwPGy/a8
-	 Tnw91dil62sqrjCK/ETa0aSxMqxi635zvV93KycvO/KlswKCMEnQXlh+zAK1qTnWDt
-	 TeR+ji2tpIWRP9tiuqzyxPI1osp38i9rF2SGWYdybMSeSHFUI72o2wf5Pj/juv0697
-	 zpPLI8YfWfr2pkEoOqa/OVxXsFVqmUpp3tf8u6TSQzF2GwAP08mrN8Gjy2HcoTLnyp
-	 SLhZm+NZyN1mMYqGnrvXNN7M7agEYziZ2CiZt+kBHqicVKvMrnXt5Mu6offVoyCsdE
-	 jOwCogIbXZvmg==
-Message-ID: <a3adf6b1-6545-490b-a082-7362578fa343@kernel.org>
-Date: Mon, 1 Jul 2024 15:41:30 +0300
+	s=k20201202; t=1719837715;
+	bh=ihcaF3I5EST7/gh26RJbcWXrvF2VUf3XZhHK396ADEY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VOrGFwGGKN5lI/CJUfdrHs/8GxLfqXIKjyaI9b1Hd1PWF6oNMCa9sg/PEoF0+L547
+	 djeXuDFAvRf01uwC4eXKoueFCp4+GHY//51rEsCpY1YSSPvIyep6ByNVH7s0a+Nzx6
+	 ITyRLFEMGh+4rkSQh0o0V7KDaflJroM081iuWe83EH3gy5u05LBpKkEKolaFkuuaMu
+	 0NMWR+RwmYCIs1ubSRDuwdrwRBhXDP+MfStM9oGjB87efyEPlWSdD6mBPKnmtrdqpi
+	 WQkPebsQ9TVZdnHLbTrXa0EhP+O/eQ6xTjnbKuX+Zc19lqU+mR481VPfJWR5hlcV4x
+	 GHkzRz4hzZxBg==
+Date: Mon, 1 Jul 2024 13:41:49 +0100
+From: Will Deacon <will@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	lkft-triage@lists.linaro.org,
+	Linux Regressions <regressions@lists.linux.dev>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Aishwarya TCV <Aishwarya.TCV@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Anders Roxell <anders.roxell@linaro.org>
+Subject: Re: Mainline: v6.10-rc6 boot failed across all arm64 devices
+Message-ID: <20240701124149.GA2095@willie-the-truck>
+References: <CA+G9fYsXsbHp+0cWoTjEhkpANOav=GLSjPx5ghtUY-FjMPyoSQ@mail.gmail.com>
+ <145b39a0-da05-4c60-a019-c1a6211e6c77@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFT][PATCH 1/2] arm64: dts: ti: k3-am62p5-sk: fix
- graph_child_address warnings
-To: Dhruva Gole <d-gole@ti.com>, Nishanth Menon <nm@ti.com>,
- Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Andrew Davis <afd@ti.com>,
- Tero Kristo <kristo@kernel.org>
-References: <20240626101520.1782320-1-d-gole@ti.com>
- <20240626101520.1782320-2-d-gole@ti.com>
-Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <20240626101520.1782320-2-d-gole@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <145b39a0-da05-4c60-a019-c1a6211e6c77@sirena.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-
-
-On 26/06/2024 13:15, Dhruva Gole wrote:
-> Fix the following warnings that are thrown when building dtbs with W=1:
+On Mon, Jul 01, 2024 at 01:12:07PM +0100, Mark Brown wrote:
+> On Mon, Jul 01, 2024 at 05:28:29PM +0530, Naresh Kamboju wrote:
+> > The mainline kernel v6.10-rc6 boot failed across all arm64 devices and
+> > qemu-arm64 and no crash log found (earlycon) did not help.
+> > 
+> > But the defconfig builds boot PASS.
+> > 
+> > The boot problem is with defconfig + Extra Kconfigs and builds links
+> > provided in the bottom of this email.
+> > 
+> > The boot test history shows that,
+> >   GOOD: v6.10-rc5
+> >   BAD:  v6.10-rc6
 > 
-> ../arch/arm64/boot/dts/ti/k3-am62p5-sk.dts:367.10-376.6: Warning (graph_child_address): /bus@f0000/i2c@20000000/usb-power-controller@3f/connector/ports: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary
-> ../arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi:647.22-657.5: Warning (graph_child_address): /bus@f0000/usb@f900000/usb@31000000: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary
->   also defined at ../arch/arm64/boot/dts/ti/k3-am62p5-sk.dts:517.7-528.3
+> Other CI systems aren't showing this.  I'm guessing you've updated the
+> toolchain versions you're using and are running into:
 > 
-> Cc: Roger Quadros <rogerq@kernel.org>
-> Signed-off-by: Dhruva Gole <d-gole@ti.com>
+>    https://sourceware.org/bugzilla/show_bug.cgi?id=31924#c9
+> 
+> and will see this with other kernels.  It's probably worth testing
+> toolchains before deploying them...
 
-Reviewed-by: Roger Quadros <rogerq@kernel.org>
+Aha, that would explain why I'm failing to reproduce this with clang or
+my old version of GCC. I only see the problem with the binary provided
+by the CI.
+
+Will
 
