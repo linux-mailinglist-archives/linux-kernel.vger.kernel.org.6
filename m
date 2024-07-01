@@ -1,76 +1,119 @@
-Return-Path: <linux-kernel+bounces-237052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BA1691EA53
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 23:28:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFD7B91EA58
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 23:29:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CC511C212F1
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:28:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2337282947
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66CAF17166F;
-	Mon,  1 Jul 2024 21:28:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F626171653;
+	Mon,  1 Jul 2024 21:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CDufTpQW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Tv65dCRf"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9A884A32;
-	Mon,  1 Jul 2024 21:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7EF128812
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 21:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719869307; cv=none; b=WcPv6hmVs0tv2XKEKd4pvX9p8r5EugL7/qf9uqeafpf5wAenhSr72VXX/tFNzD2pDogLiHgwNyt2y9mC0Ub1caaBoWvDaUCaCEDjjtaGDNGLQt3/cOAgBkdLCd2fGskbtNxrjVowDWU1hzD6XK5uS/K/GbOTs5mIWOqcZUT+WDw=
+	t=1719869361; cv=none; b=lKmPbtSyihVUIkpM4xhiXZXQeiehXq68ZSOYT73tU1JGAFC0hT6Ul+Suild75W+0bPdH308BTAyqcEifsa/naHKl6JulwwGO5D4l7zeTR5IFTvDXGi7sI5Lzd3NNo/A/VaD4G/25zwE4rqfiWyU6GwnBOSQcgLo+/z6XmpENGWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719869307; c=relaxed/simple;
-	bh=3EZcXFlOOkubFO5EKsszk15HVDKuJ+iEX+67Sj1Hswc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z4xj4xKEOoxwpw3+uanC6XmlvTWqSTYvjTkjcA0tHz5qqNtnYYZ8du0GMN7dBCXcGxW1C2eAm1hPlcbRjW5523Cz8Xr+2HNOSZZkSmSl5mh/hCpVfExZ1xPrmcICq+CfRzG15ycUU6waZB92dZF4XHkm2TfprN1ePOvt1Ta3qL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CDufTpQW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD33FC116B1;
-	Mon,  1 Jul 2024 21:28:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719869307;
-	bh=3EZcXFlOOkubFO5EKsszk15HVDKuJ+iEX+67Sj1Hswc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=CDufTpQWq9CZD/cbL4YGD7JsivHT7+dOSHRELR+950oJN0WdrGj7/aTA0QbJ6Q4QY
-	 EaUTLO+DajdIjZNKm8EYcZBbftdPp8NiFgqmTaWem6TgPsX6w6G3Oen2wDo+FfnuDi
-	 SxZxjF9Ezf4lx8jw8HK38eybN/ygnI+MKg7Cy67Rj1p1HrQtk4Ma4imq7eFGvHL7Vx
-	 A3Ohz1dGxIbsPysjLQwzBJ4n1AjtX4IC5GNROUZyIrqNclw4OOFyvHLNWWt9j0mIfo
-	 NZBBvaGp2iD3NrvmXwIX4tlfEHiXOsTzoWw1nS4Ut200KG4j/+TfLlN7pGleR9PDZn
-	 cjOU/WKuMaYjA==
-Date: Mon, 1 Jul 2024 14:28:26 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Slark Xiao <slark_xiao@163.com>
-Cc: manivannan.sadhasivam@linaro.org, loic.poulain@linaro.org,
- ryazanov.s.a@gmail.com, johannes@sipsolutions.net, quic_jhugo@quicinc.com,
- netdev@vger.kernel.org, mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] net: wwan: mhi: make default data link id
- configurable
-Message-ID: <20240701142826.25ccb798@kernel.org>
-In-Reply-To: <20240701021216.17734-3-slark_xiao@163.com>
-References: <20240701021216.17734-1-slark_xiao@163.com>
-	<20240701021216.17734-3-slark_xiao@163.com>
+	s=arc-20240116; t=1719869361; c=relaxed/simple;
+	bh=QYRodptKrW/HhfD33cZFPnsonz/sn+arLYZ+QIwl0Os=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=etM4edOEj5Pr30IAzTKpCEiZ63vRCfrmsAeAHAXsSQLx5dwbwn6cuWeK5GcGoeX57s2SAqOEKtDo3iKogEUX7teQtBoJ9cyW36l3AygeD1Ic7kdq5iC9CwphjkezjbS8pMYTDccnucE0YEBsF1LW0gm/SHZISNKGMCaxuPPE8D4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Tv65dCRf; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-64a6bf15db9so29394477b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 14:29:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719869359; x=1720474159; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oSl2Z5I3t21oRckeUtUCQTf8DO87uHYoHEdnx8eg3oc=;
+        b=Tv65dCRf6jaye+ibDMk340wcb+IxypZyh4pBo8l9kMqeGkHIcpgk4xAcxs7UVeNxQH
+         /fRy0Vf3yZ8A2NuhCSboc3IyCcHJlI80J5fW/86Y78yDHUeJQzsfVipHYsrEXbi+jxbV
+         2MzvfYmN1I7oebmAqEuWbJI397Wd+THexwspSHB2gg5B1pTo0HsN4DhaX3VuIE0SEGc8
+         NB9UWJ/Gk5V9JWi6BJhHpClgM4m61kZzCTZ4lErGxO1u2pWmDN5RXK/76PBBm4steC6V
+         C3IMef4X0j5TXRPmuq3ptBYhRD0PKF4upjq1uwgu3lTvaQkk1g/uoF6mmVSY0ERjVPkE
+         vPFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719869359; x=1720474159;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oSl2Z5I3t21oRckeUtUCQTf8DO87uHYoHEdnx8eg3oc=;
+        b=pNLZrRIOReae0Y4QQYB/LbQhizhL+svBYo+hTRriRCkdeK6f6g/hdLkMq5t26hhV7F
+         e60brcYfqfjEV034xtSjhPFNy7NKPBFnaMSdaJNG2F+j6AM1E++V+rsRQWpwp+Zaa+YU
+         kDcdSe+znGDqIdTnMyoxUTZmpHIk6Kp7bEmagv6fyFTP5hbRMAQQDIF6skI2gSsjKsKa
+         bVlONZV3j51W1vvVromf4G6u6h0Z/KoyczGY+GUgBoRJ5MpT4iwA8QTPTxnssXMe/w1h
+         IipjA2i1d699D5WPpbI3gRCaegtcY1Dp4I29h2gT7D3NBV3qqpwFTyzHH/7SBnjuYGmf
+         m5LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXef61MGdPkBYBCG31A21BPJgTsYWcycCBjbf5geLH0jOI6fESniW57JullpUvqZC0DtAPaDa5X+ZHIBIRp4i7aW4oILO9TrgL1q1DU
+X-Gm-Message-State: AOJu0YySjpDJBx8fQKjF72bud/87grwPc3HhszZilJWSGOhBAQj1aICM
+	cIEGz6YKUR3DBJxo1AOE+I4DLOS4aLqrtYk7Vhdx5iNsfGbtMXS4hhZCJUG0bzLj2OE1ObRM4uf
+	h7nZx96FGRd0B/nhnEp0pw7qOIycWMUANDa5g
+X-Google-Smtp-Source: AGHT+IGrXD+4pTPNuwEshDbV7GX9n6Y4nx9gnSj9JNfjW9ApBZxXIXAXK/wbTCLOwmtQ93G/H286x9LA3nwcDlnDZsc=
+X-Received: by 2002:a81:a748:0:b0:64a:6eda:fc60 with SMTP id
+ 00721157ae682-64c7114568cmr54543967b3.4.1719869358874; Mon, 01 Jul 2024
+ 14:29:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240701190512.49379-1-sj@kernel.org> <20240701190512.49379-2-sj@kernel.org>
+In-Reply-To: <20240701190512.49379-2-sj@kernel.org>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Mon, 1 Jul 2024 14:29:05 -0700
+Message-ID: <CAJuCfpE40946AOT9-DQouy+=HdgfFxFH6+OYu=FLXXVv7h-E3A@mail.gmail.com>
+Subject: Re: [PATCH 1/4] Docs/mm/allocation-profiling: mark 'Theory of
+ operation' as chapter
+To: SeongJae Park <sj@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	Jonathan Corbet <corbet@lwn.net>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon,  1 Jul 2024 10:12:16 +0800 Slark Xiao wrote:
-> For SDX72 MBIM mode, it starts data mux id from 112 instead of 0.
-> This would lead to device can't ping outside successfully.
-> Also MBIM side would report "bad packet session (112)". In order
-> to fix this issue, we decide to use the device name of MHI
-> controller to do a match in wwan side. Then wwan driver could
-> set a corresponding mux_id value according to the MHI product.
+On Mon, Jul 1, 2024 at 12:05=E2=80=AFPM SeongJae Park <sj@kernel.org> wrote=
+:
+>
+> 'Theory of operation' part of allocation-profiling document is
+> apparently a chapter.  However, it is mistakenly marked as a document
+> title.  As a result, rendered mm document index page shows two items for
+> the document.  Fix it to be marked as a chapter.
+>
+> Signed-off-by: SeongJae Park <sj@kernel.org>
 
-Sounds like Mani wants to take these so:
+Acked-by: Suren Baghdasaryan <surenb@google.com>
 
-Acked-by: Jakub Kicinski <kuba@kernel.org>
+> ---
+>  Documentation/mm/allocation-profiling.rst | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/Documentation/mm/allocation-profiling.rst b/Documentation/mm=
+/allocation-profiling.rst
+> index d3b733b41ae6..ffd6655b7be2 100644
+> --- a/Documentation/mm/allocation-profiling.rst
+> +++ b/Documentation/mm/allocation-profiling.rst
+> @@ -46,7 +46,6 @@ Example output::
+>           55M     4887 mm/slub.c:2259 func:alloc_slab_page
+>          122M    31168 mm/page_ext.c:270 func:alloc_page_ext
+>
+> -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>  Theory of operation
+>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> --
+> 2.39.2
+>
 
