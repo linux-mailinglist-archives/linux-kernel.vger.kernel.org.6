@@ -1,117 +1,229 @@
-Return-Path: <linux-kernel+bounces-236214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFA2291DED3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:13:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2325691DED4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:13:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FDB5B22AC9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:13:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D44A32813D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:13:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0170314A604;
-	Mon,  1 Jul 2024 12:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E3514A0A0;
+	Mon,  1 Jul 2024 12:13:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="H7bMJYQo"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z9E2m6CW"
+Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E574664C6;
-	Mon,  1 Jul 2024 12:13:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10EEA14373A
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 12:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719835988; cv=none; b=lz4VdTPcaUOHjHWFxAbJ7+ACCCDjglwxGw701swKfsqJ0yCy4ZjhYXJmvhD1LDISjYRQRqEr3/cbnES6r+GxeZ3TSfGj/rluie9+eFX2HMu73tPvB5VtZ4ODr7GVj3NmmGO0Cvo7wHq6rMEHYDRuAntudRR4TTPGbYS3DOC1hXE=
+	t=1719836007; cv=none; b=StFB4+N44d5xJvjGAXROZYZcC6eA+KnMwu4ucEiGaMcb+6egbCsmrf64XBGFeg3omWDpvmLtZ16hqXI02C1qDsSYdhW/eBW0LEvZCrVgEZwiXe7lU3LdtNC6/2lHPvzevoNVxmbaQcO3LjrhBl0+cAO8vSPZ4LIXEu3D3GpbPs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719835988; c=relaxed/simple;
-	bh=Y4zVJ4xfJdxCJO2uOyRE9CjN3rspmO3rce9CIk7rvxE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kyIwajOgI6uwLdtCBT9hnPvSahDdRqu7+16RTxTSKvbjAqOTGxj1P5Ptl4upEKd0E7WqkLa8XRnF+V8u875RSD4aff0BkbYB9OD83TfdyNwO9Eb4qWuaLRvksTmahM/hctakLIDXYfnFSmVrMWXYHB1Lj6JbkC28HPdqBvDLUXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=H7bMJYQo; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:Reply-To:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=s0SQSY2/qlwdSn2Ne62QkwvKmp6lPNA13idmIDBlXko=;
-	t=1719835986; x=1720267986; b=H7bMJYQo+acxT/MFT40LuTU9RZ6ksOuW+VKrMjaNuW6/6mo
-	Q40czHwmGgT2gyCWjzbMLmErFgMvEXCIEHJgwRBH1QcMK7bHjBL23uMK0ThetwfZewmR/ef5AAK+f
-	9vk1Obx0ZJsDrrp43YZ3SzkC1oX0olIqVWRx/i21q2MFkfjK76sL3/OoaIAysHi3N3wRfzAMrr0Rv
-	UoRiK65dHEVBj3RO1lWk13G7bK7wNw9XynQSKJDrxp+Qsn0x8zu+WpxZ6YYE47WvNNL+tZToavrBL
-	JDHBwmkFw0f90JaBWgVbshS+w+2nDTSZNpS/A+PS1Pgdtf14ZJ6ZzI8V0LX5qbZw==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sOFtw-000089-AO; Mon, 01 Jul 2024 14:12:56 +0200
-Message-ID: <c93ab2cc-d8e9-41ba-9f56-51acb331ae38@leemhuis.info>
-Date: Mon, 1 Jul 2024 14:12:55 +0200
+	s=arc-20240116; t=1719836007; c=relaxed/simple;
+	bh=bDYmic1FXoGq7jlmHOMll74zWH2WxCkSh+IfmGz3pzo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IIXxU2Fl6vFmjf1YwsWYU3sOGtqymeqPU2/JGRJCiw4hZ4BxpYe4+eHy48EDi78DOPysbOtUcZ5J9dMsMIeJ0KGl8xIp2wZDzdtCYpq3TTd1D4z+cET05cN02Jl6zrms4IxK/vidhjcPFqaX2L1vUaw+iPaz7wnnHgEBSuTxSu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z9E2m6CW; arc=none smtp.client-ip=209.85.161.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5c2284616f7so1939897eaf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 05:13:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719836004; x=1720440804; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2DNN7trhLb/0wTf9+UXZYBheTumE9oV7384hI+GoXms=;
+        b=Z9E2m6CWxN5HC1Z1j6oSVl7TfQ29x52+n39EGtz0W/xtzoubrj3LAdLAZsTR/syutE
+         NTn5PWDAkbIT+PT/YZJG453dyl5kxBR8vzcACODcJXVYKUs6bUHRUT+ys2UFEJCEDpi5
+         EVMefgtfHP9ewg25AYKA4hMGUQehMPJXQbUXTMbLRMRHkx+f/gILsBp3dfZTCRK2w2e6
+         2RgApWtZf5/81a41t2gJhzSoN/Xjx2pXI03EGs63PiIPQsnpbnwnMEe21zqbujJ2Ftak
+         G0RASUoMn72xnOFBDbvJ/BY0HeC0Xwv4eMzs70QVG93cS9u6jZ8cqkbtaxCc6WeoY/cD
+         znUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719836004; x=1720440804;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2DNN7trhLb/0wTf9+UXZYBheTumE9oV7384hI+GoXms=;
+        b=DQtfxyu+/uOYxiLPX/QLRlUy2Sy0LwuqLCy0mQNm4boIuWnnV9YK6hZNNb3Sp5NNUq
+         WkU3YJNtkUygeblf7A5Bqlhz/duv7Wn32gsSddLmaAWsKnV+3Epn5IK6gsC51IsOjrEl
+         55cfFDG7GwBaWirU7GA07sM1L+YXMK/NoQA69DDQD91tTZgRIU3XjT6b82lX36lb1GiG
+         oM9tLmYS5GT9NRE+TKQwVszQj+NOajkCOq2Yb6VmKb9XEBYm6azYEJPFpb4olwEIbcoc
+         /5OVX37eTU1aaWC32shBaobjf4/9K3VdmFYf7CpTw9DyOePKm94oU8URQn7d9kvNgvJ0
+         vSKA==
+X-Forwarded-Encrypted: i=1; AJvYcCUSLG9xmWwEMyFN9ObQF/aPCH3hWQF3EaZp0x1yCsyHQV/AByt9QAHyucw5b4bdvVXSTIcndXZ2qb3ShLDM5TAeohZYJr01yLN690Fr
+X-Gm-Message-State: AOJu0YyRmZNiQzcWqIx0uKka0Ia12JCcB0XwQZujRdchk8Erc3ogi0D+
+	0NwfFm/fJLCc1WMV/n5OgBDWYUguM4eUCPEfIAMAxdvszhvBDjc3pkaUM5Bzpjhj0AvawakNP+Y
+	IFlSkKBhjLDnqH0xi50/MgISF5kw=
+X-Google-Smtp-Source: AGHT+IHRhqFnNBXVEw2b2Oa7rt9dQO/OndOJPvrPuDJuFwAnUVXXPlOa7LKro7BuU2A0XPfL1ild2yLbg4GlM0pkUOk=
+X-Received: by 2002:a05:6870:5688:b0:24c:a8e6:34e7 with SMTP id
+ 586e51a60fabf-25db348bda7mr4874884fac.26.1719836003922; Mon, 01 Jul 2024
+ 05:13:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Subject: Re: Kernel hang caused by commit "can: m_can: Start/Cancel polling
- timer together with interrupts"
-To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
- Markus Schneider-Pargmann <msp@baylibre.com>,
- Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Tony Lindgren <tony@atomide.com>, Judith Mendez <jm@ti.com>,
- linux-can@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux@ew.tq-group.com,
- Linux kernel regressions list <regressions@lists.linux.dev>
-References: <e72771c75988a2460fa8b557b0e2d32e6894f75d.camel@ew.tq-group.com>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-In-Reply-To: <e72771c75988a2460fa8b557b0e2d32e6894f75d.camel@ew.tq-group.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1719835986;baec6e98;
-X-HE-SMSGID: 1sOFtw-000089-AO
+References: <20240624082011.4990-1-xuewen.yan@unisoc.com> <20240624082011.4990-3-xuewen.yan@unisoc.com>
+ <20240628012832.37swdtxr4ds2kkp7@airbuntu>
+In-Reply-To: <20240628012832.37swdtxr4ds2kkp7@airbuntu>
+From: Xuewen Yan <xuewen.yan94@gmail.com>
+Date: Mon, 1 Jul 2024 20:13:12 +0800
+Message-ID: <CAB8ipk-p_vT3mq4+BD0AxzgsLiRxpAnHJ1QaTWr1t619JeaL+w@mail.gmail.com>
+Subject: Re: [PATCH V2 2/2] sched/fair: Use actual_cpu_capacity everywhere in util_fits_cpu()
+To: Qais Yousef <qyousef@layalina.io>
+Cc: Xuewen Yan <xuewen.yan@unisoc.com>, vincent.guittot@linaro.org, 
+	dietmar.eggemann@arm.com, mingo@redhat.com, peterz@infradead.org, 
+	juri.lelli@redhat.com, rostedt@goodmis.org, bsegall@google.com, 
+	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com, 
+	christian.loehle@arm.com, vincent.donnefort@arm.com, ke.wang@unisoc.com, 
+	di.shen@unisoc.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[CCing the regression list, as it should be in the loop for regressions:
-https://docs.kernel.org/admin-guide/reporting-regressions.html]
+On Fri, Jun 28, 2024 at 9:28=E2=80=AFAM Qais Yousef <qyousef@layalina.io> w=
+rote:
+>
+> On 06/24/24 16:20, Xuewen Yan wrote:
+> > Commit f1f8d0a22422 ("sched/cpufreq: Take cpufreq feedback into account=
+")
+> > introduced get_actual_cpu_capacity(), and it had aggregated the
+> > different pressures applied on the capacity of CPUs.
+> > And in util_fits_cpu(), it would return true when uclamp_max
+> > is smaller than SCHED_CAPACITY_SCALE, althought the uclamp_max
+> > is bigger than actual_cpu_capacity.
+> >
+> > So use actual_cpu_capacity everywhere in util_fits_cpu() to
+> > cover all cases.
+> >
+> > Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+> > ---
+> >  kernel/sched/fair.c | 19 +++++++++----------
+> >  1 file changed, 9 insertions(+), 10 deletions(-)
+> >
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index 5ca6396ef0b7..9c16ae192217 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+> > @@ -4980,7 +4980,7 @@ static inline int util_fits_cpu(unsigned long uti=
+l,
+> >                               int cpu)
+> >  {
+> >       unsigned long capacity =3D capacity_of(cpu);
+> > -     unsigned long capacity_orig;
+> > +     unsigned long capacity_actual;
+> >       bool fits, uclamp_max_fits;
+> >
+> >       /*
+> > @@ -4992,15 +4992,15 @@ static inline int util_fits_cpu(unsigned long u=
+til,
+> >               return fits;
+> >
+> >       /*
+> > -      * We must use arch_scale_cpu_capacity() for comparing against uc=
+lamp_min and
+> > +      * We must use actual_cpu_capacity() for comparing against uclamp=
+_min and
+> >        * uclamp_max. We only care about capacity pressure (by using
+> >        * capacity_of()) for comparing against the real util.
+> >        *
+> >        * If a task is boosted to 1024 for example, we don't want a tiny
+> >        * pressure to skew the check whether it fits a CPU or not.
+> >        *
+> > -      * Similarly if a task is capped to arch_scale_cpu_capacity(littl=
+e_cpu), it
+> > -      * should fit a little cpu even if there's some pressure.
+> > +      * Similarly if a task is capped to actual_cpu_capacity, it shoul=
+d fit
+> > +      * the cpu even if there's some pressure.
+>
+> This statement is not clear now. We need to be specific since
+> actual_cpu_capacity() includes thermal pressure and cpufreq limits.
+>
+> /even if there's some pressure/even if there is non OPP based pressure ie=
+: RT,
+> DL or irq/?
+>
+> >        *
+> >        * Only exception is for HW or cpufreq pressure since it has a di=
+rect impact
+> >        * on available OPP of the system.
+> > @@ -5011,7 +5011,7 @@ static inline int util_fits_cpu(unsigned long uti=
+l,
+> >        * For uclamp_max, we can tolerate a drop in performance level as=
+ the
+> >        * goal is to cap the task. So it's okay if it's getting less.
+> >        */
+> > -     capacity_orig =3D arch_scale_cpu_capacity(cpu);
+> > +     capacity_actual =3D get_actual_cpu_capacity(cpu);
+> >
+> >       /*
+> >        * We want to force a task to fit a cpu as implied by uclamp_max.
+> > @@ -5039,7 +5039,7 @@ static inline int util_fits_cpu(unsigned long uti=
+l,
+> >        *     uclamp_max request.
+> >        *
+> >        *   which is what we're enforcing here. A task always fits if
+> > -      *   uclamp_max <=3D capacity_orig. But when uclamp_max > capacit=
+y_orig,
+> > +      *   uclamp_max <=3D capacity_actual. But when uclamp_max > capac=
+ity_actual,
+> >        *   the normal upmigration rules should withhold still.
+> >        *
+> >        *   Only exception is when we are on max capacity, then we need =
+to be
+> > @@ -5050,8 +5050,8 @@ static inline int util_fits_cpu(unsigned long uti=
+l,
+> >        *     2. The system is being saturated when we're operating near
+> >        *        max capacity, it doesn't make sense to block overutiliz=
+ed.
+> >        */
+> > -     uclamp_max_fits =3D (capacity_orig =3D=3D SCHED_CAPACITY_SCALE) &=
+& (uclamp_max =3D=3D SCHED_CAPACITY_SCALE);
+> > -     uclamp_max_fits =3D !uclamp_max_fits && (uclamp_max <=3D capacity=
+_orig);
+> > +     uclamp_max_fits =3D (capacity_actual =3D=3D SCHED_CAPACITY_SCALE)=
+ && (uclamp_max =3D=3D SCHED_CAPACITY_SCALE);
+>
+> We should use capacity_orig here. We are checking if the CPU is the max
+> capacity CPU.
 
-Hi, Thorsten here, the Linux kernel's regression tracker. Top-posting
-for once, to make this easily accessible to everyone.
+Maybe we could remove the uclamp_max_fits =3D (capacity_orig =3D=3D
+SCHED_CAPACITY_SCALE) && (uclamp_max =3D=3D SCHED_CAPACITY_SCALE);
+and just judge the uclamp_max <=3D capacity_actual?
 
-Hmm, looks like there was not even a single reply to below regression
-report. But also seens Markus hasn't posted anything archived on Lore
-since about three weeks now, so he might be on vacation.
+-     uclamp_max_fits =3D (capacity_orig =3D=3D SCHED_CAPACITY_SCALE) &&
+(uclamp_max =3D=3D SCHED_CAPACITY_SCALE);
+-     uclamp_max_fits =3D !uclamp_max_fits && (uclamp_max <=3D capacity_ori=
+g);
++     uclamp_max_fits =3D  (uclamp_max <=3D capacity_actual);
 
-Marc, do you might have an idea what's wrong with the culprit? Or do we
-expected Markus to be back in action soon?
 
-Ciao, Thorsten
-
-On 18.06.24 18:12, Matthias Schiffer wrote:
-> Hi Markus,
-> 
-> we've found that recent kernels hang on the TI AM62x SoC (where no m_can interrupt is available and
-> thus the polling timer is used), always a few seconds after the CAN interfaces are set up.
-> 
-> I have bisected the issue to commit a163c5761019b ("can: m_can: Start/Cancel polling timer together
-> with interrupts"). Both master and 6.6 stable (which received a backport of the commit) are
-> affected. On 6.6 the commit is easy to revert, but on master a lot has happened on top of that
-> change.
-> 
-> As far as I can tell, the reason is that hrtimer_cancel() tries to cancel the timer synchronously,
-> which will deadlock when called from the hrtimer callback itself (hrtimer_callback -> m_can_isr ->
-> m_can_disable_all_interrupts -> hrtimer_cancel).
-> 
-> I can try to come up with a fix, but I think you are much more familiar with the driver code. Please
-> let me know if you need any more information.
-> 
-> Best regards,
-> Matthias
-> 
-> 
+>
+> > +     uclamp_max_fits =3D !uclamp_max_fits && (uclamp_max <=3D capacity=
+_actual);
+> >       fits =3D fits || uclamp_max_fits;
+> >
+> >       /*
+> > @@ -5086,8 +5086,7 @@ static inline int util_fits_cpu(unsigned long uti=
+l,
+> >        * handle the case uclamp_min > uclamp_max.
+> >        */
+> >       uclamp_min =3D min(uclamp_min, uclamp_max);
+> > -     if (fits && (util < uclamp_min) &&
+> > -         (uclamp_min > get_actual_cpu_capacity(cpu)))
+> > +     if (fits && (util < uclamp_min) && (uclamp_min > capacity_actual)=
+)
+> >               return -1;
+> >
+> >       return fits;
+> > --
+> > 2.25.1
+> >
 
