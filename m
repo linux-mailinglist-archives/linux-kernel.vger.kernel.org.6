@@ -1,126 +1,135 @@
-Return-Path: <linux-kernel+bounces-236798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16D8691E73E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:14:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6E8B91E740
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:15:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48E571C21A90
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:14:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6336FB22890
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE79116EBF8;
-	Mon,  1 Jul 2024 18:14:00 +0000 (UTC)
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878F016CD1E;
+	Mon,  1 Jul 2024 18:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="ViFKjOnO"
+Received: from mx1.riseup.net (mx1.riseup.net [198.252.153.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA42516D4E6;
-	Mon,  1 Jul 2024 18:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3618BBA34
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 18:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719857640; cv=none; b=FxlAAw76JEdbhZychRyxBwkmNa96rxlja0bSzwdJlal2Un05myUcyOMLXcJAgzy623KLOQJuaXPE0SX+4vw0vfsMdPP2RgcEHhfnqNu+LghyKD/JSZ1HXFgLJZ5+dUfTTa6Yp8FEljRrgZpgOIz27j8mV7LJGvWba1dxw0jXf5g=
+	t=1719857717; cv=none; b=NUfrg9iin743i6NwDNmw6Zdjzi1ZAemi6h5ZD+jZu0iP+Xgj+05HSQHqA9UbVmy2GcCOczPbT1RoKqAPqglxLh+2KnMmytkFCgJ63LlavUZUlddq0xbC/6E+4585vd+MeM5kj5JRrhRAEllqhklLeJDcjeEV0ZKWjzxWrpoIFwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719857640; c=relaxed/simple;
-	bh=SJzzdOWtUni41BKj5bL292iqR628aFrzwxBvh2EIk2s=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=NBxRQacg0ISOz/Nwg+IIQSh2gFW2sZG7vjMwUVx0bYmhHF35FxRmPYqRGaYgExFsxXfqIfF//IZ7VtH78ZSVo18x/PNxanXOHBymPZF48a46Np7yrRskpQ86WCdnVVOd7nUS6wjZD4GfvvYQGCTmutTK1nxqA9IjtzCvQuflP/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org; spf=pass smtp.mailfrom=ovn.org; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ovn.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id ABEC9FF802;
-	Mon,  1 Jul 2024 18:13:53 +0000 (UTC)
-Message-ID: <8cdb8979-b0e4-4d61-b386-550dc7ee3def@ovn.org>
-Date: Mon, 1 Jul 2024 20:13:52 +0200
+	s=arc-20240116; t=1719857717; c=relaxed/simple;
+	bh=QseJPPx4W8bBEr4BuyPO9KS4jwHMWSvIQx0Jjb5czes=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=PYwcK24ZwlemralPhkjGCMJvoI4GFYjnRLo1RtqGSAmAVTTzucp2JYMTkPoUr1pmP7FfoR80/mbzUDi8wQZyOY0ewBC1cHIJPWyp3j4PT0dhznGzJ6ZRD56AzNuqGhf2/EuxrDH7fNxJHt38PV0l1AtidmCM7OX/QW1HDIh4ZVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=ViFKjOnO; arc=none smtp.client-ip=198.252.153.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
+Received: from fews02-sea.riseup.net (fews02-sea-pn.riseup.net [10.0.1.112])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx1.riseup.net (Postfix) with ESMTPS id 4WCZ2p6TY9zDql0;
+	Mon,  1 Jul 2024 18:15:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
+	t=1719857715; bh=QseJPPx4W8bBEr4BuyPO9KS4jwHMWSvIQx0Jjb5czes=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=ViFKjOnO1J7b4+dF7tTtyUkBPGc4Tk973LbW2yQExKo+DpzjGs+4QcpDRsOg06F3p
+	 o9Lan3T4ShOXKGZCEvMRxqnlY3ZaaPjqVPcunhPdbhS0/XncmV05Y85BlZrxPqgre8
+	 XXD8u/qTXDyTwCZX9HaVFUM4zn2xY3/MfqpeCGUg=
+X-Riseup-User-ID: B88A74BDAAC8086B44F20CFA023858B79A3E2131DF8C1106D6E7EEC07A09B213
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	 by fews02-sea.riseup.net (Postfix) with ESMTPSA id 4WCZ2f6YYFzFtKB;
+	Mon,  1 Jul 2024 18:15:06 +0000 (UTC)
+Message-ID: <2969cd21-5915-46fb-b4f0-c584100c15b1@riseup.net>
+Date: Mon, 1 Jul 2024 15:15:04 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: i.maximets@ovn.org, aconole@redhat.com, echaudro@redhat.com,
- horms@kernel.org, dev@openvswitch.org,
- Donald Hunter <donald.hunter@gmail.com>, Jakub Kicinski <kuba@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Pravin B Shelar <pshelar@ovn.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v7 05/10] net: openvswitch: add psample action
-To: Adrian Moreno <amorenoz@redhat.com>, netdev@vger.kernel.org
-References: <20240630195740.1469727-1-amorenoz@redhat.com>
- <20240630195740.1469727-6-amorenoz@redhat.com>
+Subject: Re: [PATCH v8 00/17] drm/vkms: Reimplement line-per-line pixel
+ conversion for plane reading
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+ Melissa Wen <melissa.srw@gmail.com>,
+ Haneen Mohammed <hamohammed.sa@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, rdunlap@infradead.org,
+ arthurgrillo@riseup.net, Jonathan Corbet <corbet@lwn.net>,
+ pekka.paalanen@haloniitty.fi, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com,
+ miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com,
+ seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com,
+ Pekka Paalanen <pekka.paalanen@collabora.com>,
+ =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+References: <20240516-yuv-v8-0-cf8d6f86430e@bootlin.com>
+ <ZoKpwWaX4LGqLC04@louis-chauvet-laptop>
 Content-Language: en-US
-From: Ilya Maximets <i.maximets@ovn.org>
-Autocrypt: addr=i.maximets@ovn.org; keydata=
- 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
-In-Reply-To: <20240630195740.1469727-6-amorenoz@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: i.maximets@ovn.org
+From: Maira Canal <mairacanal@riseup.net>
+In-Reply-To: <ZoKpwWaX4LGqLC04@louis-chauvet-laptop>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 6/30/24 21:57, Adrian Moreno wrote:
-> Add support for a new action: psample.
-> 
-> This action accepts a u32 group id and a variable-length cookie and uses
-> the psample multicast group to make the packet available for
-> observability.
-> 
-> The maximum length of the user-defined cookie is set to 16, same as
-> tc_cookie, to discourage using cookies that will not be offloadable.
-> 
-> Acked-by: Eelco Chaudron <echaudro@redhat.com>
-> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
-> ---
->  Documentation/netlink/specs/ovs_flow.yaml | 17 ++++++++
->  include/uapi/linux/openvswitch.h          | 28 ++++++++++++++
->  net/openvswitch/Kconfig                   |  1 +
->  net/openvswitch/actions.c                 | 47 +++++++++++++++++++++++
->  net/openvswitch/flow_netlink.c            | 32 ++++++++++++++-
->  5 files changed, 124 insertions(+), 1 deletion(-)
+Hi Louis,
 
-Thanks for addressing the comments!  The new name also
-seems reasonable to me.
+On 7/1/24 10:06, Louis Chauvet wrote:
+> Hi everyone,
+> 
+> I sent this iteration over a month ago, and I haven't received any
+> feedback since then. The same goes for the two other series [1] and [2],
+> which I sent after discussing with Melissa.
 
-Reviewed-by: Ilya Maximets <i.maximets@ovn.org>
+As you may know, Melissa is stepping down on her maintainership duties
+for VKMS [1].
+
+> 
+> I'm a bit surprised that nothing has been reviewed or merged, as Maíra
+> mentioned in [3] that she wanted to merge at least the first 11 patches. I
+> just checked, and this series applies to drm-misc-next. However, if you
+> encounter any issues, I can send a rebased version.
+
+I want to get the series merged, but, as me and Melissa pointed out last
+XDC, we are volunteers. AFAIK VKMS has been maintained by volunteers
+since its beginning. We are doing our best to maintain VKMS, but we do
+it in our free time.
+
+I need to take some time to review and test this series properly. Then,
+I can push it to drm-misc-next.
+
+> 
+> As you can see, I have more series ready ([2], [3]), and I am working on
+> additional features (configfs [4], variable refresh rate, mst...).
+> However, I am currently waiting for feedback on this series before
+> proceeding further with the next topics.
+> 
+> What should I do to move those series forward?
+
+I appreciate the work you are doing for VKMS. But, apart from adding new
+features, we first need to ensure that VKMS is stable. Also, when
+reviewing new features, I need to make even more tests to make sure that 
+everything is still stable. Therefore, it is a slow process, but I hope
+we can start to move forward.
+
+[1] 
+https://lore.kernel.org/dri-devel/20240525142637.82586-1-melissa.srw@gmail.com/
+
+Best Regards,
+- Maíra
+
+> 
+> Best regards,
+> Louis Chauvet
+> 
+> [1]: https://lore.kernel.org/all/20240516-b4-new-color-formats-v1-0-74cf9fe07317@bootlin.com/
+> [2]: https://lore.kernel.org/all/20240516-writeback_line_by_line-v1-0-7b2e3bf9f1c9@bootlin.com/
+> [3]: https://lore.kernel.org/all/c83255f4-745e-43e6-98e0-2e89c31d569a@igalia.com/
+> [4]: https://github.com/Fomys/linux/tree/b4/new-configfs
+> 
 
