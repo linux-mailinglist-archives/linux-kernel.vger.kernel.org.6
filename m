@@ -1,94 +1,80 @@
-Return-Path: <linux-kernel+bounces-235496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7086A91D5D0
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 03:35:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EC9A91D5D2
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 03:37:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BFD81C20F10
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 01:35:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AC6F1F216B7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 01:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E912847B;
-	Mon,  1 Jul 2024 01:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7208A882B;
+	Mon,  1 Jul 2024 01:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aLlcnuhG"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jYSOHuVO"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5437A847C;
-	Mon,  1 Jul 2024 01:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5F079C0
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 01:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719797718; cv=none; b=o3jqgIvg2Vd2RF7VVphxGMbKKwH4Q+vFFktFm1+fhq7MbpSf6H6uIfHzXbMS0QVncNP70OQ3V7o/Lv/WYiGUpKNyPh387RN2mWPSCr9mecUL7I/BCd/a2TK+CBVPtQrAPfHZ2zgPUATqSi9Ld7oAbTB8xNOnWyyNx7/sR0lMHOE=
+	t=1719797857; cv=none; b=l6b5NdhUrOqC+fGfawBZ2hahKu7rjz6E/AGTaAWx2Ve+nQF3j0vBxYMD4B66RoBE0mJRl/46Tf92FSHmAoDJbOhRp8lmvxIpjzjWDrGNDWMqoeqMfHstiaZW5UjArf6aY6qoSC04wGm9uP7vrXl6iNojA6osCyKpSptBqXry+2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719797718; c=relaxed/simple;
-	bh=QXGvyv4dc/C594KPbdWqh+erqMWMNESAXYjWqoBFgok=;
+	s=arc-20240116; t=1719797857; c=relaxed/simple;
+	bh=azwbFdwsMUU4k6HYmVyPxOBWH1A6/l1hVBXoZKbQCPo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VuPy9gVqNRn4MDA5BhzPgrj8YC91YiMtNcNK/6TNT6ThD13yf/dZZZRjy2DhCiQ4i624Rev/Gp/r5G+zibAilONRPgeA5+UN2Z53a1309KEztT6zP7enP7scN4WsHqpGJN0xaORGuFhYVD/D+N0MyS32IDPwfKdP/QrDu9UXu58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aLlcnuhG; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70670188420so1484147b3a.2;
-        Sun, 30 Jun 2024 18:35:17 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ODdhufMKqdbpyvABDHW0ncgjM1+Hs1nvYsR+QPz/O17jKCEWYo9imcepo2gbOvW7PpVPs9FJBmpED8Sr8xYEDgk45dHihij22R+W08vnkR1bsHw0wBseepHPyeA+iqpbR0Hk1LJVLlQC5drNhzkq0ypXuTKocBdNWUdMBgFd/g4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jYSOHuVO; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2c80637ee79so1445747a91.0
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 18:37:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719797716; x=1720402516; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1719797855; x=1720402655; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TQQn1j58t9nLeF0b2LNufFZwTiFUhCHzGVW8dgiIQ9I=;
-        b=aLlcnuhGKDvyNQy8xRE2iaw9M5NakdoXst+exs7XSIAwZ1YcpcOKu+kXOI5H3xFiem
-         GfwQHOWSVQFaytYcQ2mOGTpwR9CB7/FG6jSeOYTd8/IAEhS3XvYMrrsU9MoO74N5Bw2u
-         Rb2J5b9V0sqNsZXrcZ+y8B31n1Uw2vzhXEWIE17v/5LdUVT/4zJ4F7ImJWl7oeXT6uvM
-         WBz19+jL+mVDtvpCWBLcZW3SgUnw4zQ6CvWEi2B0Qbk6WFzQ93SuoQ+Bi2u1HLwv4loD
-         1otAKNszABaFNcvhHIQy4odRhi0JE2LvWPL5B9vhXv6a4yiRAOCSYbcgTAiuUuRQu+Dc
-         sM6g==
+        bh=azwbFdwsMUU4k6HYmVyPxOBWH1A6/l1hVBXoZKbQCPo=;
+        b=jYSOHuVOEbcmr+JhGtF0xpmlEzV4AKnbM8qnBZXevF5t6Wd9BFjmv9tEpnNMB+ebnV
+         vor7fUNcXA5l68zv9lBc50kSQcCo50JHTSfdf5SDHtBVaQudRCm50iLlWwMaC6+92bod
+         8YlQZDr9ZJLVqGoP0YN78wcVg4iZieeCgT5+U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719797716; x=1720402516;
+        d=1e100.net; s=20230601; t=1719797855; x=1720402655;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TQQn1j58t9nLeF0b2LNufFZwTiFUhCHzGVW8dgiIQ9I=;
-        b=ZIE4piozPvS1NMgoU+5La0O6FK+xBEPLRK7Dg80Mf7Pg6U0xezHTyuE78XWOdpRg09
-         fegsrDpgcTN12ulVlZQD/v1tsJ81MQR2hdXcLPIIxN3GSRH9PD+YR7/F6+YZotLutUGR
-         ljOZILaKh9vP74pXIMd5PNWtpfWrYBJThUhFFXT/KIMqVx5i+I7ADPtgqbUVLbN5t1SN
-         c3+TuZqYb6v0BOlD6gVYS4lO51Tzlrz3GkMuj+rCNlyIEYagWC6LRiD0f7HQ4K86jSib
-         3oxYP0ExNAPS/+tCBP49WQ/y65KXhqnj8qEt3/w661jSD5J88xGwgNnlfskGxAwbrDAG
-         rNpw==
-X-Forwarded-Encrypted: i=1; AJvYcCWoaY7bFi1FiJgNYh0HEMiqJhh78TfvCqooNgcoq3lldiMm1nSeFkfapFcMyPw7fKiYS1kE9IL7i5ELh7mWAETG5tx/f0YSL/czuyKPJ3spJuNQkfzp5EDpBzL/K2aBsItdjpf1EXgjPWyFwt8IZTQUwY6dgFoXLIaxxb1S1wxdsCefvMQH
-X-Gm-Message-State: AOJu0YyZdfs4+xMqG6cGdyEXVrUWtiCetgkdCj7XmKtTVdDx34ZqsC68
-	uQz6wrHNXshZYF2yuMi60NKIKFCZIiLYCMJLsfQrR+lYjKIe60V9
-X-Google-Smtp-Source: AGHT+IFBK4tz7vP4nvoPFyP+apmogncqsE6QoVtl2tcv/PWC9oXL42qPiAGp55B55QszY0izCcu8kA==
-X-Received: by 2002:a05:6a00:3e1d:b0:706:a87f:98ae with SMTP id d2e1a72fcca58-70aaadd0e01mr3447630b3a.24.1719797716258;
-        Sun, 30 Jun 2024 18:35:16 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:7783:69e6:8487:f6ab])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-708045ac8b2sm5267910b3a.183.2024.06.30.18.35.14
+        bh=azwbFdwsMUU4k6HYmVyPxOBWH1A6/l1hVBXoZKbQCPo=;
+        b=vN3ysmUe+b5k7saH7glpqAqYegxmXCneDigI/jCseD44xNUFRaODqQDRE8a7v1BRO4
+         t2ryr7yJf8kjDBxvgUai/NOv6w6Yq4WVQQmeIbLa2+7eWcIXgBg0rWbClCjWc5OF1Clf
+         s2OlnloeyIX+SoJEx5VDlPu2eNkj5hBHB5rwfYnFnbBuyj98qYNDF+TDO7TgK1aNtZkm
+         JwNlOXW52zRImppV0BIvfKoCbY9h3ZwDB32RHzXHByVsZ4tyULKWX9X9NU0MzT0DktrI
+         Wa9HhH95EN/+zQLptlDDdxf2QsFv+u1Rs2M54g6dh3seU12AieNsAiQC5uDWno0TQJKt
+         reCg==
+X-Forwarded-Encrypted: i=1; AJvYcCWADFfwZMoPxPilce0kkl0B9c19f6t15gm8NAUa1rhJHE8nAP7tFwbX+Sx+Ax7SCa+0PrINXHJR4u8JsBgzytXqGSJVTTWatKqBHvu0
+X-Gm-Message-State: AOJu0YxGAfsepxNWfEEJVkWt+9gWE/7m44FKg5LqMVygZomHAaUNRKUF
+	lvbJC1Ydapcg8dv/xk/xiRhMohSCrRGi4E5HerGkDepxnxbIoJe7IhDXu39V6ResjsoMV421syu
+	9Hg==
+X-Google-Smtp-Source: AGHT+IED3Z9xukW/wlLLei7aTGWggDhQMuD78NJA+LS/lSNy3ZVDA9IaFofzyP0kk2vOjCsYqPCtaQ==
+X-Received: by 2002:a17:90b:3718:b0:2c7:146e:a207 with SMTP id 98e67ed59e1d1-2c93d751c4fmr1646834a91.22.1719797855627;
+        Sun, 30 Jun 2024 18:37:35 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:132b:a86a:a9d0:d7fd])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91d3bf20dsm5445367a91.39.2024.06.30.18.37.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Jun 2024 18:35:15 -0700 (PDT)
-Date: Sun, 30 Jun 2024 18:35:12 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: Daisuke Nojiri <dnojiri@chromium.org>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Reka Norman <rekanorman@chromium.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Gwendal Grignou <gwendal@chromium.org>,
-	Pavan Holla <pholla@chromium.org>,
-	Lukasz Majczak <lma@chromium.org>,
-	Ching-Kang Yen <chingkang@chromium.org>,
-	Stephen Boyd <swboyd@chromium.org>,
-	Prashant Malani <pmalani@chromium.org>,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 2/2] dt-bindings: cros-ec-keyboard: Add keyboard
- matrix v3.0
-Message-ID: <ZoIH0FfNGAZPgCCi@google.com>
-References: <cover.1719531519.git.dnojiri@chromium.org>
- <9ae4d96cc2ce8c9de8755b9beffb78c641100fe7.1719531519.git.dnojiri@chromium.org>
- <ZoFM9QJVp3cpf012@tzungbi-laptop>
+        Sun, 30 Jun 2024 18:37:35 -0700 (PDT)
+Date: Mon, 1 Jul 2024 10:37:31 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Chengming Zhou <chengming.zhou@linux.dev>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	akpm@linux-foundation.org, minchan@kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] mm/zsmalloc: fix class per-fullness zspage counts
+Message-ID: <20240701013731.GA3232210@google.com>
+References: <20240627075959.611783-1-chengming.zhou@linux.dev>
+ <20240628005523.GC15925@google.com>
+ <20240628010812.GD15925@google.com>
+ <caf4b05d-6adf-4976-9961-fa30d3a9969c@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,24 +83,13 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZoFM9QJVp3cpf012@tzungbi-laptop>
+In-Reply-To: <caf4b05d-6adf-4976-9961-fa30d3a9969c@linux.dev>
 
-Hi Tzung-Bi,
+On (24/06/28 11:19), Chengming Zhou wrote:
+> Andrew, could you please help to change the subject as Sergey asked?
+> Sorry, I should have noted these details in the changelog when I wrote
+> this subject.
 
-On Sun, Jun 30, 2024 at 08:17:57PM +0800, Tzung-Bi Shih wrote:
-> On Thu, Jun 27, 2024 at 04:53:08PM -0700, Daisuke Nojiri wrote:
-> > Add support for keyboard matrix version 3.0, which reduces keyboard
-> > ghosting.
-> 
-> Dmitry,
-> 
-> I saw your R-b tag of the patch.  Would you like to apply the patch
-> through chrome-platform tree?
-
-Yes, I think that would be the best.
-
-Thanks.
-
--- 
-Dmitry
+Chengming, can I ask you to resend these patches with a proper commit
+message?
 
