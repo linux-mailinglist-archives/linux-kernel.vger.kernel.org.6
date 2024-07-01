@@ -1,137 +1,125 @@
-Return-Path: <linux-kernel+bounces-236586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 594DF91E45A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:41:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8FBF91E484
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:47:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D0891C23153
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:41:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAF1F1C2162F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6621916D31A;
-	Mon,  1 Jul 2024 15:41:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A1D16D4D4;
+	Mon,  1 Jul 2024 15:47:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m5f3GDVt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="krz8D/e2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5206053AC;
-	Mon,  1 Jul 2024 15:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C203126F1E;
+	Mon,  1 Jul 2024 15:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719848498; cv=none; b=Frs2gIWx7AJmbxp40MW7cSlbFRWPVPHJYpP3mgTdwToyrmfrVoAwXAFGEH9bLEsCKN7ILZulbGTlHhzXMV2Jy8LUYBHMUg1cKPqvZGGO4OLzXh2UwlMYvO3UhgJvSwZcIF5hbN5u0HhgcXWCmgjHXHjY+a/MV0Y3zusAOwemY9Q=
+	t=1719848836; cv=none; b=ldJDkcIao3thIYQicIbpzImCaQLHOeEwHmkff8YWWvG3NQs0GARmZUpCTQzmPzHScLeqgHzEtlfZLJDSi+3DK2d06f6ZS6dNfSoWM8Nmzp+02305MwmvhZ0keeddb1c/yMKbsiIF3ykRw4NtM432nkGXPuRwW+lCUHeKvPvczts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719848498; c=relaxed/simple;
-	bh=y4/4hoQ8Bg4wG8GNer7UrOuI1EBVEk3lTJGhZjRtEc0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DCiEKrtk3l1prJWCWOBcWU8NgE3PPzlwnihEiznhL1+4EwTQUtYlHZXwE41D/b+PhJ6tbyxK1lmpj53knojJzVIuVsMr9X7okbScNuUJf6gBE1rBeqAVdsln/iYJ4ZDrQfZ5+hLEXeVGFPnu8H+1cXjvKqQ6HRj14QY3IZ57oAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m5f3GDVt; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719848497; x=1751384497;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=y4/4hoQ8Bg4wG8GNer7UrOuI1EBVEk3lTJGhZjRtEc0=;
-  b=m5f3GDVtHXFXHKNxRx+Y3aRefH9drdkH3/aDmyj9cmezfmtZI2MNUDxW
-   HqDNHuby/bZKpW/NTH9uk+AlIMqj5JcnygHp6EggGFjNzdQViq50ywmJE
-   1QQRFUb+QaazdCuLtO/CJgyBkTc2+ib2j5IrY08YsJH7FLiwDjt2AlYV/
-   6KOBkcfNprEIbMEI0xo9RroOldS2KuehBqMO97GsE/gFh2YI1t2LNS+4d
-   +iaXlqFUDHfcS6jpWX34c+1lUYkEwBMLFR3GaylXovXWtLC3FoYDtIrn8
-   trk5+9Z0IZ4D9orMLnk5sRR1SNPA7Rc6A6GHhMTttF3pFoU4+xrroDXiy
-   w==;
-X-CSE-ConnectionGUID: N4x7vwyPR2ukdeByb9rrLQ==
-X-CSE-MsgGUID: 6JcSTg1MTSW8mgB4zPZPNA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="17111794"
-X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
-   d="scan'208";a="17111794"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 08:41:35 -0700
-X-CSE-ConnectionGUID: 6N8iEaWWQmSrO2R39EsDmg==
-X-CSE-MsgGUID: 0LZZkzlpS2y5FOD3Bdbs9g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
-   d="scan'208";a="45460970"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.54.39.125])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 08:41:34 -0700
-Date: Mon, 1 Jul 2024 08:46:46 -0700
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-To: Zeng Guang <guang.zeng@intel.com>
-Cc: X86 Kernel <x86@kernel.org>, Sean Christopherson <seanjc@google.com>,
- LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Dave Hansen <dave.hansen@intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Xin Li
- <xin3.li@intel.com>, linux-perf-users@vger.kernel.org, Peter Zijlstra
- <peterz@infradead.org>, Paolo Bonzini <pbonzini@redhat.com>, Tony Luck
- <tony.luck@intel.com>, Andy Lutomirski <luto@kernel.org>, acme@kernel.org,
- kan.liang@linux.intel.com, Andi Kleen <andi.kleen@intel.com>, "Mehta,
- Sohil" <sohil.mehta@intel.com>, jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v3 07/11] KVM: VMX: Handle NMI Source report in VM exit
-Message-ID: <20240701084646.268bfc86@jacob-builder>
-In-Reply-To: <eeaf0647-e165-4736-97d0-a2856875c59d@intel.com>
-References: <20240628201839.673086-1-jacob.jun.pan@linux.intel.com>
-	<20240628201839.673086-8-jacob.jun.pan@linux.intel.com>
-	<eeaf0647-e165-4736-97d0-a2856875c59d@intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719848836; c=relaxed/simple;
+	bh=cgDZXg9wLV4DysNwoHJXiG7s2kLDhDus3KCRIoKm4lM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BWRFmr07uze4VbzNQ2/GW9qzTHshUGBjrsBRCxrNXxTmK1bPA0MdjEfdIdL1By/aDzumAecyR25tr2dMNweYjou3IJxEchBP7aP2oAmfGXhU+kw6B3TX/otLMKpUigY6XW07K83UB2JpB8pXPTHAwZ54JeG54ux9Euuz/tDwlZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=krz8D/e2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF920C116B1;
+	Mon,  1 Jul 2024 15:47:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719848835;
+	bh=cgDZXg9wLV4DysNwoHJXiG7s2kLDhDus3KCRIoKm4lM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=krz8D/e2ipDBO5Eqmu3QevhSVroIhs2OVp1//t3Ag9V1hq2ZBWicolNkH6qMy79tr
+	 8YNNoErrhdToPxVcuvTNzZhBcJAIKG7JOtwJzB6agQMbxGo0Ol4aLKTYQ6LkYtm72a
+	 HfcxUCHLLkWM8nKYVK/nK54/8TddTRenwgd3fV0lfHeIzN1TvJk5xZjeN30rK+IBif
+	 tTUUkSO5OK/OuuQsu7ELTkrQ8ajPgQ0ulyuc8Xa6SoV5u619n13MDoLjVNpOqTXv5h
+	 0RSvDCzn26xA37SQ19ewY/HMgsNFFKwll93Ny6ST3ifVBKkoMJay2azP8dXmja6IYO
+	 Aagzf4ZeBAS1w==
+Date: Mon, 1 Jul 2024 16:47:10 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Alex Vdovydchenko <keromvp@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sean Anderson <sean.anderson@linux.dev>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-i2c@vger.kernel.org, Alex Vdovydchenko <xzeol@yahoo.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: hwmon: Add MPS mp5920
+Message-ID: <20240701-mug-scuttle-dfe4c84b4e0b@spud>
+References: <20240701145603.1507516-1-xzeol@yahoo.com>
+ <20240701145603.1507516-2-xzeol@yahoo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="OOkMTkyQ+HJ7f1to"
+Content-Disposition: inline
+In-Reply-To: <20240701145603.1507516-2-xzeol@yahoo.com>
 
 
-On Sun, 30 Jun 2024 21:04:18 +0800, Zeng Guang <guang.zeng@intel.com> wrote:
+--OOkMTkyQ+HJ7f1to
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On 6/29/2024 4:18 AM, Jacob Pan wrote:
-> > From: Zeng Guang <guang.zeng@intel.com>
-> >
-> > If the "NMI exiting" VM-execution control is 1, the value of the 16-bit
-> > NMI source vector is saved in the exit-qualification field in the VMCS
-> > when VM exits occur on CPUs that support NMI source.
-> >
-> > KVM that is aware of NMI-source reporting will push the bitmask of NMI
-> > source vectors as the exceptoin event data field on the stack for then
-> > entry of FRED exception. Subsequently, the host NMI exception handler
-> > is invoked which will process NMI source information in the event data.
-> > This operation is independent of vCPU FRED enabling status.
-> >
-> > Signed-off-by: Zeng Guang <guang.zeng@intel.com>
-> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > ---
-> >   arch/x86/entry/entry_64_fred.S |  2 +-
-> >   arch/x86/kvm/vmx/vmx.c         | 11 ++++++++---
-> >   2 files changed, 9 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/arch/x86/entry/entry_64_fred.S
-> > b/arch/x86/entry/entry_64_fred.S index a02bc6f3d2e6..0d934a3fcaf8 100644
-> > --- a/arch/x86/entry/entry_64_fred.S
-> > +++ b/arch/x86/entry/entry_64_fred.S
-> > @@ -92,7 +92,7 @@ SYM_FUNC_START(asm_fred_entry_from_kvm)
-> >   	 * +--------+-----------------+
-> >   	 */
-> >   	push $0				/* Reserved, must be 0
-> > */
-> > -	push $0				/* Event data, 0 for
-> > IRQ/NMI */
-> > +	push %rsi			/* Event data for IRQ/NMI */
-> >   	push %rdi			/* fred_ss handed in by the
-> > caller */ push %rbp
-> >   	pushf  
-> Move this part to previous patch as it changes the common FRED api and 
-> prepares for nmi handling in case of nmi
-> source enabled in this patch.
-You are right, will do.
->  [...]  
+On Mon, Jul 01, 2024 at 05:56:00PM +0300, Alex Vdovydchenko wrote:
+> Add support for MPS mp5920 controller
+>=20
+> Signed-off-by: Alex Vdovydchenko <xzeol@yahoo.com>
 
+Missing an ack from v2:
+https://lore.kernel.org/all/20240627-swivel-grower-002af077b654@spud/
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
 Thanks,
+Conor.
 
-Jacob
+> ---
+>  Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Doc=
+umentation/devicetree/bindings/trivial-devices.yaml
+> index ff70f0926..cb2fc26d9 100644
+> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
+> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+> @@ -296,6 +296,8 @@ properties:
+>            - mps,mp2975
+>              # Monolithic Power Systems Inc. multi-phase controller mp2993
+>            - mps,mp2993
+> +            # Monolithic Power Systems Inc. multi-phase hot-swap control=
+ler mp5920
+> +          - mps,mp5920
+>              # Monolithic Power Systems Inc. multi-phase hot-swap control=
+ler mp5990
+>            - mps,mp5990
+>              # Monolithic Power Systems Inc. digital step-down converter =
+mp9941
+> --=20
+> 2.43.0
+>=20
+
+--OOkMTkyQ+HJ7f1to
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoLPfgAKCRB4tDGHoIJi
+0o6MAP0ah9d98rZ6tJdV5mXQutgTtJMF5zQNz+Tbp5DwrnxhKAEA6f7FjGXZ7C2e
+yng7aXu7w+jRuBnVFQj2HWB8vBG0Nw0=
+=nK1N
+-----END PGP SIGNATURE-----
+
+--OOkMTkyQ+HJ7f1to--
 
