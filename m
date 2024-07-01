@@ -1,171 +1,94 @@
-Return-Path: <linux-kernel+bounces-236912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CEE791E88C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:27:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A067D91E88E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4A4BB21594
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:26:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D214D1C21747
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4AD016F840;
-	Mon,  1 Jul 2024 19:26:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DA816F855;
+	Mon,  1 Jul 2024 19:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jvZUtmsr"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GfvP3TAt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B4916F0F0;
-	Mon,  1 Jul 2024 19:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20AD16F0F0;
+	Mon,  1 Jul 2024 19:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719862010; cv=none; b=hpfIlhMFugZbQCXX/fane+KV2ay4PrNuVlnnbJDLr9EqCJq9XzKE28dtymqvSuDmS0dn+B+k2p/r0+G+EQ61ocxkk8N9VCkWeUKWpC6M2sPn/9O7xWWERJyxy0cL3S4yEC5e57kZ7RQzghOWCRApHbaAWLlcU4ozRL02H2P49aQ=
+	t=1719862031; cv=none; b=rod+fuub7kVY1VSOJbV8/2iy+qONke6m82ztoU2F3KbXdUN20ly1hudPbCit9zuAzTif0RSJ5p5TH3OXONWNu2owpBbXN5Lm0CabCn2/AuuNoLAlYn7DyG37f0WHUx8D6r3iB72nvmVKaNrAw0FDDkyTK3tkEcTZcfLUIt73SP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719862010; c=relaxed/simple;
-	bh=LHk7eROmcWbnYfS7vGmlALNYA1Wkpd69NP4AeKt/6wQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YZI5FJRzMjGjEU8GAL+qTjnbfQvffYu7tw9bD2O4eGf3T9XmSAnOFgTiA4A+2tXLSWTIPyKqHDX8WKNcP+zo/smF/n9zuy/JeBtiMEBY51svjjqHJAZXWOS1vM05Dg145jF88Bp1ZHjekQ/YCr/Pn3M95jR0/Pbs81M9SUqEKww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jvZUtmsr; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-586de6191c7so67019a12.3;
-        Mon, 01 Jul 2024 12:26:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719862007; x=1720466807; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nfdinNK4I+EoPid1lO74/d3sekkGPezRAAen9ZXKCjo=;
-        b=jvZUtmsr60zdUWJOUoq4MAUY7yHfYztWiMEdxlVQi8yVlQhXlYnqTczsl1JfmB3HYp
-         V9u3Vax4Wpk0glWEJj1wkNnBbh4jXsaZmk9MiQEvNSflefib6laxT72/865hfvZryAQH
-         3UPCn0JMWKpjKbSyXuNVX2E+YXXraM2QnTwwS0gv++RasuxMNj4Y72DqvZraxSvq+7JA
-         7YTetmvY5Ir+lnzlB2P6zod/HQ6hTkuvwqdwRmYTvl0fcdCB7mkG3VGU3l3pw2e3K8xj
-         ZcLZSXFp1AxsG/k3uDGgojbi3NyyB3izfxgJYPSOKM7E9vdcup04gZpWMVGhVbLJH+A5
-         pJNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719862007; x=1720466807;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nfdinNK4I+EoPid1lO74/d3sekkGPezRAAen9ZXKCjo=;
-        b=EYsVZQoH/AXIdsiBNmy5m8QDUQKi/VwyH2iB33xibIOaS87HP+meZPNJmOC8TCs5QB
-         71ABI+3UMoUODOEgXo4P3wGYecSFd7gayRv/QGWBQqgFJu1hx8yr2bE0Evot1uYFPAiy
-         YQHpiO8j+EzvPNqQJtf1DGNA1ZqF+YB1QUoewJN8ZMggj1GU9milFQ5f+fuy8IM/i4Sb
-         O9p6E1CtU/pFNo5vpmfiQVQ34pyKKgnbWdg3mTZJr0ZMgvLpSuGs6Kc6BW1UMH7Q5Xtd
-         zuJnytO2Pfo4KJ3/Hao5/mnPwBKnM2YAEAnd84sOxZtES9a1NIOYl5I+RZPF0ytHO71m
-         u43w==
-X-Forwarded-Encrypted: i=1; AJvYcCVcoCYyj2SbrvbUBEmtGKNmyFl514SnMv6IFwP3pOZZUltmVC9EZqWWRWpNo6+QHKmeV+moE12ogdHweQ/qh/s6MqMaH66xEYpkUMlm
-X-Gm-Message-State: AOJu0YxDGbOY2f/TvUoHN7+YrX81bT7jW4wXPLhOO//JZtstVIDE4eHb
-	K0vW9gUE4Mjqt95+rOIpllky2Ql0XUPvc+wQRlJW9eQ3RISFzhwD
-X-Google-Smtp-Source: AGHT+IFIldSyzbbCJ+hsZsoZunyrocfc9ycgS0pL5fYmvUqQyAR2jtyv2kjmcAuWJPQInx+F8WFnGA==
-X-Received: by 2002:a05:6402:14d0:b0:58b:e3b:c5db with SMTP id 4fb4d7f45d1cf-58b0e3bcb29mr393220a12.4.1719862006584;
-        Mon, 01 Jul 2024 12:26:46 -0700 (PDT)
-Received: from [192.168.0.103] (p57ba2f9b.dip0.t-ipconnect.de. [87.186.47.155])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58614d50da0sm4761129a12.59.2024.07.01.12.26.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Jul 2024 12:26:46 -0700 (PDT)
-Message-ID: <e4006c92-b5ff-4f28-9cf7-3f5c2a808234@gmail.com>
-Date: Mon, 1 Jul 2024 21:26:45 +0200
+	s=arc-20240116; t=1719862031; c=relaxed/simple;
+	bh=OXbSvK9dxE6Kh54IRK7iqf4AbqeHSzT/rikFY0RySd0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YCpGqwOq0EsAX0W01d+7QKK2ZcBRHPKX0s5iSbDcAOsY9Q0gXAVdLVlGQ0pl829WilmikkFAKErt4lA5ZBFRp0H5Z53RGgTLjAI6xQ/iaIW+REhLBu2qeYlgFVgaH30eXAM+dhlNDWQO2F0MLlEERnWayr3HXATBxkrA2i3wcmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GfvP3TAt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3C40C116B1;
+	Mon,  1 Jul 2024 19:27:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719862031;
+	bh=OXbSvK9dxE6Kh54IRK7iqf4AbqeHSzT/rikFY0RySd0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GfvP3TAt8OMnmuVAnPldXyQlsCzYw9cYOvZVn5ga2pp+9KL0Vch+r7PxCmjzIxP9c
+	 DamY4/LEAeFrffWQgnLbIFqXPjBBgmzyFL4LadxEO/w2vttP0AjdqFpVFUC0IbvBb8
+	 jvZYv5IhqVzJNOGF2THxWxvaSsVaQ2oYGTjXFLvpqUs5dOZpglyY3E0Rs6EixxtPey
+	 T4jSWMIGgG6qwFFGYw+0AKkg5dsjHmZUc7fgwp3U73fhkovXpg8Plxqvk7rtsh3cBa
+	 D8FRTdihEL4QoHy5sdOpDKOeDfAnzIwjq9eMC2/V/b1eHWWxve19GDoGc0t+b2CSjY
+	 jD65v6TNyopXw==
+From: SeongJae Park <sj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/9] Docs/damon: minor fixups and improvements
+Date: Mon,  1 Jul 2024 12:26:57 -0700
+Message-Id: <20240701192706.51415-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] staging: nvec: cannot configure to compile driver for
- testing
-To: =?UTF-8?Q?=C3=81gatha_Isabelle_Chris_Moreira_Guedes?= <code@agatha.dev>
-Cc: linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org, Tom Mounet <tommounet@gmail.com>,
- Julia Lawall <julia.lawall@inria.fr>, Marc Dietrich <marvin24@gmx.de>,
- Greg KH <gregkh@linuxfoundation.org>
-References: <13cd3ec0-0f4f-4119-b2a5-f74e33e3c862@gmail.com>
- <yhpx2piocn5bkzaqec7mdyosb7x5zpws5l52lmx4xnejmr5xeh@6s3oe4cagcen>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <yhpx2piocn5bkzaqec7mdyosb7x5zpws5l52lmx4xnejmr5xeh@6s3oe4cagcen>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 7/1/24 04:13, Ágatha Isabelle Chris Moreira Guedes wrote:
-> Hi!
-> 
-> On Sun, Jun 30, 2024 at 12:37:53PM GMT, Philipp Hortmann wrote:
->> When start make menuconfig
->>
->> and search with / for NVEC I can see:
->>
->> Symbol: MFD_NVEC [=n]
->> Type  : tristate
->>
->>                                         Defined at
->> drivers/staging/nvec/Kconfig:2
->> Prompt: NV Tegra Embedded Controller SMBus Interface
->> Depends on: STAGING [=y] && I2C [=y] && GPIOLIB [=y] && ARCH_TEGRA
->> Location:
->>
->>   -> Device Drivers                                                      (2)
->> -> Staging drivers (STAGING [=y])
->> 	 -> NV Tegra Embedded Controller SMBus Interface (MFD_NVEC [=n])
->> Selects: MFD_CORE [=y]
->>
->>
->> But I cannot jump or go into "NV Tegra Embedded Controller SMBus Interface"
-> 
-> Have you checked whether you have its dependencies enabled?
-> 
-> It seems like you have STAGING, I2C and GPIOLIB, but not ARCH_TEGRA.
-> 
-> Is your kernel configured for the right architecture? Are you using
-> ARCH=arm environment variable? You can do this by running the command:
-> 
-> $ ARCH=arm make menuconfig
-> 
->> In my .config file there is no string "NVEC" at all.
-> 
-> If it's generated by `make menuconfig` and you don't have the
-> dependencies, as far as I can recall it's not supposed to have this
-> string at all.
-> 
->> How to config this driver to be compiled?
-> 
-> I haven't worked much with kernel for ARM-based SoCs, but I think as
-> soon as you have your kernel properly configured for the correct
-> architecture and having all dependencies met  you'll see it there. I
-> just tested and it shows up for me
-> 
+Fixup typos, clarify regions merging operation design with recent
+change, add access pattern snapshot example use case, and improve
+readability of the design document and subsystem documents index by
+reorganizing/wordsmithing and adding links to other sections and/or
+documents for easy browsing.
 
 
-Hi,
+SeongJae Park (9):
+  Docs/mm/damon/design: fix two typos
+  Docs/mm/damon/design: clarify regions merging operation
+  Docs/admin-guide/mm/damon/start: add access pattern snapshot example
+  Docs/mm/damon/design: add links from overall architecture to sections
+    of details
+  Docs/mm/damon/design: move 'Configurable Operations Set' section into
+    'Operations Set Layer' section
+  Docs/mm/damon/design: Remove 'Programmable Modules' section in favor
+    of 'Modules' section
+  Docs/mm/damon/design: add links to sections of DAMON sysfs interface
+    usage doc
+  Docs/mm/damon/index: add links to design
+  Docs/mm/damon/index: add links to admin-guide doc
 
-thanks for the hints. Here the steps I took on my x86_64:
-
-saved my .config file.
-sudo apt install gcc-aarch64-linux-gnu
-export ARCH=arm64
-export CROSS_COMPILE=aarch64-linux-gnu-
-make defconfig
-make menuconfig
-	used / NVEC to find driver(s) and set them all to modules
-make scripts prepare modules_prepare
-make -j6
-make -C . M=drivers/staging/nvec
-
-Thanks for your support.
-
-Bye Philipp
-
-
-
+ Documentation/admin-guide/mm/damon/start.rst |  46 +++++-
+ Documentation/mm/damon/design.rst            | 145 +++++++++++++------
+ Documentation/mm/damon/index.rst             |  22 +--
+ 3 files changed, 152 insertions(+), 61 deletions(-)
 
 
-
-
-
-
-
+base-commit: 32b57f0583f399fc92419cb9db525d7b174d6d77
+-- 
+2.39.2
 
 
