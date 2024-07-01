@@ -1,156 +1,149 @@
-Return-Path: <linux-kernel+bounces-235542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4F0191D665
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 05:02:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F47C91D669
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 05:03:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C97E2814E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 03:02:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82272281AE0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 03:03:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D5FDF42;
-	Mon,  1 Jul 2024 03:02:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6412DEECF;
+	Mon,  1 Jul 2024 03:03:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="Sn105TYe"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DoD2p6q8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32DD0D535
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 03:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B162F4FA;
+	Mon,  1 Jul 2024 03:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719802952; cv=none; b=Y5yaxztTJaQfuIkxj30npVzLVwEMAhFlwK/00r27pn+OF4DWlmeNA7XxsuRdV6v6aYohhyyNYNjAKA3rrTP9pE30umXbMlRtWvshtwHvAD817vpelLgOl9I73tEu3QrjbGs1PIoanxrQiERIwcc5ELpuAqXHGqTMhktVfjT8xh8=
+	t=1719802985; cv=none; b=LgsAZJ/SdFjXaOoAYzdfAxA7rDZlxP3syKolgBNToyecBwhzrKJDDtCy5aQ9nPN9iDXKRSbZPX9nTxu4EFp5TBIOQjsMfJ5bYgZGqTzb+W03ZlJUZQqD4i99/zNWiqGtICkPY81cokR8WJotktFnDpAwYMcysqv0YbSFiDOY1tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719802952; c=relaxed/simple;
-	bh=oQ7rpryzsTz1eIjsSTfHG66pAISA+j+qm8IQAPhoeiM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=U463po32VzDIX8WF7HI4oYoM02wDOHs/zLqn/zbv6XH13svOI5U3YWV1/wNBCcN/kXaC1S3DRtSJZXRJ1RFtuWuhQmtXxniz6THOScQIeqpoJu7YEGYlJU7TjnfInR6RdCawKpWvoKJFmJjiOSIwsUUsLIrLGAI4tbcH8DCTb3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=Sn105TYe; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id E92EF2C02E1;
-	Mon,  1 Jul 2024 15:02:27 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1719802947;
-	bh=oQ7rpryzsTz1eIjsSTfHG66pAISA+j+qm8IQAPhoeiM=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=Sn105TYeAHC/o4B2ZpXE9H8y4jHNxQlG34B/bweYtuUfBMW/y4QoA1NmeXXBB+xkn
-	 fUNOaJdZ6IJQ784GmMpih9vTd3rxW4rLjsZcPtkN+SdSgcEX3Lfu1w32zzedGEDIdH
-	 BnsHTsKAQ/M2uqXSWgXg9030cn/V+VXcH3u4D63XozzUn9GWdYyBJWmFYHPopPZRzF
-	 9UK1AyfpDLNh1CgDkb7aZv+lm2HiQ9P+L0LrETX4gGYeNllRZHtDuuGUzzjCStZvoo
-	 P+83+6yncZBlwJXUNKp6e2GWHrVe34qZSuCgytka4l2UklmvfpgiXKbqIMBQJEvObJ
-	 tDtfWmIAJnrfA==
-Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B66821c430001>; Mon, 01 Jul 2024 15:02:27 +1200
-Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
- svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 1 Jul 2024 15:02:27 +1200
-Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
- svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
- 15.02.1544.011; Mon, 1 Jul 2024 15:02:27 +1200
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: Krzysztof Kozlowski <krzk@kernel.org>, "tglx@linutronix.de"
-	<tglx@linutronix.de>, "robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
-	<conor+dt@kernel.org>, "tsbogend@alpha.franken.de"
-	<tsbogend@alpha.franken.de>, "daniel.lezcano@linaro.org"
-	<daniel.lezcano@linaro.org>, "paulburton@kernel.org" <paulburton@kernel.org>,
-	"peterz@infradead.org" <peterz@infradead.org>, "mail@birger-koblitz.de"
-	<mail@birger-koblitz.de>, "bert@biot.com" <bert@biot.com>, "john@phrozen.org"
-	<john@phrozen.org>, "sander@svanheule.net" <sander@svanheule.net>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, "kabel@kernel.org"
-	<kabel@kernel.org>, "ericwouds@gmail.com" <ericwouds@gmail.com>
-Subject: Re: [PATCH v3 6/9] dt-bindings: interrupt-controller:
- realtek,rtl-intc: Add rtl9300-intc
-Thread-Topic: [PATCH v3 6/9] dt-bindings: interrupt-controller:
- realtek,rtl-intc: Add rtl9300-intc
-Thread-Index: AQHayEsk886ha4dF906RSsJN+a1s27HacQGAgAWqb4CAAFEEgA==
-Date: Mon, 1 Jul 2024 03:02:27 +0000
-Message-ID: <0ffcb229-0feb-4bc8-bbb2-6a9143401e88@alliedtelesis.co.nz>
-References: <20240627043317.3751996-1-chris.packham@alliedtelesis.co.nz>
- <20240627043317.3751996-7-chris.packham@alliedtelesis.co.nz>
- <8a708add-52a7-4189-b0f1-e2a4c83230a9@kernel.org>
- <1b9f9deb-37b9-4be7-9e95-9ee4f95d3d69@alliedtelesis.co.nz>
-In-Reply-To: <1b9f9deb-37b9-4be7-9e95-9ee4f95d3d69@alliedtelesis.co.nz>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <79824120C8E8B746804C9A66ACE85205@atlnz.lc>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1719802985; c=relaxed/simple;
+	bh=nyhn01EuqHL8T1OWGhJk6ZNhVB/UOlqWw6s6S1sIt7s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bE9ljtEm+ukjsPTc1wW2V4bZ0kNiiEcHpybL38vqpYwjF1ee0sDXIIRKsAdiImhQqSfC/3rphGxG83WY2A425oXJsAReMSlJoVEf9bXSZN8pTxL3P1L5CsKy8o+48Ljmu96wPaezChZlXnwh03h48Ncv313iVWoMFaq5gFiLMWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DoD2p6q8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79C41C4AF0B;
+	Mon,  1 Jul 2024 03:03:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719802985;
+	bh=nyhn01EuqHL8T1OWGhJk6ZNhVB/UOlqWw6s6S1sIt7s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DoD2p6q87Diq3qmQGCtzBvh8Pk01XRmjUxHhjbKQ3+xGfub058JAAe108/1Qdam/y
+	 riyP4NQth2xXNLlleq01UfXc4RUrKWHIgEuARvAF8tnOfLAGXUYjd7UNc7rY9UI7fN
+	 DNpdYybZFx1VY2lrr571LaYCe1TFOGuU52OlI6HXgt1NtBOjdR93O7G/LqhjJtmt4k
+	 C+iHjyVEnwEe3uOaQI4OKJxPhiG7BhGBbFQhCtjtlnJ6hMw5YKQbAbrbAMq+LLDlDx
+	 7CnxWQYotEjUPXWqO/2HmwXHiiqVmGNJMuBZh5KyKpSiaUo5JBk6TBzVMfgpY2mJct
+	 KKwkhyBo4ZGaQ==
+Message-ID: <85cebcb9-ce97-43f2-8da5-01c3a745fe2c@kernel.org>
+Date: Mon, 1 Jul 2024 12:03:02 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=CvQccW4D c=1 sm=1 tr=0 ts=66821c43 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=Rk-_PRSAtc41h617atMA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-SEG-SpamProfiler-Score: 0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [bug report] scsi: SATA devices missing after FLR is triggered
+ during HBA suspended
+To: Yihang Li <liyihang9@huawei.com>, cassel@kernel.org
+Cc: James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+ john.g.garry@oracle.com, yanaijie@huawei.com, linux-kernel@vger.kernel.org,
+ linux-scsi@vger.kernel.org, linuxarm@huawei.com, chenxiang66@hisilicon.com,
+ prime.zeng@huawei.com, "linux-pci@vger.kernel.org"
+ <linux-pci@vger.kernel.org>, Bjorn Helgaas <bhelgaas@google.com>
+References: <20240618132900.2731301-1-liyihang9@huawei.com>
+ <0c5e14eb-5560-48cb-9086-6ad9c3970427@kernel.org>
+ <f27d6fa7-3088-0e60-043e-e71232066b12@huawei.com>
+ <b39b4a5b-07b7-483b-9c42-3ac80503120d@kernel.org>
+ <0d9bce26-c45b-5ce1-93c0-ca8af50547ae@huawei.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <0d9bce26-c45b-5ce1-93c0-ca8af50547ae@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-DQpPbiAxLzA3LzI0IDEwOjEyLCBDaHJpcyBQYWNraGFtIHdyb3RlOg0KPg0KPiBPbiAyNy8wNi8y
-NCAxOTo0MSwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToNCj4+IE9uIDI3LzA2LzIwMjQgMDY6
-MzMsIENocmlzIFBhY2toYW0gd3JvdGU6DQo+Pj4gQWRkIGEgY29tcGF0aWJsZSBzdHJpbmcgZm9y
-IHRoZSBpbnRlcnJ1cHQgY29udHJvbGxlciBmb3VuZCBvbiB0aGUNCj4+PiBydGw5MzB4IFNvQ3Mu
-IFRoZSBpbnRlcnJ1cHQgY29udHJvbGxlciBoYXMgcmVnaXN0ZXJzIGZvciBWUEUxIHNvIHRoZXNl
-DQo+Pj4gYXJlIGFkZGVkIGFzIGEgc2Vjb25kIHJlZyBjZWxsLg0KPj4+DQo+Pj4gU2lnbmVkLW9m
-Zi1ieTogQ2hyaXMgUGFja2hhbSA8Y2hyaXMucGFja2hhbUBhbGxpZWR0ZWxlc2lzLmNvLm56Pg0K
-Pj4+IC0tLQ0KPj4+DQo+Pj4gTm90ZXM6DQo+Pj4gwqDCoMKgwqAgQ2hhbmdlcyBpbiB2MzoNCj4+
-PiDCoMKgwqDCoCAtIFVzZSBpdGVtcyB0byBkZXNjcmliZSB0aGUgcmVncyBwcm9wZXJ0eQ0KPj4+
-IMKgwqDCoMKgIENoYW5nZXMgaW4gdjI6DQo+Pj4gwqDCoMKgwqAgLSBTZXQgcmVnOm1heEl0ZW1z
-IHRvIDIgdG8gYWxsb3cgZm9yIFZQRTEgcmVnaXN0ZXJzIG9uIHRoZSANCj4+PiBydGw5MzAwLiBB
-ZGQNCj4+PiDCoMKgwqDCoMKgwqAgYSBjb25kaXRpb24gdG8gZW5mb3JjZSB0aGUgb2xkIGxpbWl0
-IG9uIG90aGVyIFNvQ3MuDQo+Pj4gwqDCoMKgwqAgLSBDb25ub3IgYW5kIEtyenlzenRvZiBvZmZl
-cmVkIGFja3Mgb24gdjEgYnV0IEkgdGhpbmsgdGhlIA0KPj4+IGNoYW5nZXMgaGVyZQ0KPj4+IMKg
-wqDCoMKgwqDCoCBhcmUgYmlnIGVub3VnaCB0byB2b2lkIHRob3NlLg0KPj4+DQo+Pj4gwqAgLi4u
-L2ludGVycnVwdC1jb250cm9sbGVyL3JlYWx0ZWsscnRsLWludGMueWFtbCB8IDE4IA0KPj4+ICsr
-KysrKysrKysrKysrKysrLQ0KPj4+IMKgIDEgZmlsZSBjaGFuZ2VkLCAxNyBpbnNlcnRpb25zKCsp
-LCAxIGRlbGV0aW9uKC0pDQo+Pj4NCj4+PiBkaWZmIC0tZ2l0IA0KPj4+IGEvRG9jdW1lbnRhdGlv
-bi9kZXZpY2V0cmVlL2JpbmRpbmdzL2ludGVycnVwdC1jb250cm9sbGVyL3JlYWx0ZWsscnRsLWlu
-dGMueWFtbCANCj4+PiBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9pbnRlcnJ1
-cHQtY29udHJvbGxlci9yZWFsdGVrLHJ0bC1pbnRjLnlhbWwgDQo+Pj4NCj4+PiBpbmRleCBmYjU1
-OTM3MjQwNTkuLmQwZTViZGY0NWQwNSAxMDA2NDQNCj4+PiAtLS0gDQo+Pj4gYS9Eb2N1bWVudGF0
-aW9uL2RldmljZXRyZWUvYmluZGluZ3MvaW50ZXJydXB0LWNvbnRyb2xsZXIvcmVhbHRlayxydGwt
-aW50Yy55YW1sDQo+Pj4gKysrIA0KPj4+IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRp
-bmdzL2ludGVycnVwdC1jb250cm9sbGVyL3JlYWx0ZWsscnRsLWludGMueWFtbA0KPj4+IEBAIC0y
-NSw2ICsyNSw3IEBAIHByb3BlcnRpZXM6DQo+Pj4gwqDCoMKgwqDCoMKgwqAgLSBpdGVtczoNCj4+
-PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIC0gZW51bToNCj4+PiDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqAgLSByZWFsdGVrLHJ0bDgzODAtaW50Yw0KPj4+ICvCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoCAtIHJlYWx0ZWsscnRsOTMwMC1pbnRjDQo+Pj4gwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoCAtIGNvbnN0OiByZWFsdGVrLHJ0bC1pbnRjDQo+Pj4gwqDCoMKgwqDCoMKgwqAgLSBjb25z
-dDogcmVhbHRlayxydGwtaW50Yw0KPj4+IMKgwqDCoMKgwqDCoMKgwqDCoCBkZXByZWNhdGVkOiB0
-cnVlDQo+Pj4gQEAgLTM1LDcgKzM2LDkgQEAgcHJvcGVydGllczoNCj4+PiDCoMKgwqDCoMKgIGNv
-bnN0OiAxDQo+Pj4gwqAgwqDCoMKgIHJlZzoNCj4+PiAtwqDCoMKgIG1heEl0ZW1zOiAxDQo+PiBN
-aXNzaW5nIG1pbkl0ZW1zIChhcyB0ZXN0aW5nIHdvdWxkIHRlbGwgeW91KQ0KPg0KPiBIbW0gSSBy
-ZWFsbHkgZGlkIHRlc3QgdGhpcy4gRXZlbiBub3cgcnVubmluZw0KPg0KPiBgbWFrZSBBUkNIPW1p
-cHMgTz1idWlsZF9taXBzIA0KPiBEVF9TQ0hFTUFfRklMRVM9cmVhbHRlayxydGwtaW50Yy55YW1s
-OnJlYWx0ZWstcnRsLnlhbWw6cmVhbHRlayxvdHRvLXRpbWVyLnlhbWwgDQo+IGNsZWFuIGR0X2Jp
-bmRpbmdfY2hlY2tgIGRvZXNuJ3Qgc2VlbSB0byB5aWVsZCBhbnkgY29tcGxhaW50cy4gQW0gSSAN
-Cj4gdGVzdGluZyB0aGlzIHByb3Blcmx5Pw0KDQpMb29rcyBsaWtlIHRoZXJlIGlzIGEgZGlmZmVy
-ZW5jZSBiZXR3ZWVuIA0KYERUX1NDSEVNQV9GSUxFUz1yZWFsdGVrLHJ0bC1pbnRjLnlhbWxgIGFu
-ZCANCmBEVF9TQ0hFTUFfRklMRVM9cmVhbHRlayxydGwtaW50Yy55YW1sOnJlYWx0ZWstcnRsLnlh
-bWw6cmVhbHRlayxvdHRvLXRpbWVyLnlhbWxgLg0KDQo+DQo+DQo+Pg0KPj4+ICvCoMKgwqAgaXRl
-bXM6DQo+Pj4gK8KgwqDCoMKgwqAgLSBkZXNjcmlwdGlvbjogdnBlMCByZWdpc3RlcnMNCj4+PiAr
-wqDCoMKgwqDCoCAtIGRlc2NyaXB0aW9uOiB2cGUxIHJlZ2lzdGVycw0KPj4+IMKgIMKgwqDCoCBp
-bnRlcnJ1cHRzOg0KPj4+IMKgwqDCoMKgwqAgbWluSXRlbXM6IDENCj4+PiBAQCAtNzEsNiArNzQs
-MTkgQEAgYWxsT2Y6DQo+Pj4gwqDCoMKgwqDCoCBlbHNlOg0KPj4+IMKgwqDCoMKgwqDCoMKgIHJl
-cXVpcmVkOg0KPj4+IMKgwqDCoMKgwqDCoMKgwqDCoCAtIGludGVycnVwdHMNCj4+PiArwqAgLSBp
-ZjoNCj4+PiArwqDCoMKgwqDCoCBwcm9wZXJ0aWVzOg0KPj4+ICvCoMKgwqDCoMKgwqDCoCBjb21w
-YXRpYmxlOg0KPj4+ICvCoMKgwqDCoMKgwqDCoMKgwqAgY29udGFpbnM6DQo+Pj4gK8KgwqDCoMKg
-wqDCoMKgwqDCoMKgwqAgY29uc3Q6IHJlYWx0ZWsscnRsOTMwMC1pbnRjDQo+Pj4gK8KgwqDCoCB0
-aGVuOg0KPj4+ICvCoMKgwqDCoMKgIHByb3BlcnRpZXM6DQo+Pj4gK8KgwqDCoMKgwqDCoMKgIHJl
-ZzoNCj4+IE5lZWRlZCBpczogbWluSXRlbXM6IDINCj4+DQo+Pj4gK8KgwqDCoMKgwqDCoMKgwqDC
-oCBtYXhJdGVtczogMg0KPj4+ICvCoMKgwqAgZWxzZToNCj4+PiArwqDCoMKgwqDCoCBwcm9wZXJ0
-aWVzOg0KPj4+ICvCoMKgwqDCoMKgwqDCoCByZWc6DQo+Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoCBt
-YXhJdGVtczogMQ0KPj4+IMKgIMKgIGFkZGl0aW9uYWxQcm9wZXJ0aWVzOiBmYWxzZQ0KPj4gQmVz
-dCByZWdhcmRzLA0KPj4gS3J6eXN6dG9mDQo+Pg==
+On 6/24/24 21:10, Yihang Li wrote:
+>> Thank you for the explanation, but as Niklas said, it would be a lot easier for
+>> me to recreate the issue if you send the exact commands you execute to trigger
+>> the issue. E.g. "suspend all disks" in step a can have a lot of different
+>> meaning depending on which type os suspend you are using... So please send the
+>> exact commands you use.
+>> is what exactly ? autosuspend ? or something else ?
+
+I am failing to recreate the exact same issue. I do see a lot of bad things
+happening though, but that is not looking like what you sent. I do endup with
+the 4 drives connected on my HBA being disabled by libata as revalidate/IDENTIFY
+fails. And even worse: I hit a deadlock on dev->mutex when I try to do "rmmod
+pm80xx" after running your test.
+
+I am using a pm80xx adapter as that is the only libsas adapter I have.
+
+I think your test just kicked a big can of worms... There seem to be a lot of
+wrong things going on, but I now need to sort out if the problems are with the
+pm80xx driver, libsas, libata or sd. Probably a combination of all.
+
+ATA device suspend/resume has been a constant source of issues since scsi layer
+switched to doing PM operations asynchronouly. Your issue is latest one.
+This will take a while to debug.
+
+> In step a, I suspend all disks by issuing the following command to all disks
+> attached to the SAS controller 0000:b4:02.0:
+> [root@localhost ~]# echo auto > /sys/devices/pci0000:b4/0000:b4:02.0/host6/port-6:0/end_device-6:0/target6:0:0/6:0:0:0/power/control
+> [root@localhost ~]# echo 5000 > /sys/devices/pci0000:b4/0000:b4:02.0/host6/port-6:0/end_device-6:0/target6:0:0/6:0:0:0/power/autosuspend_delay_ms
+> ...
+> [root@localhost ~]# echo auto > /sys/devices/pci0000:b4/0000:b4:02.0/host6/port-6:6/end_device-6:6/target6:0:6/6:0:6:0/power/control
+> [root@localhost ~]# echo 5000 > /sys/devices/pci0000:b4/0000:b4:02.0/host6/port-6:6/end_device-6:6/target6:0:6/6:0:6:0/power/autosuspend_delay_ms
+
+This works as expected on my system and I see my drives going to sleep after 5s.
+
+> Step b, Suspend the SAS controller:
+> [root@localhost ~]# echo auto > /sys/devices/pci0000:b4/0000:b4:02.0/power/control
+
+This has no effect for me. Can you confirm that your controller is actually
+sleeping ? I.e., what do the following show ?
+
+cat /sys/devices/pci0000:b4/0000:b4:02.0/power/runtime_active_kids
+cat /sys/devices/pci0000:b4/0000:b4:02.0/power/runtime_status
+
+?
+
+> At this point, the SAS controller is suspended. Next step c is trigger PCI FLR.
+> [root@localhost ~]# echo 1 > /sys/bus/pci/devices/0000:b4:02.0/reset
+
+What does
+
+cat /sys/bus/pci/devices/0000:b4:02.0/reset_method
+
+is on your system ?
+
+Mine is "bus" only.
+
+>>> The issue 2:
+>>> a. Suspend all disks on controller B.
+>>> b. Suspend controller B.
+>>> c. Resuming all disks on controller B.
+>>> d. Run the "lsmod" command to check the driver reference counting.
+
+What is the reference count before you do step (a), after you run step (b) and
+at step (d) ?
+
+For my system using the pm80xx driver, I get:
+
+pm80xx                352256  0
+libsas                155648  1 pm80xx
+
+before and after, and that is all normal. But there is the difference that
+suspending the pm80xx controller does not seem to be supported and does nothing.
+
+-- 
+Damien Le Moal
+Western Digital Research
+
 
