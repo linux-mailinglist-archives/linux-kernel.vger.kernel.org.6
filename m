@@ -1,132 +1,158 @@
-Return-Path: <linux-kernel+bounces-235670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06F7391D82C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:41:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3B5B91D82F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:42:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 394D11C20E76
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 06:41:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B9D21F232D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 06:42:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC084C634;
-	Mon,  1 Jul 2024 06:41:17 +0000 (UTC)
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74E84C634;
+	Mon,  1 Jul 2024 06:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="w6fJcxG6"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A0A4A0F;
-	Mon,  1 Jul 2024 06:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44B94A0F;
+	Mon,  1 Jul 2024 06:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719816077; cv=none; b=mnLPBVLozrM+To6bfn0Q7wyC1Ajy08LFWvlEn7JRoa2Kp6kRgSCXiPmMSWbM5zfIMD8zmVJO9emFB1kLbt6WC7wRejAhcWwaj17fBfZg9BxDesJp3n7ipVDHQ1w0S2jmysWF99OMJXxHOkP21B5sQh03Is4XQzUsVWgsshRPdwc=
+	t=1719816140; cv=none; b=lbk2/szTw9hWLZpe2PSLYUqUlAs0y+qVBdf+XsKpqMnio6K7W5jHkZff2DcrUGBY6UK0BXAR0+QG/GP4xojQiPXyjprNmZHXdCt9MYheddCHrBZWN31uJUdt3VFh3cc7G5Gl9tXgue2obMOHPiDxWBAHz80QI46mOkWXW8sJLGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719816077; c=relaxed/simple;
-	bh=0giSCIxMHwaDnOvFpUqp4Y73M/ZlyG2EnIUwXN/iyRs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iqeaonjmTIhu+mDz0KK3rzoy5IMJdXSHBGNtXkLkLLVqbuyoxWV530PJMXg+hJjptL/G8aGiqU1OHn6ZEQhNv47qkgshCSD5Aw4GxmLkX+uSTtcF+9s1CJzndPp5bZnDiUMf3sv3HWq0/lyVxfnekK4eo4/zMQBRT/3uJ3SuTYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 0F4263000086C;
-	Mon,  1 Jul 2024 08:41:06 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 0371036558D; Mon,  1 Jul 2024 08:41:06 +0200 (CEST)
-Date: Mon, 1 Jul 2024 08:41:05 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Aditya Garg <gargaditya08@live.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-	Kerem Karabay <kekrby@gmail.com>,
-	Orlando Chamberlain <orlandoch.dev@gmail.com>
-Subject: Re: [PATCH v2] efi: libstub: add support for the apple_set_os
- protocol
-Message-ID: <ZoJPgSlZJ3ZlU2zL@wunner.de>
-References: <75C90B50-9AB9-4F0A-B2CD-43427354D15C@live.com>
- <ZoJAAifMqIDXdniv@wunner.de>
- <CAMj1kXH3fvS259Y1mfYcKQbM2mUYbSfuf2ZiMXfFhjq-rzn5UA@mail.gmail.com>
- <ZoJDuunseVIDua-m@wunner.de>
- <CAMj1kXFKBsAXDLxinqiszH=6hEOjbJQL-nFgBsBceta4rUCN-w@mail.gmail.com>
+	s=arc-20240116; t=1719816140; c=relaxed/simple;
+	bh=+L1gLhPWyiXil0aU/u4hnfAZuN8j6AatG/NJUGyBWYQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=gBiXN7MOSz6dqozYPELJQG0/26bYx7afwQ4VNL4ujV+mQj26UUr6TknkWW9u65Ycki6NjUP7lkPdJEVB2+s+hQeyEEyeX5SdYL8DvQv+LfRt3vKltFs881ax15th6skfA+z6XqVf7YFWYBeQzUbWMglK9DBMrLgCs8kiagPOmS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=w6fJcxG6; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1719816128; h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
+	bh=xC5V9FxBvzJbpDR6tzK42w9tfK3G4dB8HG8E1rfAlg8=;
+	b=w6fJcxG6n154X855fSDQ3sHND/vYniqhxVFCQGWpP5TAUghI9IV5FjIj6tqCbMTCbjLQDjjvhcPtBLTVcEfH2piH8jMsd5bsb+P6pvNd0o+xe6xS4JTs8vF35QIHfqDbvfgvo8EQBTwb7jME88igKwrdN8CCldLJ3No8wEnM9M0=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=wodemia@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0W9agurl_1719816125;
+Received: from localhost.localdomain(mailfrom:wodemia@linux.alibaba.com fp:SMTPD_---0W9agurl_1719816125)
+          by smtp.aliyun-inc.com;
+          Mon, 01 Jul 2024 14:42:08 +0800
+From: Tao Zou <wodemia@linux.alibaba.com>
+To: Alex Shi <alexs@kernel.org>,
+	Yanteng Si <siyanteng@loongson.cn>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: Tao Zou <wodemia@linux.alibaba.com>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5] zh_CN/admin-guide: Add zh_CN/admin-guide/numastat.rst translation document
+Date: Mon,  1 Jul 2024 14:41:53 +0800
+Message-Id: <20240701064153.62303-1-wodemia@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXFKBsAXDLxinqiszH=6hEOjbJQL-nFgBsBceta4rUCN-w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 01, 2024 at 07:56:04AM +0200, Ard Biesheuvel wrote:
-> On Mon, 1 Jul 2024 at 07:50, Lukas Wunner <lukas@wunner.de> wrote:
-> > On Mon, Jul 01, 2024 at 07:38:38AM +0200, Ard Biesheuvel wrote:
-> > > Any thoughts on whether this should depend on CONFIG_APPLE_GMUX or not?
-> >
-> > I tend towards *not* making it depend on CONFIG_APPLE_GMUX:
-> >
-> > * The gpu-switch utility Orlando linked to doesn't use the apple-gmux
-> >   driver.  (It changes EFI variables that influence to which GPU the
-> >   EFI driver will switch on next reboot.)
-> >
-> > * apple_set_os() has side effects beyond exposing the iGPU (such as
-> >   switching the keyboard+trackpad access method to SPI instead of USB).
-> >   If there are issues, they will be harder to debug if their occurrence
-> >   depends on a Kconfig option.
-> 
-> Understood. I agree that having fewer possible combinations is
-> strongly preferred.
-> 
-> However, this change affects all Intel Macs. Is the latter side effect
-> likely to cause any regressions on Intel Mac users that don't have two
-> GPUs to begin with?
+Add translation zh_CN/admin-guide/numastat.rst and link it to
+zh_CN/admin-guide/index.rst while clean its todo entry.
 
-MacBook Air models introduced 2013/2014 will use SPI instead of USB
-to access the keyboard and trackpad.  And from a quick look, the
-applespi_tp_models[] array in drivers/input/keyboard/applespi.c
-seems to be missing the trackpad dimensions of those models.
-The driver may also need a quirk to work around missing properties
-in the DSDT on those models.  Back in 2018 someone tested apple_set_os()
-on such a machine and reported these issues, but the GitHub discussion
-to narrow them down and fix them fizzled out:
+commit 77691ee92d4a ("Documentation: update numastat explanation")
 
-https://github.com/cb22/macbook12-spi-driver/issues/65
+Signed-off-by: Tao Zou <wodemia@linux.alibaba.com>
+Reviewed-by: Yanteng Si <siyanteng@loongson.cn>
+Reviewed-by: Alex Shi <alexs@kernel.org>
+---
+v4->v5: fix one typo error
+v3->v4: replace "在有无内存节点" with "在包含无内存节点"
+v2->v3: add space in origin commit tag
+v1->v2: drop the useless label "+.. _cn_numastat:" and unnecessary "=",
+	add a commit tag of origin document in commit description
 
-The problem is that users of such models will generally run a
-distribution kernel which has CONFIG_APPLE_GMUX enabled,
-so constraining apple_set_os() to CONFIG_APPLE_GMUX won't help them.
-Also, there is no incentive to amend the applespi.c driver for
-affected machines if apple_set_os() is never called on them,
-which is regrettable.
+ .../translations/zh_CN/admin-guide/index.rst  |  2 +-
+ .../zh_CN/admin-guide/numastat.rst            | 48 +++++++++++++++++++
+ 2 files changed, 49 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/translations/zh_CN/admin-guide/numastat.rst
 
-Another potential regression is that exposing the iGPU may consume
-more power.  Or maybe the i915 driver will autosuspend if the panel
-is not connected, I don't know.  Likewise there is no incentive to
-fix the issue if apple_set_os() is never run.
+diff --git a/Documentation/translations/zh_CN/admin-guide/index.rst b/Documentation/translations/zh_CN/admin-guide/index.rst
+index ac2960da33e6..0db80ab830a0 100644
+--- a/Documentation/translations/zh_CN/admin-guide/index.rst
++++ b/Documentation/translations/zh_CN/admin-guide/index.rst
+@@ -68,6 +68,7 @@ Todolist:
+    cpu-load
+    cputopology
+    lockup-watchdogs
++   numastat
+    unicode
+    sysrq
+    mm/index
+@@ -109,7 +110,6 @@ Todolist:
+ *   module-signing
+ *   mono
+ *   namespaces/index
+-*   numastat
+ *   parport
+ *   perf-security
+ *   pm/index
+diff --git a/Documentation/translations/zh_CN/admin-guide/numastat.rst b/Documentation/translations/zh_CN/admin-guide/numastat.rst
+new file mode 100644
+index 000000000000..4d9817b91870
+--- /dev/null
++++ b/Documentation/translations/zh_CN/admin-guide/numastat.rst
+@@ -0,0 +1,48 @@
++.. SPDX-License-Identifier: GPL-2.0
++.. include:: ../disclaimer-zh_CN.rst
++
++:Original: Documentation/admin-guide/numastat.rst
++:Translator: Tao Zou <wodemia@linux.alibaba.com>
++
++
++=======================
++Numa策略命中/未命中统计
++=======================
++
++/sys/devices/system/node/node*/numastat
++
++所有数据的单位都是页面。巨页有独立的计数器。
++
++numa_hit、numa_miss和numa_foreign计数器反映了进程是否能够在他们偏好的节点上分配内存。
++如果进程成功在偏好的节点上分配内存则在偏好的节点上增加numa_hit计数，否则在偏好的节点上增
++加numa_foreign计数同时在实际内存分配的节点上增加numa_miss计数。
++
++通常，偏好的节点是进程运行所在的CPU的本地节点，但是一些限制可以改变这一行为，比如内存策略，
++因此同样有两个基于CPU本地节点的计数器。local_node和numa_hit类似，当在CPU所在的节点上分
++配内存时增加local_node计数，other_node和numa_miss类似，当在CPU所在节点之外的其他节点
++上成功分配内存时增加other_node计数。需要注意，没有和numa_foreign对应的计数器。
++
++更多细节内容:
++
++=============== ============================================================
++numa_hit        一个进程想要从本节点分配内存并且成功。
++
++numa_miss       一个进程想要从其他节点分配内存但是最终在本节点完成内存分配。
++
++numa_foreign    一个进程想要在本节点分配内存但是最终在其他节点完成内存分配。
++
++local_node      一个进程运行在本节点的CPU上并且从本节点上获得了内存。
++
++other_node      一个进程运行在其他节点的CPU上但是在本节点上获得了内存。
++
++interleave_hit  内存交叉分配策略下想要从本节点分配内存并且成功。
++=============== ============================================================
++
++你可以使用numactl软件包（http://oss.sgi.com/projects/libnuma/）中的numastat工具
++来辅助阅读。需要注意，numastat工具目前只在有少量CPU的机器上运行良好。
++
++需要注意，在包含无内存节点（一个节点有CPUs但是没有内存）的系统中numa_hit、numa_miss和
++numa_foreign统计数据会被严重曲解。在当前的内核实现中，如果一个进程偏好一个无内存节点（即
++进程正在该节点的一个本地CPU上运行），实际上会从距离最近的有内存节点中挑选一个作为偏好节点。
++结果会导致相应的内存分配不会增加无内存节点上的numa_foreign计数器，并且会扭曲最近节点上的
++numa_hit、numa_miss和numa_foreign统计数据。
+-- 
+2.39.3 (Apple Git-146)
 
-I've also heard rumors that the EFI firmware configures different
-CPU frequency scaling parameters if apple_set_os() is called,
-but maybe Linux overwrites them anyway.  Apple never cared for Linux,
-so apple_set_os() basically just differentiates between macOS and
-Windows (via Boot Camp).  We generally choose to masquerade as macOS
-to get access to the full set of hardware features, not the crippled
-setup exposed to Windows.
-
-If you think that we absolutely need to avoid these potential regressions,
-a better approach than constraining to CONFIG_APPLE_GMUX would be to
-match DMI data for dual-GPU MacBook Pros.  I notice that the efistub
-has been amended with SMBIOS support through efi_get_smbios_record() +
-efi_get_smbios_string().  Would that get us to the laptop model name?
-If so that would seem to be a viable way to avoid or at least minimize
-regressions.
-
-Thanks,
-
-Lukas
 
