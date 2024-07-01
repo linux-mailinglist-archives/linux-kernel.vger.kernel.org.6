@@ -1,259 +1,505 @@
-Return-Path: <linux-kernel+bounces-235538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4040691D656
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 04:56:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2136591D658
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 04:58:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7381282E4A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 02:56:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44DAC1C210FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 02:58:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC2CEAD0;
-	Mon,  1 Jul 2024 02:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="De7uU9Sz"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB0EFDF42;
+	Mon,  1 Jul 2024 02:58:07 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0D9B674;
-	Mon,  1 Jul 2024 02:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F59C13B;
+	Mon,  1 Jul 2024 02:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719802558; cv=none; b=RB2A6MW0Je2TC01277d2vTK39XiDVQP/gUPbm+0AIlh7aJZphCQf2z8wHG2yPk4NcTsiD2a2N/dMXCyLPSNRwJpvQM9hPUMs82XzAoWG7ZGwhALTsJQ8YFt+HrfBVKaAMKP3TDb31YKkHC+RzmRWMKci9F/PN9RsDxtR7M+kMaA=
+	t=1719802687; cv=none; b=I6yt5XtiOTvp0R21QMUd3MuxkbhUbmLW3ROtAwFW7JhGx02kqOPW2aRItSuCl2JbCkPRK1saLOZwX2srzPeYQBOT/tseDpkVo0gTWTZ2b9eO1b3Pr+buUJvpuPwksqubnscrue6wB/qpNFFk0JQN4y8F546FqoW6cVu7juc9q5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719802558; c=relaxed/simple;
-	bh=9b3W5TSHr8dGDm2EfJckKW6u7JUbDzLGenvoyZxmBI0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=M3sQG0EauSHDPPz6rQQfes87XKoisRx9A8g5ARNuBZl1uwvfIQByVl7JGahcTtHhSIKEM0LHP1TUYneBXD5ikcbMtR5nOZ3wAgLkjLrxxCMrVKPekaGrISsCxMwpHtcEwcnvb++cOOsPSUJHPKp4N4wdUCf5BfZ2twm/X9M2R/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=De7uU9Sz; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7180e5f735bso1378186a12.0;
-        Sun, 30 Jun 2024 19:55:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719802556; x=1720407356; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=HLBPwPLhRdwTrJD/RPLwV4cUim+rjoeYww3a0iF11Lc=;
-        b=De7uU9SzfzrtbdLYFxbQE7fjddRYYFcuUwVFdX5DcQjtRJyDfebO6F4OzHv3CYFbqw
-         ub54UfEYp2fd/TRIdAZM/Qnv631nTibs9Jx7RkkN427w2bhwPjnHzyAspuAWWxMxLT6s
-         Nn4PxRQ+dU/sKvE7MlB0JsHPR12QCP/O+iH79/vbCfWHGeWdsC6iLXTMoUGjRRU8R1i0
-         s6FtUDeV+5DMUwf53y2YhZzR1GdzisFOiMKLitVeQ0hMGju7+psMce+dAJOs4pa5yZsa
-         r3oWQr9AR0FEkMb3liWZEU+Af22zVX/SbFiY1YqYZTWZugbvkkfM9le+9z448PvQCqQK
-         DZ2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719802556; x=1720407356;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HLBPwPLhRdwTrJD/RPLwV4cUim+rjoeYww3a0iF11Lc=;
-        b=Oz3l/qjIA/gcwNAT1bLOKyUb5Nr4bDNA9AZuajFIlhQqAcMsD8ucbdDRUCuNnJJX3M
-         Xp2ec6YXI+zhc2VOWy0iXRKBluFpNQx0n3+TbUXC54vQ5qDWPJ0uRjx91/sZ5WY7bgWe
-         MxaCk2pIToeho5DcpB6MOEE7D9Bd4CVUMquP5ui4YMsZx6eCG/Qi6T/mQzrDfztzD1jH
-         JJGltqWwMKf5WEC/D/yR2uDDaiw0CWgLJPYY7ZlmtMK6Jd22BYazeVpu19Uj7uXRlMjM
-         GbxSdCaI12EoHSI3JuCLGCnREnzWtUaJJzz327GCUj419sWgKcUDiFtjopspGyQ0irwW
-         pJkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZudPtSeYLyLOwnMShwXqM1BZLbaHR2pa4Ae0lzwrTnwkIQr9QRQFF23pM1inXKAudo1BhWWYzk8a1+dWMS8EYYccSnBlPjfNUh/mt0+chTtqiW/44S8o8IzE7SjCoNcwmSxZa5GDJ0mPDt6liZoSlEv+YxV0XkI03zB8nWbCCkRx8mGp1YkY=
-X-Gm-Message-State: AOJu0YxD84IL4fYCTu0gxS4C8iNJMFcaCMLks4J9dqnPe5ThYZKbFfts
-	KZs6UepEPUEdFowXNfAK3PLvPY+twBC1o4Uh0ihaGKJm37xy0Oc9HeuzCh9DU4Q=
-X-Google-Smtp-Source: AGHT+IGcWWT0YfQ3fzHVJK/yt6UUkT0nAwlaFQ3DCAg1QKgJqw34+EaBIL5tvM0MRfIA4SfQYWz7dg==
-X-Received: by 2002:a05:6a21:6da4:b0:1be:c2d9:be69 with SMTP id adf61e73a8af0-1bef62436d1mr6678818637.23.1719802556093;
-        Sun, 30 Jun 2024 19:55:56 -0700 (PDT)
-Received: from [192.168.0.171] ([223.166.28.45])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70867f642fesm5012627b3a.166.2024.06.30.19.55.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 30 Jun 2024 19:55:55 -0700 (PDT)
-Message-ID: <acff166f-9ebb-456e-9bea-61c3dafe7ebd@gmail.com>
-Date: Mon, 1 Jul 2024 10:55:47 +0800
+	s=arc-20240116; t=1719802687; c=relaxed/simple;
+	bh=AxLSvBgrgjabcvLKDFiZJZD3U5+v9MMdLRJSZwCwqMc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=u2N5tKfaAjr+2ZrwyZQbnZ+eKnd4RdESqLcKyl+bmC1mK+bWmusSvdrUyaxd1jj2bXOl6q6NtPJK+GxL3lBpUppCvGhqEuuSo9XslP8g2+rzSGCpwumrRKnOaPfnLaYjFZgONhyLZYtV9W74U16Q99cliORa+kScwc+V2tIpVHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WC9bm6VJ4z2CkXL;
+	Mon,  1 Jul 2024 10:53:56 +0800 (CST)
+Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
+	by mail.maildlp.com (Postfix) with ESMTPS id 120DF14022E;
+	Mon,  1 Jul 2024 10:58:01 +0800 (CST)
+Received: from localhost.localdomain (10.175.104.67) by
+ kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 1 Jul 2024 10:58:00 +0800
+From: Zizhi Wo <wozizhi@huawei.com>
+To: <chandan.babu@oracle.com>, <djwong@kernel.org>, <dchinner@redhat.com>,
+	<wozizhi@huawei.com>, <john.g.garry@oracle.com>, <osandov@fb.com>
+CC: <linux-xfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yangerkun@huawei.com>
+Subject: [PATCH V4] xfs: Avoid races with cnt_btree lastrec updates
+Date: Mon, 1 Jul 2024 10:56:27 +0800
+Message-ID: <20240701025627.881222-1-wozizhi@huawei.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Xilin Wu <wuxilin123@gmail.com>
-Subject: Re: [PATCH v3 2/2] arm64: dts: qcom: Add device tree for ASUS
- Vivobook S 15
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Johan Hovold <johan+linaro@kernel.org>,
- Elliot Berman <quic_eberman@quicinc.com>
-References: <20240630-asus-vivobook-s15-v3-0-bce7ca4d9683@gmail.com>
- <20240630-asus-vivobook-s15-v3-2-bce7ca4d9683@gmail.com>
- <ZoGMaOdyDFjoyqww@linaro.org>
-Content-Language: en-US
-In-Reply-To: <ZoGMaOdyDFjoyqww@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemf100017.china.huawei.com (7.202.181.16)
 
+A concurrent file creation and little writing could unexpectedly return
+-ENOSPC error since there is a race window that the allocator could get
+the wrong agf->agf_longest.
 
+Write file process steps:
+1) Find the entry that best meets the conditions, then calculate the start
+   address and length of the remaining part of the entry after allocation.
+2) Delete this entry and update the -current- agf->agf_longest.
+3) Insert the remaining unused parts of this entry based on the
+   calculations in 1), and update the agf->agf_longest again if necessary.
 
-On 2024/7/1 0:48, Abel Vesa wrote:
-> On 24-06-30 16:59:27, Xilin Wu via B4 Relay wrote:
->> From: Xilin Wu <wuxilin123@gmail.com>
->>
->> ASUS Vivobook S 15 is a laptop based on the Qualcomm Snapdragon X Elite
->> SoC (X1E78100).
->>
->> Add the device tree for the laptop with support for the following features:
->>
->> - CPU frequency scaling up to 3.4GHz
->> - NVMe storage on PCIe 6a (capable of Gen4x4, currently limited to Gen4x2)
->> - Keyboard and touchpad
->> - WCN7850 Wi-Fi
->> - Two Type-C ports on the left side (USB3 only in one orientation)
->> - internal eDP display
->> - ADSP and CDSP remoteprocs
->>
->> Further details could be found in the cover letter.
->>
->> Signed-off-by: Xilin Wu <wuxilin123@gmail.com>
->> ---
->>   arch/arm64/boot/dts/qcom/Makefile                  |   1 +
->>   .../boot/dts/qcom/x1e80100-asus-vivobook-s15.dts   | 616 +++++++++++++++++++++
->>   2 files changed, 617 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
->> index 5576c7d6ea06..fe08b6be565d 100644
->> --- a/arch/arm64/boot/dts/qcom/Makefile
->> +++ b/arch/arm64/boot/dts/qcom/Makefile
->> @@ -258,5 +258,6 @@ dtb-$(CONFIG_ARCH_QCOM)	+= sm8650-hdk-display-card.dtb
->>   dtb-$(CONFIG_ARCH_QCOM)	+= sm8650-hdk.dtb
->>   dtb-$(CONFIG_ARCH_QCOM)	+= sm8650-mtp.dtb
->>   dtb-$(CONFIG_ARCH_QCOM)	+= sm8650-qrd.dtb
->> +dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-asus-vivobook-s15.dtb
->>   dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-crd.dtb
->>   dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-qcp.dtb
->> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
->> new file mode 100644
->> index 000000000000..34f90e45a5d7
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
->> @@ -0,0 +1,616 @@
->> +// SPDX-License-Identifier: BSD-3-Clause
->> +/*
->> + * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
->> + * Copyright (c) 2024, Xilin Wu <wuxilin123@gmail.com>
->> + */
->> +
->> +/dts-v1/;
->> +
->> +#include <dt-bindings/gpio/gpio.h>
->> +#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
->> +
->> +#include "x1e80100.dtsi"
->> +#include "x1e80100-pmics.dtsi"
->> +
->> +/ {
->> +	model = "ASUS Vivobook S 15";
->> +	compatible = "asus,vivobook-s15", "qcom,x1e80100";
->> +	chassis-type = "laptop";
->> +
-> 
-> [ ... ]
-> 
->> +
->> +	tpad_default: tpad-default-state {
->> +		pins = "gpio3";
->> +		function = "gpio";
->> +		bias-disable;
->> +	};
->> +};
->> +
->> +&usb_1_ss0_hsphy {
->> +	vdd-supply = <&vreg_l2e_0p8>;
-> 
-> I think you will probably want to use vreg_l3j_0p8 here. See following
-> fix for CRD and QCP:
-> 
-> https://lore.kernel.org/linux-kernel/20240629-x1e80100-dts-fix-hsphy-0-8v-supplies-v1-1-de99ee030b27@linaro.org/T/
-> 
+Create file process steps:
+1) Check whether there are free inodes in the inode chunk.
+2) If there is no free inode, check whether there has space for creating
+   inode chunks, perform the no-lock judgment first.
+3) If the judgment succeeds, the judgment is performed again with agf lock
+   held. Otherwire, an error is returned directly.
 
-Indeed, I checked ACPI just now and I think the design follows CRD and QCP.
+If the write process is in step 2) but not go to 3) yet, the create file
+process goes to 2) at this time, it may be mistaken for no space,
+resulting in the file system still has space but the file creation fails.
 
->> +	vdda12-supply = <&vreg_l2j_1p2>;
->> +
->> +	phys = <&smb2360_0_eusb2_repeater>;
->> +
->> +	status = "okay";
->> +};
->> +
->> +&usb_1_ss0_qmpphy {
->> +	vdda-phy-supply = <&vreg_l3e_1p2>;
->> +	vdda-pll-supply = <&vreg_l1j_0p8>;
->> +
->> +	orientation-switch;
->> +
->> +	status = "okay";
->> +};
->> +
->> +&usb_1_ss0 {
->> +	status = "okay";
->> +};
->> +
->> +&usb_1_ss0_dwc3 {
->> +	dr_mode = "host";
->> +};
->> +
->> +&usb_1_ss0_dwc3_hs {
->> +	remote-endpoint = <&pmic_glink_ss0_hs_in>;
->> +};
->> +
->> +&usb_1_ss0_qmpphy_out {
->> +	remote-endpoint = <&pmic_glink_ss0_ss_in>;
->> +};
->> +
->> +&usb_1_ss1_hsphy {
->> +	vdd-supply = <&vreg_l2e_0p8>;
-> 
-> Same here.
-> 
->> +	vdda12-supply = <&vreg_l2j_1p2>;
->> +
->> +	phys = <&smb2360_1_eusb2_repeater>;
->> +
->> +	status = "okay";
->> +};
->> +
->> +&usb_1_ss1_qmpphy {
->> +	vdda-phy-supply = <&vreg_l3e_1p2>;
->> +	vdda-pll-supply = <&vreg_l2d_0p9>;
->> +
->> +	orientation-switch;
->> +
->> +	status = "okay";
->> +};
->> +
->> +&usb_1_ss1 {
->> +	status = "okay";
->> +};
->> +
->> +&usb_1_ss1_dwc3 {
->> +	dr_mode = "host";
->> +};
->> +
->> +&usb_1_ss1_dwc3_hs {
->> +	remote-endpoint = <&pmic_glink_ss1_hs_in>;
->> +};
->> +
->> +&usb_1_ss1_qmpphy_out {
->> +	remote-endpoint = <&pmic_glink_ss1_ss_in>;
->> +};
->>
->> -- 
->> 2.45.2
->>
->>
+We have sent two different commits to the community in order to fix this
+problem[1][2]. Unfortunately, both solutions have flaws. In [2], I
+discussed with Dave and Darrick, realized that a better solution to this
+problem requires the "last cnt record tracking" to be ripped out of the
+generic btree code. And surprisingly, Dave directly provided his fix code.
+This patch includes appropriate modifications based on his tmp-code to
+address this issue.
 
+The entire fix can be roughly divided into two parts:
+1) Delete the code related to lastrec-update in the generic btree code.
+2) Place the process of updating longest freespace with cntbt separately
+   to the end of the cntbt modifications. Move the cursor to the rightmost
+   firstly, and update the longest free extent based on the record.
+
+Note that we can not update the longest with xfs_alloc_get_rec() after
+find the longest record, as xfs_verify_agbno() may not pass because
+pag->block_count is updated on the outside. Therefore, use
+xfs_btree_get_rec() as a replacement.
+
+[1] https://lore.kernel.org/all/20240419061848.1032366-2-yebin10@huawei.com
+[2] https://lore.kernel.org/all/20240604071121.3981686-1-wozizhi@huawei.com
+
+Reported by: Ye Bin <yebin10@huawei.com>
+Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
+---
+ fs/xfs/libxfs/xfs_alloc.c       | 114 ++++++++++++++++++++++++++++++++
+ fs/xfs/libxfs/xfs_alloc_btree.c |  64 ------------------
+ fs/xfs/libxfs/xfs_btree.c       |  51 --------------
+ fs/xfs/libxfs/xfs_btree.h       |  16 +----
+ 4 files changed, 115 insertions(+), 130 deletions(-)
+
+diff --git a/fs/xfs/libxfs/xfs_alloc.c b/fs/xfs/libxfs/xfs_alloc.c
+index 6c55a6e88eba..a8ea2aa75461 100644
+--- a/fs/xfs/libxfs/xfs_alloc.c
++++ b/fs/xfs/libxfs/xfs_alloc.c
+@@ -465,6 +465,97 @@ xfs_alloc_fix_len(
+ 	args->len = rlen;
+ }
+ 
++/*
++ * Determine if the cursor points to the block that contains the right-most
++ * block of records in the by-count btree. This block contains the largest
++ * contiguous free extent in the AG, so if we modify a record in this block we
++ * need to call xfs_alloc_fixup_longest() once the modifications are done to
++ * ensure the agf->agf_longest field is kept up to date with the longest free
++ * extent tracked by the by-count btree.
++ */
++static bool
++xfs_alloc_cursor_at_lastrec(
++	struct xfs_btree_cur	*cnt_cur)
++{
++	struct xfs_btree_block	*block;
++	union xfs_btree_ptr	ptr;
++	struct xfs_buf		*bp;
++
++	block = xfs_btree_get_block(cnt_cur, 0, &bp);
++
++	xfs_btree_get_sibling(cnt_cur, block, &ptr, XFS_BB_RIGHTSIB);
++	return xfs_btree_ptr_is_null(cnt_cur, &ptr);
++}
++
++/*
++ * Find the rightmost record of the cntbt, and return the longest free space
++ * recorded in it. Simply set both the block number and the length to their
++ * maximum values before searching.
++ */
++static int
++xfs_cntbt_longest(
++	struct xfs_btree_cur	*cnt_cur,
++	xfs_extlen_t		*longest)
++{
++	struct xfs_alloc_rec_incore irec;
++	union xfs_btree_rec	    *rec;
++	int			    stat = 0;
++	int			    error;
++
++	memset(&cnt_cur->bc_rec, 0xFF, sizeof(cnt_cur->bc_rec));
++	error = xfs_btree_lookup(cnt_cur, XFS_LOOKUP_LE, &stat);
++	if (error)
++		return error;
++	if (!stat) {
++		/* totally empty tree */
++		*longest = 0;
++		return 0;
++	}
++
++	error = xfs_btree_get_rec(cnt_cur, &rec, &stat);
++	if (error)
++		return error;
++	if (XFS_IS_CORRUPT(cnt_cur->bc_mp, stat != 0)) {
++		xfs_btree_mark_sick(cnt_cur);
++		return -EFSCORRUPTED;
++	}
++
++	xfs_alloc_btrec_to_irec(rec, &irec);
++	*longest = irec.ar_blockcount;
++	return 0;
++}
++
++/*
++ * Update the longest contiguous free extent in the AG from the by-count cursor
++ * that is passed to us. This should be done at the end of any allocation or
++ * freeing operation that touches the longest extent in the btree.
++ *
++ * Needing to update the longest extent can be determined by calling
++ * xfs_alloc_cursor_at_lastrec() after the cursor is positioned for record
++ * modification but before the modification begins.
++ */
++static int
++xfs_alloc_fixup_longest(
++	struct xfs_btree_cur	*cnt_cur)
++{
++	struct xfs_perag	*pag = cnt_cur->bc_ag.pag;
++	struct xfs_buf		*bp = cnt_cur->bc_ag.agbp;
++	struct xfs_agf		*agf = bp->b_addr;
++	xfs_extlen_t		longest = 0;
++	int			error;
++
++	/* Lookup last rec in order to update AGF. */
++	error = xfs_cntbt_longest(cnt_cur, &longest);
++	if (error)
++		return error;
++
++	pag->pagf_longest = longest;
++	agf->agf_longest = cpu_to_be32(pag->pagf_longest);
++	xfs_alloc_log_agf(cnt_cur->bc_tp, bp, XFS_AGF_LONGEST);
++
++	return 0;
++}
++
+ /*
+  * Update the two btrees, logically removing from freespace the extent
+  * starting at rbno, rlen blocks.  The extent is contained within the
+@@ -489,6 +580,7 @@ xfs_alloc_fixup_trees(
+ 	xfs_extlen_t	nflen1=0;	/* first new free length */
+ 	xfs_extlen_t	nflen2=0;	/* second new free length */
+ 	struct xfs_mount *mp;
++	bool		fixup_longest = false;
+ 
+ 	mp = cnt_cur->bc_mp;
+ 
+@@ -577,6 +669,10 @@ xfs_alloc_fixup_trees(
+ 		nfbno2 = rbno + rlen;
+ 		nflen2 = (fbno + flen) - nfbno2;
+ 	}
++
++	if (xfs_alloc_cursor_at_lastrec(cnt_cur))
++		fixup_longest = true;
++
+ 	/*
+ 	 * Delete the entry from the by-size btree.
+ 	 */
+@@ -654,6 +750,10 @@ xfs_alloc_fixup_trees(
+ 			return -EFSCORRUPTED;
+ 		}
+ 	}
++
++	if (fixup_longest)
++		return xfs_alloc_fixup_longest(cnt_cur);
++
+ 	return 0;
+ }
+ 
+@@ -1956,6 +2056,7 @@ xfs_free_ag_extent(
+ 	int				i;
+ 	int				error;
+ 	struct xfs_perag		*pag = agbp->b_pag;
++	bool				fixup_longest = false;
+ 
+ 	bno_cur = cnt_cur = NULL;
+ 	mp = tp->t_mountp;
+@@ -2219,8 +2320,13 @@ xfs_free_ag_extent(
+ 	}
+ 	xfs_btree_del_cursor(bno_cur, XFS_BTREE_NOERROR);
+ 	bno_cur = NULL;
++
+ 	/*
+ 	 * In all cases we need to insert the new freespace in the by-size tree.
++	 *
++	 * If this new freespace is being inserted in the block that contains
++	 * the largest free space in the btree, make sure we also fix up the
++	 * agf->agf-longest tracker field.
+ 	 */
+ 	if ((error = xfs_alloc_lookup_eq(cnt_cur, nbno, nlen, &i)))
+ 		goto error0;
+@@ -2229,6 +2335,8 @@ xfs_free_ag_extent(
+ 		error = -EFSCORRUPTED;
+ 		goto error0;
+ 	}
++	if (xfs_alloc_cursor_at_lastrec(cnt_cur))
++		fixup_longest = true;
+ 	if ((error = xfs_btree_insert(cnt_cur, &i)))
+ 		goto error0;
+ 	if (XFS_IS_CORRUPT(mp, i != 1)) {
+@@ -2236,6 +2344,12 @@ xfs_free_ag_extent(
+ 		error = -EFSCORRUPTED;
+ 		goto error0;
+ 	}
++	if (fixup_longest) {
++		error = xfs_alloc_fixup_longest(cnt_cur);
++		if (error)
++			goto error0;
++	}
++
+ 	xfs_btree_del_cursor(cnt_cur, XFS_BTREE_NOERROR);
+ 	cnt_cur = NULL;
+ 
+diff --git a/fs/xfs/libxfs/xfs_alloc_btree.c b/fs/xfs/libxfs/xfs_alloc_btree.c
+index 6ef5ddd89600..585e98e87ef9 100644
+--- a/fs/xfs/libxfs/xfs_alloc_btree.c
++++ b/fs/xfs/libxfs/xfs_alloc_btree.c
+@@ -115,67 +115,6 @@ xfs_allocbt_free_block(
+ 	return 0;
+ }
+ 
+-/*
+- * Update the longest extent in the AGF
+- */
+-STATIC void
+-xfs_allocbt_update_lastrec(
+-	struct xfs_btree_cur		*cur,
+-	const struct xfs_btree_block	*block,
+-	const union xfs_btree_rec	*rec,
+-	int				ptr,
+-	int				reason)
+-{
+-	struct xfs_agf		*agf = cur->bc_ag.agbp->b_addr;
+-	struct xfs_perag	*pag;
+-	__be32			len;
+-	int			numrecs;
+-
+-	ASSERT(!xfs_btree_is_bno(cur->bc_ops));
+-
+-	switch (reason) {
+-	case LASTREC_UPDATE:
+-		/*
+-		 * If this is the last leaf block and it's the last record,
+-		 * then update the size of the longest extent in the AG.
+-		 */
+-		if (ptr != xfs_btree_get_numrecs(block))
+-			return;
+-		len = rec->alloc.ar_blockcount;
+-		break;
+-	case LASTREC_INSREC:
+-		if (be32_to_cpu(rec->alloc.ar_blockcount) <=
+-		    be32_to_cpu(agf->agf_longest))
+-			return;
+-		len = rec->alloc.ar_blockcount;
+-		break;
+-	case LASTREC_DELREC:
+-		numrecs = xfs_btree_get_numrecs(block);
+-		if (ptr <= numrecs)
+-			return;
+-		ASSERT(ptr == numrecs + 1);
+-
+-		if (numrecs) {
+-			xfs_alloc_rec_t *rrp;
+-
+-			rrp = XFS_ALLOC_REC_ADDR(cur->bc_mp, block, numrecs);
+-			len = rrp->ar_blockcount;
+-		} else {
+-			len = 0;
+-		}
+-
+-		break;
+-	default:
+-		ASSERT(0);
+-		return;
+-	}
+-
+-	agf->agf_longest = len;
+-	pag = cur->bc_ag.agbp->b_pag;
+-	pag->pagf_longest = be32_to_cpu(len);
+-	xfs_alloc_log_agf(cur->bc_tp, cur->bc_ag.agbp, XFS_AGF_LONGEST);
+-}
+-
+ STATIC int
+ xfs_allocbt_get_minrecs(
+ 	struct xfs_btree_cur	*cur,
+@@ -493,7 +432,6 @@ const struct xfs_btree_ops xfs_bnobt_ops = {
+ 	.set_root		= xfs_allocbt_set_root,
+ 	.alloc_block		= xfs_allocbt_alloc_block,
+ 	.free_block		= xfs_allocbt_free_block,
+-	.update_lastrec		= xfs_allocbt_update_lastrec,
+ 	.get_minrecs		= xfs_allocbt_get_minrecs,
+ 	.get_maxrecs		= xfs_allocbt_get_maxrecs,
+ 	.init_key_from_rec	= xfs_allocbt_init_key_from_rec,
+@@ -511,7 +449,6 @@ const struct xfs_btree_ops xfs_bnobt_ops = {
+ const struct xfs_btree_ops xfs_cntbt_ops = {
+ 	.name			= "cnt",
+ 	.type			= XFS_BTREE_TYPE_AG,
+-	.geom_flags		= XFS_BTGEO_LASTREC_UPDATE,
+ 
+ 	.rec_len		= sizeof(xfs_alloc_rec_t),
+ 	.key_len		= sizeof(xfs_alloc_key_t),
+@@ -525,7 +462,6 @@ const struct xfs_btree_ops xfs_cntbt_ops = {
+ 	.set_root		= xfs_allocbt_set_root,
+ 	.alloc_block		= xfs_allocbt_alloc_block,
+ 	.free_block		= xfs_allocbt_free_block,
+-	.update_lastrec		= xfs_allocbt_update_lastrec,
+ 	.get_minrecs		= xfs_allocbt_get_minrecs,
+ 	.get_maxrecs		= xfs_allocbt_get_maxrecs,
+ 	.init_key_from_rec	= xfs_allocbt_init_key_from_rec,
+diff --git a/fs/xfs/libxfs/xfs_btree.c b/fs/xfs/libxfs/xfs_btree.c
+index d29547572a68..a5c4af148853 100644
+--- a/fs/xfs/libxfs/xfs_btree.c
++++ b/fs/xfs/libxfs/xfs_btree.c
+@@ -1331,30 +1331,6 @@ xfs_btree_init_block_cur(
+ 			xfs_btree_owner(cur));
+ }
+ 
+-/*
+- * Return true if ptr is the last record in the btree and
+- * we need to track updates to this record.  The decision
+- * will be further refined in the update_lastrec method.
+- */
+-STATIC int
+-xfs_btree_is_lastrec(
+-	struct xfs_btree_cur	*cur,
+-	struct xfs_btree_block	*block,
+-	int			level)
+-{
+-	union xfs_btree_ptr	ptr;
+-
+-	if (level > 0)
+-		return 0;
+-	if (!(cur->bc_ops->geom_flags & XFS_BTGEO_LASTREC_UPDATE))
+-		return 0;
+-
+-	xfs_btree_get_sibling(cur, block, &ptr, XFS_BB_RIGHTSIB);
+-	if (!xfs_btree_ptr_is_null(cur, &ptr))
+-		return 0;
+-	return 1;
+-}
+-
+ STATIC void
+ xfs_btree_buf_to_ptr(
+ 	struct xfs_btree_cur	*cur,
+@@ -2420,15 +2396,6 @@ xfs_btree_update(
+ 	xfs_btree_copy_recs(cur, rp, rec, 1);
+ 	xfs_btree_log_recs(cur, bp, ptr, ptr);
+ 
+-	/*
+-	 * If we are tracking the last record in the tree and
+-	 * we are at the far right edge of the tree, update it.
+-	 */
+-	if (xfs_btree_is_lastrec(cur, block, 0)) {
+-		cur->bc_ops->update_lastrec(cur, block, rec,
+-					    ptr, LASTREC_UPDATE);
+-	}
+-
+ 	/* Pass new key value up to our parent. */
+ 	if (xfs_btree_needs_key_update(cur, ptr)) {
+ 		error = xfs_btree_update_keys(cur, 0);
+@@ -3617,15 +3584,6 @@ xfs_btree_insrec(
+ 			goto error0;
+ 	}
+ 
+-	/*
+-	 * If we are tracking the last record in the tree and
+-	 * we are at the far right edge of the tree, update it.
+-	 */
+-	if (xfs_btree_is_lastrec(cur, block, level)) {
+-		cur->bc_ops->update_lastrec(cur, block, rec,
+-					    ptr, LASTREC_INSREC);
+-	}
+-
+ 	/*
+ 	 * Return the new block number, if any.
+ 	 * If there is one, give back a record value and a cursor too.
+@@ -3983,15 +3941,6 @@ xfs_btree_delrec(
+ 	xfs_btree_set_numrecs(block, --numrecs);
+ 	xfs_btree_log_block(cur, bp, XFS_BB_NUMRECS);
+ 
+-	/*
+-	 * If we are tracking the last record in the tree and
+-	 * we are at the far right edge of the tree, update it.
+-	 */
+-	if (xfs_btree_is_lastrec(cur, block, level)) {
+-		cur->bc_ops->update_lastrec(cur, block, NULL,
+-					    ptr, LASTREC_DELREC);
+-	}
+-
+ 	/*
+ 	 * We're at the root level.  First, shrink the root block in-memory.
+ 	 * Try to get rid of the next level down.  If we can't then there's
+diff --git a/fs/xfs/libxfs/xfs_btree.h b/fs/xfs/libxfs/xfs_btree.h
+index f93374278aa1..10b7ddc3b2b3 100644
+--- a/fs/xfs/libxfs/xfs_btree.h
++++ b/fs/xfs/libxfs/xfs_btree.h
+@@ -154,12 +154,6 @@ struct xfs_btree_ops {
+ 			       int *stat);
+ 	int	(*free_block)(struct xfs_btree_cur *cur, struct xfs_buf *bp);
+ 
+-	/* update last record information */
+-	void	(*update_lastrec)(struct xfs_btree_cur *cur,
+-				  const struct xfs_btree_block *block,
+-				  const union xfs_btree_rec *rec,
+-				  int ptr, int reason);
+-
+ 	/* records in block/level */
+ 	int	(*get_minrecs)(struct xfs_btree_cur *cur, int level);
+ 	int	(*get_maxrecs)(struct xfs_btree_cur *cur, int level);
+@@ -222,15 +216,7 @@ struct xfs_btree_ops {
+ };
+ 
+ /* btree geometry flags */
+-#define XFS_BTGEO_LASTREC_UPDATE	(1U << 0) /* track last rec externally */
+-#define XFS_BTGEO_OVERLAPPING		(1U << 1) /* overlapping intervals */
+-
+-/*
+- * Reasons for the update_lastrec method to be called.
+- */
+-#define LASTREC_UPDATE	0
+-#define LASTREC_INSREC	1
+-#define LASTREC_DELREC	2
++#define XFS_BTGEO_OVERLAPPING		(1U << 0) /* overlapping intervals */
+ 
+ 
+ union xfs_btree_irec {
 -- 
-Thanks,
-Xilin Wu
+2.39.2
+
 
