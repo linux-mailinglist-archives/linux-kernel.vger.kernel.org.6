@@ -1,118 +1,144 @@
-Return-Path: <linux-kernel+bounces-236285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FBE891DFF3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:54:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C8EE91DFF7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:54:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 558621C212C1
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:54:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8849CB25397
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE6C15A87C;
-	Mon,  1 Jul 2024 12:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="Hc9VI9Ov"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FA515A85F;
+	Mon,  1 Jul 2024 12:54:46 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F67115A85A;
-	Mon,  1 Jul 2024 12:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00910145B09;
+	Mon,  1 Jul 2024 12:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719838440; cv=none; b=IViLG9qZNCQnlnPOjhlQI4CBXQKiMbNOiTxEAvoGObKx7gnJu1ej/6PWnI7GpRAWEsG5OD5xksgGWmLIt33uKr2FxsxCJnXtYgTosBnDtAiTe/XIX64EBBZxpZwmc/ez/mzNtLOGsYaHAihxLWP5tzzXrBYAfY82fMrb1pOCrgQ=
+	t=1719838486; cv=none; b=GZxGPJfpZ4D56DvGiux1o/uEtNm4RtHcFfa+SA75qWB/ERJ05Kj1e2naMpdTwGHmrvAn+ZrcLxrHTa/RFyG6Jh8B0Yn7JynMpRsBWBm9LMqoiThqhSP21EDhITKobeoLc/JFUF+MkzGLWBBYMZFhOA3zkpjMAitETZrFgekJUSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719838440; c=relaxed/simple;
-	bh=joqZqxfvJhfI6MGsku+7ZiuyZkmDI6a7ruDeHS6gU1E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=UipSaXj1wp4C6Igh9xRMrVqZP3+IXmPoAKPL2+HsYHdgFbiIUFQYmgFbsmq76vBx5DZxhLdBgkIoUKXoiQ0lbDX3DrHSB+4BW7CzkRVLmoNuDvxkKyoxlq8UJi8mXUMufEUV/kciEXvEXhiayMFgMZw0v23qLDZmOJD4Y6Pl2xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=Hc9VI9Ov; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:Cc:From:References:To:Subject:Reply-To:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=t+dVjH56wuvAZMPLxREj1dS4Lb8ihceYjbLapljYOh8=;
-	t=1719838438; x=1720270438; b=Hc9VI9OvKZk9XydVJKeulcENUM/WMLZTPlh9I4LB0vd8F+O
-	JIZ8CpLlIM2wA/EMhYcOvZk8d8NmaI0liLETGL6x0lwYU4/5jXroGpqLdyTHwqhUHY/aVUIZBpeLi
-	TEASf/fXYNM6fdLfGCZUqf6quNiWX6FgkQCHzF/C1HhFH+Qw0qInElZGtOXcmjTh3/wg2sOMATIv9
-	rovKekvSQyfqaTj2DQGYKl+7/5yJ5kK9R7USI7z51iJf6h27Oi3J0pKY+aHbMcNinK3iY/9UEi9nT
-	6XOZMbCdSfO8L23zzLhvLRiRpnzBmA1TPMtCot4yQMjNyyNIL/mG3odNr4qk+IlA==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sOGXc-0008Qe-Fb; Mon, 01 Jul 2024 14:53:56 +0200
-Message-ID: <a60fc742-0ad4-498d-b90f-793b9578b843@leemhuis.info>
-Date: Mon, 1 Jul 2024 14:53:55 +0200
+	s=arc-20240116; t=1719838486; c=relaxed/simple;
+	bh=fpklSivkHqBgwZ+MA54wZ0oce/H9M9AHo8SsHJoYIEc=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Zyi9yismZyNjJvM4bLDLSIZ4k+c1rySarQDI4HL2gwrVImT7aSNPkeran4Sk310KgGYrbRx1jJ4N4g+AlOnEJhP7gG4GOAY4hQvqTa7LFTiyF8NAjGN8Tuhfa5Ig1RnZOXUHFpqeohIx/vo5B56BKr7jAxLg2CTJTwKjbBI+T7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WCQtq2TVNz6K9Wd;
+	Mon,  1 Jul 2024 20:52:51 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1D953140B3C;
+	Mon,  1 Jul 2024 20:54:41 +0800 (CST)
+Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 1 Jul
+ 2024 13:54:40 +0100
+Date: Mon, 1 Jul 2024 13:54:40 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+CC: <linus.walleij@linaro.org>, <dan.carpenter@linaro.org>,
+	<linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <aisheng.dong@nxp.com>, <festevam@gmail.com>,
+	<shawnguo@kernel.org>, <kernel@pengutronix.de>,
+	<u.kleine-koenig@pengutronix.de>, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH V3 1/3] pinctrl: ti: iodelay: Use scope based
+ of_node_put() cleanups
+Message-ID: <20240701135440.00004d67@Huawei.com>
+In-Reply-To: <20240627131721.678727-2-peng.fan@oss.nxp.com>
+References: <20240627131721.678727-1-peng.fan@oss.nxp.com>
+	<20240627131721.678727-2-peng.fan@oss.nxp.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Subject: Re: [PATCH] fs/ntfs3: Fix memory corruption when page_size changes
-To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-References: <20240614155437.2063380-1-popcornmix@gmail.com>
- <CAEi1pCSQePMo4X_RvMfYmpxYwmuamhd8=1OXgNCU-N2BBdTXPg@mail.gmail.com>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-Cc: popcorn mix <popcornmix@gmail.com>, ntfs3@lists.linux.dev,
- Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Linux kernel regressions list <regressions@lists.linux.dev>
-In-Reply-To: <CAEi1pCSQePMo4X_RvMfYmpxYwmuamhd8=1OXgNCU-N2BBdTXPg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1719838438;8fe70a28;
-X-HE-SMSGID: 1sOGXc-0008Qe-Fb
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-[CCing a few lists]
+On Thu, 27 Jun 2024 21:17:19 +0800
+"Peng Fan (OSS)" <peng.fan@oss.nxp.com> wrote:
 
-Hi, Thorsten here, the Linux kernel's regression tracker. Top-posting
-for once, to make this easily accessible to everyone.
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> Use scope based of_node_put() cleanup to simplify code.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+A couple of comments on additional cleanups - primarily
+using return dev_err_probe() - enabled by using scope based
+cleanup to avoid the goto dance.
 
-Konstantin, what's the status of this regression report or the patch Dom
-Cobley propsed to fix the issue? From here it looks like it fall through
-the cracks, but I might be missing something.
+Either way LGTM
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
---
-Everything you wanna know about Linux kernel regression tracking:
-https://linux-regtracking.leemhuis.info/about/#tldr
-If I did something stupid, please tell me, as explained on that page.
+> ---
+>  drivers/pinctrl/ti/pinctrl-ti-iodelay.c | 43 +++++++++----------------
+>  1 file changed, 15 insertions(+), 28 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+> index ef9758638501..f5e5a23d2226 100644
+> --- a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+> +++ b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+> @@ -822,53 +822,48 @@ MODULE_DEVICE_TABLE(of, ti_iodelay_of_match);
+>  static int ti_iodelay_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> -	struct device_node *np = of_node_get(dev->of_node);
+> +	struct device_node *np __free(device_node) = of_node_get(dev->of_node);
+>  	struct resource *res;
+>  	struct ti_iodelay_device *iod;
+> -	int ret = 0;
+> +	int ret;
+>  
+>  	if (!np) {
+> -		ret = -EINVAL;
+>  		dev_err(dev, "No OF node\n");
+> -		goto exit_out;
+> +		return -EINVAL;
+Whilst you are here can use more compact
+		return dev_err_probe(dev, -EINVAL, "No OF node\n");
+for all error prints in a probe() function.
+They do various nice things on deferred probe but are
+useful more generally.
 
-#regzbot poke
+>  	}
+>  
+>  	iod = devm_kzalloc(dev, sizeof(*iod), GFP_KERNEL);
+> -	if (!iod) {
+> -		ret = -ENOMEM;
+> -		goto exit_out;
+> -	}
+> +	if (!iod)
+> +		return -ENOMEM;
+> +
+>  	iod->dev = dev;
+>  	iod->reg_data = device_get_match_data(dev);
+>  	if (!iod->reg_data) {
+> -		ret = -EINVAL;
+>  		dev_err(dev, "No DATA match\n");
+> -		goto exit_out;
+> +		return -EINVAL;
 
-On 14.06.24 18:24, popcorn mix wrote:
-> On Fri, Jun 14, 2024 at 4:55 PM Dom Cobley <popcornmix@gmail.com> wrote:
->> The kernel panic can be observed when connecting an
->> ntfs formatted drive that has previously been connected
->> to a Windows machine to a Raspberry Pi 5, which by defauilt
->> uses a 16K kernel pagesize.
-> 
-> Here are links to some bug reports about the issue:
-> https://github.com/raspberrypi/linux/issues/6036
-> https://forum.libreelec.tv/thread/28620-libreelec-12-0-rpi5-and-ntfs-hdd-problem/?postID=192713#post192713
-> https://forums.raspberrypi.com/viewtopic.php?p=2203090#p2203090
-> https://forums.raspberrypi.com/viewtopic.php?t=367545
-> 
-> The common points are it occurs on the (default) 16K pagesize kernel,
-> but switching to 4K pagesize kernel
-> avoids the issue.
-> 
-> Issue wasn't present in previous RPiOS LTS kernel (6.1), but is
-> present in current LTS kernel (6.6).
-> Revering to 6.1 kernel avoids the issue.
-> 
-> I've confirmed that reverting the commit:
-> 865e7a7700d9 ("fs/ntfs3: Reduce stack usage")
-> 
-> avoids the issue.
-> 
-> This patch avoids the issue for me, and I'd like confirmation it is correct.
+return dev_err_probe() works here as well and in 
+other cases below. It's an added bonus __free() magic often enables.
+
+No idea why DATA is in capitals and to be honest it's not
+a particularly useful error message.  What data? :)
+
+>  	}
+
+
+>  }
+>  
+>  /**
+
 
