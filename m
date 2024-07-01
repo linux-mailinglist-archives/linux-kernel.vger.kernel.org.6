@@ -1,64 +1,87 @@
-Return-Path: <linux-kernel+bounces-236753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41A4B91E6B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:32:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A326A91E6B7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:33:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3CE8B218E1
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:32:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AC141F2251E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4742216EB67;
-	Mon,  1 Jul 2024 17:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F34616F0DB;
+	Mon,  1 Jul 2024 17:32:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VkbPs9kW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YaUTwfVa"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3E346434;
-	Mon,  1 Jul 2024 17:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0812E16EC05;
+	Mon,  1 Jul 2024 17:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719855139; cv=none; b=l0yn/2ICXi6GHQ6kGDwGlhyzqndNioDiaaoTqtojvTICFf343qA5vGUVbURupX4FE67yQaC/nuYLmuoH3IzB5Q1d+mPRzTTcN8PFbZysuAaIHfieteCIxzy881U31TsQp2rR1uWtaD85ISfJw5kwRK9Rgpy/6aaYL7yidjg/1n0=
+	t=1719855153; cv=none; b=AULlnoIBsz8WPH6MTPwmO5vR7UALJsqzkb12BLDG1diWS8mfj1BGR6f7IyIirTzmc4nQYHP10nNF3FhRz/x2sOOL9uzlWc3mplDw7F06V+HhcbeKZUXM7cmELZHJNKJ8QR9tvto+u5Xp9d0y0MdDJXbnyARQxNDFTYSam5UMmVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719855139; c=relaxed/simple;
-	bh=duLF429OqK4+yYUi2wJlbgb+Kc0mzXjX7pP0HDXNojM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=AKxqWiN4MB9+xMyRvw61Y90kwTZSjeSJCMZdDkdgH6I0fWTHvsy5KSv/c/2rEwrYipksH0B0DyHZNIaBRE/CAWUOOV8LJFEJF8zJanwnCnnIjxraaQxivXNCSXLsO08JpXCxe+QU9pZzCMpVwGCZcgl0KaPhb99bpwntcPW7RQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VkbPs9kW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFD2EC116B1;
-	Mon,  1 Jul 2024 17:32:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719855139;
-	bh=duLF429OqK4+yYUi2wJlbgb+Kc0mzXjX7pP0HDXNojM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=VkbPs9kWg4u9U81VCDle7qKzAN8phFWFUnSr0ylXUWhDOj4fOOOlvD6CZSF/+tPsg
-	 ht1QYzjMrpFSUpTUR6ULvs4LfanOrFW6QXr+1sgSwFd0X0g7pzCL+B/gB7FqHtEujy
-	 QBZfv16I44earRPzQI3vCmd7ydjwdp5ldDPfUZw6AHusiWBsKND/9kTIafB2JKQrm9
-	 QyVyMe9/4CUKI+aNANmyivoC8yHeu9QlfFK5f5UUxICrLkg38M36daQGQsiPCUDXb1
-	 NCm4IpTX6vzY7VDKlJG0gdFVSPz9Q0va/HTzAiMnVC5ptSbacTq+xJKsri2B0jySFG
-	 zlasoIEfOUb1g==
-Date: Mon, 1 Jul 2024 12:32:17 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Jim Quinlan <james.quinlan@broadcom.com>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Cyril Brulebois <kibi@debian.org>,
-	Stanimir Varbanov <svarbanov@suse.de>,
-	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 5/8] PCI: brcmstb: Two more register offsets vary by
- SOC
-Message-ID: <20240701173217.GA10563@bhelgaas>
+	s=arc-20240116; t=1719855153; c=relaxed/simple;
+	bh=RH54wpfJPFuq1p/47n403zxx5+QmRAvugMB5EeGq/DM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dm1HIWTFVgsHl7Ts2RwfWXJtuov7vvoxgiswA7gxChTpl1J6kyqgZfYR1SGzr+ZTtjYd6n8f2h7FphYgje++kvMYSyYJBmN5c7dSLvfai78goNCHj/xwzdqAz4lL2FpudADtT0UTzGhoajS3fAZEaGcZVuYEocApaci0EVSM97w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YaUTwfVa; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719855152; x=1751391152;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RH54wpfJPFuq1p/47n403zxx5+QmRAvugMB5EeGq/DM=;
+  b=YaUTwfVa2Q7VbQVzCRb1r1/HJU9UPuG6oq+ztCoTd1+CC4WtHHCW38BL
+   jEG5npCRKTGTPR5i8upMFdD7podYFVQ2tVWQ70qSzz21pxDIZCxtcfMHR
+   r2sPpT9W5+X/f8R6VVBv1DxXdXhlYMyeVpeB50I4q9c5Fq3j+8Arz4eeE
+   J4f8TrmwfDO1VT7ium5EEITt1qGNnlNZ8pLpun8ki8g7J8P3gkAi0LOct
+   4TestWFCIq8r6OUgXO9q26TXKoCEInFct64cfrEjlwKHeuRhi8KeycMZU
+   i5jGuVNB9D8O8zbpqEW+KYpQfK2LhHk1bQKDlkxHyGbkKhRuXhgapWrKA
+   Q==;
+X-CSE-ConnectionGUID: nBrwzkblSuOfHanpbYrxCA==
+X-CSE-MsgGUID: EcilDMjWQCiWfQlteJVxYg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="12343503"
+X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
+   d="scan'208";a="12343503"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 10:32:30 -0700
+X-CSE-ConnectionGUID: hrC7i042S+KUbRkezbWGJA==
+X-CSE-MsgGUID: QtPpU4dST423AiFJac8HDw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
+   d="scan'208";a="46259398"
+Received: from aadeosun-mobl.amr.corp.intel.com (HELO desk) ([10.209.8.130])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 10:32:29 -0700
+Date: Mon, 1 Jul 2024 10:32:21 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Brice Goglin <brice.goglin@gmail.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Perry Yuan <Perry.Yuan@amd.com>
+Subject: Re: [PATCH v2 3/9] perf/x86/intel: Use topology_hw_cpu_type()
+Message-ID: <20240701173221.fb5k3dqyycsb4pmn@desk>
+References: <20240627-add-cpu-type-v2-0-f927bde83ad0@linux.intel.com>
+ <20240627-add-cpu-type-v2-3-f927bde83ad0@linux.intel.com>
+ <09000f4e-f373-448f-afef-35d2a413929f@linux.intel.com>
+ <20240628185136.6rl4x3no3vl3zben@desk>
+ <d866215b-bffc-453f-9d92-232b729946d0@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,15 +90,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240628205430.24775-6-james.quinlan@broadcom.com>
+In-Reply-To: <d866215b-bffc-453f-9d92-232b729946d0@linux.intel.com>
 
-Could mention the registers in the subject, e.g.,
-
-  PCI: brcmstb: Make HARD_DEBUG, INTR2_CPU_BASE offsets SoC-specific
-
-On Fri, Jun 28, 2024 at 04:54:24PM -0400, Jim Quinlan wrote:
-> Our HW design has again changed a register offset which used to be standard
-> for all Broadcom SOCs with PCIe cores.  This difference is now reconciled.
+On Mon, Jul 01, 2024 at 11:37:26AM +0800, Mi, Dapeng wrote:
+> > diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+> > index d8d715fcc25c..08794668750f 100644
+> > --- a/arch/x86/include/asm/processor.h
+> > +++ b/arch/x86/include/asm/processor.h
+> > @@ -107,7 +107,7 @@ struct cpuinfo_topology {
+> >  	u32			l2c_id;
+> >  
+> >  	// Hardware defined CPU-type
+> > -	u8			hw_cpu_type;
+> > +	u32			hw_cpu_type;
 > 
-> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> Since hw_cpu_type represents the whole EAX right now, it may need to be
+> changed to a more generic name, like hw_cpu_model, or others.
+
+Even with whole EAX it still identifies the CPU-type (just more granular).
+
+Since hw_cpu_type will be used by AMD as well, I think it is better to keep
+it as is. Interpretation of what hw_cpu_type means can be left to vendor
+specific code.
 
