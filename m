@@ -1,81 +1,119 @@
-Return-Path: <linux-kernel+bounces-236087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A935891DD46
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:59:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82E7791DD4C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:00:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9B521C21906
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:59:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F05D8B21BE0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:59:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9EDC13D614;
-	Mon,  1 Jul 2024 10:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ADE414B97D;
+	Mon,  1 Jul 2024 10:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="V5VVmnDE"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nFlUdJ5X"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418D347F60;
-	Mon,  1 Jul 2024 10:58:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B3B14B970;
+	Mon,  1 Jul 2024 10:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719831486; cv=none; b=ON8Msz4cLOuVlc/A2AQJRs52VHhIqPvTYdd7DInB/bl/DdgU9evd7Kyeka8Lc58LGFvYkMoGCI58p/g2al3pUdkRCOkaMcMfp9DM9T3YQM3Rec6hTCQmO3k71BPHpZ0X+YCUiEbpo9tWutXY3R8L9aYAWFqnfUZY70G143NhzWs=
+	t=1719831505; cv=none; b=bmRQ8CNcSXLnUwH1aTjZyOGvaNTAE6oqJ8HGVY2tgicOFHa4grQLrCPzpx4Y7wz8CTXDHo1gbttyzOchuwsPtCYfgH/BFSn+ZhWeo80VA/Bs78aTrG4v4TjJKZNX7RTtcCwj2U1ZHqdiAloUImg0WTGUcEuI/3rJmDHR58HTSYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719831486; c=relaxed/simple;
-	bh=eLSpo8EbkBywOWglxP9hHArZD4JJ7lpsTEJyLuyNHf8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qnfzgzfzK8yDey8g6hxwuWWpRi+2Af9rFshzl9qKaKdnGl0oQqTZjw0bU2Atg/VbhUGnzsnqSadmViILxiRCE34KznbDp1w4T37XEZC2LgNPDdQ2HBNiibvyTCdPde+AUIlQMZj2gOnUlXOO1ChpYsQ2OkMKjcl9WK9VMeqCNq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=V5VVmnDE; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=emXPLS7GBemo5rU7u1Tfy3cPzCBTxwIMRG6+MZJaKQ0=; b=V5VVmnDEwuSQh/OzvqLzk9JrFe
-	QcuCq+pTjKTnQiCtVzFkJqZ0ICc2M2nbgRhraPIpwDD81tFEbn+j5gYGGw+PEN82WM07sXZv40BKq
-	Y+Pe2c+CK+XhuUu6u9Ky80ga7/MnJ7FzckWGueWh5ZaXDYiCvama1va6gCK/u5oa1ifWCS8gN/Snl
-	RmHHqTjeSEf/2cFBWZgVK1fq+YIKHjl0He1U7QLnog+0m6fdaMNloBZVkkdV5gZUB10wEr8gCt6Ph
-	80SUe5VCRIB8X2F8pzmC1JHHrnPPBk74NTTaoZmCBwmtbGTAXQ1Jw/WxplUSZqXhd0o6noApaXOZQ
-	E4v7EPiA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sOEjQ-0000000HFor-4ABu;
-	Mon, 01 Jul 2024 10:58:01 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id A0C2C300694; Mon,  1 Jul 2024 12:58:00 +0200 (CEST)
-Date: Mon, 1 Jul 2024 12:58:00 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Wander Lairson Costa <wander@redhat.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the tip tree
-Message-ID: <20240701105800.GD20127@noisy.programming.kicks-ass.net>
-References: <20240701200309.5c6169df@canb.auug.org.au>
+	s=arc-20240116; t=1719831505; c=relaxed/simple;
+	bh=qfmjcgXwXL9ej5UsHYaaLGC4iEOatC7wQkbgxNZII50=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k0ZGDRta0qcWcuAC8SeCo5RghVXIxbaP4lXAXa+RNdrhyB/xogAxWOjUcZHx4wOLukdQYJsmwapuoUBFVkgdQ/D2cR7E3Ht3iYMitEGL9WhSsZV7Nn9VfUypw7+wNoKY7UOoEvQIuof8FmuBMvpgWIOfTShkYLuuu1bDeWvXIh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nFlUdJ5X; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 461AvZWj023589;
+	Mon, 1 Jul 2024 10:58:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=q
+	fmjcgXwXL9ej5UsHYaaLGC4iEOatC7wQkbgxNZII50=; b=nFlUdJ5XypgfCuyC1
+	EsBU2zf8UfzPGnr2+cotqzU3GdzhFF8jnJY1UIoVvWv+bFRb19Nlz819kVRyU4iq
+	QSfzJvSSNZcGAt8KftOWYu+nUXpLYcUNiP4/W/CMljdm3nkpoaUbu9pF1Q72bIWA
+	KnLiFGGZKpYif1FHLVMUMNt/dB2mb+9qx4Vk+dSlI5uxjCzMcfUgr9XMzTaxiTVW
+	KsT8kT6hmbLo54e/Pi7zA7EFN7oXpKT83M4ymCDUAEOGcqpX+qVkz4IYvMUeP2t3
+	YRSzvVohLn/3JygS39LM+IdkDO5BSa+4c7FmHyghHdKsMmdT4Xo2XMmssRRlSuz0
+	wUmuQ==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 403u5m8044-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 01 Jul 2024 10:58:19 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4619Vf4x024114;
+	Mon, 1 Jul 2024 10:58:19 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 402ya36dym-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 01 Jul 2024 10:58:19 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 461AwFmL48235226
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 1 Jul 2024 10:58:17 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A969558055;
+	Mon,  1 Jul 2024 10:58:15 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6AC8B58067;
+	Mon,  1 Jul 2024 10:58:13 +0000 (GMT)
+Received: from [9.171.47.124] (unknown [9.171.47.124])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  1 Jul 2024 10:58:13 +0000 (GMT)
+Message-ID: <c41c53e4-aa6d-47b7-b928-0c1b9e8dcdc3@linux.ibm.com>
+Date: Mon, 1 Jul 2024 12:58:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240701200309.5c6169df@canb.auug.org.au>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] s390/dasd: fix error checks in dasd_copy_pair_store()
+To: =?UTF-8?Q?Carlos_L=C3=B3pez?= <clopez@suse.de>, linux-s390@vger.kernel.org
+Cc: Jan Hoeppner <hoeppner@linux.ibm.com>, Heiko Carstens
+ <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Jens Axboe <axboe@kernel.dk>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20240527135044.27427-1-clopez@suse.de>
+Content-Language: en-US
+From: Stefan Haberland <sth@linux.ibm.com>
+In-Reply-To: <20240527135044.27427-1-clopez@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: dPZozCrxvg7Nfru8mf_1pc7X9RORArOe
+X-Proofpoint-ORIG-GUID: dPZozCrxvg7Nfru8mf_1pc7X9RORArOe
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-01_08,2024-06-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
+ spamscore=0 mlxscore=0 lowpriorityscore=0 mlxlogscore=842
+ priorityscore=1501 bulkscore=0 adultscore=0 suspectscore=0 clxscore=1011
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407010080
 
-On Mon, Jul 01, 2024 at 08:03:09PM +1000, Stephen Rothwell wrote:
-> Hi all,
->=20
-> Commit
->=20
->   a7accf658efa ("sched/deadline: fix task_struct reference leak")
->=20
-> is missing a Signed-off-by from its author.
+Am 27.05.24 um 15:50 schrieb Carlos López:
+> dasd_add_busid() can return an error via ERR_PTR() if an allocation
+> fails. However, two callsites in dasd_copy_pair_store() do not check
+> the result, potentially resulting in a NULL pointer dereference. Fix
+> this by checking the result with IS_ERR() and returning the error up
+> the stack.
+>
+> Fixes: a91ff09d39f9b ("s390/dasd: add copy pair setup")
+> Signed-off-by: Carlos López <clopez@suse.de>
+> ---
 
-Urgh, thanks for that, lemme go fix that.
+Applied, thanks.
+
 
