@@ -1,144 +1,177 @@
-Return-Path: <linux-kernel+bounces-236462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36B5191E2AA
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:42:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB78791E2AD
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:43:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 689031C215E1
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:42:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A1181F22872
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246B616B74C;
-	Mon,  1 Jul 2024 14:42:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265A24696;
+	Mon,  1 Jul 2024 14:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Es6ZvAts"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AObP9STy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF584696;
-	Mon,  1 Jul 2024 14:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6173616B3BD;
+	Mon,  1 Jul 2024 14:43:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719844961; cv=none; b=Wv0lvCC11h8mD2kgsRvavWPyUbssqvskV/CTJRNfEq17z4Q2tc5GUNBiOq/phhVzFzZDj9txDS8oL2J3sqCV6TLV/HDGUueQc1vjXspD43v7Vhgs18qLXxKXGOxT9OyisHuKawqwN1U2koZ3z/NTw5OLki0tJHik+dEiGStxqlc=
+	t=1719845023; cv=none; b=lmPjZl2GK1jW5n0XfOZe4c7EJgDjijYJm5Yfa2jHdv23KxR2DEqvfCIYELCSEBrCsdViV9F+/bn1LxX3nBGP9IiNsyKDsOgJZqKDYnplMBzwSEFnxy+rmc6ra/Lbz3pOlAdJdtLst2gwSfRM7JGOzhXbxIu1MxlHO9DFXlnu1ME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719844961; c=relaxed/simple;
-	bh=oqreuN7Lmf3KZB06NiHnlq3XgvAne96Q0HZLnxU1cvA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cetDsoaMvwzi8W9hhDbN5E8LUWMYgDwpGNmwtbde3BHQwDWiyciQo7/zZfC+4qqu6SkXmsAvcsmUylFs89e6r+CqYTrT+awDdsa1mGXvYem/dLPbFnKC+KBPJsi1zL4baVpUIFcQzk4uhe1/tFsgxYxnHmRx5x2WITq/v//Yu7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Es6ZvAts; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A929C116B1;
-	Mon,  1 Jul 2024 14:42:39 +0000 (UTC)
+	s=arc-20240116; t=1719845023; c=relaxed/simple;
+	bh=bG2ru4fWCajW+qe+qA7NC/B+XA3N0d8dcjIR0OxiVhs=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kWEkybJJ6PIj+p5YihtAxXBuLx037pxitM0OjQTUjZ3/ruR8a7cSXnrDYT26X/EGWIvPDinIfSvk0XjuZaHLLRJsyj8v3tyrs15a2Z12QFvhkrlHTUsara+MCsDOO7Fh/OXvZCZyVM3RUj8LuwuiWbu1ajdJJg2VS3hBxMTklyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AObP9STy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7471C116B1;
+	Mon,  1 Jul 2024 14:43:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719844961;
-	bh=oqreuN7Lmf3KZB06NiHnlq3XgvAne96Q0HZLnxU1cvA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Es6ZvAtss93UUyTV0/C5Kq7xcHV2mMr7W2uHGzC8FpKbNdC+jdwp2ciIC5jj/WLlr
-	 FyJlaV6yEroIgDjOJcuzd9aP6IUmM5Sp6czY1Awasc8IPqdGjj19lmJ1PoKJQekKjF
-	 iO8Evf/hfcQCmvr2bAjQTBrWOLxgdGAf4UNc7gokAoLxG4XDH0ROZNiDmRHlstPjTK
-	 RYuYX45Ln2d79925pclof5E9V0BwvtKu0XXZGfSh1PNR9rQGijypIVTJJfg19nB3Ou
-	 eOYGsfaO+Ws94mFfXxKN7LCu/yzJU5xXxZNZxLrtd2oRTkk6rkoTKotFrck44To5RZ
-	 tLuvqQyHCPFuA==
-Date: Mon, 1 Jul 2024 15:42:37 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de
-Subject: Re: [PATCH v2 1/2] dt-bindings: input: touchscreen: exc3000: add
- EXC81W32
-Message-ID: <20240701-evolve-unbutton-ef7d913ad69f@spud>
-References: <20240628-input-exc3000-exc81w32-v2-0-c2b21a369c05@pengutronix.de>
- <20240628-input-exc3000-exc81w32-v2-1-c2b21a369c05@pengutronix.de>
- <20240628-agonizing-syrup-fcd55c441b3f@spud>
- <150055844b8af2017fa721ff08bbde473354b2da.camel@pengutronix.de>
+	s=k20201202; t=1719845022;
+	bh=bG2ru4fWCajW+qe+qA7NC/B+XA3N0d8dcjIR0OxiVhs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=AObP9STyNMqcLb1LLilzdg7DMSkjB6Ji+XjK3vmCcyvKgrt1BXNSmuMOWqoNx05ak
+	 o+v0UK/0OSb2Ri2l6y/IdP3AtwbBMupdpBdr1nQxvg3ZZ4fxw60nqtX22OlHoM623S
+	 iPzRcOW+XJ+FQNxwL530PFUMjjBFSjj5XTSV/KD9rPU15SOttylRtq8ei69nQ+0+pH
+	 px2G4mazmq495kctJOz9rj9or8s+U+97wnI16sgJ9gfdmlOu4y6EpxzrwjySOu8UBt
+	 xKUp5yWidHSPRkih1FHr9fkeE9R7blK+VF0+KmFkhA30Qqz6I+rhJMLajxEphrMFbP
+	 rCwPv+OLfWkbA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sOIFo-008peG-HV;
+	Mon, 01 Jul 2024 15:43:40 +0100
+Date: Mon, 01 Jul 2024 15:43:40 +0100
+Message-ID: <87bk3hp3z7.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Yangyu Chen <cyy@cyyself.name>,
+	Will Deacon <will@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Janne Grunau <j@jannau.net>,
+	Hector Martin <marcan@marcan.st>,
+	Asahi Lina <lina@asahilina.net>,
+	asahi@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] drivers/perf: apple_m1: fix affinity table for event 0x96 and 0x9b
+In-Reply-To: <87cynxp52o.wl-maz@kernel.org>
+References: <tencent_7B71486CE305DF8AE084B6BB6313EE550C06@qq.com>
+	<20240701140148.GE2250@willie-the-truck>
+	<87cynxp52o.wl-maz@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/28.2
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="oXw+Hz09N3mxcR0V"
-Content-Disposition: inline
-In-Reply-To: <150055844b8af2017fa721ff08bbde473354b2da.camel@pengutronix.de>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: cyy@cyyself.name, will@kernel.org, linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com, j@jannau.net, marcan@marcan.st, lina@asahilina.net, asahi@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+
+On Mon, 01 Jul 2024 15:19:59 +0100,
+Marc Zyngier <maz@kernel.org> wrote:
+> 
+> On Mon, 01 Jul 2024 15:01:48 +0100,
+> Will Deacon <will@kernel.org> wrote:
+> > 
+> > On Thu, Jun 20, 2024 at 11:04:28AM +0800, Yangyu Chen wrote:
+> > > Events 0x96 and 0x9b can be installed on counter 7 only. Fix this to avoid
+> > > getting the wrong counter value.
+> > > 
+> > > Signed-off-by: Yangyu Chen <cyy@cyyself.name>
+> > > ---
+> > >  drivers/perf/apple_m1_cpu_pmu.c | 4 ++--
+> > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/perf/apple_m1_cpu_pmu.c b/drivers/perf/apple_m1_cpu_pmu.c
+> > > index f322e5ca1114..b8127e5428e1 100644
+> > > --- a/drivers/perf/apple_m1_cpu_pmu.c
+> > > +++ b/drivers/perf/apple_m1_cpu_pmu.c
+> > > @@ -107,12 +107,12 @@ static const u16 m1_pmu_event_affinity[M1_PMU_PERFCTR_LAST + 1] = {
+> > >  	[M1_PMU_PERFCTR_UNKNOWN_93]	= ONLY_5_6_7,
+> > >  	[M1_PMU_PERFCTR_UNKNOWN_94]	= ONLY_5_6_7,
+> > >  	[M1_PMU_PERFCTR_UNKNOWN_95]	= ONLY_5_6_7,
+> > > -	[M1_PMU_PERFCTR_UNKNOWN_96]	= ONLY_5_6_7,
+> > > +	[M1_PMU_PERFCTR_UNKNOWN_96]	= BIT(7),
+> > >  	[M1_PMU_PERFCTR_UNKNOWN_97]	= BIT(7),
+> > >  	[M1_PMU_PERFCTR_UNKNOWN_98]	= ONLY_5_6_7,
+> > >  	[M1_PMU_PERFCTR_UNKNOWN_99]	= ONLY_5_6_7,
+> > >  	[M1_PMU_PERFCTR_UNKNOWN_9a]	= BIT(7),
+> > > -	[M1_PMU_PERFCTR_UNKNOWN_9b]	= ONLY_5_6_7,
+> > > +	[M1_PMU_PERFCTR_UNKNOWN_9b]	= BIT(7),
+> > >  	[M1_PMU_PERFCTR_UNKNOWN_9c]	= ONLY_5_6_7,
+> > >  	[M1_PMU_PERFCTR_UNKNOWN_9f]	= BIT(7),
+> > >  	[M1_PMU_PERFCTR_UNKNOWN_bf]	= ONLY_5_6_7,
+> > 
+> > It would be great if somebody with access to M1 hardware (and/or any
+> > PMU insight) could Test or Ack this, please.
+> 
+> I'm a bit concerned by this.
+> 
+> I originally generated this table by hacking the counter setup so that
+> it would try and count everywhere, and then feed the observations back
+> into the driver.
+> 
+> So either my methodology was flaky (not unlikely), but I'd then expect
+> more of these mis-assignments, or this applies to an implementation
+> that is different from the one I wrote this driver against (the
+> original M1). Could it be that this for M2 only, and not M1? Or
+> another flavour of M1?
+> 
+> Either way, it would be good to understand how this has been
+> established.
+> 
+> In the meantime, I'll try and resurrect my original experiment and see
+> if I spot the same issue.
+
+A quick experiment shows that these events are counting on all 3
+expected counters:
+
+maz@mary-lou:~$ sudo taskset -c 8 perf stat -e r096:u -e r096:u -e r096:u sleep 5
+
+ Performance counter stats for 'sleep 5':
+
+            10,775      r096:u                                                                
+            10,775      r096:u                                                                
+            10,775      r096:u                                                                
+
+       5.000110823 seconds time elapsed
+
+       0.000340000 seconds user
+       0.000000000 seconds sys
 
 
---oXw+Hz09N3mxcR0V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+maz@mary-lou:~$ sudo taskset -c 8 perf stat -e r09b:u -e r09b:u -e r09b:u sleep 5
 
-On Mon, Jul 01, 2024 at 02:47:50PM +0200, Philipp Zabel wrote:
-> Hi Conor,
->=20
-> On Fr, 2024-06-28 at 17:21 +0100, Conor Dooley wrote:
-> > On Fri, Jun 28, 2024 at 10:35:51AM +0200, Philipp Zabel wrote:
-> > > Add compatible for EXC81W32 touchscreen controllers.
-> >=20
-> > Could you please mention in your commit messages what makes a fallback
-> > compatible inappropriate here?
->=20
-> thank for pointing this out. Actually, I'm not sure a fallback
-> compatible is inappropriate at all. There just is none currently, even
-> though EXC80H60 and EXC80H84 already look compatible to me.
->=20
-> To my understanding, there's EXC80[WH]{32,46,60,84} models, that should
-> only differ in ball pitch (W or H) and targeted display size (the last
-> number).
-> I don't know if there are actual relevant differences between what I
-> assume are model generations, such as EXC80 to EXC81. At least the
-> limited currently implemented feature set in the exc3000 driver is
-> identical.
->=20
-> Given that EXC80H60, EXC80H84, and now EXC81W32 all share the same 16K
-> resolution and the same message format (possible differences in
-> capability to measure touch area nonwithstanding), should I prepend
-> this series with a patch:
+ Performance counter stats for 'sleep 5':
 
-If you're prepared to update the two users to avoid adding more
-dtbs_check warnings, sure.
+            41,927      r09b:u                                                                
+            41,927      r09b:u                                                                
+            41,927      r09b:u                                                                
 
-Thanks,
-Conor.
+       5.000109771 seconds time elapsed
 
->=20
-> @@ -14,10 +14,13 @@
-> =20
->  properties:
->    compatible:
-> -    enum:
-> -      - eeti,exc3000
-> -      - eeti,exc80h60
-> -      - eeti,exc80h84
-> +    oneOf:
-> +      - const: eeti,exc3000
-> +      - items:
-> +          - enum:
-> +              - eeti,exc80h60
-> +          - const: eeti,exc80h84
-> +      - const: eeti,exc80h84
->    reg:
->      const: 0x2a
->    interrupts:
->=20
-> regards
-> Philipp
+       0.000339000 seconds user
+       0.000000000 seconds sys
 
---oXw+Hz09N3mxcR0V
-Content-Type: application/pgp-signature; name="signature.asc"
+This is on M2 Pro, by the way, and I also checked that my M1 Ultra
+counts the exact same way.
 
------BEGIN PGP SIGNATURE-----
+Yangyu, can you please clarify how you came to the conclusion that
+these events didn't count anywhere other than counter 7?
 
-iHQEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoLAXQAKCRB4tDGHoIJi
-0kfdAPinlDksflI+CZ0V7RLLNE6TzTiZAcuSVA8xrHNj8sd+AP4/QgKGeSLOwa2n
-NxYwmgWXdF5eK9yJeua4gyd0PjUSBg==
-=eq1X
------END PGP SIGNATURE-----
+	M.
 
---oXw+Hz09N3mxcR0V--
+-- 
+Without deviation from the norm, progress is not possible.
 
