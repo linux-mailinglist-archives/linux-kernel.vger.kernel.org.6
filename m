@@ -1,316 +1,164 @@
-Return-Path: <linux-kernel+bounces-235651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7264D91D7F4
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:15:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7320491D7FB
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:16:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AE431C221D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 06:15:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 231FD1F214AB
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 06:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D65965914A;
-	Mon,  1 Jul 2024 06:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RP6AD1v+"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC74C4EB51;
+	Mon,  1 Jul 2024 06:16:31 +0000 (UTC)
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4452231C;
-	Mon,  1 Jul 2024 06:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B3D2B9BF;
+	Mon,  1 Jul 2024 06:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719814535; cv=none; b=BgtsCZ93vqLd0hAvZ4LslF2FS/p1jQ+WBFyG3nBFyUw2fzx7JjgQi5gw58BTkrs5702sDssOQcT/NWUIbEL4ej9tZ1TUNDrHfjLVxiPaii3kkn07n+4u+KNcXAYgvDeu9TsF9xE9tls09Adw1vWHOOUCNcV03XKv1/Q3MYq90uo=
+	t=1719814591; cv=none; b=YyxodEubEv/oNW8LWDovKU217J/rqVK8aQEwc6o+eVxXA8taX9/73rsYy6+fpiha0CNxTKkFhmqpSR05v06scn9KEn6H2vMsHJ+edy0BpXLjKcrd8e8B2QYoh8d+kbOP80elAHo04ces52g7IaGCyCqYRG/mz5shIJyDjISoehc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719814535; c=relaxed/simple;
-	bh=WmI09JaExLOgwIiAfkIPKvdePbKWzCZg6yL6VDCaUN4=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=izu1CEz78RJoT4Rvy4JoVmrEvOCnpIW3YKKPEzFMDXlQV9OpLejtaMNMWSYFWh1cBXWaOJ3p54RUDJhje45ylFtYhUtNdq4x/EV51VjlV7oJuTi1CY480QZx+hSuhHarSrt/+JgS36nRbk9MjhOChojmhSVDDRSblcY/JYAo/No=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RP6AD1v+; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1719814532;
-	bh=WmI09JaExLOgwIiAfkIPKvdePbKWzCZg6yL6VDCaUN4=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=RP6AD1v+j6bPzkD4Qfi/D0Q58GhtnnMPgGqhmQ9YGJX9Jc/5j84eJ7xUBdHZJRzFx
-	 aXPXn39mJWbIX+hF2Rx6HPtqgMK4vfUXHqti+IbFCO5Q8bGEOYciAZVbAvxI1kGzeR
-	 g0TD5c0QDnRR5cYZ0bk02V6Iz6eS/b5EgMh95woV6SkktOdHJgXgDkEDcqIbeyMewD
-	 TfpEAsVSV82X6VPFFcT0pA4AfIytfyCqe6TFWaYlNmT4kY7j1t72YZQc6kzGiHWxze
-	 VlPaDaj3j6O+JFwu31mdPgmr5u8MzDcUXIrceg69E0CyvjyMCcC0aTq021O4QEtL3Z
-	 exwCDx8GCLtyg==
-Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id AA10E3782065;
-	Mon,  1 Jul 2024 06:15:00 +0000 (UTC)
-Message-ID: <221495d5-1be2-4c71-ab2f-eb145257737a@collabora.com>
-Date: Mon, 1 Jul 2024 11:14:54 +0500
+	s=arc-20240116; t=1719814591; c=relaxed/simple;
+	bh=+oYyA2t91VJ5Zv4CluJBZ7kYxo1DqJ18AJpDzTQeCHE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eF8sKK05ffCYqyT2qEJuVnbQQMnV8HzzS26RUZmbXcaeo42hvW0DrpClp5vgQYjqXCMUCMkF7T/4TIB8MBoeTbyvuoa7aX+cjpzX9P6nzo3JDUIv8HoYECGV1aymByLCFaeQXerlLzEFR5KeAjji/mS7/naneaHe/JYOYXUhD78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3d63332595cso1177941b6e.3;
+        Sun, 30 Jun 2024 23:16:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719814589; x=1720419389;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rTyii9XBbJ4Ky0TNjSfhn+DHUjISOA38nQqAS4bi8KQ=;
+        b=UwxpPYsoq19fdFZHZ5r8RLWmCOzlTEFAYYHyV8ZmJbWEdPMLPXO5Uo8eMS9nGofiiL
+         PEjShq9f7HZaXi2m10DaM5OToYSWaDffHw77XdChv37QT+Jbh9cVsfBBUJs/zOPEB4aN
+         O2GK4JvMtM1VMKfWldu4AB1i51Np3KfgOUfVJnvLD2eqc5p7hfwhpZ9O2ZDSWhuHV+X0
+         7awbEXY+YWvC0hJjPO0KnGJHx1nyvJt4XCn9oUZyf+Iis11RIcCNhdI0DCVBb8+3U/Ch
+         eyP9MqZcsoOR92yf+Q1Vehq1OfNZvl+mllV/+MbygNfhynRtgItxA+pPua1xpKuSckT5
+         cbKg==
+X-Forwarded-Encrypted: i=1; AJvYcCXVAPLCjn31dzOimi1TVubE4mFRip7kTD8b6Dd2IWafcqfo1FO3PicfxMg+/S6q/Y3VhiVPldTqRILsijZfd/BZwqk67xA1+wGvwW1uMf3Ddn+vMQ7CrgLFqJCP/3zf0CMLfVS7+5c9EPkZCOFJvv61PMPi0gSfMFlQsO49IjrfoO4vc6rv
+X-Gm-Message-State: AOJu0YxO4GIEeC/yCioaCYJMjw09klINdrzgxSW+G2kysz9KE01Q3NXG
+	nLRwbg+2fHLkmGwlGNw/5p2kd+rvQUl8xmCYY47BQwmXDoFsw7wb
+X-Google-Smtp-Source: AGHT+IFYqg+/QLVGWkm2Bb11LtZmSlEFPu4ScAz9HoXJiKNTs0C3lcornbmodvP0o7eEZaKOlW86BQ==
+X-Received: by 2002:a05:6808:2288:b0:3d6:331d:b52d with SMTP id 5614622812f47-3d6b2f07e53mr7284293b6e.4.1719814588940;
+        Sun, 30 Jun 2024 23:16:28 -0700 (PDT)
+Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-708044ac419sm5655629b3a.164.2024.06.30.23.16.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 30 Jun 2024 23:16:28 -0700 (PDT)
+Date: Mon, 1 Jul 2024 06:16:18 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Wei Liu <wei.liu@kernel.org>,
+	Linux on Hyper-V List <linux-hyperv@vger.kernel.org>,
+	stable@kernel.org, "K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Dexuan Cui <decui@microsoft.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Jake Oshins <jakeo@microsoft.com>,
+	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] PCI: hv: fix reading of PCI_INTERRUPT_PIN
+Message-ID: <ZoJJsolJJcLUYiVG@liuwe-devbox-debian-v2>
+References: <20240621210018.350429-1-wei.liu@kernel.org>
+ <20240626151039.GA1466747@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- linux-kernel@vger.kernel.org, seanjc@google.com, kernel-team@android.com,
- linux-mm@kvack.org, iommu@lists.linux.dev, kvm@vger.kernel.org,
- netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-sgx@vger.kernel.org,
- John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH v7 1/1] selftests: Centralize -D_GNU_SOURCE= to CFLAGS in
- lib.mk
-To: Edward Liaw <edliaw@google.com>, linux-kselftest@vger.kernel.org,
- Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
- Shuah Khan <shuah@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
- =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>,
- Paolo Bonzini <pbonzini@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Fenghua Yu <fenghua.yu@intel.com>,
- Reinette Chatre <reinette.chatre@intel.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Jarkko Sakkinen <jarkko@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>
-References: <20240625223454.1586259-1-edliaw@google.com>
- <20240625223454.1586259-2-edliaw@google.com>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <20240625223454.1586259-2-edliaw@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240626151039.GA1466747@bhelgaas>
 
-On 6/26/24 3:34 AM, Edward Liaw wrote:
-> Centralize the _GNU_SOURCE definition to CFLAGS in lib.mk.  Remove
-> redundant defines from Makefiles that import lib.mk.  Convert any usage
-> of "#define _GNU_SOURCE 1" to "#define _GNU_SOURCE".
-> 
-> This uses the form "-D_GNU_SOURCE=", which is equivalent to
-> "#define _GNU_SOURCE".
-> 
-> Otherwise using "-D_GNU_SOURCE" is equivalent to "-D_GNU_SOURCE=1" and
-> "#define _GNU_SOURCE 1", which is less commonly seen in source code and
-> would require many changes in selftests to avoid redefinition warnings.
-> 
-> Suggested-by: John Hubbard <jhubbard@nvidia.com>
-> Signed-off-by: Edward Liaw <edliaw@google.com>
-Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+On Wed, Jun 26, 2024 at 10:10:39AM -0500, Bjorn Helgaas wrote:
+> 1) Capitalize subject to match history
 
-> ---
->  tools/testing/selftests/exec/Makefile             | 1 -
->  tools/testing/selftests/futex/functional/Makefile | 2 +-
->  tools/testing/selftests/intel_pstate/Makefile     | 2 +-
->  tools/testing/selftests/iommu/Makefile            | 2 --
->  tools/testing/selftests/kvm/Makefile              | 2 +-
->  tools/testing/selftests/lib.mk                    | 3 +++
->  tools/testing/selftests/mm/thuge-gen.c            | 2 +-
->  tools/testing/selftests/net/Makefile              | 2 +-
->  tools/testing/selftests/net/tcp_ao/Makefile       | 2 +-
->  tools/testing/selftests/proc/Makefile             | 1 -
->  tools/testing/selftests/resctrl/Makefile          | 2 +-
->  tools/testing/selftests/ring-buffer/Makefile      | 1 -
->  tools/testing/selftests/riscv/mm/Makefile         | 2 +-
->  tools/testing/selftests/sgx/Makefile              | 2 +-
->  tools/testing/selftests/tmpfs/Makefile            | 1 -
->  15 files changed, 12 insertions(+), 15 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/exec/Makefile b/tools/testing/selftests/exec/Makefile
-> index ab67d58cfab7..ba012bc5aab9 100644
-> --- a/tools/testing/selftests/exec/Makefile
-> +++ b/tools/testing/selftests/exec/Makefile
-> @@ -1,7 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0
->  CFLAGS = -Wall
->  CFLAGS += -Wno-nonnull
-> -CFLAGS += -D_GNU_SOURCE
->  
->  ALIGNS := 0x1000 0x200000 0x1000000
->  ALIGN_PIES        := $(patsubst %,load_address.%,$(ALIGNS))
-> diff --git a/tools/testing/selftests/futex/functional/Makefile b/tools/testing/selftests/futex/functional/Makefile
-> index 994fa3468f17..f79f9bac7918 100644
-> --- a/tools/testing/selftests/futex/functional/Makefile
-> +++ b/tools/testing/selftests/futex/functional/Makefile
-> @@ -1,6 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0
->  INCLUDES := -I../include -I../../ $(KHDR_INCLUDES)
-> -CFLAGS := $(CFLAGS) -g -O2 -Wall -D_GNU_SOURCE= -pthread $(INCLUDES) $(KHDR_INCLUDES)
-> +CFLAGS := $(CFLAGS) -g -O2 -Wall -pthread $(INCLUDES) $(KHDR_INCLUDES)
->  LDLIBS := -lpthread -lrt
->  
->  LOCAL_HDRS := \
-> diff --git a/tools/testing/selftests/intel_pstate/Makefile b/tools/testing/selftests/intel_pstate/Makefile
-> index 05d66ef50c97..f45372cb00fe 100644
-> --- a/tools/testing/selftests/intel_pstate/Makefile
-> +++ b/tools/testing/selftests/intel_pstate/Makefile
-> @@ -1,5 +1,5 @@
->  # SPDX-License-Identifier: GPL-2.0
-> -CFLAGS := $(CFLAGS) -Wall -D_GNU_SOURCE
-> +CFLAGS := $(CFLAGS) -Wall
->  LDLIBS += -lm
->  
->  ARCH ?= $(shell uname -m 2>/dev/null || echo not)
-> diff --git a/tools/testing/selftests/iommu/Makefile b/tools/testing/selftests/iommu/Makefile
-> index 32c5fdfd0eef..fd6477911f24 100644
-> --- a/tools/testing/selftests/iommu/Makefile
-> +++ b/tools/testing/selftests/iommu/Makefile
-> @@ -2,8 +2,6 @@
->  CFLAGS += -Wall -O2 -Wno-unused-function
->  CFLAGS += $(KHDR_INCLUDES)
->  
-> -CFLAGS += -D_GNU_SOURCE
-> -
->  TEST_GEN_PROGS :=
->  TEST_GEN_PROGS += iommufd
->  TEST_GEN_PROGS += iommufd_fail_nth
-> diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
-> index ac280dcba996..4ee37abf70ff 100644
-> --- a/tools/testing/selftests/kvm/Makefile
-> +++ b/tools/testing/selftests/kvm/Makefile
-> @@ -231,7 +231,7 @@ LINUX_TOOL_ARCH_INCLUDE = $(top_srcdir)/tools/arch/$(ARCH)/include
->  endif
->  CFLAGS += -Wall -Wstrict-prototypes -Wuninitialized -O2 -g -std=gnu99 \
->  	-Wno-gnu-variable-sized-type-not-at-end -MD -MP -DCONFIG_64BIT \
-> -	-D_GNU_SOURCE -fno-builtin-memcmp -fno-builtin-memcpy \
-> +	-fno-builtin-memcmp -fno-builtin-memcpy \
->  	-fno-builtin-memset -fno-builtin-strnlen \
->  	-fno-stack-protector -fno-PIE -I$(LINUX_TOOL_INCLUDE) \
->  	-I$(LINUX_TOOL_ARCH_INCLUDE) -I$(LINUX_HDR_PATH) -Iinclude \
-> diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
-> index 7b299ed5ff45..d6edcfcb5be8 100644
-> --- a/tools/testing/selftests/lib.mk
-> +++ b/tools/testing/selftests/lib.mk
-> @@ -196,6 +196,9 @@ endef
->  clean: $(if $(TEST_GEN_MODS_DIR),clean_mods_dir)
->  	$(CLEAN)
->  
-> +# Build with _GNU_SOURCE by default
-> +CFLAGS += -D_GNU_SOURCE=
-> +
->  # Enables to extend CFLAGS and LDFLAGS from command line, e.g.
->  # make USERCFLAGS=-Werror USERLDFLAGS=-static
->  CFLAGS += $(USERCFLAGS)
-> diff --git a/tools/testing/selftests/mm/thuge-gen.c b/tools/testing/selftests/mm/thuge-gen.c
-> index d50dc71cac32..e4370b79b62f 100644
-> --- a/tools/testing/selftests/mm/thuge-gen.c
-> +++ b/tools/testing/selftests/mm/thuge-gen.c
-> @@ -13,7 +13,7 @@
->     sudo ipcs | awk '$1 == "0x00000000" {print $2}' | xargs -n1 sudo ipcrm -m
->     (warning this will remove all if someone else uses them) */
->  
-> -#define _GNU_SOURCE 1
-> +#define _GNU_SOURCE
->  #include <sys/mman.h>
->  #include <linux/mman.h>
->  #include <stdlib.h>
-> diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftests/net/Makefile
-> index bc3925200637..8eaffd7a641c 100644
-> --- a/tools/testing/selftests/net/Makefile
-> +++ b/tools/testing/selftests/net/Makefile
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0
->  # Makefile for net selftests
->  
-> -CFLAGS =  -Wall -Wl,--no-as-needed -O2 -g
-> +CFLAGS +=  -Wall -Wl,--no-as-needed -O2 -g
->  CFLAGS += -I../../../../usr/include/ $(KHDR_INCLUDES)
->  # Additional include paths needed by kselftest.h
->  CFLAGS += -I../
-> diff --git a/tools/testing/selftests/net/tcp_ao/Makefile b/tools/testing/selftests/net/tcp_ao/Makefile
-> index 522d991e310e..bd88b90b902b 100644
-> --- a/tools/testing/selftests/net/tcp_ao/Makefile
-> +++ b/tools/testing/selftests/net/tcp_ao/Makefile
-> @@ -26,7 +26,7 @@ LIB	:= $(LIBDIR)/libaotst.a
->  LDLIBS	+= $(LIB) -pthread
->  LIBDEPS	:= lib/aolib.h Makefile
->  
-> -CFLAGS	:= -Wall -O2 -g -D_GNU_SOURCE -fno-strict-aliasing
-> +CFLAGS	+= -Wall -O2 -g -fno-strict-aliasing
->  CFLAGS	+= $(KHDR_INCLUDES)
->  CFLAGS	+= -iquote ./lib/ -I ../../../../include/
->  
-> diff --git a/tools/testing/selftests/proc/Makefile b/tools/testing/selftests/proc/Makefile
-> index 6066f607f758..ee424a9f075f 100644
-> --- a/tools/testing/selftests/proc/Makefile
-> +++ b/tools/testing/selftests/proc/Makefile
-> @@ -1,6 +1,5 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  CFLAGS += -Wall -O2 -Wno-unused-function
-> -CFLAGS += -D_GNU_SOURCE
->  LDFLAGS += -pthread
->  
->  TEST_GEN_PROGS :=
-> diff --git a/tools/testing/selftests/resctrl/Makefile b/tools/testing/selftests/resctrl/Makefile
-> index 021863f86053..f408bd6bfc3d 100644
-> --- a/tools/testing/selftests/resctrl/Makefile
-> +++ b/tools/testing/selftests/resctrl/Makefile
-> @@ -1,6 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0
->  
-> -CFLAGS = -g -Wall -O2 -D_FORTIFY_SOURCE=2 -D_GNU_SOURCE
-> +CFLAGS = -g -Wall -O2 -D_FORTIFY_SOURCE=2
->  CFLAGS += $(KHDR_INCLUDES)
->  
->  TEST_GEN_PROGS := resctrl_tests
-> diff --git a/tools/testing/selftests/ring-buffer/Makefile b/tools/testing/selftests/ring-buffer/Makefile
-> index 627c5fa6d1ab..23605782639e 100644
-> --- a/tools/testing/selftests/ring-buffer/Makefile
-> +++ b/tools/testing/selftests/ring-buffer/Makefile
-> @@ -1,7 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0
->  CFLAGS += -Wl,-no-as-needed -Wall
->  CFLAGS += $(KHDR_INCLUDES)
-> -CFLAGS += -D_GNU_SOURCE
->  
->  TEST_GEN_PROGS = map_test
->  
-> diff --git a/tools/testing/selftests/riscv/mm/Makefile b/tools/testing/selftests/riscv/mm/Makefile
-> index c333263f2b27..4664ed79e20b 100644
-> --- a/tools/testing/selftests/riscv/mm/Makefile
-> +++ b/tools/testing/selftests/riscv/mm/Makefile
-> @@ -3,7 +3,7 @@
->  # Originally tools/testing/arm64/abi/Makefile
->  
->  # Additional include paths needed by kselftest.h and local headers
-> -CFLAGS += -D_GNU_SOURCE -std=gnu99 -I.
-> +CFLAGS += -std=gnu99 -I.
->  
->  TEST_GEN_FILES := mmap_default mmap_bottomup
->  
-> diff --git a/tools/testing/selftests/sgx/Makefile b/tools/testing/selftests/sgx/Makefile
-> index 867f88ce2570..03b5e13b872b 100644
-> --- a/tools/testing/selftests/sgx/Makefile
-> +++ b/tools/testing/selftests/sgx/Makefile
-> @@ -12,7 +12,7 @@ OBJCOPY := $(CROSS_COMPILE)objcopy
->  endif
->  
->  INCLUDES := -I$(top_srcdir)/tools/include
-> -HOST_CFLAGS := -Wall -Werror -g $(INCLUDES) -fPIC
-> +HOST_CFLAGS := -Wall -Werror -g $(INCLUDES) -fPIC $(CFLAGS)
->  HOST_LDFLAGS := -z noexecstack -lcrypto
->  ENCL_CFLAGS += -Wall -Werror -static-pie -nostdlib -ffreestanding -fPIE \
->  	       -fno-stack-protector -mrdrnd $(INCLUDES)
-> diff --git a/tools/testing/selftests/tmpfs/Makefile b/tools/testing/selftests/tmpfs/Makefile
-> index aa11ccc92e5b..3be931e1193f 100644
-> --- a/tools/testing/selftests/tmpfs/Makefile
-> +++ b/tools/testing/selftests/tmpfs/Makefile
-> @@ -1,6 +1,5 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  CFLAGS += -Wall -O2
-> -CFLAGS += -D_GNU_SOURCE
->  
->  TEST_GEN_PROGS :=
->  TEST_GEN_PROGS += bug-link-o-tmpfile
+What do you mean here? I got the "PCI: hv: ..." format from recent
+commits. "PCI" is capitalized. You want to to capitalize "fix"?
 
--- 
-BR,
-Muhammad Usama Anjum
+> 2) Say something more specific than "fix reading ..."
+> 
+> Apparently this returns garbage in some case where you want to return
+> zero?
+
+Yes. *val is not changed in the old code, so garbage is returned.
+
+Here is the updated commit message. I can resend once you confirm you're
+happy with it.
+
+    PCI: hv: Fix reading of PCI_INTERRUPT_PIN
+
+    The intent of the code snippet is to always return 0 for both
+    PCI_INTERRUPT_LINE and PCI_INTERRUPT_PIN.
+
+    The check misses PCI_INTERRUPT_PIN. This patch fixes that.
+
+    This is discovered by this call in VFIO:
+
+        pci_read_config_byte(vdev->pdev, PCI_INTERRUPT_PIN, &pin);
+
+    The old code does not set *val to 0 because it misses the check for
+    PCI_INTERRUPT_PIN. Garbage is returned in this case.
+
+    Fixes: 4daace0d8ce8 ("PCI: hv: Add paravirtual PCI front-end for Microsoft Hyper-V VMs")
+    Cc: stable@kernel.org
+    Signed-off-by: Wei Liu <wei.liu@kernel.org>
+
+Thanks,
+Wei.
+
+
+> 
+> On Fri, Jun 21, 2024 at 09:00:18PM +0000, Wei Liu wrote:
+> > The intent of the code snippet is to always return 0 for both
+> > PCI_INTERRUPT_LINE and PCI_INTERRUPT_PIN.
+> > 
+> > The check misses PCI_INTERRUPT_PIN. This patch fixes that.
+> > 
+> > This is discovered by this call in VFIO:
+> > 
+> >     pci_read_config_byte(vdev->pdev, PCI_INTERRUPT_PIN, &pin);
+> > 
+> > The old code does not set *val to 0 because it misses the check for
+> > PCI_INTERRUPT_PIN.
+> > 
+> > Fixes: 4daace0d8ce8 ("PCI: hv: Add paravirtual PCI front-end for Microsoft Hyper-V VMs")
+> > Cc: stable@kernel.org
+> > Signed-off-by: Wei Liu <wei.liu@kernel.org>
+> > ---
+> > v2:
+> > * Change the commit subject line and message
+> > * Change the code according to feedback
+> > ---
+> >  drivers/pci/controller/pci-hyperv.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
+> > index 5992280e8110..cdd5be16021d 100644
+> > --- a/drivers/pci/controller/pci-hyperv.c
+> > +++ b/drivers/pci/controller/pci-hyperv.c
+> > @@ -1130,8 +1130,8 @@ static void _hv_pcifront_read_config(struct hv_pci_dev *hpdev, int where,
+> >  		   PCI_CAPABILITY_LIST) {
+> >  		/* ROM BARs are unimplemented */
+> >  		*val = 0;
+> > -	} else if (where >= PCI_INTERRUPT_LINE && where + size <=
+> > -		   PCI_INTERRUPT_PIN) {
+> > +	} else if ((where >= PCI_INTERRUPT_LINE && where + size <= PCI_INTERRUPT_PIN) ||
+> > +		   (where >= PCI_INTERRUPT_PIN && where + size <= PCI_MIN_GNT)) {
+> >  		/*
+> >  		 * Interrupt Line and Interrupt PIN are hard-wired to zero
+> >  		 * because this front-end only supports message-signaled
+> > -- 
+> > 2.43.0
+> > 
 
