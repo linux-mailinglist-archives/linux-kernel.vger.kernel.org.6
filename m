@@ -1,54 +1,72 @@
-Return-Path: <linux-kernel+bounces-235609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ADA491D761
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:22:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC8F791D765
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:24:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D69C0280EF7
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 05:22:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC5ED1C22096
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 05:24:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B77938397;
-	Mon,  1 Jul 2024 05:22:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 439A437708;
+	Mon,  1 Jul 2024 05:23:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="HYeQbzVa"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GwM0KQAk"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39052433D2;
-	Mon,  1 Jul 2024 05:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D122A1C5
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 05:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719811330; cv=none; b=DLIXegA/9Xbtm2BIyelhGigZx1+rsBO868vHtKTmXFvmsOiPNjzNT7RzdiGURBTnqpOgoOLBH9MLqJlXsP1NHqtm233qN5VC78fw2ugRj2ozNbFE5tI00sK0ucUIfBo4HQODa3AM16eF/fzbXRzY3PhpzTAKsy6CCEL5cfWgFfw=
+	t=1719811434; cv=none; b=FQRL34wP5QaarCvT/CQtQOg+SnysvELMWS8Qj4+w5gY+YdUI9ta+KAQRMjwXbjFdpIqTJUTAW1z/aqxpqVC7s1m6j1btcfLUFOyCdQvmC0QM0mwfvZD4VFGBWj9hG7VyDYXLBj+Pixm1oyrmdSSLE9Yd04J5dbAsChFyt4VYPb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719811330; c=relaxed/simple;
-	bh=IMGIXZ6HdrFRPSbcEmA5t2KXTtvIr3dl+wW5RM+jytI=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=hSDzYhY6WRwgtdQULIQegW2MkmrR1fROJicBO8H4kqM1if2qcTKB+AdV3EzURITv52pA0WxlEyXkt+SXPYo+oa2XmlZr9E3gbJCUhDWH8U3or1KZnq/ZSbwBLUsfOvQncwwoufMhMiClbJOxtnyRUj3uK5+mOZWnx93JKYc2eHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=HYeQbzVa; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719811295; x=1720416095; i=markus.elfring@web.de;
-	bh=IMGIXZ6HdrFRPSbcEmA5t2KXTtvIr3dl+wW5RM+jytI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=HYeQbzVacYIAEj2A0UPV/THk+x4OLgwhDHkd7U3gRfli1Ib3wX0oAhIyUFL26az0
-	 ZS0fiPQTUCFgYYs4lSHKtjNWXQrRN2Y4zcFZyT9UrtCy+z//xD1NT7he62dkvEh9a
-	 psRHen+/FG/qBeRJ17fsOmXWsdnxBDGSWzLUrNm5gTntVquGuKP84xRbi7jjQMIgy
-	 gCHUGTxyL5vcjHMTaDleOrxeswCiM5sVRVS9E93Y+odF+GXuw0jqg26faJN4UYcZM
-	 7V9JTRGvpxSM2GXGtksGtb4H+0y7Q0kEc43jHgtDCmij37hf9BwaxRktrDYXDNBoM
-	 cuOpWcr9cFcDV9C9GA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MdwJO-1rpdfs3oec-00ln7o; Mon, 01
- Jul 2024 07:21:34 +0200
-Message-ID: <8ced519f-47f2-4a74-be6d-4be5958009ba@web.de>
-Date: Mon, 1 Jul 2024 07:21:18 +0200
+	s=arc-20240116; t=1719811434; c=relaxed/simple;
+	bh=GiOtOBj6pf0LX9H0g6927w2KpEVUW3DE8nPCm4R7vPQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oSBwaNIzR4s6lz57zHuYc/V7Ou45Y55rDT3KSLdYB903rBvEJyfkQdUx7ShmG9L4I6O+4AMRnN8HsI2lCMGPUIPDuoaud/612EgRG1OsKgMizaLrwyA8+TUDd4EUN9QZY11hkH/HQ0CdDf3LZwf3o/449mUep0klmDJJ1sipUKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GwM0KQAk; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so14526345e9.1
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 22:23:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719811431; x=1720416231; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8ZPrvTX1LlCOARG8zADhUY6Yra+UeWC6LQybo1XCNjI=;
+        b=GwM0KQAkEWxtGDr67FuD4oHwWdzIDKiICVkT+Y6Q8uyrQr4RpHW9e11537gHYFRJl/
+         1pc0wA5tLzQqZGnsjVm43QevbRKSyZF+ofHGxSjLaJPB2p+wz2gRqY5lW9qBT7KgAern
+         COsbS+hmhoAKCz+qkGcF9F0p5Q3xXbH0vq39Q+HiNwwYbryntdnQwcmhXUD+X8toWtgp
+         eNEv3SCPfGbwN2el38p4YYFsYBtOoEtYN8T3xhY/UomBGeZjSyFXYJT1eHxQ/u679UEd
+         suRbr4U8LDpRiy/yq1BjWj8HmxtUKlRk6rJt6/JHTEOp6cGcLWq+PVtcI3wgp+QxpnGd
+         tq9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719811431; x=1720416231;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8ZPrvTX1LlCOARG8zADhUY6Yra+UeWC6LQybo1XCNjI=;
+        b=q2yzrA6iZDsHXBwqUgyGOU1isfzqu7PibqLQZ1t3ZJfDpcUQRRYLzhKLBsfFaZvVme
+         aU3qbyTDyPWipd5kZKeAt0pjzPrxoc3CYB5QD+E+dudU011M/B8CsW5J/S5RpgHVVybK
+         lGa+d0DQxVb1VHU6o18c6aZpbtJ3nNs+BzH+EnAorwuvWBdEXOkb4jdRcuKBcMLmejX8
+         ZENpSTcyfyUSDPB4a0RHiU0Y56oU8zBaYsvX8ihqIjbIxH2cE7qnU3x4dLbB3tcnhsJY
+         iZBC+UbFIYM9vd7i/6gMZM/qDc6Crgni1B2JWVUr0xL0gQ5RXu3zKd+jGC/aJWZDmdSR
+         DctA==
+X-Gm-Message-State: AOJu0YwL3PaXucbz3lQTR1JlT/DQWJ0EmtxD9cU59SpGy102MfztSzR4
+	5WsLlGwssnUbZ49uLy2H3hgRWjqqjtaJHyDWjmXsoKDwvleej3e/1IbgfYioiZc=
+X-Google-Smtp-Source: AGHT+IF9MRIx1wSh67nqdVTfzQyiTLHhWk7kRj6SC+p6KSXYmfU40pPYzAfvgbGb4Ez6x7V9WMYD3Q==
+X-Received: by 2002:a05:600c:48a2:b0:421:7ab8:59c with SMTP id 5b1f17b1804b1-42579862523mr43337155e9.10.1719811431050;
+        Sun, 30 Jun 2024 22:23:51 -0700 (PDT)
+Received: from [192.168.2.107] ([79.115.63.178])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b0c18cfsm138130885e9.45.2024.06.30.22.23.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 30 Jun 2024 22:23:50 -0700 (PDT)
+Message-ID: <1c457520-07b7-4bde-b040-e8bca959a4f5@linaro.org>
+Date: Mon, 1 Jul 2024 06:23:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,56 +74,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: Re: [v2 2/5] rosebush: Add new data structure
-To: Matthew Wilcox <willy@infradead.org>, kernel-janitors@vger.kernel.org,
- Boqun Feng <boqun.feng@gmail.com>, Johannes Berg <johannes.berg@intel.com>,
- Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
- <paulmck@kernel.org>, Uladzislau Rezki <urezki@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
- maple-tree@lists.infradead.org
-References: <20240625211803.2750563-3-willy@infradead.org>
- <52d370b2-d82a-4629-918a-128fc7bf7ff8@web.de>
- <ZoIHLiTvNm0IE0CD@casper.infradead.org>
-Content-Language: en-GB
-In-Reply-To: <ZoIHLiTvNm0IE0CD@casper.infradead.org>
+Subject: Re: [PATCH v2 3/4] dt-bindings: mtd: macronix,mx25l12833f: add
+ SPI-NOR chip
+To: Erez Geva <erezgeva@nwtime.org>, linux-mtd@lists.infradead.org,
+ Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Erez Geva <ErezGeva2@gmail.com>
+References: <20240629103914.161530-1-erezgeva@nwtime.org>
+ <20240629103914.161530-4-erezgeva@nwtime.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20240629103914.161530-4-erezgeva@nwtime.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:UX+yfozCovUOm1nP0B4sPqw6v0GncWxcDhx/WTSrO86UU6cPV96
- wkrtHU+lntN1gR1IY6k2WV9FajaXj/y36jiqB7AxzUBvVlyO7FLxsIXSV85SBvEZOLWRt5b
- TbUM7ivrT/tiyhmLwKdR3IZBRxeYDBZbBCzf4Uh8Si93d8JyZty4eyWDaUmOjXD6T2HgzOJ
- sTiU0NvL2ntkXCAunRyoQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:rTh91dUTLFs=;RJyIXwVaTwSFBMHklihzmdWsonH
- L6vlbDQDW2aPB+JXmXF20qa2FpvnEqnxSRbngoZqT/w+V6bEhSzLAq7tjoukGJpDzsWGlaNgZ
- xAIXE3vWJyikUBB7niMyEzU2vLxpczFfA9RQTOmZZJHZiP9Wfsqm+QSnv5EttT3WUQhs/nL6P
- H5AicN/YjQokwYT0ThjYI+Gp+G/H8Os66lxZTuYCjHTAlArAks9NEkmbCkZhjREI/Qjc2TQsC
- YcyBW2iTStwMEdaBfUkZ1DEme2BEMhoZhMR4Z+kes25TipOiBdUq9laPFmimLowdUxoS9xoZV
- iTesXWViE/HrOUyYVn5gyAx3Xcd9k20i2/KBotYlROt6sjtJbEzwmL3qtie128Xd9DWrb9npy
- 1I+iQg0oza0z3YFaPWcVF55AIT0RGrnbfbH9PFxc1C0OH4o4WGs3I33UY3p0kJuh1D86bGBQB
- klRBn1asu9p3hiqZrXcaci72V5zznSBnoTU+vdvaB7E5sDQIPfr3DxZyltTB/EVmqQEiSgRH3
- zJr1GF2VAKyz8b3pdedbYjRp1X5Cp95sAwzgV2XC25R5Xx5nomOPfY1q+zY5rHeZTGIA8tmG+
- e/crKXfxY8u1s1hI/fqq45FzpaJOMiICEZ8ZAaRLo00Gv9sydsNMSB4LNZ0pAJZfl4mkvWbG8
- bc5SEG6IRBSP/OLHgMBnO6rY2Pf0F/+herdmrYmcLJdj9xsXCFt+ypNXY8E191V7Ajd/eKOfO
- e8OxI0/iJko6EKN0S/wh4IhGbmqG++WXX79zob6wW8WTnaQwKi4UHITcs5LhF3TvdajkcSHOA
- +ZjJEBCMAHvpBBtX20Hrxy3pjQ7jB6h6uSciJmtVSeHSQ=
+Content-Transfer-Encoding: 7bit
 
->> Under which circumstances would you become interested to apply a statem=
-ent
->> like =E2=80=9Cguard(rcu)();=E2=80=9D?
->
-> Under no circumstances.
+Hi,
 
-I imagine that further contributors would like to discuss collateral evolu=
-tion
-also according to the support for applications of scope-based resource man=
-agement.
-https://elixir.bootlin.com/linux/v6.10-rc6/source/include/linux/rcupdate.h=
-#L1093
+On 6/29/24 11:39 AM, Erez Geva wrote:
+> From: Erez Geva <ErezGeva2@gmail.com>
+> 
+> Add Macronix SPI-NOR mx25l12833f.
+> 
+> mx25l12833f uses the same JEDEC ID as mx25l12805d.
+> 
+> Although mx25l12833f is a new chip that support read ID and SFDP,
+>  users might want to specify it in the device tree,
+>  to differ it from the old mx25l12805d chip.
 
-See also the commit 80cd613a9ae091dbf52e27a409d58da988ffc8f3 ("rcu:
-Mollify sparse with RCU guard") from 2024-04-15.
+As Michael said in a reply in v1, we try really hard to don't introduce
+new compatibles and instead rely on the generic "jedec,spi-nor". In your
+case you can differentiate between the two flavors of flashes based on
+the SFDP presence. We won't apply this.
 
-Regards,
-Markus
+Cheers,
+ta
 
