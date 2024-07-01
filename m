@@ -1,62 +1,61 @@
-Return-Path: <linux-kernel+bounces-236717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59ABB91E640
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:10:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3A0E91E642
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:10:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15ACA283473
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:10:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F36E31C21C75
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F82416EB46;
-	Mon,  1 Jul 2024 17:09:44 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85F116E883;
-	Mon,  1 Jul 2024 17:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7051716E883;
+	Mon,  1 Jul 2024 17:09:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="YX1D+n0y"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74FC516DEDB;
+	Mon,  1 Jul 2024 17:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719853783; cv=none; b=ONHapKgixoJMXXhkaxehQoN6vqF+/10nHcNWLiQPrr7QJonyFDZkjIYQ2yT0+/kUNWSGOdy+2tpPr0WyDfkOOYz9abC7O+usG89XPdWeo2GBM2VfV7tHsrOiCnsBvb+YTNYWbMOyBGASXuuYAlSUcRTfJGsh+PLCnJy4/uXLjFc=
+	t=1719853790; cv=none; b=Mnh8XurJfliXgNWb06EIURPSbdds6nqYPO0eXWvqyiJ1vZM3ESPR4shDf/3cZS2wREcLNVk2C0LxO8j50zQVKDzSA8X7nU26PqqGVCzL2Zb2Tf4FkA5oLpNZNIMAWPcGLOmch+v4vWuCDAvNtDiUy7ik6W9FnWAXlRQ5QENv7w0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719853783; c=relaxed/simple;
-	bh=/0P36xAcbDr1Y49JaZRQ1aDkbz3B2ByND+s9thhdz6o=;
+	s=arc-20240116; t=1719853790; c=relaxed/simple;
+	bh=dQkhVsO4fjep5bz5yxh8YYyV7YRAO/BUP/DL0UhJJbM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=orwQdTs4co9AT/ggE083ofTiUSuMWAqExrtAuBeG/bXEd/UE3+pZRrmX358tJqbV1w+neZhW9D4TfGidFgJdY4zn6WEcD8ULXSf+1iwtnkSGpzTc9D3zYcfAkbwe0G8Z08kZ9YFdtRc8GouCbhyFOk2sZBF5arTAsFAksxH6h4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 13A7C339;
-	Mon,  1 Jul 2024 10:10:06 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0F5003F766;
-	Mon,  1 Jul 2024 10:09:37 -0700 (PDT)
-Date: Mon, 1 Jul 2024 18:09:35 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Russell King <linux@armlinux.org.uk>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	James Clark <james.clark@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, kvmarm@lists.linux.dev
-Subject: Re: [PATCH v2 01/12] perf: arm_pmuv3: Avoid assigning fixed cycle
- counter with threshold
-Message-ID: <ZoLiz5FoPsd89p5E@J2N7QTR9R3>
-References: <20240626-arm-pmu-3-9-icntr-v2-0-c9784b4f4065@kernel.org>
- <20240626-arm-pmu-3-9-icntr-v2-1-c9784b4f4065@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OswhJSAflEbgO5ZujrEFBFGcVLkROH5FTs2d1aHn/3C+Fyq9tY6V5PpvxiieZIw0+/p4M+hZkslAay1tB8PLb+bnunBbKtakaccuhS7nT+qlN3fNBH8uPfB6VDkBeLmioSnbrqWOM1TcZvQ5seoYYWe2xJKZ8G9uWBhkIcqOBd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=YX1D+n0y; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=p/89mPRQ0gX+pUOoSRTlrwC6hJIOaY6TbRnTSm81D10=; b=YX1D+n0yoylmEMjNfwK9WwVmsy
+	HzTJOj09BrXXePwyBmzHL7XPAg148FCKIQZieGdM+hrD8H/OB46FCR8jDVAlLrCARvHX2gmMYKdm1
+	h2UB7TyG4x3KVhE+HkxyrK3JYp0/xyRhd5N8mvlQcFAwPYMy6rUrVAsIGDKHiAXgSm0g=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sOKX6-001ZHa-S3; Mon, 01 Jul 2024 19:09:40 +0200
+Date: Mon, 1 Jul 2024 19:09:40 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Romain Gantois <romain.gantois@bootlin.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 6/6] net: phy: dp83869: Fix link up reporting in
+ SGMII bridge mode
+Message-ID: <289c5122-759f-408a-a48a-a3719f0331f9@lunn.ch>
+References: <20240701-b4-dp83869-sfp-v1-0-a71d6d0ad5f8@bootlin.com>
+ <20240701-b4-dp83869-sfp-v1-6-a71d6d0ad5f8@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,73 +64,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240626-arm-pmu-3-9-icntr-v2-1-c9784b4f4065@kernel.org>
+In-Reply-To: <20240701-b4-dp83869-sfp-v1-6-a71d6d0ad5f8@bootlin.com>
 
-On Wed, Jun 26, 2024 at 04:32:25PM -0600, Rob Herring (Arm) wrote:
-> If the user has requested a counting threshold for the CPU cycles event,
-> then the fixed cycle counter can't be assigned as it lacks threshold
-> support. Currently, the thresholds will work or not randomly depending
-> on which counter the event is assigned.
-> 
-> While using thresholds for CPU cycles doesn't make much sense, it can be
-> useful for testing purposes.
-> 
-> Fixes: 816c26754447 ("arm64: perf: Add support for event counting threshold")
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> +			if (dp83869->mod_phy) {
+> +				ret = phy_read_status(dp83869->mod_phy);
+> +				if (ret)
+> +					return ret;
 
-Acked-by: Mark Rutland <mark.rutland@arm.com>
+Locking? When phylib does this in phy_check_link_status(), we have:
 
-Mark.
+	lockdep_assert_held(&phydev->lock);
 
-> ---
-> This should go to 6.10 and stable. It is also a dependency for ICNTR
-> support.
-> 
-> v2:
->  - Add and use armv8pmu_event_get_threshold() helper.
-> 
-> v1: https://lore.kernel.org/all/20240611155012.2286044-1-robh@kernel.org/
-> ---
->  drivers/perf/arm_pmuv3.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/perf/arm_pmuv3.c b/drivers/perf/arm_pmuv3.c
-> index 23fa6c5da82c..8ed5c3358920 100644
-> --- a/drivers/perf/arm_pmuv3.c
-> +++ b/drivers/perf/arm_pmuv3.c
-> @@ -338,6 +338,11 @@ static bool armv8pmu_event_want_user_access(struct perf_event *event)
->  	return ATTR_CFG_GET_FLD(&event->attr, rdpmc);
->  }
->  
-> +static u32 armv8pmu_event_get_threshold(struct perf_event_attr *attr)
-> +{
-> +	return ATTR_CFG_GET_FLD(attr, threshold);
-> +}
-> +
->  static u8 armv8pmu_event_threshold_control(struct perf_event_attr *attr)
->  {
->  	u8 th_compare = ATTR_CFG_GET_FLD(attr, threshold_compare);
-> @@ -941,7 +946,8 @@ static int armv8pmu_get_event_idx(struct pmu_hw_events *cpuc,
->  	unsigned long evtype = hwc->config_base & ARMV8_PMU_EVTYPE_EVENT;
->  
->  	/* Always prefer to place a cycle counter into the cycle counter. */
-> -	if (evtype == ARMV8_PMUV3_PERFCTR_CPU_CYCLES) {
-> +	if ((evtype == ARMV8_PMUV3_PERFCTR_CPU_CYCLES) &&
-> +	    !armv8pmu_event_get_threshold(&event->attr)) {
->  		if (!test_and_set_bit(ARMV8_IDX_CYCLE_COUNTER, cpuc->used_mask))
->  			return ARMV8_IDX_CYCLE_COUNTER;
->  		else if (armv8pmu_event_is_64bit(event) &&
-> @@ -1033,7 +1039,7 @@ static int armv8pmu_set_event_filter(struct hw_perf_event *event,
->  	 * If FEAT_PMUv3_TH isn't implemented, then THWIDTH (threshold_max) will
->  	 * be 0 and will also trigger this check, preventing it from being used.
->  	 */
-> -	th = ATTR_CFG_GET_FLD(attr, threshold);
-> +	th = armv8pmu_event_get_threshold(attr);
->  	if (th > threshold_max(cpu_pmu)) {
->  		pr_debug("PMU event threshold exceeds max value\n");
->  		return -EINVAL;
-> 
-> -- 
-> 2.43.0
-> 
+I don't see anything which takes the downstreams PHY lock.
+
+Is this also introducing race conditions? What happens if the link
+just went down? phy_check_link_status() takes actions. Will they still
+happen when phylib next talks to the downstream PHY? It is probably
+safer to call phy_check_link_status() than phy_read_status().
+
+   Andrew
+
 
