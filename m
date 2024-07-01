@@ -1,131 +1,85 @@
-Return-Path: <linux-kernel+bounces-236301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 751F191E028
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:02:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 664B991E021
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:01:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F8F91F235B3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:02:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 119451F236B4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DAC015D5D8;
-	Mon,  1 Jul 2024 13:01:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24AF15DBC8;
+	Mon,  1 Jul 2024 13:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="e7DPe1iS"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sX4NA97c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F7215EFB8;
-	Mon,  1 Jul 2024 13:01:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B6114D6E1;
+	Mon,  1 Jul 2024 13:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719838900; cv=none; b=oyk6/KUaIfpV7tl/NIISZjjIF7u5HqPJlJIEk5Kd/Zj+5sHMiEuazLmrAfPxaLAd6AOYTIsszJXR8QhkVuIE81MtirLbeQ/pwqadv5h3mF5J136LAphMo90KyTsfyciK60S8dx7nepO6YXCV/Op8RgMaanHNWcytHpdqHXff1O8=
+	t=1719838894; cv=none; b=ShfjQVUaeASf0flvVzvznc1YdmFBh1eY2iph2THtaRwTRsRZk4YdRLHG4HA7sPMUmIHoCoMtVNjlKyGbVW4ZUzSBAgl53JOW9zc1fINJ76rvea95eXZO7s9pRzDYV3sEunp44RyvmD0xJ5Voc6hYjevhbVopg3cvaU1A6czxdhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719838900; c=relaxed/simple;
-	bh=I5l4BmXzzjYrEFqjls37V5m4ptisjD/c/HozJlF8dEU=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=XZ7T48aTV9y6X+Z81mOOnB/BjZ/ymtxZ++GiNTVbRhitzG/ms/SWfMOHK/EVdbHFey5RFt0SfnO6u8AW4verTm1oBc+Ioq3soM1BdB8Zzr19Hr+5y0at2GRiFdYNs6LKlU640DwCyUHeA9Bxow70tqdJKf/jyhHbIRRqGoU1grk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=e7DPe1iS; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719838880; x=1720443680; i=markus.elfring@web.de;
-	bh=RheuWezdV3dKfPfPXlPzuZw1wJlMe7l1v3xBfQujEMU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=e7DPe1iSWlAR3vgcYGuyIxX8+4Oj1iGauSSTWqmeCInM+JIoldR/JT0WYLQWM/vA
-	 IwdOoULXtOEi+zd5QnzFuqkPcDGjczE23hH7u6r1waODPFoB0quO7wf8+KOJoEn1O
-	 vjQXcuEEVIm5rsjUixPTYnHYvtT2afrhJ8IuZdthwzBe+gnKBBvW7VNOXfnGuZCkR
-	 xFZ6refvHVzdFk/PzCkOCIlFcennevibKRQiGa/b1+b7msX6ZQRgNgSpdf5e4Pzw+
-	 UByOvECBuOz1UlLkpBCO5CpKAKCLWa8/joPUJuLK9VVgLY+04rfwpSJ3lVaHehFeh
-	 /2ub96fwZV5p/JS98w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MwjK2-1sCezq2isc-014Pjz; Mon, 01
- Jul 2024 15:01:20 +0200
-Message-ID: <5fecc08a-c3b7-4745-abc9-0f5b4de03c22@web.de>
-Date: Mon, 1 Jul 2024 15:01:15 +0200
+	s=arc-20240116; t=1719838894; c=relaxed/simple;
+	bh=mzcB+fYp3o9NJjTjsfH7uSf97jiaMjiCzdHrbPN4x/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mNneA+cMoLRzUtW7LCV5WutuAy7cbEzzuhmYX2eptLZw8Ibogb0kQ+UwRd0iHBTU1eVtQa5mTWgraCzoAIS37qWYgEA1kvjps0U6myZRD6y/wT3nJ+NFqP5e2avqCBj0CE14SvnFw8zTFI7n3K6u9p6VSnTmP6h0SPCEj0yBpME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sX4NA97c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B61DFC116B1;
+	Mon,  1 Jul 2024 13:01:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719838893;
+	bh=mzcB+fYp3o9NJjTjsfH7uSf97jiaMjiCzdHrbPN4x/0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sX4NA97c5+M3LFDkuGDmaVnn/H9lqdywQTGi+jxtly5k1AKfc5AdVHcAPDo+4ctLK
+	 Yo31K7dSkmvLiKRA+jxdP0vmelQs2BzJm5Om54DuXw5S665Xop1Suz19U/xaui/sxx
+	 /69EGjx8QiSxvyBUkFCafe/RV4ew1fGgVW3CI7Qy1uWSERd6c4/Kp8sM8fPfP8IvXV
+	 7L0A1hcoerKhduog+LaCtUpLMV6f9YRybnBvrK0AlwLMvD80qee5VyvAdsc8n9UY5Y
+	 cQsutZuPE+rGLLEPgfhltbn6nMO8wUtwwU4OzhFhMmLlu+1ih/2FHHNSqG+/J0dJtC
+	 TLfebFRb2V83g==
+Date: Mon, 1 Jul 2024 14:01:27 +0100
+From: Will Deacon <will@kernel.org>
+To: Atish Patra <atishp@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, kvm-riscv@lists.infradead.org,
+	Atish Patra <atishp@atishpatra.org>,
+	Anup Patel <anup@brainfault.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, garthlei@pku.edu.cn
+Subject: Re: [PATCH v4 0/3] Assorted fixes in RISC-V PMU driver
+Message-ID: <20240701130127.GA2250@willie-the-truck>
+References: <20240628-misc_perf_fixes-v4-0-e01cfddcf035@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Haoxiang Li <make24@iscas.ac.cn>, samba-technical@lists.samba.org,
- linux-cifs@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Bharath SM <bharathsm@microsoft.com>, Paulo Alcantara <pc@manguebit.com>,
- Ronnie Sahlberg <ronniesahlberg@gmail.com>,
- Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>,
- Tom Talpey <tom@talpey.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240701064847.84726-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH] fs: smb: client: Add missing check for kstrdup()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240701064847.84726-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:WGM+jFjvbr01rKJUJEZYPEiqQkoIMOHon5Q3YwwJMi5/5cPJkXb
- hWPKRkzf1iYYz3Zl3XNNJvJ6mUz2Y/Q1HjCp8NnX8jVgV0FLyaK+RjuMNieZDeMYsE3WPVm
- XEB797PD/jaIx0OSp6csgjzik08v9HIfoCL6cT5K8ANNGomp8ska6HAbTE/2JBMhH41BvRA
- F+wc6w0VU2O4veIVJFDrg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:n/hCUtUIstI=;SUHx5PArkiOBs4twGmmXl0aGEFv
- 5g5IXJUuAVq/FhX+EfKgzJ52yGtoWn6fP4ZZp9m0TAkLfQS3LCwvWXpYvF0MD2D68znERpik8
- 2wqSP6FJPuJEC8HNrGT7VOOTbGCB45jl2k0TSfx3De8ZtVq/lunJWx6M0uk2NdnfAOfGlb3OD
- /3GGNxctlAa2C02fNKFN/ojohyayJohKzXOPWoABfISpFbKFZYgHJZbf0xpREMGyTMXThL6sA
- fXTQHxT1jgfQcFmtl+rPEhTzlWzDYvrwMQzdrk1qUy7KliD4hNl5P10/Ghbi6Kl2f3lUeA4UR
- maVho+4C4tqZW1MIBcIurKBHv+RjwlrQ6khiU6GFwrUupBYOhSS07NIz+ikqiswVHQA6AlesV
- FL6JOv0ceG3j+CfY+z43QgFCplTHogtQ6mQFfTuOHcbPL+XQmHozKaABcclim8SHjqhscsfZh
- iUxBdK0AZ/ZPHiefjicqjovD5dvJYQDr3UZpfnMEon7C0QWuj9LSs0QTcPWQBM7CH6GQKaQYL
- OOQs8rrtWCHftQ8O0rWX4xsf/ESI+PkzOPRt7RfdzyTRpdFhwuEs3PoDJ1JLztdL7su/Ns5f+
- Qkzwg5i9gCh7fb9VhkitLeZIIlNiJtcjGfnyT1aXa4nc/3Mgwwt4zGgfB79Vt3F0U0V40pSCd
- YLBE2vsiysvvN33YYFQGwW3nSgp4TjmIzy0lM0TLZq1gwV1PqbEGde+/uwBtpalaajaTRa+fH
- b9jL6HlkU31g3me8D1NyZ5gBDojDEs1y4nv8gbKYzxtPyYD/l3QrovSx7aImJC9tIifrZZKxV
- gfzJTvWKo2stICzv8cCacu1EEQAF+2rmdxGNs9xLGl+64=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240628-misc_perf_fixes-v4-0-e01cfddcf035@rivosinc.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-> Add check for kstrdup() in smb3_reconfigure in order to guarantee
+On Fri, Jun 28, 2024 at 12:51:40AM -0700, Atish Patra wrote:
+> This series contains 3 fixes out of which the first one is a new fix
+> for invalid event data reported in lkml[2]. The last two are v3 of Samuel's
+> patch[1]. I added the RB/TB/Fixes tag and moved 1 unrelated change
+> to its own patch. I also changed an error message in kvm vcpu_pmu from
+> pr_err to pr_debug to avoid redundant failure error messages generated
+> due to the boot time quering of events implemented in the patch[1]
 
-      checks?             calls?             ()
+I'm assuming this series will go via the riscv arch tree, but please
+shout if that's not the case.
 
-
-> the success of allocation.
-
-I suggest to take further patch/code review concerns better into account.
-
-
-=E2=80=A6
-> Signed-off-by: Haoxiang Li <make24@iscas.ac.cn>
-
-Will requirements be reconsidered once more for the Developer's Certificat=
-e of Origin?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n398
-
-
-How do you think about to use a summary phrase like =E2=80=9CComplete erro=
-r handling
-in smb3_reconfigure()=E2=80=9D?
-
-
-=E2=80=A6
-> +++ b/fs/smb/client/fs_context.c
-> @@ -920,6 +920,8 @@ static int smb3_reconfigure(struct fs_context *fc)
->  		ses->password =3D kstrdup(ctx->password, GFP_KERNEL);
->  		kfree_sensitive(ses->password2);
->  		ses->password2 =3D kstrdup(ctx->password2, GFP_KERNEL);
-> +		if (!ses->password || !ses->password2)
-> +			return ERR_PTR(rc);
->  	}
-=E2=80=A6
-
-How do you think about to avoid also a memory leak here?
-
-Regards,
-Markus
+Will
 
