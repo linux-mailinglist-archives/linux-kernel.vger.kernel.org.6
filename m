@@ -1,119 +1,133 @@
-Return-Path: <linux-kernel+bounces-236839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F378791E7B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:35:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3340391E7B3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:35:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 308601C2234C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:35:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E48ED284A73
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:35:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C343D16F282;
-	Mon,  1 Jul 2024 18:34:25 +0000 (UTC)
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7B216EB67;
+	Mon,  1 Jul 2024 18:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WFk5+wn3"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EBEF16C844;
-	Mon,  1 Jul 2024 18:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEFF381CC
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 18:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719858865; cv=none; b=bLk96bPx9kLqaj24cr9RDpDaXuvzXw2UDWY8aZEazXzMD/W8JoTJFNDlXkixN5SHObVA/oRJsM9gDH35r51Cn/QEJpUXIHJ1npMx5AgYEbRwN+D4glOlnpjxzwZ+O1mlu8H7ggwyDrrh5aG7BkI4CNoYmgEqOBURDKdrsPmhj2o=
+	t=1719858913; cv=none; b=f+EeOUNPXQfTzCYYEpj3b9eG1gY/s9pjptPVVd/ygEL0AR7IWwGffS8KWNN3YqRb8f4Wl5pzceU0OuEK0xNF8XNmDIGH0/XVlWUOwB1KMxD9HNNPTSF8jFGicEg8oCZpLyUVmRqO+BLr29tWMaix5uYIa38sUo63ixb2GXvHW4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719858865; c=relaxed/simple;
-	bh=qnBhsbC4WESNiDDc/d77ys1TcQzeK/0ng/S3oNQv8JA=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=NiyzFLUDOQOtrS/GvfEaJmQyjbYWX6AeoEsGap5ltGjRYQihNQlCSAdXUtl8J3fDsvsQgRpHIuvDCCK+DPWpoGxZNEadoLmUzuBHDQk1TScnzXoaovGO0QJ7XVgSn1yfuS7OUNyLE5fiBJ3JQbPf/wuV5sgN10qdhgDB583vT3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org; spf=pass smtp.mailfrom=ovn.org; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ovn.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 413AEC0005;
-	Mon,  1 Jul 2024 18:34:18 +0000 (UTC)
-Message-ID: <79258c61-9658-4f9b-b564-f2e14440a7c5@ovn.org>
-Date: Mon, 1 Jul 2024 20:34:17 +0200
+	s=arc-20240116; t=1719858913; c=relaxed/simple;
+	bh=XRD9+5Hp/AxmKvP/dHR9thQkxU3IsZa+pNzAr0D2acw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jjseilE/9QU6jB/ApWPSM32Z3fHDMyZ22GjZRogy9zawozT9YdC+dT1YBt0nSqjXJz2FhctU0PwlP5IYoc80sPWCv0Yqdt/QLLZeQ27jWtA4oP4v2Elu25+TqO8t42ATiBuEUCRSNHbfg4WeaODac+ZBXeoLGmjpiqz3jTtF5yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WFk5+wn3; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-656d8b346d2so1864126a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 11:35:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719858911; x=1720463711; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=u5fDYwHqagylc/gG2b6UzkgSO9G/V5kt1qLdPCrfUHU=;
+        b=WFk5+wn3jeQStcMFmpAAp1vCWuWz+1lgHW76TYSEUgb/v7rLfIEAiAOob4jY/iFs00
+         uWwdXgrahFpY4PiEQAkwfgPf5+zdnWKInH7253dZ/Sq+bfY7NYtG80F3rvmWBexIvSTt
+         VLX+3sBe9dY+fhUPFXl0jcX1OZznk42BPQYvvW5KHeAVZWwKaGVy0DFkhC5kgY9YhJVe
+         ZZv2AGXcji9btXE+uTxszhK4ZCGa5TEgOggowCK9EZ6p66IR+pzNzjCMwzXs+g/58WU1
+         yYLRgVegv7fvhW/MECN/naR5KPp3EMJCcIxOjSvjm2Edw1h0jqgJ93hl0oR7gpRR+cVE
+         rF2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719858911; x=1720463711;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u5fDYwHqagylc/gG2b6UzkgSO9G/V5kt1qLdPCrfUHU=;
+        b=GSJftqmq8ucPOw+bWAymGW3Iu5U+/hkQtPN5tHBialQQSQUjkSDyS1CLd1RSnJeEsY
+         CR8Ohsd14VMAAhs87OUBCr1pUP4Fa20BsArGb35rL9URf3USSY0ebMpZHw2SmBf+fOXr
+         TqIpVToAESxcbQp+7dNuG04oELCK5oq/kHlkzhFY/VBClqIkMQmu7Qca+2TsERWB4J0B
+         mm1b/ARnSDRnv3v90yswTsq+Cvzn6s6AKV8uJQagdOlpM1YnOriTg6GPNEQ8Oyd77l4/
+         TINOHdtGv+7vWvfuSCFXiPeL/OTCVv+WYcNppH+TsmaZP/SgZpiiQNQdiS9ldNFUo8XU
+         peUw==
+X-Forwarded-Encrypted: i=1; AJvYcCV9COK0f393kKR+tTyjSjhyYFFlXUKiUmlXiTzUsXQp9xTHWHq8tAG8RJAbZRNttk3FIRuW0UWB5em0HIhqM7WKqG/u+D+5aGY5O3eE
+X-Gm-Message-State: AOJu0YxdKwc1BDezfZIkIRMTx4QlqczDQcSObyR3VDvl+ZCNej5GOzo6
+	NvGpAJFq4UsdjvP2T8lZHc+vOL3wJXNV7TZ0o4A5Al1iuc/L58F98c3fvQ==
+X-Google-Smtp-Source: AGHT+IF9TtNI4i4BF5Ba60WFG/q6KzZTWmuEiGb9mjbhO5m7EH4+eFvigCwt1/L2uKnvFL4VFabvJA==
+X-Received: by 2002:a05:6a20:8425:b0:1bd:24e5:81f4 with SMTP id adf61e73a8af0-1bef61e7c36mr6371779637.45.1719858910699;
+        Mon, 01 Jul 2024 11:35:10 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac1535cc8sm67904915ad.122.2024.07.01.11.35.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 11:35:10 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Mon, 1 Jul 2024 08:35:08 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Vishal Chourasia <vishalc@linux.ibm.com>
+Cc: David Vernet <void@manifault.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH sched_ext/for-6.11] sched_ext: Swap argument positions in
+ kcalloc() call to avoid compiler warning
+Message-ID: <ZoL23Bq0hmeJ0F8a@slm.duckdns.org>
+References: <ZoG6zreEtQhAUr_2@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: i.maximets@ovn.org, aconole@redhat.com, echaudro@redhat.com,
- horms@kernel.org, dev@openvswitch.org, Pravin B Shelar <pshelar@ovn.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v7 10/10] selftests: openvswitch: add psample
- test
-To: Adrian Moreno <amorenoz@redhat.com>, netdev@vger.kernel.org
-References: <20240630195740.1469727-1-amorenoz@redhat.com>
- <20240630195740.1469727-11-amorenoz@redhat.com>
-Content-Language: en-US
-From: Ilya Maximets <i.maximets@ovn.org>
-Autocrypt: addr=i.maximets@ovn.org; keydata=
- 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
-In-Reply-To: <20240630195740.1469727-11-amorenoz@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZoG6zreEtQhAUr_2@linux.ibm.com>
+
+From b651d7c39289850b5a0a2c67231dd36117340a2e Mon Sep 17 00:00:00 2001
+From: Tejun Heo <tj@kernel.org>
+Date: Mon, 1 Jul 2024 08:30:02 -1000
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: i.maximets@ovn.org
+Content-Transfer-Encoding: 8bit
 
-On 6/30/24 21:57, Adrian Moreno wrote:
-> Add a test to verify sampling packets via psample works.
-> 
-> In order to do that, create a subcommand in ovs-dpctl.py to listen to
-> on the psample multicast group and print samples.
-> 
-> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
-> ---
->  .../selftests/net/openvswitch/openvswitch.sh  | 115 +++++++++++++++++-
->  .../selftests/net/openvswitch/ovs-dpctl.py    |  73 ++++++++++-
->  2 files changed, 182 insertions(+), 6 deletions(-)
+alloc_exit_info() calls kcalloc() but puts in the size of the element as the
+first argument which triggers the following gcc warning:
 
+  kernel/sched/ext.c:3815:32: warning: ‘kmalloc_array_noprof’ sizes
+  specified with ‘sizeof’ in the earlier argument and not in the later
+  argument [-Wcalloc-transposed-args]
 
-This version seems to work correctly with and without arguments.
+Fix it by swapping the positions of the first two arguments. No functional
+changes.
 
-Tested-by: Ilya Maximets <i.maximets@ovn.org>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Reported-by: Vishal Chourasia <vishalc@linux.ibm.com>
+Link: http://lkml.kernel.org/r/ZoG6zreEtQhAUr_2@linux.ibm.com
+---
+Applied to sched_ext/for-6.11.
+
+Thanks.
+
+ kernel/sched/ext.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index f6e25545bfc0..ae9ec8f542f2 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -3812,7 +3812,7 @@ static struct scx_exit_info *alloc_exit_info(size_t exit_dump_len)
+ 	if (!ei)
+ 		return NULL;
+ 
+-	ei->bt = kcalloc(sizeof(ei->bt[0]), SCX_EXIT_BT_LEN, GFP_KERNEL);
++	ei->bt = kcalloc(SCX_EXIT_BT_LEN, sizeof(ei->bt[0]), GFP_KERNEL);
+ 	ei->msg = kzalloc(SCX_EXIT_MSG_LEN, GFP_KERNEL);
+ 	ei->dump = kzalloc(exit_dump_len, GFP_KERNEL);
+ 
+-- 
+2.45.2
+
 
