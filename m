@@ -1,101 +1,158 @@
-Return-Path: <linux-kernel+bounces-236841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 314A691E7B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:36:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B978391E7D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:40:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9AD51F2158D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:36:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 638701F21D94
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC3516F0C3;
-	Mon,  1 Jul 2024 18:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CCEC16F269;
+	Mon,  1 Jul 2024 18:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y1i8joHi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sSyHjfU9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B53381CC;
-	Mon,  1 Jul 2024 18:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF1416F26C;
+	Mon,  1 Jul 2024 18:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719858992; cv=none; b=uSrrl02hWLTOp0OEEF6dRL9RY5+xzravBRJYhc+uz2YKM76AFpw4AX5JQiitKM5n4xvBQU7RWy4vNEHqWKb8bS5ONzXiqN4GhMKjYicZurG7RyDPtwnXjb2BV7SPjkx+XB9fp+RnJiN+I9/iWpYcAhpbASrPW/uTHiP++b4R2mM=
+	t=1719859093; cv=none; b=lanjaAkTIOil6i1oQSKx8IORRxDiDitnVBS31QcgY84ztupfZUy3ISCo9ciQ2pirzbI1xJ6a45RQ2F0KwqSup7uD0PFhwwds7GkZclw10/Gh/vPEWLW0XRO2RSrqSSJsPYQR4oyP+VMOFLiWJohMa/eFAfWBWaLRBu9l6NBPsoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719858992; c=relaxed/simple;
-	bh=PtmpIxW7QtZRZGSwCmMzSgdpUv310aGaJeYhAgzViwo=;
+	s=arc-20240116; t=1719859093; c=relaxed/simple;
+	bh=AX3Burc+jVtSsnnqyFaj57eodtlYTSR/s+lG7Ov1sgI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rhBjwx882Cqjw9IK2IVZFqvupjfStoMlSwaN56msZQl5nhFO91+gln30VSY1qy2dLYtHCsniBlY6+SLiQqBThWbZGMdqWgnh69Ts+GNNmJ6B6GVOytcdk7NHowrKFyczPdgas0O2CPtFjgu4TItfVsV+T6dvmSTxlD5jgFJha+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y1i8joHi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2892AC116B1;
-	Mon,  1 Jul 2024 18:36:32 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=hWE/V2RxJ1vL8SR/AyHbXYLFY4Rq+Jfwc7jZdwmQ7GF5x94t3oezgury6fI2UtGnU+209BLJnuiNjrAq94Kvy9udj+3XEWjR6CW3Hlno/1Plx8OS1kD29FdFAXBdBDgTx5jc8f+Z/4MU7Hlcj3DpPiPi2pqSB/ahvflxrXPmrQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sSyHjfU9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7DF2C116B1;
+	Mon,  1 Jul 2024 18:38:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719858992;
-	bh=PtmpIxW7QtZRZGSwCmMzSgdpUv310aGaJeYhAgzViwo=;
+	s=k20201202; t=1719859093;
+	bh=AX3Burc+jVtSsnnqyFaj57eodtlYTSR/s+lG7Ov1sgI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y1i8joHio0IzCMxKBhGEFgei3HHw7ygdeCR3CAglvJMsZFMYe6bgeaLT8w3eXH8uZ
-	 0wnahBan1xLupL68xx3DPMJtL3CdwHHZNTXRfJM1Ys//jPd9y4PSzyaZtVrQ48aabu
-	 dpaTvX3D18/ZGJc1HfXl3f6o2SHUNZBfBHaXSTLLW9L2VflxGGc96B7kXiLlHEyVSK
-	 1amC0DpO7Yq2VTIiISBHuf52YjNgZaYJrDn5Gf5i8VjBP1ULbVqjKWThpJmNqeWJfj
-	 FebHhcKrJDdGsVOgT1jMyStSml6H77i7COpyZHcWldp7RIAIHfTrmw7jdvAp6EKzSY
-	 8B8fbD1hfXGsw==
-Date: Mon, 1 Jul 2024 12:36:31 -0600
-From: Rob Herring <robh@kernel.org>
-To: George Stark <gnstark@salutedevices.com>
-Cc: ukleinek@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	neil.armstrong@linaro.org, khilman@baylibre.com,
-	jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
-	hkallweit1@gmail.com, linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel@salutedevices.com
-Subject: Re: [PATCH v2 2/3] dt-bindings: pwm: amlogic: Add optional
- power-domains
-Message-ID: <20240701183631.GA349021-robh@kernel.org>
-References: <20240701172016.523402-1-gnstark@salutedevices.com>
- <20240701172016.523402-3-gnstark@salutedevices.com>
+	b=sSyHjfU9W8vGs6ErMsERYxc7l6R+5ipDNqZ2WOFY+pAntHp9Bru4N7DeebcQRYEKt
+	 MPVB3gx2g7JV7UY08ap+VjNYlDzPqSlchKb+9IyVZznt9glZbc1NMUNlicbbRKPyj/
+	 i2VT46ecWjmXTYRbFT2ozagHlpJ+a4bhmRELY0Sazw7jl6Bf/uKprk8QKN9P0jzFf5
+	 3TDY1AE9UK9ftqm6Kyf+HhV8UKpbyRjR5u9Oom0AOI+xJ6zY5/CuibBvgcU76J+oO3
+	 KOkRtB0c2HuN9gWL7PKTw4WxuCpVBbrcTVnPZac6/3zrnwn0spvX9z8OVnnVUM0r8g
+	 1Hgp+uo4Vxcmw==
+Date: Mon, 1 Jul 2024 19:38:06 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>, lars@metafoo.de,
+	Michael.Hennerich@analog.com, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	nuno.sa@analog.com, dlechner@baylibre.com, corbet@lwn.net,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 6/7] iio: adc: Add support for AD4000
+Message-ID: <152ba099-7610-478b-8465-49d9e5adffd0@sirena.org.uk>
+References: <cover.1719686465.git.marcelo.schmitt@analog.com>
+ <628a85cb8cbee32ea7d2930c63e73f2ef449a800.1719686465.git.marcelo.schmitt@analog.com>
+ <20240630121726.5d75578e@jic23-huawei>
+ <ZoLxLgpy44S38nSe@debian-BULLSEYE-live-builder-AMD64>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="vlIPlvW+fKtcuuHS"
+Content-Disposition: inline
+In-Reply-To: <ZoLxLgpy44S38nSe@debian-BULLSEYE-live-builder-AMD64>
+X-Cookie: Microwaves frizz your heir.
+
+
+--vlIPlvW+fKtcuuHS
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240701172016.523402-3-gnstark@salutedevices.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 01, 2024 at 08:20:15PM +0300, George Stark wrote:
-> On newer SoCs, the PWM can require a power-domain to operate so add it
-> as optional.
+On Mon, Jul 01, 2024 at 03:10:54PM -0300, Marcelo Schmitt wrote:
+> On 06/30, Jonathan Cameron wrote:
+> > Marcelo Schmitt <marcelo.schmitt@analog.com> wrote:
 
-If required, then how is it optional?
+> > > +	struct spi_transfer t =3D {
+> > > +		.tx_buf =3D st->tx_buf,
+> > > +		.rx_buf =3D st->rx_buf,
+> > > +		.len =3D 2,
+> > > +	};
 
-If the 'newer SoCs' means the one you just added, then this should be 
-squashed into the prior patch with a conditional schema making it 
-required for the new compatible.
+> > I'd be tempted to do
 
-> 
-> Signed-off-by: George Stark <gnstark@salutedevices.com>
-> ---
->  Documentation/devicetree/bindings/pwm/pwm-amlogic.yaml | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pwm/pwm-amlogic.yaml b/Documentation/devicetree/bindings/pwm/pwm-amlogic.yaml
-> index da22cb3ed878..c814d88748dd 100644
-> --- a/Documentation/devicetree/bindings/pwm/pwm-amlogic.yaml
-> +++ b/Documentation/devicetree/bindings/pwm/pwm-amlogic.yaml
-> @@ -60,6 +60,9 @@ properties:
->      minItems: 1
->      maxItems: 2
->  
-> +  power-domains:
-> +    maxItems: 1
-> +
->    "#pwm-cells":
->      const: 3
->  
-> -- 
-> 2.25.1
-> 
+> > 	ssize_t ret;
+> >=20
+> > 	ret =3D spi_w8r8(AD4000_READ_COMMAND);
+
+> I tried this when working on v6. Only difference was I had declared ret a=
+s int.
+> Then reg values were not read correctly with spi_w8r8().
+> I'm either missing something or reg access must be 16-bit transfer.
+> Datasheet sais:
+> "The AD4000/AD4004/AD4008 configuration register is read from and written=
+ to
+> with a 16-bit SPI instruction."
+> Yet, besides possible delay between first and last 8 SCLK pulses, I don't=
+ see
+> any transfer level differences between current and spi_w8r8() versions.
+
+It is possible the chip gets upset with the state of the idle line
+during the RX only or TX only portion of the transfer.
+
+>=20
+> >=20
+> >=20
+> ...
+> > > +			ret =3D ad4000_write_reg(st, reg_val);
+> > > +			if (ret < 0)
+> > > +				return ret;
+> > > +
+> > > +			st->span_comp =3D span_comp_en;
+> > > +			return ret;
+> >=20
+> > If you are spinning for another reason, make it clear this is always go=
+od.
+> > The spi_write() never returns positive so current code is correct but I=
+ had
+> > to go check which this would have avoided.
+> >=20
+> > 			return 0;
+>=20
+> Ack
+> >=20
+> > If nothing else comes up, I'll probably tweak whilst applying.
+> >=20
+> > J
+> >=20
+> > > +		}
+> > > +		unreachable();
+> > > +	default:
+> > > +		return -EINVAL;
+> > > +	}
+> > > +}
+> >=20
+
+--vlIPlvW+fKtcuuHS
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaC944ACgkQJNaLcl1U
+h9D8mwf/fLAAQ6d+jz6IWF9+lHbZcHpYz4U1qtMVOTEwlcyyObhiyLG+zZFIRrrZ
+80bLCIzF1ST4jCHXer4FT2bmwK0ItVpV7DR1n+YfXIu/4Zt8TISh4ViHHa6gZKNo
+Ggxvea/jOMcToMTpIqj4el5fvIM2MgozOiaNxDgUlBHG5Edu4BAPCy13AQdvfJ2/
+thc6NoeBrY70l/l5L/PWJBkJdXt8yh/4H5MocWtr9SQYhHwWRiQoyftYbDrakNby
+CfcD63Uh3WrEtWvdgYjwjUgg7yPdx5kQCFbpGXu4NA86Gh1V1oW14mk3s0WObxa+
+ha3wV0ZtQKfaYElnEtfG2iL+mab5Xw==
+=FfdN
+-----END PGP SIGNATURE-----
+
+--vlIPlvW+fKtcuuHS--
 
