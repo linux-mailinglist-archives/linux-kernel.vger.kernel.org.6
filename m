@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-235858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39F3E91DA7B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:51:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA0AE91DA7D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:52:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A3701C21984
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:51:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 656C4B225EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E57F14B942;
-	Mon,  1 Jul 2024 08:48:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE34414BF8F;
+	Mon,  1 Jul 2024 08:48:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="hb5Y3QwG"
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="V+qLUZ4G"
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57DA814B077
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 08:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD13214B95A
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 08:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719823713; cv=none; b=CMOlSMNTdvFy177d8/WtmtDEmSH0k+i6GjOM0ixufEWe8SbGwY/KQdV13SML83YcOMJvXW3rJVBv82popGyv8mBbg2CMithmm5WOZMakdXKARCMB2KhIe/T5/BYXiMeP2aD5/55ePbFbNLLWc0AyxZ4Y8FY8IaMW9NTK2DCRgWU=
+	t=1719823717; cv=none; b=pxXF+M6pj0xnWAUEAMehfXcZvL6unQ9kyCSFGs+t7n2bH3VTjv5KsFqVgxRL1aMJQWPTg/5/RsgXmDyv5ii+mwmZ8QtLZyTKlCAditMqU7FO6pyPTMD0eH7vLSk2eZCowQadz0gEnqUQmh0szodnJw08CaT7IrE6Nwo0FBqBQ48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719823713; c=relaxed/simple;
-	bh=I9ZLJI6Hui3oX+ajVbw9U0h4kGM7XOSsdMnotECzQ1o=;
+	s=arc-20240116; t=1719823717; c=relaxed/simple;
+	bh=fcyiPkvEEKdWecEuJOIrUfCCsRSKdwvcoilRZcmvGGo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=T1VakSR8meXeqBsyg+NTP6vrmp8x1US+ObSdzeG7EpeyD7GuN0bgQGd4BytAuKXnchLWwzIHLEZln9/YtazHi9gm6Lji53GzxvTip22TR0CikzUsX9BGbqMStlhsy0ZkQVMdOqIItxLpO3bQG0Gj60NFUhVJsw7kR3xmO3IISSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=hb5Y3QwG; arc=none smtp.client-ip=209.85.160.44
+	 MIME-Version; b=V64rj+Y6kUd/cXr1cb8KZKUb1DF7s+WJQitoLcWlirPcxReCcPibX/8Pd2ASsEtWcTVM9vrEhWt+oBomaXc3KQwkAsG9XTDDOz4RgzIyNjcdkA14h6eqRB9nz7hUTcIRlniBH9LaH02zd2osGgC+rRcc15qunbZGvpYtpFG5tJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=V+qLUZ4G; arc=none smtp.client-ip=209.85.160.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-25cce249004so441845fac.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 01:48:31 -0700 (PDT)
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-25cd49906aeso382642fac.2
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 01:48:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1719823710; x=1720428510; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1719823715; x=1720428515; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BSdXPp6cua9HpA6rLebdl04hcrKD7F+dglilKwP4NdI=;
-        b=hb5Y3QwGjZ9AmmfZA/oi0sGtobsrTBo46HyxZqJDFnmW1qTi8ZgOfuJ5T+2iyDygkk
-         LIPf5HYdJY48fGrlmpTV5aycpnBC6TGeTqwx+uMESEhvCNi/r82Um/6DuNKteGbX74co
-         fwmMfZjLR2Q9YEZz266Qp4RwHzlJrzU38/QomOKMoNj+CWy7FfVizBN/Z7EICQmmBgLw
-         lxVIhmXBVSpIzYwT3VJHELARKlbReMsgeD+0zjwHQq8NZxhPQTFhFDvb8J7DcDAsXYlm
-         /aZan/dSx9EK1j+1RjGe50b0Eol7FOa+mAlvMg0aH3mmK2KCpbGaXBWeVxD/Hl3J+U3q
-         CJCA==
+        bh=StMJ2RtFXCKaoVJqaHkGOtRFp2kjcwvK/9x07Wn8pQQ=;
+        b=V+qLUZ4GIIrF45F6iucTWm5GCtC3/JlaRVHJV1mluKhVd3fH9gOzvL5rd4ib8DKX7L
+         ExYdNg9vjeOteHZM4NZwnx4kDVY7LKpHedblkfyAhuqTduhUvhbLQ+aTN1zpDuIRo1Ma
+         As8MZsThRMwALvnMcQ89JK2xiDKkMNkIi47mT0b1hH1ADKKgZWRyyVtLppwan9rL+oCh
+         mVCb65Brq4oVsshm4bk6RWTPwcqPLiR6dOa1QzbRuA1EIolPOiXu/SiezFcZZfAVHXaK
+         1bQVcYIg55vO0om8sSbNtycD9MtR3IJ+hDQls0zhX/yMdXro4aVMGYmItwB0OHYgtvQf
+         A0GQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719823710; x=1720428510;
+        d=1e100.net; s=20230601; t=1719823715; x=1720428515;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BSdXPp6cua9HpA6rLebdl04hcrKD7F+dglilKwP4NdI=;
-        b=C7KHWhYQDfcNtWVqooq2DC6CFjVUWuJ3TNuYjRr2O7bNxoCcS4jSGp0aI0GokTOSpN
-         p45wdbPnWJKRev5XLeeBzkmmEA6tw9HL6Ah0HVAvuRuWk7MemrFrf4IlqRwsVtjdC2Me
-         1GkhhtybQmo+s6n73eCWy3xY8IsDiBVH/1yOmdJtUqqQX4O3p0RNqf+yv0GcNN0chz2X
-         MaInBhwlOvm+3ixyLBLq+zCrd6bY5X36pRySI4M4o9K0jtucCa6qJdEAt3hhRuW6JMjk
-         AN6K6m9lyizMr4ADz9TSa8F7Vqj2RNzodV4ZW5mYnAH6QZ0LowgWek6O3G531KfZoYwj
-         AxOA==
-X-Forwarded-Encrypted: i=1; AJvYcCXczFKvHaLPbBqVMOJrzqJW7QIRdh/8IzzPucZUJzZNp0yNkmV1WwLHjirzuizWjZmnILHdaLi0IQck+V41dB3AXFRSxa1orI+aKtzu
-X-Gm-Message-State: AOJu0YxW5PyJ+KfKGWVbGkEWL5NeLDl/mGTqfjuS2r4iwCh4+qfhDani
-	e6TdqLSJDunhxn3DBY7YLIfORTDrWf3dXOXP4N7c23osyjwmtd/KMTPTm+a5CzY=
-X-Google-Smtp-Source: AGHT+IFfafy76qxnP3FNZsq5qulnNjrKrfxWqb4/wPoL/DGlK5/mwzGRfDiOgExztR4uBC55G6FnbA==
-X-Received: by 2002:a05:6871:7806:b0:254:ecbd:1815 with SMTP id 586e51a60fabf-25db3709c91mr5161423fac.5.1719823710530;
-        Mon, 01 Jul 2024 01:48:30 -0700 (PDT)
+        bh=StMJ2RtFXCKaoVJqaHkGOtRFp2kjcwvK/9x07Wn8pQQ=;
+        b=qaXsqrErUY+lszf7F8BjztIQps29Zq9XvNqcY92uJyHIRySwyrXCFlElKg8ieD7Slq
+         EFKZj8UOSZT5nHpsWigGPnSpammhWxNaiEqiXPDS0ntrS6TAvZ+ynNu7F7oBn/F/rDt6
+         rNLaAFrIyt9PTn9wpNOEbk8cYuxmD9Vfc+jlhVjDKgSstPFBildxla3VK3eprqBKJeKu
+         mBhI/o4Wr2vg1ONwiAW5m59OLRLrEAAfCi5qewIX2bHtu3d3vMPbKQYshG8DYnHBWP/+
+         707aFT+r/sKTYkafqMSrVJJLsReOMsIvg5ZXSIMVRMGkhQWINbYAiNplucAUAOEWUoLe
+         uZjw==
+X-Forwarded-Encrypted: i=1; AJvYcCUaDMVhTx221eQhQwQiwVjbyf+pAbeKSeVWe0DsNzPD1luemE92fzk2NrBjYP8wfaeWK6H9q39SyDMFr0ARqrLW8YK4YqaRFpuRHjrv
+X-Gm-Message-State: AOJu0YwGSgALiMZQeXNCqTvfiySipcm4nbjqLTDjyOj40rvjQT2qv2PI
+	amhTUDZ1CLkTaUCZRv9HcUtDKdFL39ROucdSar0uB647B0dVEO9mI2kC5kYshpU=
+X-Google-Smtp-Source: AGHT+IFE3dKI9Tgl7EIyomU4IdVHY+PmwvfXhSbglMPZKAPvgX4/lADNKj6dPhxAruv+7V80kKXCBw==
+X-Received: by 2002:a05:6808:1a2a:b0:3d5:65c7:c26c with SMTP id 5614622812f47-3d6b549a9fcmr5659724b6e.4.1719823714723;
+        Mon, 01 Jul 2024 01:48:34 -0700 (PDT)
 Received: from C02DW0BEMD6R.bytedance.net ([139.177.225.241])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70804a7e7e0sm5932374b3a.204.2024.07.01.01.48.26
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70804a7e7e0sm5932374b3a.204.2024.07.01.01.48.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 01:48:30 -0700 (PDT)
+        Mon, 01 Jul 2024 01:48:34 -0700 (PDT)
 From: Qi Zheng <zhengqi.arch@bytedance.com>
 To: david@redhat.com,
 	hughd@google.com,
@@ -76,9 +76,9 @@ To: david@redhat.com,
 Cc: linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: [RFC PATCH 6/7] x86: mm: define arch_flush_tlb_before_set_huge_page
-Date: Mon,  1 Jul 2024 16:46:47 +0800
-Message-Id: <a6cea157a2d9ba4d35f53d4d44b4d6e9ccd26aa5.1719570849.git.zhengqi.arch@bytedance.com>
+Subject: [RFC PATCH 7/7] x86: select ARCH_SUPPORTS_PT_RECLAIM if X86_64
+Date: Mon,  1 Jul 2024 16:46:48 +0800
+Message-Id: <0f3aacc9707da962398de71c127e7771c6798062.1719570849.git.zhengqi.arch@bytedance.com>
 X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 In-Reply-To: <cover.1719570849.git.zhengqi.arch@bytedance.com>
 References: <cover.1719570849.git.zhengqi.arch@bytedance.com>
@@ -90,65 +90,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When we use mmu_gather to batch flush tlb and free PTE pages, the TLB is
-not flushed before pmd lock is unlocked. This may result in the following
-two situations:
-
-1) Userland can trigger page fault and fill a huge page, which will cause
-   the existence of small size TLB and huge TLB for the same address.
-
-2) Userland can also trigger page fault and fill a PTE page, which will
-   cause the existence of two small size TLBs, but the PTE page they map
-   are different.
-
-According to Intel's TLB Application note (317080), some CPUs of x86 do
-not allow the 1) case, so define arch_flush_tlb_before_set_huge_page to
-detect and fix this issue.
+Now, x86 has fully supported the CONFIG_PT_RECLAIM feature, and
+reclaiming PTE pages is profitable only on 64-bit systems, so select
+ARCH_SUPPORTS_PT_RECLAIM if X86_64.
 
 Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 ---
- arch/x86/include/asm/pgtable.h |  6 ++++++
- arch/x86/mm/pgtable.c          | 13 +++++++++++++
- 2 files changed, 19 insertions(+)
+ arch/x86/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index e39311a89bf4..f93d964ab6a3 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -1668,6 +1668,12 @@ void arch_check_zapped_pte(struct vm_area_struct *vma, pte_t pte);
- #define arch_check_zapped_pmd arch_check_zapped_pmd
- void arch_check_zapped_pmd(struct vm_area_struct *vma, pmd_t pmd);
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index cbe5fac4b9dd..23ccd7c30adc 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -313,6 +313,7 @@ config X86
+ 	select FUNCTION_ALIGNMENT_4B
+ 	imply IMA_SECURE_AND_OR_TRUSTED_BOOT    if EFI
+ 	select HAVE_DYNAMIC_FTRACE_NO_PATCHABLE
++	select ARCH_SUPPORTS_PT_RECLAIM		if X86_64
  
-+#ifdef CONFIG_PT_RECLAIM
-+#define arch_flush_tlb_before_set_huge_page arch_flush_tlb_before_set_huge_page
-+void arch_flush_tlb_before_set_huge_page(struct mm_struct *mm,
-+					 unsigned long addr);
-+#endif
-+
- #ifdef CONFIG_XEN_PV
- #define arch_has_hw_nonleaf_pmd_young arch_has_hw_nonleaf_pmd_young
- static inline bool arch_has_hw_nonleaf_pmd_young(void)
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index cd5bf2157611..d037f7425f82 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -926,3 +926,16 @@ void arch_check_zapped_pmd(struct vm_area_struct *vma, pmd_t pmd)
- 	VM_WARN_ON_ONCE(!(vma->vm_flags & VM_SHADOW_STACK) &&
- 			pmd_shstk(pmd));
- }
-+
-+#ifdef CONFIG_PT_RECLAIM
-+void arch_flush_tlb_before_set_huge_page(struct mm_struct *mm,
-+					 unsigned long addr)
-+{
-+	if (atomic_read(&mm->tlb_flush_pending)) {
-+		unsigned long start = ALIGN_DOWN(addr, PMD_SIZE);
-+		unsigned long end = start + PMD_SIZE;
-+
-+		flush_tlb_mm_range(mm, start, end, PAGE_SHIFT, false);
-+	}
-+}
-+#endif /* CONFIG_PT_RECLAIM */
+ config INSTRUCTION_DECODER
+ 	def_bool y
 -- 
 2.20.1
 
