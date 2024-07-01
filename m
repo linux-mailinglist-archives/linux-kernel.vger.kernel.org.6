@@ -1,181 +1,109 @@
-Return-Path: <linux-kernel+bounces-235596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E273A91D729
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 06:42:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AB1C91D72A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 06:42:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95184286CAE
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 04:42:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 280CB286CA3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 04:42:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC3C2CCB7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B657036AF5;
 	Mon,  1 Jul 2024 04:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QieRuDgl"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p1JGeSid"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770E517C61;
-	Mon,  1 Jul 2024 04:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94091B809
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 04:42:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719808961; cv=none; b=eiuIU5WkAEJ5liCJMx0gf3GF8fPbUxIruwzjYOM3z9igdqb0MUv7/9ElrwbzJJUEN5XxjObFWLzyLkC0o8DIhsdYc0xEDzxnO4z1nlXC7DJjsToPWI/J/wZTaXc/ZHmaaS5T5MjPSicCwP2Hp3kwSrhSWzvE0g2mbJ7HKL0cXMI=
+	t=1719808962; cv=none; b=iM5Y58Q1MnDGhrY8BHSFIQ8WYTxs869JTvomBbIP5QRcPPyGpqOHuHudKCGTyvsvRl65dzDlq1YkT/bF7eXZQcdYAv7RSQ8/vue/KBmum8/TpS43coZUx37G/3QuO5ZAakwer1rfBpQ5fKzzOI2j6ADXLhgXYb4PRR6SfM112Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719808961; c=relaxed/simple;
-	bh=8t/KdAzxqkS/7p07GxkZ0bFQhYV3CS1hbsMUGQ4NktI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jzfRPbykx6Gro34amjXTfhzgY1gO/ge/pqqhn98Pt47/a4UPHabXY6Uq2HWODctOuxbKQvT4PUKOi/ff/R8klPCTDSQ7lS/ALZtm6+cDGj1f4Pvg2DwTUMvSBBHDxOC5dgqzXfjLlRE6awhfW3KIhOULdkPLTYThWG0hef4uR+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QieRuDgl; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-719843c8478so76144a12.0;
-        Sun, 30 Jun 2024 21:42:40 -0700 (PDT)
+	s=arc-20240116; t=1719808962; c=relaxed/simple;
+	bh=f17c88A26NZskfgiFXDQMND/t9HuKkVv+EOcHsvscrQ=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=c3FTWXAD0eOd/6ZwgTjR0pYf2vvWc31Rs3ZF62aYXZv3DHbHyQVx+dxit9dYLJKq5JYQq7V3jVwoLB+Zf+MPd12Ebfsgx5eqi2bpgKcnoAJln0HOcTZvKPqP8OeALVYwssiPTk7HdormnPwZDoo+n3BMhUZkGsXJg9X4Eej44So=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p1JGeSid; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-62d054b1ceeso46004267b3.2
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 21:42:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719808960; x=1720413760; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R8YffMYnGN0uxObMvEtbv5MkYWHWmd5kg/aBxvT37pI=;
-        b=QieRuDglrhRRqQQeGsTK57L6ZTGHmnQT3JE4VRXEONa1j73l1gVSVszsgk+w1somcX
-         78DimDLPrlLDqAzin/P8RTInSHK7LR3cUwL6AguELCMAhc99o3glus6FVBMg9pn+S/NS
-         Dx3N/Vvax7ovulGZNdBZob5AwkRxDsseCErJT2XulAjjVTkgtwIv3GoUNaXWUFKTow59
-         hty7dxzT+zQW4twu3Sig8XjTkYY4BsG80IfGfnPdrSN+gnxZqVtBupSrmFWnvhBt6r7j
-         uDAOSuS7C53vv1oJKgt+GPO8IpFqfC8dWKF/5PrzWseBMvTMUEMwkCTQiyO9e1g89MY+
-         Uhrg==
+        d=google.com; s=20230601; t=1719808959; x=1720413759; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ja0X0aEX+OPc1UcZxy/m1jTtUBMOJm0IX9nvA6gMdVk=;
+        b=p1JGeSidvIsJa6T/EhjB31zVmImik86Y/pTsH5zX7NseWNpomJQ/eOGKF4ctC+gafp
+         a8mIBIb25MXEeDW5bnUL0uT1pceQzVk5iuFzSD6fIxuu5SRq2bAhGJ0N0tsJHg2+8Ms5
+         LeLoucuolnGauCV4oXv/Kv6IwxlIpMK9YVJ9WZiQZiYBoUtvcen/IBE96zNff9FzE4Bu
+         Ugr2Pi3C2Px8SdVFXnTzoKcPZWFLalfhgJ2Dz9akAOB9E5qVO6raUTu/j3VsnKikmzD7
+         lhXSj1TXGmn+Yap4nP6shGP1nz8gWnTAWoEoXEETyVb8icMydCXBHvpXJUKX3qjn875T
+         dNAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719808960; x=1720413760;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R8YffMYnGN0uxObMvEtbv5MkYWHWmd5kg/aBxvT37pI=;
-        b=D4Ui1ltaAB/2rl+jgBSaLsXdmEp/nKrdQwh2aGwVQDDiVks6u0b3HbBVXx12W7faOi
-         qwJvA2nLHKJDu/KDxx+6fOfPdCKSc3ggfzWxKL/5bLGj9kBQKMXpL4mxlfAGb91HExHQ
-         /8tQouK30JEElAzXzd1ED8KmEyF3ctO8+qcxow6PSTkKUpHUg3irXS2jDrWlAyhX8B/p
-         N+d7Oea573vE498BWN89Nwi2OjG+FI+3e4ZHv6bF0Ae1l8KEFIYWXViAoOtRgQ+T2DE+
-         nGPOrWlb12rs6iLZysB3ZMTN/ZsBvIjdZvL9q8wOCtzRZJE7Cx/+uRKvYzcklVgFAPPO
-         QjNw==
-X-Forwarded-Encrypted: i=1; AJvYcCVe/7DvUjrL9j0cJmivhB1NunfG1IfGF4qKWbeO9zbo6w2vFxnGCldMGSLtPl4zDI8oGMrfKnDiSNNBqNK6uAOxWs9AzTZWrDNg06UAGNs23IxJNR83yl5KBuvsnU9w+jnoMkXuGk3Tjw==
-X-Gm-Message-State: AOJu0YzgJ9D7ycL0kyHFvH93rlRUQWHgAmHROlLGwf9k2hs8Y8SFXoJY
-	+LXtqHRyaXGGgFh2NnTV3uKuQvlNFJ3oygNjsfW68iuFWaS+0uL9Ruus0g==
-X-Google-Smtp-Source: AGHT+IHcbdyNFOmrDfxkQwPMDupIwNySdkVbFUyk2wdUvXKuxcCIR8tGWdbWR7laH0m2coQeAkGLbQ==
-X-Received: by 2002:a05:6a00:bcc:b0:706:61bb:7094 with SMTP id d2e1a72fcca58-70aaaed0574mr5211840b3a.2.1719808959476;
-        Sun, 30 Jun 2024 21:42:39 -0700 (PDT)
-Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70802564b50sm5485130b3a.67.2024.06.30.21.42.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Jun 2024 21:42:39 -0700 (PDT)
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: rafael@kernel.org
-Cc: lenb@kernel.org,
-	mario.limonciello@amd.com,
-	akpm@linux-foundation.org,
-	jserv@ccns.ncku.edu.tw,
-	alexdeucher@gmail.com,
-	belegdol@gmail.com,
-	regressions@leemhuis.info,
-	linux-acpi@vger.kernel.org,
-	regressions@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Kuan-Wei Chiu <visitorckw@gmail.com>
-Subject: [PATCH v2] ACPI: processor_idle: Fix invalid comparison with insertion sort for latency
-Date: Mon,  1 Jul 2024 12:42:32 +0800
-Message-Id: <20240701044232.42266-1-visitorckw@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <ZoHKhr9896+Kf65F@visitorckw-System-Product-Name>
-References: <ZoHKhr9896+Kf65F@visitorckw-System-Product-Name>
+        d=1e100.net; s=20230601; t=1719808959; x=1720413759;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ja0X0aEX+OPc1UcZxy/m1jTtUBMOJm0IX9nvA6gMdVk=;
+        b=n6Am17auFimPYfSzaSA2lHQY71j7SDszDLo1+74xhqtmD7KZ9eMwby1LWusAkZsrlN
+         8fQabDMeFPeqhLk5lDFfON6gEkTIr1KcpFwkJYy4nnU8kjX8vVYBqh2l6SrKHshG+ftL
+         rY8uSroXzdrvV+5aWy7qK5Q5rmgfK5vXjP1SX50qm2+COp09YqdoazLo89hJcDV1PHVv
+         WKqauQ1tpZbMpcdPE65YNmj1cBaU7Vn0+7OZwull5t6CE5KHXKxowpCRxr+zVObpj2qD
+         pORK+GTCwwUpXbL7NNvJwOSQXCELUs5Hff83yQlDLSRMfOZH33on8XGF5xO5QJNugKYR
+         VbiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWRfu4MNEjHU+Fez+rZdZ/MkGo5I5tsJkmo9h4ZpkwmxeOGEBSGwvlqwEJ8NaWm+UaFxRShx23UeE9L7Xpgcd1FW64LLQ1nA2M849S
+X-Gm-Message-State: AOJu0Ywxx3yAIomWNsAOSLzha5VULMxZ/kr0p7Qxl8rHjlU0Yi0ao6SR
+	vqksyBUfX9tlUQJbjsIqVDLj0ykJ5NNiawNGxALkWoivBfxPgIImFDmu7uwQGN1SYTMKWR7xEWb
+	znS9ASg==
+X-Google-Smtp-Source: AGHT+IFxobfPLI+HYKOSGevXm/fFjBZH1Ej99MSAQeEXdFzOTyUxD8UDyMe878XEaCetpI4+dWDCHii3+Md/
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:7bcd:6ae9:263e:82ff])
+ (user=irogers job=sendgmr) by 2002:a05:6902:2d45:b0:e02:e1c7:6943 with SMTP
+ id 3f1490d57ef6-e036ec43f15mr9180276.12.1719808959578; Sun, 30 Jun 2024
+ 21:42:39 -0700 (PDT)
+Date: Sun, 30 Jun 2024 21:42:34 -0700
+Message-Id: <20240701044236.475098-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
+Subject: [PATCH v2 0/2] perf test: Display remaining tests while waiting
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@arm.com>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The acpi_cst_latency_cmp comparison function currently used for sorting
-C-state latencies does not satisfy transitivity, causing incorrect
-sorting results. Specifically, if there are two valid acpi_processor_cx
-elements A and B and one invalid element C, it may occur that A < B,
-A = C, and B = C. Sorting algorithms assume that if A < B and A = C,
-then C < B, leading to incorrect ordering.
+The v1 patch series:
+https://lore.kernel.org/lkml/20240405070931.1231245-1-irogers@google.com/
+was partially merged. The check_if_command_finished wasn't working as
+intended as stdout/stderr could be lost due to waitpid being
+called. Modify this function to not use waitpid and use procfs
+instead.
 
-Given the small size of the array (<=8), we replace the library sort
-function with a simple insertion sort that properly ignores invalid
-elements and sorts valid ones based on latency. This change ensures
-correct ordering of the C-state latencies.
+Keeping the output test display logic in 1 place should simplify
+improving parallel and sequential output. Namhyung was experiencing
+issues with this in:
+https://lore.kernel.org/lkml/20240628215751.1512250-1-namhyung@kernel.org/
 
-Fixes: 65ea8f2c6e23 ("ACPI: processor idle: Fix up C-state latency if not ordered")
-Reported-by: Julian Sikorski <belegdol@gmail.com>
-Closes: https://lore.kernel.org/lkml/70674dc7-5586-4183-8953-8095567e73df@gmail.com/
-Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
----
-v1 -> v2:
-- Avoid swapping if arr[i] is an invalid element.
+Ian Rogers (2):
+  tools subcmd: Add non-waitpid check_if_command_finished()
+  perf test: Display number of remaining tests
 
-I do not have the appropriate AMD hardware to reproduce this issue and
-test the patch. However, if the aforementioned reason is indeed the
-source of the problem, I believe this patch might help.
+ tools/lib/subcmd/run-command.c  | 33 ++++++++++++++
+ tools/perf/tests/builtin-test.c | 77 ++++++++++++++++++++++-----------
+ tools/perf/util/color.h         |  1 +
+ 3 files changed, 86 insertions(+), 25 deletions(-)
 
- drivers/acpi/processor_idle.c | 35 ++++++++++++++---------------------
- 1 file changed, 14 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
-index bd6a7857ce05..813c718b9108 100644
---- a/drivers/acpi/processor_idle.c
-+++ b/drivers/acpi/processor_idle.c
-@@ -386,25 +386,21 @@ static void acpi_processor_power_verify_c3(struct acpi_processor *pr,
- 	acpi_write_bit_register(ACPI_BITREG_BUS_MASTER_RLD, 1);
- }
- 
--static int acpi_cst_latency_cmp(const void *a, const void *b)
-+static void acpi_cst_latency_sort(struct acpi_processor_cx *arr, size_t length)
- {
--	const struct acpi_processor_cx *x = a, *y = b;
-+	int i, j, k;
- 
--	if (!(x->valid && y->valid))
--		return 0;
--	if (x->latency > y->latency)
--		return 1;
--	if (x->latency < y->latency)
--		return -1;
--	return 0;
--}
--static void acpi_cst_latency_swap(void *a, void *b, int n)
--{
--	struct acpi_processor_cx *x = a, *y = b;
--
--	if (!(x->valid && y->valid))
--		return;
--	swap(x->latency, y->latency);
-+	for (i = 1; i < length; i++) {
-+		if (!arr[i].valid)
-+			continue;
-+		for (j = i - 1, k = i; j >= 0; j--) {
-+			if (!arr[j].valid)
-+				continue;
-+			if (arr[j].latency > arr[k].latency)
-+				swap(arr[j].latency, arr[k].latency);
-+			k = j;
-+		}
-+	}
- }
- 
- static int acpi_processor_power_verify(struct acpi_processor *pr)
-@@ -449,10 +445,7 @@ static int acpi_processor_power_verify(struct acpi_processor *pr)
- 
- 	if (buggy_latency) {
- 		pr_notice("FW issue: working around C-state latencies out of order\n");
--		sort(&pr->power.states[1], max_cstate,
--		     sizeof(struct acpi_processor_cx),
--		     acpi_cst_latency_cmp,
--		     acpi_cst_latency_swap);
-+		acpi_cst_latency_sort(&pr->power.states[1], max_cstate);
- 	}
- 
- 	lapic_timer_propagate_broadcast(pr);
 -- 
-2.34.1
+2.45.2.803.g4e1b14247a-goog
 
 
