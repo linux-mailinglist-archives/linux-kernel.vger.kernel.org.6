@@ -1,121 +1,141 @@
-Return-Path: <linux-kernel+bounces-235830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F336791DA40
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:42:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EFE391DA43
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:42:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66010281FCC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:42:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2D1AB22713
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1767084D0E;
-	Mon,  1 Jul 2024 08:41:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD0B85283;
+	Mon,  1 Jul 2024 08:41:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="gE7HuV6/"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Rqwbi8Mp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EDF784A5E
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 08:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BCE6839F1
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 08:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719823309; cv=none; b=SddiP1iaxoATmKgZNS4iVoJmlM05vGgdDsgqkxPVEJxxej2ikZokz8EkKYBXeOXivohuTrCK80NQ7bt94/n0f+bw0dYozuv+C+IHPQCGwPZ/How/rs366xyPgTt34VXr8FZGaomkFo/zEHx7IKP1TO0pBX22xsXddf8wFnsXxn0=
+	t=1719823319; cv=none; b=rsdFORrym26kod9s+k3o/bPhIqpg9P+OoV/2Ir7jW+uKvCn0EqO12PY6nM2LVgsB1Y27QYLO7LYiOc7qt/UW7QLt9xrdg4nbOAOfxoeRD6g3ayvo7lAimW2wZiURJJVDXM4Nn3NQ564q3CMhC1+FR5JjbCiea67lIFpsTcy7ja0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719823309; c=relaxed/simple;
-	bh=A5Zg1PRYfzfOHOtP83qHfhhvwMY5XoJvZFi2Uh3VW3c=;
+	s=arc-20240116; t=1719823319; c=relaxed/simple;
+	bh=98/yARMgR7LwngA3FFhVlRw2ly6+sDcbpTvJSV5r3Jo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HuZaFEGpl0L6H3lxO9R13OYYaZKYqnl7bmOEZc36ja+YIMGZc84gRGGfMXma1u5je8sOVSK8vGFFKnL1pGpLCbhFtlzMpN39gJ4C7Stfk0poHtYRcGDbm6huhg5Z2yQpPazQm/0TwUIMKZ0DYUbbyzx/tejdUtLFenIeafIgfyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=gE7HuV6/; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2eaae2a6dc1so34626631fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 01:41:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719823305; x=1720428105; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z9juGhjHfVWoUy99hHa5hPCw3ioXYAtyhRKhN5Xhpo8=;
-        b=gE7HuV6/aBhndsvb6GGSFHcRWDsrAMazeBWrMS14OtOmgzj+Bo5s+LtMsCWcWoPXBH
-         fsz2sHtTLpafqCW4KsiYOq7fl4P2NKIpvA5IEkkuj80qTEIRj27jRc0WQllgvsAaMjL+
-         qXAURu6AFLrn5uvljIn0jUQIQr9l1hXJ7F1t6DaKDMQrOqz4DXPgDnRvCcHiNhCZU8Yn
-         65XRzRrEhe8QhEib0L3Y3n7KhEh47HqSgecGjbqcy1cMG5ertSbqCBKmVzmcr+VhXa+2
-         jM8gT0gXXSASbKNs/LhkjBeZCdT8Rgblvx3OYC2tmtoxGIdif+mG65yS0297zhA/WJv3
-         i0wg==
+	 To:Cc:Content-Type; b=ino1bf4iE2Ne11xHoJ6KAvm7b/lXZPXptAWgVpKNBmSi1jcSn3JOw2W+Ij7t5Q3ZxbYSE0wJicWaB3rUHw/rKm09AJz+/FbhgXxSa5eLJHm9Ix3u0Z8ZMsce4u/SB45xvVNynPqRJVN9Wf9u/Aesvf0dyjj0LHY8bNNIhaYiI7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Rqwbi8Mp; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719823315;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iFuYJuF23ilR26DvtLr3NKMhW/7ERM9own7UOA3paPg=;
+	b=Rqwbi8MpyMYYHfzpW7Ha5HAhaNi/VbagfJe0qOWARHwhemj3FppG9EDSG+kHK2k0qlxMYu
+	7gkd6hoCtU/STazSQfO/rEdBE1n6yIyhJIc74ZSZs3OGobUzOZ5IyTMlMoW5ovnRRg01CR
+	IlOINPZ9+22HX3eThAPDc7qFq9lDUec=
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com
+ [209.85.166.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-509-GfLUsmXKM0ScI3THQfOW1w-1; Mon, 01 Jul 2024 04:41:52 -0400
+X-MC-Unique: GfLUsmXKM0ScI3THQfOW1w-1
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-37623e47362so31206305ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 01:41:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719823305; x=1720428105;
+        d=1e100.net; s=20230601; t=1719823312; x=1720428112;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=z9juGhjHfVWoUy99hHa5hPCw3ioXYAtyhRKhN5Xhpo8=;
-        b=kvubuXzYrdNF1tJwOKpmNPCGd1+f6M+7Sv9JQSbyLdzvQqJuL+GXcBJ7VGpOQ62Jhq
-         yvNJ6yrfYDO9NAl4g5f5hbG5+a/0260gAcunC3cUcnW8ZPvVideVv8nHTxCu4l44djOB
-         Bnb9cqiQckDTeIuMpyw+IoLZq54sdAJH+EE+ArDYqCvKIQ7v2tiBrGAOU9GwM3cw11No
-         5hYbpMrSUByHM4v5vwW+W9/UTzreSy0m4vyBGShmHwn/iw3SI/6M8l/e7sjk30BL5E6E
-         lI4xUHecX6p+WqPNQKmZbTvh0yRC5DGAzCZ2Tu2VaH9aV/NoTdhqgLPpJlRIhjYUmXwW
-         1cCA==
-X-Forwarded-Encrypted: i=1; AJvYcCVbAnN+2U6jLitq8aY/iJSvypH1D/V6vU8t2d/kxHt8CTz9M20i/0xGMPkja5BabxD8XWkv15xOk1UaqvNGFqnfEZtjIKXuOYhWtYO/
-X-Gm-Message-State: AOJu0YwKlXbD7a5bWvUwXbYj3KbPqhBVjm5HcQ0BQtGj0hPwUaHguIHS
-	PhKIW6RGUtaCj0Ifxeei6EViuTqUT9GsDS4k0R40xUlS+SeXDiWwRpDh+vqJ0FbTIbwvCr1zzOe
-	NtW8yCR3e1sAG34f+NnT5riQiN/83qd48ycQc1KmkCws5aOdr
-X-Google-Smtp-Source: AGHT+IEsCWgMx9DJFYAcQiyEJw4++CwfBQYA9g4zZOE5DaBcnPejbFFLGbW4vhjuhsfFCmyeaoej8jPIhz7E2M6qR/Y=
-X-Received: by 2002:a2e:96c6:0:b0:2ec:2038:925d with SMTP id
- 38308e7fff4ca-2ee5e37ffa9mr42312751fa.1.1719823305729; Mon, 01 Jul 2024
- 01:41:45 -0700 (PDT)
+        bh=iFuYJuF23ilR26DvtLr3NKMhW/7ERM9own7UOA3paPg=;
+        b=WP5FMvQ84gqhdQAYxld4fo9/rnj3zq+vrGNOhdepJEXYjs/HwDeP247o7lbKNXQotv
+         4hAPxOac3RvNE3JYacJVEz+957elG+Uz33n7bFeFYfrvyNBUAu27FwNTGneRaa4hnt9+
+         M7aGaeUvBVx9C0Yr2yyH5HTviA/iymE3Au/S8YrTYfv8ruC7D2s52BTk53jPLb7kcrTT
+         Bg7OR66Zj/8uiPwH/fiPsazvfxJAqpuDt69piWFK7HtKObaM2q0DmRn/F+cWNZ8X73Xz
+         Mo/ASNHhVdYUAvUrP0Ykopgt4OE20q4gf1J2XFNBQlFzNkRRCWdFMiF0pA7Mp7ZNKEEU
+         i36g==
+X-Forwarded-Encrypted: i=1; AJvYcCU2IEuyaTx7/h2DSvDuRkm6yR7uFlmXXs44Q+QLyrnHGdbhFBmW7mUSPEns3h5zr+6jkW7yOtD8XGm1D7JCutwVqlvI9UXbbGAg73G2
+X-Gm-Message-State: AOJu0YybKxY0HbPJUsIPfW/1FgD+NbedZWawyInK0ZuaHFQRn9AUE2aj
+	vG5huCZjuEDKQowQ29udwfZ356PgDDwmfJoLyqv5i0ptQdY9HjvG9379xoxIvhYIBMAZKuUpdNW
+	JTJ7uNrkuOnIjxkQGI29K4uQ9z0y/01R96bxiOxcaXJPyRYeOtDbHB67jN+YFlWvV2bZSeaI8AX
+	f9+j5qSYicbYPwrMKzWDgqLaYnG2fgxgsm4KFF
+X-Received: by 2002:a05:6e02:18c6:b0:376:3e9c:d9a8 with SMTP id e9e14a558f8ab-37cd169a012mr60188035ab.9.1719823311921;
+        Mon, 01 Jul 2024 01:41:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFZ3y4drjAYdSWs4QiL8X7hDAC6CgqCfAJPZG5DjOd5WCm0ZkwSvXgxmwb93eBH/DXOt6glH8WwXWNWRBJw1cw=
+X-Received: by 2002:a05:6e02:18c6:b0:376:3e9c:d9a8 with SMTP id
+ e9e14a558f8ab-37cd169a012mr60187965ab.9.1719823311695; Mon, 01 Jul 2024
+ 01:41:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240624093934.17089-1-brgl@bgdev.pl>
-In-Reply-To: <20240624093934.17089-1-brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 1 Jul 2024 10:41:34 +0200
-Message-ID: <CAMRc=MfH8ZuA2pK3bzSw5mitsFE9wUnoD4iG4Tg8_83SJm-poQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] gpio: sim: lock simulated GPIOs as interrupts
-To: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20240626201129.272750-2-lkarpins@redhat.com> <20240626201129.272750-3-lkarpins@redhat.com>
+ <Znx-WGU5Wx6RaJyD@casper.infradead.org> <50512ec3-da6d-4140-9659-58e0514a4970@redhat.com>
+ <20240627115418.lcnpctgailhlaffc@quack3> <20240627-abkassieren-grinsen-6ce528fe5526@brauner>
+ <d1b449cb-7ff8-4953-84b9-04dd56ddb187@redhat.com> <20240628-gelingen-erben-0f6e14049e68@brauner>
+ <CAL7ro1HtzvcuQbRpdtYAG1eK+0tekKYaTh-L_8FqHv_JrSFcZg@mail.gmail.com>
+ <97cf3ef4-d2b4-4cb0-9e72-82ca42361b13@redhat.com> <20240701-zauber-holst-1ad7cadb02f9@brauner>
+In-Reply-To: <20240701-zauber-holst-1ad7cadb02f9@brauner>
+From: Alexander Larsson <alexl@redhat.com>
+Date: Mon, 1 Jul 2024 10:41:40 +0200
+Message-ID: <CAL7ro1FOYPsN3Y18tgHwpg+VB=rU1XB8Xds9P89Mh4T9N98jyA@mail.gmail.com>
+Subject: Re: [RFC v3 1/1] fs/namespace: remove RCU sync for MNT_DETACH umount
+To: Christian Brauner <brauner@kernel.org>
+Cc: Ian Kent <ikent@redhat.com>, Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>, 
+	Lucas Karpinski <lkarpins@redhat.com>, viro@zeniv.linux.org.uk, raven@themaw.net, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Eric Chanudet <echanude@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 24, 2024 at 11:39=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl=
-> wrote:
+On Mon, Jul 1, 2024 at 7:50=E2=80=AFAM Christian Brauner <brauner@kernel.or=
+g> wrote:
 >
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > I always thought the rcu delay was to ensure concurrent path walks "see=
+" the
+> >
+> > umount not to ensure correct operation of the following mntput()(s).
+> >
+> >
+> > Isn't the sequence of operations roughly, resolve path, lock, deatch,
+> > release
+> >
+> > lock, rcu wait, mntput() subordinate mounts, put path.
 >
-> I realized that the gpio-sim module doesn't lock the GPIOs as interrupts
-> when they are requested from the irq_sim. This leads to users being able
-> to change the direction of GPIOs that should remain as inputs to output.
-> This series extends the irq_sim interface and allows users to supply
-> callbacks that will be executed to inform users about interrupts being
-> requested and released so that they can act accordingly. The gpio-sim is
-> made to use this new API and lock GPIOs as interrupts when needed.
+> The crucial bit is really that synchronize_rcu_expedited() ensures that
+> the final mntput() won't happen until path walk leaves RCU mode.
 >
-> Thomas: if this is fine with you, can you Ack it so that I can take it
-> through the GPIO tree for the next merge window?
+> This allows caller's like legitimize_mnt() which are called with only
+> the RCU read-lock during lazy path walk to simple check for
+> MNT_SYNC_UMOUNT and see that the mnt is about to be killed. If they see
+> that this mount is MNT_SYNC_UMOUNT then they know that the mount won't
+> be freed until an RCU grace period is up and so they know that they can
+> simply put the reference count they took _without having to actually
+> call mntput()_.
 >
-> Changes since v1:
-> - drop the notifier in favor of specific callbacks
->
-> Bartosz Golaszewski (2):
->   genirq/irq_sim: add an extended irq_sim initializer
->   gpio: sim: lock GPIOs as interrupts when they are requested
->
->  drivers/gpio/gpio-sim.c | 25 ++++++++++++++++-
->  include/linux/irq_sim.h | 17 ++++++++++++
->  kernel/irq/irq_sim.c    | 60 ++++++++++++++++++++++++++++++++++++++---
->  3 files changed, 98 insertions(+), 4 deletions(-)
->
-> --
-> 2.43.0
->
+> Because if they did have to call mntput() they might end up shutting the
+> filesystem down instead of umount() and that will cause said EBUSY
+> errors I mentioned in my earlier mails.
 
-Without any objections, I'd like to take it through the GPIO tree by
-the end of this week.
+But such behaviour could be kept even without an expedited RCU sync.
+Such as in my alternative patch for this:
+https://www.spinics.net/lists/linux-fsdevel/msg270117.html
 
-Bart
+I.e. we would still guarantee the final mput is called, but not block
+the return of the unmount call.
+
+
+--=20
+=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D=
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D
+ Alexander Larsson                                Red Hat, Inc
+       alexl@redhat.com         alexander.larsson@gmail.com
+
 
