@@ -1,234 +1,156 @@
-Return-Path: <linux-kernel+bounces-236622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB8FC91E517
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:15:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B50A91E519
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:15:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49B681F23543
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:15:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D8DA1C21A96
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3080F16D4E8;
-	Mon,  1 Jul 2024 16:15:36 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D836F2EB;
-	Mon,  1 Jul 2024 16:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD7616D9A3;
+	Mon,  1 Jul 2024 16:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eRS9cFQg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B64616CD09;
+	Mon,  1 Jul 2024 16:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719850535; cv=none; b=iHUPoIhZ2PlC0OvLPqEkC3qA8yQEIf609jCewXp5MJFxkD+kTo+HtIEWwa92OOLuENH5f1v6IHBBeehw5NnfEvvJv7Mrnn1swOdF4mOUX9KAqWa01HUHeVDHGjBthwXOQmRNtqkVPnW+0+gf1PpyXSP4Wkyb85dH32otsFPjoc4=
+	t=1719850552; cv=none; b=O15dlOlpUdbzYtLRjtzlFROPrvXLr479toHSN/pIjbLYLjY23ZQwAR/1a1UvUpBX8u/H0KcEiqV2OoG79o6YHCF9CpOa3+9RRHCZD/zHA6ABRXfn3V9J29amsWRWJPpO3nMRZ0kRjAlgRvb0nN4IssD1UI++gmkGxaw/8kc7Fns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719850535; c=relaxed/simple;
-	bh=YtlCIhlzvR741FG+CjEjpuyfwMmqxuTKUqcadGHXiNE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=asZ6wVzB5kS6AZ0nOIPRjGDnEEeo++kQxBFmRuU4qY7k/nPtAS8Nq3PecAAz8opREgdSbA6XS+jzVAHnQlTOhk5HauXbO/ccObCInTtcaq/l+gYIY4YU9YJS2w+walG9jXP9kYwZ/QRIfcsNG4apfrI6NuNkRktgP4XMZhL8Irc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 09F68339;
-	Mon,  1 Jul 2024 09:15:56 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2F65B3F73B;
-	Mon,  1 Jul 2024 09:15:30 -0700 (PDT)
-Date: Mon, 1 Jul 2024 17:15:27 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Luke Parkin <luke.parkin@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, sudeep.holla@arm.com,
-	cristian.marussi@arm.com
-Subject: Re: [PATCH 2/3] Track basic SCMI statistics
-Message-ID: <ZoLWH9-JPFQB4YSu@pluto>
-References: <20240701142851.1448515-1-luke.parkin@arm.com>
- <20240701142851.1448515-3-luke.parkin@arm.com>
+	s=arc-20240116; t=1719850552; c=relaxed/simple;
+	bh=6WeDN4O9CqsZITlUaWatsVbDiRibRXGUfWyTH4PNE7Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H+QlIgtMeT4sSek3tlyNQu35dAbWsJV/R1BrPw+cfWhVbbJ8tRk1PcKo7yWpYMcNSdsnKiQ3/ZhcrmgxRElnAdsrkVWPEHXAIASdDC82tCwTlfEUjXv7s+AYBFMqof6eKtUWsNr+3+cM9RKLwckju5jB4RK/flkOWIXgxdqskoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eRS9cFQg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 238F2C4AF0F;
+	Mon,  1 Jul 2024 16:15:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719850552;
+	bh=6WeDN4O9CqsZITlUaWatsVbDiRibRXGUfWyTH4PNE7Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=eRS9cFQgfitWaNC+/gY9b2F4iYIVG4MzNrmtG0bE/FvE1JcoANIIS2gA5P9wT6/9M
+	 8NTwLAhbaoZcZ6ibCxx/Ga2GqF0QIZOSWsmhFGF15sSpa1s6WU7I5yvOHnei/qyq1l
+	 dF78pbrYIVBIN6FwmIZaH/dhLQPXfuv9qNbzitCO/QjVSDR3H61BZ+CSlWVnFM4/pV
+	 xLgNWHP8pFbzxtNIvSabbbr4vgtkmcoW9OP9aHFWpzOoa3Tk57LYvZDJrsverJ+Wi1
+	 xIHs3yj+t3+FfGA7XOFXqf0f3HnGrdsZAAz/qf0wfN0qNzyMw81pgbZMQKKo9jjaHf
+	 xFGdqh102tc4Q==
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-25cd49906aeso416704fac.2;
+        Mon, 01 Jul 2024 09:15:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXQUPMME55VRcSmdyW0fdurDEC2JLL6+Rho3lLmQbOjEL0igldzyuz4ehojEipoRLm17IutxOZCGgaNcUw2VlK9iWTJsYBY7clq9AhjLMnjFOxWhXd+XAEWPNqzsyLVtuSpPzp+7DI=
+X-Gm-Message-State: AOJu0Yyg4H/6y2zRZZzEv+it1w7Fq2sY0FEQuf8fU9Xhji07EbKIQDqH
+	3ZpuqXiVhKAqyxVbdrF8i+hzU8Q1cwtB2SaAI4GJ27/vIm8OFqZvUCbflxpRjyrzby/JVnN2DzR
+	yTAab0VpRaZhHHyBMf29veL2mKIk=
+X-Google-Smtp-Source: AGHT+IFh/enPoUKNGEs4oUOY6HqFo+VjaGLpISFn8fxo3xPC4aSgmGXVDFt3twaLwzBH48fNasaBqvISCVRSZDdXeb0=
+X-Received: by 2002:a05:6870:a349:b0:254:d417:34ff with SMTP id
+ 586e51a60fabf-25db3630354mr5941180fac.4.1719850551358; Mon, 01 Jul 2024
+ 09:15:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240701142851.1448515-3-luke.parkin@arm.com>
+References: <20240626204723.6237-1-mario.limonciello@amd.com>
+ <CAJZ5v0hu1rVOLycx5K4YWOGhtC8YfSYupc8D6qygtXVGtvxJrQ@mail.gmail.com> <5ed06d29-a8b6-48f6-b341-3cd32c19c8d7@amd.com>
+In-Reply-To: <5ed06d29-a8b6-48f6-b341-3cd32c19c8d7@amd.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 1 Jul 2024 18:15:40 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jtmpmg-7XvJ-OheWzTn=xbbiEZ8iu=F_tO3gaG9-rKDA@mail.gmail.com>
+Message-ID: <CAJZ5v0jtmpmg-7XvJ-OheWzTn=xbbiEZ8iu=F_tO3gaG9-rKDA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] cpufreq: Allow drivers to advertise boost enabled
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Sibi Sankar <quic_sibis@quicinc.com>, 
+	Dhruva Gole <d-gole@ti.com>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	"Gautham R . Shenoy" <gautham.shenoy@amd.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Yipeng Zou <zouyipeng@huawei.com>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 01, 2024 at 03:28:50PM +0100, Luke Parkin wrote:
-> Add scmi_debug_stats struct with atomic_t types to prevent racing.
-> 
+On Thu, Jun 27, 2024 at 9:12=E2=80=AFPM Mario Limonciello
+<mario.limonciello@amd.com> wrote:
+>
+> On 6/27/2024 04:59, Rafael J. Wysocki wrote:
+> > On Wed, Jun 26, 2024 at 10:47=E2=80=AFPM Mario Limonciello
+> > <mario.limonciello@amd.com> wrote:
+> >>
+> >> The behavior introduced in commit f37a4d6b4a2c ("cpufreq: Fix per-poli=
+cy
+> >> boost behavior on SoCs using cpufreq_boost_set_sw()") sets up the boos=
+t
+> >> policy incorrectly when boost has been enabled by the platform firmwar=
+e
+> >> initially even if a driver sets the policy up.
+> >>
+> >> This is because policy_has_boost_freq() assumes that there is a freque=
+ncy
+> >> table set up by the driver and that the boost frequencies are advertis=
+ed
+> >> in that table. This assumption doesn't work for acpi-cpufreq or
+> >> amd-pstate. Only use this check to enable boost if it's not already
+> >> enabled instead of also disabling it if alreayd enabled.
+> >>
+> >> Reviewed-by: Sibi Sankar <quic_sibis@quicinc.com>
+> >> Reviewed-by: Dhruva Gole <d-gole@ti.com>
+> >> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> >> Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+> >> Fixes: f37a4d6b4a2c ("cpufreq: Fix per-policy boost behavior on SoCs u=
+sing cpufreq_boost_set_sw()")
+> >
+> > CC: stable I suppose?
+>
+> Yes, I didn't realize f37a4d6b4a2c came in 6.9, I had assumed it was
+> 6.10.  But since it's 6.9, yes if you can please add stable tag when
+> committing.
 
-Hi
+Applied as 6.10-rc material along with the [2/2].
 
-"Add SCMI debug statisticts based on atomic types to prevent races."
+I've added a Fixes: tag to the second patch and "Cc: stable" tags to
+both patches.
 
-if you want to specify why you did it this way in the commit message,
-but this seems really more something for a comment in the doxygen that
-on the commit log.
+Thanks!
 
-> Add tracking of 5 initial statistics
-> - sent_ok & sent_fail
-> - response_ok & dlyd_response_ok
-> - xfers_response_timeout
-
-Morover I would not specify here in the log what you added, you can see
-it from the code. "Add some initial stats counter" if you want.
-
-> 
-> Signed-off-by: Luke Parkin <luke.parkin@arm.com>
-> ---
->  drivers/firmware/arm_scmi/driver.c | 46 +++++++++++++++++++++++++++++-
->  1 file changed, 45 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-> index 6b6957f4743f..f69dff699d48 100644
-> --- a/drivers/firmware/arm_scmi/driver.c
-> +++ b/drivers/firmware/arm_scmi/driver.c
-> @@ -125,6 +125,22 @@ struct scmi_debug_info {
->  	bool is_atomic;
->  };
->  
-> +/**
-> + * struct scmi_debug_stats - Debug statistics
-> + * @sent_ok: Count of successful sends
-> + * @sent_fail: Count of failed sends
-> + * @response_ok: Count of successful responses
-> + * @dlyd_response_ok: Count of successful delayed responses
-> + * @xfers_response_timeout: Count of xfer response timeouts
-> + */
-> +struct scmi_debug_stats {
-> +	atomic_t sent_ok;
-> +	atomic_t sent_fail;
-> +	atomic_t response_ok;
-> +	atomic_t dlyd_response_ok;
-> +	atomic_t xfers_response_timeout;
-> +};
-> +
->  /**
->   * struct scmi_info - Structure representing a SCMI instance
->   *
-> @@ -141,6 +157,7 @@ struct scmi_debug_info {
->   * @protocols: IDR for protocols' instance descriptors initialized for
->   *	       this SCMI instance: populated on protocol's first attempted
->   *	       usage.
-> + * @stats: Contains several atomic_t's for tracking various statistics
->   * @protocols_mtx: A mutex to protect protocols instances initialization.
->   * @protocols_imp: List of protocols implemented, currently maximum of
->   *		   scmi_revision_info.num_protocols elements allocated by the
-> @@ -174,6 +191,7 @@ struct scmi_info {
->  	struct idr tx_idr;
->  	struct idr rx_idr;
->  	struct idr protocols;
-> +	struct scmi_debug_stats stats;
-
-Pleaase move this field right after scmi_debug_info down below, so that
-we keep all debug stuff together.
-
-Also this is an embedded structure, not a bare pointer to dynamically
-allocated stuff (and this is fine...) so you should probably ifdef
-ARM_SCMI_DEBUG_STATISTICS at compile time the presence of this field itself
-so as not to waste memory for something you never use...but this is
-opinable because it will also, on the other side, polllute a bit the code
-with unpleasant ifdeffery... so maybe Sudeep wont like it...the other option
-would be to make this a pointer and conditionaly devm_kzalloc a struct to this
-pointer (like scmi_debug_info)
-
->  	/* Ensure mutual exclusive access to protocols instance array */
->  	struct mutex protocols_mtx;
->  	u8 *protocols_imp;
-> @@ -1143,7 +1161,12 @@ static void scmi_handle_response(struct scmi_chan_info *cinfo,
->  						SCMI_RAW_REPLY_QUEUE,
->  						cinfo->id);
->  	}
-> -
-> +	if (IS_ENABLED(CONFIG_ARM_SCMI_DEBUG_STATISTICS)) {
-> +		if (xfer->hdr.type == MSG_TYPE_DELAYED_RESP)
-> +			atomic_inc(&info->stats.dlyd_response_ok);
-> +		else
-> +			atomic_inc(&info->stats.response_ok);
-> +	}
-
-Ok, so IMO, this is the main core thing to rework in this series: the
-"counting" operation/block should be defined as a macro so that it can
-be fully compiled out when STATS=n, because these are counters
-incremented on the hot path for each message, not just once in a while,
-so the above if(IS_ENABELD()) now will be there and evaluated even when
-STATS=n.
-
-Something like:
-
-	#ifdef CONFIG_ARM_SCMI_DEBUG_STATISTICS
-	#define SCMI_LOG_STATS(counter)			\
-		<your magic here> 			\
-	#else
-	#define SCMI_LOG_STATS(counter)
-	#endif
-
-.... I have not thought it through eh...so it could be radically
-different...the point is ... the counting machinery should just
-disappear at compile time when STATS=n
-
-Moreover please define this macros magic here in this patch BUT split
-out in a distinct patch all the places where you make use of it, so that
-this patch contains only definitions of mechanisms and struct and
-another patch will contain all the places where stats are monitored.
-
->  	scmi_xfer_command_release(info, xfer);
->  }
->  
-> @@ -1279,6 +1302,12 @@ static int scmi_wait_for_reply(struct device *dev, const struct scmi_desc *desc,
->  		}
->  	}
->  
-> +	if (IS_ENABLED(CONFIG_ARM_SCMI_DEBUG_STATISTICS) && ret == -ETIMEDOUT) {
-> +		struct scmi_info *info =
-> +					handle_to_scmi_info(cinfo->handle);
-> +		atomic_inc(&info->stats.xfers_response_timeout);
-> +	}
-> +
-
-Ditto.
-
->  	return ret;
->  }
->  
-> @@ -1414,6 +1443,13 @@ static int do_xfer(const struct scmi_protocol_handle *ph,
->  	trace_scmi_xfer_end(xfer->transfer_id, xfer->hdr.id,
->  			    xfer->hdr.protocol_id, xfer->hdr.seq, ret);
->  
-> +	if (IS_ENABLED(CONFIG_ARM_SCMI_DEBUG_STATISTICS)) {
-> +		if (ret == 0)
-> +			atomic_inc(&info->stats.sent_ok);
-> +		else
-> +			atomic_inc(&info->stats.sent_fail);
-> +	}
-> +
-
-Ditto.
-
->  	return ret;
->  }
->  
-> @@ -2994,6 +3030,14 @@ static int scmi_probe(struct platform_device *pdev)
->  	handle->devm_protocol_get = scmi_devm_protocol_get;
->  	handle->devm_protocol_put = scmi_devm_protocol_put;
->  
-> +	if (IS_ENABLED(CONFIG_ARM_SCMI_DEBUG_STATISTICS)) {
-> +		atomic_set(&info->stats.response_ok, 0);
-> +		atomic_set(&info->stats.sent_fail, 0);
-> +		atomic_set(&info->stats.sent_ok, 0);
-> +		atomic_set(&info->stats.dlyd_response_ok, 0);
-> +		atomic_set(&info->stats.xfers_response_timeout, 0);
-> +	}
-> +
-
-I think that you can just drop this zero initializations because the
-stats are part of the info structure which is created devm_kzalloc'ed...
-so zerod at creation time AND indeed atomic_t is just a structure containing
-an int counter which will be already zeroed too...I dont think that any
-other special init is done, it is already zero, and nothing more is done
-by your atomic_set(v, 0)...but feel free to verify I am not missing
-something, please.
-
-Thanks,
-Cristian
-
+> >
+> >> Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
+> >> Suggested-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+> >> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> >> ---
+> >> Cc: Sibi Sankar <quic_sibis@quicinc.com>
+> >> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> >> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> >> Cc: Dhruva Gole <d-gole@ti.com>
+> >> Cc: Yipeng Zou <zouyipeng@huawei.com>
+> >> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >> v1->v2
+> >>   * Pick up tags
+> >> ---
+> >>   drivers/cpufreq/cpufreq.c | 3 ++-
+> >>   1 file changed, 2 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> >> index 1fdabb660231..270ea04fb616 100644
+> >> --- a/drivers/cpufreq/cpufreq.c
+> >> +++ b/drivers/cpufreq/cpufreq.c
+> >> @@ -1430,7 +1430,8 @@ static int cpufreq_online(unsigned int cpu)
+> >>                  }
+> >>
+> >>                  /* Let the per-policy boost flag mirror the cpufreq_d=
+river boost during init */
+> >> -               policy->boost_enabled =3D cpufreq_boost_enabled() && p=
+olicy_has_boost_freq(policy);
+> >> +               if (cpufreq_boost_enabled() && policy_has_boost_freq(p=
+olicy))
+> >> +                       policy->boost_enabled =3D true;
+> >>
+> >>                  /*
+> >>                   * The initialization has succeeded and the policy is=
+ online.
+> >> --
+>
 
