@@ -1,131 +1,122 @@
-Return-Path: <linux-kernel+bounces-236965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8801491E928
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 22:06:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 481DC91E92C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 22:07:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B62A1F22E4E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:06:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5D121F22F0F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8B67170844;
-	Mon,  1 Jul 2024 20:06:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1749816F840;
+	Mon,  1 Jul 2024 20:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="pfYul48e"
-Received: from mail-43166.protonmail.ch (mail-43166.protonmail.ch [185.70.43.166])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pV7iWmMn"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2D116F8F5
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 20:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2C416F908
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 20:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719864406; cv=none; b=U7wTAOnUHzzxDb8V128sxJjraxKrGxSE57MtgFhuE9ADeGDeA47iqikabG3LOoGFnaXOdVIEH/upVYFEX8GwHO7+eGtV6hHqmoFIB9r58rnnUzemxe3kKONJF82JZERQPHgF1lcZfrwfYOr96+BwKUNK0/5cpTwdoQCZ6poGdNE=
+	t=1719864436; cv=none; b=QsNbMzTjjvF9Xwl4gFv3kwOW6KIiWpGItRzS7bk5vQlQ9pZLpOFouMGXit7GWw0/5JigVvovWChD2b3RR4GhTK93qcqSrEDVzyT24EnxwCc++hJMDQhfPiaQnA0ArNoCLRvjJjdhy6QzJS8Bm8qTf/zakIoWymPTIVbjq7cjRb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719864406; c=relaxed/simple;
-	bh=XbPG5OYWR1cgiAkSWQfBtuSPvtxJkMeXLqpn4CoNSDs=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ol+cTXyqEAu/+1GjZoASHaLURgMca4FL5BS1LU9yISFwZA1sQTrM2+JUMn8Iym09KRQRbj7TSxWdoBfEh76ttVhQNAUN9mL3h2gisZF+p1EwsRnTsl0SUlBkm41l1Una3uVWuCIifKUwn4Rf12jc0/+l2MawBPO3QCLcsErUgt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=pfYul48e; arc=none smtp.client-ip=185.70.43.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1719864402; x=1720123602;
-	bh=qBeERxLETEgybhXOkjxuhEzlSp6YK4Z+bBuIZXY0xnQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=pfYul48eOqn2o9ulBnP2mv7+RzdhnSn73xHin6gUZ1tJulbz9p7wZGXUqyJ9vfiXQ
-	 EGUrUYeGmfIgc//SDC8v57JZgmBJ7ITyQnNK6zh5MULj/H2Ywy9gS7+DfTnDjromMS
-	 yU/ol4DNWtAltdLIQzsn55C0rZO5MhB0w8rlOfYyBazcvYGj5YjXT829j9CysZ+zlF
-	 Bd9GLsmf+as/SbcA6GfegSNZzFYJxQ9cFFJa9KuZPX/AS/KiUYQglNYjNa/wbUOYEF
-	 hmpKxKbWNqsBKc/Bkv/cMson2IU5i0c6NhPe//1DahJ+HBRrVGSA3CT5dpUtFzFbtz
-	 NbjpC5AP1okEA==
-Date: Mon, 01 Jul 2024 20:06:38 +0000
-To: Miguel Ojeda <ojeda@kernel.org>
-From: =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>
-Cc: Wedson Almeida Filho <wedsonaf@gmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH 03/13] rust: allow `dead_code` for never constructed bindings
-Message-ID: <dhqYZwDV26lEyH45RqwDnXjOODD6xEYXM_sG7vYK2VM2xhWILyi6voa0cS3PyKAseW29ZiIWEGOEwdQdhPxidg7eQgV74LmSgFm0N1yHRg8=@protonmail.com>
-In-Reply-To: <20240701183625.665574-4-ojeda@kernel.org>
-References: <20240701183625.665574-1-ojeda@kernel.org> <20240701183625.665574-4-ojeda@kernel.org>
-Feedback-ID: 27884398:user:proton
-X-Pm-Message-ID: 2c21c386f20e574f3d165c0dad0783ca192b2fc7
+	s=arc-20240116; t=1719864436; c=relaxed/simple;
+	bh=DTx0TnMXknMnU1py/GEV3TbUeQ0A4+c8OwKWSEIEY60=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UYTjkk7tmwpnYHaf8Hqgx21hAQgyeg/O7EdaV1d3vtbtOfVuRqPvUYXUgxcQbaJeEyFvs2QrhxXTOABuIB4cpL2KtUxqVd9TA11y4OX7DLiqXvGmY1uFYGl1bFYB7E9fstSIG8RA7VMatLntuREgTdvq5aPXC6b/RmL3h0fAoho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pV7iWmMn; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57d119fddd9so10819a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 13:07:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719864433; x=1720469233; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HA1dU22m3UNj5lyj13MGSrb+8h3p7MYcfXDGMuEpnwo=;
+        b=pV7iWmMnE4CLmq/TiV0X7tzonmq/wxD24BAM1cWI/CSi7jua2bZ+hR/8iqNnZvmmCD
+         lqfrr8GMbU9DCJpVX3xmkkMZPAmd3kJImpE/q9WXkjnSZxlwd3WYd3Ay/r1od6cJWll7
+         p6XX92skCQsVjeyAB6JEQuuBNPPtUGq4tvFpVRLtmHPgFxHr67+njCHPsasnMnCD6ji/
+         T7D2HQ+O/ZRAozy5waDZoewOIK/hmXFu65GgxBVv9Wzsl/E99kKQGBQRWBExOBWRy6Xg
+         GLhw2ySClsWGHZDTmrbVIkwm0r0/GcijvTusNEuaVAGv+zYb5MptAp3y9KMXp/IEwpsU
+         0fBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719864433; x=1720469233;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HA1dU22m3UNj5lyj13MGSrb+8h3p7MYcfXDGMuEpnwo=;
+        b=g0/3RyPpUnsj5D+I7vZqNixhNP5lEi5qvLuhYuvkqgTemr60AurU/5LVIYPkvR0Xln
+         wmnT382trAvv7dmLa+PR1YvWPE/425SuYVYulrQ50FLYPCv1yctXF593fuyBxrFaqH6h
+         WDeNEMQ8jdL4/tpvwf5J6rBefJeKnbZIv+l1/VClO1ugB2Y+ovYFe/CcArP3d4vgwAR/
+         GID/KBg/NHtuPdsEYhYhZT2QZX8EP55ZG+mPszqLlUGkoh59HL/IlNkplzORjdIOOyED
+         4LC5576brDfnYTRu9Uzy0Tbem+kr6bQ/FRFdRWt7XDyvt2PPI/zUTuom3GvXnXsvXmea
+         KNDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUfJC6Z7E+dDbnBpWAkRh93tOewENi26bK+nMbHiXxCm+hQjpCzKKltPVi8mp1K8bXm7pSWZI5ec/1fhMaAvPuI93mN0TSZnBGNDPcm
+X-Gm-Message-State: AOJu0YyXBg9vdN+ZC0Z+FK1WJsvi1GdtniWx9znR7O0Vs+vC2U2vzoig
+	Sofoyar3XXC0x2qg5kji07y3dGlXPh3Ls/JW+4jkB4YSEKSMs3hlwAF6cMQ/tCHYSrejX+ID90D
+	SvNkGk2/lvUWAQKP8dSU15Bj8oCaveMP1IWOE
+X-Google-Smtp-Source: AGHT+IH9YyeTHtOmKWNRjWDZNOFaOcyjCIO5hmhn2IbnyBQewSRB362+m++tv5m6fkb6HeoZ2TpHUYTYJYIbCgB85hk=
+X-Received: by 2002:a50:d799:0:b0:58b:93:b624 with SMTP id 4fb4d7f45d1cf-58b0093b6fdmr89607a12.1.1719864432894;
+ Mon, 01 Jul 2024 13:07:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20240701162025.375134-1-robdclark@gmail.com>
+In-Reply-To: <20240701162025.375134-1-robdclark@gmail.com>
+From: Pranjal Shrivastava <praan@google.com>
+Date: Tue, 2 Jul 2024 01:37:00 +0530
+Message-ID: <CAN6iL-TCsS1dxwZngJ77J1MJcBeRsZW22W9uNLG59Z-isy9J5w@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] iommu/arm-smmu: Prettyify context fault messages
+To: Rob Clark <robdclark@gmail.com>
+Cc: iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	Stephen Boyd <swboyd@chromium.org>, Robin Murphy <robin.murphy@arm.com>, 
+	Rob Clark <robdclark@chromium.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Georgi Djakov <quic_c_gdjako@quicinc.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Jerry Snitselaar <jsnitsel@redhat.com>, Joerg Roedel <jroedel@suse.de>, Krishna Reddy <vdumpa@nvidia.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"open list:POWER MANAGEMENT CORE" <linux-pm@vger.kernel.org>, 
+	"open list:TEGRA IOMMU DRIVERS" <linux-tegra@vger.kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Monday, July 1st, 2024 at 20:36, Miguel Ojeda <ojeda@kernel.org> wrote:
-
-> Starting with the upcoming Rust 1.80.0 (since upstream commit 35130d7233e=
-9
-> ("Detect pub structs never constructed and unused associated constants
-> in traits")), the `dead_code` pass detects more cases, which triggers
-> in the `bindings` crate:
->=20
->     warning: struct `boot_params` is never constructed
->         --> rust/bindings/bindings_generated.rs:10684:12
->         |
->     10684 | pub struct boot_params {
->         |            ^^^^^^^^^^^
->         |
->         =3D note: `#[warn(dead_code)]` on by default
->=20
-> As well as in the `uapi` one:
->=20
->     warning: struct `boot_params` is never constructed
->         --> rust/uapi/uapi_generated.rs:10392:12
->         |
->     10392 | pub struct boot_params {
->         |            ^^^^^^^^^^^
->         |
->         =3D note: `#[warn(dead_code)]` on by default
->=20
-> These are all expected, since we do not use all the structs in the
-> bindings that `bindgen` generates from the C headers.
->=20
-> Therefore, allow them.
->=20
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-
-Reviewed-by: Bj=C3=B6rn Roy Baron <bjorn3_gh@protonmail.com>
-
-> ---
->  rust/bindings/lib.rs | 1 +
->  rust/uapi/lib.rs     | 1 +
->  2 files changed, 2 insertions(+)
->=20
-> diff --git a/rust/bindings/lib.rs b/rust/bindings/lib.rs
-> index 40ddaee50d8b..93a1a3fc97bc 100644
-> --- a/rust/bindings/lib.rs
-> +++ b/rust/bindings/lib.rs
-> @@ -24,6 +24,7 @@
->      unsafe_op_in_unsafe_fn
->  )]
-> =20
-> +#[allow(dead_code)]
->  mod bindings_raw {
->      // Use glob import here to expose all helpers.
->      // Symbols defined within the module will take precedence to the glo=
-b import.
-> diff --git a/rust/uapi/lib.rs b/rust/uapi/lib.rs
-> index 0caad902ba40..80a00260e3e7 100644
-> --- a/rust/uapi/lib.rs
-> +++ b/rust/uapi/lib.rs
-> @@ -14,6 +14,7 @@
->  #![cfg_attr(test, allow(unsafe_op_in_unsafe_fn))]
->  #![allow(
->      clippy::all,
-> +    dead_code,
->      missing_docs,
->      non_camel_case_types,
->      non_upper_case_globals,
-> --=20
+On Mon, Jul 1, 2024 at 9:50=E2=80=AFPM Rob Clark <robdclark@gmail.com> wrot=
+e:
+>
+> From: Rob Clark <robdclark@chromium.org>
+>
+> v3: Split out the reg bitfield renaming, rework
+>     print_context_fault_info() helper
+>
+> Rob Clark (3):
+>   iommu/arm-smmu: Add CB prefix to register bitfields
+>   iommu/arm-smmu-qcom-debug: Do not print for handled faults
+>   iommu/arm-smmu: Pretty-print context fault related regs
+>
+>  drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c  |  2 +-
+>  .../iommu/arm/arm-smmu/arm-smmu-qcom-debug.c  | 66 ++++++-----------
+>  drivers/iommu/arm/arm-smmu/arm-smmu.c         | 74 ++++++++++++++-----
+>  drivers/iommu/arm/arm-smmu/arm-smmu.h         | 71 +++++++++++-------
+>  drivers/iommu/arm/arm-smmu/qcom_iommu.c       |  4 +-
+>  5 files changed, 127 insertions(+), 90 deletions(-)
+>
+> --
 > 2.45.2
+>
+For the series:
+
+Reviewed-by: Pranjal Shrivastava <praan@google.com>
+
+Thanks,
+Praan
 
