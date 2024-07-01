@@ -1,73 +1,74 @@
-Return-Path: <linux-kernel+bounces-235690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13FD591D876
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:02:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 232AB91D877
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:02:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 377051C21E04
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:02:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A220F1F231FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F80659160;
-	Mon,  1 Jul 2024 07:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2916F31C;
+	Mon,  1 Jul 2024 07:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lU1RygW+"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kvd6i+a/"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E652C39855
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 07:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B841A5103F
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 07:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719817359; cv=none; b=RSPBy4d/5yvdL4P+vcSzuOnOXdjpi8/YKI7YSY+MO1AV/rVzsmxtFLyfyP3Yd0ar76qOfPYq/lgzQ70CMz5F/QOrzFjJCEXkuEHwjh5waw5noenme46BuEwdpb903Uoxhh9LRo5joPwI+PVKpfiGM/OYKwyjg1iL5+l1p835td0=
+	t=1719817360; cv=none; b=HEhOO2LzvXo8pnSGZt0bDehwMho3moP9zjeZZdlvuE7No3+GWCrgKW9PeSdHsUke5ulZj+ogN2Mzwtn/Il2ovCAvmBpAPMc0whcf6tUUZpHahKv0jNXUOVEiNAA0f+k1Uo6lGGNrHLMKBahZnO4DiPZcxX+8wfnRAavndO1MSyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719817359; c=relaxed/simple;
-	bh=cBYvlD+uGm4bJQ4B0yh+wG+da72WDtr4bU+1bwuff10=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BJNOZnyG+7k8wcJiHldeq4KD/dwiP3B0KSFwS99qXZO0ZrZczzS7wswy3BcOQPoaJoj3O1vlj70daCkoOKGt3xoYnsek9tJ83cRP1oc1WfVV3DRVoTnW3fksASrjQWSLCYKvpYkFGl/AJo0F3GU/GYI0HpMWtrgJPda8Ly278g4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lU1RygW+; arc=none smtp.client-ip=209.85.208.45
+	s=arc-20240116; t=1719817360; c=relaxed/simple;
+	bh=HoYOZ5VZZSoT1oPQmsk8ALI7brrvFdAyk8iW+8VaR4M=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=UC+zoQ4HskFdsAVaVPE1P0dFQVdQ/H2oNNl4+rftUzX5VSBTKhI4cAlw0jnMtLr0eELYQrpVilVoHisLM3gRFCGR1RVSwi1gZpkBCiF6FAMFtbFuXhrYSmEpwZVwJ50fmwPsRoFL1JFkm0LZJiqq5S7PdqWrbYLjWkd7e+xZ2GM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kvd6i+a/; arc=none smtp.client-ip=209.85.208.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57d106e69a2so2809174a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 00:02:37 -0700 (PDT)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57d20d89748so2835687a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 00:02:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719817356; x=1720422156; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BNxRkokndQgS6PANhpBf3Erk5CI3oT2TsBCHeOpBCbw=;
-        b=lU1RygW++E7DGEz+m/mFKTKpRgHzJYtaN4mS0LXVPNRShqBCwvSUZf24l8L/Hlv8Ub
-         tsaFv7EWUP8Mkl6VUmiT6ypAI3i945YCWm9Tx4+lFcQCbt0NPHRJ/tZsG9wu9+1hF4mk
-         jRNeUSK73fbGSrdB+wOnUfYFKxYMMaNrwwpWT/iAj5d5ZPM45wPc4RpNb3AouaecAYA1
-         JHKqAr76yavsWV2DsY9u80uywyM+xUgO22IwQYcp1qhgWm2RvRGpIAccn5HdY81dNq9h
-         yrBp+iWbxcL8etEb3tLC7qRv2VkIbVBAIIkr1QkDM11lx6HzSCJrzAFpbNHrRrHawblC
-         IijA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719817356; x=1720422156;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1719817357; x=1720422157; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=BNxRkokndQgS6PANhpBf3Erk5CI3oT2TsBCHeOpBCbw=;
-        b=tOOkdZi1uqwVO0XJnbtPMI/65JoInd1VtDYaEe+S+jRowJmcRpoI13vEe2efaZJquY
-         dQv6F01EDewkY+vf5xlg7qX2JpiDRccN5f7kXqxdS0bWZQLQE5Gg726qw0Ql450IOuvX
-         Amdf31JqdCx6xZV+QBA3ETpIE+RRvkAbQkgI2Q7GPWdsIkRR6/BmYoEZ7VvKL1GbAR5x
-         dmb0jgaLyFNtndBFK09vB4phPwT77+mC23MAFeys8VPUXipgWTTOIRNScsw3LctJ/U4j
-         xM/7m4JjrlOkwCIkTJaWBOwRQYJwrPjfbGAHPMrlBukSM4nEhaZL568iX0tk+Bvhe0O4
-         yotg==
-X-Forwarded-Encrypted: i=1; AJvYcCUBaPw81T/g37HIxntYOFU5pdCGGB0c9+w5Fh19OjE3J1BHtNNW7KFdYM9zwL7leH3OVjf9zcpm/mUX8DHD+OaC21sToOJru2KijSz3
-X-Gm-Message-State: AOJu0YwwCa0qy4RVbDC0LjUL2X5cQu3g1CTrykedrGQ8L55jQAyvkmgE
-	UvuTSas6d1V1K/89Rf3YPNZbYaJRQOSG5Kb8NxKCpnp0leH3Bb7ZB9yoDSPtm34=
-X-Google-Smtp-Source: AGHT+IFNhztsKQspA93PM83poO4cdAZw8JWQkG10BqzhYODnEj8VuZNhOj6/m2oKwI+kNWX5P2Ac9w==
-X-Received: by 2002:a05:6402:26c8:b0:584:21eb:7688 with SMTP id 4fb4d7f45d1cf-5865d47375fmr7232268a12.14.1719817334068;
-        Mon, 01 Jul 2024 00:02:14 -0700 (PDT)
+        bh=G0uxixe8SRdEtYS3hYnA/51z5ZCVTziscEpNL0ARHP8=;
+        b=kvd6i+a/8KSSu0NKX5Qvd7b+ppJhT5FrDmuIKUHmKBGHhieikiXrm2al7Lj4b8vDBj
+         nohdvVhGFBVNSw2U1q1V4QR/BDqKj9ll26StvJWYV/CQQI9i3m6YXG0/Y7oyQxz2f7to
+         DBcscjENTIycKvdzyMd9k9l660kaaF0MaeCXsg27wcUf9Jrsqz19ubGKmj+v/foojqLN
+         lxCJ8LNsIJX0KOQQMMjmRcl50YfWQlCWaeVuwMpc5Z3xKs0v5mbyy31oi1HFhs5OKPOW
+         W8qhZnY8wGHL4yoY9mKwq5F5fHJierlkrCYrzZFie+JS62MzwwzX1bbi40e0a3RiUVJg
+         4wag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719817357; x=1720422157;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G0uxixe8SRdEtYS3hYnA/51z5ZCVTziscEpNL0ARHP8=;
+        b=lkSSwmXqf4Tyub96e3/FlawZc0vMSm8MG3Bzq99NhlIHkso1dyPEI/D0MjqlnUFCk3
+         sc5/SRIR97upqjjIJqHSlQ4+fe0sRE38evpbYRmcW2HdsUrjLVmOuTvqF4huzCQPLKQr
+         L4bRdopmXUAiRuTo4FdyTpTHZWJWQNAcpJTg4paVa7QyT2+j1cxKFiydUHjxfxT5uAzK
+         n8aQDjAbeOQOhO98g0EV5b08IU5E7hXohPP/rxMqBVBlf2CuvCYikEXJm1YgTXPtR2Di
+         GCQSL1x1UrvVqldJk4ZVbK3NyX9fcnIMFBvnI0EsYqOSc8EggBCxWuWAo5zvudy+Gt/C
+         A3Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhAQOawt9PKnc/YVCUOSQSwcKPPntFmIGC8aYtrrnTGAiVpsLWmYXTODottjIOPvtEeVAttXWmYeb1bgt0NfTRWC7BV/MRPaAbQqai
+X-Gm-Message-State: AOJu0YwrvzkiHVT76pVl7gGMrQbIRdgUctsYClKlJS9ULspmsg32f08q
+	iU1l3DI27DMIF2jnDXVfKdYha2X45hgGHiyLyfSjaX0Tg5Mqroz+sRNldjywewg=
+X-Google-Smtp-Source: AGHT+IFpmkqFIW4SYt5Bywcq02sj5OIw8F3oMcyUDj7GJ0VoQuAFnMl+7gJ97FBtnoFNiB+QfU/AHA==
+X-Received: by 2002:a05:6402:2547:b0:57d:f9f:133b with SMTP id 4fb4d7f45d1cf-5879f0c4da6mr3053720a12.2.1719817357206;
+        Mon, 01 Jul 2024 00:02:37 -0700 (PDT)
 Received: from lino.lan ([85.235.12.238])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5861324f036sm4034383a12.34.2024.07.01.00.02.13
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5861324f036sm4034383a12.34.2024.07.01.00.02.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 00:02:13 -0700 (PDT)
+        Mon, 01 Jul 2024 00:02:36 -0700 (PDT)
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 0/4] ASoC: tas*: Fix up GPIO usage
-Date: Mon, 01 Jul 2024 09:02:11 +0200
-Message-Id: <20240701-asoc-tas-gpios-v1-0-d69ec5d79939@linaro.org>
+Date: Mon, 01 Jul 2024 09:02:12 +0200
+Subject: [PATCH 1/4] ASoC: tas5086: Convert to GPIO descriptors
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,9 +77,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAHNUgmYC/x3MPQqAMAxA4auUzAZS8Q+vIg6ljZrFlkZEkN7d4
- vgN772gnIUVZvNC5ltU4llhGwP+cOfOKKEaWmo7Gsmi0+jxcop7kqjYe+ptmCiMwwQ1Spk3ef7
- hspbyAUdqO69gAAAA
+Message-Id: <20240701-asoc-tas-gpios-v1-1-d69ec5d79939@linaro.org>
+References: <20240701-asoc-tas-gpios-v1-0-d69ec5d79939@linaro.org>
+In-Reply-To: <20240701-asoc-tas-gpios-v1-0-d69ec5d79939@linaro.org>
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
  Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
  Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
@@ -88,43 +89,104 @@ Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
  Linus Walleij <linus.walleij@linaro.org>
 X-Mailer: b4 0.14.0
 
-The TI TAS drivers use some legacy GPIO code and headers,
-this series fixes it up.
+Switch the driver to use GPIO descriptors.
 
-The TAS2781 is a special case since it adds a handful of
-lines of deviating code to reconfigure a GPIO line for
-IRQ mode and then never actually use the IRQ obtained in
-the code. Is the line used by autonomous hardware? I'm
-puzzled by this.
+Notice that we let the gpiolib handle line inversion for the
+active low reset line (nreset !reset).
 
-Anyways the patch suggest how to solve this properly by
-fixing the parent irqchip and I'm happy to help.
+There are no upstream device trees using the tas5086 compatible
+string, if there were, we would need to ascertain that they all
+set the GPIO_ACTIVE_LOW flag on their GPIO lines.
 
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-Linus Walleij (4):
-      ASoC: tas5086: Convert to GPIO descriptors
-      ASoC: tas2781-i2c: Drop weird GPIO code
-      ASoC: tas2781-i2c: Get the right GPIO line
-      ASoC: tas*: Drop unused GPIO includes
+ sound/soc/codecs/tas5086.c | 27 ++++++++++++---------------
+ 1 file changed, 12 insertions(+), 15 deletions(-)
 
- include/sound/tas2781.h           |  7 +------
- sound/pci/hda/tas2781_hda_i2c.c   |  2 +-
- sound/soc/codecs/tas2552.c        |  2 --
- sound/soc/codecs/tas2764.c        |  2 --
- sound/soc/codecs/tas2770.c        |  2 --
- sound/soc/codecs/tas2780.c        |  2 --
- sound/soc/codecs/tas2781-comlib.c |  3 ---
- sound/soc/codecs/tas2781-fmwlib.c |  1 -
- sound/soc/codecs/tas2781-i2c.c    | 26 ++++----------------------
- sound/soc/codecs/tas5086.c        | 27 ++++++++++++---------------
- 10 files changed, 18 insertions(+), 56 deletions(-)
----
-base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
-change-id: 20240701-asoc-tas-gpios-5c051d80d768
+diff --git a/sound/soc/codecs/tas5086.c b/sound/soc/codecs/tas5086.c
+index 6d45df3b9ba4..4bc1fdd232bb 100644
+--- a/sound/soc/codecs/tas5086.c
++++ b/sound/soc/codecs/tas5086.c
+@@ -24,14 +24,13 @@
+ #include <linux/module.h>
+ #include <linux/slab.h>
+ #include <linux/delay.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/i2c.h>
+ #include <linux/regmap.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/spi/spi.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+-#include <linux/of_gpio.h>
+ #include <sound/pcm.h>
+ #include <sound/pcm_params.h>
+ #include <sound/soc.h>
+@@ -246,7 +245,7 @@ struct tas5086_private {
+ 	/* Current sample rate for de-emphasis control */
+ 	int		rate;
+ 	/* GPIO driving Reset pin, if any */
+-	int		gpio_nreset;
++	struct gpio_desc *reset;
+ 	struct		regulator_bulk_data supplies[ARRAY_SIZE(supply_names)];
+ };
+ 
+@@ -462,11 +461,11 @@ static int tas5086_mute_stream(struct snd_soc_dai *dai, int mute, int stream)
+ 
+ static void tas5086_reset(struct tas5086_private *priv)
+ {
+-	if (gpio_is_valid(priv->gpio_nreset)) {
++	if (priv->reset) {
+ 		/* Reset codec - minimum assertion time is 400ns */
+-		gpio_direction_output(priv->gpio_nreset, 0);
++		gpiod_direction_output(priv->reset, 1);
+ 		udelay(1);
+-		gpio_set_value(priv->gpio_nreset, 1);
++		gpiod_set_value(priv->reset, 0);
+ 
+ 		/* Codec needs ~15ms to wake up */
+ 		msleep(15);
+@@ -867,9 +866,9 @@ static void tas5086_remove(struct snd_soc_component *component)
+ {
+ 	struct tas5086_private *priv = snd_soc_component_get_drvdata(component);
+ 
+-	if (gpio_is_valid(priv->gpio_nreset))
++	if (priv->reset)
+ 		/* Set codec to the reset state */
+-		gpio_set_value(priv->gpio_nreset, 0);
++		gpiod_set_value(priv->reset, 1);
+ 
+ 	regulator_bulk_disable(ARRAY_SIZE(priv->supplies), priv->supplies);
+ };
+@@ -914,7 +913,6 @@ static int tas5086_i2c_probe(struct i2c_client *i2c)
+ {
+ 	struct tas5086_private *priv;
+ 	struct device *dev = &i2c->dev;
+-	int gpio_nreset = -EINVAL;
+ 	int i, ret;
+ 
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+@@ -940,12 +938,11 @@ static int tas5086_i2c_probe(struct i2c_client *i2c)
+ 
+ 	i2c_set_clientdata(i2c, priv);
+ 
+-	gpio_nreset = of_get_named_gpio(dev->of_node, "reset-gpio", 0);
+-	if (gpio_is_valid(gpio_nreset))
+-		if (devm_gpio_request(dev, gpio_nreset, "TAS5086 Reset"))
+-			gpio_nreset = -EINVAL;
+-
+-	priv->gpio_nreset = gpio_nreset;
++	/* Request line asserted */
++	priv->reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
++	if (IS_ERR(priv->reset))
++		return PTR_ERR(priv->reset);
++	gpiod_set_consumer_name(priv->reset, "TAS5086 Reset");
+ 
+ 	ret = regulator_bulk_enable(ARRAY_SIZE(priv->supplies), priv->supplies);
+ 	if (ret < 0) {
 
-Best regards,
 -- 
-Linus Walleij <linus.walleij@linaro.org>
+2.45.2
 
 
