@@ -1,240 +1,152 @@
-Return-Path: <linux-kernel+bounces-236265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F22F91DFA9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:44:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01AB491DFA1
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:43:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B07981F22BB5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:44:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB9392830A8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:43:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC4815A85A;
-	Mon,  1 Jul 2024 12:43:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28BE9158D7F;
+	Mon,  1 Jul 2024 12:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZsIH0J0r"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dSIJzG5k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFE2D158DAC;
-	Mon,  1 Jul 2024 12:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE2D155381;
+	Mon,  1 Jul 2024 12:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719837830; cv=none; b=kFhuo0puOEcO+6YuQZCKFlKlf8yBMKDDrVn35OO71Vrw428oJ/RWR13/p9UpmKI5eeHZMmgQl/6F53Ud/BynT7rFnqizjrU7jD90Ux+Al4hY+QWjXjlczC7Y4p7nzSjz2Q3JJ6Zlxdizs9ZEaR4Lp2gDRLI9137zazAyPN7hyNI=
+	t=1719837827; cv=none; b=GjNX6SFtC8XVN3h8TS43YNSeNfHS7eOU4suDbY2QOtO4n08iko3rEljZoEii/JEFkAnUWhUS0RP6Kp1IBxDIqrF4FBYAM7gDhQd5hcd7eNJaAqbp9Wu2nhkutspg0odnWw/sRvlq15EuPwgauHPQWLgMXIge9IyguO014f67TwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719837830; c=relaxed/simple;
-	bh=bSKMJmBIyXB7YFEsLUEmwinm5lPLRoRalWSc9qIce08=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WfLYkQIPWC2znyNus9AvOb+RUO26e0gm/bHL1Q+M/BlstGEoE2ebChWjY4nUlrdlZL/LAhp3AEPuwM1Ehxvh1zNOcTd2vtOMSu0DADTnp+PrPZ0MfvXRHboLVHskiL9l98e+5+MsTnzHo9i/GE8FhUW6lkSfBg2I14Cp6m5RVWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZsIH0J0r; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719837829; x=1751373829;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=bSKMJmBIyXB7YFEsLUEmwinm5lPLRoRalWSc9qIce08=;
-  b=ZsIH0J0rC+VBUfY83LurZomNKtkO2lGNnbry3i3NkMidasYnjoLtCDWg
-   +IXlidQ700KcnrMfA1u3eCrENU6lzHTUrkbSUM4BHz/QoCwlZGqXkCbGA
-   4kDM+OEGXMJ2ZnXm7UC/I9wpnR9LocNuPTRfaXehW7+M/91uNbxzD0wPD
-   XmFVPyTP/BO+mP97o+HeJmN/hhlIq8NLhQ2JPiwcEpZpM/CDLSJHhVupR
-   ESVkFuOopqxHZOBhjw8Agx+inpmJlXWNXE+1WMdhgA8BjmQBZtBUGfJZq
-   20YNJbDl2OP6haKjiv6XSZjxKPsxR9v1Djz4liIL3yX8HQmmEBtVsRBBK
-   g==;
-X-CSE-ConnectionGUID: 4RTcN3CmRoiQXjtjVWdn1w==
-X-CSE-MsgGUID: OWBi7RVzQQaH3HY6CjNYGQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="16797997"
-X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
-   d="scan'208";a="16797997"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 05:43:47 -0700
-X-CSE-ConnectionGUID: 81lCLWfWR3KxkQH2yM4voA==
-X-CSE-MsgGUID: YmTjb5uQS7OyJBE/hLKWmA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
-   d="scan'208";a="50469589"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa005.jf.intel.com with ESMTP; 01 Jul 2024 05:43:43 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 70E75358; Mon, 01 Jul 2024 15:43:41 +0300 (EEST)
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Baoquan He <bhe@redhat.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Sean Christopherson <seanjc@google.com>,
-	linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH 3/3] x86/64/kexec: Rewrite init_transition_pgtable() with kernel_ident_mapping_init()
-Date: Mon,  1 Jul 2024 15:43:34 +0300
-Message-ID: <20240701124334.1855981-4-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240701124334.1855981-1-kirill.shutemov@linux.intel.com>
-References: <20240701124334.1855981-1-kirill.shutemov@linux.intel.com>
+	s=arc-20240116; t=1719837827; c=relaxed/simple;
+	bh=YeBo7WeEfHrDjar+170g32UT5NI8xg7k30NX9nn6DDM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uFWWVx5Ds0ld+N5Wvx9R7hAP3dl6aNs8gZtLMM9/GmsaFPsUR9FskuvZfHMCxJ1xXZP2QaBYSSsih6TNJQx77OtdMXCob5WyabZZ8egvaZ6sV4AQ/Hl28LyQcVqtrGJQQiEwkcPV04n6TyAos1SkP6LMJNkduLF8It0X7CPiDG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dSIJzG5k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7699C116B1;
+	Mon,  1 Jul 2024 12:43:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719837826;
+	bh=YeBo7WeEfHrDjar+170g32UT5NI8xg7k30NX9nn6DDM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dSIJzG5kE3e7rGZi40BjaTQT/5aPg4DFWj8Vm1JdG0gJVnpmtOUQpSPVgCx0fB0gM
+	 QBb+Aj++c+X7axAYj/va2uHBCMv5DSYRdrRCzOjTyXtwJPsJmAsrgXd/t3vvxJk979
+	 v5PF/L273JYv8bq2K2Py93P1Xoq0mGrX0/hMk3ZkdAyvInZteKAKPKLnWPp3ZJ0AOw
+	 RrJ3KHCZBo2kZp18Eo27xiWDtCRQQFAzAQapbw5Ai2jEke04hBRnNqEBQWqLji2HrF
+	 y2dzUy/nZzEeMgr71LJeczA4L6Ktils1i4fcrrm2sUexD3PPy0D7CJf6lihcbrjyMU
+	 sqj9p8HSh1QHQ==
+Date: Mon, 1 Jul 2024 14:43:41 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jiri Kosina <jikos@kernel.org>, 
+	Benjamin Tissoires <benjamin.tissoires@redhat.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the hid tree
+Message-ID: <p3uo2zzvqgw5ym6dmbmhqdhjv2xgkocwcaulqmrunen3mgalge@2clqixaxpar3>
+References: <20240701185104.52c159c1@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240701185104.52c159c1@canb.auug.org.au>
 
-init_transition_pgtable() setups transitional page tables. Rewrite it
-using kernel_ident_mapping_init() to avoid code duplication.
+Hi Stephen,
 
-struct kimage_arch changed to track allocated page tables as a list, not
-linking them to specific page table levels.
+On Jul 01 2024, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the hid tree, today's linux-next build (i386 defconfig)
+> failed like this:
+> 
+> drivers/hid/hidraw.c: In function 'hidraw_send_report':
+> drivers/hid/hidraw.c:143:63: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
+>   143 |                 ret = __hid_hw_output_report(dev, buf, count, (__u64)file, false);
+>       |                                                               ^
+> drivers/hid/hidraw.c:154:56: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
+>   154 |                                    HID_REQ_SET_REPORT, (__u64)file, false);
+>       |                                                        ^
+> drivers/hid/hidraw.c: In function 'hidraw_get_report':
+> drivers/hid/hidraw.c:231:56: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
+>   231 |                                    HID_REQ_GET_REPORT, (__u64)file, false);
+>       |                                                        ^
+> cc1: all warnings being treated as errors
+> 
+> Caused by commit
+> 
+>   67eccf151d76 ("HID: add source argument to HID low level functions")
+> 
+> I applied the following patch.
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
----
- arch/x86/include/asm/kexec.h       |  5 +-
- arch/x86/kernel/machine_kexec_64.c | 89 +++++++++++-------------------
- 2 files changed, 32 insertions(+), 62 deletions(-)
+Thanks a lot for the report and the proposed patch. I've just finished
+and published[0] my own version which enforces a u64 in the end. It's the
+same approach that can be found in the kernel/bpf/helper.c file, which
+is IMO slightly better than yours.
 
-diff --git a/arch/x86/include/asm/kexec.h b/arch/x86/include/asm/kexec.h
-index ae5482a2f0ca..7f9287f371e6 100644
---- a/arch/x86/include/asm/kexec.h
-+++ b/arch/x86/include/asm/kexec.h
-@@ -145,10 +145,7 @@ struct kimage_arch {
- };
- #else
- struct kimage_arch {
--	p4d_t *p4d;
--	pud_t *pud;
--	pmd_t *pmd;
--	pte_t *pte;
-+	struct list_head pages;
- };
- #endif /* CONFIG_X86_32 */
- 
-diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
-index cc0f7f70b17b..951b17d217ab 100644
---- a/arch/x86/kernel/machine_kexec_64.c
-+++ b/arch/x86/kernel/machine_kexec_64.c
-@@ -107,71 +107,42 @@ map_efi_systab(struct x86_mapping_info *info, pgd_t *level4p)
- 	return 0;
- }
- 
-+static void *alloc_transition_pgt_page(void *data)
-+{
-+	struct kimage *image = (struct kimage *)data;
-+	unsigned long virt;
-+
-+	virt = get_zeroed_page(GFP_KERNEL);
-+	if (!virt)
-+		return NULL;
-+
-+	list_add(&virt_to_page(virt)->lru, &image->arch.pages);
-+	return (void *)virt;
-+}
-+
- static void free_transition_pgtable(struct kimage *image)
- {
--	free_page((unsigned long)image->arch.p4d);
--	image->arch.p4d = NULL;
--	free_page((unsigned long)image->arch.pud);
--	image->arch.pud = NULL;
--	free_page((unsigned long)image->arch.pmd);
--	image->arch.pmd = NULL;
--	free_page((unsigned long)image->arch.pte);
--	image->arch.pte = NULL;
-+	struct page *page, *tmp;
-+
-+	list_for_each_entry_safe(page, tmp, &image->arch.pages, lru) {
-+		list_del(&page->lru);
-+		free_page((unsigned long)page_address(page));
-+	}
- }
- 
- static int init_transition_pgtable(struct kimage *image, pgd_t *pgd)
- {
--	pgprot_t prot = PAGE_KERNEL_EXEC_NOENC;
--	unsigned long vaddr, paddr;
--	int result = -ENOMEM;
--	p4d_t *p4d;
--	pud_t *pud;
--	pmd_t *pmd;
--	pte_t *pte;
-+	struct x86_mapping_info info = {
-+		.alloc_pgt_page	= alloc_transition_pgt_page,
-+		.context	= image,
-+		.page_flag	= __PAGE_KERNEL_LARGE_EXEC,
-+		.kernpg_flag	= _KERNPG_TABLE_NOENC,
-+		.offset = __START_KERNEL_map - phys_base,
-+	};
-+	unsigned long mstart = PAGE_ALIGN_DOWN(__pa(relocate_kernel));
-+	unsigned long mend = mstart + PAGE_SIZE;
- 
--	vaddr = (unsigned long)relocate_kernel;
--	paddr = __pa(page_address(image->control_code_page)+PAGE_SIZE);
--	pgd += pgd_index(vaddr);
--	if (!pgd_present(*pgd)) {
--		p4d = (p4d_t *)get_zeroed_page(GFP_KERNEL);
--		if (!p4d)
--			goto err;
--		image->arch.p4d = p4d;
--		set_pgd(pgd, __pgd(__pa(p4d) | _KERNPG_TABLE));
--	}
--	p4d = p4d_offset(pgd, vaddr);
--	if (!p4d_present(*p4d)) {
--		pud = (pud_t *)get_zeroed_page(GFP_KERNEL);
--		if (!pud)
--			goto err;
--		image->arch.pud = pud;
--		set_p4d(p4d, __p4d(__pa(pud) | _KERNPG_TABLE));
--	}
--	pud = pud_offset(p4d, vaddr);
--	if (!pud_present(*pud)) {
--		pmd = (pmd_t *)get_zeroed_page(GFP_KERNEL);
--		if (!pmd)
--			goto err;
--		image->arch.pmd = pmd;
--		set_pud(pud, __pud(__pa(pmd) | _KERNPG_TABLE));
--	}
--	pmd = pmd_offset(pud, vaddr);
--	if (!pmd_present(*pmd)) {
--		pte = (pte_t *)get_zeroed_page(GFP_KERNEL);
--		if (!pte)
--			goto err;
--		image->arch.pte = pte;
--		set_pmd(pmd, __pmd(__pa(pte) | _KERNPG_TABLE));
--	}
--	pte = pte_offset_kernel(pmd, vaddr);
--
--	if (cc_platform_has(CC_ATTR_GUEST_MEM_ENCRYPT))
--		prot = PAGE_KERNEL_EXEC;
--
--	set_pte(pte, pfn_pte(paddr >> PAGE_SHIFT, prot));
--	return 0;
--err:
--	return result;
-+	return kernel_ident_mapping_init(&info, pgd, mstart, mend);
- }
- 
- static void *alloc_pgt_page(void *data)
-@@ -272,6 +243,8 @@ int machine_kexec_prepare(struct kimage *image)
- 	unsigned long start_pgtable;
- 	int result;
- 
-+	INIT_LIST_HEAD(&image->arch.pages);
-+
- 	/* Calculate the offsets */
- 	start_pgtable = page_to_pfn(image->control_code_page) << PAGE_SHIFT;
- 
--- 
-2.43.0
+I think I'll apply all of the series[0] right now so you can drop this
+patch below from your tree.
+
+Cheers,
+Benjamin
+
+[0] https://lore.kernel.org/all/20240701-fix-cki-v2-2-20564e2e1393@kernel.org/
+
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 1 Jul 2024 18:36:36 +1000
+> Subject: [PATCH] fix up for "HID: add source argument to HID low level
+>  functions"
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/hid/hidraw.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/hid/hidraw.c b/drivers/hid/hidraw.c
+> index c2396916cdaa..34633f99f3e4 100644
+> --- a/drivers/hid/hidraw.c
+> +++ b/drivers/hid/hidraw.c
+> @@ -140,7 +140,7 @@ static ssize_t hidraw_send_report(struct file *file, const char __user *buffer,
+>  
+>  	if ((report_type == HID_OUTPUT_REPORT) &&
+>  	    !(dev->quirks & HID_QUIRK_NO_OUTPUT_REPORTS_ON_INTR_EP)) {
+> -		ret = __hid_hw_output_report(dev, buf, count, (__u64)file, false);
+> +		ret = __hid_hw_output_report(dev, buf, count, (unsigned long)file, false);
+>  		/*
+>  		 * compatibility with old implementation of USB-HID and I2C-HID:
+>  		 * if the device does not support receiving output reports,
+> @@ -151,7 +151,7 @@ static ssize_t hidraw_send_report(struct file *file, const char __user *buffer,
+>  	}
+>  
+>  	ret = __hid_hw_raw_request(dev, buf[0], buf, count, report_type,
+> -				   HID_REQ_SET_REPORT, (__u64)file, false);
+> +				   HID_REQ_SET_REPORT, (unsigned long)file, false);
+>  
+>  out_free:
+>  	kfree(buf);
+> @@ -228,7 +228,7 @@ static ssize_t hidraw_get_report(struct file *file, char __user *buffer, size_t
+>  	}
+>  
+>  	ret = __hid_hw_raw_request(dev, report_number, buf, count, report_type,
+> -				   HID_REQ_GET_REPORT, (__u64)file, false);
+> +				   HID_REQ_GET_REPORT, (unsigned long)file, false);
+>  
+>  	if (ret < 0)
+>  		goto out_free;
+> -- 
+> 2.43.0
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+
 
 
