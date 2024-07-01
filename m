@@ -1,149 +1,229 @@
-Return-Path: <linux-kernel+bounces-236609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABEE391E4C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:07:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8E6191E4BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:04:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 677A3283B1A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:06:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB8181C2178B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A1E16D4D4;
-	Mon,  1 Jul 2024 16:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B43516D328;
+	Mon,  1 Jul 2024 16:04:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="GbO6gM1T"
-Received: from cockroach.ash.relay.mailchannels.net (cockroach.ash.relay.mailchannels.net [23.83.222.37])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Eg9bJCUC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239631EB2A;
-	Mon,  1 Jul 2024 16:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.222.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4171EB2A;
+	Mon,  1 Jul 2024 16:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719850012; cv=pass; b=NDDzLFgh0KUMWEzcagf9G/JZ//47FxLiBXDaXBM0crS8K6Yi953lGZNKI0J3AZbBvmRpRE7mWYvrqr0r38XfWCnMZip06PFtXjEcwQvyxImM86QfMzItmWq3XRZHylcZGhwu39w6UOATdTLbEDcPOH9v+rSOkOBcORF5HTQgVGA=
+	t=1719849866; cv=fail; b=Yv/BBOvuUTfT26S93oPc9lobb4v4wJLbxMHq5i5uTqG2KZSccYBc5dzJnVGs3Nk8mrhI32mPd+izQl5ACjY1DMmoJfesHnTr8zcb2oBMdhEwn/PdL8HMU8yZ4oPg8T5R1ZzEnJC0YpIiotBWYwGdaD1scMlDj77L9qJ4pyuSp2I=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719850012; c=relaxed/simple;
-	bh=Fmfy/xanfD84Dr+3FY7udGrsBHHaal7DeaKVvneRcQ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ujqJCJdjYtWqNcZtOks2dsaEEcPCOzt81g5EzAXKUEJkpqXrdKnwnlST/M0TDOiqashvxz0eRSACEyrRBWSuAQObZsW4Mn0otVwe7tpBX8q/RMqn+AGmfpraj+ebSydRLG+HYGpe1YQM3Ca6WSKrtgfJPWsNU5Dm6Cdl1MesSf4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=GbO6gM1T; arc=pass smtp.client-ip=23.83.222.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id D2A325C0F88;
-	Mon,  1 Jul 2024 15:49:36 +0000 (UTC)
-Received: from pdx1-sub0-mail-a313.dreamhost.com (unknown [127.0.0.6])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 5EBEC5C1B6A;
-	Mon,  1 Jul 2024 15:49:36 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1719848976; a=rsa-sha256;
-	cv=none;
-	b=K3vskIPsaEkbKlZ+39JXhK2UUI9c/I3mL84BX9hqW/MatdflI6hMygskfFIILcGFVUMLHb
-	DsaLsVfmmWMe2L8pOkMT3cvuuucNtBB/CFwS/N+urnbaMe90kAJCHgDgx1PZPLIo3vH+JT
-	774vGH7aqG3Ya1x2zyqBRYJo+0OOLcWxnrYtns5S8ddCQZQWy87EtvCfzzSs49BsI1tAhx
-	R7x2QbO4qic2iGRLIc/dk1H0gTHwOGCyRCQY0/uYMCUYxWfLngybshkrW6kY31NVASrNlk
-	tVi4NFff2eLK5usRIHEIgvXucirX7M+5nWGhGtz0AL25tXtDDDi4ORMFoQZjLw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1719848976;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=Fmfy/xanfD84Dr+3FY7udGrsBHHaal7DeaKVvneRcQ4=;
-	b=M8RCE8/eGI+8lYvaBh9/XG4LZtfhlorho7k8uust2TmjWqFZ7djUm5JMiZkW4pFkhO9gX/
-	oopT+wlqQDrfyV00tkpANt/ItefZ++fq/CQ+KQnDEEwDKXQkjq4QofcIXyI00zrBvyWpxa
-	jo1jLDUdf97EONHenuAVimJxlEgMBSMUJNNN9WtFDdkBe9ylZ/Ovg2O9kapcGRHOrFh2eW
-	H8F5WiLO6FmlYTBgeVO0y0G24+nkCqalAAqPnCWxuOzc9/6YzP/UOSCz6eb/tII9Z1hU+k
-	0+nbcK71431LPCwdBZhJ2VEl5koHjE//83Zra6x0vew838l/zCQ82hxd2k+qGA==
-ARC-Authentication-Results: i=1;
-	rspamd-79677bdb95-txlxl;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
-X-MailChannels-Auth-Id: dreamhost
-X-Stupid-Relation: 0e9670cc4fdd7ace_1719848976681_3504571096
-X-MC-Loop-Signature: 1719848976681:2275360465
-X-MC-Ingress-Time: 1719848976680
-Received: from pdx1-sub0-mail-a313.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.104.90.83 (trex/6.9.2);
-	Mon, 01 Jul 2024 15:49:36 +0000
-Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dave@stgolabs.net)
-	by pdx1-sub0-mail-a313.dreamhost.com (Postfix) with ESMTPSA id 4WCVpl55DTz5y;
-	Mon,  1 Jul 2024 08:49:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
-	s=dreamhost; t=1719848976;
-	bh=Fmfy/xanfD84Dr+3FY7udGrsBHHaal7DeaKVvneRcQ4=;
-	h=Date:From:To:Cc:Subject:Content-Type;
-	b=GbO6gM1TUlIgx0XWcNmx8hQX4Uwm9UOl6c8eklzCcOncOSox/lpk8Ihk4/BNrfZJm
-	 RfLL1BjXNuVK8jaRnfKR0Xd6x2n+D3pB+ezdUdEk5I3KLsUCvoXOiGEYPg6Ktwhgzq
-	 zambJdDfJ3hL/MO+VSiejOMg7FqU0W4zHvhvV55lPMKeGqBFk7oNnIRhMUtkV12EEf
-	 zJjYgd3jKp1iTFpW2y3jyFblToD8YEp2AToRlpLZ2l0tjq6uIqjivpJbQ0GSAewxwJ
-	 faIkasgt9BrmuEF7AkmuAo0NzKd4mHlCwatbk1BBxFBdF6EkmMhjB7qeLMW3ZF4+EF
-	 KN00jJMBNkJRg==
-Date: Mon, 1 Jul 2024 08:49:32 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-Cc: Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org
-Subject: Re: [PATCH v2] cxl/acpi: Warn on mixed CXL VH and RCH/RCD Hierarchy
-Message-ID: <20240701154932.ch7b75m5xp62oly7@offworld>
-References: <20240628175535.272472-1-fabio.m.de.francesco@linux.intel.com>
+	s=arc-20240116; t=1719849866; c=relaxed/simple;
+	bh=dEmZYM17WHQ01N6xxpEJOPKMqnRFqiBs2QlnfcDREgY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=GSP9CDMnq20wP4eN7/mzeehxTg/8isFqPYdJCq13IEyhL0KLA3197EG/tbooyBDYCBAmsODfPqIA3WsT1baFJu5L2V+GTfd/wARIY1NyviLWUlgG1p+EH49/ugfIdENsGhqlHHcJc0ObQaowX+e2MWlSzp4sCap2rX2RzHcGmtU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Eg9bJCUC; arc=fail smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719849864; x=1751385864;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=dEmZYM17WHQ01N6xxpEJOPKMqnRFqiBs2QlnfcDREgY=;
+  b=Eg9bJCUC/hz2l7fxCMXM7wyhkO/0rpO/fjpeBVz0l0OaIqKbZGssS8+G
+   YEfQNTeTkvShSOnKTOp8fhAvMPvTDqOLnj9IIIaBeeHoWYB5EtQwjp2t5
+   CMHXx2YMhZ4jGZNtlJoNxuCjFI7LustUzEji1mxaQmwP6y40WMCUGI4mH
+   qS5cQs2RRLS32+FRqhDy06WCsdOtENRYO8tINzMOHja/faxi/Pnwh1p0B
+   hkg60Mzi/B3p0JJeE0s+Dd/LfH1pRgwvSNbwOUNhviuQybjaQEOSICprb
+   r74jldhYuu2EI/AfyocYvSOwtcBAzt/XACCP6Je0w0K8vOkLpR2ZOxoj/
+   w==;
+X-CSE-ConnectionGUID: d812AsSXTDugQpXevPvnGg==
+X-CSE-MsgGUID: PxykerDNTXy3dUB+7wsrLw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="20743233"
+X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
+   d="scan'208";a="20743233"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 09:04:08 -0700
+X-CSE-ConnectionGUID: JFXZCDGRQVWdHWC2/r14qQ==
+X-CSE-MsgGUID: UPcWxd1UQ3OOeHud7ONwnw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
+   d="scan'208";a="83111574"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa001.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 01 Jul 2024 09:04:07 -0700
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 1 Jul 2024 09:04:06 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 1 Jul 2024 09:04:06 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 1 Jul 2024 09:04:06 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.49) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 1 Jul 2024 09:04:04 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kRy2+BnrGi1or2BOOEhDwqHzEsqq9PxSg7GnxPPyC3Ddu+VOwTPGRU+GSgXNv+jSr3y8HS/0ikZ5XdQWeapCPTAPs+GYJVmYLi80e76N53WcRVCKD2N5XhISsVc40KTL5lm6LDzo8cfYjQw66e3JgPHor59xrWJCm/grhUqwCxfjwbFaSrktWX+pxRun0NVf+zpZVmUdkKjRMZZmx6z2FXIrsjkMgFw4kDhfnnQLuCQhpAoR4qhE665A+lnp9eG0xnMZ0IcZnkt0Pn/gb/RtFKVdfZloxes1D4SFfL56ZSSSIURVf3tOQGPSbRmBosE/cECJytCYozOjimioNPMSOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wJHTPenOkh4AD8k7/W5p/VyoAR55EOofNsvMBphi7HM=;
+ b=S2b+BuCUsTIoRk7FVtSsv7HtQNNf94z4hxLCphNiSEL5Fkw5OVkbwSrNBTYqVJjR539hO+ltRdHgyCwG5lPchwH+gOrg7A/kckc9Q5EXR0h3dkpAAzrdDenM//w9xO0VoUw15rmVBrsgywrYjkkV7UaEqFYO15KvKY6nbbN+jp0eAZ+UnhnKnaOHCOFH9Qp85XrsqUyftVPFR1UrvT3Ibur9EEhX7ClPsO3pu3cpftLU7519ngRki+NJ8hlIpMqhZKU3aO5u9v20uoafQqEn6NC1Q8PB+Fje7DyRqR8o1qnFmyrQZSZnvrRIbq89HetFGACv0jmpHw3wqZt65jltbw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
+ by CO1PR11MB5092.namprd11.prod.outlook.com (2603:10b6:303:6e::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.29; Mon, 1 Jul
+ 2024 16:04:01 +0000
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361%5]) with mapi id 15.20.7719.029; Mon, 1 Jul 2024
+ 16:04:00 +0000
+From: "Luck, Tony" <tony.luck@intel.com>
+To: "Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>,
+	"shuah@kernel.org" <shuah@kernel.org>, "Chatre, Reinette"
+	<reinette.chatre@intel.com>, "Yu, Fenghua" <fenghua.yu@intel.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"ilpo.jarvinen@linux.intel.com" <ilpo.jarvinen@linux.intel.com>
+Subject: RE: [PATCH v3 2/2] selftests/resctrl: Adjust SNC support messages
+Thread-Topic: [PATCH v3 2/2] selftests/resctrl: Adjust SNC support messages
+Thread-Index: AQHay8Gqstk8aT+5WkSi2DkWMDfArrHiB7zQ
+Date: Mon, 1 Jul 2024 16:04:00 +0000
+Message-ID: <SJ1PR11MB6083D0D8AF9D1A7864084F0EFCD32@SJ1PR11MB6083.namprd11.prod.outlook.com>
+References: <cover.1719842207.git.maciej.wieczor-retman@intel.com>
+ <484aef5f10e2a13a7c4f575f4a0b3eb726271277.1719842207.git.maciej.wieczor-retman@intel.com>
+In-Reply-To: <484aef5f10e2a13a7c4f575f4a0b3eb726271277.1719842207.git.maciej.wieczor-retman@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ1PR11MB6083:EE_|CO1PR11MB5092:EE_
+x-ms-office365-filtering-correlation-id: cd4ac519-93eb-4663-4e6a-08dc99e76c13
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?u8EFt3n1mFDbH3OVGmBtgabRwr2LFIKDZU7Lte31jsnFPGabM/LYGoKVW+lf?=
+ =?us-ascii?Q?zFk7ld/GdMqubX2vUUazekpPwTJLTlRXDQVvlPnyrdr+9Ea88SMCyFaMMc03?=
+ =?us-ascii?Q?jQiGHkIXekk4ssyRbv8KTvO2T0vZ27ZFcnWRA8XNYC6v4HIci2nxq1Ion8k8?=
+ =?us-ascii?Q?xn61SuCEBQ/zpj00oGkFBZa/Sa6OiN8SM0PUhd0PwwMpiN7E1BttIRyrOhAA?=
+ =?us-ascii?Q?+xJDD7dRei+vhYAMu3SJJY5K6U6A320w0wFZ0DupgNlgtndQy8yhfLpKoQFh?=
+ =?us-ascii?Q?CPC3T4XAPOyG6++iXByPyL0FJ6pDQXtYcKDoSVBqj2cW8AqkZiZBzrS/mUcl?=
+ =?us-ascii?Q?aYHqutN1M0YXaDCQou7jQ9ky8KwrXR6h3MivgborLS1Ssb/cJUgnBR55yx/j?=
+ =?us-ascii?Q?z2nk+2TMDv0NUkOgW9MwJtjrsnTt4yMcoWoOCRSCtfSLmOdlwjLA9qea9hhc?=
+ =?us-ascii?Q?Lczj4HWAyDdtYzLLL9Cgg02t+Hg3Azbkg75ftIDKygEdY5yiRkbv2nTquAsj?=
+ =?us-ascii?Q?a6Nlel34/LJsAq2+MpTrAE4N3xXqq3wVkQ+GWslBQI0EADvhbm6HB/Hbeqrq?=
+ =?us-ascii?Q?odzRldB1M7M8kMTnA8spyrslXPYl953zlRZdYlPai5A7lJEghQRja16e0HiM?=
+ =?us-ascii?Q?pBTbI3x5X/YjqrYEcJYYeqasbQwEco6x9V3e5SVUJsYtc8WipsIXKn/jaFic?=
+ =?us-ascii?Q?e5PLn2EaRqqjMTgjUH6o/ALOFKsN9/3TOXBJ2hPAPAExO78lYRqAqYJF0tuB?=
+ =?us-ascii?Q?RkWUbLwn15cDy4A63Nn30f5HH36g4/pksFiAmabfVNZWySn8Iu98gNYnWe3J?=
+ =?us-ascii?Q?lVgxfxmUN8Xcbo8BYwx9aLadc1Hj9Jmnj01no1tuXc404iPstUTSIHS7Jf/C?=
+ =?us-ascii?Q?0myQaJg+vr1Kd8buMzIpaLbcSrfQ+7tCR83F+YUvI7F+WCsg/yqhaVFFDlTi?=
+ =?us-ascii?Q?l58nUVgvMGVD6mWM2ebDbX6CP7IvqRhepwcf+xSOzt0ItnRf1+MGMzKlUcpd?=
+ =?us-ascii?Q?WYLJj23/MMVByglD8oBx8KGN4YeTkLFvFp5Z9vQRCNWqz2MG0QrlJKVPX8YR?=
+ =?us-ascii?Q?Czb0wktDh0NHI8bBaCrid0HjJSie15H/N3YOm//BlxhswzznmDSzcSs+7TH8?=
+ =?us-ascii?Q?X+R5y9J8OdtZdjOrcbvwtJrzZJQIw8O4FcKt2wZNC0MBjugw+d+uqAMp4ujk?=
+ =?us-ascii?Q?HeMNtUv2Ol6CoLiwkB185BYfXVSRoIzcpaONNZC0RDHvEP3G3RM2TRyhL3fX?=
+ =?us-ascii?Q?7j12tRG69gGWgi+Y1Fkap9/zkNp2S7qQIO3nk8367rz481RaJX+Si2vXlHBq?=
+ =?us-ascii?Q?jw5HdiQk2W0vOc79nfIoQS6UTVH7DuHdy/4PFAfA/3X2+e7Us2AcneDazEsC?=
+ =?us-ascii?Q?lBRAl0S7qm7zItDhRWDwYxl+7Bgm4UxiTkb4gXMjeFwmX8Uvzw=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?AZYk3AXF9OU/6kCKwFMyRdGo299PiagXFkTUM32KgLxYXMBeNX+0LsurMjeM?=
+ =?us-ascii?Q?xL2uIi9bJ9ssuN01MV1qG7Z+TBZ+yH+P11W259X569HUjVOOWXdKsLbznAqV?=
+ =?us-ascii?Q?KC9WzJNDH8RLsQxaU+9RFpLIe1vTfdsuiuIpZjEQvCxsRT5WUGumTqt509b1?=
+ =?us-ascii?Q?CAkLN1ZrhmypUGkEfTT3kkMDvpkm4+8/eRrHhrMkdQBUPUzQVSKW0A3KcZyC?=
+ =?us-ascii?Q?+VPfNQwYlmm7jrlH7/rnPZndlDTpe6+6awv/cjl/27oG8hBOwlkI3JVwnUxD?=
+ =?us-ascii?Q?aTyRQgr1WoqVqaCdKKaW922WpyV5VWio7zOg+VAz/uPCtodWqUSegrKv7fb4?=
+ =?us-ascii?Q?aKKg0QM71MnwSNGeHc5b3npIl/lu4xigoTCG8PI8nDNjs3Ny1MkDVSpp9tQ2?=
+ =?us-ascii?Q?2Z5ag6swjct5coZIzAQP5e8LKWjRGAsoVkNrJproWfAdK97J6e+68ZNGsbJC?=
+ =?us-ascii?Q?Xp41zulUDOIMfqChp2uzHKahydVeifZZOkS6wv+YuwmSXbcKhFTyc07GUY7/?=
+ =?us-ascii?Q?KIs8f6lw067n0U8hdx/diBmXXzd76vE0S/QRW+sRRPspWtKUNwx4XMGWfAW/?=
+ =?us-ascii?Q?AtMt/3FQDSpyShmcmXN4RHa3MtMel+zUy1VLHORu+vza+TBYvxQpf9C78g5g?=
+ =?us-ascii?Q?Esf7GoT/B1LUsEeQ9CjB+bqJRqWferuW0N4Me5VaUSzKZPovMnbg2VTLHzex?=
+ =?us-ascii?Q?iyqMR4x1ptc7Rn9P8KzN9oF8OCAdyt943lISmIJcJPGTYqHzj5215YeKLcTY?=
+ =?us-ascii?Q?YhVT5mL+uB2pJ9NZhFd+gH3B23R5ex0hiHpXzn4P66aKwthp7drH8IgP6qcQ?=
+ =?us-ascii?Q?GR+DYePqF0RuXTKzT+a0RKiF78rHzVfwARSV77rkFSjiMWvc1zXn9lSyjzGB?=
+ =?us-ascii?Q?09xNQpypMy1x6LNA1trhkUNT8vj2Rs46fuXvbBxgpJg+MrdPeGb431KmcPEc?=
+ =?us-ascii?Q?Uju8N9YRKD5jT1aL8avo1rETZIGHbGz7CaKJfzvSQjdwT6kpvJjvurQStDJ+?=
+ =?us-ascii?Q?6VMXrDvNDHFpCWuZuTjz9m7YISAEzWknEXYkFi5sZ3pEahZKQ/DA6pqmeEX4?=
+ =?us-ascii?Q?3Dhc3fsqI8cQlnpzfxCTl+zxHFv9v6XmZQENRaJEn2VycT2i1MCj4Y8IWeUR?=
+ =?us-ascii?Q?pYynkfv12eGjZvbhwXMYCTHz6DPqMbrtrnIOn5saY96yFaHuWnR2pD1Q0wXm?=
+ =?us-ascii?Q?tQxqlFYTV9SCF5dFMjf+oSJjMb6ysnDdVsB51hwpjbGEQH8SUUtD/R4vlk01?=
+ =?us-ascii?Q?TjOxkscaMnqCx79Qc75ZPvFI13ym+yqcZZyqHq4B8dfYg9nSpY/zSGbTMgFr?=
+ =?us-ascii?Q?f5/jSKgl+LIP5zF8Jh6HjTiEni7dliC/j21nge0DKHAMHWu6eP+t4bSwN+UA?=
+ =?us-ascii?Q?FJXvnQ35N7dhXKmP/pHWrkVG+ZbR/DpohaB9kbCCisTvyy0VH33Pdwv2NxwX?=
+ =?us-ascii?Q?yaj6yEuFSPHHbiJ+r9zRBTPpdbVnKcA/9QbqToxCMYR/+4D8L2vGpHuIYuob?=
+ =?us-ascii?Q?6JfR6VASeo5suyWWoHgTAXCRnDW7sEMIRpYV4YwfQsnFnlF6KcD/PAz+AoSS?=
+ =?us-ascii?Q?GWFA/ZnIJ6fKFXYWFnOYArecqHVC58FSvXnknxkQ?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20240628175535.272472-1-fabio.m.de.francesco@linux.intel.com>
-User-Agent: NeoMutt/20220429
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cd4ac519-93eb-4663-4e6a-08dc99e76c13
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jul 2024 16:04:00.9156
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: M1JgfvMpy4OUxh8B93wgiIU1+XaPwkIcpyJIYYTgXP4fmubpFBHvSn5lagXkTCEKRkLL0kYSzuVSCsmxRWvLeg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB5092
+X-OriginatorOrg: intel.com
 
-On Fri, 28 Jun 2024, Fabio M. De Francesco wrote:
++static bool cpus_offline_empty(void)
++{
++	char offline_cpus_str[64];
++	FILE *fp;
++
++	fp =3D fopen("/sys/devices/system/cpu/offline", "r");
 
->Each Host Bridge instance has a corresponding CXL Host Bridge Structure
->(CHBS) ACPI table that identifies its capabilities. CHBS tables can be
->two types (CXL 3.1 Table 9-21): The PCIe Root Complex Register Block
->(RCRB) and CXL Host Bridge Component Registers (CHBCR).
->
->If a Host Bridge is attached to a device that is operating in Restricted
->CXL Device Mode (RCD), BIOS publishes an RCRB with the base address of
->registers that describe its capabilities (CXL 3.1 sec. 9.11).
->
->Instead, the new (CXL 2.0+) Component registers can only be accessed
->by means of a base address published with a CHBCR (CXL 3.1 sec. 9.12).
->
->If an eRCD (a device that forces the host-bridge into CXL 1.1 Restricted
->CXL Host mode) is attached to a CXL 2.0+ Host-Bridge, the current CXL
->specification does not define a mechanism for finding CXL-2.0-only
->root-port component registers like HDM decoders and Extended Security
->capability.
->
->An algorithm to locate a CHBCR associated with an RCRB, would be too
->invasive to land without some concrete motivation.
->
->Therefore, just print a message to inform of unsupported config.
->
->Count how many different CHBS "Version" types are detected by
->cxl_get_chbs_iter(). Then make cxl_get_chbs() print a warning if that sum
->is greater than 1.
->
->Tested-by: Alison Schofield <alison.schofield@intel.com>
->Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
+Check for fp =3D=3D NULL before using it.
 
-Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
++	if (fscanf(fp, "%s", offline_cpus_str) < 0) {
+
+fscanf() seems like a heavy hammer.
+
+	if (fgets(offline_cpus_str, sizeof(offline_cpus_str), fp) =3D=3D NULL) {
++		if (!errno) {
+
+Don't need an errno check (seems dubious mixing errno with stdio).
+
++			fclose(fp);
++			return 1;
+
+			return true;
+
++		}
++		ksft_perror("Could not read offline CPUs file!");
++	}
++
++	fclose(fp);
++
++	return 0;
+
+	return false;
++}
+
 
