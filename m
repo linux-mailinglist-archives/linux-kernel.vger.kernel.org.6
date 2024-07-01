@@ -1,73 +1,47 @@
-Return-Path: <linux-kernel+bounces-235828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46FA691DA34
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:41:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA6ED91DA3D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:42:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CDB9B2137C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:41:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78E7B1F2233C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:42:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AAA084DEB;
-	Mon,  1 Jul 2024 08:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A415E8405D;
+	Mon,  1 Jul 2024 08:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FATPpAIu"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UkoFlXfJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3EDE82D89;
-	Mon,  1 Jul 2024 08:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3131824B1;
+	Mon,  1 Jul 2024 08:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719823272; cv=none; b=HIyGUmz+TVbR8dkG15aXRmI7hDKTT1dDMJWzbDtg7+jgwFA1pDcikenxTqoYvYqUp7VZ9Y4hMXVmUCJjALr7ZUzAEj35scwzQYExTqp7sZYrmQ1BABVk+aaRoLBuJXC8oHyNWEq0rqJf37Z6Jk03GD3w9Bo/RpbYwUDwnOvdOu4=
+	t=1719823299; cv=none; b=dEQlXb0QS68aqNhhjm4gep5AwF8hm9T2qqbvI+OaNPEJneTbR7Adl9Rvs8v+mTVEsHaRCiyFOMciXUMWUD26ugnKdmQKxnulNpG4Ma4O3QzaEwCgogCmOv8dbm6CoKf5dLrmpjL9nCO2FKX5TL4Wy4F7Ua+A8E70Li+AiU0ZwOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719823272; c=relaxed/simple;
-	bh=iOIsNftd+AUOPQ+Acsg6REjaYC+90eaaV8L3VB0Yp1M=;
+	s=arc-20240116; t=1719823299; c=relaxed/simple;
+	bh=hg+g7DiLnSzkTsvXjpWJRV2heN5XuuVLmYBc59TNCUg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WQ74Ga8snxOQuq88xfPGoudQCTWPS2N/ZTtJdQMFfo+Tbd4fL5CF39QfiWTddW1TXy2OTp0QPuUYCbmHMd+lhFErLoTi+bo8PRFMhi6vBCVVI88qKYudyMMAZinpoxyD4oBzYAJqoknCIu5/fEN4HaQm0DPkYPkz0TNCf0oUlr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FATPpAIu; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-424a3ccd0c0so20086135e9.1;
-        Mon, 01 Jul 2024 01:41:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719823268; x=1720428068; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AMt7mTb63MOoRef5KMAR+OLG9LjGQCs3Iv9eQzbOgVY=;
-        b=FATPpAIuS8kQHdSUKSMeEgjfl3nX18w3aK8SqE/cFFCzfryepebTqzrE5Rgv3/cuad
-         Rako7lr7T5MrMptiYetareEX0Q44gPabOdHIoReOXCn5vkq1ibf3j0z7Wd+Us9edg6Ux
-         2mXC/gfPzQWR8P4e0wfIv5EpHIGU7oGirGrqAuFP2TCxdFjVU0Bjh8rQ2/I+0SLkI+iJ
-         3GhxdMvCztUopMjB8oxzJ3PUzoqh5QO4FlOrfmgKkYOCLk6wyLDU4Kv7nBpXsaDjnXCu
-         58XCwqS9EaWiqlyh9ABBaMe06JCYCrT5Qv2n7vCPme1FXuywIfvVLE6mGm+i8rHD7A/v
-         Bn4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719823268; x=1720428068;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AMt7mTb63MOoRef5KMAR+OLG9LjGQCs3Iv9eQzbOgVY=;
-        b=w6eOZ2v6yWZZunq1cWhzcweWFrEE9gP5NwRrefsAQDD2WhoxW+uQNrsnqgl5ZmMLLt
-         /vMIj+QkM+n9HR2FRGsIJSQCrKqpDaJnbzsWZrPhIr0VwPdpT4ZAVIzTjqYWJgktxUq4
-         +LGVFtyjk8wpzBPMeNGsu7788OFjDCYyoShXGroFBSwiFFl839QcqYCAjdV93tJ8W3c/
-         f0S0oh0UPdvunXNrAe7cYG0vWgQmE309YVLjhvMvitWv/Km/GgnsA0qNWHEH916kUFGo
-         6RD2v+t7KczX0wohs7adPrYnqGh+/icDRyH4TVTNlzkc68eI1Fu6RbJvEfoKV/o63ryu
-         /rVA==
-X-Forwarded-Encrypted: i=1; AJvYcCVPXMvzP5xE9VA24KOQNYiKS8u4T2flkmgOqlyD7L47oLux63qaTFm4LzwrYECRTv2rF26gj81zH+LBfJb5v1gM7JTqRElQxpCQomoPqKAJfmWjX4qoOk//4SLc8GAhmdwSuYVIxsXAxEM/QmSvd77A3c/WyV1u8LgWqsYOI19RHGmarrVs
-X-Gm-Message-State: AOJu0YzwehtFt0x54C023w6iLcHi3euHHH52a8HEE4peksPVkwIqodCL
-	y59BIHAVL2swm3XOTFX9fyJyPBvQ5K0BteU4plEb9GHDaJSw1HFZ
-X-Google-Smtp-Source: AGHT+IFVkP4vxt28218+k2V48TYQocy8Fz5i69HcPxCmln5LU4tWH1iaovbS/2p5BgnSrenoOSY/NQ==
-X-Received: by 2002:a05:600c:6a8d:b0:425:77b4:366d with SMTP id 5b1f17b1804b1-4257a02f3f6mr32722375e9.11.1719823267873;
-        Mon, 01 Jul 2024 01:41:07 -0700 (PDT)
-Received: from [10.254.108.81] (munvpn.amd.com. [165.204.72.6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b09a94csm141988335e9.33.2024.07.01.01.41.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Jul 2024 01:41:07 -0700 (PDT)
-Message-ID: <dbcd9a16-4e4b-42c8-ba7f-d6c1dfd9dccb@gmail.com>
-Date: Mon, 1 Jul 2024 10:41:04 +0200
+	 In-Reply-To:Content-Type; b=eH6X42MPFze4Wc7MrBSH2AwFXHwYwfZaG4r6lywHE0zTMHizDo/9htARk0jtdUoXJ2CgfaHU6no7YC6iyB4DTlYLuuYLv+oI0TNzXcyT1K4VPDm+5oxWF+JFuMdfQSplPgIuozm1BXXuxSLKJtoTZgz1cuJow3rqVxHiKBAO3rQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UkoFlXfJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5590C116B1;
+	Mon,  1 Jul 2024 08:41:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719823299;
+	bh=hg+g7DiLnSzkTsvXjpWJRV2heN5XuuVLmYBc59TNCUg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UkoFlXfJsZhhnKX24BRkCiNKND2UWpXS+xqQonjFz3XLkR2/9BMFdGS3e8wdZAWOo
+	 0XB+jbnH85jecYk9bhvMNOCFQ8C00l1fV6D3izX8vOCFvhnKR+vAmcelDVOd5q2Nu2
+	 ydZ5yqd0PiJ2PyzAA55nwTiKAs2uchDveGeBlhgDXptedtSsNJh7yMobx53X+/OD4G
+	 mUW4pM2OJzeHsSSq82mAdy5s+5Yw5c6KSz9dPrmsyi4Gg9k3ApexKHgO4OqTQOLzax
+	 RvUCc+ZNtc0K95iaRnksSBJ7fZ9E77n9OGKOAGIXuL35lHUvLHGvnaf6oSWUpeCe1r
+	 LQYq+T7Bzxs4A==
+Message-ID: <3fe026a2-a8d6-4688-863f-1237e71945ea@kernel.org>
+Date: Mon, 1 Jul 2024 10:41:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,92 +49,133 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [Linaro-mm-sig] Re: [PATCH v5 2/9] scatterlist: Add a flag for
- the restricted memory
-To: Nicolas Dufresne <nicolas@ndufresne.ca>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- =?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>,
- "daniel@ffwll.ch" <daniel@ffwll.ch>
-Cc: "quic_vjitta@quicinc.com" <quic_vjitta@quicinc.com>,
- "angelogioacchino.delregno@collabora.com"
- <angelogioacchino.delregno@collabora.com>,
- "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
+Subject: Re: [PATCH v2 1/5] arm64: dts: rockchip: Add AP6275P wireless support
+ to Khadas Edge 2
+To: Jacobe Zang <jacobe.zang@wesion.com>,
+ "arend.vanspriel@broadcom.com" <arend.vanspriel@broadcom.com>
+Cc: "kvalo@kernel.org" <kvalo@kernel.org>,
+ "duoming@zju.edu.cn" <duoming@zju.edu.cn>,
+ "bhelgaas@google.com" <bhelgaas@google.com>,
+ "minipli@grsecurity.net" <minipli@grsecurity.net>,
+ "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+ "brcm80211@lists.linux.dev" <brcm80211@lists.linux.dev>,
+ "brcm80211-dev-list.pdl@broadcom.com" <brcm80211-dev-list.pdl@broadcom.com>,
+ "megi@xff.cz" <megi@xff.cz>, "robh@kernel.org" <robh@kernel.org>,
+ "efectn@protonmail.com" <efectn@protonmail.com>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
  "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "jkardatzke@google.com" <jkardatzke@google.com>,
- "krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
- "joakim.bech@linaro.org" <joakim.bech@linaro.org>,
- =?UTF-8?B?WW91bGluIFBlaSAo6KO05Y+L5p6XKQ==?= <youlin.pei@mediatek.com>,
- "logang@deltatee.com" <logang@deltatee.com>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- =?UTF-8?B?S3VvaG9uZyBXYW5nICjnjovlnIvptLsp?= <kuohong.wang@mediatek.com>,
- =?UTF-8?B?SmlhbmppYW8gWmVuZyAo5pu+5YGl5aejKQ==?=
- <Jianjiao.Zeng@mediatek.com>, "contact@emersion.fr" <contact@emersion.fr>,
- "benjamin.gaignard@collabora.com" <benjamin.gaignard@collabora.com>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
- "willy@infradead.org" <willy@infradead.org>, "pavel@ucw.cz" <pavel@ucw.cz>,
- "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "Brian.Starkey@arm.com" <Brian.Starkey@arm.com>,
- "robh+dt@kernel.org" <robh+dt@kernel.org>,
- "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "heiko@sntech.de" <heiko@sntech.de>, Nick Xie <nick@khadas.com>,
+ "jagan@edgeble.ai" <jagan@edgeble.ai>,
+ "dsimic@manjaro.org" <dsimic@manjaro.org>,
  "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "tjmercier@google.com" <tjmercier@google.com>,
- "jstultz@google.com" <jstultz@google.com>,
  "linux-arm-kernel@lists.infradead.org"
  <linux-arm-kernel@lists.infradead.org>,
- "mripard@kernel.org" <mripard@kernel.org>,
- "robin.murphy@arm.com" <robin.murphy@arm.com>,
- =?UTF-8?B?WW9uZyBXdSAo5ZC05YuHKQ==?= <Yong.Wu@mediatek.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "ppaalanen@gmail.com" <ppaalanen@gmail.com>
-References: <20240515112308.10171-1-yong.wu@mediatek.com>
- <20240515112308.10171-3-yong.wu@mediatek.com>
- <98721904-003d-4d0d-8cfe-1cecdd59ce01@amd.com>
- <779ce30a657754ff945ebd32b66e1c644635e84d.camel@mediatek.com>
- <cef8f87d-edab-41d8-8b95-f3fc39ad7f74@amd.com>
- <1050c44512374031d1349b5dced228d0efc3fbde.camel@mediatek.com>
- <3104b765-5666-44e4-8788-f1b1b296fe17@amd.com>
- <98c11bad7f40bcc79ed7a2039ddb3a46f99908f5.camel@mediatek.com>
- <75dc1136-7751-4772-9fa7-dd9124684cd2@amd.com>
- <ZnxWWtdShekGSUif@phenom.ffwll.local>
- <ae73a0203d6acf2878c9e3ae2d7554816b9c66ad.camel@mediatek.com>
- <5739abdb-0234-412a-9f25-49219411bbc6@amd.com>
- <183f2ae09c2dbcf687e69cd13a9d258fd24fd80c.camel@ndufresne.ca>
+ "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20240624081906.1399447-1-jacobe.zang@wesion.com>
+ <20240624081906.1399447-2-jacobe.zang@wesion.com>
+ <258459b8-549b-4a63-8d33-76c9631483f1@kernel.org>
+ <TYZPR03MB7001D4DE507C919802B2F7F380D52@TYZPR03MB7001.apcprd03.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>
-In-Reply-To: <183f2ae09c2dbcf687e69cd13a9d258fd24fd80c.camel@ndufresne.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <TYZPR03MB7001D4DE507C919802B2F7F380D52@TYZPR03MB7001.apcprd03.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Am 28.06.24 um 22:16 schrieb Nicolas Dufresne:
-> [SNIP]
->>>>> Why can't you get this information from userspace?
->>>> Same reason amd and i915/xe also pass this around internally in the
->>>> kernel, it's just that for those gpus the render and kms node are the
->>>> same
->>>> driver so this is easy.
->>>>
->> The reason I ask is that encryption here looks just like another
->> parameter for the buffer, e.g. like format, stride, tilling etc..
-> I'm mostly a reader of the thread here, but I'd like to avoid basic mistakes.
-> The buffer in question are "protected", meaning that the CPU HW does not have
-> access to the underlying pages (or zone in the case of Meditatek).
->
-> This is different from encrypted buffers, which don't need this level of
-> protection, as without the security key to decrypt them, their content is close
-> to random data.
+On 25/06/2024 10:04, Jacobe Zang wrote:
+>>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts b/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
+>>> index 3b6286461a746..f674deb6f7da8 100644
+>>> --- a/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
+>>> +++ b/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
+>>> @@ -356,6 +356,22 @@ &pcie2x1l2 {
+>>>         reset-gpios = <&gpio3 RK_PD1 GPIO_ACTIVE_HIGH>;
+>>>         vpcie3v3-supply = <&vcc3v3_pcie_wl>;
+>>>         status = "okay";
+>>> +
+>>> +     pcie@0,0 {
+>>> +             reg = <0x400000 0 0 0 0>;
+>>> +             #address-cells = <3>;
+>>> +             #size-cells = <2>;
+>>> +             ranges;
+>>> +             device_type = "pci";
+>>> +             bus-range = <0x40 0x4f>;
+>>
+>> Isn't bus-range a property of PCI host bridge, so the parent? This is a
+>> PCI device, right?
+>>
+>>> +
+>>> +             wifi: wifi@0,0 {
+>>
+>> Binding does not say anything about this. Rockchip PCI controller is the
+>> PCI host bridge, isn't it? Then the pci@0,0 is the child, so what is this?
+> 
+> The host bridge is the parent of pcie@0,0. And pcie@0,0 is Bridge1, so the
 
-Thanks for that clarification, this difference was absolutely not obvious.
+Do you want to say Rockchip PCI is PCI-PCI bridge? Bindings do not allow it.
 
-In that case having a separate heap for this memory is indeed the 
-easiest approach.
+> wifi@0,0 as a device under the Bridge1.
+> 
+>>
+>>> +                     reg = <0x410000 0 0 0 0>;
+>>> +                     clocks = <&hym8563>;
+>>> +                     clock-names = "32k";
+>>
+>> 1. Bindings are before the users.
+>> 2. Where is the compatible? Are you sure this validates?
+> 
+> Before, the compatible is "pci14e4,449d", but when I checkpatch the warning
+> said that "pci14e4" was not documented, so I remove the compatible which 
+> doesn't affect the Wi-Fi function. I have tried to add "pci14e4" to 
+> vendor-prefixes.yaml but was refused. So whether should I add the compatible 
+> with warning? 
 
-My question is still what would happen if the CPU tries to access this 
-protected buffer? Or does the CPU not even have an address to do that?
+I talk about dtbs_check, not checkpatch. That checkpatch warning does
+not matter, obviously.
 
-Just out of curiosity, I mean the exporting heap should then somehow 
-reject any attempt to mmap() or vmap() the buffer content.
+Best regards,
+Krzysztof
 
-Thanks,
-Christian.
 
