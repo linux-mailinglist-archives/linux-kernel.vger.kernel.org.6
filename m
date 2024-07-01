@@ -1,99 +1,116 @@
-Return-Path: <linux-kernel+bounces-236448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1AF291E274
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:30:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 29FDA91E2A6
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:39:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BB9A28362E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:30:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA3E42846CF
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:39:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C70216A950;
-	Mon,  1 Jul 2024 14:29:36 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3421684BD;
-	Mon,  1 Jul 2024 14:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 168A116B3BD;
+	Mon,  1 Jul 2024 14:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="UYp5EScF"
+Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359182A1A4;
+	Mon,  1 Jul 2024 14:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719844175; cv=none; b=AXpo4T3qDSMwkVhhTM+sOlPWpawz7DtXGl1g00sPsxmLc7EamjM3b8kbKIcIUW9pOc9HValpLzNRmYABMCNqclwjVLHOHeZ7aNwFTrd5jd3PclJbcSjykLMvu2DSKqHNYwnbHLgzpPU6JdYXwVm/ZVgI7LegzRmhOInFGCqwAZk=
+	t=1719844775; cv=none; b=P9Kqocyu2eKiLSiBfbc7Y6SW7K3S1YAF0l1JSaMMozaCVMC5+s573FLBdf6kfIeZ7vmo8G+QD2nRKDcBfxaioqtmiXkNeuIJh7AKZ4VQBkofoL73NPmmo4GN/WJ1fjiri3o/lHUwUOBR5HEt5luhB3upNvjGw7WscyYucgYvfFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719844175; c=relaxed/simple;
-	bh=RaUcUsCsJULxcj53PVFIPVEf5NAcdvwQU8sNh4SOEJI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FnAvgqylNzuUWycsVm1PSQ7WykYneb7oL/haBbpPe9QSQn+87U+Qki+9jaG+HfW3zA3t7lo9xgui4GAO14iwnEw1rgJA3pu6vUqdpHrw3UYUbfB1Cij6s24UuHRrB2WQwfWGbWBYbeqWDf7ytUcwQDgNrbh6oxqOE/rQDpwTcMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EB64F367;
-	Mon,  1 Jul 2024 07:29:57 -0700 (PDT)
-Received: from thinkcentre-m93p.cambridge.arm.com (thinkcentre-m93p.cambridge.arm.com [10.1.197.43])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 214883F762;
-	Mon,  1 Jul 2024 07:29:32 -0700 (PDT)
-From: Luke Parkin <luke.parkin@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org
-Cc: sudeep.holla@arm.com,
-	cristian.marussi@arm.com,
-	Luke Parkin <luke.parkin@arm.com>
-Subject: [PATCH 3/3] Create debugfs files for statistics
-Date: Mon,  1 Jul 2024 15:28:51 +0100
-Message-Id: <20240701142851.1448515-4-luke.parkin@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240701142851.1448515-1-luke.parkin@arm.com>
-References: <20240701142851.1448515-1-luke.parkin@arm.com>
+	s=arc-20240116; t=1719844775; c=relaxed/simple;
+	bh=/6qke6RUXta77pvxyFGlQ7jb5LbK70lHz1fXlCciVSQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fC7X1sC5/TCGMA2HK2XwwarKZMkE19v29IDL1VJqv3KB2R3DR1SKkyL2D2DrD1v7F0cJUVzcVzw27iWQfixtMR39S+8m5qXB5eLYfAzuAatIUxWuMR17ooNSyR7m44XSLOXfjBe70vUKenamjpFTBWUtdfUIiTrPjECpYsBhXJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=UYp5EScF; arc=none smtp.client-ip=193.136.128.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 122A26002414;
+	Mon,  1 Jul 2024 15:30:39 +0100 (WEST)
+X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
+Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
+ by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
+ with LMTP id vtWJFCvQ7Ifm; Mon,  1 Jul 2024 15:30:09 +0100 (WEST)
+Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [IPv6:2001:690:2100:1::b3dd:b9ac])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 5B1E2600140D;
+	Mon,  1 Jul 2024 15:30:09 +0100 (WEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
+	s=mail; t=1719844209;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=R1hlZfJgLOxh6K5sBaTW/U1/Z3z8nnKAghRXP3SUY+M=;
+	b=UYp5EScF7V+KxA4yERMIUFmVwF4ik5RZZrXsTQ+JOmRz7TDUNzk8F9oeDbcNRDUt/YyzgC
+	uecnkyP5cSBhMWq0WLp8KzX+X4Qk4z0wx3v4TxtzPnKQdCBDq5J4ajqGNTlhKdaKAdEQ1L
+	5w//eWiLtm2vsLdM5RcLGhDQpcD8T2Q=
+Received: from diogo-gram (unknown [46.6.168.43])
+	(Authenticated sender: ist187313)
+	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 11CD83600B9;
+	Mon,  1 Jul 2024 15:30:03 +0100 (WEST)
+Date: Mon, 1 Jul 2024 15:29:55 +0100
+From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: "Rob Herring (Arm)" <robh@kernel.org>, soc@kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: Add/fix /memory node unit-addresses
+Message-ID: <otqwrgux76jfnj3zqdmybivu23k7os4gthxlvwn6xh3wv5g4lk@niz3kwwmcizr>
+References: <20240430191856.874600-2-robh@kernel.org>
+ <lbv5dlpvjfolp3tidna6ft7o3c3xswu6udp6savazegbfovygp@uzf2yyrocfuj>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <lbv5dlpvjfolp3tidna6ft7o3c3xswu6udp6savazegbfovygp@uzf2yyrocfuj>
 
-Create debugfs files for the statistics in the scmi_debug_stats struct
+Hi Thierry,
 
-Signed-off-by: Luke Parkin <luke.parkin@arm.com>
----
- drivers/firmware/arm_scmi/driver.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+On Fri, Jun 28, 2024 at 05:06:10PM GMT, Thierry Reding wrote:
+> On Tue, Apr 30, 2024 at 02:18:54PM GMT, Rob Herring (Arm) wrote:
+> [...]
+> > diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+> > index 9ebb7369256e..2e5b6b2c1f56 100644
+> > --- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+> > +++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+> > @@ -25,7 +25,7 @@ chosen {
+> >  		stdout-path = "serial0:115200n8";
+> >  	};
+> >  
+> > -	memory {
+> > +	memory@80000000 {
+> >  		device_type = "memory";
+> >  		reg = <0x0 0x80000000 0x0 0xc0000000>;
+> >  	};
+> 
+> [trimming the recipient list and adding Diogo]
+> 
+> Sorry I just noticed this as I was doing a cleanup path of patchwork.
+> 
+> For tegra210-smaug, unfortunately we can't do this. The problem is that
+> the firmware for this device looks for a hard-coded /memory device when
+> updating with the proper memory size and this firmware can't always be
+> updated.
+> 
+> Diogo, you're one of the few remaining people that I know of that still
+> use this device (with an upstream kernel). Do you have any more details
+> about this? Is there any way the firmware can be safely updated on these
+> devices?
 
-diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-index f69dff699d48..509ea42d17bf 100644
---- a/drivers/firmware/arm_scmi/driver.c
-+++ b/drivers/firmware/arm_scmi/driver.c
-@@ -2884,7 +2884,7 @@ static void scmi_debugfs_common_cleanup(void *d)
- static struct scmi_debug_info *scmi_debugfs_common_setup(struct scmi_info *info)
- {
- 	char top_dir[16];
--	struct dentry *trans, *top_dentry;
-+	struct dentry *trans, *top_dentry, *stats;
- 	struct scmi_debug_info *dbg;
- 	const char *c_ptr = NULL;
- 
-@@ -2935,6 +2935,19 @@ static struct scmi_debug_info *scmi_debugfs_common_setup(struct scmi_info *info)
- 	debugfs_create_u32("rx_max_msg", 0400, trans,
- 			   (u32 *)&info->rx_minfo.max_msg);
- 
-+	if (IS_ENABLED(CONFIG_ARM_SCMI_DEBUG_STATISTICS)) {
-+		stats = debugfs_create_dir("stats", trans);
-+		debugfs_create_atomic_t("response_ok", 0400, stats,
-+					&info->stats.response_ok);
-+		debugfs_create_atomic_t("dlyd_response_ok", 0400, stats,
-+					&info->stats.dlyd_response_ok);
-+		debugfs_create_atomic_t("sent_ok", 0400, stats,
-+					&info->stats.sent_ok);
-+		debugfs_create_atomic_t("sent_fail", 0400, stats,
-+					&info->stats.sent_fail);
-+		debugfs_create_atomic_t("xfers_response_timeout", 0400, stats,
-+					&info->stats.xfers_response_timeout);
-+	}
- 	dbg->top_dentry = top_dentry;
- 
- 	if (devm_add_action_or_reset(info->dev,
--- 
-2.34.1
+To be honest I am not quite sure. I do know that at least there is a part
+of the firmware that is locked down and cannot be updated easily, as you
+have to disconnect a ribbon cable inside of the device. Do you know of
+any firmware updates for this device? Currently I am not aware of any.
 
+Diogo
 
