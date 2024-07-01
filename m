@@ -1,208 +1,170 @@
-Return-Path: <linux-kernel+bounces-235748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A632791D933
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:41:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C8F391D956
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:46:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8E4AB21D11
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:41:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EB471C21AB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2968185C5E;
-	Mon,  1 Jul 2024 07:39:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9AE461674;
+	Mon,  1 Jul 2024 07:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PhXcidIB"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="bDLcOEyg"
+Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8874084A31
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 07:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CDB037142
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 07:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719819597; cv=none; b=D9+fjPICgzzzgtZmhC6qwuFNNKiXTbnN5DvfQS1TR99mQUgTP/IvjulpdBf8Mk7LgjWnS+esXN2+JK/aLlxVT0pfe2sufjBCT3MBda+9hORDk3ZijLZkSpOkbeNHioAXOmKSW85jADWV9y8vvXze/O0/KiwKizBuEpT/MBffk78=
+	t=1719819996; cv=none; b=B7P2BpI/3J4OkyRjOA538UJze51rxEnCRC0hlO1WCIb0ANx1iH4NdusQyrCQMu38sjZMHFfx9gqnz2FZYnXzUgzMjVG7ylVv090pdHX+6bCN1QmeM54WQoMdtqsaiWmcXdqZSiKg9Lxiz2f80Gst2aQnjPnXsn4khugsIhung4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719819597; c=relaxed/simple;
-	bh=mHTTaZNpcGoV/mUxNlKDTFQQYgAom9YHnI/rebyFS7Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fjDmOsz80wz6b5r2nKTxbHrwDIwEFGwhNXs5jmMEk0lc9DtLGYT3SK3CwjJ1wa/FATuExB8Qnqi7Kyve8efz4q5Oj8vPwJtEiG212stQh32bR9ObtBRm2QfvSino4AiS3EAss49ibay2rdkOKCwwEqzi9UJ2lVKQAZWMJyh/g9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PhXcidIB; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3674e1931b7so1896621f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 00:39:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719819594; x=1720424394; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LkhZEX+m4yRFERQhljwkeNudJNH97Tx+yLOdy4DNmag=;
-        b=PhXcidIBQYT9Kbag+uEEEp6fuwRteJgOY7oV5HZanr1XlMaKWwUiimxNAgrSlpAbuE
-         8eW3QiIUKxjvTMAqioVvUgy9O+6xYspxRqyHVrWbZkBLpESMlm8/9LLz3JLYHPBLfcOJ
-         TGb25JVfhbJKqT/kcccg1A0MGdqxRLzzZPjQnNUbr1l8lNhudrQnEZCo9N9+7zTWiYCL
-         plEoNXL6KJUA2r7gp+J4tz22bNMoHaDV1OY7/gmbhCFFDSYkkrrAhMZZq9p6bJiiZRko
-         +kacKje6kazcefR0XXVhgVzQqBxFgTdQUHffQfWeaB+QjkqUUUGOnoAlWxQBXgM14ONh
-         MtNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719819594; x=1720424394;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LkhZEX+m4yRFERQhljwkeNudJNH97Tx+yLOdy4DNmag=;
-        b=aIbiNezmRHWlwose9APXk5GCDkxGGbwMOEciqV/evDoiwqXSdYO+X7iFsRHSQuJViY
-         EIHt6Dz36FlNOM4yVxta4bjv9LQtNYqqKCF0CA1r/IGY9AKllooP1nsXCRnCBOhMkRtW
-         bjcCEpaloFl6Of514gmHxk9tsU5TF20CWtXMdHnWjnPmqiZIn85CjDLIsbWwlXtRB860
-         A18RRaO+fsmRYrcmRKAFDlsBHp0EFoYZJvcBmRUBrliT/FQMU2DMsURJ/0m8r3sFmrL6
-         Pf1Mt4sGxeIdBoaULUlR6aev4lkrgzs8fsrh3vzuqdhD8tdQVTzU7FepHhQ5oM4ZpH/k
-         Fijg==
-X-Forwarded-Encrypted: i=1; AJvYcCU0SO8nVuQ+KT0j1vHTRAHiC/K/sHVHhKgsgIUxiiZL/4UnICWxWjcnK4Frf7EQj+lDmgVxu2C3+ttXJgSEofM6cS7RqFvPvyVOYjaw
-X-Gm-Message-State: AOJu0YzKeFpqXwUIHnztMoU5GeDnLwsr9Nvg9C4ODBHONyYqBncMb0+u
-	kiwHS+FCuPhkLBxbWvGvOZr9VphlAnPcKVCF52QhLDxtFYlHg5Z8xsx52DXTHL4tSCrMJjDuyCl
-	0
-X-Google-Smtp-Source: AGHT+IELAP7OOkaVhC6selMuvtx3yRVOwXrHRpbUfCYh3qaNYGybZnve/dhn7uV2G1WhEKJKJ5oHWw==
-X-Received: by 2002:adf:f48e:0:b0:360:8537:ce27 with SMTP id ffacd0b85a97d-367756e5165mr3354107f8f.42.1719819594023;
-        Mon, 01 Jul 2024 00:39:54 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0fb9absm9279936f8f.80.2024.07.01.00.39.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 00:39:53 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Mon, 01 Jul 2024 09:39:38 +0200
-Subject: [PATCH v3 6/6] ASoC: codecs: lpass-wsa-macro: Simplify with
- cleanup.h
+	s=arc-20240116; t=1719819996; c=relaxed/simple;
+	bh=4IuU3rL9MQkYSvOSjZrnPlocJmUuOKhy+jxUu+oFEug=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L12+nafcwdTdPzexRNmc0+cEBZNkObq59W1zTAHrbpugaahEkVX9w5UwKo1UdqVIucOkGfCfi7OqLyrMHOUa9kULzzJcINI5qCkDyhfNwTMnxyHecdg+bKOUe+88gyRl0Bz2ZAFZc671Yji9KauAxH2RvRmtRVRhy7ua7rskRw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=bDLcOEyg; arc=none smtp.client-ip=217.92.40.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4C1A514868DC;
+	Mon,  1 Jul 2024 09:41:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
+	t=1719819666; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=38ns72u8iNLYvZX9CtZLrTvjFcrXs/evZ3NwzBdYp4E=;
+	b=bDLcOEygba8aEwqpUqrIWKEt+go5w1XVL7wq52BCrpR+L2fipm2jTFgj3q1LehjBS9hqcM
+	m4UYpnXKBlHkOlVKoqziYgnHiqrX8j9NDvWu2D/D6OOb/xhGzoHksdmcRjWcOPfi7V/ima
+	CThzFS690em8xvUsmyW6ukMgmV0zk9+wQPASQUGM23mH6INi4FuiVsYQ6jW4QnqGDHlSJp
+	ozz9aAudLrmP+GcVoXk6o+sG4YeXDuuBztsPJv0bQftH1x2CAEybpoCyXcB1MFaFVTNQhV
+	rcZ3GWF0GYugMfZTsq0+79eUFMg2YowZXWlBndun/XpwTOspghSu1i0Gw2DRTg==
+Date: Mon, 1 Jul 2024 09:40:56 +0200
+From: Alexander Dahl <ada@thorsis.com>
+To: claudiu beznea <claudiu.beznea@tuxon.dev>
+Cc: Alexander Dahl <ada@thorsis.com>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Cyrille Pitchen <cyrille.pitchen@microchip.com>
+Subject: Re: [RFC PATCH 0/1] Timeout error with Microchip OTPC driver on
+ SAM9X60
+Message-ID: <20240701-nuttiness-backlit-60ccfea75b56@thorsis.com>
+Mail-Followup-To: claudiu beznea <claudiu.beznea@tuxon.dev>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Cyrille Pitchen <cyrille.pitchen@microchip.com>
+References: <20240412140802.1571935-1-ada@thorsis.com>
+ <d4dc3f45-5bae-44a8-8169-58077f8b7966@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240701-b4-qcom-audio-lpass-codec-cleanups-v3-6-6d98d4dd1ef5@linaro.org>
-References: <20240701-b4-qcom-audio-lpass-codec-cleanups-v3-0-6d98d4dd1ef5@linaro.org>
-In-Reply-To: <20240701-b4-qcom-audio-lpass-codec-cleanups-v3-0-6d98d4dd1ef5@linaro.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>
-Cc: alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org, 
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3389;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=mHTTaZNpcGoV/mUxNlKDTFQQYgAom9YHnI/rebyFS7Q=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmgl1AQS92yL9416c8UVe+w7/0WkAuH7E1cdUAC
- ++EDTJccBuJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZoJdQAAKCRDBN2bmhouD
- 1wEfD/wIHxe8tcpCX1EmCOcXJt2sUUnucJDFR+nNQ+DNVcA7ZufKmvMsEHQ1Mi7g7Ju0uhaRR9J
- DU9kt5wS350/08AZerCK99VA1Og8ddZwmAZ/gJoQXzKowQyjbwMw0gLheSEWkr1i1t3vJGpQNnS
- NbN/Gjg+IVHxrOCKgq68825mk5Q7v5WWM76u2201s4xIcSWajthZDoY6TM0C3x1rFsFckGBbvnc
- 5zaPV8b5+UENozlrb2tSuKcDpoCJ2WS5MmmfkDhRzya23JADD3/shIZOzt26mrGnItt5ZRS7az0
- BQMFrrPRyYkc4GD1Po0YF72bdvPUTLyEt67WmKIlnnDUcOWe9kH4sE/Aey/+/JfURjkho0uEHpZ
- l6v9dHxXFMK2v9T5MMsh2IHA4sxRxyF0329W8cHUOFMMe/UM/KKXJPBkB1VbVacSukanSyyPt5D
- fVVisrQTdJbZWNdnCKCOXi0OEFBMr5m08sg0Oqn45wxTywy0E9yuuOHE5P9YXKnoQy5QhgDiS67
- zJfBW//uMxxbHNeFS9UMCc2/7Jv6hWt70uKbtsAM0D3/faMH1AZrVwbv0CbRiIrn4PGdZsVMLPz
- zqXSAD0WJtPyD1Y3i1yIeqy09EzyrfW66qIKWYsncv5VcNTY3+3lv1axz1fX3DfXqPbMniYeF1y
- ydRmGBLBBIPO6Ng==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d4dc3f45-5bae-44a8-8169-58077f8b7966@tuxon.dev>
+User-Agent: Mutt/2.2.12 (2023-09-09)
+X-Last-TLS-Session-Version: TLSv1.3
 
-Driver's probe() has two allocations which are needed only within the
-probe() itself - for devm_regmap_init_mmio().
+Hei hei,
 
-Usage of devm interface is a bit misleading here, because these can be
-freed right after each scope finishes.
+Am Wed, Apr 24, 2024 at 10:32:02AM +0300 schrieb claudiu beznea:
+> Hi, Alexander,
+> 
+> On 12.04.2024 17:08, Alexander Dahl wrote:
+> > Hei hei,
+> > 
+> > on a custom sam9x60 based board we want to access a unique ID of the
+> > SoC.  Microchip sam-ba has a command 'readuniqueid' which returns the
+> > content of the OTPC Product UID x Register in that case.
+> > 
+> > (On a different board with a SAMA5D2 we use the Serial Number x Register
+> > exposed through the atmel soc driver, which is not present in the
+> > SAM9X60 series.)
+> > 
+> > There is a driver for the OTPC of the SAMA7G5 and after comparing
+> > register layouts it seems that one is almost identical to the one used
+> > by SAM9X60.  So I thought just adapting the driver for SAM9X60 should be
+> > easy.  (At least as a start, the driver has no support for that UID
+> > register, but I suppose it would be the right place to implement it.)
+> > 
+> > However it does not work.  I used the patch attached with
+> > additional debug messages on a SAM9X60-Curiosity board.  (That patch is
+> > not meant for inclusion, just for showing what I've tried.)
+> > 
+> > On probe the function mchp_otpc_init_packets_list() returns with
+> > ETIMEDOUT, which it can only do if mchp_otpc_prepare_read() returns with
+> > timeout and that can only happen if read_poll_timeout() times out on
+> > reading the Status Register.  Poking that register with `devmem
+> > 0xeff0000c 32` gives 0x00000040 which means "A packet read is on-going".
+> 
+> 
+> Would it be possible that the OTP memory is not properly initialized and
+> the algorithm to initialized the packet list to confuse the hardware?
+> 
+> I see in the datasheet the following: "The initial value of the OTP memory
+> is ‘0’ but the memory may contain some “defective” bits already set to the
+> value ‘1’."
 
-This makes the code a bit more obvious and self documenting.
+Meanwhile we looked deeper into this driver.  I just drop here what we
+found so far, because it's vacation time, and this will probably not
+be picked up again this month because vacation etc.  I wanna get it
+out of my head for now. ;-)
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Note: most of this should also apply to sama7g5, from comparing data
+sheets the OTPC is the same.
 
----
+1. the call to read_poll_timeout() most probably has its sleep and
+timeout paramaters swapped.
 
-Changes in v2:
-1. New patch
----
- sound/soc/codecs/lpass-wsa-macro.c | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+2. the read access to OTPC_CR register is not necessary, the datasheet
+says the register is "write only".  It may even trigger an interrupt
+for reading a write only register.  Furthermore the WPCTEN bit in the
+OTPC Write Protection Mode register (OTPC_WPMR) is not checked before
+accessing OTPC_CR as suggested by the datasheet.
 
-diff --git a/sound/soc/codecs/lpass-wsa-macro.c b/sound/soc/codecs/lpass-wsa-macro.c
-index b4e7139bac61..73a588289408 100644
---- a/sound/soc/codecs/lpass-wsa-macro.c
-+++ b/sound/soc/codecs/lpass-wsa-macro.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0-only
- // Copyright (c) 2018-2020, The Linux Foundation. All rights reserved.
- 
-+#include <linux/cleanup.h>
- #include <linux/module.h>
- #include <linux/init.h>
- #include <linux/io.h>
-@@ -2725,8 +2726,6 @@ static const struct snd_soc_component_driver wsa_macro_component_drv = {
- static int wsa_macro_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	struct reg_default *reg_defaults;
--	struct regmap_config *reg_config;
- 	struct wsa_macro *wsa;
- 	kernel_ulong_t flags;
- 	void __iomem *base;
-@@ -2765,6 +2764,8 @@ static int wsa_macro_probe(struct platform_device *pdev)
- 		return PTR_ERR(base);
- 
- 	wsa->codec_version = lpass_macro_get_codec_version();
-+	struct reg_default *reg_defaults __free(kfree) = NULL;
-+
- 	switch (wsa->codec_version) {
- 	case LPASS_CODEC_VERSION_1_0:
- 	case LPASS_CODEC_VERSION_1_1:
-@@ -2773,9 +2774,8 @@ static int wsa_macro_probe(struct platform_device *pdev)
- 	case LPASS_CODEC_VERSION_2_1:
- 		wsa->reg_layout = &wsa_codec_v2_1;
- 		def_count = ARRAY_SIZE(wsa_defaults) + ARRAY_SIZE(wsa_defaults_v2_1);
--		reg_defaults = devm_kmalloc_array(dev, def_count,
--						  sizeof(*reg_defaults),
--						  GFP_KERNEL);
-+		reg_defaults = kmalloc_array(def_count, sizeof(*reg_defaults),
-+					     GFP_KERNEL);
- 		if (!reg_defaults)
- 			return -ENOMEM;
- 		memcpy(&reg_defaults[0], wsa_defaults, sizeof(wsa_defaults));
-@@ -2789,9 +2789,8 @@ static int wsa_macro_probe(struct platform_device *pdev)
- 	case LPASS_CODEC_VERSION_2_8:
- 		wsa->reg_layout = &wsa_codec_v2_5;
- 		def_count = ARRAY_SIZE(wsa_defaults) + ARRAY_SIZE(wsa_defaults_v2_5);
--		reg_defaults = devm_kmalloc_array(dev, def_count,
--						  sizeof(*reg_defaults),
--						  GFP_KERNEL);
-+		reg_defaults = kmalloc_array(def_count, sizeof(*reg_defaults),
-+					     GFP_KERNEL);
- 		if (!reg_defaults)
- 			return -ENOMEM;
- 		memcpy(&reg_defaults[0], wsa_defaults, sizeof(wsa_defaults));
-@@ -2804,8 +2803,9 @@ static int wsa_macro_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
--	reg_config = devm_kmemdup(dev, &wsa_regmap_config,
--				  sizeof(*reg_config), GFP_KERNEL);
-+	struct regmap_config *reg_config __free(kfree) = kmemdup(&wsa_regmap_config,
-+								 sizeof(*reg_config),
-+								 GFP_KERNEL);
- 	if (!reg_config)
- 		return -ENOMEM;
- 
-@@ -2816,8 +2816,6 @@ static int wsa_macro_probe(struct platform_device *pdev)
- 	if (IS_ERR(wsa->regmap))
- 		return PTR_ERR(wsa->regmap);
- 
--	devm_kfree(dev, reg_config);
--	devm_kfree(dev, reg_defaults);
- 	dev_set_drvdata(dev, wsa);
- 
- 	wsa->dev = dev;
+3. the errata sheet for the SAM9X60 SoC (DS80000846) has a section on
+the OTPC which recommends a fixup before the first write operation,
+with code example:
+https://ww1.microchip.com/downloads/aemDocuments/documents/MPU32/ProductDocuments/Errata/SAM9X60-Device-Silicon-Errata-and-Data-Sheet-Clarif-DS80000846.pdf
+The same thing is implemented in 'atmel-software-package' which has
+(at least had in the past) the code for the binary applets used in the
+'sam-ba' tool:
+https://github.com/atmelcorp/atmel-software-package/blame/master/drivers/nvm/otp/otpc.c#L86
+I bet this fixup should be implemented in this driver here as well?
 
--- 
-2.43.0
+So far for now.
 
+Greets
+Alex
+
+> 
+> Otherwise, from the top of my mind I don't have any idea on what might happen.
+> 
+> Thank you,
+> Claudiu Beznea
+> 
+> > 
+> > Kinda stuck here.  Any ideas?
+> > 
+> > Greets and have a nice weekend everyone
+> > Alex
+> > 
+> > Alexander Dahl (1):
+> >   nvmem: microchip-otpc: Add support for SAM9X60
+> > 
+> >  .../dts/microchip/at91-sam9x60_curiosity.dts     |  4 ++++
+> >  arch/arm/boot/dts/microchip/sam9x60.dtsi         |  7 +++++++
+> >  drivers/nvmem/microchip-otpc.c                   | 16 +++++++++++++---
+> >  3 files changed, 24 insertions(+), 3 deletions(-)
+> > 
+> > 
+> > base-commit: fec50db7033ea478773b159e0e2efb135270e3b7
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
