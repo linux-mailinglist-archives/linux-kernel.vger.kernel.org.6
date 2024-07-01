@@ -1,80 +1,125 @@
-Return-Path: <linux-kernel+bounces-236069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAF4591DD10
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:51:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35B0591DD15
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:51:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 042161C2197D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:51:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4D9B28329E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:51:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14FB112F365;
-	Mon,  1 Jul 2024 10:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015E113C80C;
+	Mon,  1 Jul 2024 10:51:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CJNYJSbg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VACvhyRE"
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58666847C;
-	Mon,  1 Jul 2024 10:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0F912D747;
+	Mon,  1 Jul 2024 10:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719831053; cv=none; b=p+4Bl68Kt2naUcl4hG1+NiMIZ+RSCHII2xcoO3h2vn1nMt0xWX8N6qbXoQURArQP0Fx8hgZyB52O03y9s5b3JB3PG8NXPVMJtB1fLMAolyrntWQpSRjV+9dhqhNzvq92ygO7X3/8kKmjPKM8GJ3CMlarkIsKcsmZz32F0fw4oqw=
+	t=1719831069; cv=none; b=TEnbf0szpIvrhN6i79ACVg+TOaBDcTvWvltpp3B6ujSD/YH8+vCwiSy/PAqgQP2cLBB06IGECym1yFsvKx3n1gtbBOwKtG4kkIZUAscN8I39bX89BZRc7pkjXTjxWGBSA5ZgKIsT6GraeDyw2aMvIthaPGQLAi7fy1DmgYe93LM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719831053; c=relaxed/simple;
-	bh=5d/pnoiUBPFukw6fNzHxyl7oNa7Flp+dnG4RXp74PxE=;
+	s=arc-20240116; t=1719831069; c=relaxed/simple;
+	bh=Wz/AXBWmeXubusQROwvH3blo2TOXdRmWYaw+E6KGgIA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R9RzH6ltLc3CRJ++ofg/bMyCQGwgejJZ7dI1LLGbFNUQjHzrMrInLZglgowH53vrdupPs5OT6fgEFBYfuV1rHyofSJsIujoVcTbx125UQx+EHkI6xPDPZG2XDP9r0WlQ0BQm6JL5t6VZncPnzswt4UQLlOMd4I8uEv2csAe3ib8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CJNYJSbg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 262D7C116B1;
-	Mon,  1 Jul 2024 10:50:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719831053;
-	bh=5d/pnoiUBPFukw6fNzHxyl7oNa7Flp+dnG4RXp74PxE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CJNYJSbgQXQQsFEyE8EAjJTklMt9RlCsPYGSIEYAlf0aixcCOcqH9IPmEbP/VEkM4
-	 FmOSK5RO0ZLWMR/cATcT/3cy+Noo9JSzeWaJFW0d46DQ/1aC/60TnPZsgeGdMnXFXM
-	 lSwjh68c5KyVclgaCJCRGKbJJn7jl7/3OYbc8j7/z/AgNqdrxKqxv+KMhn6ghlkCKf
-	 OcCkunmxyEeu6hhpXm74iFgFAoP+CjuPUDHv/azIUpnjJPHga5Xl6nB7r+GQSKUmh+
-	 hdbPKMp6J6MkXeqwVgUMOuRZSyjUI23qPaIMO/8RQlPxILowLkGAu4XB9HUwnD2BEx
-	 wf2yF744LUTYg==
-Date: Mon, 1 Jul 2024 11:50:49 +0100
-From: Simon Horman <horms@kernel.org>
-To: Geetha sowjanya <gakula@marvell.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org,
-	davem@davemloft.net, pabeni@redhat.com, edumazet@google.com,
-	sgoutham@marvell.com, sbhatta@marvell.com, hkelam@marvell.com
-Subject: Re: [net-next PATCH v7 05/10] octeontx2-af: Add packet path between
- representor and VF
-Message-ID: <20240701105049.GT17134@kernel.org>
-References: <20240628133517.8591-1-gakula@marvell.com>
- <20240628133517.8591-6-gakula@marvell.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=StD5PycMW8FTW4+Ay+po0hYNT2Aoi29MqnyZf2SPMnoQsmYGZxyJHOegrprZsmScKHSgW1ydU+D/UABZueD017yWK6TuGZvcxM1IG0hJboO0H9e+mcNxZNYf2aha2IJklfbT14ARtowavPpvbNOGsQcymy/ar+xD3ixYH8W7XD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VACvhyRE; arc=none smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-25cc6962c24so1269627fac.3;
+        Mon, 01 Jul 2024 03:51:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719831067; x=1720435867; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pg/z2yi3QLYK0ChK2eEKkIMHVbR1++HdVfOjxE3Io3w=;
+        b=VACvhyREABrkz080TcyW10HKa4BOstTWPPUHgOiNapTDxZGNfe/+em5Lqfig1VmYl6
+         Trr4vBTL/E45k+Ez85RzpC/oOWfMRGuTttsCVk/W+oFrg25UXLi5f16JFzgXqKDm+G59
+         H21PLkRvOYCgMpPsGO7n/rT+qUITgBnt1RHKMiGJVyAeg5gFJsVoBAtoDxe+djz+1RJ6
+         4TQ/jib0kUfnA+o5a5oUpUw6Cvp9jHTORLlrBWq0Qk9FBE5k4Ik4NfTGeu///rsd9HQW
+         ncG/BnCykr1gXQyO0t3+sLbX7ZKsbzLYdcZrWujc3N/P3N2nUe89HqSDQULFCFupF4a5
+         UwuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719831067; x=1720435867;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pg/z2yi3QLYK0ChK2eEKkIMHVbR1++HdVfOjxE3Io3w=;
+        b=UlWSIVmFDPEgnBeUUCfD8j6cU2eJGy+JINIWvmmZ53e/k67i9sQzmpWeTnzmTJalGS
+         JrTumLKI409C/aRZ1UAxqUCvn7e4sMHBGftBQAFSSvIRJ8S4V5X20OtFg8XJ/Lm8GoJm
+         JeUuMJbpN7Ay+gtvKHeZIUJRkkVeTRt18KQxIRLkfWYTacQOj7bxl63qjuVeJil1roJj
+         55unwoITMdYQka33s+18DyjH24b6FRBXB51P3WJitRpolwkGSDF7aeGuLV5IySsKxK3e
+         oIzYBf6hWt3DvQi86Q0Gbi4r1M1UuF8I3c0N/DuJLWlqrmkyKNQOVpY3zkN7Eyr2inQN
+         /1pw==
+X-Forwarded-Encrypted: i=1; AJvYcCULVVt+whj9oF1hycx+GYKnDOOpzQwP3w7TL7AwqAONJvQJ2tIrjWtgP3fYM7xEMwpzF4EVlu0/GOYYG9UT+c25/Sx3vOqtzyNQxMnFLwl5k2Eh/e12ETXXqetbc3PYDar7EWoyPx2nJQ==
+X-Gm-Message-State: AOJu0YxE1ya1sY7nEAJA31SBuhHT0AqICxCM5sFFgYaO4hdLMBtj0ttw
+	W9KLjHmi2O2gKkDszuCj5g7rAmMHWFKNzc2zvft2nvr+e3ctjjWj
+X-Google-Smtp-Source: AGHT+IFRTnrqPqLUc/6RdDDKowRJeZA6y+M+PijtdrqyXUdWwkYn9KgsuD598WiNwF5yN+hbKcM/Qw==
+X-Received: by 2002:a05:6870:1794:b0:25c:b834:7481 with SMTP id 586e51a60fabf-25db371e196mr2733643fac.56.1719831066704;
+        Mon, 01 Jul 2024 03:51:06 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70804a97ae3sm6191955b3a.206.2024.07.01.03.51.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 03:51:06 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 249DA184B18CF; Mon, 01 Jul 2024 17:51:03 +0700 (WIB)
+Date: Mon, 1 Jul 2024 17:51:02 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Borislav Petkov <bp@alien8.de>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: [PATCH] Documentation/ABI/configfs-tsm: Fix an unexpected
+ indentation silly
+Message-ID: <ZoKKFq_DvqzPByfe@archie.me>
+References: <20240701184557.4735ca3d@canb.auug.org.au>
+ <20240701103451.GDZoKGS5klAmgmXI6s@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="YaaCJ5I02yvgxc84"
 Content-Disposition: inline
-In-Reply-To: <20240628133517.8591-6-gakula@marvell.com>
+In-Reply-To: <20240701103451.GDZoKGS5klAmgmXI6s@fat_crate.local>
 
-On Fri, Jun 28, 2024 at 07:05:12PM +0530, Geetha sowjanya wrote:
-> Current HW, do not support in-built switch which will forward pkts
-> between representee and representor. When representor is put under
-> a bridge and pkts needs to be sent to representee, then pkts from
-> representor are sent on a HW internal loopback channel, which again
-> will be punted to ingress pkt parser. Now the rules that this patch
-> installs are the MCAM filters/rules which will match against these
-> pkts and forward them to representee.
-> The rules that this patch installs are for basic
-> representor <=> representee path similar to Tun/TAP between VM and
-> Host.
-> 
-> Signed-off-by: Geetha sowjanya <gakula@marvell.com>
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+--YaaCJ5I02yvgxc84
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Jul 01, 2024 at 12:34:51PM +0200, Borislav Petkov wrote:
+> -		Currently supported service-providers are:
+> -			svsm
+> +		The only currently supported service provider is "svsm".
+
+The wording LGTM, thanks!
+
+Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--YaaCJ5I02yvgxc84
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZoKKEQAKCRD2uYlJVVFO
+o9n0AQCE42m/V43h2+Al2QajT23KaMYiMjLySACf9zqn3RAoDwEAhTrsAYXtluKu
+UZHLyCVlO/zZGD4uubSTUEEFNo8oVAA=
+=dVz6
+-----END PGP SIGNATURE-----
+
+--YaaCJ5I02yvgxc84--
 
