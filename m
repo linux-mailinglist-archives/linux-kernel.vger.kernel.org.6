@@ -1,54 +1,70 @@
-Return-Path: <linux-kernel+bounces-235899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EC4E91DB0C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:06:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 455E491DB68
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:28:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EDD41F21FA8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:06:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C809BB20D42
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:28:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9637185279;
-	Mon,  1 Jul 2024 09:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F56D84E1E;
+	Mon,  1 Jul 2024 09:28:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="j1DEXGds"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="GMOn+323"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE74D84A30;
-	Mon,  1 Jul 2024 09:06:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343591F937;
+	Mon,  1 Jul 2024 09:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719824777; cv=none; b=H5CuSUISplx6NyMcgSgOinZhb5r69DC9OPbNEDjKARATGeh6qjm9JWfi81h3RlpXQfT19du2cc29IJKCGCNqGWJ5uS69P0jMpQOFHhkaw+rVny8wYMFPj7AxQY7xnZNv3gUZ+pfNKf0uFr+6HDgVpF5WWw+Q36XJ2HDlgdw6VX0=
+	t=1719826107; cv=none; b=GmwvWs3R+klYOk0koxvxlZAaSD0ea8NWRcCs2jpbH2dUk+Yii/GRqskYIqymRFkyeTJ9ro7Nf0CRv9gpQtvq/vWB+8p7hecKhH+CaqkV3T8X6PNOLTgvLK+Vh/G33QigChucJ2pEeWKJOgmm4bHtoh7+3JUUVMhsy9gZRNfJSL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719824777; c=relaxed/simple;
-	bh=lHTxC+saNwomHSdQ9/N0PF0JUGiXX9fKozXCfNEoZtY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RvVjJzm+HlkDO77wdrNUOE6u7pnzo7kEkPLbge8PUAmz2nJuHEAvdXU6Boxcww3jJhkVJ6qJwBmoChageSZbhdY9ds5BGMbXb+j51QtkCNHyR0XFyCNZd7JD7/+E0Eq8YH/Vqsl39NjZIGgHN4yexYTH38dyV0LEtEui2ZBb4Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=j1DEXGds; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1719824772; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=3lCDxI9hX7IFUfqrckpaMfqXdk5NsVJ2mROyHOZx4/s=;
-	b=j1DEXGdsJCI01MQKkT7MjYKBDuIhb8z5CVRYTLKAxraILJjxmCcErz/IZzaBA30t5DToD/kmvQj3ot2/o9pZ9ZkteIojHI8B3gLO5kGvtfCpD2JHP7Vki6EGHCdwFJW50HTly0pvKc3b62SiRGEq9UirpQ43LwuajwWIrdTtNcI=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033023225041;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0W9cYQiW_1719824764;
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0W9cYQiW_1719824764)
-          by smtp.aliyun-inc.com;
-          Mon, 01 Jul 2024 17:06:11 +0800
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To: James.Bottomley@HansenPartnership.com
-Cc: martin.petersen@oracle.com,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH] scsi: sd: Fix unsigned expression compared with zero
-Date: Mon,  1 Jul 2024 17:06:03 +0800
-Message-Id: <20240701090603.127783-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1.7.g153144c
+	s=arc-20240116; t=1719826107; c=relaxed/simple;
+	bh=wAKcEvpgmzYUQv4xBYdWwUr3ERXwzRzT3O3PNKdMLsc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JuF3Q/FDhf9G3fQkfFSFw90p/znjJwXzABYrJgAMAaM+eneR3GUwjOIivRD5Zs8yFHFESgyE03mzORdXgWY1kwrXEzapXBQWZD+F2Vg0Pe8syQYdYzZaBXz+0QbYkj1Nl/IMvxcdAVRVkWRTYmZYtyWGsOp7fe58z/O93Um80Vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=GMOn+323; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4618vWEV022313;
+	Mon, 1 Jul 2024 02:07:58 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=MxTte4ZHFHq+OKifMO5kKxA
+	kLudbwO9gv7RxKcZ+UVo=; b=GMOn+323pObtD3pEJeEzwRpsuLLPIOW7xpgPvim
+	5jT0u6NHar5vkYD7LQKjRL5R5NpIxwHVpfJhTIjlSstTGDhsXeEaaL2pdAn9PAMz
+	x3RODRHlUVM0wKogzNt/gBjhw0QaMKpZBvHUFbjQZ5rylBHbX3Ks/nQXmkKb+PpN
+	Jk3bTa697cLBdmDMAjmURB7/sk41bDH4lff8gr4bNI3VcwmoKR89myx1MPl8FBA6
+	XMBueIo+8zk+N+gAE0GVtQX1yB86GcX2dBPKFa9ei9Iw/5vWNWby37ATzSAhrBP5
+	6rtXtn3TcWKy5YyswsXJuhfYVXRK9yBApPrcVqdqnvHWGHA==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 403sdcg1my-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 01 Jul 2024 02:07:58 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Mon, 1 Jul 2024 02:07:57 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Mon, 1 Jul 2024 02:07:57 -0700
+Received: from localhost.localdomain (unknown [10.28.36.175])
+	by maili.marvell.com (Postfix) with ESMTP id 5B2BB3F7048;
+	Mon,  1 Jul 2024 02:07:48 -0700 (PDT)
+From: Srujana Challa <schalla@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <kuba@kernel.org>, <davem@davemloft.net>, <pabeni@redhat.com>,
+        <sgoutham@marvell.com>, <lcherian@marvell.com>, <gakula@marvell.com>,
+        <jerinj@marvell.com>, <hkelam@marvell.com>, <sbhatta@marvell.com>,
+        <schalla@marvell.com>
+Subject: [PATCH net,0/6] Fixes for CPT and RSS configuration
+Date: Mon, 1 Jul 2024 14:37:40 +0530
+Message-ID: <20240701090746.2171565-1-schalla@marvell.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,34 +72,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: Wdzqu5yh_sXxaS-oq3rHEc4RaaA-6Iee
+X-Proofpoint-ORIG-GUID: Wdzqu5yh_sXxaS-oq3rHEc4RaaA-6Iee
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-01_07,2024-06-28_01,2024-05-17_01
 
-The return value from the call to scsi_execute_cmd() is int. However, the
-return value is being assigned to an unsigned int variable 'the_result',
-so making 'the_result' an int.
+This series of patches fixes various issues related to CPT
+configuration and RSS configuration.
 
-./drivers/scsi/sd.c:2333:6-16: WARNING: Unsigned expression compared with zero: the_result > 0.
+Kiran Kumar K (1):
+  octeontx2-af: Fix issue with IPv6 ext match for RSS
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9463
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
- drivers/scsi/sd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Michal Mazur (1):
+  octeontx2-af: fix detection of IP layer
 
-diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 979795dad62b..ade8c6cca295 100644
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -2396,7 +2396,7 @@ sd_spinup_disk(struct scsi_disk *sdkp)
- 	static const u8 cmd[10] = { TEST_UNIT_READY };
- 	unsigned long spintime_expire = 0;
- 	int spintime, sense_valid = 0;
--	unsigned int the_result;
-+	int the_result;
- 	struct scsi_sense_hdr sshdr;
- 	struct scsi_failure failure_defs[] = {
- 		/* Do not retry Medium Not Present */
+Nithin Dabilpuram (1):
+  octeontx2-af: replace cpt slot with lf id on reg write
+
+Satheesh Paul (1):
+  octeontx2-af: fix issue with IPv4 match for RSS
+
+Srujana Challa (2):
+  octeontx2-af: reduce cpt flt interrupt vectors for cn10kb
+  octeontx2-af: fix a issue with cpt_lf_alloc mailbox
+
+ .../net/ethernet/marvell/octeontx2/af/mbox.h  |  7 +-
+ .../net/ethernet/marvell/octeontx2/af/npc.h   |  8 +-
+ .../ethernet/marvell/octeontx2/af/rvu_cpt.c   | 78 +++++++++++++++----
+ .../ethernet/marvell/octeontx2/af/rvu_nix.c   |  7 +-
+ .../marvell/octeontx2/af/rvu_struct.h         |  5 +-
+ 5 files changed, 79 insertions(+), 26 deletions(-)
+
 -- 
-2.20.1.7.g153144c
+2.25.1
 
 
