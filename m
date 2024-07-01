@@ -1,127 +1,159 @@
-Return-Path: <linux-kernel+bounces-235871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5BCE91DAA3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:55:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23B1791DAA7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:56:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90FD8283443
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:55:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5461D1C215A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17CF12C550;
-	Mon,  1 Jul 2024 08:51:05 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F514155325
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 08:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007951553BC;
+	Mon,  1 Jul 2024 08:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="hGBlxvwO"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E121494C1
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 08:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719823865; cv=none; b=chpctfWy3DQOXIhl9Q1qDvfEpBU2f0Iuqva0QuP1PA5+7fU+MZXIkTMKbL7JMQGgJzgucaPAMDFBepGgziCFzcieg3uSF+kZ+SEcaAikld9FNQ8ztYVt4soyLOzEM61o8IE7JMvxf7HDAaT/zUqA8xS1aXp72S1cJm2NeRBMIe4=
+	t=1719823874; cv=none; b=u5hr0wXQcl3XPCLR8lJ1cGy3c9qUBRYtRyLNWYc9qqT5XYy5+QZUuxYg+WOJoEASk9OojHG1OMYs6GlJLnL/BVboL6WHGd960c5oJDoD/pDBRw5Y78oG17S7ZxNYMbSHaiXa4hSgkApi85JI4nRd/CI6bFKEo3kn9/cLjC6oj0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719823865; c=relaxed/simple;
-	bh=ADeFDTrQyuXrodrUXFPne8GrrYXJRrCWVe3GARiGF/o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AKS41izJ1gEj3IRrwORNuLRVuarX4WQF9eFO7/j8ctsMwNyI53i6lP0Ef82jFJW4/DxdUhiEP9w98mxsCVeZTCxEasrB5wRDx5uZ52754Mi6EpY5ZL3IiMB1sT5W2giSy2op0RPs1km742+JVU1VwzTMZ/G8FZfEKNlvtUOscH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9B1B4339;
-	Mon,  1 Jul 2024 01:51:27 -0700 (PDT)
-Received: from [10.57.72.41] (unknown [10.57.72.41])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 37FAD3F766;
-	Mon,  1 Jul 2024 01:51:01 -0700 (PDT)
-Message-ID: <6f68fb9d-3039-4e38-bc08-44948a1dae4d@arm.com>
-Date: Mon, 1 Jul 2024 09:50:59 +0100
+	s=arc-20240116; t=1719823874; c=relaxed/simple;
+	bh=rL247NBQSvqiNNQkTDaaFdrDHdJWz/2L3qB0qtsNmAc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lzf2WdzQ/DyczrA6H0HJzW54Ufyw1I2s7YIiaN/0tRUVXUeqsa5INl3FYTZKJkSlR49GGn4pJGXVEQE5UBuH9OLwY1AXd+x8gMh70ty2D0kFzZFEeMZ1QWE3KUDcROUkdrE4+9TfxvHPpEMtmZ9tIZBWJ8WfB28DWStTh4w8gBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=hGBlxvwO; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ebed33cb65so28988371fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 01:51:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719823871; x=1720428671; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y6IGt/O8Ag/DD0EC0oRxl+iz1s9f79lZeasOTV/wsyo=;
+        b=hGBlxvwOoQNQriY16ha0YAk1En+lQ+IlUUSFNTZR6mqtec5iKlmTfWkndr1A6wt5Ad
+         83jdVPYfbskA24f6WzNe2reQwu+BwiLjsPcrRZc6J23fKtDZ7oIlQ+JTQ4bOFWBtq4WP
+         Jw+wfvgHOrcI8wrY/Y23sG5fvleSKWWkHONY4y4qlAus6Hs/l/gvm3iYRrRffJk/QoRO
+         yYZ4IPspkvYKcpFq5oOaAgkBQZatZc/6ca19a899qHUuWjOmy0q3S7q2jWUmEmPa6Pmq
+         ELd5Az9XZkQZFWNA84Kcykh+5Pg7lDST4kde2bQvCfJFEzu2C25io9KyLg4QZ7tABSuk
+         eXfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719823871; x=1720428671;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y6IGt/O8Ag/DD0EC0oRxl+iz1s9f79lZeasOTV/wsyo=;
+        b=dVkVTQB0pi9bAAwgUHVRIFaSjYQ/n0KeV/MlzZhZmCX1nlgpPLq04jSKRa+G8lILuL
+         vt6d7UR4q5OaMaVnjN8WfJMhRqIy6y4Jxer1M+0YwahzOTPsKrVRaSeAmv0zLKpK1rJh
+         WCgLxW8ZDlInsgKKyd/nNGXu5wIg7fTP+EEElZR26UMp5P2TtMTAB9CVLYa9CN3W1b2+
+         u1vq/ipckxqCNnexnO2NjnPA9x9zPkdae68wHygFHW2tXe0EOzVTfTwBx9pmByn4N7M2
+         q4zt8xCrcp3O2LcK8h2lZ2fz+QoTBere+vTOiL6q9TpzrHGm8Tzdk9gcG9OSkn2a4jsk
+         VwJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVcIXpnVtP9WixPDQcHb/WkIqceO9c902Y5UwbRennXysTksrUoO2hdrPQeyrlGWV9jsvP7IKjnM9orC9PRs6R3itTDBsG2TlbDe9+7
+X-Gm-Message-State: AOJu0YyrWt4X/NmLFRSNd7J6voLrCe6wtN2OAkHSBagila/6ZcUPS4Y1
+	UEgNq2UPGJD7f+fpOvAkENEuagCTf/MABuQo1fQZ4l480PqX4qyl9WFsp1bPu60qnbOEpdzMDyC
+	kALawCAB6tEA1BkvmYGLlGVx5rF8j3yrXIkDr0Q==
+X-Google-Smtp-Source: AGHT+IE6uf6X0BVJtjc0lpScjbHL3mLZ3oOMkPXkzRVM0rIYzzSA8+bdRnk3JdXUel7lmANqoMpQprqBLY10Y4VGEAc=
+X-Received: by 2002:a2e:8883:0:b0:2e1:2169:a5cc with SMTP id
+ 38308e7fff4ca-2ee5e3ad770mr33275651fa.15.1719823870802; Mon, 01 Jul 2024
+ 01:51:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] support "THPeligible" semantics for mTHP with anonymous
- shmem
-Content-Language: en-GB
-To: David Hildenbrand <david@redhat.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Bang Li
- <libang.li@antgroup.com>, hughd@google.com, akpm@linux-foundation.org
-Cc: wangkefeng.wang@huawei.com, ziy@nvidia.com, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20240628104926.34209-1-libang.li@antgroup.com>
- <4b38db15-0716-4ffb-a38b-bd6250eb93da@arm.com>
- <4d54880e-03f4-460a-94b9-e21b8ad13119@linux.alibaba.com>
- <516aa6b3-617c-4642-b12b-0c5f5b33d1c9@arm.com>
- <597ac51e-3f27-4606-8647-395bb4e60df4@redhat.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <597ac51e-3f27-4606-8647-395bb4e60df4@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <Zn8CZ47e3LFncrDP@google.com>
+In-Reply-To: <Zn8CZ47e3LFncrDP@google.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 1 Jul 2024 10:51:00 +0200
+Message-ID: <CAMRc=McMn6k7QMXLHphNS03BtO=i9xKBwxa71MeVXhtNSFdiXA@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: of: fix lookup quirk for MIPS Lantiq
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Martin Schiller <ms@dev.tdt.de>, 
+	Hauke Mehrtens <hauke@hauke-m.de>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 01/07/2024 09:48, David Hildenbrand wrote:
-> On 01.07.24 10:40, Ryan Roberts wrote:
->> On 01/07/2024 09:33, Baolin Wang wrote:
->>>
->>>
->>> On 2024/7/1 15:55, Ryan Roberts wrote:
->>>> On 28/06/2024 11:49, Bang Li wrote:
->>>>> After the commit 7fb1b252afb5 ("mm: shmem: add mTHP support for
->>>>> anonymous shmem"), we can configure different policies through
->>>>> the multi-size THP sysfs interface for anonymous shmem. But
->>>>> currently "THPeligible" indicates only whether the mapping is
->>>>> eligible for allocating THP-pages as well as the THP is PMD
->>>>> mappable or not for anonymous shmem, we need to support semantics
->>>>> for mTHP with anonymous shmem similar to those for mTHP with
->>>>> anonymous memory.
->>>>>
->>>>> Signed-off-by: Bang Li <libang.li@antgroup.com>
->>>>> ---
->>>>>    fs/proc/task_mmu.c      | 10 +++++++---
->>>>>    include/linux/huge_mm.h | 11 +++++++++++
->>>>>    mm/shmem.c              |  9 +--------
->>>>>    3 files changed, 19 insertions(+), 11 deletions(-)
->>>>>
->>>>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
->>>>> index 93fb2c61b154..09b5db356886 100644
->>>>> --- a/fs/proc/task_mmu.c
->>>>> +++ b/fs/proc/task_mmu.c
->>>>> @@ -870,6 +870,7 @@ static int show_smap(struct seq_file *m, void *v)
->>>>>    {
->>>>>        struct vm_area_struct *vma = v;
->>>>>        struct mem_size_stats mss = {};
->>>>> +    bool thp_eligible;
->>>>>          smap_gather_stats(vma, &mss, 0);
->>>>>    @@ -882,9 +883,12 @@ static int show_smap(struct seq_file *m, void *v)
->>>>>          __show_smap(m, &mss, false);
->>>>>    -    seq_printf(m, "THPeligible:    %8u\n",
->>>>> -           !!thp_vma_allowable_orders(vma, vma->vm_flags,
->>>>> -               TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL));
->>>>> +    thp_eligible = !!thp_vma_allowable_orders(vma, vma->vm_flags,
->>>>> +                        TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL);
->>>>> +    if (vma_is_anon_shmem(vma))
->>>>> +        thp_eligible =
->>>>> !!shmem_allowable_huge_orders(file_inode(vma->vm_file),
->>>>> +                            vma, vma->vm_pgoff, thp_eligible);
->>>>
->>>> Afraid I haven't been following the shmem mTHP support work as much as I would
->>>> have liked, but is there a reason why we need a separate function for shmem?
->>>
->>> Since shmem_allowable_huge_orders() only uses shmem specific logic to determine
->>> if huge orders are allowable, there is no need to complicate the
->>> thp_vma_allowable_orders() function by adding more shmem related logic, making
->>> it more bloated. In my view, providing a dedicated helper
->>> shmem_allowable_huge_orders(), specifically for shmem, simplifies the logic.
->>
->> My point was really that a single interface (thp_vma_allowable_orders) should be
->> used to get this information. I have no strong opinon on how the implementation
->> of that interface looks. What you suggest below seems perfectly reasonable to me.
-> 
-> Right. thp_vma_allowable_orders() might require some care as discussed in other
-> context (cleanly separate dax and shmem handling/orders). But that would be
-> follow-up cleanups.
+On Fri, Jun 28, 2024 at 8:35=E2=80=AFPM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+>
+> As it turns out, there is a large number of out-of-tree DTSes (in
+> OpenWrt project) that used to specify incorrect (active high) polarity
+> for the Lantiq reset GPIO, so to keep compatibility while they are
+> being updated a quirk for force the polarity low is needed. Luckily
+> these old DTSes used nonstandard name for the property ("gpio-reset" vs
+> "reset-gpios") so the quirk will not hurt if there are any new devices
+> that need inverted polarity as they can specify the right polarity in
+> their DTS when using the standard "reset-gpios" property.
+>
+> Additionally the condition to enable the translation from standard to
+> non-standard reset GPIO property name was inverted and the replacement
+> name for the property was not correct. Fix this as well.
+>
+> Fixes: fbbbcd177a27 ("gpiolib: of: add quirk for locating reset lines wit=
+h legacy bindings")
+> Fixes: 90c2d2eb7ab5 ("MIPS: pci: lantiq: switch to using gpiod API")
+> Reported-by: Martin Schiller <ms@dev.tdt.de>
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
+>  drivers/gpio/gpiolib-of.c | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+> index 59c7f8a2431a..d21085830632 100644
+> --- a/drivers/gpio/gpiolib-of.c
+> +++ b/drivers/gpio/gpiolib-of.c
+> @@ -203,6 +203,16 @@ static void of_gpio_try_fixup_polarity(const struct =
+device_node *np,
+>                  */
+>                 { "qi,lb60",            "rb-gpios",     true },
+>  #endif
+> +#if IS_ENABLED(CONFIG_PCI_LANTIQ)
+> +               /*
+> +                * According to the PCI specification, the RST# pin is an
+> +                * active-low signal. However, most of the device trees t=
+hat
+> +                * have been widely used for a long time incorrectly desc=
+ribe
+> +                * reset GPIO as active-high, and were also using wrong n=
+ame
+> +                * for the property.
+> +                */
+> +               { "lantiq,pci-xway",    "gpio-reset",   false },
+> +#endif
+>  #if IS_ENABLED(CONFIG_TOUCHSCREEN_TSC2005)
+>                 /*
+>                  * DTS for Nokia N900 incorrectly specified "active high"
+> @@ -512,9 +522,9 @@ static struct gpio_desc *of_find_gpio_rename(struct d=
+evice_node *np,
+>                 { "reset",      "reset-n-io",   "marvell,nfc-uart" },
+>                 { "reset",      "reset-n-io",   "mrvl,nfc-uart" },
+>  #endif
+> -#if !IS_ENABLED(CONFIG_PCI_LANTIQ)
+> +#if IS_ENABLED(CONFIG_PCI_LANTIQ)
+>                 /* MIPS Lantiq PCI */
+> -               { "reset",      "gpios-reset",  "lantiq,pci-xway" },
+> +               { "reset",      "gpio-reset",   "lantiq,pci-xway" },
+>  #endif
+>
+>                 /*
+> --
+> 2.45.2.803.g4e1b14247a-goog
+>
+>
+> --
+> Dmitry
 
-Are you planning to do that, or do you want me to send a patch?
+Can you rebase it on top of v6.10-rc6? It doesn't apply to my fixes branch.
 
-
+Bart
 
