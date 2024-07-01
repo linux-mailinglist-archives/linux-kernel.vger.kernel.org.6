@@ -1,108 +1,99 @@
-Return-Path: <linux-kernel+bounces-237067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB87591EA90
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 23:58:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EAA191EA92
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 23:59:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26AB51C212F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:58:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B424E1F22390
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:59:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45BF2171E5A;
-	Mon,  1 Jul 2024 21:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152BC171E52;
+	Mon,  1 Jul 2024 21:59:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b+7cEjw/"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YaWBLar9"
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CD1171657;
-	Mon,  1 Jul 2024 21:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D20171E47
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 21:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719871113; cv=none; b=vGOARLzt8upmCLDBSL7t/xSFZl0ZGFNZUsYhL9f+ZuQFa9ROyvOqO4LXllKBD045rb7YKoNG6ApF7eHDaouddCKtbsbzbECvZcIHO6z4Qy5SrfoRtKNpYY4StzljQU3ZZPW4iW6bJ1/h6XPO3DheHkAJYu6sBWiTSOtuBRgXsis=
+	t=1719871138; cv=none; b=qLPX4Sdt042sI/S4as3RPz7j8jXjnfw0imQTDmK0kgGR+W50xYAJx4WQQJxYxrr2bGzGpXMv9N0iElPK7sfte/xVi8SKeK1h4FC61Hv6XbIZocjfwCOzichU/H/m5BNV8vYckKXHWF7q0HkLB3Jl+pIDiX/9Q5k1QPeWLRBBOsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719871113; c=relaxed/simple;
-	bh=tlQGRW1IcR2XLrHRJ5fJHNgvknF+VsqTTtXrxqai0CA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GIvb7XCExxnJMHvjrP5itxnDqHd1yNlie7YY7rYYBX5KRoDDoMn8dTzW+wIO+FpcBmMVUFm9GILaOQWcNoX7vGfxY/GzWv95RrMe1+/zlW/TsbXSE0FFSPSZb1A/8iWW2V10EMtKyvyp/9jb1ubqJQs1tYYR31VL6bMIcgG7uQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b+7cEjw/; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2c70c372755so2310496a91.1;
-        Mon, 01 Jul 2024 14:58:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719871112; x=1720475912; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tlQGRW1IcR2XLrHRJ5fJHNgvknF+VsqTTtXrxqai0CA=;
-        b=b+7cEjw/dpKYqA+NWkYx59gEVc5ZX3cCTMVnTpGvNsPi2tMG4gnov85cX9qaKQJYaP
-         1WZIyJ+xwgT3DGrZCMlrr2ULTMMlV3olMd1ceUrO6Gcg6KWhTTWDYUjDBxq//FnGSGXq
-         t+dsaxdA0FkUdTCkCIOLheXhGC7tURsn9EtJoUsoJA+XpOZXP/+HHK7sEl0DGVx3U/57
-         FKzLBp1aUJRgd9+TMuS0o2ZsHOtqrbl5jr1q290ciCEFYiC7EpWR848XYa3doaPW65lO
-         +tNvuUdZJ+wkjOzP8JZSFWom+O31dvSOzDApSRTEcWHigBqaQgXsCBMNrYza0yiE/yug
-         4Z7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719871112; x=1720475912;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tlQGRW1IcR2XLrHRJ5fJHNgvknF+VsqTTtXrxqai0CA=;
-        b=Oj4CR8e10Nu3tN/GU9nAr+fcW7tCyBZSjrRi8z5nFT/hCV06CnOroPrQC3keHdozXE
-         OLezA54bmtf6VJAhL4Wf5XwjVkgRIRZxafsju0IxqXzpjQ+n79HC9UYDoZwhP/vF131Q
-         ZqoqwDjk+2ofei0v+quLntSqXE1Ok1XCr88Mq64iz0XBxc4mAFDCDL2S/Z30/XBWFEhc
-         bRFoVy/i6NVm9b9lDbsul35OfYB7s9nQwNLbrGi34h5KewcMgcX0+6W2IJcs++Yi1rL5
-         pmmpanbjV+OAQjV5wKVHEW2xxf7GljbNGnaYyoHFHZDRh5Q2ZUvPbi4tLwvc9i4HvZRW
-         SnpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWX2uY61oG21Ti/CpxP0zAXZcYmFW0P/jzQPO9ndsjnF+w1rdDvZwlkVFM9qTWCx8JIsn5DN93TaJrtPECFO1CMPdiMSVo1mzHVqp3MKR8TfwPboUuKcHgIaZO4SR+nbOaJicuxMkzEOMk4ThI=
-X-Gm-Message-State: AOJu0YzLtbtpRRoqtXUAsETj0jFxTkcKGJ9kG1s0syBBG/3+BGJerB8W
-	eERHgWjANVZo7rP4HwxeMG4csgRVzGr7mxjgU55g+boQ7pGpAf/KShBmNK8Jy4AW/nJoWFcbefO
-	5txMXUqbpwD7hmjm5Upy//k1ktkw=
-X-Google-Smtp-Source: AGHT+IFrP259sfZ8yGRxwucM+31Wr6lNtpD3kv0GbUgMjP0oJ5e5qH0ThJSRx/+w2HTAmQtLrbU7L6R2M0upQgm0mj0=
-X-Received: by 2002:a17:90a:5890:b0:2c8:5cb7:54e5 with SMTP id
- 98e67ed59e1d1-2c93d79abaemr3418146a91.32.1719871111661; Mon, 01 Jul 2024
- 14:58:31 -0700 (PDT)
+	s=arc-20240116; t=1719871138; c=relaxed/simple;
+	bh=4BBEDjsPwvqouQu3l7yqObvSuH+KJ2qqOtYRjKIVBB0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bHz6EzEvwpyfAsi7pyDNAm+ks47o8AXDdhSdFWnIcZxJ5a+J96YrF7E3XRqTgRdKGpvVyRk/lAqaLdQXztcGDOvoyHfa9dWotdfF54NOX24pdnKFvJFdnNr65+nEtrySrrhu8EKiupxcvRxkPfKRT2123iIRKGhdquw/RdWhYeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YaWBLar9; arc=none smtp.client-ip=91.218.175.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: 00107082@163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1719871133;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LnFCsgUaKKXvH5ORPNnwb9Q6wEy8p49JrmdtgH5yIpA=;
+	b=YaWBLar9gcx49pEQfluf2MAdrXWbogXTLOTROe5NvKPNtu5JcUIkwUygmsuN2kQsgfJFbr
+	8XxSdkA6nrDc41knJhiubveyAnYYx9Lsvlk+8eLdXbXOS9Y/6eKkTwIw0p+Azs+Ckq5P1U
+	Y7xqf+0fm6vf3t1iZFCeV1KeQd+6ueg=
+X-Envelope-To: surenb@google.com
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+Date: Mon, 1 Jul 2024 17:58:50 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: David Wang <00107082@163.com>
+Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Add accumulated call counter for memory allocation
+ profiling
+Message-ID: <koa5yyc2opu23giistqjaw3eo47gjcxpx56ekrbsbhltk74wzz@pvym4ollouzu>
+References: <20240617153250.9079-1-00107082@163.com>
+ <CAJuCfpGaEJLaWYPidiAG1vtayugQY5vJoFv9Opauh1TrofOv7Q@mail.gmail.com>
+ <13c19bd1.2c49.1906c1ac5bf.Coremail.00107082@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240701183625.665574-1-ojeda@kernel.org> <20240701183625.665574-3-ojeda@kernel.org>
- <ap7u5hpgfdzYgTkobIleYc0uolBIsAVbq56CwMJG6k4x57wXeEtu4fpLpgSOvQtbJHvB6D0J1wlBaqDV-xt2owlVejhfABUv_ivILyJ2J9o=@protonmail.com>
-In-Reply-To: <ap7u5hpgfdzYgTkobIleYc0uolBIsAVbq56CwMJG6k4x57wXeEtu4fpLpgSOvQtbJHvB6D0J1wlBaqDV-xt2owlVejhfABUv_ivILyJ2J9o=@protonmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 1 Jul 2024 23:58:20 +0200
-Message-ID: <CANiq72kMaPm2OsGb3o0VUtdoMhSUoo8QEsCFzVjYFtCThvNJ1w@mail.gmail.com>
-Subject: Re: [PATCH 02/13] rust: init: simplify from `map_err` to `inspect_err`
-To: =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <13c19bd1.2c49.1906c1ac5bf.Coremail.00107082@163.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Jul 1, 2024 at 10:05=E2=80=AFPM Bj=C3=B6rn Roy Baron
-<bjorn3_gh@protonmail.com> wrote:
->
-> The formatting here is a bit weird. I would have expected the ) ending th=
-e inspect_err call to be placed on a new line given that the unsafe block i=
-sn't placed on the same line as the start of the inspect_err call either. T=
-his seems to be a case where rustfmt mostly gives up on formatting. If I de=
-indent the comment and unsafe block rustfmt will keep it that way and if I =
-add a trailing space to the inspect_err line it will keep it and emit an er=
-ror that it left behind trailing whitespace. Maybe add a block around the c=
-omment and unsafe block to make rustfmt work again?
+On Mon, Jul 01, 2024 at 10:23:32AM GMT, David Wang wrote:
+> HI Suren, 
+> 
+> At 2024-07-01 03:33:14, "Suren Baghdasaryan" <surenb@google.com> wrote:
+> >On Mon, Jun 17, 2024 at 8:33 AM David Wang <00107082@163.com> wrote:
+> >>
+> >> Accumulated call counter can be used to evaluate rate
+> >> of memory allocation via delta(counters)/delta(time).
+> >> This metrics can help analysis performance behaviours,
+> >> e.g. tuning cache size, etc.
+> >
+> >Sorry for the delay, David.
+> >IIUC with this counter you can identify the number of allocations ever
+> >made from a specific code location. Could you please clarify the usage
+> >a bit more? Is the goal to see which locations are the most active and
+> >the rate at which allocations are made there? How will that
+> >information be used?
+>  
+> Cumulative counters can be sampled with timestamp,  say at T1, a monitoring tool got a sample value V1,
+> then after sampling interval, at T2,  got a sample value V2. Then the average rate of allocation can be evaluated
+> via (V2-V1)/(T2-T1). (The accuracy depends on sampling interval)
+> 
+> This information "may" help identify where the memory allocation is unnecessary frequent,  
+> and  gain some  better performance by making less memory allocation .
+> The performance "gain" is just a guess, I do not have a valid example.
 
-Benno: any preference here? Or even open coding it.
-
-Thanks Bj=C3=B6rn!
-
-Cheers,
-Miguel
+Easier to just run perf...
 
