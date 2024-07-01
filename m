@@ -1,171 +1,111 @@
-Return-Path: <linux-kernel+bounces-237031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E254C91EA10
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 23:14:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A549391EA13
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 23:15:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AD5C1F20C80
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:14:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EEA8AB21427
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A31171663;
-	Mon,  1 Jul 2024 21:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8767C83CC8;
+	Mon,  1 Jul 2024 21:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hi4jHXOw"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G8Xgi+ej"
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02C57381C4;
-	Mon,  1 Jul 2024 21:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638532BB05
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 21:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719868479; cv=none; b=uz0+WiChZoj0HDlwPAY68oe5/hfojgLBnlHt8/l/xmUAwRrVnNobKxvxG1DYpQLyoNyFfCESyxm0mexrpdJpA4ghdIs8w92CgmQI1nx68zgbXecx2SMXor3V15a7gWtbeFGzQe9VnnXKJU98u3hSl7kiQhA3JipgrIVsYXCV4A8=
+	t=1719868523; cv=none; b=olynnAT9bYyplSiv5Xjquvm167JYHu7XhRR25N8XrYqrRPfClm5xoTq1+FNNxREWflJQ1lJAb7IQ0BP0J1EuJcL49JL7Aew0nPB4qeBVKqUiuSlKcA/Vv1LuYoIYpJUZUKfszgjf1UGeIYp9lKrDTJwljkI8whZNeBFKRBBpqH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719868479; c=relaxed/simple;
-	bh=chbv8/l8deuZjfbTqNU5LsaoUFIuySgwuLA2Lx5nG/A=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D8xX6l9vhzW6awPPw9n/Z7WZ50onY5ukUAcBg14IzPBm05wgOFOhN5Q7EgPFhR6bO5tfwAX/S2rSi51zj+vnZiedSiq3qjzWjgoVK4Ok2SUjvTDlyMmO2IjjOtlIICCcE3n48QMtat38LA/zhxUlgyhsPV7XV6r5rhd9/1+JUSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hi4jHXOw; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 461KGaAt001231;
-	Mon, 1 Jul 2024 21:14:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=sqB+17OgnEoc/wuUUJlH4Hun
-	ConDbmAwarAQyWJk1hc=; b=hi4jHXOwmQn10QED5TzuHsJgWXofRidWQUB0bKoL
-	KDq0RQtmd+nzD/XLg3pHeqQO7tAB2WdcaQTYgkPvmZUejCEuuwRsDTXGpANByDiP
-	D3eYWWcR/t8rLcqJ4+pmj2lz6j++dqVgucduoiFLQfOpTEZDIvF9GaCeHObMhZPY
-	3ib41g0vuybgWn2n6NQPLcPAZdQDnR3G1T4ORFPfmNm32Rn3dBdmdVepqzW4s+fc
-	oYRg8+/xymC+I47hkSCFMnPWvVDJBnKWk/VUE8H8htTNynu03J7Ybk3z0m2jATPa
-	e7jj+1x51+YygLPJVx9gur08VMulzA0KJdJsjnlOaMA21g==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 402996ndx9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 01 Jul 2024 21:14:30 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 461LESAS003395
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 1 Jul 2024 21:14:28 GMT
-Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 1 Jul 2024 14:14:28 -0700
-Date: Mon, 1 Jul 2024 14:14:27 -0700
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>
-CC: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
-        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
-        <dri-devel@lists.freedesktop.org>, <arnd@arndb.de>,
-        stable
-	<stable@kernel.org>
-Subject: Re: [PATCH v3] misc: fastrpc: Increase max user PD initmem size
-Message-ID: <ZoMcM+F8r58tmE7g@hu-bjorande-lv.qualcomm.com>
-References: <20240701115237.371020-1-quic_ekangupt@quicinc.com>
+	s=arc-20240116; t=1719868523; c=relaxed/simple;
+	bh=b4iFMOwsvk1yyy4eIIH6phVK+v4nAT3kLac1lMQPGZ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jAg3CSiet2asX8EHo25A2jQG84SHkKylLOpHI9IK0uXmUhTe5hJVeO7C1/NIhowe4yhJQKRCFBERHZgNXpqRYWSyH+WjEQCWO2Vbko6EZmkjjSY/KMbH0eJGEcCQUrI/jH4iUrseKEEAWtc7eBVVPAZF6TIV0ccftTnSproQGOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G8Xgi+ej; arc=none smtp.client-ip=209.85.167.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3d55f198f1eso1758762b6e.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 14:15:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719868521; x=1720473321; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SWlZpA9w0jHOBVI29bT6ToqLRafNc0gupNX61H+Tj74=;
+        b=G8Xgi+ejlTey1nT2Coub+ipXzOxYPtbN1EaEqToJYuVsMfatZ5oFe+E3/lfRV7of0M
+         tvOY+VAnLakS0fanPi4bY0rpUme4L3zOHmTtdLRIEcKqP0vLpLl5GyW094EQF0jmirWY
+         Rcc771x/8ZNED65g8Zetid6u34AfgVT9FgDotQQGpw+D7UtdDshqZYqkVJCdgBHFJG52
+         kOKft88vKibu3Rv7y+bjB0hfwFmNPFosXGMPIUdWFQSZtpzIX8AVhkbcBIlUstWb8WXL
+         ZiieP/i7BMYHth44EwM3O4eFFtb3koLE5jRH+VkCL1H83QM59sCRjQ7n/7bvlNVOHdIi
+         NYrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719868521; x=1720473321;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SWlZpA9w0jHOBVI29bT6ToqLRafNc0gupNX61H+Tj74=;
+        b=WHgJ4Ta1RjMR0JQPB31U9i6QK2VQxO+TuE+lgZHE7Dx6xrFvHpkeUnAiQ1lfrOPhgD
+         ujYJ9I2W9GXGDS1KhhE+3CRn5zfslCL+wNudowRoF72GzfmqRL4SpliylqQo0eNRSDOv
+         k+EFiKHvQdM5rwxYeEagdtlvPo3VbOTNPcIm4UORKROpv5kiU4xpNjzPeo3TDF+Pr/9/
+         xvVfyZCLGg/+Q9ntSR4eDxqYIgp9nGpGQkCppwCZ/aKBIJvPd+ng2XFoXPbcyTlZn3E3
+         Rz1lxY+/zDj0HrSQebnFRpG1FDJK1igy4YSHcVzuG1vzUUlZLLBjr6ZgXkA66rqCLpfU
+         +ZXQ==
+X-Gm-Message-State: AOJu0YxrQ3feRxDaqb7Ct4wYQ1JsknWyxSPDsksgQhtL0GZ8WheMdcqS
+	He3Jfr1r0rjVIgVZEkTFwRMKh1l0bn7qTy7L48I6tREsNzcAUYRs7e6csQ==
+X-Google-Smtp-Source: AGHT+IFwsW3hWWkrZhat9jTx1KbBCXiKdjnnJHyxOrO7nVUQPwqBVuJ0EcOgH4GNBq8+SxQHgTyi9A==
+X-Received: by 2002:a05:6808:2004:b0:3d5:4213:82a0 with SMTP id 5614622812f47-3d6b4de241fmr10476108b6e.45.1719868521304;
+        Mon, 01 Jul 2024 14:15:21 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-72c69b54d31sm5446722a12.19.2024.07.01.14.15.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 14:15:20 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Mon, 1 Jul 2024 14:15:19 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Linux 6.10-rc6
+Message-ID: <096d3129-0160-42b0-aa56-a27c6d19e44b@roeck-us.net>
+References: <CAHk-=wgQMOscLeeA3QXOs97xOz_CTxdqJjpC20tJ-7bUdHWtSA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240701115237.371020-1-quic_ekangupt@quicinc.com>
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: HqkJdt__v4n6MqYmO8Okb7QNv-n4h4Uz
-X-Proofpoint-ORIG-GUID: HqkJdt__v4n6MqYmO8Okb7QNv-n4h4Uz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-01_21,2024-07-01_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- priorityscore=1501 bulkscore=0 phishscore=0 spamscore=0 lowpriorityscore=0
- impostorscore=0 mlxscore=0 malwarescore=0 clxscore=1011 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2407010157
+In-Reply-To: <CAHk-=wgQMOscLeeA3QXOs97xOz_CTxdqJjpC20tJ-7bUdHWtSA@mail.gmail.com>
 
-On Mon, Jul 01, 2024 at 05:22:37PM +0530, Ekansh Gupta wrote:
-> For user PD initialization, initmem is allocated and sent to DSP for
-> initial memory requirements like shell loading. This size is passed
-> by user space and is checked against a max size.
-
-Why does fastrpc_init_create_process() allocate 4x the passed value and
-why is the value rounded up to INIT_FILELEN_MAX?
-
-> For unsigned PD
-> offloading requirement, more than 2MB size could be passed by user
-> which would result in PD initialization failure. Increase the maximum
-> size that can be passed py user for user PD initmem allocation.
-
-Sounds good, but why not 2.1MB or a rounder arbitrary value of 8 or 16?
-
-What is actually expected to fit in this initial memory? Is it the shell
-that has grown beyond 2MB?
-
-Also, s/py/by
-
-> Any
-> additional memory sent to DSP during PD init is used as the PD heap.
+On Sun, Jun 30, 2024 at 02:55:16PM -0700, Linus Torvalds wrote:
+> This release continues to be fairly calm, and rc6 looks pretty small.
+> It's also entirely just random small fixes spread all over, with no
+> bigger pattern.
+> 
+> Mostly drivers, but we've got some random arch fixlets from Arnd
+> (mostly compat syscall stuff), we've got some filesystem fixes (yes,
+> bcachefs again), some bpf stuff with selftests etc.
+> 
+> Nothing really stands out, with the possible exception of a series of
+> tty/serial reverts ("not ready yet, revert and we'll try again
+> later").
 > 
 
-Does this mean that the initmem is used for shell loading and initial
-heap, and if more heap is needed after that the DSP can request more
-memory? Related to the question in v2, how is this memory accounted for?
+Build results:
+	total: 158 pass: 158 fail: 0
+Qemu test results:
+	total: 532 pass: 532 fail: 0
+Unit test results:
+	pass: 272796 fail: 0
 
-What would it mean that init.filefd != 0 in
-fastrpc_init_create_process(), will that pre-allocated memory (which was
-allocated without any size checks afaict) then be used for the same
-purpose? Why is a buffer of 4x the size of initfd then also allocated
-and mapped to the DSP?
+Ok, I admit, I am cheating: This is for v6.10-rc6-41-g9903efbddba0,
+where the parisc build failure seen in v6.10-rc6 has been fixed.
 
-
-Could you please send a patch adding some comments documenting these
-things, the steps taken to create a new process, and what the 6
-arguments built in fastrpc_init_create_process() actually means?
-
-
-Perhaps I'm just failing to read the answers already in the
-implementation, if so I'm sorry.
-
-Regards,
-Bjorn
-
-> Fixes: 7f1f481263c3 ("misc: fastrpc: check before loading process to the DSP")
-> Cc: stable <stable@kernel.org>
-> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
-> ---
-> Changes in v2:
->   - Modified commit text.
->   - Removed size check instead of updating max file size.
-> Changes in v3:
->   - Added bound check again with a higher max size definition.
->   - Modified commit text accordingly.
-> 
->  drivers/misc/fastrpc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-> index 5204fda51da3..11a230af0b10 100644
-> --- a/drivers/misc/fastrpc.c
-> +++ b/drivers/misc/fastrpc.c
-> @@ -38,7 +38,7 @@
->  #define FASTRPC_INIT_HANDLE	1
->  #define FASTRPC_DSP_UTILITIES_HANDLE	2
->  #define FASTRPC_CTXID_MASK (0xFF0)
-> -#define INIT_FILELEN_MAX (2 * 1024 * 1024)
-> +#define INIT_FILELEN_MAX (5 * 1024 * 1024)
->  #define INIT_FILE_NAMELEN_MAX (128)
->  #define FASTRPC_DEVICE_NAME	"fastrpc"
->  
-> -- 
-> 2.34.1
-> 
-> 
-> 
+Guenter
 
