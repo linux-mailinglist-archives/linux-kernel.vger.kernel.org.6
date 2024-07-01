@@ -1,158 +1,295 @@
-Return-Path: <linux-kernel+bounces-235671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3B5B91D82F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:42:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BCB7491D832
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:43:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B9D21F232D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 06:42:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 479061F222B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 06:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74E84C634;
-	Mon,  1 Jul 2024 06:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4D852F70;
+	Mon,  1 Jul 2024 06:43:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="w6fJcxG6"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cZx/mn+d";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="PCrSfyiq";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="QBRrC09v";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="n2fWQk2j"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44B94A0F;
-	Mon,  1 Jul 2024 06:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19AD01EB39;
+	Mon,  1 Jul 2024 06:43:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719816140; cv=none; b=lbk2/szTw9hWLZpe2PSLYUqUlAs0y+qVBdf+XsKpqMnio6K7W5jHkZff2DcrUGBY6UK0BXAR0+QG/GP4xojQiPXyjprNmZHXdCt9MYheddCHrBZWN31uJUdt3VFh3cc7G5Gl9tXgue2obMOHPiDxWBAHz80QI46mOkWXW8sJLGw=
+	t=1719816221; cv=none; b=KoDOreaOI6OqeaQGaqvKkPlul5+/VX2X0HO2QCQXsBAVoXEmBRBpDPt6LMEiyKFIbSDoEryrs9PoyUMqHR6UtmN44EFBXHGS7xff0eOBaf93WLMhguTBqzmr68wKdvmCuO6z6g8GNqSCv5ufR2kUgQUGQsPFqliqH1fAtbWCmCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719816140; c=relaxed/simple;
-	bh=+L1gLhPWyiXil0aU/u4hnfAZuN8j6AatG/NJUGyBWYQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=gBiXN7MOSz6dqozYPELJQG0/26bYx7afwQ4VNL4ujV+mQj26UUr6TknkWW9u65Ycki6NjUP7lkPdJEVB2+s+hQeyEEyeX5SdYL8DvQv+LfRt3vKltFs881ax15th6skfA+z6XqVf7YFWYBeQzUbWMglK9DBMrLgCs8kiagPOmS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=w6fJcxG6; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1719816128; h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
-	bh=xC5V9FxBvzJbpDR6tzK42w9tfK3G4dB8HG8E1rfAlg8=;
-	b=w6fJcxG6n154X855fSDQ3sHND/vYniqhxVFCQGWpP5TAUghI9IV5FjIj6tqCbMTCbjLQDjjvhcPtBLTVcEfH2piH8jMsd5bsb+P6pvNd0o+xe6xS4JTs8vF35QIHfqDbvfgvo8EQBTwb7jME88igKwrdN8CCldLJ3No8wEnM9M0=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=wodemia@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0W9agurl_1719816125;
-Received: from localhost.localdomain(mailfrom:wodemia@linux.alibaba.com fp:SMTPD_---0W9agurl_1719816125)
-          by smtp.aliyun-inc.com;
-          Mon, 01 Jul 2024 14:42:08 +0800
-From: Tao Zou <wodemia@linux.alibaba.com>
-To: Alex Shi <alexs@kernel.org>,
-	Yanteng Si <siyanteng@loongson.cn>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Tao Zou <wodemia@linux.alibaba.com>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5] zh_CN/admin-guide: Add zh_CN/admin-guide/numastat.rst translation document
-Date: Mon,  1 Jul 2024 14:41:53 +0800
-Message-Id: <20240701064153.62303-1-wodemia@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	s=arc-20240116; t=1719816221; c=relaxed/simple;
+	bh=5qnOCWfOErjfZWoriSn33e8IRH+pdlFj0WbdWgsiXuo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cYUQ4prpeRdg/FA4Ao7nwMeAYMDvbny9HuA1JCrKpsfuNnMrDVBTQPT0WwKxeQXX2jXK8Vc+6kSolvHGAncJI8DVyb/Iy8lA72EAY2OhS7/hfYiDdH9OC3E8mZlfIH2Z/qVyw+YVFPw7nRBeEbRPNpNLHffWVhCe9timrh/1JDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cZx/mn+d; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=PCrSfyiq; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=QBRrC09v; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=n2fWQk2j; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 2F1E21F8CC;
+	Mon,  1 Jul 2024 06:43:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1719816218; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=io+vHh/wENzYYopWBqwKu+pSriO7/Za5mn1v17FgrIY=;
+	b=cZx/mn+dLq2Mzn1BIwTi0bdAgUwlhHx8N4G/2nUeA2kOpHcAgiNux3roxDK9Kw8oC2lfvv
+	vNGsxUA4sVRVg/4C5D6KOwAqk0VSxSLcbRKWjlRUNhZaxJRIeG2h3HXDpYP6e/fZEwnqBH
+	BZJ9YNb8M9IN3ooKejkG56N9r6eR0X4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1719816218;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=io+vHh/wENzYYopWBqwKu+pSriO7/Za5mn1v17FgrIY=;
+	b=PCrSfyiqDff4THtn+h5XqzfMJZJMMUeX42I7XzSkJflto40fFZbVLJdBDKx9LGRV84jHVO
+	gUAH+we3QK+O2lDQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1719816216; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=io+vHh/wENzYYopWBqwKu+pSriO7/Za5mn1v17FgrIY=;
+	b=QBRrC09v1q/fTaTfHjNChQriSQ+AYa0q8kBBmX6PaI0FNErPhu8nmu7ysh0s/0pP13Z0Mo
+	a4A+2AVP5oyubKftakCAradC3sNkqpz6svhpBuwXz0Bk7557bh/M93GP1yY5a/bkpitgy1
+	dCJqEo5L4KCn9t6xJQfyhgq3/bEVt00=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1719816216;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=io+vHh/wENzYYopWBqwKu+pSriO7/Za5mn1v17FgrIY=;
+	b=n2fWQk2jZ04OskWKHSwDZ4CzNySI5LTNRq0A6gQHN8d/vJCGjgTIrNkEXwChZmkJDrXiuR
+	SE56tS3/wiFijpAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2BB7213800;
+	Mon,  1 Jul 2024 06:43:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id HL4HBRdQgmYrYwAAD6G6ig
+	(envelope-from <hare@suse.de>); Mon, 01 Jul 2024 06:43:35 +0000
+Message-ID: <1a1a4684-a55d-4c27-8509-9bf61408872f@suse.de>
+Date: Mon, 1 Jul 2024 08:43:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] lib/group_cpus.c: honor housekeeping config when
+ grouping CPUs
+Content-Language: en-US
+To: Ming Lei <ming.lei@redhat.com>, Daniel Wagner <dwagner@suse.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
+ Sagi Grimberg <sagi@grimberg.me>, Thomas Gleixner <tglx@linutronix.de>,
+ Christoph Hellwig <hch@lst.de>, Frederic Weisbecker <fweisbecker@suse.com>,
+ Mel Gorman <mgorman@suse.de>,
+ Sridhar Balaraman <sbalaraman@parallelwireless.com>,
+ "brookxu.cn" <brookxu.cn@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-block@vger.kernel.org, linux-nvme@lists.infradead.org
+References: <20240627-isolcpus-io-queues-v2-0-26a32e3c4f75@suse.de>
+ <20240627-isolcpus-io-queues-v2-3-26a32e3c4f75@suse.de>
+ <ZoIPzQNEsUWOWp3f@fedora>
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <ZoIPzQNEsUWOWp3f@fedora>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Spam-Score: -2.79
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-2.79 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	TAGGED_RCPT(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.dk,kernel.org,grimberg.me,linutronix.de,lst.de,suse.com,suse.de,parallelwireless.com,gmail.com,vger.kernel.org,lists.infradead.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email]
 
-Add translation zh_CN/admin-guide/numastat.rst and link it to
-zh_CN/admin-guide/index.rst while clean its todo entry.
+On 7/1/24 04:09, Ming Lei wrote:
+> On Thu, Jun 27, 2024 at 04:10:53PM +0200, Daniel Wagner wrote:
+>> group_cpus_evenly distributes all present CPUs into groups. This ignores
+>> the isolcpus configuration and assigns isolated CPUs into the groups.
+>>
+>> Make group_cpus_evenly aware of isolcpus configuration and use the
+>> housekeeping CPU mask as base for distributing the available CPUs into
+>> groups.
+>>
+>> Fixes: 11ea68f553e2 ("genirq, sched/isolation: Isolate from handling managed interrupts")
+>> Signed-off-by: Daniel Wagner <dwagner@suse.de>
+>> ---
+>>   lib/group_cpus.c | 75 ++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+>>   1 file changed, 73 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/lib/group_cpus.c b/lib/group_cpus.c
+>> index ee272c4cefcc..19fb7186f9d4 100644
+>> --- a/lib/group_cpus.c
+>> +++ b/lib/group_cpus.c
+>> @@ -8,6 +8,7 @@
+>>   #include <linux/cpu.h>
+>>   #include <linux/sort.h>
+>>   #include <linux/group_cpus.h>
+>> +#include <linux/sched/isolation.h>
+>>   
+>>   #ifdef CONFIG_SMP
+>>   
+>> @@ -330,7 +331,7 @@ static int __group_cpus_evenly(unsigned int startgrp, unsigned int numgrps,
+>>   }
+>>   
+>>   /**
+>> - * group_cpus_evenly - Group all CPUs evenly per NUMA/CPU locality
+>> + * group_possible_cpus_evenly - Group all CPUs evenly per NUMA/CPU locality
+>>    * @numgrps: number of groups
+>>    *
+>>    * Return: cpumask array if successful, NULL otherwise. And each element
+>> @@ -344,7 +345,7 @@ static int __group_cpus_evenly(unsigned int startgrp, unsigned int numgrps,
+>>    * We guarantee in the resulted grouping that all CPUs are covered, and
+>>    * no same CPU is assigned to multiple groups
+>>    */
+>> -struct cpumask *group_cpus_evenly(unsigned int numgrps)
+>> +static struct cpumask *group_possible_cpus_evenly(unsigned int numgrps)
+>>   {
+>>   	unsigned int curgrp = 0, nr_present = 0, nr_others = 0;
+>>   	cpumask_var_t *node_to_cpumask;
+>> @@ -423,6 +424,76 @@ struct cpumask *group_cpus_evenly(unsigned int numgrps)
+>>   	}
+>>   	return masks;
+>>   }
+>> +
+>> +/**
+>> + * group_mask_cpus_evenly - Group all CPUs evenly per NUMA/CPU locality
+>> + * @numgrps: number of groups
+>> + * @cpu_mask: CPU to consider for the grouping
+>> + *
+>> + * Return: cpumask array if successful, NULL otherwise. And each element
+>> + * includes CPUs assigned to this group.
+>> + *
+>> + * Try to put close CPUs from viewpoint of CPU and NUMA locality into
+>> + * same group. Allocate present CPUs on these groups evenly.
+>> + */
+>> +static struct cpumask *group_mask_cpus_evenly(unsigned int numgrps,
+>> +					      const struct cpumask *cpu_mask)
+>> +{
+>> +	cpumask_var_t *node_to_cpumask;
+>> +	cpumask_var_t nmsk;
+>> +	int ret = -ENOMEM;
+>> +	struct cpumask *masks = NULL;
+>> +
+>> +	if (!zalloc_cpumask_var(&nmsk, GFP_KERNEL))
+>> +		return NULL;
+>> +
+>> +	node_to_cpumask = alloc_node_to_cpumask();
+>> +	if (!node_to_cpumask)
+>> +		goto fail_nmsk;
+>> +
+>> +	masks = kcalloc(numgrps, sizeof(*masks), GFP_KERNEL);
+>> +	if (!masks)
+>> +		goto fail_node_to_cpumask;
+>> +
+>> +	build_node_to_cpumask(node_to_cpumask);
+>> +
+>> +	ret = __group_cpus_evenly(0, numgrps, node_to_cpumask, cpu_mask, nmsk,
+>> +				  masks);
+>> +
+>> +fail_node_to_cpumask:
+>> +	free_node_to_cpumask(node_to_cpumask);
+>> +
+>> +fail_nmsk:
+>> +	free_cpumask_var(nmsk);
+>> +	if (ret < 0) {
+>> +		kfree(masks);
+>> +		return NULL;
+>> +	}
+>> +	return masks;
+>> +}
+>> +
+>> +/**
+>> + * group_cpus_evenly - Group all CPUs evenly per NUMA/CPU locality
+>> + * @numgrps: number of groups
+>> + *
+>> + * Return: cpumask array if successful, NULL otherwise.
+>> + *
+>> + * group_possible_cpus_evently() is used for distributing the cpus on all
+>> + * possible cpus in absence of isolcpus command line argument.
+>> + * group_mask_cpu_evenly() is used when the isolcpus command line
+>> + * argument is used with managed_irq option. In this case only the
+>> + * housekeeping CPUs are considered.
+>> + */
+>> +struct cpumask *group_cpus_evenly(unsigned int numgrps)
+>> +{
+>> +	const struct cpumask *hk_mask;
+>> +
+>> +	hk_mask = housekeeping_cpumask(HK_TYPE_MANAGED_IRQ);
+>> +	if (!cpumask_empty(hk_mask))
+>> +		return group_mask_cpus_evenly(numgrps, hk_mask);
+>> +
+>> +	return group_possible_cpus_evenly(numgrps);
+> 
+> Since this patch, some isolated CPUs may not be covered in
+> blk-mq queue mapping.
+> 
+> Meantime people still may submit IO workload from isolated CPUs
+> such as by 'taskset -c', blk-mq may not work well for this situation,
+> for example, IO hang may be caused during cpu hotplug.
+> 
+> I did see this kind of usage in some RH Openshift workloads.
+> 
+> If blk-mq problem can be solved, I am fine with this kind of
+> change.
+> 
+That was kinda the idea of this patchset; when 'isolcpus' is active any 
+in-kernel driver can only run on the housekeeping CPUs, and I/O from the 
+isolcpus is impossible.
+(Otherwise they won't be isolated anymore, and the whole concepts 
+becomes ever so shaky.).
+Consequently we should not spread blk-mq onto the isolcpus (which is 
+what this patchset attempts). We do need to check how we could inhibit 
+I/O from the isolcpus, though; not sure if we do that now.
+Something we need to check.
 
-commit 77691ee92d4a ("Documentation: update numastat explanation")
+Cheers,
 
-Signed-off-by: Tao Zou <wodemia@linux.alibaba.com>
-Reviewed-by: Yanteng Si <siyanteng@loongson.cn>
-Reviewed-by: Alex Shi <alexs@kernel.org>
----
-v4->v5: fix one typo error
-v3->v4: replace "在有无内存节点" with "在包含无内存节点"
-v2->v3: add space in origin commit tag
-v1->v2: drop the useless label "+.. _cn_numastat:" and unnecessary "=",
-	add a commit tag of origin document in commit description
-
- .../translations/zh_CN/admin-guide/index.rst  |  2 +-
- .../zh_CN/admin-guide/numastat.rst            | 48 +++++++++++++++++++
- 2 files changed, 49 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/translations/zh_CN/admin-guide/numastat.rst
-
-diff --git a/Documentation/translations/zh_CN/admin-guide/index.rst b/Documentation/translations/zh_CN/admin-guide/index.rst
-index ac2960da33e6..0db80ab830a0 100644
---- a/Documentation/translations/zh_CN/admin-guide/index.rst
-+++ b/Documentation/translations/zh_CN/admin-guide/index.rst
-@@ -68,6 +68,7 @@ Todolist:
-    cpu-load
-    cputopology
-    lockup-watchdogs
-+   numastat
-    unicode
-    sysrq
-    mm/index
-@@ -109,7 +110,6 @@ Todolist:
- *   module-signing
- *   mono
- *   namespaces/index
--*   numastat
- *   parport
- *   perf-security
- *   pm/index
-diff --git a/Documentation/translations/zh_CN/admin-guide/numastat.rst b/Documentation/translations/zh_CN/admin-guide/numastat.rst
-new file mode 100644
-index 000000000000..4d9817b91870
---- /dev/null
-+++ b/Documentation/translations/zh_CN/admin-guide/numastat.rst
-@@ -0,0 +1,48 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+.. include:: ../disclaimer-zh_CN.rst
-+
-+:Original: Documentation/admin-guide/numastat.rst
-+:Translator: Tao Zou <wodemia@linux.alibaba.com>
-+
-+
-+=======================
-+Numa策略命中/未命中统计
-+=======================
-+
-+/sys/devices/system/node/node*/numastat
-+
-+所有数据的单位都是页面。巨页有独立的计数器。
-+
-+numa_hit、numa_miss和numa_foreign计数器反映了进程是否能够在他们偏好的节点上分配内存。
-+如果进程成功在偏好的节点上分配内存则在偏好的节点上增加numa_hit计数，否则在偏好的节点上增
-+加numa_foreign计数同时在实际内存分配的节点上增加numa_miss计数。
-+
-+通常，偏好的节点是进程运行所在的CPU的本地节点，但是一些限制可以改变这一行为，比如内存策略，
-+因此同样有两个基于CPU本地节点的计数器。local_node和numa_hit类似，当在CPU所在的节点上分
-+配内存时增加local_node计数，other_node和numa_miss类似，当在CPU所在节点之外的其他节点
-+上成功分配内存时增加other_node计数。需要注意，没有和numa_foreign对应的计数器。
-+
-+更多细节内容:
-+
-+=============== ============================================================
-+numa_hit        一个进程想要从本节点分配内存并且成功。
-+
-+numa_miss       一个进程想要从其他节点分配内存但是最终在本节点完成内存分配。
-+
-+numa_foreign    一个进程想要在本节点分配内存但是最终在其他节点完成内存分配。
-+
-+local_node      一个进程运行在本节点的CPU上并且从本节点上获得了内存。
-+
-+other_node      一个进程运行在其他节点的CPU上但是在本节点上获得了内存。
-+
-+interleave_hit  内存交叉分配策略下想要从本节点分配内存并且成功。
-+=============== ============================================================
-+
-+你可以使用numactl软件包（http://oss.sgi.com/projects/libnuma/）中的numastat工具
-+来辅助阅读。需要注意，numastat工具目前只在有少量CPU的机器上运行良好。
-+
-+需要注意，在包含无内存节点（一个节点有CPUs但是没有内存）的系统中numa_hit、numa_miss和
-+numa_foreign统计数据会被严重曲解。在当前的内核实现中，如果一个进程偏好一个无内存节点（即
-+进程正在该节点的一个本地CPU上运行），实际上会从距离最近的有内存节点中挑选一个作为偏好节点。
-+结果会导致相应的内存分配不会增加无内存节点上的numa_foreign计数器，并且会扭曲最近节点上的
-+numa_hit、numa_miss和numa_foreign统计数据。
+Hannes
 -- 
-2.39.3 (Apple Git-146)
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
 
