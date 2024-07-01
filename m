@@ -1,123 +1,224 @@
-Return-Path: <linux-kernel+bounces-235413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0BBB91D4CA
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 01:43:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66AFF91D4CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 02:02:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45C611F2120B
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Jun 2024 23:43:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53B4E1C20ACB
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 00:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F5B7BB0A;
-	Sun, 30 Jun 2024 23:43:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C5610F9;
+	Mon,  1 Jul 2024 00:02:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="s2LYvG3D"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aDXfrCLr"
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3EC4433DC
-	for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 23:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59327387
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 00:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719791004; cv=none; b=rKuwj9jKr2vvvn6mHLfnkts315sGAIJCqvKpE3Au4+/a7Zp9yjRG7/V1YrH7nvRsOW27kLj70m3n/9ypETLpYpW4WTF4q2oN9gciLlr8x6ID/3u5d88A/YAr6Ttgs6CU//DaBOlQaGfSq8Ba0zOVTz5XJMFufbMj0f9VrPafbpQ=
+	t=1719792149; cv=none; b=NgB9jThJGLqAKW+DODpSSLX7Dk70kFzZpwy8hl2pN0wMfyNFvl3jE900LL1vL4N694Ib7DjzmBfixAZCVK6bDwpCz2rqKI69CPPOsSVWsNgcZGEeen6oGhMnmsf2TneqGXTHGbyZsacNo9E0fNMpCiz3EJesEbc51roiakR9d9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719791004; c=relaxed/simple;
-	bh=dQeSb5HUW7PzZSG5/RZUjMe9QcWragkoEU+5VJR1etM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=C5/ztayWBaNXTD23QYu82hdSrDVYBk+R9VGupQBI9ZTxcMX5d+I6SlFgTyg//byo6kR34hCuBKfcsSxLzN+eBnZ7TFWX6aqpGt/8WA3nS+d5raVoZisHfkjk92FmkgjgxRG5xMIXbn7lYHg13/ISO3nllrGuROnMk/IQcpCVqDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=s2LYvG3D; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 567BE2C0659;
-	Mon,  1 Jul 2024 11:43:20 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1719791000;
-	bh=dQeSb5HUW7PzZSG5/RZUjMe9QcWragkoEU+5VJR1etM=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=s2LYvG3DxXDJNGnpVBFlQtZLkYk6CA7WvsT5RILhx4q7J/I55IAPtXIk8YAhptnU3
-	 +VQ6XqBBx+bHgckvO+KBcFOfXDtrabcxl9RlK8k2ivXZQ4KutxslSH3HA49ZWhEE0O
-	 sl7mJ5M/RsrCHdjQbZrbpdNk1mvDCFcSFJbDJhEeKKkn/iIluNxIekS10wqUdIgGTR
-	 TAdGxi0AfG5JRPgC56rUdta3NwpDHtFagTS+eqBqS9onm+WA76syDDXosyyGR42TDQ
-	 6OmdXUAjWPaiiasG+ui9NYQXTVx94Z9wUSigMopLYhZuIsePJKbNGjE+3ZuAHpZzaK
-	 q+me/VUGvRw0w==
-Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B6681ed980001>; Mon, 01 Jul 2024 11:43:20 +1200
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
- svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.1544.11; Mon, 1 Jul 2024 11:43:20 +1200
-Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
- svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with Microsoft
- SMTP Server (TLS) id 15.0.1497.48; Mon, 1 Jul 2024 11:43:19 +1200
-Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
- svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
- 15.02.1544.011; Mon, 1 Jul 2024 11:43:19 +1200
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: Rob Herring <robh@kernel.org>
-CC: "tglx@linutronix.de" <tglx@linutronix.de>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"tsbogend@alpha.franken.de" <tsbogend@alpha.franken.de>,
-	"daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-	"paulburton@kernel.org" <paulburton@kernel.org>, "peterz@infradead.org"
-	<peterz@infradead.org>, "mail@birger-koblitz.de" <mail@birger-koblitz.de>,
-	"bert@biot.com" <bert@biot.com>, "john@phrozen.org" <john@phrozen.org>,
-	"sander@svanheule.net" <sander@svanheule.net>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-mips@vger.kernel.org"
-	<linux-mips@vger.kernel.org>, "kabel@kernel.org" <kabel@kernel.org>,
-	"ericwouds@gmail.com" <ericwouds@gmail.com>
-Subject: Re: [PATCH v3 0/9] mips: Support for RTL9302C
-Thread-Topic: [PATCH v3 0/9] mips: Support for RTL9302C
-Thread-Index: AQHayEskNTyKeYqN80i0yhPI3N/Ix7Ha5qwAgAVOJYA=
-Date: Sun, 30 Jun 2024 23:43:19 +0000
-Message-ID: <68a574c0-2775-4275-b590-b7f362ae3885@alliedtelesis.co.nz>
-References: <20240627043317.3751996-1-chris.packham@alliedtelesis.co.nz>
- <CAL_Jsq+1M47kRb5xELSqroPLbava4TJkiLjDT8er0=iiBmutfw@mail.gmail.com>
-In-Reply-To: <CAL_Jsq+1M47kRb5xELSqroPLbava4TJkiLjDT8er0=iiBmutfw@mail.gmail.com>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <2409619D9F17424C9145CE4DA7C6D3F2@atlnz.lc>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1719792149; c=relaxed/simple;
+	bh=NbgkfrTDAiPMFVVs0YSeT9ayus6njpTHVQtt6B8eRv8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dj2/geH9igHIRdT9CGgN83YPfGKYSKgRixRltxSt+qJ8IpuFpjOFEmMt4no7YYzO/M7oW5IJwcKfKaBHV/t68C7xvQYHYSe0AK5LGel/fwkSzc5fRlUyUXM7R9611cLb9x10UnHs2UyCQGegZFxS91xn6j/I9MXRojEM93qhCUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aDXfrCLr; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-4ef5f4e3f56so768767e0c.3
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 17:02:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719792145; x=1720396945; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bhN9AvD496DDfdjwo2Jpu2JMzYfWFg3K+lNbZSu8nz0=;
+        b=aDXfrCLrrz7BVYZReKrHtqYIberssV2zlyF+ITBlzS8vN06+DUQNs6rDQYC9M84SPo
+         TgU+qHh0gfPHjpbVrQgtf0xqkKesfqyN8Sk/Of4yI7L5XYxCKAapwNpj2zwqWHR5wukg
+         0qxPrJJkdhb/5yS82DUtKmQakmvHttN85TZLmW0l4C9s0DPq34ViF13a3gC5H1DdJX95
+         8/6NY1vx2oZHFsdCLscl6br+18LT4cSe4ca1pdFgcWjmDcd432AslKm8uEIvJgpNzR8m
+         /nkPlWjkLvIogi0LBGmK+fkgNip9QeFqCozWldnHs5+hj8W6e2YulbNH1WLMWr3tanh5
+         puZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719792145; x=1720396945;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bhN9AvD496DDfdjwo2Jpu2JMzYfWFg3K+lNbZSu8nz0=;
+        b=MGzFZ/75PuQmBVuVx8JIOkqgjPjkRzypFT8vDehdno5DN9cipS+PyZQHYXTzeB1vmT
+         HtggLiiE2eoaZI8XhJKOa1MTBzQ8fSXpB3AmNDebf50XoEVvEjLIQnuvHeyouErFb4vC
+         ST+qktwIYkaxH4tGaLRgv5yjSIoRvUPlpbkD/yCoFgwqkRUIUkpN59AugdFajoLIUZvV
+         YWst85/X9wgi9CxjvH1DldWSUOXkNPAXftTcV6T8MTwG/vlD3pzA3OXxkByssXgGWE+w
+         evqLil4DA74FBueZF2YVyGtvu35cwXZY4RxSlSK0C0cWRQKDkjA1U7ks0onqADdxV+2o
+         QcTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlfmfV4GWsS21FUSSXMcyToRfeIKhtsLP2TPjiLXne7l5fHz3kzEHgY0Wrd94gFn9PhtwL7pdfGSIyQNehctObA4g/trVC6IEkzBK3
+X-Gm-Message-State: AOJu0YwVh4Y++lCDm1MaTcDTx/cPiKIXNk9y3EP1YqFY6WSNvCAGtFvy
+	blXxDMPG15R5wUDsUNjwCOOmHFLlBo530AOP6bTNC9gRIYzKPpNQ+ZGbWSPGHkdE6+PGx5ZWYNo
+	LENCFENevYdJXsXSThqgDUDfANWU=
+X-Google-Smtp-Source: AGHT+IFkYOZAIccehM4mD5dWvZy3ssCMdsjnZYfbVnoRIM94K1dOA5MX7p4didYbA0msMSHMQoipe2OMdh8UBaXpttc=
+X-Received: by 2002:a05:6122:1b85:b0:4ef:6b47:3570 with SMTP id
+ 71dfb90a1353d-4f2a56addcbmr5108954e0c.8.1719792145192; Sun, 30 Jun 2024
+ 17:02:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=CvQccW4D c=1 sm=1 tr=0 ts=6681ed98 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=JeTaMc2W5e4oDVImXegA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-SEG-SpamProfiler-Score: 0
+References: <20240628130750.73097-1-ioworker0@gmail.com> <20240628130750.73097-2-ioworker0@gmail.com>
+In-Reply-To: <20240628130750.73097-2-ioworker0@gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Mon, 1 Jul 2024 12:02:14 +1200
+Message-ID: <CAGsJ_4yF6ucmLpMpdfjEgZXB6CP7vQkidqfugsmo1vGiaUb97g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] mm: add per-order mTHP split counters
+To: Lance Yang <ioworker0@gmail.com>
+Cc: akpm@linux-foundation.org, dj456119@gmail.com, ryan.roberts@arm.com, 
+	david@redhat.com, shy828301@gmail.com, ziy@nvidia.com, libang.li@antgroup.com, 
+	baolin.wang@linux.alibaba.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, Mingzhe Yang <mingzhe.yang@ly.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-DQpPbiAyOC8wNi8yNCAwMjo0MiwgUm9iIEhlcnJpbmcgd3JvdGU6DQo+IE9uIFdlZCwgSnVuIDI2
-LCAyMDI0IGF0IDEwOjMz4oCvUE0gQ2hyaXMgUGFja2hhbQ0KPiA8Y2hyaXMucGFja2hhbUBhbGxp
-ZWR0ZWxlc2lzLmNvLm56PiB3cm90ZToNCj4+IFRoaXMgc2VyaWVzIGFkZHMgYmFzaWMgc3VwcG9y
-dCBmb3IgdGhlIFJUTDkzMDJDIHJlZmVyZW5jZSBib2FyZC4gQ3VycmVudGx5IHRoZQ0KPj4gZm9j
-dXMgaXMgb24gdGhlIENQVSBibG9jayBzdHVmZi4gSSBob3BlIHRvIGdldCBhcm91bmQgdG8gdGhl
-IERTQSBzd2l0Y2ggZHJpdmVyDQo+PiBldmVudHVhbGx5IGJ1dCB0aGlzIGlzIGEgc21hbGwgc3Rh
-cnQgdGhhdCBsZXRzIG1lIGJvb3QgYSBtYWlubGluZSBrZXJuZWwgb24gdGhlDQo+PiBib2FyZCBJ
-IGhhdmUuIEkgaW5pdGlhbGl5IHN0YXJ0ZWQgd2l0aCBjb2RlIGZyb20gb3BlbndydCBidXQgaGF2
-ZSBwYWlyZWQgaXQNCj4+IGRvd24gdG8ganVzdCB0aGUgY2xvY2tzb3VyY2UgZHJpdmVyIGFuZCBk
-ZXZpY2V0cmVlLg0KPiBZb3VyIGVtYWlscyBhcmUgYmVpbmcgc2VudCBhcyBxdW90ZWQtcHJpbnRh
-YmxlIGVuY29kaW5nIHdoaWNoIGlzDQo+IGdlbmVyYWxseSBwcmVmZXJyZWQgdG8gYmUgYXZvaWRl
-ZCBvbiBtYWlsbGlzdHMgKGFzIGlzIGJhc2U2NCkuDQo+IGdpdC1zZW5kLWVtYWlsIHNob3VsZCBu
-b3JtYWxseSB1c2UgOC1iaXQgZW5jb2RpbmcsIGJ1dCB0aGUgbWFuIHBhZ2UNCj4gaW5kaWNhdGVz
-IFFQIG1heSBiZSB1c2VkIGlmIHRoZXJlIGFyZSBjYXJyaWFnZSByZXR1cm5zICh0aGVyZQ0KPiBz
-aG91bGRuJ3QgYmUpLg0KDQpIbW0gaGVyZSdzIHRoZSBvdXRwdXQgZnJvbSB3aGVuIEkgc2VudCB0
-aGlzIHNlcmllcy4NCg0KU3ViamVjdDogW1BBVENIIHYzIDAvOV0gbWlwczogU3VwcG9ydCBmb3Ig
-UlRMOTMwMkMNCkRhdGU6IFRodSwgMjcgSnVuIDIwMjQgMTY6MzM6MDggKzEyMDANCk1lc3NhZ2Ut
-SUQ6IDwyMDI0MDYyNzA0MzMxNy4zNzUxOTk2LTEtY2hyaXMucGFja2hhbUBhbGxpZWR0ZWxlc2lz
-LmNvLm56Pg0KWC1NYWlsZXI6IGdpdC1zZW5kLWVtYWlsIDIuNDUuMg0KTUlNRS1WZXJzaW9uOiAx
-LjANCkNvbnRlbnQtVHJhbnNmZXItRW5jb2Rpbmc6IDhiaXQNCg0KQWxsIHRoZSBwYXRjaGVzIGFy
-ZSBhbHNvIDhiaXQuIFNvIEkgdGhpbmsgZ2l0IGNob3NlIHRoZSByaWdodCB0aGluZy4NCg0KSSBk
-byBrZWVwIG5lZWRpbmcgdG8gY29udmluY2UgVGh1bmRlcmJpcmQgdG8gc2VuZCBteSByZXBsaWVz
-IGFzIHBsYWluIA0KdGV4dC4gT2NjYXNpb25hbGx5IEkgZm9yZ2V0IGFuZCB2Z2VyIGNvbXBsYWlu
-cyBhdCBtZS4NCg==
+On Sat, Jun 29, 2024 at 1:09=E2=80=AFAM Lance Yang <ioworker0@gmail.com> wr=
+ote:
+>
+> Currently, the split counters in THP statistics no longer include
+> PTE-mapped mTHP. Therefore, we propose introducing per-order mTHP split
+> counters to monitor the frequency of mTHP splits. This will help develope=
+rs
+> better analyze and optimize system performance.
+>
+> /sys/kernel/mm/transparent_hugepage/hugepages-<size>/stats
+>         split
+>         split_failed
+>         split_deferred
+>
+> Signed-off-by: Mingzhe Yang <mingzhe.yang@ly.com>
+> Signed-off-by: Lance Yang <ioworker0@gmail.com>
+
+Personally, I'm not convinced that using a temporary variable order
+makes the code
+more readable. Functions like folio_test_pmd_mappable() seem more readable =
+to
+me. In any case, it's a minor issue.
+
+Acked-by: Barry Song <baohua@kernel.org>
+
+> ---
+>  include/linux/huge_mm.h |  3 +++
+>  mm/huge_memory.c        | 19 ++++++++++++++-----
+>  2 files changed, 17 insertions(+), 5 deletions(-)
+>
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index 212cca384d7e..cee3c5da8f0e 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -284,6 +284,9 @@ enum mthp_stat_item {
+>         MTHP_STAT_FILE_ALLOC,
+>         MTHP_STAT_FILE_FALLBACK,
+>         MTHP_STAT_FILE_FALLBACK_CHARGE,
+> +       MTHP_STAT_SPLIT,
+> +       MTHP_STAT_SPLIT_FAILED,
+> +       MTHP_STAT_SPLIT_DEFERRED,
+>         __MTHP_STAT_COUNT
+>  };
+>
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index c7ce28f6b7f3..a633206375af 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -559,6 +559,9 @@ DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPO=
+UT_FALLBACK);
+>  DEFINE_MTHP_STAT_ATTR(file_alloc, MTHP_STAT_FILE_ALLOC);
+>  DEFINE_MTHP_STAT_ATTR(file_fallback, MTHP_STAT_FILE_FALLBACK);
+>  DEFINE_MTHP_STAT_ATTR(file_fallback_charge, MTHP_STAT_FILE_FALLBACK_CHAR=
+GE);
+> +DEFINE_MTHP_STAT_ATTR(split, MTHP_STAT_SPLIT);
+> +DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLIT_FAILED);
+> +DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
+>
+>  static struct attribute *stats_attrs[] =3D {
+>         &anon_fault_alloc_attr.attr,
+> @@ -569,6 +572,9 @@ static struct attribute *stats_attrs[] =3D {
+>         &file_alloc_attr.attr,
+>         &file_fallback_attr.attr,
+>         &file_fallback_charge_attr.attr,
+> +       &split_attr.attr,
+> +       &split_failed_attr.attr,
+> +       &split_deferred_attr.attr,
+>         NULL,
+>  };
+>
+> @@ -3068,7 +3074,7 @@ int split_huge_page_to_list_to_order(struct page *p=
+age, struct list_head *list,
+>         XA_STATE_ORDER(xas, &folio->mapping->i_pages, folio->index, new_o=
+rder);
+>         struct anon_vma *anon_vma =3D NULL;
+>         struct address_space *mapping =3D NULL;
+> -       bool is_thp =3D folio_test_pmd_mappable(folio);
+> +       int order =3D folio_order(folio);
+>         int extra_pins, ret;
+>         pgoff_t end;
+>         bool is_hzp;
+> @@ -3076,7 +3082,7 @@ int split_huge_page_to_list_to_order(struct page *p=
+age, struct list_head *list,
+>         VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
+>         VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
+>
+> -       if (new_order >=3D folio_order(folio))
+> +       if (new_order >=3D order)
+>                 return -EINVAL;
+>
+>         if (folio_test_anon(folio)) {
+> @@ -3253,8 +3259,9 @@ int split_huge_page_to_list_to_order(struct page *p=
+age, struct list_head *list,
+>                 i_mmap_unlock_read(mapping);
+>  out:
+>         xas_destroy(&xas);
+> -       if (is_thp)
+> +       if (order >=3D HPAGE_PMD_ORDER)
+>                 count_vm_event(!ret ? THP_SPLIT_PAGE : THP_SPLIT_PAGE_FAI=
+LED);
+> +       count_mthp_stat(order, !ret ? MTHP_STAT_SPLIT : MTHP_STAT_SPLIT_F=
+AILED);
+>         return ret;
+>  }
+>
+> @@ -3278,13 +3285,14 @@ void deferred_split_folio(struct folio *folio)
+>  #ifdef CONFIG_MEMCG
+>         struct mem_cgroup *memcg =3D folio_memcg(folio);
+>  #endif
+> +       int order =3D folio_order(folio);
+>         unsigned long flags;
+>
+>         /*
+>          * Order 1 folios have no space for a deferred list, but we also
+>          * won't waste much memory by not adding them to the deferred lis=
+t.
+>          */
+> -       if (folio_order(folio) <=3D 1)
+> +       if (order <=3D 1)
+>                 return;
+>
+>         /*
+> @@ -3305,8 +3313,9 @@ void deferred_split_folio(struct folio *folio)
+>
+>         spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
+>         if (list_empty(&folio->_deferred_list)) {
+> -               if (folio_test_pmd_mappable(folio))
+> +               if (order >=3D HPAGE_PMD_ORDER)
+>                         count_vm_event(THP_DEFERRED_SPLIT_PAGE);
+> +               count_mthp_stat(order, MTHP_STAT_SPLIT_DEFERRED);
+>                 list_add_tail(&folio->_deferred_list, &ds_queue->split_qu=
+eue);
+>                 ds_queue->split_queue_len++;
+>  #ifdef CONFIG_MEMCG
+> --
+> 2.45.2
+>
 
