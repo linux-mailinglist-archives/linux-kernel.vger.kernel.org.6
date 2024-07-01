@@ -1,144 +1,123 @@
-Return-Path: <linux-kernel+bounces-236958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 609A091E90F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:59:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1225591E913
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 22:00:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC5011F23A64
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:59:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 116C21C22119
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD208171075;
-	Mon,  1 Jul 2024 19:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA6B16FF5F;
+	Mon,  1 Jul 2024 19:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yOtzG8WJ"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="Ua6Q1SOJ"
+Received: from mail-40135.protonmail.ch (mail-40135.protonmail.ch [185.70.40.135])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2BCA173328
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 19:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69BF416F8F5
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 19:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719863901; cv=none; b=lqYvTeVL0Ecv0ASNp95InE7HcXN2fcLExURGCha4V/jeyjiL6Oz1Rtw54trlOPg7+ygBmmPmSjlGziG2tprG/Rwt00/dTHCd8pz83zMCzEkWlZhIk+s/vXpS2zpFd+j89VcnO73SjJXp7yjDkTaCeLTlMgsLsqsOify9c5cr9mE=
+	t=1719863972; cv=none; b=Y97MtAu4/ExXYW8bt3e0IM7hHAiYy2fm1XIqRq8lNBDaqpihhbAfgm1WQKYmlvQ2W7YaM513FWT0pehLfbKb4oI+jDZ2yiX3J0LHfHOp7nPZ4xWdR+u2gB6jw3FUxNYRx1UuSF7Y1Dz30AzV+f04dXLcINm9mADoBIALOv9Noxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719863901; c=relaxed/simple;
-	bh=SGLDCCdcSGl/5KZWzQWNbQHDwV7PVlEgpPhtBzv/BHs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=mw/TQqokj7E6HmZ/azSLFZSJxO7afNdkUIRzmPZ4GaobKYWRHqhDdMrj8OQSFSQDxlLsFDNZ6e5kq6uNQpLsa6YZk78xQJJb/+wcBxSC5smtoni5OjHZr5f3WNuw/ih223sxJWx2nKFJe8YpoFAVtPF04zeTbnkchYPS+8EC8FI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ipylypiv.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yOtzG8WJ; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ipylypiv.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-64a6cda8ba1so58835607b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 12:58:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719863899; x=1720468699; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AVwwqckKyhckc77/Vm3GySk6R9oDUsxFVKO3y3cHTK8=;
-        b=yOtzG8WJEs1vUsgqA5seVUbbZlYb7arCrMoH4tcrjajgfrE5EkEnSVhTVfOBdwpa+z
-         2ckXHNdMBZ0/pPkrE76O2n4Byp1ObY0+AfZ8o9oCKo/Ns6JxpzVJt7XaNQyEWnKKFYnd
-         sV7FXQlTqKsOWOAn2kcZRAQ1apuynkiUcIm+xzOo8Y7MrjMJ5feJ7WTZSVhXV6iciwMk
-         8c0qyIyGBehCmdLfiYGo95HTtoBLzwqW9hJywwd4TD8St+8PUUL5bG5NpbgrbE13IyB+
-         MhoFaUZU0RF53nYegnbyUztzbx7zox94gw0HWMMRp6dmlgaUodsIHPtbnN2y+D62rgjy
-         Z85g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719863899; x=1720468699;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AVwwqckKyhckc77/Vm3GySk6R9oDUsxFVKO3y3cHTK8=;
-        b=Wb/x4t+W27vCydLdrqdBdK9pPbpKQq43YNhZwsZ/40Q49ghli3G772djEjFh4YSTIZ
-         rLBrRMSL9NdhFoSTUG6noCJ6mI8epcfGU2u59KarDhlYXVGvFxrV5OPrzTlR8TFvCXIJ
-         aLH3iooxFvY4BO63ywRvCjOIt0dtNbqwWNvhtza4HzZWSRPDZ5a9itvPOkUauvC1ScfU
-         RyGNqvHFHRXTFuHshG1t/sEBb0oaBUZ8bxbIvJaJdWGgUEQpXB5dORzFxcJ3DX+ktKPu
-         T/IyXbecI+ATYMw5iVn6BRXbxlqSCMMjbF7uTko0Hspj9h8dpDc3RJHJB41a1P4TyXB1
-         jMtA==
-X-Forwarded-Encrypted: i=1; AJvYcCUEq/pMjINJaYOrooO7gmhIVH6emePV8dELHZUa3+Fv5/yL7cUN/dlwjHRHKhWmiwtuH+/Ft+03i/VmvWCaTrEdhyFsTlIAIPjAdCQO
-X-Gm-Message-State: AOJu0YzgRsLLEvAGsgXnI/G9AaboN2I3YGO3/xM0alOv6wG/rkKQgoxv
-	RmJtDBFkZwWnXuqRBVoNfLr2ZJxW8MqAMCeA/78IDemT2UGBsNrk7A10v7kSxkPOUfrCo1Qdu5D
-	aiPPsjxo7+Q==
-X-Google-Smtp-Source: AGHT+IFUWN0zMur3c1eDEJteOuIigfCOtAjrWxujYZwgpJadqu5Y3EF6L0+M+Mf+VIqZA2gUeEINdCt1Ta4ZHg==
-X-Received: from ip.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:57f3])
- (user=ipylypiv job=sendgmr) by 2002:a81:6057:0:b0:64b:7bd4:1fcd with SMTP id
- 00721157ae682-64c76d2ffa9mr194767b3.5.1719863898807; Mon, 01 Jul 2024
- 12:58:18 -0700 (PDT)
-Date: Mon,  1 Jul 2024 19:57:58 +0000
-In-Reply-To: <20240701195758.1045917-1-ipylypiv@google.com>
+	s=arc-20240116; t=1719863972; c=relaxed/simple;
+	bh=AqA7XSoiga49RNa4in42qXiUyHcLPSufgPaTSG4cQCo=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tKfbu4MFrCkmKbsnkUFzuPdPtmYBtQPtYi+8H2LR6WfAzkWScQPvUDjFFRDMFBvgJH8niX6tkIrPca32sz3AdpMUmp7JJzvYFgYSDVZux1gZn32Q5XlVpFcXINvrtmo2+lVjEQzj6xiioiKVdIEZ7MMRYEWeAgfCcNlMWTLcMxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=Ua6Q1SOJ; arc=none smtp.client-ip=185.70.40.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1719863962; x=1720123162;
+	bh=LHHzOFrLVRHPhXM3cTpsKHZXSCksH5WLT0OBAgYAHgs=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=Ua6Q1SOJgp+n6fD2oSLGxkwqVwx7+c9Xr4o0P452MFU7E0vLWW3tl5iLMekSfT0nB
+	 aSbUbpWk+xqutaIuqVEYzkEbPj9hj1q/RG52uTPXGn+9wxqG4fI+Hlqmf8m9ZTiayi
+	 UPSZ9YGZkHbIWyCmw10aS+tXoQIF7Ai+Fnvwdt4Kg+X7BInSMlwM5qwGk1blaEh+3y
+	 8gMHL0FUk8Yf+K9lw79s+2cOZmkCosNb7chfP1pvvj2mUqFdBA+LAhRCmGg89zz0xk
+	 e0+F2UQ0ypzhdgly82J83y5X7n7NuV3fogDnPMpsWdijbe1pFAH+de42c1IRfq0U/A
+	 PaOPMT+O+v6qw==
+Date: Mon, 01 Jul 2024 19:59:17 +0000
+To: Miguel Ojeda <ojeda@kernel.org>
+From: =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>
+Cc: Wedson Almeida Filho <wedsonaf@gmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH 01/13] rust: macros: indent list item in `paste!`'s docs
+Message-ID: <9TYxnX2cuHc3686PNQnw2JWAXbte0llMojuko4xBdIpn1E5cQIus0_j8KGiYnTUUXzA92iglhe0EswEtgtDEKF_RKQ06s22pxzlVB9nnhxo=@protonmail.com>
+In-Reply-To: <20240701183625.665574-2-ojeda@kernel.org>
+References: <20240701183625.665574-1-ojeda@kernel.org> <20240701183625.665574-2-ojeda@kernel.org>
+Feedback-ID: 27884398:user:proton
+X-Pm-Message-ID: 5bdcc7dd4aadf6635da74163485a606716c87b10
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240701195758.1045917-1-ipylypiv@google.com>
-X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
-Message-ID: <20240701195758.1045917-9-ipylypiv@google.com>
-Subject: [PATCH v4 8/8] ata: libata-scsi: Make ata_scsi_qc_complete() more readable
-From: Igor Pylypiv <ipylypiv@google.com>
-To: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>, Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Igor Pylypiv <ipylypiv@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The ATA PASS-THROUGH handling logic in ata_scsi_qc_complete() is hard
-to read/understand. Improve the readability of the code by moving checks
-into self-explanatory boolean variables.
+On Monday, July 1st, 2024 at 20:36, Miguel Ojeda <ojeda@kernel.org> wrote:
 
-Additionally, always set SAM_STAT_CHECK_CONDITION when CK_COND=1 because
-SAT specification mandates that SATL shall return CHECK CONDITION if
-the CK_COND bit is set.
+> A new style lint, `doc_lazy_continuation` [1], has been introduced in the
+> upcoming Rust 1.80 (currently in beta), which detects missing indentation
+> in code documentation.
+>=20
+> We have one such case:
+>=20
+>     error: doc list item missing indentation
+>     --> rust/macros/lib.rs:315:5
+>         |
+>     315 | /// default the span of the `[< >]` group is used.
+>         |     ^
+>         |
+>         =3D help: if this is supposed to be its own paragraph, add a blan=
+k line
+>         =3D help: for further information visit https://rust-lang.github.=
+io/rust-clippy/master/index.html#doc_lazy_continuation
+>         =3D note: `-D clippy::doc-lazy-continuation` implied by `-D clipp=
+y::style`
+>         =3D help: to override `-D clippy::style` add `#[allow(clippy::doc=
+_lazy_continuation)]`
+>     help: indent this line
+>         |
+>     315 | ///   default the span of the `[< >]` group is used.
+>         |     ++
+>=20
+> While the rendering of the docs by `rustdoc` is not affected, we apply
+> this kind of indentation elsewhere since it looks better.
+>=20
+> Thus clean it up.
+>=20
+> Link: https://rust-lang.github.io/rust-clippy/master/index.html#/doc_lazy=
+_continuation [1]
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-Co-developed-by: Niklas Cassel <cassel@kernel.org>
-Signed-off-by: Niklas Cassel <cassel@kernel.org>
-Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
----
- drivers/ata/libata-scsi.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+Reviewed-by: Bj=C3=B6rn Roy Baron <bjorn3_gh@protonmail.com>
 
-diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-index a66c177b6087..8f21b3b0bc75 100644
---- a/drivers/ata/libata-scsi.c
-+++ b/drivers/ata/libata-scsi.c
-@@ -1659,26 +1659,27 @@ static void ata_scsi_qc_complete(struct ata_queued_cmd *qc)
- {
- 	struct scsi_cmnd *cmd = qc->scsicmd;
- 	u8 *cdb = cmd->cmnd;
--	int need_sense = (qc->err_mask != 0) &&
--		!(qc->flags & ATA_QCFLAG_SENSE_VALID);
--	int need_passthru_sense = (qc->err_mask != 0) ||
--		(qc->flags & ATA_QCFLAG_SENSE_VALID);
-+	bool have_sense = qc->flags & ATA_QCFLAG_SENSE_VALID;
-+	bool is_ata_passthru = cdb[0] == ATA_16 || cdb[0] == ATA_12;
-+	bool is_ck_cond_request = cdb[2] & 0x20;
-+	bool is_error = qc->err_mask != 0;
- 
- 	/* For ATA pass thru (SAT) commands, generate a sense block if
- 	 * user mandated it or if there's an error.  Note that if we
--	 * generate because the user forced us to [CK_COND =1], a check
-+	 * generate because the user forced us to [CK_COND=1], a check
- 	 * condition is generated and the ATA register values are returned
- 	 * whether the command completed successfully or not. If there
--	 * was no error, we use the following sense data:
-+	 * was no error, and CK_COND=1, we use the following sense data:
- 	 * sk = RECOVERED ERROR
- 	 * asc,ascq = ATA PASS-THROUGH INFORMATION AVAILABLE
- 	 */
--	if (((cdb[0] == ATA_16) || (cdb[0] == ATA_12)) &&
--	    ((cdb[2] & 0x20) || need_passthru_sense)) {
--		if (!(qc->flags & ATA_QCFLAG_SENSE_VALID))
-+	if (is_ata_passthru && (is_ck_cond_request || is_error || have_sense)) {
-+		if (!have_sense)
- 			ata_gen_passthru_sense(qc);
- 		ata_scsi_set_passthru_sense_fields(qc);
--	} else if (need_sense) {
-+		if (is_ck_cond_request)
-+			set_status_byte(qc->scsicmd, SAM_STAT_CHECK_CONDITION);
-+	} else if (is_error && !have_sense) {
- 		ata_gen_ata_sense(qc);
- 	} else {
- 		/* Keep the SCSI ML and status byte, clear host byte. */
--- 
-2.45.2.803.g4e1b14247a-goog
-
+> ---
+>  rust/macros/lib.rs | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/rust/macros/lib.rs b/rust/macros/lib.rs
+> index 520eae5fd792..05d976b3c09a 100644
+> --- a/rust/macros/lib.rs
+> +++ b/rust/macros/lib.rs
+> @@ -312,7 +312,7 @@ pub fn pinned_drop(args: TokenStream, input: TokenStr=
+eam) -> TokenStream {
+>  ///
+>  /// Currently supported modifiers are:
+>  /// * `span`: change the span of concatenated identifier to the span of =
+the specified token. By
+> -/// default the span of the `[< >]` group is used.
+> +///   default the span of the `[< >]` group is used.
+>  /// * `lower`: change the identifier to lower case.
+>  /// * `upper`: change the identifier to upper case.
+>  ///
+> --
+> 2.45.2
 
