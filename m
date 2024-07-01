@@ -1,355 +1,131 @@
-Return-Path: <linux-kernel+bounces-236300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF61491E025
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:02:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 751F191E028
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:02:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D9C61F235DA
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:02:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F8F91F235B3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D8215E5D0;
-	Mon,  1 Jul 2024 13:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DAC015D5D8;
+	Mon,  1 Jul 2024 13:01:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="DybD95eX"
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="e7DPe1iS"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F641591E3;
-	Mon,  1 Jul 2024 13:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F7215EFB8;
+	Mon,  1 Jul 2024 13:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719838894; cv=none; b=ECIqWV1q25R+/E9nO2PgxUBhiITgdNI/8qut/zujtc5NQgLo8NaYHNo8YnyzIoPZU4G7ki2np4Cgayhxkz2jpTPKKi0y1bTMUEEU1b6TfZrPBsGJW8RBRjENdgagH7Mki2w7z1R0dHjUus3pFYm/rjngszbXS5LsbN6bBYANuXI=
+	t=1719838900; cv=none; b=oyk6/KUaIfpV7tl/NIISZjjIF7u5HqPJlJIEk5Kd/Zj+5sHMiEuazLmrAfPxaLAd6AOYTIsszJXR8QhkVuIE81MtirLbeQ/pwqadv5h3mF5J136LAphMo90KyTsfyciK60S8dx7nepO6YXCV/Op8RgMaanHNWcytHpdqHXff1O8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719838894; c=relaxed/simple;
-	bh=SUIaTV81srnXVIJNxC+R4Sh2XmDPYaahO1P68G9vz40=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Hni+8Hl0CtF8vEvsdwsyg1b8CkAo77yVYNbIwxoQHK5ayox8Ju0Z+nYqnpYGMKbRZBo81QS3G9OUF1UF9Ca+8kYHbfhzg4qL291GcxogvASyqrvEA1MGRi27K1x/aUskBUhXcAeH44RF634kw6KZGYptbLooWPPJwurEAypF23A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=DybD95eX; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 6EFEC100023;
-	Mon,  1 Jul 2024 16:01:23 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 6EFEC100023
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1719838883;
-	bh=WDvsjnCOMqIp/cCpUuumCAjvp9d7iYIJ13Aq9BVxTOE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=DybD95eXYe/ryPCzwCPZ3puFOhiZSEkLul5NUUmvIu4W+tGO+eq3Vg9CiOaDBeNt/
-	 1d6O2Mq21FPUbluKFok2kQASYYqZKRjPkyXw+T/okpefYaIxpi9e6iROmkxk5MiA2Z
-	 goFuOLEHhCbABzurreNBjz/pVfsdik7B4ByOmEo+qXbtKeH6lzVKRgGvTr/hXhvMCn
-	 pcGhGBQVGQx+TAmigkwpal8y0puLYTr/dOPKvPP7ABZYeQUmJCmn4coDUnY97g6iyk
-	 Alb9AWfHIZb5DIoWkplGurexPVS0VRvmVHjWU7RSAgGnG+3RC+m09wvGkZUu6R7hyU
-	 9Ppv/qwRHf2bQ==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Mon,  1 Jul 2024 16:01:23 +0300 (MSK)
-Received: from localhost.localdomain (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Mon, 1 Jul 2024 16:01:22 +0300
-From: George Stark <gnstark@salutedevices.com>
-To: <ukleinek@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <neil.armstrong@linaro.org>, <khilman@baylibre.com>,
-	<jbrunet@baylibre.com>, <martin.blumenstingl@googlemail.com>,
-	<hkallweit1@gmail.com>
-CC: <linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <kernel@salutedevices.com>, George Stark
-	<GNStark@sberdevices.ru>, Dmitry Rokosov <ddrokosov@salutedevices.com>
-Subject: [PATCH 2/2] arm64: dts: meson: a1: add definitions for meson pwm
-Date: Mon, 1 Jul 2024 16:01:13 +0300
-Message-ID: <20240701130113.433169-3-gnstark@salutedevices.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240701130113.433169-1-gnstark@salutedevices.com>
-References: <20240701130113.433169-1-gnstark@salutedevices.com>
+	s=arc-20240116; t=1719838900; c=relaxed/simple;
+	bh=I5l4BmXzzjYrEFqjls37V5m4ptisjD/c/HozJlF8dEU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=XZ7T48aTV9y6X+Z81mOOnB/BjZ/ymtxZ++GiNTVbRhitzG/ms/SWfMOHK/EVdbHFey5RFt0SfnO6u8AW4verTm1oBc+Ioq3soM1BdB8Zzr19Hr+5y0at2GRiFdYNs6LKlU640DwCyUHeA9Bxow70tqdJKf/jyhHbIRRqGoU1grk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=e7DPe1iS; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719838880; x=1720443680; i=markus.elfring@web.de;
+	bh=RheuWezdV3dKfPfPXlPzuZw1wJlMe7l1v3xBfQujEMU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=e7DPe1iSWlAR3vgcYGuyIxX8+4Oj1iGauSSTWqmeCInM+JIoldR/JT0WYLQWM/vA
+	 IwdOoULXtOEi+zd5QnzFuqkPcDGjczE23hH7u6r1waODPFoB0quO7wf8+KOJoEn1O
+	 vjQXcuEEVIm5rsjUixPTYnHYvtT2afrhJ8IuZdthwzBe+gnKBBvW7VNOXfnGuZCkR
+	 xFZ6refvHVzdFk/PzCkOCIlFcennevibKRQiGa/b1+b7msX6ZQRgNgSpdf5e4Pzw+
+	 UByOvECBuOz1UlLkpBCO5CpKAKCLWa8/joPUJuLK9VVgLY+04rfwpSJ3lVaHehFeh
+	 /2ub96fwZV5p/JS98w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MwjK2-1sCezq2isc-014Pjz; Mon, 01
+ Jul 2024 15:01:20 +0200
+Message-ID: <5fecc08a-c3b7-4745-abc9-0f5b4de03c22@web.de>
+Date: Mon, 1 Jul 2024 15:01:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186241 [Jul 01 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: gnstark@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 21 0.3.21 ebee5449fc125b2da45f1a6a6bc2c5c0c3ad0e05, {Tracking_from_domain_doesnt_match_to}, 100.64.160.123:7.1.2;salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;smtp.sberdevices.ru:7.1.1,5.0.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/01 11:44:00 #25786379
-X-KSMG-AntiVirus-Status: Clean, skipped
+User-Agent: Mozilla Thunderbird
+To: Haoxiang Li <make24@iscas.ac.cn>, samba-technical@lists.samba.org,
+ linux-cifs@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Bharath SM <bharathsm@microsoft.com>, Paulo Alcantara <pc@manguebit.com>,
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>,
+ Tom Talpey <tom@talpey.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240701064847.84726-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH] fs: smb: client: Add missing check for kstrdup()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240701064847.84726-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:WGM+jFjvbr01rKJUJEZYPEiqQkoIMOHon5Q3YwwJMi5/5cPJkXb
+ hWPKRkzf1iYYz3Zl3XNNJvJ6mUz2Y/Q1HjCp8NnX8jVgV0FLyaK+RjuMNieZDeMYsE3WPVm
+ XEB797PD/jaIx0OSp6csgjzik08v9HIfoCL6cT5K8ANNGomp8ska6HAbTE/2JBMhH41BvRA
+ F+wc6w0VU2O4veIVJFDrg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:n/hCUtUIstI=;SUHx5PArkiOBs4twGmmXl0aGEFv
+ 5g5IXJUuAVq/FhX+EfKgzJ52yGtoWn6fP4ZZp9m0TAkLfQS3LCwvWXpYvF0MD2D68znERpik8
+ 2wqSP6FJPuJEC8HNrGT7VOOTbGCB45jl2k0TSfx3De8ZtVq/lunJWx6M0uk2NdnfAOfGlb3OD
+ /3GGNxctlAa2C02fNKFN/ojohyayJohKzXOPWoABfISpFbKFZYgHJZbf0xpREMGyTMXThL6sA
+ fXTQHxT1jgfQcFmtl+rPEhTzlWzDYvrwMQzdrk1qUy7KliD4hNl5P10/Ghbi6Kl2f3lUeA4UR
+ maVho+4C4tqZW1MIBcIurKBHv+RjwlrQ6khiU6GFwrUupBYOhSS07NIz+ikqiswVHQA6AlesV
+ FL6JOv0ceG3j+CfY+z43QgFCplTHogtQ6mQFfTuOHcbPL+XQmHozKaABcclim8SHjqhscsfZh
+ iUxBdK0AZ/ZPHiefjicqjovD5dvJYQDr3UZpfnMEon7C0QWuj9LSs0QTcPWQBM7CH6GQKaQYL
+ OOQs8rrtWCHftQ8O0rWX4xsf/ESI+PkzOPRt7RfdzyTRpdFhwuEs3PoDJ1JLztdL7su/Ns5f+
+ Qkzwg5i9gCh7fb9VhkitLeZIIlNiJtcjGfnyT1aXa4nc/3Mgwwt4zGgfB79Vt3F0U0V40pSCd
+ YLBE2vsiysvvN33YYFQGwW3nSgp4TjmIzy0lM0TLZq1gwV1PqbEGde+/uwBtpalaajaTRa+fH
+ b9jL6HlkU31g3me8D1NyZ5gBDojDEs1y4nv8gbKYzxtPyYD/l3QrovSx7aImJC9tIifrZZKxV
+ gfzJTvWKo2stICzv8cCacu1EEQAF+2rmdxGNs9xLGl+64=
 
-From: George Stark <GNStark@sberdevices.ru>
+> Add check for kstrdup() in smb3_reconfigure in order to guarantee
 
-The chip has 3 dual-channel PWM modules PWM_AB, PWM_CD, PWM_EF those
-can be connected to various digital I/O pins.
+      checks?             calls?             ()
 
-Each of 6 PWM is driven by individually selected clock parent and
-8-bit divider. The PWM signal is generated using two 16-bit counters.
 
-Signed-off-by: George Stark <GNStark@sberdevices.ru>
-Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
----
- arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 215 ++++++++++++++++++++++
- 1 file changed, 215 insertions(+)
+> the success of allocation.
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-index 2a69e1e41bdc..d93b10bd156b 100644
---- a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-@@ -307,6 +307,188 @@ mux {
- 					};
- 				};
- 
-+				pwm_a_pins1: pwm-a-pins1 {
-+					mux {
-+						groups = "pwm_a_x6";
-+						function = "pwm_a";
-+					};
-+				};
-+
-+				pwm_a_pins2: pwm-a-pins2 {
-+					mux {
-+						groups = "pwm_a_x7";
-+						function = "pwm_a";
-+					};
-+				};
-+
-+				pwm_a_pins3: pwm-a-pins3 {
-+					mux {
-+						groups = "pwm_a_f10";
-+						function = "pwm_a";
-+					};
-+				};
-+
-+				pwm_a_pins4: pwm-a-pins4 {
-+					mux {
-+						groups = "pwm_a_f6";
-+						function = "pwm_a";
-+					};
-+				};
-+
-+				pwm_a_pins5: pwm-a-pins5 {
-+					mux {
-+						groups = "pwm_a_a";
-+						function = "pwm_a";
-+					};
-+				};
-+
-+				pwm_b_pins1: pwm-b-pins1 {
-+					mux {
-+						groups = "pwm_b_x";
-+						function = "pwm_b";
-+					};
-+				};
-+
-+				pwm_b_pins2: pwm-b-pins2 {
-+					mux {
-+						groups = "pwm_b_f";
-+						function = "pwm_b";
-+					};
-+				};
-+
-+				pwm_b_pins3: pwm-b-pins3 {
-+					mux {
-+						groups = "pwm_b_a";
-+						function = "pwm_b";
-+					};
-+				};
-+
-+				pwm_c_pins1: pwm-c-pins1 {
-+					mux {
-+						groups = "pwm_c_x";
-+						function = "pwm_c";
-+					};
-+				};
-+
-+				pwm_c_pins2: pwm-c-pins2 {
-+					mux {
-+						groups = "pwm_c_f3";
-+						function = "pwm_c";
-+					};
-+				};
-+
-+				pwm_c_pins3: pwm-c-pins3 {
-+					mux {
-+						groups = "pwm_c_f8";
-+						function = "pwm_c";
-+					};
-+				};
-+
-+				pwm_c_pins4: pwm-c-pins4 {
-+					mux {
-+						groups = "pwm_c_a";
-+						function = "pwm_c";
-+					};
-+				};
-+
-+				pwm_d_pins1: pwm-d-pins1 {
-+					mux {
-+						groups = "pwm_d_x15";
-+						function = "pwm_d";
-+					};
-+				};
-+
-+				pwm_d_pins2: pwm-d-pins2 {
-+					mux {
-+						groups = "pwm_d_x13";
-+						function = "pwm_d";
-+					};
-+				};
-+
-+				pwm_d_pins3: pwm-d-pins3 {
-+					mux {
-+						groups = "pwm_d_x10";
-+						function = "pwm_d";
-+					};
-+				};
-+
-+				pwm_d_pins4: pwm-d-pins4 {
-+					mux {
-+						groups = "pwm_d_f";
-+						function = "pwm_d";
-+					};
-+				};
-+
-+				pwm_e_pins1: pwm-e-pins1 {
-+					mux {
-+						groups = "pwm_e_p";
-+						function = "pwm_e";
-+					};
-+				};
-+
-+				pwm_e_pins2: pwm-e-pins2 {
-+					mux {
-+						groups = "pwm_e_x16";
-+						function = "pwm_e";
-+					};
-+				};
-+
-+				pwm_e_pins3: pwm-e-pins3 {
-+					mux {
-+						groups = "pwm_e_x14";
-+						function = "pwm_e";
-+					};
-+				};
-+
-+				pwm_e_pins4: pwm-e-pins4 {
-+					mux {
-+						groups = "pwm_e_x2";
-+						function = "pwm_e";
-+					};
-+				};
-+
-+				pwm_e_pins5: pwm-e-pins5 {
-+					mux {
-+						groups = "pwm_e_f";
-+						function = "pwm_e";
-+					};
-+				};
-+
-+				pwm_e_pins6: pwm-e-pins6 {
-+					mux {
-+						groups = "pwm_e_a";
-+						function = "pwm_e";
-+					};
-+				};
-+
-+				pwm_f_pins1: pwm-f-pins1 {
-+					mux {
-+						groups = "pwm_f_b";
-+						function = "pwm_f";
-+					};
-+				};
-+
-+				pwm_f_pins2: pwm-f-pins2 {
-+					mux {
-+						groups = "pwm_f_x";
-+						function = "pwm_f";
-+					};
-+				};
-+
-+				pwm_f_pins3: pwm-f-pins3 {
-+					mux {
-+						groups = "pwm_f_f4";
-+						function = "pwm_f";
-+					};
-+				};
-+
-+				pwm_f_pins4: pwm-f-pins4 {
-+					mux {
-+						groups = "pwm_f_f12";
-+						function = "pwm_f";
-+					};
-+				};
-+
- 				sdio_pins: sdio {
- 					mux0 {
- 						groups = "sdcard_d0_x",
-@@ -648,6 +830,28 @@ uart_AO_B: serial@2000 {
- 				status = "disabled";
- 			};
- 
-+			pwm_ab: pwm@2400 {
-+				compatible = "amlogic,meson-a1-pwm",
-+					     "amlogic,meson-s4-pwm";
-+				reg = <0x0 0x2400 0x0 0x24>;
-+				#pwm-cells = <3>;
-+				clocks = <&clkc_periphs CLKID_PWM_A>,
-+					 <&clkc_periphs CLKID_PWM_B>;
-+				power-domains = <&pwrc PWRC_I2C_ID>;
-+				status = "disabled";
-+			};
-+
-+			pwm_cd: pwm@2800 {
-+				compatible = "amlogic,meson-a1-pwm",
-+					     "amlogic,meson-s4-pwm";
-+				reg = <0x0 0x2800 0x0 0x24>;
-+				#pwm-cells = <3>;
-+				clocks = <&clkc_periphs CLKID_PWM_C>,
-+					 <&clkc_periphs CLKID_PWM_D>;
-+				power-domains = <&pwrc PWRC_I2C_ID>;
-+				status = "disabled";
-+			};
-+
- 			saradc: adc@2c00 {
- 				compatible = "amlogic,meson-g12a-saradc",
- 					"amlogic,meson-saradc";
-@@ -731,6 +935,17 @@ sec_AO: ao-secure@5a20 {
- 				amlogic,has-chip-id;
- 			};
- 
-+			pwm_ef: pwm@5400 {
-+				compatible = "amlogic,meson-a1-pwm",
-+					     "amlogic,meson-s4-pwm";
-+				reg = <0x0 0x5400 0x0 0x24>;
-+				#pwm-cells = <3>;
-+				clocks = <&clkc_periphs CLKID_PWM_E>,
-+					 <&clkc_periphs CLKID_PWM_F>;
-+				power-domains = <&pwrc PWRC_I2C_ID>;
-+				status = "disabled";
-+			};
-+
- 			clkc_pll: pll-clock-controller@7c80 {
- 				compatible = "amlogic,a1-pll-clkc";
- 				reg = <0 0x7c80 0 0x18c>;
--- 
-2.25.1
+I suggest to take further patch/code review concerns better into account.
 
+
+=E2=80=A6
+> Signed-off-by: Haoxiang Li <make24@iscas.ac.cn>
+
+Will requirements be reconsidered once more for the Developer's Certificat=
+e of Origin?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n398
+
+
+How do you think about to use a summary phrase like =E2=80=9CComplete erro=
+r handling
+in smb3_reconfigure()=E2=80=9D?
+
+
+=E2=80=A6
+> +++ b/fs/smb/client/fs_context.c
+> @@ -920,6 +920,8 @@ static int smb3_reconfigure(struct fs_context *fc)
+>  		ses->password =3D kstrdup(ctx->password, GFP_KERNEL);
+>  		kfree_sensitive(ses->password2);
+>  		ses->password2 =3D kstrdup(ctx->password2, GFP_KERNEL);
+> +		if (!ses->password || !ses->password2)
+> +			return ERR_PTR(rc);
+>  	}
+=E2=80=A6
+
+How do you think about to avoid also a memory leak here?
+
+Regards,
+Markus
 
