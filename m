@@ -1,173 +1,212 @@
-Return-Path: <linux-kernel+bounces-236906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3414791E876
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:20:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CC8791E87F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98948B20A0A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:20:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEA7E1F25D8B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C094E16F831;
-	Mon,  1 Jul 2024 19:20:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E16216F848;
+	Mon,  1 Jul 2024 19:21:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="Cybsfms9"
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2064.outbound.protection.outlook.com [40.92.103.64])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UqjDwCGD"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1558115DBD6;
-	Mon,  1 Jul 2024 19:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719861612; cv=fail; b=ULFodwZZWPChFd46eMHWsiCKi2le0782R9z8MVZY9YmxgB6uPL02He/v3umtfv+QfikHNC3XN5m/vOI73ZjnFiQWJYIkzZ2nlGwpFP88jtX2BKOqJf3IaYF7BcGCyp1zBXQ3GHKZ8Qq6CcgVnAeL4pcl64Uek2ODRxKbvPOC8SA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719861612; c=relaxed/simple;
-	bh=Gx1HdONiuQnoJAJUCq46hz1xzjowdZyqsNfl2wR8HCU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZvN2vYhsOO/elYKuafxwsIrCRMnlaUR29AGQk5YXcGAgcpgJsqpDuf5cmFW3FlSu9enUbNjN7EPUUl5OjI5K5blpeo1qRNIIy+8ceS/B5Ll+TcfJhAij/H/cHUMOCsoDUc4nI1zvK/t1ut9ht7jWraRM2ih2ppujZP+hGC6QkSw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=Cybsfms9; arc=fail smtp.client-ip=40.92.103.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OwCR8BVvY09Wluh3BHoZYTfOa7ZmltwxPjbrbsmxgkpd/IhRi2I/NZGWnpVt0WokIy194TxUelX0C+zQt5WxCJRg3YW+VNAjBabVDrLx5XTsPkNC1FxCJKOFBWSSzP2dvK5YWy2M/hnkbEA0GZN0juR/VdqeWerkoVIQ7idJwgLgyTZKm+v3aLGWkWTSwNU4dryDoVq7ALo+tHc9zTdfswgPa5I5jwarMhuuRlJWsGdkbpNkm5IR8OD4vmPz+xKQhzQs1qIauzu0SNaRkqNnhr/l5UjJraWqntCXKYaCHY/td9Roln3aL6pm1Otz6+ep4T0c9gdcwoHTpwJEDuYFnA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Gx1HdONiuQnoJAJUCq46hz1xzjowdZyqsNfl2wR8HCU=;
- b=U3mVi6xYb6OU8ItaU9Hdm1zlM/NOqAQctoaHXDdUCg1/w1xOdRC9lcSVoeOcIvWhlgKnQLZITXzViOkuVknflPnd19okrgl0w7SwZ8b7EBO5ros/QJikODAu9i2g/SYlyhsl9fx3bC0yR/s9DSvfue77+kwcag2ilIToFhYAto8nWoCxkPYyz8HgoqInXRktN6J4zXCAJQLScFVExwe1NzxxE5xvgJS5ll8/xAb70zQQI0NQmDkq0WFxIBMRIN/TZIbrGySILJZEOIic4R24Q6Bj8dhqHLc//YgVsnKU08Yp9WExWkxDVwGbkXhQbhHMoEzpdxMLC2jlNYuPMYI6Aw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Gx1HdONiuQnoJAJUCq46hz1xzjowdZyqsNfl2wR8HCU=;
- b=Cybsfms90Jv6mBE7kgWor3rAzfkhMaCbli3tgIl1RDMMs86FsMBiYJd6iqysVxoVOWgELbu6QjT0TrBgNV9Zo0N0DkHTsuUVC72Ik0sq4RMj/J/84Hxv2CbsdYUfCGkLZkP3DzZK3fpVgpu1toaATxly+0H6IC5/65tbVrSqYEld24Fij04/vuNj0HFGhfi/isNxTUWQRrzrfDSazSF9a92FzHiWl1Ap9cqXwUfk2ClqBWtEA0e3mbgXSjtQTt1IbHLjtDk2O2QLWu6c25KaxRL7AZamb6bvyt2AKTIh+KNLfR4DDDOr/LLpmMdcB/+aeptKvXRNjNNTpph/P0u1KA==
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
- PN2P287MB0651.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:157::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7719.33; Mon, 1 Jul 2024 19:20:04 +0000
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a%7]) with mapi id 15.20.7719.029; Mon, 1 Jul 2024
- 19:20:04 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: Pavel Machek <pavel@ucw.cz>, "lee@kernel.org" <lee@kernel.org>, Jonathan
- Corbet <corbet@lwn.net>, Jiri Kosina <jikos@kernel.org>, "bentiss@kernel.org"
-	<bentiss@kernel.org>
-CC: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org"
-	<linux-input@vger.kernel.org>, Orlando Chamberlain <orlandoch.dev@gmail.com>,
-	Kerem Karabay <kekrby@gmail.com>, Andy Shevchenko
-	<andy.shevchenko@gmail.com>, =?iso-8859-1?Q?Thomas_Wei=DFschuh?=
-	<linux@weissschuh.net>
-Subject: [PATCH 1/2] Documentation: leds: standardise keyboard backlight led
- names
-Thread-Topic: [PATCH 1/2] Documentation: leds: standardise keyboard backlight
- led names
-Thread-Index: AQHay+utkJBjyo+8CEiDLNPducTfHQ==
-Date: Mon, 1 Jul 2024 19:20:04 +0000
-Message-ID: <6F9E1BB7-5F25-4BE0-AE82-903B9B81109B@live.com>
-References: <3055BCC5-8F8B-4472-9E94-1319D1C6DEED@live.com>
-In-Reply-To: <3055BCC5-8F8B-4472-9E94-1319D1C6DEED@live.com>
-Accept-Language: en-IN, en-US
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0028715F3E0;
+	Mon,  1 Jul 2024 19:21:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719861692; cv=none; b=q7K3KUYjhYQu6V47HKzJ2tvEUhtRbh+F2H+D/wL5zVRlynNc8KyVhJn+0sNDi1QfImXKTeLJ/8rPqtyMSTBEtVejGJV0ZgSB/PlGLnUHjLH6namXs8PwNRd+WddcIiSBiGeELb4kwZzzXSiSavU7mZLHg+GTX4FEScyjcGG5t1s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719861692; c=relaxed/simple;
+	bh=xA4gT5jgdk/OTxA5+HmO+icyiiNsnLJsHJKqiT48Ou0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=HD2Qa2DZGkBWOyjlqj7h07VGjHDLX8lR1+jHBbYfjGGnpumy6QywWJ5zvyJTOHzQuJ4FUgARLOZzRSirEYr/uyrk1wWHizUeHwn/nrKJY0ncrS9zFVfXiN5eEoJokOxOinXqhitxBlxTv3EE+YncfvaobS4Hux+IQ5/pvZDQIiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UqjDwCGD; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 461Iv0HE013388;
+	Mon, 1 Jul 2024 19:21:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	vwPSGgNyfB7PV/gU5mKuyglcYgFurNIMZQ4OJRpNuIs=; b=UqjDwCGD7ZPhhPfJ
+	2T6PY4BrgQHagrXZIf+zZGGzZGUfoAAodzuyCsNY0bxSrOZToKePlOHrxjrIz/Uc
+	pF54TtoFwemRyaydw+3mzwZchISj0Xq60tA8dwJY9Z8wSSaPLiodu8NrjWB/FAmk
+	nA17VDTWM4JdDXqrH+hsEENndoD/bIza/7p70dmsTF5ZdfXcYzeSMIFBtFkQmVu7
+	YxTRGSTwhtAZsXOVnUe4Ujt+iA1eQ8hnWzMN4N829hYvBXaorK5VZMYC7gmQA5jA
+	9qZOM7J2vaJGjmPzzZrvPEgOd6TvEY0Mi31+kExoiKKVK2USaLTDGULpdsEVr7nS
+	mZ3nEA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4041rw03s2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 01 Jul 2024 19:21:16 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 461JLFUw025280;
+	Mon, 1 Jul 2024 19:21:15 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4041rw03s1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 01 Jul 2024 19:21:15 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 461I0B4R009561;
+	Mon, 1 Jul 2024 19:21:14 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 402w00h39e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 01 Jul 2024 19:21:14 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 461JLBA256230172
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 1 Jul 2024 19:21:13 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2DFFC58055;
+	Mon,  1 Jul 2024 19:21:11 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4D36B58060;
+	Mon,  1 Jul 2024 19:21:07 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  1 Jul 2024 19:21:07 +0000 (GMT)
+Message-ID: <596c3997-6a9d-4ac4-895f-512058a2648c@linux.ibm.com>
+Date: Mon, 1 Jul 2024 15:21:06 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tpm: Check non-nullity of chip->auth
+To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org
+Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>,
+        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, Ard Biesheuvel <ardb@kernel.org>,
+        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
+        "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+References: <20240701170735.109583-1-jarkko@kernel.org>
 Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:
- [ML52K3w48FwAiGUncbC2RXt/kiKTx43LkeRP6IE65RXqbZrvXjar1TI5eJXOuSswgLmVo/bXz3U=]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MA0P287MB0217:EE_|PN2P287MB0651:EE_
-x-ms-office365-filtering-correlation-id: 733347e5-e730-4592-a0e2-08dc9a02cfda
-x-microsoft-antispam:
- BCL:0;ARA:14566002|8060799006|461199028|102099032|440099028|3412199025;
-x-microsoft-antispam-message-info:
- oEYSt2JbgjZLIJpklHYyfXcdkbbvZ5iLlvJDNogGFQsWFzpLCRjx5pMbcQ2KviivvvWfu56BQKn3I0nAxvsrcH5W+PF7fbvjvH+a1hJdbLVdFenlaQ2AjPTJsb5Oh5vG9y69dgAZMa1Cs+GTo8+tR3ruZqKRew4dFPX+PiUiCL09Jctazl4wcVmFNNRbBR3hlDiQS38OQehhSAKi+wPcQv7Fe5A49QIhP3xw12fNblGxfpeVgSMd/XFLxhF/Yx7nly6BswmM3570cv2RPZwJMJRgSQ5He7ixI3rBfZOHGBqznHuRtjv2IcVgHpDNPncrWzvfkLW7opW9HP6H1OmtwRDfmt55JpWLr82euhOnslcE400zFMZmEF2OvtOQ9Deiodvu6xYE4OmCiXSQYFkVPEKOknSSaaT5LhUpUFCZH284Z58IXtsFNMS4q3ZHRddzjqlAI+RX8erKkvNPCy1562gYNTTiZBncJL0Xp4YB3x09yB3sVMmlEB92v0R1gRB28g8uAXkBSuzG9cdx+2xTc73I4FN2HADk8lteKKm28PjYYKEvoJj9ako5KLOs5beSRB0/B8Sv3E0KZEChhk5dmTiri5GOnKKPhdMe43hVithZrl7WtdzhabrZNfd+nXyY
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?XAukk7xQjNn4ubCa37t8WnOHDrvNZLRHAn/ZKhDt7bvnf0j2GC90rl5Ix1?=
- =?iso-8859-1?Q?FXbKvQr2tLyeQbE3g9kQCMczta15LlMsS4sGPtAeIWsdeadAFufAvlg8QC?=
- =?iso-8859-1?Q?cZzoDyLvFnw0gzEpZPQwMc+3jmLoiG08zoZ1aJQVrKF1igwslai5WkzX5D?=
- =?iso-8859-1?Q?al/+6CbgYGV0Pltjd96bJp/KTQaVHzvzXQ6o8DLvIlO6cLq4YJLg+pyDME?=
- =?iso-8859-1?Q?cYEzLpjTtLrkaESe9uduFY0NfQ2I1F97BVULE2w7m51FXUoAtb05ldlt9d?=
- =?iso-8859-1?Q?FvxGjP1Z0mXQYsHL/VGSxPFE1ABAfmr6YuOkEdwuiRDt1/xH3o0gpFKZPb?=
- =?iso-8859-1?Q?Peh9awVvCb71hhho6UwjV861yadWQFFxpQqTGyhYWtl3qBXPv+f/RB8m79?=
- =?iso-8859-1?Q?cnft3EzmonOtKnGkj7lBAfCB+czS5s7ahdptpq0t90SZHqiYqjdNLP34Nh?=
- =?iso-8859-1?Q?UDSpoTvAMDPZDCeVsdl/t/tzFHE/lnPYLLPN/vVd7IMCRtfK2fxtFYjY9S?=
- =?iso-8859-1?Q?Q/qPJ5dEloiyHfLTZD9Kvg7mTDMbLWEtaXejwPKTlPjf4m+tn7w88/GsE2?=
- =?iso-8859-1?Q?CRCy+XPYZ0uwzjJX/mOremR1tx7z7TxC2LEFGch7Hi01ydqtUX59PCUe/q?=
- =?iso-8859-1?Q?2obUgrQyRpIMOtuYPbRXjh/+dGoToXP80Gj4/ZjNJviBAWzllGZCZRhnJ4?=
- =?iso-8859-1?Q?o9pMs43CCWuJGL4mJ7dcO+Eu043fqnJ1wc5cP9tqCXzwbYHHy0HtOTy+UQ?=
- =?iso-8859-1?Q?n0lOXvPNTu+mfRCoBVu5tDnoWweIYxvdIF24dDBXQw50ATaWIw9ABum6Ed?=
- =?iso-8859-1?Q?wcvHd2UvAxVj376B9qwiVZvytxECD2iKmNRRvO3J5kMzgxdEplwqXRENMF?=
- =?iso-8859-1?Q?EHHpL/W7Hj9d0ukiYc+S0o+RqlQXudr9c/E0J+e1rQ4i2Qmro49gwpMfEk?=
- =?iso-8859-1?Q?d09iVTwYIjUMts4wkPOfKIsbtwpI7qNdXLzWiiguKM3u+j/PZAs/VNpwc7?=
- =?iso-8859-1?Q?ts6GI81Qq9ic5ZkSXDXt+PxbLIqSetn8TJV8Eky5bQU+kTq0O2LcdDxvxz?=
- =?iso-8859-1?Q?wwAFslY/HvwF1RkY+1oxdL0JFtu+se+ZnbWsjKJq/UZh21ni8bFlTNJv2X?=
- =?iso-8859-1?Q?1ZM9U6woXCvGNDLj7HD8XVmLWgdXQ84Q8RAyhAze/SPRR0hCjOX4XORDXV?=
- =?iso-8859-1?Q?Zhsbm3jX2mCqpbkDm+7l48jaNkMXE5ERGzmm3MH1i3ozzH8MZ3cSEq2E/3?=
- =?iso-8859-1?Q?B/nLFkrXHqXBeQGytEi3Us3JmtUGBFmfIz1oveG/QXo5LzulsVrmGTmxZs?=
- =?iso-8859-1?Q?Gk1JgIooSYUZT/kEbE3KQGkyTwRnH3PgtmTJBGsUfrt+s+LrMWF71hXUNM?=
- =?iso-8859-1?Q?kLU35HlYsf?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-ID: <26C120190C045C429D8101BAA7E2B394@INDP287.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20240701170735.109583-1-jarkko@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: ZiMnc2k-AjdCMwIntE57sE603DRvScCp
+X-Proofpoint-ORIG-GUID: 1rPc_D_JYeAanSUH0ce6VrL5Yf1X5woA
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-bafef.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 733347e5-e730-4592-a0e2-08dc9a02cfda
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jul 2024 19:20:04.7096
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB0651
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-01_19,2024-07-01_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ mlxlogscore=999 impostorscore=0 spamscore=0 clxscore=1011 bulkscore=0
+ phishscore=0 mlxscore=0 adultscore=0 priorityscore=1501 suspectscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407010141
 
-From: Orlando Chamberlain <orlandoch.dev@gmail.com>
 
-Advice use of either "input*:*:kbd_backlight" or ":*:kbd_backlight". We
-don't want people using vendor or product name (e.g. "smc", "apple",
-"asus") as this information is available from sysfs anyway, and it made the
-folder names inconsistent.
 
-Signed-off-by: Orlando Chamberlain <orlandoch.dev@gmail.com>
-Signed-off-by: Aditya Garg <gargaditya08@live.com>
----
- Documentation/leds/well-known-leds.txt | 8 ++++++++
- 1 file changed, 8 insertions(+)
+On 7/1/24 13:07, Jarkko Sakkinen wrote:
+> All exported functions lack the check for non-nullity of chip->auth. Add
+> the guard for each.
+> 
+> Link: https://lore.kernel.org/linux-integrity/9f86a167074d9b522311715c567f1c19b88e3ad4.camel@kernel.org/
+> Cc: Stefan Berger <stefanb@linux.ibm.com>
+> Cc: stable@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Fixes: 1085b8276bb4 ("tpm: Add the rest of the session HMAC API")
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> ---
+>   drivers/char/tpm/tpm2-sessions.c | 26 ++++++++++++++++++++++++--
+>   1 file changed, 24 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
+> index 907ac9956a78..d833db20531a 100644
+> --- a/drivers/char/tpm/tpm2-sessions.c
+> +++ b/drivers/char/tpm/tpm2-sessions.c
+> @@ -377,6 +377,9 @@ void tpm_buf_append_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf,
+>   	u32 len;
+>   	struct tpm2_auth *auth = chip->auth;
+>   
+> +	if (!auth)
+> +		return;
+> +
+>   	/*
+>   	 * The Architecture Guide requires us to strip trailing zeros
+>   	 * before computing the HMAC
+> @@ -449,6 +452,9 @@ void tpm_buf_fill_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf)
+>   	u8 cphash[SHA256_DIGEST_SIZE];
+>   	struct sha256_state sctx;
+>   
+> +	if (!auth)
+> +		return;
+> +
+>   	/* save the command code in BE format */
+>   	auth->ordinal = head->ordinal;
+>   
+> @@ -639,6 +645,9 @@ void tpm_buf_append_name(struct tpm_chip *chip, struct tpm_buf *buf,
+>   	struct tpm2_auth *auth = chip->auth;
+>   	int slot;
+>   
+> +	if (!auth)
+> +		return;
+> +
+>   	slot = (tpm_buf_length(buf) - TPM_HEADER_SIZE)/4;
+>   	if (slot >= AUTH_MAX_NAMES) {
+>   		dev_err(&chip->dev, "TPM: too many handles\n");
+> @@ -705,6 +714,9 @@ int tpm_buf_check_hmac_response(struct tpm_chip *chip, struct tpm_buf *buf,
+>   	u32 cc = be32_to_cpu(auth->ordinal);
+>   	int parm_len, len, i, handles;
+>   
+> +	if (!auth)
+> +		return rc;
+> +
+>   	if (auth->session >= TPM_HEADER_SIZE) {
+>   		WARN(1, "tpm session not filled correctly\n");
+>   		goto out;
+> @@ -824,8 +836,13 @@ EXPORT_SYMBOL(tpm_buf_check_hmac_response);
+>    */
+>   void tpm2_end_auth_session(struct tpm_chip *chip)
+>   {
+> -	tpm2_flush_context(chip, chip->auth->handle);
+> -	memzero_explicit(chip->auth, sizeof(*chip->auth));
+> +	struct tpm2_auth *auth = chip->auth;
+> +
+> +	if (!auth)
+> +		return;
+> +
+> +	tpm2_flush_context(chip, auth->handle);
+> +	memzero_explicit(auth, sizeof(*auth));
+>   }
+>   EXPORT_SYMBOL(tpm2_end_auth_session);
+>   
+> @@ -907,6 +924,11 @@ int tpm2_start_auth_session(struct tpm_chip *chip)
+>   	int rc;
+>   	u32 null_key;
+>   
+> +	if (!auth) {
+> +		pr_warn_once("%s: encryption is not active\n", __func__);
+> +		return 0;
+> +	}
+> +
+>   	rc = tpm2_load_null(chip, &null_key);
+>   	if (rc)
+>   		goto out;
+It looks like you got all of the chip->auth tested:
 
-diff --git a/Documentation/leds/well-known-leds.txt b/Documentation/leds/we=
-ll-known-leds.txt
-index 2160382c86be..4e5429fce4d8 100644
---- a/Documentation/leds/well-known-leds.txt
-+++ b/Documentation/leds/well-known-leds.txt
-@@ -44,6 +44,14 @@ Legacy: "lp5523:kb{1,2,3,4,5,6}" (Nokia N900)
-=20
- Frontlight/backlight of main keyboard.
-=20
-+Good: ":*:kbd_backlight"
-+Good: "input*:*:kbd_backlight"
-+Legacy: "*:*:kbd_backlight"
-+
-+Many drivers have the vendor or product name as the first field of the led=
- name,
-+this makes names inconsistent and is redundant as that information is alre=
-ady in
-+sysfs.
-+
- Legacy: "button-backlight" (Motorola Droid 4)
-=20
- Some phones have touch buttons below screen; it is different from main
---=20
-2.39.1
+Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 
+As I mentioned in the other email (1), it does not solve the problem on 
+ppc64.
+
+1: 
+https://lore.kernel.org/linux-integrity/656b319fc58683e399323b880722434467cf20f2.camel@kernel.org/T/#m88892cb6f9cf8fdef875dcdd0ed3eccac1d28190
 
