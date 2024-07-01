@@ -1,64 +1,80 @@
-Return-Path: <linux-kernel+bounces-236776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B12791E6ED
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:52:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 923BD91E6F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:53:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D7341C218C5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:52:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EA941F237F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:53:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DBE816EC11;
-	Mon,  1 Jul 2024 17:51:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238DC16EB6F;
+	Mon,  1 Jul 2024 17:53:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FKH7srHI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UPPbpng5"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A8816EB77;
-	Mon,  1 Jul 2024 17:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B75C16E88E
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 17:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719856312; cv=none; b=tEh61Jd8uz7gJHwiisNsz7qDP0j4iOESSCitrJLl+5MvN1KnU820See/5/DwomTDHglpdSLxQORiXBm0RIIedyLem1x0YKwkhBRS2374eI4CHOUwDjkWK/FPT1Vr///Cms/tI/BXe2lGe5CKtxLL/gyns+R8cJ33EJWYQkHkE+k=
+	t=1719856414; cv=none; b=Dm3vodHQblqxnGJnVkMloVwwunzjQceGEgi/7LLMqwpesuypIlpc1aMsfPODvKvsPOjxfIMcr2bwepckXi7tjeWluXDU9nHh37PreQKSVWxtqyDgPhzDnj1IaTQiWbR6qsHdiB+topJ1TV2U/EbPEN9y1G7WHshc85Od+A8AI+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719856312; c=relaxed/simple;
-	bh=+xTcvxBakZ4cHh0hXoK9EpJRwYxm/3zwJmLM/+ERZyc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=OyMmLoArLaqI4Qe/aIjy84iP1GwjHn2x8tv+Y125/bO2h6Rke0GMGuGwumXOfwf3+kw3Nfdg3KZ1XLP/lbOM8bh8O4WSaSHEQiy85ow8I4kBlJ2c1/F/JuSAmzi5pEbAXTLsJVjbmMkMqcEtTLx+NZFKpTR/6IK+ft72ZuifElI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FKH7srHI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E31FBC116B1;
-	Mon,  1 Jul 2024 17:51:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719856312;
-	bh=+xTcvxBakZ4cHh0hXoK9EpJRwYxm/3zwJmLM/+ERZyc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=FKH7srHI4Yo1MYbh1wm2OLGqHckHihJmvcF+yJfLIOPxZJYM8uje+hAqVUn7J4sOV
-	 dSC8EXnJ8xX+YM3CP5NSk6RCwdhGJl/sMgn0UgObqwTS+1THutn3ShGabc7hkLhYWc
-	 Q2xjVfTYt5im03tQiPRQJ3aemWnw42gEAVUTrvuAz9u0sk9JULKbB0eCBhE5eP5jsm
-	 H9qVfq8MxIuS5TUMn9QSgmJoqtJqQAO4iz9TT+Jf8uPgsVNR9eVAZXTfkBDiZ2THt5
-	 TYaBcvh7baMNe/p6saTZKW+xHXTQL6bZMVaNK+aXhf6AGgtL4H9V//m7mIEZMu+c7e
-	 x4YXpuwLXpYJg==
-Date: Mon, 1 Jul 2024 12:51:49 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Jingoo Han <jingoohan1@gmail.com>, quic_vbadigan@quicinc.com,
-	quic_skananth@quicinc.com, quic_nitegupt@quicinc.com,
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 0/7] PCI: enable Power and configure the QPS615 PCIe
- switch
-Message-ID: <20240701175149.GA10638@bhelgaas>
+	s=arc-20240116; t=1719856414; c=relaxed/simple;
+	bh=Ki0a0rivdegP6ZdVVTYc0h2LYoF539DYEwq99jWRT4A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KOeWP7U5vIcnrmieigzEucp5AWwbrFbYYfD8h4v8hRjrC4mzI1n3/h0y6+bieFA/CeoI21843Aaql/IRdffRliOPJRerUNEqnofYO8I8qb9dl1gGNnFoSUudntRiO3OAixJLVXLDVulDmiGmdyeIY5Mrx8Z/xKN3p+8lGgnvTno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UPPbpng5; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2c92d00059eso2035091a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 10:53:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719856412; x=1720461212; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=s6F5DAOoLaB1FuZ5x0v5JU7nd1VPYyeV/NmL4hws5Es=;
+        b=UPPbpng52r/zk8wRH2dDLEbZLGURNpR03CF0p8s+7pCfT7g8jugsLPZCD5EUpSgHuc
+         Bo/xsaNWVPHxU5q1lpot37SOzh3EaPg9OkDlVJ/2a/Hd6NuTOS8DBu7NAEoFCM3prjoB
+         mp74vBdUdMPJLVCH7X/D+eWf2DA/laP6HhuU+KSAyrVlZpx6HEwcRkTGnqVTOsCX1yGy
+         g7h+ZaSNlDV5xPfOVC4lusWDuxdfpMCMADioizeWfUCj4nH3O0/PiecMeRWrMJk4ZoXh
+         COCDBSkaLfNCcxxB31tdiPfudLXkmFZN1oAj3pvDiVeWbZiTlCbBxwLlvRWC6xUrDuhc
+         lI/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719856412; x=1720461212;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=s6F5DAOoLaB1FuZ5x0v5JU7nd1VPYyeV/NmL4hws5Es=;
+        b=IWpL6Rwa0rYK7g+NnJoC80Me1ZjiUBbOxW3YVieN9zJlPCW+POumx2lH6vgS13ki5x
+         nI0G1cAqh5ottTjnpuON0ouuADs2lryQAnBmgoSVV3ULvCOHbcG7LXoy4cEyI/X511wG
+         rHAmBgbpu0/9KqDpGvHh+PZkHyQq6o2Ph44KaLVg1nSPFappAseTTTcZJIvkFEvW+G92
+         8OvNjScbpR5YcuBgvHlfVvcYBCRnYi506jWSJxIvPG5xVYOEtEYxckUeaosIjtDO6BxA
+         rZdAAcnoS0gxv2iy6ENjGo2lbVxZcCG/rZ7Mu2VgbTqWbML0128RrtuNl1AQu3s4XEeo
+         E0UQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVeWlUgQC9R6mlgH/fLm9OLPzYPmT9PeM8ryD08LmZZRPuJ3rfdgZ1lCouQI7Zpr3ZMouUR4Y8F27X8+sRXdp8ei0pKJ0sdz9jF0xBf
+X-Gm-Message-State: AOJu0YzC7F0VNvUj6bxwEpzS2EyV0uk1tjFN2VZEpUNGshHFkYu587T5
+	wfCCY586Pgi8EdUxhVwM75qExeYlbDnX193WP6NC2lSNYdTkCq7wv5pw1A==
+X-Google-Smtp-Source: AGHT+IEk2bezpirCnkoJ1+8233fAVectjRnOukFTtCY28y/UBJedEQdoVXAxD0BjbYRmDBAV95yLQQ==
+X-Received: by 2002:a17:90a:7445:b0:2c3:213b:d0b1 with SMTP id 98e67ed59e1d1-2c93d729f7cmr3296331a91.5.1719856412341;
+        Mon, 01 Jul 2024 10:53:32 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91ce778f1sm7052721a91.33.2024.07.01.10.53.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 10:53:31 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Mon, 1 Jul 2024 07:53:30 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Aboorva Devarajan <aboorvad@linux.ibm.com>
+Cc: void@manifault.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH sched_ext/for-6.11] sched_ext: Documentation: Remove
+ mentions of scx_bpf_switch_all
+Message-ID: <ZoLtGmBw6kcNtmts@slm.duckdns.org>
+References: <20240701123022.68700-1-aboorvad@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,28 +83,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240626-qps615-v1-0-2ade7bd91e02@quicinc.com>
+In-Reply-To: <20240701123022.68700-1-aboorvad@linux.ibm.com>
 
-On Wed, Jun 26, 2024 at 06:07:48PM +0530, Krishna chaitanya chundru wrote:
->       dt: bindings: add qcom,qps615.yaml
->       arm64: dts: qcom: qcs6490-rb3gen2: Add qps615 node
->       pci: Change the parent of the platform devices for child OF nodes
->       pci: Add new start_link() & stop_link function ops
->       pci: dwc: Add support for new pci function op
->       pci: qcom: Add support for start_link() & stop_link()
->       pci: pwrctl: Add power control driver for qps615
+Hello,
 
-Run "git log --oneline" on these files and match the style.
-"PCI: Change ...", "PCI: qcom:", "PCI/pwrctl", etc.
+On Mon, Jul 01, 2024 at 06:00:22PM +0530, Aboorva Devarajan wrote:
+...
+> +sched_ext is used only when the BPF scheduler is loaded and running. To use
+> +sched_ext, a task can invoke ``sched_setscheduler`` with the ``SCHED_EXT``
+> +policy constant.
 
-The colon vs slash convention isn't obvious, but this is how we've
-applied it in the past:
+I wonder whether the last sentence is a bit confusing given that tasks can
+be on SCX without setting SCHED_EXT.
 
-For PCI core features like MSI, PM, ASPM, AER, DOE, etc:
+> +When the BPF scheduler is not loaded, tasks with the ``SCHED_EXT`` policy are
+> +treated as ``SCHED_NORMAL`` and scheduled by CFS. ``SCHED_NORMAL`` tasks
+> +continue to be scheduled by CFS.
+> +
+> +When the BPF scheduler is loaded, all tasks with the ``SCHED_EXT`` policy are
+> +switched to sched_ext. By default, if the ``struct ops->flag`` is not set to
+> +``SCX_OPS_SWITCH_PARTIAL``, ``SCHED_EXT``, ``SCHED_NORMAL``, and lower class
+> +tasks are scheduled by sched_ext. In this case, all ``SCHED_NORMAL``,
+> +``SCHED_BATCH``, ``SCHED_IDLE``, and ``SCHED_EXT`` tasks are scheduled by
+> +sched_ext.
 
-  PCI/<feature>: <Text>
+How about something like:
 
-For PCI drivers outside the PCI core, like dwc, qcom, imx6, etc:
+When the BPF scheduler is loaded and ``SCX_OPS_SWITCH_PARTIAL`` is not set
+in ops->flags, all ``SCHED_NORMAL``, ``SCHED_BATCH``, ``SCHED_IDLE``, and
+``SCHED_EXT`` tasks are scheduled by sched_ext.
 
-  PCI: <driver name>: <Text>
+> +However, if the ``struct ops->flag`` is set to``SCX_OPS_SWITCH_PARTIAL``,
+> +only tasks with the policy set to ``SCHED_EXT`` are scheduled by sched_ext.
+
+And update this paragraph in a similar fashion?
+
+Thanks.
+
+-- 
+tejun
 
