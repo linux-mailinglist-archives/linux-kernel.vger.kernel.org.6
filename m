@@ -1,158 +1,163 @@
-Return-Path: <linux-kernel+bounces-236933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EFAF91E8C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:42:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44C1791E8C5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:43:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 039D7284037
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:42:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68EBE1C21A65
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:43:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A5416F8E3;
-	Mon,  1 Jul 2024 19:42:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B3B16F8E3;
+	Mon,  1 Jul 2024 19:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="oLkUAGBV"
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2086.outbound.protection.outlook.com [40.92.103.86])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NG2H7pzO"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B60E16D9BA;
-	Mon,  1 Jul 2024 19:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719862964; cv=fail; b=jFp0znKqWd2SZpLsuLPhkeNJGKUwrjpeCbT/DzE0maxkn82di0YDxzhnYoOOhXK85wRJyI94IHQw5He1qchMEcL5XN/JZMqEjTffZAiqTyl5QSc8eRZdMl9wPdRpA8bnvh6bVpN5FrvzeGZF62eV/Ykcp9lSm7+DMrFozRFDj9U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719862964; c=relaxed/simple;
-	bh=RAvnN17HZpYue492q/YMWi1m6TbYF1SkRg9pEk81quI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=LbpWzQuKJaBD7/2jdp/inzGam+2Oe0IWQIu3jgLZB0gWwGNmTLG6U9fay49zXTyI8X1i1flwbp1VHytKNH4uN6N4rKbpJEG6VSMcC6++HVUwfPrd1jv/kyCnYpney40saFKqyCe31fEJcAUorbufy/sUYLtCpRx9++nIhdMY+ps=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=oLkUAGBV; arc=fail smtp.client-ip=40.92.103.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hzlmUEvqbQWQv2djekGenYO3y0zNjGJekIB4LrQVDDNVkBsaB2pdFq8jSSG8szcoMzDUEgu1E5Mh3XOxzDeq15F2lizbI0Pblfng4sG9QexFQwSVwpB5bIld4lcMLSkvePnHlYJGaWiVUrvVSIuF7J7vtg3lLT+X0B++3YTLkH9keuz3i6tE0O8MGWv4nBCwRrQF4jSe+5rSWUrL6/VRiM6+i7TwaVfebd7qVXfTx925H2ULAt0kJd/1fY8l5G11uobI4nOQ7Aj/LQbNqj1jKwrk7w2ru2jrNKaQIcIUDeMVSfodZxj4EZ7bD6Ye1gMJNEAY4cZaZdf3SACt7q/TUg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RAvnN17HZpYue492q/YMWi1m6TbYF1SkRg9pEk81quI=;
- b=IgJTOSHRvBn0XdHthK1d9vjq2ad1bqH7ddSOyuYCCJYvx/vm6ZwG4izuPWYx+NYHqaVAtx6RTyMhJAUPp2wJeaIZNv4Sz8bOrp27ap+biwAj2+i33Tbep1TrW6SZeCLdcK3FswJmEXc52A26uyihC+YaqI4Hcp/RLBFAJzdJ8FeXTfhiSwLIgZBL+r8MXSx7EV1CxGzETj7ckQ4FfhDrHKzwEvJb5YXU+cHWrcHVHIh1RAI25WsXDRTLVUTRsmPD//MzYvthLnJd0xBnDOYmoSU4nc83hDnxNZdrJhqKeccwRBeG9ZpiSJpMtdXTGGxSE0Ze3lNeirOVLtXsw9c68A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RAvnN17HZpYue492q/YMWi1m6TbYF1SkRg9pEk81quI=;
- b=oLkUAGBVWotrA/FbteqjAsSzsCQiw8z0btfHbsdClFfaFbWyWeLsMuK0qZby87D23q3AK3cb5pRIdLufsjkN69HY4ClrB+ROcOfLcAk54wAJ7WHEP3YLVLOfEqc3V9+EceyyqCdxD9jai45m9gMnCvbeI2P3qPgvfM0aTVbB7d2yktlSvYxXuS/ON9uTJVe6G2mqQNw3GyNz1+9jbAtdxDIcfxCTiDB3Cy7jLHuOuz/gsIgYYBrm/JPTcSjgR/RNX7sbkTC579mQzYpGyGAolQ3BG5pQHJqR7hSD6CucR5DEZfQgDNh1sYwrEwEmF9BTbxr+mjPIj1XEeOyq4MYuRQ==
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
- PN0P287MB1990.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:1be::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7719.32; Mon, 1 Jul 2024 19:42:37 +0000
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a%7]) with mapi id 15.20.7719.029; Mon, 1 Jul 2024
- 19:42:37 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: Ard Biesheuvel <ardb+git@google.com>
-CC: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ard Biesheuvel
-	<ardb@kernel.org>, Hans de Goede <hdegoede@redhat.com>, Lukas Wunner
-	<lukas@wunner.de>, Kerem Karabay <kekrby@gmail.com>, Orlando Chamberlain
-	<orlandoch.dev@gmail.com>
-Subject: Re: [PATCH v3 0/2] efi/x86: Call set_os() protocol on dual GPU Macs
-Thread-Topic: [PATCH v3 0/2] efi/x86: Call set_os() protocol on dual GPU Macs
-Thread-Index: AQHay8BxbD/3780MxUWT4The9rzhebHiRiV0
-Date: Mon, 1 Jul 2024 19:42:36 +0000
-Message-ID:
- <MA0P287MB0217C0F7E0B9F6FE8CA47BE8B8D32@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
-References: <20240701140940.2340297-4-ardb+git@google.com>
-In-Reply-To: <20240701140940.2340297-4-ardb+git@google.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-IN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:
- [FzU/UOv+4LsefLbUugMVPQilqYNZruikVb0hel7gKb+kvYOuufWyoaicMO9hAzKXUkzSDRGhxbw=]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MA0P287MB0217:EE_|PN0P287MB1990:EE_
-x-ms-office365-filtering-correlation-id: 2f1ecdff-747f-40cf-d7f6-08dc9a05f5cc
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199028|8060799006|102099032|3412199025|440099028;
-x-microsoft-antispam-message-info:
- Q2CUPDWWTTZlqaCSAVOsgyAyx9tu2FB8TuJShqYYn/j9NjEg17OtKNUTIQzyzAYsc1AkyAed2zlRtC19d2Q7t/UjGsC96G7jY62YuB+Ps68ebx+FcXYPF5IuRpW1j3mRfrd2ScOBIZxIYf9GhCbUIVgi8coaPwgu4g9qIim9fj4wBQs1rnq744lTexzhlKVeEM1zZfovdBtv23lndatI7UYBQnbrqA2wFmvF5xFuwpSX2bg2EO9kXaTaLR2vuJhU8PjGJt+vb9FGMfBzaYfBjgghpFGP8VbHirfhvVUpi2K96W7voZLeakTLcA0iLCXE2k6kkWCta6YPFNSMIywd444JxOzfhtOYtWnDpfqNOiYyB30vucmgIHAqQCB6oUK1+szCUex5bQop7LkC0PKSqgZacMkfcHYMRfJBF13qsqwd4DBL+G5F7iY/82FwaRRTgKhYKbVRD6TMevROqEdBuLjb/cp1DqBrwFPz/Ihe4kIclwK9dNcxQcUWUS4Wq2rpWzD9SLe1gptnX++1pJuEHkv4nRTaWit2akZVFr4LxHCCrCwPHOGhCb4zbZtpjJOgcCQN7ZV0uOOfPsZGVLcQAEJWoJAwhd38MLXaP0Ag0LokZSSQRwtJnTCR/xSUa1pD
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?TUVJbTcrcWVGVHJ2Zll2Q2Fhd1hiS0c0Tmo4UjMzLy9NNXBFdXhXRit6bzVS?=
- =?utf-8?B?T1V4a1Uza2JjWktUWmJWVFRaOTRaZnBQTVBXTVZ3V2RoeExKMjhxajdaaDNE?=
- =?utf-8?B?YklKVElzS1FHVDYydWM3bmUyV1VlbEZheHg1TGVucTJEVThWUUJHTTR2ZVd4?=
- =?utf-8?B?bVQzS1BMUFRSaWJkMk1lanVCUlRYcG1RT0pBd2ZnaU5wMS82dDlheHNadlZN?=
- =?utf-8?B?d1VIaVJkdGxSampNYndYeXF6L0R1OWl0MnFxcWlSbjI4WEdGSzVqNVBEeFZU?=
- =?utf-8?B?VHRjTjFNdjhzcnUrTFVRRklTQ1hjbU5wM3p5SzlKZHZnczJneENXcFlFbWVW?=
- =?utf-8?B?ejMrNHRmajdBMStiUmRTSFc4VHk5ZTBNY1FkTEwvcUFxV25vOU5SSDViR2g3?=
- =?utf-8?B?ZVB1Wnc0UlRmQkdFc1hxTlp1K0RNSVQxYmM5UldmVFVjSDUxZm54cTFsSVc1?=
- =?utf-8?B?eDB0b2FjMkZWVkh6SC9BMFBEVFVuOUJTN3pJR2p6MmM3Snd5WEpuK3BRdTZB?=
- =?utf-8?B?TTl6UU1Xc2RZdHhMNkVXblJ2ME1ZTmZwYkxMQlRIcWRWUy9kWGJjYjJmUkFj?=
- =?utf-8?B?MytFM2FMck1BUzg1K3cwS0RPNjhURmxqN1Q2eUdaWmpEd3Y1dSs2d01LemtN?=
- =?utf-8?B?MUtJZEtDRzRLTlpKczc2eSttalJRTXFqTlhuQkFPYkpaUFkyTkRKRkFPOStW?=
- =?utf-8?B?UHFIR0FaZDYzVElQSU5uWTJJQXhPZ2hIM0hFa1RCcUFkbTNPd2d3cmFFd1No?=
- =?utf-8?B?Nmc4MkVpMWU4RFlBV1gvbGRKREZsdzN4d25Vdy9hV05xbHlKZjJBRHhxVVNx?=
- =?utf-8?B?VHJOY0pJbTBTeFBMZlgwNHM0TkozVFh4eENucTFvNXd0Y3BIWWYvbS8yT3V2?=
- =?utf-8?B?SWpoZTZhd0J0NVNVcE80RzRWbnhyYWQ3U2pXcDJ1YkJDRDhGbnNPdlJIUTBM?=
- =?utf-8?B?ZE1rWVJXc05zUjhBUVhxR00rWis5MkdYMEk0N0pMZzF3QnRVQnpzZnVIbmxS?=
- =?utf-8?B?V2FrVTNxOE56ZkI1eE13Q2JlYkhFM2Z5UU8vV3N4ZTlNZXh5bDdlWXp5OU5t?=
- =?utf-8?B?cGZabEdGb280Q2FqYmFHT0pXWGo1UXdrR1VWRENVY1JYTDhkQzduZWlPdVRw?=
- =?utf-8?B?cG0wWmJGSWttR1hXNStSengzdUZjMmkzYW5JbWRqWWRXQ1F4TmhYcDNtbVh5?=
- =?utf-8?B?WHFZRFBUYUNjN3BFc1RjUFpySTZmT0orRlMzWDRnLzRta3hneHVySEpyclNj?=
- =?utf-8?B?UEliM05vYkg5Z1JSQW9iOG1DQzYzS0p2K09DL2hXSWx2S3N5TjZNbjFuUDZR?=
- =?utf-8?B?clFJWUtaOFZhdjh0QzdqcEJpdGlFakJIeVlFc3FNNUJHRk9hOTl0WUNLUE1o?=
- =?utf-8?B?TnNQNGwwSUhid3pBQlVOelh3Nk84NnVrRVcrWVNTOThVdjNQUkdIMUtqWWVG?=
- =?utf-8?B?TWhoSnRBQUh0Vk9hdnhwVnVhdVFMS29HRTUwYWhJeG5Ca05TUXB2blNBZW05?=
- =?utf-8?B?SWZCcFBPaXhJc2YzMmNKL284UHM4bGcxbzR6STAwVXM3QnJ4Ni9Tb0lhYVY1?=
- =?utf-8?B?S24vNzRaN2FCWDBNMzVBWGdnOXRIVlRUTXFZdzFONXAvbE1LTmNXMjZKTmlX?=
- =?utf-8?B?MVdBWStaazUrRGMzNEJNLzdQTWx5ek0rZjFsUmpWbjJ0NkszUkZPSUpNMEUv?=
- =?utf-8?B?aWxseWtPMXdlODNPNkRtd3l1YTd1ZFVBcFFhNzMrdHgyZlpwL0VSdU92RHBp?=
- =?utf-8?Q?0nylTHeMc8H9O8n4fI=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C801416D9BA
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 19:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719863001; cv=none; b=IerWa3Sd3YEdT/4g0l842UrHHt8rAV93pqqJdYn6nRlC9IfbgMZ2g0TiNHAEw7I4yZkcEmg3neSs2rJ03y8PFu+Tm8yPTyX2+lsQPsTB3EcggRCrvsApnKGMKJBCNZyrvE7zAs8sIBfPMPMvlQAh4F0JVIOIhmmnp7j5+toJxAg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719863001; c=relaxed/simple;
+	bh=shrbWN/CrXwZygomd4aysklY0BHpRI/Lqzag+3eHk6I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hKkoGuSNjrormwon2io8aGCcJLh4BaEwqYavnSo1LB9vLEscSx06Tmt8TiSfA7xvf3flbdpdWOKjx10/chH7ln+T1eiEkDgChXJj1PL5OqxOXWsSrRkrkt1xz/LgaUX0n45vGmyW48bI1UTw588LEN+2vExVV6bTqT0+Rp4lvwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NG2H7pzO; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52cd80e55efso5935623e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 12:43:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719862998; x=1720467798; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oscpSDO7CeUkkgmCfEkVvaRyN/meIA6JpS1dhxrIHl0=;
+        b=NG2H7pzOxe/yfDqhIzNt+v71y7p7iGdRqk3n6WIBxAXU0lP5TRSfJN+WiVxW1kfluj
+         8G6HxfVHKhNOq5GjPp4xJDwe2kFNG2v+ZSKzB1pOORKMp6hcCnPk4seBC4afsmc5CxQ8
+         lPxAmH+TlPIjFFu7EjThCDYVq40pa00ox8UBpiQHgW6bIA+JYJDuE03uu45uNtUbvPUN
+         EkNd4ax1mKmkG2mWqWOP8MqRfgHrPMkEtLX3JjvHoMUQsSyWIOGFmTf55yiF3TElCCMe
+         BciwQq9isVqB2ltl3o/NukauCYAKOvaAVGGKuAuapbSHDURhL9l6INCx5tdG+ys0+6Aj
+         5mZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719862998; x=1720467798;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oscpSDO7CeUkkgmCfEkVvaRyN/meIA6JpS1dhxrIHl0=;
+        b=JG9e/ZInOLUMJY4Lte8cP3jZWOEgh+76MDRPb1kMsWHSyjZZLvotkHhTOG/MsNT2No
+         0sTs5xPfw3/111c59+a3gECnosAC0kkajkLnp/peCquZOrB+COf92EAcQvbdE6kRUZzs
+         QIqSRVJJjccgozGQ1aRF/YwfzTF5tBgcxFzLM1Nd5OnyjhRaGI3LpOx7ee9dCyPJh1oa
+         iD65/4/8/O348SCRv1TGy3SWikCYAox/ZoY3fERj7lfqHhzLYNnj7A+nGAtikNJ6+dhY
+         7k7BUyO9nzl7n/xvNrNGWUpwa/bc2J8MxNvniz9eA9Aay3gulkNwl0HYCFhagnGglJ3X
+         /kYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVFGkOjaUYG5meOCP3ib1iu13droqoyHkOpNLjy+0LnBmseyWej/KJOFMpayEjUDmrro/bvwuCVO07rzDSLm8jc7LWsm/PQPpiyy2Kk
+X-Gm-Message-State: AOJu0YzQPF/V3cW+5ZPAc5+r9nZpJQlWkLqgA+Gsqr7t7PAlrviW7sKy
+	80/qQ0WOKV9mIHUn+niceCy3GkLpIZrx/q4txFWza/hJ3/lajXDBqlnsevpdsKM=
+X-Google-Smtp-Source: AGHT+IFJ7WfUoSw0//3UtLKEzdeD18XEuk93La1NkOaUbrCL4a3tDiQ5T8y7FR/KCltxgwltD2/Zqg==
+X-Received: by 2002:a2e:bc88:0:b0:2ee:4c6c:5874 with SMTP id 38308e7fff4ca-2ee5e37ff02mr73446291fa.10.1719862997936;
+        Mon, 01 Jul 2024 12:43:17 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ee5160d26dsm14817021fa.25.2024.07.01.12.43.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 12:43:17 -0700 (PDT)
+Date: Mon, 1 Jul 2024 22:43:16 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: freedreno@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	quic_jesszhan@quicinc.com, swboyd@chromium.org, dianders@chromium.org, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/5] drm/msm/dpu: rate limit snapshot capture for mmu
+ faults
+Message-ID: <5isw7c5kkef4kql4qcous3gmwhvgwc53ntgjm4staymqr67ktm@iw3cr2gr2iko>
+References: <20240628214848.4075651-1-quic_abhinavk@quicinc.com>
+ <20240628214848.4075651-6-quic_abhinavk@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-bafef.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2f1ecdff-747f-40cf-d7f6-08dc9a05f5cc
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jul 2024 19:42:36.8899
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB1990
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240628214848.4075651-6-quic_abhinavk@quicinc.com>
 
-VGVzdGVkLWJ5OiBBZGl0eWEgR2FyZyA8Z2FyZ2FkaXR5YTA4QGxpdmUuY29tPg0KDQpUaGFua3Mg
-Zm9yIHRoZSBzdXBwb3J0IEFyZCA6KQ0KDQo+IE9uIDEgSnVsIDIwMjQsIGF0IDc6NDDigK9QTSwg
-QXJkIEJpZXNoZXV2ZWwgPGFyZGIrZ2l0QGdvb2dsZS5jb20+IHdyb3RlOg0KPiANCj4g77u/RnJv
-bTogQXJkIEJpZXNoZXV2ZWwgPGFyZGJAa2VybmVsLm9yZz4NCj4gDQo+IHYzOg0KPiAtIGFkZCBw
-YXRjaCB0byBtYWtlIHRoZSBTTUJJT1MgcHJvdG9jb2wgZ2x1ZSBjb2RlIGNvbXBhdGlibGUgd2l0
-aCBtaXhlZA0KPiAgbW9kZSBvbiB4ODYNCj4gLSB1cGRhdGUgQWRpdHlhJ3MgcGF0Y2ggdG8gbGlt
-aXQgdGhlIGVmZmVjdCB0byBkdWFsIEdQVSBNYWNzIHRoYXQgYXJlDQo+ICBrbm93biB0byByZXF1
-aXJlIHRoZSBzZXRfb3MoKSBjYWxscyBpbiBvcmRlciBmb3IgYm90aCBHUFVzIHRvIHJlbWFpbg0K
-PiAgYWN0aXZlIGFmdGVyIGJvb3QNCj4gLSBkcm9wIG1peGVkIG1vZGUgaGFuZGxpbmcgb2Ygc2V0
-X29zKCkgcHJvdG9jb2wsIGFuZCBkZXJlZmVyZW5jZSB0aGUNCj4gIHN0cnVjdCBtZW1iZXJzIGRp
-cmVjdGx5DQo+IA0KPiBDYzogQWRpdHlhIEdhcmcgPGdhcmdhZGl0eWEwOEBsaXZlLmNvbT4NCj4g
-Q2M6IEhhbnMgZGUgR29lZGUgPGhkZWdvZWRlQHJlZGhhdC5jb20+DQo+IENjOiBMdWthcyBXdW5u
-ZXIgPGx1a2FzQHd1bm5lci5kZT4NCj4gQ2M6IEtlcmVtIEthcmFiYXkgPGtla3JieUBnbWFpbC5j
-b20+DQo+IENjOiBPcmxhbmRvIENoYW1iZXJsYWluIDxvcmxhbmRvY2guZGV2QGdtYWlsLmNvbT4N
-Cj4gDQo+IEFkaXR5YSBHYXJnICgxKToNCj4gIHg4Ni9lZmlzdHViOiBDYWxsIEFwcGxlIHNldF9v
-cyBwcm90b2NvbCBvbiBkdWFsIEdQVSBJbnRlbCBNYWNzDQo+IA0KPiBBcmQgQmllc2hldXZlbCAo
-MSk6DQo+ICBlZmlzdHViL3g4NjogRW5hYmxlIFNNQklPUyBwcm90b2NvbCBoYW5kbGluZyBmb3Ig
-eDg2DQo+IA0KPiBkcml2ZXJzL2Zpcm13YXJlL2VmaS9saWJzdHViL01ha2VmaWxlICAgfCAgMiAr
-LQ0KPiBkcml2ZXJzL2Zpcm13YXJlL2VmaS9saWJzdHViL3NtYmlvcy5jICAgfCA0MiArKysrKysr
-Ky0tLS0NCj4gZHJpdmVycy9maXJtd2FyZS9lZmkvbGlic3R1Yi94ODYtc3R1Yi5jIHwgNzIgKysr
-KysrKysrKysrKysrKysrKy0NCj4gaW5jbHVkZS9saW51eC9lZmkuaCAgICAgICAgICAgICAgICAg
-ICAgIHwgIDEgKw0KPiA0IGZpbGVzIGNoYW5nZWQsIDk4IGluc2VydGlvbnMoKyksIDE5IGRlbGV0
-aW9ucygtKQ0KPiANCj4gLS0NCj4gMi40NS4yLjgwMy5nNGUxYjE0MjQ3YS1nb29nDQo+IA0K
+On Fri, Jun 28, 2024 at 02:48:47PM GMT, Abhinav Kumar wrote:
+> There is no recovery mechanism in place yet to recover from mmu
+> faults for DPU. We can only prevent the faults by making sure there
+> is no misconfiguration.
+> 
+> Rate-limit the snapshot capture for mmu faults to once per
+> msm_kms_init_aspace() as that should be sufficient to capture
+> the snapshot for debugging otherwise there will be a lot of
+> dpu snapshots getting captured for the same fault which is
+> redundant and also might affect capturing even one snapshot
+> accurately.
+
+Please squash this into the first patch. There is no need to add code
+with a known defficiency.
+
+Also, is there a reason why you haven't used <linux/ratelimit.h> ?
+
+> 
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> ---
+>  drivers/gpu/drm/msm/msm_kms.c | 6 +++++-
+>  drivers/gpu/drm/msm/msm_kms.h | 3 +++
+>  2 files changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/msm_kms.c b/drivers/gpu/drm/msm/msm_kms.c
+> index d5d3117259cf..90a333920c01 100644
+> --- a/drivers/gpu/drm/msm/msm_kms.c
+> +++ b/drivers/gpu/drm/msm/msm_kms.c
+> @@ -168,7 +168,10 @@ static int msm_kms_fault_handler(void *arg, unsigned long iova, int flags, void
+>  {
+>  	struct msm_kms *kms = arg;
+>  
+> -	msm_disp_snapshot_state(kms->dev);
+> +	if (!kms->fault_snapshot_capture) {
+> +		msm_disp_snapshot_state(kms->dev);
+> +		kms->fault_snapshot_capture++;
+
+When is it decremented?
+
+> +	}
+>  
+>  	return -ENOSYS;
+>  }
+> @@ -208,6 +211,7 @@ struct msm_gem_address_space *msm_kms_init_aspace(struct drm_device *dev)
+>  		mmu->funcs->destroy(mmu);
+>  	}
+>  
+> +	kms->fault_snapshot_capture = 0;
+>  	msm_mmu_set_fault_handler(aspace->mmu, kms, msm_kms_fault_handler);
+>  
+>  	return aspace;
+> diff --git a/drivers/gpu/drm/msm/msm_kms.h b/drivers/gpu/drm/msm/msm_kms.h
+> index 1e0c54de3716..240b39e60828 100644
+> --- a/drivers/gpu/drm/msm/msm_kms.h
+> +++ b/drivers/gpu/drm/msm/msm_kms.h
+> @@ -134,6 +134,9 @@ struct msm_kms {
+>  	int irq;
+>  	bool irq_requested;
+>  
+> +	/* rate limit the snapshot capture to once per attach */
+> +	int fault_snapshot_capture;
+> +
+>  	/* mapper-id used to request GEM buffer mapped for scanout: */
+>  	struct msm_gem_address_space *aspace;
+>  
+> -- 
+> 2.44.0
+> 
+
+-- 
+With best wishes
+Dmitry
 
