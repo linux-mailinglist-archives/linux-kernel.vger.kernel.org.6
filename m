@@ -1,387 +1,234 @@
-Return-Path: <linux-kernel+bounces-236898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26D4F91E85D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:15:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A94B191E85F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D23D22816B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:15:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD1631C216C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52AF716F847;
-	Mon,  1 Jul 2024 19:13:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9682716F8F0;
+	Mon,  1 Jul 2024 19:13:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Sp5IB6H8"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S27138dp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 315841741CB
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 19:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719861209; cv=none; b=peN4eGtxX987YZ6Y/BglwYCJP/YpCimW5SD+CAdUSMge7X3Kw4aagEm4zbHjIkx2wqsVeGvXFJsmIwxqVuSJIrag3MaGL957ZXevgcla5Xz8ATFjGU+/NiXU6La/jaBaxGUNngwZtMsSqjAivvTZWc5+BfBdfaLdhGJIfoF6La8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719861209; c=relaxed/simple;
-	bh=gupexbpiAL3ERI6YIxBbES/GTXD1sqpimnc8/MRuhRk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Tt1nhGXenrVDR+Z4gtWl2YM054PQHLOjwjcHPS7jpCe3ccU0sC5igvy+WOEs+nRkzccW51mPgelCs6zNuYlBVACM8F9Avh3Z/VWyCf3aH2ZfAegUo4TzeIMst0xsdbWABhv3pddIow2DBwmwKVGeYBZQaWGp88R+Ag1hY3HwcPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Sp5IB6H8; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57a16f4b8bfso11418a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 12:13:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719861204; x=1720466004; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CTwR81k/C6TuKDXD1gSrH19luO0XpCqAMdsSecTdwzo=;
-        b=Sp5IB6H8Y5bfOsPucptstZYE5WAXODObavQOUkDnCrrv5uQpb2iu/VLieq+wIMxj3F
-         QXr8E/UE+EbS6ycX7wHaQUMo1L4OSBDdUL31FTfmhsvGUCt/bH3ojgSHh68s6kI5eCq0
-         YMk0d16X97Vpmc9AHjBWxM2gLm0fSES7Kr6LPcu/8LOsftT07A8H/t+FKE9ErK2I1BVD
-         yLgRaLo2cTqZy4cuaGvsoUsqjrLs/ZbGG31r7TBxlT66Adu/8FVImXvM5QfjumtKQEvd
-         goPDjHkpI8Y1tEKD0qZwczmLpmt8GIDcam5foXajvgmUukWV1KPFWPkm3m4aPFJm/0jZ
-         ApJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719861204; x=1720466004;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CTwR81k/C6TuKDXD1gSrH19luO0XpCqAMdsSecTdwzo=;
-        b=OjOYTtN6007N1lyXwi9ui8OfbVgi7Gjz+Zcp2R72bvx7fz2IcepZHObBDga7O2wTDS
-         nYcuvGd1zN7aVUQqUxvgh+2OaIHgtSNqbd2JM39ymRwxh4vNRe/MJlhSc2jPuy/CUDLz
-         n2+E21Q5oiQrEAYu3iPVFu4udC3kVhEIwuT0mlJc4Q8QdRuTEHeA/DA2xw7K6Z62u4F4
-         qgyRVVlg79ydV9XZKj0YCL8BEJCZPF0+U6f1Itt18emlQiTxZTacUnhoPygcPac6ZZUe
-         I8m+Yqje8TFvxCpKK0Hab0XcS70BXzvtXd3SeYoT7OlIjg62ZCkNrn1HmlpQBoit0Xqk
-         sbhg==
-X-Forwarded-Encrypted: i=1; AJvYcCWkoHS0s11DAe7B5lwjifoQwMfb94ZY6OUro2eS7gPf7MEU6EO8vPV42kHmXKCGvZCJstYGh1O7FfcqCElAoHcCa1N8a5jBH3iVBiy8
-X-Gm-Message-State: AOJu0YxJdHO/TQvBheLxIoEAwSoYHi2+dH/spXdRmP4iydXaGGUMrg0W
-	+0PxfboU53dPxUxkR/4i89hvTVTtevvL28+4zolEIDtqciulQN66M7dS1jk1esL4RgSPOjkWjvd
-	ZrzOaGC7whmaXFE9zz6m7ROowUO8NjiCevQv4
-X-Google-Smtp-Source: AGHT+IG4fl/B90e8BsNKHT04HFecbPppNUeued91constonNbbT9xRg4qeU5lwJhMIMzw5b1exUJ8PHDuDq+XulfAKQ=
-X-Received: by 2002:a50:f68d:0:b0:57c:bb0d:5e48 with SMTP id
- 4fb4d7f45d1cf-5872f673e4bmr450741a12.2.1719861204259; Mon, 01 Jul 2024
- 12:13:24 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176E016F8F3
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 19:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719861222; cv=fail; b=OIx+M9I/lqmU8kL7DoBkY2x5iQbeXF464U4+mOFokozJ/3VHjMV66VIgqtlkJy98pajBWB+wgrnpMPA0ifn/z7KvLxZNkf0r9mirin2v5zmW+j381S4eWD9majNwJ12gnOKPHGDUlSbZ3J9pgcXUK+PzwzHIyNCFIq0lARKbUO8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719861222; c=relaxed/simple;
+	bh=KRpictUQGEfRn0o7HAa4MqfGs9X9Xag7E+sG6lHirJU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=NzrZuwOuNjcZ0uaiEamqbICyI9Ektob9Kd1WQf+jyRdv+NJTCFdfdQY8aDKMEK3JhN0QCgdgCnrHARl1eHYfyJqheWeunVuhQAY4SytynO42fo+/xEYLRnd9XDVeRHvQMnu6/b5YhWvSuO5TZ3QB+Sq2pawcLCMZsJRreJhqmo8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S27138dp; arc=fail smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719861222; x=1751397222;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=KRpictUQGEfRn0o7HAa4MqfGs9X9Xag7E+sG6lHirJU=;
+  b=S27138dp/v/EVdKsyOozG1CVYNl2bo5wNKtGLy8TsVFRHpNGhTlcG3iQ
+   J68BAYHmB75oPpEihqQCQPgKtFXACbHMF1BS0C4EviQh8pj7Z/0Zar6o4
+   XreJL55TAjtJFZhhD/a1LujesyknMbdf2TqfuZQaagQkPHO2UI1xFI46p
+   /StMNqZRrBPj4xWWjcl2lbt45dRlFHGpfhhBHO4P4nF0Tzy47BjELANTH
+   eQu05GG25KXTElF3WeD7Au0mRIgk5uO2VXYiRofvg1aJkCe4WEe+62rtR
+   Ad0YRmKfIuiuHh3ZycIaI3i6NYmTntpqEz+I+Z1eDD1GUuPDDOrqttPEw
+   g==;
+X-CSE-ConnectionGUID: DUEwKUfsRm+osAfA4TSBjw==
+X-CSE-MsgGUID: KwZm/c8ISfqPycUyxWJDsg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="16850683"
+X-IronPort-AV: E=Sophos;i="6.09,177,1716274800"; 
+   d="scan'208";a="16850683"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 12:13:41 -0700
+X-CSE-ConnectionGUID: zMr/h7uhQT2JOQNi7Od+aQ==
+X-CSE-MsgGUID: QOlCHPDzTM29uQcwz9V0/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,177,1716274800"; 
+   d="scan'208";a="45634870"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 01 Jul 2024 12:13:39 -0700
+Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 1 Jul 2024 12:13:38 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 1 Jul 2024 12:13:38 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.45) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 1 Jul 2024 12:13:38 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=e4r6CwkDbCvNE1MbnJw6+hcK4K3ey4GJSBw/+VUAIExQ+WyH0lQ2H7/cGF1/OOCBosjcVAvcHiVNXroHvwLvOl4mmGTMTLslcSSuIzGA48ru3bbsLP/Fd7Myy66487Ii5P6PAn8M5i1UVHci4jfUuOCE+hLO2Yl0QFGZWjyjLXx8SmkSM4JEgaXmutAFDnBlbMpTQggcjlVaNEs8cllnQ1cEmr6UgNcoeVx7qNZ6l2nlT8+//XHiTyYVrcdU/lAs/yGmKoo3dq584nFRjW8MbzYdhmDgkNvvjxtm92iIhsl9FelM1jD7BDHag0L95r0lBZFnDnNV+5SnB2b1Hwlzsw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KRpictUQGEfRn0o7HAa4MqfGs9X9Xag7E+sG6lHirJU=;
+ b=oUZO42WnO+cBJ1mJrDbW3rfUqZjRWyJpKm0AYz4wOpXxzEr8ecMM3UaVlPBUoWJHxT9MRzlQBxMcVSfzao2dvDRbFFC46OnKlcwy69dhV2Ww53RUhixwjs/RSef+DadkVJDsQCAHlg8FzmgbQktuLGYcAA2XfqOk6iZIphIoIPcHzq8E2VFgMDGVWZ9V5zBgWHmq9SgjT0WwSKj58Vc3e9JDkbRK4BnD4pC9v/Q73/mCeCM9tJvTfZoPIJiwJJinyctaxJ01SsaG8cfPFdXAcYV5U0hBzkxhNvItUXahDI+P/y9qnbZT+5g8j1Dz3FTCUXT7bHvkGzonc6jQiKJElg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
+ by DS0PR11MB7382.namprd11.prod.outlook.com (2603:10b6:8:131::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.29; Mon, 1 Jul
+ 2024 19:13:30 +0000
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9%4]) with mapi id 15.20.7719.029; Mon, 1 Jul 2024
+ 19:13:30 +0000
+From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To: "jgross@suse.com" <jgross@suse.com>, "luto@kernel.org" <luto@kernel.org>,
+	"bp@alien8.de" <bp@alien8.de>, "dave.hansen@linux.intel.com"
+	<dave.hansen@linux.intel.com>, "peterz@infradead.org" <peterz@infradead.org>,
+	"mingo@redhat.com" <mingo@redhat.com>, "tglx@linutronix.de"
+	<tglx@linutronix.de>, "ashish.kalra@amd.com" <ashish.kalra@amd.com>
+CC: "x86@kernel.org" <x86@kernel.org>, "mhklinux@outlook.com"
+	<mhklinux@outlook.com>, "Rodel, Jorg" <jroedel@suse.de>, "hpa@zytor.com"
+	<hpa@zytor.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "thomas.lendacky@amd.com"
+	<thomas.lendacky@amd.com>, "kirill.shutemov@linux.intel.com"
+	<kirill.shutemov@linux.intel.com>, "peterx@redhat.com" <peterx@redhat.com>,
+	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>
+Subject: Re: [PATCH] x86/mm: fix lookup_address() to handle physical memory
+ holes in direct mapping
+Thread-Topic: [PATCH] x86/mm: fix lookup_address() to handle physical memory
+ holes in direct mapping
+Thread-Index: AQHayZ0272Rw0HaOX0+/vmpf14Hnz7HeiKyAgAOkgwCAAAtfAIAABcCAgAAD+oA=
+Date: Mon, 1 Jul 2024 19:13:30 +0000
+Message-ID: <25478bbd92a0dacb6d52d7ffd214374e151a9338.camel@intel.com>
+References: <20240628205229.193800-1-Ashish.Kalra@amd.com>
+	 <2982a4f2-ea8f-4fa4-81ea-d73c00fc2ad0@suse.com>
+	 <5cf60d52-1682-4244-b892-688b22eaf4a1@amd.com>
+	 <8d970528-0e57-457f-ae00-862b4d320a2a@suse.com>
+	 <0dfcaae1-9ee7-47c5-b530-2062021155f0@amd.com>
+In-Reply-To: <0dfcaae1-9ee7-47c5-b530-2062021155f0@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.44.4-0ubuntu2 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|DS0PR11MB7382:EE_
+x-ms-office365-filtering-correlation-id: 95a622d6-a04b-4282-b76f-08dc9a01e4c3
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?M0RYYmRyTStDMmtmNEFZWWxWVjZNNmJFNHdLa2FwYmJrR2loQ2dNS3pHSWZD?=
+ =?utf-8?B?OUJjd21zcnBsRVBGa2RPckNxZEVlNHIwd2ltUXk2Z0ZVVncza3p2VjBzUFNZ?=
+ =?utf-8?B?Z3BLNk5nQjFJWXVObkxyUnVMWldXM2dTcHZtRCtpSDhTNUdjNU9hdFJ2dVVi?=
+ =?utf-8?B?Vkc0OVRpTkZWKzBnai9vcVRCNGJybnRPS3BpY2loQXp0cmpiaUNZYWUvdXlM?=
+ =?utf-8?B?aTRJVFpGcjFaS0ZyVUlGUXg1akJoYStZYllzWE9XdjJDR2JzeUtMQ0I3NUNP?=
+ =?utf-8?B?K2t5dFF2bGIyUXQvT21SR1NBcGQxOXkwUGtoWGNlZTRFWVFOSThOOXltSVBn?=
+ =?utf-8?B?Tnp6OExTd3BtYklydS9rWWYzeVlMVVV4RkxlQWtJczRjbEs3Wko2Q05SendU?=
+ =?utf-8?B?RWNZR3pKejkwdGxSb1NKazllRGhpRXpNbzhDUVBGMzJYN044U2JWZGtmNnIz?=
+ =?utf-8?B?cm1LWHRMRFE5Kys5WTVLQm4vZFZ1ckFoS1l2REZjb3RVMmNveXZjRzVmWWYy?=
+ =?utf-8?B?MnRtNVMrTUltY3kvVzlKdHl2ajdERURzOGIxZEJQaUJpREw0QVN1bGtiT3lY?=
+ =?utf-8?B?b0lJemQ4Q3ZGRTZMWnZFcW5EamtIMUJTK3BPM2xObFFka1ZZUTd5YlZmQU9y?=
+ =?utf-8?B?SStJZkRZUnQ5a01FNkk3RHVBRGJWZkZ6MnpPOGNsSWZpLzVpN2J6Q1ZCb0dT?=
+ =?utf-8?B?MW9FU3NEdkxtWE91b0pmdzB5bStBd1hOdDg3YndUemt0RmNNR3JkdEFOdUEz?=
+ =?utf-8?B?OGczRFhPaTh0WlAxSmtaY3I2UXVwWXAzVzlka09tZm54QnpoVU5aaDRpMm9v?=
+ =?utf-8?B?NE9TMDY3cWRaSXVDTTA5bk93dWRvZXk4QUkrY094YnFNdWlVdmhiMHU2T1Rw?=
+ =?utf-8?B?ZmdlQTh1NkVsbnp2RllwcDZvUGJoZzJhdXRwejVDRzdHUWxtdWpWQlZndWdm?=
+ =?utf-8?B?TGlnMk5vTmhSL1RWWjA1VGVFSU03RkhCM1FGaUF4cG1TbHpyR1lBb2Z1QktH?=
+ =?utf-8?B?MGJzUkh0VC8rTDZUK3dWOEJBaWthYkx5Y3BHV0VCTm9wd3dNS1IvZWl4Q2dB?=
+ =?utf-8?B?bS9hVStWMW94MlhpSGhGUE9uVVFFYk1DdTRiQXZrR2RPNDIzNGFuSnFwNS9T?=
+ =?utf-8?B?cWVIcEtIdEtvdzR5U3A4b2FWUHY1WW1lWDd0SHNDUkNqSVFFZG1zbE1idUhl?=
+ =?utf-8?B?K25oQ0szcXlicHJRc3RTQkFVU3dmSU5tN3k3bGhKd1Nld1p0aEVaSmpJWjJj?=
+ =?utf-8?B?cXB4QmVXOFFVZFpQYjNMaXlBMmJlNmtET3VweWRkZGNGNGh3cmwrZFpnbnlG?=
+ =?utf-8?B?MFJkeFVSNGd6WElZd2pUSGRnQ1FudEp0NzlHR3BxZnJLMjJTU29vMmJicHNq?=
+ =?utf-8?B?YU1xQ1JLZVI1RXIzdGdDUVp2cENjRGM0dHdXSGh5T3NIMVpyakJIeW1TWUk1?=
+ =?utf-8?B?VFo2aEhCNVlQVlJrT1BQY2RYajN2TTBRczc5ZktVbGtlUU81b3M5aFVURnlI?=
+ =?utf-8?B?SDdFWkFnRUV5cE94YkNzeEN2RmpNZDBYTkJoaFVOQXhuTjBzVS9kRk05L0x1?=
+ =?utf-8?B?VFJLRlluMllQbjM0WUdlZFNhLzk4cGticzExSi9yRkkxb0ZMWlBpKzRJL2Qr?=
+ =?utf-8?B?T21TTUNNc0tsV3VoeXJ4eWZFVU9Ma2UzejhTZGtOb1V5L0FZYit3QWtKU2tW?=
+ =?utf-8?B?S25uOVBiWTFXb1MzbXZDdlZzbGhjU2owTFMwM0J1OGMzZ0t2Nkx4bzRGcjNX?=
+ =?utf-8?B?L3RlaG54d1AzK2NGWGhIQlNrZWI5REk5ZUxMRGd1WEcrRVZnZWpGVEdmMHNm?=
+ =?utf-8?B?bThXdGI4bzRDRUhyVnJ3RVU5aTltT2Q1QlA2ODVjSi80MzBPTllPbXpEUDJZ?=
+ =?utf-8?B?V1dncjJ1ZXJxUTBwY3Z1WEVmeEswQzVOMHlET2hVL1BqdGc9PQ==?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?VWJCTWx5Y1JXZ0dCTit3Y0g1OFkwM2NDQmpMS2x2TkkyZGdOb0lWM0RXOVAx?=
+ =?utf-8?B?MzladDJBaUdaZ3Irc0VGQVFjRlZJNFhBVDNUZ2prZ2lyNXpybVhDUmFVck5y?=
+ =?utf-8?B?bUdkN2YvM090M1FYeEhydzBjVFpvejlaMkM0YkMwVTd6eUpOOGFwVmpKTXIv?=
+ =?utf-8?B?SVFNSlFwRzZ4RE1NV1RwdzNFM2ZuWHE2WWFVSFZBNHh5a0tsd2d0enBqZHJq?=
+ =?utf-8?B?aXFNVitTNGpMOXFqdnozK0pHY3U3eVRqRm01cW4xSElYMVJCQkoyaDcvSGtR?=
+ =?utf-8?B?azU3Z0pEZmFiejlUN2VwM1publpsZkRzc3VOeG91ekljZFhLZ2RTZXZoNCtn?=
+ =?utf-8?B?ZmJ0ejJ5eWhqbjNnM1ZVZlZZRkRXdm9sYkJPV1NRbWdWUlI1ZU9lZmgrVUZW?=
+ =?utf-8?B?djNSQWhqSWMvR3phazdwWkZrQ3VFeTlad0VMeHcxWjdianE3M0ZUaDlYa09Z?=
+ =?utf-8?B?Ukt0MjBSczNUdUdhbVkrdFdlSW1lVVpXc093ZHhVaVJwOG1VTW5Da0pPeHFz?=
+ =?utf-8?B?RW5uNnN4TzFhY0FsY1gwbkJqVVV1NnYvSWRrN2t4T2JMNnNJMDM4TEhLcXQ2?=
+ =?utf-8?B?aUdVTmI5MlBOeXdoMDhWUXkrOUVFZStJSnRoV2hidXFzRU9sT0R0Rk9KRnU3?=
+ =?utf-8?B?RlZCZ3hvVExtYnRYc0NUZlNBa00xblZrQTYzK0pFQVhMdlhpOWd3NFJuRDRW?=
+ =?utf-8?B?L0IzOEdTd3hmNUlsR25wc1hHOUp2R0VHdFdFSkdYSnV5ZXdOV0xZTm8yOVd3?=
+ =?utf-8?B?Wk4vVm82Wmk4Uk9Yb0l6NjVFUTAydFczMkd2eTFhZTlFRnAyUlh6ZHNCcGNC?=
+ =?utf-8?B?V0FvNGlTZFJ4LzU0N1k4dWdnMjVia0tpYk84SVFUYWhtWUV2emJmMEp0OXZi?=
+ =?utf-8?B?SUJ2cW9adis0Y2ZYdm1qK1ZZK21udGo4OHVQUDV6aGduREt1WSsra0Z6Slhs?=
+ =?utf-8?B?ZTg4VWpuRWIyelFGRWppclRzRkUxdEF3SHRoMnZKVUdYbFJIUGpNRXNGN01C?=
+ =?utf-8?B?WVJlelU5cHl4V0x3Wkd3Si80STZnWkZBMytYOURuSm1yYTVvSVovbE05OERK?=
+ =?utf-8?B?Z1B1YzBEMDdTdUEvcEkyUCt1NjA4Vk1hQzVxU0lEUVd5QS95ZWJ0ODFOU09B?=
+ =?utf-8?B?OThhQ09DYWdBRmZCb1B4WFBRRmQyMzZwOFYxeGlIbzBJSDU3dHNZUjFlQjdB?=
+ =?utf-8?B?cnNnSEN2YmZwS0M5NWNEUTczU0xhYXA1SmJmcmVBT2cvemFyc2k1RFNzZEtS?=
+ =?utf-8?B?dEYvbUgyQzNDaGpyekZ3dTVrY1A4QndlL1UzUk16OGxxcnlta1V1TW5IYTA1?=
+ =?utf-8?B?ZFFIMDFsQ1RDQkdKbGZJa3FRbmpsc0ZwOHp1Q2tDUExJVG44QkQzcjFIWDA0?=
+ =?utf-8?B?R2grYzcybHlLazBSeXdzMFIrbGViTWgwaDc3WG5TbzVPMWZWaXRialZTSlN6?=
+ =?utf-8?B?NlgydzUzN0hYaEhyTENqL2dkdG9tZDBxeGRDSy82RE5vbUJBUENYSS83aFpr?=
+ =?utf-8?B?R1lGejZNR2U5M24yVEdEdUE5RUNmQ25qUFVrMUFTNWFJM0gxRm0yQnpmcW1T?=
+ =?utf-8?B?Smw3WTFzS2VYMEI3SUdmL09rRXJqeFgwRGt0cTd5WE8wUnZINDhKMms5Yjk1?=
+ =?utf-8?B?M0JDRk12YklmYzhIQkMyMkxPNHJsTVZydDA0TXFES091a3pUY04wK2h0L01K?=
+ =?utf-8?B?Zm5OQUZnT0xNS3RRTDB1aHduS3h4dnErY282NjZhQldtYUl2YThzSU1ib0pF?=
+ =?utf-8?B?N3JZVUNZTWRIQ1VGZWF1WE5WVy9yWkp1NXE4WkZTc01Vb3FEMXpXby80cVZv?=
+ =?utf-8?B?NDc0akZZMUJYNU1VaUpQUmZDSVZLby9zb043ck5zSWp3bG9hbWVlNHJ1WmV3?=
+ =?utf-8?B?N1MxaC9xUVllSUt1dHFoWDIvcmxNV0RFT3ZhSjdsZDcwRWNGQWo2bzFjTkFt?=
+ =?utf-8?B?NllWZFhMZzBhUDdFZ1lQcENFM2JmZnpOSmllZmkzRkNNcEp3QlBGVENFUFlW?=
+ =?utf-8?B?c2R6UlBVUFR6SXlqSGtWaU5Demx6eDZ4VmkwWDI2cHNodmpIR2pHc2RMU25Y?=
+ =?utf-8?B?cnUwWlQxWit6aUdNaDhVWksycENGTmdENGFLa2JRbXZ6VHAzMkZWRGVZUDNO?=
+ =?utf-8?B?M1hBL20rNExBamxkby9oYUx0UllocVlhMkE4cWhUdXZaTkZ0SnAzWDIwNUhL?=
+ =?utf-8?B?dVE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0ADB98A3FCE47C4E8DB8A7C82E212D1B@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240701162025.375134-1-robdclark@gmail.com> <20240701162025.375134-2-robdclark@gmail.com>
-In-Reply-To: <20240701162025.375134-2-robdclark@gmail.com>
-From: Pranjal Shrivastava <praan@google.com>
-Date: Tue, 2 Jul 2024 00:43:12 +0530
-Message-ID: <CAN6iL-TdLdtoK2Cz4qyf6z8x=7c=Adzwi0GuC=-3CVeOzBZ_bA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] iommu/arm-smmu: Add CB prefix to register bitfields
-To: Rob Clark <robdclark@gmail.com>
-Cc: iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	Stephen Boyd <swboyd@chromium.org>, Robin Murphy <robin.murphy@arm.com>, 
-	Rob Clark <robdclark@chromium.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Krishna Reddy <vdumpa@nvidia.com>, Will Deacon <will@kernel.org>, Joerg Roedel <joro@8bytes.org>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Jerry Snitselaar <jsnitsel@redhat.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Georgi Djakov <quic_c_gdjako@quicinc.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	"open list:TEGRA IOMMU DRIVERS" <linux-tegra@vger.kernel.org>, 
-	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 95a622d6-a04b-4282-b76f-08dc9a01e4c3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jul 2024 19:13:30.3000
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: GkN6vW01pyNbX8KPxy2O5tJd7n6eWRscePEdzi0PmPzlLnsQGMW8RXzdtf+ZuZqhTiOaDBFXD0e4cdgAQetjDXpK9iKC9J3guc1WNzxfmpg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7382
+X-OriginatorOrg: intel.com
 
-On Mon, Jul 1, 2024 at 9:50=E2=80=AFPM Rob Clark <robdclark@gmail.com> wrot=
-e:
->
-> From: Rob Clark <robdclark@chromium.org>
->
-> For consistency, add the "CB" prefix to the bitfield defines for context
-> registers.
->
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
-> ---
->  drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c  |  2 +-
->  .../iommu/arm/arm-smmu/arm-smmu-qcom-debug.c  | 18 +++----
->  drivers/iommu/arm/arm-smmu/arm-smmu.c         |  8 +--
->  drivers/iommu/arm/arm-smmu/arm-smmu.h         | 50 +++++++++----------
->  drivers/iommu/arm/arm-smmu/qcom_iommu.c       |  4 +-
->  5 files changed, 41 insertions(+), 41 deletions(-)
->
-> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c b/drivers/iommu=
-/arm/arm-smmu/arm-smmu-nvidia.c
-> index 957d988b6d83..4b2994b6126d 100644
-> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
-> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
-> @@ -200,7 +200,7 @@ static irqreturn_t nvidia_smmu_context_fault_bank(int=
- irq,
->         void __iomem *cb_base =3D nvidia_smmu_page(smmu, inst, smmu->nump=
-age + idx);
->
->         fsr =3D readl_relaxed(cb_base + ARM_SMMU_CB_FSR);
-> -       if (!(fsr & ARM_SMMU_FSR_FAULT))
-> +       if (!(fsr & ARM_SMMU_CB_FSR_FAULT))
->                 return IRQ_NONE;
->
->         fsynr =3D readl_relaxed(cb_base + ARM_SMMU_CB_FSYNR0);
-> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c b/drivers/i=
-ommu/arm/arm-smmu/arm-smmu-qcom-debug.c
-> index 552199cbd9e2..e4ee78fb6a66 100644
-> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c
-> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c
-> @@ -141,7 +141,7 @@ static int qcom_tbu_halt(struct qcom_tbu *tbu, struct=
- arm_smmu_domain *smmu_doma
->         writel_relaxed(val, tbu->base + DEBUG_SID_HALT_REG);
->
->         fsr =3D arm_smmu_cb_read(smmu, idx, ARM_SMMU_CB_FSR);
-> -       if ((fsr & ARM_SMMU_FSR_FAULT) && (fsr & ARM_SMMU_FSR_SS)) {
-> +       if ((fsr & ARM_SMMU_CB_FSR_FAULT) && (fsr & ARM_SMMU_CB_FSR_SS)) =
-{
->                 u32 sctlr_orig, sctlr;
->
->                 /*
-> @@ -298,7 +298,7 @@ static phys_addr_t qcom_iova_to_phys(struct arm_smmu_=
-domain *smmu_domain,
->         arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_SCTLR, sctlr);
->
->         fsr =3D arm_smmu_cb_read(smmu, idx, ARM_SMMU_CB_FSR);
-> -       if (fsr & ARM_SMMU_FSR_FAULT) {
-> +       if (fsr & ARM_SMMU_CB_FSR_FAULT) {
->                 /* Clear pending interrupts */
->                 arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_FSR, fsr);
->
-> @@ -306,7 +306,7 @@ static phys_addr_t qcom_iova_to_phys(struct arm_smmu_=
-domain *smmu_domain,
->                  * TBU halt takes care of resuming any stalled transcatio=
-n.
->                  * Kept it here for completeness sake.
->                  */
-> -               if (fsr & ARM_SMMU_FSR_SS)
-> +               if (fsr & ARM_SMMU_CB_FSR_SS)
->                         arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_RESUME,
->                                           ARM_SMMU_RESUME_TERMINATE);
->         }
-> @@ -320,11 +320,11 @@ static phys_addr_t qcom_iova_to_phys(struct arm_smm=
-u_domain *smmu_domain,
->                         phys =3D qcom_tbu_trigger_atos(smmu_domain, tbu, =
-iova, sid);
->
->                         fsr =3D arm_smmu_cb_read(smmu, idx, ARM_SMMU_CB_F=
-SR);
-> -                       if (fsr & ARM_SMMU_FSR_FAULT) {
-> +                       if (fsr & ARM_SMMU_CB_FSR_FAULT) {
->                                 /* Clear pending interrupts */
->                                 arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_=
-FSR, fsr);
->
-> -                               if (fsr & ARM_SMMU_FSR_SS)
-> +                               if (fsr & ARM_SMMU_CB_FSR_SS)
->                                         arm_smmu_cb_write(smmu, idx, ARM_=
-SMMU_CB_RESUME,
->                                                           ARM_SMMU_RESUME=
-_TERMINATE);
->                         }
-> @@ -394,7 +394,7 @@ irqreturn_t qcom_smmu_context_fault(int irq, void *de=
-v)
->                                       DEFAULT_RATELIMIT_BURST);
->
->         fsr =3D arm_smmu_cb_read(smmu, idx, ARM_SMMU_CB_FSR);
-> -       if (!(fsr & ARM_SMMU_FSR_FAULT))
-> +       if (!(fsr & ARM_SMMU_CB_FSR_FAULT))
->                 return IRQ_NONE;
->
->         fsynr =3D arm_smmu_cb_read(smmu, idx, ARM_SMMU_CB_FSYNR0);
-> @@ -403,7 +403,7 @@ irqreturn_t qcom_smmu_context_fault(int irq, void *de=
-v)
->
->         if (list_empty(&tbu_list)) {
->                 ret =3D report_iommu_fault(&smmu_domain->domain, NULL, io=
-va,
-> -                                        fsynr & ARM_SMMU_FSYNR0_WNR ? IO=
-MMU_FAULT_WRITE : IOMMU_FAULT_READ);
-> +                                        fsynr & ARM_SMMU_CB_FSYNR0_WNR ?=
- IOMMU_FAULT_WRITE : IOMMU_FAULT_READ);
->
->                 if (ret =3D=3D -ENOSYS)
->                         dev_err_ratelimited(smmu->dev,
-> @@ -417,7 +417,7 @@ irqreturn_t qcom_smmu_context_fault(int irq, void *de=
-v)
->         phys_soft =3D ops->iova_to_phys(ops, iova);
->
->         tmp =3D report_iommu_fault(&smmu_domain->domain, NULL, iova,
-> -                                fsynr & ARM_SMMU_FSYNR0_WNR ? IOMMU_FAUL=
-T_WRITE : IOMMU_FAULT_READ);
-> +                                fsynr & ARM_SMMU_CB_FSYNR0_WNR ? IOMMU_F=
-AULT_WRITE : IOMMU_FAULT_READ);
->         if (!tmp || tmp =3D=3D -EBUSY) {
->                 dev_dbg(smmu->dev,
->                         "Context fault handled by client: iova=3D0x%08lx,=
- fsr=3D0x%x, fsynr=3D0x%x, cb=3D%d\n",
-> @@ -481,7 +481,7 @@ irqreturn_t qcom_smmu_context_fault(int irq, void *de=
-v)
->                 arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_FSR, fsr);
->
->                 /* Retry or terminate any stalled transactions */
-> -               if (fsr & ARM_SMMU_FSR_SS)
-> +               if (fsr & ARM_SMMU_CB_FSR_SS)
->                         arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_RESUME, =
-resume);
->         }
->
-> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/ar=
-m-smmu/arm-smmu.c
-> index 87c81f75cf84..23cf91ac409b 100644
-> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
-> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
-> @@ -415,7 +415,7 @@ static irqreturn_t arm_smmu_context_fault(int irq, vo=
-id *dev)
->         int ret;
->
->         fsr =3D arm_smmu_cb_read(smmu, idx, ARM_SMMU_CB_FSR);
-> -       if (!(fsr & ARM_SMMU_FSR_FAULT))
-> +       if (!(fsr & ARM_SMMU_CB_FSR_FAULT))
->                 return IRQ_NONE;
->
->         fsynr =3D arm_smmu_cb_read(smmu, idx, ARM_SMMU_CB_FSYNR0);
-> @@ -423,7 +423,7 @@ static irqreturn_t arm_smmu_context_fault(int irq, vo=
-id *dev)
->         cbfrsynra =3D arm_smmu_gr1_read(smmu, ARM_SMMU_GR1_CBFRSYNRA(idx)=
-);
->
->         ret =3D report_iommu_fault(&smmu_domain->domain, NULL, iova,
-> -               fsynr & ARM_SMMU_FSYNR0_WNR ? IOMMU_FAULT_WRITE : IOMMU_F=
-AULT_READ);
-> +               fsynr & ARM_SMMU_CB_FSYNR0_WNR ? IOMMU_FAULT_WRITE : IOMM=
-U_FAULT_READ);
->
->         if (ret =3D=3D -ENOSYS)
->                 dev_err_ratelimited(smmu->dev,
-> @@ -1306,7 +1306,7 @@ static phys_addr_t arm_smmu_iova_to_phys_hard(struc=
-t iommu_domain *domain,
->                 arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_ATS1PR, va);
->
->         reg =3D arm_smmu_page(smmu, ARM_SMMU_CB(smmu, idx)) + ARM_SMMU_CB=
-_ATSR;
-> -       if (readl_poll_timeout_atomic(reg, tmp, !(tmp & ARM_SMMU_ATSR_ACT=
-IVE),
-> +       if (readl_poll_timeout_atomic(reg, tmp, !(tmp & ARM_SMMU_CB_ATSR_=
-ACTIVE),
->                                       5, 50)) {
->                 spin_unlock_irqrestore(&smmu_domain->cb_lock, flags);
->                 dev_err(dev,
-> @@ -1642,7 +1642,7 @@ static void arm_smmu_device_reset(struct arm_smmu_d=
-evice *smmu)
->         /* Make sure all context banks are disabled and clear CB_FSR  */
->         for (i =3D 0; i < smmu->num_context_banks; ++i) {
->                 arm_smmu_write_context_bank(smmu, i);
-> -               arm_smmu_cb_write(smmu, i, ARM_SMMU_CB_FSR, ARM_SMMU_FSR_=
-FAULT);
-> +               arm_smmu_cb_write(smmu, i, ARM_SMMU_CB_FSR, ARM_SMMU_CB_F=
-SR_FAULT);
->         }
->
->         /* Invalidate the TLB, just in case */
-> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.h b/drivers/iommu/arm/ar=
-m-smmu/arm-smmu.h
-> index 4765c6945c34..b04a00126a12 100644
-> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.h
-> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.h
-> @@ -196,34 +196,34 @@ enum arm_smmu_cbar_type {
->  #define ARM_SMMU_CB_PAR_F              BIT(0)
->
->  #define ARM_SMMU_CB_FSR                        0x58
-> -#define ARM_SMMU_FSR_MULTI             BIT(31)
-> -#define ARM_SMMU_FSR_SS                        BIT(30)
-> -#define ARM_SMMU_FSR_UUT               BIT(8)
-> -#define ARM_SMMU_FSR_ASF               BIT(7)
-> -#define ARM_SMMU_FSR_TLBLKF            BIT(6)
-> -#define ARM_SMMU_FSR_TLBMCF            BIT(5)
-> -#define ARM_SMMU_FSR_EF                        BIT(4)
-> -#define ARM_SMMU_FSR_PF                        BIT(3)
-> -#define ARM_SMMU_FSR_AFF               BIT(2)
-> -#define ARM_SMMU_FSR_TF                        BIT(1)
-> -
-> -#define ARM_SMMU_FSR_IGN               (ARM_SMMU_FSR_AFF |             \
-> -                                        ARM_SMMU_FSR_ASF |             \
-> -                                        ARM_SMMU_FSR_TLBMCF |          \
-> -                                        ARM_SMMU_FSR_TLBLKF)
-> -
-> -#define ARM_SMMU_FSR_FAULT             (ARM_SMMU_FSR_MULTI |           \
-> -                                        ARM_SMMU_FSR_SS |              \
-> -                                        ARM_SMMU_FSR_UUT |             \
-> -                                        ARM_SMMU_FSR_EF |              \
-> -                                        ARM_SMMU_FSR_PF |              \
-> -                                        ARM_SMMU_FSR_TF |              \
-> -                                        ARM_SMMU_FSR_IGN)
-> +#define ARM_SMMU_CB_FSR_MULTI          BIT(31)
-> +#define ARM_SMMU_CB_FSR_SS             BIT(30)
-> +#define ARM_SMMU_CB_FSR_UUT            BIT(8)
-> +#define ARM_SMMU_CB_FSR_ASF            BIT(7)
-> +#define ARM_SMMU_CB_FSR_TLBLKF         BIT(6)
-> +#define ARM_SMMU_CB_FSR_TLBMCF         BIT(5)
-> +#define ARM_SMMU_CB_FSR_EF             BIT(4)
-> +#define ARM_SMMU_CB_FSR_PF             BIT(3)
-> +#define ARM_SMMU_CB_FSR_AFF            BIT(2)
-> +#define ARM_SMMU_CB_FSR_TF             BIT(1)
-> +
-> +#define ARM_SMMU_CB_FSR_IGN            (ARM_SMMU_CB_FSR_AFF |          \
-> +                                        ARM_SMMU_CB_FSR_ASF |          \
-> +                                        ARM_SMMU_CB_FSR_TLBMCF |       \
-> +                                        ARM_SMMU_CB_FSR_TLBLKF)
-> +
-> +#define ARM_SMMU_CB_FSR_FAULT          (ARM_SMMU_CB_FSR_MULTI |        \
-> +                                        ARM_SMMU_CB_FSR_SS |           \
-> +                                        ARM_SMMU_CB_FSR_UUT |          \
-> +                                        ARM_SMMU_CB_FSR_EF |           \
-> +                                        ARM_SMMU_CB_FSR_PF |           \
-> +                                        ARM_SMMU_CB_FSR_TF |           \
-> +                                        ARM_SMMU_CB_FSR_IGN)
->
->  #define ARM_SMMU_CB_FAR                        0x60
->
->  #define ARM_SMMU_CB_FSYNR0             0x68
-> -#define ARM_SMMU_FSYNR0_WNR            BIT(4)
-> +#define ARM_SMMU_CB_FSYNR0_WNR         BIT(4)
->
->  #define ARM_SMMU_CB_FSYNR1             0x6c
->
-> @@ -237,7 +237,7 @@ enum arm_smmu_cbar_type {
->  #define ARM_SMMU_CB_ATS1PR             0x800
->
->  #define ARM_SMMU_CB_ATSR               0x8f0
-> -#define ARM_SMMU_ATSR_ACTIVE           BIT(0)
-> +#define ARM_SMMU_CB_ATSR_ACTIVE                BIT(0)
->
->  #define ARM_SMMU_RESUME_TERMINATE      BIT(0)
->
-> diff --git a/drivers/iommu/arm/arm-smmu/qcom_iommu.c b/drivers/iommu/arm/=
-arm-smmu/qcom_iommu.c
-> index e079bb7a993e..b98a7a598b89 100644
-> --- a/drivers/iommu/arm/arm-smmu/qcom_iommu.c
-> +++ b/drivers/iommu/arm/arm-smmu/qcom_iommu.c
-> @@ -194,7 +194,7 @@ static irqreturn_t qcom_iommu_fault(int irq, void *de=
-v)
->
->         fsr =3D iommu_readl(ctx, ARM_SMMU_CB_FSR);
->
-> -       if (!(fsr & ARM_SMMU_FSR_FAULT))
-> +       if (!(fsr & ARM_SMMU_CB_FSR_FAULT))
->                 return IRQ_NONE;
->
->         fsynr =3D iommu_readl(ctx, ARM_SMMU_CB_FSYNR0);
-> @@ -274,7 +274,7 @@ static int qcom_iommu_init_domain(struct iommu_domain=
- *domain,
->
->                 /* Clear context bank fault address fault status register=
-s */
->                 iommu_writel(ctx, ARM_SMMU_CB_FAR, 0);
-> -               iommu_writel(ctx, ARM_SMMU_CB_FSR, ARM_SMMU_FSR_FAULT);
-> +               iommu_writel(ctx, ARM_SMMU_CB_FSR, ARM_SMMU_CB_FSR_FAULT)=
-;
->
->                 /* TTBRs */
->                 iommu_writeq(ctx, ARM_SMMU_CB_TTBR0,
-> --
-> 2.45.2
->
-Reviewed-by: Pranjal Shrivastava <praan@google.com>
+T24gTW9uLCAyMDI0LTA3LTAxIGF0IDEzOjU5IC0wNTAwLCBLYWxyYSwgQXNoaXNoIHdyb3RlOg0K
+PiANCj4gVGhlbiB3aGF0IGlzIHRoZSBjYWxsZXIgc3VwcG9zZWQgdG8gZG8gaW4gdGhpcyBjYXNl
+ID8NCj4gDQo+IEFzIHRoZSByZXR1cm4gZnJvbSBsb29rdXBfYWRkcmVzcygpIGlzIG5vbi1OVUxM
+IGluIHRoaXMgY2FzZSwgYWNjZXNzaW5nIGl0DQo+IGNhdXNlcyBhIGZhdGFsICNQRi4NCj4gDQo+
+IElzIHRoZSBjYWxsZXIgc3VwcG9zZWQgdG8gYWRkIHRoZSBjaGVjayBmb3IgYSB2YWxpZCBQVEUg
+dXNpbmcgcHRlX25vbmUoKnB0ZSkgPw0KDQpJIGRpZCBhIHF1aWNrIGxvb2sgYXQgdGhlIGNhbGxl
+cnMsIGFuZCBzb21lIGRvIHRoZWlyIG93biBjaGVjayBmb3IgcHRlX25vbmUoKS4NCkJ1dCBzb21l
+IGRvbid0LiBTb21lIGFsc28gYXNzdW1lIHRoZSByZXR1cm4gY2FuJ3QgYmUgTlVMTC4NCg0KQ2Fu
+IHlvdSBlbGFib3JhdGUgb24geW91ciBnb2FsIGZvciB0aGlzIGNoYW5nZT8gSnVzdCBhIGNsZWFu
+dXA/DQoNCg0K
 
