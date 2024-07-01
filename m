@@ -1,456 +1,214 @@
-Return-Path: <linux-kernel+bounces-235475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5B9591D58D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 02:40:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06DCF91D58F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 02:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15A981C20BB1
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 00:40:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71C851F211DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 00:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F30A1C147;
-	Mon,  1 Jul 2024 00:39:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5434A20;
+	Mon,  1 Jul 2024 00:47:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NFjWJEik"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="s2IKIxc6"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2059.outbound.protection.outlook.com [40.107.21.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6578F77;
-	Mon,  1 Jul 2024 00:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719794393; cv=none; b=KcfJb2fQJilv4eQ8VqBaRPnrPvJxgmVG3oBcd3eZS5j8yRRfPI1XyuOFklNGnmvJS9/oM3FCju0qtTAXmGlJzDOYK1ax9gkyaQkIEemJjVIHBKRXrxcHZ0JOtP7aAYRk/uUcNXkM4v/BX/qCNK3xELPgkn2iPHHO1RD1UnRqCdM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719794393; c=relaxed/simple;
-	bh=gprsEEUlmspK/xkfaXTo0VxJTVp3rBMptmDboD5nCa4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fuw/u6/NbIzMmDKqnE1Nf0YXp/d0C0Po3yBWekb5kdKTJrhrqrkcedFYWzlyAj/yAitzN9vL+TeL4+0sfMES536wrtS+yot3zFk8Tr7z3azIga1Vvw899pXXaPkirzfN+EplEu+SsnUDXMSpGZilcMmsZqsdSlyE1pb6tHvzoTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NFjWJEik; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7065a2f4573so1438150b3a.2;
-        Sun, 30 Jun 2024 17:39:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719794391; x=1720399191; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kjrMofQ/wylL8mgP+cLq3btmDs/Cn5RZw4wN8l/2kC4=;
-        b=NFjWJEiks64Jl+eYAHXv+VjQQ/4a8beQZJ4uUFS3paEpXUdHh+xhCEsmZdTW61B57D
-         Nn0pxd8cK+udIMuNk7LoL5icJcTGVE7SBp7AZaqRguSMIQeDsyUC2c0g62Lo4j0DwQ0E
-         zcfUASd5bcT/aMzIzoOeGYV3dm5eqNy34Wku5JltXDfmq3wBxBmcJr9lZTswDeKB3zgO
-         z4pFJT/Ny1bnLr9IDJ7V28LoBb8krnKQnFaDbYRhVA7X1Bu0n4h5glFdFBjlUibXnwTo
-         9XzECAvxQRX75h92Qdmpt0HbketsIyvIn8sWTpfibO46rXPIvooVi5iEABFMI49+av5U
-         JagA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719794391; x=1720399191;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kjrMofQ/wylL8mgP+cLq3btmDs/Cn5RZw4wN8l/2kC4=;
-        b=uozRvlXzsbP30bNkc0GqrThPFgjE0LlFDBgE5tZ34V+iD9/TC6Z2LrrhxEIlRUodAC
-         GaaQECo+woPGePs0J9LcQSoKs2wRHzFL04sajafPgSaf2joGvvm5h63g8Hj+1ooOwt2m
-         Hb/+GA/dPTRChgl44OnpMWRPOWBA0igF7XwvKiiimUH4pmoz17TMjLQWYwFVBM+Efh9T
-         s4N7kd8quGSaUBYM88D1BK05on6rvYkrh5aQrds0u7UFd5IumDg0X78CkITnoudjIqqs
-         4dA6c0OkrzLRfl+npsWBisF6R+Rmf/ciJRDn367R+5d5BlRFboMdHnvSwKPq68E4G4Lt
-         p3ag==
-X-Forwarded-Encrypted: i=1; AJvYcCVe88EPZMmZj+LYrvEev+A5N/rJ27fngEWb/XDmSO312hDAlSz3wwxAn0IWa5OMbY4mdyoSJQehHjhYTUKy1sR52yDHUBHGL8DZRGZRIPT0rrD+Sp+oyZW9eBICjeTk9Uj+wHHZ19QOKvMEfgKJK9F7RkiBTbjBKgVSr3Rw/7y92hqyZQ==
-X-Gm-Message-State: AOJu0YzY2cyA7H/MC2vnj541xYCtvIT1OYU3mUTpLwIAMgTTcshv6Hmd
-	cMfX9nDZ5I1XB/iSB/2V6m68kOaETXAyFaiDwGu26ZNf7ivg2KTS
-X-Google-Smtp-Source: AGHT+IF8UTooXyuS/kGjuSXsPhDqTd0A74/jhZD1Tlnvr7Ip7qUcBXX7KNcVcK66cANUx+WvGm2zrg==
-X-Received: by 2002:aa7:8884:0:b0:706:b19c:46cf with SMTP id d2e1a72fcca58-70aaad605e5mr2263095b3a.20.1719794391237;
-        Sun, 30 Jun 2024 17:39:51 -0700 (PDT)
-Received: from localhost.localdomain (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70801e53b47sm5232022b3a.37.2024.06.30.17.39.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Jun 2024 17:39:50 -0700 (PDT)
-From: Shan-Chun Hung <shanchun1218@gmail.com>
-To: ulf.hansson@linaro.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	adrian.hunter@intel.com,
-	p.zabel@pengutronix.de,
-	pbrobinson@gmail.com,
-	serghox@gmail.com,
-	mcgrof@kernel.org,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	forbidden405@outlook.com,
-	tmaimon77@gmail.com,
-	andy.shevchenko@gmail.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: ychuang3@nuvoton.com,
-	schung@nuvoton.com,
-	Shan-Chun Hung <shanchun1218@gmail.com>
-Subject: [PATCH v3 2/2] mmc: sdhci-of-ma35d1: Add Nuvoton MA35D1 SDHCI driver
-Date: Mon,  1 Jul 2024 08:39:13 +0800
-Message-Id: <20240701003913.729428-3-shanchun1218@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240701003913.729428-1-shanchun1218@gmail.com>
-References: <20240701003913.729428-1-shanchun1218@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EEEA10F9;
+	Mon,  1 Jul 2024 00:47:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719794826; cv=fail; b=lRftx3GkhSSyBC/nof0ArU4ZhA6j09ZGzVRxrarprj9yUWpozSCusLfvugS/mkm1KYU370Ec16ZRibmwoDcrISpkIaYZPo3GnCvecBr0kCdwC6oXUxkXLQshTNqv8olsshM0aHzgRDSAD0h/ye/NJEv0WdE4FFtT9OaSmgaiZFU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719794826; c=relaxed/simple;
+	bh=uWhiIYORnCdWSqpYBJIJWA0C7FOL4neeyDFQeMISJRo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=VzCjYWU3+D0Cw60TgQRm2ru3sS1gt2OLVib64dKoMfTbAwl7lw2RKtNAXkDfiUTS9saopAzLHiw39AJ1sdw59kEwOApFznuqha7zJOMLJlUrzccGssButCgHkdoImHpSvTdd64PPH6/AmgD1SKmvIJ8h48Vfc+8eVKJ8guBQ/I8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=s2IKIxc6; arc=fail smtp.client-ip=40.107.21.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Irw7JKDlm6pa+zK4tfterleCxEhE9XXzenqMYakKLEHoL27av4hpxqnHgwkO7Rh7Ka3vmXtj2xNCq+qo8TIlj0Wzcgpl84Tf5Ac9/kUX6JgIaC6kf0OUzlmiM1maCXEyOcSwNrF25zUTxCvP/80acZUy2vPg40HEkItvB0Ee6Aggr0vHyQaecv5aBWoWw1CRz94ArIVyXUyiN8kGh5WIa4KNAuwriPExl0hjfUOBf9SoDyQUzN3mta07DjDrDPwzO14k/nYsQ/fWXU2/DhvRD0gv3nqv3r2PYfh+4Mhvq+5FsH5l5IU0gZboXuVsRmtdWcFKirFLeKy6MgonLlD/hQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OhQ4HR0Gx6AV1LwF80NEYg4tcYdRMxlHEpOleS1gfQ0=;
+ b=XIEcr2S7/zejzI+wfSDHtDdNqU3W//0Lf3UG5ufdezVwUsfL8iurk9ZNBt7xJqDYwNm9IDSQdhiM08vPdV/pJjZFzHYSb5qCOs7VwOjUrjik4yfd6UJUkPbQgxa97/aO0MyzzwZulVNzzY+0q+Y9sB4g+EATjLKykHDfbJMjHQsUQkn3adXioLk96x/kfCoeYfl+9kBa4lBGrUysqBr0sIzaUqoRj5TSzEKnsM2Pq8gcPoABPvDDzhPebTVAgGcJRm9PkZmfpuQSE717qwThf7qnS2j54iv3G/FzSB9nZV5vpyWy9D53XDwlwkv12fLun/mZodxsUzCu/AYrq7sSvg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OhQ4HR0Gx6AV1LwF80NEYg4tcYdRMxlHEpOleS1gfQ0=;
+ b=s2IKIxc6NFWRdnZ6rAhiWx9QxyWGV6SgrYPboH5OpEs1jf3j2wCkLgQUqyaQocQH8HU9rzZzEgiSftFztDYuSwX0QePqiUWz5XFLi2NehDlc9ZJjaPqtjLXNe7A5UcCWa4f4AO4tNSa7wOFtOhPhQUPMZ6RpKJkJOE80c939SDw=
+Received: from PA4PR04MB9638.eurprd04.prod.outlook.com (2603:10a6:102:273::20)
+ by DU0PR04MB9441.eurprd04.prod.outlook.com (2603:10a6:10:359::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.29; Mon, 1 Jul
+ 2024 00:47:00 +0000
+Received: from PA4PR04MB9638.eurprd04.prod.outlook.com
+ ([fe80::f950:3bb6:6848:2257]) by PA4PR04MB9638.eurprd04.prod.outlook.com
+ ([fe80::f950:3bb6:6848:2257%4]) with mapi id 15.20.7719.022; Mon, 1 Jul 2024
+ 00:47:00 +0000
+From: David Lin <yu-hao.lin@nxp.com>
+To: Abel Vesa <abel.vesa@linaro.org>
+CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"briannorris@chromium.org" <briannorris@chromium.org>, "kvalo@kernel.org"
+	<kvalo@kernel.org>, "francesco@dolcini.it" <francesco@dolcini.it>, Pete Hsieh
+	<tsung-hsien.hsieh@nxp.com>
+Subject: RE: [EXT] Re: [PATCH 01/43] wifi: nxpwifi: add 11ac.c
+Thread-Topic: [EXT] Re: [PATCH 01/43] wifi: nxpwifi: add 11ac.c
+Thread-Index: AQHaw6/6IZnwWyq+VkyBRkmHmcqDk7Hc4S6AgAQ2/hA=
+Date: Mon, 1 Jul 2024 00:46:59 +0000
+Message-ID:
+ <PA4PR04MB96381CF2AE91D91B814A7E6CD1D32@PA4PR04MB9638.eurprd04.prod.outlook.com>
+References: <20240621075208.513497-1-yu-hao.lin@nxp.com>
+ <20240621075208.513497-2-yu-hao.lin@nxp.com> <Zn5ytQtySds3Ix9g@linaro.org>
+In-Reply-To: <Zn5ytQtySds3Ix9g@linaro.org>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PA4PR04MB9638:EE_|DU0PR04MB9441:EE_
+x-ms-office365-filtering-correlation-id: d7b8b700-576d-461d-43bd-08dc9967510c
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?WIU0mCWsvKHaSegL8onLTD0cWA/ittJ+r1opvfht7di/5yxjnv6S+MYKuPPs?=
+ =?us-ascii?Q?b/26DhoNs7URC0ujrZe0vdGM+PzKH7LFAUb4mMhMWX2A7btvLo3hzVq5Mhj3?=
+ =?us-ascii?Q?eSVMWcGjMgVEfoZxFVP9kX4k12HPBwlNuuY0a82kCV5Wd83Es/Ki/jAFcskp?=
+ =?us-ascii?Q?eaO5hzn75kOn5lb8jrhs2P5U3f/ILKGaeRStVNv5ZtlIRNEl6jz/5vcKP2X2?=
+ =?us-ascii?Q?mg/WECGgPCDwVcv1uBvhk07D2D7IPZ0LiGO7v0zOTERvM7tCzA0h35CSkKlg?=
+ =?us-ascii?Q?7So5rw9g8W7PI+SjVkN6SuikzleZ3BFCXdKGkj5vCZPNmCNTn0jbWjkkf1Qn?=
+ =?us-ascii?Q?sN1V5uZUBLy2q7/O0VALe+8wmLuzwKxrpu/d50B5l/dKzbnFcT94iKBl+KXy?=
+ =?us-ascii?Q?bTfIU0liPzx+uFhnlbCSTIqTd1W0HXS0heYILZiq9xKrviHsNUSsIZ+oITs/?=
+ =?us-ascii?Q?JWTwTYh9rtpBe3gg737GXm9DX38x6ak+jEQ1gWq3dCoyf5qVk0StNjN/pSww?=
+ =?us-ascii?Q?C0KgqdP/o/59oj7XvpVMFsRG/sj4YWt0GTMaUIcCd1HpP6VqWJzoh/FxJZkw?=
+ =?us-ascii?Q?+ymx9Z9WZNRCOoswgqt7JfFiGy2ohXpITBzWXkjh7ngsgq5uV5co3OyLzLrG?=
+ =?us-ascii?Q?Ra51faOIioWlpWhqx35ceHPo0l0W4ZutnKf8CMEWgFnQHZAStcYtQUqiD+Vm?=
+ =?us-ascii?Q?2/BkiMZRcN2uEEnz2lQ9Di3WpWx1AuIAVeXIyudAMEQi3s17iYGV5NnlxQJ/?=
+ =?us-ascii?Q?jHTSVAy3r8KKsKoI3iGipPLEJKKoh72V61DNf93qbS4H1DuPgM7IjZTPTFeZ?=
+ =?us-ascii?Q?dxBQjMpo8VdvvJVh13TrkBqWVXRpXssUL5unh5DtthFO5h5FByMdmOcJcjHr?=
+ =?us-ascii?Q?sd3VOW8IjUpVoogWTbbP6gvmTDr8j2clMR/Fvafbf4OwFpjGOmK6Ef2/PlxW?=
+ =?us-ascii?Q?haRZEQ5La0B8F6fPaf3Mur02UQ69LHcQE/dgvdOZrTgkDBp7Jh9xSgzslPAV?=
+ =?us-ascii?Q?wzXQiIB/UxaWvepeQWlG0qFdNjOen/ccj40NwC38scK1oJ07/UqL5yFPcktI?=
+ =?us-ascii?Q?i9xxwszU5tkPQKYR7ThldQqlGizmEtrpTDNt/wBydInyM19HY7M1HP7bLi54?=
+ =?us-ascii?Q?DaocNO4gLXOwEZKcrUJDv7fJalgX8lmxAdmhnPIEUv7xMStJt+kPNJOb1JPJ?=
+ =?us-ascii?Q?vp+PcbCHeblJ63S3BRwpYexhT3g3UNacv7iEgU3YXfyuh/hhiCGMepzXM0bd?=
+ =?us-ascii?Q?N/7cVlwwScizNwiK8bwievLTmFc+dIv+SG+fhWr5vJb1DLNgHM+bhXjgoKcT?=
+ =?us-ascii?Q?SJorR8bxntU5kiDskYEEMdt6BcyCgLSe6y2fTMQqjbpzmINPuZJkeNXobMKf?=
+ =?us-ascii?Q?jBD6SbUeX0x757cHCa6vd1yDusasxlHW96T1wc9YI9y7l+UfdQ=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB9638.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?8wlIOlAtWJt5SOUxnxCIrThKGw9TC9fTSzmxK2fQjbcaCm2qlejwZq/5p24y?=
+ =?us-ascii?Q?I0+zupmooZSdBQIej+/X6nSeYZNAes4NqT5hCRU7P7BVzy0T3JbB00uGL1AC?=
+ =?us-ascii?Q?en8A4/DkdQpGF2dwr5QAJCrDPCUKSKtTYKb+acZ5zohYqMs1R+AgCdMV4v1x?=
+ =?us-ascii?Q?YD7VqN5z+ifcD4JG9P44O27X6Kjz8KH7JNaUPa7GkB/S5qM2HRTQ02V4uzgQ?=
+ =?us-ascii?Q?bIiHaE/IBR81sklWpCs78v5KWdjwv7wSf3WNmVkXgnwEZ5LbE05t1g0m+JGC?=
+ =?us-ascii?Q?wB2JCsuLRv3PjjdYJzEva5yykwPs9guqPxVrZmP15ArPBaQ+RAO4ws1tSgcu?=
+ =?us-ascii?Q?xyxBzpBHnwk3E/klJz6aYZT+4h2pRdlVWsDUzTSJZhNFkGOrPP6q5FGAjeqU?=
+ =?us-ascii?Q?Ub5av+84I7rWuWLVHbwOZNhr9qP96jdFfZrUaWd1wgfO52RtrhMSIQ1MGRAT?=
+ =?us-ascii?Q?/EWAM671dIW5aYl5lNKyK+5slQw9Ae4Yq1WAIHD9ba1md7iS170S5V1+MQLR?=
+ =?us-ascii?Q?c4iCJlJhFGOUfOUEgDiiOYXL2mbVpNyCM6///W+bGKcVOVwAh14eRjjhktb8?=
+ =?us-ascii?Q?/oyXSLmAQenJGV8KyFfm0fSLDl4MTSWG3Y7U6jcr5/Ftxyt3rOWLQmKiqfGy?=
+ =?us-ascii?Q?1ZJqTXuYipQ/tBa+WVFWl3hT7or2O8a//YKt/dtQX81KkCcOFvWs1sm2SSfI?=
+ =?us-ascii?Q?/Ss+OKm8+PEs10LxyKVXgQbTdZhxEuJ+orcXvPSLb34XpJS70YadN0bFg74T?=
+ =?us-ascii?Q?BeUPCHSQk1+fcIjSs5YD5VzjWvcCoNj/RJG4u8zxFQIVYt9bSYE8zZmfNq2G?=
+ =?us-ascii?Q?yX5TEQxi8r9ksULdlp78UrxKU8YWdK9RB9Fj1Rt09FeDyJ2ELytM7DzCMXsr?=
+ =?us-ascii?Q?HsFDnjS45WHbdkSEJ1th+sQh5YltEwS6EPm3c9oj13accvaJTi+Tgw2Hr2Pg?=
+ =?us-ascii?Q?Q/I1wc9V/kRvX5uoLNJJlBxLHx63C6FmIKrMb4TX2ukrpHiXmG/bqorNoGml?=
+ =?us-ascii?Q?/uycrzjS3OoKkmvTCPDNcjOlzn6mt8Z6RujeUvhBhyxwdlHi+u0ocnekyNeC?=
+ =?us-ascii?Q?4oBTOq6mRspMVNeMK2latscVs2vEnuXFwY3LQwCzmXMaMEk90mud6xJMvlk1?=
+ =?us-ascii?Q?/m5p1N8J/7WDQ99B1R9/vs8wQMcli/7bLF0cCvFARoENasbgpbO3tasTbDDd?=
+ =?us-ascii?Q?BmMyTSuqWdXzypxZVUR9S97iBZKqpWKsDURwvX3ZEKuLBWUrrn+sBoSr6/Ny?=
+ =?us-ascii?Q?co+El9Hi5lcjZkqhD7YOSPohxgI65MdZzaPJKJdnObMCuosP2EOF7A75MQqE?=
+ =?us-ascii?Q?H+gN5/tAxsVRM/piM6AA3kXxPvFDHSMQGGptWppWVQrPgvLX+Il1+jNK8sjf?=
+ =?us-ascii?Q?91MFZfy1K02PCyUGJBVHf7oR5+oDuTl2U9Rzheq9NmR6CIA3kaEiij3Smsq5?=
+ =?us-ascii?Q?RfhTSoUtblGOCaBv6MU+tBbR95Cn+ooTZkbx9QdjeaTJr6vV1x6L0XQkwgrl?=
+ =?us-ascii?Q?QJz85dNOO19LCSF5UgzSWPXhPYSOu1xfiP5uKSuAD44sl6fp/N3SGzBNVnW+?=
+ =?us-ascii?Q?rqvXqe4nsHg7UsVxR/hW6cDjebwYmEXy6TrqMbVj?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB9638.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d7b8b700-576d-461d-43bd-08dc9967510c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jul 2024 00:46:59.9728
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: mRtQQL1xquX2NidBFOJP6SWVDOjRBWA3MetcHMgYcp5PP7gaVkto6LaUgyalso2EGgOzaYmB7oaOd3PF8hp0fQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR04MB9441
 
-Add the SDHCI driver for the MA35D1 platform. It is based upon the
-SDHCI interface, but requires some extra initialization.
+Hi Abel,
 
-Signed-off-by: Shan-Chun Hung <shanchun1218@gmail.com>
----
- drivers/mmc/host/Kconfig           |  12 ++
- drivers/mmc/host/Makefile          |   1 +
- drivers/mmc/host/sdhci-of-ma35d1.c | 297 +++++++++++++++++++++++++++++
- 3 files changed, 310 insertions(+)
- create mode 100644 drivers/mmc/host/sdhci-of-ma35d1.c
+> From: Abel Vesa <abel.vesa@linaro.org>
+> Sent: Friday, June 28, 2024 4:22 PM
+> To: David Lin <yu-hao.lin@nxp.com>
+> Cc: linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
+> briannorris@chromium.org; kvalo@kernel.org; francesco@dolcini.it; Pete
+> Hsieh <tsung-hsien.hsieh@nxp.com>
+> Subject: [EXT] Re: [PATCH 01/43] wifi: nxpwifi: add 11ac.c
+>=20
+> Caution: This is an external email. Please take care when clicking links =
+or
+> opening attachments. When in doubt, report the message using the 'Report
+> this email' button
+>=20
+>=20
+> On 24-06-21 15:51:26, David Lin wrote:
+> > Signed-off-by: David Lin <yu-hao.lin@nxp.com>
+>=20
+> Hi David,
+>=20
+> Please read the ./Documentation/process/submitting-patches.rst
+>=20
+> Just a hint. There is no commit message.
+>=20
+> > ---
+> >  drivers/net/wireless/nxp/nxpwifi/11ac.c | 366
+> ++++++++++++++++++++++++
+> >  1 file changed, 366 insertions(+)
+> >  create mode 100644 drivers/net/wireless/nxp/nxpwifi/11ac.c
+> >
+> > diff --git a/drivers/net/wireless/nxp/nxpwifi/11ac.c
+> b/drivers/net/wireless/nxp/nxpwifi/11ac.c
+> > new file mode 100644
+> > index 000000000000..3e14ee602cdc
+> > --- /dev/null
+> > +++ b/drivers/net/wireless/nxp/nxpwifi/11ac.c
+> > @@ -0,0 +1,366 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * NXP Wireless LAN device driver: 802.11ac
+> > + *
+> > + * Copyright 2011-2024 NXP
+> > + */
+>=20
+> [...]
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index bb0d4fb0892a..ecd6a63872db 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -252,6 +252,18 @@ config MMC_SDHCI_OF_SPARX5
+Thanks for your information. For new driver, it should be submitted one fil=
+e per patch first.
+Once if accepted, it will become one single patch. That is the reason, I wo=
+n't give commit
+message for the patch of a single file.
 
- 	  If unsure, say N.
-
-+config MMC_SDHCI_OF_MA35D1
-+	tristate "SDHCI OF support for the MA35D1 SDHCI controller"
-+	depends on ARCH_MA35 || COMPILE_TEST
-+	depends on MMC_SDHCI_PLTFM
-+	help
-+	  This selects the MA35D1 Secure Digital Host Controller Interface.
-+
-+	  If you have a controller with this interface, say Y or M here. You
-+	  also need to enable an appropriate bus interface.
-+
-+	  If unsure, say N.
-+
- config MMC_SDHCI_CADENCE
- 	tristate "SDHCI support for the Cadence SD/SDIO/eMMC controller"
- 	depends on MMC_SDHCI_PLTFM
-diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
-index f53f86d200ac..3ccffebbe59b 100644
---- a/drivers/mmc/host/Makefile
-+++ b/drivers/mmc/host/Makefile
-@@ -88,6 +88,7 @@ obj-$(CONFIG_MMC_SDHCI_OF_ESDHC)	+= sdhci-of-esdhc.o
- obj-$(CONFIG_MMC_SDHCI_OF_HLWD)		+= sdhci-of-hlwd.o
- obj-$(CONFIG_MMC_SDHCI_OF_DWCMSHC)	+= sdhci-of-dwcmshc.o
- obj-$(CONFIG_MMC_SDHCI_OF_SPARX5)	+= sdhci-of-sparx5.o
-+obj-$(CONFIG_MMC_SDHCI_OF_MA35D1)	+= sdhci-of-ma35d1.o
- obj-$(CONFIG_MMC_SDHCI_BCM_KONA)	+= sdhci-bcm-kona.o
- obj-$(CONFIG_MMC_SDHCI_IPROC)		+= sdhci-iproc.o
- obj-$(CONFIG_MMC_SDHCI_NPCM)		+= sdhci-npcm.o
-diff --git a/drivers/mmc/host/sdhci-of-ma35d1.c b/drivers/mmc/host/sdhci-of-ma35d1.c
-new file mode 100644
-index 000000000000..80a5caab88d9
---- /dev/null
-+++ b/drivers/mmc/host/sdhci-of-ma35d1.c
-@@ -0,0 +1,297 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright (C) 2024 Nuvoton Technology Corp.
-+ *
-+ * Author: Shan-Chun Hung <shanchun1218@gmail.com>
-+ */
-+
-+#include <linux/align.h>
-+#include <linux/array_size.h>
-+#include <linux/bits.h>
-+#include <linux/build_bug.h>
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/dev_printk.h>
-+#include <linux/device.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/err.h>
-+#include <linux/math.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/minmax.h>
-+#include <linux/mmc/card.h>
-+#include <linux/mmc/host.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/pinctrl/consumer.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/reset.h>
-+#include <linux/sizes.h>
-+#include <linux/types.h>
-+
-+#include "sdhci-pltfm.h"
-+#include "sdhci.h"
-+
-+#define MA35_SYS_MISCFCR0	0x070
-+#define MA35_SDHCI_MSHCCTL	0x508
-+#define MA35_SDHCI_MBIUCTL	0x510
-+
-+#define MA35_SDHCI_CMD_CONFLICT_CHK	BIT(0)
-+#define MA35_SDHCI_INCR_MSK		GENMASK(3, 0)
-+#define MA35_SDHCI_INCR16		BIT(3)
-+#define MA35_SDHCI_INCR8		BIT(2)
-+
-+struct ma35_priv {
-+	struct regmap		*regmap;
-+	struct reset_control	*rst;
-+	struct pinctrl		*pinctrl;
-+	struct pinctrl_state	*pins_uhs;
-+	struct pinctrl_state	*pins_default;
-+};
-+
-+struct ma35_restore_data {
-+	u32	reg;
-+	u32	width;
-+};
-+
-+static const struct ma35_restore_data restore_data[] = {
-+	{ SDHCI_CLOCK_CONTROL,		sizeof(u32)},
-+	{ SDHCI_BLOCK_SIZE,		sizeof(u32)},
-+	{ SDHCI_INT_ENABLE,		sizeof(u32)},
-+	{ SDHCI_SIGNAL_ENABLE,		sizeof(u32)},
-+	{ SDHCI_AUTO_CMD_STATUS,	sizeof(u32)},
-+	{ SDHCI_HOST_CONTROL,		sizeof(u32)},
-+	{ SDHCI_TIMEOUT_CONTROL,	sizeof(u8) },
-+	{ MA35_SDHCI_MSHCCTL,		sizeof(u16)},
-+	{ MA35_SDHCI_MBIUCTL,		sizeof(u16)},
-+};
-+
-+/*
-+ * If DMA addr spans 128MB boundary, we split the DMA transfer into two
-+ * so that each DMA transfer doesn't exceed the boundary.
-+ */
-+static void ma35_adma_write_desc(struct sdhci_host *host, void **desc, dma_addr_t addr, int len,
-+				 unsigned int cmd)
-+{
-+	int tmplen, offset;
-+
-+	if (likely(!len || (ALIGN(addr, SZ_128M) == ALIGN(addr + len - 1, SZ_128M)))) {
-+		sdhci_adma_write_desc(host, desc, addr, len, cmd);
-+		return;
-+	}
-+
-+	offset = addr & (SZ_128M - 1);
-+	tmplen = SZ_128M - offset;
-+	sdhci_adma_write_desc(host, desc, addr, tmplen, cmd);
-+
-+	addr += tmplen;
-+	len -= tmplen;
-+	sdhci_adma_write_desc(host, desc, addr, len, cmd);
-+}
-+
-+static void ma35_set_clock(struct sdhci_host *host, unsigned int clock)
-+{
-+	u32 ctl;
-+
-+	/*
-+	 * If the clock frequency exceeds MMC_HIGH_52_MAX_DTR,
-+	 * disable command conflict check.
-+	 */
-+	ctl = sdhci_readw(host, MA35_SDHCI_MSHCCTL);
-+	if (clock > MMC_HIGH_52_MAX_DTR)
-+		ctl &= ~MA35_SDHCI_CMD_CONFLICT_CHK;
-+	else
-+		ctl |= MA35_SDHCI_CMD_CONFLICT_CHK;
-+	sdhci_writew(host, ctl, MA35_SDHCI_MSHCCTL);
-+
-+	sdhci_set_clock(host, clock);
-+}
-+
-+static int ma35_start_signal_voltage_switch(struct mmc_host *mmc, struct mmc_ios *ios)
-+{
-+	struct sdhci_host *host = mmc_priv(mmc);
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct ma35_priv *priv = sdhci_pltfm_priv(pltfm_host);
-+
-+	switch (ios->signal_voltage) {
-+	case MMC_SIGNAL_VOLTAGE_180:
-+		if (!IS_ERR(priv->pinctrl) && !IS_ERR(priv->pins_uhs))
-+			pinctrl_select_state(priv->pinctrl, priv->pins_uhs);
-+		break;
-+	case MMC_SIGNAL_VOLTAGE_330:
-+		if (!IS_ERR(priv->pinctrl) && !IS_ERR(priv->pins_default))
-+			pinctrl_select_state(priv->pinctrl, priv->pins_default);
-+		break;
-+	default:
-+		dev_err(mmc_dev(host->mmc), "Unsupported signal voltage!\n");
-+		return -EINVAL;
-+	}
-+
-+	return sdhci_start_signal_voltage_switch(mmc, ios);
-+}
-+
-+static void ma35_voltage_switch(struct sdhci_host *host)
-+{
-+	/* Wait for 5ms after set 1.8V signal enable bit */
-+	fsleep(5000);
-+}
-+
-+static int ma35_execute_tuning(struct mmc_host *mmc, u32 opcode)
-+{
-+	struct sdhci_host *host = mmc_priv(mmc);
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct ma35_priv *priv = sdhci_pltfm_priv(pltfm_host);
-+	int idx;
-+	u32 regs[ARRAY_SIZE(restore_data)] = { };
-+
-+	/*
-+	 * Limitations require a reset of SD/eMMC before tuning and
-+	 * saving the registers before resetting, then restoring
-+	 * after the reset.
-+	 */
-+	for (idx = 0; idx < ARRAY_SIZE(restore_data); idx++) {
-+		if (restore_data[idx].width == sizeof(u32))
-+			regs[idx] = sdhci_readl(host, restore_data[idx].reg);
-+		else if (restore_data[idx].width == sizeof(u16))
-+			regs[idx] = sdhci_readw(host, restore_data[idx].reg);
-+		else if (restore_data[idx].width == sizeof(u8))
-+			regs[idx] = sdhci_readb(host, restore_data[idx].reg);
-+	}
-+
-+	reset_control_assert(priv->rst);
-+	reset_control_deassert(priv->rst);
-+
-+	for (idx = 0; idx < ARRAY_SIZE(restore_data); idx++) {
-+		if (restore_data[idx].width == sizeof(u32))
-+			sdhci_writel(host, regs[idx], restore_data[idx].reg);
-+		else if (restore_data[idx].width == sizeof(u16))
-+			sdhci_writew(host, regs[idx], restore_data[idx].reg);
-+		else if (restore_data[idx].width == sizeof(u8))
-+			sdhci_writeb(host, regs[idx], restore_data[idx].reg);
-+	}
-+
-+	return sdhci_execute_tuning(mmc, opcode);
-+}
-+
-+static const struct sdhci_ops sdhci_ma35_ops = {
-+	.set_clock		= ma35_set_clock,
-+	.set_bus_width		= sdhci_set_bus_width,
-+	.set_uhs_signaling	= sdhci_set_uhs_signaling,
-+	.get_max_clock		= sdhci_pltfm_clk_get_max_clock,
-+	.reset			= sdhci_reset,
-+	.adma_write_desc	= ma35_adma_write_desc,
-+	.voltage_switch		= ma35_voltage_switch,
-+};
-+
-+static const struct sdhci_pltfm_data sdhci_ma35_pdata = {
-+	.ops = &sdhci_ma35_ops,
-+	.quirks = SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
-+	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN | SDHCI_QUIRK2_BROKEN_DDR50 |
-+		   SDHCI_QUIRK2_ACMD23_BROKEN,
-+};
-+
-+static int ma35_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct sdhci_pltfm_host *pltfm_host;
-+	struct sdhci_host *host;
-+	struct ma35_priv *priv;
-+	int err;
-+	u32 extra, ctl;
-+
-+	host = sdhci_pltfm_init(pdev, &sdhci_ma35_pdata, sizeof(struct ma35_priv));
-+	if (IS_ERR(host))
-+		return PTR_ERR(host);
-+
-+	/* Extra adma table cnt for cross 128M boundary handling. */
-+	extra = DIV_ROUND_UP_ULL(dma_get_required_mask(dev), SZ_128M);
-+	extra = min(extra, SDHCI_MAX_SEGS);
-+
-+	host->adma_table_cnt += extra;
-+	pltfm_host = sdhci_priv(host);
-+	priv = sdhci_pltfm_priv(pltfm_host);
-+
-+	pltfm_host->clk = devm_clk_get_optional_enabled(dev, NULL);
-+	if (IS_ERR(pltfm_host->clk)) {
-+		err = PTR_ERR(pltfm_host->clk);
-+		dev_err_probe(dev, err, "failed to get clk\n");
-+		goto err_sdhci;
-+	}
-+
-+	err = mmc_of_parse(host->mmc);
-+	if (err)
-+		goto err_sdhci;
-+
-+	priv->rst = devm_reset_control_get_exclusive(dev, NULL);
-+	if (IS_ERR(priv->rst)) {
-+		err = PTR_ERR(priv->rst);
-+		dev_err_probe(dev, err, "failed to get reset control\n");
-+		goto err_sdhci;
-+	}
-+
-+	sdhci_get_of_property(pdev);
-+
-+	priv->pinctrl = devm_pinctrl_get(dev);
-+	if (!IS_ERR(priv->pinctrl)) {
-+		priv->pins_default = pinctrl_lookup_state(priv->pinctrl, "default");
-+		priv->pins_uhs = pinctrl_lookup_state(priv->pinctrl, "state_uhs");
-+		pinctrl_select_state(priv->pinctrl, priv->pins_default);
-+	}
-+
-+	if (!(host->quirks2 & SDHCI_QUIRK2_NO_1_8_V)) {
-+		u32 reg;
-+
-+		priv->regmap = syscon_regmap_lookup_by_phandle(dev_of_node(dev), "nuvoton,sys");
-+
-+		if (!IS_ERR(priv->regmap)) {
-+			/* Enable SDHCI voltage stable for 1.8V */
-+			regmap_read(priv->regmap, MA35_SYS_MISCFCR0, &reg);
-+			reg |= BIT(17);
-+			regmap_write(priv->regmap, MA35_SYS_MISCFCR0, reg);
-+		}
-+
-+		host->mmc_host_ops.start_signal_voltage_switch =
-+					ma35_start_signal_voltage_switch;
-+	}
-+
-+	host->mmc_host_ops.execute_tuning = ma35_execute_tuning;
-+
-+	err = sdhci_add_host(host);
-+	if (err)
-+		goto err_sdhci;
-+
-+	/*
-+	 * Split data into chunks of 16 or 8 bytes for transmission.
-+	 * Each chunk transfer is guaranteed to be uninterrupted on the bus.
-+	 * This likely corresponds to the AHB bus DMA burst size.
-+	 */
-+	ctl = sdhci_readw(host, MA35_SDHCI_MBIUCTL);
-+	ctl &= ~MA35_SDHCI_INCR_MSK;
-+	ctl |= MA35_SDHCI_INCR16 | MA35_SDHCI_INCR8;
-+	sdhci_writew(host, ctl, MA35_SDHCI_MBIUCTL);
-+
-+	return 0;
-+
-+err_sdhci:
-+	sdhci_pltfm_free(pdev);
-+	return err;
-+}
-+
-+static const struct of_device_id sdhci_ma35_dt_ids[] = {
-+	{ .compatible = "nuvoton,ma35d1-sdhci" },
-+	{}
-+};
-+
-+static struct platform_driver sdhci_ma35_driver = {
-+	.driver	= {
-+		.name	= "sdhci-ma35",
-+		.of_match_table = sdhci_ma35_dt_ids,
-+	},
-+	.probe	= ma35_probe,
-+	.remove_new = sdhci_pltfm_remove,
-+};
-+module_platform_driver(sdhci_ma35_driver);
-+
-+MODULE_DESCRIPTION("SDHCI platform driver for Nuvoton MA35");
-+MODULE_AUTHOR("Shan-Chun Hung <shanchun1218@gmail.com>");
-+MODULE_LICENSE("GPL");
---
-2.25.1
-
+David
 
