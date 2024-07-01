@@ -1,91 +1,188 @@
-Return-Path: <linux-kernel+bounces-235517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BB2F91D60A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 04:24:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF71391D60D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 04:26:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F23A21F218D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 02:24:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96E1428194D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 02:26:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B77B667;
-	Mon,  1 Jul 2024 02:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="LK5soE92"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671C98BF7
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 02:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD5DD534;
+	Mon,  1 Jul 2024 02:26:34 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67E8847C;
+	Mon,  1 Jul 2024 02:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719800643; cv=none; b=Vn3v4ERJMobwaO85Y3L6vM+v4veCHy2cqryOrKdnlc9O+bSA0GC7G88L7oX46V3Lyr/rLEFVRjQTrVrD7hzFFpKoSvDJCtW6PwAZ4RZXlG0pQehAx2HP1Ov1YV/b7GssT6rI1K1avMYk0hiwOYddgQAHvfNSMPQNMZ9V8acK/Dc=
+	t=1719800793; cv=none; b=ToGHeKOpoqt2rBbejRAHNsb+31IYnkXz6GD0u00OBSOL0GTPQS5xL8XKiG3jHST8Sn3RAV8ARnWjnskgRqeb9bPKZehSvLaHUA+gg2dPUVRTZtLVrY6G/sGB0qkWKIibV2k4mQ3lVYHNjUETLHgRrIX8lcWvyWSisgyWpalMjog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719800643; c=relaxed/simple;
-	bh=0NomcIrW376mye01CwEX88pFBGpqa2YI0CCkp4+u32E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=j8ry9R6xS56x/uLXDtG2y6jKSNvRqlrLWo5vKKn69nzEQiijxbit+UrMOdaXeoj81smOGx8tkq+SJAuz6favN82doE9zS8fk61M0qWyiEWSGldy3Cl+cowceEiG276XQAllB/BlvnpGgXM1UIzNuxfVB9bzRBRxPBOtefBzMZ8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=LK5soE92 reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=iI8zBmrKJrRHvnmdrVBoqCHW7KZvi9ta/8ZKijiyFIk=; b=L
-	K5soE92qR2xCUl2cI+qASP0pi3R5LAdMsHp5r697BS5xplRny21GH7pH0sfmXQOI
-	0JItplpxNsyBdEWzSh+Jezmc6ZojuEp/6GxZgXa0k0D5RWnIsPZ4cFb++9xnPrwQ
-	0svtTEgEHvmtgMZlvZ6p4YOqYSF68eZub/ZYyB0Wn8=
-Received: from 00107082$163.com ( [111.35.186.71] ) by
- ajax-webmail-wmsvr-40-118 (Coremail) ; Mon, 1 Jul 2024 10:23:32 +0800 (CST)
-Date: Mon, 1 Jul 2024 10:23:32 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: "Suren Baghdasaryan" <surenb@google.com>
-Cc: kent.overstreet@linux.dev, akpm@linux-foundation.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re:Re: [PATCH] Add accumulated call counter for memory allocation
- profiling
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <CAJuCfpGaEJLaWYPidiAG1vtayugQY5vJoFv9Opauh1TrofOv7Q@mail.gmail.com>
-References: <20240617153250.9079-1-00107082@163.com>
- <CAJuCfpGaEJLaWYPidiAG1vtayugQY5vJoFv9Opauh1TrofOv7Q@mail.gmail.com>
-X-NTES-SC: AL_Qu2aC/Sbv04q5CKQYekZnEYQheY4XMKyuPkg1YJXOp80qCTr9SoDcmZsEFXv9tmuFSeFqQG7dSdC+PljW7NlYJyfmNGsNEEoXKbJbud9XH0i
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1719800793; c=relaxed/simple;
+	bh=sSXuzX+WtTkW5UROQw7ByVRKZjhDpJk2+IFTmWsInT0=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=fPjzfRKrH1omWY8rq75UC6NCUt6jMbD5fsIvTcQilo11VVaKgAwxkQ5JYiubR5LrnOjlzUwme5LH/x0RYc8hV/eRPecAjbyCWLYD7gvhinTWVri+CPzfkAzwfwG6PWjK4Gra6OpUKzt2AY0VcG39yFkRv0VfrFuZJbq5tqWrjnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WC8zh10Yqz4f3jHw;
+	Mon,  1 Jul 2024 10:26:08 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 814ED1A016E;
+	Mon,  1 Jul 2024 10:26:20 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP2 (Coremail) with SMTP id Syh0CgAnkYbKE4JmQUVRAw--.39659S3;
+	Mon, 01 Jul 2024 10:26:20 +0800 (CST)
+Subject: Re: [PATCH -next v6 1/2] xfs: reserve blocks for truncating large
+ realtime inode
+To: Dave Chinner <david@fromorbit.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+ brauner@kernel.org, chandanbabu@kernel.org,
+ John Garry <john.g.garry@oracle.com>, jack@suse.cz, yi.zhang@huawei.com,
+ chengzhihao1@huawei.com, yukuai3@huawei.com
+References: <20240618142112.1315279-1-yi.zhang@huaweicloud.com>
+ <20240618142112.1315279-2-yi.zhang@huaweicloud.com>
+ <ZoIDVHaS8xjha1mA@dread.disaster.area>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <b27977d3-3764-886d-7067-483cea203fbe@huaweicloud.com>
+Date: Mon, 1 Jul 2024 10:26:18 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <13c19bd1.2c49.1906c1ac5bf.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wD3n70lE4Jm8T4SAA--.58049W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqRAOqmVOBMjahwAFsi
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+In-Reply-To: <ZoIDVHaS8xjha1mA@dread.disaster.area>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgAnkYbKE4JmQUVRAw--.39659S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxuryDZr13tr1Dury8ArWrZrb_yoW5ury3pF
+	Z7Ca1UKFZ8Xry0kaySyF1ay3Wjkw1rKr42kryYgr1Iv34DXr1ftrn7tr4UKF1UJr4kWa1j
+	gr15A3y3Zw15ZFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
+	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
+	9x07UWE__UUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-SEkgU3VyZW4sIAoKQXQgMjAyNC0wNy0wMSAwMzozMzoxNCwgIlN1cmVuIEJhZ2hkYXNhcnlhbiIg
-PHN1cmVuYkBnb29nbGUuY29tPiB3cm90ZToKPk9uIE1vbiwgSnVuIDE3LCAyMDI0IGF0IDg6MzPi
-gK9BTSBEYXZpZCBXYW5nIDwwMDEwNzA4MkAxNjMuY29tPiB3cm90ZToKPj4KPj4gQWNjdW11bGF0
-ZWQgY2FsbCBjb3VudGVyIGNhbiBiZSB1c2VkIHRvIGV2YWx1YXRlIHJhdGUKPj4gb2YgbWVtb3J5
-IGFsbG9jYXRpb24gdmlhIGRlbHRhKGNvdW50ZXJzKS9kZWx0YSh0aW1lKS4KPj4gVGhpcyBtZXRy
-aWNzIGNhbiBoZWxwIGFuYWx5c2lzIHBlcmZvcm1hbmNlIGJlaGF2aW91cnMsCj4+IGUuZy4gdHVu
-aW5nIGNhY2hlIHNpemUsIGV0Yy4KPgo+U29ycnkgZm9yIHRoZSBkZWxheSwgRGF2aWQuCj5JSVVD
-IHdpdGggdGhpcyBjb3VudGVyIHlvdSBjYW4gaWRlbnRpZnkgdGhlIG51bWJlciBvZiBhbGxvY2F0
-aW9ucyBldmVyCj5tYWRlIGZyb20gYSBzcGVjaWZpYyBjb2RlIGxvY2F0aW9uLiBDb3VsZCB5b3Ug
-cGxlYXNlIGNsYXJpZnkgdGhlIHVzYWdlCj5hIGJpdCBtb3JlPyBJcyB0aGUgZ29hbCB0byBzZWUg
-d2hpY2ggbG9jYXRpb25zIGFyZSB0aGUgbW9zdCBhY3RpdmUgYW5kCj50aGUgcmF0ZSBhdCB3aGlj
-aCBhbGxvY2F0aW9ucyBhcmUgbWFkZSB0aGVyZT8gSG93IHdpbGwgdGhhdAo+aW5mb3JtYXRpb24g
-YmUgdXNlZD8KIApDdW11bGF0aXZlIGNvdW50ZXJzIGNhbiBiZSBzYW1wbGVkIHdpdGggdGltZXN0
-YW1wLCAgc2F5IGF0IFQxLCBhIG1vbml0b3JpbmcgdG9vbCBnb3QgYSBzYW1wbGUgdmFsdWUgVjEs
-CnRoZW4gYWZ0ZXIgc2FtcGxpbmcgaW50ZXJ2YWwsIGF0IFQyLCAgZ290IGEgc2FtcGxlIHZhbHVl
-IFYyLiBUaGVuIHRoZSBhdmVyYWdlIHJhdGUgb2YgYWxsb2NhdGlvbiBjYW4gYmUgZXZhbHVhdGVk
-CnZpYSAoVjItVjEpLyhUMi1UMSkuIChUaGUgYWNjdXJhY3kgZGVwZW5kcyBvbiBzYW1wbGluZyBp
-bnRlcnZhbCkKClRoaXMgaW5mb3JtYXRpb24gIm1heSIgaGVscCBpZGVudGlmeSB3aGVyZSB0aGUg
-bWVtb3J5IGFsbG9jYXRpb24gaXMgdW5uZWNlc3NhcnkgZnJlcXVlbnQsICAKYW5kICBnYWluIHNv
-bWUgIGJldHRlciBwZXJmb3JtYW5jZSBieSBtYWtpbmcgbGVzcyBtZW1vcnkgYWxsb2NhdGlvbiAu
-ClRoZSBwZXJmb3JtYW5jZSAiZ2FpbiIgaXMganVzdCBhIGd1ZXNzLCBJIGRvIG5vdCBoYXZlIGEg
-dmFsaWQgZXhhbXBsZS4KCgoKPkknbSBhIGJpdCBjYXV0aW91cyBoZXJlIGJlY2F1c2UgZWFjaCBj
-b3VudGVyIHdpbGwgdGFrZSBtb3JlIHNwYWNlIGFuZAo+dXNlIHNvbWUgYWRkaXRpb25hbCBjcHUg
-Y3ljbGVzLgo+VGhhbmtzLAo+U3VyZW4uCj4KCgoKVGhhbmtzfiEKRGF2aWQ=
+On 2024/7/1 9:16, Dave Chinner wrote:
+> On Tue, Jun 18, 2024 at 10:21:11PM +0800, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> When unaligned truncate down a big realtime file, xfs_truncate_page()
+>> only zeros out the tail EOF block, __xfs_bunmapi() should split the tail
+>> written extent and convert the later one that beyond EOF block to
+>> unwritten, but it couldn't work as expected now since the reserved block
+>> is zero in xfs_setattr_size(), this could expose stale data just after
+>> commit '943bc0882ceb ("iomap: don't increase i_size if it's not a write
+>> operation")'.
+>>
+>> If we truncate file that contains a large enough written extent:
+>>
+>>      |<    rxext    >|<    rtext    >|
+>>   ...WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+>>         ^ (new EOF)      ^ old EOF
+>>
+>> Since we only zeros out the tail of the EOF block, and
+>> xfs_itruncate_extents()->..->__xfs_bunmapi() unmap the whole ailgned
+>> extents, it becomes this state:
+>>
+>>      |<    rxext    >|
+>>   ...WWWzWWWWWWWWWWWWW
+>>         ^ new EOF
+>>
+>> Then if we do an extending write like this, the blocks in the previous
+>> tail extent becomes stale:
+>>
+>>      |<    rxext    >|
+>>   ...WWWzSSSSSSSSSSSSS..........WWWWWWWWWWWWWWWWW
+>>         ^ old EOF               ^ append start  ^ new EOF
+>>
+>> Fix this by reserving XFS_DIOSTRAT_SPACE_RES blocks for big realtime
+>> inode.
+> 
+> This same problem is going to happen with force aligned allocations,
+> right? i.e. it is a result of having a allocation block size larger
+> than one filesystem block?
+> 
+Yeah, right.
+
++cc John
+
+> If so, then....
+> 
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>> Reviewed-by: Christoph Hellwig <hch@lst.de>
+>> ---
+>>  fs/xfs/xfs_iops.c | 15 ++++++++++++++-
+>>  1 file changed, 14 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+>> index ff222827e550..a00dcbc77e12 100644
+>> --- a/fs/xfs/xfs_iops.c
+>> +++ b/fs/xfs/xfs_iops.c
+>> @@ -17,6 +17,8 @@
+>>  #include "xfs_da_btree.h"
+>>  #include "xfs_attr.h"
+>>  #include "xfs_trans.h"
+>> +#include "xfs_trans_space.h"
+>> +#include "xfs_bmap_btree.h"
+>>  #include "xfs_trace.h"
+>>  #include "xfs_icache.h"
+>>  #include "xfs_symlink.h"
+>> @@ -811,6 +813,7 @@ xfs_setattr_size(
+>>  	struct xfs_trans	*tp;
+>>  	int			error;
+>>  	uint			lock_flags = 0;
+>> +	uint			resblks = 0;
+>>  	bool			did_zeroing = false;
+>>  
+>>  	xfs_assert_ilocked(ip, XFS_IOLOCK_EXCL | XFS_MMAPLOCK_EXCL);
+>> @@ -917,7 +920,17 @@ xfs_setattr_size(
+>>  			return error;
+>>  	}
+>>  
+>> -	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_itruncate, 0, 0, 0, &tp);
+>> +	/*
+>> +	 * For realtime inode with more than one block rtextsize, we need the
+>> +	 * block reservation for bmap btree block allocations/splits that can
+>> +	 * happen since it could split the tail written extent and convert the
+>> +	 * right beyond EOF one to unwritten.
+>> +	 */
+>> +	if (xfs_inode_has_bigrtalloc(ip))
+>> +		resblks = XFS_DIOSTRAT_SPACE_RES(mp, 0);
+> 
+> .... should this be doing this generic check instead:
+> 
+> 	if (xfs_inode_alloc_unitsize(ip) > 1)
+
+        if (xfs_inode_alloc_unitsize(ip) > i_blocksize(inode)) ?
+
+> 		resblks = XFS_DIOSTRAT_SPACE_RES(mp, 0);
+> 
+
+Yeah, it makes sense to me, but Christoph suggested to think about force
+aligned allocations later, so I only dealt with the big RT inode case here.
+I can revise it if John and Christoph don't object.
+
+Thanks,
+Yi.
+
 
