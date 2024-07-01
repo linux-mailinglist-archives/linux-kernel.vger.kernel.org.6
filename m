@@ -1,54 +1,73 @@
-Return-Path: <linux-kernel+bounces-235827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5C1B91DA30
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:41:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46FA691DA34
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:41:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 806B32821F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:41:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CDB9B2137C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E643383CDE;
-	Mon,  1 Jul 2024 08:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AAA084DEB;
+	Mon,  1 Jul 2024 08:41:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="D7ro7b9K"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FATPpAIu"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1F483CC7;
-	Mon,  1 Jul 2024 08:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3EDE82D89;
+	Mon,  1 Jul 2024 08:41:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719823265; cv=none; b=cl9xzrjsl3ZWutnLRxqo6OfM8hqgVzyNRHQIwC7X6HuYBfi+Q727B7YDeNQ2GOTeauKSwPwKu35bx0eS37maCEQrCvImhRGE5MqRJsz+NWN4XwHEiabYKQGdpusONyAKKDCvsjFhSbc+qqbm9TmNEtiuOMQZgOkI8sakZh83D4s=
+	t=1719823272; cv=none; b=HIyGUmz+TVbR8dkG15aXRmI7hDKTT1dDMJWzbDtg7+jgwFA1pDcikenxTqoYvYqUp7VZ9Y4hMXVmUCJjALr7ZUzAEj35scwzQYExTqp7sZYrmQ1BABVk+aaRoLBuJXC8oHyNWEq0rqJf37Z6Jk03GD3w9Bo/RpbYwUDwnOvdOu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719823265; c=relaxed/simple;
-	bh=O7/N2xAgN5KMJnrraKivEWkngEmOWMs9C+6n1akqfwQ=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Sbu2bgFZO1jY1tOhoaYSCJFCCdjPpzBPTPcmq898nW3OvLsSuF/nhOrn6tGCpETGb4XHDcZZc3kl4PyQnDKMvaoFojEEBht+gWw9TaemhkRWvccQOf/nqnCKZYSpQIpogIfCazLCbgyutxJjpEYTqEVOkAZoWSqgysg+sQ2OUsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=D7ro7b9K; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1719823262;
-	bh=O7/N2xAgN5KMJnrraKivEWkngEmOWMs9C+6n1akqfwQ=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=D7ro7b9KUPYyxLemYufQPSOrjl6IjUTUuLLYqIzQmYacRvHbGfO7ZjMYX+YG4JiGa
-	 lkr9GnI4jE0rz9cEew5hZ9NlZS+e7haV1c43cJQt99IzkL7umtisIRfYh/2B3E0hDB
-	 jyihkeScS4cFtGgGAEm0cMseofI/xHb2I51q9TM90g8nYxbQPHADIk6nQK3qolWXm0
-	 NMcTVSja27gsHFUhcJ2/9Pt28V8J/2nMpERMVIYyMr4R22cBdz8yDDmBSCHUjbL9mM
-	 HB8IwF7vTCq/rzy9YX1B/ouhnPyTUoBYjC6N25oaTxWkbbyEY5WyWTLBoC6MgHT/3T
-	 zpC8jCycstfsw==
-Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 45365378210B;
-	Mon,  1 Jul 2024 08:40:55 +0000 (UTC)
-Message-ID: <599d722c-6d34-42dd-bdfd-5cc862d1c8b4@collabora.com>
-Date: Mon, 1 Jul 2024 13:40:51 +0500
+	s=arc-20240116; t=1719823272; c=relaxed/simple;
+	bh=iOIsNftd+AUOPQ+Acsg6REjaYC+90eaaV8L3VB0Yp1M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WQ74Ga8snxOQuq88xfPGoudQCTWPS2N/ZTtJdQMFfo+Tbd4fL5CF39QfiWTddW1TXy2OTp0QPuUYCbmHMd+lhFErLoTi+bo8PRFMhi6vBCVVI88qKYudyMMAZinpoxyD4oBzYAJqoknCIu5/fEN4HaQm0DPkYPkz0TNCf0oUlr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FATPpAIu; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-424a3ccd0c0so20086135e9.1;
+        Mon, 01 Jul 2024 01:41:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719823268; x=1720428068; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AMt7mTb63MOoRef5KMAR+OLG9LjGQCs3Iv9eQzbOgVY=;
+        b=FATPpAIuS8kQHdSUKSMeEgjfl3nX18w3aK8SqE/cFFCzfryepebTqzrE5Rgv3/cuad
+         Rako7lr7T5MrMptiYetareEX0Q44gPabOdHIoReOXCn5vkq1ibf3j0z7Wd+Us9edg6Ux
+         2mXC/gfPzQWR8P4e0wfIv5EpHIGU7oGirGrqAuFP2TCxdFjVU0Bjh8rQ2/I+0SLkI+iJ
+         3GhxdMvCztUopMjB8oxzJ3PUzoqh5QO4FlOrfmgKkYOCLk6wyLDU4Kv7nBpXsaDjnXCu
+         58XCwqS9EaWiqlyh9ABBaMe06JCYCrT5Qv2n7vCPme1FXuywIfvVLE6mGm+i8rHD7A/v
+         Bn4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719823268; x=1720428068;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AMt7mTb63MOoRef5KMAR+OLG9LjGQCs3Iv9eQzbOgVY=;
+        b=w6eOZ2v6yWZZunq1cWhzcweWFrEE9gP5NwRrefsAQDD2WhoxW+uQNrsnqgl5ZmMLLt
+         /vMIj+QkM+n9HR2FRGsIJSQCrKqpDaJnbzsWZrPhIr0VwPdpT4ZAVIzTjqYWJgktxUq4
+         +LGVFtyjk8wpzBPMeNGsu7788OFjDCYyoShXGroFBSwiFFl839QcqYCAjdV93tJ8W3c/
+         f0S0oh0UPdvunXNrAe7cYG0vWgQmE309YVLjhvMvitWv/Km/GgnsA0qNWHEH916kUFGo
+         6RD2v+t7KczX0wohs7adPrYnqGh+/icDRyH4TVTNlzkc68eI1Fu6RbJvEfoKV/o63ryu
+         /rVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVPXMvzP5xE9VA24KOQNYiKS8u4T2flkmgOqlyD7L47oLux63qaTFm4LzwrYECRTv2rF26gj81zH+LBfJb5v1gM7JTqRElQxpCQomoPqKAJfmWjX4qoOk//4SLc8GAhmdwSuYVIxsXAxEM/QmSvd77A3c/WyV1u8LgWqsYOI19RHGmarrVs
+X-Gm-Message-State: AOJu0YzwehtFt0x54C023w6iLcHi3euHHH52a8HEE4peksPVkwIqodCL
+	y59BIHAVL2swm3XOTFX9fyJyPBvQ5K0BteU4plEb9GHDaJSw1HFZ
+X-Google-Smtp-Source: AGHT+IFVkP4vxt28218+k2V48TYQocy8Fz5i69HcPxCmln5LU4tWH1iaovbS/2p5BgnSrenoOSY/NQ==
+X-Received: by 2002:a05:600c:6a8d:b0:425:77b4:366d with SMTP id 5b1f17b1804b1-4257a02f3f6mr32722375e9.11.1719823267873;
+        Mon, 01 Jul 2024 01:41:07 -0700 (PDT)
+Received: from [10.254.108.81] (munvpn.amd.com. [165.204.72.6])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b09a94csm141988335e9.33.2024.07.01.01.41.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Jul 2024 01:41:07 -0700 (PDT)
+Message-ID: <dbcd9a16-4e4b-42c8-ba7f-d6c1dfd9dccb@gmail.com>
+Date: Mon, 1 Jul 2024 10:41:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,64 +75,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, kernel@collabora.com,
- linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] selftests: arm64: tags_test: conform test to TAP
- output
-To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Shuah Khan <shuah@kernel.org>, Kunwu Chan <chentao@kylinos.cn>,
- Mark Brown <broonie@kernel.org>
-References: <20240602132502.4186771-1-usama.anjum@collabora.com>
+Subject: Re: [Linaro-mm-sig] Re: [PATCH v5 2/9] scatterlist: Add a flag for
+ the restricted memory
+To: Nicolas Dufresne <nicolas@ndufresne.ca>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ =?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>,
+ "daniel@ffwll.ch" <daniel@ffwll.ch>
+Cc: "quic_vjitta@quicinc.com" <quic_vjitta@quicinc.com>,
+ "angelogioacchino.delregno@collabora.com"
+ <angelogioacchino.delregno@collabora.com>,
+ "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "jkardatzke@google.com" <jkardatzke@google.com>,
+ "krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
+ "joakim.bech@linaro.org" <joakim.bech@linaro.org>,
+ =?UTF-8?B?WW91bGluIFBlaSAo6KO05Y+L5p6XKQ==?= <youlin.pei@mediatek.com>,
+ "logang@deltatee.com" <logang@deltatee.com>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ =?UTF-8?B?S3VvaG9uZyBXYW5nICjnjovlnIvptLsp?= <kuohong.wang@mediatek.com>,
+ =?UTF-8?B?SmlhbmppYW8gWmVuZyAo5pu+5YGl5aejKQ==?=
+ <Jianjiao.Zeng@mediatek.com>, "contact@emersion.fr" <contact@emersion.fr>,
+ "benjamin.gaignard@collabora.com" <benjamin.gaignard@collabora.com>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+ "willy@infradead.org" <willy@infradead.org>, "pavel@ucw.cz" <pavel@ucw.cz>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "Brian.Starkey@arm.com" <Brian.Starkey@arm.com>,
+ "robh+dt@kernel.org" <robh+dt@kernel.org>,
+ "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "tjmercier@google.com" <tjmercier@google.com>,
+ "jstultz@google.com" <jstultz@google.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "mripard@kernel.org" <mripard@kernel.org>,
+ "robin.murphy@arm.com" <robin.murphy@arm.com>,
+ =?UTF-8?B?WW9uZyBXdSAo5ZC05YuHKQ==?= <Yong.Wu@mediatek.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "ppaalanen@gmail.com" <ppaalanen@gmail.com>
+References: <20240515112308.10171-1-yong.wu@mediatek.com>
+ <20240515112308.10171-3-yong.wu@mediatek.com>
+ <98721904-003d-4d0d-8cfe-1cecdd59ce01@amd.com>
+ <779ce30a657754ff945ebd32b66e1c644635e84d.camel@mediatek.com>
+ <cef8f87d-edab-41d8-8b95-f3fc39ad7f74@amd.com>
+ <1050c44512374031d1349b5dced228d0efc3fbde.camel@mediatek.com>
+ <3104b765-5666-44e4-8788-f1b1b296fe17@amd.com>
+ <98c11bad7f40bcc79ed7a2039ddb3a46f99908f5.camel@mediatek.com>
+ <75dc1136-7751-4772-9fa7-dd9124684cd2@amd.com>
+ <ZnxWWtdShekGSUif@phenom.ffwll.local>
+ <ae73a0203d6acf2878c9e3ae2d7554816b9c66ad.camel@mediatek.com>
+ <5739abdb-0234-412a-9f25-49219411bbc6@amd.com>
+ <183f2ae09c2dbcf687e69cd13a9d258fd24fd80c.camel@ndufresne.ca>
 Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <20240602132502.4186771-1-usama.anjum@collabora.com>
-Content-Type: text/plain; charset=UTF-8
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>
+In-Reply-To: <183f2ae09c2dbcf687e69cd13a9d258fd24fd80c.camel@ndufresne.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Soft reminder
+Am 28.06.24 um 22:16 schrieb Nicolas Dufresne:
+> [SNIP]
+>>>>> Why can't you get this information from userspace?
+>>>> Same reason amd and i915/xe also pass this around internally in the
+>>>> kernel, it's just that for those gpus the render and kms node are the
+>>>> same
+>>>> driver so this is easy.
+>>>>
+>> The reason I ask is that encryption here looks just like another
+>> parameter for the buffer, e.g. like format, stride, tilling etc..
+> I'm mostly a reader of the thread here, but I'd like to avoid basic mistakes.
+> The buffer in question are "protected", meaning that the CPU HW does not have
+> access to the underlying pages (or zone in the case of Meditatek).
+>
+> This is different from encrypted buffers, which don't need this level of
+> protection, as without the security key to decrypt them, their content is close
+> to random data.
 
-On 6/2/24 6:24 PM, Muhammad Usama Anjum wrote:
-> Conform the layout, informational and status messages to TAP. No
-> functional change is intended other than the layout of output messages.
-> 
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> ---
->  tools/testing/selftests/arm64/tags/tags_test.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/arm64/tags/tags_test.c b/tools/testing/selftests/arm64/tags/tags_test.c
-> index 955f87c1170d7..8ae26e496c89c 100644
-> --- a/tools/testing/selftests/arm64/tags/tags_test.c
-> +++ b/tools/testing/selftests/arm64/tags/tags_test.c
-> @@ -17,19 +17,21 @@ int main(void)
->  	static int tbi_enabled = 0;
->  	unsigned long tag = 0;
->  	struct utsname *ptr;
-> -	int err;
-> +
-> +	ksft_print_header();
-> +	ksft_set_plan(1);
->  
->  	if (prctl(PR_SET_TAGGED_ADDR_CTRL, PR_TAGGED_ADDR_ENABLE, 0, 0, 0) == 0)
->  		tbi_enabled = 1;
->  	ptr = (struct utsname *)malloc(sizeof(*ptr));
->  	if (!ptr)
-> -		ksft_exit_fail_msg("Failed to allocate utsname buffer\n");
-> +		ksft_exit_fail_perror("Failed to allocate utsname buffer");
->  
->  	if (tbi_enabled)
->  		tag = 0x42;
->  	ptr = (struct utsname *)SET_TAG(ptr, tag);
-> -	err = uname(ptr);
-> +	ksft_test_result(!uname(ptr), "Syscall successful with tagged address\n");
->  	free(ptr);
->  
-> -	return err;
-> +	ksft_finished();
->  }
+Thanks for that clarification, this difference was absolutely not obvious.
 
--- 
-BR,
-Muhammad Usama Anjum
+In that case having a separate heap for this memory is indeed the 
+easiest approach.
+
+My question is still what would happen if the CPU tries to access this 
+protected buffer? Or does the CPU not even have an address to do that?
+
+Just out of curiosity, I mean the exporting heap should then somehow 
+reject any attempt to mmap() or vmap() the buffer content.
+
+Thanks,
+Christian.
 
