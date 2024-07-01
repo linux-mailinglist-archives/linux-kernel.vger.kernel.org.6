@@ -1,275 +1,629 @@
-Return-Path: <linux-kernel+bounces-236816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EF7F91E766
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:26:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4880991E76A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:27:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 617A81C21B13
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:26:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C24A41F2204B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:27:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF8916EC0F;
-	Mon,  1 Jul 2024 18:26:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12A916EC0F;
+	Mon,  1 Jul 2024 18:27:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Uc5hw9TL"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wZVYlQRd"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282A84206C;
-	Mon,  1 Jul 2024 18:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9776916EBF8
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 18:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719858389; cv=none; b=qY4a3TomwZbLHuCgF34B9r5wTXfS2vggHvKXaevbVKjnHXYgv5Gx3OyJjrj+IQXH2I83aGaqSVpTlXwcigDdjhFBpZj4zkOKVPq+7za2b243oAO1GSWRgcjDZuFyJQXIDvaFhnpcERLpjYQ3yUJ/HhxC5QLdxUPwwlJG3HGxXnw=
+	t=1719858467; cv=none; b=QiJpvliVO0CR/CL3eO9ercbwzQh4tHzQCJ4K2y5MyaX49n7UJLpH8tkc4bnvjWzjGZ6GmNltJEGFqTVL48a4idm4UWzTglr2hQbKSpx/3Cnk5dE/7tdbbw+2L8CcOjNyg6CQEYYAixHDy4oyH80uyQ+pO9p1/dOxx+oipNhO2Zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719858389; c=relaxed/simple;
-	bh=eJuTrf0oLJxZyj0FJqRF/6p6IZeg+srqP1FrZsdO7Q8=;
-	h=MIME-Version:Content-Type:Date:Message-ID:CC:Subject:From:To:
-	 References:In-Reply-To; b=BE9Aj03HosIM31RW+tvkH9CExX0lde5S1om91+NGoyvCfiHZ3PFV6SZNToCyqWyPiTdFo09IMPn1ZdbmL4FkUsXR8BcQpfQiupL62qDqhrUEXnOIlRnssvtdpt+BB1ivdaEQMYY45oXq5dWBZpo7e03zSCqAI1KVxzU6F8EFYKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Uc5hw9TL; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 461IQG9b033443;
-	Mon, 1 Jul 2024 13:26:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719858376;
-	bh=OTJBK/eXTcbCUlw13jrhouc45oqruLOebA3Tdbxp8MU=;
-	h=Date:CC:Subject:From:To:References:In-Reply-To;
-	b=Uc5hw9TL2yMsW1KDXtOSuNJcTMz6fjJwhzB+cQieBsVQniGiVXovoHeYlQukomA9Q
-	 QEl5X14IQWj/0Z87a6ikTlc4RraEtTN9PTAIAoT/MGSnOzKx40XKTRhMxTCul+wkjU
-	 EYm1yTUUpuN613GEVhfG5CZTM+VpYKdaGPu0P80s=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 461IQG8E056592
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 1 Jul 2024 13:26:16 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 1
- Jul 2024 13:26:16 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 1 Jul 2024 13:26:16 -0500
-Received: from localhost (rs-desk.dhcp.ti.com [128.247.81.144])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 461IQG2Q073831;
-	Mon, 1 Jul 2024 13:26:16 -0500
+	s=arc-20240116; t=1719858467; c=relaxed/simple;
+	bh=h/VJaBsOP7MWo33/fGyHsD0KNzcXJIKJLL4AmQ5bx/Q=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=sKNinUcuLI8OzQUJgQ5m3Pz6gMQO7uCOsudbZVbDvd0dAeNLXm/9i1QcJUkYSUWAR3mSe3EAwbfnv1Y5jt64lqsuT8s02/e9XWnXF5dJK3H5b9/69m7IInwaBB/xfmWtV8EXu9SfvJ/y0Zj8lNqRflvSK1ToXJl7gFF/pwTYjvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yutingtseng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wZVYlQRd; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yutingtseng.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-70683497777so2431161b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 11:27:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719858465; x=1720463265; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CkzMYZbSYK7SvX5vWuwux9UzfrFHHVKVHuw1w7cG5Tk=;
+        b=wZVYlQRdtifSNrG/uCP3gumdsj5hrLJj/2o+wJHPBL0pOh76h4mPNew8SKHDaAus4U
+         h+pArZAgjgnjpDBxTZg6G8yeEO05CO6PY0umNkxzcv66qN4wALKWC2TYtDlQt8EyLQBW
+         jGpM7pmCshguJbeL7/dhGPoJWUgWzt1fm0ZMwHUb1vIXj805tV5UCsSYWDcGvqVw9dSp
+         90eLpUZb0p1GRW+v3+McwDG1PWJQlJrihGoaYMvxIP9qUNMwcbg9WC0TmaNigYGqbzKa
+         62JyFva+NuIn5dcj56gvw8trdOyurNo+9hr/sjEEl4i7wNuYdjKH0Zh0cZcWsl5bpgIE
+         MOIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719858465; x=1720463265;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CkzMYZbSYK7SvX5vWuwux9UzfrFHHVKVHuw1w7cG5Tk=;
+        b=r2ZySiV4/DBtb2IQtLWlpMN/BhK7DAqvgnO1Y7pDJrR/frdFcoK99bzGnHCL4D04nD
+         3npSltnyNa5rmON5v7rPNKHvCbFi1b0hhvuBo4/z2s8SG8idQETUInWFhTsX+iK5zVsV
+         PQEOvhTMYY6EsS9fDMYhgogvLyzY923MCCICpAL86YArsLD37nybuQTux2OEhbg8uSsN
+         gOhueoOq1uqU+CEpGwE+S6fInzs4SgwVO5Id4hc4BTXO/60bniGLJdpuIrtbfXQLNIt1
+         eFrzT4Lj1xSyQrZ2ofL3hnNmTgl3ykwzH4XWgkW/mzMik1JsZOD2/FvV/GrT/uWIQvoR
+         Ht8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXTmw88aP6+PFQnjN55XoZ+qucTkD+oKeqwkligSiAnJYCCYN5k21UwfnQnMfJwqDF3Zt7EbXZj3aZFCOQjf95MmVK0tNrzmXKGz3QH
+X-Gm-Message-State: AOJu0YwTLtZkNlg1B+F/osPJ7TkPN4JIxh8EWENnZfYWAEtnJqPpOl6M
+	PTgjwwU+4SBreh1qpAX9dcdkBokmPdmgJbaq0MRDwXUEl5zkxwIsB1dcEjLpa9zfrP8PFB/1B5e
+	8J4as41jvUB+fFKp4FrlUkw==
+X-Google-Smtp-Source: AGHT+IFO8eXwT62u0ui5i5z5ZeQ239VKlGfFmBizO/a6Pw6EvwSZz78rgLZbLtejdkInVD3mVszV/37kj6MVXZfnlg==
+X-Received: from yuting.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:317f])
+ (user=yutingtseng job=sendgmr) by 2002:a05:6a00:1404:b0:704:6ea0:2bae with
+ SMTP id d2e1a72fcca58-70aaad327d9mr161359b3a.2.1719858464677; Mon, 01 Jul
+ 2024 11:27:44 -0700 (PDT)
+Date: Mon,  1 Jul 2024 11:27:33 -0700
+In-Reply-To: <CAN5Drs06fbditeSaVLc6i6wEY+A47HHzQmhCS1rzJgacNs1Tjw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <CAN5Drs06fbditeSaVLc6i6wEY+A47HHzQmhCS1rzJgacNs1Tjw@mail.gmail.com>
+X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
+Message-ID: <20240701182731.1003031-3-yutingtseng@google.com>
+Subject: [PATCH v4] binder: frozen notification
+From: Yu-Ting Tseng <yutingtseng@google.com>
+To: cmllamas@google.com, tkjos@google.com, gregkh@linuxfoundation.org
+Cc: arve@android.com, maco@android.com, joel@joelfernandes.org, 
+	brauner@kernel.org, surenb@google.com, aliceryhl@google.com, 
+	kernel-team@android.com, linux-kernel@vger.kernel.org, 
+	Yu-Ting Tseng <yutingtseng@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Date: Mon, 1 Jul 2024 13:26:16 -0500
-Message-ID: <D2EEWUPE9RAG.26DDBH0DK0OP7@ti.com>
-CC: <praneeth@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
-        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
-        <vijayp@ti.com>, "Khasim, Syed Mohammed" <khasim@ti.com>
-Subject: Re: [PATCH 0/3] Add global CMA reserve area
-From: Randolph Sapp <rs@ti.com>
-To: Andrew Davis <afd@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Devarsh
- Thakkar <devarsht@ti.com>, <nm@ti.com>, <kristo@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.17.0-0-g6ea74eb30457
-References: <20240613150902.2173582-1-devarsht@ti.com>
- <D1ZXO8F3XN2I.3CTTE245I0TYY@ti.com>
- <24c0ed06-3c32-4cc3-922c-4717d35a1112@ti.com>
- <64b78ba2-776c-1de6-4c13-001d11000ff0@ti.com>
- <D2BSORIL5C7T.3B8EAANVQ7TX5@ti.com>
- <0ca809d0-3d0f-47d1-b5e7-aa78d65d7917@ti.com>
- <2f1f25b5-86c1-4a60-8f71-519658d5f88a@ti.com>
-In-Reply-To: <2f1f25b5-86c1-4a60-8f71-519658d5f88a@ti.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Mon Jul 1, 2024 at 9:33 AM CDT, Andrew Davis wrote:
-> On 6/30/24 2:09 AM, Vignesh Raghavendra wrote:
-> >=20
-> >=20
-> > On 28/06/24 22:05, Randolph Sapp wrote:
-> >> On Fri Jun 28, 2024 at 10:57 AM CDT, Devarsh Thakkar wrote:
-> >>> Hi Andrew, Vignesh,
-> >>>
-> >>> On 24/06/24 22:03, Andrew Davis wrote:
-> >>>> On 6/14/24 12:58 PM, Randolph Sapp wrote:
-> >>>>> On Thu Jun 13, 2024 at 10:08 AM CDT, Devarsh Thakkar wrote:
-> >>>>>> Add global CMA reserve area for AM62x, AM62A and AM62P SoCs.
-> >>>>>> These SoCs do not have MMU and hence require contiguous memory poo=
-l to
-> >>>>>> support various multimedia use-cases.
-> >>>>>>
-> >>>>>> Brandon Brnich (1):
-> >>>>>>  =C2=A0=C2=A0 arm64: dts: ti: k3-am62p5-sk: Reserve 576 MiB of glo=
-bal CMA
-> >>>>>>
-> >>>>>> Devarsh Thakkar (2):
-> >>>>>>  =C2=A0=C2=A0 arm64: dts: ti: k3-am62x-sk-common: Reserve 128MiB o=
-f global CMA
-> >>>>>>  =C2=A0=C2=A0 arm64: dts: ti: k3-am62a7-sk: Reserve 576MiB of glob=
-al CMA
-> >>>>>>
-> >>>>>>  =C2=A0 arch/arm64/boot/dts/ti/k3-am62a7-sk.dts=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 | 9 +++++++++
-> >>>>>>  =C2=A0 arch/arm64/boot/dts/ti/k3-am62p5-sk.dts=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 | 7 +++++++
-> >>>>>>  =C2=A0 arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi | 8 +++++++=
+Frozen processes present a significant challenge in binder transactions.
+When a process is frozen, it cannot, by design, accept and/or respond to
+binder transactions. As a result, the sender needs to adjust its
+behavior, such as postponing transactions until the peer process
+unfreezes. However, there is currently no way to subscribe to these
+state change events, making it impossible to implement frozen-aware
+behaviors efficiently.
+
+Introduce a binder API for subscribing to frozen state change events.
+This allows programs to react to changes in peer process state,
+mitigating issues related to binder transactions sent to frozen
+processes.
+
+Implementation details:
+For a given binder_ref, the state of frozen notification can be one of
+the followings:
+1. Userspace doesn't want a notification. binder_ref->freeze is null.
+2. Userspace wants a notification but none is in flight.
+   list_empty(&binder_ref->freeze->work.entry) = true
+3. A notification is in flight and waiting to be read by userspace.
+   binder_ref_freeze.sent is false.
+4. A notification was read by userspace and kernel is waiting for an ack.
+   binder_ref_freeze.sent is true.
+
+When a notification is in flight, new state change events are coalesced into
+the existing binder_ref_freeze struct. If userspace hasn't picked up the
+notification yet, the driver simply rewrites the state. Otherwise, the
+notification is flagged as requiring a resend, which will be performed
+once userspace acks the original notification that's inflight.
+
+See https://r.android.com/3070045 for how userspace is going to use this
+feature.
+
+Signed-off-by: Yu-Ting Tseng <yutingtseng@google.com>
+---
+ drivers/android/binder.c            | 287 +++++++++++++++++++++++++++-
+ drivers/android/binder_internal.h   |  21 +-
+ include/uapi/linux/android/binder.h |  36 ++++
+ 3 files changed, 340 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index b21a7b246a0d..e1bd9810c2af 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -3763,6 +3763,159 @@ static void binder_transaction(struct binder_proc *proc,
+ 	}
+ }
+ 
++static int
++binder_request_freeze_notification(struct binder_proc *proc,
++				   struct binder_thread *thread,
++				   struct binder_handle_cookie *handle_cookie)
++{
++	struct binder_ref_freeze *freeze;
++	struct binder_ref *ref;
++	bool is_frozen;
 +
-> >>>>>>  =C2=A0 3 files changed, 24 insertions(+)
-> >>>>>
-> >>>>> I'm still a little torn about putting this allocation into the devi=
-ce tree
-> >>>>> directly as the actual required allocation size depends on the task=
-.
-> >>>>>
-> >>>>
-> >>>> That is the exact reason this does not belong in DT. For everyone *n=
-ot*
-> >>>> using the most extreme case (12x decodes at the same time), this is
-> >>>> all wasted space. If one is running out of CMA, they can add more on
-> >>>> the kernel cmdline.
-> >>>>
-> >>>
-> >>> I disagree with this. The 12x decode for 480p is not an extreme use-c=
-ase this
-> >>> is something VPU is capable to run at optimum frame-rate (12x 1080p i=
-t can't)
-> >>> and as the AM62A7 is meant to be AI + multimedia centric device, per =
-the
-> >>> device definition we were given the requirements to support a list of
-> >>> multimedia use-cases which should work out of box and 12x decode for =
-480p was
-> >>> one of them as device is very much capable of doing that with optimum
-> >>> performance and I don't think it is right to change these requirement=
-s on the fly.
-> >>>
-> >>> The AM62A7 board has 4 GiB of DDR and we have been using this CMA val=
-ue since
-> >>> more than a year, I have never heard anyone complain about out of mem=
-ory or
-> >>> CMA starvation and it suffices to requirements of *most use-cases*, b=
-ut if for
-> >>> some specific use-case it doesn't suffice, user can change it via ker=
-nel cmdline.
-> >>>
-> >>> The kernelcmdline suggestion doesn't suffice out of box experience re=
-quired,
-> >>> we don't want to ask the user to reboot the board everytime they run =
-out of CMA.
-> >>>
-> >>>
-> >>>>> If it's allowed though, this series is fine for introducing those c=
-hanges. This
-> >>>>> uses the long-tested values we've been using on our tree for a bit =
-now. The
-> >>>>> only
-> >>>>> thing that's a little worrying is the missing range definitions for=
- devices
-> >>>>> with
-> >>>>> more than 32bits of addressable memory as Brandon has pointed out. =
-Once that's
-> >>>>> addressed:
-> >>>>>
-> >>>>> Reviewed-by: Randolph Sapp <rs@ti.com>
-> >>>>>
-> >>>>> Specifying these regions using the kernel cmdline parameter via u-b=
-oot was
-> >>>>> brought up as a potential workaround. This is fine until you get in=
-to distro
-> >>>>> boot methods which will almost certainly attempt to override those.=
- I don't
-> >>>>> know. Still a little odd. Curious how the community feels about it.
-> >>>>>
-> >>>>> Technically the user or distro can still override it with the cmdli=
-ne parameter
-> >>>>> if necessary, so this may be the best way to have a useful default.
-> >>>>>
-> >>>>
-> >>>
-> >>> Unlike above, this solution is independent of distro as it should be =
-as we
-> >>> want that all the supported multimedia use-cases should work out of b=
-ox. This
-> >>> solution is nothing illegal as CMA region carveouts are not a kernel
-> >>> deprecated feature.
-> >>
-> >> Right. I support this change for at least introducing a usable default=
-. 32M of
-> >> CMA is barely enough to run glmark2 under Weston once everything's up =
-and
-> >> running.
-> >>
-> >> As I said before, the user or distro can still override the dt CMA blo=
-ck with
-> >> the cma kernel parameter if they aren't happy with the default block.
-> >> Unfortunately this is about the only way to have a usable default valu=
-e to fall
-> >> back on.
-> >>
-> >=20
-> >=20
-> > Given the number of SoMs and non TI EVMs that are about to come out wit=
-h
-> > AM62A/P and AM67s, we need to provide a consistent way of being able to
-> > support multimedia IPs out of the box. Modifying cmdline may not always
-> > be feasible given distro defaults don't always provide a way to do so.
-> >=20
->
-> We need to keep thinking then. I empathize with desire to put
-> configuration in Device Tree. DT feels like a great spot for it,
-> it is ubiquitous on these boards and has a good bit of tooling around
-> it. We are already describing the hardware, why not configure it here
-> too? But the reason we do not want to go down that road is simple:
-> DT takes away use-case flexibility. A lack of flexibility is fine for
-> hardware which is unchanging, but not for configuration.
-
-I agree with the sentiment here, but this explicit case is an exception. Th=
-is is
-no more than a default value. Userspace can still change this allocation wi=
-th
-the kernel cma parameter. That still takes precedence.
-
-> Device policy and configuration must be left to userspace.
->
-> It is not for us to decide how folks should use our hardware, and
-> that is what we are doing when we configure it in DT.
->
-> For configuration that must happen in early boot before userspace is
-> available (such as kernel stdout and memory carveouts) we have the
-> kernel cmdline. If we find something that cannot be done today though
-> the cmdline, then we should add that support to the cmdline, not
-> give up and just hide the configuration in DT.
->
-> What this series does is already available on the kernel cmdline.
-> Our bootloader can provide sane defaults on the cmdline today.
-> If the worry is that distros will override this default then
-> go fix those distros.
-
-Our bootloaders doing anything to kernel cmdline parameters is inherently
-non-standard. You just brought up userspace control. They clobber cmdline
-parameters all the time. Unsetting this bootloader value will be the first =
-thing
-they do. This will be done passively, since they normally inject a new
-intermediary boot stage that they can actually control between u-boot and t=
-heir
-kernel.
-
-- Randolph
-
-> > So I am inclined to queue first 2 patches unless there is another way t
-> > achieve this.
-> >=20
->
-> Our lack of creativity in finding better solutions to this issue is
-> not an excuse to add more junk to DT..
->
-> Andrew
->
-> > [...]
-> >=20
++	freeze = kzalloc(sizeof(*freeze), GFP_KERNEL);
++	if (!freeze)
++		return -ENOMEM;
++	binder_proc_lock(proc);
++	ref = binder_get_ref_olocked(proc, handle_cookie->handle, false);
++	if (!ref) {
++		binder_user_error("%d:%d BC_REQUEST_FREEZE_NOTIFICATION invalid ref %d\n",
++				  proc->pid, thread->pid, handle_cookie->handle);
++		binder_proc_unlock(proc);
++		kfree(freeze);
++		return -EINVAL;
++	}
++
++	binder_node_lock(ref->node);
++
++	if (ref->freeze || !ref->node->proc) {
++		if (ref->freeze) {
++			binder_user_error("%d:%d BC_REQUEST_FREEZE_NOTIFICATION freeze notification already set\n",
++					  proc->pid, thread->pid);
++		} else {
++			binder_user_error("%d:%d BC_REQUEST_FREEZE_NOTIFICATION process is already dead\n",
++					  proc->pid, thread->pid);
++		}
++		binder_node_unlock(ref->node);
++		binder_proc_unlock(proc);
++		kfree(freeze);
++		return -EINVAL;
++	}
++	binder_inner_proc_lock(ref->node->proc);
++	is_frozen = ref->node->proc->is_frozen;
++	binder_inner_proc_unlock(ref->node->proc);
++
++	binder_stats_created(BINDER_STAT_FREEZE);
++	INIT_LIST_HEAD(&freeze->work.entry);
++	freeze->cookie = handle_cookie->cookie;
++	freeze->work.type = BINDER_WORK_FROZEN_BINDER;
++	freeze->is_frozen = ref->node->proc->is_frozen;
++
++	ref->freeze = freeze;
++
++	binder_inner_proc_lock(proc);
++	binder_enqueue_work_ilocked(&ref->freeze->work, &proc->todo);
++	binder_wakeup_proc_ilocked(proc);
++	binder_inner_proc_unlock(proc);
++
++	binder_node_unlock(ref->node);
++	binder_proc_unlock(proc);
++	return 0;
++}
++
++static int
++binder_clear_freeze_notification(struct binder_proc *proc,
++				 struct binder_thread *thread,
++				 struct binder_handle_cookie *handle_cookie)
++{
++	struct binder_ref_freeze *freeze;
++	struct binder_ref *ref;
++
++	binder_proc_lock(proc);
++	ref = binder_get_ref_olocked(proc, handle_cookie->handle, false);
++	if (!ref) {
++		binder_user_error("%d:%d BC_CLEAR_FREEZE_NOTIFICATION invalid ref %d\n",
++				  proc->pid, thread->pid, handle_cookie->handle);
++		binder_proc_unlock(proc);
++		return -EINVAL;
++	}
++
++	binder_node_lock(ref->node);
++
++	if (!ref->freeze) {
++		binder_user_error("%d:%d BC_CLEAR_FREEZE_NOTIFICATION freeze notification not active\n",
++				  proc->pid, thread->pid);
++		binder_node_unlock(ref->node);
++		binder_proc_unlock(proc);
++		return -EINVAL;
++	}
++	freeze = ref->freeze;
++	binder_inner_proc_lock(proc);
++	if (freeze->cookie != handle_cookie->cookie) {
++		binder_user_error("%d:%d BC_CLEAR_FREEZE_NOTIFICATION freeze notification cookie mismatch %016llx != %016llx\n",
++				  proc->pid, thread->pid, (u64)freeze->cookie,
++				  (u64)handle_cookie->cookie);
++		binder_inner_proc_unlock(proc);
++		binder_node_unlock(ref->node);
++		binder_proc_unlock(proc);
++		return -EINVAL;
++	}
++	ref->freeze = NULL;
++	/*
++	 * Take the existing freeze object and overwrite its work type. There are three cases here:
++	 * 1. No pending notification. In this case just add the work to the queue.
++	 * 2. An notification was sent and is pending an ack from userspace. Once an ack arrives, we
++	 *    should resend with the new work type.
++	 * 3. A notification is pending to be sent. Since the work is already in the queue, nothing
++	 *    needs to be done here.
++	 */
++	freeze->work.type = BINDER_WORK_CLEAR_FREEZE_NOTIFICATION;
++	if (list_empty(&freeze->work.entry)) {
++		binder_enqueue_work_ilocked(&freeze->work, &proc->todo);
++		binder_wakeup_proc_ilocked(proc);
++	} else if (freeze->sent) {
++		freeze->resend = true;
++	}
++	binder_inner_proc_unlock(proc);
++	binder_node_unlock(ref->node);
++	binder_proc_unlock(proc);
++	return 0;
++}
++
++static int
++binder_freeze_notification_done(struct binder_proc *proc,
++				struct binder_thread *thread,
++				binder_uintptr_t cookie)
++{
++	struct binder_ref_freeze *freeze = NULL;
++	struct binder_work *w;
++
++	binder_inner_proc_lock(proc);
++	list_for_each_entry(w, &proc->delivered_freeze, entry) {
++		struct binder_ref_freeze *tmp_freeze =
++			container_of(w, struct binder_ref_freeze, work);
++
++		if (tmp_freeze->cookie == cookie) {
++			freeze = tmp_freeze;
++			break;
++		}
++	}
++	if (!freeze) {
++		binder_user_error("%d:%d BC_FREEZE_NOTIFICATION_DONE %016llx not found\n",
++				  proc->pid, thread->pid, (u64)cookie);
++		binder_inner_proc_unlock(proc);
++		return -EINVAL;
++	}
++	binder_dequeue_work_ilocked(&freeze->work);
++	freeze->sent = false;
++	if (freeze->resend) {
++		freeze->resend = false;
++		binder_enqueue_work_ilocked(&freeze->work, &proc->todo);
++		binder_wakeup_proc_ilocked(proc);
++	}
++	binder_inner_proc_unlock(proc);
++	return 0;
++}
++
+ /**
+  * binder_free_buf() - free the specified buffer
+  * @proc:	binder proc that owns buffer
+@@ -4246,6 +4399,44 @@ static int binder_thread_write(struct binder_proc *proc,
+ 			binder_inner_proc_unlock(proc);
+ 		} break;
+ 
++		case BC_REQUEST_FREEZE_NOTIFICATION: {
++			struct binder_handle_cookie handle_cookie;
++			int error;
++
++			if (copy_from_user(&handle_cookie, ptr, sizeof(handle_cookie)))
++				return -EFAULT;
++			ptr += sizeof(handle_cookie);
++			error = binder_request_freeze_notification(proc, thread,
++								   &handle_cookie);
++			if (error)
++				return error;
++		} break;
++
++		case BC_CLEAR_FREEZE_NOTIFICATION: {
++			struct binder_handle_cookie handle_cookie;
++			int error;
++
++			if (copy_from_user(&handle_cookie, ptr, sizeof(handle_cookie)))
++				return -EFAULT;
++			ptr += sizeof(handle_cookie);
++			error = binder_clear_freeze_notification(proc, thread, &handle_cookie);
++			if (error)
++				return error;
++		} break;
++
++		case BC_FREEZE_NOTIFICATION_DONE: {
++			binder_uintptr_t cookie;
++			int error;
++
++			if (get_user(cookie, (binder_uintptr_t __user *)ptr))
++				return -EFAULT;
++
++			ptr += sizeof(cookie);
++			error = binder_freeze_notification_done(proc, thread, cookie);
++			if (error)
++				return error;
++		} break;
++
+ 		default:
+ 			pr_err("%d:%d unknown command %u\n",
+ 			       proc->pid, thread->pid, cmd);
+@@ -4635,6 +4826,46 @@ static int binder_thread_read(struct binder_proc *proc,
+ 			if (cmd == BR_DEAD_BINDER)
+ 				goto done; /* DEAD_BINDER notifications can cause transactions */
+ 		} break;
++
++		case BINDER_WORK_FROZEN_BINDER: {
++			struct binder_ref_freeze *freeze;
++			struct binder_frozen_state_info info;
++			memset(&info, 0, sizeof(info));
++
++			freeze = container_of(w, struct binder_ref_freeze, work);
++			info.is_frozen = freeze->is_frozen;
++			info.cookie = freeze->cookie;
++			freeze->sent = true;
++			binder_enqueue_work_ilocked(w, &proc->delivered_freeze);
++			binder_inner_proc_unlock(proc);
++
++			if (put_user(BR_FROZEN_BINDER, (uint32_t __user *)ptr))
++				return -EFAULT;
++			ptr += sizeof(uint32_t);
++			if (copy_to_user(ptr, &info, sizeof(info)))
++				return -EFAULT;
++			ptr += sizeof(info);
++			binder_stat_br(proc, thread, BR_FROZEN_BINDER);
++			goto done; /* BR_FROZEN_BINDER notifications can cause transactions */
++		} break;
++
++		case BINDER_WORK_CLEAR_FREEZE_NOTIFICATION: {
++			struct binder_ref_freeze *freeze =
++			    container_of(w, struct binder_ref_freeze, work);
++			binder_uintptr_t cookie = freeze->cookie;
++
++			binder_inner_proc_unlock(proc);
++			kfree(freeze);
++			binder_stats_deleted(BINDER_STAT_FREEZE);
++			if (put_user(BR_CLEAR_FREEZE_NOTIFICATION_DONE, (uint32_t __user *)ptr))
++				return -EFAULT;
++			ptr += sizeof(uint32_t);
++			if (put_user(cookie, (binder_uintptr_t __user *)ptr))
++				return -EFAULT;
++			ptr += sizeof(binder_uintptr_t);
++			binder_stat_br(proc, thread, BR_CLEAR_FREEZE_NOTIFICATION_DONE);
++		} break;
++
+ 		default:
+ 			binder_inner_proc_unlock(proc);
+ 			pr_err("%d:%d: bad work type %d\n",
+@@ -5242,6 +5473,48 @@ static bool binder_txns_pending_ilocked(struct binder_proc *proc)
+ 	return false;
+ }
+ 
++static void binder_add_freeze_work(struct binder_proc *proc, bool is_frozen)
++{
++	struct rb_node *n;
++	struct binder_ref *ref;
++
++	binder_inner_proc_lock(proc);
++	for (n = rb_first(&proc->nodes); n; n = rb_next(n)) {
++		struct binder_node *node;
++
++		node = rb_entry(n, struct binder_node, rb_node);
++		binder_inner_proc_unlock(proc);
++		binder_node_lock(node);
++		hlist_for_each_entry(ref, &node->refs, node_entry) {
++			/*
++			 * Need the node lock to synchronize
++			 * with new notification requests and the
++			 * inner lock to synchronize with queued
++			 * freeze notifications.
++			 */
++			binder_inner_proc_lock(ref->proc);
++			if (!ref->freeze) {
++				binder_inner_proc_unlock(ref->proc);
++				continue;
++			}
++			ref->freeze->work.type = BINDER_WORK_FROZEN_BINDER;
++			if (list_empty(&ref->freeze->work.entry)) {
++				ref->freeze->is_frozen = is_frozen;
++				binder_enqueue_work_ilocked(&ref->freeze->work, &ref->proc->todo);
++				binder_wakeup_proc_ilocked(ref->proc);
++			} else {
++				if (ref->freeze->sent && ref->freeze->is_frozen != is_frozen)
++					ref->freeze->resend = true;
++				ref->freeze->is_frozen = is_frozen;
++			}
++			binder_inner_proc_unlock(ref->proc);
++		}
++		binder_node_unlock(node);
++		binder_inner_proc_lock(proc);
++	}
++	binder_inner_proc_unlock(proc);
++}
++
+ static int binder_ioctl_freeze(struct binder_freeze_info *info,
+ 			       struct binder_proc *target_proc)
+ {
+@@ -5253,6 +5526,7 @@ static int binder_ioctl_freeze(struct binder_freeze_info *info,
+ 		target_proc->async_recv = false;
+ 		target_proc->is_frozen = false;
+ 		binder_inner_proc_unlock(target_proc);
++		binder_add_freeze_work(target_proc, false);
+ 		return 0;
+ 	}
+ 
+@@ -5285,6 +5559,8 @@ static int binder_ioctl_freeze(struct binder_freeze_info *info,
+ 		binder_inner_proc_lock(target_proc);
+ 		target_proc->is_frozen = false;
+ 		binder_inner_proc_unlock(target_proc);
++	} else {
++		binder_add_freeze_work(target_proc, true);
+ 	}
+ 
+ 	return ret;
+@@ -5658,6 +5934,7 @@ static int binder_open(struct inode *nodp, struct file *filp)
+ 	binder_stats_created(BINDER_STAT_PROC);
+ 	proc->pid = current->group_leader->pid;
+ 	INIT_LIST_HEAD(&proc->delivered_death);
++	INIT_LIST_HEAD(&proc->delivered_freeze);
+ 	INIT_LIST_HEAD(&proc->waiting_threads);
+ 	filp->private_data = proc;
+ 
+@@ -6209,7 +6486,9 @@ static const char * const binder_return_strings[] = {
+ 	"BR_FAILED_REPLY",
+ 	"BR_FROZEN_REPLY",
+ 	"BR_ONEWAY_SPAM_SUSPECT",
+-	"BR_TRANSACTION_PENDING_FROZEN"
++	"BR_TRANSACTION_PENDING_FROZEN",
++	"BR_FROZEN_BINDER",
++	"BR_CLEAR_FREEZE_NOTIFICATION_DONE",
+ };
+ 
+ static const char * const binder_command_strings[] = {
+@@ -6232,6 +6511,9 @@ static const char * const binder_command_strings[] = {
+ 	"BC_DEAD_BINDER_DONE",
+ 	"BC_TRANSACTION_SG",
+ 	"BC_REPLY_SG",
++	"BC_REQUEST_FREEZE_NOTIFICATION",
++	"BC_CLEAR_FREEZE_NOTIFICATION",
++	"BC_FREEZE_NOTIFICATION_DONE",
+ };
+ 
+ static const char * const binder_objstat_strings[] = {
+@@ -6241,7 +6523,8 @@ static const char * const binder_objstat_strings[] = {
+ 	"ref",
+ 	"death",
+ 	"transaction",
+-	"transaction_complete"
++	"transaction_complete",
++	"freeze",
+ };
+ 
+ static void print_binder_stats(struct seq_file *m, const char *prefix,
+diff --git a/drivers/android/binder_internal.h b/drivers/android/binder_internal.h
+index 5b7c80b99ae8..3e4b35873c64 100644
+--- a/drivers/android/binder_internal.h
++++ b/drivers/android/binder_internal.h
+@@ -129,12 +129,13 @@ enum binder_stat_types {
+ 	BINDER_STAT_DEATH,
+ 	BINDER_STAT_TRANSACTION,
+ 	BINDER_STAT_TRANSACTION_COMPLETE,
++	BINDER_STAT_FREEZE,
+ 	BINDER_STAT_COUNT
+ };
+ 
+ struct binder_stats {
+-	atomic_t br[_IOC_NR(BR_TRANSACTION_PENDING_FROZEN) + 1];
+-	atomic_t bc[_IOC_NR(BC_REPLY_SG) + 1];
++	atomic_t br[_IOC_NR(BR_CLEAR_FREEZE_NOTIFICATION_DONE) + 1];
++	atomic_t bc[_IOC_NR(BC_FREEZE_NOTIFICATION_DONE) + 1];
+ 	atomic_t obj_created[BINDER_STAT_COUNT];
+ 	atomic_t obj_deleted[BINDER_STAT_COUNT];
+ };
+@@ -159,6 +160,8 @@ struct binder_work {
+ 		BINDER_WORK_DEAD_BINDER,
+ 		BINDER_WORK_DEAD_BINDER_AND_CLEAR,
+ 		BINDER_WORK_CLEAR_DEATH_NOTIFICATION,
++		BINDER_WORK_FROZEN_BINDER,
++		BINDER_WORK_CLEAR_FREEZE_NOTIFICATION,
+ 	} type;
+ };
+ 
+@@ -275,6 +278,14 @@ struct binder_ref_death {
+ 	binder_uintptr_t cookie;
+ };
+ 
++struct binder_ref_freeze {
++	struct binder_work work;
++	binder_uintptr_t cookie;
++	bool is_frozen:1;
++	bool sent:1;
++	bool resend:1;
++};
++
+ /**
+  * struct binder_ref_data - binder_ref counts and id
+  * @debug_id:        unique ID for the ref
+@@ -307,6 +318,8 @@ struct binder_ref_data {
+  *               @node indicates the node must be freed
+  * @death:       pointer to death notification (ref_death) if requested
+  *               (protected by @node->lock)
++ * @freeze:      pointer to freeze notification (ref_freeze) if requested
++ *               (protected by @node->lock)
+  *
+  * Structure to track references from procA to target node (on procB). This
+  * structure is unsafe to access without holding @proc->outer_lock.
+@@ -323,6 +336,7 @@ struct binder_ref {
+ 	struct binder_proc *proc;
+ 	struct binder_node *node;
+ 	struct binder_ref_death *death;
++	struct binder_ref_freeze *freeze;
+ };
+ 
+ /**
+@@ -374,6 +388,8 @@ struct binder_ref {
+  *                        (atomics, no lock needed)
+  * @delivered_death:      list of delivered death notification
+  *                        (protected by @inner_lock)
++ * @delivered_freeze:     list of delivered freeze notification
++ *                        (protected by @inner_lock)
+  * @max_threads:          cap on number of binder threads
+  *                        (protected by @inner_lock)
+  * @requested_threads:    number of binder threads requested but not
+@@ -421,6 +437,7 @@ struct binder_proc {
+ 	struct list_head todo;
+ 	struct binder_stats stats;
+ 	struct list_head delivered_death;
++	struct list_head delivered_freeze;
+ 	u32 max_threads;
+ 	int requested_threads;
+ 	int requested_threads_started;
+diff --git a/include/uapi/linux/android/binder.h b/include/uapi/linux/android/binder.h
+index d44a8118b2ed..1fd92021a573 100644
+--- a/include/uapi/linux/android/binder.h
++++ b/include/uapi/linux/android/binder.h
+@@ -236,6 +236,12 @@ struct binder_frozen_status_info {
+ 	__u32            async_recv;
+ };
+ 
++struct binder_frozen_state_info {
++	binder_uintptr_t cookie;
++	__u32            is_frozen;
++	__u32            reserved;
++};
++
+ /* struct binder_extened_error - extended error information
+  * @id:		identifier for the failed operation
+  * @command:	command as defined by binder_driver_return_protocol
+@@ -467,6 +473,17 @@ enum binder_driver_return_protocol {
+ 	/*
+ 	 * The target of the last async transaction is frozen.  No parameters.
+ 	 */
++
++	BR_FROZEN_BINDER = _IOR('r', 21, struct binder_frozen_state_info),
++	/*
++	 * The cookie and a boolean (is_frozen) that indicates whether the process
++	 * transitioned into a frozen or an unfrozen state.
++	 */
++
++	BR_CLEAR_FREEZE_NOTIFICATION_DONE = _IOR('r', 22, binder_uintptr_t),
++	/*
++	 * void *: cookie
++	 */
+ };
+ 
+ enum binder_driver_command_protocol {
+@@ -550,6 +567,25 @@ enum binder_driver_command_protocol {
+ 	/*
+ 	 * binder_transaction_data_sg: the sent command.
+ 	 */
++
++	BC_REQUEST_FREEZE_NOTIFICATION =
++			_IOW('c', 19, struct binder_handle_cookie),
++	/*
++	 * int: handle
++	 * void *: cookie
++	 */
++
++	BC_CLEAR_FREEZE_NOTIFICATION = _IOW('c', 20,
++					    struct binder_handle_cookie),
++	/*
++	 * int: handle
++	 * void *: cookie
++	 */
++
++	BC_FREEZE_NOTIFICATION_DONE = _IOW('c', 21, binder_uintptr_t),
++	/*
++	 * void *: cookie
++	 */
+ };
+ 
+ #endif /* _UAPI_LINUX_BINDER_H */
+-- 
+2.45.2.803.g4e1b14247a-goog
 
 
