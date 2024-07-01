@@ -1,118 +1,104 @@
-Return-Path: <linux-kernel+bounces-236038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8DD491DCAA
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:33:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28E7F91DC8B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:30:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68156280F3F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:33:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB4051F2378C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F7715A4BD;
-	Mon,  1 Jul 2024 10:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0E9153BDE;
+	Mon,  1 Jul 2024 10:27:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OowJhdWf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qkH4nFpE"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22261591EA;
-	Mon,  1 Jul 2024 10:27:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB491509A6;
+	Mon,  1 Jul 2024 10:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719829647; cv=none; b=NqI9fzKHJ0TUcDFr/GC7zqzHRo7qbR8Ksfrx1UQHq3OH5mW+75s5bnMrNcWIStzDHB8XOTUPAFE6HWmFhm+G7gU57zMENXjR4NN0Goga5DUIeyFsIs34lc1n4f5KLYu1qcGWwl80hPVMyH4QdI5cOvmrLQs5BElQdI2woay5GLs=
+	t=1719829637; cv=none; b=LLZrMJ4Du1yzvyOs5bVm0t+tS7iNdNB6PtTp9w8npE8fRBL9yoYn2rK+AEFxFhv7QK89eEPAISGLjsvh6hDP/BH2WM5q/65A6W8Y6l5Fv4W2049Pzl5zOhOf+dV1k2E0shF/zhB/YoQnvdwX+GF1kCjc94g8UCHTB7C9nl8Qiqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719829647; c=relaxed/simple;
-	bh=Rk22CdrDmdQOqV9B263elJ8j6v40sRU7F5SFeqVcw0c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RChfssgWGgemF2oVQGsmL78iOWExPNbYsVBk4HvTNSB+5dJGjGrHQbsLnJZ7RU1cygQhpVv7oj6X86LUMqNJBUMzmm3AdOxfdziJ6D+zAwgZr2HZwJKOig2sWe8BLL3nKdKRgZUVknwM9DJ3Uc/X6C+B5D0lErKvz8WY/5yBlJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OowJhdWf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FE45C116B1;
-	Mon,  1 Jul 2024 10:27:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719829646;
-	bh=Rk22CdrDmdQOqV9B263elJ8j6v40sRU7F5SFeqVcw0c=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=OowJhdWfVqPKKEzYltDwB3xDFDzgsyHuZVnZFzyVf+NMt7lTQ5Xc0tuog3yyfc7ig
-	 sTzsTHcSwUnEVnS/lAS8fq3DlhpJXutHyVEQhawSqrWfPNa4nSVTJ4duw3FZDlzJmZ
-	 208icB/wfSVQYNHoz3qgs76HcEVXAx47suT211oSvJKgZkF+DhjT/hwRXWQrOcFMIw
-	 /yDzneIZdAfeh+wno6J5k9/ixaEKqGn/02aVR05iSEdWW0ltLmB1hurn9sOluDtEcL
-	 8qMhhXlOYebsXL49jTYC7zgsbjEJj8uiT4Ua+TgTzyOvdBSXN/c5JTqnhMBaP/XZCe
-	 kwwaYTUjo9RZg==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Mon, 01 Jul 2024 06:26:44 -0400
-Subject: [PATCH v2 08/11] ext4: switch to multigrain timestamps
+	s=arc-20240116; t=1719829637; c=relaxed/simple;
+	bh=Ae+LjInKCHKU5PQp8DqXlIeZPpw3xgmBwQ9T3U7uWpg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RL7bRvHbuIY454YK9GdRZ+1kLwWGW62/ct4gkWmy5OpItjwRAoXtez05sbHX3unPmCYaY+Tz5DpGRTkfjkUXOgfkOmiaqagxxPzmfhvcK9S1syRngtNvyG1arwheP+TTp2Sg0GeM7Cb/OM4Y8lkIEfxmsdPHKhA5ylnI2HT1aDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qkH4nFpE; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=9c+PJ9qplCm9e71aGNj46Xv63qyZzWb3k6nVOLS8TaI=; b=qkH4nFpE/dI8n+JWCA7Fo5j8FJ
+	jRvlopf2P+DW8DDyAXEeSzskDa9j9Qg8SY9qtBVV9GF7xrUE2lFUNHClTST6qXRFV1XUupHU40uKC
+	T5b7fqy5JpIUiDz6yALapXj82qHS+1TUBgcFd9+ZTJbQ9pGYxRdXmBobO6b0SMi4nJZJlsVI46KKM
+	R9IgSdvaTtkaOCbYPgWJWaSYj6PS9RmK+tDlyvLDQR4+FneoIDA2+7lLaBQrBlIusp/Jjke05T+Nl
+	cP7vt7lx6N1s9lASCOk9v9W+lVpeMMty2ES0+JV5dLbeEFyfU040ecc1agZKovqblwSgR6ygbZ3UY
+	jsd/UG7A==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sOEFD-00000009dXr-1eTt;
+	Mon, 01 Jul 2024 10:26:48 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 60C70300694; Mon,  1 Jul 2024 12:26:44 +0200 (CEST)
+Date: Mon, 1 Jul 2024 12:26:44 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Hendrik Brueckner <brueckner@linux.ibm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@arm.com>, coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Will Deacon <will@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>, Andi Kleen <ak@linux.intel.com>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH V8 01/12] perf/core: Add aux_pause, aux_resume,
+ aux_start_paused
+Message-ID: <20240701102644.GA20127@noisy.programming.kicks-ass.net>
+References: <20240628065111.59718-1-adrian.hunter@intel.com>
+ <20240628065111.59718-2-adrian.hunter@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240701-mgtime-v2-8-19d412a940d9@kernel.org>
-References: <20240701-mgtime-v2-0-19d412a940d9@kernel.org>
-In-Reply-To: <20240701-mgtime-v2-0-19d412a940d9@kernel.org>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Steven Rostedt <rostedt@goodmis.org>, 
- Masami Hiramatsu <mhiramat@kernel.org>, 
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
- Chandan Babu R <chandan.babu@oracle.com>, 
- "Darrick J. Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
- Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, 
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
- Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Andi Kleen <ak@linux.intel.com>, kernel-team@fb.com, 
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
- linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mm@kvack.org, 
- linux-nfs@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=839; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=Rk22CdrDmdQOqV9B263elJ8j6v40sRU7F5SFeqVcw0c=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmgoR5dUKZAApA/E/nRf8PhsAANcOPXvLXNU/zT
- iYd1qkDzC+JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZoKEeQAKCRAADmhBGVaC
- FSUID/9d0pO7TT9EGNH/i9za9KrWODEB5zSIIaRqI/95Bt/pwLRRr2KYiuSXiRv3RRAWDn1GijG
- LTSMRD7kVqDNCR6uPWUO5INXMOYvfypXN5mxWWXaPFsp5j6TPDOcsE6Kbf/vCDDGwmIEZZtqAqD
- CAw8fVNdszgTykJEVngG4sJ7q3c0pIZoDtuiwe8L+krK3SUU4amjj1u8rOGG7z0fDzftIqvknf9
- Ke5a1qn+cWa/DgnKPmJVhSGoY2EMvu5fELrasSun90ERTY3dS/87GUcUNY1WryIbebedaVKi6s3
- 9uVrCQUygyJzW5INth1pNMSMSitS7QN2F3rKFxQaImISFY3Pvi0i5MvXsIbwUuEMDEixB/rmLd/
- axKEm6rFltjfvlmWe/VVV/H4fBXv3hhDIT2ZaT/i5rwIdghM8DaGOmiJYjvb4UgHUB3nScbdyWf
- vloMf0oOIBm1hrE0kSS2xbHYIBZAPyqlq0utguPUKPpyEn8dCBjVsS6lolhydeU+RyeLXYpLV9y
- rEvrmE5tDwSsi++UlMtX8LxIQgIq6corJIikLnTLC/wOfqqglaQqKYKu9FtUrh8NvTbe4hNgjTG
- 3mgzSVxouLdteOhi11js/IIAU4lbcillebCeDLZZlqo0+7lXdoK5oYdXeNAygZ0fjpPrLg2R/Vy
- 8S5NgQBdXHroK6A==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240628065111.59718-2-adrian.hunter@intel.com>
 
-Enable multigrain timestamps, which should ensure that there is an
-apparent change to the timestamp whenever it has been written after
-being actively observed via getattr.
+On Fri, Jun 28, 2024 at 09:51:00AM +0300, Adrian Hunter wrote:
 
-For ext4, we only need to enable the FS_MGTIME flag.
+> Add aux_paused to struct perf_event for AUX area events to keep track of
+> the "paused" state. aux_paused is initialized to aux_start_paused.
+	
+> @@ -798,6 +810,9 @@ struct perf_event {
+>  	/* for aux_output events */
+>  	struct perf_event		*aux_event;
+>  
+> +	/* for AUX area events */
+> +	unsigned int			aux_paused;
+> +
+>  	void (*destroy)(struct perf_event *);
+>  	struct rcu_head			rcu_head;
+>  
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ext4/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Should this not be part of struct hw_perf_event for whatever hw event
+implements this AUX stuff?
 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index c682fb927b64..9ae48763f81f 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -7310,7 +7310,7 @@ static struct file_system_type ext4_fs_type = {
- 	.init_fs_context	= ext4_init_fs_context,
- 	.parameters		= ext4_param_specs,
- 	.kill_sb		= ext4_kill_sb,
--	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
-+	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_MGTIME,
- };
- MODULE_ALIAS_FS("ext4");
- 
-
--- 
-2.45.2
-
+In fact, I would expect PERF_HES_PAUSED or something to go in
+perf_event::hw::state.
 
