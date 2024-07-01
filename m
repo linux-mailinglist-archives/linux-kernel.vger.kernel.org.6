@@ -1,87 +1,91 @@
-Return-Path: <linux-kernel+bounces-235570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ECC191D6B9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 05:50:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDD0191D6BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 05:56:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90CFBB21568
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 03:50:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71C201F21D56
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 03:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354BF18651;
-	Mon,  1 Jul 2024 03:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YbB9tdLX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8801D1EB2B;
+	Mon,  1 Jul 2024 03:56:06 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683E520312;
-	Mon,  1 Jul 2024 03:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BFD32F29;
+	Mon,  1 Jul 2024 03:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719805794; cv=none; b=Wk5EYHI8tu82uU72MrBfLtERgxZ1F+UWjzEbL2wpkqBGRk3XGy+NYgm0Bw9590l002P2pIlZSPT/QECatkJqe/k4hMUqHQshXntM1n92MR5L1I/Teaz98k/ioTJ+wGWzhH1k97l9domBuMI41Oh9qKsr7BT1i41qMBzcAToGdss=
+	t=1719806166; cv=none; b=jpdfsv4KuQn3TFQ3YUjKLhdAw1k40pwo4puUQTAEx+tQucoA/x4mWAgSz0zO3uQ+0ibRL/i42lVI7Gxr1dI7M4xBODeqSQiyh/DzleVzzuh82YKQfu5jNU/hwmFCRB+sknzgCu55L6CGp/TXSU6Jrw/0EfWY79vjeTSNPc5/7h4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719805794; c=relaxed/simple;
-	bh=hQkaS728q63iPXfVIWLS/QmQ1U9qUrYr8fbEHvTVAJM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=miBcuF1zxrHCY9yKQSTa4MjieT1I77dzDR5UhhIb2lPDH4dU106Q+uPHtni4AAz379YRGTpKBf/yP3sucGeBjBqAcvXUEWQrXTt9rh5p2OPQ3eG/yVLYEtyCGDJcHMepCBV7sqN/j13Y/ujarIIuy7/752BfQxpa8M56Wpb740E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YbB9tdLX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEC43C116B1;
-	Mon,  1 Jul 2024 03:49:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719805793;
-	bh=hQkaS728q63iPXfVIWLS/QmQ1U9qUrYr8fbEHvTVAJM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YbB9tdLX35gVvVqld/CDWme4U2GP0wb7+too+cvtIUHPH+nWzT1cE0DYc9fDM5fHp
-	 XXzLciai+gG0LycnbhESpiMVLne6rowoqCT40SzuERJuGsNuza9bjUHv1BUEXOVkpP
-	 zq6pWeFnm9UbeUzbSvT+D+0KrOG1aNw0+V/v+GMM5MTODNCJ5NPWsFgpxSlQ9CshQ4
-	 6dOfwm0Mf9Squj7F9g0l1Q2KWXQxaLS0ILZQrQ0PODBUCasADV2xBebppA1CImcQSn
-	 vn01tlF0RQHyUbXw/1fp+BQOev+G9UedVX+NH+O3WqPIJvxPp5oxWZ27MZfaDzM+OQ
-	 R6ElrdgBiiVhg==
-Date: Mon, 1 Jul 2024 11:49:41 +0800
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Daisuke Nojiri <dnojiri@chromium.org>
-Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Reka Norman <rekanorman@chromium.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Gwendal Grignou <gwendal@chromium.org>,
-	Pavan Holla <pholla@chromium.org>,
-	Lukasz Majczak <lma@chromium.org>,
-	Ching-Kang Yen <chingkang@chromium.org>,
-	Stephen Boyd <swboyd@chromium.org>,
-	Prashant Malani <pmalani@chromium.org>,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 2/2] dt-bindings: cros-ec-keyboard: Add keyboard
- matrix v3.0
-Message-ID: <ZoInVQL__5f4O0I5@tzungbi-laptop>
-References: <cover.1719531519.git.dnojiri@chromium.org>
- <9ae4d96cc2ce8c9de8755b9beffb78c641100fe7.1719531519.git.dnojiri@chromium.org>
+	s=arc-20240116; t=1719806166; c=relaxed/simple;
+	bh=5nRwKclQHo74eFKgSr+muDmaAz+AnTAM242LUVGmivI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WcgmbHVB+9H5t82zrpiUd2TPMvt828I7U4ec7Qvfdhm4g4/scNHCp81eQYTgk9FCLf7lZPA/Nb/85HVKsekfj5kTWEUw7MFX8kCQGB4EALx+OIZJtLGLVVJtRvlpSQ41V6stgpqj9Q3KfuuwE+JtS0sY/SSYnByJ4wPI660Q5Mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-01 (Coremail) with SMTP id qwCowAD32E3PKIJmuELxAA--.4159S2;
+	Mon, 01 Jul 2024 11:55:59 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] scsi: qlogicpti: Remove unneeded semicolon
+Date: Mon,  1 Jul 2024 11:55:44 +0800
+Message-Id: <20240701035544.562689-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9ae4d96cc2ce8c9de8755b9beffb78c641100fe7.1719531519.git.dnojiri@chromium.org>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowAD32E3PKIJmuELxAA--.4159S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYY7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87
+	Iv6xkF7I0E14v26F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAK
+	zVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx
+	8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIF
+	xwCY02Avz4vE14v_Gr4l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2
+	IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v2
+	6r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2
+	IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv
+	67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyT
+	uYvjfU0UDGUUUUU
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On Thu, Jun 27, 2024 at 04:53:08PM -0700, Daisuke Nojiri wrote:
-> Add support for keyboard matrix version 3.0, which reduces keyboard
-> ghosting.
-> 
-> [...]
+Remove unneeded semicolon.
+This is detected by coccinelle.
 
-Applied to
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/scsi/qlogicpti.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-    https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git for-next
+diff --git a/drivers/scsi/qlogicpti.c b/drivers/scsi/qlogicpti.c
+index 6177f4798f3a..7680fc11ee28 100644
+--- a/drivers/scsi/qlogicpti.c
++++ b/drivers/scsi/qlogicpti.c
+@@ -1150,7 +1150,7 @@ static struct scsi_cmnd *qlogicpti_intr_handler(struct qlogicpti *qpti)
+ 		case COMMAND_ERROR:
+ 		case COMMAND_PARAM_ERROR:
+ 			break;
+-		};
++		}
+ 		sbus_writew(0, qpti->qregs + SBUS_SEMAPHORE);
+ 	}
+ 
+-- 
+2.25.1
 
-Thanks!
 
