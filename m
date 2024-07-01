@@ -1,134 +1,169 @@
-Return-Path: <linux-kernel+bounces-235865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2B4991DA94
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:53:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A45191DAA5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:56:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 962BB1F22D3C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:53:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC7071F2284F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6245B13C821;
-	Mon,  1 Jul 2024 08:50:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8EE51494C4;
+	Mon,  1 Jul 2024 08:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DJ7gTZLQ"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ji9cPAlM"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C977A86131;
-	Mon,  1 Jul 2024 08:50:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65DD128812;
+	Mon,  1 Jul 2024 08:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719823849; cv=none; b=T2CHgwrN8RL3ZvY7CP/mGkTAqXk2X6lvNRYwWvnRGHyf4OtVXQHVtyAGaXEhWHkFzpHo1yJ5CkBcTzXCOYFPZFMOwDuYPsHHFBTX+hdGbgqSVQorI4zV9rwT0qkU4K4Q8L+1G+/zQpxVlwpgOp1S9fxEveTGnPFWpxQGPRYA9OM=
+	t=1719823872; cv=none; b=uUTL1zDp17fmcSdxuV/vUUv3Cv+ppcBpLiOkJF9/1WO+gb+dVr4HzVMKAWJzEnPUdCKugFUca7jkF3qaLVZAGl1MX7M5mxe5yQGpy/SQW/sl0JnZ3mQKpqCYiAT0OPmIecLVorpKud4CF2O4+DkImWGi55O+tz0yeZk0joc/oYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719823849; c=relaxed/simple;
-	bh=XCkunF4AkoYqkk7iGvEclPs05+M/NfpaS+34vYEgKWQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mAh008UanuZbTD57iLBAFgGOU7PN3g7HMyva9LPRpCa73lSUzSElTem+IHnp09Bc+/pnAQDqWbsKO3bVbMG69+ZYtm3KLVhqogip0mmynq9GjGlIzuWDUFom6f21L/ly4KiZC/vRnpQvd8KKnTHW6yM9Rva2x9P3HUUbITfsMKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DJ7gTZLQ; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 602F2C0011;
-	Mon,  1 Jul 2024 08:50:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1719823844;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ew3JaznEZxurg8VWcTWT0iqBhrJFxR4lf44/wyJRZV4=;
-	b=DJ7gTZLQTxh8TCadSbqg5H1e9BFo/cx8I+wCnN0Nw9EnX7oHelxZZaEPoCIWV4ogQCf7KR
-	6GDj2HjMp0pxBTt5iDI4CYTvUWCQ22Bn0LVooDGzazpWgwsCHriD6Pi1Rg0L4rkefmIL7T
-	j9Mqord/KHqPxBBzo0qmMWqPwTBt/Iy8pxwo53QnWusHH+k9yB7oUYigQHcm3hZhFasai2
-	ckg5veS8kR5Q9cYjynYbdsdJ45GaFMAkMs0hDkuMYOMBEayW3wOZQN9Evr2zC5Ldsqf2pk
-	Cn1C0q8G3NBzopIl+fHGAZz8uhnXFrduoqA+TGX0mCM8U36CON18mvX+aAtMww==
-From: Romain Gantois <romain.gantois@bootlin.com>
-Date: Mon, 01 Jul 2024 10:51:03 +0200
-Subject: [PATCH net-next 1/6] net: phy: dp83869: Disable autonegotiation in
- RGMII/1000Base-X mode
+	s=arc-20240116; t=1719823872; c=relaxed/simple;
+	bh=enbFik6zV9Xmu6FbER/ccs/hIQ3iLSFP/Hy9O6wI3Qc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=iboxvcLpZ+x9t6b0A9mlsDnCAy+HT4mHRFO0NJ56HD+BRbqv9fYMSZ7t08p6dQA8r/wSOkgIyar0S9n47uGTdl1AGx7FBDu0TZ35blaNWLbgWETYjywCskcQPmAwTZyFm8vN5/ta6Wzo6P1eyxDnVm156RW3DfWMQ1yiiojUK3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ji9cPAlM; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1719823865;
+	bh=1tJEm6YmoAW7fA3Ot0WnCO1StXIvHT+v8AiTsyv8SH4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ji9cPAlMUZy+5D4u0obuHcp32Q2bMPc6Gf5pKG4zFRAYA/WvdNrFxyUcJnW5wajZp
+	 Abc7YAbZlL5w2ymVMaj5GLvWLWNBB0++PysCgadU//wDhsNZVKIcMgPRy0j0XGafOG
+	 bh6XK/mnxVbHrdyXtUqEgSA+LrTMttJFbGjpXhRgTRybWr7wti9Tbpx9fYmJLU9ZCY
+	 nBWErErbeGzLx6kSmjo9vv1LKe9B49v7I+89qWBJL5e9Q6z7X53PNbNEDKlC0yzJOc
+	 3rPsR4N0AALmgjl0Xm12KieAHcu5h/y80SxKHwRWKiHJ3nda7DfCbKWKJkkI0F2mbF
+	 0wvICxnP612WQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WCKWs4FFwz4wbp;
+	Mon,  1 Jul 2024 18:51:05 +1000 (AEST)
+Date: Mon, 1 Jul 2024 18:51:04 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires
+ <benjamin.tissoires@redhat.com>
+Cc: Benjamin Tissoires <bentiss@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the hid tree
+Message-ID: <20240701185104.52c159c1@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240701-b4-dp83869-sfp-v1-1-a71d6d0ad5f8@bootlin.com>
-References: <20240701-b4-dp83869-sfp-v1-0-a71d6d0ad5f8@bootlin.com>
-In-Reply-To: <20240701-b4-dp83869-sfp-v1-0-a71d6d0ad5f8@bootlin.com>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Romain Gantois <romain.gantois@bootlin.com>
-X-Mailer: b4 0.14.0
-X-GND-Sasl: romain.gantois@bootlin.com
+Content-Type: multipart/signed; boundary="Sig_/oJrhX/FkTrH24p6_sExpE1b";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Currently, the DP83869 driver only disables autonegotiation in fiber
-configurations for 100Base-FX mode. However, the DP83869 PHY does not
-support autonegotiation in any of its fiber modes.
+--Sig_/oJrhX/FkTrH24p6_sExpE1b
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Disable autonegotiation for all fiber modes.
+Hi all,
 
-Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
+After merging the hid tree, today's linux-next build (i386 defconfig)
+failed like this:
+
+drivers/hid/hidraw.c: In function 'hidraw_send_report':
+drivers/hid/hidraw.c:143:63: error: cast from pointer to integer of differe=
+nt size [-Werror=3Dpointer-to-int-cast]
+  143 |                 ret =3D __hid_hw_output_report(dev, buf, count, (__=
+u64)file, false);
+      |                                                               ^
+drivers/hid/hidraw.c:154:56: error: cast from pointer to integer of differe=
+nt size [-Werror=3Dpointer-to-int-cast]
+  154 |                                    HID_REQ_SET_REPORT, (__u64)file,=
+ false);
+      |                                                        ^
+drivers/hid/hidraw.c: In function 'hidraw_get_report':
+drivers/hid/hidraw.c:231:56: error: cast from pointer to integer of differe=
+nt size [-Werror=3Dpointer-to-int-cast]
+  231 |                                    HID_REQ_GET_REPORT, (__u64)file,=
+ false);
+      |                                                        ^
+cc1: all warnings being treated as errors
+
+Caused by commit
+
+  67eccf151d76 ("HID: add source argument to HID low level functions")
+
+I applied the following patch.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 1 Jul 2024 18:36:36 +1000
+Subject: [PATCH] fix up for "HID: add source argument to HID low level
+ functions"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/net/phy/dp83869.c | 30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+ drivers/hid/hidraw.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/phy/dp83869.c b/drivers/net/phy/dp83869.c
-index d7aaefb5226b6..f6b05e3a3173e 100644
---- a/drivers/net/phy/dp83869.c
-+++ b/drivers/net/phy/dp83869.c
-@@ -647,6 +647,21 @@ static int dp83869_configure_fiber(struct phy_device *phydev,
- 	linkmode_set_bit(ETHTOOL_LINK_MODE_FIBRE_BIT, phydev->supported);
- 	linkmode_set_bit(ADVERTISED_FIBRE, phydev->advertising);
- 
-+	/* Auto neg is not supported in 100/1000base FX modes */
-+	bmcr = phy_read(phydev, MII_BMCR);
-+	if (bmcr < 0)
-+		return bmcr;
-+
-+	phydev->autoneg = AUTONEG_DISABLE;
-+	linkmode_clear_bit(ETHTOOL_LINK_MODE_Autoneg_BIT, phydev->supported);
-+	linkmode_clear_bit(ETHTOOL_LINK_MODE_Autoneg_BIT, phydev->advertising);
-+
-+	if (bmcr & BMCR_ANENABLE) {
-+		ret =  phy_modify(phydev, MII_BMCR, BMCR_ANENABLE, 0);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
- 	if (dp83869->mode == DP83869_RGMII_1000_BASE) {
- 		linkmode_set_bit(ETHTOOL_LINK_MODE_1000baseX_Full_BIT,
- 				 phydev->supported);
-@@ -655,21 +670,6 @@ static int dp83869_configure_fiber(struct phy_device *phydev,
- 				 phydev->supported);
- 		linkmode_set_bit(ETHTOOL_LINK_MODE_100baseFX_Half_BIT,
- 				 phydev->supported);
--
--		/* Auto neg is not supported in 100base FX mode */
--		bmcr = phy_read(phydev, MII_BMCR);
--		if (bmcr < 0)
--			return bmcr;
--
--		phydev->autoneg = AUTONEG_DISABLE;
--		linkmode_clear_bit(ETHTOOL_LINK_MODE_Autoneg_BIT, phydev->supported);
--		linkmode_clear_bit(ETHTOOL_LINK_MODE_Autoneg_BIT, phydev->advertising);
--
--		if (bmcr & BMCR_ANENABLE) {
--			ret =  phy_modify(phydev, MII_BMCR, BMCR_ANENABLE, 0);
--			if (ret < 0)
--				return ret;
--		}
+diff --git a/drivers/hid/hidraw.c b/drivers/hid/hidraw.c
+index c2396916cdaa..34633f99f3e4 100644
+--- a/drivers/hid/hidraw.c
++++ b/drivers/hid/hidraw.c
+@@ -140,7 +140,7 @@ static ssize_t hidraw_send_report(struct file *file, co=
+nst char __user *buffer,
+=20
+ 	if ((report_type =3D=3D HID_OUTPUT_REPORT) &&
+ 	    !(dev->quirks & HID_QUIRK_NO_OUTPUT_REPORTS_ON_INTR_EP)) {
+-		ret =3D __hid_hw_output_report(dev, buf, count, (__u64)file, false);
++		ret =3D __hid_hw_output_report(dev, buf, count, (unsigned long)file, fal=
+se);
+ 		/*
+ 		 * compatibility with old implementation of USB-HID and I2C-HID:
+ 		 * if the device does not support receiving output reports,
+@@ -151,7 +151,7 @@ static ssize_t hidraw_send_report(struct file *file, co=
+nst char __user *buffer,
  	}
- 
- 	/* Update advertising from supported */
+=20
+ 	ret =3D __hid_hw_raw_request(dev, buf[0], buf, count, report_type,
+-				   HID_REQ_SET_REPORT, (__u64)file, false);
++				   HID_REQ_SET_REPORT, (unsigned long)file, false);
+=20
+ out_free:
+ 	kfree(buf);
+@@ -228,7 +228,7 @@ static ssize_t hidraw_get_report(struct file *file, cha=
+r __user *buffer, size_t
+ 	}
+=20
+ 	ret =3D __hid_hw_raw_request(dev, report_number, buf, count, report_type,
+-				   HID_REQ_GET_REPORT, (__u64)file, false);
++				   HID_REQ_GET_REPORT, (unsigned long)file, false);
+=20
+ 	if (ret < 0)
+ 		goto out_free;
+--=20
+2.43.0
 
--- 
-2.45.2
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/oJrhX/FkTrH24p6_sExpE1b
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaCbfgACgkQAVBC80lX
+0GwBTQf8CMmO/lMRq1cXSEtte+sol+3t4NC32rXxCsBm4Q/GHUzZC2w1Wdg1lPyj
+HMJKMCTJuxuByURv58lWR+o+bN4iLFZdjhYuJAyR8WTNU6tSxnnwDkqV2u8TmPhe
+bKviZ3q4RtUWcw+oxK2jcFemR5o+celpRPEnl8p+oeuzqt+kXQEFTSOME5+H65/K
+JdchOFaxqZACoWXpSdaBPd6TST2Q+nR6F6JUTbCgPNA4curB0AvS6sjDM6g6JUbC
+dnP0QoaEjB82+PoGByu2IU4HPziRodUOI90ZRUMgHybyfCEfllCw/5ifHAdNq4zn
+XNBepcwzSRbC1gXB+cvpGCBknFTMzQ==
+=JnhF
+-----END PGP SIGNATURE-----
+
+--Sig_/oJrhX/FkTrH24p6_sExpE1b--
 
