@@ -1,234 +1,235 @@
-Return-Path: <linux-kernel+bounces-236704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58CCE91E61F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:01:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DAAF91E623
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF9041F23F5B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:01:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 916AF1C21447
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C73716DED2;
-	Mon,  1 Jul 2024 17:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456AC16DED8;
+	Mon,  1 Jul 2024 17:01:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NTO85I9r"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b="CKSLXSep"
+Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com [209.85.128.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F5A14AD25;
-	Mon,  1 Jul 2024 17:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414CC168491
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 17:01:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719853256; cv=none; b=BYET85qna82kGSxASxTLs2GVSaiKQSndTLUzE3Jhl67hpbnDN1EThSyqRkW+g3rlqRI+LZLNuWqEtH0jUH66ARyhhqXABe96PjNDG313SecOZHHmFHlPAIZbNf7SjZtbggr5HP6T9XAdQ9gcsXFKXtMOKhciSetymHmm5llxqvQ=
+	t=1719853308; cv=none; b=hXX0Z0foIFM7trYyEmkP0kj2rl/v+izsRZhp1JLpD2CZe/FeIfCMp+ikMWwm0I+enDI4qrbcT2g5eDCuKv/JBagwBiqP5bRPRru+7tbF5DZ7yXq6JsQLqH6NTUKMzih8Utw2TqFKISrGrwi8GVlLlTnFoJXOpySya2R57NC491Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719853256; c=relaxed/simple;
-	bh=ekw0DMQar3iKgmubgFqmNT5HhTaIZCTupMRTitjU+U8=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iIvfHQoKtkluTd/GAVLEDuqFC3egtg4gBNxvO7ikLFw6A5MQCwGV8nJDykcDGGYjT5C2yOsvajm8JHUMPV/AkR7hpTcMusoX8Xi9C/Mc3L+mZ6Lsmd59mJhwKufCneAJxe4R6Bxu/TXZyvXnB2yyf9HIDfjOfGMoYUxPDADklT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NTO85I9r; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a72988749f0so493673666b.0;
-        Mon, 01 Jul 2024 10:00:54 -0700 (PDT)
+	s=arc-20240116; t=1719853308; c=relaxed/simple;
+	bh=qExW45/1/1Ch3sloxtbNfC3Wx4G1Hba3Q8lHze7Nqnw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NjIEHntIsI0LuFPtrYb+3Vig3CiEfxWMRu1Kgk2oeJDhMD6U5w33s6JQvzO7e6EBRyDcOoOv7vmQV8lZ9X+OGUe7YEFenmSVlmaeWJn8w+ck7DEtiuw2LkPmxxCgXTp4J0shlVUUkWvm/M85Hm99waLQrlQw6mdHmm31WyLer08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net; spf=none smtp.mailfrom=ursulin.net; dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b=CKSLXSep; arc=none smtp.client-ip=209.85.128.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ursulin.net
+Received: by mail-wm1-f65.google.com with SMTP id 5b1f17b1804b1-424aa70fbc4so22625285e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 10:01:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719853253; x=1720458053; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wS6rVccUbUUVIz0RCQ2zkO6umllJPh+yj9iUDxE7Wsw=;
-        b=NTO85I9rnY7n9xUHgPlxIH/He4Mt2svz78Bd11jE1CRIH3ZX2mf7A1BqIUI7VF8ReK
-         Fvuz7TtOvzSR03xweWbEn6G+2KEyzvA+fkXZoRioIzkFgPbhZYQFqT72LWrk34dVEO71
-         FIo1I5CtViCiz677peQSe3D+i921a5IcMkmPN4x9VFCEvCHrJMEvTbWrzZPwISD7DPej
-         tuKXbxGPdnaKbApf77MeDZj2AegOyY92MuveL0NbltNOxwVqyHwxf7kC6V52sCbI15kz
-         DRa+PXB07bs3WXwo/9ZP/fwlMtUPWxzF4E/ZrUFYh9oRMxkxYyc5V3F/iHH+eol3Wxqw
-         A2GA==
+        d=ursulin-net.20230601.gappssmtp.com; s=20230601; t=1719853304; x=1720458104; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YEtwSsT8f1rhSc1gX7Ak6nA4NzVFoZT/y5iSR3NaswA=;
+        b=CKSLXSepUla3PvckK7RIQt5HbvVjXDY06TSFAsE3BdCszpyvVn23woZDeDKETihxBW
+         xskyYjYtx2K6bFiDIlWIJlOXGTUvFyh3NolMB2DOhpwq1tK2T0FUFpb3gVkmTIBCPCZ2
+         BXOUoPh9b8F+vAKecTOoyWZvBsSs3rWp4Uvym2uITAFyBI9fBR7s7VZm1SoYVYTCNv2v
+         V4BspYsqjx4ulTW5bt3cXI4FM1/6abUzLjlczAsbqMGf34hdTnRYplyNlkrAIO/GsXkj
+         xpr22W+9M1yVZU8csPqhFD17mO4O/ir0PSvbShxPjxMT1tbiKti7Km3lvRlbWxM0dtpb
+         gAqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719853253; x=1720458053;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wS6rVccUbUUVIz0RCQ2zkO6umllJPh+yj9iUDxE7Wsw=;
-        b=pqBHV6YVVnxYJPURi8smTuelAxeKCE0oqwPWHhHnm9woK+bBrspWEHJlW+knps7WAv
-         AAuThXGU0uYSKh7mpCjnGh3ulTKzC+G4Fcr9OWvk1KBhn1KlBgYSErCkBi2IH5tC+Xf1
-         TBuQzn7vCtO+psHzErW9gG86gZX/XgJ+/LoDKcpavQoJeKzWUFX+quo6rssPtcQWfS21
-         OhsAhTZqSICz08/xHTgyjuomM+3MeaKgGltJad+EAX9E3bExsCN04C1wG0FiQ+vv31g/
-         AT/ObEgTyuE9L2/9HJwRgg69XEtMDnZiY5Lj/rBHXSBacyVkWkyIKkumn4J37GXOqIOb
-         5taw==
-X-Forwarded-Encrypted: i=1; AJvYcCUTVUH/8Nr3EkpQXEddIU4Ic9uPryjr+qXvG1vc79jFBxxhZlWv6jn97ij3+BsSjWaiVxexw9j6Im/1Zx60I3oPtbIK02CGm6gPZHjUoksF6r6nJ/CRAFYH1WRGtmVLFUMl+FuJ2iu4
-X-Gm-Message-State: AOJu0Yxfc4L8nB9+8/5o5EkYYutVocoktgDSvYFy5e5UC0yJhe6r4UUj
-	XORmPITQGlzulLSu5kUnvBh6ZqRkxapefyPPNOtTrPU+JjZyLUGhC0NmkOKE2qM=
-X-Google-Smtp-Source: AGHT+IEe9A5zBfv4Gu/ycdUeuERrUo9VIg62Eo8WIeVJ+4dDYHuhZ1w8sXUPNjCDzb7QDDxyW3cpuw==
-X-Received: by 2002:a17:907:971d:b0:a72:a05a:6600 with SMTP id a640c23a62f3a-a75144630d2mr456397066b.7.1719853252593;
-        Mon, 01 Jul 2024 10:00:52 -0700 (PDT)
-Received: from vamoiridPC ([2a04:ee41:82:7577:427:8e07:6fdd:d397])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72aaf1b569sm346207366b.1.2024.07.01.10.00.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 10:00:51 -0700 (PDT)
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
-Date: Mon, 1 Jul 2024 19:00:49 +0200
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, jic23@kernel.org,
-	dpfrey@gmail.com, himanshujha199640@gmail.com, lars@metafoo.de,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mike.looijmans@topic.nl
-Subject: Re: [PATCH v3 00/15] iio: chemical: bme680: Driver cleanup
-Message-ID: <20240701170049.GA248279@vamoiridPC>
-References: <20240609233826.330516-1-vassilisamir@gmail.com>
- <20240630202640.GA185141@vamoiridPC>
- <20240701134452.00003f1d@Huawei.com>
+        d=1e100.net; s=20230601; t=1719853304; x=1720458104;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YEtwSsT8f1rhSc1gX7Ak6nA4NzVFoZT/y5iSR3NaswA=;
+        b=BvVGDhKPX0clPvqkkGtaeA5Wr2V1JMV8SSasJ/VSuRuRI8Puu6QX9/Zsrtvv+kj1Sj
+         JkQHg3/64dJtBIEq3OHCh0vE6LhHNOvsCzp6R4xigYINsv6yqy4VnfHKwyfiwnRLl2uU
+         zLb9N4zKLusm7ZFmmJPqSPhZfJ7mSnnG/GkM1PTO8n3zVEN8RA3ykeIglmM0I+PoczLq
+         OeIIzsDTKgaZvtyYDg/RsXagUD0x3d4pZOlUojsOlx8/hAHYh4ejHWCygOOtc4/F04d+
+         lbrPIBZd514TIMz3he0aRG2LLcSwUQFT9T7vsPMANEYyPk+x2YcAnTlJmZKrRdRiYQn8
+         beOw==
+X-Forwarded-Encrypted: i=1; AJvYcCWzTN1JtBOwiCieKJpMuYbibTbiQpyjRg9dTD30guikCo8yqdPhkkR6k/alJwWUFPqI5JJZ/qCFAIrhgMlcV2wNFR8FHr4pCPFnvmiD
+X-Gm-Message-State: AOJu0YynJ0D/jJgbblKedZE4xfELIV6TMvevSI1kC88hqH1bB1CrLlnX
+	d6TqoHB73dY+T5Qgzt8nEWkth2WmMmWgbPY4ehmd1uvxMMCCdus334Sc0yy+luI=
+X-Google-Smtp-Source: AGHT+IEtDUSKzwuUgMWWp1N5EFZlk9+N4r+/RVGPSTepN8CyOc19OztAsCLL+3zjdsmhEvxdjtswqw==
+X-Received: by 2002:a05:600c:3b24:b0:422:615f:649e with SMTP id 5b1f17b1804b1-4257a06dcf9mr47932555e9.27.1719853303452;
+        Mon, 01 Jul 2024 10:01:43 -0700 (PDT)
+Received: from [192.168.0.101] ([84.69.19.168])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b09a073sm160827635e9.32.2024.07.01.10.01.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Jul 2024 10:01:42 -0700 (PDT)
+Message-ID: <40ef0eed-c514-4ec1-9486-2967f23824be@ursulin.net>
+Date: Mon, 1 Jul 2024 18:01:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240701134452.00003f1d@Huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 2/6] drm/cgroup: Add memory accounting DRM cgroup
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>
+Cc: intel-xe@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Tejun Heo <tj@kernel.org>,
+ Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ Friedrich Vock <friedrich.vock@gmx.de>, cgroups@vger.kernel.org,
+ linux-mm@kvack.org, linux-doc@vger.kernel.org
+References: <20240627154754.74828-1-maarten.lankhorst@linux.intel.com>
+ <20240627154754.74828-3-maarten.lankhorst@linux.intel.com>
+ <20240627-paper-vicugna-of-fantasy-c549ed@houat>
+ <6cb7c074-55cb-4825-9f80-5cf07bbd6745@linux.intel.com>
+ <20240628-romantic-emerald-snake-7b26ca@houat>
+ <70289c58-7947-4347-8600-658821a730b0@linux.intel.com>
+Content-Language: en-GB
+From: Tvrtko Ursulin <tursulin@ursulin.net>
+In-Reply-To: <70289c58-7947-4347-8600-658821a730b0@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 01, 2024 at 01:44:52PM +0100, Jonathan Cameron wrote:
-> On Sun, 30 Jun 2024 22:26:40 +0200
-> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-> 
-> > On Mon, Jun 10, 2024 at 01:38:11AM +0200, Vasileios Amoiridis wrote:
-> > > Based on fixes-togreg as the 4 first commits are already applied
-> > > 
-> > > Patch 1/15: Added comment for explanation of what mutex is used for
-> > > 
-> > > Patch 2/15: Removed fixes tag
-> > > 
-> > > Patch 3-15/15: Reworded the commit messages to come close to convention
-> > > 	       of 75 chars per line.
-> > > 
-> > > v2: https://lore.kernel.org/linux-iio/20240606212313.207550-1-vassilisamir@gmail.com/
-> > > 
-> > > Patch 4/19:
-> > > 	- Combined the bme680_conversion_time_us() and bme680_wait_for_eoc()
-> > > 	  into one function.
-> > > 	- Added better comment for the calculation.
-> > > 	- Added checks in the bme680_wait_for_eoc() function.
-> > > 
-> > > Patch 5/19:
-> > > 	- Fixed typo in commit message.
-> > > 
-> > > Patch 6/19:
-> > > 	- Added a fixes tag since without the mutexes, read operations can be
-> > > 	  broken.
-> > > 
-> > > Patch 10/19:
-> > > 	- Converted shifting operation to FIELD_GET()
-> > > 
-> > > Patch 11/19:
-> > > 	- Changed convention from &data->bufer[0] to data->buffer.
-> > > 	- Removed IIO_DMA_MINALIGN as it is not needed anymore.
-> > > 
-> > > Patch 13/19:
-> > > 	- Removed IIO_DMA_MINALIGN
-> > > 
-> > > Patch 14/19:
-> > > 	- Splitted from Patch v1 14/19
-> > > 
-> > > Patch 15/19:
-> > > 	- Splitted from Patch v1 14/19
-> > > 
-> > > Patch 16/19: **NEW**
-> > > 	- Use dev_err_probe() where applicable.
-> > > 
-> > > v1: https://lore.kernel.org/linux-iio/20240527183805.311501-1-vassilisamir@gmail.com/
-> > > 
-> > > This started as a series to add support for buffers and the new
-> > > BME688 but it ended up being just a cleaning series. These might
-> > > be quite some patches for such a thing but I feel that they are
-> > > are well split, in order to allow for better review.
-> > > 
-> > > The patches are mostly small changes but essential for the correct use
-> > > of the driver. The first patches looked like fixes that should be
-> > > marked for the stable. Patches [11,17/17] might be a bit bigger but 11/17
-> > > is quite straightforward and 17/17 is basically a duplication of a
-> > > very similar commit coming from the BMP280 driver [1].
-> > > 
-> > > In general, the datasheet [2] of the driver is not very descriptive,
-> > > and it redirects the user to the BME68x Sensor API [3]. All the things
-> > > that were identified from the BME68x Sensor API have been marked with
-> > > links to the original locations of the GitHub code. If this is too much
-> > > and we don't want this type of information on the commit message, please
-> > > let me know and I will fix it.
-> > > 
-> > > [1]: https://lore.kernel.org/linux-iio/20240512230524.53990-1-vassilisamir@gmail.com/T/#mc6f814e9a4f8c2b39015909d174c7013b3648b9b
-> > > [2]: https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme680-ds001.pdf
-> > > [3]: https://github.com/boschsensortec/BME68x_SensorAPI/tree/master
-> > > 
-> > > 
-> > > Vasileios Amoiridis (15):
-> > >   iio: chemical: bme680: Fix read/write ops to device by adding mutexes
-> > >   iio: chemical: bme680: Fix typo in define
-> > >   iio: chemical: bme680: Drop unnecessary casts and correct adc data
-> > >     types
-> > >   iio: chemical: bme680: Remove remaining ACPI-only stuff
-> > >   iio: chemical: bme680: Sort headers alphabetically
-> > >   iio: chemical: bme680: Remove duplicate register read
-> > >   iio: chemical: bme680: Use bulk reads for calibration data
-> > >   iio: chemical: bme680: Allocate IIO device before chip initialization
-> > >   iio: chemical: bme680: Add read buffers in read/write buffer union
-> > >   iio: chemical: bme680: Make error checks consistent
-> > >   iio: chemical: bme680: Modify startup procedure
-> > >   iio: chemical: bme680: Move probe errors to dev_err_probe()
-> > >   iio: chemical: bme680: Remove redundant gas configuration
-> > >   iio: chemical: bme680: Move forced mode setup in ->read_raw()
-> > >   iio: chemical: bme680: Refactorize reading functions
-> > > 
-> > >  drivers/iio/chemical/bme680.h      |  41 +-
-> > >  drivers/iio/chemical/bme680_core.c | 631 +++++++++++++----------------
-> > >  2 files changed, 291 insertions(+), 381 deletions(-)
-> > > 
-> > > 
-> > > base-commit: 4241665e6ea063a9c1d734de790121a71db763fc
-> > > -- 
-> > > 2.25.1
-> > >   
-> > 
-> > Hi Jonathan,
-> > 
-> > It's been three weeks so I am just checking-in here, to be sure that this
-> > series was not lost in the countless e-mails that you receive. Totally
-> > understand the summer time on top, so no hurry at all, just checking in
-> > that it is not lost! :) Thanks for the amazing job with the reviews
-> > though anyways! :)
-> 
-> Hi,
-> 
-> It's stalled because of a tree management issue - that is the first
-> few patches were going through fixes-togreg and I'd like to keep
-> the merge fun simple which means they have to end up upstream and
-> back in char-misc/char-misc-next which I then rebase on after
-> an IIO pull request.
-> 
-> They are in char-misc-next as of about 45 mins ago.
-> 
-> It'll be a bit tight for this cycle but my plan is 2 more pull requests
-> with the last one at risk because of timing.  This stuff can only be
-> in that final pull request.
-> 
-> Once it's all in place I will take a final look for but not anticipating
-> needing any changes.
-> 
-> Jonathan
-> 
 
-Hi Jonathan,
-
-Ok, since it is not lost perfect! No need to hurry or anything. Thanks!
-
-Cheers,
-Vasilis
-
+On 01/07/2024 10:25, Maarten Lankhorst wrote:
+> Den 2024-06-28 kl. 16:04, skrev Maxime Ripard:
+>> Hi,
+>>
+>> On Thu, Jun 27, 2024 at 09:22:56PM GMT, Maarten Lankhorst wrote:
+>>> Den 2024-06-27 kl. 19:16, skrev Maxime Ripard:
+>>>> Hi,
+>>>>
+>>>> Thanks for working on this!
+>>>>
+>>>> On Thu, Jun 27, 2024 at 05:47:21PM GMT, Maarten Lankhorst wrote:
+>>>>> The initial version was based roughly on the rdma and misc cgroup
+>>>>> controllers, with a lot of the accounting code borrowed from rdma.
+>>>>>
+>>>>> The current version is a complete rewrite with page counter; it uses
+>>>>> the same min/low/max semantics as the memory cgroup as a result.
+>>>>>
+>>>>> There's a small mismatch as TTM uses u64, and page_counter long pages.
+>>>>> In practice it's not a problem. 32-bits systems don't really come with
+>>>>>> =4GB cards and as long as we're consistently wrong with units, it's
+>>>>> fine. The device page size may not be in the same units as kernel page
+>>>>> size, and each region might also have a different page size (VRAM vs GART
+>>>>> for example).
+>>>>>
+>>>>> The interface is simple:
+>>>>> - populate drmcgroup_device->regions[..] name and size for each active
+>>>>>     region, set num_regions accordingly.
+>>>>> - Call drm(m)cg_register_device()
+>>>>> - Use drmcg_try_charge to check if you can allocate a chunk of memory,
+>>>>>     use drmcg_uncharge when freeing it. This may return an error code,
+>>>>>     or -EAGAIN when the cgroup limit is reached. In that case a reference
+>>>>>     to the limiting pool is returned.
+>>>>> - The limiting cs can be used as compare function for
+>>>>>     drmcs_evict_valuable.
+>>>>> - After having evicted enough, drop reference to limiting cs with
+>>>>>     drmcs_pool_put.
+>>>>>
+>>>>> This API allows you to limit device resources with cgroups.
+>>>>> You can see the supported cards in /sys/fs/cgroup/drm.capacity
+>>>>> You need to echo +drm to cgroup.subtree_control, and then you can
+>>>>> partition memory.
+>>>>>
+>>>>> Signed-off-by: Maarten Lankhorst<maarten.lankhorst@linux.intel.com>
+>>>>> Co-developed-by: Friedrich Vock<friedrich.vock@gmx.de>
+>>>> I'm sorry, I should have wrote minutes on the discussion we had with TJ
+>>>> and Tvrtko the other day.
+>>>>
+>>>> We're all very interested in making this happen, but doing a "DRM"
+>>>> cgroup doesn't look like the right path to us.
+>>>>
+>>>> Indeed, we have a significant number of drivers that won't have a
+>>>> dedicated memory but will depend on DMA allocations one way or the
+>>>> other, and those pools are shared between multiple frameworks (DRM,
+>>>> V4L2, DMA-Buf Heaps, at least).
+>>>>
+>>>> This was also pointed out by Sima some time ago here:
+>>>> https://lore.kernel.org/amd-gfx/YCVOl8%2F87bqRSQei@phenom.ffwll.local/
+>>>>
+>>>> So we'll want that cgroup subsystem to be cross-framework. We settled on
+>>>> a "device" cgroup during the discussion, but I'm sure we'll have plenty
+>>>> of bikeshedding.
+>>>>
+>>>> The other thing we agreed on, based on the feedback TJ got on the last
+>>>> iterations of his series was to go for memcg for drivers not using DMA
+>>>> allocations.
+>>>>
+>>>> It's the part where I expect some discussion there too :)
+>>>>
+>>>> So we went back to a previous version of TJ's work, and I've started to
+>>>> work on:
+>>>>
+>>>>     - Integration of the cgroup in the GEM DMA and GEM VRAM helpers (this
+>>>>       works on tidss right now)
+>>>>
+>>>>     - Integration of all heaps into that cgroup but the system one
+>>>>       (working on this at the moment)
+>>>
+>>> Should be similar to what I have then. I think you could use my work to
+>>> continue it.
+>>>
+>>> I made nothing DRM specific except the name, if you renamed it the device
+>>> resource management cgroup and changed the init function signature to take a
+>>> name instead of a drm pointer, nothing would change. This is exactly what
+>>> I'm hoping to accomplish, including reserving memory.
+>>
+>> I've started to work on rebasing my current work onto your series today,
+>> and I'm not entirely sure how what I described would best fit. Let's
+>> assume we have two KMS device, one using shmem, one using DMA
+>> allocations, two heaps, one using the page allocator, the other using
+>> CMA, and one v4l2 device using dma allocations.
+>>
+>> So we would have one KMS device and one heap using the page allocator,
+>> and one KMS device, one heap, and one v4l2 driver using the DMA
+>> allocator.
+>>
+>> Would these make different cgroup devices, or different cgroup regions?
 > 
+> Each driver would register a device, whatever feels most logical for that device I suppose.
 > 
-> > 
-> > Cheers,
-> > Vasilis
-> > 
+> My guess is that a prefix would also be nice here, so register a device with name of drm/$name or v4l2/$name, heap/$name. I didn't give it much thought and we're still experimenting, so just try something. :)
 > 
+> There's no limit to amount of devices, I only fixed amount of pools to match TTM, but even that could be increased arbitrarily. I just don't think there is a point in doing so.
+
+Do we need a plan for top level controls which do not include region 
+names? If the latter will be driver specific then I am thinking of ease 
+of configuring it all from the outside. Especially considering that one 
+cgroup can have multiple devices in it.
+
+Second question is about double accounting for shmem backed objects. I 
+think they will be seen, for drivers which allocate backing store at 
+buffer objects creation time, under the cgroup of process doing the 
+creation, in the existing memory controller. Right?
+
+Is there a chance to exclude those from there and only have them in this 
+new controller? Or would the opposite be a better choice? That is, not 
+see those in the device memory controller but only in the existing one.
+
+Regards,
+
+Tvrtko
+
+>>> The nice thing is that it should be similar to the memory cgroup controller
+>>> in semantics, so you would have the same memory behavior whether you use the
+>>> device cgroup or memory cgroup.
+>>>
+>>> I'm sad I missed the discussion, but hopefully we can coordinate more now
+>>> that we know we're both working on it. :)
+>>
+>> Yeah, definitely :)
+>>
+>> Maxime
+> Cheers,
+> ~Maarten
 
