@@ -1,156 +1,154 @@
-Return-Path: <linux-kernel+bounces-236355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6503091E101
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:42:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF03191E104
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:43:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 959E01C21805
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:42:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BA951C21955
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C79F15ECC4;
-	Mon,  1 Jul 2024 13:42:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B9915EFAF;
+	Mon,  1 Jul 2024 13:43:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ee9nhHlP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZQ5fm6tk"
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A4C14B96C
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 13:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6122715ECE0
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 13:43:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719841359; cv=none; b=dAR2wanVmpnc93U2/OTHGxSkyBU+9SnDuInqaNh20NX+3e1wwOyXg6o7Y7x6QcPS0/77m7HDQ4MBs963tPIVBcwuWk8vlXP80R4khgW6EcZoitHgZIBR/7hSuidlvHsiE9kXP/me3HuYna86Tg4jiNZAAFrST2Au4SAKIhydGrQ=
+	t=1719841382; cv=none; b=gXakXlK9KBmU7vWUG8rjhLtcEBWPjFg27IHwQZ0rzKk4Uh1RZ6YA2Di2NzuwxNKLmrsQUmauk0R9XQTNLU9nO+iSC0tcGi/0xv9POaH1i+LBRnVSZlLjkpProjLanfItej5yeejPGvlSZDPYCU5Hy0y7KIpukt7IchSHGTGFefo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719841359; c=relaxed/simple;
-	bh=92/SR3+ittNLh2Rsy76Cz2RIU6V8eOAhn7AYJBLat38=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=iEibo9yoAOiLXr1P5+hnIIt9IQF4snRQ0BiJRqtrNGhXOi5ujs6xejtPOQbgEBR944PCTR5qxRnC2zYuHJQiZ2u4331Qv5I0Sz9jo+C0Ed6oRS7NtVgZYcTkXZ1LSiY2IY1GAOvdnzvtqhSnZ7iPToWmCUJYbq9RajdUDmtOh28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ee9nhHlP; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719841357;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E0HQdp4BRkZxb6hA/5Q0WjRUWoRI6uTvZSiyunG2Nc0=;
-	b=ee9nhHlPANyPwM1WDMYYBrwNKHo0yUGaGvKt3HMFhvb7FLv4u/6yiHPbPjELtDhHmTghuY
-	cU/nfeQ78PWzEEXp68mlEDfESihUklVQJGIxIxvMcHGkJA8TBCJshMwhD/o2cE3iUb9Qvx
-	qnbN3KknXqsbUBCqvO0fNGtHukgXKAU=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-527-gvXgAmFGPlWT2QszDnWHhA-1; Mon,
- 01 Jul 2024 09:42:33 -0400
-X-MC-Unique: gvXgAmFGPlWT2QszDnWHhA-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D41BA19560BA;
-	Mon,  1 Jul 2024 13:42:31 +0000 (UTC)
-Received: from file1-rdu.file-001.prod.rdu2.dc.redhat.com (unknown [10.11.5.21])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0AE4C3000223;
-	Mon,  1 Jul 2024 13:42:31 +0000 (UTC)
-Received: by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix, from userid 12668)
-	id E9CE830C1C14; Mon,  1 Jul 2024 13:42:29 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-	by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix) with ESMTP id E8E9D3FB52;
-	Mon,  1 Jul 2024 15:42:29 +0200 (CEST)
-Date: Mon, 1 Jul 2024 15:42:29 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: =?ISO-8859-15?Q?Daniel_P=2E_Berrang=E9?= <berrange@redhat.com>
-cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
-    Waiman Long <longman@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
-    Laurence Oberman <loberman@redhat.com>, 
-    Jonathan Brassow <jbrassow@redhat.com>, Ming Lei <minlei@redhat.com>, 
-    Ondrej Kozina <okozina@redhat.com>, Milan Broz <gmazyland@gmail.com>, 
-    linux-kernel@vger.kernel.org, dm-devel@lists.linux.dev, 
-    users@lists.libvirt.org
-Subject: Re: dm-crypt performance regression due to workqueue changes
-In-Reply-To: <ZoKqYg7TKiozapmW@redhat.com>
-Message-ID: <e52c5a40-8ca9-38ae-1595-3785c6ac435@redhat.com>
-References: <32fd8274-d5f-3eca-f5d2-1a9117fd8edb@redhat.com> <ZoGSJWMD9v1BxUDb@slm.duckdns.org> <e64c112-4fa9-74da-68ce-c1eec19460f2@redhat.com> <ZoKqYg7TKiozapmW@redhat.com>
+	s=arc-20240116; t=1719841382; c=relaxed/simple;
+	bh=6TJrdqdGOFUfNAc2K8v9vR/tcthQDljpvcHgKkBQdV8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C6FICP03Md4KspO0vWg5rtVrVVQBg44laSQyytjLQTSasjxBzGxnIiVo8Bs7TFPrC8EoRIw68VK+TIQwo3dupQRHUMZGVZ0EbYMLWJcWzJ/syhziPpo8ULsVufuKzdukYLAzrB7HGbORKSDymBt1OLrq1Xeg0lK2TtKITOL7R5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZQ5fm6tk; arc=none smtp.client-ip=209.85.222.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-80fc48bb31cso1068684241.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 06:43:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719841380; x=1720446180; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=QzDzN8qMadfykp4fLzSl/Fe/+BqVWg+52h9oZmO7PNo=;
+        b=ZQ5fm6tk66Ve3NlZ1tqnqDiSiwFmhVXzXwJulx+zW1NBeP94jz8kwnlaVq6IguskLh
+         Xiyz5C188tUFmqFN61lUALCI71aDoM18GpJuPQywTiSPHmEAUERrWjual1eVycpzv1rk
+         lYVGycYTokXNXi/QyDhNBXfhTggaHJV90bPDOVT42WogYayglGH3D3OgU5wyWpRcdv0X
+         moqTey+ScS2FadTtLqK3B32jJhPp6y4zNiZjTc8BS7ML0IyjZhUVBb7DW3WzoKJVEzNG
+         k3P2xTZj0Vw2XchxHa63PktDK6A+kBxt9+rZ4mqf/gIN6oRVErP4AbCwP+5no9Z1MgEs
+         RJVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719841380; x=1720446180;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QzDzN8qMadfykp4fLzSl/Fe/+BqVWg+52h9oZmO7PNo=;
+        b=HDvYv0xNlSqCIhEb7WNw3IRxvf+yvmuRR/w8tIZRBT3KkSv94p7gquXwvFL9NHwwIO
+         SZz8dNqyMFUsmp7nUwPHI3B965ssh9EqPdZ1xHPf4gu/T3DiMCIwVMDNLDrTmHbiDuMU
+         2GsgxCq3yKuAzeDJtmk9vxZejAmY/f30OhQoh+6AS3/K14+JX4KRqR02golWPy6K68dQ
+         C3jmiyeX0rpMS0tIuD1pigTQuBDGj9zgZnVdZ/id/UbMLCMZsO8bLNJMrrb8ThrGWoho
+         OtIVT6serBgZ0UuYXWJ6repNhA+bKfrFjL+8Q2h+t6bqrN16iO4Iiw5DndCOusfPvWnL
+         aSPA==
+X-Forwarded-Encrypted: i=1; AJvYcCWX7TAxa8Gk5bVh/8Cl8F+6j9iIMsDieO5K420lfXgYHCaU9et2OSX3uDVDvmP/AEZAJgzEWu9SyU9/cso/t9NaEsGwQiAj1RDIZijy
+X-Gm-Message-State: AOJu0Yx4tmQ1GUAWjeVfPNNgdvaXn7ATqGKm+hA/rSBSbVyJn/GSjWJA
+	/PeO/JASNf0gZXM1yxg1AsPI8Q8eh1YXtrN9K0b2Isds8+j9r3wgzzMMM3yRXdaH3k/vXk2Do2x
+	QRVyTlmKW9UPfIBvsYu7R+gXdU8cbUSZHGYaijQ==
+X-Google-Smtp-Source: AGHT+IEiXUSbYSAJMo84UhUarOx3CsnYlrPxZyKJQGlBzRnCF/WKnt/Ht7O8aq6MeKZvdwlxYEkKcMyqbYdByzcAwDk=
+X-Received: by 2002:a05:6102:3109:b0:48f:8be8:970f with SMTP id
+ ada2fe7eead31-48faf15a142mr5297794137.32.1719841380229; Mon, 01 Jul 2024
+ 06:43:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="185210117-223779599-1719839675=:700989"
-Content-ID: <42b1735e-969f-b8d6-2c61-eda77a311fc@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+References: <CA+G9fYsXsbHp+0cWoTjEhkpANOav=GLSjPx5ghtUY-FjMPyoSQ@mail.gmail.com>
+ <20240701124733.GB2095@willie-the-truck>
+In-Reply-To: <20240701124733.GB2095@willie-the-truck>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Mon, 1 Jul 2024 19:12:48 +0530
+Message-ID: <CA+G9fYu2GQXEWECWHi0LZZ_UsMSPGaJ1ORKTR8k_E_LuYteLAA@mail.gmail.com>
+Subject: Re: Mainline: v6.10-rc6 boot failed across all arm64 devices
+To: Will Deacon <will@kernel.org>
+Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Mark Brown <broonie@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Aishwarya TCV <Aishwarya.TCV@arm.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi Will,
 
---185210117-223779599-1719839675=:700989
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: 8BIT
-Content-ID: <69bd3f6f-9476-86a4-732-3fadbfafeb2@redhat.com>
+On Mon, 1 Jul 2024 at 18:17, Will Deacon <will@kernel.org> wrote:
+>
+> Hi Naresh,
+>
+> This report is quite hard to follow, so just some minor comments which
+> you can hopefully take on board to improve things in future:
+>
+> On Mon, Jul 01, 2024 at 05:28:29PM +0530, Naresh Kamboju wrote:
+> > The mainline kernel v6.10-rc6 boot failed across all arm64 devices and
+> > qemu-arm64 and no crash log found (earlycon) did not help.
+> >
+> > But the defconfig builds boot PASS.
+> >
+> > The boot problem is with defconfig + Extra Kconfigs and builds links
+> > provided in the bottom of this email.
+>
+> If I go to the bottom of the email, I see this:
+>
+> > Links:
+> > -----
+> >  - https://storage.tuxsuite.com/public/linaro/lkft/builds/2idWrbdtwMqpD9wx7IPRGJ7Dsx3/
+> >  - https://storage.tuxsuite.com/public/linaro/lkft/builds/2idWrYDposdlRsS4jwF916a0qGE/
+> >  - https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.10-rc6/testrun/24473346/suite/boot/test/gcc-13-lkftconfig-libgpiod/history/
+> >  - https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.10-rc6/testrun/24473903/suite/boot/test/gcc-13-lkftconfig-rcutorture/history/
+>
+> but these are just random links without any context. The first two appear
+> to be kernel build artifacts, but I can't tell:
+>
+>   - Are both "good" or "bad"?
+
+Both are bad. which failed to boot from these build artifacts.
+Which is the location of storage of Build artifacts and build logs,
+Image, Vmlinux.
+
+>   - What is the difference between them?
+ one build is pointing to Rcu Torture test build,
+  - CONFIG_RCU_TORTURE_TEST=m ++Kconfigs
+
+other one is pointing to libgpiod build,
+  - CONFIG_GPIOLIB=y ++Kconfigs
+
+>
+> If I look at the first of the last two links, click through to the
+> "qemu-arm64" target and follow the "job_url" link, then I end up at:
+>
+>   https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2idWuAb51mcz7lO1BAj8Aw0BrNY
+>
+> which has some empty logs and something from "TuxRun" which says:
+>
+>   {"error": "File not found"}
+
+Due to missing boot log this file is empty.
+
+>
+> It's very hard to know what to do with this :/
 
 
+Sorry for the trouble.
+I will add more detailed information next to each link in my next report.
 
-On Mon, 1 Jul 2024, Daniel P. Berrangé wrote:
+>
+> Will
 
-> On Sun, Jun 30, 2024 at 08:49:48PM +0200, Mikulas Patocka wrote:
-> > 
-> > 
-> > On Sun, 30 Jun 2024, Tejun Heo wrote:
-> > 
-> > > Do you happen to know why libvirt is doing that? There are many other
-> > > implications to configuring the system that way and I don't think we want to
-> > > design kernel behaviors to suit topology information fed to VMs which can be
-> > > arbitrary.
-> > > 
-> > > Thanks.
-> > 
-> > I don't know why. I added users@lists.libvirt.org to the CC.
-> > 
-> > How should libvirt properly advertise "we have 16 threads that are 
-> > dynamically scheduled by the host kernel, so the latencies between them 
-> > are changing and unpredictable"?
-> 
-> NB, libvirt is just control plane, the actual virtual hardware exposed
-> is implemented across QEMU and the KVM kernel mod. Guest CPU topology
-> and/or NUMA cost information is the responsibility of QEMU.
-> 
-> When QEMU's virtual CPUs are floating freely across host CPUs there's
-> no perfect answer. The host admin needs to make a tradeoff in their
-> configuration
-> 
-> They can optimize for density, by allowing guest CPUs to float freely
-> and allow CPU overcommit against host CPUs, and the guest CPU topology
-> is essentially a lie.
-> 
-> They can optimize for predictable performance, by strictly pinning
-> guest CPUs 1:1 to host CPUs, and minimize CPU overcommit, and have
-> the guest CPU topology 1:1 match the host CPU topology.
-> 
-> With regards,
-> Daniel
-
-The problem that we have here is that the commit 
-63c5484e74952f60f5810256bd69814d167b8d22 ("workqueue: Add multiple 
-affinity scopes and interface to select them") changes the behavior of 
-unbound workqueues, so that work items are only executed on CPUs that 
-share last level cache with the task that submitted them.
-
-If there are 16 virtual CPUs that are freely floating across physical 
-CPUs, virt-manager by default selects a topology where it advertises 16 
-sockets, 1 CPU per socket, 1 thread per CPU. The result is that the 
-unbound workqueues are no longer unbound, they can't move work across 
-sockets and they are bound to just one virtual CPU, causing dm-crypt 
-performance degradation. (the crypto operations are no longer 
-parallelized).
-
-Whose bug is this? Is it a bug in virt-manager because it advertises 
-invalid topology? Is this a bug in that patch 63c5484e7495 because it 
-avoids moving work items across sockets?
-
-Mikulas
---185210117-223779599-1719839675=:700989--
-
+- Naresh
 
