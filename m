@@ -1,259 +1,159 @@
-Return-Path: <linux-kernel+bounces-236649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E405B91E55D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:29:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7117891E55E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:30:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 128971C21883
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:29:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1BA31C21450
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E316A16D9CB;
-	Mon,  1 Jul 2024 16:29:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF9D416D9C9;
+	Mon,  1 Jul 2024 16:30:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="kYKgqfFw"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2092.outbound.protection.outlook.com [40.107.22.92])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sgvA1voj"
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB8B16D320;
-	Mon,  1 Jul 2024 16:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.92
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719851351; cv=fail; b=OPdQLd1yZl9sQTkBsl9EwxJSqxSbQ+RxsEcwDs/nnFQgvhF3as0My3oE2XAbLAha/QX0J0HnBjFBDMMlHzs50vU1wJlrPo9/kOCI35bfr3+R5Gu1j3FAJZIjdjCpQY2pk4/Jgh2dhM8ZcqMyUERACNyiF9JYPLKiCNSpBxjAE8s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719851351; c=relaxed/simple;
-	bh=WWC0SMG0GxRPfg3zEfAuctSwPC9DEubzgcMdxOLGNQc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=RshpljC6/jg0IDw5weW4VB/BaeQ/2FHmJkV+Sun+UFIYVwgn3In0iCGi3QwwC92p6cSvnpo4jeTwGK/qMakojg036r6bsBR+KewfsWy+hP1hKrw0I/wIfc7JCWqUqicGl7MN4purNi+NLxhAH1ZlGaPZmoDGFXjdSfYQr9mrGnI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=kYKgqfFw; arc=fail smtp.client-ip=40.107.22.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BSoXzGMF34NfjmlFFkauAUbdjUfUQ3QxxxJ7z7Skc7xd951B38QKQU6WDWkuh6KXoS/2x3B6640Z3i28DHu5er1mwVVLipRfmwgnAilSe3q0XfhuUYCFWBohOVCA2o9SSX9b0johvRUgd07+9R3w4mp0CIU9EtdyEMWLGqikhCu4EmtwDICl8KWTXNiX+33bdEqjpmSuujxBWNcQC48p1YVRQv3biCOmyV6ZcheZ0Hb4bEoGbVSiEtCv6MBOSafI1F8V4hkOni1248ohVJfvNpMGfzPytM1nNqLCWZ98Vj1nWBOckqZe5CeYWw+xx2daF0drnHmobPG1qHM7bjZb9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BK12HntA1nN1Z23bIxTKZ3XnVnZCMdX0KyESr8gGNME=;
- b=aPamDZHk/lhsRwKDLpWXOMew50wGbyrpYKAmtR7sqUqdGrkMsYf3hxphnZp45tSn3MBpNqrFWXKLf/Eint8KHoQYAhzPsK/e4JR1fSOdz6/6uAA4ntowm6KAtszYXSwu5E/a/RGhxH7r5nOlxW7gJ6OaGePjbNEYv2ZUQjpkue2sDQ1EgQVG3J2h4BN9gpasUWd1I9HLopqAQSGrk4rc/9JySoralW0S5OKhPHQyOuMMcET9gOHYsAg7NXZjW38RgJHvVUm5+o/23PI76iGE4+aLqT2MixhIZe2wNrlJIasi40BWCCTh3PGdxQ0vcaRPERfE5s8sNJZxBCHE4Ba2Ig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BK12HntA1nN1Z23bIxTKZ3XnVnZCMdX0KyESr8gGNME=;
- b=kYKgqfFwcQAaYXXD/M7EZtCTMSHg5oSRVTTm1vxPpBOKv/buq+KxW2hy9sJNDb2WVhSVS9lovu06MK0vrOfXw3K7IwF6kEfa4wjEQoi4ClRr5ZREeSBef7g829xfXdYAI5GfN7hnN16iROMirwgw4ge68aD3Z/Ds51VVVhKyAVs=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from PA4PR04MB7982.eurprd04.prod.outlook.com (2603:10a6:102:c4::9)
- by VI0PR04MB10175.eurprd04.prod.outlook.com (2603:10a6:800:242::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.29; Mon, 1 Jul
- 2024 16:29:03 +0000
-Received: from PA4PR04MB7982.eurprd04.prod.outlook.com
- ([fe80::3c4:afd5:49ac:77af]) by PA4PR04MB7982.eurprd04.prod.outlook.com
- ([fe80::3c4:afd5:49ac:77af%4]) with mapi id 15.20.7719.029; Mon, 1 Jul 2024
- 16:29:03 +0000
-Message-ID: <86df2f79-c201-4e80-9e28-dfe13b674258@cherry.de>
-Date: Mon, 1 Jul 2024 18:29:01 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/10] hwmon: (amc6821) Add support for fan1_target and
- pwm1_enable mode 4
-To: Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Farouk Bouabid <farouk.bouabid@cherry.de>
-References: <20240628151346.1152838-1-linux@roeck-us.net>
- <20240628151346.1152838-5-linux@roeck-us.net>
- <e1933ae1-af38-4c17-b36e-33d43e90f057@cherry.de>
- <31eb2d27-fd00-4284-93f8-23504e14b47f@roeck-us.net>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <31eb2d27-fd00-4284-93f8-23504e14b47f@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: VI1PR08CA0243.eurprd08.prod.outlook.com
- (2603:10a6:803:dc::16) To PA4PR04MB7982.eurprd04.prod.outlook.com
- (2603:10a6:102:c4::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8DB4696
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 16:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719851445; cv=none; b=l+0lJE7lGYmoiztz+W1EgtPhUmvejkyTaeyV9Q8UyV6PN00YGIms52Ih/vWdQ6BCB/fywDmdQgdTAtPAcw3MlM9dRbPHsX0Li0FCzEIdHx8Zx7tMqKzfAfNSk5HiuYdVy/txmwHoenUVQ3mHVYd1A5+zdN2HWpsAq58gi2rL6ZU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719851445; c=relaxed/simple;
+	bh=cyBZIZOlVW0uFuDers68bdrFwZZWvwcsCmsyVCP3NT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=qdHTEnVK39p9gDbK9t97t/4zt/V6xkfbUsG+TjGBgIt4106akBXcbgC2ea+92E9nqnQStD0MYJSBbDOwYYYZ4XXGP36zE62PKf3BFnYvK0fulTj2fiOnEgh1O85Hfrf7aRYLeI9cjr2h8ggAdP27usTfn4IDahQI1esB3N7K0OE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sgvA1voj; arc=none smtp.client-ip=209.85.167.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3d55db7863bso2176511b6e.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 09:30:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719851442; x=1720456242; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xG/yczWNA3S6agDnft2zlqDhiY2xh8cwDya0vX2WWTc=;
+        b=sgvA1voj2jNw7u/rqLSpGPhk6F4Ve0CDbLXDcIYPDSGFXR2ZICFVeuREQgYKE01ADi
+         vDzG2WXAkwf5VJhyTcQBVvsoicetQQX7rTalHkuDE6+ECoQpu+0f5L9s36QpAzXb2Ls8
+         8hJ9NuM8+FvNOC58PtvH88giqezWH/LAWfcrrY/CQBOzt19JGFj9GDXpvRiO77busi5h
+         ztKV5gC8gEJ/cmUjOnpD8iPso/cXfGoscegs+Cr7lUiOtq5sauPjNMsYwNUrmBbYbjmt
+         Obq/AKewgJhiAkMYG84jiDZc6BdPyDWIbTvwb2PF+Q0HUmj8gkvC0T73Xsekby2+jlJt
+         HLBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719851442; x=1720456242;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xG/yczWNA3S6agDnft2zlqDhiY2xh8cwDya0vX2WWTc=;
+        b=FpTPNvE8/phQJ/6uqQP/d5hZf7z3xrJzLJ0xUV0vaUuNhZ7H7G3vZO5/KF5we3lQom
+         IdOVVEuQXUr345f5gIKzqKc11rKuKXjzuQ5o4AgxTBusYjf/cnfTLalwNa5tlDgazlq0
+         594qYZQvnRc0ZxDS2nl1H8/fR+wvoVOnKHTkQ7mTaiCjzZy0I18lsowKXNp8JLN5qNPn
+         Q2dpZZJuY074VxpnWOKFucSkqM/zoEstbHAKDnMrWbpoGuDizkGmc5UH+wVE7uM3DcNV
+         HupwHNP4HUbO298jxdaHWDxz4lMDLmTwuHMBI1oR0kmh9IWCMcKcjjteo/zB6ak8YZoh
+         7WLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV7mgwVQ6c5cJtfXSbQNgk0Ao7/5i9o0igJU+WfglYTimzExOOT/tGfE3M6HiEMMgstCEivv6rv9vJQBf/EBfqzHbeZddEwDTWECwpI
+X-Gm-Message-State: AOJu0YzaBzxLSyaz2IlWefY2l8YeICMcMduT4ZneuOG7Kap8OPZiH9kV
+	iw1iKyw7WGrBMHsph65IAJitRwoji3ha4Mul50eCBShuHTP/zSM/C42TAKOz9hc=
+X-Google-Smtp-Source: AGHT+IGtjpg0CTkGUOVUT8tVr1x56kkLv8fO3EHB0uCgBbInRDqjQByQEmG74LyP6w9zbLghuwHLtQ==
+X-Received: by 2002:a05:6808:2288:b0:3d5:63f0:ee9e with SMTP id 5614622812f47-3d6b32e3fd9mr8133239b6e.20.1719851442481;
+        Mon, 01 Jul 2024 09:30:42 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:e8c6:2364:637f:c70e])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d62fa39edfsm1420328b6e.37.2024.07.01.09.30.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 09:30:41 -0700 (PDT)
+Date: Mon, 1 Jul 2024 18:30:38 +0200
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev,
+	Ronald =?iso-8859-1?Q?Tschal=E4r?= <ronald@innovation.ch>
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: drivers/input/keyboard/applespi.c:1833 applespi_drain_writes() warn:
+ mixing irqsave and irq
+Message-ID: <3e789ab9-ebfc-40a2-b90d-b8b55e0cfaac@suswa.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR04MB7982:EE_|VI0PR04MB10175:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1f29c7cc-321f-499f-5157-08dc99eaebb6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cjIzS2plRktFOEdzZDNOWEVBMllzb1MrQ24xdmxhSUUzK0s4Y2RMUys1ZVdQ?=
- =?utf-8?B?cTBSUE9NUXE4VVV5Vys1ZFVoRFpsTlRERlVEcjNGMDNNM3ErMCtOYW1LYUxE?=
- =?utf-8?B?ajBWbmFVTjFyQ3BWSDBsS2thWjNDeUpobXhlYXllZ1FHV2cxUjZ2TmlXam8w?=
- =?utf-8?B?ZnZVYkl5aXI3d29FSDRUU2pRUUpkUVJNejRjOC95L1l2UG93UWNtZU9tUThT?=
- =?utf-8?B?VGRoaHNGZGlnZWZIV0ZwdWVkOElCVGpYQTBjZVJKeDFSU24xV1pHTXBFZFdW?=
- =?utf-8?B?YmYza0RCbXg1WjlrSkxoa0l2ZFV6d0I0ZHRjdHJ0Z21Ib0hiOWV3MDg2Mmpj?=
- =?utf-8?B?V05HVjNpZUNsOXA3WVFibFlqcG9uNGZZN1gySU5wQXB4MHAvcXdHemFJbmJE?=
- =?utf-8?B?SzU5UkVIR2llTHhmQzY1NFFyV21jZTNQWERsTEVkcTFiRE9MQjBQMVkzZ3ZK?=
- =?utf-8?B?L0dNODdPQldYNzFhUWJGREl0Wkd2eVJzem9qTW1UWjZnMXEyTWN1ZlUvVklJ?=
- =?utf-8?B?L1oydnhDMFRSZEVXL2lLY0duT0p0SVdhZnAxZDZoU1JHYmJUdXk2SWM3QUd2?=
- =?utf-8?B?Rkc2THJNWkdsd0hsRnpMSFRKQWZod2pWSEg2K3dRN29GYkxyM2w2bE5nb3V2?=
- =?utf-8?B?ZGJXYlhVUFJKNXBwelBzNXQ2M2pzSjIvV212MWtPM3VKcTdVVDVNUHIxU1pl?=
- =?utf-8?B?by9ZQ1FWRnpSWnRkdUp4WUk2NUF5ZEVsV2dtS0hqTXhJdjRHK3R6cnFNNWcr?=
- =?utf-8?B?NkQzdlVJamVTU2dvUEVTNnJkemhmRmJrZGhRTVJNd1RBUjRERk05dHBBY2dK?=
- =?utf-8?B?a01oRzloNFhyKyt6d1Rya2Q3L3pLVFlFRXZKUzVJemxScndMY2NETFR0Qk9u?=
- =?utf-8?B?alAwZXhScjV0a29waE5kTzgzblhGaTZoTHd6dE56OVZLWHM4MFBZbndtUDVT?=
- =?utf-8?B?djMzWFRyRWlnb0ZSQ2NvTTF1VTFtVkhTdU04T1VXRmx6SHR5MnVZQS96Q3Zv?=
- =?utf-8?B?K1c2cnQ0V3RTay9YOURBY1JTazRPTUdxK2pSZHpMWlRFbWYySnZFSjR2ZWpy?=
- =?utf-8?B?OFgraU5nWjhDRHBPdGppWTRtdDBrRkppdmZvTkhycUN0MXhId2xKMFlyaCtJ?=
- =?utf-8?B?QTREdTE0WEo2TUNFK1EyR1ZRUXhHL2orOThhTjE3V2NTVHh1bVVGK3VnOTlW?=
- =?utf-8?B?NkYxNmM3V2NiV2dXNUlXcHFvb29yVWhSZ1hsUmlQV1FsWlVQazFGRFFiN0dp?=
- =?utf-8?B?djdPbmtWSGgrK0ZaN0wzcG1UNjVQdGdLTFpkcnNVbk9xSHYxZk1EYitpRzlL?=
- =?utf-8?B?VFJ4bkpjWEsyeC9uZ3FMRU80QnFIZFJieGNEa3JHSmRuamQ4MFplbUdWWXU0?=
- =?utf-8?B?d3BLQmdlbDh2RzZORkRFZ0todGRxelVvS0VDdnpGR2FwT2p5WXdQc3VkWEto?=
- =?utf-8?B?dVNEUVMrWEVXRjVxWUdXdUE4elp2b3dRUVBRcDR2UlFjNFRIc2hZSFZRbGNl?=
- =?utf-8?B?bWx1a3VnR3dIUWhBcWwwTFBWN1l6ci9tMWF6SG4vekFLNU9SM2RZWEdLQndE?=
- =?utf-8?B?SVlPNmpqQmJaMWswUU5WbFpvaTlxRlFpZFdzZ0p0OXppQjRHMVN4L0ZSWXFS?=
- =?utf-8?B?QlJYSDVxeUNhQjhYOHZxRjdsd2VKZkcvUjBPMU5tVXhJdEV3MHVxZzR3RTFh?=
- =?utf-8?B?aUMrV1dKWUxoN3ZSejdJZ0pmSkpHZy9GUjlKWkNhMU9qaFhudmE5TXhLaHJx?=
- =?utf-8?B?RFVrdmgwSHBNNEVzZFJVZUNPc1ZGdUtJUlcwVm5BR2p1V3NUbm9jNGd3bVVy?=
- =?utf-8?B?Um1Td2kyMC9wWkxsejhudz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB7982.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?REdWeDlia1JrbnYxYnlCRGN3ZTVtQ0Q0aDRwakE3T2ZKZjdWMThUV0piVHo1?=
- =?utf-8?B?UklPSzgyMXpSWE92WkF4bzNCcnE3WlBXekhHMkRwUlcyQ09DK2syQXRYeDZJ?=
- =?utf-8?B?bXRaaFVSU3RZQnczdGJ6MkJjQlBaY0l4R3djUVYzTVZtcEE4bWZ5OUgrdm1w?=
- =?utf-8?B?RTJscS9pNFFoa3l1SUVUNkJsU1pDc24rYmhDL2J6ZFhnQkxxQ2cwT3BFZnR4?=
- =?utf-8?B?eW45NnBERjF4VE9lWEp6TEpQUHpCcjFWRDJDS2FuSi9ac0VLakY5Ym13Tms2?=
- =?utf-8?B?bG9GampLR2JrSlBielFmemNPV1ZvVjIyK2Zmbmc4MDZUbHM4L2hFbk5ZT0hV?=
- =?utf-8?B?elVKQmJrL2VPaXlpNTdIVDc1akw4Qkx0bllrUVBaWGRaQmRzVFY4VEREb0cx?=
- =?utf-8?B?WS92L2YwUlQramNzUjBsQVhSNDkvd1BaRGdzaTdaRzZxSFQzK1pBRGIvVTRX?=
- =?utf-8?B?NUwwRldzMkgvTytRWWxBM3dKZ3J3TG1LOGs2UUN3ekdxcldZU1B0ckR3bmNS?=
- =?utf-8?B?UTdBNG1KK1duV0V3N1VlUE9pWFJVRUpXdUFXUGxSTjZOZXMxVy9GZjZFLzI5?=
- =?utf-8?B?UHpzY3E0SFFsOTVTZEoxYkZScmF0c3NBU3ExRjg4bGVPbm43R2lENS90d3NO?=
- =?utf-8?B?SzltdkNBYVNSSnVLam40U3FPcS9nNi9ycVlHTk1mZWk5RDNwNldjUGFqcXpq?=
- =?utf-8?B?U2hPMU9oOUhwRnNzMXd4ZUlsMjA1cnY3dVVhOW5yZVkySUI2amlldTQvS1R4?=
- =?utf-8?B?cDBTOUlMajFXSkdnOStUWmRBWGFCSjdSZHJsWGtlTTlnVkFRZGVwQUk3VFRj?=
- =?utf-8?B?QUxhclA5MHZXcWpTTVlacGppaVRyK1Uxc0FrbGRVcFdKQXFPbm0xV0Y4TXJx?=
- =?utf-8?B?Y2NWbzBTVEdUbGNmTExIdVNUV1lVKzZxNmtaeGloMEFjaXNUNUxVSExGRW9w?=
- =?utf-8?B?MnBlRjRWRFdpNXZCMWJBeE9QQkIwanhBL2JVN3FsZlgyakM5L3NYWmY2RUZs?=
- =?utf-8?B?eU9QNU9IZ0FhYmt0Um5lbFdrUytQLzJsNU0rMExQZGlwV0xxeVVUWElGenU1?=
- =?utf-8?B?TCs1OWxEUm1KL1lmOVJsUUVuYnJkM1RlNEtja2g2bHdjZWhnOFNZQnh3TEUy?=
- =?utf-8?B?RlRuUmZsbUlOZWsyNWZNWDhESmtFbWkwTnVtbGJwTUNOSkR1VjduOGdLM0Z5?=
- =?utf-8?B?endERWxydGYrdnpFLzNrdlI4SEd5SHVzSXFxa2RrUE12cXBvQ250cjR5MmpE?=
- =?utf-8?B?M3FNNndhblVRdzEzc2dXVXRXVUo0TWllVkxwQmdISFRCOXZJYUJoYkFFOG5o?=
- =?utf-8?B?QlJTSEtPdm9pYkI0OXVRSERhTDhZaDFsM1dPVmhmMnE0R2t0SmdSbTVIYXpa?=
- =?utf-8?B?ZlVWd2hPS05VWWxNNTVaTld0bmJId0hJZEs3N05sQVJ5c3cwVlNhZHdZV2xT?=
- =?utf-8?B?U0x4SGpxZ2lYUSt1UThUSXE4MlJzejhFK0Q4TUN4OVkvU2JNejN1UmZnQVRF?=
- =?utf-8?B?MjBPK3hqV0NyODZUNzVpb3FQWlEwQjdsZk80ZnRSdU1zSWsyenFJSW1tR2FU?=
- =?utf-8?B?WkFsUCtLQnRGZzFwK3RweFBvV1p4Mk9GUVczWEZSakhlYzRyTURIelV6OWo4?=
- =?utf-8?B?RTlObk9JaC90eGJmMVpHcWI3d0ovbWY4a3N0SGpjRXFxNGZjT1FRV2lyMlpn?=
- =?utf-8?B?WGVpUkMvTzFjZUJYWnRpZ1ZaYzNzb2F2b2JkTHFFZDh2YXRDVWVaSTFJYkN1?=
- =?utf-8?B?ODVlOURLMnlubFdIRXFhdmNKTUhPMkhiRVVKSWxGbDFmWis5ZkVtSGVabXNU?=
- =?utf-8?B?a0NRaWkwVUM2M21tbi84OVRUY1Z5NklQdWgzdHMwRnAyczhZYmswVE9yZzND?=
- =?utf-8?B?ZDd0SWNBU1RMeTVObkp4RGtpYUZaZGZWK1ZEZFU2TmRvUGJVdWROaDdIbzdh?=
- =?utf-8?B?WXdaUlVZSk8ydnc4WjJSZFVUbHo1SUY2NGsyTjRPZDkzYS9IS2dIdVVobDdw?=
- =?utf-8?B?SVZCWGdHa1ZxTG53ZS9LRmpUVS9Na0JpZC9jUkRVa1NaajVsVEE4QnpMRlZj?=
- =?utf-8?B?djl5U0ZHR2h6b3hxc29kM1Fqb2FLZG56N0hyTFZHTTdRSERSUzRlK3QyZDN6?=
- =?utf-8?B?eXRSUEoxT2w0c0dYNmdnY0Zjak1xZmdNYU5ud1d2ZXZpcktLcHdPVnVKeFpz?=
- =?utf-8?Q?2PjW9ty3S13p27Y4HWWT71c=3D?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1f29c7cc-321f-499f-5157-08dc99eaebb6
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB7982.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2024 16:29:03.6696
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GjZJ7vDV3SP+yNTP+nMe9ZklV1L2L2o7yHyQLfEMLvNHH73fOClCUlgUrapyjY3Dp2E5eylAai9PVC82Oqb4patQpu6eH5MdCLfGMiMsNGY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10175
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Guenter,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   6d6444ba82053c716fb5ac83346202659023044e
+commit: 038b1a05eae6666b731920e46f47d8e2332e07ff Input: add Apple SPI keyboard and trackpad driver
+config: x86_64-randconfig-161-20240628 (https://download.01.org/0day-ci/archive/20240628/202406280337.1Av9qm8V-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
 
-On 7/1/24 5:26 PM, Guenter Roeck wrote:
-> Quentin,
-> 
-> On 7/1/24 04:23, Quentin Schulz wrote:
->> Hi Guenter,
->>
->> On 6/28/24 5:13 PM, Guenter Roeck wrote:
->>> After setting fan1_target and setting pwm1_enable to 4,
->>> the fan controller tries to achieve the requested fan speed.
->>>
->>
->> There's something in the docs (section `Software-RPM Control Mode (Fan 
->> Speed Regulator`) that rubs me the wrong way though.
->>
->> """
->> When the TACH-MODE bit (bit 1 of
->> 0x02) is cleared ('0'), the duty cycle of PWM-Out is forced to 30% 
->> when the calculated desired value of duty
->> cycle is less than 30%. Therefore, the TACH setting must be not 
->> greater than the value corresponding to the
->> RPM for 30% duty cycle.
->> """
->>
-> 
-> It turns out that the tach-mode bit is in reality the DC vs. pwm selector,
-> and defaults to DC. For pwm fans (4-bit fans), the bit should be set to 1.
-> That means that pwm1_mode should be supported to set the mode. I'll add 
-> a patch
-> for that.
-> 
->> TACH-MODE is never modified in the driver, so its default value 
->> prevails: 0.
->>
->> I'm wondering if there isn't something we need to do to make sure 
->> we're not under those 30% for 
->> TACH-Low-Limit/TACH-High-Limit/TACH-SETTING? Forbid the user to write 
->> (or clamp instead) <30% duty cycle. Forbid the user to select mode 4 
->> if current values are <30% duty cycle, or update them to be >=30%?
->>
-> 
-> It also says that the "the selected target speed must not be too low
-> to operate the fan", which makes sense. It also says that the requested
-> fan speed should not be below the speed translating to 30% duty cycle.
-> However, that is not a fixed value; it depends on the fan. Some fans may
-> operate at 500 rpm with a duty cycle of 30%, others at 3,000 rpm.
-> Looking at Figure 26, I don't think the value written into the pwm
-> register makes any difference in Software-RPM control mode.
-> 
-> With that in mind, the only thing we could do is to ensure that the
-> requested fan speed is within the configured low and high limits,
-> or in other words require the user to set the limits before writing
-> the target fan speed. That is a bit circular, though - the user
-> could still write the target speed and _then_ update the limits
-> to a value outside the requested limit. The best we could do would be
-> to sanitize settings when the mode is set to 4 and any of the limits
-> is changed, and return an error if an obviously wrong limit or target
-> speed is requested (target speed outside limit, or low limit >= high
-> limit). Do you think that would be worth the effort ?
-> 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202406280337.1Av9qm8V-lkp@intel.com/
 
-It depends how far we want to go to prevent the user shooting themself 
-in the foot. I think the kernel's stance on that is "let them"?
+smatch warnings:
+drivers/input/keyboard/applespi.c:1833 applespi_drain_writes() warn: mixing irqsave and irq
+drivers/input/keyboard/applespi.c:1845 applespi_drain_reads() warn: mixing irqsave and irq
 
-The "benefit" of forcing the user to enter a value in a user-modifiable 
-range is that they wouldn't unknowingly trigger a too-low or too-high 
-logic within the IC.
+vim +1833 drivers/input/keyboard/applespi.c
 
-As an example, my bank has a limit on how much I can pay by card per 
-day. However, I can instantly change the value through an app and retry 
-the payment again right after if it's been refused.
+038b1a05eae666 Ronald Tschalär 2019-07-15  1826  static void applespi_drain_writes(struct applespi_data *applespi)
+038b1a05eae666 Ronald Tschalär 2019-07-15  1827  {
+038b1a05eae666 Ronald Tschalär 2019-07-15  1828  	unsigned long flags;
+038b1a05eae666 Ronald Tschalär 2019-07-15  1829  
+038b1a05eae666 Ronald Tschalär 2019-07-15  1830  	spin_lock_irqsave(&applespi->cmd_msg_lock, flags);
 
-Would that be something interesting for this speed limit.... who knows.
+_irqsave() sort of implies that potentially the caller has disabled IRQs,
+otherwise we would use spin_lock_irq() if we knew they hadn't disabled
+IRQs.
 
-Another thing we could do is modify the min and max values if they are 
-higher and lower than the requested speed. But this is trying to be 
-smart, which I think isn't something the kernel is aiming for (as little 
-logic/algorithm as possible)?
+038b1a05eae666 Ronald Tschalär 2019-07-15  1831  
+038b1a05eae666 Ronald Tschalär 2019-07-15  1832  	applespi->drain = true;
+038b1a05eae666 Ronald Tschalär 2019-07-15 @1833  	wait_event_lock_irq(applespi->drain_complete, !applespi->write_active,
+038b1a05eae666 Ronald Tschalär 2019-07-15  1834  			    applespi->cmd_msg_lock);
 
-So... I guess, the answer is "no, not worth the effort"?
+This will renable IRQs briefly and then disable them again.
 
-Cheers,
-Quentin
+038b1a05eae666 Ronald Tschalär 2019-07-15  1835  
+038b1a05eae666 Ronald Tschalär 2019-07-15  1836  	spin_unlock_irqrestore(&applespi->cmd_msg_lock, flags);
+
+This will set them back to how they were at the start of the function.
+
+The issue is that if the caller really wanted IRQs disabled, then it's
+not necessarilly a good idea to enable them at all in the
+wait_event_lock_irq() macro.  I suspect that in real life no callers
+disable IRQs so it's not an issue.  But anyway, that's what the warning
+is about.
+
+I suspect that kbuild-bot has a 5 year cut off for warnings and if this
+had been a month older then kbuild-bot would have ignored it.  :P
+
+038b1a05eae666 Ronald Tschalär 2019-07-15  1837  }
+038b1a05eae666 Ronald Tschalär 2019-07-15  1838  
+038b1a05eae666 Ronald Tschalär 2019-07-15  1839  static void applespi_drain_reads(struct applespi_data *applespi)
+038b1a05eae666 Ronald Tschalär 2019-07-15  1840  {
+038b1a05eae666 Ronald Tschalär 2019-07-15  1841  	unsigned long flags;
+038b1a05eae666 Ronald Tschalär 2019-07-15  1842  
+038b1a05eae666 Ronald Tschalär 2019-07-15  1843  	spin_lock_irqsave(&applespi->cmd_msg_lock, flags);
+038b1a05eae666 Ronald Tschalär 2019-07-15  1844  
+038b1a05eae666 Ronald Tschalär 2019-07-15 @1845  	wait_event_lock_irq(applespi->drain_complete, !applespi->read_active,
+038b1a05eae666 Ronald Tschalär 2019-07-15  1846  			    applespi->cmd_msg_lock);
+038b1a05eae666 Ronald Tschalär 2019-07-15  1847  
+038b1a05eae666 Ronald Tschalär 2019-07-15  1848  	applespi->suspended = true;
+038b1a05eae666 Ronald Tschalär 2019-07-15  1849  
+038b1a05eae666 Ronald Tschalär 2019-07-15  1850  	spin_unlock_irqrestore(&applespi->cmd_msg_lock, flags);
+038b1a05eae666 Ronald Tschalär 2019-07-15  1851  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
