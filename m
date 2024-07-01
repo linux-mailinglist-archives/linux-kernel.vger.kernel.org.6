@@ -1,139 +1,252 @@
-Return-Path: <linux-kernel+bounces-235950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15E5D91DBA9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:43:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1024691DBAA
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:44:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 959AF1F232A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:43:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6BF72827E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0742684DE9;
-	Mon,  1 Jul 2024 09:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866FA84DE9;
+	Mon,  1 Jul 2024 09:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NTYPMw4Y"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="vQegFkf8"
+Received: from out0-193.mail.aliyun.com (out0-193.mail.aliyun.com [140.205.0.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6EC4A0F
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 09:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91984A0F
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 09:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719826994; cv=none; b=sZoZ8SWcPdEJEuGnmqNwOYvkPI/1ak69yVtFTtxOpsYLIqZUfM/OWhULPdSyei3umHhOmOwJLGAIXPoSu8q/fSaYSnmcIQ7NvuopK9QlJw78atBn5oNUqYpuihV1qXTcz6xKVuAuN2DS2/UWZhsTz23Ge5DBIqKGvb9I80EsHLc=
+	t=1719827034; cv=none; b=CdV6cXzJeBap1Ii5OZNt99ypN8968NVN8shqmkDpPjGoVLLp43NjWwbvkkbZS4C+YOXosEoz7SDdMqIIhvqyPUONoVqGyg2bKy4kOxV9lX82VdZCBMFaL6BOpKbhZgOcQ+h1YtIs3rJuLnrMy11RWxMe9KYh7iaWikcPnZT8Yl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719826994; c=relaxed/simple;
-	bh=3NzHyVFUjKyygfr/kqv/H3Lr1uZS//QAnnBQ8/1LmGk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LFNsrfK0klMxzQf/uaB75+ZXxn5Ajula6jRQaBePknODtgX0qTknAq97GlQmDT2UBZFaS3nVO07k3b4FwfO4MS7NINgDvGya6oQaVgQhCNqs6dGyHTMxgwEkmbagFNpT1ICJM6r4pcDN0DfjFhDvo3LhKS0cDj1XuoZiF4W4yeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NTYPMw4Y; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 843ADE0009;
-	Mon,  1 Jul 2024 09:43:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1719826989;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ed3IOlft/9T9yxBUdqc3PoZwEw29DrpPjWIbyKJhKD8=;
-	b=NTYPMw4YGZc0IJp6iNpS/5KF1KO9IK9sy96WhScM1rCDYnMmahEQpxwgfHxYfO6OF/ncL+
-	jSS6nfeZCofeAR9ep6K4fz0YH06ocrzn7VUsZz6G5ZkI5kaRE5VMKiuu2/Qnl4SufMUvEI
-	E5wLZUxECNhAPXHE5fb57XpkzlNByJOLxeJfNP2BpKrxGUdfrtAhEvo2tkVYAVqKAoLhG/
-	bqAHUk9kfH+8qEfbAMSrmIcAJyJxQRDGrf1B/dhZts1YpXmxtWewLT4h5L0WG/fZuEEyei
-	svXQQ4aODcIb6e+DpMVFM/vvdLgPlSgDeScZDjH3y1gAvty9kEPZSMCKZBf2gw==
-Date: Mon, 1 Jul 2024 11:43:07 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Cheng Ming Lin <linchengming884@gmail.com>
-Cc: vigneshr@ti.com, richard@nod.at, linux-mtd@lists.infradead.org,
- linux-kernel@vger.kernel.org, alvinzhou@mxic.com.tw, leoyu@mxic.com.tw,
- Cheng Ming Lin <chengminglin@mxic.com.tw>
-Subject: Re: [PATCH 1/2] mtd: spinand: Support serial NAND for reading two
- bytes ID
-Message-ID: <20240701114307.031005ce@xps-13>
-In-Reply-To: <20240628085444.132714-2-linchengming884@gmail.com>
-References: <20240628085444.132714-1-linchengming884@gmail.com>
-	<20240628085444.132714-2-linchengming884@gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719827034; c=relaxed/simple;
+	bh=eWNKxhroc9c4Tpm1WnD/CMbCLJ0sIYDbIpAIu0NQffs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wy6bcW1zeBIjI8yOOEN2r0TVVeLOC2E10e82qmNoPPziv6RUbETToxAf1nBpkfGs+HghauhkDL9Gv8vepHgOgraGsEXCrpUBD9X1Dw718bO8C+jxt1vz+95247ZBaxTQY+XGCapbLI65VJ5ahHHQ8oL3XjTqLfYWhbXMQj8KTzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=vQegFkf8; arc=none smtp.client-ip=140.205.0.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=antgroup.com; s=default;
+	t=1719827022; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=PKR6sxM7W5GGchw1blJuJyfZABT5gHN6PYWv8xcaq5E=;
+	b=vQegFkf8VuHemutQ/3HI+nFLtaYR3id6R38ggVTT7vNeOL9P7ry1FqCt9ZcdRiDbLxgNXbV6UCJlDS5r7Bp4H5kGwu6xzU3L9reMaf+x0QODozRIi+ASJOzIGaEGLXcIz9FUEKcCD8GllZ+X2Po3aDAr2BNew9JiyoA81phZl5E=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037088118;MF=libang.li@antgroup.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---.YEDLAmw_1719827021;
+Received: from 30.13.185.168(mailfrom:libang.li@antgroup.com fp:SMTPD_---.YEDLAmw_1719827021)
+          by smtp.aliyun-inc.com;
+          Mon, 01 Jul 2024 17:43:41 +0800
+Message-ID: <ee59573f-52bd-45e4-bd2f-eac28ae97e66@antgroup.com>
+Date: Mon, 01 Jul 2024 17:43:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] support "THPeligible" semantics for mTHP with anonymous
+ shmem
+To: Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, hughd@google.com,
+ akpm@linux-foundation.org
+Cc: david@redhat.com, wangkefeng.wang@huawei.com, ziy@nvidia.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20240628104926.34209-1-libang.li@antgroup.com>
+ <4b38db15-0716-4ffb-a38b-bd6250eb93da@arm.com>
+ <4d54880e-03f4-460a-94b9-e21b8ad13119@linux.alibaba.com>
+Content-Language: en-US
+From: "Bang Li" <libang.li@antgroup.com>
+In-Reply-To: <4d54880e-03f4-460a-94b9-e21b8ad13119@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Hi, Baolin
 
-linchengming884@gmail.com wrote on Fri, 28 Jun 2024 16:54:43 +0800:
+On 2024/7/1 16:33, Baolin Wang wrote:
+> 
+> 
+> On 2024/7/1 15:55, Ryan Roberts wrote:
+>> On 28/06/2024 11:49, Bang Li wrote:
+>>> After the commit 7fb1b252afb5 ("mm: shmem: add mTHP support for
+>>> anonymous shmem"), we can configure different policies through
+>>> the multi-size THP sysfs interface for anonymous shmem. But
+>>> currently "THPeligible" indicates only whether the mapping is
+>>> eligible for allocating THP-pages as well as the THP is PMD
+>>> mappable or not for anonymous shmem, we need to support semantics
+>>> for mTHP with anonymous shmem similar to those for mTHP with
+>>> anonymous memory.
+>>>
+>>> Signed-off-by: Bang Li <libang.li@antgroup.com>
+>>> ---
+>>>   fs/proc/task_mmu.c      | 10 +++++++---
+>>>   include/linux/huge_mm.h | 11 +++++++++++
+>>>   mm/shmem.c              |  9 +--------
+>>>   3 files changed, 19 insertions(+), 11 deletions(-)
+>>>
+>>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+>>> index 93fb2c61b154..09b5db356886 100644
+>>> --- a/fs/proc/task_mmu.c
+>>> +++ b/fs/proc/task_mmu.c
+>>> @@ -870,6 +870,7 @@ static int show_smap(struct seq_file *m, void *v)
+>>>   {
+>>>       struct vm_area_struct *vma = v;
+>>>       struct mem_size_stats mss = {};
+>>> +    bool thp_eligible;
+>>>       smap_gather_stats(vma, &mss, 0);
+>>> @@ -882,9 +883,12 @@ static int show_smap(struct seq_file *m, void *v)
+>>>       __show_smap(m, &mss, false);
+>>> -    seq_printf(m, "THPeligible:    %8u\n",
+>>> -           !!thp_vma_allowable_orders(vma, vma->vm_flags,
+>>> -               TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL));
+>>> +    thp_eligible = !!thp_vma_allowable_orders(vma, vma->vm_flags,
+>>> +                        TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL);
+>>> +    if (vma_is_anon_shmem(vma))
+>>> +        thp_eligible = 
+>>> !!shmem_allowable_huge_orders(file_inode(vma->vm_file),
+>>> +                            vma, vma->vm_pgoff, thp_eligible);
+>>
+>> Afraid I haven't been following the shmem mTHP support work as much as 
+>> I would
+>> have liked, but is there a reason why we need a separate function for 
+>> shmem?
+> 
+> Since shmem_allowable_huge_orders() only uses shmem specific logic to 
+> determine if huge orders are allowable, there is no need to complicate 
+> the thp_vma_allowable_orders() function by adding more shmem related 
+> logic, making it more bloated. In my view, providing a dedicated helper 
+> shmem_allowable_huge_orders(), specifically for shmem, simplifies the 
+> logic.
+> 
+> IIUC, I agree with David's suggestion that the 
+> shmem_allowable_huge_orders() helper function could be used in 
+> thp_vma_allowable_orders() to support shmem mTHP. Something like:
+> 
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index c7ce28f6b7f3..9677fe6cf478 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -151,10 +151,13 @@ unsigned long __thp_vma_allowable_orders(struct 
+> vm_area_struct *vma,
+>           * Must be done before hugepage flags check since shmem has its
+>           * own flags.
+>           */
+> -       if (!in_pf && shmem_file(vma->vm_file))
+> -               return shmem_is_huge(file_inode(vma->vm_file), 
+> vma->vm_pgoff,
+> -                                    !enforce_sysfs, vma->vm_mm, vm_flags)
+> -                       ? orders : 0;
+> +       if (!in_pf && shmem_file(vma->vm_file)) {
+> +               bool global_huge = 
+> shmem_is_huge(file_inode(vma->vm_file), vma->vm_pgoff,
+> +                                    !enforce_sysfs, vma->vm_mm, vm_flags);
+> +
+> +               return 
+> shmem_allowable_huge_orders(file_inode(vma->vm_file),
+> +                                       vma, vma->vm_pgoff, global_huge);
+> +       }
+> 
+>          if (!vma_is_anonymous(vma)) {
+>                  /*
+> 
+>> Couldn't (shouldn't) thp_vma_allowable_orders() be taught to handle 
+>> shmem too?
+>>
+>>> +    seq_printf(m, "THPeligible:    %8u\n", thp_eligible);
+>>>       if (arch_pkeys_enabled())
+>>>           seq_printf(m, "ProtectionKey:  %8u\n", vma_pkey(vma));
+>>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>>> index 212cca384d7e..f87136f38aa1 100644
+>>> --- a/include/linux/huge_mm.h
+>>> +++ b/include/linux/huge_mm.h
+>>> @@ -267,6 +267,10 @@ unsigned long thp_vma_allowable_orders(struct 
+>>> vm_area_struct *vma,
+>>>       return __thp_vma_allowable_orders(vma, vm_flags, tva_flags, 
+>>> orders);
+>>>   }
+>>> +unsigned long shmem_allowable_huge_orders(struct inode *inode,
+>>> +                struct vm_area_struct *vma, pgoff_t index,
+>>> +                bool global_huge);
+>>> +
+>>>   struct thpsize {
+>>>       struct kobject kobj;
+>>>       struct list_head node;
+>>> @@ -460,6 +464,13 @@ static inline unsigned long 
+>>> thp_vma_allowable_orders(struct vm_area_struct *vma,
+>>>       return 0;
+>>>   }
+>>> +static inline unsigned long shmem_allowable_huge_orders(struct inode 
+>>> *inode,
+>>> +                struct vm_area_struct *vma, pgoff_t index,
+>>> +                bool global_huge)
+>>> +{
+>>> +    return 0;
+>>> +}
+>>> +
+>>>   #define transparent_hugepage_flags 0UL
+>>>   #define thp_get_unmapped_area    NULL
+>>> diff --git a/mm/shmem.c b/mm/shmem.c
+>>> index d495c0701a83..aa85df9c662a 100644
+>>> --- a/mm/shmem.c
+>>> +++ b/mm/shmem.c
+>>> @@ -1622,7 +1622,7 @@ static gfp_t limit_gfp_mask(gfp_t huge_gfp, 
+>>> gfp_t limit_gfp)
+>>>   }
+>>>   #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>>> -static unsigned long shmem_allowable_huge_orders(struct inode *inode,
+>>> +unsigned long shmem_allowable_huge_orders(struct inode *inode,
+>>>                   struct vm_area_struct *vma, pgoff_t index,
+>>>                   bool global_huge)
+>>>   {
+>>> @@ -1707,13 +1707,6 @@ static unsigned long 
+>>> shmem_suitable_orders(struct inode *inode, struct vm_fault
+>>>       return orders;
+>>>   }
+>>>   #else
+>>> -static unsigned long shmem_allowable_huge_orders(struct inode *inode,
+>>> -                struct vm_area_struct *vma, pgoff_t index,
+>>> -                bool global_huge)
+>>> -{
+>>> -    return 0;
+>>> -}
+>>> -
+>>>   static unsigned long shmem_suitable_orders(struct inode *inode, 
+>>> struct vm_fault *vmf,
+>>>                          struct address_space *mapping, pgoff_t index,
+>>>                          unsigned long orders)
 
-> From: Cheng Ming Lin <chengminglin@mxic.com.tw>
->=20
-> Adding the Device ID 2 on Macronix Serial Flash.
->=20
-> When the number of flashes increases, we need to utilize
-> Device ID 2 to distinguish between different flashes.
->=20
-> These flashes have been validated on Xilinx zynq-picozed
-> board which included Macronix SPI Host.
->=20
-> Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
-> ---
+Thanks for the reference code. Currently, we only implement the mTHP of
+anonymous shmem, so we only need to handle anonymous shmem specially. As
+shown in the following code:
 
-...
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -151,10 +151,14 @@ unsigned long __thp_vma_allowable_orders(struct 
+vm_area_struct *vma,
+          * Must be done before hugepage flags check since shmem has its
+          * own flags.
+          */
+-       if (!in_pf && shmem_file(vma->vm_file))
+-               return shmem_is_huge(file_inode(vma->vm_file), 
+vma->vm_pgoff,
+-                                    !enforce_sysfs, vma->vm_mm, vm_flags)
+-                       ? orders : 0;
++       if (!in_pf && shmem_file(vma->vm_file)) {
++               bool global_huge = 
+shmem_is_huge(file_inode(vma->vm_file), vma->vm_pgoff,
++                                    !enforce_sysfs, vma->vm_mm, vm_flags);
++               if (!vma_is_anon_shmem(vma))
++                       return global_huge? orders : 0;
++               return shmem_allowable_huge_orders(file_inode(vma->vm_file),
++                                               vma, vma->vm_pgoff, 
+global_huge);
++       }
 
->  	SPINAND_INFO("MX35UF1GE4AD",
-> -		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x96),
-> +		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x96, 0x03),
->  		     NAND_MEMORG(1, 2048, 128, 64, 1024, 20, 1, 1, 1),
->  		     NAND_ECCREQ(8, 512),
->  		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-> @@ -289,7 +288,7 @@ static const struct spinand_info macronix_spinand_tab=
-le[] =3D {
->  		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
->  				     mx35lf1ge4ab_ecc_get_status)),
->  	SPINAND_INFO("MX35UF1GE4AC",
-> -		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x92),
-> +		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x92, 0x01),
->  		     NAND_MEMORG(1, 2048, 64, 64, 1024, 20, 1, 1, 1),
->  		     NAND_ECCREQ(4, 512),
->  		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-> @@ -298,7 +297,6 @@ static const struct spinand_info macronix_spinand_tab=
-le[] =3D {
->  		     SPINAND_HAS_QE_BIT,
->  		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
->  				     mx35lf1ge4ab_ecc_get_status)),
-> -
-
-This is style, and if you care should be in another patch.
-
->  	SPINAND_INFO("MX31LF2GE4BC",
->  		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x2e),
->  		     NAND_MEMORG(1, 2048, 64, 64, 2048, 40, 1, 1, 1),
-> @@ -309,7 +307,7 @@ static const struct spinand_info macronix_spinand_tab=
-le[] =3D {
->  		     SPINAND_HAS_QE_BIT,
->  		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
->  				     mx35lf1ge4ab_ecc_get_status)),
-> -	SPINAND_INFO("MX3UF2GE4BC",
-> +	SPINAND_INFO("MX31UF2GE4BC",
-
-This is a fix that should have the right tags (stable/fixes) and be in
-another patch.
-
-Also, maybe you want this patch content to be backported. If it's the
-case, please add the necessary tags here as well.
-
->  		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xae),
->  		     NAND_MEMORG(1, 2048, 64, 64, 2048, 40, 1, 1, 1),
->  		     NAND_ECCREQ(8, 512),
-
+         if (!vma_is_anonymous(vma)) {
 
 Thanks,
-Miqu=C3=A8l
+Bang
 
