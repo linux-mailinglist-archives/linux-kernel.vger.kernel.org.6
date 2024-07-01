@@ -1,103 +1,166 @@
-Return-Path: <linux-kernel+bounces-236114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B59191DDA4
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:16:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1235A91DDA7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:16:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26CD02826E3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:16:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E6C3B23087
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CB3126F1E;
-	Mon,  1 Jul 2024 11:16:00 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23BF51F949
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 11:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C6913D63B;
+	Mon,  1 Jul 2024 11:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="dFretxN3"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE7242056
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 11:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719832560; cv=none; b=FZgDtMHZz2H0INKUh7IeVy4g6pwqyFXvMSrJD04ou0p+TQ9o2o5ZRXYJ5/6TdKliJsIBRpbVSUicw/sjXSDHmoSG9BXW7+kmatTyuBL1OW+LKOKaNQSQCxFVRGVHqndIEZZFPpNdOPlzHHmM7/mTA5/nPocRIXrzfxP0J3DH6JA=
+	t=1719832580; cv=none; b=CRS+Gt4XzkZVf4+srlhcuNU7/FmI8LWz2ry+Lm+XjFuAeEwydFTge1Xi56Uv+2YhKYIvjw+f5jnAtZQ9D0rE5z5EfqGqVtblPiWZ8h4v7ZD8cIP/XGyILCfq8DABou9ioZWPJ4TjAGOTwa+uS513FHWO6YR1nN1LhmMqpmX2Wto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719832560; c=relaxed/simple;
-	bh=4ddreTu5LbcKhaTksdZi+sf51LSj3+yN1qf5sdX0dDc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=leaw/qq9cooLRLKYFF5I7e1MDRMV8V8xKOANQrIyOYvieQ+npzdCMzqmxcWyerFbSSIDO/qTJRmQMDGeJqn29LKjIStZJ1fuOQMP0x+sEaV3y8z/MNpdbkhWeRrJZHNe5c2ePls7sep3WoR3uPMC5MtIxBL/8qlTTGTmsaZeTT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 68818339;
-	Mon,  1 Jul 2024 04:16:22 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8DC2C3F762;
-	Mon,  1 Jul 2024 04:15:55 -0700 (PDT)
-Date: Mon, 1 Jul 2024 12:15:50 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, ryan.roberts@arm.com,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Mark Brown <broonie@kernel.org>,
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 0/2] arm64: Drop
- ID_AA64PFR0_EL1_ELx_[64BIT_ONLY|32BIT_64BIT]
-Message-ID: <ZoKP5sgACZbGpmck@J2N7QTR9R3>
-References: <20240613102710.3295108-1-anshuman.khandual@arm.com>
+	s=arc-20240116; t=1719832580; c=relaxed/simple;
+	bh=aUmHFmCj00nbSQPlvA2WR19eWFxTbT4x0o2bCJLAsMI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m7MVdMTgXHleInKG/r4uddQdgWWIrSE1qRPp0kg5+mbETUv0BReyeVBrc9Ly+HJe6PP0kIEVKoJ1D20UHwDN/Msh6o3W1wNBcgTK1U66n6p1kLd5Zd0QUo+qrFBCAEX1JQTaj+iXEPHc24V7+I0ODnB58YFjMbG0PVzo81vv8sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=dFretxN3; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52cd717ec07so3582157e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 04:16:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719832577; x=1720437377; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OiTqHtixONqyEPfUYaZyZ5XwiBvCrwsHRC/9NwSSQuk=;
+        b=dFretxN31ooV7u5zrBSu9x1RXrlgxfQqiLM+RCixX/cHpSoAPigzhQx4JM6YfXQcN7
+         RVNoCQscjLfTa2X8czESI3roBtkiX2eTSaSQg4mfhAfKBDtw98nnoJ0ix1OUF0k018q0
+         3Zhjj2RAcvozGh8FBjr2sIyPYId8xZgL5QaospRNIR5T+vMRZAwfxEIIDpNaOmdjIDgs
+         ljJ7sFWSUbEy76iRPgMpbMr+cu6XjlQdzzRaQlS9+O9fQ9F/t22CdQziBX1i4zicc/fS
+         g6IIpKcnNiJwzMY8clXNUZzY0qPUbKtwv32Is2XOYKuRcish6f+gSoYOfRME44l94Z+f
+         aWqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719832577; x=1720437377;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OiTqHtixONqyEPfUYaZyZ5XwiBvCrwsHRC/9NwSSQuk=;
+        b=jxLY7R5yOhEeULHGCfLlTV9z91uS0uVRH7cbOLIU/nCD7gDrHXchPbhA4pEP8o+L3Y
+         lm9EmsgKKI3nT0DvgNhak4I7TkWhV27iA6X9ayfPF3JnylJcxN0urpTTXy5iXllPDYVS
+         X/dp1e96V3BaHSK+EitR/Xu+REGYVrvGef7WrGbiMCQHkPU5epBozgqfx6ovsBzLMHx5
+         9W/L055IbQg98wy9pBBv3BnRVmwpv1z1dK6G+xLHFJySHg54M2AfrKUU/fr3+sSnQygf
+         bOZYN8x0m5nr5mBp/9d3emNthkJrPdKGGTjCTr3OmB8zegquXvkEjJNlhCDc2SEWTXd+
+         4BLA==
+X-Forwarded-Encrypted: i=1; AJvYcCULc/FOk9q9YIGcsCbwUqLk5g+k052fykp4tOii5WAWaX1yf1sDhw4IciWInb0zMxscZT2GzNtL4I8N61MgISKc738WZQwHWQ2buT0B
+X-Gm-Message-State: AOJu0YwghAWltpm8m5zYkzxS2ceanndjx/s3seDd69/z/KC28yoIcbeK
+	4QwHWhLC8M6Cvm4fFe+/ZCnVmwDhlV42e7Z4MbxovTesjiK4ua1VrY2ZSG01adeM6R2TOBchVa/
+	um2rLFiQO9pTSWh8d71pdMvnahjMwRfuWnbRfyQ==
+X-Google-Smtp-Source: AGHT+IFZQjK7geifJ09MRCpbq8brbTyrKcPuKgZAiXAm/M2ljIsoMT+3i7x1VgQPpeH0MNSsnPaG1VF6VOFIScHpZIQ=
+X-Received: by 2002:a05:651c:1033:b0:2ec:5488:ccaf with SMTP id
+ 38308e7fff4ca-2ee5e6bc337mr36386171fa.35.1719832576733; Mon, 01 Jul 2024
+ 04:16:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240613102710.3295108-1-anshuman.khandual@arm.com>
+References: <20240628080146.49545-1-andrei.simion@microchip.com>
+ <20240628080146.49545-2-andrei.simion@microchip.com> <CAMRc=MeJyByMvcFT2aJDK87bz4=+UXEuMtQ4G4MZUAUt39SS1Q@mail.gmail.com>
+ <67d3646f-1b84-4d2d-9e36-be898f13be90@microchip.com> <CAMRc=MeJM4LmczCbZ8bKytLZKY_mP=Q8eaUprLMmO8BYHecStw@mail.gmail.com>
+ <c1b53308-d1d5-412b-9558-9f40dd237397@microchip.com> <CAMRc=Mewx0NAdFBX6hpes_oa62M_Jp=LtzAPK73tZv+tKxnScA@mail.gmail.com>
+ <dbba7a80-dc91-4685-bb62-34503eed1a02@microchip.com>
+In-Reply-To: <dbba7a80-dc91-4685-bb62-34503eed1a02@microchip.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 1 Jul 2024 13:16:04 +0200
+Message-ID: <CAMRc=MfiYZOzA+T6+_jZgz-=UsHxGO5vhS8zhjX2ckUf2YxG_w@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] eeprom: at24: avoid adjusting offset for
+ 24AA025E{48, 64}
+To: Andrei.Simion@microchip.com
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com, 
+	claudiu.beznea@tuxon.dev, arnd@arndb.de, gregkh@linuxfoundation.org, 
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	claudiu.beznea@microchip.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 13, 2024 at 03:57:08PM +0530, Anshuman Khandual wrote:
-> This series replaces custom macros usage for ID_AA64PFR0_EL1_ELx_64BIT_ONLY
-> and ID_AA64PFR0_EL1_ELx_32BIT_64BIT fields, thus finally just dropping them
-> off completely. This series applies on v6.10-rc3
-> 
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Oliver Upton <oliver.upton@linux.dev>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: kvmarm@lists.linux.dev
-> Cc: linux-kernel@vger.kernel.org
-> 
-> Changes in V2:
-> 
-> - Replaced FIELD_PREP() with SYS_FIELD_PREP_ENUM() as per Marc
-> 
-> Changes in V1:
-> 
-> https://lore.kernel.org/all/20240418053804.2573071-1-anshuman.khandual@arm.com/
-> 
-> Anshuman Khandual (2):
->   KVM: arm64: Replace custom macros with fields from ID_AA64PFR0_EL1
->   arm64/cpufeature: Replace custom macros with fields from ID_AA64PFR0_EL1
+On Mon, Jul 1, 2024 at 12:20=E2=80=AFPM <Andrei.Simion@microchip.com> wrote=
+:
+>
+> On 01.07.2024 11:46, Bartosz Golaszewski wrote:
+> > EXTERNAL EMAIL: Do not click links or open attachments unless you know =
+the content is safe
+> >
+> > On Mon, Jul 1, 2024 at 9:23=E2=80=AFAM <Andrei.Simion@microchip.com> wr=
+ote:
+> >>
+> >>>>
+> >>>> For those types of eeprom 24AA025E{48, 64} adjusting offset is not r=
+equired (at24_get_offset_adj()).
+> >>>> So, indeed, it is an entanglement in logic.
+> >>>> To keep the implementation as it is:
+> >>>> adjoff (which is a flag that indicates when to use the adjusting off=
+set) needs to be 1 for old compatibles but for these new ones needs to be 0=
+.
+> >>>>
+> >>>> I think that is enough not to break the existing users. What are you=
+r thoughts?
+> >>>>
+> >>>
+> >>> Wait... is the adjoff field effectively a boolean? Why u8?
+> >>>
+> >>
+> >> struct at24_data contains offset_adj which will get value calling at24=
+_get_offset_adj()) if adjoff is true (1).
+> >> Yes, adjoff needs to be treated as a boolean. I will change it in the =
+next version.
+> >>
+> >
+> > No, wait. Why can't you just do:
+> >
+> > AT24_CHIP_DATA(at24_data_24aa025e48, 48 / 8, AT24_FLAG_READONLY);
+> >
+> > and avoid this whole new macro variant entirely?
+> >
+>
+> just AT24_CHIP_DATA(at24_data_24aa025e48, 48 / 8, AT24_FLAG_READONLY):
+> # hexdump -C /sys/bus/nvmem/devices/1-00532/cells/eui48@fa\,0
+> 00000000  ff ff ff ff ff ff                                 |......|
+> 00000006
+> # hexdump -C /sys/bus/nvmem/devices/1-00521/cells/eui48@fa\,0
+> 00000000  ff ff ff ff ff ff                                 |......|
+> 00000006
+>
+> with this patch (adjoff false and new macro)
+> # hexdump -C /sys/bus/nvmem/devices/1-00521/cells/eui48@fa\,0
+> 00000000  04 91 62 [the rest bytes]                                 |..b.=
+..|
+> 00000006
+> # hexdump -C /sys/bus/nvmem/devices/1-00532/cells/eui48@fa\,0
+> 00000000  04 91 62 [the rest bytes]                                 |..b.=
+.m|
+> 00000006
+> #
+>
 
-For the series:
+Ok, but your goal is for at24_get_offset_adj() to return 0, isn't it?
+This is what line
 
-Acked-by: Mark Rutland <mark.rutland@arm.com>
+at24->offset_adj =3D cdata->adjoff ? at24_get_offset_adj(flags, byte_len) :=
+ 0;
 
-Mark.
+is effectively achieving. What's the difference between this patch and
+the solution I'm proposing? Isn't the offset_adj field 0 in both
+cases? Is there any other difference I'm not seeing?
 
-> 
->  arch/arm64/include/asm/cpufeature.h            |  4 ++--
->  arch/arm64/include/asm/sysreg.h                |  4 ----
->  arch/arm64/kernel/cpufeature.c                 |  4 ++--
->  arch/arm64/kvm/hyp/include/nvhe/fixed_config.h | 10 +++++-----
->  arch/arm64/kvm/hyp/nvhe/pkvm.c                 |  4 ++--
->  arch/arm64/kvm/hyp/nvhe/sys_regs.c             |  2 +-
->  6 files changed, 12 insertions(+), 16 deletions(-)
-> 
-> -- 
-> 2.30.2
-> 
+Because I still think we can avoid all this churn.
+
+Bart
 
