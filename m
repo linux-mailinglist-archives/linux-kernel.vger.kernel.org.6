@@ -1,146 +1,227 @@
-Return-Path: <linux-kernel+bounces-236783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BAA791E703
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:57:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0FD591E704
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:58:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC697B210EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:57:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F175B22B1A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45D616E88C;
-	Mon,  1 Jul 2024 17:57:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4178316E88C;
+	Mon,  1 Jul 2024 17:58:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iiB/hVX4"
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="aRGCojjg"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2086.outbound.protection.outlook.com [40.107.220.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A3E16D4F0
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 17:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719856666; cv=none; b=kaLQB6sV78qch8XgZjt6RMSuCoTbmm625j36FJMOcA7fKSbZwmfLOKH8j3QRCruQaFJPvPjl0kRrRbCFyNpBYG6Dh5MLvVxeTTM8ZUmy3iUlk7jNCn+eGc4B2/k1G2+MquLucWF4wX69L+g+by3VBqXUPwEfX+oLdwZYTR9X2NI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719856666; c=relaxed/simple;
-	bh=SSh9HCaWvyEmhyXPHgrKUYkleMVbvV4Dm8MXK2e8yZ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nQrExFCLuO58x0//84rPC5LVR35tTnutIngmY5wKhlJu2gmztIK6UnyAKhmq3pyKfZIkpO05sbbozU3VJ0Am5oVwQ3k8/nu/MEKFZ7SVUy1Z/7xyKKf6A/SjfyPI8ubeny+iMJhYKqhIKAcGhuKmuvXV/MLHXlLeSe4UZTV6lYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iiB/hVX4; arc=none smtp.client-ip=209.85.160.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-250c0555a63so1638069fac.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 10:57:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719856664; x=1720461464; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Iq7LaOoJ929Ne7IIqCNeS+dBDfJFsJTnNAQTkDtHOm0=;
-        b=iiB/hVX49V0hpgMsAkOWXCJ2pCJYiPurj6+y6s4qk2LjE3lKL36Ps+C/G66noak/s5
-         0bthG2UI9q76ItDVrnLZY0qA1T0lruu1oGVbF0g3CdiLvo+yz8iP8owKZw3aoJ0WxNL3
-         uUbYoC1VIXQrHhrj90yNnZZdLl9Ikidq82+lN4hO3fO2v0N/PLfDQAl8AJNe0i6EV8RG
-         Jzub6GxEvXX10Y7D9wTbY+n/b/o8jRs5UC9+wY+6vgFsDBgMwXZgNA/LP8SeHWfR8Sx1
-         eMdVaj5zP9PY1d+HrxeFIEJl/Bqe1jQ+laqqqd/XDE5vv26ZC6hpDp5iKhYcuUsAC+Uw
-         xB+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719856664; x=1720461464;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Iq7LaOoJ929Ne7IIqCNeS+dBDfJFsJTnNAQTkDtHOm0=;
-        b=Lxf2s0lEshKh168pY+AtQ8G0O0eZaGMclptLWFEdp9Euo4iQ03pSBDc2xhrV8Jz1by
-         MLhfmUFdfVQaaEWxx0gioOXYliPnrAPMNROY2DJftfuIBs8YiYHXz7CnswN1ynx7o7PN
-         cPK3l3zaaLAWKcug4W7YfG3QlGIjnFwrl47hFt+npO5pBgWb5/1CsCGQrkmP/76mVwZp
-         UvUFXbcCpJkv5btGOtkl5RFMbWvsnt1icq3+6rsIyJvIpSSOWCf1dgAl3wDmoadPjmyg
-         Hwq91VvMHonDCScWpB/0o5TnEeTqa99pf9zwEWTLMNHGqiPuFUuufs7uKCd4e3wgRbrI
-         1tXQ==
-X-Gm-Message-State: AOJu0YxlX95v6YZcHLw1EwHzJImfGe286IAPkZilwchfdEhD69AzJ3VR
-	NR5a8wkvCrpBoc5HAkbjS17LzVCJPRW7CcPpEVUdMqipmo81t/3s
-X-Google-Smtp-Source: AGHT+IHcImss3ZKjRkkmMrd9b9X4rGySjxBpsw1cPL0M4Fg4bC3ZEpvE4Id7GDKSHjFtpuRmhhUy+g==
-X-Received: by 2002:a05:6870:9626:b0:258:42c8:7f69 with SMTP id 586e51a60fabf-25db33f81f1mr5718323fac.23.1719856663587;
-        Mon, 01 Jul 2024 10:57:43 -0700 (PDT)
-Received: from [192.168.1.224] (syn-067-048-091-116.res.spectrum.com. [67.48.91.116])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25d8e1f278fsm1829479fac.24.2024.07.01.10.57.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Jul 2024 10:57:43 -0700 (PDT)
-Message-ID: <8a7ae125-883c-4c45-8b89-791066fb5866@gmail.com>
-Date: Mon, 1 Jul 2024 12:57:40 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF34816EB75
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 17:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719856687; cv=fail; b=cgNwVGaYwlD5p0T0CBxdiCJpLqS+o1Oc+sEXwD5xc/69UJYjstj3d8//mGS+qD2GK0xpfbjvjNO8jovKwKrBqCOzhGhKxkyLXQRiU9YcTax8EYgly2BDWoBVs36Hp2O5u/h+ooW6S9UEQB+Zbovmhlj/l9uS8Rv5YomJjzBOInc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719856687; c=relaxed/simple;
+	bh=wY+aqkQFEjKquMXvdxwZnrY4yS1Z+bgeZWKZ7nmYKAw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=UYUEXJmwoXjA8fb7Ilc2cigBb7JIioBuH9EWMIYVqfE5U4ZNrEuR6EaOMofv00jD7AuXdrhFrKjQLtS2D1bjEGJzCdeWcLZc9jYhDHE8jjJHt5S0XQGn01i0uAp/I+8e/Zc7zSn9v4DfeB0PXWCsGMj9HcXuC43VaeyLzMGkTA4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=aRGCojjg; arc=fail smtp.client-ip=40.107.220.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QWOF+rSLt/tVr9Wh0gyzYhjEp9+m2C9nVlQJMeTP4zTbj39YUDHjnEHZKbmcVRbinPLBvFrQTsczMAixbA5d63g521rq63snSlfOD+GkR2jCdPmd57bcGGG3CDzVDaIXK2n/0h4ompwHSxjpslTpM+ys/znAo6kz/Lbc2Odkac9drCDc8IdFJ+CiZhK8B80D2l+rKAWdoYChn0sRrtAKsJSiVNvMafOnSG7hfgWRuXzLWPt1vywFUlsVTYvI+MkYgIcXPPUIgGzxhTMDHWrm/V7pgffsAZTvvqWPvMZICEAd1Y0T6O6mYIWJK459kV/B1mIwpRU4AWfkjFgKr0I39w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wY+aqkQFEjKquMXvdxwZnrY4yS1Z+bgeZWKZ7nmYKAw=;
+ b=cbyIIapLr+CLHV6fD0FCRw9yBdeSR1SZVt6daMMfZ/scnJCZmX+/q6jG9jqExIGDq3+ES3HWNeIZV3ZqmgkMntftnbYhiOKIYgcD9o4D/HqrCM6ZzcifH/dFO5vf0brSel7UzQU+SO/SQWRvIg1iI22OQVOM0ISIJjxUffl4bl069XCoDCO6zTu9KffUDvXpUbsQfx7R6XNoxLEwp2a6yv3UpECS3fjRCLMdluBrjgwe+etiRCvJKZlpR99haMdn6MepEEKMverncVnbNpd9gtW1I6QwwG2jFYOFfEIu8PvccnhcZ3/5uTt/QIjn45j2ejVQT3UjiJ8TM6YMOINkhQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wY+aqkQFEjKquMXvdxwZnrY4yS1Z+bgeZWKZ7nmYKAw=;
+ b=aRGCojjg65v6MCVgT+k0476CXEaTCQfjiAK1xp3FYCik1hXtTVMgczQtczQK5asxXd+9K9BRF/ZEKSMql0culHPrY/1cQUo95y1RjaCIt9hG36/KTzGNPVtLJ0LkK6OnAAF7lZd1UMHdF7DL73pkgIqPo4S63FRvb5cndA2dA+A=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from SN6PR12MB2767.namprd12.prod.outlook.com (2603:10b6:805:75::23)
+ by MN0PR12MB5739.namprd12.prod.outlook.com (2603:10b6:208:372::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.29; Mon, 1 Jul
+ 2024 17:58:01 +0000
+Received: from SN6PR12MB2767.namprd12.prod.outlook.com
+ ([fe80::e441:89a7:4dd:dce7]) by SN6PR12MB2767.namprd12.prod.outlook.com
+ ([fe80::e441:89a7:4dd:dce7%4]) with mapi id 15.20.7698.025; Mon, 1 Jul 2024
+ 17:58:01 +0000
+Message-ID: <5cf60d52-1682-4244-b892-688b22eaf4a1@amd.com>
+Date: Mon, 1 Jul 2024 12:57:58 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/mm: fix lookup_address() to handle physical memory
+ holes in direct mapping
+Content-Language: en-US
+To: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
+ dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de
+Cc: x86@kernel.org, hpa@zytor.com, kirill.shutemov@linux.intel.com,
+ rick.p.edgecombe@intel.com, mhklinux@outlook.com, peterx@redhat.com,
+ linux-kernel@vger.kernel.org, thomas.lendacky@amd.com,
+ linux-coco@lists.linux.dev, jroedel@suse.de
+References: <20240628205229.193800-1-Ashish.Kalra@amd.com>
+ <2982a4f2-ea8f-4fa4-81ea-d73c00fc2ad0@suse.com>
+From: "Kalra, Ashish" <ashish.kalra@amd.com>
+In-Reply-To: <2982a4f2-ea8f-4fa4-81ea-d73c00fc2ad0@suse.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SA9P221CA0019.NAMP221.PROD.OUTLOOK.COM
+ (2603:10b6:806:25::24) To SN6PR12MB2767.namprd12.prod.outlook.com
+ (2603:10b6:805:75::23)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 3/4] driver core: shut down devices asynchronously
-To: Christoph Hellwig <hch@lst.de>
-Cc: linux-kernel@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J . Wysocki" <rafael@kernel.org>,
- Martin Belanger <Martin.Belanger@dell.com>,
- Oliver O'Halloran <oohall@gmail.com>, Daniel Wagner <dwagner@suse.de>,
- Keith Busch <kbusch@kernel.org>, Lukas Wunner <lukas@wunner.de>,
- David Jeffery <djeffery@redhat.com>, Jeremy Allison <jallison@ciq.com>,
- Jens Axboe <axboe@fb.com>, Sagi Grimberg <sagi@grimberg.me>,
- linux-nvme@lists.infradead.org
-References: <20240626194650.3837-1-stuart.w.hayes@gmail.com>
- <20240626194650.3837-4-stuart.w.hayes@gmail.com>
- <20240627055515.GC15415@lst.de>
-Content-Language: en-US
-From: stuart hayes <stuart.w.hayes@gmail.com>
-In-Reply-To: <20240627055515.GC15415@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN6PR12MB2767:EE_|MN0PR12MB5739:EE_
+X-MS-Office365-Filtering-Correlation-Id: d59aa314-e34b-4d84-cff4-08dc99f75910
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dGZweExYb0J0QlBQYVdmSlQyVVFmUGdVSTZ5N3lxVWd0SU5YdjJJVGZXdC9s?=
+ =?utf-8?B?RUhXZzQ1RXVFNGtDQlFjOHM5c1h3b2wzNDc0ZlhxN2NEY2xYZWRzQzhpaUF0?=
+ =?utf-8?B?djJRVFBMb2FuNXFiSDN2T3VSQXlmQSt4VVM2N1F1Z3dxeDdVWGNSNzJyWlJP?=
+ =?utf-8?B?UjFvLzVGN0l6Qk9LWHdxTlNCOGFxTFpzbVRzVm40VVBzR2VwZ0kzcmpPbVUv?=
+ =?utf-8?B?SGFTYXQ5dWN3MyttWUxQQThiSjNuZGowVnNXZ1hqcE9hOHRPKzFqcXVvcmZX?=
+ =?utf-8?B?K2w2cE8vQXh1TDg3azNBSzdNRzUyNy9HWVoyT2lIREdWam5KSHR4cmxRTzMy?=
+ =?utf-8?B?cmRuaGllSURLM3k4YTJiUW1aUUdTc1ZTNTIxbFk4Zzc2U0Z3SktLMm5SbmVG?=
+ =?utf-8?B?b3Nta1dqUWpPMk85QmhSSURBY0R3NlZtbVFVQXBHbjRKa3FYa2FTRjhCdU05?=
+ =?utf-8?B?eHRxdCtBZXVWbmx4MmhMSWhTSkwvc25NTGVuZ3UwemM5M1VCSnRkbnZnMmxP?=
+ =?utf-8?B?bkxqb0hXa2loZUIyTS9FMjVLclN2aHlxQVN1R2FJUGgrb1NGNG9hSU9aSmNK?=
+ =?utf-8?B?K1p3emVnQm9lTTVXbGxLNytObzhDQ1NvN25Ebm0wUVZKd3dpZzE2MWlrejRv?=
+ =?utf-8?B?emRGMlpEYzU4dUE3RWx1SVNFQS9sSXgvemNoRWlMUmhQSVV2SnZzK1R2T2s5?=
+ =?utf-8?B?QzUvU2FTMzN6WFV3cTF3M0IzNVlvZVh5bDNMSjh0Q08xb2Z2SDhHTEZ0b3Bl?=
+ =?utf-8?B?d1hiWldFZlFNdjVQVXdkckUyTmxsWHczZGJuMEEvS3luUzQ1TmhUU3B4L3Yw?=
+ =?utf-8?B?aENnQzZrdVErYk56NlpBZlFqbzhOeW5xVDNwVEpvTnlNUXEyMXY1d3pERW1D?=
+ =?utf-8?B?eWtRSElicDdibWRrS21Wb1ovUW0rTVhsNTM5MEdzVVBrSzdIQTdBVVF1aEtX?=
+ =?utf-8?B?V09BRW1JVDhDdFU4QVRUZlNBamtYWHI1b0hMMnFHOTJzRmpLRyt2cnM3eGJq?=
+ =?utf-8?B?OXNUK2dXWnlTU3llMjV4V0FtT3cvdUhMNUN2OXlROU5CeVN6d2p3NFpJdUNt?=
+ =?utf-8?B?dytKS01wUDVOZnlwUEdsd0I4Rmk0TStMdGlxc2kzQys5MDAwak9wWjV2RGxz?=
+ =?utf-8?B?VDVZWjMwVlhMVllvVzBiTVRmWCtoa2ZIUVJzVVR2RWxySDRGaVUyVTB3ejFr?=
+ =?utf-8?B?WlNOZFg0YW1BaGtNQldmU01ycFhhZGhBV1RmblE1ZTNZV2U2OGxsY2l4ZzZI?=
+ =?utf-8?B?TnkxY29tTlBoNlhlNlRPdTlYc1lBR3U2ay9GTVBpakdpTThib0FZd0tkL2FR?=
+ =?utf-8?B?am1TVU5SblF1Y3dHV3lmdGwrNlFHL1NaRW5xdHBkeEphczdIbjM5RDhZemlw?=
+ =?utf-8?B?SjhKeFNzZmsxL05INDRHanVjTm14RnZ3Zzd2SXl0NTFkdUExK0pzRXd5MUc1?=
+ =?utf-8?B?TnVCbzNTbTJZWXVJZEZQZE5zeFRNSFE2TGxnODl2ZzVDTzZWUW0xckxwcWdZ?=
+ =?utf-8?B?blF3TmZ4TjNLV2dpU0lLMVN5M3dhRUp3RE83SmhmbHFpY0xlbC9zbDhwcnhF?=
+ =?utf-8?B?a2c0dWpqNHRqeHBDZzh0SHVidnlaWXZnVForQ3lwcXp1S1NqVXJCYmxtWU5y?=
+ =?utf-8?B?NUV1YW5SSjlDYit2KzJyNnpBZXNlSWQxeURCQnBSaVVXdlFMOVpTVXBlOFpn?=
+ =?utf-8?B?TTZURldIa055dXZick5TTTNGbElDMU9aRGcybzhGWk4rODhkT2djb2VrUi80?=
+ =?utf-8?B?Kyt2bjFkbHN5dEpsbk5yUHFEcC9uK1lsbmRhYUQ4ZXZNUWROeFRyMWVNOUh1?=
+ =?utf-8?B?WTVLbCthL3Jxb1MvYjFkZz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR12MB2767.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cGZXRTA4c0dhbVlxc2x6RmhwTE9RMDdDZ010QWNZWkE2UGQ3TGs0VUtjWXYx?=
+ =?utf-8?B?YlgzaXJFVUV5ZjJvTzFja280T0xjTHdDWlc2eW9rMnNrZENyUEVWY3VjZW40?=
+ =?utf-8?B?YysrUTVMZzZaa0UwZG8rQmFNdUVZWlJ5b1dadjJGb3h0VjVqSWFIN0d5ZWZk?=
+ =?utf-8?B?dTUzWWlQTXBKYVRNZ2hJRlg0U0w2SmdaK294Z0FvdUNYRDdCbmxyai8xajJM?=
+ =?utf-8?B?RDRVZXMrZE1wYkUyc3dCNTRjbkkyVGxodURPOHhBV2drR2ZJeUtRM0xuZHBD?=
+ =?utf-8?B?TXIyV2tGYVRVZzJ0dGxnZGI0RlZyd05LektrYXJGMjBNUUpCaE9ydk9EVnZ3?=
+ =?utf-8?B?c1FNZFI5dVhKb0JlOE9PUUNmQnE2Y0VEVkFuTk1FMjNOL0VjdkhRME1RTTRr?=
+ =?utf-8?B?VTRKWVVxQ2dUdzhsT2dWTG1ZZmgrYjRsZnFQcEh6TmtEZTEwVTZKYlNqK01L?=
+ =?utf-8?B?NTJ6N2N1bm11R3puc2doaytoUUkwbWVzemtqYnFRNG02U1o1ekpUUnNqV2E3?=
+ =?utf-8?B?VWpPUldrdWZUWkxUdFBkTlltR0h3OVhEL1hHYnpRM3U1TEVlWnFtTk5zbk5H?=
+ =?utf-8?B?RGxSZ2FaVnBDNEdzcnZ6NEZLSWI5TVJSek5wdzVja1k2eHBqaHpDaDl2cHJH?=
+ =?utf-8?B?SmtoZk9lYk8xM3V1SzhBQ0tGckxBdERVTlZ4YjhqSm4xUXBnQnZ3MDFSc283?=
+ =?utf-8?B?ZEFqMFhhdFczc0c0b1hDZllGZ1N1ZU53Z1VqRTVrc2dGZHh1V0RFT2dRdjVu?=
+ =?utf-8?B?M1VSNHVnakR1azRoZUZXN05SSFVHb2ZwNnphTFhmczh6QThOL3c4azhrYVE5?=
+ =?utf-8?B?YjR2dS9USzY2bzBuRVNWSG16c1UweloyZS9uZ1A2enVXeHI1cVh2TCtmUTlo?=
+ =?utf-8?B?S3pwT01kRFNYMGZvWkNENlNkd01UR3RtQ2NCSmpoSzZ3dElnNVlsVDFYWm1Y?=
+ =?utf-8?B?Y2cybHpZVG5ZcG9Cdm91VjRtK3dSZ3A4NXJkTVVXa2JyWHYrQzVkVEplVmhh?=
+ =?utf-8?B?RnFNNFkxU0lZKzFGbFMxWUFJRW8wT010bHczS1gwbTF0dThJOTRxenBlWVY4?=
+ =?utf-8?B?Y2I4V3dRMzNWdTkxVHdKSUxoMU5ZcGtlckM4QTk4RlVxYWhWelJCVm1rUi9X?=
+ =?utf-8?B?Mk8rcnByazJqQTl4REFOTkNuS2hKODcyeGtvVEJ4bUxsVkUzUTJzT3VHb2sr?=
+ =?utf-8?B?bU9pdjlXK2l6d1RrK25Ka2JsU3FzcmlsTnZ5NC95eEZmUUg1aWdTSXJqZ0Rn?=
+ =?utf-8?B?VFNMalhxN3MxQkZ6Q1hEWEFCYStVMGpCUFJEditHeFh1Y0VoalRQdVB2WEhE?=
+ =?utf-8?B?cGNxbGVwbUN5LzZWenkwM2I4ckpmeXlGdnpUUkw4L1cxY09tM2tBM2xPT0c5?=
+ =?utf-8?B?ckpHNmtXQUxBVHN0NE1rZ05xTVNFV0UwWGVva2gzUndEaXcrRzA2blJsdFIv?=
+ =?utf-8?B?M1E3cHcxWGtLODZic21QckM4UnlQVVZKWktWajBqU3hoWEYvTVFKTUtSZzQ5?=
+ =?utf-8?B?TWJvVDhlSFpaQWVWWnNkcjYyNWV6S2dQRWNNRENtU280akJTRERsbnlqaHFH?=
+ =?utf-8?B?a2JXQ2NDU2JVdHIwUytXMk1jZFBqYXdZMnVKMzdRVzBOcFBIWnhmTlFNbDBl?=
+ =?utf-8?B?Zld2aDAvcElXdzgwcnBYdncvZEt2bWszRS9jZldkMHZaWDVReXhoOHBuUzFj?=
+ =?utf-8?B?RjFIRDBhVTQ4QlY4c2xNY0w4RG82NFl0a1FCbDcweWdwOHF5LzhNcWpCOEFn?=
+ =?utf-8?B?QUJIN2IwV0JLcWNRRjI5aFhpOGhsV0hrMmZ4Z3EySjhEWGdickJjdXJlOUpK?=
+ =?utf-8?B?WVgwZVZTWmFQUWx0TEVSeFN6aW9uQXRKdldlY1IyTnA2MU5NcmZTOEs2WXF1?=
+ =?utf-8?B?U0NPOUhmb2t2M29hNEdxbjJCOGd1OUJrTm5yZkNrS21JaElzc3FkcE91UGd0?=
+ =?utf-8?B?S2g1Y0thaWlBNlZ5QTN3cHJTL1I5a0VnQVMyciswMGVEcnp1cFg2ZlN1d0Rt?=
+ =?utf-8?B?ZXRUTGdZL3V5b09vNEMybzk3Z3NTMUsvTGs2OGFYYWMwa1k3aVA4aWRxY3I2?=
+ =?utf-8?B?Vk0xVXRlTXZTM0ZzRyt0Nk1PcjNXYy84SWEzQlZzOEtiOWRBQnRCdmNCUWU4?=
+ =?utf-8?Q?kZXEpWvNY8oOdgQxgbjpdUWRJ?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d59aa314-e34b-4d84-cff4-08dc99f75910
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR12MB2767.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2024 17:58:01.1164
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: O5pKm0JZZFxUoJe7e1tCBJZaR06nx7mKmgHsYQwdtoQ6LIUX1bSrqaaRBwEykhRVe0IjGjrNWr98GVdpDY+mTg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5739
 
 
-
-On 6/27/2024 12:55 AM, Christoph Hellwig wrote:
-> On Wed, Jun 26, 2024 at 02:46:49PM -0500, Stuart Hayes wrote:
->> Add code to allow asynchronous shutdown of devices, ensuring that each
->> device is shut down before its parents & suppliers.
+On 6/29/2024 5:20 AM, Jürgen Groß wrote:
+> On 28.06.24 22:52, Ashish Kalra wrote:
+>> From: Ashish Kalra <ashish.kalra@amd.com>
 >>
->> Add async_shutdown_enable to struct device_driver, and expose it via sysfs.
->> This can be used to view or change driver opt-in to asynchronous shutdown.
->> Only devices with drivers that have async_shutdown_enable enabled will be
->> shut down asynchronously.
+>> lookup_address_in_pgd_attr() at pte level it is simply returning
+>> pte_offset_kernel() and there does not seem to be a check for
+>> returning NULL if pte_none().
 >>
->> This can dramatically reduce system shutdown/reboot time on systems that
->> have multiple devices that take many seconds to shut down (like certain
->> NVMe drives). On one system tested, the shutdown time went from 11 minutes
->> without this patch to 55 seconds with the patch.
-> 
-> We discussed this before, but there is no summary of it and I of course
-> forgot the conclusion:
-> 
->   - why don't we do this by default?
+>> Fix lookup_address_in_pgd_attr() to add check for pte_none()
+>> after pte_offset_kernel() and return NULL if it is true.
+>
+> Please have a look at the comment above lookup_address(). You should not
+> break the documented behavior without verifying that no caller is relying
+> on the current behavior. If this is fine, please update the comment.
+>
+>
+I don't get that, in this case the PTE does not exist, so as per the comments here lookup_address() should have returned NULL.
 
-It is done by default in this version, for devices whose drivers opt-in.
+Thanks, Ashish
 
-In the previous discussion, you mentioned that you thought "safe" was the
-only sensible option (where "safe" was driver opt-in to async shutdown)...
-that is the default (and only) option with this version.  Greg K-H also
-requested opt-in as well, and suggested that "on" (driver opt-out) could
-be removed.
-
->   - why is it safe to user enable it?
-
-I guess it isn't necessarily safe, if there are any drivers that can't
-handle their devices shutting down asynchronously. I thought it would be
-nice to be able to enable driver opt-in from user space for testing, before
-changing the default setting for the driver.
-
-> 
->> + * @shutdown_after - used during device shutdown to ensure correct shutdown ordering.
-> 
-> Overly long line.
-> 
->> +static ssize_t async_shutdown_enable_store(struct device_driver *drv, const char *buf,
-> 
-> .. and here.
-> 
-I can correct these lines. I thought that an 80 character line length limit
-was no longer required, and saw another line a few lines above these that was
-even longer... and the checkpatch script didn't flag it either.
+>
+>>
+>> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
+>> ---
+>>   arch/x86/mm/pat/set_memory.c | 7 ++++++-
+>>   1 file changed, 6 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
+>> index 443a97e515c0..be8b5bf3bc3f 100644
+>> --- a/arch/x86/mm/pat/set_memory.c
+>> +++ b/arch/x86/mm/pat/set_memory.c
+>> @@ -672,6 +672,7 @@ pte_t *lookup_address_in_pgd_attr(pgd_t *pgd, unsigned long address,
+>>       p4d_t *p4d;
+>>       pud_t *pud;
+>>       pmd_t *pmd;
+>> +    pte_t *pte;
+>>         *level = PG_LEVEL_256T;
+>>       *nx = false;
+>> @@ -717,7 +718,11 @@ pte_t *lookup_address_in_pgd_attr(pgd_t *pgd, unsigned long address,
+>>       *nx |= pmd_flags(*pmd) & _PAGE_NX;
+>>       *rw &= pmd_flags(*pmd) & _PAGE_RW;
+>>   -    return pte_offset_kernel(pmd, address);
+>> +    pte = pte_offset_kernel(pmd, address);
+>> +    if (pte_none(*pte))
+>> +        return NULL;
+>> +
+>> +    return pte;
+>>   }
+>>     /*
+>
 
