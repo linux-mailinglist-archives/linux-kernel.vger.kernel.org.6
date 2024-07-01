@@ -1,80 +1,57 @@
-Return-Path: <linux-kernel+bounces-236653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2E4591E569
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:31:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 405B191E56C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:32:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3C9D1C216B5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:31:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0127281020
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:32:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C67816DC0A;
-	Mon,  1 Jul 2024 16:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5857216D9D9;
+	Mon,  1 Jul 2024 16:32:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dbQ14Rnt"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="wchgJlhB"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40A816CD1E;
-	Mon,  1 Jul 2024 16:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE55B46525;
+	Mon,  1 Jul 2024 16:32:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719851493; cv=none; b=hM/pKkrEhCn1CjyXI+0Mt2ioq8stPqj11X8MuliZOm5Bfn0MNZZcExyMUzCcSBqdLM24eKunqZ/6EPI6Q3/eAqR1QE40YODBUeoAlyJEbq6fLih8yAiiqPLuKixERaOlini9yR//shBmXgHAmPeFiFAUEf2QcmRm0g3mnIbQpSI=
+	t=1719851536; cv=none; b=FhXJ5NzgLwreIe8q0MMNh4nX3zQvK8B/VO7RAVphE0YS3U53Th9a8qqX/dporRPPh75GOGrRzVJPXywkk9iftolgAsFLoj80JO5w+/jX9b/V0Kwxg1+QwTIUee1CvfraATQEW7hLPVOINSTDVSbTMeqU43mlI3AaJwK7Wc/vFd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719851493; c=relaxed/simple;
-	bh=TifkD5hVkfGaSO8ihQ8YTBk0F409tUQni5mnGn4iz8c=;
+	s=arc-20240116; t=1719851536; c=relaxed/simple;
+	bh=MMBxZX2hH/sVgsNCW5bp8trGOlBYSIFLvqJ0oTPqdfA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q4S5n0Na+hliU6xiMGnsY5Gk3sWv8xpFZPFxVfVsTS9FtjkrtBBc6uHnuAmTg6GaDN5Q1319+NwPLkunVcOHeonI3JInV0f1I7RIte12b83rRU8UgTOCzGl/75bBHjrwzUP7PYn+cT5Zb1AlwaWbciy09bx7Lj7aHxuHFPefEFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dbQ14Rnt; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-706a4a04891so1928926b3a.3;
-        Mon, 01 Jul 2024 09:31:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719851492; x=1720456292; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DDxa8Y7qDFzYu84VzXuiVkhDJnkp6oD4zUKV4rga8Uw=;
-        b=dbQ14Rnt5CdSn7PAFYbaiXNEAGCLlgUPsDZjib4X3aEQKWvlC2lcjn7EtjfkdxLmNt
-         Gl1fp7Rfgl+omxSgP1eUpz2c7vhEGC4l9CLoE2HPb+xvE9tpAjrNFf7lhWMOGTYyqqhp
-         YXm1BGCixPSUjHsoCFwXJqIa0z+pQoRJxvPSL96GmPj+RQUhkRfIXfKE8ZGWqvAppjRF
-         3ahlbR7qznynU4QgY1kV8ecTB5UZywa8BubKTDhEGD+vbz3tGfPgHS0tQqGxcX9ndbLK
-         XNxKcOXny7+MbJdsCJdImzRwhbI11wchYeW9cc+u0ZhDoIzSUkyhr9GNd5WAKA8ioevm
-         3Kgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719851492; x=1720456292;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DDxa8Y7qDFzYu84VzXuiVkhDJnkp6oD4zUKV4rga8Uw=;
-        b=TMzA+fJtvojVWbqgwrsrflJzn2PYFUmcggb1IRviD/lxPoV1YeeNZ65TDmp/ndbmOv
-         ZFUpQn9WR7BhZcDITjrainxFdISEomaW5I1aOKBGiv++U6q/+DIifxq89S20UZ1Nm21v
-         awLdmrvvxdbnKieGEWsBi79jbO1+/XcQYG/CYUdsgvZeeJbvvzyfc3FT1cafPPacYAlX
-         aY7IBh6UHKxg3gLCmxVJZ4N71JsoLE4RBY8ZQ9XS2zZT4pupzaGenavsGyUWaA6xYYFG
-         W3CMj+Lg0GzzDjkrP2zwgbqCc7Tg8wcrz0TpL15bK6pFpWVtEP7QLgnKuUKosxdhbtB9
-         JikA==
-X-Forwarded-Encrypted: i=1; AJvYcCXvVbNsAUhy0wUyZgUJHhGd1QPfgrljg2qj/CHWeYFKv8qgvQxNiamyYOvYnEQJVdtA3znDVHF1MXoCg9LIY7J/Finu3pS2rB0bMzGv
-X-Gm-Message-State: AOJu0Yw99QCeOjC6Kd7D/TAQmUnTRhZ0T5uAk/lzGmB0uyUhX+0FXJ38
-	u8TgtQZlJLtJLiOEaZfenBXO9X0mMdsMPVctJhXdLNlfz6CKFH4bko05LQ==
-X-Google-Smtp-Source: AGHT+IG5jVz15PRjp9GhSUvJnrNd+szn4cEnfN2pl4hgvcfqVt6He2l3AUF6hjhr8yBNMH24PhWWqg==
-X-Received: by 2002:a05:6a00:3c8b:b0:705:d8b8:682d with SMTP id d2e1a72fcca58-70aaaf2523amr5172462b3a.22.1719851491786;
-        Mon, 01 Jul 2024 09:31:31 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:7783:69e6:8487:f6ab])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-708044ae3a0sm6925981b3a.173.2024.07.01.09.31.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 09:31:31 -0700 (PDT)
-Date: Mon, 1 Jul 2024 09:31:28 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Benjamin Tissoires <bentiss@kernel.org>
-Cc: linux-input@vger.kernel.org, Jeff LaBundy <jeff@labundy.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] Input: simplify event handling logic
-Message-ID: <ZoLZ4INw2gZjNzw1@google.com>
-References: <20240701060553.869989-1-dmitry.torokhov@gmail.com>
- <20240701060553.869989-4-dmitry.torokhov@gmail.com>
- <qevkkesgw7y2bypexmogght7iozo646vowjkovht5mplegzvnl@tzfffoaglijz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WMbFu4PLSRl5fu3Zx/iokbAO+giC15Kz3PGaJiBC2dSqyosicjuPXCR19OAl1DJugoDhwybXQ4WToPpurkUh6ua4qAXHJevxB8Kz6f1JEiXb0xy/dmquoECa9XqquQ2TTofQqkLhFM7rjPMWj/pgj88lP5PyIPfRYcrWDX/4vK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=wchgJlhB; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=AU7N4szUOgDr+wW5jeX3otLSueJJ1dESnDFcAc2lRx8=; b=wchgJlhBT+amcPbLTjNHChiKX4
+	sg526fH9p9aZdTjYQHC0n1NuH3zbXBevMlVae9DsHTTZTECMEi2csx4l3yst4N2XeQuJhc/KAyXFT
+	Zs88HDf1CrMO8DtdtaSOLMmLf1pwrHT7m9Ut0mPaeu7nYL1Y0PbO6uOim8nSPypu/Oks=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sOJwi-001YvR-MG; Mon, 01 Jul 2024 18:32:04 +0200
+Date: Mon, 1 Jul 2024 18:32:04 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Youwan Wang <youwan@nfschina.com>
+Cc: davem@davemloft.net, edumazet@google.com, hkallweit1@gmail.com,
+	kuba@kernel.org, linux-kernel@vger.kernel.org,
+	linux@armlinux.org.uk, netdev@vger.kernel.org, pabeni@redhat.com
+Subject: Re: [net-next,v1] net: phy: phy_device: fix PHY WOL enabled, PM
+ failed to suspend
+Message-ID: <b61cae2b-6b94-465e-b4e4-6c220c6c66d9@lunn.ch>
+References: <20240628060318.458925-1-youwan@nfschina.com>
+ <20240701062144.552508-1-youwan@nfschina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,27 +60,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <qevkkesgw7y2bypexmogght7iozo646vowjkovht5mplegzvnl@tzfffoaglijz>
+In-Reply-To: <20240701062144.552508-1-youwan@nfschina.com>
 
-On Mon, Jul 01, 2024 at 09:41:22AM +0200, Benjamin Tissoires wrote:
-> On Jun 30 2024, Dmitry Torokhov wrote:
-> >  /*
-> >   * Pass values first through all filters and then, if event has not been
-> >   * filtered out, through all open handles. This function is called with
+On Mon, Jul 01, 2024 at 02:21:44PM +0800, Youwan Wang wrote:
+
+Please always start a new thread with a new version of a
+patchset. Tools like patchwork require this, and without the patchset
+in patchwork, it is not going to be applied.
+
+> If the PHY of the mido bus is enabled with Wake-on-LAN (WOL),
+> we cannot suspend the PHY. Although the WOL status has been
+> checked in phy_suspend(), returning -EBUSY(-16) would cause
+> the Power Management (PM) to fail to suspend. Since
+> phy_suspend() is an exported symbol (EXPORT_SYMBOL),
+> timely error reporting is needed. Therefore, an additional
+> check is performed here. If the PHY of the mido bus is enabled
+> with WOL, we skip calling phy_suspend() to avoid PM failure.
 > 
-> Nitpick: maybe that comment above input_pass_values() should also be
-> amended now that the processing is more straightforward?
+> Thank you all for your analysis.
+> I am using the Linux kernel version 6.6, the current system is
+> utilizing ACPI firmware. However, in terms of configuration,
+> the system only includes MAC layer configuration while lacking
+> PHY configuration. Furthermore, it has been observed that the
+> phydev->attached_dev is NULL
+> 
+> Is it possible to add a judgment about netdev is NULL?
+> if (!netdev && phydev->wol_enabled &&
+>     !(phydrv->flags & PHY_ALWAYS_CALL_SUSPEND))
 
-I think the comment is still accurate from the higher POV. We do want to
-send the event(s) first through all the filters and the remainder is
-through the handlers. This is achieved by placing filters at the head of
-the list of handles attacher to the device, and placing regular handles
-at the tail of the list.
+Comments like this should be placed below the --- so they don't make
+it into the commit message.
 
-Do you want me to expand the comment?
+Why is phydev->attached_dev NULL? Was a MAC never attached to the PHY?
+Has the MAC disconnected the PHY as part of the suspend? It would be
+odd that a device being used for WoL would disconnect the PHY.
 
-Thanks.
+> 
+> log:
+> [  322.631362] OOM killer disabled.
+> [  322.631364] Freezing remaining freezable tasks
+> [  322.632536] Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
+> [  322.632540] printk: Suspending console(s) (use no_console_suspend to debug)
+> [  322.633052] YT8521 Gigabit Ethernet stmmac-0:01:
+> PM: dpm_run_callback(): mdio_bus_phy_suspend+0x0/0x110 [libphy] returns -16
+> [  322.633071] YT8521 Gigabit Ethernet stmmac-0:01:
+> PM: failed to suspend: error -16
+> [  322.669699] PM: Some devices failed to suspend, or early wake event detected
+> [  322.669949] OOM killer enabled.
+> [  322.669951] Restarting tasks ... done.
+> [  322.671008] random: crng reseeded on system resumption
+> [  322.671014] PM: suspend exit
+> 
+> If the YT8521 driver adds phydrv->flags, ask the YT8521 driver to process
+> WOL at suspend and resume time, the phydev->suspended_by_mdio_bus=1
+> flag would cause the resume failure.
+> 
+> log:
+> [  260.814763] YT8521 Gigabit Ethernet stmmac-0:01:
+> PM: dpm_run_callback():mdio_bus_phy_resume+0x0/0x160 [libphy] returns -95
+> [  260.814782] YT8521 Gigabit Ethernet stmmac-0:01:
+> PM: failed to resume: error -95
 
--- 
-Dmitry
+-95 is EOPNOTSUPP. Where is that coming from?
+
+	Andrew
 
