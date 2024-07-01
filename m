@@ -1,717 +1,214 @@
-Return-Path: <linux-kernel+bounces-236152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B18DC91DE19
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:34:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FC7191DDEF
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:31:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 366AD1F20FCF
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:34:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1245328249F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6765C143736;
-	Mon,  1 Jul 2024 11:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hIqvZEVT"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5901414387A;
+	Mon,  1 Jul 2024 11:31:37 +0000 (UTC)
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2124.outbound.protection.outlook.com [40.107.255.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05FDB1534EC;
-	Mon,  1 Jul 2024 11:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719833528; cv=none; b=tRnUZZA0sqjGY2VHAOdNatE5slY+1MZTeUdMgCkMgiUT3054n9N7bZoIvcVr8dJFxYrWzwgupP2vZLQbhDli4ICQJsqk282qm4w/wBN/0PTYTUnXF0PTGBKf0ZYatreCSYQbBxvrBM+JB+jYRBHd1WrmKhyNHUoRldXeFO5Z5zI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719833528; c=relaxed/simple;
-	bh=UEB2pUzUcoOt0r1h8EKSYRRzfI8FEyPBiM/jSqQN/Wg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jIiSUnQhtswB1qkc2aqtmAAgq6HonORvM9cHLe/BlnMcOn1VbBLDny3SNGdBNnUOZhJXg+R2k6Ke/fVR/dHGf7Ov51WLngLRPWxpoywSH7mVw/j6iMWADPNMEoEIs7IHS4us0blhUTQh6eTyccPOvRvaLzkpNODLGRTDy4jrJ0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hIqvZEVT; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 6A39624000A;
-	Mon,  1 Jul 2024 11:32:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1719833524;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eHG8lPGlQk6+IXxucX4unaLMS1tOpOoqGN2wBV2+b+Q=;
-	b=hIqvZEVTTPI12BajyP21kj3t7NtwnC954hShbuFKmK5JJeq6vp54mDZjTm23yj/6j7ZtFH
-	t2ap7DyW39eljVQG7nzdhf7/1XLJSpSL+JCp/p9VORtV8arvgj6Xlci4F/ujchA68jeY8S
-	l9qO9XA4aZduY7lXPxC7Y+E9OLQhlbh7kIpTq4SZf3SQNNeYFQ2XwRe5Y91bf5k94aVWcg
-	QJskuGVUbqu1DS7I5tlAxqdqmCXo/Qvprlez7yTMXVoDlmPtMwW7Cq2immyfT3Kabbjv9f
-	Yd9mYpv9kXB+ofkaBrxlZxYSskntHgswokugaE5SY16dYK+95MtGdyk10ZtaAA==
-From: Herve Codina <herve.codina@bootlin.com>
-To: Herve Codina <herve.codina@bootlin.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Qiang Zhao <qiang.zhao@nxp.com>,
-	Shengjiu Wang <shengjiu.wang@gmail.com>,
-	Xiubo Li <Xiubo.Lee@gmail.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Nicolin Chen <nicoleotsuka@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: alsa-devel@alsa-project.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v2 10/10] ASoC: fsl: fsl_qmc_audio: Add support for non-interleaved mode.
-Date: Mon,  1 Jul 2024 13:30:37 +0200
-Message-ID: <20240701113038.55144-11-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20240701113038.55144-1-herve.codina@bootlin.com>
-References: <20240701113038.55144-1-herve.codina@bootlin.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF652B9C6;
+	Mon,  1 Jul 2024 11:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.124
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719833496; cv=fail; b=fyYOaS+JCSm/NQRiTVGRZsL5mxirTytTJLP0ZxJeYYGic58LT98p6/nvsudri6myqmypuqEP+KJRYGvWIhcSnp57MyjNebn79L3lvwy+VV1yorGOcihuah5VIHUs4RsqZZtza/+/t+4Xo4UsayFaVanPr3wMNMFbFRrPobbwWds=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719833496; c=relaxed/simple;
+	bh=MNB/oj6E3ATgeAv7Spql3aeZL5BH2gwnTsO1OnjoiK0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=bp9UIXPQaKa8b1L/a/Rdy4QuApXGYMfG+iF8h45ugt2AZnU9CzEoZoDG3y1ZecCF1N3KmW9xh8w6sB+oIXHmfF6NdnhbYk3HUSRVpCubc7e0IjR2dHCWj6pbwKnITKD9SQnqMVq3dHO69Q/urN8GvnrQC4ls2XzcL6aEkqX+cA8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wesion.com; spf=pass smtp.mailfrom=wesion.com; arc=fail smtp.client-ip=40.107.255.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wesion.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wesion.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LXajuF6pX2/OFyVLgOypYlvXYKh3rFlEsCvpczr6qrkQBVzWDd6mqkav0LF3lQvxOZgZkAVJbiwHQBbqklJdL8us4wDlygaVEJxE8O1okC36ifxT8mIeljEzO5cJZkqSmQt6vpGDeHHwQ+JQcNPVoxoGrrd9YJBd9KUl9A/E05z237rpklTdCQ3wiJEvKHdbrZsAVr5MQSXtOL62AJh837m4x32TkNbiZcQErt7/g7HZSNZBedAtCKWaecTKNSo5zM6P8bH4DXRlcUvk7cO4MzXMu3WWesTgBQDv4wnLmA9qglsxtReUaUwiwY/SSjnrum62qCwU0E2BFSvt+UUtVw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MNB/oj6E3ATgeAv7Spql3aeZL5BH2gwnTsO1OnjoiK0=;
+ b=jWZaylRsVz//0vn1d6J6UMP8pAHfW0dGDbfAhwl89tY2DIvXh13rhdpwt3ap/mxjAFU9E5LVAwFkHNiykSX/zq52JQ048lVWNLen1h46ON4sPGGPMjkCtkXRCVIcU37EXcWMd2bjbcRXxug845AoUjc5Io8EOglFYq9FGdFlHSzzQp5eCAJmyQBu7WeprA0oPfoZZYSuUAgfRM9kk1sPj7RvRmFUi1r4yI5cj6wZTwhYZYxKiqhBUtTB2Ds2DQQyACWAS/M4zNw+So2AFs0BtGPeAM5/yhV0gVCqxSkJBL+X4v1NC8HMmMwQEGN1X/xtxPTNkwfNZeRZMK3f/Hp8aQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wesion.com; dmarc=pass action=none header.from=wesion.com;
+ dkim=pass header.d=wesion.com; arc=none
+Received: from TYZPR03MB7001.apcprd03.prod.outlook.com (2603:1096:400:26a::14)
+ by JH0PR03MB7653.apcprd03.prod.outlook.com (2603:1096:990:10::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.32; Mon, 1 Jul
+ 2024 11:31:30 +0000
+Received: from TYZPR03MB7001.apcprd03.prod.outlook.com
+ ([fe80::78dd:5e68:1a9c:36c0]) by TYZPR03MB7001.apcprd03.prod.outlook.com
+ ([fe80::78dd:5e68:1a9c:36c0%6]) with mapi id 15.20.7719.028; Mon, 1 Jul 2024
+ 11:31:30 +0000
+From: Jacobe Zang <jacobe.zang@wesion.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, "robh@kernel.org"
+	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"heiko@sntech.de" <heiko@sntech.de>, "kvalo@kernel.org" <kvalo@kernel.org>,
+	"davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
+	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>
+CC: "efectn@protonmail.com" <efectn@protonmail.com>, "dsimic@manjaro.org"
+	<dsimic@manjaro.org>, "jagan@edgeble.ai" <jagan@edgeble.ai>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-rockchip@lists.infradead.org"
+	<linux-rockchip@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "arend@broadcom.com" <arend@broadcom.com>,
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, "megi@xff.cz"
+	<megi@xff.cz>, "duoming@zju.edu.cn" <duoming@zju.edu.cn>,
+	"bhelgaas@google.com" <bhelgaas@google.com>, "minipli@grsecurity.net"
+	<minipli@grsecurity.net>, "brcm80211@lists.linux.dev"
+	<brcm80211@lists.linux.dev>, "brcm80211-dev-list.pdl@broadcom.com"
+	<brcm80211-dev-list.pdl@broadcom.com>, Nick Xie <nick@khadas.com>
+Subject: Re: [PATCH v3 3/5] arm64: dts: rockchip: Add AP6275P wireless support
+ to Khadas Edge 2
+Thread-Topic: [PATCH v3 3/5] arm64: dts: rockchip: Add AP6275P wireless
+ support to Khadas Edge 2
+Thread-Index: AQHaysA5gqQ7qqo00E6aPButxU3qdLHhkO8AgAAdHZeAAAytAIAAAH9G
+Date: Mon, 1 Jul 2024 11:31:30 +0000
+Message-ID:
+ <TYZPR03MB7001C414251A2A844D121A0E80D32@TYZPR03MB7001.apcprd03.prod.outlook.com>
+References: <20240630073605.2164346-1-jacobe.zang@wesion.com>
+ <20240630073605.2164346-4-jacobe.zang@wesion.com>
+ <eeeb3f1f-5c77-4ca5-b996-17b968b7c2f0@kernel.org>
+ <TYZPR03MB7001FFD5180C6248F14EE48E80D32@TYZPR03MB7001.apcprd03.prod.outlook.com>
+ <c2febca9-59e4-4505-bbec-6e61f7d8b944@kernel.org>
+In-Reply-To: <c2febca9-59e4-4505-bbec-6e61f7d8b944@kernel.org>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=wesion.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYZPR03MB7001:EE_|JH0PR03MB7653:EE_
+x-ms-office365-filtering-correlation-id: 1edf8738-9d49-4c05-718c-08dc99c15a58
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700018|921020;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?6SM48O8Zt7BSKYEmtgd/577nzeNvNArf7PiEBUAbrBniHrAwzlLA2Uka1K?=
+ =?iso-8859-1?Q?vv8TxZesAOqwTph5KiN4luM+R9RT/lzXw2zXJMhApf8k6MAYdFMhfW4i1E?=
+ =?iso-8859-1?Q?AixdZizhbC09KCfCTy4/ZKq2HuzcEV3qccKOInxzuh6a6V4si11W84r3l1?=
+ =?iso-8859-1?Q?imreTs3BsiyApao+SfiEZZvRu8D2VbRhxOyu6croAZ2r1rJOg0qwTNxYEq?=
+ =?iso-8859-1?Q?499e2d87kAeMD+uNyfyBx6+AEve7qWaPgd1yJM8CpIAgCYHd2Ge1GCmW6n?=
+ =?iso-8859-1?Q?Ekbo/5slgVPdw7k6Tstb62iyIoVBBk9IltccVUYxyDN+1ADYNf9EJle2zg?=
+ =?iso-8859-1?Q?Wxs31w7ezcy1InCb0JdlAGAstfLhQ+620D+9LK8/CMf+I8FGaeEgo2711q?=
+ =?iso-8859-1?Q?pB+kqwUBjrw9n+zqiyuaLNg9CA8cm0CxxkEtmkRezFEprpln4+4W2i9z/i?=
+ =?iso-8859-1?Q?JRtSKufodWC4G9ZSwjHyX7gPB8ttdhLZ2ICsbx2zl0S4d8gMawKTph5kD8?=
+ =?iso-8859-1?Q?evZEuZGxmiuksu6jomSUR3Pc8DdNELnCnl4lWz2syp0CDoiyB4fVtvcIKz?=
+ =?iso-8859-1?Q?CGjAhQDaTkg6Fi3CtXmRoi+ZtpFT28rjk/4qCgpfsUx83G6Y3ZMCdHrHKE?=
+ =?iso-8859-1?Q?cPHFPIH8XFvAlP9WuqJUN+/9BdCicvMjyV/XaA645bA6ODSAohG6DIR1x+?=
+ =?iso-8859-1?Q?HPv0zr7qr+qedsUuz5t8rrxKGTqaVffgw2nc5qxVteD8WntNlsuTbAg7fF?=
+ =?iso-8859-1?Q?FQaNQ/mDD3ub6LwHNPuJvU2W0is2DjxwaGedyYtKfrWXS+eWlrGUEeNbwI?=
+ =?iso-8859-1?Q?gnnsubvFtTJvq5CSbSoufw2MpSdnLm8wngIGNI+KSUxCg0TlABJXLX40e0?=
+ =?iso-8859-1?Q?DnO3ShxjKLQE/4oL4mMmFSvnrrLWc7Lwq7sLgl5uuPaTtlySnCdYcJ4IFi?=
+ =?iso-8859-1?Q?6gMyTGoPHjqLjW2lPueMKLvWviY1wlHAiD7Iv/5YMpV4TsjMkKSokuks8u?=
+ =?iso-8859-1?Q?TzJgPxgw+XHIJqDpNv5BaGLnvGj6Bex9IlWpiXmZmVGVRNQSZbCFd4Sgn6?=
+ =?iso-8859-1?Q?8m4hJY2ZfJB0tjGhD8D7BZ5RNhuVJ3+fSUKxdtt8I/hLsStAa6r5A57ct7?=
+ =?iso-8859-1?Q?l7lcND89ebaMTiAQjlzV9nn+GNXvZqIPy8y0zUWoAcGXDFkoaSQ68tdqGV?=
+ =?iso-8859-1?Q?CF5zALyqMAm+M3zYWfIkbatV+DtpksN3GCzfvz6BxeDbXwutcr9kmgzMot?=
+ =?iso-8859-1?Q?f10BweI4vBSGDGMUVO6JPLPvnKzBIocjut1imRoH2nB5KHUbkIQbFQBTKQ?=
+ =?iso-8859-1?Q?I4vZdN1U/ztXkrsWN6R0M6h/65OM50xZSVIRGPjTzY3Kaqi6m3YI/cXjbL?=
+ =?iso-8859-1?Q?mWl78B//BExjaLSMqmvmF5fkJu1oZ0ziycPi2d3KVKin7kYOf5whwVUJ3n?=
+ =?iso-8859-1?Q?06tNKjTt0NLRpPjhYl7E54qYlat+PM/q8YdiE1EcC2ccyeuaaPmWD1stxD?=
+ =?iso-8859-1?Q?I=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB7001.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700018)(921020);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?JDO5TU9k0Aiyh5obS+D8TJ0xn0HfMFJpHVI0633Og//IrDoeH2ZgdgislU?=
+ =?iso-8859-1?Q?Pf8uSG4ef/vPVZV5WtSWtHvq4ts+Xch19DCFWYxp9OVJ7fmGpF0U3bx7gl?=
+ =?iso-8859-1?Q?KN2Y7cL/cN7Rl+y0EUzjW0yr4dC+1UyYBaMnV4a5cY41vQaoSiGgK2QIxm?=
+ =?iso-8859-1?Q?PoiN2sA6FtGHc3BOEx6pAevLm4wPe6nPxkaUI7PRnAuKVfJ90ZaXGTha6F?=
+ =?iso-8859-1?Q?pwwubLl5WFOlDD5uCZlz/Mc0QGGoSOMINxb/nrhITmiBsJPpEHZ2S/Y9eN?=
+ =?iso-8859-1?Q?9nICMNDhNZPeTN6XyHKNu8UVl5cX8z12Xxq7au0vjJf3H3RQiiPvBAPaGX?=
+ =?iso-8859-1?Q?3OxFYydC4+L9aLwNra4eKanRixCRwwUrOPidls4ED1ll9USn4cKVO9w/sn?=
+ =?iso-8859-1?Q?8RpKql6snx0jW9+7/x8dENk1oN/kBXhLL0Sgea6o/uxA1Ze5/1x5B1bcUQ?=
+ =?iso-8859-1?Q?82D4WyRbgKQaWIuzhWSZygKJFe2Mwrvj8QF6EeGyboPez9FLCTQt8FItC2?=
+ =?iso-8859-1?Q?yZKDsSJDKL+MCuzzwG7YxrJ3IMN1eSG3iRB3zrbXlAIo3wm0F1VgbCH5ZL?=
+ =?iso-8859-1?Q?ACVSMiKW0Ape/JlwB/91OuzjvdJlTQGm7HCWyylyzJMrHdW2qL1NMEtIss?=
+ =?iso-8859-1?Q?bRsxiDe0ehwQRinB/aGiqSD+PdfN4+hPHZtiD0u1FKA3H399DxbF4fSxKK?=
+ =?iso-8859-1?Q?vgkRteq6Wja3jCCU2FikZKeAlqkB+TFcjhy0p83Hraa2uk/ty+hqGEEmG0?=
+ =?iso-8859-1?Q?eK3yWKwP8Ba9SS98tiPKEfRN7muurDI72EekfhlT3acWNWN5P/c/QtJTuF?=
+ =?iso-8859-1?Q?KQIhwXFBXPi8XaGc84870VVUyQQRjPWTcFI5zV6HNZUUOYQx9ZX9VqQLWJ?=
+ =?iso-8859-1?Q?23fYrvZFE7lMg8icYSWtrBBRgm6tFBm+bA/H1IlTmUiwSHD1KKs5yKSEJe?=
+ =?iso-8859-1?Q?W7PwyrVqzUsOy4L1N7x9gj5ZBiQOukpVQMAkFNkxhsc/hyeddnM6UDnZh8?=
+ =?iso-8859-1?Q?KPwqT2exfH2863fYVwgf58rkKE+GGRon7GVxO0c5dhgWMJwQN2vgzI4UV7?=
+ =?iso-8859-1?Q?isbHHFkZamFXpTQhbTbFhtBVi67iet4wE3ScubOP+qnb2JPsVAAoHLf358?=
+ =?iso-8859-1?Q?sTzBRfMt1UmnTbCOJVspd/jVmPoz5ZXShUq0y98hSPCEwBn2Ubd0mHTwPC?=
+ =?iso-8859-1?Q?5f0WWyAc54AgP6yi8vf0yrIrewJwioPbJc3dSHekrsi2f/uAhW6oJtR6IJ?=
+ =?iso-8859-1?Q?fovhx0KjpQ9vx/r+SRIF5jZRtZ7XNYwgUVWS/iN5U7lm78vIfNETGW3nrY?=
+ =?iso-8859-1?Q?U4xhEnrMQnVGHRRrSgxZNzXDeav3kj30YZwJ3493u2r4CwJ+OogT11dTji?=
+ =?iso-8859-1?Q?PVTgoUD2y2YrQ23gVO7M9Iho7fQ3coNXk8WArymBF3g639YMvh65qM9WMI?=
+ =?iso-8859-1?Q?GVBXmc2uHJnvi9f6+pS342HI1kqxtwziusNNoZofwLEHWVSaWBe0A9UP3r?=
+ =?iso-8859-1?Q?zkqdyBDTpiWG9tMZlD+EM/bx5Q6A+rC9zEGYXOdHcTY4QIVRls/auzJyYw?=
+ =?iso-8859-1?Q?rM74TEwPM4mP7AjR6NvYi6Cbi0xNig727xiB/MUzLNRb5XzpyXH8negJpU?=
+ =?iso-8859-1?Q?7w9b4TVsAYMVFwPh5KeoVhFC5v+wKqqGXf?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+X-OriginatorOrg: wesion.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB7001.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1edf8738-9d49-4c05-718c-08dc99c15a58
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jul 2024 11:31:30.2653
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 2dc3bd76-7ac2-4780-a5b7-6c6cc6b5af9b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: PfJmK39fcO3woJvrFbau2IdYynMs4MhRPHD+ALR4u8OXzoLmDF6o0i4YJtMZi4vnG1tpH+Zq6VRTshZBQL82Gw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR03MB7653
 
-The current fsl_qmc_audio works in interleaved mode. The audio samples
-are interleaved and all data are sent to (received from) one QMC
-channel.
-
-Using several QMC channels, non interleaved mode can be easily
-supported. In that case, data related to ch0 are sent to (received from)
-the first QMC channel, data related to ch1 use the next QMC channel and
-so on up to the last channel.
-
-In terms of constraints and settings, the two modes are slightly
-different:
-- Interleaved mode:
-    - The sample size should fit in the number of time-slots available
-      for the QMC channel.
-    - The number of audio channels should fit in the number of
-      time-slots (taking into account the sample size) available for the
-      QMC channel.
-- Non-interleaved mode:
-    - The number of audio channels is the number of available QMC
-      channels.
-    - Each QMC channel should have the same number of time-slots.
-    - The sample size equals the number of time-slots of one QMC
-      channel.
-
-Add support for the non-interleaved mode allowing multiple QMC channel
-per DAI. The DAI switches in non-interleaved mode when more that one QMC
-channel is available.
-
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
----
- sound/soc/fsl/fsl_qmc_audio.c | 372 +++++++++++++++++++++++++++-------
- 1 file changed, 297 insertions(+), 75 deletions(-)
-
-diff --git a/sound/soc/fsl/fsl_qmc_audio.c b/sound/soc/fsl/fsl_qmc_audio.c
-index f70c6c8eec4a..8668abd35208 100644
---- a/sound/soc/fsl/fsl_qmc_audio.c
-+++ b/sound/soc/fsl/fsl_qmc_audio.c
-@@ -29,7 +29,11 @@ struct qmc_dai {
- 	struct device *dev;
- 	unsigned int nb_tx_ts;
- 	unsigned int nb_rx_ts;
--	struct qmc_dai_chan chan;
-+
-+	unsigned int nb_chans_avail;
-+	unsigned int nb_chans_used_tx;
-+	unsigned int nb_chans_used_rx;
-+	struct qmc_dai_chan *chans;
- };
- 
- struct qmc_audio {
-@@ -50,7 +54,10 @@ struct qmc_dai_prtd {
- 	dma_addr_t ch_dma_addr_current;
- 	dma_addr_t ch_dma_addr_end;
- 	size_t ch_dma_size;
-+	size_t ch_dma_offset;
- 
-+	unsigned int channels;
-+	DECLARE_BITMAP(chans_pending, 64);
- 	struct snd_pcm_substream *substream;
- };
- 
-@@ -69,6 +76,18 @@ static int qmc_audio_pcm_construct(struct snd_soc_component *component,
- 	return 0;
- }
- 
-+static bool qmc_audio_access_is_interleaved(snd_pcm_access_t access)
-+{
-+	switch (access) {
-+	case SNDRV_PCM_ACCESS_MMAP_INTERLEAVED:
-+	case SNDRV_PCM_ACCESS_RW_INTERLEAVED:
-+		return true;
-+	default:
-+		break;
-+	}
-+	return false;
-+}
-+
- static int qmc_audio_pcm_hw_params(struct snd_soc_component *component,
- 				   struct snd_pcm_substream *substream,
- 				   struct snd_pcm_hw_params *params)
-@@ -76,6 +95,14 @@ static int qmc_audio_pcm_hw_params(struct snd_soc_component *component,
- 	struct snd_pcm_runtime *runtime = substream->runtime;
- 	struct qmc_dai_prtd *prtd = substream->runtime->private_data;
- 
-+	/*
-+	 * In interleaved mode, the driver uses one QMC channel for all audio
-+	 * channels whereas in non-interleaved mode, it uses one QMC channel per
-+	 * audio channel.
-+	 */
-+	prtd->channels = qmc_audio_access_is_interleaved(params_access(params)) ?
-+				1 : params_channels(params);
-+
- 	prtd->substream = substream;
- 
- 	prtd->buffer_ended = 0;
-@@ -83,9 +110,10 @@ static int qmc_audio_pcm_hw_params(struct snd_soc_component *component,
- 	prtd->period_size = params_period_size(params);
- 
- 	prtd->ch_dma_addr_start = runtime->dma_addr;
--	prtd->ch_dma_addr_end = runtime->dma_addr + params_buffer_bytes(params);
-+	prtd->ch_dma_offset = params_buffer_bytes(params) / prtd->channels;
-+	prtd->ch_dma_addr_end = runtime->dma_addr + prtd->ch_dma_offset;
- 	prtd->ch_dma_addr_current = prtd->ch_dma_addr_start;
--	prtd->ch_dma_size = params_period_bytes(params);
-+	prtd->ch_dma_size = params_period_bytes(params) / prtd->channels;
- 
- 	return 0;
- }
-@@ -94,16 +122,23 @@ static void qmc_audio_pcm_write_complete(void *context);
- 
- static int qmc_audio_pcm_write_submit(struct qmc_dai_prtd *prtd)
- {
-+	unsigned int i;
- 	int ret;
- 
--	ret = qmc_chan_write_submit(prtd->qmc_dai->chan.qmc_chan,
--				    prtd->ch_dma_addr_current, prtd->ch_dma_size,
--				    qmc_audio_pcm_write_complete,
--				    &prtd->qmc_dai->chan);
--	if (ret) {
--		dev_err(prtd->qmc_dai->dev, "write_submit failed %d\n",
--			ret);
--		return ret;
-+	for (i = 0; i < prtd->channels; i++) {
-+		bitmap_set(prtd->chans_pending, i, 1);
-+
-+		ret = qmc_chan_write_submit(prtd->qmc_dai->chans[i].qmc_chan,
-+					    prtd->ch_dma_addr_current + i * prtd->ch_dma_offset,
-+					    prtd->ch_dma_size,
-+					    qmc_audio_pcm_write_complete,
-+					    &prtd->qmc_dai->chans[i]);
-+		if (ret) {
-+			dev_err(prtd->qmc_dai->dev, "write_submit %u failed %d\n",
-+				i, ret);
-+			bitmap_clear(prtd->chans_pending, i, 1);
-+			return ret;
-+		}
- 	}
- 
- 	return 0;
-@@ -116,6 +151,16 @@ static void qmc_audio_pcm_write_complete(void *context)
- 
- 	prtd = chan->prtd_tx;
- 
-+	/* Mark the current channel as completed */
-+	bitmap_clear(prtd->chans_pending, chan - prtd->qmc_dai->chans, 1);
-+
-+	/*
-+	 * All QMC channels involved must have completed their transfer before
-+	 * submitting a new one.
-+	 */
-+	if (!bitmap_empty(prtd->chans_pending, 64))
-+		return;
-+
- 	prtd->buffer_ended += prtd->period_size;
- 	if (prtd->buffer_ended >= prtd->buffer_size)
- 		prtd->buffer_ended = 0;
-@@ -133,15 +178,23 @@ static void qmc_audio_pcm_read_complete(void *context, size_t length, unsigned i
- 
- static int qmc_audio_pcm_read_submit(struct qmc_dai_prtd *prtd)
- {
-+	unsigned int i;
- 	int ret;
- 
--	ret = qmc_chan_read_submit(prtd->qmc_dai->chan.qmc_chan,
--				   prtd->ch_dma_addr_current, prtd->ch_dma_size,
--				   qmc_audio_pcm_read_complete,
--				   &prtd->qmc_dai->chan);
--	if (ret) {
--		dev_err(prtd->qmc_dai->dev, "read_submit failed %d\n",
--			ret);
-+	for (i = 0; i < prtd->channels; i++) {
-+		bitmap_set(prtd->chans_pending, i, 1);
-+
-+		ret = qmc_chan_read_submit(prtd->qmc_dai->chans[i].qmc_chan,
-+					   prtd->ch_dma_addr_current + i * prtd->ch_dma_offset,
-+					   prtd->ch_dma_size,
-+					   qmc_audio_pcm_read_complete,
-+					   &prtd->qmc_dai->chans[i]);
-+		if (ret) {
-+			dev_err(prtd->qmc_dai->dev, "read_submit %u failed %d\n",
-+				i, ret);
-+			bitmap_clear(prtd->chans_pending, i, 1);
-+			return ret;
-+		}
- 	}
- 
- 	return 0;
-@@ -154,11 +207,21 @@ static void qmc_audio_pcm_read_complete(void *context, size_t length, unsigned i
- 
- 	prtd = chan->prtd_rx;
- 
-+	/* Mark the current channel as completed */
-+	bitmap_clear(prtd->chans_pending, chan - prtd->qmc_dai->chans, 1);
-+
- 	if (length != prtd->ch_dma_size) {
- 		dev_err(prtd->qmc_dai->dev, "read complete length = %zu, exp %zu\n",
- 			length, prtd->ch_dma_size);
- 	}
- 
-+	/*
-+	 * All QMC channels involved must have completed their transfer before
-+	 * submitting a new one.
-+	 */
-+	if (!bitmap_empty(prtd->chans_pending, 64))
-+		return;
-+
- 	prtd->buffer_ended += prtd->period_size;
- 	if (prtd->buffer_ended >= prtd->buffer_size)
- 		prtd->buffer_ended = 0;
-@@ -176,6 +239,7 @@ static int qmc_audio_pcm_trigger(struct snd_soc_component *component,
- 				 struct snd_pcm_substream *substream, int cmd)
- {
- 	struct qmc_dai_prtd *prtd = substream->runtime->private_data;
-+	unsigned int i;
- 	int ret;
- 
- 	if (!prtd->qmc_dai) {
-@@ -185,8 +249,10 @@ static int qmc_audio_pcm_trigger(struct snd_soc_component *component,
- 
- 	switch (cmd) {
- 	case SNDRV_PCM_TRIGGER_START:
-+		bitmap_zero(prtd->chans_pending, 64);
- 		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
--			prtd->qmc_dai->chan.prtd_tx = prtd;
-+			for (i = 0; i < prtd->channels; i++)
-+				prtd->qmc_dai->chans[i].prtd_tx = prtd;
- 
- 			/* Submit first chunk ... */
- 			ret = qmc_audio_pcm_write_submit(prtd);
-@@ -203,7 +269,8 @@ static int qmc_audio_pcm_trigger(struct snd_soc_component *component,
- 			if (ret)
- 				return ret;
- 		} else {
--			prtd->qmc_dai->chan.prtd_rx = prtd;
-+			for (i = 0; i < prtd->channels; i++)
-+				prtd->qmc_dai->chans[i].prtd_rx = prtd;
- 
- 			/* Submit first chunk ... */
- 			ret = qmc_audio_pcm_read_submit(prtd);
-@@ -270,6 +337,7 @@ static const struct snd_pcm_hardware qmc_audio_pcm_hardware = {
- 	.info			= SNDRV_PCM_INFO_MMAP |
- 				  SNDRV_PCM_INFO_MMAP_VALID |
- 				  SNDRV_PCM_INFO_INTERLEAVED |
-+				  SNDRV_PCM_INFO_NONINTERLEAVED |
- 				  SNDRV_PCM_INFO_PAUSE,
- 	.period_bytes_min	= 32,
- 	.period_bytes_max	= 64 * 1024,
-@@ -442,6 +510,7 @@ static int qmc_dai_constraints_interleaved(struct snd_pcm_substream *substream,
- 	snd_pcm_hw_rule_func_t hw_rule_channels_by_format;
- 	snd_pcm_hw_rule_func_t hw_rule_format_by_channels;
- 	unsigned int frame_bits;
-+	u64 access;
- 	int ret;
- 
- 	if (substream->stream == SNDRV_PCM_STREAM_CAPTURE) {
-@@ -478,6 +547,44 @@ static int qmc_dai_constraints_interleaved(struct snd_pcm_substream *substream,
- 		return ret;
- 	}
- 
-+	access = 1ULL << (__force int)SNDRV_PCM_ACCESS_MMAP_INTERLEAVED |
-+		 1ULL << (__force int)SNDRV_PCM_ACCESS_RW_INTERLEAVED;
-+	ret = snd_pcm_hw_constraint_mask64(substream->runtime, SNDRV_PCM_HW_PARAM_ACCESS,
-+					   access);
-+	if (ret) {
-+		dev_err(qmc_dai->dev, "Failed to add hw_param_access constraint (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int qmc_dai_constraints_noninterleaved(struct snd_pcm_substream *substream,
-+					      struct qmc_dai *qmc_dai)
-+{
-+	unsigned int frame_bits;
-+	u64 access;
-+	int ret;
-+
-+	frame_bits = (substream->stream == SNDRV_PCM_STREAM_CAPTURE) ?
-+			qmc_dai->nb_rx_ts * 8 : qmc_dai->nb_tx_ts * 8;
-+	ret = snd_pcm_hw_constraint_single(substream->runtime,
-+					   SNDRV_PCM_HW_PARAM_FRAME_BITS,
-+					   frame_bits);
-+	if (ret < 0) {
-+		dev_err(qmc_dai->dev, "Failed to add frame_bits constraint (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	access = 1ULL << (__force int)SNDRV_PCM_ACCESS_MMAP_NONINTERLEAVED |
-+		 1ULL << (__force int)SNDRV_PCM_ACCESS_RW_NONINTERLEAVED;
-+	ret = snd_pcm_hw_constraint_mask64(substream->runtime, SNDRV_PCM_HW_PARAM_ACCESS,
-+					   access);
-+	if (ret) {
-+		dev_err(qmc_dai->dev, "Failed to add hw_param_access constraint (%d)\n", ret);
-+		return ret;
-+	}
-+
- 	return 0;
- }
- 
-@@ -495,7 +602,9 @@ static int qmc_dai_startup(struct snd_pcm_substream *substream,
- 
- 	prtd->qmc_dai = qmc_dai;
- 
--	return qmc_dai_constraints_interleaved(substream, qmc_dai);
-+	return qmc_dai->nb_chans_avail > 1 ?
-+		qmc_dai_constraints_noninterleaved(substream, qmc_dai) :
-+		qmc_dai_constraints_interleaved(substream, qmc_dai);
- }
- 
- static int qmc_dai_hw_params(struct snd_pcm_substream *substream,
-@@ -503,7 +612,9 @@ static int qmc_dai_hw_params(struct snd_pcm_substream *substream,
- 			     struct snd_soc_dai *dai)
- {
- 	struct qmc_chan_param chan_param = {0};
-+	unsigned int nb_chans_used;
- 	struct qmc_dai *qmc_dai;
-+	unsigned int i;
- 	int ret;
- 
- 	qmc_dai = qmc_dai_get_data(dai);
-@@ -512,15 +623,34 @@ static int qmc_dai_hw_params(struct snd_pcm_substream *substream,
- 		return -EINVAL;
- 	}
- 
-+	/*
-+	 * In interleaved mode, the driver uses one QMC channel for all audio
-+	 * channels whereas in non-interleaved mode, it uses one QMC channel per
-+	 * audio channel.
-+	 */
-+	nb_chans_used = qmc_audio_access_is_interleaved(params_access(params)) ?
-+				1 : params_channels(params);
-+
-+	if (nb_chans_used > qmc_dai->nb_chans_avail) {
-+		dev_err(dai->dev, "Not enough qmc_chans. Need %u, avail %u\n",
-+			nb_chans_used, qmc_dai->nb_chans_avail);
-+		return -EINVAL;
-+	}
-+
- 	if (substream->stream == SNDRV_PCM_STREAM_CAPTURE) {
- 		chan_param.mode = QMC_TRANSPARENT;
--		chan_param.transp.max_rx_buf_size = params_period_bytes(params);
--		ret = qmc_chan_set_param(qmc_dai->chan.qmc_chan, &chan_param);
--		if (ret) {
--			dev_err(dai->dev, "set param failed %d\n",
--				ret);
--			return ret;
-+		chan_param.transp.max_rx_buf_size = params_period_bytes(params) / nb_chans_used;
-+		for (i = 0; i < nb_chans_used; i++) {
-+			ret = qmc_chan_set_param(qmc_dai->chans[i].qmc_chan, &chan_param);
-+			if (ret) {
-+				dev_err(dai->dev, "chans[%u], set param failed %d\n",
-+					i, ret);
-+				return ret;
-+			}
- 		}
-+		qmc_dai->nb_chans_used_rx = nb_chans_used;
-+	} else {
-+		qmc_dai->nb_chans_used_tx = nb_chans_used;
- 	}
- 
- 	return 0;
-@@ -529,9 +659,12 @@ static int qmc_dai_hw_params(struct snd_pcm_substream *substream,
- static int qmc_dai_trigger(struct snd_pcm_substream *substream, int cmd,
- 			   struct snd_soc_dai *dai)
- {
-+	unsigned int nb_chans_used;
- 	struct qmc_dai *qmc_dai;
-+	unsigned int i;
- 	int direction;
--	int ret;
-+	int ret = 0;
-+	int ret_tmp;
- 
- 	qmc_dai = qmc_dai_get_data(dai);
- 	if (!qmc_dai) {
-@@ -539,30 +672,50 @@ static int qmc_dai_trigger(struct snd_pcm_substream *substream, int cmd,
- 		return -EINVAL;
- 	}
- 
--	direction = (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) ?
--		    QMC_CHAN_WRITE : QMC_CHAN_READ;
-+	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
-+		direction = QMC_CHAN_WRITE;
-+		nb_chans_used = qmc_dai->nb_chans_used_tx;
-+	} else {
-+		direction = QMC_CHAN_READ;
-+		nb_chans_used = qmc_dai->nb_chans_used_rx;
-+	}
- 
- 	switch (cmd) {
- 	case SNDRV_PCM_TRIGGER_START:
- 	case SNDRV_PCM_TRIGGER_RESUME:
- 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
--		ret = qmc_chan_start(qmc_dai->chan.qmc_chan, direction);
--		if (ret)
--			return ret;
-+		for (i = 0; i < nb_chans_used; i++) {
-+			ret = qmc_chan_start(qmc_dai->chans[i].qmc_chan, direction);
-+			if (ret)
-+				goto err_stop;
-+		}
- 		break;
- 
- 	case SNDRV_PCM_TRIGGER_STOP:
--		ret = qmc_chan_stop(qmc_dai->chan.qmc_chan, direction);
--		if (ret)
--			return ret;
--		ret = qmc_chan_reset(qmc_dai->chan.qmc_chan, direction);
-+		/* Stop and reset all QMC channels and return the first error encountered */
-+		for (i = 0; i < nb_chans_used; i++) {
-+			ret_tmp = qmc_chan_stop(qmc_dai->chans[i].qmc_chan, direction);
-+			if (!ret)
-+				ret = ret_tmp;
-+			if (ret_tmp)
-+				continue;
-+
-+			ret_tmp = qmc_chan_reset(qmc_dai->chans[i].qmc_chan, direction);
-+			if (!ret)
-+				ret = ret_tmp;
-+		}
- 		if (ret)
- 			return ret;
- 		break;
- 
- 	case SNDRV_PCM_TRIGGER_SUSPEND:
- 	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
--		ret = qmc_chan_stop(qmc_dai->chan.qmc_chan, direction);
-+		/* Stop all QMC channels and return the first error encountered */
-+		for (i = 0; i < nb_chans_used; i++) {
-+			ret_tmp = qmc_chan_stop(qmc_dai->chans[i].qmc_chan, direction);
-+			if (!ret)
-+				ret = ret_tmp;
-+		}
- 		if (ret)
- 			return ret;
- 		break;
-@@ -572,6 +725,13 @@ static int qmc_dai_trigger(struct snd_pcm_substream *substream, int cmd,
- 	}
- 
- 	return 0;
-+
-+err_stop:
-+	while (i--) {
-+		qmc_chan_stop(qmc_dai->chans[i].qmc_chan, direction);
-+		qmc_chan_reset(qmc_dai->chans[i].qmc_chan, direction);
-+	}
-+	return ret;
- }
- 
- static const struct snd_soc_dai_ops qmc_dai_ops = {
-@@ -580,7 +740,7 @@ static const struct snd_soc_dai_ops qmc_dai_ops = {
- 	.hw_params	= qmc_dai_hw_params,
- };
- 
--static u64 qmc_audio_formats(u8 nb_ts)
-+static u64 qmc_audio_formats(u8 nb_ts, bool is_noninterleaved)
- {
- 	unsigned int format_width;
- 	unsigned int chan_width;
-@@ -612,6 +772,13 @@ static u64 qmc_audio_formats(u8 nb_ts)
- 		if (format_width > chan_width || chan_width % format_width)
- 			continue;
- 
-+		/*
-+		 * In non interleaved mode, we can only support formats that
-+		 * can fit only 1 time in the channel
-+		 */
-+		if (is_noninterleaved && format_width != chan_width)
-+			continue;
-+
- 		formats_mask |= pcm_format_to_bits(format);
- 	}
- 	return formats_mask;
-@@ -622,6 +789,12 @@ static int qmc_audio_dai_parse(struct qmc_audio *qmc_audio, struct device_node *
- 			       struct snd_soc_dai_driver *qmc_soc_dai_driver)
- {
- 	struct qmc_chan_info info;
-+	unsigned long rx_fs_rate;
-+	unsigned long tx_fs_rate;
-+	unsigned int nb_tx_ts;
-+	unsigned int nb_rx_ts;
-+	unsigned int i;
-+	int count;
- 	u32 val;
- 	int ret;
- 
-@@ -639,56 +812,105 @@ static int qmc_audio_dai_parse(struct qmc_audio *qmc_audio, struct device_node *
- 	if (!qmc_dai->name)
- 		return -ENOMEM;
- 
--	qmc_dai->chan.qmc_chan = devm_qmc_chan_get_byphandle(qmc_audio->dev, np,
--							     "fsl,qmc-chan");
--	if (IS_ERR(qmc_dai->chan.qmc_chan)) {
--		ret = PTR_ERR(qmc_dai->chan.qmc_chan);
--		return dev_err_probe(qmc_audio->dev, ret,
--				     "dai %d get QMC channel failed\n", qmc_dai->id);
--	}
-+	count = qmc_chan_count_phandles(np, "fsl,qmc-chan");
-+	if (count < 0)
-+		return dev_err_probe(qmc_audio->dev, count,
-+				     "dai %d get number of QMC channel failed\n", qmc_dai->id);
-+	if (!count)
-+		return dev_err_probe(qmc_audio->dev, -EINVAL,
-+				     "dai %d no QMC channel defined\n", qmc_dai->id);
- 
--	qmc_soc_dai_driver->id = qmc_dai->id;
--	qmc_soc_dai_driver->name = qmc_dai->name;
-+	qmc_dai->chans = devm_kcalloc(qmc_audio->dev, count, sizeof(*qmc_dai->chans), GFP_KERNEL);
-+	if (!qmc_dai->chans)
-+		return -ENOMEM;
- 
--	ret = qmc_chan_get_info(qmc_dai->chan.qmc_chan, &info);
--	if (ret) {
--		dev_err(qmc_audio->dev, "dai %d get QMC channel info failed %d\n",
--			qmc_dai->id, ret);
--		return ret;
--	}
--	dev_info(qmc_audio->dev, "dai %d QMC channel mode %d, nb_tx_ts %u, nb_rx_ts %u\n",
--		 qmc_dai->id, info.mode, info.nb_tx_ts, info.nb_rx_ts);
-+	for (i = 0; i < count; i++) {
-+		qmc_dai->chans[i].qmc_chan = devm_qmc_chan_get_byphandles_index(qmc_audio->dev, np,
-+										"fsl,qmc-chan", i);
-+		if (IS_ERR(qmc_dai->chans[i].qmc_chan)) {
-+			return dev_err_probe(qmc_audio->dev, PTR_ERR(qmc_dai->chans[i].qmc_chan),
-+					     "dai %d get QMC channel %d failed\n", qmc_dai->id, i);
-+		}
- 
--	if (info.mode != QMC_TRANSPARENT) {
--		dev_err(qmc_audio->dev, "dai %d QMC chan mode %d is not QMC_TRANSPARENT\n",
--			qmc_dai->id, info.mode);
--		return -EINVAL;
-+		ret = qmc_chan_get_info(qmc_dai->chans[i].qmc_chan, &info);
-+		if (ret) {
-+			dev_err(qmc_audio->dev, "dai %d get QMC %d channel info failed %d\n",
-+				qmc_dai->id, i, ret);
-+			return ret;
-+		}
-+		dev_info(qmc_audio->dev, "dai %d QMC channel %d mode %d, nb_tx_ts %u, nb_rx_ts %u\n",
-+			 qmc_dai->id, i, info.mode, info.nb_tx_ts, info.nb_rx_ts);
-+
-+		if (info.mode != QMC_TRANSPARENT) {
-+			dev_err(qmc_audio->dev, "dai %d QMC chan %d mode %d is not QMC_TRANSPARENT\n",
-+				qmc_dai->id, i, info.mode);
-+			return -EINVAL;
-+		}
-+
-+		/*
-+		 * All channels must have the same number of Tx slots and the
-+		 * same numbers of Rx slots.
-+		 */
-+		if (i == 0) {
-+			nb_tx_ts = info.nb_tx_ts;
-+			nb_rx_ts = info.nb_rx_ts;
-+			tx_fs_rate = info.tx_fs_rate;
-+			rx_fs_rate = info.rx_fs_rate;
-+		} else {
-+			if (nb_tx_ts != info.nb_tx_ts) {
-+				dev_err(qmc_audio->dev, "dai %d QMC chan %d inconsistent number of Tx timeslots (%u instead of %u)\n",
-+					qmc_dai->id, i, info.nb_tx_ts, nb_tx_ts);
-+				return -EINVAL;
-+			}
-+			if (nb_rx_ts != info.nb_rx_ts) {
-+				dev_err(qmc_audio->dev, "dai %d QMC chan %d inconsistent number of Rx timeslots (%u instead of %u)\n",
-+					qmc_dai->id, i, info.nb_rx_ts, nb_rx_ts);
-+				return -EINVAL;
-+			}
-+			if (tx_fs_rate != info.tx_fs_rate) {
-+				dev_err(qmc_audio->dev, "dai %d QMC chan %d inconsistent Tx frame sample rate (%lu instead of %lu)\n",
-+					qmc_dai->id, i, info.tx_fs_rate, tx_fs_rate);
-+				return -EINVAL;
-+			}
-+			if (rx_fs_rate != info.rx_fs_rate) {
-+				dev_err(qmc_audio->dev, "dai %d QMC chan %d inconsistent Rx frame sample rate (%lu instead of %lu)\n",
-+					qmc_dai->id, i, info.rx_fs_rate, rx_fs_rate);
-+				return -EINVAL;
-+			}
-+		}
- 	}
--	qmc_dai->nb_tx_ts = info.nb_tx_ts;
--	qmc_dai->nb_rx_ts = info.nb_rx_ts;
-+
-+	qmc_dai->nb_chans_avail = count;
-+	qmc_dai->nb_tx_ts = nb_tx_ts * count;
-+	qmc_dai->nb_rx_ts = nb_rx_ts * count;
-+
-+	qmc_soc_dai_driver->id = qmc_dai->id;
-+	qmc_soc_dai_driver->name = qmc_dai->name;
- 
- 	qmc_soc_dai_driver->playback.channels_min = 0;
- 	qmc_soc_dai_driver->playback.channels_max = 0;
--	if (qmc_dai->nb_tx_ts) {
-+	if (nb_tx_ts) {
- 		qmc_soc_dai_driver->playback.channels_min = 1;
--		qmc_soc_dai_driver->playback.channels_max = qmc_dai->nb_tx_ts;
-+		qmc_soc_dai_driver->playback.channels_max = count > 1 ? count : nb_tx_ts;
- 	}
--	qmc_soc_dai_driver->playback.formats = qmc_audio_formats(qmc_dai->nb_tx_ts);
-+	qmc_soc_dai_driver->playback.formats = qmc_audio_formats(nb_tx_ts,
-+								 count > 1 ? true : false);
- 
- 	qmc_soc_dai_driver->capture.channels_min = 0;
- 	qmc_soc_dai_driver->capture.channels_max = 0;
--	if (qmc_dai->nb_rx_ts) {
-+	if (nb_rx_ts) {
- 		qmc_soc_dai_driver->capture.channels_min = 1;
--		qmc_soc_dai_driver->capture.channels_max = qmc_dai->nb_rx_ts;
-+		qmc_soc_dai_driver->capture.channels_max = count > 1 ? count : nb_rx_ts;
- 	}
--	qmc_soc_dai_driver->capture.formats = qmc_audio_formats(qmc_dai->nb_rx_ts);
--
--	qmc_soc_dai_driver->playback.rates = snd_pcm_rate_to_rate_bit(info.tx_fs_rate);
--	qmc_soc_dai_driver->playback.rate_min = info.tx_fs_rate;
--	qmc_soc_dai_driver->playback.rate_max = info.tx_fs_rate;
--	qmc_soc_dai_driver->capture.rates = snd_pcm_rate_to_rate_bit(info.rx_fs_rate);
--	qmc_soc_dai_driver->capture.rate_min = info.rx_fs_rate;
--	qmc_soc_dai_driver->capture.rate_max = info.rx_fs_rate;
-+	qmc_soc_dai_driver->capture.formats = qmc_audio_formats(nb_rx_ts,
-+								count > 1 ? true : false);
-+
-+	qmc_soc_dai_driver->playback.rates = snd_pcm_rate_to_rate_bit(tx_fs_rate);
-+	qmc_soc_dai_driver->playback.rate_min = tx_fs_rate;
-+	qmc_soc_dai_driver->playback.rate_max = tx_fs_rate;
-+	qmc_soc_dai_driver->capture.rates = snd_pcm_rate_to_rate_bit(rx_fs_rate);
-+	qmc_soc_dai_driver->capture.rate_min = rx_fs_rate;
-+	qmc_soc_dai_driver->capture.rate_max = rx_fs_rate;
- 
- 	qmc_soc_dai_driver->ops = &qmc_dai_ops;
- 
--- 
-2.45.0
-
+>>> +=A0=A0=A0=A0 pcie@0,0 {=0A=
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 reg =3D <0x400000 0 0 0 0>;=0A=
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 #address-cells =3D <3>;=0A=
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 #size-cells =3D <2>;=0A=
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 ranges;=0A=
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 device_type =3D "pci";=0A=
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 bus-range =3D <0x40 0x4f>;=0A=
+>>> +=0A=
+>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 wifi: wifi@0,0 {=0A=
+>> Where is the compatible (again!)? Test your code - you will see your=0A=
+>> binding is a no-op.=0A=
+>=0A=
+> I tried to build kernel with CHECK_DTBS=3D1. And didn't get any message=
+=0A=
+> like 'compatible' is a required property in wifi node. But when I check=
+=0A=
+> the bindings that do required the compatible... So I will add it next tim=
+e.=0A=
+=0A=
+> Yep, use different clock name and then test. You should see errors,=0A=
+> right? But there are not, because schema is not applied to this node at a=
+ll.=0A=
+> =0A=
+> Look how Apple is doing this.=0A=
+> =0A=
+> I have doubts that your code works at all in the first place. If there=0A=
+> is no compatible, how your platform device gets of_node?=0A=
+=0A=
+In file brcm_hw_ids.h and pcie.c has added Device ID and Vendor ID=0A=
+for bus to enumerate the device when board bootup, so I didn't add=0A=
+specific compatible in DTS. And by doing so, it can probe successfully.=0A=
+=0A=
+---=0A=
+Best Regards=0A=
+Jacobe=
 
