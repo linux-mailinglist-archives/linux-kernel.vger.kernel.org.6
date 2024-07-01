@@ -1,88 +1,64 @@
-Return-Path: <linux-kernel+bounces-235626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2613191D7A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:50:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2063491D7AB
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:50:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 582B21C222D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 05:50:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 522D01C22229
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 05:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6727E42056;
-	Mon,  1 Jul 2024 05:49:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC9242AB7;
+	Mon,  1 Jul 2024 05:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="NQCaENbu"
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gJOkfmYk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F613FB01
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 05:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9852CCB7;
+	Mon,  1 Jul 2024 05:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719812988; cv=none; b=s/p6vkfXYsO9mv+C3ij0asHwzpOLFlrFWL2Qo4bQ1uVwXMbd0O7lqW/XN855mQTvE9yKtZxVEJU8MY/8oXJxcbJlDLX5QsNzMiyyd+8t5Q7trpqOA+6M0U8E2sU7G275Wq+ILOY1DmvfkmCFjEp2ev/Pd/h6GcdXYVZn9T0vvhg=
+	t=1719813030; cv=none; b=YRPnaco/DAwKs3xU9rm97KjFaqnhbOGjI3gdFOdCFKu/jtahUXhbluLu8UqFRHn7VWQYn5rwtFxNF3R3te9iQc364XXyw0/naYcA5k8KXDpJaECAzY7dNQG2MltDEp/G94X7uV9vR8RAyC0n3A51Ty9Gpzp3AIKk5r+Ox5tENb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719812988; c=relaxed/simple;
-	bh=mqqGdxTAEmXRIjGTDLRjrJRNNyk8TOJ/9inqH08rFms=;
+	s=arc-20240116; t=1719813030; c=relaxed/simple;
+	bh=CggASGndVY2hRAe4b7g7gUovcHQroxoUVYzI/gZU+1k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nnIYpSXlHZxcChZaB9kD6ELWjf1nAXxOM7Fj3JOIQtBylPvUY3wfY9z87VDF3fdtJNlX3tRFftyBlRJ6GEiGmOT46QecpBDq+YCSvyiCpLfqZKKRx8MP+makt81g3ybIzfMjIp1udxswRiTBknljpSk4iG6ixRLacW8lM4mI2LA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=NQCaENbu; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3d564919cd6so1712264b6e.2
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 22:49:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1719812986; x=1720417786; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4s/WBvVl/dst1lHjWFZpMEMdrWEWEKJym4uGaWtNax0=;
-        b=NQCaENbuY22ees4p2Z4dKnlXLHK1hiHxuS9HYo2/1vL/sRXH050PwZ3ArdngMJXiXG
-         MfI+vlsmVSiPqFC5tV/87IkP63vgZbpQEb5yBcP8CaOXWrnIYWyF1DdD6FpQQFTsE0+0
-         5hFRhtuggvSMadFf3KYbsMoPsuKvs+KXPN4m2Tsd18KxC2SPEeuoCifdkR1pXrOyBwy7
-         TsOOV9gMR9gpPdbhU9jT3e2Zv65URBKh5gYmbZkDvXQL83UX0goK/I7CnWDL6P51biZ+
-         V40W9vLc/h/FsNyRMA153bl7Pce4Qg0setvvwND8aGQD/URWU1sT/+dw+uyFgJBhpabZ
-         do8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719812986; x=1720417786;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4s/WBvVl/dst1lHjWFZpMEMdrWEWEKJym4uGaWtNax0=;
-        b=bEHIiY/tFN5LMaYNipQ+mz9cfgazmQDEhlOlRtXHYvEhl0sau0/bmGxeEnisw2/EMs
-         iTnhBtELiID6Z3iqj/b9fWhqhH40cX5Xg0kUvK6GV9yr8XgBGLgWsMSZzOLi+vIX+NqY
-         xUlIXYP3YdQ2HYT8WswRRxQQy9BMSZPJXB6R6btdKXcUPX1f1d/KQkKYQgAUTmgZU1dP
-         u3izZEgPv14LYlWcWwXkLNSSdz06kGXvHRrPKsjQrVQgGMvvIravduliDjiB3VK0mkPc
-         Z+w49GOvXm/7PzfSi817iHJOEFvfOxz2PoWSOGirOs0uSee5iVc4HNtNACjIZ3W7nFF1
-         G/lw==
-X-Forwarded-Encrypted: i=1; AJvYcCWHcIRTxN829M3xidhjrVSekCGu0FZedy3M9G2KfdRevnlvyA95EWLBKrSc/yL3sY2Pq8nPcXRis1yfddx6qMc4ShHpjYlpe+PlaMpI
-X-Gm-Message-State: AOJu0YxkO1qnFTO81/X7zxwgARh+e3xj56rnuno8ioohqWzxw/8yRpks
-	Btfs08rs6s1rsiWnMKmlr1k6mVqJL2N6YSyXQ/oiP34AdYBD8YswkODupobveKw=
-X-Google-Smtp-Source: AGHT+IFkbfzSyeGbbMoYBWXleU/NPIjZpuMJZvhBR4F8gn5oN8vBjv/YM3Be+WxqxSc8Jn7yn+W2+w==
-X-Received: by 2002:a05:6808:1706:b0:3d6:32d2:2c15 with SMTP id 5614622812f47-3d6b5686a2dmr6011108b6e.59.1719812985837;
-        Sun, 30 Jun 2024 22:49:45 -0700 (PDT)
-Received: from sunil-laptop ([106.51.187.237])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d62fb48ab1sm1228661b6e.54.2024.06.30.22.49.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Jun 2024 22:49:45 -0700 (PDT)
-Date: Mon, 1 Jul 2024 11:19:35 +0530
-From: Sunil V L <sunilvl@ventanamicro.com>
-To: yunhui cui <cuiyunhui@bytedance.com>
-Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	linux-riscv@lists.infradead.org, bhelgaas@google.com,
-	james.morse@arm.com, jeremy.linton@arm.com,
-	Jonathan.Cameron@huawei.com, pierre.gondois@arm.com,
-	sudeep.holla@arm.com, tiantao6@huawei.com
-Subject: Re: [External] Re: [PATCH v6 3/3] RISC-V: Select ACPI PPTT drivers
-Message-ID: <ZoJDb9PQX2oEISrI@sunil-laptop>
-References: <20240617131425.7526-1-cuiyunhui@bytedance.com>
- <20240617131425.7526-3-cuiyunhui@bytedance.com>
- <CAEEQ3wnkQsfmLbyMrG_YBvWvhHJdSTg7dG5W_mxv_wxCjatgCA@mail.gmail.com>
- <ZnLY3mNxyv9QOmGn@sunil-laptop>
- <CAEEQ3wmarOoWWYrdpf7YNQdZG4rf_O4dHkeiO3W1cuavVh8TMQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fWAsWQQcD/omAdDJVf56NNvMIyBWofnB/OCi9RvOVCBcbzCjsbqB4fpyaqe0tfVwqnrzHdhR1N5sqr657acJ1pEnqMAWn/MAWNfcC4t2GNpEeqekTO2XlJ1HHCkNE4dPF/auirO1jCxbQw8uqft7w6grDaWDQ2howhwQwKY/9XE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gJOkfmYk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACFEEC116B1;
+	Mon,  1 Jul 2024 05:50:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719813030;
+	bh=CggASGndVY2hRAe4b7g7gUovcHQroxoUVYzI/gZU+1k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gJOkfmYkatWF9NWIpFH+N+JjmQQaypWEN0VPjo97n2fLXeYD54U8rw7DsE8ayKq0d
+	 aM+EZcugBP/jcjx6cBhMsFYf8svKHR8QIG6boql1PBNMjUq8kbGhlc43Hwar0e3MqM
+	 SMyoVxO2iP91mLIV0c1n8Gd+AncP3Eh9COte7oIeCtdeEG450kHUokfoIrXBddAc8I
+	 cYpwcMMjktcRwCTu6tm8ps1Qap/+SMLpI6F/dDSIPIElrEz2Yj6ciCmViyD/78f1kI
+	 kln9fHY4tJo+r95nMWjV5BzhEp2OfpNuq2Ar7wPhL5fdHbnACOrCyFHDuOR5FjlWwi
+	 TZdNyD34OiqKw==
+Date: Mon, 1 Jul 2024 07:50:24 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Ian Kent <ikent@redhat.com>
+Cc: Alexander Larsson <alexl@redhat.com>, Jan Kara <jack@suse.cz>, 
+	Matthew Wilcox <willy@infradead.org>, Lucas Karpinski <lkarpins@redhat.com>, viro@zeniv.linux.org.uk, 
+	raven@themaw.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Eric Chanudet <echanude@redhat.com>
+Subject: Re: [RFC v3 1/1] fs/namespace: remove RCU sync for MNT_DETACH umount
+Message-ID: <20240701-zauber-holst-1ad7cadb02f9@brauner>
+References: <20240626201129.272750-2-lkarpins@redhat.com>
+ <20240626201129.272750-3-lkarpins@redhat.com>
+ <Znx-WGU5Wx6RaJyD@casper.infradead.org>
+ <50512ec3-da6d-4140-9659-58e0514a4970@redhat.com>
+ <20240627115418.lcnpctgailhlaffc@quack3>
+ <20240627-abkassieren-grinsen-6ce528fe5526@brauner>
+ <d1b449cb-7ff8-4953-84b9-04dd56ddb187@redhat.com>
+ <20240628-gelingen-erben-0f6e14049e68@brauner>
+ <CAL7ro1HtzvcuQbRpdtYAG1eK+0tekKYaTh-L_8FqHv_JrSFcZg@mail.gmail.com>
+ <97cf3ef4-d2b4-4cb0-9e72-82ca42361b13@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,63 +67,93 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEEQ3wmarOoWWYrdpf7YNQdZG4rf_O4dHkeiO3W1cuavVh8TMQ@mail.gmail.com>
+In-Reply-To: <97cf3ef4-d2b4-4cb0-9e72-82ca42361b13@redhat.com>
 
-On Thu, Jun 20, 2024 at 09:28:18AM +0800, yunhui cui wrote:
-> Hi Sunil,
+> I always thought the rcu delay was to ensure concurrent path walks "see" the
 > 
-> On Wed, Jun 19, 2024 at 9:11 PM Sunil V L <sunilvl@ventanamicro.com> wrote:
-> >
-> > On Wed, Jun 19, 2024 at 07:32:18PM +0800, yunhui cui wrote:
-> > > Hi Sunil,
-> > >
-> > > On Mon, Jun 17, 2024 at 9:14 PM Yunhui Cui <cuiyunhui@bytedance.com> wrote:
-> > > >
-> > > > After adding ACPI support to populate_cache_leaves(), RISC-V can build
-> > > > cacheinfo through the ACPI PPTT table, thus enabling the ACPI_PPTT
-> > > > configuration.
-> > > >
-> > > > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> > > > Reviewed-by: Jeremy Linton <jeremy.linton@arm.com>
-> > > > Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> > > > Reviewed-by: Sunil V L <sunilvl@ventanamicro.com>
-> > > > ---
-> > > >  arch/riscv/Kconfig | 1 +
-> > > >  1 file changed, 1 insertion(+)
-> > > >
-> > > > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> > > > index 9f38a5ecbee3..1b4c310a59fb 100644
-> > > > --- a/arch/riscv/Kconfig
-> > > > +++ b/arch/riscv/Kconfig
-> > > > @@ -13,6 +13,7 @@ config 32BIT
-> > > >  config RISCV
-> > > >         def_bool y
-> > > >         select ACPI_GENERIC_GSI if ACPI
-> > > > +       select ACPI_PPTT if ACPI
-> > > >         select ACPI_REDUCED_HARDWARE_ONLY if ACPI
-> > > >         select ARCH_DMA_DEFAULT_COHERENT
-> > > >         select ARCH_ENABLE_HUGEPAGE_MIGRATION if HUGETLB_PAGE && MIGRATION
-> > > > --
-> > > > 2.20.1
-> > > >
-> > >
-> > > Gentle ping.
-> > >
-> > Actually, my RB is still valid. Anyway, here again.
-> >
-> > Reviewed-by: Sunil V L <sunilvl@ventanamicro.com>
-> >
-> > Thanks,
-> > Sunil
+> umount not to ensure correct operation of the following mntput()(s).
 > 
-> Okay, thank you. BTW, when will this patchset be picked up to linux-next?
 > 
-Hi Palmer,
+> Isn't the sequence of operations roughly, resolve path, lock, deatch,
+> release
+> 
+> lock, rcu wait, mntput() subordinate mounts, put path.
 
-Can this series be picked up for -next? Looks like it has got sufficient
-reviews.
+The crucial bit is really that synchronize_rcu_expedited() ensures that
+the final mntput() won't happen until path walk leaves RCU mode.
 
-Thanks,
-Sunil
+This allows caller's like legitimize_mnt() which are called with only
+the RCU read-lock during lazy path walk to simple check for
+MNT_SYNC_UMOUNT and see that the mnt is about to be killed. If they see
+that this mount is MNT_SYNC_UMOUNT then they know that the mount won't
+be freed until an RCU grace period is up and so they know that they can
+simply put the reference count they took _without having to actually
+call mntput()_.
+
+Because if they did have to call mntput() they might end up shutting the
+filesystem down instead of umount() and that will cause said EBUSY
+errors I mentioned in my earlier mails.
+
+> 
+> 
+> So the mount gets detached in the critical section, then we wait followed by
+> 
+> the mntput()(s). The catch is that not waiting might increase the likelyhood
+> 
+> that concurrent path walks don't see the umount (so that possibly the umount
+> 
+> goes away before the walks see the umount) but I'm not certain. What looks
+> to
+> 
+> be as much of a problem is mntput() racing with a concurrent mount beacase
+> while
+> 
+> the detach is done in the critical section the super block instance list
+> deletion
+> 
+> is not and the wait will make the race possibility more likely. What's more
+
+Concurrent mounters of the same filesystem will wait for each other via
+grab_super(). That has it's own logic based on sb->s_active which goes
+to zero when all mounts are gone.
+
+> 
+> mntput() delegates the mount cleanup (which deletes the list instance) to a
+> 
+> workqueue job so this can also occur serially in a following mount command.
+
+No, that only happens when it's a kthread. Regular umount() call goes
+via task work which finishes before the caller returns to userspace
+(same as closing files work).
+
+> 
+> 
+> In fact I might have seen exactly this behavior in a recent xfs-tests run
+> where I
+> 
+> was puzzled to see occasional EBUSY return on mounting of mounts that should
+> not
+> 
+> have been in use following their umount.
+
+That's usually very much other bugs. See commit 2ae4db5647d8 ("fs: don't
+misleadingly warn during thaw operations") in vfs.fixes for example.
+
+> 
+> 
+> So I think there are problems here but I don't think the removal of the wait
+> for
+> 
+> lazy umount is the worst of it.
+> 
+> 
+> The question then becomes, to start with, how do we resolve this unjustified
+> EBUSY
+> 
+> return. Perhaps a completion (used between the umount and mount system
+> calls) would
+> 
+> work well here?
+
+Again, this already exists deeper down the stack...
 
