@@ -1,85 +1,93 @@
-Return-Path: <linux-kernel+bounces-236428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EACF91E230
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:18:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F3C291E233
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:18:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC1A51F24E72
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:18:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10A1D284AB7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:18:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15FDA167290;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46973167DA4;
 	Mon,  1 Jul 2024 14:18:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C6DydJbO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4B915D5B4
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 14:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 769DE16191A;
+	Mon,  1 Jul 2024 14:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719843484; cv=none; b=Lpe1I+ilNIu4iLteIX0pTnxC+2TzT3wbWkaBQoA15fiiRxTZvLrjaYnrF8EvLLr9ekGH8Uwoo0DtNE+vqwDLY30clPaW/Qmiu1QvFGvX1l8yJyXngGXt0lPSNlbPhnvAAbDa9ZfzGEQRF7BW2MKv0lNngWxRggjMI+hrm20fgC4=
+	t=1719843484; cv=none; b=Hk24Alm8aA/vD6mGfUa4Zv6VjWNd9EWNk3YClr2VNRkW1OL5MhBrZwrOlTJ8v6N7nSCHpaMu44p2DkfPKRJT7jr/M/0MjPQmS5qkJCd65/RI0W9/lXcQlcLMAOuuhYz/XPlGc+Hd+tF7GzVU6h+8er1njgauNP8MtzlG9K/7aoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719843484; c=relaxed/simple;
-	bh=Hqauc34JIR21GByKeefatrTTgjDYWO0CZ0el9+9ox08=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=nChObqS7TfDwkuw9imBFWUe+wJQOJl9WXLM1yy3dEWicR6Vn/40g6TAbacB7HjojhOcvBgPC2TadXJqS7uE0yjavBNLiXjCmmxJrz5lbWO4yVn5eEYY3GkXjEV+vuDlyycXhX2DcfoIzSB5YbG0hvRW4tLuXHyahYCZHzgU71oA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3761cec5b39so33879625ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 07:18:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719843482; x=1720448282;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YGESIlx4u7wAXAlH51/mWo3q/1xE15equ6TWpZIqiCI=;
-        b=F2Svjlydl4BX5O4wJPwJDzaYneJL5OM5PWyYwC2NwN56rnZQw27ax3HMI58TPJchGP
-         l+zsr7u8vuWbEQMekhHzyhy5D/tw9UUZATroVfvPQE/J2lUdn++UaIUl32KQLoH6+RJz
-         Hd+fZJgxej7fCy+ieTRuyPtCjNdwXlOePrI8HkDD3LO9k1BmI9Z8K9S+BSoe9UZIMEhi
-         k+cccX7nBx944KZTbNenQy8s2/ouHi9mCG7UTpe81+MZ/AfpTDkJQelqYxWKRdBlNBa2
-         fQuPbEfkSa+fUvNX9a7zfMqrYMbZ/EL/HyLuLIc6/MzfNxX/wC9S+v7GrcuxORfmrUSg
-         mv0w==
-X-Gm-Message-State: AOJu0YxjUlL+8Lf0HOBbCJbT5gfhu7KHb5olV6gCJZ5oWmenkyWcKy1K
-	TQbdiY53jkrTtuChOrQCjUy4FL7/7coPy9lZQ1w0UjX7RTKm5higwdYvWCFjHRgqZkMnPxzNgh+
-	aFSN6HPSNPyKpMzRR22an+G3q3QqNtuywOQiKKE2f0/3i0HDRSz6N4Oo=
-X-Google-Smtp-Source: AGHT+IGG+COI6wqlcdEZgNfvEzhqwob9ieVA/91cAO4Jit5QILunPAapiqj17lkfCKHqizBBzzTSndnhrWxpVI+HUgFvWLP52ro7
+	bh=KNdmg62H0LvKkwIT08kVZT9u8KwP64SOz7rDR0b4SFE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EjxMYc7B+OykxRJLlnhBT++GVZXdPGe3g/shBf22imCp2/p/UJwADzgxzceU1V7nYLfkaDx+upxg4Auwg8V4x/ZAZ9zH3S47O50qOF+8OpfGI2Owjh7gdAqeoSlw0oOH2yaxO25Nc2x4NXjcNltUmcycS/gSB04FHGpG9W9YSvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C6DydJbO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1D8FC116B1;
+	Mon,  1 Jul 2024 14:18:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719843484;
+	bh=KNdmg62H0LvKkwIT08kVZT9u8KwP64SOz7rDR0b4SFE=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=C6DydJbOJaYlZYklePBF3Mo12au5Yjdt2qvyRaArGosBk6V1aQWD1+mPpmyoTD7aa
+	 H142OWpuDA0wW/Dq8pJx0lIsbaY5LJPRC2KMfrASntlF0W5Ey5houV2xjJu0dhsrvW
+	 +sXSmJvCd3IHLyFJj4Nnlw391xuhO1uL0MIi/9tGYGtTxaBbkywvXcIDF/AHnQecgz
+	 1A0BCNmhWgAA0p33tZC3bVduW66GyodzrYTgl+hk2HMiDkNf40k/Mo1bBHdfEpXa06
+	 Z++U+RlDRgkcd7AFt4mL4ZcuHCV++rBaKxb6SQK7f+vXdTzzO6KCQF+ilHSTFxeHLp
+	 s/o2L9gRqQkSQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 94168CE0AD3; Mon,  1 Jul 2024 07:18:03 -0700 (PDT)
+Date: Mon, 1 Jul 2024 07:18:03 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Matthew Wilcox <willy@infradead.org>, kernel-janitors@vger.kernel.org,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+	maple-tree@lists.infradead.org
+Subject: Re: [v2 2/5] rosebush: Add new data structure
+Message-ID: <c550c690-7555-4ccd-bf8a-8c54657aea3c@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240625211803.2750563-3-willy@infradead.org>
+ <52d370b2-d82a-4629-918a-128fc7bf7ff8@web.de>
+ <ZoIHLiTvNm0IE0CD@casper.infradead.org>
+ <8ced519f-47f2-4a74-be6d-4be5958009ba@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d95:b0:37a:653b:3ba6 with SMTP id
- e9e14a558f8ab-37cd358d008mr5735495ab.5.1719843482458; Mon, 01 Jul 2024
- 07:18:02 -0700 (PDT)
-Date: Mon, 01 Jul 2024 07:18:02 -0700
-In-Reply-To: <20240701084541.1731210-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d77129061c30432a@google.com>
-Subject: Re: [syzbot] [bcachefs?] INFO: task hung in bch2_fs_read_only_work
-From: syzbot <syzbot+8996d8f176cf946ef641@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8ced519f-47f2-4a74-be6d-4be5958009ba@web.de>
 
-Hello,
+On Mon, Jul 01, 2024 at 07:21:18AM +0200, Markus Elfring wrote:
+> >> Under which circumstances would you become interested to apply a statement
+> >> like “guard(rcu)();”?
+> >
+> > Under no circumstances.
+> 
+> I imagine that further contributors would like to discuss collateral evolution
+> also according to the support for applications of scope-based resource management.
+> https://elixir.bootlin.com/linux/v6.10-rc6/source/include/linux/rcupdate.h#L1093
+> 
+> See also the commit 80cd613a9ae091dbf52e27a409d58da988ffc8f3 ("rcu:
+> Mollify sparse with RCU guard") from 2024-04-15.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Although the guard(rcu)() statement is very helpful in some circumstances
+and is seeing increasing use, it is not free of downsides in a number
+of situations.  For but one example, Matthew might expect that partially
+overlapping critical sections will be needed, which would rule out use of
+guards on one or the other of those two critical sections.
 
-Reported-and-tested-by: syzbot+8996d8f176cf946ef641@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         f06ce441 Merge tag 'loongarch-fixes-6.10-1' of git://g..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=1183738e980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=eb72437243175f22
-dashboard link: https://syzkaller.appspot.com/bug?extid=8996d8f176cf946ef641
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1306a869980000
-
-Note: testing is done by a robot and is best-effort only.
+							Thanx, Paul
 
