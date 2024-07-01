@@ -1,218 +1,217 @@
-Return-Path: <linux-kernel+bounces-236164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2224291DE51
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:48:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 057ED91DE55
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:49:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 682E6B22424
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:48:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B1DEB235CD
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 404C01494B8;
-	Mon,  1 Jul 2024 11:47:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37BA1474AD;
+	Mon,  1 Jul 2024 11:48:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vcERIxBu"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PEJE6KJl"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E717C770E6
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 11:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6271F14A4F1;
+	Mon,  1 Jul 2024 11:48:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719834474; cv=none; b=auuNZjFCxDTHk34f6Y60n3fJfbW2Yza5kWMSW9X1UOKXpbxS3BmXffEo3G9AuvGbwN1xZAUW3dwWL44AM8p10s9PaAG9gwS7MjXUxbsPnX01thXbkSGeVRyHksYCDmeBR+TNBi5UnPo0qrMEG40Yp7JQ+mpgr6HF48rW1qs5EAc=
+	t=1719834538; cv=none; b=fF9Y19Q02mWsB51/CzXHJdwJeHXWt8UnOVfhF5fbF1Ca+EBjks+8RLqq/2KhOSt9xE3Fh6n48IrGS3q++OyYHh3lGgbs34gt+6Q+Y389XmpI47ZpDCqFWTjdscxBmmTnacjfaE1RBH8hMSxXU1Qqv3ZRd+kIig14cc/hTMRTEQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719834474; c=relaxed/simple;
-	bh=jiWVBvlci6pg3oJ+xWBRBIfbjSaD2vYzPxE1uip87Pw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JctVLly+Bm8NkpUEGeK/N0k3YLMOD8zZJLWPPPkS+5LXVctUqLvGiOn1AahPre9FjyLhiF7sW5sP+fpazi5iy5EIRQ+r/Sln5dIYRWqpengkrAybIZlRlaOLq60B/I4VtqchHJtvysoY42ChadiR1fN5phu/SJqH42JPkv8Of/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vcERIxBu; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7067a2e9607so2266160b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 04:47:51 -0700 (PDT)
+	s=arc-20240116; t=1719834538; c=relaxed/simple;
+	bh=6a1jANNPOTvEfPmJEWvbSZBbVBozVrmbh+bxb2UH+7o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VA0SPh61teEC+08SDemdjR1Xvs0MyFxKIwy+L90YBxe85VfWMQKZ1R76WvmLt+HO6cKjo84hynz66B64ZyOZEEwDABXmRv/qvqjQzcvujYbHie3clo7MK4ad0oBUms+lDt9DTqSB0uLT4MXV3CFWSnq/RDuEfY06ETrY3LhkSWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PEJE6KJl; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a72517e6225so322479566b.0;
+        Mon, 01 Jul 2024 04:48:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719834471; x=1720439271; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vi7uBT1zGBUytAU1JAG3iLk2sulQaLB7Dq+BxdOsfHM=;
-        b=vcERIxBu0xd5g4IpMJl4OnjdSwsr7rK3jJt6Fr/LtUsqHAzLVMhWQnD5tQacKnt0Ns
-         w7hoPcm8HONBQaHUbdW3dWLvpGWDpsOtyHEwWbbPfigMkSrX8+/iI8MacalFJcz8J3rN
-         MlERqwYN8ERrX5OkKjJLOn5RtovDoQG90ahTwkgKa63dJC5VN88ak3bFk2wEqNDYxI0p
-         Phc+y7Ig47C67CaP/YWrBvxpIwa/TNbrVBBX9dNcvAH1YbOZ8CctzKl6IfqX2WGHPv0i
-         EtDndWA9oC6ew2O3zNXzpQRJcXtDEZcgydLwA7hDYqZGv3TdbsjtwHO4uh1Hm64yDaj2
-         MkCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719834471; x=1720439271;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1719834535; x=1720439335; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vi7uBT1zGBUytAU1JAG3iLk2sulQaLB7Dq+BxdOsfHM=;
-        b=igo/uPGK7ZgkMeVX349nm3FCkomHil1VUuvbXXMmYhNMVktf67oxSge1VbT0HTGY3t
-         Ykf8qLy/wiiTWnOtkZCmyZVSiyw11OYIoopiwi2PfnarSQx7eVjQOMRV69+7tOVCsn+/
-         YGooQ8LV3i8GF1IvGMIjdas75HW6vTc8/ERVfqBFkHocbbhZFHjHjH+uuia5+iGStFLy
-         0JjDTC5AqYGZ1px41OAi23K5DivZMvrr7P6iVVqusZy+HlCey+SHsTM6vstuxA0PgElM
-         InbILfsIeLLpUL9KQrmhONANDZVpKjios1FEYxHvscxZKP673zuRdjOaLUBxZATHoPxR
-         nAKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWacVdHAh5VgoxA08nux+1Gel/jKwnIiG5EGjnrmn5tData7wsqtnt0HTnpHBQcauhftmHy96vP94YDwgQ1NIV1ilEPeK2qv4MzpPzl
-X-Gm-Message-State: AOJu0YxBfbLjAEjVDimJajY4qzG+jLfPYVf2/FE9Qm9JdcIde5kCHyoD
-	AyL+fej/k/Cuu0uXbTPFI3sIhlLzj5fjWLLyJ2DpWsgCM2YQPDh3aeVouri/Gj/OYt2qIjr4g3k
-	i
-X-Google-Smtp-Source: AGHT+IGOn8fZU80VMtXzaPnMUv7YL/QK2W3TGTcOrKEGGFell07/QenRkEBPEcSm5E5/EzY3PGFhNA==
-X-Received: by 2002:a05:6a20:4303:b0:1bd:18ee:f145 with SMTP id adf61e73a8af0-1bef60ee5e3mr8481395637.1.1719834471025;
-        Mon, 01 Jul 2024 04:47:51 -0700 (PDT)
-Received: from localhost ([122.172.82.13])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91ce1c396sm6598209a91.4.2024.07.01.04.47.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 04:47:50 -0700 (PDT)
-Date: Mon, 1 Jul 2024 17:17:48 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>, Nikunj Kela <nkela@quicinc.com>,
-	Prasad Sodagudi <psodagud@quicinc.com>, linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] OPP: Fix support for required OPPs for multiple PM
- domains
-Message-ID: <20240701114748.hodf6pngk7opx373@vireshk-i7>
-References: <20240618155013.323322-1-ulf.hansson@linaro.org>
- <20240625105425.pkociumt4biv4j36@vireshk-i7>
- <CAPDyKFpLfBjozpcOzKp4jngkYenqSdpmejvCK37XvE1-WbBY2g@mail.gmail.com>
+        bh=OV/0naMj7Ov0TQcz1d4KTNBA6C9daFFiQCJCqoAVX9c=;
+        b=PEJE6KJlvQzKAnpYUqxdvPjiYsGh4q8LcQO5UWz/L9izpqrJgR8wICOGCQvU+UpMAx
+         Vqs3Irf8o5QkWEbGkHVM8vBe8yHcqwceGlHTu5qA3C0iQRoDY1ZXRrAYMmPp8aThVEF+
+         RzGkr3TPAbqDrfoDPwc9Q9+iZSLmEE0gGy0G+y+6lUUGRYj4GX/NT90yQ7vdsMPwlFaV
+         Zy6n3TI9CE8WiqsAqmXsaSSmdUoHRthwk/zqag1ED9kw6uCAzwVJLmq8ZfxxRHo6/G8R
+         VyrTEMjOqLkHa8eO2nHg3WmkgvL8IvIifjDj+kIwKpyZjy1DWT/qfnJgBzsCQ9Udt9NM
+         MQkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719834535; x=1720439335;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OV/0naMj7Ov0TQcz1d4KTNBA6C9daFFiQCJCqoAVX9c=;
+        b=mJCqOHPjOrhG0iWMyKCJ3/wPh8KmtfFXmcYMsj8vb1VWuDVZmBPyFOqQjcsP3MZOj3
+         Qo82WCuYNnZcuJaAaDEKl7zrNoT6pm0UWihKzPcH8z2R5lzzPP3Y5UFhTGddMhlXfLMS
+         GTutx+8lCO+9NujZ5Q4Cxq1ZSC62bO5IUQ9EkLPgDQ2Up4xbg21xh0KXBqBxlzZ1EJZh
+         KYK9FRMGp2nWywmA6FXKvWhVi4hMRV7HhlA+WDBfCMMuXGpFeKxgw4bK6koTOaFcce18
+         HgwynDtEOK92wFs0NVJRfO6CIXcfpigia/Vf7XixI72Ik2nzjVR34Oy3dPysIcSF3ZiS
+         UFow==
+X-Forwarded-Encrypted: i=1; AJvYcCXWgMnjyfXGQMUUmLdGtf4Rr1fqAimpcd3xPF+EZ4zdSXgsBBu+XDS8m8f6ynWe7y0veQjwgTIMylP/DXBEMRM8+DYm3uXp/GWzoZEOMVbsW7ZLUFAnHbTt6bPMbH/chMWVbDW7EeJjzF0MyPH0wp4tU4MUOsJxwl43JHKlWoNRcMoH5w==
+X-Gm-Message-State: AOJu0YwwntuIEaYIe2i6VLzgc0EkAd2gzbwyS74GHpeLA9PtfMBHFWhx
+	kDfXvA4E92yzPXUwd+ZZ87osIcYf3wWKCWfABODdydJVlGCOIJKDcfasiVFy1ptYWmkmKtG9+bf
+	ozoCmfw8tWM/bpgcdTFzwJJUh0nRtMisqpYA=
+X-Google-Smtp-Source: AGHT+IEb0SmE7nytN26KZiMUWH3d+2JmwWgbVDyujSQngfNsJbSRJMsPN5Ts/PU6SiSb5LYnb0/c/h26gtzP/k2ML4I=
+X-Received: by 2002:a17:907:7242:b0:a6f:c886:b68b with SMTP id
+ a640c23a62f3a-a75144398a9mr487892666b.43.1719834534317; Mon, 01 Jul 2024
+ 04:48:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFpLfBjozpcOzKp4jngkYenqSdpmejvCK37XvE1-WbBY2g@mail.gmail.com>
+References: <20240601092646.52139-1-joswang1221@gmail.com> <20240603130126.25758-1-joswang1221@gmail.com>
+ <20240604000147.2xxkkp7efjsbr3i5@synopsys.com> <CAMtoTm0S2WSO6VxK79DkTs+1aq5xBYBMRsPXWAFuWo4DoymUEw@mail.gmail.com>
+ <20240622000528.3keexfbetetkrxpy@synopsys.com> <CAMtoTm2_QoT6YL=9fDJfdgcc__X-dkJymwDXj8VpyYdXx1mHAA@mail.gmail.com>
+ <20240626012927.obxdoarp6cotfowo@synopsys.com>
+In-Reply-To: <20240626012927.obxdoarp6cotfowo@synopsys.com>
+From: joswang <joswang1221@gmail.com>
+Date: Mon, 1 Jul 2024 19:48:43 +0800
+Message-ID: <CAMtoTm0SaDfWN2DWoqvfSdqLGUp+jgoM_vuAudwhsp77aH5L_A@mail.gmail.com>
+Subject: Re: [PATCH v2, 2/3] usb: dwc3: core: add p3p2tranok quirk
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, 
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "balbi@kernel.org" <balbi@kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, joswang <joswang@lenovo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 29-06-24, 11:09, Ulf Hansson wrote:
-> I get your point, but I am not sure I agree with it.
-> 
-> For the required-opps, the only existing use case is power/perf
-> domains with performance-states, so why make the code more complicated
-> than it needs to be?
+Thank you for your feedback. We will not deal with this issue after
+internal discussion.
+Thank you again for taking the time to review the code.
 
-That is a fair argument generally, i.e. keep things as simple as we
-can, but this is a bit different. We are talking about setting the
-(required) OPP for a device (parent genpd) here and it should follow
-the full path.
+Thanks,
+Jos Wang
 
-Even in case of genpds we may want to configure more properties and
-not just vote, like bandwidth, regulator, clk, etc. And so I would
-really like to set the OPP in a standard way, no matter what.
-
-> No, that's not correct. Let me try to elaborate on my setup, which is
-> very similar to a use case on a Tegra platform.
-
-Thanks, I wasn't thinking about this setup earlier.
-
-> pd_perf0: pd-perf0 {
->     #power-domain-cells = <0>;
->     operating-points-v2 = <&opp_table_pd_perf0>;
-> };
-> 
-> //Note: no opp-table
-> pd_power4: pd-power4 {
->     #power-domain-cells = <0>;
->      power-domains = <&pd_perf0>;
-> };
-> 
-> //Note: no opp-table
-> pd_power5: pd-power5 {
->      #power-domain-cells = <0>;
->      power-domains = <&pd_perf0>;
-> };
-> 
-> //Note: The opp_table_pm_test10 are having required-opps pointing to
-> pd_perf0's opp-table.
-> pm_test10 {
->     ...
->     power-domains = <&pd_power4>, <&pd_power5>;
->     power-domain-names = "perf4", "perf5";
->     operating-points-v2 = <&opp_table_pm_test10>;
-> };
-
-
-> In the use case above, we end up never voting on pd_power5.
- 
-> The DT parsing of the required-opps is already complicated and there
-> seems to be endless new corner-cases showing up. Maybe we can fix this
-> too, but perhaps we should simply take a step back and go for
-> simplifications instead?
-
-I truly believe that keeping a standard way of updating OPPs is the
-right way to go and that will only prevent complicated corner cases
-coming later on.
-
-What about this patch instead ?
-
-diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-index 5f4598246a87..2086292f8355 100644
---- a/drivers/opp/core.c
-+++ b/drivers/opp/core.c
-@@ -1091,7 +1091,8 @@ static int _set_required_opps(struct device *dev, struct opp_table *opp_table,
- 		if (devs[index]) {
- 			required_opp = opp ? opp->required_opps[index] : NULL;
- 
--			ret = dev_pm_opp_set_opp(devs[index], required_opp);
-+			/* Set required OPPs forcefully */
-+			ret = dev_pm_opp_set_opp_forced(devs[index], required_opp, true);
- 			if (ret)
- 				return ret;
- 		}
-@@ -1365,17 +1366,8 @@ int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq)
- }
- EXPORT_SYMBOL_GPL(dev_pm_opp_set_rate);
- 
--/**
-- * dev_pm_opp_set_opp() - Configure device for OPP
-- * @dev: device for which we do this operation
-- * @opp: OPP to set to
-- *
-- * This configures the device based on the properties of the OPP passed to this
-- * routine.
-- *
-- * Return: 0 on success, a negative error number otherwise.
-- */
--int dev_pm_opp_set_opp(struct device *dev, struct dev_pm_opp *opp)
-+static int dev_pm_opp_set_opp_forced(struct device *dev, struct dev_pm_opp *opp,
-+				     bool forced)
- {
- 	struct opp_table *opp_table;
- 	int ret;
-@@ -1386,11 +1378,25 @@ int dev_pm_opp_set_opp(struct device *dev, struct dev_pm_opp *opp)
- 		return PTR_ERR(opp_table);
- 	}
- 
--	ret = _set_opp(dev, opp_table, opp, NULL, false);
-+	ret = _set_opp(dev, opp_table, opp, NULL, forced);
- 	dev_pm_opp_put_opp_table(opp_table);
- 
- 	return ret;
- }
-+/**
-+ * dev_pm_opp_set_opp() - Configure device for OPP
-+ * @dev: device for which we do this operation
-+ * @opp: OPP to set to
-+ *
-+ * This configures the device based on the properties of the OPP passed to this
-+ * routine.
-+ *
-+ * Return: 0 on success, a negative error number otherwise.
-+ */
-+int dev_pm_opp_set_opp(struct device *dev, struct dev_pm_opp *opp)
-+{
-+	return dev_pm_opp_set_opp_forced(dev, opp, false);
-+}
- EXPORT_SYMBOL_GPL(dev_pm_opp_set_opp);
- 
- /* OPP-dev Helpers */
-
--- 
-viresh
+On Wed, Jun 26, 2024 at 9:29=E2=80=AFAM Thinh Nguyen <Thinh.Nguyen@synopsys=
+.com> wrote:
+>
+> Hi Joswang,
+>
+> On Tue, Jun 25, 2024, joswang wrote:
+> > On Sat, Jun 22, 2024 at 8:05=E2=80=AFAM Thinh Nguyen <Thinh.Nguyen@syno=
+psys.com> wrote:
+> > >
+> > > Sorry for the delay response regarding this.
+> > >
+> > > On Wed, Jun 19, 2024, joswang wrote:
+> > > > Hi Thinh
+> > > >
+> > > > The workaround solution provided by your company for this issue is =
+as follows:
+> > > >   Workaround=EF=BC=9Aif the phy support direct P3 to P2 transition=
+=EF=BC=8Cprogram
+> > > > GUSB3PIPECTL.P3P2Tranok=3D1
+> > > >
+> > > > As the databook mentions:
+> > > > This bit is used only for some non-Synopsys PHYs that cannot do LFP=
+S in P3.
+> > > > This bit is used by third-party SS PHY. It must be set to '0' for S=
+ynopsys PHY.
+> > > >
+> > > > For Synopsys PHY, if this bit is set to "1", will it cause unknown =
+problems?
+> > > > Please help confirm this, thank you!
+> > > >
+> > >
+> > > That depends on what your use case and requirements are.
+> > >
+> > > I've reviewed this case. The impact to this issue is that power state
+> > > change may take longer than expected. It may violate the PIPE spec, b=
+ut
+> > > functionally, at least for how linux drivers are handled, I'm not cle=
+ar
+> > > on how this will impact the typical user.
+> > >
+> > > Can you help clarify your use case and what does this resolve beside =
+the
+> > > fact that it workaround the increase latency/response time.
+> > >
+> > > Thanks,
+> > > Thinh
+> >
+> > Your company provides usage scenarios:
+> > System software places the controller in low-power when there is no
+> > traffic on the USB.
+> > Subsequently, system software programs the controller to exit
+> > low-power to resume traffic.
+> >
+> > The method to reproduce the problem provided by your company:
+> > 1. Program the DWC_usb31 controller to operate in device mode of
+> > operation. Program GUSB3PIPECTL.P3P2TranOK=3D0. To increase the
+> > probability of hitting the problem run with a slower frequency for
+> > suspend_clk (for example, 32 KHz and 160 KHz).
+> > 2. Place the link in U3 while ensuring that pipe_powerdown is driven to=
+ P3.
+> > 3. Program DWC_usb31 controller to exit U3. Ensure that for P0 ->P2
+> > transition pipe_PhyStatus is returned immediately.
+> > 4. Program U3 exit from the remote link.
+> > 5. Program a D3 entry (pm_power_state_request=3DD3) at the same time
+> > (from the device application) and observe if the D3 entry
+> > acknowledgement (current_power_state_u3pmu=3DD3) takes longer than
+> > expected (> 10 ms).
+> >
+> > Currently, we do not have a real environment to verify this case, but
+> > considering the Android GKI regulations, we need to submit patches to
+> > Linux in advance. Based on the following workaround solution provided
+> > by your company=EF=BC=8Csince the hardware cannot be changed, we can on=
+ly use
+> > workaround 1 at present.
+> > Workaround 1: If the PHY supports direct P3 to P2 transition, program
+> > GUSB3PIPECTL.P3P2TranOK=3D1. However, note that as per PIPE4
+> > Specification, direct transition from P3 to P2 is illegal.
+> > Workaround 2: Delay the pipe_PhyStatus assertion by an amount greater
+> > than two suspend_clk durations at the input of the controller's PIPE
+> > interface.
+> >
+> > We have the following questions and hope you can help us confirm them.
+> > Thank you!
+> > 1. This case seems to describe that the P3 to P2 power state change
+> > takes a long time, that is, the DWC3_usb31 controller takes a long
+> > time to exit the D3 state. Please help evaluate whether this problem
+> > is perceived from the software perspective, such as whether there is a
+> > problem in the xhci_suspend or xhci_resume process. If from the
+> > software perspective, this case will not cause the xhci driver to
+> > fail, then we may not deal with this problem.
+> > 2. If this case causes the above problem, for Synopsys PHY,
+> > configuring GUSB3PIPECTL.P3P2TranOK=3D1 will cause other unknown
+> > problems?
+>
+> For this to occur, the host must try to transition from P3 to P2, and
+> somehow goes into suspend and request for D3 immediately, which causes
+> D3 request to take longer than expected.
+>
+> This is not something we would expect for xhci, because:
+> 1) On xhci_resume(), we would expect the pci device to be powered on
+>    (D0). So it would not be in a condition for this issue to occur.
+> 2) xhci_resume() takes some time restore the host controller states
+>    and reinitialize the registers and start the controller. Then
+>    xhci_suspend() also takes some time to save the states and halt the
+>    controller. So there's some time before the pci driver can send a D3
+>    request. I don't know how long your setup may take, but it's unlikely
+>    to hit this condition.
+>
+> Even if we do somehow manage to run into this scenario, we can set a pci
+> quirk to increase pci_pm_d3hot_delay to increase the suspend/resume
+> timeout, avoid hitting this.
+>
+> Unfortunately we don't have the real environment to verify this. But
+> IMHO, for a typical use case, I don't see the need to introduce this
+> "snps,p2p3tranok-quirk".
+>
+> BR,
+> Thinh
 
