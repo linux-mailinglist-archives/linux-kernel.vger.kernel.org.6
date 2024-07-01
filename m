@@ -1,308 +1,145 @@
-Return-Path: <linux-kernel+bounces-236399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2785291E1C1
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:01:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43D3591E1C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:01:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 496861C23656
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:01:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAA301F2268B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4766E15F412;
-	Mon,  1 Jul 2024 14:00:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16A88153BE2;
+	Mon,  1 Jul 2024 14:01:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="ZQKaE+tq"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DCt6KPfE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A9715ECF5
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 14:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA9A3D72
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 14:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719842438; cv=none; b=tt2DYR93/87B1YVNA2TLlZj9/D10LldQHg4eTHU0dPEC/JwbvauKKp2pJ4x7ApLLMjSjYwUkAp2xvsjvgzmsyHVznzBQ5cGRMqQoKCPbxVm6LDv7NfU6yKvYTSqwU3UJoxB6zp/Do7kC6lqEcGQp/nx6eFd5u9Y8TBwTEzbN4v8=
+	t=1719842491; cv=none; b=fmUDk0htoUY9X8BG6zeYuEAWj8m5wrjtU+M7FrDjVf8Lm+QbPyOVwf6RrcGAF8cJ4fCQcUqLOgUb2OGEY5xAoyUYk65MILMv1SSsUJmAT8Xe4i8jSLjXAhrLSfu/aAlbsB5MpNwrCo9/ZtABJhSBFTKy8nwQJCfXlJsA+5iKUIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719842438; c=relaxed/simple;
-	bh=TlvbxZ9JbIdfsPX/FV+25GcJGzDSr4wkVnI2yY2DQeQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C2JAidWANEyhoYdC+HqtmgXk2+YptV9mu9J0CuAOjximGK3TAt2XtsQQXMbw8GzvXemHyexOma3dptacb98x12zgrxChZoNwm7PX1ZwZPjtscSI5uV4sPOZOcvPYx3nBQMB4TpypKcFuXwwPHlMLkEVvpXEmnp/HGqWF1mLEJLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=ZQKaE+tq; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dfdb6122992so2368727276.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 07:00:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1719842435; x=1720447235; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vQmQhGzXksR9nKnDEcUMRooEIa3TmT02Xr/hSLyAdds=;
-        b=ZQKaE+tqnWDB9Gd3L8+0iWnxz45rXbiZ6It2++njJBTRMzEcRvBYR3Wvu2wwtsPuJ6
-         sZlNF2bhH7q58Mb+AxB0dEubeBou3lMMV6tDeo4QKSY5+oPbdjZINkb85pW9En5w8j9i
-         Q9DpS7D4duOowvQBv1P+tXFXqjS1r86nRl44bIVmluzMhxsybAgUBOar1KvWb5+lvcip
-         SnXH8yuRyQa7LwyirKsFNNkQrRFec0urTFjQE9/hBpQPUfjInrwlarlZEoEqIdueHMw5
-         MJ6Euq7FMr79xsoGLwEDjLHBS1rm0t84iSKKCuWjD8qUL7ohdWP4k9ofyjP3E1EuWPzQ
-         CSeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719842435; x=1720447235;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vQmQhGzXksR9nKnDEcUMRooEIa3TmT02Xr/hSLyAdds=;
-        b=URmiSOuxDnQJ2zrn2hE0kfb5biIqZbYlwcJQZOg2e8V/ZnLXgxyaGAPZBRaRJY0urZ
-         6qANTnIckt1jltrzhr33PpgHyIP1TXJ2Pzv2lL3MavPQ22kNgLX1I8Q1aW1BKEfXh2S1
-         zoJBKQLkEmjChLBTYZ+d8Otk8x19gLgEpE7/JmdTLrHN7gMq40x0vNDQsm97UqPH0cRw
-         kAh/US86HMd3ky5+3OQLiAbfba74mIConHgHSbDa1guFglomWVK7bflf26Z6b5ZaTpR4
-         rtXCy4lLJZ9ALqEhVqBOlBPCyKI8mkT0W5b0t/+EqaoPpizQUJUPeepO7WTfZFAPhwdU
-         78jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVZYCAzyRwOy5Hr5WCRNDdRX2JbuFMA9N+1nWpHeAmHntxw1xqACpfwFJGBayrKzcKjUJHJiHBAFqRotBrEJEcmySPfIXCmnysXJ4oo
-X-Gm-Message-State: AOJu0Yz0RJDJwSrPe+kosGRfMMLhDOxfqnAxfJ1cADpIw3RRMblPAf/j
-	cRSRGPL6iMIyzreiX+JAJImtwmC26URI5RD+FBO/zwG/6KCs4NSRQWRBty2kGEERspqfxSQ2v5X
-	I1FIOB5CCrShUWrTspcgxcDqsmYv/GyhFZfTuZQ==
-X-Google-Smtp-Source: AGHT+IGuOCjZc1h86QjIqKAEJQJHMLC6Fum29438lWdBlbcNmDsNzjPr4JOvu0g45BKOpIOEuzSwn6JY1/6xuhjs2z4=
-X-Received: by 2002:a25:f44e:0:b0:e03:562c:7e92 with SMTP id
- 3f1490d57ef6-e036eb54999mr4457628276.24.1719842434688; Mon, 01 Jul 2024
- 07:00:34 -0700 (PDT)
+	s=arc-20240116; t=1719842491; c=relaxed/simple;
+	bh=OCCNiYkig3OpItCurKgzHYtMokBXxh1cSb7XVgOm6D4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KKWB0k6GLIg6EjNTC62QZGl2gW3+YgpXt1uJDGHfXICfbrSpONKbJ3hFc3NLm+TQuYXEDJ9g4QX2mIKBuT72KybPccqEV4rOiCe/Zbt/NrQP58wB9yowoS0UuBY6BTY0YCM87QqNoZ+qpNw/psM0BwjL/Kyf0FFsEUd349D6ik8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DCt6KPfE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E57C9C116B1;
+	Mon,  1 Jul 2024 14:01:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719842490;
+	bh=OCCNiYkig3OpItCurKgzHYtMokBXxh1cSb7XVgOm6D4=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=DCt6KPfEC4wrzpjthvJpI1iicVsXHkoMkr40lfVEGqSnM4UbdnDA8HVNf++TfS1yW
+	 Sp7Nfyo/g3c8GG9JDQYzpt/EDy9Px4A2gTJUJ8FhsC1YSKBsgtVTQ61sKKZqA3/PWd
+	 tH3i4ugNwGSXuEa93UFGCeW2Wa7k3YkJvNK7Wfbojr/3xQEX+jlYIUs7pFuwZLsK9F
+	 TTkn3lykqO3mJ2c/ll6a3WTsXSPS8TXyCCRgZnTrIyu3HbVnWr9x1M1ffX+Qv6iYIS
+	 PdbOfmkqG087Fd6gvoYQ1Y9Bkl3n7JJRU2cYIFHRsW4YJZ3jubJeKzHp1dnjgtxRxP
+	 P1/7kVb1yc0xA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 88A74CE0AD3; Mon,  1 Jul 2024 07:01:30 -0700 (PDT)
+Date: Mon, 1 Jul 2024 07:01:30 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Marco Elver <elver@google.com>
+Cc: Thorsten Blum <thorsten.blum@toblux.com>, dvyukov@google.com,
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+	David.Laight@aculab.com
+Subject: Re: [PATCH v3] kcsan: Use min() to fix Coccinelle warning
+Message-ID: <b96317e1-2aa6-4e04-bd9e-6fb2ce49c417@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240630200135.224108-1-thorsten.blum@toblux.com>
+ <CANpmjNMXOn_N=9CY2iGLC=r=FAP4J2EFJbwDsAEuhKydwh6wtg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240628-imx728-driver-v2-0-80efa6774286@d3engineering.com>
- <20240628-imx728-driver-v2-2-80efa6774286@d3engineering.com> <5802879.DvuYhMxLoT@steina-w>
-In-Reply-To: <5802879.DvuYhMxLoT@steina-w>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Mon, 1 Jul 2024 15:00:16 +0100
-Message-ID: <CAPY8ntDbtL_+aRr9WaBjc103Qqt8FHKWZ-oRYNwA24WR-cWGLg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] media: i2c: Add driver for Sony IMX728
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Spencer Hill <shill@d3engineering.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANpmjNMXOn_N=9CY2iGLC=r=FAP4J2EFJbwDsAEuhKydwh6wtg@mail.gmail.com>
 
-Hi Alexander
-
-On Mon, 1 Jul 2024 at 10:25, Alexander Stein
-<alexander.stein@ew.tq-group.com> wrote:
->
-> Hi,
->
-> Am Freitag, 28. Juni 2024, 23:17:01 CEST schrieb Spencer Hill:
-> > Add a driver for the Sony IMX728 image sensor.
+On Mon, Jul 01, 2024 at 10:07:29AM +0200, Marco Elver wrote:
+> On Sun, 30 Jun 2024 at 22:03, Thorsten Blum <thorsten.blum@toblux.com> wrote:
 > >
-> > Signed-off-by: Spencer Hill <shill@d3engineering.com>
+> > Fixes the following Coccinelle/coccicheck warning reported by
+> > minmax.cocci:
+> >
+> >   WARNING opportunity for min()
+> >
+> > Use size_t instead of int for the result of min().
+> >
+> > Compile-tested with CONFIG_KCSAN=y.
+> >
+> > Reviewed-by: Marco Elver <elver@google.com>
+> > Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
 > > ---
-> >  drivers/media/i2c/Kconfig  |   11 +
-> >  drivers/media/i2c/Makefile |    1 +
-> >  drivers/media/i2c/imx728.c | 4660 ++++++++++++++++++++++++++++++++++++=
-++++++++
-> >  3 files changed, 4672 insertions(+)
+> > Changes in v2:
+> > - Add const and remove redundant parentheses as suggested by Marco Elver
+> > - Link to v1: https://lore.kernel.org/linux-kernel/20240623220606.134718-2-thorsten.blum@toblux.com/
 > >
-> > diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-> > index c6d3ee472d81..46b6463c558a 100644
-> > --- a/drivers/media/i2c/Kconfig
-> > +++ b/drivers/media/i2c/Kconfig
-> > @@ -233,6 +233,17 @@ config VIDEO_IMX415
-> >           To compile this driver as a module, choose M here: the
-> >           module will be called imx415.
-> >
-> > +config VIDEO_IMX728
-> > +       tristate "Sony IMX728 sensor support"
-> > +       depends on OF_GPIO
-> > +       select V4L2_CCI_I2C
-> > +       help
-> > +         This is a Video4Linux2 sensor driver for the Sony
-> > +         IMX728 camera.
-> > +
-> > +         To compile this driver as a module, choose M here: the
-> > +         module will be called imx728.
-> > +
-> >  config VIDEO_MAX9271_LIB
-> >         tristate
-> >
-> > diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
-> > index dfbe6448b549..1188420ee1b4 100644
-> > --- a/drivers/media/i2c/Makefile
-> > +++ b/drivers/media/i2c/Makefile
-> > @@ -56,6 +56,7 @@ obj-$(CONFIG_VIDEO_IMX335) +=3D imx335.o
-> >  obj-$(CONFIG_VIDEO_IMX355) +=3D imx355.o
-> >  obj-$(CONFIG_VIDEO_IMX412) +=3D imx412.o
-> >  obj-$(CONFIG_VIDEO_IMX415) +=3D imx415.o
-> > +obj-$(CONFIG_VIDEO_IMX728) +=3D imx728.o
-> >  obj-$(CONFIG_VIDEO_IR_I2C) +=3D ir-kbd-i2c.o
-> >  obj-$(CONFIG_VIDEO_ISL7998X) +=3D isl7998x.o
-> >  obj-$(CONFIG_VIDEO_KS0127) +=3D ks0127.o
-> > diff --git a/drivers/media/i2c/imx728.c b/drivers/media/i2c/imx728.c
-> > new file mode 100644
-> > index 000000000000..190f54aaf4e9
-> > --- /dev/null
-> > +++ b/drivers/media/i2c/imx728.c
-> > @@ -0,0 +1,4660 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Sony IMX728 CMOS Image Sensor Driver
-> > + *
-> > + * Copyright (c) 2024 Define Design Deploy Corp
-> > + */
-> > +
-> > +#include <linux/delay.h>
-> > +#include <linux/clk.h>
-> > +#include <linux/gpio/consumer.h>
-> > +#include <linux/i2c.h>
-> > +#include <linux/types.h>
-> > +#include <linux/module.h>
-> > +#include <linux/of.h>
-> > +#include <linux/pm_runtime.h>
-> > +#include <linux/v4l2-mediabus.h>
-> > +#include <linux/videodev2.h>
-> > +#include <media/v4l2-subdev.h>
-> > +#include <media/v4l2-ctrls.h>
-> > +#include <media/v4l2-event.h>
-> > +#include <media/v4l2-cci.h>
-> > +
-> > +#define IMX728_FRAMERATE_MAX           30
->
-> Bindings state the framerate is up to 45 fps, to this should be
-> set accordingly.
+> > Changes in v3:
+> > - Remove const again after feedback from David Laight
+> 
+> I think I was clear that the removal of const was not needed in this
+> case, and my preference was to keep const.
+> 
+> While general and _constructive_ comments are helpful and appreciated,
+> this level of nit-picking and bikeshedding about 'const' is a complete
+> and utter waste of time. I'm sorry, but I'm rather allergic to this
+> level of time-wasting.
+> 
+> As KCSAN maintainer, I'm just going to say I prefer v2.
+> 
+> > - Link to v2: https://lore.kernel.org/linux-kernel/20240624175727.88012-2-thorsten.blum@toblux.com/
+> 
+> [+Cc Paul]
+> 
+> Paul, if possible kindly pick v2 of this patch into the KCSAN tree:
+> https://lore.kernel.org/linux-kernel/20240624175727.88012-2-thorsten.blum@toblux.com/
 
-Not necessarily. The binding describes the hardware, not the
-functionality implemented by the driver.
+I have queued v2 of this patch, which is as shown below.  Please let me
+know if anything needs adjustment.  If things go well, this should make
+the upcoming merge window.
 
-The link frequency defined may not be sufficient to support 45fps -
-perfectly valid.
-The binding also lists that it can produce RAW24/20/16/12 and 10, but
-the driver only currently implements RAW10. Hopefully the others get
-added at a later date.
+							Thanx, Paul
 
-The bindings for many sensors advertise a wide range of potential
-input clock frequencies, but most only implement a 1 or 2. (I'm
-slightly surprised this sensor appears to be able to configure all
-PLLs just by being told the frequency of the clock, but it's
-possible).
-Many sensors could support using a different number of CSI2 data lanes
-and reference it in their bindings, but currently don't.
+------------------------------------------------------------------------
 
-AIUI All of those are acceptable to be stated in the bindings but not
-currently implemented in the drivers.
+commit 613b072fe9b3aa11410937498c98b7ac6d7c9d5a
+Author: Thorsten Blum <thorsten.blum@toblux.com>
+Date:   Mon Jun 24 19:57:28 2024 +0200
 
+    kcsan: Use min() to fix Coccinelle warning
+    
+    Fixes the following Coccinelle/coccicheck warning reported by
+    minmax.cocci:
+    
+            WARNING opportunity for min()
+    
+    Use const size_t instead of int for the result of min().
+    
+    Compile-tested with CONFIG_KCSAN=y.
+    
+    Reviewed-by: Marco Elver <elver@google.com>
+    Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 
-What does appear to be an issue here is that setting the frame
-interval appears to never be programmed into the sensor, so you have
-no frame rate control (imx728->fps is never read other than in
-imx728_get_frame_interval). There's no point in advertising the
-capability if it isn't connected up.
-If frame rate/interval control was hooked up, it'd be nice if that
-also set the maximum exposure time based on the frame interval.
-
-  Dave
-
-> > +#define IMX728_FRAMERATE_DEFAULT       30
-> > +#define IMX728_FRAMERATE_MIN           10
-> > +
-> > +#define IMX728_PIXEL_ARRAY_WIDTH       3857
-> > +#define IMX728_PIXEL_ARRAY_HEIGHT      2177
-> > +#define IMX728_PIXEL_ARRAY_MARGIN_TOP  9
-> > +#define IMX728_PIXEL_ARRAY_MARGIN_LEFT 8
-> > +#define IMX728_PIXEL_ARRAY_RECORDING_WIDTH     3840
-> > +#define IMX728_PIXEL_ARRAY_RECORDING_HEIGHT    2160
-> > +
-> > +#define IMX728_PIXEL_RATE              248832000
-> > +#define IMX728_LINK_FREQ               800000000
-> > +
-> > +#define IMX728_EXPOSURE_DEFAULT                10000
-> > +
-> > +#define IMX728_PM_IDLE_TIMEOUT         1000
-> > +
-> > +#define IMX728_REG_STATE       CCI_REG8(0x2CAC)
-> > +#define IMX728_REG_PG_00       CCI_REG16_LE(0x1A2A)
-> > +#define IMX728_REG_PG_01       CCI_REG24_LE(0x1A30)
-> > +#define IMX728_REG_PG_02       CCI_REG24_LE(0x1A38)
-> > +#define IMX728_REG_PG_03       CCI_REG8(0xB58F)
-> > +#define IMX728_REG_PG_04       CCI_REG8(0xB6C5)
-> > +#define IMX728_REG_PG_05       CCI_REG16_LE(0x1A2C)
-> > +#define IMX728_REG_PG_06       CCI_REG8(0xB58E)
-> > +#define IMX728_REG_PG_07       CCI_REG8(0xB6C4)
-> > +#define IMX728_REG_EXPOSURE_00 CCI_REG32_LE(0x98DC)
-> > +#define IMX728_REG_EXPOSURE_01 CCI_REG32_LE(0x98E4)
-> > +#define IMX728_REG_EXPOSURE_02 CCI_REG32_LE(0x98EC)
-> > +#define IMX728_REG_AGAIN_00    CCI_REG32_LE(0x98F8)
-> > +#define IMX728_REG_AGAIN_01    CCI_REG32_LE(0x98FC)
-> > +#define IMX728_REG_AGAIN_02    CCI_REG32_LE(0x9900)
-> > +#define IMX728_REG_AGAIN_03    CCI_REG32_LE(0x9904)
-> > +#define IMX728_REG_AGAIN_04    CCI_REG32_LE(0x9908)
-> > +#define IMX728_REG_FLIP                CCI_REG8(0x9651)
-> > +#define IMX728_REG_HFLIP       CCI_REG8(0xB67C)
-> > +#define IMX728_REG_VFLIP       CCI_REG8(0xB67D)
-> > +#define IMX728_REG_VMINOR      CCI_REG8(0x6000)
-> > +#define IMX728_REG_VMAJOR      CCI_REG8(0x6002)
-> > +#define IMX728_REG_RESET_0     CCI_REG8(0xB661)
-> > +#define IMX728_REG_RESET_1     CCI_REG8(0x95C5)
-> > +#define IMX728_REG_INCK_0      CCI_REG8(0x1B20)
-> > +#define IMX728_REG_INCK_1      CCI_REG8(0x1B1C)
-> > +#define IMX728_REG_SLEEP       CCI_REG8(0x1B05)
-> > +#define IMX728_REG_REGMAP      CCI_REG8(0xFFFF)
-> > +#define IMX728_REG_HDR_00      CCI_REG32_LE(0x9C60)
-> > +#define IMX728_REG_HDR_01      CCI_REG32_LE(0x9C6C)
-> > +#define IMX728_REG_HDR_02      CCI_REG32_LE(0x9C64)
-> > +#define IMX728_REG_HDR_03      CCI_REG32_LE(0x9C70)
-> > +#define IMX728_REG_HDR_04      CCI_REG16_LE(0x9C68)
-> > +#define IMX728_REG_HDR_05      CCI_REG16_LE(0x9C74)
-> > +#define IMX728_REG_HDR_06      CCI_REG16_LE(0x9C6A)
-> > +#define IMX728_REG_HDR_07      CCI_REG16_LE(0x9C76)
-> > +#define IMX728_REG_AE_MODE     CCI_REG8(0x98AC)
-> > +#define IMX728_REG_AWBMODE     CCI_REG8(0xA248)
-> > +#define IMX728_REG_AWB_EN      CCI_REG8(0x1808)
-> > +#define IMX728_REG_UNIT_00     CCI_REG8(0x98E0)
-> > +#define IMX728_REG_UNIT_01     CCI_REG8(0x98E8)
-> > +#define IMX728_REG_UNIT_02     CCI_REG8(0x98F0)
-> > +#define IMX728_REG_MD_00       CCI_REG8(0x1708)
-> > +#define IMX728_REG_MD_01       CCI_REG8(0x1709)
-> > +#define IMX728_REG_MD_02       CCI_REG8(0x170A)
-> > +#define IMX728_REG_MD_03       CCI_REG8(0x1B40)
-> > +#define IMX728_REG_MODE_SEL    CCI_REG16_LE(0x9728)
-> > +#define IMX728_REG_OUT_MODE    CCI_REG8(0xEC7E)
-> > +#define IMX728_REG_OB_0                CCI_REG16_LE(0xEC12)
-> > +#define IMX728_REG_OB_1                CCI_REG8(0xEC14)
-> > +#define IMX728_REG_SKEW                CCI_REG8(0x1761)
-> > +#define IMX728_REG_SUBP_0      CCI_REG8(0x9714)
-> > +#define IMX728_REG_SUBP_1      CCI_REG8(0xB684)
-> > +#define IMX728_REG_STREAM_00   CCI_REG8(0x9789)
-> > +#define IMX728_REG_STREAM_01   CCI_REG8(0x95C1)
-> > +#define IMX728_REG_STREAM_02   CCI_REG8(0x1B04)
->
-> Can you sort them by register address?
->
-> > +#define IMX728_REG_CTRL_POINT_X(i) CCI_REG32(0xA198 + (i) * 8)
-> > +#define IMX728_REG_CTRL_POINT_Y(i) (IMX728_REG_CTRL_POINT_X(i) + 4)
->
-> >[snip]
->
-> Best regards,
-> Alexander
->
-> > --
-> > 2.43.0
-> >
-> > Please be aware that this email includes email addresses outside of the=
- organization.
-> >
->
->
-> --
-> TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Ge=
-rmany
-> Amtsgericht M=C3=BCnchen, HRB 105018
-> Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan S=
-chneider
-> http://www.tq-group.com/
->
->
+diff --git a/kernel/kcsan/debugfs.c b/kernel/kcsan/debugfs.c
+index 1d1d1b0e4248..53b21ae30e00 100644
+--- a/kernel/kcsan/debugfs.c
++++ b/kernel/kcsan/debugfs.c
+@@ -225,7 +225,7 @@ debugfs_write(struct file *file, const char __user *buf, size_t count, loff_t *o
+ {
+ 	char kbuf[KSYM_NAME_LEN];
+ 	char *arg;
+-	int read_len = count < (sizeof(kbuf) - 1) ? count : (sizeof(kbuf) - 1);
++	const size_t read_len = min(count, sizeof(kbuf) - 1);
+ 
+ 	if (copy_from_user(kbuf, buf, read_len))
+ 		return -EFAULT;
 
