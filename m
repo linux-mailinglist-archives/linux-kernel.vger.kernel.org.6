@@ -1,93 +1,119 @@
-Return-Path: <linux-kernel+bounces-236693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23E9791E5F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:53:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A83C91E5FB
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4145284E74
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:53:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CD67B28B02
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20FFC16DEA8;
-	Mon,  1 Jul 2024 16:53:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A34B16DEAC;
+	Mon,  1 Jul 2024 16:54:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YciY+bie"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r/BEXppk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D1918635;
-	Mon,  1 Jul 2024 16:53:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE2616DC28
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 16:54:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719852821; cv=none; b=t3ozwR0G9+8X7h+dBTYi+ltefxohI/bwgNbTg7t9Shvh32NQXEWTf9W6ZWyIcVkkYMWIneSAMyCR2hgBZ7yJffUskeoaQTl1t48dP8Z7OOOAr0GZkfQGcBTy/TgfORwvpKhyToYkF0IjMNpTtWpEM8Vlx2gpXhmcUDKkgKKtFxQ=
+	t=1719852850; cv=none; b=XR0IKwRFmEcKX4fOYdOApHmneDxvk7CSl7oNhltCY3WwKBIkEq/JiJcN1mI5b5EDST92GQUsjeAD4O4keNw1VfPMZhCdmpjpqd7b+8p6qfVM0Zbd+I4zMriroUnAqDJLoLNA8DG0sy69c1JlQiwtzUubJDFhvzTUnB6d77L0NW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719852821; c=relaxed/simple;
-	bh=vnMuZlhKXm3KWWW0CRfEhy9hgYlQoH9VI9igjz+6Si0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ui/sWSiQ8LPDEtBd6dFk1GkNK2C74D6+foD7ih/m10gp1AKPTxU0Gf8cRtPLt0TVK+ymh8aQTNSA9tiMNK5lNE5O0fR651Wx6wJRHl/I2u3vP7L4rM/yDE6T+cmplf+R8KZvRxPGr0AINxD+JfBtLisJDHYZbuS9xmwokPXI2OI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YciY+bie; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58559C116B1;
-	Mon,  1 Jul 2024 16:53:40 +0000 (UTC)
+	s=arc-20240116; t=1719852850; c=relaxed/simple;
+	bh=FAaYEYSLgLPbK/9pUqZ6l1cu5kPiyAYZYNlWpGsQNL0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n9o1b2DSJOGjue61knu6bLvmCHgmfewyyb/7fABu5YTAJzAkOVJVM6ifosIPZreUfYRobYpkH+aLN1ocGxeNCRwGD9LCC2RNFLBntXovpA9fknewj/ywuocVIU3UPdGthyiIfuc7+EQaTaStiuWcOeqwogoJ1LfRDIKFajJ+yLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r/BEXppk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C9C6C116B1;
+	Mon,  1 Jul 2024 16:54:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719852821;
-	bh=vnMuZlhKXm3KWWW0CRfEhy9hgYlQoH9VI9igjz+6Si0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=YciY+biejtOG3AjVCjmdQi/3gRrbbRsqkwGMgtpLIbfJhZAQ1HX9Xj2ZGDYyQXFRF
-	 esTXKo3nhK1hYmRFIYdGq4dIvEoVcBOEuKxwuIvYxQRHnbofntCHv480h98IdkRmbl
-	 XLVS+Z77J4ioWulfFtbv8bfADc5zu9aimUPKCILRLK9tbjDHR8TbAG7BnXbkFkskyy
-	 9MD7elwfPsUhLp6wjjv1PEWVv067dNQxQVQ34Ct2Ydt8o0fu/CiB8SBa0/PkQxYIFh
-	 0JFoTeA5SiQlo8bN9cErXolZ214cDLJDwSawX29KPK1aOUHfSxFVZ9+moPfzksnRds
-	 dp5pjo4zFwRuw==
-From: SeongJae Park <sj@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	Hyeongtak Ji <hyeongtak.ji@sk.com>,
-	Honggyu Kim <honggyu.kim@sk.com>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	kernel test robot <lkp@intel.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: [PATCH mm-stable 1/1] mm/damon/paddr: initialize nr_succeeded in __damon_pa_migrate_folio_list()
-Date: Mon,  1 Jul 2024 09:53:32 -0700
-Message-Id: <20240701165332.47495-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=k20201202; t=1719852850;
+	bh=FAaYEYSLgLPbK/9pUqZ6l1cu5kPiyAYZYNlWpGsQNL0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=r/BEXppkPLUw+mf5DRddac/6u+SbehgnBH+AQ6dHFu/VzPvP4fQH62U0sbwkd940q
+	 E2DieWm5t6Xk/TdUpjK+wmy/zcexagx899i304HkoIwlJnBXisxl/2vJHDwj+J3BNH
+	 Sd5hJZZDreZs1V+JXmE7h7fnyAWTHjQLh7ECQq+OKwIgIM5ly8l1EEK6me5w04LNur
+	 lgwQVXM+c3my/N5R7LspJOAGG0Ji6sY+lO0TJHhQgoXAT7haXxW0BBrL4IhF5PTyVa
+	 tNmm6TM4Tf6+DZ2rVkhmBCUBh0vEvqY0EhGsbGcTCtWvSXIXy6MISmJ0RtRs3xM/NL
+	 yDAzzLRjUz9Lw==
+Message-ID: <ebb55bc2-3a6f-416f-8624-cf7ab2932983@kernel.org>
+Date: Mon, 1 Jul 2024 18:54:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 31/53] nfc: mrvl: Simplify a create*_workqueue() call
+To: Bart Van Assche <bvanassche@acm.org>, Tejun Heo <tj@kernel.org>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>,
+ linux-kernel@vger.kernel.org
+References: <20240630222904.627462-1-bvanassche@acm.org>
+ <20240630222904.627462-32-bvanassche@acm.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240630222904.627462-32-bvanassche@acm.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The variable is supposed to be set via later migrate_pages() call.
-However, the function does not do that when CONFIG_MIGRATION is unset.
-Initialize the variable to zero.
+On 01/07/2024 00:26, Bart Van Assche wrote:
+> Pass a format string to create*_workqueue2() instead of formatting the
+> workqueue name before create*_workqueue() is called.
+> 
+> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 
-Fixes: 5311c0a2eee3 ("mm/damon/paddr: introduce DAMOS_MIGRATE_COLD action for demotion") # mm-stable
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/r/202406251102.GE07hqfQ-lkp@intel.com/
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- mm/damon/paddr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-diff --git a/mm/damon/paddr.c b/mm/damon/paddr.c
-index af6aac388a43..a9ff35341d65 100644
---- a/mm/damon/paddr.c
-+++ b/mm/damon/paddr.c
-@@ -332,7 +332,7 @@ static unsigned int __damon_pa_migrate_folio_list(
- 		struct list_head *migrate_folios, struct pglist_data *pgdat,
- 		int target_nid)
- {
--	unsigned int nr_succeeded;
-+	unsigned int nr_succeeded = 0;
- 	nodemask_t allowed_mask = NODE_MASK_NONE;
- 	struct migration_target_control mtc = {
- 		/*
--- 
-2.39.2
+Best regards,
+Krzysztof
 
 
