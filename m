@@ -1,139 +1,181 @@
-Return-Path: <linux-kernel+bounces-235595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7A0D91D726
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 06:42:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E273A91D729
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 06:42:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 431AA1F22D15
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 04:42:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95184286CAE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 04:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9BA72AEE4;
-	Mon,  1 Jul 2024 04:41:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC3C2CCB7;
+	Mon,  1 Jul 2024 04:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="oxfjPuNa"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QieRuDgl"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB35A8F5D
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 04:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770E517C61;
+	Mon,  1 Jul 2024 04:42:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719808916; cv=none; b=C5OWPzLtwdOP7DrCdTGIfBUF9Sjgv/H67f5xJeCdJSNqUJb0PVlSIWwv7XFLmL93EcY/CmHZLOmSKRr39THx4UQp4QELXuSIgrhxDAjOUMOCQqWDeVJsaWYqXp7BzWQKY/E99vD65UHJpfF1coshMPfj2hTtX2Kx1yuEmql+u7I=
+	t=1719808961; cv=none; b=eiuIU5WkAEJ5liCJMx0gf3GF8fPbUxIruwzjYOM3z9igdqb0MUv7/9ElrwbzJJUEN5XxjObFWLzyLkC0o8DIhsdYc0xEDzxnO4z1nlXC7DJjsToPWI/J/wZTaXc/ZHmaaS5T5MjPSicCwP2Hp3kwSrhSWzvE0g2mbJ7HKL0cXMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719808916; c=relaxed/simple;
-	bh=06YkxrgCoIoGvHH9fxP45rR9QuR+rPkZTVRF1V+qI1U=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ONZ6446GsSObag1emwzfDtGOw3Yk/HpWHwT+HwSfo/BGnhbZ3HgKVY1OPGdvrnsUf/5RdQwYHxTug6EQpHwJqpXg5K3zs1UkEb4I8xTCW6yRfLlQ7XJX2yCaFhfBt9YJSQ8vI9a5FY66dSMC9/giQIyLjhynNjqtDpMUzLgrCr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=oxfjPuNa; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 797962C09B5;
-	Mon,  1 Jul 2024 16:41:52 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1719808912;
-	bh=06YkxrgCoIoGvHH9fxP45rR9QuR+rPkZTVRF1V+qI1U=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=oxfjPuNa6qhNgUYSREKuvo8rZvUJEnKh9UKCWa66Gq6xOHBpVBoE9KRyTKjEXIX+P
-	 RA5ewvtD8Co72K/4rBdufVzrzPOL0+L+m9YAcNokT3hwWIkJW7gAjfkELuk0RtKSoR
-	 O8EB0qLitMfs8Ga2Pz36jYEP5ycgLRW67r8sIvaaOu2wzCVYm0DlKbG0TDifIzQTV4
-	 OatG9zIHSxTs6K57UMr2wYkDn0G5wpTkDJApmavTaFXFPq72bv7AYIAULU7RBLmk3g
-	 v/0Y/ShAJnUeBTPZ7nSejTRMYyDzNv41N2ImT2nKBwJSnXQvCFQRpURCjdFgRNJtn2
-	 Czl+HYF02q1TA==
-Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B668233900001>; Mon, 01 Jul 2024 16:41:52 +1200
-Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
- svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 1 Jul 2024 16:41:52 +1200
-Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
- svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
- 15.02.1544.011; Mon, 1 Jul 2024 16:41:52 +1200
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: =?utf-8?B?TWFyZWsgQmVow7pu?= <kabel@kernel.org>
-CC: "tglx@linutronix.de" <tglx@linutronix.de>, "robh@kernel.org"
-	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "tsbogend@alpha.franken.de"
-	<tsbogend@alpha.franken.de>, "daniel.lezcano@linaro.org"
-	<daniel.lezcano@linaro.org>, "paulburton@kernel.org" <paulburton@kernel.org>,
-	"peterz@infradead.org" <peterz@infradead.org>, "mail@birger-koblitz.de"
-	<mail@birger-koblitz.de>, "bert@biot.com" <bert@biot.com>, "john@phrozen.org"
-	<john@phrozen.org>, "sander@svanheule.net" <sander@svanheule.net>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-	"ericwouds@gmail.com" <ericwouds@gmail.com>, Markus Stockhausen
-	<markus.stockhausen@gmx.de>
-Subject: Re: [PATCH v3 7/9] clocksource: realtek: Add timer driver for
- rtl-otto platforms
-Thread-Topic: [PATCH v3 7/9] clocksource: realtek: Add timer driver for
- rtl-otto platforms
-Thread-Index: AQHayEslEo613VNYNk2gJ1HCuf0QnrHarVaAgAXa5IA=
-Date: Mon, 1 Jul 2024 04:41:52 +0000
-Message-ID: <3520a743-2962-43ee-83f5-3e9384fe4c42@alliedtelesis.co.nz>
-References: <20240627043317.3751996-1-chris.packham@alliedtelesis.co.nz>
- <20240627043317.3751996-8-chris.packham@alliedtelesis.co.nz>
- <20240627131707.3410b4d3@dellmb>
-In-Reply-To: <20240627131707.3410b4d3@dellmb>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <8A25C4C26E9A7643B660717A75A50263@atlnz.lc>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1719808961; c=relaxed/simple;
+	bh=8t/KdAzxqkS/7p07GxkZ0bFQhYV3CS1hbsMUGQ4NktI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=jzfRPbykx6Gro34amjXTfhzgY1gO/ge/pqqhn98Pt47/a4UPHabXY6Uq2HWODctOuxbKQvT4PUKOi/ff/R8klPCTDSQ7lS/ALZtm6+cDGj1f4Pvg2DwTUMvSBBHDxOC5dgqzXfjLlRE6awhfW3KIhOULdkPLTYThWG0hef4uR+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QieRuDgl; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-719843c8478so76144a12.0;
+        Sun, 30 Jun 2024 21:42:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719808960; x=1720413760; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R8YffMYnGN0uxObMvEtbv5MkYWHWmd5kg/aBxvT37pI=;
+        b=QieRuDglrhRRqQQeGsTK57L6ZTGHmnQT3JE4VRXEONa1j73l1gVSVszsgk+w1somcX
+         78DimDLPrlLDqAzin/P8RTInSHK7LR3cUwL6AguELCMAhc99o3glus6FVBMg9pn+S/NS
+         Dx3N/Vvax7ovulGZNdBZob5AwkRxDsseCErJT2XulAjjVTkgtwIv3GoUNaXWUFKTow59
+         hty7dxzT+zQW4twu3Sig8XjTkYY4BsG80IfGfnPdrSN+gnxZqVtBupSrmFWnvhBt6r7j
+         uDAOSuS7C53vv1oJKgt+GPO8IpFqfC8dWKF/5PrzWseBMvTMUEMwkCTQiyO9e1g89MY+
+         Uhrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719808960; x=1720413760;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R8YffMYnGN0uxObMvEtbv5MkYWHWmd5kg/aBxvT37pI=;
+        b=D4Ui1ltaAB/2rl+jgBSaLsXdmEp/nKrdQwh2aGwVQDDiVks6u0b3HbBVXx12W7faOi
+         qwJvA2nLHKJDu/KDxx+6fOfPdCKSc3ggfzWxKL/5bLGj9kBQKMXpL4mxlfAGb91HExHQ
+         /8tQouK30JEElAzXzd1ED8KmEyF3ctO8+qcxow6PSTkKUpHUg3irXS2jDrWlAyhX8B/p
+         N+d7Oea573vE498BWN89Nwi2OjG+FI+3e4ZHv6bF0Ae1l8KEFIYWXViAoOtRgQ+T2DE+
+         nGPOrWlb12rs6iLZysB3ZMTN/ZsBvIjdZvL9q8wOCtzRZJE7Cx/+uRKvYzcklVgFAPPO
+         QjNw==
+X-Forwarded-Encrypted: i=1; AJvYcCVe/7DvUjrL9j0cJmivhB1NunfG1IfGF4qKWbeO9zbo6w2vFxnGCldMGSLtPl4zDI8oGMrfKnDiSNNBqNK6uAOxWs9AzTZWrDNg06UAGNs23IxJNR83yl5KBuvsnU9w+jnoMkXuGk3Tjw==
+X-Gm-Message-State: AOJu0YzgJ9D7ycL0kyHFvH93rlRUQWHgAmHROlLGwf9k2hs8Y8SFXoJY
+	+LXtqHRyaXGGgFh2NnTV3uKuQvlNFJ3oygNjsfW68iuFWaS+0uL9Ruus0g==
+X-Google-Smtp-Source: AGHT+IHcbdyNFOmrDfxkQwPMDupIwNySdkVbFUyk2wdUvXKuxcCIR8tGWdbWR7laH0m2coQeAkGLbQ==
+X-Received: by 2002:a05:6a00:bcc:b0:706:61bb:7094 with SMTP id d2e1a72fcca58-70aaaed0574mr5211840b3a.2.1719808959476;
+        Sun, 30 Jun 2024 21:42:39 -0700 (PDT)
+Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70802564b50sm5485130b3a.67.2024.06.30.21.42.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 30 Jun 2024 21:42:39 -0700 (PDT)
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: rafael@kernel.org
+Cc: lenb@kernel.org,
+	mario.limonciello@amd.com,
+	akpm@linux-foundation.org,
+	jserv@ccns.ncku.edu.tw,
+	alexdeucher@gmail.com,
+	belegdol@gmail.com,
+	regressions@leemhuis.info,
+	linux-acpi@vger.kernel.org,
+	regressions@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Kuan-Wei Chiu <visitorckw@gmail.com>
+Subject: [PATCH v2] ACPI: processor_idle: Fix invalid comparison with insertion sort for latency
+Date: Mon,  1 Jul 2024 12:42:32 +0800
+Message-Id: <20240701044232.42266-1-visitorckw@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <ZoHKhr9896+Kf65F@visitorckw-System-Product-Name>
+References: <ZoHKhr9896+Kf65F@visitorckw-System-Product-Name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=CvQccW4D c=1 sm=1 tr=0 ts=66823390 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=otBbUuXHAfLwFJZbIYsA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-SEG-SpamProfiler-Score: 0
+Content-Transfer-Encoding: 8bit
 
-DQpPbiAyNy8wNi8yNCAyMzoxNywgTWFyZWsgQmVow7puIHdyb3RlOg0KPiBPbiBUaHUsIDI3IEp1
-biAyMDI0IDE2OjMzOjE1ICsxMjAwDQo+IENocmlzIFBhY2toYW0gPGNocmlzLnBhY2toYW1AYWxs
-aWVkdGVsZXNpcy5jby5uej4gd3JvdGU6DQo+DQo+PiArLyogU2ltcGxlIGludGVybmFsIHJlZ2lz
-dGVyIGZ1bmN0aW9ucyAqLw0KPj4gK3N0YXRpYyBpbmxpbmUgdm9pZCBydHRtX3NldF9jb3VudGVy
-KHZvaWQgX19pb21lbSAqYmFzZSwgdW5zaWduZWQgaW50IGNvdW50ZXIpDQo+PiArew0KPj4gKwlp
-b3dyaXRlMzIoY291bnRlciwgYmFzZSArIFJUVE1fQ05UKTsNCj4gVGhlc2UgcmVxdWlyZSAjaW5j
-bHVkZSA8YXNtL2lvLmg+DQpsaW51eC9pby5oIEknbSBndWVzc2luZy4NCj4+ICsvKiBBZ2dyZWdh
-dGVkIGNvbnRyb2wgZnVuY3Rpb25zIGZvciBrZXJuZWwgY2xvY2sgZnJhbWV3b3JrICovDQo+PiAr
-I2RlZmluZSBSVFRNX0RFQlVHKGJhc2UpCQkJXA0KPj4gKwlwcl9kZWJ1ZygiLS0tLS0tLS0tLS0t
-LSAlZCAlcFxuIiwJXA0KPj4gKwkJIHNtcF9wcm9jZXNzb3JfaWQoKSwgYmFzZSkNCj4gI2luY2x1
-ZGUgPGxpbnV4L3ByaW50ay5oPg0KYWNrDQo+PiArc3RhdGljIGlycXJldHVybl90IHJ0dG1fdGlt
-ZXJfaW50ZXJydXB0KGludCBpcnEsIHZvaWQgKmRldl9pZCkNCj4+ICt7DQo+PiArCXN0cnVjdCBj
-bG9ja19ldmVudF9kZXZpY2UgKmNsa2V2dCA9IGRldl9pZDsNCj4+ICsJc3RydWN0IHRpbWVyX29m
-ICp0byA9IHRvX3RpbWVyX29mKGNsa2V2dCk7DQo+PiArDQo+PiArCXJ0dG1fYWNrX2lycSh0by0+
-b2ZfYmFzZS5iYXNlKTsNCj4+ICsJUlRUTV9ERUJVRyh0by0+b2ZfYmFzZS5iYXNlKTsNCj4+ICsJ
-Y2xrZXZ0LT5ldmVudF9oYW5kbGVyKGNsa2V2dCk7DQo+IEFsdGhvdWdoIHlvdSBpbmNsdWRlICJ0
-aW1lci1vZi5oIiwgd2hpY2ggaW5jbHVkZXMgY2xvY2tjaGlwcy5oLCBwbGVhc2UNCj4gZG8gYWxz
-byBleHBsaWNpdCAjaW5jbHVkZSA8bGludXgvY2xvY2tjaGlwcy5oPg0KPg0KPj4gKwlydHRtX3Nl
-dF9wZXJpb2QodG8tPm9mX2Jhc2UuYmFzZSwgUlRUTV9USUNLU19QRVJfU0VDIC8gSFopOw0KPiBI
-WiAtPiBsaW51eC9qaWZmaWVzLmgsIG9yIG1heWJlIGFzbS9wYXJhbS5oDQphY2sNCj4+ICtzdGF0
-aWMgdTY0IHJ0dG1fcmVhZF9jbG9ja3NvdXJjZShzdHJ1Y3QgY2xvY2tzb3VyY2UgKmNzKQ0KPj4g
-K3sNCj4+ICsJc3RydWN0IHJ0dG1fY3MgKnJjcyA9IGNvbnRhaW5lcl9vZihjcywgc3RydWN0IHJ0
-dG1fY3MsIGNzKTsNCj4+ICsNCj4+ICsJcmV0dXJuICh1NjQpcnR0bV9nZXRfY291bnRlcihyY3Mt
-PnRvLm9mX2Jhc2UuYmFzZSk7DQo+IFJlZHVuZGFudCBjYXN0IHRvIHU2NC4NCmFjaw0KPj4gKwly
-dHRtX2VuYWJsZV90aW1lcihyY3MtPnRvLm9mX2Jhc2UuYmFzZSwgUlRUTV9DVFJMX1RJTUVSLA0K
-Pj4gKwkJCSAgcmNzLT50by5vZl9jbGsucmF0ZSAvIFJUVE1fVElDS1NfUEVSX1NFQyk7DQo+IElz
-IHRoaXMgY29ycmVjdD8gU29tZXRpbWVzIGl0IG1ha2VzIHNlbnNlIHRvIHVzZSBESVZfUk9VTkRf
-Q0xPU0VTVCwgYnV0DQo+IG1heWJlIG5vdCBoZXJlLg0KDQpJdCdzIE9LIGZvciBtZSBiZWNhdXNl
-IHRoZSBMZXhyYSBidXMgY2xvY2sgaXMgMTc1bWh6IHNvIHBsYWluIGRpdmlzaW9uIA0Kd29ya3Mg
-ZmluZS4gVGhlIGRvY3MgZG8gc2F5IHNvbWV0aGluZyBhYm91dCBhIGNvbmZpZ3VyYWJsZSBkaXZp
-c29yIGJ1dCANCnRoZSByYW5nZSBzZWVtcyBmYWlybHkgbGltaXRlZCBzbyBJIGRvbid0IHRoaW5r
-IHRoZXJlJ3MgYSBzcGVjaWZpYyBuZWVkIA0KdG8gdXNlIERJVl9ST1VORF9DTE9TRVNULg0KDQo+
-DQo+PiArc3RhdGljIHU2NCBub3RyYWNlIHJ0dG1fcmVhZF9jbG9jayh2b2lkKQ0KPj4gK3sNCj4+
-ICsJcmV0dXJuICh1NjQpcnR0bV9nZXRfY291bnRlcihydHRtX2NzLnRvLm9mX2Jhc2UuYmFzZSk7
-DQo+IFJlZHVuZGFudCBjYXN0IHRvIHU2NC4NCmFjaw0KPj4gK3N0YXRpYyBpbnQgX19pbml0IHJ0
-dG1fcHJvYmUoc3RydWN0IGRldmljZV9ub2RlICpucCkNCj4+ICt7DQo+PiArCWludCBjcHUsIGNw
-dV9yb2xsYmFjazsNCj4gdW5zaWduZWQgaW50Pw0KYWNrDQo+PiArCXN0cnVjdCB0aW1lcl9vZiAq
-dG87DQo+PiArCWludCBjbGtpZHggPSBudW1fcG9zc2libGVfY3B1cygpOw0KPiBsaW51eC9jcHVt
-YXNrLmgsIHVuc2lnbmVkIGludA0KYWNrDQo+IE1hcmVr
+The acpi_cst_latency_cmp comparison function currently used for sorting
+C-state latencies does not satisfy transitivity, causing incorrect
+sorting results. Specifically, if there are two valid acpi_processor_cx
+elements A and B and one invalid element C, it may occur that A < B,
+A = C, and B = C. Sorting algorithms assume that if A < B and A = C,
+then C < B, leading to incorrect ordering.
+
+Given the small size of the array (<=8), we replace the library sort
+function with a simple insertion sort that properly ignores invalid
+elements and sorts valid ones based on latency. This change ensures
+correct ordering of the C-state latencies.
+
+Fixes: 65ea8f2c6e23 ("ACPI: processor idle: Fix up C-state latency if not ordered")
+Reported-by: Julian Sikorski <belegdol@gmail.com>
+Closes: https://lore.kernel.org/lkml/70674dc7-5586-4183-8953-8095567e73df@gmail.com/
+Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+---
+v1 -> v2:
+- Avoid swapping if arr[i] is an invalid element.
+
+I do not have the appropriate AMD hardware to reproduce this issue and
+test the patch. However, if the aforementioned reason is indeed the
+source of the problem, I believe this patch might help.
+
+ drivers/acpi/processor_idle.c | 35 ++++++++++++++---------------------
+ 1 file changed, 14 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
+index bd6a7857ce05..813c718b9108 100644
+--- a/drivers/acpi/processor_idle.c
++++ b/drivers/acpi/processor_idle.c
+@@ -386,25 +386,21 @@ static void acpi_processor_power_verify_c3(struct acpi_processor *pr,
+ 	acpi_write_bit_register(ACPI_BITREG_BUS_MASTER_RLD, 1);
+ }
+ 
+-static int acpi_cst_latency_cmp(const void *a, const void *b)
++static void acpi_cst_latency_sort(struct acpi_processor_cx *arr, size_t length)
+ {
+-	const struct acpi_processor_cx *x = a, *y = b;
++	int i, j, k;
+ 
+-	if (!(x->valid && y->valid))
+-		return 0;
+-	if (x->latency > y->latency)
+-		return 1;
+-	if (x->latency < y->latency)
+-		return -1;
+-	return 0;
+-}
+-static void acpi_cst_latency_swap(void *a, void *b, int n)
+-{
+-	struct acpi_processor_cx *x = a, *y = b;
+-
+-	if (!(x->valid && y->valid))
+-		return;
+-	swap(x->latency, y->latency);
++	for (i = 1; i < length; i++) {
++		if (!arr[i].valid)
++			continue;
++		for (j = i - 1, k = i; j >= 0; j--) {
++			if (!arr[j].valid)
++				continue;
++			if (arr[j].latency > arr[k].latency)
++				swap(arr[j].latency, arr[k].latency);
++			k = j;
++		}
++	}
+ }
+ 
+ static int acpi_processor_power_verify(struct acpi_processor *pr)
+@@ -449,10 +445,7 @@ static int acpi_processor_power_verify(struct acpi_processor *pr)
+ 
+ 	if (buggy_latency) {
+ 		pr_notice("FW issue: working around C-state latencies out of order\n");
+-		sort(&pr->power.states[1], max_cstate,
+-		     sizeof(struct acpi_processor_cx),
+-		     acpi_cst_latency_cmp,
+-		     acpi_cst_latency_swap);
++		acpi_cst_latency_sort(&pr->power.states[1], max_cstate);
+ 	}
+ 
+ 	lapic_timer_propagate_broadcast(pr);
+-- 
+2.34.1
+
 
