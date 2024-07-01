@@ -1,147 +1,144 @@
-Return-Path: <linux-kernel+bounces-236162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC82791DE49
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:46:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C3C691DE4A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:47:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 877C71F23EEE
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:46:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A012287D28
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:47:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA5413D899;
-	Mon,  1 Jul 2024 11:46:04 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5F739FD0
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 11:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD4514387A;
+	Mon,  1 Jul 2024 11:47:06 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4BD839FD0
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 11:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719834364; cv=none; b=OmHE/q3V2bZ0TugZc6QrYmLPsa8SCmR24FaS7fUEDpZM89AQCkYPjfK6J/DXJn8TsiqlUJNrx9qRszRsWpLIVI72eA0QcK2izxRufWrB3lPQUTos+iPIUlg6Kb7Y4q+WiqBQlBnpivCvD27AjqhNYNcrvVocQPRMM/JOwjW+G94=
+	t=1719834425; cv=none; b=IwJjwmOKbyZWFtBu81AM3dbFUwiE75LKiwC4UkRBMDSPQlg4GPbvX+Q9DCTQISzGzUfE0nbqSZG0VX7exlRF7+BkaP6QkjoRagdc5oJTHjXbjaMOnlj0OAoQQX6A6mdx6ZeYrre8FagcH+jIsqr4B6QG3z7KY5MVaZ5f8mrvWyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719834364; c=relaxed/simple;
-	bh=hdPKoylG40W7zl1aTrckDFgmTI1Hbv3Y8O/dZxpHRaU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=sogWj1MEexjtIrd2k/2mUiQ1Ucot3bvMfvcYWQpdLAuSoFqIOjqipuB/rqQGxKN577RxrPc7ER+7W9JTH8Xb4Vj3qnaU6g+FebXd034Sm9geiq2tHXiVCxuNAAIiYYtAW5kbFP41aUkK2JbmQ6tHpGTR8OPRvFRtcKzs6wltX08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7eb01189491so326912339f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 04:46:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719834362; x=1720439162;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iuvPc09B6zLoBMrrjxwzhjQ5I76x5n0j5Rwuao9taCY=;
-        b=P08WfXCSMphznB9uneMex92iCXdsDkxGmweRDN7FrNb3exYyhHla0WMkFjKOITUzxZ
-         iky1PB3sUdGcClRokOjm4apUA3rZRPU4u++jLjlVzj5/d/aQTHeMprZlNbpEsMDEIM5I
-         365IbCIBncxZXmqfOyzF+oeBDhQS+S2qU/+xmGB5YbK4rcMRlkLp1ar5CTs50Z0AeUZS
-         +nU+PFteWGjq+oouuJya8SwGyEQEnhGO4+oi7pnFsCvEFfQyg5eZ9RfoMUQpIHne7T+Q
-         G+VEG/8mm2uiKZdddJ/tdvmrZKPR8ZXFgTFusVYFcXMaJKIlfbYi/ZAd1pE0JabWwH3X
-         fsqA==
-X-Gm-Message-State: AOJu0Ywv3NhBysdPTsGN2y29rndQ2Q8DJMEPlD5Vxmo1oOdS21au2KUT
-	0D7vSVYUcgYv/aruQSVJuhd9XmjDkL5d4WIP7FFVKxf2nWm8g6mBx9Zr7ThZTblH+wmNvLX8mAP
-	HX2H3yzOzmH0gd5ZuUd9zkSzSuc9WEcfh9J6drJfbbe18ew8C/OFhxdM=
-X-Google-Smtp-Source: AGHT+IGf5H/026/2sjPnOMNgqW04h0GGiyEvCnLqkb47chVHykRq6OTMa/WwDP0FkQRghOcmSGfZa1p0QDLLi1EpnrkeCkOdx32G
+	s=arc-20240116; t=1719834425; c=relaxed/simple;
+	bh=QbMeO0zCEIjsw7BElAH3ADx8DVUzqr7ztJ+td4iFcjY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GZyJZHUV6KhxuNiOUTk0kCQnXreb0K3v6cY/ITuZXKdIAhf+Ez7P8Cq48l30mUD7lJACcV3hvuqsGzFEuMl7fyCOmqIGe2E3zogtuiy0+09+gDDSnKu7CiMXQ4LAbboy90FtOJ9BJ877aOief4+Fr5vOZ6IqyuhC2yCeNI1p2Wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC80B339;
+	Mon,  1 Jul 2024 04:47:26 -0700 (PDT)
+Received: from [10.57.72.41] (unknown [10.57.72.41])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1A8F63F762;
+	Mon,  1 Jul 2024 04:46:58 -0700 (PDT)
+Message-ID: <9bbbf8be-a197-476d-b491-92c9e31e8119@arm.com>
+Date: Mon, 1 Jul 2024 12:46:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:130d:b0:4bb:5dc8:5a77 with SMTP id
- 8926c6da1cb9f-4bbb669a2aemr321902173.0.1719834361996; Mon, 01 Jul 2024
- 04:46:01 -0700 (PDT)
-Date: Mon, 01 Jul 2024 04:46:01 -0700
-In-Reply-To: <20240701084542.24151-1-wojciech.gladysz@infogain.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000383721061c2e247a@google.com>
-Subject: Re: [syzbot] [ext4?] general protection fault in __block_commit_write
-From: syzbot <syzbot+18df508cf00a0598d9a6@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	wojciech.gladysz@infogain.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] mm: add docs for per-order mTHP split counters
+Content-Language: en-GB
+To: Lance Yang <ioworker0@gmail.com>
+Cc: akpm@linux-foundation.org, dj456119@gmail.com, 21cnbao@gmail.com,
+ david@redhat.com, shy828301@gmail.com, ziy@nvidia.com,
+ libang.li@antgroup.com, baolin.wang@linux.alibaba.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Mingzhe Yang <mingzhe.yang@ly.com>
+References: <20240628130750.73097-1-ioworker0@gmail.com>
+ <20240628130750.73097-3-ioworker0@gmail.com>
+ <13dcf4be-8c5f-4697-adc1-b68c3da82d78@arm.com>
+ <CAK1f24msC9T2vN6wJPNfMFgG7RsXf7CML-P2fxwkY73969ZAhQ@mail.gmail.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <CAK1f24msC9T2vN6wJPNfMFgG7RsXf7CML-P2fxwkY73969ZAhQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 01/07/2024 11:50, Lance Yang wrote:
+> On Mon, Jul 1, 2024 at 4:31 PM Ryan Roberts <ryan.roberts@arm.com> wrote:
+>>
+>> On 28/06/2024 14:07, Lance Yang wrote:
+>>> This commit introduces documentation for mTHP split counters in
+>>> transhuge.rst.
+>>>
+>>> Signed-off-by: Mingzhe Yang <mingzhe.yang@ly.com>
+>>> Signed-off-by: Lance Yang <ioworker0@gmail.com>
+>>> ---
+>>>  Documentation/admin-guide/mm/transhuge.rst | 16 ++++++++++++++++
+>>>  1 file changed, 16 insertions(+)
+>>>
+>>> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+>>> index 1f72b00af5d3..709fe10b60f4 100644
+>>> --- a/Documentation/admin-guide/mm/transhuge.rst
+>>> +++ b/Documentation/admin-guide/mm/transhuge.rst
+>>> @@ -514,6 +514,22 @@ file_fallback_charge
+>>>       falls back to using small pages even though the allocation was
+>>>       successful.
+>>
+>>
+>> I note at the top of this section there is a note:
+>>
+>> Monitoring usage
+>> ================
+>>
+>> .. note::
+>>    Currently the below counters only record events relating to
+>>    PMD-sized THP. Events relating to other THP sizes are not included.
+>>
+>> Which is out of date, now that we support mTHP stats. Perhaps it should be removed?
+> 
+> Good catch! Let's remove that in this patch ;)
+> 
+>>
+>>>
+>>> +split
+>>> +     is incremented every time a huge page is successfully split into
+>>> +     base pages. This can happen for a variety of reasons but a common
+>>> +     reason is that a huge page is old and is being reclaimed.
+>>> +     This action implies splitting any block mappings into PTEs.
+>>
+>> Now that I'm reading this, I'm reminded that Yang Shi suggested at LSFMM that a
+>> potential aid so solving the swap-out fragmentation problem is to split high
+>> orders to lower (but not 0) orders. I don't know if we would take that route,
+>> but in principle it sounds like splitting mTHP to smaller mTHP might be
+>> something we want some day. I wonder if we should spec this counter to also
+>> include splits to smaller orders and not just splits to base pages?
+>>
+>> Actually looking at the code, I think split_huge_page_to_list_to_order(order>0)
+>> would already increment this counter without actually splitting to base pages.
+>> So the documantation should probably just reflect that.
+> 
+> Yep, you're right.
+> 
+> It’s important that the documentation reflects that to ensure consistency.
+> 
+> How about "...  is successfully split into smaller orders. This can..."?
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-BUG: unable to handle kernel paging request in __block_commit_write
+fine by me.
 
-Unable to handle kernel paging request at virtual address dfff800000000004
-KASAN: null-ptr-deref in range [0x0000000000000020-0x0000000000000027]
-Mem abort info:
-  ESR = 0x0000000096000005
-  EC = 0x25: DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-  FSC = 0x05: level 1 translation fault
-Data abort info:
-  ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
-  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[dfff800000000004] address between user and kernel address ranges
-Internal error: Oops: 0000000096000005 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 1 PID: 10062 Comm: syz-executor Not tainted 6.10.0-rc6-syzkaller-g22a40d14b572 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : __block_commit_write+0x64/0x2b0 fs/buffer.c:2190
-lr : __block_commit_write+0x3c/0x2b0 fs/buffer.c:2183
-sp : ffff800098507600
-x29: ffff800098507610 x28: dfff800000000000 x27: ffff0000dfe252b0
-x26: 0000000000000000 x25: dfff800000000000 x24: dfff800000000000
-x23: fffffdffc3a7e460 x22: 0000000000000020 x21: 0000000000000020
-x20: 0000000000000040 x19: fffffdffc3a7e440 x18: 1fffe000367b23de
-x17: ffff80008efed000 x16: ffff80008af20c64 x15: 00000000200000c0
-x14: 1fffe0001d3f2204 x13: 0000000000000000 x12: 0000000000000000
-x11: 0000000000000001 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : 0000000000000004 x7 : 0000000000000000 x6 : 0000000000000000
-x5 : fffffdffc3a7e440 x4 : 0000000000000020 x3 : 0000000000000020
-x2 : 0000000000000040 x1 : 0000000000000020 x0 : fffffdffc3a7e440
-Call trace:
- __block_commit_write+0x64/0x2b0 fs/buffer.c:2190
- block_write_end+0xb4/0x104 fs/buffer.c:2276
- ext4_da_do_write_end fs/ext4/inode.c:2952 [inline]
- ext4_da_write_end+0x2c4/0xa40 fs/ext4/inode.c:3025
- generic_perform_write+0x394/0x588 mm/filemap.c:4026
- ext4_buffered_write_iter+0x2c0/0x4ec fs/ext4/file.c:299
- ext4_file_write_iter+0x188/0x1780
- new_sync_write fs/read_write.c:497 [inline]
- vfs_write+0x828/0xc78 fs/read_write.c:590
- ksys_write+0x15c/0x26c fs/read_write.c:643
- __do_sys_write fs/read_write.c:655 [inline]
- __se_sys_write fs/read_write.c:652 [inline]
- __arm64_sys_write+0x7c/0x90 fs/read_write.c:652
- __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:131
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:150
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-Code: 97f8507d f94002da 91008356 d343fec8 (38796908) 
----[ end trace 0000000000000000 ]---
-----------------
-Code disassembly (best guess):
-   0:	97f8507d 	bl	0xffffffffffe141f4
-   4:	f94002da 	ldr	x26, [x22]
-   8:	91008356 	add	x22, x26, #0x20
-   c:	d343fec8 	lsr	x8, x22, #3
-* 10:	38796908 	ldrb	w8, [x8, x25] <-- trapping instruction
+> 
+> Thanks,
+> Lance
+> 
+>>
+>>> +
+>>> +split_failed
+>>> +     is incremented if kernel fails to split huge
+>>> +     page. This can happen if the page was pinned by somebody.
+>>> +
+>>> +split_deferred
+>>> +     is incremented when a huge page is put onto split
+>>> +     queue. This happens when a huge page is partially unmapped and
+>>> +     splitting it would free up some memory. Pages on split queue are
+>>> +     going to be split under memory pressure.
+>>> +
+>>>  As the system ages, allocating huge pages may be expensive as the
+>>>  system uses memory compaction to copy data around memory to free a
+>>>  huge page for use. There are some counters in ``/proc/vmstat`` to help
+>>
 
-
-Tested on:
-
-commit:         22a40d14 Linux 6.10-rc6
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-console output: https://syzkaller.appspot.com/x/log.txt?x=135d71c6980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f85e95b525c28b48
-dashboard link: https://syzkaller.appspot.com/bug?extid=18df508cf00a0598d9a6
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-
-Note: no patches were applied.
 
