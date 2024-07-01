@@ -1,106 +1,188 @@
-Return-Path: <linux-kernel+bounces-236056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51CB791DCF1
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:45:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0367291DCF6
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:46:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C34DDB22EFC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:45:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C82DB2479F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2D913D503;
-	Mon,  1 Jul 2024 10:45:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="XnjaO90D"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FAB113B597;
+	Mon,  1 Jul 2024 10:45:31 +0000 (UTC)
+Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2093.outbound.protection.partner.outlook.cn [139.219.17.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888BA664C6;
-	Mon,  1 Jul 2024 10:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719830707; cv=none; b=QGkSKayF6+J3V6fyxEwc8l5fOQrJ3SPancD4xZOJcUYNZ3ZI6+Vs2RQXhwC3WkMrYXgqHk9csD5K3LqdQEOeI6MTm88yi3HAS6KISJiKU9pVhTJXFfO0q7CufMkhmU1WyjrkC3jsVxR/Fnlfnf21cKjhL1ayCwVLao4biMuo7S4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719830707; c=relaxed/simple;
-	bh=ppEZyCTx1x2jsfAV7x0LVq3kr0YNd/emoX6Wqo/kXEA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JOX40c9L7xMfv5BwOtIodLcctED0NvW4gPjhhsiqmbzwO4XVzL1q1YK8R9q1CzyJjoNl2Odgl4ewGHHhwx7TTZkq9lGz3beJHNmb2/nLzzoc7ojQAX6MqFoWTNdV52x97oeaFCUpt4O4azP16lvx38TcK2/PeQm/yAirhYDgo6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=XnjaO90D; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4617Qrbw017780;
-	Mon, 1 Jul 2024 05:44:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=C+UjOWKJZYKMEfALDrZ+CB3Ep15T+UKAiEh3PiEiuPE=; b=
-	XnjaO90DzsozqsnbdHdj2veq7GbDsxn4wl8zFHf87kAXTd4dqTuVv2W2UW5fiLNY
-	52LnxgCKIZH4OgYDef/uJD8RhHZJKyJvihuMy0Ea/JO9T/ktxDAgkmPc0sNdjS+6
-	qwK2O1J2Q125r0daOw2cT9UnkrJ5OzGk45ydI9DacFc4jtgw8StUpO81MRd3CRf+
-	Lcdmeww/odxH358wrTjfGLQJCFNLa4XswhyKGbt87qarZoWmvhNWwOs2j95hovYu
-	eJn2Yxu2MLkhBzjwp+tgBWflRnFyhWW5GKflN3qrR/zr9J16TRVAdItgKngkZlpq
-	cCDoZ0JKazzDg9wBQXPdpg==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 402fnxa3x0-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 01 Jul 2024 05:44:47 -0500 (CDT)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 1 Jul 2024
- 11:44:44 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Mon, 1 Jul 2024 11:44:44 +0100
-Received: from ediswws06.ad.cirrus.com (ediswws06.ad.cirrus.com [198.90.208.18])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id B0ADA820258;
-	Mon,  1 Jul 2024 10:44:44 +0000 (UTC)
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-To: <broonie@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
-        <alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>
-Subject: [PATCH 3/3] ASoC: cs35l56: Remove redundant clearing of clk_stop_mode1
-Date: Mon, 1 Jul 2024 11:44:44 +0100
-Message-ID: <20240701104444.172556-4-rf@opensource.cirrus.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240701104444.172556-1-rf@opensource.cirrus.com>
-References: <20240701104444.172556-1-rf@opensource.cirrus.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B096912C52E;
+	Mon,  1 Jul 2024 10:45:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.93
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719830730; cv=fail; b=nfjo72aCdvLbMD8nZ87pAHcEgSsLackjh37V/0GBBEOopLcz1wYBpzeaRt5WjVkoLDnvdtfHrF0E5UU820KNBGylgek1kZnc1uER8HcIf37OAAZs6E4Ci+0vuUH7rEKTCGpOb5Q1HBViwt3WOF4tXQxMEWzVo9+/QeySMRsbXfs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719830730; c=relaxed/simple;
+	bh=dO59LVyFoq9F7uIrwRjFkBZRaNbX4SzAUkLLfR41XKY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=CPf8X02q1vc0jVVg48oAD3kkDPht4n8KWcWKGoGxqNPpty/iNs01LvcEBMzHzka/kF71HT16VgIXF642RSc/w+ZYXM4eECwa3jCdMR/yDWAnccTNA7AY1VAEERd83HMCRRXK+/jWFPLMtaIy7KHYlJuudNm2U8fYeF+tJP0MnUc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hlV72AwgKcCzVgv8w2WmY8V86NQIJXPQgYEk9c0ecuaRCpwv/YUFlMcZvD804kl866ORwUY3+dS1BdXGJdU1YcUCL53HSawjLKKz+JgRgzVPo5F419PjeUS/T8a/T0NnDCbe5cH0vWVlxa7r6Uk8TbTDDsTYUOq/LYxB65Bgo7Xiy9Oxo7/dGFF068Jh92737OAP7Mso5GJDGc3Ud55ubfWDzA3dYzuJ1X4bzdcqYes3wNDAivDJJm7mpz6DQTRJAhVxuRimIanOoZ7DYyZCOOwN016ZoBMM+8Fk61FsDBi2gLV99kSL5Hg4vTX+H9+t5II04B/Tg87X5j8kh4LDXg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4Fpz9VwyVTaofpuBmUrXsl6XcCbmQlFKIRCLGA5iJ44=;
+ b=DdI12TnXG7y+aM2jmUtQzuHdT5i8VMsTUhqEtTtNHpq5c2u4upQBwSsBXdyXmlyY/Txg8df3jWB2ioQgC86XA3FtGa4SMkIoZXYkw2Uw1H4jRGC5uSjAXd3z8hG+eajllkJgbTOQRQ5mZTEX5MEgytDeN021VQweOTA2nYlhBHdPHtQyAa9SQ2LA6RtQkBp1ofV48DBq6wjZADyKj6SlNX2f1O1psxw2MZi61x0uZvzjV/V0CbYzBL8yotrxsf5dLSybVDO3jYeAVbpfQCO8gF0d3SpyzdZ//uJSWlRFpSMtDcCEX528rLyd5yhPevuHNib3TxGOIMGVCMHeSrX9XA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Received: from SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c311:25::15) by SHXPR01MB0814.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c311:24::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.32; Mon, 1 Jul
+ 2024 10:45:15 +0000
+Received: from SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn
+ ([fe80::358e:d57d:439f:4e8a]) by
+ SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn ([fe80::358e:d57d:439f:4e8a%7])
+ with mapi id 15.20.7719.028; Mon, 1 Jul 2024 10:45:15 +0000
+From: Minda Chen <minda.chen@starfivetech.com>
+To: Conor Dooley <conor@kernel.org>, "linux-riscv@lists.infradead.org"
+	<linux-riscv@lists.infradead.org>
+CC: Conor Dooley <conor.dooley@microchip.com>, Rob Herring
+	<robh+dt@kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] riscv: dts: starfive: add pcie1 on the star64
+Thread-Topic: [PATCH] riscv: dts: starfive: add pcie1 on the star64
+Thread-Index: AQHayAObtie3lKGpSUu9x20651p+HrHht3rA
+Date: Mon, 1 Jul 2024 10:45:15 +0000
+Message-ID:
+ <SHXPR01MB086332671CEBE2D0A21ED695E6D32@SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn>
+References: <20240626-traverse-excitable-a1d9be38a9da@spud>
+In-Reply-To: <20240626-traverse-excitable-a1d9be38a9da@spud>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SHXPR01MB0863:EE_|SHXPR01MB0814:EE_
+x-ms-office365-filtering-correlation-id: c70de35f-5a38-406c-b2db-08dc99bae482
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|41320700013|38070700018;
+x-microsoft-antispam-message-info:
+ e+uSDgvOzdK0V2HVD3hDDlXPpriRnQoHRCXvgyRM1LlyJadCfYpHhM2JX3OTJ4OiqAVAsM+/12dEqt7FUghN9+Tx8eeJu8MAV3AXHsO5kQg24Qs4erP2pZHwUwJWaMdFjLRBljxmTLl6M+PkQor8IwZUHjaGCciuElC9wAFwTRgz6cKJAueiRadFo9tyB7k7MiFKwXp2NW3kOZ0GmOcefhovOaHmmRwhcMCPr4QSQ0sHVpTWuXMgxHijkvTnDJua/er64DKtlfUXV0MRwasuwy4s23tQyzDTwzNmBP+AaFyv0gbyLCRmGB8Ryv+zh4RbBYp2h4L0jaOJXpXL3EencE5ry3HObkUoKaeS37lmDNGpf6IE4vJjeP3OwTLWLPSngUpLciwfkSVbsX+cYUBQULwh4B9cUirhY5W+8Kv6bAVuuiCeLyvQcgvxJMNEVB/0iejZidtZNrIMl2z6FDg9+ORCsaiOfmyqQbNBxYbOMLcTlCWQvoTkqclm5cXKi5RDUkPZCnYK5qDGfqBXTVmc/l5DCedJ1KDRFy4YUzwcZQ4ZyjuNUXD/yMuZI6ckdOYVq8txDGVp5MK/nnxJjkw+MHMs0sQ8AbIQZJ/mRiZHeB522/rFT7oZJTEQp8HkqFLR
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(41320700013)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?lnnKcDHnltCDzH0pxRKkqt25TnKqxw4l167wqqN2fxgbHxzHNIbsi8b8PGNJ?=
+ =?us-ascii?Q?hdzkcyTzH9/vOqTBYZANUyRrrSu6J1vDG0i0cxYyKFepYKciglqzEYRTA0Wo?=
+ =?us-ascii?Q?4NnJYwi05icDBvnNV3g1qQ9OC4BnrHYZ9ArJulcikagwbH1fUnTtwMpnKPPa?=
+ =?us-ascii?Q?96WV8sWCPysTXU7Ll823vKtg5+HTSxeq6g4jnRMDgZiuGDrfaP9v5kC8qNro?=
+ =?us-ascii?Q?pvlZzdMFik3JIBuTM735aoOQZjQdQPWJFEbAKmr3G349ZdjYwss/BPHB9WWH?=
+ =?us-ascii?Q?t8f8qm1JGoGp+kN2Gu3a2ze+FAeQalMPE0+X7J5m4YlWerU2baLBI0m1DlaL?=
+ =?us-ascii?Q?v5QXUfnvXRrm8tLgorCJz4VMygeKyv4zlgn7+Z//Z8nlD1UV0RMS++Ag2tAq?=
+ =?us-ascii?Q?I8Wsg21WG04TyY4pJDoG0pq3unYm+lb6rZHBtFZ06W98d76eXHcE0pPs9GbL?=
+ =?us-ascii?Q?khcZVI8/x7105LjkaFrCRmnL3qBt2nc3w/CMtoyBLdJJ4WfCdk3BO8kZFOMx?=
+ =?us-ascii?Q?2EkNwj0iDf1POoaa9FfPizBOVLtwNdeb6Yhec0kJRUbcLGAmgMQsU0ocN8LZ?=
+ =?us-ascii?Q?PypVCFnC6FgOV6d16ZZCA5coaZ3Wet5vEkUnpZzFfVxSxrl43D8c5BDGesgO?=
+ =?us-ascii?Q?wiKiItH9+/3Q368prSOyRN4ZNFDJ5daebg41xVWbqKTtA+TTBCOTaOVNnGIN?=
+ =?us-ascii?Q?fPWKj/Uurid/mj7waDLkvjF7rMDsnZjNSPPSg2am20DPADlFMT247p1VL9Hh?=
+ =?us-ascii?Q?gvPifl5LnzPrrnr3sV6ioNl9W2H+ZsF6I24sTY+wFUzZGbosPJIQdFdHstfv?=
+ =?us-ascii?Q?nE1NXKu+/dBOoyIJ9Iv+HIbBRZq656W3PbsUqtOULc2SPztoQXk0iofay9q8?=
+ =?us-ascii?Q?z9EWn3ue2O6u7UdK6ComoTI+6Cq0PyZYX+xm7ii678ftcan2WA9Mo0VB73qg?=
+ =?us-ascii?Q?Mbwo5OUB9ZNHdWS0niMKMYasYtPuCm2Nt/mahorJV2at6FgcihlBVx+WeYT6?=
+ =?us-ascii?Q?XStd4JLTaFwAMrwxO+KdvSnt7LgnNa1lk3gfwhEoizmGOv1Ei/cjP+lggcQw?=
+ =?us-ascii?Q?2SIC7hvJhxatdobTioQ6tAuajx3MHZSpcewfB8mJewTuEFhOWah94shHepYj?=
+ =?us-ascii?Q?ZTEFYg3W+DBglSauITUoGx3GpbSL/1iHzm8J7AYkL99djanww0TLf/lhp70t?=
+ =?us-ascii?Q?PNVyJqHAKHm+nz9fXLS1xEMwc1DPEnFfV1lg5ww1kqq/FLCbXCdiGQolNbc4?=
+ =?us-ascii?Q?/diI9Fw0JBI/dwUt0LH4mRRB4Uj5hOBwYAtgSCuFZeSRqeeZUXdVI4TT+dnS?=
+ =?us-ascii?Q?lPSw69j3ttI/ef6JUe7qQcB34ULl/nBcjjvOeJ2IcrTqz2hQcejC+Fq2ESgr?=
+ =?us-ascii?Q?kPQbwjnIXakIT1v4K+qJgVLk3acLCit2g3IFOjdp5jvIjitozWKDOH6Q4Gc6?=
+ =?us-ascii?Q?kVdXWul5g240qa6b9ysJRoM4Kc9nYHxQTiPVRcFSDu2m6e4YnvSkD0I9VIml?=
+ =?us-ascii?Q?1xtNvNVzIzEcLh+xzWHnCQmV8dRzOqgMgt69WlVHxZ7TnbGoCHoruGPfDBfE?=
+ =?us-ascii?Q?5ZjXz9GgAoQmwpb+2HQQSxGsoc8NP8FVpPnEXcxX?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: OMfk5AMUV-k6fHEnPsjv3Rw03SaLFLGM
-X-Proofpoint-ORIG-GUID: OMfk5AMUV-k6fHEnPsjv3Rw03SaLFLGM
-X-Proofpoint-Spam-Reason: safe
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-Network-Message-Id: c70de35f-5a38-406c-b2db-08dc99bae482
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jul 2024 10:45:15.6303
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 7v3b1oiemt8kdCqd05GkVLDwrARvmZ4SxFYIFMf4lEbfEmXF55+IxTxtboECuHdfID2CXP2LVv5dwOxEKr5X0j0bMO6DwaWiA5V2fP/dlQA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SHXPR01MB0814
 
-struct sdw_slave_prop is zero-initialized by the SoundWire core so there
-is no need to clear clk_stop_mode1 to false. Removing this also avoids
-having an unnecessary build dependency on a struct member.
 
-Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
----
- sound/soc/codecs/cs35l56-sdw.c | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/sound/soc/codecs/cs35l56-sdw.c b/sound/soc/codecs/cs35l56-sdw.c
-index 8862107105ae..fc03bb7ecae1 100644
---- a/sound/soc/codecs/cs35l56-sdw.c
-+++ b/sound/soc/codecs/cs35l56-sdw.c
-@@ -271,7 +271,6 @@ static int cs35l56_sdw_read_prop(struct sdw_slave *peripheral)
- 	prop->source_ports = BIT(CS35L56_SDW1_CAPTURE_PORT);
- 	prop->sink_ports = BIT(CS35L56_SDW1_PLAYBACK_PORT);
- 	prop->paging_support = true;
--	prop->clk_stop_mode1 = false;
- 	prop->quirks = SDW_SLAVE_QUIRKS_INVALID_INITIAL_PARITY;
- 	prop->scp_int1_mask = SDW_SCP_INT1_BUS_CLASH | SDW_SCP_INT1_PARITY | SDW_SCP_INT1_IMPL_DEF;
- 
--- 
-2.39.2
+>=20
+> From: Conor Dooley <conor.dooley@microchip.com>
+>=20
+> It was reported to me that the star64 actually /does/ have an exposed PCI=
+e port,
+> despite the commit message there. In my original conversation with Minda,
+> they said that pcie1 was available there and pcie0 was not, but the v2 pa=
+tch
+> didn't actually add pcie1 on the star64.
+>=20
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+> I think I'll just squash this in and fixup the commit message, since the =
+patch is still
+> at the top of my branch.
+>=20
+> CC: Minda Chen <minda.chen@starfivetech.com>
+> CC: Conor Dooley <conor@kernel.org>
+> CC: Rob Herring <robh+dt@kernel.org>,
+> CC: Emil Renner Berthing <emil.renner.berthing@canonical.com
+> CC: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org
+> CC: devicetree@vger.kernel.org
+> CC: linux-kernel@vger.kernel.org
+> CC: linux-riscv@lists.infradead.org
+> ---
+>  arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts | 4 ++++
+>  1 file changed, 4 insertions(+)
+>=20
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
+> b/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
+> index 2d41f18e0359..b720cdd15ed6 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
+> @@ -39,6 +39,10 @@ phy1: ethernet-phy@1 {
+>  	};
+>  };
+>=20
+> +&pcie1 {
+> +	status =3D "okay";
+> +};
+> +
+>  &phy0 {
+>  	rx-internal-delay-ps =3D <1900>;
+>  	tx-internal-delay-ps =3D <1500>;
+> --
+> 2.43.0
+
+Hi Conor
+
+The jh7110-pine64-star64.dts is in linux-next tree. I have not noticed it b=
+efore.
+Should I squash this to my patch? Can my dts patch be accepted in kernel 6.=
+11? Thanks
+(The same with Starfive PCIe patch set in linux-next, which will be merge i=
+n 6.11, right?)
 
 
