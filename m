@@ -1,183 +1,162 @@
-Return-Path: <linux-kernel+bounces-236781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CB6391E700
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:55:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8048D91E708
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:02:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4A011F23709
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:55:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9F62281457
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:01:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C941416EBE8;
-	Mon,  1 Jul 2024 17:55:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15EDB14BF8F;
+	Mon,  1 Jul 2024 18:01:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Me7R+7ax"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="CvCLh9nA"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6629C16EB6A;
-	Mon,  1 Jul 2024 17:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10248F9DF
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 18:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719856549; cv=none; b=FOOb6R6oSoiuNYu2bqelLyM6OqbDuU3mWZGTcxrSnssczIm14ODy9mAgHpco9w/EL+hmW3I+kB7INQd7liu+xl9/bj0vSup3suu9PzJTnZQqUonZ9IjomsY7HdJZgY97GayCqez2vr76uV1KiT6ySrBtl94XY7ayX18oy/2xV9g=
+	t=1719856914; cv=none; b=ufEJLxjYwMjuGWMz2sJbgFnTaVH/OjmfbjeyCLJd8Dgz7y0PwKGa6PmriOEgJo02F6g5yMrGizhm0K2umKKIlLNutTrV6gREKlorbFzszZcagP3ubaYStQcbW54Gn7LW1rVpA1vhSHmbbPM7KISpOJu9kOW/7LR2BcDm4fM5iOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719856549; c=relaxed/simple;
-	bh=SGQJsHnQ5hH73LkMg9W47h+XoIg3nmMQ48iQr3+H3sY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dS4oQLSvb3DRVn4VcegZC6EbpNAszh68WhV0L/tKAwZ1K91leo0wnUtcuPmeF9OUQ8l+s09XP0XotuG6C2crEHEz67bNUoigik7GQ5kZ3PI30h8M5QYMHawkv4CA+C/xpnuMS18gGZD3RKZrc81WPkd+sZYaPr6vDwO5808zIdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Me7R+7ax; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719856547; x=1751392547;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=SGQJsHnQ5hH73LkMg9W47h+XoIg3nmMQ48iQr3+H3sY=;
-  b=Me7R+7axUMNfMWxGttgnb+89XbTsKhSmWZFpkdmgE7LxZuC4a9QuN4fa
-   5bhgmXcnygT4fmlqfXECJZAQKYYLMoDRs07VVYypPJPAX/xPaUMxmuHGG
-   YYyDybgrA4BL/600MyG0NDkB7e8z+5/W6PY6aY1Ht4kC6f/I07h9xKQlm
-   H5stO5bd8RXPvsYqEuVvoQZa2P7mfOmh2DhBp1sc/gFPgZC+w9rVVt23z
-   6CunIOt+YtYBR6saP0Qx4qEsTzVcbyV1TVrFsp4gDMxNHK121YV/fB1Ng
-   bYSp/elPueeWzFC/+KKLYAJpHa0CfgLfliS8o2UmZfX7jBNjGCp2Id5cs
-   g==;
-X-CSE-ConnectionGUID: soQ9o0/nS5iazJpkUfDtgw==
-X-CSE-MsgGUID: U+riKPaDQ+i6Vcy4D0tgpg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="34542838"
-X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
-   d="scan'208";a="34542838"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 10:55:46 -0700
-X-CSE-ConnectionGUID: VvlaK8fdRBex0s2yHtTBBA==
-X-CSE-MsgGUID: Hy0V87hJRWagHoxyaofFRw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
-   d="scan'208";a="46263903"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.54.39.125])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 10:55:47 -0700
-Date: Mon, 1 Jul 2024 11:00:58 -0700
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-To: Xin Li <xin@zytor.com>
-Cc: X86 Kernel <x86@kernel.org>, Sean Christopherson <seanjc@google.com>,
- LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Dave Hansen <dave.hansen@intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Xin Li
- <xin3.li@intel.com>, linux-perf-users@vger.kernel.org, Peter Zijlstra
- <peterz@infradead.org>, Paolo Bonzini <pbonzini@redhat.com>, Tony Luck
- <tony.luck@intel.com>, Andy Lutomirski <luto@kernel.org>, acme@kernel.org,
- kan.liang@linux.intel.com, Andi Kleen <andi.kleen@intel.com>, "Mehta,
- Sohil" <sohil.mehta@intel.com>, Zeng Guang <guang.zeng@intel.com>,
- jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v3 07/11] KVM: VMX: Handle NMI Source report in VM exit
-Message-ID: <20240701110058.098c6445@jacob-builder>
-In-Reply-To: <51768b50-96ac-49a7-a63b-02d2b94c2c6a@zytor.com>
-References: <20240628201839.673086-1-jacob.jun.pan@linux.intel.com>
-	<20240628201839.673086-8-jacob.jun.pan@linux.intel.com>
-	<6c8160e4-3d67-410d-aad0-3ec731a903f8@zytor.com>
-	<20240701084558.1620584f@jacob-builder>
-	<51768b50-96ac-49a7-a63b-02d2b94c2c6a@zytor.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719856914; c=relaxed/simple;
+	bh=P8YG2LyxevjiJ7vKNtBwNMx6fC14gxOjGhQOFwy3PnE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J8QA+aUaMf6JlocpjF51XzcYBIz8cu2C8UekOqhePo8lBeR0uAZZ5D6otrAGE70VzRi+Eao6lNk9bBhhLagtUZAAShPeKR9SdA73D1HezBH2oCAJLS7sg/SbZz7shB5h/AwKa7YaK/8VVEE/MPMJbCIHUacNC3KNd/ZdkMed8QM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=CvCLh9nA; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57d1012e52fso717994a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 11:01:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719856908; x=1720461708; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=INqZmZ/BbGR0eouXTG+y0zxvAOWCJwOuHsTjqM/v/d4=;
+        b=CvCLh9nA+iPm9LBrmceHUbijfnLPB/F1HIyUv5qWhAlU5/zXPI6aohMEu0bzXfIsFN
+         9umQHqZKGKZXEFE6ekQKdLECyFiNkEhV6U0Hj7FcUdB3+ykbYPyRTomV1wTcJ2Wtrp7T
+         g9SKgRD/bcw+yBDGnyTkds4Mm60gkwT3Pq+tAHPagKcAP/HJTm8t2gxEAjLe97egcaMa
+         k9zzFZjFGpqpeN+uFKXSH4d6+w6UnzfpX7aaPym5lTGa+7bi7zEqoMujvFBLgFApYQ6/
+         N/GDwzqquTKW7aqx8Ru9WfCl0TNzO44mSh+/q1dbgE2iXTXKcP3znx0qU41IaiZXbQQi
+         dpfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719856908; x=1720461708;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=INqZmZ/BbGR0eouXTG+y0zxvAOWCJwOuHsTjqM/v/d4=;
+        b=F3obKdQ0QWJs3A84gAF4gmGHQRlsmyN2TzD9iNwHAViKKXlqdbG8JUbOlfm/55I3tc
+         FPfIDzGkpKv5ApcDwb2DYi7LmKs1M4SS4MrJVKQugqf2noy/zY/3jozEihaz3GvFzwhq
+         7bIjRH9pos70PkXOqH8LOXtO4RQubAexM7W72snsGwjITK+zms3Y3gVUwAyGfgbb8VYe
+         Nyx8/i9Jo8kUoFQpGSCVk7mi0yrvqhvtGtVmugyzsISMnGxgSlPa1h+rA1kR++PBAFNO
+         2liQp8Lz6GhfwBXw6Ku2pVxxi7Dj9Oil8lRczWfVALoLsWgBCOJs/etoh5B3eff7wk1R
+         /1HA==
+X-Forwarded-Encrypted: i=1; AJvYcCUErgDjmzFuKtRksrX8R99NuDscws+BBow15uR/m5xjYkYMtq12ghmoxOpsHvWRnt7rOFTfwEhBmmuxVnYQkcKbCxpxCQi6R74pfCjy
+X-Gm-Message-State: AOJu0YwL+MdGmTYRgl+6gVXvZ9ccSVda34vh947zv/TAP2H1oeaLhLYA
+	toeQLWxYgBDrNXq8NOLWOiwOEZrImKfrpqgjXEA+OHKUkG/IdWl79lTWWSjr7/4=
+X-Google-Smtp-Source: AGHT+IFS0IKG4SAvkQ872CcDn2q1pa+4nXgdaSgRnCwPe+UQcIA9gA5eQvrWiX4yZWT0Jl8kNs6JJw==
+X-Received: by 2002:a05:6402:1d4b:b0:57d:15ee:3d18 with SMTP id 4fb4d7f45d1cf-5879f984d05mr4338882a12.20.1719856908042;
+        Mon, 01 Jul 2024 11:01:48 -0700 (PDT)
+Received: from localhost ([2a02:8071:b783:6940:36f3:9aff:fec2:7e46])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-586138185ebsm4680218a12.52.2024.07.01.11.01.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 11:01:47 -0700 (PDT)
+Date: Mon, 1 Jul 2024 20:01:46 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Ahmad Fatoum <a.fatoum@pengutronix.de>, 
+	Masahiro Yamada <masahiroy@kernel.org>, kernel@pengutronix.de, it+linux-kconfig@molgen.mpg.de, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] lib/build_OID_registry: Avoid non-destructive
+ substitution for Perl < 5.13.2 compat
+Message-ID: <rroqnszmdjpue4q5celbqbo43hij7lqlzpdtm7odmkfwb6vc2b@qp6lgyzlxwt6>
+References: <20240701155802.75152-1-pmenzel@molgen.mpg.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="45ulsa4igztdzz5v"
+Content-Disposition: inline
+In-Reply-To: <20240701155802.75152-1-pmenzel@molgen.mpg.de>
 
 
-On Mon, 1 Jul 2024 10:03:58 -0700, Xin Li <xin@zytor.com> wrote:
+--45ulsa4igztdzz5v
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On 7/1/2024 8:45 AM, Jacob Pan wrote:
-> > 
-> > On Fri, 28 Jun 2024 21:07:04 -0700, Xin Li <xin@zytor.com> wrote:
-> >   
-> >> On 6/28/2024 1:18 PM, Jacob Pan wrote:  
-> >>> From: Zeng Guang <guang.zeng@intel.com>
-> >>>
-> >>> If the "NMI exiting" VM-execution control is 1, the value of the
-> >>> 16-bit NMI source vector is saved in the exit-qualification field in
-> >>> the VMCS when VM exits occur on CPUs that support NMI source.
-> >>>
-> >>> KVM that is aware of NMI-source reporting will push the bitmask of NMI
-> >>> source vectors as the exceptoin event data field on the stack for then
-> >>> entry of FRED exception. Subsequently, the host NMI exception handler
-> >>> is invoked which will process NMI source information in the event
-> >>> data. This operation is independent of vCPU FRED enabling status.
-> >>>
-> >>> Signed-off-by: Zeng Guang <guang.zeng@intel.com>
-> >>> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> >>> ---
-> >>>    arch/x86/entry/entry_64_fred.S |  2 +-
-> >>>    arch/x86/kvm/vmx/vmx.c         | 11 ++++++++---
-> >>>    2 files changed, 9 insertions(+), 4 deletions(-)
-> >>>
-> >>> diff --git a/arch/x86/entry/entry_64_fred.S
-> >>> b/arch/x86/entry/entry_64_fred.S index a02bc6f3d2e6..0d934a3fcaf8
-> >>> 100644 --- a/arch/x86/entry/entry_64_fred.S
-> >>> +++ b/arch/x86/entry/entry_64_fred.S
-> >>> @@ -92,7 +92,7 @@ SYM_FUNC_START(asm_fred_entry_from_kvm)
-> >>>    	 * +--------+-----------------+
-> >>>    	 */
-> >>>    	push $0				/* Reserved, must
-> >>> be 0 */
-> >>> -	push $0				/* Event data, 0 for
-> >>> IRQ/NMI */
-> >>> +	push %rsi			/* Event data for IRQ/NMI */
-> >>>    	push %rdi			/* fred_ss handed in by
-> >>> the caller */ push %rbp
-> >>>    	pushf  
-> >>
-> >> This belongs to the previous patch, it is part of the host changes.  
-> > right, will do.
-> >   
-> >>  
-> >>> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> >>> index 4e7b36081b76..6719c598fa5f 100644
-> >>> --- a/arch/x86/kvm/vmx/vmx.c
-> >>> +++ b/arch/x86/kvm/vmx/vmx.c
-> >>> @@ -7331,10 +7331,15 @@ static noinstr void vmx_vcpu_enter_exit(struct
-> >>> kvm_vcpu *vcpu, if ((u16)vmx->exit_reason.basic ==
-> >>> EXIT_REASON_EXCEPTION_NMI && is_nmi(vmx_get_intr_info(vcpu))) {
-> >>>    		kvm_before_interrupt(vcpu, KVM_HANDLING_NMI);
-> >>> -		if (cpu_feature_enabled(X86_FEATURE_FRED))
-> >>> -			fred_entry_from_kvm(EVENT_TYPE_NMI,
-> >>> NMI_VECTOR, 0);
-> >>> -		else
-> >>> +		if (cpu_feature_enabled(X86_FEATURE_FRED)) {
-> >>> +			unsigned long edata = 0;
-> >>> +
-> >>> +			if
-> >>> (cpu_feature_enabled(X86_FEATURE_NMI_SOURCE))
-> >>> +				edata = vmx_get_exit_qual(vcpu);
-> >>> +			fred_entry_from_kvm(EVENT_TYPE_NMI,
-> >>> NMI_VECTOR, edata);  
-> >>
-> >> Simply do fred_entry_from_kvm(EVENT_TYPE_NMI, NMI_VECTOR,
-> >> vmx_get_exit_qual(vcpu))?  
-> > I don't have strong preference but having a local variable improves
-> > readability IMHO.  
-> 
-> My point was, do we actually need this check:
->      (cpu_feature_enabled(X86_FEATURE_NMI_SOURCE)?
-I also pondered about the value of this CPUID bit if it is consistently
-linked with the FRED bit. But since the architecture provided this
-additional enumeration, as noted in Chapter 9 of the FRED specification,
-which states: 
+Hello Paul,
 
-"Processors that support FRED *may* also support a related feature called
-NMI-source reporting".
+On Mon, Jul 01, 2024 at 05:58:01PM +0200, Paul Menzel wrote:
+> On a system with Perl 5.12.1, commit 5ef6dc08cfde
+> ("lib/build_OID_registry: don't mention the full path of the script in
+> output") causes the build to fail with the error below.
+>=20
+>      Bareword found where operator expected at ./lib/build_OID_registry l=
+ine 41, near "s#^\Q$abs_srctree/\E##r"
+>      syntax error at ./lib/build_OID_registry line 41, near "s#^\Q$abs_sr=
+ctree/\E##r"
+>      Execution of ./lib/build_OID_registry aborted due to compilation err=
+ors.
+>      make[3]: *** [lib/Makefile:352: lib/oid_registry_data.c] Error 255
+>=20
+> Ahmad Fatoum analyzed that non-destructive substitution is only supported=
+ since
+> Perl 5.13.2. Instead of dropping `r` and having the side effect of modify=
+ing
+> `$0`, introduce a dedicated variable to support older Perl versions.
+>=20
+> Fixes: 5ef6dc08cfde ("lib/build_OID_registry: don't mention the full path=
+ of
+> the script in output")
 
-The use of "may" suggests that there are scenarios where FRED might exist
-without NMI-source reporting. To ensure future compatibility, I believe
-it is still valid to maintain this check.
+No real objection from my side. But if this is an issue for you, I
+recommend to upgrade your build system. Looking at Debian releases
+(because they are known for their up-to-date software) and their
+included versions of Perl, we have:
 
+	release  | releaseno | Perl version | release date
+	---------+-----------+--------------+-------------------
+	squeeze  |     6     |    5.10.1    | February 6th, 2011
+	wheezy   |     7     |    5.14.2    | May 4th, 2013
+	jessie   |     8     |    5.20.2    | April 26th, 2015
+	stretch  |     9     |    5.24.1    | June 17th, 2017
+	buster   |    10     |    5.28.1    | July 6th, 2019
+	bullseye |    11     |    5.32.1    | August 14th, 2021
+	bookworm |    12     |    5.36.0    | June 10th, 2023
 
-Thanks,
+So wheezy is new enough, and that's 11 years old.
+Perl 5.13.2 was released June 22, 2010---that's 14 years ago.
 
-Jacob
+I don't know about your build environment, but I wonder if a system that
+old can really build a recent kernel (if the patch under discussion is
+applied).
+
+Best regards
+Uwe
+
+--45ulsa4igztdzz5v
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmaC7wcACgkQj4D7WH0S
+/k4VpAf+JeZLxCrS0r1yfAdVFivttdmpWI9bVU2Apq24G6PAS0fH7m14oZEHNFdu
+giBVi7XCQGZLGlZHFUJfpXq+D3FrRt/J4zHiPeh3DIXMdMd0TNqcH9jUrwf+Z6Bm
+hQZQWGl4vbUotZMcaoEGrkXbsIEJMEtF6vIT8uFqQ7C7JyEF97/V/G/JLPEzkaOy
+cArfdMiXdb4A6mkbwTJ3KWNtpZQYrE63cOKyaQyFmdnGMeTYyL08pLI7bKyTere5
+zpmGESHqZmZH4XrIT33MUBJN8+C7moL3id62Lfw60o+BzkKK70Dz6DL0trseLrJ1
+0sUGsF0FxbdzxjfZsT95LzxtrBp2GQ==
+=VZs2
+-----END PGP SIGNATURE-----
+
+--45ulsa4igztdzz5v--
 
