@@ -1,248 +1,465 @@
-Return-Path: <linux-kernel+bounces-236578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96C9191E440
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:36:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC9FF91E448
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:37:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAA9A1C22D67
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:36:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EC7E1F23C0C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E59C16D308;
-	Mon,  1 Jul 2024 15:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E82716CD3A;
+	Mon,  1 Jul 2024 15:37:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wgPa6N9o"
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RnlVUBKQ"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB3B16CD03
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 15:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0B6376E7
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 15:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719848171; cv=none; b=frphqkckwkkxGYmtYVAVw9rCYX0mxNAFW6DeHYfkOtthaIkLPRgXGtJ4ydjRcVV6h28clwZjp+Ydi15jeRfheGkMKq9A8GCUFS0S1KhDfzAX8NBXv1OwwetZ6P8SyU7z4GoZBkC1SI66MNvujfA9jyhxDiqXsjFv92/9b7AoHRw=
+	t=1719848246; cv=none; b=J6/blz0O8GGYxHSMSME1O4qA7+dM/DirMtn/YR09DlO3Xp2h3PpKm853WMIjQZ0Xb3oZ1SY9i+K572KfnCdwVGX+8OsroOz+K5f8RqVCPhrF693KhYmWBRcyPoX7Q+2bJMt2kIdO/NRBupuEgKiTl/KA9BZ37VbwiXA5smn3jVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719848171; c=relaxed/simple;
-	bh=IFMo+EgxtM+B2OQnWyCmG01tIkkhCDQlN5GI66q6Bq0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uU5YZLSa+AbL8J7taGmx4/GaM9A64JK745cfZudmklMSqGKQ7XB4ek3e0tiqdDhckMQjO12r6KERjNBxhziu5j6DKL/kIrK0ixdeBc/MN1S2wn6H28msHXUy0xoa4vRmml+fIBF86FJm5+sZdsfTgKwuSPGlODmkNTgxzzFYpGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wgPa6N9o; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-700d083b65bso2280625a34.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 08:36:08 -0700 (PDT)
+	s=arc-20240116; t=1719848246; c=relaxed/simple;
+	bh=SX4kOIqEQyKl8hbtHLp/3XwskJW991M2N+9jLbksQtA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=HcCj1k56dfKS58qFxpFXwTcDrnmvCky+q8W4EWX4VV5sMDwCf6+Z42P/QPyPd/WUjgJHtB/ztrjzVhtCq8SYBd8cSf2ILfbZKB5SiQliwYrz12CfroggmZT+iQd6vdkr5uqaQOTnLpSVle/xGUEIQhwIky2gJkfqJW99fP/x3q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RnlVUBKQ; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52cdcd26d61so3488612e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 08:37:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719848167; x=1720452967; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=K5bvCJAQ/Xchffz3t2J6NQaiVKI3Au7zTH9UDbhEV2c=;
-        b=wgPa6N9oxOI3cluKe3Ioh1UaLxjt12NyTx6DfPYhBcy2V/7u6/np+2U7kM0HaC6de+
-         pNbkraXcLySPZxycY4o4LssZ1WN1hmj+wHTL++iBdiwLFCnwPc7W0eL7UBwy0teFvdIu
-         X2vBfiw5qThR7QftNJ+ymjrEK562Pu7z8gbBKTErn5MteKdQeYh9p4ZpN5GxPti4xJo9
-         ZGy/108hR6muEma+rPhmJjDfkVE//eb/mFQxY4s8snWn9SflXgcdPaeMbXf6Y9I3THsI
-         dWoccsxX22E0ji24tdBq+wD07b0FFkQ33OOK69TsUtXQhbzhzrQ8IaGTO2Qyenxm5JWU
-         R/+A==
+        d=gmail.com; s=20230601; t=1719848242; x=1720453042; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=sQfhSFiqrbWpIg3Ny2S4d0ryJUXXU8wg64ktG484uv4=;
+        b=RnlVUBKQ2RW1vgD4IBiQKY/LEp3kjhfGedOvwxzt9+T4XSnlhQ5aOT8vWNrseEjjXv
+         wHB+u0zkPxmxtSJoAhzG0T0awLk0R9nMa/A6FBOVkibNznhigpe0rc6AyINj5XQTUku9
+         2Pq8TZ1eBuE8v9pYUXclzErGegGt9IjrkC8U2jKRC1y+Vz3qCuawKSBys3yJ9xxiSSHT
+         h2DedBkbJ/jz3mcIOyO4X3gPysM1LClPnV1auKuXYafUcl+DQvqYllb/Dq2d/II4qBtd
+         znmrrC1ACTHDgHaz/sm8KF+YPHZtIZKzQjXWsVh3vjfPUIKw3lDEaixmzF6F+RhHRhKC
+         x/8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719848167; x=1720452967;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1719848242; x=1720453042;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=K5bvCJAQ/Xchffz3t2J6NQaiVKI3Au7zTH9UDbhEV2c=;
-        b=uOt5rL+GSlzamjwlHLfr936OZTEb+YFqxmp4mu/Ww5lOn8SDOAbF5hO2d9NkB+nSia
-         vGJzZM2TiMwTzHLNF4OTPM7kKjppv5rCrXk59CNs2aF9cWzqAcd4T168y0sj/7cUuW29
-         Sz/6LMIZu7vJCPLlCkJcIq8uTqZJbZXqBcs+NUXm2havNfH9y/9Zv9JVCZhwiNIZLZGM
-         ivBXLccLVh/GK1RUkyb1sRpHNZo9/uswajrPVokFUB7f1ORDyUSmyh9QMfhISdo7N+ct
-         swcdkIOqR4wlF9qqnJ14Q88bPh9XQeF+0y/hFlpQpz17HO+zsUkBzWdqcDKXJ/ZNnjhv
-         1lsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/o8ZAKARhR5Cy3qHbVXbT9l8EfkoqnCIUyjdQi2wBqU5oioRyG7A2cY+7xQq8S1gQbMImgfXHEIQ45Z1+a7peyiVejLOQ+q9HmPgX
-X-Gm-Message-State: AOJu0YyQJwUmFpFhjbFW9hgZQR8Joy3Q2IOZjAyTEtNLzLu3NTBHB2Be
-	ViClQY1G6w2jh2kVqcMpA0YgFqqv0Xuemhu127qS63rZKKbHt1jo6k+Ok1Xvyms=
-X-Google-Smtp-Source: AGHT+IFKq9w04b6QdUgSzMjtv3hGAqE/wViwGiHvkXfxi+QBNbw7E5hSpyBFPmF7DTfZhjYDni0mXA==
-X-Received: by 2002:a05:6830:4a:b0:700:cf09:f512 with SMTP id 46e09a7af769-702075be678mr6912139a34.1.1719848167370;
-        Mon, 01 Jul 2024 08:36:07 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:e8c6:2364:637f:c70e])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-701f7b3926fsm1325289a34.74.2024.07.01.08.36.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 08:36:06 -0700 (PDT)
-Date: Mon, 1 Jul 2024 17:36:05 +0200
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Filipe Manana <fdmanana@suse.com>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, David Sterba <dsterba@suse.com>
-Subject: fs/btrfs/ctree.c:612 btrfs_force_cow_block() error: we previously
- assumed 'parent' could be null (see line 548)
-Message-ID: <96f65252-854d-4de4-a375-8f974a8bb884@suswa.mountain>
+        bh=sQfhSFiqrbWpIg3Ny2S4d0ryJUXXU8wg64ktG484uv4=;
+        b=XGp2YuoN5NQiw5UkM56K0Bsmqplc8wT0aFGIJQSmq3wXkZtnaxzkdh2tTVS/GnLD8M
+         TUILYyDN3cyL1B6zE95OfYItDkyyd7OeCz6VXbTWy+ASjKr4hCEtiaEprMrxbxd/958o
+         PRCw0ZKE7CsrpnBny57s2L+JAhlzcBb/+uPwffSxH2UofIFmhmitSigOM1WtUiuWygP1
+         iE/QIRBitnL3k78YMH0BEhxnYfHdFr3J/Q4F3qk2GJ2gCXxwMhFU8AKDsq3xgM25sZRq
+         Q0vH135RDwpRuLiExWp1V7+XWT/8XnmzpqYXVmVRAooTowBlKO8810yt62uFsqZX7WYA
+         PO4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVYqOavEWks6nGwE7qdBOBZHszwpCSqlNPXu4tfc4T/rCj/bxbALqf8ZTTQIzOjqCnEqLGU+E5CaGPaOcAFkhvXNSK0Ret/6eM9+YL7
+X-Gm-Message-State: AOJu0YwkpehLXE/JJVqnI0lUkYCmf/+7anxdrywxZFWAKej8l7sl/snv
+	NWzGbJfDCISvevC+fuG4XG+84jTbJc3JCuQSO0ZiITUl+GO81DNm
+X-Google-Smtp-Source: AGHT+IH2ZfOVOfrg3YdkSlcPjbBRbZXfC8cBkbtV8wd6XdRB9vtWxaji79ZUO+BDOo67IlKs8bmJEQ==
+X-Received: by 2002:ac2:4e0b:0:b0:52e:767a:ad9c with SMTP id 2adb3069b0e04-52e826fc0dcmr3719563e87.53.1719848242130;
+        Mon, 01 Jul 2024 08:37:22 -0700 (PDT)
+Received: from ?IPV6:2001:16a2:dfed:e700:8f2:d143:dc90:1038? ([2001:16a2:dfed:e700:8f2:d143:dc90:1038])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af557fesm160797575e9.11.2024.07.01.08.37.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Jul 2024 08:37:21 -0700 (PDT)
+Message-ID: <5743d4e4-3e34-4ac1-b4a9-0ddc4f0e624d@gmail.com>
+Date: Mon, 1 Jul 2024 18:37:19 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/2] mm: store zero pages to be swapped out in a bitmap
+From: Usama Arif <usamaarif642@gmail.com>
+To: Johannes Weiner <hannes@cmpxchg.org>, akpm@linux-foundation.org
+Cc: shakeel.butt@linux.dev, david@redhat.com, ying.huang@intel.com,
+ hughd@google.com, willy@infradead.org, yosryahmed@google.com,
+ nphamcs@gmail.com, chengming.zhou@linux.dev, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, kernel-team@meta.com,
+ Andi Kleen <ak@linux.intel.com>
+References: <20240627105730.3110705-1-usamaarif642@gmail.com>
+ <20240627105730.3110705-2-usamaarif642@gmail.com>
+ <20240627161852.GA469122@cmpxchg.org>
+ <44a57df4-e54c-47ee-96b8-e2361c549239@gmail.com>
+ <aa573e39-8d27-475d-a3a1-27fdcfdcef56@gmail.com>
+Content-Language: en-US
+In-Reply-To: <aa573e39-8d27-475d-a3a1-27fdcfdcef56@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   55027e689933ba2e64f3d245fb1ff185b3e7fc81
-commit: 95f93bc4cbcac6121a5ee85cd5019ee8e7447e0b btrfs: rename and export __btrfs_cow_block()
-config: um-randconfig-r071-20240623 (https://download.01.org/0day-ci/archive/20240625/202406250719.jidL6tVI-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project ad79a14c9e5ec4a369eed4adf567c22cc029863f)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202406250719.jidL6tVI-lkp@intel.com/
+On 01/07/2024 18:01, Usama Arif wrote:
+>
+> On 28/06/2024 18:30, Usama Arif wrote:
+>>
+>> On 27/06/2024 19:18, Johannes Weiner wrote:
+>>> Hi Usama,
+>>>
+>>> On Thu, Jun 27, 2024 at 11:55:29AM +0100, Usama Arif wrote:
+>>>> Approximately 10-20% of pages to be swapped out are zero pages [1].
+>>>> Rather than reading/writing these pages to flash resulting
+>>>> in increased I/O and flash wear, a bitmap can be used to mark these
+>>>> pages as zero at write time, and the pages can be filled at
+>>>> read time if the bit corresponding to the page is set.
+>>>> With this patch, NVMe writes in Meta server fleet decreased
+>>>> by almost 10% with conventional swap setup (zswap disabled).
+>>>>
+>>>> [1] 
+>>>> https://lore.kernel.org/all/20171018104832epcms5p1b2232e2236258de3d03d1344dde9fce0@epcms5p1/
+>>>>
+>>>> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+>>>> Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
+>>>> Reviewed-by: Yosry Ahmed <yosryahmed@google.com>
+>>>> Reviewed-by: Nhat Pham <nphamcs@gmail.com>
+>>>> Cc: David Hildenbrand <david@redhat.com>
+>>>> Cc: "Huang, Ying" <ying.huang@intel.com>
+>>>> Cc: Hugh Dickins <hughd@google.com>
+>>>> Cc: Johannes Weiner <hannes@cmpxchg.org>
+>>>> Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+>>>> Cc: Shakeel Butt <shakeel.butt@linux.dev>
+>>>> Cc: Usama Arif <usamaarif642@gmail.com>
+>>>> Cc: Andi Kleen <ak@linux.intel.com>
+>>>> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+>>> This looks great to me, and the numbers speak for themselves. A few
+>>> minor comments below:
+>>>
+>>>> ---
+>>>>   include/linux/swap.h |   1 +
+>>>>   mm/page_io.c         | 113 
+>>>> ++++++++++++++++++++++++++++++++++++++++++-
+>>>>   mm/swapfile.c        |  20 ++++++++
+>>>>   3 files changed, 133 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/include/linux/swap.h b/include/linux/swap.h
+>>>> index 3df75d62a835..ed03d421febd 100644
+>>>> --- a/include/linux/swap.h
+>>>> +++ b/include/linux/swap.h
+>>>> @@ -299,6 +299,7 @@ struct swap_info_struct {
+>>>>       signed char    type;        /* strange name for an index */
+>>>>       unsigned int    max;        /* extent of the swap_map */
+>>>>       unsigned char *swap_map;    /* vmalloc'ed array of usage 
+>>>> counts */
+>>>> +    unsigned long *zeromap;        /* vmalloc'ed bitmap to track 
+>>>> zero pages */
+>>>>       struct swap_cluster_info *cluster_info; /* cluster info. Only 
+>>>> for SSD */
+>>>>       struct swap_cluster_list free_clusters; /* free clusters list */
+>>>>       unsigned int lowest_bit;    /* index of first free in 
+>>>> swap_map */
+>>>> diff --git a/mm/page_io.c b/mm/page_io.c
+>>>> index 6c1c1828bb88..480b8f221d90 100644
+>>>> --- a/mm/page_io.c
+>>>> +++ b/mm/page_io.c
+>>>> @@ -172,6 +172,88 @@ int generic_swapfile_activate(struct 
+>>>> swap_info_struct *sis,
+>>>>       goto out;
+>>>>   }
+>>> It might be good to have a short comment that gives 1) an overview,
+>>> that we're using a bitmap to avoid doing IO for zero-filled pages and
+>>> 2) the locking, that the bits are protected by the locked swapcache
+>>> folio and atomic updates are used to protect against RMW corruption
+>>> due to other zero swap entries seeing concurrent updates.
+>>
+>> Thanks! have addressed the comments and will include them in next 
+>> revision. Just a couple of things.
+>>
+>> Will add the overview in swap_writepage when the check is made if the 
+>> folio is zero filled and zeromap bits are set, instead of at this point.
+>>
+>>>> +static bool is_folio_page_zero_filled(struct folio *folio, int i)
+>>>> +{
+>>>> +    unsigned long *data;
+>>>> +    unsigned int pos, last_pos = PAGE_SIZE / sizeof(*data) - 1;
+>>>> +    bool ret = false;
+>>>> +
+>>>> +    data = kmap_local_folio(folio, i * PAGE_SIZE);
+>>>> +    if (data[last_pos])
+>>>> +        goto out;
+>>>> +static void folio_zero_fill(struct folio *folio)
+>>>> +{
+>>>> +    unsigned int i;
+>>>> +
+>>>> +    for (i = 0; i < folio_nr_pages(folio); i++)
+>>>> +        clear_highpage(folio_page(folio, i));
+>>>> +}
+>>> Should this be in highmem.h next to the other folio_zero_* functions?
+>>
+>> Thanks for pointing to highmem.h. It already has folio_zero_range, 
+>> which should do the same thing, so I think I can just do 
+>> folio_zero_range(folio, 0, folio_size(folio)) and this function 
+>> shouldnt be needed.
+>
+>
+> How about this? Patch 2 to remove zswap code doesn't change.
+>
+>
+My mail client had messed up the spacing in my previous reply, so it 
+might not apply cleanly. Hoping it comes out correct this time
 
-New smatch warnings:
-fs/btrfs/ctree.c:612 btrfs_force_cow_block() error: we previously assumed 'parent' could be null (see line 548)
 
-vim +/parent +612 fs/btrfs/ctree.c
-95f93bc4cbcac6 Filipe Manana             2023-09-27  513  int btrfs_force_cow_block(struct btrfs_trans_handle *trans,
-5f39d397dfbe14 Chris Mason               2007-10-15  514  			  struct btrfs_root *root,
-5f39d397dfbe14 Chris Mason               2007-10-15  515  			  struct extent_buffer *buf,
-5f39d397dfbe14 Chris Mason               2007-10-15  516  			  struct extent_buffer *parent, int parent_slot,
-5f39d397dfbe14 Chris Mason               2007-10-15  517  			  struct extent_buffer **cow_ret,
-9631e4cc1a030a Josef Bacik               2020-08-20  518  			  u64 search_start, u64 empty_size,
-9631e4cc1a030a Josef Bacik               2020-08-20  519  			  enum btrfs_lock_nesting nest)
-02217ed299c634 Chris Mason               2007-03-02  520  {
-0b246afa62b0cf Jeff Mahoney              2016-06-22  521  	struct btrfs_fs_info *fs_info = root->fs_info;
-5d4f98a28c7d33 Yan Zheng                 2009-06-10  522  	struct btrfs_disk_key disk_key;
-5f39d397dfbe14 Chris Mason               2007-10-15  523  	struct extent_buffer *cow;
-be1a5564fd39fa Mark Fasheh               2011-08-08  524  	int level, ret;
-f0486c68e4bd9a Yan, Zheng                2010-05-16  525  	int last_ref = 0;
-925baeddc5b076 Chris Mason               2008-06-25  526  	int unlock_orig = 0;
-0f5053eb90f58c Goldwyn Rodrigues         2016-09-22  527  	u64 parent_start = 0;
-60ea105a0f9fd3 Boris Burkov              2023-06-21  528  	u64 reloc_src_root = 0;
-7bb86316c3961d Chris Mason               2007-12-11  529  
-925baeddc5b076 Chris Mason               2008-06-25  530  	if (*cow_ret == buf)
-925baeddc5b076 Chris Mason               2008-06-25  531  		unlock_orig = 1;
-925baeddc5b076 Chris Mason               2008-06-25  532  
-49d0c6424cf13a Filipe Manana             2021-09-22  533  	btrfs_assert_tree_write_locked(buf);
-925baeddc5b076 Chris Mason               2008-06-25  534  
-92a7cc4252231d Qu Wenruo                 2020-05-15  535  	WARN_ON(test_bit(BTRFS_ROOT_SHAREABLE, &root->state) &&
-0b246afa62b0cf Jeff Mahoney              2016-06-22  536  		trans->transid != fs_info->running_transaction->transid);
-92a7cc4252231d Qu Wenruo                 2020-05-15  537  	WARN_ON(test_bit(BTRFS_ROOT_SHAREABLE, &root->state) &&
-27cdeb7096b86f Miao Xie                  2014-04-02  538  		trans->transid != root->last_trans);
-5f39d397dfbe14 Chris Mason               2007-10-15  539  
-7bb86316c3961d Chris Mason               2007-12-11  540  	level = btrfs_header_level(buf);
-31840ae1a6b433 Zheng Yan                 2008-09-23  541  
-5d4f98a28c7d33 Yan Zheng                 2009-06-10  542  	if (level == 0)
-5d4f98a28c7d33 Yan Zheng                 2009-06-10  543  		btrfs_item_key(buf, &disk_key, 0);
-5d4f98a28c7d33 Yan Zheng                 2009-06-10  544  	else
-5d4f98a28c7d33 Yan Zheng                 2009-06-10  545  		btrfs_node_key(buf, &disk_key, 0);
-5d4f98a28c7d33 Yan Zheng                 2009-06-10  546  
-60ea105a0f9fd3 Boris Burkov              2023-06-21  547  	if (root->root_key.objectid == BTRFS_TREE_RELOC_OBJECTID) {
-60ea105a0f9fd3 Boris Burkov              2023-06-21 @548  		if (parent)
-                                                                            ^^^^^^
-The NULL checking in this function is not very consistent.  This warning
-is possibly a false positive, but I expect that parent can't actually be
-NULL and the NULL checks can be deleted.
+ From b4aa285289b0d5c87b998cc48669cf3fc41fcbb6 Mon Sep 17 00:00:00 2001
+From: Usama Arif <usamaarif642@gmail.com>
+Date: Fri, 24 May 2024 14:52:55 +0100
+Subject: [PATCH 1/2] mm: store zero pages to be swapped out in a bitmap
 
-5d4f98a28c7d33 Yan Zheng                 2009-06-10  549  			parent_start = parent->start;
-60ea105a0f9fd3 Boris Burkov              2023-06-21  550  		reloc_src_root = btrfs_header_owner(buf);
-60ea105a0f9fd3 Boris Burkov              2023-06-21  551  	}
-79bd37120b1495 Filipe Manana             2021-06-29  552  	cow = btrfs_alloc_tree_block(trans, root, parent_start,
-79bd37120b1495 Filipe Manana             2021-06-29  553  				     root->root_key.objectid, &disk_key, level,
-60ea105a0f9fd3 Boris Burkov              2023-06-21  554  				     search_start, empty_size, reloc_src_root, nest);
-54aa1f4dfdacd6 Chris Mason               2007-06-22  555  	if (IS_ERR(cow))
-54aa1f4dfdacd6 Chris Mason               2007-06-22  556  		return PTR_ERR(cow);
-6702ed490ca0bb Chris Mason               2007-08-07  557  
-b4ce94de9b4d64 Chris Mason               2009-02-04  558  	/* cow is set to blocking by btrfs_init_new_buffer */
-b4ce94de9b4d64 Chris Mason               2009-02-04  559  
-58e8012cc12b3c David Sterba              2016-11-08  560  	copy_extent_buffer_full(cow, buf);
-db94535db75e67 Chris Mason               2007-10-15  561  	btrfs_set_header_bytenr(cow, cow->start);
-5f39d397dfbe14 Chris Mason               2007-10-15  562  	btrfs_set_header_generation(cow, trans->transid);
-5d4f98a28c7d33 Yan Zheng                 2009-06-10  563  	btrfs_set_header_backref_rev(cow, BTRFS_MIXED_BACKREF_REV);
-5d4f98a28c7d33 Yan Zheng                 2009-06-10  564  	btrfs_clear_header_flag(cow, BTRFS_HEADER_FLAG_WRITTEN |
-5d4f98a28c7d33 Yan Zheng                 2009-06-10  565  				     BTRFS_HEADER_FLAG_RELOC);
-5d4f98a28c7d33 Yan Zheng                 2009-06-10  566  	if (root->root_key.objectid == BTRFS_TREE_RELOC_OBJECTID)
-5d4f98a28c7d33 Yan Zheng                 2009-06-10  567  		btrfs_set_header_flag(cow, BTRFS_HEADER_FLAG_RELOC);
-5d4f98a28c7d33 Yan Zheng                 2009-06-10  568  	else
-5f39d397dfbe14 Chris Mason               2007-10-15  569  		btrfs_set_header_owner(cow, root->root_key.objectid);
-6702ed490ca0bb Chris Mason               2007-08-07  570  
-de37aa513105f8 Nikolay Borisov           2018-10-30  571  	write_extent_buffer_fsid(cow, fs_info->fs_devices->metadata_uuid);
-2b82032c34ec40 Yan Zheng                 2008-11-17  572  
-be1a5564fd39fa Mark Fasheh               2011-08-08  573  	ret = update_ref_for_cow(trans, root, buf, cow, &last_ref);
-b68dc2a93e794c Mark Fasheh               2011-08-29  574  	if (ret) {
-572c83acdcdafe Josef Bacik               2020-09-29  575  		btrfs_tree_unlock(cow);
-572c83acdcdafe Josef Bacik               2020-09-29  576  		free_extent_buffer(cow);
-66642832f06a43 Jeff Mahoney              2016-06-10  577  		btrfs_abort_transaction(trans, ret);
-b68dc2a93e794c Mark Fasheh               2011-08-29  578  		return ret;
-b68dc2a93e794c Mark Fasheh               2011-08-29  579  	}
-1a40e23b95da45 Zheng Yan                 2008-09-26  580  
-92a7cc4252231d Qu Wenruo                 2020-05-15  581  	if (test_bit(BTRFS_ROOT_SHAREABLE, &root->state)) {
-83d4cfd4da57b6 Josef Bacik               2013-08-30  582  		ret = btrfs_reloc_cow_block(trans, root, buf, cow);
-93314e3b64fd2e Zhaolei                   2015-08-06  583  		if (ret) {
-572c83acdcdafe Josef Bacik               2020-09-29  584  			btrfs_tree_unlock(cow);
-572c83acdcdafe Josef Bacik               2020-09-29  585  			free_extent_buffer(cow);
-66642832f06a43 Jeff Mahoney              2016-06-10  586  			btrfs_abort_transaction(trans, ret);
-83d4cfd4da57b6 Josef Bacik               2013-08-30  587  			return ret;
-83d4cfd4da57b6 Josef Bacik               2013-08-30  588  		}
-93314e3b64fd2e Zhaolei                   2015-08-06  589  	}
-3fd0a5585eb98e Yan, Zheng                2010-05-16  590  
-02217ed299c634 Chris Mason               2007-03-02  591  	if (buf == root->node) {
-925baeddc5b076 Chris Mason               2008-06-25  592  		WARN_ON(parent && parent != buf);
+Approximately 10-20% of pages to be swapped out are zero pages [1].
+Rather than reading/writing these pages to flash resulting
+in increased I/O and flash wear, a bitmap can be used to mark these
+pages as zero at write time, and the pages can be filled at
+read time if the bit corresponding to the page is set.
+With this patch, NVMe writes in Meta server fleet decreased
+by almost 10% with conventional swap setup (zswap disabled).
 
-Checked here as well.
+[1] 
+https://lore.kernel.org/all/20171018104832epcms5p1b2232e2236258de3d03d1344dde9fce0@epcms5p1/
 
-5d4f98a28c7d33 Yan Zheng                 2009-06-10  593  		if (root->root_key.objectid == BTRFS_TREE_RELOC_OBJECTID ||
-5d4f98a28c7d33 Yan Zheng                 2009-06-10  594  		    btrfs_header_backref_rev(buf) < BTRFS_MIXED_BACKREF_REV)
-5d4f98a28c7d33 Yan Zheng                 2009-06-10  595  			parent_start = buf->start;
-925baeddc5b076 Chris Mason               2008-06-25  596  
-406808ab2f0ba3 Filipe Manana             2021-03-11  597  		ret = btrfs_tree_mod_log_insert_root(root->node, cow, true);
-40b0a749388517 Filipe Manana             2023-06-08  598  		if (ret < 0) {
-40b0a749388517 Filipe Manana             2023-06-08  599  			btrfs_tree_unlock(cow);
-40b0a749388517 Filipe Manana             2023-06-08  600  			free_extent_buffer(cow);
-40b0a749388517 Filipe Manana             2023-06-08  601  			btrfs_abort_transaction(trans, ret);
-40b0a749388517 Filipe Manana             2023-06-08  602  			return ret;
-40b0a749388517 Filipe Manana             2023-06-08  603  		}
-40b0a749388517 Filipe Manana             2023-06-08  604  		atomic_inc(&cow->refs);
-240f62c8756df2 Chris Mason               2011-03-23  605  		rcu_assign_pointer(root->node, cow);
-925baeddc5b076 Chris Mason               2008-06-25  606  
-7a1636089acfee Filipe Manana             2021-12-13  607  		btrfs_free_tree_block(trans, btrfs_root_id(root), buf,
-7a1636089acfee Filipe Manana             2021-12-13  608  				      parent_start, last_ref);
-5f39d397dfbe14 Chris Mason               2007-10-15  609  		free_extent_buffer(buf);
-0b86a832a1f38a Chris Mason               2008-03-24  610  		add_root_to_dirty_list(root);
-02217ed299c634 Chris Mason               2007-03-02  611  	} else {
-5d4f98a28c7d33 Yan Zheng                 2009-06-10 @612  		WARN_ON(trans->transid != btrfs_header_generation(parent));
-                                                                                                                          ^^^^^^
-No check for NULL.
+Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
+Reviewed-by: Yosry Ahmed <yosryahmed@google.com>
+Reviewed-by: Nhat Pham <nphamcs@gmail.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: "Huang, Ying" <ying.huang@intel.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Usama Arif <usamaarif642@gmail.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+---
+  include/linux/swap.h |   1 +
+  mm/page_io.c         | 117 ++++++++++++++++++++++++++++++++++++++++++-
+  mm/swapfile.c        |  20 ++++++++
+  3 files changed, 137 insertions(+), 1 deletion(-)
 
-d09c51521f22f9 Filipe Manana             2023-06-08  613  		ret = btrfs_tree_mod_log_insert_key(parent, parent_slot,
-33cff222faffef Filipe Manana             2022-10-14  614  						    BTRFS_MOD_LOG_KEY_REPLACE);
-d09c51521f22f9 Filipe Manana             2023-06-08  615  		if (ret) {
-d09c51521f22f9 Filipe Manana             2023-06-08  616  			btrfs_tree_unlock(cow);
-d09c51521f22f9 Filipe Manana             2023-06-08  617  			free_extent_buffer(cow);
-d09c51521f22f9 Filipe Manana             2023-06-08  618  			btrfs_abort_transaction(trans, ret);
-d09c51521f22f9 Filipe Manana             2023-06-08  619  			return ret;
-d09c51521f22f9 Filipe Manana             2023-06-08  620  		}
-5f39d397dfbe14 Chris Mason               2007-10-15  621  		btrfs_set_node_blockptr(parent, parent_slot,
-db94535db75e67 Chris Mason               2007-10-15  622  					cow->start);
-74493f7a59bfd4 Chris Mason               2007-12-11  623  		btrfs_set_node_ptr_generation(parent, parent_slot,
-74493f7a59bfd4 Chris Mason               2007-12-11  624  					      trans->transid);
-50564b651d01c1 Filipe Manana             2023-09-12  625  		btrfs_mark_buffer_dirty(trans, parent);
-5de865eebb8330 Filipe David Borba Manana 2013-12-20  626  		if (last_ref) {
-f3a84ccd28d0b0 Filipe Manana             2021-03-11  627  			ret = btrfs_tree_mod_log_free_eb(buf);
-5de865eebb8330 Filipe David Borba Manana 2013-12-20  628  			if (ret) {
-572c83acdcdafe Josef Bacik               2020-09-29  629  				btrfs_tree_unlock(cow);
-572c83acdcdafe Josef Bacik               2020-09-29  630  				free_extent_buffer(cow);
-66642832f06a43 Jeff Mahoney              2016-06-10  631  				btrfs_abort_transaction(trans, ret);
-5de865eebb8330 Filipe David Borba Manana 2013-12-20  632  				return ret;
-5de865eebb8330 Filipe David Borba Manana 2013-12-20  633  			}
-5de865eebb8330 Filipe David Borba Manana 2013-12-20  634  		}
-7a1636089acfee Filipe Manana             2021-12-13  635  		btrfs_free_tree_block(trans, btrfs_root_id(root), buf,
-7a1636089acfee Filipe Manana             2021-12-13  636  				      parent_start, last_ref);
-02217ed299c634 Chris Mason               2007-03-02  637  	}
-925baeddc5b076 Chris Mason               2008-06-25  638  	if (unlock_orig)
-925baeddc5b076 Chris Mason               2008-06-25  639  		btrfs_tree_unlock(buf);
-3083ee2e18b701 Josef Bacik               2012-03-09  640  	free_extent_buffer_stale(buf);
-50564b651d01c1 Filipe Manana             2023-09-12  641  	btrfs_mark_buffer_dirty(trans, cow);
-2c90e5d658424b Chris Mason               2007-04-02  642  	*cow_ret = cow;
-02217ed299c634 Chris Mason               2007-03-02  643  	return 0;
-02217ed299c634 Chris Mason               2007-03-02  644  }
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index 3df75d62a835..8c38a18320b8 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -299,6 +299,7 @@ struct swap_info_struct {
+      signed char    type;        /* strange name for an index */
+      unsigned int    max;        /* extent of the swap_map */
+      unsigned char *swap_map;    /* vmalloc'ed array of usage counts */
++    unsigned long *zeromap;        /* kvmalloc'ed bitmap to track zero 
+pages */
+      struct swap_cluster_info *cluster_info; /* cluster info. Only for 
+SSD */
+      struct swap_cluster_list free_clusters; /* free clusters list */
+      unsigned int lowest_bit;    /* index of first free in swap_map */
+diff --git a/mm/page_io.c b/mm/page_io.c
+index 6c1c1828bb88..6cbfb277d020 100644
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -172,6 +172,80 @@ int generic_swapfile_activate(struct 
+swap_info_struct *sis,
+      goto out;
+  }
+
++static bool is_folio_zero_filled(struct folio *folio)
++{
++    unsigned int pos, last_pos;
++    unsigned long *data;
++    unsigned int i;
++
++    last_pos = PAGE_SIZE / sizeof(*data) - 1;
++    for (i = 0; i < folio_nr_pages(folio); i++) {
++        data = kmap_local_folio(folio, i * PAGE_SIZE);
++        /*
++         * Check last word first, incase the page is zero-filled at
++         * the start and has non-zero data at the end, which is common
++         * in real-world workloads.
++         */
++        if (data[last_pos]) {
++            kunmap_local(data);
++            return false;
++        }
++        for (pos = 0; pos < last_pos; pos++) {
++            if (data[pos]) {
++                kunmap_local(data);
++                return false;
++            }
++        }
++        kunmap_local(data);
++    }
++
++    return true;
++}
++
++static void swap_zeromap_folio_set(struct folio *folio)
++{
++    struct swap_info_struct *sis = swp_swap_info(folio->swap);
++    swp_entry_t entry;
++    unsigned int i;
++
++    for (i = 0; i < folio_nr_pages(folio); i++) {
++        entry = page_swap_entry(folio_page(folio, i));
++        set_bit(swp_offset(entry), sis->zeromap);
++    }
++}
++
++static void swap_zeromap_folio_clear(struct folio *folio)
++{
++    struct swap_info_struct *sis = swp_swap_info(folio->swap);
++    swp_entry_t entry;
++    unsigned int i;
++
++    for (i = 0; i < folio_nr_pages(folio); i++) {
++        entry = page_swap_entry(folio_page(folio, i));
++        clear_bit(swp_offset(entry), sis->zeromap);
++    }
++}
++
++/*
++ * Return the index of the first subpage which is not zero-filled
++ * according to swap_info_struct->zeromap.
++ * If all pages are zero-filled according to zeromap, it will return
++ * folio_nr_pages(folio).
++ */
++static unsigned int swap_zeromap_folio_test(struct folio *folio)
++{
++    struct swap_info_struct *sis = swp_swap_info(folio->swap);
++    swp_entry_t entry;
++    unsigned int i;
++
++    for (i = 0; i < folio_nr_pages(folio); i++) {
++        entry = page_swap_entry(folio_page(folio, i));
++        if (!test_bit(swp_offset(entry), sis->zeromap))
++            return i;
++    }
++    return i;
++}
++
+  /*
+   * We may have stale swap cache pages in memory: notice
+   * them here and get rid of the unnecessary final write.
+@@ -195,6 +269,25 @@ int swap_writepage(struct page *page, struct 
+writeback_control *wbc)
+          folio_unlock(folio);
+          return ret;
+      }
++
++    /*
++     * Use a bitmap (zeromap) to avoid doing IO for zero-filled pages.
++     * The bits in zeromap are protected by the locked swapcache folio
++     * and atomic updates are used to protect against read-modify-write
++     * corruption due to other zero swap entries seeing concurrent updates.
++     */
++    if (is_folio_zero_filled(folio)) {
++        swap_zeromap_folio_set(folio);
++        folio_unlock(folio);
++        return 0;
++    } else {
++        /*
++         * Clear bits this folio occupies in the zeromap to prevent
++         * zero data being read in from any previous zero writes that
++         * occupied the same swap entries.
++         */
++        swap_zeromap_folio_clear(folio);
++    }
+      if (zswap_store(folio)) {
+          folio_unlock(folio);
+          return 0;
+@@ -424,6 +517,26 @@ static void sio_read_complete(struct kiocb *iocb, 
+long ret)
+      mempool_free(sio, sio_pool);
+  }
+
++static bool swap_read_folio_zeromap(struct folio *folio)
++{
++    unsigned int idx = swap_zeromap_folio_test(folio);
++
++    if (idx == 0)
++        return false;
++
++    /*
++     * Swapping in a large folio that is partially in the zeromap is not
++     * currently handled. Return true without marking the folio uptodate so
++     * that an IO error is emitted (e.g. do_swap_page() will sigbus).
++     */
++    if (WARN_ON_ONCE(idx < folio_nr_pages(folio)))
++        return true;
++
++    folio_zero_range(folio, 0, folio_size(folio));
++    folio_mark_uptodate(folio);
++    return true;
++}
++
+  static void swap_read_folio_fs(struct folio *folio, struct swap_iocb 
+**plug)
+  {
+      struct swap_info_struct *sis = swp_swap_info(folio->swap);
+@@ -514,7 +627,9 @@ void swap_read_folio(struct folio *folio, struct 
+swap_iocb **plug)
+      }
+      delayacct_swapin_start();
+
+-    if (zswap_load(folio)) {
++    if (swap_read_folio_zeromap(folio)) {
++        folio_unlock(folio);
++    } else if (zswap_load(folio)) {
+          folio_unlock(folio);
+      } else if (data_race(sis->flags & SWP_FS_OPS)) {
+          swap_read_folio_fs(folio, plug);
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 9c6d8e557c0f..4f8e67d18cb5 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -747,6 +747,14 @@ static void swap_range_free(struct swap_info_struct 
+*si, unsigned long offset,
+      unsigned long begin = offset;
+      unsigned long end = offset + nr_entries - 1;
+      void (*swap_slot_free_notify)(struct block_device *, unsigned long);
++    unsigned int i;
++
++    /*
++     * Use atomic clear_bit operations only on zeromap instead of 
+non-atomic
++     * bitmap_clear to prevent adjacent bits corruption due to 
+simultaneous writes.
++     */
++    for (i = 0; i < nr_entries; i++)
++        clear_bit(offset + i, si->zeromap);
+
+      if (offset < si->lowest_bit)
+          si->lowest_bit = offset;
+@@ -2635,6 +2643,7 @@ SYSCALL_DEFINE1(swapoff, const char __user *, 
+specialfile)
+      free_percpu(p->cluster_next_cpu);
+      p->cluster_next_cpu = NULL;
+      vfree(swap_map);
++    kvfree(p->zeromap);
+      kvfree(cluster_info);
+      /* Destroy swap account information */
+      swap_cgroup_swapoff(p->type);
+@@ -3161,6 +3170,17 @@ SYSCALL_DEFINE2(swapon, const char __user *, 
+specialfile, int, swap_flags)
+          goto bad_swap_unlock_inode;
+      }
+
++    /*
++     * Use kvmalloc_array instead of bitmap_zalloc as the allocation 
+order might
++     * be above MAX_PAGE_ORDER incase of a large swap file.
++     */
++    p->zeromap = kvmalloc_array(BITS_TO_LONGS(maxpages), sizeof(long),
++                    GFP_KERNEL | __GFP_ZERO);
++    if (!p->zeromap) {
++        error = -ENOMEM;
++        goto bad_swap_unlock_inode;
++    }
++
+      if (p->bdev && bdev_stable_writes(p->bdev))
+          p->flags |= SWP_STABLE_WRITES;
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
 
 
