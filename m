@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-235709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 032E391D8AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:15:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8632591D8B0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 345191C20FE1
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:15:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1958D1F21903
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:15:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1417768FD;
-	Mon,  1 Jul 2024 07:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE2178C63;
+	Mon,  1 Jul 2024 07:14:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PsrqYe+L";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="M9t38IfN"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LPoe9+Wl";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wUnPsgQu"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904FB69959;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8DB66E2BE;
 	Mon,  1 Jul 2024 07:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719818096; cv=none; b=py58SM3MM/DBdw6YhwiPxdGN6/IGaDIW3PWdopu3nt8vKGduBEOUDCpfo455QIGltSKhae3UhDdSBlDsL4ZWOj0676uDORKSc5stgrVkRY9TqPwgC+kfz6HHt1QhkZBw+jAV+8OkN3SOwqTb7HAVmNp5aVStQcnzTN3E8qd63kQ=
+	t=1719818096; cv=none; b=MY4Tbl9hmFMQ6KWu3RtBGFnAHowoI+e3hwtpXUWROu0NFMYc8goCfYuzXWW/VELU9cZGOgK7js+03zI1nVVo2BTm4TCzSPzGS9pTWT8uqCMRPLqVT1WdizGDEt5dNFi4NJBcbOx9MNdSX1JMQ+UCe2yEitPOebpBZyp6F8ssYDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719818096; c=relaxed/simple;
-	bh=0jdegRLGkMSpzy25XtuZ3ijvGKt4MzIqqVdilnPZYq4=;
+	bh=rPAa5vn/Qo11zfBkto0+8kgUP3z2BmM2j77tOCf0dlA=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=jwjDf4URffWPfhX3CEI3sXA2UD1QJ33MiaL5ahBH6Ph2nfVTlYcu2c49Dn/IIeetBZjkKjgw45Q5BdflCoYy3Vp4L3krhmFQSyB01d+Z2kYE/dznmZsFiNWtkzxzdv3+fw0LMk1XPMiibPD7A9iJMcO5mYSi0c76W5dx0SvyQTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PsrqYe+L; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=M9t38IfN; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=C9OQ6YUomZ9qNsRnrQnyXvSHc0EQ1xOJlJeH/Ebz9fd9zix9323fee3TFGMOqDyITEkZFdT47Z5sCupg1tCBt24QMWi3Y4wrvWidWBxLJlpzje6TQawCjIhBlPAz+/ruDJTfIeaeHr/JkCSkcsqJ2OyMtR7afHcjz7FbPDlEPT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LPoe9+Wl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wUnPsgQu; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Date: Mon, 01 Jul 2024 07:14:52 -0000
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=XdaSvnZfkj1BPcdaLwG575o7viKXrNTySdEv4FhkRPg=;
-	b=PsrqYe+L7aduFojA5BEUzKGi6724Sko75IREMMqbJPnOymNmJSJU8eydLHne1fIfr2MHcV
-	QAuuJf04ftzGtLNHE/QOffI4P5gY/jrBJEzbkUGVxm9t3MjxmO4ji3csAFK9/kXWsaZpE6
-	jG7yzrcsx2MXRks5dGHJi9sijV/IrLLTor1hC3LIM+yoDacbtL2PniK7fyATm0RNExCaS9
-	wEXZCAztoz1twZIATRrCcG8A8j4YKuckyuTCxUaiLuRquZwYCEcZeRmVZr4o5IJHWW5pPF
-	YPL/s5yIsP0zcXCfQ7vgieksJdZ3o2DB1dg5TLDX2TRkGeUvPNnTFiSxMlyDfQ==
+	bh=rLk3Bx57c2GRlIXyMyGtKV3+Y8pbT7lL526uLOTUd50=;
+	b=LPoe9+Wlj+0jz+DSB5iPjQ0TTBeW3/kGGwFK8GR36TgZV3Yc5I10WBPhjx9cjuCq255tm5
+	fVWhqSwGTpMDu4B/6RDOTHCJWLgz5DhQlS+EEHGjsF3r4ebZS3Qd0FPS5aX8snqDoK1jYe
+	kDRPNuZBkf/x7wV7HMPFjba3PfkNaNdX16Tt6uaongFD43P/3Q9qm5htMOTTjwRGQCXUUQ
+	9jLW67zy2G7zg2rdVt9dSlcY+QHCI9bbCgNfpHXhY2oWafDg1Y2sd7M1ZyQ0dxRmH7eU6t
+	qJV/3pOs1VVztYZsGI1Qa+zmuIlfaJ6keXkML6yl2oDpFLZXeW/5HzOsr+7H9Q==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1719818093;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,26 +52,27 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=XdaSvnZfkj1BPcdaLwG575o7viKXrNTySdEv4FhkRPg=;
-	b=M9t38IfNz3YP9dCSjJSyU7GHoaMej2zB47T0kT3b8Q2FqpUhpB3TKFJ7buTwXfSmugBRve
-	jGONZmON9FfJdHCg==
+	bh=rLk3Bx57c2GRlIXyMyGtKV3+Y8pbT7lL526uLOTUd50=;
+	b=wUnPsgQuZ68mUQ3Ol61vznC2xrtxl8dBAYJr2Gn73UupwN2lmzRaxHByeEdbUBDK7+g15/
+	0zBkqlxzwTqJLcCQ==
 From: "tip-bot2 for Frederic Weisbecker" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] task_work: Introduce task_work_cancel() again
+Subject:
+ [tip: perf/urgent] task_work: s/task_work_cancel()/task_work_cancel_func()/
 Cc: Frederic Weisbecker <frederic@kernel.org>,
  "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20240621091601.18227-3-frederic@kernel.org>
-References: <20240621091601.18227-3-frederic@kernel.org>
+In-Reply-To: <20240621091601.18227-2-frederic@kernel.org>
+References: <20240621091601.18227-2-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171981809270.2215.3000722988563647462.tip-bot2@tip-bot2>
+Message-ID: <171981809294.2215.15420538071880369389.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,72 +82,102 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the perf/urgent branch of tip:
 
-Commit-ID:     74e45974c966fdecafb7149edb08a2f210e7ab60
-Gitweb:        https://git.kernel.org/tip/74e45974c966fdecafb7149edb08a2f210e7ab60
+Commit-ID:     b3d9ad61dc099bfd1e289460cde199b1ca4a7415
+Gitweb:        https://git.kernel.org/tip/b3d9ad61dc099bfd1e289460cde199b1ca4a7415
 Author:        Frederic Weisbecker <frederic@kernel.org>
-AuthorDate:    Fri, 21 Jun 2024 11:15:59 +02:00
+AuthorDate:    Fri, 21 Jun 2024 11:15:58 +02:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Tue, 25 Jun 2024 10:43:37 +02:00
+CommitterDate: Tue, 25 Jun 2024 10:43:36 +02:00
 
-task_work: Introduce task_work_cancel() again
+task_work: s/task_work_cancel()/task_work_cancel_func()/
 
-Re-introduce task_work_cancel(), this time to cancel an actual callback
-and not *any* callback pointing to a given function. This is going to be
-needed for perf events event freeing.
+A proper task_work_cancel() API that actually cancels a callback and not
+*any* callback pointing to a given function is going to be needed for
+perf events event freeing. Do the appropriate rename to prepare for
+that.
 
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20240621091601.18227-3-frederic@kernel.org
+Link: https://lore.kernel.org/r/20240621091601.18227-2-frederic@kernel.org
 ---
- include/linux/task_work.h |  1 +
- kernel/task_work.c        | 24 ++++++++++++++++++++++++
- 2 files changed, 25 insertions(+)
+ include/linux/task_work.h |  2 +-
+ kernel/irq/manage.c       |  2 +-
+ kernel/task_work.c        | 10 +++++-----
+ security/keys/keyctl.c    |  2 +-
+ 4 files changed, 8 insertions(+), 8 deletions(-)
 
 diff --git a/include/linux/task_work.h b/include/linux/task_work.h
-index 23ab01a..26b8a47 100644
+index 795ef5a..23ab01a 100644
 --- a/include/linux/task_work.h
 +++ b/include/linux/task_work.h
-@@ -31,6 +31,7 @@ int task_work_add(struct task_struct *task, struct callback_head *twork,
+@@ -30,7 +30,7 @@ int task_work_add(struct task_struct *task, struct callback_head *twork,
+ 
  struct callback_head *task_work_cancel_match(struct task_struct *task,
  	bool (*match)(struct callback_head *, void *data), void *data);
- struct callback_head *task_work_cancel_func(struct task_struct *, task_work_func_t);
-+bool task_work_cancel(struct task_struct *task, struct callback_head *cb);
+-struct callback_head *task_work_cancel(struct task_struct *, task_work_func_t);
++struct callback_head *task_work_cancel_func(struct task_struct *, task_work_func_t);
  void task_work_run(void);
  
  static inline void exit_task_work(struct task_struct *task)
-diff --git a/kernel/task_work.c b/kernel/task_work.c
-index 54ac240..2134ac8 100644
---- a/kernel/task_work.c
-+++ b/kernel/task_work.c
-@@ -136,6 +136,30 @@ task_work_cancel_func(struct task_struct *task, task_work_func_t func)
- 	return task_work_cancel_match(task, task_work_func_match, func);
+diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+index 71b0fc2..dd53298 100644
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -1337,7 +1337,7 @@ static int irq_thread(void *data)
+ 	 * synchronize_hardirq(). So neither IRQTF_RUNTHREAD nor the
+ 	 * oneshot mask bit can be set.
+ 	 */
+-	task_work_cancel(current, irq_thread_dtor);
++	task_work_cancel_func(current, irq_thread_dtor);
+ 	return 0;
  }
  
-+static bool task_work_match(struct callback_head *cb, void *data)
-+{
-+	return cb == data;
-+}
-+
-+/**
-+ * task_work_cancel - cancel a pending work added by task_work_add()
-+ * @task: the task which should execute the work
-+ * @cb: the callback to remove if queued
-+ *
-+ * Remove a callback from a task's queue if queued.
-+ *
-+ * RETURNS:
-+ * True if the callback was queued and got cancelled, false otherwise.
-+ */
-+bool task_work_cancel(struct task_struct *task, struct callback_head *cb)
-+{
-+	struct callback_head *ret;
-+
-+	ret = task_work_cancel_match(task, task_work_match, cb);
-+
-+	return ret == cb;
-+}
-+
+diff --git a/kernel/task_work.c b/kernel/task_work.c
+index 95a7e1b..54ac240 100644
+--- a/kernel/task_work.c
++++ b/kernel/task_work.c
+@@ -120,9 +120,9 @@ static bool task_work_func_match(struct callback_head *cb, void *data)
+ }
+ 
  /**
-  * task_work_run - execute the works added by task_work_add()
+- * task_work_cancel - cancel a pending work added by task_work_add()
+- * @task: the task which should execute the work
+- * @func: identifies the work to remove
++ * task_work_cancel_func - cancel a pending work matching a function added by task_work_add()
++ * @task: the task which should execute the func's work
++ * @func: identifies the func to match with a work to remove
   *
+  * Find the last queued pending work with ->func == @func and remove
+  * it from queue.
+@@ -131,7 +131,7 @@ static bool task_work_func_match(struct callback_head *cb, void *data)
+  * The found work or NULL if not found.
+  */
+ struct callback_head *
+-task_work_cancel(struct task_struct *task, task_work_func_t func)
++task_work_cancel_func(struct task_struct *task, task_work_func_t func)
+ {
+ 	return task_work_cancel_match(task, task_work_func_match, func);
+ }
+@@ -168,7 +168,7 @@ void task_work_run(void)
+ 		if (!work)
+ 			break;
+ 		/*
+-		 * Synchronize with task_work_cancel(). It can not remove
++		 * Synchronize with task_work_cancel_match(). It can not remove
+ 		 * the first entry == work, cmpxchg(task_works) must fail.
+ 		 * But it can remove another entry from the ->next list.
+ 		 */
+diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+index 4bc3e93..ab927a1 100644
+--- a/security/keys/keyctl.c
++++ b/security/keys/keyctl.c
+@@ -1694,7 +1694,7 @@ long keyctl_session_to_parent(void)
+ 		goto unlock;
+ 
+ 	/* cancel an already pending keyring replacement */
+-	oldwork = task_work_cancel(parent, key_change_session_keyring);
++	oldwork = task_work_cancel_func(parent, key_change_session_keyring);
+ 
+ 	/* the replacement session keyring is applied just prior to userspace
+ 	 * restarting */
 
