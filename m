@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-235807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 048C891D9EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:28:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E5D091D9E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:24:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD2B41F21FDE
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:28:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 024C31F211C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B268286F;
-	Mon,  1 Jul 2024 08:28:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61EC28249A;
+	Mon,  1 Jul 2024 08:24:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="o7QnGHhJ"
-Received: from out187-6.us.a.mail.aliyun.com (out187-6.us.a.mail.aliyun.com [47.90.187.6])
+	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="B7k/XCZv"
+Received: from out0-209.mail.aliyun.com (out0-209.mail.aliyun.com [140.205.0.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 213F782498
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 08:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.187.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9123C1804A
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 08:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719822504; cv=none; b=DTQAy3gc/LBCHCD/KxLMI+AExhzQrkGaac0ojJ8E6P7ZVWrDl6wOSfpoZQUYG/kSfB0f7zWDQUZaTNGVrgazmaNQ9uhqhdTRaI8VW+ZqygfxMdvxnnRN5UOM6iXl2ZzQlbybcLhaKUN5VDetc9hRUy/bchmSXnYoGakItWPyPVI=
+	t=1719822277; cv=none; b=LlcU5EiwPZc9ozbX9qnrjfJ6FEDpJZDgIN12jyhsKbguU8htt5d2la74Ry74vQzmnWzO1iu6lYPlZNn6gopq82nCmGZw48MYwvEplN+9CPafTSUn9mGxfuSw0nn8tCHh8n38o7/zA7TSFCuLSiGj7VGMOTe5KTyOHhhXqcsY58M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719822504; c=relaxed/simple;
-	bh=LVZaEFFpmjLSLIHc3mWQaQg3P//cgDdA2m4wmoDiXFk=;
+	s=arc-20240116; t=1719822277; c=relaxed/simple;
+	bh=h/ysissWJ3fdVPDH35GDl3waQLbtD2L181Ml+HYur60=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fmEDni72TCoO58XRcYFTzjiOiC586KA0NaEysrqOhoOE3fDgCXDdnjwqqEQVwqFowxB/1q5XlmhTORo7cxIL+tRQVh6NWT8Yl/ysNFeqTHVjbDadXVK1L/sznyIKa817685jbF7mtQx9Z3SW5kQh/LCgNaKdslxI+AWHIL9HF98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=o7QnGHhJ; arc=none smtp.client-ip=47.90.187.6
+	 In-Reply-To:Content-Type; b=LwrLwm0iBL/Ea79+5HVDuddebAhT5BDWbE6lajq9k9SsP+34lf/temEzossamktnON+vuVPg2bYi2NcMLJroHwzqjOYQHI9Uec+hpn+RZX4JqLoE6s5VcgnO5xcNwrdZsTpLyzaUQesp/FUE3WqiIzk//9Bv1NXq6SGuE/eSYB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=B7k/XCZv; arc=none smtp.client-ip=140.205.0.209
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=antgroup.com; s=default;
-	t=1719822490; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=vGhjO9uIjc37ou1f7D8tf/WdHUzM0CCNY36XPbaqCkA=;
-	b=o7QnGHhJ73rwoGE3GBRfcgfT6wgLbHZ2Y1DS8YLYn2xLWWRQc4pxCDW8SpghUTuL+BAzd8TYAj6/CNdeYD9iXISHE1i6ZKzZnR26m/5TEcEPryRJcAVVUfBEIaNMq4hP2kCZ7JEK9hba3xAMAAxsgRdyaBP9C1/do2iDLcVedaA=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033068157007;MF=libang.li@antgroup.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---.YE88zYj_1719822171;
-Received: from 30.13.185.168(mailfrom:libang.li@antgroup.com fp:SMTPD_---.YE88zYj_1719822171)
+	t=1719822264; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=DDMQAn41L6SWm47GL1Pl/XtVoTBg9GDb/pxF+UO/8oc=;
+	b=B7k/XCZv2Bgko6+2duBPdHDW+DhG805cKcdlmTrzOm8TIvrnSvRLRGLyKE/KHsTki7VzD7mhGOik07Rmy87us/J118cKfTGe0yGkQbAcbtTtTONBtvpHXa7DoZbzOOT6/B45g7M6Syniqebj50oy2EC7GpnMOI5/MwNrVzxpWRY=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033068194251;MF=libang.li@antgroup.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---.YE7WgG6_1719822263;
+Received: from 30.13.185.168(mailfrom:libang.li@antgroup.com fp:SMTPD_---.YE7WgG6_1719822263)
           by smtp.aliyun-inc.com;
-          Mon, 01 Jul 2024 16:22:51 +0800
-Message-ID: <d17c2da6-fa1f-4d89-afef-2be82e7d8d52@antgroup.com>
-Date: Mon, 01 Jul 2024 16:22:49 +0800
+          Mon, 01 Jul 2024 16:24:24 +0800
+Message-ID: <21c698a4-f6b5-4afd-9f6c-72de08adad10@antgroup.com>
+Date: Mon, 01 Jul 2024 16:24:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,61 +50,69 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] support "THPeligible" semantics for mTHP with anonymous
  shmem
-To: David Hildenbrand <david@redhat.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, hughd@google.com,
+To: David Hildenbrand <david@redhat.com>, hughd@google.com,
  akpm@linux-foundation.org
-Cc: ryan.roberts@arm.com, wangkefeng.wang@huawei.com, ziy@nvidia.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Barry Song <21cnbao@gmail.com>
+Cc: ryan.roberts@arm.com, wangkefeng.wang@huawei.com,
+ baolin.wang@linux.alibaba.com, ziy@nvidia.com, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
 References: <20240628104926.34209-1-libang.li@antgroup.com>
- <b2e6fac2-7c23-4a92-8d89-ff29b8566967@linux.alibaba.com>
- <2972d75a-ab26-4da7-88fa-81bed955cf52@redhat.com>
+ <1bf214bb-86a7-4f73-a839-39a4b37bc04a@redhat.com>
 Content-Language: en-US
 From: "Bang Li" <libang.li@antgroup.com>
-In-Reply-To: <2972d75a-ab26-4da7-88fa-81bed955cf52@redhat.com>
+In-Reply-To: <1bf214bb-86a7-4f73-a839-39a4b37bc04a@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
 Hi David,
 
-On 2024/7/1 14:55, David Hildenbrand wrote:
-> On 01.07.24 08:47, Baolin Wang wrote:
->> CC Barry.
+Thanks for you review!
+
+On 2024/7/1 14:57, David Hildenbrand wrote:
+> On 28.06.24 12:49, Bang Li wrote:
+>> After the commit 7fb1b252afb5 ("mm: shmem: add mTHP support for
+>> anonymous shmem"), we can configure different policies through
+>> the multi-size THP sysfs interface for anonymous shmem. But
+>> currently "THPeligible" indicates only whether the mapping is
+>> eligible for allocating THP-pages as well as the THP is PMD
+>> mappable or not for anonymous shmem, we need to support semantics
+>> for mTHP with anonymous shmem similar to those for mTHP with
+>> anonymous memory.
 >>
->> On 2024/6/28 18:49, Bang Li wrote:
->>> After the commit 7fb1b252afb5 ("mm: shmem: add mTHP support for
->>> anonymous shmem"), we can configure different policies through
->>> the multi-size THP sysfs interface for anonymous shmem. But
->>> currently "THPeligible" indicates only whether the mapping is
->>> eligible for allocating THP-pages as well as the THP is PMD
->>> mappable or not for anonymous shmem, we need to support semantics
->>> for mTHP with anonymous shmem similar to those for mTHP with
->>> anonymous memory.
+>> Signed-off-by: Bang Li <libang.li@antgroup.com>
+>> ---
+>>   fs/proc/task_mmu.c      | 10 +++++++---
+>>   include/linux/huge_mm.h | 11 +++++++++++
+>>   mm/shmem.c              |  9 +--------
+>>   3 files changed, 19 insertions(+), 11 deletions(-)
 >>
->> I did not see a consensus that "THP*" related statistics should contain
->> mTHP in previous discussion [1].
->>
->> In addition, if we all agree that "THPeligible" should include mTHP
->> statistics, you should update the corresponding documentation to keep
->> consistency.
->>
->> [1]
->> https://lore.kernel.org/linux-mm/202406262300.iAURISyJ-lkp@intel.com/T/#md7a77056110cebcc2a9b3cd7e4a8d682667f6ba5
->>
+>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+>> index 93fb2c61b154..09b5db356886 100644
+>> --- a/fs/proc/task_mmu.c
+>> +++ b/fs/proc/task_mmu.c
+>> @@ -870,6 +870,7 @@ static int show_smap(struct seq_file *m, void *v)
+>>   {
+>>       struct vm_area_struct *vma = v;
+>>       struct mem_size_stats mss = {};
+>> +    bool thp_eligible;
+>>       smap_gather_stats(vma, &mss, 0);
+>> @@ -882,9 +883,12 @@ static int show_smap(struct seq_file *m, void *v)
+>>       __show_smap(m, &mss, false);
+>> -    seq_printf(m, "THPeligible:    %8u\n",
+>> -           !!thp_vma_allowable_orders(vma, vma->vm_flags,
+>> -               TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL));
+>> +    thp_eligible = !!thp_vma_allowable_orders(vma, vma->vm_flags,
+>> +                        TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL);
+>> +    if (vma_is_anon_shmem(vma))
+>> +        thp_eligible = 
+>> !!shmem_allowable_huge_orders(file_inode(vma->vm_file),
+>> +                            vma, vma->vm_pgoff, thp_eligible);
 > 
-> Fortunately, documentation (Documentation/filesystems/proc.rst) says:
-> 
-> "THPeligible" indicates whether the mapping is eligible for allocating 
-> naturally aligned THP pages of any currently enabled size. 1 if true, 0 
-> otherwise."
-> 
-> So that documentation is already pretty clear (we just have to make sure 
-> the other ones are properly documented, for example as raised in reply 
-> to [1]).
+> I would have thought the correct fix is to return the correct result 
+> from thp_vma_allowable_orders().
 > 
 
-Thanks for the clarification.
+Agreed. I'll try to reimplement this in thp_vma_allowable_orders().
 
-Thanks,
+Thanks again for the review!
 Bang
 
