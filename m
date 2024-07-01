@@ -1,103 +1,184 @@
-Return-Path: <linux-kernel+bounces-236595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2653291E489
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:48:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 170C791E48C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:48:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58A0F1C21585
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:48:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D9E81F253C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98CE416D4D0;
-	Mon,  1 Jul 2024 15:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C5416D32E;
+	Mon,  1 Jul 2024 15:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DdIxjcId"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uGIasQMv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED3E16CD2E
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 15:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6EAF3236;
+	Mon,  1 Jul 2024 15:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719848883; cv=none; b=sS3uq1FE67TdBQrcIFMcTKhfOj1Nxey0SQOI0zbfGE8Ln9nU4S0xngmYsPyG+89t+FULAaUSCQ9D7ne3pvYzzBOzjytfL+kg+rEQ4fbTNuc9BTiq0AkLNVTDuPWS1G69+ZC8kXyIVYZ1SzQ6Nng5NRQVWNK9yek6YBGNvK567RE=
+	t=1719848888; cv=none; b=HEa+h8AuEbRp5kLct2QCD0+xt+zeqsKVpAFziB2+HFwVvkeR9E3z+mCgW3e8gnWc72URUKG++hoiZwu8sOhDEOqXU60zUNjQrYHLk/ToCkkDvsgg/Red3zn6sInye/ZoSdixu3qbpSdslC+HRoYaj4SToz9KUL6JEESW2BAu9hU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719848883; c=relaxed/simple;
-	bh=bgZsYiiLzPqk9D5/qPj2Dk0l0ygcCkt+0t57HkzLs/E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eaLWG6gW9IuHlFlB6T+P49tz7qal28EGNmVaYjh4w4KOXbPeonJ9DAgB0tDwohPOGBYa5tYLlz1S2sZXJARuFo5KZAxBg+DMJHz8kyvvkB8iQOUDdz+hJl7janfwBBWo9bMtw7AENWY0zAa02gkC4TqfdRdwjY6sbEAjzDRjZjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DdIxjcId; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ec1620a956so36391411fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 08:48:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1719848879; x=1720453679; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=h/S6/sRocxwesAowLy485WuVHMdVxBuCShYp33Jt2FA=;
-        b=DdIxjcIdguCjcdU2fbqh3gUB3UKjCXZckXN9cm1tfFv2N7ryDj+RLru60ZWrs6KpnP
-         IpnLianQ13lDhQ18QarHxp1+0rHg8wqvywYxRXmEUjwg+gnKVBpGtJhQg/C3JCgjOIpc
-         Od+pb6p0KBSPFpIJpkQy8kM9MjHaGB/JOwUT1E14br05rhgSliPplXA39tHfRXw4pAuq
-         pdcfRShRsx7oA8v0+8zMWQ+wXXZ3Mzar7VVjgx4Y4fdVNA1T4gBdg+YoGudzKBQ9inpN
-         QpwSZVlvofvi4zXKo9IX/xxLdhGB8VJQFyZPjFVijBHkZ7c91n/VmSJ5OWDftAJroyHk
-         Mjpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719848879; x=1720453679;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h/S6/sRocxwesAowLy485WuVHMdVxBuCShYp33Jt2FA=;
-        b=LplOl2L92ao4qsQjUnoLwTYsnfvtOI07LRZ64FBQMt76kUtqazlqXQxbpQ+Gz+zAgl
-         zpbjToq28CSK/9dD2Xo39dMzM4jqwsynMw/Gm/y5LYYkAVToE3Et5hXZfMXq7kr5RIjY
-         5cpgky88Y4mVO3cxpxqcEW0/a2dssAsiHoJx6u7xoRphIEpluM3XmIe4ZzmcV4cOF0Ms
-         Rnxdadl21tiSaD4tUEduiOQej+9+0VrBkcf+ZmT1NcDhPlAnarfcBjrKJsOk6JTdriWM
-         U5J8sPaZyjbfbZJdt4CwjFvEaI+FHndp31cFENufqokxz7a5mz46ipbeBK9skq+OYb4x
-         YvrA==
-X-Forwarded-Encrypted: i=1; AJvYcCXerWN7bKnHBJ9+p+IvsLdJvic1fW8m86GskPaLbf1cyJHdnH6+pONd3x2vBRvoXO3Yze1BlEGTeMNnxqhJQoeq92ZUnAdaQ20FRFGE
-X-Gm-Message-State: AOJu0YxT893DgGTu06Hq1MYhoj/nF6oiuGlw9GB/9q2hxbbXHy+MxPSq
-	YBx7tZkJlgX3nsG4i6lVVR01E5v+4vvNR5t1AlMM/tr4Zvs0UByqI4ExPqFT1Lg=
-X-Google-Smtp-Source: AGHT+IHLQjQwvt9E/5s2tk8lEWfMDMzBJSpwqspSlsD26T4qHQmNl1L1z57DawnmFvA9vYX4BCLfMg==
-X-Received: by 2002:a2e:a902:0:b0:2ee:5ec1:182f with SMTP id 38308e7fff4ca-2ee5ec11972mr52360601fa.6.1719848879007;
-        Mon, 01 Jul 2024 08:47:59 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7080256dc9dsm6685795b3a.63.2024.07.01.08.47.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 08:47:58 -0700 (PDT)
-Date: Mon, 1 Jul 2024 17:47:49 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH printk v2 14/18] proc: Add nbcon support for
- /proc/consoles
-Message-ID: <ZoLPpc3SLUJjxJFw@pathway.suse.cz>
-References: <20240603232453.33992-1-john.ogness@linutronix.de>
- <20240603232453.33992-15-john.ogness@linutronix.de>
+	s=arc-20240116; t=1719848888; c=relaxed/simple;
+	bh=/VH/3Ey/xG35l3GHO0Mz0W9la2fMePm/3Z9rnD2V+4E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F6QA3jpTIs9cq1oz0Lz9BbEjKzuDX76jDeRcUoCeUiFktVXMM+fB62LhDwvOzy2LETQPSUjprHTA+GinAdjH4kZpw2Wl8rHoGi+RwVt2mvVgBjmOLqcvOWf5CusC7Z0gE3UDVomFtMfMtl+z4VZqbb07rvyQz2G1O88H27NVQVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uGIasQMv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 497E5C32786;
+	Mon,  1 Jul 2024 15:48:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719848888;
+	bh=/VH/3Ey/xG35l3GHO0Mz0W9la2fMePm/3Z9rnD2V+4E=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=uGIasQMvuXMBB49ZwGgSdjKkJ8GxSNlpuI/4jSIxI+HVxLyA6ba5Ft2v0vltED1tp
+	 wSrRbiA4FvUw2kc4/flO1/Uu7Bz0DpJ29MgGk8dHIPAC+/OVk70MVuSTwyEiK5iZNG
+	 6GlAyJIyuRxnm2n6cIYQf/kTk9Z4szxmy/JShyIVkh0Nb9x/i6D9bvIufSSjLnOWWH
+	 h0f03dCuywssH1NZAzEIEZBODP2/YJt/Qu0zJIw4UKtHzxHUk2cTT9zwOoXRMDZ8vR
+	 It/Etw85yrhQWGZ3l0pJ9tz+e+0sdN+Fw36ZsINa4ta0UHKRlrwYLxFqMN+O0c4ZNK
+	 G/wYP4mApcpfw==
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-25cc44857a1so335434fac.3;
+        Mon, 01 Jul 2024 08:48:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVWfLnGrvcIJyBtHtSO2hmnQ/BYmeXzejqZnpgDep1DIZI6oE3+RdGsPQxcsEAkjU2S6UulIYy9k1M8i9jo82XcAreS0cTfmwrzYedxvvxic3NpD8EV8m1CDv0311etLeVKK/z6lCrRP27lMDcLBnW4CoLyM++WrgIOTcZZVgZKR+pZ
+X-Gm-Message-State: AOJu0Yy25keq0x7YIKLJvl7U4LExnUAzJYmU7fS7v2Qg93pwxsm6K5Dq
+	HZhkPnTDbl2ZOkKVkAZUuJORooyPiWooc9k0haBHpopk3GicBtamT4iCxtRGEBBIekUeGS1EJIw
+	SzCfwf/+iZGi7IjqkR2VXzVonvC8=
+X-Google-Smtp-Source: AGHT+IH/fEob6+VKSIrt2TPZFzQS/Lx2tB+/dy8MJsM5vB+GatoWKl4OltK48wxmENCyhWXyGLXsRaNEcgrxy/sWOm0=
+X-Received: by 2002:a05:6870:b155:b0:254:d417:351f with SMTP id
+ 586e51a60fabf-25db338f8f9mr6474785fac.1.1719848887517; Mon, 01 Jul 2024
+ 08:48:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240603232453.33992-15-john.ogness@linutronix.de>
+References: <20240627085451.3813989-1-daniel.lezcano@linaro.org>
+ <CAJZ5v0iO6MrX3QxAu4Wj4grUL2g7gPPXO3f8PFmZBot-Ud32TQ@mail.gmail.com> <9c2971dd-2f2d-426f-9107-eae93d5dd554@linaro.org>
+In-Reply-To: <9c2971dd-2f2d-426f-9107-eae93d5dd554@linaro.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 1 Jul 2024 17:47:56 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0ip9P7uD76i-SDxpea1Qj_8vgqhQ-jJt2h5iqYsMUaCzg@mail.gmail.com>
+Message-ID: <CAJZ5v0ip9P7uD76i-SDxpea1Qj_8vgqhQ-jJt2h5iqYsMUaCzg@mail.gmail.com>
+Subject: Re: [PATCH] thermal/core: Introduce user trip points
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue 2024-06-04 01:30:49, John Ogness wrote:
-> Update /proc/consoles output to show 'W' if an nbcon write
-> callback is implemented (write_atomic or write_thread).
-> 
-> Also update /proc/consoles output to show 'N' if it is an
-> nbcon console.
-> 
-> Signed-off-by: John Ogness <john.ogness@linutronix.de>
+On Mon, Jul 1, 2024 at 5:13=E2=80=AFPM Daniel Lezcano <daniel.lezcano@linar=
+o.org> wrote:
+>
+> On 28/06/2024 15:56, Rafael J. Wysocki wrote:
+> > On Thu, Jun 27, 2024 at 10:55=E2=80=AFAM Daniel Lezcano
+> > <daniel.lezcano@linaro.org> wrote:
+> >>
+> >> Currently the thermal framework has 4 trip point types:
+> >>
+> >> - active : basically for fans (or anything requiring energy to cool
+> >>    down)
+> >>
+> >> - passive : a performance limiter
+> >>
+> >> - hot : for a last action before reaching critical
+> >>
+> >> - critical : a without return threshold leading to a system shutdown
+> >>
+> >> A thermal zone monitors the temperature regarding these trip
+> >> points. The old way to do that is actively polling the temperature
+> >> which is very bad for embedded systems, especially mobile and it is
+> >> even worse today as we can have more than fifty thermal zones. The
+> >> modern way is to rely on the driver to send an interrupt when the trip
+> >> points are crossed, so the system can sleep while the temperature
+> >> monitoring is offloaded to a dedicated hardware.
+> >>
+> >> However, the thermal aspect is also managed from userspace to protect
+> >> the user, especially tracking down the skin temperature sensor. The
+> >> logic is more complex than what we found in the kernel because it
+> >> needs multiple sources indicating the thermal situation of the entire
+> >> system.
+> >>
+> >> For this reason it needs to setup trip points at different levels in
+> >> order to get informed about what is going on with some thermal zones
+> >> when running some specific application.
+> >>
+> >> For instance, the skin temperature must be limited to 43=C2=B0C on a l=
+ong
+> >> run but can go to 48=C2=B0C for 10 minutes, or 60=C2=B0C for 1 minute.
+> >>
+> >> The thermal engine must then rely on trip points to monitor those
+> >> temperatures. Unfortunately, today there is only 'active' and
+> >> 'passive' trip points which has a specific meaning for the kernel, not
+> >> the userspace. That leads to hacks in different platforms for mobile
+> >> and embedded systems where 'active' trip points are used to send
+> >> notification to the userspace. This is obviously not right because
+> >> these trip are handled by the kernel.
+> >>
+> >> This patch introduces the 'user' trip point type where its semantic is
+> >> simple: do nothing at the kernel level, just send a notification to
+> >> the user space.
+> >>
+> >> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> >> ---
+> >>   .../devicetree/bindings/thermal/thermal-zones.yaml        | 1 +
+> >>   drivers/thermal/thermal_core.c                            | 8 ++++++=
+++
+> >>   drivers/thermal/thermal_of.c                              | 1 +
+> >>   drivers/thermal/thermal_trace.h                           | 4 +++-
+> >>   drivers/thermal/thermal_trip.c                            | 1 +
+> >>   include/uapi/linux/thermal.h                              | 1 +
+> >>   6 files changed, 15 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/thermal/thermal-zones.y=
+aml b/Documentation/devicetree/bindings/thermal/thermal-zones.yaml
+> >> index 68398e7e8655..cb9ea54a192e 100644
+> >> --- a/Documentation/devicetree/bindings/thermal/thermal-zones.yaml
+> >> +++ b/Documentation/devicetree/bindings/thermal/thermal-zones.yaml
+> >> @@ -153,6 +153,7 @@ patternProperties:
+> >>                 type:
+> >>                   $ref: /schemas/types.yaml#/definitions/string
+> >>                   enum:
+> >> +                  - user     # enable user notification
+> >>                     - active   # enable active cooling e.g. fans
+> >>                     - passive  # enable passive cooling e.g. throttlin=
+g cpu
+> >>                     - hot      # send notification to driver
+> >> diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_=
+core.c
+> >> index 2aa04c46a425..506f880d9aa9 100644
+> >> --- a/drivers/thermal/thermal_core.c
+> >> +++ b/drivers/thermal/thermal_core.c
+> >> @@ -734,6 +734,14 @@ int thermal_bind_cdev_to_trip(struct thermal_zone=
+_device *tz,
+> >>          if (tz !=3D pos1 || cdev !=3D pos2)
+> >>                  return -EINVAL;
+> >>
+> >> +       /*
+> >> +        * It is not allowed to bind a cooling device with a trip
+> >> +        * point user type because no mitigation should happen from
+> >> +        * the kernel with these trip points
+> >> +        */
+> >> +       if (trip->type =3D=3D THERMAL_TRIP_USER)
+> >> +               return -EINVAL;
+> >
+> > Maybe print a debug message when bailing out here?
+>
+> After thinking a bit about the message, it sounds to me that is a really
+> an error in the firmware if we end up binding an 'user' trip point.
+>
+> What about the following message:
+>
+> dev_err(tz->device, "Trying to bind the cooling device '%s' with an
+> 'user' trip point id=3D%d", cdev->type, trip->id);
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+s/an// I think.
 
-Best Regards,
-Petr
+Also I wouldn't use dev_err() as it indicates a kernel issue.  Maybe
+dev_info(tz->device, FW_BUG ...)?
 
