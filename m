@@ -1,84 +1,114 @@
-Return-Path: <linux-kernel+bounces-236506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C30291E32A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:02:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13AC091E32C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57947287D7F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:02:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE0571F226C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 188C316CD0C;
-	Mon,  1 Jul 2024 15:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651C516C853;
+	Mon,  1 Jul 2024 15:03:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L0RxSM2L"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WKP31U3P"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5779016B739;
-	Mon,  1 Jul 2024 15:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61B116B739;
+	Mon,  1 Jul 2024 15:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719846135; cv=none; b=ADwLSw8PgmWmNI/m+wJ753vNPoTKqx2Rxtoh4xmHWdRGI+Hy1qfZDuXs+2gxq0nd7HSR+MJofKIRh7SVxwiUF0tZU5ZwAVyxuTitwqzb6xtqIDHUi5ySyUWdHoakiFqyiLtStdK2TLvoJsKBAfsoeVcUuCIMQ6jqVc0TEJPZz90=
+	t=1719846188; cv=none; b=ATgLHi3L5HfkKDAz3FMKl3PkX1MJQHrOE7Vp5K1dMeWlpNWcEDy6XE75ie/ly8Q4dWJiXFC4Vq1eJpQFw33k5Semt+KYNLg5bf7E8NxkSm8szd/Oj5q4vXwqwCAmR8syRxaYH2mkiCRknevC8hrAJazHixsYd4gv118fptkua7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719846135; c=relaxed/simple;
-	bh=uqathgmbSM8m38d4fIzNW2zu9IWw8l+lf1vgqx51hdI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=E2Khj+hz1kOji6eMSp8Jf/BzuBQwCr/LjyfUXkCH9YRt8qv1pq8ipUJUUo86c4Z8JEcCKZLCjCGt8f3pnC7IE9ItP5Z9TFZACDn2tQlLhLMKzlN3+knljYBBlCLDAlOUXo/8QxeaawdhwPg8ovM2yL89azvYnzfvlY5VBYS+81I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L0RxSM2L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB399C116B1;
-	Mon,  1 Jul 2024 15:02:14 +0000 (UTC)
+	s=arc-20240116; t=1719846188; c=relaxed/simple;
+	bh=9zEnVq1vKf8ZCB+ZTWMUuZ5XV/zSomvjrV9gFojPVhY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K/kV0JCdqmBZkyzJ489qmlrzIIyyBDFq1UVaNs3R53EeE9DoLkq/N+74FCA3p3nNhPTeoG5/gj+BsVHAFvArRqX7Y0jzYfHm0e5aW4KT148qTt57P+3Sz8OitISeB+jyEB5bZL/xi4ZBlz+KZcbFq7lbcuQqUzs2/dr8+gWcjYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WKP31U3P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AA9EC116B1;
+	Mon,  1 Jul 2024 15:03:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719846135;
-	bh=uqathgmbSM8m38d4fIzNW2zu9IWw8l+lf1vgqx51hdI=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=L0RxSM2LYiElQtH9cBnJze28HtH8IHUmgu1ONOjYMSOKEwIKjzO0m9lR+Kd0B36e+
-	 uQSnFPFSmT2IDyB3FXFCoREBIiy4BVs4yEn2cKkesaMvtGrtlRMEgMO3mCU5m6pRwr
-	 NdPDwX0ooaW+yOV5PJZP8aqihKNggSlyfcMOlyOXyR5MGUuF5O30qOG0JzSVikjuAF
-	 hMVx4bXxGsnGs0hgU4pscRKQGzjxTAkyvtH8aqlMl3yaWm1pD1EsCmHZDCpGxvVlrE
-	 RIlvAb9qJszX62Oc6S8gmv3FYRtRbpbifFJQUol73w7c+sWKP3rfgMhxJxoQQQqxIi
-	 6s4quqyjbao0Q==
-Message-ID: <0c5445a5142612fa617fef91cb85fa7ed174447f.camel@kernel.org>
-Subject: Re: [PATCH v1] tpm_tis_spi: add missing attpm20p SPI device ID entry
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Vitor Soares <ivitro@gmail.com>, Peter Huewe <peterhuewe@gmx.de>, Jason
- Gunthorpe <jgg@ziepe.ca>, Lukas Wunner <lukas@wunner.de>
-Cc: Vitor Soares <vitor.soares@toradex.com>,
- linux-integrity@vger.kernel.org,  linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-Date: Mon, 01 Jul 2024 15:02:11 +0000
-In-Reply-To: <20240621095045.1536920-1-ivitro@gmail.com>
-References: <20240621095045.1536920-1-ivitro@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+	s=k20201202; t=1719846188;
+	bh=9zEnVq1vKf8ZCB+ZTWMUuZ5XV/zSomvjrV9gFojPVhY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WKP31U3PYNlxmJ5Jw6ioMcWDQnElftOp2CStBuFMpol50DHkEDljLXpYZneKe1hK/
+	 V+Gzkx/DA10SFxNMABh5BXp6LpumMgOF3zJi8+RqTegYGwwVu1Cv1G2NgtPk5jsj7V
+	 wu8qzmuCoAaBYDgWCjmT2uFTh4nRowX0GrqnZ3skuKsek7sqOgeKF0KVraQ7oEaXQA
+	 bmTn0A63keAa789BFAcl8D7VXLegb4ugUTcuRLKhrHAb8kj4llVkKd7vd6PWcfkrql
+	 ISTEAL+faHJHnOmfNpwilUfMY/cDu+mEF33TVK6Asti4NavBdUskw83zY6gy8u2bYl
+	 SctQE3VkLt17w==
+Date: Mon, 1 Jul 2024 16:03:03 +0100
+From: Conor Dooley <conor@kernel.org>
+To: George Liu <liuxiwei1013@gmail.com>
+Cc: linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org,
+	openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	joel@jms.id.au, andrew@codeconstruct.com.au
+Subject: Re: [PATCH v1 2/3] dt-bindings: arm: aspeed: add IEIT x86 platform
+ BMC boards
+Message-ID: <20240701-penniless-purplish-99aa73b47a42@spud>
+References: <20240701105259.972135-1-liuxiwei@ieisystem.com>
+ <20240701105259.972135-2-liuxiwei@ieisystem.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="IXUbULBPs5b4abff"
+Content-Disposition: inline
+In-Reply-To: <20240701105259.972135-2-liuxiwei@ieisystem.com>
 
-On Fri, 2024-06-21 at 10:50 +0100, Vitor Soares wrote:
-> From: Vitor Soares <vitor.soares@toradex.com>
->=20
-> "atmel,attpm20p" DT compatible is missing its SPI device ID entry, not
-> allowing module autoloading and leading to the following message:
->=20
-> =C2=A0 "SPI driver tpm_tis_spi has no spi_device_id for atmel,attpm20p"
->=20
-> Based on:
-> =C2=A0 commit 7eba41fe8c7b ("tpm_tis_spi: Add missing SPI ID")
->=20
-> Fix this by adding the corresponding "attpm20p" spi_device_id entry.
->=20
-> Fixes: 3c45308c44ed ("tpm_tis_spi: Add compatible string atmel,attpm20p")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
 
-This is not a bug fix. This is a feature.
+--IXUbULBPs5b4abff
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-BR, Jarkko
+On Mon, Jul 01, 2024 at 06:52:58PM +0800, George Liu wrote:
+> Document the new compatibles used on the ieisystems
+>=20
+> Signed-off-by: George Liu <liuxiwei@ieisystem.com>
+> ---
+>  Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml b/D=
+ocumentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> index e386d0ebfb14..818fbe9c45fc 100644
+> --- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> +++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> @@ -92,6 +92,7 @@ properties:
+>                - ibm,rainier-bmc
+>                - ibm,system1-bmc
+>                - ibm,tacoma-bmc
+> +              - ieit,nf5280m7-bmc
+
+This is a singular item, but your commit message's $body and $subject
+both sound plural. Is that intentional?
+
+>                - inventec,starscream-bmc
+>                - inventec,transformer-bmc
+>                - jabil,rbp-bmc
+> --=20
+> 2.34.1
+>=20
+
+--IXUbULBPs5b4abff
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoLFJwAKCRB4tDGHoIJi
+0pXnAP4labcVzdg4N5elo5nMFW9/bbZHoNZWdzlofSvdJaEHJwD/cMxGLP+opluH
+MicGC5BtbXqGAUic3usuJcSJOjWoYwM=
+=O6so
+-----END PGP SIGNATURE-----
+
+--IXUbULBPs5b4abff--
 
