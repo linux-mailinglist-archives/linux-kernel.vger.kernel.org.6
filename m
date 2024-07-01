@@ -1,183 +1,87 @@
-Return-Path: <linux-kernel+bounces-237006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 366DB91E9C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 22:41:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ED8D91E9C3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 22:42:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E0B2B22481
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:41:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 434081F23617
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35427171647;
-	Mon,  1 Jul 2024 20:41:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A45917164D;
+	Mon,  1 Jul 2024 20:42:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CdrK11dp"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CbZvbZb6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D064318635;
-	Mon,  1 Jul 2024 20:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1136A16F8F7;
+	Mon,  1 Jul 2024 20:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719866488; cv=none; b=jcW+5DBa86kYln4Z+NVzIsBdH2HTLl3uvRop1dW2EIdvem7hlFZMX08ylxzapkeTskeXjPAurs5jdNqzZiFl0BOmfaM3UqEIy7Nbadujw5+K3c7D3i6bUVgLS2suwwdMmHy8BondXc4AEM7dV2388KYUtGzMMHE22R6BLIByQ4Q=
+	t=1719866529; cv=none; b=MQvgEXYaGUvQMYbLLa3S2knKghnPFt/rQjXbReMzqzSV/dBn5c1UigSSJtXNcKPeVJaSgg7F0jOob9/oQk+yGE/HIf4P1Vbwt4WRmbR/gqOYaNWIEe5zhjryn5qK8UIkzikDMQyxgTrgi9NGMq/rqqE7Yw4lcUD/+z1GfZo/ebQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719866488; c=relaxed/simple;
-	bh=dODezE65U1g0imimGz4sZnYSrGehBka7giUMK0ch29U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=He5PVAYFT+4xu0jWc9PFDyD8KFAL9wx6V7ygdt++dZoKv8CRyZjLrgbB77KPSrwCTzMrffhByjcz+FaF/Np7Nky5pOtMT/6WrRODcA2UGAN6gSkd+nu/PmMMl6dRCjGc4zVduBDEi2JjVuRfTduUDs1TmSkugecf1V1Us8kLPmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CdrK11dp; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57d1d614049so1002605a12.1;
-        Mon, 01 Jul 2024 13:41:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719866485; x=1720471285; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xzj8Z3HbuiJuMSPBjE+mSOU8JyhOC/fKZmPOTRp5tZ4=;
-        b=CdrK11dpgN9w9eVcqRGvMWrDRVcF+2oRkAsH5gezni5DC4rr+AZSroFBFRCtdaymOY
-         3F4yArolWdQXTz5Rlw5mw1CfEE3x4UHDQ4+152FC2bpzdSrGcUNSr44SxQniwVM/7ImK
-         maDokeG7I9Py46muXLAles+S/APEYLW3xKVgo0s3VKRvfIMAG/5Pzcdg1g5Dl+qZZBJb
-         qed0Spcc42OxvLNNXX8HUHZFC5VpPS7UeEDX+iRi+ZnRSXbozGS1/4ShhR6v1Q+Vk5jJ
-         t+Fxlm/KBaA3eVzIpPJE7c5LZMm4cF9JCghIchDsrJ8R0Dg4lD9tPUaHkO73OYgbISou
-         mY+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719866485; x=1720471285;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Xzj8Z3HbuiJuMSPBjE+mSOU8JyhOC/fKZmPOTRp5tZ4=;
-        b=JEghX6MaeCXLti8dkz1TpXtHP+aj9BDoUV2F/ZF89p9OhcjWX2TC8KS+eux2gUG8HO
-         TDMWnbMcHwf4rwUP1UpApTSqoWyJjRqb5b7lExMbQeNFe2RcVDCRh0syI6OEN8V6EgYe
-         ahkJs6TiLAxwGoPswhEtXf0Z4Vz577NhVQr2FCLngTYFAjmdBy74107t17yCVp9gkGAm
-         t7/Ng9TKWD9ww8JsuDJ8CLddnl7ML15r1fisyT6FCvbxTFvSSJ00r8fnikn0bSPd4t5O
-         mUSj4g31zMpggLEYYkrZn59Ht8ujlEtLFYhTCjqZJFKSY+Jv27DYbFSpEsUF0PMGwFB3
-         Yi/w==
-X-Forwarded-Encrypted: i=1; AJvYcCWwiJZZjD9/jm5hZyQ8W5BW8yQw/mFWimpZfF/DH7LlsZLO+2PBaoTqg6z+Qz9YmzTG7UK4hMZBW8uG3Fwy59iPZQxFAehCwmOlr/BmQ71hR4yWqIt9pbqjUTyZOEe0oY3vSrmCVCFdzVQQOg==
-X-Gm-Message-State: AOJu0YxiL9IGuUmdqtp7ddayNR9FLW9qjg15z7LXRigfbKCc8If0revC
-	LP7xukkHuANXqB9Hqd6v4DwdnEaVX8GrdW0HO2pteGwu/Rt4S1ml7U/sghX56HsK6Yofxe/uMXU
-	LnQUu5BKnKiR6KiEREayCMVhKShI=
-X-Google-Smtp-Source: AGHT+IE9uDJq3G5ntysqFKKv18zGU7mP9ARbny08OKRkjg7To2BLgG0cfYT92khriItZCFxEBInnfZHBNEl1caa/d8I=
-X-Received: by 2002:a05:6402:11c8:b0:57c:6d1c:3cee with SMTP id
- 4fb4d7f45d1cf-5879f3ac6f6mr5350840a12.14.1719866485011; Mon, 01 Jul 2024
- 13:41:25 -0700 (PDT)
+	s=arc-20240116; t=1719866529; c=relaxed/simple;
+	bh=7VJPiSaAOik0sxB5qPZlQkuDLSMT39Hww2+NVN+SEA8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=be0VtQKhoB+GAy3vI8L4LpkiTbmDGDoPsR2Z2S31VSReXFEbr/Ouis16McDhQDzI8hiuzBTwXKxSSvq4Q1XLu1qNqvNMzMtSQBi5o4A8KG1LYxsJ4/+Z6prPqBZR7WLkVHyNvdft/0QZcSA6ygwFXrMFu8K+fC6uKRl0UGPpJJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CbZvbZb6; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719866528; x=1751402528;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7VJPiSaAOik0sxB5qPZlQkuDLSMT39Hww2+NVN+SEA8=;
+  b=CbZvbZb6iXYyFImFS4oRwD66F6v2xoXEJe4KURymqXoVvhURWhgBJ5Qc
+   /tUe4BxDfTLjCd1u+GhZw3KA+tFleSUrfv3sjlPLFZs4/Rcd6qscifE1K
+   gzmMpjmOSBW1OKrNbixWw2blJfDMhpNtPqDphcoCVIzMaiFjEr/X0Nw9g
+   gWTi9xVgeK1Ob15txsRc+RQ2q9nW+OLjM28EtOnCOVS5P+oFXvxJoMmYu
+   KdsO7tjyt+eTY86KlStfh7ou9T9ud6ezH256S8wJ9dztfYpuPmRN3WYoB
+   5n00aT8STORJJ/IpMcU2+4gH31ptHn/b8Ld7+7betTGl95MVHam+mbG8L
+   A==;
+X-CSE-ConnectionGUID: aFrjwC1hTRW9ON8x4PqoiA==
+X-CSE-MsgGUID: //1MPnbPTj+F0tMAzVLJwA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="12345220"
+X-IronPort-AV: E=Sophos;i="6.09,177,1716274800"; 
+   d="scan'208";a="12345220"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 13:42:07 -0700
+X-CSE-ConnectionGUID: iSnY78nJTSyhgLak49YwhQ==
+X-CSE-MsgGUID: OGOkPio+SJuiVRy1ItQa4w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,177,1716274800"; 
+   d="scan'208";a="68866251"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 13:42:07 -0700
+Date: Mon, 1 Jul 2024 13:42:05 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-efi@vger.kernel.org,
+	x86@kernel.org, linux-kernel@vger.kernel.org, dyoung@redhat.com,
+	Ard Biesheuvel <ardb@kernel.org>
+Subject: Re: [RFC PATCH] x86/efi: Drop support for fake EFI memory maps
+Message-ID: <ZoMUnSaqORagM_Y2@agluck-desk3.sc.intel.com>
+References: <20240620073205.1543145-1-ardb+git@google.com>
+ <66830ebdb7f0e_5639294f5@dwillia2-xfh.jf.intel.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240628214848.4075651-1-quic_abhinavk@quicinc.com> <20240628214848.4075651-4-quic_abhinavk@quicinc.com>
-In-Reply-To: <20240628214848.4075651-4-quic_abhinavk@quicinc.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Mon, 1 Jul 2024 13:41:13 -0700
-Message-ID: <CAF6AEGt2zX5anreTLnMFEiPToGFJdgYZHHpqJfUtaOkdr+Wbbw@mail.gmail.com>
-Subject: Re: [PATCH 3/5] drm/msm/iommu: introduce msm_iommu_disp_new() for msm_kms
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: freedreno@lists.freedesktop.org, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, 
-	quic_jesszhan@quicinc.com, swboyd@chromium.org, dianders@chromium.org, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <66830ebdb7f0e_5639294f5@dwillia2-xfh.jf.intel.com.notmuch>
 
-On Fri, Jun 28, 2024 at 2:49=E2=80=AFPM Abhinav Kumar <quic_abhinavk@quicin=
-c.com> wrote:
->
-> Introduce a new API msm_iommu_disp_new() for display use-cases.
->
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> ---
->  drivers/gpu/drm/msm/msm_iommu.c | 26 ++++++++++++++++++++++++++
->  drivers/gpu/drm/msm/msm_mmu.h   |  1 +
->  2 files changed, 27 insertions(+)
->
-> diff --git a/drivers/gpu/drm/msm/msm_iommu.c b/drivers/gpu/drm/msm/msm_io=
-mmu.c
-> index a79cd18bc4c9..0420bdc4a224 100644
-> --- a/drivers/gpu/drm/msm/msm_iommu.c
-> +++ b/drivers/gpu/drm/msm/msm_iommu.c
-> @@ -343,6 +343,17 @@ static int msm_gpu_fault_handler(struct iommu_domain=
- *domain, struct device *dev
->         return 0;
->  }
->
-> +static int msm_disp_fault_handler(struct iommu_domain *domain, struct de=
-vice *dev,
-> +                                 unsigned long iova, int flags, void *ar=
-g)
-> +{
-> +       struct msm_iommu *iommu =3D arg;
-> +
-> +       if (iommu->base.handler)
-> +               return iommu->base.handler(iommu->base.arg, iova, flags, =
-NULL);
-> +
-> +       return -ENOSYS;
-> +}
-> +
->  static void msm_iommu_resume_translation(struct msm_mmu *mmu)
->  {
->         struct adreno_smmu_priv *adreno_smmu =3D dev_get_drvdata(mmu->dev=
-);
-> @@ -434,6 +445,21 @@ struct msm_mmu *msm_iommu_new(struct device *dev, un=
-signed long quirks)
->         return &iommu->base;
->  }
->
-> +struct msm_mmu *msm_iommu_disp_new(struct device *dev, unsigned long qui=
-rks)
-> +{
-> +       struct msm_iommu *iommu;
-> +       struct msm_mmu *mmu;
-> +
-> +       mmu =3D msm_iommu_new(dev, quirks);
-> +       if (IS_ERR_OR_NULL(mmu))
-> +               return mmu;
-> +
-> +       iommu =3D to_msm_iommu(mmu);
-> +       iommu_set_fault_handler(iommu->domain, msm_disp_fault_handler, io=
-mmu);
-> +
-> +       return mmu;
-> +}
+On Mon, Jul 01, 2024 at 01:17:01PM -0700, Dan Williams wrote:
+> [ add Tony who may care about the more-reliable removal ]
 
-Hmm, are we using dev drvdata for the display pdev?  If
-dev_get_drvdata() returns NULL for display pdev, we could get away
-without having a different fault handler.
+I don't think I care about removal the fake options. I have had
+systems that support real "more-reliable" memory for many years.
 
-BR,
--R
-
-> +
->  struct msm_mmu *msm_iommu_gpu_new(struct device *dev, struct msm_gpu *gp=
-u, unsigned long quirks)
->  {
->         struct adreno_smmu_priv *adreno_smmu =3D dev_get_drvdata(dev);
-> diff --git a/drivers/gpu/drm/msm/msm_mmu.h b/drivers/gpu/drm/msm/msm_mmu.=
-h
-> index 88af4f490881..730458d08d6b 100644
-> --- a/drivers/gpu/drm/msm/msm_mmu.h
-> +++ b/drivers/gpu/drm/msm/msm_mmu.h
-> @@ -42,6 +42,7 @@ static inline void msm_mmu_init(struct msm_mmu *mmu, st=
-ruct device *dev,
->
->  struct msm_mmu *msm_iommu_new(struct device *dev, unsigned long quirks);
->  struct msm_mmu *msm_iommu_gpu_new(struct device *dev, struct msm_gpu *gp=
-u, unsigned long quirks);
-> +struct msm_mmu *msm_iommu_disp_new(struct device *dev, unsigned long qui=
-rks);
->
->  static inline void msm_mmu_set_fault_handler(struct msm_mmu *mmu, void *=
-arg,
->                 int (*handler)(void *arg, unsigned long iova, int flags, =
-void *data))
-> --
-> 2.44.0
->
+-Tony
 
