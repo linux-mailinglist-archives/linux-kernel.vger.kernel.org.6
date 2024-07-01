@@ -1,114 +1,158 @@
-Return-Path: <linux-kernel+bounces-236566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4943691E419
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:28:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 090D791E45D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:42:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F377B1F2335F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:28:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF31AB233C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:29:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44B516CD0C;
-	Mon,  1 Jul 2024 15:28:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD97316CD0C;
+	Mon,  1 Jul 2024 15:29:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iDAA0GKr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Jf6ZCbzk"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C14116CD04;
-	Mon,  1 Jul 2024 15:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD6516C6A9;
+	Mon,  1 Jul 2024 15:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719847727; cv=none; b=iNdUywGqqcXs1bkRAF0mOcwC/DxekpRoIwuz7TZzzBZi77Qw7vAovMkx/tFB02dzUcv5gDIdkwACRn2oZQA4RDhE2MzVvbC5M/MBCBz6cCeqFrBRdnMobTMLq+7G+HhSE6cBhqsG9J+2lCuI6lmypIrccf3lsknctJPTei2rSzI=
+	t=1719847787; cv=none; b=QuNlSl+cY4OSwe6IeAfIYXzpZQeBTXUODxs1QfuNYzfUv1kimVpA3aIMcibDLM5sM4Ccb9Ab6ICZIKK9L5ZhWxI1ZCqt7esCZvp/wptiHPFvrCrlU7PtvSqzII8FLKpG0vrxNeIn7Q6Y1rt5GCGr3D8hVBXdfnDSQKmaitcSaB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719847727; c=relaxed/simple;
-	bh=7pFQCZF0TK7ge4TJfBJVjPmPKLYdXcSUa4GgK0+Inco=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Le3orR4YI6ztioLd8qUZICkv8DnCNd1SpjpzdnNNSiYGPxamEmjz3hP70nOA3xz8XFpLUTZ/U9KjCUpmxG/aXwK+tyjTSlU2/56ZnxczBHu1yO6dL5QoGhMYpBnsUBjvw/8ZGSb0Q6LwjTEiZNoTQ2yIjXoCp+7d+oV5xfDvY7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iDAA0GKr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40FF4C32781;
-	Mon,  1 Jul 2024 15:28:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719847726;
-	bh=7pFQCZF0TK7ge4TJfBJVjPmPKLYdXcSUa4GgK0+Inco=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=iDAA0GKre8S1rv2bMacDuuz2ODoaSPjEuD96mYfLOPDuzZ/5KvMA+q7qJvBiOCVxg
-	 pvhUP5VLVb4z0cT5i/DdKiWJxS14MUBW9va92DXZBLdbbXM6PWJRTrvbskG9cB04LJ
-	 thla3/hQgZJb3nSTR5n15pSIPW0i7Vuw3a9CpmoAe8tnY2k+lA3Ok8Uufq3Q5gcxrP
-	 QBwijG7Ji2owD2rDC+xisECkvw6iEY4zKEwvNFPFiIUNI1F8MKpPRwwQsK295TQzXg
-	 gMiWAL8pmkDbGxnMufrKwkABNDN/YQf0dhOnuiVny5DV/h6DAq88Kjvmr4TB3njG+i
-	 ZclkeNVPBQBFg==
-Message-ID: <c1cffcdc24c5689b6f9e93f3259480d1e28a46d2.camel@kernel.org>
-Subject: Re: [PATCH v1] tpm_tis_spi: add missing attpm20p SPI device ID entry
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Vitor Soares <ivitro@gmail.com>, Peter Huewe <peterhuewe@gmx.de>, Jason
- Gunthorpe <jgg@ziepe.ca>, Lukas Wunner <lukas@wunner.de>, Vitor Soares
- <vitor.soares@toradex.com>,  linux-integrity@vger.kernel.org,
- linux-kernel@vger.kernel.org,  stable@vger.kernel.org
-Date: Mon, 01 Jul 2024 15:28:43 +0000
-In-Reply-To: <b565856a28cff8e01fc1dbb6a776067a3467af9c.camel@kernel.org>
-References: <20240621095045.1536920-1-ivitro@gmail.com>
-	 <0c5445a5142612fa617fef91cb85fa7ed174447f.camel@kernel.org>
-	 <20240701151436.GA41530@francesco-nb>
-	 <b565856a28cff8e01fc1dbb6a776067a3467af9c.camel@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+	s=arc-20240116; t=1719847787; c=relaxed/simple;
+	bh=InQZh7AMKKadM+s0dLV0UwYYE1oFpR7Ea7MTJqU5Te4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ouhj06LAcSdBAX24YNwYUvm7xjkwjfj7VD1b8Fj224oYcdS6TBmDzDwpRSPnxnvavizYSfVrnt7/10Fv7FVsLPozZ89o9DZ1ZsoEgkoIeSxZ4VDW0UBE+nJ//G5CwqWMJPNvmlgLLx1l/Uu3/AybGeAzADL1+GdZh4oWwOkMwUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Jf6ZCbzk; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 461F088C007808;
+	Mon, 1 Jul 2024 15:29:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=u
+	niWTNZhY6/PeN2PBXp9nxUxWcQ8eIFPOkQf1pvT4LY=; b=Jf6ZCbzkoD4m7gYMB
+	bnVL6XGh21Nwtv/YCIC9h//5Igs4GrdW/dhhaRNShK4fykKwVAwDGAxSicWLvo1d
+	hfrG1MiyiXc+OsT9lK89Xa6TKMTyPreKiUhDT08IVZoyd9qzCqjOSA176CoN4fdg
+	c2YHIxxsHKmuK4Q8ZdP/GMRWd6SKE2VyAPLlqWZ7CKAUI0t8yHGnZZvbRSZmyJAF
+	ewG5iQmkosvazaCmb6Hp890uLPSLXCcsE6BQLcShLd+ZgSYwZVTaxV/C/8R3EZUy
+	wiKF0NQtzeWMRfDTfMOM4IQe0czD5EyaZM8otac2HsKOryS5p21QGhDoNJSckbzI
+	18WCQ==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 403xpf025p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 01 Jul 2024 15:29:27 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 461CBTO2030030;
+	Mon, 1 Jul 2024 15:29:26 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 402x3mqumu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 01 Jul 2024 15:29:26 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 461FTNfV60621240
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 1 Jul 2024 15:29:25 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 484015806A;
+	Mon,  1 Jul 2024 15:29:23 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 950DB58053;
+	Mon,  1 Jul 2024 15:29:22 +0000 (GMT)
+Received: from [9.61.77.123] (unknown [9.61.77.123])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  1 Jul 2024 15:29:22 +0000 (GMT)
+Message-ID: <a242af91-5e7f-48e3-8445-46c4a8b6a4ef@linux.ibm.com>
+Date: Mon, 1 Jul 2024 10:29:21 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 00/40] fsi: Add interrupt support
+To: Andrew Jeffery <andrew@codeconstruct.com.au>, linux-fsi@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-spi@vger.kernel.org, broonie@kernel.org, andi.shyti@kernel.org,
+        joel@jms.id.au, alistair@popple.id.au, jk@ozlabs.org,
+        linux-aspeed@lists.ozlabs.org, ninad@linux.ibm.com,
+        lakshmiy@us.ibm.com
+References: <20240605212312.349188-1-eajames@linux.ibm.com>
+ <21490f28ab110ae2eca59ec23591fc9c676361cc.camel@codeconstruct.com.au>
+Content-Language: en-US
+From: Eddie James <eajames@linux.ibm.com>
+In-Reply-To: <21490f28ab110ae2eca59ec23591fc9c676361cc.camel@codeconstruct.com.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Vnhkp8-_gSn0iLzqGVG5IlnMptV4-1Yb
+X-Proofpoint-GUID: Vnhkp8-_gSn0iLzqGVG5IlnMptV4-1Yb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-01_15,2024-07-01_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 phishscore=0
+ mlxscore=0 spamscore=0 malwarescore=0 clxscore=1011 impostorscore=0
+ suspectscore=0 bulkscore=0 priorityscore=1501 adultscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407010118
 
-On Mon, 2024-07-01 at 15:27 +0000, Jarkko Sakkinen wrote:
-> On Mon, 2024-07-01 at 17:14 +0200, Francesco Dolcini wrote:
-> > On Mon, Jul 01, 2024 at 03:02:11PM +0000, Jarkko Sakkinen wrote:
-> > > On Fri, 2024-06-21 at 10:50 +0100, Vitor Soares wrote:
-> > > > From: Vitor Soares <vitor.soares@toradex.com>
-> > > >=20
-> > > > "atmel,attpm20p" DT compatible is missing its SPI device ID entry, =
-not
-> > > > allowing module autoloading and leading to the following message:
-> > > >=20
-> > > > =C2=A0 "SPI driver tpm_tis_spi has no spi_device_id for atmel,attpm=
-20p"
-> > > >=20
-> > > > Based on:
-> > > > =C2=A0 commit 7eba41fe8c7b ("tpm_tis_spi: Add missing SPI ID")
-> > > >=20
-> > > > Fix this by adding the corresponding "attpm20p" spi_device_id entry=
-.
-> > > >=20
-> > > > Fixes: 3c45308c44ed ("tpm_tis_spi: Add compatible string atmel,attp=
-m20p")
-> > > > Cc: stable@vger.kernel.org
-> > > > Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
-> > >=20
-> > > This is not a bug fix. This is a feature.
-> >=20
-> > I believe that some maintainer have a different view on this kind of
-> > patches compared to you, adding new device id would be material for
-> > stable, or this specific issue preventing module auto loading.
-> >=20
-> > I noticed that this specific view is not new from you, see
-> > https://lore.kernel.org/all/CY54PJM8KY92.UOCXW1JQUVF7@suppilovahvero/.
-> >=20
-> > With that said, I am ok with it.
-> >=20
-> > Do you want a new patch version without Fixes/Cc:stable tags or you can
-> > remove those while applying?
-> >=20
-> > Francesco
->=20
-> Hmm... OK, I'll apply this version, I see your point here!
->=20
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-Should be soon available in -next.
+On 6/5/24 20:02, Andrew Jeffery wrote:
+> On Wed, 2024-06-05 at 16:22 -0500, Eddie James wrote:
+>> Eddie James (40):
+> ...
+>
+>>   .../dts/aspeed/aspeed-bmc-ibm-everest.dts     |  32 +-
+>>   .../boot/dts/aspeed/aspeed-bmc-opp-tacoma.dts |   1 +
+>>   .../arm/boot/dts/aspeed/ibm-power10-dual.dtsi |  17 +-
+>>   .../arm/boot/dts/aspeed/ibm-power10-quad.dtsi |  16 +-
+>>   drivers/fsi/Kconfig                           |   2 +
+>>   drivers/fsi/fsi-core.c                        | 888 +++++++++++++++---
+>>   drivers/fsi/fsi-master-aspeed.c               | 431 +++++----
+>>   drivers/fsi/fsi-master-hub.c                  | 244 ++---
+>>   drivers/fsi/fsi-master-i2cr.c                 |   2 +-
+>>   drivers/fsi/fsi-master.h                      |  33 +
+>>   drivers/fsi/fsi-slave.h                       | 117 +++
+>>   drivers/i2c/busses/i2c-fsi.c                  | 463 ++++++---
+>>   drivers/spi/spi-fsi.c                         |  33 +-
+>>   include/linux/fsi.h                           |   3 +
+>>   include/trace/events/fsi.h                    | 171 ++--
+>>   include/trace/events/fsi_master_aspeed.h      |  86 +-
+>>   include/trace/events/i2c_fsi.h                |  45 +
+>>   17 files changed, 1897 insertions(+), 687 deletions(-)
+>>   create mode 100644 include/trace/events/i2c_fsi.h
+>
+> That's a lot of patches, that span the trees of several maintainers.
+>
+> What's your expectation for those who should be merging work in this
+> combined series? Have you had any feedback in that regard?
+>
+> I'm asking because I need to make a call on what I do with respect to
+> the Aspeed devicetrees. I think it would clarify responsibility if this
+> series were split by subsystem. That way I can apply the devicetree
+> patches and the rest can go through their respective trees.
 
-BR, Jarkko
+
+OK, I'll go ahead and split this up, and probably just wait for the FSI 
+changes to merge before sending other subsystems. Thanks for the 
+guidance on merging!
+
+
+Eddie
+
+
+
+>
+> If there are dependencies that require merging all or none, then it
+> would be helpful if they were outlined in the cover letter. Even then,
+> merging the leaves and waiting a cycle might make everyone's lives
+> easier?
+>
+> Andrew
 
