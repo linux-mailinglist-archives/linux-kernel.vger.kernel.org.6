@@ -1,131 +1,147 @@
-Return-Path: <linux-kernel+bounces-235602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A73E691D73D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 06:52:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3BB191D740
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 06:55:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A93F1F234F1
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 04:52:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C0C0B244C0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 04:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA69A28385;
-	Mon,  1 Jul 2024 04:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812582AD05;
+	Mon,  1 Jul 2024 04:55:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JZzGCw53"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pJNeMRFP"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF6C29AB
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 04:52:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6D329AB
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 04:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719809540; cv=none; b=l9C5X1eNG1lnKoL0SoI5GV1205AH0r7/AIUf00KbuqennY53tiCKnmAavsW2Ku6xpOIMCktX/wwTUIsRdH394Wk5YiFOiU62DT2f3D8YI2JqdDb/TQQmw63PlcmCuJ9c62Ej/yX+emmYmgU0MkYbgmUS8h1nfoXkfMMULriHtWc=
+	t=1719809731; cv=none; b=HxE35bNosOaH+Az/bCwlRqkTCmnx9oI0PZruf3o874I3jauPbdscel6ew9ts0KYOk2jTNMFkqkxOb9/8PYTEc2vSBxKuGr0BzBJz41jqTisl4GmLsO2I0H3/HHStEj1oczhxpdzNcBc9NA/rbVFMFqb6BRmXpioGhiNPwBi58ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719809540; c=relaxed/simple;
-	bh=yM1Y5DkB/7ohMR0GEwXVmnGF7Tgx668d4FOpm6Mq1yg=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=jOALLPSVgfng2YPApS3DV3z5YRVhcTQvE0S0SMUJv7vjo0E4fh9LlHsa2uUCL1E0NXko/Kygo1z/EEeP1BMq0TsfZxaml+f7vv21/9t+9YycR7B6o8T5ShS+aBFaqeRRlNc16+uQcoqGSV7NzWNrhLScD8KE3IIThQqtSZTESAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JZzGCw53; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7066f68e22cso1508625b3a.2
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 21:52:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719809538; x=1720414338; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=t+L7BI00lIFylFFLESW6ozge3fM7WKLb9kC850GFECg=;
-        b=JZzGCw531pvBThfxHgCtlBUp89MOH0qKmiaHir1/grcgLukjv6p+xamwT1v8CVcxFo
-         nOw6O7FiLSRqnL5JP/7D46+LcNs5cgeKqUoHgULTRsySQtCqElsMJx9YDhSRNEMxiWui
-         X9j+MLAy5AVK8YVbkjXtg0Oix7fYyarbelngFv7OLGor9VJCnpmXx31hCgSnK0b9kYQO
-         d9MS58gPaEFn1u3VfQTikVA/HM21g/HzuemyROHvIfQbSFTlK3tXgwkFMY5waNR436u6
-         SvmM4rIl6rkT6TNe5A0wqJ9/0vILRrnFf1twiPWHQz6fMAXeZBnTX6Fxg5Ft2Syd8/64
-         CRZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719809538; x=1720414338;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=t+L7BI00lIFylFFLESW6ozge3fM7WKLb9kC850GFECg=;
-        b=q9GlWTryzmxnRDt90rRlQSmdVRkBj79CsHkiJFoE882k6RUAMhnFGiN/BLUgK9y1Eo
-         JpzUpKzljzRc8hY7af5nxQCyhjx83+tvwqnnTJJFVbnLqnY9hHFOh5kdA27+PjiLGM2j
-         vBGh6qTvk9//DP3wu6vZp8+nEsbFCop1f/DoZY/NJWMORoqPNYTXWfwS9/baClmXsOsr
-         V0cxlOct8PXbqphKrTr1hX05beIPiN87L0U90GkI5Y4sOoEVv+ZbS+KNonQQK2HanQhW
-         vxTHt6e3jVqtbAMkp3tSWkE20OO58uHyuUXIPwuAf3NarmXnj9zE0Kt+ctLxMjhkdCe8
-         PmJA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNhomWKSePiVWL38gM4YG16Lx1bhEVlet9wbX0VTMRivN3JoK93CIyXq7l2bULEvno18DMrpSWH1VV6ZTVZEcu7iYcSik+mBl7ZtkO
-X-Gm-Message-State: AOJu0YyqDJl5EGBpWszsif9Nl2m40PjjTRBKBx+aZGRNkCtbmoldn1eH
-	XCweagLS0MgKLRIimOgKEPHD3uCfnRB2Lh/ZYAWzGAbRS0yYZRce
-X-Google-Smtp-Source: AGHT+IF610b9OyUPP35WVsNJmw68/ZgQqgi5D1JVTHEUov/7kMsegjHXm8fabI2r/qp9jntWMqBdmQ==
-X-Received: by 2002:a05:6a20:3948:b0:1bd:fef5:ab0b with SMTP id adf61e73a8af0-1bef611b985mr4019720637.8.1719809537499;
-        Sun, 30 Jun 2024 21:52:17 -0700 (PDT)
-Received: from gmail.com ([2a09:bac5:80c9:183c::26a:88])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac1568dd9sm54238515ad.182.2024.06.30.21.52.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Jun 2024 21:52:17 -0700 (PDT)
-From: Qingfang Deng <dqfext@gmail.com>
-To: David Woodhouse <dwmw2@infradead.org>,
-	Richard Weinberger <richard@nod.at>,
-	Qingfang Deng <qingfang.deng@siflower.com.cn>,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] jffs2: fix use of uninitialized variable
-Date: Mon,  1 Jul 2024 12:52:05 +0800
-Message-Id: <20240701045206.162103-1-dqfext@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1719809731; c=relaxed/simple;
+	bh=qx2i3nuJk8bJLjorfGUm06rte3GhES7sGQJYwHADTNY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Crr7plkgmhmCV0+dOOGxURzD63UGF79FW+J8Ym+uOuoiaGZHD8M/biPaqp3jIRhirzwoDNLVD63QGtmVRbJ3KqOdt+QWk8PIQXEvQvCYXI0LL44RMvqxVpDijVVea/vZaWjLd5ITdR+7qpvUVPgj73Ui2AwAcx6pb/3lbvPA15U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pJNeMRFP; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4614qDpm024734;
+	Mon, 1 Jul 2024 04:55:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=6
+	s1Wp1MJPT5iZygHaUn92dcxM+cXHEFm46diAdXVT/g=; b=pJNeMRFPvC8FUCrcW
+	3NeK7VgRVJMDZCFxMLt+AnsDSELDiZIyMeRhYWOLpdUbwVK7pVMlqIbkn17B8obC
+	qFQAJOAbTifSUQOGZULYSbj1PAD7hJ4mZMDflOuaEFG+C34JXkQkqR5Pukaj4bG3
+	dq1p1EewBSZiYsVnbbRSL04KPty9GbiuavI/KN2BL1vqOsBtKpjQYl5brXbJeWJU
+	iqN/h/uop+xnztFeYeudRBBRAuZRBrHNk5YB9XvYO0jTsY+dovVPPw4Dw6o3eW02
+	uomAl2OgYeZAQaz8tFrmMeZuiNU1NXTKG8xppCetfaS/ctop8dCnrzh6iMd77MQT
+	jgJUg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 403hxu8g7j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 01 Jul 2024 04:55:00 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4614t0YK029180;
+	Mon, 1 Jul 2024 04:55:00 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 403hxu8g78-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 01 Jul 2024 04:55:00 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4614DCm1026417;
+	Mon, 1 Jul 2024 04:54:58 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 402wkpncrh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 01 Jul 2024 04:54:58 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4614stJ63801774
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 1 Jul 2024 04:54:57 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EB69258056;
+	Mon,  1 Jul 2024 04:54:54 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7D24A58052;
+	Mon,  1 Jul 2024 04:54:51 +0000 (GMT)
+Received: from [9.109.201.126] (unknown [9.109.201.126])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  1 Jul 2024 04:54:51 +0000 (GMT)
+Message-ID: <dcab2925-11cb-454a-ba1e-a32e06117ca4@linux.ibm.com>
+Date: Mon, 1 Jul 2024 10:24:49 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] Skip offline cores when enabling SMT on PowerPC
+To: Thomas Gleixner <tglx@linutronix.de>,
+        "Nysal Jan K.A."
+ <nysal@linux.ibm.com>
+Cc: Tyrel Datwyler <tyreld@linux.ibm.com>,
+        Michal Suchanek
+ <msuchanek@suse.de>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Laurent Dufour
+ <ldufour@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
+References: <20240612185046.1826891-1-nysal@linux.ibm.com>
+ <875xudoz4d.fsf@mail.lhotse> <87ikxza01w.ffs@tglx>
+ <11f9cc04-91eb-4a70-9ff0-5c6f24483cd3@linux.ibm.com> <87sex26nlw.ffs@tglx>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <87sex26nlw.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 8mr7tDjkjiElWILwVd6jh9jlf9XVFZeJ
+X-Proofpoint-ORIG-GUID: XqkE6oS4WMgQ1S91_2M3_x2Mc-TIed-f
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-01_04,2024-06-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
+ adultscore=0 priorityscore=1501 malwarescore=0 mlxscore=0 bulkscore=0
+ lowpriorityscore=0 clxscore=1015 mlxlogscore=999 suspectscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407010034
 
-From: Qingfang Deng <qingfang.deng@siflower.com.cn>
 
-When building the kernel with -Wmaybe-uninitialized, the compiler
-reports this warning:
 
-In function 'jffs2_mark_erased_block',
-    inlined from 'jffs2_erase_pending_blocks' at fs/jffs2/erase.c:116:4:
-fs/jffs2/erase.c:474:9: warning: 'bad_offset' may be used uninitialized [-Wmaybe-uninitialized]
-  474 |         jffs2_erase_failed(c, jeb, bad_offset);
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-fs/jffs2/erase.c: In function 'jffs2_erase_pending_blocks':
-fs/jffs2/erase.c:402:18: note: 'bad_offset' was declared here
-  402 |         uint32_t bad_offset;
-      |                  ^~~~~~~~~~
+On 6/25/24 2:54 AM, Thomas Gleixner wrote:
+> On Tue, Jun 25 2024 at 00:41, Shrikanth Hegde wrote:
+>> On 6/24/24 1:44 AM, Thomas Gleixner wrote:
+>>> Right. So changing it not to online a thread when the full core is
+>>> offline should not really break stuff.
+>>>
+>>> OTH, the mechanism to figure that out on x86 is definitely different and
+>>> more complicated than on power because the sibling threads are not
+>>> having consecutive CPU numbers.
+>>
+>> wouldn't topology_sibling_cpumask have this info? 
+>> If the mask is empty does it mean the core is offline? 
+> 
+> The mask is not yet available for the to be brought up CPU. That's
+> established when the CPU boots. It might work because all threads are
+> brought up during early boot for !~*&^!@% reasons, but then it won't
+> work under all circumstances, e.g. 'maxcpus=$N'.
+> 
+> We could fix that now with the new topology enumeration code, but that's
+> a larger scale project.
 
-When mtd->point() is used, jffs2_erase_pending_blocks can return -EIO
-without initializing bad_offset, which is later used at the filebad
-label in jffs2_mark_erased_block.
-Fix it by initializing this variable.
+Ok. 
 
-Fixes: 8a0f572397ca ("[JFFS2] Return values of jffs2_block_check_erase error paths")
-Signed-off-by: Qingfang Deng <qingfang.deng@siflower.com.cn>
----
- fs/jffs2/erase.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/fs/jffs2/erase.c b/fs/jffs2/erase.c
-index acd32f05b519..ef3a1e1b6cb0 100644
---- a/fs/jffs2/erase.c
-+++ b/fs/jffs2/erase.c
-@@ -338,10 +338,9 @@ static int jffs2_block_check_erase(struct jffs2_sb_info *c, struct jffs2_erasebl
- 		} while(--retlen);
- 		mtd_unpoint(c->mtd, jeb->offset, c->sector_size);
- 		if (retlen) {
--			pr_warn("Newly-erased block contained word 0x%lx at offset 0x%08tx\n",
--				*wordebuf,
--				jeb->offset +
--				c->sector_size-retlen * sizeof(*wordebuf));
-+			*bad_offset = jeb->offset + c->sector_size - retlen * sizeof(*wordebuf);
-+			pr_warn("Newly-erased block contained word 0x%lx at offset 0x%08x\n",
-+				*wordebuf, *bad_offset);
- 			return -EIO;
- 		}
- 		return 0;
--- 
-2.34.1
-
+Can we please document the behavior on different platforms i.e on x86 and PowerPC? 
+May be in ABI/testing/sysfs-devices-system-cpu? 
 
