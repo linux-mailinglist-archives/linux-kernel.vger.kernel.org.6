@@ -1,113 +1,203 @@
-Return-Path: <linux-kernel+bounces-236316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 397CC91E059
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:15:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 418C291E05E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:17:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E82C52840CC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:15:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7882CB22A8A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C6215AAB8;
-	Mon,  1 Jul 2024 13:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC3215DBAF;
+	Mon,  1 Jul 2024 13:17:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UbOO7HMH"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q9txVLT3"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E1F1DFD9;
-	Mon,  1 Jul 2024 13:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17371DFD9
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 13:17:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719839720; cv=none; b=F2AFM0CRaFBam9XK6p/eX9XCUBMWjsYqfXR+NGt6S76wJdd/jZrYByxzUi9i/GMM4+vUcgxKI+WvX4Bd+tQKVFoNQoJ4Pepu7w1cRK5Yq43dQ1D8JLFNQgjEBBtLsFsxsFbOHsPuwptdEBCh+2jOmWBaaX6+2kajjur1uQV854o=
+	t=1719839829; cv=none; b=bqDja1X0WoCmWOqClOVCyGYOYjw5KXF9i5X2JXsdFkXESomOSwOertHK9gwCyFJgzs3087MHOSg753utsSOUgKH54/uRO0Lbk3YlcPxM5nDYrJn+/GhZPIXd1+ObqbLw61ZMHdPjwd12SUuhVylFgwPvAkMReqeuavmKYeF3oXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719839720; c=relaxed/simple;
-	bh=544hdO4m+Yo09Ix1f8HVM+SryQd+PGyhysli3+nWtYU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type; b=DmcSDwjRDZf2Wmk7pLJj2JK+1Wgh4LKWvK1vKURXrV3v8UR9RvzLJp7f0adGIB7QAQ2PQGrVM76mA/v1cShBX6Uv26P5TJcIVbF/TVppG42rzcC5OqS+zvp+dfnl5Zb0C9VVFQompSi3KBUBTS2oQL/MasUwXMd0QltfR3RtQHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UbOO7HMH; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f9a78c6c5dso16040285ad.1;
-        Mon, 01 Jul 2024 06:15:19 -0700 (PDT)
+	s=arc-20240116; t=1719839829; c=relaxed/simple;
+	bh=84GKtdvsfDggTxG3tR23U4I4btum+7MtvVR/KCb6JrY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qN9CnGIinrdtUq4Nf3QPEgKQZXGpkqCSPQhKnQbmyqzbd9SIqAY0Lj0YiOhxe3eFDJmE/oF7hSyKWHdkp9hCHKACkRHETBGUxOOE92T0GLEiRG5Cg43iVxrh473tZ2BY6pZWOgKLL9yzZkJRheF96uSe5DvxqxsIE5xpggnXOMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q9txVLT3; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4256f102e89so20336665e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 06:17:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719839718; x=1720444518; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:in-reply-to:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=544hdO4m+Yo09Ix1f8HVM+SryQd+PGyhysli3+nWtYU=;
-        b=UbOO7HMHQjs6xghw/8mhvNUvbyb64LCC4lS06nWWJavrlZWBdoJXpy0wFJp5VDrt0E
-         FDp5oIsRm1yM2uNmkUJ2knrfIB1wKZ952Zqsx1++w0v27AHQErBs0qcu/6xxgBx5FUqY
-         QQgPOMhTjCfrTU/y2V3PRZvvrYqGOL1j7oUVUFnnJLaVi76brlBb55Jwsq0mOWj6/MCN
-         TylQFwZG3fXJBRVz9yeRykulKBcqRQIpE2fQBk8bvEOQ/rJnGUazKX9wns9TeurBoJjJ
-         Pt2DE6Yr3klpJ4tYG8Wxq1C3blK6NXlkViC/xEAmwpLHcVl+vAe3OVBjdlW8G8KKnm1H
-         OKAg==
+        d=linaro.org; s=google; t=1719839825; x=1720444625; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WDfoGKlIKdR6A3RcZgmOG3TGuVOGKN/gx0BFWtmG53E=;
+        b=q9txVLT3BuG34PQX7OW0QrmPuDkQa3jyQUAxp4EUL9kBJ/baSkOqtg+qnium3Lu+ge
+         +p/5Hgw9W3wQNoK4vdpKf2GkCKuBZlHlibD9GdYyPYpcqyDk4G0b5bq/QrNwItRAZn4+
+         SpEh6qLHSz4ur3vYgreRyO3FehYHt/zoDg4xXoz7QdeDsfdWXq2OFUIPaHVcxt3sbGWG
+         ijaqRrHbkyKIRYuYbCfzniL8IDO0YFChHxkxiTgophsa+tAIx+XxG0FWWqkra1icWyCj
+         ledcnWDFoc2B7Si9NqPUj5gnlZiY2SUsslHoAzOr+S5UAo9GJ61gTdjpC8+FUQUEtFLk
+         NP2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719839718; x=1720444518;
-        h=content-transfer-encoding:mime-version:in-reply-to:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=544hdO4m+Yo09Ix1f8HVM+SryQd+PGyhysli3+nWtYU=;
-        b=NdXfTOfwujKgBM49Diyr8bXb+hYqJsATidNJiJLDh9CDA0DrpUEjiKOA8wyoqOihq+
-         i0gelQBlPetrJK8qOARu8g0NPaMaF0g5wNOn04KE5mWZ4A0hvI1IyJqxxZbzH5MXMnSK
-         WTYfK6eQ671VLSEGL4LUzNTVR0c3ordnWO/6ObEIEIbXG3iGiB+COmY9R1FHvQBuc2nY
-         EjNQTxYxVTXZIlT73pjwNLJ9AaNgsm+Awet2YVI64kSe63G6Op/dBwr9xEBlOz79yIHa
-         f4RIeNLIXsWKSDkeM33xXKE1CI2HZvVDwUD7yRI442GM8JezsDaUoIo3dN+K1U8j8lzw
-         7GRw==
-X-Forwarded-Encrypted: i=1; AJvYcCXexQWXIrVto7O0uP5vDvUuG21QsoeUsWCYZGYUmz0Qzp4Y5Gst36wpCqjKabIS1vc6PAHZGdPZSA9QvWyF0HydvMiB7HAVIHQdQJkbcqh7LWoDj8L9FU2xxLOBCurVzca4wGwhPJUg
-X-Gm-Message-State: AOJu0YyWUFf+CkB48Rd/u6ctojLBcgVVq/YyXZQTt7KqzWFVbTEefXZF
-	AjX1zI9JWMKGMQZVe4N386EmvAky768DVNixK85b6gfEqeTgFaEdTIPwIg==
-X-Google-Smtp-Source: AGHT+IFFN8wg4fbelccTURAYeNBoHJ1Drq8wevD15r5D0xHsU3RhfIznlMAFHdR7wGtBqZXliZxqKA==
-X-Received: by 2002:a17:902:a511:b0:1f9:b9ed:e84e with SMTP id d9443c01a7336-1fadbd08e34mr23626995ad.58.1719839718336;
-        Mon, 01 Jul 2024 06:15:18 -0700 (PDT)
-Received: from redecorated-mbp (121-45-106-167.tpgi.com.au. [121.45.106.167])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac10d15a9sm64544555ad.37.2024.07.01.06.15.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 06:15:18 -0700 (PDT)
-Date: Mon, 1 Jul 2024 23:14:52 +1000
-From: Orlando Chamberlain <orlandoch.dev@gmail.com>
-To: lukas@wunner.de
-Cc: ardb@kernel.org, gargaditya08@live.com, hdegoede@redhat.com,
- kekrby@gmail.com, linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] efi: libstub: add support for the apple_set_os
- protocol
-Message-ID: <20240701231452.3d547e7f@redecorated-mbp>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.41; x86_64-pc-linux-gnu)
-In-Reply-To: <ZoJcVf98MElXhMjT@wunner.de>
+        d=1e100.net; s=20230601; t=1719839825; x=1720444625;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WDfoGKlIKdR6A3RcZgmOG3TGuVOGKN/gx0BFWtmG53E=;
+        b=pSRX3zf0a4BvDr4TOAewTcq19jHA1AfUok7UNtIkAhti4xxkmO6/+2YxGLMkaCF2CO
+         yXezM8XD7/2rfheFOJ91COYdzRSGcmAUWNZCul7uqVUg5EaX6nulCfP37XDZliVwt88Y
+         DqR9hbeDU9f898jPaORx4K7Mjt0crkjf0S0i36EqPqw15qOHvh+6VmyOuWY8IkmjaWJT
+         s5vCEmbhOXD8ooLCYe5fv5AAkk5DxjO99kpmncB0OGzjbfWlVWMlqE8BO72NKiwfLXde
+         xF38EwDRYSip++Vsulczkg4oAlEJcngG1YQjQLxVcR0B52XQaNVM068zfqwDaTaxAVic
+         03eg==
+X-Forwarded-Encrypted: i=1; AJvYcCXfwkky+tPjg51Wxufon8XOkm6s/5CqFUCQbBB4wnmfi/G0cNseXwtrFhacT5RW6layUSUJenXR84PASjIY0mUxzKs6LVi0JJY0J4sz
+X-Gm-Message-State: AOJu0Yw8KGERnwBPZLHfuBXAp6KdX93F416iiQTiXn8c4AS6aytV+fe/
+	8JwG7vGGTfR41o02macGxtoc95Fhe4OdliJCZ7O5mu+ulPX914aXdi/Ye+oa7hA=
+X-Google-Smtp-Source: AGHT+IHkBfoP4v4QMxXcR1bWHc9hcJjpRR6wiB0ZAwlodHQGeXh8pzUBFPOZyamackKhLJ+5vGVTDg==
+X-Received: by 2002:a05:600c:181b:b0:424:aa83:ef01 with SMTP id 5b1f17b1804b1-4257a00d057mr38661955e9.10.1719839825118;
+        Mon, 01 Jul 2024 06:17:05 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:d5d7:31af:53ed:6dbc? ([2a05:6e02:1041:c10:d5d7:31af:53ed:6dbc])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4256af3cf9bsm155864955e9.8.2024.07.01.06.17.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Jul 2024 06:17:04 -0700 (PDT)
+Message-ID: <f78d50e2-cda5-48a6-b591-96218bd83e2b@linaro.org>
+Date: Mon, 1 Jul 2024 15:17:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] thermal/core: Introduce user trip points
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+References: <20240627085451.3813989-1-daniel.lezcano@linaro.org>
+ <CAJZ5v0iO6MrX3QxAu4Wj4grUL2g7gPPXO3f8PFmZBot-Ud32TQ@mail.gmail.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <CAJZ5v0iO6MrX3QxAu4Wj4grUL2g7gPPXO3f8PFmZBot-Ud32TQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> FWIW, there would be only 6 models to match if this needs to be
-> constrained to ones with dual GPUs:
->
-> MacBookPro11,3
-> MacBookPro11,5
-> MacBookPro13,3
-> MacBookPro14,3
-> MacBookPro15,1
-> MacBookPro16,1
+On 28/06/2024 15:56, Rafael J. Wysocki wrote:
+> On Thu, Jun 27, 2024 at 10:55 AM Daniel Lezcano
+> <daniel.lezcano@linaro.org> wrote:
+>>
+>> Currently the thermal framework has 4 trip point types:
+>>
+>> - active : basically for fans (or anything requiring energy to cool
+>>    down)
+>>
+>> - passive : a performance limiter
+>>
+>> - hot : for a last action before reaching critical
+>>
+>> - critical : a without return threshold leading to a system shutdown
+>>
+>> A thermal zone monitors the temperature regarding these trip
+>> points. The old way to do that is actively polling the temperature
+>> which is very bad for embedded systems, especially mobile and it is
+>> even worse today as we can have more than fifty thermal zones. The
+>> modern way is to rely on the driver to send an interrupt when the trip
+>> points are crossed, so the system can sleep while the temperature
+>> monitoring is offloaded to a dedicated hardware.
+>>
+>> However, the thermal aspect is also managed from userspace to protect
+>> the user, especially tracking down the skin temperature sensor. The
+>> logic is more complex than what we found in the kernel because it
+>> needs multiple sources indicating the thermal situation of the entire
+>> system.
+>>
+>> For this reason it needs to setup trip points at different levels in
+>> order to get informed about what is going on with some thermal zones
+>> when running some specific application.
+>>
+>> For instance, the skin temperature must be limited to 43°C on a long
+>> run but can go to 48°C for 10 minutes, or 60°C for 1 minute.
+>>
+>> The thermal engine must then rely on trip points to monitor those
+>> temperatures. Unfortunately, today there is only 'active' and
+>> 'passive' trip points which has a specific meaning for the kernel, not
+>> the userspace. That leads to hacks in different platforms for mobile
+>> and embedded systems where 'active' trip points are used to send
+>> notification to the userspace. This is obviously not right because
+>> these trip are handled by the kernel.
+>>
+>> This patch introduces the 'user' trip point type where its semantic is
+>> simple: do nothing at the kernel level, just send a notification to
+>> the user space.
+>>
+>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>> ---
+>>   .../devicetree/bindings/thermal/thermal-zones.yaml        | 1 +
+>>   drivers/thermal/thermal_core.c                            | 8 ++++++++
+>>   drivers/thermal/thermal_of.c                              | 1 +
+>>   drivers/thermal/thermal_trace.h                           | 4 +++-
+>>   drivers/thermal/thermal_trip.c                            | 1 +
+>>   include/uapi/linux/thermal.h                              | 1 +
+>>   6 files changed, 15 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/thermal/thermal-zones.yaml b/Documentation/devicetree/bindings/thermal/thermal-zones.yaml
+>> index 68398e7e8655..cb9ea54a192e 100644
+>> --- a/Documentation/devicetree/bindings/thermal/thermal-zones.yaml
+>> +++ b/Documentation/devicetree/bindings/thermal/thermal-zones.yaml
+>> @@ -153,6 +153,7 @@ patternProperties:
+>>                 type:
+>>                   $ref: /schemas/types.yaml#/definitions/string
+>>                   enum:
+>> +                  - user     # enable user notification
+>>                     - active   # enable active cooling e.g. fans
+>>                     - passive  # enable passive cooling e.g. throttling cpu
+>>                     - hot      # send notification to driver
+>> diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
+>> index 2aa04c46a425..506f880d9aa9 100644
+>> --- a/drivers/thermal/thermal_core.c
+>> +++ b/drivers/thermal/thermal_core.c
+>> @@ -734,6 +734,14 @@ int thermal_bind_cdev_to_trip(struct thermal_zone_device *tz,
+>>          if (tz != pos1 || cdev != pos2)
+>>                  return -EINVAL;
+>>
+>> +       /*
+>> +        * It is not allowed to bind a cooling device with a trip
+>> +        * point user type because no mitigation should happen from
+>> +        * the kernel with these trip points
+>> +        */
+>> +       if (trip->type == THERMAL_TRIP_USER)
+>> +               return -EINVAL;
+> 
+> Maybe print a debug message when bailing out here?
+> 
+> A check for "user" trips would need to be added to
+> thermal_governor_trip_crossed() and to the .manage() callbacks in the
+> power allocator, step-wise and fair-share governors, if I'm not
+> mistaken.  Especially fair-share and power allocator should not take
+> them into account IMV.
 
-I know that at least these two also need it:
-MacBookPro16,4
-MacBookPro15,3
+I'm not sure the power_allocator needs to change anything. The trip 
+point used is switch_on which is only derived from passive or active 
+trip point, so it is not possible to have a user trip point used in the 
+manage callback.
 
-I think there could be more older ones too. Apple has a list of
-MacBookPros [0], but I don't know how many of the older models that
-list 2 gpus on their "Tech Specs" pages need apple-set-os.
+Did I miss something ?
 
-The original apple-set-os code was posted to the GRUB mailing list in
-December 2013 [1] so maybe it was in 2013 that new dual GPU Macbooks
-started needing apple-set-os?
 
-[0] https://support.apple.com/en-us/108052
-[1] https://lists.gnu.org/archive/html/grub-devel/2013-12/msg00442.html
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
 
