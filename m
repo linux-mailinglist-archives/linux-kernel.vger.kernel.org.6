@@ -1,308 +1,120 @@
-Return-Path: <linux-kernel+bounces-236860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E099491E7E6
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:41:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D7DE91E7EA
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:41:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96799282F05
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:41:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF5ACB23DB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA95E16F0FE;
-	Mon,  1 Jul 2024 18:40:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2D216DEC2;
+	Mon,  1 Jul 2024 18:41:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Mlh7P3TD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fX88dpFK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F2BA29CEC
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 18:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AACB16F298;
+	Mon,  1 Jul 2024 18:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719859244; cv=none; b=P99FHuyJC/Nxt+0kOXYMWbUi+N0sC6rd2tcc7Q5ssCgRGWys5PAQjl2mXvCmGiQuLp99PioVm5C6/5g63o1ECF+xXCgUCmRS20CeL4lx/1afBwbntgEIK/omE2+bSeMc6Irb6eLvWbGlRkaj2PM7670/q5yoaA2w/PRZOg3s7IE=
+	t=1719859262; cv=none; b=RWlff9E2soYQRynLeOtYNACJJbVCCbWw9FbSH2c8/3TWlNlJmoLrQSQlmDQEd0vR4/70cqWppzRsHevpVtEZBS3Xw8hfMROPt3ouHdYphxlVHG8RknkYhA4rYMl17arbm7YO3fXIQv2gSTJ+vuLq+uWcYK6J4+c+elM5EgyTR20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719859244; c=relaxed/simple;
-	bh=eyopcm2Ew6oocd/u7WL8Xcv/jE6nL90N3xeBHy8r6a8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=c02Fj14+KawseyTWgbHOTwQI+hiZ7qRtH/QhsV/F2hJKKSRC8YneNe3J7rSarZGZtgZOhHPfgFNWZebzxmeM8RzIcX0DJYvh6atqKJAn9wgzwcFGCNg/Rh4k5uF5cihwQUG+J9Y4MCU7cNPyoR4AgKbIhIyY9nrxvbwUoKDCmLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Mlh7P3TD; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719859242;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H+jJw59ZX/TI+A1daC6HaI1eArZa7UJ5kz7UF8mNVKo=;
-	b=Mlh7P3TDV2Yq+LyYoeAeqlDDvBHvk8xL/XhisG8PeEya0+l8MPRCn3hJgXrNyqkDHnVQBk
-	lAuoYp0fNadXiTFrILLb2M0gCAe4SO9flbVDG5mZM7f3ZDzhDO4a8XuZBy/eldVQJEVauz
-	a4ZccN2oEYadNXPW4/KzCrKqPoYqQOU=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-171-TSgBsaB7NPyhpYmIZiQ92g-1; Mon,
- 01 Jul 2024 14:40:39 -0400
-X-MC-Unique: TSgBsaB7NPyhpYmIZiQ92g-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 215B21955DA1;
-	Mon,  1 Jul 2024 18:40:37 +0000 (UTC)
-Received: from RHTRH0061144 (unknown [10.22.8.184])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E4A0C1956089;
-	Mon,  1 Jul 2024 18:40:33 +0000 (UTC)
-From: Aaron Conole <aconole@redhat.com>
-To: Adrian Moreno <amorenoz@redhat.com>
-Cc: netdev@vger.kernel.org,  echaudro@redhat.com,  horms@kernel.org,
-  i.maximets@ovn.org,  dev@openvswitch.org,  Pravin B Shelar
- <pshelar@ovn.org>,  "David S. Miller" <davem@davemloft.net>,  Eric Dumazet
- <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>,  Paolo Abeni
- <pabeni@redhat.com>,  Shuah Khan <shuah@kernel.org>,
-  linux-kselftest@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v7 07/10] selftests: openvswitch: add psample
- action
-In-Reply-To: <20240630195740.1469727-8-amorenoz@redhat.com> (Adrian Moreno's
-	message of "Sun, 30 Jun 2024 21:57:28 +0200")
-References: <20240630195740.1469727-1-amorenoz@redhat.com>
-	<20240630195740.1469727-8-amorenoz@redhat.com>
-Date: Mon, 01 Jul 2024 14:40:31 -0400
-Message-ID: <f7tbk3hvtuo.fsf@redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1719859262; c=relaxed/simple;
+	bh=b9t315kB2irXXTEOqh+BPq5CDd3WoseJBjsx1O8vZSo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=R6YldDyzk3mEsHqlpF3HAlYHIw9Mcr4xtWezkz+wKs3Mq975tI1QGor76iiKqFJ16crDywq6EWMVlVDyIHFQa+dZHo7KA9KtCBQJII1exmHiz42w3ohnQ/Cj5iKcLroQhJvZdC/iVrlAdA+BX3k0kmmwi13yg3R7/TI32fVU1Y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fX88dpFK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD09FC116B1;
+	Mon,  1 Jul 2024 18:40:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719859262;
+	bh=b9t315kB2irXXTEOqh+BPq5CDd3WoseJBjsx1O8vZSo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=fX88dpFKO878qmBPMIG3r5lwS2ifsBgzlaZduktbIrYVmU/6VJf1obFf44anDXWnj
+	 bq0pX6Znv9d8lZ+NGsuUm5BcO84WNxJJcJ9bCoIn1Ff8k3OwVsKVH9l9rh0jZlaXSo
+	 vQurBqp789lZAI3w2Prz3qDD+ugCN4NNqdadOYg56BrSmXNUM8obZxOPuCnFH8pFpq
+	 WMzSrEvPR0mE+sikN668ATSUPsi1XKeRDgp098UAHSba52z7o0CxoDcwq8JtnG65pV
+	 sXIR9fHY/CRLXtW5Q46XxpjDFu5SLP2RMYjdgCFRC0GnlSra41TnX3p67DVB9ycr+u
+	 MwZYgw0UmUCOA==
+Date: Mon, 1 Jul 2024 19:40:52 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, matthias.bgg@gmail.com, lee@kernel.org,
+ andy@kernel.org, nuno.sa@analog.com, bigunclemax@gmail.com,
+ dlechner@baylibre.com, marius.cristea@microchip.com,
+ marcelo.schmitt@analog.com, fr0st61te@gmail.com, mitrutzceclan@gmail.com,
+ mike.looijmans@topic.nl, marcus.folkesson@gmail.com,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, andy.shevchenko@gmail.com,
+ kernel@collabora.com
+Subject: Re: [PATCH v2 0/5] MediaTek MT6357/8/9 PMIC Auxiliary ADC support
+Message-ID: <20240701194052.2702a3da@jic23-huawei>
+In-Reply-To: <20240604123008.327424-1-angelogioacchino.delregno@collabora.com>
+References: <20240604123008.327424-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Adrian Moreno <amorenoz@redhat.com> writes:
+On Tue,  4 Jun 2024 14:30:03 +0200
+AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com> wrote:
 
-> Add sample and psample action support to ovs-dpctl.py.
->
-> Refactor common attribute parsing logic into an external function.
->
-> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
-> ---
+> Changes in v2:
+>  - Dropped 'mfd: mt6397-core: Add support for AUXADCs on MT6357/58/59 PMICs'
+>    as Lee J already applied it;
+>  - Added patch to describe the ADC subnode in the MT6357 MFD binding
+>    and moved the example node from mediatek,mt6359-auxadc.yaml to
+>    mediatek,mt6357.yaml
+>  - Added 8-bits {s8,u8}_fract to math.h
+>  - Addressed reviewer comments on mt6359-auxadc driver
 
-Reviewed-by: Aaron Conole <aconole@redhat.com>
+Applied 1,3,4 to the IIO tree. I'm assuming the mfd dt binding update
+will got via mfd and the dts via appropriate SoC tree.
 
->  .../selftests/net/openvswitch/ovs-dpctl.py    | 162 +++++++++++++++++-
->  1 file changed, 161 insertions(+), 1 deletion(-)
->
-> diff --git a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-> index 182a09975975..dcc400a21a22 100644
-> --- a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-> +++ b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-> @@ -8,6 +8,7 @@ import argparse
->  import errno
->  import ipaddress
->  import logging
-> +import math
->  import multiprocessing
->  import re
->  import socket
-> @@ -60,6 +61,7 @@ OVS_FLOW_CMD_DEL = 2
->  OVS_FLOW_CMD_GET = 3
->  OVS_FLOW_CMD_SET = 4
->  
-> +UINT32_MAX = 0xFFFFFFFF
->  
->  def macstr(mac):
->      outstr = ":".join(["%02X" % i for i in mac])
-> @@ -281,6 +283,75 @@ def parse_extract_field(
->      return str_skipped, data
->  
->  
-> +def parse_attrs(actstr, attr_desc):
-> +    """Parses the given action string and returns a list of netlink
-> +    attributes based on a list of attribute descriptions.
-> +
-> +    Each element in the attribute description list is a tuple such as:
-> +        (name, attr_name, parse_func)
-> +    where:
-> +        name: is the string representing the attribute
-> +        attr_name: is the name of the attribute as defined in the uAPI.
-> +        parse_func: is a callable accepting a string and returning either
-> +            a single object (the parsed attribute value) or a tuple of
-> +            two values (the parsed attribute value and the remaining string)
-> +
-> +    Returns a list of attributes and the remaining string.
-> +    """
-> +    def parse_attr(actstr, key, func):
-> +        actstr = actstr[len(key) :]
-> +
-> +        if not func:
-> +            return None, actstr
-> +
-> +        delim = actstr[0]
-> +        actstr = actstr[1:]
-> +
-> +        if delim == "=":
-> +            pos = strcspn(actstr, ",)")
-> +            ret = func(actstr[:pos])
-> +        else:
-> +            ret = func(actstr)
-> +
-> +        if isinstance(ret, tuple):
-> +            (datum, actstr) = ret
-> +        else:
-> +            datum = ret
-> +            actstr = actstr[strcspn(actstr, ",)"):]
-> +
-> +        if delim == "(":
-> +            if not actstr or actstr[0] != ")":
-> +                raise ValueError("Action contains unbalanced parentheses")
-> +
-> +            actstr = actstr[1:]
-> +
-> +        actstr = actstr[strspn(actstr, ", ") :]
-> +
-> +        return datum, actstr
-> +
-> +    attrs = []
-> +    attr_desc = list(attr_desc)
-> +    while actstr and actstr[0] != ")" and attr_desc:
-> +        found = False
-> +        for i, (key, attr, func) in enumerate(attr_desc):
-> +            if actstr.startswith(key):
-> +                datum, actstr = parse_attr(actstr, key, func)
-> +                attrs.append([attr, datum])
-> +                found = True
-> +                del attr_desc[i]
-> +
-> +        if not found:
-> +            raise ValueError("Unknown attribute: '%s'" % actstr)
-> +
-> +        actstr = actstr[strspn(actstr, ", ") :]
-> +
-> +    if actstr[0] != ")":
-> +        raise ValueError("Action string contains extra garbage or has "
-> +                         "unbalanced parenthesis: '%s'" % actstr)
-> +
-> +    return attrs, actstr[1:]
-> +
-> +
->  class ovs_dp_msg(genlmsg):
->      # include the OVS version
->      # We need a custom header rather than just being able to rely on
-> @@ -299,7 +370,7 @@ class ovsactions(nla):
->          ("OVS_ACTION_ATTR_SET", "ovskey"),
->          ("OVS_ACTION_ATTR_PUSH_VLAN", "none"),
->          ("OVS_ACTION_ATTR_POP_VLAN", "flag"),
-> -        ("OVS_ACTION_ATTR_SAMPLE", "none"),
-> +        ("OVS_ACTION_ATTR_SAMPLE", "sample"),
->          ("OVS_ACTION_ATTR_RECIRC", "uint32"),
->          ("OVS_ACTION_ATTR_HASH", "none"),
->          ("OVS_ACTION_ATTR_PUSH_MPLS", "none"),
-> @@ -318,8 +389,85 @@ class ovsactions(nla):
->          ("OVS_ACTION_ATTR_ADD_MPLS", "none"),
->          ("OVS_ACTION_ATTR_DEC_TTL", "none"),
->          ("OVS_ACTION_ATTR_DROP", "uint32"),
-> +        ("OVS_ACTION_ATTR_PSAMPLE", "psample"),
->      )
->  
-> +    class psample(nla):
-> +        nla_flags = NLA_F_NESTED
-> +
-> +        nla_map = (
-> +            ("OVS_PSAMPLE_ATTR_UNSPEC", "none"),
-> +            ("OVS_PSAMPLE_ATTR_GROUP", "uint32"),
-> +            ("OVS_PSAMPLE_ATTR_COOKIE", "array(uint8)"),
-> +        )
-> +
-> +        def dpstr(self, more=False):
-> +            args = "group=%d" % self.get_attr("OVS_PSAMPLE_ATTR_GROUP")
-> +
-> +            cookie = self.get_attr("OVS_PSAMPLE_ATTR_COOKIE")
-> +            if cookie:
-> +                args += ",cookie(%s)" % \
-> +                        "".join(format(x, "02x") for x in cookie)
-> +
-> +            return "psample(%s)" % args
-> +
-> +        def parse(self, actstr):
-> +            desc = (
-> +                ("group", "OVS_PSAMPLE_ATTR_GROUP", int),
-> +                ("cookie", "OVS_PSAMPLE_ATTR_COOKIE",
-> +                    lambda x: list(bytearray.fromhex(x)))
-> +            )
-> +
-> +            attrs, actstr = parse_attrs(actstr, desc)
-> +
-> +            for attr in attrs:
-> +                self["attrs"].append(attr)
-> +
-> +            return actstr
-> +
-> +    class sample(nla):
-> +        nla_flags = NLA_F_NESTED
-> +
-> +        nla_map = (
-> +            ("OVS_SAMPLE_ATTR_UNSPEC", "none"),
-> +            ("OVS_SAMPLE_ATTR_PROBABILITY", "uint32"),
-> +            ("OVS_SAMPLE_ATTR_ACTIONS", "ovsactions"),
-> +        )
-> +
-> +        def dpstr(self, more=False):
-> +            args = []
-> +
-> +            args.append("sample={:.2f}%".format(
-> +                100 * self.get_attr("OVS_SAMPLE_ATTR_PROBABILITY") /
-> +                UINT32_MAX))
-> +
-> +            actions = self.get_attr("OVS_SAMPLE_ATTR_ACTIONS")
-> +            if actions:
-> +                args.append("actions(%s)" % actions.dpstr(more))
-> +
-> +            return "sample(%s)" % ",".join(args)
-> +
-> +        def parse(self, actstr):
-> +            def parse_nested_actions(actstr):
-> +                subacts = ovsactions()
-> +                parsed_len = subacts.parse(actstr)
-> +                return subacts, actstr[parsed_len :]
-> +
-> +            def percent_to_rate(percent):
-> +                percent = float(percent.strip('%'))
-> +                return int(math.floor(UINT32_MAX * (percent / 100.0) + .5))
-> +
-> +            desc = (
-> +                ("sample", "OVS_SAMPLE_ATTR_PROBABILITY", percent_to_rate),
-> +                ("actions", "OVS_SAMPLE_ATTR_ACTIONS", parse_nested_actions),
-> +            )
-> +            attrs, actstr = parse_attrs(actstr, desc)
-> +
-> +            for attr in attrs:
-> +                self["attrs"].append(attr)
-> +
-> +            return actstr
-> +
->      class ctact(nla):
->          nla_flags = NLA_F_NESTED
->  
-> @@ -683,6 +831,18 @@ class ovsactions(nla):
->                  self["attrs"].append(["OVS_ACTION_ATTR_CT", ctact])
->                  parsed = True
->  
-> +            elif parse_starts_block(actstr, "sample(", False):
-> +                sampleact = self.sample()
-> +                actstr = sampleact.parse(actstr[len("sample(") : ])
-> +                self["attrs"].append(["OVS_ACTION_ATTR_SAMPLE", sampleact])
-> +                parsed = True
-> +
-> +            elif parse_starts_block(actstr, "psample(", False):
-> +                psampleact = self.psample()
-> +                actstr = psampleact.parse(actstr[len("psample(") : ])
-> +                self["attrs"].append(["OVS_ACTION_ATTR_PSAMPLE", psampleact])
-> +                parsed = True
-> +
->              actstr = actstr[strspn(actstr, ", ") :]
->              while parencount > 0:
->                  parencount -= 1
+Given time is tight I'll gamble a bit and push directly out as togreg
+rather than normal exposure to 0-day first.
+
+Thanks,
+
+Jonathan
+
+> 
+> AngeloGioacchino Del Regno (5):
+>   dt-bindings: iio: adc: Add MediaTek MT6359 PMIC AUXADC
+>   dt-bindings: mfd: mediatek,mt6357: Describe Auxiliary ADC subdev
+>   math.h: Add unsigned 8 bits fractional numbers type
+>   iio: adc: Add support for MediaTek MT6357/8/9 Auxiliary ADC
+>   arm64: dts: mediatek: Add ADC node on MT6357, MT6358, MT6359 PMICs
+> 
+>  .../iio/adc/mediatek,mt6359-auxadc.yaml       |  33 +
+>  .../bindings/mfd/mediatek,mt6357.yaml         |  10 +
+>  arch/arm64/boot/dts/mediatek/mt6357.dtsi      |   5 +
+>  arch/arm64/boot/dts/mediatek/mt6358.dtsi      |   5 +
+>  arch/arm64/boot/dts/mediatek/mt6359.dtsi      |   5 +
+>  drivers/iio/adc/Kconfig                       |  12 +
+>  drivers/iio/adc/Makefile                      |   1 +
+>  drivers/iio/adc/mt6359-auxadc.c               | 606 ++++++++++++++++++
+>  .../iio/adc/mediatek,mt6357-auxadc.h          |  21 +
+>  .../iio/adc/mediatek,mt6358-auxadc.h          |  22 +
+>  .../iio/adc/mediatek,mt6359-auxadc.h          |  22 +
+>  include/linux/math.h                          |   2 +
+>  12 files changed, 744 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml
+>  create mode 100644 drivers/iio/adc/mt6359-auxadc.c
+>  create mode 100644 include/dt-bindings/iio/adc/mediatek,mt6357-auxadc.h
+>  create mode 100644 include/dt-bindings/iio/adc/mediatek,mt6358-auxadc.h
+>  create mode 100644 include/dt-bindings/iio/adc/mediatek,mt6359-auxadc.h
+> 
 
 
