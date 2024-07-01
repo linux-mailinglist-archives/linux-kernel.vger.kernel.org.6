@@ -1,93 +1,226 @@
-Return-Path: <linux-kernel+bounces-236427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F3C291E233
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:18:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EED791E239
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:19:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10A1D284AB7
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:18:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFF141F25979
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:19:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46973167DA4;
-	Mon,  1 Jul 2024 14:18:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9E316631A;
+	Mon,  1 Jul 2024 14:18:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C6DydJbO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VYcA7wxJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 769DE16191A;
-	Mon,  1 Jul 2024 14:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F96116089A;
+	Mon,  1 Jul 2024 14:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719843484; cv=none; b=Hk24Alm8aA/vD6mGfUa4Zv6VjWNd9EWNk3YClr2VNRkW1OL5MhBrZwrOlTJ8v6N7nSCHpaMu44p2DkfPKRJT7jr/M/0MjPQmS5qkJCd65/RI0W9/lXcQlcLMAOuuhYz/XPlGc+Hd+tF7GzVU6h+8er1njgauNP8MtzlG9K/7aoc=
+	t=1719843534; cv=none; b=GRvGL8bdlfKnRjnJaVWqi4U9THoXYoh5dX2bT3XoqpWm6gYvkaXzjEEmjsFk+ohVA4SKkSdxCPMmxWJtpBTjuH07R3tfVx6OsxYBUZmVBFVOmbad56KdZEa+kyxHKqf88VXuKHg8DYrSJsmjtNNUgVqF/XaLD05ke/WqC9JZl6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719843484; c=relaxed/simple;
-	bh=KNdmg62H0LvKkwIT08kVZT9u8KwP64SOz7rDR0b4SFE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EjxMYc7B+OykxRJLlnhBT++GVZXdPGe3g/shBf22imCp2/p/UJwADzgxzceU1V7nYLfkaDx+upxg4Auwg8V4x/ZAZ9zH3S47O50qOF+8OpfGI2Owjh7gdAqeoSlw0oOH2yaxO25Nc2x4NXjcNltUmcycS/gSB04FHGpG9W9YSvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C6DydJbO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1D8FC116B1;
-	Mon,  1 Jul 2024 14:18:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719843484;
-	bh=KNdmg62H0LvKkwIT08kVZT9u8KwP64SOz7rDR0b4SFE=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=C6DydJbOJaYlZYklePBF3Mo12au5Yjdt2qvyRaArGosBk6V1aQWD1+mPpmyoTD7aa
-	 H142OWpuDA0wW/Dq8pJx0lIsbaY5LJPRC2KMfrASntlF0W5Ey5houV2xjJu0dhsrvW
-	 +sXSmJvCd3IHLyFJj4Nnlw391xuhO1uL0MIi/9tGYGtTxaBbkywvXcIDF/AHnQecgz
-	 1A0BCNmhWgAA0p33tZC3bVduW66GyodzrYTgl+hk2HMiDkNf40k/Mo1bBHdfEpXa06
-	 Z++U+RlDRgkcd7AFt4mL4ZcuHCV++rBaKxb6SQK7f+vXdTzzO6KCQF+ilHSTFxeHLp
-	 s/o2L9gRqQkSQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 94168CE0AD3; Mon,  1 Jul 2024 07:18:03 -0700 (PDT)
-Date: Mon, 1 Jul 2024 07:18:03 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Matthew Wilcox <willy@infradead.org>, kernel-janitors@vger.kernel.org,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
-	maple-tree@lists.infradead.org
-Subject: Re: [v2 2/5] rosebush: Add new data structure
-Message-ID: <c550c690-7555-4ccd-bf8a-8c54657aea3c@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240625211803.2750563-3-willy@infradead.org>
- <52d370b2-d82a-4629-918a-128fc7bf7ff8@web.de>
- <ZoIHLiTvNm0IE0CD@casper.infradead.org>
- <8ced519f-47f2-4a74-be6d-4be5958009ba@web.de>
+	s=arc-20240116; t=1719843534; c=relaxed/simple;
+	bh=EZt86gKStA4pkyLkX+E2IbyiQEvDlNGUQ2FHGPVHax0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=eofcx76kkTeabifQGo80Lyyplyvhy/FW+aVyN/CQPB+X2HMyotDGwFmPNhcG+R7ZYPJ3SPXDfAE4B9S5/TfKCph5SIkDj7Hqz9oMjrvemCt+ubtw5gOpkP783uAIuHGOpr6N58GFwXmTrptXkqXq4+AE3fWK5AavaiNsgvmj6Ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VYcA7wxJ; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719843534; x=1751379534;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=EZt86gKStA4pkyLkX+E2IbyiQEvDlNGUQ2FHGPVHax0=;
+  b=VYcA7wxJo9A2akq+e/wWoeRc1sycVwkd9fApsfddvp73qZvVKg4iLynn
+   9b5SLF0Vz8DqPBAoDsbBV6x69IHnmmieWV5Gbn2C4XyVaSaey293p9PDL
+   0BWtmjxsQsecvJZbc/KLzRqcJBBaITdga0qZbdMygYwuuvds8FCkjYoBB
+   QBDaU5MJoIIZWWNp8QRJwGRiNQBgXVXmjoPVOi9gmqZa3CzxCEFkRdEIs
+   Dq4KKs9ja1pG/rL/C1EKzTF5jH+O6vdeg8znIS0zff8eCqDYbRgV4+wWh
+   ihrvDSTzJ6RMR7yexQc3t6No5AQP0vSC1jCVSlOWuAlrvkTCs5p2pf5dH
+   A==;
+X-CSE-ConnectionGUID: xngudnqdQfO3kU1Lk/zxhA==
+X-CSE-MsgGUID: SHgfFZ2zRgKKVNhVBRxyzA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="28367012"
+X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
+   d="scan'208";a="28367012"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 07:18:51 -0700
+X-CSE-ConnectionGUID: sHbWvgQxTeSos6DdEPqOcQ==
+X-CSE-MsgGUID: Pft9tYHlTx+cbyR3nMt93w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
+   d="scan'208";a="45966253"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO wieczorr-mobl1.intel.com) ([10.245.244.21])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 07:18:49 -0700
+From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+To: shuah@kernel.org,
+	reinette.chatre@intel.com,
+	fenghua.yu@intel.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	tony.luck@intel.com
+Subject: [PATCH v3 1/2] selftests/resctrl: Adjust effective L3 cache size with SNC enabled
+Date: Mon,  1 Jul 2024 16:18:04 +0200
+Message-ID: <1e6ed2bbbc7716a1606865b8e890afdfcea7ca1d.1719842207.git.maciej.wieczor-retman@intel.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <cover.1719842207.git.maciej.wieczor-retman@intel.com>
+References: <cover.1719842207.git.maciej.wieczor-retman@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <8ced519f-47f2-4a74-be6d-4be5958009ba@web.de>
 
-On Mon, Jul 01, 2024 at 07:21:18AM +0200, Markus Elfring wrote:
-> >> Under which circumstances would you become interested to apply a statement
-> >> like “guard(rcu)();”?
-> >
-> > Under no circumstances.
-> 
-> I imagine that further contributors would like to discuss collateral evolution
-> also according to the support for applications of scope-based resource management.
-> https://elixir.bootlin.com/linux/v6.10-rc6/source/include/linux/rcupdate.h#L1093
-> 
-> See also the commit 80cd613a9ae091dbf52e27a409d58da988ffc8f3 ("rcu:
-> Mollify sparse with RCU guard") from 2024-04-15.
+Sub-NUMA Cluster divides CPUs sharing an L3 cache into separate NUMA
+nodes. Systems may support splitting into either two, three or four
+nodes.
 
-Although the guard(rcu)() statement is very helpful in some circumstances
-and is seeing increasing use, it is not free of downsides in a number
-of situations.  For but one example, Matthew might expect that partially
-overlapping critical sections will be needed, which would rule out use of
-guards on one or the other of those two critical sections.
+When SNC mode is enabled the effective amount of L3 cache available
+for allocation is divided by the number of nodes per L3.
 
-							Thanx, Paul
+Detect which SNC mode is active by comparing the number of CPUs
+that share a cache with CPU0, with the number of CPUs on node0.
+
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Co-developed-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+---
+Changelog v3:
+- Added comment to cache size modification to better explain why it is
+  needed there. (Reinette)
+- Fix facts in patch message. (Reinette)
+- Change snc_ways() to snc_nodes_per_l3_cache(). (Reinette)
+
+ tools/testing/selftests/resctrl/resctrl.h   |  4 ++
+ tools/testing/selftests/resctrl/resctrlfs.c | 70 +++++++++++++++++++++
+ 2 files changed, 74 insertions(+)
+
+diff --git a/tools/testing/selftests/resctrl/resctrl.h b/tools/testing/selftests/resctrl/resctrl.h
+index 2dda56084588..851b37c9c38a 100644
+--- a/tools/testing/selftests/resctrl/resctrl.h
++++ b/tools/testing/selftests/resctrl/resctrl.h
+@@ -11,6 +11,7 @@
+ #include <signal.h>
+ #include <dirent.h>
+ #include <stdbool.h>
++#include <ctype.h>
+ #include <sys/stat.h>
+ #include <sys/ioctl.h>
+ #include <sys/mount.h>
+@@ -43,6 +44,8 @@
+ 
+ #define DEFAULT_SPAN		(250 * MB)
+ 
++#define MAX_SNC		4
++
+ /*
+  * user_params:		User supplied parameters
+  * @cpu:		CPU number to which the benchmark will be bound to
+@@ -120,6 +123,7 @@ extern volatile int *value_sink;
+ 
+ extern char llc_occup_path[1024];
+ 
++int snc_nodes_per_l3_cache(void);
+ int get_vendor(void);
+ bool check_resctrlfs_support(void);
+ int filter_dmesg(void);
+diff --git a/tools/testing/selftests/resctrl/resctrlfs.c b/tools/testing/selftests/resctrl/resctrlfs.c
+index 250c320349a7..18a31a2ba7b3 100644
+--- a/tools/testing/selftests/resctrl/resctrlfs.c
++++ b/tools/testing/selftests/resctrl/resctrlfs.c
+@@ -156,6 +156,65 @@ int get_domain_id(const char *resource, int cpu_no, int *domain_id)
+ 	return 0;
+ }
+ 
++/*
++ * Count number of CPUs in a /sys bit map
++ */
++static unsigned int count_sys_bitmap_bits(char *name)
++{
++	FILE *fp = fopen(name, "r");
++	int count = 0, c;
++
++	if (!fp)
++		return 0;
++
++	while ((c = fgetc(fp)) != EOF) {
++		if (!isxdigit(c))
++			continue;
++		switch (c) {
++		case 'f':
++			count++;
++		case '7': case 'b': case 'd': case 'e':
++			count++;
++		case '3': case '5': case '6': case '9': case 'a': case 'c':
++			count++;
++		case '1': case '2': case '4': case '8':
++			count++;
++		}
++	}
++	fclose(fp);
++
++	return count;
++}
++
++/*
++ * Detect SNC by comparing #CPUs in node0 with #CPUs sharing LLC with CPU0.
++ * If some CPUs are offline the numbers may not be exact multiples of each
++ * other. Any offline CPUs on node0 will be also gone from shared_cpu_map of
++ * CPU0 but offline CPUs from other nodes will only make the cache_cpus value
++ * lower. Still try to get the ratio right by preventing the second possibility.
++ */
++int snc_nodes_per_l3_cache(void)
++{
++	int node_cpus, cache_cpus, i, ret = 1;
++
++	node_cpus = count_sys_bitmap_bits("/sys/devices/system/node/node0/cpumap");
++	cache_cpus = count_sys_bitmap_bits("/sys/devices/system/cpu/cpu0/cache/index3/shared_cpu_map");
++
++	if (!node_cpus || !cache_cpus) {
++		ksft_print_msg("Could not determine Sub-NUMA Cluster mode!\n");
++		return 1;
++	}
++
++	for (i = 1; i <= MAX_SNC ; i++) {
++		if (i * node_cpus >= cache_cpus) {
++			ret = i;
++			break;
++		}
++	}
++
++	return ret;
++}
++
+ /*
+  * get_cache_size - Get cache size for a specified CPU
+  * @cpu_no:	CPU number
+@@ -211,6 +270,17 @@ int get_cache_size(int cpu_no, const char *cache_type, unsigned long *cache_size
+ 			break;
+ 	}
+ 
++	/*
++	 * The amount of cache represented by each bit in the masks
++	 * in the schemata file is reduced by a factor equal to SNC
++	 * nodes per L3 cache.
++	 * E.g. on a SNC-2 system with a 100MB L3 cache a test that
++	 * allocates memory from its local SNC node (default behavior
++	 * without using libnuma) will only see 50 MB llc_occupancy
++	 * with a fully populated L3 mask in the schemata file.
++	 */
++	if (cache_num == 3)
++		*cache_size /= snc_nodes_per_l3_cache();
+ 	return 0;
+ }
+ 
+-- 
+2.45.2
+
 
