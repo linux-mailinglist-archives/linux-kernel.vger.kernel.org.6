@@ -1,241 +1,219 @@
-Return-Path: <linux-kernel+bounces-236580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 155B391E44B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:37:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 419AE91E44D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:38:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B22D51F23DD7
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:37:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBC461F247EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:38:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82EE916D334;
-	Mon,  1 Jul 2024 15:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2829616D317;
+	Mon,  1 Jul 2024 15:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SkJaksBE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eA9wc509"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F68816CD2C;
-	Mon,  1 Jul 2024 15:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89BA9376E7;
+	Mon,  1 Jul 2024 15:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719848256; cv=none; b=ec4XR00+aVkGsMcS3LtjnAHBkg3XQGLckyLuYq/Am/pPdeXZnsgdgBDj/3gbvHIurWksDzvpaD8GtTq28tMNtJ2w3OVl2VHekg3VN9DINGFYel7iJEahnf+i8imglpmxZw5TfaC0hfpaOefrPuH6HbovLBWaPVqkit5cPcPROHk=
+	t=1719848321; cv=none; b=Dv9jDx8mOl4BI0yWQhdZvL+fdUX77rDvNvtV08IdDn22971q15BHrVKFsmbQE6wbdRz4ksumTd5HrGq70tozMtDIqok4iB7dGNs3swE0U4Xvmzgp2rrhmhS2iQKKquKM3ax5rMmjRVqSc4YUhneeAW4DAgNNgspSkYDWNmMacGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719848256; c=relaxed/simple;
-	bh=6xLG9gejykXLJ01LV0GBV05fGjC37m1kgN/owrHxuZs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CRxYolFwyy9EoyCXipQPyi5FrzDModNlQA/JQxLnYVO6ktdjX7BvwKvtZxgOIa4RT5dDXLEtLc6Tp8RQJkpfduG7zXr+5VYgeu3qBGCQIc/fVUzdNRmzSleVVKB05eud1IgM+IsLkk3+meBIBSDN7pPhdKLbsHPr3TW+k7kjSrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SkJaksBE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50E27C116B1;
-	Mon,  1 Jul 2024 15:37:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719848256;
-	bh=6xLG9gejykXLJ01LV0GBV05fGjC37m1kgN/owrHxuZs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SkJaksBEx4Hz4oBkA8Le19qm36sNpHmyaRMTPPREUG0cenY5pUw6iQEjIk1ndnjbY
-	 YevL3J2kqkzbO4dg7l9T3DCC5Nnk8SFMD31ogvUrvrFuNnF/OctJ70f6OeJEA/hO51
-	 Sm/oqcyEfQd6JkIe9/ZOuOonA3BZXfK3DjOE6bGl0TPvtzkgknvZ6Agia3dTjDJGaX
-	 bkCk/hPMOWqpcBnKP787wPQ9YQmWmQroUYBSGaSjaFMFch6IXbk4wrGv6h5KS87W64
-	 7LZ4E4835Sy5lowLQHyr5HgMKFd1/tBoHZlp9WRv+jHrdH84RBQ+eypRYzt60ugdk9
-	 O4MUIDInOJPyA==
-Date: Mon, 1 Jul 2024 16:37:31 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Serge Semin <fancer.lancer@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] dt-bindings: net: dwmac: Validate PBL for all
- IP-cores
-Message-ID: <20240701-concierge-goofy-dbed136abe4b@spud>
-References: <20240628154515.8783-1-fancer.lancer@gmail.com>
+	s=arc-20240116; t=1719848321; c=relaxed/simple;
+	bh=qGZSUpncTlrSVUhF9e8WztlZO/H62XIR+WPrDBCFjoA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=sa5DoeJo2qNzip/k/92hvWC9mG2qbEBl1vd+JDqdLjFu1RNt6FXynpsEuFl9CP5Oetu1GCGtdBFy0MBSH5SOiigrjH3wBzom1PIw7wxl9TfrpM3JBSsbegavhX6IM52MqxVU313Q+szrnPguriIfS7wOOp4zQfl8XT197xYhbCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eA9wc509; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4619pLsX006850;
+	Mon, 1 Jul 2024 15:38:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	WQNu3HGwsBvw34NNAmVNukSruR+Bp7trDgkn2Im5fCM=; b=eA9wc509jjj1vmb7
+	eJA99ekbRO0RoJQiYpvDmWq9Ty9eAd4uA5A6oyYD/804DzfK11z0Bxey24jAVPyT
+	o+HPf31DGemAFOSYWJzQydDMB30D8ldG4qsVSE+25DS0F6L6ghVbHknsSafL3n+M
+	J+7A530TrI5vtQ5GXPK32JzgeO3QPK9BtkKZGfbxzySYxQ0LrmzCr2S3IWEROc8V
+	fZH+AZesPQbdTlUdvRsBfi8Y+I4r24MagnDUBBG9Ag6TO3Sl7A+GowtMGQzfALDh
+	WcWVzccrNxpXU6YulGeg9V/3x8LDAoAyl4HSK77SM4uNKsrnbvUBxupBRJCeuNXg
+	2Q+NaQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4027mnmyw7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 01 Jul 2024 15:38:05 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 461Fc4Ff017655
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 1 Jul 2024 15:38:04 GMT
+Received: from [10.48.245.148] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 1 Jul 2024
+ 08:38:03 -0700
+Message-ID: <aac18765-4278-4ce0-a0f9-d249ba1d6872@quicinc.com>
+Date: Mon, 1 Jul 2024 08:38:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="XLWvfM11bBx7ol4T"
-Content-Disposition: inline
-In-Reply-To: <20240628154515.8783-1-fancer.lancer@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] perf: add missing MODULE_DESCRIPTION() macros
+To: Will Deacon <will@kernel.org>
+CC: Mark Rutland <mark.rutland@arm.com>,
+        Jonathan Cameron
+	<jonathan.cameron@huawei.com>,
+        Frank Li <Frank.li@nxp.com>, Shawn Guo
+	<shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix
+ Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Yicong Yang <yangyicong@hisilicon.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-cxl@vger.kernel.org>, <imx@lists.linux.dev>,
+        <kernel-janitors@vger.kernel.org>
+References: <20240620-md-drivers-perf-v2-1-1f88f8a08e48@quicinc.com>
+ <20240701140521.GF2250@willie-the-truck>
+Content-Language: en-US
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240701140521.GF2250@willie-the-truck>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: BbcI1LKTv-uvKs_nmSQ5TkuqOvGmHLkU
+X-Proofpoint-GUID: BbcI1LKTv-uvKs_nmSQ5TkuqOvGmHLkU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-01_15,2024-07-01_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ spamscore=0 malwarescore=0 adultscore=0 priorityscore=1501
+ lowpriorityscore=0 phishscore=0 mlxscore=0 suspectscore=0 clxscore=1015
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407010120
+
+On 7/1/2024 7:05 AM, Will Deacon wrote:
+> On Thu, Jun 20, 2024 at 06:46:09PM -0700, Jeff Johnson wrote:
+>> With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm-ccn.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/fsl_imx8_ddr_perf.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/marvell_cn10k_ddr_pmu.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/arm_cspmu_module.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/nvidia_cspmu.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/ampere_cspmu.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/cxl_pmu.o
+>>
+>> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
+>> files which have a MODULE_LICENSE().
+>>
+>> This includes drivers/perf/hisilicon/hisi_uncore_pmu.c which, although
+>> it did not produce a warning with the x86 allmodconfig configuration,
+>> may cause this warning with arm64 configurations.
+>>
+>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+>> ---
+>> Changes in v2:
+>> - Updated hisi_uncore_pmu.c description per Yicong Yang
+>> - Link to v1: https://lore.kernel.org/r/20240611-md-drivers-perf-v1-1-c001bae6da5c@quicinc.com
+>> ---
+>>  drivers/perf/arm-ccn.c                   | 1 +
+>>  drivers/perf/arm_cspmu/ampere_cspmu.c    | 1 +
+>>  drivers/perf/arm_cspmu/arm_cspmu.c       | 1 +
+>>  drivers/perf/arm_cspmu/nvidia_cspmu.c    | 1 +
+>>  drivers/perf/cxl_pmu.c                   | 1 +
+>>  drivers/perf/fsl_imx8_ddr_perf.c         | 1 +
+>>  drivers/perf/hisilicon/hisi_uncore_pmu.c | 1 +
+>>  drivers/perf/marvell_cn10k_ddr_pmu.c     | 1 +
+>>  8 files changed, 8 insertions(+)
+>>
+>> diff --git a/drivers/perf/arm-ccn.c b/drivers/perf/arm-ccn.c
+>> index 86ef31ac7503..65f4882531db 100644
+>> --- a/drivers/perf/arm-ccn.c
+>> +++ b/drivers/perf/arm-ccn.c
+>> @@ -1561,4 +1561,5 @@ module_init(arm_ccn_init);
+>>  module_exit(arm_ccn_exit);
+>>  
+>>  MODULE_AUTHOR("Pawel Moll <pawel.moll@arm.com>");
+>> +MODULE_DESCRIPTION("ARM CCN (Cache Coherent Network) driver support");
+>>  MODULE_LICENSE("GPL v2");
+>> diff --git a/drivers/perf/arm_cspmu/ampere_cspmu.c b/drivers/perf/arm_cspmu/ampere_cspmu.c
+>> index f146a455e838..426b3cfcb52e 100644
+>> --- a/drivers/perf/arm_cspmu/ampere_cspmu.c
+>> +++ b/drivers/perf/arm_cspmu/ampere_cspmu.c
+>> @@ -269,4 +269,5 @@ static void __exit ampere_cspmu_exit(void)
+>>  module_init(ampere_cspmu_init);
+>>  module_exit(ampere_cspmu_exit);
+>>  
+>> +MODULE_DESCRIPTION("Ampere SoC PMU (Performance Monitor Unit) driver");
+> 
+> Curious: why do you expand the PMU acronym here, but not for any of the
+> other drivers? If we're going to add these strings to all the drivers in
+> one go, then it would good to be consistent.
+
+Since I'm modifying hundreds of files treewide, I'm not spending much time on
+individual files. In most cases I've taken these descriptions directly from
+code comments, Kconfig descriptions, or git logs.
+
+This description was derived from the prologue comment in ampere_cspmu.c (I
+added "driver"):
+/*
+ * Ampere SoC PMU (Performance Monitor Unit)
+ *
+ * Copyright (c) 2023, Ampere Computing LLC
+ */
 
 
---XLWvfM11bBx7ol4T
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> 
+>>  MODULE_LICENSE("GPL");
+>> diff --git a/drivers/perf/arm_cspmu/arm_cspmu.c b/drivers/perf/arm_cspmu/arm_cspmu.c
+>> index c318dc909767..c21c564840d6 100644
+>> --- a/drivers/perf/arm_cspmu/arm_cspmu.c
+>> +++ b/drivers/perf/arm_cspmu/arm_cspmu.c
+>> @@ -1427,4 +1427,5 @@ EXPORT_SYMBOL_GPL(arm_cspmu_impl_unregister);
+>>  module_init(arm_cspmu_init);
+>>  module_exit(arm_cspmu_exit);
+>>  
+>> +MODULE_DESCRIPTION("ARM CoreSight Architecture PMU driver");
 
-On Fri, Jun 28, 2024 at 06:45:12PM +0300, Serge Semin wrote:
-> Indeed the maximum DMA burst length can be programmed not only for DW
-> xGMACs, Allwinner EMACs and Spear SoC GMAC, but in accordance with
-> [1, 2, 3] for Generic DW *MAC IP-cores. Moreover the STMMAC driver parses
-> the property and then apply the configuration for all supported DW MAC
-> devices. All of that makes the property being available for all IP-cores
-> the bindings supports. Let's make sure the PBL-related properties are
-> validated for all of them by the common DW *MAC DT schema.
+compare to prologue for this file:
+/*
+ * ARM CoreSight Architecture PMU driver.
+ *
 
-I'd been leaving this one for Rob, given the earlier discussion - but I
-had one (minor) comment about the commit message here. I think it is fine
-for the kernel to unconditionally read a property if present, with no
-regard for the compatible in question, and to rely on the binding
-ensuring that the properties are not used where invalid. IOW, I don't
-think that that is a relevant justification for making the properties
-available on all hardware.
+>>  MODULE_LICENSE("GPL v2");
+>> diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.c b/drivers/perf/arm_cspmu/nvidia_cspmu.c
+>> index 5b84b701ad62..0dea47e48ac5 100644
+>> --- a/drivers/perf/arm_cspmu/nvidia_cspmu.c
+>> +++ b/drivers/perf/arm_cspmu/nvidia_cspmu.c
+>> @@ -417,4 +417,5 @@ static void __exit nvidia_cspmu_exit(void)
+>>  module_init(nvidia_cspmu_init);
+>>  module_exit(nvidia_cspmu_exit);
+>>  
+>> +MODULE_DESCRIPTION("NVIDIA Coresight Architecture PMU driver");
+>>  MODULE_LICENSE("GPL v2");
+>> diff --git a/drivers/perf/cxl_pmu.c b/drivers/perf/cxl_pmu.c
+>> index 1f93a66eff5b..8b6ce9ea5a55 100644
+>> --- a/drivers/perf/cxl_pmu.c
+>> +++ b/drivers/perf/cxl_pmu.c
+>> @@ -972,6 +972,7 @@ static __exit void cxl_pmu_exit(void)
+>>  	cpuhp_remove_multi_state(cxl_pmu_cpuhp_state_num);
+>>  }
+>>  
+>> +MODULE_DESCRIPTION("CXL Performance Monitoring Unit driver");
+> 
+> Similarly here, we now have a conflicting expansion of the acronym.
 
-However, as you say, it seems like all versions of the core actually do
-support the features the properties control and therefore the patch is
-perfectly fine. I just wanted to ~comment on~nitpick that portion of the
-commit message.
+I'll make them consistent in the MODULE_DESCRIPTION()s.
+Do you have a preference for expanding or not expanding?
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-
-Thanks,
-Conor.
-
->=20
-> [1] DesignWare Cores Ethernet MAC Universal Databook, Revision 3.73a,
->     October 2013, p.378.
->=20
-> [2] DesignWare Cores Ethernet Quality-of-Service Databook, Revision 5.10a,
->     December 2017, p.1223.
->=20
-> [3] DesignWare Cores XGMAC - 10G Ethernet MAC Databook, Revision 2.11a,
->     September 2015, p.469-473.
->=20
-> Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
->=20
-> ---
->=20
-> The discussion where we agreed to submit this change:
-> Link: https://lore.kernel.org/netdev/20240625215442.190557-2-robh@kernel.=
-org
->=20
-> ---
->  .../devicetree/bindings/net/snps,dwmac.yaml   | 80 ++++++-------------
->  1 file changed, 26 insertions(+), 54 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Docu=
-mentation/devicetree/bindings/net/snps,dwmac.yaml
-> index 5a39d931e429..509086b76211 100644
-> --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-> +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-> @@ -447,6 +447,32 @@ properties:
->      description:
->        Use Address-Aligned Beats
-> =20
-> +  snps,pbl:
-> +    description:
-> +      Programmable Burst Length (tx and rx)
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [1, 2, 4, 8, 16, 32]
-> +
-> +  snps,txpbl:
-> +    description:
-> +      Tx Programmable Burst Length. If set, DMA tx will use this
-> +      value rather than snps,pbl.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [1, 2, 4, 8, 16, 32]
-> +
-> +  snps,rxpbl:
-> +    description:
-> +      Rx Programmable Burst Length. If set, DMA rx will use this
-> +      value rather than snps,pbl.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [1, 2, 4, 8, 16, 32]
-> +
-> +  snps,no-pbl-x8:
-> +    $ref: /schemas/types.yaml#/definitions/flag
-> +    description:
-> +      Don\'t multiply the pbl/txpbl/rxpbl values by 8. For core
-> +      rev < 3.50, don\'t multiply the values by 4.
-> +
->    snps,fixed-burst:
->      $ref: /schemas/types.yaml#/definitions/flag
->      description:
-> @@ -577,60 +603,6 @@ dependencies:
-> =20
->  allOf:
->    - $ref: ethernet-controller.yaml#
-> -  - if:
-> -      properties:
-> -        compatible:
-> -          contains:
-> -            enum:
-> -              - allwinner,sun7i-a20-gmac
-> -              - allwinner,sun8i-a83t-emac
-> -              - allwinner,sun8i-h3-emac
-> -              - allwinner,sun8i-r40-gmac
-> -              - allwinner,sun8i-v3s-emac
-> -              - allwinner,sun50i-a64-emac
-> -              - ingenic,jz4775-mac
-> -              - ingenic,x1000-mac
-> -              - ingenic,x1600-mac
-> -              - ingenic,x1830-mac
-> -              - ingenic,x2000-mac
-> -              - qcom,sa8775p-ethqos
-> -              - qcom,sc8280xp-ethqos
-> -              - snps,dwmac-3.50a
-> -              - snps,dwmac-4.10a
-> -              - snps,dwmac-4.20a
-> -              - snps,dwmac-5.20
-> -              - snps,dwxgmac
-> -              - snps,dwxgmac-2.10
-> -              - st,spear600-gmac
-> -
-> -    then:
-> -      properties:
-> -        snps,pbl:
-> -          description:
-> -            Programmable Burst Length (tx and rx)
-> -          $ref: /schemas/types.yaml#/definitions/uint32
-> -          enum: [1, 2, 4, 8, 16, 32]
-> -
-> -        snps,txpbl:
-> -          description:
-> -            Tx Programmable Burst Length. If set, DMA tx will use this
-> -            value rather than snps,pbl.
-> -          $ref: /schemas/types.yaml#/definitions/uint32
-> -          enum: [1, 2, 4, 8, 16, 32]
-> -
-> -        snps,rxpbl:
-> -          description:
-> -            Rx Programmable Burst Length. If set, DMA rx will use this
-> -            value rather than snps,pbl.
-> -          $ref: /schemas/types.yaml#/definitions/uint32
-> -          enum: [1, 2, 4, 8, 16, 32]
-> -
-> -        snps,no-pbl-x8:
-> -          $ref: /schemas/types.yaml#/definitions/flag
-> -          description:
-> -            Don\'t multiply the pbl/txpbl/rxpbl values by 8. For core
-> -            rev < 3.50, don\'t multiply the values by 4.
-> -
->    - if:
->        properties:
->          compatible:
-> --=20
-> 2.43.0
->=20
-
---XLWvfM11bBx7ol4T
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoLNOwAKCRB4tDGHoIJi
-0qAoAQD5uIvD5Yo0jgNBbfMZUUoUe3osh0lslMQBRktekRB+5gD/ZeKGDTzVMx6q
-WuSXdcuPPsnwUY+MrnknFBDdwPiwiAE=
-=QoSx
------END PGP SIGNATURE-----
-
---XLWvfM11bBx7ol4T--
+/jeff
 
