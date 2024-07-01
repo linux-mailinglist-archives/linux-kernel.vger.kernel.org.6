@@ -1,126 +1,116 @@
-Return-Path: <linux-kernel+bounces-235986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8E2C91DC16
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:09:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8817291DC1C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:10:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C6A12817AA
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:09:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16918B23525
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A35512BEBB;
-	Mon,  1 Jul 2024 10:08:58 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B74F12BF3A;
+	Mon,  1 Jul 2024 10:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="AdzFlVXn"
+Received: from mx1.riseup.net (mx1.riseup.net [198.252.153.129])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA5F38397
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 10:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0453E38397;
+	Mon,  1 Jul 2024 10:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719828537; cv=none; b=M7x9pNcTyC3cm86i7ppVsN9o6Yc/pjQBgqZXs3s0n9M6HNkRTKOwJvyqbYMXIDsr3cZUQfPcQX5n2xrn7vTPfbhnMeoulh/PdDDCW3i+UwQbtwU5sDeglGBHoUc8uC8Mi5X4ZrssqF4a82C+WxNj8ObsmNKlaEhvsgT+qpJRlMc=
+	t=1719828623; cv=none; b=PBZVR5Nf7JCWPgfaD0pYmRhnCKojxcMKMlc3Gv4nEQGbA/E7OUwDNMPJBwfxq7NKGG1622Fv/Pe+6JJU6HMsWl+EZOESNuZCjb/f2W+jU+KS85MDpREnpSf5R1zbcX1sFwXxbT4fqFfY8Ej/fFP3mWTU2nwdGIDfAQv3lSr6zbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719828537; c=relaxed/simple;
-	bh=DBE7iAf6douD2ekCMunjZ6GvuaMCKlqv3UvoSJdfo64=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=sEnya9qlk3Xq/CMmiAgbt/snV49qSvMl7IZ4QYtXXhB3P2yLBrfRHmZxB0mke3QGZNRgBiurbFUqUkpDe5YrnkmWEsJWyON6Gu/n0E0Sbg6C3Cppzze7bGlC1z5bEseYPb+k+f/9EmUk5rn8zhHXLaEYFI4GMZ09KKSmwmrs+G4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7f3c9b72aebso307290439f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 03:08:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719828535; x=1720433335;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2P3DiKTRhPXgRbdLfmRBRDpp1MsjZKjZ8JgmQvxrVMU=;
-        b=Q8KKFF4M1zdCaVR/L/g6iiuLp52ydNoTMoV+57txJl1DeQ2v9ZU3atoTG+DvlLmJid
-         0AMCV1uiuUQ2nJ4thO3fJPEt5FTKrGZIKacDqLt+Z1eOZoeizarvkfQKf9xONACIggK+
-         x7tZYwOYvOxeMk3ytHV5wYnEqre5ZuT70g5qqho7Z3DqZADGqPGmdQYhVP+zBAE2ech6
-         EmZnBEN2ypmPsO65vPUBe6CJVZ1BOW93q3B6Nz3fQKurbvXzrV4InQRIyaawKBWCciDa
-         haDLGHp1ligC9F+9gz6fTFMR6thRvWcyCJIL/lA57qEevpzImgS5etWx30WoTxbN3A9z
-         HQUQ==
-X-Gm-Message-State: AOJu0Yw83o2fKZ86veMAl54ewxt/aUgGtxTbz+xybEgou1CYwKGlTaFM
-	DI2DkipvGeU9dGZNxSoa1IrEueLyMIbZIAZYexU/IP1DW1X3jkMlYyb8QiidA1cJBAw2R+M7dLG
-	yY1bsi/nnRwc/LETGHWW4FsohsrDEIZ02Zfgx3Nq80uYtQ7ggce9xAIM=
-X-Google-Smtp-Source: AGHT+IEdfNicUut4M3jlEVimVVVhwNk8nA4O0ohYD8vGaqHdcXsx10hHJ5UtgfyNHyQUBxQBIS2EXZ4vimAv4rpf20W8IEfnGivj
+	s=arc-20240116; t=1719828623; c=relaxed/simple;
+	bh=3RsDpfCoTAZ3q1FNMCir3GnLeMMkBWdgV78aDzg85+A=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=bB/5Ool42tUYVeRICnAf/6MM6gTrMuEsrxGlvAXmYZLLfvD2F2MWmnfFZDTYJGkUyoQ1Ed0boYCCrtnIyOLHrICVUQu3a4qoYJephnmFhlotXGiL61xQI8e0MmmVqm0kT2RK1DSea17FXtF9xNY2aiYanYfoNVjV8uQrLxwT4PA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=AdzFlVXn; arc=none smtp.client-ip=198.252.153.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
+Received: from mx0.riseup.net (mx0-pn.riseup.net [10.0.1.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx1.riseup.net (Postfix) with ESMTPS id 4WCMHC0fCCzDqh4;
+	Mon,  1 Jul 2024 10:10:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
+	t=1719828615; bh=3RsDpfCoTAZ3q1FNMCir3GnLeMMkBWdgV78aDzg85+A=;
+	h=From:Date:Subject:To:Cc:From;
+	b=AdzFlVXnCppvzWVbrzh//iVrRDRZSf40pXrYiwxVDwzhCAxHtWvldkLicD1ixBpV+
+	 Eta5GCfLmvF2ZqO60c6WNwnu2ZYNmaSkBR5ATIAAX6/3W9QqXG+UANPG9QJs2Qh4jS
+	 Pg1NsCmOqNVkhISHTzem7/LCtNO4XJ6lxnrdGsXY=
+Received: from fews01-sea.riseup.net (fews01-sea-pn.riseup.net [10.0.1.109])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx0.riseup.net (Postfix) with ESMTPS id 4WCMH35p0Jz9vXW;
+	Mon,  1 Jul 2024 10:10:07 +0000 (UTC)
+X-Riseup-User-ID: 1D35BC222651F46F43E4F43BC3D5A4A6C635349B67A1625C0F0EC58AC523AE47
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	 by fews01-sea.riseup.net (Postfix) with ESMTPSA id 4WCMGn5hsDzJrqG;
+	Mon,  1 Jul 2024 10:09:53 +0000 (UTC)
+From: Dang Huynh <danct12@riseup.net>
+Date: Mon, 01 Jul 2024 17:09:42 +0700
+Subject: [PATCH] arm64: dts: qcom: qrb4210-rb2: Correct PMI632 VBUS voltage
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6d8b:b0:7f6:28ed:efe5 with SMTP id
- ca18e2360f4ac-7f62ee8869bmr45896939f.2.1719828534415; Mon, 01 Jul 2024
- 03:08:54 -0700 (PDT)
-Date: Mon, 01 Jul 2024 03:08:54 -0700
-In-Reply-To: <0000000000004cf0fe06160c8d71@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000de633e061c2cc882@google.com>
-Subject: Re: [syzbot] [syzbot] [bpf?] KMSAN: uninit-value in htab_percpu_map_lookup_elem
-From: syzbot <syzbot+0a079d6ef3831217a230@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240701-qrd4210rb2-vbus-volt-v1-1-5c06f8358436@riseup.net>
+X-B4-Tracking: v=1; b=H4sIAGWAgmYC/x3MQQqEMAxA0atI1gbaUKx4lcGFrVEDomPqlAHx7
+ haXb/H/BYlVOEFXXaCcJcm+Fdi6grgM28woYzGQIWe8sXjo6MgaDYQ5/BLmfT2xJfKNiz5OcYC
+ SfpUn+b/bT3/fD7xOmVpmAAAA
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Luca Weiss <luca.weiss@fairphone.com>, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dang Huynh <danct12@riseup.net>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+According to downstream sources, PMI632 maximum VBUS voltage is
+1 volt.
 
-***
+Taken from msm-4.19 (631561973a034e46ccacd0e53ef65d13a40d87a4)
+Line 685-687 in drivers/power/supply/qcom/qpnp-smb5.c
 
-Subject: [syzbot] [bpf?] KMSAN: uninit-value in htab_percpu_map_lookup_elem
-Author: wojciech.gladysz@infogain.com
+Signed-off-by: Dang Huynh <danct12@riseup.net>
+---
+In previous patch series, there's a suggestion to correct
+PMI632's VBUS voltage.
 
-#syz test: https://linux.googlesource.com/linux/kernel/git/torvalds/linux e478cf26c556e4ab572ab0ab2306c986901dcd61
+Unfortunately it didn't make it and probably forgotten.
+---
+ arch/arm64/boot/dts/qcom/qrb4210-rb2.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
+index 1c7de7f2db79..1888d99d398b 100644
+--- a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
++++ b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
+@@ -305,7 +305,7 @@ pmi632_ss_in: endpoint {
+ 
+ &pmi632_vbus {
+ 	regulator-min-microamp = <500000>;
+-	regulator-max-microamp = <3000000>;
++	regulator-max-microamp = <1000000>;
+ 	status = "okay";
+ };
+ 
 
 ---
- kernel/bpf/verifier.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+base-commit: 642a16ca7994a50d7de85715996a8ce171a5bdfb
+change-id: 20240701-qrd4210rb2-vbus-volt-822764c7cfca
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 36ef8e96787e..13a9c2e2908a 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -7146,8 +7146,8 @@ static int check_stack_range_initialized(
- 		 * reads. However, if raw_mode is not set, we'll do extra
- 		 * checks below.
- 		 */
--		bounds_check_type = BPF_WRITE;
--		clobber = true;
-+		clobber = !meta || meta->raw_mode;
-+		bounds_check_type = clobber ? BPF_WRITE : BPF_READ;
- 	} else {
- 		bounds_check_type = BPF_READ;
- 	}
-@@ -7230,8 +7230,7 @@ static int check_stack_range_initialized(
- 		stype = &state->stack[spi].slot_type[slot % BPF_REG_SIZE];
- 		if (*stype == STACK_MISC)
- 			goto mark;
--		if ((*stype == STACK_ZERO) ||
--		    (*stype == STACK_INVALID && env->allow_uninit_stack)) {
-+		if (*stype == STACK_ZERO) {
- 			if (clobber) {
- 				/* helper can write anything into the stack */
- 				*stype = STACK_MISC;
-@@ -8748,6 +8747,8 @@ static int check_func_arg(struct bpf_verifier_env *env, u32 arg,
- 		meta->map_uid = reg->map_uid;
- 		break;
- 	case ARG_PTR_TO_MAP_KEY:
-+		/* always mark read access */
-+		meta->raw_mode = false;
- 		/* bpf_map_xxx(..., map_ptr, ..., key) call:
- 		 * check that [key, key + map->key_size) are within
- 		 * stack limits and initialized
-@@ -8763,7 +8764,7 @@ static int check_func_arg(struct bpf_verifier_env *env, u32 arg,
- 		}
- 		err = check_helper_mem_access(env, regno,
- 					      meta->map_ptr->key_size, false,
--					      NULL);
-+					      meta);
- 		break;
- 	case ARG_PTR_TO_MAP_VALUE:
- 		if (type_may_be_null(arg_type) && register_is_null(reg))
+Best regards,
 -- 
-2.35.3
+Dang Huynh <danct12@riseup.net>
+
 
