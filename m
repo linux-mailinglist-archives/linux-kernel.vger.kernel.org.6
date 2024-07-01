@@ -1,200 +1,332 @@
-Return-Path: <linux-kernel+bounces-237075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28A4891EAC8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 00:19:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D180591EAD1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 00:27:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A91232828CF
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 22:19:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 881CA2831B3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 22:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B78A5171662;
-	Mon,  1 Jul 2024 22:19:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40EB1171658;
+	Mon,  1 Jul 2024 22:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VhYTboMk"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g6s4g3r8"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5247538394;
-	Mon,  1 Jul 2024 22:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EE64153835
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 22:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719872384; cv=none; b=pgm57OX1uLH1AeQjxjIgeg3ZzKN9ZEpXfc+lsiP+VOdDPiq8bxO3R5jRuuo0xJGRW1bxMrqIzCGLbsmU/1Kq7j1hUvqOGnk/8vxZ5Hef9oto6jM57gqyONHvL2EZVT6cFe0yPpByy0oxywiwO7x63AJFFSwDY2o5N79JTWm2M4I=
+	t=1719872818; cv=none; b=UZUhPf1glrPde2l+eiqXOWa33vHrBYVyuujn1eZgG1PV7M/d1Sgca8F2PgfhGrScpb98Vf92R0nIGhP58+ZQ/Ka4AfW5N4Aw2edM9RAz6XO4L0+0z5oT4vnFc4ZTVaicUrt1/rhHR3iYA0wyNn81NMroW9XsFNOi14s+jPp2tns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719872384; c=relaxed/simple;
-	bh=oTe6pp84cdG5j4yQ9X9fQZvdeb7qLRuCIJkf/86nbP4=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=BqG7TZa58dfvtBwVF/FbivEI2ddfyp81uENMQijSaHKH2MCCfUo+4oc2UM7jqPVExhjuWuDVX97nngY/q5wJ6zAtRB+Mfa7LeWCt8st3iv2qAyRki8qwopDDknr56lGZiUKpK43HGbFxxrG3abFDica867f47XpzgLCye/9V6mQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VhYTboMk; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719872383; x=1751408383;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=oTe6pp84cdG5j4yQ9X9fQZvdeb7qLRuCIJkf/86nbP4=;
-  b=VhYTboMkU8gn3ckBb13GOLeTRFdv43WZlqw84WHNf4mB3p7jBWbhrt3t
-   s5QCNkWh2aVMTGQEP5RZKKora4L6SA4QxIFYg7Z1h8ANYM/8EnZig/g2h
-   m7X6mtgxwn4PIayynv6RD9bNxVKjADzAlEsa5Z+HlaAstBxbUqwjHYL3W
-   F/Q8miCXVE9Flwbw76CvwueTOvBb+347xDrMTtHDjXy1qv7mJxG9zfWZt
-   H11R46HuBSeS4Em+Ej4TpdJ59LkjK6cMIi9OVkU9JsZOCEsF1AEbVYWu7
-   AVbkUQrLOUcIkzXWFJW3C9ny2eb2UlBa65nSIG3Zd5skmLFFpEpb+2Rpj
-   g==;
-X-CSE-ConnectionGUID: 4pFGYcLIS1eysnFF25Y2MA==
-X-CSE-MsgGUID: Ia+KmjtZSaau9mlLmBIRXw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="17165146"
-X-IronPort-AV: E=Sophos;i="6.09,177,1716274800"; 
-   d="scan'208";a="17165146"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 15:19:42 -0700
-X-CSE-ConnectionGUID: vkPELPRFS9qoJF7OpJ4mJg==
-X-CSE-MsgGUID: Dg0YZb/QS/yenlP5pesyKQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,177,1716274800"; 
-   d="scan'208";a="83216803"
-Received: from sj-4150-psse-sw-opae-dev2.sj.intel.com ([10.233.115.162])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 15:19:41 -0700
-Date: Mon, 1 Jul 2024 15:19:31 -0700 (PDT)
-From: matthew.gerlach@linux.intel.com
-X-X-Sender: mgerlach@sj-4150-psse-sw-opae-dev2
-To: Conor Dooley <conor@kernel.org>
-cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org, bhelgaas@google.com, 
-    krzk+dt@kernel.org, conor+dt@kernel.org, joyce.ooi@intel.com, 
-    linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7] dt-bindings: PCI: altera: Convert to YAML
-In-Reply-To: <20240627-finer-expel-2c7ab9f05733@spud>
-Message-ID: <alpine.DEB.2.22.394.2407011517270.757537@sj-4150-psse-sw-opae-dev2>
-References: <20240614163520.494047-1-matthew.gerlach@linux.intel.com> <20240627-finer-expel-2c7ab9f05733@spud>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+	s=arc-20240116; t=1719872818; c=relaxed/simple;
+	bh=X4fU4jJhuutoKrbHWp/vR/sx7mSrhQQclqNYjphnL9U=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=DEMUdXXsDmJN5atC7wyZ5bWyt0iMw/vZCrb+IRRyk1L44KesveJJa6TzbTbKKi9TcwciodGuKoyc/ThLqH8Bq9cBqwhx/RwHzDGWLVdBxnLIl1jo7QUP+qBpdQt39AIK5irDoHSqH/Y7VjwZvtYnv9veBxpCPTuzYDX1VN54ANA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaslanka.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=g6s4g3r8; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mmaslanka.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e034f972e8bso5996625276.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 15:26:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719872815; x=1720477615; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5trD/scqVKhMYOlYiGg8D8SgzaZrrv+skpQvukGH0vA=;
+        b=g6s4g3r8tv+AaaxdTrChQ3ogJyMyUEZpnrQId4phQJyDL36eytsTDM1CfDoBJc+nWt
+         UO1QPpMppN/UN8e3QxK0t8xXLYZ186Vj2eNsSSb5U0y0LGOYusrpgMxxK7UA3qTpY7Qg
+         1r4hmqr1PwlSgSpZw6zXR6NQ1hXbT7O1/UaHuTUrB/wzKIk1BhszDBGyjHzU2tKzN9VA
+         QtOlvT75Gvyuhm+swdsvAxTCpazXs5lGpLyyOJkNZ7rVu2P0Cexb1N5RWyC7/drxr2mN
+         fmSw9uEkYd/8dYR51+a06SfjbXKIPgKkZt1nf3SgCR21SMDU2CLwSq5E7K69fUhY/305
+         S/QQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719872815; x=1720477615;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5trD/scqVKhMYOlYiGg8D8SgzaZrrv+skpQvukGH0vA=;
+        b=WvogXVu4ayuPesrvl7bmVkIBwfzS5JNLnIXa3KULQxt+mNT+hmi8Zy35W/hZaboXU8
+         Y9fK5AMyV4SwoTl+zGp3BFyuhVGsxaQj66VgCoFjdoCwlK5Au7cOsjpSl513EpxhZnQL
+         YdHv8sh26gxife+TKTHSpb9S79FnOj9PxwlZPn3coezd7fZciEglTmdEw4O1shqGZdp2
+         i0FEtIMPrOEqfFGdSxfBzVNXZgTuw3FAu464F2DpfnaA0VF0NPax+zHTSiYAi/+A+9gw
+         AMON2hYH9fh0Zye+yEd+gbxqBoMcmjnNc+nxiJeh/GJrlv3NwPjwoA+kPTe0eu1V0mem
+         Lh0Q==
+X-Gm-Message-State: AOJu0YwTRFNr8o6hpSMrUrSTFWEwVfj71SRrfaKKwnUhgGfXQTXQumqg
+	AT8xuR3dOM9AtcbGzJCkT53Ik4k71aCsozXc2veTVAyU/uXleXWGy839QVSVvrTEnNcLi4mrgp8
+	jJR4FVHMLlZm7e1QkAZw0bRKmc+s6p2z/yAOlB7B37zJgpdwnm0Gk1sC+vhi61xRioTyzYwHmKg
+	UBD9DvpiIs+1LjgQpHv5haeRDi/Fg+Nwed6Fm+x99moMkhWN7aElR4sHM4
+X-Google-Smtp-Source: AGHT+IEqxxekV1PvR444SOwh3pWOrp1CoA4nls0Y/iOA2UhypmDktxGu48mVAjQWnTzkzruMrpyTyAvD6VVsSNk=
+X-Received: from mmaslanka2.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:b8d])
+ (user=mmaslanka job=sendgmr) by 2002:a05:6902:c03:b0:e03:2f90:e81d with SMTP
+ id 3f1490d57ef6-e036ec6eaa0mr715551276.11.1719872815295; Mon, 01 Jul 2024
+ 15:26:55 -0700 (PDT)
+Date: Mon,  1 Jul 2024 22:25:11 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
+Message-ID: <20240701222508.1.I872f9412fdb7cdc20d7c6e98b93daa014f3616dc@changeid>
+Subject: [PATCH] platform/x86:intel/pmc: Enable the ACPI PM Timer to be turned
+ off when suspended
+From: Marek Maslanka <mmaslanka@google.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Marek Maslanka <mmaslanka@google.com>, David E Box <david.e.box@intel.com>, 
+	Hans de Goede <hdegoede@redhat.com>, 
+	"=?UTF-8?q?Ilpo=20J=C3=A4rvinen?=" <ilpo.jarvinen@linux.intel.com>, 
+	Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>, platform-driver-x86@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Allow to disable ACPI PM Timer on suspend and enable on resume. A
+disabled timer helps optimise power consumption when the system is
+suspended. On resume the timer is only reactivated if it was activated
+prior to suspend, so unless the ACPI PM timer is enabled in the BIOS,
+this won't change anything.
 
+Signed-off-by: Marek Maslanka <mmaslanka@google.com>
+---
 
-On Thu, 27 Jun 2024, Conor Dooley wrote:
+ drivers/platform/x86/intel/pmc/Kconfig | 13 ++++++++
+ drivers/platform/x86/intel/pmc/adl.c   |  4 +++
+ drivers/platform/x86/intel/pmc/cnp.c   |  4 +++
+ drivers/platform/x86/intel/pmc/core.c  | 43 ++++++++++++++++++++++++++
+ drivers/platform/x86/intel/pmc/core.h  | 14 +++++++++
+ drivers/platform/x86/intel/pmc/icl.c   |  4 +++
+ drivers/platform/x86/intel/pmc/mtl.c   |  4 +++
+ drivers/platform/x86/intel/pmc/spt.c   |  4 +++
+ drivers/platform/x86/intel/pmc/tgl.c   |  4 +++
+ 9 files changed, 94 insertions(+)
 
-> Been stalling replying here, was wondering if Rob would look given he
-> reviewed the previous versions.
->
-> On Fri, Jun 14, 2024 at 11:35:20AM -0500, matthew.gerlach@linux.intel.com wrote:
->> From: Matthew Gerlach <matthew.gerlach@linux.intel.com>
->>
->> Convert the device tree bindings for the Altera Root Port PCIe controller
->> from text to YAML. Update the entries in the interrupt-map field to have
->> the correct number of address cells for the interrupt parent.
->>
->> Signed-off-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
->> diff --git a/Documentation/devicetree/bindings/pci/altera-pcie.txt b/Documentation/devicetree/bindings/pci/altera-pcie.txt
->> deleted file mode 100644
->> index 816b244a221e..000000000000
->> --- a/Documentation/devicetree/bindings/pci/altera-pcie.txt
->> +++ /dev/null
->> @@ -1,50 +0,0 @@
->> -* Altera PCIe controller
->> -
->> -Required properties:
->> -- compatible :	should contain "altr,pcie-root-port-1.0" or "altr,pcie-root-port-2.0"
->> -- reg:		a list of physical base address and length for TXS and CRA.
->> -		For "altr,pcie-root-port-2.0", additional HIP base address and length.
->> -- reg-names:	must include the following entries:
->> -		"Txs": TX slave port region
->> -		"Cra": Control register access region
->
->> -		"Hip": Hard IP region (if "altr,pcie-root-port-2.0")
->
-> I think this should be constrained in the new yaml binding by setting
-> maxItems: for reg/reg-names to 2 for 1.0 and, if I am not
-> misunderstanding what "must include" means, minItems: to 3 for 2.0.
+diff --git a/drivers/platform/x86/intel/pmc/Kconfig b/drivers/platform/x86/intel/pmc/Kconfig
+index d2f651fbec2cf..3a563db8eba6a 100644
+--- a/drivers/platform/x86/intel/pmc/Kconfig
++++ b/drivers/platform/x86/intel/pmc/Kconfig
+@@ -24,3 +24,16 @@ config INTEL_PMC_CORE
+ 		- SLPS0 Debug registers (Cannonlake/Icelake PCH)
+ 		- Low Power Mode registers (Tigerlake and beyond)
+ 		- PMC quirks as needed to enable SLPS0/S0ix
++
++config DISABLE_ACPI_PM_TIMER_ON_SUSPEND
++	bool "Disable ACPI PM Timer on suspend"
++	default n
++	depends on INTEL_PMC_CORE
++	help
++	  Disable ACPI Power Management Timer on entering to suspend and enable it
++	  on resume. This helps optimize energy consumption while the system is
++	  suspend.
++
++	  This is only applicable if the ACPI PM timer is enabled by the BIOS.
++
++	  Say N if unsure.
+diff --git a/drivers/platform/x86/intel/pmc/adl.c b/drivers/platform/x86/intel/pmc/adl.c
+index e7878558fd909..8859e0d275288 100644
+--- a/drivers/platform/x86/intel/pmc/adl.c
++++ b/drivers/platform/x86/intel/pmc/adl.c
+@@ -295,6 +295,10 @@ const struct pmc_reg_map adl_reg_map = {
+ 	.ppfear_buckets = CNP_PPFEAR_NUM_ENTRIES,
+ 	.pm_cfg_offset = CNP_PMC_PM_CFG_OFFSET,
+ 	.pm_read_disable_bit = CNP_PMC_READ_DISABLE_BIT,
++#ifdef CONFIG_DISABLE_ACPI_PM_TIMER_ON_SUSPEND
++	.acpi_pm_tmr_ctl_offset = SPT_PMC_ACPI_PM_TMR_CTL_OFFSET,
++	.acpi_pm_tmr_disable_bit = SPT_PMC_BIT_ACPI_PM_TMR_DISABLE,
++#endif /* CONFIG_DISABLE_ACPI_PM_TIMER_ON_SUSPEND */
+ 	.ltr_ignore_max = ADL_NUM_IP_IGN_ALLOWED,
+ 	.lpm_num_modes = ADL_LPM_NUM_MODES,
+ 	.lpm_num_maps = ADL_LPM_NUM_MAPS,
+diff --git a/drivers/platform/x86/intel/pmc/cnp.c b/drivers/platform/x86/intel/pmc/cnp.c
+index dd72974bf71e2..e92157aa3c9f1 100644
+--- a/drivers/platform/x86/intel/pmc/cnp.c
++++ b/drivers/platform/x86/intel/pmc/cnp.c
+@@ -200,6 +200,10 @@ const struct pmc_reg_map cnp_reg_map = {
+ 	.ppfear_buckets = CNP_PPFEAR_NUM_ENTRIES,
+ 	.pm_cfg_offset = CNP_PMC_PM_CFG_OFFSET,
+ 	.pm_read_disable_bit = CNP_PMC_READ_DISABLE_BIT,
++#ifdef CONFIG_DISABLE_ACPI_PM_TIMER_ON_SUSPEND
++	.acpi_pm_tmr_ctl_offset = SPT_PMC_ACPI_PM_TMR_CTL_OFFSET,
++	.acpi_pm_tmr_disable_bit = SPT_PMC_BIT_ACPI_PM_TMR_DISABLE,
++#endif /* CONFIG_DISABLE_ACPI_PM_TIMER_ON_SUSPEND */
+ 	.ltr_ignore_max = CNP_NUM_IP_IGN_ALLOWED,
+ 	.etr3_offset = ETR3_OFFSET,
+ };
+diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
+index 10c96c1a850af..a3e56c524308f 100644
+--- a/drivers/platform/x86/intel/pmc/core.c
++++ b/drivers/platform/x86/intel/pmc/core.c
+@@ -1171,6 +1171,37 @@ static bool pmc_core_is_pson_residency_enabled(struct pmc_dev *pmcdev)
+ 	return val == 1;
+ }
+ 
++#ifdef CONFIG_DISABLE_ACPI_PM_TIMER_ON_SUSPEND
++/*
++ * Enable or disable APCI PM Timer
++ *
++ * @return: Previous APCI PM Timer enabled state
++ */
++static bool pmc_core_enable_apci_pm_timer(struct pmc_dev *pmcdev, bool enable)
++{
++	struct pmc *pmc = pmcdev->pmcs[PMC_IDX_MAIN];
++	const struct pmc_reg_map *map = pmc->map;
++	bool state;
++	u32 reg;
++
++	if (!map->acpi_pm_tmr_ctl_offset)
++		return false;
++
++	mutex_lock(&pmcdev->lock);
++
++	reg = pmc_core_reg_read(pmc, map->acpi_pm_tmr_ctl_offset);
++	state = !(reg & map->acpi_pm_tmr_disable_bit);
++	if (enable)
++		reg &= ~map->acpi_pm_tmr_disable_bit;
++	else
++		reg |= map->acpi_pm_tmr_disable_bit;
++	pmc_core_reg_write(pmc, map->acpi_pm_tmr_ctl_offset, reg);
++
++	mutex_unlock(&pmcdev->lock);
++
++	return state;
++}
++#endif /* CONFIG_DISABLE_ACPI_PM_TIMER_ON_SUSPEND */
+ 
+ static void pmc_core_dbgfs_unregister(struct pmc_dev *pmcdev)
+ {
+@@ -1446,6 +1477,12 @@ static __maybe_unused int pmc_core_suspend(struct device *dev)
+ 	if (pmcdev->suspend)
+ 		pmcdev->suspend(pmcdev);
+ 
++#ifdef CONFIG_DISABLE_ACPI_PM_TIMER_ON_SUSPEND
++	/* Disable APCI PM Timer */
++	pmcdev->enable_acpi_pm_timer_on_resume =
++		pmc_core_enable_apci_pm_timer(pmcdev, false);
++#endif /* CONFIG_DISABLE_ACPI_PM_TIMER_ON_SUSPEND */
++
+ 	/* Check if the syspend will actually use S0ix */
+ 	if (pm_suspend_via_firmware())
+ 		return 0;
+@@ -1500,6 +1537,12 @@ int pmc_core_resume_common(struct pmc_dev *pmcdev)
+ 	int offset = pmc->map->lpm_status_offset;
+ 	int i;
+ 
++#ifdef CONFIG_DISABLE_ACPI_PM_TIMER_ON_SUSPEND
++	/* Enable APCI PM Timer */
++	if (pmcdev->enable_acpi_pm_timer_on_resume)
++		pmc_core_enable_apci_pm_timer(pmcdev, true);
++#endif /* CONFIG_DISABLE_ACPI_PM_TIMER_ON_SUSPEND */
++
+ 	/* Check if the syspend used S0ix */
+ 	if (pm_suspend_via_firmware())
+ 		return 0;
+diff --git a/drivers/platform/x86/intel/pmc/core.h b/drivers/platform/x86/intel/pmc/core.h
+index 83504c49a0e31..4d5983d741433 100644
+--- a/drivers/platform/x86/intel/pmc/core.h
++++ b/drivers/platform/x86/intel/pmc/core.h
+@@ -67,6 +67,10 @@ struct telem_endpoint;
+ #define SPT_PMC_LTR_SCC				0x3A0
+ #define SPT_PMC_LTR_ISH				0x3A4
+ 
++#ifdef CONFIG_DISABLE_ACPI_PM_TIMER_ON_SUSPEND
++#define SPT_PMC_ACPI_PM_TMR_CTL_OFFSET		0x18FC
++#endif /* CONFIG_DISABLE_ACPI_PM_TIMER_ON_SUSPEND */
++
+ /* Sunrise Point: PGD PFET Enable Ack Status Registers */
+ enum ppfear_regs {
+ 	SPT_PMC_XRAM_PPFEAR0A = 0x590,
+@@ -147,6 +151,10 @@ enum ppfear_regs {
+ #define SPT_PMC_VRIC1_SLPS0LVEN			BIT(13)
+ #define SPT_PMC_VRIC1_XTALSDQDIS		BIT(22)
+ 
++#ifdef CONFIG_DISABLE_ACPI_PM_TIMER_ON_SUSPEND
++#define SPT_PMC_BIT_ACPI_PM_TMR_DISABLE		BIT(1)
++#endif /* CONFIG_DISABLE_ACPI_PM_TIMER_ON_SUSPEND */
++
+ /* Cannonlake Power Management Controller register offsets */
+ #define CNP_PMC_SLPS0_DBG_OFFSET		0x10B4
+ #define CNP_PMC_PM_CFG_OFFSET			0x1818
+@@ -344,6 +352,8 @@ struct pmc_reg_map {
+ 	const u8  *lpm_reg_index;
+ 	const u32 pson_residency_offset;
+ 	const u32 pson_residency_counter_step;
++	const u32 acpi_pm_tmr_ctl_offset;
++	const u32 acpi_pm_tmr_disable_bit;
+ };
+ 
+ /**
+@@ -417,6 +427,10 @@ struct pmc_dev {
+ 	u32 die_c6_offset;
+ 	struct telem_endpoint *punit_ep;
+ 	struct pmc_info *regmap_list;
++
++#ifdef CONFIG_DISABLE_ACPI_PM_TIMER_ON_SUSPEND
++	bool enable_acpi_pm_timer_on_resume;
++#endif /* CONFIG_DISABLE_ACPI_PM_TIMER_ON_SUSPEND */
+ };
+ 
+ enum pmc_index {
+diff --git a/drivers/platform/x86/intel/pmc/icl.c b/drivers/platform/x86/intel/pmc/icl.c
+index 71b0fd6cb7d84..8b5c782e71ebd 100644
+--- a/drivers/platform/x86/intel/pmc/icl.c
++++ b/drivers/platform/x86/intel/pmc/icl.c
+@@ -46,6 +46,10 @@ const struct pmc_reg_map icl_reg_map = {
+ 	.ppfear_buckets = ICL_PPFEAR_NUM_ENTRIES,
+ 	.pm_cfg_offset = CNP_PMC_PM_CFG_OFFSET,
+ 	.pm_read_disable_bit = CNP_PMC_READ_DISABLE_BIT,
++#ifdef CONFIG_DISABLE_ACPI_PM_TIMER_ON_SUSPEND
++	.acpi_pm_tmr_ctl_offset = SPT_PMC_ACPI_PM_TMR_CTL_OFFSET,
++	.acpi_pm_tmr_disable_bit = SPT_PMC_BIT_ACPI_PM_TMR_DISABLE,
++#endif /* CONFIG_DISABLE_ACPI_PM_TIMER_ON_SUSPEND */
+ 	.ltr_ignore_max = ICL_NUM_IP_IGN_ALLOWED,
+ 	.etr3_offset = ETR3_OFFSET,
+ };
+diff --git a/drivers/platform/x86/intel/pmc/mtl.c b/drivers/platform/x86/intel/pmc/mtl.c
+index c7d15d864039d..c726ef8f1d5a9 100644
+--- a/drivers/platform/x86/intel/pmc/mtl.c
++++ b/drivers/platform/x86/intel/pmc/mtl.c
+@@ -462,6 +462,10 @@ const struct pmc_reg_map mtl_socm_reg_map = {
+ 	.ppfear_buckets = MTL_SOCM_PPFEAR_NUM_ENTRIES,
+ 	.pm_cfg_offset = CNP_PMC_PM_CFG_OFFSET,
+ 	.pm_read_disable_bit = CNP_PMC_READ_DISABLE_BIT,
++#ifdef CONFIG_DISABLE_ACPI_PM_TIMER_ON_SUSPEND
++	.acpi_pm_tmr_ctl_offset = SPT_PMC_ACPI_PM_TMR_CTL_OFFSET,
++	.acpi_pm_tmr_disable_bit = SPT_PMC_BIT_ACPI_PM_TMR_DISABLE,
++#endif /* CONFIG_DISABLE_ACPI_PM_TIMER_ON_SUSPEND */
+ 	.lpm_num_maps = ADL_LPM_NUM_MAPS,
+ 	.ltr_ignore_max = MTL_SOCM_NUM_IP_IGN_ALLOWED,
+ 	.lpm_res_counter_step_x2 = TGL_PMC_LPM_RES_COUNTER_STEP_X2,
+diff --git a/drivers/platform/x86/intel/pmc/spt.c b/drivers/platform/x86/intel/pmc/spt.c
+index ab993a69e33ee..4832e953d0403 100644
+--- a/drivers/platform/x86/intel/pmc/spt.c
++++ b/drivers/platform/x86/intel/pmc/spt.c
+@@ -130,6 +130,10 @@ const struct pmc_reg_map spt_reg_map = {
+ 	.ppfear_buckets = SPT_PPFEAR_NUM_ENTRIES,
+ 	.pm_cfg_offset = SPT_PMC_PM_CFG_OFFSET,
+ 	.pm_read_disable_bit = SPT_PMC_READ_DISABLE_BIT,
++#ifdef CONFIG_DISABLE_ACPI_PM_TIMER_ON_SUSPEND
++	.acpi_pm_tmr_ctl_offset = SPT_PMC_ACPI_PM_TMR_CTL_OFFSET,
++	.acpi_pm_tmr_disable_bit = SPT_PMC_BIT_ACPI_PM_TMR_DISABLE,
++#endif /* CONFIG_DISABLE_ACPI_PM_TIMER_ON_SUSPEND */
+ 	.ltr_ignore_max = SPT_NUM_IP_IGN_ALLOWED,
+ 	.pm_vric1_offset = SPT_PMC_VRIC1_OFFSET,
+ };
+diff --git a/drivers/platform/x86/intel/pmc/tgl.c b/drivers/platform/x86/intel/pmc/tgl.c
+index e0580de180773..4742b84fe226e 100644
+--- a/drivers/platform/x86/intel/pmc/tgl.c
++++ b/drivers/platform/x86/intel/pmc/tgl.c
+@@ -197,6 +197,10 @@ const struct pmc_reg_map tgl_reg_map = {
+ 	.ppfear_buckets = ICL_PPFEAR_NUM_ENTRIES,
+ 	.pm_cfg_offset = CNP_PMC_PM_CFG_OFFSET,
+ 	.pm_read_disable_bit = CNP_PMC_READ_DISABLE_BIT,
++#ifdef CONFIG_DISABLE_ACPI_PM_TIMER_ON_SUSPEND
++	.acpi_pm_tmr_ctl_offset = SPT_PMC_ACPI_PM_TMR_CTL_OFFSET,
++	.acpi_pm_tmr_disable_bit = SPT_PMC_BIT_ACPI_PM_TMR_DISABLE,
++#endif /* CONFIG_DISABLE_ACPI_PM_TIMER_ON_SUSPEND */
+ 	.ltr_ignore_max = TGL_NUM_IP_IGN_ALLOWED,
+ 	.lpm_num_maps = TGL_LPM_NUM_MAPS,
+ 	.lpm_res_counter_step_x2 = TGL_PMC_LPM_RES_COUNTER_STEP_X2,
+-- 
+2.45.2.803.g4e1b14247a-goog
 
-Your understanding is correct. Your suggestion makes the binding more 
-precise, and I will implement it in v8.
-
-Thanks for the feedback,
-
-Matthew Gerlach
-
->
-> Thanks,
-> Conor.
->
->> diff --git a/Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml b/Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml
->> new file mode 100644
->> index 000000000000..0aaf5dbcc9cc
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml
->> @@ -0,0 +1,93 @@
->> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->> +# Copyright (C) 2015, 2019, 2024, Intel Corporation
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/altr,pcie-root-port.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Altera PCIe Root Port
->> +
->> +maintainers:
->> +  - Matthew Gerlach <matthew.gerlach@linux.intel.com>
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - altr,pcie-root-port-1.0
->> +      - altr,pcie-root-port-2.0
->> +
->> +  reg:
->> +    items:
->> +      - description: TX slave port region
->> +      - description: Control register access region
->> +      - description: Hard IP region
->> +    minItems: 2
->> +
->> +  reg-names:
->> +    items:
->> +      - const: Txs
->> +      - const: Cra
->> +      - const: Hip
->> +    minItems: 2
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
->> +  interrupt-controller: true
->> +
->> +  interrupt-map-mask:
->> +    items:
->> +      - const: 0
->> +      - const: 0
->> +      - const: 0
->> +      - const: 7
->> +
->> +  interrupt-map:
->> +    maxItems: 4
->> +
->> +  "#interrupt-cells":
->> +    const: 1
->> +
->> +  msi-parent: true
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - reg-names
->> +  - interrupts
->> +  - "#interrupt-cells"
->> +  - interrupt-controller
->> +  - interrupt-map
->> +  - interrupt-map-mask
->> +
->> +allOf:
->> +  - $ref: /schemas/pci/pci-host-bridge.yaml#
->
 
