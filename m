@@ -1,132 +1,119 @@
-Return-Path: <linux-kernel+bounces-235722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 035E891D8EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:29:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC37991D8F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 331C11C20DD8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:29:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D37EB226DE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9FE823C3;
-	Mon,  1 Jul 2024 07:29:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1D16F073;
+	Mon,  1 Jul 2024 07:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BoYxOi2L"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="TrCf7BKe"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3C76F073;
-	Mon,  1 Jul 2024 07:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D614E7E110
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 07:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719818946; cv=none; b=h73CMcNj6Re6Ky86gh1WLqgEE4yelL/T3+D8j48RWs61SEVisCjNJRjubI2p942B7MgCqym8k+4g3D00M2V9qQUCFBROPPl37F7cP8RLO7dxQntugoIYhIMuXZhw+rHKaEi1aqeQc4q+awzJj5adFC+1KA8EcNWjjWpSEml5IgI=
+	t=1719818960; cv=none; b=Yl2CVtwP1Wa7FK54BmJVqn3VLcDA+SVeHdfHcfQJF86DrgbAa7N5SOckrHf45yv58Uw0S23Y1wzGqcHNRX0Cp18ELsIyj36rGAefxouVJqQ44qxyVHwzokYsSGAbVpEBZg56xuMvJNB+vLZTOv9wsY70fusD7Z4+3ghBpA+7qME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719818946; c=relaxed/simple;
-	bh=EDBgwrAXGm7DDaSLp8v9GIoqwkI5jZPyguJRT3ECYpY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GHqdnAXP+84BWtVuSn7tEIEWLLs3kjtihhXolFYMS+6xqwaCHk5DsavU0VZGDbW16QQAB/0tBFR7vZF3CHegkk9BLHESYOoGQWkvb3j2pE0wg04DT8+m5RoegQ2hJrwqTOxpl9RqfHVb3m1APFyiRsswZMAwU7fpl+ahM1qZwtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BoYxOi2L; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4617SX4L043065;
-	Mon, 1 Jul 2024 02:28:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719818913;
-	bh=8kqj7nlnDR1MaaO6+mykpDKSibuX68b+dr81Cm/MSzs=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=BoYxOi2LfIQcCfLChCzE6+TQ4AK5ce9Qnz+eETFans/NaqxnFUtfNzHmtpz0ge89m
-	 h/WUFTXo/83tL+ORwdRSjL3R4HKs/qzLRa+UTWDSYssvNDOaaB30YXxqjbZU9ZhmNv
-	 SUtnIdg/LJP2Spnbj8z34dxAwj4YpascRh685QHo=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4617SX81009870
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 1 Jul 2024 02:28:33 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 1
- Jul 2024 02:28:32 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 1 Jul 2024 02:28:32 -0500
-Received: from [172.24.227.94] (uda0132425.dhcp.ti.com [172.24.227.94])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4617STOZ011982;
-	Mon, 1 Jul 2024 02:28:30 -0500
-Message-ID: <d595b624-ef18-4aac-ab2c-bd36a8c4de3d@ti.com>
-Date: Mon, 1 Jul 2024 12:58:28 +0530
+	s=arc-20240116; t=1719818960; c=relaxed/simple;
+	bh=ud4FVBvixmqybTJpkYMtIYJPy3IRXCt7ASTyNTFo0Iw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VPOWz6PBWsR/8xwXGRdtvMAt0v2g6IZdC/5mMn9H0EL/NX/aJPeGO80zBe/jqcSSPdWVm3H7we1l247ddMePrXHefoCiyUVXOopZ5JRZ4kRxxPc+KHmfmV9nugEXUE+02clgySlMFXXkt8JM4nR9V0wUyVN/pIkCT5Bj18nQf40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=TrCf7BKe; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-706680d3a25so1588279b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 00:29:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1719818958; x=1720423758; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VGhqSiLMzxESl6q2TXeHQ+QtaRhhPlHzzW1Ik7jwLak=;
+        b=TrCf7BKeBkLLWuMC7PwHagFBdVKFkGgLUvk5RNt7U3WLh4jzomfQXGkhC/eq3jyCc1
+         AUiwwULNcPAA1+9Aw0+U5axseSTTSqWQff3MOYHsQy9GTUOvu9HWzMSvTposvcwO7Ph7
+         8c+o3ezNrlLAqDrWbBndYjyMu4GriOOZo0iUmV5jundtcjKy0qY7RpCq1RqHvNntjFjC
+         JG9dCZC+cLKPHveGB+kHgLEgxXuPmGRSd7Tr5G19qsey6qYA3e3NbbE6bTCi5AGE4W5/
+         N8eda0gaH5fwbK4TfhunFc3jNa4cLqZsqDyAcuqwA0nyP8y/6NN0Y2sY60R3pBsxDAe+
+         oU4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719818958; x=1720423758;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VGhqSiLMzxESl6q2TXeHQ+QtaRhhPlHzzW1Ik7jwLak=;
+        b=XywCOyi9W/ywJAGkbuoQY/xv1zSrRwjg9WbCdq3v1crF+SXPLbtwgMtx4jjnUkZkbT
+         bYi4mOVElJPNTSIzR6q0gKU4vw0tvJhePacJJomr+JkP5/FgV9ebF1BonL3Ft+Sn8lJr
+         5JmTlR0HFkv9ncRjvJpLGLf8dnOK9izwfH37BuSGdaxpViI00oVGlJ2OaIqqrTzR+aui
+         Lqv8NjhAqMF5xnTjSWnHuuisFM66Lm+SalbJ5q0JZ9C4gXy0zwEmHXjVrLu08ou/7RCv
+         OGGjgZyvAk++3aJUp0SEBmzcs3Rpx/FIBANbtaBCDdJYEq81yXljnSAtc3hoUKcwG+18
+         Id8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWjhSLvvmeCLFLyZQ/bcuJrmwSIqpJbjNCqofk8EkNTVFECnnBS5d1YOkloDj4m+rpHSsXImgiPQOuxzKHp6sM9DIYfmSB14wSTf9ln
+X-Gm-Message-State: AOJu0Yw+Xvhauyd2Np8HN0o9XGjeDYpaJ+BoPZmF3TKxxXpYgW6Or/Bo
+	CnHPql29I+barkKsKH/BvY6OznUQq1CtyvpzPaFE3rVCveGlwbrqsBFZTnkmVow=
+X-Google-Smtp-Source: AGHT+IGMGQElpf9p3wHiQ0XgC52tuI2eBaue5vhEMaYrPXb1lA2D7IhLm40/sZqFmLeQyKwdlN8PBw==
+X-Received: by 2002:a05:6a00:1909:b0:704:31ae:4fe5 with SMTP id d2e1a72fcca58-70aaaf25245mr3686034b3a.25.1719818958046;
+        Mon, 01 Jul 2024 00:29:18 -0700 (PDT)
+Received: from J9GPGXL7NT.bytedance.net ([61.213.176.58])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70803ecf757sm5779337b3a.104.2024.07.01.00.29.13
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 01 Jul 2024 00:29:17 -0700 (PDT)
+From: Xu Lu <luxu.kernel@bytedance.com>
+To: tjeznach@rivosinc.com,
+	joro@8bytes.org,
+	will@kernel.org,
+	robin.murphy@arm.com,
+	paul.walmsley@sifive.com
+Cc: palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	apatel@ventanamicro.com,
+	sunilvl@ventanamicro.com,
+	iommu@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux@rivosinc.com,
+	baolu.lu@linux.intel.com,
+	lihangjing@bytedance.com,
+	xieyongji@bytedance.com,
+	Xu Lu <luxu.kernel@bytedance.com>
+Subject: [PATCH 0/1] iommu/riscv: Support sharing irq lines between iommu queues
+Date: Mon,  1 Jul 2024 15:29:07 +0800
+Message-Id: <20240701072908.25503-1-luxu.kernel@bytedance.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: manual merge of the counter-next tree with the ti
- tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
-        William Breathitt Gray
-	<wbg@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Tero Kristo
-	<kristo@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>
-CC: Judith Mendez <jm@ti.com>,
-        Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List
-	<linux-next@vger.kernel.org>,
-        Siddharth Vadapalli <s-vadapalli@ti.com>
-References: <20240701163749.1cb88c8b@canb.auug.org.au>
-From: Vignesh Raghavendra <vigneshr@ti.com>
-Content-Language: en-US
-In-Reply-To: <20240701163749.1cb88c8b@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 
-Hi Will,
+This is an additional patch for Tomasz Jeznach's riscv iommu driver
+patch series[1].
 
-On 01/07/24 12:07, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the counter-next tree got a conflict in:
-> 
->   arch/arm64/boot/dts/ti/k3-am62p-main.dtsi
-> 
-> between commits:
-> 
->   3ad6579f106d ("arm64: dts: ti: am62p: Rename am62p-{}.dtsi to am62p-j722s-common-{}.dtsi")
->   77044cfb9346 ("arm64: dts: ti: k3-am62p-j722s: Move AM62P specific USB1 to am62p-main.dtsi")
->   ed07d82f9e3e ("arm64: dts: ti: k3-am62p-j722s: Move SoC-specific node properties")
->   84935117f25f ("arm64: dts: ti: k3-am62p: Add gpio-ranges properties")
-> 
-> from the ti tree and commit:
-> 
->   131eaf47c4c5 ("arm64: dts: ti: k3-am62p-main: Add eQEP nodes")
+It seems that when the number of wired irq lines is less than the number
+of iommu queues, iommu platform driver does not assign virtual irqs for
+iommu queues whose id exceeds the total number of irq lines.
 
-Could you please drop from your tree "arm64: dts: ti: .." patches, these need to go via TI SoC/arm64 tree. 
+If it is a problem worth fixing, please feel free to merge this patch
+into existing commits. And please ignore this patch if we don't think
+it is a problem.
 
-In particular
+[1] link: https://lore.kernel.org/all/cover.1718388908.git.tjeznach@rivosinc.com/
 
-7fb9d8854fcf(Judith Mendez)6 hours ago  arm64: dts: ti: k3-am64x-sk: Enable eQEP
-afdfe6439a6d(Judith Mendez)6 hours ago  arm64: dts: ti: k3-am64-main: Add eQEP nodes
-131eaf47c4c5(Judith Mendez)6 hours ago  arm64: dts: ti: k3-am62p-main: Add eQEP nodes
-ba5a251b1d53(Judith Mendez)6 hours ago  arm64: dts: ti: k3-am62a-main: Add eQEP nodes
-e2e1fce199b0(Judith Mendez)6 hours ago  arm64: dts: ti: k3-am62-main: Add eQEP nodes
+Xu Lu (1):
+  iommu/riscv: Support sharing irq lines between iommu queues
 
-Thanks!
-
-> 
-> from the counter-next tree.
-> 
-> I don't know how to fix this up, so I just dropped the latter chanhd
-> for now.
-> 
-
+ drivers/iommu/riscv/iommu-platform.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 -- 
-Regards
-Vignesh
+2.20.1
+
 
