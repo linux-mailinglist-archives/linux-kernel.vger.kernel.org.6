@@ -1,252 +1,101 @@
-Return-Path: <linux-kernel+bounces-236855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C86FD91E7D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:39:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 314A691E7B8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C7741F218BD
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:39:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9AD51F2158D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53007172BD5;
-	Mon,  1 Jul 2024 18:37:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC3516F0C3;
+	Mon,  1 Jul 2024 18:36:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B+IGRoqX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y1i8joHi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F3616EC0F;
-	Mon,  1 Jul 2024 18:37:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B53381CC;
+	Mon,  1 Jul 2024 18:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719859068; cv=none; b=WgnXuhEtd3Uf6w62Ong+NRRvxVbizq2ztFKxuCr1k1uyAI+O7eyMndafClBPmgl6FzAlFnqnqmx07wlTsp81asZBWsEH9lGUtPRpJS6x3zASUrJ3/CdPtreHa2C4JC9j9gdpXX1/qNdG2HF2po3F6UuDll9RBWmYnOgOjQcqrGM=
+	t=1719858992; cv=none; b=uSrrl02hWLTOp0OEEF6dRL9RY5+xzravBRJYhc+uz2YKM76AFpw4AX5JQiitKM5n4xvBQU7RWy4vNEHqWKb8bS5ONzXiqN4GhMKjYicZurG7RyDPtwnXjb2BV7SPjkx+XB9fp+RnJiN+I9/iWpYcAhpbASrPW/uTHiP++b4R2mM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719859068; c=relaxed/simple;
-	bh=AOrqewpmo3+XMOPNv8O3XmSJfqYus/NPWk7kj+7SfIM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lROtEcios58SvxIMm15HJWXtm0AFL/iKv+t/4IH3DgDwoMqbXzVK7zJM+sJSt/tGxT6cAWvtqIKWjUrbR/DZon/PQBnQUsQFHLmjFKjuxqZ46JfzHSTX8tBltLSvY1NKor4roZyp9IA2uBpMmPxMFFGNfHq7/jIgBmYzpt1vGuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B+IGRoqX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80560C32781;
-	Mon,  1 Jul 2024 18:37:40 +0000 (UTC)
+	s=arc-20240116; t=1719858992; c=relaxed/simple;
+	bh=PtmpIxW7QtZRZGSwCmMzSgdpUv310aGaJeYhAgzViwo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rhBjwx882Cqjw9IK2IVZFqvupjfStoMlSwaN56msZQl5nhFO91+gln30VSY1qy2dLYtHCsniBlY6+SLiQqBThWbZGMdqWgnh69Ts+GNNmJ6B6GVOytcdk7NHowrKFyczPdgas0O2CPtFjgu4TItfVsV+T6dvmSTxlD5jgFJha+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y1i8joHi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2892AC116B1;
+	Mon,  1 Jul 2024 18:36:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719859068;
-	bh=AOrqewpmo3+XMOPNv8O3XmSJfqYus/NPWk7kj+7SfIM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=B+IGRoqXbOqjfzM3t6kEYMadiwnbMJQ8J/igQBEqS1MPRwhrMDjygFhKkjFtdID2C
-	 sarxRKfJeexmt45ww1XF4AqqH/EgLNNrrz2qfXf/vwNEhbuU8PWkBQH3GCtfDZKpoH
-	 To2ku5h2susyntctwh98HmUISl8ZGl0g53206t9IET/4ghGf2zMNZeuxwpP9lYQatl
-	 UjvXs7BDewmQcHm2JW3ytVbWiQ5ZibqpsP/edubE9ipXWDfbqIHSU+hWjUU8HDY3dd
-	 olm4qwALzvksdTQljYoAI40I5omT8jF67N0BzZaIHMOzp5nMbPwfHPNVWL7+fUlbqv
-	 e/HTj6YPjjHfA==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	Jan Alexander Steffens <heftig@archlinux.org>,
-	=?UTF-8?q?Johannes=20L=C3=B6thberg?= <johannes@kyriasis.com>,
-	=?UTF-8?q?Fabian=20Gr=C3=BCnbichler?= <debian@fabian.gruenbichler.email>,
-	Josh Stone <jistone@redhat.com>,
-	Randy Barlow <randy@electronsweatshop.com>,
-	Anna Figueiredo Gomes <navi@vlhl.dev>,
-	Matoro Mahri <matoro_gentoo@matoro.tk>,
-	Ryan Scheel <ryan.havvy@gmail.com>,
-	figsoda <figsoda@pm.me>,
-	=?UTF-8?q?J=C3=B6rg=20Thalheim?= <joerg@thalheim.io>,
-	Theodore Ni <43ngvg@masqt.com>,
-	Winter <nixos@winter.cafe>,
-	William Brown <wbrown@suse.de>,
-	Xiaoguang Wang <xiaoguang.wang@suse.com>,
-	Andrea Righi <andrea.righi@canonical.com>,
-	Zixing Liu <zixing.liu@canonical.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	workflows@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: [PATCH 13/13] docs: rust: quick-start: add section on Linux distributions
-Date: Mon,  1 Jul 2024 20:36:23 +0200
-Message-ID: <20240701183625.665574-14-ojeda@kernel.org>
-In-Reply-To: <20240701183625.665574-1-ojeda@kernel.org>
-References: <20240701183625.665574-1-ojeda@kernel.org>
+	s=k20201202; t=1719858992;
+	bh=PtmpIxW7QtZRZGSwCmMzSgdpUv310aGaJeYhAgzViwo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y1i8joHio0IzCMxKBhGEFgei3HHw7ygdeCR3CAglvJMsZFMYe6bgeaLT8w3eXH8uZ
+	 0wnahBan1xLupL68xx3DPMJtL3CdwHHZNTXRfJM1Ys//jPd9y4PSzyaZtVrQ48aabu
+	 dpaTvX3D18/ZGJc1HfXl3f6o2SHUNZBfBHaXSTLLW9L2VflxGGc96B7kXiLlHEyVSK
+	 1amC0DpO7Yq2VTIiISBHuf52YjNgZaYJrDn5Gf5i8VjBP1ULbVqjKWThpJmNqeWJfj
+	 FebHhcKrJDdGsVOgT1jMyStSml6H77i7COpyZHcWldp7RIAIHfTrmw7jdvAp6EKzSY
+	 8B8fbD1hfXGsw==
+Date: Mon, 1 Jul 2024 12:36:31 -0600
+From: Rob Herring <robh@kernel.org>
+To: George Stark <gnstark@salutedevices.com>
+Cc: ukleinek@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	neil.armstrong@linaro.org, khilman@baylibre.com,
+	jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
+	hkallweit1@gmail.com, linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel@salutedevices.com
+Subject: Re: [PATCH v2 2/3] dt-bindings: pwm: amlogic: Add optional
+ power-domains
+Message-ID: <20240701183631.GA349021-robh@kernel.org>
+References: <20240701172016.523402-1-gnstark@salutedevices.com>
+ <20240701172016.523402-3-gnstark@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240701172016.523402-3-gnstark@salutedevices.com>
 
-Now that we are starting to support several Rust compiler and `bindgen`
-versions, there is a good chance some Linux distributions work out of
-the box.
+On Mon, Jul 01, 2024 at 08:20:15PM +0300, George Stark wrote:
+> On newer SoCs, the PWM can require a power-domain to operate so add it
+> as optional.
 
-Thus, provide some instructions on how to set the toolchain up for a
-few major Linux distributions. This simplifies the setup users need to
-build the kernel.
+If required, then how is it optional?
 
-In addition, add an introduction to the document so that it is easier
-to understand its structure. We may want to reorganize it or split it
-in the future, but I wanted to focus this commit on the new information
-added about each particular distribution.
+If the 'newer SoCs' means the one you just added, then this should be 
+squashed into the prior patch with a conditional schema making it 
+required for the new compatible.
 
-Finally, remove the `rustup`'s components mention in `changes.rst` since
-users do not need it if they install the toolchain via the distributions
-(and anyway it was too detailed for that main document).
-
-Cc: Jan Alexander Steffens <heftig@archlinux.org>
-Cc: Johannes Löthberg <johannes@kyriasis.com>
-Cc: Fabian Grünbichler <debian@fabian.gruenbichler.email>
-Cc: Josh Stone <jistone@redhat.com>
-Cc: Randy Barlow <randy@electronsweatshop.com>
-Cc: Anna (navi) Figueiredo Gomes <navi@vlhl.dev>
-Cc: Matoro Mahri <matoro_gentoo@matoro.tk>
-Cc: Ryan Scheel <ryan.havvy@gmail.com>
-Cc: figsoda <figsoda@pm.me>
-Cc: Jörg Thalheim <joerg@thalheim.io>
-Cc: Theodore Ni <43ngvg@masqt.com>
-Cc: Winter <nixos@winter.cafe>
-Cc: William Brown <wbrown@suse.de>
-Cc: Xiaoguang Wang <xiaoguang.wang@suse.com>
-Cc: Andrea Righi <andrea.righi@canonical.com>
-Cc: Zixing Liu <zixing.liu@canonical.com>
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
----
-Note that openSUSE Tumbleweed is adding the Rust standard library source
-code, `rustfmt` and Clippy, so we may be able to drop that small note in
-their section in a few days (possibly before this gets applied) --
-thanks William!
-
- Documentation/process/changes.rst  |  5 --
- Documentation/rust/quick-start.rst | 83 ++++++++++++++++++++++++++++--
- 2 files changed, 78 insertions(+), 10 deletions(-)
-
-diff --git a/Documentation/process/changes.rst b/Documentation/process/changes.rst
-index 0d0b7120792b..0ce96ae2588c 100644
---- a/Documentation/process/changes.rst
-+++ b/Documentation/process/changes.rst
-@@ -90,11 +90,6 @@ Rust (optional)
- 
- A recent version of the Rust compiler is required.
- 
--Each Rust toolchain comes with several "components", some of which are required
--(like ``rustc``) and some that are optional. The ``rust-src`` component (which
--is optional) needs to be installed to build the kernel. Other components are
--useful for developing.
--
- Please see Documentation/rust/quick-start.rst for instructions on how to
- satisfy the build requirements of Rust support. In particular, the ``Makefile``
- target ``rustavailable`` is useful to check why the Rust toolchain may not
-diff --git a/Documentation/rust/quick-start.rst b/Documentation/rust/quick-start.rst
-index f624b913ff89..65a34a9a7089 100644
---- a/Documentation/rust/quick-start.rst
-+++ b/Documentation/rust/quick-start.rst
-@@ -5,17 +5,90 @@ Quick Start
- 
- This document describes how to get started with kernel development in Rust.
- 
-+There are a few ways to install a Rust toolchain needed for kernel development.
-+A simple way is to use the packages from your Linux distribution if they are
-+suitable -- the first section below explains this approach. An advantage of this
-+approach is that, typically, the distribution will match the LLVM used by Rust
-+and Clang.
-+
-+Alternatively, the next two "Requirements" sections explain each component and
-+how to install them through ``rustup``, the standalone installers from Rust
-+and/or building them.
-+
-+The rest of the document explains other aspects on how to get started.
-+
-+
-+Distributions
-+-------------
-+
-+Arch Linux
-+**********
-+
-+Arch Linux provides recent Rust releases and thus it should generally work out
-+of the box, e.g.::
-+
-+	pacman -S rust rust-src rust-bindgen
-+
-+
-+Debian
-+******
-+
-+Debian Unstable (Sid), outside of the freeze period, provides recent Rust
-+release and thus it should generally work out of the box, e.g.::
-+
-+	apt install rustc rust-src bindgen rustfmt rust-clippy
-+
-+
-+Fedora Linux
-+************
-+
-+Fedora Linux provides recent Rust releases and thus it should generally work out
-+of the box, e.g.::
-+
-+	dnf install rust rust-src bindgen-cli rustfmt clippy
-+
-+
-+Gentoo Linux
-+************
-+
-+Gentoo Linux (and especially the testing branch) provides recent Rust releases
-+and thus it should generally work out of the box, e.g.::
-+
-+	USE='rust-src rustfmt clippy' emerge dev-lang/rust dev-util/bindgen
-+
-+``LIBCLANG_PATH`` may need to be set.
-+
-+
-+Nix
-+***
-+
-+Nix (unstable channel) provides recent Rust releases and thus it should
-+generally work out of the box, e.g.::
-+
-+	{ pkgs ? import <nixpkgs> {} }:
-+	pkgs.mkShell {
-+	  nativeBuildInputs = with pkgs; [ rustc rust-bindgen rustfmt clippy ];
-+	  RUST_LIB_SRC = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
-+	}
-+
-+
-+openSUSE
-+********
-+
-+openSUSE Tumbleweed provides recent Rust releases and thus it should generally
-+work out of the box, e.g.::
-+
-+	zypper install rust rust-bindgen clang
-+
-+The Rust standard library source code, ``rustfmt`` and Clippy are not packaged
-+(yet), thus currently they need to be installed separately.
-+
- 
- Requirements: Building
- ----------------------
- 
- This section explains how to fetch the tools needed for building.
- 
--Some of these requirements might be available from Linux distributions
--under names like ``rustc``, ``rust-src``, ``rust-bindgen``, etc. However,
--at the time of writing, they are likely not to be recent enough unless
--the distribution tracks the latest releases.
--
- To easily check whether the requirements are met, the following target
- can be used::
- 
--- 
-2.45.2
-
+> 
+> Signed-off-by: George Stark <gnstark@salutedevices.com>
+> ---
+>  Documentation/devicetree/bindings/pwm/pwm-amlogic.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pwm/pwm-amlogic.yaml b/Documentation/devicetree/bindings/pwm/pwm-amlogic.yaml
+> index da22cb3ed878..c814d88748dd 100644
+> --- a/Documentation/devicetree/bindings/pwm/pwm-amlogic.yaml
+> +++ b/Documentation/devicetree/bindings/pwm/pwm-amlogic.yaml
+> @@ -60,6 +60,9 @@ properties:
+>      minItems: 1
+>      maxItems: 2
+>  
+> +  power-domains:
+> +    maxItems: 1
+> +
+>    "#pwm-cells":
+>      const: 3
+>  
+> -- 
+> 2.25.1
+> 
 
