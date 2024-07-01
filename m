@@ -1,271 +1,128 @@
-Return-Path: <linux-kernel+bounces-236636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1C0591E535
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:22:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED10191E537
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:22:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A14E283D84
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:22:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A99F52830F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:22:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E114916DC14;
-	Mon,  1 Jul 2024 16:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32AEF16DC3D;
+	Mon,  1 Jul 2024 16:21:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bIBXlwvG"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KxvajOjk"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0978016D9BF
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 16:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0378716D9B7;
+	Mon,  1 Jul 2024 16:21:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719850881; cv=none; b=oXqBBV+YECFR5VokGuDv4c7zu45vXJrcO6zWQAo+IemWwfIpehMvaRdIDnPq1AoZyovkg8ObZGkurM301gx/45bksIGbVBK76w1FxQ1XpJWEOjQjYtiatLFLW/MN/O7G+lKUMLioweCaugLqQHE1ytI+K7iUMWo1RU8u40Za8o0=
+	t=1719850890; cv=none; b=mB6geNGKvrb/LwSYMV1NZOaTfoR9ery9QdnBZnoimNYaev2kx3bd8JgQEBU7hicKQwJG/q+Oxz1l9858KomRo0U97R/ITRF0Iz7vMTGvLSIS9p2/osd3ZbXwSofo37PjmEFC6yYW8SpJL829GC4hoFTIR0MoVupoR/gBmC4R6Mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719850881; c=relaxed/simple;
-	bh=bPWwqei6jWrE5Jr9kgBDF9MkeajeJQ2zwc+WvnfYERE=;
+	s=arc-20240116; t=1719850890; c=relaxed/simple;
+	bh=5aHOtGJJ2Y5Pc+Kx8K9gLM0fxXIvzccg70ioxAvbKW4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=im468COz6cQAL9wwL6KmGXbbKyaUvt0r3gfhd6a/2EL0xUoqpeC4vCJ0fygmzMEObiDcwBjcDhqSSgeBIxWM+DVw20W1fpwInOKE4bE8W1QuWrrDZ7xPvhCkKXg8eaGZU8gDm3jFOC8tuU27SqxzXLK8IavWflJeMmfNFwSTmi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bIBXlwvG; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f9de13d6baso18157195ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 09:21:16 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=XeAcyDyXBalmH6UQMIFHm+iXFBzOtsbRN7pXgcYVfur6rrohnDVXnOIHzc8/UL+YK7PwzFuErCwVD4D3ppahACiqVfrWHwkgTNyayt5TlCsK01byFNpvxbk18wFHoIA5XdoftgE8EcXcnu3RgB5rQW0S+o1iGWWMUvszyc/OO4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KxvajOjk; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52e829086f3so2813867e87.3;
+        Mon, 01 Jul 2024 09:21:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719850876; x=1720455676; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=C4gxJ4vSXPzGYatbBqyhF5IDCVllp/DdXAW8fjEoy3I=;
-        b=bIBXlwvGYSB3w3iaqEAsaq0bzIz54NmreQJk0fqlzEZl3FZTYkbkrVk5eC7nPb1wfp
-         rdZBRfGYY+eKsjLWQx8sU4CwefThfMl98fruJg/S+tg0u5XS6GR08kGsU/xCR4nIL9t2
-         IS2x+XEPgACOFRHU3FdoGbC+xSO2DT/KzF4ZColqTf9/6ceMyxi5qd0YJZBQ/iwKh4sU
-         p5/JJYt21uMSh//79X/i+93q21ktmMI3zFO2+P4TTiRRJHmvhTRrWE+V1K6IbMGncWgm
-         CpAoa/o0PeiuV0reZqZC+ORTUOFcnIxJ+5ShSBfAGk30fYaXTZhKbczgEUN1EOJVnmOw
-         87Nw==
+        d=gmail.com; s=20230601; t=1719850887; x=1720455687; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1hgz/vfvdIIstVkRxWKHH4AxdmLyZ5LWQUHyNfrig1A=;
+        b=KxvajOjkmNghFfHGB0NcajkeAQpEtu9tTYJ6qYqBDQ+qRxCDzyIfrCQWTrOK9GbHEX
+         cl/WPG/P9zLGKgaWNOgcBR7fHSLKJO9b/1rd0xVX92pBP9wW1sP7665rI1eR0untWm4X
+         8s4hf0rG1L9hiZaPTOzJEhdx4yHk9WSXUN2FGXcHlxhVGGZaETd0Sg0CusMIHCvf7U+z
+         sxBNsZN5M2mcwkBwMnxYfY2WoxhQDbWqoiEBIS5N/ClA65XkRpWHe4s3bL50ryyTIn8A
+         1usUMfj/xeLcN+9XjoMkK6YEucfJ3kAjRjWTvrCRyTVi6kmVDupQKbXbPn5J4GUZM7qw
+         bhAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719850876; x=1720455676;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=C4gxJ4vSXPzGYatbBqyhF5IDCVllp/DdXAW8fjEoy3I=;
-        b=Y9p/BslNzSAyEeuCu3YSIYebhlOD8BmR8zCbyiqZXaAbQJpoHyyrGRoOPTFqwEQ7IX
-         l1SkSvaQVhWlFXw4SjFBjVJO4vyJ8yo0PVd5R/fa7RuIAVPXVjHYb+LPtOOHLMGXsYVC
-         l3xNp/rYe5rkkRhY95SefbMspF5TYYHfLIkKgpx3r0So04Kda/LNJpCEG+wJDF7cFUqc
-         eRn7NydsuJBfQmVM92KJKm7di8nCTPMVMuHNkCZLNpqjwOcwDAFg2Q7SS5LyRfWPvTLA
-         ud1L7qVOoqospEDJJMNhBp5NZ2Vltz3eZfmMlXVqTCz8uEeU7wO+YK6w5PJfJF6z9kKj
-         T8pg==
-X-Forwarded-Encrypted: i=1; AJvYcCWhD1onVSBL6bn40qv6IL+uuCKuZO8SpyS4o+ITdtbhasDidZ9RxJs/Kk0BCQlMNx0k6/NRt0noPTkQw3ZTxwSngNZXJAmoRdiajFax
-X-Gm-Message-State: AOJu0Yzr4To/XOhyjUm2eYD1bDAtO0aP13m+d/yocDSfxsspu4JntCs3
-	DUltBszrOM9xYrU3pOl8w1omtQ3Wqwzv2JpqtSEaAqc6knxCDC4VUArjdFHisHGBANMjmnOGFyE
-	=
-X-Google-Smtp-Source: AGHT+IHAc7i73eCE5OJ85flXtikavJFK+SnqbPI2t4qhNV+2Wl+l1VEvytK3rd5TID2DkSju3Cncbw==
-X-Received: by 2002:a17:903:32cc:b0:1fa:1274:946c with SMTP id d9443c01a7336-1fadbc5c1f5mr35130695ad.2.1719850876293;
-        Mon, 01 Jul 2024 09:21:16 -0700 (PDT)
-Received: from thinkpad ([220.158.156.91])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac10d2282sm66725305ad.44.2024.07.01.09.21.14
+        d=1e100.net; s=20230601; t=1719850887; x=1720455687;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1hgz/vfvdIIstVkRxWKHH4AxdmLyZ5LWQUHyNfrig1A=;
+        b=cd1ymGkT7ZMBjUFtv16dRatSI7FNxuSmT0fSBhLO8DSA04pL7rXsYuvxH6dcbTGiXO
+         Pho9CMO5VKNdIvJYE/7QUM1lZIwVwxeB1feWg6Lu4BCAsFxOS8y/CcCEUzQd7oDmLfUF
+         JyuQvsO4zM0Wh9Y32Q4hPO76O63NP0UnLqot7UzFezIORcgZD++m9VuFo1avGXh3v4Hl
+         lTylBcOt2Yy/uP+6q6DvKGE9FTv1E/CaWYVOKxQUVmcCzHtS4ceh1YYtEkxPh8As30B7
+         1sCh/F/mgaa/Bolz0zZJ+NpZakq3EKVJ2mVGEx9qQ1sH5BGceF/k2Gwg38WHOFuXkE1q
+         QAXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVoTd4RtsCy43+k9YBtB55fU8jv2XcmJgXSjtXTqZ8e9lppSuSCc1CHGO96FUZ6+4bE4rQzKsUI5VdOpaXyU3Xiw+s/uLr2BsMKG6p5ffdg43U0gvxPcsaUYaIfMBuMCCh9Hb0/
+X-Gm-Message-State: AOJu0YyjM13q6JazGVA1YlhV2eV//3PlcAUglCcirRL3E3/aJZWgTxYE
+	E9QvblMLImXpMXCPJoZZD3+7vdRB3C1QUcqmaJ7Xb2K94I2gFDBt
+X-Google-Smtp-Source: AGHT+IHQQCCynAPYl6LXUvW6APyHqE9berK0UtiI5jg1zfVojn7CuH1WrDqZGKkIjixJza673C2nkA==
+X-Received: by 2002:a05:6512:33c8:b0:52c:c9b6:df0f with SMTP id 2adb3069b0e04-52e82733f9dmr3934002e87.61.1719850886847;
+        Mon, 01 Jul 2024 09:21:26 -0700 (PDT)
+Received: from skbuf ([79.115.210.53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0fba0bsm10433428f8f.69.2024.07.01.09.21.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 09:21:15 -0700 (PDT)
-Date: Mon, 1 Jul 2024 21:51:11 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mhi@lists.linux.dev
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Slark Xiao <slark_xiao@163.com>
-Subject: Re: [PATCH v2] bus: mhi: host: pci_generic: Use unique
- 'mhi_pci_dev_info' for product families
-Message-ID: <20240701162111.GB133366@thinkpad>
-References: <20240626053237.4227-1-manivannan.sadhasivam@linaro.org>
+        Mon, 01 Jul 2024 09:21:26 -0700 (PDT)
+Date: Mon, 1 Jul 2024 19:21:23 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>, Andrew Lunn <andrew@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Arun Ramadoss <arun.ramadoss@microchip.com>,
+	Lucas Stach <l.stach@pengutronix.de>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com
+Subject: Re: [PATCH net-next v2 3/3] net: dsa: microchip: lan937x: disable
+ VPHY support
+Message-ID: <20240701162123.bj2lgsrouik3xtj3@skbuf>
+References: <20240701085343.3042567-1-o.rempel@pengutronix.de>
+ <20240701085343.3042567-3-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240626053237.4227-1-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20240701085343.3042567-3-o.rempel@pengutronix.de>
 
-On Wed, Jun 26, 2024 at 11:02:37AM +0530, Manivannan Sadhasivam wrote:
-> Currently, a single 'mhi_pci_dev_info' is shared across different product
-> families. Even though it makes the device functional, it misleads the users
-> by sharing the common product name.
+On Mon, Jul 01, 2024 at 10:53:43AM +0200, Oleksij Rempel wrote:
+> From: Lucas Stach <l.stach@pengutronix.de>
 > 
-> For instance, below message will be printed for Foxconn SDX62 modem during
-> boot:
+> As described by the microchip article "LAN937X - The required
+> configuration for the external MAC port to operate at RGMII-to-RGMII
+> 1Gbps link speed." [1]:
 > 
-> "MHI PCI device found: foxconn-sdx65"
+> "When VPHY is enabled, the auto-negotiation process following IEEE 802.3
+> standard will be triggered and will result in RGMII-to-RGMII signal
+> failure on the interface because VPHY will try to poll the PHY status
+> that is not available in the scenario of RGMII-to-RGMII connection
+> (normally the link partner is usually an external processor).
 > 
-> But this is quite misleading to the users since the actual modem plugged in
-> could be 'T99W373' which is based on SDX62.
+> Note that when VPHY fails on accessing PHY registers, it will fall back
+> to 100Mbps speed, it indicates disabling VPHY is optional if you only
+> need the port to link at 100Mbps speed.
 > 
-> So fix this issue by using a unique 'mhi_pci_dev_info' for product
-> families. This allows us to specify a unique product name for each product
-> family. Also, once this name is exposed to client drivers, they may use
-> this name to identify the modems and use any modem specific configuration.
+> Again, VPHY must and can only be disabled by writing VPHY_DISABLE bit in
+> the register below as there is no strapping pin for the control."
 > 
-> Modems of unknown product families are not impacted by this change.
+> This patch was tested on LAN9372, so far it seems to not to affect VPHY
+> based clock crossing optimization for the ports with integrated PHYs.
 > 
-> CC: Slark Xiao <slark_xiao@163.com>
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-Applied to mhi-next!
-
-- Mani
-
+> [1]: https://microchip.my.site.com/s/article/LAN937X-The-required-configuration-for-the-external-MAC-port-to-operate-at-RGMII-to-RGMII-1Gbps-link-speed
+> 
+> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 > ---
-> 
-> Changes in v2:
-> 
-> * Used 'mhi_foxconn_t99w175_info' for HP variant as well
-> 
->  drivers/bus/mhi/host/pci_generic.c | 78 ++++++++++++++++++++++--------
->  1 file changed, 59 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-> index 08844ee79654..35ae7cd0711f 100644
-> --- a/drivers/bus/mhi/host/pci_generic.c
-> +++ b/drivers/bus/mhi/host/pci_generic.c
-> @@ -419,8 +419,10 @@ static const struct mhi_controller_config modem_foxconn_sdx55_config = {
->  	.event_cfg = mhi_foxconn_sdx55_events,
->  };
->  
-> -static const struct mhi_pci_dev_info mhi_foxconn_sdx24_info = {
-> -	.name = "foxconn-sdx24",
-> +static const struct mhi_pci_dev_info mhi_foxconn_sdx55_info = {
-> +	.name = "foxconn-sdx55",
-> +	.fw = "qcom/sdx55m/sbl1.mbn",
-> +	.edl = "qcom/sdx55m/edl.mbn",
->  	.config = &modem_foxconn_sdx55_config,
->  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
->  	.dma_data_width = 32,
-> @@ -428,8 +430,8 @@ static const struct mhi_pci_dev_info mhi_foxconn_sdx24_info = {
->  	.sideband_wake = false,
->  };
->  
-> -static const struct mhi_pci_dev_info mhi_foxconn_sdx55_info = {
-> -	.name = "foxconn-sdx55",
-> +static const struct mhi_pci_dev_info mhi_foxconn_t99w175_info = {
-> +	.name = "foxconn-t99w175",
->  	.fw = "qcom/sdx55m/sbl1.mbn",
->  	.edl = "qcom/sdx55m/edl.mbn",
->  	.config = &modem_foxconn_sdx55_config,
-> @@ -439,8 +441,46 @@ static const struct mhi_pci_dev_info mhi_foxconn_sdx55_info = {
->  	.sideband_wake = false,
->  };
->  
-> -static const struct mhi_pci_dev_info mhi_foxconn_sdx65_info = {
-> -	.name = "foxconn-sdx65",
-> +static const struct mhi_pci_dev_info mhi_foxconn_dw5930e_info = {
-> +	.name = "foxconn-dw5930e",
-> +	.fw = "qcom/sdx55m/sbl1.mbn",
-> +	.edl = "qcom/sdx55m/edl.mbn",
-> +	.config = &modem_foxconn_sdx55_config,
-> +	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
-> +	.dma_data_width = 32,
-> +	.mru_default = 32768,
-> +	.sideband_wake = false,
-> +};
-> +
-> +static const struct mhi_pci_dev_info mhi_foxconn_t99w368_info = {
-> +	.name = "foxconn-t99w368",
-> +	.config = &modem_foxconn_sdx55_config,
-> +	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
-> +	.dma_data_width = 32,
-> +	.mru_default = 32768,
-> +	.sideband_wake = false,
-> +};
-> +
-> +static const struct mhi_pci_dev_info mhi_foxconn_t99w373_info = {
-> +	.name = "foxconn-t99w373",
-> +	.config = &modem_foxconn_sdx55_config,
-> +	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
-> +	.dma_data_width = 32,
-> +	.mru_default = 32768,
-> +	.sideband_wake = false,
-> +};
-> +
-> +static const struct mhi_pci_dev_info mhi_foxconn_t99w510_info = {
-> +	.name = "foxconn-t99w510",
-> +	.config = &modem_foxconn_sdx55_config,
-> +	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
-> +	.dma_data_width = 32,
-> +	.mru_default = 32768,
-> +	.sideband_wake = false,
-> +};
-> +
-> +static const struct mhi_pci_dev_info mhi_foxconn_dw5932e_info = {
-> +	.name = "foxconn-dw5932e",
->  	.config = &modem_foxconn_sdx55_config,
->  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
->  	.dma_data_width = 32,
-> @@ -646,40 +686,40 @@ static const struct pci_device_id mhi_pci_id_table[] = {
->  		.driver_data = (kernel_ulong_t) &mhi_quectel_em1xx_info },
->  	/* T99W175 (sdx55), Both for eSIM and Non-eSIM */
->  	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe0ab),
-> -		.driver_data = (kernel_ulong_t) &mhi_foxconn_sdx55_info },
-> +		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w175_info },
->  	/* DW5930e (sdx55), With eSIM, It's also T99W175 */
->  	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe0b0),
-> -		.driver_data = (kernel_ulong_t) &mhi_foxconn_sdx55_info },
-> +		.driver_data = (kernel_ulong_t) &mhi_foxconn_dw5930e_info },
->  	/* DW5930e (sdx55), Non-eSIM, It's also T99W175 */
->  	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe0b1),
-> -		.driver_data = (kernel_ulong_t) &mhi_foxconn_sdx55_info },
-> +		.driver_data = (kernel_ulong_t) &mhi_foxconn_dw5930e_info },
->  	/* T99W175 (sdx55), Based on Qualcomm new baseline */
->  	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe0bf),
-> -		.driver_data = (kernel_ulong_t) &mhi_foxconn_sdx55_info },
-> +		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w175_info },
->  	/* T99W175 (sdx55) */
->  	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe0c3),
-> -		.driver_data = (kernel_ulong_t) &mhi_foxconn_sdx55_info },
-> +		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w175_info },
->  	/* T99W368 (sdx65) */
->  	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe0d8),
-> -		.driver_data = (kernel_ulong_t) &mhi_foxconn_sdx65_info },
-> +		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w368_info },
->  	/* T99W373 (sdx62) */
->  	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe0d9),
-> -		.driver_data = (kernel_ulong_t) &mhi_foxconn_sdx65_info },
-> +		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w373_info },
->  	/* T99W510 (sdx24), variant 1 */
->  	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe0f0),
-> -		.driver_data = (kernel_ulong_t) &mhi_foxconn_sdx24_info },
-> +		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w510_info },
->  	/* T99W510 (sdx24), variant 2 */
->  	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe0f1),
-> -		.driver_data = (kernel_ulong_t) &mhi_foxconn_sdx24_info },
-> +		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w510_info },
->  	/* T99W510 (sdx24), variant 3 */
->  	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe0f2),
-> -		.driver_data = (kernel_ulong_t) &mhi_foxconn_sdx24_info },
-> +		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w510_info },
->  	/* DW5932e-eSIM (sdx62), With eSIM */
->  	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe0f5),
-> -		.driver_data = (kernel_ulong_t) &mhi_foxconn_sdx65_info },
-> +		.driver_data = (kernel_ulong_t) &mhi_foxconn_dw5932e_info },
->  	/* DW5932e (sdx62), Non-eSIM */
->  	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe0f9),
-> -		.driver_data = (kernel_ulong_t) &mhi_foxconn_sdx65_info },
-> +		.driver_data = (kernel_ulong_t) &mhi_foxconn_dw5932e_info },
->  	/* MV31-W (Cinterion) */
->  	{ PCI_DEVICE(PCI_VENDOR_ID_THALES, 0x00b3),
->  		.driver_data = (kernel_ulong_t) &mhi_mv31_info },
-> @@ -694,7 +734,7 @@ static const struct pci_device_id mhi_pci_id_table[] = {
->  		.driver_data = (kernel_ulong_t) &mhi_mv32_info },
->  	/* T99W175 (sdx55), HP variant */
->  	{ PCI_DEVICE(0x03f0, 0x0a6c),
-> -		.driver_data = (kernel_ulong_t) &mhi_foxconn_sdx55_info },
-> +		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w175_info },
->  	{  }
->  };
->  MODULE_DEVICE_TABLE(pci, mhi_pci_id_table);
-> -- 
-> 2.25.1
-> 
+> changes v2:
+> - reword the comment and link microchip article
+> ---
 
--- 
-மணிவண்ணன் சதாசிவம்
+Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
 
