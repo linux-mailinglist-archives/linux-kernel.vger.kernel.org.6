@@ -1,171 +1,185 @@
-Return-Path: <linux-kernel+bounces-236585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E588891E457
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:40:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22D8991E47A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:46:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E69E1F2473A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:40:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7A31286551
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:46:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994AA16D317;
-	Mon,  1 Jul 2024 15:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6E316D4C0;
+	Mon,  1 Jul 2024 15:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P+Ia4RYV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rmLu8rVB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0C253AC;
-	Mon,  1 Jul 2024 15:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78A816CD1A;
+	Mon,  1 Jul 2024 15:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719848449; cv=none; b=qDfxuF1sjKqAmaaRHYJd0Juz3teUW4su5A5QOWupKhdwkXh4buX2L/PWgRgGRv6zuk+2ZYBB4tK615VchfS0WoEvIdq+rMDfkKsmiJibgJci7Rw0ltBVA9iSlbwY5LnRoDr0rbDoecYKnLedjUVxpO0lJ7ZHK6BmQSpAhBg8w50=
+	t=1719848778; cv=none; b=pPND1HRfFbTWZARzVYV4mKeHkWtTMc1kLwMMSF2mpSE/jv/0CbKZzikRqjjcz/IDCYjKNOTR5mBA7t4b6fkuzmtvDbc/+Z2cyk9nPY3r4bVABlayRPiz6H1gyKpJm3fI+23K9gSg8E0P1FHNnWdnNBqZdPD7eKECgG0FQIz1yzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719848449; c=relaxed/simple;
-	bh=een/u44RHHbOSr8wUZ1YivcJUZUcGARZ5X9uyg30b84=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WhTLCWUavf6Zpw+toe8UsX0EJd3pUA0WYGwSYc/US6NwrwDAX8s60YijHmcM6PN3UQ4pD3Bc35BWEvjVqbgjna32MNO+2V7zKwsqrjfwo+CUKARsPFe4yQZLZkPjePaflTe0Ze1sMWr4YqcIIpsP1UUAu9AjGyViyTmncKbQ3Cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P+Ia4RYV; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719848448; x=1751384448;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=een/u44RHHbOSr8wUZ1YivcJUZUcGARZ5X9uyg30b84=;
-  b=P+Ia4RYVrbCFWpoXBf5VEnUQtKTbUeG/Y0bYQXWo5rZt4Un+cfjltCz+
-   xiOfr0t02M/niF2ElYmU3r7bgp49fPbDRamnoObqpfwmHUAO3HS3dRZdg
-   p4tZuXpE/VrRwaTpdkEPV6pU2Uxqk9sSpEeRcK7Ov9sZ/qFd3jYU03afY
-   wpVtC1eZ46IjG1KL0xaiS+LYOyH7eNHJ23FP9YODVObYGIJBCIVkIgBl8
-   xykDT4E6F4s25XQ+aHtwSfCQjnFST7u3DS0b+Bg0Ku9EyJvHHFaUqmwO2
-   eI0tFqPc6hd5K8bjD25yNr/l28w/ZfKAw5Ao17xyKwXKuJt8zjlrgTe06
-   w==;
-X-CSE-ConnectionGUID: 7/ob2AhORHunWMvr9Gh8WQ==
-X-CSE-MsgGUID: oD2MTkcFSZiyT6TpXO6p0A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="34528148"
-X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
-   d="scan'208";a="34528148"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 08:40:47 -0700
-X-CSE-ConnectionGUID: A81hiQBvSMmHLYpz/Tm3MQ==
-X-CSE-MsgGUID: t2s5aAH9QGi/ZScpGyvL/g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
-   d="scan'208";a="49917494"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.54.39.125])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 08:40:46 -0700
-Date: Mon, 1 Jul 2024 08:45:58 -0700
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-To: Xin Li <xin@zytor.com>
-Cc: X86 Kernel <x86@kernel.org>, Sean Christopherson <seanjc@google.com>,
- LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Dave Hansen <dave.hansen@intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Xin Li
- <xin3.li@intel.com>, linux-perf-users@vger.kernel.org, Peter Zijlstra
- <peterz@infradead.org>, Paolo Bonzini <pbonzini@redhat.com>, Tony Luck
- <tony.luck@intel.com>, Andy Lutomirski <luto@kernel.org>, acme@kernel.org,
- kan.liang@linux.intel.com, Andi Kleen <andi.kleen@intel.com>, "Mehta,
- Sohil" <sohil.mehta@intel.com>, Zeng Guang <guang.zeng@intel.com>,
- jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v3 07/11] KVM: VMX: Handle NMI Source report in VM exit
-Message-ID: <20240701084558.1620584f@jacob-builder>
-In-Reply-To: <6c8160e4-3d67-410d-aad0-3ec731a903f8@zytor.com>
-References: <20240628201839.673086-1-jacob.jun.pan@linux.intel.com>
-	<20240628201839.673086-8-jacob.jun.pan@linux.intel.com>
-	<6c8160e4-3d67-410d-aad0-3ec731a903f8@zytor.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719848778; c=relaxed/simple;
+	bh=Fg94f39jtc9hqKc36WSaKQnsZgFXSp7xy5OBlT2V7M0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rF9Xz1Bu3NpWOA4U4NcvHIEfQQ60qFv4yYkN55BZJf1ZJTa6LQemUXaQ+D1uyt1jnQXrYoEgvL7zj8U4eOzd0mH3gCMtDvlPmx2J7TnrYWONNTNEvsA82fCIBAYrIbsw+gG6MocHws3p/yrBWqsA8STao8bCTl8l29w8SZN+Qjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rmLu8rVB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1E95C116B1;
+	Mon,  1 Jul 2024 15:46:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719848777;
+	bh=Fg94f39jtc9hqKc36WSaKQnsZgFXSp7xy5OBlT2V7M0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rmLu8rVB/3esvcxOeQajnTJatwXOApM4Ul0yEYTmx4KKEuxYhSOfNPkkD+tV0A7O0
+	 SSZewKH3oGn12+d4PbhaLVMPkbhSA95LMnLUab8Krd3yo2rUC+C+L4cXDIH/Zvu055
+	 AFGbc+OuVBl2Orz4atYdHu9Xtl2fkK/PbSevqV3MT4SPMyy8VSRKge+JK/jJvedaKe
+	 54jyL4HqOgoX4jENIAQ+5+PEGua9oOlprHjfFqdpZrtO/zJKEJCSJuxq9Q/8fMAZP5
+	 CgEwwoEl4hnQDek7XbmjSi5lrNdwRry7nJvb5HZAoMoyfZ3bRAyLKbUs2ty4anAH5t
+	 mE00hsdfaJmIg==
+Date: Mon, 1 Jul 2024 16:46:12 +0100
+From: Conor Dooley <conor@kernel.org>
+To: utsav.agarwal@analog.com
+Cc: Michael Hennerich <michael.hennerich@analog.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Arturs Artamonovs <arturs.artamonovs@analog.com>,
+	Vasileios Bimpikas <vasileios.bimpikas@analog.com>,
+	Oliver Gaskell <oliver.gaskell@analog.com>
+Subject: Re: [PATCH v4 2/2] dt-bindings: input: Update dtbinding for adp5588
+Message-ID: <20240701-battalion-tacky-c52566b37a97@spud>
+References: <20240701-adp5588_gpio_support-v4-0-44bba0445e90@analog.com>
+ <20240701-adp5588_gpio_support-v4-2-44bba0445e90@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="oDOttPmur9969YgW"
+Content-Disposition: inline
+In-Reply-To: <20240701-adp5588_gpio_support-v4-2-44bba0445e90@analog.com>
 
 
-On Fri, 28 Jun 2024 21:07:04 -0700, Xin Li <xin@zytor.com> wrote:
+--oDOttPmur9969YgW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On 6/28/2024 1:18 PM, Jacob Pan wrote:
-> > From: Zeng Guang <guang.zeng@intel.com>
-> > 
-> > If the "NMI exiting" VM-execution control is 1, the value of the 16-bit
-> > NMI source vector is saved in the exit-qualification field in the VMCS
-> > when VM exits occur on CPUs that support NMI source.
-> > 
-> > KVM that is aware of NMI-source reporting will push the bitmask of NMI
-> > source vectors as the exceptoin event data field on the stack for then
-> > entry of FRED exception. Subsequently, the host NMI exception handler
-> > is invoked which will process NMI source information in the event data.
-> > This operation is independent of vCPU FRED enabling status.
-> > 
-> > Signed-off-by: Zeng Guang <guang.zeng@intel.com>
-> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > ---
-> >   arch/x86/entry/entry_64_fred.S |  2 +-
-> >   arch/x86/kvm/vmx/vmx.c         | 11 ++++++++---
-> >   2 files changed, 9 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/arch/x86/entry/entry_64_fred.S
-> > b/arch/x86/entry/entry_64_fred.S index a02bc6f3d2e6..0d934a3fcaf8 100644
-> > --- a/arch/x86/entry/entry_64_fred.S
-> > +++ b/arch/x86/entry/entry_64_fred.S
-> > @@ -92,7 +92,7 @@ SYM_FUNC_START(asm_fred_entry_from_kvm)
-> >   	 * +--------+-----------------+
-> >   	 */
-> >   	push $0				/* Reserved, must be 0
-> > */
-> > -	push $0				/* Event data, 0 for
-> > IRQ/NMI */
-> > +	push %rsi			/* Event data for IRQ/NMI */
-> >   	push %rdi			/* fred_ss handed in by the
-> > caller */ push %rbp
-> >   	pushf  
-> 
-> This belongs to the previous patch, it is part of the host changes.
-right, will do.
+On Mon, Jul 01, 2024 at 04:04:51PM +0100, Utsav Agarwal via B4 Relay wrote:
+> From: Utsav Agarwal <utsav.agarwal@analog.com>
+>=20
+> Updating dt bindings for adp5588. Following properties are now made
+> optional:
+> 	- interrupts
+> 	- keypad,num-rows
+> 	- keypad,num-columns
+> 	- linux,keymap
+> The proposed new property "gpio-only" has been added as an optional
+> property with an additional example.
 
-> 
-> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> > index 4e7b36081b76..6719c598fa5f 100644
-> > --- a/arch/x86/kvm/vmx/vmx.c
-> > +++ b/arch/x86/kvm/vmx/vmx.c
-> > @@ -7331,10 +7331,15 @@ static noinstr void vmx_vcpu_enter_exit(struct
-> > kvm_vcpu *vcpu, if ((u16)vmx->exit_reason.basic ==
-> > EXIT_REASON_EXCEPTION_NMI && is_nmi(vmx_get_intr_info(vcpu))) {
-> >   		kvm_before_interrupt(vcpu, KVM_HANDLING_NMI);
-> > -		if (cpu_feature_enabled(X86_FEATURE_FRED))
-> > -			fred_entry_from_kvm(EVENT_TYPE_NMI,
-> > NMI_VECTOR, 0);
-> > -		else
-> > +		if (cpu_feature_enabled(X86_FEATURE_FRED)) {
-> > +			unsigned long edata = 0;
-> > +
-> > +			if
-> > (cpu_feature_enabled(X86_FEATURE_NMI_SOURCE))
-> > +				edata = vmx_get_exit_qual(vcpu);
-> > +			fred_entry_from_kvm(EVENT_TYPE_NMI,
-> > NMI_VECTOR, edata);  
-> 
-> Simply do fred_entry_from_kvm(EVENT_TYPE_NMI, NMI_VECTOR, 
-> vmx_get_exit_qual(vcpu))?
-I don't have strong preference but having a local variable improves
-readability IMHO.
+I can see that as it is clear in the diff, but this doesn't explain why,
+which is what you need to do in your commit message.
 
-> > +		} else {
-> >   			vmx_do_nmi_irqoff();
-> > +		}
-> >   		kvm_after_interrupt(vcpu);
-> >   	}
-> >     
-> 
+>=20
+> Signed-off-by: Utsav Agarwal <utsav.agarwal@analog.com>
+> ---
+>  .../devicetree/bindings/input/adi,adp5588.yaml     | 28 ++++++++++++++++=
+++----
+>  1 file changed, 24 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/input/adi,adp5588.yaml b/D=
+ocumentation/devicetree/bindings/input/adi,adp5588.yaml
+> index 26ea66834ae2..158fbf02cc16 100644
+> --- a/Documentation/devicetree/bindings/input/adi,adp5588.yaml
+> +++ b/Documentation/devicetree/bindings/input/adi,adp5588.yaml
+> @@ -46,6 +46,11 @@ properties:
+>    '#gpio-cells':
+>      const: 2
+> =20
+> +  gpio-only:
+> +    description:
+> +      This property applies if keypad,num-rows, keypad,num-columns and
+> +      linux,keypad are not specified. All keys will be marked as gpio.
 
+Why is a property required for this? Is the absence of the 3 keypad
+properties not sufficient to determine that you're in this mode?
+
+
+>    interrupt-controller:
+>      description:
+>        This property applies if either keypad,num-rows lower than 8 or
+> @@ -68,10 +73,6 @@ properties:
+>  required:
+>    - compatible
+>    - reg
+> -  - interrupts
+
+I don't understand why interrupts is no longer required.
+
+> -  - keypad,num-rows
+> -  - keypad,num-columns
+> -  - linux,keymap
+
+I think you should configure "dependencies:" such that if one of these
+properties is added, then all 3 of them must be to preserve the current
+requirements while the device is being used in keypad mode.
 
 Thanks,
+Conor.
 
-Jacob
+> =20
+>  unevaluatedProperties: false
+> =20
+> @@ -108,4 +109,23 @@ examples:
+>              >;
+>          };
+>      };
+> +
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/input/input.h>
+> +    #include <dt-bindings/gpio/gpio.h>
+> +
+> +    i2c {
+> +      #address-cells =3D <1>;
+> +      #size-cells =3D <0>;
+> +        gpio@34 {
+> +            compatible =3D "adi,adp5588";
+> +            reg =3D <0x34>;
+> +
+> +            #gpio-cells =3D <2>;
+> +            gpio-controller;
+> +            gpio-only;
+> +            };
+> +        };
+> +
+>  ...
+>=20
+> --=20
+> 2.34.1
+>=20
+>=20
+
+--oDOttPmur9969YgW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoLPRAAKCRB4tDGHoIJi
+0nBeAQCMd4I0xkAJEwaZsZmkD1PB6aeBhxjeoczPoq86VRRHEwEAp4QdAfVNSYoc
+D/M+TPzlJGpZ1KDMJrOYRdK/NJkOygI=
+=RHUe
+-----END PGP SIGNATURE-----
+
+--oDOttPmur9969YgW--
 
