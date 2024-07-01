@@ -1,161 +1,101 @@
-Return-Path: <linux-kernel+bounces-236407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 187F191E1D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:05:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8215091E1D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:07:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C06951F241CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:05:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EA4CB2238D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A7315FCF5;
-	Mon,  1 Jul 2024 14:05:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2939915FD0C;
+	Mon,  1 Jul 2024 14:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IelUclHL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D3kAHJ0+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C8915FA84;
-	Mon,  1 Jul 2024 14:05:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A44D15F41E;
+	Mon,  1 Jul 2024 14:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719842727; cv=none; b=Rae/gYzg2RYN4qNyi/YrdYwW5cjmZDhuW1O7nl5kw4z/m7aPEQt9if+Gn/tIH4AdMBslBLT9pHbmul7fQUSuM/yD9t6YuoN9qajDvnpnh+mLYMfwsE5nzIqvgGJzI3LJy10nOCKK70J7i3R9HrMz35kW1+J1/uAqyDoTWxT7FZw=
+	t=1719842811; cv=none; b=IhSQqjKLqVHISDJz2a67o5Xv5HzeUenopDzy5JZZcZ/Mo4v/0Dt7DXpqn7o6AQePjP6e7d2lEk/wwmb9boXpaicaudlqLow/OzZ3VUF2XlbnYEbFpD8x3+jO9vBZ6CrnwKaQ5r36B8/qwoR95DzClYpTnYYqsHcC5FbQvRaOU88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719842727; c=relaxed/simple;
-	bh=3z7Nyih4klomXUbQ7PdjR2cY+MU5YAkFW2gKQkAGdis=;
+	s=arc-20240116; t=1719842811; c=relaxed/simple;
+	bh=pQIIGvTZUYi99XxRe0YcnEpYQcYwdZfuFQQL2fvkEHg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QxGh9kWHPkGLr94QLnAOm0TGDC7P/dGz0J6qXMCUjREr6w+2oalSgK7i4gJT9580oxYKMR/M5IfSoIvb1DfsKhNQahSA+ug2JpMz+1xbfBw0Xk0hgAJrzOSwAb3ErelgoP0QPagMT7XLt4G15g7f4mc1E2jmhH0xiI+RPOTwAXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IelUclHL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6613BC116B1;
-	Mon,  1 Jul 2024 14:05:24 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=MStFDwgjqPV0jY5/m8iybVA3FeZuoNuVbuGrsNqsBEDac4ry3pOqWMh8BI2jlzwM0bNgZGoxJ3L6LPxBs7MjKpMAeb5zeKbH5/PeGaFBChHnb1Z7zDcPcU75RPswHaA2L7iXj4yQw7NBIlMK7D/r8pB2yshrF25Hh6RqOmZOsmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D3kAHJ0+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03A0DC2BD10;
+	Mon,  1 Jul 2024 14:06:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719842726;
-	bh=3z7Nyih4klomXUbQ7PdjR2cY+MU5YAkFW2gKQkAGdis=;
+	s=k20201202; t=1719842811;
+	bh=pQIIGvTZUYi99XxRe0YcnEpYQcYwdZfuFQQL2fvkEHg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IelUclHLBKmH/CQ1eHdRciWb6yKC9Ex/W+yqaBRUGCDDPmIVbju1SQgHfL+JRC38g
-	 1MkB/gtU8Ml9QsNa2gkU9T2l+kaz5vvwT9VBybApM0NYkcCLnRpK2jPu6U+E0TD/fy
-	 Z9gMLVGMNITnWZM2G7os5H/nMwDigx+OZ+hpvQP46SLCzNAFsuTFM8g675o0eIJECw
-	 hThpLWmk3m5OwJpiwTyEqDqhocPwHRPRucGYu4VdbqvL03whaiAM28TrxJ3Zd2M+4g
-	 VCEA9lq/r3uyTm5yE1SyfIDDlJhSaKrYV55DU0h+p/sGm//ELBZn1GttvlBs/jSTCl
-	 9V0Ff+2WSjPEg==
-Date: Mon, 1 Jul 2024 15:05:21 +0100
-From: Will Deacon <will@kernel.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Frank Li <Frank.li@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org, imx@lists.linux.dev,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] perf: add missing MODULE_DESCRIPTION() macros
-Message-ID: <20240701140521.GF2250@willie-the-truck>
-References: <20240620-md-drivers-perf-v2-1-1f88f8a08e48@quicinc.com>
+	b=D3kAHJ0+G9KnnnwtkBej5oeluZnuuPHiG/QzE5zXykCiPGWlWac9i8fppS4JJJbrp
+	 nKCII4vGqtm1cm2BcgA0FMTfrKgDZxAE1amRMkFK3QsKeDirIP4a9oPf1Up9iHkX8N
+	 39GnlQ60qejy4aKS51Jp4Rmf3V7kB9JZ6lFipLISScRugEpUwYwM0rNA8d8pbzQCax
+	 lSUZAHzxtps7hTrTtg412zkZ1Aznhy1wYoBSr15veRsCJnDsFWN4IRMYym9o/H7raR
+	 EPZHwQIYV19puDb/7KR1ZbKkAZSuULkxdW25gKsSdYN7mIKqU0XjS1OtPYWTRt26XD
+	 T4D2XR/TRYB6A==
+Date: Mon, 1 Jul 2024 15:06:44 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>,
+	Andy Chiu <andy.chiu@sifive.com>,
+	Jessica Clarke <jrtc27@jrtc27.com>, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-sunxi@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v3 05/13] riscv: vector: Use vlenb from DT for thead
+Message-ID: <20240701-hybrid-kitchen-2051f8a8ee86@spud>
+References: <20240619-xtheadvector-v3-0-bff39eb9668e@rivosinc.com>
+ <20240619-xtheadvector-v3-5-bff39eb9668e@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="TK00VZtfKVU6+hsk"
+Content-Disposition: inline
+In-Reply-To: <20240619-xtheadvector-v3-5-bff39eb9668e@rivosinc.com>
+
+
+--TK00VZtfKVU6+hsk
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240620-md-drivers-perf-v2-1-1f88f8a08e48@quicinc.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 20, 2024 at 06:46:09PM -0700, Jeff Johnson wrote:
-> With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm-ccn.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/fsl_imx8_ddr_perf.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/marvell_cn10k_ddr_pmu.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/arm_cspmu_module.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/nvidia_cspmu.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/ampere_cspmu.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/cxl_pmu.o
-> 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
-> files which have a MODULE_LICENSE().
-> 
-> This includes drivers/perf/hisilicon/hisi_uncore_pmu.c which, although
-> it did not produce a warning with the x86 allmodconfig configuration,
-> may cause this warning with arm64 configurations.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
-> Changes in v2:
-> - Updated hisi_uncore_pmu.c description per Yicong Yang
-> - Link to v1: https://lore.kernel.org/r/20240611-md-drivers-perf-v1-1-c001bae6da5c@quicinc.com
-> ---
->  drivers/perf/arm-ccn.c                   | 1 +
->  drivers/perf/arm_cspmu/ampere_cspmu.c    | 1 +
->  drivers/perf/arm_cspmu/arm_cspmu.c       | 1 +
->  drivers/perf/arm_cspmu/nvidia_cspmu.c    | 1 +
->  drivers/perf/cxl_pmu.c                   | 1 +
->  drivers/perf/fsl_imx8_ddr_perf.c         | 1 +
->  drivers/perf/hisilicon/hisi_uncore_pmu.c | 1 +
->  drivers/perf/marvell_cn10k_ddr_pmu.c     | 1 +
->  8 files changed, 8 insertions(+)
-> 
-> diff --git a/drivers/perf/arm-ccn.c b/drivers/perf/arm-ccn.c
-> index 86ef31ac7503..65f4882531db 100644
-> --- a/drivers/perf/arm-ccn.c
-> +++ b/drivers/perf/arm-ccn.c
-> @@ -1561,4 +1561,5 @@ module_init(arm_ccn_init);
->  module_exit(arm_ccn_exit);
->  
->  MODULE_AUTHOR("Pawel Moll <pawel.moll@arm.com>");
-> +MODULE_DESCRIPTION("ARM CCN (Cache Coherent Network) driver support");
->  MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/perf/arm_cspmu/ampere_cspmu.c b/drivers/perf/arm_cspmu/ampere_cspmu.c
-> index f146a455e838..426b3cfcb52e 100644
-> --- a/drivers/perf/arm_cspmu/ampere_cspmu.c
-> +++ b/drivers/perf/arm_cspmu/ampere_cspmu.c
-> @@ -269,4 +269,5 @@ static void __exit ampere_cspmu_exit(void)
->  module_init(ampere_cspmu_init);
->  module_exit(ampere_cspmu_exit);
->  
-> +MODULE_DESCRIPTION("Ampere SoC PMU (Performance Monitor Unit) driver");
+On Wed, Jun 19, 2024 at 04:57:18PM -0700, Charlie Jenkins wrote:
+> If thead,vlenb is provided in the device tree, prefer that over reading
+> the vlenb csr.
+>=20
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
 
-Curious: why do you expand the PMU acronym here, but not for any of the
-other drivers? If we're going to add these strings to all the drivers in
-one go, then it would good to be consistent.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
->  MODULE_LICENSE("GPL");
-> diff --git a/drivers/perf/arm_cspmu/arm_cspmu.c b/drivers/perf/arm_cspmu/arm_cspmu.c
-> index c318dc909767..c21c564840d6 100644
-> --- a/drivers/perf/arm_cspmu/arm_cspmu.c
-> +++ b/drivers/perf/arm_cspmu/arm_cspmu.c
-> @@ -1427,4 +1427,5 @@ EXPORT_SYMBOL_GPL(arm_cspmu_impl_unregister);
->  module_init(arm_cspmu_init);
->  module_exit(arm_cspmu_exit);
->  
-> +MODULE_DESCRIPTION("ARM CoreSight Architecture PMU driver");
->  MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.c b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> index 5b84b701ad62..0dea47e48ac5 100644
-> --- a/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> +++ b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> @@ -417,4 +417,5 @@ static void __exit nvidia_cspmu_exit(void)
->  module_init(nvidia_cspmu_init);
->  module_exit(nvidia_cspmu_exit);
->  
-> +MODULE_DESCRIPTION("NVIDIA Coresight Architecture PMU driver");
->  MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/perf/cxl_pmu.c b/drivers/perf/cxl_pmu.c
-> index 1f93a66eff5b..8b6ce9ea5a55 100644
-> --- a/drivers/perf/cxl_pmu.c
-> +++ b/drivers/perf/cxl_pmu.c
-> @@ -972,6 +972,7 @@ static __exit void cxl_pmu_exit(void)
->  	cpuhp_remove_multi_state(cxl_pmu_cpuhp_state_num);
->  }
->  
-> +MODULE_DESCRIPTION("CXL Performance Monitoring Unit driver");
+--TK00VZtfKVU6+hsk
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Similarly here, we now have a conflicting expansion of the acronym.
+-----BEGIN PGP SIGNATURE-----
 
-Will
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoK39AAKCRB4tDGHoIJi
+0oZ2AP9wLY8qWGouPJdOJukMSsLuFzcc2RXdh+CXIFhJZWObAwD8DnRG3q8GIDBV
+lsqKFk1HciXkBCw2+musvfI7br12WAE=
+=yHvA
+-----END PGP SIGNATURE-----
+
+--TK00VZtfKVU6+hsk--
 
