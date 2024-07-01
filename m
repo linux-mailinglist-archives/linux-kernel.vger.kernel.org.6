@@ -1,128 +1,109 @@
-Return-Path: <linux-kernel+bounces-236652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A2D891E564
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:31:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2E4591E569
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:31:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5687D282A48
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:31:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3C9D1C216B5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:31:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264F316DC21;
-	Mon,  1 Jul 2024 16:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C67816DC0A;
+	Mon,  1 Jul 2024 16:31:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JT/7HuBB"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dbQ14Rnt"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D8B14D2AC;
-	Mon,  1 Jul 2024 16:31:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40A816CD1E;
+	Mon,  1 Jul 2024 16:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719851468; cv=none; b=kXDUotvwWLYc0BZGC9CXWhbu939XC9s9YCPaMXmwiydeJdwQ3nOCyav8t+Xulg2BnoNp+armnN9ADqzA+sa8g0oaseMRh3alrUuP++W+nCFJrSmDOqMncXBjzbPO4uk9SRrNv0qBr2EkIhbPTHJ/kLADrDUZbzjJjoFddveZfYg=
+	t=1719851493; cv=none; b=hM/pKkrEhCn1CjyXI+0Mt2ioq8stPqj11X8MuliZOm5Bfn0MNZZcExyMUzCcSBqdLM24eKunqZ/6EPI6Q3/eAqR1QE40YODBUeoAlyJEbq6fLih8yAiiqPLuKixERaOlini9yR//shBmXgHAmPeFiFAUEf2QcmRm0g3mnIbQpSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719851468; c=relaxed/simple;
-	bh=9pyJvPtweb1UHSGE+8KU62A6fqLPa5bzsQ1lE0/LcU0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
-	 References:In-Reply-To; b=Oe+p993rJwVqp6DES6psMLXPU0By+Ozu7y4NzBH+g/1Lmy6DbYSJa39a32kM8f9O132Cvci6WrtbHozhd5qmlSunlfbi26kR+Fk4nBBPzUhZcz8ouxGDLEFr7v02Tnq4YQmncby86pgcflIn4XB5ZbOvztLhSP85phYGSm6aKmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JT/7HuBB; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A44F320005;
-	Mon,  1 Jul 2024 16:31:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1719851464;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9pyJvPtweb1UHSGE+8KU62A6fqLPa5bzsQ1lE0/LcU0=;
-	b=JT/7HuBBhBruZABWwdrYHaof3kr2CIBvYXpPf4wr1GJpwr2XbNjvzVtkA6rQqclFs+npbl
-	gc2aOIoAkc955HAVqHq3PVlT0wg1C2ifdZGqjfHAoitjZMFJz10P2mBcg7RvWo1mCAFNyO
-	8LvIvXHKMX0eJjHO2LpjkYtucxYBT0QLwjkAHVcgqVtB2zV4/MXLF592ysxzQny76lp2/F
-	T8GSDcl8cpKS+LT0L2xvE/P3Jyvqea0MhnNDDHh8cr5rDudb+el41fKz91s2JZ0FmValVS
-	pVYZJxGsaxTBTKy/qU3eXje4bitHxfHGONcwuL4T2EaDCarZ6QM9kTUJMLPS3g==
+	s=arc-20240116; t=1719851493; c=relaxed/simple;
+	bh=TifkD5hVkfGaSO8ihQ8YTBk0F409tUQni5mnGn4iz8c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q4S5n0Na+hliU6xiMGnsY5Gk3sWv8xpFZPFxVfVsTS9FtjkrtBBc6uHnuAmTg6GaDN5Q1319+NwPLkunVcOHeonI3JInV0f1I7RIte12b83rRU8UgTOCzGl/75bBHjrwzUP7PYn+cT5Zb1AlwaWbciy09bx7Lj7aHxuHFPefEFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dbQ14Rnt; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-706a4a04891so1928926b3a.3;
+        Mon, 01 Jul 2024 09:31:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719851492; x=1720456292; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DDxa8Y7qDFzYu84VzXuiVkhDJnkp6oD4zUKV4rga8Uw=;
+        b=dbQ14Rnt5CdSn7PAFYbaiXNEAGCLlgUPsDZjib4X3aEQKWvlC2lcjn7EtjfkdxLmNt
+         Gl1fp7Rfgl+omxSgP1eUpz2c7vhEGC4l9CLoE2HPb+xvE9tpAjrNFf7lhWMOGTYyqqhp
+         YXm1BGCixPSUjHsoCFwXJqIa0z+pQoRJxvPSL96GmPj+RQUhkRfIXfKE8ZGWqvAppjRF
+         3ahlbR7qznynU4QgY1kV8ecTB5UZywa8BubKTDhEGD+vbz3tGfPgHS0tQqGxcX9ndbLK
+         XNxKcOXny7+MbJdsCJdImzRwhbI11wchYeW9cc+u0ZhDoIzSUkyhr9GNd5WAKA8ioevm
+         3Kgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719851492; x=1720456292;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DDxa8Y7qDFzYu84VzXuiVkhDJnkp6oD4zUKV4rga8Uw=;
+        b=TMzA+fJtvojVWbqgwrsrflJzn2PYFUmcggb1IRviD/lxPoV1YeeNZ65TDmp/ndbmOv
+         ZFUpQn9WR7BhZcDITjrainxFdISEomaW5I1aOKBGiv++U6q/+DIifxq89S20UZ1Nm21v
+         awLdmrvvxdbnKieGEWsBi79jbO1+/XcQYG/CYUdsgvZeeJbvvzyfc3FT1cafPPacYAlX
+         aY7IBh6UHKxg3gLCmxVJZ4N71JsoLE4RBY8ZQ9XS2zZT4pupzaGenavsGyUWaA6xYYFG
+         W3CMj+Lg0GzzDjkrP2zwgbqCc7Tg8wcrz0TpL15bK6pFpWVtEP7QLgnKuUKosxdhbtB9
+         JikA==
+X-Forwarded-Encrypted: i=1; AJvYcCXvVbNsAUhy0wUyZgUJHhGd1QPfgrljg2qj/CHWeYFKv8qgvQxNiamyYOvYnEQJVdtA3znDVHF1MXoCg9LIY7J/Finu3pS2rB0bMzGv
+X-Gm-Message-State: AOJu0Yw99QCeOjC6Kd7D/TAQmUnTRhZ0T5uAk/lzGmB0uyUhX+0FXJ38
+	u8TgtQZlJLtJLiOEaZfenBXO9X0mMdsMPVctJhXdLNlfz6CKFH4bko05LQ==
+X-Google-Smtp-Source: AGHT+IG5jVz15PRjp9GhSUvJnrNd+szn4cEnfN2pl4hgvcfqVt6He2l3AUF6hjhr8yBNMH24PhWWqg==
+X-Received: by 2002:a05:6a00:3c8b:b0:705:d8b8:682d with SMTP id d2e1a72fcca58-70aaaf2523amr5172462b3a.22.1719851491786;
+        Mon, 01 Jul 2024 09:31:31 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:7783:69e6:8487:f6ab])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-708044ae3a0sm6925981b3a.173.2024.07.01.09.31.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 09:31:31 -0700 (PDT)
+Date: Mon, 1 Jul 2024 09:31:28 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Benjamin Tissoires <bentiss@kernel.org>
+Cc: linux-input@vger.kernel.org, Jeff LaBundy <jeff@labundy.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] Input: simplify event handling logic
+Message-ID: <ZoLZ4INw2gZjNzw1@google.com>
+References: <20240701060553.869989-1-dmitry.torokhov@gmail.com>
+ <20240701060553.869989-4-dmitry.torokhov@gmail.com>
+ <qevkkesgw7y2bypexmogght7iozo646vowjkovht5mplegzvnl@tzfffoaglijz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 01 Jul 2024 18:31:03 +0200
-Message-Id: <D2ECGMYXJWZ9.GNRJ1NAG4MF8@bootlin.com>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH 1/4] Revert "dt-bindings: clock: mobileye,eyeq5-clk: add
- bindings"
-Cc: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Vladimir Kondratiev"
- <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
- <gregory.clement@bootlin.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>
-X-Mailer: aerc 0.17.0
-References: <20240628-mbly-clk-v1-0-edb1e29ea4c1@bootlin.com>
- <20240628-mbly-clk-v1-1-edb1e29ea4c1@bootlin.com>
- <2846186f-a0e1-4cd3-85bf-f029053bf98c@kernel.org>
-In-Reply-To: <2846186f-a0e1-4cd3-85bf-f029053bf98c@kernel.org>
-X-GND-Sasl: theo.lebrun@bootlin.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <qevkkesgw7y2bypexmogght7iozo646vowjkovht5mplegzvnl@tzfffoaglijz>
 
-Hello Krzysztof,
+On Mon, Jul 01, 2024 at 09:41:22AM +0200, Benjamin Tissoires wrote:
+> On Jun 30 2024, Dmitry Torokhov wrote:
+> >  /*
+> >   * Pass values first through all filters and then, if event has not been
+> >   * filtered out, through all open handles. This function is called with
+> 
+> Nitpick: maybe that comment above input_pass_values() should also be
+> amended now that the processing is more straightforward?
 
-On Mon Jul 1, 2024 at 11:14 AM CEST, Krzysztof Kozlowski wrote:
-> On 28/06/2024 18:10, Th=C3=A9o Lebrun wrote:
-> > Switch from one sub-node per functionality in the system-controller to =
-a
-> > single node representing the entire OLB instance. This is the
-> > recommended approach for controllers handling many different
-> > functionalities; it is a single controller and should be represented by
-> > a single devicetree node.
-> >=20
-> > The clock bindings is removed and all properties will be described by:
-> > soc/mobileye/mobileye,eyeq5-olb.yaml
-> >=20
-> > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
->
-> This is v1, so where did this happen?
+I think the comment is still accurate from the higher POV. We do want to
+send the event(s) first through all the filters and the remainder is
+through the handlers. This is achieved by placing filters at the head of
+the list of handles attacher to the device, and placing regular handles
+at the tail of the list.
 
-This is a split of the previous Mobileye EyeQ5 system-controller series.
+Do you want me to expand the comment?
 
-I started my cover letter [4] by mentioning it. I should most probably
-have kept incrementing on the previous version number, sorry about
-that.
+Thanks.
 
-Relevant extract from this series' cover letter:
-
-On Fri Jun 28, 2024 at 6:10 PM CEST, Th=C3=A9o Lebrun wrote:
-> This is a new iteration on the Mobileye system-controller series [0].
-> It has been split into separate series to facilitate merging.
-[...]
-> Related series are targeted at reset [1], pinctrl [2] and MIPS [3].
-[...]
-> [0]: https://lore.kernel.org/lkml/20240620-mbly-olb-v3-0-5f29f8ca289c@boo=
-tlin.com/
-> [1]: https://lore.kernel.org/lkml/20240628-mbly-reset-v1-0-2a8294fd4392@b=
-ootlin.com/
-> [2]: https://lore.kernel.org/lkml/20240628-mbly-pinctrl-v1-0-c878192d6b0a=
-@bootlin.com/
-> [3]: https://lore.kernel.org/lkml/20240628-mbly-mips-v1-0-f53f5e4c422b@bo=
-otlin.com/
-
-Regards,
-
-[4]: https://lore.kernel.org/lkml/20240628-mbly-clk-v1-0-edb1e29ea4c1@bootl=
-in.com/
-
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+-- 
+Dmitry
 
