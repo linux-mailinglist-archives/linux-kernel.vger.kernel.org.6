@@ -1,264 +1,172 @@
-Return-Path: <linux-kernel+bounces-235772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F90291D975
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:53:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D93C91D97C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:53:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC1981C2210D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:53:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 130CB280FD7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 236327D095;
-	Mon,  1 Jul 2024 07:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36917E110;
+	Mon,  1 Jul 2024 07:53:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QQPjE1la"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="OwFQU5DA"
+Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2071.outbound.protection.outlook.com [40.92.102.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4676F073;
-	Mon,  1 Jul 2024 07:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719820385; cv=none; b=bjXRzZOeXA//qAMfib5x5QoJ7+52qQL7st9i4ZYE+6KLSacaEZ4n0WAk4zIq47ZrgJcHmJniKd1pzpo9accEWSq9pUEY19wKmP1yU2Mvi5ns2ZM4pxwSNZNpb0WaaUPNEIDioonYIe0KehH3M+yTs9FARQnWzfQljcd+XhQIAlE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719820385; c=relaxed/simple;
-	bh=hDpWgwSVQ5Ukrel+3JWNk0RsmebH4XHE9ysBkqTz5YY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gBl+ROXUWpEtNBWbVqRxka8nDb7/Y/Lijhuo1Bxa7n9j/v5EBrq7dxqPp0MyKFuvZaTW3pBuvQwPyJ+EpluvT++1IUXz17WXrN2f+YhoGZ4zepjlmiUa/gKflJ7en2mZ9fZE2/FgctD4n3/9hfcQR5WeD7A6/V/wqYne0/O1hTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QQPjE1la; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EB9BC116B1;
-	Mon,  1 Jul 2024 07:53:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719820384;
-	bh=hDpWgwSVQ5Ukrel+3JWNk0RsmebH4XHE9ysBkqTz5YY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QQPjE1lazVNsIQLAEYALQMN6MNlJSaRtMFyuukrF8xJNyWJF+M5u7WPFHmPO+wAEH
-	 77cs8oTWmTRQvjJForpJ5S36RFrTu4tk2CxFodaKMrrllzyFlmELZrYLnjDc8A1gvB
-	 HrgpmV7tKrp3DVwBPBQOV7swtS/shaUb5zQppzARflG6IkndTAD29thQnjN08A+aKz
-	 leLyzyZXozB4DN0seq1zT4YQO83YKX+wMroBM2DO/MZXnRocutkIGTPCe35IBTsjyT
-	 GSDNE3ubu6nXgW0dXsBuBPPOsAUvitWyPAbu4Ubr9LBtJ0bwNCiezhO0yPTocYDhLw
-	 8BPd6iy1HkZow==
-Date: Mon, 1 Jul 2024 09:53:01 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, Jeff LaBundy <jeff@labundy.com>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] Input: preallocate memory to hold event values
-Message-ID: <uhw27xijopkzogbs6ekt5bo3trrg4yu6pkxtpd3udeosjungwm@es6j6h6mjka6>
-References: <20240701060553.869989-1-dmitry.torokhov@gmail.com>
- <20240701060553.869989-5-dmitry.torokhov@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9562C144;
+	Mon,  1 Jul 2024 07:53:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719820422; cv=fail; b=mN09hZ2CIVnV1BBgkrEGmM73tlmA0aT6BFaLbMdMjbb5D55IGxfwieuSyfKy858YXvYi86hQv6EOmWkH7N3SzG9N4Mg+GmdhECr4QEvs6Fq/oJIfWjQ4Uyx6jCbEhupYjQm+uxKacT1KuNslPv8Gfm9Mtq3830/HVbrUNgSH7CE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719820422; c=relaxed/simple;
+	bh=5kJcnWK0CPl+Xr/VRu5P9z5pEKIdtIijoP3CzDl8xgs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ILOSAy8GHQ5VT4K2ypVr4sxP+zPsXrZMLKWd56EDYdJ8mOh4rzmgra5QTxoCCQsnJu+4z3fJelPCLQYa4wxBs50kZI2dRNp4KlhOxQLQ9wNQtxRuLVDiNUh2e9xZqmD5J5d3Deshrr4CFKdY+wA1ErAKLCdsZitGSpewWcVFa4U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=OwFQU5DA; arc=fail smtp.client-ip=40.92.102.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Vp99o7VVTIXg7rIv/bL2SZRWf/aF6rojYM6dtfIpdNpz3FI8c9lyxwpVI7WT3rOLIXt2JXx/1fHWFz0spaGZRB6VbKoaxtwzqfVKtDlNlDSrnOEWb3sHqB8qxPTSEmaqT/UYTD6GaQZIBzOXeaL0J7rWz5t9yvnzbXaIZz2/LcoEcfySOiDw3ygXME/DPBXkT54lfg2uJby/ivIUn4JPeFG8MZNp+jowwd3eu8Ty5MYB2VKrLwwwqbaj+3/bZALn4BI64d6mY9CO32oisybGhfcSYpoTEWKGvsBBdh8uvFzq/Zxi494otBU26IvHEWzQwYiMp1HwycUuZcJgCe2C7A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5kJcnWK0CPl+Xr/VRu5P9z5pEKIdtIijoP3CzDl8xgs=;
+ b=BAIRL1KKAGoLOKJYpJgy1kafXDLi09anUShxICQzfSI0FzS1fNLgOrO3qZIkcyAvupZJhj+O+7xcdznYcf+ge5gD/nhv/hl1Yl0BRScVI8PTntyxjf6OphYk01eQJZUbKGEY01oUuiBo+43AggT1zAcexNZbN1KeFPvvWHE9/eHw94AtmmgyClcbA1EvkQ7WPTdjbEuzkc6II5P/cHaM5U7U3Wfkm20pVUHOW0/gXDEljfZgjgHQV4i+4Q4LHyQ1QfFR3aeuQH6q9Na5qarMqa0t8wOzl+yf0QemiGLNIDEzHnqjmn/x4/Wwws5hbAAfOS8D5OCvyHRsM8ekbTJCjw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5kJcnWK0CPl+Xr/VRu5P9z5pEKIdtIijoP3CzDl8xgs=;
+ b=OwFQU5DAcVNF8z1ZeYX/wNv72rMevFpEdvVdFVsxBMXIm3MHQwzL3kFJocg9Wqrf/E+o/QFMr2EKr8tg5hs+Kz1HdeTXXf3RVGHfricYw8PrVcZiyfPNn7eiYGpdlFqUJa2UeUfCWBS5UHRYI65OSp9v1J6+bn7s+xuqyYffRh4qgepkocTogNGRYsBTHPbPbF2M3fe1jtdOM+yOj26p5AjzNFvd75crHbO+wP/3uG550z5+uPX2OyAjXrM3wax1RCBiUVRiP7MUF9hTg0hP7EB04qjsyI/sNRBkp5taEM1iSVQhAvoj4puXpp15p9x3UkYFy32bY6ngM0dXuL2Z2w==
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
+ PN2P287MB0302.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:ef::12) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7719.32; Mon, 1 Jul 2024 07:53:35 +0000
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a%7]) with mapi id 15.20.7719.029; Mon, 1 Jul 2024
+ 07:53:35 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: Ard Biesheuvel <ardb@kernel.org>
+CC: Lukas Wunner <lukas@wunner.de>, Hans de Goede <hdegoede@redhat.com>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, Kerem Karabay
+	<kekrby@gmail.com>, Orlando Chamberlain <orlandoch.dev@gmail.com>
+Subject: Re: [PATCH v2] efi: libstub: add support for the apple_set_os
+ protocol
+Thread-Topic: [PATCH v2] efi: libstub: add support for the apple_set_os
+ protocol
+Thread-Index:
+ AQHayyMw+x8Tv3BlDUuYLD8zHzW0zLHhWosAgAABBwCAAANoAIAAAXYAgAAMlICAAA3UAIAAA9mAgAAB9YCAAACgEQ==
+Date: Mon, 1 Jul 2024 07:53:35 +0000
+Message-ID:
+ <MA0P287MB0217F69CBAB2D5776D4AFA43B8D32@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+References: <75C90B50-9AB9-4F0A-B2CD-43427354D15C@live.com>
+ <ZoJAAifMqIDXdniv@wunner.de>
+ <CAMj1kXH3fvS259Y1mfYcKQbM2mUYbSfuf2ZiMXfFhjq-rzn5UA@mail.gmail.com>
+ <ZoJDuunseVIDua-m@wunner.de>
+ <CAMj1kXFKBsAXDLxinqiszH=6hEOjbJQL-nFgBsBceta4rUCN-w@mail.gmail.com>
+ <ZoJPgSlZJ3ZlU2zL@wunner.de>
+ <CAMj1kXHR+mCR5eibj23S26-PN6yLPD1uf9+H2fEEDhNWOh6TjA@mail.gmail.com>
+ <ZoJeVWMU8yg4CRLl@wunner.de>
+ <CAMj1kXFRNrmyAtVaqHr+RWQ22+++u70eJ__brLjmJa0ocyc0Bw@mail.gmail.com>
+In-Reply-To:
+ <CAMj1kXFRNrmyAtVaqHr+RWQ22+++u70eJ__brLjmJa0ocyc0Bw@mail.gmail.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-IN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:
+ [97LsZwUZa/A5PyRbG0ivr7sJSapniSbTIM9yxghp5oZwolqZ7Ezls9lzXR2A69pYsSIp7BE05Pg=]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MA0P287MB0217:EE_|PN2P287MB0302:EE_
+x-ms-office365-filtering-correlation-id: e117defe-eba6-485c-e4ef-08dc99a2e917
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|8060799006|461199028|102099032|440099028|3412199025;
+x-microsoft-antispam-message-info:
+ K4ndPMDOv0Zch1shJkwFMTbBEZ7gPFOjBZ2yPacXw7TyJoeZQdx7EJCNRYYR5ivtFfB7mjitE94gg4o00OwgY81Jpar8uZcQyBaCNW2jqS+M0xE2aY+V4itBWxIftT6C/HuUKcwIDdVEUIDHPKRReY1w3acypvJ1eJ6xgSBDDSC2XPOGA5BDiSPqiG6Cn0ogFvRk23LPcyd8Krgthc8MN6nOMzcyDOc+wxwv2xFX1m+vBuVNAu/im44g2uQfFlji3/aI/biYABim8aNUsrTOxSoWHUFSnF6FjLcizzQok3UhPeRA7FOZyTIrJaDV1N5GYsv3AKUvX19vs6xZ+Xjg1u87z70lo1eFE7L8LqYLlw4Jr73BlyTGoZFIuTwigLW0ybJywNVFnyD2zpHAWc2W9HVQVocs9SSzdMjxwbOvHAj8eTIcSM8xH9qmjJiCHS3eGLICMSOoigbcV4zGcZ8RMnKAc77pVOjjCSu+kwHqp9A/eBMD89edKWqNk4Zd9GTK2D7vaAOw/ob/frqeVvgaBr3rzgIIIOw7k0x9u782GgiIp/4svqR27VG8XcKUq9Nxm+0f6HnvaGc+1SxHlT1IMrPXGXvcpUOD8J4WzV5MCRzcSZrcsvEFAbEai73gb4HB
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?Mk1iZDVQVU8xZWh5TklrM2RCa216aXpmeThxVWpWVy82Z3QzT0xFcG1UOGo4?=
+ =?utf-8?B?Y0k1VzFjUEtMK3p1WWxSYnAyS1hXMnVSNlJFaERZbllhLzZpTDlMRis2R2V0?=
+ =?utf-8?B?dUFCR2tVSk8wbW5GY1FOM2dtYnhXai9QdXJsWTRlOE1PVExwRktLVmpBWmZw?=
+ =?utf-8?B?R3lCQ2ZnVFR6T1lLaEp6MUs2d1RuMndQRUFvVitucjdTdEJhVGdtT0daVVox?=
+ =?utf-8?B?SkxqZHUycVFKa3VTN0FnZVJ2aWgxVkNkaGhTTlhrN3N2QTlMODc0ODlpdXlS?=
+ =?utf-8?B?endidytsbW9PR1g3UGsyRmdzMVNwMm9SS1pkTWwyQ09wV0VieGJqTVdKOXNl?=
+ =?utf-8?B?cU1FYUp0M25OcnBCbFBPT1NpZEs5U3kyQ0Q3c3pDdzBQSFdaS3V6WTFhSWxp?=
+ =?utf-8?B?cVozbGxFLzArdHlZcHRBWE5MSkxvaXdMU0ZjQmZOdWlYTm9VQlROZ3B4ZGhZ?=
+ =?utf-8?B?Mnk0aVZIcGRRVk1YYytwb1ZYUDF1elRJaDhPUnNyek8yN2txTUhRSUsxazJC?=
+ =?utf-8?B?ajhRYk5NdlVMRmx0dCszWFRTSWFKWU5XbTFzRkZiZ2pCMll2UStOR2NLTkU4?=
+ =?utf-8?B?RWRxUmtMQkwvZ2ZlYU1CWGxoVjVIdWc5VE91ZnpFZUJ0YlFvZlphcHozSTl3?=
+ =?utf-8?B?ZVhub285YWpoN3hmQXVvb0pXd21WKzhrS0RRd2l0UzdTYzltUVhKWC9XcDF1?=
+ =?utf-8?B?MnVXWlduQTUxUC9nc0NkRENWdU5MRUVmM0lZY29IaElDeWhMN2dBa2FZc3Qr?=
+ =?utf-8?B?UHhQTDV5ZWZaWmxXRkt5bUFhZUZ3SHJSc2daLzA0Vmo3TUZ4U1ZoVzhVRVRp?=
+ =?utf-8?B?WHFNMnhwUi94bnNBNS9uNk1VS3FNTVNieGxWdTAxVzg3dFF2YitRMXVqMnZJ?=
+ =?utf-8?B?aEtXckg4V1B2SUtQZ3daSExjMThacmdmeCs1Tjd4cW9LTlhxcm8ydllBKzZY?=
+ =?utf-8?B?TDkyY1B2VGd6YVJ3cExSV3VxTHNHdzJINk9JTy84VldCMCt2UDJvRUlmRGJY?=
+ =?utf-8?B?UE53NFhtc21nNmpYeVgyOEhwNUNzMFJuY01Hd2hFZlV4VkJCYWEzTWwwSzJx?=
+ =?utf-8?B?WFFZaXNmNTZ0WUFTbGU0bjBTTC95NjlKM2NlRnR5RGNqZU0xc2twVFRyamRP?=
+ =?utf-8?B?b1BGWUl4NmFkbWo3VVE2UlBtSEZLaUtHWDhXeW0yMzNuRkdiTzRHZlJRZ0hW?=
+ =?utf-8?B?d0Vhdit4UzIzdXBDYmRjMll0U3Z6Ykd3UTRUYjZDN3NSRWlQY2J5ekVTK0xM?=
+ =?utf-8?B?VmVMYzM1eWt6TSswSklPN2trTGNadjZjVi9BV1lMQk5EWnp1U3Y4SEhDY0o2?=
+ =?utf-8?B?NXJrRmc5MWc1cDVVQ3VzY0tXc0dyemloaUR0R01FTEF2NmVxMlEwOTQ1d1Fl?=
+ =?utf-8?B?UDdBMjVkeWM5U0tmQjg2SGZDL0Z2cXBlMnJiNU40ZnIrVkQvejBsdTh5MkMr?=
+ =?utf-8?B?WlpleWxiK0ZFUjNyZ2hydVljdlcyaHMvL2JmK1V2NFNLZHdCdUcraGk5cTZt?=
+ =?utf-8?B?cnY1cUZqUGIybWhlUnU1dDZud1pXTDcxZTV3MWlIZUFUSFJOOEhxaG1mVWdZ?=
+ =?utf-8?B?SW4vWndaU2FBRGNabEFFNzBYcFp4bktpZDJJQlN0WVV1K2ZvNTBHeC9EeXFw?=
+ =?utf-8?B?bFNSZUdoZzdwUHpDMGM2VWF1b01iaW5SWUlYMVdBVFQ1UU84Mjd2Qm8rck5J?=
+ =?utf-8?B?eEdsaFZ1RkMxZlFjVnNRckRybUl6eE95NTJyRmt3Tk5udEhHV2RneEViUUZD?=
+ =?utf-8?Q?yFCACJegsdAxYDKR3k=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240701060553.869989-5-dmitry.torokhov@gmail.com>
+X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-bafef.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: e117defe-eba6-485c-e4ef-08dc99a2e917
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jul 2024 07:53:35.3853
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB0302
 
-On Jun 30 2024, Dmitry Torokhov wrote:
-> Preallocate memory for holding event values (input_dev->vals) so that
-> there is no need to check if it was allocated or not in the event
-> processing code.
-> 
-> The amount of memory will be adjusted after input device has been fully
-> set up upon registering device with the input core.
-
-As a general comment on this patch, I think it should be split in 2 or
-3:
-- reorder input_allocate_device() and introduce the `if (!dev) return`
-  statement
-- introduce input_device_tune_vals()
-- and then preallocate the memory for dev->vals.
-
-I think the code is OK in its current form, but the rewrite in the
-middle are giving me a hard time ensuring we are not losing anything in
-the change.
-
-> 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->  drivers/input/input.c | 98 ++++++++++++++++++++++++++++---------------
->  1 file changed, 64 insertions(+), 34 deletions(-)
-> 
-> diff --git a/drivers/input/input.c b/drivers/input/input.c
-> index eeb755cb12e7..b65b645d9478 100644
-> --- a/drivers/input/input.c
-> +++ b/drivers/input/input.c
-> @@ -112,9 +112,6 @@ static void input_pass_values(struct input_dev *dev,
->  
->  	lockdep_assert_held(&dev->event_lock);
->  
-> -	if (!count)
-> -		return;
-
-This doesn't seem to be related to the commit. Should this be in a
-separate one?
-
-> -
->  	rcu_read_lock();
->  
->  	handle = rcu_dereference(dev->grab);
-> @@ -320,9 +317,6 @@ static void input_event_dispose(struct input_dev *dev, int disposition,
->  	if ((disposition & INPUT_PASS_TO_DEVICE) && dev->event)
->  		dev->event(dev, type, code, value);
->  
-> -	if (!dev->vals)
-> -		return;
-> -
->  	if (disposition & INPUT_PASS_TO_HANDLERS) {
->  		struct input_value *v;
->  
-> @@ -1979,22 +1973,41 @@ struct input_dev *input_allocate_device(void)
->  	struct input_dev *dev;
->  
->  	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
-> -	if (dev) {
-> -		dev->dev.type = &input_dev_type;
-> -		dev->dev.class = &input_class;
-> -		device_initialize(&dev->dev);
-> -		mutex_init(&dev->mutex);
-> -		spin_lock_init(&dev->event_lock);
-> -		timer_setup(&dev->timer, NULL, 0);
-> -		INIT_LIST_HEAD(&dev->h_list);
-> -		INIT_LIST_HEAD(&dev->node);
-> -
-> -		dev_set_name(&dev->dev, "input%lu",
-> -			     (unsigned long)atomic_inc_return(&input_no));
-> -
-> -		__module_get(THIS_MODULE);
-> +	if (!dev)
-> +		return NULL;
-> +
-> +	/*
-> +	 * Start with space for SYN_REPORT + 7 EV_KEY/EV_MSC events + 2 spare,
-> +	 * see input_estimate_events_per_packet(). We will tune the number
-> +	 * when we register the device.
-> +	 */
-> +	dev->max_vals = 10;
-> +	dev->vals = kcalloc(dev->max_vals, sizeof(*dev->vals), GFP_KERNEL);
-> +	if (!dev->vals) {
-> +		kfree(dev);
-> +		return NULL;
->  	}
->  
-> +	mutex_init(&dev->mutex);
-> +	spin_lock_init(&dev->event_lock);
-> +	timer_setup(&dev->timer, NULL, 0);
-> +	INIT_LIST_HEAD(&dev->h_list);
-> +	INIT_LIST_HEAD(&dev->node);
-> +
-> +	dev->dev.type = &input_dev_type;
-> +	dev->dev.class = &input_class;
-> +	device_initialize(&dev->dev);
-> +	/*
-> +	 * From this point on we can no longer simply "kfree(dev)", we need
-> +	 * to use input_free_device() so that device core properly frees its
-> +	 * resources associated with the input device.
-> +	 */
-> +
-> +	dev_set_name(&dev->dev, "input%lu",
-> +		     (unsigned long)atomic_inc_return(&input_no));
-> +
-> +	__module_get(THIS_MODULE);
-> +
->  	return dev;
->  }
->  EXPORT_SYMBOL(input_allocate_device);
-> @@ -2334,6 +2347,34 @@ bool input_device_enabled(struct input_dev *dev)
->  }
->  EXPORT_SYMBOL_GPL(input_device_enabled);
->  
-> +static int input_device_tune_vals(struct input_dev *dev)
-> +{
-> +	struct input_value *vals;
-> +	unsigned int packet_size;
-> +	unsigned int max_vals;
-> +
-> +	packet_size = input_estimate_events_per_packet(dev);
-> +	if (dev->hint_events_per_packet < packet_size)
-> +		dev->hint_events_per_packet = packet_size;
-> +
-> +	max_vals = dev->hint_events_per_packet + 2;
-> +	if (dev->max_vals >= max_vals)
-> +		return 0;
-> +
-> +	vals = kcalloc(max_vals, sizeof(*vals), GFP_KERNEL);
-> +	if (!vals)
-> +		return -ENOMEM;
-> +
-> +	spin_lock_irq(&dev->event_lock);
-> +	dev->max_vals = max_vals;
-> +	swap(dev->vals, vals);
-> +	spin_unlock_irq(&dev->event_lock);
-> +
-> +	kfree(vals);
-
-Maybe add a comment here that we are freeing the *old* value of
-dev->vals, not the brand new we just allocated a few lines above.
-This made me look at the code a few time and wondered why we just
-allocate and free the same data...
-
-Cheers,
-Benjamin
-
-> +
-> +	return 0;
-> +}
-> +
->  /**
->   * input_register_device - register device with input core
->   * @dev: device to be registered
-> @@ -2361,7 +2402,6 @@ int input_register_device(struct input_dev *dev)
->  {
->  	struct input_devres *devres = NULL;
->  	struct input_handler *handler;
-> -	unsigned int packet_size;
->  	const char *path;
->  	int error;
->  
-> @@ -2389,16 +2429,9 @@ int input_register_device(struct input_dev *dev)
->  	/* Make sure that bitmasks not mentioned in dev->evbit are clean. */
->  	input_cleanse_bitmasks(dev);
->  
-> -	packet_size = input_estimate_events_per_packet(dev);
-> -	if (dev->hint_events_per_packet < packet_size)
-> -		dev->hint_events_per_packet = packet_size;
-> -
-> -	dev->max_vals = dev->hint_events_per_packet + 2;
-> -	dev->vals = kcalloc(dev->max_vals, sizeof(*dev->vals), GFP_KERNEL);
-> -	if (!dev->vals) {
-> -		error = -ENOMEM;
-> +	error = input_device_tune_vals(dev);
-> +	if (error)
->  		goto err_devres_free;
-> -	}
->  
->  	/*
->  	 * If delay and period are pre-set by the driver, then autorepeating
-> @@ -2418,7 +2451,7 @@ int input_register_device(struct input_dev *dev)
->  
->  	error = device_add(&dev->dev);
->  	if (error)
-> -		goto err_free_vals;
-> +		goto err_devres_free;
->  
->  	path = kobject_get_path(&dev->dev.kobj, GFP_KERNEL);
->  	pr_info("%s as %s\n",
-> @@ -2448,9 +2481,6 @@ int input_register_device(struct input_dev *dev)
->  
->  err_device_del:
->  	device_del(&dev->dev);
-> -err_free_vals:
-> -	kfree(dev->vals);
-> -	dev->vals = NULL;
->  err_devres_free:
->  	devres_free(devres);
->  	return error;
-> -- 
-> 2.45.2.803.g4e1b14247a-goog
-> 
+DQoNCj4gT24gMSBKdWwgMjAyNCwgYXQgMToyMeKAr1BNLCBBcmQgQmllc2hldXZlbCA8YXJkYkBr
+ZXJuZWwub3JnPiB3cm90ZToNCj4gDQo+IO+7v09uIE1vbiwgMSBKdWwgMjAyNCBhdCAwOTo0NCwg
+THVrYXMgV3VubmVyIDxsdWthc0B3dW5uZXIuZGU+IHdyb3RlOg0KPj4gDQo+Pj4gT24gTW9uLCBK
+dWwgMDEsIDIwMjQgYXQgMDk6MzA6MzRBTSArMDIwMCwgQXJkIEJpZXNoZXV2ZWwgd3JvdGU6DQo+
+Pj4gQXNzdW1pbmcgdGhhdCBJbnRlbCBNYWNzIGltcGxlbWVudCB0aGUgRUZJIFNNQklPUyBwcm90
+b2NvbCwgcmV1c2luZw0KPj4+IHRoZSBleGlzdGluZyBwaWVjZXMgc2hvdWxkIGJlIHJhdGhlciBz
+dHJhaWdodC1mb3J3YXJkLiBTb21ldGhpbmcgbGlrZQ0KPj4+IHRoZSBiZWxvdyBzaG91bGQgd29y
+ayBpbiB0aGF0IGNhc2UgKHdoaXRlc3BhY2UgZGFtYWdlIGNvdXJ0ZXN5IG9mDQo+Pj4gZ21haWwp
+DQo+Pj4gDQo+Pj4gTm90ZSB0aGF0IHRoZSBzbWJpb3MuYyAgbGlic3R1YiBzb3VyY2UgZmlsZSBu
+ZWVkcyBzb21lIGNoYW5nZXMgdG8NCj4+PiBidWlsZCBjb3JyZWN0bHkgZm9yIHg4NiB3aXRoIENP
+TkZJR19FRklfTUlYRUQ9eSwgYnV0IEkgY2FuIHRha2UgY2FyZQ0KPj4+IG9mIHRoYXQuDQo+PiAN
+Cj4+IE9ybGFuZG8sIEFkaXR5YSwgY291bGQgeW91IHRlc3QgQXJkJ3MgcGF0Y2ggd2l0aCBDT05G
+SUdfRUZJX01JWEVEPW4/DQo+PiANCj4gDQo+IFllcywgcGxlYXNlIHRlc3Qgc28gd2UgY2FuIGNo
+ZWNrIHdoZXRoZXIgSW50ZWwgTWFjcyBleHBvc2UgdGhpcw0KPiBwcm90b2NvbCBpbiB0aGUgZmly
+c3QgcGxhY2UuDQoNClN1cmUNCg0KPiANCj4gTm90ZSB0aGF0IHRoZSBmb2xsb3dpbmcgaHVuayBp
+cyBuZWVkZWQgdG9vOg0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZmlybXdhcmUvZWZpL2xp
+YnN0dWIvTWFrZWZpbGUNCj4gYi9kcml2ZXJzL2Zpcm13YXJlL2VmaS9saWJzdHViL01ha2VmaWxl
+DQo+IGluZGV4IDA2ZjA0MjhhNzIzYy4uMWYzMmQ2Y2Y5OGQ2IDEwMDY0NA0KPiAtLS0gYS9kcml2
+ZXJzL2Zpcm13YXJlL2VmaS9saWJzdHViL01ha2VmaWxlDQo+ICsrKyBiL2RyaXZlcnMvZmlybXdh
+cmUvZWZpL2xpYnN0dWIvTWFrZWZpbGUNCj4gQEAgLTc3LDUgKzc3LDUgQEANCj4gbGliLSQoQ09O
+RklHX0FSTSkgICAgICAgICAgICAgICs9IGFybTMyLXN0dWIubw0KPiBsaWItJChDT05GSUdfQVJN
+NjQpICAgICAgICAgICAgKz0ga2FzbHIubyBhcm02NC5vIGFybTY0LXN0dWIubyBzbWJpb3Mubw0K
+PiAtbGliLSQoQ09ORklHX1g4NikgICAgICAgICAgICAgICs9IHg4Ni1zdHViLm8NCj4gK2xpYi0k
+KENPTkZJR19YODYpICAgICAgICAgICAgICArPSB4ODYtc3R1Yi5vIHNtYmlvcy5vDQo+IGxpYi0k
+KENPTkZJR19YODZfNjQpICAgICAgICAgICArPSB4ODYtNWx2bC5vDQo+IGxpYi0kKENPTkZJR19S
+SVNDVikgICAgICAgICAgICArPSBrYXNsci5vIHJpc2N2Lm8gcmlzY3Ytc3R1Yi5vDQo=
 
