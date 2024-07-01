@@ -1,188 +1,90 @@
-Return-Path: <linux-kernel+bounces-235958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AA5191DBBF
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:51:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D71FC91DBC1
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BACD4B20AA1
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:51:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5F4B1C22254
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:53:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92483129A74;
-	Mon,  1 Jul 2024 09:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE130128372;
+	Mon,  1 Jul 2024 09:53:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TeqbyRSS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="A4yxTbo9"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6372C859;
-	Mon,  1 Jul 2024 09:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76B52C859
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 09:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719827477; cv=none; b=d/KfX7x4NOmrF4BNOJtL9pA8/ymHJ3PR5WqHWuGbWzuJCXsCEn3ycyY301lY9NwtsJmRWQ+BdUam+Nrm4GsKz35MH2JNvRfVaP7q1z1SHAi8fbpbprQGNoBf8cV8/oeNGz1Orhoif8gZEH8vT2C2qjSblxiK6QSAbgS5mn4+Lig=
+	t=1719827631; cv=none; b=T0K1uN3wxh7VVUEVpA5cQg7e2C1cD0gDs2w1u7fDEystJ27/JFy2D4+KR9TrU/Klj38ASgENceYpZA1gTtvJ36HtRL+s/6JhfiE4FFwaHEHuFn13YlNxdCvye7qZngMZGHWquhRkBIKvur4unFez1AZ3Je1om33TIJUbt+V1S28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719827477; c=relaxed/simple;
-	bh=yKWtYTbS3qpNtS6WsmHfq2eHCxVi3Q8AxVnwoo5d3eI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sudtd20hhwJoG8rjz+EuxnDdeBxAz3/w4MUNR2leAB79lzZxazxh8QrQaJhWbumap7n0lXB4a++rWZu5XaMMDXd8h7WCiRGz5H4iH+RGXX7SPm0bRJ+/wY5Ca3MpOGRM8XuJJhTa9OLM86SkKaRMdL/qxtt9Kqjlk4KcMm54LZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TeqbyRSS; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719827477; x=1751363477;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=yKWtYTbS3qpNtS6WsmHfq2eHCxVi3Q8AxVnwoo5d3eI=;
-  b=TeqbyRSSVzw4pxzhZUlwrD1L9LeF+fEsgt45NBh2nZAXGCpMdxVJ9uZG
-   ZUO+jCKLiI3haYTHlGe/kjm3urH/A1kBVlP9WKQgV2fUrSrCn7Ple/1Uk
-   dMKYSpANjQ+DobKzWCWmV7Za/M5GjGbTzP5qncqQJ5b8p9Pn2bWqXznvj
-   IzvVkap3kMtOdAkZ43diqcKKsfFH4Dt3K3tnMtFFTyhC719h9+QjNcKFb
-   nTnk/zdrr7/uyto1Vm9ZhID1WArw6DsNN1lixWIiVsAldaOnaGKg7r5AH
-   R9J0ApeT2SD8UYnMOI6SBoIpzsId0lF+2LesLTNu4Z5rbcqpRPmbMJcqz
-   g==;
-X-CSE-ConnectionGUID: AVioUNiFSIynu2XC7g5zuw==
-X-CSE-MsgGUID: TFPIBzx+RWOkYQJtiXpitA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11119"; a="20759822"
-X-IronPort-AV: E=Sophos;i="6.09,175,1716274800"; 
-   d="scan'208";a="20759822"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 02:51:16 -0700
-X-CSE-ConnectionGUID: 6uIx7oc+RGy+i9SpXNbhwA==
-X-CSE-MsgGUID: Ngzqc+JQTQm4LLX2pO3UoQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,175,1716274800"; 
-   d="scan'208";a="49795701"
-Received: from xfang-mobl1.ccr.corp.intel.com (HELO [10.124.225.1]) ([10.124.225.1])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 02:51:11 -0700
-Message-ID: <c0a9ffb6-e6ea-4159-9cc0-a23df5e59429@linux.intel.com>
-Date: Mon, 1 Jul 2024 17:51:09 +0800
+	s=arc-20240116; t=1719827631; c=relaxed/simple;
+	bh=vM2BqcsoybpKJKE+WB6Ic7BDJbuXe+TuXSwmVKkGXbg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZqiYC2yEGzRehrbP1VZ7TC2FLcLTu2WfmEyxALoBiFoK16r2H6KFni4cZLU1HMXyffbyrOfAw0TX6Kvmxdx5SkyqNxKrLhJ9WcdDFJ03DjJeQ/Bdnq/dZIZWDqudigwNDTHUPafQb+TFlU9ltrUdCNcXWiGbpWQtFv9YGvBGJrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=A4yxTbo9; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id AB6041BF20A;
+	Mon,  1 Jul 2024 09:53:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1719827627;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vM2BqcsoybpKJKE+WB6Ic7BDJbuXe+TuXSwmVKkGXbg=;
+	b=A4yxTbo9rV4rBfvnnUuQptK4TfLtqGMChbEgNYd6E8BKwOjiCLfX2sgIaAMguQTzcsihBi
+	KgfjdQdj5Ft+LOnxc0QLq2tF/OcBU4YkU5s0vWZ5tmzgVaCKYZsHXswt9YUl9maOMLwBNT
+	v4gxgMPjYeMLmn8d0FSiohuoyKMp1G7ZUkMs9e3P1oHs0QIYNGoG4nOW4DouRixMfKdeES
+	FMRKQxIuBm52i/1Kg2D3mpckzIEZijEUH80yRCfMNPUavlCRsY6wWzGZ849Alnh2miC3Sa
+	nOS8N6nJW0MNfr6JKkyx90LNjpKhkrfdqB6tDxypgjAK2GeSTVt+356Oehmfkg==
+Date: Mon, 1 Jul 2024 11:53:45 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, Richard
+ Weinberger <richard@nod.at>
+Subject: Re: [PATCH] mtd: nand: mxc_nand: always copy_spare() for page write
+Message-ID: <20240701115345.3ca6fef7@xps-13>
+In-Reply-To: <20240528203006.1479230-1-s.hauer@pengutronix.de>
+References: <20240528203006.1479230-1-s.hauer@pengutronix.de>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf topdown: Correct leader selection with sample_read
- enabled
-To: "Liang, Kan" <kan.liang@linux.intel.com>, Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- Dapeng Mi <dapeng1.mi@intel.com>
-References: <20240614213908.352840-1-dapeng1.mi@linux.intel.com>
- <df56c6e1-5d99-4cbe-abd4-772e7ff948af@linux.intel.com>
- <4f5dbf6f-3805-43b6-867c-2503ccec7c1a@linux.intel.com>
- <CAP-5=fVYmUvYawOBtUc_-PVzsTQhpOuMx4wxA7bHjwaZejii8Q@mail.gmail.com>
- <350e5bf7-23ee-4a7f-8b62-e3d07604cbe1@linux.intel.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <350e5bf7-23ee-4a7f-8b62-e3d07604cbe1@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
+Hi Sascha,
 
-On 6/29/2024 4:27 AM, Liang, Kan wrote:
->
-> On 2024-06-28 2:28 p.m., Ian Rogers wrote:
->> On Thu, Jun 27, 2024 at 11:17 PM Mi, Dapeng <dapeng1.mi@linux.intel.com> wrote:
->>> On 6/27/2024 11:11 PM, Liang, Kan wrote:
->>>> On 2024-06-14 5:39 p.m., Dapeng Mi wrote:
->>>>
->>>> Besides, we need a test for the sampling read as well.
->>>> Ian has provided a very good base. Please add a topdown sampling read
->>>> case on top of it as well.
->>>> https://lore.kernel.org/lkml/CAP-5=fUkg-cAXTb+3wbFOQCfdXgpQeZw40XHjfrNFbnBD=NMXg@mail.gmail.com/
->>> Sure. I would look at it and add a test case.
->> Thanks Dapeng and thanks Kan too! I wonder if we can do a regular
->> counter and a leader sample counter then compare the counts are
->> reasonably consistent. Something like this:
->>
->> ```
->> $ perf stat -e instructions perf test -w noploop
->>
->> Performance counter stats for '/tmp/perf/perf test -w noploop':
->>
->>    25,779,785,496      instructions
->>
->>       1.008047696 seconds time elapsed
->>
->>       1.003754000 seconds user
->>       0.003999000 seconds sys
->> ```
->>
->> ```
->> cat << "_end_of_file_" > a.py
->> last_count = None
->>
->> def process_event(param_dict):
->>    if ("ev_name" in param_dict and "sample" in param_dict and
->>        param_dict["ev_name"] == "instructions"):
->>        sample = param_dict["sample"]
->>        if "values" in sample:
->>            global last_count
->>            last_count = sample["values"][1][1]
->>
->> def trace_end():
->>    global last_count
->>    print(last_count)
->> _end_of_file_
->> $ sudo perf record -o -  -e "{cycles,instructions}:S" perf test -w
->> noploop|perf script -i - -s ./a.py
->> [ perf record: Woken up 2 times to write data ]
->> [ perf record: Captured and wrote 0.459 MB - ]
->> 22195356100
->> ```
->>
->> I didn't see a simpler way to get count and I don't think it is right.
-> The perf stat can cover the whole life cycle of a workload. But I think
-> the result of perf record can only give the sum from the beginning to
-> the last sample.
-> There are some differences.
->
->> There's some similar perf script checking of data in
->> tools/perf/tests/shell/test_intel_pt.sh.
->>
-> I think the case should be to test the output of the perf script, rather
-> than verify the accuracy of an event.
->
-> If so, we may run two same events. They should show the exact same
-> results in a sample.
->
-> For example,
->
-> perf record  -e "{branches,branches}:Su" -c 1000000 ./perf test -w brstack
-> perf script
-> perf  752598 349300.123884:    1000002 branches:      7f18676a875a
-> do_lookup_x+0x2fa (/usr/lib64/l>
-> perf  752598 349300.123884:    1000002 branches:      7f18676a875a
-> do_lookup_x+0x2fa (/usr/lib64/l>
-> perf  752598 349300.124854:    1000005 branches:      7f18676a90b6
-> _dl_lookup_symbol_x+0x56 (/usr/>
-> perf  752598 349300.124854:    1000005 branches:      7f18676a90b6
-> _dl_lookup_symbol_x+0x56 (/usr/>
-> perf  752598 349300.125914:     999998 branches:      7f18676a8556
-> do_lookup_x+0xf6 (/usr/lib64/ld>
-> perf  752598 349300.125914:     999998 branches:      7f18676a8556
-> do_lookup_x+0xf6 (/usr/lib64/ld>
-> perf  752598 349300.127401:    1000009 branches:            4c1adf
-> brstack_bench+0x15 (/home/kan/o>
-> perf  752598 349300.127401:    1000009 branches:            4c1adf
-> brstack_bench+0x15 (/home/kan/o>
+s.hauer@pengutronix.de wrote on Tue, 28 May 2024 22:30:06 +0200:
 
-This looks a more accurate validation. I would add this test.
+> When doing a page write we always have to copy the OOB data in place,
+> as the controller will always write it. Not copying it means we write
+> random data to the OOB area.
+>=20
+> Fixes: 3df54960b63cc ("mtd: nand: mxc_nand: implement exec_op")
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> ---
+> Miquel, feel free to fixup the original patch with this.
 
+Sorry for the delay, I'm now fixing up the original patch with this one.
 
->
-> Thanks,
-> Kan
->
->> Thanks,
->> Ian
->>
+Thanks for the follow-up.
+
+BTW I've changed the titles to "mtd: rawnand: mxc:" to match the naming
+changes since the introduction of spi-nand.
+
+Cheers,
+Miqu=C3=A8l
 
