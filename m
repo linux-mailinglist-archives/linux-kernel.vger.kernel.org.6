@@ -1,129 +1,126 @@
-Return-Path: <linux-kernel+bounces-236291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDB8A91E009
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:59:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92F4891E014
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:01:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 906E81F224A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:59:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D2BF2848E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:01:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F106C15A85A;
-	Mon,  1 Jul 2024 12:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qKmzYVli"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A4D15EFB0;
+	Mon,  1 Jul 2024 13:00:21 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8993E15A849;
-	Mon,  1 Jul 2024 12:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE82215EFA2
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 13:00:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719838780; cv=none; b=ZTsYBxgmCV1h+ZYjtu2HQ7pkaQWTJFFjsaZ0DmnleLv+8ulVy15Wz3S/KnJXXuVe6xZQYe04mkppFUCnblJMKq0uuojxQCxmmxScJJgZrEJNdJiaddYKyNWuINMszudG2RJ+7iPtnu+NZdmhKDYyGF4xz+769WaMoxfmmpL2UB8=
+	t=1719838821; cv=none; b=UO6r7xEjTqdM+sR3p4dxPpdYuI6em5Ok4cx9KlJeAYUqCu4WrhVHLwSAMjSvEH6SmU7yxp4ZyC8YoF8IkD5hVhrLjwdWLckGLySlKqEQqSFhxZd1JyzjYDnpEqnqwJ6BwG9Yg2XSJqsdRszCU3vUVmuI0Jh6sMW6gccIlraC7t8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719838780; c=relaxed/simple;
-	bh=EqV4abtVrBCqNL/GCdb8qpcsm3jc7faIH+C/b8k/t2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FXfw2WGPHs/yl/mVBWbGGq0u4ewe+cbF2aYR/GL4l46rGzKwuQeqvR0jblgvGLAEDaZFScUBGjfnEgQv42JLI7iwNk3Z5q8bgFEywOT0TYHlV3xXIvlRWKsrq/ueB7Zv2ZfsqLSRRZcMyKfVqCEvOuJD9WzYOhAvNWpjwJDaF0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qKmzYVli; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=YWMUW1LEMTcUPVRQMHHO4hmc7vT38Q6vHYQXacFSLpM=; b=qKmzYVlivegaiZefvHTin5m6fO
-	6I1XQMeYJ7jxR8qZDS6S6yMYm6lVUTNJHu++zn0BCIWVlk6KeawOhtk9B72Jyh+e/xadsj1QUjmJ6
-	7CDAXBwD3FZBcBJKamSxIHXR0KmLm8nBwY8CmJi30RXSHkMoNccyY/u1DuM+9vczopRcwe9pHqe+t
-	g17ndHL4D1h0Z10WMcz43VBaoEe4DPGlfGsEqJl4W68RaOUFdtTtGNzzLFNsTJHZvhTNOGYSHh5Qr
-	eJPWIl1LqAgpYpfiiTtlDZHDlEQqm6cdSgD7RcPmSpBy6au3sTt181bX4/VT2YYDkjrUyNYPMJ45n
-	qirtuX6g==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sOGcu-0000000HLb4-3JF7;
-	Mon, 01 Jul 2024 12:59:24 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id F29C1300694; Mon,  1 Jul 2024 14:59:21 +0200 (CEST)
-Date: Mon, 1 Jul 2024 14:59:21 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, kees@kernel.org,
-	gustavoars@kernel.org, rui.zhang@intel.com,
-	oleksandr@natalenko.name, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	ananth.narayan@amd.com, gautham.shenoy@amd.com,
-	kprateek.nayak@amd.com, ravi.bangoria@amd.com, sandipan.das@amd.com,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 02/10] perf/x86/rapl: Fix the energy-pkg event for AMD
- CPUs
-Message-ID: <20240701125921.GG20127@noisy.programming.kicks-ass.net>
-References: <20240624055907.7720-1-Dhananjay.Ugwekar@amd.com>
- <20240624055907.7720-3-Dhananjay.Ugwekar@amd.com>
+	s=arc-20240116; t=1719838821; c=relaxed/simple;
+	bh=DU5Rpao9sVkwftxVXiBbPjmDCfg1edojbtuA+4rU99w=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=bp5o0ssVDg/z8xJrZZGUNYNIV6QkH4ViH0n75tRPNRLRbw5wE1+3Jz6qc6QGJcLNZ9uqw971fB1uI/BYm+2xQDra4rMeVcjQl60FY8KSehTui+V2inETt2xkbON4ROxUGyjAT+y4zd8qd+Bxj27GrixuupsTmKsN+L3V56otgrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7f61fca8c40so313268839f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 06:00:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719838819; x=1720443619;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lKQzMVVd8JV3z0u1HLRD129oSCr8seG4wu/QgPU2cjc=;
+        b=YycqUOh3sA0gJseUtQp7F17FefOJX/EF9/7YWmEbM9ryZiEWnqFoFkqO6gRSbjpnyh
+         29OKG+t9ezDEJhE2v85qdgM+kIFMprVvrP4sSx+ahma5T8bXY5jOPbqMbH6ibaXTzyfd
+         PWUbeSaPwat5eDf7erkGWPI2M+GRoxhiAVhpXfpTQJXJ+T3EKJLLpJaDS+Be46eGcQdr
+         4SG+CM5n+RShVKqWS4bmhpJht2nOCAIfqe9duJ4lFcmUVfk1+/lUIAtdDeRUM5tDvirI
+         I9dSDTSSeiqtVJ8QPK11wl+dRsH1roTiW4amRWYeEFCo8777UrWZOBXyd+EDsxVOZwAn
+         HSPA==
+X-Gm-Message-State: AOJu0Yxhqu/1fe/97Bu5HdKcALlZMWq+SV27v5BdvFzbwbplzcd7K8eM
+	ElpPLRn/UD4g1OVmio6Cd0rZ5iQs+C+p2qPrnP13Xh7HrM4IskUGZo+qXBX2Bx6vtsGIe9hpevd
+	fOchP+LQuwgALdaEFXPwloRXGStAnorg+c1VsCJ3flv2P7Rb7z6u7myM=
+X-Google-Smtp-Source: AGHT+IFjfzX64Rdy84nGXFpO+a/9DdmBFIA0Cb03XfztEfHdSopox7b2rYRLwMVVIk6xuXUnH0kqit7skKw8yR7UbffZUoOxCs2j
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240624055907.7720-3-Dhananjay.Ugwekar@amd.com>
+X-Received: by 2002:a05:6602:3f8a:b0:7eb:75e9:8f2b with SMTP id
+ ca18e2360f4ac-7f62ee6461bmr43693339f.2.1719838819082; Mon, 01 Jul 2024
+ 06:00:19 -0700 (PDT)
+Date: Mon, 01 Jul 2024 06:00:19 -0700
+In-Reply-To: <0000000000006cbc570618c0d4a3@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e1f1a9061c2f2d82@google.com>
+Subject: Re: [syzbot] [syzbot] [bpf?] [net?] KMSAN: uninit-value in dev_map_hash_lookup_elem
+From: syzbot <syzbot+80cf9d55d6fd2d6a9838@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jun 24, 2024 at 05:58:59AM +0000, Dhananjay Ugwekar wrote:
- 	
-> diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
-> index b985ca79cf97..73be25e1f4b4 100644
-> --- a/arch/x86/events/rapl.c
-> +++ b/arch/x86/events/rapl.c
-> @@ -103,6 +103,10 @@ static struct perf_pmu_events_attr event_attr_##v = {				\
->  	.event_str	= str,							\
->  };
->  
-> +#define rapl_pmu_is_pkg_scope()				\
-> +	(boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||	\
-> +	 boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
-> +
->  struct rapl_pmu {
->  	raw_spinlock_t		lock;
->  	int			n_active;
-> @@ -140,9 +144,21 @@ static unsigned int rapl_cntr_mask;
->  static u64 rapl_timer_ms;
->  static struct perf_msr *rapl_msrs;
->  
-> +static inline unsigned int get_rapl_pmu_idx(int cpu)
-> +{
-> +	return rapl_pmu_is_pkg_scope() ? topology_logical_package_id(cpu) :
-> +					 topology_logical_die_id(cpu);
-> +}
-> +
-> +static inline const struct cpumask *get_rapl_pmu_cpumask(int cpu)
-> +{
-> +	return rapl_pmu_is_pkg_scope() ? topology_core_cpumask(cpu) :
-> +					 topology_die_cpumask(cpu);
-> +}
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-This wants a comment. The next time someone looks at this we're going to
-be confused.
+***
 
-> @@ -677,6 +696,9 @@ static int __init init_rapl_pmus(void)
->  {
->  	int nr_rapl_pmu = topology_max_packages() * topology_max_dies_per_package();
->  
-> +	if (rapl_pmu_is_pkg_scope())
-> +		nr_rapl_pmu = topology_max_packages();
-> +
+Subject: [syzbot] [bpf?] [net?] KMSAN: uninit-value in dev_map_hash_lookup_elem
+Author: wojciech.gladysz@infogain.com
 
-How about:
+#syz test: https://linux.googlesource.com/linux/kernel/git/torvalds/linux e478cf26c556e4ab572ab0ab2306c986901dcd61
 
-	int nr_rapl_pmu = topology_max_packages();
-	if (!rapl_pmu_is_pkg_scope())
-		nr_rapl_pmu *= topology_max_dies_per_package();
+---
+ kernel/bpf/verifier.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-hmm?
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 36ef8e96787e..13a9c2e2908a 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -7146,8 +7146,8 @@ static int check_stack_range_initialized(
+ 		 * reads. However, if raw_mode is not set, we'll do extra
+ 		 * checks below.
+ 		 */
+-		bounds_check_type = BPF_WRITE;
+-		clobber = true;
++		clobber = !meta || meta->raw_mode;
++		bounds_check_type = clobber ? BPF_WRITE : BPF_READ;
+ 	} else {
+ 		bounds_check_type = BPF_READ;
+ 	}
+@@ -7230,8 +7230,7 @@ static int check_stack_range_initialized(
+ 		stype = &state->stack[spi].slot_type[slot % BPF_REG_SIZE];
+ 		if (*stype == STACK_MISC)
+ 			goto mark;
+-		if ((*stype == STACK_ZERO) ||
+-		    (*stype == STACK_INVALID && env->allow_uninit_stack)) {
++		if (*stype == STACK_ZERO) {
+ 			if (clobber) {
+ 				/* helper can write anything into the stack */
+ 				*stype = STACK_MISC;
+@@ -8748,6 +8747,8 @@ static int check_func_arg(struct bpf_verifier_env *env, u32 arg,
+ 		meta->map_uid = reg->map_uid;
+ 		break;
+ 	case ARG_PTR_TO_MAP_KEY:
++		/* always mark read access */
++		meta->raw_mode = false;
+ 		/* bpf_map_xxx(..., map_ptr, ..., key) call:
+ 		 * check that [key, key + map->key_size) are within
+ 		 * stack limits and initialized
+@@ -8763,7 +8764,7 @@ static int check_func_arg(struct bpf_verifier_env *env, u32 arg,
+ 		}
+ 		err = check_helper_mem_access(env, regno,
+ 					      meta->map_ptr->key_size, false,
+-					      NULL);
++					      meta);
+ 		break;
+ 	case ARG_PTR_TO_MAP_VALUE:
+ 		if (type_may_be_null(arg_type) && register_is_null(reg))
+-- 
+2.35.3
 
