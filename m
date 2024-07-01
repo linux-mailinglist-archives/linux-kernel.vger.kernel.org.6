@@ -1,214 +1,218 @@
-Return-Path: <linux-kernel+bounces-235476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06DCF91D58F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 02:47:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ADC591D591
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 02:51:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71C851F211DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 00:47:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C19152811B2
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 00:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5434A20;
-	Mon,  1 Jul 2024 00:47:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F7D4A07;
+	Mon,  1 Jul 2024 00:51:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="s2IKIxc6"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2059.outbound.protection.outlook.com [40.107.21.59])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="RdOfQywN"
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EEEA10F9;
-	Mon,  1 Jul 2024 00:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719794826; cv=fail; b=lRftx3GkhSSyBC/nof0ArU4ZhA6j09ZGzVRxrarprj9yUWpozSCusLfvugS/mkm1KYU370Ec16ZRibmwoDcrISpkIaYZPo3GnCvecBr0kCdwC6oXUxkXLQshTNqv8olsshM0aHzgRDSAD0h/ye/NJEv0WdE4FFtT9OaSmgaiZFU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719794826; c=relaxed/simple;
-	bh=uWhiIYORnCdWSqpYBJIJWA0C7FOL4neeyDFQeMISJRo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=VzCjYWU3+D0Cw60TgQRm2ru3sS1gt2OLVib64dKoMfTbAwl7lw2RKtNAXkDfiUTS9saopAzLHiw39AJ1sdw59kEwOApFznuqha7zJOMLJlUrzccGssButCgHkdoImHpSvTdd64PPH6/AmgD1SKmvIJ8h48Vfc+8eVKJ8guBQ/I8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=s2IKIxc6; arc=fail smtp.client-ip=40.107.21.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Irw7JKDlm6pa+zK4tfterleCxEhE9XXzenqMYakKLEHoL27av4hpxqnHgwkO7Rh7Ka3vmXtj2xNCq+qo8TIlj0Wzcgpl84Tf5Ac9/kUX6JgIaC6kf0OUzlmiM1maCXEyOcSwNrF25zUTxCvP/80acZUy2vPg40HEkItvB0Ee6Aggr0vHyQaecv5aBWoWw1CRz94ArIVyXUyiN8kGh5WIa4KNAuwriPExl0hjfUOBf9SoDyQUzN3mta07DjDrDPwzO14k/nYsQ/fWXU2/DhvRD0gv3nqv3r2PYfh+4Mhvq+5FsH5l5IU0gZboXuVsRmtdWcFKirFLeKy6MgonLlD/hQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OhQ4HR0Gx6AV1LwF80NEYg4tcYdRMxlHEpOleS1gfQ0=;
- b=XIEcr2S7/zejzI+wfSDHtDdNqU3W//0Lf3UG5ufdezVwUsfL8iurk9ZNBt7xJqDYwNm9IDSQdhiM08vPdV/pJjZFzHYSb5qCOs7VwOjUrjik4yfd6UJUkPbQgxa97/aO0MyzzwZulVNzzY+0q+Y9sB4g+EATjLKykHDfbJMjHQsUQkn3adXioLk96x/kfCoeYfl+9kBa4lBGrUysqBr0sIzaUqoRj5TSzEKnsM2Pq8gcPoABPvDDzhPebTVAgGcJRm9PkZmfpuQSE717qwThf7qnS2j54iv3G/FzSB9nZV5vpyWy9D53XDwlwkv12fLun/mZodxsUzCu/AYrq7sSvg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OhQ4HR0Gx6AV1LwF80NEYg4tcYdRMxlHEpOleS1gfQ0=;
- b=s2IKIxc6NFWRdnZ6rAhiWx9QxyWGV6SgrYPboH5OpEs1jf3j2wCkLgQUqyaQocQH8HU9rzZzEgiSftFztDYuSwX0QePqiUWz5XFLi2NehDlc9ZJjaPqtjLXNe7A5UcCWa4f4AO4tNSa7wOFtOhPhQUPMZ6RpKJkJOE80c939SDw=
-Received: from PA4PR04MB9638.eurprd04.prod.outlook.com (2603:10a6:102:273::20)
- by DU0PR04MB9441.eurprd04.prod.outlook.com (2603:10a6:10:359::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.29; Mon, 1 Jul
- 2024 00:47:00 +0000
-Received: from PA4PR04MB9638.eurprd04.prod.outlook.com
- ([fe80::f950:3bb6:6848:2257]) by PA4PR04MB9638.eurprd04.prod.outlook.com
- ([fe80::f950:3bb6:6848:2257%4]) with mapi id 15.20.7719.022; Mon, 1 Jul 2024
- 00:47:00 +0000
-From: David Lin <yu-hao.lin@nxp.com>
-To: Abel Vesa <abel.vesa@linaro.org>
-CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"briannorris@chromium.org" <briannorris@chromium.org>, "kvalo@kernel.org"
-	<kvalo@kernel.org>, "francesco@dolcini.it" <francesco@dolcini.it>, Pete Hsieh
-	<tsung-hsien.hsieh@nxp.com>
-Subject: RE: [EXT] Re: [PATCH 01/43] wifi: nxpwifi: add 11ac.c
-Thread-Topic: [EXT] Re: [PATCH 01/43] wifi: nxpwifi: add 11ac.c
-Thread-Index: AQHaw6/6IZnwWyq+VkyBRkmHmcqDk7Hc4S6AgAQ2/hA=
-Date: Mon, 1 Jul 2024 00:46:59 +0000
-Message-ID:
- <PA4PR04MB96381CF2AE91D91B814A7E6CD1D32@PA4PR04MB9638.eurprd04.prod.outlook.com>
-References: <20240621075208.513497-1-yu-hao.lin@nxp.com>
- <20240621075208.513497-2-yu-hao.lin@nxp.com> <Zn5ytQtySds3Ix9g@linaro.org>
-In-Reply-To: <Zn5ytQtySds3Ix9g@linaro.org>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PA4PR04MB9638:EE_|DU0PR04MB9441:EE_
-x-ms-office365-filtering-correlation-id: d7b8b700-576d-461d-43bd-08dc9967510c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?WIU0mCWsvKHaSegL8onLTD0cWA/ittJ+r1opvfht7di/5yxjnv6S+MYKuPPs?=
- =?us-ascii?Q?b/26DhoNs7URC0ujrZe0vdGM+PzKH7LFAUb4mMhMWX2A7btvLo3hzVq5Mhj3?=
- =?us-ascii?Q?eSVMWcGjMgVEfoZxFVP9kX4k12HPBwlNuuY0a82kCV5Wd83Es/Ki/jAFcskp?=
- =?us-ascii?Q?eaO5hzn75kOn5lb8jrhs2P5U3f/ILKGaeRStVNv5ZtlIRNEl6jz/5vcKP2X2?=
- =?us-ascii?Q?mg/WECGgPCDwVcv1uBvhk07D2D7IPZ0LiGO7v0zOTERvM7tCzA0h35CSkKlg?=
- =?us-ascii?Q?7So5rw9g8W7PI+SjVkN6SuikzleZ3BFCXdKGkj5vCZPNmCNTn0jbWjkkf1Qn?=
- =?us-ascii?Q?sN1V5uZUBLy2q7/O0VALe+8wmLuzwKxrpu/d50B5l/dKzbnFcT94iKBl+KXy?=
- =?us-ascii?Q?bTfIU0liPzx+uFhnlbCSTIqTd1W0HXS0heYILZiq9xKrviHsNUSsIZ+oITs/?=
- =?us-ascii?Q?JWTwTYh9rtpBe3gg737GXm9DX38x6ak+jEQ1gWq3dCoyf5qVk0StNjN/pSww?=
- =?us-ascii?Q?C0KgqdP/o/59oj7XvpVMFsRG/sj4YWt0GTMaUIcCd1HpP6VqWJzoh/FxJZkw?=
- =?us-ascii?Q?+ymx9Z9WZNRCOoswgqt7JfFiGy2ohXpITBzWXkjh7ngsgq5uV5co3OyLzLrG?=
- =?us-ascii?Q?Ra51faOIioWlpWhqx35ceHPo0l0W4ZutnKf8CMEWgFnQHZAStcYtQUqiD+Vm?=
- =?us-ascii?Q?2/BkiMZRcN2uEEnz2lQ9Di3WpWx1AuIAVeXIyudAMEQi3s17iYGV5NnlxQJ/?=
- =?us-ascii?Q?jHTSVAy3r8KKsKoI3iGipPLEJKKoh72V61DNf93qbS4H1DuPgM7IjZTPTFeZ?=
- =?us-ascii?Q?dxBQjMpo8VdvvJVh13TrkBqWVXRpXssUL5unh5DtthFO5h5FByMdmOcJcjHr?=
- =?us-ascii?Q?sd3VOW8IjUpVoogWTbbP6gvmTDr8j2clMR/Fvafbf4OwFpjGOmK6Ef2/PlxW?=
- =?us-ascii?Q?haRZEQ5La0B8F6fPaf3Mur02UQ69LHcQE/dgvdOZrTgkDBp7Jh9xSgzslPAV?=
- =?us-ascii?Q?wzXQiIB/UxaWvepeQWlG0qFdNjOen/ccj40NwC38scK1oJ07/UqL5yFPcktI?=
- =?us-ascii?Q?i9xxwszU5tkPQKYR7ThldQqlGizmEtrpTDNt/wBydInyM19HY7M1HP7bLi54?=
- =?us-ascii?Q?DaocNO4gLXOwEZKcrUJDv7fJalgX8lmxAdmhnPIEUv7xMStJt+kPNJOb1JPJ?=
- =?us-ascii?Q?vp+PcbCHeblJ63S3BRwpYexhT3g3UNacv7iEgU3YXfyuh/hhiCGMepzXM0bd?=
- =?us-ascii?Q?N/7cVlwwScizNwiK8bwievLTmFc+dIv+SG+fhWr5vJb1DLNgHM+bhXjgoKcT?=
- =?us-ascii?Q?SJorR8bxntU5kiDskYEEMdt6BcyCgLSe6y2fTMQqjbpzmINPuZJkeNXobMKf?=
- =?us-ascii?Q?jBD6SbUeX0x757cHCa6vd1yDusasxlHW96T1wc9YI9y7l+UfdQ=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB9638.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?8wlIOlAtWJt5SOUxnxCIrThKGw9TC9fTSzmxK2fQjbcaCm2qlejwZq/5p24y?=
- =?us-ascii?Q?I0+zupmooZSdBQIej+/X6nSeYZNAes4NqT5hCRU7P7BVzy0T3JbB00uGL1AC?=
- =?us-ascii?Q?en8A4/DkdQpGF2dwr5QAJCrDPCUKSKtTYKb+acZ5zohYqMs1R+AgCdMV4v1x?=
- =?us-ascii?Q?YD7VqN5z+ifcD4JG9P44O27X6Kjz8KH7JNaUPa7GkB/S5qM2HRTQ02V4uzgQ?=
- =?us-ascii?Q?bIiHaE/IBR81sklWpCs78v5KWdjwv7wSf3WNmVkXgnwEZ5LbE05t1g0m+JGC?=
- =?us-ascii?Q?wB2JCsuLRv3PjjdYJzEva5yykwPs9guqPxVrZmP15ArPBaQ+RAO4ws1tSgcu?=
- =?us-ascii?Q?xyxBzpBHnwk3E/klJz6aYZT+4h2pRdlVWsDUzTSJZhNFkGOrPP6q5FGAjeqU?=
- =?us-ascii?Q?Ub5av+84I7rWuWLVHbwOZNhr9qP96jdFfZrUaWd1wgfO52RtrhMSIQ1MGRAT?=
- =?us-ascii?Q?/EWAM671dIW5aYl5lNKyK+5slQw9Ae4Yq1WAIHD9ba1md7iS170S5V1+MQLR?=
- =?us-ascii?Q?c4iCJlJhFGOUfOUEgDiiOYXL2mbVpNyCM6///W+bGKcVOVwAh14eRjjhktb8?=
- =?us-ascii?Q?/oyXSLmAQenJGV8KyFfm0fSLDl4MTSWG3Y7U6jcr5/Ftxyt3rOWLQmKiqfGy?=
- =?us-ascii?Q?1ZJqTXuYipQ/tBa+WVFWl3hT7or2O8a//YKt/dtQX81KkCcOFvWs1sm2SSfI?=
- =?us-ascii?Q?/Ss+OKm8+PEs10LxyKVXgQbTdZhxEuJ+orcXvPSLb34XpJS70YadN0bFg74T?=
- =?us-ascii?Q?BeUPCHSQk1+fcIjSs5YD5VzjWvcCoNj/RJG4u8zxFQIVYt9bSYE8zZmfNq2G?=
- =?us-ascii?Q?yX5TEQxi8r9ksULdlp78UrxKU8YWdK9RB9Fj1Rt09FeDyJ2ELytM7DzCMXsr?=
- =?us-ascii?Q?HsFDnjS45WHbdkSEJ1th+sQh5YltEwS6EPm3c9oj13accvaJTi+Tgw2Hr2Pg?=
- =?us-ascii?Q?Q/I1wc9V/kRvX5uoLNJJlBxLHx63C6FmIKrMb4TX2ukrpHiXmG/bqorNoGml?=
- =?us-ascii?Q?/uycrzjS3OoKkmvTCPDNcjOlzn6mt8Z6RujeUvhBhyxwdlHi+u0ocnekyNeC?=
- =?us-ascii?Q?4oBTOq6mRspMVNeMK2latscVs2vEnuXFwY3LQwCzmXMaMEk90mud6xJMvlk1?=
- =?us-ascii?Q?/m5p1N8J/7WDQ99B1R9/vs8wQMcli/7bLF0cCvFARoENasbgpbO3tasTbDDd?=
- =?us-ascii?Q?BmMyTSuqWdXzypxZVUR9S97iBZKqpWKsDURwvX3ZEKuLBWUrrn+sBoSr6/Ny?=
- =?us-ascii?Q?co+El9Hi5lcjZkqhD7YOSPohxgI65MdZzaPJKJdnObMCuosP2EOF7A75MQqE?=
- =?us-ascii?Q?H+gN5/tAxsVRM/piM6AA3kXxPvFDHSMQGGptWppWVQrPgvLX+Il1+jNK8sjf?=
- =?us-ascii?Q?91MFZfy1K02PCyUGJBVHf7oR5+oDuTl2U9Rzheq9NmR6CIA3kaEiij3Smsq5?=
- =?us-ascii?Q?RfhTSoUtblGOCaBv6MU+tBbR95Cn+ooTZkbx9QdjeaTJr6vV1x6L0XQkwgrl?=
- =?us-ascii?Q?QJz85dNOO19LCSF5UgzSWPXhPYSOu1xfiP5uKSuAD44sl6fp/N3SGzBNVnW+?=
- =?us-ascii?Q?rqvXqe4nsHg7UsVxR/hW6cDjebwYmEXy6TrqMbVj?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C1415D1
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 00:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719795079; cv=none; b=o+qEkFfm1RY85US770/Cy4RkpM3gBIAZ1P0Md6E7Cv2AkLwMLhbB6BPiQv5SpvcOKEjBOd0NfVzrcDm5c/3qL/NWxyza2VcEDTUckXciXhv7zB2Pq7OOHsdDdE5Ib9jafCg26v+P/5hNNj+ssyNItmS8IwiRCA4bk2LhVA5wwE8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719795079; c=relaxed/simple;
+	bh=hr9gdzshpFzQmPvL3ZRAUjLw+TmTlbHROzGD/vC5ciI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GDeuUPCVw/z9cZG3OJPcwrZD/qvQ3dZRYMhHfQcFv/8COqZlwXPq8PoViGTKSpg+QwYAifcWOPNVX7wfd1ksyuNYqgF2WlTQQnTgWwmtNIgIieHulOGROIHB/QUaX/pyKp1YBuYYB4pw7gJ7L8Fh7RRsCCGG0Dv/t4CM1d0BnRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=RdOfQywN; arc=none smtp.client-ip=209.85.160.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-25d6dd59170so1120414fac.0
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 17:51:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1719795077; x=1720399877; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BRy9gpTqjPsDTNmbbMNYv903/wEg0NdHPwtiMwt6OR4=;
+        b=RdOfQywNWLM3IDMLN/Pn2D3qgf7QTv51iPV+SCwJlXDFerFX/Ngtgu3D4J4jU8IaGf
+         HQeumdjGt56H/TqJaU3Qaf5hIWgHEFkAk2Tir/jje7sYzoOi0VaivEEfuc86/F6ClKUO
+         pnvk9/8c0CJiVHEYDWxrbCBu8PVgclW0Gc5O5kKj1hcGR57Go7GKckCN0lfmguAWmzeV
+         cDRoBfg3BOSL7e52BbAvPxhm9HPB8Bx/aIoMXmpK2cFLUtqrBIKAe+vJbjJwFdNuNSKN
+         xonezYuvkYMc4MRzdnlMuDNhgwwjjeO+5neNSTjH7mdGU+L17GSzXLEE962ypRBlQiA2
+         xIrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719795077; x=1720399877;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BRy9gpTqjPsDTNmbbMNYv903/wEg0NdHPwtiMwt6OR4=;
+        b=H3J59BYNn4V/IWpWP9QOilo1RIigYv0aMfXt5svob/MJAivXfN8UAtzLUtjxqy6F/1
+         OV8i1Q8nhh6FKEAYEDVFg4MVlIaYs+jV5Cpk4ZzVJewnVK4kuHfTAZ3myJa4OJLgyl15
+         n0Qd+9RLPlL6Btdal6s+EXzKA6Ha521niYjHZD+/CRX3WyIIgcbG/fuOIHtXUqABGQEm
+         HkgIKvHupBKjud7aDO+F+RklzQt77uRGFY4qFIDd3ZnLnflxcqyHNIhO1PYjxqliNPYw
+         16DSI28yeUlXznc1UdFqNbFiTSDqN4oENUTfvz0s85oYl4z8J/JTw8nY+tTCMUDmglTD
+         IsLA==
+X-Forwarded-Encrypted: i=1; AJvYcCVUhvhGJ8lHpLmwKPnfUvXA+iwlblBwtS4tUm0w4k5nhFa9K3K2xJP0N4O4Ns+ahxHDT+2PU6b6S7yNTS9If0E1njuzDX92IUp3MGoQ
+X-Gm-Message-State: AOJu0YwctxE0etEQg3F4qlAnczWBypbgkSuKyHRiufEf6ReniLO5oa8f
+	HoiOOEYHs8pCO/7zfdQngVk/RMSr1B+hnWArSiju3o7qv9mkjF2ZvZhSPPC0S3k=
+X-Google-Smtp-Source: AGHT+IHwf+hkdxjvEUS1SSgOqiQynwxq7WtMiWRzYfBDFBW3X2YyYuAHnU7Wo8v0yTr7hdPVqncAKA==
+X-Received: by 2002:a05:6870:1584:b0:259:8463:43a6 with SMTP id 586e51a60fabf-25db35870cdmr2243202fac.34.1719795076526;
+        Sun, 30 Jun 2024 17:51:16 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70801f584b2sm5220058b3a.43.2024.06.30.17.51.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 30 Jun 2024 17:51:16 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sO5GD-00HLeT-0g;
+	Mon, 01 Jul 2024 10:51:13 +1000
+Date: Mon, 1 Jul 2024 10:51:13 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: alexjlzheng@gmail.com
+Cc: chandan.babu@oracle.com, djwong@kernel.org, hch@infradead.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	alexjlzheng@tencent.com
+Subject: Re: [PATCH v3 2/2] xfs: make xfs_log_iovec independent from
+ xfs_log_vec and free it early
+Message-ID: <ZoH9gVVlwMkQO1dm@dread.disaster.area>
+References: <20240626044909.15060-1-alexjlzheng@tencent.com>
+ <20240626044909.15060-3-alexjlzheng@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB9638.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d7b8b700-576d-461d-43bd-08dc9967510c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jul 2024 00:46:59.9728
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: mRtQQL1xquX2NidBFOJP6SWVDOjRBWA3MetcHMgYcp5PP7gaVkto6LaUgyalso2EGgOzaYmB7oaOd3PF8hp0fQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR04MB9441
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240626044909.15060-3-alexjlzheng@tencent.com>
 
-Hi Abel,
+On Wed, Jun 26, 2024 at 12:49:09PM +0800, alexjlzheng@gmail.com wrote:
+> From: Jinliang Zheng <alexjlzheng@tencent.com>
+> 
+> When the contents of the xfs_log_vec/xfs_log_iovec combination are
+> written to iclog, xfs_log_iovec loses its meaning in continuing to exist
+> in memory, because iclog already has a copy of its contents. We only
+> need to keep xfs_log_vec that takes up very little memory to find the
+> xfs_log_item that needs to be added to AIL after we flush the iclog into
+> the disk log space.
+> 
+> Because xfs_log_iovec dominates most of the memory in the
+> xfs_log_vec/xfs_log_iovec combination, retaining xfs_log_iovec until
+> iclog is flushed into the disk log space and releasing together with
+> xfs_log_vec is a significant waste of memory.
 
-> From: Abel Vesa <abel.vesa@linaro.org>
-> Sent: Friday, June 28, 2024 4:22 PM
-> To: David Lin <yu-hao.lin@nxp.com>
-> Cc: linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
-> briannorris@chromium.org; kvalo@kernel.org; francesco@dolcini.it; Pete
-> Hsieh <tsung-hsien.hsieh@nxp.com>
-> Subject: [EXT] Re: [PATCH 01/43] wifi: nxpwifi: add 11ac.c
->=20
-> Caution: This is an external email. Please take care when clicking links =
-or
-> opening attachments. When in doubt, report the message using the 'Report
-> this email' button
->=20
->=20
-> On 24-06-21 15:51:26, David Lin wrote:
-> > Signed-off-by: David Lin <yu-hao.lin@nxp.com>
->=20
-> Hi David,
->=20
-> Please read the ./Documentation/process/submitting-patches.rst
->=20
-> Just a hint. There is no commit message.
->=20
-> > ---
-> >  drivers/net/wireless/nxp/nxpwifi/11ac.c | 366
-> ++++++++++++++++++++++++
-> >  1 file changed, 366 insertions(+)
-> >  create mode 100644 drivers/net/wireless/nxp/nxpwifi/11ac.c
-> >
-> > diff --git a/drivers/net/wireless/nxp/nxpwifi/11ac.c
-> b/drivers/net/wireless/nxp/nxpwifi/11ac.c
-> > new file mode 100644
-> > index 000000000000..3e14ee602cdc
-> > --- /dev/null
-> > +++ b/drivers/net/wireless/nxp/nxpwifi/11ac.c
-> > @@ -0,0 +1,366 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * NXP Wireless LAN device driver: 802.11ac
-> > + *
-> > + * Copyright 2011-2024 NXP
-> > + */
->=20
-> [...]
+Have you measured this? Please provide numbers and the workload that
+generates them, because when I did this combined structure the
+numbers and performance measured came out decisively on the side of
+"almost no difference in memory usage, major performance cost to
+doing a second allocation"...
 
-Thanks for your information. For new driver, it should be submitted one fil=
-e per patch first.
-Once if accepted, it will become one single patch. That is the reason, I wo=
-n't give commit
-message for the patch of a single file.
+Here's the logic - the iovec array is largely "free" with the larger
+data allocation.
 
-David
+------
+
+Look at how the heap is structured - it is in power of 2 slab sizes:
+
+$ grep kmalloc /proc/slabinfo |tail -13
+kmalloc-8k           949    976   8192    4    8 : tunables    0    0    0 : slabdata    244    244      0
+kmalloc-4k          1706   1768   4096    8    8 : tunables    0    0    0 : slabdata    221    221      0
+kmalloc-2k          3252   3312   2048   16    8 : tunables    0    0    0 : slabdata    207    207      0
+kmalloc-1k         76110  96192   1024   32    8 : tunables    0    0    0 : slabdata   3006   3006      0
+kmalloc-512        71753  98656    512   32    4 : tunables    0    0    0 : slabdata   3083   3083      0
+kmalloc-256        71006  71520    256   32    2 : tunables    0    0    0 : slabdata   2235   2235      0
+kmalloc-192        10304  10458    192   42    2 : tunables    0    0    0 : slabdata    249    249      0
+kmalloc-128         8889   9280    128   32    1 : tunables    0    0    0 : slabdata    290    290      0
+kmalloc-96         13583  13902     96   42    1 : tunables    0    0    0 : slabdata    331    331      0
+kmalloc-64         63116  64640     64   64    1 : tunables    0    0    0 : slabdata   1010   1010      0
+kmalloc-32        552726 582272     32  128    1 : tunables    0    0    0 : slabdata   4549   4549      0
+kmalloc-16        444768 445440     16  256    1 : tunables    0    0    0 : slabdata   1740   1740      0
+kmalloc-8          18178  18432      8  512    1 : tunables    0    0    0 : slabdata     36     36      0
+
+IOws, if we do a 260 byte allocation, we get the same sized memory
+chunk as a 512 byte allocation as they come from the same slab
+cache.
+
+If we now look at structure sizes - the common ones are buffers
+and inodes so we'll look at then.
+
+For an inode, we typically log something like this for an extent
+allocation (or free) on mostly contiguous inode (say less than 10
+extents)
+
+vec 1:	inode log format item
+vec 2:	inode core
+vec 3:	inode data fork
+
+Each of these vectors has a 12 byte log op header built into them,
+and some padding to round them out to 8 byte alignment.
+
+vec 1:	inode log format item:	12 + 56 + 4 (pad)
+vec 2:	inode core:		12 + 176 + 4 (pad)
+vec 3:	inode data fork:	12 + 16 (minimum) + 4 (pad)
+				12 + 336 (maximum for 512 byte inode)
+
+If we are just logging the inode core, we are allocating
+12 + 56 + 4 + 12 + 176 + 4 = 264 bytes.
+
+It should be obvious now that this must be allocated from the 512
+byte slab, and that means we have another 248 bytes of unused space
+in that allocated region we can actually use -for free-.
+
+IOWs, the fact that we add 32 bytes for the 2 iovecs for to index
+this inode log item doesn't matter at all - it's free space on the
+heap. Indeed, it's not until the inode data fork gets to a couple of
+hundred bytes in length that we overflow the 512 byte slab and have
+to use the 1kB slab. Again, we get the iovec array space for free.
+
+If we are logging the entire inode with the data fork, then the
+size of the data being logged is 264 + 12 + 336 + 4 = 616 bytes.
+This is well over the 512 byte slab, so we are always going to be
+allocating from the 1kB slab. We get the iovec array for free the
+moment we go over the 512 byte threshold again.
+
+IOWs, all the separation of the iovec array does is slightly change
+the data/attr fork size thresholds where we go from using the 512
+byte slab to the 1kB slab.
+
+A similar pattern holds out for the buffer log items.  The minimum
+it will be is:
+
+vec 1:	buf log format item
+vec 2:	single 128 byte chunk
+
+This requires 12 + 40B + 4 + 12 + 128B + 4 = 200 bytes. For two
+vectors, we need 32 bytes for the iovec array, so a total of 232
+bytes is needed, and this will fit in a 256 byte slab with or
+without the iovec array attached.
+
+The same situation occurs are we increase the number of logged
+regions or the size of the logged regions - in almost all cases we
+get the iovec array for free because we log 128 byte regions out of
+buffers and they will put us into the next largest size slab
+regardless of the memory used by the iovec array.
+
+Hence we should almost always get the space for the iovec array for
+free from the slab allocator, and separating it out doesn't actually
+reduce slab cache memory usage. If anything, it increases it,
+because now we are allocating the iovec array out of small slabs and
+so instead of it being "free" the memory usage is now accounted to
+smaller slabs...
+
+-----
+
+Hence before we go any further with this patch set, I'd like to see
+see numbers that quantify how much extra memory the embedded iovec
+array is actually costing us. And from that, an explanation of why
+the above "iovec array space should be cost-free" logic isn't
+working as intended....
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
