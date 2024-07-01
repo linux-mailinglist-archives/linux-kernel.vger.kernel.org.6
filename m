@@ -1,373 +1,679 @@
-Return-Path: <linux-kernel+bounces-236676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B13D791E5AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:45:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F52C91E594
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FAE1B25C7C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:45:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 525DF1C2164D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:43:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5102816DED1;
-	Mon,  1 Jul 2024 16:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F291716DC2D;
+	Mon,  1 Jul 2024 16:42:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K0l2RFqt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AIwTfQmQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5784C16DC21;
-	Mon,  1 Jul 2024 16:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BAFC16D9D4;
+	Mon,  1 Jul 2024 16:42:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719852248; cv=none; b=cmEMQ8BIqog1IPFyd0mK80d23nBcoo2lvrP4vAk1+PdQiaqR0/d7ts+eYPjqCUJpFZ1Uj5r9ipQ3ZcvYHjOikGARvefmf3li14Jt1bZBkhh7f4Aohgd2Fx/nSNE3nrgOYxWtq0SyXA7JJ4nN0+5vw3BuujnlRHBhcAFBBrD8O0o=
+	t=1719852171; cv=none; b=Z0JgSoyAXAU+u/QgI6LC5P1Y7HbuIdJym/y/37Rwrys9yspu4lAIRVjPoOr9zJcCS9FnIp44DPrlUIzBSGRgBcQQl/lmF4/9NUSKV9VZ6xTlcma9UCLYq6+IgLKKyymfk9k3VlIwo9Xaev/KDvLWnK7bB/4EszXiO5swNCN+RX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719852248; c=relaxed/simple;
-	bh=jCfeYzbsQH5gHSzmVaEYEvXxdC2wLU2zO//1JKdlqMM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cN2+nQ3bx7Cb0KxbJXKSfF8qLOshz8kzPD0M2uhC0GsV1R1DHyU+3XzaoIO9AJmi3EF2Im4XTXaQqVKfoeDi9vT8QSS9w1OctyVnWJNmh1vpEdv4nXBiTGQ7H4uTswrOAYTBfAUuE9S8GNPmmPWl9dhTQZgJ5TD1VTcAJ3SCYlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K0l2RFqt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5569C116B1;
-	Mon,  1 Jul 2024 16:44:00 +0000 (UTC)
+	s=arc-20240116; t=1719852171; c=relaxed/simple;
+	bh=crpOrx+AhVJ633iBSGG9K4u7w7lUT/UKN4loqWQu8oc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rf838AKWwNifjd90NLkEYhZvif2AfQ1nLGkRtFCgGJ60Xf52ReSbC51cKCUJ0LMM6Pu1C1HU2URT8k1N2Osy1Ev+jV3ujoZrDmtxXrfsP1OBacwDlI+bzJS3EffzZkHyaKS8mpJ3tgEs7Ne8fH6+o1zV0FFMnNFTGu3/HeIDqpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AIwTfQmQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26282C116B1;
+	Mon,  1 Jul 2024 16:42:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719852247;
-	bh=jCfeYzbsQH5gHSzmVaEYEvXxdC2wLU2zO//1JKdlqMM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=K0l2RFqtWN/aFN6px7+2ScwlEdOgYJ4hu+gGJTgWeHOmmmlbe5RvsdnNgwQeOFQUf
-	 6rhX17TDZ6/pr74VpWxUZUuv4p5WhYH4tcwK3fsE1moDGmfimZA6s9LuU4A34pPV2J
-	 q3CEyGdYWLK5ptRKvdAruM3/OHijmQ2uwRLQlGeXH/VFwwgFwsvxawl+ocLwGHfMh+
-	 7/ZsOijRtW+/PuM+uXOhF0G6awlzHDRIiSxXhP8pKYOADnjLQbQL8e0WVOfxhu5hwA
-	 7lZDrfkcZ4GZ70QqhBu1t4Q+pHTwnVHUU1zchAOqTHAz0NRyynHe99tWd4s+zDuFZG
-	 D7/XK76f2UNdg==
-From: Jiri Olsa <jolsa@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>
-Cc: bpf@vger.kernel.org,
-	Martin KaFai Lau <kafai@fb.com>,
-	Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@chromium.org>,
-	Stanislav Fomichev <sdf@google.com>,
-	Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCHv2 bpf-next 9/9] selftests/bpf: Add uprobe session consumers test
-Date: Mon,  1 Jul 2024 18:41:15 +0200
-Message-ID: <20240701164115.723677-10-jolsa@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240701164115.723677-1-jolsa@kernel.org>
-References: <20240701164115.723677-1-jolsa@kernel.org>
+	s=k20201202; t=1719852171;
+	bh=crpOrx+AhVJ633iBSGG9K4u7w7lUT/UKN4loqWQu8oc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AIwTfQmQ3Dy1kZ7C0RJbKjk5gpGUQ7Oro35XTe+MG8UtO3w4LOjUdRHOGylUlurf3
+	 snB8hsul40DK5L6oTJTwlI5N6Qgl2oaE3tutntKZURfrT5ZplfJsOQxw+M+mK/UODk
+	 a9dQTWc34hGQlGShyjV2G+6Jbp1C836UjdHh27jbXG96l9+dKiZ4IHU+Fs5hrFwAed
+	 GlODUEAXL2qMn5nAGBWKOhk5/IE3kjZ1Geh4EH9ZfpVJclAeni4/lVzekcuQe882wb
+	 VWOwnkSXi0xGiI2zFZjcTP6/jnWBdwMF4PPCIQ/HsvZqDGp8joMT6FFl7JZyTPlTe4
+	 rZF019YP9aK1w==
+Date: Mon, 1 Jul 2024 11:42:48 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Odelu Kukatla <quic_okukatla@quicinc.com>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, cros-qcom-dts-watchers@chromium.org, 
+	"Gustavo A . R . Silva" <gustavoars@kernel.org>, linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	quic_rlaggysh@quicinc.com, quic_mdtipton@quicinc.com
+Subject: Re: [PATCH v5 2/4] interconnect: qcom: sc7280: enable QoS
+ configuration
+Message-ID: <ciji6nlxn752ina4tmh6kwvek52nxpnguomqek6plwvwgvoqef@yrtexkpmn5br>
+References: <20240607173927.26321-1-quic_okukatla@quicinc.com>
+ <20240607173927.26321-3-quic_okukatla@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240607173927.26321-3-quic_okukatla@quicinc.com>
 
-Adding test that attached/detaches multiple consumers on
-single uprobe and verifies all were hit as expected.
+On Fri, Jun 07, 2024 at 11:09:25PM GMT, Odelu Kukatla wrote:
+> Enable QoS configuration for master ports with predefined values
+> for priority and urgency forawrding.
+> 
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- .../bpf/prog_tests/uprobe_multi_test.c        | 203 ++++++++++++++++++
- .../progs/uprobe_multi_session_consumers.c    |  53 +++++
- 2 files changed, 256 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/progs/uprobe_multi_session_consumers.c
+This patch causes QCS6490 RB3Gen2 to hit a bus timeout and crash during
+boot, unless the associated DeviceTree change (adding clocks) is
+present.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c b/tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c
-index b521590fdbb9..83eac954cf00 100644
---- a/tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c
-+++ b/tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c
-@@ -9,6 +9,7 @@
- #include "uprobe_multi_session.skel.h"
- #include "uprobe_multi_session_cookie.skel.h"
- #include "uprobe_multi_session_recursive.skel.h"
-+#include "uprobe_multi_session_consumers.skel.h"
- #include "bpf/libbpf_internal.h"
- #include "testing_helpers.h"
- #include "../sdt.h"
-@@ -739,6 +740,206 @@ static void test_session_recursive_skel_api(void)
- 	uprobe_multi_session_recursive__destroy(skel);
- }
- 
-+static int uprobe_attach(struct uprobe_multi_session_consumers *skel, int bit)
-+{
-+	struct bpf_program **prog = &skel->progs.uprobe_0 + bit;
-+	struct bpf_link **link = &skel->links.uprobe_0 + bit;
-+	LIBBPF_OPTS(bpf_uprobe_multi_opts, opts);
-+
-+	/*
-+	 * bit: 0,1 uprobe session
-+	 * bit: 2,3 uprobe entry
-+	 * bit: 4,5 uprobe return
-+	 */
-+	opts.session = bit < 2;
-+	opts.retprobe = bit == 4 || bit == 5;
-+
-+	*link = bpf_program__attach_uprobe_multi(*prog, 0, "/proc/self/exe",
-+						 "uprobe_session_consumer_test",
-+						 &opts);
-+	if (!ASSERT_OK_PTR(*link, "bpf_program__attach_uprobe_multi"))
-+		return -1;
-+	return 0;
-+}
-+
-+static void uprobe_detach(struct uprobe_multi_session_consumers *skel, int bit)
-+{
-+	struct bpf_link **link = &skel->links.uprobe_0 + bit;
-+
-+	bpf_link__destroy(*link);
-+	*link = NULL;
-+}
-+
-+static bool test_bit(int bit, unsigned long val)
-+{
-+	return val & (1 << bit);
-+}
-+
-+noinline int
-+uprobe_session_consumer_test(struct uprobe_multi_session_consumers *skel,
-+			     unsigned long before, unsigned long after)
-+{
-+	int bit;
-+
-+	/* detach uprobe for each unset bit in 'before' state ... */
-+	for (bit = 0; bit < 6; bit++) {
-+		if (test_bit(bit, before) && !test_bit(bit, after))
-+			uprobe_detach(skel, bit);
-+	}
-+
-+	/* ... and attach all new bits in 'after' state */
-+	for (bit = 0; bit < 6; bit++) {
-+		if (!test_bit(bit, before) && test_bit(bit, after)) {
-+			if (!ASSERT_OK(uprobe_attach(skel, bit), "uprobe_attach_after"))
-+				return -1;
-+		}
-+	}
-+	return 0;
-+}
-+
-+static void session_consumer_test(struct uprobe_multi_session_consumers *skel,
-+				  unsigned long before, unsigned long after)
-+{
-+	int err, bit;
-+
-+	/* 'before' is each, we attach uprobe for every set bit */
-+	for (bit = 0; bit < 6; bit++) {
-+		if (test_bit(bit, before)) {
-+			if (!ASSERT_OK(uprobe_attach(skel, bit), "uprobe_attach_before"))
-+				goto cleanup;
-+		}
-+	}
-+
-+	err = uprobe_session_consumer_test(skel, before, after);
-+	if (!ASSERT_EQ(err, 0, "uprobe_session_consumer_test"))
-+		goto cleanup;
-+
-+	for (bit = 0; bit < 6; bit++) {
-+		const char *fmt = "BUG";
-+		__u64 val = 0;
-+
-+		if (bit == 0) {
-+			/*
-+			 * session with return
-+			 *  +1 if defined in 'before'
-+			 *  +1 if defined in 'after'
-+			 */
-+			if (test_bit(bit, before)) {
-+				val++;
-+				if (test_bit(bit, after))
-+					val++;
-+			}
-+			fmt = "bit 0  : session with return";
-+		} else if (bit == 1) {
-+			/*
-+			 * session without return
-+			 *   +1 if defined in 'before'
-+			 */
-+			if (test_bit(bit, before))
-+				val++;
-+			fmt = "bit 1  : session with NO return";
-+		} else if (bit < 4) {
-+			/*
-+			 * uprobe entry
-+			 *   +1 if define in 'before'
-+			 */
-+			if (test_bit(bit, before))
-+				val++;
-+			fmt = "bit 3/4: uprobe";
-+		} else {
-+			/* uprobe return is tricky ;-)
-+			 *
-+			 * to trigger uretprobe consumer, the uretprobe needs to be installed,
-+			 * which means one of the 'return' uprobes was alive when probe was hit:
-+			 *
-+			 *   bits: 0 (session with return) 4/5 uprobe return in 'installed' mask
-+			 *
-+			 * in addition if 'after' state removes everything that was installed in
-+			 * 'before' state, then uprobe kernel object goes away and return uprobe
-+			 * is not installed and we won't hit it even if it's in 'after' state.
-+			 */
-+			unsigned long installed = before & 0b110001; // is uretprobe installed
-+			unsigned long exists    = before & after;    // did uprobe go away
-+
-+			if (installed && exists && test_bit(bit, after))
-+				val++;
-+			fmt = "bit 5/6: uretprobe";
-+		}
-+
-+		ASSERT_EQ(skel->bss->uprobe_result[bit], val, fmt);
-+		skel->bss->uprobe_result[bit] = 0;
-+	}
-+
-+cleanup:
-+	for (bit = 0; bit < 6; bit++) {
-+		struct bpf_link **link = &skel->links.uprobe_0 + bit;
-+
-+		if (*link)
-+			uprobe_detach(skel, bit);
-+	}
-+}
-+
-+static void test_session_consumers(void)
-+{
-+	struct uprobe_multi_session_consumers *skel;
-+	int before, after;
-+
-+	skel = uprobe_multi_session_consumers__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "uprobe_multi_session_consumers__open_and_load"))
-+		return;
-+
-+	/*
-+	 * The idea of this test is to try all possible combinations of
-+	 * uprobes consumers attached on single function.
-+	 *
-+	 *  - 1 uprobe session with return handler called
-+	 *  - 1 uprobe session without return handler called
-+	 *  - 2 uprobe entry consumer
-+	 *  - 2 uprobe exit consumers
-+	 *
-+	 * The test uses 6 uprobes attached on single function, but that
-+	 * translates into single uprobe with 6 consumers in kernel.
-+	 *
-+	 * The before/after values present the state of attached consumers
-+	 * before and after the probed function:
-+	 *
-+	 *  bit 0   : uprobe session with return
-+	 *  bit 1   : uprobe session with no return
-+	 *  bit 2,3 : uprobe entry
-+	 *  bit 4,5 : uprobe return
-+	 *
-+	 * For example for:
-+	 *
-+	 *   before = 0b10101
-+	 *   after  = 0b00110
-+	 *
-+	 * it means that before we call 'uprobe_session_consumer_test' we
-+	 * attach uprobes defined in 'before' value:
-+	 *
-+	 *   - bit 0: uprobe session with return
-+	 *   - bit 2: uprobe entry
-+	 *   - bit 4: uprobe return
-+	 *
-+	 * uprobe_session_consumer_test is called and inside it we attach
-+	 * and detach * uprobes based on 'after' value:
-+	 *
-+	 *   - bit 0: uprobe session with return is detached
-+	 *   - bit 1: uprobe session without return is attached
-+	 *   - bit 2: stays untouched
-+	 *   - bit 4: uprobe return is detached
-+	 *
-+	 * uprobe_session_consumer_test returs and we check counters values
-+	 * increased by bpf programs on each uprobe to match the expected
-+	 * count based on before/after bits.
-+	 */
-+	for (before = 0; before < 64; before++) {
-+		for (after = 0; after < 64; after++)
-+			session_consumer_test(skel, before, after);
-+	}
-+
-+	uprobe_multi_session_consumers__destroy(skel);
-+}
-+
- static void test_bench_attach_uprobe(void)
- {
- 	long attach_start_ns = 0, attach_end_ns = 0;
-@@ -833,4 +1034,6 @@ void test_uprobe_multi_test(void)
- 		test_session_cookie_skel_api();
- 	if (test__start_subtest("session_cookie_recursive"))
- 		test_session_recursive_skel_api();
-+	if (test__start_subtest("session/consumers"))
-+		test_session_consumers();
- }
-diff --git a/tools/testing/selftests/bpf/progs/uprobe_multi_session_consumers.c b/tools/testing/selftests/bpf/progs/uprobe_multi_session_consumers.c
-new file mode 100644
-index 000000000000..035d31a0a7f8
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/uprobe_multi_session_consumers.c
-@@ -0,0 +1,53 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/bpf.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+#include <stdbool.h>
-+#include "bpf_kfuncs.h"
-+#include "bpf_misc.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+__u64 uprobe_result[6];
-+
-+SEC("uprobe.session")
-+int uprobe_0(struct pt_regs *ctx)
-+{
-+	uprobe_result[0]++;
-+	return 0;
-+}
-+
-+SEC("uprobe.session")
-+int uprobe_1(struct pt_regs *ctx)
-+{
-+	uprobe_result[1]++;
-+	return 1;
-+}
-+
-+SEC("uprobe.multi")
-+int uprobe_2(struct pt_regs *ctx)
-+{
-+	uprobe_result[2]++;
-+	return 0;
-+}
-+
-+SEC("uprobe.multi")
-+int uprobe_3(struct pt_regs *ctx)
-+{
-+	uprobe_result[3]++;
-+	return 0;
-+}
-+
-+SEC("uprobe.multi")
-+int uprobe_4(struct pt_regs *ctx)
-+{
-+	uprobe_result[4]++;
-+	return 0;
-+}
-+
-+SEC("uprobe.multi")
-+int uprobe_5(struct pt_regs *ctx)
-+{
-+	uprobe_result[5]++;
-+	return 0;
-+}
--- 
-2.45.2
+The two patches are reaching linux-next, and hence mainline, through
+different code paths we now have periods where rb3gen2 is not bootable.
+But more importantly, devices with current .dtbs installed can not boot
+the new kernel.
 
+
+It is not acceptable to introduce non-backwards compatible changes in
+drivers (unless there's extraordinary reasons to do so).
+
+Regards,
+Bjorn
+
+> Signed-off-by: Odelu Kukatla <quic_okukatla@quicinc.com>
+> ---
+>  drivers/interconnect/qcom/sc7280.c | 274 +++++++++++++++++++++++++++++
+>  1 file changed, 274 insertions(+)
+> 
+> diff --git a/drivers/interconnect/qcom/sc7280.c b/drivers/interconnect/qcom/sc7280.c
+> index 7d33694368e8..759c609a20bf 100644
+> --- a/drivers/interconnect/qcom/sc7280.c
+> +++ b/drivers/interconnect/qcom/sc7280.c
+> @@ -1,6 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * Copyright (c) 2021, The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>   *
+>   */
+>  
+> @@ -21,6 +22,12 @@ static struct qcom_icc_node qhm_qspi = {
+>  	.id = SC7280_MASTER_QSPI_0,
+>  	.channels = 1,
+>  	.buswidth = 4,
+> +	.qosbox = &(const struct qcom_icc_qosbox) {
+> +		.num_ports = 1,
+> +		.port_offsets = { 0x7000 },
+> +		.prio = 2,
+> +		.urg_fwd = 0,
+> +	},
+>  	.num_links = 1,
+>  	.links = { SC7280_SLAVE_A1NOC_SNOC },
+>  };
+> @@ -30,6 +37,12 @@ static struct qcom_icc_node qhm_qup0 = {
+>  	.id = SC7280_MASTER_QUP_0,
+>  	.channels = 1,
+>  	.buswidth = 4,
+> +	.qosbox = &(const struct qcom_icc_qosbox) {
+> +		.num_ports = 1,
+> +		.port_offsets = { 0x11000 },
+> +		.prio = 2,
+> +		.urg_fwd = 0,
+> +	},
+>  	.num_links = 1,
+>  	.links = { SC7280_SLAVE_A1NOC_SNOC },
+>  };
+> @@ -39,6 +52,12 @@ static struct qcom_icc_node qhm_qup1 = {
+>  	.id = SC7280_MASTER_QUP_1,
+>  	.channels = 1,
+>  	.buswidth = 4,
+> +	.qosbox = &(const struct qcom_icc_qosbox) {
+> +		.num_ports = 1,
+> +		.port_offsets = { 0x8000 },
+> +		.prio = 2,
+> +		.urg_fwd = 0,
+> +	},
+>  	.num_links = 1,
+>  	.links = { SC7280_SLAVE_A1NOC_SNOC },
+>  };
+> @@ -57,6 +76,12 @@ static struct qcom_icc_node xm_sdc1 = {
+>  	.id = SC7280_MASTER_SDCC_1,
+>  	.channels = 1,
+>  	.buswidth = 8,
+> +	.qosbox = &(const struct qcom_icc_qosbox) {
+> +		.num_ports = 1,
+> +		.port_offsets = { 0xc000 },
+> +		.prio = 2,
+> +		.urg_fwd = 0,
+> +	},
+>  	.num_links = 1,
+>  	.links = { SC7280_SLAVE_A1NOC_SNOC },
+>  };
+> @@ -66,6 +91,12 @@ static struct qcom_icc_node xm_sdc2 = {
+>  	.id = SC7280_MASTER_SDCC_2,
+>  	.channels = 1,
+>  	.buswidth = 8,
+> +	.qosbox = &(const struct qcom_icc_qosbox) {
+> +		.num_ports = 1,
+> +		.port_offsets = { 0xe000 },
+> +		.prio = 2,
+> +		.urg_fwd = 0,
+> +	},
+>  	.num_links = 1,
+>  	.links = { SC7280_SLAVE_A1NOC_SNOC },
+>  };
+> @@ -75,6 +106,12 @@ static struct qcom_icc_node xm_sdc4 = {
+>  	.id = SC7280_MASTER_SDCC_4,
+>  	.channels = 1,
+>  	.buswidth = 8,
+> +	.qosbox = &(const struct qcom_icc_qosbox) {
+> +		.num_ports = 1,
+> +		.port_offsets = { 0x9000 },
+> +		.prio = 2,
+> +		.urg_fwd = 0,
+> +	},
+>  	.num_links = 1,
+>  	.links = { SC7280_SLAVE_A1NOC_SNOC },
+>  };
+> @@ -84,6 +121,12 @@ static struct qcom_icc_node xm_ufs_mem = {
+>  	.id = SC7280_MASTER_UFS_MEM,
+>  	.channels = 1,
+>  	.buswidth = 8,
+> +	.qosbox = &(const struct qcom_icc_qosbox) {
+> +		.num_ports = 1,
+> +		.port_offsets = { 0xa000 },
+> +		.prio = 2,
+> +		.urg_fwd = 0,
+> +	},
+>  	.num_links = 1,
+>  	.links = { SC7280_SLAVE_A1NOC_SNOC },
+>  };
+> @@ -102,6 +145,12 @@ static struct qcom_icc_node xm_usb3_0 = {
+>  	.id = SC7280_MASTER_USB3_0,
+>  	.channels = 1,
+>  	.buswidth = 8,
+> +	.qosbox = &(const struct qcom_icc_qosbox) {
+> +		.num_ports = 1,
+> +		.port_offsets = { 0xb000 },
+> +		.prio = 2,
+> +		.urg_fwd = 0,
+> +	},
+>  	.num_links = 1,
+>  	.links = { SC7280_SLAVE_A1NOC_SNOC },
+>  };
+> @@ -111,6 +160,12 @@ static struct qcom_icc_node qhm_qdss_bam = {
+>  	.id = SC7280_MASTER_QDSS_BAM,
+>  	.channels = 1,
+>  	.buswidth = 4,
+> +	.qosbox = &(const struct qcom_icc_qosbox) {
+> +		.num_ports = 1,
+> +		.port_offsets = { 0x18000 },
+> +		.prio = 2,
+> +		.urg_fwd = 0,
+> +	},
+>  	.num_links = 1,
+>  	.links = { SC7280_SLAVE_A2NOC_SNOC },
+>  };
+> @@ -129,6 +184,12 @@ static struct qcom_icc_node qnm_cnoc_datapath = {
+>  	.id = SC7280_MASTER_CNOC_A2NOC,
+>  	.channels = 1,
+>  	.buswidth = 8,
+> +	.qosbox = &(const struct qcom_icc_qosbox) {
+> +		.num_ports = 1,
+> +		.port_offsets = { 0x1c000 },
+> +		.prio = 2,
+> +		.urg_fwd = 0,
+> +	},
+>  	.num_links = 1,
+>  	.links = { SC7280_SLAVE_A2NOC_SNOC },
+>  };
+> @@ -138,6 +199,12 @@ static struct qcom_icc_node qxm_crypto = {
+>  	.id = SC7280_MASTER_CRYPTO,
+>  	.channels = 1,
+>  	.buswidth = 8,
+> +	.qosbox = &(const struct qcom_icc_qosbox) {
+> +		.num_ports = 1,
+> +		.port_offsets = { 0x1d000 },
+> +		.prio = 2,
+> +		.urg_fwd = 0,
+> +	},
+>  	.num_links = 1,
+>  	.links = { SC7280_SLAVE_A2NOC_SNOC },
+>  };
+> @@ -147,6 +214,12 @@ static struct qcom_icc_node qxm_ipa = {
+>  	.id = SC7280_MASTER_IPA,
+>  	.channels = 1,
+>  	.buswidth = 8,
+> +	.qosbox = &(const struct qcom_icc_qosbox) {
+> +		.num_ports = 1,
+> +		.port_offsets = { 0x10000 },
+> +		.prio = 2,
+> +		.urg_fwd = 0,
+> +	},
+>  	.num_links = 1,
+>  	.links = { SC7280_SLAVE_A2NOC_SNOC },
+>  };
+> @@ -173,6 +246,12 @@ static struct qcom_icc_node xm_qdss_etr = {
+>  	.id = SC7280_MASTER_QDSS_ETR,
+>  	.channels = 1,
+>  	.buswidth = 8,
+> +	.qosbox = &(const struct qcom_icc_qosbox) {
+> +		.num_ports = 1,
+> +		.port_offsets = { 0x15000 },
+> +		.prio = 2,
+> +		.urg_fwd = 0,
+> +	},
+>  	.num_links = 1,
+>  	.links = { SC7280_SLAVE_A2NOC_SNOC },
+>  };
+> @@ -305,6 +384,12 @@ static struct qcom_icc_node alm_gpu_tcu = {
+>  	.id = SC7280_MASTER_GPU_TCU,
+>  	.channels = 1,
+>  	.buswidth = 8,
+> +	.qosbox = &(const struct qcom_icc_qosbox) {
+> +		.num_ports = 1,
+> +		.port_offsets = { 0xd7000 },
+> +		.prio = 2,
+> +		.urg_fwd = 0,
+> +	},
+>  	.num_links = 2,
+>  	.links = { SC7280_SLAVE_GEM_NOC_CNOC, SC7280_SLAVE_LLCC },
+>  };
+> @@ -314,6 +399,12 @@ static struct qcom_icc_node alm_sys_tcu = {
+>  	.id = SC7280_MASTER_SYS_TCU,
+>  	.channels = 1,
+>  	.buswidth = 8,
+> +	.qosbox = &(const struct qcom_icc_qosbox) {
+> +		.num_ports = 1,
+> +		.port_offsets = { 0xd6000 },
+> +		.prio = 6,
+> +		.urg_fwd = 0,
+> +	},
+>  	.num_links = 2,
+>  	.links = { SC7280_SLAVE_GEM_NOC_CNOC, SC7280_SLAVE_LLCC },
+>  };
+> @@ -333,6 +424,12 @@ static struct qcom_icc_node qnm_cmpnoc = {
+>  	.id = SC7280_MASTER_COMPUTE_NOC,
+>  	.channels = 2,
+>  	.buswidth = 32,
+> +	.qosbox = &(const struct qcom_icc_qosbox) {
+> +		.num_ports = 2,
+> +		.port_offsets = { 0x21000, 0x61000 },
+> +		.prio = 0,
+> +		.urg_fwd = 1,
+> +	},
+>  	.num_links = 2,
+>  	.links = { SC7280_SLAVE_GEM_NOC_CNOC, SC7280_SLAVE_LLCC },
+>  };
+> @@ -353,6 +450,12 @@ static struct qcom_icc_node qnm_gpu = {
+>  	.id = SC7280_MASTER_GFX3D,
+>  	.channels = 2,
+>  	.buswidth = 32,
+> +	.qosbox = &(const struct qcom_icc_qosbox) {
+> +		.num_ports = 2,
+> +		.port_offsets = { 0x22000, 0x62000 },
+> +		.prio = 0,
+> +		.urg_fwd = 0,
+> +	},
+>  	.num_links = 2,
+>  	.links = { SC7280_SLAVE_GEM_NOC_CNOC, SC7280_SLAVE_LLCC },
+>  };
+> @@ -362,6 +465,12 @@ static struct qcom_icc_node qnm_mnoc_hf = {
+>  	.id = SC7280_MASTER_MNOC_HF_MEM_NOC,
+>  	.channels = 2,
+>  	.buswidth = 32,
+> +	.qosbox = &(const struct qcom_icc_qosbox) {
+> +		.num_ports = 2,
+> +		.port_offsets = { 0x23000, 0x63000 },
+> +		.prio = 0,
+> +		.urg_fwd = 1,
+> +	},
+>  	.num_links = 1,
+>  	.links = { SC7280_SLAVE_LLCC },
+>  };
+> @@ -371,6 +480,12 @@ static struct qcom_icc_node qnm_mnoc_sf = {
+>  	.id = SC7280_MASTER_MNOC_SF_MEM_NOC,
+>  	.channels = 1,
+>  	.buswidth = 32,
+> +	.qosbox = &(const struct qcom_icc_qosbox) {
+> +		.num_ports = 1,
+> +		.port_offsets = { 0xcf000 },
+> +		.prio = 0,
+> +		.urg_fwd = 1,
+> +	},
+>  	.num_links = 2,
+>  	.links = { SC7280_SLAVE_GEM_NOC_CNOC, SC7280_SLAVE_LLCC },
+>  };
+> @@ -389,6 +504,12 @@ static struct qcom_icc_node qnm_snoc_gc = {
+>  	.id = SC7280_MASTER_SNOC_GC_MEM_NOC,
+>  	.channels = 1,
+>  	.buswidth = 8,
+> +	.qosbox = &(const struct qcom_icc_qosbox) {
+> +		.num_ports = 1,
+> +		.port_offsets = { 0xd3000 },
+> +		.prio = 0,
+> +		.urg_fwd = 1,
+> +	},
+>  	.num_links = 1,
+>  	.links = { SC7280_SLAVE_LLCC },
+>  };
+> @@ -398,6 +519,12 @@ static struct qcom_icc_node qnm_snoc_sf = {
+>  	.id = SC7280_MASTER_SNOC_SF_MEM_NOC,
+>  	.channels = 1,
+>  	.buswidth = 16,
+> +	.qosbox = &(const struct qcom_icc_qosbox) {
+> +		.num_ports = 1,
+> +		.port_offsets = { 0xd4000 },
+> +		.prio = 0,
+> +		.urg_fwd = 1,
+> +	},
+>  	.num_links = 3,
+>  	.links = { SC7280_SLAVE_GEM_NOC_CNOC, SC7280_SLAVE_LLCC,
+>  		   SC7280_SLAVE_MEM_NOC_PCIE_SNOC },
+> @@ -437,6 +564,12 @@ static struct qcom_icc_node qnm_video0 = {
+>  	.id = SC7280_MASTER_VIDEO_P0,
+>  	.channels = 1,
+>  	.buswidth = 32,
+> +	.qosbox = &(const struct qcom_icc_qosbox) {
+> +		.num_ports = 1,
+> +		.port_offsets = { 0x14000 },
+> +		.prio = 0,
+> +		.urg_fwd = 1,
+> +	},
+>  	.num_links = 1,
+>  	.links = { SC7280_SLAVE_MNOC_SF_MEM_NOC },
+>  };
+> @@ -446,6 +579,12 @@ static struct qcom_icc_node qnm_video_cpu = {
+>  	.id = SC7280_MASTER_VIDEO_PROC,
+>  	.channels = 1,
+>  	.buswidth = 8,
+> +	.qosbox = &(const struct qcom_icc_qosbox) {
+> +		.num_ports = 1,
+> +		.port_offsets = { 0x15000 },
+> +		.prio = 0,
+> +		.urg_fwd = 1,
+> +	},
+>  	.num_links = 1,
+>  	.links = { SC7280_SLAVE_MNOC_SF_MEM_NOC },
+>  };
+> @@ -455,6 +594,12 @@ static struct qcom_icc_node qxm_camnoc_hf = {
+>  	.id = SC7280_MASTER_CAMNOC_HF,
+>  	.channels = 2,
+>  	.buswidth = 32,
+> +	.qosbox = &(const struct qcom_icc_qosbox) {
+> +		.num_ports = 2,
+> +		.port_offsets = { 0x10000, 0x10180 },
+> +		.prio = 0,
+> +		.urg_fwd = 1,
+> +	},
+>  	.num_links = 1,
+>  	.links = { SC7280_SLAVE_MNOC_HF_MEM_NOC },
+>  };
+> @@ -464,6 +609,12 @@ static struct qcom_icc_node qxm_camnoc_icp = {
+>  	.id = SC7280_MASTER_CAMNOC_ICP,
+>  	.channels = 1,
+>  	.buswidth = 8,
+> +	.qosbox = &(const struct qcom_icc_qosbox) {
+> +		.num_ports = 1,
+> +		.port_offsets = { 0x11000 },
+> +		.prio = 0,
+> +		.urg_fwd = 1,
+> +	},
+>  	.num_links = 1,
+>  	.links = { SC7280_SLAVE_MNOC_SF_MEM_NOC },
+>  };
+> @@ -473,6 +624,12 @@ static struct qcom_icc_node qxm_camnoc_sf = {
+>  	.id = SC7280_MASTER_CAMNOC_SF,
+>  	.channels = 1,
+>  	.buswidth = 32,
+> +	.qosbox = &(const struct qcom_icc_qosbox) {
+> +		.num_ports = 1,
+> +		.port_offsets = { 0x12000 },
+> +		.prio = 0,
+> +		.urg_fwd = 1,
+> +	},
+>  	.num_links = 1,
+>  	.links = { SC7280_SLAVE_MNOC_SF_MEM_NOC },
+>  };
+> @@ -482,6 +639,12 @@ static struct qcom_icc_node qxm_mdp0 = {
+>  	.id = SC7280_MASTER_MDP0,
+>  	.channels = 1,
+>  	.buswidth = 32,
+> +	.qosbox = &(const struct qcom_icc_qosbox) {
+> +		.num_ports = 1,
+> +		.port_offsets = { 0x16000 },
+> +		.prio = 0,
+> +		.urg_fwd = 1,
+> +	},
+>  	.num_links = 1,
+>  	.links = { SC7280_SLAVE_MNOC_HF_MEM_NOC },
+>  };
+> @@ -536,6 +699,12 @@ static struct qcom_icc_node qxm_pimem = {
+>  	.id = SC7280_MASTER_PIMEM,
+>  	.channels = 1,
+>  	.buswidth = 8,
+> +	.qosbox = &(const struct qcom_icc_qosbox) {
+> +		.num_ports = 1,
+> +		.port_offsets = { 0x8000 },
+> +		.prio = 2,
+> +		.urg_fwd = 0,
+> +	},
+>  	.num_links = 1,
+>  	.links = { SC7280_SLAVE_SNOC_GEM_NOC_GC },
+>  };
+> @@ -545,6 +714,12 @@ static struct qcom_icc_node xm_gic = {
+>  	.id = SC7280_MASTER_GIC,
+>  	.channels = 1,
+>  	.buswidth = 8,
+> +	.qosbox = &(const struct qcom_icc_qosbox) {
+> +		.num_ports = 1,
+> +		.port_offsets = { 0xa000 },
+> +		.prio = 2,
+> +		.urg_fwd = 0,
+> +	},
+>  	.num_links = 1,
+>  	.links = { SC7280_SLAVE_SNOC_GEM_NOC_GC },
+>  };
+> @@ -1502,7 +1677,16 @@ static struct qcom_icc_node * const aggre1_noc_nodes[] = {
+>  	[SLAVE_SERVICE_A1NOC] = &srvc_aggre1_noc,
+>  };
+>  
+> +static const struct regmap_config sc7280_aggre1_noc_regmap_config = {
+> +	.reg_bits = 32,
+> +	.reg_stride = 4,
+> +	.val_bits = 32,
+> +	.max_register = 0x1c080,
+> +	.fast_io = true,
+> +};
+> +
+>  static const struct qcom_icc_desc sc7280_aggre1_noc = {
+> +	.config = &sc7280_aggre1_noc_regmap_config,
+>  	.nodes = aggre1_noc_nodes,
+>  	.num_nodes = ARRAY_SIZE(aggre1_noc_nodes),
+>  	.bcms = aggre1_noc_bcms,
+> @@ -1513,6 +1697,14 @@ static struct qcom_icc_bcm * const aggre2_noc_bcms[] = {
+>  	&bcm_ce0,
+>  };
+>  
+> +static const struct regmap_config sc7280_aggre2_noc_regmap_config = {
+> +	.reg_bits = 32,
+> +	.reg_stride = 4,
+> +	.val_bits = 32,
+> +	.max_register = 0x2b080,
+> +	.fast_io = true,
+> +};
+> +
+>  static struct qcom_icc_node * const aggre2_noc_nodes[] = {
+>  	[MASTER_QDSS_BAM] = &qhm_qdss_bam,
+>  	[MASTER_A2NOC_CFG] = &qnm_a2noc_cfg,
+> @@ -1525,6 +1717,7 @@ static struct qcom_icc_node * const aggre2_noc_nodes[] = {
+>  };
+>  
+>  static const struct qcom_icc_desc sc7280_aggre2_noc = {
+> +	.config = &sc7280_aggre2_noc_regmap_config,
+>  	.nodes = aggre2_noc_nodes,
+>  	.num_nodes = ARRAY_SIZE(aggre2_noc_nodes),
+>  	.bcms = aggre2_noc_bcms,
+> @@ -1605,7 +1798,16 @@ static struct qcom_icc_node * const cnoc2_nodes[] = {
+>  	[SLAVE_SNOC_CFG] = &qns_snoc_cfg,
+>  };
+>  
+> +static const struct regmap_config sc7280_cnoc2_regmap_config = {
+> +	.reg_bits = 32,
+> +	.reg_stride = 4,
+> +	.val_bits = 32,
+> +	.max_register = 0x1000,
+> +	.fast_io = true,
+> +};
+> +
+>  static const struct qcom_icc_desc sc7280_cnoc2 = {
+> +	.config = &sc7280_cnoc2_regmap_config,
+>  	.nodes = cnoc2_nodes,
+>  	.num_nodes = ARRAY_SIZE(cnoc2_nodes),
+>  	.bcms = cnoc2_bcms,
+> @@ -1637,7 +1839,16 @@ static struct qcom_icc_node * const cnoc3_nodes[] = {
+>  	[SLAVE_TCU] = &xs_sys_tcu_cfg,
+>  };
+>  
+> +static const struct regmap_config sc7280_cnoc3_regmap_config = {
+> +	.reg_bits = 32,
+> +	.reg_stride = 4,
+> +	.val_bits = 32,
+> +	.max_register = 0x1000,
+> +	.fast_io = true,
+> +};
+> +
+>  static const struct qcom_icc_desc sc7280_cnoc3 = {
+> +	.config = &sc7280_cnoc3_regmap_config,
+>  	.nodes = cnoc3_nodes,
+>  	.num_nodes = ARRAY_SIZE(cnoc3_nodes),
+>  	.bcms = cnoc3_bcms,
+> @@ -1653,7 +1864,16 @@ static struct qcom_icc_node * const dc_noc_nodes[] = {
+>  	[SLAVE_GEM_NOC_CFG] = &qns_gemnoc,
+>  };
+>  
+> +static const struct regmap_config sc7280_dc_noc_regmap_config = {
+> +	.reg_bits = 32,
+> +	.reg_stride = 4,
+> +	.val_bits = 32,
+> +	.max_register = 0x5080,
+> +	.fast_io = true,
+> +};
+> +
+>  static const struct qcom_icc_desc sc7280_dc_noc = {
+> +	.config = &sc7280_dc_noc_regmap_config,
+>  	.nodes = dc_noc_nodes,
+>  	.num_nodes = ARRAY_SIZE(dc_noc_nodes),
+>  	.bcms = dc_noc_bcms,
+> @@ -1689,7 +1909,16 @@ static struct qcom_icc_node * const gem_noc_nodes[] = {
+>  	[SLAVE_SERVICE_GEM_NOC] = &srvc_sys_gemnoc,
+>  };
+>  
+> +static const struct regmap_config sc7280_gem_noc_regmap_config = {
+> +	.reg_bits = 32,
+> +	.reg_stride = 4,
+> +	.val_bits = 32,
+> +	.max_register = 0xe2200,
+> +	.fast_io = true,
+> +};
+> +
+>  static const struct qcom_icc_desc sc7280_gem_noc = {
+> +	.config = &sc7280_gem_noc_regmap_config,
+>  	.nodes = gem_noc_nodes,
+>  	.num_nodes = ARRAY_SIZE(gem_noc_nodes),
+>  	.bcms = gem_noc_bcms,
+> @@ -1709,7 +1938,16 @@ static struct qcom_icc_node * const lpass_ag_noc_nodes[] = {
+>  	[SLAVE_SERVICE_LPASS_AG_NOC] = &srvc_niu_lpass_agnoc,
+>  };
+>  
+> +static const struct regmap_config sc7280_lpass_ag_noc_regmap_config = {
+> +	.reg_bits = 32,
+> +	.reg_stride = 4,
+> +	.val_bits = 32,
+> +	.max_register = 0xf080,
+> +	.fast_io = true,
+> +};
+> +
+>  static const struct qcom_icc_desc sc7280_lpass_ag_noc = {
+> +	.config = &sc7280_lpass_ag_noc_regmap_config,
+>  	.nodes = lpass_ag_noc_nodes,
+>  	.num_nodes = ARRAY_SIZE(lpass_ag_noc_nodes),
+>  	.bcms = lpass_ag_noc_bcms,
+> @@ -1726,7 +1964,16 @@ static struct qcom_icc_node * const mc_virt_nodes[] = {
+>  	[SLAVE_EBI1] = &ebi,
+>  };
+>  
+> +static const struct regmap_config sc7280_mc_virt_regmap_config = {
+> +	.reg_bits = 32,
+> +	.reg_stride = 4,
+> +	.val_bits = 32,
+> +	.max_register = 0x4,
+> +	.fast_io = true,
+> +};
+> +
+>  static const struct qcom_icc_desc sc7280_mc_virt = {
+> +	.config = &sc7280_mc_virt_regmap_config,
+>  	.nodes = mc_virt_nodes,
+>  	.num_nodes = ARRAY_SIZE(mc_virt_nodes),
+>  	.bcms = mc_virt_bcms,
+> @@ -1753,7 +2000,16 @@ static struct qcom_icc_node * const mmss_noc_nodes[] = {
+>  	[SLAVE_SERVICE_MNOC] = &srvc_mnoc,
+>  };
+>  
+> +static const struct regmap_config sc7280_mmss_noc_regmap_config = {
+> +	.reg_bits = 32,
+> +	.reg_stride = 4,
+> +	.val_bits = 32,
+> +	.max_register = 0x1e080,
+> +	.fast_io = true,
+> +};
+> +
+>  static const struct qcom_icc_desc sc7280_mmss_noc = {
+> +	.config = &sc7280_mmss_noc_regmap_config,
+>  	.nodes = mmss_noc_nodes,
+>  	.num_nodes = ARRAY_SIZE(mmss_noc_nodes),
+>  	.bcms = mmss_noc_bcms,
+> @@ -1772,7 +2028,16 @@ static struct qcom_icc_node * const nsp_noc_nodes[] = {
+>  	[SLAVE_SERVICE_NSP_NOC] = &service_nsp_noc,
+>  };
+>  
+> +static const struct regmap_config sc7280_nsp_noc_regmap_config = {
+> +	.reg_bits = 32,
+> +	.reg_stride = 4,
+> +	.val_bits = 32,
+> +	.max_register = 0x10000,
+> +	.fast_io = true,
+> +};
+> +
+>  static const struct qcom_icc_desc sc7280_nsp_noc = {
+> +	.config = &sc7280_nsp_noc_regmap_config,
+>  	.nodes = nsp_noc_nodes,
+>  	.num_nodes = ARRAY_SIZE(nsp_noc_nodes),
+>  	.bcms = nsp_noc_bcms,
+> @@ -1797,7 +2062,16 @@ static struct qcom_icc_node * const system_noc_nodes[] = {
+>  	[SLAVE_SERVICE_SNOC] = &srvc_snoc,
+>  };
+>  
+> +static const struct regmap_config sc7280_system_noc_regmap_config = {
+> +	.reg_bits = 32,
+> +	.reg_stride = 4,
+> +	.val_bits = 32,
+> +	.max_register = 0x15480,
+> +	.fast_io = true,
+> +};
+> +
+>  static const struct qcom_icc_desc sc7280_system_noc = {
+> +	.config = &sc7280_system_noc_regmap_config,
+>  	.nodes = system_noc_nodes,
+>  	.num_nodes = ARRAY_SIZE(system_noc_nodes),
+>  	.bcms = system_noc_bcms,
+> -- 
+> 2.17.1
+> 
 
