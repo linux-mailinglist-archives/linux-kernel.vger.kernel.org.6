@@ -1,126 +1,109 @@
-Return-Path: <linux-kernel+bounces-236295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92F4891E014
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:01:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E396691E023
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D2BF2848E1
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:01:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E895284748
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A4D15EFB0;
-	Mon,  1 Jul 2024 13:00:21 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26EED15E5B5;
+	Mon,  1 Jul 2024 13:01:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="UY1il4SO"
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE82215EFA2
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 13:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F19154BE7;
+	Mon,  1 Jul 2024 13:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719838821; cv=none; b=UO6r7xEjTqdM+sR3p4dxPpdYuI6em5Ok4cx9KlJeAYUqCu4WrhVHLwSAMjSvEH6SmU7yxp4ZyC8YoF8IkD5hVhrLjwdWLckGLySlKqEQqSFhxZd1JyzjYDnpEqnqwJ6BwG9Yg2XSJqsdRszCU3vUVmuI0Jh6sMW6gccIlraC7t8=
+	t=1719838894; cv=none; b=oqzw2nSiKjDUpZv5wAkSedCvMov+sbd8sU9vuH1ZJ9NDiA16JGGQoslBI+ZUM29H/PwfP9rR+R+XmS1H2lZJF3Cf+caiDdSXZH1BJ27CWZZhtKON6xJc56V7vR09z6mnRTi34HW+RurFDj3AIiUiO/vXIkW6+BuoUsZqWZzrKos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719838821; c=relaxed/simple;
-	bh=DU5Rpao9sVkwftxVXiBbPjmDCfg1edojbtuA+4rU99w=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=bp5o0ssVDg/z8xJrZZGUNYNIV6QkH4ViH0n75tRPNRLRbw5wE1+3Jz6qc6QGJcLNZ9uqw971fB1uI/BYm+2xQDra4rMeVcjQl60FY8KSehTui+V2inETt2xkbON4ROxUGyjAT+y4zd8qd+Bxj27GrixuupsTmKsN+L3V56otgrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7f61fca8c40so313268839f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 06:00:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719838819; x=1720443619;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lKQzMVVd8JV3z0u1HLRD129oSCr8seG4wu/QgPU2cjc=;
-        b=YycqUOh3sA0gJseUtQp7F17FefOJX/EF9/7YWmEbM9ryZiEWnqFoFkqO6gRSbjpnyh
-         29OKG+t9ezDEJhE2v85qdgM+kIFMprVvrP4sSx+ahma5T8bXY5jOPbqMbH6ibaXTzyfd
-         PWUbeSaPwat5eDf7erkGWPI2M+GRoxhiAVhpXfpTQJXJ+T3EKJLLpJaDS+Be46eGcQdr
-         4SG+CM5n+RShVKqWS4bmhpJht2nOCAIfqe9duJ4lFcmUVfk1+/lUIAtdDeRUM5tDvirI
-         I9dSDTSSeiqtVJ8QPK11wl+dRsH1roTiW4amRWYeEFCo8777UrWZOBXyd+EDsxVOZwAn
-         HSPA==
-X-Gm-Message-State: AOJu0Yxhqu/1fe/97Bu5HdKcALlZMWq+SV27v5BdvFzbwbplzcd7K8eM
-	ElpPLRn/UD4g1OVmio6Cd0rZ5iQs+C+p2qPrnP13Xh7HrM4IskUGZo+qXBX2Bx6vtsGIe9hpevd
-	fOchP+LQuwgALdaEFXPwloRXGStAnorg+c1VsCJ3flv2P7Rb7z6u7myM=
-X-Google-Smtp-Source: AGHT+IFjfzX64Rdy84nGXFpO+a/9DdmBFIA0Cb03XfztEfHdSopox7b2rYRLwMVVIk6xuXUnH0kqit7skKw8yR7UbffZUoOxCs2j
+	s=arc-20240116; t=1719838894; c=relaxed/simple;
+	bh=2dwIRvYJsgZnBw5Li/TobLh4i//fTecCDkTu18lUU0Q=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dMt7aXkMa3wAP82p/Fxh1mhdWgdMd0C+3raNa+3O27z65GiDJnuDSMbz4D8uXKXKJjj8wMH9DRIeVHWd5vuQS9dHTD7x2BRwIV624VD9tsM62h3g1JQX8AKDsLxMAstHhojmVk5bsmnLRgspKhZR65vAzNRoC73gcGPL6oAr+m8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=UY1il4SO; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id AEBD2100020;
+	Mon,  1 Jul 2024 16:01:22 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru AEBD2100020
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1719838882;
+	bh=u8k3tcTnpuTH/PJpX5qayEs3QW/i3kdJlSiuUB2g0ww=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=UY1il4SOWjSidlDgmgTqG0dbU9WJLinsFAMfLf7lwuXSto4H/3192vEfBpz/7p5lL
+	 nYon/u79o0J5f7/Wsuo8T22tiJrDrCii9GDO8S8t3xxF6GjpQWSwsQByktRSiLAbQR
+	 IdEpNdPOs5SaPka3G5FTBuDgUq46UK03B87kbFwwWuvwlHjbaz8l2fpVX1whRBi00J
+	 +kbGOo8LRTE6KnHimZCvvz575pUhcVd9swPF6CAdJwkBmMipG++oCvv0xrnr2f+7BO
+	 vBpFNt5kFPjq2gnffhNqwmqwPfR5W3K8Na+UtYBkDIvKCoRQVqiGOZNcgxFSI3XvaB
+	 NORGDfdXRA8hw==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Mon,  1 Jul 2024 16:01:22 +0300 (MSK)
+Received: from localhost.localdomain (100.64.160.123) by
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Mon, 1 Jul 2024 16:01:22 +0300
+From: George Stark <gnstark@salutedevices.com>
+To: <ukleinek@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <neil.armstrong@linaro.org>, <khilman@baylibre.com>,
+	<jbrunet@baylibre.com>, <martin.blumenstingl@googlemail.com>,
+	<hkallweit1@gmail.com>
+CC: <linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <kernel@salutedevices.com>, George Stark
+	<gnstark@salutedevices.com>
+Subject: [PATCH 0/2] add support for meson a1 PWM in dts and bindings
+Date: Mon, 1 Jul 2024 16:01:11 +0300
+Message-ID: <20240701130113.433169-1-gnstark@salutedevices.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3f8a:b0:7eb:75e9:8f2b with SMTP id
- ca18e2360f4ac-7f62ee6461bmr43693339f.2.1719838819082; Mon, 01 Jul 2024
- 06:00:19 -0700 (PDT)
-Date: Mon, 01 Jul 2024 06:00:19 -0700
-In-Reply-To: <0000000000006cbc570618c0d4a3@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e1f1a9061c2f2d82@google.com>
-Subject: Re: [syzbot] [syzbot] [bpf?] [net?] KMSAN: uninit-value in dev_map_hash_lookup_elem
-From: syzbot <syzbot+80cf9d55d6fd2d6a9838@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 186241 [Jul 01 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: gnstark@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 21 0.3.21 ebee5449fc125b2da45f1a6a6bc2c5c0c3ad0e05, {Tracking_from_domain_doesnt_match_to}, 100.64.160.123:7.1.2;salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;smtp.sberdevices.ru:7.1.1,5.0.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/01 11:44:00 #25786379
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Add support for meson a1 PWM in dts and bindings. Due to pwm driver code is fully
+the same for a1 and s4 then a1 compatible defined with s4 as fallback.
 
-***
+George Stark (2):
+  dt-bindings: pwm: amlogic: Add new bindings for meson A1 pwm
+  arm64: dts: meson: a1: add definitions for meson pwm
 
-Subject: [syzbot] [bpf?] [net?] KMSAN: uninit-value in dev_map_hash_lookup_elem
-Author: wojciech.gladysz@infogain.com
+ .../devicetree/bindings/pwm/pwm-amlogic.yaml  |   2 +
+ arch/arm64/boot/dts/amlogic/meson-a1.dtsi     | 215 ++++++++++++++++++
+ 2 files changed, 217 insertions(+)
 
-#syz test: https://linux.googlesource.com/linux/kernel/git/torvalds/linux e478cf26c556e4ab572ab0ab2306c986901dcd61
+--
+2.25.1
 
----
- kernel/bpf/verifier.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 36ef8e96787e..13a9c2e2908a 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -7146,8 +7146,8 @@ static int check_stack_range_initialized(
- 		 * reads. However, if raw_mode is not set, we'll do extra
- 		 * checks below.
- 		 */
--		bounds_check_type = BPF_WRITE;
--		clobber = true;
-+		clobber = !meta || meta->raw_mode;
-+		bounds_check_type = clobber ? BPF_WRITE : BPF_READ;
- 	} else {
- 		bounds_check_type = BPF_READ;
- 	}
-@@ -7230,8 +7230,7 @@ static int check_stack_range_initialized(
- 		stype = &state->stack[spi].slot_type[slot % BPF_REG_SIZE];
- 		if (*stype == STACK_MISC)
- 			goto mark;
--		if ((*stype == STACK_ZERO) ||
--		    (*stype == STACK_INVALID && env->allow_uninit_stack)) {
-+		if (*stype == STACK_ZERO) {
- 			if (clobber) {
- 				/* helper can write anything into the stack */
- 				*stype = STACK_MISC;
-@@ -8748,6 +8747,8 @@ static int check_func_arg(struct bpf_verifier_env *env, u32 arg,
- 		meta->map_uid = reg->map_uid;
- 		break;
- 	case ARG_PTR_TO_MAP_KEY:
-+		/* always mark read access */
-+		meta->raw_mode = false;
- 		/* bpf_map_xxx(..., map_ptr, ..., key) call:
- 		 * check that [key, key + map->key_size) are within
- 		 * stack limits and initialized
-@@ -8763,7 +8764,7 @@ static int check_func_arg(struct bpf_verifier_env *env, u32 arg,
- 		}
- 		err = check_helper_mem_access(env, regno,
- 					      meta->map_ptr->key_size, false,
--					      NULL);
-+					      meta);
- 		break;
- 	case ARG_PTR_TO_MAP_VALUE:
- 		if (type_may_be_null(arg_type) && register_is_null(reg))
--- 
-2.35.3
 
