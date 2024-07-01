@@ -1,235 +1,131 @@
-Return-Path: <linux-kernel+bounces-236705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DAAF91E623
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:01:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF4C791E626
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:02:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 916AF1C21447
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:01:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AFDB283A53
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:02:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456AC16DED8;
-	Mon,  1 Jul 2024 17:01:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5916E16DED2;
+	Mon,  1 Jul 2024 17:02:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b="CKSLXSep"
-Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com [209.85.128.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ukJ1XLye"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414CC168491
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 17:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B31014AD25;
+	Mon,  1 Jul 2024 17:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719853308; cv=none; b=hXX0Z0foIFM7trYyEmkP0kj2rl/v+izsRZhp1JLpD2CZe/FeIfCMp+ikMWwm0I+enDI4qrbcT2g5eDCuKv/JBagwBiqP5bRPRru+7tbF5DZ7yXq6JsQLqH6NTUKMzih8Utw2TqFKISrGrwi8GVlLlTnFoJXOpySya2R57NC491Q=
+	t=1719853352; cv=none; b=qPd9V2JqaSIwOL/H6xhHz5FOPm1gBNfxu/2vokwKa71q2MesV9bLQjmI9+JomEp+AiQ3alWnEDw72/I9vIrKtNQ8jhsZxmB2rLWqdynIJMZf50QZz0uRSnLcC7TNkn5SyK2asVZq2F4lACyT40UMiyzhUH8mUvmmCEmjDCyCFZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719853308; c=relaxed/simple;
-	bh=qExW45/1/1Ch3sloxtbNfC3Wx4G1Hba3Q8lHze7Nqnw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NjIEHntIsI0LuFPtrYb+3Vig3CiEfxWMRu1Kgk2oeJDhMD6U5w33s6JQvzO7e6EBRyDcOoOv7vmQV8lZ9X+OGUe7YEFenmSVlmaeWJn8w+ck7DEtiuw2LkPmxxCgXTp4J0shlVUUkWvm/M85Hm99waLQrlQw6mdHmm31WyLer08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net; spf=none smtp.mailfrom=ursulin.net; dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b=CKSLXSep; arc=none smtp.client-ip=209.85.128.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ursulin.net
-Received: by mail-wm1-f65.google.com with SMTP id 5b1f17b1804b1-424aa70fbc4so22625285e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 10:01:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ursulin-net.20230601.gappssmtp.com; s=20230601; t=1719853304; x=1720458104; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YEtwSsT8f1rhSc1gX7Ak6nA4NzVFoZT/y5iSR3NaswA=;
-        b=CKSLXSepUla3PvckK7RIQt5HbvVjXDY06TSFAsE3BdCszpyvVn23woZDeDKETihxBW
-         xskyYjYtx2K6bFiDIlWIJlOXGTUvFyh3NolMB2DOhpwq1tK2T0FUFpb3gVkmTIBCPCZ2
-         BXOUoPh9b8F+vAKecTOoyWZvBsSs3rWp4Uvym2uITAFyBI9fBR7s7VZm1SoYVYTCNv2v
-         V4BspYsqjx4ulTW5bt3cXI4FM1/6abUzLjlczAsbqMGf34hdTnRYplyNlkrAIO/GsXkj
-         xpr22W+9M1yVZU8csPqhFD17mO4O/ir0PSvbShxPjxMT1tbiKti7Km3lvRlbWxM0dtpb
-         gAqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719853304; x=1720458104;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YEtwSsT8f1rhSc1gX7Ak6nA4NzVFoZT/y5iSR3NaswA=;
-        b=BvVGDhKPX0clPvqkkGtaeA5Wr2V1JMV8SSasJ/VSuRuRI8Puu6QX9/Zsrtvv+kj1Sj
-         JkQHg3/64dJtBIEq3OHCh0vE6LhHNOvsCzp6R4xigYINsv6yqy4VnfHKwyfiwnRLl2uU
-         zLb9N4zKLusm7ZFmmJPqSPhZfJ7mSnnG/GkM1PTO8n3zVEN8RA3ykeIglmM0I+PoczLq
-         OeIIzsDTKgaZvtyYDg/RsXagUD0x3d4pZOlUojsOlx8/hAHYh4ejHWCygOOtc4/F04d+
-         lbrPIBZd514TIMz3he0aRG2LLcSwUQFT9T7vsPMANEYyPk+x2YcAnTlJmZKrRdRiYQn8
-         beOw==
-X-Forwarded-Encrypted: i=1; AJvYcCWzTN1JtBOwiCieKJpMuYbibTbiQpyjRg9dTD30guikCo8yqdPhkkR6k/alJwWUFPqI5JJZ/qCFAIrhgMlcV2wNFR8FHr4pCPFnvmiD
-X-Gm-Message-State: AOJu0YynJ0D/jJgbblKedZE4xfELIV6TMvevSI1kC88hqH1bB1CrLlnX
-	d6TqoHB73dY+T5Qgzt8nEWkth2WmMmWgbPY4ehmd1uvxMMCCdus334Sc0yy+luI=
-X-Google-Smtp-Source: AGHT+IEtDUSKzwuUgMWWp1N5EFZlk9+N4r+/RVGPSTepN8CyOc19OztAsCLL+3zjdsmhEvxdjtswqw==
-X-Received: by 2002:a05:600c:3b24:b0:422:615f:649e with SMTP id 5b1f17b1804b1-4257a06dcf9mr47932555e9.27.1719853303452;
-        Mon, 01 Jul 2024 10:01:43 -0700 (PDT)
-Received: from [192.168.0.101] ([84.69.19.168])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b09a073sm160827635e9.32.2024.07.01.10.01.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Jul 2024 10:01:42 -0700 (PDT)
-Message-ID: <40ef0eed-c514-4ec1-9486-2967f23824be@ursulin.net>
-Date: Mon, 1 Jul 2024 18:01:41 +0100
+	s=arc-20240116; t=1719853352; c=relaxed/simple;
+	bh=rrZg9Pb0++jARgOgd/Z0l3VmYE7RR9w+0Gh7JqwfciA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IPgHppmyyLYIxInRnZuXDBcoqaiUf9pKhoZN1ROWIuqbL9gaEPdmNyb0rj/arVsrEsjMi3ZWsYzfMSDp3Jed8oKyAAZXH4C/7QTP1A+st/gigegpeShff4KpbOYlMQEyrEerbCIKfR2HFq2yMkccQXLte9UEEGDGKp+oDQpu074=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ukJ1XLye; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 250B5C4AF12;
+	Mon,  1 Jul 2024 17:02:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719853352;
+	bh=rrZg9Pb0++jARgOgd/Z0l3VmYE7RR9w+0Gh7JqwfciA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ukJ1XLyeOU7dxCB49i0ennHAaVa1jJTryhFOGA+E8Nere57bzHshRUNzzdezWqB1w
+	 oW9gtcr8NPmhf+eYmD0PztlGnOihLVLIUbkTZs2Syu6FHAnDWqp6na+67mSsRtY4Jl
+	 dkeOummBLEWEi3FKYBFmei747ke6iObMkO3PyR+zSstsmpRFjGeOBLScJc/0LdE5ki
+	 hWuznYaexvRgB04gAFoo0NS9M0DZdxjm6VRwHjpqpVPnSxjjF1znzSFtRVPQYT87Hg
+	 1V+iYtEJqGUNypGYdO75dJc2nR+Gnc2S6uwHjQTJN0Cssuk+s0a7/UbjhTjJK7Uzvo
+	 6U3N39uZo2pCQ==
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-25989f87e20so504939fac.1;
+        Mon, 01 Jul 2024 10:02:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVc3RyDe9B2GkUXOZKAZElHzsAFnNYk2U0sbkikOCGRM83fIwQXDGcGEz9NeHKBqwx3yZHDsqCx7I0+fvwg43p1YrdjdoY2+oT8RZcCQFwJemBUV/s0PpOKvM1bo5Sn09K72R00cD8=
+X-Gm-Message-State: AOJu0Yxm5PD8BqWut5NsjdAqcRPKzD3mCZvR1H7VL/9x7IuJKZ5Fwq3P
+	OkhcZ7js4TCHVWPapknJTXge0gnR/qokmVWM269faPxznDQES+La3OHMCZFyylkXcBmewNdff42
+	PMFsH9g9GSJeZsY0tCjgo0DJhpm0=
+X-Google-Smtp-Source: AGHT+IEJpZmbqEHO1Bh+OEp3LPFinKMG1IadW16uX8PwTkV1l2Yyvu7JRQgOww++E+3PBknGG60nkJTheF+JVlO6A5A=
+X-Received: by 2002:a05:6870:4195:b0:25d:d69:eaf with SMTP id
+ 586e51a60fabf-25db36406d0mr6091618fac.4.1719853351316; Mon, 01 Jul 2024
+ 10:02:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/6] drm/cgroup: Add memory accounting DRM cgroup
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>
-Cc: intel-xe@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Tejun Heo <tj@kernel.org>,
- Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- Friedrich Vock <friedrich.vock@gmx.de>, cgroups@vger.kernel.org,
- linux-mm@kvack.org, linux-doc@vger.kernel.org
-References: <20240627154754.74828-1-maarten.lankhorst@linux.intel.com>
- <20240627154754.74828-3-maarten.lankhorst@linux.intel.com>
- <20240627-paper-vicugna-of-fantasy-c549ed@houat>
- <6cb7c074-55cb-4825-9f80-5cf07bbd6745@linux.intel.com>
- <20240628-romantic-emerald-snake-7b26ca@houat>
- <70289c58-7947-4347-8600-658821a730b0@linux.intel.com>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tursulin@ursulin.net>
-In-Reply-To: <70289c58-7947-4347-8600-658821a730b0@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240628091456.57301-1-yang.lee@linux.alibaba.com>
+In-Reply-To: <20240628091456.57301-1-yang.lee@linux.alibaba.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 1 Jul 2024 19:02:20 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0h1OZ1=x3Evfkdb90oHML_KOALS9FmPW+jk-o7udOY-yQ@mail.gmail.com>
+Message-ID: <CAJZ5v0h1OZ1=x3Evfkdb90oHML_KOALS9FmPW+jk-o7udOY-yQ@mail.gmail.com>
+Subject: Re: [PATCH -next] mm/treewide: Add missing kernel-doc function comments.
+To: Yang Li <yang.lee@linux.alibaba.com>
+Cc: mingo@redhat.com, rafael@kernel.org, tglx@linutronix.de, pavel@ucw.cz, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Abaci Robot <abaci@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Jun 28, 2024 at 11:15=E2=80=AFAM Yang Li <yang.lee@linux.alibaba.co=
+m> wrote:
+>
+> Add kernel-doc style comments for the pfn_is_nosave and
+> arch_hibernation_header_save functions.
+>
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=3D9453
+> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+> ---
+>  arch/x86/power/hibernate.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/x86/power/hibernate.c b/arch/x86/power/hibernate.c
+> index 5b81d19cd114..90f682ff63b1 100644
+> --- a/arch/x86/power/hibernate.c
+> +++ b/arch/x86/power/hibernate.c
+> @@ -41,7 +41,8 @@ unsigned long temp_pgt __visible;
+>  unsigned long relocated_restore_code __visible;
+>
+>  /**
+> - *     pfn_is_nosave - check if given pfn is in the 'nosave' section
+> + * pfn_is_nosave - check if given pfn is in the 'nosave' section
+> + * @pfn: The Page Frame Number to check
 
-On 01/07/2024 10:25, Maarten Lankhorst wrote:
-> Den 2024-06-28 kl. 16:04, skrev Maxime Ripard:
->> Hi,
->>
->> On Thu, Jun 27, 2024 at 09:22:56PM GMT, Maarten Lankhorst wrote:
->>> Den 2024-06-27 kl. 19:16, skrev Maxime Ripard:
->>>> Hi,
->>>>
->>>> Thanks for working on this!
->>>>
->>>> On Thu, Jun 27, 2024 at 05:47:21PM GMT, Maarten Lankhorst wrote:
->>>>> The initial version was based roughly on the rdma and misc cgroup
->>>>> controllers, with a lot of the accounting code borrowed from rdma.
->>>>>
->>>>> The current version is a complete rewrite with page counter; it uses
->>>>> the same min/low/max semantics as the memory cgroup as a result.
->>>>>
->>>>> There's a small mismatch as TTM uses u64, and page_counter long pages.
->>>>> In practice it's not a problem. 32-bits systems don't really come with
->>>>>> =4GB cards and as long as we're consistently wrong with units, it's
->>>>> fine. The device page size may not be in the same units as kernel page
->>>>> size, and each region might also have a different page size (VRAM vs GART
->>>>> for example).
->>>>>
->>>>> The interface is simple:
->>>>> - populate drmcgroup_device->regions[..] name and size for each active
->>>>>     region, set num_regions accordingly.
->>>>> - Call drm(m)cg_register_device()
->>>>> - Use drmcg_try_charge to check if you can allocate a chunk of memory,
->>>>>     use drmcg_uncharge when freeing it. This may return an error code,
->>>>>     or -EAGAIN when the cgroup limit is reached. In that case a reference
->>>>>     to the limiting pool is returned.
->>>>> - The limiting cs can be used as compare function for
->>>>>     drmcs_evict_valuable.
->>>>> - After having evicted enough, drop reference to limiting cs with
->>>>>     drmcs_pool_put.
->>>>>
->>>>> This API allows you to limit device resources with cgroups.
->>>>> You can see the supported cards in /sys/fs/cgroup/drm.capacity
->>>>> You need to echo +drm to cgroup.subtree_control, and then you can
->>>>> partition memory.
->>>>>
->>>>> Signed-off-by: Maarten Lankhorst<maarten.lankhorst@linux.intel.com>
->>>>> Co-developed-by: Friedrich Vock<friedrich.vock@gmx.de>
->>>> I'm sorry, I should have wrote minutes on the discussion we had with TJ
->>>> and Tvrtko the other day.
->>>>
->>>> We're all very interested in making this happen, but doing a "DRM"
->>>> cgroup doesn't look like the right path to us.
->>>>
->>>> Indeed, we have a significant number of drivers that won't have a
->>>> dedicated memory but will depend on DMA allocations one way or the
->>>> other, and those pools are shared between multiple frameworks (DRM,
->>>> V4L2, DMA-Buf Heaps, at least).
->>>>
->>>> This was also pointed out by Sima some time ago here:
->>>> https://lore.kernel.org/amd-gfx/YCVOl8%2F87bqRSQei@phenom.ffwll.local/
->>>>
->>>> So we'll want that cgroup subsystem to be cross-framework. We settled on
->>>> a "device" cgroup during the discussion, but I'm sure we'll have plenty
->>>> of bikeshedding.
->>>>
->>>> The other thing we agreed on, based on the feedback TJ got on the last
->>>> iterations of his series was to go for memcg for drivers not using DMA
->>>> allocations.
->>>>
->>>> It's the part where I expect some discussion there too :)
->>>>
->>>> So we went back to a previous version of TJ's work, and I've started to
->>>> work on:
->>>>
->>>>     - Integration of the cgroup in the GEM DMA and GEM VRAM helpers (this
->>>>       works on tidss right now)
->>>>
->>>>     - Integration of all heaps into that cgroup but the system one
->>>>       (working on this at the moment)
->>>
->>> Should be similar to what I have then. I think you could use my work to
->>> continue it.
->>>
->>> I made nothing DRM specific except the name, if you renamed it the device
->>> resource management cgroup and changed the init function signature to take a
->>> name instead of a drm pointer, nothing would change. This is exactly what
->>> I'm hoping to accomplish, including reserving memory.
->>
->> I've started to work on rebasing my current work onto your series today,
->> and I'm not entirely sure how what I described would best fit. Let's
->> assume we have two KMS device, one using shmem, one using DMA
->> allocations, two heaps, one using the page allocator, the other using
->> CMA, and one v4l2 device using dma allocations.
->>
->> So we would have one KMS device and one heap using the page allocator,
->> and one KMS device, one heap, and one v4l2 driver using the DMA
->> allocator.
->>
->> Would these make different cgroup devices, or different cgroup regions?
-> 
-> Each driver would register a device, whatever feels most logical for that device I suppose.
-> 
-> My guess is that a prefix would also be nice here, so register a device with name of drm/$name or v4l2/$name, heap/$name. I didn't give it much thought and we're still experimenting, so just try something. :)
-> 
-> There's no limit to amount of devices, I only fixed amount of pools to match TTM, but even that could be increased arbitrarily. I just don't think there is a point in doing so.
+This is fine.
 
-Do we need a plan for top level controls which do not include region 
-names? If the latter will be driver specific then I am thinking of ease 
-of configuring it all from the outside. Especially considering that one 
-cgroup can have multiple devices in it.
+>   */
+>  int pfn_is_nosave(unsigned long pfn)
+>  {
+> @@ -84,9 +85,11 @@ static inline u32 compute_e820_crc32(struct e820_table=
+ *table)
+>  #endif
+>
+>  /**
+> - *     arch_hibernation_header_save - populate the architecture specific=
+ part
+> - *             of a hibernation image header
+> - *     @addr: address to save the data at
+> + * arch_hibernation_header_save - populate the architecture specific par=
+t
+> + * of a hibernation image header
 
-Second question is about double accounting for shmem backed objects. I 
-think they will be seen, for drivers which allocate backing store at 
-buffer objects creation time, under the cgroup of process doing the 
-creation, in the existing memory controller. Right?
+But this is not.
 
-Is there a chance to exclude those from there and only have them in this 
-new controller? Or would the opposite be a better choice? That is, not 
-see those in the device memory controller but only in the existing one.
+If you take the time to clean this up, please rephrase this so it fits
+into one line.
 
-Regards,
-
-Tvrtko
-
->>> The nice thing is that it should be similar to the memory cgroup controller
->>> in semantics, so you would have the same memory behavior whether you use the
->>> device cgroup or memory cgroup.
->>>
->>> I'm sad I missed the discussion, but hopefully we can coordinate more now
->>> that we know we're both working on it. :)
->>
->> Yeah, definitely :)
->>
->> Maxime
-> Cheers,
-> ~Maarten
+> + * @addr: address to save the data at
+> + * @max_size: the maximum size of the data to save
+> + *
+>   */
+>  int arch_hibernation_header_save(void *addr, unsigned int max_size)
+>  {
+> --
+> 2.20.1.7.g153144c
+>
+>
 
