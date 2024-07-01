@@ -1,235 +1,141 @@
-Return-Path: <linux-kernel+bounces-235997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC28C91DC36
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:18:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90D1991DC38
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:19:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09A501C20DD9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:18:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4376F1F2161D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E823D12D74E;
-	Mon,  1 Jul 2024 10:18:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4928139CF3;
+	Mon,  1 Jul 2024 10:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E1c6YrYJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SSYTNvNJ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GeaVGEne"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D108381D9;
-	Mon,  1 Jul 2024 10:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9695312C52E
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 10:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719829123; cv=none; b=ovDNWYKU3oBLRRV3fXbowDR2/cPFuyDaoWWqienDZXiUMxxuKpfPFH9Q6a6hYAc/LJcuxkBbMPOYjM1koBhUz9HcqRS5snrDWjUhVDuOJxUwOsD1JJyWJKCkgiYkQlGpO15VBKayMDxnTPJb/SIpIEMcMgiY0uhIU9jhCBObVBA=
+	t=1719829143; cv=none; b=CN5wcFWE9wmU/GgFSDZEBY1rzPM9Eevv8MFXrOfc/3ysd/axxdbgOsocdv8H7/NeAQoOPomuvQjlcv5sq1JNN9GrLzkUUHB4YwLrUhcaR0bacLfkHBmSdDDRFLVoZ9pNxVqN9qYqxaR14YRD3FYrYyAN1VaP+w7q5bmgnzD/hIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719829123; c=relaxed/simple;
-	bh=ClI/GouLZgq9UgNAOwvIcA2hQFqeT2XM0Y1uG/u+g5I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UA2FkQyErAb3iLGpGaUN9is/sHjkV5nDH/88o3BxIMQ1lAUZKeHMbE7GuGzHuctC1zldBmUOLWDhQpr3LIKRMR3KjUaUY0YKTzAQW8BKmIKs7PVEID3qP/dXN53jbvvQ0bBHTAlzGPDuQIX/sMKPz8eDd7VZ3AMbB3KinYP780Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E1c6YrYJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BE07C116B1;
-	Mon,  1 Jul 2024 10:18:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719829122;
-	bh=ClI/GouLZgq9UgNAOwvIcA2hQFqeT2XM0Y1uG/u+g5I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E1c6YrYJ5LrQEyQatQV0jlyhxgbpgecIc74o5QU2Avzs+zQ/iQI51dJlqJVJqCD7B
-	 2yiuW+mkdEPbbs2nYAN3N+8W1Ml4D1m42/c2XSsABWPcTadtIiz8RREH8W8XvwMsqf
-	 R9C4xL/lSVTHJvoDnMOo5wrZ/t8rNbSZV111z2gwcaLE3WrG5ZpLb7L+fnsoqZ71Px
-	 CiM1lyR7ms0sgS5xW1n6Q0WdCOszij30OTVzOlPLnf10gEZI71RUcUqLvmXlDg0A3c
-	 Y1jI9/Mn8hUuvSJGUYxxA2wz2gwHNmVG4Jhs0kqd9itBgF8kB5Pz3olwtjXK5v1YWF
-	 djkFvhsoqXXzQ==
-Date: Mon, 1 Jul 2024 12:18:31 +0200
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-	maz@kernel.org, anna-maria@linutronix.de, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com,
-	rdunlap@infradead.org, vidyas@nvidia.com,
-	ilpo.jarvinen@linux.intel.com, apatel@ventanamicro.com,
-	kevin.tian@intel.com, nipun.gupta@amd.com, den@valinux.co.jp,
-	andrew@lunn.ch, gregory.clement@bootlin.com,
-	sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org,
-	rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org,
-	lorenzo.pieralisi@arm.com, jgg@mellanox.com,
-	ammarfaizi2@gnuweeb.org, robin.murphy@arm.com, nm@ti.com,
-	kristo@kernel.org, vkoul@kernel.org, okaya@kernel.org,
-	agross@kernel.org, andersson@kernel.org, mark.rutland@arm.com,
-	shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com,
-	shivamurthy.shastri@linutronix.de
-Subject: Re: [patch V4 02/21] irqchip: Provide irq-msi-lib
-Message-ID: <ZoKCd5t5yoMkee0a@lpieralisi>
-References: <20240623142137.448898081@linutronix.de>
- <20240623142234.840975799@linutronix.de>
+	s=arc-20240116; t=1719829143; c=relaxed/simple;
+	bh=DWyhSviFBq49KsWE1GHUBThsO3yvc6bExLckvSCcooo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PWKSPvFSzUPENXe8ux7B4Zb1MKsGkT9T2pbW3lTljYPUaMStvPWdnm9jA+wXWzj+t9GnB7P8KJ67C4Fa2ptZSCeh/rHiuUBxXm8Gmteh0TV6xfvORW5+7Ri0M12Zutvn6T5dpreFamMHJ0wCDnWKG8WOjrM5z0PNRxbN4BTbnzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SSYTNvNJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GeaVGEne; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Anna-Maria Behnsen <anna-maria@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1719829136;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=RIDlsaHGKdsfbXEOFSQDvXxqmkVZhbx1B8rojESXhF0=;
+	b=SSYTNvNJcAdG5+jOoPO5t3fVUlb4PNhOEY0cxsxg+emurg3J25j+Cm82zJ6e7wCPUNi1Uy
+	8YGmmKR80RjlgQ31RSfc9iOSypBkFuZ4echhQYofSqNWMCc1TLmM/UUpDYf5/s2jsJHBKs
+	mzvkoq2dj5/Z4uJ5MnKYKc5SM+B/ZDfb641qrXdX7eu8z32tfGmKMFyruqgxQiO1+w0rLf
+	1lwcz4GsnaHyqoZ6kb413W1wUL8aQLLWDyqnHJ7Rm34Es55MvIpDEADZKbhOGN7xe6yqbu
+	WZauiknxXZ+XZMnnXGQWgWx6Db1FqeMQdThw+gG1jjy4BEwYZ9nTrfK9TCjcXQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1719829136;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=RIDlsaHGKdsfbXEOFSQDvXxqmkVZhbx1B8rojESXhF0=;
+	b=GeaVGEneYBcmdpYdeOMJ3A1MGaeuraNMkUZbjlHWie03CTZb6c3t02ovOBxfu3FUb5KZZ9
+	O14yUBLT/TSRETCA==
+Subject: [PATCH v3 0/8] timers/migration: Fix three possible races and some
+ improvements
+Date: Mon, 01 Jul 2024 12:18:36 +0200
+Message-Id: <20240701-tmigr-fixes-v3-0-25cd5de318fb@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240623142234.840975799@linutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHyCgmYC/23MQQ6CMBCF4auQrq1phwrFlfcwLrAdYBJtTYsNh
+ nB3Cys1Lt9Mvn9mEQNhZMdiZgETRfIuj3JXMDO0rkdONm8GApSoQPLxTn3gHU0YuQVzkB0o2Sj
+ DsngE3B4ZnC95DxRHH15bPMn1+r+TJBdcG92C1ahtXZ9u5J5j8I6mvUW2thJ8evXtIfsSr8qIS
+ qi6Eb9+WZY37zmY0OoAAAA=
+To: Frederic Weisbecker <frederic@kernel.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Cc: Borislav Petkov <bp@alien8.de>, 
+ Anna-Maria Behnsen <anna-maria@linutronix.de>
 
-On Sun, Jun 23, 2024 at 05:18:34PM +0200, Thomas Gleixner wrote:
+Borislav reported a warning in timer migration deactive path
 
-[...]
+  https://lore.kernel.org/r/20240612090347.GBZmlkc5PwlVpOG6vT@fat_crate.local
 
-> diff --git a/drivers/irqchip/irq-msi-lib.c b/drivers/irqchip/irq-msi-lib.c
-> new file mode 100644
-> index 000000000000..acbccf8f7f5b
-> --- /dev/null
-> +++ b/drivers/irqchip/irq-msi-lib.c
-> @@ -0,0 +1,112 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +// Copyright (C) 2022 Linutronix GmbH
-> +// Copyright (C) 2022 Intel
-> +
-> +#include <linux/export.h>
-> +
-> +#include "irq-msi-lib.h"
-> +
-> +/**
-> + * msi_lib_init_dev_msi_info - Domain info setup for MSI domains
-> + * @dev:		The device for which the domain is created for
-> + * @domain:		The domain providing this callback
-> + * @real_parent:	The real parent domain of the domain to be initialized
-> + *			which might be a domain built on top of @domain or
-> + *			@domain itself
-> + * @info:		The domain info for the domain to be initialize
-> + *
-> + * This function is to be used for all types of MSI domains above the root
-> + * parent domain and any intermediates. The topmost parent domain specific
-> + * functionality is determined via @real_parent.
-> + *
-> + * All intermediate domains between the root and the device domain must
-> + * have either msi_parent_ops.init_dev_msi_info = msi_parent_init_dev_msi_info
-> + * or invoke it down the line.
-> + */
-> +bool msi_lib_init_dev_msi_info(struct device *dev, struct irq_domain *domain,
-> +			       struct irq_domain *real_parent,
-> +			       struct msi_domain_info *info)
-> +{
-> +	const struct msi_parent_ops *pops = real_parent->msi_parent_ops;
-> +
-> +	/*
-> +	 * MSI parent domain specific settings. For now there is only the
-> +	 * root parent domain, e.g. NEXUS, acting as a MSI parent, but it is
-> +	 * possible to stack MSI parents. See x86 vector -> irq remapping
-> +	 */
-> +	if (domain->bus_token == pops->bus_select_token) {
-> +		if (WARN_ON_ONCE(domain != real_parent))
-> +			return false;
-> +	} else {
-> +		WARN_ON_ONCE(1);
-> +		return false;
-> +	}
-> +
-> +	/* Parent ops available? */
-> +	if (WARN_ON_ONCE(!pops))
+Sadly it doesn't reproduce directly. But with the change of timing (by
+adding a trace prinkt before the warning), it is possible to trigger the
+warning reliable at least in my test setup. The problem here is a racy
+check agains group->parent pointer. This is also used in other places in
+the code and fixing this racy usage is adressed by the first patch.
 
-We have already dereferenced pops above, we should move this warning
-before we dereference it (ie checked devmsi-arm-v4-2 too - branch same
-comment applies there too).
+There were two other races reported by Frederic in setup path:
 
-Thanks
-Lorenzo
+  https://lore.kernel.org/r/ZnWOswTMML6ShzYO@localhost.localdomain
 
-> +		return false;
-> +
-> +	/* Is the target domain bus token supported? */
-> +	switch(info->bus_token) {
-> +	default:
-> +		/*
-> +		 * This should never be reached. See
-> +		 * msi_lib_irq_domain_select()
-> +		 */
-> +		WARN_ON_ONCE(1);
-> +		return false;
-> +	}
-> +
-> +	/*
-> +	 * Mask out the domain specific MSI feature flags which are not
-> +	 * supported by the real parent.
-> +	 */
-> +	info->flags			&= pops->supported_flags;
-> +	/* Enforce the required flags */
-> +	info->flags			|= pops->required_flags;
-> +
-> +	/* Chip updates for all child bus types */
-> +	if (!info->chip->irq_eoi)
-> +		info->chip->irq_eoi	= irq_chip_eoi_parent;
-> +
-> +	/*
-> +	 * The device MSI domain can never have a set affinity callback. It
-> +	 * always has to rely on the parent domain to handle affinity
-> +	 * settings. The device MSI domain just has to write the resulting
-> +	 * MSI message into the hardware which is the whole purpose of the
-> +	 * device MSI domain aside of mask/unmask which is provided e.g. by
-> +	 * PCI/MSI device domains.
-> +	 */
-> +	info->chip->irq_set_affinity	= msi_domain_set_affinity;
-> +	return true;
-> +}
-> +EXPORT_SYMBOL_GPL(msi_lib_init_dev_msi_info);
-> +
-> +/**
-> + * msi_lib_irq_domain_select - Shared select function for NEXUS domains
-> + * @d:		Pointer to the irq domain on which select is invoked
-> + * @fwspec:	Firmware spec describing what is searched
-> + * @bus_token:	The bus token for which a matching irq domain is looked up
-> + *
-> + * Returns:	%0 if @d is not what is being looked for
-> + *
-> + *		%1 if @d is either the domain which is directly searched for or
-> + *		   if @d is providing the parent MSI domain for the functionality
-> + *			 requested with @bus_token.
-> + */
-> +int msi_lib_irq_domain_select(struct irq_domain *d, struct irq_fwspec *fwspec,
-> +			      enum irq_domain_bus_token bus_token)
-> +{
-> +	const struct msi_parent_ops *ops = d->msi_parent_ops;
-> +	u32 busmask = BIT(bus_token);
-> +
-> +	if (fwspec->fwnode != d->fwnode || fwspec->param_count != 0)
-> +		return 0;
-> +
-> +	/* Handle pure domain searches */
-> +	if (bus_token == ops->bus_select_token)
-> +		return 1;
-> +
-> +	return ops && !!(ops->bus_select_mask & busmask);
-> +}
-> +EXPORT_SYMBOL_GPL(msi_lib_irq_domain_select);
-> diff --git a/drivers/irqchip/irq-msi-lib.h b/drivers/irqchip/irq-msi-lib.h
-> new file mode 100644
-> index 000000000000..f0706cc28264
-> --- /dev/null
-> +++ b/drivers/irqchip/irq-msi-lib.h
-> @@ -0,0 +1,19 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +// Copyright (C) 2022 Linutronix GmbH
-> +// Copyright (C) 2022 Intel
-> +
-> +#ifndef _DRIVERS_IRQCHIP_IRQ_MSI_LIB_H
-> +#define _DRIVERS_IRQCHIP_IRQ_MSI_LIB_H
-> +
-> +#include <linux/bits.h>
-> +#include <linux/irqdomain.h>
-> +#include <linux/msi.h>
-> +
-> +int msi_lib_irq_domain_select(struct irq_domain *d, struct irq_fwspec *fwspec,
-> +			      enum irq_domain_bus_token bus_token);
-> +
-> +bool msi_lib_init_dev_msi_info(struct device *dev, struct irq_domain *domain,
-> +			       struct irq_domain *real_parent,
-> +			       struct msi_domain_info *info);
-> +
-> +#endif /* _DRIVERS_IRQCHIP_IRQ_MSI_LIB_H */
-> -- 
-> 2.34.1
-> 
-> 
+  https://lore.kernel.org/r/ZnoIlO22habOyQRe@lothringen
+
+Those races are both is addressed by the change of patch 2.
+
+Some updates/cleanups are provided by patch 3-8. ("timers/migration:
+Improve tracing" and "timers/migration: Spare write when nothing changed"
+are the same as provided by v2).
+
+Patches are available here:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/anna-maria/linux-devel.git timers/misc
+
+---
+Changes in v3:
+- Address the new reported possible race (childmask and parent pointer)
+  together with the existing race (both reported by Frederic).
+- New cleanup: Two patches to access childmask and parent pointer only in
+  one place
+- New cleanup: Rename childmask to parentmask as during discussions there
+  was some kind of confusion because of the naming
+- New cleanup: Fix typo
+- Fix prefix in all patches (s$timer_migration$timers/migration$)
+- Link to v2: https://lore.kernel.org/r/20240624-tmigr-fixes-v2-0-3eb4c0604790@linutronix.de
+
+Changes in v2:
+- Address another possible race in setup code (reported by Frederic) and
+  recycle therefore one improvement patch
+- Change order and move the already existing improvement patch to the end
+  of the queue
+- Existing patches didn't change
+- Link to v1: https://lore.kernel.org/r/20240621-tmigr-fixes-v1-0-8c8a2d8e8d77@linutronix.de
+
+Thanks,
+
+        Anna-Maria
+
+---
+Anna-Maria Behnsen (8):
+      timers/migration: Do not rely always on group->parent
+      timers/migration: Move hierarchy setup into cpuhotplug prepare callback
+      timers/migration: Improve tracing
+      timers/migration: Use a single struct for hierarchy walk data
+      timers/migration: Read childmask and parent pointer in a single place
+      timers/migration: Rename childmask by parentmask to make naming more obvious
+      timers/migration: Spare write when nothing changed
+      timers/migration: Fix grammar in comment
+
+ include/linux/cpuhotplug.h             |   1 +
+ include/trace/events/timer_migration.h |   4 +-
+ kernel/time/timer_migration.c          | 366 ++++++++++++++++-----------------
+ kernel/time/timer_migration.h          |  27 ++-
+ 4 files changed, 197 insertions(+), 201 deletions(-)
+
 
