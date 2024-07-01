@@ -1,179 +1,108 @@
-Return-Path: <linux-kernel+bounces-235793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B496591D9B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:11:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CE8691D9BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:13:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CF5F1F2186E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:11:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BDD41C21B06
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:13:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53E8824BC;
-	Mon,  1 Jul 2024 08:11:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC6AB82488;
+	Mon,  1 Jul 2024 08:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="EDmpEFyz"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="oiOly9vH"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8FE347B4;
-	Mon,  1 Jul 2024 08:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33465347B4;
+	Mon,  1 Jul 2024 08:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719821479; cv=none; b=kK42RispxcuwZFiINA261swNY7xnW6r6ujg/X5j/AjeXitQKnUCd7RywsH5QRMT4LdaCkuWnVd1jeIQ7DfY9dNQJmjbeGvwwrUJ2R2Ug0OWRSByR72NaPf8sAh45kXq2ltHwb0Bp2sLLMcPXUHJZ4O7e2or58zNeT7Fm7DtPCCs=
+	t=1719821612; cv=none; b=STjXkjLPBafwuf93Phwkcvi0tzUFSMdzg/zW+s3P64KMirFcPHQFnQ/OtDUjLF43fYauXxLyfqA/or8Qn3fVU1kmFwMJqITEmOtIh85/4YqIRKOpEDNTfHwEL/BJmjfdBQ4AvMxAiQryQ0D79q2ahztzaeRY74dtXLTvXxbXn88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719821479; c=relaxed/simple;
-	bh=CO0atmO61p3aGajumua4T4JBohTwicxstoDR6BwINw4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=iR1SXlCtywLilQdJbcepvHxisxo5peCVXI2pOxj86dIcjk3eitpvJ5q+lJ83zuWoht5oUTis136pxVL/1expvjEpFK9rxYNJF+D/kPtrpWfht2fTlZi4I9znN5bvrQumlZdXW9cm+cJqXwOtz6D+VSrMaq74Ueph4QOokUBT900=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=EDmpEFyz; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4617ucU6018969;
-	Mon, 1 Jul 2024 08:11:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	nCQv8/viKXnzHIWRR3w7m2uDPzOmhLiFd/+m7V5VxVE=; b=EDmpEFyzjuXM29op
-	Xhsg9nsSWUbVnRXaDnP5Qiv4ZJdYfpycohP/HfSMeJqzew0Xb7CQfOyix0475LcO
-	UDmHIKOUDu7lVZdzbaakWf2lfa5hJJaWZPaJhEJqNybhXVkvD6wXuzPQPlBq2NLI
-	+VMmRmlAuTtDeV2DKpWbOn1+ETvUc0uBJEA3zzysrHIncOih9RtWSJpaszNxLCdD
-	5JVx5xRH9CZ/5654DqFwQpkHkndhjCgYCcV6BrNYvzJWYT52IgKxrBl1znp1An0H
-	159AvMqx8l3vejfk0F0rzKY1YgyssueT8jkjsXeZsPABU27hXWM2fvFSCsfG8pdZ
-	e9JrLA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 403r3u02w3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 01 Jul 2024 08:11:02 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4618B1MO009261;
-	Mon, 1 Jul 2024 08:11:01 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 403r3u02vx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 01 Jul 2024 08:11:01 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46185Ddv026417;
-	Mon, 1 Jul 2024 08:11:00 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 402wkpp5bb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 01 Jul 2024 08:11:00 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4618AsMV30802434
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 1 Jul 2024 08:10:57 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CF6282004B;
-	Mon,  1 Jul 2024 08:10:54 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 968442004D;
-	Mon,  1 Jul 2024 08:10:51 +0000 (GMT)
-Received: from [9.109.241.85] (unknown [9.109.241.85])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  1 Jul 2024 08:10:51 +0000 (GMT)
-Message-ID: <c17fa094-f337-4422-8ae0-d554d66dd92a@ibm.com>
-Date: Mon, 1 Jul 2024 13:40:50 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] pci/hotplug/pnv_php: Fix hotplug driver crash on
- Powernv
-To: Krishna Kumar <krishnak@linux.ibm.com>, mpe@ellerman.id.au,
-        npiggin@gmail.com
-Cc: nathanl@linux.ibm.com, aneesh.kumar@kernel.org, linux-pci@vger.kernel.org,
-        Shawn Anastasio
- <sanastasio@raptorengineering.com>,
-        linux-kernel@vger.kernel.org, christophe.leroy@csgroup.eu,
-        gbatra@linux.ibm.com, bhelgaas@google.com,
-        tpearson@raptorengineering.com, oohall@gmail.com,
-        brking@linux.vnet.ibm.com, linuxppc-dev@lists.ozlabs.org
-References: <20240701074513.94873-1-krishnak@linux.ibm.com>
- <20240701074513.94873-2-krishnak@linux.ibm.com>
-Content-Language: en-US
-From: Krishna Kumar <krishna.kumar11@ibm.com>
-In-Reply-To: <20240701074513.94873-2-krishnak@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: uGtoPARkEk5c4KUJx69RJXApADgzx_sF
-X-Proofpoint-ORIG-GUID: pmjukpBmqWJ1wsAj0Hj6FZSeQcph6LQ5
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1719821612; c=relaxed/simple;
+	bh=N1bYsI6wmDxtVtmFb3pz1vlTl3ojYgemUfnK1Wgrga4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=aXT11JWasJanPuPO8dYM6FRxIwqWFerxOWLcdqJDWiIteSYrnZH5s0lmsemY7ZL2/xTfv6KdP63E7Q9WodNbLf+zfArtkpWZfR/PMCT9y99GOlgttQyoRyJQbU2nC01hLfAmd9j2RXCDOuOgScQDOHPxp81H0T64LX6lMI3uvFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=oiOly9vH; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1719821606;
+	bh=/oLgkbhNapBBXvS0ePIZSPbeeUO3NuaFx99dJfiG054=;
+	h=Date:From:To:Cc:Subject:From;
+	b=oiOly9vHS8cn31OGKs034IP7CgHeqdiqB2sfER6B3BVco9jMbdXv56+jbNoS1QVcD
+	 GRXSIWNmkb+mxSmfDDg+qjf3gzVDtlFOjllcVHOxE0RibR3qeHrZUhgm3jZiKsBeEh
+	 Q81CIOoz/6Q+nZEByK/Y/1u3Fb9dKFa0k1pguwd/RpZbdZAH9Gb9gjqEOEMxhzUunZ
+	 sjpzCn0tx+OjL9xHPt1XzxdiSoiOaxPs9MJJonKlH0GqW3q+SYPBkJRNaoRVaVZrbC
+	 iVeXbwmsmjaAvqzHPArhUTdJF1mnC+F7tQTC8CM8QM+R0RUsjlfAxv5IJumHPAEnLY
+	 PCfMcK5Ua579g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WCJhQ168Vz4wc1;
+	Mon,  1 Jul 2024 18:13:26 +1000 (AEST)
+Date: Mon, 1 Jul 2024 18:13:25 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Marcel Holtmann
+ <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>
+Cc: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>, Linux Kernel Mailing
+ List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patches in the pwrseq tree
+Message-ID: <20240701181325.266539d3@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-01_06,2024-06-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- priorityscore=1501 suspectscore=0 mlxlogscore=999 spamscore=0
- impostorscore=0 phishscore=0 bulkscore=0 mlxscore=0 malwarescore=0
- adultscore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2406140001 definitions=main-2407010060
+Content-Type: multipart/signed; boundary="Sig_/R7noGpwOP_WVz3Ar9q5nYqD";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi Michael,
+--Sig_/R7noGpwOP_WVz3Ar9q5nYqD
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-When you apply/merge the patch, please consider below URL in commit message.
-This is the URL where this issue was reported - 
+Hi all,
 
-https://lists.ozlabs.org/pipermail/linuxppc-dev/2023-December/267034.html
+The following commits are also in the bluetooth tree as different
+commits (but the same patches):
 
-Thanks, 
-Krishna
+  249ebf3f65f8 ("power: sequencing: implement the pwrseq core")
+  2f1630f437df ("power: pwrseq: add a driver for the PMU module on the QCom=
+ WCN chipsets")
 
+These are commits
 
-On 7/1/24 1:15 PM, Krishna Kumar wrote:
-> Description of the problem: The hotplug driver for powerpc
-> (pci/hotplug/pnv_php.c) gives kernel crash when we try to
-> hot-unplug/disable the PCIe switch/bridge from the PHB.
->
-> Root Cause of Crash: The crash is due to the reason that, though the msi
-> data structure has been released during disable/hot-unplug path and it
-> has been assigned with NULL, still during unregistration the code was
-> again trying to explicitly disable the MSI which causes the NULL pointer
-> dereference and kernel crash.
->
-> The patch fixes the check during unregistration path to prevent invoking
-> pci_disable_msi/msix() since its data structure is already freed.
->
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Cc: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Gaurav Batra <gbatra@linux.ibm.com>
-> Cc: Nathan Lynch <nathanl@linux.ibm.com>
-> Cc: Brian King <brking@linux.vnet.ibm.com>
->
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> Tested-by: Shawn Anastasio <sanastasio@raptorengineering.com>
-> Signed-off-by: Krishna Kumar <krishnak@linux.ibm.com>
-> ---
->  drivers/pci/hotplug/pnv_php.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/pci/hotplug/pnv_php.c b/drivers/pci/hotplug/pnv_php.c
-> index 694349be9d0a..573a41869c15 100644
-> --- a/drivers/pci/hotplug/pnv_php.c
-> +++ b/drivers/pci/hotplug/pnv_php.c
-> @@ -40,7 +40,6 @@ static void pnv_php_disable_irq(struct pnv_php_slot *php_slot,
->  				bool disable_device)
->  {
->  	struct pci_dev *pdev = php_slot->pdev;
-> -	int irq = php_slot->irq;
->  	u16 ctrl;
->  
->  	if (php_slot->irq > 0) {
-> @@ -59,7 +58,7 @@ static void pnv_php_disable_irq(struct pnv_php_slot *php_slot,
->  		php_slot->wq = NULL;
->  	}
->  
-> -	if (disable_device || irq > 0) {
-> +	if (disable_device) {
->  		if (pdev->msix_enabled)
->  			pci_disable_msix(pdev);
->  		else if (pdev->msi_enabled)
+  cb28daf2c4a2 ("power: sequencing: implement the pwrseq core")
+  4d593268f065 ("power: pwrseq: add a driver for the PMU module on the QCom=
+ WCN chipsets")
+
+in the bluetooth tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/R7noGpwOP_WVz3Ar9q5nYqD
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaCZSUACgkQAVBC80lX
+0GzakAf8Dr2NcifsyACZ0+5AW/FH4VNSPQyvkctNZ7kBEBHd5gO1Wi3qETYoDrjX
+PXlnyeKuY21++g82ePf3y1/iqrGHJ8PjqNL9qmDwgpP1gois63/CRNSjXNrEFMtn
+Qk+vKonbBcp0InZWQQrnlawMQPJqRvEEGz7BtY3MJ7Pbr6EzggKxTZTsuZS28aRv
+DAU5feiq+sXz0psxIbIR83T7GRRlK+bobppWQ88BlkWq2bSMc8iT7hHWdvGbhnjl
+Ctec/rBOOcpIzL+Q7dT4QMcMh/QBsb9rWbLXzkQo58dCCmaJzK1NBGmdA8xIQNOv
+2xJr1IHo5NIMKqHZ+iSFGWASzYR99g==
+=dprO
+-----END PGP SIGNATURE-----
+
+--Sig_/R7noGpwOP_WVz3Ar9q5nYqD--
 
