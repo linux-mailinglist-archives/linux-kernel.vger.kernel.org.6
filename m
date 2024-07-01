@@ -1,156 +1,149 @@
-Return-Path: <linux-kernel+bounces-236256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C30A91DF91
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:41:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71A5C91DF82
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:40:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E8711C2152F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:41:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EAA6B2152D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:40:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E64E515AADA;
-	Mon,  1 Jul 2024 12:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OxVssHLs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 070C4156F54;
+	Mon,  1 Jul 2024 12:40:05 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24DB915A87C;
-	Mon,  1 Jul 2024 12:40:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2138577115
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 12:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719837614; cv=none; b=bEysZRbod8lT5E1tEkyYYmluoimmF+/xA4h1Oc4yyTQPDmnh7o71IroPp+zPIdHjwKk/Wmfx3eeKhMgagjdKRrnQJDMtbuMS7SZJpyZOLTNQaTLu36fFmvbleC2gt5AhG0fR6fVsBtCT+wupJdZvJUToJ9S/Pmb8jI/poe8Ilig=
+	t=1719837604; cv=none; b=ApSCc/IpPbxSkgc7oNq4hWJdhT2A/sKEdz7XBhZwi/Fg3hVxknmjbpPqbsOVermet+ZEs207y9NkVOALNGHoft1tGp/X/SLdHZ6Vd6jxvfG+Yhrrq41ne6vA8LYAdrGGmFodGY04SRHejYN+pSK6PEoJToXD9VU4T/npQ8yJNpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719837614; c=relaxed/simple;
-	bh=d7yH9YfAsU8Sr3Uu3uIuiYCXGouIBOJuEfxMH6XTfb0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=u9rA+pabUEX/8PtZu6Qw5OpWxtq1vgRJOeTRlXcPFK7uoRRXk54W3U7MWgxaLdhvKtsVOcnD5T2r3iDcUzxOLcU8CxcFaR3K7vdnTqXfHRpOdgpKVkFl2mInkp19M0gOz02U5SWVn+0RtsM3ZVI3Xlzpyj1eVewx3T/L2OIHPwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OxVssHLs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F6BFC2BD10;
-	Mon,  1 Jul 2024 12:40:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719837613;
-	bh=d7yH9YfAsU8Sr3Uu3uIuiYCXGouIBOJuEfxMH6XTfb0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=OxVssHLsOOJFr4MH5RlMpbyjO/kIYmyjM4THraM6JKXAHLo5b9Nx+4MqnXSpYh4qf
-	 jsBF+XQapwHA9P+hBo29hlQrkPZlPN4iiuVJFkmtqUKOdXpH0ru5cApTiGv9hZrZC9
-	 HMY76uW/iSO8NTrKTE/DSGFQ3CcgBP+uO6KGZEP+cKbB1LjiOiXonnxn3vJqQTBXm5
-	 T6WSOuqEOBKNa4fnZhBVubWFo3b+nzjG4UGDPBsOxrxZZe3n17OvrV6ZjGjlIO5BTI
-	 IaGnOkVtLNDNO2tBPOz0uzBIxQcLJQqNgjXgTSJY2zg8WcBeri6eRZ+O2dAyJMYmQ0
-	 MRnCrNN1/lCkg==
-From: Benjamin Tissoires <bentiss@kernel.org>
-Date: Mon, 01 Jul 2024 14:39:52 +0200
-Subject: [PATCH v2 4/4] HID: bpf: doc fixes for hid_hw_request() hooks
+	s=arc-20240116; t=1719837604; c=relaxed/simple;
+	bh=J+H5UKWgYzC7vHdzBbsztrubuN+R2ryxmUAqzToRA/o=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=VrtyEzxSfmifsu31Ea5fkCxi4dXbxLnU5UyjmoWKIHaCktk8Q5FVpblbANgfEdS/o6v8Q6fHYO7s+c1LrSw3l0YzwM8ChtoO4z5lRTHEzJCcTTz+fKRGyJwzklhH0MnAV4sJcWGlhQ9rrSXN0/SExJwHkI2JfwtiHCDg6+KKWfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7f61da2de1eso316536139f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 05:40:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719837602; x=1720442402;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YJTKaR9V+bhTIjvCX9awLS/dYvrnWBq/4WYc0wqzcXo=;
+        b=b6NxEy9jpqLbpm362lLGTq1/oU61UX72odmf+YUv7M0MKbRVlh1ge31FIUhAbnCIKx
+         HHlM+urxCBrdzBTEGY83bySzg+Uy1KNTuU36hOfghYmSfM47arQm1Qvk6aGBSetzhxIt
+         5zIqDJnJbvuz7oSyZnQJSDURfqUV9Zj8WYWEVhdHU+rgKXvVGmb2ZUw2bH9DTaH/HI3C
+         PyJoac6WThPMHsI/n7FI8e4HaZ9RhSCgr2M0NtQij3MPAwZECvlYcZo9bJqLwNh7I3Vc
+         FbellNcRcP9y2422OFGXqGtU0YCKgHbXZZq+N78ewuJaPjSpXtlGRRCCx/t7Tb1Ye3M3
+         +u2w==
+X-Gm-Message-State: AOJu0YyDmNj4tK70PPwOl9pC4PI+t7O1Y91mfXCC3Xj1OmMxWteCRgFg
+	z1k6lSlU5m2JrDZGwYJ0RN4WOaVMZ5DHW9Z6KSI3ygjr0iqMYMGnNrPpbX9UlURyXk7y/A5RiI6
+	AZk1giW8GLytkJ5B5a8yTtR2D/90TalANqMxk3yE5Fm7P8LOKGvhhLrI=
+X-Google-Smtp-Source: AGHT+IGm+MJea1H0xFdonl2/ViMaxPJPY533DO5RDlmJjlb/kb58Le7Cv2yASxLR8pUHvOHVoGkuTbbLwH4h30kWEkdN2s/2D4UZ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240701-fix-cki-v2-4-20564e2e1393@kernel.org>
-References: <20240701-fix-cki-v2-0-20564e2e1393@kernel.org>
-In-Reply-To: <20240701-fix-cki-v2-0-20564e2e1393@kernel.org>
-To: Jiri Kosina <jikos@kernel.org>, Shuah Khan <shuah@kernel.org>
-Cc: linux-input@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Benjamin Tissoires <bentiss@kernel.org>, 
- Stephen Rothwell <sfr@canb.auug.org.au>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1719837604; l=3801;
- i=bentiss@kernel.org; s=20230215; h=from:subject:message-id;
- bh=d7yH9YfAsU8Sr3Uu3uIuiYCXGouIBOJuEfxMH6XTfb0=;
- b=lRVwyNBjOsfEBiiJ7w+xL007jid0rN15OF9+h9R5Zm5GHE/IgWBsYSaY+iq4VfC0o3D6EvH9u
- 4L0zR1wYq3wBN4Kof28tK6Gp81Z0IZICq9vY06Pwdggu5CyKO1rP5wz
-X-Developer-Key: i=bentiss@kernel.org; a=ed25519;
- pk=7D1DyAVh6ajCkuUTudt/chMuXWIJHlv2qCsRkIizvFw=
+X-Received: by 2002:a05:6638:238e:b0:4b9:b122:d07d with SMTP id
+ 8926c6da1cb9f-4bbb6e7ca4fmr463602173.4.1719837602043; Mon, 01 Jul 2024
+ 05:40:02 -0700 (PDT)
+Date: Mon, 01 Jul 2024 05:40:02 -0700
+In-Reply-To: <20240701101742.15473-1-wojciech.gladysz@infogain.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000576bfa061c2ee53e@google.com>
+Subject: Re: [syzbot] [bpf?] [net?] KMSAN: uninit-value in bpf_prog_test_run_xdp
+From: syzbot <syzbot+6856926fbb5e9b794e5c@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	wojciech.gladysz@infogain.com
+Content-Type: text/plain; charset="UTF-8"
 
-We had the following errors while doing make htmldocs:
+Hello,
 
-Documentation/hid/hid-bpf:185: include/linux/hid_bpf.h:167:
-	ERROR: Unexpected indentation.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: uninit-value in bpf_prog_test_run_xdp
 
-Also ensure consistency with the rest of the __u64 vs u64.
+=====================================================
+BUG: KMSAN: uninit-value in bpf_prog_test_run_xdp+0x175d/0x1a40 net/bpf/test_run.c:1287
+ bpf_prog_test_run_xdp+0x175d/0x1a40 net/bpf/test_run.c:1287
+ bpf_prog_test_run+0x6b7/0xad0 kernel/bpf/syscall.c:4240
+ __sys_bpf+0x6aa/0xd90 kernel/bpf/syscall.c:5649
+ __do_sys_bpf kernel/bpf/syscall.c:5738 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5736 [inline]
+ __x64_sys_bpf+0xa0/0xe0 kernel/bpf/syscall.c:5736
+ do_syscall_64+0xd5/0x1f0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Fixes: 9286675a2aed ("HID: bpf: add HID-BPF hooks for hid_hw_output_report")
-Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
----
- drivers/hid/bpf/hid_bpf_dispatch.c |  2 +-
- include/linux/hid_bpf.h            | 14 ++++++++------
- 2 files changed, 9 insertions(+), 7 deletions(-)
+Uninit was stored to memory at:
+ bpf_test_run+0x52e/0xc30
+ bpf_prog_test_run_xdp+0xeaa/0x1a40 net/bpf/test_run.c:1277
+ bpf_prog_test_run+0x6b7/0xad0 kernel/bpf/syscall.c:4240
+ __sys_bpf+0x6aa/0xd90 kernel/bpf/syscall.c:5649
+ __do_sys_bpf kernel/bpf/syscall.c:5738 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5736 [inline]
+ __x64_sys_bpf+0xa0/0xe0 kernel/bpf/syscall.c:5736
+ do_syscall_64+0xd5/0x1f0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
 
-diff --git a/drivers/hid/bpf/hid_bpf_dispatch.c b/drivers/hid/bpf/hid_bpf_dispatch.c
-index a36e680399fe..a272a086c950 100644
---- a/drivers/hid/bpf/hid_bpf_dispatch.c
-+++ b/drivers/hid/bpf/hid_bpf_dispatch.c
-@@ -115,7 +115,7 @@ int dispatch_hid_bpf_raw_requests(struct hid_device *hdev,
- EXPORT_SYMBOL_GPL(dispatch_hid_bpf_raw_requests);
- 
- int dispatch_hid_bpf_output_report(struct hid_device *hdev,
--				   __u8 *buf, u32 size, __u64 source,
-+				   __u8 *buf, u32 size, u64 source,
- 				   bool from_bpf)
- {
- 	struct hid_bpf_ctx_kern ctx_kern = {
-diff --git a/include/linux/hid_bpf.h b/include/linux/hid_bpf.h
-index c30c31b79419..9ca96fc90449 100644
---- a/include/linux/hid_bpf.h
-+++ b/include/linux/hid_bpf.h
-@@ -138,6 +138,7 @@ struct hid_bpf_ops {
- 	 * It has the following arguments:
- 	 *
- 	 * ``ctx``: The HID-BPF context as &struct hid_bpf_ctx
-+	 *
- 	 * ``reportnum``: the report number, as in hid_hw_raw_request()
- 	 *
- 	 * ``rtype``: the report type (``HID_INPUT_REPORT``, ``HID_FEATURE_REPORT``,
-@@ -165,16 +166,17 @@ struct hid_bpf_ops {
- 	 * It has the following arguments:
- 	 *
- 	 * ``ctx``: The HID-BPF context as &struct hid_bpf_ctx
-+	 *
- 	 * ``source``: a u64 referring to a uniq but identifiable source. If %0, the
--	 *             kernel itself emitted that call. For hidraw, ``source`` is set
--	 *             to the associated ``struct file *``.
-+	 * kernel itself emitted that call. For hidraw, ``source`` is set
-+	 * to the associated ``struct file *``.
- 	 *
- 	 * Return: %0 to keep processing the request by hid-core; any other value
- 	 * stops hid-core from processing that event. A positive value should be
- 	 * returned with the number of bytes written to the device; a negative error
- 	 * code interrupts the processing of this call.
- 	 */
--	int (*hid_hw_output_report)(struct hid_bpf_ctx *ctx, __u64 source);
-+	int (*hid_hw_output_report)(struct hid_bpf_ctx *ctx, u64 source);
- 
- 
- 	/* private: do not show up in the docs */
-@@ -203,9 +205,9 @@ int dispatch_hid_bpf_raw_requests(struct hid_device *hdev,
- 				  unsigned char reportnum, __u8 *buf,
- 				  u32 size, enum hid_report_type rtype,
- 				  enum hid_class_request reqtype,
--				  __u64 source, bool from_bpf);
-+				  u64 source, bool from_bpf);
- int dispatch_hid_bpf_output_report(struct hid_device *hdev, __u8 *buf, u32 size,
--				   __u64 source, bool from_bpf);
-+				   u64 source, bool from_bpf);
- int hid_bpf_connect_device(struct hid_device *hdev);
- void hid_bpf_disconnect_device(struct hid_device *hdev);
- void hid_bpf_destroy_device(struct hid_device *hid);
-@@ -221,7 +223,7 @@ static inline int dispatch_hid_bpf_raw_requests(struct hid_device *hdev,
- 						enum hid_class_request reqtype,
- 						u64 source, bool from_bpf) { return 0; }
- static inline int dispatch_hid_bpf_output_report(struct hid_device *hdev, __u8 *buf, u32 size,
--						 __u64 source, bool from_bpf) { return 0; }
-+						 u64 source, bool from_bpf) { return 0; }
- static inline int hid_bpf_connect_device(struct hid_device *hdev) { return 0; }
- static inline void hid_bpf_disconnect_device(struct hid_device *hdev) {}
- static inline void hid_bpf_destroy_device(struct hid_device *hid) {}
+Uninit was stored to memory at:
+ ___bpf_prog_run+0x58c4/0xe0f0
+ __bpf_prog_run512+0xb5/0xe0 kernel/bpf/core.c:2252
+ bpf_dispatcher_nop_func include/linux/bpf.h:1233 [inline]
+ __bpf_prog_run include/linux/filter.h:667 [inline]
+ bpf_prog_run_xdp include/net/xdp.h:514 [inline]
+ bpf_test_run+0x43e/0xc30 net/bpf/test_run.c:423
+ bpf_prog_test_run_xdp+0xeaa/0x1a40 net/bpf/test_run.c:1277
+ bpf_prog_test_run+0x6b7/0xad0 kernel/bpf/syscall.c:4240
+ __sys_bpf+0x6aa/0xd90 kernel/bpf/syscall.c:5649
+ __do_sys_bpf kernel/bpf/syscall.c:5738 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5736 [inline]
+ __x64_sys_bpf+0xa0/0xe0 kernel/bpf/syscall.c:5736
+ do_syscall_64+0xd5/0x1f0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
 
--- 
-2.44.0
+Uninit was stored to memory at:
+ ___bpf_prog_run+0x9098/0xe0f0
+ __bpf_prog_run512+0xb5/0xe0 kernel/bpf/core.c:2252
+ bpf_dispatcher_nop_func include/linux/bpf.h:1233 [inline]
+ __bpf_prog_run include/linux/filter.h:667 [inline]
+ bpf_prog_run_xdp include/net/xdp.h:514 [inline]
+ bpf_test_run+0x43e/0xc30 net/bpf/test_run.c:423
+ bpf_prog_test_run_xdp+0xeaa/0x1a40 net/bpf/test_run.c:1277
+ bpf_prog_test_run+0x6b7/0xad0 kernel/bpf/syscall.c:4240
+ __sys_bpf+0x6aa/0xd90 kernel/bpf/syscall.c:5649
+ __do_sys_bpf kernel/bpf/syscall.c:5738 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5736 [inline]
+ __x64_sys_bpf+0xa0/0xe0 kernel/bpf/syscall.c:5736
+ do_syscall_64+0xd5/0x1f0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+
+Local variable stack created at:
+ __bpf_prog_run512+0x45/0xe0 kernel/bpf/core.c:2252
+ bpf_dispatcher_nop_func include/linux/bpf.h:1233 [inline]
+ __bpf_prog_run include/linux/filter.h:667 [inline]
+ bpf_prog_run_xdp include/net/xdp.h:514 [inline]
+ bpf_test_run+0x43e/0xc30 net/bpf/test_run.c:423
+
+CPU: 0 PID: 5442 Comm: syz-executor.0 Not tainted 6.9.0-rc1-syzkaller-00257-ge478cf26c556-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+=====================================================
+
+
+Tested on:
+
+commit:         e478cf26 Merge branch 'bpf-fix-a-couple-of-test-failur..
+git tree:       https://linux.googlesource.com/linux/kernel/git/torvalds/linux
+console output: https://syzkaller.appspot.com/x/log.txt?x=14d7871e980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e2599baf258ef795
+dashboard link: https://syzkaller.appspot.com/bug?extid=6856926fbb5e9b794e5c
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=162e5ed1980000
 
 
