@@ -1,92 +1,75 @@
-Return-Path: <linux-kernel+bounces-236236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 678A691DF26
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:27:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B11C91DFB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:46:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1450F1F21E01
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:27:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C02CDB22E02
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D412914B946;
-	Mon,  1 Jul 2024 12:27:04 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6BFF15AAC2;
+	Mon,  1 Jul 2024 12:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="sIMAuXXi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2327514A098
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 12:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198DA7F9
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 12:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719836824; cv=none; b=dlzwbgmyDEUtUyoMs56fFIqZUdlpqcrfJ48HHr2MvhgVbAW1W5eSoAYaP1MVoo3Cfzqo67lfGdC33pKaRUhijkGX8Sujf8fne0qkqVSNjj/1QmJOGAy4NkDrahwZVRoQu0Jbi7WvGXo9LVI5gD6rZVtVC7IlB5SlvHaOOACixWI=
+	t=1719837920; cv=none; b=Qz9djhNSmSxNb5drZq2tNefa2s6Fq33BaD1qbUw9KItw/fTVMl6440jnCi8bYdole3MVkSCXFpqo8C5Q9yLC2RO/OeizQ12iVMABW3NrKdcN3aExCiuZW/Di80jdvIZL3Ulu1UULi8a5Bq7iAmfsABCkDV29eas9cCUk0KRyEyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719836824; c=relaxed/simple;
-	bh=6qdpZ2ZaMSNBLlhJwrtc5Vcmfp7+vv0OVMHqTXpWb7c=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=EN/35pZlNExkky9nW5tpg49GZ4lj6DgvdG8Gc6odgOCD6rCFiQL4fCWsBzJy3ySMv01TBTJP1wskEABmRY3r784oe1y8xol8lB97ypYHiR/lBPKkLmpd+z0S/pTyo61PriVVkXZ78L5oPwJlBhV2H/Ze4m1+RcbL1KQxc3WodOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7f63eb9f141so66556739f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 05:27:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719836822; x=1720441622;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DbeecvukDyVo3VtHX6r0WAchUA0h1Wd3HInWyp6BZ+g=;
-        b=u5RLJ6e1LtqYaBrLK6GVfCVxs47Ace5UMR7UN0ILQ0aO3gqEP6WRF5zWc8AZMvqkNW
-         mCTItleWiDNyhE8cpfIxQTfLU+3hbahGyBx8tX1qhqyzJfJa2nv2y5z3ewGbO7AI97Z8
-         wTKWOKdV0qllDRIHoZHl/1RKMAWgOE/sDp4fij/5+3LMfPe+a8ra6Yb2fz/JO2i9ilj7
-         ssJUjAMiXcYpqGyGZ0b6Spa3Jw9EZX1ftakgLi8GYVTrLhpiCbkVw5mGvl3CbeVDAC9o
-         iq48ROK+5PkOimsQy8RmNYtxWisRDEmE/Q5B297nCuZt5wzS7rHfdd3hQVarSVCvJz9n
-         An5A==
-X-Gm-Message-State: AOJu0YzYrrvDA+tDmLdQrMUN8TSghIFq32rDai/PoHsicxyVe/jTvffF
-	Sc0R8HmF2tZ7DH4Mm2g06sL+rpHwZPZ5M/p7UTGz8ffMNA88kHnY50wzrTB75ZW9G8qcA/Hdbt3
-	OzWrdaa+NfqreYRlsyKS614LkOPCYhbyRJIgUtOMQTFsYtUaY2UF4vPc=
-X-Google-Smtp-Source: AGHT+IG/mr/OnbDSwOXZa2ArGb59Z6ZlPDlP2jnvk9DPb9ctSlK5vJy+y683Qw+5sOM2lDBk5bHFpGL+f0imr3ES4QJUteRpsKPa
+	s=arc-20240116; t=1719837920; c=relaxed/simple;
+	bh=mcsm+deKAsfjotatoCY43zzx8qAarB1cncwtOYmoE5E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hh9saphAY6Ho52L6gdvVKiO4dPpxws4uzHnSmiFCVlpXvKE3wD+8BqBZydBYFgrKhUPvxvZu7CskuuaOLb84ZPrUbxKloscSq14ii8CQFeM8tTAWBIk7PnTCPLmAJvd1KcS8ZnRqagoKltXpM9gXmsUxcOWE8KIgKwKslz8QsjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=sIMAuXXi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74C3DC32786;
+	Mon,  1 Jul 2024 12:45:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1719837919;
+	bh=mcsm+deKAsfjotatoCY43zzx8qAarB1cncwtOYmoE5E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sIMAuXXin+3XP14RmiXZse6QmoojSzhAhVNx977D7LRV1aUwuXXsPVKcPY0MklDDn
+	 nMcFphel2Ljruvv26XvXHEPdUdWrTwd+Bm7FqznD3lX/KIpr6kPPfgq0cKjrhi7KA3
+	 4YAhGd78lMNmMy8LG6CYnSmNSd7TlpPqgIm0/0PA=
+Date: Mon, 1 Jul 2024 14:27:04 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jari Ruusu <jariruusu@protonmail.com>
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: Stable linux-5.10.x regression triggered by MDS mitigation
+Message-ID: <2024070152-unpaired-trouble-2632@gregkh>
+References: <IdYcxU6x6xuUqUg8cliJUnucfwfTO29TrKIlLGCCYbbIr1EQnP0ZAtTxdAM2hp5e5Gny_acIN3OFDS6v0sazocnZZ1UBaINEJ0HoDnbasSI=@protonmail.com>
+ <20240624170921.mep2x6pg4aiui4wh@desk>
+ <yVXwe8gvgmPADpRB6lXlicS2fcHoV5OHHxyuFbB_MEleRPD7-KhGe5VtORejtPe-KCkT8Uhcg5d7-IBw4Ojb4H7z5LQxoZylSmJ8KNL3A8o=@protonmail.com>
+ <20240625180150.7awxiyvmztcuu4pw@desk>
+ <eK0mvc1FJknv3ZTg6opsYgeqRGgQCTFIQ-gdp5k0KdB3EsY-dL7cKmKvsG93qcTKvPQhrjkbRTrI32YK-AqMXcqiKqLetkLeDnn_b5qs7AA=@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:d5c8:0:b0:375:cfd0:393d with SMTP id
- e9e14a558f8ab-37cbcc6d420mr2236345ab.2.1719836822341; Mon, 01 Jul 2024
- 05:27:02 -0700 (PDT)
-Date: Mon, 01 Jul 2024 05:27:02 -0700
-In-Reply-To: <20240701101125.13829-1-wojciech.gladysz@infogain.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000de1f00061c2eb6ec@google.com>
-Subject: Re: [syzbot] [bpf?] [net?] KMSAN: uninit-value in dev_map_hash_lookup_elem
-From: syzbot <syzbot+80cf9d55d6fd2d6a9838@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	wojciech.gladysz@infogain.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eK0mvc1FJknv3ZTg6opsYgeqRGgQCTFIQ-gdp5k0KdB3EsY-dL7cKmKvsG93qcTKvPQhrjkbRTrI32YK-AqMXcqiKqLetkLeDnn_b5qs7AA=@protonmail.com>
 
-Hello,
+On Wed, Jun 26, 2024 at 01:02:35PM +0000, Jari Ruusu wrote:
+> On Tuesday, June 25th, 2024 at 21:01, Pawan Gupta <pawan.kumar.gupta@linux.intel.com> wrote:
+> > Thanks for pointing this out, CLEAR_CPU_BUFFERS should happen before POPFL.
+> > Below patch moves it before POPFL and also adds a safer version that
+> > switches to KERNEL_DS before executing VERW. This should ensure VERW works
+> > in all cases:
+> 
+> Your patch looks OK to me. Thanks.
+> Tested on linux-5.10.220 inside 32-bit VM.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-SYZFAIL: NL802154_CMD_SET_SHORT_ADDR failed
-
-2024/07/01 12:26:06 ignoring optional flag "sandboxArg"="0"
-2024/07/01 12:26:07 parsed 1 programs
-2024/07/01 12:26:07 [FATAL] failed to run ["./syz-executor" "setup" "fault" "binfmt_misc" "usb" "802154" "swap"]: exit status 67
-mkdir(/syzcgroup) failed: 17
-mount(binfmt_misc) failed: 16
-SYZFAIL: NL802154_CMD_SET_SHORT_ADDR failed
- (errno 16: Device or resource busy)
-
-
-Tested on:
-
-commit:         e478cf26 Merge branch 'bpf-fix-a-couple-of-test-failur..
-git tree:       https://linux.googlesource.com/linux/kernel/git/torvalds/linux
-console output: https://syzkaller.appspot.com/x/log.txt?x=15f181c1980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2ad6a8768920dd4b
-dashboard link: https://syzkaller.appspot.com/bug?extid=80cf9d55d6fd2d6a9838
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=129891d1980000
-
+Great!  Hopefully someone submits this to the stable tree so we can
+accept it...
 
