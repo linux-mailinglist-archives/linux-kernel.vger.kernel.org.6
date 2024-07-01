@@ -1,123 +1,84 @@
-Return-Path: <linux-kernel+bounces-236575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7D4791E437
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:34:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEB5D91E454
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:40:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 835BC1F2215D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:34:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A9391C217DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 15:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18AF416CD28;
-	Mon,  1 Jul 2024 15:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB2C16D308;
+	Mon,  1 Jul 2024 15:40:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eW64tHs7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FbqxQsNP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D5628F4;
-	Mon,  1 Jul 2024 15:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72B853AC
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 15:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719848086; cv=none; b=jDnjx5FpHxHOI8gajn/llJTrOF4+riEuA252mxM2551ONlC4NyENTGAdXZgwvXaNYklAG482tqAL4bRYy8nvRSMkSVwYv6ctJ/fUj+ofnLHS0kTL+NyX+6FXQfoRSXIePzkWo8s8G5/OcPwn7S7uW34i/0wrc8xyjk2QhKZORAY=
+	t=1719848421; cv=none; b=Cor7uk7epfNfvzaHR7s+SHYqd2gmJiRc9d/Xkb7LJTVng+b/QHKAA+zjABdhuCRY3bT5z2r0GsmVCbCoxbHVqUm904vjleMrnD/AYQ72Q2OHnJqre6sl8M8Gh1LRn8MdFcMpvpZOdKM2De9yawq8YJNWQcE9fAaHT7uk1ufUp+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719848086; c=relaxed/simple;
-	bh=iq8bWnF6w36ZZ3oKBLDL7Q66Va//VDQRpFTyD5AraCo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RnT1wDuNTktSuScjWDngLrPqb/FpAPbOeEt5NqWlIQX7s+tfdE9hE0I8XydPEoJz1pmmUSGNV3IUvEYadUcOo57ZmMHUBJHwkKP7AdPf4c0vWV+DNpuucfDl2aOfGfHrf8fHmRkqp1qAEDS3gftdAsvDSAVk4VH35YBgB9EhJMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eW64tHs7; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719848084; x=1751384084;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=iq8bWnF6w36ZZ3oKBLDL7Q66Va//VDQRpFTyD5AraCo=;
-  b=eW64tHs7rEe1TdVUZRaLDRCc/bXFVf9LuGFNkqez9CQUAkMxeDxDPJnX
-   +usxlRBqxJTjjaGdDATFHPPvpHryFFtSsolsJSOM1HSWmrfhQWOQqk7YA
-   jbgJSJjMZ8mZVymG6Q96YJm4kBvL4CLSfzy9QCSUVQilOmeS/xf/z7lpF
-   7Focolt2bhn+g21hp0sucOQ/32fUwK9BzYx2+vxB0JjydFT5rIP0kvsaW
-   Efp5Hw3yKYAB1vt0h7Fo9f50APFzWOvoHMMgvJGexDNQOrei58gt8bcJH
-   SBfh2Y4cguOLQojl5ZHAZCgBGPTm+kZ5jm7/OqQbITSynzovECJQGpBxX
-   A==;
-X-CSE-ConnectionGUID: o5KnzWbJRoaa5bdlmehGXw==
-X-CSE-MsgGUID: v5om0M9TRwGLtAK5OvzHEw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="34527578"
-X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
-   d="scan'208";a="34527578"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 08:34:43 -0700
-X-CSE-ConnectionGUID: YfCSuWqcRQ+x9qFnKqd/Gw==
-X-CSE-MsgGUID: Y6xwroDyRqScS3SLIcaBvw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
-   d="scan'208";a="50446989"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.54.39.125])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 08:34:44 -0700
-Date: Mon, 1 Jul 2024 08:39:56 -0700
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-To: Xin Li <xin@zytor.com>
-Cc: X86 Kernel <x86@kernel.org>, Sean Christopherson <seanjc@google.com>,
- LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Dave Hansen <dave.hansen@intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Xin Li
- <xin3.li@intel.com>, linux-perf-users@vger.kernel.org, Peter Zijlstra
- <peterz@infradead.org>, Paolo Bonzini <pbonzini@redhat.com>, Tony Luck
- <tony.luck@intel.com>, Andy Lutomirski <luto@kernel.org>, acme@kernel.org,
- kan.liang@linux.intel.com, Andi Kleen <andi.kleen@intel.com>, "Mehta,
- Sohil" <sohil.mehta@intel.com>, Zeng Guang <guang.zeng@intel.com>,
- jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v3 06/11] KVM: VMX: Expand FRED kvm entry with event
- data
-Message-ID: <20240701083956.4460bb06@jacob-builder>
-In-Reply-To: <d385c639-d2b1-4068-b386-98c456265926@zytor.com>
-References: <20240628201839.673086-1-jacob.jun.pan@linux.intel.com>
-	<20240628201839.673086-7-jacob.jun.pan@linux.intel.com>
-	<d385c639-d2b1-4068-b386-98c456265926@zytor.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719848421; c=relaxed/simple;
+	bh=jzZ8xQY7eDm6paSkzdj5TLzcQV7wRCSr0mNrUY+RcFE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GUAgtd4AKDeUUisw2rCmegaEFAtf88aPnkCiCaEfZsr3Dq7mmxiRmFQ5+ktawkzBzr6szcn+cjNp8SwlVPy2vYGIIEeWsHBIgskeXKRX+yCjhvlosKIi81a6M/ScFqONynzWhOPBO3owkEyTLgicjgE2pJJ4wt946CtpciiqTFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FbqxQsNP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73776C116B1;
+	Mon,  1 Jul 2024 15:40:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719848420;
+	bh=jzZ8xQY7eDm6paSkzdj5TLzcQV7wRCSr0mNrUY+RcFE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FbqxQsNPRL84pLMtwOYiIBqCdPxk+tbjUAUx+CXdTLUxDGXLqsBVDPtq2qjkTeX1z
+	 QG9Bhz/Pf1HdH2lzwk1tLLqI94CkHRDuXMJpIa/J5CpQt9niePFr8r7nc3Q5fWV/o5
+	 Z+i/bOmAYJTtaKFvo1i0W4+WRCYJWz6Pd1gUTqqvIY/aDfuTbs2MtvTprn4dhN15fv
+	 AwMh4VYz+sc+OK3VQCl9RQcmJnFoMVrXmoRdqm5jv5Ir8z7n8n0VQR4Vi2lzbPhIBP
+	 geh51ewBqrpDt6wXAuheehLmkaWwpN2N4mNx/4fAcqkRVVLWIC0BblIl99EEQQFU1D
+	 I+EKdMaZ8q3zg==
+Date: Mon, 1 Jul 2024 08:40:20 -0700
+From: Kees Cook <kees@kernel.org>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, oleg@redhat.com,
+	tglx@linutronix.de, peterz@infradead.org, luto@kernel.org,
+	wad@chromium.org, rostedt@goodmis.org, arnd@arndb.de,
+	ardb@kernel.org, broonie@kernel.org, mark.rutland@arm.com,
+	rick.p.edgecombe@intel.com, leobras@redhat.com,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 0/3] arm64: entry: Convert to generic entry
+Message-ID: <202407010839.125126F@keescook>
+References: <20240629085601.470241-1-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240629085601.470241-1-ruanjinjie@huawei.com>
 
+On Sat, Jun 29, 2024 at 04:55:58PM +0800, Jinjie Ruan wrote:
+> Changes in v3:
+> - Test the MTE test cases.
+> - Handle forget_syscall() in arch_post_report_syscall_entry()
+> - Make the arch funcs not use __weak as Thomas suggested, so move
+>   the arch funcs to entry-common.h, and make arch_forget_syscall() folded
+>   in arch_post_report_syscall_entry() as suggested.
+> - Move report_single_step() to thread_info.h for arm64
+> - Change __always_inline() to inline, add inline for the other arch funcs.
+> - Remove unused signal.h for entry-common.h.
+> - Add Suggested-by.
+> - Update the commit message.
 
-On Fri, 28 Jun 2024 21:01:28 -0700, Xin Li <xin@zytor.com> wrote:
+I didn't see the mentioned feedback from tglx in any of the threads. Is
+lore busted or is there discussion on this series happening somewhere
+else?
 
-> On 6/28/2024 1:18 PM, Jacob Pan wrote:
-> > From: Zeng Guang <guang.zeng@intel.com>
-> > 
-> > For VM exits caused by events (NMI, #DB, and #PF) delivered by FRED, the
-> > event data is saved in the exit-qualification field. (FRED spec.
-> > 10.6.2)  
-> 
-> I don't like mentioning #DB/#PF here, they belong to the guest that was 
-> running, and KVM handles them.
-It is part of the spec.
-
-> While NMIs belong to host, and the host NMI handler needs event data
-> saved in VMCS in NMI induced VM exits.
-> 
-> Or you paint a full picture.
-I will add your explanation that #DB/#PF belong to the guest so readers can
-get a full picture of both usage and spec.
-> 
-> > Expand FRED KVM entry interface to include the event data obtained from
-> > the exit qualification.
-> > 
-> > Signed-off-by: Zeng Guang <guang.zeng@intel.com>
-> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>  
-> 
-
-
-Thanks,
-
-Jacob
+-- 
+Kees Cook
 
