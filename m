@@ -1,136 +1,261 @@
-Return-Path: <linux-kernel+bounces-236796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 567A491E736
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:11:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0BB791E739
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:12:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D154BB232E0
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:11:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2EC01C21A7F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F14216EC11;
-	Mon,  1 Jul 2024 18:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC72F16EBF9;
+	Mon,  1 Jul 2024 18:12:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sug4zvn4"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jgvUlOgC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA2516EB6D
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 18:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7CE14BF8F;
+	Mon,  1 Jul 2024 18:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719857483; cv=none; b=HM1+eBbJ+2PwuVetZqOXYy1qDP7CK7DGT4qfhnV86/QhFTIIoG6smboIS+vuqpk/v/7nymHQ1OdqPHfP2kTB8Mf58GHmTzwFSjR8dtPNOvpcbwux8F11p0kPDbc95ozCFDKHBNlqWDH3HsI5NaUSYjqRDdJp+knY7l+nu4un6Dg=
+	t=1719857540; cv=none; b=qZ50TgpH7Qo9kyH2BbVTOdpr1aJ/MICGGG1X09HuB2Tr2gH2FLIAMmmWOi2DceHAw+njFZ3pL0s/b871vEtiXmAA+5FT426+EzBUtiACAJe6miYvC6mnc5oZGTmDpcD31vWSLAlJvvtazxtCBbzxDz1XAyPBZwbz/JsfzDsvjqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719857483; c=relaxed/simple;
-	bh=w7U7p//qg9/BOYI9iU60ZIGf+BbEbqV3HX/8OXO7k20=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=clP60gbQ82bzo194qstHRDL9PNDVLp2B1AQlTm0n4H/Q36j7/OXhyNnJy4PmfzBebt5fGNaUYXYEJS+et2uznrq/1rat4sEpW1GDZ9N0rvi++HtWGp89YbaPQVAaJQ0n/dZG3LzAJKPUj8sHEvHYTHRh3nmBvyLzO98qKuklrko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sug4zvn4; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52e764bb3fbso4271834e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 11:11:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719857479; x=1720462279; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UXIjfifqoY2+USdxqsmMR1PZNjbJyEi4O/Dl39q5iAg=;
-        b=sug4zvn4JF2dCA43ZCLn+iwezXRDZucJI23Tq1wbktBunfHFAM5R1u+Cu/Xdx+EKhB
-         EDaa3a1KMUmXAcV2Yom46JWgx2cjneNwNdTP4LsG4RJxf979W6m59333EPhWwbT8BtVX
-         X+Q1XClsPe+uttN5/8khXNo5bTsjmvFFaS+ewftnDrzjNACqD1f95cazRBCCW20BbvoW
-         kEBbKuVayKwm+sc0s6nZTQ75ZE5DWo+2aOV5BQLU5hn2s2AoP5hyWX8QqgVFrf85ndAo
-         /ueUtK1uRq2fEPSK9eHbA1NQjRS+UYpEWZQdkWkhWToCPQs4hILCphLK5LBte0SvuojB
-         n6kA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719857479; x=1720462279;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UXIjfifqoY2+USdxqsmMR1PZNjbJyEi4O/Dl39q5iAg=;
-        b=A2+dTJmDKtAnG3i4aXw/P8h1jLoir0hcxZ0gKmcgCI2SqsxYGC2wGM4mLMB7dx9Thi
-         RQGyHibSYdanpTVWliEU+BS44GCMqpYCK2Y+IB+WPZum40JjuXcxacH1t+0coOy4jbyg
-         06MqG88FzpyUcQ9004qf5AS78HKWpRK3JJJmZOf3bx72JFPEIVUqhjs5Xi1LbxWfzhwr
-         /2TMmw+RXQAGHB00jiCTzNAo3gdLReviE/Lkz6X/8SVemdp58+GYNXBpQdajI/OlraJc
-         OspoNrhK2PyYLiEG0xbz16kc5EO5lD+GEXb+Dhn0qsJgSi+A0HlhjtZlUrfDILzhzMDm
-         Qmow==
-X-Forwarded-Encrypted: i=1; AJvYcCX/cz/o3apFfSo0OBFDoTG0OVGBq25f0/+9NKdqjETypvCDuq/dF9Uk+WwUXB2IZ3rNYGNktBAVmgF3c5bDavrHX4QfkzB+Ksqdi6Vl
-X-Gm-Message-State: AOJu0YzxeNYl2ujmR3mterLIkMl5aG/FxmEqwZyS1MsGyzTFzkU9AIrN
-	OJDMMdkOf5P0mI6O5wEB9idStB8oZ/XGP5p8hwDIwmhEs0b4xXz9Pp8WfjHgwvc=
-X-Google-Smtp-Source: AGHT+IF3y0VQLedqFBWkM6U87xQcON7ggU7XAKTs5isP66PO2FZSXJSQqq/IyH9zOvUQm0t8b7EkCg==
-X-Received: by 2002:a05:6512:528:b0:52b:c1ad:1b56 with SMTP id 2adb3069b0e04-52e8266639bmr3495909e87.19.1719857479041;
-        Mon, 01 Jul 2024 11:11:19 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7e3bd707sm1274292e87.53.2024.07.01.11.11.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 11:11:18 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 01 Jul 2024 21:11:16 +0300
-Subject: [PATCH] arm64: dts: qcom: pm8916: correct thermal zone name
+	s=arc-20240116; t=1719857540; c=relaxed/simple;
+	bh=ndWsAOia4WnVSxp0z9wn1/Y9JHHFhLWK7tqCxcJLoSc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qHldlIi34sAiPupBFc0PjMfFnxa3hhU7CzAPnrnyNYOfw05g9+VQ8iImEzuVzoUpB5Di6AKGlWy9HCdjxID2C+Bm/ivQwxnbYM3ksoDi3ajBWFeNHIBUTk8UVmjA0D7AHcISyxtkpa3K7ofBiJZgLSRpYOFjJLbo75FlkYeAsRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jgvUlOgC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A8A6C32781;
+	Mon,  1 Jul 2024 18:12:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719857540;
+	bh=ndWsAOia4WnVSxp0z9wn1/Y9JHHFhLWK7tqCxcJLoSc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=jgvUlOgCCBI5mqKbbnb2IiV1wIlvnm7JcOuch0JAZAv0cuh8N5PRMnWusqVtA6OBg
+	 xir5QkVys7EYBq8Ooiu4Bh23T86oSaE77Ln7ueDjljdwFppkc2KDYzUYO8x6oDOPuI
+	 47U3GItTbFRrf/aC1oi5blsBXQUNIv7mQuuf4IaWgiXWw2Q2zdKgOYRFIn8oXfg6/u
+	 MukIrrxmLOmr+gpPJd/Q4bngvzv7dKTQTZTnp9Z0m4BClW16czevnPaKAmG+KpWPli
+	 xtdg1s/JZlpIXHEX7CDAodE8FuBshUFicKqZlwhFBgykQKeg1NBB4GJtvQ9yrvgayq
+	 YhQsl2KxQ1jVw==
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-25d0f8d79ebso487219fac.0;
+        Mon, 01 Jul 2024 11:12:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVzvCohjg4oQjmPC70YcgvNPj7nY4G8eFxUZ22nkrjfx16GOKaJo3OJ9BXztTx13TZ9XhoEug1wns9aX9I45/wZwR/l5VDOOvuPtN9fajG1IyDMDOQoxNmb7b7iibZsMPG53gtT/I6Z/eAOgEM0i3UKQsPcnQBEsR3adKF+FawM53xaB6pW3ZPwMA==
+X-Gm-Message-State: AOJu0Yz6ZDGIv7MiLBKNkb9/ytqTZQPc/F3f/BHa07xM7pVi8QNblrnk
+	kmvksmhNV4mH/NvHAEOgmkqcxyjLn2E+PoNcPGtKvsboHOWtktb4zZxFjb3XUMBMlmZ+maeeP2B
+	FEzNqyBiA9COXzg0VUKUG3WdPN9o=
+X-Google-Smtp-Source: AGHT+IGkHU8gGCwWculrKktL7Tykcy0bLso97IDN39fFEMkNLo1ZVdhdoINCWlMaFA4QgoyHLDzsf3ncUnGICuZYmCU=
+X-Received: by 2002:a05:6870:c68a:b0:254:a7df:721b with SMTP id
+ 586e51a60fabf-25db36a5391mr6349750fac.5.1719857539722; Mon, 01 Jul 2024
+ 11:12:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240701-fix-pm8916-tz-v1-1-02f8a713f577@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAEPxgmYC/x2MSQqAMAwAvyI5G0hKcfuKeHCJmoNVWhGx+HeLx
- 4GZiRDEqwRosgheLg26uwScZzCuvVsEdUoMhoylkhhnvfHYqpoLPB9kIzyQkJ1kgNQcXpLw/9r
- ufT84GrIDXwAAAA==
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=998;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=w7U7p//qg9/BOYI9iU60ZIGf+BbEbqV3HX/8OXO7k20=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmgvFG5D7g4V+ZT1LWDVCXsEADQXnHuLk/v9cMz
- m2ca8/RU+SJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZoLxRgAKCRCLPIo+Aiko
- 1WVoB/9270bZd7hm1wP1rDCf0QLlVeu+merMMJdG4zLjiIvUAoGOnSQRjyIgCBwfwbjz0Pe79rd
- +K3Jn3w7jsJb420UkDb+OTsssL5yzZOjPt2e1gJkxraOgPm19/3qe0iCMJ+7T/tJGY4B01IXyjv
- v4vfGYnepgsTIE/dnNqCwmhzx0x05yE2gGbxBc3aIhwYI30gyArq3tUBsFokxsBYyX7xFOdrYJH
- v+/hcGftN+GHiHTECu1gXTWz5oQVTLuB5fwNDa8zovsrsAYNuKGS/ANaomcUfjOPO8oxJ8NnHSp
- Nne1ca5ZjTBBXrwRnMynrA3XHyfbS2fabhc7dx1ot1XNvfWe
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+References: <a6c9b1bcdf259adabbcaf91183d3f5ab87a98600.1719644292.git.christophe.jaillet@wanadoo.fr>
+ <6e881b24-e1fe-40fe-b19e-69ee0091839f@redhat.com>
+In-Reply-To: <6e881b24-e1fe-40fe-b19e-69ee0091839f@redhat.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 1 Jul 2024 20:12:08 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hyryu8t7wntnOb9-moqcwV3GSXzgEbVORMXvFGbW+23g@mail.gmail.com>
+Message-ID: <CAJZ5v0hyryu8t7wntnOb9-moqcwV3GSXzgEbVORMXvFGbW+23g@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: PMIC: Constify struct pmic_table
+To: Hans de Goede <hdegoede@redhat.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-acpi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Correct the name for the thermal zone on PM8916 PMIC. I ended up with
-c&p mistake, which wasn't noticed until the patch got merged.
+On Sat, Jun 29, 2024 at 12:06=E2=80=AFPM Hans de Goede <hdegoede@redhat.com=
+> wrote:
+>
+> Hi,
+>
+> On 6/29/24 8:58 AM, Christophe JAILLET wrote:
+> > 'struct pmic_table' is not modified in these drivers.
+> >
+> > Constifying this structure moves some data to a read-only section, so
+> > increase overall security.
+> >
+> > On a x86_64, with allmodconfig, as an example:
+> > Before:
+> > =3D=3D=3D=3D=3D=3D
+> >    text          data     bss     dec     hex filename
+> >    3811           786       0    4597    11f5 drivers/acpi/pmic/intel_p=
+mic_xpower.o
+> >
+> >    text          data     bss     dec     hex filename
+> >    4147           450       0    4597    11f5 drivers/acpi/pmic/intel_p=
+mic_xpower.o
+> >
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > ---
+> > Compile tested-only
+>
+> Thanks, patch looks good to me:
+>
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
-Reported-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-Fixes: b7a28d8a7b80 ("arm64: dts: qcom: pm8916: add temp-alarm thermal zone")
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- arch/arm64/boot/dts/qcom/pm8916.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied as 6.11 material, thanks!
 
-diff --git a/arch/arm64/boot/dts/qcom/pm8916.dtsi b/arch/arm64/boot/dts/qcom/pm8916.dtsi
-index 2def48f2d101..f8e4829ff7f7 100644
---- a/arch/arm64/boot/dts/qcom/pm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/pm8916.dtsi
-@@ -6,7 +6,7 @@
- 
- / {
- 	thermal-zones {
--		pm8150-thermal {
-+		pm8916-thermal {
- 			polling-delay-passive = <100>;
- 
- 			thermal-sensors = <&pm8916_temp>;
 
----
-base-commit: 43f9f53b46c63cbfc02af073a84c72c64b10767b
-change-id: 20240701-fix-pm8916-tz-12e1b0e04deb
-
-Best regards,
--- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
+> > ---
+> >  drivers/acpi/pmic/intel_pmic.c          | 2 +-
+> >  drivers/acpi/pmic/intel_pmic.h          | 4 ++--
+> >  drivers/acpi/pmic/intel_pmic_bxtwc.c    | 4 ++--
+> >  drivers/acpi/pmic/intel_pmic_bytcrc.c   | 4 ++--
+> >  drivers/acpi/pmic/intel_pmic_chtdc_ti.c | 4 ++--
+> >  drivers/acpi/pmic/intel_pmic_chtwc.c    | 2 +-
+> >  drivers/acpi/pmic/intel_pmic_xpower.c   | 4 ++--
+> >  7 files changed, 12 insertions(+), 12 deletions(-)
+> >
+> > diff --git a/drivers/acpi/pmic/intel_pmic.c b/drivers/acpi/pmic/intel_p=
+mic.c
+> > index f20dbda1a831..134e9ca8eaa2 100644
+> > --- a/drivers/acpi/pmic/intel_pmic.c
+> > +++ b/drivers/acpi/pmic/intel_pmic.c
+> > @@ -31,7 +31,7 @@ struct intel_pmic_opregion {
+> >
+> >  static struct intel_pmic_opregion *intel_pmic_opregion;
+> >
+> > -static int pmic_get_reg_bit(int address, struct pmic_table *table,
+> > +static int pmic_get_reg_bit(int address, const struct pmic_table *tabl=
+e,
+> >                           int count, int *reg, int *bit)
+> >  {
+> >       int i;
+> > diff --git a/drivers/acpi/pmic/intel_pmic.h b/drivers/acpi/pmic/intel_p=
+mic.h
+> > index d956b03a6ca0..006f0780ffab 100644
+> > --- a/drivers/acpi/pmic/intel_pmic.h
+> > +++ b/drivers/acpi/pmic/intel_pmic.h
+> > @@ -21,9 +21,9 @@ struct intel_pmic_opregion_data {
+> >                                         u32 reg_address, u32 value, u32=
+ mask);
+> >       int (*lpat_raw_to_temp)(struct acpi_lpat_conversion_table *lpat_t=
+able,
+> >                               int raw);
+> > -     struct pmic_table *power_table;
+> > +     const struct pmic_table *power_table;
+> >       int power_table_count;
+> > -     struct pmic_table *thermal_table;
+> > +     const struct pmic_table *thermal_table;
+> >       int thermal_table_count;
+> >       /* For generic exec_mipi_pmic_seq_element handling */
+> >       int pmic_i2c_address;
+> > diff --git a/drivers/acpi/pmic/intel_pmic_bxtwc.c b/drivers/acpi/pmic/i=
+ntel_pmic_bxtwc.c
+> > index e247615189fa..c332afbf82bd 100644
+> > --- a/drivers/acpi/pmic/intel_pmic_bxtwc.c
+> > +++ b/drivers/acpi/pmic/intel_pmic_bxtwc.c
+> > @@ -24,7 +24,7 @@
+> >  #define VSWITCH1_OUTPUT         BIT(4)
+> >  #define VUSBPHY_CHARGE          BIT(1)
+> >
+> > -static struct pmic_table power_table[] =3D {
+> > +static const struct pmic_table power_table[] =3D {
+> >       {
+> >               .address =3D 0x0,
+> >               .reg =3D 0x63,
+> > @@ -177,7 +177,7 @@ static struct pmic_table power_table[] =3D {
+> >       } /* MOFF -> MODEMCTRL Bit 0 */
+> >  };
+> >
+> > -static struct pmic_table thermal_table[] =3D {
+> > +static const struct pmic_table thermal_table[] =3D {
+> >       {
+> >               .address =3D 0x00,
+> >               .reg =3D 0x4F39
+> > diff --git a/drivers/acpi/pmic/intel_pmic_bytcrc.c b/drivers/acpi/pmic/=
+intel_pmic_bytcrc.c
+> > index 2b09f8da5400..b4c21a75294a 100644
+> > --- a/drivers/acpi/pmic/intel_pmic_bytcrc.c
+> > +++ b/drivers/acpi/pmic/intel_pmic_bytcrc.c
+> > @@ -16,7 +16,7 @@
+> >
+> >  #define PMIC_A0LOCK_REG              0xc5
+> >
+> > -static struct pmic_table power_table[] =3D {
+> > +static const struct pmic_table power_table[] =3D {
+> >  /*   {
+> >               .address =3D 0x00,
+> >               .reg =3D ??,
+> > @@ -134,7 +134,7 @@ static struct pmic_table power_table[] =3D {
+> >       }, /* V105 -> V1P05S, L2 SRAM */
+> >  };
+> >
+> > -static struct pmic_table thermal_table[] =3D {
+> > +static const struct pmic_table thermal_table[] =3D {
+> >       {
+> >               .address =3D 0x00,
+> >               .reg =3D 0x75
+> > diff --git a/drivers/acpi/pmic/intel_pmic_chtdc_ti.c b/drivers/acpi/pmi=
+c/intel_pmic_chtdc_ti.c
+> > index 79f9df552524..ecb36fbc1e7f 100644
+> > --- a/drivers/acpi/pmic/intel_pmic_chtdc_ti.c
+> > +++ b/drivers/acpi/pmic/intel_pmic_chtdc_ti.c
+> > @@ -23,7 +23,7 @@
+> >  #define CHTDC_TI_BPTHERM     0x58
+> >  #define CHTDC_TI_GPADC               0x5a
+> >
+> > -static struct pmic_table chtdc_ti_power_table[] =3D {
+> > +static const struct pmic_table chtdc_ti_power_table[] =3D {
+> >       { .address =3D 0x00, .reg =3D 0x41 }, /* LDO1 */
+> >       { .address =3D 0x04, .reg =3D 0x42 }, /* LDO2 */
+> >       { .address =3D 0x08, .reg =3D 0x43 }, /* LDO3 */
+> > @@ -39,7 +39,7 @@ static struct pmic_table chtdc_ti_power_table[] =3D {
+> >       { .address =3D 0x30, .reg =3D 0x4e }, /* LD14 */
+> >  };
+> >
+> > -static struct pmic_table chtdc_ti_thermal_table[] =3D {
+> > +static const struct pmic_table chtdc_ti_thermal_table[] =3D {
+> >       {
+> >               .address =3D 0x00,
+> >               .reg =3D CHTDC_TI_GPADC
+> > diff --git a/drivers/acpi/pmic/intel_pmic_chtwc.c b/drivers/acpi/pmic/i=
+ntel_pmic_chtwc.c
+> > index 25aa3e33b09a..81caede51ca2 100644
+> > --- a/drivers/acpi/pmic/intel_pmic_chtwc.c
+> > +++ b/drivers/acpi/pmic/intel_pmic_chtwc.c
+> > @@ -70,7 +70,7 @@
+> >   * "regulator: whiskey_cove: implements Whiskey Cove pmic VRF support"
+> >   * https://github.com/intel-aero/meta-intel-aero/blob/master/recipes-k=
+ernel/linux/linux-yocto/0019-regulator-whiskey_cove-implements-WhiskeyCove-=
+pmic-V.patch
+> >   */
+> > -static struct pmic_table power_table[] =3D {
+> > +static const struct pmic_table power_table[] =3D {
+> >       {
+> >               .address =3D 0x0,
+> >               .reg =3D CHT_WC_V1P8A_CTRL,
+> > diff --git a/drivers/acpi/pmic/intel_pmic_xpower.c b/drivers/acpi/pmic/=
+intel_pmic_xpower.c
+> > index 43c5850b4bf3..49bda5e0c8aa 100644
+> > --- a/drivers/acpi/pmic/intel_pmic_xpower.c
+> > +++ b/drivers/acpi/pmic/intel_pmic_xpower.c
+> > @@ -26,7 +26,7 @@
+> >  #define AXP288_ADC_TS_CURRENT_ON_ONDEMAND            (2 << 0)
+> >  #define AXP288_ADC_TS_CURRENT_ON                     (3 << 0)
+> >
+> > -static struct pmic_table power_table[] =3D {
+> > +static const struct pmic_table power_table[] =3D {
+> >       {
+> >               .address =3D 0x00,
+> >               .reg =3D 0x13,
+> > @@ -129,7 +129,7 @@ static struct pmic_table power_table[] =3D {
+> >  };
+> >
+> >  /* TMP0 - TMP5 are the same, all from GPADC */
+> > -static struct pmic_table thermal_table[] =3D {
+> > +static const struct pmic_table thermal_table[] =3D {
+> >       {
+> >               .address =3D 0x00,
+> >               .reg =3D XPOWER_GPADC_LOW
+>
 
