@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-236809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C320F91E756
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:20:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56F5D91E757
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:20:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79DA6282365
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:20:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C7F1280D66
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F3716EC19;
-	Mon,  1 Jul 2024 18:19:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 016AA16F0E0;
+	Mon,  1 Jul 2024 18:20:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AbYAxomN"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xeqUbuzH"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94EB916EBF6
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 18:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA8B2A1D1
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 18:19:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719857999; cv=none; b=gcJ1hyw+PzwcV/xS956fSQ2ycY7nNmB8rj1/XAodIEqDQclxXBwHZ0tFUFNvlQu/uy7NSS3CpJCK/enGKeSVIZz77ShAhfQKCGBFm8GowXQIjGDSo20y0mBza3wtEDy7J1r4mhhjGZdzb7ZNSta9iUOLY7qO0Ey1hwHekoqYqbw=
+	t=1719858000; cv=none; b=YCVi6+NuBiomRTvxy/a66FB8DkoCNdrD/sem73cpitZNIoYM4oHOIDyVqKVW0HXO0+1ox68RbZB2Iu/JWliK6EgwJ9/2icK5yfebyzl6w8F5LxQaK170vxQEX8+MhVItEdEH5g4jRCOOwBzzE61k5uLfDl/e+aC6d56iUfnqP6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719857999; c=relaxed/simple;
-	bh=SKAFSPCa5VrynHGCh1AnVztZXyJngqx/+e1B3wfGBFA=;
+	s=arc-20240116; t=1719858000; c=relaxed/simple;
+	bh=3vwogvWVjSEg2amSgBHvcpUf/GAVj6civXHWgqF082c=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ARa5vSVUa4QX7iTvewhWnpzYmwpdy8fKp24PmtPGAV00ktzrzIuAKhSIr4BW5OMQZFkTOPiLoknDUGEIicgc54YN3ltXiAgje33kvi0ioyQQyhtA33CfmAVhfgjcWggdcDzDuT/rwojA40p0/zwAo03G1hdUIutPOYVJ91+lw3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AbYAxomN; arc=none smtp.client-ip=209.85.208.173
+	 In-Reply-To:To:Cc; b=fol7NBYdjOPMAYu8WPosFGOqdkBhYsdvc4QeHs43hr39LM4divN1hDcG/oAxqqw6J8mScIqYT9q5DXBg6SOagEF4RArDEyucqLmxONYNEAqv33RMgsATjwil6KpzdBWlASJ+rsg8kMfzwh+u1KvlKhFTOBPZJ8BjVZlwPumI6jY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xeqUbuzH; arc=none smtp.client-ip=209.85.167.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ee4ab5958dso37554521fa.1
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52ce01403f6so3747222e87.0
         for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 11:19:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1719857996; x=1720462796; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=9f4mKCaRWs6EL5Tgl8NVvQuffheXHlnyeBx3NKI8np8=;
-        b=AbYAxomNazrvCUsbw79+eu32F2AiG7UJZkY/KUlDTbXF/j8aMF+ZPMiAbEt6DdQS86
-         P3l+fKu0HA4rI0azNYx7pSczX0WvaHP6ruz7Om4ZUgv/8m/fPOtOpRLNEn+xEUk2mPdT
-         l8mwOnj7z2UGxCqEpqRI8t4qK8QRf1STFUhwmpwbUSfpQl+HjwcUqcXrYpSD6jsWQ2xZ
-         uRv3Rpmm5a+bIJAxf6uSa9D4oSh7iHS2KjWwDjA3OFiYg4Vzx1yM2Cv+qM0nBtgREYW5
-         yH/+jMdJ1u6B+ARtAI06zZr++463f4Dl2ht6CVgmOVWpyhucBKOvvrmhPlwXVrX4DnG7
-         2b8g==
+        bh=tfdgN7xrW/R6B0u6uKJvfbAFTMRYQPiCCKcLGsN0b/k=;
+        b=xeqUbuzHqo0nXSEzDeOQ4n1mzBK/Qgc7JYYuTxfBrNSVK31n2XKLprOJXJ2Rmbwl9o
+         F7hLL3TOnYLGNmAkdFj7Xko3zluPfVYj9p+Yq0HmQCxS+dzmQXWJypWcGl2WfzuX7l2i
+         fib0qlK/NdhS4Yed+arheJaywkL5Mp1MgGqH3M8ZY37oYZ+Z8V3MUDETHiPsEF/sL8zT
+         qnT0AIdHCEVzByVsGRbBJUPoZVQb0OgR/46VHqRg5v6GvSx2Hnw1gWcN0bucZynT6pjW
+         eEsgRtsuy3dwvjYkWdl4PhENczAZpHo/wn/QR1Al3Xy1m5vEVfaysBPwLCYJKobhci5S
+         skCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1719857996; x=1720462796;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9f4mKCaRWs6EL5Tgl8NVvQuffheXHlnyeBx3NKI8np8=;
-        b=MtciV4yrlnvB+Duxma0Lj44mO/8YGKcjVSc7kv5fsee8T9xXMPFofjyy+a4M4IeLl6
-         joWlcwHXL95OXgYClL0A5BjDafKhZ1+fjAXzpuqUxwE6a9qM1DtYVla/dv7VE08Liywi
-         t8SqaJrWs6C1q4QTYFTBKzQ+BgG3pJkjH+8lWuFJHRr0SyFc7F6tEiWgOLiKuVU4GHmi
-         QZqMmy+hJa6MlyZQvttW+nnSH5KZgs2xalN1/9+/zhGJUrOr8tdGcRcgHBc688AxNWBj
-         y3hjijQyYvNQlQ2HhuDH+pT361+Cno1m2OqfVznLp75dQy+J35guYoHEnVExd3h88Ulm
-         KGzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCViB6UUyK7k+CcG/Cw2UsW7UyzK/PY3SKaxw8hrPMf057WFCbSQZyJcbsg+gZM76eZSX/fAzBGLcPxW/iDtcM4d6DsxpE5M/eiSZpmu
-X-Gm-Message-State: AOJu0YykIScgSlJpGFIKQUkfaJIuqYl6lxIsmJ+viFLqxZtd3QvakJY9
-	sizFsRmI1Tmu+uYXBB1RTYts/LXys6k8/VzwOTa6YZMNO0y1c7Jt6zzi8WW4FBY=
-X-Google-Smtp-Source: AGHT+IHHEZTy14kxUGvJ5gNImCp6TDI/dbrQQgc1/QstVX1/NQsX4jr1qkKXl2r4xuXwszTqwSPmOA==
-X-Received: by 2002:a05:6512:10d6:b0:52c:df4c:92d8 with SMTP id 2adb3069b0e04-52e7b8decfdmr3570098e87.1.1719857995662;
-        Mon, 01 Jul 2024 11:19:55 -0700 (PDT)
+        bh=tfdgN7xrW/R6B0u6uKJvfbAFTMRYQPiCCKcLGsN0b/k=;
+        b=oxG86rI6HOrps/s9dX2jxRvNYZYbBwvdKbxolmSxfi3R+ITrQF/Yu8zKgH8sOiyY8G
+         /laKbqcXe109P8yDXvImsxVYRjYrXJdce/IUgppiysIHihsvP2d2ilEvIIHSDZLw8Uhg
+         4EiQ16nIeBIGQx2moUvQQqaSzTu7ZgZi/6ZMoUjNqZcFdeCwnqIXVeZE0/3MSV/keSXL
+         9ZV8pTkscgGPJLIqELk5V6zKGE8JFmS/greR4a0T6cN7mP+9XSCP9yNkiVQtaY3lQXUm
+         ER5OYJuTD9didj+zo8TeovWjuGim3fkaQQkipangbHQ21JKMEN3I82WYlalLuqZQfZcJ
+         G7iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVseSrvgb+w4B6qHp2Tl8nNiwSQPjARA8/WdADKNSRQsbjQeLfrBG6HmoA/y16fXk9HHXtVO977sGxghz50w52/CG2YXzFAMLmuFfJM
+X-Gm-Message-State: AOJu0Yx0t3K6u9yonyhwuy4rgTrQgU1XsitoqzXoMZk9HwOuOrV8ZZVy
+	zw+Ycjws10e/zq5imNVNAH45RQvwefcATp3ZghuREN1mRoZAhri6ihybIUt+/Og=
+X-Google-Smtp-Source: AGHT+IF/IGns73MSGhgQayWQ8eqWzFmQGyxaZK4i8j/fzIlop+C9LAet3Q0Imb3kBOEar2guYXGQZQ==
+X-Received: by 2002:a05:6512:158b:b0:52c:df8c:72cc with SMTP id 2adb3069b0e04-52e82703ecbmr4528869e87.43.1719857996371;
+        Mon, 01 Jul 2024 11:19:56 -0700 (PDT)
 Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab2f8aasm1516931e87.236.2024.07.01.11.19.54
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab2f8aasm1516931e87.236.2024.07.01.11.19.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Mon, 01 Jul 2024 11:19:55 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 01 Jul 2024 21:19:52 +0300
-Subject: [PATCH 1/2] drm/bridge: lt9611uxc: properly attach to a next
- bridge
+Date: Mon, 01 Jul 2024 21:19:53 +0300
+Subject: [PATCH 2/2] drm/bridge: lt9611uxc: drop support for
+ !DRM_BRIDGE_ATTACH_NO_CONNECTOR
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240701-lt9611uxc-next-bridge-v1-1-665bce5fdaaa@linaro.org>
+Message-Id: <20240701-lt9611uxc-next-bridge-v1-2-665bce5fdaaa@linaro.org>
 References: <20240701-lt9611uxc-next-bridge-v1-0-665bce5fdaaa@linaro.org>
 In-Reply-To: <20240701-lt9611uxc-next-bridge-v1-0-665bce5fdaaa@linaro.org>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -91,68 +91,170 @@ To: Andrzej Hajda <andrzej.hajda@intel.com>,
 Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
  Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1701;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5199;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=SKAFSPCa5VrynHGCh1AnVztZXyJngqx/+e1B3wfGBFA=;
- b=owGbwMvMwMXYbdNlx6SpcZXxtFoSQ1rTZ0/m8tkTF6eUXTLhCVpzbPpakTsdmmk+dSWFU9WO/
- DtayRDZyWjMwsDIxSArpsjiU9AyNWZTctiHHVPrYQaxMoFMYeDiFICJVN/kYJjf0zprvrSq0IRT
- J2I2hd1O9Vc6KFAj6yx3KGjKgZRp6u92sp+3sSnI5KoJ1dJiWHNhy9fqdreG7I51UucWnH3zre6
- 84v3iI/4/hBVSzl93nSRg2tTfHn5jvULRrFOxcZqr3thJmjzZd2eOzInFsZnhS9JT09d+MJmnYN
- l0R2HGRu3MndN86pwtDyspTjOpeuk/29H+p+xrPb9zEcU8TxrmLbxb6+KdocQ069wV2+t5kW5e7
- Lbn9S5Km69uuSvVdZS/UmGx4n2nBx/cZjh91lXWkktmDXi5TEXu4HFHwZtZUlvTSrzdRfxFCk5u
- EHvo3eH0d++xk5LOW5w3/2PfeZBvJyv7lVJvB3+Ve//8AA==
+ bh=3vwogvWVjSEg2amSgBHvcpUf/GAVj6civXHWgqF082c=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmgvNKam6DiSkAgqx8cwxy8Xd9qmzmIt1gy9F02
+ cFc/pcs7BmJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZoLzSgAKCRCLPIo+Aiko
+ 1Xl0B/4rSGml/IY3ZJBGwK+3Ms6wCuiID9KbblxrxP5BkNnx8jdeAa01ihU0hkmqOMxPYdaItow
+ M5i7nPuQmzIT1UOUeojlJ22FZyEg+r+8BcK01uk45vuio2bZGO3rRXecpP/I3LdAWQKBXnqyZmO
+ E45pTHkzEkR9bseNlAYGPlMvh11LdL8yGORx6hzp3V8+CLjhhwGtynGfEgOqte6kJ2FxzW0Rjx8
+ XLP681u4zEqWQFR4HJqSYCW+l9lZtxr/cI5aWTJWWmBal0R9kqvjy4PwAlZWt/MRTOMwMN9TYWM
+ QE3HZ3qTAfJSW9ceP/r6m1aya/u46mvwEsiQEX2dRcLN1nWf
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-If there is a next bridge in the OF graph don't let it be ignored.
-Attach the next bridge to the chain.
+Having no in-kernel devices that use !DRM_BRIDGE_ATTACH_NO_CONNECTOR
+mode for the Lontium LT9611UXC bridge, drop the in-bridge implementation
+of the drm_connector.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/gpu/drm/bridge/lontium-lt9611uxc.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/bridge/lontium-lt9611uxc.c | 104 +++--------------------------
+ 1 file changed, 9 insertions(+), 95 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/lontium-lt9611uxc.c b/drivers/gpu/drm/bridge/lontium-lt9611uxc.c
-index 4e802b54a1cb..4d379d0d24d9 100644
+index 4d379d0d24d9..4d1d40e1f1b4 100644
 --- a/drivers/gpu/drm/bridge/lontium-lt9611uxc.c
 +++ b/drivers/gpu/drm/bridge/lontium-lt9611uxc.c
-@@ -23,6 +23,7 @@
- #include <drm/drm_bridge.h>
- #include <drm/drm_edid.h>
- #include <drm/drm_mipi_dsi.h>
-+#include <drm/drm_of.h>
- #include <drm/drm_print.h>
- #include <drm/drm_probe_helper.h>
- 
-@@ -34,6 +35,7 @@
- struct lt9611uxc {
+@@ -36,7 +36,6 @@ struct lt9611uxc {
  	struct device *dev;
  	struct drm_bridge bridge;
-+	struct drm_bridge *next_bridge;
- 	struct drm_connector connector;
+ 	struct drm_bridge *next_bridge;
+-	struct drm_connector connector;
  
  	struct regmap *regmap;
-@@ -358,6 +360,11 @@ static int lt9611uxc_bridge_attach(struct drm_bridge *bridge,
- 	struct lt9611uxc *lt9611uxc = bridge_to_lt9611uxc(bridge);
- 	int ret;
- 
-+	ret = drm_bridge_attach(bridge->encoder, lt9611uxc->next_bridge,
-+				 bridge, flags | DRM_BRIDGE_ATTACH_NO_CONNECTOR);
-+	if (ret)
-+		return ret;
-+
- 	if (!(flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR)) {
- 		ret = lt9611uxc_connector_init(bridge, lt9611uxc);
- 		if (ret < 0)
-@@ -525,7 +532,7 @@ static int lt9611uxc_parse_dt(struct device *dev,
- 
- 	lt9611uxc->dsi1_node = of_graph_get_remote_node(dev->of_node, 1, -1);
- 
--	return 0;
-+	return drm_of_find_panel_or_bridge(dev->of_node, 2, -1, NULL, &lt9611uxc->next_bridge);
+ 	/* Protects all accesses to registers by stopping the on-chip MCU */
+@@ -122,11 +121,6 @@ static struct lt9611uxc *bridge_to_lt9611uxc(struct drm_bridge *bridge)
+ 	return container_of(bridge, struct lt9611uxc, bridge);
  }
  
- static int lt9611uxc_gpio_init(struct lt9611uxc *lt9611uxc)
+-static struct lt9611uxc *connector_to_lt9611uxc(struct drm_connector *connector)
+-{
+-	return container_of(connector, struct lt9611uxc, connector);
+-}
+-
+ static void lt9611uxc_lock(struct lt9611uxc *lt9611uxc)
+ {
+ 	mutex_lock(&lt9611uxc->ocm_lock);
+@@ -173,20 +167,14 @@ static void lt9611uxc_hpd_work(struct work_struct *work)
+ 	struct lt9611uxc *lt9611uxc = container_of(work, struct lt9611uxc, work);
+ 	bool connected;
+ 
+-	if (lt9611uxc->connector.dev) {
+-		if (lt9611uxc->connector.dev->mode_config.funcs)
+-			drm_kms_helper_hotplug_event(lt9611uxc->connector.dev);
+-	} else {
+-
+-		mutex_lock(&lt9611uxc->ocm_lock);
+-		connected = lt9611uxc->hdmi_connected;
+-		mutex_unlock(&lt9611uxc->ocm_lock);
++	mutex_lock(&lt9611uxc->ocm_lock);
++	connected = lt9611uxc->hdmi_connected;
++	mutex_unlock(&lt9611uxc->ocm_lock);
+ 
+-		drm_bridge_hpd_notify(&lt9611uxc->bridge,
+-				      connected ?
+-				      connector_status_connected :
+-				      connector_status_disconnected);
+-	}
++	drm_bridge_hpd_notify(&lt9611uxc->bridge,
++			      connected ?
++			      connector_status_connected :
++			      connector_status_disconnected);
+ }
+ 
+ static void lt9611uxc_reset(struct lt9611uxc *lt9611uxc)
+@@ -291,87 +279,13 @@ static struct mipi_dsi_device *lt9611uxc_attach_dsi(struct lt9611uxc *lt9611uxc,
+ 	return dsi;
+ }
+ 
+-static int lt9611uxc_connector_get_modes(struct drm_connector *connector)
+-{
+-	struct lt9611uxc *lt9611uxc = connector_to_lt9611uxc(connector);
+-	const struct drm_edid *drm_edid;
+-	int count;
+-
+-	drm_edid = drm_bridge_edid_read(&lt9611uxc->bridge, connector);
+-	drm_edid_connector_update(connector, drm_edid);
+-	count = drm_edid_connector_add_modes(connector);
+-	drm_edid_free(drm_edid);
+-
+-	return count;
+-}
+-
+-static enum drm_connector_status lt9611uxc_connector_detect(struct drm_connector *connector,
+-							    bool force)
+-{
+-	struct lt9611uxc *lt9611uxc = connector_to_lt9611uxc(connector);
+-
+-	return lt9611uxc->bridge.funcs->detect(&lt9611uxc->bridge);
+-}
+-
+-static enum drm_mode_status lt9611uxc_connector_mode_valid(struct drm_connector *connector,
+-							   struct drm_display_mode *mode)
+-{
+-	struct lt9611uxc_mode *lt9611uxc_mode = lt9611uxc_find_mode(mode);
+-
+-	return lt9611uxc_mode ? MODE_OK : MODE_BAD;
+-}
+-
+-static const struct drm_connector_helper_funcs lt9611uxc_bridge_connector_helper_funcs = {
+-	.get_modes = lt9611uxc_connector_get_modes,
+-	.mode_valid = lt9611uxc_connector_mode_valid,
+-};
+-
+-static const struct drm_connector_funcs lt9611uxc_bridge_connector_funcs = {
+-	.fill_modes = drm_helper_probe_single_connector_modes,
+-	.detect = lt9611uxc_connector_detect,
+-	.destroy = drm_connector_cleanup,
+-	.reset = drm_atomic_helper_connector_reset,
+-	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
+-	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+-};
+-
+-static int lt9611uxc_connector_init(struct drm_bridge *bridge, struct lt9611uxc *lt9611uxc)
+-{
+-	int ret;
+-
+-	lt9611uxc->connector.polled = DRM_CONNECTOR_POLL_HPD;
+-
+-	drm_connector_helper_add(&lt9611uxc->connector,
+-				 &lt9611uxc_bridge_connector_helper_funcs);
+-	ret = drm_connector_init(bridge->dev, &lt9611uxc->connector,
+-				 &lt9611uxc_bridge_connector_funcs,
+-				 DRM_MODE_CONNECTOR_HDMIA);
+-	if (ret) {
+-		DRM_ERROR("Failed to initialize connector with drm\n");
+-		return ret;
+-	}
+-
+-	return drm_connector_attach_encoder(&lt9611uxc->connector, bridge->encoder);
+-}
+-
+ static int lt9611uxc_bridge_attach(struct drm_bridge *bridge,
+ 				   enum drm_bridge_attach_flags flags)
+ {
+ 	struct lt9611uxc *lt9611uxc = bridge_to_lt9611uxc(bridge);
+-	int ret;
+-
+-	ret = drm_bridge_attach(bridge->encoder, lt9611uxc->next_bridge,
+-				 bridge, flags | DRM_BRIDGE_ATTACH_NO_CONNECTOR);
+-	if (ret)
+-		return ret;
+ 
+-	if (!(flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR)) {
+-		ret = lt9611uxc_connector_init(bridge, lt9611uxc);
+-		if (ret < 0)
+-			return ret;
+-	}
+-
+-	return 0;
++	return drm_bridge_attach(bridge->encoder, lt9611uxc->next_bridge,
++				 bridge, flags);
+ }
+ 
+ static enum drm_mode_status
 
 -- 
 2.39.2
