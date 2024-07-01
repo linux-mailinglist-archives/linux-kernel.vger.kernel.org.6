@@ -1,585 +1,203 @@
-Return-Path: <linux-kernel+bounces-236396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0319091E1B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:00:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5053191E1BA
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:00:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59908287105
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:00:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8416B2274E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:00:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982CA15FA83;
-	Mon,  1 Jul 2024 13:58:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7911166304;
+	Mon,  1 Jul 2024 13:58:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="MNC7Aq6Q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sCa34a/q"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415E316088F;
-	Mon,  1 Jul 2024 13:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1061E15EFD7;
+	Mon,  1 Jul 2024 13:58:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719842315; cv=none; b=QA6vZjzx5ZmjejW+fWc4+GfN4ceSTy0dTCJmmOXujgVzXlZVDiHYkvPDOlPSTnLFaNOHS+FgsVqbdAvNym6uXr2HrvZ4wC+9WPXYknfSOZsoFTqeGZ3XZ0uh3/mR9cOjs9EaPzzOPtPVBZDEX7zbhcfkUQ7hE93xbIMsVI37zLY=
+	t=1719842326; cv=none; b=kz1Qsa/zMEI1dMtJGeIXPLOzmNMgdnuP1JOtrP3I4bSaFIffEW/rH0Zvpx6K/BldytdvFLUCQBNTVU88+JiKse6188LnKN+R3F2R33yyOUHAxwQBphI/Yj/cZsF54CwkaHOJxhkhOglnjSQffZpLP2YnBXWE5uzPlaeS/X0QzDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719842315; c=relaxed/simple;
-	bh=hIYliNLqZI2ldS70zWMwb+m8+iUUvJJcHCXl5wmJquM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=o/os7dOunZEbdTWS9JPBrNaWiRMrJyWvXoenumXznphwAXsdSkLmwUAxlIKOYNT2gjUOPJUpfL4wORZ4pewIcYokurIkqGlHGp43DV7UrGH53a9orRSLVo741tIYEuu8L7gEHLdeNgVcWVmjINX5aGWKfODkpNH3mzGjGXxVf50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=MNC7Aq6Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F7D6C32786;
-	Mon,  1 Jul 2024 13:58:33 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="MNC7Aq6Q"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1719842312;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oxgtpEvzDDXyCwVnCoI3IOMUP2jkl9OOIZCyMvex310=;
-	b=MNC7Aq6Q3STAfWc/0ozEOXED7qbNo+QDXon7PPphGoZhW2X7fqYIHZNs06StZ3HX44QW5R
-	I1Qak+I2AaQAGwMKzm6vgBGgN1cqxKb6ttpZw6LEvxBw3x4zxQ2sqZTzm1eNINE8s+Efx2
-	/Qz6qXlnTHrDNXMWPZbWCLzQrEKJoeE=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id f4843f23 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Mon, 1 Jul 2024 13:58:32 +0000 (UTC)
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	tglx@linutronix.de
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
-	linux-crypto@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	x86@kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
-	Carlos O'Donell <carlos@redhat.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Jann Horn <jannh@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	David Hildenbrand <dhildenb@redhat.com>,
-	Samuel Neves <sneves@dei.uc.pt>
-Subject: [PATCH v19 5/5] x86: vdso: Wire up getrandom() vDSO implementation
-Date: Mon,  1 Jul 2024 15:57:59 +0200
-Message-ID: <20240701135801.3698-6-Jason@zx2c4.com>
-In-Reply-To: <20240701135801.3698-1-Jason@zx2c4.com>
-References: <20240701135801.3698-1-Jason@zx2c4.com>
+	s=arc-20240116; t=1719842326; c=relaxed/simple;
+	bh=VlYW+BVRr/2wR3yn9dKsp1GvB5pZ/gJsdlh3v7mNgNQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GKIA658+wK1909pT1/H9oweotXwKac2mVHkE65cH0B7j2Ig0As4jk9GmsStq+96IrmRgTfn2wF8OaFQqrI72QsHMULGrcJVYlhfOf8OcQ4biddPszvTtLbbR0/AQe2JDIEPdJqEufl3jjqiA/rAMsGWpdw3IFl4wNulQ1ZH22+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sCa34a/q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2C0FC4AF0A;
+	Mon,  1 Jul 2024 13:58:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719842325;
+	bh=VlYW+BVRr/2wR3yn9dKsp1GvB5pZ/gJsdlh3v7mNgNQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sCa34a/qdJvYWcajMBbpHf1rUBXPV8M31Y/m6W6pDSxBp/BQN1u40rg0iq5bk/Le8
+	 orPJ3ALUY0f4N3TIb7UhKwLSN+GJq2QDHkKh5ru85nk36b+YAjW82s2IGIArx0NngQ
+	 SBxfkb2Jd1yeNPdlIX3MhwVWTDEEUT454n18TPjNlrOtrNNlT+M81WKU6UOHAHIQ7S
+	 obF/PBNv+P2tskoAm5FKNTDGx7keMpSS4k+n5M+vAdg+WVcsWhlyXnINg6SrHWdp+l
+	 jvoDBNvt1mCHjJTN3LMLcu+1RVz3vB140YbeTiVL9//yqfcHVKsn3a6Zk1TSCwS5A6
+	 jMRAmmFScPTWA==
+Date: Mon, 1 Jul 2024 14:58:36 +0100
+From: Conor Dooley <conor@kernel.org>
+To: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>
+Cc: Charlie Jenkins <charlie@rivosinc.com>,
+	Jesse Taube <jesse@rivosinc.com>, linux-riscv@lists.infradead.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Evan Green <evan@rivosinc.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Xiao Wang <xiao.w.wang@intel.com>, Andy Chiu <andy.chiu@sifive.com>,
+	Eric Biggers <ebiggers@google.com>,
+	Greentime Hu <greentime.hu@sifive.com>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Costa Shulyupin <costa.shul@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>, Anup Patel <apatel@ventanamicro.com>,
+	Zong Li <zong.li@sifive.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Ben Dooks <ben.dooks@codethink.co.uk>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Erick Archer <erick.archer@gmx.com>,
+	Joel Granados <j.granados@samsung.com>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 4/8] RISC-V: Check Zicclsm to set unaligned access
+ speed
+Message-ID: <20240701-ajar-italicize-9e3d9b8a0264@spud>
+References: <20240625005001.37901-1-jesse@rivosinc.com>
+ <20240625005001.37901-5-jesse@rivosinc.com>
+ <20240626-march-abreast-83414e844250@spud>
+ <Zn3XrLRl/yazsoZe@ghost>
+ <43941f48-9905-4b25-89ef-6ad75bf1a123@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="EnTioEvMPr9HA3hF"
+Content-Disposition: inline
+In-Reply-To: <43941f48-9905-4b25-89ef-6ad75bf1a123@rivosinc.com>
 
-Hook up the generic vDSO implementation to the x86 vDSO data page. Since
-the existing vDSO infrastructure is heavily based on the timekeeping
-functionality, which works over arrays of bases, a new macro is
-introduced for vvars that are not arrays.
 
-The vDSO function requires a ChaCha20 implementation that does not write
-to the stack, yet can still do an entire ChaCha20 permutation, so
-provide this using SSE2, since this is userland code that must work on
-all x86-64 processors. There's a simple test for this code as well.
+--EnTioEvMPr9HA3hF
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Samuel Neves <sneves@dei.uc.pt> # for vgetrandom-chacha.S
-Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
----
- arch/x86/Kconfig                              |   1 +
- arch/x86/entry/vdso/Makefile                  |   3 +-
- arch/x86/entry/vdso/vdso.lds.S                |   2 +
- arch/x86/entry/vdso/vgetrandom-chacha.S       | 178 ++++++++++++++++++
- arch/x86/entry/vdso/vgetrandom.c              |  17 ++
- arch/x86/include/asm/vdso/getrandom.h         |  55 ++++++
- arch/x86/include/asm/vdso/vsyscall.h          |   2 +
- arch/x86/include/asm/vvar.h                   |  16 ++
- tools/testing/selftests/vDSO/.gitignore       |   1 +
- tools/testing/selftests/vDSO/Makefile         |  15 ++
- .../testing/selftests/vDSO/vdso_test_chacha.c |  43 +++++
- 11 files changed, 332 insertions(+), 1 deletion(-)
- create mode 100644 arch/x86/entry/vdso/vgetrandom-chacha.S
- create mode 100644 arch/x86/entry/vdso/vgetrandom.c
- create mode 100644 arch/x86/include/asm/vdso/getrandom.h
- create mode 100644 tools/testing/selftests/vDSO/vdso_test_chacha.c
+On Mon, Jul 01, 2024 at 09:15:09AM +0200, Cl=E9ment L=E9ger wrote:
+>=20
+>=20
+> On 27/06/2024 23:20, Charlie Jenkins wrote:
+> > On Wed, Jun 26, 2024 at 03:39:14PM +0100, Conor Dooley wrote:
+> >> On Mon, Jun 24, 2024 at 08:49:57PM -0400, Jesse Taube wrote:
+> >>> Check for Zicclsm before checking for unaligned access speed. This wi=
+ll
+> >>> greatly reduce the boot up time as finding the access speed is no lon=
+ger
+> >>> necessary.
+> >>>
+> >>> Signed-off-by: Jesse Taube <jesse@rivosinc.com>
+> >>> ---
+> >>> V2 -> V3:
+> >>>  - New patch split from previous patch
+> >>> ---
+> >>>  arch/riscv/kernel/unaligned_access_speed.c | 26 ++++++++++++++------=
+--
+> >>>  1 file changed, 17 insertions(+), 9 deletions(-)
+> >>>
+> >>> diff --git a/arch/riscv/kernel/unaligned_access_speed.c b/arch/riscv/=
+kernel/unaligned_access_speed.c
+> >>> index a9a6bcb02acf..329fd289b5c8 100644
+> >>> --- a/arch/riscv/kernel/unaligned_access_speed.c
+> >>> +++ b/arch/riscv/kernel/unaligned_access_speed.c
+> >>> @@ -259,23 +259,31 @@ static int check_unaligned_access_speed_all_cpu=
+s(void)
+> >>>  	kfree(bufs);
+> >>>  	return 0;
+> >>>  }
+> >>> +#else /* CONFIG_RISCV_PROBE_UNALIGNED_ACCESS */
+> >>> +static int check_unaligned_access_speed_all_cpus(void)
+> >>> +{
+> >>> +	return 0;
+> >>> +}
+> >>> +#endif
+> >>> =20
+> >>>  static int check_unaligned_access_all_cpus(void)
+> >>>  {
+> >>> -	bool all_cpus_emulated =3D check_unaligned_access_emulated_all_cpus=
+();
+> >>> +	bool all_cpus_emulated;
+> >>> +	int cpu;
+> >>> +
+> >>> +	if (riscv_has_extension_unlikely(RISCV_ISA_EXT_ZICCLSM)) {
+> >>> +		for_each_online_cpu(cpu) {
+> >>> +			per_cpu(misaligned_access_speed, cpu) =3D RISCV_HWPROBE_MISALIGNE=
+D_FAST;
+> >>
+> >> - const: zicclsm
+> >>   description:
+> >>     The standard Zicclsm extension for misaligned support for all regu=
+lar
+> >>     load and store instructions (including scalar and vector) but not =
+AMOs
+> >>     or other specialized forms of memory access. Defined in the
+> >>     RISC-V RVA Profiles Specification.=20
+> >>
+> >> Doesn't, unfortunately, say anywhere there that they're actually fast =
+:(
+> >=20
+> > Oh no! That is unfortunate that the ISA does not explicitly call that
+> > out, but I think that acceptable.
+> >=20
+> > If a vendor puts Zicclsm in their isa string, they should expect
+> > software to take advantage of misaligned accesses. FAST is our signal to
+> > tell software that they should emit misaligned accesses.
+>=20
+> AFAIK, Zicclsm is not even an ISA extension, simply a profile
+> specification which means that only the execution environment which
+> provides the profile support misaligned accesses (cf
+> https://lists.riscv.org/g/tech-profiles/message/56).
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 1d7122a1883e..9c98b7a88cc2 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -287,6 +287,7 @@ config X86
- 	select HAVE_UNSTABLE_SCHED_CLOCK
- 	select HAVE_USER_RETURN_NOTIFIER
- 	select HAVE_GENERIC_VDSO
-+	select VDSO_GETRANDOM			if X86_64
- 	select HOTPLUG_PARALLEL			if SMP && X86_64
- 	select HOTPLUG_SMT			if SMP
- 	select HOTPLUG_SPLIT_STARTUP		if SMP && X86_32
-diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
-index 215a1b202a91..c9216ac4fb1e 100644
---- a/arch/x86/entry/vdso/Makefile
-+++ b/arch/x86/entry/vdso/Makefile
-@@ -7,7 +7,7 @@
- include $(srctree)/lib/vdso/Makefile
- 
- # Files to link into the vDSO:
--vobjs-y := vdso-note.o vclock_gettime.o vgetcpu.o
-+vobjs-y := vdso-note.o vclock_gettime.o vgetcpu.o vgetrandom.o vgetrandom-chacha.o
- vobjs32-y := vdso32/note.o vdso32/system_call.o vdso32/sigreturn.o
- vobjs32-y += vdso32/vclock_gettime.o vdso32/vgetcpu.o
- vobjs-$(CONFIG_X86_SGX)	+= vsgx.o
-@@ -73,6 +73,7 @@ CFLAGS_REMOVE_vdso32/vclock_gettime.o = -pg
- CFLAGS_REMOVE_vgetcpu.o = -pg
- CFLAGS_REMOVE_vdso32/vgetcpu.o = -pg
- CFLAGS_REMOVE_vsgx.o = -pg
-+CFLAGS_REMOVE_vgetrandom.o = -pg
- 
- #
- # X32 processes use x32 vDSO to access 64bit kernel data.
-diff --git a/arch/x86/entry/vdso/vdso.lds.S b/arch/x86/entry/vdso/vdso.lds.S
-index e8c60ae7a7c8..0bab5f4af6d1 100644
---- a/arch/x86/entry/vdso/vdso.lds.S
-+++ b/arch/x86/entry/vdso/vdso.lds.S
-@@ -30,6 +30,8 @@ VERSION {
- #ifdef CONFIG_X86_SGX
- 		__vdso_sgx_enter_enclave;
- #endif
-+		getrandom;
-+		__vdso_getrandom;
- 	local: *;
- 	};
- }
-diff --git a/arch/x86/entry/vdso/vgetrandom-chacha.S b/arch/x86/entry/vdso/vgetrandom-chacha.S
-new file mode 100644
-index 000000000000..bcba5639b8ee
---- /dev/null
-+++ b/arch/x86/entry/vdso/vgetrandom-chacha.S
-@@ -0,0 +1,178 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2022-2024 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
-+ */
-+
-+#include <linux/linkage.h>
-+#include <asm/frame.h>
-+
-+.section	.rodata, "a"
-+.align 16
-+CONSTANTS:	.octa 0x6b20657479622d323320646e61707865
-+.text
-+
-+/*
-+ * Very basic SSE2 implementation of ChaCha20. Produces a given positive number
-+ * of blocks of output with a nonce of 0, taking an input key and 8-byte
-+ * counter. Importantly does not spill to the stack. Its arguments are:
-+ *
-+ *	rdi: output bytes
-+ *	rsi: 32-byte key input
-+ *	rdx: 8-byte counter input/output
-+ *	rcx: number of 64-byte blocks to write to output
-+ */
-+SYM_FUNC_START(__arch_chacha20_blocks_nostack)
-+
-+.set	output,		%rdi
-+.set	key,		%rsi
-+.set	counter,	%rdx
-+.set	nblocks,	%rcx
-+.set	i,		%al
-+/* xmm registers are *not* callee-save. */
-+.set	temp,		%xmm0
-+.set	state0,		%xmm1
-+.set	state1,		%xmm2
-+.set	state2,		%xmm3
-+.set	state3,		%xmm4
-+.set	copy0,		%xmm5
-+.set	copy1,		%xmm6
-+.set	copy2,		%xmm7
-+.set	copy3,		%xmm8
-+.set	one,		%xmm9
-+
-+	/* copy0 = "expand 32-byte k" */
-+	movaps		CONSTANTS(%rip),copy0
-+	/* copy1,copy2 = key */
-+	movups		0x00(key),copy1
-+	movups		0x10(key),copy2
-+	/* copy3 = counter || zero nonce */
-+	movq		0x00(counter),copy3
-+	/* one = 1 || 0 */
-+	movq		$1,%rax
-+	movq		%rax,one
-+
-+.Lblock:
-+	/* state0,state1,state2,state3 = copy0,copy1,copy2,copy3 */
-+	movdqa		copy0,state0
-+	movdqa		copy1,state1
-+	movdqa		copy2,state2
-+	movdqa		copy3,state3
-+
-+	movb		$10,i
-+.Lpermute:
-+	/* state0 += state1, state3 = rotl32(state3 ^ state0, 16) */
-+	paddd		state1,state0
-+	pxor		state0,state3
-+	movdqa		state3,temp
-+	pslld		$16,temp
-+	psrld		$16,state3
-+	por		temp,state3
-+
-+	/* state2 += state3, state1 = rotl32(state1 ^ state2, 12) */
-+	paddd		state3,state2
-+	pxor		state2,state1
-+	movdqa		state1,temp
-+	pslld		$12,temp
-+	psrld		$20,state1
-+	por		temp,state1
-+
-+	/* state0 += state1, state3 = rotl32(state3 ^ state0, 8) */
-+	paddd		state1,state0
-+	pxor		state0,state3
-+	movdqa		state3,temp
-+	pslld		$8,temp
-+	psrld		$24,state3
-+	por		temp,state3
-+
-+	/* state2 += state3, state1 = rotl32(state1 ^ state2, 7) */
-+	paddd		state3,state2
-+	pxor		state2,state1
-+	movdqa		state1,temp
-+	pslld		$7,temp
-+	psrld		$25,state1
-+	por		temp,state1
-+
-+	/* state1[0,1,2,3] = state1[1,2,3,0] */
-+	pshufd		$0x39,state1,state1
-+	/* state2[0,1,2,3] = state2[2,3,0,1] */
-+	pshufd		$0x4e,state2,state2
-+	/* state3[0,1,2,3] = state3[3,0,1,2] */
-+	pshufd		$0x93,state3,state3
-+
-+	/* state0 += state1, state3 = rotl32(state3 ^ state0, 16) */
-+	paddd		state1,state0
-+	pxor		state0,state3
-+	movdqa		state3,temp
-+	pslld		$16,temp
-+	psrld		$16,state3
-+	por		temp,state3
-+
-+	/* state2 += state3, state1 = rotl32(state1 ^ state2, 12) */
-+	paddd		state3,state2
-+	pxor		state2,state1
-+	movdqa		state1,temp
-+	pslld		$12,temp
-+	psrld		$20,state1
-+	por		temp,state1
-+
-+	/* state0 += state1, state3 = rotl32(state3 ^ state0, 8) */
-+	paddd		state1,state0
-+	pxor		state0,state3
-+	movdqa		state3,temp
-+	pslld		$8,temp
-+	psrld		$24,state3
-+	por		temp,state3
-+
-+	/* state2 += state3, state1 = rotl32(state1 ^ state2, 7) */
-+	paddd		state3,state2
-+	pxor		state2,state1
-+	movdqa		state1,temp
-+	pslld		$7,temp
-+	psrld		$25,state1
-+	por		temp,state1
-+
-+	/* state1[0,1,2,3] = state1[3,0,1,2] */
-+	pshufd		$0x93,state1,state1
-+	/* state2[0,1,2,3] = state2[2,3,0,1] */
-+	pshufd		$0x4e,state2,state2
-+	/* state3[0,1,2,3] = state3[1,2,3,0] */
-+	pshufd		$0x39,state3,state3
-+
-+	decb		i
-+	jnz		.Lpermute
-+
-+	/* output0 = state0 + copy0 */
-+	paddd		copy0,state0
-+	movups		state0,0x00(output)
-+	/* output1 = state1 + copy1 */
-+	paddd		copy1,state1
-+	movups		state1,0x10(output)
-+	/* output2 = state2 + copy2 */
-+	paddd		copy2,state2
-+	movups		state2,0x20(output)
-+	/* output3 = state3 + copy3 */
-+	paddd		copy3,state3
-+	movups		state3,0x30(output)
-+
-+	/* ++copy3.counter */
-+	paddq		one,copy3
-+
-+	/* output += 64, --nblocks */
-+	addq		$64,output
-+	decq		nblocks
-+	jnz		.Lblock
-+
-+	/* counter = copy3.counter */
-+	movq		copy3,0x00(counter)
-+
-+	/* Zero out the potentially sensitive regs, in case nothing uses these again. */
-+	pxor		state0,state0
-+	pxor		state1,state1
-+	pxor		state2,state2
-+	pxor		state3,state3
-+	pxor		copy1,copy1
-+	pxor		copy2,copy2
-+	pxor		temp,temp
-+
-+	ret
-+SYM_FUNC_END(__arch_chacha20_blocks_nostack)
-diff --git a/arch/x86/entry/vdso/vgetrandom.c b/arch/x86/entry/vdso/vgetrandom.c
-new file mode 100644
-index 000000000000..52d3c7faae2e
---- /dev/null
-+++ b/arch/x86/entry/vdso/vgetrandom.c
-@@ -0,0 +1,17 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2022-2024 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
-+ */
-+#include <linux/types.h>
-+
-+#include "../../../../lib/vdso/getrandom.c"
-+
-+ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len);
-+
-+ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len)
-+{
-+	return __cvdso_getrandom(buffer, len, flags, opaque_state, opaque_len);
-+}
-+
-+ssize_t getrandom(void *, size_t, unsigned int, void *, size_t)
-+	__attribute__((weak, alias("__vdso_getrandom")));
-diff --git a/arch/x86/include/asm/vdso/getrandom.h b/arch/x86/include/asm/vdso/getrandom.h
-new file mode 100644
-index 000000000000..b96e674cafde
---- /dev/null
-+++ b/arch/x86/include/asm/vdso/getrandom.h
-@@ -0,0 +1,55 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2022-2024 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
-+ */
-+#ifndef __ASM_VDSO_GETRANDOM_H
-+#define __ASM_VDSO_GETRANDOM_H
-+
-+#ifndef __ASSEMBLY__
-+
-+#include <asm/unistd.h>
-+#include <asm/vvar.h>
-+
-+/**
-+ * getrandom_syscall - Invoke the getrandom() syscall.
-+ * @buffer:	Destination buffer to fill with random bytes.
-+ * @len:	Size of @buffer in bytes.
-+ * @flags:	Zero or more GRND_* flags.
-+ * Returns:	The number of random bytes written to @buffer, or a negative value indicating an error.
-+ */
-+static __always_inline ssize_t getrandom_syscall(void *buffer, size_t len, unsigned int flags)
-+{
-+	long ret;
-+
-+	asm ("syscall" : "=a" (ret) :
-+	     "0" (__NR_getrandom), "D" (buffer), "S" (len), "d" (flags) :
-+	     "rcx", "r11", "memory");
-+
-+	return ret;
-+}
-+
-+#define __vdso_rng_data (VVAR(_vdso_rng_data))
-+
-+static __always_inline const struct vdso_rng_data *__arch_get_vdso_rng_data(void)
-+{
-+	if (IS_ENABLED(CONFIG_TIME_NS) && __vdso_data->clock_mode == VDSO_CLOCKMODE_TIMENS)
-+		return (void *)&__vdso_rng_data + ((void *)&__timens_vdso_data - (void *)&__vdso_data);
-+	return &__vdso_rng_data;
-+}
-+
-+/**
-+ * __arch_chacha20_blocks_nostack - Generate ChaCha20 stream without using the stack.
-+ * @dst_bytes:	Destination buffer to hold @nblocks * 64 bytes of output.
-+ * @key:	32-byte input key.
-+ * @counter:	8-byte counter, read on input and updated on return.
-+ * @nblocks:	Number of blocks to generate.
-+ *
-+ * Generates a given positive number of blocks of ChaCha20 output with nonce=0, and does not write
-+ * to any stack or memory outside of the parameters passed to it, in order to mitigate stack data
-+ * leaking into forked child processes.
-+ */
-+extern void __arch_chacha20_blocks_nostack(u8 *dst_bytes, const u32 *key, u32 *counter, size_t nblocks);
-+
-+#endif /* !__ASSEMBLY__ */
-+
-+#endif /* __ASM_VDSO_GETRANDOM_H */
-diff --git a/arch/x86/include/asm/vdso/vsyscall.h b/arch/x86/include/asm/vdso/vsyscall.h
-index be199a9b2676..71c56586a22f 100644
---- a/arch/x86/include/asm/vdso/vsyscall.h
-+++ b/arch/x86/include/asm/vdso/vsyscall.h
-@@ -11,6 +11,8 @@
- #include <asm/vvar.h>
- 
- DEFINE_VVAR(struct vdso_data, _vdso_data);
-+DEFINE_VVAR_SINGLE(struct vdso_rng_data, _vdso_rng_data);
-+
- /*
-  * Update the vDSO data page to keep in sync with kernel timekeeping.
-  */
-diff --git a/arch/x86/include/asm/vvar.h b/arch/x86/include/asm/vvar.h
-index 183e98e49ab9..9d9af37f7cab 100644
---- a/arch/x86/include/asm/vvar.h
-+++ b/arch/x86/include/asm/vvar.h
-@@ -26,6 +26,8 @@
-  */
- #define DECLARE_VVAR(offset, type, name) \
- 	EMIT_VVAR(name, offset)
-+#define DECLARE_VVAR_SINGLE(offset, type, name) \
-+	EMIT_VVAR(name, offset)
- 
- #else
- 
-@@ -37,6 +39,10 @@ extern char __vvar_page;
- 	extern type timens_ ## name[CS_BASES]				\
- 	__attribute__((visibility("hidden")));				\
- 
-+#define DECLARE_VVAR_SINGLE(offset, type, name)				\
-+	extern type vvar_ ## name					\
-+	__attribute__((visibility("hidden")));				\
-+
- #define VVAR(name) (vvar_ ## name)
- #define TIMENS(name) (timens_ ## name)
- 
-@@ -44,12 +50,22 @@ extern char __vvar_page;
- 	type name[CS_BASES]						\
- 	__attribute__((section(".vvar_" #name), aligned(16))) __visible
- 
-+#define DEFINE_VVAR_SINGLE(type, name)					\
-+	type name							\
-+	__attribute__((section(".vvar_" #name), aligned(16))) __visible
-+
- #endif
- 
- /* DECLARE_VVAR(offset, type, name) */
- 
- DECLARE_VVAR(128, struct vdso_data, _vdso_data)
- 
-+#if !defined(_SINGLE_DATA)
-+#define _SINGLE_DATA
-+DECLARE_VVAR_SINGLE(640, struct vdso_rng_data, _vdso_rng_data)
-+#endif
-+
- #undef DECLARE_VVAR
-+#undef DECLARE_VVAR_SINGLE
- 
- #endif
-diff --git a/tools/testing/selftests/vDSO/.gitignore b/tools/testing/selftests/vDSO/.gitignore
-index 7dbfdec53f3d..30d5c8f0e5c7 100644
---- a/tools/testing/selftests/vDSO/.gitignore
-+++ b/tools/testing/selftests/vDSO/.gitignore
-@@ -7,3 +7,4 @@ vdso_test_gettimeofday
- vdso_test_getcpu
- vdso_standalone_test_x86
- vdso_test_getrandom
-+vdso_test_chacha
-diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
-index fd7c29d9814b..f828e0a9d498 100644
---- a/tools/testing/selftests/vDSO/Makefile
-+++ b/tools/testing/selftests/vDSO/Makefile
-@@ -3,6 +3,7 @@ include ../lib.mk
- 
- uname_M := $(shell uname -m 2>/dev/null || echo not)
- ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
-+SODIUM := $(shell pkg-config --libs libsodium 2>/dev/null)
- 
- TEST_GEN_PROGS := $(OUTPUT)/vdso_test_gettimeofday $(OUTPUT)/vdso_test_getcpu
- TEST_GEN_PROGS += $(OUTPUT)/vdso_test_abi
-@@ -12,10 +13,18 @@ TEST_GEN_PROGS += $(OUTPUT)/vdso_standalone_test_x86
- endif
- TEST_GEN_PROGS += $(OUTPUT)/vdso_test_correctness
- TEST_GEN_PROGS += $(OUTPUT)/vdso_test_getrandom
-+ifeq ($(uname_M),x86_64)
-+ifneq ($(SODIUM),)
-+TEST_GEN_PROGS += $(OUTPUT)/vdso_test_chacha
-+endif
-+endif
- 
- CFLAGS := -std=gnu99
- CFLAGS_vdso_standalone_test_x86 := -nostdlib -fno-asynchronous-unwind-tables -fno-stack-protector
- CFLAGS_vdso_test_getrandom := -isystem $(top_srcdir)/tools/include -isystem $(top_srcdir)/include/uapi
-+CFLAGS_vdso_test_chacha := $(SODIUM) -idirafter $(top_srcdir)/include -idirafter \
-+			   $(top_srcdir)/arch/$(ARCH)/include -idirafter include \
-+			   -D__ASSEMBLY__ -DBULID_VDSO -DCONFIG_FUNCTION_ALIGNMENT=0 -Wa,--noexecstack
- LDFLAGS_vdso_test_correctness := -ldl
- ifeq ($(CONFIG_X86_32),y)
- LDLIBS += -lgcc_s
-@@ -37,3 +46,9 @@ $(OUTPUT)/vdso_test_correctness: vdso_test_correctness.c
- 		$(LDFLAGS_vdso_test_correctness)
- $(OUTPUT)/vdso_test_getrandom: CFLAGS += $(CFLAGS_vdso_test_getrandom)
- $(OUTPUT)/vdso_test_getrandom: parse_vdso.c
-+$(OUTPUT)/vdso_test_chacha: CFLAGS += $(CFLAGS_vdso_test_chacha)
-+$(OUTPUT)/vdso_test_chacha: $(top_srcdir)/arch/$(ARCH)/entry/vdso/vgetrandom-chacha.S
-+$(OUTPUT)/vdso_test_chacha: include/asm/rwonce.h
-+include/asm/rwonce.h:
-+	mkdir -p include/asm
-+	touch $@
-diff --git a/tools/testing/selftests/vDSO/vdso_test_chacha.c b/tools/testing/selftests/vDSO/vdso_test_chacha.c
-new file mode 100644
-index 000000000000..e38f44e5f803
---- /dev/null
-+++ b/tools/testing/selftests/vDSO/vdso_test_chacha.c
-@@ -0,0 +1,43 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2022-2024 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
-+ */
-+
-+#include <sodium/crypto_stream_chacha20.h>
-+#include <sys/random.h>
-+#include <string.h>
-+#include <stdint.h>
-+#include "../kselftest.h"
-+
-+extern void __arch_chacha20_blocks_nostack(uint8_t *dst_bytes, const uint8_t *key, uint32_t *counter, size_t nblocks);
-+
-+int main(int argc, char *argv[])
-+{
-+	enum { TRIALS = 1000, BLOCKS = 128, BLOCK_SIZE = 64 };
-+	static const uint8_t nonce[8] = { 0 };
-+	uint32_t counter[2];
-+	uint8_t key[32];
-+	uint8_t output1[BLOCK_SIZE * BLOCKS], output2[BLOCK_SIZE * BLOCKS];
-+
-+	ksft_print_header();
-+	ksft_set_plan(1);
-+
-+	for (unsigned int trial = 0; trial < TRIALS; ++trial) {
-+		if (getrandom(key, sizeof(key), 0) != sizeof(key)) {
-+			printf("getrandom() failed!\n");
-+			return KSFT_SKIP;
-+		}
-+		crypto_stream_chacha20(output1, sizeof(output1), nonce, key);
-+		for (unsigned int split = 0; split < BLOCKS; ++split) {
-+			memset(output2, 'X', sizeof(output2));
-+			memset(counter, 0, sizeof(counter));
-+			if (split)
-+				__arch_chacha20_blocks_nostack(output2, key, counter, split);
-+			__arch_chacha20_blocks_nostack(output2 + split * BLOCK_SIZE, key, counter, BLOCKS - split);
-+			if (memcmp(output1, output2, sizeof(output1)))
-+				return KSFT_FAIL;
-+		}
-+	}
-+	ksft_test_result_pass("chacha: PASS\n");
-+	return KSFT_PASS;
-+}
--- 
-2.45.2
+I dunno, the specification status page used to describe it as an
+extension:
+https://wiki.riscv.org/display/HOME/Specification+Status+-+Historical
+My understanding was that these could be considered extensions, just
+like we are considering svade to be one.
 
+> . I don't think we
+> can extrapolate that the misaligned accesses will be fast at all.
+
+That is my opinion on it too. If it doesn't say "fast" and give a
+definition for what that means in the binding, then we can't assume that
+it is fast. I'm also wary of extending definitions of extensions in the
+binding, because a) I am 90% sure that people writing devicetrees don't
+care and b) it'd be a potential difference between DT and ACPI without a
+real justification (unlike the zkr or svade/svadu situations).
+
+> > This allows for a generic kernel, like the one a distro would compile, =
+to
+> > skip the probing when booting on a system that explicitly called out
+> > that the hardware supports misaligned accesses.
+
+--EnTioEvMPr9HA3hF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoK2DAAKCRB4tDGHoIJi
+0jMlAQDXSIyO1eIrZ/BuGBKJHLB7xCoNnG0MF/2pC2M8BmRSFgD/Z0rIDWJaRF7z
+bgl9+NyRjblrbywgRXV4IPYh3mhDEww=
+=/nDm
+-----END PGP SIGNATURE-----
+
+--EnTioEvMPr9HA3hF--
 
