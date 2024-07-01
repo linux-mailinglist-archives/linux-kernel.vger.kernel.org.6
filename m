@@ -1,218 +1,327 @@
-Return-Path: <linux-kernel+bounces-235477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ADC591D591
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 02:51:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB40D91D594
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 02:59:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C19152811B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 00:51:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BAB428115E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 00:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F7D4A07;
-	Mon,  1 Jul 2024 00:51:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 039964C6B;
+	Mon,  1 Jul 2024 00:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="RdOfQywN"
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F7NHfQ7H"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C1415D1
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 00:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B5714A06
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 00:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719795079; cv=none; b=o+qEkFfm1RY85US770/Cy4RkpM3gBIAZ1P0Md6E7Cv2AkLwMLhbB6BPiQv5SpvcOKEjBOd0NfVzrcDm5c/3qL/NWxyza2VcEDTUckXciXhv7zB2Pq7OOHsdDdE5Ib9jafCg26v+P/5hNNj+ssyNItmS8IwiRCA4bk2LhVA5wwE8=
+	t=1719795540; cv=none; b=lgzBkNc3uPu6sSn4saJP1ku6KRX2Pgsk1j/tKkndum5+09fCeK45MUce7/+AEE8r6MzOBE6Mrirsfh9vB0ZZdh8m6D3vwPpicdSxwJ5QnwG1nQmi9nPNGCk0PEtGOqoWddJrQLvAxG+Z/vwXYxhn0w+rnohk1/ylR15W/ld7n9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719795079; c=relaxed/simple;
-	bh=hr9gdzshpFzQmPvL3ZRAUjLw+TmTlbHROzGD/vC5ciI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GDeuUPCVw/z9cZG3OJPcwrZD/qvQ3dZRYMhHfQcFv/8COqZlwXPq8PoViGTKSpg+QwYAifcWOPNVX7wfd1ksyuNYqgF2WlTQQnTgWwmtNIgIieHulOGROIHB/QUaX/pyKp1YBuYYB4pw7gJ7L8Fh7RRsCCGG0Dv/t4CM1d0BnRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=RdOfQywN; arc=none smtp.client-ip=209.85.160.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-25d6dd59170so1120414fac.0
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 17:51:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1719795077; x=1720399877; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BRy9gpTqjPsDTNmbbMNYv903/wEg0NdHPwtiMwt6OR4=;
-        b=RdOfQywNWLM3IDMLN/Pn2D3qgf7QTv51iPV+SCwJlXDFerFX/Ngtgu3D4J4jU8IaGf
-         HQeumdjGt56H/TqJaU3Qaf5hIWgHEFkAk2Tir/jje7sYzoOi0VaivEEfuc86/F6ClKUO
-         pnvk9/8c0CJiVHEYDWxrbCBu8PVgclW0Gc5O5kKj1hcGR57Go7GKckCN0lfmguAWmzeV
-         cDRoBfg3BOSL7e52BbAvPxhm9HPB8Bx/aIoMXmpK2cFLUtqrBIKAe+vJbjJwFdNuNSKN
-         xonezYuvkYMc4MRzdnlMuDNhgwwjjeO+5neNSTjH7mdGU+L17GSzXLEE962ypRBlQiA2
-         xIrg==
+	s=arc-20240116; t=1719795540; c=relaxed/simple;
+	bh=OKpXOH1V5ofWjz9SCSARcVWRpXkVg3TzlreV5hyDM6c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KdvO3IZbnHB3yWrjQSYp+yGL5R79QFOvlHaw91FE9D8oeJyaLV65Q/LwfgUimLZ7BdQOt0TrI1A/qI8SI/miyk23lEiqTaqYTIYrdq87+F5N3Xn2npsqCAVoYcmJXu0vPzCC7g2vinDh9eURUepxssSWRr7lgAoHala7aH2cDjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F7NHfQ7H; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719795537;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lbwIoUp2FOGyNX6DAXGXc5hN/7DBWodm6MffMzZS5L4=;
+	b=F7NHfQ7H7p6hdGdnBf3UeOge/aYeGaIdLgGHjcS2k+2D+NVnNrYqbQGJ9BKRLWi8e+9mHd
+	PC+XtR2cgojFLfNUD2WOaEpFh+KggvAj3smXJejTdPEZ3E4rLjoCW6HsTtFH7EMUTdHtN5
+	h+fRukFBYxKJbtllZbU2i/Jqe9/G14k=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-553-K-TNUmVsP0i8KeLKt7E83A-1; Sun, 30 Jun 2024 20:58:52 -0400
+X-MC-Unique: K-TNUmVsP0i8KeLKt7E83A-1
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-1f9a39114a7so11684195ad.0
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 17:58:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719795077; x=1720399877;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1719795532; x=1720400332;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BRy9gpTqjPsDTNmbbMNYv903/wEg0NdHPwtiMwt6OR4=;
-        b=H3J59BYNn4V/IWpWP9QOilo1RIigYv0aMfXt5svob/MJAivXfN8UAtzLUtjxqy6F/1
-         OV8i1Q8nhh6FKEAYEDVFg4MVlIaYs+jV5Cpk4ZzVJewnVK4kuHfTAZ3myJa4OJLgyl15
-         n0Qd+9RLPlL6Btdal6s+EXzKA6Ha521niYjHZD+/CRX3WyIIgcbG/fuOIHtXUqABGQEm
-         HkgIKvHupBKjud7aDO+F+RklzQt77uRGFY4qFIDd3ZnLnflxcqyHNIhO1PYjxqliNPYw
-         16DSI28yeUlXznc1UdFqNbFiTSDqN4oENUTfvz0s85oYl4z8J/JTw8nY+tTCMUDmglTD
-         IsLA==
-X-Forwarded-Encrypted: i=1; AJvYcCVUhvhGJ8lHpLmwKPnfUvXA+iwlblBwtS4tUm0w4k5nhFa9K3K2xJP0N4O4Ns+ahxHDT+2PU6b6S7yNTS9If0E1njuzDX92IUp3MGoQ
-X-Gm-Message-State: AOJu0YwctxE0etEQg3F4qlAnczWBypbgkSuKyHRiufEf6ReniLO5oa8f
-	HoiOOEYHs8pCO/7zfdQngVk/RMSr1B+hnWArSiju3o7qv9mkjF2ZvZhSPPC0S3k=
-X-Google-Smtp-Source: AGHT+IHwf+hkdxjvEUS1SSgOqiQynwxq7WtMiWRzYfBDFBW3X2YyYuAHnU7Wo8v0yTr7hdPVqncAKA==
-X-Received: by 2002:a05:6870:1584:b0:259:8463:43a6 with SMTP id 586e51a60fabf-25db35870cdmr2243202fac.34.1719795076526;
-        Sun, 30 Jun 2024 17:51:16 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70801f584b2sm5220058b3a.43.2024.06.30.17.51.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Jun 2024 17:51:16 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sO5GD-00HLeT-0g;
-	Mon, 01 Jul 2024 10:51:13 +1000
-Date: Mon, 1 Jul 2024 10:51:13 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: alexjlzheng@gmail.com
-Cc: chandan.babu@oracle.com, djwong@kernel.org, hch@infradead.org,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	alexjlzheng@tencent.com
-Subject: Re: [PATCH v3 2/2] xfs: make xfs_log_iovec independent from
- xfs_log_vec and free it early
-Message-ID: <ZoH9gVVlwMkQO1dm@dread.disaster.area>
-References: <20240626044909.15060-1-alexjlzheng@tencent.com>
- <20240626044909.15060-3-alexjlzheng@tencent.com>
+        bh=lbwIoUp2FOGyNX6DAXGXc5hN/7DBWodm6MffMzZS5L4=;
+        b=WK1ma5dcy+pd5dhTijIHqSWYmNrWmkrji1+OoS4JE8BFEihMPj2KWUCz5MGh2SqCrZ
+         8flh+seCKnhg/kkog0QJvy6FI/b+kNffDzZjxjN70wnrW3xtRitWmLWMtfwmKzvBjxuu
+         K7HtaIz3h95+v3XPp7Rs2dFvgy879rv0dmwBlr35HcedgVmNaLvyG8LVvBOdiCPSYHep
+         eGoNTqEkh16+z3B/rQmOdktd6q/JV1O4Hyr6d7JZLRNb1IpOKfVDwuW8XC8fzBXTuBa+
+         vZhwbmnKk9f42Koh7sp2m3PFjWjkTg5581UbtJ6I08GnjVMJXDfY/H8P3eXd9/eYJNit
+         /OIw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4YIHYsIz/i14RlYFTvvrwQhQWC3Sfh+QFPl8AxHxM8WSD3QOjuaEIfHYkzF/HdYXvgyZwBXq93/WQSwILEfGGESSeWtq8JI+HEl3k
+X-Gm-Message-State: AOJu0YxdtjnBIS2zbW9z8SMSQLCrbK8yboCzsqdMgCP1YvKC/3xygLcX
+	r6y3jBeLNf0GjjgNgBWS4CBMdo87ZmfVMugmeYyxpoSXRHd0LujZHZjmJ114bOon462lfuZzWeb
+	hs8w/8bZUo05+DKv7cJRPRK2H4lhF7AsqPeBTcxs9PMGYHOAekB6vLHuEQE9WpQ==
+X-Received: by 2002:a17:902:e54a:b0:1f8:6971:c35d with SMTP id d9443c01a7336-1fadbd22960mr19865045ad.68.1719795531710;
+        Sun, 30 Jun 2024 17:58:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFH1D6k87aSBfdAB4BMMzDpgHS9GmZA2JImdO7EGg8XRxG9PyfFNbFmvOeCu9ImvTXD51+0xg==
+X-Received: by 2002:a17:902:e54a:b0:1f8:6971:c35d with SMTP id d9443c01a7336-1fadbd22960mr19864885ad.68.1719795531225;
+        Sun, 30 Jun 2024 17:58:51 -0700 (PDT)
+Received: from ?IPV6:2403:580f:7fe0:0:ae49:39b9:2ee8:2187? (2403-580f-7fe0-0-ae49-39b9-2ee8-2187.ip6.aussiebb.net. [2403:580f:7fe0:0:ae49:39b9:2ee8:2187])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac1569f83sm51668325ad.204.2024.06.30.17.58.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 30 Jun 2024 17:58:50 -0700 (PDT)
+Message-ID: <97cf3ef4-d2b4-4cb0-9e72-82ca42361b13@redhat.com>
+Date: Mon, 1 Jul 2024 08:58:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240626044909.15060-3-alexjlzheng@tencent.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v3 1/1] fs/namespace: remove RCU sync for MNT_DETACH umount
+To: Alexander Larsson <alexl@redhat.com>,
+ Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+ Lucas Karpinski <lkarpins@redhat.com>, viro@zeniv.linux.org.uk,
+ raven@themaw.net, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Eric Chanudet <echanude@redhat.com>
+References: <20240626201129.272750-2-lkarpins@redhat.com>
+ <20240626201129.272750-3-lkarpins@redhat.com>
+ <Znx-WGU5Wx6RaJyD@casper.infradead.org>
+ <50512ec3-da6d-4140-9659-58e0514a4970@redhat.com>
+ <20240627115418.lcnpctgailhlaffc@quack3>
+ <20240627-abkassieren-grinsen-6ce528fe5526@brauner>
+ <d1b449cb-7ff8-4953-84b9-04dd56ddb187@redhat.com>
+ <20240628-gelingen-erben-0f6e14049e68@brauner>
+ <CAL7ro1HtzvcuQbRpdtYAG1eK+0tekKYaTh-L_8FqHv_JrSFcZg@mail.gmail.com>
+Content-Language: en-US
+From: Ian Kent <ikent@redhat.com>
+Autocrypt: addr=ikent@redhat.com; keydata=
+ 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
+In-Reply-To: <CAL7ro1HtzvcuQbRpdtYAG1eK+0tekKYaTh-L_8FqHv_JrSFcZg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 26, 2024 at 12:49:09PM +0800, alexjlzheng@gmail.com wrote:
-> From: Jinliang Zheng <alexjlzheng@tencent.com>
-> 
-> When the contents of the xfs_log_vec/xfs_log_iovec combination are
-> written to iclog, xfs_log_iovec loses its meaning in continuing to exist
-> in memory, because iclog already has a copy of its contents. We only
-> need to keep xfs_log_vec that takes up very little memory to find the
-> xfs_log_item that needs to be added to AIL after we flush the iclog into
-> the disk log space.
-> 
-> Because xfs_log_iovec dominates most of the memory in the
-> xfs_log_vec/xfs_log_iovec combination, retaining xfs_log_iovec until
-> iclog is flushed into the disk log space and releasing together with
-> xfs_log_vec is a significant waste of memory.
+On 28/6/24 23:13, Alexander Larsson wrote:
+> On Fri, Jun 28, 2024 at 2:54 PM Christian Brauner <brauner@kernel.org> wrote:
+>> On Fri, Jun 28, 2024 at 11:17:43AM GMT, Ian Kent wrote:
+>>> On 27/6/24 23:16, Christian Brauner wrote:
+>>>> On Thu, Jun 27, 2024 at 01:54:18PM GMT, Jan Kara wrote:
+>>>>> On Thu 27-06-24 09:11:14, Ian Kent wrote:
+>>>>>> On 27/6/24 04:47, Matthew Wilcox wrote:
+>>>>>>> On Wed, Jun 26, 2024 at 04:07:49PM -0400, Lucas Karpinski wrote:
+>>>>>>>> +++ b/fs/namespace.c
+>>>>>>>> @@ -78,6 +78,7 @@ static struct kmem_cache *mnt_cache __ro_after_init;
+>>>>>>>>     static DECLARE_RWSEM(namespace_sem);
+>>>>>>>>     static HLIST_HEAD(unmounted);    /* protected by namespace_sem */
+>>>>>>>>     static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
+>>>>>>>> +static bool lazy_unlock = false; /* protected by namespace_sem */
+>>>>>>> That's a pretty ugly way of doing it.  How about this?
+>>>>>> Ha!
+>>>>>>
+>>>>>> That was my original thought but I also didn't much like changing all the
+>>>>>> callers.
+>>>>>>
+>>>>>> I don't really like the proliferation of these small helper functions either
+>>>>>> but if everyone
+>>>>>>
+>>>>>> is happy to do this I think it's a great idea.
+>>>>> So I know you've suggested removing synchronize_rcu_expedited() call in
+>>>>> your comment to v2. But I wonder why is it safe? I *thought*
+>>>>> synchronize_rcu_expedited() is there to synchronize the dropping of the
+>>>>> last mnt reference (and maybe something else) - see the comment at the
+>>>>> beginning of mntput_no_expire() - and this change would break that?
+>>>> Yes. During umount mnt->mnt_ns will be set to NULL with namespace_sem
+>>>> and the mount seqlock held. mntput() doesn't acquire namespace_sem as
+>>>> that would get rather problematic during path lookup. It also elides
+>>>> lock_mount_hash() by looking at mnt->mnt_ns because that's set to NULL
+>>>> when a mount is actually unmounted.
+>>>>
+>>>> So iirc synchronize_rcu_expedited() will ensure that it is actually the
+>>>> system call that shuts down all the mounts it put on the umounted list
+>>>> and not some other task that also called mntput() as that would cause
+>>>> pretty blatant EBUSY issues.
+>>>>
+>>>> So callers that come before mnt->mnt_ns = NULL simply return of course
+>>>> but callers that come after mnt->mnt_ns = NULL will acquire
+>>>> lock_mount_hash() _under_ rcu_read_lock(). These callers see an elevated
+>>>> reference count and thus simply return while namespace_lock()'s
+>>>> synchronize_rcu_expedited() prevents the system call from making
+>>>> progress.
+>>>>
+>>>> But I also don't see it working without risk even with MNT_DETACH. It
+>>>> still has potential to cause issues in userspace. Any program that
+>>>> always passes MNT_DETACH simply to ensure that even in the very rare
+>>>> case that a mount might still be busy is unmounted might now end up
+>>>> seeing increased EBUSY failures for mounts that didn't actually need to
+>>>> be unmounted with MNT_DETACH. In other words, this is only inocuous if
+>>>> userspace only uses MNT_DETACH for stuff they actually know is busy when
+>>>> they're trying to unmount. And I don't think that's the case.
+>>>>
+>>> I'm sorry but how does an MNT_DETACH umount system call return EBUSY, I
+>>> can't
+>>>
+>>> see how that can happen?
+>> Not the umount() call is the problem. Say you have the following
+>> sequence:
+>>
+>> (1) mount(ext4-device, /mnt)
+>>      umount(/mnt, 0)
+>>      mount(ext4-device, /mnt)
+>>
+>> If that ext4 filesystem isn't in use anymore then umount() will succeed.
+>> The same task can immediately issue a second mount() call on the same
+>> device and it must succeed.
+>>
+>> Today the behavior for this is the same whether or no the caller uses
+>> MNT_DETACH. So:
+>>
+>> (2) mount(ext4-device, /mnt)
+>>      umount(/mnt, MNT_DETACH)
+>>      mount(ext4-device, /mnt)
+>>
+>> All that MNT_DETACH does is to skip the check for busy mounts otherwise
+>> it's identical to a regular umount. So (1) and (2) will behave the same
+>> as long as the filesystem isn't used anymore.
+>>
+>> But afaict with your changes this wouldn't be true anymore. If someone
+>> uses (2) on a filesystem that isn't busy then they might end up getting
+>> EBUSY on the second mount. And if I'm right then that's potentially a
+>> rather visible change.
 
-Have you measured this? Please provide numbers and the workload that
-generates them, because when I did this combined structure the
-numbers and performance measured came out decisively on the side of
-"almost no difference in memory usage, major performance cost to
-doing a second allocation"...
+I'm not sure this change affects the the likelyhood of an EBUSY return 
+in the
 
-Here's the logic - the iovec array is largely "free" with the larger
-data allocation.
+described case, in fact it looks like it does the opposite.
 
-------
 
-Look at how the heap is structured - it is in power of 2 slab sizes:
+I always thought the rcu delay was to ensure concurrent path walks "see" the
 
-$ grep kmalloc /proc/slabinfo |tail -13
-kmalloc-8k           949    976   8192    4    8 : tunables    0    0    0 : slabdata    244    244      0
-kmalloc-4k          1706   1768   4096    8    8 : tunables    0    0    0 : slabdata    221    221      0
-kmalloc-2k          3252   3312   2048   16    8 : tunables    0    0    0 : slabdata    207    207      0
-kmalloc-1k         76110  96192   1024   32    8 : tunables    0    0    0 : slabdata   3006   3006      0
-kmalloc-512        71753  98656    512   32    4 : tunables    0    0    0 : slabdata   3083   3083      0
-kmalloc-256        71006  71520    256   32    2 : tunables    0    0    0 : slabdata   2235   2235      0
-kmalloc-192        10304  10458    192   42    2 : tunables    0    0    0 : slabdata    249    249      0
-kmalloc-128         8889   9280    128   32    1 : tunables    0    0    0 : slabdata    290    290      0
-kmalloc-96         13583  13902     96   42    1 : tunables    0    0    0 : slabdata    331    331      0
-kmalloc-64         63116  64640     64   64    1 : tunables    0    0    0 : slabdata   1010   1010      0
-kmalloc-32        552726 582272     32  128    1 : tunables    0    0    0 : slabdata   4549   4549      0
-kmalloc-16        444768 445440     16  256    1 : tunables    0    0    0 : slabdata   1740   1740      0
-kmalloc-8          18178  18432      8  512    1 : tunables    0    0    0 : slabdata     36     36      0
+umount not to ensure correct operation of the following mntput()(s).
 
-IOws, if we do a 260 byte allocation, we get the same sized memory
-chunk as a 512 byte allocation as they come from the same slab
-cache.
 
-If we now look at structure sizes - the common ones are buffers
-and inodes so we'll look at then.
+Isn't the sequence of operations roughly, resolve path, lock, deatch, 
+release
 
-For an inode, we typically log something like this for an extent
-allocation (or free) on mostly contiguous inode (say less than 10
-extents)
+lock, rcu wait, mntput() subordinate mounts, put path.
 
-vec 1:	inode log format item
-vec 2:	inode core
-vec 3:	inode data fork
 
-Each of these vectors has a 12 byte log op header built into them,
-and some padding to round them out to 8 byte alignment.
+So the mount gets detached in the critical section, then we wait followed by
 
-vec 1:	inode log format item:	12 + 56 + 4 (pad)
-vec 2:	inode core:		12 + 176 + 4 (pad)
-vec 3:	inode data fork:	12 + 16 (minimum) + 4 (pad)
-				12 + 336 (maximum for 512 byte inode)
+the mntput()(s). The catch is that not waiting might increase the likelyhood
 
-If we are just logging the inode core, we are allocating
-12 + 56 + 4 + 12 + 176 + 4 = 264 bytes.
+that concurrent path walks don't see the umount (so that possibly the umount
 
-It should be obvious now that this must be allocated from the 512
-byte slab, and that means we have another 248 bytes of unused space
-in that allocated region we can actually use -for free-.
+goes away before the walks see the umount) but I'm not certain. What 
+looks to
 
-IOWs, the fact that we add 32 bytes for the 2 iovecs for to index
-this inode log item doesn't matter at all - it's free space on the
-heap. Indeed, it's not until the inode data fork gets to a couple of
-hundred bytes in length that we overflow the 512 byte slab and have
-to use the 1kB slab. Again, we get the iovec array space for free.
+be as much of a problem is mntput() racing with a concurrent mount 
+beacase while
 
-If we are logging the entire inode with the data fork, then the
-size of the data being logged is 264 + 12 + 336 + 4 = 616 bytes.
-This is well over the 512 byte slab, so we are always going to be
-allocating from the 1kB slab. We get the iovec array for free the
-moment we go over the 512 byte threshold again.
+the detach is done in the critical section the super block instance list 
+deletion
 
-IOWs, all the separation of the iovec array does is slightly change
-the data/attr fork size thresholds where we go from using the 512
-byte slab to the 1kB slab.
+is not and the wait will make the race possibility more likely. What's more
 
-A similar pattern holds out for the buffer log items.  The minimum
-it will be is:
+mntput() delegates the mount cleanup (which deletes the list instance) to a
 
-vec 1:	buf log format item
-vec 2:	single 128 byte chunk
+workqueue job so this can also occur serially in a following mount command.
 
-This requires 12 + 40B + 4 + 12 + 128B + 4 = 200 bytes. For two
-vectors, we need 32 bytes for the iovec array, so a total of 232
-bytes is needed, and this will fit in a 256 byte slab with or
-without the iovec array attached.
 
-The same situation occurs are we increase the number of logged
-regions or the size of the logged regions - in almost all cases we
-get the iovec array for free because we log 128 byte regions out of
-buffers and they will put us into the next largest size slab
-regardless of the memory used by the iovec array.
+In fact I might have seen exactly this behavior in a recent xfs-tests 
+run where I
 
-Hence we should almost always get the space for the iovec array for
-free from the slab allocator, and separating it out doesn't actually
-reduce slab cache memory usage. If anything, it increases it,
-because now we are allocating the iovec array out of small slabs and
-so instead of it being "free" the memory usage is now accounted to
-smaller slabs...
+was puzzled to see occasional EBUSY return on mounting of mounts that 
+should not
 
------
+have been in use following their umount.
 
-Hence before we go any further with this patch set, I'd like to see
-see numbers that quantify how much extra memory the embedded iovec
-array is actually costing us. And from that, an explanation of why
-the above "iovec array space should be cost-free" logic isn't
-working as intended....
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+So I think there are problems here but I don't think the removal of the 
+wait for
+
+lazy umount is the worst of it.
+
+
+The question then becomes, to start with, how do we resolve this 
+unjustified EBUSY
+
+return. Perhaps a completion (used between the umount and mount system 
+calls) would
+
+work well here?
+
+
+> This is rather unfortunate, as the synchronize_rcu call is quite
+> expensive. In particular on a real-time kernel where there are no
+> expedited RCUs. This is causing container startup to be slow, as there
+> are several umount(MNT_DETACH) happening during container setup (after
+> the pivot_root, etc).
+>
+> Maybe we can add a umount flag for users that don't need the current
+> behaviour wrt EBUSY? In the container usecase the important part is
+> that the old mounts are disconnected from the child namespace and not
+> really what the mount busy state is (typically it is still mounted in
+> the parent namespace anyway).
+>
+I think it's a little too soon to try and work out what to do about the
+
+speed of umount, lazy or not.
+
+
+Umount has taken progressively longer over the years and is in fact quite
+
+slow now. I'm really not sure what to do about that having looked at it a
+
+number of times without joy. Nevertheless, I believe we need to find a way
+
+to do this or something like it to reduce the delays involved in umount.
+
+
+Ian
+
 
