@@ -1,261 +1,121 @@
-Return-Path: <linux-kernel+bounces-236112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 469D191DD9C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:12:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AFB091DDA3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:16:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADF7EB225FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:12:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C4611F23093
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BFF13D242;
-	Mon,  1 Jul 2024 11:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="LOIa7iBv"
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17DEC13C821;
+	Mon,  1 Jul 2024 11:15:52 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A60C537E7
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 11:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33891F949;
+	Mon,  1 Jul 2024 11:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719832359; cv=none; b=FnQcXDO/2pjfeD/FDaLL5yKtpkvuRTeXfOnRf99npv2YIPR/R91X1DmqHBU/L3v7Xzk0TaXoRfntt3vUbMEpamyjFTDaCLYfEnVBWcCicM68oC0KpM4Jc86YgRWzjRDSdeondJIke6p6P6cWqYS4/RZeEB0myzOUmIOHfVuwFvc=
+	t=1719832551; cv=none; b=J3XJhjEX5ArhNKCUtU6JvNtjJsj8eVD3T8ukr/Qm2Z2Kk4XiAhXqy0032iN8PFqiLIIbRNFu2h3xkCgS8OoiPJy5R27+7JxpX5qgkctX1BOJMYnDeES/oobbVf/5JwKwX9Uffwsik2J35yPGAR4cHx5qudddeDGAO74wzjMr6F8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719832359; c=relaxed/simple;
-	bh=ppkAU5StD42sPSdL5l2TSYfljpOWYEyGK6YZrWmPipM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ulGJZYsdbn9YD7G2x/uKxYQgcCRVAz54g8Gm5JOyGa/9VUF+3cwnGr/TtFfCWu7fYmmt90FoS/mE9WHI6XphBQkcFQrW55ifU4BB02RZ0K1xc2tqjvOFY0ZATuxumpQ4f64HkC9unTfpvOYynF1aFdUICM3zHvudu7km5COh3z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=LOIa7iBv; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1719832354; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=Y+VMaG1F3anoAtn1Tdo4ZeCIuoG31jZY6NdwJKdEzqI=;
-	b=LOIa7iBvOixLtyQinVwYmz8D6co+EmAoadDWVcqVF86nJL97bLPFxwfnuNK7ovaSMJGpqvCIic91nzMqzVgLD6PSbSX2xBfZsaWo6DZE0z1ofJjShA1CJ7+Qbefd5ymQCUMVG2QWEYVTrl+vQV3j2gP8ilZtFY6glrj+mhFMQdw=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R281e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045046011;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0W9dfsZN_1719832352;
-Received: from 30.97.56.67(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W9dfsZN_1719832352)
-          by smtp.aliyun-inc.com;
-          Mon, 01 Jul 2024 19:12:33 +0800
-Message-ID: <2910ddc3-b05f-4394-8288-6e3c321fffee@linux.alibaba.com>
-Date: Mon, 1 Jul 2024 19:12:32 +0800
+	s=arc-20240116; t=1719832551; c=relaxed/simple;
+	bh=FrjOrKb+tlQmpgbKQBEuV+IA2pjKYmp4EtQ4sHK9Clg=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=liwFO4kDj/M7miA7lvkFGFo/EW+9MguJyJbAUfbjnSugMcf3+JJnVaWSVA7ICJGfx13UAwIDEaCOC10zhPYuGV5v74FJX5Z6D1duuKgvL2PQXiZ0EFM6YfnTJ6wN35Zmuseex0nGs/+4d+JE1GF0zY5SI3dXVDG0+5MhvhzxG44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WCNhj1kdlz6K9TV;
+	Mon,  1 Jul 2024 19:13:57 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id DD25A140D30;
+	Mon,  1 Jul 2024 19:15:46 +0800 (CST)
+Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 1 Jul
+ 2024 12:15:45 +0100
+Date: Mon, 1 Jul 2024 12:15:44 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Shradha Todi <shradha.t@samsung.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<manivannan.sadhasivam@linaro.org>, <lpieralisi@kernel.org>, <kw@linux.com>,
+	<robh@kernel.org>, <bhelgaas@google.com>, <jingoohan1@gmail.com>,
+	<fancer.lancer@gmail.com>, <yoshihiro.shimoda.uh@renesas.com>,
+	<conor.dooley@microchip.com>, <pankaj.dubey@samsung.com>,
+	<gost.dev@samsung.com>
+Subject: Re: [PATCH v3 0/3] Add support for RAS DES feature in PCIe DW
+Message-ID: <20240701121544.00006faa@Huawei.com>
+In-Reply-To: <20240625093813.112555-1-shradha.t@samsung.com>
+References: <CGME20240625094434epcas5p2e48bda118809ccb841c983d737d4f09d@epcas5p2.samsung.com>
+	<20240625093813.112555-1-shradha.t@samsung.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] support "THPeligible" semantics for mTHP with anonymous
- shmem
-To: Bang Li <libang.li@antgroup.com>, Ryan Roberts <ryan.roberts@arm.com>,
- hughd@google.com, akpm@linux-foundation.org
-Cc: david@redhat.com, wangkefeng.wang@huawei.com, ziy@nvidia.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240628104926.34209-1-libang.li@antgroup.com>
- <4b38db15-0716-4ffb-a38b-bd6250eb93da@arm.com>
- <4d54880e-03f4-460a-94b9-e21b8ad13119@linux.alibaba.com>
- <ee59573f-52bd-45e4-bd2f-eac28ae97e66@antgroup.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <ee59573f-52bd-45e4-bd2f-eac28ae97e66@antgroup.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
+
+On Tue, 25 Jun 2024 15:08:10 +0530
+Shradha Todi <shradha.t@samsung.com> wrote:
+
+> DesignWare controller provides a vendor specific extended capability
+> called RASDES as an IP feature. This extended capability  provides
+> hardware information like:
+>  - Debug registers to know the state of the link or controller. 
+>  - Error injection mechanisms to inject various PCIe errors including
+>    sequence number, CRC
+>  - Statistical counters to know how many times a particular event
+>    occurred
+> 
+> However, in Linux we do not have any generic or custom support to be
+> able to use this feature in an efficient manner. This is the reason we
+> are proposing this framework. Debug and bring up time of high-speed IPs
+> are highly dependent on costlier hardware analyzers and this solution
+> will in some ways help to reduce the HW analyzer usage.
+> 
+> The debugfs entries can be used to get information about underlying
+> hardware and can be shared with user space. Separate debugfs entries has
+> been created to cater to all the DES hooks provided by the controller.
+> The debugfs entries interacts with the RASDES registers in the required
+> sequence and provides the meaningful data to the user. This eases the
+> effort to understand and use the register information for debugging.
+
+To consider this properly I think some documentation is needed.
+
+Maybe just ABI in Documentation/ABI/testing/debugfs-*
+or maybe a more freestanding document.
 
 
+> 
+> v2: https://lore.kernel.org/lkml/20240319163315.GD3297@thinkpad/T/
+> 
+> v1: https://lore.kernel.org/all/20210518174618.42089-1-shradha.t@samsung.com/T/
+> 
+> Shradha Todi (3):
+>   PCI: dwc: Add support for vendor specific capability search
+>   PCI: debugfs: Add support for RASDES framework in DWC
+>   PCI: dwc: Create debugfs files in DWC driver
+> 
+>  drivers/pci/controller/dwc/Kconfig            |   8 +
+>  drivers/pci/controller/dwc/Makefile           |   1 +
+>  .../controller/dwc/pcie-designware-debugfs.c  | 474 ++++++++++++++++++
+>  .../controller/dwc/pcie-designware-debugfs.h  |   0
+>  .../pci/controller/dwc/pcie-designware-host.c |   2 +
+>  drivers/pci/controller/dwc/pcie-designware.c  |  20 +
+>  drivers/pci/controller/dwc/pcie-designware.h  |  18 +
+>  7 files changed, 523 insertions(+)
+>  create mode 100644 drivers/pci/controller/dwc/pcie-designware-debugfs.c
+>  create mode 100644 drivers/pci/controller/dwc/pcie-designware-debugfs.h
+> 
 
-On 2024/7/1 17:43, Bang Li wrote:
-> Hi, Baolin
-> 
-> On 2024/7/1 16:33, Baolin Wang wrote:
->>
->>
->> On 2024/7/1 15:55, Ryan Roberts wrote:
->>> On 28/06/2024 11:49, Bang Li wrote:
->>>> After the commit 7fb1b252afb5 ("mm: shmem: add mTHP support for
->>>> anonymous shmem"), we can configure different policies through
->>>> the multi-size THP sysfs interface for anonymous shmem. But
->>>> currently "THPeligible" indicates only whether the mapping is
->>>> eligible for allocating THP-pages as well as the THP is PMD
->>>> mappable or not for anonymous shmem, we need to support semantics
->>>> for mTHP with anonymous shmem similar to those for mTHP with
->>>> anonymous memory.
->>>>
->>>> Signed-off-by: Bang Li <libang.li@antgroup.com>
->>>> ---
->>>>   fs/proc/task_mmu.c      | 10 +++++++---
->>>>   include/linux/huge_mm.h | 11 +++++++++++
->>>>   mm/shmem.c              |  9 +--------
->>>>   3 files changed, 19 insertions(+), 11 deletions(-)
->>>>
->>>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
->>>> index 93fb2c61b154..09b5db356886 100644
->>>> --- a/fs/proc/task_mmu.c
->>>> +++ b/fs/proc/task_mmu.c
->>>> @@ -870,6 +870,7 @@ static int show_smap(struct seq_file *m, void *v)
->>>>   {
->>>>       struct vm_area_struct *vma = v;
->>>>       struct mem_size_stats mss = {};
->>>> +    bool thp_eligible;
->>>>       smap_gather_stats(vma, &mss, 0);
->>>> @@ -882,9 +883,12 @@ static int show_smap(struct seq_file *m, void *v)
->>>>       __show_smap(m, &mss, false);
->>>> -    seq_printf(m, "THPeligible:    %8u\n",
->>>> -           !!thp_vma_allowable_orders(vma, vma->vm_flags,
->>>> -               TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL));
->>>> +    thp_eligible = !!thp_vma_allowable_orders(vma, vma->vm_flags,
->>>> +                        TVA_SMAPS | TVA_ENFORCE_SYSFS, 
->>>> THP_ORDERS_ALL);
->>>> +    if (vma_is_anon_shmem(vma))
->>>> +        thp_eligible = 
->>>> !!shmem_allowable_huge_orders(file_inode(vma->vm_file),
->>>> +                            vma, vma->vm_pgoff, thp_eligible);
->>>
->>> Afraid I haven't been following the shmem mTHP support work as much 
->>> as I would
->>> have liked, but is there a reason why we need a separate function for 
->>> shmem?
->>
->> Since shmem_allowable_huge_orders() only uses shmem specific logic to 
->> determine if huge orders are allowable, there is no need to complicate 
->> the thp_vma_allowable_orders() function by adding more shmem related 
->> logic, making it more bloated. In my view, providing a dedicated 
->> helper shmem_allowable_huge_orders(), specifically for shmem, 
->> simplifies the logic.
->>
->> IIUC, I agree with David's suggestion that the 
->> shmem_allowable_huge_orders() helper function could be used in 
->> thp_vma_allowable_orders() to support shmem mTHP. Something like:
->>
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index c7ce28f6b7f3..9677fe6cf478 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -151,10 +151,13 @@ unsigned long __thp_vma_allowable_orders(struct 
->> vm_area_struct *vma,
->>           * Must be done before hugepage flags check since shmem has its
->>           * own flags.
->>           */
->> -       if (!in_pf && shmem_file(vma->vm_file))
->> -               return shmem_is_huge(file_inode(vma->vm_file), 
->> vma->vm_pgoff,
->> -                                    !enforce_sysfs, vma->vm_mm, 
->> vm_flags)
->> -                       ? orders : 0;
->> +       if (!in_pf && shmem_file(vma->vm_file)) {
->> +               bool global_huge = 
->> shmem_is_huge(file_inode(vma->vm_file), vma->vm_pgoff,
->> +                                    !enforce_sysfs, vma->vm_mm, 
->> vm_flags);
->> +
->> +               return 
->> shmem_allowable_huge_orders(file_inode(vma->vm_file),
->> +                                       vma, vma->vm_pgoff, global_huge);
->> +       }
->>
->>          if (!vma_is_anonymous(vma)) {
->>                  /*
->>
->>> Couldn't (shouldn't) thp_vma_allowable_orders() be taught to handle 
->>> shmem too?
->>>
->>>> +    seq_printf(m, "THPeligible:    %8u\n", thp_eligible);
->>>>       if (arch_pkeys_enabled())
->>>>           seq_printf(m, "ProtectionKey:  %8u\n", vma_pkey(vma));
->>>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->>>> index 212cca384d7e..f87136f38aa1 100644
->>>> --- a/include/linux/huge_mm.h
->>>> +++ b/include/linux/huge_mm.h
->>>> @@ -267,6 +267,10 @@ unsigned long thp_vma_allowable_orders(struct 
->>>> vm_area_struct *vma,
->>>>       return __thp_vma_allowable_orders(vma, vm_flags, tva_flags, 
->>>> orders);
->>>>   }
->>>> +unsigned long shmem_allowable_huge_orders(struct inode *inode,
->>>> +                struct vm_area_struct *vma, pgoff_t index,
->>>> +                bool global_huge);
->>>> +
->>>>   struct thpsize {
->>>>       struct kobject kobj;
->>>>       struct list_head node;
->>>> @@ -460,6 +464,13 @@ static inline unsigned long 
->>>> thp_vma_allowable_orders(struct vm_area_struct *vma,
->>>>       return 0;
->>>>   }
->>>> +static inline unsigned long shmem_allowable_huge_orders(struct 
->>>> inode *inode,
->>>> +                struct vm_area_struct *vma, pgoff_t index,
->>>> +                bool global_huge)
->>>> +{
->>>> +    return 0;
->>>> +}
->>>> +
->>>>   #define transparent_hugepage_flags 0UL
->>>>   #define thp_get_unmapped_area    NULL
->>>> diff --git a/mm/shmem.c b/mm/shmem.c
->>>> index d495c0701a83..aa85df9c662a 100644
->>>> --- a/mm/shmem.c
->>>> +++ b/mm/shmem.c
->>>> @@ -1622,7 +1622,7 @@ static gfp_t limit_gfp_mask(gfp_t huge_gfp, 
->>>> gfp_t limit_gfp)
->>>>   }
->>>>   #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->>>> -static unsigned long shmem_allowable_huge_orders(struct inode *inode,
->>>> +unsigned long shmem_allowable_huge_orders(struct inode *inode,
->>>>                   struct vm_area_struct *vma, pgoff_t index,
->>>>                   bool global_huge)
->>>>   {
->>>> @@ -1707,13 +1707,6 @@ static unsigned long 
->>>> shmem_suitable_orders(struct inode *inode, struct vm_fault
->>>>       return orders;
->>>>   }
->>>>   #else
->>>> -static unsigned long shmem_allowable_huge_orders(struct inode *inode,
->>>> -                struct vm_area_struct *vma, pgoff_t index,
->>>> -                bool global_huge)
->>>> -{
->>>> -    return 0;
->>>> -}
->>>> -
->>>>   static unsigned long shmem_suitable_orders(struct inode *inode, 
->>>> struct vm_fault *vmf,
->>>>                          struct address_space *mapping, pgoff_t index,
->>>>                          unsigned long orders)
-> 
-> Thanks for the reference code. Currently, we only implement the mTHP of
-> anonymous shmem, so we only need to handle anonymous shmem specially. As
-> shown in the following code:
-> 
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -151,10 +151,14 @@ unsigned long __thp_vma_allowable_orders(struct 
-> vm_area_struct *vma,
->           * Must be done before hugepage flags check since shmem has its
->           * own flags.
->           */
-> -       if (!in_pf && shmem_file(vma->vm_file))
-> -               return shmem_is_huge(file_inode(vma->vm_file), 
-> vma->vm_pgoff,
-> -                                    !enforce_sysfs, vma->vm_mm, vm_flags)
-> -                       ? orders : 0;
-> +       if (!in_pf && shmem_file(vma->vm_file)) {
-> +               bool global_huge = 
-> shmem_is_huge(file_inode(vma->vm_file), vma->vm_pgoff,
-> +                                    !enforce_sysfs, vma->vm_mm, vm_flags);
-
-Nit: add a blank line after the declaration. Otherwise looks good to me.
-
-> +               if (!vma_is_anon_shmem(vma))
-> +                       return global_huge? orders : 0;
-> +               return 
-> shmem_allowable_huge_orders(file_inode(vma->vm_file),
-> +                                               vma, vma->vm_pgoff, 
-> global_huge);
-> +       }
-> 
->          if (!vma_is_anonymous(vma)) {
-> 
-> Thanks,
-> Bang
 
