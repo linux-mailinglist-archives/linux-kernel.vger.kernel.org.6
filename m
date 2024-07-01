@@ -1,629 +1,258 @@
-Return-Path: <linux-kernel+bounces-236817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4880991E76A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:27:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6F7B91E774
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:29:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C24A41F2204B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:27:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AA751F21FB0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12A916EC0F;
-	Mon,  1 Jul 2024 18:27:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1C416F26F;
+	Mon,  1 Jul 2024 18:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wZVYlQRd"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bjs0Z/bj"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9776916EBF8
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 18:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60483BA34;
+	Mon,  1 Jul 2024 18:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719858467; cv=none; b=QiJpvliVO0CR/CL3eO9ercbwzQh4tHzQCJ4K2y5MyaX49n7UJLpH8tkc4bnvjWzjGZ6GmNltJEGFqTVL48a4idm4UWzTglr2hQbKSpx/3Cnk5dE/7tdbbw+2L8CcOjNyg6CQEYYAixHDy4oyH80uyQ+pO9p1/dOxx+oipNhO2Zk=
+	t=1719858559; cv=none; b=nQ84sUG8O/iVXU1PXeDqGUiW4dhGV+nXB12pr4L2vqTR8cP7aPewdDrzaqwybqhiEMtdFFzUMQfknIrV99IPIqzEQTjMR8um33QU8pki1XSHU737PdrXovTkGMl7jCmRryF1Zg8XnpDm5hXZhlAowTsU7dBxr8XNJMGsLHgcmcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719858467; c=relaxed/simple;
-	bh=h/VJaBsOP7MWo33/fGyHsD0KNzcXJIKJLL4AmQ5bx/Q=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=sKNinUcuLI8OzQUJgQ5m3Pz6gMQO7uCOsudbZVbDvd0dAeNLXm/9i1QcJUkYSUWAR3mSe3EAwbfnv1Y5jt64lqsuT8s02/e9XWnXF5dJK3H5b9/69m7IInwaBB/xfmWtV8EXu9SfvJ/y0Zj8lNqRflvSK1ToXJl7gFF/pwTYjvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yutingtseng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wZVYlQRd; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yutingtseng.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-70683497777so2431161b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 11:27:45 -0700 (PDT)
+	s=arc-20240116; t=1719858559; c=relaxed/simple;
+	bh=YdSBTKoud5HTTCEcvzEun4Dix6xLngYJO/Z7QgHW8yE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OnT64DUGPcSVPS9q8t1rH9oZbdtT1h8DcAD7qUiYOI8LPp5O093Xssb7Bs3Vk/WKUrQPM/bY5Nh6BJzBcp2xwSCJjSgyVcEKaJUWseKyn9VKYN6iakOkMNXZLmmFN+gfAwm7k5z7iyychhaqM7oqe5ceK+MV8uEdjxXgsdhaRpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bjs0Z/bj; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52ce6c8db7bso4975813e87.1;
+        Mon, 01 Jul 2024 11:29:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719858465; x=1720463265; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CkzMYZbSYK7SvX5vWuwux9UzfrFHHVKVHuw1w7cG5Tk=;
-        b=wZVYlQRdtifSNrG/uCP3gumdsj5hrLJj/2o+wJHPBL0pOh76h4mPNew8SKHDaAus4U
-         h+pArZAgjgnjpDBxTZg6G8yeEO05CO6PY0umNkxzcv66qN4wALKWC2TYtDlQt8EyLQBW
-         jGpM7pmCshguJbeL7/dhGPoJWUgWzt1fm0ZMwHUb1vIXj805tV5UCsSYWDcGvqVw9dSp
-         90eLpUZb0p1GRW+v3+McwDG1PWJQlJrihGoaYMvxIP9qUNMwcbg9WC0TmaNigYGqbzKa
-         62JyFva+NuIn5dcj56gvw8trdOyurNo+9hr/sjEEl4i7wNuYdjKH0Zh0cZcWsl5bpgIE
-         MOIA==
+        d=gmail.com; s=20230601; t=1719858555; x=1720463355; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fWVLiIeLfu9VxxvmoDSR42nCkv8Kp3qYClEoexCNKyM=;
+        b=Bjs0Z/bjNH9nmig1n5OLfMZ9S4GKUC3SQjdrYZ8VBKSLst+DiWgbPIiWZ/8xf2LUKo
+         7RtRhRGBRrbbqeEf4aq4bXd/9Yflvl7EMY1jthg2+CYwEAB9aJhCg6tHrwblKRgQSSif
+         Qj1z7OepjzUsfWe7L4kK4Af6NHkXCmZZaHXPAd5L6UfVy5h7ynDYaV2Ino8p/bZquMg5
+         yNBsc4Z1mt1kpgrXV3pOkADvpR/4EyAy5CI1xEWvDomvG5yl/FDGjpCemeRqShz+pqQ6
+         fB4MAZ5DFo5IFhiom0tAJZGl/Qokt/p4kweBZTzWqX/IqqJKIP/LIJHMDrH5vD7sguPU
+         90sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719858465; x=1720463265;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CkzMYZbSYK7SvX5vWuwux9UzfrFHHVKVHuw1w7cG5Tk=;
-        b=r2ZySiV4/DBtb2IQtLWlpMN/BhK7DAqvgnO1Y7pDJrR/frdFcoK99bzGnHCL4D04nD
-         3npSltnyNa5rmON5v7rPNKHvCbFi1b0hhvuBo4/z2s8SG8idQETUInWFhTsX+iK5zVsV
-         PQEOvhTMYY6EsS9fDMYhgogvLyzY923MCCICpAL86YArsLD37nybuQTux2OEhbg8uSsN
-         gOhueoOq1uqU+CEpGwE+S6fInzs4SgwVO5Id4hc4BTXO/60bniGLJdpuIrtbfXQLNIt1
-         eFrzT4Lj1xSyQrZ2ofL3hnNmTgl3ykwzH4XWgkW/mzMik1JsZOD2/FvV/GrT/uWIQvoR
-         Ht8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXTmw88aP6+PFQnjN55XoZ+qucTkD+oKeqwkligSiAnJYCCYN5k21UwfnQnMfJwqDF3Zt7EbXZj3aZFCOQjf95MmVK0tNrzmXKGz3QH
-X-Gm-Message-State: AOJu0YwTLtZkNlg1B+F/osPJ7TkPN4JIxh8EWENnZfYWAEtnJqPpOl6M
-	PTgjwwU+4SBreh1qpAX9dcdkBokmPdmgJbaq0MRDwXUEl5zkxwIsB1dcEjLpa9zfrP8PFB/1B5e
-	8J4as41jvUB+fFKp4FrlUkw==
-X-Google-Smtp-Source: AGHT+IFO8eXwT62u0ui5i5z5ZeQ239VKlGfFmBizO/a6Pw6EvwSZz78rgLZbLtejdkInVD3mVszV/37kj6MVXZfnlg==
-X-Received: from yuting.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:317f])
- (user=yutingtseng job=sendgmr) by 2002:a05:6a00:1404:b0:704:6ea0:2bae with
- SMTP id d2e1a72fcca58-70aaad327d9mr161359b3a.2.1719858464677; Mon, 01 Jul
- 2024 11:27:44 -0700 (PDT)
-Date: Mon,  1 Jul 2024 11:27:33 -0700
-In-Reply-To: <CAN5Drs06fbditeSaVLc6i6wEY+A47HHzQmhCS1rzJgacNs1Tjw@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1719858555; x=1720463355;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fWVLiIeLfu9VxxvmoDSR42nCkv8Kp3qYClEoexCNKyM=;
+        b=gtX4zohgz6RdMjbIbfqmV9/pJPwLy+BXjooxShEPNIOJKSL5aVCUCmYlivez3oyEKs
+         mHV14Tx9LOf/xpS4Syv2W0NdYaoEj53dcI63Aa5DiYtaHDggWoWzACCscJPjfmsD6tuy
+         /3n+jrrKKjTObisuyPz5/k+v3PAWc8u5amhjM16nSrca7XXL/eTrcQ8giUUjKxCLNzzf
+         VD7ugZtOrYRfOn+Jzbpyq4c/N1jbgdSnTVgE/c9hIYIGg5rrZIXJEMCjoBYvC5Jr/FeS
+         3LTlCZT5Ny3sQ/k0G30icoiZIq5F0lLCQ/syI/RAU1UvctnQ2SGsfmooTotD5O6VN1mF
+         KC4A==
+X-Forwarded-Encrypted: i=1; AJvYcCWp5tsGZ+iELVK6iBIpmVXFE1+uFKKpat4XhTwtldvy7roP7QEFOb3/rrJPw/Fw76awABS9b4pMryhg9XXGmZG13Mm9q2WclKe2vR0w5PbWPtUdXzuvAySkEQX0b0HhWrlY0J4v/uWgOjFUmprwZsWd+ru0rrQwcLy5aOi4rbFYpg==
+X-Gm-Message-State: AOJu0Yy1rlo2J63anYiFPr5Oty+mdnaFHi/+DepGxFb96VaVgF+9bhR4
+	nSPkhJERSgRncfsXgOEVuJp9SDnGK8LPd1tYVqhC9upO5pUbJKKF
+X-Google-Smtp-Source: AGHT+IH5NomShbunjQY08CL9VTshtdRejDVasRBQIKlR1Z+vValI0nwISz8hsAwkpEXlRfpYNR+kqQ==
+X-Received: by 2002:a05:6512:2397:b0:52e:813f:ab60 with SMTP id 2adb3069b0e04-52e8274a125mr5104043e87.56.1719858555025;
+        Mon, 01 Jul 2024 11:29:15 -0700 (PDT)
+Received: from localhost ([178.176.56.174])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab10027sm1532527e87.73.2024.07.01.11.29.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 11:29:13 -0700 (PDT)
+From: Serge Semin <fancer.lancer@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Serge Semin <fancer.lancer@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Sagar Cheluvegowda <quic_scheluve@quicinc.com>,
+	Abhishek Chauhan <quic_abchauha@quicinc.com>,
+	Andrew Halaney <ahalaney@redhat.com>,
+	Jiawen Wu <jiawenwu@trustnetic.com>,
+	Mengyuan Lou <mengyuanlou@net-swift.com>,
+	Tomer Maimon <tmaimon77@gmail.com>,
+	openbmc@lists.ozlabs.org,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v4 00/10] net: pcs: xpcs: Add memory-mapped device support
+Date: Mon,  1 Jul 2024 21:28:31 +0300
+Message-ID: <20240701182900.13402-1-fancer.lancer@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <CAN5Drs06fbditeSaVLc6i6wEY+A47HHzQmhCS1rzJgacNs1Tjw@mail.gmail.com>
-X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
-Message-ID: <20240701182731.1003031-3-yutingtseng@google.com>
-Subject: [PATCH v4] binder: frozen notification
-From: Yu-Ting Tseng <yutingtseng@google.com>
-To: cmllamas@google.com, tkjos@google.com, gregkh@linuxfoundation.org
-Cc: arve@android.com, maco@android.com, joel@joelfernandes.org, 
-	brauner@kernel.org, surenb@google.com, aliceryhl@google.com, 
-	kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	Yu-Ting Tseng <yutingtseng@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Frozen processes present a significant challenge in binder transactions.
-When a process is frozen, it cannot, by design, accept and/or respond to
-binder transactions. As a result, the sender needs to adjust its
-behavior, such as postponing transactions until the peer process
-unfreezes. However, there is currently no way to subscribe to these
-state change events, making it impossible to implement frozen-aware
-behaviors efficiently.
+The main goal of this series is to extend the DW XPCS device support in
+the kernel. Particularly the patchset adds a support of the DW XPCS
+device with the MCI/APB3 IO interface registered as a platform device. In
+order to have them utilized by the DW XPCS core the fwnode-based DW XPCS
+descriptor creation procedure has been introduced. Finally the STMMAC
+driver has been altered to support the DW XPCS passed via the 'pcs-handle'
+property.
 
-Introduce a binder API for subscribing to frozen state change events.
-This allows programs to react to changes in peer process state,
-mitigating issues related to binder transactions sent to frozen
-processes.
+Note the series has been significantly re-developed since v1. So I even
+had to change the subject. Anyway I've done my best to take all the noted
+into account.
 
-Implementation details:
-For a given binder_ref, the state of frozen notification can be one of
-the followings:
-1. Userspace doesn't want a notification. binder_ref->freeze is null.
-2. Userspace wants a notification but none is in flight.
-   list_empty(&binder_ref->freeze->work.entry) = true
-3. A notification is in flight and waiting to be read by userspace.
-   binder_ref_freeze.sent is false.
-4. A notification was read by userspace and kernel is waiting for an ack.
-   binder_ref_freeze.sent is true.
+The series traditionally starts with a set of the preparation patches.
+First one just moves the generic DW XPCS IDs macros from the internal
+header file to the external one where some other IDs also reside. Second
+patch splits up the xpcs_create() method to a set of the coherent
+sub-functions for the sake of the further easier updates and to have it
+looking less complicated. The goal of the next three patches is to extend
+the DW XPCS ID management code by defining a new dw_xpcs_info structure
+with both PCS and PMA IDs.
 
-When a notification is in flight, new state change events are coalesced into
-the existing binder_ref_freeze struct. If userspace hasn't picked up the
-notification yet, the driver simply rewrites the state. Otherwise, the
-notification is flagged as requiring a resend, which will be performed
-once userspace acks the original notification that's inflight.
+The next two patches provide the DW XPCS device DT-bindings and the
+respective platform-device driver for the memory-mapped DW XPCS devices.
+Besides the later patch makes use of the introduced dw_xpcs_info structure
+to pre-define the DW XPCS IDs based on the platform-device compatible
+string. Thus if there is no way to auto-identify the XPCS device
+capabilities it can be done based on the custom device IDs passed via the
+MDIO-device platform data.
 
-See https://r.android.com/3070045 for how userspace is going to use this
-feature.
+Final DW XPCS driver change is about adding a new method of the DW XPCS
+descriptor creation. The xpcs_create_fwnode() function has been introduced
+with the same semantics as a similar method recently added to the Lynx PCS
+driver. It's supposed to be called with the fwnode pointing to the DW XPCS
+device node, for which the XPCS descriptor will be created.
 
-Signed-off-by: Yu-Ting Tseng <yutingtseng@google.com>
----
- drivers/android/binder.c            | 287 +++++++++++++++++++++++++++-
- drivers/android/binder_internal.h   |  21 +-
- include/uapi/linux/android/binder.h |  36 ++++
- 3 files changed, 340 insertions(+), 4 deletions(-)
+The series is terminated with two STMMAC driver patches. The former one
+simplifies the DW XPCS descriptor registration procedure by dropping the
+MDIO-bus scanning and creating the descriptor for the particular device
+address. The later patch alters the STMMAC PCS setup method so one would
+support the DW XPCS specified via the "pcs-handle" property.
 
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index b21a7b246a0d..e1bd9810c2af 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -3763,6 +3763,159 @@ static void binder_transaction(struct binder_proc *proc,
- 	}
- }
- 
-+static int
-+binder_request_freeze_notification(struct binder_proc *proc,
-+				   struct binder_thread *thread,
-+				   struct binder_handle_cookie *handle_cookie)
-+{
-+	struct binder_ref_freeze *freeze;
-+	struct binder_ref *ref;
-+	bool is_frozen;
-+
-+	freeze = kzalloc(sizeof(*freeze), GFP_KERNEL);
-+	if (!freeze)
-+		return -ENOMEM;
-+	binder_proc_lock(proc);
-+	ref = binder_get_ref_olocked(proc, handle_cookie->handle, false);
-+	if (!ref) {
-+		binder_user_error("%d:%d BC_REQUEST_FREEZE_NOTIFICATION invalid ref %d\n",
-+				  proc->pid, thread->pid, handle_cookie->handle);
-+		binder_proc_unlock(proc);
-+		kfree(freeze);
-+		return -EINVAL;
-+	}
-+
-+	binder_node_lock(ref->node);
-+
-+	if (ref->freeze || !ref->node->proc) {
-+		if (ref->freeze) {
-+			binder_user_error("%d:%d BC_REQUEST_FREEZE_NOTIFICATION freeze notification already set\n",
-+					  proc->pid, thread->pid);
-+		} else {
-+			binder_user_error("%d:%d BC_REQUEST_FREEZE_NOTIFICATION process is already dead\n",
-+					  proc->pid, thread->pid);
-+		}
-+		binder_node_unlock(ref->node);
-+		binder_proc_unlock(proc);
-+		kfree(freeze);
-+		return -EINVAL;
-+	}
-+	binder_inner_proc_lock(ref->node->proc);
-+	is_frozen = ref->node->proc->is_frozen;
-+	binder_inner_proc_unlock(ref->node->proc);
-+
-+	binder_stats_created(BINDER_STAT_FREEZE);
-+	INIT_LIST_HEAD(&freeze->work.entry);
-+	freeze->cookie = handle_cookie->cookie;
-+	freeze->work.type = BINDER_WORK_FROZEN_BINDER;
-+	freeze->is_frozen = ref->node->proc->is_frozen;
-+
-+	ref->freeze = freeze;
-+
-+	binder_inner_proc_lock(proc);
-+	binder_enqueue_work_ilocked(&ref->freeze->work, &proc->todo);
-+	binder_wakeup_proc_ilocked(proc);
-+	binder_inner_proc_unlock(proc);
-+
-+	binder_node_unlock(ref->node);
-+	binder_proc_unlock(proc);
-+	return 0;
-+}
-+
-+static int
-+binder_clear_freeze_notification(struct binder_proc *proc,
-+				 struct binder_thread *thread,
-+				 struct binder_handle_cookie *handle_cookie)
-+{
-+	struct binder_ref_freeze *freeze;
-+	struct binder_ref *ref;
-+
-+	binder_proc_lock(proc);
-+	ref = binder_get_ref_olocked(proc, handle_cookie->handle, false);
-+	if (!ref) {
-+		binder_user_error("%d:%d BC_CLEAR_FREEZE_NOTIFICATION invalid ref %d\n",
-+				  proc->pid, thread->pid, handle_cookie->handle);
-+		binder_proc_unlock(proc);
-+		return -EINVAL;
-+	}
-+
-+	binder_node_lock(ref->node);
-+
-+	if (!ref->freeze) {
-+		binder_user_error("%d:%d BC_CLEAR_FREEZE_NOTIFICATION freeze notification not active\n",
-+				  proc->pid, thread->pid);
-+		binder_node_unlock(ref->node);
-+		binder_proc_unlock(proc);
-+		return -EINVAL;
-+	}
-+	freeze = ref->freeze;
-+	binder_inner_proc_lock(proc);
-+	if (freeze->cookie != handle_cookie->cookie) {
-+		binder_user_error("%d:%d BC_CLEAR_FREEZE_NOTIFICATION freeze notification cookie mismatch %016llx != %016llx\n",
-+				  proc->pid, thread->pid, (u64)freeze->cookie,
-+				  (u64)handle_cookie->cookie);
-+		binder_inner_proc_unlock(proc);
-+		binder_node_unlock(ref->node);
-+		binder_proc_unlock(proc);
-+		return -EINVAL;
-+	}
-+	ref->freeze = NULL;
-+	/*
-+	 * Take the existing freeze object and overwrite its work type. There are three cases here:
-+	 * 1. No pending notification. In this case just add the work to the queue.
-+	 * 2. An notification was sent and is pending an ack from userspace. Once an ack arrives, we
-+	 *    should resend with the new work type.
-+	 * 3. A notification is pending to be sent. Since the work is already in the queue, nothing
-+	 *    needs to be done here.
-+	 */
-+	freeze->work.type = BINDER_WORK_CLEAR_FREEZE_NOTIFICATION;
-+	if (list_empty(&freeze->work.entry)) {
-+		binder_enqueue_work_ilocked(&freeze->work, &proc->todo);
-+		binder_wakeup_proc_ilocked(proc);
-+	} else if (freeze->sent) {
-+		freeze->resend = true;
-+	}
-+	binder_inner_proc_unlock(proc);
-+	binder_node_unlock(ref->node);
-+	binder_proc_unlock(proc);
-+	return 0;
-+}
-+
-+static int
-+binder_freeze_notification_done(struct binder_proc *proc,
-+				struct binder_thread *thread,
-+				binder_uintptr_t cookie)
-+{
-+	struct binder_ref_freeze *freeze = NULL;
-+	struct binder_work *w;
-+
-+	binder_inner_proc_lock(proc);
-+	list_for_each_entry(w, &proc->delivered_freeze, entry) {
-+		struct binder_ref_freeze *tmp_freeze =
-+			container_of(w, struct binder_ref_freeze, work);
-+
-+		if (tmp_freeze->cookie == cookie) {
-+			freeze = tmp_freeze;
-+			break;
-+		}
-+	}
-+	if (!freeze) {
-+		binder_user_error("%d:%d BC_FREEZE_NOTIFICATION_DONE %016llx not found\n",
-+				  proc->pid, thread->pid, (u64)cookie);
-+		binder_inner_proc_unlock(proc);
-+		return -EINVAL;
-+	}
-+	binder_dequeue_work_ilocked(&freeze->work);
-+	freeze->sent = false;
-+	if (freeze->resend) {
-+		freeze->resend = false;
-+		binder_enqueue_work_ilocked(&freeze->work, &proc->todo);
-+		binder_wakeup_proc_ilocked(proc);
-+	}
-+	binder_inner_proc_unlock(proc);
-+	return 0;
-+}
-+
- /**
-  * binder_free_buf() - free the specified buffer
-  * @proc:	binder proc that owns buffer
-@@ -4246,6 +4399,44 @@ static int binder_thread_write(struct binder_proc *proc,
- 			binder_inner_proc_unlock(proc);
- 		} break;
- 
-+		case BC_REQUEST_FREEZE_NOTIFICATION: {
-+			struct binder_handle_cookie handle_cookie;
-+			int error;
-+
-+			if (copy_from_user(&handle_cookie, ptr, sizeof(handle_cookie)))
-+				return -EFAULT;
-+			ptr += sizeof(handle_cookie);
-+			error = binder_request_freeze_notification(proc, thread,
-+								   &handle_cookie);
-+			if (error)
-+				return error;
-+		} break;
-+
-+		case BC_CLEAR_FREEZE_NOTIFICATION: {
-+			struct binder_handle_cookie handle_cookie;
-+			int error;
-+
-+			if (copy_from_user(&handle_cookie, ptr, sizeof(handle_cookie)))
-+				return -EFAULT;
-+			ptr += sizeof(handle_cookie);
-+			error = binder_clear_freeze_notification(proc, thread, &handle_cookie);
-+			if (error)
-+				return error;
-+		} break;
-+
-+		case BC_FREEZE_NOTIFICATION_DONE: {
-+			binder_uintptr_t cookie;
-+			int error;
-+
-+			if (get_user(cookie, (binder_uintptr_t __user *)ptr))
-+				return -EFAULT;
-+
-+			ptr += sizeof(cookie);
-+			error = binder_freeze_notification_done(proc, thread, cookie);
-+			if (error)
-+				return error;
-+		} break;
-+
- 		default:
- 			pr_err("%d:%d unknown command %u\n",
- 			       proc->pid, thread->pid, cmd);
-@@ -4635,6 +4826,46 @@ static int binder_thread_read(struct binder_proc *proc,
- 			if (cmd == BR_DEAD_BINDER)
- 				goto done; /* DEAD_BINDER notifications can cause transactions */
- 		} break;
-+
-+		case BINDER_WORK_FROZEN_BINDER: {
-+			struct binder_ref_freeze *freeze;
-+			struct binder_frozen_state_info info;
-+			memset(&info, 0, sizeof(info));
-+
-+			freeze = container_of(w, struct binder_ref_freeze, work);
-+			info.is_frozen = freeze->is_frozen;
-+			info.cookie = freeze->cookie;
-+			freeze->sent = true;
-+			binder_enqueue_work_ilocked(w, &proc->delivered_freeze);
-+			binder_inner_proc_unlock(proc);
-+
-+			if (put_user(BR_FROZEN_BINDER, (uint32_t __user *)ptr))
-+				return -EFAULT;
-+			ptr += sizeof(uint32_t);
-+			if (copy_to_user(ptr, &info, sizeof(info)))
-+				return -EFAULT;
-+			ptr += sizeof(info);
-+			binder_stat_br(proc, thread, BR_FROZEN_BINDER);
-+			goto done; /* BR_FROZEN_BINDER notifications can cause transactions */
-+		} break;
-+
-+		case BINDER_WORK_CLEAR_FREEZE_NOTIFICATION: {
-+			struct binder_ref_freeze *freeze =
-+			    container_of(w, struct binder_ref_freeze, work);
-+			binder_uintptr_t cookie = freeze->cookie;
-+
-+			binder_inner_proc_unlock(proc);
-+			kfree(freeze);
-+			binder_stats_deleted(BINDER_STAT_FREEZE);
-+			if (put_user(BR_CLEAR_FREEZE_NOTIFICATION_DONE, (uint32_t __user *)ptr))
-+				return -EFAULT;
-+			ptr += sizeof(uint32_t);
-+			if (put_user(cookie, (binder_uintptr_t __user *)ptr))
-+				return -EFAULT;
-+			ptr += sizeof(binder_uintptr_t);
-+			binder_stat_br(proc, thread, BR_CLEAR_FREEZE_NOTIFICATION_DONE);
-+		} break;
-+
- 		default:
- 			binder_inner_proc_unlock(proc);
- 			pr_err("%d:%d: bad work type %d\n",
-@@ -5242,6 +5473,48 @@ static bool binder_txns_pending_ilocked(struct binder_proc *proc)
- 	return false;
- }
- 
-+static void binder_add_freeze_work(struct binder_proc *proc, bool is_frozen)
-+{
-+	struct rb_node *n;
-+	struct binder_ref *ref;
-+
-+	binder_inner_proc_lock(proc);
-+	for (n = rb_first(&proc->nodes); n; n = rb_next(n)) {
-+		struct binder_node *node;
-+
-+		node = rb_entry(n, struct binder_node, rb_node);
-+		binder_inner_proc_unlock(proc);
-+		binder_node_lock(node);
-+		hlist_for_each_entry(ref, &node->refs, node_entry) {
-+			/*
-+			 * Need the node lock to synchronize
-+			 * with new notification requests and the
-+			 * inner lock to synchronize with queued
-+			 * freeze notifications.
-+			 */
-+			binder_inner_proc_lock(ref->proc);
-+			if (!ref->freeze) {
-+				binder_inner_proc_unlock(ref->proc);
-+				continue;
-+			}
-+			ref->freeze->work.type = BINDER_WORK_FROZEN_BINDER;
-+			if (list_empty(&ref->freeze->work.entry)) {
-+				ref->freeze->is_frozen = is_frozen;
-+				binder_enqueue_work_ilocked(&ref->freeze->work, &ref->proc->todo);
-+				binder_wakeup_proc_ilocked(ref->proc);
-+			} else {
-+				if (ref->freeze->sent && ref->freeze->is_frozen != is_frozen)
-+					ref->freeze->resend = true;
-+				ref->freeze->is_frozen = is_frozen;
-+			}
-+			binder_inner_proc_unlock(ref->proc);
-+		}
-+		binder_node_unlock(node);
-+		binder_inner_proc_lock(proc);
-+	}
-+	binder_inner_proc_unlock(proc);
-+}
-+
- static int binder_ioctl_freeze(struct binder_freeze_info *info,
- 			       struct binder_proc *target_proc)
- {
-@@ -5253,6 +5526,7 @@ static int binder_ioctl_freeze(struct binder_freeze_info *info,
- 		target_proc->async_recv = false;
- 		target_proc->is_frozen = false;
- 		binder_inner_proc_unlock(target_proc);
-+		binder_add_freeze_work(target_proc, false);
- 		return 0;
- 	}
- 
-@@ -5285,6 +5559,8 @@ static int binder_ioctl_freeze(struct binder_freeze_info *info,
- 		binder_inner_proc_lock(target_proc);
- 		target_proc->is_frozen = false;
- 		binder_inner_proc_unlock(target_proc);
-+	} else {
-+		binder_add_freeze_work(target_proc, true);
- 	}
- 
- 	return ret;
-@@ -5658,6 +5934,7 @@ static int binder_open(struct inode *nodp, struct file *filp)
- 	binder_stats_created(BINDER_STAT_PROC);
- 	proc->pid = current->group_leader->pid;
- 	INIT_LIST_HEAD(&proc->delivered_death);
-+	INIT_LIST_HEAD(&proc->delivered_freeze);
- 	INIT_LIST_HEAD(&proc->waiting_threads);
- 	filp->private_data = proc;
- 
-@@ -6209,7 +6486,9 @@ static const char * const binder_return_strings[] = {
- 	"BR_FAILED_REPLY",
- 	"BR_FROZEN_REPLY",
- 	"BR_ONEWAY_SPAM_SUSPECT",
--	"BR_TRANSACTION_PENDING_FROZEN"
-+	"BR_TRANSACTION_PENDING_FROZEN",
-+	"BR_FROZEN_BINDER",
-+	"BR_CLEAR_FREEZE_NOTIFICATION_DONE",
- };
- 
- static const char * const binder_command_strings[] = {
-@@ -6232,6 +6511,9 @@ static const char * const binder_command_strings[] = {
- 	"BC_DEAD_BINDER_DONE",
- 	"BC_TRANSACTION_SG",
- 	"BC_REPLY_SG",
-+	"BC_REQUEST_FREEZE_NOTIFICATION",
-+	"BC_CLEAR_FREEZE_NOTIFICATION",
-+	"BC_FREEZE_NOTIFICATION_DONE",
- };
- 
- static const char * const binder_objstat_strings[] = {
-@@ -6241,7 +6523,8 @@ static const char * const binder_objstat_strings[] = {
- 	"ref",
- 	"death",
- 	"transaction",
--	"transaction_complete"
-+	"transaction_complete",
-+	"freeze",
- };
- 
- static void print_binder_stats(struct seq_file *m, const char *prefix,
-diff --git a/drivers/android/binder_internal.h b/drivers/android/binder_internal.h
-index 5b7c80b99ae8..3e4b35873c64 100644
---- a/drivers/android/binder_internal.h
-+++ b/drivers/android/binder_internal.h
-@@ -129,12 +129,13 @@ enum binder_stat_types {
- 	BINDER_STAT_DEATH,
- 	BINDER_STAT_TRANSACTION,
- 	BINDER_STAT_TRANSACTION_COMPLETE,
-+	BINDER_STAT_FREEZE,
- 	BINDER_STAT_COUNT
- };
- 
- struct binder_stats {
--	atomic_t br[_IOC_NR(BR_TRANSACTION_PENDING_FROZEN) + 1];
--	atomic_t bc[_IOC_NR(BC_REPLY_SG) + 1];
-+	atomic_t br[_IOC_NR(BR_CLEAR_FREEZE_NOTIFICATION_DONE) + 1];
-+	atomic_t bc[_IOC_NR(BC_FREEZE_NOTIFICATION_DONE) + 1];
- 	atomic_t obj_created[BINDER_STAT_COUNT];
- 	atomic_t obj_deleted[BINDER_STAT_COUNT];
- };
-@@ -159,6 +160,8 @@ struct binder_work {
- 		BINDER_WORK_DEAD_BINDER,
- 		BINDER_WORK_DEAD_BINDER_AND_CLEAR,
- 		BINDER_WORK_CLEAR_DEATH_NOTIFICATION,
-+		BINDER_WORK_FROZEN_BINDER,
-+		BINDER_WORK_CLEAR_FREEZE_NOTIFICATION,
- 	} type;
- };
- 
-@@ -275,6 +278,14 @@ struct binder_ref_death {
- 	binder_uintptr_t cookie;
- };
- 
-+struct binder_ref_freeze {
-+	struct binder_work work;
-+	binder_uintptr_t cookie;
-+	bool is_frozen:1;
-+	bool sent:1;
-+	bool resend:1;
-+};
-+
- /**
-  * struct binder_ref_data - binder_ref counts and id
-  * @debug_id:        unique ID for the ref
-@@ -307,6 +318,8 @@ struct binder_ref_data {
-  *               @node indicates the node must be freed
-  * @death:       pointer to death notification (ref_death) if requested
-  *               (protected by @node->lock)
-+ * @freeze:      pointer to freeze notification (ref_freeze) if requested
-+ *               (protected by @node->lock)
-  *
-  * Structure to track references from procA to target node (on procB). This
-  * structure is unsafe to access without holding @proc->outer_lock.
-@@ -323,6 +336,7 @@ struct binder_ref {
- 	struct binder_proc *proc;
- 	struct binder_node *node;
- 	struct binder_ref_death *death;
-+	struct binder_ref_freeze *freeze;
- };
- 
- /**
-@@ -374,6 +388,8 @@ struct binder_ref {
-  *                        (atomics, no lock needed)
-  * @delivered_death:      list of delivered death notification
-  *                        (protected by @inner_lock)
-+ * @delivered_freeze:     list of delivered freeze notification
-+ *                        (protected by @inner_lock)
-  * @max_threads:          cap on number of binder threads
-  *                        (protected by @inner_lock)
-  * @requested_threads:    number of binder threads requested but not
-@@ -421,6 +437,7 @@ struct binder_proc {
- 	struct list_head todo;
- 	struct binder_stats stats;
- 	struct list_head delivered_death;
-+	struct list_head delivered_freeze;
- 	u32 max_threads;
- 	int requested_threads;
- 	int requested_threads_started;
-diff --git a/include/uapi/linux/android/binder.h b/include/uapi/linux/android/binder.h
-index d44a8118b2ed..1fd92021a573 100644
---- a/include/uapi/linux/android/binder.h
-+++ b/include/uapi/linux/android/binder.h
-@@ -236,6 +236,12 @@ struct binder_frozen_status_info {
- 	__u32            async_recv;
- };
- 
-+struct binder_frozen_state_info {
-+	binder_uintptr_t cookie;
-+	__u32            is_frozen;
-+	__u32            reserved;
-+};
-+
- /* struct binder_extened_error - extended error information
-  * @id:		identifier for the failed operation
-  * @command:	command as defined by binder_driver_return_protocol
-@@ -467,6 +473,17 @@ enum binder_driver_return_protocol {
- 	/*
- 	 * The target of the last async transaction is frozen.  No parameters.
- 	 */
-+
-+	BR_FROZEN_BINDER = _IOR('r', 21, struct binder_frozen_state_info),
-+	/*
-+	 * The cookie and a boolean (is_frozen) that indicates whether the process
-+	 * transitioned into a frozen or an unfrozen state.
-+	 */
-+
-+	BR_CLEAR_FREEZE_NOTIFICATION_DONE = _IOR('r', 22, binder_uintptr_t),
-+	/*
-+	 * void *: cookie
-+	 */
- };
- 
- enum binder_driver_command_protocol {
-@@ -550,6 +567,25 @@ enum binder_driver_command_protocol {
- 	/*
- 	 * binder_transaction_data_sg: the sent command.
- 	 */
-+
-+	BC_REQUEST_FREEZE_NOTIFICATION =
-+			_IOW('c', 19, struct binder_handle_cookie),
-+	/*
-+	 * int: handle
-+	 * void *: cookie
-+	 */
-+
-+	BC_CLEAR_FREEZE_NOTIFICATION = _IOW('c', 20,
-+					    struct binder_handle_cookie),
-+	/*
-+	 * int: handle
-+	 * void *: cookie
-+	 */
-+
-+	BC_FREEZE_NOTIFICATION_DONE = _IOW('c', 21, binder_uintptr_t),
-+	/*
-+	 * void *: cookie
-+	 */
- };
- 
- #endif /* _UAPI_LINUX_BINDER_H */
+That's it for now. Thanks for review in advance. Any tests are very
+welcome. After this series is merged in, I'll submit another one which
+adds the generic 10GBase-R and 10GBase-X interfaces support to the STMMAC
+and DW XPCS driver with the proper CSRs re-initialization, PMA
+initialization and reference clock selection as it's described in the
+Synopsys DW XPCS HW manual.
+
+Link: https://lore.kernel.org/netdev/20231205103559.9605-1-fancer.lancer@gmail.com
+Changelog v2:
+- Drop the patches:
+  [PATCH net-next 01/16] net: pcs: xpcs: Drop sentinel entry from 2500basex ifaces list
+  [PATCH net-next 02/16] net: pcs: xpcs: Drop redundant workqueue.h include directive
+  [PATCH net-next 03/16] net: pcs: xpcs: Return EINVAL in the internal methods
+  [PATCH net-next 04/16] net: pcs: xpcs: Explicitly return error on caps validation
+  as ones have already been merged into the kernel repo:
+Link: https://lore.kernel.org/netdev/20240222175843.26919-1-fancer.lancer@gmail.com/
+- Drop the patches:
+  [PATCH net-next 14/16] net: stmmac: Pass netdev to XPCS setup function
+  [PATCH net-next 15/16] net: stmmac: Add dedicated XPCS cleanup method
+  as ones have already been merged into the kernel repo:
+Link: https://lore.kernel.org/netdev/20240513-rzn1-gmac1-v7-0-6acf58b5440d@bootlin.com/
+- Drop the patch:
+  [PATCH net-next 06/16] net: pcs: xpcs: Avoid creating dummy XPCS MDIO device
+  [PATCH net-next 09/16] net: mdio: Add Synopsys DW XPCS management interface support
+  [PATCH net-next 11/16] net: pcs: xpcs: Change xpcs_create_mdiodev() suffix to "byaddr"
+  [PATCH net-next 13/16] net: stmmac: intel: Register generic MDIO device
+  as no longer relevant.
+- Add new patches:
+  [PATCH net-next v2 03/10] net: pcs: xpcs: Convert xpcs_id to dw_xpcs_desc
+  [PATCH net-next v2 04/10] net: pcs: xpcs: Convert xpcs_compat to dw_xpcs_compat
+  [PATCH net-next v2 05/10] net: pcs: xpcs: Introduce DW XPCS info structure
+  [PATCH net-next v2 09/10] net: stmmac: Create DW XPCS device with particular address
+- Use the xpcs_create_fwnode() function name and semantics similar to the
+  Lynx PCS driver.
+- Add kdoc describing the DW XPCS registration functions.
+- Convert the memory-mapped DW XPCS device driver to being the
+  platform-device driver.
+- Convert the DW XPCS DT-bindings to defining both memory-mapped and MDIO
+  devices.
+- Drop inline'es from the methods statically defined in *.c. (@Maxime)
+- Preserve the strict refcount-ing pattern. (@Russell)
+
+Link: https://lore.kernel.org/netdev/20240602143636.5839-1-fancer.lancer@gmail.com/
+Changelov v3:
+- Implement the ordered clocks constraint. (@Rob)
+- Convert xpcs_plat_pm_ops to being defined as static. (@Simon)
+- Add the "@interface" argument kdoc to the xpcs_create_mdiodev()
+  function. (@Simon)
+- Fix the "@fwnode" argument name in the xpcs_create_fwnode() method kdoc.
+  (@Simon)
+- Move the return value descriptions to the "Return:" section of the
+  xpcs_create_mdiodev() and xpcs_create_fwnode() kdoc. (@Simon)
+- Drop stmmac_mdio_bus_data::has_xpcs flag and define the PCS-address
+  mask with particular XPCS address instead.
+
+Link: https://lore.kernel.org/netdev/20240627004142.8106-1-fancer.lancer@gmail.com/
+Changelog v4:
+- Make sure the series is applicable to the net-next tree. (@Vladimir)
+- Rename entry to desc in the xpcs_init_id() method. (@Andrew)
+- Add a comment to the clock-names property constraint about the
+  oneOf-subschemas applicability. (@Conor)
+- Convert "pclk" clock name to "csr" to match the DW XPCS IP-core
+  input signal name. (@Rob)
+
+base-commit: 74d6529b78f7a440a10aa7f4904ca9f27d1d2f3c
+Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Cc: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+Cc: Abhishek Chauhan <quic_abchauha@quicinc.com>
+Cc: Andrew Halaney <ahalaney@redhat.com>
+Cc: Jiawen Wu <jiawenwu@trustnetic.com>
+Cc: Mengyuan Lou <mengyuanlou@net-swift.com>
+Cc: Tomer Maimon <tmaimon77@gmail.com>
+Cc: openbmc@lists.ozlabs.org
+Cc: netdev@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+
+Serge Semin (10):
+  net: pcs: xpcs: Move native device ID macro to linux/pcs/pcs-xpcs.h
+  net: pcs: xpcs: Split up xpcs_create() body to sub-functions
+  net: pcs: xpcs: Convert xpcs_id to dw_xpcs_desc
+  net: pcs: xpcs: Convert xpcs_compat to dw_xpcs_compat
+  net: pcs: xpcs: Introduce DW XPCS info structure
+  dt-bindings: net: Add Synopsys DW xPCS bindings
+  net: pcs: xpcs: Add Synopsys DW xPCS platform device driver
+  net: pcs: xpcs: Add fwnode-based descriptor creation method
+  net: stmmac: Create DW XPCS device with particular address
+  net: stmmac: Add DW XPCS specified via "pcs-handle" support
+
+ .../bindings/net/pcs/snps,dw-xpcs.yaml        | 136 ++++++
+ .../net/ethernet/stmicro/stmmac/dwmac-intel.c |   2 +-
+ .../net/ethernet/stmicro/stmmac/stmmac_mdio.c |  32 +-
+ drivers/net/pcs/Kconfig                       |   6 +-
+ drivers/net/pcs/Makefile                      |   3 +-
+ drivers/net/pcs/pcs-xpcs-plat.c               | 460 ++++++++++++++++++
+ drivers/net/pcs/pcs-xpcs.c                    | 361 +++++++++-----
+ drivers/net/pcs/pcs-xpcs.h                    |   7 +-
+ include/linux/pcs/pcs-xpcs.h                  |  49 +-
+ include/linux/stmmac.h                        |   2 +-
+ 10 files changed, 910 insertions(+), 148 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/pcs/snps,dw-xpcs.yaml
+ create mode 100644 drivers/net/pcs/pcs-xpcs-plat.c
+
 -- 
-2.45.2.803.g4e1b14247a-goog
+2.43.0
 
 
