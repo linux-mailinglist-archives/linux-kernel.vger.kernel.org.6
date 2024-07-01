@@ -1,130 +1,183 @@
-Return-Path: <linux-kernel+bounces-236785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F94991E705
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:59:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CB6391E700
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:55:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90F2D1C2218C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:59:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4A011F23709
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E861A16EB7E;
-	Mon,  1 Jul 2024 17:58:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C941416EBE8;
+	Mon,  1 Jul 2024 17:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=chrisli-org.20230601.gappssmtp.com header.i=@chrisli-org.20230601.gappssmtp.com header.b="2Gz+YDoq"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Me7R+7ax"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939BA16EB71
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 17:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6629C16EB6A;
+	Mon,  1 Jul 2024 17:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719856735; cv=none; b=Jo5f7yWWTdrG1jlMpnbAC25h/UhGKAtuz9UjTOnFJjFD9p9PwBhUVNhodv66WvNk4mfSjGR/A7UUuabTPX/krBrtVGZ/ieVHCAbF0xAgNrjgrdkS156iD70l5aaHfXvGSGOI5ZSjv9ZPOn27joMIpBR6O4cCn/Gpqab1hbCuSMw=
+	t=1719856549; cv=none; b=FOOb6R6oSoiuNYu2bqelLyM6OqbDuU3mWZGTcxrSnssczIm14ODy9mAgHpco9w/EL+hmW3I+kB7INQd7liu+xl9/bj0vSup3suu9PzJTnZQqUonZ9IjomsY7HdJZgY97GayCqez2vr76uV1KiT6ySrBtl94XY7ayX18oy/2xV9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719856735; c=relaxed/simple;
-	bh=9uA3Y+CKDQgcpbSj76MBdoSDbtnzadrzu8XP5nWZpXc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n3FumIaqIZ2UNSoS4b8h9sNQNxqE4Rq5F7kYKtFS1wbiMt83/HapkICYON1cYjI6iMr2qwMh0oQbagnehVRf9OS2rJmc1LcpAYzZN/6eArAkLBcI/VziuLVYOqTcz3/Aotu2R2BH4N3qx2J8gWEP70jaRZU4GEw0lvnxzN1py/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chrisli.org; spf=pass smtp.mailfrom=chrisli.org; dkim=pass (2048-bit key) header.d=chrisli-org.20230601.gappssmtp.com header.i=@chrisli-org.20230601.gappssmtp.com header.b=2Gz+YDoq; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chrisli.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chrisli.org
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-64d408a5d01so15764837b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 10:58:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chrisli-org.20230601.gappssmtp.com; s=20230601; t=1719856732; x=1720461532; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9StUTNhxwCy/pDRuf8/7L71MaUer3QRVVlv9U1S2xNU=;
-        b=2Gz+YDoq8m+XuStUY2eBBWXEkygpgcoGU2zaHRO0s1ZzVRkxQOlkAan0OHJDqHogjS
-         0m6FnU5S0JS8QOIYApJ4C33xE8RGekvjV7OqU7l9p2bhvEMFDXriuGJtZ886QblgtvD2
-         /92drCS8hfGO2hvwvr4bl2yJaOeqQ3ZMPuMwdeFF2NZPtTM1D3EUURc6aioWKpQVYR8t
-         eq4UrNa7ktkiyr6IKgVr+F+qLasae9KROKBVzxQjBvLI5dljwXRfgohjAs27flvJGPgL
-         aBtmHaVhNhZMwseqFvpuJxoKWYabnzHJuQJfdF+d5P0BoFv+XHUUdclP76bMkYirdwdP
-         AESQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719856732; x=1720461532;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9StUTNhxwCy/pDRuf8/7L71MaUer3QRVVlv9U1S2xNU=;
-        b=ZjQaCrt/hhCERbNXrd7AqoDOdwrIdOdtS96N2lD36IQ1A3pdqBtYL4wmyVTc2XcyMo
-         nLz+c8WgTesc7lC3qs3zaVAWXl82mktFbKJzSgMlm/5i3/OPEGODiRy8apLNJeEB4qd9
-         F8imtj+gywiOSQQZ8ub5RCti0pCe72cKQzWXTfjDr8LHAV5KdaqVdsykUdL8z59Qj+W8
-         VRq2fLdNbDEmtwVdHgAsFA36r+yYqiZLUQJ5/56eNsVwLn4NpRRjyUcs+KNLkZsHh4E4
-         IAfL/vhcL3B7y/+cfNZyFd08ubNPazV2TfLZTg1egiJ4JxgjIf8iW7Pl1ufJd2/dDuyF
-         3JPw==
-X-Forwarded-Encrypted: i=1; AJvYcCWHQix5YL07MfYcQS78AS/hyA3X8cNSFioG100uCY5AtToR3gq+aLpDfjaZtjbEyGLskFta0TBrcfbPEskGW/mgQ5WgFGpVVjOPZbz5
-X-Gm-Message-State: AOJu0YwI2QCV9dlKMYzB8bcYEWx0xxThYc/RPphnJvCX7GyUb3HjjfBV
-	Iz2gOtUttOO7vc2zUsc4y600u9XC+drl14nDOckqcpnjg+o44wwa+eWJLjEcm0zz4StfXyrztOZ
-	a6appMmFvAqwKJAwvlNOQo6Mx65PMrNvPabOQEA==
-X-Google-Smtp-Source: AGHT+IFJluQuwD1WcAotSkbFXZSCdGFCSEJsz0a4V4lxTs2mfUgp3DWk5Hz/0vqUyKZs3Prk2hk7RE+AVR9pUzOtbpY=
-X-Received: by 2002:a81:ab4c:0:b0:630:d0a3:d2e6 with SMTP id
- 00721157ae682-64c73bde7d6mr59684427b3.49.1719856732638; Mon, 01 Jul 2024
- 10:58:52 -0700 (PDT)
+	s=arc-20240116; t=1719856549; c=relaxed/simple;
+	bh=SGQJsHnQ5hH73LkMg9W47h+XoIg3nmMQ48iQr3+H3sY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dS4oQLSvb3DRVn4VcegZC6EbpNAszh68WhV0L/tKAwZ1K91leo0wnUtcuPmeF9OUQ8l+s09XP0XotuG6C2crEHEz67bNUoigik7GQ5kZ3PI30h8M5QYMHawkv4CA+C/xpnuMS18gGZD3RKZrc81WPkd+sZYaPr6vDwO5808zIdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Me7R+7ax; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719856547; x=1751392547;
+  h=date:from:to:cc:subject:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=SGQJsHnQ5hH73LkMg9W47h+XoIg3nmMQ48iQr3+H3sY=;
+  b=Me7R+7axUMNfMWxGttgnb+89XbTsKhSmWZFpkdmgE7LxZuC4a9QuN4fa
+   5bhgmXcnygT4fmlqfXECJZAQKYYLMoDRs07VVYypPJPAX/xPaUMxmuHGG
+   YYyDybgrA4BL/600MyG0NDkB7e8z+5/W6PY6aY1Ht4kC6f/I07h9xKQlm
+   H5stO5bd8RXPvsYqEuVvoQZa2P7mfOmh2DhBp1sc/gFPgZC+w9rVVt23z
+   6CunIOt+YtYBR6saP0Qx4qEsTzVcbyV1TVrFsp4gDMxNHK121YV/fB1Ng
+   bYSp/elPueeWzFC/+KKLYAJpHa0CfgLfliS8o2UmZfX7jBNjGCp2Id5cs
+   g==;
+X-CSE-ConnectionGUID: soQ9o0/nS5iazJpkUfDtgw==
+X-CSE-MsgGUID: U+riKPaDQ+i6Vcy4D0tgpg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="34542838"
+X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
+   d="scan'208";a="34542838"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 10:55:46 -0700
+X-CSE-ConnectionGUID: VvlaK8fdRBex0s2yHtTBBA==
+X-CSE-MsgGUID: Hy0V87hJRWagHoxyaofFRw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
+   d="scan'208";a="46263903"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.54.39.125])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 10:55:47 -0700
+Date: Mon, 1 Jul 2024 11:00:58 -0700
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+To: Xin Li <xin@zytor.com>
+Cc: X86 Kernel <x86@kernel.org>, Sean Christopherson <seanjc@google.com>,
+ LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Dave Hansen <dave.hansen@intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Ingo
+ Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Xin Li
+ <xin3.li@intel.com>, linux-perf-users@vger.kernel.org, Peter Zijlstra
+ <peterz@infradead.org>, Paolo Bonzini <pbonzini@redhat.com>, Tony Luck
+ <tony.luck@intel.com>, Andy Lutomirski <luto@kernel.org>, acme@kernel.org,
+ kan.liang@linux.intel.com, Andi Kleen <andi.kleen@intel.com>, "Mehta,
+ Sohil" <sohil.mehta@intel.com>, Zeng Guang <guang.zeng@intel.com>,
+ jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v3 07/11] KVM: VMX: Handle NMI Source report in VM exit
+Message-ID: <20240701110058.098c6445@jacob-builder>
+In-Reply-To: <51768b50-96ac-49a7-a63b-02d2b94c2c6a@zytor.com>
+References: <20240628201839.673086-1-jacob.jun.pan@linux.intel.com>
+	<20240628201839.673086-8-jacob.jun.pan@linux.intel.com>
+	<6c8160e4-3d67-410d-aad0-3ec731a903f8@zytor.com>
+	<20240701084558.1620584f@jacob-builder>
+	<51768b50-96ac-49a7-a63b-02d2b94c2c6a@zytor.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240629232231.42394-1-21cnbao@gmail.com>
-In-Reply-To: <20240629232231.42394-1-21cnbao@gmail.com>
-From: Chris Li <cli@chrisli.org>
-Date: Mon, 1 Jul 2024 10:58:41 -0700
-Message-ID: <CACePvbW+0j0omqwYcJR6RKSzJu9Kf6aYK7rYJZFtWo3f_bXhWw@mail.gmail.com>
-Subject: Re: [PATCH] mm: zswap: fix zswap_never_enabled() for CONFIG_ZSWAP==N
-To: Barry Song <21cnbao@gmail.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>, 
-	Yosry Ahmed <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Chris Li <chrisl@kernel.org>, 
-	David Hildenbrand <david@redhat.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Acked-by: Chris Li <chrisl@kernel.org>
 
-Chris
+On Mon, 1 Jul 2024 10:03:58 -0700, Xin Li <xin@zytor.com> wrote:
 
-On Sat, Jun 29, 2024 at 4:22=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
-e:
->
-> From: Barry Song <v-songbaohua@oppo.com>
->
-> If CONFIG_ZSWAP is set to N, it means zswap cannot be enabled.
-> zswap_never_enabled() should return true.
->
-> Fixes: 0300e17d67c3 ("mm: zswap: add zswap_never_enabled()")
-> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-> Cc: Yosry Ahmed <yosryahmed@google.com>
-> Cc: Nhat Pham <nphamcs@gmail.com>
-> Cc: Chengming Zhou <chengming.zhou@linux.dev>
-> Cc: Chris Li <chrisl@kernel.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  include/linux/zswap.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/include/linux/zswap.h b/include/linux/zswap.h
-> index bf83ae5e285d..6cecb4a4f68b 100644
-> --- a/include/linux/zswap.h
-> +++ b/include/linux/zswap.h
-> @@ -68,7 +68,7 @@ static inline bool zswap_is_enabled(void)
->
->  static inline bool zswap_never_enabled(void)
->  {
-> -       return false;
-> +       return true;
->  }
->
->  #endif
-> --
-> 2.34.1
->
+> On 7/1/2024 8:45 AM, Jacob Pan wrote:
+> > 
+> > On Fri, 28 Jun 2024 21:07:04 -0700, Xin Li <xin@zytor.com> wrote:
+> >   
+> >> On 6/28/2024 1:18 PM, Jacob Pan wrote:  
+> >>> From: Zeng Guang <guang.zeng@intel.com>
+> >>>
+> >>> If the "NMI exiting" VM-execution control is 1, the value of the
+> >>> 16-bit NMI source vector is saved in the exit-qualification field in
+> >>> the VMCS when VM exits occur on CPUs that support NMI source.
+> >>>
+> >>> KVM that is aware of NMI-source reporting will push the bitmask of NMI
+> >>> source vectors as the exceptoin event data field on the stack for then
+> >>> entry of FRED exception. Subsequently, the host NMI exception handler
+> >>> is invoked which will process NMI source information in the event
+> >>> data. This operation is independent of vCPU FRED enabling status.
+> >>>
+> >>> Signed-off-by: Zeng Guang <guang.zeng@intel.com>
+> >>> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> >>> ---
+> >>>    arch/x86/entry/entry_64_fred.S |  2 +-
+> >>>    arch/x86/kvm/vmx/vmx.c         | 11 ++++++++---
+> >>>    2 files changed, 9 insertions(+), 4 deletions(-)
+> >>>
+> >>> diff --git a/arch/x86/entry/entry_64_fred.S
+> >>> b/arch/x86/entry/entry_64_fred.S index a02bc6f3d2e6..0d934a3fcaf8
+> >>> 100644 --- a/arch/x86/entry/entry_64_fred.S
+> >>> +++ b/arch/x86/entry/entry_64_fred.S
+> >>> @@ -92,7 +92,7 @@ SYM_FUNC_START(asm_fred_entry_from_kvm)
+> >>>    	 * +--------+-----------------+
+> >>>    	 */
+> >>>    	push $0				/* Reserved, must
+> >>> be 0 */
+> >>> -	push $0				/* Event data, 0 for
+> >>> IRQ/NMI */
+> >>> +	push %rsi			/* Event data for IRQ/NMI */
+> >>>    	push %rdi			/* fred_ss handed in by
+> >>> the caller */ push %rbp
+> >>>    	pushf  
+> >>
+> >> This belongs to the previous patch, it is part of the host changes.  
+> > right, will do.
+> >   
+> >>  
+> >>> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> >>> index 4e7b36081b76..6719c598fa5f 100644
+> >>> --- a/arch/x86/kvm/vmx/vmx.c
+> >>> +++ b/arch/x86/kvm/vmx/vmx.c
+> >>> @@ -7331,10 +7331,15 @@ static noinstr void vmx_vcpu_enter_exit(struct
+> >>> kvm_vcpu *vcpu, if ((u16)vmx->exit_reason.basic ==
+> >>> EXIT_REASON_EXCEPTION_NMI && is_nmi(vmx_get_intr_info(vcpu))) {
+> >>>    		kvm_before_interrupt(vcpu, KVM_HANDLING_NMI);
+> >>> -		if (cpu_feature_enabled(X86_FEATURE_FRED))
+> >>> -			fred_entry_from_kvm(EVENT_TYPE_NMI,
+> >>> NMI_VECTOR, 0);
+> >>> -		else
+> >>> +		if (cpu_feature_enabled(X86_FEATURE_FRED)) {
+> >>> +			unsigned long edata = 0;
+> >>> +
+> >>> +			if
+> >>> (cpu_feature_enabled(X86_FEATURE_NMI_SOURCE))
+> >>> +				edata = vmx_get_exit_qual(vcpu);
+> >>> +			fred_entry_from_kvm(EVENT_TYPE_NMI,
+> >>> NMI_VECTOR, edata);  
+> >>
+> >> Simply do fred_entry_from_kvm(EVENT_TYPE_NMI, NMI_VECTOR,
+> >> vmx_get_exit_qual(vcpu))?  
+> > I don't have strong preference but having a local variable improves
+> > readability IMHO.  
+> 
+> My point was, do we actually need this check:
+>      (cpu_feature_enabled(X86_FEATURE_NMI_SOURCE)?
+I also pondered about the value of this CPUID bit if it is consistently
+linked with the FRED bit. But since the architecture provided this
+additional enumeration, as noted in Chapter 9 of the FRED specification,
+which states: 
+
+"Processors that support FRED *may* also support a related feature called
+NMI-source reporting".
+
+The use of "may" suggests that there are scenarios where FRED might exist
+without NMI-source reporting. To ensure future compatibility, I believe
+it is still valid to maintain this check.
+
+
+Thanks,
+
+Jacob
 
