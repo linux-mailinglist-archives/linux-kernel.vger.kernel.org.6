@@ -1,110 +1,127 @@
-Return-Path: <linux-kernel+bounces-236923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0015691E8A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:29:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFE3491E8A6
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:31:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DD8BB21484
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:29:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5CDF1C20F0E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:31:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1331716F85A;
-	Mon,  1 Jul 2024 19:28:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C633D16F849;
+	Mon,  1 Jul 2024 19:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eK/F8rRc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eprjowPH"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 431E416F82E;
-	Mon,  1 Jul 2024 19:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C48616D9BA;
+	Mon,  1 Jul 2024 19:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719862108; cv=none; b=mtEfnxjLfR8F1KKgLAzh+DD3Y6u7EhireBRN699BCApPBDx7quRKs+923DitXg8BsmSHt6hdNoMcyBccV+vGhPPYK+k0fzHVJT2mpAzAG8JNLVhYQ6g0UX7ydFjXhMZZRZ7SRJhP+Ryns/YP6TAkD6GFWbzES4tHOeFf0YxkYUI=
+	t=1719862280; cv=none; b=RgJibpXYdNi25lYD1Va5szu6bdllsnW5grinC1mosvt77d5mHjOek3pD0KmXl+iX3lQkjUIsaBkdk0N2C2NIHBaEE6jkz5S3nuUIqrMubzaVohSQzHD8B6tKlgATiM2F6Iiy25Sa52GT6zzQIrYOlfkTgawUJhhb2/yjrgX3DuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719862108; c=relaxed/simple;
-	bh=5Pb0c/Ig5x3IoqV7zXvxQplmAH8/JaolhjzydtQVsMQ=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=e0rXbHh2L654IgjjPG6bSCSVfQDGsIv+S0Afjy0hOMNg0q4j2XeDqSBstoTD8shsaWa8zddwlqZHLUSffKabVMxpziIbihHv/OWyn2w3vIyezCYfjsCuJSy1Q6scXeSOQhNomtNsQUkrmFiRSHAFJoTZwYTs7EZ9retrBma/NmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eK/F8rRc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0362DC32781;
-	Mon,  1 Jul 2024 19:28:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719862108;
-	bh=5Pb0c/Ig5x3IoqV7zXvxQplmAH8/JaolhjzydtQVsMQ=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=eK/F8rRcEhl6noiaLkE6Rb8qV2v5vtfplYcW20zP39uKLgGPewpCi0go+bYd5hLfh
-	 cPo7tUtAKK2Xt5Wc7aYvB6iSu37/9XGzGYnUxXrsZ+xqTh1UtjxfNt0XpKc0pvdHDU
-	 pHLtjrAr8Kj2MKRbMsG1lOwIMOpbT2s9V9NK3x0l9/hbQCmoDsYbu1z+2G7Rwuj0Dq
-	 lNWCvQsCylYbKUQ1iN5LS93iXLokj19KOGdIb8K8tBX2WWmES6zQr0YtLr++9aciRi
-	 VIzozdUEWlYtiPgjdPeEQZaTkv/zFdxIO0nkGXmv0vlhmopj3EogcXICnuyt537fV2
-	 zg+ko26RMGa+w==
-Date: Mon, 01 Jul 2024 13:28:27 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1719862280; c=relaxed/simple;
+	bh=7uK56noa9OT7NT7AiKzpcK8+8gv6waaOJ9178RHutXM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=hNBh3RyusbVzkneC0pKiXNvbaeS4yFYE7jhkXAflHMvRzDKsWxEUvyqNV0SFBL4OR34rvS6zmrrBpypcBzLtRpnE3OK/bHZjAkiLtCfBdGv7FYEV2kDz0kr9Uz8jaLIrxPn3tRgiG9jQl3mX+JyTajOwHIpVztfFbFL/gB7VTRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eprjowPH; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57d0e3d32f1so102633a12.0;
+        Mon, 01 Jul 2024 12:31:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719862277; x=1720467077; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=D0HZlK8nHwoje+lWDsShpqSJVC51ECArGsANp8ntoAw=;
+        b=eprjowPHB66SNBaU4r2f+Y2SPmDt844CfcS+EAzMJbakLaJYJXavfpPOeM6NtzJmQl
+         A/Nm2hT9ttgIqZ9kTgN8Y43spoA+eo1lEKvH6QZrgmhIInxW8jMG3inmd4ekJMFhC8d9
+         IL01b+CGY2stCQOkMPPvSPVjKGY2py4bkNYnNKNyu3yDtoeRR9Jzqd9P5jF21YH2oA7g
+         QCjrEk0cMFRDsKQp1UybuL2uxXdMLB5ni1q1DqAFa8qLR8cbQLXkucWkTvgv7jNXCPva
+         Rn7UxKguKaqVLGYiJtC4W+RpOqgf4iXQdarMdx3VQks2e98vfARVGtGWO3FXI/BebI/g
+         kKKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719862277; x=1720467077;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D0HZlK8nHwoje+lWDsShpqSJVC51ECArGsANp8ntoAw=;
+        b=GpceVNknpi9Y3WbA7w+/36+hEG2OrtmHR058rtGTy+qFDxhwxxoWcNVeCWoprP/bDB
+         F+Yl6i82GYE9uzJPKlBkJHZZOeFMfhLhk5nQmgl3GaLneKgFWZMaKLAwrPFgFPEEGqhl
+         e+Ge0mWN1gOKnw7E6oBN+oDHOhoecJGu7QgZhy1K0V2GL30+9jfo2gaLbxvH/atuXQ8A
+         enH5pPucVBOHerNngEImUZeQyiwUjcvS3GA8PD8ShH6isB/YYiDOwEU4UMcu6ZRNuMTJ
+         qKIdgahAP+VXUEsuWJp+4cyei+G3xmoaGY6t3wjewSfatMtj2McFvWy1S+6BGzqyLR0U
+         oqHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVitrthq1XLRl+tNUAzyYKMzrIobcTzFwxVyRfvb1c5V1Drxn3C6WtZCP2Pq7HNcfJQMMBClxINh1k62KKn6IZjcuhy87I4KGSa581lXYfCztsHMHtGBDehbHgJqoQWyKp+POtjeTC7WYs=
+X-Gm-Message-State: AOJu0Yx20TupWxFEbhhYeCv7NjaBup90oVTa2PJs1rf/NY6rnU+3Y1zU
+	QOmL0I+jw24WdLPfgNxUGx/ozD7+DD9worYhit+1QsPQZJtqpcdd
+X-Google-Smtp-Source: AGHT+IEtOTFhO5s/ESTanETwKJvhOIab0I4p7PgSG6Bi6jKBUgeYqvdk9TOJBWlSN/5+j6oA7dtTMg==
+X-Received: by 2002:a50:c356:0:b0:57c:bc7f:fb51 with SMTP id 4fb4d7f45d1cf-587a0b030abmr4269936a12.2.1719862276901;
+        Mon, 01 Jul 2024 12:31:16 -0700 (PDT)
+Received: from [192.168.0.103] (p57ba2f9b.dip0.t-ipconnect.de. [87.186.47.155])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58612c835c4sm4730177a12.11.2024.07.01.12.31.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Jul 2024 12:31:16 -0700 (PDT)
+Message-ID: <cbd7ead7-bfe9-40d1-ae9d-053388384356@gmail.com>
+Date: Mon, 1 Jul 2024 21:31:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Spencer Hill <shill@d3engineering.com>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
- Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Alexander Stein <alexander.stein@ew.tq-group.com>, 
- linux-kernel@vger.kernel.org, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- linux-arm-kernel@lists.infradead.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Shawn Guo <shawnguo@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>
-In-Reply-To: <20240628-imx728-driver-v2-1-80efa6774286@d3engineering.com>
-References: <20240628-imx728-driver-v2-0-80efa6774286@d3engineering.com>
- <20240628-imx728-driver-v2-1-80efa6774286@d3engineering.com>
-Message-Id: <171986210711.640699.6919165749438870008.robh@kernel.org>
-Subject: Re: [PATCH v2 1/2] media: dt-bindings: Add Sony IMX728
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] staging: nvec: Use x instead of x != NULL to improve
+ readability.
+To: Tom Mounet <tommounet@gmail.com>, Marc Dietrich <marvin24@gmx.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, ac100@lists.launchpad.net,
+ linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org, outreachy@lists.linux.dev
+References: <66804898.5d0a0220.6df0f.4f0a@mx.google.com>
+Content-Language: en-US
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+In-Reply-To: <66804898.5d0a0220.6df0f.4f0a@mx.google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-On Fri, 28 Jun 2024 17:17:00 -0400, Spencer Hill wrote:
-> Add bindings for Sony IMX728.
+On 6/29/24 19:47, Tom Mounet wrote:
+> Use x instead of x != NULL to improve readability.
+> Issue identified by checkpatch.
 > 
-> Signed-off-by: Spencer Hill <shill@d3engineering.com>
+> Signed-off-by: Tom Mounet <tommounet@gmail.com>
 > ---
->  .../devicetree/bindings/media/i2c/sony,imx728.yaml | 119 +++++++++++++++++++++
->  MAINTAINERS                                        |   7 ++
->  2 files changed, 126 insertions(+)
+> v3: Add change history and proper description
+> v2: Make commit title clearer
 > 
+>   drivers/staging/nvec/nvec.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+> index e5ca78e57..814eb121c 100644
+> --- a/drivers/staging/nvec/nvec.c
+> +++ b/drivers/staging/nvec/nvec.c
+> @@ -300,7 +300,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
+>   {
+>   	mutex_lock(&nvec->sync_write_mutex);
+>   
+> -	if (msg != NULL)
+> +	if (msg)
+>   		*msg = NULL;
+>   
+>   	nvec->sync_write_pending = (data[1] << 8) + data[0];
+> @@ -322,7 +322,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
+>   
+>   	dev_dbg(nvec->dev, "nvec_sync_write: pong!\n");
+>   
+> -	if (msg != NULL)
+> +	if (msg)
+>   		*msg = nvec->last_sync_msg;
+>   	else
+>   		nvec_msg_free(nvec, nvec->last_sync_msg);
 
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/media/i2c/sony,imx728.yaml:62:17: [warning] wrong indentation: expected 18 but found 16 (indentation)
-./Documentation/devicetree/bindings/media/i2c/sony,imx728.yaml:65:17: [warning] wrong indentation: expected 18 but found 16 (indentation)
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/sony,imx728.example.dtb: camera@1a: port:endpoint: Unevaluated properties are not allowed ('data-lanes', 'link-frequencies' were unexpected)
-	from schema $id: http://devicetree.org/schemas/media/i2c/sony,imx728.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240628-imx728-driver-v2-1-80efa6774286@d3engineering.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Reviewed-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
 
