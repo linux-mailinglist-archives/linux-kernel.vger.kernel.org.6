@@ -1,139 +1,138 @@
-Return-Path: <linux-kernel+bounces-235629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CE2C91D7B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:51:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BA7D91D7B4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:52:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C03CE1F22B2B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 05:51:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6D27280F96
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 05:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE42E4315D;
-	Mon,  1 Jul 2024 05:51:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86FE241C85;
+	Mon,  1 Jul 2024 05:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="T1eWx6OJ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="CpEu1hZC"
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72AFF9F8;
-	Mon,  1 Jul 2024 05:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EBBB383AC
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 05:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719813085; cv=none; b=r7a18IztMUzpfSp/bQxiWYdhUGUK+s5+oEVU0kaYWoy4sIOlqpkrMng8JRrykGtM4vFKQOFyZViOrZW02jhU3AExIRI2gpj3S7IF9KMHMd73OqD4bq9FOScYpm6wxPDfPSdpWOSZ8qOgabWtCxmIVqujLz0jxhevy4uL/SImchw=
+	t=1719813143; cv=none; b=BIvEzWiMytVbeUFq8epgxfNooXPa0iC/OgEPlS/HQfu1A7CX98XorQ+xtP2wBbsaBTIDDNVQ58zUubP+VRdd3i932/E18NJA8tmSrr4X8FTqQzYxgw0X1jXAIOZew1Ep+NCTR2zs19x3gYoqXNKlsyAD8yzJBdbqfnjlMNqtzAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719813085; c=relaxed/simple;
-	bh=86cdlPrxWyCNweDyitOQiuhUq9SGWkQjidN4YDN7Op0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DndvdII0RNt7P5DMucrDvIyo0MVIaJol1e3aBUjdR/XJLWj6OSWvYSdeLbnTdEpvZiz5WYiONBkUVXuodwZKvxtRv01OXtevDR9NBKY6s8lysIvw+JTWH5M3ol6ZxqfiErUj9vPXwqvZHoXIQbvTb9LT81sLjz/mWeU1CugldfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=T1eWx6OJ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45UNhNPl009177;
-	Mon, 1 Jul 2024 05:51:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=U8w4D1r7t7niSc/XiQ8MWOlU
-	ZfgvTBRs8X6EjKJ4vwY=; b=T1eWx6OJLaaLAXZWIoAdhOPKH/C2jnVRXZHiJ7b9
-	ma0QL6ElXYT62aSSjODmfFFonSdpZ02m77m0sODF8Mk2BbeqPQfyv9hz3SeVa0Al
-	0CNMJwiAIVOFoDtXVPmZxSEojHqqB1FzjsRVDHwkUdGeMhqtH9ul1XFJPPSRSiDI
-	y5CUCGI/wPts8gHepD4Vsfhrq/AYqsZlBqbkYy8epVo0ZQZqcTE/+VWhrzVd5HSt
-	gAlJUdLVSvL+oDs3Tf8UdOv7YGbCdrLrutw+SRjwWMRsUHNME0ivPiSs/Iqhzw2v
-	Yhj3p9K0FKaEXVaCPxDR4/gcNhRJkwPt5vEOS93bwZM6KA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 402bejjw3w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 01 Jul 2024 05:51:13 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4615pCTs027669
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 1 Jul 2024 05:51:12 GMT
-Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Sun, 30 Jun 2024 22:51:07 -0700
-Date: Mon, 1 Jul 2024 11:21:03 +0530
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-CC: freedreno <freedreno@lists.freedesktop.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
-        "OPEN
- FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Krzysztof Kozlowski
-	<krzk@kernel.org>, Will Deacon <will@kernel.org>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Daniel Vetter <daniel@ffwll.ch>, David Airlie
-	<airlied@gmail.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        "Sean
- Paul" <sean@poorly.run>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 3/5] drm/msm/adreno: Introduce gmu_chipid for a740 &
- a750
-Message-ID: <20240701055103.srt6olauy7ux5um5@hu-akhilpo-hyd.qualcomm.com>
-References: <20240629015111.264564-1-quic_akhilpo@quicinc.com>
- <20240629015111.264564-4-quic_akhilpo@quicinc.com>
- <243c0432-a681-4932-957b-e80f2f4ef295@linaro.org>
+	s=arc-20240116; t=1719813143; c=relaxed/simple;
+	bh=vZGko0eoNLnj84zRoOPdlydINGSPQ6fYtJo/KDahuY4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LNm4wdFwcAYdk6a/BLPCqtWcex4cnlm+3xWVH+ADjFcY9PL1OnoRRdO60yLKvfXAYTDBryCqxmdEwlxdA6J5Th2so0dsXqJnwDOCX56Q9xQlD+VJaPBOeMw3gTWlPX1mYxywkaxwV5ynIooLGAePFI85/4T0dCN8Wzp+6FR/Nl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=CpEu1hZC; arc=none smtp.client-ip=209.85.210.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-702052976f7so1105193a34.1
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 22:52:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1719813141; x=1720417941; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aKMU8DKIWEClgPDBnmDjtT7Ao2B1dNYMjzwF2iFrrjI=;
+        b=CpEu1hZCoRVZqXhtpRCFV7/VZ4tUIUEaOQTxBIG4rA9LQvmcuZn+UZBbHFdE13kyZi
+         4XCjy6vPsX9WCOA0m5PbhVqIEJDMoNnmHGcZfVQCvTRbdAJgS70RmEPSomNcy5D+pugp
+         wjQdPHLQXyg4cxrxz0gnFsWDYJKw7nIi6qt+UBwUIphXz9blveDHDUM+jPQnlB7s+1EP
+         mzHFsoDt3Ulf/ru4hdUtcFuDD+yukWX7ccTwfUnoqRX6BBHWniQGV6rAXmbVPshlpCMK
+         1KNT8NFAYsbe/7OP5JySlZyPLAr/fLzu3b4wal6zXkbfkulDNBj0HLSJfJS8KhiouGSm
+         Kjfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719813141; x=1720417941;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aKMU8DKIWEClgPDBnmDjtT7Ao2B1dNYMjzwF2iFrrjI=;
+        b=SKQ9UWR9GnHZpM8Rm4bTBvmloU8enNIDezpRGEB/Fa2fQ3cU/YeSwcwx/8VH+Lbs6i
+         FP/66MinWDT+Tru78wHFZwtpGaFKQRTT5vYs18yKsOX0NJ/A7wbJRmsCr8fFuw6yM/bb
+         i1Rq3n7q8ULPvnDwPlGpXZeUZMDOBEzFIK++hdOrrh4InNY5L48GVY9H73L5YZpIL6LA
+         0r8PFmQ8N1nouHO8TmyDVneu4gYy+fLk5fdvR9sR3MMhOY8kEy73kBec3JvgZYx81jRx
+         76I4jQpO8OkpJkcXq3qlhly7+dbfYbIIRkOlycHUazQJBNUJDecILOYjUG8AarxNYmYD
+         eJmw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2rQOeDXeY8PLF+acBkf4EjiGn88B5eFoDr0nnSy8ELEdTjCivjbSrRQjRe41VqzHXuL6mgJVjqjbFTKr91NOH6EsJ/mItUWxUEn5U
+X-Gm-Message-State: AOJu0Yx6tQdJWrZDBqDuVz8swQOCPsvBHyysdvAYFnI0vVCKfgLQfTw2
+	EJkuYgkWZ+6NTH18HoT40V7u+J3CrvhdIC6XUqbVkS43ejT3sl+pqk50GgZoqJc=
+X-Google-Smtp-Source: AGHT+IGm7YJAgZMyphMx4GQMzsUKLII+YHeZwD23+Ey+akRFhATjAn/ybArgYnMmQp/igw9JEjVJmw==
+X-Received: by 2002:a05:6830:903:b0:702:1d8:4d08 with SMTP id 46e09a7af769-702076a4d47mr8000813a34.35.1719813141012;
+        Sun, 30 Jun 2024 22:52:21 -0700 (PDT)
+Received: from sunil-laptop ([106.51.187.237])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-701f7a9b2d9sm1167621a34.6.2024.06.30.22.52.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 30 Jun 2024 22:52:20 -0700 (PDT)
+Date: Mon, 1 Jul 2024 11:22:03 +0530
+From: Sunil V L <sunilvl@ventanamicro.com>
+To: Haibo Xu <haibo1.xu@intel.com>, Palmer Dabbelt <palmer@dabbelt.com>
+Cc: arnd@arndb.de, xiaobo55x@gmail.com, ajones@ventanamicro.com,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Charlie Jenkins <charlie@rivosinc.com>, Baoquan He <bhe@redhat.com>,
+	Evan Green <evan@rivosinc.com>,
+	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>,
+	Zong Li <zong.li@sifive.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Chen Jiahao <chenjiahao16@huawei.com>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	James Morse <james.morse@arm.com>, Andy Chiu <andy.chiu@sifive.com>,
+	Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Tony Luck <tony.luck@intel.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Robert Richter <rrichter@amd.com>, Yuntao Wang <ytcoode@gmail.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v4 0/4] Add ACPI NUMA support for RISC-V
+Message-ID: <ZoJEA85utEK6u36t@sunil-laptop>
+References: <cover.1718268003.git.haibo1.xu@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <243c0432-a681-4932-957b-e80f2f4ef295@linaro.org>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: YTnb4gfmvQsDbz3CbM_Kw55DIfWsDEV1
-X-Proofpoint-ORIG-GUID: YTnb4gfmvQsDbz3CbM_Kw55DIfWsDEV1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-01_04,2024-06-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- impostorscore=0 spamscore=0 clxscore=1015 mlxscore=0 suspectscore=0
- bulkscore=0 adultscore=0 lowpriorityscore=0 malwarescore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407010043
+In-Reply-To: <cover.1718268003.git.haibo1.xu@intel.com>
 
-On Sat, Jun 29, 2024 at 03:06:22PM +0200, Konrad Dybcio wrote:
-> On 29.06.2024 3:49 AM, Akhil P Oommen wrote:
-> > To simplify, introduce the new gmu_chipid for a740 & a750 GPUs.
-> > 
-> > Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
-> > ---
+On Thu, Jun 13, 2024 at 04:54:32PM +0800, Haibo Xu wrote:
+> This patch series enable RISC-V ACPI NUMA support which was based on
+> the recently approved ACPI ECR[1].
 > 
-> This gets rid of getting patchid from dts, but I suppose that's fine,
-> as we can just add a new entry to the id table
+> Patch 1/4 add RISC-V specific acpi_numa.c file to parse NUMA information
+> from SRAT and SLIT ACPI tables.
+> Patch 2/4 add the common SRAT RINTC affinity structure handler.
+> Patch 3/4 change the ACPI_NUMA to a hidden option since it would be selected
+> by default on all supported platform.
+> Patch 4/4 replace pr_info with pr_debug in arch_acpi_numa_init() to avoid
+> potential boot noise on ACPI platforms that are not NUMA.
 > 
-> [...]
+> Based-on: https://github.com/linux-riscv/linux-riscv/tree/for-next
 > 
-> > --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> > +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> > @@ -771,7 +771,7 @@ static int a6xx_gmu_fw_start(struct a6xx_gmu *gmu, unsigned int state)
-> >  	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
-> >  	const struct a6xx_info *a6xx_info = adreno_gpu->info->a6xx;
-> >  	u32 fence_range_lower, fence_range_upper;
-> > -	u32 chipid, chipid_min = 0;
-> > +	u32 chipid = 0;
-> 
-> The initialization doesn't seem necessary
+> [1] https://drive.google.com/file/d/1YTdDx2IPm5IeZjAW932EYU-tUtgS08tX/view?usp=sharing
 
-Rob, would it be possible to fix this up when you pick this patch?
+Hi Palmer,
 
--Akhil.
+Can this series be taken for -next?
 
-> 
-> otherwise:
-> 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> 
-> Konrad
+Thanks,
+Sunil
 
