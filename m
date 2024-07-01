@@ -1,259 +1,255 @@
-Return-Path: <linux-kernel+bounces-236437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54C2991E24B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:22:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3317D91E252
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:24:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F5D42877F9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:22:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F486B26384
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2E216133C;
-	Mon,  1 Jul 2024 14:22:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1961662EB;
+	Mon,  1 Jul 2024 14:24:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G1HkP1xX"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qe+fx+Rn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF62B161314
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 14:22:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF68160887
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 14:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719843768; cv=none; b=OKAG0dwL8WzaQAj4jrGPXD3xB1+fqSOvLlqAE2QK54Z1UsoZWo1R6ZCzTGGgPfggv/ibCXbVB0kCUA9wM21g2AebFo+zHe1nSCfznTjubCS+2FYwA3Oe4kZISqWvE4TXgUNkSvqWXkbk3lAYLxPF9CqAWK9VU6SfyYx/DccpOlk=
+	t=1719843848; cv=none; b=qXnEPrrLHYmxTbCC4Cd+dEpUZClIc+oMRVA3YFzbJwU/YUoMpH5M97UygbVEeozwFOBNpWjTEYiEsIAZUdbn507FOBxAwNU3Uyn8lBWqvDpfIbX3iMuc86hJFOjiZ8x8xAsuXMJrtQfZN75+WzVfW/1k+VZBM8G1gMh1IjhoLJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719843768; c=relaxed/simple;
-	bh=CL0VQcOdLknkqaZQnfKJaWCOUQd0LT7HUMHcF5iatnA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=USzReOpX2ijplx+AOR/hJL8my8VNJjOOSi20de9B1TcwLqPhVlOVRW696/4spE4HvrrpPwk+uN5F7kZJouGeglbxQsC7whbQcXSPXP5bgLINKnxdNNXi8+9RVbKaythrpyj5++xdiOD+OXWHTOwhWMB2gyRFEm3uWF9t74l/QYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G1HkP1xX; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4255f915611so89825e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 07:22:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719843765; x=1720448565; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=of8h/yHjfyVd8gobR+fvjPEOrNpXyMTMcmCaItkRWUw=;
-        b=G1HkP1xXpyzAFewdG9GHWP798Hf6svqkuEroSw4teqVxgqZY4GamtJ1UE4HIUX4+O/
-         RR7092+e3rrNGuJ44XzImQc2XtIdkZBV+upkBApKTQrweMYId010JbS323LTzd0rajr+
-         lXGtaYnFaG+/ZHMAmbNJbVGZi/uD3ggJ120Upo6RH2e2Jrw+CmxEWvV1VV/igteGjZgE
-         MV6khpA88j1vfdjJm9FmvBjxQyxHda0Yj8IsEd9xiZF9KP5aBTk4m3bzYXWQyMZrHIJM
-         r2r5rEes92FZzcFOihzMHlvkuYZKnvlhSLIZls8I5vJyXv9wlz8nOMoin22w+RcTJtdg
-         SYiA==
+	s=arc-20240116; t=1719843848; c=relaxed/simple;
+	bh=8wCpjzsvEcYJwO7uz7Cksxml4x0CETvzHLYyJ2ii+ac=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bxg2gXXZ1KCe9rYvsLdVymm4wcntSelp/Tlrbpv/hf65Wi70i4FMJ1Ro/NURBU1u3N4CauGg1T9mQAVC1Tlaz6ZN/3SJNrWKQTlTfBmIR4FHiVsT2I/cZb5z6qAJxgvm81CLrwRCtfbZB0IxvQJITxxRCDeqVqWncpBzKvEgB6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qe+fx+Rn; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719843845;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=GbfMnOycdlA3xHxqKRVFaGrN8OTl8KSGgKXHSgYRGsU=;
+	b=Qe+fx+RnHiK3Xh0nnqe+OhPQAVZbtEGEdmIYhauWi+tWVWT6i3TUoURIsc0XupmacgesTr
+	hAn4lG9WfDBd49KVAO8t+dO2ShQG2TlzLItFXQMy2xKzAQJjCKqWKqKghJ+rLA7PhKWyGi
+	SdUFuF1X4Rb3VDS+/M/BHdRBKYKRX7A=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-114-rKkEPQRvOIe3s1B-K0-WXw-1; Mon, 01 Jul 2024 10:24:02 -0400
+X-MC-Unique: rKkEPQRvOIe3s1B-K0-WXw-1
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a724a6a321cso11586666b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 07:24:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719843765; x=1720448565;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=of8h/yHjfyVd8gobR+fvjPEOrNpXyMTMcmCaItkRWUw=;
-        b=Uv7eIdHddJfeeLrMu0VPkfbHQP0Q/IYjwmZZ4RAhKX5m3goqptRYJbqGUc/vsoX+Ca
-         bOOkxvV6hJV1bkP5Nq7rfNaUz1j1FdG4qziplXnuq1P+jx+xok0p85i33VlAQTLTpNyu
-         DgTX+NxWiAoonB/Il88jwrBRzZPLDe7vYRqD3stmypn9rY1xrnmbyBZrnLZMMPRbNJV0
-         laLiA5dnnfdq6Q3j3jKY6U1oGd6BlmqcPfdZ22BHdvydCegZY/PJnhaJvOWAtt3ZpjDF
-         FRUoLbryHnuLJ19Nuoo10T/VC1cfiSYCXmOQBh3xrRujvBY6mYxFYBoabzM2QrBEOrPc
-         nExw==
-X-Forwarded-Encrypted: i=1; AJvYcCUz84q1pjapDqK3pxKc3SJkP340B3mArrWfjGheflaQztSTiTHTUduzkEg/mw56di2kErmpZhK1m2vJvYiM4JjXTkb/RCBgGkbBtbwA
-X-Gm-Message-State: AOJu0YyEpb8qmj9G5t29UkoLxak6Qf1V54su4syLPY3pQg7z+VmRyt/X
-	Yy8abtr0Ombp7NM0wbo/ZOtmLNL4ug5ibSRQd7rJNTugc4YUZ+lB4jSXuLnKzw==
-X-Google-Smtp-Source: AGHT+IFAq/GFiNJ0adtx2OIotan4cZfIRVizFxAq75sexqi9Few6MhuACXgBYA4CjeCEBo5vIrjeuQ==
-X-Received: by 2002:a05:600c:3550:b0:41a:444b:e1d9 with SMTP id 5b1f17b1804b1-425777f8671mr3614145e9.4.1719843765016;
-        Mon, 01 Jul 2024 07:22:45 -0700 (PDT)
-Received: from google.com (216.131.76.34.bc.googleusercontent.com. [34.76.131.216])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4257fc934b2sm59543115e9.44.2024.07.01.07.22.44
+        d=1e100.net; s=20230601; t=1719843841; x=1720448641;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GbfMnOycdlA3xHxqKRVFaGrN8OTl8KSGgKXHSgYRGsU=;
+        b=sxHtPB6DYvyN//GKHkEN8EwEGAK7pMxg4YS9VdjMlB4UE5Ppm2e6QAdIH18jT2CviY
+         pQUF0LEzPQxpweH+Jlf6DLts+JkJmyNOLUdn/GMiFqiCnUsmIM12j4WILBLPfQ0f9zBx
+         vSENoPYCuCzfDEPgqbgkM239HYWHrF548+r9477MTelsc6zerGS8dTNxHbpFl2uYxpLH
+         QM0TSjRtNScUSYPYpZuwgyG64qvVb6c/emGY8tkDbXYohdDdP48sYaLEp8XEQ4+jqgCh
+         l2+B5LWDk1pyGZNx2cvsSN8aeCx3KyHpWvWeuT+XA9Q9j1o7vOaJxefwi9+wBK+57xfH
+         rFgA==
+X-Forwarded-Encrypted: i=1; AJvYcCXoBq3HlCRo0ezchHdLPqW+rndtDo+397GY0A6Ckv1i1QvOZ7jhwz0H8ZuUKyN/onJgRLg7pSaP48k7GrGcR7RJdU0lVlXAJXebWdJr
+X-Gm-Message-State: AOJu0YyeI61hJQNMGAGPZa2g2jub7Ynyhc36gPldUzlC3dgFWo4AuY94
+	nXjDQTgrUQLYn06Jstl5MOECPDWf1AoEDFQz7vkjfcakfiaAJKkr038LBvW6cgZ1XrV4JJpZipT
+	u3Dvi4eMbMMGR9SHHuQ2uQA9WZg8VwHl2QvsR9SGplRz9EKnAdt56B2L7nr7tQA==
+X-Received: by 2002:a17:907:7ea4:b0:a72:7404:deb2 with SMTP id a640c23a62f3a-a75145d05d1mr486692266b.7.1719843841726;
+        Mon, 01 Jul 2024 07:24:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGYCOaXQVOURhrWbLAmhpKyeJYd7HQOC2OdUGBazt2HV2n/uRW1KKGallc0kiVP3UneUtIi7A==
+X-Received: by 2002:a17:907:7ea4:b0:a72:7404:deb2 with SMTP id a640c23a62f3a-a75145d05d1mr486690266b.7.1719843841310;
+        Mon, 01 Jul 2024 07:24:01 -0700 (PDT)
+Received: from gerbillo.redhat.com ([2a0d:3344:2451:6610::f71])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72aaf58cc0sm336288266b.47.2024.07.01.07.23.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 07:22:44 -0700 (PDT)
-Date: Mon, 1 Jul 2024 14:22:43 +0000
-From: Sebastian Ene <sebastianene@google.com>
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: akpm@linux-foundation.org, alexghiti@rivosinc.com, ankita@nvidia.com,
-	ardb@kernel.org, catalin.marinas@arm.com,
-	christophe.leroy@csgroup.eu, james.morse@arm.com,
-	vdonnefort@google.com, mark.rutland@arm.com, maz@kernel.org,
-	rananta@google.com, ryan.roberts@arm.com, shahuang@redhat.com,
-	suzuki.poulose@arm.com, will@kernel.org, yuzenghui@huawei.com,
-	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v7 0/6] arm64: ptdump: View the second stage page-tables
-Message-ID: <ZoK7sw73g94iP050@google.com>
-References: <20240621123230.1085265-1-sebastianene@google.com>
- <Zn8qRqf8VZCk0KmP@linux.dev>
+        Mon, 01 Jul 2024 07:24:00 -0700 (PDT)
+Message-ID: <7348f2c9f594dd494732c481c0e35638ae064988.camel@redhat.com>
+Subject: Re: [PATCH 13/15] net: jme: Convert tasklet API to new bottom half
+ workqueue mechanism
+From: Paolo Abeni <pabeni@redhat.com>
+To: Allen <allen.lkml@gmail.com>
+Cc: kuba@kernel.org, Guo-Fu Tseng <cooldavid@cooldavid.org>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ jes@trained-monkey.org, kda@linux-powerpc.org, cai.huoqing@linux.dev, 
+ dougmill@linux.ibm.com, npiggin@gmail.com, christophe.leroy@csgroup.eu, 
+ aneesh.kumar@kernel.org, naveen.n.rao@linux.ibm.com, nnac123@linux.ibm.com,
+  tlfalcon@linux.ibm.com, marcin.s.wojtas@gmail.com, mlindner@marvell.com, 
+ stephen@networkplumber.org, nbd@nbd.name, sean.wang@mediatek.com, 
+ Mark-MC.Lee@mediatek.com, lorenzo@kernel.org, matthias.bgg@gmail.com, 
+ angelogioacchino.delregno@collabora.com, borisp@nvidia.com, 
+ bryan.whitehead@microchip.com, UNGLinuxDriver@microchip.com, 
+ louis.peens@corigine.com, richardcochran@gmail.com,
+ linux-rdma@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ linux-acenic@sunsite.dk, linux-net-drivers@amd.com,  netdev@vger.kernel.org
+Date: Mon, 01 Jul 2024 16:23:56 +0200
+In-Reply-To: <CAOMdWSKKyqaJB2Psgcy9piUv3LTDBHhbo_g404fSmqQrVSyr7Q@mail.gmail.com>
+References: <20240621050525.3720069-1-allen.lkml@gmail.com>
+	 <20240621050525.3720069-14-allen.lkml@gmail.com>
+	 <ba3b8f5907c071e40be68758f2a11662008713e8.camel@redhat.com>
+	 <CAOMdWSKKyqaJB2Psgcy9piUv3LTDBHhbo_g404fSmqQrVSyr7Q@mail.gmail.com>
+Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=mQINBGISiDUBEAC5uMdJicjm3ZlWQJG4u2EU1EhWUSx8IZLUTmEE8zmjPJFSYDcjtfGcbzLPb63BvX7FADmTOkO7gwtDgm501XnQaZgBUnCOUT8qv5MkKsFH20h1XJyqjPeGM55YFAXc+a4WD0YyO5M0+KhDeRLoildeRna1ey944VlZ6Inf67zMYw9vfE5XozBtytFIrRyGEWkQwkjaYhr1cGM8ia24QQVQid3P7SPkR78kJmrT32sGk+TdR4YnZzBvVaojX4AroZrrAQVdOLQWR+w4w1mONfJvahNdjq73tKv51nIpu4SAC1Zmnm3x4u9r22mbMDr0uWqDqwhsvkanYmn4umDKc1ZkBnDIbbumd40x9CKgG6ogVlLYeJa9WyfVMOHDF6f0wRjFjxVoPO6p/ZDkuEa67KCpJnXNYipLJ3MYhdKWBZw0xc3LKiKc+nMfQlo76T/qHMDfRMaMhk+L8gWc3ZlRQFG0/Pd1pdQEiRuvfM5DUXDo/YOZLV0NfRFU9SmtIPhbdm9cV8Hf8mUwubihiJB/9zPvVq8xfiVbdT0sPzBtxW0fXwrbFxYAOFvT0UC2MjlIsukjmXOUJtdZqBE3v3Jf7VnjNVj9P58+MOx9iYo8jl3fNd7biyQWdPDfYk9ncK8km4skfZQIoUVqrWqGDJjHO1W9CQLAxkfOeHrmG29PK9tHIwARAQABtB9QYW9sbyBBYmVuaSA8cGFiZW5pQHJlZGhhdC5jb20+iQJSBBMBCAA8FiEEg1AjqC77wbdLX2LbKSR5jcyPE6QFAmISiDUCGwMFCwkIBwIDIgIBBhUKCQgLAgQWAgMBAh4HAheAAAoJECkkeY3MjxOkJSYQAJcc6MTsuFxYdYZkeWjW//zbD3ApRHzpNlHLVSuJqHr9/aDS+tyszgS8jj9MiqALzgq4iZbg
+ 7ZxN9ZsDL38qVIuFkSpgMZCiUHdxBC11J8nbBSLlpnc924UAyr5XrGA99 6Wl5I4Km3128GY6iAkH54pZpOmpoUyBjcxbJWHstzmvyiXrjA2sMzYjt3Xkqp0cJfIEekOi75wnNPofEEJg28XPcFrpkMUFFvB4Aqrdc2yyR8Y36rbw18sIX3dJdomIP3dL7LoJi9mfUKOnr86Z0xltgcLPGYoCiUZMlXyWgB2IPmmcMP2jLJrusICjZxLYJJLofEjznAJSUEwB/3rlvFrSYvkKkVmfnfro5XEr5nStVTECxfy7RTtltwih85LlZEHP8eJWMUDj3P4Q9CWNgz2pWr1t68QuPHWaA+PrXyasDlcRpRXHZCOcvsKhAaCOG8TzCrutOZ5NxdfXTe3f1jVIEab7lNgr+7HiNVS+UPRzmvBc73DAyToKQBn9kC4jh9HoWyYTepjdcxnio0crmara+/HEyRZDQeOzSexf85I4dwxcdPKXv0fmLtxrN57Ae82bHuRlfeTuDG3x3vl/Bjx4O7Lb+oN2BLTmgpYq7V1WJPUwikZg8M+nvDNcsOoWGbU417PbHHn3N7yS0lLGoCCWyrK1OY0QM4EVsL3TjOfUtCNQYW9sbyBBYmVuaSA8cGFvbG8uYWJlbmlAZ21haWwuY29tPokCUgQTAQgAPBYhBINQI6gu+8G3S19i2ykkeY3MjxOkBQJiEoitAhsDBQsJCAcCAyICAQYVCgkICwIEFgIDAQIeBwIXgAAKCRApJHmNzI8TpBzHD/45pUctaCnhee1vkQnmStAYvHmwrWwIEH1lzDMDCpJQHTUQOOJWDAZOFnE/67bxSS81Wie0OKW2jvg1ylmpBA0gPpnzIExQmfP72cQ1TBoeVColVT6Io35BINn+ymM7c0Bn8RvngSEpr3jBtqvvWXjvtnJ5/HbOVQCg62NC6ewosoKJPWpGXMJ9SKsVIOUHsmoWK60spzeiJoSmAwm3zTJQnM5kRh2q
+ iWjoCy8L35zPqR5TV+f5WR5hTVCqmLHSgm1jxwKhPg9L+GfuE4d0SWd84y GeOB3sSxlhWsuTj1K6K3MO9srD9hr0puqjO9sAizd0BJP8ucf/AACfrgmzIqZXCfVS7jJ/M+0ic+j1Si3yY8wYPEi3dvbVC0zsoGj9n1R7B7L9c3g1pZ4L9ui428vnPiMnDN3jh9OsdaXeWLvSvTylYvw9q0DEXVQTv4/OkcoMrfEkfbXbtZ3PRlAiddSZA5BDEkkm6P9KA2YAuooi1OD9d4MW8LFAeEicvHG+TPO6jtKTacdXDRe611EfRwTjBs19HmabSUfFcumL6BlVyceIoSqXFe5jOfGpbBevTZtg4kTSHqymGb6ra6sKs+/9aJiONs5NXY7iacZ55qG3Ib1cpQTps9bQILnqpwL2VTaH9TPGWwMY3Nc2VEc08zsLrXnA/yZKqZ1YzSY9MGXWYLkCDQRiEog1ARAAyXMKL+x1lDvLZVQjSUIVlaWswc0nV5y2EzBdbdZZCP3ysGC+s+n7xtq0o1wOvSvaG9h5q7sYZs+AKbuUbeZPu0bPWKoO02i00yVoSgWnEqDbyNeiSW+vI+VdiXITV83lG6pS+pAoTZlRROkpb5xo0gQ5ZeYok8MrkEmJbsPjdoKUJDBFTwrRnaDOfb+Qx1D22PlAZpdKiNtwbNZWiwEQFm6mHkIVSTUe2zSemoqYX4QQRvbmuMyPIbwbdNWlItukjHsffuPivLF/XsI1gDV67S1cVnQbBgrpFDxN62USwewXkNl+ndwa+15wgJFyq4Sd+RSMTPDzDQPFovyDfA/jxN2SK1Lizam6o+LBmvhIxwZOfdYH8bdYCoSpqcKLJVG3qVcTwbhGJr3kpRcBRz39Ml6iZhJyI3pEoX3bJTlR5Pr1Kjpx13qGydSMos94CIYWAKhegI06aTdvvuiigBwjngo/Rk5S+iEGR5KmTqGyp27o6YxZy6D4NIc6PKUzhIUxfvuHNvfu
+ sD2W1U7eyLdm/jCgticGDsRtweytsgCSYfbz0gdgUuL3EBYN3JLbAU+UZpy v/fyD4cHDWaizNy/KmOI6FFjvVh4LRCpGTGDVPHsQXaqvzUybaMb7HSfmBBzZqqfVbq9n5FqPjAgD2lJ0rkzb9XnVXHgr6bmMRlaTlBMAEQEAAYkCNgQYAQgAIBYhBINQI6gu+8G3S19i2ykkeY3MjxOkBQJiEog1AhsMAAoJECkkeY3MjxOkY1YQAKdGjHyIdOWSjM8DPLdGJaPgJdugHZowaoyCxffilMGXqc8axBtmYjUIoXurpl+f+a7S0tQhXjGUt09zKlNXxGcebL5TEPFqgJTHN/77ayLslMTtZVYHE2FiIxkvW48yDjZUlefmphGpfpoXe4nRBNto1mMB9Pb9vR47EjNBZCtWWbwJTIEUwHP2Z5fV9nMx9Zw2BhwrfnODnzI8xRWVqk7/5R+FJvl7s3nY4F+svKGD9QHYmxfd8Gx42PZc/qkeCjUORaOf1fsYyChTtJI4iNm6iWbD9HK5LTMzwl0n0lL7CEsBsCJ97i2swm1DQiY1ZJ95G2Nz5PjNRSiymIw9/neTvUT8VJJhzRl3Nb/EmO/qeahfiG7zTpqSn2dEl+AwbcwQrbAhTPzuHIcoLZYV0xDWzAibUnn7pSrQKja+b8kHD9WF+m7dPlRVY7soqEYXylyCOXr5516upH8vVBmqweCIxXSWqPAhQq8d3hB/Ww2A0H0PBTN1REVw8pRLNApEA7C2nX6RW0XmA53PIQvAP0EAakWsqHoKZ5WdpeOcH9iVlUQhRgemQSkhfNaP9LqR1XKujlTuUTpoyT3xwAzkmSxN1nABoutHEO/N87fpIbpbZaIdinF7b9srwUvDOKsywfs5HMiUZhLKoZzCcU/AEFjQsPTATACGsWf3JYPnWxL9
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zn8qRqf8VZCk0KmP@linux.dev>
 
-On Fri, Jun 28, 2024 at 09:25:26PM +0000, Oliver Upton wrote:
+On Mon, 2024-07-01 at 03:13 -0700, Allen wrote:
+> > > @@ -1326,22 +1326,22 @@ static void jme_link_change_work(struct work_=
+struct *work)
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0jme_start_shutdown_timer(jme);
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+> > >=20
+> > > -     goto out_enable_tasklet;
+> > > +     goto out_enable_bh_work;
+> > >=20
+> > > =C2=A0err_out_free_rx_resources:
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0jme_free_rx_resources(jme);
+> > > -out_enable_tasklet:
+> > > -     tasklet_enable(&jme->txclean_task);
+> > > -     tasklet_enable(&jme->rxclean_task);
+> > > -     tasklet_enable(&jme->rxempty_task);
+> > > +out_enable_bh_work:
+> > > +     enable_and_queue_work(system_bh_wq, &jme->txclean_bh_work);
+> > > +     enable_and_queue_work(system_bh_wq, &jme->rxclean_bh_work);
+> > > +     enable_and_queue_work(system_bh_wq, &jme->rxempty_bh_work);
+> >=20
+> > This will unconditionally schedule the rxempty_bh_work and is AFAICS a
+> > different behavior WRT prior this patch.
+> >=20
+> > In turn the rxempty_bh_work() will emit (almost unconditionally) the
+> > 'RX Queue Full!' message, so the change should be visibile to the user.
+> >=20
+> > I think you should queue the work only if it was queued at cancel time.
+> > You likely need additional status to do that.
+> >=20
+>=20
+> =C2=A0Thank you for taking the time out to review. Now that it's been a w=
+eek, I was
+> preparing to send out version 3. Before I do that, I want to make sure if=
+ this
+> the below approach is acceptable.
 
-Hello Oliver,
+I _think_ the following does not track the  rxempty_bh_work 'queued'
+status fully/correctly.
 
-> Hi Seb,
-> 
-> I think we're getting closer on this series, thanks for reposting it. In
-> addition to polishing up the KVM side of things, I'd like to have acks
-> on the ptdump changes (patches 2-3).
->
-> Will + Catalin, any concerns?
-> 
-> -- 
-> Thanks,
-> Oliver
+> @@ -1282,9 +1282,9 @@ static void jme_link_change_work(struct work_struct=
+ *work)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0jme_stop_shutdown_timer(jme);
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0jme_stop_pcc_timer(jme);
+> -       tasklet_disable(&jme->txclean_task);
+> -       tasklet_disable(&jme->rxclean_task);
+> -       tasklet_disable(&jme->rxempty_task);
+> +       disable_work_sync(&jme->txclean_bh_work);
+> +       disable_work_sync(&jme->rxclean_bh_work);
+> +       disable_work_sync(&jme->rxempty_bh_work);
+
+I think the above should be:
+
+	  jme->rxempty_bh_work_queued =3D disable_work_sync(&jme->rxempty_bh_work)=
+;
+
+[...]
+> @@ -1326,22 +1326,23 @@ static void jme_link_change_work(struct
+> work_struct *work)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0jme_start_shutdown_timer(jme);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+>=20
+> -       goto out_enable_tasklet;
+> +       goto out_enable_bh_work;
+>=20
+> =C2=A0err_out_free_rx_resources:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0jme_free_rx_resources(jme=
+);
+> -out_enable_tasklet:
+> -       tasklet_enable(&jme->txclean_task);
+> -       tasklet_enable(&jme->rxclean_task);
+> -       tasklet_enable(&jme->rxempty_task);
+> +out_enable_bh_work:
+> +       enable_and_queue_work(system_bh_wq, &jme->txclean_bh_work);
+> +       enable_and_queue_work(system_bh_wq, &jme->rxclean_bh_work);
+> +       if (jme->rxempty_bh_work_queued)
+> +               enable_and_queue_work(system_bh_wq, &jme->rxempty_bh_work=
+);
+
+Missing:
+
+	  else
+		enable_work(system_bh_wq, &jme->rxempty_bh_work);
+
+[...]
+> @@ -3180,9 +3182,9 @@ jme_suspend(struct device *dev)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0netif_stop_queue(netdev);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0jme_stop_irq(jme);
+>=20
+> -       tasklet_disable(&jme->txclean_task);
+> -       tasklet_disable(&jme->rxclean_task);
+> -       tasklet_disable(&jme->rxempty_task);
+> +       disable_work_sync(&jme->txclean_bh_work);
+> +       disable_work_sync(&jme->rxclean_bh_work);
+> +       disable_work_sync(&jme->rxempty_bh_work);
+
+should be:
+
+	  jme->rxempty_bh_work_queued =3D disable_work_sync(&jme->rxempty_bh_work)=
+;=09
 
 
-Thanks for the feedback, I will spin a v8 later this week if there are
-no more findings on the remaining patches.
+>=20
+> @@ -3198,9 +3200,10 @@ jme_suspend(struct device *dev)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0jme->phylink =3D 0;
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+>=20
+> -       tasklet_enable(&jme->txclean_task);
+> -       tasklet_enable(&jme->rxclean_task);
+> -       tasklet_enable(&jme->rxempty_task);
+> +       enable_and_queue_work(system_bh_wq, &jme->txclean_bh_work);
+> +       enable_and_queue_work(system_bh_wq, &jme->rxclean_bh_work);
+> +       jme->rxempty_bh_work_queued =3D true;
+> +       enable_and_queue_work(system_bh_wq, &jme->rxempty_bh_work);
+
+should be:
+
+	if (jme->rxempty_bh_work_queued)
+        	enable_and_queue_work(system_bh_wq, &jme->rxempty_bh_work);
+	else
+		enable_work(system_bh_wq, &jme->rxempty_bh_work);
+
+I think the above ones are the only places where you need to touch
+'rxempty_bh_work_queued'.
+
+
+[...]
+> =C2=A0=C2=A0Do we need a flag for rxclean and txclean too?
+
+Functionally speaking I don't think it will be necessary, as
+rxclean_bh_work() and txclean_bh_work() don't emit warnings on spurious
+invocation.
 
 Thanks,
-Sebastian
 
-> 
-> On Fri, Jun 21, 2024 at 12:32:24PM +0000, Sebastian Ene wrote:
-> > Hi,
-> > 
-> > 
-> > This series extends the ptdump support to allow dumping the guest
-> > stage-2 pagetables. When CONFIG_PTDUMP_STAGE2_DEBUGFS is enabled, ptdump
-> > registers '/sys/debug/kvm/<guest_id>/stage2_page_tables' entry with debugfs
-> > upon guest creation. This allows userspace tools (eg. cat) to dump the
-> > stage-2 pagetables by reading the registered file.
-> > 
-> > Reading the debugfs file shows stage-2 memory ranges in following format:
-> > <IPA range> <size> <descriptor type> <access permissions> <mem_attributes>
-> > 
-> > Below is the output of a guest stage-2 pagetable dump running under Qemu:
-> > 
-> > ---[ IPA bits 33 start lvl 2 ]---
-> > 0x0000000000000000-0x0000000080000000           2G PGD
-> > 0x0000000080000000-0x0000000080c00000          12M PGD      R W AF        BLK
-> > 0x0000000080c00000-0x0000000080e00000           2M PGD   XN R W AF        BLK
-> > 0x0000000080e00000-0x0000000081000000           2M PGD      R W AF        BLK
-> > 0x0000000081000000-0x0000000081400000           4M PGD   XN R W AF        BLK
-> > 0x0000000081400000-0x000000008fe00000         234M PGD
-> > 0x000000008fe00000-0x0000000090000000           2M PGD   XN R W AF        BLK
-> > 0x0000000090000000-0x00000000fa000000        1696M PGD
-> > 0x00000000fa000000-0x00000000fe000000          64M PGD   XN R W AF        BLK
-> > 0x00000000fe000000-0x0000000100000000          32M PGD
-> > 0x0000000100000000-0x0000000101c00000          28M PGD   XN R W AF        BLK
-> > 0x0000000101c00000-0x0000000102000000           4M PGD
-> > 0x0000000102000000-0x0000000102200000           2M PGD   XN R W AF        BLK
-> > 0x0000000102200000-0x000000017b000000        1934M PGD
-> > 0x000000017b000000-0x0000000180000000          80M PGD   XN R W AF        BLK
-> > 
-> > Link to v6:
-> > https://lore.kernel.org/all/20240220151035.327199-1-sebastianene@google.com/
-> > 
-> > Link to v5:
-> > https://lore.kernel.org/all/20240207144832.1017815-2-sebastianene@google.com/
-> > 
-> > Link to v4:
-> > https://lore.kernel.org/all/20231218135859.2513568-2-sebastianene@google.com/
-> > 
-> > Link to v3:
-> > https://lore.kernel.org/all/20231115171639.2852644-2-sebastianene@google.com/
-> > 
-> > Changelog:
-> >  v6 -> v7:
-> >  * Reworded commit for this patch : [PATCH v6 2/6] arm64: ptdump: Expose
-> >    the attribute parsing functionality
-> >  * fixed minor conflicts in the struct pg_state definition
-> >  * moved the kvm_ptdump_guest_registration in the
-> >  * kvm_arch_create_vm_debugfs
-> >  * reset the parse state before walking the pagetables
-> >  * copy the level name to the pg_level buffer
-> > 
-> > 
-> >  v5 -> v6:
-> >  * don't return an error if the kvm_arch_create_vm_debugfs fails to
-> >    initialize (ref.
-> > https://lore.kernel.org/all/20240216155941.2029458-1-oliver.upton@linux.dev/)  
-> >  * fix use-after-free suggested by getting a reference to the
-> >    KVM struct while manipulating the debugfs files
-> >    and put the reference on the file close.
-> >  * do all the allocations at once for the ptdump parser state tracking
-> >    and simplify the initialization.
-> >  * move the ptdump parser state initialization as part of the file_open
-> >  * create separate files for printing the guest stage-2 pagetable
-> >    configuration such as: the start level of the pagetable walk and the
-> >    number of bits used for the IPA space representation.
-> >  * fixed the wrong header format for the newly added file
-> >  * include missing patch which hasn't been posted on the v5:
-> >    "KVM-arm64-Move-pagetable-definitions-to-common-heade.patch" 
-> > 
-> > 
-> >  v4 -> v5:
-> >  * refactorization: split the series into two parts as per the feedback
-> >    received from Oliver. Introduce the base support which allows dumping
-> >    of the guest stage-2 pagetables.
-> >  * removed the *ops* struct wrapper built on top of the file_ops and
-> >    simplify the ptdump interface access.
-> >  * keep the page table walker away from the ptdump specific code
-> > 
-> >   v3 -> current_version:
-> >   * refactorization: moved all the **KVM** specific components under
-> >     kvm/ as suggested by Oliver. Introduced a new file
-> >     arm64/kvm/ptdump.c which handled the second stage translation.
-> >     re-used only the display portion from mm/ptdump.c
-> >   * pagetable snapshot creation now uses memory donated from the host.
-> >     The memory is no longer shared with the host as this can pose a security
-> >     risk if the host has access to manipulate the pagetable copy while
-> >     the hypervisor iterates it.
-> >   * fixed a memory leak: while memory was used from the memcache for
-> >     building the snapshot pagetable, it was no longer giving back the
-> >     pages to the host for freeing. A separate array was introduced to
-> >     keep track of the pages allocated from the memcache.
-> > 
-> > 
-> >   v2 -> v3:
-> >   * register the stage-2 debugfs entry for the host under
-> >     /sys/debug/kvm/host_stage2_page_tables and in
-> >     /sys/debug/kvm/<guest_id>/stage2_page_tables for guests.
-> >   * don't use a static array for parsing the attributes description,
-> >     generate it dynamically based on the number of pagetable levels
-> >   * remove the lock that was guarding the seq_file private inode data,
-> >     and keep the data private to the open file session.
-> >   * minor fixes & renaming of CONFIG_NVHE_EL2_PTDUMP_DEBUGFS to
-> >     CONFIG_PTDUMP_STAGE2_DEBUGFS
-> > 
-> > 
-> >   v1 -> v2:
-> >   * use the stage-2 pagetable walker for dumping descriptors instead of
-> >     the one provided by ptdump.
-> >   * support for guests pagetables dumping under VHE/nVHE non-protected
-> > 
-> > Thanks,
-> > 
-> > Sebastian Ene (6):
-> >   KVM: arm64: Move pagetable definitions to common header
-> >   arm64: ptdump: Expose the attribute parsing functionality
-> >   arm64: ptdump: Use the mask from the state structure
-> >   KVM: arm64: Register ptdump with debugfs on guest creation
-> >   KVM: arm64: Initialize the ptdump parser with stage-2 attributes
-> >   KVM: arm64: Expose guest stage-2 pagetable config to debugfs
-> > 
-> >  arch/arm64/include/asm/kvm_pgtable.h |  42 +++++
-> >  arch/arm64/include/asm/ptdump.h      |  42 ++++-
-> >  arch/arm64/kvm/Kconfig               |  14 ++
-> >  arch/arm64/kvm/Makefile              |   1 +
-> >  arch/arm64/kvm/arm.c                 |   2 +
-> >  arch/arm64/kvm/hyp/pgtable.c         |  42 -----
-> >  arch/arm64/kvm/kvm_ptdump.h          |  20 ++
-> >  arch/arm64/kvm/ptdump.c              | 272 +++++++++++++++++++++++++++
-> >  arch/arm64/mm/ptdump.c               |  50 +----
-> >  9 files changed, 402 insertions(+), 83 deletions(-)
-> >  create mode 100644 arch/arm64/kvm/kvm_ptdump.h
-> >  create mode 100644 arch/arm64/kvm/ptdump.c
-> > 
-> > -- 
-> > 2.45.2.741.gdbec12cfda-goog
-> > 
-> 
-> To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
-> 
+Paolo
+
+
 
