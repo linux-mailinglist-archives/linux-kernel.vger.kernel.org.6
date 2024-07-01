@@ -1,135 +1,139 @@
-Return-Path: <linux-kernel+bounces-236186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E8E691DE88
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:59:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3AD091DE90
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:00:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 098F81F22718
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:59:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 990CF1F239B1
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:00:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E932414A0AD;
-	Mon,  1 Jul 2024 11:58:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C134314C5A4;
+	Mon,  1 Jul 2024 11:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qXaTrbAk"
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="VC66qgtq";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pXCT8ZF7"
+Received: from fhigh6-smtp.messagingengine.com (fhigh6-smtp.messagingengine.com [103.168.172.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC2B14D2AC
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 11:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7992114AD3A;
+	Mon,  1 Jul 2024 11:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719835124; cv=none; b=dlwNmkwZxYBrB6Sxc6BrlQw4F6byMDE2OnDyNEg1K1l14jHHVDukDN26zxcsdcMNklDI7P8yBiIUJlndnFie8EKqxSNBtEcULY48D7KFtWUp4/ATB4MwBf5gXDmpsIKluivdAwJMZlcwQSZZwlt45fFELbiszkSHPKiawqLByw0=
+	t=1719835176; cv=none; b=I6stQIWbPa8tvQlmaEryUCafs5hIBUDydTLvNzblwt1DASGZAsRFL0swsxiguZxOWoA7zY+5raPkVrDyBO2x+bbvb0T84hh7AbvaAfmfBihK7qQbRSwQ9G/ZZRQ9T4dwkUiyDtsjxDjDXUNZq/KO5cgu8KlmrCgxaXEaeRq00/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719835124; c=relaxed/simple;
-	bh=gEOE+ocBdbt+fDzHf37CbGhJxzEUg6Nqi3RW68DDFgk=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=BSWqasreo3sX+Yb1wb6mJfpib7BuY4DlsFfNO/5b3zSZmpN0miQcwO/IuTvNn73STCXJnFnOIsH//hFkt9bu3UnWDVhIk+cqEUoX9fAoHzlL/OW8ilhuc+pbvmzUuIId9A+WI0Lne70WwbJ00chdwav2A1M8A2spS0u4hhUEE+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qXaTrbAk; arc=none smtp.client-ip=209.85.217.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-48f59584cbbso1008560137.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 04:58:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719835120; x=1720439920; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FiDSz9VE0AFUeXEbzLB0AhJfOiLVcxxxs1VWcvfxXRY=;
-        b=qXaTrbAk52rnM1E7t5z75cKZtO4O7MwVgJQIySDlOOuqaFu0300pY/zsY9KKUFRVn3
-         WflPoapXzwE1tfr4avT9BerwpN4dxGnZ6tZJiQ6eDw7A0U7v4IRi4d8jajSIydYIux3+
-         C1iCpkVZwFW6IBh21pQpi4PhDmB3ET8P71cNpSN/m2ES8z+YuxR9f5I9YWjnTDAYcHtE
-         jI6xu8MH+Iwe0VYJxVcP2g+nQBx4Fz+qUtKzPtDiNl8rCu+cmjStu+mf48AL1xbxfK82
-         pZmOamYimxxiyRnf9Gb7b4RK68xa2TP6E+J1MDAqi7IGAubCUBOxpHzzsDu5ofE0QA9n
-         HP0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719835120; x=1720439920;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FiDSz9VE0AFUeXEbzLB0AhJfOiLVcxxxs1VWcvfxXRY=;
-        b=Ollbq1e7gFoX7rTeS5v9F08QVHhg4nDT7ptsMBqbvek/IurLKV2biAZZ7DuVeaN6SW
-         mHyfgMyGvrwRMU0PqEsvW0MzJe0cZgpPUQ2LyVu566I6RwgWl4uamqKEgV6X93k2/DAZ
-         XA7LNBCHoC1iIwZ3JoVDjXcxl4jCwlF9gEKXYJvSlKcbJtHgFxH0l6TBKHjOTfvlSOb2
-         bwz4pnhheOghSEJxgtfEg+uctXlhoCj83h+mDypiwOgIfJ3CXdxbSy98GsbsqWV5kSUG
-         81Sdh3dlk6hV92CU7ieYYEr1XiDg6M+9yFZc5A4+QpZAjTMiMew5zcbdNeMbz9KIObgM
-         oVzg==
-X-Forwarded-Encrypted: i=1; AJvYcCVZV01N/LsJSi5ctdKC25KzHal/KeZEfZFjwKk4naCdeub82Hn82rYRPg01BhTqDUakZVrhgHBfJPEXdH8Tfsl6fJNZ/Tvh2V+k4pJK
-X-Gm-Message-State: AOJu0YymSFkgAgCgKDdJKA3c0KH4Ddr2mxIA1+F5nIkhtMmpd0fgQzT+
-	z0/57ce7Yb8/VIebKEVZrbMod4g2FGnhXleWR6oAUcRuRmz1NPPSeZtpVTohs0nmHku34lYKebI
-	ksvWJ749hbgnsA/ygJ/nLZCoa7M+h4dtMmbRPfQ==
-X-Google-Smtp-Source: AGHT+IHXyYi+vErcz2WdDS+6TqDK+01dX2IbGbbnCkxLEnQrj1qDcp5NDG5b+X0fZ+YTkKJiTZEaWoLMJRjDqFi0TsE=
-X-Received: by 2002:a67:f343:0:b0:48f:5abc:8b93 with SMTP id
- ada2fe7eead31-48faf132dc7mr5756721137.27.1719835120661; Mon, 01 Jul 2024
- 04:58:40 -0700 (PDT)
+	s=arc-20240116; t=1719835176; c=relaxed/simple;
+	bh=0ku05XJrAjTZTejqmaVQxaIEziireIHvW6LnDpuxlec=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=AY0PW+fHn+wsUAFyJ2XJ7zvHj2BexQSsYSwpsdok/y/MpYZ4EcoZPMQU6JfRYH7SCe2sjGVWgV4KJbQye8RURTItLWwk9vZG1pra98jpZp6c+hnHHd9EXGt7qlWKBGMsRKdjC01tY7jX7cnL4FRYqdfr8ZEr9uzL2l3S16yuPwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=VC66qgtq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=pXCT8ZF7; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id A13A211401FA;
+	Mon,  1 Jul 2024 07:59:34 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Mon, 01 Jul 2024 07:59:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1719835174;
+	 x=1719921574; bh=3pqX5jXkyZwQM2k8YThla4nhvHoVmaxSyoEecqI36uo=; b=
+	VC66qgtqdG7LsO8I8ky+Ow6RnM72z/T/P9hFSisalIKxoC+s7mMlhwIk949lBwzo
+	gjer10Q060g4z6PVOux0cYv65fJW1XbvYkSBTsn6Ahji63YzCsoG89liw6Cmm7S1
+	C8TPzthfzFhJg0YyE9YXZWzREZ8IQai/MpJfMSQ8n70RF8yVpoVBUSaoUCcODAmT
+	nIQw12/Q4SSjN2lIuI5LEpFePPw9KXlQT0/KljFT1YwofwhhcwzpPz8owaF0gnXG
+	wPZGHa78hI12ZMQiOi5LRJJD9IkblQgG9UWURYw+YScpq0RSAh4PysH1UufZeVgX
+	JjcA6HcURbJLp1bqeuAN+A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1719835174; x=
+	1719921574; bh=3pqX5jXkyZwQM2k8YThla4nhvHoVmaxSyoEecqI36uo=; b=p
+	XCT8ZF7nFeaNlv5oLGXxNzvIrIysC8liKEXqVh/izOHe6r/jyFCbxmP/1Qqdt/MY
+	JCuZQMQLHiPrGVbpTBw0ng73OUZ6m0YJ7mJuKGaqzLqzhvqn2+1ZN6q3hibFpD4w
+	YuucA1kQUfSSk71wSa/+NMRCzd/CF/067pdJ1EoUtBK/aI6YitZAmoGP5WpMHrdU
+	f40jbYLzTe38iSR2brVQT+amt+hPsKpg9tipVR0l9lwGF9Ytcs5YL5mwVJdQwZec
+	EpKTDyje2i+zxvr18Sb6EIXpCsjyynxMXCRuC5vsqc5jIJsOHhNdt2ibstNWE8IA
+	hkhacZeD4fcrt86wQSYQA==
+X-ME-Sender: <xms:JZqCZsxcJE6FkhmOhZHd60Sz4T-1KYZNMPNXoZBrw8VIYTh3jKhKBw>
+    <xme:JZqCZgTn4KyprCTX4Vk75aLRQ2iHLnnAjHnQtAP1KfoN3AxpreIWJKjWkMRD1CBH7
+    uqEQTPiAdOGEbNXdG0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudefgdegiecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepgeefjeehvdelvdffieejieejiedvvdfhleeivdelveehjeelteegudektdfg
+    jeevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:JZqCZuVMYBIkXDD6oqFUlgu0zfkT6NuqzYHPRTGV-E1jCOquhBiKTg>
+    <xmx:JZqCZqjnFRZ0Lq5R_gmXB84igaHpPBscWooKrLDpOkjRwc1b7kS3cw>
+    <xmx:JZqCZuBWmJCkkLCr9xwq5G2VUaTAAkNNYwQpIUuGY2zDqWpc5iDU9Q>
+    <xmx:JZqCZrLZUEbVnk0OoDZPYzwfP9wuAah9JriHZoGlC0GoqY80MFvePg>
+    <xmx:JpqCZvK8eB-kPZWbt1OPrao0nZt_7tAwaeT78MbUZezNbhdLaLolBCi_>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 9D034B6008D; Mon,  1 Jul 2024 07:59:33 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-566-g3812ddbbc-fm-20240627.001-g3812ddbb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Mon, 1 Jul 2024 17:28:29 +0530
-Message-ID: <CA+G9fYsXsbHp+0cWoTjEhkpANOav=GLSjPx5ghtUY-FjMPyoSQ@mail.gmail.com>
-Subject: Mainline: v6.10-rc6 boot failed across all arm64 devices
-To: Linux ARM <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Mark Brown <broonie@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Aishwarya TCV <Aishwarya.TCV@arm.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Anders Roxell <anders.roxell@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Message-Id: <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com>
+In-Reply-To: <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site>
+References: <20240625110029.606032-1-mjguzik@gmail.com>
+ <20240625110029.606032-3-mjguzik@gmail.com>
+ <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
+ <e8db013bf06d2170dc48a8252c7049c6d1ee277a.camel@xry111.site>
+ <CAAhV-H7iKyQBvV+J9T1ekxh9OF8h=F9zp_QMyuhFBrFXGHHmTg@mail.gmail.com>
+ <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site>
+Date: Mon, 01 Jul 2024 13:59:12 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Xi Ruoyao" <xry111@xry111.site>, "Huacai Chen" <chenhuacai@kernel.org>
+Cc: "Mateusz Guzik" <mjguzik@gmail.com>,
+ "Christian Brauner" <brauner@kernel.org>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>, "Jan Kara" <jack@suse.cz>,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ io-uring@vger.kernel.org, "Jens Axboe" <axboe@kernel.dk>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>, loongarch@lists.linux.dev
+Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The mainline kernel v6.10-rc6 boot failed across all arm64 devices and
-qemu-arm64 and no crash log found (earlycon) did not help.
+On Sun, Jun 30, 2024, at 04:39, Xi Ruoyao wrote:
+> On Sun, 2024-06-30 at 09:40 +0800, Huacai Chen wrote:
+>> >=20
+>> > Yes, both Linus and Christian hates introducing a new AT_ flag for
+>> > this.
+>> >=20
+>> > This patch just makes statx(fd, NULL, AT_EMPTY_PATH, ...) behave
+>> > like
+>> > statx(fd, "", AT_EMPTY_PATH, ...) instead.=C2=A0 NULL avoids the
+>> > performance
+>> > issue and it's also audit-able by seccomp BPF.
+>> To be honest, I still want to restore __ARCH_WANT_NEW_STAT. Because
+>> even if statx() becomes audit-able, it is still blacklisted now.
+>
+> Then patch the sandbox to allow it.
+>
+> The sandbox **must** be patched anyway or it'll be broken on all 32-bit
+> systems after 2037.  [Unless they'll unsupport all 32-bit systems befo=
+re
+> 2037.]
 
-But the defconfig builds boot PASS.
+More importantly, the sandbox won't be able to support any 32-bit
+targets that support running after 2037, regardless of how long
+the sandbox supports them: if you turn off COMPAT_32BIT_TIME today
+in order to be sure those don't get called by accident, the
+fallback is immediately broken.
 
-The boot problem is with defconfig + Extra Kconfigs and builds links
-provided in the bottom of this email.
-
-The boot test history shows that,
-  GOOD: v6.10-rc5
-  BAD:  v6.10-rc6
-
-We are bisecting this issue and get back to you with git bisect results.
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-Following is the list of build combinations that boot failed.
-Regressions found on qemu-arm64, Juno-r2, db410c, db845c, e850-96 and Rock-pi-4.
- - boot/gcc-13-lkftconfig-64k_page_size
- - boot/gcc-13-lkftconfig-kunit
- - boot/gcc-13-lkftconfig-rcutorture
- - boot/gcc-13-lkftconfig-16k_page_size
- - boot/gcc-13-lkftconfig-libgpiod
- - boot/gcc-13-lkftconfig-devicetree
- - boot/gcc-13-lkftconfig-debug-kmemleak
- - boot/gcc-13-lkftconfig-debug
- - boot/gcc-13-lkftconfig
-
-
-Steps to reproduce boot failure on qemu-arm64:
-----------
- - https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2idWuAb51mcz7lO1BAj8Aw0BrNY/reproducer
-
-metadata:
-----
-  git_describe: v6.10-rc6
-  git_repo: https://gitlab.com/Linaro/lkft/mirrors/torvalds/linux-mainline
-  git_sha: 22a40d14b572deb80c0648557f4bd502d7e83826
-  git_short_log: 22a40d14b572 ("Linux 6.10-rc6")
-  arch: arm64
-
-Links:
------
- - https://storage.tuxsuite.com/public/linaro/lkft/builds/2idWrbdtwMqpD9wx7IPRGJ7Dsx3/
- - https://storage.tuxsuite.com/public/linaro/lkft/builds/2idWrYDposdlRsS4jwF916a0qGE/
- - https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.10-rc6/testrun/24473346/suite/boot/test/gcc-13-lkftconfig-libgpiod/history/
- - https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.10-rc6/testrun/24473903/suite/boot/test/gcc-13-lkftconfig-rcutorture/history/
-
-
---
-Linaro LKFT
-https://lkft.linaro.org
+      Arnd
 
