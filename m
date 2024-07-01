@@ -1,94 +1,146 @@
-Return-Path: <linux-kernel+bounces-236241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1585591DF40
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:28:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED3A891DF4C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C70662823EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:28:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99BE91F22A08
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:31:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B7F14B97D;
-	Mon,  1 Jul 2024 12:28:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE8014B960;
+	Mon,  1 Jul 2024 12:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rWaKaeeM"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MOIG8O9E"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BEC14AD35;
-	Mon,  1 Jul 2024 12:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73641E488
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 12:30:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719836918; cv=none; b=OS9CW6oXQejF6I3vRABvj/+gLKKpgeBKIIuLCRs3uiN471QtZANNxTclAvC6cGqncI1/uM81YuYvHU4iDVjMK7wRaYt7+5GceH05f7SE0TQXts7fIzEV2qL8VqkE2iW2mbR9PEIN5PVxD15WPcuhpOcw1KZdSHhXbBAfrlnPff4=
+	t=1719837049; cv=none; b=YB8jg/8FW/jwEI9Q6lmksvt1hnsEpnhNDAuKJobbmgplIPue0mao7WORj02kWDB/8qjQWw4xIXqASG6CbuzrMzmCuhMVU3Ew0Vi70MgHyshP30HUJy5VOFdXWgaEObUukjfNTDRhBFcmEikLrPFMI7lHHJ0SasQCKtvJIh0n8Gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719836918; c=relaxed/simple;
-	bh=8Vnkb5Sj5ahbf41xkdp3RVrVWg6PtFAl5M0wAYACncE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mQmQAinyHH/iwzJ35/9YYXIfk3+Cej8KmsMZ1kk98s+4dDG8+5KC18nqO7JWtKUDvIrQlbSXtkvyKt0xhvliksU9XJeEzkEnijwMl9Ab4ui0VM6pG+7beSsJXFKeCAHqEY2DwQ9n94fRgmc3in5UhZaZaig3qhbfoBr1fbgMpcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rWaKaeeM; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=8oU0Zu0hDmII2BWlQyeY+sS/zbhKwqsdmTyUNdLjFLw=; b=rWaKaeeM62/4xfdNeq12ulT6j0
-	eM/tVbxIVLV1fLS8qF3Y22M/+BE4PeVV3bYgfkQ7riY8EB9PL9Lv3akdElWLc1VtHaEQb7RI+0RAG
-	yP1yHBCzLwmDHcTw8KmX84Ar45mUZi4IijsS/HP+rAgt/maXp+3OcHLqbjw8dSJN4FP1gjV6sZNtX
-	ePIebCfbb1bckXA1gvimUrHTSOgOOUOWOm0nWS9erJoO/pJ/DTxzvzNikL287q59gi3TweEh7Gvl5
-	wrbVw/zYmZZUQc5UiRqOR6lAzSii2c264GqHTmn4PSkKVUTA2951K35ckS5Gh9rsMKW5Hz2gIY3xR
-	1qH4rsiQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sOG90-0000000HK3p-1Djh;
-	Mon, 01 Jul 2024 12:28:30 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 9A977300694; Mon,  1 Jul 2024 14:28:29 +0200 (CEST)
-Date: Mon, 1 Jul 2024 14:28:29 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Daniel Bristot de Oliveira <bristot@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
-	Marco Elver <elver@google.com>, Mark Rutland <mark.rutland@arm.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [PATCH v4 2/6] perf: Enqueue SIGTRAP always via task_work.
-Message-ID: <20240701122829.GE20127@noisy.programming.kicks-ass.net>
-References: <20240624152732.1231678-1-bigeasy@linutronix.de>
- <20240624152732.1231678-3-bigeasy@linutronix.de>
+	s=arc-20240116; t=1719837049; c=relaxed/simple;
+	bh=uf4LPflSQFqov0T2c3ATtdR3QL0RXgFpEx87xVbdtx0=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=HUAEuFC5uwI8i2U7SPRBfgOIshV/GLeJOB565AJLa6nuQl+I0ZrTRfU9Jn0EhutvlFW0eqmjdqZHwCRlIbib1JGPgCM9gyqBgqAwNbXqOSDAVcp5hwxeQPZ4MfUEzFAh77VLRQOU0clElrsosv7Nv7Ka8GZSaxmmYrFDfEI+A4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MOIG8O9E; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719837047; x=1751373047;
+  h=date:from:to:cc:subject:message-id;
+  bh=uf4LPflSQFqov0T2c3ATtdR3QL0RXgFpEx87xVbdtx0=;
+  b=MOIG8O9EOY4hFIGCeVEW9skpV5E+XB0Iw02DXWwFSJXaqc57gPHU6L58
+   sQndBLCOJnH2CNIRtbW4rUha8wvawxWUlph9Uh/OUDmWI26R8pu5w2Uip
+   fIEnldIOfG6uNfKOyQNMeJlh7gzl65Da6H7KW0m6g/ct0oDGLgfqvUEFA
+   vLGCfckAxUEpKdOaBirMqmh5BoqIjXOq/DuG3LYeA4/2aJItC6hq6Fqdj
+   OrMofWvfbHZFRZcR8bCXbaCcCWsT+lQZB3z870ECSSXQfiO/pPQ49UK/e
+   i642s2sDjnOsmDI2HMWR3699Z6p8FqbY3MexvbmPsNVfEmb7bzaW+vs3l
+   A==;
+X-CSE-ConnectionGUID: hUytaypNSgOr9jOAODQhcQ==
+X-CSE-MsgGUID: k9OUAJy2QT+zcUu5xRc2NA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="16831829"
+X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
+   d="scan'208";a="16831829"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 05:30:46 -0700
+X-CSE-ConnectionGUID: cs4tOshMQN+klTNIvVoiKA==
+X-CSE-MsgGUID: IcsDpkzJR1y7yUCQqQHOUQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
+   d="scan'208";a="50107322"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 01 Jul 2024 05:30:44 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sOGB9-000Mp9-10;
+	Mon, 01 Jul 2024 12:30:43 +0000
+Date: Mon, 01 Jul 2024 20:29:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: [gustavoars:testing/WFAMNAE-next20240611-CbC] BUILD SUCCESS
+ a99909e5c524ca24c2143f1e89020b40e1ff33cd
+Message-ID: <202407012054.la94HnMs-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240624152732.1231678-3-bigeasy@linutronix.de>
 
-On Mon, Jun 24, 2024 at 05:15:15PM +0200, Sebastian Andrzej Siewior wrote:
-> @@ -9735,18 +9719,28 @@ static int __perf_event_overflow(struct perf_event *event,
->  
->  		if (regs)
->  			pending_id = hash32_ptr((void *)instruction_pointer(regs)) ?: 1;
-> -		if (!event->pending_sigtrap) {
-> -			event->pending_sigtrap = pending_id;
-> +
-> +		if (!event->pending_work &&
-> +		    !task_work_add(current, &event->pending_task, TWA_RESUME)) {
-> +			event->pending_work = pending_id;
->  			local_inc(&event->ctx->nr_pending);
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/WFAMNAE-next20240611-CbC
+branch HEAD: a99909e5c524ca24c2143f1e89020b40e1ff33cd  wifi: radiotap: Avoid -Wflex-array-member-not-at-end warnings
 
-task_work_add() isn't NMI safe, at the very least the
-kasan_record_aux_stack() thing needs to go. But the whole
-set_notify_resume() thing also needs an audit.
+elapsed time: 9736m
+
+configs tested: 54
+configs skipped: 3
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                            allyesconfig   gcc-13.2.0
+arc                              allmodconfig   gcc-13.2.0
+arc                              allyesconfig   gcc-13.2.0
+arc                        nsimosci_defconfig   gcc-13.2.0
+arm                              allmodconfig   gcc-13.2.0
+arm                              allyesconfig   gcc-13.2.0
+arm                             mxs_defconfig   clang-19
+arm                         s5pv210_defconfig   gcc-13.2.0
+arm                           sama7_defconfig   clang-19
+arm                           spitz_defconfig   gcc-13.2.0
+arm                         wpcm450_defconfig   gcc-13.2.0
+arm64                            allmodconfig   clang-19
+hexagon                          allmodconfig   clang-19
+hexagon                          allyesconfig   clang-19
+i386                             allmodconfig   gcc-13
+i386                              allnoconfig   gcc-13
+i386                             allyesconfig   gcc-13
+i386                                defconfig   clang-18
+loongarch                        allmodconfig   gcc-13.2.0
+m68k                             allmodconfig   gcc-13.2.0
+m68k                             allyesconfig   gcc-13.2.0
+microblaze                       allmodconfig   gcc-13.2.0
+microblaze                       allyesconfig   gcc-13.2.0
+mips                          malta_defconfig   gcc-13.2.0
+openrisc                         alldefconfig   gcc-13.2.0
+openrisc                          allnoconfig   gcc-13.2.0
+openrisc                         allyesconfig   gcc-13.2.0
+parisc                           allmodconfig   gcc-13.2.0
+parisc                            allnoconfig   gcc-13.2.0
+parisc                           allyesconfig   gcc-13.2.0
+powerpc                          allmodconfig   gcc-13.2.0
+powerpc                           allnoconfig   gcc-13.2.0
+powerpc                          allyesconfig   clang-19
+powerpc                   microwatt_defconfig   gcc-13.2.0
+powerpc                 mpc8313_rdb_defconfig   gcc-13.2.0
+powerpc                     taishan_defconfig   clang-19
+riscv                            allmodconfig   clang-19
+riscv                             allnoconfig   gcc-13.2.0
+riscv                            allyesconfig   clang-19
+riscv                               defconfig   clang-19
+s390                             allmodconfig   clang-19
+s390                             allyesconfig   gcc-13.2.0
+sh                               allmodconfig   gcc-13.2.0
+sh                               allyesconfig   gcc-13.2.0
+sh                        edosk7760_defconfig   gcc-13.2.0
+sh                           se7619_defconfig   gcc-13.2.0
+sparc                            allmodconfig   gcc-13.2.0
+um                               allmodconfig   clang-19
+um                               allyesconfig   gcc-13
+x86_64                            allnoconfig   clang-18
+x86_64                           allyesconfig   clang-18
+x86_64                              defconfig   gcc-13
+x86_64                          rhel-8.3-rust   clang-18
+xtensa                  audio_kc705_defconfig   gcc-13.2.0
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
