@@ -1,178 +1,129 @@
-Return-Path: <linux-kernel+bounces-235654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39CA491D806
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:19:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E76391D809
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:21:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 395941C20D86
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 06:19:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE6A1285345
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 06:21:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B3B4F20E;
-	Mon,  1 Jul 2024 06:19:50 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E5754BAA6;
+	Mon,  1 Jul 2024 06:21:21 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18592381AA;
-	Mon,  1 Jul 2024 06:19:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA5A381AA
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 06:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719814790; cv=none; b=XD9oldYNdkbXZAL9F74XXqaRdg6vnxBWC8xteswJH3imcY5APcHoNKce6Dn8USSiZpHoGXIXwd7WdSr63LU2GXopgnz14+3IJhq8xVhUIxzpnlfMatwozHcO2toi8fBbzGBDwt31J8cN2wCETXzjlX1yrpcEtS7C05pN4QjIBDs=
+	t=1719814881; cv=none; b=mEGLWx/Wq0tJm/kubu1tf3A0BFS1kl9u746lPwTyGRnSkjkwJnN8zwJlDR7ImA5/MnK5lFMVuarCiTKyvIqi49s5bNqueDOodpD+PrfaqWKt3QALVKSYhBcjQ83x1NpwIobx9lp68MH75OOLZSeA4dEb2/1NFp+zhwlNy4lM6P4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719814790; c=relaxed/simple;
-	bh=c0zFf9EzVOYuFsqRLEA7uNMvONLeWu5gmEdd68pITb0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MiVUBq//aQwPz8Qpq9CdVP22kcAhUZExFscMr7euLMyclDJjaxIfgZyetgy8g7FG9N5SWLCLqDJ9QtTuA3pSJb8s0uVd/KBGIHvOgAArNOwErdv6T/hZvmA0f4rpMcW8kkW0U8/ghrbRUrddkBXwuf15NO0M4ES3zRTrT94SNpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WCG931dNMz4f3jLV;
-	Mon,  1 Jul 2024 14:19:35 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 7FFF51A0189;
-	Mon,  1 Jul 2024 14:19:42 +0800 (CST)
-Received: from [10.174.177.174] (unknown [10.174.177.174])
-	by APP1 (Coremail) with SMTP id cCh0CgBHcX16SoJmUIpGAw--.10541S3;
-	Mon, 01 Jul 2024 14:19:42 +0800 (CST)
-Message-ID: <b4f557cb-c72b-44e6-b7dc-808005a47fda@huaweicloud.com>
-Date: Mon, 1 Jul 2024 14:19:38 +0800
+	s=arc-20240116; t=1719814881; c=relaxed/simple;
+	bh=dW7BqdINXHuQ/V5giKx4pd9BSfttfPOKfuMMjqxROiA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rHpNSgbNhdldrfM1F8Bf25G1okMCmPOFs7Xp/oqu7AIqlb5hhca9SdtnwJwM8qqZbiSVBjTkMklR7gIuOnDsqliJ56tPcTAWgtS0pbMB4s/S/Z79jsliyxxxGKHoBIvRfo72hRC6CibslF4uwHhAZheSvZqh1H4OzmdsFuNZyOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WCG5d64q0z1T4Hs;
+	Mon,  1 Jul 2024 14:16:37 +0800 (CST)
+Received: from kwepemd500014.china.huawei.com (unknown [7.221.188.63])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4A370180A9C;
+	Mon,  1 Jul 2024 14:21:08 +0800 (CST)
+Received: from 228-1616.huawei.com (10.67.246.68) by
+ kwepemd500014.china.huawei.com (7.221.188.63) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 1 Jul 2024 14:21:07 +0800
+From: Nianyao Tang <tangnianyao@huawei.com>
+To: <maz@kernel.org>, <tglx@linutronix.de>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: <guoyang2@huawei.com>, <wangwudi@hisilicon.com>, <tangnianyao@huawei.com>
+Subject: [RESPIN PATCH] irqchip/gic-v4.1: Use local 4_1 ITS to generate VSGI
+Date: Mon, 1 Jul 2024 06:20:42 +0000
+Message-ID: <20240701062042.4128863-1-tangnianyao@huawei.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] blk-wbt: don't throttle swap writes in direct
- reclaim
-To: linux-block@vger.kernel.org
-Cc: axboe@kernel.dk, hch@infradead.org, linux-kernel@vger.kernel.org,
- yangerkun@huawei.com, houtao1@huawei.com, yukuai3@huawei.com,
- libaokun1@huawei.com
-References: <20240604030522.3686177-1-libaokun@huaweicloud.com>
-Content-Language: en-US
-From: Baokun Li <libaokun@huaweicloud.com>
-In-Reply-To: <20240604030522.3686177-1-libaokun@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:cCh0CgBHcX16SoJmUIpGAw--.10541S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxAw48Xr45Jr48Kw13GF15urg_yoW5uw1Dpr
-	43Kas0yFyqvFn7Xrn7XayxX3yruw48Jr43A345Gr1SvrW3Kr13WF4kCw1akF4UAr97uw42
-	qF40yry7Jr4avaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUglb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY
-	6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17
-	CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF
-	0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3w
-	CI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVF
-	xhVjvjDU0xZFpf9x07UWE__UUUUU=
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAgAIBV1jkHsQDQABsG
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemd500014.china.huawei.com (7.221.188.63)
 
-Friendly ping...
+On multi-node GICv4.1 system, VSGI senders always use one certain 4_1 ITS,
+because find_4_1_its return the first its_node in list, regardless of
+which node the VSGI sender is on. This brings guest vsgi performance drop
+when VM is not deployed on the same node as this returned ITS.
 
-On 2024/6/4 11:05, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
->
-> Now we avoid throttling swap writes by determining whether the current
-> process is kswapd (aka current_is_kswapd()), but swap writes can come
-> from either kswapd or direct reclaim, so the swap writes from direct
-> reclaim will still be throttled.
->
-> When a process holds a lock to allocate a free page, and enters direct
-> reclaim because there is no free memory, then it might trigger a hung
-> due to the wbt throttling that causes other processes to fail to get
-> the lock.
->
-> Both kswapd and direct reclaim set the REQ_SWAP flag, so use REQ_SWAP
-> instead of current_is_kswapd() to avoid throttling swap writes. Also
-> renamed WBT_KSWAPD to WBT_SWAP and WBT_RWQ_KSWAPD to WBT_RWQ_SWAP.
->
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> ---
->   block/blk-wbt.c | 18 +++++++++---------
->   1 file changed, 9 insertions(+), 9 deletions(-)
->
-> diff --git a/block/blk-wbt.c b/block/blk-wbt.c
-> index 64472134dd26..aaacf2f5b223 100644
-> --- a/block/blk-wbt.c
-> +++ b/block/blk-wbt.c
-> @@ -37,7 +37,7 @@
->   enum wbt_flags {
->   	WBT_TRACKED		= 1,	/* write, tracked for throttling */
->   	WBT_READ		= 2,	/* read */
-> -	WBT_KSWAPD		= 4,	/* write, from kswapd */
-> +	WBT_SWAP		= 4,	/* write, from swap_writepage() */
->   	WBT_DISCARD		= 8,	/* discard */
->   
->   	WBT_NR_BITS		= 4,	/* number of bits */
-> @@ -45,7 +45,7 @@ enum wbt_flags {
->   
->   enum {
->   	WBT_RWQ_BG		= 0,
-> -	WBT_RWQ_KSWAPD,
-> +	WBT_RWQ_SWAP,
->   	WBT_RWQ_DISCARD,
->   	WBT_NUM_RWQ,
->   };
-> @@ -172,8 +172,8 @@ static bool wb_recent_wait(struct rq_wb *rwb)
->   static inline struct rq_wait *get_rq_wait(struct rq_wb *rwb,
->   					  enum wbt_flags wb_acct)
->   {
-> -	if (wb_acct & WBT_KSWAPD)
-> -		return &rwb->rq_wait[WBT_RWQ_KSWAPD];
-> +	if (wb_acct & WBT_SWAP)
-> +		return &rwb->rq_wait[WBT_RWQ_SWAP];
->   	else if (wb_acct & WBT_DISCARD)
->   		return &rwb->rq_wait[WBT_RWQ_DISCARD];
->   
-> @@ -528,7 +528,7 @@ static bool close_io(struct rq_wb *rwb)
->   		time_before(now, rwb->last_comp + HZ / 10);
->   }
->   
-> -#define REQ_HIPRIO	(REQ_SYNC | REQ_META | REQ_PRIO)
-> +#define REQ_HIPRIO	(REQ_SYNC | REQ_META | REQ_PRIO | REQ_SWAP)
->   
->   static inline unsigned int get_limit(struct rq_wb *rwb, blk_opf_t opf)
->   {
-> @@ -539,13 +539,13 @@ static inline unsigned int get_limit(struct rq_wb *rwb, blk_opf_t opf)
->   
->   	/*
->   	 * At this point we know it's a buffered write. If this is
-> -	 * kswapd trying to free memory, or REQ_SYNC is set, then
-> +	 * swap trying to free memory, or REQ_SYNC is set, then
->   	 * it's WB_SYNC_ALL writeback, and we'll use the max limit for
->   	 * that. If the write is marked as a background write, then use
->   	 * the idle limit, or go to normal if we haven't had competing
->   	 * IO for a bit.
->   	 */
-> -	if ((opf & REQ_HIPRIO) || wb_recent_wait(rwb) || current_is_kswapd())
-> +	if ((opf & REQ_HIPRIO) || wb_recent_wait(rwb))
->   		limit = rwb->rq_depth.max_depth;
->   	else if ((opf & REQ_BACKGROUND) || close_io(rwb)) {
->   		/*
-> @@ -622,8 +622,8 @@ static enum wbt_flags bio_to_wbt_flags(struct rq_wb *rwb, struct bio *bio)
->   	if (bio_op(bio) == REQ_OP_READ) {
->   		flags = WBT_READ;
->   	} else if (wbt_should_throttle(bio)) {
-> -		if (current_is_kswapd())
-> -			flags |= WBT_KSWAPD;
-> +		if (bio->bi_opf & REQ_SWAP)
-> +			flags |= WBT_SWAP;
->   		if (bio_op(bio) == REQ_OP_DISCARD)
->   			flags |= WBT_DISCARD;
->   		flags |= WBT_TRACKED;
+On a 2-socket environment, each with one ITS and 32 cpu, GICv4.1 enabled,
+4U8G guest, 4 vcpu is deployed on same socket.
+When VM on socket0, kvm-unit-tests ipi_hw result is 850ns.
+When VM on socket1, it is 750ns. The reason is VSGI sender always
+use lasted reported ITS(that on socket1) to inject VSGI. The access
+from cpu to other-socket ITS will cost 100ns more compared to cpu to 
+local ITS.
 
+To use local ITS, we can get 12% reduction in IPI latency.
 
+The patch modify find_4_1_its to firstly return per-cpu local_4_1_its,
+which is init when inherit the VPE table from the ITS on secondary CPUs.
+If fail to find local 4_1 ITS, return any 4_1 ITS like before.
+
+Signed-off-by: Nianyao Tang <tangnianyao@huawei.com>
+Reviewed-by: Marc Zyngier <maz@kernel.org>
+---
+ drivers/irqchip/irq-gic-v3-its.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index 3c755d5dad6e..f99c0a86320b 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -119,6 +119,8 @@ struct its_node {
+ 	int			vlpi_redist_offset;
+ };
+ 
++static DEFINE_PER_CPU(struct its_node *, local_4_1_its);
++
+ #define is_v4(its)		(!!((its)->typer & GITS_TYPER_VLPIS))
+ #define is_v4_1(its)		(!!((its)->typer & GITS_TYPER_VMAPP))
+ #define device_ids(its)		(FIELD_GET(GITS_TYPER_DEVBITS, (its)->typer) + 1)
+@@ -2709,6 +2711,8 @@ static u64 inherit_vpe_l1_table_from_its(void)
+ 		}
+ 		val |= FIELD_PREP(GICR_VPROPBASER_4_1_SIZE, GITS_BASER_NR_PAGES(baser) - 1);
+ 
++		*this_cpu_ptr(&local_4_1_its) = its;
++
+ 		return val;
+ 	}
+ 
+@@ -2746,6 +2750,8 @@ static u64 inherit_vpe_l1_table_from_rd(cpumask_t **mask)
+ 		gic_data_rdist()->vpe_l1_base = gic_data_rdist_cpu(cpu)->vpe_l1_base;
+ 		*mask = gic_data_rdist_cpu(cpu)->vpe_table_mask;
+ 
++		*this_cpu_ptr(&local_4_1_its) = *per_cpu_ptr(&local_4_1_its, cpu);
++
+ 		return val;
+ 	}
+ 
+@@ -4058,8 +4064,9 @@ static struct irq_chip its_vpe_irq_chip = {
+ 
+ static struct its_node *find_4_1_its(void)
+ {
+-	static struct its_node *its = NULL;
++	struct its_node *its;
+ 
++	its = *this_cpu_ptr(&local_4_1_its);
+ 	if (!its) {
+ 		list_for_each_entry(its, &its_nodes, entry) {
+ 			if (is_v4_1(its))
 -- 
-With Best Regards,
-Baokun Li
+2.30.0
 
 
