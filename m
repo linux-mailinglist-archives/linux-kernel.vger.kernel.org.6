@@ -1,119 +1,248 @@
-Return-Path: <linux-kernel+bounces-237053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFD7B91EA58
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 23:29:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B4E4991EA60
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 23:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2337282947
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:29:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A046281FE1
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F626171653;
-	Mon,  1 Jul 2024 21:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3748171069;
+	Mon,  1 Jul 2024 21:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Tv65dCRf"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IVHhwud/"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7EF128812
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 21:29:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E954AEE0
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 21:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719869361; cv=none; b=lKmPbtSyihVUIkpM4xhiXZXQeiehXq68ZSOYT73tU1JGAFC0hT6Ul+Suild75W+0bPdH308BTAyqcEifsa/naHKl6JulwwGO5D4l7zeTR5IFTvDXGi7sI5Lzd3NNo/A/VaD4G/25zwE4rqfiWyU6GwnBOSQcgLo+/z6XmpENGWI=
+	t=1719869531; cv=none; b=Su1n2mQaVwm7qdBbnpRCAjHNCZKLXhD8RjYaBMTInS5Wf/d/t+89RLSU8srLqCsKYn3RYq1kJc0y96IF+on4afWLcPs+t5lqW0JBHO2zLjoXgRJwYS2VHQghn0rYhQF9Fx225koMw6FPzCzX87nEBRVP4Ur1Uh9f2oSDxAqO6Fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719869361; c=relaxed/simple;
-	bh=QYRodptKrW/HhfD33cZFPnsonz/sn+arLYZ+QIwl0Os=;
+	s=arc-20240116; t=1719869531; c=relaxed/simple;
+	bh=tEUarioCUcFbNaP2RfuhoLjmS+WOS0rQMGx8A45M7DA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=etM4edOEj5Pr30IAzTKpCEiZ63vRCfrmsAeAHAXsSQLx5dwbwn6cuWeK5GcGoeX57s2SAqOEKtDo3iKogEUX7teQtBoJ9cyW36l3AygeD1Ic7kdq5iC9CwphjkezjbS8pMYTDccnucE0YEBsF1LW0gm/SHZISNKGMCaxuPPE8D4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Tv65dCRf; arc=none smtp.client-ip=209.85.128.170
+	 To:Cc:Content-Type; b=tyT9n2876qADm6gPicICc+pBSqYE2h7btlMRNucBQcRMRKjJT0FDrynM+qE0bsvZUNCh5Ox/crGP+cCcjAH/1LCKGQjbMj3Sx/Eg8KTXxqNbGPKxMadkvZItbsVYEOufrVF4WxqABEnU0tbYxknzJJ5CwlMKj4HcMExtN/eMKus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IVHhwud/; arc=none smtp.client-ip=209.85.160.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-64a6bf15db9so29394477b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 14:29:19 -0700 (PDT)
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-444fe7e9f11so684181cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 14:32:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719869359; x=1720474159; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1719869529; x=1720474329; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oSl2Z5I3t21oRckeUtUCQTf8DO87uHYoHEdnx8eg3oc=;
-        b=Tv65dCRf6jaye+ibDMk340wcb+IxypZyh4pBo8l9kMqeGkHIcpgk4xAcxs7UVeNxQH
-         /fRy0Vf3yZ8A2NuhCSboc3IyCcHJlI80J5fW/86Y78yDHUeJQzsfVipHYsrEXbi+jxbV
-         2MzvfYmN1I7oebmAqEuWbJI397Wd+THexwspSHB2gg5B1pTo0HsN4DhaX3VuIE0SEGc8
-         NB9UWJ/Gk5V9JWi6BJhHpClgM4m61kZzCTZ4lErGxO1u2pWmDN5RXK/76PBBm4steC6V
-         C3IMef4X0j5TXRPmuq3ptBYhRD0PKF4upjq1uwgu3lTvaQkk1g/uoF6mmVSY0ERjVPkE
-         vPFQ==
+        bh=J67WCzSlHWFlY+A0bs0l9CZDhvuEPnOb2uXCOASkodI=;
+        b=IVHhwud/zfLQIbn58QsKQsL3whsnz7AViRU0ou1kwBl7FGSslNBm0w4lF7X8sfHKzv
+         YMKN3zP5rhzOFHbzCumzC+2KIf8WSUzX2DiO7V8MEi6sy5dBqzozEF+aVvAr/JxnxcZc
+         OmerQ+zFleeamSPwUpBcSE3OH/JlcCJw9GNZrVlpcw2R0zd+qxPKtpIWb1GaolrQAI6P
+         w1XWn735jrV6d8eFEv3NmgN6Lm569mKb0e4LmeOvXS4df+rEbw2mk3PVN5+6tX3ztyPI
+         /LyyAh2niOqM1neZXEhXKuFzr6GuRNffSgwmCD5vcy0sVur6i8aLwz9ZIhFBotGRfiSI
+         VUmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719869359; x=1720474159;
+        d=1e100.net; s=20230601; t=1719869529; x=1720474329;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oSl2Z5I3t21oRckeUtUCQTf8DO87uHYoHEdnx8eg3oc=;
-        b=pNLZrRIOReae0Y4QQYB/LbQhizhL+svBYo+hTRriRCkdeK6f6g/hdLkMq5t26hhV7F
-         e60brcYfqfjEV034xtSjhPFNy7NKPBFnaMSdaJNG2F+j6AM1E++V+rsRQWpwp+Zaa+YU
-         kDcdSe+znGDqIdTnMyoxUTZmpHIk6Kp7bEmagv6fyFTP5hbRMAQQDIF6skI2gSsjKsKa
-         bVlONZV3j51W1vvVromf4G6u6h0Z/KoyczGY+GUgBoRJ5MpT4iwA8QTPTxnssXMe/w1h
-         IipjA2i1d699D5WPpbI3gRCaegtcY1Dp4I29h2gT7D3NBV3qqpwFTyzHH/7SBnjuYGmf
-         m5LQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXef61MGdPkBYBCG31A21BPJgTsYWcycCBjbf5geLH0jOI6fESniW57JullpUvqZC0DtAPaDa5X+ZHIBIRp4i7aW4oILO9TrgL1q1DU
-X-Gm-Message-State: AOJu0YySjpDJBx8fQKjF72bud/87grwPc3HhszZilJWSGOhBAQj1aICM
-	cIEGz6YKUR3DBJxo1AOE+I4DLOS4aLqrtYk7Vhdx5iNsfGbtMXS4hhZCJUG0bzLj2OE1ObRM4uf
-	h7nZx96FGRd0B/nhnEp0pw7qOIycWMUANDa5g
-X-Google-Smtp-Source: AGHT+IGrXD+4pTPNuwEshDbV7GX9n6Y4nx9gnSj9JNfjW9ApBZxXIXAXK/wbTCLOwmtQ93G/H286x9LA3nwcDlnDZsc=
-X-Received: by 2002:a81:a748:0:b0:64a:6eda:fc60 with SMTP id
- 00721157ae682-64c7114568cmr54543967b3.4.1719869358874; Mon, 01 Jul 2024
- 14:29:18 -0700 (PDT)
+        bh=J67WCzSlHWFlY+A0bs0l9CZDhvuEPnOb2uXCOASkodI=;
+        b=CFjJn0PGFLnppGfU/iEBOI3xdzXh+iiLE3kjhEfob1HYFCDWSpGOVVcGd4jxLEEzYJ
+         uT/r6fraQVRQZMSdc5CN42Wz4QYN9hh+65vDp1qrP0zkMuO3NjQXANzrO6Tggi6LuZ6u
+         0hKMEjIhWVC/WXQDVxp5mJ8m9aeDIniJbDzW0P+IPb62KtyzMSWQ0EYdhedJuTtSe1g4
+         bMNmL0Q8LdjpEBnP/hynceia5fKyC8KTR8uAqsVj2KFhbstUVO05zTcJ1gDx18AMnGPl
+         Mm587qvC3+iMQsicOfzxGB80CHFwFZd5aDQ4jYuNeYA9TM1h7J14TT0xkPSHKFatFFzZ
+         OksA==
+X-Forwarded-Encrypted: i=1; AJvYcCUM1bHDokgRXSz5PGbPzIy+BDhQP2n30/lVDTzvB56B2n3CeMuvzhaBi5uCusOrqXfGh53OTqIowpYj/sDE+M4eCCsfv05eaYYfdLVi
+X-Gm-Message-State: AOJu0YwSwanHvTIUZNlbWuOHF58JuaT7/ngsX48oRWoMPBI/84XcKoRk
+	2ax74PSP0a0k2kt4sWjdVulkmqUiNQ032ZaYHapL4h9CaFrRh/E3v80XDkyl+YFDGFyLIzgzjGb
+	ZG3F/kPvf8vRTkPJiaJAVz0ozgyDYJ1FGeSs9
+X-Google-Smtp-Source: AGHT+IEH0ZITXe2UCv0cCHd5aHLEsR7t11euWOBqlLR/sVZ1A0ADj29+NfF1nQB1AvlbSYyoohooEFV9znnGPJZS9rQ=
+X-Received: by 2002:ac8:4d51:0:b0:444:ccfc:fd with SMTP id d75a77b69052e-4465def170emr5251491cf.3.1719869529008;
+ Mon, 01 Jul 2024 14:32:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240701190512.49379-1-sj@kernel.org> <20240701190512.49379-2-sj@kernel.org>
-In-Reply-To: <20240701190512.49379-2-sj@kernel.org>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Mon, 1 Jul 2024 14:29:05 -0700
-Message-ID: <CAJuCfpE40946AOT9-DQouy+=HdgfFxFH6+OYu=FLXXVv7h-E3A@mail.gmail.com>
-Subject: Re: [PATCH 1/4] Docs/mm/allocation-profiling: mark 'Theory of
- operation' as chapter
-To: SeongJae Park <sj@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	Jonathan Corbet <corbet@lwn.net>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20240630184912.37335-1-pobrn@protonmail.com>
+In-Reply-To: <20240630184912.37335-1-pobrn@protonmail.com>
+From: Jeff Xu <jeffxu@google.com>
+Date: Mon, 1 Jul 2024 14:31:28 -0700
+Message-ID: <CALmYWFv-y9N2pK-Rq9GY4duHynWCUrwi2BRnoihoNzLHVNvTUg@mail.gmail.com>
+Subject: Re: [PATCH v4] memfd: `MFD_NOEXEC_SEAL` should not imply `MFD_ALLOW_SEALING`
+To: =?UTF-8?B?QmFybmFiw6FzIFDFkWN6ZQ==?= <pobrn@protonmail.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, akpm@linux-foundation.org, cyphar@cyphar.com, 
+	david@readahead.eu, dmitry.torokhov@gmail.com, dverkamp@chromium.org, 
+	hughd@google.com, jorgelo@chromium.org, keescook@chromium.org, 
+	skhan@linuxfoundation.org, stable@vger.kernel.org, 
+	Jeff Xu <jeffxu@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 1, 2024 at 12:05=E2=80=AFPM SeongJae Park <sj@kernel.org> wrote=
-:
->
-> 'Theory of operation' part of allocation-profiling document is
-> apparently a chapter.  However, it is mistakenly marked as a document
-> title.  As a result, rendered mm document index page shows two items for
-> the document.  Fix it to be marked as a chapter.
->
-> Signed-off-by: SeongJae Park <sj@kernel.org>
+Hi
 
-Acked-by: Suren Baghdasaryan <surenb@google.com>
+On Sun, Jun 30, 2024 at 11:49=E2=80=AFAM Barnab=C3=A1s P=C5=91cze <pobrn@pr=
+otonmail.com> wrote:
+>
+> `MFD_NOEXEC_SEAL` should remove the executable bits and set `F_SEAL_EXEC`
+> to prevent further modifications to the executable bits as per the commen=
+t
+> in the uapi header file:
+>
+>   not executable and sealed to prevent changing to executable
+>
+> However, commit 105ff5339f498a ("mm/memfd: add MFD_NOEXEC_SEAL and MFD_EX=
+EC")
+> that introduced this feature made it so that `MFD_NOEXEC_SEAL` unsets
+> `F_SEAL_SEAL`, essentially acting as a superset of `MFD_ALLOW_SEALING`.
+>
+> Nothing implies that it should be so, and indeed up until the second vers=
+ion
+> of the of the patchset[0] that introduced `MFD_EXEC` and `MFD_NOEXEC_SEAL=
+`,
+> `F_SEAL_SEAL` was not removed, however, it was changed in the third revis=
+ion
+> of the patchset[1] without a clear explanation.
+>
+> This behaviour is surprising for application developers, there is no
+> documentation that would reveal that `MFD_NOEXEC_SEAL` has the additional
+> effect of `MFD_ALLOW_SEALING`. Additionally, combined with `vm.memfd_noex=
+ec=3D2`
+> it has the effect of making all memfds initially sealable.
+>
+The documentation is in linux main (653c5c75115c), I hope this gives
+clarity to the usage of MFD_NOEXEC_SEAL flag to application
+developers, furthermore I'm working on man page for memfd_create.
 
+> So do not remove `F_SEAL_SEAL` when `MFD_NOEXEC_SEAL` is requested,
+> thereby returning to the pre-Linux 6.3 behaviour of only allowing
+> sealing when `MFD_ALLOW_SEALING` is specified.
+>
+> Now, this is technically a uapi break. However, the damage is expected
+> to be minimal. To trigger user visible change, a program has to do the
+> following steps:
+>
+>  - create memfd:
+>    - with `MFD_NOEXEC_SEAL`,
+>    - without `MFD_ALLOW_SEALING`;
+>  - try to add seals / check the seals.
+>
+> But that seems unlikely to happen intentionally since this change
+> essentially reverts the kernel's behaviour to that of Linux <6.3,
+> so if a program worked correctly on those older kernels, it will
+> likely work correctly after this change.
+>
+During V3 patch discussion,  I sent my reasoning, but here are summaries:
+
+- As one might have noticed, unlike other flags in memfd_create,
+MFD_NOEXEC_SEAL is actually a combination of multiple flags. The idea
+is to make it easier to use memfd in the most common way, which is
+NOEXEC + F_SEAL_EXEC + MFD_ALLOW_SEALING.
+
+- The new sysctl vm.noexec =3D 1 helps existing applications move to a
+more secure way of using memfd. IMO, MFD_ALLOW_SEALING is included by
+default because most applications would rather have it than not. In
+any case, an app can set F_SEAL_SEAL to disable the sealing.
+
+- MFD_NOEXEC_SEAL has been added for more than one year, multiple
+applications and distributions have backported and utilized it.
+Altering ABI now presents a degree of risk and may lead to
+disruptions.
+
+Best regards,
+-Jeff
+
+> I have used Debian Code Search and GitHub to try to find potential
+> breakages, and I could only find a single one. dbus-broker's
+> memfd_create() wrapper is aware of this implicit `MFD_ALLOW_SEALING`
+> behaviour, and tries to work around it[2]. This workaround will
+> break. Luckily, this only affects the test suite, it does not affect
+> the normal operations of dbus-broker. There is a PR with a fix[3].
+>
+> I also carried out a smoke test by building a kernel with this change
+> and booting an Arch Linux system into GNOME and Plasma sessions.
+>
+> There was also a previous attempt to address this peculiarity by
+> introducing a new flag[4].
+>
+> [0]: https://lore.kernel.org/lkml/20220805222126.142525-3-jeffxu@google.c=
+om/
+> [1]: https://lore.kernel.org/lkml/20221202013404.163143-3-jeffxu@google.c=
+om/
+> [2]: https://github.com/bus1/dbus-broker/blob/9eb0b7e5826fc76cad7b025bc46=
+f267d4a8784cb/src/util/misc.c#L114
+> [3]: https://github.com/bus1/dbus-broker/pull/366
+> [4]: https://lore.kernel.org/lkml/20230714114753.170814-1-david@readahead=
+.eu/
+>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Barnab=C3=A1s P=C5=91cze <pobrn@protonmail.com>
 > ---
->  Documentation/mm/allocation-profiling.rst | 1 -
->  1 file changed, 1 deletion(-)
 >
-> diff --git a/Documentation/mm/allocation-profiling.rst b/Documentation/mm=
-/allocation-profiling.rst
-> index d3b733b41ae6..ffd6655b7be2 100644
-> --- a/Documentation/mm/allocation-profiling.rst
-> +++ b/Documentation/mm/allocation-profiling.rst
-> @@ -46,7 +46,6 @@ Example output::
->           55M     4887 mm/slub.c:2259 func:alloc_slab_page
->          122M    31168 mm/page_ext.c:270 func:alloc_page_ext
+> * v3: https://lore.kernel.org/linux-mm/20240611231409.3899809-1-jeffxu@ch=
+romium.org/
+> * v2: https://lore.kernel.org/linux-mm/20240524033933.135049-1-jeffxu@goo=
+gle.com/
+> * v1: https://lore.kernel.org/linux-mm/20240513191544.94754-1-pobrn@proto=
+nmail.com/
 >
-> -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->  Theory of operation
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> This fourth version returns to removing the inconsistency as opposed to d=
+ocumenting
+> its existence, with the same code change as v1 but with a somewhat extend=
+ed commit
+> message. This is sent because I believe it is worth at least a try; it ca=
+n be easily
+> reverted if bigger application breakages are discovered than initially im=
+agined.
 >
+> ---
+>  mm/memfd.c                                 | 9 ++++-----
+>  tools/testing/selftests/memfd/memfd_test.c | 2 +-
+>  2 files changed, 5 insertions(+), 6 deletions(-)
+>
+> diff --git a/mm/memfd.c b/mm/memfd.c
+> index 7d8d3ab3fa37..8b7f6afee21d 100644
+> --- a/mm/memfd.c
+> +++ b/mm/memfd.c
+> @@ -356,12 +356,11 @@ SYSCALL_DEFINE2(memfd_create,
+>
+>                 inode->i_mode &=3D ~0111;
+>                 file_seals =3D memfd_file_seals_ptr(file);
+> -               if (file_seals) {
+> -                       *file_seals &=3D ~F_SEAL_SEAL;
+> +               if (file_seals)
+>                         *file_seals |=3D F_SEAL_EXEC;
+> -               }
+> -       } else if (flags & MFD_ALLOW_SEALING) {
+> -               /* MFD_EXEC and MFD_ALLOW_SEALING are set */
+> +       }
+> +
+> +       if (flags & MFD_ALLOW_SEALING) {
+>                 file_seals =3D memfd_file_seals_ptr(file);
+>                 if (file_seals)
+>                         *file_seals &=3D ~F_SEAL_SEAL;
+> diff --git a/tools/testing/selftests/memfd/memfd_test.c b/tools/testing/s=
+elftests/memfd/memfd_test.c
+> index 95af2d78fd31..7b78329f65b6 100644
+> --- a/tools/testing/selftests/memfd/memfd_test.c
+> +++ b/tools/testing/selftests/memfd/memfd_test.c
+> @@ -1151,7 +1151,7 @@ static void test_noexec_seal(void)
+>                             mfd_def_size,
+>                             MFD_CLOEXEC | MFD_NOEXEC_SEAL);
+>         mfd_assert_mode(fd, 0666);
+> -       mfd_assert_has_seals(fd, F_SEAL_EXEC);
+> +       mfd_assert_has_seals(fd, F_SEAL_SEAL | F_SEAL_EXEC);
+>         mfd_fail_chmod(fd, 0777);
+>         close(fd);
+>  }
 > --
-> 2.39.2
+> 2.45.2
+>
 >
 
