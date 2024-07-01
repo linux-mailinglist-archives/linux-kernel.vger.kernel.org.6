@@ -1,189 +1,140 @@
-Return-Path: <linux-kernel+bounces-236759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B98891E6C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:37:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 604F291E6C3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:37:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99570B21067
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:37:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8573E1C21DD7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:37:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F13A16EB6E;
-	Mon,  1 Jul 2024 17:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52C216EB6F;
+	Mon,  1 Jul 2024 17:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GAQem2J7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="fKxLvXOi";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="fKxLvXOi"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6208277115;
-	Mon,  1 Jul 2024 17:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C7C16D4E5;
+	Mon,  1 Jul 2024 17:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719855414; cv=none; b=XHCdNfoP/z4sKMwgw3dHtMhNGzcS4ofiQKcBEeyr6UdQfaUTclsvIT0VVvjfpsntohP5jWMyE5zMQp6OnQLRcW4NX2rx5PT1zmn4yPkVNLX4xm/TQZEjK6bjRqn44TfV6XvmxUW2AJlQCrXI3p70SpZbCfB0a4g+uTymNiKRrME=
+	t=1719855438; cv=none; b=Ht7AvWpdLmfEbQuzZheMvjD/yrDTUpXe6FRrw4yTo5sCZbgF418BRxp/K9eMOZ5/1ghowhreFu4X09VrLZilGNOx+jvsiqwhmrtbcDbUOenlUY0ZHGvOCwX9+HlGfaWwG+GDh6IejNzOGLuqDTCRZy1vSMuD1KbfDgFiiqIoyk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719855414; c=relaxed/simple;
-	bh=AJ43U8TxBFG1R0W4PvfAZW+pIgCbJ/wmU+LmsAUrYjU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WH2iT0gGPn6LvVv8rgvk6FBaSaE2fs5T6MDhWLdR/KoxzcPz8NX1r2B1xGNMDf7PtNyH6Pa1nQoRnPvBkkU/7R2IG8zu2erw/K2yMV62tBSpf6nl9L5f9o4Z3DWS4uKjiG1QglybVBUwfwVsSVpCUQDLgDZvTGTHIMtGstcmP10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GAQem2J7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E90DCC4AF12;
-	Mon,  1 Jul 2024 17:36:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719855413;
-	bh=AJ43U8TxBFG1R0W4PvfAZW+pIgCbJ/wmU+LmsAUrYjU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=GAQem2J7raFxA9lVH1y/ketnYyyQZqQuNgSlgcormbdqA2tFRR6DN/a/dm9X5gmE4
-	 C0tl9VQBQr8ZDrVNlCp9IGe6wnCBdQnJtbnRlVPcbeFOMzQE/djT5Ol/0ThKZ0iviR
-	 QTA1LIEvrrAJqitmAGmvFuTQ2OzGd2+tM8H0K195ySIgZ1C+f8oesPwR74lZsLzAmR
-	 uwB9V+PJuHLxarOivu9iQkb59MHjnE98JlrR814m9MkBiIOizRrhpWg1/KQphZl4oY
-	 g1cDEZA8Leus4rSBd+V8R4IxckGHbR5CLU0/MW+gp8syg1YkVybnyCorrkddk55gLr
-	 O0Mg0T3/IxMHg==
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5c411d037b3so81915eaf.2;
-        Mon, 01 Jul 2024 10:36:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV1Ul/XM1yTV2HwuuOAvoDbYYOM9CngT608aMReZF1JyfEnlk3Y8//1dqAwKwEdEKl1D1GuNkANUExULrL/gEBu7czI0G3oLnalSqAOYGfOtE4rG5DRTH/10zrSaEQdBoWGH5UWUOdhU5XZT6/lGnEk7G9wLUTqe45FQs85UBx7WA==
-X-Gm-Message-State: AOJu0Ywz+OgTOEQwVSfTRT0i3NqVGxjS9cxj7AX1Ow5JJoRV1R9bYJtU
-	lzYif4zRT7pQjgVJorTF7nj72H8RSFCbRkConiA46bX/GqfbgRRmk66vBHupTfXTqQ1bvOcPyxF
-	++d+a9x8tFK/JB+Io4hEvQ0OWQ4o=
-X-Google-Smtp-Source: AGHT+IHwSaJ1hicMo5mBvoWp89o0ASG0KBJLQ81cNcOTGZ3yBfDdae3nh4KtC0AqPvla0OZvfnqwU4SaJJoAWy55Gc8=
-X-Received: by 2002:a4a:c914:0:b0:5ba:ca86:a025 with SMTP id
- 006d021491bc7-5c438d51dfcmr5664269eaf.0.1719855412448; Mon, 01 Jul 2024
- 10:36:52 -0700 (PDT)
+	s=arc-20240116; t=1719855438; c=relaxed/simple;
+	bh=hN6oSSRWYToPIMwG16+WPYiqy2arnc7nun29w+3bd4k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jbShyu6p4QhwSAJVFS7DKXmcb5EyVZ0uBwD2wgb1A58BB3/I2s/366jDG/95HOnO6b7Qc0gkVUs6VHjup3KzFnRzO94/6azYtF1nHWZZjCOCuGV0bizXA77+lsjMjhD2xJ23OPnZL/+jXjxgb6hJ5/4MvHGhKM++hOJSMlVVtoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=fKxLvXOi; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=fKxLvXOi; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8764621BFC;
+	Mon,  1 Jul 2024 17:37:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1719855433; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=XPfeObkmiABo3u/9oEUp18A+HOCjxx8ouUmmjFX6AXM=;
+	b=fKxLvXOiK4uiUV9uPUEwnWFbqBbhwZYHSKiNdLS3b6wF1/IOxJ6yH9iMEeoS/0i5iBtDy3
+	KhWbYHpEXAQlouAKHq4cI8gbP79hX/hajS2JD5VcnHP2pS4wO6T0WoqkCU9fQ6EUerJM/c
+	qs9LmmOiOx5s82FbhLbJlqoqF62QyI8=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=fKxLvXOi
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1719855433; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=XPfeObkmiABo3u/9oEUp18A+HOCjxx8ouUmmjFX6AXM=;
+	b=fKxLvXOiK4uiUV9uPUEwnWFbqBbhwZYHSKiNdLS3b6wF1/IOxJ6yH9iMEeoS/0i5iBtDy3
+	KhWbYHpEXAQlouAKHq4cI8gbP79hX/hajS2JD5VcnHP2pS4wO6T0WoqkCU9fQ6EUerJM/c
+	qs9LmmOiOx5s82FbhLbJlqoqF62QyI8=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 80AE213800;
+	Mon,  1 Jul 2024 17:37:13 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id LVtiH0npgmaUKQAAD6G6ig
+	(envelope-from <dsterba@suse.com>); Mon, 01 Jul 2024 17:37:13 +0000
+From: David Sterba <dsterba@suse.com>
+To: torvalds@linux-foundation.org
+Cc: David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Btrfs fix for 6.10-rc7
+Date: Mon,  1 Jul 2024 19:36:54 +0200
+Message-ID: <cover.1719854274.git.dsterba@suse.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <46742c5a-5df4-46d1-bf5f-b74067866fec@amd.com> <20240701161039.80008-1-visitorckw@gmail.com>
-In-Reply-To: <20240701161039.80008-1-visitorckw@gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 1 Jul 2024 19:36:40 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iY=S+WKWvDAAWxLcOwvpOG5Cck1gQv4p+FfW1Nca0Yqw@mail.gmail.com>
-Message-ID: <CAJZ5v0iY=S+WKWvDAAWxLcOwvpOG5Cck1gQv4p+FfW1Nca0Yqw@mail.gmail.com>
-Subject: Re: [PATCH v3] ACPI: processor_idle: Fix invalid comparison with
- insertion sort for latency
-To: Kuan-Wei Chiu <visitorckw@gmail.com>
-Cc: rafael@kernel.org, lenb@kernel.org, mario.limonciello@amd.com, 
-	akpm@linux-foundation.org, jserv@ccns.ncku.edu.tw, alexdeucher@gmail.com, 
-	belegdol@gmail.com, regressions@leemhuis.info, linux-acpi@vger.kernel.org, 
-	regressions@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_THREE(0.00)[4];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 8764621BFC
+X-Spam-Flag: NO
+X-Spam-Score: -3.01
+X-Spam-Level: 
 
-On Mon, Jul 1, 2024 at 6:10=E2=80=AFPM Kuan-Wei Chiu <visitorckw@gmail.com>=
- wrote:
->
-> The acpi_cst_latency_cmp comparison function currently used for sorting
-> C-state latencies does not satisfy transitivity, causing incorrect
-> sorting results. Specifically, if there are two valid acpi_processor_cx
-> elements A and B and one invalid element C, it may occur that A < B,
-> A =3D C, and B =3D C. Sorting algorithms assume that if A < B and A =3D C=
-,
-> then C < B, leading to incorrect ordering.
->
-> Given the small size of the array (<=3D8), we replace the library sort
-> function with a simple insertion sort that properly ignores invalid
-> elements and sorts valid ones based on latency. This change ensures
-> correct ordering of the C-state latencies.
->
-> Fixes: 65ea8f2c6e23 ("ACPI: processor idle: Fix up C-state latency if not=
- ordered")
-> Cc: stable@vger.kernel.org
-> Reported-by: Julian Sikorski <belegdol@gmail.com>
-> Closes: https://lore.kernel.org/lkml/70674dc7-5586-4183-8953-8095567e73df=
-@gmail.com/
-> Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-> ---
-> v2 -> v3:
-> - Remove #include <linux/sort.h>
-> - Cc @stable
->
-> Note: I only performed a build test and a simple unit test to ensure
->       the latency of valid elements is correctly sorted in the randomly
->           generated data.
->
->  drivers/acpi/processor_idle.c | 36 ++++++++++++++---------------------
->  1 file changed, 14 insertions(+), 22 deletions(-)
->
-> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.=
-c
-> index bd6a7857ce05..17cc81340b4b 100644
-> --- a/drivers/acpi/processor_idle.c
-> +++ b/drivers/acpi/processor_idle.c
-> @@ -16,7 +16,6 @@
->  #include <linux/acpi.h>
->  #include <linux/dmi.h>
->  #include <linux/sched.h>       /* need_resched() */
-> -#include <linux/sort.h>
->  #include <linux/tick.h>
->  #include <linux/cpuidle.h>
->  #include <linux/cpu.h>
-> @@ -386,25 +385,21 @@ static void acpi_processor_power_verify_c3(struct a=
-cpi_processor *pr,
->         acpi_write_bit_register(ACPI_BITREG_BUS_MASTER_RLD, 1);
->  }
->
-> -static int acpi_cst_latency_cmp(const void *a, const void *b)
-> +static void acpi_cst_latency_sort(struct acpi_processor_cx *arr, size_t =
-length)
+Hi,
 
-s/arr/states/ please.
+please pull the following branch. It contains a fixup for a recent fix
+that prevents an infinite loop during block group reclaim.
+Unfortunately it introduced an unsafe way of updating block group list
+and could race with relocation.  This could be hit on fast devices when
+relocation/balance does not have enough space.
 
->  {
-> -       const struct acpi_processor_cx *x =3D a, *y =3D b;
-> +       int i, j, k;
->
-> -       if (!(x->valid && y->valid))
-> -               return 0;
-> -       if (x->latency > y->latency)
-> -               return 1;
-> -       if (x->latency < y->latency)
-> -               return -1;
-> -       return 0;
-> -}
-> -static void acpi_cst_latency_swap(void *a, void *b, int n)
-> -{
-> -       struct acpi_processor_cx *x =3D a, *y =3D b;
-> -
-> -       if (!(x->valid && y->valid))
-> -               return;
-> -       swap(x->latency, y->latency);
-> +       for (i =3D 1; i < length; i++) {
-> +               if (!arr[i].valid)
-> +                       continue;
+Thanks.
 
-Please add an empty line here (and analogously below).
+----------------------------------------------------------------
+The following changes since commit a7e4c6a3031c74078dba7fa36239d0f4fe476c53:
 
-> +               for (j =3D i - 1, k =3D i; j >=3D 0; j--) {
-> +                       if (!arr[j].valid)
-> +                               continue;
-> +                       if (arr[j].latency > arr[k].latency)
-> +                               swap(arr[j].latency, arr[k].latency);
+  btrfs: qgroup: fix quota root leak after quota disable failure (2024-06-25 00:35:50 +0200)
 
-And here.
+are available in the Git repository at:
 
-> +                       k =3D j;
-> +               }
-> +       }
->  }
->
->  static int acpi_processor_power_verify(struct acpi_processor *pr)
-> @@ -449,10 +444,7 @@ static int acpi_processor_power_verify(struct acpi_p=
-rocessor *pr)
->
->         if (buggy_latency) {
->                 pr_notice("FW issue: working around C-state latencies out=
- of order\n");
-> -               sort(&pr->power.states[1], max_cstate,
-> -                    sizeof(struct acpi_processor_cx),
-> -                    acpi_cst_latency_cmp,
-> -                    acpi_cst_latency_swap);
-> +               acpi_cst_latency_sort(&pr->power.states[1], max_cstate);
->         }
->
->         lapic_timer_propagate_broadcast(pr);
-> --
+  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.10-rc6-tag
+
+for you to fetch changes up to 48f091fd50b2eb33ae5eaea9ed3c4f81603acf38:
+
+  btrfs: fix adding block group to a reclaim list and the unused list during reclaim (2024-07-01 17:33:15 +0200)
+
+----------------------------------------------------------------
+Naohiro Aota (1):
+      btrfs: fix adding block group to a reclaim list and the unused list during reclaim
+
+ fs/btrfs/block-group.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
