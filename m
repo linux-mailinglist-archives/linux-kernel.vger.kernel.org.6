@@ -1,194 +1,133 @@
-Return-Path: <linux-kernel+bounces-235685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C32C91D85C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:56:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78EEA91D861
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EEEE1F22456
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 06:56:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 174CBB2157F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 06:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1736257CBA;
-	Mon,  1 Jul 2024 06:56:25 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC0B59168;
+	Mon,  1 Jul 2024 06:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h87V073D"
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FDD04A9B0
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 06:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E594B4EB45;
+	Mon,  1 Jul 2024 06:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719816984; cv=none; b=B8txcq3D6tMWl/3J0HXS+X0FnGtIrhUcZuJIAQS2tyKvLyLIiTVB1ixHJB1hE/HmTJ87flNmb82Qg/bm/e0OdPr+r29Pop2Www3fuxxpkCaFL8StDiRW6q4vBVZH/0reF7vOf4R/BVO8qbHfEgRRwS6fBjH7Hd5ktkChFijUJ/8=
+	t=1719817015; cv=none; b=emcwZfNxd9wtVrEiD7R5MH1Rkem1i2XPG2d75ppSOglmGv7ksMU248Fy+3Xe4hUT5QX8KNK3rmMMFyyGGVzFanf0GDCIx2Mq0XSaMJa9R5AgY1DMCLk4b74Ku9jAFknao59/MHrciW0FAocvvH0+URgoxgeabGwDbK0hDChJCts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719816984; c=relaxed/simple;
-	bh=HOIaIlSj7r2hqWcDrBSX8JQqRZf1t595YMIepq2kMyo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QcRvBYCl9/ZHvUiM/eoURlEUDDowFNj038KXocArVTgIhh3CRwAwBtuy+03WkxbSfyn1vjDkyXEWnAyHSAn8yNpjkQrx1aAUMAGyqLornvOSR1t2I+M0Oi0ckdubSh0Jl67q5LPOmL1eysJ8jyEJqPmCeAU04mRrxZNIJJIdGc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sOAx0-0003Yo-FR; Mon, 01 Jul 2024 08:55:46 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sOAww-006JJB-6n; Mon, 01 Jul 2024 08:55:42 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sOAww-008Jk4-0K;
-	Mon, 01 Jul 2024 08:55:42 +0200
-Date: Mon, 1 Jul 2024 08:55:42 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, Mark Brown <broonie@kernel.org>,
-	Martin Sperl <kernel@martin.sperl.org>,
-	David Jander <david@protonic.nl>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-iio@vger.kernel.org,
-	Julien Stephan <jstephan@baylibre.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	kernel@pengutronix.de, T.Scherer@eckelmann.de
-Subject: Re: [PATCH v2 0/5] spi: add support for pre-cooking messages
-Message-ID: <ZoJS7hAdf36ezyUn@pengutronix.de>
-References: <20240219-mainline-spi-precook-message-v2-0-4a762c6701b9@baylibre.com>
- <Zn6HMrYG2b7epUxT@pengutronix.de>
- <20240628-awesome-discerning-bear-1621f9-mkl@pengutronix.de>
- <9e6b5cff-8692-484e-9e1c-b89a1f49d6c7@baylibre.com>
+	s=arc-20240116; t=1719817015; c=relaxed/simple;
+	bh=+ntPJT+r5ArrobOCjTljPY5X1luO0LW3vJ9fSfFxWI8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=giGNBuUNkHGvoE61BDSrahcjMsybYcZnbeOkjiSsmQCMpK+UKxY2n4pTGgy7v76phfEx2IkWrEhnIhVtE9BX0a2xKAWp9uZIL488eWHFgeeyatkfl6IJJw/YK4fLga98UXr5mRoCQMpra+OkBD3JiyCbzkpsc+0SFj675BdbJbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h87V073D; arc=none smtp.client-ip=209.85.167.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3c9cc681ee4so1825102b6e.0;
+        Sun, 30 Jun 2024 23:56:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719817013; x=1720421813; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+ntPJT+r5ArrobOCjTljPY5X1luO0LW3vJ9fSfFxWI8=;
+        b=h87V073DHZRX2oFduFxZYCFGk7+mB8WXTR6EMqgiVXed0oZKwY7NV9n12f4PcTZjTt
+         1qUiLnoEKMyHGU7c87xivHK8qfZHFlitZV82mZU88kADdg0+ninBJX7xx/jUautog4uM
+         LrAO4cC25E8bjW7tvTAdkuJFB/s2SJLH0LEuVDUJEx+Ar741ciX9f8mikvWX9h3LpXG8
+         PodP5K232B74RRk6YJyNryCxVsDGXMF6406PoRyj9BtEtIbdlZ4z/w48+bZfTX8PUMKM
+         8D33in+zJXtyNUWWor10WGa49bdmpOk3lqCu3lBVWFEnufqksNhX5dbpGBodqFv0tTqV
+         jhLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719817013; x=1720421813;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+ntPJT+r5ArrobOCjTljPY5X1luO0LW3vJ9fSfFxWI8=;
+        b=iSeiJGVe/g7BpSeldaO9IfCKoOPmz3EN124grAiSGwqlaJuhpkinazU2OUdM2tG4nR
+         lrdhungC9C5QWPkXqcEoMS3T8haBiq3wtp19vFdyuHPdlfUQo3dHd2uon9snka1XGeNw
+         a4/V4qHOp2X5n0z4Rl4e+sinDzXKYnbAnhdzGuIrHsMiC5hUy2kqRzeNR7IxEnGZXCvs
+         dGnxywk14L9+m9pVIjkWhnV+4vruDqSwRT7E8W2Tc6ibiz96uFJAaLGgNgnPlvevX5dd
+         u8wLeg+10vlvpufgRfpuoH+cHaNxwC/dz6m/uVAlNviPBIJL78gmkUSohrewFpdv6Tv9
+         nb3w==
+X-Forwarded-Encrypted: i=1; AJvYcCW/a6FhpDOITszcWlOrIG0RvMxSybkF41+KLSzn4HuwKCUSiZJZmMbSOxA86eSBkDRkugYHGtO5bMrAEJX+qFzeO9skno6ud9auzM9cXifqq3+bbSCY/DeAI3cvP3wpXTEPmMPnza7lQ3OUWpr3NqURU2x06nOiKeH9WBkE0V22Txjwxw==
+X-Gm-Message-State: AOJu0YymkSzx8Vz8i6N/pcnSX2S9aDRMsDCy7u9nJuIHqTR9sh9LLTsv
+	cQEMMgFT9TmE7ScqIQ0qcOuUIMWp/jXcYhK4VZDktxhikaRRAgeY
+X-Google-Smtp-Source: AGHT+IEpqIOCW/jccTj/xYWZV3r4E+LFfyzOwkCVx0hHDZpgZCno30MYJoir9PNX4x8DmW0+NjCHRg==
+X-Received: by 2002:a05:6808:f15:b0:3d6:2d45:a791 with SMTP id 5614622812f47-3d6b3c86bbbmr8659230b6e.32.1719817012691;
+        Sun, 30 Jun 2024 23:56:52 -0700 (PDT)
+Received: from [172.19.1.51] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-708044b1112sm5715670b3a.182.2024.06.30.23.56.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 30 Jun 2024 23:56:52 -0700 (PDT)
+Message-ID: <747c568b-6934-40dc-90d6-386fd1e0e795@gmail.com>
+Date: Mon, 1 Jul 2024 14:56:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <9e6b5cff-8692-484e-9e1c-b89a1f49d6c7@baylibre.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] dt-bindings: mmc: nuvoton,ma35d1-sdhci: Document
+ MA35D1 SDHCI controller
+To: Krzysztof Kozlowski <krzk@kernel.org>, ulf.hansson@linaro.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ adrian.hunter@intel.com, p.zabel@pengutronix.de, pbrobinson@gmail.com,
+ serghox@gmail.com, mcgrof@kernel.org,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, forbidden405@outlook.com,
+ tmaimon77@gmail.com, andy.shevchenko@gmail.com,
+ linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: ychuang3@nuvoton.com, schung@nuvoton.com
+References: <20240701003913.729428-1-shanchun1218@gmail.com>
+ <20240701003913.729428-2-shanchun1218@gmail.com>
+ <e02dc084-1e69-4231-b191-3605c68b53f4@kernel.org>
+Content-Language: en-US
+From: Shan-Chun Hung <shanchun1218@gmail.com>
+In-Reply-To: <e02dc084-1e69-4231-b191-3605c68b53f4@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 28, 2024 at 10:27:28AM -0500, David Lechner wrote:
-> On 6/28/24 5:16 AM, Marc Kleine-Budde wrote:
-> > On 28.06.2024 11:49:38, Oleksij Rempel wrote:
-> >> It seems to be spi_mux specific. We have seen similar trace on other system
-> >> with spi_mux.
-> > 
-> > Here is the other backtrace from another imx8mp system with a completely
-> > different workload. Both have in common that they use a spi_mux on the
-> > spi-imx driver.
-> > 
-> > Unable to handle kernel NULL pointer dereference at virtual address 0000000000000dd0
-> > Mem abort info:
-> >   ESR = 0x0000000096000004
-> >   EC = 0x25: DABT (current EL), IL = 32 bits
-> >   SET = 0, FnV = 0
-> >   EA = 0, S1PTW = 0
-> >   FSC = 0x04: level 0 translation fault
-> > Data abort info:
-> >   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-> >   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-> >   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> > user pgtable: 4k pages, 48-bit VAs, pgdp=0000000046760000
-> > [0000000000000dd0] pgd=0000000000000000, p4d=0000000000000000
-> > Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-> > Modules linked in: can_raw can ti_ads7950 industrialio_triggered_buffer kfifo_buf spi_mux fsl_imx8_ddr_perf at24 flexcan caam can_dev error rtc_snvs imx8mm_thermal spi_imx capture_events_irq cfg80211 iio_trig_hrtimer industrialio_sw_trigger ind>
-> > CPU: 3 PID: 177 Comm: spi5 Not tainted 6.9.0 #1
-> > Hardware name: xxxxxxxxxxxxxxxx (xxxxxxxxx) (DT)
-> > pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> > pc : spi_res_release+0x24/0xb8
-> > lr : spi_async+0xac/0x118
-> > sp : ffff8000823fbcc0
-> > x29: ffff8000823fbcc0 x28: 0000000000000000 x27: 0000000000000000
-> > x26: ffff8000807bef88 x25: ffff80008115c008 x24: 0000000000000000
-> > x23: ffff8000826c3938 x22: 0000000000000000 x21: ffff0000076a9800
-> > x20: 0000000000000000 x19: 0000000000000dc8 x18: 0000000000000000
-> > x17: 0000000000000000 x16: 0000000000000000 x15: 0000ffff88c0e760
-> > x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
-> > x11: ffff8000815a1f98 x10: ffff8000823fbb40 x9 : ffff8000807b8420
-> > x8 : ffff800081508000 x7 : 0000000000000004 x6 : 0000000003ce4c66
-> > x5 : 0000000001000000 x4 : 0000000000000000 x3 : 0000000001000000
-> > x2 : 0000000000000000 x1 : ffff8000826c38e0 x0 : ffff0000076a9800
-> > Call trace:
-> >  spi_res_release+0x24/0xb8
-> >  spi_async+0xac/0x118
-> >  spi_mux_transfer_one_message+0xb8/0xf0 [spi_mux]
-> >  __spi_pump_transfer_message+0x260/0x5d8
-> >  __spi_pump_messages+0xdc/0x320
-> >  spi_pump_messages+0x20/0x38
-> >  kthread_worker_fn+0xdc/0x220
-> >  kthread+0x118/0x128
-> >  ret_from_fork+0x10/0x20
-> > Code: a90153f3 a90363f7 91016037 f9403033 (f9400674) 
-> > ---[ end trace 0000000000000000 ]---
-> > 
-> > regards,
-> > Marc
-> > 
-> 
-> 
-> Hi Oleksij and Marc,
-> 
-> I'm supposed to be on vacation so I didn't look into this deeply yet
-> but I can see what is happening here.
-> 
-> spi_mux_transfer_one_message() is calling spi_async() which is calling
-> __spi_optimize_message() on an already optimized message.
-> 
-> Then it also calls __spi_unoptimize_message() which tries to release
-> resources. But this fails because the spi-mux driver has swapped
-> out the pointer to the device in the SPI message. This causes the
-> wrong ctlr to be passed to spi_res_release(), causing the crash.
-> 
-> I don't know if a proper fix could be quite so simple, but here is
-> something you could try (untested):
+Dear Krzysztof,
 
-This issue is still reproducible with following trace:
-[   19.566433] Call trace:
-[   19.568882]  spi_async+0x90/0x118
-[   19.572204]  spi_mux_transfer_one_message+0xd4/0x110
-[   19.577175]  __spi_pump_transfer_message+0x2bc/0x6e8
-[   19.582149]  __spi_pump_messages+0xe0/0x228
-[   19.586339]  spi_pump_messages+0x20/0x38
-[   19.590271]  kthread_worker_fn+0xe0/0x2e8
-[   19.594286]  kthread+0x10c/0x120
-[   19.597518]  ret_from_fork+0x10/0x20
+Thanks for your review.
 
-addr2line for spi_async+0x90/0x118 -> drivers/spi/spi.c:2136
-  2132 static void __spi_unoptimize_message(struct spi_message *msg)         
-  2133 {                                                                     
-  2134         struct spi_controller *ctlr = msg->spi->controller;
-  2135
-  2136         if (ctlr->unoptimize_message)
-  2137                ctlr->unoptimize_message(msg);
-  2138
-  2139         spi_res_release(ctlr, msg);                                   
-  2140
-  2141         msg->optimized = false;
-  2142         msg->opt_state = NULL;
-  2143 }
+I'm sorry, I just realized I missed an important letter.
 
-Regards,
-Oleksij
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+I will drop status = "disabled" in the next version.
+
+> On 01/07/2024 02:39, Shan-Chun Hung wrote:
+>> Add binding for Nuvoton MA35D1 SDHCI controller.
+>>
+>> Signed-off-by: Shan-Chun Hung <shanchun1218@gmail.com>
+> You ignored comment third time.
+>
+> NAK.
+>
+> <form letter>
+> This is a friendly reminder during the review process.
+>
+> It seems my or other reviewer's previous comments were not fully
+> addressed. Maybe the feedback got lost between the quotes, maybe you
+> just forgot to apply it. Please go back to the previous discussion and
+> either implement all requested changes or keep discussing them.
+>
+> Thank you.
+> </form letter>
+>
+>
+> Best regards,
+> Krzysztof
+
+Best Regards,
+
+Shan-Chun
+
 
