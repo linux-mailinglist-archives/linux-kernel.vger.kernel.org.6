@@ -1,80 +1,47 @@
-Return-Path: <linux-kernel+bounces-235883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01BE791DAC5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:59:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DFE791DACE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:59:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD032286B50
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:58:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 549B1286F51
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:59:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41FA585656;
-	Mon,  1 Jul 2024 08:57:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21AA12BF32;
+	Mon,  1 Jul 2024 08:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fr/WkZMN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h6ZW0/KM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D1D839F7
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 08:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8424A82D70;
+	Mon,  1 Jul 2024 08:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719824277; cv=none; b=Q5ZVZAEbtnSbTCNQ7pJimpSqJNSWlC3lu/odR4TERV5CH6rRN5OrekbgOhl/pBOMn+T/CRf0+WheA6QFmtVTIfsZCc8PYYF3sjcxIeORTghEifvMn6J7rBuZpFJuNt7AoxI49SKq63jYKnXN3wOQ2dkxDv+08wlSLEGVvgn/hdU=
+	t=1719824304; cv=none; b=SvmYwkoZbCdPxFhRNm09KcKowsXBJzhEySkOilRDWovj0x6xKu9tm0ndLbHlnJACHAwzsn7VQZ5yqnt84bTq/Hp2GEAoyKfz3co3QpUCOMXTOBHRViMFoRULN+rH/NBI7lYr8VXdvI26PsQ9jrC/vea4yMjQ7T3rCs/aCW9KgC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719824277; c=relaxed/simple;
-	bh=XtQ7Dk4G04HBYx17Kd6QETpRN5kgHBAYhDLsC1KbziQ=;
+	s=arc-20240116; t=1719824304; c=relaxed/simple;
+	bh=7+cfx/00RQCvZrZuSrvwvg9g3ZH0q8lQ1rTw1bQFDTs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OagqaWUAIGUmc42SL+kebcQgenxaUixFXgj9Nvczje+VRe/AnF1MoPF3Ti0+4Ii4ReW6AME2SbZmm1gk+DmeWPRz5G18kzPz1Uaj1CKihh2mhVyd0cgvaYzsyIqF9wZLV9j5CTmCafqBMiTqAwOKZ02JYflhiEmr0G7azHmxOAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fr/WkZMN; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719824274;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=LZI8SncX1/n/FMeJ2PL2SGP7FZv3xpQuNunFwEeaCBs=;
-	b=fr/WkZMNYGZ+tTVVYdHCxvvGQAycz9un9j7vSO8sC40MyuHOQ9iz+FMIWthpMJPDYqTgaT
-	1psULb8JTFUlfA+Di7+eRIi0l8EfbWoumQlcPmKZcFX6FoGZtBFMl4ZiAncghOrcp6qBJs
-	AUbGY09nbSv0ZGyDJxx439UKrD6H4XA=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-20-oskMA3ePMF-aOEYIxZTVVA-1; Mon, 01 Jul 2024 04:57:52 -0400
-X-MC-Unique: oskMA3ePMF-aOEYIxZTVVA-1
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-57cad6e94e5so1940111a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 01:57:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719824272; x=1720429072;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=LZI8SncX1/n/FMeJ2PL2SGP7FZv3xpQuNunFwEeaCBs=;
-        b=n0lOGCr1gwvDKlxjporhsjkhL7096ml9YZdKOeVh6K6+W9SfDNK4C8JXhs4zD4Aml1
-         2YZtxAiy/KXFqzc3e8JMqMVjMRT9vKbNV+eS7fszCLdfdWDC+YYQ2xfaD7fE1zK67AJR
-         gDLhQtnvn4+cOwQABtBt6qh1W54uPK8O3gdnyck1K2uW19Z+6c+VO26sOScgX92eCKHP
-         To/4sSvFS7TlbVKEZZR8p+Tllymwsxclsjy4u9Bz6RkxmD4mWELMbTgd2veZ1KIPNJMg
-         sxqH68LsXFS9/EbGKSzT8MasOAmfIrlM5wu888i6YFKx0/HHEemdAGmmDXdVY1Dycn/X
-         5EbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVsAkp9fALarxa1iUwkHy2a9CSlKzaCQVQHyhO2ZMvjobJbkDOLz1fwpPlE31zfOtrU+9Gvq+7fNtcsqY+FLLUVzTIdoh9r/6ozld8P
-X-Gm-Message-State: AOJu0YzG4nom+v+T50ZrdaRFMMGX0S3Ekv46PIuEWuGByOar/QGbqMCR
-	F+wtpcUB/UcV9jvhu4tbNpO1iTIGUbmfGBIA7A3yK7T+S8NY7cWS1UfRt4lOrXgi9YKFGOln2Nk
-	czvYVXIy101LLpSQaxdgFzpYnv8BmHATrOsYBY7JnFsaVo0vTaPna+MST+gEc7g==
-X-Received: by 2002:a05:6402:3512:b0:57d:1d79:45b7 with SMTP id 4fb4d7f45d1cf-587a053d9f3mr3140192a12.29.1719824271771;
-        Mon, 01 Jul 2024 01:57:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFhuskY2jpqnXAMiCH+ztFwptLwTTk7Ub/sKIkIXMzgIsSHgGTWpW86QHPOoNRn1WZDcaP5lA==
-X-Received: by 2002:a05:6402:3512:b0:57d:1d79:45b7 with SMTP id 4fb4d7f45d1cf-587a053d9f3mr3139644a12.29.1719824252454;
-        Mon, 01 Jul 2024 01:57:32 -0700 (PDT)
-Received: from [100.81.188.195] ([178.24.249.76])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5861324f069sm4236982a12.33.2024.07.01.01.57.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Jul 2024 01:57:32 -0700 (PDT)
-Message-ID: <992cdbf9-80df-4a91-aea6-f16789c5afd7@redhat.com>
-Date: Mon, 1 Jul 2024 10:57:30 +0200
+	 In-Reply-To:Content-Type; b=NHQ40yIdSVpJhsC0HuHZsYqhbRmdMx766o5fSCpyZUnYnD6faeGY/uFdFOKBoOvr+iYJ3yLUZ46CD7LfNVUp0m9AEXO8DP/wP2GgQLeUVCkSndV1j15KRT4ONJl0ghyUV52gj2HvUuM8lDehw7tx/3FJTl6Dy39h+Uo+77qBBqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h6ZW0/KM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7978C116B1;
+	Mon,  1 Jul 2024 08:58:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719824304;
+	bh=7+cfx/00RQCvZrZuSrvwvg9g3ZH0q8lQ1rTw1bQFDTs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=h6ZW0/KMR+I9IpoxExW+H6RrJOc6saAFY//y02zRUiUGB/jFuL7Kgj4v7351rQzcc
+	 7cofmFchgpMy5BK8qtosqB6wQ2/7eh46SOk28GWJ+dERmwRlwfjYHj2As4Ox7v8ut6
+	 ANYyfF3SkPs1Wj3X5s835ukf9KgjmIXNttKZWdqhiYeT4cAXlgYfeUYJ8cP31GpjGc
+	 r108TWGrOIQj6AX1pHVY4YaVcPfX9ecIfOIq6wsweTtRNHggtSXXxxCzuyXdEXXvEJ
+	 StqeZtUvkqHUn6oysj7UL0A1+eU1A0mjK8Y1B4i9sKrQ5WWQmD6noP2OYeYSLHPiWL
+	 cTYa5ebo9o9Og==
+Message-ID: <087e7f29-1fa8-4bc2-bb3d-acb941432381@kernel.org>
+Date: Mon, 1 Jul 2024 10:58:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,142 +49,503 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] support "THPeligible" semantics for mTHP with anonymous
- shmem
-To: Ryan Roberts <ryan.roberts@arm.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Bang Li
- <libang.li@antgroup.com>, hughd@google.com, akpm@linux-foundation.org
-Cc: wangkefeng.wang@huawei.com, ziy@nvidia.com, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20240628104926.34209-1-libang.li@antgroup.com>
- <4b38db15-0716-4ffb-a38b-bd6250eb93da@arm.com>
- <4d54880e-03f4-460a-94b9-e21b8ad13119@linux.alibaba.com>
- <516aa6b3-617c-4642-b12b-0c5f5b33d1c9@arm.com>
- <597ac51e-3f27-4606-8647-395bb4e60df4@redhat.com>
- <6f68fb9d-3039-4e38-bc08-44948a1dae4d@arm.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 1/6] media: dt-bindings: media: camss: Add
+ qcom,sc7280-camss binding
+To: Vikram Sharma <quic_vikramsa@quicinc.com>, Robert Foss
+ <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Kapatrala Syed <akapatra@quicinc.com>,
+ Hariram Purushothaman <hariramp@quicinc.com>,
+ cros-qcom-dts-watchers@chromium.org, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Loic Poulain <loic.poulain@linaro.org>, Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-i2c@vger.kernel.org, Suresh Vankadara <quic_svankada@quicinc.com>,
+ Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
+References: <20240629-camss_first_post_linux_next-v1-0-bc798edabc3a@quicinc.com>
+ <20240629-camss_first_post_linux_next-v1-1-bc798edabc3a@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <6f68fb9d-3039-4e38-bc08-44948a1dae4d@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240629-camss_first_post_linux_next-v1-1-bc798edabc3a@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 01.07.24 10:50, Ryan Roberts wrote:
-> On 01/07/2024 09:48, David Hildenbrand wrote:
->> On 01.07.24 10:40, Ryan Roberts wrote:
->>> On 01/07/2024 09:33, Baolin Wang wrote:
->>>>
->>>>
->>>> On 2024/7/1 15:55, Ryan Roberts wrote:
->>>>> On 28/06/2024 11:49, Bang Li wrote:
->>>>>> After the commit 7fb1b252afb5 ("mm: shmem: add mTHP support for
->>>>>> anonymous shmem"), we can configure different policies through
->>>>>> the multi-size THP sysfs interface for anonymous shmem. But
->>>>>> currently "THPeligible" indicates only whether the mapping is
->>>>>> eligible for allocating THP-pages as well as the THP is PMD
->>>>>> mappable or not for anonymous shmem, we need to support semantics
->>>>>> for mTHP with anonymous shmem similar to those for mTHP with
->>>>>> anonymous memory.
->>>>>>
->>>>>> Signed-off-by: Bang Li <libang.li@antgroup.com>
->>>>>> ---
->>>>>>     fs/proc/task_mmu.c      | 10 +++++++---
->>>>>>     include/linux/huge_mm.h | 11 +++++++++++
->>>>>>     mm/shmem.c              |  9 +--------
->>>>>>     3 files changed, 19 insertions(+), 11 deletions(-)
->>>>>>
->>>>>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
->>>>>> index 93fb2c61b154..09b5db356886 100644
->>>>>> --- a/fs/proc/task_mmu.c
->>>>>> +++ b/fs/proc/task_mmu.c
->>>>>> @@ -870,6 +870,7 @@ static int show_smap(struct seq_file *m, void *v)
->>>>>>     {
->>>>>>         struct vm_area_struct *vma = v;
->>>>>>         struct mem_size_stats mss = {};
->>>>>> +    bool thp_eligible;
->>>>>>           smap_gather_stats(vma, &mss, 0);
->>>>>>     @@ -882,9 +883,12 @@ static int show_smap(struct seq_file *m, void *v)
->>>>>>           __show_smap(m, &mss, false);
->>>>>>     -    seq_printf(m, "THPeligible:    %8u\n",
->>>>>> -           !!thp_vma_allowable_orders(vma, vma->vm_flags,
->>>>>> -               TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL));
->>>>>> +    thp_eligible = !!thp_vma_allowable_orders(vma, vma->vm_flags,
->>>>>> +                        TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL);
->>>>>> +    if (vma_is_anon_shmem(vma))
->>>>>> +        thp_eligible =
->>>>>> !!shmem_allowable_huge_orders(file_inode(vma->vm_file),
->>>>>> +                            vma, vma->vm_pgoff, thp_eligible);
->>>>>
->>>>> Afraid I haven't been following the shmem mTHP support work as much as I would
->>>>> have liked, but is there a reason why we need a separate function for shmem?
->>>>
->>>> Since shmem_allowable_huge_orders() only uses shmem specific logic to determine
->>>> if huge orders are allowable, there is no need to complicate the
->>>> thp_vma_allowable_orders() function by adding more shmem related logic, making
->>>> it more bloated. In my view, providing a dedicated helper
->>>> shmem_allowable_huge_orders(), specifically for shmem, simplifies the logic.
->>>
->>> My point was really that a single interface (thp_vma_allowable_orders) should be
->>> used to get this information. I have no strong opinon on how the implementation
->>> of that interface looks. What you suggest below seems perfectly reasonable to me.
->>
->> Right. thp_vma_allowable_orders() might require some care as discussed in other
->> context (cleanly separate dax and shmem handling/orders). But that would be
->> follow-up cleanups.
+On 28/06/2024 20:32, Vikram Sharma wrote:
+> Add bindings for qcom,sc7280-camss in order to support the camera
+> subsystem for sc7280.
 > 
-> Are you planning to do that, or do you want me to send a patch?
+> Signed-off-by: Suresh Vankadara <quic_svankada@quicinc.com>
+> Signed-off-by: Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
+> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+> ---
+>  .../bindings/media/qcom,sc7280-camss.yaml          | 477 +++++++++++++++++++++
+>  1 file changed, 477 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/qcom,sc7280-camss.yaml b/Documentation/devicetree/bindings/media/qcom,sc7280-camss.yaml
+> new file mode 100644
+> index 000000000000..588c6fb50e2f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/qcom,sc7280-camss.yaml
+> @@ -0,0 +1,477 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +
+> +---
+> +$id: http://devicetree.org/schemas/media/qcom,sc7280-camss.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Technologies, Inc. SC7280 CAMSS ISP
 
-I'm planning on looking into some details, especially the interaction 
-with large folios in the pagecache. I'll let you know once I have a 
-better idea what actually should be done :)
+We write only "Qualcomm", drop "Technologies, Inc.".
 
--- 
-Cheers,
+> +
+> +maintainers:
+> +  - Azam Sadiq Pasha Kapatrala Syed <akapatra@quicinc.com>
+> +  - Hariram Purushothaman <hariramp@quicinc.com>
+> +
+> +description: |
 
-David / dhildenb
+Do not need '|' unless you need to preserve formatting.
+
+> +  The CAMSS IP is a CSI decoder and ISP present on
+> +  Qualcomm Technologies, Inc. platforms.
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,sc7280-camss
+> +
+> +  clocks:
+> +    minItems: 41
+
+
+Drop
+
+> +    maxItems: 41
+> +
+> +  clock-names:
+> +    items:
+> +
+
+
+Drop blank line
+
+> +      - const: cam_hf_axi
+> +      - const: slow_ahb_src
+> +      - const: cpas_ahb
+> +      - const: camnoc_axi_src
+> +      - const: camnoc_axi
+
+Which file did you use as template? Isn't this supposed to be reversed?
+
+BTW, you *must* work on latest tree. Do not take some ancient code and
+use as template. It's really waste of time to point the same issues over
+and over again.
+
+> +      - const: csiphy0
+> +      - const: csiphy0_timer
+> +      - const: csiphy0_timer_src
+> +      - const: csiphy1
+> +      - const: csiphy1_timer
+> +      - const: csiphy1_timer_src
+> +      - const: csiphy2
+> +      - const: csiphy2_timer
+> +      - const: csiphy2_timer_src
+> +      - const: csiphy3
+> +      - const: csiphy3_timer
+> +      - const: csiphy3_timer_src
+> +      - const: csiphy4
+> +      - const: csiphy4_timer
+> +      - const: csiphy4_timer_src
+> +      - const: vfe0_csid
+> +      - const: vfe0_cphy_rx
+> +      - const: vfe0
+> +      - const: vfe0_axi
+> +      - const: csiphy_rx_src
+> +      - const: vfe1_csid
+> +      - const: vfe1_cphy_rx
+> +      - const: vfe1
+> +      - const: vfe1_axi
+> +      - const: vfe2_csid
+> +      - const: vfe2_cphy_rx
+> +      - const: vfe2
+> +      - const: vfe2_axi
+> +      - const: vfe0_lite_csid
+> +      - const: vfe0_lite_cphy_rx
+
+Why these are reversed comparing to other bindings? Srsly, from which
+file did you take it?
+
+> +      - const: vfe0_lite
+> +      - const: vfe1_lite_csid
+> +      - const: vfe1_lite_cphy_rx
+> +      - const: vfe1_lite
+> +      - const: vfe_lite0
+> +      - const: vfe_lite1
+> +
+> +  interrupts:
+> +    minItems: 15
+
+Drop
+
+> +    maxItems: 15
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: csiphy0
+> +      - const: csiphy1
+> +      - const: csiphy2
+> +      - const: csiphy3
+> +      - const: csiphy4
+> +      - const: csid0
+> +      - const: csid1
+> +      - const: csid2
+> +      - const: csid_lite0
+> +      - const: csid_lite1
+> +      - const: vfe0
+> +      - const: vfe1
+> +      - const: vfe2
+> +      - const: vfe_lite0
+> +      - const: vfe_lite1
+> +
+> +  iommus:
+> +    maxItems: 1
+> +
+> +  interconnects:
+> +    minItems: 2
+
+Drop
+
+> +    maxItems: 2
+> +
+> +  interconnect-names:
+> +    items:
+> +      - const: cam_ahb
+> +      - const: cam_hf_0
+
+Drop "cam_" prefix in both. Actually everywhere...
+
+
+> +
+> +  power-domains:
+> +    items:
+> +      - description: IFE0 GDSC - Image Front End, Global Distributed Switch Controller.
+> +      - description: IFE1 GDSC - Image Front End, Global Distributed Switch Controller.
+> +      - description: IFE2 GDSC - Image Front End, Global Distributed Switch Controller.
+> +      - description: Titan GDSC - Titan ISP Block, Global Distributed Switch Controller.
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +
+> +    description:
+> +      CSI input ports.
+> +
+> +    properties:
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              clock-lanes:
+> +                maxItems: 1
+> +
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +            required:
+> +              - clock-lanes
+> +              - data-lanes
+> +
+> +      port@1:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              clock-lanes:
+> +                maxItems: 1
+> +
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +            required:
+> +              - clock-lanes
+> +              - data-lanes
+> +
+> +      port@2:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              clock-lanes:
+> +                maxItems: 1
+> +
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +            required:
+> +              - clock-lanes
+> +              - data-lanes
+> +
+> +      port@3:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              clock-lanes:
+> +                maxItems: 1
+> +
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +            required:
+> +              - clock-lanes
+> +              - data-lanes
+> +
+> +      port@4:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              clock-lanes:
+> +                maxItems: 1
+> +
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +            required:
+> +              - clock-lanes
+> +              - data-lanes
+> +
+> +      port@5:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              clock-lanes:
+> +                maxItems: 1
+> +
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +            required:
+> +              - clock-lanes
+> +              - data-lanes
+> +
+> +  reg:
+> +    minItems: 10
+
+Drop
+
+> +    maxItems: 10
+> +
+> +  reg-names:
+> +    items:
+> +      - const: vfe0
+> +      - const: vfe1
+> +      - const: vfe2
+> +      - const: vfe_lite0
+> +      - const: vfe_lite1
+> +      - const: csiphy0
+> +      - const: csiphy1
+> +      - const: csiphy2
+> +      - const: csiphy3
+> +      - const: csiphy4
+
+Which file did you use as template for these?
+
+> +
+> +required:
+> +  - clock-names
+> +  - clocks
+> +  - compatible
+> +  - interconnects
+> +  - interconnect-names
+> +  - interrupts
+> +  - interrupt-names
+> +  - iommus
+> +  - power-domains
+> +  - reg
+> +  - reg-names
+> +
+> +additionalProperties: false
+
+Missing blank line
+
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/clock/qcom,camcc-sc7280.h>
+> +    #include <dt-bindings/interconnect/qcom,sc7280.h>
+> +    #include <dt-bindings/clock/qcom,gcc-sc7280.h>
+> +    #include <dt-bindings/power/qcom-rpmpd.h>
+
+These should be in alphabetical order, not random.
+
+> +
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        camss: camss@acaf000 {
+> +            compatible = "qcom,sc7280-camss";
+> +            reg = <0x0 0x0acaf000 0x0 0x5200>,
+> +                <0x0 0x0acb6000 0x0 0x5200>,
+> +                <0x0 0x0acbd000 0x0 0x5200>,
+> +                <0x0 0x0acc4000 0x0 0x5000>,
+> +                <0x0 0x0accb000 0x0 0x5000>,
+> +                <0x0 0x0ace0000 0x0 0x2000>,
+> +                <0x0 0x0ace2000 0x0 0x2000>,
+> +                <0x0 0x0ace4000 0x0 0x2000>,
+> +                <0x0 0x0ace6000 0x0 0x2000>,
+> +                <0x0 0x0ace8000 0x0 0x2000>;
+> +
+> +            reg-names = "vfe0",
+> +                "vfe1",
+> +                "vfe2",
+
+Misaligned.
+
+> +                "vfe_lite0",
+> +                "vfe_lite1",
+> +                "csiphy0",
+> +                "csiphy1",
+> +                "csiphy2",
+> +                "csiphy3",
+> +                "csiphy4";
+> +
+> +            interrupts = <GIC_SPI 477 IRQ_TYPE_EDGE_RISING>,
+> +                <GIC_SPI 478 IRQ_TYPE_EDGE_RISING>,
+
+Misaligned.
+
+> +                <GIC_SPI 479 IRQ_TYPE_EDGE_RISING>,
+> +                <GIC_SPI 448 IRQ_TYPE_EDGE_RISING>,
+> +                <GIC_SPI 122 IRQ_TYPE_EDGE_RISING>,
+> +                <GIC_SPI 464 IRQ_TYPE_EDGE_RISING>,
+> +                <GIC_SPI 466 IRQ_TYPE_EDGE_RISING>,
+> +                <GIC_SPI 640 IRQ_TYPE_EDGE_RISING>,
+> +                <GIC_SPI 468 IRQ_TYPE_EDGE_RISING>,
+> +                <GIC_SPI 359 IRQ_TYPE_EDGE_RISING>,
+> +                <GIC_SPI 465 IRQ_TYPE_EDGE_RISING>,
+> +                <GIC_SPI 467 IRQ_TYPE_EDGE_RISING>,
+> +                <GIC_SPI 641 IRQ_TYPE_EDGE_RISING>,
+> +                <GIC_SPI 469 IRQ_TYPE_EDGE_RISING>,
+> +                <GIC_SPI 360 IRQ_TYPE_EDGE_RISING>;
+> +
+> +            interrupt-names = "csiphy0",
+> +                "csiphy1",
+> +                "csiphy2",
+
+Misaligned.
+
+> +                "csiphy3",
+> +                "csiphy4",
+> +                "csid0",
+> +                "csid1",
+> +                "csid2",
+> +                "csid_lite0",
+> +                "csid_lite1",
+> +                "vfe0",
+> +                "vfe1",
+> +                "vfe2",
+> +                "vfe_lite0",
+> +                "vfe_lite1";
+
+
+Best regards,
+Krzysztof
 
 
