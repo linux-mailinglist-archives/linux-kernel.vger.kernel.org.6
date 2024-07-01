@@ -1,181 +1,219 @@
-Return-Path: <linux-kernel+bounces-236874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BE7391E80C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:59:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C88ED91E80D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 20:59:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D5031C21CF3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:59:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB7611C21D83
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3BE516F267;
-	Mon,  1 Jul 2024 18:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 565EC16F0E8;
+	Mon,  1 Jul 2024 18:59:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="Hs7VFFNR"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="jwuk22Ll"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2072.outbound.protection.outlook.com [40.107.244.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96CF110F9;
-	Mon,  1 Jul 2024 18:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719860341; cv=none; b=KBYYtPgO6PzIm0EyMVAUkoAdATUjxWetKJYjCk0JiVCwX0eENND3SEosluBfvxrD9qK99GoS52A3rs0xg1Du/rcbBVSFx4O5/4dFH2W5KthYV577IHVmH82lF1KFn/ydj9Z/0awiqq7ivutVXtC6cxbCLMW+4eNLPFFtQlrMJTI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719860341; c=relaxed/simple;
-	bh=jetS33nQbJ/Zs44pgSr2icqebgTTKV3ZBtWFKSb/w04=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=H1+41ogwGEK7B10ySDOUgBOzAhsySlOp0SETWG3GfiNisZizNlPqCZHrsvk8zdz1YluM7ZJrX9lLd5mzOkwAuCb/aDzsoAdTnE7QuqUJikTNo9X7XNPTReAwKxaMhVYj6wKaGRb+dVkyl1GZme87OV2bYCeVf/f2bKrBw7DaZP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=Hs7VFFNR; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1719860328; x=1720465128; i=w_armin@gmx.de;
-	bh=7PQqll3Iy2KZ7jqD5thlaUNrJgtMeZOmoxeG9yB2+0Y=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Hs7VFFNRpJuhcz+SockAMUmpIcJxi/VRIkEAzQaoJiXE+MMWxI/qfksj7kJEQ7yu
-	 XR8v9/N8TqS+KDPWBlHmMfUxIRAsS62M5gEGL4HHNl9i+hihwjw8my43khIa5Ck7n
-	 b3WJiE5hNsJ0cdMW5bHDoQHh+mSTYyvqTxslZVj88mER1jcucXLMvyxxGsQI65Afd
-	 1H7YUg2dm31qnfwz3HrKNaQo3P668TrPbmSbr05lCfPGGsDlwJ4ucFKCecz0HpPRX
-	 5ROTvz6dqIjO123NksOqnZrfclKLbJX9VcJZ3FRMurSnIQ+DzY00kBD/xFQsuUKSF
-	 z0gEPbIFFpqMK4Fk+g==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from mx-amd-b650.users.agdsn.de ([141.30.226.129]) by mail.gmx.net
- (mrgmx104 [212.227.17.168]) with ESMTPSA (Nemesis) id
- 1N17UQ-1sGxec29ec-00zxZ4; Mon, 01 Jul 2024 20:58:48 +0200
-From: Armin Wolf <W_Armin@gmx.de>
-To: coproscefalo@gmail.com
-Cc: lkml@vorpal.se,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC] platform/x86: toshiba_acpi: Fix quickstart quirk handling
-Date: Mon,  1 Jul 2024 20:58:33 +0200
-Message-Id: <20240701185833.338467-1-W_Armin@gmx.de>
-X-Mailer: git-send-email 2.39.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E11F316F0E0
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 18:59:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.72
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719860362; cv=fail; b=L7BP2y3sd5Jdpnkc6ryFXRUyelHRf2695AK8kAzJpB+bu6pZ3SsQ84s8XUGynlaHXRGEEzKIB8CiuAundSNII12twoko+1an7hlllO4S1TQWiZ64kVv+GLC/C4jmowdzfwwbAILAtZ/QOmMVD7QfyMt505+ZDa2WEaJpp/K6H4E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719860362; c=relaxed/simple;
+	bh=ZbtItP//NmqGoD5zomLVtKbZXOtnXb4wWPEsQggpAlk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=tp4qulVhbYqyM6NPFN7Mdj+qFP9C/9voSN02x0rXvHPLaFRcb+TnBiDR71dppJF7QUdb2njLEA6R84URjUiYiwuM39V3fawE8/+s2mgE3CpyDmCtjEn3mDBqH0jXz0j9usLgxbjFJeE2oXt9oHMj5dA78DkztIox9ka2m0mGSJg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=jwuk22Ll; arc=fail smtp.client-ip=40.107.244.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=i2jdMwYcGxDL4PiAfHe9D5nlasH8/ooa+OKGU/IOCP9sceF1+LOVaGJfilrdGjpQJsnvRQwoXltnzKhR0oNk+JYOdW5EGLw9TDi6XUTfJoYYw8/xNa2s7fqMa9hn5iU/Mq3hTARAQbQ600ghVzn1VQ7isgHsZO6eoxcuiU1v0NtDsGpHjCnsaOJIs03kIBW1mz68WJcCjzcZWbiO8stJeihmNiP6/WJZc6QuqIinrO2vOxhfaPu6GhUedHfdZO/hFGZIkUpBxd6tgf5wxMs8M36h0wmT+BCgkuCaiN/tjzMbwUDYvMGebVnHUzyeyAi86oPVOBoj8SI2Cg/j+RNDbg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZbtItP//NmqGoD5zomLVtKbZXOtnXb4wWPEsQggpAlk=;
+ b=QHrRpXdyroOu2xbWQ32run1BPHVFU2H4hjreVTTpOMFrsbvu5fH6Upw0/F62vpP447D5+eY22KVXFYrA6dwIpeaH15W/9fTE7xzc0OrU+gM+TejAU9rAVCb2YQlQR7HU/zA3vH/MpOqJoZoJnZ2dpSRq/OhPyY4DEhh/Lvmmrs4BhCRPjK+P8jOp/MgICQCcu/O+egomx51booYf7nrfQJBqEMNk1+gRxpALJJzxkrbdGtQOx3hLaN/MXyo6R2EgCBbfcOJTKGe7rf6AmrenEJIZxZulNH7fZVt3NOvsXjKi/Sef5ZxPtg8HXfwL7BQtDSBzzgnvGD737xk0EeLMnQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZbtItP//NmqGoD5zomLVtKbZXOtnXb4wWPEsQggpAlk=;
+ b=jwuk22Ll88UEOpjlEs4cycQQ6jjmkmaoxGtN+ri8HBX5/ae1p8dvXb0SkFwe+DWibWnHj+myMkRIpnGQpFxAF104bek/1pJnCceIwVbSxPOJDcZz+8cXmRvmCetMu3htrYA62rOYN8bhvOCasjRMybpgyc7yQab3vIwuThClne8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from SN6PR12MB2767.namprd12.prod.outlook.com (2603:10b6:805:75::23)
+ by SJ2PR12MB9212.namprd12.prod.outlook.com (2603:10b6:a03:563::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.33; Mon, 1 Jul
+ 2024 18:59:18 +0000
+Received: from SN6PR12MB2767.namprd12.prod.outlook.com
+ ([fe80::e441:89a7:4dd:dce7]) by SN6PR12MB2767.namprd12.prod.outlook.com
+ ([fe80::e441:89a7:4dd:dce7%4]) with mapi id 15.20.7698.025; Mon, 1 Jul 2024
+ 18:59:18 +0000
+Message-ID: <0dfcaae1-9ee7-47c5-b530-2062021155f0@amd.com>
+Date: Mon, 1 Jul 2024 13:59:15 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/mm: fix lookup_address() to handle physical memory
+ holes in direct mapping
+Content-Language: en-US
+To: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
+ dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de
+Cc: x86@kernel.org, hpa@zytor.com, kirill.shutemov@linux.intel.com,
+ rick.p.edgecombe@intel.com, mhklinux@outlook.com, peterx@redhat.com,
+ linux-kernel@vger.kernel.org, thomas.lendacky@amd.com,
+ linux-coco@lists.linux.dev, jroedel@suse.de
+References: <20240628205229.193800-1-Ashish.Kalra@amd.com>
+ <2982a4f2-ea8f-4fa4-81ea-d73c00fc2ad0@suse.com>
+ <5cf60d52-1682-4244-b892-688b22eaf4a1@amd.com>
+ <8d970528-0e57-457f-ae00-862b4d320a2a@suse.com>
+From: "Kalra, Ashish" <ashish.kalra@amd.com>
+In-Reply-To: <8d970528-0e57-457f-ae00-862b4d320a2a@suse.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SN7PR18CA0006.namprd18.prod.outlook.com
+ (2603:10b6:806:f3::8) To SN6PR12MB2767.namprd12.prod.outlook.com
+ (2603:10b6:805:75::23)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ie5D47L/Y8FZUNY3Atkn23AiXGYJykOJ/I7CgJFWATXloImOU1u
- kvm2trFZzaDZ3goZmpIrwQiumEk/r0M01VrchfY+zSFF6wH+Exj8ROsmFi4KvRfb5XAPh+t
- c3qTYHGr6uEuqohFI/DBW3sVpV5o/IXILtZ0YpcID5v+sveF3puqCNUbxVMvaOX3mtFdyqW
- EYeR+/YySJcjJfAAmRCTQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:G5bC7GkwdCE=;fW3ZCW6zpV3cg1MPBrTXNi1Ce63
- i5uX/8l1bHRN1BOBhEb2hmbKqeHMZ+z3RcCzTfnv9rmKDkQlOQ6UgwiZscdcLER4viM+KDnmm
- ytOEp0Yqyus1Titee6jmsM9EHa76HkFGJjB/CZ/guVwC3Sp9tuMEvtMZVPH5SngrU85oXcSTs
- 36RoT47MWpO97Jmv2PDkNxK0sRfq1XoOT10YDOdM3lcdpjmfvl75unZqk/3wdMeVGF0Qjk9eZ
- Kylydiz66K5iscaQNVL4Lz/8Vk3aZt9ksGeFn4l170mWt0rXZeHX5MoGVxaJ0ZNCya0e+LTsQ
- QPcjypN+n6vFoBKyZzdq/7GRLATk5Hi7eyPYSvFDKkKdLkVT2nIUY367ftcKp3/bImr/5Zvj7
- rDejBWgi7Ynzzdb3d/Q00iVQbBmUWhIu6kssW5cmlkS48K70GdETj0TApqImd/HObWNea3aEi
- GM75tP/XlgBagdZHLfHm6dyxrr6yaERwF7Sg5yIPFW7xUlZrWT772ZUtpTBNqmDg9/J3uGROf
- SrSISDRs8BL21mSRf7jUOBWUvYmQ0hHiS0alKQBMKGYIY4Ge33ZtYA34gtOOY8ZV7cOXnfGIJ
- k/PKKkneUXqJDuJ03IFhKBZYjk7BdEVSPYc0gSAughD5pY30YC/KplGX1CkIqgQuiZuxz5bM5
- gOgAnty6lUbqNHxJStVqBvi2EA1IgIZz6yDYonSLHDSYetNsIWMppeMnXVvgAT6mhIMX80Yo0
- YtTQN2WeakFBW+2qmyrqg6qiafHMZhUnetZqJK5vplgW8zSRaiwOVVD+o0td9KhMg0qjzDxd2
- YY8VviLqJoo7zYuXFx8ye4e+O9WOGWkG7xWLhLmQtvHQtptVLJBmZiTmXHUV5aDNYEEiPw3Ce
- nIBK2o2iS1HdjCA==
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN6PR12MB2767:EE_|SJ2PR12MB9212:EE_
+X-MS-Office365-Filtering-Correlation-Id: fb8ce780-51c7-499e-1b06-08dc99ffe89e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RFYxV3ppSnArSVNkY0VaVzZ2YkFKMUZ5bzlyL2NPN1VkaTJEUVRxck1VbEdk?=
+ =?utf-8?B?TFMrSXNBbzc1a1luV0o4YXpDS29QNW9zSUM5UHozQTV5NVFZbmQxa0h3THpr?=
+ =?utf-8?B?ZkNrUU5mRnUwZzhmZmNYaDMwWWRVR216dFhvN2hKRCt5ajhnSUNVcW5QSEYr?=
+ =?utf-8?B?VXNnMEs3My92Z29uSGNSRHMzNm1pc0RGMHhubG84WnlkVTFYZlBzam9QcjZP?=
+ =?utf-8?B?VWFnczF6dXZwWkR0a2hRQXZkZjFSb3RpeVBJMGtLdlBLWkVMNXBtc2dycVM3?=
+ =?utf-8?B?SVpRZkY5QThuVFVTSVo2NnJlNUVDZDZTOU9kZWpiV1E5S3VEMU1LWHV1VXpH?=
+ =?utf-8?B?YWpqWjVDZkE5NmROOExqRENFR2Z6RmdEL3hxTG1LY3E0ZkpOR2Y3TW93bFgy?=
+ =?utf-8?B?NnIvcFI0NlpBZnlvcXF6L1VFWXl4ak5tWGV5bkttaU4yYW5uL005ano4NUxq?=
+ =?utf-8?B?UjNmaXhPSnY0S1cyVjJXcGRyblE5dDVlRC9weXBxYVROZ05IYm9PU1dGb2Js?=
+ =?utf-8?B?WHB6cGRqUU9kRDA1WGpPV0c3OWdqTFlhayt4a2xSeVEvMVZMcHdUd05BTWdl?=
+ =?utf-8?B?MUNLTS9Rd0VWTnM3MDV2RUQ5NnBSRWhLZ0oyZTJCa1pNRjcrZnkzOFZ3UTN6?=
+ =?utf-8?B?Z2lxd3Z2c0ZDQzJUdVhuTkRiZjFkZHcwekJCc2h4LzFPdlp6MTZ6Um5QN0d6?=
+ =?utf-8?B?L09KM1BqKzVQY3dhZ2s1S01TbXJPSEcrQVN5dDRxQUJrbno3dUFoMm4xdVdo?=
+ =?utf-8?B?OGI2MGIxT1dJcGxpd2RMdUtYS2p1RDlMQTByRlRyWFdZNkIxeGFpb0dER29E?=
+ =?utf-8?B?eFJTU1lBaU4rbVBPZGtQWTJJWUd0aEpDTXd6L2crVU1idGw3UWFYTStnUUZN?=
+ =?utf-8?B?Nk55ZUgyY2hmZTFLTVRsVUNRcVFITGRHWmxjWEkvN2J0bjg5bDM0MFFab2Fx?=
+ =?utf-8?B?b2NBOGFEdFlCWVFhOEROTitZNkVSL0lvaG95Y0JpWGZUcFYvbnpOWFZwWE1x?=
+ =?utf-8?B?blNMT2ZBNFJPa2lOR1NNbDR2M04xWExkNXB6WVZOaDBKdnFWd2xmemZZSXZZ?=
+ =?utf-8?B?aTAvWExlTnoxbjJrKzdvQmpOc2dGZld2eWF0bGs2bnhqeEJDR2VUNnF5bDVP?=
+ =?utf-8?B?SUF3blJDY29tMEVKRVlHZ0xmMFVvNXJmRVVaN1hDZWp2eUV5cHBvRncwektK?=
+ =?utf-8?B?UWxCbE1UUHRQc0VaMWJtYkIvb3pVS1VXSHJxQ3lxYUxHVnRTNkFWQ0ZCS3VJ?=
+ =?utf-8?B?bFJKS3phbFh0SkpFZytmM1dGZ1BBUHdldDUvbHJDTHQ3MEc3UlJaVGRsTFRG?=
+ =?utf-8?B?enhRR3REcGM1c0ZQOWlneDQ3QlNSUkdKejA3eVE4cFRvR3lSZ2hQVCtKeU9t?=
+ =?utf-8?B?N0lxTkRUN1pyWlg3ZFVpSUIzc293bktjNWJZdS85bksvcEFuMWNnSHhuWFI3?=
+ =?utf-8?B?YkFrckYwWStPRk9tNElOeW5jYUNsYW5adE9WYjV2TUFGeWszSkp4K2IvaUNL?=
+ =?utf-8?B?SkVjeVVBU3V1d2ViS3diSkY2UEZmclluZTMrUVZ2SVNFdWJiYlZ5aGcrdjBy?=
+ =?utf-8?B?aXgrYjZyTFFxdTZuWXpRM09NMVZ1MkNVNi9SWmg3UklBVjFGZXVwM1pmWi9z?=
+ =?utf-8?B?WTVFWC94bHo4ZkVkTnhBd3NvTWJJVktJUzQrREdFUmZ1cXpRTkZyMmExc2VT?=
+ =?utf-8?B?Q294NWVRK2dTQjhaemlQVXVrQm1QSVlCOGxXcnhJdTZkSFA2WWcrRTYzdEd6?=
+ =?utf-8?B?UmtaRkhkRUtXd2ZWOUd1K3I1RVZTQUFXcmh2ck9BczQrdEZoRDc5NzBIOXZF?=
+ =?utf-8?B?TDgzNkgrTWFOem0yb3l6dz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR12MB2767.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cTBkWHl0TWR2eHVZMnRBR3ZwOGVzQVI2ZUpHZHZMVE1qbVZ0MmtkcjgxM29K?=
+ =?utf-8?B?MkpVWGM0UjBtRSt0Y1hYdG5UVGxCcFJORnZEd2ZsZnRzQ1R1WG1hQmNEaGsx?=
+ =?utf-8?B?ZUMyQWozNzVHQVZhREdtdWtHWkVtNTFMRXNENk9CN08wUVljdlRVeURJd1hw?=
+ =?utf-8?B?NStubnFKZm1qd2ROaDNkZ2V0dS9NRkYwWlVIbWFWbm5CckluUlNNRHhsUVph?=
+ =?utf-8?B?ZkkvM2Z3RFNjeW9BNUhpRm5leFMyMndicW5PYUJkd1NybFhRS09xdHMxZGRG?=
+ =?utf-8?B?aEtnbDNoUG40WVpJbjdXRkFOdHdrLzcwVmw2ZncybnpybTNEQ1NaMm1QU2Zp?=
+ =?utf-8?B?ZGJRSGRyU0NlWUhwWEZ2TWtObm9qZzF2a25CZGc1bmtFa1gxc2lRak04Vm1C?=
+ =?utf-8?B?THY0QzdKWG1rbWlSelg1d29wSVd1MnBOdlpZN2hsYUY4Ri9uNVQ5SXBBR1NJ?=
+ =?utf-8?B?V1JVM2Z3ck14ZEphbDVvNy9QY1gwTHFsNzlrdnRSZE52QUdQbXJiSTZVdzUv?=
+ =?utf-8?B?V2hFbVVIT05wYlpxWmM5RW1XRjN2NVp4aE1pMlJmaUVYL3BaMHZmTHVsdUZK?=
+ =?utf-8?B?YnNwYzh2Y0pIb0U5SmU5WnlWWjZpaXF6ajRUYWo5Sk5oQlJtR1ltd0FhMktY?=
+ =?utf-8?B?RDhZanRKMVNKWTZlQlNiZHZPZlF1UjYxNVBpTkthSTBlelFsTENoTzFIQWpZ?=
+ =?utf-8?B?RDJTTmRCS2hGMThkd0VMTUVyRExNV3JIT2Z5ZVJGZUg0UCs5cks5K0U3cWhQ?=
+ =?utf-8?B?bDlDc3RJMTZtczdiZUQxTFMvVlJqRkZMcjcwR1o0anhEV2EyYkllUHRCUnJM?=
+ =?utf-8?B?REJKeWZsNXc3UUlwN1BwWi9TcDFieWdzRzI4aTMycU9rQ0R6alVxWHNvbWZy?=
+ =?utf-8?B?cEJKN1ZFM1JWSnUrald0OFFFclkxSXF2YjlhV2dOZUNEYlMvK1dGN1AvYWMx?=
+ =?utf-8?B?YTFtVEgxYXg3ZW9qbE9ockJCWFlLSXEwOEZHd2RJLzJWak1uVUp0TW5IK2dx?=
+ =?utf-8?B?aTlvU0JiZ2ZRdTZ6Z1FLNkprQ0ozRzJ2Ky9ySHVORTVEelplalozU3ljM2FQ?=
+ =?utf-8?B?RXZ1NVdHSlNvK3gwSGZVaDdLMjVHWGFhdjlhakE1N1Z3SHVSVmYwVTVGeC9H?=
+ =?utf-8?B?OVgxY0pQMjZYZGNmOFAzYlZ3djBwUUREY0szNjBBdjc1SGNaVWFoUUF4Zm5C?=
+ =?utf-8?B?WTRZZjRMQUVhUDlnNG9laVQ4NTdiTFZvSU1QUkVoOVNXczNlc2R2dkJlK2dT?=
+ =?utf-8?B?bnBySmdhUy83bm9UekUxYTh5OEJiMmlTQWtLQWpYL215dGgxNU1uUkg2TTdE?=
+ =?utf-8?B?bjZsVDByWnR2eGpwTEdUYjBWTktPRUFhaVY1U3FCMTZEcGM0U25wMHFBU2tE?=
+ =?utf-8?B?bXJ5bVJ4Z1NEeXdTVElteEZSM1hJamtpeGhQeSsrTUNCUFREaUJ5WEJYMnFK?=
+ =?utf-8?B?UEdMSnIzdlF1Qjg3cE1JZit0aGhrNGdUU2pCN3p6MzNYR3I4Q1ZIeTdrMFkw?=
+ =?utf-8?B?bm1aRURTL3VyeGxkRDdaU3pmaFJ6NVBYazhDNHlRTHRBMDNvNHArU2p5Y2Z1?=
+ =?utf-8?B?dGorNFZVcW56MWU5M0lldWJ0UnpITm51MW9nY3pmTitFemxFbHpsYm0yNFpw?=
+ =?utf-8?B?TmFVNUF1RjZmeDZaZlY0NnJOOG1DSnVpa3ZyRnFkTlhxNVN4aUF0NlZOTzNl?=
+ =?utf-8?B?MEFLcy80a1huRDhiVGxUaGVaanNtS2Q1Vml6elUzQ3RCT0hVU25BdEVOcDFG?=
+ =?utf-8?B?QUprdmZNTldoOHFqSkhIK0dVY2tiRFcvTGxKYzlhQnZYdlU4S3o5emh4WjBx?=
+ =?utf-8?B?bkZNUzJMZ0pKeWFHa3VKNTFzQ254Z2hndnF2ZzBMdjFHRVgzRHNDQnppMGto?=
+ =?utf-8?B?NWdBTzNVQ3BFekJTT2FaOExDdE1KT0JYREp2eGxHTjY1eFZqNktZWUlwTHVm?=
+ =?utf-8?B?bXREa0VVU1NOMXZ3ZWtMQUhXRkoyQUxHYWY5MXhnOWJHclI1cElDRDRCcTQz?=
+ =?utf-8?B?Tk4yczh1N2lLS2FpeTZpYkFwUUYwNmhidXlSeHU0M05uenIyQjhNeDhZYVFl?=
+ =?utf-8?B?M01OR0MyMlphajZjT2wydmpVT1NSVC93OW1kV2VEa2t6bThGdGJQNWFiUFhp?=
+ =?utf-8?Q?xP7zkxm3cFXgR3RdxOTi3tF2L?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fb8ce780-51c7-499e-1b06-08dc99ffe89e
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR12MB2767.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2024 18:59:17.9196
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AlWZqs6JyedQ6faMmmry3EwOsFTVZeBljKdNwrAu8VIPDBUxC6VKXf5F3OBS2ajQuKHGhsca8Y+aWaws+tlebQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB9212
 
-The global hci_hotkey_quickstart quirk flag is tested in
-toshiba_acpi_enable_hotkeys() before the quirk flag is properly
-initialized based on SMBIOS data. This causes the quirk to be
-applied to all models, some of which behave erratically as a
-result.
 
-Fix this by initializing the global quirk flags during module
-initialization before registering the ACPI driver. This also
-allows us to mark toshiba_dmi_quirks[] as __initconst.
+On 7/1/2024 1:38 PM, Jürgen Groß wrote:
+> On 01.07.24 19:57, Kalra, Ashish wrote:
+>>
+>> On 6/29/2024 5:20 AM, Jürgen Groß wrote:
+>>> On 28.06.24 22:52, Ashish Kalra wrote:
+>>>> From: Ashish Kalra <ashish.kalra@amd.com>
+>>>>
+>>>> lookup_address_in_pgd_attr() at pte level it is simply returning
+>>>> pte_offset_kernel() and there does not seem to be a check for
+>>>> returning NULL if pte_none().
+>>>>
+>>>> Fix lookup_address_in_pgd_attr() to add check for pte_none()
+>>>> after pte_offset_kernel() and return NULL if it is true.
+>>>
+>>> Please have a look at the comment above lookup_address(). You should not
+>>> break the documented behavior without verifying that no caller is relying
+>>> on the current behavior. If this is fine, please update the comment.
+>>>
+>>>
+>> I don't get that, in this case the PTE does not exist, so as per the comments here lookup_address() should have returned NULL.
+>
+> There is a PTE, but it is all 0.
+>
+> There is no _valid_ PTE. No PTE would mean that the related PMD entry (or any
+> other higher level entry) is invalid.
 
-Fixes: 23f1d8b47d12 ("platform/x86: toshiba_acpi: Add quirk for buttons on=
- Z830")
-Reported-by: kemal <kmal@cock.li>
-Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-=2D--
- drivers/platform/x86/toshiba_acpi.c | 31 +++++++++++++++++------------
- 1 file changed, 18 insertions(+), 13 deletions(-)
+Then what is the caller supposed to do in this case ?
 
-diff --git a/drivers/platform/x86/toshiba_acpi.c b/drivers/platform/x86/to=
-shiba_acpi.c
-index 3a8d8df89186..10d0ce6c8342 100644
-=2D-- a/drivers/platform/x86/toshiba_acpi.c
-+++ b/drivers/platform/x86/toshiba_acpi.c
-@@ -3271,7 +3271,7 @@ static const char *find_hci_method(acpi_handle handl=
-e)
-  */
- #define QUIRK_HCI_HOTKEY_QUICKSTART		BIT(1)
+As the return from lookup_address() is non-NULL in this case, accessing it causes a fatal #PF.
 
--static const struct dmi_system_id toshiba_dmi_quirks[] =3D {
-+static const struct dmi_system_id toshiba_dmi_quirks[] __initconst =3D {
- 	{
- 	 /* Toshiba Port=C3=A9g=C3=A9 R700 */
- 	 /* https://bugzilla.kernel.org/show_bug.cgi?id=3D21012 */
-@@ -3306,8 +3306,6 @@ static int toshiba_acpi_add(struct acpi_device *acpi=
-_dev)
- 	struct toshiba_acpi_dev *dev;
- 	const char *hci_method;
- 	u32 dummy;
--	const struct dmi_system_id *dmi_id;
--	long quirks =3D 0;
- 	int ret =3D 0;
+Is the caller supposed to add the check for a valid PTE using pte_none(*pte) ?
 
- 	if (toshiba_acpi)
-@@ -3460,16 +3458,6 @@ static int toshiba_acpi_add(struct acpi_device *acp=
-i_dev)
- 	}
- #endif
+Thanks, Ashish
 
--	dmi_id =3D dmi_first_match(toshiba_dmi_quirks);
--	if (dmi_id)
--		quirks =3D (long)dmi_id->driver_data;
--
--	if (turn_on_panel_on_resume =3D=3D -1)
--		turn_on_panel_on_resume =3D !!(quirks & QUIRK_TURN_ON_PANEL_ON_RESUME);
--
--	if (hci_hotkey_quickstart =3D=3D -1)
--		hci_hotkey_quickstart =3D !!(quirks & QUIRK_HCI_HOTKEY_QUICKSTART);
--
- 	toshiba_wwan_available(dev);
- 	if (dev->wwan_supported)
- 		toshiba_acpi_setup_wwan_rfkill(dev);
-@@ -3618,10 +3606,27 @@ static struct acpi_driver toshiba_acpi_driver =3D =
-{
- 	.drv.pm	=3D &toshiba_acpi_pm,
- };
-
-+static void __init toshiba_dmi_init(void)
-+{
-+	const struct dmi_system_id *dmi_id;
-+	long quirks =3D 0;
-+
-+	dmi_id =3D dmi_first_match(toshiba_dmi_quirks);
-+	if (dmi_id)
-+		quirks =3D (long)dmi_id->driver_data;
-+
-+	if (turn_on_panel_on_resume =3D=3D -1)
-+		turn_on_panel_on_resume =3D !!(quirks & QUIRK_TURN_ON_PANEL_ON_RESUME);
-+
-+	if (hci_hotkey_quickstart =3D=3D -1)
-+		hci_hotkey_quickstart =3D !!(quirks & QUIRK_HCI_HOTKEY_QUICKSTART);
-+}
-+
- static int __init toshiba_acpi_init(void)
- {
- 	int ret;
-
-+	toshiba_dmi_init();
- 	toshiba_proc_dir =3D proc_mkdir(PROC_TOSHIBA, acpi_root_dir);
- 	if (!toshiba_proc_dir) {
- 		pr_err("Unable to create proc dir " PROC_TOSHIBA "\n");
-=2D-
-2.39.2
-
+>
+> Remember that the W^X checking needs to be performed _before_ a new PTE is
+> written.
+>
+>
+> Juergen
 
