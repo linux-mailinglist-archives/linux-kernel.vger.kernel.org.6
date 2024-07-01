@@ -1,303 +1,200 @@
-Return-Path: <linux-kernel+bounces-236059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C331B91DCF9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:46:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE89E91DCFC
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:46:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7744628168A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:46:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1AC61C20E0D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E6C313B59F;
-	Mon,  1 Jul 2024 10:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C917142E77;
+	Mon,  1 Jul 2024 10:45:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="pk8k7Vdv"
-Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2059.outbound.protection.outlook.com [40.92.102.59])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="QVSyfX+k"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2063.outbound.protection.outlook.com [40.107.212.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F26657C9A;
-	Mon,  1 Jul 2024 10:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.59
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C9413D625;
+	Mon,  1 Jul 2024 10:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.63
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719830732; cv=fail; b=Fct3SNgs9Tci/MPsSo93poHPD84POCS+pWajHyMR1uCtI1XGct8+y07tmDs3piem8x1s75Mb9XBynz5ovVASAW8meVc/wZsGIrDlK8DStI6o/395oEQGQF7tHn/hNTBoP3XAuwU1qsBeDtPv+pwHFDV7/72AYyt3n6Uehh7KZCw=
+	t=1719830745; cv=fail; b=UBhVt3NuautSrUSZd+2m/KzIP/o6ilvqKO8DhwhH6QClW5vSXrSqWdnSLuP3chYvCftKsLZzNg62LenH3U9/PR8CpkeSEjTNyIoYdb86kNYsCosINjiK2Qpov0okVRFJnYZCUb3rhTY/bjAIXiVRk/5zEzxxgVf8jHGWVhg7m6E=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719830732; c=relaxed/simple;
-	bh=Fw5W6Mg3CDWVxNIbWH4Q9MQvSK98cK8h35loj/05puc=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Ery1pxpQgECqPGbRGCGKpliZiyk5irpMZ8RZ7jptyhd5RwVCTOsOx++q1o8GmvnfT/mUFA979ogDMC+nRfgfakMwgf6EwdFXsTAzv5ssgM0VKFgTk0RMkv0nGlRiQlk8PGeZ+PHiE+WGr/NLeA7FeL6BnSPlRN1XDmB1+uxsRvM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=pk8k7Vdv; arc=fail smtp.client-ip=40.92.102.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+	s=arc-20240116; t=1719830745; c=relaxed/simple;
+	bh=jSpARc6REZpoUmBYf0anObMgdM1R7dCL+W0WHgXnNNM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=tFsntdppo4GQ3EELwfMLZCy9ZMqYX3U9bRfy8AHmwP1ka+EhLc+Y2ZQSA0TqwBOXo0QkZt5hyvEzTYu+REyDSirJSh4GGNOoKIy3PlRG8CUlirY1zUCa9pvHJlBDIoFVhLzP7hZyOVRoMrhkQuCViFYiIF2Yf65MS8LZ01gRCbU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=QVSyfX+k; arc=fail smtp.client-ip=40.107.212.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eSkv11KCd9gXv7mRIROS1hSytdPGAkgzvOSnaDAxCjJs4dVPSshe1u3oisIsu9XYr79ONzkr4k1k0gZao9nJSeNzyNXygwaDJ/VoG+8Cj2L/gmKoDfuBekf5LGznU+WGRDG6LnBdcyo691lg1x+l3v7DGh9FtqCh/36OK6GPQ3HIAloiTEO3xd5cnjxs8skT9foiSethPe3w8JEJk4KvnU51mUWUIMLv9LP1n6YZM8F3eXpS2W6DMgSf1OMAYutiQkMW9LtrOidY3ZyXEZSddBnR/PqfAsa4Ar9lBiARogP2BJdIMGXu2MoUNoLk6OHOs09II8kB8+Z6hIXSX6porg==
+ b=hKYqF4ULtfg5R0XZ/A1QJ5CdJJG+PERpr+EdPfOm3L6UN9SZvYdKLTh4FdWkVPfne8+5MhQ3Urqrj9JQ0oBClrUDNaxvuHcT14xxcDVxYLTh7bN+tatI18sWgoLol0UWXHhdMUpBKDhA9VM9le85gotZrKU3j8rq23oAPykPntF2XboXjy5vpOVY86iVXUsFw3t9HR1HK7cdMYGUEJRtagZHvWQrNJuh9xaqQO5Wn//yAs45HQF2+SDVhIuSr/ZfKuDAcPCjQduQINTKrsM/GngPvHktPTSN9vO33SKAOWiClUPSmQfKIsyMnQ2cpx4v9IJkSzKVnwN/ggnc72ga0Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EK+8Q8ctycK/JqpR1S/x6bk1jvDpwYa0GayZEaWoDdU=;
- b=JRK2cuiyWVfCKpKYCCPGNRAIDe6zSOHf8TnxPVRosvzti3aVyTBP6S1IA1JeyLHwWfbXxSJZ4A93nd9wKPTqaX4+mRYfWJ1myNrAIxF2SZv8/ytBuzExOVQuKeQOMKv3Nbf68yndWmSqE/Ew5TyeGmseEH/37W1PXmsYTvBOmqL4FW8sbE9ku4sqN7Ih1JNzwFL9Z2L94CjzA+sSew/0eoKSlQo+64hLhGv8j5s7uyWnWexkIpYPHfsn/ZU3EpWTH9Uy677zVJDi2T5nmLYBmgu6ZAbqjlqS9M6CHuMT5326mqosdByqOdDMi9X/MmrXWV4fb4G9mpR0iBMn5INJpQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ bh=tslcGes6PdFELoCZrJcn5JPGoidV8BSt8txnHl914i8=;
+ b=kQ5/3007ZdN/ZwL9OkkBRnf7xzXPaJg95UW7QcVi3Cs7/lKx4kkVloz27KTJTr2pjiY0lwRPcoQtufbv7UBnM1iSrw2xC9u3wTE8bXxmI+239vm5CVxl39XGDPwf7XwnJxjjHlZH2r7Tc6gDrEkYrnf6dL3V3qkqXzrBoEE2WoS2P1NDBio4mgPQTj8pFJy211laBOS0Wbc5Go2iHPm7Y0vLo7/78B4Mj3tart5dHNeZJJ1A/NcBl7VH2/HyxHqbb8LjWr0387+x/R/zTdJKgLyooKZpIm2iDgNmFlUpXKI+e5c+967e7F4LzGPQeChq9J9yLpCYYxwMi+pegYA65g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EK+8Q8ctycK/JqpR1S/x6bk1jvDpwYa0GayZEaWoDdU=;
- b=pk8k7VdvJEWIgG98krxa59nY7B4V7OfKPC6FsQgeIWbZisH2FNCxAKgHEmO556Ra05CI/+l0yc4tqpCKMxPXFtZXXAqd0w9hbliUUW0eIrcJrm8JJfXFNfwS6tNthgeP8ZyohloaS4eMcQxszV8JrFn/ItCjMoV22Prw4Sbd+rv3QSniGf0x8anQxsrz+8/qKSrxWc6Ub0dh7NGp9IgOXHNJ6zpFhyrLjzPSLOUNDuNXaerhm6mv/DlZT0jbenLAkSf1CLvFJLN6YxcggFgw+1Yd/Kn3bBv44lyv1bJsXS2JxjmNfwqs5ezf/haHtv+hONAIdNWNUF2pMTdPs0icAQ==
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
- PN3P287MB0180.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:d5::6) with Microsoft
+ bh=tslcGes6PdFELoCZrJcn5JPGoidV8BSt8txnHl914i8=;
+ b=QVSyfX+kddcEMXqGocT6IY3ex5JTRzJ/mAFSMO7u/DLVXouoajwlZAOtAuwkC4rTOND42/PUoHlMtuQpBHa3fneV14wyDNWxJM+L3CgvRuzLjaBCycMoAmXrW4Em4wF54lxp/oQGE0Z/DTvoRkuK95sdn8HtoZofKD/c1EndCFU=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB6309.namprd12.prod.outlook.com (2603:10b6:8:96::19) by
+ SJ1PR12MB6363.namprd12.prod.outlook.com (2603:10b6:a03:453::9) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7719.28; Mon, 1 Jul 2024 10:45:25 +0000
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a%7]) with mapi id 15.20.7719.029; Mon, 1 Jul 2024
- 10:45:25 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: Jiri Kosina <jikos@kernel.org>, "bentiss@kernel.org" <bentiss@kernel.org>
-CC: "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>, Orlando Chamberlain
-	<orlandoch.dev@gmail.com>
-Subject: [PATCH] HID: apple: Add support for magic keyboard backlight on T2
- Macs
-Thread-Topic: [PATCH] HID: apple: Add support for magic keyboard backlight on
- T2 Macs
-Thread-Index: AQHay6PHPmmDJHTE8kuvuT8p1BrWxw==
-Date: Mon, 1 Jul 2024 10:45:25 +0000
-Message-ID: <B3762A0A-1355-4345-9040-AF4E5292F188@live.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:
- [SPF4WkZQgmTDLAv4vo3dG6GrwOB/Hd1ubWjFzirFwTGb3Tnu3P4/eVDayxWMaYc9uBiBZArh5Vo=]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MA0P287MB0217:EE_|PN3P287MB0180:EE_
-x-ms-office365-filtering-correlation-id: c6b02bf5-1150-40ae-9389-08dc99baea2a
-x-microsoft-antispam:
- BCL:0;ARA:14566002|8060799006|461199028|3412199025|440099028|102099032;
-x-microsoft-antispam-message-info:
- v7YAaHTKoy1+ytK+ZAQ3r6KHq0ftRI5yReCCSWpJt/T/KGkX0MoESJhuEw1coQnacDsWCrc3NZkdJXofOtAOQtpbHX5jxfEMnlylVSZKIVPaZg/riw2t3hx7AQD/dVVlzdsfGAAgbt8Ps8gJSdzcdTZNKVg/Uur8Cz8otTRQ10Z5OT+nqEuwmEp+52O8kL7rzt7+aIpwidcen5mMB+IxV0vCKE3O6E49d4yhC1CRvmRS2SXoy8M+1P1Wq5Hv/qm8vxzyDpS8TQqBcAEPvlTEs2nw8zquMpPfuqQboZo+PS1kP88t+2VYNsOA3l+A6FC4ZaB0V8uYnOsIV2Q1RZUwQmBFM6/DdupkzPRWlmqP/qX4doIDis0EWGeFINHZq2gCojbIMA3R7xkLmaRRhh71HoMsNs1D4eWSpwzuK9lYJDyLBDPh8C/82ikKw+365+IPqz3hwFO1Aqu7OwSNccjFe2Rn9YeXt4q7l55ueifT4l23ceEFlvL3hylF0VG0a+rL7RdsuBArVtmMIbjLPklbQHxg2umaCb6Bg2KAbXL8x+pVsYhseIrIQKUEw2dptBfWjkhVhKKhseQS6p8bDbK04TcVnw363GqXZSehwCa3aygTBrrWYnYSm5yOg2M2EkPE
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?65SFwUfL5p4Th+dfpLKaDBT8D9i5H6ftpdYXHIUKZ5DIx0qZueENq7DLksST?=
- =?us-ascii?Q?C6gUm1Fo7dslXcdrhyl0Qu1Mt+PzarUI9m87DA14ouygxLmperI5+15wQYDo?=
- =?us-ascii?Q?MInc7JQvgEAR6v//X7jGikP1OW0kq+GZFJsiyFfVaG40CyC9hLXgNZ5Gqs+v?=
- =?us-ascii?Q?b6pK/20wMtGfeyBkmNvYcZt6BcNgFlRWkzecw8qt6Vh2pnKMYeuJ0VEMax8x?=
- =?us-ascii?Q?qLseFF/3sqVzkI6yjjUXkug3FTjH4HcxIuXva10QfQAz4CSNNISvGZRg8B8h?=
- =?us-ascii?Q?258LLTE2I9CBHHNpyHtnZV/2TzgrnDwQS17Jtftx7gi746TDCHzuzLovyePU?=
- =?us-ascii?Q?RTuAWaU08Er7zTVhk3aPVM9vCjzpW6T80cTKxx0yQwO5vs9jMuRHticD/wIL?=
- =?us-ascii?Q?JtClMHkT3nWhz0BPjTztqZElkd7a9BqXxqf07RMNqam9YRj15J/Ro0T/80MO?=
- =?us-ascii?Q?P2OHficS2lni8MgwWj86isz9OB3zg+Ns7IgW4r3r0qaX3mOPWUEEm9yM9UeF?=
- =?us-ascii?Q?5Ygvmq2poFBX7NhT9VdGxlzZEZwkSA7WnfYZf5hNlgoFlK0C7zIMS4pcCllt?=
- =?us-ascii?Q?dlHv1C6e9EH0OjkNTiGVvp6Pf8fOa7h/aUUJE1g4jfvy2Ufyi2jPcTmn3Kgw?=
- =?us-ascii?Q?isJe/YmwyrwUm/G4sTKMNyKkUqXV9wYy1bsO6yMlgDEh47d6S75wAx4TZBMT?=
- =?us-ascii?Q?HrPIZevREyPeLaqt5xKhoGSPdX8UYkO9+/XoMTU5p4LARBLeUaQCVKJZrLln?=
- =?us-ascii?Q?c/zVvCx937zdrcBJhDrFOsDrn9jyAkyzwX2WpeG/hCL0+IZPBwf78d9yWHmg?=
- =?us-ascii?Q?zUOhWcyU+y57LJMTcAN6g/FOTQ/HFLIIfPWqpUUTsKdN5YvbVkGcdeWEgXUK?=
- =?us-ascii?Q?QZmLd9hFJlBDQ6HW8hVkevpChtEH6kB3ZsCHPAYquMOC2xNulp1hCkEEXJuF?=
- =?us-ascii?Q?BdRflM5kHXtOxRCjTNhfXPLW5V7prY7NCZELS72fyVsSUFgYq95XOr0oPaAK?=
- =?us-ascii?Q?jc54NUWpCGy4W+niRSKfYRNSvyi0oeTofWm2ywpZ9W1rmeSxt06UM2sGFpZw?=
- =?us-ascii?Q?8iSN/WyHUh/YgCgJZczjmzOIJNYOJd65yuvghMWxb+GEZOeleZJ/YXHPxs1J?=
- =?us-ascii?Q?yaZlxWwPNZM6fPTxQjqxAupxo5nZ+CP4LEnjj+xed5A4k8bh9rg0xabdc7VZ?=
- =?us-ascii?Q?9vMquAvD99bz9fZBtVDQI4WVFhXv8iHNO8QRdFScj1gYtcNPDa88HqJdgLTn?=
- =?us-ascii?Q?Yg/ekVI+SBqyVOPh98dJ/i23o61MN5Ho0FogWXZL2B+XyMJ7yCsdQUB0aKAk?=
- =?us-ascii?Q?1txsNmGnhMs6/XtQ45jXFclN?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3EDDD37BEE915F4D9CD9F6613872E129@INDP287.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
+ 15.20.7719.29; Mon, 1 Jul 2024 10:45:41 +0000
+Received: from DS7PR12MB6309.namprd12.prod.outlook.com
+ ([fe80::b890:920f:cf3b:5fec]) by DS7PR12MB6309.namprd12.prod.outlook.com
+ ([fe80::b890:920f:cf3b:5fec%6]) with mapi id 15.20.7719.028; Mon, 1 Jul 2024
+ 10:45:41 +0000
+Message-ID: <007c2e93-d5cd-7f7e-bd29-bfc0da4c18ba@amd.com>
+Date: Mon, 1 Jul 2024 16:15:31 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.0.3
+Subject: Re: [PATCH v10 07/24] virt: sev-guest: Store VMPCK index to SNP guest
+ device structure
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
+ kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
+ dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
+ pbonzini@redhat.com
+References: <20240621123903.2411843-1-nikunj@amd.com>
+ <20240621123903.2411843-8-nikunj@amd.com>
+ <20240628035217.GAZn4zcWMZy3mgCKky@fat_crate.local>
+From: "Nikunj A. Dadhania" <nikunj@amd.com>
+In-Reply-To: <20240628035217.GAZn4zcWMZy3mgCKky@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN3PR01CA0091.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:9b::20) To DS7PR12MB6309.namprd12.prod.outlook.com
+ (2603:10b6:8:96::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-bafef.templateTenant
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB6309:EE_|SJ1PR12MB6363:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0b104d0a-2493-4f4d-4b56-08dc99baf372
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZTlud0dEcTdvZW1DU0dXL01KZjdhTHU1ZndPZDR5ZGFuWXJ3NklmRXBaRU9t?=
+ =?utf-8?B?NndOK0tDeUwrWFlISkN4N0VCVkI2OWp1bWVLaEhwaEZhSVBsMGl6RTZaRVNh?=
+ =?utf-8?B?UGY2cXcvK2FSYmt0dWFYY3RacURwb0c5eG4rVURFdFR1MVlsazViZVVzcUpo?=
+ =?utf-8?B?WUpvSEZnTEE3YkJzOE5UY2hDN09vUEpFV3I3VG9vdmZ6MTdINzRwaDhzeWZm?=
+ =?utf-8?B?ZElvV0xnajZtK3Nrb0xHTUVvZ0k1YnVPb21Ycll5Q1RNcmtkNGQ1cTBGbFRi?=
+ =?utf-8?B?WFdXWVltM09vTVFSYXM5OXBLYVJlalU0ZWY5UVp3TjhONU9vOXZ4NmdYR0lx?=
+ =?utf-8?B?eENxWmlyWXlZeXF4RWg2a0hVWkR6SFhWZU5LVGlLQUw2VDBOdFFueHE2eHpF?=
+ =?utf-8?B?Z0JVOFNHSHVzb1hSU1ByRlJPUHhuQ0xrcEFsNUVITjF3SDcrYVhKK0lLYnRN?=
+ =?utf-8?B?TTcxUkZPb3Y2TkdzckNOSUhCb0lhYWkyYk5qaGNtOWZLcUg1ZTRYT203WHBy?=
+ =?utf-8?B?VDlWUXBqWXFCUGE2cDRKNEdkM0twKzZhZi9CQkg0RHBnSmxPY1pFaHEyMGdC?=
+ =?utf-8?B?R092c3Ewa1dNcHd4TFA2b0ZBTk5jL0FabUlBcUhJQTBsUjdiT1JqZ1U4Uldh?=
+ =?utf-8?B?SnZTRnFtTzVEWkFyb2RRUkxEdkhZTzN3cjlpbkdWSWR2U0dJT203RXp1OWxD?=
+ =?utf-8?B?azBmNlhGSVZrMWNmZUJKem81VjNLQUszTmdyL3V3SGw5NldPYjNsc2ozZ2Mx?=
+ =?utf-8?B?bk5nc25vN2pUcDg0U2pUY3pwTGtXS2VrWUR5cTZFR0Z5OE1YZnl3OUtnZmtB?=
+ =?utf-8?B?UlBxN0FZMWxQS0duV2ZPQUZDbjJuNVlFOURVWGJxUnBoRU9MejZWcC9XSUxO?=
+ =?utf-8?B?NTZTTUxIVzdDU2NnWEhWOUR0dElpRXhmNnBZblZYMlNIK1RZalZzSnRjMGdp?=
+ =?utf-8?B?TXVmMXZwUEdRMTNnNlpCK1VrNDl0K3NBcjgxd3M1UlVnR2FaRWpOQUN3TDE4?=
+ =?utf-8?B?eDNQa3dkV1Z1OXRiSm1HdEZGR2tEcGFGQ2E5cTlHREltTk1RTkhna1JHcTJi?=
+ =?utf-8?B?U2hSSHFJTjhEUjFzWkJaRUZoK3lqL2J1dmw0VnBDV1lrSWlVeDFsMUtoQ0tI?=
+ =?utf-8?B?M01GVERrSDJMSHpBempBWldHZHVqeTA1ZytsMzRTV3lwWTB2VnE2YmV4MWtu?=
+ =?utf-8?B?ektHaHRUNysvSDVYamE3L0VUNTRaVVZMSmVOYWpIZ2p4QlJuaGQ1VGNrV2tk?=
+ =?utf-8?B?WUhodWxFb3phajkrVHZFUHovWGJqSjcrcHZNWS82NXREUi9jTTdveUlmbXRn?=
+ =?utf-8?B?S2dHK3JGSjloN0g4ODVCMHdKZTRCVW5QNkp0eG85V3J2NFJzYmFuMG1CVjc0?=
+ =?utf-8?B?WktQeWhEWEdDUjZ4aWJvblVOdHdpazluRjltWURPN3YvR1FQL0I3aTgwRWhs?=
+ =?utf-8?B?UDh4SXlFdGxuemhWN3lDaXAxRmFkZkdsVERJSi9DUWN1NDRWV0FaT0w4bkNp?=
+ =?utf-8?B?Tmd3UC9UK1NHMk5MOVpLME5uVU5uNmg1bDUwMGF1SFF0Q1N1TjYyZG54Y1ZV?=
+ =?utf-8?B?OStLU0tLSDlzeWdRUXViZ2VmaW9UclFyNmg0RVFXSkcyN1g2VjhENjRDZERL?=
+ =?utf-8?B?dWxLTUU4UGoxekl2Y1NZQW9BUFBZR2UzRGlBajdUUUp0d0JFYTlxMmhnUjZm?=
+ =?utf-8?B?aFlOQlYyYTRCTS9FWHBtQ0VCa0FKR21kSzB1d3VPR1dpaXl3OTVjL0Mxbm9t?=
+ =?utf-8?Q?zVEX9h1dm22Mzlq8c4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6309.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?KzNBYzU1a05IdkkvMWl0Qko0YnZ6UGJob2dNNFhMS3JDdU9CWWgzdjBlb3VJ?=
+ =?utf-8?B?N29vVHZNSjFmc2xSMXFoemJpamU1eEVsaElYYUVOV3VSR2daaXVRSVRBcG5h?=
+ =?utf-8?B?NFVwVGVpR3drelNsNGt3b0o1WitmWFJOOStmL0ordXg4emp1cmlBQ3VBL1U0?=
+ =?utf-8?B?dDl4bit2dHpMY2xtVStkNnEwak94T1VlSFh2Sno4Unk2QkQ4Wkx1eUJLRk9n?=
+ =?utf-8?B?M0lMa21XZ2xtZlFzOVlkOGVMVmhBVmtzTTdlbGVlZXk2cDFXY01vblNxbVVN?=
+ =?utf-8?B?Qkc4TEVrWDRFRUtreXZvNktBa1krR0Z2aEc1YlVOTEpsOVZQZUEwM0phZVB3?=
+ =?utf-8?B?VHpjL3ZUZjhsQ0JKZlVjeHRjZXpKRDNUWXMrTVJOS2JlR0plOC80UmFNZHFU?=
+ =?utf-8?B?Y3NLejJPQ0Z6YlYwcFljZXlBVkd1Y3RWRWRVM3VINFBZWEhla2pZcmcydW8y?=
+ =?utf-8?B?am53SjNHK1RPb29YWUtzaGtZOVBDT012WENHc3pFbmt6RTVqVisrTUZDa3c3?=
+ =?utf-8?B?L1BVUWwwYnhFaXVrUEVmRTBhNzBlTm9yYWVkeEdNcWloTThpaEFYaEVNcTd2?=
+ =?utf-8?B?L3ZNa2FrL2ZTQXhZSVRJa29lMG5DWVNub3JmM0xMSG1JeklBL2Q1S0JYT1Bx?=
+ =?utf-8?B?QTV5UUJZY2hzc2tDdkVEVkJoQjRlS1FYR1ZGYUNOTVB2NGJ2ZnZjMW5EV0Rz?=
+ =?utf-8?B?bjA3eGNGVjh3V1VyYURDWGVZK2Nzb0d4T2I3blpkeGR6aFRvRlQ3N2NDN2o1?=
+ =?utf-8?B?OUtYZkdydmhjV0hyeUFnRG5hNzE4cmNkaDArMHdqU29tR3EvcldZei85U3Yy?=
+ =?utf-8?B?UWxqNVJSa0N0V3FKL29HMXFPbEp4Q2I0N1VsMGNCaDdMcHpDQk5jVmppTVlw?=
+ =?utf-8?B?VFBWS05QVk5PQ0Y0VXFsRHJpdDJ3b3dPRnZZcGhuaGRBMHJxZE9ZMG5vdmNE?=
+ =?utf-8?B?cUdFOFN6ekhGRHYwZlorTGNzeVoxZ3ZLdUR3WEhKUWYxWVozemxBQU45S3dJ?=
+ =?utf-8?B?MFVCQXlKTDN0bWwvNUJhWlNZejc0SDZWM1F4Q2tjK2NvZW8zWTI2MFF4R3RU?=
+ =?utf-8?B?TU94by8wV2l6MFVyelBYOTZNMHVyQU8xeFlPUkZCSTNQR1M4b3NWay94Uy80?=
+ =?utf-8?B?eXpRS2ZzUmt6azg3YUU0MGhtRExnVGFmUTVueHliTWtINGRaUndrdnl6NkZ3?=
+ =?utf-8?B?K00xaDZER0lRRzB3NStzaFlEY2Yyb294T2Fhc3pZV2ZaTmdtWVIvUTREZTY2?=
+ =?utf-8?B?TG1ueU1UOXZKYWplNWZPeVB1MkNuUGNlb0Z2bTdLeGREbmNoNlhaNUx0Nlla?=
+ =?utf-8?B?OStBTjZnOVhydXNxZEF0b05ub1JuZ2paV2NpNk03RUFiaGg3Nks0TmR1M29v?=
+ =?utf-8?B?dWlZNC9ZTzY5SGJMbWZ6MFRWNWwySDdzbUtVRThPWHFuVWlaWEZmM2s0Snl0?=
+ =?utf-8?B?eHFrZ1hKazVPODBOVjN0Z2dHcDNYdkd0bFl0eXg4aVhIN2FxeW85bm5zV240?=
+ =?utf-8?B?YTY3cFcvN3RGSHladXZUYThwSzYxQkdyS21JUU5kT0x4TERKakpNbmdqbFhk?=
+ =?utf-8?B?WkVjcmpoOWVMTkZ2a2JYYWpsQXpLbmV3czVvdGtoRlY5SGNMQnhMdUtvdFhI?=
+ =?utf-8?B?QmZQNkE2eGtPMFVia2NqMXV2YUhGTUdhVkxpNkoyeUlVRW5CWVdXQlZhOHRm?=
+ =?utf-8?B?NVFZNzd5MjdCWGRkRkxoUkhweHBXWmk1RDhxSEViRHdndXROcXhOdUpTNXpN?=
+ =?utf-8?B?RzZoVjVObnJoN0Yra3pYMzR4YXVMVjRjQ1FLNXZSSWp4Ly9rUklCNjArQnlQ?=
+ =?utf-8?B?WTI5a0JHZE44VnltRUQ3OUZDVDJLeUdjNWY0Z2dVKzJadnJaMHBXdUN0N0tK?=
+ =?utf-8?B?b1N3L0h1SnVFU1F6VjFma0M2clYzQk8vclA3NmN2dlhzenR1SDUrVjdvWGI0?=
+ =?utf-8?B?MnM2S092NkVZVW0yM2NDSnJYTlowTlY0bmhuL0Z2blROMGZKWHpqNlNsSEZy?=
+ =?utf-8?B?MnptaldmM2hxeGR4ME5uTjg5T0VwNzI4VFNBRFArNjJsekJ6NGpmamF1WGZN?=
+ =?utf-8?B?TXc3cXZ4VENYRklvSWVsWTFEZFZHckxmL0VNRERXTDdpNHRXSkVSTjl0UllH?=
+ =?utf-8?Q?CI73sumSHOWHkCBqFSM6+Evse?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0b104d0a-2493-4f4d-4b56-08dc99baf372
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6309.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: c6b02bf5-1150-40ae-9389-08dc99baea2a
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jul 2024 10:45:25.1248
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2024 10:45:41.0428
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3P287MB0180
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: u7Y+rCjmRo3x0p7xFmFsfjKyG8Ymcwlzh91d8ez87AM1QLDrn5metzWEdS6TlsGmfh9F8NNJMlBSD2xNFTBW1w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6363
 
-From: Orlando Chamberlain <orlandoch.dev@gmail.com>
 
-Unlike T2 Macs with Butterfly keyboard, who have their keyboard backlight
-on the USB device the T2 Macs with Magic keyboard have their backlight on
-the Touchbar backlight device (05ac:8102).=20
 
-Support for Butterfly keyboards has already been added in 9018eacbe623
-("HID: apple: Add support for keyboard backlight on certain T2 Macs.").
-This patch adds support for the Magic keyboards.
+On 6/28/2024 9:22 AM, Borislav Petkov wrote:
+> On Fri, Jun 21, 2024 at 06:08:46PM +0530, Nikunj A Dadhania wrote:
+>> Currently, SEV guest driver retrieves the pointers to VMPCK and
+>> os_area_msg_seqno from the secrets page. In order to get rid of this
+>> dependency,
+> 
+> And we do this because...?
 
-Co-developed-by: Aditya Garg <gargaditya08@live.com>
-Signed-off-by: Aditya Garg <gargaditya08@live.com>
-Signed-off-by: Orlando Chamberlain <orlandoch.dev@gmail.com>
----
- drivers/hid/hid-apple.c | 87 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 86 insertions(+), 1 deletion(-)
+Thinking more about this patch, I think I can drop this patch and retain
+the VMPCK pointer and the os_area_msg_seqno.
 
-diff --git a/drivers/hid/hid-apple.c b/drivers/hid/hid-apple.c
-index bd022e004..db279948c 100644
---- a/drivers/hid/hid-apple.c
-+++ b/drivers/hid/hid-apple.c
-@@ -8,6 +8,8 @@
-  *  Copyright (c) 2006-2007 Jiri Kosina
-  *  Copyright (c) 2008 Jiri Slaby <jirislaby@gmail.com>
-  *  Copyright (c) 2019 Paul Pawlowski <paul@mrarm.io>
-+ *  Copyright (c) 2023 Orlando Chamberlain <orlandoch.dev@gmail.com>
-+ *  Copyright (c) 2024 Aditya Garg <gargaditya08@live.com>
-  */
-=20
- /*
-@@ -23,6 +25,7 @@
- #include <linux/timer.h>
- #include <linux/string.h>
- #include <linux/leds.h>
-+#include <dt-bindings/leds/common.h>
-=20
- #include "hid-ids.h"
-=20
-@@ -37,13 +40,18 @@
- #define APPLE_NUMLOCK_EMULATION	BIT(8)
- #define APPLE_RDESC_BATTERY	BIT(9)
- #define APPLE_BACKLIGHT_CTL	BIT(10)
--#define APPLE_IS_NON_APPLE	BIT(11)
-+#define APPLE_MAGIC_BACKLIGHT	BIT(11)
-+#define APPLE_IS_NON_APPLE	BIT(12)
-=20
- #define APPLE_FLAG_FKEY		0x01
-=20
- #define HID_COUNTRY_INTERNATIONAL_ISO	13
- #define APPLE_BATTERY_TIMEOUT_MS	60000
-=20
-+#define HID_USAGE_MAGIC_BL			0xff00000f
-+#define APPLE_MAGIC_REPORT_ID_POWER		3
-+#define APPLE_MAGIC_REPORT_ID_BRIGHTNESS	1
-+
- static unsigned int fnmode =3D 3;
- module_param(fnmode, uint, 0644);
- MODULE_PARM_DESC(fnmode, "Mode of fn key on Apple keyboards (0 =3D disable=
-d, "
-@@ -81,6 +89,12 @@ struct apple_sc_backlight {
- 	struct hid_device *hdev;
- };
-=20
-+struct apple_magic_backlight {
-+	struct led_classdev cdev;
-+	struct hid_report *brightness;
-+	struct hid_report *power;
-+};
-+
- struct apple_sc {
- 	struct hid_device *hdev;
- 	unsigned long quirks;
-@@ -822,6 +836,72 @@ static int apple_backlight_init(struct hid_device *hde=
-v)
- 	return ret;
- }
-=20
-+static void apple_magic_backlight_report_set(struct hid_report *rep, s32 v=
-alue, u8 rate)
-+{
-+	rep->field[0]->value[0] =3D value;
-+	rep->field[1]->value[0] =3D 0x5e; /* Mimic Windows */
-+	rep->field[1]->value[0] |=3D rate << 8;
-+
-+	hid_hw_request(rep->device, rep, HID_REQ_SET_REPORT);
-+}
-+
-+static void apple_magic_backlight_set(struct apple_magic_backlight *backli=
-ght,
-+				     int brightness, char rate)
-+{
-+	apple_magic_backlight_report_set(backlight->power, brightness ? 1 : 0, ra=
-te);
-+	if (brightness)
-+		apple_magic_backlight_report_set(backlight->brightness, brightness, rate=
-);
-+}
-+
-+static int apple_magic_backlight_led_set(struct led_classdev *led_cdev,
-+					 enum led_brightness brightness)
-+{
-+	struct apple_magic_backlight *backlight =3D container_of(led_cdev,
-+			struct apple_magic_backlight, cdev);
-+
-+	apple_magic_backlight_set(backlight, brightness, 1);
-+	return 0;
-+}
-+
-+static int apple_magic_backlight_init(struct hid_device *hdev)
-+{
-+	struct apple_magic_backlight *backlight;
-+	int rc;
-+
-+	/*
-+	 * Ensure this usb endpoint is for the keyboard backlight, not touchbar
-+	 * backlight.
-+	 */
-+	if (hdev->collection[0].usage !=3D HID_USAGE_MAGIC_BL)
-+		return -ENODEV;
-+
-+	backlight =3D devm_kzalloc(&hdev->dev, sizeof(*backlight), GFP_KERNEL);
-+	if (!backlight)
-+		return -ENOMEM;
-+
-+	backlight->brightness =3D hid_register_report(hdev, HID_FEATURE_REPORT,
-+			APPLE_MAGIC_REPORT_ID_BRIGHTNESS, 0);
-+	backlight->power =3D hid_register_report(hdev, HID_FEATURE_REPORT,
-+			APPLE_MAGIC_REPORT_ID_POWER, 0);
-+
-+	if (!backlight->brightness || !backlight->power) {
-+		rc =3D -ENODEV;
-+		goto hw_stop;
-+	}
-+
-+	backlight->cdev.name =3D ":white:" LED_FUNCTION_KBD_BACKLIGHT;
-+	backlight->cdev.max_brightness =3D backlight->brightness->field[0]->logic=
-al_maximum;
-+	backlight->cdev.brightness_set_blocking =3D apple_magic_backlight_led_set=
-;
-+
-+	apple_magic_backlight_set(backlight, 0, 0);
-+
-+	return devm_led_classdev_register(&hdev->dev, &backlight->cdev);
-+
-+hw_stop:
-+	hid_hw_stop(hdev);
-+	return rc;
-+}
-+
- static int apple_probe(struct hid_device *hdev,
- 		const struct hid_device_id *id)
- {
-@@ -860,6 +940,9 @@ static int apple_probe(struct hid_device *hdev,
- 	if (quirks & APPLE_BACKLIGHT_CTL)
- 		apple_backlight_init(hdev);
-=20
-+	if (quirks & APPLE_MAGIC_BACKLIGHT)
-+		apple_magic_backlight_init(hdev);
-+
- 	return 0;
- }
-=20
-@@ -1073,6 +1156,8 @@ static const struct hid_device_id apple_devices[] =3D=
- {
- 		.driver_data =3D APPLE_HAS_FN | APPLE_ISO_TILDE_QUIRK | APPLE_RDESC_BATT=
-ERY },
- 	{ HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYB=
-OARD_NUMPAD_2021),
- 		.driver_data =3D APPLE_HAS_FN | APPLE_ISO_TILDE_QUIRK },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_TOUCHBAR_BACKLI=
-GHT),
-+		.driver_data =3D APPLE_MAGIC_BACKLIGHT },
-=20
- 	{ }
- };
---=20
-2.43.0
+In my v8 [1] and earlier series, I had dropped secrets pages pointer from
+snp_guest_dev structure. But with newer changes in v9 secrets pages pointer
+is retained so all these APIs will still be fine. 
 
+> 
+>> use vmpck_id to index the appropriate key and the corresponding
+>> message sequence number.
+>>
+>> Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
+
+Regards
+Nikunj
+
+1. https://lore.kernel.org/lkml/20240215113128.275608-8-nikunj@amd.com/
 
