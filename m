@@ -1,149 +1,135 @@
-Return-Path: <linux-kernel+bounces-236477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06BA791E2C6
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:50:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 819BD91E2CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:51:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1C1828425F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:50:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07985B23BB3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140F916C845;
-	Mon,  1 Jul 2024 14:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF42316C852;
+	Mon,  1 Jul 2024 14:50:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="khIfk+f+"
-Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02olkn2109.outbound.protection.outlook.com [40.92.49.109])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KHzcdJpF"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A282316B750;
-	Mon,  1 Jul 2024 14:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.49.109
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719845417; cv=fail; b=dXOq0xEg5cEegmSLR+TYnKhQFehNiqyRNqb1iONL/7CQaptkhOgCnAKCp0tX+Z7/3S8FwCXi2TfwpfkBd9iEQ3qGTpcxTCHHIwpVM3MpgXK6rM+s827g/z0lPFgO2HAtxJHIUfpELjAJxCqGmH9Q/ZCHWvgBrQVb+pXQz3hwG5s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719845417; c=relaxed/simple;
-	bh=0PybR2F9bNvwIvO/qTyObZYiEfYjs5DeCBIYUxeCqd0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Nl0JtTeUAYtOeT/kiVsRGJsCnsVeQXdNo02s9BykjpAJhBimeX5tdt5oPNMxkZaLrsAKKEWXqCD8WIa/BVwKPjrEXjNBZ9S82MFM0TyXo9OMoDuAKU+P6nwwyD0ipcyYh0ZSmi+4TjroqHUYZu0sfl9smhdPt3S6IKnIemao5OA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=khIfk+f+; arc=fail smtp.client-ip=40.92.49.109
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Hf3HOF2maZZShc4BV8PlWpNG/G2Msbr20mwzc3iJVByCasw2DWxZKL+0fqbXhDdYwuMLy7zbxB+s9d9rd7JmHR9HTwSoxEq4cXMCqtFV3TPID5Q5snkTy8KvrQVdLLRNyzB4xb/IjSS5k8ZKAXmv/HFyea/HRweojP/ntEw4vp9JbOJa1ts5ZehoydkZ+ZIHdzHbLykcCOxGsOsBmmaXLVC2Xn0GI5lwNYdG5vYB8IVS111HDoSA3CLSlUD1Cmk43wsvYkNG8FPt4ZOs9vqiIJW8bI4928W66ROLR62R31AIZ+9/06ugnjXzywbGXzFjygqFDeMjFGgaemO5lKadfA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cInpAUnfgY+dl/3jdMpt0fwwJPOWp5VFOuhZ613ReaA=;
- b=nvvgNwv8y3BKIozMr8IJyRuVniRPQj9IiPISYzwnmchiXgiae+ekEBvFkFmsdS0bRuNZp4I321n57Rkftc3yIq+rhjzPrybjTCtNeKmAIuucH2f/Md7kATDNTX3esYahcpuNprwDycdqfjlFiTAHrbep/Un5tu+RrG5cAcswOqwmdtZq3NO8r0dTvL46TvZiAKkw2x0FxNlIe0LyM9iQRJJhGvbzVusRtTfjaDF3Iww0hS4rwCarAPtzwpFaZm+d2vUaPq0do2tTVEY1MxAoh3Y9HQNy5veT8gr0lrRM/dU9VaTEbzInv5gr6Bu4pWPIsdW0biQuwWXb89gV0TQODA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cInpAUnfgY+dl/3jdMpt0fwwJPOWp5VFOuhZ613ReaA=;
- b=khIfk+f+Td49oyK5ltD1Kxhk8rAXh97dwTIBhbrMK0h3VZx02Kp+Z30CjW8cgIOjni9rdjecK884BD90M7Qz4w4p8h98PbDkaXoalSb0mvC6XiEVm6ce3Sq8z5AiscM7LiizRVpxfHr1WxH2FkusEISOO/6bfjtFtafY75csxhYIooUByvBUDbWKI5xpkaGwO3XlY7e7g5SR6jqcBhIefVCuW0ue3lG1ugqvi4o8YrQTzsR8YFXg323H5M3V+xneACAxRBqEhO66Lw42b+5dlgOW9Dq0tmVKBTBxK3yHAFdxLTmkdkP7JSv1xvKabXY7m1fkJmJLx6jPoNTcf8zRrQ==
-Received: from AS2P194MB2170.EURP194.PROD.OUTLOOK.COM (2603:10a6:20b:642::8)
- by AM8P194MB1673.EURP194.PROD.OUTLOOK.COM (2603:10a6:20b:320::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.32; Mon, 1 Jul
- 2024 14:50:12 +0000
-Received: from AS2P194MB2170.EURP194.PROD.OUTLOOK.COM
- ([fe80::3d63:e123:2c2f:c930]) by AS2P194MB2170.EURP194.PROD.OUTLOOK.COM
- ([fe80::3d63:e123:2c2f:c930%4]) with mapi id 15.20.7719.028; Mon, 1 Jul 2024
- 14:50:12 +0000
-From: Luigi Leonardi <luigi.leonardi@outlook.com>
-To: devnull+luigi.leonardi.outlook.com@kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	luigi.leonardi@outlook.com,
-	marco.pinn95@gmail.com,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	sgarzare@redhat.com,
-	stefanha@redhat.com,
-	virtualization@lists.linux.dev
-Subject: Re: [PATCH PATCH net-next v2 2/2] vsock/virtio: avoid enqueue packets when work queue is empty
-Date: Mon,  1 Jul 2024 16:49:41 +0200
-Message-ID:
- <AS2P194MB21701DDDFD9714671737D0E39AD32@AS2P194MB2170.EURP194.PROD.OUTLOOK.COM>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240701-pinna-v2-2-ac396d181f59@outlook.com>
-References: <20240701-pinna-v2-2-ac396d181f59@outlook.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [IifNZn0XtVjad8xnR9zjL0AwBOlrPIrF]
-X-ClientProxiedBy: MI1P293CA0012.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:2::10) To AS2P194MB2170.EURP194.PROD.OUTLOOK.COM
- (2603:10a6:20b:642::8)
-X-Microsoft-Original-Message-ID:
- <20240701144940.13356-2-luigi.leonardi@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D639316C84D
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 14:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719845435; cv=none; b=u6oZXnwPZr2wOEsvPewO97Kyjbuh+kGldzwukT0Mm0tH4YhvvXZTOKDBr8tZj4dVzdZ4zFS1uJ9CBGyz9H2fia7oF6iFEw8LgUwgxpc6ZujbUhPQe4ugbtODD00N8QBZppVSnBFRkXcEkc5Kyhn3R2c2BBBGi5beYO274674vys=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719845435; c=relaxed/simple;
+	bh=nPQmSRmxFkYAvEGstpdrhUEr1pwYwydjFr3ilUsw4pk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hVKa5idzU8DfXwdpBaz5h0E4IXv0KZ8RRq9mpougtCoFl+zIPWkHHYA8oPVgcdkiU5Vbh20csh6S7eVKw0ZLtZGzGQQZtKKNXe2sCmREXFmP4Zbwkxkpegm+bnkaB2OUY42TMDzZFurgpQW6pRhklK42/BV2HS0L+GyY8wQZlTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KHzcdJpF; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ec58040f39so29893281fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 07:50:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1719845431; x=1720450231; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5R4veaHrLsvPru62XryR93QLDpwVMbkjxlXAZklEG+E=;
+        b=KHzcdJpFQ7avgOk/XaL+JzWHNuZG2t9zPZ9NoN71aG9+2yLFvsF6W4hNhpjNNLfDd5
+         fSYwBBOrq6TcCDux1T6GKsC5mpGX/8/CVuUmcmS1TsWfKIdjvg/r721fGsw+mpU0eI4H
+         2E/EIJupT9Ueo4iZdq7PSaipbGJK0FrIWnnw4XZ03yQwYxlmcMy/CRMAq4lIu5+UtWUF
+         I8d3FvfmGwvikd6WVQdQORTuzf5EQ6JKa9qhcn8TvXfA9p8fGMITqGYFA2TFVH0mwk1z
+         vVdue47A/vGSQP3zxXWqYqrD/7wqlIZ6ggr+AD1zaNqLLw/b0a0WKPRF5N0IKal3vvEx
+         N75g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719845431; x=1720450231;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5R4veaHrLsvPru62XryR93QLDpwVMbkjxlXAZklEG+E=;
+        b=wNuGVIMj+MznypAB6eT8jX92F5YJ042wlayjOPZEqIbxPO815g2KhXIeNMgEY1Yjph
+         PheEWbR60lQ+9clSREHiseRmHo1DOAgYXtIKWiwp0xOd/tg0tMXxLjnRsG42KoiHNz22
+         O7/MTgNp3bVV1ACdACYOKpRqZEeWj0Wa1juMiAqJZ5AHgznsDEFcV0g6yjFm8QwTTWq+
+         5kEmj5/xVkIwzxDly+G1qdlibkfPgrE3n19dtOjb5VYebS+DH7iH7uOpYqpGW57ZrhUw
+         iNUTlGJMjTLBEUTsVk3XKyFB49r91cv4GzU5MlLuP+onBBSwQ+gyo6MqVJTA9dEPmXwU
+         WkXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVo5WALdRA2w+FyTst5Dlj3Jl9ilnyyRGFDDEza1oYFqIs91oW3RkIHbVLN9GaPi98QPFMDeI0eLLN6js8S49K8amfHY+pCYO3TpK5F
+X-Gm-Message-State: AOJu0YzA29LoroZ2InVYJzCav4NZ/Pb45m2ewtruff0QFnNoYJeBF8E0
+	kqFbIitbtuxsHiqVkY0TbzKEKZCRDEt1YD6SsNY3kwXBVf2g7OyveWHXrDAcBtI=
+X-Google-Smtp-Source: AGHT+IHwkxVgbDOc2mGtkSQedZ9W7zvlkiig3t1b8tLqhN02hzaaH8nczeygbiuw3+GjYgY4xXCHgA==
+X-Received: by 2002:a2e:a984:0:b0:2ec:53ad:464 with SMTP id 38308e7fff4ca-2ee5e6cd723mr47832101fa.34.1719845430983;
+        Mon, 01 Jul 2024 07:50:30 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91d3b9f2csm6839982a91.35.2024.07.01.07.50.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 07:50:30 -0700 (PDT)
+Date: Mon, 1 Jul 2024 16:50:21 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH printk v2 12/18] printk: Add kthread for all legacy
+ consoles
+Message-ID: <ZoLCLfcIjQ6FbgR0@pathway.suse.cz>
+References: <20240603232453.33992-1-john.ogness@linutronix.de>
+ <20240603232453.33992-13-john.ogness@linutronix.de>
+ <Zn6iq3n2ggL138Gs@pathway.suse.cz>
+ <87cyo1xnmw.fsf@jogness.linutronix.de>
+ <Zn67hDCEHdgtYPv3@pathway.suse.cz>
+ <877ce9xim6.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS2P194MB2170:EE_|AM8P194MB1673:EE_
-X-MS-Office365-Filtering-Correlation-Id: c55ba186-6ca6-47ef-afdd-08dc99dd1c40
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199028|8060799006|3412199025|440099028|56899033|1710799026;
-X-Microsoft-Antispam-Message-Info:
-	ITmXCn5fE80qMaM187/TmGOt3nm1bTMTK9nRiiWnMoBMDH1RrFQlBkazCDYlVBSaIWtguFebTJ5Iany67Ew58+Vp5t3XBHH9ZMQR4R770TgTmt4HkkiKmiR7GjXmnLHH2qlh+rXvcsCKvnjoD+o+Jwk8lNX/I98elGnikuPd6lmvcruqK2EUmArKOLU9B47o3Mv8dlTE3+ZVdgjh54UzdP3BlBwax/+28FvcyLZ9Lq16n5OxjsWu956j4zCIaaoEsYrX9BJWm3hLA2rI0OShHEPY/wv7+U6nDiOR5WJw5xxyExRaJ/TXhlvcbS9u6u2hHK1Zh/loCLC2ZAHrg2VMLVPQF1GLm3C3T1BHRM3VVyuEDLTe/hfwEXgg5QaBjFm+m3h0ZI/NG/nZ7fI4jeTmvq59RYQu+pK9Dqef2dLm3rtkVZ06lh9zZOT3y6FAHfykUzP62nNEk91P3uOju6LDWeCJcq0yYqx2FSktmCmFLz7Mn/v0I0tEPWE9Cs7KyXiez42hOPwWantAePadWio9T0Lx6yFHp2qJ02Op5iliBMR6I3OVXqHPxGRR6djffiGb2mrdTC8MdTYAdoBINCL6IdFTuUPYnMz5An7CXVxY+ePRD2A0+O5HVfF7/d1BD1w7qyuPkjlonM/1UBR4jnGIOw==
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?LO0xSbYbE5mZ8S+rFlNQ6R6JIjfICrH9lxHHKVcx3giV3i+hJxmVw5qeIf+J?=
- =?us-ascii?Q?cKA5GRgqi4Jn7GQ/FiNzg6u5zmQRS+mxSt0saV6OR/hEmAP8s1qhMAuU3Vrh?=
- =?us-ascii?Q?oW4k92M/PYv0Ixpy7DcNdRC6SL69HONjqBec+ztPPZrlNIHqDy7mqbUjpQdZ?=
- =?us-ascii?Q?SKkYX7P7CTsklNJNWbSpuYZkTrBdIjJsSc8iHdqujHNltuMmnGR0UTZDLN2E?=
- =?us-ascii?Q?Tv3NlUWy3DKWdjvTGIZw9PnNw7RoCtXbX6W44AmkX1VMXn66XVBBKqpKZfRg?=
- =?us-ascii?Q?jd2yCaIyH85se9IM8Fel+w64DlHTuUja+3Ek+FyXCalnYeEOr3MNNvc08Fp8?=
- =?us-ascii?Q?UHV+cT3ajCkZ8MD5KiAZ+QO1N9bQFMSSZ3a/P2bUvbDg3zf9BkpvTwGGcD0c?=
- =?us-ascii?Q?BmqwVMD9DDzx6r/nErdSuYnQqteCFJ31Pyz7FfrKQndgOUAt9QtAElScdU6r?=
- =?us-ascii?Q?v6UOxMOue1wt7jTRJUXJrEgibOn4wzOxEG8/NPCmBK/5k3UyqEQwW0YQV6UQ?=
- =?us-ascii?Q?x1lRQSFO2H+Z8oykkBoCZjkuFEewwGAi/SmtFOf4SwTVGrgbB0AVGV+BMVtX?=
- =?us-ascii?Q?JdtIydE6x3TbW1j6IwS7jb7mNg6beyPlAC/mVPa+3FPIaDmArF5WcTXnPgzs?=
- =?us-ascii?Q?OVWcb/A5p472XAKcryiY8Nd/kLetRpI8BLGCl6rGV/QECSnDzRx2qITNb/if?=
- =?us-ascii?Q?AyqD9EwWwdRrgl2hJIOufaYrYqQrJ8qKRDGGROwJE3HJdNcNnohjJ/VZ44as?=
- =?us-ascii?Q?4RfDkbHLkGXaSKLK/KNohM0X17X27TFsLnvI/s8a1Y6W5V9qvcjOt78EqmVZ?=
- =?us-ascii?Q?lGeWvjRaZSW0CmPqADCJ+LMzPjndlOASmKrXHVoHU8S8u+LRCH9y/a6G8zzw?=
- =?us-ascii?Q?qKMST+O7RE6QsHhy2pex/WmLRO/DYl56SiCpBd5jIgWZwGiTJXl1URrrCumY?=
- =?us-ascii?Q?3Cfg8FoZEyTkxvw8jhff4ZoN03Rv5WVuNpdX1FT43Hmo23Jp/PkEXYOoV3Yh?=
- =?us-ascii?Q?OdusZydcQ/tKrsgI2Nm4e6RW4BVkxLRRRFOYXWtS55q6ie3uZdVi+x7cpmw4?=
- =?us-ascii?Q?lETt637l3/qFLO3uLVt0t+6cyGQdQNeg365JiJNHnIlTjSDJs0adRiYfgq2q?=
- =?us-ascii?Q?g5rbPQLnc6qSbT7l4EynHtVENHJh/7O+qCL4aG8LbdJZ0Xl8cwRMFFnkfUS2?=
- =?us-ascii?Q?60WbG2d7TSRhKVHobtpw+lImFcw8l86OtKtNgFzWT8kvzFDZibYD7XfKzOp/?=
- =?us-ascii?Q?5IaJGdvDOTAPLRJQdKnx?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c55ba186-6ca6-47ef-afdd-08dc99dd1c40
-X-MS-Exchange-CrossTenant-AuthSource: AS2P194MB2170.EURP194.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2024 14:50:12.5061
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8P194MB1673
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <877ce9xim6.fsf@jogness.linutronix.de>
 
-Hi all,
+On Fri 2024-06-28 16:17:13, John Ogness wrote:
+> On 2024-06-28, Petr Mladek <pmladek@suse.com> wrote:
+> > On Fri 2024-06-28 14:28:47, John Ogness wrote:
+> >> On 2024-06-28, Petr Mladek <pmladek@suse.com> wrote:
+> >> >> @@ -1494,7 +1508,9 @@ void nbcon_cpu_emergency_exit(void)
+> >> >>  		 * to handle it.
+> >> >>  		 */
+> >> >>  		do_trigger_flush = true;
+> >> >> -		if (printing_via_unlock && !is_printk_deferred()) {
+> >> >> +		if (!force_printkthreads() &&
+> >> >
+> >> > Is this correct? We still need to flush the messages directly
+> >> > when the legacy kthread is not ready yet.
+> >> 
+> >> No! If force_printkthreads() is set, messages will never flush directly
+> >> except for console_flush_on_panic().
+> >
+> > But this is an _emergency_ context! This would be inconsistent with
+> > the nbcon consoles where the messages are flushed directly.
+> >
+> > Is RT sheduling quaranteed when the system reached emergency state?
+> 
+> No.
+> 
+> > In fact, we probably should not check force_printkthreads() here at
+> > all. It would be only for NBCON_PRIO_NORMAL context.
+> 
+> On PREEMPT_RT, legacy consoles are not allowed to print from
+> non-preemptible contexts because they use spinlocks (rtmutexes).
 
-> +		/* Inside RCU, can't sleep! */
-> +		ret = mutex_trylock(&vsock->tx_lock);
-> +		if (unlikely(ret == 0))
-> +			goto out_worker;
+Ah, I see.
 
-I just realized that here I don't release the tx_lock and 
-that the email subject is "PATCH PATCH".
-I will fix this in the next version.
-Any feedback is welcome!
+> This is a disadvantage for legacy consoles on PREEMPT_RT. If people want
+> a legacy console to gain the reliability attribute on PREEMPT_RT, then
+> that console _must_ be converted to nbcon.
 
-Thanks,
-Luigi
+Makes sense.
+
+Thanks a lot for explanation.
+
+Best Regards,
+Petr
 
