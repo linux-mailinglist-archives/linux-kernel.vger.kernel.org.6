@@ -1,137 +1,134 @@
-Return-Path: <linux-kernel+bounces-236715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B46C891E63C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:09:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE66291E63D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 19:09:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7565B284326
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:09:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 182761C21466
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 17:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C7916E873;
-	Mon,  1 Jul 2024 17:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33FA116E868;
+	Mon,  1 Jul 2024 17:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F2jnUjY0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZC7OWLYS"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D0216631C;
-	Mon,  1 Jul 2024 17:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D529E16C697;
+	Mon,  1 Jul 2024 17:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719853733; cv=none; b=X0BszuGLPRxaErRg6lyrDZ5FBJYZmPqLD7o080rR8oxBG29p5wI07/U+k7TUan+KrykSTa1I5NDqlSnrFJZYs7N3USMBG6hPNec1vwgue+e4NkM9k93UbT1e/r41KZnf9tfYmf223RDdAMObNZKYKkcoAEFxy3QFiSTOx+lUraI=
+	t=1719853779; cv=none; b=utccVIDYc3AXgMwGFZPigx7SMvd7Hobfp7SycOV+kahnQeqdGeOW8vGmLdWsOtnQflZmGWhum4S1mU58FHGOcgWF4F9Z/egMZU0tRj317rkAVI8vWfr+T9C1kjpaeYxNmvDAptAWKXsDiXVCttLMAgOKA4tw/Zqkufv28V5tUKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719853733; c=relaxed/simple;
-	bh=zsbuHy5w3OfgJ0azDM2BXoti/8qlEfU9xPQTRcEHelw=;
+	s=arc-20240116; t=1719853779; c=relaxed/simple;
+	bh=gVhmfdnxbOOPgeFRaCg9Ymh4Zpg0f7AXBtcggt+t08M=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=De3fillKepmd6Dvu88Xa2HIpwgXoPIqoR2vfDqNeVhnECV5dls8hqIIZDzeU45wasvCGXf/LPo0/AHmjG7inLOi1VRtrWYjPuWtpYVfmohQlG6vpdx3/tbMPDmHEYZ88ZqOllGBUCIwN6vM69KwhM64kj2guqgl7Vg2FokCS4aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F2jnUjY0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCD7FC116B1;
-	Mon,  1 Jul 2024 17:08:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719853732;
-	bh=zsbuHy5w3OfgJ0azDM2BXoti/8qlEfU9xPQTRcEHelw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=F2jnUjY0VX/mlOYaaaNOahMAfD4fMzU2DiWaZErPsQyjNQ54vosqhObE2Br7YSC6C
-	 XhzIXAZNPVuU9frlgBdRX2VyQUK6CIBtiXPdJKn6iuGrYIzBtw8rYLsHhWCLaiZjkb
-	 pSOHU3AuRZjehR/LRU0C+OBApkLKBRdvEf2o3wi/1TzazaaTFs5s/YbxP66zS0HHAr
-	 txWK8GIpyb3UBLSfAJbGNjTc68vTU/6u3USm+lkml5zwU4dp61haT9SzTz519ruHiu
-	 mOb46CW+BdcTCdxnyp7QevmaEogoZUIwtlHXrXij1LhDq/F5Vd7de1fyKiOvBhF7M/
-	 6nNjV8zO7HnDA==
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-25cd2b51fd3so429436fac.3;
-        Mon, 01 Jul 2024 10:08:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX2+p8AwhpO+OnofTGUeYndZ8l/QUYstLZP/0FmO97FAjsz33caxHAqVYEW9CtOwkWnYnv2jOp1MP3TNnc1599FiwN8GnNIMDp1S59sidLG5A4Wd/jWWD/cn9W4LNipX7B0efIFnHsqA23HFUplFZ6yvaGWGi7uKW0QC6EpRhcNc9Ong0MYuoP5
-X-Gm-Message-State: AOJu0YwvVtdxRnQ9KbhfcBmYC6C3Z9+z5cc4mDz+4DoE3iBSMhD2L/hu
-	uF1gdi4JgevETCbPU5eFvc5rWVuD+AbCX9y3QQBiKn3zKIInOrfcqB69YSqD9tigMYk0sfbH2n8
-	JflY4d0lBgcjxkZtgP5bnlfkR0jU=
-X-Google-Smtp-Source: AGHT+IHR4xtavs3WYiLzujF4aoqo2c9S9zl3NErTsshLspZCJKaUFkpOeuqq5NUryZB+mKUEOJsqiLWQefG2dVeChEg=
-X-Received: by 2002:a05:6871:71e:b0:25d:707d:2550 with SMTP id
- 586e51a60fabf-25db344441amr6479512fac.2.1719853732094; Mon, 01 Jul 2024
- 10:08:52 -0700 (PDT)
+	 To:Cc:Content-Type; b=FdMWfm3u5Eey55a/8fhEY2bNuNNFT3AEF/ytekaZK808gY8oXJduRjwIbC5O7exR3/k769DftVUFzUXTzIp9vIh6mm2I5Wtky0XdEzh1ogYIthIJSuOGOBGFA4MrXi41z6zaWYkLTSxMSHeB2xYAJYbLT0U1OLopbQlWJAhwOYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZC7OWLYS; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52cdbc20faeso4696941e87.1;
+        Mon, 01 Jul 2024 10:09:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719853776; x=1720458576; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=x2AvaZ/UqlvKRYfAtV7P9vybf13O6HOVkfDtPt1cvUk=;
+        b=ZC7OWLYS4TtFg73E4SuJ5mjHxOlo8/FFhf8FcgIqXFZyMVvufjpCT2zhyYLHF/fHoq
+         4Mz7hI+NioDVC4Bvnrl7/2aTloAHrkLwQnb3oHFIeiuDjYy9Gi5pjaXFJcZmcmsmXaeV
+         UxwHchAsSCdeNRzH2dRTgH3Umcv9ylH0cf+2Obs8YZC6bNc2al4S5qngi4sL870Lym0w
+         EEe8JiSY+47fagUZaTxXwd0cd3fLWriRTeySE7DJMcEWMC5lPXArTZEnZpJ8QnTdbJWu
+         eZf04YiNw8MRHinqo1/rY6+Se3Z0gZbmseoNqEk2MuYj7WE9kF3C6dpq5PcxSWI00aXa
+         JWKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719853776; x=1720458576;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x2AvaZ/UqlvKRYfAtV7P9vybf13O6HOVkfDtPt1cvUk=;
+        b=oAaoHDid+9zVzjQSZjLrGi4w+tIyC2/f0FFBxaRBgceiKXFivVDojEs8PznnAjOcq+
+         r+KkGxlY8grwCNsqTyzBuDqeZp2kBgIsBk04z5to8CcU1JzZk7vVBWYb6Fv9775xyXdH
+         tfYN07F57ChcvxTr7c6/themttXanDAn04nB9IxD+JN1Do/ouJbRegPiEubBbHD3HGq3
+         p2HwhQBm6OL+3aZpguOEBvvtLhOfaGxpXUpJgWqbOaCX9Mxh82Ok/XExTGa2EDaFiLx0
+         +5Rjqs+s0o65Ne3C8s1Xe94amid8TwxdPRupDJeUtyVOhQyWsKWJMAZg2RKxGvMLIyFj
+         b+Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCUnm2Gc5jgU8oeQRFIA8og1zI3EY/lh6ktKTRuMipW20ATbULFcFsW9NgA/UwK7Y1YAsPatgucLsMzQ3O/38OP7+CQV+ha8D1kGaBKW6QFHpsIFGkEl2IcDLkTijdeRb5USBVFYG+XnPQ==
+X-Gm-Message-State: AOJu0YzSVcsiXl5uTmaiN3FgqTidAEGfexpnVgtV7DuKcbFiNxLFrMhZ
+	EboFItOI5+2u25zsXjT12YloI6GmJ7q09cE020IP8mM2ZXkzH+Kl9QpqP1VRgBODA/1zJlyF+/F
+	kizHSf/qUee0Him+02aeIFkjhHQ==
+X-Google-Smtp-Source: AGHT+IGYYNCj47g6ucYfUx88jylfxwmzthcbBunBR6FSqs2Zy9xB27gXOmjZv5e2f+ERX7Yl2NsAnugoE22lg1LI1Pg=
+X-Received: by 2002:a05:6512:3b12:b0:52c:e17c:3753 with SMTP id
+ 2adb3069b0e04-52e82647353mr4096272e87.5.1719853775769; Mon, 01 Jul 2024
+ 10:09:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240627-add-cpu-type-v2-0-f927bde83ad0@linux.intel.com> <20240627-add-cpu-type-v2-2-f927bde83ad0@linux.intel.com>
-In-Reply-To: <20240627-add-cpu-type-v2-2-f927bde83ad0@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 1 Jul 2024 19:08:41 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0g+ih6Yh3su58Wrj+p04vr_4nmcJc41O-8_OCyzVQFKpA@mail.gmail.com>
-Message-ID: <CAJZ5v0g+ih6Yh3su58Wrj+p04vr_4nmcJc41O-8_OCyzVQFKpA@mail.gmail.com>
-Subject: Re: [PATCH PATCH v2 2/9] cpufreq: intel_pstate: Use topology_cpu_type()
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	daniel.sneddon@linux.intel.com, tony.luck@intel.com, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, 
-	"Liang, Kan" <kan.liang@linux.intel.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
-	Brice Goglin <brice.goglin@gmail.com>, Mario Limonciello <mario.limonciello@amd.com>, 
-	Perry Yuan <Perry.Yuan@amd.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>
+References: <20240629103914.161530-1-erezgeva@nwtime.org> <20240629103914.161530-4-erezgeva@nwtime.org>
+ <1c457520-07b7-4bde-b040-e8bca959a4f5@linaro.org> <CANeKEMOODBNZA6efh0E0Ga_KaVs5Y3WLcUftRhNwYHhnXO=GNw@mail.gmail.com>
+ <CANeKEMO42rJt5Ob4_HDcZ3eEMvuMOPvRaFaLwL8SA65NtxSV7A@mail.gmail.com> <1d56c3b2-7adf-45b9-a509-956340f3f17b@linaro.org>
+In-Reply-To: <1d56c3b2-7adf-45b9-a509-956340f3f17b@linaro.org>
+From: Erez <erezgeva2@gmail.com>
+Date: Mon, 1 Jul 2024 19:08:57 +0200
+Message-ID: <CANeKEMMe-Onpn7xWQHgWz1Ps_uQPEMa7HrKA00HpoKjG+DCJNQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] dt-bindings: mtd: macronix,mx25l12833f: add
+ SPI-NOR chip
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Esben Haabendal <esben@geanix.com>, Erez Geva <erezgeva@nwtime.org>, linux-mtd@lists.infradead.org, 
+	Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, linux-kernel@vger.kernel.org, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 27, 2024 at 10:44=E2=80=AFPM Pawan Gupta
-<pawan.kumar.gupta@linux.intel.com> wrote:
+On Mon, 1 Jul 2024 at 12:15, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
 >
-> Intel pstate driver uses hybrid_get_type() to get the cpu-type of a given
-> CPU. It uses smp_call_function_single() which is sub-optimal. Avoid it by
-> using topology_hw_cpu_type(cpu) that returns the cached cpu-type.
 >
-> Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
-> Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-> Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+>
+> On 7/1/24 10:46 AM, Erez wrote:
+> > When using mx25l12805d, we do not read SFDP.
+> > As it uses the no-SFDP flags.
+> > When using mx25l12833f hardware with mx25l12805d driver, it did not
+> > try to read the SFDP.
+> > Yet mx25l12833f does have SFDP, when I remove the no-SFDP flags, the
+> > driver fetch the SFDP.
+> >
+> > Secondly SFDP does not contain OTP information.
+> >
+> > mx25l12805d has two OTP regions of 128 KiB and 384 KiB (yes asymmetric).
+> > While mx25l12833f has two OTP regions of 512 KiB.
+> >
+> > How do we handle it?
+>
+> You would first try to parse SFDP and initialize the flash based on
+> SFDP. If there's no SFDP then you fallback to the flags declared at
+> flash declaration. Esben had a try recently, see [1]. I don't know if
+> there's any progress in that direction.
+>
+> Also, you haven't mentioned anything about the testing. Do you have the
+> flash?
+>
+> [1]
+> https://lore.kernel.org/linux-mtd/20240603-macronix-mx25l3205d-fixups-v2-0-ff98da26835c@geanix.com/
 
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Looking at "mtd: spi-nor: macronix: workaround for device id re-use"
+I guess it can be applied to all Macronix devices.
+Adding something like the following in macronix_nor_default_init():
 
-and I'm assuming that it will be routed along with the rest of the series.
+if (info>no_sfdp_flags)
+    info>no_sfdp_flags |= SPI_NOR_TRY_SFDP
 
-Thanks!
+It seems Macronix did many reuse of IDs.
+I saw it with "mx25l12833f" reusing "mx25l12805d".
+And Esben saw it with MX25L3233F reusing "MX25L3205D".
 
-> ---
->  drivers/cpufreq/intel_pstate.c | 14 +++-----------
->  1 file changed, 3 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstat=
-e.c
-> index 15de5e3d96fd..0a1e832c7536 100644
-> --- a/drivers/cpufreq/intel_pstate.c
-> +++ b/drivers/cpufreq/intel_pstate.c
-> @@ -1956,24 +1956,16 @@ static int knl_get_turbo_pstate(int cpu)
->         return ret;
->  }
->
-> -static void hybrid_get_type(void *data)
-> -{
-> -       u8 *cpu_type =3D data;
-> -
-> -       *cpu_type =3D get_this_hybrid_cpu_type();
-> -}
-> -
->  static int hwp_get_cpu_scaling(int cpu)
->  {
-> -       u8 cpu_type =3D 0;
-> +       u8 cpu_type =3D topology_hw_cpu_type(cpu);
->
-> -       smp_call_function_single(cpu, hybrid_get_type, &cpu_type, 1);
->         /* P-cores have a smaller perf level-to-freqency scaling factor. =
-*/
-> -       if (cpu_type =3D=3D 0x40)
-> +       if (cpu_type =3D=3D X86_HW_CPU_TYPE_INTEL_CORE)
->                 return hybrid_scaling_factor;
->
->         /* Use default core scaling for E-cores */
-> -       if (cpu_type =3D=3D 0x20)
-> +       if (cpu_type =3D=3D X86_HW_CPU_TYPE_INTEL_ATOM)
->                 return core_get_scaling();
->
->         /*
->
-> --
+The only thing I notice is the flash using the same size.
+A sort of "backward" compatible.
+
+Erez
 
