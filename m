@@ -1,187 +1,276 @@
-Return-Path: <linux-kernel+bounces-236108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EA7391DD8B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:08:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BE9D91DD8F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:09:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 266DF282395
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:08:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EAA0283632
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B503F13C9A4;
-	Mon,  1 Jul 2024 11:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="Ms/kM9Qp"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2139.outbound.protection.outlook.com [40.107.22.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC43A13D242;
+	Mon,  1 Jul 2024 11:09:41 +0000 (UTC)
+Received: from mx2.zhaoxin.com (mx2.zhaoxin.com [203.110.167.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48661376E7;
-	Mon,  1 Jul 2024 11:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.139
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719832124; cv=fail; b=Ah5mkaA2wjR0HDAsnWQss71MG0AmjmF1RhN2UjwFaOr3KUJrz9eUNkLhGfdg8yxlgks+PerPjmKB4dEudyeOj2urQY5Eq2s2/bhytY/ti9gavHtgQSWqmxtEBiDeWHpfvU2BuJSK7ufPow418HSUdYcFZ8NHLWN1ukysU5brSs0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719832124; c=relaxed/simple;
-	bh=ru9VPKGKg5n1lr3yc+WJPLInBbPV+vQBOfZcMIamI98=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=B+1w4MZNSlclYOzBH1OfbJmejB0+E/53vKL0aHj3tY/K1EYIQbA/dpGplN2epqvKa0t8UQagNSzCWv9DYEkofVYlLDe9+W7+990IkcMKvM39bEdR/vfirO6eJVYAe68rg4lBbjk5y42Dz9wzIE37+eE+042tN239FNXeSgYHEx0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=Ms/kM9Qp; arc=fail smtp.client-ip=40.107.22.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gT0mHCYJcZEvIimg714F7L6Y/hUcWi1P0Wj4R0YLX+Sk0rjjucnaEhYI9ATkmBbOlDPC9nbbnX92WpI5FfZ1+B/XjSJuTATM04vunk+Tav9aZrf6JDx3Uca6+R5gkVaKH0V4ktfWfsLY45EWOtj1FmCU4w9u3D6eL91mLFANBkamiD51bomnk6B+vyUWpaHOXyX3fweoJ5L/q7XNrSWwL97ZzARgYkAGMVWM9r39xuaMOeevK/x2zzJYDuFC7mS3+v/NHgF0vN7L3DPMgpQM6Up5W2jrCSpnfbtQBbiihVjGbaL7hYbbHtmWochCpmo8K/sc2sQHb+2lsEHiVEejIQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sZSVQ+fZL7o16SVchVfnkyNEFsRTX4U/KpXmEFoBu70=;
- b=lZQRySnfi7jpDYhDyy64CeOMus8oC1xS4qMfXZuKNPsP9MkqcFZuXBrraKak8rVhOMAL9dDbPQ2OztE7d2Cdk/g0iX7KaFVxsX0FtuosrSe/Jqn8JvBfZ/YWSzv4SUsoRkTtGXd1t6Kv4flG/pJHEpIyvLbbAbd4IIAIZn4eyO4GipiJNPiRmlpDfA4rtHkMkRsrFpBxojTb+RR2wTiJ4hB9N++j7tIgep9KRYvnTX2fys4N8PRn2XP5nyCJdWSy36S2my3QcARBdY77N45d0nJQd1dPEQotv44D0HEn8xC+k25ylOp3vXNlz9qMPGwdjakNsFk8g2hWQhTvy4NEcg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sZSVQ+fZL7o16SVchVfnkyNEFsRTX4U/KpXmEFoBu70=;
- b=Ms/kM9QppeAw1P3V1amnSGDOVgTLbJDiJXD0JmME4dzjZUvkhH/Pazg0LGbZKP2tRLOv6jIF+M4ooyzKwBAy7oH2MDqMwc/5LcQvU16BPbDo/fsaoZl/MNOOQxIxvzzmgbeghy7LOgOSDZ8IH/91QYQd2iCmFVKo35WmPvQ+SRM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from PA4PR04MB7982.eurprd04.prod.outlook.com (2603:10a6:102:c4::9)
- by DB9PR04MB8073.eurprd04.prod.outlook.com (2603:10a6:10:24d::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.32; Mon, 1 Jul
- 2024 11:08:38 +0000
-Received: from PA4PR04MB7982.eurprd04.prod.outlook.com
- ([fe80::3c4:afd5:49ac:77af]) by PA4PR04MB7982.eurprd04.prod.outlook.com
- ([fe80::3c4:afd5:49ac:77af%4]) with mapi id 15.20.7719.029; Mon, 1 Jul 2024
- 11:08:38 +0000
-Message-ID: <05e2dfa6-ea35-4600-94a3-6b182635434f@cherry.de>
-Date: Mon, 1 Jul 2024 13:08:36 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/10] hwmon: (amc6821) Rename fan1_div to fan1_pulses
-To: Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Farouk Bouabid <farouk.bouabid@cherry.de>
-References: <20240628151346.1152838-1-linux@roeck-us.net>
- <20240628151346.1152838-4-linux@roeck-us.net>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20240628151346.1152838-4-linux@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: WA2P291CA0046.POLP291.PROD.OUTLOOK.COM
- (2603:10a6:1d0:1f::15) To PA4PR04MB7982.eurprd04.prod.outlook.com
- (2603:10a6:102:c4::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3374413AA35
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 11:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.110.167.99
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719832181; cv=none; b=ZrxfIEYPy0o7Ze2LNyGFyaTsQ0VxTYFK/2TZxY+tJsJsehvMiTiG85ynlC9s1UjRUZ/vZ99wwS+2IxGCf0Itcp/YUtRgj/0U8wfbG+OzwQWvUg1aD3CYBbkWv56BRG3IwGWTfx+wcU8CRfBwKPaIW6zIoubmRArRAWtN4KCCi/o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719832181; c=relaxed/simple;
+	bh=QWhAOknMbrY7rRqGy+yUZxAysV4mTx6t7CIYJcVhJ0A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Vyd+wDEna60E7V76W1zERZMrstaJQKb9+ZAK8Ni6u/kSgbkzyNewmkJOSaNkuvsQAgxTmlbEpOraLURRH3DfoikU01/g9HZI3DpE+rQJLT3gEAwS+lG0sHrRmV5lZdpapdFbwttImGb+Ka3yj2/87+1YYHOjpaFe4tnZ4EPigWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=203.110.167.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
+X-ASG-Debug-ID: 1719832167-1eb14e2e61c47f0001-xx1T2L
+Received: from ZXSHMBX3.zhaoxin.com (ZXSHMBX3.zhaoxin.com [10.28.252.165]) by mx2.zhaoxin.com with ESMTP id DBp4gzMym7EBFipn (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Mon, 01 Jul 2024 19:09:27 +0800 (CST)
+X-Barracuda-Envelope-From: TonyWWang-oc@zhaoxin.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.165
+Received: from ZXBJMBX03.zhaoxin.com (10.29.252.7) by ZXSHMBX3.zhaoxin.com
+ (10.28.252.165) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 1 Jul
+ 2024 19:09:27 +0800
+Received: from [10.32.57.242] (10.32.57.242) by ZXBJMBX03.zhaoxin.com
+ (10.29.252.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 1 Jul
+ 2024 19:09:24 +0800
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.165
+Message-ID: <93030e7f-dcd2-45dd-a3a2-efa0128753f1@zhaoxin.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.32.57.242
+Date: Mon, 1 Jul 2024 19:09:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR04MB7982:EE_|DB9PR04MB8073:EE_
-X-MS-Office365-Filtering-Correlation-Id: f38715f0-7eb6-4b7e-f5e1-08dc99be28a7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OVpxN0VybkhDQnNnOTNPdHBnMW5BYmk2NDVva1BJZnJDcVM5UmZDUnRXT1M1?=
- =?utf-8?B?SU9NS1lhUmxFelMvcXpDZ0NENVc5amEyNFplSmpROThLRTgwZ2lIVHY1VjE2?=
- =?utf-8?B?Zi9DSUoyOG8wQ2hLbndLelZCWm1KL1l5emNLK2dmWWZNRkZ5SHVIdnAvMzI0?=
- =?utf-8?B?ZVVqQTJyV09sWVMzcFJLWkFLdmx3M3M2dndzZnVWR0VZQXlyak9Cb1B1UkJi?=
- =?utf-8?B?UUtzc1M0OXZFbjlhZmpiTlpxMmFFNG54VE56ejM1dExaTE1rVXhZSzN2V0pT?=
- =?utf-8?B?N3hwOFY4UkN3T1ZUaHhCVUZmZEtINitkVWppK0Jpdng5dVBtYnBwU2ZmT1JI?=
- =?utf-8?B?WXd1bFJMblQ5enpQVFM3RnJrdCtPYXhmSW14TmpwQWduZ2RYTXRLSmRLOEw5?=
- =?utf-8?B?TkhGeG5odmx1ZjE1Z2s4dU9TVVR3ME5MeDVUb3paTmdEcVpkcDgyb1VzRlhR?=
- =?utf-8?B?d3NWL1E1R293SG4wMVlMNkh3VjQyS0pFVWMxbFBGOWdQa3gvZ21XR3JSaFdD?=
- =?utf-8?B?ZkFBMEdWbzZrSG0xQXdNcTJ1SWlZUlBJSGw5b2lTcEtZOE9Oc1hzNGtFTENo?=
- =?utf-8?B?ZFF5S1p5b01iMEtldGEvbUxXdFZEWWc3a1JpZFc1VkJrRnFwYzB2NXNuUXBj?=
- =?utf-8?B?bzYyaWhBU09PSFlkc2ZXSFg2MzI1d3B3K3FqTWhHMnpkY3FNK1dtLzJXZFBu?=
- =?utf-8?B?UW1mdCt3eWZtUXlSNDNPZFlKYW8vS1R0dUczZzY4TWhTdTFwRkZ6TS92QWVX?=
- =?utf-8?B?cndWV3c3OC9TelF4ZlcydzB4Z1BlMXptMGRMTldpM2svSEFkUFBFMDk4Rk9T?=
- =?utf-8?B?YWlENS90OGt1MVpTWWdBZWJkUzFpUWY0aEROY2RGdy84VW5nb1VtWStkUDJW?=
- =?utf-8?B?VjhkQnZlR1VGT1JhcVJ1c3AwUzBzK0t3czcvWUsvK0RTeDNCT2VzV2t5YXgx?=
- =?utf-8?B?bU5WQjZiQStsVjdFNlN5TVFxNzRpK2VVMWIvRFY1ZVRrRk80S1FZU0FMcDVD?=
- =?utf-8?B?MzdOQjhZUGQ0LzFGUVpvZVdRRmY1MVU2b1BkVk5rRDhZS2hSM00xK2FZWEwv?=
- =?utf-8?B?MmJpNE1mckpYWDY1QjE4M1RoV0tMRlplRHJZbEFFaXNjMXU3N085S1dWRHlR?=
- =?utf-8?B?YkFNM1hXNnRvc2xWekRheW1GVm80UHpyYWNPMDBXNzdWUU5kVTMveU95RFJM?=
- =?utf-8?B?Q3Z3bzRPb0dlam9IZ2RBaTQwVWpDV1FiRHdvWjJMUWFWaXIzMWc5NkQ4UDRo?=
- =?utf-8?B?djkzSTZqZ1dNcUExUHA3cVdBeGhnRFVqeHRLWGRYRzI3alo3N2Y5MFN5dVdO?=
- =?utf-8?B?Z0ZmQkFLcjlGdWZhQi9uNklISm9nNzVod0ZsQ0xwUzBjVUFFMysydHlwbFlF?=
- =?utf-8?B?QzUvMzF0REpZWGdxYzk3SUZwZWF6Tis1bWtkblNoUDArdUhVVHBzRExxUXBp?=
- =?utf-8?B?SjRvQjRZWENHMVRzYmRSK2JIcWpBbE8ycmlpV2ZjaVNwSlQ1bjhkSmZsdE1U?=
- =?utf-8?B?R2FRZmR1QUlvdW4wRlIyOGIzUDRSVktTR2VvSkxGTW1NbWR3RnFZcXRnVU1m?=
- =?utf-8?B?SnA4WEFQYlU3ZjhuTUd1QmJYVjl2OGFWME5QclpyV2dvZmNMbGlLRlV0Q0Na?=
- =?utf-8?B?YXoyUDZZQXNjR3NQTHQ3aFY0Y3RFYzg1WElrbS9VVHMxeUV1ZlMrM05QeHI5?=
- =?utf-8?B?OGlwLzZ4YUxkRllPTTE4UitzN0ZldlhMaEJmYVRtRGNRdUMxZ1kxV1RiNnRQ?=
- =?utf-8?B?WVN3eVRvZHR3cDBrcE0xWUdqWHdmSTU5eEtxcDBteVd5bkNIWmovd2VwMndV?=
- =?utf-8?B?UXVTQjcrWjlUMGNQSmdEdz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB7982.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?K1pHOUJTbjQzdnVRVW11dHZlV2t5NVdwSDRzSVJ0TFN3Vjk3Z3ZUdFF1UjRB?=
- =?utf-8?B?Qi9RZlZEeHhLYjVGZ2VVRm9jcnI3cklYNmpnNXZHU1V4aXFLYnBIcnRFZlU2?=
- =?utf-8?B?WGJIRlFFbDZoT0w3K1RjY3Q1dDF3VWJ4elhNYjZUNlYxK3NSczRERGdreTVR?=
- =?utf-8?B?VWV1cXZoU3lGVzRwS0tFQUkwOU9WdXVwYjNSY3Q1TEJ0dzhOdzJiSmRXdW5P?=
- =?utf-8?B?NWFNS2VqN25SVHoydFo4WXo4NFZpUUE1cER3TlNDTlFZQ0d3Q3llalBzWnpl?=
- =?utf-8?B?MkdmdkdEb0pIaTNPRmhJSXJHTmh1a0gvViszVjhmbGRjdTk5aWhsdmVsN3lQ?=
- =?utf-8?B?YjgwZlRrYjRqUXlBRXlwVWxVUEN2eCtydm84VmtvNzFCczd3bFNaUDUxQXM3?=
- =?utf-8?B?N0g4dXRoaDN3ZFEraFRwemtzZHFvZWF2VWdUUmhBV0RNbFRjWGdZSVl1Rjgw?=
- =?utf-8?B?QTExMUpCVVlVRHVDZWh2OTBVK2dDeWpicTlEbnVoN2xyRWFBaUpoSTB6UFda?=
- =?utf-8?B?N2lWRUl5LzlPWDNwdEI5aWoxanQzb0k2QnZmR3ZuVVAwNER3NXUzcVBvTlZQ?=
- =?utf-8?B?WVhMUkUxdEFvM3ppYzB5N29KSy96TkFFQ1FZTHdkTXMvbmhZY3ZpbFBiRmsr?=
- =?utf-8?B?ZFZNclk0NVpVU25rd1I0MWF4V0t2NHo2OVVVekJ5R0pSTXlFdlIrWlpEWkxC?=
- =?utf-8?B?eWxOR3BPeW1aSmNIZzJMTGpLeDl5cVR5czJ1R3FrQjBDcGQ5dWVZVG80NUl2?=
- =?utf-8?B?ZWpMTjZWK3Zra1hEb1ZLUEF2T1B5RmhWU2ExZHFRalZRYlIzdkRuT2lmRTh6?=
- =?utf-8?B?clZsYWxaWDhFTUlLOE8xWklVYWlOaW5FV0tMaEtpeS92L2xsMW13T1RhV1Zv?=
- =?utf-8?B?TzF0MFF3NXdNVTV4bjhjcjJkM0dEcTJscW1BbTVtVENTUzI1aFByK2FsaE9v?=
- =?utf-8?B?a2JTVGlNZDdpWVVoVGRvUjRXekJmVlF0YXlSemtrY1ZNUGxVTDZUYVI5a21h?=
- =?utf-8?B?cTZTRFVpUmFuZWZMTDAydWZGVWJIQUMrSy9STUVsZDdFWXY1TVQ1YmwwR0RY?=
- =?utf-8?B?bjJtSit2dkp5Rld6Y2Y0b09xN1dwcHpOd2tXRnAyQjJGaitJQmRRMmJ6bEZo?=
- =?utf-8?B?cFQzclZlMDdKeXJFUWsvdSs1Z0JNeWFDMTE1anRtTEp0d0gweDZrb3hTRVRI?=
- =?utf-8?B?ZFdOc2hScDFkSktQaTBZTFdVZGlCTWNSbHZNNWRDanhGNUxzYW5PMzNNN1Fq?=
- =?utf-8?B?dWVUTld3Rm55KzJQUElXWDV3SWxvZXltbFFuVi8vYlYrNnFvZnZMallEK2Nz?=
- =?utf-8?B?WFBJc2NabTNvY2xQZEVjNEcvQmlSQUVobW52eDJtTGFtbzdDUmtIeURKSFVQ?=
- =?utf-8?B?cTQrNHZjUnNLZURQQktSelNwakQwbzkwOGVsZ3B6Y1ZjaE5jK2dqQ1BDZ1hJ?=
- =?utf-8?B?WFF6QXorV2IzVUNwUVNtdi9SdXdPbDYvZ2Mvc05PRmlaV3lHTlRqRVBFT0JT?=
- =?utf-8?B?MkI4QXJ3MXhROXpSaWdMdEN4OGtkMXlQenVrSXo0KzcrYzJoZlZzQnh3d2gy?=
- =?utf-8?B?R043YUpGaGJ6ZHUwcG9oY00xRzFGWG1DRG1BUjBQekEwcm5OcWpMU1h5dVlj?=
- =?utf-8?B?R3VWV3phTXY1UlRBTmpvck5PZE1tWU9rWGhBODR0UjVRUUgwUDluK0ZYQW0z?=
- =?utf-8?B?bStkYUdMSHZ0TU81L1Ewbkd6dWdhUGREY3Zrd1hZU0NQTTd6UlBMV1lzYlJy?=
- =?utf-8?B?N0I5cmtUOTN0S3d0Wmg1Y1Y3dTFyZmwzSWU4WFlxY2tIeEErYXBQZjA3U0Ni?=
- =?utf-8?B?SWhSVlIvTVhJUnViYlI2SlYxeTZTNWlWWm4vWURxSVpPa0V3cEJxaFlvOFJj?=
- =?utf-8?B?YXJwSlJLUm5NRERYUVcwTWozTlllRzh4WFFxTlVrOVJlZWEvMm9zdlVnTDhB?=
- =?utf-8?B?K1pJMThZam12d1FjMUx3UUtsRlVQTVpneUNIVG1tSjVFTjlTcEdVTTJva3ZR?=
- =?utf-8?B?QjdmTTl0WTBpMC9rUWhkYmxTVVNSZk5KcWhwZmFaTTZyVWk3dXZ4VHR0R1Nm?=
- =?utf-8?B?dW5PUnRkRTdvK3FLeloweXVEWVlOdUc2L1hMeVlSVWVjLzNvRG96eVdSSVFy?=
- =?utf-8?B?L01CRU5KZERGQk9WTlVlclZRU09FZEE1aDduMm1PUC9WZ0dlOWtMK3lwVTZl?=
- =?utf-8?B?QXc9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: f38715f0-7eb6-4b7e-f5e1-08dc99be28a7
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB7982.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2024 11:08:38.6222
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ougDskg1q4qKuVP8tHAuHtvJxj8UiOQ3uNbbB03GlBadQGFqsvpvQJwuqUDLRrEJPfk9+3IlD5xUZmCYJm0bMU1KFOO0v8DUEuxgbh42GT4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8073
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/hpet: Read HPET directly if panic in progress
+To: Thomas Gleixner <tglx@linutronix.de>, Dave Hansen <dave.hansen@intel.com>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<x86@kernel.org>, <hpa@zytor.com>, <keescook@chromium.org>,
+	<tony.luck@intel.com>, <gpiccoli@igalia.com>, <mat.jonczyk@o2.pl>,
+	<rdunlap@infradead.org>, <alexandre.belloni@bootlin.com>,
+	<mario.limonciello@amd.com>, <yaolu@kylinos.cn>, <bhelgaas@google.com>,
+	<justinstitt@google.com>, <linux-kernel@vger.kernel.org>,
+	<linux-hardening@vger.kernel.org>
+X-ASG-Orig-Subj: Re: [PATCH] x86/hpet: Read HPET directly if panic in progress
+CC: <CobeChen@zhaoxin.com>, <TimGuo@zhaoxin.com>, <LeoLiu-oc@zhaoxin.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+References: <20240528063836.5248-1-TonyWWang-oc@zhaoxin.com>
+ <50fc1bd3-909e-41c4-a991-9d81e32ef92c@intel.com> <87wmnda8mc.ffs@tglx>
+Content-Language: en-US
+From: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
+In-Reply-To: <87wmnda8mc.ffs@tglx>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: ZXSHCAS1.zhaoxin.com (10.28.252.161) To
+ ZXBJMBX03.zhaoxin.com (10.29.252.7)
+X-Barracuda-Connect: ZXSHMBX3.zhaoxin.com[10.28.252.165]
+X-Barracuda-Start-Time: 1719832167
+X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
+X-Barracuda-URL: https://10.28.252.36:4443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at zhaoxin.com
+X-Barracuda-Scan-Msg-Size: 7509
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
+X-Barracuda-Spam-Score: -2.02
+X-Barracuda-Spam-Status: No, SCORE=-2.02 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.127014
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------------------------
 
-Hi Guenter,
 
-On 6/28/24 5:13 PM, Guenter Roeck wrote:
-> The chip does not have a fan divisor. What it does have is a configuration
-> to set either 2 or 4 pulses per fan rotation. Rename the attribute to
-> reflect its use. Update documentation accordingly.
+
+On 2024/5/29 06:12, Thomas Gleixner wrote:
 > 
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> 
+> [这封邮件来自外部发件人 谨防风险]
+> 
+> On Tue, May 28 2024 at 07:18, Dave Hansen wrote:
+>> On 5/27/24 23:38, Tony W Wang-oc wrote:
+>> ...> diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
+>>> index c96ae8fee95e..ecadd0698d6a 100644
+>>> --- a/arch/x86/kernel/hpet.c
+>>> +++ b/arch/x86/kernel/hpet.c
+>>> @@ -804,6 +804,12 @@ static u64 read_hpet(struct clocksource *cs)
+>>>       if (in_nmi())
+>>>               return (u64)hpet_readl(HPET_COUNTER);
+>>>
+>>> +    /*
+>>> +     * Read HPET directly if panic in progress.
+>>> +     */
+>>> +    if (unlikely(atomic_read(&panic_cpu) != PANIC_CPU_INVALID))
+>>> +            return (u64)hpet_readl(HPET_COUNTER);
+>>> +
+>>
+>> There is literally one other piece of the code in the kernel doing
+>> something similar: the printk() implementation.  There's no other
+>> clocksource or timekeeping code that does this on any architecture.
+>>
+>> Why doesn't this problem apply to any other clock sources?
+> 
+> I principle it applies to any clocksource which needs a spinlock to
+> serialize access. HPET is not the only insanity here.
+> 
+> Think about i8253 :)
+> 
+> Most real clocksources, like TSC and the majority of the preferred clock
+> sources on other architectures are perfectly fine. They just read and be
+> done.
+> 
+>> Why should the problem be fixed in the clock sources themselves?  Why
+>> doesn't printk() deadlock on systems using the HPET?
+> 
+> Because regular printk()s are deferred to irq work when in NMI and
+> similar contexts, but that obviously does not apply to panic
+> situations. Also NMI is treated special even in the HPET code. See
+> below.
+> 
+>> In other words, I think we should fix pstore to be more like printk
+>> rather than hacking around this in each clock source.
+> 
+> pstore is perfectly fine. It uses a NMI safe time accessor function
+> which is then tripping over the HPET lock. That's really a HPET specific
+> problem.
+> 
+> Though what I read out of the changelog is that the MCE hits the same
+> CPU 'x' which holds the lock. But that's fairy tale material as you can
+> see in the patch above:
+> 
+>          if (in_nmi())
+>                  return (u64)hpet_readl(HPET_COUNTER);
+> 
+> For that particular case the dead lock, which would actually be a live
+> lock, cannot happen because in kernel MCEs are NMI class exceptions and
+> therefore in_nmi() evaluates to true and that new voodoo can't be
+> reached at all.
+> 
+> Now there are two other scenarios which really can make that happen:
+> 
+>   1) A non-NMI class exception within the lock held region
+> 
+>      CPU A
+>      acquire(hpet_lock);
+>      ...                 <- #PF, #GP, #DE, ... -> panic()
+> 
+>      If any of that happens within that lock held section then the live
+>      lock on the hpet_lock is the least of your worries. Seriously, I
+>      don't care about this at all.
+> 
+>   2) The actual scenario is:
+> 
+>      CPU A                       CPU B
+>      lock(hpet_lock)
+>                                  MCE hits user space
+>                                  ...
+>                                  exc_machine_check_user()
+>                                    irqentry_enter_from_user_mode(regs);
+> 
+>      irqentry_enter_from_user_mode() obviously does not mark the
+>      exception as NMI class, so in_nmi() evaluates to false. That would
+>      actually dead lock if CPU A is not making progress and releases
+>      hpet_lock.
+> 
+>      Sounds unlikely to happen, right? But in reality it can because of
+>      MCE broadcast. Assume that both CPUs go into MCE:
+> 
+>      CPU A                       CPU B
+>      lock(hpet_lock)
+>                                  exc_machine_check_user()
+>                                    irqentry_enter_from_user_mode();
+>      exc_machine_check_kernel()    do_machine_check()
+>        irqentry_nmi_enter();         mce_panic()
+>        do_machine_check()            if (atomic_inc_return(&mce_panicked) > 1)
+>          mce_panic()                     wait_for_panic(); <- Not taken
+> 
+>          if (atomic_inc_return(&mce_panicked) > 1)
+>              wait_for_panic(); <- Taken
+> 
+>                                      ....
+>                                      hpet_read()
+> 
+>      -> Dead lock because in_nmi() evaluates to false on CPU B and CPU A
+>         obviously can't release the lock.
+> 
 
-Good catch!
+For this scenario, an experiment was designed for the printk:
+a, Install a driver module that repeatedly sending IPIs to multiple 
+cores to executes printk.
+b, Run a user-level testing tool like stream on all cores.
+c, Trigger a MCE hardware error.
+During burnin tests a-c, reproduce the following case:
 
-Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+CPU A                              CPU B
+printk()
+console_owner
+                                    exc_machine_check_user()
+                                      irqentry_enter_from_user_mode()
+exc_machine_check_kernel()           do_machine_check()
+   irqentry_nmi_enter()                 mce_panic()
+   do_machine_check()                     print_mce()
+                                            ...
+     ...                                    while(console_waiter)
+                                              cpu_relax(); <- deadloop
+     mce_timed_out() <-timeout
+       wait_for_panic()
+         panic("Panicing machine check CPU died");
 
-Thanks,
-Quentin
+In this case CPU B is the monarch CPU in MCE handler, CPU B waiting to 
+be the console_owner and CPU A can't release the console_owner.
+So the monarch CPU B deadloop happened, as a result other CPU witch 
+waiting the monarch CPU timeout will call the panic function.
+
+This problem is caused by the use of printk in the MCE handler.
+
+Actually, I found the comments for the MCE handler like:
+  * This is executed in #MC context not subject to normal locking rules.
+  * This implies that most kernel services cannot be safely used. Don't even
+  * think about putting a printk in there!
+
+Should consider not using printk in the MCE handler?
+
+Sincerely!
+TonyWWang-oc
+
+> So the proposed patch makes sense to some extent. But it only cures the
+> symptom. The real underlying questions are:
+> 
+>    1) Should we provide a panic mode read callback for clocksources which
+>       are affected by this?
+> 
+>    2) Is it correct to claim that a MCE which hits user space and ends up in
+>       mce_panic() is still just a regular exception or should we upgrade to
+>       NMI class context when we enter mce_panic() or even go as far to
+>       upgrade to NMI class context for any panic() invocation?
+> 
+> #1 Solves it at the clocksource level. It still needs HPET specific
+>     changes.
+> 
+> #2 Solves a whole class of issues
+> 
+>     ... while potentially introducing new ones :)
+> 
+>     To me upgrading any panic() invocation to NMI class context makes a
+>     lot of sense because in that case all bets are off.
+> 
+>     in_nmi() is used in quite some places to avoid such problems. IOW,
+>     that would kill a whole class of issues instead of "curing" the HPET
+>     problem locally for the price of an extra conditional. Not that the
+>     extra conditional matters much if HPET is the clocksource as that's
+>     awfully slow anyway and I really don't care about that.
+> 
+>     But I very much care about avoiding to sprinkle panic_cpu checks all
+>     over the place.
+> 
+> Thanks,
+> 
+>          tglx
 
