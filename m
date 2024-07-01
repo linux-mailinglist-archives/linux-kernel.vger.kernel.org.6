@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-237046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23C4091EA42
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 23:25:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A62E91EA45
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 23:25:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45F6D1C212AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:25:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83BBEB21AC0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 21:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E51171E53;
-	Mon,  1 Jul 2024 21:24:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E57176249;
+	Mon,  1 Jul 2024 21:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JGD597ZB"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MEixF0aX"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3521741FF;
-	Mon,  1 Jul 2024 21:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75453175545;
+	Mon,  1 Jul 2024 21:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719869048; cv=none; b=TGnVjrCSgP5JiuA8C/VkytpAOzjV2EVGuy1bkQNOD584xju+BpHsfwlf8b2Gg7Ni0A+H7B1b396hHrY6iNf3rVs/amm+flBjDTOaaoPTN1e0Z+8gZmn9SrypUz1chVr2bZCNua4/NqM2dFHEjK3WnzY+JgYdoWK2SN+eZXrvj6o=
+	t=1719869050; cv=none; b=QBKlrfz0J9o/oEwp5wx4bC0PLzYoMq1Zw+gmO8BVREBu8mThgf0tW2wT28xAzBOg9smh+cH+0waUV5Wlze92TWtcPiO0wPs7lQsgRqtD4bchTHVD8XR1ouPyWjf1T6zoPs2ahS1vsAMIHktkrzCziYfNbJVFLKag8s2GESIBptA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719869048; c=relaxed/simple;
-	bh=cP/Te4vYlcEA2DyQm3mhACaSkg+fKuSH/l6VfZ9060U=;
+	s=arc-20240116; t=1719869050; c=relaxed/simple;
+	bh=w2ytLGhxJ8xqtikhcDFb/101DvsxVLKLiN7+ClASY6E=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lzuXIXphNRuocaUL2sAmZzycH+bsuETCSSm6bYA/MvmxrEaxvmPktvhbaZKhL5jvnDlXccG6daa6oefBvisV3aa+D6j5QHkCaKgKktvR0/O0numdtMgPNQrOVQ/3K8/lY+5IPfpG4tyfwTW8yumLD0VsB1Kwa0bAkmgXUOv6xtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JGD597ZB; arc=none smtp.client-ip=209.85.210.177
+	 MIME-Version; b=lalpiRDkZehL9t1WHr4rNmYpwP51R6s9ydWmbJnty6zTa/XYWi1TdQzNkrP1FdR+HxiMsPqQet3QzJLpp2WblNX2S9g4HTPK9/fv1w43jgizmwtJt8Idsk2SUmVNA7h+hse8M+6oHh7f6mRZaqEApXbnnyZvAsTvy+03mntCl44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MEixF0aX; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70ad2488fb1so575188b3a.1;
-        Mon, 01 Jul 2024 14:24:06 -0700 (PDT)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f4a5344ec7so24941905ad.1;
+        Mon, 01 Jul 2024 14:24:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719869045; x=1720473845; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1719869047; x=1720473847; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iSxJWFowv5lUUeg2OJwZzPUg88dacVPoyWzeuKBMJO4=;
-        b=JGD597ZBz1LtrKKk++MsfVgkjtlN1wushAP/PxewuZSxRf6yUDNoTdSUs/by5v0BZw
-         TUWtXXqvbzYnU6cxKnFnTso1+2eDc1SO+5bvFC8Umg8iuLAWbET2T7i+y85gRtBxAnUA
-         Y6QIhujZa6oJqfS1UVC4x03pfjyRZmfK2kCNpEqOaQC/Xjmre7ncsXfu28SYABM/c6AT
-         Hu6CwGg/IGySisOMVNANFBI8J48fMjJByVI9crxoyLM4nIpbXNIfY9dTR1aEU7bP5A61
-         vmBsf0Q8PlM8WHuviV6avjz+SHqXQrEibSc1bu2nRwg9zZAFy+Lopdsbd59qjxJkbmMu
-         RYMw==
+        bh=pTDoHQSoLzBP9qWdmxxdqRGtTFu78ggoAtSKR8+CFuA=;
+        b=MEixF0aX5pQVUYmCAqPIfPSWQ6LnEUCVC1MGzn1Cp4KK27BqpYHKvKjwbT2/dS9BpH
+         KavPpkweKiHSyiTCXWQboE4lBxqtpy8/U6vESBNSWOEJVUQXW9ftR/2MBDR/K8pkxlu/
+         4hVA22Wje2F8AU+/qp0R23IojjDaDVfNLpQ1zCO+bI+FDZ+LMeKFnK9pwmcf8mosrbRr
+         d7EUmT4RyLHCccVVJkl58NdkmgbTXLKPDzh37iVtluLkFACyHIUnnErTAe4asXz/zOhZ
+         oISyNkK4oOEIa5UTzePs2dT+7h61ICnCX1ZvD1pf23KeiUMvHqek9pnhtqRd1ey1GA7y
+         fsQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719869045; x=1720473845;
+        d=1e100.net; s=20230601; t=1719869047; x=1720473847;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=iSxJWFowv5lUUeg2OJwZzPUg88dacVPoyWzeuKBMJO4=;
-        b=rLgzPPOZnLBpvSlxYyf39Kem4XfGVGFTpTt8AbCgld/JTFPGxDs/1n/oUxjvLAXf66
-         KwBEWK0ZX8Uoh31trwMZfq8AJodQ5ASwWJRSaodTAU2UjTo8vcm7oWbkrYoI07P4z4o3
-         WZ+wSi34a5txiVkvcdcJ26oD4js//R8UdSYS2OtrJdvOEj3QI49vezfsjhzxG3npYRns
-         NYE4VrhWTD4o8yvqpjNkTCOJVMG1ruWu32+NQdfw/Eh2CVO31rlJ/mLulPNttdmjMJxd
-         PXTZk22goWaBXBw89bmsnGW+zYGAm3PMm8eo645VbtEncoVwbaM7ek7e49fnWonRoO7I
-         Uuzw==
-X-Gm-Message-State: AOJu0YwYggeLeczQONVRdZHm77UEjFu32ZUHbs0OOkW4SkBbuHk6Hk8T
-	XCnrr+aJv8++CwTQGQTcZY7aJBX25wXuU9w5R6d7/t/MjW5WPp7VTlcskQ==
-X-Google-Smtp-Source: AGHT+IFTn+wYkDLtgUaVoZsKa0dDG7n8VqzCW83jo420t/c/oLJlzZrTjjtxnorhVmkXsfcUSZp7EQ==
-X-Received: by 2002:a05:6a20:47df:b0:1be:e4ca:e077 with SMTP id adf61e73a8af0-1bef6244884mr7074981637.52.1719869045214;
-        Mon, 01 Jul 2024 14:24:05 -0700 (PDT)
+        bh=pTDoHQSoLzBP9qWdmxxdqRGtTFu78ggoAtSKR8+CFuA=;
+        b=YhPM4RTK12HCaAjxjXoY3V7C0ypdy2mzk4eha2Q757MaRWGvKmNMT+BPfoHkzBIvRx
+         dL7Eg3pZDhBXqdXcWNdDP4+WAl6M2fAmfRXFjBlJhrF8Qpt/gL7FaP9/Nvbi9hC7NJhD
+         QJCzrff6wUfJJbbGibgYlZ8DTrCR+m5mvgWjqmvFr3ki/A9HlNfM3ZFjAKQToZCXPGi5
+         Tfm+ZF5XB27REJI70thvBdiYes8DC8Obw71V3tejU0v6f+/ccfLSlbsYx8pwSCXYlJFy
+         6a6/YUMja3neX+noxaiMz4FA85nQM4PHYfc4mf/nhBUN+1bZ294moYwqzgmpGfHciwPu
+         EyCw==
+X-Gm-Message-State: AOJu0YzEPKAyE+c+yOeXH0IecWdQwWYmlwi3Tu0mkCz4jaoZVTdKfB1f
+	dpPzYYR5exGcgZOWWElQOHzTGPvOhl2IlKtzmdbNfLbbafsbtXDqPDPaLQ==
+X-Google-Smtp-Source: AGHT+IHXORxruQ4TT2KAZusn2tzEmegiZY0CZlxrUZ7bTVytQEg/2hAg2Jn4xvh6kAidqoo3OnTluQ==
+X-Received: by 2002:a17:902:f203:b0:1f9:e97d:9460 with SMTP id d9443c01a7336-1fac7e7fcf3mr99242875ad.16.1719869047004;
+        Mon, 01 Jul 2024 14:24:07 -0700 (PDT)
 Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91d3ba044sm7269423a91.42.2024.07.01.14.24.04
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac1598d35sm69427795ad.285.2024.07.01.14.24.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 14:24:04 -0700 (PDT)
+        Mon, 01 Jul 2024 14:24:06 -0700 (PDT)
 Sender: Guenter Roeck <groeck7@gmail.com>
 From: Guenter Roeck <linux@roeck-us.net>
 To: linux-hwmon@vger.kernel.org
@@ -72,9 +72,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Farouk Bouabid <farouk.bouabid@cherry.de>,
 	Quentin Schulz <quentin.schulz@cherry.de>,
 	Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH v2 09/11] hwmon: (amc6821) Convert to use regmap
-Date: Mon,  1 Jul 2024 14:23:46 -0700
-Message-Id: <20240701212348.1670617-10-linux@roeck-us.net>
+Subject: [PATCH v2 10/11] hwmon: (amc6821) Convert to with_info API
+Date: Mon,  1 Jul 2024 14:23:47 -0700
+Message-Id: <20240701212348.1670617-11-linux@roeck-us.net>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240701212348.1670617-1-linux@roeck-us.net>
 References: <20240701212348.1670617-1-linux@roeck-us.net>
@@ -86,1070 +86,857 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use regmap for register accesses and for most caching.
-
-While at it, use sysfs_emit() instead of sprintf() to write sysfs
-attribute data, and remove spurious debug messages which would
-only be seen as result of a bug in the code.
+Convert to use with_info API to simplify the code and make it easier
+to maintain. This also reduces code size by approximately 20%.
 
 No functional change intended.
 
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 ---
-v2: Drop another spurious debug message in this patch instead of patch 10
-    Add missing "select REGMAP_I2C" to Kconfig
-    Change misleading variable name from 'mask' to 'mode'.
-    Use sysfs_emit instead of sprintf everywhere
+v2: Adjust to changes made in preceding patches
 
- drivers/hwmon/Kconfig   |   1 +
- drivers/hwmon/amc6821.c | 713 ++++++++++++++++++----------------------
- 2 files changed, 329 insertions(+), 385 deletions(-)
+ drivers/hwmon/amc6821.c | 744 +++++++++++++++++++++-------------------
+ 1 file changed, 390 insertions(+), 354 deletions(-)
 
-diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-index e14ae18a973b..a8fa87a96e8f 100644
---- a/drivers/hwmon/Kconfig
-+++ b/drivers/hwmon/Kconfig
-@@ -2127,6 +2127,7 @@ config SENSORS_ADS7871
- config SENSORS_AMC6821
- 	tristate "Texas Instruments AMC6821"
- 	depends on I2C
-+	select REGMAP_I2C
- 	help
- 	  If you say yes here you get support for the Texas Instruments
- 	  AMC6821 hardware monitoring chips.
 diff --git a/drivers/hwmon/amc6821.c b/drivers/hwmon/amc6821.c
-index 028998d3bedf..3fe0bfeac843 100644
+index 3fe0bfeac843..5a3c089ae06f 100644
 --- a/drivers/hwmon/amc6821.c
 +++ b/drivers/hwmon/amc6821.c
-@@ -8,15 +8,16 @@
+@@ -6,6 +6,9 @@
+  *
+  * Based on max6650.c:
   * Copyright (C) 2007 Hans J. Koch <hjk@hansjkoch.de>
++ *
++ * Conversion to regmap and with_info API:
++ * Copyright (C) 2024 Guenter Roeck <linux@roeck-us.net>
   */
  
-+#include <linux/bitops.h>
- #include <linux/bits.h>
- #include <linux/err.h>
- #include <linux/hwmon.h>
- #include <linux/hwmon-sysfs.h>
- #include <linux/i2c.h>
- #include <linux/init.h>
--#include <linux/jiffies.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
-+#include <linux/regmap.h>
- #include <linux/slab.h>
+ #include <linux/bitops.h>
+@@ -107,28 +110,6 @@ module_param(init, int, 0444);
+ #define AMC6821_STAT2_L_THERM		BIT(6)
+ #define AMC6821_STAT2_THERM_IN		BIT(7)
  
- /*
-@@ -44,6 +45,7 @@ module_param(init, int, 0444);
- #define AMC6821_REG_CONF4		0x04
- #define AMC6821_REG_STAT1		0x02
- #define AMC6821_REG_STAT2		0x03
-+#define AMC6821_REG_TEMP_LO		0x06
- #define AMC6821_REG_TDATA_LOW		0x08
- #define AMC6821_REG_TDATA_HI		0x09
- #define AMC6821_REG_LTEMP_HI		0x0A
-@@ -61,11 +63,8 @@ module_param(init, int, 0444);
- #define AMC6821_REG_DCY_LOW_TEMP	0x21
- 
- #define AMC6821_REG_TACH_LLIMITL	0x10
--#define AMC6821_REG_TACH_LLIMITH	0x11
- #define AMC6821_REG_TACH_HLIMITL	0x12
--#define AMC6821_REG_TACH_HLIMITH	0x13
- #define AMC6821_REG_TACH_SETTINGL	0x1e
--#define AMC6821_REG_TACH_SETTINGH	0x1f
- 
- #define AMC6821_CONF1_START		BIT(0)
- #define AMC6821_CONF1_FAN_INT_EN	BIT(1)
-@@ -130,224 +129,169 @@ static const u8 fan_reg_low[] = {AMC6821_REG_TDATA_LOW,
- 			AMC6821_REG_TACH_HLIMITL,
- 			AMC6821_REG_TACH_SETTINGL, };
- 
--static const u8 fan_reg_hi[] = {AMC6821_REG_TDATA_HI,
--			AMC6821_REG_TACH_LLIMITH,
--			AMC6821_REG_TACH_HLIMITH,
--			AMC6821_REG_TACH_SETTINGH, };
+-enum {IDX_TEMP1_INPUT = 0, IDX_TEMP1_MIN, IDX_TEMP1_MAX,
+-	IDX_TEMP1_CRIT, IDX_TEMP2_INPUT, IDX_TEMP2_MIN,
+-	IDX_TEMP2_MAX, IDX_TEMP2_CRIT,
+-	TEMP_IDX_LEN, };
+-
+-static const u8 temp_reg[] = {AMC6821_REG_LTEMP_HI,
+-			AMC6821_REG_LTEMP_LIMIT_MIN,
+-			AMC6821_REG_LTEMP_LIMIT_MAX,
+-			AMC6821_REG_LTEMP_CRIT,
+-			AMC6821_REG_RTEMP_HI,
+-			AMC6821_REG_RTEMP_LIMIT_MIN,
+-			AMC6821_REG_RTEMP_LIMIT_MAX,
+-			AMC6821_REG_RTEMP_CRIT, };
+-
+-enum {IDX_FAN1_INPUT = 0, IDX_FAN1_MIN, IDX_FAN1_MAX, IDX_FAN1_TARGET,
+-	FAN1_IDX_LEN, };
+-
+-static const u8 fan_reg_low[] = {AMC6821_REG_TDATA_LOW,
+-			AMC6821_REG_TACH_LLIMITL,
+-			AMC6821_REG_TACH_HLIMITL,
+-			AMC6821_REG_TACH_SETTINGL, };
 -
  /*
   * Client data (each client gets its own)
   */
+@@ -189,219 +170,319 @@ static int amc6821_init_auto_point_data(struct amc6821_data *data)
+ 	return 0;
+ }
  
- struct amc6821_data {
--	struct i2c_client *client;
-+	struct regmap *regmap;
- 	struct mutex update_lock;
--	bool valid; /* false until following fields are valid */
--	unsigned long last_updated; /* in jiffies */
- 
--	/* register values */
--	int temp[TEMP_IDX_LEN];
--
--	u16 fan[FAN1_IDX_LEN];
--	u8 fan1_pulses;
--
--	u8 pwm1;
- 	u8 temp1_auto_point_temp[3];
- 	u8 temp2_auto_point_temp[3];
--	u8 pwm1_auto_point_pwm[3];
--	u8 pwm1_enable;
--	u8 pwm1_auto_channels_temp;
--
--	u8 stat1;
--	u8 stat2;
- };
- 
--static struct amc6821_data *amc6821_update_device(struct device *dev)
-+static int amc6821_init_auto_point_data(struct amc6821_data *data)
+-static ssize_t temp_show(struct device *dev, struct device_attribute *devattr,
+-			 char *buf)
++static int amc6821_temp_read_values(struct regmap *regmap, u32 attr, int channel, long *val)
  {
 -	struct amc6821_data *data = dev_get_drvdata(dev);
--	struct i2c_client *client = data->client;
--	int timeout = HZ;
--	u8 reg;
--	int i;
-+	struct regmap *regmap = data->regmap;
-+	u32 pwm, regval;
-+	int err;
+-	int ix = to_sensor_dev_attr(devattr)->index;
++	int reg, err;
+ 	u32 regval;
+-	int err;
  
--	mutex_lock(&data->update_lock);
-+	err = regmap_read(regmap, AMC6821_REG_DCY_LOW_TEMP, &pwm);
-+	if (err)
-+		return err;
- 
--	if (time_after(jiffies, data->last_updated + timeout) ||
--			!data->valid) {
-+	err = regmap_read(regmap, AMC6821_REG_PSV_TEMP, &regval);
-+	if (err)
-+		return err;
-+	data->temp1_auto_point_temp[0] = regval;
-+	data->temp2_auto_point_temp[0] = data->temp1_auto_point_temp[0];
- 
--		for (i = 0; i < TEMP_IDX_LEN; i++)
--			data->temp[i] = (int8_t)i2c_smbus_read_byte_data(
--				client, temp_reg[i]);
-+	err = regmap_read(regmap, AMC6821_REG_LTEMP_FAN_CTRL, &regval);
-+	if (err)
-+		return err;
-+	data->temp1_auto_point_temp[1] = (regval & 0xF8) >> 1;
- 
--		data->stat1 = i2c_smbus_read_byte_data(client,
--			AMC6821_REG_STAT1);
--		data->stat2 = i2c_smbus_read_byte_data(client,
--			AMC6821_REG_STAT2);
-+	regval &= 0x07;
-+	regval = 0x20 >> regval;
-+	if (regval)
-+		data->temp1_auto_point_temp[2] =
-+			data->temp1_auto_point_temp[1] +
-+			(255 - pwm) / regval;
-+	else
-+		data->temp1_auto_point_temp[2] = 255;
- 
--		data->pwm1 = i2c_smbus_read_byte_data(client,
--			AMC6821_REG_DCY);
--		for (i = 0; i < FAN1_IDX_LEN; i++) {
--			data->fan[i] = i2c_smbus_read_byte_data(
--					client,
--					fan_reg_low[i]);
--			data->fan[i] += i2c_smbus_read_byte_data(
--					client,
--					fan_reg_hi[i]) << 8;
--		}
--		data->fan1_pulses = i2c_smbus_read_byte_data(client,
--			AMC6821_REG_CONF4);
--		data->fan1_pulses = data->fan1_pulses & AMC6821_CONF4_PSPR ? 4 : 2;
-+	err = regmap_read(regmap, AMC6821_REG_RTEMP_FAN_CTRL, &regval);
-+	if (err)
-+		return err;
- 
--		data->pwm1_auto_point_pwm[0] = 0;
--		data->pwm1_auto_point_pwm[2] = 255;
--		data->pwm1_auto_point_pwm[1] = i2c_smbus_read_byte_data(client,
--			AMC6821_REG_DCY_LOW_TEMP);
-+	data->temp2_auto_point_temp[1] = (regval & 0xF8) >> 1;
-+	regval &= 0x07;
-+	regval = 0x20 >> regval;
- 
--		data->temp1_auto_point_temp[0] =
--			i2c_smbus_read_byte_data(client,
--					AMC6821_REG_PSV_TEMP);
--		data->temp2_auto_point_temp[0] =
--				data->temp1_auto_point_temp[0];
--		reg = i2c_smbus_read_byte_data(client,
--			AMC6821_REG_LTEMP_FAN_CTRL);
--		data->temp1_auto_point_temp[1] = (reg & 0xF8) >> 1;
--		reg &= 0x07;
--		reg = 0x20 >> reg;
--		if (reg > 0)
--			data->temp1_auto_point_temp[2] =
--				data->temp1_auto_point_temp[1] +
--				(data->pwm1_auto_point_pwm[2] -
--				data->pwm1_auto_point_pwm[1]) / reg;
--		else
--			data->temp1_auto_point_temp[2] = 255;
-+	if (regval)
-+		data->temp2_auto_point_temp[2] =
-+			data->temp2_auto_point_temp[1] +
-+			(255 - pwm) / regval;
-+	else
-+		data->temp2_auto_point_temp[2] = 255;
- 
--		reg = i2c_smbus_read_byte_data(client,
--			AMC6821_REG_RTEMP_FAN_CTRL);
--		data->temp2_auto_point_temp[1] = (reg & 0xF8) >> 1;
--		reg &= 0x07;
--		reg = 0x20 >> reg;
--		if (reg > 0)
--			data->temp2_auto_point_temp[2] =
--				data->temp2_auto_point_temp[1] +
--				(data->pwm1_auto_point_pwm[2] -
--				data->pwm1_auto_point_pwm[1]) / reg;
--		else
--			data->temp2_auto_point_temp[2] = 255;
+-	err = regmap_read(data->regmap, temp_reg[ix], &regval);
+-	if (err)
+-		return err;
 -
--		reg = i2c_smbus_read_byte_data(client, AMC6821_REG_CONF1);
--		reg = (reg >> 5) & 0x3;
--		switch (reg) {
--		case 0: /*open loop: software sets pwm1*/
--			data->pwm1_auto_channels_temp = 0;
--			data->pwm1_enable = 1;
--			break;
--		case 2: /*closed loop: remote T (temp2)*/
--			data->pwm1_auto_channels_temp = 2;
--			data->pwm1_enable = 2;
--			break;
--		case 3: /*closed loop: local and remote T (temp2)*/
--			data->pwm1_auto_channels_temp = 3;
--			data->pwm1_enable = 3;
--			break;
--		case 1: /*
--			 * semi-open loop: software sets rpm, chip controls
--			 * pwm1
--			 */
--			data->pwm1_auto_channels_temp = 0;
--			data->pwm1_enable = 4;
--			break;
--		}
+-	return sysfs_emit(buf, "%d\n", sign_extend32(regval, 7) * 1000);
+-}
 -
--		data->last_updated = jiffies;
--		data->valid = true;
--	}
--	mutex_unlock(&data->update_lock);
--	return data;
+-static ssize_t temp_store(struct device *dev, struct device_attribute *attr,
+-			  const char *buf, size_t count)
+-{
+-	struct amc6821_data *data = dev_get_drvdata(dev);
+-	int ix = to_sensor_dev_attr(attr)->index;
+-	long val;
+-	int err;
+-
+-	int ret = kstrtol(buf, 10, &val);
+-	if (ret)
+-		return ret;
+-	val = clamp_val(val / 1000, -128, 127);
+-
+-	err = regmap_write(data->regmap, temp_reg[ix], val);
+-	if (err)
+-		return err;
+-
+-	return count;
+-}
+-
+-static ssize_t temp_alarm_show(struct device *dev,
+-			       struct device_attribute *devattr, char *buf)
+-{
+-	struct amc6821_data *data = dev_get_drvdata(dev);
+-	int ix = to_sensor_dev_attr(devattr)->index;
+-	u32 regval, mask, reg;
+-	int err;
+-
+-	switch (ix) {
+-	case IDX_TEMP1_MIN:
+-		reg = AMC6821_REG_STAT1;
+-		mask = AMC6821_STAT1_LTL;
++	switch (attr) {
++	case hwmon_temp_input:
++		reg = channel ? AMC6821_REG_RTEMP_HI : AMC6821_REG_LTEMP_HI;
+ 		break;
+-	case IDX_TEMP1_MAX:
+-		reg = AMC6821_REG_STAT1;
+-		mask = AMC6821_STAT1_LTH;
++	case hwmon_temp_min:
++		reg = channel ? AMC6821_REG_RTEMP_LIMIT_MIN : AMC6821_REG_LTEMP_LIMIT_MIN;
+ 		break;
+-	case IDX_TEMP1_CRIT:
+-		reg = AMC6821_REG_STAT2;
+-		mask = AMC6821_STAT2_LTC;
++	case hwmon_temp_max:
++		reg = channel ? AMC6821_REG_RTEMP_LIMIT_MAX : AMC6821_REG_LTEMP_LIMIT_MAX;
+ 		break;
+-	case IDX_TEMP2_MIN:
+-		reg = AMC6821_REG_STAT1;
+-		mask = AMC6821_STAT1_RTL;
+-		break;
+-	case IDX_TEMP2_MAX:
+-		reg = AMC6821_REG_STAT1;
+-		mask = AMC6821_STAT1_RTH;
+-		break;
+-	case IDX_TEMP2_CRIT:
+-		reg = AMC6821_REG_STAT2;
+-		mask = AMC6821_STAT2_RTC;
++	case hwmon_temp_crit:
++		reg = channel ? AMC6821_REG_RTEMP_CRIT : AMC6821_REG_LTEMP_CRIT;
+ 		break;
+ 	default:
+-		return -EINVAL;
++		return -EOPNOTSUPP;
+ 	}
+-	err = regmap_read(data->regmap, reg, &regval);
++	err = regmap_read(regmap, reg, &regval);
+ 	if (err)
+ 		return err;
+-	return sysfs_emit(buf, "%d\n", !!(regval & mask));
++	*val = sign_extend32(regval, 7) * 1000;
 +	return 0;
  }
  
- static ssize_t temp_show(struct device *dev, struct device_attribute *devattr,
- 			 char *buf)
+-static ssize_t temp2_fault_show(struct device *dev,
+-				struct device_attribute *devattr, char *buf)
++static int amc6821_read_alarms(struct regmap *regmap, enum hwmon_sensor_types type,
++			       u32 attr, int channel, long *val)
  {
--	struct amc6821_data *data = amc6821_update_device(dev);
-+	struct amc6821_data *data = dev_get_drvdata(dev);
- 	int ix = to_sensor_dev_attr(devattr)->index;
-+	u32 regval;
-+	int err;
+-	struct amc6821_data *data = dev_get_drvdata(dev);
++	int reg, mask, err;
+ 	u32 regval;
+-	int err;
  
--	return sprintf(buf, "%d\n", data->temp[ix] * 1000);
-+	err = regmap_read(data->regmap, temp_reg[ix], &regval);
-+	if (err)
-+		return err;
-+
-+	return sysfs_emit(buf, "%d\n", sign_extend32(regval, 7) * 1000);
- }
- 
- static ssize_t temp_store(struct device *dev, struct device_attribute *attr,
- 			  const char *buf, size_t count)
- {
- 	struct amc6821_data *data = dev_get_drvdata(dev);
--	struct i2c_client *client = data->client;
- 	int ix = to_sensor_dev_attr(attr)->index;
- 	long val;
-+	int err;
- 
- 	int ret = kstrtol(buf, 10, &val);
- 	if (ret)
- 		return ret;
- 	val = clamp_val(val / 1000, -128, 127);
- 
--	mutex_lock(&data->update_lock);
--	data->temp[ix] = val;
--	if (i2c_smbus_write_byte_data(client, temp_reg[ix], data->temp[ix])) {
--		dev_err(&client->dev, "Register write error, aborting.\n");
--		count = -EIO;
--	}
--	mutex_unlock(&data->update_lock);
-+	err = regmap_write(data->regmap, temp_reg[ix], val);
-+	if (err)
-+		return err;
-+
- 	return count;
- }
- 
- static ssize_t temp_alarm_show(struct device *dev,
- 			       struct device_attribute *devattr, char *buf)
- {
--	struct amc6821_data *data = amc6821_update_device(dev);
-+	struct amc6821_data *data = dev_get_drvdata(dev);
- 	int ix = to_sensor_dev_attr(devattr)->index;
--	u8 flag;
-+	u32 regval, mask, reg;
-+	int err;
- 
- 	switch (ix) {
- 	case IDX_TEMP1_MIN:
--		flag = data->stat1 & AMC6821_STAT1_LTL;
-+		reg = AMC6821_REG_STAT1;
-+		mask = AMC6821_STAT1_LTL;
- 		break;
- 	case IDX_TEMP1_MAX:
--		flag = data->stat1 & AMC6821_STAT1_LTH;
-+		reg = AMC6821_REG_STAT1;
-+		mask = AMC6821_STAT1_LTH;
- 		break;
- 	case IDX_TEMP1_CRIT:
--		flag = data->stat2 & AMC6821_STAT2_LTC;
-+		reg = AMC6821_REG_STAT2;
-+		mask = AMC6821_STAT2_LTC;
- 		break;
- 	case IDX_TEMP2_MIN:
--		flag = data->stat1 & AMC6821_STAT1_RTL;
-+		reg = AMC6821_REG_STAT1;
-+		mask = AMC6821_STAT1_RTL;
- 		break;
- 	case IDX_TEMP2_MAX:
--		flag = data->stat1 & AMC6821_STAT1_RTH;
-+		reg = AMC6821_REG_STAT1;
-+		mask = AMC6821_STAT1_RTH;
- 		break;
- 	case IDX_TEMP2_CRIT:
--		flag = data->stat2 & AMC6821_STAT2_RTC;
-+		reg = AMC6821_REG_STAT2;
-+		mask = AMC6821_STAT2_RTC;
- 		break;
- 	default:
--		dev_dbg(dev, "Unknown attr->index (%d).\n", ix);
- 		return -EINVAL;
- 	}
--	if (flag)
--		return sprintf(buf, "1");
--	else
--		return sprintf(buf, "0");
-+	err = regmap_read(data->regmap, reg, &regval);
-+	if (err)
-+		return err;
-+	return sysfs_emit(buf, "%d\n", !!(regval & mask));
- }
- 
- static ssize_t temp2_fault_show(struct device *dev,
- 				struct device_attribute *devattr, char *buf)
- {
--	struct amc6821_data *data = amc6821_update_device(dev);
--	if (data->stat1 & AMC6821_STAT1_RTF)
--		return sprintf(buf, "1");
--	else
--		return sprintf(buf, "0");
-+	struct amc6821_data *data = dev_get_drvdata(dev);
-+	u32 regval;
-+	int err;
-+
-+	err = regmap_read(data->regmap, AMC6821_REG_STAT1, &regval);
-+	if (err)
-+		return err;
-+
-+	return sysfs_emit(buf, "%d\n", !!(regval & AMC6821_STAT1_RTF));
- }
- 
- static ssize_t pwm1_show(struct device *dev, struct device_attribute *devattr,
- 			 char *buf)
- {
--	struct amc6821_data *data = amc6821_update_device(dev);
--	return sprintf(buf, "%d\n", data->pwm1);
-+	struct amc6821_data *data = dev_get_drvdata(dev);
-+	u32 regval;
-+	int err;
-+
-+	err = regmap_read(data->regmap, AMC6821_REG_DCY, &regval);
-+	if (err)
-+		return err;
-+
-+	return sysfs_emit(buf, "%d\n", regval);
- }
- 
- static ssize_t pwm1_store(struct device *dev,
-@@ -355,24 +299,43 @@ static ssize_t pwm1_store(struct device *dev,
- 			  size_t count)
- {
- 	struct amc6821_data *data = dev_get_drvdata(dev);
--	struct i2c_client *client = data->client;
- 	u8 val;
- 	int ret = kstrtou8(buf, 10, &val);
- 	if (ret)
- 		return ret;
- 
--	mutex_lock(&data->update_lock);
--	data->pwm1 = val;
--	i2c_smbus_write_byte_data(client, AMC6821_REG_DCY, data->pwm1);
--	mutex_unlock(&data->update_lock);
-+	ret = regmap_write(data->regmap, AMC6821_REG_DCY, val);
-+	if (ret)
-+		return ret;
-+
- 	return count;
- }
- 
- static ssize_t pwm1_enable_show(struct device *dev,
- 				struct device_attribute *devattr, char *buf)
- {
--	struct amc6821_data *data = amc6821_update_device(dev);
--	return sprintf(buf, "%d\n", data->pwm1_enable);
-+	struct amc6821_data *data = dev_get_drvdata(dev);
-+	int err;
-+	u32 val;
-+
-+	err = regmap_read(data->regmap, AMC6821_REG_CONF1, &val);
-+	if (err)
-+		return err;
-+	switch (val & (AMC6821_CONF1_FDRC0 | AMC6821_CONF1_FDRC1)) {
-+	case 0:
-+		val = 1;	/* manual */
-+		break;
-+	case AMC6821_CONF1_FDRC0:
-+		val = 4;	/* target rpm (fan1_target) controlled */
-+		break;
-+	case AMC6821_CONF1_FDRC1:
-+		val = 2;	/* remote temp controlled */
-+		break;
-+	default:
-+		val = 3;	/* max(local, remote) temp controlled */
-+		break;
-+	}
-+	return sysfs_emit(buf, "%d\n", val);
- }
- 
- static ssize_t pwm1_enable_store(struct device *dev,
-@@ -380,49 +343,37 @@ static ssize_t pwm1_enable_store(struct device *dev,
- 				 const char *buf, size_t count)
- {
- 	struct amc6821_data *data = dev_get_drvdata(dev);
--	struct i2c_client *client = data->client;
- 	long val;
--	int config = kstrtol(buf, 10, &val);
--	if (config)
--		return config;
-+	u32 mode;
-+	int err;
- 
--	mutex_lock(&data->update_lock);
--	config = i2c_smbus_read_byte_data(client, AMC6821_REG_CONF1);
--	if (config < 0) {
--			dev_err(&client->dev,
--			"Error reading configuration register, aborting.\n");
--			count = config;
--			goto unlock;
--	}
-+	err = kstrtol(buf, 10, &val);
-+	if (err)
-+		return err;
- 
- 	switch (val) {
- 	case 1:
--		config &= ~AMC6821_CONF1_FDRC0;
--		config &= ~AMC6821_CONF1_FDRC1;
-+		mode = 0;
- 		break;
- 	case 2:
--		config &= ~AMC6821_CONF1_FDRC0;
--		config |= AMC6821_CONF1_FDRC1;
-+		mode = AMC6821_CONF1_FDRC1;
- 		break;
- 	case 3:
--		config |= AMC6821_CONF1_FDRC0;
--		config |= AMC6821_CONF1_FDRC1;
-+		mode = AMC6821_CONF1_FDRC0 | AMC6821_CONF1_FDRC1;
- 		break;
- 	case 4:
--		config |= AMC6821_CONF1_FDRC0;
--		config &= ~AMC6821_CONF1_FDRC1;
-+		mode = AMC6821_CONF1_FDRC0;
- 		break;
- 	default:
--		count = -EINVAL;
--		goto unlock;
-+		return -EINVAL;
- 	}
--	if (i2c_smbus_write_byte_data(client, AMC6821_REG_CONF1, config)) {
--			dev_err(&client->dev,
--			"Configuration register write error, aborting.\n");
--			count = -EIO;
--	}
--unlock:
--	mutex_unlock(&data->update_lock);
-+
-+	err = regmap_update_bits(data->regmap, AMC6821_REG_CONF1,
-+				 AMC6821_CONF1_FDRC0 | AMC6821_CONF1_FDRC1,
-+				 mode);
-+	if (err)
-+		return err;
-+
- 	return count;
- }
- 
-@@ -430,26 +381,45 @@ static ssize_t pwm1_auto_channels_temp_show(struct device *dev,
- 					    struct device_attribute *devattr,
- 					    char *buf)
- {
--	struct amc6821_data *data = amc6821_update_device(dev);
--	return sprintf(buf, "%d\n", data->pwm1_auto_channels_temp);
-+	struct amc6821_data *data = dev_get_drvdata(dev);
-+	u32 val;
-+	int err;
-+
-+	err = regmap_read(data->regmap, AMC6821_REG_CONF1, &val);
-+	if (err)
-+		return err;
-+	switch (val & (AMC6821_CONF1_FDRC0 | AMC6821_CONF1_FDRC1)) {
-+	case 0:
-+	case AMC6821_CONF1_FDRC0:
-+		val = 0;	/* manual or target rpm controlled */
-+		break;
-+	case AMC6821_CONF1_FDRC1:
-+		val = 2;	/* remote temp controlled */
-+		break;
-+	default:
-+		val = 3;	/* max(local, remote) temp controlled */
-+		break;
-+	}
-+
-+	return sysfs_emit(buf, "%d\n", val);
- }
- 
- static ssize_t temp_auto_point_temp_show(struct device *dev,
- 					 struct device_attribute *devattr,
- 					 char *buf)
- {
-+	struct amc6821_data *data = dev_get_drvdata(dev);
- 	int ix = to_sensor_dev_attr_2(devattr)->index;
- 	int nr = to_sensor_dev_attr_2(devattr)->nr;
--	struct amc6821_data *data = amc6821_update_device(dev);
-+
- 	switch (nr) {
- 	case 1:
--		return sprintf(buf, "%d\n",
--			data->temp1_auto_point_temp[ix] * 1000);
-+		return sysfs_emit(buf, "%d\n",
-+				  data->temp1_auto_point_temp[ix] * 1000);
- 	case 2:
--		return sprintf(buf, "%d\n",
--			data->temp2_auto_point_temp[ix] * 1000);
-+		return sysfs_emit(buf, "%d\n",
-+				  data->temp2_auto_point_temp[ix] * 1000);
- 	default:
--		dev_dbg(dev, "Unknown attr->nr (%d).\n", nr);
- 		return -EINVAL;
- 	}
- }
-@@ -458,44 +428,59 @@ static ssize_t pwm1_auto_point_pwm_show(struct device *dev,
- 					struct device_attribute *devattr,
- 					char *buf)
- {
-+	struct amc6821_data *data = dev_get_drvdata(dev);
- 	int ix = to_sensor_dev_attr(devattr)->index;
--	struct amc6821_data *data = amc6821_update_device(dev);
--	return sprintf(buf, "%d\n", data->pwm1_auto_point_pwm[ix]);
-+	u32 val;
-+	int err;
-+
-+	switch (ix) {
-+	case 0:
-+		val = 0;
-+		break;
-+	case 1:
-+		err = regmap_read(data->regmap, AMC6821_REG_DCY_LOW_TEMP, &val);
-+		if (err)
-+			return err;
-+		break;
-+	default:
-+		val = 255;
-+		break;
-+	}
-+	return sysfs_emit(buf, "%d\n", val);
- }
- 
--static inline ssize_t set_slope_register(struct i2c_client *client,
--		u8 reg,
--		u8 dpwm,
--		u8 *ptemp)
-+static inline int set_slope_register(struct regmap *regmap,
-+				     u8 reg, u8 *ptemp)
- {
--	int dt;
--	u8 tmp;
-+	u8 tmp, dpwm;
-+	int err, dt;
-+	u32 pwm;
- 
--	dt = ptemp[2]-ptemp[1];
-+	err = regmap_read(regmap, AMC6821_REG_DCY_LOW_TEMP, &pwm);
-+	if (err)
-+		return err;
-+
-+	dpwm = 255 - pwm;
-+
-+	dt = ptemp[2] - ptemp[1];
- 	for (tmp = 4; tmp > 0; tmp--) {
- 		if (dt * (0x20 >> tmp) >= dpwm)
- 			break;
- 	}
- 	tmp |= (ptemp[1] & 0x7C) << 1;
--	if (i2c_smbus_write_byte_data(client,
--			reg, tmp)) {
--		dev_err(&client->dev, "Register write error, aborting.\n");
--		return -EIO;
--	}
--	return 0;
-+	return regmap_write(regmap, reg, tmp);
- }
- 
- static ssize_t temp_auto_point_temp_store(struct device *dev,
- 					  struct device_attribute *attr,
- 					  const char *buf, size_t count)
- {
--	struct amc6821_data *data = amc6821_update_device(dev);
--	struct i2c_client *client = data->client;
-+	struct amc6821_data *data = dev_get_drvdata(dev);
- 	int ix = to_sensor_dev_attr_2(attr)->index;
- 	int nr = to_sensor_dev_attr_2(attr)->nr;
-+	struct regmap *regmap = data->regmap;
- 	u8 *ptemp;
- 	u8 reg;
--	int dpwm;
- 	long val;
- 	int ret = kstrtol(buf, 10, &val);
- 	if (ret)
-@@ -511,12 +496,10 @@ static ssize_t temp_auto_point_temp_store(struct device *dev,
- 		reg = AMC6821_REG_RTEMP_FAN_CTRL;
- 		break;
- 	default:
--		dev_dbg(dev, "Unknown attr->nr (%d).\n", nr);
- 		return -EINVAL;
- 	}
- 
- 	mutex_lock(&data->update_lock);
--	data->valid = false;
- 
- 	switch (ix) {
- 	case 0:
-@@ -525,13 +508,9 @@ static ssize_t temp_auto_point_temp_store(struct device *dev,
- 		ptemp[0] = clamp_val(ptemp[0], 0,
- 				     data->temp2_auto_point_temp[1]);
- 		ptemp[0] = clamp_val(ptemp[0], 0, 63);
--		if (i2c_smbus_write_byte_data(
--					client,
--					AMC6821_REG_PSV_TEMP,
--					ptemp[0])) {
--				dev_err(&client->dev,
--					"Register write error, aborting.\n");
--				count = -EIO;
-+		if (regmap_write(regmap, AMC6821_REG_PSV_TEMP, ptemp[0])) {
-+			dev_err(dev, "Register write error, aborting.\n");
-+			count = -EIO;
- 		}
- 		goto EXIT;
- 	case 1:
-@@ -543,12 +522,10 @@ static ssize_t temp_auto_point_temp_store(struct device *dev,
- 		ptemp[2] = clamp_val(val / 1000, ptemp[1]+1, 255);
- 		break;
- 	default:
--		dev_dbg(dev, "Unknown attr->index (%d).\n", ix);
- 		count = -EINVAL;
- 		goto EXIT;
- 	}
--	dpwm = data->pwm1_auto_point_pwm[2] - data->pwm1_auto_point_pwm[1];
--	if (set_slope_register(client, reg, dpwm, ptemp))
-+	if (set_slope_register(regmap, reg, ptemp))
- 		count = -EIO;
- 
- EXIT:
-@@ -561,10 +538,11 @@ static ssize_t pwm1_auto_point_pwm_store(struct device *dev,
- 					 const char *buf, size_t count)
- {
- 	struct amc6821_data *data = dev_get_drvdata(dev);
--	struct i2c_client *client = data->client;
--	int dpwm;
-+	struct regmap *regmap = data->regmap;
- 	u8 val;
+-	err = regmap_read(data->regmap, AMC6821_REG_STAT1, &regval);
+-	if (err)
+-		return err;
+-
+-	return sysfs_emit(buf, "%d\n", !!(regval & AMC6821_STAT1_RTF));
+-}
+-
+-static ssize_t pwm1_show(struct device *dev, struct device_attribute *devattr,
+-			 char *buf)
+-{
+-	struct amc6821_data *data = dev_get_drvdata(dev);
+-	u32 regval;
+-	int err;
+-
+-	err = regmap_read(data->regmap, AMC6821_REG_DCY, &regval);
+-	if (err)
+-		return err;
+-
+-	return sysfs_emit(buf, "%d\n", regval);
+-}
+-
+-static ssize_t pwm1_store(struct device *dev,
+-			  struct device_attribute *devattr, const char *buf,
+-			  size_t count)
+-{
+-	struct amc6821_data *data = dev_get_drvdata(dev);
+-	u8 val;
 -	int ret = kstrtou8(buf, 10, &val);
-+	int ret;
-+
-+	ret = kstrtou8(buf, 10, &val);
- 	if (ret)
- 		return ret;
- 
-@@ -572,27 +550,24 @@ static ssize_t pwm1_auto_point_pwm_store(struct device *dev,
- 		return -EINVAL;
- 
- 	mutex_lock(&data->update_lock);
--	data->pwm1_auto_point_pwm[1] = val;
--	if (i2c_smbus_write_byte_data(client, AMC6821_REG_DCY_LOW_TEMP,
--			data->pwm1_auto_point_pwm[1])) {
--		dev_err(&client->dev, "Register write error, aborting.\n");
--		count = -EIO;
--		goto EXIT;
-+	ret = regmap_write(regmap, AMC6821_REG_DCY_LOW_TEMP, val);
-+	if (ret)
-+		goto unlock;
-+
-+	ret = set_slope_register(regmap, AMC6821_REG_LTEMP_FAN_CTRL,
-+				 data->temp1_auto_point_temp);
-+	if (ret) {
-+		count = ret;
-+		goto unlock;
- 	}
--	dpwm = data->pwm1_auto_point_pwm[2] - data->pwm1_auto_point_pwm[1];
--	if (set_slope_register(client, AMC6821_REG_LTEMP_FAN_CTRL, dpwm,
--			data->temp1_auto_point_temp)) {
--		count = -EIO;
--		goto EXIT;
--	}
--	if (set_slope_register(client, AMC6821_REG_RTEMP_FAN_CTRL, dpwm,
--			data->temp2_auto_point_temp)) {
--		count = -EIO;
--		goto EXIT;
-+	ret = set_slope_register(regmap, AMC6821_REG_RTEMP_FAN_CTRL,
-+				 data->temp2_auto_point_temp);
-+	if (ret) {
-+		count = ret;
-+		goto unlock;
- 	}
- 
--EXIT:
--	data->valid = false;
-+unlock:
- 	mutex_unlock(&data->update_lock);
- 	return count;
- }
-@@ -600,63 +575,76 @@ static ssize_t pwm1_auto_point_pwm_store(struct device *dev,
- static ssize_t fan_show(struct device *dev, struct device_attribute *devattr,
- 			char *buf)
- {
--	struct amc6821_data *data = amc6821_update_device(dev);
-+	struct amc6821_data *data = dev_get_drvdata(dev);
- 	int ix = to_sensor_dev_attr(devattr)->index;
--	if (0 == data->fan[ix])
--		return sprintf(buf, "0");
--	return sprintf(buf, "%d\n", (int)(6000000 / data->fan[ix]));
-+	u32 regval;
-+	u8 regs[2];
-+	int err;
-+
-+	err = regmap_bulk_read(data->regmap, fan_reg_low[ix], regs, 2);
-+	if (err)
-+		return err;
-+	regval = (regs[1] << 8) | regs[0];
-+
-+	return sysfs_emit(buf, "%d\n", 6000000 / (regval ? : 1));
- }
- 
- static ssize_t fan1_fault_show(struct device *dev,
- 			       struct device_attribute *devattr, char *buf)
- {
--	struct amc6821_data *data = amc6821_update_device(dev);
--	if (data->stat1 & AMC6821_STAT1_FANS)
--		return sprintf(buf, "1");
--	else
--		return sprintf(buf, "0");
-+	struct amc6821_data *data = dev_get_drvdata(dev);
-+	u32 regval;
-+	int err;
-+
-+	err = regmap_read(data->regmap, AMC6821_REG_STAT1, &regval);
-+	if (err)
-+		return err;
-+
-+	return sysfs_emit(buf, "%d\n", !!(regval & AMC6821_STAT1_FANS));
- }
- 
- static ssize_t fan_store(struct device *dev, struct device_attribute *attr,
- 			 const char *buf, size_t count)
- {
- 	struct amc6821_data *data = dev_get_drvdata(dev);
--	struct i2c_client *client = data->client;
--	unsigned long val;
- 	int ix = to_sensor_dev_attr(attr)->index;
--	int ret = kstrtoul(buf, 10, &val);
 -	if (ret)
 -		return ret;
-+	unsigned long val;
-+	u8 regs[2];
-+	int err;
-+
-+	err = kstrtoul(buf, 10, &val);
+-
+-	ret = regmap_write(data->regmap, AMC6821_REG_DCY, val);
+-	if (ret)
+-		return ret;
+-
+-	return count;
+-}
+-
+-static ssize_t pwm1_enable_show(struct device *dev,
+-				struct device_attribute *devattr, char *buf)
+-{
+-	struct amc6821_data *data = dev_get_drvdata(dev);
+-	int err;
+-	u32 val;
+-
+-	err = regmap_read(data->regmap, AMC6821_REG_CONF1, &val);
+-	if (err)
+-		return err;
+-	switch (val & (AMC6821_CONF1_FDRC0 | AMC6821_CONF1_FDRC1)) {
+-	case 0:
+-		val = 1;	/* manual */
++	switch (type) {
++	case hwmon_temp:
++		switch (attr) {
++		case hwmon_temp_min_alarm:
++			reg = AMC6821_REG_STAT1;
++			mask = channel ? AMC6821_STAT1_RTL : AMC6821_STAT1_LTL;
++			break;
++		case hwmon_temp_max_alarm:
++			reg = AMC6821_REG_STAT1;
++			mask = channel ? AMC6821_STAT1_RTH : AMC6821_STAT1_LTH;
++			break;
++		case hwmon_temp_crit_alarm:
++			reg = AMC6821_REG_STAT2;
++			mask = channel ? AMC6821_STAT2_RTC : AMC6821_STAT2_LTC;
++			break;
++		case hwmon_temp_fault:
++			reg = AMC6821_REG_STAT1;
++			mask = AMC6821_STAT1_RTF;
++			break;
++		default:
++			return -EOPNOTSUPP;
++		}
+ 		break;
+-	case AMC6821_CONF1_FDRC0:
+-		val = 4;	/* target rpm (fan1_target) controlled */
+-		break;
+-	case AMC6821_CONF1_FDRC1:
+-		val = 2;	/* remote temp controlled */
++	case hwmon_fan:
++		switch (attr) {
++		case hwmon_fan_fault:
++			reg = AMC6821_REG_STAT1;
++			mask = AMC6821_STAT1_FANS;
++			break;
++		default:
++			return -EOPNOTSUPP;
++		}
+ 		break;
+ 	default:
+-		val = 3;	/* max(local, remote) temp controlled */
+-		break;
++		return -EOPNOTSUPP;
+ 	}
+-	return sysfs_emit(buf, "%d\n", val);
++	err = regmap_read(regmap, reg, &regval);
 +	if (err)
 +		return err;
++	*val = !!(regval & mask);
++	return 0;
+ }
  
- 	/* Minimum and target fan speed must not be unlimited (0) */
- 	if ((ix == IDX_FAN1_MIN || ix == IDX_FAN1_TARGET) && !val)
- 		return -EINVAL;
+-static ssize_t pwm1_enable_store(struct device *dev,
+-				 struct device_attribute *attr,
+-				 const char *buf, size_t count)
++static int amc6821_temp_read(struct device *dev, u32 attr, int channel, long *val)
+ {
+ 	struct amc6821_data *data = dev_get_drvdata(dev);
+-	long val;
++
++	switch (attr) {
++	case hwmon_temp_input:
++	case hwmon_temp_min:
++	case hwmon_temp_max:
++	case hwmon_temp_crit:
++		return amc6821_temp_read_values(data->regmap, attr, channel, val);
++	case hwmon_temp_min_alarm:
++	case hwmon_temp_max_alarm:
++	case hwmon_temp_crit_alarm:
++	case hwmon_temp_fault:
++		return amc6821_read_alarms(data->regmap, hwmon_temp, attr, channel, val);
++	default:
++		return -EOPNOTSUPP;
++	}
++}
++
++static int amc6821_temp_write(struct device *dev, u32 attr, int channel, long val)
++{
++	struct amc6821_data *data = dev_get_drvdata(dev);
++	int reg;
++
++	val = DIV_ROUND_CLOSEST(clamp_val(val, -128000, 127000), 1000);
++
++	switch (attr) {
++	case hwmon_temp_min:
++		reg = channel ? AMC6821_REG_RTEMP_LIMIT_MIN : AMC6821_REG_LTEMP_LIMIT_MIN;
++		break;
++	case hwmon_temp_max:
++		reg = channel ? AMC6821_REG_RTEMP_LIMIT_MAX : AMC6821_REG_LTEMP_LIMIT_MAX;
++		break;
++	case hwmon_temp_crit:
++		reg = channel ? AMC6821_REG_RTEMP_CRIT : AMC6821_REG_LTEMP_CRIT;
++		break;
++	default:
++		return -EOPNOTSUPP;
++	}
++	return regmap_write(data->regmap, reg, val);
++}
++
++static int amc6821_pwm_read(struct device *dev, u32 attr, long *val)
++{
++	struct amc6821_data *data = dev_get_drvdata(dev);
++	struct regmap *regmap = data->regmap;
++	u32 regval;
++	int err;
++
++	switch (attr) {
++	case hwmon_pwm_enable:
++		err = regmap_read(regmap, AMC6821_REG_CONF1, &regval);
++		if (err)
++			return err;
++		switch (regval & (AMC6821_CONF1_FDRC0 | AMC6821_CONF1_FDRC1)) {
++		case 0:
++			*val = 1;	/* manual */
++			break;
++		case AMC6821_CONF1_FDRC0:
++			*val = 4;	/* target rpm (fan1_target) controlled */
++			break;
++		case AMC6821_CONF1_FDRC1:
++			*val = 2;	/* remote temp controlled */
++			break;
++		default:
++			*val = 3;	/* max(local, remote) temp controlled */
++			break;
++		}
++		return 0;
++	case hwmon_pwm_auto_channels_temp:
++		err = regmap_read(regmap, AMC6821_REG_CONF1, &regval);
++		if (err)
++			return err;
++		switch (regval & (AMC6821_CONF1_FDRC0 | AMC6821_CONF1_FDRC1)) {
++		case 0:
++		case AMC6821_CONF1_FDRC0:
++			*val = 0;	/* manual or target rpm controlled */
++			break;
++		case AMC6821_CONF1_FDRC1:
++			*val = 2;	/* remote temp controlled */
++			break;
++		default:
++			*val = 3;	/* max(local, remote) temp controlled */
++			break;
++		}
++		return 0;
++	case hwmon_pwm_input:
++		err = regmap_read(regmap, AMC6821_REG_DCY, &regval);
++		if (err)
++			return err;
++		*val = regval;
++		return 0;
++	default:
++		return -EOPNOTSUPP;
++	}
++}
++
++static int amc6821_pwm_write(struct device *dev, u32 attr, long val)
++{
++	struct amc6821_data *data = dev_get_drvdata(dev);
++	struct regmap *regmap = data->regmap;
+ 	u32 mode;
+-	int err;
  
- 	val = val > 0 ? 6000000 / clamp_val(val, 1, 6000000) : 0;
-+	val = clamp_val(val, 0, 0xFFFF);
+-	err = kstrtol(buf, 10, &val);
+-	if (err)
+-		return err;
+-
+-	switch (val) {
+-	case 1:
+-		mode = 0;
+-		break;
+-	case 2:
+-		mode = AMC6821_CONF1_FDRC1;
+-		break;
+-	case 3:
+-		mode = AMC6821_CONF1_FDRC0 | AMC6821_CONF1_FDRC1;
+-		break;
+-	case 4:
+-		mode = AMC6821_CONF1_FDRC0;
+-		break;
++	switch (attr) {
++	case hwmon_pwm_enable:
++		switch (val) {
++		case 1:
++			mode = 0;
++			break;
++		case 2:
++			mode = AMC6821_CONF1_FDRC1;
++			break;
++		case 3:
++			mode = AMC6821_CONF1_FDRC0 | AMC6821_CONF1_FDRC1;
++			break;
++		case 4:
++			mode = AMC6821_CONF1_FDRC0;
++			break;
++		default:
++			return -EINVAL;
++		}
++		return regmap_update_bits(regmap, AMC6821_REG_CONF1,
++					  AMC6821_CONF1_FDRC0 | AMC6821_CONF1_FDRC1,
++					  mode);
++	case hwmon_pwm_input:
++		if (val < 0 || val > 255)
++			return -EINVAL;
++		return regmap_write(regmap, AMC6821_REG_DCY, val);
+ 	default:
+-		return -EINVAL;
++		return -EOPNOTSUPP;
+ 	}
+-
+-	err = regmap_update_bits(data->regmap, AMC6821_REG_CONF1,
+-				 AMC6821_CONF1_FDRC0 | AMC6821_CONF1_FDRC1,
+-				 mode);
+-	if (err)
+-		return err;
+-
+-	return count;
+ }
+ 
+-static ssize_t pwm1_auto_channels_temp_show(struct device *dev,
+-					    struct device_attribute *devattr,
+-					    char *buf)
++static int amc6821_fan_read_rpm(struct regmap *regmap, u32 attr, long *val)
+ {
+-	struct amc6821_data *data = dev_get_drvdata(dev);
+-	u32 val;
+-	int err;
++	int reg, err;
++	u8 regs[2];
++	u32 regval;
+ 
+-	err = regmap_read(data->regmap, AMC6821_REG_CONF1, &val);
+-	if (err)
+-		return err;
+-	switch (val & (AMC6821_CONF1_FDRC0 | AMC6821_CONF1_FDRC1)) {
+-	case 0:
+-	case AMC6821_CONF1_FDRC0:
+-		val = 0;	/* manual or target rpm controlled */
++	switch (attr) {
++	case hwmon_fan_input:
++		reg = AMC6821_REG_TDATA_LOW;
+ 		break;
+-	case AMC6821_CONF1_FDRC1:
+-		val = 2;	/* remote temp controlled */
++	case hwmon_fan_min:
++		reg = AMC6821_REG_TACH_LLIMITL;
++		break;
++	case hwmon_fan_max:
++		reg = AMC6821_REG_TACH_HLIMITL;
++		break;
++	case hwmon_fan_target:
++		reg = AMC6821_REG_TACH_SETTINGL;
+ 		break;
+ 	default:
+-		val = 3;	/* max(local, remote) temp controlled */
+-		break;
++		return -EOPNOTSUPP;
+ 	}
+ 
+-	return sysfs_emit(buf, "%d\n", val);
++	err = regmap_bulk_read(regmap, reg, regs, 2);
++	if (err)
++		return err;
++
++	regval = (regs[1] << 8) | regs[0];
++	*val = regval ? 6000000 / regval : 0;
++
++	return 0;
++}
++
++static int amc6821_fan_read(struct device *dev, u32 attr, long *val)
++{
++	struct amc6821_data *data = dev_get_drvdata(dev);
++	struct regmap *regmap = data->regmap;
++	u32 regval;
++	int err;
++
++	switch (attr) {
++	case hwmon_fan_input:
++	case hwmon_fan_min:
++	case hwmon_fan_max:
++	case hwmon_fan_target:
++		return amc6821_fan_read_rpm(regmap, attr, val);
++	case hwmon_fan_fault:
++		return amc6821_read_alarms(regmap, hwmon_fan, attr, 0, val);
++	case hwmon_fan_pulses:
++		err = regmap_read(regmap, AMC6821_REG_CONF4, &regval);
++		if (err)
++			return err;
++		*val = (regval & AMC6821_CONF4_PSPR) ? 4 : 2;
++		return 0;
++	default:
++		return -EOPNOTSUPP;
++	}
++}
++
++static int amc6821_fan_write(struct device *dev, u32 attr, long val)
++{
++	struct amc6821_data *data = dev_get_drvdata(dev);
++	struct regmap *regmap = data->regmap;
++	u8 regs[2];
++	int reg;
++
++	if (attr == hwmon_fan_pulses) {
++		if (val != 2 && val != 4)
++			return -EINVAL;
++		return regmap_update_bits(regmap, AMC6821_REG_CONF4,
++					 AMC6821_CONF4_PSPR,
++					 val == 4 ? AMC6821_CONF4_PSPR : 0);
++	}
++
++	if (val < 0)
++		return -EINVAL;
++
++	switch (attr) {
++	case hwmon_fan_min:
++		if (!val)	/* no unlimited minimum speed */
++			return -EINVAL;
++		reg = AMC6821_REG_TACH_LLIMITL;
++		break;
++	case hwmon_fan_max:
++		reg = AMC6821_REG_TACH_HLIMITL;
++		break;
++	case hwmon_fan_target:
++		if (!val)	/* no unlimited target speed */
++			return -EINVAL;
++		reg = AMC6821_REG_TACH_SETTINGL;
++		break;
++	default:
++		return -EOPNOTSUPP;
++	}
++
++	val = val ? 6000000 / clamp_val(val, 1, 6000000) : 0;
++	val = clamp_val(val, 0, 0xffff);
 +
 +	regs[0] = val & 0xff;
 +	regs[1] = val >> 8;
 +
-+	err = regmap_bulk_write(data->regmap, fan_reg_low[ix], regs, 2);
-+	if (err)
-+		return err;
++	return regmap_bulk_write(data->regmap, reg, regs, 2);
+ }
  
--	mutex_lock(&data->update_lock);
--	data->fan[ix] = clamp_val(val, 0, 0xFFFF);
--	if (i2c_smbus_write_byte_data(client, fan_reg_low[ix],
--			data->fan[ix] & 0xFF)) {
--		dev_err(&client->dev, "Register write error, aborting.\n");
--		count = -EIO;
--		goto EXIT;
--	}
--	if (i2c_smbus_write_byte_data(client,
--			fan_reg_hi[ix], data->fan[ix] >> 8)) {
--		dev_err(&client->dev, "Register write error, aborting.\n");
--		count = -EIO;
--	}
--EXIT:
--	mutex_unlock(&data->update_lock);
+ static ssize_t temp_auto_point_temp_show(struct device *dev,
+@@ -572,134 +653,9 @@ static ssize_t pwm1_auto_point_pwm_store(struct device *dev,
  	return count;
  }
  
- static ssize_t fan1_pulses_show(struct device *dev,
- 				struct device_attribute *devattr, char *buf)
- {
--	struct amc6821_data *data = amc6821_update_device(dev);
--	return sprintf(buf, "%d\n", data->fan1_pulses);
-+	struct amc6821_data *data = dev_get_drvdata(dev);
-+	u32 regval;
-+	int err;
-+
-+	err = regmap_read(data->regmap, AMC6821_REG_CONF4, &regval);
-+	if (err)
-+		return err;
-+
-+	return sysfs_emit(buf, "%d\n", (regval & AMC6821_CONF4_PSPR) ? 4 : 2);
- }
+-static ssize_t fan_show(struct device *dev, struct device_attribute *devattr,
+-			char *buf)
+-{
+-	struct amc6821_data *data = dev_get_drvdata(dev);
+-	int ix = to_sensor_dev_attr(devattr)->index;
+-	u32 regval;
+-	u8 regs[2];
+-	int err;
+-
+-	err = regmap_bulk_read(data->regmap, fan_reg_low[ix], regs, 2);
+-	if (err)
+-		return err;
+-	regval = (regs[1] << 8) | regs[0];
+-
+-	return sysfs_emit(buf, "%d\n", 6000000 / (regval ? : 1));
+-}
+-
+-static ssize_t fan1_fault_show(struct device *dev,
+-			       struct device_attribute *devattr, char *buf)
+-{
+-	struct amc6821_data *data = dev_get_drvdata(dev);
+-	u32 regval;
+-	int err;
+-
+-	err = regmap_read(data->regmap, AMC6821_REG_STAT1, &regval);
+-	if (err)
+-		return err;
+-
+-	return sysfs_emit(buf, "%d\n", !!(regval & AMC6821_STAT1_FANS));
+-}
+-
+-static ssize_t fan_store(struct device *dev, struct device_attribute *attr,
+-			 const char *buf, size_t count)
+-{
+-	struct amc6821_data *data = dev_get_drvdata(dev);
+-	int ix = to_sensor_dev_attr(attr)->index;
+-	unsigned long val;
+-	u8 regs[2];
+-	int err;
+-
+-	err = kstrtoul(buf, 10, &val);
+-	if (err)
+-		return err;
+-
+-	/* Minimum and target fan speed must not be unlimited (0) */
+-	if ((ix == IDX_FAN1_MIN || ix == IDX_FAN1_TARGET) && !val)
+-		return -EINVAL;
+-
+-	val = val > 0 ? 6000000 / clamp_val(val, 1, 6000000) : 0;
+-	val = clamp_val(val, 0, 0xFFFF);
+-
+-	regs[0] = val & 0xff;
+-	regs[1] = val >> 8;
+-
+-	err = regmap_bulk_write(data->regmap, fan_reg_low[ix], regs, 2);
+-	if (err)
+-		return err;
+-
+-	return count;
+-}
+-
+-static ssize_t fan1_pulses_show(struct device *dev,
+-				struct device_attribute *devattr, char *buf)
+-{
+-	struct amc6821_data *data = dev_get_drvdata(dev);
+-	u32 regval;
+-	int err;
+-
+-	err = regmap_read(data->regmap, AMC6821_REG_CONF4, &regval);
+-	if (err)
+-		return err;
+-
+-	return sysfs_emit(buf, "%d\n", (regval & AMC6821_CONF4_PSPR) ? 4 : 2);
+-}
+-
+-static ssize_t fan1_pulses_store(struct device *dev,
+-				 struct device_attribute *attr, const char *buf,
+-				 size_t count)
+-{
+-	struct amc6821_data *data = dev_get_drvdata(dev);
+-	long val;
+-	int err;
+-
+-	err = kstrtol(buf, 10, &val);
+-	if (err)
+-		return err;
+-
+-	if (val != 2 && val != 4)
+-		return -EINVAL;
+-
+-	err = regmap_update_bits(data->regmap, AMC6821_REG_CONF4,
+-				 AMC6821_CONF4_PSPR,
+-				 val == 4 ? AMC6821_CONF4_PSPR : 0);
+-	if (err)
+-		return err;
+-
+-	return count;
+-}
+-
+-static SENSOR_DEVICE_ATTR_RO(temp1_input, temp, IDX_TEMP1_INPUT);
+-static SENSOR_DEVICE_ATTR_RW(temp1_min, temp, IDX_TEMP1_MIN);
+-static SENSOR_DEVICE_ATTR_RW(temp1_max, temp, IDX_TEMP1_MAX);
+-static SENSOR_DEVICE_ATTR_RW(temp1_crit, temp, IDX_TEMP1_CRIT);
+-static SENSOR_DEVICE_ATTR_RO(temp1_min_alarm, temp_alarm, IDX_TEMP1_MIN);
+-static SENSOR_DEVICE_ATTR_RO(temp1_max_alarm, temp_alarm, IDX_TEMP1_MAX);
+-static SENSOR_DEVICE_ATTR_RO(temp1_crit_alarm, temp_alarm, IDX_TEMP1_CRIT);
+-static SENSOR_DEVICE_ATTR_RO(temp2_input, temp, IDX_TEMP2_INPUT);
+-static SENSOR_DEVICE_ATTR_RW(temp2_min, temp, IDX_TEMP2_MIN);
+-static SENSOR_DEVICE_ATTR_RW(temp2_max, temp, IDX_TEMP2_MAX);
+-static SENSOR_DEVICE_ATTR_RW(temp2_crit, temp, IDX_TEMP2_CRIT);
+-static SENSOR_DEVICE_ATTR_RO(temp2_fault, temp2_fault, 0);
+-static SENSOR_DEVICE_ATTR_RO(temp2_min_alarm, temp_alarm, IDX_TEMP2_MIN);
+-static SENSOR_DEVICE_ATTR_RO(temp2_max_alarm, temp_alarm, IDX_TEMP2_MAX);
+-static SENSOR_DEVICE_ATTR_RO(temp2_crit_alarm, temp_alarm, IDX_TEMP2_CRIT);
+-static SENSOR_DEVICE_ATTR_RO(fan1_input, fan, IDX_FAN1_INPUT);
+-static SENSOR_DEVICE_ATTR_RW(fan1_min, fan, IDX_FAN1_MIN);
+-static SENSOR_DEVICE_ATTR_RW(fan1_max, fan, IDX_FAN1_MAX);
+-static SENSOR_DEVICE_ATTR_RW(fan1_target, fan, IDX_FAN1_TARGET);
+-static SENSOR_DEVICE_ATTR_RO(fan1_fault, fan1_fault, 0);
+-static SENSOR_DEVICE_ATTR_RW(fan1_pulses, fan1_pulses, 0);
+-
+-static SENSOR_DEVICE_ATTR_RW(pwm1, pwm1, 0);
+-static SENSOR_DEVICE_ATTR_RW(pwm1_enable, pwm1_enable, 0);
+ static SENSOR_DEVICE_ATTR_RO(pwm1_auto_point1_pwm, pwm1_auto_point_pwm, 0);
+ static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point2_pwm, pwm1_auto_point_pwm, 1);
+ static SENSOR_DEVICE_ATTR_RO(pwm1_auto_point3_pwm, pwm1_auto_point_pwm, 2);
+-static SENSOR_DEVICE_ATTR_RO(pwm1_auto_channels_temp, pwm1_auto_channels_temp,
+-			     0);
+ static SENSOR_DEVICE_ATTR_2_RO(temp1_auto_point1_temp, temp_auto_point_temp,
+ 			       1, 0);
+ static SENSOR_DEVICE_ATTR_2_RW(temp1_auto_point2_temp, temp_auto_point_temp,
+@@ -715,30 +671,6 @@ static SENSOR_DEVICE_ATTR_2_RW(temp2_auto_point3_temp, temp_auto_point_temp,
+ 			       2, 2);
  
- static ssize_t fan1_pulses_store(struct device *dev,
-@@ -664,40 +652,22 @@ static ssize_t fan1_pulses_store(struct device *dev,
- 				 size_t count)
- {
- 	struct amc6821_data *data = dev_get_drvdata(dev);
--	struct i2c_client *client = data->client;
- 	long val;
--	int config = kstrtol(buf, 10, &val);
--	if (config)
--		return config;
-+	int err;
-+
-+	err = kstrtol(buf, 10, &val);
-+	if (err)
-+		return err;
-+
-+	if (val != 2 && val != 4)
-+		return -EINVAL;
-+
-+	err = regmap_update_bits(data->regmap, AMC6821_REG_CONF4,
-+				 AMC6821_CONF4_PSPR,
-+				 val == 4 ? AMC6821_CONF4_PSPR : 0);
-+	if (err)
-+		return err;
+ static struct attribute *amc6821_attrs[] = {
+-	&sensor_dev_attr_temp1_input.dev_attr.attr,
+-	&sensor_dev_attr_temp1_min.dev_attr.attr,
+-	&sensor_dev_attr_temp1_max.dev_attr.attr,
+-	&sensor_dev_attr_temp1_crit.dev_attr.attr,
+-	&sensor_dev_attr_temp1_min_alarm.dev_attr.attr,
+-	&sensor_dev_attr_temp1_max_alarm.dev_attr.attr,
+-	&sensor_dev_attr_temp1_crit_alarm.dev_attr.attr,
+-	&sensor_dev_attr_temp2_input.dev_attr.attr,
+-	&sensor_dev_attr_temp2_min.dev_attr.attr,
+-	&sensor_dev_attr_temp2_max.dev_attr.attr,
+-	&sensor_dev_attr_temp2_crit.dev_attr.attr,
+-	&sensor_dev_attr_temp2_min_alarm.dev_attr.attr,
+-	&sensor_dev_attr_temp2_max_alarm.dev_attr.attr,
+-	&sensor_dev_attr_temp2_crit_alarm.dev_attr.attr,
+-	&sensor_dev_attr_temp2_fault.dev_attr.attr,
+-	&sensor_dev_attr_fan1_input.dev_attr.attr,
+-	&sensor_dev_attr_fan1_min.dev_attr.attr,
+-	&sensor_dev_attr_fan1_max.dev_attr.attr,
+-	&sensor_dev_attr_fan1_target.dev_attr.attr,
+-	&sensor_dev_attr_fan1_fault.dev_attr.attr,
+-	&sensor_dev_attr_fan1_pulses.dev_attr.attr,
+-	&sensor_dev_attr_pwm1.dev_attr.attr,
+-	&sensor_dev_attr_pwm1_enable.dev_attr.attr,
+-	&sensor_dev_attr_pwm1_auto_channels_temp.dev_attr.attr,
+ 	&sensor_dev_attr_pwm1_auto_point1_pwm.dev_attr.attr,
+ 	&sensor_dev_attr_pwm1_auto_point2_pwm.dev_attr.attr,
+ 	&sensor_dev_attr_pwm1_auto_point3_pwm.dev_attr.attr,
+@@ -750,13 +682,117 @@ static struct attribute *amc6821_attrs[] = {
+ 	&sensor_dev_attr_temp2_auto_point3_temp.dev_attr.attr,
+ 	NULL
+ };
+-
+ ATTRIBUTE_GROUPS(amc6821);
  
--	mutex_lock(&data->update_lock);
--	config = i2c_smbus_read_byte_data(client, AMC6821_REG_CONF4);
--	if (config < 0) {
--		dev_err(&client->dev,
--			"Error reading configuration register, aborting.\n");
--		count = config;
--		goto EXIT;
--	}
--	switch (val) {
--	case 2:
--		config &= ~AMC6821_CONF4_PSPR;
--		data->fan1_pulses = 2;
--		break;
--	case 4:
--		config |= AMC6821_CONF4_PSPR;
--		data->fan1_pulses = 4;
--		break;
--	default:
--		count = -EINVAL;
--		goto EXIT;
--	}
--	if (i2c_smbus_write_byte_data(client, AMC6821_REG_CONF4, config)) {
--		dev_err(&client->dev,
--			"Configuration register write error, aborting.\n");
--		count = -EIO;
--	}
--EXIT:
--	mutex_unlock(&data->update_lock);
- 	return count;
- }
- 
-@@ -829,110 +799,83 @@ static int amc6821_detect(
- 	return 0;
- }
- 
--static int amc6821_init_client(struct i2c_client *client)
-+static int amc6821_init_client(struct amc6821_data *data)
- {
--	int config;
--	int err = -EIO;
-+	struct regmap *regmap = data->regmap;
-+	int err;
-+
-+	err = amc6821_init_auto_point_data(data);
-+	if (err)
-+		return err;
- 
- 	if (init) {
--		config = i2c_smbus_read_byte_data(client, AMC6821_REG_CONF4);
--
--		if (config < 0) {
--				dev_err(&client->dev,
--			"Error reading configuration register, aborting.\n");
--				return err;
--		}
--
--		config |= AMC6821_CONF4_MODE;
--
--		if (i2c_smbus_write_byte_data(client, AMC6821_REG_CONF4,
--				config)) {
--			dev_err(&client->dev,
--			"Configuration register write error, aborting.\n");
-+		err = regmap_set_bits(regmap, AMC6821_REG_CONF4, AMC6821_CONF4_MODE);
-+		if (err)
- 			return err;
--		}
--
--		config = i2c_smbus_read_byte_data(client, AMC6821_REG_CONF3);
--
--		if (config < 0) {
--			dev_err(&client->dev,
--			"Error reading configuration register, aborting.\n");
-+		err = regmap_clear_bits(regmap, AMC6821_REG_CONF3, AMC6821_CONF3_THERM_FAN_EN);
-+		if (err)
- 			return err;
--		}
--
--		dev_info(&client->dev, "Revision %d\n", config & 0x0f);
--
--		config &= ~AMC6821_CONF3_THERM_FAN_EN;
--
--		if (i2c_smbus_write_byte_data(client, AMC6821_REG_CONF3,
--				config)) {
--			dev_err(&client->dev,
--			"Configuration register write error, aborting.\n");
-+		err = regmap_clear_bits(regmap, AMC6821_REG_CONF2,
-+					AMC6821_CONF2_RTFIE |
-+					AMC6821_CONF2_LTOIE |
-+					AMC6821_CONF2_RTOIE);
-+		if (err)
- 			return err;
--		}
- 
--		config = i2c_smbus_read_byte_data(client, AMC6821_REG_CONF2);
--
--		if (config < 0) {
--			dev_err(&client->dev,
--			"Error reading configuration register, aborting.\n");
-+		err = regmap_update_bits(regmap, AMC6821_REG_CONF1,
-+					 AMC6821_CONF1_THERMOVIE | AMC6821_CONF1_FANIE |
-+					 AMC6821_CONF1_START | AMC6821_CONF1_PWMINV,
-+					 AMC6821_CONF1_START |
-+					 (pwminv ? AMC6821_CONF1_PWMINV : 0));
-+		if (err)
- 			return err;
--		}
--
--		config &= ~AMC6821_CONF2_RTFIE;
--		config &= ~AMC6821_CONF2_LTOIE;
--		config &= ~AMC6821_CONF2_RTOIE;
--		if (i2c_smbus_write_byte_data(client,
--				AMC6821_REG_CONF2, config)) {
--			dev_err(&client->dev,
--			"Configuration register write error, aborting.\n");
--			return err;
--		}
--
--		config = i2c_smbus_read_byte_data(client, AMC6821_REG_CONF1);
--
--		if (config < 0) {
--			dev_err(&client->dev,
--			"Error reading configuration register, aborting.\n");
--			return err;
--		}
--
--		config &= ~AMC6821_CONF1_THERMOVIE;
--		config &= ~AMC6821_CONF1_FANIE;
--		config |= AMC6821_CONF1_START;
--		if (pwminv)
--			config |= AMC6821_CONF1_PWMINV;
--		else
--			config &= ~AMC6821_CONF1_PWMINV;
--
--		if (i2c_smbus_write_byte_data(
--				client, AMC6821_REG_CONF1, config)) {
--			dev_err(&client->dev,
--			"Configuration register write error, aborting.\n");
--			return err;
--		}
- 	}
- 	return 0;
- }
- 
-+static bool amc6821_volatile_reg(struct device *dev, unsigned int reg)
++static int amc6821_read(struct device *dev, enum hwmon_sensor_types type,
++			u32 attr, int channel, long *val)
 +{
-+	switch (reg) {
-+	case AMC6821_REG_STAT1:
-+	case AMC6821_REG_STAT2:
-+	case AMC6821_REG_TEMP_LO:
-+	case AMC6821_REG_TDATA_LOW:
-+	case AMC6821_REG_LTEMP_HI:
-+	case AMC6821_REG_RTEMP_HI:
-+	case AMC6821_REG_TDATA_HI:
-+		return true;
++	switch (type) {
++	case hwmon_temp:
++		return amc6821_temp_read(dev, attr, channel, val);
++	case hwmon_fan:
++		return amc6821_fan_read(dev, attr, val);
++	case hwmon_pwm:
++		return amc6821_pwm_read(dev, attr, val);
 +	default:
-+		return false;
++		return -EOPNOTSUPP;
 +	}
 +}
 +
-+static const struct regmap_config amc6821_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.max_register = AMC6821_REG_CONF3,
-+	.volatile_reg = amc6821_volatile_reg,
-+	.cache_type = REGCACHE_MAPLE,
++static int amc6821_write(struct device *dev, enum hwmon_sensor_types type,
++			 u32 attr, int channel, long val)
++{
++	switch (type) {
++	case hwmon_temp:
++		return amc6821_temp_write(dev, attr, channel, val);
++	case hwmon_fan:
++		return amc6821_fan_write(dev, attr, val);
++	case hwmon_pwm:
++		return amc6821_pwm_write(dev, attr, val);
++	default:
++		return -EOPNOTSUPP;
++	}
++}
++
++static umode_t amc6821_is_visible(const void *data,
++				  enum hwmon_sensor_types type,
++				  u32 attr, int channel)
++{
++	switch (type) {
++	case hwmon_temp:
++		switch (attr) {
++		case hwmon_temp_input:
++		case hwmon_temp_min_alarm:
++		case hwmon_temp_max_alarm:
++		case hwmon_temp_crit_alarm:
++		case hwmon_temp_fault:
++			return 0444;
++		case hwmon_temp_min:
++		case hwmon_temp_max:
++		case hwmon_temp_crit:
++			return 0644;
++		default:
++			return 0;
++		}
++	case hwmon_fan:
++		switch (attr) {
++		case hwmon_fan_input:
++		case hwmon_fan_fault:
++			return 0444;
++		case hwmon_fan_pulses:
++		case hwmon_fan_min:
++		case hwmon_fan_max:
++		case hwmon_fan_target:
++			return 0644;
++		default:
++			return 0;
++		}
++	case hwmon_pwm:
++		switch (attr) {
++		case hwmon_pwm_enable:
++		case hwmon_pwm_input:
++			return 0644;
++		case hwmon_pwm_auto_channels_temp:
++			return 0444;
++		default:
++			return 0;
++		}
++	default:
++		return 0;
++	}
++}
++
++static const struct hwmon_channel_info * const amc6821_info[] = {
++	HWMON_CHANNEL_INFO(temp,
++			   HWMON_T_INPUT | HWMON_T_MIN | HWMON_T_MAX |
++			   HWMON_T_CRIT | HWMON_T_MIN_ALARM |
++			   HWMON_T_MAX_ALARM | HWMON_T_CRIT_ALARM,
++			   HWMON_T_INPUT | HWMON_T_MIN | HWMON_T_MAX |
++			   HWMON_T_CRIT | HWMON_T_MIN_ALARM |
++			   HWMON_T_MAX_ALARM | HWMON_T_CRIT_ALARM |
++			   HWMON_T_FAULT),
++	HWMON_CHANNEL_INFO(fan,
++			   HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_MAX |
++			   HWMON_F_TARGET | HWMON_F_PULSES | HWMON_F_FAULT),
++	HWMON_CHANNEL_INFO(pwm,
++			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE |
++			   HWMON_PWM_AUTO_CHANNELS_TEMP),
++	NULL
 +};
 +
- static int amc6821_probe(struct i2c_client *client)
++static const struct hwmon_ops amc6821_hwmon_ops = {
++	.is_visible = amc6821_is_visible,
++	.read = amc6821_read,
++	.write = amc6821_write,
++};
++
++static const struct hwmon_chip_info amc6821_chip_info = {
++	.ops = &amc6821_hwmon_ops,
++	.info = amc6821_info,
++};
++
+ /* Return 0 if detection is successful, -ENODEV otherwise */
+-static int amc6821_detect(
+-		struct i2c_client *client,
+-		struct i2c_board_info *info)
++static int amc6821_detect(struct i2c_client *client, struct i2c_board_info *info)
  {
- 	struct device *dev = &client->dev;
- 	struct amc6821_data *data;
- 	struct device *hwmon_dev;
-+	struct regmap *regmap;
- 	int err;
- 
- 	data = devm_kzalloc(dev, sizeof(struct amc6821_data), GFP_KERNEL);
- 	if (!data)
- 		return -ENOMEM;
- 
--	data->client = client;
--	mutex_init(&data->update_lock);
-+	regmap = devm_regmap_init_i2c(client, &amc6821_regmap_config);
-+	if (IS_ERR(regmap))
-+		return dev_err_probe(dev, PTR_ERR(regmap),
-+				     "Failed to initialize regmap\n");
-+	data->regmap = regmap;
- 
--	/*
--	 * Initialize the amc6821 chip
--	 */
--	err = amc6821_init_client(client);
-+	err = amc6821_init_client(data);
+ 	struct i2c_adapter *adapter = client->adapter;
+ 	int address = client->addr;
+@@ -879,9 +915,9 @@ static int amc6821_probe(struct i2c_client *client)
  	if (err)
  		return err;
+ 
+-	hwmon_dev = devm_hwmon_device_register_with_groups(dev, client->name,
+-							   data,
+-							   amc6821_groups);
++	hwmon_dev = devm_hwmon_device_register_with_info(dev, client->name,
++							 data, &amc6821_chip_info,
++							 amc6821_groups);
+ 	return PTR_ERR_OR_ZERO(hwmon_dev);
+ }
  
 -- 
 2.39.2
