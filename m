@@ -1,379 +1,121 @@
-Return-Path: <linux-kernel+bounces-235847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3811991DA69
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:49:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 846E491D9F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 10:32:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EFD61F22C0A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:49:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B912281F6F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43AA13A868;
-	Mon,  1 Jul 2024 08:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="xYarrNHl"
-Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E1784A35;
-	Mon,  1 Jul 2024 08:47:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682F880BF8;
+	Mon,  1 Jul 2024 08:31:57 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E25002C6BB
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 08:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719823638; cv=none; b=C0z8kolXY4nbAPJqQJVixdx5ZRcbgmV+gVYwYv+XJh+pDaHno4cQeXp0DUMIK3xCoGmjcBXS1vYhrOVxe/6B1BY4GKZKnhg388vviZ+SjL8WpODWesNOsIiy+VqJkfHYc5eJHeA/wHi4cwK39GqHLG2McHNGHCpPMayIgPIjfso=
+	t=1719822717; cv=none; b=ucUm+rDcM1gt55QnXyvlaOEj/mdjYrnIPEC139TqNOKokslFkOX1pwYkyjDTH4fJMVhqH4sxX7wMShhQnVJHlRFlPqTVtCN622Ln6MBUmkhCa6Q+FbhVNJ6McH6Fg5RspuUqj2hzLMOI4Cf/0CT6MaJyu5kDGozAhtDvxVb1q9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719823638; c=relaxed/simple;
-	bh=R4cC6D6gJjIIjiiIyqNIOYQ/ggPlCuWGQTFAtL7UPJA=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nRXvBbN79H3rP41+MljyLH5CqwtPPZBfAj4JfNEFMtS+lJ89jnIrrsGb+1Ta3RoVi2BGexW80QfCsUpq3wMbwWHwkm6lamFfXI7LtqbR9N7JaCP5W1DBja6Vr0jYsMrfJ5WR6I7bDGTjVmCLL/8cutRXUB5SMZ8ZDsvpoEiyXP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=xYarrNHl; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
-	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46186JRS005324;
-	Mon, 1 Jul 2024 04:46:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=8EGak
-	9Sb3hUw1x7TOM6eobyfu+QTbee4xTN4X/gkEoI=; b=xYarrNHl/agz1vq85WgtP
-	EWS3C1hTIOtHZMbadXRWdoBwJoWBMMZW6EtAKLFUlEWmcMUr3xNGNr0Ovrd5ZecF
-	Lfeh50HLDwei5H3YFXLj+TVsGHhQ/r7vuzzQc7v4bzk/RlbGVkW0io9ICer/ltTU
-	PeJp0LIWIAhi2FLNZ/3Fxv73IPAVdnY6Zx4aqVc7kFc9noS/axwAMhfHrI6/kI8Z
-	pjPYGJoCu4tGmrgUxw3/LOM4sxgrXWDUs1SZVMi7XB4+ni5P2fxHNe34AMK5MPWG
-	uOe3SSODzFq2NN/t8enxjpY1EfxBWxa/Gqm9h6EPIw+3vy1xdntT7H3t5k498/o7
-	Q==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 403m2ch2qq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 01 Jul 2024 04:46:58 -0400 (EDT)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 4618kvqV037415
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 1 Jul 2024 04:46:57 -0400
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Mon, 1 Jul 2024
- 04:46:56 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Mon, 1 Jul 2024 04:46:56 -0400
-Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.159])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 4618k0LB004394;
-	Mon, 1 Jul 2024 04:46:43 -0400
-From: Antoniu Miclaus <antoniu.miclaus@analog.com>
-To: Ramona Gradinariu <ramona.gradinariu@analog.com>,
-        Antoniu Miclaus
-	<antoniu.miclaus@analog.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael
- Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron
-	<jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet
-	<corbet@lwn.net>,
-        Matti Vaittinen <mazziesaccount@gmail.com>,
-        Jun Yan
-	<jerrysteve1101@gmail.com>,
-        Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>,
-        Mehdi Djait <mehdi.djait.k@gmail.com>,
-        Mario Limonciello <mario.limonciello@amd.com>,
-        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>
-Subject: [PATCH v4 3/3] docs: iio: add documentation for adxl380 driver
-Date: Mon, 1 Jul 2024 11:30:44 +0300
-Message-ID: <20240701083138.15891-3-antoniu.miclaus@analog.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240701083138.15891-1-antoniu.miclaus@analog.com>
-References: <20240701083138.15891-1-antoniu.miclaus@analog.com>
+	s=arc-20240116; t=1719822717; c=relaxed/simple;
+	bh=9fMBl3IiR9pAJFqq60EQ0JGDl+5vTAPK9ubUsBFBqfs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hDtYkSxBgEpGlIkUQA4ODQic4Tvvnz6/c27EfiGBCOpBLut7k1eZjJsTQ8d14iTscmRWLTgu2uQqZXZJd/cV1wJQu43LdeXa7b+2AyllgoAu9/PdJv0NsmbAG3rYteAC/WMrNGv0ShkGVfEQY+DAYHsoHTPw8O/69su0noc9gPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 34DBF339;
+	Mon,  1 Jul 2024 01:32:19 -0700 (PDT)
+Received: from [10.57.72.41] (unknown [10.57.72.41])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9F4103F766;
+	Mon,  1 Jul 2024 01:31:52 -0700 (PDT)
+Message-ID: <13dcf4be-8c5f-4697-adc1-b68c3da82d78@arm.com>
+Date: Mon, 1 Jul 2024 09:31:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-ORIG-GUID: A5atxJNWU2CMRD3fNtkso-yhHiRK6YKB
-X-Proofpoint-GUID: A5atxJNWU2CMRD3fNtkso-yhHiRK6YKB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-01_07,2024-06-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- spamscore=0 impostorscore=0 adultscore=0 bulkscore=0 lowpriorityscore=0
- malwarescore=0 clxscore=1011 mlxscore=0 suspectscore=0 mlxlogscore=999
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407010067
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] mm: add docs for per-order mTHP split counters
+Content-Language: en-GB
+To: Lance Yang <ioworker0@gmail.com>, akpm@linux-foundation.org
+Cc: dj456119@gmail.com, 21cnbao@gmail.com, david@redhat.com,
+ shy828301@gmail.com, ziy@nvidia.com, libang.li@antgroup.com,
+ baolin.wang@linux.alibaba.com, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, Mingzhe Yang <mingzhe.yang@ly.com>
+References: <20240628130750.73097-1-ioworker0@gmail.com>
+ <20240628130750.73097-3-ioworker0@gmail.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20240628130750.73097-3-ioworker0@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add documentation for adxl380 driver which describes the driver
-device files and shows how the user may use the ABI for various
-scenarios (configuration, measurement, etc.).
+On 28/06/2024 14:07, Lance Yang wrote:
+> This commit introduces documentation for mTHP split counters in
+> transhuge.rst.
+> 
+> Signed-off-by: Mingzhe Yang <mingzhe.yang@ly.com>
+> Signed-off-by: Lance Yang <ioworker0@gmail.com>
+> ---
+>  Documentation/admin-guide/mm/transhuge.rst | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+> index 1f72b00af5d3..709fe10b60f4 100644
+> --- a/Documentation/admin-guide/mm/transhuge.rst
+> +++ b/Documentation/admin-guide/mm/transhuge.rst
+> @@ -514,6 +514,22 @@ file_fallback_charge
+>  	falls back to using small pages even though the allocation was
+>  	successful.
 
-Signed-off-by: Ramona Gradinariu <ramona.gradinariu@analog.com>
-Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
----
-changes in v4:
- - drop marketing from description.
- Documentation/iio/adxl380.rst | 233 ++++++++++++++++++++++++++++++++++
- Documentation/iio/index.rst   |   1 +
- 2 files changed, 234 insertions(+)
- create mode 100644 Documentation/iio/adxl380.rst
 
-diff --git a/Documentation/iio/adxl380.rst b/Documentation/iio/adxl380.rst
-new file mode 100644
-index 000000000000..376dee5fe1dd
---- /dev/null
-+++ b/Documentation/iio/adxl380.rst
-@@ -0,0 +1,233 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+===============
-+ADXL380 driver
-+===============
-+
-+This driver supports Analog Device's ADXL380/382 on SPI/I2C bus.
-+
-+1. Supported devices
-+====================
-+
-+* `ADXL380 <https://www.analog.com/ADXL380>`_
-+* `ADXL382 <https://www.analog.com/ADXL382>`_
-+
-+The ADXL380/ADXL382 is a low noise density, low power, 3-axis accelerometer with
-+selectable measurement ranges. The ADXL380 supports the ±4 g, ±8 g, and ±16 g
-+ranges, and the ADXL382 supports ±15 g, ±30 g, and ±60 g ranges.
-+
-+2. Device attributes
-+====================
-+
-+Accelerometer measurements are always provided.
-+
-+Temperature data are also provided. This data can be used to monitor the
-+internal system temperature or to improve the temperature stability of the
-+device via calibration.
-+
-+Each IIO device, has a device folder under ``/sys/bus/iio/devices/iio:deviceX``,
-+where X is the IIO index of the device. Under these folders reside a set of
-+device files, depending on the characteristics and features of the hardware
-+device in questions. These files are consistently generalized and documented in
-+the IIO ABI documentation.
-+
-+The following tables show the adxl380 related device files, found in the
-+specific device folder path ``/sys/bus/iio/devices/iio:deviceX``.
-+
-++---------------------------------------------------+----------------------------------------------------------+
-+| 3-Axis Accelerometer related device files         | Description                                              |
-++---------------------------------------------------+----------------------------------------------------------+
-+| in_accel_scale                                    | Scale for the accelerometer channels.                    |
-++---------------------------------------------------+----------------------------------------------------------+
-+| in_accel_filter_high_pass_3db_frequency           | Low pass filter bandwidth.                               |
-++---------------------------------------------------+----------------------------------------------------------+
-+| in_accel_filter_high_pass_3db_frequency_available | Available low pass filter bandwidth configurations.      |
-++---------------------------------------------------+----------------------------------------------------------+
-+| in_accel_filter_low_pass_3db_frequency            | High pass filter bandwidth.                              |
-++---------------------------------------------------+----------------------------------------------------------+
-+| in_accel_filter_low_pass_3db_frequency_available  | Available high pass filter bandwidth configurations.     |
-++---------------------------------------------------+----------------------------------------------------------+
-+| in_accel_x_calibbias                              | Calibration offset for the X-axis accelerometer channel. |
-++---------------------------------------------------+----------------------------------------------------------+
-+| in_accel_x_raw                                    | Raw X-axis accelerometer channel value.                  |
-++---------------------------------------------------+----------------------------------------------------------+
-+| in_accel_y_calibbias                              | y-axis acceleration offset correction                    |
-++---------------------------------------------------+----------------------------------------------------------+
-+| in_accel_y_raw                                    | Raw Y-axis accelerometer channel value.                  |
-++---------------------------------------------------+----------------------------------------------------------+
-+| in_accel_z_calibbias                              | Calibration offset for the Z-axis accelerometer channel. |
-++---------------------------------------------------+----------------------------------------------------------+
-+| in_accel_z_raw                                    | Raw Z-axis accelerometer channel value.                  |
-++---------------------------------------------------+----------------------------------------------------------+
-+
-++----------------------------------+--------------------------------------------+
-+| Temperature sensor related files | Description                                |
-++----------------------------------+--------------------------------------------+
-+| in_temp_raw                      | Raw temperature channel value.             |
-++----------------------------------+--------------------------------------------+
-+| in_temp_offset                   | Offset for the temperature sensor channel. |
-++----------------------------------+--------------------------------------------+
-+| in_temp_scale                    | Scale for the temperature sensor channel.  |
-++----------------------------------+--------------------------------------------+
-+
-++------------------------------+----------------------------------------------+
-+| Miscellaneous device files   | Description                                  |
-++------------------------------+----------------------------------------------+
-+| name                         | Name of the IIO device.                      |
-++------------------------------+----------------------------------------------+
-+| sampling_frequency           | Currently selected sample rate.              |
-++------------------------------+----------------------------------------------+
-+| sampling_frequency_available | Available sampling frequency configurations. |
-++------------------------------+----------------------------------------------+
-+
-+Channels processed values
-+-------------------------
-+
-+A channel value can be read from its _raw attribute. The value returned is the
-+raw value as reported by the devices. To get the processed value of the channel,
-+apply the following formula:
-+
-+.. code-block:: bash
-+
-+        processed value = (_raw + _offset) * _scale
-+
-+Where _offset and _scale are device attributes. If no _offset attribute is
-+present, simply assume its value is 0.
-+
-+The adis16475 driver offers data for 2 types of channels, the table below shows
-+the measurement units for the processed value, which are defined by the IIO
-+framework:
-+
-++-------------------------------------+---------------------------+
-+| Channel type                        | Measurement unit          |
-++-------------------------------------+---------------------------+
-+| Acceleration on X, Y, and Z axis    | Meters per Second squared |
-++-------------------------------------+---------------------------+
-+| Temperature                         | Millidegrees Celsius      |
-++-------------------------------------+---------------------------+
-+
-+Usage examples
-+--------------
-+
-+Show device name:
-+
-+.. code-block:: bash
-+
-+	root:/sys/bus/iio/devices/iio:device0> cat name
-+        adxl382
-+
-+Show accelerometer channels value:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_x_raw
-+        -1771
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_y_raw
-+        282
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_z_raw
-+        -1523
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_scale
-+        0.004903325
-+
-+- X-axis acceleration = in_accel_x_raw * in_accel_scale = −8.683788575 m/s^2
-+- Y-axis acceleration = in_accel_y_raw * in_accel_scale = 1.38273765 m/s^2
-+- Z-axis acceleration = in_accel_z_raw * in_accel_scale = -7.467763975 m/s^2
-+
-+Set calibration offset for accelerometer channels:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_x_calibbias
-+        0
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo 50 > in_accel_x_calibbias
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_x_calibbias
-+        50
-+
-+Set sampling frequency:
-+
-+.. code-block:: bash
-+
-+	root:/sys/bus/iio/devices/iio:device0> cat sampling_frequency
-+        16000
-+        root:/sys/bus/iio/devices/iio:device0> cat sampling_frequency_available
-+        16000 32000 64000
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo 32000 > sampling_frequency
-+        root:/sys/bus/iio/devices/iio:device0> cat sampling_frequency
-+        32000
-+
-+Set low pass filter bandwidth for accelerometer channels:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_filter_low_pass_3db_frequency
-+        32000
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_filter_low_pass_3db_frequency_available
-+        32000 8000 4000 2000
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo 2000 > in_accel_filter_low_pass_3db_frequency
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_filter_low_pass_3db_frequency
-+        2000
-+
-+3. Device buffers
-+=================
-+
-+This driver supports IIO buffers.
-+
-+All devices support retrieving the raw acceleration and temperature measurements
-+using buffers.
-+
-+Usage examples
-+--------------
-+
-+Select channels for buffer read:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo 1 > scan_elements/in_accel_x_en
-+        root:/sys/bus/iio/devices/iio:device0> echo 1 > scan_elements/in_accel_y_en
-+        root:/sys/bus/iio/devices/iio:device0> echo 1 > scan_elements/in_accel_z_en
-+        root:/sys/bus/iio/devices/iio:device0> echo 1 > scan_elements/in_temp_en
-+
-+Set the number of samples to be stored in the buffer:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo 10 > buffer/length
-+
-+Enable buffer readings:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo 1 > buffer/enable
-+
-+Obtain buffered data:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> hexdump -C /dev/iio\:device0
-+        ...
-+        002bc300  f7 e7 00 a8 fb c5 24 80  f7 e7 01 04 fb d6 24 80  |......$.......$.|
-+        002bc310  f7 f9 00 ab fb dc 24 80  f7 c3 00 b8 fb e2 24 80  |......$.......$.|
-+        002bc320  f7 fb 00 bb fb d1 24 80  f7 b1 00 5f fb d1 24 80  |......$...._..$.|
-+        002bc330  f7 c4 00 c6 fb a6 24 80  f7 a6 00 68 fb f1 24 80  |......$....h..$.|
-+        002bc340  f7 b8 00 a3 fb e7 24 80  f7 9a 00 b1 fb af 24 80  |......$.......$.|
-+        002bc350  f7 b1 00 67 fb ee 24 80  f7 96 00 be fb 92 24 80  |...g..$.......$.|
-+        002bc360  f7 ab 00 7a fc 1b 24 80  f7 b6 00 ae fb 76 24 80  |...z..$......v$.|
-+        002bc370  f7 ce 00 a3 fc 02 24 80  f7 c0 00 be fb 8b 24 80  |......$.......$.|
-+        002bc380  f7 c3 00 93 fb d0 24 80  f7 ce 00 d8 fb c8 24 80  |......$.......$.|
-+        002bc390  f7 bd 00 c0 fb 82 24 80  f8 00 00 e8 fb db 24 80  |......$.......$.|
-+        002bc3a0  f7 d8 00 d3 fb b4 24 80  f8 0b 00 e5 fb c3 24 80  |......$.......$.|
-+        002bc3b0  f7 eb 00 c8 fb 92 24 80  f7 e7 00 ea fb cb 24 80  |......$.......$.|
-+        002bc3c0  f7 fd 00 cb fb 94 24 80  f7 e3 00 f2 fb b8 24 80  |......$.......$.|
-+        ...
-+
-+See ``Documentation/iio/iio_devbuf.rst`` for more information about how buffered
-+data is structured.
-+
-+4. IIO Interfacing Tools
-+========================
-+
-+See ``Documentation/iio/iio_tools.rst`` for the description of the available IIO
-+interfacing tools.
-diff --git a/Documentation/iio/index.rst b/Documentation/iio/index.rst
-index 4c13bfa2865c..1ce5b24d40aa 100644
---- a/Documentation/iio/index.rst
-+++ b/Documentation/iio/index.rst
-@@ -20,5 +20,6 @@ Industrial I/O Kernel Drivers
-    ad7944
-    adis16475
-    adis16480
-+   adxl380
-    bno055
-    ep93xx_adc
--- 
-2.45.2
+I note at the top of this section there is a note:
+
+Monitoring usage
+================
+
+.. note::
+   Currently the below counters only record events relating to
+   PMD-sized THP. Events relating to other THP sizes are not included.
+
+Which is out of date, now that we support mTHP stats. Perhaps it should be removed?
+
+>  
+> +split
+> +	is incremented every time a huge page is successfully split into
+> +	base pages. This can happen for a variety of reasons but a common
+> +	reason is that a huge page is old and is being reclaimed.
+> +	This action implies splitting any block mappings into PTEs.
+
+Now that I'm reading this, I'm reminded that Yang Shi suggested at LSFMM that a
+potential aid so solving the swap-out fragmentation problem is to split high
+orders to lower (but not 0) orders. I don't know if we would take that route,
+but in principle it sounds like splitting mTHP to smaller mTHP might be
+something we want some day. I wonder if we should spec this counter to also
+include splits to smaller orders and not just splits to base pages?
+
+Actually looking at the code, I think split_huge_page_to_list_to_order(order>0)
+would already increment this counter without actually splitting to base pages.
+So the documantation should probably just reflect that.
+
+> +
+> +split_failed
+> +	is incremented if kernel fails to split huge
+> +	page. This can happen if the page was pinned by somebody.
+> +
+> +split_deferred
+> +	is incremented when a huge page is put onto split
+> +	queue. This happens when a huge page is partially unmapped and
+> +	splitting it would free up some memory. Pages on split queue are
+> +	going to be split under memory pressure.
+> +
+>  As the system ages, allocating huge pages may be expensive as the
+>  system uses memory compaction to copy data around memory to free a
+>  huge page for use. There are some counters in ``/proc/vmstat`` to help
 
 
