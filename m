@@ -1,229 +1,301 @@
-Return-Path: <linux-kernel+bounces-236607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8E6191E4BF
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:04:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D088B91E4C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 18:05:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB8181C2178B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:04:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 003511C2184E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B43516D328;
-	Mon,  1 Jul 2024 16:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31AD16D4D4;
+	Mon,  1 Jul 2024 16:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Eg9bJCUC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="OzvLiVbu"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4171EB2A;
-	Mon,  1 Jul 2024 16:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719849866; cv=fail; b=Yv/BBOvuUTfT26S93oPc9lobb4v4wJLbxMHq5i5uTqG2KZSccYBc5dzJnVGs3Nk8mrhI32mPd+izQl5ACjY1DMmoJfesHnTr8zcb2oBMdhEwn/PdL8HMU8yZ4oPg8T5R1ZzEnJC0YpIiotBWYwGdaD1scMlDj77L9qJ4pyuSp2I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719849866; c=relaxed/simple;
-	bh=dEmZYM17WHQ01N6xxpEJOPKMqnRFqiBs2QlnfcDREgY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=GSP9CDMnq20wP4eN7/mzeehxTg/8isFqPYdJCq13IEyhL0KLA3197EG/tbooyBDYCBAmsODfPqIA3WsT1baFJu5L2V+GTfd/wARIY1NyviLWUlgG1p+EH49/ugfIdENsGhqlHHcJc0ObQaowX+e2MWlSzp4sCap2rX2RzHcGmtU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Eg9bJCUC; arc=fail smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719849864; x=1751385864;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=dEmZYM17WHQ01N6xxpEJOPKMqnRFqiBs2QlnfcDREgY=;
-  b=Eg9bJCUC/hz2l7fxCMXM7wyhkO/0rpO/fjpeBVz0l0OaIqKbZGssS8+G
-   YEfQNTeTkvShSOnKTOp8fhAvMPvTDqOLnj9IIIaBeeHoWYB5EtQwjp2t5
-   CMHXx2YMhZ4jGZNtlJoNxuCjFI7LustUzEji1mxaQmwP6y40WMCUGI4mH
-   qS5cQs2RRLS32+FRqhDy06WCsdOtENRYO8tINzMOHja/faxi/Pnwh1p0B
-   hkg60Mzi/B3p0JJeE0s+Dd/LfH1pRgwvSNbwOUNhviuQybjaQEOSICprb
-   r74jldhYuu2EI/AfyocYvSOwtcBAzt/XACCP6Je0w0K8vOkLpR2ZOxoj/
-   w==;
-X-CSE-ConnectionGUID: d812AsSXTDugQpXevPvnGg==
-X-CSE-MsgGUID: PxykerDNTXy3dUB+7wsrLw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="20743233"
-X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
-   d="scan'208";a="20743233"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 09:04:08 -0700
-X-CSE-ConnectionGUID: JFXZCDGRQVWdHWC2/r14qQ==
-X-CSE-MsgGUID: UPcWxd1UQ3OOeHud7ONwnw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
-   d="scan'208";a="83111574"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa001.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 01 Jul 2024 09:04:07 -0700
-Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 1 Jul 2024 09:04:06 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 1 Jul 2024 09:04:06 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 1 Jul 2024 09:04:06 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.49) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 1 Jul 2024 09:04:04 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kRy2+BnrGi1or2BOOEhDwqHzEsqq9PxSg7GnxPPyC3Ddu+VOwTPGRU+GSgXNv+jSr3y8HS/0ikZ5XdQWeapCPTAPs+GYJVmYLi80e76N53WcRVCKD2N5XhISsVc40KTL5lm6LDzo8cfYjQw66e3JgPHor59xrWJCm/grhUqwCxfjwbFaSrktWX+pxRun0NVf+zpZVmUdkKjRMZZmx6z2FXIrsjkMgFw4kDhfnnQLuCQhpAoR4qhE665A+lnp9eG0xnMZ0IcZnkt0Pn/gb/RtFKVdfZloxes1D4SFfL56ZSSSIURVf3tOQGPSbRmBosE/cECJytCYozOjimioNPMSOg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wJHTPenOkh4AD8k7/W5p/VyoAR55EOofNsvMBphi7HM=;
- b=S2b+BuCUsTIoRk7FVtSsv7HtQNNf94z4hxLCphNiSEL5Fkw5OVkbwSrNBTYqVJjR539hO+ltRdHgyCwG5lPchwH+gOrg7A/kckc9Q5EXR0h3dkpAAzrdDenM//w9xO0VoUw15rmVBrsgywrYjkkV7UaEqFYO15KvKY6nbbN+jp0eAZ+UnhnKnaOHCOFH9Qp85XrsqUyftVPFR1UrvT3Ibur9EEhX7ClPsO3pu3cpftLU7519ngRki+NJ8hlIpMqhZKU3aO5u9v20uoafQqEn6NC1Q8PB+Fje7DyRqR8o1qnFmyrQZSZnvrRIbq89HetFGACv0jmpHw3wqZt65jltbw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
- by CO1PR11MB5092.namprd11.prod.outlook.com (2603:10b6:303:6e::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.29; Mon, 1 Jul
- 2024 16:04:01 +0000
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361%5]) with mapi id 15.20.7719.029; Mon, 1 Jul 2024
- 16:04:00 +0000
-From: "Luck, Tony" <tony.luck@intel.com>
-To: "Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>,
-	"shuah@kernel.org" <shuah@kernel.org>, "Chatre, Reinette"
-	<reinette.chatre@intel.com>, "Yu, Fenghua" <fenghua.yu@intel.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"ilpo.jarvinen@linux.intel.com" <ilpo.jarvinen@linux.intel.com>
-Subject: RE: [PATCH v3 2/2] selftests/resctrl: Adjust SNC support messages
-Thread-Topic: [PATCH v3 2/2] selftests/resctrl: Adjust SNC support messages
-Thread-Index: AQHay8Gqstk8aT+5WkSi2DkWMDfArrHiB7zQ
-Date: Mon, 1 Jul 2024 16:04:00 +0000
-Message-ID: <SJ1PR11MB6083D0D8AF9D1A7864084F0EFCD32@SJ1PR11MB6083.namprd11.prod.outlook.com>
-References: <cover.1719842207.git.maciej.wieczor-retman@intel.com>
- <484aef5f10e2a13a7c4f575f4a0b3eb726271277.1719842207.git.maciej.wieczor-retman@intel.com>
-In-Reply-To: <484aef5f10e2a13a7c4f575f4a0b3eb726271277.1719842207.git.maciej.wieczor-retman@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ1PR11MB6083:EE_|CO1PR11MB5092:EE_
-x-ms-office365-filtering-correlation-id: cd4ac519-93eb-4663-4e6a-08dc99e76c13
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?u8EFt3n1mFDbH3OVGmBtgabRwr2LFIKDZU7Lte31jsnFPGabM/LYGoKVW+lf?=
- =?us-ascii?Q?zFk7ld/GdMqubX2vUUazekpPwTJLTlRXDQVvlPnyrdr+9Ea88SMCyFaMMc03?=
- =?us-ascii?Q?jQiGHkIXekk4ssyRbv8KTvO2T0vZ27ZFcnWRA8XNYC6v4HIci2nxq1Ion8k8?=
- =?us-ascii?Q?xn61SuCEBQ/zpj00oGkFBZa/Sa6OiN8SM0PUhd0PwwMpiN7E1BttIRyrOhAA?=
- =?us-ascii?Q?+xJDD7dRei+vhYAMu3SJJY5K6U6A320w0wFZ0DupgNlgtndQy8yhfLpKoQFh?=
- =?us-ascii?Q?CPC3T4XAPOyG6++iXByPyL0FJ6pDQXtYcKDoSVBqj2cW8AqkZiZBzrS/mUcl?=
- =?us-ascii?Q?aYHqutN1M0YXaDCQou7jQ9ky8KwrXR6h3MivgborLS1Ssb/cJUgnBR55yx/j?=
- =?us-ascii?Q?z2nk+2TMDv0NUkOgW9MwJtjrsnTt4yMcoWoOCRSCtfSLmOdlwjLA9qea9hhc?=
- =?us-ascii?Q?Lczj4HWAyDdtYzLLL9Cgg02t+Hg3Azbkg75ftIDKygEdY5yiRkbv2nTquAsj?=
- =?us-ascii?Q?a6Nlel34/LJsAq2+MpTrAE4N3xXqq3wVkQ+GWslBQI0EADvhbm6HB/Hbeqrq?=
- =?us-ascii?Q?odzRldB1M7M8kMTnA8spyrslXPYl953zlRZdYlPai5A7lJEghQRja16e0HiM?=
- =?us-ascii?Q?pBTbI3x5X/YjqrYEcJYYeqasbQwEco6x9V3e5SVUJsYtc8WipsIXKn/jaFic?=
- =?us-ascii?Q?e5PLn2EaRqqjMTgjUH6o/ALOFKsN9/3TOXBJ2hPAPAExO78lYRqAqYJF0tuB?=
- =?us-ascii?Q?RkWUbLwn15cDy4A63Nn30f5HH36g4/pksFiAmabfVNZWySn8Iu98gNYnWe3J?=
- =?us-ascii?Q?lVgxfxmUN8Xcbo8BYwx9aLadc1Hj9Jmnj01no1tuXc404iPstUTSIHS7Jf/C?=
- =?us-ascii?Q?0myQaJg+vr1Kd8buMzIpaLbcSrfQ+7tCR83F+YUvI7F+WCsg/yqhaVFFDlTi?=
- =?us-ascii?Q?l58nUVgvMGVD6mWM2ebDbX6CP7IvqRhepwcf+xSOzt0ItnRf1+MGMzKlUcpd?=
- =?us-ascii?Q?WYLJj23/MMVByglD8oBx8KGN4YeTkLFvFp5Z9vQRCNWqz2MG0QrlJKVPX8YR?=
- =?us-ascii?Q?Czb0wktDh0NHI8bBaCrid0HjJSie15H/N3YOm//BlxhswzznmDSzcSs+7TH8?=
- =?us-ascii?Q?X+R5y9J8OdtZdjOrcbvwtJrzZJQIw8O4FcKt2wZNC0MBjugw+d+uqAMp4ujk?=
- =?us-ascii?Q?HeMNtUv2Ol6CoLiwkB185BYfXVSRoIzcpaONNZC0RDHvEP3G3RM2TRyhL3fX?=
- =?us-ascii?Q?7j12tRG69gGWgi+Y1Fkap9/zkNp2S7qQIO3nk8367rz481RaJX+Si2vXlHBq?=
- =?us-ascii?Q?jw5HdiQk2W0vOc79nfIoQS6UTVH7DuHdy/4PFAfA/3X2+e7Us2AcneDazEsC?=
- =?us-ascii?Q?lBRAl0S7qm7zItDhRWDwYxl+7Bgm4UxiTkb4gXMjeFwmX8Uvzw=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?AZYk3AXF9OU/6kCKwFMyRdGo299PiagXFkTUM32KgLxYXMBeNX+0LsurMjeM?=
- =?us-ascii?Q?xL2uIi9bJ9ssuN01MV1qG7Z+TBZ+yH+P11W259X569HUjVOOWXdKsLbznAqV?=
- =?us-ascii?Q?KC9WzJNDH8RLsQxaU+9RFpLIe1vTfdsuiuIpZjEQvCxsRT5WUGumTqt509b1?=
- =?us-ascii?Q?CAkLN1ZrhmypUGkEfTT3kkMDvpkm4+8/eRrHhrMkdQBUPUzQVSKW0A3KcZyC?=
- =?us-ascii?Q?+VPfNQwYlmm7jrlH7/rnPZndlDTpe6+6awv/cjl/27oG8hBOwlkI3JVwnUxD?=
- =?us-ascii?Q?aTyRQgr1WoqVqaCdKKaW922WpyV5VWio7zOg+VAz/uPCtodWqUSegrKv7fb4?=
- =?us-ascii?Q?aKKg0QM71MnwSNGeHc5b3npIl/lu4xigoTCG8PI8nDNjs3Ny1MkDVSpp9tQ2?=
- =?us-ascii?Q?2Z5ag6swjct5coZIzAQP5e8LKWjRGAsoVkNrJproWfAdK97J6e+68ZNGsbJC?=
- =?us-ascii?Q?Xp41zulUDOIMfqChp2uzHKahydVeifZZOkS6wv+YuwmSXbcKhFTyc07GUY7/?=
- =?us-ascii?Q?KIs8f6lw067n0U8hdx/diBmXXzd76vE0S/QRW+sRRPspWtKUNwx4XMGWfAW/?=
- =?us-ascii?Q?AtMt/3FQDSpyShmcmXN4RHa3MtMel+zUy1VLHORu+vza+TBYvxQpf9C78g5g?=
- =?us-ascii?Q?Esf7GoT/B1LUsEeQ9CjB+bqJRqWferuW0N4Me5VaUSzKZPovMnbg2VTLHzex?=
- =?us-ascii?Q?iyqMR4x1ptc7Rn9P8KzN9oF8OCAdyt943lISmIJcJPGTYqHzj5215YeKLcTY?=
- =?us-ascii?Q?YhVT5mL+uB2pJ9NZhFd+gH3B23R5ex0hiHpXzn4P66aKwthp7drH8IgP6qcQ?=
- =?us-ascii?Q?GR+DYePqF0RuXTKzT+a0RKiF78rHzVfwARSV77rkFSjiMWvc1zXn9lSyjzGB?=
- =?us-ascii?Q?09xNQpypMy1x6LNA1trhkUNT8vj2Rs46fuXvbBxgpJg+MrdPeGb431KmcPEc?=
- =?us-ascii?Q?Uju8N9YRKD5jT1aL8avo1rETZIGHbGz7CaKJfzvSQjdwT6kpvJjvurQStDJ+?=
- =?us-ascii?Q?6VMXrDvNDHFpCWuZuTjz9m7YISAEzWknEXYkFi5sZ3pEahZKQ/DA6pqmeEX4?=
- =?us-ascii?Q?3Dhc3fsqI8cQlnpzfxCTl+zxHFv9v6XmZQENRaJEn2VycT2i1MCj4Y8IWeUR?=
- =?us-ascii?Q?pYynkfv12eGjZvbhwXMYCTHz6DPqMbrtrnIOn5saY96yFaHuWnR2pD1Q0wXm?=
- =?us-ascii?Q?tQxqlFYTV9SCF5dFMjf+oSJjMb6ysnDdVsB51hwpjbGEQH8SUUtD/R4vlk01?=
- =?us-ascii?Q?TjOxkscaMnqCx79Qc75ZPvFI13ym+yqcZZyqHq4B8dfYg9nSpY/zSGbTMgFr?=
- =?us-ascii?Q?f5/jSKgl+LIP5zF8Jh6HjTiEni7dliC/j21nge0DKHAMHWu6eP+t4bSwN+UA?=
- =?us-ascii?Q?FJXvnQ35N7dhXKmP/pHWrkVG+ZbR/DpohaB9kbCCisTvyy0VH33Pdwv2NxwX?=
- =?us-ascii?Q?yaj6yEuFSPHHbiJ+r9zRBTPpdbVnKcA/9QbqToxCMYR/+4D8L2vGpHuIYuob?=
- =?us-ascii?Q?6JfR6VASeo5suyWWoHgTAXCRnDW7sEMIRpYV4YwfQsnFnlF6KcD/PAz+AoSS?=
- =?us-ascii?Q?GWFA/ZnIJ6fKFXYWFnOYArecqHVC58FSvXnknxkQ?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303C51EB2A;
+	Mon,  1 Jul 2024 16:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719849914; cv=none; b=ICB3h30z/yexNe6fRsrk/uso3bsMqGJV7354+7SIfePz3gEXIyzhqHJQr2WYCOxdVLxMuoqQQALmZS+oUQpAuTF8DAtmERI8eRf6EfzzfEdgM1BNcYvgsaJlqrxNgke4WNoJkNMH0bf1MiIQ8qPn3nX8pnvZoCy5vGtPPh6eO68=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719849914; c=relaxed/simple;
+	bh=lhamLxssCzkjxOeUar7vMfjTkdL0ujnbTccKlDX8Opc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=gy3i8JqUnhls/m+Pdwr6qC/DZWuSVhwrzur35n6pY4pgqFnde3cCi1Xqj3wPwwARoGsg/hYYnh9Wmpz4FRmuWYbr6MCTTLJv6RhDLojeQ/jmilZaCl1IKZ0yuCpkXipHvP4UWxP0JObex11GMReTX2fpbsyWO05fxbRZfzonNv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=OzvLiVbu; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1719849905; x=1720454705; i=w_armin@gmx.de;
+	bh=CdGU7eC+qMJeNREwkW0NoXjqnQktnRTm01J5sGioeXk=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=OzvLiVbuwqjPw5kgEiFRIvCEiGzn7iR7Q187HbznNj41SFnoO1xR+lQccyuXUxBx
+	 get21u70zMHOgNOn7xM+BrsKKZuioZ8wDuDHBIHdiMRV7kG4ScEbZ0vsr2xxVpeA9
+	 7IB8lxlQ60MMCr4k6HJnioJDmPc0PL5UeEbR19q0p//tiFT8/3f3PDwNWe80XKEpe
+	 6vu4nfZMenmSm6UWOF/pJiPFTWsRHRVu3rFwV/C/6YTKG16uyY2hh1XBDmiL/15ds
+	 aypm0ZrbO4lwS24MpnVVwBmfcm0yCFYJSbiHn7r/Obf+3m+WQ+AfiW31CvwiXCEFe
+	 mBzhhTrPZAuyUq8fNA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MatRZ-1rquNu2C1j-00mqSR; Mon, 01
+ Jul 2024 18:05:05 +0200
+Message-ID: <1240c064-9321-4817-bae2-55687005990a@gmx.de>
+Date: Mon, 1 Jul 2024 18:05:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cd4ac519-93eb-4663-4e6a-08dc99e76c13
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jul 2024 16:04:00.9156
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: M1JgfvMpy4OUxh8B93wgiIU1+XaPwkIcpyJIYYTgXP4fmubpFBHvSn5lagXkTCEKRkLL0kYSzuVSCsmxRWvLeg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB5092
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] ACPI: bus: Indicate support for battery charge
+ limiting thru _OSC
+From: Armin Wolf <W_Armin@gmx.de>
+To: rafael@kernel.org, lenb@kernel.org
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240620191410.3646-1-W_Armin@gmx.de>
+ <20240620191410.3646-2-W_Armin@gmx.de>
+Content-Language: en-US
+In-Reply-To: <20240620191410.3646-2-W_Armin@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:OgeEkorGtvmJdTnzJ4k5uJpUeooTvUmkfoUOVPWNUOMZEGeW5Ja
+ ibWabv4EZJLTA/gznX3XuPI5+9DBSnVTgKvOckIAxxcDLStCjoJMIJsIhOWwD/zTn16PUPR
+ dRZDGzWzRTVy7htdVeU5dQP6j8M2F42ZN8BLXH3zhaVbIowVafUCHEbykMNdEHq6XhQvqfh
+ JPLVqmhtPBX51MucGxTqw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:YpdjvBXLOZE=;mhROOKY+0p4qAENhlKOSFWHEDWG
+ nIY0+HMo6wv4ZMc8B1BFqeA5YqvS72z93DTL5CUhXjjgDBxd6nfCQlL9ZMLatBzde8jjGX225
+ fw1ysxrrkJwq1w664C6RT0Nt1iqxtMsGH/W4+czCsrMRFWQwhScIEZ97+HHnEYb2QM/+K8zqe
+ XHFN0pgQEz45y5KTi50IbND6OPaEGqikIUpgIGMBEeaEURQkIe+pN4Ub8TbYARBKTw13MeXfB
+ 0t5XTrAPpwrHEyI/N64bfgqO4Yi1czFuWN+MMAFDr7M2Wobj87C58cMTLEQWFsTr4iqudZlHz
+ 49wSKoTYecFB3LpsvhRDeZ2w6L8phfVkW24tL26nJqZPClvyhpvQ4sW0efHWASrnJeSyh8pmF
+ E5/t/SjEO2oV4Z4GVg7eZ7IuuMsPSPe9H1X3t4SYgSaplaW9WURoGqtBv26t7S8oRYKMri9w6
+ 4G9VfQwfukEh9bSccwyH/BnI6ffrMgfh49mgP+2SGuEVABlQ5bc3U1p1xkW4Q5V0sVqNGeF6x
+ VtRxihs8b65N3BxlRQPe5RgeznE9Sgc9c1tqeP26NcUHIxZIuDVRQW6AcC0y/Y4f1/us5nNm1
+ AbKLP1yQ9Z7lSVts6U6t8VbrbMjtO++oQFqA2mbeA+IB3MKBvsKqaDleeSEcvP4NEtjqOqvDJ
+ QANbgbDif4JzxkW2QI4yvhN1p8YbhrSQTBHoHP3x4yNPbkZl0qEEEq5DK/9pYlYPXi8jyxsMS
+ XgCvn0FqnoSJQUvu9X6eD/LumYRBfwl405/i388G2TAgo2dS+c2pVH90FVwfD0AWaCqp93K80
+ BJ9+oGVNP0dcmqtd91r1b88CkY4oYWSblqIx6j+jKxMUk=
 
-+static bool cpus_offline_empty(void)
-+{
-+	char offline_cpus_str[64];
-+	FILE *fp;
-+
-+	fp =3D fopen("/sys/devices/system/cpu/offline", "r");
+Am 20.06.24 um 21:14 schrieb Armin Wolf:
 
-Check for fp =3D=3D NULL before using it.
+> The ACPI battery driver can handle the "charge limiting" state
+> of the battery, so the platform can advertise this state.
+>
+> Indicate this by setting bit 19 ("Battery Charge Limiting Support")
+> when evaluating _OSC.
+>
+> Tested on a Lenovo Ideapad S145-14IWL.
 
-+	if (fscanf(fp, "%s", offline_cpus_str) < 0) {
+What is the status of this?
 
-fscanf() seems like a heavy hammer.
+Thanks,
+Armin Wolf
 
-	if (fgets(offline_cpus_str, sizeof(offline_cpus_str), fp) =3D=3D NULL) {
-+		if (!errno) {
-
-Don't need an errno check (seems dubious mixing errno with stdio).
-
-+			fclose(fp);
-+			return 1;
-
-			return true;
-
-+		}
-+		ksft_perror("Could not read offline CPUs file!");
-+	}
-+
-+	fclose(fp);
-+
-+	return 0;
-
-	return false;
-+}
-
+>
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+> ---
+>   drivers/acpi/bus.c   | 2 ++
+>   include/linux/acpi.h | 1 +
+>   2 files changed, 3 insertions(+)
+>
+> diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c
+> index 787eca838410..bdbd60ae8897 100644
+> --- a/drivers/acpi/bus.c
+> +++ b/drivers/acpi/bus.c
+> @@ -329,6 +329,8 @@ static void acpi_bus_osc_negotiate_platform_control(=
+void)
+>   		capbuf[OSC_SUPPORT_DWORD] |=3D OSC_SB_PPC_OST_SUPPORT;
+>   	if (IS_ENABLED(CONFIG_ACPI_THERMAL))
+>   		capbuf[OSC_SUPPORT_DWORD] |=3D OSC_SB_FAST_THERMAL_SAMPLING_SUPPORT;
+> +	if (IS_ENABLED(CONFIG_ACPI_BATTERY))
+> +		capbuf[OSC_SUPPORT_DWORD] |=3D OSC_SB_BATTERY_CHARGE_LIMITING_SUPPORT=
+;
+>
+>   	capbuf[OSC_SUPPORT_DWORD] |=3D OSC_SB_HOTPLUG_OST_SUPPORT;
+>   	capbuf[OSC_SUPPORT_DWORD] |=3D OSC_SB_PCLPI_SUPPORT;
+> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+> index bb18e7bf8826..b9d6882f323e 100644
+> --- a/include/linux/acpi.h
+> +++ b/include/linux/acpi.h
+> @@ -576,6 +576,7 @@ acpi_status acpi_run_osc(acpi_handle handle, struct =
+acpi_osc_context *context);
+>   #define OSC_SB_CPC_FLEXIBLE_ADR_SPACE		0x00004000
+>   #define OSC_SB_GENERIC_INITIATOR_SUPPORT	0x00020000
+>   #define OSC_SB_NATIVE_USB4_SUPPORT		0x00040000
+> +#define OSC_SB_BATTERY_CHARGE_LIMITING_SUPPORT	0x00080000
+>   #define OSC_SB_PRM_SUPPORT			0x00200000
+>   #define OSC_SB_FFH_OPR_SUPPORT			0x00400000
+>
+> --
+> 2.39.2
+>
+>
+>  From mboxrd@z Thu Jan  1 00:00:00 1970
+> Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+> 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+> 	(No client certificate requested)
+> 	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 311791B4C49;
+> 	Thu, 20 Jun 2024 19:14:26 +0000 (UTC)
+> Authentication-Results: smtp.subspace.kernel.org; arc=3Dne smtp.client-i=
+p!2.227.15.19
+> ARC-Seal:i=3D a=3Drsa-sha256; d=3Dsubspace.kernel.org; s=3Darc-20240116;
+> 	t=1718910869; cv=3Dnone; b=3DPNV4pnv5gdeDQ6rB2hU1/ZjHVFLTc57fDIDsaOLhos=
+raq8aj2nG78LkoXubdSkBQZj2o0ASSObniw4/Fr+kBxA9iY2cRtFzQ+xFjevfYjlIsIlMrHler=
+ntx5q0p7BBt1PgbHMZ9NHxYlRZr6zLsCzdeT6JqAXSNrP1N20H2H5WAARC-Message-Signatu=
+re:i=3D1; a=3Drsa-sha256; d=3Dsubspace.kernel.org;
+> 	s=3Dc-20240116; t=1718910869; c=3Drelaxed/simple;
+> 	bh=3D7d2nU/1EXglGqyMknsqP4KzMVjfNITvBaD0xtbb8U=3D;
+> 	h=3DFrom:To:Cc:Subject:Date:Message-Id:MIME-Version; b=3DFSSGUWdjXpIOmk=
+B5tG0jHhXkNWu6Yh/Ms7qA6VzQ2ek91bTYG1FbBHECiLveTd7nNZdecgHbq0UE688Zc7qgvG3z=
+9b9MwO/ZOc8rA9KM2UkBaFhacVjQtFe0AotjWA07QNlmsTTnbkB1ywNKCse77kiM/g3sStU2yq=
+nGaeZktmUARC-Authentication-Results:i=3D1; smtp.subspace.kernel.org; dmarc=
+=3Dpass (p=3Dquarantine dis=3Dnone) header.from=3Dgmx.de; spf=3Dpass smtp.=
+mailfrom=3Dgmx.de; dkim=3Dpass (2048-bit key) header.d=3Dgmx.de header.i=
+=3Dw_armin@gmx.de header.b=3DXxTpuznq; arc=3Dnone smtp.client-ip!2.227.15.=
+19
+> Authentication-Results: smtp.subspace.kernel.org; dmarc=3Dss (p=3Dquaran=
+tine dis=3Dnone) header.from=3Dgmx.de
+> Authentication-Results: smtp.subspace.kernel.org; spf=3Dss smtp.mailfrom=
+=3Dgmx.de
+> Authentication-Results: smtp.subspace.kernel.org;
+> 	dkim=3Dss (2048-bit key) header.d=3Dgmx.de header.i=3Dw_armin@gmx.de he=
+ader.b=3D"XxTpuznq"
+> DKIM-Signature: v=3D a=3Drsa-sha256; c=3Drelaxed/relaxed; d=3Dgmx.de;
+> 	s=3D1663417; t=1718910856; x=1719515656; i=3Dw_armin@gmx.de;
+> 	bh=3DxDuAxw0I5rokPnnN/NN9/gOvD5EFn1E9laPeck6iA=3D;
+> 	h=3DX-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
+> 	 MIME-Version:Content-Transfer-Encoding:cc:
+> 	 content-transfer-encoding:content-type:date:from:message-id:
+> 	 mime-version:reply-to:subject:to;
+> 	b=3DTpuznqa5s0SpQ6YdBrvZNwCXRJ0edFeG7RwA4nafWEyqJXBNYwkwFHqkAwFph/
+> 	 obu4vTPFY+7Qo8UXInbPMrj96MAUMv7WH+7KynWZbaU6jWpmgpfI3EtAqC0iGv7tB
+> 	 R6/iC0NBkzpWYJe/A+3dBrppWvzsVla1nGnwu66kc6DXtUyEZ/Znr8eFMdKXi77bu
+> 	 +xt7LGs4mr+Swymo1EOxUvTy59CZERil76zkUyBO9n3ndytFj8qd11eeWXYQwZGYP
+> 	 y9QhxcX50jwPqpUX5rCcdjiU6Z6DT0uJoGV+4O4YWpCBzUpj4V+Bq1MYzUKtq/GeN
+> 	 ytkbdoU/jbWr0NIakw=3DX-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01=
+a50d3a
+> Received: from mx-amd-b650.users.agdsn.de ([141.30.226.129]) by mail.gmx=
+.net
+>   (mrgmx004 [212.227.17.190]) with ESMTPSA (Nemesis) id
+>   1N8XTv-1sP43t1c9p-015xmJ; Thu, 20 Jun 2024 21:14:16 +0200
+> From: Armin Wolf <W_Armin@gmx.de>
+> To: rafael@kernel.org,
+> 	lenb@kernel.org
+> Cc: linux-acpi@vger.kernel.org,
+> 	linux-kernel@vger.kernel.org
+> Subject: [PATCH 1/2] ACPI: battery: Add support for charge limiting stat=
+e
+> Date: Thu, 20 Jun 2024 21:14:09 +0200
+> Message-Id: <20240620191410.3646-1-W_Armin@gmx.de>
+> X-Mailer: git-send-email 2.39.2
+> Precedence: bulk
+> X-Mailing-List: linux-acpi@vger.kernel.org
+> List-Id: <linux-acpi.vger.kernel.org>
+> List-Subscribe: <mailto:linux-acpi+subscribe@vger.kernel.org>
+> List-Unsubscribe: <mailto:linux-acpi+unsubscribe@vger.kernel.org>
+> MIME-Version: 1.0
+> Content-Transfer-Encoding: quoted-printable
+> X-Provags-ID: V03:K1:uNBDOBDXPCELTkGamOlx2L0j/W2Zhplj2lD9/D7v5T+apEJnnw9
+>   YiM8dfeyyR6Sy2iqGvBwBDR6TNNFBsC9VaQzIPF0Zi5MqlrWxVwPMPuZuRC8nQgDl6lfsI=
+T
+>   NNaneKZl8AKNkuZEFKyFzA3bTq9rBVXFdlx/onmHI+b7i3oAv8ZBdY2ucgGs31HLhjlPCC=
+Z
+>   eV4atUc4q9u9vxLvvUQpg=3DX-Spam-Flag: NO
+> UI-OutboundReport: notjunk:1;M01:P0:1ivwSHmpePc=3DSM9rr41Wuw5kjzAoyyV5tk=
+2mIl
+>   i3jkEV278EZxI7Tk/3ljPtMJcjPoU7q2SD0TKmrBG8zaCd1wn9zF183BELhNv0Vz6fxEa1=
+Op0
+>   CYjwyMDqZHupFczhdiADcP3WdB53f9HVAK0KB+USScSkLgiu1AGKwkoHNnhLvXxK6K0vaN=
+csZ
+>   A8iThkF8WUgig558RbKPTTVjpE4yyI5xeuJ8m5wxTj/BvHcenpIuXOFPuhmIZAETe+JbVj=
+ZyY
+>   kdVion2B/yeZ+WS2V2FVwbyh1s9sXNLNvioudWhER+U7rEqykfYIHoJll5px93LumYyval=
+SNo
+>   b6b4eAt5FMXefwAdhc1WQaf9LcUuXwTvLBJxDVMmk+MToV0W9eRkYanJbW/YAune218sx7=
+M3w
+>   UyTwWk5eBSckWg2GFCz8zjLJ62pYXFWo2gC3d8UVVmSG+sudcgEBjyaDxaVHF6WPfRl2Ny=
+heG
+>   /ss80HzssXQwewBtvvvm4QzyloC5TNoD9KaORUWWFYYKO7xMg0avbO33Z0vEV9kqMsTSa1=
+Wel
+>   wb0JtzFQhnBIRS1/ulhAjNtrKVtMQzBqLiDPgmUUv8zfMxoLhiYpMagXzvDQCoc5Buzr6F=
+gvH
+>   jDhA3MuPWGLufg+nCVMyiOsYRArwG52PSBbF107eEPGxEkM3igcCkaprQVTZv+huO+fSOV=
+K/Y
+>   YSw1InfHXFjx9mRga1WvahMB06QO7rCfD7/3H4ht8+hLQxPIn4J/gyFGXLRkdumLXtayoU=
+7kh
+>   nEAPyxyGRIMZOmvO0O2EHYiwveoCWIc7U+2D+KnQ6UnaZ/nQmLJ/1XtzCA2dRL6V4tefU6=
+9Qy
+>   1dWpymJu7A6bbYvJ5cBYL7zeMf8Q3zp1OitpB8c7FIj0g
+> The ACPI specification says that bit 3 inside the battery state
+> signals that the battery is in charge limiting state. In this state,
+> the platform limits the battery from reaching its full capacity, the
+> exact limit is platform-specific.
+>
+> This might explain why a number of batteries reported a "Unknown"
+> battery state in the past when using platform-specific interfaces to
+> stop battery charging at a user defined level.
+>
+> Unfortunately not all platforms set this bit in such cases, so
+> "non-charging" is still the default state when the battery is neither
+> charging, discharging or full.
+>
+> Tested on a Lenovo Ideapad S145-14IWL.
+>
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+> ---
+>   drivers/acpi/battery.c | 11 +++++++----
+>   1 file changed, 7 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
+> index d289b98a2cca..9ba2191a96d6 100644
+> --- a/drivers/acpi/battery.c
+> +++ b/drivers/acpi/battery.c
+> @@ -38,9 +38,10 @@
+>   /* Battery power unit: 0 means mW, 1 means mA */
+>   #define ACPI_BATTERY_POWER_UNIT_MA	1
+>
+> -#define ACPI_BATTERY_STATE_DISCHARGING	0x1
+> -#define ACPI_BATTERY_STATE_CHARGING	0x2
+> -#define ACPI_BATTERY_STATE_CRITICAL	0x4
+> +#define ACPI_BATTERY_STATE_DISCHARGING		0x1
+> +#define ACPI_BATTERY_STATE_CHARGING		0x2
+> +#define ACPI_BATTERY_STATE_CRITICAL		0x4
+> +#define ACPI_BATTERY_STATE_CHARGE_LIMITING	0x8
+>
+>   #define MAX_STRING_LENGTH	64
+>
+> @@ -155,7 +156,7 @@ static int acpi_battery_get_state(struct acpi_batter=
+y *battery);
+>
+>   static int acpi_battery_is_charged(struct acpi_battery *battery)
+>   {
+> -	/* charging, discharging or critical low */
+> +	/* charging, discharging, critical low or charge limited */
+>   	if (battery->state !=3D 0)
+>   		return 0;
+>
+> @@ -215,6 +216,8 @@ static int acpi_battery_get_property(struct power_su=
+pply *psy,
+>   			val->intval =3D acpi_battery_handle_discharging(battery);
+>   		else if (battery->state & ACPI_BATTERY_STATE_CHARGING)
+>   			val->intval =3D POWER_SUPPLY_STATUS_CHARGING;
+> +		else if (battery->state & ACPI_BATTERY_STATE_CHARGE_LIMITING)
+> +			val->intval =3D POWER_SUPPLY_STATUS_NOT_CHARGING;
+>   		else if (acpi_battery_is_charged(battery))
+>   			val->intval =3D POWER_SUPPLY_STATUS_FULL;
+>   		else
+> --
+> 2.39.2
+>
+>
 
