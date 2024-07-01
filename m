@@ -1,159 +1,244 @@
-Return-Path: <linux-kernel+bounces-235498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC2EF91D5D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 03:40:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9498191D5D7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 03:42:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F038E1C20EAB
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 01:40:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF1071C20F3B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 01:42:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A79E8BEE;
-	Mon,  1 Jul 2024 01:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255E74C6B;
+	Mon,  1 Jul 2024 01:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jEtXO8td"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QtLz3QiP"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0462E847B;
-	Mon,  1 Jul 2024 01:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ADBE79C0
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 01:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719798031; cv=none; b=QHUrAb3Iw7f/hUIILp89NK0Cfj9jIGURMeZyGv5dxGKzWEdmbs7rnef5K8iui7ah7fNhlnOZl/jfactH8cBowUpghGI9PmoqZeD5wAHMNbk3iK9X1asOtCDYT2QtOpG47KOaWHut3iDKQl1nj7jESdjABC/z8uBsqN5JS7wNWMw=
+	t=1719798140; cv=none; b=B5yvLlZX6+rb0BljxthNo3o89Lx8UrPa4jx5XplZDZjQhMpgiku3TrDnXDZagwy2krOtaKt1xxBCqwW8BIhgCKO1vahpwZxWuu5HB+O4XPSaokphLwSPR8S9eFHsRdE73e86gFn8NUz5kTtDCZY31FzUB4AwskruzsBerVQM0mE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719798031; c=relaxed/simple;
-	bh=8N1kTPTMUy3OyP8Thfs9SN31LDGnJJ5vniYo0Oy95II=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QBMBwELmacsfsWC93GS3l2Me8aarJHwdh5gmnj06PDOgW3fm9OXP7I2wW0ncc7RBk6MLj+rgUTHRVVVPK6FxU6e1lRxlZKI62nfjFJJh8iKrLRKikbJ4r4owCY5xkmHDx8yKH2aY+OXA8tsvYFwSB7IS7N3dX/hPd+Tv55iu9RE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jEtXO8td; arc=none smtp.client-ip=209.85.167.48
+	s=arc-20240116; t=1719798140; c=relaxed/simple;
+	bh=s/EgXF6GOpyypwBIbZjziqi4ZoNSF+vPsmcS7o+SJdQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YUua7F8uaNrt4VMnxZAZ7cENLPgdfYtFT4sPPrDR8NdTtN8IxXWT3zOxgcGNyjDtcPWLsc8FVJDvMDRnStefj0VCRKItn/eeQE8c93+/4Bdo9qVxeRvQulNRNkOcIuCmXq8lCxyg5FKl0H9zar8RthvJmG5ewU2LnPyLERUpJG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QtLz3QiP; arc=none smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52cdfb69724so3041343e87.1;
-        Sun, 30 Jun 2024 18:40:29 -0700 (PDT)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57ccd1111aeso2817866a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 18:42:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719798028; x=1720402828; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SwnfzGgZbXchQuvwIi7BwMqkkcPzYDSZ1lkWRl6NvOM=;
-        b=jEtXO8td6vultGKSKEtKfTEeiV3gFQhzZ2CGbBGrsHfPRTceyYnBrF44KCLpx26tyY
-         x4XswVgAaACK5NUptwc7siH15kAyI5MTEvRHgXCAjrz4zoyHFOOK9JjhILk2b7rTmPID
-         UFVLwgspOCtGtdjAhyxiCv50tEASZJPEV+hixeeZ3t4I3hPWEZsk9aA/H2D8eq/V/QPw
-         rt1N3pie2HafW6yVNJMBjocPHxILXmvFV2pv7UbvSLlgcNgbJC42XbkfkstZTWty+fZc
-         gDPhcHBd9fRe/+YrmWvIZk14K5eoLX9kv2D0pMXzPMJJ5ydCtJLmOUqg4WH2k4YN//Bx
-         422A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719798028; x=1720402828;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1719798137; x=1720402937; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SwnfzGgZbXchQuvwIi7BwMqkkcPzYDSZ1lkWRl6NvOM=;
-        b=Olo8j6s+BlZ5QXOt4GRqnbEEn4j0erJN/2BUm7uIDWr4XKWF3HcRsEa1dbjv6Aw4Vs
-         Tp34MF1nTNYiJ7XYYeCqLYT7Er9gU8Lvd5Yt3GIUcseKx5DOjjwlLxpMBThOi+T1BHvH
-         TtP894VJ+TQUS2erSm7DzKOGXCYsYEfijZcc451prvSf1jHUiCjM7DhNvW5ihaAO/FzA
-         WNMHrmXm8vQTdIJhcjsaT/of+Wcx98Oy19nNspsPl1Ns4w90rcPy5z6KalhIDFdzOhO2
-         Eurc/bkToe3JSKNFBUPlPZCAgxideB1doKf7OJYcHKy70AiDLgRJlPMb760kh3DqLXcW
-         GCzg==
-X-Forwarded-Encrypted: i=1; AJvYcCVW+/TgaFKp0/o5iIyxLuB4veYPWYsXJCgfriEgsVM3E+WUwF2/uCnfd0ys85n92LTNcNrN+kVxQD1q28ppfffRBXavjqLv6VIYRIr3ADhv25h/187QzyYlzmpO7FbT/+YcAYXZ0p70huBqx8FkH1ozW9O4uCfzZC8lAJxsHkxDmg==
-X-Gm-Message-State: AOJu0YwLqsXDDReP9FnN9f43Xuzxl1hvH3lpTUVegHNQqDQnwhgxDrVT
-	DajdIMbuHQAuRzprGaComodAvbSzJgszn9F9KvUx+yohT2BocmOn
-X-Google-Smtp-Source: AGHT+IE7kAt6EsHOnTzUdCIGnBj2h9mmrLiQhrSexUxPRaRVqV6UHVmgj5fZQR2jnaMRamWK2GFoig==
-X-Received: by 2002:a05:6512:6c3:b0:52c:def3:44b with SMTP id 2adb3069b0e04-52e8268b40amr2615295e87.31.1719798027768;
-        Sun, 30 Jun 2024 18:40:27 -0700 (PDT)
-Received: from mobilestation ([176.213.1.81])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab0fff6sm1173823e87.81.2024.06.30.18.40.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Jun 2024 18:40:27 -0700 (PDT)
-Date: Mon, 1 Jul 2024 04:40:24 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Conor Dooley <conor@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, 
-	Jose Abreu <Jose.Abreu@synopsys.com>, Vladimir Oltean <olteanv@gmail.com>, 
-	Florian Fainelli <f.fainelli@gmail.com>, Maxime Chevallier <maxime.chevallier@bootlin.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Sagar Cheluvegowda <quic_scheluve@quicinc.com>, 
-	Abhishek Chauhan <quic_abchauha@quicinc.com>, Andrew Halaney <ahalaney@redhat.com>, 
-	Jiawen Wu <jiawenwu@trustnetic.com>, Mengyuan Lou <mengyuanlou@net-swift.com>, 
-	Tomer Maimon <tmaimon77@gmail.com>, openbmc@lists.ozlabs.org, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 06/10] dt-bindings: net: Add Synopsys DW xPCS
- bindings
-Message-ID: <a2quritc5udbpebvymbbhez2e4g5qk774trpzvsmtzgd4bpc4y@ckaqnqyrkszx>
-References: <20240627004142.8106-1-fancer.lancer@gmail.com>
- <20240627004142.8106-7-fancer.lancer@gmail.com>
- <20240627-hurry-gills-19a2496797f3@spud>
- <e5mqaztxz62b7jktr47mojjrz7ht5m4ou4mqsxtozpp3xba7e4@uh7v5zn2pbn2>
- <20240628221246.GA296233-robh@kernel.org>
+        bh=QDwPLMmlaqY2Z+dXHgf9a1r847VxqdR04f3yjAi09Uk=;
+        b=QtLz3QiPhoZPYu3ijU5XufQY2VfabmTB81egm1v4M4HMJWOgjB6Rn4AazqDs1kD2tg
+         z8zrvmCog+a4c1do0qEaYKtCttXCQg7/tCEZzHDbbo/a/xxoHBXPpRk0GlxuXGJyu17g
+         fRR3CtlDeYHxI7QWL6wg/Qlj+tPZjUPCR5ijwqHSZxTuHNNIyjmSutgry2Gw1WCCVPiV
+         ZJKJGZeXS2duQyjk7bvEa/QXVZ8/UbTmbCVW+k3UQgCKoEypeGKvBJP+A/teRybCoV8O
+         KYLIYZxQDlyGub6oa42FytaysHA+UnXRXLFDZ76UWxgloajk82A/rldkJZV1P6HiDf02
+         /msQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719798137; x=1720402937;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QDwPLMmlaqY2Z+dXHgf9a1r847VxqdR04f3yjAi09Uk=;
+        b=jFXOsUI9iuu7gbSDiKmPzdC6ilnnt4k1noMFeRqY3PFp5n5znqKFX88u4MpVXVHmfV
+         k0Hj+92+p+/FlE6rO80Ix1HK+6+L8TghA+s9S93ckAlOnWtj3RQiFW0hRz9xDAUzWRl0
+         gw6daPCLzlI+zDxLtv0tmC992+b8CcS+pn+30Du/iw57/UoESz7F4kWbVPRcY5GJfw9y
+         8kCi1X4VHOy7RelENOew7gA/QoqKtJ6eVR5v9a/NheL1ilxfQUVbWprEHf8xUjb8ASwI
+         UpTrxeyXi6f01xNihBgkR6RiDHHWdrvpTx6jLxN4A5GDUOipkEaB9EqDpDSpMAqD6dbQ
+         1+dA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZ/uSgr/sj6VyjxzJyqCKl71NojjBehpPW03vFfj8Bc+X9/n3w7VYsXM3qbnazJQggQ4dmU7t0lWlIk7bS7W8q39pUg7knDTtMUHlr
+X-Gm-Message-State: AOJu0YyZCxrLBYi9W2nxx69ROW7oYMUwZDiAD47rlhtagzbf5ZO1gHzk
+	yw6502XAnTbeta82oRRMrlfuQD+esTiE6E8sj3MlljUFuoCk5HbY0brQNsim8clVRjtlAy1yW0h
+	CzahAsE5jtNDSlVkGT3elppQ+Tyc=
+X-Google-Smtp-Source: AGHT+IG/MYaPLxvlYOaDUSFyv1g6sKCJYrmgLplveO02lDU/vDYT0ChyOHw5p1KMxVyGv3bpjUijSClKJ1dfNzeetNg=
+X-Received: by 2002:a05:6402:50d3:b0:57d:4b56:da11 with SMTP id
+ 4fb4d7f45d1cf-5879f4a5716mr3289105a12.11.1719798136582; Sun, 30 Jun 2024
+ 18:42:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240628221246.GA296233-robh@kernel.org>
+References: <20240628130750.73097-1-ioworker0@gmail.com> <20240628130750.73097-2-ioworker0@gmail.com>
+ <CAGsJ_4yF6ucmLpMpdfjEgZXB6CP7vQkidqfugsmo1vGiaUb97g@mail.gmail.com>
+In-Reply-To: <CAGsJ_4yF6ucmLpMpdfjEgZXB6CP7vQkidqfugsmo1vGiaUb97g@mail.gmail.com>
+From: Lance Yang <ioworker0@gmail.com>
+Date: Mon, 1 Jul 2024 09:42:05 +0800
+Message-ID: <CAK1f24kotV_CiWRM3rNrQqF+=uAjzJShV+t4YU+035vzA1LGJw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] mm: add per-order mTHP split counters
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, dj456119@gmail.com, ryan.roberts@arm.com, 
+	david@redhat.com, shy828301@gmail.com, ziy@nvidia.com, libang.li@antgroup.com, 
+	baolin.wang@linux.alibaba.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, Mingzhe Yang <mingzhe.yang@ly.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 28, 2024 at 04:12:46PM -0600, Rob Herring wrote:
-> On Thu, Jun 27, 2024 at 08:10:48PM +0300, Serge Semin wrote:
-> > On Thu, Jun 27, 2024 at 04:51:22PM +0100, Conor Dooley wrote:
-> > > On Thu, Jun 27, 2024 at 03:41:26AM +0300, Serge Semin wrote:
-> > > > +  clocks:
-> > > > +    description:
-> > > > +      Both MCI and APB3 interfaces are supposed to be equipped with a clock
-> > > > +      source connected via the clk_csr_i line.
-> > > > +
-> > > > +      PCS/PMA layer can be clocked by an internal reference clock source
-> > > > +      (phyN_core_refclk) or by an externally connected (phyN_pad_refclk) clock
-> > > > +      generator. Both clocks can be supplied at a time.
-> > > > +    minItems: 1
-> > > > +    maxItems: 3
-> > > > +
-> > > > +  clock-names:
-> > > > +    oneOf:
-> > > > +      - minItems: 1
-> > > > +        items:
-> > > > +          - enum: [core, pad]
-> > > > +          - const: pad
-> > > > +      - minItems: 1
-> > > > +        items:
-> > > > +          - const: pclk
-> > > > +          - enum: [core, pad]
-> > > > +          - const: pad
-> > > 
-> > 
-> > > While reading this, I'm kinda struggling to map "clk_csr_i" to a clock
-> > > name. Is that pclk? And why pclk if it is connected to "clk_csr_i"?
-> > 
-> > Right. It's "pclk". The reason of using the "pclk" name is that it has
-> > turned to be a de-facto standard name in the DT-bindings for the
-> > peripheral bus clock sources utilized for the CSR-space IO buses.
-> > Moreover the STMMAC driver responsible for the parental DW *MAC
-> > devices handling also has the "pclk" name utilized for the clk_csr_i
-> > signal. So using the "pclk" name in the tightly coupled devices (MAC
-> > and PCS) for the same signal seemed a good idea.
-> 
+Hi Barry,
 
-> It is? That's really just the name of the bus clock for APB (Arm 
-> Peripheral Bus). If there's a name that matches the docs, use that. 
-> Though I'd drop 'clk_' part.
+Thanks  for taking time to review!
 
-Yes, it's normally should have been utilized for APB, but as I see it
-the name utilization has gone wider than to just the ARM Peripheral
-bus clock. The DW MAC clock-names DT-property bindings is just one
-example of that.
+On Mon, Jul 1, 2024 at 8:02=E2=80=AFAM Barry Song <21cnbao@gmail.com> wrote=
+:
+>
+> On Sat, Jun 29, 2024 at 1:09=E2=80=AFAM Lance Yang <ioworker0@gmail.com> =
+wrote:
+> >
+> > Currently, the split counters in THP statistics no longer include
+> > PTE-mapped mTHP. Therefore, we propose introducing per-order mTHP split
+> > counters to monitor the frequency of mTHP splits. This will help develo=
+pers
+> > better analyze and optimize system performance.
+> >
+> > /sys/kernel/mm/transparent_hugepage/hugepages-<size>/stats
+> >         split
+> >         split_failed
+> >         split_deferred
+> >
+> > Signed-off-by: Mingzhe Yang <mingzhe.yang@ly.com>
+> > Signed-off-by: Lance Yang <ioworker0@gmail.com>
+>
+> Personally, I'm not convinced that using a temporary variable order
+> makes the code
+> more readable. Functions like folio_test_pmd_mappable() seem more readabl=
+e to
 
-Anyway. Ok. I'll convert the name to "csr". (I'll drop the _i suffix
-too since it's obvious that the clock signal is the connected to the
-device input pin.)
+Agreed. Using functions like folio_test_pmd_mappable() is more readable
+for THP checks.
 
--Serge(y)
+> me. In any case, it's a minor issue.
 
-> 
-> Rob
+I'd like to hear other opinions as well ;)
+
+>
+> Acked-by: Barry Song <baohua@kernel.org>
+
+Thanks again for your time!
+Lance
+
+>
+> > ---
+> >  include/linux/huge_mm.h |  3 +++
+> >  mm/huge_memory.c        | 19 ++++++++++++++-----
+> >  2 files changed, 17 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> > index 212cca384d7e..cee3c5da8f0e 100644
+> > --- a/include/linux/huge_mm.h
+> > +++ b/include/linux/huge_mm.h
+> > @@ -284,6 +284,9 @@ enum mthp_stat_item {
+> >         MTHP_STAT_FILE_ALLOC,
+> >         MTHP_STAT_FILE_FALLBACK,
+> >         MTHP_STAT_FILE_FALLBACK_CHARGE,
+> > +       MTHP_STAT_SPLIT,
+> > +       MTHP_STAT_SPLIT_FAILED,
+> > +       MTHP_STAT_SPLIT_DEFERRED,
+> >         __MTHP_STAT_COUNT
+> >  };
+> >
+> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > index c7ce28f6b7f3..a633206375af 100644
+> > --- a/mm/huge_memory.c
+> > +++ b/mm/huge_memory.c
+> > @@ -559,6 +559,9 @@ DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SW=
+POUT_FALLBACK);
+> >  DEFINE_MTHP_STAT_ATTR(file_alloc, MTHP_STAT_FILE_ALLOC);
+> >  DEFINE_MTHP_STAT_ATTR(file_fallback, MTHP_STAT_FILE_FALLBACK);
+> >  DEFINE_MTHP_STAT_ATTR(file_fallback_charge, MTHP_STAT_FILE_FALLBACK_CH=
+ARGE);
+> > +DEFINE_MTHP_STAT_ATTR(split, MTHP_STAT_SPLIT);
+> > +DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLIT_FAILED);
+> > +DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
+> >
+> >  static struct attribute *stats_attrs[] =3D {
+> >         &anon_fault_alloc_attr.attr,
+> > @@ -569,6 +572,9 @@ static struct attribute *stats_attrs[] =3D {
+> >         &file_alloc_attr.attr,
+> >         &file_fallback_attr.attr,
+> >         &file_fallback_charge_attr.attr,
+> > +       &split_attr.attr,
+> > +       &split_failed_attr.attr,
+> > +       &split_deferred_attr.attr,
+> >         NULL,
+> >  };
+> >
+> > @@ -3068,7 +3074,7 @@ int split_huge_page_to_list_to_order(struct page =
+*page, struct list_head *list,
+> >         XA_STATE_ORDER(xas, &folio->mapping->i_pages, folio->index, new=
+_order);
+> >         struct anon_vma *anon_vma =3D NULL;
+> >         struct address_space *mapping =3D NULL;
+> > -       bool is_thp =3D folio_test_pmd_mappable(folio);
+> > +       int order =3D folio_order(folio);
+> >         int extra_pins, ret;
+> >         pgoff_t end;
+> >         bool is_hzp;
+> > @@ -3076,7 +3082,7 @@ int split_huge_page_to_list_to_order(struct page =
+*page, struct list_head *list,
+> >         VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
+> >         VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
+> >
+> > -       if (new_order >=3D folio_order(folio))
+> > +       if (new_order >=3D order)
+> >                 return -EINVAL;
+> >
+> >         if (folio_test_anon(folio)) {
+> > @@ -3253,8 +3259,9 @@ int split_huge_page_to_list_to_order(struct page =
+*page, struct list_head *list,
+> >                 i_mmap_unlock_read(mapping);
+> >  out:
+> >         xas_destroy(&xas);
+> > -       if (is_thp)
+> > +       if (order >=3D HPAGE_PMD_ORDER)
+> >                 count_vm_event(!ret ? THP_SPLIT_PAGE : THP_SPLIT_PAGE_F=
+AILED);
+> > +       count_mthp_stat(order, !ret ? MTHP_STAT_SPLIT : MTHP_STAT_SPLIT=
+_FAILED);
+> >         return ret;
+> >  }
+> >
+> > @@ -3278,13 +3285,14 @@ void deferred_split_folio(struct folio *folio)
+> >  #ifdef CONFIG_MEMCG
+> >         struct mem_cgroup *memcg =3D folio_memcg(folio);
+> >  #endif
+> > +       int order =3D folio_order(folio);
+> >         unsigned long flags;
+> >
+> >         /*
+> >          * Order 1 folios have no space for a deferred list, but we als=
+o
+> >          * won't waste much memory by not adding them to the deferred l=
+ist.
+> >          */
+> > -       if (folio_order(folio) <=3D 1)
+> > +       if (order <=3D 1)
+> >                 return;
+> >
+> >         /*
+> > @@ -3305,8 +3313,9 @@ void deferred_split_folio(struct folio *folio)
+> >
+> >         spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
+> >         if (list_empty(&folio->_deferred_list)) {
+> > -               if (folio_test_pmd_mappable(folio))
+> > +               if (order >=3D HPAGE_PMD_ORDER)
+> >                         count_vm_event(THP_DEFERRED_SPLIT_PAGE);
+> > +               count_mthp_stat(order, MTHP_STAT_SPLIT_DEFERRED);
+> >                 list_add_tail(&folio->_deferred_list, &ds_queue->split_=
+queue);
+> >                 ds_queue->split_queue_len++;
+> >  #ifdef CONFIG_MEMCG
+> > --
+> > 2.45.2
+> >
 
