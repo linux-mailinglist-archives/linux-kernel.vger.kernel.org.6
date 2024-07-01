@@ -1,121 +1,120 @@
-Return-Path: <linux-kernel+bounces-235495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8100191D5CD
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 03:34:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7086A91D5D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 03:35:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2CD81C20C4E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 01:34:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BFD81C20F10
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 01:35:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F9DB676;
-	Mon,  1 Jul 2024 01:34:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E912847B;
+	Mon,  1 Jul 2024 01:35:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jDFUBxbG"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aLlcnuhG"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01FC1847B
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 01:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5437A847C;
+	Mon,  1 Jul 2024 01:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719797666; cv=none; b=gfgXsE3FfFDWxO7cm9A126hNR9c4u9b49xJzo+Ps6VyAh/t+wdGwM4QGuqDaBarBA6rbO3jDURnHvGU/3ZEgN08bJg3bnFIF619HLtkMOLZXmbPZCwBzNlssDsjy+dhoLwe9jsBiCsuLKpRYrYqpzNExsFt1KwYN2G0op0xqDdU=
+	t=1719797718; cv=none; b=o3jqgIvg2Vd2RF7VVphxGMbKKwH4Q+vFFktFm1+fhq7MbpSf6H6uIfHzXbMS0QVncNP70OQ3V7o/Lv/WYiGUpKNyPh387RN2mWPSCr9mecUL7I/BCd/a2TK+CBVPtQrAPfHZ2zgPUATqSi9Ld7oAbTB8xNOnWyyNx7/sR0lMHOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719797666; c=relaxed/simple;
-	bh=up6vic00r/EC983lCSpeqOy8ZwRpFze7coNStEEisAg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=ssYhVPSzyvhtajHXpSocoA6Io9VxcuCQAD9PRrkNLuBuu0TkmLh+98qR6In8dH1iaUKHiE0iQbCDEocsCSs8PIX9pxRYoc7hcqVM0L70yc7r1A8ZrsDzoTwDjfMkzOMZ4dKWSVE/sLE1Bv1fSed/BIcWV7ZnKNf5+SneYgormP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jDFUBxbG; arc=none smtp.client-ip=209.85.208.181
+	s=arc-20240116; t=1719797718; c=relaxed/simple;
+	bh=QXGvyv4dc/C594KPbdWqh+erqMWMNESAXYjWqoBFgok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VuPy9gVqNRn4MDA5BhzPgrj8YC91YiMtNcNK/6TNT6ThD13yf/dZZZRjy2DhCiQ4i624Rev/Gp/r5G+zibAilONRPgeA5+UN2Z53a1309KEztT6zP7enP7scN4WsHqpGJN0xaORGuFhYVD/D+N0MyS32IDPwfKdP/QrDu9UXu58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aLlcnuhG; arc=none smtp.client-ip=209.85.210.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ec4eefbaf1so24765161fa.1
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 18:34:23 -0700 (PDT)
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70670188420so1484147b3a.2;
+        Sun, 30 Jun 2024 18:35:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719797662; x=1720402462; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=qATZEMh/1klgF7W20a4dIuUsabGQyRb4CXLrEd1f3Bk=;
-        b=jDFUBxbG5/w0640cnsfljfg7deGZDmWaOqXg86yxaZEBBtchNN1SHZMMcbwNH5uZsA
-         IxOpqSQ8I1VXAOi7XERIe5gJg+ffr4B0zYjqom55wUq54c5Dkafl7t6vEJdeIdgLpvOD
-         Ww7znhg9ZZsGR56FuSPP5fYiYh1c4OwpBQ/jXHMLfVBB/v8oai4sSrjeCFYkoBKNQizR
-         xs1rNhu2VpG+SFsHqoKsen7P76FLHbfaHsvDEmhv8ikOtrV3vitGCALEHq4BohL1Z6fS
-         UVkNaf6IXYKBqcJsFnQWCQY/pQc1wzCiJ0LTTckN0Gq8T/NYkyeE/c67vfdH2BvhSwRI
-         Ytlg==
+        d=gmail.com; s=20230601; t=1719797716; x=1720402516; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TQQn1j58t9nLeF0b2LNufFZwTiFUhCHzGVW8dgiIQ9I=;
+        b=aLlcnuhGKDvyNQy8xRE2iaw9M5NakdoXst+exs7XSIAwZ1YcpcOKu+kXOI5H3xFiem
+         GfwQHOWSVQFaytYcQ2mOGTpwR9CB7/FG6jSeOYTd8/IAEhS3XvYMrrsU9MoO74N5Bw2u
+         Rb2J5b9V0sqNsZXrcZ+y8B31n1Uw2vzhXEWIE17v/5LdUVT/4zJ4F7ImJWl7oeXT6uvM
+         WBz19+jL+mVDtvpCWBLcZW3SgUnw4zQ6CvWEi2B0Qbk6WFzQ93SuoQ+Bi2u1HLwv4loD
+         1otAKNszABaFNcvhHIQy4odRhi0JE2LvWPL5B9vhXv6a4yiRAOCSYbcgTAiuUuRQu+Dc
+         sM6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719797662; x=1720402462;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qATZEMh/1klgF7W20a4dIuUsabGQyRb4CXLrEd1f3Bk=;
-        b=riPZ+GZFcxOG7LWMih/Bu2LmBEVReEeTTVZ6LUn5RhjQK/XV2biXrdnhn+Cu6Xj2Cy
-         v15MfC2WJIhMM7U+GhYn/cvF7j7EaGja0k1CErcTmreGAqHlC+UIGlLwCA/+xmW+M+LY
-         2ticg/Ub3wzfwYFFZazm9QIY5+Bw7kDjBqrn0Av/Lw57yqLchIUhpNdX3dx/zKHe89ts
-         eH7BtdlbQuUEdE5upru/BNxp8+oAuBW+BRwahuvSh8mCETvaBW7G0gUd62KcHy/kCXEh
-         wjcJiZrYtb90YzAACyvxLU4jbQMlJ8Qq8HVtVtTQ3BoeMvVtyH6xhnVRDZqR8VKphBat
-         OsJg==
-X-Gm-Message-State: AOJu0YzrwmDpPxKo4j5FVTMXmDRX21qXLUQ5AacoOXueRVJfXHxEgOxK
-	RSa4yJ4uTXwy7NK1vKGS6ume6f5c9GbOVLKF1co8JFAMo2hggGBX
-X-Google-Smtp-Source: AGHT+IFnHIA0qyXjT34qzJBjabQNmeA/pWdMGS+ibJ9rs+Sfp4za1/I/pamjX3x5a/AiuSV4T4GE9w==
-X-Received: by 2002:a05:651c:1245:b0:2ec:b376:3a41 with SMTP id 38308e7fff4ca-2ee5e6c9d00mr23666631fa.51.1719797661939;
-        Sun, 30 Jun 2024 18:34:21 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58612c835adsm3814440a12.17.2024.06.30.18.34.20
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 30 Jun 2024 18:34:20 -0700 (PDT)
-From: Wei Yang <richard.weiyang@gmail.com>
-To: akpm@linux-foundation.org,
-	brauner@kernel.org,
-	oleg@redhat.com,
-	mjguzik@gmail.com,
-	tandersen@netflix.com
-Cc: linux-kernel@vger.kernel.org,
-	Wei Yang <richard.weiyang@gmail.com>
-Subject: [PATCH v2 2/2] kernel/fork.c: put set_max_threads()/task_struct_whitelist() in __init section
-Date: Mon,  1 Jul 2024 01:34:10 +0000
-Message-Id: <20240701013410.17260-2-richard.weiyang@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20240701013410.17260-1-richard.weiyang@gmail.com>
-References: <20240701013410.17260-1-richard.weiyang@gmail.com>
+        d=1e100.net; s=20230601; t=1719797716; x=1720402516;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TQQn1j58t9nLeF0b2LNufFZwTiFUhCHzGVW8dgiIQ9I=;
+        b=ZIE4piozPvS1NMgoU+5La0O6FK+xBEPLRK7Dg80Mf7Pg6U0xezHTyuE78XWOdpRg09
+         fegsrDpgcTN12ulVlZQD/v1tsJ81MQR2hdXcLPIIxN3GSRH9PD+YR7/F6+YZotLutUGR
+         ljOZILaKh9vP74pXIMd5PNWtpfWrYBJThUhFFXT/KIMqVx5i+I7ADPtgqbUVLbN5t1SN
+         c3+TuZqYb6v0BOlD6gVYS4lO51Tzlrz3GkMuj+rCNlyIEYagWC6LRiD0f7HQ4K86jSib
+         3oxYP0ExNAPS/+tCBP49WQ/y65KXhqnj8qEt3/w661jSD5J88xGwgNnlfskGxAwbrDAG
+         rNpw==
+X-Forwarded-Encrypted: i=1; AJvYcCWoaY7bFi1FiJgNYh0HEMiqJhh78TfvCqooNgcoq3lldiMm1nSeFkfapFcMyPw7fKiYS1kE9IL7i5ELh7mWAETG5tx/f0YSL/czuyKPJ3spJuNQkfzp5EDpBzL/K2aBsItdjpf1EXgjPWyFwt8IZTQUwY6dgFoXLIaxxb1S1wxdsCefvMQH
+X-Gm-Message-State: AOJu0YyZdfs4+xMqG6cGdyEXVrUWtiCetgkdCj7XmKtTVdDx34ZqsC68
+	uQz6wrHNXshZYF2yuMi60NKIKFCZIiLYCMJLsfQrR+lYjKIe60V9
+X-Google-Smtp-Source: AGHT+IFBK4tz7vP4nvoPFyP+apmogncqsE6QoVtl2tcv/PWC9oXL42qPiAGp55B55QszY0izCcu8kA==
+X-Received: by 2002:a05:6a00:3e1d:b0:706:a87f:98ae with SMTP id d2e1a72fcca58-70aaadd0e01mr3447630b3a.24.1719797716258;
+        Sun, 30 Jun 2024 18:35:16 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:7783:69e6:8487:f6ab])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-708045ac8b2sm5267910b3a.183.2024.06.30.18.35.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 30 Jun 2024 18:35:15 -0700 (PDT)
+Date: Sun, 30 Jun 2024 18:35:12 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Tzung-Bi Shih <tzungbi@kernel.org>
+Cc: Daisuke Nojiri <dnojiri@chromium.org>,
+	Benson Leung <bleung@chromium.org>,
+	Guenter Roeck <groeck@chromium.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Reka Norman <rekanorman@chromium.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Gwendal Grignou <gwendal@chromium.org>,
+	Pavan Holla <pholla@chromium.org>,
+	Lukasz Majczak <lma@chromium.org>,
+	Ching-Kang Yen <chingkang@chromium.org>,
+	Stephen Boyd <swboyd@chromium.org>,
+	Prashant Malani <pmalani@chromium.org>,
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 2/2] dt-bindings: cros-ec-keyboard: Add keyboard
+ matrix v3.0
+Message-ID: <ZoIH0FfNGAZPgCCi@google.com>
+References: <cover.1719531519.git.dnojiri@chromium.org>
+ <9ae4d96cc2ce8c9de8755b9beffb78c641100fe7.1719531519.git.dnojiri@chromium.org>
+ <ZoFM9QJVp3cpf012@tzungbi-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZoFM9QJVp3cpf012@tzungbi-laptop>
 
-Function set_max_threads()/task_struct_whitelist() is only used by
-fork_init() during bootup.
+Hi Tzung-Bi,
 
-Let's add __init tag to them.
+On Sun, Jun 30, 2024 at 08:17:57PM +0800, Tzung-Bi Shih wrote:
+> On Thu, Jun 27, 2024 at 04:53:08PM -0700, Daisuke Nojiri wrote:
+> > Add support for keyboard matrix version 3.0, which reduces keyboard
+> > ghosting.
+> 
+> Dmitry,
+> 
+> I saw your R-b tag of the patch.  Would you like to apply the patch
+> through chrome-platform tree?
 
-Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
-Suggested-by: Oleg Nesterov <oleg@redhat.com>
----
- kernel/fork.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Yes, I think that would be the best.
 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index eb2b5f96aa61..b42334b53bd6 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -997,7 +997,7 @@ void __init __weak arch_task_cache_init(void) { }
- /*
-  * set_max_threads
-  */
--static void set_max_threads(unsigned int max_threads_suggested)
-+static void __init set_max_threads(unsigned int max_threads_suggested)
- {
- 	u64 threads;
- 	unsigned long nr_pages = PHYS_PFN(memblock_phys_mem_size() - memblock_reserved_size());
-@@ -1023,7 +1023,7 @@ static void set_max_threads(unsigned int max_threads_suggested)
- int arch_task_struct_size __read_mostly;
- #endif
- 
--static void task_struct_whitelist(unsigned long *offset, unsigned long *size)
-+static void __init task_struct_whitelist(unsigned long *offset, unsigned long *size)
- {
- 	/* Fetch thread_struct whitelist for the architecture. */
- 	arch_thread_struct_whitelist(offset, size);
+Thanks.
+
 -- 
-2.34.1
-
+Dmitry
 
