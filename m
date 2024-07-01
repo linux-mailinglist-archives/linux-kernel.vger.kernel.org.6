@@ -1,122 +1,93 @@
-Return-Path: <linux-kernel+bounces-235716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0886091D8D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:21:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E49FC91D8D7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 09:21:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 992DAB20DB8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:21:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 992251F21C5F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 07:21:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E9D47581B;
-	Mon,  1 Jul 2024 07:21:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jAe/qCCt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 862647E58D;
+	Mon,  1 Jul 2024 07:21:40 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A45E61FC4
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 07:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4785064CEC;
+	Mon,  1 Jul 2024 07:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719818497; cv=none; b=VSF3H/vdXw37cWGMbi1np+f9pNanOwweBP+22mUxaWVBAXrZObCf1QsaSMlAfoq5QqtWLBHW7Cy1UdYefvZ1nlo8bkGT+qy4rQYCFKJ587Z8M3brivn59YxgjKftcjDdh5N7YYYS5GNSIlcfdGAM1n+WoEe3MlQkDzomRN1yWD8=
+	t=1719818500; cv=none; b=Z5KqzSuCvZ2OM+NE5Vqe/TzhpcyulkXz4dxwllk6dPw9jmHnEs8h4DcmZ6tMJxpXBR1RYNBIMf52IMFdprAE9UEf1TXLFV/ftE5PuqllDNHaRZ/+vED62GkVOLfJOtKfBaFPckMLNLoLuTat1clNZlOdEvR7SAdtIKHfG5fajB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719818497; c=relaxed/simple;
-	bh=3fZtaBbbZzsHhLK/3C1yQIXRmJwQkiJgXyvRD2amXCU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O84a0p2baDsXbTPr1z8Bpeqiig2PTg6NOw9N1cV3bhXuIdeXN3dZ6+ItKTTQWnDJ8MprOieCe8uL4G6dVtLGz7FIA3AnUjd9QMV6sTkf3vZCnMbe1o8paxP/wQrpdpdJLlgbNqrIWLeczQYTAfzY1Be9NPxpmFTm41VgpQeFwO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jAe/qCCt; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719818495;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M+g42u0E0RJmKENIvoxoEw3yJCtdKnco3k8DpYO4KE0=;
-	b=jAe/qCCtMxor1/lz4kI2ZWVPju4UPSR1dMWBv8ikGPYlP7crddTiQ2vDvZtipLOBYrVob1
-	ifIfzzLNtTGAhyp5DYEUB5ag6nmKzPV1u1Mpx3Z5m8bhKFFiSWeJIyRBi5oqBNn0w+Rwll
-	HeENownzDgPmvyMxT4mZJf+SnOsMkhM=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-135-6rDNLKIsNk6DoD4JULhg0w-1; Mon,
- 01 Jul 2024 03:21:30 -0400
-X-MC-Unique: 6rDNLKIsNk6DoD4JULhg0w-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C7B1419560B0;
-	Mon,  1 Jul 2024 07:21:27 +0000 (UTC)
-Received: from fedora (unknown [10.72.112.45])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5D40A3000229;
-	Mon,  1 Jul 2024 07:21:18 +0000 (UTC)
-Date: Mon, 1 Jul 2024 15:21:13 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Daniel Wagner <dwagner@suse.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Christoph Hellwig <hch@lst.de>,
-	Frederic Weisbecker <fweisbecker@suse.com>,
-	Mel Gorman <mgorman@suse.de>, Hannes Reinecke <hare@suse.de>,
-	Sridhar Balaraman <sbalaraman@parallelwireless.com>,
-	"brookxu.cn" <brookxu.cn@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v2 3/3] lib/group_cpus.c: honor housekeeping config when
- grouping CPUs
-Message-ID: <ZoJY6a1CHCENAZZ8@fedora>
-References: <20240627-isolcpus-io-queues-v2-0-26a32e3c4f75@suse.de>
- <20240627-isolcpus-io-queues-v2-3-26a32e3c4f75@suse.de>
- <ZoFgLxGXrk4VCR03@fedora>
- <b2ncik6c7xicsnzihhwfjjqood2yys52tzotohjnxj6o2mapg5@m364yzsjbvs2>
+	s=arc-20240116; t=1719818500; c=relaxed/simple;
+	bh=YfENndAYVYsTGyzKorJAdO4GPFG+Scgf3TSW9rtgTVo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V+YHtHeRI/PeVS5KSD1FbcHAC/lSor/gcy1xxyLdNNsMkoIr3s4O341bS4CMJqtDM5h7F3ZM7LWp8EHj6qwFbVMsISWkmbTyt4V/Bi9/94voZZyXEDR3g8FX2P+ZmPZnQkj9M6ZM4Ixg5DTjYc0vUA40LfWrYBaT8rAsnWea8ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-05 (Coremail) with SMTP id zQCowACnreX2WIJm4fPvAA--.58012S2;
+	Mon, 01 Jul 2024 15:21:26 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: Yazen.Ghannam@amd.com,
+	tony.luck@intel.com,
+	bp@alien8.de
+Cc: linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] RAS/AMD/ATL: Remove unneeded semicolon
+Date: Mon,  1 Jul 2024 15:21:18 +0800
+Message-Id: <20240701072118.846277-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b2ncik6c7xicsnzihhwfjjqood2yys52tzotohjnxj6o2mapg5@m364yzsjbvs2>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowACnreX2WIJm4fPvAA--.58012S2
+X-Coremail-Antispam: 1UD129KBjvdXoWruFW7Gr18JF1DGr1kKF4fGrg_yoWxurg_uw
+	13Aw4fXFykXw1F9wnIv3ZYvwnFyw4kWrn5urs0gF4fC342qryrJa4DWF1DW3WxWFWxAFy3
+	KF13Jr13Ja97ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbcxFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc2xSY4AK67AK6r4x
+	MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr
+	0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0E
+	wIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JV
+	WxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAI
+	cVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjVc_3UUUUU==
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On Mon, Jul 01, 2024 at 09:08:32AM +0200, Daniel Wagner wrote:
-> On Sun, Jun 30, 2024 at 09:39:59PM GMT, Ming Lei wrote:
-> > > Make group_cpus_evenly aware of isolcpus configuration and use the
-> > > housekeeping CPU mask as base for distributing the available CPUs into
-> > > groups.
-> > > 
-> > > Fixes: 11ea68f553e2 ("genirq, sched/isolation: Isolate from handling managed interrupts")
-> > 
-> > isolated CPUs are actually handled when figuring out irq effective mask,
-> > so not sure how commit 11ea68f553e2 is wrong, and what is fixed in this
-> > patch from user viewpoint?
-> 
-> IO queues are allocated/spread on the isolated CPUs and if there is an
-> thread submitting IOs from an isolated CPU it will cause noise on the
-> isolated CPUs. The question is this a use case you need/want to support?
+Remove unneeded semicolon.
+This is detected by coccinelle.
 
-I have talked RH Openshift team weeks ago and they have such usage.
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/ras/amd/atl/denormalize.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-userspace is free to run any application from isolated CPUs via 'taskset
--c' even though 'isolcpus=' is passed from command line.
-
-Kernel can not add such new constraint on userspace.
-
-> We have customers who are complaining that even with isolcpus provided
-> they still see IO noise on the isolated CPUs.
-
-That is another issue, which has been fixed by the following patch:
-
-a46c27026da1 blk-mq: don't schedule block kworker on isolated CPUs
-
-
-
-Thanks,
-Ming
+diff --git a/drivers/ras/amd/atl/denormalize.c b/drivers/ras/amd/atl/denormalize.c
+index 1a525cfa983c..d45ce753e636 100644
+--- a/drivers/ras/amd/atl/denormalize.c
++++ b/drivers/ras/amd/atl/denormalize.c
+@@ -683,7 +683,7 @@ static int denorm_addr_df4_np2(struct addr_ctx *ctx)
+ 	default:
+ 		atl_debug_on_bad_intlv_mode(ctx);
+ 		return -EINVAL;
+-	};
++	}
+ 
+ 	if (ctx->map.num_intlv_sockets == 1) {
+ 		hash_pa8	= BIT_ULL(shift_value) & ctx->ret_addr;
+-- 
+2.25.1
 
 
