@@ -1,112 +1,172 @@
-Return-Path: <linux-kernel+bounces-235531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD56291D645
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 04:49:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B95091D648
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 04:50:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 766241F21436
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 02:49:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6C201F21436
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 02:50:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA55C144;
-	Mon,  1 Jul 2024 02:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Ei9mi7B0"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAFF5D535;
+	Mon,  1 Jul 2024 02:49:58 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5070B79FE
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 02:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C57171C9;
+	Mon,  1 Jul 2024 02:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719802166; cv=none; b=ETOPsPtxmir4KnqajAp4IpGsjLHsje/oZKBwPPzikSlfGIti8E09QqMt87mz5Q8t5OS0Kly7yM6aG6AqOtFTyTm4eCBTEla6oglCb/YuDDxHsRvgjgwpIfd0tWKpGZlG8TR0xqCLV05g0vQkSOFg2+HtbQHn8SGE0AZI0SG+OoE=
+	t=1719802198; cv=none; b=pHrDSrSfb02CCGE2C/wmxSamszUGsIBjEyIzjj4qf61nXFG5Sn+9BYPVUPYhv9VawvI/fLVQfIFTBZaBFa397HwYYbVGI79VLH4lc3IQa0IYT/hCFxh/ypcZ1TW1gJDVmjSDj+ZKtSy4Z84RLf5tZFRfOxoNkfLoWtU3Dgv3oQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719802166; c=relaxed/simple;
-	bh=keqjdE0I+X6l14hJzH5UBvrkJI7iwlUuj7mnK9jbMJI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=fuVQshgxkBojLNyx5d16MnKZe1LlH6DU6w7AYu5DMfUxBzwGyYT+nqm20lc2/E3BTV8rCTYpjcG5gnWYsS16MaTkapZif3GN9MCG/61sULw54dGtcPiFYBVkE2t5dRVf7q5DZ8xpZ533SRf5PSB/6XzdGca1vyZndUocgbb0HOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Ei9mi7B0; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: senozhatsky@chromium.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1719802159;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7mFxjC1U9/7JygpJdsg86O8Ayb0TyOCDXKOYMsrvCw0=;
-	b=Ei9mi7B0/RVD3/lgBL1ONKhW0K810nMsBJltQ6rAP5LVFw8dP2N3FIgV34ysxAFQj3yIMb
-	jQhuD/i0IcIjuJNuCFFBmLJX/ubb1qTzi5KIZs5Ew9usL2WCH1/AJmMResu6YJzlDbvinQ
-	zySfDA08FINQDopG7cM78XBatmiw8S8=
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: minchan@kernel.org
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Message-ID: <8163966f-d31d-425c-97cb-3d18ab28ac1f@linux.dev>
-Date: Mon, 1 Jul 2024 10:49:13 +0800
+	s=arc-20240116; t=1719802198; c=relaxed/simple;
+	bh=n+oAJrMiKU/m7GwdMOLXLJIDRyS/D/sRQp8DT/+cx0E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DVB7jiJckyINmX7KVSRUZ8CI/HSgh6MDt9vS1ukUzSksGuCe5UtwM21yEHr7XXFy02WATnhmjkEvQkuxfxl9K4X8iROf3hpcHGfSRMjdGqe245Ro//Ooc8WZelYHSdWK9zG+Z4Ns/vwkUmh3584XccEqshD+yYlKJqtHY/9zAJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WC9QD3QP1z1j62j;
+	Mon,  1 Jul 2024 10:45:40 +0800 (CST)
+Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6D6FB1A016C;
+	Mon,  1 Jul 2024 10:49:44 +0800 (CST)
+Received: from [10.174.176.88] (10.174.176.88) by
+ kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 1 Jul 2024 10:49:43 +0800
+Message-ID: <3f2edec7-5be9-4bf4-bc34-f64072a61336@huawei.com>
+Date: Mon, 1 Jul 2024 10:49:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 1/2] mm/zsmalloc: fix class per-fullness zspage counts
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: akpm@linux-foundation.org, minchan@kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20240627075959.611783-1-chengming.zhou@linux.dev>
- <20240628005523.GC15925@google.com> <20240628010812.GD15925@google.com>
- <caf4b05d-6adf-4976-9961-fa30d3a9969c@linux.dev>
- <20240701013731.GA3232210@google.com>
- <4f2a5cf1-3132-4bc6-965f-8dc5a8ffc05a@linux.dev>
-In-Reply-To: <4f2a5cf1-3132-4bc6-965f-8dc5a8ffc05a@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3] xfs: Avoid races with cnt_btree lastrec updates
+To: Dave Chinner <david@fromorbit.com>
+CC: <chandan.babu@oracle.com>, <djwong@kernel.org>, <dchinner@redhat.com>,
+	<linux-xfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yangerkun@huawei.com>
+References: <20240625014651.382485-1-wozizhi@huawei.com>
+ <ZoIUrmB2Jc1KK9Tv@dread.disaster.area>
+From: Zizhi Wo <wozizhi@huawei.com>
+In-Reply-To: <ZoIUrmB2Jc1KK9Tv@dread.disaster.area>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemf100017.china.huawei.com (7.202.181.16)
 
-On 2024/7/1 10:20, Chengming Zhou wrote:
-> On 2024/7/1 09:37, Sergey Senozhatsky wrote:
->> On (24/06/28 11:19), Chengming Zhou wrote:
->>> Andrew, could you please help to change the subject as Sergey asked?
->>> Sorry, I should have noted these details in the changelog when I wrote
->>> this subject.
+
+
+在 2024/7/1 10:30, Dave Chinner 写道:
+> On Tue, Jun 25, 2024 at 09:46:51AM +0800, Zizhi Wo wrote:
+>> A concurrent file creation and little writing could unexpectedly return
+>> -ENOSPC error since there is a race window that the allocator could get
+>> the wrong agf->agf_longest.
 >>
->> Chengming, can I ask you to resend these patches with a proper commit
->> message?
+>> Write file process steps:
+>> 1) Find the entry that best meets the conditions, then calculate the start
+>>     address and length of the remaining part of the entry after allocation.
+>> 2) Delete this entry and update the -current- agf->agf_longest.
+>> 3) Insert the remaining unused parts of this entry based on the
+>>     calculations in 1), and update the agf->agf_longest again if necessary.
+>>
+>> Create file process steps:
+>> 1) Check whether there are free inodes in the inode chunk.
+>> 2) If there is no free inode, check whether there has space for creating
+>>     inode chunks, perform the no-lock judgment first.
+>> 3) If the judgment succeeds, the judgment is performed again with agf lock
+>>     held. Otherwire, an error is returned directly.
+>>
+>> If the write process is in step 2) but not go to 3) yet, the create file
+>> process goes to 2) at this time, it may be mistaken for no space,
+>> resulting in the file system still has space but the file creation fails.
+>>
+>> We have sent two different commits to the community in order to fix this
+>> problem[1][2]. Unfortunately, both solutions have flaws. In [2], I
+>> discussed with Dave and Darrick, realized that a better solution to this
+>> problem requires the "last cnt record tracking" to be ripped out of the
+>> generic btree code. And surprisingly, Dave directly provided his fix code.
+>> This patch includes appropriate modifications based on his tmp-code to
+>> address this issue.
+>>
+>> The entire fix can be roughly divided into two parts:
+>> 1) Delete the code related to lastrec-update in the generic btree code.
+>> 2) Place the process of updating longest freespace with cntbt separately
+>>     to the end of the cntbt modifications. Move the cursor to the rightmost
+>>     firstly, and update the longest free extent based on the record.
+>>
+>> Note that we can not update the longest with xfs_alloc_get_rec() after
+>> find the longest record, as xfs_verify_agbno() may not pass because
+>> pag->block_count is updated on the outside. Therefore, use
+>> xfs_btree_get_rec() as a replacement.
+>>
+>> [1] https://lore.kernel.org/all/20240419061848.1032366-2-yebin10@huawei.com
+>> [2] https://lore.kernel.org/all/20240604071121.3981686-1-wozizhi@huawei.com
+>>
+>> Reported by: Ye Bin <yebin10@huawei.com>
+>> Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
+>> ---
+>>   fs/xfs/libxfs/xfs_alloc.c       | 115 ++++++++++++++++++++++++++++++++
+>>   fs/xfs/libxfs/xfs_alloc_btree.c |  64 ------------------
+>>   fs/xfs/libxfs/xfs_btree.c       |  51 --------------
+>>   fs/xfs/libxfs/xfs_btree.h       |  16 +----
+>>   4 files changed, 116 insertions(+), 130 deletions(-)
 > 
-> Of course, will update and send later.
+> Mostly looks good. One small thing to fix, though.
+> 
+>> +/*
+>> + * Find the rightmost record of the cntbt, and return the longest free space
+>> + * recorded in it. Simply set both the block number and the length to their
+>> + * maximum values before searching.
+>> + */
+>> +static int
+>> +xfs_cntbt_longest(
+>> +	struct xfs_btree_cur	*cnt_cur,
+>> +	xfs_extlen_t		*longest)
+>> +{
+>> +	struct xfs_alloc_rec_incore irec;
+>> +	union xfs_btree_rec	    *rec;
+>> +	int			    stat = 0;
+>> +	int			    error;
+>> +
+>> +	memset(&cnt_cur->bc_rec, 0xFF, sizeof(cnt_cur->bc_rec));
+>> +	error = xfs_btree_lookup(cnt_cur, XFS_LOOKUP_LE, &stat);
+>> +	if (error)
+>> +		return error;
+>> +	if (!stat) {
+>> +		/* totally empty tree */
+>> +		*longest = 0;
+>> +		return 0;
+>> +	}
+>> +
+>> +	error = xfs_btree_get_rec(cnt_cur, &rec, &stat);
+>> +	if (error)
+>> +		return error;
+>> +	if (!stat) {
+>> +		ASSERT(0);
+>> +		*longest = 0;
+>> +		return 0;
+> 
+> If we don't find a record, some kind of btree corruption has been
+> encountered. Rather than "ASSERT(0)" here, this should fail in
+> production systems in a way that admins and online repair will
+> notice:
+> 
+> 	if (XFS_IS_CORRUPT(mp, stat != 0)) {
+> 		xfs_btree_mark_sick(cnt_cur);
+> 		return -EFSCORRUPTED;
+> 	}
+> 
+> -Dave.
 
-I just pulled mm/mm-unstable and ready to update, but find Andrew has 
-already helped to change the subject and commit message as below, which
-is great enough! Thanks!
+Yes, that seems more reasonable. I will send the V4 patch.
 
-commit 84d0abc5905bbdf29dc7ff8083d21145d78a3ffe
-Author: Chengming Zhou <chengming.zhou@linux.dev>
-Date:   Thu Jun 27 15:59:58 2024 +0800
-
-     mm/zsmalloc: clarify class per-fullness zspage counts
-
-     We always use insert_zspage() and remove_zspage() to update zspage's
-     fullness location, which will account correctly.
-
-     But this special async free path use "splice" instead of 
-remove_zspage(),
-     so the per-fullness zspage count for ZS_INUSE_RATIO_0 won't decrease.
-
-     Clean things up by decreasing when iterate over the zspage free list.
-
-     This doesn't actually fix anything.  ZS_INUSE_RATIO_0 is just a
-     "placeholder" which is never used anywhere.
-
-     Link: 
-https://lkml.kernel.org/r/20240627075959.611783-1-chengming.zhou@linux.dev
-     Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
-     Cc: Minchan Kim <minchan@kernel.org>
-     Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
-     Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Thanks,
+Zizhi Wo
 
