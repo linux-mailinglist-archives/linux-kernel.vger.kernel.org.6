@@ -1,148 +1,147 @@
-Return-Path: <linux-kernel+bounces-236247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E97991DF62
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:34:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F6E591DF69
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:35:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 175F728208D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:34:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 967EB1C208A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 12:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1527014D430;
-	Mon,  1 Jul 2024 12:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB60B14D6F1;
+	Mon,  1 Jul 2024 12:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UpqgutNQ"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="pAfHIgjF"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73AA586250
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 12:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB46386250
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 12:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719837251; cv=none; b=dkt+NHHr7NxM97Cq7pwsN0H7R4k9q7n2VSgKG8cQrayBaN777woN7AvIjnYSExQbbRIaeX2zXqJMl6lcvhh9rNvzxfG/riqy3I8wav4tGgchWEcRQRb4Ei7ANa9Z0OXF84yYlM1oHPuVdLBUXrqdb07Kh+ZOt/0DLuJjea3KcxU=
+	t=1719837313; cv=none; b=oy1ndlS4YnUflJH46rQzv5/OgVe3NXkj7yBkCZpLaWgFHowklRLsN/6Iww0+w1a00IvfATwZi5aa9QugOYe/9xu4bnIuAgNO5XokcmaZCkgh1hkv6sR/HdjaZjgeUhjaiO3W9qXEJ8jNuolfPvcBXCeK7lvWoPWaJFJ7e+J59sU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719837251; c=relaxed/simple;
-	bh=kt7z8+rEOdJwKmgSycNoh2R+LGoo0w5oUmgkQgFW4P8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=lkIcdsshCDk9I646q1iJC0zk6IroTIF0+UvU2k1Nx8dORbor20c1ayQxCkG/nEaZeZ56Vp6i0vSgrGGJAf1cdnjxebnykbr2iuMsCQbH0oCfZLgx/CyAY7OI1WX3CEEG0hbMVJRvua0LV2VHvDxoagyiC42k5sbJ1ua0hXlwR+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UpqgutNQ; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3627ef1fc07so1754844f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 05:34:08 -0700 (PDT)
+	s=arc-20240116; t=1719837313; c=relaxed/simple;
+	bh=mZeO1f7tTznVKqOD4SvW+UN628jwmIqb6IO7RYHEuNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g2ZSP1B6mrmAGKqCIHA5Hhgb3tn72MboaJyu7+1GejW9WcSVqoaycRULFWJFw5fJnnI15h1JrKWZf4YGNLV80k6goForfhqQBz1ms0z00M0xyt+gPTwsFDVnsKWce/32XqK4jDBeTYIyFZR7UvE5z3rww63Ah703DpLxN/P8Nk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=pAfHIgjF; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f480624d0fso15575815ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 05:35:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719837247; x=1720442047; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=a287NlBt1es5eAg2uwHXF+qjhDTjmaYvEUEHcHWzfuk=;
-        b=UpqgutNQeO5Q92x3IGAiM/ML8pUfh+d+oqKLPE8yHV+7loyKqmaD8eW+vmmgT01ykE
-         PuRi0s79VL/OuG5MELoaCcdCcMZnvoYI6QNluPh95J6chBZToSgE1BnjuSEU9SQWpLES
-         gg9PN378ZivNxJCDr9VW/aqGvvKrqkSAgurU6YkT5qCwm+3o/h8WGd9nM3cK5SzY0Wzp
-         xfvE3lQe91h+iSs069cvzADUJACSpOvYUUR30rSW2LqyEf+qlzvUZ8gE5qA1L6sgmxND
-         hfFYF8TgoqrJANQkv8uWlDJc1ZXisAH7jQY9qY0LdX4+72ZV4QLbxi0tIXXGtIiP0QY3
-         RAww==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1719837311; x=1720442111; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8Srvua/8GiZk2f1lRDes3KQDNlajTOwOOiszOgYhtkE=;
+        b=pAfHIgjFp9YUT8lsILQhKGdJNkOLEeH4L8svf4d7mBWVb59VOY3lbu9C/Z1NNsk2us
+         jvlz9Goy9AqnLoTwfqdsFBOUpoL48O0ve9S9guulN7+IwahnQLJRRdHbTwAklM5knKmb
+         jTRPBEv9DUtSETpgv1AVNa74gsPS2TR0+AGrrCjxn/XBceocNim3OrAIWAedMk6jZSfP
+         1sqaDRQYZ2LtmFjo+OE1LZxHtgz/e4kFrNGjZyNGQfwvs08n30ZwUosJfGYD9N6emHmk
+         UJkzRuJLYvs1ZFpPQ558CgrO03/VplZ9uVgHRZDMAg59xSH23RYkhcOgvYRoZbQPkbH6
+         tnxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719837247; x=1720442047;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=a287NlBt1es5eAg2uwHXF+qjhDTjmaYvEUEHcHWzfuk=;
-        b=JdmMW/b6Z1oyOhiyciZ3tQ0Y28nLDmjLSynjxMd7UaFJOg4pkLkeOEEi9+NWC8DYbC
-         2KSa7DdOE1CCLVtXlyKYy3vYqqGEtoZYPFWfK6vaoq9UDhMw2DEVjq8tclr6RPZanK+6
-         /ipkEOeTCf8e4RjXtCvNPM0sY5fcYTwdnEhZr9qIVnJrLa0NoYj+SgHm4sJJR3YIvvjZ
-         dULQ5u8JmagsYHGNTtSSP1ZBSODkx9Mf8/WmY3NxP+vkwyRGQexnBwQg9Hv2cii64p1c
-         lZLzamdMVFlNorPKziXsi1imwc/KUvEaM5nKMeP1BIap+4ujwPtnUcdkIkwPlA6vmjno
-         UgVw==
-X-Forwarded-Encrypted: i=1; AJvYcCWUN1GsiP5GHsFPPxfbW8ZQkwQJDd5X507LabeyiTP4fuByeeKxbMag1q/vsRWCSTEBHxgVqeaFb4XCRlHmAZQYdUoGCHcQVno1vIDJ
-X-Gm-Message-State: AOJu0Yx3yefBaeOyZBg8d5uM0Nchz/EdAKcwAs2PUVLwuaQzKQ7fJNON
-	k8ydrifQwO5PUc6NzlvKu+27HmG6GmtnwV0zRERWjxbXBkSu+6AUP47k/18297o=
-X-Google-Smtp-Source: AGHT+IFquMweWu7uygXTunNKJ/3190b7nlrlnjvn4mIs9Yb0+U9p0r5GPfWyirnYIWqlNKr3yAsNKA==
-X-Received: by 2002:a05:6000:1fa8:b0:366:e9b8:784f with SMTP id ffacd0b85a97d-367756c6fabmr3539122f8f.32.1719837246509;
-        Mon, 01 Jul 2024 05:34:06 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:ffea:206f:fd2e:ac5c? ([2a01:e0a:982:cbb0:ffea:206f:fd2e:ac5c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0cd4f4sm9983016f8f.13.2024.07.01.05.34.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Jul 2024 05:34:05 -0700 (PDT)
-Message-ID: <34b3617f-3663-40c8-a738-237dd4bd6c54@linaro.org>
-Date: Mon, 1 Jul 2024 14:34:05 +0200
+        d=1e100.net; s=20230601; t=1719837311; x=1720442111;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8Srvua/8GiZk2f1lRDes3KQDNlajTOwOOiszOgYhtkE=;
+        b=wO/k7SunMqIEttfEjIz/cPLtpqFQLEGzI3gtZlvjTI0/WjgcLGvbxYsdEyPgx+418d
+         +EzSGTJF5A9znmOwp3S0tpv+RFk1+50HhqPXROHKQDrqvcRLmf6WeBXHEiNWQZvNtZsi
+         P3syeBo4y7hGIpyKtKTvS1jhJK1lnR4nnA5fgJzUSQlbtfS5+tFyvpbxBAMLydP19mDn
+         DOwNv0UaTqzl7RGfIOiFgPju+zwAly3bYm+HzkDJCNZC707SrQ6JqTo40kGj0wjVaFwE
+         mBro2KxgtVa22trVPc+j+JkGUwiP+osY/9dSPhce089BBBC3gmvxOR6dk0Qwig/+AJhE
+         kMog==
+X-Forwarded-Encrypted: i=1; AJvYcCWMLnlZY+yW/glTtjS2sdk8Qq248TjGC960crdEdj+C4t3qnW/3svh6Ao+/77RG1V9p2whdl068FxI4ucbJhCftnii/XvncLrHLUfKx
+X-Gm-Message-State: AOJu0YyJXBLVIA/AGKmvS2JDOufUSuQA/yY4HGtrAsiA7Px2yID6+tKg
+	3r6xcTR/ePJTYGdIwLLhObE1JYw2iNdM/+xBOW+pnZf5KKRamL5BbPxdnYLHmjQ=
+X-Google-Smtp-Source: AGHT+IEDTYyht4xal4sRk0Ri79tyKeyIeWLDUvtqY7rzls4XH1cjLoNZcE3nJnryOV0CB94f4AEujg==
+X-Received: by 2002:a17:902:cec5:b0:1fa:95d6:1584 with SMTP id d9443c01a7336-1fadbca398dmr31822695ad.37.1719837310840;
+        Mon, 01 Jul 2024 05:35:10 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac11d8cbbsm63560625ad.106.2024.07.01.05.35.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 05:35:10 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sOGFP-000KA4-33;
+	Mon, 01 Jul 2024 22:35:07 +1000
+Date: Mon, 1 Jul 2024 22:35:07 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+	brauner@kernel.org, chandanbabu@kernel.org,
+	John Garry <john.g.garry@oracle.com>, jack@suse.cz,
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH -next v6 1/2] xfs: reserve blocks for truncating large
+ realtime inode
+Message-ID: <ZoKie9aZV0sHIbA8@dread.disaster.area>
+References: <20240618142112.1315279-1-yi.zhang@huaweicloud.com>
+ <20240618142112.1315279-2-yi.zhang@huaweicloud.com>
+ <ZoIDVHaS8xjha1mA@dread.disaster.area>
+ <b27977d3-3764-886d-7067-483cea203fbe@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] ASoC: codecs: wcd939x: Fix typec mux and switch leak
- during device removal
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-References: <20240701122616.414158-1-krzysztof.kozlowski@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240701122616.414158-1-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b27977d3-3764-886d-7067-483cea203fbe@huaweicloud.com>
 
-On 01/07/2024 14:26, Krzysztof Kozlowski wrote:
-> Driver does not unregister typec structures (typec_mux_dev and
-> typec_switch_desc) during removal leading to leaks.  Fix this by moving
-> typec registering parts to separate function and using devm interface to
-> release them.  This also makes code a bit simpler:
->   - Smaller probe() function with less error paths and no #ifdefs,
->   - No need to store typec_mux_dev and typec_switch_desc in driver state
->     container structure.
+On Mon, Jul 01, 2024 at 10:26:18AM +0800, Zhang Yi wrote:
+> On 2024/7/1 9:16, Dave Chinner wrote:
+> > On Tue, Jun 18, 2024 at 10:21:11PM +0800, Zhang Yi wrote:
+> >> @@ -917,7 +920,17 @@ xfs_setattr_size(
+> >>  			return error;
+> >>  	}
+> >>  
+> >> -	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_itruncate, 0, 0, 0, &tp);
+> >> +	/*
+> >> +	 * For realtime inode with more than one block rtextsize, we need the
+> >> +	 * block reservation for bmap btree block allocations/splits that can
+> >> +	 * happen since it could split the tail written extent and convert the
+> >> +	 * right beyond EOF one to unwritten.
+> >> +	 */
+> >> +	if (xfs_inode_has_bigrtalloc(ip))
+> >> +		resblks = XFS_DIOSTRAT_SPACE_RES(mp, 0);
+> > 
+> > .... should this be doing this generic check instead:
+> > 
+> > 	if (xfs_inode_alloc_unitsize(ip) > 1)
 > 
-> Cc: <stable@vger.kernel.org>
-> Fixes: 10f514bd172a ("ASoC: codecs: Add WCD939x Codec driver")
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>         if (xfs_inode_alloc_unitsize(ip) > i_blocksize(inode)) ?
 > 
-> ---
+> > 		resblks = XFS_DIOSTRAT_SPACE_RES(mp, 0);
+> > 
 > 
-> Not tested on hardware.
-> ---
->   sound/soc/codecs/wcd939x.c | 113 ++++++++++++++++++++++---------------
->   1 file changed, 66 insertions(+), 47 deletions(-)
-> 
+> Yeah, it makes sense to me, but Christoph suggested to think about force
+> aligned allocations later, so I only dealt with the big RT inode case here.
+> I can revise it if John and Christoph don't object.
 
-<snip>
+Sorry, but I don't really care what either John or Christoph say on
+this matter: xfs_inode_has_bigrtalloc() is recently introduced
+technical debt that should not be propagated further.
 
-Looks good!
+xfs_inode_has_bigrtalloc() needs to be replaced completely with
+xfs_inode_alloc_unitsize() and any conditional behaviour needed can
+be based on the return value from xfs_inode_alloc_unitsize(). That
+works for everything that has an allocation block size larger than
+one filesystem block, not just one specific RT case.
 
+Don't force John to have fix all these same RT bugs that are being
+fixed with xfs_inode_has_bigrtalloc() just because forced alignment
+stuff is not yet merged. Don't make John's life harder than it needs
+to be to get that stuff merged, and don't waste my time arguing
+about it: just fix the problem the right way the first time.
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
