@@ -1,249 +1,194 @@
-Return-Path: <linux-kernel+bounces-235688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5653291D864
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:58:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 834F091D862
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 08:57:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A78F9B211AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 06:58:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE217B20916
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 06:57:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970A16F076;
-	Mon,  1 Jul 2024 06:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16AA05811A;
+	Mon,  1 Jul 2024 06:57:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="M45OcH+T"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OzK1/tut"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0F460BBE
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 06:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22F310A0E
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 06:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719817069; cv=none; b=m6Jz1fNiiUolqOZCDFHnxPdUIoVkS1LqdU8ndKJ+rwAnGu7LvWhqN1MjE3IDpU9CNCtGDQ7KwqyoEvzoinglSiaBwT9Bhwah6dCcWhB+nQjDTapF/Mboy4G/9NnWVLdcAuopKOQvahTifE9RqyHV0BkLexk3doHxi/64BbkPGJo=
+	t=1719817064; cv=none; b=Llhj1z/PMie6JjycdbTLa8l7KZo9/KPo8YZ5sz0XGHHsrBw51KaQ4CVmaaeMU7tIEUUTJOa9B9QKr6Lm3Mej7ThLTaWUiMthbJkVsf3UM/7q1PngI6RebCi7MLDmDJTWlw+e+hbMtTcOy2wUDPeKq/gG0oEtokln9xz8bd5rtEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719817069; c=relaxed/simple;
-	bh=Zc7HA+BQowWq5Oaa95fc6fBaYWxRXcEecHyUImcmiFA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VeIUfL5om0lp7njej+RyGr66feGnBrYVvu8oJVHEh31W2DOpf6Ol2FH/+hLm0dGZScX1gthyqSEVzEOhrK/vR7jMKnO+t7Z8mi6oH5ouFtMoo/tIJ0XEJIcotV7Lf8clkL+jSmQ+3u2G6s2M4WSAF/1MTKivobe6pEUrpeR7LCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=M45OcH+T; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1719817046; x=1720421846; i=efault@gmx.de;
-	bh=5wPewIEuF6TbLHl/Kj1QXPvantQneRP01pEe6xIVb7k=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=M45OcH+T/ZUj+jfNw7jrWxwQLzHzP/4Vayb8iqX0gcSlb/fJ4UNv2DJiZpOpaRGF
-	 dL5V5QuTHUTQRR3s+Qp+plrffr6aJk2NLofkGP8nHXMhIJYw9sQv1wcN2LJSiSmyi
-	 ms5PBSuwurHl2Bk//PIagg0U7rkGMJR+Aa+GTpc7GEa/sFurJSqvPbF+cJ1YbKLDr
-	 mXWklWCth5HjJ3/XQ9079ldkLFropJgCEq9w/sTf/7NPIy40xZ1f3ambxVaT2oD5A
-	 UyH2lRgeT063X6PAT8196dxEjd3I9d11rvkfEg1HbTPSsBxjB6lVBd7ARZVvMJhIg
-	 wF3dPN8C+f0/us1KhQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from homer.fritz.box ([185.191.216.19]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MTAFh-1srZfd2Bx9-00T42L; Mon, 01
- Jul 2024 08:57:26 +0200
-Message-ID: <db81ba7fba622e2a1b7186e66471cfb9ad8490fd.camel@gmx.de>
-Subject: Re: [PATCH 1/2] sched/fair: Record the average duration of a task
-From: Mike Galbraith <efault@gmx.de>
-To: Chen Yu <yu.c.chen@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, Tim Chen <tim.c.chen@intel.com>, Yujie Liu
- <yujie.liu@intel.com>, K Prateek Nayak <kprateek.nayak@amd.com>, "Gautham R
- . Shenoy" <gautham.shenoy@amd.com>,  Chen Yu <yu.chen.surf@gmail.com>,
- linux-kernel@vger.kernel.org
-Date: Mon, 01 Jul 2024 08:57:25 +0200
-In-Reply-To: <ZoFY/n2S7rMp6ypn@chenyu5-mobl2>
-References: <cover.1719295669.git.yu.c.chen@intel.com>
-	 <338ec61022d4b5242e4af6d156beac53f20eacf2.1719295669.git.yu.c.chen@intel.com>
-	 <d922f7bf3965f4eaef5028177b886e2e1861742d.camel@gmx.de>
-	 <ZoFY/n2S7rMp6ypn@chenyu5-mobl2>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1719817064; c=relaxed/simple;
+	bh=8DfI1H8UonA6NomhsPjUPjeq10/x6VChoMolak6uzSY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SU+c3fySIkKFBb9AgMuRTBml6k9dQ+OE6BM9OTv+/m4xZNNwYIYRJnBECAdgtbvxDKcF/4o3QbsVGxhBFLbFjVMVml+8i3a2PQHR8CmOGm8AxZ5I2KmXBiOmCvAiD3Yrwy+BLTGQ08+hJPRi7ql1E5lMwOXpGVYYFJkXWTcRZyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OzK1/tut; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719817059;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=IpTSHvGGLKrRIbXymuTxT7TJOOuk+NtEfOPydwUddDU=;
+	b=OzK1/tutq4Bxy53Z8xF2Jvci19E7RMlvom83Oj92CI/oW4FQyOASb3OZJKSGDTNqlUG77m
+	eMs7uyDF9+RovL1v0YQ1iVGiOibfGwZd7zqn9YLbb5VbX83X5TXw8xG0C3MVVCfNa4RHLi
+	5qGYgDWyn1FK2bvuDB6fsYUXSfPeuL8=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-150-voQJEwLsM_-GYDxXX9_L4A-1; Mon, 01 Jul 2024 02:57:36 -0400
+X-MC-Unique: voQJEwLsM_-GYDxXX9_L4A-1
+Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2ec584f36bfso24293121fa.3
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Jun 2024 23:57:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719817054; x=1720421854;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=IpTSHvGGLKrRIbXymuTxT7TJOOuk+NtEfOPydwUddDU=;
+        b=ezwIj9xZtFA31OCjLnp3AMPb8b4jov5vHhKenW4eyoWzd4MksrbvpmIQh6EWF/boAl
+         bV+rn4Advcx11oSk7xF2pS9WuRWG7Ehv9uq16aA65wVdrUiBTIQxNCPNNgVLO2tvuMch
+         e1JJJZz47u/xJwx7iULAp5lM0jSpJ+A0wo6Et5Lc/9NvExxauhb0kPapFghdlka7n26L
+         HiFi1+cWoUNl1r4+8n1VLVzzJjT6Gs+mhT5bijCrUKIftN8KKSHWvQj2yxeTbDxQCptc
+         VJTdQjjZPRr0jKwf/p8QYep7MZnjP3pJYKXRjqONhtCEPSZ9yBid8vWZohS5iDyGXSyZ
+         Zskw==
+X-Forwarded-Encrypted: i=1; AJvYcCVQGA3NXIOjBgBgMh5OcT4iyLsE0nthDK/cczhLDOujLntkNd+JYijmWWrnoPslyP4sZ5S9Re44QxS2R+EQyi0NhcF7x5BIV0YXzph9
+X-Gm-Message-State: AOJu0YzbqR0Gs6slH8EC/g16tywjSvJrStKQAikRt2rWbcOOFITQhAqc
+	kZCRihjISeSiFJyj0k/uBibSaIbOoHJmSZGE7m7Qywk8heUrni3BxnVnIAh5yriKqfMjBUgm3sj
+	gIGjYjdXvteMeUEdVpaPvmA3kIQd5nE4pX4s+NimwCJalHp/KEhDiU8GZmdsbDA==
+X-Received: by 2002:a2e:9556:0:b0:2ec:58e8:d7a2 with SMTP id 38308e7fff4ca-2ee5e359092mr25084501fa.16.1719817053956;
+        Sun, 30 Jun 2024 23:57:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF/HNWdb4R7HyFPm87+8vcgtMUhbGbar8AL+VQEjwkzMxx2hDvAu8eV7BURsrmPE30qqdiZcw==
+X-Received: by 2002:a2e:9556:0:b0:2ec:58e8:d7a2 with SMTP id 38308e7fff4ca-2ee5e359092mr25084441fa.16.1719817053536;
+        Sun, 30 Jun 2024 23:57:33 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c72e:2200:7ed7:c239:d423:3b31? (p200300cbc72e22007ed7c239d4233b31.dip0.t-ipconnect.de. [2003:cb:c72e:2200:7ed7:c239:d423:3b31])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0e1345sm9105356f8f.54.2024.06.30.23.57.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 30 Jun 2024 23:57:33 -0700 (PDT)
+Message-ID: <1bf214bb-86a7-4f73-a839-39a4b37bc04a@redhat.com>
+Date: Mon, 1 Jul 2024 08:57:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:+aQCZbKsF8EVAytOQhP20MIfuHhKmi4JIncM4tSynN0UW/8KO5+
- d0/U+MYfVQQquZS2Qty2snf+vXq9ZdJskzrwsCEzDckihZ1d1nxTq0cvcaifQ74J34VQSIO
- lw4iasYEN4edPOagOKBTXwFFitIh1Ir3HMuAyeMk6XYzm9uXY35JkAG4Uryf+3raGSCoPMZ
- hHd+ZkhgqxPiHWWXXjMrg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:e+bbNlmh9ig=;2IFEq5urH5lMd0JIcQ4dfwF02MB
- WWAnXHA/vlDp2QhUQgYMni415oayeqZ6lAUd1WeSQeKNVT6+vpsTK1tFVIEPYn0f1A/TrCX01
- WC3Rx0+YOZrgglm25W5gWIWrlypfmN8g1TvraCxL/VA5iWhqTgqi62A1cQQhF+sRxWCLZoROP
- Vka5r/TJcm50a/gYLSKP92qIKwWHeScB57Ank36kXM6irNPfpF1FBlQcJm6N3CajRr6Lpfiz9
- eaUh/+v+ZoGImg1MMBn+Smv1VJVT7uP01CWs+P50ltsPOkDZ5QsrAHdgCJWeYBtApjsYjxkql
- O/cRG5THQS3v1BegAvz3E3Ql1Evz7aPgeRvmqbf0m3xqykGnylJoLswAknEyejkwejxYYSyqU
- 3SzwoN2UGsFqc8cmnDxEdc0vsot1sfN9Nd6XZGiHwDg6w4EjpaxJOIgO7tWVGA9FRQZ2yvbOP
- 5saztbNQEtnWFd2gd3qOO2kecctDGwUd6/nktCGnCEvG2se/l/0wFkLz7QP5ZhSSUUHjBKpi5
- TInQDpwPVVaYk2gOxG3lK7kna6mj71JRURBN0FqwjTqZRInkcwiyB0FoS6t+3p3YXcdp3lczq
- oHQpEIBhWloNrUusOh55P9hCA0gTzxDzA5H7QdUELfTnkhG+TKcHWdoY0IB3y4kJkpWxC6qKJ
- YgqK/2ixMs3bhSvNlJmWVnjfF3cdLU76bUOnGk9GGrAKsvMsHF+Xt/OvEmRmYVtXxaYG2fDNC
- kYFVdennz3fPwSExfehk2YD3JDk69gm73lVyWGDmCL8271vDhvex4ePsKBJ7xjyDez6jXh9hc
- E+1PFxF/QGE3we0c9Q3aSSz4C8f8933d4q3bxi1CUKOKU=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] support "THPeligible" semantics for mTHP with anonymous
+ shmem
+To: Bang Li <libang.li@antgroup.com>, hughd@google.com,
+ akpm@linux-foundation.org
+Cc: ryan.roberts@arm.com, wangkefeng.wang@huawei.com,
+ baolin.wang@linux.alibaba.com, ziy@nvidia.com, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20240628104926.34209-1-libang.li@antgroup.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240628104926.34209-1-libang.li@antgroup.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, 2024-06-30 at 21:09 +0800, Chen Yu wrote:
-> Hi Mike,
->
-> Thanks for your time and giving the insights.
->
-> On 2024-06-26 at 06:21:43 +0200, Mike Galbraith wrote:
-> > On Tue, 2024-06-25 at 15:22 +0800, Chen Yu wrote:
-> > >
-> > > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> > > index 0935f9d4bb7b..7399c4143528 100644
-> > > --- a/kernel/sched/core.c
-> > > +++ b/kernel/sched/core.c
-> > > @@ -4359,6 +4359,8 @@ static void __sched_fork(unsigned long clone_f=
-lags, struct task_struct *p)
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0p->migration_pending=
- =3D NULL;
-> > > =C2=A0#endif
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0init_sched_mm_cid(p)=
-;
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0p->prev_sleep_sum_runtime=
- =3D 0;
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0p->duration_avg =3D 0;
-> > > =C2=A0}
-> >
-> > Beginning life biased toward stacking?
-> >
->
-> OK, so I should change the short_task() to skip the 0 duration_avg, to a=
-void
-> task stacking in the beginning.
+On 28.06.24 12:49, Bang Li wrote:
+> After the commit 7fb1b252afb5 ("mm: shmem: add mTHP support for
+> anonymous shmem"), we can configure different policies through
+> the multi-size THP sysfs interface for anonymous shmem. But
+> currently "THPeligible" indicates only whether the mapping is
+> eligible for allocating THP-pages as well as the THP is PMD
+> mappable or not for anonymous shmem, we need to support semantics
+> for mTHP with anonymous shmem similar to those for mTHP with
+> anonymous memory.
+> 
+> Signed-off-by: Bang Li <libang.li@antgroup.com>
+> ---
+>   fs/proc/task_mmu.c      | 10 +++++++---
+>   include/linux/huge_mm.h | 11 +++++++++++
+>   mm/shmem.c              |  9 +--------
+>   3 files changed, 19 insertions(+), 11 deletions(-)
+> 
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index 93fb2c61b154..09b5db356886 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -870,6 +870,7 @@ static int show_smap(struct seq_file *m, void *v)
+>   {
+>   	struct vm_area_struct *vma = v;
+>   	struct mem_size_stats mss = {};
+> +	bool thp_eligible;
+>   
+>   	smap_gather_stats(vma, &mss, 0);
+>   
+> @@ -882,9 +883,12 @@ static int show_smap(struct seq_file *m, void *v)
+>   
+>   	__show_smap(m, &mss, false);
+>   
+> -	seq_printf(m, "THPeligible:    %8u\n",
+> -		   !!thp_vma_allowable_orders(vma, vma->vm_flags,
+> -			   TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL));
+> +	thp_eligible = !!thp_vma_allowable_orders(vma, vma->vm_flags,
+> +						TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL);
+> +	if (vma_is_anon_shmem(vma))
+> +		thp_eligible = !!shmem_allowable_huge_orders(file_inode(vma->vm_file),
+> +							vma, vma->vm_pgoff, thp_eligible);
 
-Or something, definitely.
-=C2=A0 =C2=A0
-> > > =C2=A0DEFINE_STATIC_KEY_FALSE(sched_numa_balancing);
-> > > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > > index 41b58387023d..445877069fbf 100644
-> > > --- a/kernel/sched/fair.c
-> > > +++ b/kernel/sched/fair.c
-> > >
-> > > @@ -6905,6 +6914,9 @@ static void dequeue_task_fair(struct rq *rq, s=
-truct task_struct *p, int flags)
-> > > =C2=A0
-> > > =C2=A0dequeue_throttle:
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0util_est_update(&rq-=
->cfs, p, task_sleep);
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (task_sleep)
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0dur_avg_update(p);
-> > > +
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0hrtick_update(rq);
-> > > =C2=A0}
-> > >
-> >
-> > That qualifier looks a bit dangerous.=C2=A0 Microbench components tend=
- to
-> > have only one behavior, but the real world goes through all kinds of
-> > nutty gyrations, intentional and otherwise.
-> >
->
-> Understand. Unfortunately I don't have access to production environment
-> so I have to rely on microbenchmarks and a OLTP to check the result. I
-> get feedback from Abel that the former version of this patch brought
-> benefit to some short tasks like Redis in the production environment[1].
-> https://lore.kernel.org/lkml/36ba3b68-5b73-9db0-2247-061627b0d95a@byteda=
-nce.com/
+I would have thought the correct fix is to return the correct result 
+from thp_vma_allowable_orders().
 
-Here's hoping you get a lot more.
+-- 
+Cheers,
 
-> I can launch a combination of microbenchmarks in parallel to check the i=
-mpact.
->
-> > The heuristics in the next patch seem to exhibit a healthy level of
-> > paranoia, but these bits could perhaps use a tad more.=C2=A0 Bad exper=
-iences
-> > springs to mind when I stare at that - sleepers going hog, hogs meet
-> > sleeping lock contention, preemption, sync hint not meaning much...
-> >
->
-> I see. If I understand correctly, the scenario mentioned above
-> could bring a false positive of 'short task', which causes
-> task stacking.
+David / dhildenb
 
-Yeah.
-
-> If the sleeper task:
-> 1. is preempted frequently. This should not be a problem, because
-> =C2=A0=C2=A0 the task duration is unlikely to be shorten by preemption, =
-and
-> =C2=A0=C2=A0 the short_task() is unlikely to return true.
-
-Ah, but it not being a problem would beg the question why bother?
-There are consequences either way, the dark side is just scarier.
-
-> 2. meets sleeping lock contention. This would be a false positive 'short=
- task',
-> =C2=A0=C2=A0 which bring unexpected task stacking.
-
-Yeah.
-
-> So consider 1 and 2, I'm thinking of moving the calculating of task dura=
-tion from
-> dequeue_task_fair() to wait_woken(). The reason to update the task's dur=
-ation in
-> wait_woken() rather than dequeue_task_fair() is that, the former is awar=
-e of the
-> scenario that the task is waiting for the real resource, rather than blo=
-cking
-> on a random sleeping lock. And the wait_woken() is widely used by the dr=
-iver to
-> indicate that task is waiting for the resource. For example, the netperf=
- calltrace:
->
-> =C2=A0=C2=A0=C2=A0 schedule_timeout+222
-> =C2=A0=C2=A0=C2=A0 wait_woken+84
-> =C2=A0=C2=A0=C2=A0 sk_wait_data+378
-> =C2=A0=C2=A0=C2=A0 tcp_recvmsg_locked+507
-> =C2=A0=C2=A0=C2=A0 tcp_recvmsg+115
-> =C2=A0=C2=A0=C2=A0 inet_recvmsg+90
-> =C2=A0=C2=A0=C2=A0 sock_recvmsg+150
->
-> In the future, if there is requirement other scenario could also invoke =
-the newly
-> introduced update_cur_duration() when needed. For example, the pipe_read=
-() could
-> use it if the task is going to sleep due to the empty pipe buffer. I cha=
-nge the
-> code as below, may I have your suggestion on this?
-
-I don't have any suggestions that will help plug the holes, heck, I
-squabbled in this arena quite a bit some years ago, and did not win.
-Frankly I don't think the scheduler has the information necessary to do
-so, it'll always be a case of this will likely do less harm than good,
-but will certainly leave at least an occasional mark.
-
-Just take a look at the high speed ping-pong thing (not a benchmark,
-that's a box full of tape measures, rather silly, but..).  TCP_RR IS
-1:1, has as short a duration as network stack plus scheduler can
-possibly make it, and is nearly synchronous to boot, two halves of a
-whole, the ONLY thing you can certainly safely stack.. but a shared L2
-box still takes a wee hit when you do so.  1:N or M:N tasks can
-approach its wakeup frequency range, and there's nothing you can do
-about the very same cache to cache latency you're trying to duck, it
-just is what it is, and is considered perfectly fine as it is.  That's
-a bit of a red flag, but worse is the lack of knowledge wrt what tasks
-are actually up to at any given time.  We rashly presume that tasks
-waking one another implies a 1:1 relationship, we routinely call them
-buddies and generally get away with it.. but during any overlap they
-can be doing anything including N way data share, and regardless of
-what that is and section size, needless stacking flushes concurrency,
-injecting service latency in its place, cost unknown.
-
-Intentional stacking can be jokingly equated to injecting just a wee
-bit of SMP kryptonite.. it'll be fine.. at least until it's not ;-)
-
-	-Mike
 
