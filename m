@@ -1,109 +1,84 @@
-Return-Path: <linux-kernel+bounces-235552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-235553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DDEA91D681
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 05:16:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C37B091D685
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 05:20:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9BF7281790
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 03:16:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC14B281770
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 03:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91381EAD2;
-	Mon,  1 Jul 2024 03:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A211DDB1;
+	Mon,  1 Jul 2024 03:19:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DTU7587S"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CFwryO+K"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B262566
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 03:16:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5D42C80
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 03:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719803805; cv=none; b=EinF07OrxQTP9C2car4RoAWz8o0JfNqwftYNz9C82Qixytoxa+5EhPa+cMhq0h3zAPoQ8haWjUwWU17Tu2xX97buJp++WQpKrxGxf5YzU8l1+k7deGJofV5mfArnfYGkjR3LBf8gw9TUql+PL6MkQ6RL+t7Kt+dJmGatUZEv1Gg=
+	t=1719803993; cv=none; b=rBPt+/Uo3txrNSi2Xy3i/jK6Jis1w1WEWs5z2gIA+E16EyOhN0H7Id6lE+1XQeQ7dZ8ZQRUwUmIeH71HUr8F/wrG/WqIs0W5yGzaxqo32V2dKg3o1SMVg9G6APZuJFqyyF2r1nOtgfj9eODLeW2kIbZP91R1WCxBt8xsZq7Wftg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719803805; c=relaxed/simple;
-	bh=+S7tJRkQK/CkFu8GUPmkSryFc2Zwu5E/aE0nbvEqB/Q=;
+	s=arc-20240116; t=1719803993; c=relaxed/simple;
+	bh=20owXG7+ITAeZso283pl9zsFJevavFpWp1z7qvQTLFk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DtjN0fCroEWXw5UHgu7MtK2gikocs1dRF3jrFJUqq6kcoYy6Wcs+QYY1kaRdwounm9piXiGABSuU2ZI7jCGm6Zi6ryB62pON8Iw1HRNyKQHlKFHmh/iMmbVgpoV+CdNTEib7yLl1Qtkd2dePdERo+GV2Iw1ejniV8qK8lvM2lCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DTU7587S; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719803803;
+	 In-Reply-To:Content-Type; b=c8vd9VfnUSDC4yC7M5hb+GOIQMr+Ase26x91iLRarJPNdHigmMXPuRN0biWfqZeRf42YpNjoCWWwqKyGN5Z8XZCiSm0EmQfqhX/lsBqMvzN4EepY3OjmUD8OE+IbjTREANKrlFQFKnZlnaDu7GZpQ8XdKYLD+flYk23wg/oOiiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CFwryO+K; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: senozhatsky@chromium.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1719803989;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=viQG/1ciLB7oJ/0omugD7kTmJcNapKZKS5EL54NXd2M=;
-	b=DTU7587S6RrlLJea78UT49qCTpsZA6epC9ZHaGrucOLL0AHVT33FLr6FvygZ2IAe6muMgy
-	5T65I39AYy2ldkeZc6r8WCyFTu7qtgWcBubDJoGvTjdEv6QletZ0JaUJrTR/7U2LGUK6iF
-	VQaXnv0GVDXAmX2DUyCv7RcjKCX13tA=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-205-A_Ssgs25OdajJj1d0ITndg-1; Sun,
- 30 Jun 2024 23:16:40 -0400
-X-MC-Unique: A_Ssgs25OdajJj1d0ITndg-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 036C519560AD;
-	Mon,  1 Jul 2024 03:16:39 +0000 (UTC)
-Received: from [10.22.8.67] (unknown [10.22.8.67])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6466F3000218;
-	Mon,  1 Jul 2024 03:16:37 +0000 (UTC)
-Message-ID: <62c553f2-2fb3-4b83-86ae-5b038941cdbb@redhat.com>
-Date: Sun, 30 Jun 2024 23:16:36 -0400
+	bh=5JYKZDodvrjDQDmo06M+nRwoR9WCeIcHzSHHV+4ORr8=;
+	b=CFwryO+K25YtW+FELK27lJkKzheCewOv29EWdE0Y5huNDe32xuYcdLAZhbznqARLplInli
+	Tsbx1emTMHTlOIREglT16vwOKGjjIXP1E1CtY8v4Yj06thR6XZW/9ftBCPDg5NueWC5c5e
+	d3oNdho4Cxewc42FjK5GSbxrIx2K30M=
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: minchan@kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+Message-ID: <6afcd23b-69bf-4ace-b489-3b500a8271df@linux.dev>
+Date: Mon, 1 Jul 2024 11:19:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] lockdep: lockdep_set_notrack_class()
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-kernel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>
-References: <20240630051037.2785156-1-kent.overstreet@linux.dev>
- <016f2bd0-a192-4ec5-9c4b-d48e8e001cd6@redhat.com>
- <uvf4ilncakodvwmu6kbzs4lrxgeegtanhyhsk52xj7foil65jm@p54wibff6bgc>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <uvf4ilncakodvwmu6kbzs4lrxgeegtanhyhsk52xj7foil65jm@p54wibff6bgc>
+Subject: Re: [PATCH] zsmalloc: rename class stat mutators
+To: Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Minchan Kim <minchan@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+References: <20240701031140.3756345-1-senozhatsky@chromium.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Chengming Zhou <chengming.zhou@linux.dev>
+In-Reply-To: <20240701031140.3756345-1-senozhatsky@chromium.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Migadu-Flow: FLOW_OUT
 
+On 2024/7/1 11:11, Sergey Senozhatsky wrote:
+> A cosmetic change.
+> 
+> o Rename class_stat_inc() and class_stat_dec() to class_stat_add()
+>    and class_stat_sub() correspondingly. inc/dec are usually associated
+>    with +1/-1 modifications, while zsmlloc can modify stats by up
+>    to ->objs_per_zspage. Use add/sub (follow atomics naming).
+> 
+> o Rename zs_stat_get() to class_stat_read()
+>    get() is usually associated with ref-counting and is paired with put().
+>    zs_stat_get() simply reads class stat so rename to reflect it.
+>    (This also follows atomics naming).
+> 
+> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 
-On 6/30/24 20:10, Kent Overstreet wrote:
-> On Sun, Jun 30, 2024 at 06:08:21PM GMT, Waiman Long wrote:
->> On 6/30/24 01:10, Kent Overstreet wrote:
->>> Add a new helper to disable lockdep tracking entirely for a given class.
->>>
->>> This is needed for bcachefs, which takes too many btree node locks for
->>> lockdep to track. Instead, we have a single lockdep_map for "btree_trans
->>> has any btree nodes locked", which makes more since given that we have
->>> centralized lock management and a cycle detector.
->> Could you explain a bit more what the current novalidate_class is lacking
->> WRT to the bcachefs lock? Is it excessive performance overhead or some bogus
->> lockdep warning?
-> novalidate just switches off checking of lock ordering, but the fact
-> that the locks are held is still tracked.
->
-> bcachefs takes more btree node locks than lockdep can track, so I'm
-> switching to a single lockdep map for "this btree_trans has any btree
-> nodes locked" instead.
-
-I asked because you are adding a new special class that is similar to 
-no_validate in some way but also a bit different. So we need to document 
-what each of these special classes are for to avoid confusion.
-
-Cheers,
-Longman
+Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
 
 
