@@ -1,91 +1,105 @@
-Return-Path: <linux-kernel+bounces-236170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C3EB91DE61
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:53:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 302A091DE64
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 13:53:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE679282912
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:53:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62B3F1C20D6D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 11:53:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2488E14A4F1;
-	Mon,  1 Jul 2024 11:53:11 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6691422A6;
-	Mon,  1 Jul 2024 11:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0B014B96C;
+	Mon,  1 Jul 2024 11:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="O6qhCzL1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3624314A601;
+	Mon,  1 Jul 2024 11:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719834790; cv=none; b=UERR6EufMyH+1nDKfcMkuzSXE8nWOtoduQsOfkJWq3Q5w8hkEnYP4jxnePndSiP7n9AsG9Qohduv7Q08Tyk1n+P9csgXFX0jiijlrjN9et+xvSi+ZigaynFy0T2jwCtliX//6Km6qbrn1A2KPdgMMCUzYsIkuU+RAbj55Nlg5UM=
+	t=1719834791; cv=none; b=XY+6BQ3gjoimuvhZA9fPJ/enOS9u0EUmNcP8Ou5G3qSfmJ+JCWG2zh3tt9FBDdkBG12H48irmCdYg+FhyylQjb9uunoFijT498DcQJri3qJm48s+JzB2mNmZ/RoJQIiduskv490dTMlFSjc3qM0xAgPL71B0Fs/6Cv+XlfunKwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719834790; c=relaxed/simple;
-	bh=qWG7kb8w8R9vl1bgDVpM+lu85kOrxk6mqBBK6s8rVyQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e4O4Udr+d1VHy+A7O/5Ux22Cs03ULmm+NvlDYayYZTAJliMZa0BdyiNNpedDcjoSuiQjx4c2S1DC1bm3zl9Z6VWwhIW/zSa6PYWmuGCNIqZfqX/tPh6EdDxsjOSUhXtvJgnpec+Re9GTrRwHvzSSPtTvZ8fZV0Z1dRFJjv51ZNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app08-12008 (RichMail) with SMTP id 2ee86682989df94-1afc0;
-	Mon, 01 Jul 2024 19:53:05 +0800 (CST)
-X-RM-TRANSID:2ee86682989df94-1afc0
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain.localdomain (unknown[10.54.5.252])
-	by rmsmtp-syy-appsvr06-12006 (RichMail) with SMTP id 2ee66682989f269-6a7e8;
-	Mon, 01 Jul 2024 19:53:05 +0800 (CST)
-X-RM-TRANSID:2ee66682989f269-6a7e8
-From: Liu Jing <liujing@cmss.chinamobile.com>
-To: pablo@netfilter.org,
-	kadlec@netfilter.org,
-	davem@davemloft.net,
-	dsahern@kernel.org,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Liu Jing <liujing@cmss.chinamobile.com>
-Subject: [PATCH] netfilter: remove unnecessary assignment in translate_table
-Date: Mon,  1 Jul 2024 19:53:02 +0800
-Message-Id: <20240701115302.7246-1-liujing@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1719834791; c=relaxed/simple;
+	bh=vKDM44VET0ISDBwcNtPUEEiERcMPn9O7mLC4TjHOZ80=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N4l5G4dGfYOTZ9u1dmQmgeeIV5GSjx90yBqrVDGGbt+aw1WU3YeWu3ChpOHNEGgxYA+lKxJIczVRSZ0lkYoabVMzNTRO+mfVmg1z8pnsOPjYFcIUv4eLaYOCkGxwvbDwsxqvNivF3lR5muc4YgMhkmSHT3unI6fvCDKCA8A3+oE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=O6qhCzL1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B531C2BD10;
+	Mon,  1 Jul 2024 11:53:09 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="O6qhCzL1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1719834787;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BdJk45yqWfAF6GzrWiLUT4OERI93TgE+sNwH9kDnoUI=;
+	b=O6qhCzL1UqaP9OmQMiGvaqfgQIkuqdGJxVyuwGFZxSyXxf70lZBi6WuLHkNATF4f9u2r5o
+	Vl8I/mObuqeWf/v/9TdNNLvaJGZlf1ikZftxdYT4T4BbsDh2XDXng0jV1Y7NDIAsmOd3aq
+	R1SKNw65Tsg+asToLqMmCu4u4yP9Tyg=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 67037b82 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 1 Jul 2024 11:53:07 +0000 (UTC)
+Date: Mon, 1 Jul 2024 13:53:04 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Aleksa Sarai <cyphar@cyphar.com>, linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev, linux-crypto@vger.kernel.org,
+	linux-api@vger.kernel.org, x86@kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+	Carlos O'Donell <carlos@redhat.com>,
+	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+	Jann Horn <jannh@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	David Hildenbrand <dhildenb@redhat.com>
+Subject: Re: [PATCH v18 2/5] random: add vgetrandom_alloc() syscall
+Message-ID: <ZoKYoBp_bSRP_fqn@zx2c4.com>
+References: <20240620005339.1273434-1-Jason@zx2c4.com>
+ <20240620005339.1273434-3-Jason@zx2c4.com>
+ <20240620.020423-puny.wheat.mobile.arm-1wWnJHwWYyAl@cyphar.com>
+ <ZnQeCRjgNXEAQjEo@zx2c4.com>
+ <87v81txjb7.ffs@tglx>
+ <Zn7D_YBC2SXTa_jX@zx2c4.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Zn7D_YBC2SXTa_jX@zx2c4.com>
 
-in translate_table, the initialized value of 'ret' is unused,
-because it will be assigned in the rear. thus remove it.
+On Fri, Jun 28, 2024 at 04:09:01PM +0200, Jason A. Donenfeld wrote:
+> fine. Also I used u32 there for the two smaller arguments, but maybe
+> that's silly and we should go straight to u64?
 
-Signed-off-by: Liu Jing <liujing@cmss.chinamobile.com>
----
- net/ipv4/netfilter/ip_tables.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Judging by `struct clone_args`, it looks like I've got to use
+__aligned_u64 for every argument:
 
-diff --git a/net/ipv4/netfilter/ip_tables.c b/net/ipv4/netfilter/ip_tables.c
-index fe89a056eb06..c9b34d7d7558 100644
---- a/net/ipv4/netfilter/ip_tables.c
-+++ b/net/ipv4/netfilter/ip_tables.c
-@@ -664,7 +664,7 @@ translate_table(struct net *net, struct xt_table_info *newinfo, void *entry0,
- 	struct ipt_entry *iter;
- 	unsigned int *offsets;
- 	unsigned int i;
--	int ret = 0;
-+	int ret;
- 
- 	newinfo->size = repl->size;
- 	newinfo->number = repl->num_entries;
--- 
-2.33.0
+    struct clone_args {
+        __aligned_u64 flags;
+        __aligned_u64 pidfd;
+        __aligned_u64 child_tid;
+        __aligned_u64 parent_tid;
+        __aligned_u64 exit_signal;
+        __aligned_u64 stack;
+        __aligned_u64 stack_size;
+        __aligned_u64 tls;
+        __aligned_u64 set_tid;
+        __aligned_u64 set_tid_size;
+        __aligned_u64 cgroup;
+    };
+    #define CLONE_ARGS_SIZE_VER0 64 /* sizeof first published struct */
+    #define CLONE_ARGS_SIZE_VER1 80 /* sizeof second published struct */
+    #define CLONE_ARGS_SIZE_VER2 88 /* sizeof third published struct */
+    
+So okay, I'll do that, and will have an ARGS_SIZE_VER0 macro too.
 
-
-
+Jason
 
