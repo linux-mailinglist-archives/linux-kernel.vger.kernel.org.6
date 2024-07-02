@@ -1,137 +1,131 @@
-Return-Path: <linux-kernel+bounces-237355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F1E891EF9D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:59:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3903891EFA1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:00:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFC1A1F234F5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:59:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7BE5283395
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:00:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596AC12E1DB;
-	Tue,  2 Jul 2024 06:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011DB77119;
+	Tue,  2 Jul 2024 07:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CR+kvVLh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="irSIw51u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2718A12D1E8
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 06:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411E3D518
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 07:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719903563; cv=none; b=jxZEghBgcA5GJbRYiPD6pZwBmDmp4BRepzRRTTZZ93hpbLsHD5doDVpJGsAmcmJi7UCZ2DIswBcBlN9an3wNJ1Mp4OsiazJU7nfD5FrHaBwowv7hnkir84FugqMMJJnjU0NWwWVYhbZRL2gAs02NiVu0f+c/Xv4g+x0E7NuRLqc=
+	t=1719903633; cv=none; b=c10iHYX7P/yKmtkpUHdiJ77MP1c08UuM7NmpOqhhJCkqJfJAxPBn5Z9ub2IvJpFeOxcSXMbvMyI5eFa3d4re7CAGpVsDCQz7xn1K+/75pb+AVxYEaYh87Znu2/nbuewp1Bzfj4V3+P7Xi0gSZ52Ka6b7NcCbENzcIOAL7RPs+lY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719903563; c=relaxed/simple;
-	bh=Rd/RzdxgFoao+tjvS20h2iENS+qz6H0tKNh29qnyTTQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=r71vRpxGrTMnjoHUj+ee+rH6kZbWfgPx8PgNdsWl+HYQkPi4dDn8Z1MS1by/rop11WY74GnbBqD76JGx3iOjWEEzaAg9Jg/heUMy22p+cbbw18+3UeQAUrNjIeJGW9PN01Q28gkcSfK5EJImt4lz4GL4N9shUkzujDMFBIrhY1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CR+kvVLh; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719903561;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rd/RzdxgFoao+tjvS20h2iENS+qz6H0tKNh29qnyTTQ=;
-	b=CR+kvVLhiYjfT8gaSSTv9V681ATCK2RBiOK3GDYyyrh/zgNaRFRAPBYMFyMlY+qrmjRcrf
-	+FSygMLO7NRXcdlrngYA6mbbNOgjuLMb1H53kHnlqoUn/Ak2Z0RFGIj0KmFPFPPe7z0t/w
-	ExzE2H3JYlUyG/FlOj3KUp/TWushJgg=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-689-SIJ-20VAPWGLmJgJmPZclQ-1; Tue, 02 Jul 2024 02:59:16 -0400
-X-MC-Unique: SIJ-20VAPWGLmJgJmPZclQ-1
-Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-52cd9405c75so693282e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 23:59:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719903555; x=1720508355;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Rd/RzdxgFoao+tjvS20h2iENS+qz6H0tKNh29qnyTTQ=;
-        b=gL0YH1t2srvAbpf1DCMEov1++nTDQWuidI8P7bvPSuyJAjZ9Lf+nXrLrCMZuOTLSce
-         hmOT+iqpMzdpJ+FF9C0zD/1yp2Vv7lwKkZH7axa0g3JLsaJnl5r8iL5IQZikVupfyr9+
-         rWXdwOQl+4ThsjwELLGiUKVIrOvNnriocAtjw76GkVPNAXCSYfvmqyAYQn8BZdT3QaiV
-         f72i5LeN2BJsI7GhF6WvIUNzrKDpZ0XOWh/yb4hR0Uf9PlCLzsTMHGcgdC4dKXlGtvSC
-         ENITfCMSHya0YcU8juJtatWuUwFHBYjcBRZsqheq36CrwTKGmEa+rn+kh1K74SY1GcFt
-         QvfA==
-X-Forwarded-Encrypted: i=1; AJvYcCVXI+hUZRfiCFXH2FgVvBxF3w70SUTjnwQjROGhwqd81yfTcgjF5jIVIa9knJHSIPEC2tllOq5+HdEfYbdojTwA2vq893JL2VOuDqlr
-X-Gm-Message-State: AOJu0YxnIiBtaqubpt3iZa7kI1nM8gw3H5LtNW7de5/WIxQTyLvpAv9W
-	ovYhhgAyRySFPI0pmZJektb6OR50uk1n/jJBThqNG6V0Dy+WbOZLQg3Kce7uFM69uKVH1oTC4V8
-	oOSankrl2mnFgFZRYP1Jkgor7/Sk5xAmr4BKXCZKmXQnyzBmyLEe7gk7SlHui4g==
-X-Received: by 2002:a05:6512:3b82:b0:52c:d7cc:33da with SMTP id 2adb3069b0e04-52e82781728mr4311177e87.5.1719903555011;
-        Mon, 01 Jul 2024 23:59:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEhDdqPcifqRCMpdR3/pZrpWaJ0ehef+3kASf9fmzugXWnbXQzPcb1hFh97Iab2IrnSolSs+A==
-X-Received: by 2002:a05:6512:3b82:b0:52c:d7cc:33da with SMTP id 2adb3069b0e04-52e82781728mr4311164e87.5.1719903554605;
-        Mon, 01 Jul 2024 23:59:14 -0700 (PDT)
-Received: from pstanner-thinkpadt14sgen1.remote.csb (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42573c55ff4sm160862905e9.46.2024.07.01.23.59.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 23:59:14 -0700 (PDT)
-Message-ID: <ed7a3800674cf5bc94f4d8119f6f7c311f9e7eaa.camel@redhat.com>
-Subject: Re: linux-next: build warning after merge of the pci tree
-From: Philipp Stanner <pstanner@redhat.com>
-To: Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Bjorn Helgaas
-	 <helgaas@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Bjorn Helgaas
- <bhelgaas@google.com>,  Lorenzo Pieralisi <lpieralisi@kernel.org>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Date: Tue, 02 Jul 2024 08:59:13 +0200
-In-Reply-To: <20240701201532.GA272504@rocinante>
-References: <20240701192453.3e4a0a3e@canb.auug.org.au>
-	 <20240701193748.GA13881@bhelgaas> <20240701201532.GA272504@rocinante>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	s=arc-20240116; t=1719903633; c=relaxed/simple;
+	bh=G08x9Hsb4KLp3BcCWhMY8WT2trDfN0A90XlVgRrIvp8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LzmA4coHphZXqN8bCR1Gg5cOyoyS7MLoaRCrcJ9TCxff/9/osSjqYbsVS1BBrve7qYaKxHygz/plpMP9vIFKtJoKvUBW/RVsFGXx0//g+gD69B2dosMySTN1pc6lIdHDy2ISQqnWYCmrOZIU2/SgTYBGmRTTEBThSRa5lrr1kEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=irSIw51u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0576C116B1;
+	Tue,  2 Jul 2024 07:00:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719903632;
+	bh=G08x9Hsb4KLp3BcCWhMY8WT2trDfN0A90XlVgRrIvp8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=irSIw51ubwpKsbC2BrtrQTcOfGSkHw+pUSM51Z/9l6eTUZ/S5wv2gATsWL7pBQwKz
+	 m89OubxuZ5nqlb4TxAbkUGIfTL1fOWqQRzYAtTTpLi457vFf6I1PtaMZH0+FZl4nwb
+	 qAyLK6IGY6gDL9ynQykqx7eBWkWl5MnNfMMn8Yg2rMazU+GNtiEQhG9QCaGuZZMhN4
+	 XtC7mGX3gVlxoFGE67N2yyqweuSw/NN1jVaWZ4LNwtBLpy5kZ6QupFKT2q2h7Yx6ih
+	 fvh1T6yN8ZffnPniM1MhKlssLpOY42DgXiDqVMFHb/SYgJppCTaELZy9D375X8h2ko
+	 sD7h4MnO5kHOw==
+Message-ID: <d203dd45-fe69-48dc-aa36-d9870065f2e9@kernel.org>
+Date: Tue, 2 Jul 2024 09:00:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] powerpc/configs: Update defconfig with now
+ user-visible CONFIG_FSL_IFC
+To: Esben Haabendal <esben@geanix.com>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
+References: <20240530-fsl-ifc-config-v3-0-1fd2c3d233dd@geanix.com>
+ <20240530-fsl-ifc-config-v3-2-1fd2c3d233dd@geanix.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240530-fsl-ifc-config-v3-2-1fd2c3d233dd@geanix.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 2024-07-02 at 05:15 +0900, Krzysztof Wilczy=C5=84ski wrote:
-> Hello,
->=20
-> [...]
-> > > After merging the pci tree, today's linux-next build (htmldocs)
-> > > produced
-> > > this warning:
-> > >=20
-> > > Documentation/driver-api/pci/pci:10: drivers/pci/devres.c:556:
-> > > WARNING: Inline emphasis start-string without end-string.
-> > >=20
-> > > Introduced by commit
-> > >=20
-> > > =C2=A0 06fa2e1e9116 ("PCI: Deprecate pcim_iomap_table(),
-> > > pcim_iomap_regions_request_all()")
-> >=20
-> > I fixed by changing * to \* here:
-> >=20
-> > =C2=A0 * void __iomem \*mappy =3D pcim_iomap(pdev, bar, length);
->=20
-> I wonder if the following hack would work too:
->=20
-> =C2=A0 void __iomem * mappy =3D pcim_iomap(pdev, bar, length);
->=20
-> Separate the asterisks from the name, so that the parser will no
-> longer try
-> to make "mappy" bold.
->=20
-> Also, "mappy"... Philipp, this is so amazingly cringe. :)
+On 30/05/2024 16:46, Esben Haabendal wrote:
+> With CONFIG_FSL_IFC now being user-visible, and thus changed from a select
+> to depends in CONFIG_MTD_NAND_FSL_IFC, the dependencies needs to be
+> selected in defconfigs.
+> 
+> Signed-off-by: Esben Haabendal <esben@geanix.com>
 
-The kernel community has a reputation to defend =E2=80=93 that of not being
-boring corporate people :]
+Anyone is going to pick this up?
 
-P.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
->=20
-> =C2=A0=C2=A0=C2=A0 Krzysztof
->=20
+Best regards,
+Krzysztof
 
 
