@@ -1,60 +1,63 @@
-Return-Path: <linux-kernel+bounces-237870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D22E923F1F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:38:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16A16923F36
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:41:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C10E91C21AA4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:38:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C70F628AF12
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A101B5818;
-	Tue,  2 Jul 2024 13:36:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC311B4C59;
+	Tue,  2 Jul 2024 13:40:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AD/cxQQ6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="cCTD0IQD"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB23115B143;
-	Tue,  2 Jul 2024 13:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB1318755A;
+	Tue,  2 Jul 2024 13:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719927417; cv=none; b=VjEsxhSCzYKG3xm/oqNl9nZorTo21AqWFRNrg388qpVvZZcWXZR3Cc/QOShlj8y3YP4v1OfHs9osnKZu8j0+EeoPhYs6VkWLBXn6NiDM13XlShazA9Q+ffrfT77h3vS0UL1DgHiR2XtRJlzZ4YqY2EGx9Q2XfW70hs2kGhZUpoI=
+	t=1719927644; cv=none; b=Fko450wi8vyJ9Vhu53GPg5XpCeXgkhhSxDWK1eLUGLXvoIvBgJBnClIo0JQpFuwK2xVMe/1mqhbtpEPVww7LImIESBdgURuDqYGbzNNUs9xErvvRaOTeCDYuBxehpJWrkJWuv9NVD2km6X4Yl0/wAIytkOXg4WEOsfL/0WBjcuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719927417; c=relaxed/simple;
-	bh=8xSDy43ox5BcR5NmXJ3vxQaOq5/T0Sg4W3yVzi9h2jw=;
+	s=arc-20240116; t=1719927644; c=relaxed/simple;
+	bh=AU/qdBOM6SXuHEJq9Agt49uegv1H+uuZp34OljBygFo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VPIHBLg3cUffL2QtGwE9DBpR42OtxiZ5rahN6BOgw1K2V+Ixp4ENeyJl9sJCfOaJOnyRG+P8rulXhMSXiigcrAhb22Ibo09Vg0yu9HIPlGTs1c4ljt0b1KnUd8Vl7S7ZsOM6AxJNtgltoxIzoJGLhrOsWeJjndEx/71DDCTKEp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AD/cxQQ6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE160C4AF0C;
-	Tue,  2 Jul 2024 13:36:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719927417;
-	bh=8xSDy43ox5BcR5NmXJ3vxQaOq5/T0Sg4W3yVzi9h2jw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AD/cxQQ6tU8fOUyYEmqZmX4tmVYHNJNOWIUXqayAgBSQ9kS6zJkxhQiggvkZ+3Nwl
-	 pG51CYv5SU6yNaubNW253f+81aK1rrFFafQGob0PfKTFcGERuCfcMaNaZjW2+SCtG+
-	 c2HIE4ZOxeWGvkfMzfAHB9c2uOjYcAM+6TfSMYWjwrRCYR8M41N+DnzRyqeSLbFjR6
-	 buv8ZqtX0BHo6ueH4Gk0cvuPjLUmVYJ6LDVxxoKrFqPmqsmhUJCD2z9E667motgf85
-	 Xmdq0AQTB3rs9cyt9nj5hSErt/XsyLlAbZWR8vIZoezfmwa8eO7HpS3JUrOF09NPSu
-	 6F1+6ppV6rxBg==
-Date: Tue, 2 Jul 2024 14:36:51 +0100
-From: Simon Horman <horms@kernel.org>
-To: Aleksandr Mishin <amishin@t-argos.ru>
-Cc: Igal Liberman <igal.liberman@freescale.com>,
-	Madalin Bucur <madalin.bucur@nxp.com>,
-	Sean Anderson <sean.anderson@seco.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=dBaNZIksJo4HhFth9kpi6tNmEsAt7D323XVLcVgn4D3O7WMsNcr40c+upMZRibSIPQYwRwpJZPQO3QmPCOAVYsJFP4lMhJueOJ3yu7oRfrJLxL6H++ZL3Tc/AKNNpc4KGzyCInx7xaiLlM2WDwvYVlBF/H4HgagFCEy1z1Juylw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=cCTD0IQD; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=e4kZhyAqPLnjl0fZjSn+t21vrlos4A4MwU5pTA+wAIo=; b=cCTD0IQDupZaLwcS163PyH2DnE
+	m1NGQ89xRwsjEC2RrxXZ1r0PREHCDdJNa0Csj1rorQ2E+eB3UCXHwiJjKq6Yo6JDyGbgNPERJIpHa
+	KTOvWDpyXfELY+FWoA9rHf8+iTaXLEq2jaUNBtZX4DlyNdHtGKg0EoeY09x/4bT4gyPU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sOdkB-001dpn-Jm; Tue, 02 Jul 2024 15:40:27 +0200
+Date: Tue, 2 Jul 2024 15:40:27 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Michael Walle <michael@walle.cc>
+Cc: Aleksandr Mishin <amishin@t-argos.ru>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
 	"David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
 	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
 	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
 	lvc-project@linuxtesting.org
-Subject: Re: [PATCH] fsl/fman: Validate cell-index value obtained from Device
- Tree
-Message-ID: <20240702133651.GK598357@kernel.org>
-References: <20240702095034.12371-1-amishin@t-argos.ru>
+Subject: Re: [PATCH net v2] net: phy: mscc-miim: Validate bus frequency
+ obtained from Device Tree
+Message-ID: <1c7eefe0-7262-45a0-b734-39b9202adfc5@lunn.ch>
+References: <20240702110650.17563-1-amishin@t-argos.ru>
+ <20240702130247.18515-1-amishin@t-argos.ru>
+ <D2F2Y45Y1LQS.8GN3PG7ZYAPB@walle.cc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,103 +66,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240702095034.12371-1-amishin@t-argos.ru>
+In-Reply-To: <D2F2Y45Y1LQS.8GN3PG7ZYAPB@walle.cc>
 
-On Tue, Jul 02, 2024 at 12:50:34PM +0300, Aleksandr Mishin wrote:
-> Cell-index value is obtained from Device Tree and then used to calculate
-> the index for accessing arrays port_mfl[], mac_mfl[] and intr_mng[].
-> In case of broken DT due to any error cell-index can contain any value
-> and it is possible to go beyond the array boundaries which can lead
-> at least to memory corruption.
-> Validate cell-index value obtained from Device Tree.
+On Tue, Jul 02, 2024 at 03:16:21PM +0200, Michael Walle wrote:
+> Hi,
 > 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> 
-> Fixes: 414fd46e7762 ("fsl/fman: Add FMan support")
-> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
-> ---
->  drivers/net/ethernet/freescale/fman/fman.c | 7 +++++++
->  drivers/net/ethernet/freescale/fman/fman.h | 2 ++
->  drivers/net/ethernet/freescale/fman/mac.c  | 5 +++++
->  3 files changed, 14 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/freescale/fman/fman.c b/drivers/net/ethernet/freescale/fman/fman.c
-> index d96028f01770..6929bca3f768 100644
-> --- a/drivers/net/ethernet/freescale/fman/fman.c
-> +++ b/drivers/net/ethernet/freescale/fman/fman.c
-> @@ -2933,3 +2933,10 @@ module_exit(fman_unload);
->  
->  MODULE_LICENSE("Dual BSD/GPL");
->  MODULE_DESCRIPTION("Freescale DPAA Frame Manager driver");
-> +
-> +int check_mac_id(u32 mac_id)
-> +{
-> +	if (mac_id >= MAX_NUM_OF_MACS)
-> +		return -EINVAL;
-> +	return 0;
-> +}
-> diff --git a/drivers/net/ethernet/freescale/fman/fman.h b/drivers/net/ethernet/freescale/fman/fman.h
-> index 2ea575a46675..3cedde4851e1 100644
-> --- a/drivers/net/ethernet/freescale/fman/fman.h
-> +++ b/drivers/net/ethernet/freescale/fman/fman.h
-> @@ -372,6 +372,8 @@ u16 fman_get_max_frm(void);
->  
->  int fman_get_rx_extra_headroom(void);
->  
-> +int check_mac_id(u32 mac_id);
-> +
->  #ifdef CONFIG_DPAA_ERRATUM_A050385
->  bool fman_has_errata_a050385(void);
->  #endif
-> diff --git a/drivers/net/ethernet/freescale/fman/mac.c b/drivers/net/ethernet/freescale/fman/mac.c
-> index 9767586b4eb3..7a67b4c887e2 100644
-> --- a/drivers/net/ethernet/freescale/fman/mac.c
-> +++ b/drivers/net/ethernet/freescale/fman/mac.c
-> @@ -247,6 +247,11 @@ static int mac_probe(struct platform_device *_of_dev)
->  		dev_err(dev, "failed to read cell-index for %pOF\n", mac_node);
->  		return -EINVAL;
->  	}
-> +	err = check_mac_id(val);
+> Please post a new version of a patch at the earliest after 24 hours,
+> so reviewers got a chance to reply.
 
-Hi Aleksandr, all,
+Just adding to that, please also read:
 
-It seems that this breaks linking with allmodconfig builds on x86_64,
-perhaps it is better to simply make check_mac_id a static function in mac.c ?
+https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
 
-> +	if (err) {
-> +		dev_err(dev, "cell-index value is out of range for %pOF\n", mac_node);
-
-Although other instances exist in this function before this patch,
-it does look like this leaks a reference to of_dev taken by the
-call to of_find_device_by_node() on line 194.
-
-Maybe it is intentional, I'm unsure.
-Perhaps this can be investigated separately to the fix proposed by this
-patch?
-
-Flagged by Coccinelle (this one is on line 253):
-
- .../mac.c:238:2-8: ERROR: missing put_device; call of_find_device_by_node on line 194, but without a corresponding object release within this function.
- .../mac.c:242:2-8: ERROR: missing put_device; call of_find_device_by_node on line 194, but without a corresponding object release within this function.
- .../mac.c:248:2-8: ERROR: missing put_device; call of_find_device_by_node on line 194, but without a corresponding object release within this function.
- .../mac.c:253:2-8: ERROR: missing put_device; call of_find_device_by_node on line 194, but without a corresponding object release within this function.
- .../mac.c:267:2-8: ERROR: missing put_device; call of_find_device_by_node on line 194, but without a corresponding object release within this function.
- .../mac.c:273:2-8: ERROR: missing put_device; call of_find_device_by_node on line 194, but without a corresponding object release within this function.
- .../mac.c:282:3-9: ERROR: missing put_device; call of_find_device_by_node on line 194, but without a corresponding object release within this function.
- .../mac.c:320:2-8: ERROR: missing put_device; call of_find_device_by_node on line 194, but without a corresponding object release within this function.
- .../mac.c:333:1-7: ERROR: missing put_device; call of_find_device_by_node on line 194, but without a corresponding object release within this function.
- .../mac.c:337:1-7: ERROR: missing put_device; call of_find_device_by_node on line 194, but without a corresponding object release within this function.
- .../mac.c:282:3-9: ERROR: missing put_device; call of_find_device_by_node on line 285, but without a corresponding object release within this function.
- .../mac.c:320:2-8: ERROR: missing put_device; call of_find_device_by_node on line 285, but without a corresponding object release within this function.
- .../mac.c:333:1-7: ERROR: missing put_device; call of_find_device_by_node on line 285, but without a corresponding object release within this function.
- .../mac.c:337:1-7: ERROR: missing put_device; call of_find_device_by_node on line 285, but without a corresponding object release within this function.
-
-> +		return err;
-> +	}
->  	priv->cell_index = (u8)val;
->  
->  	/* Get the MAC address */
-
--- 
-pw-bot: changes-requested
+	Andrew
 
