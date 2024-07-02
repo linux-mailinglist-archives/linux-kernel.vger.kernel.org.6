@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-238177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80D1C924679
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:35:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A28AD924677
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:35:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FA28B27CFD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:35:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C73B71C209E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801091C0DF2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 428D71CCCD0;
 	Tue,  2 Jul 2024 17:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="X9OwpT/G"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Tb2/hbh2"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92AF1C005A
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 17:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6181C0076
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 17:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719941654; cv=none; b=q5qX9J0JhzG/U91uhSdI4qYNLEZv4WvUYketGFyo8suSgr1Inj9iSwoWuE8Yl1eUYnwa9Jo06g8fiGkcngkW0+ZxtzVKia5ziFe/+gniNpmoVsINpe/mmLbDjQPNNmY/lXUpQMIIaKIJfw5LsUhz5As9yrsB2FWmv8lIH5Wgfx4=
+	t=1719941654; cv=none; b=Sdt7C6br9v4t8/ghnJAcLRUQUoP59G7q0P8N7bMmf8m6Bv0htk6ZCCMh49R0QDUwj5MjeVFqSuOc8+MVLCnrClwek1FI6RyEPPLAqK19QdcItmm9mAqT7zvhAeRkI4klCBoKGYfRZ3rkSOTgCe2uzSqF3HB9BYdt+8h8yIjC46s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719941654; c=relaxed/simple;
-	bh=nGzK2S78m0bky0xL6X4TlkILzMXZbw7Q567KAtyItso=;
+	bh=/LA/tVbUGREpux3rwFNrtFexWvYIFIQqHifGylYOE7Y=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XaDHJwYqPIBGehu07n4VSf1JFMNmmHAjO4rLU6qg5OzojGNzcT2ChjjhPBn5W9Oidkoieyn0Ii2FUoMruaCzC+nGlSJZHhwVCf5gtId5lit3qYjc7AIlsE3Tyu22kjj+dfN1Ia9mt64GAywQamHmXj+vwzSm42iYlo+X33lEAHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=X9OwpT/G; arc=none smtp.client-ip=209.85.167.46
+	 In-Reply-To:To:Cc; b=RPjmzcjhXHS1U1Peu4k5+cWZJpH0L5HKm6QXRkjIewiCxn+uOcyqyBdEqwtIzsOA1si+wr7ztRNpvl64QjnGk8an7/QlfCJZGNU+pPHtRTK4Ae27gBGQ7y74cvbgSrFvkbVCQ5Ja2ATKkxxeAZ5oujw78d/uvVSwvAaR7/+Vd78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Tb2/hbh2; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52e94eaf5efso23494e87.2
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-425814992aeso17037455e9.1
         for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 10:34:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719941649; x=1720546449; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bqVxrCmaqTdd1OivUsUaCiiNGBxmmQjkW28fKPO8hWM=;
-        b=X9OwpT/GOyRvGYNRAocpe5BorQ35LZ8cPEWEfpTR6VVmG/PAiBclZWeABUcaqBY7qh
-         LDPrH3wmj2M9egaLNVE0QXywMfeRljb3nFTSSHVEA2Fq6BttdiEj5Wg1LvIhwsPo3FQN
-         YSjl8QJTLn5CachTFU1FE9zAyxIYewQNASAbijE5rrbCTLor6iymiVQlZGI3yH81+hre
-         hmhcxSoPQ6mjcnmwbRKMq9gwBFiRFv6XD3dcXiah3zLKRFZiNea74dhik8S2mz6Ho3lL
-         t4WG2pmXB7JXCj9SJxI9Vc/mfFhv7GyeVtS+zPSNqggUVVSPskvwEtL0EMutxK6dI13F
-         TPZg==
+        bh=OlOMVM0Oi/I1G5ABSh4CvVIoiZHYlhaelZAr8Gl3RX4=;
+        b=Tb2/hbh25bo/t5+n3AURyKbt8RCGLirlj9Dzhx3WRbY6Rf+9SPAc3FH73mXmDXjc0r
+         oecveLKmgKuQw/9hNnyGi3S8L3W5Pl1wLMFYIssGi0QiqdTx/Sd2nib8Fx1In2mmZEsX
+         sTf/I2R1uYfqUD5y8rktm73lE4yBU30TQmo7sEO8s5TYZH1Uwb4+5dzNJ8sMd4RwXGcq
+         l9+7mQd1CAiNBGxZjte/NKmjepAXvKOk6Zv2biaaN7SQyReGZnQENMVNFAWySePshDyN
+         GC7BBHxwts+6IJ5bqdtKCMMLLyNhx3yziQS5JJQ/Qk5WIGRSX6YvxjfehsrHOQ5BqcMW
+         VatQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1719941649; x=1720546449;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bqVxrCmaqTdd1OivUsUaCiiNGBxmmQjkW28fKPO8hWM=;
-        b=LO7TbXAn68FWRy88lqJfdaizvwoOzXQg7Qd4E+J1ow+cR1mg9SjjxA5qnATQHSV5gb
-         Mp8c9ZfE/TCm9DIbypgHfM8/JaQijoljel9YSaZJeyS9W6J18TCfvKhl/JIrLl3tD4Bs
-         ok5DP/cb4FZOoGy5QWNeQFJmXjkCDGsJaSTcwn5K34ZOhrET+joNxLTObk0Ptuh/J6pG
-         uzWqW12Uoi8C0HplvKsLB1+fkNuikkDeCgRzN1NADc0//sLOHO1n/gqtLUWEI9uxX6h6
-         5qHrDm3kduvOW4AiiRXwNGaBBPQ9cUl3KX1oDBXc4OMavh12mJci2wTTxdgBXa20MMvd
-         g/+g==
-X-Forwarded-Encrypted: i=1; AJvYcCXTGMdhxJZPt2gMAH2xSsKWYoE36QwErYTZW3CwZZTrZMrIEuoiGhY9voRdkgT2v2pgDBaFMSpvrKsTkaCzgQtgPUtck0pBZoIYPRBO
-X-Gm-Message-State: AOJu0YykYwaCheFvSlJ58ZmFm5h3p433AgcGiCFZ4yuqc4pekuxxbYxu
-	8b0Y3dmJBDj6Eftig1Iwowa2Aku1tkqaEANYm2he5vziaU/ujShOnzCU0XvW/z0=
-X-Google-Smtp-Source: AGHT+IENS/hi3LdGvHKX10bpeZAX/pN6vBzZfnzLA+VvEBpaHsDKR8zQxnIVkfkUxagS9XQHEEGRZQ==
-X-Received: by 2002:a05:6512:3d1b:b0:52c:b008:3db8 with SMTP id 2adb3069b0e04-52e826898e6mr5673752e87.38.1719941648842;
-        Tue, 02 Jul 2024 10:34:08 -0700 (PDT)
+        bh=OlOMVM0Oi/I1G5ABSh4CvVIoiZHYlhaelZAr8Gl3RX4=;
+        b=bOgNd5bcQ+yQsM8NRZHWNIh7ZGgfRKDLj1uTBCjQYeGu7P0mAKCySb930I2Mmq/9U1
+         3SV4lHYBaVb4vwWXyx9UwDVb7+XCkDDAKQkSzgKOR1mq0mpSpKr/YsDq/7m1D70cu03R
+         UhPGec3wG95pbs23pr4Fll71np08aXWXa2uOdSyfBhyuISdj8u8bIYA5KpgICaj8hW64
+         SLhHRlcDrv36GLVzEKehfZ4h4Oky3P5vlb3cQV3O+hx13rTqjUsoq1QK0uSajpc4iSME
+         A0ff3V60z+zvJusV5xZE31pGSQMajqvCoOLiX8CY40zGF65GV9imuB9pR0SiXtn1qUvW
+         hyig==
+X-Forwarded-Encrypted: i=1; AJvYcCUSPj1QFq5n+jmdOwq4FTp8Qe6eOPlLntqVycfvxET+etGRCAEHngiY1D9pg9QjC5Lx6LqwmgtGnxy94OwbM23qM2WeFHmB3dnzv2Ax
+X-Gm-Message-State: AOJu0YyRhRaNbzdYDzePjgVjIKx5fcrt+OITm4uz+Ej2/xH8llA6SDR3
+	Nvpi/IDckMGOWKp5048nK1sBsIacSScJJPdF9OvqUMzfqML5CA4RXDOR8u8awAI=
+X-Google-Smtp-Source: AGHT+IE7S6mRIdq/pwCzKBcD26Jq2dW/C6XfGEiQgs8D7NweKQh0I45uV18IHCqTsOFz+vvMfcxK8A==
+X-Received: by 2002:a05:600c:3542:b0:425:77ad:93cb with SMTP id 5b1f17b1804b1-4257a009c1cmr61212815e9.2.1719941649375;
+        Tue, 02 Jul 2024 10:34:09 -0700 (PDT)
 Received: from [127.0.1.1] (frhb82016ds.ikexpress.com. [185.246.87.17])
         by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af59732sm207594485e9.11.2024.07.02.10.34.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 10:34:08 -0700 (PDT)
+        Tue, 02 Jul 2024 10:34:09 -0700 (PDT)
 From: Guillaume Stols <gstols@baylibre.com>
-Date: Tue, 02 Jul 2024 17:34:08 +0000
-Subject: [PATCH v3 4/8] dt-bindings: iio: adc: adi,ad7606: fix example
+Date: Tue, 02 Jul 2024 17:34:09 +0000
+Subject: [PATCH v3 5/8] dt-bindings: iio: adc: adi,ad7606: add conditions
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,8 +76,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240702-cleanup-ad7606-v3-4-57fd02a4e2aa@baylibre.com>
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240702-cleanup-ad7606-v3-5-57fd02a4e2aa@baylibre.com>
 References: <20240702-cleanup-ad7606-v3-0-57fd02a4e2aa@baylibre.com>
 In-Reply-To: <20240702-cleanup-ad7606-v3-0-57fd02a4e2aa@baylibre.com>
 To: Lars-Peter Clausen <lars@metafoo.de>, 
@@ -93,27 +93,101 @@ Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
  dlechner@baylibre.com, Conor Dooley <conor.dooley@microchip.com>
 X-Mailer: b4 0.14.0
 
-Example uses adi,ad7606-8 as compatible, but adi,sw-mode is not
-available for it. So remove this property from example.
+Since the driver supports several parts that present differences in
+their layout and behaviour, it is necessary to describe the differences
+from one chip to another.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Guillaume Stols <gstols@baylibre.com>
 ---
- Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml | 1 -
- 1 file changed, 1 deletion(-)
+ .../devicetree/bindings/iio/adc/adi,ad7606.yaml    | 60 +++++++++++++++++++---
+ 1 file changed, 54 insertions(+), 6 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-index bb716182db63..499b6ad5525a 100644
+index 499b6ad5525a..69408cae3db9 100644
 --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
 +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-@@ -152,7 +152,6 @@ examples:
-                                            <&gpio 23 GPIO_ACTIVE_HIGH>,
-                                            <&gpio 26 GPIO_ACTIVE_HIGH>;
-             standby-gpios = <&gpio 24 GPIO_ACTIVE_LOW>;
--            adi,sw-mode;
-         };
-     };
- ...
+@@ -52,10 +52,11 @@ properties:
+ 
+   adi,conversion-start-gpios:
+     description:
+-      Must be the device tree identifier of the CONVST pin. This logic input is
+-      used to initiate conversions on the analog input channels. As the line is
+-      active high, it should be marked GPIO_ACTIVE_HIGH.
+-    maxItems: 1
++      Must be the device tree identifier of the CONVST pin(s). This logic input
++      is used to initiate conversions on the analog input channels. As the line
++      is active high, it should be marked GPIO_ACTIVE_HIGH.
++    minItems: 1
++    maxItems: 2
+ 
+   reset-gpios:
+     description:
+@@ -88,8 +89,11 @@ properties:
+       is tied to a logic high, the analog input range is ±10V for all channels.
+       On the AD760X, if this pin is tied to a logic low, the analog input range
+       is ±5V for all channels. As the line is active high, it should be marked
+-      GPIO_ACTIVE_HIGH.
+-    maxItems: 1
++      GPIO_ACTIVE_HIGH. On the AD7616, there are 2 pins, and if the 2 pins are
++      tied to a logic high, software mode is enabled, otherwise one of the 3
++      possible range values is selected.
++    minItems: 1
++    maxItems: 2
+ 
+   adi,oversampling-ratio-gpios:
+     description:
+@@ -122,6 +126,50 @@ required:
+ allOf:
+   - $ref: /schemas/spi/spi-peripheral-props.yaml#
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: adi,ad7616
++    then:
++      properties:
++        adi,first-data-gpios: false
++        standby-gpios: false
++        adi,range-gpios:
++          maxItems: 2
++    else:
++      properties:
++        adi,range-gpios:
++          maxItems: 1
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - adi,ad7605-4
++              - adi,ad7616
++    then:
++      properties:
++        adi,oversampling-ratio-gpios: false
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - adi,ad7605-4
++              - adi,ad7606-4
++              - adi,ad7606-6
++              - adi,ad7606-8
++    then:
++      properties:
++        adi,sw-mode: false
++    else:
++      properties:
++        adi,conversion-start-gpios:
++          maxItems: 1
++
+ unevaluatedProperties: false
+ 
+ examples:
 
 -- 
 2.34.1
