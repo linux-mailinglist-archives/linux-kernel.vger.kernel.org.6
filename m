@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-237930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 464C2924087
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:22:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2893B92408F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:23:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 785661C23AC3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:22:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A0D91C21F55
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:23:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51EBE1BA07C;
-	Tue,  2 Jul 2024 14:22:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E411BA078;
+	Tue,  2 Jul 2024 14:23:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jWJVBSpI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WZF42urV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD861B5831;
-	Tue,  2 Jul 2024 14:22:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07411C2F2;
+	Tue,  2 Jul 2024 14:23:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719930138; cv=none; b=BCnyNS3OV7XuwPb4zC8KRL/hsFZZnwjkJNpmnN3BSNWCM9q0qJNaCWVmV38a3Bk9yxMklaOF5xQvlStVsQWK2qIMx6arPm8XTGJx/sWzhFCnpQCOWGLdQP3Pr2xsUtM8we/QrzuDzKyuL5Ss7s/LaJIQcQS6kPlx+psVaXmYANc=
+	t=1719930227; cv=none; b=XeqXJmCvIecG8K3cnmxbKT0OIGatIE0SD2SaSVBvxcSYE25On9y5/UaSWp0q86D8HsU9qdpt2LVDJi9II1t05s/1Xi2flTcG1HeQFOZwTTLYAOng5ZOi2wEash53LKeMn7R8/wWoU46k+X5D/yTG6NRvt5oMw0sGFoTTRhtxeAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719930138; c=relaxed/simple;
-	bh=CYL4wcV5+JAD42d2LM/I6CzAcAEDCRWHoYAK11ZhrEg=;
+	s=arc-20240116; t=1719930227; c=relaxed/simple;
+	bh=i0ACXZEU9v2nO7krTChYuJUFdkYuMP1aVBi/1z08pF8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hJlpLOy2Un9r4K8VzJCcUpsya/OrvM3cxp79q3GL64qSrqO1y0nkcl8zIgiMdCXAN1a4ssLrIWVHyYdrYqVVih7f4dsekw7u0wlzWbk0iZ7/y8ztYYc9pFE9gMQ6y2uDf5wygxT4oxlBL6iyAUaUsSgfMSO0tbvAqji9ur0dH7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jWJVBSpI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 880A2C116B1;
-	Tue,  2 Jul 2024 14:22:13 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=YUuAW7GRmCDVJykih4OseO1wCEfClXbSxxoZP1P2VbnEZ/iDvX0r6m3zHQQSvrXyBcd3x4AIl6rXPJqWf7e29stDm6nXd03R2LRSZywbpE+OWFGGK4X0IXDFOR3JdlcLG2YG6KyPh4axYXsmh4ba0RfQx5CC9gey0fgcB8HV6JE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WZF42urV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0CF6C116B1;
+	Tue,  2 Jul 2024 14:23:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719930138;
-	bh=CYL4wcV5+JAD42d2LM/I6CzAcAEDCRWHoYAK11ZhrEg=;
+	s=k20201202; t=1719930226;
+	bh=i0ACXZEU9v2nO7krTChYuJUFdkYuMP1aVBi/1z08pF8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jWJVBSpIpK3TfW11eDZZOtlX0kcjiNRhnEp1+Oxj7C4UlVlZVBtKJwUBPWpDD7nxM
-	 xJrz3cGRu9djtVxyhNV6Bwsz9RFaPQrZGDS0mfAu7f/NkCLmt6UUwBzcMLYaOp4TxF
-	 bNsLaB2sDddatMSxT15vEkzaQCFRu1HRmf9ty6333BgOpLeYcLBIu/1mOFrRLCVXBt
-	 wOw7IadbBkNlD2SptvcJlUaKvDXom6yfoVCxxmDFrtPwCV4ZrHXXJOKldj7M1csb+n
-	 DAcqIoiQ4u8FElyBXmY0iIsuReH0wr4RgFVFBldTinh1NC3r6yNRFblxGddbZySgQl
-	 tJSHIlrQS/qcA==
-Message-ID: <27dffa7f-035f-4173-8581-62bd7a8ed70f@kernel.org>
-Date: Tue, 2 Jul 2024 16:22:11 +0200
+	b=WZF42urVfppLKS4WyhSfWQ8i5+Cqd2GpJWLRhHHdTOdST5EtgCV+XcYs3vLI4rcI3
+	 bJNTDdQgnyQZ0dnJ0bdAiku9EdaPvSVyY4xb+5d1egVbtU/RniVxNWoFcCFytup8DP
+	 /0kCgiUk2DuaVgCtagg/GaleqNfZrnhDnjLNPfLmk18chAaPsmMCvSls/U+djNWkyT
+	 uctJRA9PnPKooB60pQnJnFa79E1dy5bQthNoECPolVDtuTmpsK+n9YQlHcIKO4IaNQ
+	 qoOQ63mZqKVCP69TpAEJ8WBOCllTcRozSqAoPnbo8XhSpfAsu1bx3Lky6eQTzhHG+8
+	 WyNUl4xKRGFyg==
+Message-ID: <26ad845a-3fde-47f0-8541-fa8c751530b2@kernel.org>
+Date: Tue, 2 Jul 2024 16:23:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,22 +49,22 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] dt-bindings: eeprom: at24: Add compatible for ONSemi
- N24S64B
+Subject: Re: [PATCH 3/7] dt-bindings: gpio: vf610: Allow gpio-line-names to be
+ set
 To: Frieder Schrempf <frieder@fris.de>, Bartosz Golaszewski <brgl@bgdev.pl>,
  Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+ Stefan Agner <stefan@agner.ch>
 Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
- Alexander Stein <alexander.stein@ew.tq-group.com>,
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Conor Dooley <conor.dooley@microchip.com>, Marek Vasut <marex@denx.de>,
- =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
- Sebastian Reichel <sebastian.reichel@collabora.com>
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Peng Fan <peng.fan@nxp.com>
 References: <20240702103155.321855-1-frieder@fris.de>
- <20240702103155.321855-3-frieder@fris.de>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <20240702103155.321855-4-frieder@fris.de>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -108,19 +108,42 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240702103155.321855-3-frieder@fris.de>
+In-Reply-To: <20240702103155.321855-4-frieder@fris.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 02/07/2024 12:31, Frieder Schrempf wrote:
 > From: Frieder Schrempf <frieder.schrempf@kontron.de>
 > 
-> The ONSemi N24S64B is a 64 KBit serial EEPROM that is compatible
-> with atmel,24c64.
+> Describe common "gpio-line-names" property to fix dtbs_check warnings
+> like:
+> 
+>   arch/arm64/boot/dts/freescale/imx93-kontron-bl-osm-s.dtb: gpio@43810000:
+
+There is no such file. You cannot use future work as reason for a
+warning. Simply such warning does not exist at this point and
+introducing warnings knowingly is also not correct.
+
+>     'gpio-line-names' does not match any of the regexes: '^.+-hog(-[0-9]+)?$', 'pinctrl-[0-9]+'
 > 
 > Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+> ---
+>  Documentation/devicetree/bindings/gpio/gpio-vf610.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml b/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml
+> index a27f929502575..7230ba1a386ae 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml
+> @@ -50,6 +50,7 @@ properties:
+>      const: 2
+>  
+>    gpio-controller: true
+> +  gpio-line-names: true
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+maxItems are not known?
+
+
 
 Best regards,
 Krzysztof
