@@ -1,106 +1,200 @@
-Return-Path: <linux-kernel+bounces-238198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D74E9246AF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:51:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACCF89246B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:54:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39794281AC7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:51:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A5391F23DD0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C631F1BF330;
-	Tue,  2 Jul 2024 17:51:28 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D42E1C0DE3;
+	Tue,  2 Jul 2024 17:54:01 +0000 (UTC)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9E01BE234;
-	Tue,  2 Jul 2024 17:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23131BE873;
+	Tue,  2 Jul 2024 17:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719942688; cv=none; b=rnex/RjxGscCtAimzpXeuaYr0S/mY1etvRD6pRbx84oV+8zH0xmfYVX5/Mw5EDZnGIPuSwsgA4IRrBkUpi2UVWzXIlBFao4S17a+m5m4ZB6xNJAtJmXbvuG8hzG1rPFpzxZNz8rjLa1okXM4SQVdY6X6hV4XtE+1bTSjvGJLZi0=
+	t=1719942840; cv=none; b=ZlRIZyh8G0zfLUFfbazj3+w9O5LgxTsCcMiM9kkCTiZiiiJh4sTGCqt4Fl0TQaNW74DoqrIhFMrYdo2ailXXeGpAdHRBKyArmOF5+T0B/Ye7axFSlnqvnRzrQ89um2v0rPKkg6JEgWcOWGx2EZixUsPwOE/OMFyDk1mOxW66q+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719942688; c=relaxed/simple;
-	bh=H+U1EYcxPs8vYHE+bBElJ5nD7JX1Ny122D1CoXoM0nE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fDACJpzpRn23zsJy5KaOV0/BtRc3dkbSHFyVkzwrNcIo0XR1lgw3xTwXv/h5amWVsPhmzWOj9eMB2Lr3F4pI4r52tSiJPlZEWr2xC80C/EI/oC6Kv7BaEsw2BxLJajn/zCLutdqfWagdCNU3xFGLIlk0Ygj7udhmDQo85nTQzWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from ljl-virtual-machine.localdomain (unknown [106.58.225.219])
-	by APP-01 (Coremail) with SMTP id qwCowABnR0zvPYRmR0g9AQ--.968S2;
-	Wed, 03 Jul 2024 01:51:06 +0800 (CST)
-From: Junlin Li <make24@iscas.ac.cn>
-To: mchehab@kernel.org,
-	laurent.pinchart+renesas@ideasonboard.com,
-	tzimmermann@suse.de,
-	wsa+renesas@sang-engineering.com,
-	hkallweit1@gmail.com,
-	robh@kernel.org,
-	crope@iki.fi
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Junlin Li <make24@iscas.ac.cn>
-Subject: [PATCH] drivers: media: dvb-frontends/rtl2830: fix an out-of-bounds write error
-Date: Wed,  3 Jul 2024 01:50:23 +0800
-Message-Id: <20240702175023.3921-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1719942840; c=relaxed/simple;
+	bh=yvLMvBy0+1otlEibY6ok9ydC9gmPj672qN+b7belio0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OtCjKJJjGl3YWz3WAe+NdPmoULPjoMvtAs83YY4DcG+HLQE1COgrBHNPyeFW/tk1r2Qbt4K/KOUrNjzzBYeJeg/vhH1zgPJpP670eZ3CYZqHqUeUbNgvDKciQfXT2IzWB42BU/8HGRS4M644socqTIhJFy1H3Pbd5gSWgLa4KKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a70c0349b64so596175166b.1;
+        Tue, 02 Jul 2024 10:53:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719942837; x=1720547637;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WFhXTk49J7JdTh0lfYEvpqmeq+8M8zcqsRkfkO5ZaBg=;
+        b=HaKPXUQT3Q0G/VHLwNRATAahOGqOng/2BsW59qBOmrSff6BP0PinFqWnP+jL8aUYHq
+         AycB2BEwmTaqzs9rXJjb4pFTl20KfPeoJNipJo91xbKkWWqC43nqG8bAnROYfEhqx+eg
+         oH+PrDNOsAJhpg2ez31qvS80i2MkwP1LVd83XADrwgHc0xsZdQVz7y19EQ35PJ4YXl+I
+         Yyc8P7txWgdw5C46n6GQDYVwTsSySAgqsVpKbVYrJ7Iwv8iMddKf7tTxg9jvA1TfU3S0
+         CF1lJ4C7izaY1KxoFVJ8D8gxgIo7QMf5P+cUC5IbjTNJqngqh2W4k3dWATkrK0CmdGeL
+         S7Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCWukf+uMVFrJedfWXEDZdL1X0mQDUIdvMzlpUbxA9/+6XXzD3MYZ+KP0bB1rQIQELcNXkxv1KzwcgMU8SDocTfcT5Kqu7zGjqo08pcjI6JZuOzXUFo9Z8iIEQOknm7neyvhkC1fhcVCSfCWSc5lBQWtyK6dqXG5GSVyTZUdKRUCkdQN
+X-Gm-Message-State: AOJu0YyJ6x4yxgG63LtZYCtAmxi9UDeRFjybBrfhmnBDzskLJEYaNzTQ
+	ouA8TZGM+a03KQ7+K/p0rfQDrOC4lgDAsieQnTrwOEJp0iM85OyTgd+Uww==
+X-Google-Smtp-Source: AGHT+IFnAVqJ3O2Q8aIdhmkkjE1j+Fm1XfaodkkcdmoRrrC68/Bn9KyBFsMLV+BTv1FvVW1s5rafow==
+X-Received: by 2002:a17:906:29cf:b0:a6f:17a9:947a with SMTP id a640c23a62f3a-a75144a8a9cmr544931866b.71.1719942836902;
+        Tue, 02 Jul 2024 10:53:56 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-113.fbsv.net. [2a03:2880:30ff:71::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab0651dfsm448430766b.142.2024.07.02.10.53.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 10:53:56 -0700 (PDT)
+Date: Tue, 2 Jul 2024 10:53:54 -0700
+From: Breno Leitao <leitao@debian.org>
+To: kernel test robot <lkp@intel.com>
+Cc: kuba@kernel.org, horia.geanta@nxp.com, pankaj.gupta@nxp.com,
+	gaurav.jain@nxp.com, linux-crypto@vger.kernel.org,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	horms@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 1/3] crypto: caam: Make CRYPTO_DEV_FSL_CAAM
+ dependent of COMPILE_TEST
+Message-ID: <ZoQ+snH2GTnwKNT2@gmail.com>
+References: <20240628161450.2541367-2-leitao@debian.org>
+ <202407011309.cpTuOGdg-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowABnR0zvPYRmR0g9AQ--.968S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7XrWkAryrWw4xur4rGrW3ZFb_yoWkJwc_G3
-	4SqrsxXFyjqF1Yya1Y9w45ZrWq9rW7XwsYgF15t3y3tFW5ZFy8KFyqg3ZFyFy8WFy7Wrn8
-	AFnxGF1Sk3W29jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb3kFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Jr0_
-	Gr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJV
-	WxJr1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
-	648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIda
-	VFxhVjvjDU0xZFpf9x0JUQZ23UUUUU=
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202407011309.cpTuOGdg-lkp@intel.com>
 
-Ensure index in rtl2830_pid_filter
-does not exceed 31 to prevent out-of-bounds access.
-dev->filters is a 32-bit value,
-so set_bit and clear_bit functions should only
-operate on indices from 0 to 31.
-If index is 32, it will attempt to access a non-existent 33rd bit,
-leading to out-of-bounds access.
-Change the boundary check
-from index > 32 to index >= 32 to resolve this issue.
+On Mon, Jul 01, 2024 at 01:48:21PM +0800, kernel test robot wrote:
 
-Fixes: df70ddad81b4 ("[media] rtl2830: implement PID filter")
-Signed-off-by: Junlin Li <make24@iscas.ac.cn>
----
- drivers/media/dvb-frontends/rtl2830.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> reproduce:
+>         git clone https://github.com/intel/lkp-tests.git ~/lkp-tests
+>         # apt-get install sparse
+>         # sparse version: v0.6.4-66-g0196afe1
+>         # https://github.com/intel-lab-lkp/linux/commit/ca1603af1770827216f5f67a91f6f13fbb05a050
+>         git remote add linux-review https://github.com/intel-lab-lkp/linux
+>         git fetch --no-tags linux-review Breno-Leitao/crypto-caam-Make-CRYPTO_DEV_FSL_CAAM-dependent-of-COMPILE_TEST/20240630-073726
+>         git checkout ca1603af1770827216f5f67a91f6f13fbb05a050
+>         # save the config file
+>         mkdir build_dir && cp config build_dir/.config
+>         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-13.2.0 ~/lkp-tests/kbuild/make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__ -fmax-errors=unlimited -fmax-warnings=unlimited' O=build_dir ARCH=m68k olddefconfig
+>         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-13.2.0 ~/lkp-tests/kbuild/make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__ -fmax-errors=unlimited -fmax-warnings=unlimited' O=build_dir ARCH=m68k SHELL=/bin/bash
 
-diff --git a/drivers/media/dvb-frontends/rtl2830.c b/drivers/media/dvb-frontends/rtl2830.c
-index 30d10fe4b33e..320aa2bf99d4 100644
---- a/drivers/media/dvb-frontends/rtl2830.c
-+++ b/drivers/media/dvb-frontends/rtl2830.c
-@@ -609,7 +609,7 @@ static int rtl2830_pid_filter(struct dvb_frontend *fe, u8 index, u16 pid, int on
- 		index, pid, onoff);
- 
- 	/* skip invalid PIDs (0x2000) */
--	if (pid > 0x1fff || index > 32)
-+	if (pid > 0x1fff || index >= 32)
- 		return 0;
- 
- 	if (onoff)
--- 
-2.34.1
+Thanks, this seems a valid error, but, I am unfortunately not able to
+reproduce it:
 
+	#  COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-13.2.0 ~/lkp-tests/kbuild/make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__-fmax-errors=unlimited -fmax-warnings=unlimited' O=build_dir ARCH=m68k SHELL=/bin/bash
+	Compiler will be installed in /home/leit/0day
+	PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/bin/:/home/leit/.cargo/bin:/usr/share/Modules/bin:/usr/lib64/ccache:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/usr/facebook/ops/scripts:/usr/facebook/scripts:/usr/facebook/ops/scripts:/usr/facebook/scripts:/usr/facebook/scripts:/usr/facebook/scripts/db:/usr/facebook/ops/scripts:/usr/facebook/scripts:/usr/facebook/scripts:/usr/facebook/scripts/db:/usr/local/sbin:/usr/sbin:/sbin:/var/www/scripts/bin:/home/leit/.yarn/bin:/home/leit/bin:/usr/facebook/ops/scripts:/usr/facebook/scripts:/usr/lib/cargo/bin:/home/leit/bin:/home/leit/.local/bin:/home/leit/bin:~/Devel/virtme:/home/leit/bin/virtme:/home/leit/bin/twtf:/home/leit/Devel/git-fuzzy/bin:/home/leit/bin/kernel:/home/leit/bin/git:/home/leit/bin/iterm:/usr/facebook/ops/scripts:/usr/facebook/scripts:/usr/local/sbin:/usr/sbin:/sbin:/var/www/scripts/bin:/home/leit/.yarn/bin
+	make --keep-going CROSS_COMPILE=/home/leit/0day/gcc-13.2.0-nolibc/m68k-linux/bin/m68k-linux- --jobs=332 KCFLAGS= -Wtautological-compare -Wno-error=return-type -Wreturn-type -Wcast-function-type -funsigned-char -Wundef -fstrict-flex-arrays=3 -Wformat-overflow -Wformat-truncation -Wrestrict -Wenum-conversion C=1 CF=-fdiagnostic-prefix -D__CHECK_ENDIAN__-fmax-errors=unlimited -fmax-warnings=unlimited O=build_dir ARCH=m68k SHELL=/bin/bash
+	make[1]: Entering directory '/home/leit/Devel/upstream/build_dir'
+	  GEN     Makefile
+	  CALL    ../scripts/checksyscalls.sh
+	  CC      drivers/crypto/caam/error.o
+	  CC      drivers/crypto/caam/ctrl.o
+	  CC      drivers/crypto/caam/debugfs.o
+	  CC      drivers/crypto/caam/jr.o
+	  CC      drivers/crypto/caam/key_gen.o
+	  CC      drivers/crypto/caam/caamalg.o
+	  CC      drivers/crypto/caam/caamrng.o
+	  CC      drivers/crypto/caam/caampkc.o
+	  CC      drivers/crypto/caam/pkc_desc.o
+	  CC      drivers/crypto/caam/caamalg_desc.o
+	  CHECK   ../drivers/crypto/caam/debugfs.c
+	command-line: note: in included file:
+	builtin:1:25: sparse: warning: no whitespace before object-like macro body
+	  CHECK   ../drivers/crypto/caam/error.c
+	command-line: note: in included file:
+	builtin:1:25: sparse: warning: no whitespace before object-like macro body
+	  CHECK   ../drivers/crypto/caam/key_gen.c
+	command-line: note: in included file:
+	builtin:1:25: sparse: warning: no whitespace before object-like macro body
+	  CHECK   ../drivers/crypto/caam/caamrng.c
+	command-line: note: in included file:
+	builtin:1:25: sparse: warning: no whitespace before object-like macro body
+	  CHECK   ../drivers/crypto/caam/jr.c
+	  CHECK   ../drivers/crypto/caam/pkc_desc.c
+	command-line: note: in included file:
+	builtin:1:25: sparse: warning: no whitespace before object-like macro body
+	command-line: note: in included file:
+	builtin:1:25: sparse: warning: no whitespace before object-like macro body
+	  CHECK   ../drivers/crypto/caam/ctrl.c
+	command-line: note: in included file:
+	builtin:1:25: sparse: warning: no whitespace before object-like macro body
+	  CHECK   ../drivers/crypto/caam/caampkc.c
+	command-line: note: in included file:
+	builtin:1:25: sparse: warning: no whitespace before object-like macro body
+	  CHECK   ../drivers/crypto/caam/caamalg_desc.c
+	command-line: note: in included file:
+	builtin:1:25: sparse: warning: no whitespace before object-like macro body
+	  CHECK   ../drivers/crypto/caam/caamalg.c
+	command-line: note: in included file:
+	builtin:1:25: sparse: warning: no whitespace before object-like macro body
+	  AR      drivers/crypto/caam/built-in.a
+	  AR      drivers/crypto/built-in.a
+	  AR      drivers/built-in.a
+	  AR      built-in.a
+	  AR      vmlinux.a
+	  LD      vmlinux.o
+	  OBJCOPY modules.builtin.modinfo
+	  GEN     modules.builtin
+	  MODPOST vmlinux.symvers
+	  UPD     include/generated/utsversion.h
+	  CC      init/version-timestamp.o
+	  CHECK   ../init/version-timestamp.c
+	command-line: note: in included file:
+	builtin:1:25: sparse: warning: no whitespace before object-like macro body
+	  LD      .tmp_vmlinux.kallsyms1
+	  NM      .tmp_vmlinux.kallsyms1.syms
+	  KSYMS   .tmp_vmlinux.kallsyms1.S
+	  AS      .tmp_vmlinux.kallsyms1.o
+	  LD      .tmp_vmlinux.kallsyms2
+	  NM      .tmp_vmlinux.kallsyms2.syms
+	  KSYMS   .tmp_vmlinux.kallsyms2.S
+	  AS      .tmp_vmlinux.kallsyms2.o
+	  LD      vmlinux
+	  NM      System.map
+	cp vmlinux vmlinux.tmp
+	/home/leit/0day/gcc-13.2.0-nolibc/m68k-linux/bin/m68k-linux-strip vmlinux.tmp
+	gzip -9c vmlinux.tmp >vmlinux.gz
+	rm vmlinux.tmp
+	make[1]: Leaving directory '/home/leit/Devel/upstream/build_dir'
+
+
+# The repo I am building:
+
+	# git show --oneline
+	ca1603af1770 (HEAD) crypto: caam: Make CRYPTO_DEV_FSL_CAAM dependent of COMPILE_TEST
+	diff --git a/drivers/crypto/caam/Kconfig b/drivers/crypto/caam/Kconfig
+	index c631f99e415f..05210a0edb8a 100644
+	--- a/drivers/crypto/caam/Kconfig
+	+++ b/drivers/crypto/caam/Kconfig
+	@@ -10,7 +10,7 @@ config CRYPTO_DEV_FSL_CAAM_AHASH_API_DESC
+
+	 config CRYPTO_DEV_FSL_CAAM
+		tristate "Freescale CAAM-Multicore platform driver backend"
+	-       depends on FSL_SOC || ARCH_MXC || ARCH_LAYERSCAPE
+	+       depends on FSL_SOC || ARCH_MXC || ARCH_LAYERSCAPE || COMPILE_TEST
+		select SOC_BUS
+		select CRYPTO_DEV_FSL_CAAM_COMMON
+		imply FSL_MC_BUS
+
+My version of tools:
+
+	# sparse --version
+	v0.6.4-66-g0196afe1
+
+	# cd ~/lkp-tests; git show --stat
+	commit 22f5cf2c860a5604f182f966b1f105ce1c0becb7 (HEAD -> master, origin/master, origin/HEAD)
 
