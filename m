@@ -1,396 +1,223 @@
-Return-Path: <linux-kernel+bounces-237363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AA7091EFB5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:05:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56AF791EFB8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:06:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5DDC1F21862
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:05:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C23191F21976
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4752712FB29;
-	Tue,  2 Jul 2024 07:05:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QHrhoyTu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368A312EBE1;
+	Tue,  2 Jul 2024 07:05:58 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F25F3EA69
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 07:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420033EA69
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 07:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719903908; cv=none; b=OUbS5srnMsupi84WFJ9QZ4txOEbetM3PVFRdlCKmnTSB32wTjKPDJfTxuJN/dawYHM7pfMTmssvYzmaeBWeF/SK3F6bIOluxO8WZakGCtE3MZyeQi9I7SRH9+NP/bqcw7WdMC8ITdkgzOtbDFbu0dV5y1KiW0ZStn7Kj/railtY=
+	t=1719903957; cv=none; b=sJ9GnENgDjwwE/3c50VmvCJqT5FsV4YI3JKbmjmqyRu4JeTmnQT3mcAOv854bTSwTIJN+BwXzsSNSUBtWc8+feglSljKiHawdVl26yR70+rQIM5J33YVg/DZeVOWC77Kl8YKQdmiZCM1kAjsIFrr8mZjLRAicsyl0EEcLx4JuVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719903908; c=relaxed/simple;
-	bh=EoPCih5mKGxCOt1Z9cTsXeh4cFNKaiOFSxgeD//FC2M=;
-	h=From:References:MIME-Version:In-Reply-To:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HIWIjeFBvxASG3xXIOA0viBqZDYMbHaBsb6oEvGnFBVUwGa4UpHbTJuV7NOflDeBeQ3THQX4PXQXDpM5EkTvupltWiFJCPi+PkqJAgJB0s7orzWm2D+XFkMRdNAG0ATLVO1QHS3FRuZLxDzvQfANWQh07PHqWwLlHdADikixWrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QHrhoyTu; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719903905;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=efzutW9HnuNZcBmVDI1TMkeEGqVEdgVo01H+ILWp7Ac=;
-	b=QHrhoyTugk1robWo2zRCUOSJkLFoVCK3TkLZqQVT3SgOefx21+3Fw4Gj/0lrj1COeLpTs+
-	TtiOnBzdQsV5vrXk0tZEahZMqqpZTWhHpmsb3I243d0h5zrvKGyX6VfLswj4QU8aKhz8iu
-	eV0PpRJFegRGJajmVRj2X4SkTDGg+jk=
-Received: from mail-ua1-f72.google.com (mail-ua1-f72.google.com
- [209.85.222.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-49-wnV5MhrzNmO1v6FzhHy9Fw-1; Tue, 02 Jul 2024 03:05:04 -0400
-X-MC-Unique: wnV5MhrzNmO1v6FzhHy9Fw-1
-Received: by mail-ua1-f72.google.com with SMTP id a1e0cc1a2514c-80f748e565bso1036083241.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 00:05:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719903903; x=1720508703;
-        h=cc:to:subject:message-id:date:in-reply-to:mime-version:references
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=efzutW9HnuNZcBmVDI1TMkeEGqVEdgVo01H+ILWp7Ac=;
-        b=Z2VPV/Bjy/pCG0iOAnd02noLRvDxCI1kNPjwS3CsKdRE69XBeUhVFNX/LlIYkzw78U
-         Ec3sNzpIjnW0fH/sm2DLHBGS1jCrf4qB4e55Z8049fM2x8fK3b1GWIyZhqmbZZNsYJa2
-         NStELnMbiozNtgAW9CSkHM2WRSEMr9ce1L6O+qvoQOXtYzxi6cfVkb39NeMOIkXH7Xft
-         uSinpT1wF0X9KIBZu+W9JoWCLepEHbVaT8Ym/6RTZYdh/2H04N6e6eto31GeV93Sz7Q4
-         q8KdmilY5cCmFFaSsHSf2awqJBZ4mPg2mKMHjd2sztCJFZsdm6k6SVhhnTkaVMva7JPV
-         Pd6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUgGsS2sIESegFwEZRmuLVg2siBkHPfy3Q0SNiY/VBg8/0ceTsREAonZgbPD0eEYt3C8W3dkoFaryVKH+Tl9Ev0DwMWxRdOWA96SOf2
-X-Gm-Message-State: AOJu0YxpakQ7Q+3+Wu5RE/x4anm/YW+RirhWZw8156y+VQsj68JsLf/5
-	EWa+H9cyaZzTKaUA0tvuixAwTnaF6WodDt1MKIhtrQQhqA44oEHMpSzCbNViQe93oL0TB/grTIq
-	7XnWuRKb6PigUns5zeIU48v0H4PVhL8/861Kwae8dPlt8IgB0pwQcJkc7XsiIVkR23IqdArN7HK
-	P/x5i2l8VDPbL0GpmV1X4j+bOdjw+4+wErqgYw
-X-Received: by 2002:a67:fd52:0:b0:48f:8e07:1c45 with SMTP id ada2fe7eead31-48faf07d163mr8037992137.1.1719903903594;
-        Tue, 02 Jul 2024 00:05:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFMQUlw0aoLNQC1idWkR5Ffvb5E602EnWUcDvF/217QkaIVFxOqVK0cek7uFLD5Ir5RwGMJUeZGmztECgxI93M=
-X-Received: by 2002:a67:fd52:0:b0:48f:8e07:1c45 with SMTP id
- ada2fe7eead31-48faf07d163mr8037962137.1.1719903903133; Tue, 02 Jul 2024
- 00:05:03 -0700 (PDT)
-Received: from 311643009450 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 2 Jul 2024 03:05:02 -0400
-From: =?UTF-8?Q?Adri=C3=A1n_Moreno?= <amorenoz@redhat.com>
-References: <20240630195740.1469727-1-amorenoz@redhat.com> <20240630195740.1469727-6-amorenoz@redhat.com>
- <f7to77hvunj.fsf@redhat.com>
+	s=arc-20240116; t=1719903957; c=relaxed/simple;
+	bh=I++kslG8ihenEvWXSMDFZqI3nirvDtne2p9d6pqkVIA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=LWlQ54Z27Mgsx8ZhKRVB8IVJO8M1UAfbmAsBAtMS5EwCHDHzVaa81XxptQEvrnJ9BzRzMu2/R+xnFijVUJQbyc3UlcANcUCfFJMdqt/kRzF9fA5YY2GENjUNwtLm4YxlR7s9Kwl84O7/C58qq9HSQ6d+/fGN+T+YEPpXgZESDQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav111.sakura.ne.jp (fsav111.sakura.ne.jp [27.133.134.238])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 46275JJp069284;
+	Tue, 2 Jul 2024 16:05:19 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav111.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav111.sakura.ne.jp);
+ Tue, 02 Jul 2024 16:05:19 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav111.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 46275JB6069281
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 2 Jul 2024 16:05:19 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <e045dcff-a6cd-4110-83e0-6fc2a56d0413@I-love.SAKURA.ne.jp>
+Date: Tue, 2 Jul 2024 16:05:19 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <f7to77hvunj.fsf@redhat.com>
-Date: Tue, 2 Jul 2024 03:05:02 -0400
-Message-ID: <CAG=2xmOaMy2DVNfTOkh1sK+NR_gz+bXvKLg9YSp1t_K+sEUzJg@mail.gmail.com>
-Subject: Re: [PATCH net-next v7 05/10] net: openvswitch: add psample action
-To: Aaron Conole <aconole@redhat.com>
-Cc: netdev@vger.kernel.org, echaudro@redhat.com, horms@kernel.org, 
-	i.maximets@ovn.org, dev@openvswitch.org, 
-	Donald Hunter <donald.hunter@gmail.com>, Jakub Kicinski <kuba@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Pravin B Shelar <pshelar@ovn.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [kernel?] KASAN: stack-out-of-bounds Read in __show_regs
+ (2)
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To: Andrey Konovalov <andreyknvl@gmail.com>
+Cc: syzbot <syzbot+e9be5674af5e3a0b9ecc@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        kasan-dev <kasan-dev@googlegroups.com>, linux-mm <linux-mm@kvack.org>,
+        bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+        mingo@redhat.com, tglx@linutronix.de, x86@kernel.org
+References: <000000000000a8c856061ae85e20@google.com>
+ <82cf2f25-fd3b-40a2-8d2b-a6385a585601@I-love.SAKURA.ne.jp>
+ <daad75ac-9fd5-439a-b04b-235152bea222@I-love.SAKURA.ne.jp>
+ <CA+fCnZdg=o3bA-kBM4UKEftiGfBffWXbqSapje8w25aKUk_4Nw@mail.gmail.com>
+ <ec7411af-01ac-4ebd-99ad-98019ff355bf@I-love.SAKURA.ne.jp>
+Content-Language: en-US
+In-Reply-To: <ec7411af-01ac-4ebd-99ad-98019ff355bf@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 01, 2024 at 02:23:12PM GMT, Aaron Conole wrote:
-> Adrian Moreno <amorenoz@redhat.com> writes:
->
-> > Add support for a new action: psample.
-> >
-> > This action accepts a u32 group id and a variable-length cookie and uses
-> > the psample multicast group to make the packet available for
-> > observability.
-> >
-> > The maximum length of the user-defined cookie is set to 16, same as
-> > tc_cookie, to discourage using cookies that will not be offloadable.
-> >
-> > Acked-by: Eelco Chaudron <echaudro@redhat.com>
-> > Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
-> > ---
->
-> Hi Adrian,
->
-> Just some nits below.
->
-> >  Documentation/netlink/specs/ovs_flow.yaml | 17 ++++++++
-> >  include/uapi/linux/openvswitch.h          | 28 ++++++++++++++
-> >  net/openvswitch/Kconfig                   |  1 +
-> >  net/openvswitch/actions.c                 | 47 +++++++++++++++++++++++
-> >  net/openvswitch/flow_netlink.c            | 32 ++++++++++++++-
-> >  5 files changed, 124 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/netlink/specs/ovs_flow.yaml b/Documentation/netlink/specs/ovs_flow.yaml
-> > index 4fdfc6b5cae9..46f5d1cd8a5f 100644
-> > --- a/Documentation/netlink/specs/ovs_flow.yaml
-> > +++ b/Documentation/netlink/specs/ovs_flow.yaml
-> > @@ -727,6 +727,12 @@ attribute-sets:
-> >          name: dec-ttl
-> >          type: nest
-> >          nested-attributes: dec-ttl-attrs
-> > +      -
-> > +        name: psample
-> > +        type: nest
-> > +        nested-attributes: psample-attrs
-> > +        doc: |
-> > +          Sends a packet sample to psample for external observation.
-> >    -
-> >      name: tunnel-key-attrs
-> >      enum-name: ovs-tunnel-key-attr
-> > @@ -938,6 +944,17 @@ attribute-sets:
-> >        -
-> >          name: gbp
-> >          type: u32
-> > +  -
-> > +    name: psample-attrs
-> > +    enum-name: ovs-psample-attr
-> > +    name-prefix: ovs-psample-attr-
-> > +    attributes:
-> > +      -
-> > +        name: group
-> > +        type: u32
-> > +      -
-> > +        name: cookie
-> > +        type: binary
-> >
-> >  operations:
-> >    name-prefix: ovs-flow-cmd-
-> > diff --git a/include/uapi/linux/openvswitch.h b/include/uapi/linux/openvswitch.h
-> > index efc82c318fa2..3dd653748725 100644
-> > --- a/include/uapi/linux/openvswitch.h
-> > +++ b/include/uapi/linux/openvswitch.h
-> > @@ -914,6 +914,31 @@ struct check_pkt_len_arg {
-> >  };
-> >  #endif
-> >
-> > +#define OVS_PSAMPLE_COOKIE_MAX_SIZE 16
-> > +/**
-> > + * enum ovs_psample_attr - Attributes for %OVS_ACTION_ATTR_PSAMPLE
-> > + * action.
-> > + *
-> > + * @OVS_PSAMPLE_ATTR_GROUP: 32-bit number to identify the source of the
-> > + * sample.
-> > + * @OVS_PSAMPLE_ATTR_COOKIE: An optional variable-length binary cookie that
-> > + * contains user-defined metadata. The maximum length is
-> > + * OVS_PSAMPLE_COOKIE_MAX_SIZE bytes.
-> > + *
-> > + * Sends the packet to the psample multicast group with the specified group and
-> > + * cookie. It is possible to combine this action with the
-> > + * %OVS_ACTION_ATTR_TRUNC action to limit the size of the sample.
-> > + */
-> > +enum ovs_psample_attr {
-> > +	OVS_PSAMPLE_ATTR_GROUP = 1,	/* u32 number. */
-> > +	OVS_PSAMPLE_ATTR_COOKIE,	/* Optional, user specified cookie. */
-> > +
-> > +	/* private: */
-> > +	__OVS_PSAMPLE_ATTR_MAX
-> > +};
-> > +
-> > +#define OVS_PSAMPLE_ATTR_MAX (__OVS_PSAMPLE_ATTR_MAX - 1)
-> > +
-> >  /**
-> >   * enum ovs_action_attr - Action types.
-> >   *
-> > @@ -966,6 +991,8 @@ struct check_pkt_len_arg {
-> >   * of l3 tunnel flag in the tun_flags field of OVS_ACTION_ATTR_ADD_MPLS
-> >   * argument.
-> >   * @OVS_ACTION_ATTR_DROP: Explicit drop action.
-> > + * @OVS_ACTION_ATTR_PSAMPLE: Send a sample of the packet to external observers
-> > + * via psample.
-> >   *
-> >   * Only a single header can be set with a single %OVS_ACTION_ATTR_SET.  Not all
-> >   * fields within a header are modifiable, e.g. the IPv4 protocol and fragment
-> > @@ -1004,6 +1031,7 @@ enum ovs_action_attr {
-> >  	OVS_ACTION_ATTR_ADD_MPLS,     /* struct ovs_action_add_mpls. */
-> >  	OVS_ACTION_ATTR_DEC_TTL,      /* Nested OVS_DEC_TTL_ATTR_*. */
-> >  	OVS_ACTION_ATTR_DROP,         /* u32 error code. */
-> > +	OVS_ACTION_ATTR_PSAMPLE,      /* Nested OVS_PSAMPLE_ATTR_*. */
-> >
-> >  	__OVS_ACTION_ATTR_MAX,	      /* Nothing past this will be accepted
-> >  				       * from userspace. */
-> > diff --git a/net/openvswitch/Kconfig b/net/openvswitch/Kconfig
-> > index 29a7081858cd..2535f3f9f462 100644
-> > --- a/net/openvswitch/Kconfig
-> > +++ b/net/openvswitch/Kconfig
-> > @@ -10,6 +10,7 @@ config OPENVSWITCH
-> >  		   (NF_CONNTRACK && ((!NF_DEFRAG_IPV6 || NF_DEFRAG_IPV6) && \
-> >  				     (!NF_NAT || NF_NAT) && \
-> >  				     (!NETFILTER_CONNCOUNT || NETFILTER_CONNCOUNT)))
-> > +	depends on PSAMPLE || !PSAMPLE
-> >  	select LIBCRC32C
-> >  	select MPLS
-> >  	select NET_MPLS_GSO
-> > diff --git a/net/openvswitch/actions.c b/net/openvswitch/actions.c
-> > index 964225580824..a035b7e677dd 100644
-> > --- a/net/openvswitch/actions.c
-> > +++ b/net/openvswitch/actions.c
-> > @@ -24,6 +24,11 @@
-> >  #include <net/checksum.h>
-> >  #include <net/dsfield.h>
-> >  #include <net/mpls.h>
-> > +
-> > +#if IS_ENABLED(CONFIG_PSAMPLE)
-> > +#include <net/psample.h>
-> > +#endif
-> > +
-> >  #include <net/sctp/checksum.h>
-> >
-> >  #include "datapath.h"
-> > @@ -1299,6 +1304,39 @@ static int execute_dec_ttl(struct sk_buff *skb, struct sw_flow_key *key)
-> >  	return 0;
-> >  }
-> >
-> > +#if IS_ENABLED(CONFIG_PSAMPLE)
-> > +static void execute_psample(struct datapath *dp, struct sk_buff *skb,
-> > +			    const struct nlattr *attr)
-> > +{
-> > +	struct psample_group psample_group = {};
-> > +	struct psample_metadata md = {};
-> > +	const struct nlattr *a;
-> > +	int rem;
-> > +
-> > +	nla_for_each_attr(a, nla_data(attr), nla_len(attr), rem) {
-> > +		switch (nla_type(a)) {
-> > +		case OVS_PSAMPLE_ATTR_GROUP:
-> > +			psample_group.group_num = nla_get_u32(a);
-> > +			break;
-> > +
-> > +		case OVS_PSAMPLE_ATTR_COOKIE:
-> > +			md.user_cookie = nla_data(a);
-> > +			md.user_cookie_len = nla_len(a);
-> > +			break;
-> > +		}
-> > +	}
-> > +
-> > +	psample_group.net = ovs_dp_get_net(dp);
-> > +	md.in_ifindex = OVS_CB(skb)->input_vport->dev->ifindex;
-> > +	md.trunc_size = skb->len - OVS_CB(skb)->cutlen;
-> > +
-> > +	psample_sample_packet(&psample_group, skb, 0, &md);
-> > +}
-> > +#else
-> > +static inline void execute_psample(struct datapath *dp, struct sk_buff *skb,
-> > +				   const struct nlattr *attr) {}
->
-> I noticed that this got flagged in patchwork since it is 'static inline'
-> while being part of a complete translation unit - but I also see some
-> other places where that has been done.  I guess it should be just
-> 'static' though.  I don't feel very strongly about it.
->
+On 2024/07/02 15:11, Tetsuo Handa wrote:
+> Well, KASAN says "out-of-bounds". But the reported address
+> 
+>   BUG: KASAN: stack-out-of-bounds in __show_regs+0x172/0x610
+>   Read of size 8 at addr ffffc90003c4f798 by task kworker/u8:5/234
+> 
+> is within the kernel stack memory mapping
+> 
+>   The buggy address belongs to the virtual mapping at
+>    [ffffc90003c48000, ffffc90003c51000) created by:
+>    copy_process+0x5d1/0x3d7
+> 
+> . Why is this "out-of-bounds" ? What boundary did KASAN compare with?
 
-We had a bit of discussion about this with Ilya. It seems "static
-inline" is a common pattern around the kernel. The coding style
-documentation says:
-"Generally, inline functions are preferable to macros resembling functions."
+I think I found a hint. The KASAN message is printed when the call trace
+starts with
 
-So I think this "inline" is correct but I might be missing something.
+  __schedule()
+  preempt_schedule_irq()
+  irqentry_exit()
 
-> > +#endif
-> > +
-> >  /* Execute a list of actions against 'skb'. */
-> >  static int do_execute_actions(struct datapath *dp, struct sk_buff *skb,
-> >  			      struct sw_flow_key *key,
-> > @@ -1502,6 +1540,15 @@ static int do_execute_actions(struct datapath *dp, struct sk_buff *skb,
-> >  			ovs_kfree_skb_reason(skb, reason);
-> >  			return 0;
-> >  		}
-> > +
-> > +		case OVS_ACTION_ATTR_PSAMPLE:
-> > +			execute_psample(dp, skb, a);
-> > +			OVS_CB(skb)->cutlen = 0;
->
-> We may want to document that trunc is also impacted by psample calls.
-> Right now, it is only mentioned for a single OUTPUT action.
-> Alternatively, we could either ignore trunc, or not reset here.
+. That is, when preemption happens, KASAN by error tries to compare with
+unintended stack boundary?
 
-The uAPI header says:
+[  504.507489][    C0] DEBUG: holding rtnl_mutex for 3212 jiffies.
+[  504.513708][    C0] task:kworker/u8:5    state:R  running task     stack:19992 pid:340   tgid:340   ppid:2      flags:0x00004000
+[  504.525827][    C0] Workqueue: netns cleanup_net
+[  504.530890][    C0] Call Trace:
+[  504.534213][    C0]  <TASK>
+[  504.537244][    C0]  __schedule+0x17e8/0x4a20
+[  504.541874][    C0]  ? mark_lock+0x9a/0x360
+[  504.546279][    C0]  ? lockdep_hardirqs_on_prepare+0x43d/0x780
+[  504.552396][    C0]  ? __virt_addr_valid+0x183/0x520
+[  504.557711][    C0]  ? __pfx_lockdep_hardirqs_on_prepare+0x10/0x10
+[  504.564121][    C0]  ? lock_release+0xbf/0x9f0
+[  504.568918][    C0]  ? __pfx___schedule+0x10/0x10
+[  504.573835][    C0]  ? lockdep_hardirqs_on+0x99/0x150
+[  504.579189][    C0]  ? mark_lock+0x9a/0x360
+[  504.583592][    C0]  preempt_schedule_irq+0xfb/0x1c0
+[  504.588984][    C0]  ? __pfx_preempt_schedule_irq+0x10/0x10
+[  504.594785][    C0]  irqentry_exit+0x5e/0x90
+[  504.599421][    C0]  asm_sysvec_reschedule_ipi+0x1a/0x20
 
-"
-Sends the packet to the psample multicast group with the specified group and
-cookie. It is possible to combine this action with the
-%OVS_ACTION_ATTR_TRUNC action to limit the size of the sample.
-"
+[  463.514954][    C1] DEBUG: holding rtnl_mutex for 993 jiffies.
+[  463.528845][    C1] task:kworker/u8:10   state:R  running task     stack:19856 pid:5725  tgid:5725  ppid:2      flags:0x00004000
+[  463.536743][ T9938] rock: corrupted directory entry. extent=41, offset=65536, size=8
+[  463.540652][    C1] Workqueue: netns cleanup_net
+[  463.553421][    C1] Call Trace:
+[  463.556740][    C1]  <TASK>
+[  463.559706][    C1]  __schedule+0x17e8/0x4a20
+[  463.564304][    C1]  ? __pfx_validate_chain+0x10/0x10
+[  463.569611][    C1]  ? __pfx___schedule+0x10/0x10
+[  463.574628][    C1]  ? lockdep_hardirqs_on_prepare+0x43d/0x780
+[  463.580760][    C1]  ? preempt_schedule_irq+0xf0/0x1c0
+[  463.586149][    C1]  preempt_schedule_irq+0xfb/0x1c0
+[  463.591401][    C1]  ? __pfx_preempt_schedule_irq+0x10/0x10
+[  463.597269][    C1]  irqentry_exit+0x5e/0x90
+[  463.601834][    C1]  asm_sysvec_apic_timer_interrupt+0x1a/0x20
 
-Isn't this enough? What else would you add to make it even more clear?
+[ 1558.178669][    C1] DEBUG: holding rtnl_mutex for 536 jiffies.
+[ 1558.184806][    C1] task:syz-executor.3  state:R  running task     stack:25968 pid:6351  tgid:6345  ppid:6200   flags:0x00004006
+[ 1558.196699][    C1] Call Trace:
+[ 1558.200068][    C1]  <TASK>
+[ 1558.203055][    C1]  __schedule+0x17e8/0x4a20
+[ 1558.207638][    C1]  ? __pfx___schedule+0x10/0x10
+[ 1558.212585][    C1]  ? lockdep_hardirqs_on_prepare+0x43d/0x780
+[ 1558.218675][    C1]  ? preempt_schedule_irq+0xf0/0x1c0
+[ 1558.224004][    C1]  preempt_schedule_irq+0xfb/0x1c0
+[ 1558.229196][    C1]  ? __pfx_preempt_schedule_irq+0x10/0x10
+[ 1558.234986][    C1]  irqentry_exit+0x5e/0x90
+[ 1558.239503][    C1]  asm_sysvec_reschedule_ipi+0x1a/0x20
 
->
-> > +			if (nla_is_last(a, rem)) {
-> > +				consume_skb(skb);
-> > +				return 0;
-> > +			}
-> > +			break;
-> >  		}
-> >
-> >  		if (unlikely(err)) {
-> > diff --git a/net/openvswitch/flow_netlink.c b/net/openvswitch/flow_netlink.c
-> > index f224d9bcea5e..c92bdc4dfe19 100644
-> > --- a/net/openvswitch/flow_netlink.c
-> > +++ b/net/openvswitch/flow_netlink.c
-> > @@ -64,6 +64,7 @@ static bool actions_may_change_flow(const struct nlattr *actions)
-> >  		case OVS_ACTION_ATTR_TRUNC:
-> >  		case OVS_ACTION_ATTR_USERSPACE:
-> >  		case OVS_ACTION_ATTR_DROP:
-> > +		case OVS_ACTION_ATTR_PSAMPLE:
-> >  			break;
-> >
-> >  		case OVS_ACTION_ATTR_CT:
-> > @@ -2409,7 +2410,7 @@ static void ovs_nla_free_nested_actions(const struct nlattr *actions, int len)
-> >  	/* Whenever new actions are added, the need to update this
-> >  	 * function should be considered.
-> >  	 */
-> > -	BUILD_BUG_ON(OVS_ACTION_ATTR_MAX != 24);
-> > +	BUILD_BUG_ON(OVS_ACTION_ATTR_MAX != 25);
-> >
-> >  	if (!actions)
-> >  		return;
-> > @@ -3157,6 +3158,28 @@ static int validate_and_copy_check_pkt_len(struct net *net,
-> >  	return 0;
-> >  }
-> >
-> > +static int validate_psample(const struct nlattr *attr)
-> > +{
-> > +	static const struct nla_policy policy[OVS_PSAMPLE_ATTR_MAX + 1] = {
-> > +		[OVS_PSAMPLE_ATTR_GROUP] = { .type = NLA_U32 },
-> > +		[OVS_PSAMPLE_ATTR_COOKIE] = {
-> > +			.type = NLA_BINARY,
-> > +			.len = OVS_PSAMPLE_COOKIE_MAX_SIZE,
-> > +		},
-> > +	};
-> > +	struct nlattr *a[OVS_PSAMPLE_ATTR_MAX + 1];
-> > +	int err;
-> > +
-> > +	if (!IS_ENABLED(CONFIG_PSAMPLE))
-> > +		return -EOPNOTSUPP;
-> > +
-> > +	err = nla_parse_nested(a, OVS_PSAMPLE_ATTR_MAX, attr, policy, NULL);
-> > +	if (err)
-> > +		return err;
-> > +
-> > +	return a[OVS_PSAMPLE_ATTR_GROUP] ? 0 : -EINVAL;
-> > +}
-> > +
-> >  static int copy_action(const struct nlattr *from,
-> >  		       struct sw_flow_actions **sfa, bool log)
-> >  {
-> > @@ -3212,6 +3235,7 @@ static int __ovs_nla_copy_actions(struct net *net, const struct nlattr *attr,
-> >  			[OVS_ACTION_ATTR_ADD_MPLS] = sizeof(struct ovs_action_add_mpls),
-> >  			[OVS_ACTION_ATTR_DEC_TTL] = (u32)-1,
-> >  			[OVS_ACTION_ATTR_DROP] = sizeof(u32),
-> > +			[OVS_ACTION_ATTR_PSAMPLE] = (u32)-1,
-> >  		};
-> >  		const struct ovs_action_push_vlan *vlan;
-> >  		int type = nla_type(a);
-> > @@ -3490,6 +3514,12 @@ static int __ovs_nla_copy_actions(struct net *net, const struct nlattr *attr,
-> >  				return -EINVAL;
-> >  			break;
-> >
-> > +		case OVS_ACTION_ATTR_PSAMPLE:
-> > +			err = validate_psample(a);
-> > +			if (err)
-> > +				return err;
-> > +			break;
-> > +
-> >  		default:
-> >  			OVS_NLERR(log, "Unknown Action type %d", type);
-> >  			return -EINVAL;
->
+[ 1104.439430][    C0] DEBUG: holding rtnl_mutex for 578 jiffies.
+[ 1104.445729][    C0] task:kworker/u8:3    state:R  running task     stack:18544 pid:53    tgid:53    ppid:2      flags:0x00004000
+[ 1104.459070][    C0] Workqueue: netns cleanup_net
+[ 1104.464170][    C0] Call Trace:
+[ 1104.467478][    C0]  <TASK>
+[ 1104.470481][    C0]  __schedule+0x17e8/0x4a20
+[ 1104.476080][    C0]  ? mark_lock+0x9a/0x360
+[ 1104.480776][    C0]  ? __lock_acquire+0x1359/0x2000
+[ 1104.486043][    C0]  ? __pfx___schedule+0x10/0x10
+[ 1104.490987][    C0]  ? lockdep_hardirqs_on_prepare+0x43d/0x780
+[ 1104.497017][    C0]  ? preempt_schedule_irq+0xf0/0x1c0
+[ 1104.502486][    C0]  preempt_schedule_irq+0xfb/0x1c0
+[ 1104.507809][    C0]  ? __pfx_preempt_schedule_irq+0x10/0x10
+[ 1104.514030][    C0]  irqentry_exit+0x5e/0x90
+[ 1104.518689][    C0]  asm_sysvec_reschedule_ipi+0x1a/0x20
+
+[  926.207053][    C1] DEBUG: holding rtnl_mutex for 517 jiffies.
+[  926.213142][    C1] task:syz.1.1365      state:R  running task     stack:24672 pid:11152 tgid:11152 ppid:10992  flags:0x00004006
+[  926.225053][    C1] Call Trace:
+[  926.228434][    C1]  <TASK>
+[  926.231441][    C1]  __schedule+0x17e8/0x4a20
+[  926.236054][    C1]  ? __pfx___schedule+0x10/0x10
+[  926.241130][    C1]  ? lockdep_hardirqs_on_prepare+0x43d/0x780
+[  926.247265][    C1]  ? kasan_save_track+0x51/0x80
+[  926.252225][    C1]  ? preempt_schedule_irq+0xf0/0x1c0
+[  926.257705][    C1]  preempt_schedule_irq+0xfb/0x1c0
+[  926.262899][    C1]  ? __pfx_preempt_schedule_irq+0x10/0x10
+[  926.268725][    C1]  ? __pfx_pfifo_fast_destroy+0x10/0x10
+[  926.274379][    C1]  irqentry_exit+0x5e/0x90
+[  926.278903][    C1]  asm_sysvec_apic_timer_interrupt+0x1a/0x20
+
+[  940.917894][    C0] DEBUG: holding rtnl_mutex for 1611 jiffies.
+[  940.924066][    C0] task:syz.2.2274      state:R  running task     stack:24336 pid:15954 tgid:15954 ppid:14850  flags:0x00004006
+[  940.936192][    C0] Call Trace:
+[  940.939550][    C0]  <TASK>
+[  940.942540][    C0]  __schedule+0x17e8/0x4a20
+[  940.947134][    C0]  ? __pfx___schedule+0x10/0x10
+[  940.952070][    C0]  ? lockdep_hardirqs_on_prepare+0x43d/0x780
+[  940.958362][    C0]  ? kasan_save_track+0x51/0x80
+[  940.963266][    C0]  ? preempt_schedule_irq+0xf0/0x1c0
+[  940.968628][    C0]  preempt_schedule_irq+0xfb/0x1c0
+[  940.973790][    C0]  ? __pfx_preempt_schedule_irq+0x10/0x10
+[  940.979610][    C0]  ? __pfx_pfifo_fast_destroy+0x10/0x10
+[  940.985227][    C0]  irqentry_exit+0x5e/0x90
+[  940.989731][    C0]  asm_sysvec_apic_timer_interrupt+0x1a/0x20
+
+[ 2120.744289][    C1] DEBUG: holding rtnl_mutex for 1675 jiffies.
+[ 2120.750440][    C1] task:syz-executor    state:R  running task     stack:20288 pid:2431  tgid:2431  ppid:1      flags:0x00004006
+[ 2120.762291][    C1] Call Trace:
+[ 2120.765647][    C1]  <TASK>
+[ 2120.768615][    C1]  __schedule+0x17e8/0x4a20
+[ 2120.773210][    C1]  ? __pfx___schedule+0x10/0x10
+[ 2120.778152][    C1]  ? lockdep_hardirqs_on_prepare+0x43d/0x780
+[ 2120.784188][    C1]  ? kasan_save_track+0x51/0x80
+[ 2120.789118][    C1]  ? preempt_schedule_irq+0xf0/0x1c0
+[ 2120.794445][    C1]  preempt_schedule_irq+0xfb/0x1c0
+[ 2120.799621][    C1]  ? __pfx_preempt_schedule_irq+0x10/0x10
+[ 2120.805378][    C1]  ? kvm_kick_cpu+0x26/0xb0
+[ 2120.809965][    C1]  irqentry_exit+0x5e/0x90
+[ 2120.814423][    C1]  asm_sysvec_apic_timer_interrupt+0x1a/0x20
+
+[ 1465.514982][    C1] DEBUG: holding rtnl_mutex for 583 jiffies.
+[ 1465.521071][    C1] task:kworker/u8:2    state:R  running task     stack:20232 pid:35    tgid:35    ppid:2      flags:0x00004000
+[ 1465.532945][    C1] Workqueue: netns cleanup_net
+[ 1465.537846][    C1] Call Trace:
+[ 1465.541164][    C1]  <TASK>
+[ 1465.544132][    C1]  __schedule+0x17e8/0x4a20
+[ 1465.548730][    C1]  ? mark_lock+0x9a/0x360
+[ 1465.553148][    C1]  ? lockdep_hardirqs_on_prepare+0x43d/0x780
+[ 1465.559257][    C1]  ? __pfx_lockdep_hardirqs_on_prepare+0x10/0x10
+[ 1465.565697][    C1]  ? __pfx___schedule+0x10/0x10
+[ 1465.570636][    C1]  ? lockdep_hardirqs_on+0x99/0x150
+[ 1465.575968][    C1]  ? mark_lock+0x9a/0x360
+[ 1465.580381][    C1]  preempt_schedule_irq+0xfb/0x1c0
+[ 1465.585599][    C1]  ? __pfx_preempt_schedule_irq+0x10/0x10
+[ 1465.591383][    C1]  irqentry_exit+0x5e/0x90
+[ 1465.595895][    C1]  asm_sysvec_reschedule_ipi+0x1a/0x20
 
 
