@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-237239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7970A91EDCA
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:20:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 772E391EDCC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:20:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A34141C2362F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 04:20:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E30D4B234A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 04:20:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C115D12CDBE;
-	Tue,  2 Jul 2024 04:19:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B1C5A110;
+	Tue,  2 Jul 2024 04:19:10 +0000 (UTC)
 Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23846F06A;
-	Tue,  2 Jul 2024 04:19:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A9F84DE9;
+	Tue,  2 Jul 2024 04:19:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719893948; cv=none; b=o8jxQJiUSgHNDY//ix5ZjOmDiu5Npq1PQuMpq4hH3nNzpxoyqrXzSYZ7NamZ7u9TAmFi1bW/f7HF2QrZHny8nJU33tbQ39zYWNcphR/ZLn2CZUqdX31r6JGysldoJNHmi7hKdK3fQYp6oQ36kWXjleV9oa5Fa7q5lBgQhOT+Pvc=
+	t=1719893949; cv=none; b=THS49XmRmFe/wwqWYhtgfd+1eH7O5sQzKuJvR9VNuEtyOl3qY6fNiu0+KM1Inv01Dw7FigtwXl6fiep53ShwBM13DhjI+jHDxZ8C9B00IXMAfuWYqTeyGcMglWlrNiegajg7uliaIfBqqf7WUPXmBgFSYyxLCDp3jHjuFksMlRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719893948; c=relaxed/simple;
-	bh=ai9h6Dew9+W3mt2HzltrnE6jkw5lNXSWmYIC+kOQRyg=;
+	s=arc-20240116; t=1719893949; c=relaxed/simple;
+	bh=BnKwtgbDOBy6xNe23GdjLGT6tsNsyI/9xyn0n4di9lQ=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FBNiLhjkK+KuoLr4PRymJsG6j0FSjRa5zYRYDf0+M4uP6CceMU/d+/FFY9Lu9sM0pTmsV4hJFCv7x6q8UCVAL15SQ94Aeemuq07nXbI7J+MAnFnPPwR7QgAmea9ZQnuea6Td9PzwrLKNY9VPnHx814BeRxqScMFfTESVOn3DdPI=
+	 MIME-Version:Content-Type; b=qgg3j7BW5Is8ljOMs9c2W1m6jsy5sn97NkY/jL1ublAoteiVtoDCNeVEPw7Om1cpuWpWz5nsVLd3JCE2WhCbwW/1jorxydyF3TzNBMGAOaQUcnAd20Yp7miSOGXchI+xhfAV8YDsKUF/WYusY9I8VqOKtnmGkqadWJxlCXcilG8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WCqRF5bd5znVgP;
-	Tue,  2 Jul 2024 12:18:49 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WCqRH1YMkznYnM;
+	Tue,  2 Jul 2024 12:18:51 +0800 (CST)
 Received: from kwepemd100011.china.huawei.com (unknown [7.221.188.204])
-	by mail.maildlp.com (Postfix) with ESMTPS id AFE7614037D;
-	Tue,  2 Jul 2024 12:19:04 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 266FC18007E;
+	Tue,  2 Jul 2024 12:19:06 +0800 (CST)
 Received: from M910t.huawei.com (10.110.54.157) by
  kwepemd100011.china.huawei.com (7.221.188.204) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 2 Jul 2024 12:19:03 +0800
+ 15.2.1258.34; Tue, 2 Jul 2024 12:19:04 +0800
 From: Changbin Du <changbin.du@huawei.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim
@@ -50,9 +50,9 @@ CC: Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin
 	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<llvm@lists.linux.dev>, Hui Wang <hw.huiwang@huawei.com>, Changbin Du
 	<changbin.du@huawei.com>
-Subject: [PATCH v5 7/8] perf: disasm: prefer debugging files in build-id cache
-Date: Tue, 2 Jul 2024 12:18:36 +0800
-Message-ID: <20240702041837.5306-8-changbin.du@huawei.com>
+Subject: [PATCH v5 8/8] perf buildid-cache: recognize vdso when adding files
+Date: Tue, 2 Jul 2024 12:18:37 +0800
+Message-ID: <20240702041837.5306-9-changbin.du@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240702041837.5306-1-changbin.du@huawei.com>
 References: <20240702041837.5306-1-changbin.du@huawei.com>
@@ -67,56 +67,63 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
  kwepemd100011.china.huawei.com (7.221.188.204)
 
-The build-id cache might have both debugging and non-debugging files. Here
-we prefer the debugging version for annotation.
+Identify vdso by file name matching. The vdso objects have name
+as vdso[32,64].so[.dbg].
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
+$ perf buildid-cache -a /work/linux/arch/x86/entry/vdso/vdso64.so.dbg
+
+Without this change, adding vdso using above command actually will never
+be used.
+
 Signed-off-by: Changbin Du <changbin.du@huawei.com>
 ---
- tools/perf/util/disasm.c | 29 ++++++++++++++++++-----------
- 1 file changed, 18 insertions(+), 11 deletions(-)
+ tools/perf/builtin-buildid-cache.c | 26 +++++++++++++++++++++++++-
+ 1 file changed, 25 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
-index f4e94ff37e50..ecfd6a03713d 100644
---- a/tools/perf/util/disasm.c
-+++ b/tools/perf/util/disasm.c
-@@ -1162,18 +1162,25 @@ static int dso__disassemble_filename(struct dso *dso, char *filename, size_t fil
- 	    !dso__is_kcore(dso))
- 		return SYMBOL_ANNOTATE_ERRNO__NO_VMLINUX;
+diff --git a/tools/perf/builtin-buildid-cache.c b/tools/perf/builtin-buildid-cache.c
+index b0511d16aeb6..8edea9044a65 100644
+--- a/tools/perf/builtin-buildid-cache.c
++++ b/tools/perf/builtin-buildid-cache.c
+@@ -172,6 +172,30 @@ static int build_id_cache__add_kcore(const char *filename, bool force)
+ 	return 0;
+ }
  
--	build_id_filename = dso__build_id_filename(dso, NULL, 0, false);
--	if (build_id_filename) {
--		__symbol__join_symfs(filename, filename_size, build_id_filename);
--		free(build_id_filename);
--	} else {
--		if (dso__has_build_id(dso))
--			return ENOMEM;
--		return fallback_filename(dso, filename, filename_size);
--	}
-+	/* Prefer debugging file if exists, otherwise non-debugging one is used. */
-+	for (int i = 0; i < 2; i++) {
-+		build_id_filename = dso__build_id_filename(dso, NULL, 0, !i);
-+		if (build_id_filename) {
-+			__symbol__join_symfs(filename, filename_size, build_id_filename);
-+			free(build_id_filename);
-+		} else {
-+			if (dso__has_build_id(dso))
-+				return ENOMEM;
-+			return fallback_filename(dso, filename, filename_size);
-+		}
- 
--	if (access(filename, R_OK))
--		return fallback_filename(dso, filename, filename_size);
-+		if (!access(filename, R_OK))
-+			break;
-+		else if (i != 0) {
-+			/* nor debugging or non-debugging is found */
-+			return fallback_filename(dso, filename, filename_size);
-+		}
++static bool filename_is_vdso(const char *filename)
++{
++	char *fname, *bname;
++	static const char * const vdso_names[] = {
++		"vdso.so", "vdso32.so", "vdso64.so", "vdsox32.so"
++	};
++
++	fname = strdup(filename);
++	if (!fname) {
++		pr_err("no mememory\n");
++		return false;
 +	}
++
++	bname = basename(fname);
++	if (!bname)
++		return false;
++
++	for (unsigned int i = 0; i < ARRAY_SIZE(vdso_names); i++) {
++		if (!strncmp(bname, vdso_names[i], strlen(vdso_names[i])))
++			return true;
++	}
++	return false;
++}
++
+ static int build_id_cache__add_file(const char *filename, struct nsinfo *nsi)
+ {
+ 	char sbuild_id[SBUILD_ID_SIZE];
+@@ -189,7 +213,7 @@ static int build_id_cache__add_file(const char *filename, struct nsinfo *nsi)
  
- 	if (dso__is_kcore(dso) || dso__is_vdso(dso))
- 		goto fallback;
+ 	build_id__sprintf(&bid, sbuild_id);
+ 	err = build_id_cache__add_s(sbuild_id, filename, nsi,
+-				    false, false);
++				    false, filename_is_vdso(filename));
+ 	pr_debug("Adding %s %s: %s\n", sbuild_id, filename,
+ 		 err ? "FAIL" : "Ok");
+ 	return err;
 -- 
 2.34.1
 
