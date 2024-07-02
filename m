@@ -1,160 +1,235 @@
-Return-Path: <linux-kernel+bounces-237365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CC5991EFBB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:07:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E45391EFC3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:13:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C037E1F217E8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:07:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 873E21C21F9E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:13:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4320812FB39;
-	Tue,  2 Jul 2024 07:07:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9099412FF8F;
+	Tue,  2 Jul 2024 07:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iinhIyCc"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="cFN+hWzM"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2075.outbound.protection.outlook.com [40.107.223.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE76612DDAF;
-	Tue,  2 Jul 2024 07:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719904061; cv=none; b=n7P0LoQPV1DvH5Mjsax6ouQZDlPZHzMjmCtyZBUfXwTfdsnPRSCFuPmj2nJLjt+PsE3TjGe5Cqofi0tsyWokgypbcLwldVUtMMByG5d/jwvH+6eXPsSppCEzQUPVBm6vjAjV6OsOukxWp7yu6LVvtw+INkjqbTllFPsxBbrDGVg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719904061; c=relaxed/simple;
-	bh=Vk4bYNKhpK6COrm6nr1+yRC4zvYfwQ5t+wYF1UvIWd0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GN8zPvRCCl4IbqK3DyLsLeLUBMwejaJH+OU7QNqKP3mx5NJR/wwB151cGrKowvjrl8ECcRemaYWK17oSUFXfnCB03Rc5jMI9GEyx/qt8nGO3PfC0ms0xry5j+Y0lJQEv+mcVFlUw6HkU6NvT1Mi+C5uv5EE5y03+xB2WAHB7fc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iinhIyCc; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 461L0Y9h013083;
-	Tue, 2 Jul 2024 07:07:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	B/tDdP2Z1keyEASbG3gxexaFA29gWOsTfObNOgHDdoM=; b=iinhIyCc65Cwmfmj
-	7mlmSav7clUGbmcbQDEZUSD6SI7yNMaGDWyRNAscb7IIPQa8JYUouldQIhLWERhh
-	hBX0y4TLS8cm8fW1a7VAF0ijLGEtjOr21pNkT91bqiPvcyhRcOflWc+Wcni7Z4u5
-	KdQw5mZGXJPTmHZaBwnqCnZQ8vczNi32PRndv14yhzsxIt7ZIMBS12jrtt/JMhge
-	zGP6nBicBPUadBUWeXvaad1+Wxst/FMoxz2UvU3mhl0WBLjanJFwQfGVxh35aHcH
-	XX6Y3lu7EA0H2gZHtZBM8DQnXZgeuhrao7kFXCDY8zwUbuc/MjyBwBKsN/xhU36y
-	im6MLg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 402ag2ebp3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 02 Jul 2024 07:07:32 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46277VIY012507
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 2 Jul 2024 07:07:31 GMT
-Received: from [10.204.65.49] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 2 Jul 2024
- 00:07:28 -0700
-Message-ID: <3b07be20-e0c9-4ee2-a37b-34400e63862b@quicinc.com>
-Date: Tue, 2 Jul 2024 12:37:25 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F41372;
+	Tue,  2 Jul 2024 07:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719904427; cv=fail; b=inZT0h6gUbz8me8nBeysQSlh9grbHoatqTar+5EyFxTm9SXAjH9Ci5lHb0Py9GA39RUBf+MbCD3GQEdAOxrslGzH8RC4eOhXVLOR/G+dBJRMlZpnVRT6JnOeQjP0aLwvqCj9ZRZxAng2aKZD+rpFMIIasRmPjNKLBeYdsArL+Yc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719904427; c=relaxed/simple;
+	bh=D1Toc1BhUb1sW0aZ6lyLd8ruCtvsMjIAS10a4RCphp0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=NRuXHppZlpLZdAncxPkbwij3aoY24E+JYlzYffnqlgTvQzcNtlTjkpmziHdyJUgB7OSGPq67IFpXZddusRQWOGOzYcJl+FnUp72dvhNZPjN3n4tReNPM0kdOekxEaxLsISNGndMXuwixt95Jj5JLihH9OPpKaDjGLS96geZrAiI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=cFN+hWzM; arc=fail smtp.client-ip=40.107.223.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=mVodtl0vRhgEoh+JjFBsDc6BrNsGnnq1yBbYOn497QmZ1SewAphbOb+FowhSEbDsoqTlpJuMx/Iam0eWbLk2hfrkHYgH9QZ4lB6/auRNegsAhltP4yDfWCztqRIhxPQzUu8wB4CmM0l6GNo4j2wUXfcID7OCH0wXIw67GVWvMHgYPcKNP8cwCA+YL65l3zbmpDAzaTbl4G0fc5zPPFps1nsDIBPR2QO85MrpMXeF6N6mXOaKsRfIDzvpwawJgC5IbyBvnXO+kHwqrAf6LcySoVOW6LkmBkCBIYPl9BFXpuTRQT3UkPpEzIIaZfdiFcV6OEkL3nTHg+zoA0yPsNFP2g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8LUDaiKG7j/5IBW3BfnNj6QTlwClXzkhrvc8DQG5zhM=;
+ b=S8s0GzuStUUlBL3Z2YlWzXNlMVNMaPX+J9RWXOyeSwuNsyXp3SUJT8eFQ0i1Chw2pUXZsxPNTFLnsHmm73PUxu3HDpzEug7R8jMJvYPhlIqJXOaxAplJhqTz1pMrmXTZeJr3gip8JW7aMAEhbNQx9kxNkeqTHZIhL6nYqtuzBy9sE5EmPaGb0/M830XUAdRbMhpIYHRmrjTzJrRJh5n105hxIABGCVpQJb3UkeVxcJLmsc8DHWEH/CUIX1YitE9MGlATD5wUBWFbBLm+LVn6WZOxa3iuUBdUyCjC44bQyCkt/RscJPNHBdroDZEccf1cuJ3XzU0tzRst8QAgqLOujg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8LUDaiKG7j/5IBW3BfnNj6QTlwClXzkhrvc8DQG5zhM=;
+ b=cFN+hWzMGvHKYWvnMJdrVNOhtmyaoUx6KXaLFkHZivU/rqy/VR2hXFyuOsThhLtpKpC27AuZ2bLnr614C3NwnoLgNVx8O9yoeKDrtV2K17dMyYBAcIDF3j6QduQ47o/X30EQJa1GiYdJZciu2dimf0pXL5foelGJqxjBAZIQgrE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by CY8PR12MB7708.namprd12.prod.outlook.com (2603:10b6:930:87::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.33; Tue, 2 Jul
+ 2024 07:13:42 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%6]) with mapi id 15.20.7719.028; Tue, 2 Jul 2024
+ 07:13:41 +0000
+Message-ID: <e0f384b0-6913-4224-a3ea-bdae784f5dab@amd.com>
+Date: Tue, 2 Jul 2024 09:13:35 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dma-buf: Remove unnecessary kmalloc() cast
+To: Christoph Hellwig <hch@lst.de>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Thorsten Blum <thorsten.blum@toblux.com>, jack@suse.cz,
+ surenb@google.com, linux-kernel@vger.kernel.org,
+ Sumit Semwal <sumit.semwal@linaro.org>, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
+References: <20240630011215.42525-1-thorsten.blum@toblux.com>
+ <20240701232634.0bddb542ddea123b48dcabdf@linux-foundation.org>
+ <20240702064017.GA24838@lst.de>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <20240702064017.GA24838@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR4P281CA0155.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:ba::9) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] misc: fastrpc: Remove user PD initmem size check
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Greg KH <gregkh@linuxfoundation.org>, <srinivas.kandagatla@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <quic_bkumar@quicinc.com>,
-        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
-        <dri-devel@lists.freedesktop.org>, <arnd@arndb.de>,
-        stable
-	<stable@kernel.org>
-References: <20240627060518.1510124-1-quic_ekangupt@quicinc.com>
- <62dzilcvsp3efxpxulzkf6e62rzcrhp55k6yjk5fymkqthdfzw@yageexbx6ddz>
- <f3d502ca-228e-4be4-b296-a9073975d34b@quicinc.com>
- <a5e69a5e-b882-4f36-b023-f85da430fa2f@quicinc.com>
- <2024062849-brunt-humvee-d338@gregkh>
- <2e616e9d-fc04-4826-b784-4c6ee45bfbc2@quicinc.com>
- <foe6khsckzdvd5ccwitzfpdwoigdgu3uostuar3zk5d5stcd4s@hkrdg7vp4mqt>
-From: Ekansh Gupta <quic_ekangupt@quicinc.com>
-In-Reply-To: <foe6khsckzdvd5ccwitzfpdwoigdgu3uostuar3zk5d5stcd4s@hkrdg7vp4mqt>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: B9XM07VYNaMfDIjZ_s349d8y1bzur172
-X-Proofpoint-GUID: B9XM07VYNaMfDIjZ_s349d8y1bzur172
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-02_02,2024-07-02_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
- malwarescore=0 phishscore=0 impostorscore=0 mlxlogscore=916 bulkscore=0
- spamscore=0 priorityscore=1501 suspectscore=0 adultscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407020053
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|CY8PR12MB7708:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5cb5a221-ac92-4c5b-8943-08dc9a668082
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UGpWalRWNnQ4a3gya1BqK2dxY2RJZlZtV0M5RkJwYnk1djlzZGIrQmNtWkN0?=
+ =?utf-8?B?MzVpTnJTVXNzYUZJVkFFTjF0OXBwMTFrOCsyTzg1bFJyUDUvTUpxT2pNc1Iy?=
+ =?utf-8?B?dzN0d09BZ0JkT3ZLRU9JaVNPQlRkbG1nNmJGZnAvb2RPN1BPQnpVV200bG1K?=
+ =?utf-8?B?bTVyS0J0UkhWVG5vOVkzZ0RrVjArZzEwdUd3RWV1TEhFYmQ0SlhPNmltVXVK?=
+ =?utf-8?B?ejYwamx2N1luWitTYVJTMEptOGtBblFuSmpHOFRIZGRmamNlVlZKaW9tZWpP?=
+ =?utf-8?B?WXdReS9LTGo1N05heWV5U3dFekY5TjVRSDZ0M0ZCNzlZb3Fzd1BBZ0kvcWFF?=
+ =?utf-8?B?VnJnYzRSTUdrY3p5VHRaQWJYQ1c5VVlpZFU4c1Q1aGNaaFREaHB5UkoyZmc1?=
+ =?utf-8?B?Q1RQWEU2MXVyV3VDVUdySHV2aXQ4RG5Ndm1pNlZOOUExek5nQnpwVUtrdTAw?=
+ =?utf-8?B?NTRUMVY5VW8rYzFOSlI1RWhZN1k5NzdpbGtVUnlhc3p6QjhOQlFnSCtqUlh5?=
+ =?utf-8?B?eFJKaGFmSXdzaDZyTXFOYjlNQU8wUGtxSHE0cUJjZFRCSmVlQmZMZWYwSnR6?=
+ =?utf-8?B?VDFQdkdSOHBzUnh1ZndrMmQ1SnQ1ZXVFWFFRUGpTdTQxeHQwVXZURGpZZElw?=
+ =?utf-8?B?Uld3dFZ1WlRlSXFzT1ljcHRJT1NlZ0ZDZm5PMko4ME44VWxwWHdSWkdiU3hh?=
+ =?utf-8?B?S2FxNG0xOEJVWVJwNTcxWUV5UFpUV1I3ZGZ0WWxEZjJjVHZCSnY3S2taVmVE?=
+ =?utf-8?B?Y2IrYm1lMjhaNjdHZHorUFBFckJmKzhqeFE0WXRDVm5mUXVvRThveWptbWRK?=
+ =?utf-8?B?V2ZkUnZYK0dIQmxzQkxoM1lzeFQyQWNwRjA2Nkg2NWdNZ0kyRitFdU1Lcm1j?=
+ =?utf-8?B?MDg3N3VyZk52a0RCU1ozd2dNa2IrNnZyS3ZWOWkrWSswOHNQOC9IYTFkV3Uv?=
+ =?utf-8?B?NkNta3dDZWVVcjI1aU01SEI5WjBvQ2xrVmpvYTEwdks1Und0a3ptOTZvNFlF?=
+ =?utf-8?B?b3BORFI0aHljdDhmSGd3TGVQaG5NNkZRVzUxUWlKekQwWnY4VEt4N0ZVWU9o?=
+ =?utf-8?B?VCtKTktic3Z4SS9HVGNTb25kdjN2VlZUTmI5U0g4RUYxTGpudlFON09RU2tJ?=
+ =?utf-8?B?Q05KYjFUOWJTZTR4NExxWHlNSVZjNEoyc1VhTmZUYVFIYzIwMEpiMVFVbUFq?=
+ =?utf-8?B?M0RHeTh5emhFUTlPdEt5MTZ3T0tjNzJqY2x3WlpickpjSHpMNGN5UndRMGRu?=
+ =?utf-8?B?eTRZU05KdnA1T2tpS0YwUXFFYXVBWkFycXhhazlXZ0lCZ1NGQTNUUEdDZjg1?=
+ =?utf-8?B?MFRMeUpWMHBPdWJwV2hiOVNYbEYvYmtTZ2orNTFtU0ZmeXBGMmVtamM0azhT?=
+ =?utf-8?B?S0VncXBtbW1Gd3pIay8zcWYwdjZaM3dTM2RCWFVrVlVsN1A3OG9nL2hpbXlo?=
+ =?utf-8?B?bEN2Ky9JT3JWL3dudkFhWnVrNXNXTnNLbnYwa3M2cjdScEEvSnhzelp6OFR6?=
+ =?utf-8?B?TjRnb2RqSDFRNTBka1IwR2xEam5BekYxRlpZRVNtUExkeVdJaTE1MmE4WXd3?=
+ =?utf-8?B?ZitRaEhoUWpXeFNYcVltZjE2V3ZWTUdlZHZVZG5ZSW5EQWh2K2ozN0g0c1FW?=
+ =?utf-8?B?WUZDZWRNQVFhazZmNjB5YWxzNjUvY01Vb0ZpTUkwZTlwN01lWUUrZWJtcnZx?=
+ =?utf-8?B?QVh6c09CYWFSd1BLYzFlVjRhZEkxQlI4L0RnT21xNWE5ZWlCSlRZVzRlQWdW?=
+ =?utf-8?B?SGFmTWxZbWdLWFRzZFpUQU1RV0I4TVM4eUxMV05ac0RZKytmekhCTSs5eE16?=
+ =?utf-8?B?Y2RhYWlpeWg4VXg0MHVqZz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QlBYSDdBcmVrak56RWFqakljRGhTdC9jeTJUUjRWMFpiQjVzb3ZBRkZDaFZR?=
+ =?utf-8?B?WncvR1cwUWNhS2o3ZUN1ZDZ6ZC9SVm1IQWRvWDd1NGZ2Q1NOU0k0U045WFRH?=
+ =?utf-8?B?UUduaWNXNC9QNGlvTkF3cGhtY0w1aFpuazhZNHRKcnErUHlzZHBVbE1Jc0Jr?=
+ =?utf-8?B?UFB5WVNDV3JPcW81ZWJFdFJyVEl6ZTJLRmxxQkYrSnJra1QyRjlwRzJrd2dj?=
+ =?utf-8?B?a0cvM2tDYzgrZnRwZzRSUzIvRUp6TjBRRFJqWDR2WC93ek9SMUtqZnV0K3Nv?=
+ =?utf-8?B?eHpiVjNMcjZ5VlNRWDQ2d054bWI1WHdCcWRNUlpFQ3IwSXZlMyt2WlZSdkdU?=
+ =?utf-8?B?bnJ0eW1MUHc4ODcva1VKUkc2VW5Ob1VjRU1VNXpWMTk3bnpFS0JVemtKNjQ1?=
+ =?utf-8?B?M3M1d21yK2FFZTdPVEdsMEg3d25EUHNUUmNMaEJYMERaU1I1cGswdEd6dmlj?=
+ =?utf-8?B?M3hKR0RoNHh6TVFqZDk1ZUhvSHlVRVJlQzZuM2pSbkJMVGdaeCtaRjJnZWlE?=
+ =?utf-8?B?eTVTT01kcndLR21pRmQ0b0gyaXdDNXUvUENMSmNOL2JDOWRvSmxHRVlmUEtX?=
+ =?utf-8?B?Uzl0aHU2cTZlclZLNXJCMURDU093ck9qYXc0Skhsc0I1NnVpaGF5VkxUZG1C?=
+ =?utf-8?B?cGRPQjBaVGV3MHh3TmQ3bjVkT1ZySWxDdFFUcEdRbzFickordHV1cDNhbHF5?=
+ =?utf-8?B?ZkRTSzJVUEJLMEp2WGpGWjJRS1V3bVFDcDlINTErZmExVmVWVGZRN1labnB3?=
+ =?utf-8?B?VVo4Y0ZvTzhmTkRCL21ROFY1aVVsUys0NVdLb1NZRWNRVS9vWnFmL1I1YTd5?=
+ =?utf-8?B?VmMxU3NPQWJBcVNSRlhaTXVSa2Z0UzJxN2VOeUluMU02Znd0T0JSM0NVdndh?=
+ =?utf-8?B?WnhadUZrNUcxTkNoQTBuc3RFYWl4UFlLVkxkaUNuYWUwQVl4ZUFBaFdmbXN2?=
+ =?utf-8?B?YUgwS2Q4a0czNzc1MzdsdFlkbEhmMDNSN091VERET1h1VDIzdHBXNG1rblZr?=
+ =?utf-8?B?NkwrKzZNK2cvb3F2Sk44ejVHRWVxZUNIdHpQeDJXUms3Vk12VjM4UHBWaDhU?=
+ =?utf-8?B?LzI3bUQ0RG1JTy81bVRHVXp3ZlV1K3VBUTBMVEdyS1cxNEtDWDlpUmkxalN0?=
+ =?utf-8?B?TlZvTmVkMlV2c1RnNmszM0pNQnRrQU9YNENyZjNMM0ZwczcrRFBZT3hYY3pQ?=
+ =?utf-8?B?KzVCeW1relNLS0kyRDQvVEZweTd1eEE3bDRyeEpjTlUvY2M0dkRwQjJOR2tN?=
+ =?utf-8?B?emNwQ2JQbHJNaVVJNUQ5ejd4YUJaTmdzMGN4NlFwaTJFREl3QkNsdkZqZmJI?=
+ =?utf-8?B?TFU2YWlKWm1Ga3FJSllrY1lYTkdGTEVPMlR1bkJYUmRtSXJqbE01M3ArSnRr?=
+ =?utf-8?B?VStwRWtrcTN4SG55VU8vcFZ6b1JWcVljYnJjVjZCeXdEQkJ0OHR4Q0VnQ1NF?=
+ =?utf-8?B?RVBpV1N5bmpjdTM4NGRPcnBOWjNtclhzbHhYOFd4c21nSVAxWjJhRnlrdGZl?=
+ =?utf-8?B?b0ZLSXlIcGdJRkJQZ3hqaHpEajlKTEhCc2NjRE45K20rczNPL21zdm5rekNR?=
+ =?utf-8?B?a1NmSk5VSkJzcTExNWNreGdUUXZVOURpMVRRVU91ZyttMyszZzd5aGRUZyt2?=
+ =?utf-8?B?NTBCcTFUVWFXd2hxZTJ4VnlYcFFadDlYeFpsN2tXeVhlZWNTVGFkVENtYlky?=
+ =?utf-8?B?Mk85dkpaSXJFZGxLMDRsYU5PQkd0RWNabkpDOGJRbWE0YkZvL0p5WnV6a0dU?=
+ =?utf-8?B?WFNUc3FTYnZVSDlqclJpN1kyRXFRVW1Tc2J6TFdCTE4vSk9YUEgwLzZBU1dw?=
+ =?utf-8?B?MHhSd1FpU0h5bTBOY3AvWFJCdDA0S1M3N2szT1FPVUZHaElua1VkWEdhYkxu?=
+ =?utf-8?B?LzI0VHN6RXF2N09vb21lMXFKQ3M5VGx0ZTZCTWlSVXZaQlMyb2kyMlZNUVBR?=
+ =?utf-8?B?YnllcEV6WmRSSWxPRGxKYllrVHd1UXVzZ3dsVTVMZUV2ODRKTkpTdEh1T1hJ?=
+ =?utf-8?B?MzVrWGtMa0ptY0xWSHRSQ0R2SW8zZVRnYzM2bUFsQ2k1akZmNWNtbGFGUm1p?=
+ =?utf-8?B?aG5kWnhINENCemJVVnR3dXFBZmFQZkxnckZFcFZhbWk4NEozbERETlE4VUpq?=
+ =?utf-8?Q?wnigScyQFqC+ujfrgJMjZ3uTE?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5cb5a221-ac92-4c5b-8943-08dc9a668082
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jul 2024 07:13:41.4279
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Urgvvs61714O5auQ4WSMBxcvnGj0PrWiogVHKKot6lZLvosytHza3xB+p+t+nQbd
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7708
 
-
-
-On 7/1/2024 10:41 PM, Dmitry Baryshkov wrote:
-> On Mon, Jul 01, 2024 at 10:50:38AM GMT, Ekansh Gupta wrote:
+Am 02.07.24 um 08:40 schrieb Christoph Hellwig:
+> On Mon, Jul 01, 2024 at 11:26:34PM -0700, Andrew Morton wrote:
+>> No, I do think the cast is useful:
 >>
->> On 6/28/2024 7:51 PM, Greg KH wrote:
->>> On Fri, Jun 28, 2024 at 04:12:10PM +0530, Ekansh Gupta wrote:
->>>> On 6/28/2024 3:59 PM, Ekansh Gupta wrote:
->>>>> On 6/27/2024 4:43 PM, Dmitry Baryshkov wrote:
->>>>>> On Thu, Jun 27, 2024 at 11:35:18AM GMT, Ekansh Gupta wrote:
->>>>>>> For user PD initialization, initmem is allocated and sent to DSP for
->>>>>>> initial memory requirements like shell loading. This size is passed
->>>>>>> by user space and is checked against a max size. For unsigned PD
->>>>>>> offloading, more than 2MB size could be passed by user which would
->>>>>>> result in PD initialization failure. Remove the user PD initmem size
->>>>>>> check and allow buffer allocation for user passed size. Any additional
->>>>>>> memory sent to DSP during PD init is used as the PD heap.
->>>>>> Would it allow malicious userspace to allocate big enough buffers and
->>>>>> reduce the amount of memory available to the system? To other DSP
->>>>>> programs?
->>>>> The allocation here is happening from SMMU context bank which is uniquely assigned
->>>>> to processes going to DSP. As per my understanding process can allocate maximum
->>>>> 4GB of memory from the context bank and the memory availability will be taken care
->>>>> by kernel memory management. Please correct me if my understanding is incorrect.
->>>> Just wanted to add 1 question here:
->>>> User space can also directly allocate memory. Wouldn't that be a problem if any malicious userspace
->>>> allocated huge memory?
->>> No, because any userspace program that takes up too much memory will be
->>> killed by the kernel.
->>>
->>> You can not have userspace tell the kernel to allocate 100Gb of memory,
->>> as then the kernel is the one that just took it all up, and then
->>> userspace applications will start to be killed off.
->>>
->>> You MUST bounds check your userspace-supplied memory requests.  Remember
->>> the 4 words of kernel development:
->>>
->>> 	All input is evil.
->> Thanks for the detailed explanation, Greg. I'll remember this going forward.
+>> 	struct page *page = dma_fence_chain_alloc();
 >>
->> For this change, I'll increase the max size limit to 5MB which is the requirement for
->> unsigned PD to run on DSP.
-> So we are back to the quesiton of why 5MB is considered to be enough,
-> see
->
-> https://lore.kernel.org/linux-arm-msm/2024061755-snare-french-de38@gregkh/
-This is based on the initial memory requirement for unsigned PD. This includes memory for shell loading on DSP
-+ memory for static heap allocations(heap allocations are dynamic for Signed PD). This requirement tends to
-around 5MB. I'll update this  also information in commit text. There will be some additional memory passed to
-the PD which will get added to the PD heap.
+>> will presently generate a warning.  We want this.  Your change will
+>> remove that useful warning.
+>>
+>>
+>> Unrelatedly: there is no earthly reason why this is implemented as a
+>> macro.  A static inline function would be so much better.  Why do we
+>> keep doing this.
+> Agreed with all of the above.  Adding the dmabuf maintainers.
 
---Ekansh
->
->> --Ekansh
->>> thanks,
->>>
->>> greg k-h
+Thanks for adding me and I have to ask to be added on DMA-buf patches 
+when initially sending them out.
 
+First of all: Yes that cast is intentionally there and yes that is 
+intentionally a define and not an inline function.
+
+See this patch here which changed that:
+
+commit 2c321f3f70bc284510598f712b702ce8d60c4d14
+Author: Suren Baghdasaryan <surenb@google.com>
+Date:   Sun Apr 14 19:07:31 2024 -0700
+
+     mm: change inlined allocation helpers to account at the call site
+
+     Main goal of memory allocation profiling patchset is to provide 
+accounting
+     that is cheap enough to run in production.  To achieve that we inject
+     counters using codetags at the allocation call sites to account 
+every time
+     allocation is made.  This injection allows us to perform accounting
+     efficiently because injected counters are immediately available as 
+opposed
+     to the alternative methods, such as using _RET_IP_, which would require
+     counter lookup and appropriate locking that makes accounting much more
+     expensive.  This method requires all allocation functions to inject
+     separate counters at their call sites so that their callers can be
+     individually accounted.  Counter injection is implemented by allocation
+     hooks which should wrap all allocation functions.
+
+     Inlined functions which perform allocations but do not use allocation
+     hooks are directly charged for the allocations they perform.  In most
+     cases these functions are just specialized allocation wrappers used 
+from
+     multiple places to allocate objects of a specific type.  It would 
+be more
+     useful to do the accounting at their call sites instead. Instrument 
+these
+     helpers to do accounting at the call site.  Simple inlined allocation
+     wrappers are converted directly into macros.  More complex 
+allocators or
+     allocators with documentation are converted into _noprof versions and
+     allocation hooks are added.  This allows memory allocation profiling
+     mechanism to charge allocations to the callers of these functions.
+
+Regards,
+Christian.
 
