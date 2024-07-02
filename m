@@ -1,139 +1,147 @@
-Return-Path: <linux-kernel+bounces-237260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D95591EDFF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:58:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 294F091EE01
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:58:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF4DA1C22AF2
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 04:58:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A96E1C22C88
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 04:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63AC047F45;
-	Tue,  2 Jul 2024 04:58:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE2343AC1;
+	Tue,  2 Jul 2024 04:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cip4jZJJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="g+yM/vBd"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADD081F;
-	Tue,  2 Jul 2024 04:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2115A7A0;
+	Tue,  2 Jul 2024 04:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719896292; cv=none; b=fHaioBv5amDzXEfeLEM5oMuONHxo/I46Z5xSJvpa6umqHkr6j6GyxHggm2AfdlfL4LALA3L7fW0tNywfGbK6mVniwuQCIveZJxj6gHR0pEqjU5RgyZPsDiPO7dyQSwRb73FpRewBnvwtP3ShaAYA/0yf40MJBravAElOXCU+o2M=
+	t=1719896308; cv=none; b=sbK8D7Ui5I6l77uKq22uU1rYs1UFEeQy13Xr+efHQc9E79VwxgmWx+Dr6t6yQ+3fPoFnRsSIqZrsTzEbd+M/K017UJDxSD1RNiFxOEGXLKTg7BCihFG3AIt0rIRfVit4924OaGIR8mPEw8SrO3HPNWdKM/xqJq98bq+16FHUgW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719896292; c=relaxed/simple;
-	bh=uO6STUc14T56dIESpMhyWi2neZ9u9dDvyMOL6sjEZds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EWgNfKKlTThVk6SGRNiIlL/u3SGt0bxGRmTO1IZM2CiUS5dDq+wDEWYncBqANhZh1UMuVBia3MlrCgYO4qH2GWY07Sea10jZ3aGYecfazgUqfVLMM7XX3Dh30myYkqRbJXj2yxCcDBW4Q8zklczJUuPLVhUMLUDqb9qEiIW96TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cip4jZJJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5BD0C116B1;
-	Tue,  2 Jul 2024 04:58:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719896292;
-	bh=uO6STUc14T56dIESpMhyWi2neZ9u9dDvyMOL6sjEZds=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cip4jZJJ9p02SzpcGhe7EPhkxUeJGL6pnLoJRRlXPO2cQm+vqB0Iqvq21bMrpwgRD
-	 Ucbkn45OK7CTkhkfmwTqg+ZT48oEOrUcKLE6012ffh7J2l1SY7SFQxa6lv/4EnrQlg
-	 9RF5SqwkXfdSnjxHyfkZH3uI1FkHC1rWBJ3HtLYshtGhFRIPix627DlxTpnzqhTLXL
-	 iaB+FZR9zev/E2+4O6CoT0Wu87W4LwKXyQdqZQlwwox2pHxf9BN/G+ZI3S70BYJSnk
-	 uo48R0Z4IJpNWX2cIN1lhV0ogAc8r038vVX4OPbzyYC521Gbeq2D19p33+oJ5dwqow
-	 rxZTMTAjv0u2Q==
-Date: Tue, 2 Jul 2024 06:58:06 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Ian Kent <ikent@redhat.com>, Matthew Wilcox <willy@infradead.org>, 
-	Lucas Karpinski <lkarpins@redhat.com>, viro@zeniv.linux.org.uk, raven@themaw.net, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Alexander Larsson <alexl@redhat.com>, Eric Chanudet <echanude@redhat.com>
-Subject: Re: [RFC v3 1/1] fs/namespace: remove RCU sync for MNT_DETACH umount
-Message-ID: <20240702-sauna-tattoo-31b01a5f98f6@brauner>
-References: <20240626201129.272750-2-lkarpins@redhat.com>
- <20240626201129.272750-3-lkarpins@redhat.com>
- <Znx-WGU5Wx6RaJyD@casper.infradead.org>
- <50512ec3-da6d-4140-9659-58e0514a4970@redhat.com>
- <20240627115418.lcnpctgailhlaffc@quack3>
- <cfda4682-34b4-462c-acf6-976b0d79ba06@redhat.com>
- <20240628111345.3bbcgie4gar6icyj@quack3>
+	s=arc-20240116; t=1719896308; c=relaxed/simple;
+	bh=AJ3kIwtK2LdnP7xcStE1JUwCs3ZO9xmlshimtlId0wM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=tGn1/t9P20rQMZbDzvSc9WB7GW7z7igMDUMuwKD7KNn3EIfEcxRg2RisIezE+iA8f2XwZVRtUpeafEO4xL1B4MKGofnGZryfy+1i/I9FIPXXhYsPya5fbp+ImarbVSJ4XMSes0G5w3yZDAmUso3ZblQTedTUCpjfKZ/MhreGEE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=g+yM/vBd; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1719896302;
+	bh=6lo576Kp59cVI11pY9bbCK6DPbXy67BQ66dZgq4jhaQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=g+yM/vBdhgx7s2WSJQtDkDVZ1JrVEdByGCTs2dWqpaXyA4HPr+Fm8308iv4Vib0zT
+	 AzAANCLXR3YzOSJu0FUjp5aIjixaNst3UAlsTc+q+F+WI8xgp51snZySUUrbjNLYOn
+	 kMuYyqfX/0CrmPsD89Y/D0SQrTr1kVQ9wmUeLtey/yDF2VzuN1cEwq+lmz11EYl4AK
+	 oXYQ0lewVnPiMSUNeVdDIfVV0TOQhSHcaL6p4JrFpcJECs4nKDuXZfLOheOpX2GXkF
+	 jjdS5tUI9qNigwIRQkaGrEVr5KsKsqOTFZK+spKVO3SQ/W4NHPG4F6P1Q1WXpCC24z
+	 hFlk65gGpGHbA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WCrJr3m99z4wbr;
+	Tue,  2 Jul 2024 14:58:20 +1000 (AEST)
+Date: Tue, 2 Jul 2024 14:58:19 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Lee Jones <lee@kernel.org>, Benson Leung <bleung@google.com>, Guenter
+ Roeck <groeck@chromium.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Thomas =?UTF-8?B?V2Vpw59zY2h1?=
+ =?UTF-8?B?aA==?= <linux@weissschuh.net>, Tzung-Bi Shih <tzungbi@kernel.org>
+Subject: linux-next: manual merge of the leds-lj tree with the
+ chrome-platform tree
+Message-ID: <20240702145819.3bd4e113@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240628111345.3bbcgie4gar6icyj@quack3>
+Content-Type: multipart/signed; boundary="Sig_/11QYbJkL6x_QzL4iq/kQb4w";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Fri, Jun 28, 2024 at 01:13:45PM GMT, Jan Kara wrote:
-> On Fri 28-06-24 10:58:54, Ian Kent wrote:
-> > 
-> > On 27/6/24 19:54, Jan Kara wrote:
-> > > On Thu 27-06-24 09:11:14, Ian Kent wrote:
-> > > > On 27/6/24 04:47, Matthew Wilcox wrote:
-> > > > > On Wed, Jun 26, 2024 at 04:07:49PM -0400, Lucas Karpinski wrote:
-> > > > > > +++ b/fs/namespace.c
-> > > > > > @@ -78,6 +78,7 @@ static struct kmem_cache *mnt_cache __ro_after_init;
-> > > > > >    static DECLARE_RWSEM(namespace_sem);
-> > > > > >    static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
-> > > > > >    static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
-> > > > > > +static bool lazy_unlock = false; /* protected by namespace_sem */
-> > > > > That's a pretty ugly way of doing it.  How about this?
-> > > > Ha!
-> > > > 
-> > > > That was my original thought but I also didn't much like changing all the
-> > > > callers.
-> > > > 
-> > > > I don't really like the proliferation of these small helper functions either
-> > > > but if everyone
-> > > > 
-> > > > is happy to do this I think it's a great idea.
-> > > So I know you've suggested removing synchronize_rcu_expedited() call in
-> > > your comment to v2. But I wonder why is it safe? I *thought*
-> > > synchronize_rcu_expedited() is there to synchronize the dropping of the
-> > > last mnt reference (and maybe something else) - see the comment at the
-> > > beginning of mntput_no_expire() - and this change would break that?
-> > 
-> > Interesting, because of the definition of lazy umount I didn't look closely
-> > enough at that.
-> > 
-> > But I wonder, how exactly would that race occur, is holding the rcu read
-> > lock sufficient since the rcu'd mount free won't be done until it's
-> > released (at least I think that's how rcu works).
-> 
-> I'm concerned about a race like:
-> 
-> [path lookup]				[umount -l]
-> ...
-> path_put()
->   mntput(mnt)
->     mntput_no_expire(m)
->       rcu_read_lock();
->       if (likely(READ_ONCE(mnt->mnt_ns))) {
-> 					do_umount()
-> 					  umount_tree()
-> 					    ...
-> 					    mnt->mnt_ns = NULL;
-> 					    ...
-> 					  namespace_unlock()
-> 					    mntput(&m->mnt)
-> 					      mntput_no_expire(mnt)
-> 				              smp_mb();
-> 					      mnt_add_count(mnt, -1);
-> 					      count = mnt_get_count(mnt);
-> 					      if (count != 0) {
-> 						...
-> 						return;
->         mnt_add_count(mnt, -1);
->         rcu_read_unlock();
->         return;
-> -> KABOOM, mnt->mnt_count dropped to 0 but nobody cleaned up the mount!
->       }
+--Sig_/11QYbJkL6x_QzL4iq/kQb4w
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Yeah, I think that's a valid concern. mntput_no_expire() requires that
-the last reference is dropped after an rcu grace period and that can
-only be done by synchronize_rcu_*() (It could be reworked but that would
-be quite ugly.). See also mnt_make_shortterm() caller's for kernel
-initiated unmounts.
+Hi all,
+
+Today's linux-next merge of the leds-lj tree got a conflict in:
+
+  MAINTAINERS
+
+between commits:
+
+  bc3e45258096 ("hwmon: add ChromeOS EC driver")
+  c6ed48ef5259 ("power: supply: add ChromeOS EC based charge control driver=
+")
+
+from the chrome-platform tree and commit:
+
+  8d6ce6f3ec9d ("leds: Add ChromeOS EC driver")
+
+from the leds-lj tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc MAINTAINERS
+index c89c84111696,a7deb8fa20ca..000000000000
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@@ -5210,19 -5135,11 +5210,24 @@@ S:	Maintaine
+  F:	Documentation/devicetree/bindings/sound/google,cros-ec-codec.yaml
+  F:	sound/soc/codecs/cros_ec_codec.*
+ =20
+ +CHROMEOS EC CHARGE CONTROL
+ +M:	Thomas Wei=C3=9Fschuh <thomas@weissschuh.net>
+ +S:	Maintained
+ +F:	drivers/power/supply/cros_charge-control.c
+ +
+ +CHROMEOS EC HARDWARE MONITORING
+ +M:	Thomas Wei=C3=9Fschuh <thomas@weissschuh.net>
+ +L:	chrome-platform@lists.linux.dev
+ +L:	linux-hwmon@vger.kernel.org
+ +S:	Maintained
+ +F:	Documentation/hwmon/cros_ec_hwmon.rst
+ +F:	drivers/hwmon/cros_ec_hwmon.c
+ +
++ CHROMEOS EC LED DRIVER
++ M:	Thomas Wei=C3=9Fschuh <thomas@weissschuh.net>
++ S:	Maintained
++ F:	drivers/leds/leds-cros_ec.c
++=20
+  CHROMEOS EC SUBDRIVERS
+  M:	Benson Leung <bleung@chromium.org>
+  R:	Guenter Roeck <groeck@chromium.org>
+
+--Sig_/11QYbJkL6x_QzL4iq/kQb4w
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaDiOsACgkQAVBC80lX
+0Gx1qAf+LmxInoYE6m3SPzbudcHjQ9fuwnlOPG4+7+IQ8jstwOCU/ilkFsHCThYE
+JS1/RdvQOmLweOI6asc62xfNaEDfVr0u6l6QcvgCLg1yOMiLgxl6V2WLon3NN5VU
+XtgvcpiGLPOJSugxCKzHW+Wt/ZWR0VNh8HmngQHpVFckxSNfXTNn4X2K0OV3TsyX
+0RJJTHHd7l1e546b4CriGDYfPLdwZXNkbCl4vlOnyMZ8fzNSp8d/1H/qTFIiPXaS
+GdibRGeVw0zwR1DADL70zFWroKUu8DI4VWpjsxrb0s1nDef+MvBvV1XwO7QShbp5
+XZvUr6Cd00vAWzf+KJtFOBIZSAO4YA==
+=RalT
+-----END PGP SIGNATURE-----
+
+--Sig_/11QYbJkL6x_QzL4iq/kQb4w--
 
