@@ -1,133 +1,78 @@
-Return-Path: <linux-kernel+bounces-238380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59C8292499E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:53:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0A0E9249A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:56:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92F0E1C22C7F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:53:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64F21284F50
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:56:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90FF820125D;
-	Tue,  2 Jul 2024 20:52:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E837620125E;
+	Tue,  2 Jul 2024 20:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RCM55eYi"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fdsF9hJU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A839A200134;
-	Tue,  2 Jul 2024 20:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C3C1BA096;
+	Tue,  2 Jul 2024 20:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719953572; cv=none; b=C5PzytFs0MI+glqi+UcGdsRR4oa92kNYwDLtQLIPCvtCagmbrQTxkqnhseT2wnhiNG7Im1iszhjZOQtcJ6Qfs8wT617Pj8ggNzqST82BgmtSA/i1F01hpPy25sYKmkUk0MIpjatXyy9pvAhEi1zM35xzadSfUUKxt3LDAJORdaA=
+	t=1719953798; cv=none; b=B525/ZwfC/0zifdFWIf3jSYB+yR7H0bZeDQx/ZLK7eQtYDb8YUUfy+8YWIcEjUsMAxWlxlecG+t8VDyjtleUHQBakyue/+XUk3laaOB9gJIJJ7XSZapFA/aR62ZTRss3M0e/Za+8+BeMOL5sbzo7cYPzczN17gI5WwIkC3Vs9ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719953572; c=relaxed/simple;
-	bh=gepoO6cOPMo/DOI3XgZGN8LXNSfcCbsIJ5EA8atVg1o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kWB+Z/K2dUYrdBmA910MBn23WXq41eqIWlMLk6PEkrra2fM3BAH37vrP43jtBA9m2wsiN+Kgw5NrcUJrJuck356xtE/Lymum7A1D1QmbwbbiYEGLdZJJ2+8zHILeRbIW7VzuhpGeRwczzJzbR6R192qEe2WI+j2X67/7pwIz9H8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RCM55eYi; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-70670188420so3235575b3a.2;
-        Tue, 02 Jul 2024 13:52:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719953571; x=1720558371; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ka8cDyPF3TtOuN3B8pP21oZz+Ld8yxRwwPYf5j+KImo=;
-        b=RCM55eYi8JAVIOea5wemE3hvm++gZYoC9eeubG12G41UpJ5EgdpyEspWxRvyF0HfMV
-         eVKtaHwAHVwgnvLcPlLSK0HGuuTVhlLgxLkfUgqUwVapwjPJkGORKb574HVyyJHtEO2f
-         iyZIf66otUUdgs/iL0no2V89VTqvG5Shd/Zeq82tWZ3w2sp+ezdzLfmTWeQAxHct4l1m
-         egIfLHa4mafSdjTkfY1iumUELx2MMZ6tyzn5hPvy8Hb4lrRGlz1hIMmg9D58ryEGQku1
-         hFsZi0hunhLnc/efyc1WOKA3z0FjgSLLs4ZaudS00qdsj1eXt8RVY/KjS6NLmfj8IdXb
-         v43A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719953571; x=1720558371;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ka8cDyPF3TtOuN3B8pP21oZz+Ld8yxRwwPYf5j+KImo=;
-        b=DYjRCHkbN6Z8OC4sAcQUYO1QQIfgWAORd3sgiBRG3izblogmjUK8Rsjat0zWPw04OT
-         P2hj713xUsAm3RrMlEQSj5Ow3gz8EwMOA/TodLuNhaK0oYYU9CmLoTn/7nwbgsvhF/QF
-         ZmVIw51sFomDajUYjA9uqCyxLusMsVwBoZvnl0OK+WdYJlO0jxxwY/A6XZhfsAId0K9G
-         kYjz4A3i1g+wnbupprisWlYi2fwNdWzlntQtg0WcvvDcXEKNcQKkW/m4DThrMoNYZzjD
-         XbsEePTKmcyPB5UZ2+ik9/dcPnrySqDkgbsW8CCZrZ+msHBLB6a/2HwH0zy5wbNwnSsU
-         nqAg==
-X-Forwarded-Encrypted: i=1; AJvYcCWIIGAEyPxiHDodYBr2wrAyIMaVUcKtEOBfAaMlrEJg05mU6W0GHvo6x7ifRXBQTRACh9JgsDOkvkQ5/aPBpnXYyX4bhEqt7zLQNKiY6dTmfHiRpImxmounUqsQHVylW4hyS6sjL+thwSNWMJnHXvtO5IBpP9ZW2HfJ6L3BBuw38fbb838U
-X-Gm-Message-State: AOJu0YyaK72HicELZve+kMoUnLUveRC1ZNZYCbRXYK+qxK3wBvZdfcjS
-	0hfw3cM76gpUoDvgDtGSwuplqXWmhS4boJ8+i8523fXNJKKuJFujHF2OHGp6SMqirO7Jjn9Ycpm
-	3UIejkT5zY7CCZP2/JOdHoLCRTFg=
-X-Google-Smtp-Source: AGHT+IFqZ1uKSZfEUZonCPz2t787Re0NvZrqmMdWo3PXwBwPuZFGxuO2RROLpCXOi61Hl3aS+dPea5xciO2dgWvjKkU=
-X-Received: by 2002:a05:6a00:4614:b0:705:a450:a993 with SMTP id
- d2e1a72fcca58-70aaad51cccmr9567542b3a.17.1719953570968; Tue, 02 Jul 2024
- 13:52:50 -0700 (PDT)
+	s=arc-20240116; t=1719953798; c=relaxed/simple;
+	bh=pQOFBDK3jDAJf5H+jjZOSGLaf0hNHzIigPqH7V1kdxQ=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=HsJQmLWIT7l/7mNz4Sw/YKf92ILOIcGmzgB73fhIUWtNsw7IWfwqTAIrGE+svMn7i/LSWs7bIGmGAVPOCQILVfcyfkgt1BjaZwXfDc83raZcD9V0tisz3wVoiF4K7oTd7XLwSkAeNpvkyMYTYvn92iQ7lSWP3/0Mo9UqXkkghwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fdsF9hJU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 162B1C116B1;
+	Tue,  2 Jul 2024 20:56:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719953798;
+	bh=pQOFBDK3jDAJf5H+jjZOSGLaf0hNHzIigPqH7V1kdxQ=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=fdsF9hJUCdHD9MZzolsPbrZc00kvjZzaZqR6AcWQD2hhROu87eaA9lZIZy4n+hfOw
+	 WSHBkfk1X17bjcIhCuoXRQ9JyhRsjSm7RI1YjWNN6q002C4jLl6QO0FBQYQWzSOEOA
+	 51EmCY7D82Y9D32Ht/vnobRG0AiarY4i7jZ9GTArV8XZyykrHO/VtSdVIMwKHhk+f2
+	 fY9OJEOXnHaee9pgSyYmN62kUQ7EZMdyK+2IL5h3u4k3Ev3hz8EuKVgO1biQrtk35Y
+	 iB+U1c8NogQwvxKcNyFymabG68dmAvQq46eZP1ikqpn2w/QTmwfs+ls2v7CoBviO+v
+	 4SHJwtHFPFnSA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0113BC43331;
+	Tue,  2 Jul 2024 20:56:38 +0000 (UTC)
+Subject: Re: [GIT PULL] vfs fixes
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240702-vfs-fixes-7b80dba61b09@brauner>
+References: <20240702-vfs-fixes-7b80dba61b09@brauner>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240702-vfs-fixes-7b80dba61b09@brauner>
+X-PR-Tracked-Remote: git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.10-rc7.fixes.2
+X-PR-Tracked-Commit-Id: 655593a40efc577edc651f1d5c5dfde83367c477
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: dbd8132aced4596ce8386af3041dfd310c8f42c8
+Message-Id: <171995379799.5346.4648857822596764102.pr-tracker-bot@kernel.org>
+Date: Tue, 02 Jul 2024 20:56:37 +0000
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240701164115.723677-1-jolsa@kernel.org> <20240701164115.723677-2-jolsa@kernel.org>
- <20240702130408.GH11386@noisy.programming.kicks-ass.net> <ZoQmkiKwsy41JNt4@krava>
-In-Reply-To: <ZoQmkiKwsy41JNt4@krava>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 2 Jul 2024 13:52:38 -0700
-Message-ID: <CAEf4BzYz-4eeNb1621LugDtm7NFshGJUgPzrVL7p4Wg+mq4Aqg@mail.gmail.com>
-Subject: Re: [PATCHv2 bpf-next 1/9] uprobe: Add support for session consumer
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>, 
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
-	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@chromium.org>, 
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 2, 2024 at 9:11=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrote=
-:
->
-> On Tue, Jul 02, 2024 at 03:04:08PM +0200, Peter Zijlstra wrote:
-> > On Mon, Jul 01, 2024 at 06:41:07PM +0200, Jiri Olsa wrote:
-> >
-> > > +static void
-> > > +uprobe_consumer_account(struct uprobe *uprobe, struct uprobe_consume=
-r *uc)
-> > > +{
-> > > +   static unsigned int session_id;
-> > > +
-> > > +   if (uc->session) {
-> > > +           uprobe->sessions_cnt++;
-> > > +           uc->session_id =3D ++session_id ?: ++session_id;
-> > > +   }
-> > > +}
-> >
-> > The way I understand this code, you create a consumer every time you do
-> > uprobe_register() and unregister makes it go away.
-> >
-> > Now, register one, then 4g-1 times register+unregister, then register
-> > again.
-> >
-> > The above seems to then result in two consumers with the same
-> > session_id, which leads to trouble.
-> >
-> > Hmm?
->
-> ugh true.. will make it u64 :)
->
-> I think we could store uprobe_consumer pointer+ref in session_consumer,
-> and that would make the unregister path more interesting.. will check
+The pull request you sent on Tue,  2 Jul 2024 21:44:27 +0200:
 
-More interesting how? It's actually a great idea, uprobe_consumer
-pointer itself is a unique ID and 64-bit. We can still use lowest bit
-for RC (see my other reply).
+> git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.10-rc7.fixes.2
 
->
-> thanks,
-> jirka
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/dbd8132aced4596ce8386af3041dfd310c8f42c8
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
