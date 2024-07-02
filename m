@@ -1,95 +1,94 @@
-Return-Path: <linux-kernel+bounces-238391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 385EE9249D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:18:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07DCC9249D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:20:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1AEE28499B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:18:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B4FC1C23BD8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9FD20127E;
-	Tue,  2 Jul 2024 21:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B08920127F;
+	Tue,  2 Jul 2024 21:20:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ocqWw2Fc";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pmi3Ix8l";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ocqWw2Fc";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pmi3Ix8l"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="znuU7Auu";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9hvdvqlo";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="znuU7Auu";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9hvdvqlo"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E314D201266;
-	Tue,  2 Jul 2024 21:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC99D1534E8;
+	Tue,  2 Jul 2024 21:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719955126; cv=none; b=Cu52hqUHDnLCeOp2gJ6ajFG9s/IQeSzqK6fAC4ltBdd0ikFNlPB/b1yCn6nGq38VJUyEgztLmol7Z1kgypu1d9biZVERvaQ0EAApFgIIZ5JY4OezAqZjl6CeImDDW8FcmVVei5ZWGBW3DTca5EWX4S3JrAejHqx8z+v199jxIEI=
+	t=1719955216; cv=none; b=WYW87+5Ej6GBU1FcsoKhhaa9YJU8pLIFUg0jfGzQ7LV1NYp7WdFIurD/yG++1g8QKMCYant43khT9DWw4xOSMllJg2Tv/dqky/QPPL2Qq3AwyYjmsL6Qkxipu634EJRZ7W0CEioidL1k2wVdv83rqF39ccLGngLxyfsuSxBrvgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719955126; c=relaxed/simple;
-	bh=H9Xq8CCPy6WivfUhmK10V6Uv964SBWArMo0hkOgZmWQ=;
+	s=arc-20240116; t=1719955216; c=relaxed/simple;
+	bh=CeT3SBUb+MSYc8i507anLMR58tBWbydhhxCPeXPL2PA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s2T9W2qxZCe6dbk48eHmhhNiwlwhwERMPYyBcyS3AsF4vXDCav9+uO46QPQ0HOiuILKCwDAyUfBnkYsfiDSQp7gftN4nhyzxhM2WPExefsAlycB+o7Ds4f80hd2eFftYBZ+XhzsCOT2Xdn9UhMjIaUrS+EmfJGj1IAiJBmrc2uE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ocqWw2Fc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pmi3Ix8l; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ocqWw2Fc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pmi3Ix8l; arc=none smtp.client-ip=195.135.223.130
+	 In-Reply-To:Content-Type; b=swY9jYt31BHH0iGr3M/LBd+G3eFNikT5a3eSx/FYhAxg/yBSjyyq/O5mdjUQrG6V6+bGrYVGEyibzXJ4uXNBjWcSkwt1vJMPRVKEQ2t2RJTQ25ZCPqKMUDwor/wZ3WrjC81z8GJ7L5FAreIJ7em2YmzMCkk+d9eB2HFvrRudb6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=znuU7Auu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9hvdvqlo; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=znuU7Auu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9hvdvqlo; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 04C2221B89;
-	Tue,  2 Jul 2024 21:18:37 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 26CE41FBDD;
+	Tue,  2 Jul 2024 21:20:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719955117; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1719955213; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Ymb8ALAHiyv9SRqovt2WyJNVuPEpG3F2/MZmgfbYbrA=;
-	b=ocqWw2Fc0WgSXPhJRrct++NZ2DMDpJZDsmRtDTw+Prj0ZHy3VIlyR3QZvZv94ou3yEZxZL
-	nzwVe0ulosQPS2Q2VCf9bumGzjLNXuIgLqSH9rd/97OEO866s2377U3HR/8xqPX7BzfaHX
-	FQrNyu73+5gy2AzJyVGqaCLv3qU2a2k=
+	bh=8hcmh5ZZotEcmUXMdIiHVUXAF3W0dTMFNs3reEpg/Mg=;
+	b=znuU7AuudWUhAdDFZ4iV8ETPKUi0+wXxGufJ4SdV3VFnEKZ1tfZcX8d445HRaWifgZZ3Vs
+	n0B3W021vdVYOp3qA6brwK07TQp8pDc01EOMJE7Vm5dOD9Zl9lBbfurswSw4Ddx5P+Ijw+
+	bzDl+CEHg6+Fu3B96ImMTZkbwgHnpsY=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719955117;
+	s=susede2_ed25519; t=1719955213;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Ymb8ALAHiyv9SRqovt2WyJNVuPEpG3F2/MZmgfbYbrA=;
-	b=pmi3Ix8lvq3X+9pEHdPoXfdBOXiTFjI+NKEI2v1b/Ut9BtrQ5I313Yl4ysrzjuJbPbx1lO
-	n5I3oXJTCbcTylAg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ocqWw2Fc;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=pmi3Ix8l
+	bh=8hcmh5ZZotEcmUXMdIiHVUXAF3W0dTMFNs3reEpg/Mg=;
+	b=9hvdvqloiB4asGjlHSwST6A/nGV4qVkjVrLxCiNI4/Xtt8tGWU18AnVdirpjP5431V3atR
+	GIaY4AQMWz1dGWDA==
+Authentication-Results: smtp-out2.suse.de;
+	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719955117; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1719955213; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Ymb8ALAHiyv9SRqovt2WyJNVuPEpG3F2/MZmgfbYbrA=;
-	b=ocqWw2Fc0WgSXPhJRrct++NZ2DMDpJZDsmRtDTw+Prj0ZHy3VIlyR3QZvZv94ou3yEZxZL
-	nzwVe0ulosQPS2Q2VCf9bumGzjLNXuIgLqSH9rd/97OEO866s2377U3HR/8xqPX7BzfaHX
-	FQrNyu73+5gy2AzJyVGqaCLv3qU2a2k=
+	bh=8hcmh5ZZotEcmUXMdIiHVUXAF3W0dTMFNs3reEpg/Mg=;
+	b=znuU7AuudWUhAdDFZ4iV8ETPKUi0+wXxGufJ4SdV3VFnEKZ1tfZcX8d445HRaWifgZZ3Vs
+	n0B3W021vdVYOp3qA6brwK07TQp8pDc01EOMJE7Vm5dOD9Zl9lBbfurswSw4Ddx5P+Ijw+
+	bzDl+CEHg6+Fu3B96ImMTZkbwgHnpsY=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719955117;
+	s=susede2_ed25519; t=1719955213;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Ymb8ALAHiyv9SRqovt2WyJNVuPEpG3F2/MZmgfbYbrA=;
-	b=pmi3Ix8lvq3X+9pEHdPoXfdBOXiTFjI+NKEI2v1b/Ut9BtrQ5I313Yl4ysrzjuJbPbx1lO
-	n5I3oXJTCbcTylAg==
+	bh=8hcmh5ZZotEcmUXMdIiHVUXAF3W0dTMFNs3reEpg/Mg=;
+	b=9hvdvqloiB4asGjlHSwST6A/nGV4qVkjVrLxCiNI4/Xtt8tGWU18AnVdirpjP5431V3atR
+	GIaY4AQMWz1dGWDA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DECA41395F;
-	Tue,  2 Jul 2024 21:18:36 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0CE4A1395F;
+	Tue,  2 Jul 2024 21:20:13 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id EKoGNqxuhGauCgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 02 Jul 2024 21:18:36 +0000
-Message-ID: <c8061293-8457-4d2b-85c2-7c631c00245a@suse.cz>
-Date: Tue, 2 Jul 2024 23:18:36 +0200
+	id ATBDAg1vhGYbCwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 02 Jul 2024 21:20:13 +0000
+Message-ID: <627741f3-dd28-45b3-ada9-1efeac66351e@suse.cz>
+Date: Tue, 2 Jul 2024 23:20:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,15 +99,15 @@ User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] mm, slab: extend kmalloc() alignment for non power-of-two
  sizes
 Content-Language: en-US
-To: Alice Ryhl <aliceryhl@google.com>
+To: Roman Gushchin <roman.gushchin@linux.dev>
 Cc: linux-mm@kvack.org, David Rientjes <rientjes@google.com>,
  Christoph Lameter <cl@linux.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
- Roman Gushchin <roman.gushchin@linux.dev>, Kees Cook
- <keescook@chromium.org>, Boqun Feng <boqun.feng@gmail.com>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- patches@lists.linux.dev
+ Kees Cook <keescook@chromium.org>, Alice Ryhl <aliceryhl@google.com>,
+ Boqun Feng <boqun.feng@gmail.com>, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, patches@lists.linux.dev
 References: <20240702155800.166503-2-vbabka@suse.cz>
- <CAH5fLgj=uOktnNCEm+npBh8LLbYUEO8uO30YUBsLS-iK+BKQJQ@mail.gmail.com>
+ <ZoRVbdCxrBwmDF2s@google.com> <1ca7b081-c1f0-45a3-b901-39c503368f43@suse.cz>
+ <ZoRtXgf7g5TU6HSz@google.com>
 From: Vlastimil Babka <vbabka@suse.cz>
 Autocrypt: addr=vbabka@suse.cz; keydata=
  xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
@@ -149,90 +148,80 @@ Autocrypt: addr=vbabka@suse.cz; keydata=
  w9XOLH1IIWh7RURU7G1iOfEfmImFeC3cbbS73LQEFGe1urxvIH5K/7vX+FkNcr9ujwWuPE9b
  1C2o4i/yZPLXIVy387EjA6GZMqvQUFuSTs/GeBcv0NjIQi8867H3uLjz+mQy63fAitsDwLmR
  EP+ylKVEKb0Q2A==
-In-Reply-To: <CAH5fLgj=uOktnNCEm+npBh8LLbYUEO8uO30YUBsLS-iK+BKQJQ@mail.gmail.com>
+In-Reply-To: <ZoRtXgf7g5TU6HSz@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-3.00 / 50.00];
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -2.79
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-2.79 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	SUSPICIOUS_RECIPS(1.50)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
 	XM_UA_NO_VERSION(0.01)[];
+	RCVD_TLS_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kvack.org,google.com,linux.com,gmail.com,chromium.org,vger.kernel.org,lists.linux.dev];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kvack.org,google.com,linux.com,gmail.com,linux.dev,chromium.org,vger.kernel.org,lists.linux.dev];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 04C2221B89
-X-Spam-Flag: NO
-X-Spam-Score: -3.00
-X-Spam-Level: 
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
 
-On 7/2/24 6:40 PM, Alice Ryhl wrote:
-> On Tue, Jul 2, 2024 at 5:58 PM Vlastimil Babka <vbabka@suse.cz> wrote:
-> Thanks!
+On 7/2/24 11:13 PM, Roman Gushchin wrote:
+> On Tue, Jul 02, 2024 at 10:25:44PM +0200, Vlastimil Babka wrote:
+>> On 7/2/24 9:30 PM, Roman Gushchin wrote:
+>> > On Tue, Jul 02, 2024 at 05:58:01PM +0200, Vlastimil Babka wrote:
+>> > Hello Vlastimil,
+>> > 
+>> > the idea and the implementation makes total sense to me.
+>> > 
+>> > Do you have an estimate for the memory overhead it will typically introduce?
+>> 
+>> There's no new overhead for the non-debug case as the layout already
+>> naturally has the same alignment as is now guaranteed. Debug has its own
+>> overhead so it's enabled only when needed, and this will not add much more.
 > 
-> Since this change is motivated by Rust, why not also include the Rust
-> change in this patch? You would need to remove the if inside
-> krealloc_aligned in rust/kernel/alloc/allocator.rs and update the
-> comments.
+> Got it, but can you, please, add this note with some explanation why it's true
+> to the commit message? Because it's not obvious and the commit message makes
 
-Right, thanks. Does this look ok? (not tested as I don't have the
-environment working)
+It's there but later:
 
-diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocator.rs
-index 229642960cd1..c619acb8b285 100644
---- a/rust/kernel/alloc/allocator.rs
-+++ b/rust/kernel/alloc/allocator.rs
-@@ -18,23 +18,16 @@ pub(crate) unsafe fn krealloc_aligned(ptr: *mut u8, new_layout: Layout, flags: F
-     // Customized layouts from `Layout::from_size_align()` can have size < align, so pad first.
-     let layout = new_layout.pad_to_align();
- 
-+    // Note that `layout.size()` (after padding) is guaranteed to be a multiple of `layout.align()`
-+    // which together with the slab guarantee means the `krealloc` will return a properly aligned
-+    // object (see comments in `kmalloc()` for more information).
-     let mut size = layout.size();
- 
--    if layout.align() > bindings::ARCH_SLAB_MINALIGN {
--        // The alignment requirement exceeds the slab guarantee, thus try to enlarge the size
--        // to use the "power-of-two" size/alignment guarantee (see comments in `kmalloc()` for
--        // more information).
--        //
--        // Note that `layout.size()` (after padding) is guaranteed to be a multiple of
--        // `layout.align()`, so `next_power_of_two` gives enough alignment guarantee.
--        size = size.next_power_of_two();
--    }
--
-     // SAFETY:
-     // - `ptr` is either null or a pointer returned from a previous `k{re}alloc()` by the
-     //   function safety requirement.
-     // - `size` is greater than 0 since it's either a `layout.size()` (which cannot be zero
--    //   according to the function safety requirement) or a result from `next_power_of_two()`.
-+    //   according to the function safety requirement)
-     unsafe { bindings::krealloc(ptr as *const core::ffi::c_void, size, flags.0) as *mut u8 }
- }
- 
+1) doesn't change the current slab layout (and thus does not increase
+   internal fragmentation) when slab debugging is not active
+
+> almost the opposite impression:
+>     Slab allocators have been guaranteeing natural alignment for
+>     power-of-two sizes <...>, while any other sizes are
+>     aligned only to ARCH_KMALLOC_MINALIGN bytes.
+> 
+> Should it be "guaranteed to be aligned" vs are actually aligned?
+
+Yes that's the case. Will update.
+
+>> 
+>> > I don't think it will be too large though and actually can be compensated
+>> > by potential performance gains due to a better memory alignment. What do you
+>> > think?
+>> 
+>> Yeah but again, the difference would be only in the debug case and
+>> performance gains there are not so interesting :)
+> 
+> Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
+
+Thanks!
+
+> Thanks!
 
 
