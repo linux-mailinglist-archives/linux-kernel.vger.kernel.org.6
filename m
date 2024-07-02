@@ -1,97 +1,190 @@
-Return-Path: <linux-kernel+bounces-237755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 600E1923DC2
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:28:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57016923DAC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:26:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF7F61F25639
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:28:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C09891F23DD3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:26:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D356C1741ED;
-	Tue,  2 Jul 2024 12:25:44 +0000 (UTC)
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 238ED174EDF;
-	Tue,  2 Jul 2024 12:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A72C16C847;
+	Tue,  2 Jul 2024 12:25:18 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE7B167D8C;
+	Tue,  2 Jul 2024 12:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719923144; cv=none; b=X725tF2PREo7RM6jHkkz6LC65GuxQYukscoVo6p+tHEEZBVEJexF8h+5vqNgp1FZQoyqFBIMlD20uY+ZUZmA1rwpGyWh7imFYsRCFpjAYxnXf9vbg3zrHGgXUC+jquOmy9fMavsvl1Np5tibLwO6O1bpKnjGK0SUQ/oHvVL6m/4=
+	t=1719923117; cv=none; b=SYyxc+EViFmQuKpmkkyOwwlHfoA/W/05aTCicXdmX3Ew7FEQtI6nRg8P5jc1cDlOokUyKAiI0Hf9E++g4h2oFqo+7eDBGDurUxcshGtIjtXt79zCgNFxkm9ppVIxG4D1rPPxsfQsU13/MzlTJ+gP5OLhz812XZnjfayrQLIezu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719923144; c=relaxed/simple;
-	bh=QEHj1YJApM67xSQPt8/HlxK6R7veWsWbHV9VxRLTYK4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version; b=KwMi8R2JBJ/Ja/8WQhB6na5idmhm2W942P8GAGRjDuH21l4vjvPUmbuNKsB3WuLaIIC4leKxYf40DT3G1/ib9NfvaKtwOw0lYCi+26v0WnJ/u2rBX0GplaJPaPFOq88qR20fN+2km63R+Bwg5oMpT+ULuVdGwfWiI7fXA8Mo0yY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from localhost.localdomain (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 288AA6031A64D;
-	Tue,  2 Jul 2024 20:25:32 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-To: arend.vanspriel@broadcom.com,
-	kvalo@kernel.org
-Cc: Su Hui <suhui@nfschina.com>,
-	johannes.berg@intel.com,
-	kees@kernel.org,
-	a@bayrepo.ru,
-	duoming@zju.edu.cn,
-	marcan@marcan.st,
-	petr.tesarik.ext@huawei.com,
-	colin.i.king@gmail.com,
-	linville@tuxdriver.com,
-	linux-wireless@vger.kernel.org,
-	brcm80211@lists.linux.dev,
-	brcm80211-dev-list.pdl@broadcom.com,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH wireless 9/9] wifi: cfg80211: avoid garbage value of 'wsec' in brcmf_cfg80211_{get,config_default}_key()
-Date: Tue,  2 Jul 2024 20:24:52 +0800
-Message-Id: <20240702122450.2213833-10-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20240702122450.2213833-1-suhui@nfschina.com>
+	s=arc-20240116; t=1719923117; c=relaxed/simple;
+	bh=ktCITwpxHpI1W1hj/sUArc8rIdogsyyInYcXkBWuLH0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W+kehe7JDYqZ7awSj9wIKc9kwNProwtT3pm0rAe8CxbfN+wZ3rMRDUqV0wm/oxmOgbBZB8Zb91TFjntkrYMWPRWTr8C+6YS9WEZGbhYv/EmUBUrtUXwfdfE2s2lfJxZBkZlHZBgqqmJj8RBnsKYCEA9ah4lTWyf1KqNegzPHdBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WD2DK2qWwz4f3jtx;
+	Tue,  2 Jul 2024 20:25:05 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id B2B4A1A016E;
+	Tue,  2 Jul 2024 20:25:12 +0800 (CST)
+Received: from [10.174.177.174] (unknown [10.174.177.174])
+	by APP1 (Coremail) with SMTP id cCh0CgBXgHyi8YNm6TG7Aw--.61077S3;
+	Tue, 02 Jul 2024 20:25:10 +0800 (CST)
+Message-ID: <5e3ffecd-4def-44b4-b141-e24429d13929@huaweicloud.com>
+Date: Tue, 2 Jul 2024 20:25:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/9] cachefiles: random bugfixes
+To: netfs@lists.linux.dev, dhowells@redhat.com, jlayton@kernel.org
+Cc: hsiangkao@linux.alibaba.com, jefflexu@linux.alibaba.com,
+ zhujia.zj@bytedance.com, linux-erofs@lists.ozlabs.org, brauner@kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yangerkun@huawei.com, houtao1@huawei.com, yukuai3@huawei.com,
+ wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
+ Baokun Li <libaokun@huaweicloud.com>
+References: <20240628062930.2467993-1-libaokun@huaweicloud.com>
+Content-Language: en-US
+From: Baokun Li <libaokun@huaweicloud.com>
+In-Reply-To: <20240628062930.2467993-1-libaokun@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgBXgHyi8YNm6TG7Aw--.61077S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxCF13tr18Wr1kZw45uFy8Zrb_yoWrCw17pF
+	WakanxArykWryxCws3Zw4xtFyFy3yxX3Z2gr1xXw15A3s8XF1FvrWIkr15ZFy5Crs7GrW2
+	vr1q9Fn3Gw1qv3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkE14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQvt
+	AUUUUU=
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAgAMBV1jkHxNzQAAsZ
 
-brcmf_fil_bsscfg_int_get() reads the value of 'wsec'.
-Initialize 'wsec' to avoid garbage value.
+Friendly ping...
 
-Fixes: 5b435de0d786 ("net: wireless: add brcm80211 drivers")
-Signed-off-by: Su Hui <suhui@nfschina.com>
----
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On 2024/6/28 14:29, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
+>
+> Hi all!
+>
+> This is the third version of this patch series, in which another patch set
+> is subsumed into this one to avoid confusing the two patch sets.
+> (https://patchwork.kernel.org/project/linux-fsdevel/list/?series=854914)
+>
+> Thank you, Jia Zhu, Gao Xiang, Jeff Layton, for the feedback in the
+> previous version.
+>
+> We've been testing ondemand mode for cachefiles since January, and we're
+> almost done. We hit a lot of issues during the testing period, and this
+> patch series fixes some of the issues. The patches have passed internal
+> testing without regression.
+>
+> The following is a brief overview of the patches, see the patches for
+> more details.
+>
+> Patch 1-2: Add fscache_try_get_volume() helper function to avoid
+> fscache_volume use-after-free on cache withdrawal.
+>
+> Patch 3: Fix cachefiles_lookup_cookie() and cachefiles_withdraw_cache()
+> concurrency causing cachefiles_volume use-after-free.
+>
+> Patch 4: Propagate error codes returned by vfs_getxattr() to avoid
+> endless loops.
+>
+> Patch 5-7: A read request waiting for reopen could be closed maliciously
+> before the reopen worker is executing or waiting to be scheduled. So
+> ondemand_object_worker() may be called after the info and object and even
+> the cache have been freed and trigger use-after-free. So use
+> cancel_work_sync() in cachefiles_ondemand_clean_object() to cancel the
+> reopen worker or wait for it to finish. Since it makes no sense to wait
+> for the daemon to complete the reopen request, to avoid this pointless
+> operation blocking cancel_work_sync(), Patch 1 avoids request generation
+> by the DROPPING state when the request has not been sent, and Patch 2
+> flushes the requests of the current object before cancel_work_sync().
+>
+> Patch 8: Cyclic allocation of msg_id to avoid msg_id reuse misleading
+> the daemon to cause hung.
+>
+> Patch 9: Hold xas_lock during polling to avoid dereferencing reqs causing
+> use-after-free. This issue was triggered frequently in our tests, and we
+> found that anolis 5.10 had fixed it. So to avoid failing the test, this
+> patch is pushed upstream as well.
+>
+> Comments and questions are, as always, welcome.
+> Please let me know what you think.
+>
+> Thanks,
+> Baokun
+>
+> Changes since v2:
+>    * Collect Acked-by from Jeff Layton.(Thanks for your ack!)
+>    * Collect RVB from Gao Xiang.(Thanks for your review!)
+>    * Patch 1-4 from another patch set.
+>    * Pathch 4,6,7: Optimise commit messages and subjects.
+>
+> Changes since v1:
+>    * Collect RVB from Jia Zhu and Gao Xiang.(Thanks for your review!)
+>    * Pathch 1,2：Add more commit messages.
+>    * Pathch 3：Add Fixes tag as suggested by Jia Zhu.
+>    * Pathch 4：No longer changing "do...while" to "retry" to focus changes
+>      and optimise commit messages.
+>    * Pathch 5: Drop the internal RVB tag.
+>
+> v1: https://lore.kernel.org/all/20240424033409.2735257-1-libaokun@huaweicloud.com
+> v2: https://lore.kernel.org/all/20240515125136.3714580-1-libaokun@huaweicloud.com
+>
+> Baokun Li (7):
+>    netfs, fscache: export fscache_put_volume() and add
+>      fscache_try_get_volume()
+>    cachefiles: fix slab-use-after-free in fscache_withdraw_volume()
+>    cachefiles: fix slab-use-after-free in cachefiles_withdraw_cookie()
+>    cachefiles: propagate errors from vfs_getxattr() to avoid infinite
+>      loop
+>    cachefiles: stop sending new request when dropping object
+>    cachefiles: cancel all requests for the object that is being dropped
+>    cachefiles: cyclic allocation of msg_id to avoid reuse
+>
+> Hou Tao (1):
+>    cachefiles: wait for ondemand_object_worker to finish when dropping
+>      object
+>
+> Jingbo Xu (1):
+>    cachefiles: add missing lock protection when polling
+>
+>   fs/cachefiles/cache.c          | 45 ++++++++++++++++++++++++++++-
+>   fs/cachefiles/daemon.c         |  4 +--
+>   fs/cachefiles/internal.h       |  3 ++
+>   fs/cachefiles/ondemand.c       | 52 ++++++++++++++++++++++++++++++----
+>   fs/cachefiles/volume.c         |  1 -
+>   fs/cachefiles/xattr.c          |  5 +++-
+>   fs/netfs/fscache_volume.c      | 14 +++++++++
+>   fs/netfs/internal.h            |  2 --
+>   include/linux/fscache-cache.h  |  6 ++++
+>   include/trace/events/fscache.h |  4 +++
+>   10 files changed, 123 insertions(+), 13 deletions(-)
+>
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
-index 95193e09504f..eb8d7455d0ea 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
-@@ -2707,7 +2707,7 @@ brcmf_cfg80211_config_default_key(struct wiphy *wiphy, struct net_device *ndev,
- 	struct brcmf_if *ifp = netdev_priv(ndev);
- 	struct brcmf_pub *drvr = ifp->drvr;
- 	u32 index;
--	u32 wsec;
-+	u32 wsec = 0;
- 	s32 err = 0;
- 
- 	brcmf_dbg(TRACE, "Enter\n");
-@@ -2907,7 +2907,7 @@ brcmf_cfg80211_get_key(struct wiphy *wiphy, struct net_device *ndev,
- 	struct brcmf_cfg80211_profile *profile = &ifp->vif->profile;
- 	struct brcmf_pub *drvr = cfg->pub;
- 	struct brcmf_cfg80211_security *sec;
--	s32 wsec;
-+	s32 wsec = 0;
- 	s32 err = 0;
- 
- 	brcmf_dbg(TRACE, "Enter\n");
 -- 
-2.30.2
+With Best Regards,
+Baokun Li
 
 
