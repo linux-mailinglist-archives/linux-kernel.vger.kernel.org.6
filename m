@@ -1,124 +1,128 @@
-Return-Path: <linux-kernel+bounces-237293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B2F791EED2
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:18:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8605D91EEE5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:24:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F296C283374
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:18:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FAD1282324
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66DB5CDE9;
-	Tue,  2 Jul 2024 06:18:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7147B78C80;
+	Tue,  2 Jul 2024 06:24:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="xq9BHxRa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b2N1lwNs"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C008BFA;
-	Tue,  2 Jul 2024 06:18:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0658B77119
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 06:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719901108; cv=none; b=U4ENHhU4u+ju7ihMnuXgM4/eHEuQSlVl2F4ndy6W+LNCfPFoKW/BUsEosZyhUo0xpczJrf87lDNFbIDsHdO1l+S+lN0nqYclAW3MeV6aO85Yz2R+7rWhn9uZbkxnmVLsiki3X3BnzCKpu/xTLSfm+7E960k31310t2B1J0mIzwk=
+	t=1719901468; cv=none; b=F6gWNwxGc0UBpSnzlabEvxY9+ETiLvji1kBnP/e8ZOFb8boKk1PQKiyLBuCPYqNr9NIFKaLqHW8GplUCL0OIbi/U9PTwvh4d90ojgP8lMTT/SNbxIIb3FV2F2e3n3RbH0/0kXHwbm6smg0e1/tkh3MRHf8wKqQA2qDo/sV+yUb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719901108; c=relaxed/simple;
-	bh=xcbo7H35s62k57wpp5CZn9fiLqU/YmxQeNb6aW/ijbo=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=ToKDqVS4X/qdS5YCvkmzJUS2qXu8AsZmgx7a7lUrxAX/Y30+ShRskUUp06dY7rD6X1an51L+vKU67QS4yutYFM/wD78m7xV0C4ypAxOSqaHQDtr2htzdKadL4dciY9RdMR+BTosB3gvfV1B402rWdJJxJ9nGdiQNngPgboHawow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=xq9BHxRa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5652BC116B1;
-	Tue,  2 Jul 2024 06:18:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1719901107;
-	bh=xcbo7H35s62k57wpp5CZn9fiLqU/YmxQeNb6aW/ijbo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=xq9BHxRaLm52nTg3V4uSDWdhiU55d5dItWGm5OHO3o4KIVhuoqsvVssq6bDEMMvrb
-	 um7p7vo59/H5oQatAtFS2oz2iJvFHgWrKF7uKqXdWuXI5g91dRjjQs6nD+yBMdCV0n
-	 cijErqWZNuWe6RxHe81qqlkxaUUY8GJkrQgUYybM=
-Date: Mon, 1 Jul 2024 23:18:26 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Jiaqi Yan <jiaqiyan@google.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, linux-doc@vger.kernel.org
-Subject: Re: linux-next: build warnings after merge of the mm tree
-Message-Id: <20240701231826.fb3044bb52dc97bedc9853ab@linux-foundation.org>
-In-Reply-To: <CACw3F52wm=5Rg+QP-E7JDOjBvA2mYv0uDBL+8=KPCfQ8tkHQaA@mail.gmail.com>
-References: <20240701184912.01f1f9ce@canb.auug.org.au>
-	<20240701201448.7878e9b35e1569bfc1f2ddbc@linux-foundation.org>
-	<CACw3F52=GxTCDw-PqFh3-GDM-fo3GbhGdu0hedxYXOTT4TQSTg@mail.gmail.com>
-	<CACw3F52wm=5Rg+QP-E7JDOjBvA2mYv0uDBL+8=KPCfQ8tkHQaA@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719901468; c=relaxed/simple;
+	bh=InAhoUN8tcseJPMHm9g66x74qz1q4L1w7tnrp4q2JsE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pjQxrud9paPccUgjO2dddjyiP7T/Au7pgH6vDbxCDAlC4JiIyTQ4IQdPLm3XUeaC8B3FLl9kqky2ODWR0N+q5SmAD/VMTo69O+kbFl8qHXzpLmyAWx26nmeNYlmm5AVfxLRUt9V9FV8DPjFKWZcly2o8pzVG5rvLiIQug982E7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b2N1lwNs; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52cdf9f934fso3913416e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 23:24:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719901465; x=1720506265; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bDo5IygLtEAB+cPD4fX0+9qX3XWf/HFh9CkZqeTvO3k=;
+        b=b2N1lwNsdAc6F2kYGz5Kme/belkl+xxHosId+dCCZfnbeqzjBc5HNCZUelmLQMT/hS
+         Ni40G36hsDBEQsn14C6iT/HJeEgbDM9YwVzNQpiQQAAEtHTSsXw4xjPc+SnU4QhSWk+q
+         O1N6oWY3pQy9dTzCJxNNhzQccafc9BnvMncJHc8RYVDWRRG+qJS9FuWEqft1AvRSIuJ9
+         2Eqp6iYm3b60mwYZn+rqnGPE3jPP2b9nkZqYNOwJrwgXBJpazOj1PobvOCtpL5h4dgii
+         /ouHcvqwcpwc6WCZk/WOATRb/QhvblBirL75SrLr1uylXOj5tG1toDo/VkyGmofKnaGn
+         ER6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719901465; x=1720506265;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bDo5IygLtEAB+cPD4fX0+9qX3XWf/HFh9CkZqeTvO3k=;
+        b=PASe8grv6i3aaPKe4HsqnZL0HOYBPP2DKdl2jU7tO1PdOzT8LEkG0FnaZWTeMGls3I
+         qzTkHeCkA/ULFM1YU5TqEI2AS5V5yl4JtvVRfASi+cQkD7y2F551T7Aef8LKGP71JTvh
+         /vuI+okdJNjmM6s1iT+uaFOEuuJ9Mh4PdVjBcreJN5PszGEo/gkyNLllEmysBUvWvWvj
+         LEgU3/6z8XuyUqopPUD0LpKzIFL5KoVJK7coBh85UNM/7BIwhAfO7vBk/CIOECBJihMs
+         46DdwES2iKkF8AFB4zamnsNjvBUrYTeDiNKl2VEynSyfFoFq3ZMYQO7YR+h3giqCNpTx
+         9jvA==
+X-Forwarded-Encrypted: i=1; AJvYcCX67aC5UhER3VDK26gzyGMFjYEJiGHrMA8GC5S6Crjvnykae/NWehsZZw962fjkQB2Qbce9pmwv+0YRfoabGGCs5ia9PRXNfompuHua
+X-Gm-Message-State: AOJu0Ywv8UKInWbEddrSReUgGyQhQT/EDaBhZAmH7w8Qxt4xtuTb4nii
+	Zq+roWrKmp1I8V2BOSkdYTUNzWYZyR0Pwp6ub5/2J0hpVo6SNrTcDfCGJ1/+jDI=
+X-Google-Smtp-Source: AGHT+IF75P/sOWPMtLxALLKSe++8Cf/2bVEGI3L9gmOs0TCyDPgWQ2uHOuklB9AeLyumfAx+WoRHcQ==
+X-Received: by 2002:a05:6512:10d0:b0:52c:ab83:d783 with SMTP id 2adb3069b0e04-52e8264c68emr4508470e87.6.1719901465067;
+        Mon, 01 Jul 2024 23:24:25 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab0b840sm1665664e87.11.2024.07.01.23.24.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 23:24:24 -0700 (PDT)
+Date: Tue, 2 Jul 2024 09:24:22 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Dang Huynh <danct12@riseup.net>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Luca Weiss <luca.weiss@fairphone.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] arm64: dts: qcom: qrb4210-rb2: Correct max current
+ draw for VBUS
+Message-ID: <ql24nvbdqfzhtogocmsh2xm2wkjfddfcvoxnzbzvjgcucy7gyz@hqgvr4oul7pb>
+References: <20240702-qrd4210rb2-vbus-volt-v3-1-fbd24661eec4@riseup.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240702-qrd4210rb2-vbus-volt-v3-1-fbd24661eec4@riseup.net>
 
-On Mon, 1 Jul 2024 21:33:20 -0700 Jiaqi Yan <jiaqiyan@google.com> wrote:
-
-> > > This seems a reasonable thing to do so there's probably some way in
-> > > which to do it, but a bit of grepping failed to turn up examples in
-> > > existing .rst files.  Can someone please suggest?
-> >
-> > It seems I need to add some blank lines according to [1], especially
-> > to add a blank line above the first list item:
-> >
-> > diff --git a/Documentation/admin-guide/sysctl/vm.rst
-> > b/Documentation/admin-guide/sysctl/vm.rst
-> > index 75e22137d849..74b4c0f65213 100644
-> > --- a/Documentation/admin-guide/sysctl/vm.rst
-> > +++ b/Documentation/admin-guide/sysctl/vm.rst
-> > @@ -274,12 +274,15 @@ Correctable memory errors are very common on
-> > servers. Soft-offline is kernel's
-> >  solution for memory pages having (excessive) corrected memory errors.
-> >
-> >  For different types of page, soft-offline has different behaviors / costs.
-> > +
-> >  - For a raw error page, soft-offline migrates the in-use page's content to
-> >    a new raw page.
-> > +
-> >  - For a page that is part of a transparent hugepage, soft-offline splits the
-> >    transparent hugepage into raw pages, then migrates only the raw error page.
-> >    As a result, user is transparently backed by 1 less hugepage, impacting
-> >    memory access performance.
-> > +
-> >  - For a page that is part of a HugeTLB hugepage, soft-offline first migrates
-> >    the entire HugeTLB hugepage, during which a free hugepage will be consumed
-> >    as migration target.  Then the original hugepage is dissolved into raw
-> >
-> > But I am having trouble testing the build, so wasn't able to validate
-> > the change above:
-> >
-> > Documentation$ make
-> > /tools/net/ynl/ynl-gen-rst.py -o
-> > /Documentation/networking/netlink_spec/index.rst -x
-> > make: /tools/net/ynl/ynl-gen-rst.py: No such file or directory
-> > make: *** [Makefile:113:
-> > /Documentation/networking/netlink_spec/index.rst] Error 127
-
-You need to install all sorts of whacky system and python packages. 
-The (failed) build process should guide you through this.
-
-> I tried another way: make htmldocs at repo's root directory. Although
-> I wasn't able to finish the make process,
+On Tue, Jul 02, 2024 at 01:01:19PM GMT, Dang Huynh wrote:
+> According to downstream sources, maximum current for PMI632 VBUS
+> is 1A.
 > 
-> - without the blank lines:
+> Taken from msm-4.19 (631561973a034e46ccacd0e53ef65d13a40d87a4)
+> Line 685-687 in drivers/power/supply/qcom/qpnp-smb5.c
 > 
->   Documentation/admin-guide/sysctl/vm.rst:278: ERROR: Unexpected indentation.
->   Documentation/admin-guide/sysctl/vm.rst:279: WARNING: Block quote
-> ends without a blank line; unexpected unindent.
+> Fixes: a06a2f12f9e2 ("arm64: dts: qcom: qrb4210-rb2: enable USB-C port handling")
+> Reviewed-by: Luca Weiss <luca.weiss@fairphone.com>
+> Signed-off-by: Dang Huynh <danct12@riseup.net>
+> ---
+> In previous patch series, there's a suggestion to correct maximum
+> current for PMI632 VBUS.
 > 
-> - with the blank lines added, the ERROR and WARNING in vm/rst are gone.
+> Unfortunately it didn't make it and probably forgotten.
 > 
-> Andrew and Stephen, what is the best way to post the fix for this?
-> Should I send out a v8 of the patch with the blank lines added? or a
-> standalone commit for this fix?
+> Link to the suggestion mentioned:
+> https://lore.kernel.org/linux-arm-msm/CYMDEAJZ0TJK.K31XZB3E9QOG@fairphone.com/
+> 
+> Signed-off-by: Dang Huynh <danct12@riseup.net>
+> ----
+> Changes in v3:
+> - Fixed wrong usage of electrical units.
+> - Link to v2: https://lore.kernel.org/r/20240701-qrd4210rb2-vbus-volt-v2-1-b7bcd2a78c8b@riseup.net
+> 
+> Changes in v2:
+> - Fixed typo (voltage -> ampere)
+> - Link to v1: https://lore.kernel.org/r/20240701-qrd4210rb2-vbus-volt-v1-1-5c06f8358436@riseup.net
+> ---
+>  arch/arm64/boot/dts/qcom/qrb4210-rb2.dts | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-I added your fix, thanks.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+-- 
+With best wishes
+Dmitry
 
