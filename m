@@ -1,94 +1,134 @@
-Return-Path: <linux-kernel+bounces-238104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5855092439E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:31:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 336539243A2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:32:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC659B24D99
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:30:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 660011C2342D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:32:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB2A1BD4FE;
-	Tue,  2 Jul 2024 16:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA7B1BD4FD;
+	Tue,  2 Jul 2024 16:31:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cGWy6cnK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VYm2vSAU"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF1614293;
-	Tue,  2 Jul 2024 16:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EEDF33CD2
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 16:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719937844; cv=none; b=nL8klX6oq9Hk2my8zC9h4XaZioIPM/x5esUZBR4R2DK0SWTjVnozEPc9bvgnnIM54+75haKxPnI/3QqAQxggi/C7V+QgG4IfavOGNiE1O1KFJzM9hzWWGJpoaSukzNd5xGBBA1ISm2sBTBmoYJu8VOa9O4njC9ijUKYll62lU+g=
+	t=1719937917; cv=none; b=fdaaahiEOHt7C/wnivak5yq79lp1ZTVmk8Af3tGwndaOyDCNFtYNuqBKa2yOfyfB6NTTJsYwlyJ6gXF1D/rbUkWEG6EASoLYGDgVo3fpquo7jR96k98HQNq/EcCPJ/EswyxZN8ZwL/TLneT94x7gjNi0GjQOgcoBKmbiS8BeImU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719937844; c=relaxed/simple;
-	bh=yg4aPDBbW9uUffjVz6BgdWKqSwBFTVMjQloATSZQEXE=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=IXEuw8aWo4rCmF1GPvSxLZSy2F4sxKzcUdqFCuSSvw+MGreZM0HX1fZWAzaLVkK2vO4mJ6KbEynOhqocps/ZnemVueGE36J9wsZ7PaY/Vj9RSPKKCugkXbqtAPILCd4XF+qAcbBXXLktbEjHMddzsieYJXCbcQ+h2g6dSBVuymk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cGWy6cnK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B7E97C4AF0A;
-	Tue,  2 Jul 2024 16:30:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719937843;
-	bh=yg4aPDBbW9uUffjVz6BgdWKqSwBFTVMjQloATSZQEXE=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=cGWy6cnKmx5K3dmAhRWrYwJF9Rb+ZvLavrD/zWZe32JY0ZkjnP0WIPF4xEEcfdBuW
-	 MdUreShSMD/+D7swZ8pda+nGD2EBe8wWQVb1dn8CB1Ggg00vOLEm4uNFYmoSqdZ2Js
-	 ubj6myD7Vfb6mQQqBMONfSRflvyrFU24FhW1bElghtlPcvl6ohtoDIa3Dt/gDLhSbb
-	 kMkb4ZZ6auYCIl9xEozEmFFBOwFbXfmi+XaTlMpO6a5WlOirpDmxMcyAi7VAvSYP9X
-	 kQpRWmDObUQCHBg/I46lWQ5tTadkU76z22h6Im3Wy5S4p3jbbnUWJ0gs9bGpnDW6po
-	 PYrdlsRuY3zvw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A0C25C43601;
-	Tue,  2 Jul 2024 16:30:43 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1719937917; c=relaxed/simple;
+	bh=NcR4UoV+iV/iG/vFUoCs8a66N+aWGz/3elnHzo7rR5M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j6cEZFvXPhhaY/t7nZ7m4dx9akWQX6kawKvSMuODvRkt898ZtPrroQDtyaem9sJ9T+Fji+HR9DILDBAF0YdvOL+bH9NWh+vABVp5CZZS9BJBVlzFJMfOO02kAsvIhCpAYUMhMtyXwwErCi9U38WawzJj0/ewOQB8GATqVvmIp5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VYm2vSAU; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-364a3d5d901so2566462f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 09:31:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719937913; x=1720542713; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SZ3nrMZ8xf5iqvSbwRyggvCmfkI8tHRxLTLxcqXvxrM=;
+        b=VYm2vSAUKCBTaFlvvCXxe0UjzsRQPAFVpvzX440AslRnyfKhjXx8fvlamIjxNj8inC
+         CLoaniKxd+iSUidxLVBxt3QA/wCnwv0+QcD673XZh7KtqklbE3jbJsBc+gsEZ1olpf5N
+         zuRmfIvhvPAVOPrcbqqNJdnt1z8t4ZFsMKPnh0NOo0hdUocd4FZcZTS37cPqrTRPZVoQ
+         T1rGKLl0fovU4sDvrmH/901FWukav3PmLbUiCk3umomE9R/tPoQv+4cS1f4Bzm5hM8Kf
+         IUyLW1ZJS/muT8C61nwHuSnhjB1dTPKhfFNs2cT6imzgQqJCdTN9H17Z5WJnr92DQbyS
+         DXsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719937913; x=1720542713;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SZ3nrMZ8xf5iqvSbwRyggvCmfkI8tHRxLTLxcqXvxrM=;
+        b=FKmuzzx51gK8mVeYLqUx8XzAKV+444PpoC/vSCzI7eSiSSSyg9mWuHIO1Kvot6dtz7
+         Sfc9opOcNid++CfijE4Xwp3/Mt2o7Dj0hXLMh9gaUX+KXh9ZK7qcnCukx4XQ890cRdgl
+         3VkH746oMj6uh4lXvrQsnolVkYqpkRDoCX6qmOhpUYDIp8KLFOsghNW9l8KfWoIorJOU
+         UdfSx+v6mz5Xs2pwHar+3bJP/Hco+X3URb+OZC/D2Xelm7Gag9OZgqLVx89N+7pb3djZ
+         4E4NuH6LQDt6KPQdXMcmC5g15gUAENs+/js5NIVVUHHdLCSGCMv+gDpbfstlhT8mg6vV
+         tI/w==
+X-Forwarded-Encrypted: i=1; AJvYcCXF4HMlk0V3M1OF6un7IFBizJKLWcTnpRzdkJhOqKsyMNS1ySz6yPhwKUerGL1WFr+azxRujUKlzYyIO4MOmQ1k/bp7nzlFS6EPWl+5
+X-Gm-Message-State: AOJu0YyUFgnesq9EhlGS0G2YJ0/azCAdgMXLVIvdciWUZvxmQ0vph3bH
+	NzqNAJ1iNmd9irnKaOIhWCiheg3rWLrlDpS7PpqEbkfRPcaFF2/ey6jwB2FlnRs=
+X-Google-Smtp-Source: AGHT+IGsZ1fgxA8SKHjpaB2XrBQgORgix+uj5qYoOc9dRc/F2eqJM/tlJoSyViIXlJRSGTc+c5ifJw==
+X-Received: by 2002:a5d:47c6:0:b0:367:3cdf:c027 with SMTP id ffacd0b85a97d-367757248c5mr6463145f8f.50.1719937913525;
+        Tue, 02 Jul 2024 09:31:53 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0? ([2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3675a0fb967sm13637209f8f.82.2024.07.02.09.31.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Jul 2024 09:31:53 -0700 (PDT)
+Message-ID: <2a8f5b5f-b67a-4bd0-afe9-f09473aea2d5@linaro.org>
+Date: Tue, 2 Jul 2024 18:31:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] thermal/core: Introduce user trip points
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, linux-pm@vger.kernel.org,
+ Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+References: <20240627085451.3813989-1-daniel.lezcano@linaro.org>
+ <20240701162600.GA4119789-robh@kernel.org>
+ <98fe3146-07ae-4095-b372-6aed6e080d94@linaro.org>
+ <CAJZ5v0ix+RDtrR+r3jd=A_W7D5U7JodMiirJ519-wwLrHeBbSw@mail.gmail.com>
+ <1eb7eb88-4230-4803-83fe-415ce0745951@linaro.org>
+ <CAJZ5v0jV+0bWqpCR1Q2rYLJvx0J6hgExzRks6YDPL9gX_HK0rA@mail.gmail.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <CAJZ5v0jV+0bWqpCR1Q2rYLJvx0J6hgExzRks6YDPL9gX_HK0rA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next] bpftool: Mount bpffs when pinmaps path not under the
- bpffs
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171993784364.9332.4670316229438625760.git-patchwork-notify@kernel.org>
-Date: Tue, 02 Jul 2024 16:30:43 +0000
-References: <20240702131150.15622-1-chen.dylane@gmail.com>
-In-Reply-To: <20240702131150.15622-1-chen.dylane@gmail.com>
-To: Tao Chen <chen.dylane@gmail.com>
-Cc: qmo@kernel.org, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- bpf@vger.kernel.org, martin.lau@linux.dev, eddyz87@gmail.com,
- song@kernel.org, yonghong.song@linux.dev, linux-kernel@vger.kernel.org
 
-Hello:
+On 02/07/2024 13:03, Rafael J. Wysocki wrote:
 
-This patch was applied to bpf/bpf-next.git (master)
-by Daniel Borkmann <daniel@iogearbox.net>:
+[ ... ]
 
-On Tue,  2 Jul 2024 21:11:50 +0800 you wrote:
-> As qmonnet said [1], map pinning will fail if the pinmaps path not under
-> the bpffs, like:
-> libbpf: specified path /home/ubuntu/test/sock_ops_map is not on BPF FS
-> Error: failed to pin all maps
-> [1]: https://github.com/libbpf/bpftool/issues/146
+>>> Trips cannot be created on the fly ATM.
+>>>
+>>> What can be done is to create trips that are invalid to start with and
+>>> then set their temperature via sysfs.  This has been done already for
+>>> quite a while AFAICS.
+>>
+>> Yes, I remember that.
+>>
+>> I would like to avoid introducing more weirdness in the thermal
+>> framework which deserve a clear ABI.
+>>
+>> What is missing to create new trip points on the fly ?
 > 
-> Fixes: 3767a94b3253 ("bpftool: add pinmaps argument to the load/loadall")
-> Signed-off-by: Tao Chen <chen.dylane@gmail.com>
+> A different data structure to store them (essentially, a list instead
+> of an array).
 > 
-> [...]
+> I doubt it's worth the hassle.
+> 
+> What's wrong with the current approach mentioned above?  It will need
+> to be supported going forward anyway.
 
-Here is the summary with links:
-  - [bpf-next] bpftool: Mount bpffs when pinmaps path not under the bpffs
-    https://git.kernel.org/bpf/bpf-next/c/da5f8fd1f0d3
+So when the "user trip point" option will be set, a thermal zone will 
+have ~ten(?) user trip points initialized to an invalid temperature ?
 
-You are awesome, thank you!
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
 
