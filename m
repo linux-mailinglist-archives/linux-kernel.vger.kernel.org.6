@@ -1,131 +1,181 @@
-Return-Path: <linux-kernel+bounces-237690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB29F923CB1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:43:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3393923CB3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:43:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84CA61F2639A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:43:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2E6D1C2245A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:43:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCB3D168C3F;
-	Tue,  2 Jul 2024 11:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2677316C426;
+	Tue,  2 Jul 2024 11:43:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WOduV29B"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K9Zpd8rB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12D715B57B;
-	Tue,  2 Jul 2024 11:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CDE015B96E
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 11:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719920572; cv=none; b=nAmfbq3B6Q6QiTpRGOi8RsZt28+Ya8AwRK5ygOcIxGYtnmpI4N70Qh3UFko13PEo0gRuzDJrrb8kad0Sm6o5p60EyYjFs0j3+1jdTrlRZlF35mg4fhzaypVy4Z073hwj5RMuOEDIoQWZtoNaXAGLG3yaKorCZ4Scj6pOhoAW+Dk=
+	t=1719920585; cv=none; b=SV2bCnKECmmXJ5ygfZVcT4MGG71nGswTISZYXL0TXlpdhXYjcdgHt2Pm1+lpIrlJ93Fd6VXrTkj1lGZuPAs4z7hmfjJkOWMNKj9ap8gppeZ/58kag6MF2gFsaTIliUYF0YIs7S914QdIhWvste0qgQBf2exI2FTe40H+3jrXVQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719920572; c=relaxed/simple;
-	bh=F3c82IvqkobVQ+cEL944LWTOKeY//8FJeGn9VOXvKeY=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=ZQSgaUxVDt9KuMB6BRQlXheXoz8Hw5V+0bx9+to6w6JS8iNWIcDGPHbro9HrhY0gLUdrWYhUcrJPR5yFtpkMDLNIaj10ecdu65XPKgXgSfsFZJCPaslfy3SdX/tkTfheiNWCjtP4PhlHBC3ibTy+1thGzWTFr1qo23tis1SV9go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WOduV29B; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f4a5344ec7so29138915ad.1;
-        Tue, 02 Jul 2024 04:42:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719920570; x=1720525370; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+5O9QJHV6HJ3iFkZ9r/sweFUWbG/UePP1lmvYv1+YTU=;
-        b=WOduV29B8coD7YGCZbzPEKNZN6eaycPUZl3qizhCY0c45ZBZ0RNf8DT+4JSKeXk9+6
-         u3PQ5dw+rDWG8RZJAtt9mhe7kRaV+83jyQgs2dBHmYhVG8l+3x/LllniZhAKhFJv/f6X
-         JtABgLysw8dnUwQVB6WUYKVNUUfdab5fFen+zzrMngzAaNMob2ItRj650iURHblcNSUm
-         SL/GbCtRWYAVPJ/zs/WOrsI6gpHAZvGm1lz7mObS7/R5vo6DMzh1Eo/uS51YSOxmelwr
-         9GxJiQFLZxRIcTUmkZGSNw9JSW9pu3Xzl9XZOv+dEbH3PiuHWCb5yfR/TvjuaPpZhp1P
-         Ldvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719920570; x=1720525370;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=+5O9QJHV6HJ3iFkZ9r/sweFUWbG/UePP1lmvYv1+YTU=;
-        b=YTa/c+amPvY0RD1ib+HK2UUru3+DM124uqMoDzB4E8jbtHmEKYjf/onGBJAGrNDddq
-         ewkxa6DIZL2SKbu69PM0sBrYPCyfs/cHMVOkaM1KqpKgIrRumTJ39gfnjcoI2jTge2pt
-         asLVG7G6iWfZy4Dy29AgJsUTEP9cJ/whc4p5V1kA0emqKYNNUVuKHzCpFQEfpH2ECOxU
-         DayfYhk2y12Vub4L9zZEY+rQxB9ITG04ZDLBdWQb5qBbYr27vJPGe/wb74Ju9Ij9vG70
-         JlcN956rCgwHlMbC/U1KXRhhNi9PIoW4a7IZN7jcklTXtpQuBBv1DaAq2DEmU9rxVPzR
-         7s6A==
-X-Forwarded-Encrypted: i=1; AJvYcCWaISpZevUzj+GRgfcBV545AMOwA32AKifFnLiSytqhfoIKV8kUJDWXg9vMtRNgLs3fyrNVq8lOciUkLPAsUEI+0FVNgiqE2LiPIm1vZI/UuS9A247sBtUmyBlAVomEovlF0CM9iJsclw==
-X-Gm-Message-State: AOJu0YzUd/W67t1gM6hcWeVmo+Rp1d//VL3tLTzJY/WJAjO0jIu91wo/
-	xcK0Pimxi8aKxDy09pqCyf7icRaegkFhUmtSQdHAOK3aCGsrF1RR
-X-Google-Smtp-Source: AGHT+IHbd96Fl/zaLJfz/U+3GNERR5Bvjwmw+1PyosVep26jKEoIa97jasJAI8d0Oe3YSe7eMNjctA==
-X-Received: by 2002:a17:903:188:b0:1fa:9ea1:bc7a with SMTP id d9443c01a7336-1fadb4d9067mr110159615ad.34.1719920570111;
-        Tue, 02 Jul 2024 04:42:50 -0700 (PDT)
-Received: from [10.0.2.15] (KD106167171201.ppp-bb.dion.ne.jp. [106.167.171.201])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac11d8cbbsm81914625ad.106.2024.07.02.04.42.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jul 2024 04:42:49 -0700 (PDT)
-Message-ID: <5866a20e-4b36-4eb9-b589-8135f86ceb6a@gmail.com>
-Date: Tue, 2 Jul 2024 20:42:44 +0900
+	s=arc-20240116; t=1719920585; c=relaxed/simple;
+	bh=kZbEaEyz/Tkk/PxXhmha720XfMtQAhLTk94HlDe6p1M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EMIh2PJ9cZehjEZt6X46fpsfVs9nalURiqHK4waZixNfsqvK/6Wofz9OwHwfp1ARbXL9kGjKTZc8fj23Y8rB9saNvJ55p62uv8f9nyW+Ep8VhE/ZsHBrwVD8vUr5OOxWiLEusHEfrZVhCOKliOM51FyNgJeZPkLfs5Aenu6wzMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K9Zpd8rB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94589C116B1;
+	Tue,  2 Jul 2024 11:43:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719920585;
+	bh=kZbEaEyz/Tkk/PxXhmha720XfMtQAhLTk94HlDe6p1M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=K9Zpd8rBy888J6P40DsGoLbMZH+oAjTn24zwR9iNac+cPX9X787bjLnwpAVZbg0Ab
+	 frgqJ1QnDIMZWAQWzRU6+mhNUaX1PG5YXHI1eJ9vkJRYE43U3Jqtwc9Y7hq2/zRKcq
+	 9CcI2QBQ8pUV9qcCW7gDtHCP05m+ks6w85tJFdw6V40DWDrp7tihEruUrxu9+7tS1T
+	 K5ZOi0XJPAyGNeDeycEdwJYZLpMPbVGRsdcP+BivEL4+rplJRmTiQfgNHGiYtLAJ4+
+	 WgPKyhkYc7izyTmya215lA7VQrTi9F9JdpUXrPgzuzdSe/vud9SI8jX89cLwlQEpyH
+	 n+xxIJT620XRA==
+Date: Tue, 2 Jul 2024 13:43:01 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/mipi-dsi: Fix devm unregister & detach
+Message-ID: <20240702-bold-exotic-mamba-fdbba4@houat>
+References: <20240619-dsi-devres-fix-v1-1-a5c59310a52e@ideasonboard.com>
+ <20240626-gabby-ladybug-of-freedom-08e6eb@houat>
+ <66ab4206-d1c8-4aad-99a7-c4c316e343a9@ideasonboard.com>
+ <20240626-warping-nondescript-mustang-bfce27@houat>
+ <b7cf71b8-76fd-4638-a7b6-cc8dbae635bf@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: "Paul E. McKenney" <paulmck@kernel.org>, Will Deacon <will@kernel.org>
-Cc: Alan Stern <stern@rowland.harvard.edu>,
- Andrea Parri <parri.andrea@gmail.com>, Peter Zijlstra
- <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>,
- Nicholas Piggin <npiggin@gmail.com>, David Howells <dhowells@redhat.com>,
- Jade Alglave <j.alglave@ucl.ac.uk>, Luc Maranget <luc.maranget@inria.fr>,
- Daniel Lustig <dlustig@nvidia.com>, Joel Fernandes <joel@joelfernandes.org>,
- linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- Akira Yokosawa <akiyks@gmail.com>
-From: Akira Yokosawa <akiyks@gmail.com>
-Subject: [PATCH lkmm] docs/memory-barriers.txt: Remove left-over references to
- "CACHE COHERENCY"
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="omhmpq3yr25sgkgg"
+Content-Disposition: inline
+In-Reply-To: <b7cf71b8-76fd-4638-a7b6-cc8dbae635bf@ideasonboard.com>
 
-Commit 8ca924aeb4f2 ("Documentation/barriers: Remove references to
-[smp_]read_barrier_depends()") removed the entire section of "CACHE
-COHERENCY", without getting rid of its traces.
 
-Remove them.
+--omhmpq3yr25sgkgg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Akira Yokosawa <akiyks@gmail.com>
-Cc: Will Deacon <will@kernel.org>
----
- Documentation/memory-barriers.txt | 3 ---
- 1 file changed, 3 deletions(-)
+Hi Tomi,
 
-diff --git a/Documentation/memory-barriers.txt b/Documentation/memory-barriers.txt
-index 4202174a6262..93d58d9a428b 100644
---- a/Documentation/memory-barriers.txt
-+++ b/Documentation/memory-barriers.txt
-@@ -88,7 +88,6 @@ CONTENTS
- 
-  (*) The effects of the cpu cache.
- 
--     - Cache coherency.
-      - Cache coherency vs DMA.
-      - Cache coherency vs MMIO.
- 
-@@ -677,8 +676,6 @@ include/linux/rcupdate.h.  This permits the current target of an RCU'd
- pointer to be replaced with a new modified target, without the replacement
- target appearing to be incompletely initialised.
- 
--See also the subsection on "Cache Coherency" for a more thorough example.
--
- 
- CONTROL DEPENDENCIES
- --------------------
+On Wed, Jun 26, 2024 at 06:53:40PM GMT, Tomi Valkeinen wrote:
+> On 26/06/2024 18:07, Maxime Ripard wrote:
+> > On Wed, Jun 26, 2024 at 12:55:39PM GMT, Tomi Valkeinen wrote:
+> > > On 26/06/2024 11:49, Maxime Ripard wrote:
+> > > > Hi,
+> > > >=20
+> > > > On Wed, Jun 19, 2024 at 12:07:48PM GMT, Tomi Valkeinen wrote:
+> > > > > From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> > > > >=20
+> > > > > When a bridge driver uses devm_mipi_dsi_device_register_full() or
+> > > > > devm_mipi_dsi_attach(), the resource management is moved to devre=
+s,
+> > > > > which releases the resource automatically when the bridge driver =
+is
+> > > > > unbound.
+> > > > >=20
+> > > > > However, if the DSI host goes away first, the host unregistration=
+ code
+> > > > > will automatically detach and unregister any DSI peripherals, wit=
+hout
+> > > > > notifying the devres about it. So when the bridge driver later is
+> > > > > unbound, the resources are released a second time, leading to cra=
+sh.
+> > > >=20
+> > > > That's super surprising. mipi_dsi_device_unregister calls
+> > > > device_unregister, which calls device_del, which in turn calls
+> > > > devres_release_all.
+> > >=20
+> > > Hmm, right.
+> > >=20
+> > > > If that doesn't work like that, then it's what needs to be fixed, a=
+nd
+> > > > not worked around in the MIPI-DSI bus.
+> > >=20
+> > > Well, something causes a crash for both the device register/unregiste=
+r case
+> > > and the attach/detach case, and the call stacks and debug prints show=
+ed a
+> > > double unregister/detach...
+> > >=20
+> > > I need to dig up the board and check again why the devres_release_all=
+() in
+> > > device_del() doesn't solve this. But I can probably only get back to =
+this in
+> > > August, so it's perhaps best to ignore this patch for now.
+> > >=20
+> > > However, the attach/detach case is still valid? I see no devres calls=
+ in the
+> > > detach paths.
+> >=20
+> > I'm not sure what you mean by the attach/detach case. Do you expect
+> > device resources allocated in attach to be freed when detach run?
+>=20
+> Ah, never mind, the devres_release_all() would of course deal with that t=
+oo.
+>=20
+> However, I just realized/remembered why it crashes.
+>=20
+> devm_mipi_dsi_device_register_full() and devm_mipi_dsi_attach() are given=
+ a
+> device which is used for the devres. This device is probably always the
+> bridge device. So when the bridge device goes away, so do those resources.
+>
+> The mipi_dsi_device_unregister() call deals with a DSI device, which was
+> created in devm_mipi_dsi_device_register_full(). Unregistering that DSI
+> device, which does happen when the DSI host is removed, does not affect t=
+he
+> devres of the bridge.
+>=20
+> So, unloading the DSI host driver causes mipi_dsi_device_unregister() and
+> mipi_dsi_detach() to be called (as part of mipi_dsi_host_unregister()), a=
+nd
+> unloading the bridge driver causes them to be called again via devres.
 
-base-commit: 7579cedf8efed9a05b2537f4c276571e4753a907
--- 
-2.34.1
+Sorry, that's one of the things I don't quite get. Both functions are
+exclusively(?) called from I2C bridges, so the device passed there
+should be a i2c_client instance, and thus the MIPI-DSI host going away
+will not remove those i2c devices, only the MIPI-DSI ones, right?
 
+So if we remove the host, the MIPI-DSI device will be detached and
+removed through the path you were explaing with the i2c client lingering
+around. And if we remove the I2C device, then devm will kick in and will
+detach and remove the MIPI-DSI device.
+
+Or is it the other way around? That if you remove the host, the device
+is properly detached and removed, but there's still the devm actions
+lingering around in the i2c device with pointers to the mipi_dsi_device
+that was first created, but since destroyed?
+
+And thus, if the i2c device ever goes away, we get a use-after-free?
+
+Maxime
+
+--omhmpq3yr25sgkgg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZoPnxAAKCRDj7w1vZxhR
+xecNAP4p0hrtaR5VpAUxQh77du2w/99QitTXda5ESBUZ/tsx+wD/WpaxG/OtwRDC
+qdChDyLJT14nu3fq+raaofJXdkiFYwI=
+=C7to
+-----END PGP SIGNATURE-----
+
+--omhmpq3yr25sgkgg--
 
