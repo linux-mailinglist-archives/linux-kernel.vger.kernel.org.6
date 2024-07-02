@@ -1,99 +1,152 @@
-Return-Path: <linux-kernel+bounces-238032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2336924265
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:29:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5869B924268
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:30:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DD821F24FBE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:29:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07C051F255D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8727C1BD011;
-	Tue,  2 Jul 2024 15:29:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A451BC07D;
+	Tue,  2 Jul 2024 15:29:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M/ooLIxR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e8n+dS+o"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E291BC09A;
-	Tue,  2 Jul 2024 15:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4BF81BB6B4;
+	Tue,  2 Jul 2024 15:29:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719934166; cv=none; b=d9XyjG5vxdgt7bUG/HanJAk3FZGq/cC1LQORIx+WI10zbudUteQc/FhHtpCZfh8bb/6ITalNpytPvxTL59+W+rSNpPTiEea5S8V134cLbKBeBR25HrEG4J9eSPZQjiumoN3dHa4mSZfYC30cPdzwPbZ1abMowBIMdty+RFRDruY=
+	t=1719934176; cv=none; b=iBHQlhKuXuE1fQghCP7XP3h24UYa0yShByzU5jIo5t+Fm2sy6bcbgmhAyORGRPzikbrkOz88yiXsHayyO6rPFTSdFmdGltNIuis2P6eMyuetuUcQB3zKigwVgeGnG5ulIgoXcwc4a0zrLNOPDbMDlWfvPPGI3AM/w4uv3HUxf+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719934166; c=relaxed/simple;
-	bh=9TcP9iOfSfJuc2qAGzbKkXqdTM5BVUPMB45+Ia4mwtA=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=sQayjzzASb92nNRnDPWv7Puw3yEaJ/+bw7MqCLVhP8Au4ycvBQJJ4Rmlpe4pNBi+nnUMcPuX9S0Hl02EMKD54PCwxLi4V4iDufy8Nu20uYxjzTrIXLyErYYhO5yApsnD+cKzqIm50JSMLr0MYFFtbHJJJsvfLcprUabmhInKezM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M/ooLIxR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E27EBC4AF10;
-	Tue,  2 Jul 2024 15:29:21 +0000 (UTC)
+	s=arc-20240116; t=1719934176; c=relaxed/simple;
+	bh=tB3pc/GAEvExlW3al+soe/qOIG4PU/9soU281deCYgE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QW/VP0swEQLK5eBno0lQdqlgNg5/ScrIggMBaKpSr9K2aZiuSsYx/qpbh+Yoi3v9eZi4FWLh/oUjW2JWu1haaiJRzF9YgwNT3/DTkctIHeOVxDa+sPpbEWXAU5IIcZjR9mhI38sp9Qdvp4AK6rtv4/xZHb7mE8dJtUo3noqjHpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e8n+dS+o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67091C116B1;
+	Tue,  2 Jul 2024 15:29:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719934166;
-	bh=9TcP9iOfSfJuc2qAGzbKkXqdTM5BVUPMB45+Ia4mwtA=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=M/ooLIxRWwnd1eiHpmdjJxyVlpmoqsTjAgFLlU93F/HURPUrA8epEG9GKojMkVx0J
-	 8wdx1aC7wgQL0poXAvl7IfskYMxRCHo60nFgbbpfl49EyQ9onD6XFn780iDpDITU0s
-	 ERbGFNuC4b5Dk5lfdqDShWXDo+FixAUM8exQ0ORPAiLYqRdTefiTsObJ0f00FK12y7
-	 gd7ZRGfnuRDfDdnl7Vb59ZR02i+QTcvC48KOmukRkDyc5ePldLRSyPCxTC8JUCwbG3
-	 EocbB4k+1nAZl7KvZwLFm5cKT/bHdxU/q2EORvg45x370FlVbjnMd8uIkdwXlcxUwh
-	 qSecZMXXSyGlQ==
-From: Kalle Valo <kvalo@kernel.org>
-To: Arend Van Spriel <arend.vanspriel@broadcom.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,  Su Hui <suhui@nfschina.com>,
-  <johannes.berg@intel.com>,  <kees@kernel.org>,  <a@bayrepo.ru>,
-  <marcan@marcan.st>,  <quic_alokad@quicinc.com>,  <zyytlz.wz@163.com>,
-  <petr.tesarik.ext@huawei.com>,  <duoming@zju.edu.cn>,
-  <colin.i.king@gmail.com>,  <frankyl@broadcom.com>,
-  <meuleman@broadcom.com>,  <phaber@broadcom.com>,
-  <linville@tuxdriver.com>,  <linux-wireless@vger.kernel.org>,
-  <brcm80211@lists.linux.dev>,  <brcm80211-dev-list.pdl@broadcom.com>,
-  <linux-kernel@vger.kernel.org>,  <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH wireless 1/9]  wifi: cfg80211: avoid garbage value of
- 'io_type' in  brcmf_cfg80211_attach()
-References: <20240702122450.2213833-1-suhui@nfschina.com>
-	<20240702122450.2213833-2-suhui@nfschina.com>
-	<ba67020a-04bb-46b8-bc05-751684f71e8a@suswa.mountain>
-	<19073fcc9e8.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
-Date: Tue, 02 Jul 2024 18:29:20 +0300
-In-Reply-To: <19073fcc9e8.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
-	(Arend Van Spriel's message of "Tue, 02 Jul 2024 17:07:45 +0200")
-Message-ID: <878qyjg6cv.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=k20201202; t=1719934176;
+	bh=tB3pc/GAEvExlW3al+soe/qOIG4PU/9soU281deCYgE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e8n+dS+oHa2z7pxgVBzNhdKTkPa5wrUvYMtvSGiaaQbvpz0McLvy7mnvbF7TYToo5
+	 GYDF0sb9ksSQLEJhV7d5oylcM3+MxXOlUQoD5IOPCRzZFCqTHcJz8a/UMl8Dbpbwz/
+	 szUQWxkis/TVAHS2DBEcbW4XAGIJ9dKJ8E0R3JacpCL9ciQrKm7WCRLCySUtwQa0kx
+	 Vir18XosmWJWf/Y1d/t3Pb7Nr8lV5i95LWXYfXLp35pSdS4pTFXiBbz+dKZ/uPLxzA
+	 cEdw/7x5d1ex3tS0DS7tEChHw5xpd3Y0O+e3hR0eQXUpdwGIwJAmbvAl8DXpsbjBLg
+	 9VYeRDPaWXrug==
+Date: Tue, 2 Jul 2024 16:29:31 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Kim Seer Paller <kimseer.paller@analog.com>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Dimitri Fedrau <dima.fedrau@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+Subject: Re: [PATCH v5 3/6] dt-bindings: iio: dac: Generalize DAC common
+ properties
+Message-ID: <20240702-candied-heroism-beb1d66ca352@spud>
+References: <20240702030025.57078-1-kimseer.paller@analog.com>
+ <20240702030025.57078-4-kimseer.paller@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="0XHM1JO8Q9wH9n7D"
+Content-Disposition: inline
+In-Reply-To: <20240702030025.57078-4-kimseer.paller@analog.com>
 
-Arend Van Spriel <arend.vanspriel@broadcom.com> writes:
 
-> On July 2, 2024 3:57:27 PM Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
->> On Tue, Jul 02, 2024 at 08:24:44PM +0800, Su Hui wrote:
->>> brcmf_fil_cmd_int_get() reads the value of 'io_type' and passes it to
->>> brcmf_fil_cmd_data_get(). Initialize 'io_type' to avoid garbage value.
->>
->> Since you're going to be resending anyway, please delete the space char
->> from the start of the line.
->>
->> It's weird that brcmf_fil_cmd_data_get() uses the uninitialized data.
->> It looks like it just goes to great lengths to preserve the original
->> data in io_type...  So it likely is harmless enough but still a strange
->> and complicated way write a no-op.
->
-> Not sure if it helps, but I tried to explain the reason in response to
-> patch 0 (cover letter).
+--0XHM1JO8Q9wH9n7D
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Would it make more sense to have just one patch? It's the same issue
-anyway.
+On Tue, Jul 02, 2024 at 11:00:22AM +0800, Kim Seer Paller wrote:
+> Introduce a generalized DAC binding that can be used by DACs that have
+> similar properties adding output-range-microamp and output-range-microvol=
+t.
+>=20
+> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
+> ---
+>  .../devicetree/bindings/iio/dac/dac.yaml      | 50 +++++++++++++++++++
+>  1 file changed, 50 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/dac/dac.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/dac/dac.yaml b/Documen=
+tation/devicetree/bindings/iio/dac/dac.yaml
+> new file mode 100644
+> index 000000000000..579f52ea6eb1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/dac/dac.yaml
+> @@ -0,0 +1,50 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/dac/dac.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: IIO Common Properties for DAC Channels
+> +
+> +maintainers:
+> +  - Jonathan Cameron <jic23@kernel.org>
+> +
+> +description:
+> +  A few properties are defined in a common way DAC channels.
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+"for DAC channels"
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+> +anyOf:
+> +  - oneOf:
+> +      - required:
+> +          - reg
+> +          - output-range-microamp
+> +      - required:
+> +          - reg
+> +          - output-range-microvolt
+> +  - required:
+> +      - reg
+
+Can't this be more simply written as
+
+oneOf:
+  - required:
+      - output-range-microamp
+  - required:
+      - output-range-microvolt
+
+required:
+ - reg
+
+ ?
+
+ Cheers,
+ Conor.
+
+--0XHM1JO8Q9wH9n7D
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoQc2wAKCRB4tDGHoIJi
+0gfHAQCLkMry3ePbCRVKB11k/ubc1q67WUShFIzn4Iu8YdBEjQD+KPITnMek9oRM
+wwGqlBL2irq2mCFiq+x0CFHNs4kcrQ8=
+=TEFP
+-----END PGP SIGNATURE-----
+
+--0XHM1JO8Q9wH9n7D--
 
