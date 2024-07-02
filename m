@@ -1,134 +1,110 @@
-Return-Path: <linux-kernel+bounces-237948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B39B1924103
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:35:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 528BA924135
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:46:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7586F282F2D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:35:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09FDC286C76
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:46:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32131BA085;
-	Tue,  2 Jul 2024 14:35:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB151BC07E;
+	Tue,  2 Jul 2024 14:44:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="FtlD4jZv"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="XTFvY3cO"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317CE1E50F;
-	Tue,  2 Jul 2024 14:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB3D11BA891;
+	Tue,  2 Jul 2024 14:44:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719930949; cv=none; b=IUIQR8wr+d8EhzCl4SCNmO2yO4rgVH4o1fl+qeix6xBRS0DwJrDPub22xB2E3sxxjooLFwuFAa1ke6kjVtY9Om3my8LMEd/S+896H6WMUEdBIFYpI0l1aRJuZjJZpD3p7wvD4mWwwGmlpgBekV9jM1SO205+0PolDf8+1ORuF8M=
+	t=1719931499; cv=none; b=plXv+f0Bb/Ei0RbjItVIfe+yLqdqT3fyNuHlhmueadEEZd8WyddunXH01C1XrOkl/TKLeRJJdHzI61jW0sa2Xe3bphwQcCzp/9b6VjdqN/9hzxcdwsEEcsOOVNRQPm3InnIcgWzweYDJKG1t4OsB/hr20yZSD6BlGD39VE2vUTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719930949; c=relaxed/simple;
-	bh=WX5kDqC4tJpN29x0TQP8aggg4HMYizhSJ7+/HkfdHwk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZJeNTn7EwWJRvyfo8mqnx/lMVPXiEhpQYwbsOQ5i82A4k1q9lYoC6xQMP1LufjHHCKPQVcTMLseoF1Rz0k6ECafmD8RSiljr3p7tkJPsj453cpoh0Y7f3s6Nmx0nZ0ccuDVXD5YqgSS7QbnEVLGo8cXK/SQ8gAP1PbNehMCCe9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=FtlD4jZv; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1719930944;
-	bh=WX5kDqC4tJpN29x0TQP8aggg4HMYizhSJ7+/HkfdHwk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FtlD4jZvXq217zYnd/L5G9ScVzmrDJTpOBnDM4WKRtXaeZ9tAAh42XBiudMdP+L6c
-	 v3PrjxkCa6qkpji5bCsYuot8IdJyhOtPSIsvhgK6HIJr3rx4uumJ1chLTH7RQWqofW
-	 YzeBtYcJ6wfsiLTXLjyfZ9LX8jo5z86HBCJwUEsxezJl0wNH/fYxX7aASSdDvhHPWM
-	 2byCcOOcQFPQShT4crZ7sMBqIABOjFHAG9HkKugXsJN3sUTHQs3+bE3VVD1/OXP2pA
-	 FvOWqhfi6EnnN2fkB8OA995ejiSM+J7tv8fVqUkOiQiIgpGBihmBRkODHR83QkNUJ8
-	 WzmdQKdJlItdA==
-Received: from [172.16.0.134] (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4WD5745522z17vy;
-	Tue,  2 Jul 2024 10:35:44 -0400 (EDT)
-Message-ID: <9a9c8ea4-8e17-4e7e-95fe-7b51441a228c@efficios.com>
-Date: Tue, 2 Jul 2024 10:36:03 -0400
+	s=arc-20240116; t=1719931499; c=relaxed/simple;
+	bh=S3PKQPHsAPjo5DeUHZE8ZPmG8NV78qHKXTn8IeASt+s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XQDzaD1RTc0XbONRghCyQF5ZhAzHFQXeeNF6d7DvVGAXUtD701QF+Oe7SWUoXhpSwLDbFZuXWLVibMc+nhanG5GsPOzmkRCSqn4hbixVUwLLn40/7Ra/P+eNI3jTGQqtQZwKGtdfmozMCfZHwwyT66dhGkF2G3zYQE5BJJzHSeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=XTFvY3cO reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 66157746b08292f7; Tue, 2 Jul 2024 16:44:48 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id B2DD6A562AE;
+	Tue,  2 Jul 2024 16:44:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1719931488;
+	bh=S3PKQPHsAPjo5DeUHZE8ZPmG8NV78qHKXTn8IeASt+s=;
+	h=From:To:Cc:Subject:Date;
+	b=XTFvY3cOw4kj8LLvbHa3rryOAFzdA9M+UHiBdgmUrn89LH5ZFX7WpSoeNX08p0nVn
+	 hPn1CKbDahVmMXoanNg5d3VPXk1j+dALUU7i9MlbQ9pjXr10/10E9N6w1KSWAvsGsD
+	 TKNSfXnrED1DdMAFm73qAGIkI2RML1s+rKw+LgK5HTenvpL7vO1RDGBwK+MkIEm9ey
+	 JU+xUBPGv9l7vyWc0L5JwXe68QVqO4sFQPzUSjbn7lWaGm/5fGqKoGmK23ox1JI3s/
+	 MxsEqGm1KCtFYI0pSmguIX6U/wiXEwSjjbHp1FXKHoyD8xtTSlOlARgCbN+KAzBFfR
+	 0GuWxKQEG3dUA==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Zhang Rui <rui.zhang@intel.com>, Shawn Guo <shawnguo@kernel.org>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Thara Gopinath <thara.gopinath@gmail.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-wireless@vger.kernel.org,
+ linux-tegra@vger.kernel.org
+Subject:
+ [RESEND][PATCH v1 0/5] thermal: Pass trip pointer to .set_trip_temp()
+ callback
+Date: Tue, 02 Jul 2024 16:37:52 +0200
+Message-ID: <1890956.tdWV9SEqCh@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v23 3/5] tracing: Allow user-space mapping of the
- ring-buffer
-To: Steven Rostedt <rostedt@goodmis.org>, "Dmitry V. Levin" <ldv@strace.io>
-Cc: Vincent Donnefort <vdonnefort@google.com>, mhiramat@kernel.org,
- kernel-team@android.com, rdunlap@infradead.org, rppt@kernel.org,
- david@redhat.com, linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
- Linus Torvalds <torvalds@linux-foundation.org>
-References: <20240510140435.3550353-1-vdonnefort@google.com>
- <20240510140435.3550353-4-vdonnefort@google.com>
- <20240630105322.GA17573@altlinux.org>
- <20240630084053.0b506916@rorschach.local.home>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20240630084053.0b506916@rorschach.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrudehgdejjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeegfffhudejlefhtdegffekteduhfethffhieettefhkeevgfdvgfefieekiefgheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepudegpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhr
+ tghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehsrhhinhhivhgrshdrphgrnhgurhhuvhgruggrsehlihhnuhigrdhinhhtvghlrdgtohhm
+X-DCC--Metrics: v370.home.net.pl 1024; Body=14 Fuz1=14 Fuz2=14
 
-On 2024-06-30 08:40, Steven Rostedt wrote:
-> On Sun, 30 Jun 2024 13:53:23 +0300
-> "Dmitry V. Levin" <ldv@strace.io> wrote:
-> 
->> On Fri, May 10, 2024 at 03:04:32PM +0100, Vincent Donnefort wrote:
->> [...]
->>> diff --git a/include/uapi/linux/trace_mmap.h b/include/uapi/linux/trace_mmap.h
->>> index b682e9925539..bd1066754220 100644
->>> --- a/include/uapi/linux/trace_mmap.h
->>> +++ b/include/uapi/linux/trace_mmap.h
->>> @@ -43,4 +43,6 @@ struct trace_buffer_meta {
->>>   	__u64	Reserved2;
->>>   };
->>>   
->>> +#define TRACE_MMAP_IOCTL_GET_READER		_IO('T', 0x1)
->>> +
->>
->> I'm sorry but among all the numbers this one was probably the least
->> fortunate choice because it collides with TCGETS on most of architectures.
-> 
-> Hmm, that is unfortunate.
-> 
->>
->> For example, this is how strace output would look like when
->> TRACE_MMAP_IOCTL_GET_READER support is added:
->>
->> $ strace -e ioctl stty
->> ioctl(0, TCGETS or TRACE_MMAP_IOCTL_GET_READER, {c_iflag=ICRNL|IXON, c_oflag=NL0|CR0|TAB0|BS0|VT0|FF0|OPOST|ONLCR, c_cflag=B38400|CS8|CREAD, c_lflag=ISIG|ICANON|ECHO|ECHOE|ECHOK|IEXTEN|ECHOCTL|ECHOKE, ...}) = 0
->>
->> Even though ioctl numbers are inherently not unique, TCGETS is
->> a very traditional one, so it would be great if you could change
->> TRACE_MMAP_IOCTL_GET_READER to avoid this collision.
->>
->> Given that _IO('T', 0x1) is _IOC(_IOC_NONE, 'T', 0x1, 0),
->> something like _IOC(_IOC_NONE, 'T', 0x1, 0x1) should be OK.
-> 
-> Well, it may not be too late to update this as it hasn't been
-> officially released in 6.10 yet. It's still only in the -rc and the
-> library doesn't rely on this yet (I've been holding off until 6.10 was
-> officially released before releasing the library that uses it).
-> 
-> I can send a patch this week to update it. Or feel free to send a patch
-> yourself.
+Hi Everyone,
 
-You need to reserve an unused ioctl Code and Seq# range within:
+This is a partial resend of the patch series at
 
-Documentation/userspace-api/ioctl/ioctl-number.rst
+https://lore.kernel.org/linux-pm/8409966.T7Z3S40VBb@kreacher/
 
-Otherwise this duplicate will confuse all system call instrumentation
-tooling.
+that has not received much attention.
 
-Thanks,
+However, I would like to get at least some of it into 6.11 and we are
+effectively 2 weeks away from the merge window.  I'd need to put them
+into linux-next this week so they received at least some coverage there.
 
-Mathieu
+Since the majority of the original series is mostly unrelated changes in
+different drivers which can wait, this is a smaller set of 5 patches
+including the most significant change of the driver interface, which
+to pass a trip pointer to the .set_trip_temp() zone callback.
+
+Two of the other 4 patches are preparatory and the other 2 are cleanups,
+one in the imx driver and one in the core, where the former is needed to
+unlock the latter.
+
+This series is based on the current thermal branch in linux-pm.git.
+
+Thanks!
 
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
 
 
