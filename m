@@ -1,337 +1,337 @@
-Return-Path: <linux-kernel+bounces-237841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96F7F923EDA
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:25:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66FF2923ECE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:21:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB6161C22329
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:25:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0507B2515F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:21:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F621B47D0;
-	Tue,  2 Jul 2024 13:25:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF151B4C5D;
+	Tue,  2 Jul 2024 13:21:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EM2vpMSV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U6W9oWqF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50FAF19AD86;
-	Tue,  2 Jul 2024 13:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719926708; cv=none; b=c24TMXyLEEDNxFE8UaJoTM/CpC9zip6PyiQ7E96xzu6yOSXoT6ux1TAzXEI6pwBv1CLwWbDqxeTEe6dD04Ge+MZySEcz5iiFNy2yEAUHDCajt7RRa3wJzCmPfsjJR9MRNvvf8RRCzU8FQNRpz62ww2dkfRfiGxwpDC5qtMMe0l8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719926708; c=relaxed/simple;
-	bh=XjTXfbCIQa36KxnEEDVA+79Iy+FVRaew9MxgzaZrNtk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BKBp5F2UMcH7rpSQzgmEus5OQEWlDUDtzqo1njLJVb/S/ZGU3mmJaGlzkNiGQ3LeggcLv2HCN6bkD8WZOz/ojdKSQSMZf/uwJORAWZiB5YKjTpq5IKt/gpXPDzMhLzGrNM7yniqdJeCu99O7H1eUgdashY8bF2Ou0cIy7J0agcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EM2vpMSV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48C92C116B1;
-	Tue,  2 Jul 2024 13:25:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719926707;
-	bh=XjTXfbCIQa36KxnEEDVA+79Iy+FVRaew9MxgzaZrNtk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EM2vpMSV2xc/Ui/s6I2JoLMw6Ds1fRhwJIKAyvESfSAY39QHKIP3oQ1FBMDZVBgaY
-	 A3ZxoBQUvrdPT+cAmx4KpgUyagAFmm6NZVKie4xtDvTnnTHU+vkCgHUpWFlfQH428X
-	 GMjTYM6yGERdRrDRxz0nkjX8kPLWvU7+RIpvu9NDrssP34XTVJ0r5CLG3AfK+4fgY/
-	 1R5oDTcLB6zpgeutF+iOsp+yLYY2wxgPo8iRW0YYeuDwMNPEHngQ49nO+AzBphHaS6
-	 k49poiv9D33hvuCpMEecqEogN+rGxjUJyqE3CUpev+NJMUl5g8IXtgpVyUKr5h3xPj
-	 g3APSbpiQKoug==
-Date: Tue, 2 Jul 2024 15:25:04 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Sandor Yu <Sandor.yu@nxp.com>
-Cc: dmitry.baryshkov@linaro.org, andrzej.hajda@intel.com, 
-	neil.armstrong@linaro.org, Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, 
-	jernej.skrabec@gmail.com, airlied@gmail.com, daniel@ffwll.ch, robh+dt@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com, 
-	vkoul@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
-	kernel@pengutronix.de, linux-imx@nxp.com, oliver.brown@nxp.com, 
-	alexander.stein@ew.tq-group.com, sam@ravnborg.org
-Subject: Re: [PATCH v16 4/8] drm: bridge: Cadence: Add MHDP8501 DP/HDMI driver
-Message-ID: <20240702-quartz-salamander-of-culture-eec264@houat>
-References: <cover.1719903904.git.Sandor.yu@nxp.com>
- <359914108b879e995d4a39de32a33310009f0fab.1719903904.git.Sandor.yu@nxp.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5735E1B4C44
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 13:21:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719926492; cv=fail; b=Q9cXv6koJaacvVdH5BI6U7vu5J4e8s+dPZt05QLGaPXSEcyvegSuruUl00p5vn08/5O4ItB2MD/5r10qSuGDhJno60KDapA62O55CewolnY6A/XSFdXhEIYk0V5hdCvrLLG6yzggc5CcCx6RFGb8+c7E9ffmybFU5fv9/SL9aW8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719926492; c=relaxed/simple;
+	bh=Bor3Dk8i5sozNpwgWHCf88vARoa23jjdyekL6DkasoY=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Zvob6d9aWes0RuPugVdSurhz0EwbA3bmT25ToSg4OBXki8fpzpX9ifVeGaDK06dWyERPM3pvOZJ6qc0eXIEaJrgK2xL6F4uV0GQbRwitVVofC0w9TQRlJxZcQuokL1017WdqW9Zt7lSeyU+eFmmqAK87D3JrisI4dbZ6RkmWpnM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U6W9oWqF; arc=fail smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719926490; x=1751462490;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=Bor3Dk8i5sozNpwgWHCf88vARoa23jjdyekL6DkasoY=;
+  b=U6W9oWqFV3MghUagoLaZdgVVOJy1XnVuKwoyANQEOH0TOhZdVpK2wwyA
+   V/j79TfL+cQqi1nAgCeoZv5CKolg5yyDEUwbkbuYm0s/LQ/T/fbHwUVhS
+   27D0sJObU2zy9SgaPDcaHl92sAlK8KgY2TWxwBiwhJq5lJEllrp3aL80F
+   9/ZqaSLW4QjL2bav/8vWrLmm08dSd9BhqhzEklQVyfiKZL52xJhwE1UBv
+   k2mO3LHTyIMlxnIywComw3sBR+lPF6WOCXPSgZ33EYsNpWR9iNi7M2OWk
+   9Qwnz4p1lkf1OFJI9iUnpP8kmTpqesXPRcr/kg+sL+mq3pKCG+nDXjS6u
+   g==;
+X-CSE-ConnectionGUID: d7R0rrtYRGyyjcTozvcy5A==
+X-CSE-MsgGUID: HcBkeUZkRhuwbMnYoT+wbA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="12357427"
+X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
+   d="scan'208";a="12357427"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2024 06:21:29 -0700
+X-CSE-ConnectionGUID: T8FbgESnT9622M1eL6tdRA==
+X-CSE-MsgGUID: 7YzqY/foSHSg3hcdXt/nVA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
+   d="scan'208";a="76628004"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by orviesa002.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 02 Jul 2024 06:21:29 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 2 Jul 2024 06:21:28 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 2 Jul 2024 06:21:28 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 2 Jul 2024 06:21:28 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.174)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 2 Jul 2024 06:21:28 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ctc763zUFnEa4om4tIFhJSlXZXcQ9n9au5QEapboN6AwaBqaymPG0Xzf4H0xL4ttcgUaJCYT2wQl1wP8k0q+Oh0ke4f9HGU7KSrXLMBoAx+RyfQzuG5koNMT0OMbS/UduuSgWOp4g62P/K9ldYuC60uWkR76XfQAgJ/R3glth476dKsOBaosz5NVRjeglJE/NA34eNJGfjG80FgY9ieM+C/4TTWFNpCENQkTE9kiGAz7H5sqCysZKUhTlzjaEvzJvrsQjo0NGpg2fTR2OlU4CdS9zFwsFe4c1bf2PEem2IigeUJO6oTZ348dxLGlhQlKIMUzQFwN6nnV68eo9nFuOw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cz4bdVftIeQZUHS/GyAi2myNuOxJ0nnZ2FIX5Ly8hD8=;
+ b=Us6V3s7FWpSRxxlWDE1FXquPHKySaofBAKATHne7sJko1t/g7pS2JLBX9peeL8Jw0/DVhjObVINTkmag8krruV+SinJq8HOsj6QSc+erc0AL+jJUDkBvXM+XENyiiNx79kKBzFRaHTQtTnVcL5xc7K3DcPKF8IjheSq+C7db6Z3sKyJwVa+jy0ylfQdrLz0spxWCFAtMdIUChwQ6C92EpzdWGhVLVQvUnjFE6IPmFLxrbWRvecZf3yZf3gdMAvGVn4SBiPqB6iaXi0IcnIarm88mpECbUVVsgkbOtOCAByuqwDcEa24utRhJiEy6KvsrcTyt+KYKP1355ZDSXXDRBw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7529.namprd11.prod.outlook.com (2603:10b6:8:141::20)
+ by CYXPR11MB8711.namprd11.prod.outlook.com (2603:10b6:930:d7::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.23; Tue, 2 Jul
+ 2024 13:21:26 +0000
+Received: from DS0PR11MB7529.namprd11.prod.outlook.com
+ ([fe80::d244:15cd:1060:941a]) by DS0PR11MB7529.namprd11.prod.outlook.com
+ ([fe80::d244:15cd:1060:941a%3]) with mapi id 15.20.7719.022; Tue, 2 Jul 2024
+ 13:21:26 +0000
+Message-ID: <d6e0ce90-a188-41f4-aaaa-ccbbeb605666@intel.com>
+Date: Tue, 2 Jul 2024 21:25:22 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/7] iommu/vt-d: Add helper to allocate paging domain
+To: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, "Will
+ Deacon" <will@kernel.org>
+CC: Jacob Pan <jacob.jun.pan@linux.intel.com>, <iommu@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>
+References: <20240702130839.108139-1-baolu.lu@linux.intel.com>
+ <20240702130839.108139-6-baolu.lu@linux.intel.com>
+Content-Language: en-US
+From: Yi Liu <yi.l.liu@intel.com>
+In-Reply-To: <20240702130839.108139-6-baolu.lu@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG3P274CA0022.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:be::34)
+ To DS0PR11MB7529.namprd11.prod.outlook.com (2603:10b6:8:141::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lqdlqrw2llhccm2m"
-Content-Disposition: inline
-In-Reply-To: <359914108b879e995d4a39de32a33310009f0fab.1719903904.git.Sandor.yu@nxp.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7529:EE_|CYXPR11MB8711:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5349d084-b5c0-43b5-68e5-08dc9a99e006
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?aGc2S1RPVlBQNE1MUzZRWXlRUmhiZGV3SzdCSHRLdkgzVkUrdVFINEoza1RG?=
+ =?utf-8?B?QmZIcUZFQWppOGJRK0VudkIwdzdabXUwaWpIUkFvU3kya290QlpxdmU3d3Vv?=
+ =?utf-8?B?R0VLOWdNK2JuRkRST2VQZ3B4WmJiYlZNQ0NBSXFyT2NkelgxendqZFU1cUQx?=
+ =?utf-8?B?OE1FZGdQUGxjcXRKaS9XVERZVmcrN3NYR3BQZVZvNlM0NEpwQkkzT0gxek5S?=
+ =?utf-8?B?ZmxIbHp1eWZ2UHJzSVkxb1VzWjhBN240Y1FUTEZ1WTB1ZWthbXNPa09GZVRa?=
+ =?utf-8?B?VndTK1hRYjU5dlc0NXphNEFOSUJEUm5CYTlOWnFEOWlZbVpZUC9FdzlIWUds?=
+ =?utf-8?B?REFqbW96Z3JGcGYzMmVkMmU4d1ZnUkhFMjN5dkUzbEg1Ym1qU1J3c3doU3JE?=
+ =?utf-8?B?UUo2UEhqczIyZ3BuK3lnRS83OGxRVGV0ZWZmNExzUFBMSXJPTXU4QUppRzho?=
+ =?utf-8?B?bFhpLzZZcDRBTVdwejVYdWsrM0hOdEN1WGVYalhnRE9GSVN2VklVWkp3T1hl?=
+ =?utf-8?B?aU02ZXEwUlBONHVzS1FRcTdKL0grcVg5OHIrU1JhNGJLeFdUMFNmYjF1Z1JT?=
+ =?utf-8?B?TlIrL0trVEZqTkhmVXRzNWF2UVNhV1VjNDB6Tm9NeDN5dFJKQXZ5dktaMkdS?=
+ =?utf-8?B?bm14WlZJNVF1OVVkT1QwNDFZMFBKS25yOG0yWEt1UXhEVUZaOG5GUWtLUDBD?=
+ =?utf-8?B?djh4elk2WXE4d1hRRElNbjFlL0d5MWpiMkZyWWpIblkzR0srTGRzLzR4YTlU?=
+ =?utf-8?B?YktpQVAyUzg1Vk9Pd3NjTjRRVEV6YmFNRFA3eWNmVVUrdDBmVVppSS9YcFM4?=
+ =?utf-8?B?SVI4cVMyZDVCc2RlSlpIL0JoQU45ckpZRTdYbmw0Y1lNdzVtS3U0dzBMRXJp?=
+ =?utf-8?B?bmFObHhzeHpoWGlOMk1wR21PRWkzN1p2emZwc2w0U1c4Ny8yQVc0WnRDS0ti?=
+ =?utf-8?B?Zm4zVTRpRDJ6YTF4VmpoT3k4MGNOa3ltOGJrVjNPcUZaNlFBN29VcEtvUHF6?=
+ =?utf-8?B?RzdGTWRnRFFYS1NkNXpPV09yNVUzTlViR0xPdUV4M3BYUWs2cjJXemorNTkv?=
+ =?utf-8?B?TVhLV1A0NXNHR2QwcnBzMzFWQ2tnVGFIdW1MVGhEbklTVlM0QjAyOHNPWGVn?=
+ =?utf-8?B?MGdGRUdwbVkrS2N1Uml6M0RXTFFaSjd6bHgvLytQTnlyS3l1UVI0OUZzcGNR?=
+ =?utf-8?B?NjhseEZ1SkhOK01JdjBpWjkvNk9aRVlyUE1OVGMySDBrNHplTzNkQ2ZyZ1lD?=
+ =?utf-8?B?UHptVjRrNmxkUVZIUndWYTgxMjU5S2ZxcFh4L3N2K1Y4bzUrYlpjd2lxVmtC?=
+ =?utf-8?B?Zkp0dmlEZW5Fa3dhOXhEa0xYUzhJdDR3MUpLbTdZT3pKajdrcDZqVjJIU0tv?=
+ =?utf-8?B?TzJ2MEN2Ukg2NGRBY0lZNW5sL0U0TDVONGdoMTlPdEJUM2MwR0ZVVDJ4MjQr?=
+ =?utf-8?B?VFJOZVlpbDRlaGZJRmwwLzZFVFlaT2lXZGpSTlZVSS94N1cvc2g0ckNKSmYw?=
+ =?utf-8?B?VGQwc0pIMGlhWU9IaUZMUzZVUCtnaEl0Q2UxTjYyd0piTUE3WDBUcVZZekQv?=
+ =?utf-8?B?bmNJaGNMYnFyTit5ZVF5SWw5L3BQeTc0MWtGbjQzVERaUTJ0S0doMm5EOTZR?=
+ =?utf-8?B?a0VuSjhKcDdyWFZzUXVxVnNOSVpRb2VWclpCVmtadUlvMS9jTC9SL0hYODFY?=
+ =?utf-8?B?bzFZYVBqUnpVbGpXcVNGUTJLa1pYdk12UjJUa1Q1bkpRSVQ2MEt0MkVweTRZ?=
+ =?utf-8?Q?m7TNnnGELUphhi8MrE=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB7529.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TUtLQkhQMkxSbnZhbjZmTGU4TDFKOXdRSmRObS9GZHpFbWFheFJsR1NaWmdV?=
+ =?utf-8?B?Q3BtNklZQktQMUtHTk9pTnRIMHROSjR2d0lTdlNFdHgwc3UwQjhhY0thU084?=
+ =?utf-8?B?RFFMdjd1M0RFRzE3eCtCUkh0Qm4xZklkWXlqVytDOVE4YmIrZThQanZEQ1RU?=
+ =?utf-8?B?ejFqZld4SThpSVNzUCtZU3B3WDBGdWZ4cEk0TnUzdkN2ZWRydGJLQmFQWGh4?=
+ =?utf-8?B?eWQ4RVlmUlBQMFdVVzJXMGpaemduWXdRM0I1Z2MyazR0RnFwV3VmMEVBeHRV?=
+ =?utf-8?B?ajFkNUVhMjI3WEZMTGxsR2hub3lsa2RyYVk4dDBVVzJRekdXdUh0b1J1WWtY?=
+ =?utf-8?B?WGdFYStnZmZUamdiYzNOSjdnRHg2Y0ZObG5zTTBIazJBUWJ3T1c2ZU5qejRU?=
+ =?utf-8?B?YWlwako5ekJEUUV1d0pQdmVkL3p0aWxocVNNNnM3cDV0Vk1ha1loeWZhZ3Fj?=
+ =?utf-8?B?dnhzYXZmS1dXRWE3YU1SekJWQUNLS0lCcVI1TzUxaG4veDdXdngyZWpOMmhS?=
+ =?utf-8?B?ZTZlbktBUy9VVTN5ckpXN0htTkp0WllmKzlxTlJJUE9nbmtndnBmMVpiVkdv?=
+ =?utf-8?B?ejhDekJGbzA1TkptaWdkR2NIQmRWa3RZdnFQbjR3bGI1MkU2NGt2eVRHK0NR?=
+ =?utf-8?B?dEJMRzVZT0JKMzlnaXRvNjNqam5PYys2SmF3Z2JreUdFRlJXckp4SmFXTW9B?=
+ =?utf-8?B?MUc4N3pvUXFpYzQvQ3RWSmp3ZGpMcGhJN0F5M0RvanljMzMrVGVabU1HaDBH?=
+ =?utf-8?B?ZHd3UURFK0UrT01tckU3N3Q1YnNwbW5rVk5aeXg2MDNOSTdIenBMckpjMlZU?=
+ =?utf-8?B?ZUU4eGYzVTVnbkFCTVExWm5mTFE4bnlzVHFMaHhvL1lWREwwaGFwblhvY3Bi?=
+ =?utf-8?B?NlQ5VW9tSEdlOVlFTUYrYWkxNXowWjlrVzhock5IZDdGbGNscW1ERHFkVlVh?=
+ =?utf-8?B?bTFydmVQMUFZNTZhTVhORjJML0RseTR4SyswUG9hUk54bXJpR3Q5bWtENEYv?=
+ =?utf-8?B?U0ZJdEg4MHBUYlViQmRaYkpwU2hsRkE3OUg1c3J5bzQvbFpkd1ZVZkxQWEor?=
+ =?utf-8?B?UjBWbm1NYkZTSldmWVluMStqdk94OEVXQUs1TnpBK0dTdGhyQUw5MXpSRmhn?=
+ =?utf-8?B?cVN4QUpRRmx1OXBnb21yQzlEaFJuMzlMZVhFeWErdWhBckVsSGp4WHo3VjVm?=
+ =?utf-8?B?L0JLNmR0bzdHNFBNcWxYYysrTFdVR0Z2VE1jM3p5K3FlODhFb1daVDlYS1Zo?=
+ =?utf-8?B?WWxEVlFYZEY0MnVaZzJjMmkyNHhXTXFtaHFjSFpjWDdLc1BJd3cvYW05Sldp?=
+ =?utf-8?B?MWhjb0NvbmZyeUNjbktXeUJZU1U3UEE3RUlVelkvQ0ozbUlWZUIrMEI1dkIw?=
+ =?utf-8?B?MXY2NHJ5NWsvV1UzM0lpekFMcVdUb2VwU2NMbXhsZWhZUjVzaytnWGpCMjAz?=
+ =?utf-8?B?Nko2Q2NNZWxOekcvNkF3a0czQUVHeGZHbEpGL1FtcTNRYW96QnBnSWdLTXpU?=
+ =?utf-8?B?aHBaRXFQaWZLRmZKek9LVDZ2R1dnZHdUTFpLa2Z6RTlrSzNuTkFqbXBZc21D?=
+ =?utf-8?B?OWJ6L2xncENyay91eHJzY0xuc1FKRzU5ZzdGNDcyQ3g3aE5xNHNCaHFDQXIr?=
+ =?utf-8?B?clQzQk9IcnkrUkFMV1ZqMzI2ampOL3EvL2k1ZEF6bHFicEN2VUYxYThHQzBv?=
+ =?utf-8?B?dEx0aFZ5Rjlkclpyd0JnT01jZ05sMUdJM1ZDMWhLZnliM1ZQbHhsZlhDRy80?=
+ =?utf-8?B?VmFVTVN3aHhFQ1c2eG04SkVvcWlLS09WWGdQMjcrT25FTTM0MGtVbE4zYldD?=
+ =?utf-8?B?UWlGRE5RUEt6a2pjaEFEc0poNXpkUGtZL1ZLQkRtM1JrbmlnSFdhRDJqbkZZ?=
+ =?utf-8?B?djR6WXRPQ0d4WlVCYkNUQ0Z3bFFLN0F3OTIzMUs2WWJlS25CdTVuRHdBMTJZ?=
+ =?utf-8?B?eVVncWlqdkN6eFlnU01JT1JPSmpIZ0lJUkhIdERnR3ZVQjgvZWJxQWk1bndD?=
+ =?utf-8?B?dU5EZVNqandGT1Q2NlZlUXBaZTJpcUtSTFFPKzBCKy9vMHRBVjdTVVVUQThP?=
+ =?utf-8?B?ZVpTQVB5TW1uV042ZlliZjJidFhFOXlLNW12ZHAvZ3gvR0pPMmc0aUpHVnMz?=
+ =?utf-8?Q?oSrmX4TgGxZzTQHjhtjDLjZti?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5349d084-b5c0-43b5-68e5-08dc9a99e006
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7529.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jul 2024 13:21:25.9618
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: U+s7N61PS4mtetWwq+s5ElDbIT7kXMeWS0/C3nm2mVxbvYNpKlPo6W2WuCiArBfQgZdAB6EWDBPymJ5Sw6IocA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR11MB8711
+X-OriginatorOrg: intel.com
 
-
---lqdlqrw2llhccm2m
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi,
-
-There's still the scrambler issue we discussed on v15, but I have some
-more comments.
-
-On Tue, Jul 02, 2024 at 08:22:36PM GMT, Sandor Yu wrote:
-> +enum drm_connector_status cdns_mhdp8501_detect(struct cdns_mhdp8501_device *mhdp)
+On 2024/7/2 21:08, Lu Baolu wrote:
+> The domain_alloc_user operation is currently implemented by allocating a
+> paging domain using iommu_domain_alloc(). This is because it needs to fully
+> initialize the domain before return. Add a helper to do this to avoid using
+> iommu_domain_alloc().
+> 
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Link: https://lore.kernel.org/r/20240610085555.88197-16-baolu.lu@linux.intel.com
+> ---
+>   drivers/iommu/intel/iommu.c | 90 +++++++++++++++++++++++++++++++++----
+>   1 file changed, 81 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+> index 1b5519dfa085..1f0d6892a0b6 100644
+> --- a/drivers/iommu/intel/iommu.c
+> +++ b/drivers/iommu/intel/iommu.c
+> @@ -3622,6 +3622,79 @@ static struct iommu_domain blocking_domain = {
+>   	}
+>   };
+>   
+> +static int iommu_superpage_capability(struct intel_iommu *iommu, bool first_stage)
 > +{
-> +	u8 hpd = 0xf;
+> +	if (!intel_iommu_superpage)
+> +		return 0;
 > +
-> +	hpd = cdns_mhdp8501_read_hpd(mhdp);
-> +	if (hpd == 1)
-> +		return connector_status_connected;
-> +	else if (hpd == 0)
-> +		return connector_status_disconnected;
+> +	if (first_stage)
+> +		return cap_fl1gp_support(iommu->cap) ? 2 : 1;
 > +
-> +	dev_warn(mhdp->dev, "Unknown cable status, hdp=%u\n", hpd);
-> +	return connector_status_unknown;
+> +	return fls(cap_super_page_val(iommu->cap));
 > +}
 > +
-> +static void hotplug_work_func(struct work_struct *work)
+> +static struct dmar_domain *paging_domain_alloc(struct device *dev, bool first_stage)
 > +{
-> +	struct cdns_mhdp8501_device *mhdp = container_of(work,
-> +						     struct cdns_mhdp8501_device,
-> +						     hotplug_work.work);
-> +	enum drm_connector_status status = cdns_mhdp8501_detect(mhdp);
+> +	struct device_domain_info *info = dev_iommu_priv_get(dev);
+> +	struct intel_iommu *iommu = info->iommu;
+> +	struct dmar_domain *domain;
+> +	int addr_width;
 > +
-> +	drm_bridge_hpd_notify(&mhdp->bridge, status);
+> +	domain = kzalloc(sizeof(*domain), GFP_KERNEL);
+> +	if (!domain)
+> +		return ERR_PTR(-ENOMEM);
 > +
-> +	if (status == connector_status_connected) {
-> +		/* Cable connected  */
-> +		DRM_INFO("HDMI/DP Cable Plug In\n");
-> +		enable_irq(mhdp->irq[IRQ_OUT]);
-> +	} else if (status == connector_status_disconnected) {
-> +		/* Cable Disconnected  */
-> +		DRM_INFO("HDMI/DP Cable Plug Out\n");
-> +		enable_irq(mhdp->irq[IRQ_IN]);
-> +	}
-> +}
-
-You shouldn't play with the interrupt being enabled here: hotplug
-interrupts should always enabled.
-
-If you can't for some reason, the reason should be documented in your
-driver.
-
-> +	/* Mailbox protect for HDMI PHY access */
-> +	mutex_lock(&mhdp->mbox_mutex);
-> +	ret = phy_init(mhdp->phy);
-> +	mutex_unlock(&mhdp->mbox_mutex);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to initialize PHY: %d\n", ret);
-> +		goto clk_disable;
-> +	}
+> +	INIT_LIST_HEAD(&domain->devices);
+> +	INIT_LIST_HEAD(&domain->dev_pasids);
+> +	INIT_LIST_HEAD(&domain->cache_tags);
+> +	spin_lock_init(&domain->lock);
+> +	spin_lock_init(&domain->cache_lock);
+> +	xa_init(&domain->iommu_array);
 > +
-> +	/* Mailbox protect for HDMI PHY access */
-> +	mutex_lock(&mhdp->mbox_mutex);
-> +	ret = phy_set_mode(mhdp->phy, phy_mode);
-> +	mutex_unlock(&mhdp->mbox_mutex);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to configure PHY: %d\n", ret);
-> +		goto clk_disable;
-> +	}
-
-Why do you need a shared mutex between the phy and HDMI controller?
-
-> +static enum drm_mode_status
-> +cdns_hdmi_tmds_char_rate_valid(const struct drm_bridge *bridge,
-> +			       const struct drm_display_mode *mode,
-> +			       unsigned long long tmds_rate)
-> +{
-> +	struct cdns_mhdp8501_device *mhdp = bridge->driver_private;
-> +	union phy_configure_opts phy_cfg;
-> +	int ret;
+> +	domain->nid = dev_to_node(dev);
+> +	domain->has_iotlb_device = info->ats_enabled;
+> +	domain->use_first_level = first_stage;
 > +
-> +	phy_cfg.hdmi.tmds_char_rate = tmds_rate;
+> +	/* calculate the address width */
+> +	addr_width = agaw_to_width(iommu->agaw);
+> +	if (addr_width > cap_mgaw(iommu->cap))
+> +		addr_width = cap_mgaw(iommu->cap);
+> +	domain->gaw = addr_width;
+> +	domain->agaw = iommu->agaw;
+> +	domain->max_addr = __DOMAIN_MAX_ADDR(addr_width);
 > +
-> +	/* Mailbox protect for HDMI PHY access */
-> +	mutex_lock(&mhdp->mbox_mutex);
-> +	ret = phy_validate(mhdp->phy, PHY_MODE_HDMI, 0, &phy_cfg);
-> +	mutex_unlock(&mhdp->mbox_mutex);
-> +	if (ret < 0)
-> +		return MODE_CLOCK_RANGE;
+> +	/* iommu memory access coherency */
+> +	domain->iommu_coherency = iommu_paging_structure_coherency(iommu);
 > +
-> +	return MODE_OK;
-> +}
+> +	/* pagesize bitmap */
+> +	domain->domain.pgsize_bitmap = SZ_4K;
+> +	domain->iommu_superpage = iommu_superpage_capability(iommu, first_stage);
+> +	domain->domain.pgsize_bitmap |= domain_super_pgsize_bitmap(domain);
 > +
-> +static enum drm_mode_status
-> +cdns_hdmi_bridge_mode_valid(struct drm_bridge *bridge,
-> +			    const struct drm_display_info *info,
-> +			    const struct drm_display_mode *mode)
-> +{
-> +	unsigned long long tmds_rate;
-> +
-> +	/* We don't support double-clocked and Interlaced modes */
-> +	if (mode->flags & DRM_MODE_FLAG_DBLCLK ||
-> +	    mode->flags & DRM_MODE_FLAG_INTERLACE)
-> +		return MODE_BAD;
-> +
-> +	/* MAX support pixel clock rate 594MHz */
-> +	if (mode->clock > 594000)
-> +		return MODE_CLOCK_HIGH;
-
-This needs to be in the tmds_char_rate_valid function
-
-> +	if (mode->hdisplay > 3840)
-> +		return MODE_BAD_HVALUE;
-> +
-> +	if (mode->vdisplay > 2160)
-> +		return MODE_BAD_VVALUE;
-> +
-> +	tmds_rate = mode->clock * 1000ULL;
-> +	return cdns_hdmi_tmds_char_rate_valid(bridge, mode, tmds_rate);
-
-It will already be called by the core so this is redundant.
-
-> +static void cdns_hdmi_bridge_atomic_enable(struct drm_bridge *bridge,
-> +					   struct drm_bridge_state *old_state)
-> +{
-> +	struct cdns_mhdp8501_device *mhdp = bridge->driver_private;
-> +	struct drm_atomic_state *state = old_state->base.state;
-> +	struct drm_connector *connector;
-> +	struct video_info *video = &mhdp->video_info;
-> +	struct drm_crtc_state *crtc_state;
-> +	struct drm_connector_state *conn_state;
-> +	struct drm_display_mode *mode = &mhdp->mode;
-> +	union phy_configure_opts phy_cfg;
-> +	int ret;
-> +
-> +	connector = drm_atomic_get_new_connector_for_encoder(state,
-> +							     bridge->encoder);
-> +	if (WARN_ON(!connector))
-> +		return;
-> +
-> +	mhdp->curr_conn = connector;
-> +
-> +	conn_state = drm_atomic_get_new_connector_state(state, connector);
-> +	if (WARN_ON(!conn_state))
-> +		return;
-> +
-> +	crtc_state = drm_atomic_get_new_crtc_state(state, conn_state->crtc);
-> +	if (WARN_ON(!crtc_state))
-> +		return;
-> +
-> +	video->color_fmt = conn_state->hdmi.output_format;
-> +	video->bpc = conn_state->hdmi.output_bpc;
-> +
-> +	drm_mode_copy(&mhdp->mode, &crtc_state->adjusted_mode);
-
-Why do you need a copy of all these fields? You should pass the
-connector / bridge state around and not copy these fields.
-
-> +	/* video mode check */
-> +	if (mode->clock == 0 || mode->hdisplay == 0 || mode->vdisplay == 0)
-> +		return;
-
-This should be checked in atomic_check, but I'm pretty sure it's redundant.
-
-> +	dev_dbg(mhdp->dev, "Mode: %dx%dp%d\n",
-> +		mode->hdisplay, mode->vdisplay, mode->clock);
-> +
-> +	drm_atomic_helper_connector_hdmi_update_infoframes(connector, state);
-> +
-> +	/* Line swapping */
-> +	cdns_mhdp_reg_write(&mhdp->base, LANES_CONFIG, 0x00400000 | mhdp->lane_mapping);
-> +
-> +	mhdp->hdmi.char_rate = drm_hdmi_compute_mode_clock(mode,
-> +							   mhdp->video_info.bpc,
-> +							   mhdp->video_info.color_fmt);
-
-The TMDS char rate is already available in the connector_state so there
-no need to recompute it.
-
-> +	phy_cfg.hdmi.tmds_char_rate = mhdp->hdmi.char_rate;
-
-And you shouldn't store a copy either.
-
-> +	/* Mailbox protect for HDMI PHY access */
-> +	mutex_lock(&mhdp->mbox_mutex);
-> +	ret = phy_configure(mhdp->phy, &phy_cfg);
-> +	mutex_unlock(&mhdp->mbox_mutex);
-> +	if (ret) {
-> +		dev_err(mhdp->dev, "%s: phy_configure() failed: %d\n",
-> +			__func__, ret);
-> +		return;
-> +	}
-> +
-> +	cdns_hdmi_sink_config(mhdp);
-> +
-> +	ret = cdns_hdmi_ctrl_init(mhdp);
-> +	if (ret < 0) {
-> +		dev_err(mhdp->dev, "%s, ret = %d\n", __func__, ret);
-> +		return;
-> +	}
-> +
-> +	/* Config GCP */
-> +	if (mhdp->video_info.bpc == 8)
-> +		cdns_hdmi_disable_gcp(mhdp);
+> +	/*
+> +	 * IOVA aperture: First-level translation restricts the input-address
+> +	 * to a canonical address (i.e., address bits 63:N have the same value
+> +	 * as address bit [N-1], where N is 48-bits with 4-level paging and
+> +	 * 57-bits with 5-level paging). Hence, skip bit [N-1].
+> +	 */
+> +	domain->domain.geometry.force_aperture = true;
+> +	domain->domain.geometry.aperture_start = 0;
+> +	if (first_stage)
+> +		domain->domain.geometry.aperture_end = __DOMAIN_MAX_ADDR(domain->gaw - 1);
 > +	else
-> +		cdns_hdmi_enable_gcp(mhdp);
+> +		domain->domain.geometry.aperture_end = __DOMAIN_MAX_ADDR(domain->gaw);
 > +
-> +	ret = cdns_hdmi_mode_config(mhdp, mode, &mhdp->video_info);
-> +	if (ret < 0) {
-> +		dev_err(mhdp->dev, "CDN_API_HDMITX_SetVic_blocking ret = %d\n", ret);
-> +		return;
+> +	/* always allocate the top pgd */
+> +	domain->pgd = iommu_alloc_page_node(domain->nid, GFP_KERNEL);
+> +	if (!domain->pgd) {
+> +		kfree(domain);
+> +		return ERR_PTR(-ENOMEM);
 > +	}
+> +	domain_flush_cache(domain, domain->pgd, PAGE_SIZE);
+> +
+> +	return domain;
 > +}
 > +
-> +static int cdns_hdmi_bridge_clear_infoframe(struct drm_bridge *bridge,
-> +					    enum hdmi_infoframe_type type)
-> +{
-> +	return 0;
-> +}
+>   static struct iommu_domain *intel_iommu_domain_alloc(unsigned type)
+>   {
+>   	struct dmar_domain *dmar_domain;
+> @@ -3684,15 +3757,14 @@ intel_iommu_domain_alloc_user(struct device *dev, u32 flags,
+>   	if (user_data || (dirty_tracking && !ssads_supported(iommu)))
+>   		return ERR_PTR(-EOPNOTSUPP);
+>   
+> -	/*
+> -	 * domain_alloc_user op needs to fully initialize a domain before
+> -	 * return, so uses iommu_domain_alloc() here for simple.
 
-Either implement it or don't, but an empty function is dead code.
+I think it is still valuable to note the requirement of full initialize
+a domain. is it? Otherwise, looks good to me.
 
-> +static int cdns_hdmi_bridge_write_infoframe(struct drm_bridge *bridge,
-> +					    enum hdmi_infoframe_type type,
-> +					    const u8 *buffer, size_t len)
-> +{
-> +	struct cdns_mhdp8501_device *mhdp = bridge->driver_private;
-> +
-> +	switch (type) {
-> +	case HDMI_INFOFRAME_TYPE_AVI:
-> +		cdns_hdmi_config_infoframe(mhdp, 0, len, buffer, HDMI_INFOFRAME_TYPE_AVI);
-> +		break;
-> +	case HDMI_INFOFRAME_TYPE_SPD:
-> +		cdns_hdmi_config_infoframe(mhdp, 1, len, buffer, HDMI_INFOFRAME_TYPE_SPD);
-> +		break;
-> +	case HDMI_INFOFRAME_TYPE_VENDOR:
-> +		cdns_hdmi_config_infoframe(mhdp, 2, len, buffer, HDMI_INFOFRAME_TYPE_VENDOR);
-> +		break;
-> +	default:
-> +		dev_dbg(mhdp->dev, "Unsupported infoframe type %x\n", type);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int cdns_hdmi_bridge_atomic_check(struct drm_bridge *bridge,
-> +					 struct drm_bridge_state *bridge_state,
-> +					 struct drm_crtc_state *crtc_state,
-> +					 struct drm_connector_state *conn_state)
-> +{
-> +	return drm_atomic_helper_connector_hdmi_check(conn_state->connector, conn_state->state);
-> +}
+Reviewed-by: Yi Liu <yi.l.liu@intel.com>
 
-You should also call your mode_valid function here.
+> -	 */
+> -	domain = iommu_domain_alloc(dev->bus);
+> -	if (!domain)
+> -		return ERR_PTR(-ENOMEM);
+> -
+> -	dmar_domain = to_dmar_domain(domain);
+> +	/* Do not use first stage for user domain translation. */
+> +	dmar_domain = paging_domain_alloc(dev, false);
+> +	if (IS_ERR(dmar_domain))
+> +		return ERR_CAST(dmar_domain);
+> +	domain = &dmar_domain->domain;
+> +	domain->type = IOMMU_DOMAIN_UNMANAGED;
+> +	domain->owner = &intel_iommu_ops;
+> +	domain->ops = intel_iommu_ops.default_domain_ops;
+>   
+>   	if (nested_parent) {
+>   		dmar_domain->nested_parent = true;
 
-Maxime
-
---lqdlqrw2llhccm2m
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZoP/rwAKCRDj7w1vZxhR
-xbtMAPwOIZGKcI/rVzpcMiT2neBt5WGvMKV0jq/zloFZ/N14pwD/eob5WPgjeYWd
-oweE8ti1ed438LG/cKON29OerGxdGw0=
-=INSe
------END PGP SIGNATURE-----
-
---lqdlqrw2llhccm2m--
+-- 
+Regards,
+Yi Liu
 
