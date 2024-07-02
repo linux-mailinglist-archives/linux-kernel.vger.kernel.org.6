@@ -1,261 +1,161 @@
-Return-Path: <linux-kernel+bounces-238204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 419E89246C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:56:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14B6C9246C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:58:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECEEC284C21
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:56:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 879A41F24146
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A411C0DE5;
-	Tue,  2 Jul 2024 17:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335841C232A;
+	Tue,  2 Jul 2024 17:58:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A+t98ELf"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ItL1MjS7"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C32343D978;
-	Tue,  2 Jul 2024 17:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D255A1C005A
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 17:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719943010; cv=none; b=KsF32L7XA5B5VvK1P9+MAWFAO45JO7snNrLTm1D2+NJxITqMnyx7RaloZ4ZlXN1a3j9KduG65YjBQVcEOBtvJYkQnIcyS3zzpbyGpmDclpZ7NNcmEA87ow7zgaWFhVkt6oq2MlPTy4FB/tbPWRBenkyPq2vHPlpLvssPXokNvFc=
+	t=1719943097; cv=none; b=O3wBMjqPSOEdaaknbLt/C98zc8kLUADyikRAIPNY32XSYpgMhcn+zFhb2g+dvdWDiOmxi/jZnb5TKsobCdiaIXtCvkT+s6byRmofxvlMSL1cxe4rJYmMgXGyI0JJ8VM6zIKttka6PXQYELWrZQ7+1TGSfPZZtEFgBu+ePjlT9GE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719943010; c=relaxed/simple;
-	bh=hJiz5bF6LptMBCcGXuEZWDSZAYXfPxjSOCB9LLx/iI4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ie3pGlz50QimJyx/PdCEI41+NWz40NAuJPehKEUincXJ8QL8ASVdzRK+kfSZa2lqEYkzeY/aVrJaM842PGHZICBygVb4yAA6VNjZQCPYfuTpz7qvwYqnsSF4GG82It/fAZbVcwkx7V6TJHK5J3nDitrT4IaMCxamWaNrIapUFR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A+t98ELf; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	s=arc-20240116; t=1719943097; c=relaxed/simple;
+	bh=6GV0ZhDNGPCuwYUPJDb43qoIpqlccrEfWt2pjGeAkCk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DSkTp5u6hKeM6gvvPLaYIKy9NQLJUmj4NPsbJaMn4Eo5jHHwuHRQVHDjLRX7ic2+pc/VosMWZn2BAzJKAivWFL/9cQpK+tBcJH5xzKlMH+qRU08sq9PDjYGiCM6yVWZkKuj8ob6h9vi5zt2HY3HhMUZZDPdBY/mwN97S5EZ64Pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ItL1MjS7; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-706b539fcaeso3984981b3a.0;
-        Tue, 02 Jul 2024 10:56:48 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a751ed17b1eso482003866b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 10:58:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719943008; x=1720547808; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=H/QWmxb4w+FBWrySZiVH7y9gg+E8h5e3o09iq702lTY=;
-        b=A+t98ELfkLN0oHJzyAkbM40TlDu7f8Hi6MHu1ftKWiddl/P4pR5y4sgBD2Rflk1BVc
-         XGZSE2BOgTAptIEN1KoFlM6Bw+G4iTQhi/fVy0aFyH+y61Ahx25lPDNzb2CPyL5cIS7a
-         EMcXn8GxpkuHYC8Rzj5AMXbRBqmJ3cZW4z9piWrPLLYh/+u70Q6nfw8f1hCC6NPQkC72
-         POpBklaeC9Np01tHpjG9ATEFCQZ5MCrR+KCENxNrQM6djFgItoqy4BnjQbjT2kqW+6wc
-         xKn6OCrGNPUzoSotiJblyl4YMK2WxbTI5lTgeZkiY3nMoCqMOxhzOCZ8GBjpwSSXsEzK
-         FBOA==
+        d=gmail.com; s=20230601; t=1719943094; x=1720547894; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6GV0ZhDNGPCuwYUPJDb43qoIpqlccrEfWt2pjGeAkCk=;
+        b=ItL1MjS7WKvLAHUYEz5EjOVOuwL+cbR5wljw5gI+oX7XEMbBUBrRKuF9c5iNWJZ9Ve
+         pU9PAzPYp8+6fVAPbGjr0WwpLNGPxGpwDKDHn26lRx1866Q7jiPaBt3+X35r0E4KD80Y
+         8M5EM8d/1D5ih5rr7DunMrFhuz48yXw5tuRQy4ANLtH/5DC8KGmFEzDLkwTaxNYKSgTA
+         KNmmCeUtytw8rAIhKjwphhvz5Ru8sYLhgb02bMoGvkAMbtBbnUGUhMWrL9LJBIiYwR97
+         IFGLYGRkh/S91YFpYDNYwGtQViMLWX9rMsTRy5kDiQvJjFwMcxdfeekbyk+waOGxWCyj
+         roJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719943008; x=1720547808;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1719943094; x=1720547894;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=H/QWmxb4w+FBWrySZiVH7y9gg+E8h5e3o09iq702lTY=;
-        b=LOK3JE01ebQsbiaV1vVyCv9l5SUUcQ93zcSwSNCTPrDK4MdGdotKKjj1kWj8l/bi69
-         qEwjgGHwsMyOXR+iotISc7Mx0zBrOPLdwuKLUXN3sM5xR/JIwvP6ZGkRZ/Qe1yRRhhtj
-         SeRw4BMI3frBPsCCEZi4DAL1nGStqfvutddfnqWo+JP9GX/dXKq9PfGzxmXK9HkJLeiR
-         yiZe0KFEwMaYV9dRtzuo+06cWC4QGGGcxx5UpMkMtWmtH7pib+u9G3N11vUrJRfU2IQQ
-         RH0XPQDozuDCuot/sKab11VD9aFP5PYcuXIYQya86z5SKrhCnK2tklmwmL9zNV9iCUWC
-         2pdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU4Yo4ywgL+M2PEkQoMh4ZJjLYiyE3IR6adC6VNcp2jEtSfDhYz53/qAx7nYEhJwoOcXfPvERZNU0AHxEAVeZ4KQtXyE4m7YIU0nQapGrsBiBRjYYUhEF+XAo91gRZsvpQLxfcYRfQ=
-X-Gm-Message-State: AOJu0YwNQdhKkCjfEF7T/WNIiQnjmfbRnQWl7xRqlE3To1m0h1lYYoHG
-	ckyx2zi+BOZxkQUOLheMEnOZfjOuMbWh/loFy+dexnsBypn4q3qDk2hY0w==
-X-Google-Smtp-Source: AGHT+IFxgUsrVN4r6qPYH5ewxQ1y6uYo9/TV+KG1C/eVZqsHn5GZ4wxHBlNFH/gq7bCgiTzSPGT78w==
-X-Received: by 2002:a05:6a20:1586:b0:1be:c166:6445 with SMTP id adf61e73a8af0-1bef610d040mr15286970637.4.1719943007920;
-        Tue, 02 Jul 2024 10:56:47 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70802959452sm9056729b3a.90.2024.07.02.10.56.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 10:56:47 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Tue, 2 Jul 2024 07:56:46 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Hongyan Xia <hongyan.xia2@arm.com>
-Cc: rafael@kernel.org, viresh.kumar@linaro.org, linux-pm@vger.kernel.org,
-	void@manifault.com, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com, mingo@redhat.com, peterz@infradead.org,
-	David Vernet <dvernet@meta.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Subject: Re: [PATCH 2/2] sched_ext: Add cpuperf support
-Message-ID: <ZoQ_XuXn1Y2Kp3Ba@slm.duckdns.org>
-References: <20240619031250.2936087-1-tj@kernel.org>
- <20240619031250.2936087-3-tj@kernel.org>
- <63c76af4-6451-4d6a-8aeb-0bc4812c4101@arm.com>
- <ZoQs384bAMuaeDEs@slm.duckdns.org>
- <940a41d0-2660-4a7a-ad07-581b3ac24cca@arm.com>
+        bh=6GV0ZhDNGPCuwYUPJDb43qoIpqlccrEfWt2pjGeAkCk=;
+        b=WXK2kpbRsGs9hktXPPYGYCThsGGqyW//qzCK3yUMalWwJVzIAMKCIrfKjsP/zVjuSg
+         uTHj0Ux8jYN6q5CMm1iBd7FvzeZ7WBFK28DI3Amg93NyK+lRDy5ARm6V7DkwEN5r+XB1
+         EDuI79aw2DJ/rj0gMk68MDel1uZQ/bbSuT1+HpSLwTLOcP+YtzY9EYAKR287lG+z9BWo
+         lZwHXWPituXlEQg4FtiSrqwMUwZUSHLOL/R6ylo3KBAsMLmrHcOz4tmmfr3ErBbmx0F7
+         DRMzwwCGJrbiRNaicsJIQgxWPMuT9JTwiN7myZqdf1XCOVLjRTGDAprX4RvArctuJrDP
+         S5gw==
+X-Forwarded-Encrypted: i=1; AJvYcCVP06Kdcpmnnl92CI0/Ka3V8k1e3JE3c8nih7Fb5Ko8T24HLD5UyS5e7NqehPHilg5Sh5FTAIucxgbm/BO2GKI64O05qW7ASSQ04C4d
+X-Gm-Message-State: AOJu0YyKILbl5TpG6LzexLIpMPHrUZO3WVc0YTjQAhUayzv7ogmDrjQL
+	jG5IXmlhyXaE34fNz6z1QmcZuq9vge4Gha7t9gwuFK25IGjoeTyEo9V9nrWhqMFBiBRd/RpFLN6
+	iZ1wEHsuZAsUnvwGSdpbHVzdvScvNjA==
+X-Google-Smtp-Source: AGHT+IHI8nHlXGtLgZucq/ZQPSk2r2VMZ8lQcnPCPPR3PyRgxYqNVt/2Qu+XeyFvQ5tUdULGlIastBJNp96WssLMxB8=
+X-Received: by 2002:a17:906:5acb:b0:a6f:c24a:721e with SMTP id
+ a640c23a62f3a-a7513935e17mr752283766b.30.1719943094018; Tue, 02 Jul 2024
+ 10:58:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <940a41d0-2660-4a7a-ad07-581b3ac24cca@arm.com>
+References: <202406270912.633e6c61-oliver.sang@intel.com> <lv7ykdnn2nrci3orajf7ev64afxqdw2d65bcpu2mfaqbkvv4ke@hzxat7utjnvx>
+ <vgg45kxk2fiyznm44w2saz3qjiwrjp3spvpswsl4ovd2jl5c5g@54dlbd4kdlh4>
+ <CAHk-=wgnDSS7yqNbQQ9R6Zt7gzg6SKs6myW1AfkvhApXKgUg4A@mail.gmail.com>
+ <CAGudoHGuTP-nv=zwXdQs38OEqb=BD=i-vA-9xjZ0UOyvWuXP_w@mail.gmail.com>
+ <CAHk-=wgVzKtRnvDXAzueJTbgfo1o12Lw6DH97PzRe1cGA_b1oA@mail.gmail.com> <CAGudoHH_z1a6MX8Z8Cqbz-jDTUoAjoxdV9KrQ6yvUkNszXO5aw@mail.gmail.com>
+In-Reply-To: <CAGudoHH_z1a6MX8Z8Cqbz-jDTUoAjoxdV9KrQ6yvUkNszXO5aw@mail.gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Tue, 2 Jul 2024 19:58:02 +0200
+Message-ID: <CAGudoHHg-T+ZOTm0fSpW0Hztfxn=fpfnksz5Q3=3YeCeEPo7LQ@mail.gmail.com>
+Subject: Re: [linux-next:master] [lockref] d042dae6ad: unixbench.throughput
+ -33.7% regression
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>, kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev, 
+	lkp@intel.com, Linux Memory Management List <linux-mm@kvack.org>, linux-kernel@vger.kernel.org, 
+	ying.huang@intel.com, feng.tang@intel.com, fengwei.yin@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Tue, Jul 2, 2024 at 7:46=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> wr=
+ote:
+>
+> On Tue, Jul 2, 2024 at 7:28=E2=80=AFPM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > On Tue, 2 Jul 2024 at 10:03, Mateusz Guzik <mjguzik@gmail.com> wrote:
+> > >
+> > > I was thinking a different approach.
+> > >
+> > > A lookup variant which resolves everything and returns the dentry + a=
+n
+> > > information whether this is rcu mode.
+> >
+> > That would work equally.
+> >
+> > But the end result ends up being very similar: you need to hook into
+> > that final complete_walk() -> try_to_unlazy() -> legitimize_path() and
+> > check a flag whether you actually then do "get_lockref_or_dead()" or
+> > not.
+> >
+>
+> Ye, the magic routine to validate if you can pretend the ref was taken
+> would wrap it.
+>
+> > It really *shouldn't* be too bad, but this is just so subtle code that
+> > it just takes a lot of care. Even if the patch itself ends up not
+> > necessarily being very large.
+> >
+> > As mentioned, I've looked at it, but it always ended up being _just_
+> > scary enough that I never really started doing it.
+> >
+>
+> I implemented something like this as a demo in FreeBSD few years back,
+> it did not blow up at least. The work did not get committed though
+> because I could not be arsed to productize it.
+>
+> tbf if anything the only shady things here that I see is that stat et
+> al do their work without any locks held nor seqc verification in
+> current kernel.
+>
+> In FreeBSD this was operating directly in vnodes (here one can pretend
+> it's inodes). In that system I added sequence counters to the vnode
+> itself and any state change like write, setattr, unlink or whatever
+> would bump it. Then something like stat could safely read whatever it
+> wants in a lockless manner with the final check for maching seqc
+> indicating nothing changed.
+>
+> Not having a "someone is messing with the inode" indicator (only with
+> a dentry) in Linux is definitely worrisome when pushing RCU further,
+> if that's what you meant.
+>
+> Again, I'm going to poke around if only for kicks when I find the time
+> and we will see what happens.
 
-So, maybe something like this. It's not the prettiest but avoids adding
-indirect calls to fair and rt while allowing sched_ext to report what the
-BPF scheduler wants. Only compile tested. Would something like this work for
-the use cases you have on mind?
+Suppose the rcu fast path lookup reads the dentry seqc, then does all
+the legitimize_mnt and other work. Everything, except modifying the
+lockref. The caller is given a mnt to put (per-cpu scalable), dentry
+seqc read before any of the path validation and an indication this is
+rcu.
 
-Thanks.
+Then after whatever is done if the seqc still matches this is the same
+as if there was lockref get/put around it.
 
-Index: work/kernel/sched/core.c
-===================================================================
---- work.orig/kernel/sched/core.c
-+++ work/kernel/sched/core.c
-@@ -1671,6 +1671,20 @@ static inline void uclamp_rq_dec_id(stru
- 	}
- }
- 
-+bool sched_uclamp_enabled(void)
-+{
-+	return true;
-+}
-+
-+static bool class_supports_uclamp(const struct sched_class *class)
-+{
-+	if (likely(class->uclamp_enabled == sched_uclamp_enabled))
-+		return true;
-+	if (!class->uclamp_enabled)
-+		return false;
-+	return class->uclamp_enabled();
-+}
-+
- static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
- {
- 	enum uclamp_id clamp_id;
-@@ -1684,7 +1698,7 @@ static inline void uclamp_rq_inc(struct
- 	if (!static_branch_unlikely(&sched_uclamp_used))
- 		return;
- 
--	if (unlikely(!p->sched_class->uclamp_enabled))
-+	if (class_supports_uclamp(p->sched_class))
- 		return;
- 
- 	for_each_clamp_id(clamp_id)
-@@ -1708,7 +1722,7 @@ static inline void uclamp_rq_dec(struct
- 	if (!static_branch_unlikely(&sched_uclamp_used))
- 		return;
- 
--	if (unlikely(!p->sched_class->uclamp_enabled))
-+	if (class_supports_uclamp(p->sched_class))
- 		return;
- 
- 	for_each_clamp_id(clamp_id)
-Index: work/kernel/sched/ext.c
-===================================================================
---- work.orig/kernel/sched/ext.c
-+++ work/kernel/sched/ext.c
-@@ -116,10 +116,17 @@ enum scx_ops_flags {
- 	 */
- 	SCX_OPS_SWITCH_PARTIAL	= 1LLU << 3,
- 
-+	/*
-+	 * Disable built-in uclamp support. Can be useful when the BPF scheduler
-+	 * wants to implement custom uclamp support.
-+	 */
-+	SCX_OPS_DISABLE_UCLAMP	= 1LLU << 4,
-+
- 	SCX_OPS_ALL_FLAGS	= SCX_OPS_KEEP_BUILTIN_IDLE |
- 				  SCX_OPS_ENQ_LAST |
- 				  SCX_OPS_ENQ_EXITING |
--				  SCX_OPS_SWITCH_PARTIAL,
-+				  SCX_OPS_SWITCH_PARTIAL |
-+				  SCX_OPS_DISABLE_UCLAMP,
- };
- 
- /* argument container for ops.init_task() */
-@@ -3437,6 +3444,13 @@ static void switched_from_scx(struct rq
- static void wakeup_preempt_scx(struct rq *rq, struct task_struct *p,int wake_flags) {}
- static void switched_to_scx(struct rq *rq, struct task_struct *p) {}
- 
-+#ifdef CONFIG_UCLAMP_TASK
-+static bool uclamp_enabled_scx(void)
-+{
-+	return !(scx_ops.flags & SCX_OPS_DISABLE_UCLAMP);
-+}
-+#endif
-+
- int scx_check_setscheduler(struct task_struct *p, int policy)
- {
- 	lockdep_assert_rq_held(task_rq(p));
-@@ -3522,7 +3536,7 @@ DEFINE_SCHED_CLASS(ext) = {
- 	.update_curr		= update_curr_scx,
- 
- #ifdef CONFIG_UCLAMP_TASK
--	.uclamp_enabled		= 1,
-+	.uclamp_enabled		= uclamp_enabled_scx,
- #endif
- };
- 
-Index: work/kernel/sched/fair.c
-===================================================================
---- work.orig/kernel/sched/fair.c
-+++ work/kernel/sched/fair.c
-@@ -13228,9 +13228,7 @@ DEFINE_SCHED_CLASS(fair) = {
- 	.task_is_throttled	= task_is_throttled_fair,
- #endif
- 
--#ifdef CONFIG_UCLAMP_TASK
--	.uclamp_enabled		= 1,
--#endif
-+	SCHED_CLASS_UCLAMP_ENABLED
- };
- 
- #ifdef CONFIG_SCHED_DEBUG
-Index: work/kernel/sched/rt.c
-===================================================================
---- work.orig/kernel/sched/rt.c
-+++ work/kernel/sched/rt.c
-@@ -2681,9 +2681,7 @@ DEFINE_SCHED_CLASS(rt) = {
- 	.task_is_throttled	= task_is_throttled_rt,
- #endif
- 
--#ifdef CONFIG_UCLAMP_TASK
--	.uclamp_enabled		= 1,
--#endif
-+	SCHED_CLASS_UCLAMP_ENABLED
- };
- 
- #ifdef CONFIG_RT_GROUP_SCHED
-Index: work/kernel/sched/sched.h
-===================================================================
---- work.orig/kernel/sched/sched.h
-+++ work/kernel/sched/sched.h
-@@ -2339,11 +2339,6 @@ struct affinity_context {
- extern s64 update_curr_common(struct rq *rq);
- 
- struct sched_class {
--
--#ifdef CONFIG_UCLAMP_TASK
--	int uclamp_enabled;
--#endif
--
- 	void (*enqueue_task) (struct rq *rq, struct task_struct *p, int flags);
- 	void (*dequeue_task) (struct rq *rq, struct task_struct *p, int flags);
- 	void (*yield_task)   (struct rq *rq);
-@@ -2405,8 +2400,21 @@ struct sched_class {
- #ifdef CONFIG_SCHED_CORE
- 	int (*task_is_throttled)(struct task_struct *p, int cpu);
- #endif
-+
-+#ifdef CONFIG_UCLAMP_TASK
-+	bool (*uclamp_enabled)(void);
-+#endif
- };
- 
-+#ifdef CONFIG_UCLAMP_TASK
-+bool sched_uclamp_enabled(void);
-+
-+#define SCHED_CLASS_UCLAMP_ENABLED	\
-+	.uclamp_enabled = sched_uclamp_enabled,
-+#else
-+#define SCHED_CLASS_UCLAMP_ENABLED
-+#endif
-+
- static inline void put_prev_task(struct rq *rq, struct task_struct *prev)
- {
- 	WARN_ON_ONCE(rq->curr != prev);
+The only worry is pointers suddenly going NULL or similar as
+dentry/inode is looked at. To be worked out on per-syscall basis.
+
+Unless I'm missing something.
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
