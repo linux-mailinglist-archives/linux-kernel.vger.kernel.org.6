@@ -1,125 +1,117 @@
-Return-Path: <linux-kernel+bounces-237442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45EAB923849
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:44:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD0A7923856
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:45:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14C671C21FDD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:44:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 098EEB2438C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC6E14F10E;
-	Tue,  2 Jul 2024 08:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2242D1514E0;
+	Tue,  2 Jul 2024 08:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Tfwy/TLx"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HkF+fjah"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EED2140E50
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 08:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F99E14F9EA;
+	Tue,  2 Jul 2024 08:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719909887; cv=none; b=D/BcoIfa+2rpNET0/yGTQvRTNZNo59+RQ+DbDOqeqmjWEmjqZXE7p+Y2TML3VXleE9uZ/BZiNSho7TnWWeFjnL0nWtqCd/TGGuq7DCXFBr516G/CqIyiPmOCzK+FRfs3V3TM65lsJpdUCIo6jj9HpXO8VIx4SSh+dV4/yUJS9/0=
+	t=1719909917; cv=none; b=Uu5YuqbtOCz8qByyMuohCFNhefkXb5+M3ZX4emNODiHdjbGroHSLUBgoOYlBRvdlEfj3DyCRmUjr6neEffl9r1VDecBu347746iDa3jQBucd3TBZVSpEX3gboXofL0zmbjFMZBKC1oHszJoP0joK7NcYm1GWtMQqFgLsbdE6jEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719909887; c=relaxed/simple;
-	bh=60QjJI9sV9oq/vKSPgdEtiwZDP/48WWCMT3emPVn/4Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TU7ROx3xWqoMKwDpOl/cbPkyO64iHNxGKw11vgN3zwnsfJ66a7VZNT9YwR63M9wX0GtzjdECxr87BHF6KYXWxYBqxuETEZ1MwfbE4gtGxcQ9LtGvSNnVIErMciYHOjw3S1AXoP8Gj12N+XEBS5QoJ7JCOlP0bzOV9Kx6guIGzQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Tfwy/TLx; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=hFTJNhWR0aF+dKAF+AxPr4I3/8i8Q+f8RjkFBxYhUMM=; b=Tfwy/TLxJsSaQ0NSxnySq51LIP
-	/e+6OqEa13KbTcDdw7uUQlVNel04CbOpqCGeiCtt2JUkmR8kWR81bqzfNHsMkpkdzg0GTuk/oodkG
-	9yFR4oXdZ6mkx59Aq3NWtm0wo9ePcexCHQ63+R8p5AEDOfqNOUxPKyHNqIwQamVFXShJnwYTDqaCv
-	p3mC4oo4AWxZxnfvZF6XVFu1yGo936Te6hcPDzz/oWYvM/+K+/NHku/+PB7tVNtioWMGLozq9ph+a
-	v8FT/xaGB6B/od8XiL1T/8N/2TaN/55PVBe3X3Bh9VBaVGWOaeIdwRSfsk1BFsZ1EfhBfI7/UnE73
-	foRLqQVA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sOZ7a-00000009n7e-2ZRf;
-	Tue, 02 Jul 2024 08:44:25 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 32A3A300694; Tue,  2 Jul 2024 10:44:18 +0200 (CEST)
-Date: Tue, 2 Jul 2024 10:44:18 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Yang Yingliang <yangyingliang@huaweicloud.com>
-Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, tglx@linutronix.de,
-	yu.c.chen@intel.com, tim.c.chen@linux.intel.com,
-	yangyingliang@huawei.com, liwei391@huawei.com
-Subject: Re: [PATCH resend] sched/smt: fix unbalance sched_smt_present dec/inc
-Message-ID: <20240702084418.GB11386@noisy.programming.kicks-ass.net>
-References: <20240702081128.4008011-1-yangyingliang@huaweicloud.com>
+	s=arc-20240116; t=1719909917; c=relaxed/simple;
+	bh=kS3KHcziM0kdwu5L25OpvQZQWNawNvkjuIS1hD3LWiI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KYPUBtT8smyyHkIX353FSVUDFJd1mKVVELDEr56dIuczcKSNjUfrQDFhSRufHAoQvg4hZATVAzm17V9dWJO7x5dKqcCGu8CJjK9hJd2rQwI8cmH5u8+G6XS8tglpTZJbStp1qsPOSBK7J6n+6Q16Gp/xkRl1kX4Yag3pq9qU8Ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HkF+fjah; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B3A161C0003;
+	Tue,  2 Jul 2024 08:45:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1719909907;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WKZjs/mX8vI13IJJrFcwrALX3bFcyicIzGyymtB+Xr0=;
+	b=HkF+fjahWP2SFwW5hCuEFx9X1FBKIfu9agCDZ64cq8hJu/mgGSGnsscJh/1uersOyWUjVf
+	y6ICx1O2qVbXNyj8f4MgBxo1F9YItx5OEqCIR8ee8hc/IOr2H7P2Rly8qTRcGplDOcrUtl
+	XTggOx6pRLBk/gZOQnr3g2cp+X1aGisVDzpe714rmeXFahpn+vrQ5vHcwcTGu59vBeLVuA
+	URmKW1FDTPdzd9qeWuIuHpmBXTjYxDjy7c6UvYTd3+pfO4hBX4cNLPm9B/vYm0m2ZiQy++
+	wePtj+q2rhdn81cUIVpVWP/QKQXw4wQP3YGUxapiW057AI7RJhvG4kOrYy+zAw==
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+ Russell King <linux@armlinux.org.uk>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH net-next 2/6] net: phy: dp83869: Perform software restart after
+ configuring op mode
+Date: Tue, 02 Jul 2024 10:45:52 +0200
+Message-ID: <9301598.CDJkKcVGEf@fw-rgant>
+In-Reply-To: <ba1ac5bb-ee58-406b-9f49-54327696a6a8@lunn.ch>
+References:
+ <20240701-b4-dp83869-sfp-v1-0-a71d6d0ad5f8@bootlin.com>
+ <20240701-b4-dp83869-sfp-v1-2-a71d6d0ad5f8@bootlin.com>
+ <ba1ac5bb-ee58-406b-9f49-54327696a6a8@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240702081128.4008011-1-yangyingliang@huaweicloud.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+X-GND-Sasl: romain.gantois@bootlin.com
 
-On Tue, Jul 02, 2024 at 04:11:28PM +0800, Yang Yingliang wrote:
-> From: Yang Yingliang <yangyingliang@huawei.com>
+On lundi 1 juillet 2024 18:44:33 UTC+2 Andrew Lunn wrote:
+> On Mon, Jul 01, 2024 at 10:51:04AM +0200, Romain Gantois wrote:
+> > The DP83869 PHY requires a software restart after OP_MODE is changed in
+> > the
+> > OP_MODE_DECODE register.
+> > 
+> > Add this restart in dp83869_configure_mode().
+> > 
+> > Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
+> > ---
+> > 
+> >  drivers/net/phy/dp83869.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/drivers/net/phy/dp83869.c b/drivers/net/phy/dp83869.c
+> > index f6b05e3a3173e..6bb9bb1c0e962 100644
+> > --- a/drivers/net/phy/dp83869.c
+> > +++ b/drivers/net/phy/dp83869.c
+> > @@ -786,6 +786,10 @@ static int dp83869_configure_mode(struct phy_device
+> > *phydev,
+> Not directly this patch, but dp83869_configure_mode() has:
 > 
-> I got the following warn report while doing stress test:
+> ret = phy_write(phydev, MII_BMCR, MII_DP83869_BMCR_DEFAULT);
 > 
-> jump label: negative count!
-> WARNING: CPU: 3 PID: 38 at kernel/jump_label.c:263 static_key_slow_try_dec+0x9d/0xb0
-> Call Trace:
->  <TASK>
->  __static_key_slow_dec_cpuslocked+0x16/0x70
->  sched_cpu_deactivate+0x26e/0x2a0
->  cpuhp_invoke_callback+0x3ad/0x10d0
->  cpuhp_thread_fun+0x3f5/0x680
->  smpboot_thread_fn+0x56d/0x8d0
->  kthread+0x309/0x400
->  ret_from_fork+0x41/0x70
->  ret_from_fork_asm+0x1b/0x30
->  </TASK>
+> where #define MII_DP83869_BMCR_DEFAULT	(BMCR_ANENABLE | \
+> 					 BMCR_FULLDPLX | \
+> 					 BMCR_SPEED1000)
 > 
-> Because when cpuset_cpu_inactive() fails in sched_cpu_deactivate(),
-> the cpu offline failed, but sched_smt_present is decremented before
-> calling sched_cpu_deactivate(), it leads to unbalanced dec/inc, so
-> fix it by incrementing sched_smt_present in the error path.
-> 
-> Fixes: c5511d03ec09 ("sched/smt: Make sched_smt_present track topology")
-> Reviewed-by: Chen Yu <yu.c.chen@intel.com>
-> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
-> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
-> ---
->  kernel/sched/core.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index bcf2c4cc0522..5ab6717b57e0 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -9756,6 +9756,10 @@ int sched_cpu_deactivate(unsigned int cpu)
->  	sched_update_numa(cpu, false);
->  	ret = cpuset_cpu_inactive(cpu);
->  	if (ret) {
-> +#ifdef CONFIG_SCHED_SMT
-> +		if (cpumask_weight(cpu_smt_mask(cpu)) == 2)
-> +			static_branch_inc_cpuslocked(&sched_smt_present);
-> +#endif
->  		balance_push_set(cpu, false);
->  		set_cpu_active(cpu, true);
->  		sched_update_numa(cpu, true);
+> When considering the previous patch, maybe BMCR_ANENABLE should be
+> conditional on the mode being selected?
 
-Yes, does indeed appear needed, however!, when I look at
-what else goes before this failure, should we not also call
-set_rq_online() and things like that?
+Indeed, this would definitely make sense.
 
-That is, can we rework things to be less fragile by sharing code between
-this error path and sched_cpu_activate() ?
+Thanks,
+
+-- 
+Romain Gantois, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+
+
 
