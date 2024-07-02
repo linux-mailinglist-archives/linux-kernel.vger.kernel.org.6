@@ -1,163 +1,115 @@
-Return-Path: <linux-kernel+bounces-238248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4657A924768
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:42:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A89A924770
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:44:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0585B214F0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:42:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C6741C22CEE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:44:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4789A1CB314;
-	Tue,  2 Jul 2024 18:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9470B1CCCA7;
+	Tue,  2 Jul 2024 18:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="O8uqzJqN"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pW2/DNLq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703F31DFE3
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 18:42:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD71F1DFE3;
+	Tue,  2 Jul 2024 18:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719945727; cv=none; b=MWyuonEW3TpeAmYkEoll5e2RdQMEsjAJpbPOANWaKIYp14lVOK6iM1r3AzO4iZln2R2T+LRJv/HRgnC7zR/rxU4eLMyabw6x2PHlhQVfgBLHd3chyZDVg/gWXNNNegRtVYXsZPvWXA5c1DHdnJZ/SpExahF2TsBacqCGIK2uMG8=
+	t=1719945857; cv=none; b=kFEtemLfUevI0J1r3HHd33ZvHl6uFWwQnpMzrpBKj5mdDWOMEP/lFy3KWbSLeP1rBvN1MGPr+xaCbkPJS3f6LvGEhlX6kJYhZyRAlJT6OUL1Ps+cRmGoGN80NOWsIWKBqzJB7QHosRZJJG4pblj/p7v7kYtDx8whtN7cTjEeshw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719945727; c=relaxed/simple;
-	bh=9ivcoTOU/Pu3gOuzz1x/5q59HICfwlF3oMyQ4f7Nzvw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dUxCcI4YaOz61u8J7p6qZmz8EJPrZirstMkG7wAGrVet1+AGk/IE9wj64Iu6Gs9U6a40p4qU2ETiC+TTY1bJ6nw+mmr84vW0uqRp7/Fw8yc7+9ganYIvBb3hlfnEavLvkPnTIJCUYySh5DIu5b8do2jacx8mRYVc1e4XSEYtxys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=O8uqzJqN; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52cd80e55efso8032932e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 11:42:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1719945723; x=1720550523; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PGTXXsYfe5Sa08dwRDYVcy0L1nqIjL5SVkaBtsUXzro=;
-        b=O8uqzJqN0O6PXkp+J7cCyTPq9dB0KJp2Q1X6kkyCfy1Z07dxQ0Fq8EJV+CrfVXO2ua
-         4oe1C5SHdiD0y8PNxyRgA4jUou+JEhFIH1i9UP5Sl13LY5ol4G+ULvK2KuvWZAwozdGo
-         EeF9lmQr2mGHJeLYNmoY/cpYubnXiFqr8jxnY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719945723; x=1720550523;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PGTXXsYfe5Sa08dwRDYVcy0L1nqIjL5SVkaBtsUXzro=;
-        b=QrFQJSolTrJoXOpI1RId0JDzcxHUNbxMw9xDz0huAOrA/13YpBDWeo7zXBA6VXHYpK
-         EAf3GDChoIq25m0lsh7ZW8/k+AG2pcKv4NRSLjmLSYNYNzEwlAadXIo/CsiFtRo3cgcJ
-         J/tRwOefOQeGCZ782nSY2KKh3fAmH4uQbtcKY0Rv9ey+WZJ/lXMYSXdFkGeZithyrBKl
-         N0kwnRZ45E8glcECLgi5RXPrIYnQ1KAXCA8qKBnGr3IprZCiK+upMcTQFO/6poZUnOO6
-         LrX4EkR0SdF5IEjb1NLI5L9nJqBpyDf37OMS9XpKe5x6eyLaYKcGQlWjBrXfMtzR4Y6X
-         iptg==
-X-Forwarded-Encrypted: i=1; AJvYcCVJgpEWT6AEHGRpHxBgQHuOvKtHob3Mlka0EPJ8B5Bh+tQ+NCFqgqbPNma/SU0adGddtZd0yadrJk5HM8ZMJHd9qGOvBok7qD/E4+P6
-X-Gm-Message-State: AOJu0YzCx2zOda9g7vOr2zY42IThcBhlHCox12tJ2YfPHutdPTyj6qhV
-	+A2OlA75AAwUGHI7TANy83UDtSjOx/tTLVE8TuCi6JAbf9rCx7EGQDFkYUFXsnkVa4D9SSr4LBh
-	wnoxIpg==
-X-Google-Smtp-Source: AGHT+IFDbzVaf2X6L21lLXJiew/qfljRMgEqhj8gQLeDlg3fEhE7NASYeV8NGtMVtqlYIw5yaBZujQ==
-X-Received: by 2002:a05:6512:104f:b0:52c:deea:57cb with SMTP id 2adb3069b0e04-52e8264acc1mr8201034e87.3.1719945723389;
-        Tue, 02 Jul 2024 11:42:03 -0700 (PDT)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab3b470sm1900251e87.293.2024.07.02.11.42.02
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jul 2024 11:42:02 -0700 (PDT)
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ee75ffce77so13735101fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 11:42:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW55bzui388H9FsIWLi1WlXG/wsNdjZagYYBPktt05p6XCdP+aEN2Ns7xH+RgsdrkzJsGyuKB9ue49B1kZ9ZhmFwX0Z9ZluidDnkc81
-X-Received: by 2002:a05:651c:b14:b0:2ec:5488:cc9e with SMTP id
- 38308e7fff4ca-2ee5e3bbd14mr77301241fa.26.1719945721844; Tue, 02 Jul 2024
- 11:42:01 -0700 (PDT)
+	s=arc-20240116; t=1719945857; c=relaxed/simple;
+	bh=81DVEaGVuhgaL3qUhWK3WtVKi0kz5H+uUytvhWe3MrM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PvpysUWBgLJONwNqSULjnv6NltUWumRiDRrrTgJzSn3d340HNhRWVx49PLfdByBMb4Aj49j9JHrIId2VmN7BBP7P0NaL+y7MDHy5ISDBZpAKmiMrellgvRUsQw+YDTTc6bwU9veMF1Hbs/Hqf/H4p4XU2Sm3N8yFUJ/wvPy8/ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pW2/DNLq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BD46C4AF0A;
+	Tue,  2 Jul 2024 18:44:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719945857;
+	bh=81DVEaGVuhgaL3qUhWK3WtVKi0kz5H+uUytvhWe3MrM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=pW2/DNLqngPdKmnWt0jlXQiAJdlCYqmvJrjSIqeo52Kg/w/PoE4oelx3hLHcHrr4T
+	 6PRGpKFW5zCCzKCQkYs5N3jCCC8Fne+B5LLdxKiPv744PXpdIH1/Mvj+/Ujs0aNv7P
+	 Uh+Sws1kyCXeTzCPQyAYvrOUkrXZcG6FoaJnm1QGZodrUhYgd/W9L0o0CAco3umxbu
+	 Zq77z8+m2yXDx4D85hZIqFwc/X78wRQvC6WN58t9SqJpiePb7Z9xgh6i9lmD9+7+5X
+	 BljiFE5QoDuis6yjwHG0G7PcGs8aX3raRT3IZ0QkTB09DXCzLziAlKS+QSiWdXU2fv
+	 N+w8c2+jCN2ow==
+From: Will Deacon <will@kernel.org>
+To: freedreno <freedreno@lists.freedesktop.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS <devicetree@vger.kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Rob Clark <robdclark@gmail.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: catalin.marinas@arm.com,
+	kernel-team@android.com,
+	Will Deacon <will@kernel.org>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	David Airlie <airlied@gmail.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Sean Paul <sean@poorly.run>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] Support for Adreno X1-85 GPU
+Date: Tue,  2 Jul 2024 19:43:59 +0100
+Message-Id: <171993892905.1967989.351563734585007693.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20240629015111.264564-1-quic_akhilpo@quicinc.com>
+References: <20240629015111.264564-1-quic_akhilpo@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202406270912.633e6c61-oliver.sang@intel.com> <lv7ykdnn2nrci3orajf7ev64afxqdw2d65bcpu2mfaqbkvv4ke@hzxat7utjnvx>
- <vgg45kxk2fiyznm44w2saz3qjiwrjp3spvpswsl4ovd2jl5c5g@54dlbd4kdlh4>
- <CAHk-=wgnDSS7yqNbQQ9R6Zt7gzg6SKs6myW1AfkvhApXKgUg4A@mail.gmail.com>
- <CAGudoHGuTP-nv=zwXdQs38OEqb=BD=i-vA-9xjZ0UOyvWuXP_w@mail.gmail.com>
- <CAHk-=wgVzKtRnvDXAzueJTbgfo1o12Lw6DH97PzRe1cGA_b1oA@mail.gmail.com>
- <CAGudoHH_z1a6MX8Z8Cqbz-jDTUoAjoxdV9KrQ6yvUkNszXO5aw@mail.gmail.com> <CAGudoHHg-T+ZOTm0fSpW0Hztfxn=fpfnksz5Q3=3YeCeEPo7LQ@mail.gmail.com>
-In-Reply-To: <CAGudoHHg-T+ZOTm0fSpW0Hztfxn=fpfnksz5Q3=3YeCeEPo7LQ@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 2 Jul 2024 11:41:44 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiBGSLNW6GGbnec-dCbn0kWvD+OXAa5VNXPBKLXYy5KOQ@mail.gmail.com>
-Message-ID: <CAHk-=wiBGSLNW6GGbnec-dCbn0kWvD+OXAa5VNXPBKLXYy5KOQ@mail.gmail.com>
-Subject: Re: [linux-next:master] [lockref] d042dae6ad: unixbench.throughput
- -33.7% regression
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev, 
-	lkp@intel.com, Linux Memory Management List <linux-mm@kvack.org>, linux-kernel@vger.kernel.org, 
-	ying.huang@intel.com, feng.tang@intel.com, fengwei.yin@intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2 Jul 2024 at 10:58, Mateusz Guzik <mjguzik@gmail.com> wrote:
->
-> Suppose the rcu fast path lookup reads the dentry seqc, then does all
-> the legitimize_mnt and other work. Everything, except modifying the
-> lockref. The caller is given a mnt to put (per-cpu scalable), dentry
-> seqc read before any of the path validation and an indication this is
-> rcu.
+On Sat, 29 Jun 2024 07:19:33 +0530, Akhil P Oommen wrote:
+> This series adds support for the Adreno X1-85 GPU found in Qualcomm's
+> compute series chipset, Snapdragon X1 Elite (x1e80100). In this new
+> naming scheme for Adreno GPU, 'X' stands for compute series, '1' denotes
+> 1st generation and '8' & '5' denotes the tier and the SKU which it
+> belongs.
+> 
+> X1-85 has major focus on doubling core clock frequency and bandwidth
+> throughput. It has a dedicated collapsible Graphics MX rail (gmxc) to
+> power the memories and double the number of data channels to improve
+> bandwidth to DDR.
+> 
+> [...]
 
-Yes.
+Applied SMMU bindings change to will (for-joerg/arm-smmu/bindings),
+thanks!
 
-> Then after whatever is done if the seqc still matches this is the same
-> as if there was lockref get/put around it.
+[4/5] dt-bindings: arm-smmu: Add X1E80100 GPU SMMU
+      https://git.kernel.org/will/c/d6c102881b30
 
-So this is partly why I was thinking of a callback. That "check
-sequence number afterwards" is still important. And if it's a
-callback, it can be done in the path walking code, and it can go on
-and say "oh, I'll need to redo this without RCU".
+Cheers,
+-- 
+Will
 
-If it's a "we returned a dentry under RCU", suddenly the caller has to
-know this about the name lookup and do the repeating by hand.
-
-And as long as we don't expose it to modules and only use it for
-"stat()" and friends, I'm ok with it, but I'm just saying that it's
-all a bit scary.
-
-> The only worry is pointers suddenly going NULL or similar as
-> dentry/inode is looked at. To be worked out on per-syscall basis.
-
-We have subtle rules wrt dentry->d_inode. It can indeed become NULL at
-any time during the RCU walk, since what protects it is the d_lock and
-the dentry count.
-
-The inode itself is then RCU-free'd, so it will *exist*, but you can't
-just blindly use dentry->d_inode itself while under RCU.
-
-Which is why it's cached in 'struct nameidata', and we validate it
-with nd->seq when it's loaded. And why things like may_lookup() use
-nd->inode, not the dentry.
-
-And that's another rule that we probably should aim to not have escape
-from the path walking as an interface.
-
-Because it's much too easy to do
-
-        struct inode *inode = d_backing_inode(path->dentry);
-
-but that's just wrong during the RCU path walk.
-
-Again, having this be a callback during the walk would avoid issues
-like this. The callback can just pass in the separate inode pointer.
-
-And then a sequence point failure will return -ECHILD and do the walk
-again, while a callback success with all the sequence numbers matching
-would return -ECALLBACK or whatever, so that the caller would know
-"the stat information was already successfully completed by the
-callback".
-
-Anyway, that was my handwavy "this is why I was thinking of a
-callback" thing. But it's also an example of just how nasty and subtle
-this all is.
-
-But I'm convinced this is all eminently *solvable*. There's nothing
-fundamental here. Just a lot of small nasty details.
-
-                    Linus
+https://fixes.arm64.dev
+https://next.arm64.dev
+https://will.arm64.dev
 
