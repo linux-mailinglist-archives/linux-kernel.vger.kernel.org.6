@@ -1,220 +1,131 @@
-Return-Path: <linux-kernel+bounces-237927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61EC792405E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:18:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A773192407A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:20:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18E4628120B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:18:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 525E01F2061F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBAE01BA08B;
-	Tue,  2 Jul 2024 14:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E091BA075;
+	Tue,  2 Jul 2024 14:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bZf3GYlv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NX8y4uWm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B0E1B5824
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 14:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97C0BE7F;
+	Tue,  2 Jul 2024 14:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719929872; cv=none; b=aFuQoJ0oh1IC4zabz0x3tqdxeoT3Ws6jidsrtlhO78bOqy+heBoVJ6E/YHQGmVSDbuejBUnuzEjPQnS2jOGVXGQHCXUHR4iQNWPUeOtsbAqHTpnEL2HPmmV6iiCWfGgluChu77cFOIOHxgqIkaVfD2L3V63ovbqmzouKxX42vK0=
+	t=1719930041; cv=none; b=FM9mzqUeauyomL6yqyW593UVIN87GkzirY+IOaWt7Tk5bHjJ74m5MsN+pT46Qoxv3crdHkZLAso4ij/gdsG10HCCSNwYiDU39XscQXx+ZpLqU1LJ7kfGHf7FrqUVsTlO1RzsmkeXP9oM4MD/qJDbRNaolrppqQ7ruIMEEyQHlS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719929872; c=relaxed/simple;
-	bh=Z3bX1ChqHo56rpTGVon7MaAxxB9empFscQlQSgayDl8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gOCu7n2PSM/eu3VvRNWfbQRWYiaJoGMOqLeruyMu+pkfAHCMzQMEVSrEnv9StL7bWvJotnmEdEhKyiWIhYBZLJz558ytX/yb1XnIDphsXQ/SfxlUiY4e0DN/wdjYKwROPF3MPxn7r6nXkZQ++2nqvxWGtiVJGoKfRBapmN2U8uA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bZf3GYlv; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719929870;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ued8NE/q8zXpL0TRng1QPMxjOe9iz1whmao3wS1ySBg=;
-	b=bZf3GYlvh0yumxcvTlQmKP0YaIAXVA58eDNtroHTRlar+Qosp52x9m9EAeso5Dc1nuRQ4/
-	PLxj+KlhHlRE0dgUnjXW1lm7MHNsA+a/uj3qMGeRBJv1sQJMecGQb9A8u6roAe0PCabYzD
-	V12I61b9WF5m6YurM4xie55EBVjZMdo=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-610-QwEXKxW7PuW4x-B5Op3v0Q-1; Tue, 02 Jul 2024 10:17:49 -0400
-X-MC-Unique: QwEXKxW7PuW4x-B5Op3v0Q-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4257e8a0af9so2056685e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 07:17:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719929868; x=1720534668;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ued8NE/q8zXpL0TRng1QPMxjOe9iz1whmao3wS1ySBg=;
-        b=EoTxDZMBoP2JvU0yC9/6QHqVxkviL0d+rpSU9/c3VdGTY1WN+wSlJ17cVnGDdkWpp0
-         DtCBgftYncFAqDfm2X2e92otd6xVnOmkx1O2SBBLlUR3vB50zfscbIlITlva9rsn+04g
-         FdEHB1CTuYdBXSTGJDf5A808FJqVE8s47E+osyj5iNBNkvN4O4Lgqo9oUrVdaaTIW7n3
-         MBtARiC9y43lFCuzhi0y0qZTo5zPLzMn1LP/6QGU9q+6W1WAf9tacn2jsLpauOd7tQKi
-         brvMBX4RWFwBVUAMWupPfGPJoogpVbMc7E9CE6orxX9UeSx+IJNHd1lP5h0sQTtZKWc1
-         Tgaw==
-X-Forwarded-Encrypted: i=1; AJvYcCVeos/51fApabRDi7iAlHIHQ4EZL0VKns061LtXCuZwcJa6fHXwDk1GS8tnWQ93kn9aD8NezzwpNurtsv3wro0bpoDclmp46sPT96Np
-X-Gm-Message-State: AOJu0YxnPq2UMv4Ba3nlndWhVfFPNTrqFtiqpA6ulwCcs8cz4PCDvksB
-	hi59NVmYy92UtAgX7DZ9egaSIr4hWRSswGKENRu/3VW6q7z70DxCV3rZwFM0TNnYjX2gjyXaxC/
-	s+j99PNezJqAUl4QyyvIcCPA/0YpAmAwUsEevDR4d7Aiket8D0pbo14F3gWzKYA==
-X-Received: by 2002:a05:600c:4fd3:b0:422:78c:82f6 with SMTP id 5b1f17b1804b1-4257a0df29dmr65490155e9.3.1719929867931;
-        Tue, 02 Jul 2024 07:17:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFbWk8I4Yl1h9HU7fJ8yjrwVSLYofO39SP2rdrxUuS5Wy6cRR2zvMHL+Gj2TSgNve9bWyjhzw==
-X-Received: by 2002:a05:600c:4fd3:b0:422:78c:82f6 with SMTP id 5b1f17b1804b1-4257a0df29dmr65489935e9.3.1719929867495;
-        Tue, 02 Jul 2024 07:17:47 -0700 (PDT)
-Received: from gerbillo.redhat.com ([2a0d:3341:b0a6:6710::f71])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42581bd5e4bsm94460405e9.10.2024.07.02.07.17.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 07:17:46 -0700 (PDT)
-Message-ID: <dea693fdd35692e3542466868fb3b979c1b23593.camel@redhat.com>
-Subject: Re: [PATCH net-next v15 03/14] netdev: support binding dma-buf to
- netdevice
-From: Paolo Abeni <pabeni@redhat.com>
-To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>, Donald Hunter
- <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Richard
- Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky
- <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, Thomas
- Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>, 
- Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer
- <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven
- Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnd Bergmann
- <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai
- Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
- <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
- <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
- Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa
- <jolsa@kernel.org>,  Steffen Klassert <steffen.klassert@secunet.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,  Shuah Khan
- <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>, Christian
- =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Bagas Sanjaya
- <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, Nikolay
- Aleksandrov <razor@blackwall.org>, Pavel Begunkov <asml.silence@gmail.com>,
- David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin
- <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, Harshitha
- Ramamurthy <hramamurthy@google.com>,  Shakeel Butt
- <shakeel.butt@linux.dev>, Jeroen de Borst <jeroendb@google.com>, Praveen
- Kaligineedi <pkaligineedi@google.com>, Willem de Bruijn
- <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
-Date: Tue, 02 Jul 2024 16:17:43 +0200
-In-Reply-To: <29c65e23b88002eef6b2a8c272357fa2b2a661b6.camel@redhat.com>
-References: <20240628003253.1694510-1-almasrymina@google.com>
-	 <20240628003253.1694510-4-almasrymina@google.com>
-	 <29c65e23b88002eef6b2a8c272357fa2b2a661b6.camel@redhat.com>
-Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1719930041; c=relaxed/simple;
+	bh=7yvDeMzwAH16cGXWjeCR1Y9kqp1X45jjKHVpHvm57IM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gcFPM3Cj14kOuoqs/K3MhsmRWFsH++NcExMk18vC7vBZ8zeYdupfveyyFUuyFgzlkpEsrakwSTXQxlqJFj3NbM9YI/hX5REqpI43b302xx+InrwV5nT/WusA7+1VHsGndGe32sOiiRJKHSF1gctpj9N9I2EZEBxZrud4kT/s+bA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NX8y4uWm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E839FC116B1;
+	Tue,  2 Jul 2024 14:20:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719930040;
+	bh=7yvDeMzwAH16cGXWjeCR1Y9kqp1X45jjKHVpHvm57IM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NX8y4uWm1lvzpmRu0mTXrSsKvZGqTB/dd08rNCKqFLfp/PkqEpRk7lq4qO1qodfwO
+	 sVuPpEz6XyZxCBaO44iCDlTp3qc6wHs9XMqfNN9MKmbDzrPDvkUts8/j0J43JqoyG/
+	 vGhFDMfK5ysphLL2RGo24UeBzmJf9F37SENpwY7o0GaLqtI2Hmaf3ZfZvNvMLQDy2t
+	 BGkVP4z09FOcyia+8NkV6HEzxxBx3hV1MraN+rxgc3NASz2cQ7qRQRuCL9PZyZ/RXe
+	 LVHSb2kPAF3epwepwgtoTl3h9yMNB2hn+U9DV7M4oMaCm2LGWtlntJS8YUrj3QKWOe
+	 eC3XZEl5RAu2g==
+Message-ID: <cd97f612-79ae-4d18-a6c5-2f18d84a128c@kernel.org>
+Date: Tue, 2 Jul 2024 16:20:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/7] dt-bindings: eeprom: at24: Move compatible for
+ Belling BL24C16A to proper place
+To: Frieder Schrempf <frieder@fris.de>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>
+Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
+ Alexander Stein <alexander.stein@ew.tq-group.com>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Conor Dooley <conor.dooley@microchip.com>, Marek Vasut <marex@denx.de>,
+ Philipp Zabel <p.zabel@pengutronix.de>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
+ <rafal@milecki.pl>, Sebastian Reichel <sebastian.reichel@collabora.com>
+References: <20240702103155.321855-1-frieder@fris.de>
+ <20240702103155.321855-2-frieder@fris.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240702103155.321855-2-frieder@fris.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 2024-07-02 at 13:08 +0200, Paolo Abeni wrote:
-> On Fri, 2024-06-28 at 00:32 +0000, Mina Almasry wrote:
-> > +int net_devmem_bind_dmabuf(struct net_device *dev, unsigned int dmabuf=
-_fd,
-> > +			   struct net_devmem_dmabuf_binding **out)
-> > +{
-> > +	struct net_devmem_dmabuf_binding *binding;
-> > +	static u32 id_alloc_next;
-> > +	struct scatterlist *sg;
-> > +	struct dma_buf *dmabuf;
-> > +	unsigned int sg_idx, i;
-> > +	unsigned long virtual;
-> > +	int err;
-> > +
-> > +	dmabuf =3D dma_buf_get(dmabuf_fd);
-> > +	if (IS_ERR(dmabuf))
-> > +		return -EBADFD;
-> > +
-> > +	binding =3D kzalloc_node(sizeof(*binding), GFP_KERNEL,
-> > +			       dev_to_node(&dev->dev));
-> > +	if (!binding) {
-> > +		err =3D -ENOMEM;
-> > +		goto err_put_dmabuf;
-> > +	}
-> > +
-> > +	binding->dev =3D dev;
-> > +
-> > +	err =3D xa_alloc_cyclic(&net_devmem_dmabuf_bindings, &binding->id,
-> > +			      binding, xa_limit_32b, &id_alloc_next,
-> > +			      GFP_KERNEL);
-> > +	if (err < 0)
-> > +		goto err_free_binding;
-> > +
-> > +	xa_init_flags(&binding->bound_rxq_list, XA_FLAGS_ALLOC);
-> > +
-> > +	refcount_set(&binding->ref, 1);
-> > +
-> > +	binding->dmabuf =3D dmabuf;
-> > +
-> > +	binding->attachment =3D dma_buf_attach(binding->dmabuf, dev->dev.pare=
-nt);
-> > +	if (IS_ERR(binding->attachment)) {
-> > +		err =3D PTR_ERR(binding->attachment);
-> > +		goto err_free_id;
-> > +	}
-> > +
-> > +	binding->sgt =3D
-> > +		dma_buf_map_attachment(binding->attachment, DMA_FROM_DEVICE);
-> > +	if (IS_ERR(binding->sgt)) {
-> > +		err =3D PTR_ERR(binding->sgt);
-> > +		goto err_detach;
-> > +	}
-> > +
-> > +	/* For simplicity we expect to make PAGE_SIZE allocations, but the
-> > +	 * binding can be much more flexible than that. We may be able to
-> > +	 * allocate MTU sized chunks here. Leave that for future work...
-> > +	 */
-> > +	binding->chunk_pool =3D
-> > +		gen_pool_create(PAGE_SHIFT, dev_to_node(&dev->dev));
-> > +	if (!binding->chunk_pool) {
-> > +		err =3D -ENOMEM;
-> > +		goto err_unmap;
-> > +	}
-> > +
-> > +	virtual =3D 0;
-> > +	for_each_sgtable_dma_sg(binding->sgt, sg, sg_idx) {
-> > +		dma_addr_t dma_addr =3D sg_dma_address(sg);
-> > +		struct dmabuf_genpool_chunk_owner *owner;
-> > +		size_t len =3D sg_dma_len(sg);
-> > +		struct net_iov *niov;
-> > +
-> > +		owner =3D kzalloc_node(sizeof(*owner), GFP_KERNEL,
-> > +				     dev_to_node(&dev->dev));
->=20
-> I'm sorry for not catching this earlier, but it looks like the above
-> allocation lacks a NULL check.
+On 02/07/2024 12:31, Frieder Schrempf wrote:
+> From: Frieder Schrempf <frieder.schrempf@kontron.de>
+> 
+> Merge the compatibles for the 24c16 types into a single list.
+> 
+> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+> ---
+>  Documentation/devicetree/bindings/eeprom/at24.yaml | 7 +++----
 
-FTR, given the size of the series, the number of iterations already
-done and the issue not preventing the functionality, I agree to merge
-the series as-is, and handle this with a follow-up.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Thanks,
-
-Paolo
+Best regards,
+Krzysztof
 
 
