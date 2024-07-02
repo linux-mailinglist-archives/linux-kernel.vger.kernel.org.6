@@ -1,105 +1,222 @@
-Return-Path: <linux-kernel+bounces-237502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C2FB9239D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:24:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 890A49239DD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:25:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7FD328298F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:24:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 126091F22F29
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0811514E3;
-	Tue,  2 Jul 2024 09:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ADA4153828;
+	Tue,  2 Jul 2024 09:25:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="P/9yp74U"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="F9+I5ki4";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PdrXH2ZG";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QYs9mOYm";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZFzFQMGO"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F6114039D;
-	Tue,  2 Jul 2024 09:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D787B1514E0;
+	Tue,  2 Jul 2024 09:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719912274; cv=none; b=PqkjzmYN4TLq+s1Au2adTnux74qhkAdXP075DCEnLBIIAvjIf/w0O8YDLbp0FQtgDw4s1cExe1be0VtHN9XCy/CxOo9RcB2v2QH2xRWVb1N+OKag7Wz17YuFmvfQwMWarplh61fk82WKPtCW36UnjDIjL8cOZCfvfbSWGiyU1WQ=
+	t=1719912301; cv=none; b=mq3o+yRhXWFPFg63p8XXc/y4o7peXZU66EZkk2+yBQZEbLrs27RhKhpJC/Mmt6Ub2dvVPSdNBIYIOgaGlZvaHqOs7NgW7rYAX4SSZWOxpjtK19TxHe97xWs1Am2eQGUuKjquCnMD6IeZXtG82sxMccrQqur6yI5XhjtSObv3ZEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719912274; c=relaxed/simple;
-	bh=W/ktJn8e7bfFOA1ysYs0qBqx0srBXnMv4xozdusU1tw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pei2IrQWlE9Tpjc3iJTGTrOzjKkkk9UVMggf7D4/N/fZ6XWwhBzA9rlGtfGylFiiLiJ/p2gEerNQ7PLc2lW0Adys0xVzDyjDianXXOQzoBCoq65W1G6XJHScMgMZfz4sYtFtGlb3h86aakcFZeNX1oybyVVKvcefiZiSGoPN5oQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=P/9yp74U; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=wqt/0ARIKXvi4QP6QE0niQ5YasBWqRnDOAxUw7dP/9E=; b=P/9yp74U59ZXc+uDj4tV7AgCAr
-	BSg1Ho5T3yRKpdnVHpxtP+eAVNPM5ad9Vp/UQjdrQyWXror58ptuNyksO0o5T3FiXK+Fy15x6+Y9I
-	euHLvrrq/sGVMrO6LIfn6exx/kDg82Z/jMig+hsETjKaprAZVzFSZNrTqeeZj3G7TLXYWmpgzjTea
-	ImCdbIEgpyqyrbXS/hTN732ZCoh5DRE2sq1XoY488OO2Pgj5eucExK9W/tyUhDmepGjJH2M9gwFB5
-	ZycPRpDELb7yis/RgLAqDQbYIYFmm0WukCz+jL7fTQXzs8FLtjVYt4rZ5o9J3IBNu46d+4T4KtoiR
-	9B9dw0CQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:36046)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sOZkH-00036O-1d;
-	Tue, 02 Jul 2024 10:24:17 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sOZkI-0001pb-RO; Tue, 02 Jul 2024 10:24:18 +0100
-Date: Tue, 2 Jul 2024 10:24:18 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Romain Gantois <romain.gantois@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/6] net: phy: dp83869: Disable autonegotiation
- in RGMII/1000Base-X mode
-Message-ID: <ZoPHQms2bDo5zWZm@shell.armlinux.org.uk>
-References: <20240701-b4-dp83869-sfp-v1-0-a71d6d0ad5f8@bootlin.com>
- <20240701-b4-dp83869-sfp-v1-1-a71d6d0ad5f8@bootlin.com>
- <a244ce05-28a1-47b7-9093-12899f2c447f@lunn.ch>
- <3818335.kQq0lBPeGt@fw-rgant>
+	s=arc-20240116; t=1719912301; c=relaxed/simple;
+	bh=Vnzj3qnk7b6cjDEN60nc7RvJ49vCjCaFwSdAAmBSPv8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rGLEYEUo8FdftwfMK53y9oH5WN+4/ueyuukZSnO+v6HBz2M7Kg9qARYuvQvDjg31Gy7p9rnUR5Y06z09+bwYzbhPMoEVPIHrBuvHVjhPH+pdt9jkBeLCTSd1V2H86+ddYs2ukHt8rR9zt6atsyzrXyRdu1rjc2jasKL42sOcLyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=F9+I5ki4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PdrXH2ZG; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QYs9mOYm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZFzFQMGO; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id CD17221B26;
+	Tue,  2 Jul 2024 09:24:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1719912298; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=UktWkysOiCUWKutaYWCtQrqgdTH2AKGF5J22mQ/F9zA=;
+	b=F9+I5ki4Odmoy2XHAPDDhDae8UbD7BBAcn3h+J6yyvu9seSX2T+sZ/7asrxcTctL3qlGTr
+	EjQWot4RNmDqSUQbbKZOhoL3jTQZwh6H4pwd4TaVdvV/czY31JK/dR0xmPic94JH596+73
+	e6lSvsGBmt63gyLcSeQ1Lmw2ORnxGqc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1719912298;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=UktWkysOiCUWKutaYWCtQrqgdTH2AKGF5J22mQ/F9zA=;
+	b=PdrXH2ZGrJH9C6F056rNRXZAAmPy3wHDUYmAnW395cB8I4V/C5yeBNcRBrDLFl2R+ovcqJ
+	Vr3CxngIDtNUljBg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=QYs9mOYm;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ZFzFQMGO
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1719912297; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=UktWkysOiCUWKutaYWCtQrqgdTH2AKGF5J22mQ/F9zA=;
+	b=QYs9mOYmguxLYkYMgP9N2AY3+Ggoh829eXjbX/cLuUHZCY2g3x19soWbV8ZR1xmOj1U6g6
+	bt0VWVtPOxrxMtvbc77JRt2HvoAJNtUyUIsff5wv9XnHiwjbhYIKxPficoqzEVSCFsaPma
+	pTtHq6cFWpIawuT8kfnKzep4BPYwom4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1719912297;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=UktWkysOiCUWKutaYWCtQrqgdTH2AKGF5J22mQ/F9zA=;
+	b=ZFzFQMGOxGEXxyOq2I7ufsh7NdiC7YFkl5lyMnOe79oXNGLkX8Akt4hv7oYTblQy/B411x
+	9YIqnfzoSlFAk6BQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9B10F1395F;
+	Tue,  2 Jul 2024 09:24:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id /WiFJWnHg2bNLAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 02 Jul 2024 09:24:57 +0000
+Message-ID: <e74d47c7-0873-4adb-88a3-60597bf31af6@suse.cz>
+Date: Tue, 2 Jul 2024 11:24:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3818335.kQq0lBPeGt@fw-rgant>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 0/6] slab: Introduce dedicated bucket allocator
+Content-Language: en-US
+To: Kees Cook <kees@kernel.org>
+Cc: "GONG, Ruiqi" <gongruiqi@huaweicloud.com>,
+ Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+ David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ jvoisin <julien.voisin@dustri.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, Xiu Jianfeng <xiujianfeng@huawei.com>,
+ Suren Baghdasaryan <surenb@google.com>,
+ Kent Overstreet <kent.overstreet@linux.dev>, Jann Horn <jannh@google.com>,
+ Matteo Rizzo <matteorizzo@google.com>, Thomas Graf <tgraf@suug.ch>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, linux-hardening@vger.kernel.org, netdev@vger.kernel.org
+References: <20240701190152.it.631-kees@kernel.org>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20240701190152.it.631-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: CD17221B26
+X-Spam-Score: -3.00
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-3.00 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	XM_UA_NO_VERSION(0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[23];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[huaweicloud.com,linux.com,kernel.org,google.com,lge.com,dustri.org,linux-foundation.org,linux.dev,gmail.com,huawei.com,suug.ch,gondor.apana.org.au,lwn.net,vger.kernel.org,kvack.org];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
-On Tue, Jul 02, 2024 at 10:44:12AM +0200, Romain Gantois wrote:
-> To be clear, "fiber mode" in the DP83869 linguo also includes
-> 1000Base-X which can be used with a direct-attach copper cable. From
-> what I've seen, autonegotiation is not supported in this configuration.
+On 7/1/24 9:12 PM, Kees Cook wrote:
+> 
+> Kees Cook (6):
+>   mm/slab: Introduce kmem_buckets typedef
+>   mm/slab: Plumb kmem_buckets into __do_kmalloc_node()
+>   mm/slab: Introduce kvmalloc_buckets_node() that can take kmem_buckets
+>     argument
+>   mm/slab: Introduce kmem_buckets_create() and family
+>   ipc, msg: Use dedicated slab buckets for alloc_msg()
+>   mm/util: Use dedicated slab buckets for memdup_user()
 
-Why? Direct-attached cables are 1000base-CX, which is defined by 802.3.
-It uses the 1000base-X PCS which is shared with 1000base-SX, 1000base-LX
-etc. If one looks at 37.1.3, Relationship to architectural layering,
-or 36.1.5, Inter-sublayer interfaces, one can see in that diagram that
-the PCS *including* auto-negotiation is included for SX, LX *and* CX.
+pushed to slab/for-6.11/buckets, slab/for-next
 
-Moreover, 39.3 states that TP1 and TP4 will be commin in many
-implementations of LX, SX and CX.
+Thanks!
 
-Moreover, 39.1, 1000base-CX introduction, states that it incorporates
-clause 36 and clause 38. Clause 36.2.2 states that the 1000base-X PCS
-incorporates clause 37 auto-negotiation.
+> 
+>  include/linux/slab.h            |  48 ++++++++++++---
+>  ipc/msgutil.c                   |  13 +++-
+>  kernel/configs/hardening.config |   1 +
+>  mm/Kconfig                      |  17 ++++++
+>  mm/slab.h                       |   6 +-
+>  mm/slab_common.c                | 101 +++++++++++++++++++++++++++++++-
+>  mm/slub.c                       |  20 +++----
+>  mm/util.c                       |  23 ++++++--
+>  scripts/kernel-doc              |   1 +
+>  9 files changed, 200 insertions(+), 30 deletions(-)
+> 
 
-So, I think AN is supposed to be supported on CX in the same way that
-it's supported for SX and LX.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
