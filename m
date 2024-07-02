@@ -1,80 +1,64 @@
-Return-Path: <linux-kernel+bounces-237434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38C29923845
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:44:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE88D923A46
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:39:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F35051C20BCD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:28:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30C171F22F16
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4C214F106;
-	Tue,  2 Jul 2024 08:28:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC84155A47;
+	Tue,  2 Jul 2024 09:39:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JZZAQGrO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XeO/0M3A"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B428414E2ED
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 08:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D0015217F;
+	Tue,  2 Jul 2024 09:39:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719908891; cv=none; b=r9G4JF0HBlq0Mf3oDlXIo4CVIzzNx6RRUXCNdRn/32BH0rgEG40jtU5jEA7BCrJhRCSMQIt/txxwSPLgsLrZq8SeJPeZ/uZofSAXpxVJR1duiUrNU4dkRjH1cIUjhfDUbpcnZ6NOawR6Gbr/TsqSixXvBiDPtr17ytDyOAy/iic=
+	t=1719913163; cv=none; b=DEXjC9lvl5jOI1O82069SW0FMRz4+sUyF3LeBFalvlQgH3g9ttupqdPm57d8J/NAwoxXV0nJ9ynLmmgHcyjO3pNgdgFZPlweXbe/PZTxWWhXO6urWnHo8g7hNXt4E6YDO8ecM1XpE28+u65Ot9Gb9us+9BGEHIpUcpLOdxNChLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719908891; c=relaxed/simple;
-	bh=AepyYxRPuvsxCU9Eg271aElLNiexAMCPexCHuGp38IU=;
+	s=arc-20240116; t=1719913163; c=relaxed/simple;
+	bh=cKKhmZWA8i3/t0YPKgOkIBJTFu7C+J1VqMks8j/9hs0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d8yWScZHoPmO8QgGvqA3F2WqqNdvVP4NQLlbWFEeHh9RTDVC98AHFXfscPblf8sapinCH77J2P5W/1Y8WBsSscsbZKEh1RZNhy7nzby8CdfWzs5VACxWEw8e71/8BXr+tzMIkJT8w27tJdCfO+hE2NVFZeCuuDLb0Ti9XCQROPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JZZAQGrO; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719908888;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=cKQW/jZ8XGqgxW+ezshgmUqJQXB+xrQf6OyQjEXDBY4=;
-	b=JZZAQGrOVdobKqQ7q4nWRyq+mbxCbIVrTBBWKEWSrImuGdr1U89ixbVIqgGDufxQKWW549
-	QY1HD3zyKPXdpBjDvOpIlie4efUNplu7JSgpG5VDkPvcIl8djbp9faF2TX/WS+a9hKOtzr
-	E6r/g/7jZsC9Wu3b0bF//r7EyoH+4K4=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-479-7b3nZ5hVOyalnOHypee2PA-1; Tue, 02 Jul 2024 04:28:06 -0400
-X-MC-Unique: 7b3nZ5hVOyalnOHypee2PA-1
-Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2ec5f22cbedso39740181fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 01:28:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719908885; x=1720513685;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=cKQW/jZ8XGqgxW+ezshgmUqJQXB+xrQf6OyQjEXDBY4=;
-        b=ghcs4qqx4O410fnYB/MESOGPnDemNVwVHP8kai/dExz0YQ/M8uy6I/i+dZW+IT6E+C
-         7NvvFSyou+MTCuQR1o4vx7zh3L2FFi9FwuYuNMCNVDHHJQ/wggSJOnFoMFj2hLlbfst4
-         qsTmOZ/NafDKZVxHq+W6KE4KU/fpmf7mXR1X5riAk8BLLRpJK8mmcoccEqQ3fq6a7DDq
-         EByUdqQQBxX/oLWJ9lPk3f2tFkxxz1IZvsOS2q6GZcKdt8WFa/IP5h2LkV75RSAmSPOd
-         i+IY5DRvs2S4XwQ4ylZDlpwqaasLVuLh1S5dzwCJNql3Rpi8FXfiForMkJVoP9Pw2HG4
-         e8jw==
-X-Forwarded-Encrypted: i=1; AJvYcCV6/ASLjj+pATTnjGneNfzkptm/z9kIuIzz2nlm8w0rvEgNupfSnMPl2DRrItsDvJMFxhDkTkHKsQo/hP7p8nuo1pH9dIzfBbHZne2X
-X-Gm-Message-State: AOJu0YymTmcT0/k4Iz7aM0nyQlHnOXpzQsyQsUbs68YLk8LJAQiI9kvt
-	hLbr+u3vk5ihqC+xqExB8qCtVMzteuWK1VRmcOYr6fFR/SuzbUYPieNR6+BCGF2CG6v+sTlf2eY
-	KwByhii5PomojUtBouvWz3AIj2vnYE8Q2cFeicb7QrEz2VktCQ3n9bZH7vVmyew==
-X-Received: by 2002:a05:6512:10d1:b0:52c:dcdf:3a84 with SMTP id 2adb3069b0e04-52e8264dc8cmr7036833e87.7.1719908884847;
-        Tue, 02 Jul 2024 01:28:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFnyJ8GycELeQczdkR3yL3MqgLmRPAr0OrMndAmt+PEainWt5PKBwOgtmzHYjuvSla8yDnjxg==
-X-Received: by 2002:a05:6512:10d1:b0:52c:dcdf:3a84 with SMTP id 2adb3069b0e04-52e8264dc8cmr7036779e87.7.1719908883079;
-        Tue, 02 Jul 2024 01:28:03 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c739:2400:78ac:64bb:a39e:2578? (p200300cbc739240078ac64bba39e2578.dip0.t-ipconnect.de. [2003:cb:c739:2400:78ac:64bb:a39e:2578])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42573c55ff4sm164263945e9.46.2024.07.02.01.28.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jul 2024 01:28:02 -0700 (PDT)
-Message-ID: <0c5e16a6-fc23-4602-91d6-81a8742ba221@redhat.com>
-Date: Tue, 2 Jul 2024 10:28:01 +0200
+	 In-Reply-To:Content-Type; b=FAQwfJTeITuEmt9Psz8aLiNEcJEkHu87vfJb9QC+E73EpdaVk1ekgPgZANJAP//ESsXAyIITa1noCYyr/PDRYrOBCjj5wY279EAFuN8h667LtBedymCtjISSEJ8CGun46SNR/w47b3s7e+1l/blrusfWa1sOHVeOc5mwc0NrnVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XeO/0M3A; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719913162; x=1751449162;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=cKKhmZWA8i3/t0YPKgOkIBJTFu7C+J1VqMks8j/9hs0=;
+  b=XeO/0M3A4KnIe3oLFSTo31cb8QzG9N6I6vNvkHVY/Tv3O7n0pOrqGFU/
+   C+/AtxZ+zlk9JMBoXxZrLNpuzV+S8EIE5w2RQGUF5DdpxhXlj2JSy7cGK
+   2nlOowfU0jbZCcmiL3sw6T14lw9xeNgk7Ef9MSj3SQwduyNAUV4GWFb9N
+   Ydx1tN84KqQEBuoJIpWXb2ZmuKoEqda2OJjOwjnY2ju9WqpX3U0TdotO1
+   qBOwttUrkuyUMyRzuVs3zQ9T/NdazZY53T75VwomKtIYevHu2LhtuTE5R
+   ieEzGiFfwrz2SDVuC4OzqJvfuuE7VjJR+iBgnS9h/u/j3tDX3/2pUos4z
+   Q==;
+X-CSE-ConnectionGUID: UW+Vl1+oTESyocJmh+htsA==
+X-CSE-MsgGUID: n7Rbw1buR+uEb7+OJJZsCw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="17289670"
+X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
+   d="scan'208";a="17289670"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2024 02:39:21 -0700
+X-CSE-ConnectionGUID: 3z6E88XVSzSZZvVdIsg49w==
+X-CSE-MsgGUID: tPms4iSOTy2At6x47qeQuQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
+   d="scan'208";a="45637566"
+Received: from ncintean-mobl1.ger.corp.intel.com (HELO [10.245.246.174]) ([10.245.246.174])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2024 02:39:14 -0700
+Message-ID: <f982842a-1804-420b-a539-a609ecf8fb8a@linux.intel.com>
+Date: Tue, 2 Jul 2024 10:30:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,205 +66,99 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] support "THPeligible" semantics for mTHP with anonymous
- shmem
-To: Ryan Roberts <ryan.roberts@arm.com>, Yang Shi <shy828301@gmail.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>,
- Bang Li <libang.li@antgroup.com>, hughd@google.com,
- akpm@linux-foundation.org, wangkefeng.wang@huawei.com, ziy@nvidia.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240628104926.34209-1-libang.li@antgroup.com>
- <4b38db15-0716-4ffb-a38b-bd6250eb93da@arm.com>
- <4d54880e-03f4-460a-94b9-e21b8ad13119@linux.alibaba.com>
- <516aa6b3-617c-4642-b12b-0c5f5b33d1c9@arm.com>
- <597ac51e-3f27-4606-8647-395bb4e60df4@redhat.com>
- <6f68fb9d-3039-4e38-bc08-44948a1dae4d@arm.com>
- <992cdbf9-80df-4a91-aea6-f16789c5afd7@redhat.com>
- <2e0a1554-d24f-4d0d-860b-0c2cf05eb8da@arm.com>
- <06c74db8-4d10-4a41-9a05-776f8dca7189@redhat.com>
- <429f2873-8532-4cc8-b0e1-1c3de9f224d9@arm.com>
- <7a0bbe69-1e3d-4263-b206-da007791a5c4@redhat.com>
- <CAHbLzkrv2U39oOFuuHpmcfvDOuMayjwdgXLshxtDSSPGPzOkJQ@mail.gmail.com>
- <2450e4f8-236f-49ce-8bd3-b30a6d8c5e57@arm.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v23 32/32] ASoC: doc: Add documentation for SOC USB
+To: Wesley Cheng <quic_wcheng@quicinc.com>,
+ =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
+ <amadeuszx.slawinski@linux.intel.com>, srinivas.kandagatla@linaro.org,
+ mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
+ corbet@lwn.net, broonie@kernel.org, lgirdwood@gmail.com, krzk+dt@kernel.org,
+ Thinh.Nguyen@synopsys.com, bgoswami@quicinc.com, tiwai@suse.com,
+ robh@kernel.org, gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org,
+ alsa-devel@alsa-project.org
+References: <20240610235808.22173-1-quic_wcheng@quicinc.com>
+ <20240610235808.22173-33-quic_wcheng@quicinc.com>
+ <5be51e1f-70c9-4bbc-96fa-1e50e441bd35@linux.intel.com>
+ <408d9e8e-0f40-7e66-54be-2f8d2c0783a3@quicinc.com>
+ <ca1e1063-e1bd-4e03-a7cd-91985e9954e9@linux.intel.com>
+ <096d59a0-5e18-092c-c9ae-d98130226f06@quicinc.com>
+ <368d9019-2c96-468e-b472-7e1127f76213@linux.intel.com>
+ <eb6370ea-47a0-3659-3c10-cb7f95e3e520@quicinc.com>
+ <510468c7-b181-48d0-bf2d-3e478b2f2aca@linux.intel.com>
+ <c7a95157-1b71-1489-3657-8fe67f9acb4e@quicinc.com>
+ <90463a4e-c2e7-4b59-9a79-23533b4acd1e@linux.intel.com>
+ <fd8f1eb0-4b21-4697-8175-a61bc3858852@quicinc.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <2450e4f8-236f-49ce-8bd3-b30a6d8c5e57@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <fd8f1eb0-4b21-4697-8175-a61bc3858852@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 02.07.24 10:24, Ryan Roberts wrote:
-> On 01/07/2024 19:20, Yang Shi wrote:
->> On Mon, Jul 1, 2024 at 3:23 AM David Hildenbrand <david@redhat.com> wrote:
->>>
->>> On 01.07.24 12:16, Ryan Roberts wrote:
->>>> On 01/07/2024 10:17, David Hildenbrand wrote:
->>>>> On 01.07.24 11:14, Ryan Roberts wrote:
->>>>>> On 01/07/2024 09:57, David Hildenbrand wrote:
->>>>>>> On 01.07.24 10:50, Ryan Roberts wrote:
->>>>>>>> On 01/07/2024 09:48, David Hildenbrand wrote:
->>>>>>>>> On 01.07.24 10:40, Ryan Roberts wrote:
->>>>>>>>>> On 01/07/2024 09:33, Baolin Wang wrote:
->>>>>>>>>>>
->>>>>>>>>>>
->>>>>>>>>>> On 2024/7/1 15:55, Ryan Roberts wrote:
->>>>>>>>>>>> On 28/06/2024 11:49, Bang Li wrote:
->>>>>>>>>>>>> After the commit 7fb1b252afb5 ("mm: shmem: add mTHP support for
->>>>>>>>>>>>> anonymous shmem"), we can configure different policies through
->>>>>>>>>>>>> the multi-size THP sysfs interface for anonymous shmem. But
->>>>>>>>>>>>> currently "THPeligible" indicates only whether the mapping is
->>>>>>>>>>>>> eligible for allocating THP-pages as well as the THP is PMD
->>>>>>>>>>>>> mappable or not for anonymous shmem, we need to support semantics
->>>>>>>>>>>>> for mTHP with anonymous shmem similar to those for mTHP with
->>>>>>>>>>>>> anonymous memory.
->>>>>>>>>>>>>
->>>>>>>>>>>>> Signed-off-by: Bang Li <libang.li@antgroup.com>
->>>>>>>>>>>>> ---
->>>>>>>>>>>>>        fs/proc/task_mmu.c      | 10 +++++++---
->>>>>>>>>>>>>        include/linux/huge_mm.h | 11 +++++++++++
->>>>>>>>>>>>>        mm/shmem.c              |  9 +--------
->>>>>>>>>>>>>        3 files changed, 19 insertions(+), 11 deletions(-)
->>>>>>>>>>>>>
->>>>>>>>>>>>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
->>>>>>>>>>>>> index 93fb2c61b154..09b5db356886 100644
->>>>>>>>>>>>> --- a/fs/proc/task_mmu.c
->>>>>>>>>>>>> +++ b/fs/proc/task_mmu.c
->>>>>>>>>>>>> @@ -870,6 +870,7 @@ static int show_smap(struct seq_file *m, void *v)
->>>>>>>>>>>>>        {
->>>>>>>>>>>>>            struct vm_area_struct *vma = v;
->>>>>>>>>>>>>            struct mem_size_stats mss = {};
->>>>>>>>>>>>> +    bool thp_eligible;
->>>>>>>>>>>>>              smap_gather_stats(vma, &mss, 0);
->>>>>>>>>>>>>        @@ -882,9 +883,12 @@ static int show_smap(struct seq_file *m, void
->>>>>>>>>>>>> *v)
->>>>>>>>>>>>>              __show_smap(m, &mss, false);
->>>>>>>>>>>>>        -    seq_printf(m, "THPeligible:    %8u\n",
->>>>>>>>>>>>> -           !!thp_vma_allowable_orders(vma, vma->vm_flags,
->>>>>>>>>>>>> -               TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL));
->>>>>>>>>>>>> +    thp_eligible = !!thp_vma_allowable_orders(vma, vma->vm_flags,
->>>>>>>>>>>>> +                        TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL);
->>>>>>>>>>>>> +    if (vma_is_anon_shmem(vma))
->>>>>>>>>>>>> +        thp_eligible =
->>>>>>>>>>>>> !!shmem_allowable_huge_orders(file_inode(vma->vm_file),
->>>>>>>>>>>>> +                            vma, vma->vm_pgoff, thp_eligible);
->>>>>>>>>>>>
->>>>>>>>>>>> Afraid I haven't been following the shmem mTHP support work as much as I
->>>>>>>>>>>> would
->>>>>>>>>>>> have liked, but is there a reason why we need a separate function for
->>>>>>>>>>>> shmem?
->>>>>>>>>>>
->>>>>>>>>>> Since shmem_allowable_huge_orders() only uses shmem specific logic to
->>>>>>>>>>> determine
->>>>>>>>>>> if huge orders are allowable, there is no need to complicate the
->>>>>>>>>>> thp_vma_allowable_orders() function by adding more shmem related logic,
->>>>>>>>>>> making
->>>>>>>>>>> it more bloated. In my view, providing a dedicated helper
->>>>>>>>>>> shmem_allowable_huge_orders(), specifically for shmem, simplifies the logic.
->>>>>>>>>>
->>>>>>>>>> My point was really that a single interface (thp_vma_allowable_orders)
->>>>>>>>>> should be
->>>>>>>>>> used to get this information. I have no strong opinon on how the
->>>>>>>>>> implementation
->>>>>>>>>> of that interface looks. What you suggest below seems perfectly reasonable
->>>>>>>>>> to me.
->>>>>>>>>
->>>>>>>>> Right. thp_vma_allowable_orders() might require some care as discussed in
->>>>>>>>> other
->>>>>>>>> context (cleanly separate dax and shmem handling/orders). But that would be
->>>>>>>>> follow-up cleanups.
->>>>>>>>
->>>>>>>> Are you planning to do that, or do you want me to send a patch?
->>>>>>>
->>>>>>> I'm planning on looking into some details, especially the interaction with large
->>>>>>> folios in the pagecache. I'll let you know once I have a better idea what
->>>>>>> actually should be done :)
->>>>>>
->>>>>> OK great - I'll scrub it from my todo list... really getting things done today :)
->>>>>
->>>>> Resolved the khugepaged thiny already? :P
->>>>>
->>>>> [khugepaged not active when only enabling the sub-size via the 2M folder IIRC]
->>>>
->>>> Hmm... baby brain?
->>>
->>> :)
->>>
->>> I think I only mentioned it in a private mail at some point.
->>>
->>>>
->>>> Sorry about that. I've been a bit useless lately. For some reason it wasn't on
->>>> my list, but its there now. Will prioritise it, because I agree it's not good.
->>>
->>>
->>> IIRC, if you do
->>>
->>> echo never > /sys/kernel/mm/transparent_hugepage/enabled
->>> echo always > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled
->>>
->>> khugepaged will not get activated.
+
+>> There are really multiple layers to deal with
 >>
->> khugepaged is controlled by the top level knob.
+>> a) is the controller able to support the offload path? IIRC this is
+>> embedded in an obscure XHCI property, it would make sense to expose it
+>> as a control, or component string, of the USB card.
 > 
-> What do you mean by "top level knob"? I assume
-> /sys/kernel/mm/transparent_hugepage/enabled ?
+> If a component string/tag is desired, I already have some way of doing that.  I can add it to the USB card.
 > 
-> If so, that's not really a thing in its own right; its just the legacy PMD-size
-> THP control, and we only take any notice of it if a per-size control is set to
-> "inherit". So if we have:
+>>
+>> b) is there a companion card capable of dealing with the offload path?
+>> Since the presence of this card may depend on driver probe, there should
+>> be a control on the USB card. userspace could detect changes to this
+>> control and detect if that path is or is no longer enabled.
+> 
+> So currently, the "USB Offload Playback Capable Card" kcontrol (on the USB card) will determine if there is an offload path.  However, this differs than what Amadeusz is suggesting, in that he wants a single kcontrol created for EACH USB card identified (per USB audio device), and a simple enable/disable control to determine if the offload path is enabled for that card/pcm stream.
+> 
+> It would be a simpler approach for the userspace, and if the card that handles the offload card isn't present, then these enable/disable control will be set to "disabled," and even if users attempt to set the control, it won't go through.
 
-In a simpler world, where "enabled" would have been a boolean (true / 
-false), we could have made it a universal killswitch that is AND'ed with 
-the other ones.
+Not following. Are you suggesting userspace would modify the
+enable/disable status?
 
-Unfortunately, we don't live in such a simple world.
+I would just have a read-only control that reports what the hardware can
+do and which other card can deal with offload. It's up to userspace to
+select the offloaded PCM device or not.
 
--- 
-Cheers,
 
-David / dhildenb
 
+>> c) which PCM device is actually offloaded? This could be plural for some
+>> implementations. The mapping between PCM devices exposed by the USB
+>> card, and those exposed by the companion card, should be known to
+>> userspace. I am not sure how this would be done though, a variable
+>> number of controls is a sure way to confuse userspace.
+> 
+> Expanding on Amadeusz's suggestion, my idea is to have an enable/disable kcontrol per USB stream.  For example, one USB card could have multiple PCM devices (USB streams).  So we would have something like:
+> 
+> PCM Offload Playback Enable Stream#0  enable/disable
+> 
+> PCM Offload Playback Enable Stream#1  enable/disable
+> 
+> ....
+
+are those read-only or not?
+
+> So we'd know which USB card and PCM device is selected for USB SND.  However, I see what you're getting at in case there are multiple supported streams, because userspace needs to know which ASoC card/pcm combination corresponds to which USB device/combination.
+
+I don't understand how this would help map the two parts? There's got to
+be an additional mapping...
+
+> What do you think about having a USB card kcontrol to display the mapped ASoC card and PCM indexes?
+> 
+> PCM Offload Playback Enable Stream Mapping#0  0, 1 (ASoC card#0, PCM device#1)
+> 
+> To summarize, if we did this, I'd plan to remove all the kcontrols in ASoC card, and have the following in the USB card for an USB audio device that supports one USB stream:
+> 
+> PCM Offload Playback Enable Stream#0  enable/disable
+> 
+> PCM Offload Playback Enable Stream Mapping#0  0, 1 (ASoC card#0, PCM device#1)
+
+... which is suggested here.
+
+Assuming these are read-only controls, we would need to know which PCM
+device on the USB card can be optimized with the use of which PCM device
+on the ASoC card. That means a set of three values. You would also want
+a number of streams to make the guesswork on controls less painful.
 
