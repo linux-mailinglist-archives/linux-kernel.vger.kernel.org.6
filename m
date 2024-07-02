@@ -1,110 +1,172 @@
-Return-Path: <linux-kernel+bounces-238168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36267924626
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:31:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FC17924632
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:32:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90605B21FA8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:31:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 623F0289CA7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803D81BE221;
-	Tue,  2 Jul 2024 17:31:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB6981BE847;
+	Tue,  2 Jul 2024 17:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="npVAbzeP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G7B+ZKL6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01EF63D;
-	Tue,  2 Jul 2024 17:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C6363D;
+	Tue,  2 Jul 2024 17:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719941499; cv=none; b=OVEWv4CVSiE9jD7q2EAVUiDK2wCM3ve7AcbzViYSEao4PkbQ+OfmDpAZNOgYmWOgXRn2S6cALBjmIJRKIToc8M6tnZLbQoPNt6fmtK53OkbblJ+BxQc1smSjOfNLvCfQA3YYNef/DzORNDgc560Bb8McEBQDDZnARA76h2zvd3I=
+	t=1719941531; cv=none; b=A1OSuQoBEV/AsMIR1wNT+bYwNmVQadLOUa5v8D6DUYIdfsdnxKVYdsM8DvB93RC9x3cqUbZNUHneSIr/SH+SLjlsN5NThy2rxmOjkfYiPmaR0NhxEzFzDGJXUjwXU77XJrqhYL+4QtQDqPoy06P8MNbJ6Ygdub4tSobrzdNBt6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719941499; c=relaxed/simple;
-	bh=eLSpiG/nG5LqRYTxklKZZEHMe3WYQm9lPZRlciGPDo0=;
+	s=arc-20240116; t=1719941531; c=relaxed/simple;
+	bh=t3HIDVDXEqNoB5mkt4w5bUByKXNZ3qQOdwiL9G/B48Y=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EtMdjYwzEQ08dRK1W2cxgnjcr5ChWBcc2S9jTm5AoritqMlt+vgZhjxMjBaEWMUvE+lYQVR0auEJDD0bSbBm5NVx92DVZO5KA7pzQD138VolPw45BC+BJqhoru+21XOjLs9brE5wGQYD969YlDH1Qy7hNW82H17w5Xpj3qGt5vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=npVAbzeP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 882B5C116B1;
-	Tue,  2 Jul 2024 17:31:39 +0000 (UTC)
+	 To:Cc:Content-Type; b=qWUDh8wc+SF6Ylpcdd8y+wrXZgx6xwP4mpyClkmK+DNE3un0eOlpHGEWp4fdMRhEfxl7irrdfWejt/JALQ8x+JdwRDMHeBfULSa6WiIAjQ01JFOazBNr20dGzE6uL0aI5SiDZdHMm1wgQiLAvAHQfiIoPUzPD29AhylDstjggI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G7B+ZKL6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDA01C4AF07;
+	Tue,  2 Jul 2024 17:32:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719941499;
-	bh=eLSpiG/nG5LqRYTxklKZZEHMe3WYQm9lPZRlciGPDo0=;
+	s=k20201202; t=1719941531;
+	bh=t3HIDVDXEqNoB5mkt4w5bUByKXNZ3qQOdwiL9G/B48Y=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=npVAbzeP6GC5K7lt2m6oCPpyaO+MAAGpjUWRCPmbnQh45yX+RcHbZmE65TKVLdyqx
-	 gMxrVJa38JQlF01CLzxXc+GsmsFAVE4qoPNva9NtyLPrGzlE9Tyc/LoWn1CX1bYd8c
-	 moVhn6krLEqKKVbj7g4Mi1Ej+VVscFjL1w6ydPEmt4O5ZtO00NzRtI/xNTPGl0aMdE
-	 wPHzOHXKQFS9fx6q/UfAW0+uXnaRlOubAnUqq26ljOfdMOnjrvJ4fKe10nX8SiXLjN
-	 PprggjagVTHV5alsUl+q0MpK/lkSqetIc18wIS+nkgAAgVN/hfzLklYzeGQ40/+m16
-	 gGl0OX+i9hYQA==
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ee4ab5958dso47078321fa.1;
-        Tue, 02 Jul 2024 10:31:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWaIFg/o2sVamw107e8RDxT91coBmEqSKjnjhUabLV1ptWFoKqtDJQiztHGgFD0FLRu/7zba8BNb80j3IfLVk8v013bzAILZfRNC1YWZSBlGORzQ7K2OunNtL0SwS8QghFqKNAw5C0xsg==
-X-Gm-Message-State: AOJu0Yy15ta/3wurxRxSD1wbmRrvaHM6e6/CONGxJv4Y1h9uE2/wvxCH
-	JLveJxJkZkLJtP2Uk+xSxNFM9kYP25MDzHiHhGYBUou24sZd3RGiIMnQD/ehkv/pCk8GF7yxYNx
-	qTZlYGbOPzbpa/sz1ilct4JLOoQ==
-X-Google-Smtp-Source: AGHT+IEZT7uAluQOGnvOb1tbCNAEAJsZkxrg3kb2tdkIeIRFQ0kkyoqsja8EfoWi/URPTFgwd1QrcVY+OtVG9W0TzCo=
-X-Received: by 2002:a05:6512:104a:b0:52e:941d:ade8 with SMTP id
- 2adb3069b0e04-52e941dae76mr109325e87.9.1719941497915; Tue, 02 Jul 2024
- 10:31:37 -0700 (PDT)
+	b=G7B+ZKL6XHM6S56YL7MHV9ZO6DpY7P+xqh+C75A2F9zbo1ozXvTK3yGT9EHPwQi86
+	 Gb4FumTqSrfNld5oltuqDCIY1Y+6J3UZLSmGPXo8IDDsC1b+T05V3C92ay+CkG8dl4
+	 8p8Puf6hcFvy7bueNSD+8GHx+451rI642HxoB3RqFrEZAz2i3UTZ5Q0fnR2rsTCcoD
+	 5W94YYPmCK0QwY385aKz9ArXF5SEH3tY0S0aepUwkpA7jE3WcXPNkoUXHu3wwe/dPE
+	 i5oGDyGoMYpTs+ANIqOXCIuFyxNj8uZPlOAg/Q6VpmnB5sK/B2wLNkq/dSpZGzDe3g
+	 WDhhcCXS0qd7A==
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ebec2f11b7so50899261fa.2;
+        Tue, 02 Jul 2024 10:32:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVQszmmqCUW45BWtvANjwMzOQJVmUSxNMje9+97USPSZF4aIZG3Mk5ND1cY7pnArrC7jT3f7VmSf9hotSQ2XhcZskTJe/k+k3JuF/dLGJdPsnIMb6j3wFzpkOo4nnUyakkUbSzv/TEhJO3H
+X-Gm-Message-State: AOJu0Ywwsw5HwVHSm/pq5ENyeCmxlFDKtmYs2xYoXA/LWRFd2Z9x+F/z
+	hJpfKelMsNx9JG5QlnluEnCsRUSdbZeKg8uaVO155MRlJB0Uh6LkhetdmatD4RXWzsyBucU84YA
+	JtZ7UzTAr6o0cdDFu2oVqePgDd30=
+X-Google-Smtp-Source: AGHT+IFvnAjEHAejnpwHKoTAFmR7dm14Q4hDOyrN+iuQ6xhb77eTs0VuSTWv8wYtoC42qpafg1V23gP8EWtEf0nSdSc=
+X-Received: by 2002:a05:651c:4d2:b0:2ec:5467:dcb6 with SMTP id
+ 38308e7fff4ca-2ee5e6bd1cfmr56385411fa.52.1719941529629; Tue, 02 Jul 2024
+ 10:32:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240701215441.54353-1-heinrich.schuchardt@canonical.com>
-In-Reply-To: <20240701215441.54353-1-heinrich.schuchardt@canonical.com>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 2 Jul 2024 11:31:24 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKgsD2UN2FTvz3AByc8TSdGsrSJZGUM1Fr-v2yhu0gh-g@mail.gmail.com>
-Message-ID: <CAL_JsqKgsD2UN2FTvz3AByc8TSdGsrSJZGUM1Fr-v2yhu0gh-g@mail.gmail.com>
-Subject: Re: [PATCH 1/1] libfdt: check return value of fdt_num_mem_rsv() in fdt_pack()
-To: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
-Cc: Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org, 
+References: <20240625-mkdebian-check-if-optional-vars-are-defined-v1-1-53f196b9f83a@avm.de>
+In-Reply-To: <20240625-mkdebian-check-if-optional-vars-are-defined-v1-1-53f196b9f83a@avm.de>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 3 Jul 2024 02:31:33 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASRgcmSBTMj=wq3uo441hRceEJ19ga_mFDf5DCEPvh8LQ@mail.gmail.com>
+Message-ID: <CAK7LNASRgcmSBTMj=wq3uo441hRceEJ19ga_mFDf5DCEPvh8LQ@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: deb-dpkg: Check optional env variables before use
+To: Nicolas Schier <n.schier@avm.de>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 1, 2024 at 3:55=E2=80=AFPM Heinrich Schuchardt
-<heinrich.schuchardt@canonical.com> wrote:
+On Tue, Jun 25, 2024 at 9:46=E2=80=AFPM Nicolas Schier <n.schier@avm.de> wr=
+ote:
 >
-> fdt_num_mem_rsv() may return -FDT_ERR_TRUNCATED.
-> In this case fdt_pack() should propagate the error code.
+> Add checks to mkdebian for undefined optional environment variables
+> before evaluating them.
 >
-> Signed-off-by: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+> Some variables used by scripts/package/mkdebian are fully optional and
+> not set by kbuild.  In order to allow enabling 'set -u' (shell script
+> exits on dereference of undefined variables), introduce the explicit
+> checking.
+
+
+This patch is not enough for enabling -u.
+
+
+
+email=3D${DEBEMAIL-$EMAIL}
+
+causes an error.
+
+
+$ unset DEBEMAIL; unset EMAIL; make deb-pkg
+  GEN     debian
+./scripts/package/mkdebian: 128: EMAIL: parameter not set
+
+
+
+
+I can do this work myself.
+
+
+
+
+
+
+
+
+
+>
+> Suggested-by: Masahiro Yamada <masahiroy@kernel.org>
+> Signed-off-by: Nicolas Schier <n.schier@avm.de>
 > ---
->  libfdt/fdt_rw.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-
-This needs to be sent to David G and devicetree-compiler list to be applied=
-.
-
+> This allows application of the original patch
+>    [PATCH 1/2] kconfig: add -e and -u options to *conf-cfg.sh scripts
+>    [PATCH 2/2] kbuild: package: add -e and -u options to shell scripts
+> as sent https://lore.kernel.org/linux-kbuild/20240611160938.3511096-1-mas=
+ahiroy@kernel.org/
+> ---
+>  scripts/package/mkdebian | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 >
-> diff --git a/libfdt/fdt_rw.c b/libfdt/fdt_rw.c
-> index 3621d36..a307701 100644
-> --- a/libfdt/fdt_rw.c
-> +++ b/libfdt/fdt_rw.c
-> @@ -490,8 +490,11 @@ int fdt_pack(void *fdt)
+> diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
+> index b9a5b789c655..2a7bb05c7f60 100755
+> --- a/scripts/package/mkdebian
+> +++ b/scripts/package/mkdebian
+> @@ -19,7 +19,7 @@ if_enabled_echo() {
+>  }
 >
->         FDT_RW_PROBE(fdt);
+>  set_debarch() {
+> -       if [ -n "$KBUILD_DEBARCH" ] ; then
+> +       if [ "${KBUILD_DEBARCH:+set}" ] ; then
+>                 debarch=3D"$KBUILD_DEBARCH"
+>                 return
+>         fi
+> @@ -147,7 +147,7 @@ fi
 >
-> -       mem_rsv_size =3D (fdt_num_mem_rsv(fdt)+1)
-> -               * sizeof(struct fdt_reserve_entry);
-> +       mem_rsv_size =3D fdt_num_mem_rsv(fdt);
-> +       if (mem_rsv_size < 0)
-> +               return mem_rsv_size;
-> +
-> +       mem_rsv_size =3D (mem_rsv_size + 1) * sizeof(struct fdt_reserve_e=
-ntry);
->         fdt_packblocks_(fdt, fdt, mem_rsv_size, fdt_size_dt_struct(fdt),
->                         fdt_size_dt_strings(fdt));
->         fdt_set_totalsize(fdt, fdt_data_size_(fdt));
+>  # Some variables and settings used throughout the script
+>  version=3D$KERNELRELEASE
+> -if [ -n "$KDEB_PKGVERSION" ]; then
+> +if [ "${KDEB_PKGVERSION:+set}" ]; then
+>         packageversion=3D$KDEB_PKGVERSION
+>  else
+>         packageversion=3D$(${srctree}/scripts/setlocalversion --no-local =
+${srctree})-$($srctree/scripts/build-version)
+> @@ -164,7 +164,7 @@ debarch=3D
+>  set_debarch
+>
+>  # Try to determine distribution
+> -if [ -n "$KDEB_CHANGELOG_DIST" ]; then
+> +if [ "${KDEB_CHANGELOG_DIST:+set}" ]; then
+>          distribution=3D$KDEB_CHANGELOG_DIST
+>  # In some cases lsb_release returns the codename as n/a, which breaks dp=
+kg-parsechangelog
+>  elif distribution=3D$(lsb_release -cs 2>/dev/null) && [ -n "$distributio=
+n" ] && [ "$distribution" !=3D "n/a" ]; then
+>
+> ---
+> base-commit: 3893a22a160edd1c15b483deb3dee36b36ee4226
+> change-id: 20240625-mkdebian-check-if-optional-vars-are-defined-a46cf0524=
+e4e
+>
+> Best regards,
 > --
-> 2.45.2
+> Nicolas Schier
 >
->
+
+
+--
+Best Regards
+Masahiro Yamada
 
