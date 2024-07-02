@@ -1,70 +1,57 @@
-Return-Path: <linux-kernel+bounces-237611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB0FC923B78
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:33:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEABB923B77
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:33:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFFF71C22200
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:33:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC916281D4F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448D6158A3E;
-	Tue,  2 Jul 2024 10:33:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3B4915887D;
+	Tue,  2 Jul 2024 10:33:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b="vunU46Ag"
+	dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b="KmZhuMAB"
 Received: from mail.fris.de (mail.fris.de [116.203.77.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11DF414F106;
-	Tue,  2 Jul 2024 10:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11DB12AD17
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 10:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.77.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719916388; cv=none; b=e7WWfxhpCP61ExRZdOOXZ2bJrUGn0jHHeT+iR2PmPychMa6G9ngzFdkIwOKgvNKqS/PHO5wxCOHWaCCBKXP7GLib73MVP3WDFxgnTPFjiuxjgwclyVE7X90KbAK9rtmSyXUTyw/urk+ZmOufllcYTk2fJQrYZ0VOWOAkmef4g7E=
+	t=1719916387; cv=none; b=MzeToFIC1cSNfty5urxTtioRf9GAh0LGy2+s7qzeKA0GUVq+zrKs+OBkSJl7GbeQqdA7SUBu1LrGfuZtY4AWqEOnzO/jebSaHeYwlsjoD5mSV11BFYmDNbvVjNq8BbSanY4692c3jk+0wP2WD0JyZ7kWtogLiLTRfOI0uiSPFPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719916388; c=relaxed/simple;
-	bh=IIdrde44xCAX9clc1/uANi5UWVhvF/4jtVO3weo17XA=;
+	s=arc-20240116; t=1719916387; c=relaxed/simple;
+	bh=Q0WlQsT+sfGd9MDgDc3rO8/gjW0FJPFUpaxCbJNQ6NU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IpgFIHzOTqr+1vGW8/I3k03g5PZtpvpzW4bHcdxY0nVtI1rUYUMBRxzFcw1L2WoOjXPzoIqorLD+hTFoR+pZ7sG/32YaMVR19EcQMODyAacwNCWpMeVTKcLq566TlcwUIlT0bRum7i7hCFbb4N6XIWtCvWi2r69cc9rL7YrKfe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de; spf=fail smtp.mailfrom=fris.de; dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b=vunU46Ag; arc=none smtp.client-ip=116.203.77.234
+	 MIME-Version; b=FTraFwxXFKhfvX/J4cYpZgL4aO1j4nWVoOu5QTCahvyBXKetKijyyn2BRYvahhv4UYBTVn9iGtBRFmR8zi0K3dD23ADkb5tlIBQ/RDdoZNYAp+iq8yC+7FO45o8n/Zk6v7Fq1WUEQBUCYLqzpFwmMp/iAkxQ2GhvcoevSZBb6JQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de; spf=fail smtp.mailfrom=fris.de; dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b=KmZhuMAB; arc=none smtp.client-ip=116.203.77.234
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=fris.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 59518BFC13;
-	Tue,  2 Jul 2024 12:33:00 +0200 (CEST)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 42503BFC22;
+	Tue,  2 Jul 2024 12:33:02 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fris.de; s=dkim;
-	t=1719916381; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1719916382; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=A+JqgQw0YHH82MPAAJQ1B0axOEVCaxmxVuscKJ4O+LA=;
-	b=vunU46Ag3somu7du4+5nmdkiI1xishO9OnCS9aCtY7IYqLp105EbAu40k9ypG+StwrdE6o
-	R3x3wb8bs9nj0sHG/xCfw5eWRTk/pc9HmySPqJ1SVF5HmkWXqbBW5JEQ/5zfKPfHro6Caa
-	1Hoh652FJXgQBTf1hic8UylAlHbT5itu15GysbxqFpFIKeXPXX+h2pO3xWsJ6cStn8k6zi
-	KrWBCdRpjHdL1zVryMKG84g3GF8L6ifx/vsnW4WOcbD1ecmaJUKH+oiOWcnKKqSCCcy/0M
-	/paUbkLUkzcNkmv3I9Tp/L8syoUcZpiPNMjsVw9WtppBCi/9cIW8Z/YDfijChQ==
+	bh=WjUMr+oTPhCNu/UoVZDEPwzZPd8HmMnqLmAW7x3pgnU=;
+	b=KmZhuMABtchHtNnW7vidc2L0N+eDY86DpJOcmWsQpNX4D45gOru0WoJTA3hP4sGDxBzhS2
+	KkHRZLqsoHknzu1Aavq+ad2i7PUiSJ6cwbwchf0C9SPZ9Broz37nmIdfsPCRUOYvVOv32X
+	eGm4JsMZrbZ3+JXRFwAda6ozD+Ki5WIV7qoB6wbsrn0EjLKzOMs+o5s1x4Hzzd939f9ZNe
+	DSKtPliiZC/DtRjRw5TcopNsJgN/ohGyP6qW3cklNMxIM/4L7QV2gvuw6t3qLNGNqP3nuF
+	SUg1Rn26Ea1y028X3LJmYOB5ZCn3KJC8N2ureLF5r+sJfFYBbedowG6jWhEWFQ==
 From: Frieder Schrempf <frieder@fris.de>
-To: Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+To: Liam Girdwood <lgirdwood@gmail.com>,
 	linux-kernel@vger.kernel.org,
-	Li Yang <leoyang.li@nxp.com>,
-	Rob Herring <robh@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>
+	Mark Brown <broonie@kernel.org>
 Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
-	Hiago De Franco <hiago.franco@toradex.com>,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	Joao Paulo Goncalves <joao.goncalves@toradex.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Marco Felsch <m.felsch@pengutronix.de>,
-	Markus Niebel <Markus.Niebel@ew.tq-group.com>,
-	Mathieu Othacehe <m.othacehe@gmail.com>,
-	Tim Harvey <tharvey@gateworks.com>
-Subject: [PATCH 5/7] dt-bindings: arm: fsl: Add Kontron i.MX93 OSM-S based boards
-Date: Tue,  2 Jul 2024 12:31:17 +0200
-Message-ID: <20240702103155.321855-6-frieder@fris.de>
+	Bo Liu <liubo03@inspur.com>,
+	Joy Zou <joy.zou@nxp.com>,
+	Rob Herring <robh@kernel.org>
+Subject: [PATCH 6/7] regulator: pca9450: Make IRQ optional
+Date: Tue,  2 Jul 2024 12:31:18 +0200
+Message-ID: <20240702103155.321855-7-frieder@fris.de>
 In-Reply-To: <20240702103155.321855-1-frieder@fris.de>
 References: <20240702103155.321855-1-frieder@fris.de>
 Precedence: bulk
@@ -78,31 +65,73 @@ X-Last-TLS-Session-Version: TLSv1.3
 
 From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-Add the bindings for the Kontron i.MX93 OSM-S SoM and BL carrier
-board.
+The IRQ line might not be connected on some boards. Allow the driver
+to be probed without it.
 
 Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
 ---
- Documentation/devicetree/bindings/arm/fsl.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/regulator/pca9450-regulator.c | 41 +++++++++++++--------------
+ 1 file changed, 19 insertions(+), 22 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
-index 6d185d09cb6ae..5fa1494435011 100644
---- a/Documentation/devicetree/bindings/arm/fsl.yaml
-+++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-@@ -1318,6 +1318,12 @@ properties:
-           - const: variscite,var-som-mx93
-           - const: fsl,imx93
+diff --git a/drivers/regulator/pca9450-regulator.c b/drivers/regulator/pca9450-regulator.c
+index be488c5dff140..9714afe347dcc 100644
+--- a/drivers/regulator/pca9450-regulator.c
++++ b/drivers/regulator/pca9450-regulator.c
+@@ -891,11 +891,6 @@ static int pca9450_i2c_probe(struct i2c_client *i2c)
+ 	unsigned int reset_ctrl;
+ 	int ret;
  
-+      - description: Kontron OSM-S i.MX93 SoM based boards
-+        items:
-+          - const: kontron,imx93-bl-osm-s # Kontron BL i.MX93 OSM-S board
-+          - const: kontron,imx93-osm-s    # Kontron OSM-S i.MX93 SoM
-+          - const: fsl,imx93
-+
-       - description:
-           Freescale Vybrid Platform Device Tree Bindings
+-	if (!i2c->irq) {
+-		dev_err(&i2c->dev, "No IRQ configured?\n");
+-		return -EINVAL;
+-	}
+-
+ 	pca9450 = devm_kzalloc(&i2c->dev, sizeof(struct pca9450), GFP_KERNEL);
+ 	if (!pca9450)
+ 		return -ENOMEM;
+@@ -967,23 +962,25 @@ static int pca9450_i2c_probe(struct i2c_client *i2c)
+ 		}
+ 	}
  
+-	ret = devm_request_threaded_irq(pca9450->dev, pca9450->irq, NULL,
+-					pca9450_irq_handler,
+-					(IRQF_TRIGGER_FALLING | IRQF_ONESHOT),
+-					"pca9450-irq", pca9450);
+-	if (ret != 0) {
+-		dev_err(pca9450->dev, "Failed to request IRQ: %d\n",
+-			pca9450->irq);
+-		return ret;
+-	}
+-	/* Unmask all interrupt except PWRON/WDOG/RSVD */
+-	ret = regmap_update_bits(pca9450->regmap, PCA9450_REG_INT1_MSK,
+-				IRQ_VR_FLT1 | IRQ_VR_FLT2 | IRQ_LOWVSYS |
+-				IRQ_THERM_105 | IRQ_THERM_125,
+-				IRQ_PWRON | IRQ_WDOGB | IRQ_RSVD);
+-	if (ret) {
+-		dev_err(&i2c->dev, "Unmask irq error\n");
+-		return ret;
++	if (pca9450->irq) {
++		ret = devm_request_threaded_irq(pca9450->dev, pca9450->irq, NULL,
++						pca9450_irq_handler,
++						(IRQF_TRIGGER_FALLING | IRQF_ONESHOT),
++						"pca9450-irq", pca9450);
++		if (ret != 0) {
++			dev_err(pca9450->dev, "Failed to request IRQ: %d\n",
++				pca9450->irq);
++			return ret;
++		}
++		/* Unmask all interrupt except PWRON/WDOG/RSVD */
++		ret = regmap_update_bits(pca9450->regmap, PCA9450_REG_INT1_MSK,
++					IRQ_VR_FLT1 | IRQ_VR_FLT2 | IRQ_LOWVSYS |
++					IRQ_THERM_105 | IRQ_THERM_125,
++					IRQ_PWRON | IRQ_WDOGB | IRQ_RSVD);
++		if (ret) {
++			dev_err(&i2c->dev, "Unmask irq error\n");
++			return ret;
++		}
+ 	}
+ 
+ 	/* Clear PRESET_EN bit in BUCK123_DVS to use DVS registers */
 -- 
 2.45.2
 
