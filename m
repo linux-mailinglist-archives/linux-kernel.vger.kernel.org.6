@@ -1,71 +1,70 @@
-Return-Path: <linux-kernel+bounces-238266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8F749247A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:56:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F4799247B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:58:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F05DA1C2260C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:56:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1F851F272A5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:58:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7630C1CD5B3;
-	Tue,  2 Jul 2024 18:56:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745301CD5B9;
+	Tue,  2 Jul 2024 18:57:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="FmqsNcL4"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KTfAgzop"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D0F1CB335
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 18:56:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03AF91CD5AD
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 18:57:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719946587; cv=none; b=kETjo3RTCncifDG8uQFFjBSFXK6oGN6Ja6KXWeooD23ynD/m0S1T2rCFgfFUU8r04RkNfdt3VHDV5DQDdARKYHr4/daYfh3FaxxCcEnZzXCqKolR7RLKcJfIM6eZvD2n+RkxUbm/j+AoSVBxcGPcxi62kKVwn+FOxABRfhae3no=
+	t=1719946633; cv=none; b=r1Tzyepw2f0Y8vsmmrchx3LZitgbsH9nE5iFbE5pOKkoViujGEwA7tSrnBZ6nYkQilicaTCoCG8PtAL//jzduUl0c0EwPe2Lsw9eyCYEuUn2q/2a6KRt4LrSf3EJnAwTfndVfbY3BuJ+8uu2ULoBP1k5MeI8S0ntZ9P0Hk1ZRhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719946587; c=relaxed/simple;
-	bh=08HUBc/wHv6QFHCpFs4tVQjXzet6FMMj8LdkYt8XNTE=;
+	s=arc-20240116; t=1719946633; c=relaxed/simple;
+	bh=395FfH3xyemItAqtIn4JAJLEifepSzNJDc6f4+Ca/t0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dJ643nhwEY1At5oZpytXT9lCupoG4YMzUeMEN+kWx8MlckhVHVfbypjD78mrYNRWkNUvnJ3tP9am7hRc10ddFvAevR1fmF/mhbxA7D2KxUgd+SAoc4EevYcxcKE+/jySIfM5wYnaSPUr6RskfhCYWVGMW/kt78L7EMX1kTL5vjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=FmqsNcL4; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a72585032f1so505195566b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 11:56:25 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=gZVPv/SuneFON1u5wdV8yQkUbnIRzTzz6gNBDJzltuY/qFlVoOlGGPYeCA4rpTq+xxrLDAoQeFCVC29RUll/fScSyLqHFsNY2Z2vvECTMMwMuIsFz/qeLis28YMUACAsH3rUcfCRY6WmKqHZBhOri67/x8ICR2U2bdVklLOUTXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KTfAgzop; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-375f6841f01so2279925ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 11:57:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1719946584; x=1720551384; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lcm+6JaP7ls6eJY2nHX33OTI2j9Q6Miq5O3b8qUpOnc=;
-        b=FmqsNcL44yCH2g+Ef8pq5uD0ssgWbLolO6DQ8s4/ZcYn7GdudvAl6/ou+BkIiiCV6o
-         u406GddgIp1wL9qIgzabm58pwyFYnPwGwVGKl8Z1sE6alnE+KA13K6wHTpBfG0/VXaY1
-         34pOIauvTVerjVqz6rn7E41HvtIffp5sKu8yg=
+        d=linuxfoundation.org; s=google; t=1719946631; x=1720551431; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aL4LL4Ha0vSgUoObHMQfmtayw/DD40MrTBIZ2B5uF0Q=;
+        b=KTfAgzopUvBfwAjnN9oy9AjPdhynAFgjdt82VQu8SjKQUKX61z/O9sr4Vf6tYcu9BD
+         ghHak/Da9SwB0hwfGOQ3qW2g7UgdupkTb1ANWdov0RaZD9jj5l2bcTMM4XtkFMAOfoDm
+         F9bsDo9a01b2LZssSc+rXCccSzw9AOzon8Zr8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719946584; x=1720551384;
-        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=lcm+6JaP7ls6eJY2nHX33OTI2j9Q6Miq5O3b8qUpOnc=;
-        b=XCLHFbCLufwHxVCOxYtwTTcsB5QO2+6Q02K6A47W97iNC/kSMPkYIE8zUM71B8+5Yt
-         eEPu6aQHYv9P6ItmqmuMBU18dMmuU9wNJsTQ+s632kGgsfCc92LhQ7EdD/W4mR3nJOxx
-         cT3qu+ExRH5tHm4RqrAcdnWCM276mXgkP1RHrfU+H/kOedAp4cZHM/YZz7YqM+aRFHKk
-         54PMw88litf2k6NmNFnwwAiCVSTxLkglssqPQPkrZUZhIg+eunuU+wXj+A9nrvYgFj3e
-         2HM7M2DX+4jp1Jg2HsRC/v1+EOQfCRo/5SRko7ZTq4nwIsxVoIO2L9205O20gpTttpvV
-         mv6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUrtyXgJ4NtXZEAml7vJxJ2Sb2pORCp+JIN4cr1Py8dYby9ICS0FFKtitcfrQcVpDfXGzIK2sAu5Biouqc7HRAu17MoVenKmkJKBe+8
-X-Gm-Message-State: AOJu0YzezgFppyuIvV0IUhYKaifP3QHLRBxBKdPwheb64tJTdYFqMRsn
-	ZP0ehZsqZQJ2Imr7IBf3HR9HUBqEJCVtSs24P1nCm1Ts6n3lpQL7wt8OwKef0qqobGUWs838qH5
-	rOvfE
-X-Google-Smtp-Source: AGHT+IEZRaZ1BVbdg7i2LbA6OYbJb7VhMvfdxJZ2B9p/HJCSyf4aXVEI4lvRQjGElNqeTccIAb9A6Q==
-X-Received: by 2002:a17:907:d15:b0:a70:c031:3359 with SMTP id a640c23a62f3a-a7514438b44mr781140066b.34.1719946584065;
-        Tue, 02 Jul 2024 11:56:24 -0700 (PDT)
-Received: from [192.168.178.137] (f215227.upc-f.chello.nl. [80.56.215.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a750fb362d4sm333643266b.49.2024.07.02.11.56.22
+        d=1e100.net; s=20230601; t=1719946631; x=1720551431;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aL4LL4Ha0vSgUoObHMQfmtayw/DD40MrTBIZ2B5uF0Q=;
+        b=C8aeE0BCBsoR5XuXeYGSGsxFSRNMK8BFklq26uR/f2BNFdoc2O6yaOXOrq/4fzt6qN
+         stOpY/cK9W97WW3TONx6S72StB+ZyofxSuE4fs0/yjppfMhqVGEWjre679J4WcEBH4nH
+         XsfkFH5ubwNdyWhU38svLBV5P2L/FBbK8h7VqDEsSzZDsKZRdE6FHPsYhDqyPStkqcXV
+         iNXAuMDelFpi1gGjr+0mNz6G5RWWCgPwZfAmhNFrzupJtHQsTkRA/OeMOOLoNLOVs7EH
+         a1ZMRO4Pl+ti7Vs9UW0xdombjadRykP1ynQZH6K072p388lj+vDWveR68MtQUgnvrXu/
+         yiEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUB32FHiGqygeSbGQHyWD7cd+5utpaUsmkjU9oujLTgbI+i7LRi+D9sLpjKMdJVLu2cRPmbi8cMNSGg8pLx2QdTCTdNcwwYQ1RX1o42
+X-Gm-Message-State: AOJu0YzSPCCWp2P+IsBhaImSjO+wGIWFvTXoeYQoGL+OQ3bFoprYa5CD
+	xAIDosXIKrdxNQA9eVmgnKGO9boAoBCk0BtWz72wV4jY3iVJDRC0+aUpx7ln0rI=
+X-Google-Smtp-Source: AGHT+IHt3Y/VJxYBqGCtROlUks2wWRLkDb1nCKLi8QuYrby7x99CL5CbK8pGf/fuI+6Twv+MWKldsQ==
+X-Received: by 2002:a92:3647:0:b0:375:a4f9:e701 with SMTP id e9e14a558f8ab-37cd4124f46mr82780445ab.3.1719946631117;
+        Tue, 02 Jul 2024 11:57:11 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-37ad4370c2csm24815785ab.58.2024.07.02.11.57.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jul 2024 11:56:23 -0700 (PDT)
-Message-ID: <efd4272c-81fa-49ec-a3ff-0dfb9b5da7c1@broadcom.com>
-Date: Tue, 2 Jul 2024 20:56:20 +0200
+        Tue, 02 Jul 2024 11:57:10 -0700 (PDT)
+Message-ID: <a7e0810c-2d35-48c6-9140-1ebfa3edd660@linuxfoundation.org>
+Date: Tue, 2 Jul 2024 12:57:10 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,164 +72,128 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/5] dt-bindings: net: wireless: brcm4329-fmac: add
- pci14e4,449d
-To: Jacobe Zang <jacobe.zang@wesion.com>, robh@kernel.org,
- krzk+dt@kernel.org, heiko@sntech.de, kvalo@kernel.org, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, conor+dt@kernel.org
-Cc: efectn@protonmail.com, dsimic@manjaro.org, jagan@edgeble.ai,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- arend@broadcom.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
- megi@xff.cz, duoming@zju.edu.cn, bhelgaas@google.com,
- minipli@grsecurity.net, brcm80211@lists.linux.dev,
- brcm80211-dev-list.pdl@broadcom.com, nick@khadas.com
-References: <20240630073605.2164346-1-jacobe.zang@wesion.com>
- <20240630073605.2164346-2-jacobe.zang@wesion.com>
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Autocrypt: addr=arend.vanspriel@broadcom.com; keydata=
- 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
-In-Reply-To: <20240630073605.2164346-2-jacobe.zang@wesion.com>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="00000000000033d309061c4845e3"
-
---00000000000033d309061c4845e3
+Subject: Re: [PATCH v3] cpupower: Make help command available for custom
+ install dir
+To: Roman Storozhenko <romeusmeister@gmail.com>
+Cc: Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240627-fix-help-issue-v3-1-85318a3974e4@gmail.com>
+ <c9df6637-6055-4668-b80b-a1a6e6be445e@linuxfoundation.org>
+ <CALsPMBMeo5E9ZND0bPK089VHBZnybsigkvoC2r8BLCTjYt9QFA@mail.gmail.com>
+ <f1261f1c-abbe-49e4-b0bb-b72af367da7f@linuxfoundation.org>
+ <CALsPMBP42_oKJDegVQOzHUE00mie2Mh_aPyvyTUhgsnjQO1DDQ@mail.gmail.com>
+ <501954d6-3f0a-4f1e-863b-c60353435700@linuxfoundation.org>
+ <CALsPMBPkE=CCTgm8UcsdL7qEG+1u1H8NFYYTJvEMK3uXvg97Ng@mail.gmail.com>
+ <CALsPMBP8HR8eETzuua1STdnLPwLb1-53ipQg1c3vcEN4inU65g@mail.gmail.com>
 Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <CALsPMBP8HR8eETzuua1STdnLPwLb1-53ipQg1c3vcEN4inU65g@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/30/2024 9:36 AM, Jacobe Zang wrote:
-> It's the device id used by AP6275P which is the Wi-Fi module
-> used by Rockchip's RK3588 evaluation board and also used in
-> some other RK3588 boards.
+On 7/2/24 12:52, Roman Storozhenko wrote:
+> On Tue, Jul 2, 2024 at 9:40 AM Roman Storozhenko
+> <romeusmeister@gmail.com> wrote:
+>>
+>> On Mon, Jul 1, 2024 at 9:40 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
+>>>
+>>> On 6/29/24 04:48, Roman Storozhenko wrote:
+>>>> On Fri, Jun 28, 2024 at 9:45 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
+>>>>>
+>>>>> On 6/28/24 05:30, Roman Storozhenko wrote:
+>>>>>> On Thu, Jun 27, 2024 at 7:33 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
+>>>>>>>
+>>>>>>> On 6/27/24 01:49, Roman Storozhenko wrote:
+>>>>>>>> When the 'cpupower' utility installed in the custom dir, it fails to
+>>>>>>>> render appropriate help info for a particular subcommand:
+>>>>>>>> $ LD_LIBRARY_PATH=lib64/ bin/cpupower help monitor
+>>>>>>>> with error message like 'No manual entry for cpupower-monitor.1'
+>>>>>>>> The issue is that under the hood it calls 'exec' function with
+>>>>>>>> the following args: 'man cpupower-monitor.1'. In turn, 'man' search
+>>>>>>>> path is defined in '/etc/manpath.config'. Of course it contains only
+>>>>>>>> standard system man paths.
+>>>>>>>> Make subcommands help available for a user by setting up 'MANPATH'
+>>>>>>>> environment variable to the custom installation man pages dir. That
+>>>>>>>> variable value will be prepended to the man pages standard search paths
+>>>>>>>> as described in 'SEARCH PATH' section of MANPATH(5).
+>>>>>>>
+>>>>>>> What I am asking you is what happens when you set the MANPATH before
+>>>>>>> running the command?
+>>>>>>
+>>>>>> It adds the custom search path to the beginning of the MANPATH variable.
+>>>>>> I tested this case. All works as expected.
+>>>>>>
+>>>>>
+>>>>> Let's try again. What happens if you run the command with MANPATH set and
+>>>>> exported and then run the command. Can you send the output?
+>>>>
+>>>> hedin@laptop:~/prj/cpupower/install/usr$ echo $MANPATH
+>>>> /tmp/
+>>>> hedin@laptop:~/prj/cpupower/install/usr$ LD_LIBRARY_PATH=lib64/
+>>>> bin/cpupower help monitor
+>>>> ...................
+>>>> man output
+>>>> ...................
+>>>> hedin@laptop:~/prj/cpupower/install/usr$ echo $MANPATH
+>>>> /tmp/
+>>>> hedin@laptop:~/prj/cpupower/install/usr$
+>>>>
+>>>
+>>> Is this with your patch or mainline? Can you give cut and paste
+>>> the man output here for the mainline coupower without your patch?
+>>
+>> The above output is from my patch.
+>> This is the output from the mainline:
+>> hedin@laptop:~/prj/cpupower/install/usr$ sudo LD_LIBRARY_PATH=lib64/
+>> bin/cpupower help monitor
+>> [sudo] password for hedin:
+>> No manual entry for cpupower-monitor
+>> hedin@laptop:~/prj/cpupower/install/usr$ echo $MANPATH
+>> /tmp/
+>> hedin@laptop:~/prj/cpupower/install/usr$
+>>
+> Based on our today's conversation the following is the output for the mainline:
+> 
+> hedin@laptop:~/prj/cpupower/install/usr$
+> MANPATH="/home/hedin/prj/cpupower/install/usr/man:"
+> LD_LIBRARY_PATH=lib64/ bin/cpupower help monitor
+> hedin@laptop:~/prj/cpupower/install/usr$ echo $MANPATH
+> 
+> .............
+> man output
+> .............
+> 
+> hedin@laptop:~/prj/cpupower/install/usr$ export
+> MANPATH="/home/hedin/prj/cpupower/install/usr/man:"
+> hedin@laptop:~/prj/cpupower/install/usr$ echo $MANPATH
+> /home/hedin/prj/cpupower/install/usr/man:
+> hedin@laptop:~/prj/cpupower/install/usr$ LD_LIBRARY_PATH=lib64/
+> bin/cpupower help monitor
+> 
+> .............
+> man output
+> .............
+> 
+> hedin@laptop:~/prj/cpupower/install/usr$ LD_LIBRARY_PATH=lib64/ sudo
+> bin/cpupower help monitor
+> [sudo] password for hedin:
+> bin/cpupower: error while loading shared libraries: libcpupower.so.1:
+> cannot open shared object file: No such file or directory
+> 
+> As you can see we can use MANPATH for correct help invocation, unless
+> we call it with 'sudo'. I can guess that it simply
+> inherits the environment variables from the root shell that contains
+> no 'MANPATH' variable set with an ordinary user.
+> 
 
-Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
-> ---
->   .../devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml      | 1 +
->   1 file changed, 1 insertion(+)
+sudo -s will inherit the environment. Check sudo man page.
 
---00000000000033d309061c4845e3
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+> Worth mentioning this in an appropriate manpage?
 
-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
-2Gzj3QNJRLsZu1TLyOyBBIr/BE7UiY3RabgRzknBGAPmzhS+fmyM8OtM5BYBsFBrSUFtZZO2p/tf
-Nbc24J2zf2peoZ8MK+7WQqummYlOnz+FyDkA9EybeNMcS5C+xi/PAgMBAAGjggHdMIIB2TAOBgNV
-HQ8BAf8EBAMCBaAwgaMGCCsGAQUFBwEBBIGWMIGTME4GCCsGAQUFBzAChkJodHRwOi8vc2VjdXJl
-Lmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcnQwQQYI
-KwYBBQUHMAGGNWh0dHA6Ly9vY3NwLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24y
-Y2EyMDIwME0GA1UdIARGMEQwQgYKKwYBBAGgMgEoCjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3
-dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAJBgNVHRMEAjAAMEkGA1UdHwRCMEAwPqA8oDqG
-OGh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3Js
-MCcGA1UdEQQgMB6BHGFyZW5kLnZhbnNwcmllbEBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYB
-BQUHAwQwHwYDVR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFIikAXd8CEtv
-ZbDflDRnf3tuStPuMA0GCSqGSIb3DQEBCwUAA4IBAQCdS5XCYx6k2GGZui9DlFsFm75khkqAU7rT
-zBX04sJU1+B1wtgmWTVIzW7ugdtDZ4gzaV0S9xRhpDErjJaltxPbCylb1DEsLj+AIvBR34caW6ZG
-sQk444t0HPb29HnWYj+OllIGMbdJWr0/P95ZrKk2bP24ub3ZP/8SyzrohfIba9WZKMq6g2nTLZE3
-BtkeSGJx/8dy0h8YmRn+adOrxKXHxhSL8BNn8wsmIZyYWe6fRcBtO3Ks2DOLyHCdkoFlN8x9VUQF
-N2ulEgqCbRKkx+qNirW86eF138lr1gRxzclu/38ko//MmkAYR/+hP3WnBll7zbpIt0jc9wyFkSqH
-p8a1MYICbTCCAmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1z
-YTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMTv1t
-bpIzNUky46LXMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCDGw93/OpyC9vFbUNI0
-KYsgXEqRqM8AJiA6k/pIPqhDODAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJ
-BTEPFw0yNDA3MDIxODU2MjRaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFl
-AwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzAL
-BglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAYvmEReR1wY5pDjTgWocib9dMwV5j74Lq47Q4
-UQmSwwB/CV95agjOCA9X+892vbeoZDmGvFVKgmd6zDwauhaLItb2rfRHKisXoGPPZusebEbM3Sta
-vYXevPCcOHsj1+5pDjxzCrvAqPnoF8g81GbUNWm0fSmQ7pyeREA4ME+1WZ0RIK+gXyTCpyNNvmbG
-uMVldM2GXPUzBulRWjQ/0xMUyxlKtlUGq0e533AuyoQCk0HTo4kIpD6vE6BEtLs7JKBgkRxGt51L
-WS/LWZxCTVmm6MEAk3h3QlI2qIa6De5qiISp/3FsOfi3Tt5flwHt2Em7WkaBoU0psC1cW+5j0o33
-0A==
---00000000000033d309061c4845e3--
+I don't think so.
+
+thanks,
+-- Shuah
+
 
