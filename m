@@ -1,138 +1,136 @@
-Return-Path: <linux-kernel+bounces-237686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44EA7923CA9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:42:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43E43923CAC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:43:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D69F5B24302
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:42:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75CC11C225AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D2516FF2A;
-	Tue,  2 Jul 2024 11:41:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310EB15D5A4;
+	Tue,  2 Jul 2024 11:41:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Aij3nAQ4"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="FCktr51S";
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="jtKEKH4I"
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE1616F260
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 11:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B362C15B152;
+	Tue,  2 Jul 2024 11:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719920481; cv=none; b=bV5dg7jfxTLN9nFzOGpfsjGejNZJy/mCQscbDf8GhuUPMW7DTJIz6puWtVzhT3uqdHpY7hvZIGff66kPGQjM/75s8Z8sE+v0g4NNZmGI7QbjJWQHtRRgxglry8jJLUDfhg0Pf9tl2XmpBk+2eEbvjf8bEfv0FoadA7hYjQHltUE=
+	t=1719920494; cv=none; b=rkO0UGYNFll2XyBbkJb0XzxYlbyHMece4gV7zJQktIa+3JGOGAQuWLPBmwmkmhf7gFM/MdFt4+F51aI41XdG8utqzw56a/7vV9km1LcO4ED9XuZ5pGHEKCJdd8hNoUItmCdQtOOgJ48Yn9W5Rz4g2w/qCsvAChutveCaYEKUGqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719920481; c=relaxed/simple;
-	bh=NSroMKxF+iEaFAVVz8p4WKV4y7ZnU+9j/v7aX3NGInk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VntbLqQ/znAgbcEUk3VwQ75UIDlqwyGxFEZg1wfVQa4IvgUqz93WLjNfQNka5rCIBbXs5sE07hGwqwmxliRf6c4COOizwfa/IhpeXYaI2g38Bqj2n9g8fyIp8se/UHgI34GYYUHxBEx0W19lRKmahKOsy8p6BKXV5E2xTtxbflY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Aij3nAQ4; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52cdb9526e2so2970317e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 04:41:18 -0700 (PDT)
+	s=arc-20240116; t=1719920494; c=relaxed/simple;
+	bh=XpF7Ovdn2GPQkALgInOtej7RrXCY+KCbZ7EXlTpeWSs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=oeplTcifxmQf5CZbX4qUkSqrYnZ+CNd38sGY2QG0QST+ycSbk34wveBoRj95c/2/RnlDGNg+5/SUOziYB5waIT+b5kWJ9l/Up6D7bkeCTJzNSJWcL8dWV1fudyfyHM2hX7zKW7n7T9WvUDMfFZcJne92g7G0VG/t0X0kT59cdT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=FCktr51S; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=jtKEKH4I; arc=none smtp.client-ip=35.157.23.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
+Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
+	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 5FE612168;
+	Tue,  2 Jul 2024 11:33:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719920477; x=1720525277; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kQVFB1Ory94czUgWNWBlgE/4b9Cm7QVvjGoDYPQAvFo=;
-        b=Aij3nAQ4/WoczJMW9ELIykb7PgDVYwmKQNslgdLDcCNq3ovTXxWXWiMPEnHClQK09p
-         d57wVRh5N9Cb7ntZiRS5DpMKXIplps01PMBZK4oZWv4Go66ZygPGFtjOV5Yr+++2Hl/v
-         0+o8JH5joKLqCvve+7Zfjvga2iy4oNV1t4biEv/D385YM11yfdFa4Bqq9uHOKnBFdsKS
-         1HIvQuwUCIEuxI6XYnYjeUTxGifaDefBI44GI1KV7bDWvK5d2pny/fmNBB/Ha6d36cvv
-         AA6xy+BkGEFPAcuxW5dpOzNaVD8b87+RGmV0Oxi/eeNRXpgNr5o5Xj9QZ2erIwvF0KAC
-         qyig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719920477; x=1720525277;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kQVFB1Ory94czUgWNWBlgE/4b9Cm7QVvjGoDYPQAvFo=;
-        b=TktePQ7DN+viJoqYiVrIHN5ISKSZHMw3b695+lkrrGaHkH5UrYl6oj4Yf2C6RfOiPE
-         SaXnkn50zXajU7ro9reZ5zEn0zQq81EPu6zyiKclZAFLG7eHFEKez5q6p8W7jYYTgpKo
-         ZKI+J/44Rsk83I1SmE4u5rS7INmMkyCxIXKlWg3DcFGRML0A4GCpkXCk46aiYfYgGE8b
-         +wL4jYLYM2VBpJSfn2eJKEzR1ystzXQ+22K0wOIdE/uWVHq2TEsmWMeUes/2P7mqsaI4
-         5yUrKwCXwYQNuFS/i2mN1NkgiGYbfrJr6fAT2CA3+MVzgG02oRunWdMOlc8xLnjyJQM0
-         fJZg==
-X-Forwarded-Encrypted: i=1; AJvYcCW2CvEuzx9fu+B/yb2GHNsHwdlIuk7YHGKYkz+A+fon2PRwpKVoUZKcpSYwk0/FRiFZHLNgTeoJsetDqFL17jzSHTTayXN973LzvdWA
-X-Gm-Message-State: AOJu0YzOTN0WqU8lO7cu/6AEqu2kma9qxM6f/UOQPW9wwQs1X3D+D4RZ
-	eW2SUdoWxvianvkHKbya4HNCFk1s5vwR7uoxhtq6dAES5hOKmDODoN4UkbKydlg=
-X-Google-Smtp-Source: AGHT+IFqRDyr09Nd7VDWumaaV4++hDJsHKTRvx5HWWdlWqBKX6NlFxjkCBaAtoRxcjfUWhxGiOhj5A==
-X-Received: by 2002:a19:e017:0:b0:52c:81ba:aeba with SMTP id 2adb3069b0e04-52e8259ff12mr1988718e87.14.1719920477367;
-        Tue, 02 Jul 2024 04:41:17 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab2f8b5sm1774583e87.233.2024.07.02.04.41.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 04:41:17 -0700 (PDT)
-Date: Tue, 2 Jul 2024 14:41:15 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/1] drm/bridge: Silence error messages upon probe
- deferral
-Message-ID: <5f2qg7cidl6rchculjzw52sfadwoprcptkhz2ikvo43kyny42s@o2ejrvqg7xjg>
-References: <20240628115131.2903251-1-alexander.stein@ew.tq-group.com>
+	d=paragon-software.com; s=mail; t=1719919998;
+	bh=FvoWozv7kiGX5kCPeJTR6YhhTOGEpNfWM7pqi1LrdKY=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=FCktr51SmR4olYGJ2vxwHBcO9KwMO0dynZxEPPwC4TICQrPHkOTp9uyX/e436o/H/
+	 FS2BngZMp2ilR77GMkvhC2JtJ6kQlVOIGHVHrWfXSgGoHIdgcYDa38fchFG+dQ8g07
+	 CqN5nDgoL4/xrvtjf0DuYH7fkz27aIbNT12VHg8I=
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 7B7D61D09;
+	Tue,  2 Jul 2024 11:41:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=paragon-software.com; s=mail; t=1719920484;
+	bh=FvoWozv7kiGX5kCPeJTR6YhhTOGEpNfWM7pqi1LrdKY=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=jtKEKH4IolMCs3UOtawejZ+BFvpJonwAYywkAZ7FfIcy8hEMni8YtmybQMmQJw+3R
+	 0J5ZrJmE8FhZdY6sQkIgk1/kPSNbFldTIwcnyu2GHj7p7BDlndTthxu6d0zUdCqagF
+	 VYCZh3Yusvofwdnt/JUZTXc+kyipk3+5IiVT3wiQ=
+Received: from [192.168.211.37] (192.168.211.37) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Tue, 2 Jul 2024 14:41:23 +0300
+Message-ID: <b41e693f-940b-42a8-8154-1721c7ff13e1@paragon-software.com>
+Date: Tue, 2 Jul 2024 14:41:23 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240628115131.2903251-1-alexander.stein@ew.tq-group.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs/ntfs3: Fix memory corruption when page_size changes
+To: Linux regressions mailing list <regressions@lists.linux.dev>
+CC: popcorn mix <popcornmix@gmail.com>, <ntfs3@lists.linux.dev>, Linux-fsdevel
+	<linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+References: <20240614155437.2063380-1-popcornmix@gmail.com>
+ <CAEi1pCSQePMo4X_RvMfYmpxYwmuamhd8=1OXgNCU-N2BBdTXPg@mail.gmail.com>
+ <a60fc742-0ad4-498d-b90f-793b9578b843@leemhuis.info>
+Content-Language: en-US
+From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+In-Reply-To: <a60fc742-0ad4-498d-b90f-793b9578b843@leemhuis.info>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 
-On Fri, Jun 28, 2024 at 01:51:30PM GMT, Alexander Stein wrote:
-> When -EPROBE_DEFER is returned do not raise an error, but silently return
-> this error instead. Fixes error like this:
-> [drm:drm_bridge_attach] *ERROR* failed to attach bridge
->   /soc@0/bus@30800000/mipi-dsi@30a00000 to encoder None-34: -517
-> [drm:drm_bridge_attach] *ERROR* failed to attach bridge
->   /soc@0/bus@30800000/mipi-dsi@30a00000 to encoder None-34: -517
-> 
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> Reviewed-by: Robert Foss <rfoss@kernel.org>
-> ---
-> Changes in v4:
-> * Rebased to next-20240628
-> 
->  drivers/gpu/drm/drm_bridge.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-> index d44f055dbe3e7..3e72dfd941577 100644
-> --- a/drivers/gpu/drm/drm_bridge.c
-> +++ b/drivers/gpu/drm/drm_bridge.c
-> @@ -353,8 +353,9 @@ int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
->  	bridge->encoder = NULL;
->  	list_del(&bridge->chain_node);
->  
-> -	DRM_ERROR("failed to attach bridge %pOF to encoder %s: %d\n",
-> -		  bridge->of_node, encoder->name, ret);
-> +	if (ret != -EPROBE_DEFER)
-> +		DRM_ERROR("failed to attach bridge %pOF to encoder %s: %d\n",
-> +			  bridge->of_node, encoder->name, ret);
 
-Maybe?
+On 01.07.2024 15:53, Linux regression tracking (Thorsten Leemhuis) wrote:
+> [CCing a few lists]
+>
+> Hi, Thorsten here, the Linux kernel's regression tracker. Top-posting
+> for once, to make this easily accessible to everyone.
+>
+> Konstantin, what's the status of this regression report or the patch Dom
+> Cobley propsed to fix the issue? From here it looks like it fall through
+> the cracks, but I might be missing something.
+>
+> Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+> --
+> Everything you wanna know about Linux kernel regression tracking:
+> https://linux-regtracking.leemhuis.info/about/#tldr
+> If I did something stupid, please tell me, as explained on that page.
+>
+> #regzbot poke
+>
+> On 14.06.24 18:24, popcorn mix wrote:
+>> On Fri, Jun 14, 2024 at 4:55 PM Dom Cobley <popcornmix@gmail.com> wrote:
+>>> The kernel panic can be observed when connecting an
+>>> ntfs formatted drive that has previously been connected
+>>> to a Windows machine to a Raspberry Pi 5, which by defauilt
+>>> uses a 16K kernel pagesize.
+>> Here are links to some bug reports about the issue:
+>> https://github.com/raspberrypi/linux/issues/6036
+>> https://forum.libreelec.tv/thread/28620-libreelec-12-0-rpi5-and-ntfs-hdd-problem/?postID=192713#post192713
+>> https://forums.raspberrypi.com/viewtopic.php?p=2203090#p2203090
+>> https://forums.raspberrypi.com/viewtopic.php?t=367545
+>>
+>> The common points are it occurs on the (default) 16K pagesize kernel,
+>> but switching to 4K pagesize kernel
+>> avoids the issue.
+>>
+>> Issue wasn't present in previous RPiOS LTS kernel (6.1), but is
+>> present in current LTS kernel (6.6).
+>> Revering to 6.1 kernel avoids the issue.
+>>
+>> I've confirmed that reverting the commit:
+>> 865e7a7700d9 ("fs/ntfs3: Reduce stack usage")
+>>
+>> avoids the issue.
+>>
+>> This patch avoids the issue for me, and I'd like confirmation it is correct.
+Hello everyone,
 
-else
-   dev_err_probe(encoder->dev->dev, -EPROBE_DEFER, "failed to attach...\n");
+I recently accepted this patch with the same fix:
+https://lore.kernel.org/ntfs3/20240529064053.2741996-2-chenhuacai@loongson.cn/.
 
->  
->  	return ret;
->  }
-> -- 
-> 2.34.1
-> 
+Unfortunately, I don't have an RPi with a pagesize=16K at hand, so I 
+can't practically test it.
 
--- 
-With best wishes
-Dmitry
+Regards, Konstantin
 
