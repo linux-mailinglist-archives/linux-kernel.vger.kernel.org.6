@@ -1,338 +1,347 @@
-Return-Path: <linux-kernel+bounces-237733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98E8E923D72
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:16:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE323923D35
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:06:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD33A1C20A7A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:16:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77D43286E32
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E302D16EC15;
-	Tue,  2 Jul 2024 12:15:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E91DC15D5B8;
+	Tue,  2 Jul 2024 12:06:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="GI3v1kPT"
-Received: from sonic314-46.consmr.mail.ir2.yahoo.com (sonic314-46.consmr.mail.ir2.yahoo.com [77.238.177.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="NInxXruc"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CB816EC0F
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 12:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.238.177.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E4814D703;
+	Tue,  2 Jul 2024 12:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719922523; cv=none; b=a0NiIERSL+WGdWo8cLkMR/t2YNVBu/BOpU6GP+iLbBjAX4lWQ9GW/9asIALjiv7znpPA0rBCrXZAshl7uDyOoUp9txk1q/eomqiKTVQoevrYIt3a9/t9a6d/h+QnJQg5DWoJVSYIpARs8UxSJ1mpErQiNplGMWjEhdLghWDOi8U=
+	t=1719921988; cv=none; b=eW0PNleh51lNhgHYD4N548zkCiYCvJdLv0UiSUV4Y0X6u1E+1MsGhGV+mohPzxO+6Gt7uoGWr8Id763MnAB/0HQMQlbAzYoCRYPqNJZZcdSyknltTU8Z/Fneo+Q9DUzWhc/fRLBD5/h89DAVCZCsbPbZVCkH/a40DBTWciOMMAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719922523; c=relaxed/simple;
-	bh=Ls+kWqkmPYC9fXCx3BsyLBj5i5X5oE0yDiJ+q6P3lTQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kLayJGnPwsNZntu23HsBwvg+zjhWyi2UA0aDtgiu4HzsP76r0O0BrCbzBbezcAj2qzYY74VUbP1vbx6OHIJg2vwsAbNP4Y6t1OYzw58RgpGigUEf3kAXbL6J8NliF7pYRRey7ELS9SoFbtVJP6rzKbnosBILRPVi6fg8WKIdQ6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=GI3v1kPT; arc=none smtp.client-ip=77.238.177.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1719922518; bh=piFo6kVJpzA1iUlh3d7Pz7pUkjn8r3+RtA1bJk6PcTo=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=GI3v1kPTtV6wOCZbbZ9xuhrMbKCBF/aBF0+OfEd9DGpjkaaUENzKR2hm03uXzDtWtnBf2FbE6CuoEueT3+O5AB5rWiaPYysQ/Z6UxAydQVdDbGYX4S3wXIyhW2SXI61/UYa2nk+qXAyYN8j3imzUEX8iNWj1bTrx9oJ+N4vFL9SHBmJjeym+Z4seSFekwmy8mOAAwCpCoeadOop4UEUxIfydG3YQyLGuS7Eu6qZvCBFF4/Pepx27Yjh6QYJftNDptZR/CE9ITtRGE4pEwp1i0Edo25YwwOnqT3hs608aPge5UXIXFyB+VXg1h6eNZAAmmzDaMRIONjSzA+5xI5N2gQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1719922518; bh=d6aYEmdhrgxt8A5qAs9uNCZQFgAzcVPvwqBcvCDzSkw=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=nBuNOb82HE8QlHs8NbOzL5GQHc3U8gB53W+StbimbI9n4NEij83Um2KRQHa3QNbII8Md8Y4oMGDDjff6WZcuWPG0WC4iw1PmGCidDHumXosfiMQz4jO39uvF+DK/NKUd3JsC8Ap+hhNTnqmYIgruz/5zF6I2vB2hb1f94qE9gMUyuCNAUaX5Zpn6nbxk6WfChu1aTmKoPhYVZVIkoAHcGqUYdWCfpGS2LieRrpAc4cjkNsQRHUcfxk/G50FmP/dLmEShjNFvorth+6SE2V+PyvpM7VxNXit0ccc67QKvUZQGf/ZpYg3bY3Zu4Ak9lhcN9gJN6OfnWkiaPXqDsWs5nQ==
-X-YMail-OSG: XXrJWC4VM1kyTMyKk2ETAPXKEvZN39xeGuWW_IdHVeN9SXqmLVo_c9AnAtK._LZ
- TA_tlMlCpn38A9Utme2QodYCbhp4ui4JbFR4SHZwECru.KhVZ.JrXTJcJs6t4g3GkG8C_0DYxBKc
- jWxKVd2.BGN1lNFUoaVmIa2CjyGtR2cDFJgznC4DAjoLffjWxlzhnhgagg.QWP4O3xFYF4sYjyaB
- .9fWdNfGT9uoE._VHBOiFECy85s1oHRoV4lg0Il0.mwygTu9qOZTEkkkgvHbiWtvltjAr6nNmnnE
- x3fqepYOOztmLwUsRMLR_d68lg4qCaQWYU4.iJPVzqU1cXV1mesU6OLOM8CcG6bOTVEULP0es5IJ
- CCHf5_xfs4SsOK7y_qoCMTwj5TXgNXO6v7tl4ziLYS0ZmrIuZnLk6S513JyVAzuRGZzN086At.34
- 3j7ahfmzqeB.4vkRgxpJizJaPFggi9rmieTLdyzFI.HkueGynjvTtBslbW_tGTAlPfpM.fUc_.Q3
- Bqzm.gcUGt5bf4ApHRWjd8pbN4NGfTOZ3bUbKE4s1lSEbUm5ATaGQVwkZEosNTeOq5vpOZfL047F
- qJEm5datQxd6F2H1D6jG7soep8V7z3UcomrXp4RkdcxMosVeHn8oN1IkKJOolUX8gQeuIuAPMzr8
- bhr9xi4qnFGYNXyRkHI8tJZV_fTpHIjCSG34rBAcq9RR4kjYUm4JmTT0UhrXwyLfVp0UVP_cO3v7
- YDnrHvgETL_foep8rHMliYzEBvfp1TX_Xu4PoTyvyIwGufuzk6dtpstUIFu6loPV4N7wpLAGOQq_
- wCW1rOGIAo0eRXaJgubgpC2fGoMcYRw3WFsOc.DZ0BOKANipLVrnYAMtwsH4.oM1WLWEMo2icgUn
- 0hirA.c8t9oHvNOLefjTZ_XIwjTBuHd8LcpXg3a4RQ6_xuDvSJZIKtrTzmE2RtSZT0nQcZHqMEZZ
- T2RI6ITjkQDwonwb1JY3RHSeSjIuJ3pKq1LlfSYzF3M9ItonFY3fpqJKnytWoXshDokKR18YnzQb
- dXzhYUyd.BtcBNYJMJY_JYQKeBdqxL1PmnYGboDmX_3pYMcZk_hYjiPQYQO9skAuWxm_I9..81uH
- J.yey_tgdoeLdDaUym2CqunAgA_hkDDXt8RuN.pi4LygWgOaipYIVDdjHsr1SPZUCvGnhbwDG5Nz
- ZjLTBrEEJTQf9guXVThMbf1wOZ6Elu4g0PMNSukwFDkz5PT7wzF03JITYkF8bzOCBLD8GUoUGi1w
- bGbhpJRx3ppj0zdddRmjm.yOhZEPKpNw93Z3u98n.zQsh2tb9NSa1Pa1iebwRfi.x.ra6zbWbJzp
- nRv2C7zvZeqgHNIl2O1qX5qTwXTTbVNwcPcpsvlbYriQct32lqt7P5wzWxDJH9Ym882VOrkURy3_
- 4gnZ_I8xaMq2Jy1F44liqGpn.K_QPhzMyMO2nPh4FJJqrNbvbOLvn49TEVr3ZLyelqm6BDw30yUP
- KqVNyo0BQOe8x0Z_4KVJuM.tAkfk1e2.kJrDezIXO0xz1LQUHBVtc66_003d9HthFAI2_AyDyfD2
- Ts3I2dDQtIkA0kylfn6q3B83wB_9bFQyNtsQKqjRYw7mkMrxDTKE9L1FsRw_FQKBqN4tWXxnW4PU
- Vpxi9NPsSIk6oBoR2aF5x4yfYQLX5WErj_gHEmnUvo.gctzXQQUbLg9325CSWg6GjGgs2.vP1s5T
- sMbr4Vhv2owgeyq6UJ6epF15nnOu5e9uG4KvVvpwxnb2J2IYMFFWcbVyfy8de9r05DLUMeqVVsUW
- qRo6SuX.dH6CNVb2me8YppO3vd0HbJfz85qb3pX9rzxF1uq5hbinZhWhKgyW8gcONgNKbvjgFtvF
- DyiLIkh4oC2IzzTKXNLqPAiohYmwkkzpWczz47d5foxLGKy36vDo.QTAnvC8qKFg8jdGgWDvnolu
- rbC.LXIbje6hWMtvXuw2Bi1WMHFqmHOMI1n8734QO9Rj7Kga3mrDt_CZXYOsBTzG_WoWZU894XDm
- n02HiWJ1M9Rgm6qs83o4HzejsFWhrzYZngHPtaFY4I90uzF_B_.8nssJa8waGzeDY9yRE7bxSGfP
- atsY7sbyRbq18TLFswNbpC79v03YumL0mZPpagcJaSChlxu_hGyNdc5Hm1mVEED4OOjY7NXuJldO
- VqYXyki1MvZYzuKy8Nrsen32gHdB8kxSnr_O2ikH4Urp_4qWnG2LKABHBYJk-
-X-Sonic-MF: <xzeol@yahoo.com>
-X-Sonic-ID: 910b7ae8-af15-475f-b388-310fe9ce7846
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ir2.yahoo.com with HTTP; Tue, 2 Jul 2024 12:15:18 +0000
-Received: by hermes--production-ir2-85cf877599-mvt7h (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 0dd9cec1d13f3a8113ebc66190b2d374;
-          Tue, 02 Jul 2024 11:53:01 +0000 (UTC)
-From: Alex Vdovydchenko <xzeol@yahoo.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sean Anderson <sean.anderson@linux.dev>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jean Delvare <jdelvare@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Delphine CC Chiu <Delphine_CC_Chiu@Wiwynn.com>
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	Alex Vdovydchenko <xzeol@yahoo.com>
-Subject: [PATCH v4 2/2] hwmon: add MP5920 driver
-Date: Tue,  2 Jul 2024 14:52:51 +0300
-Message-ID: <20240702115252.981416-3-xzeol@yahoo.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240702115252.981416-1-xzeol@yahoo.com>
-References: <20240702115252.981416-1-xzeol@yahoo.com>
+	s=arc-20240116; t=1719921988; c=relaxed/simple;
+	bh=utogO98dv+yZsk2Q5Ay914xrDaebYQbQ7fWLJh7Fet4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ht/5PZ3H/0TzgczDE+r2fG/ehSeDPrdCekx/Ztrg0zoIEY83EIt1rD+/A+P62KlGA83U+uF56zp1UKz/0Saiy5lMghNrSKEKQOqGeO7OglD2WdIkiolPxyGVg0zcKTV8JFaEx+20cRiu34lDKw+PVd6AEvkpW5stuKs4POZIiH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=NInxXruc; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 7eff8ae4386b11ef8b8f29950b90a568-20240702
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=0mrI+RsHjTTpEAV2tGpNTW+vQuiH/LV8BxE+CGYxcEw=;
+	b=NInxXrucJFWgZY1DTjIEDhQ1GLYp2RZRWpmgSTfNuP340XMc3wkUgDxVk+tF2gVjh6rXDWz3gTwxP0JcF9DQC3u/Tv3jvBgcn7/iyEHmuwa8RB5SiUGlqkSgr1ZarTrHsmJv5UFXYf4Y2zzuAyy7dwF4rarKu2szIhbLtkpz95o=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.40,REQID:40e51570-a5ec-4a8d-992d-cc3074f5d266,IP:0,U
+	RL:0,TC:0,Content:-20,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-20
+X-CID-META: VersionHash:ba885a6,CLOUDID:88ebf90c-46b0-425a-97d3-4623fe284021,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:1,EDM:-3,IP:nil,U
+	RL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 7eff8ae4386b11ef8b8f29950b90a568-20240702
+Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw01.mediatek.com
+	(envelope-from <mark-pk.tsai@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 650432800; Tue, 02 Jul 2024 20:06:21 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Tue, 2 Jul 2024 20:06:19 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Tue, 2 Jul 2024 20:06:19 +0800
+From: Mark-PK Tsai <mark-pk.tsai@mediatek.com>
+To: Jonathan Corbet <corbet@lwn.net>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: <yj.chiang@mediatek.com>, Mark-PK Tsai <mark-pk.tsai@mediatek.com>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
+Subject: [PATCH] docs: iommu: Remove outdated Documentation/userspace-api/iommu.rst
+Date: Tue, 2 Jul 2024 20:05:39 +0800
+Message-ID: <20240702120617.26882-1-mark-pk.tsai@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--24.821500-8.000000
+X-TMASE-MatchedRID: olJ+MHgrKwLu6He4bORuyf9WgQ5yFeIpWYu9PKwvg8+xM//OLHLfLDB9
+	ccde3hbU8urNJwQgyPBdCcmhZ8Q0VCMLnBbRowlYcX5PeMxy2v5U3K6aV1ad7d9RlPzeVuQQLFV
+	Od3/b6GSYmu1c9yHchyC+H03fDWulaQPHx3YbvOYVglQa/gMvfIzjknOM+UJo+Cckfm+bb6Bmh1
+	OorN5ZfPn2s1xTZaBMs4DHWQDGJb/7sqG6HklRYNUFhgTP7/bWtDSfcMR+7ZNOIo0O+5ZV4SNgF
+	9/7ARmv42D56kBvvfFBBtUGJzAoN9phB3BcQx/vVnQT6gDml1VAq6/y5AEOOuOxOq7LQlGLLEnD
+	LR3pDl3Iuj01kctd3srwwM67bcRV9Z8q6rO+Ih7AJnGRMfFxySQwGQSJ46Nm6ygMMToK893ldOa
+	+b1x+LMcjG1Dny377e+RRT4HSyowfqPFbZMN65FEp96PnqFJsJPS3/6nvMccUlWIKEoGBmb/fkb
+	xklHWA3fu6HAjJ1y0ImhhVnbXmhLkeZ/VkXL+KZwDJZynfzSt5w3WsOyy+8N9zZd3pUn7KKgb8B
+	fqrnGotg+GBqf3thrFdDzVRJSPNcNPMFJIX+nO20BbG4zmyXhSRa9qpSosfJJvy/zCC/vKfUkQS
+	/R/FD3aPxRKRE0lDazEBx0cBWVsH+DiyPUjnmQhWgIsZuXlPcfU+0yIKuYVPtLhlThdPEGn7AlT
+	b8W2xt2fJ1xA6iK2zZnChmC9F+HHPBvSspzfjwT5e5LDjyQLTDXgcUlCNo3W8FA7SndluC50X6/
+	IN7MBaRKmuujmzG57MxQnQvCwr0P4g2H0elcueAiCmPx4NwJuJ+Pb8n/VxSnQ4MjwaO9cqtq5d3
+	cxkNQP90fJP9eHt
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--24.821500-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	C9EFB0F55206DE590D63D3AC64D30E17320E3332782F885BD9003D594DBA27AB2000:8
+X-MTK: N
 
-Add support for MPS Hot-Swap controller mp5920. This driver exposes
-telemetry and limit value readings and writings.
+The Documentation/userspace-api/iommu.rst file has become outdated due
+to the removal of associated structures and APIs.
 
-Signed-off-by: Alex Vdovydchenko <xzeol@yahoo.com>
+Specifically, struct such as iommu_cache_invalidate_info and guest
+pasid related uapi were removed in commit 0c9f17877891 ("iommu:
+Remove guest pasid related interfaces and definitions").
+And the corresponding uapi/linux/iommu.h file was removed in
+commit 00a9bc607043 ("iommu: Move iommu fault data to
+linux/iommu.h").
+
+Signed-off-by: Mark-PK Tsai <mark-pk.tsai@mediatek.com>
 ---
- Documentation/hwmon/index.rst  |  1 +
- Documentation/hwmon/mp5920.rst | 91 +++++++++++++++++++++++++++++++++
- drivers/hwmon/pmbus/Kconfig    |  9 ++++
- drivers/hwmon/pmbus/Makefile   |  1 +
- drivers/hwmon/pmbus/mp5920.c   | 93 ++++++++++++++++++++++++++++++++++
- 5 files changed, 195 insertions(+)
- create mode 100644 Documentation/hwmon/mp5920.rst
- create mode 100644 drivers/hwmon/pmbus/mp5920.c
+ Documentation/userspace-api/iommu.rst | 209 --------------------------
+ MAINTAINERS                           |   1 -
+ 2 files changed, 210 deletions(-)
+ delete mode 100644 Documentation/userspace-api/iommu.rst
 
-diff --git a/Documentation/hwmon/index.rst b/Documentation/hwmon/index.rst
-index e92a3d5c7..9eba7e402 100644
---- a/Documentation/hwmon/index.rst
-+++ b/Documentation/hwmon/index.rst
-@@ -168,6 +168,7 @@ Hardware Monitoring Kernel Drivers
-    mp2975
-    mp2993
-    mp5023
-+   mp5920
-    mp5990
-    mp9941
-    mpq8785
---- /dev/null
-+++ b/Documentation/hwmon/mp5920.rst
-@@ -0,0 +1,91 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+Kernel driver mp5920
-+====================
-+
-+Supported chips:
-+
-+  * MPS MP5920
-+
-+    Prefix: 'mp5920'
-+
-+  * Datasheet
-+
-+    Publicly available at the MPS website : https://www.monolithicpower.com/en/mp5920.html
-+
-+Authors:
-+
-+	Tony Ao <tony_ao@wiwynn.com>
-+	Alex Vdovydchenko <xzeol@yahoo.com>
-+
-+Description
-+-----------
-+
-+This driver implements support for Monolithic Power Systems, Inc. (MPS)
-+MP5920 Hot-Swap Controller.
-+
-+Device compliant with:
-+
-+- PMBus rev 1.3 interface.
-+
-+Device supports direct and linear format for reading input voltage,
-+output voltage, output current, input power and temperature.
-+
-+The driver exports the following attributes via the 'sysfs' files
-+for input voltage:
-+
-+**in1_input**
-+
-+**in1_label**
-+
-+**in1_rated_max**
-+
-+**in1_rated_min**
-+
-+**in1_crit**
-+
-+**in1_alarm**
-+
-+The driver provides the following attributes for output voltage:
-+
-+**in2_input**
-+
-+**in2_label**
-+
-+**in2_rated_max**
-+
-+**in2_rated_min**
-+
-+**in2_alarm**
-+
-+The driver provides the following attributes for output current:
-+
-+**curr1_input**
-+
-+**curr1_label**
-+
-+**curr1_crit**
-+
-+**curr1_alarm**
-+
-+**curr1_rated_max**
-+
-+The driver provides the following attributes for input power:
-+
-+**power1_input**
-+
-+**power1_label**
-+
-+**power1_max**
-+
-+**power1_rated_max**
-+
-+The driver provides the following attributes for temperature:
-+
-+**temp1_input**
-+
-+**temp1_max**
-+
-+**temp1_crit**
-+
-+**temp1_alarm**
---- a/drivers/hwmon/pmbus/Kconfig
-+++ b/drivers/hwmon/pmbus/Kconfig
-@@ -371,6 +371,15 @@ config SENSORS_MP5023
- 	  This driver can also be built as a module. If so, the module will
- 	  be called mp5023.
- 
-+config SENSORS_MP5920
-+	tristate "MPS MP5920"
-+	help
-+	  If you say yes here you get hardware monitoring support for Monolithic
-+	  MP5920.
-+
-+	  This driver can also be built as a module. If so, the module will
-+	  be called mp5920.
-+
- config SENSORS_MP5990
- 	tristate "MPS MP5990"
- 	help
---- a/drivers/hwmon/pmbus/Makefile
-+++ b/drivers/hwmon/pmbus/Makefile
-@@ -39,6 +39,7 @@ obj-$(CONFIG_SENSORS_MP2888)	+= mp2888.o
- obj-$(CONFIG_SENSORS_MP2975)	+= mp2975.o
- obj-$(CONFIG_SENSORS_MP2993)	+= mp2993.o
- obj-$(CONFIG_SENSORS_MP5023)	+= mp5023.o
-+obj-$(CONFIG_SENSORS_MP5920)	+= mp5920.o
- obj-$(CONFIG_SENSORS_MP5990)	+= mp5990.o
- obj-$(CONFIG_SENSORS_MP9941)	+= mp9941.o
- obj-$(CONFIG_SENSORS_MPQ7932)	+= mpq7932.o
---- /dev/null
-+++ b/drivers/hwmon/pmbus/mp5920.c
-@@ -0,0 +1,85 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+#include <linux/i2c.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include "pmbus.h"
-+
-+static struct pmbus_driver_info mp5920_info = {
-+	.pages = 1,
-+	.format[PSC_VOLTAGE_IN] = direct,
-+	.format[PSC_VOLTAGE_OUT] = direct,
-+	.format[PSC_CURRENT_OUT] = direct,
-+	.format[PSC_POWER] = direct,
-+	.format[PSC_TEMPERATURE] = direct,
-+	.m[PSC_VOLTAGE_IN] = 2266,
-+	.b[PSC_VOLTAGE_IN] = 0,
-+	.R[PSC_VOLTAGE_IN] = -1,
-+	.m[PSC_VOLTAGE_OUT] = 2266,
-+	.b[PSC_VOLTAGE_OUT] = 0,
-+	.R[PSC_VOLTAGE_OUT] = -1,
-+	.m[PSC_CURRENT_OUT] = 546,
-+	.b[PSC_CURRENT_OUT] = 0,
-+	.R[PSC_CURRENT_OUT] = -2,
-+	.m[PSC_POWER] = 5840,
-+	.b[PSC_POWER] = 0,
-+	.R[PSC_POWER] = -3,
-+	.m[PSC_TEMPERATURE] = 1067,
-+	.b[PSC_TEMPERATURE] = 20500,
-+	.R[PSC_TEMPERATURE] = -2,
-+	.func[0] = PMBUS_HAVE_VIN  | PMBUS_HAVE_VOUT |
-+		PMBUS_HAVE_IOUT | PMBUS_HAVE_POUT |
-+		PMBUS_HAVE_TEMP,
-+};
-+
-+static int mp5920_probe(struct i2c_client *client)
-+{
-+	struct device *dev =  &client->dev;
-+	int ret;
-+	u8 buf[I2C_SMBUS_BLOCK_MAX];
-+
-+	if (!i2c_check_functionality(client->adapter,
-+				     I2C_FUNC_SMBUS_READ_WORD_DATA))
-+		return -ENODEV;
-+
-+	ret = i2c_smbus_read_block_data(client, PMBUS_MFR_MODEL, buf);
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "Failed to read PMBUS_MFR_MODEL\n");
-+
-+	if (ret != 6 || strncmp(buf, "MP5920", 6)) {
-+		return dev_err_probe(dev, -ENODEV, "Model '%.*s' not supported\n",
-+				     sizeof(buf), buf);
-+	}
-+
-+	return pmbus_do_probe(client, &mp5920_info);
-+}
-+
-+static const struct of_device_id mp5920_of_match[] = {
-+	{ .compatible = "mps,mp5920" },
-+	{ }
-+};
-+
-+MODULE_DEVICE_TABLE(of, mp5920_of_match);
-+
-+static const struct i2c_device_id mp5920_id[] = {
-+	{ "mp5920" },
-+	{ }
-+};
-+
-+MODULE_DEVICE_TABLE(i2c, mp5920_id);
-+
-+static struct i2c_driver mp5920_driver = {
-+	.driver = {
-+		.name = "mp5920",
-+		.of_match_table = mp5920_of_match,
-+	},
-+	.probe = mp5920_probe,
-+	.id_table = mp5920_id,
-+};
-+
-+module_i2c_driver(mp5920_driver);
-+
-+MODULE_AUTHOR("Tony Ao <tony_ao@wiwynn.com>");
-+MODULE_AUTHOR("Alex Vdovydchenko <xzeol@yahoo.com>");
-+MODULE_DESCRIPTION("PMBus driver for MP5920 HSC");
-+MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(PMBUS);
+diff --git a/Documentation/userspace-api/iommu.rst b/Documentation/userspace-api/iommu.rst
+deleted file mode 100644
+index d3108c1519d5..000000000000
+--- a/Documentation/userspace-api/iommu.rst
++++ /dev/null
+@@ -1,209 +0,0 @@
+-.. SPDX-License-Identifier: GPL-2.0
+-.. iommu:
+-
+-=====================================
+-IOMMU Userspace API
+-=====================================
+-
+-IOMMU UAPI is used for virtualization cases where communications are
+-needed between physical and virtual IOMMU drivers. For baremetal
+-usage, the IOMMU is a system device which does not need to communicate
+-with userspace directly.
+-
+-The primary use cases are guest Shared Virtual Address (SVA) and
+-guest IO virtual address (IOVA), wherein the vIOMMU implementation
+-relies on the physical IOMMU and for this reason requires interactions
+-with the host driver.
+-
+-.. contents:: :local:
+-
+-Functionalities
+-===============
+-Communications of user and kernel involve both directions. The
+-supported user-kernel APIs are as follows:
+-
+-1. Bind/Unbind guest PASID (e.g. Intel VT-d)
+-2. Bind/Unbind guest PASID table (e.g. ARM SMMU)
+-3. Invalidate IOMMU caches upon guest requests
+-4. Report errors to the guest and serve page requests
+-
+-Requirements
+-============
+-The IOMMU UAPIs are generic and extensible to meet the following
+-requirements:
+-
+-1. Emulated and para-virtualised vIOMMUs
+-2. Multiple vendors (Intel VT-d, ARM SMMU, etc.)
+-3. Extensions to the UAPI shall not break existing userspace
+-
+-Interfaces
+-==========
+-Although the data structures defined in IOMMU UAPI are self-contained,
+-there are no user API functions introduced. Instead, IOMMU UAPI is
+-designed to work with existing user driver frameworks such as VFIO.
+-
+-Extension Rules & Precautions
+------------------------------
+-When IOMMU UAPI gets extended, the data structures can *only* be
+-modified in two ways:
+-
+-1. Adding new fields by re-purposing the padding[] field. No size change.
+-2. Adding new union members at the end. May increase the structure sizes.
+-
+-No new fields can be added *after* the variable sized union in that it
+-will break backward compatibility when offset moves. A new flag must
+-be introduced whenever a change affects the structure using either
+-method. The IOMMU driver processes the data based on flags which
+-ensures backward compatibility.
+-
+-Version field is only reserved for the unlikely event of UAPI upgrade
+-at its entirety.
+-
+-It's *always* the caller's responsibility to indicate the size of the
+-structure passed by setting argsz appropriately.
+-Though at the same time, argsz is user provided data which is not
+-trusted. The argsz field allows the user app to indicate how much data
+-it is providing; it's still the kernel's responsibility to validate
+-whether it's correct and sufficient for the requested operation.
+-
+-Compatibility Checking
+-----------------------
+-When IOMMU UAPI extension results in some structure size increase,
+-IOMMU UAPI code shall handle the following cases:
+-
+-1. User and kernel has exact size match
+-2. An older user with older kernel header (smaller UAPI size) running on a
+-   newer kernel (larger UAPI size)
+-3. A newer user with newer kernel header (larger UAPI size) running
+-   on an older kernel.
+-4. A malicious/misbehaving user passing illegal/invalid size but within
+-   range. The data may contain garbage.
+-
+-Feature Checking
+-----------------
+-While launching a guest with vIOMMU, it is strongly advised to check
+-the compatibility upfront, as some subsequent errors happening during
+-vIOMMU operation, such as cache invalidation failures cannot be nicely
+-escalated to the guest due to IOMMU specifications. This can lead to
+-catastrophic failures for the users.
+-
+-User applications such as QEMU are expected to import kernel UAPI
+-headers. Backward compatibility is supported per feature flags.
+-For example, an older QEMU (with older kernel header) can run on newer
+-kernel. Newer QEMU (with new kernel header) may refuse to initialize
+-on an older kernel if new feature flags are not supported by older
+-kernel. Simply recompiling existing code with newer kernel header should
+-not be an issue in that only existing flags are used.
+-
+-IOMMU vendor driver should report the below features to IOMMU UAPI
+-consumers (e.g. via VFIO).
+-
+-1. IOMMU_NESTING_FEAT_SYSWIDE_PASID
+-2. IOMMU_NESTING_FEAT_BIND_PGTBL
+-3. IOMMU_NESTING_FEAT_BIND_PASID_TABLE
+-4. IOMMU_NESTING_FEAT_CACHE_INVLD
+-5. IOMMU_NESTING_FEAT_PAGE_REQUEST
+-
+-Take VFIO as example, upon request from VFIO userspace (e.g. QEMU),
+-VFIO kernel code shall query IOMMU vendor driver for the support of
+-the above features. Query result can then be reported back to the
+-userspace caller. Details can be found in
+-Documentation/driver-api/vfio.rst.
+-
+-
+-Data Passing Example with VFIO
+-------------------------------
+-As the ubiquitous userspace driver framework, VFIO is already IOMMU
+-aware and shares many key concepts such as device model, group, and
+-protection domain. Other user driver frameworks can also be extended
+-to support IOMMU UAPI but it is outside the scope of this document.
+-
+-In this tight-knit VFIO-IOMMU interface, the ultimate consumer of the
+-IOMMU UAPI data is the host IOMMU driver. VFIO facilitates user-kernel
+-transport, capability checking, security, and life cycle management of
+-process address space ID (PASID).
+-
+-VFIO layer conveys the data structures down to the IOMMU driver. It
+-follows the pattern below::
+-
+-   struct {
+-	__u32 argsz;
+-	__u32 flags;
+-	__u8  data[];
+-   };
+-
+-Here data[] contains the IOMMU UAPI data structures. VFIO has the
+-freedom to bundle the data as well as parse data size based on its own flags.
+-
+-In order to determine the size and feature set of the user data, argsz
+-and flags (or the equivalent) are also embedded in the IOMMU UAPI data
+-structures.
+-
+-A "__u32 argsz" field is *always* at the beginning of each structure.
+-
+-For example:
+-::
+-
+-   struct iommu_cache_invalidate_info {
+-	__u32	argsz;
+-	#define IOMMU_CACHE_INVALIDATE_INFO_VERSION_1 1
+-	__u32	version;
+-	/* IOMMU paging structure cache */
+-	#define IOMMU_CACHE_INV_TYPE_IOTLB	(1 << 0) /* IOMMU IOTLB */
+-	#define IOMMU_CACHE_INV_TYPE_DEV_IOTLB	(1 << 1) /* Device IOTLB */
+-	#define IOMMU_CACHE_INV_TYPE_PASID	(1 << 2) /* PASID cache */
+-	#define IOMMU_CACHE_INV_TYPE_NR		(3)
+-	__u8	cache;
+-	__u8	granularity;
+-	__u8	padding[6];
+-	union {
+-		struct iommu_inv_pasid_info pasid_info;
+-		struct iommu_inv_addr_info addr_info;
+-	} granu;
+-   };
+-
+-VFIO is responsible for checking its own argsz and flags. It then
+-invokes appropriate IOMMU UAPI functions. The user pointers are passed
+-to the IOMMU layer for further processing. The responsibilities are
+-divided as follows:
+-
+-- Generic IOMMU layer checks argsz range based on UAPI data in the
+-  current kernel version.
+-
+-- Generic IOMMU layer checks content of the UAPI data for non-zero
+-  reserved bits in flags, padding fields, and unsupported version.
+-  This is to ensure not breaking userspace in the future when these
+-  fields or flags are used.
+-
+-- Vendor IOMMU driver checks argsz based on vendor flags. UAPI data
+-  is consumed based on flags. Vendor driver has access to
+-  unadulterated argsz value in case of vendor specific future
+-  extensions. Currently, it does not perform the copy_from_user()
+-  itself. A __user pointer can be provided in some future scenarios
+-  where there's vendor data outside of the structure definition.
+-
+-IOMMU code treats UAPI data in two categories:
+-
+-- structure contains vendor data
+-  (Example: iommu_uapi_cache_invalidate())
+-
+-- structure contains only generic data
+-  (Example: iommu_uapi_sva_bind_gpasid())
+-
+-
+-
+-Sharing UAPI with in-kernel users
+----------------------------------
+-For UAPIs that are shared with in-kernel users, a wrapper function is
+-provided to distinguish the callers. For example,
+-
+-Userspace caller ::
+-
+-  int iommu_uapi_sva_unbind_gpasid(struct iommu_domain *domain,
+-                                   struct device *dev,
+-                                   void __user *udata)
+-
+-In-kernel caller ::
+-
+-  int iommu_sva_unbind_gpasid(struct iommu_domain *domain,
+-                              struct device *dev, ioasid_t ioasid);
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0748d6bd0c4f..1359ed17337e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11544,7 +11544,6 @@ L:	iommu@lists.linux.dev
+ S:	Maintained
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git
+ F:	Documentation/devicetree/bindings/iommu/
+-F:	Documentation/userspace-api/iommu.rst
+ F:	drivers/iommu/
+ F:	include/linux/iommu.h
+ F:	include/linux/iova.h
 -- 
-2.43.0
+2.18.0
 
 
