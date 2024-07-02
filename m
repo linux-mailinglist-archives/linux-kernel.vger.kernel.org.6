@@ -1,283 +1,422 @@
-Return-Path: <linux-kernel+bounces-237248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60B3391EDDE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:27:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4286B91EDE6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:31:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84A631C227F0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 04:27:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 675B31C228A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 04:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6C6374FE;
-	Tue,  2 Jul 2024 04:27:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BDCB35280;
+	Tue,  2 Jul 2024 04:30:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bBIvHRJv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="qFEMydrv"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7123A260;
-	Tue,  2 Jul 2024 04:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719894433; cv=fail; b=pLreso9W2GwyRQoVRyTJslH0l4snMg1A5pFxs6ZNLB2HbxVwsCft9XOtXzmbblAKzGFu8HuMG10xhV25LCw4ONuvaQSKPfmcO8wFn08SkX/ATvOvKC4SJpkUwOopMMHbYwx46LgMPr6NIaasr1RJNIPvCwmJkqf9Al79afsfVjA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719894433; c=relaxed/simple;
-	bh=rBuzoxmHgIgzS9c6ug/tnngBMqmsM7KgmksJBfo5DTo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=MKxbZ3l04pY3P7mnxu7O+jOHNtuJ+NyPOSme8g59qy/diw2woPFoa1xNGnf83ctg7d1lJUjm3+WRUYs1tkYwdff+DtMbpvVPrmURNV30cHLHWIA6eDiXPCsWlxIW+oudbVqbPr0Sn9qoIHCYc80pNi+6juKJhNYl9PtXAJdOxFc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bBIvHRJv; arc=fail smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719894432; x=1751430432;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=rBuzoxmHgIgzS9c6ug/tnngBMqmsM7KgmksJBfo5DTo=;
-  b=bBIvHRJvDcwH5kAXyiil9lmAB7UQN/HNceeJHPBEOw6fD9bIHgBlaw0Q
-   8HBj12fALX8V8YMtm3RvC6Vlzw04epgrEKCv4neeKb8wipn4P3xDv7PK+
-   JMDOGjcYh7NZ5XI7ng2+ZjinuJd8jZEbttsPHGVnBuk6RHNi0FPqGsL4E
-   vmCfK0wIeu2H7MfPidQPO6mnswk/qyioUhHPFCEI7YbI2xGyAbTS+wY1X
-   79yOvpDrVx5/ot0hZsgiluEXR4fcRqtnB2/QTiXfrzcnhBLTSmWasYej4
-   WZZZToPtyt27fBR1U+J8HBebNyq/ZV16uT9vmePaXVYgRJwRoaYFLYXyb
-   A==;
-X-CSE-ConnectionGUID: pP/l+wjoRMmmPAOTC5VXuw==
-X-CSE-MsgGUID: vLlkSWeCQouVX8gnHYL7Hw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="17264109"
-X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
-   d="scan'208";a="17264109"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 21:27:11 -0700
-X-CSE-ConnectionGUID: l2KzY4tjQj2S3uO8wojK2g==
-X-CSE-MsgGUID: 4E4djqGPRd+wT91y3JWWiQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
-   d="scan'208";a="76479474"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by orviesa002.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 01 Jul 2024 21:27:10 -0700
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 1 Jul 2024 21:27:10 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 1 Jul 2024 21:27:10 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.169)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 1 Jul 2024 21:27:10 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oXZe0WScv2grvggP81MJG8qZNM9CDq6ajPO8k7DUl8m8aYXSpEedIjmoRqvy1LhkHfX8FGQpuQI49Sg3Z54JCSgO0n4gk9czeIeWusQK5pPTuliy2umMphmt35PpK0DXI2qL3sL5VFMGOONf16A0iKkigSweh3+dHfFBgWSZvFjcDjOHZKgeVTvKfL9hciQosUjf/rm4QeS9QXswXSJTbdjuvtl+3GHKVCfbayvR3eKRzt/KF5Q4YfyftuVBrNK9G1+a8HDGGeFcoaKycuE5tt5XVKxCIF9xt2VJ6FH89cLyO6VrEvqZ1C7AtVLHCm7Yr3Wo45Dp0s7rKJLKEAeXoA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rBuzoxmHgIgzS9c6ug/tnngBMqmsM7KgmksJBfo5DTo=;
- b=IqmJgPkVudhTnXAk4eNS83tTXv2DhJ/rh+NaKZclTYkb12CTlswl1HzrSkXsuzMx3cpig0Gt4y/FXo5vULNNs8VnefzQ8EIt6MJJJmp7wZy2nEJQ1pJz0pcgroRtKZITDB/K/EVtqWlVSRfERM0ttYHlIWn1zWWi8tY0//6nD1HUYnvDnQgSbFFSMQmSPWYH9VobBy3KAQD8sakqW/H7rPYzm0QWRBu2cthD9GWSUsCJdqK01ivql+CMHADEpSXeXzkFW4BLaNi9LBULQoM4P67KSqX+8r2lP5fmEOuQg7CLEqAvuQ3JemeA16V/i5aB9eHJjON+IZXWZmMT0vqnmA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from DM8PR11MB5637.namprd11.prod.outlook.com (2603:10b6:8:33::5) by
- CH0PR11MB8236.namprd11.prod.outlook.com (2603:10b6:610:184::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.32; Tue, 2 Jul
- 2024 04:27:08 +0000
-Received: from DM8PR11MB5637.namprd11.prod.outlook.com
- ([fe80::8ee7:3d97:35d6:d1e7]) by DM8PR11MB5637.namprd11.prod.outlook.com
- ([fe80::8ee7:3d97:35d6:d1e7%7]) with mapi id 15.20.7719.029; Tue, 2 Jul 2024
- 04:27:08 +0000
-From: "Wang, Weilin" <weilin.wang@intel.com>
-To: Namhyung Kim <namhyung@kernel.org>
-CC: Ian Rogers <irogers@google.com>, Arnaldo Carvalho de Melo
-	<acme@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar
-	<mingo@redhat.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, "Hunter, Adrian" <adrian.hunter@intel.com>, Kan
- Liang <kan.liang@linux.intel.com>, "linux-perf-users@vger.kernel.org"
-	<linux-perf-users@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Taylor, Perry" <perry.taylor@intel.com>,
-	"Alt, Samantha" <samantha.alt@intel.com>, "Biggers, Caleb"
-	<caleb.biggers@intel.com>
-Subject: RE: [RFC PATCH v14 0/8] TPEBS counting mode support
-Thread-Topic: [RFC PATCH v14 0/8] TPEBS counting mode support
-Thread-Index: AQHaxoTINfG478XFb02KWQ/J2kybpbHaV/8AgAAEcrCAAbjAgIADtR3AgAMYUGA=
-Date: Tue, 2 Jul 2024 04:27:08 +0000
-Message-ID: <DM8PR11MB56372A51C1D0D2EEDDA95E31EEDC2@DM8PR11MB5637.namprd11.prod.outlook.com>
-References: <20240624222026.229401-1-weilin.wang@intel.com>
- <ZnxW4u_TB5agiFJT@google.com>
- <CO6PR11MB563505F0D97C0E2D5949F583EED62@CO6PR11MB5635.namprd11.prod.outlook.com>
- <Zn3MV8lCSHLEEXDG@google.com>
- <CO6PR11MB5635353A7B7A010FB727C5A5EED22@CO6PR11MB5635.namprd11.prod.outlook.com>
-In-Reply-To: <CO6PR11MB5635353A7B7A010FB727C5A5EED22@CO6PR11MB5635.namprd11.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM8PR11MB5637:EE_|CH0PR11MB8236:EE_
-x-ms-office365-filtering-correlation-id: ed6750c8-3cb5-4ccc-dd1f-08dc9a4f3c29
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?VHcwbmt2bWFTS3JtWWJ0QjhYZGhKdWEwa04vUFhmMDQ1OG51V08wOVpaQmJi?=
- =?utf-8?B?SHdobDIvT2dRM3RLMy82ekhHa2N0VVVyS2wvOEdyWHIyTGFPbHJNcFZZK3FS?=
- =?utf-8?B?VHlNTDBZWUlWclpCaXBGbVFaOWRWSzZWb1Vmb2NPWTVET3MzYnFZUk84M1A1?=
- =?utf-8?B?R3o5a0s0bXk1YmpWb1hEaSsrMXVRcDhDdzQrelE1RFYveW9vYWFJMUtwUlll?=
- =?utf-8?B?NFJLbVRlNjhsa0RiemVNUkJnT1BRNThPenNab3paY3dkSGkrTEZybjdSV0JQ?=
- =?utf-8?B?L3htcFdpNW5TN0tVYk5VY25xSTllQlVXR2RScTVLdldJdlJya3pseU1EeVZD?=
- =?utf-8?B?ZjRKNGpDZTNMajludlFFK29zU2Z3dTI2VWxZczRzS2UrYmdvWCszNEJVRjFC?=
- =?utf-8?B?S3NDSGlGNHpXazlJL1dqMlp0Umw2SGk5YS96Y2Q4U3pKZ1VDcXdNRUlUK0FX?=
- =?utf-8?B?NFBvUVVtOG1DdnlRbTdzaTN4VDZEVzhCdE5vVEwxekViaUNiTVVXRkFPR2hT?=
- =?utf-8?B?SmUyMjNXTkhxVmxDOFl4Q25KNTkzWk52VXk5Vldzd016TWpHR2kzcG4zbCt5?=
- =?utf-8?B?WWZFM1Vac3l2UXpZb0krdWpYNlE4S2xDemdTaWpkbTg2WlV6QStVTUdzaytu?=
- =?utf-8?B?b1VKcG9nNnV1b09tNG9pUGhKaXNDWVhMci9YSjI5RklqdEZPRjc4emVQUWVu?=
- =?utf-8?B?czcrMzFTTStNd1V5K3ZldUNORkNjQnJVMmd4SGxBSlgybU5FY1U4UU8xamlF?=
- =?utf-8?B?QVZlWlRBWkh0dzRLNUkvdzBDcDVZZExNeXpnKzQ1cWNIbDM4NTE0a1o0V1VB?=
- =?utf-8?B?ZjhMclVOZUxsUXlkZU5aRjNUdk41VjN5TVRYNmhWeVp6TnFlSE1kZWpMaCtD?=
- =?utf-8?B?blVyWXZiQnp2TUxoNW10WnVJdEhjeUk2NklmdDJ0V055Uy9IcWNGck9VTzFl?=
- =?utf-8?B?TzdhUnVPWXJwQWJDdFQ3UkU1YVFmeG1XbFUrdEhSa2lrQmcvZU8reHlQWUky?=
- =?utf-8?B?akd0Wkh1Z1VZcElPWUhKZHRMZXRsUDBrUGJnYnArdXp1UnBxWWJEakpJZnFt?=
- =?utf-8?B?Q2dNUE5FLzRITUxaSjhYVmFESmVCbURsYnl2c0hKek40ek9QaG9VaEwxUFls?=
- =?utf-8?B?YjZ6M3ZvRlFGQWM1VHE4RXdhN0lZZVhDdHJUZE12MVgrS0RVcVRkQjRIaHVj?=
- =?utf-8?B?anR0UlNjR3IraG1TbVdiY25sYmQyMG5DQXROam5RMk1LUlFRbWxvZGdidEtx?=
- =?utf-8?B?ZmYwNUMwdndwOTZzU3JXVFNwYTF0QUNtUGhyZng3L2JGZjBpVThNM3BESU1C?=
- =?utf-8?B?QzNYTndVZWpyRXFzT2FhTnZrcGNTc0dqa0R0ZEpENW5iWG9XakFBYWhkVE96?=
- =?utf-8?B?QlBGYXBKNVVoUmp5MmFGdno3MXF5RVZBcThleERYcUpMbVE5aEU4bWQwUVN1?=
- =?utf-8?B?b0NZUEZEbFBGSDdQRjFKZ3h5bnFTdG1FQWxBOVlsdFRXbGZIak50K2VJK0RL?=
- =?utf-8?B?cGJUOFR3MFRwUW1IQXFXdno3K2txYVNtb2dhekpYS3V2U0ZDNnBsOVRPVXBr?=
- =?utf-8?B?UEdBcmwySS9IOHZBM21ZNWxuWHdlT2hYRnpGeUFrbHBlRDFqS0JqSXNsL1RW?=
- =?utf-8?B?OHIxVXlTMUwwZTZaUktZNVdPRkw1M1d6cGVhODFQb29aMUMvYThpMHZWaFV0?=
- =?utf-8?B?Q2FkaVFOZzhxWGtxMCt5ZUxLZjRUejFmZ2VxV2dQelNXdHg3RnNKM2c0RXJn?=
- =?utf-8?B?cEZ0ZFJTbDNIeDNDZmU2VUQwYmgzVEtaNEd3WHcva0MwOVJGTXB1ZkR4VmEz?=
- =?utf-8?Q?KjDlEygnz/GByEcSPN3NphwoEZd03PrX+AwQg=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR11MB5637.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?NVVZTk1kQmZlOE5Ec1pNZ2U3cEtTeWs2RTlDQ3Mra2hkZDR5TW5PbXYyRVpX?=
- =?utf-8?B?RFF4eU96ejh2eGxxVStqNFhWZGl6NllQcmtYUE5yWGZ0ZjFJdGx3L2IzR3Fs?=
- =?utf-8?B?MktDZTVKUFVZYyt5ZlVPR1NqMnZqTzZlc1dsQnRMblphVElrQ2VadGVGNVFy?=
- =?utf-8?B?cTRwa1JpWTBPV1ZmeEhYWG1lQ2JHV0JzTU1CK2d0cmFLOTlUNnRodkV4L3JI?=
- =?utf-8?B?dGxIdWNyUWMwMTB5MytyV01Rd3dudFR6dldLWlJmL3BMZmw5RmozdDZWc3dh?=
- =?utf-8?B?YzJQelRUZnBaRFFNQnN1ZW5KY3FJd3VSbWpQV2RNNzNUTFE0VzNPZ0ZTeFB2?=
- =?utf-8?B?STVNaFc3QWY2VWpYQmNXTzVwSElpQlBJUksrUFdlZkNsTDVvcGhha2J5SkUz?=
- =?utf-8?B?Zi84cHBtRUs4Z01DTUpKUzZXZGsyYmtBOG1qRWJEWjBSd1MzL3dFUGhVbXFl?=
- =?utf-8?B?Vzd6ZFk0VW0xUnBiTzVwT1NOWisxQ1pwdzZjZElNNkRwY1AvZ3BkZERiUWts?=
- =?utf-8?B?VWo2bnN1YVRKRG5UUnQ4VFJsNHh0VE1VejBtVk1NQnVMWSthc3g5amJDNGdx?=
- =?utf-8?B?OWhXV0N0blBKcEdxOERMd0l0VDF2RWJFSUtmaTBqazBjZGVvNnUxUnJKdHpY?=
- =?utf-8?B?YjJlcXJreThUVmI1L3dyakRmeWRzYkZnQS9jVWV1cHVUZENqSHN3YTkzUHJr?=
- =?utf-8?B?bGtUYTZHZENyenBnM1ZUUTRXV0txeC9FUUhZenFiOTJ3djFROXd5ZlRZclFR?=
- =?utf-8?B?REtsWk1UYkpYdVBiM1NoWE5qMXJpcnRuZ0NHSWdDWm5vUnNRSnhHQmNkeUdG?=
- =?utf-8?B?SlROSVN5SzR5eDRwTktxMGExdUNJR0wxdEY4aFdPelVYRE51cE9YVThxKzFn?=
- =?utf-8?B?VjZuWEFaV1NUQjFPMXJvQW5MbVQxNkRXc0hUYklLVGJwZU5LNTdBMWZjVlBO?=
- =?utf-8?B?Uy8rRm5QL2tzYXpUMlovT0hYdTZjeFhuem5BRmJzRU5CdTNlaGF4QXJqeG9H?=
- =?utf-8?B?Q1FxQ2VxZGIzUFZvZno0djJuck8vZnZjODVlZHNuOGJvaXFkY0d1cEovWUpO?=
- =?utf-8?B?NkRZYU9jZ1Awemh2MkErY01MNXFlbHI2cGUxb1J2eDhjREQwbzZQdCsvUnlR?=
- =?utf-8?B?YzlCdm0xbzdRQkNtUXdEUDEydlZYbmtLaFVCV05KMCtJZU8zejB3dUZvK01L?=
- =?utf-8?B?TytaVUpPZm9BVFpSQjdnNlpwT2JFQkJZNVJxaGdSdDU5N2Y2bGZRYTVRVVpI?=
- =?utf-8?B?cGw5SWpGMmEwTTRheFJjM1NjZ1AwOWkrbkI2TDBkdmZ0cks1YmlvMThGNmV3?=
- =?utf-8?B?eTBjampVTjIwZUo5VlpuUWpUYlNsNkh6VFBOV2dhdzEwaHpZcTRHVm4raFBz?=
- =?utf-8?B?V3ZUWG5nYmxsSG93UGJkUEJ3NklVNzFEbXFwL3VWTDBONzBFaVV2K3dySURI?=
- =?utf-8?B?dVVJV1NkMStrVU9qcmRJYWVZLzdtQWMvd0FoVTZGZGRqRDNMTUdqbXo4NVhj?=
- =?utf-8?B?Z09GZTh6V3cvUFhZcVNCeVZaN0tLR21BRjhFZm9QcVRkMkpRYVh4clZtaWdz?=
- =?utf-8?B?NkJScGxjQUJQSkdaQm5WUE16ZzM2MGJ6cWJoR1pNTnJSVStySEdxemNwcHFp?=
- =?utf-8?B?VnhPNXlYN081WHBXSWpya1A1MklGRG4wbGFrUmw1cm8wUThkUTE1M0JEZzBm?=
- =?utf-8?B?Yit6OTZoL2lHdFp6S2FxelVqNzBwZStYNnVOMUFzUlBwZmpsSWRFOUhFQ3RJ?=
- =?utf-8?B?Q00yTEsvallmdW5ERjBYZk9OSnhNanV4cmd0MDhtWG43dFJpQ1RsVVBjU0pi?=
- =?utf-8?B?OTZ5dVIrdy9lNG5HV2o4WUNEa25Bb3hZS2lJTmFmTHUrQ2JKaWIzRnkweTVD?=
- =?utf-8?B?ODVsOTJoNVpkYkhmRy8yaEFnOEpYWk83NzRXVlJuOEQ4MUVHS0FpVXNCeW9Y?=
- =?utf-8?B?N0lnME1NTHlSWjhzOTg1M2RBdlhlWEpxWnJ3MFVPOUlPMkpJaDBDcHNQcENp?=
- =?utf-8?B?YzZVSk5iNFBMSTRFODFIc3poM2NnYlVqNjBhcmEwK01wZWtLV1lGRmprQmRG?=
- =?utf-8?B?U2xJOGJSbURnemZFTkVMT3FvYUdWQUpwaVlsbHIwdjdOMUNjSS9lZGtiUUpS?=
- =?utf-8?Q?CYiqZO9EnPzetgvgTNTUeysPt?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206C881F
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 04:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719894654; cv=none; b=mgfH5FRxv61ztZBPJgooYhiJvqyiAIUJJVJh5hEF85trmgms9J0xC1lMYO0VZ4PQ6rF4CIr0K+YauMcOMxf27iPVNmWpkydaL6s4XhniniG5IL7nyRD4hGEyJ0yFNzFpUidEwyrofjRVgU3mlX5ZAj+jQC2ooDLxSIjxk6QhHjs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719894654; c=relaxed/simple;
+	bh=PlRkBUH3KsOKJc39XgWriA2SJd+esXfQur3CBBY+V6o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UrbnHbYiMQQP46zCSAO80oLawyeuTagd8elKLuQsM0AVGW1XKn392Lk0DeyQj3cR0mjuGnSqF36NqSOaVuIE0q0KMWmIOJpp3HWqzEeyLTT407NiEWUMf1eBKjCA3Y3EXE4MuKkbH0zDQx1CDPwGziipK4StVpCfNHWn0AZ5bxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=qFEMydrv; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7178727da84so2007088a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 21:30:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1719894651; x=1720499451; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=j7wHN8ZS4EW/ROGi5LHr2BBapsgd7jowT7gRws/UAh8=;
+        b=qFEMydrvASbbL6Nxa6Cb8B3BSG1LN+wBJK7sQU9l+lvLXpNLW0RlOktgWBPEfLmCT5
+         WwhfSwZBK74DJzmh3D0la4z6tW59IFp8DTSpYtzJclGec3bCov7slcELFnmAA37rd1uH
+         GsSHTk7Ps8KOyurDCZV1mZDiABRgOTeJiWrX54b5obFRtftEnP6fCDOzleXhE7+epnIy
+         drFrEaHytrh4bYsuLGp03XA19d977Pk276Tvt9YBQySrPjK0V9j0kTUPNbAdwtjUERoo
+         YALpytrl/H7ngjNL7IIyqZwgzhwwje9VIeeXmAQnfS+fXpF9xquPaEnLlNN+y+BZubeB
+         Z7RA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719894651; x=1720499451;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j7wHN8ZS4EW/ROGi5LHr2BBapsgd7jowT7gRws/UAh8=;
+        b=CwqhmMnpeRJhzKBvFvgFRaF+GJVJFZ5uhC2OIpMVg7LYifWiCo4lJPy9jdRzBacAYj
+         3qNna/ZP1QMEd+wpGMMxhYdbL1xehsKO0zo5S+oEsI6kECl0nLfE/GlfZVfMI3Qu6mBA
+         QmRDcyTKMUT9vgWeqOA841UePxg6QFeLBQ8i7T8bLGBz8dIXJqii3sscNHoJhObAM5BG
+         qXvrugqzwVgQvRU5nY4lGhbFg5RxaJA6m2AHuNLUdp01dnw9EJ++8O+wtF8UBE3TV+qb
+         m665VY/nta8X9obk3cgqtbGS0i8mSPoiBlQGPKQ5PsciGK59z28McxYQJ4JlwqbKvC0I
+         hgAw==
+X-Forwarded-Encrypted: i=1; AJvYcCWrWzaYzsvnRNBys1BUMsrH1GP/fMBZZ1SlClvJDtAs9Ian2dn2cspXj9S5iTr77z0afuf8DvlhY17qo+FdlL7vL0V8KRtE9oFVuTmx
+X-Gm-Message-State: AOJu0YyYI/wTBJgTmlf7mP7FvYnOCj1wUEynw/oQhZaRvlfitsL+XicJ
+	gZfJH3M/EkkAERyTXq4NZLud6kcUVdKw/NbumtomKnhXS08n7s6hUKCtMJRrI8A=
+X-Google-Smtp-Source: AGHT+IEA+hwI1pWHzT1n/noPMk2yq8ZulVIVMBdYuGLl8QeXBXHg42EsIQfke1S7YJEV2djWmrb7ig==
+X-Received: by 2002:a05:6a20:3941:b0:1bd:28d1:fc5 with SMTP id adf61e73a8af0-1bef611b7e9mr7758299637.6.1719894651375;
+        Mon, 01 Jul 2024 21:30:51 -0700 (PDT)
+Received: from ghost ([2601:647:5700:6860:a569:328b:99ad:ce17])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac1539255sm73322835ad.129.2024.07.01.21.30.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 21:30:50 -0700 (PDT)
+Date: Mon, 1 Jul 2024 21:30:48 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Jesse Taube <jesse@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, Ard Biesheuvel <ardb@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Wende Tan <twd2.me@gmail.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	"Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v3 4/4] RISC-V: Use Zkr to seed KASLR base address
+Message-ID: <ZoOCeMUTIgnA72xj@ghost>
+References: <20240701185132.319995-1-jesse@rivosinc.com>
+ <20240701185132.319995-5-jesse@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR11MB5637.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ed6750c8-3cb5-4ccc-dd1f-08dc9a4f3c29
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jul 2024 04:27:08.2028
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Ox4NU8mJ+hACtKMv/Ua7AUoZ0/xtZDjnTUhGRALlEjY2CMN6DXqOK0NrkUngYnUWiP6nq+gjog/lAZh/tWMyQg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR11MB8236
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240701185132.319995-5-jesse@rivosinc.com>
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogV2FuZywgV2VpbGluDQo+
-IFNlbnQ6IFNhdHVyZGF5LCBKdW5lIDI5LCAyMDI0IDEwOjEzIFBNDQo+IFRvOiBOYW1oeXVuZyBL
-aW0gPG5hbWh5dW5nQGtlcm5lbC5vcmc+DQo+IENjOiBJYW4gUm9nZXJzIDxpcm9nZXJzQGdvb2ds
-ZS5jb20+OyBBcm5hbGRvIENhcnZhbGhvIGRlIE1lbG8NCj4gPGFjbWVAa2VybmVsLm9yZz47IFBl
-dGVyIFppamxzdHJhIDxwZXRlcnpAaW5mcmFkZWFkLm9yZz47IEluZ28gTW9sbmFyDQo+IDxtaW5n
-b0ByZWRoYXQuY29tPjsgQWxleGFuZGVyIFNoaXNoa2luDQo+IDxhbGV4YW5kZXIuc2hpc2hraW5A
-bGludXguaW50ZWwuY29tPjsgSmlyaSBPbHNhIDxqb2xzYUBrZXJuZWwub3JnPjsgSHVudGVyLA0K
-PiBBZHJpYW4gPGFkcmlhbi5odW50ZXJAaW50ZWwuY29tPjsgS2FuIExpYW5nIDxrYW4ubGlhbmdA
-bGludXguaW50ZWwuY29tPjsNCj4gbGludXgtcGVyZi11c2Vyc0B2Z2VyLmtlcm5lbC5vcmc7IGxp
-bnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IFRheWxvciwgUGVycnkNCj4gPHBlcnJ5LnRheWxv
-ckBpbnRlbC5jb20+OyBBbHQsIFNhbWFudGhhIDxzYW1hbnRoYS5hbHRAaW50ZWwuY29tPjsgQmln
-Z2VycywNCj4gQ2FsZWIgPGNhbGViLmJpZ2dlcnNAaW50ZWwuY29tPg0KPiBTdWJqZWN0OiBSRTog
-W1JGQyBQQVRDSCB2MTQgMC84XSBUUEVCUyBjb3VudGluZyBtb2RlIHN1cHBvcnQNCj4gDQo+IA0K
-PiANCj4gPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+IEZyb206IE5hbWh5dW5nIEtp
-bSA8bmFtaHl1bmdAa2VybmVsLm9yZz4NCj4gPiBTZW50OiBUaHVyc2RheSwgSnVuZSAyNywgMjAy
-NCAxOjMyIFBNDQo+ID4gVG86IFdhbmcsIFdlaWxpbiA8d2VpbGluLndhbmdAaW50ZWwuY29tPg0K
-PiA+IENjOiBJYW4gUm9nZXJzIDxpcm9nZXJzQGdvb2dsZS5jb20+OyBBcm5hbGRvIENhcnZhbGhv
-IGRlIE1lbG8NCj4gPiA8YWNtZUBrZXJuZWwub3JnPjsgUGV0ZXIgWmlqbHN0cmEgPHBldGVyekBp
-bmZyYWRlYWQub3JnPjsgSW5nbyBNb2xuYXINCj4gPiA8bWluZ29AcmVkaGF0LmNvbT47IEFsZXhh
-bmRlciBTaGlzaGtpbg0KPiA+IDxhbGV4YW5kZXIuc2hpc2hraW5AbGludXguaW50ZWwuY29tPjsg
-SmlyaSBPbHNhIDxqb2xzYUBrZXJuZWwub3JnPjsgSHVudGVyLA0KPiA+IEFkcmlhbiA8YWRyaWFu
-Lmh1bnRlckBpbnRlbC5jb20+OyBLYW4gTGlhbmcgPGthbi5saWFuZ0BsaW51eC5pbnRlbC5jb20+
-Ow0KPiA+IGxpbnV4LXBlcmYtdXNlcnNAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdl
-ci5rZXJuZWwub3JnOyBUYXlsb3IsIFBlcnJ5DQo+ID4gPHBlcnJ5LnRheWxvckBpbnRlbC5jb20+
-OyBBbHQsIFNhbWFudGhhIDxzYW1hbnRoYS5hbHRAaW50ZWwuY29tPjsNCj4gQmlnZ2VycywNCj4g
-PiBDYWxlYiA8Y2FsZWIuYmlnZ2Vyc0BpbnRlbC5jb20+DQo+ID4gU3ViamVjdDogUmU6IFtSRkMg
-UEFUQ0ggdjE0IDAvOF0gVFBFQlMgY291bnRpbmcgbW9kZSBzdXBwb3J0DQo+ID4NCj4gPiBPbiBX
-ZWQsIEp1biAyNiwgMjAyNCBhdCAwNjoxNzoyMlBNICswMDAwLCBXYW5nLCBXZWlsaW4gd3JvdGU6
-DQo+ID4gPg0KPiA+ID4NCj4gPiA+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPiA+
-ID4gRnJvbTogTmFtaHl1bmcgS2ltIDxuYW1oeXVuZ0BrZXJuZWwub3JnPg0KPiA+ID4gPiBTZW50
-OiBXZWRuZXNkYXksIEp1bmUgMjYsIDIwMjQgMTA6NTkgQU0NCj4gPiA+ID4gVG86IFdhbmcsIFdl
-aWxpbiA8d2VpbGluLndhbmdAaW50ZWwuY29tPg0KPiA+ID4gPiBDYzogSWFuIFJvZ2VycyA8aXJv
-Z2Vyc0Bnb29nbGUuY29tPjsgQXJuYWxkbyBDYXJ2YWxobyBkZSBNZWxvDQo+ID4gPiA+IDxhY21l
-QGtlcm5lbC5vcmc+OyBQZXRlciBaaWpsc3RyYSA8cGV0ZXJ6QGluZnJhZGVhZC5vcmc+OyBJbmdv
-IE1vbG5hcg0KPiA+ID4gPiA8bWluZ29AcmVkaGF0LmNvbT47IEFsZXhhbmRlciBTaGlzaGtpbg0K
-PiA+ID4gPiA8YWxleGFuZGVyLnNoaXNoa2luQGxpbnV4LmludGVsLmNvbT47IEppcmkgT2xzYSA8
-am9sc2FAa2VybmVsLm9yZz47DQo+IEh1bnRlciwNCj4gPiA+ID4gQWRyaWFuIDxhZHJpYW4uaHVu
-dGVyQGludGVsLmNvbT47IEthbiBMaWFuZw0KPiA8a2FuLmxpYW5nQGxpbnV4LmludGVsLmNvbT47
-DQo+ID4gPiA+IGxpbnV4LXBlcmYtdXNlcnNAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxA
-dmdlci5rZXJuZWwub3JnOyBUYXlsb3IsDQo+ID4gUGVycnkNCj4gPiA+ID4gPHBlcnJ5LnRheWxv
-ckBpbnRlbC5jb20+OyBBbHQsIFNhbWFudGhhIDxzYW1hbnRoYS5hbHRAaW50ZWwuY29tPjsNCj4g
-PiBCaWdnZXJzLA0KPiA+ID4gPiBDYWxlYiA8Y2FsZWIuYmlnZ2Vyc0BpbnRlbC5jb20+DQo+ID4g
-PiA+IFN1YmplY3Q6IFJlOiBbUkZDIFBBVENIIHYxNCAwLzhdIFRQRUJTIGNvdW50aW5nIG1vZGUg
-c3VwcG9ydA0KPiA+ID4gPg0KPiA+ID4gPiBPbiBNb24sIEp1biAyNCwgMjAyNCBhdCAwNjoyMDox
-NlBNIC0wNDAwLCB3ZWlsaW4ud2FuZ0BpbnRlbC5jb20NCj4gPiB3cm90ZToNCj4gPiA+ID4gPiBG
-cm9tOiBXZWlsaW4gV2FuZyA8d2VpbGluLndhbmdAaW50ZWwuY29tPg0KPiA+ID4gPiA+DQo+ID4g
-PiA+ID4gQ2hhbmdlcyBpbiB2MTQ6DQo+ID4gPiA+ID4gIC0gRml4IHRoZSBweXRob24gaW1wb3J0
-IHRlc3QgZmFpbHVyZS4gV2UgY2Fubm90IHN1cHBvcnQgUFlUSE9OX1BFUkYNCj4gPiA+ID4gYmVj
-YXVzZSBpdA0KPiA+ID4gPiA+ICB3aWxsIHRyaWdnZXIgYSBjaGFpbiBvZiBkZXBlbmRlbmN5IGlz
-c3VlcyBpZiB3ZSBhZGQgaW50ZWwtdHBlYnMuYyB0byBpdC4NCj4gU28sDQo+ID4gPiA+ID4gIG9u
-bHkgZW5hYmxlIHRwZWJzIGZ1bmN0aW9ucyBpbiBldnNlbCBhbmQgZXZsaXN0IHdoZW4gUFlUSE9O
-X1BFUkYgaXMNCj4gbm90DQo+ID4gPiA+ID4gIGRlZmluZWQuDQo+ID4gPiA+DQo+ID4gPiA+IEkg
-dGhpbmsgaXQncyBlYXNpZXIgaWYgd2UgaGF2ZSBJYW4ncyBweXRob24gYnVpbGQgY2xlYW51cCBm
-aXJzdC4NCj4gPiA+ID4NCj4gPiA+ID4gICBodHRwczovL2xvcmUua2VybmVsLm9yZy9saW51eC1w
-ZXJmLXVzZXJzLzIwMjQwNjI1MjE0MTE3Ljk1Mzc3Ny0xLQ0KPiA+ID4gPiBpcm9nZXJzQGdvb2ds
-ZS5jb20NCj4gPiA+ID4NCj4gPiA+ID4gTGV0IG1lIHRha2UgYSBsb29rIGF0IGl0Li4NCj4gPiA+
-DQo+ID4gPiBPaywgSSB3aWxsIGhvbGQgdGhlIGNtZCBvcHRpb24gbmFtZSB1cGRhdGUgdW50aWwg
-d2UgY29uY2x1ZGUgb24gdGhpcyBvbmUuDQo+ID4gPiBUaGFua3MgYSBsb3QhDQo+ID4NCj4gPiBQ
-bGVhc2UgdGFrZSBhIGxvb2sgYXQgdGhlIGN1cnJlbnQgcGVyZi10b29scy1uZXh0IGJyYW5jaC4N
-Cj4gDQo+IEhpIE5hbWh5dW5nLA0KPiANCj4gVGhlIHB5dGhvbiBpbXBvcnQgdGVzdCB3b3JrcyBj
-b3JyZWN0bHkgd2l0aCB0aGUgbGF0ZXN0IHBlcmYtdG9vbHMtbmV4dCBicmFuY2gNCj4gd2l0aG91
-dCB0aGUgY2hhbmdlIEkgYWRkZWQgaW4gdjE0LiBJIHdpbGwgc2VuZCBhIG5ldyB2ZXJzaW9uIHRo
-YXQgcmV2ZXJ0cyB0aGlzDQo+IGNoYW5nZSBhbmQgdXBkYXRlIHRoZSBjb21tYW5kIGxpbmUgb3B0
-aW9uLiBJcyB0aGVyZSBhbnkgb3RoZXIgY2hhbmdlcw0KPiB5b3UnZA0KPiBsaWtlIG1lIHRvIGFk
-ZD8NCg0KSGkgTmFtaHl1bmcsDQoNCkknbSBwbGFubmluZyB0byBzdWJtaXQgdGhlIG5ldyB2ZXJz
-aW9uIGJlZm9yZSBXZWRuZXNkYXkuIFBsZWFzZSBsZXQgbWUga25vdyBpZg0KeW91IGhhdmUgYW55
-IG5ldyBjb21tZW50IG9uIHRoaXMuDQoNClRoYW5rcywNCldlaWxpbg0KDQo+IA0KPiBUaGFua3Ms
-DQo+IFdlaWxpbg0KPiANCj4gPg0KPiA+IFRoYW5rcywNCj4gPiBOYW1oeXVuZw0KPiA+DQoNCg==
+On Mon, Jul 01, 2024 at 02:51:32PM -0400, Jesse Taube wrote:
+> Parse the device tree for Zkr in the isa string.
+> If Zkr is present, use it to seed the kernel base address.
+> 
+> On an ACPI system, as of this commit, there is no easy way to check if
+> Zkr is present. Blindly running the instruction isn't an option as;
+> we have to be able to trust the firmware.
+> 
+> Signed-off-by: Jesse Taube <jesse@rivosinc.com>
+> ---
+> V1 -> V2:
+>  - Almost entire rewrite
+> V2 -> V3:
+>  - Dont parse iscv,isa-base
+>  - Move fdt_early_match_extension_isa in pi.h under comment
+>  - Only check enabled cpus
+>  - Rename early_isa_str to fdt_early_match_extension_isa
+>  - Rename get_ext_named to early_cpu_isa_ext_available
+>  - Rewrite isa_string_contains
+>  - Update commit description
+>  - Use fdt_stringlist_contains for riscv,isa-extensions
+> ---
+>  arch/riscv/kernel/pi/Makefile           |   2 +-
+>  arch/riscv/kernel/pi/archrandom_early.c |  30 +++++
+>  arch/riscv/kernel/pi/fdt_early.c        | 160 ++++++++++++++++++++++++
+>  arch/riscv/kernel/pi/pi.h               |   3 +
+>  arch/riscv/mm/init.c                    |   5 +-
+>  5 files changed, 198 insertions(+), 2 deletions(-)
+>  create mode 100644 arch/riscv/kernel/pi/archrandom_early.c
+> 
+> diff --git a/arch/riscv/kernel/pi/Makefile b/arch/riscv/kernel/pi/Makefile
+> index 1ef7584be0c3..dba902f2a538 100644
+> --- a/arch/riscv/kernel/pi/Makefile
+> +++ b/arch/riscv/kernel/pi/Makefile
+> @@ -33,5 +33,5 @@ $(obj)/string.o: $(srctree)/lib/string.c FORCE
+>  $(obj)/ctype.o: $(srctree)/lib/ctype.c FORCE
+>  	$(call if_changed_rule,cc_o_c)
+>  
+> -obj-y		:= cmdline_early.pi.o fdt_early.pi.o string.pi.o ctype.pi.o lib-fdt.pi.o lib-fdt_ro.pi.o
+> +obj-y		:= cmdline_early.pi.o fdt_early.pi.o string.pi.o ctype.pi.o lib-fdt.pi.o lib-fdt_ro.pi.o archrandom_early.pi.o
+
+When CONFIG_FORTIFY_SOURCE is enabled, the string functions try to
+reference `__fortify_panic` which gets aliased to `__pi___fortify_panic`
+and causes lld to fail:
+
+ld.lld: error: undefined hidden symbol: __pi___fortify_panic
+>>> referenced by fdt_early.c:24 (arch/riscv/kernel/pi/fdt_early.c:24)
+>>>               arch/riscv/kernel/pi/fdt_early.pi.o:(__pi_fdt_early_match_extension_isa) in archive vmlinux.a
+
+This early in boot __fortify_panic isn't supported. Can you add
+`CFLAGS_fdt_early.o += -D__NO_FORTIFY` next to the same addition for
+cmdline_early and fdt_early?
+
+The rest of this looks go to me (just send a new version with this simple fix).
+
+Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
+
+>  extra-y		:= $(patsubst %.pi.o,%.o,$(obj-y))
+> diff --git a/arch/riscv/kernel/pi/archrandom_early.c b/arch/riscv/kernel/pi/archrandom_early.c
+> new file mode 100644
+> index 000000000000..3f05d3cf3b7b
+> --- /dev/null
+> +++ b/arch/riscv/kernel/pi/archrandom_early.c
+> @@ -0,0 +1,30 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +
+> +#include <asm/csr.h>
+> +#include <linux/processor.h>
+> +
+> +#include "pi.h"
+> +
+> +/*
+> + * To avoid rewriting code include asm/archrandom.h and create macros
+> + * for the functions that won't be included.
+> + */
+> +#undef riscv_has_extension_unlikely
+> +#define riscv_has_extension_likely(...) false
+> +#undef pr_err_once
+> +#define pr_err_once(...)
+> +
+> +#include <asm/archrandom.h>
+> +
+> +u64 get_kaslr_seed_zkr(const uintptr_t dtb_pa)
+> +{
+> +	unsigned long seed = 0;
+> +
+> +	if (!fdt_early_match_extension_isa((const void *)dtb_pa, "zkr"))
+> +		return 0;
+> +
+> +	if (!csr_seed_long(&seed))
+> +		return 0;
+> +
+> +	return seed;
+> +}
+> diff --git a/arch/riscv/kernel/pi/fdt_early.c b/arch/riscv/kernel/pi/fdt_early.c
+> index 40ee299702bf..49ff5360bf87 100644
+> --- a/arch/riscv/kernel/pi/fdt_early.c
+> +++ b/arch/riscv/kernel/pi/fdt_early.c
+> @@ -2,6 +2,7 @@
+>  #include <linux/types.h>
+>  #include <linux/init.h>
+>  #include <linux/libfdt.h>
+> +#include <linux/ctype.h>
+>  
+>  #include "pi.h"
+>  
+> @@ -23,3 +24,162 @@ u64 get_kaslr_seed(uintptr_t dtb_pa)
+>  	*prop = 0;
+>  	return ret;
+>  }
+> +
+> +/**
+> + *  fdt_device_is_available - check if a device is available for use
+> + *
+> + * @fdt: pointer to the device tree blob
+> + * @node: offset of the node whose property to find
+> + *
+> + *  Returns true if the status property is absent or set to "okay" or "ok",
+> + *  false otherwise
+> + */
+> +static bool fdt_device_is_available(const void *fdt, int node)
+> +{
+> +	const char *status;
+> +	int statlen;
+> +
+> +	status = fdt_getprop(fdt, node, "status", &statlen);
+> +	if (!status)
+> +		return true;
+> +
+> +	if (statlen > 0) {
+> +		if (!strcmp(status, "okay") || !strcmp(status, "ok"))
+> +			return true;
+> +	}
+> +
+> +	return false;
+> +}
+> +
+> +/* Copy of fdt_nodename_eq_ */
+> +static int fdt_node_name_eq(const void *fdt, int offset,
+> +			    const char *s)
+> +{
+> +	int olen;
+> +	int len = strlen(s);
+> +	const char *p = fdt_get_name(fdt, offset, &olen);
+> +
+> +	if (!p || olen < len)
+> +		/* short match */
+> +		return 0;
+> +
+> +	if (memcmp(p, s, len) != 0)
+> +		return 0;
+> +
+> +	if (p[len] == '\0')
+> +		return 1;
+> +	else if (!memchr(s, '@', len) && (p[len] == '@'))
+> +		return 1;
+> +	else
+> +		return 0;
+> +}
+> +
+> +/**
+> + *  isa_string_contains - check if isa string contains an extension
+> + *
+> + * @isa_str: isa string to search
+> + * @ext_name: the extension to search for
+> + *
+> + *  Returns true if the extension is in the given isa string,
+> + *  false otherwise
+> + */
+> +static bool isa_string_contains(const char *isa_str, const char *ext_name)
+> +{
+> +	size_t i, single_end, len = strlen(ext_name);
+> +	char ext_end;
+> +
+> +	/* Error must contain rv32/64 */
+> +	if (strlen(isa_str) < 4)
+> +		return false;
+> +
+> +	if (len == 1) {
+> +		single_end = strcspn(isa_str, "sSxXzZ");
+> +		/* Search for single chars between rv32/64 and multi-letter extensions */
+> +		for (i = 4; i < single_end; i++) {
+> +			if (tolower(isa_str[i]) == ext_name[0])
+> +				return true;
+> +		}
+> +		return false;
+> +	}
+> +
+> +	/* Skip to start of multi-letter extensions */
+> +	isa_str = strpbrk(isa_str, "sSxXzZ");
+> +	while (isa_str) {
+> +		if (strncasecmp(isa_str, ext_name, len) == 0) {
+> +			ext_end = isa_str[len];
+> +			/* Check if matches the whole extension excluding version. */
+> +			if (ext_end == '\0' || ext_end == '_' || isdigit(ext_end))
+> +				return true;
+> +		}
+> +		/* Multi-letter extensions must be split from other multi-letter
+> +		 * extensions with an "_", the end of a multi-letter extension will
+> +		 * either be the null character or the "_" at the start of the next
+> +		 * multi-letter extension.
+> +		 */
+> +		isa_str = strchr(isa_str, '_');
+> +		if (isa_str)
+> +			isa_str++;
+> +	}
+> +
+> +	return false;
+> +}
+> +
+> +/**
+> + *  early_cpu_isa_ext_available - check if cpu node has an extension
+> + *
+> + * @fdt: pointer to the device tree blob
+> + * @node: offset of the cpu node
+> + * @ext_name: the extension to search for
+> + *
+> + *  Returns true if the cpu node has the extension,
+> + *  false otherwise
+> + */
+> +static bool early_cpu_isa_ext_available(const void *fdt, int node, const char *ext_name)
+> +{
+> +	const void *prop;
+> +	int len;
+> +
+> +	prop = fdt_getprop(fdt, node, "riscv,isa-extensions", &len);
+> +	if (prop && fdt_stringlist_contains(prop, len, ext_name))
+> +		return true;
+> +
+> +	prop = fdt_getprop(fdt, node, "riscv,isa", &len);
+> +	if (prop && isa_string_contains(prop, ext_name))
+> +		return true;
+> +
+> +	return false;
+> +}
+> +
+> +/**
+> + *  fdt_early_match_extension_isa - check if all cpu nodes have an extension
+> + *
+> + * @fdt: pointer to the device tree blob
+> + * @ext_name: the extension to search for
+> + *
+> + *  Returns true if the all available the cpu nodes have the extension,
+> + *  false otherwise
+> + */
+> +bool fdt_early_match_extension_isa(const void *fdt, const char *ext_name)
+> +{
+> +	int node, parent;
+> +	bool ret = false;
+> +
+> +	parent = fdt_path_offset(fdt, "/cpus");
+> +	if (parent < 0)
+> +		return false;
+> +
+> +	fdt_for_each_subnode(node, fdt, parent) {
+> +		if (!fdt_node_name_eq(fdt, node, "cpu"))
+> +			continue;
+> +
+> +		if (!fdt_device_is_available(fdt, node))
+> +			continue;
+> +
+> +		if (!early_cpu_isa_ext_available(fdt, node, ext_name))
+> +			return false;
+> +
+> +		ret = true;
+> +	}
+> +
+> +	return ret;
+> +}
+> diff --git a/arch/riscv/kernel/pi/pi.h b/arch/riscv/kernel/pi/pi.h
+> index 493c8cb7c0e6..21141d84fea6 100644
+> --- a/arch/riscv/kernel/pi/pi.h
+> +++ b/arch/riscv/kernel/pi/pi.h
+> @@ -11,7 +11,10 @@
+>   */
+>  
+>  u64 get_kaslr_seed(uintptr_t dtb_pa);
+> +u64 get_kaslr_seed_zkr(const uintptr_t dtb_pa);
+>  bool set_nokaslr_from_cmdline(uintptr_t dtb_pa);
+>  u64 set_satp_mode_from_cmdline(uintptr_t dtb_pa);
+>  
+> +bool fdt_early_match_extension_isa(const void *fdt, const char *ext_name);
+> +
+>  #endif /* _RISCV_PI_H_ */
+> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+> index 9940171c79f0..bfb068dc4a64 100644
+> --- a/arch/riscv/mm/init.c
+> +++ b/arch/riscv/mm/init.c
+> @@ -1025,6 +1025,7 @@ static void __init pt_ops_set_late(void)
+>  #ifdef CONFIG_RANDOMIZE_BASE
+>  extern bool __init __pi_set_nokaslr_from_cmdline(uintptr_t dtb_pa);
+>  extern u64 __init __pi_get_kaslr_seed(uintptr_t dtb_pa);
+> +extern u64 __init __pi_get_kaslr_seed_zkr(const uintptr_t dtb_pa);
+>  
+>  static int __init print_nokaslr(char *p)
+>  {
+> @@ -1045,10 +1046,12 @@ asmlinkage void __init setup_vm(uintptr_t dtb_pa)
+>  
+>  #ifdef CONFIG_RANDOMIZE_BASE
+>  	if (!__pi_set_nokaslr_from_cmdline(dtb_pa)) {
+> -		u64 kaslr_seed = __pi_get_kaslr_seed(dtb_pa);
+> +		u64 kaslr_seed = __pi_get_kaslr_seed_zkr(dtb_pa);
+>  		u32 kernel_size = (uintptr_t)(&_end) - (uintptr_t)(&_start);
+>  		u32 nr_pos;
+>  
+> +		if (kaslr_seed == 0)
+> +			kaslr_seed = __pi_get_kaslr_seed(dtb_pa);
+>  		/*
+>  		 * Compute the number of positions available: we are limited
+>  		 * by the early page table that only has one PUD and we must
+> -- 
+> 2.45.2
+> 
+> 
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
