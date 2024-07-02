@@ -1,121 +1,235 @@
-Return-Path: <linux-kernel+bounces-237858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3F30923F00
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:30:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1C18923F08
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:32:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D49B21C221B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:30:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD57E1C208ED
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926231A38DB;
-	Tue,  2 Jul 2024 13:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BBZ6E/Hb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFB31B47C8;
+	Tue,  2 Jul 2024 13:32:30 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE5B26AEC;
-	Tue,  2 Jul 2024 13:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B86716B3BC
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 13:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719927017; cv=none; b=B3RKGI/JaMEopF/p7TSbteEb0mHLSCklRoo9hANYaIYfMo+CF07J4UM5DuVGjIO1NryJ0VnLibpMhSU+9dPmXbvX+CX2R8P2IbTlAqSA3+U8WrLJzgEetiG4iXuKBjlBODkIKynUOUvHilXDEsoNRFWYd7h/EW5W3Nn3gcYexyw=
+	t=1719927150; cv=none; b=ncqyKAK4L64vQ3toAp0QqsaJWINNcxeFmiaXGMLQXj6GODExeiUYLo+abIu5l2yhykTldCfT4Y0LSdsZ4+mxFkKZzebcPrqs5FCi//crMIDnBl2SmwD33UQGGhR2KuFn2P04ef7CiolywYqZmX++g5cLp4nUUb9eaUugNO0XUnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719927017; c=relaxed/simple;
-	bh=8RJtG0gGC00rT2GsXuQEaindF1W2r+IuO/BdBiyjJLM=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=hKeiMOewYVbx9vckV9r4ar9H5tHjovThhuTuzIiwYQm0Pl3a3lhba8If22gl2/HfBAcaFTS6t2QCWQf3laU52RGB+M2rLye9XFVdy0/aicXdVZfpXUUZdc7mhBlL5EPfGjpn9sKCZ6J6Pdci2YCK52hiOu2Pvnn2kLhwr92jcLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BBZ6E/Hb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23B8CC4AF07;
-	Tue,  2 Jul 2024 13:30:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719927017;
-	bh=8RJtG0gGC00rT2GsXuQEaindF1W2r+IuO/BdBiyjJLM=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=BBZ6E/HbkuhYaAn15zmd4Nk0PEd9guaspQwFVcD0y6e80jVg/7PGdlUIVTD5PVn3k
-	 NsPx7S9Szi1KiWBb73d4X17sSicGlTJrbJcJsBN3X6cDIZPzmJzp62FJuvN8zLsJBe
-	 Hh+zOGX6O7abgbci9xYpqh3fBnCUdw4W0S1LVHdMZuQ5ckD/TLMcDm3qFus0R/DkLk
-	 yYiJDpxEGqXsUCXBDddiayVBjuIbuZlOsDUy53i7Uc+UWRp2YydUwvASFOadEtiwO/
-	 1us5/GPrfCaWreY3ar8CL+Wj25deHBGbYcweqdZJp8SeE89PG2PMgQbnygxZ/RZXEe
-	 K6Q1ba13n7p5w==
-Date: Tue, 02 Jul 2024 07:30:16 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1719927150; c=relaxed/simple;
+	bh=D9GqlJnilQB8Dw8zUhX3RUqQme+BPTBFDaV9/VNMdhs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ra7dAlDL8v59xfM9Box+5T5WHGrWaPbr55Jhqjllrj7e2SjMg25ozE9uAJQbuQvg8tyBfKytnPElJD+XlDXC31hF7VaOeLZ8d21eWot4SkltU1BuwI2l4frOjI86KGXvUEL4u1Ms+p4h6NR9wd/JnzN6B/SM0ROQWod+kAeuB0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sOdcH-0006WH-JW; Tue, 02 Jul 2024 15:32:17 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sOdcG-006cdl-K3; Tue, 02 Jul 2024 15:32:16 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sOdcG-00ASZh-1j;
+	Tue, 02 Jul 2024 15:32:16 +0200
+Date: Tue, 2 Jul 2024 15:32:16 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Brian Norris <briannorris@chromium.org>, Kalle Valo <kvalo@kernel.org>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	David Lin <yu-hao.lin@nxp.com>
+Subject: Re: [PATCH] [RFC] mwifiex: Fix NULL pointer deref
+Message-ID: <ZoQBYMRLVAwM0O0j@pengutronix.de>
+References: <20240619070824.537856-1-s.hauer@pengutronix.de>
+ <87wmmll5mf.fsf@kernel.org>
+ <ZnSHcZttq79cJS3l@google.com>
+ <ZnVCzx3-pvbcYQLm@pengutronix.de>
+ <ZnmcvsXZHnQ36auI@gaggiata.pivistrello.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-Cc: devicetree@vger.kernel.org, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Albert Ou <aou@eecs.berkeley.edu>, linux-kernel@vger.kernel.org, 
- linux-riscv@lists.infradead.org, linux-iio@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, Inochi Amaoto <inochiama@outlook.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Lars-Peter Clausen <lars@metafoo.de>, 
- Chen Wang <unicorn_wang@outlook.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Jonathan Cameron <jic23@kernel.org>
-In-Reply-To: <20240702-sg2002-adc-v1-1-ac66e076a756@bootlin.com>
-References: <20240702-sg2002-adc-v1-0-ac66e076a756@bootlin.com>
- <20240702-sg2002-adc-v1-1-ac66e076a756@bootlin.com>
-Message-Id: <171992701607.3218867.8675024539411863214.robh@kernel.org>
-Subject: Re: [PATCH 1/3] dt-bindings: iio: adc: sophgo,cv18xx-saradc.yaml:
- Add Sophgo SARADC binding documentation
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZnmcvsXZHnQ36auI@gaggiata.pivistrello.it>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-
-On Tue, 02 Jul 2024 13:52:21 +0200, Thomas Bonnefille wrote:
-> The Sophgo SARADC is a Successive Approximation ADC that can be found in
-> the Sophgo SoC.
+On Mon, Jun 24, 2024 at 06:20:14PM +0200, Francesco Dolcini wrote:
+> Hello Sascha,
 > 
-> Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-> ---
->  .../bindings/iio/adc/sophgo,cv18xx-saradc.yaml     | 51 ++++++++++++++++++++++
->  MAINTAINERS                                        |  5 +++
->  2 files changed, 56 insertions(+)
+> On Fri, Jun 21, 2024 at 11:07:27AM +0200, Sascha Hauer wrote:
+> > On Thu, Jun 20, 2024 at 12:48:01PM -0700, Brian Norris wrote:
+> > > Hi Sascha,
+> > > 
+> > > On Wed, Jun 19, 2024 at 11:05:28AM +0300, Kalle Valo wrote:
+> > > > Sascha Hauer <s.hauer@pengutronix.de> writes:
+> > > > 
+> > > > > When an Access Point is repeatedly started it happens that the
+> > > > > interrupts handler is called with priv->wdev.wiphy being NULL, but
+> > > > > dereferenced in mwifiex_parse_single_response_buf() resulting in:
+> > > > >
+> > > > > | Unable to handle kernel NULL pointer dereference at virtual address 0000000000000140
+> > > ...
+> > > > > | pc : mwifiex_get_cfp+0xd8/0x15c [mwifiex]
+> > > > > | lr : mwifiex_get_cfp+0x34/0x15c [mwifiex]
+> > > > > | sp : ffff8000818b3a70
+> > > > > | x29: ffff8000818b3a70 x28: ffff000006bfd8a5 x27: 0000000000000004
+> > > > > | x26: 000000000000002c x25: 0000000000001511 x24: 0000000002e86bc9
+> > > > > | x23: ffff000006bfd996 x22: 0000000000000004 x21: ffff000007bec000
+> > > > > | x20: 000000000000002c x19: 0000000000000000 x18: 0000000000000000
+> > > > > | x17: 000000040044ffff x16: 00500072b5503510 x15: ccc283740681e517
+> > > > > | x14: 0201000101006d15 x13: 0000000002e8ff43 x12: 002c01000000ffb1
+> > > > > | x11: 0100000000000000 x10: 02e8ff43002c0100 x9 : 0000ffb100100157
+> > > > > | x8 : ffff000003d20000 x7 : 00000000000002f1 x6 : 00000000ffffe124
+> > > > > | x5 : 0000000000000001 x4 : 0000000000000003 x3 : 0000000000000000
+> > > > > | x2 : 0000000000000000 x1 : 0001000000011001 x0 : 0000000000000000
+> > > > > | Call trace:
+> > > > > |  mwifiex_get_cfp+0xd8/0x15c [mwifiex]
+> > > > > |  mwifiex_parse_single_response_buf+0x1d0/0x504 [mwifiex]
+> > > > > |  mwifiex_handle_event_ext_scan_report+0x19c/0x2f8 [mwifiex]
+> > > > > |  mwifiex_process_sta_event+0x298/0xf0c [mwifiex]
+> > > > > |  mwifiex_process_event+0x110/0x238 [mwifiex]
+> > > > > |  mwifiex_main_process+0x428/0xa44 [mwifiex]
+> > > > > |  mwifiex_sdio_interrupt+0x64/0x12c [mwifiex_sdio]
+> > > > > |  process_sdio_pending_irqs+0x64/0x1b8
+> > > > > |  sdio_irq_work+0x4c/0x7c
+> > > > > |  process_one_work+0x148/0x2a0
+> > > > > |  worker_thread+0x2fc/0x40c
+> > > > > |  kthread+0x110/0x114
+> > > > > |  ret_from_fork+0x10/0x20
+> > > > > | Code: a94153f3 a8c37bfd d50323bf d65f03c0 (f940a000)
+> > > > > | ---[ end trace 0000000000000000 ]---
+> > > > >
+> > > > > Fix this by adding a NULL check before dereferencing this pointer.
+> > > > >
+> > > > > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> > > > >
+> > > > > ---
+> > > > >
+> > > > > This is the most obvious fix for this problem, but I am not sure if we
+> > > > > might want to catch priv->wdev.wiphy being NULL earlier in the call
+> > > > > chain.
+> > > > 
+> > > > I haven't looked at the call but the symptoms sound like that either we
+> > > > are enabling the interrupts too early or there's some kind of locking
+> > > > problem so that an other cpu doesn't see the change.
+> > > 
+> > > I agree with Kalle that there's a different underlying bug involved, and
+> > > (my conclusion:) we shouldn't whack-a-mole the NULL pointer without
+> > > addressing the underlying problem.
+> > > 
+> > > Looking a bit closer (and without much other context to go on): I believe 
+> > > that one potential underlying problem is the complete lack of locking
+> > > between cfg80211 entry points (such as mwifiex_add_virtual_intf() or
+> > > mwifiex_cfg80211_change_virtual_intf()) and most stuff in the main loop
+> > > (mwifiex_main_process()). The former call sites only hold the wiphy
+> > > lock, and the latter tends to ... mostly not hold any locks, but rely on
+> > > sequentialization with itself, and using its |main_proc_lock| for setup
+> > > and teardown. It's all really bad and ready to fall down like a house of
+> > > cards at any moment. Unfortunately, no one has spent time on
+> > > rearchitecting this driver.
+> > > 
+> > > So it's possible that mwifiex_process_event() (mwifiex_get_priv_by_id()
+> > > / mwifiex_get_priv()) is getting a hold of a not-fully-initialized
+> > > 'priv' structure.
+> > > 
+> > > BTW, in case I can reproduce and poke at your scenario, what exactly
+> > > is your test case? Are you just starting / killing / restarting hostapd
+> > > in a loop?
+> > 
+> > I am running plain wpa_supplicant -i mlan0 with this config:
+> > 
+> > network={
+> >         ssid="somessid"
+> >         mode=2
+> >         frequency=2412
+> >         key_mgmt=WPA-PSK WPA-PSK-SHA256
+> >         proto=RSN
+> >         group=CCMP
+> >         pairwise=CCMP
+> >         psk="12345678"
+> > }
+> > 
+> > wait for the AP to be established, <ctrl-c> wpa_supplicant and start it
+> > again.
+> > 
+> > It doesn't seem to be a locking problem, see the patch below which fixes
+> > my problem. At some point during incoming events the correct adapter->priv[]
+> > is selected based on bss_num and bss_type. when adapter->priv[0] is used
+> > for AP mode then an incoming event with type MWIFIEX_BSS_TYPE_STA leads
+> > to adapter->priv[1] being picked which is unused and doesn't have a
+> > wiphy attached to it.
+> > 
+> > Sascha
+> > 
+> > -------------------------8<----------------------------
+> > 
+> > From 3357963821294ff7de26259a154a1cb5bab760cb Mon Sep 17 00:00:00 2001
+> > From: Sascha Hauer <s.hauer@pengutronix.de>
+> > Date: Tue, 18 Jun 2024 12:20:20 +0200
+> > Subject: [PATCH] mwifiex: Do not return unused priv in
+> >  mwifiex_get_priv_by_id()
+> > 
+> > mwifiex_get_priv_by_id() returns the priv pointer corresponding to the
+> > bss_num and bss_type, but without checking if the priv is actually
+> > currently in use.
+> > Unused priv pointers do not have a wiphy attached to them which can lead
+> > to NULL pointer dereferences further down the callstack.
+> > Fix this by returning only used priv pointers which have priv->bss_mode
+> > set to something else than NL80211_IFTYPE_UNSPECIFIED.
+> > 
+> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> > ---
+> >  drivers/net/wireless/marvell/mwifiex/main.h | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/drivers/net/wireless/marvell/mwifiex/main.h b/drivers/net/wireless/marvell/mwifiex/main.h
+> > index 175882485a195..c5164ae41b547 100644
+> > --- a/drivers/net/wireless/marvell/mwifiex/main.h
+> > +++ b/drivers/net/wireless/marvell/mwifiex/main.h
+> > @@ -1287,6 +1287,9 @@ mwifiex_get_priv_by_id(struct mwifiex_adapter *adapter,
+> >  
+> >  	for (i = 0; i < adapter->priv_num; i++) {
+> >  		if (adapter->priv[i]) {
+> > +			if (adapter->priv[i]->bss_mode == NL80211_IFTYPE_UNSPECIFIED)
+> > +				continue;
+> > +
+> >  			if ((adapter->priv[i]->bss_num == bss_num) &&
+> >  			    (adapter->priv[i]->bss_type == bss_type))
+> >  				break;
 > 
+> The change looks fine to me.
+> 
+> I am just wondering if this might have anything to do with
+> commit a17b9f590f6e ("wifi: mwifiex: Fix interface type change"), maybe you have already looked into it?
 
-My bot found errors running 'make dt_binding_check' on your patch:
+It looks somehow related. I just gave it a try and it at least doesn't
+fix my issue.
 
-yamllint warnings/errors:
+Sascha
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.yaml: 'oneOf' conditional failed, one must be fixed:
-	'unevaluatedProperties' is a required property
-	'additionalProperties' is a required property
-	hint: Either unevaluatedProperties or additionalProperties must be present
-	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.yaml: $id: Cannot determine base path from $id, relative path/filename doesn't match actual path or filename
- 	 $id: http://devicetree.org/schemas/iio/adc/sophgo,cv18xx-adc.yaml
- 	file: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.yaml
-Error: Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.example.dts:24.11-12 syntax error
-FATAL ERROR: Unable to parse input tree
-make[2]: *** [scripts/Makefile.lib:427: Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1430: dt_binding_check] Error 2
-make: *** [Makefile:240: __sub-make] Error 2
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240702-sg2002-adc-v1-1-ac66e076a756@bootlin.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
