@@ -1,167 +1,187 @@
-Return-Path: <linux-kernel+bounces-237628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 195FB923BC3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:47:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BF03923BD7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:51:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6E901F230B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:47:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F7571C23ABC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:51:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D7E156C71;
-	Tue,  2 Jul 2024 10:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B3915B10E;
+	Tue,  2 Jul 2024 10:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PFsykqId"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gyCBhUOB"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2041.outbound.protection.outlook.com [40.107.220.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71DF615533B
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 10:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719917267; cv=none; b=skXmiiOeurK1Ukkis/nlec3auccHvV/e2vI6FQQlAwEOmyiUKxDftLCgvCpj/lGCxWhzVPM1arlC3za2bIiggeZCrHHv6Baz205QgATrXezWc7WtdY/nDjKL36NndoqIMnh6t46T3J/vMRWjYknoILwVGXxrPFZjHE19NnegjOY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719917267; c=relaxed/simple;
-	bh=LzB24hC2FXy46zdfaJjOdxoT6pyKSG0gHaAqOQ1g8fs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IldL+4dC/T9MRor1IBP6yyIYkdPspFbaRrdOPz6hd0rPNhQZfQxjDbvmdtadFqBSClhIbpdq10S2JfOowQXBjko7a705cnS3Z56+KwzZI0wG85sBxmsaQAKejyUw4jazoDVK1cjP2aFR27ImtTr1bH05E7Rm7jE0EX5eWY5awGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PFsykqId; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-58b447c513aso847618a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 03:47:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719917263; x=1720522063; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=9QojKpIBfWA+MtbYhtRtr6Qp5mhuFrg9TUIh1oxlQgo=;
-        b=PFsykqIdAV6fGl+hcx8SxyiUGbuZwYQPiPeyr6K1BSuOvFAeSw0V39BdMNQvxHv5xi
-         Mbfc/MBVxra/1T3PA/SKLKAd1enDYnDJH4FpiVr6t2CG8cmvF6aSUAnZInnwpMswPYch
-         as1fEURPkqSNrOAJ9UDVTf7Qwh3ULRICZGcgskM4QF1lmmi5YVhf0TlQlQv2ZNmxYwym
-         5qoJwvC9IehXYM43nU5f0qbbNN8cPeUXyb9Y4FHKmeMi+Xh2he9RtGHZ+KKrApmKRjlm
-         VapfoN/lnH0aamddF4Mu6Nur2XhxDO0njd7eS30BHDcYzYn5RycIYTtDybiyy43uErTk
-         6cSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719917263; x=1720522063;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9QojKpIBfWA+MtbYhtRtr6Qp5mhuFrg9TUIh1oxlQgo=;
-        b=lFEa4sX1ktYmdtHqi/RDy3LqRfKTwtnkC45D6/87GTRAu7rQQC/BahkN0gv4Zt24kH
-         ZT0wj/0WEMKcQ3tTn7t2gHXgcpNcKwTfudDmYLKqvrDBcgGOTjuTwGWD/fYZEcct4G3Y
-         wLhyAIc07TJy5HnuuORhYFS0iWmkQyhMFW/8CenYMDgrZTKdysUXNLmsq1nhvBFdKk+2
-         q+zhkH5rvtZcgXFzS3VQuiXGO4fn91ULc3JsHA2k4QkjY2vdfIB9G6X0C9QW17EhYKfn
-         7G7cHTXfoZIfEhCgLB66iCknSYTEZI1HZcIRSug2SracnergpA3NIff1sFKUDMacNKjR
-         7myA==
-X-Forwarded-Encrypted: i=1; AJvYcCWyCHlvhP9Dud3PNpyb1S+7N6QIv0Cu9jy2nsIxm7svydy3zGbugJteLb3oVUxA48/wOEZPkSOrC27ezOAZvrbf5eutXWXMVdQsWXXM
-X-Gm-Message-State: AOJu0Yz97Rj1C74Sz3uhPXuBbVwr/u+u3RrVrPG6DFQrDyNUiQRLg+9f
-	KNagpP6bRp+aBKBKi6WkpWEssffrOZtkLCIlYGR68iixQnykQdxKGejSby5D1cM=
-X-Google-Smtp-Source: AGHT+IH3YqWqVZ69RnfBSZJtMSQuxKr98sUqY1vgvnLnA67Bl4IrWfoqrnYGdL9697LVJils1a9DWw==
-X-Received: by 2002:a05:6402:1941:b0:58b:abc6:9cec with SMTP id 4fb4d7f45d1cf-58babc69debmr495842a12.40.1719917262783;
-        Tue, 02 Jul 2024 03:47:42 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5861381604asm5478504a12.45.2024.07.02.03.47.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jul 2024 03:47:41 -0700 (PDT)
-Message-ID: <6bc92fdc-1724-44dd-8c8f-fb64e4c23f90@linaro.org>
-Date: Tue, 2 Jul 2024 12:47:40 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802F015921D;
+	Tue,  2 Jul 2024 10:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719917457; cv=fail; b=LQ4z4Vaa0cdXDnkbCDOIlb1zfHtnEge2UIRSxK067bGjTmcspUVk5RbHWN3yb7BQZP9Z+dh16018bYP0jcCvvCSKi6M2L99OsnwQUu6zh+UesBSJcZxIXQoitXaMHy6LPsVZ2qPXThc13VCbnKRvO3N1BrdtZnPGTnfGbpGSlyg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719917457; c=relaxed/simple;
+	bh=lV7BVviFIlqDtjVN8GCJeGSwbod73hK3R3sV2OAHLEM=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
+	 Content-Type:MIME-Version; b=aMzqzzrSgdgLkH5hRWQ4mH0YmEKKFLlpnlfbdMCZIyhcb6QNChFiU/Oo9kHc4Cte7ubSlzhzf2EJGqrnLp13Kk3OHg0gZ2HSVmZSyF2bcAWqYXojfdqPQjRiPb1INJ9xjUUrK3DTfYNg99sBLK3PQ8Vl0MiuhRNS8rxBOu8Famo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gyCBhUOB; arc=fail smtp.client-ip=40.107.220.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=oBD8cxQNCGhv2q4bUoUgHez59euwEZ/glKv/OoNOwsBu5Mi3bD1QTajL7HGQF3r0dvQsZv1ZX2tx9TBn+q96MYZ/k/xClaD250F9MDSJ0Za8bt+V/wpOR9jKbe/buuXAwsssToe9OuTVdv3S5JmXX3DQhk8F8M0WYTnPuGmOw4Tq9SbCwMr6EJwzS8yNnxRLe/QvBS/nqx8ZBEoOUz+NAjTYCNAKMCwoPtZoiTBSqqlQdJKJt4UdOAGO1e4K8SbGIhxwWb4ahV3qoLpwq3CgPf7253Mk+fffv9VQKBCsKNEDJk4YjaDzWMvFN1U/JZIkmIsD0g8QhMWjpzuWD3HHRw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lV7BVviFIlqDtjVN8GCJeGSwbod73hK3R3sV2OAHLEM=;
+ b=eo0Bgw6hjLyKBy0Ez0T1mlx1YsMdKUmpoMWsPYEQnDNSgMcUAJQ+dHaYKPKW16fpwGFRyCPQlp+S0f1RiiQ0OJouZZ0KUHFpulbbFuIJ8cTDvA2oZsB4+Bsgg2nRn7JPYtwjNHvDZmQuxpi/liElSnvV2PGihSXjhqpDPmkLpolChY1v++ov0q0zjvk3TGNqcjvUKOwOdTsU1hGkE7Pvdx5g5KjrO2a0EyY0gED465xrSknB2rbBvQuqwCOquqfzExUoHLgYzpBJHtmVqC68xhNNgl2/f1p61bWA3ofTbYU5V3kCylWLpNvnrA+bnIESsZ4YHTg40LZWj38thSF/XQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lV7BVviFIlqDtjVN8GCJeGSwbod73hK3R3sV2OAHLEM=;
+ b=gyCBhUOBZHUd1tdi9yJxvpqlDYO3zJXG01rt7Fnxa/dBEAPQSVtzsAu+xuQO3pWEdcyiIAwSxLyTUDupnhcrPo86xamr4eAvAw/B9nqZYJdkJrA20EMVXw59dZOuRwIiQLHoP8PDIVA9DnVAkTJzVmEI0X0IZFs3zphkzzH9U+CpkSK3lDL2+LRHUMU3Ph6ICDJaBAliHutPQsZLJ7W4TCxFBvI+Z7RtubSG+aJlgsFujxLp/45DNRLNKslgpXsLqaYfSDwPI6QsTyoI8REo6y3wqF8WzgGuiP7PmiA1xooCHL0YUZwUWz7Nqiwn5P3t+s2tkQ+HIzrCZSW9d0sstw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
+ MN2PR12MB4063.namprd12.prod.outlook.com (2603:10b6:208:1dc::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7719.32; Tue, 2 Jul 2024 10:50:53 +0000
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe%6]) with mapi id 15.20.7741.017; Tue, 2 Jul 2024
+ 10:50:53 +0000
+References: <cover.66009f59a7fe77320d413011386c3ae5c2ee82eb.1719386613.git-series.apopple@nvidia.com>
+ <50013c1ee52b5bb1213571bff66780568455f54c.1719386613.git-series.apopple@nvidia.com>
+ <eb3120fd-44db-4cb3-af3c-a13f9e71380b@redhat.com>
+User-agent: mu4e 1.10.8; emacs 29.1
+From: Alistair Popple <apopple@nvidia.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com,
+ dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
+ jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com, will@kernel.org,
+ mpe@ellerman.id.au, npiggin@gmail.com, dave.hansen@linux.intel.com,
+ ira.weiny@intel.com, willy@infradead.org, djwong@kernel.org,
+ tytso@mit.edu, linmiaohe@huawei.com, peterx@redhat.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+ jhubbard@nvidia.com, hch@lst.de, david@fromorbit.com
+Subject: Re: [PATCH 06/13] mm/memory: Add dax_insert_pfn
+Date: Tue, 02 Jul 2024 20:47:50 +1000
+In-reply-to: <eb3120fd-44db-4cb3-af3c-a13f9e71380b@redhat.com>
+Message-ID: <87zfr0f4oo.fsf@nvdebian.thelocal>
+Content-Type: text/plain
+X-ClientProxiedBy: SY5P300CA0106.AUSP300.PROD.OUTLOOK.COM
+ (2603:10c6:10:248::7) To DS0PR12MB7726.namprd12.prod.outlook.com
+ (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: arm: qcom: Document samsung,ms013g
-To: Raymond Hackley <raymondhackley@protonmail.com>,
- linux-kernel@vger.kernel.org
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, phone-devel@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht
-References: <20240630132859.2885-1-raymondhackley@protonmail.com>
- <20240630132859.2885-2-raymondhackley@protonmail.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240630132859.2885-2-raymondhackley@protonmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 30/06/2024 15:29, Raymond Hackley wrote:
-> Document samsung,ms013g for Galaxy Grand 2.
-> 
-> Signed-off-by: Raymond Hackley <raymondhackley@protonmail.com>
-
-<form letter>
-This is a friendly reminder during the review process.
-
-It looks like you received a tag and forgot to add it.
-
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions, under or above your Signed-off-by tag. Tag is "received", when
-provided in a message replied to you on the mailing list. Tools like b4
-can help here. However, there's no need to repost patches *only* to add
-the tags. The upstream maintainer will do that for tags received on the
-version they apply.
-
-https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
-
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|MN2PR12MB4063:EE_
+X-MS-Office365-Filtering-Correlation-Id: 19b3bc10-5a53-47f4-a83c-08dc9a84d7e4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?5ctS0T3sEfGEmg4Sh7vc6i685Z4ZV61MlXoxr+dur1ScXoj/T+8BwRiURqe5?=
+ =?us-ascii?Q?iUlY3q/vQE1ysXhkLPGQwYqd0SNMV1MmRzoY5B2EvRmmfCTRHrR8YbJPZ3cz?=
+ =?us-ascii?Q?cPY2tOBao/ldYL3DVKFBtj0eQRYom9Ion1v/m6tAClT5cnKGxMogEpmqP8Jt?=
+ =?us-ascii?Q?j4SEOA4Q+eroPHa/fluiJqTeckLpxki458j9caJMQMtb1cJouVnZGHvRxKBd?=
+ =?us-ascii?Q?vkoXvPaA3ES5zBjsh/82I9N9hUwue/k4AQYiVslW7jiHcBpAXajoF+aT26lV?=
+ =?us-ascii?Q?sZWxbcwyhTm+Ch0bf/IQpDZn4IVYAeZnopW0nYAyeTGjSafLJxo1y5aW4JeC?=
+ =?us-ascii?Q?6a46gGL4sHcEtpnqe8UiHjmzxeUWcYRMa02hEBT0iFrPiQk3pWDUSGLKqFSF?=
+ =?us-ascii?Q?d8UMOv2t4p89+gGXsqmQsYdIpiqHdItZR+XdIcG7UxaPIKZ2gn3Xea0FchiF?=
+ =?us-ascii?Q?Wfvb9ktuvwkshvcTdoYZI1O81aPT62uJTIYpy4ylrUBbiuBzX6DIIaJoJTRu?=
+ =?us-ascii?Q?tzXtBfifKopWxMqZPulIIz4QHaL80N/VoYV1BzDIULZtifJH3eCLY5fwMlvS?=
+ =?us-ascii?Q?IhtPUDfA9wO/XSisDw1zesPMRIsfjxb1+AGIILmAHBVAUjU1/cas1BFn+f7Y?=
+ =?us-ascii?Q?7NQc587ottolLQuFFhoOXMZZ2MN9hvyNyJ4ovp0WSAb3F6mPAVXPJDoGd8VP?=
+ =?us-ascii?Q?0awJPZ5tnJCvS4fPDmLuYFMzzLL/oah6Aa2jBnPKoIhbNFs7osWRvx+4siSx?=
+ =?us-ascii?Q?aJfGhKIVaBVF/O/kFKMKXz8J6ASA+1RKJeDiBtCzBlVqUJeQQPaDfiTxUrwS?=
+ =?us-ascii?Q?tloq/YlrH5TRIk5NA3yPTQig012hFaLPw9yeB7CSiYoCyDKI0Ux+CxGt8bY6?=
+ =?us-ascii?Q?QSLNP6Rzz73CaulotUS4ZTA/9875mYc0/c9tkxpONPfxaxqLhQ0g7jOwLZzC?=
+ =?us-ascii?Q?ZcovjSWqNrBYZnhhlHBIfSwlRfn6iWwg5zVVQ1OhXlxB0K4Pv5LBFB/9hsWQ?=
+ =?us-ascii?Q?Rz33vsTaPYaOYd5u09TMCTZyjhD4e9Y50DWaN3w+BHAMbMUogtSQLyeo/+68?=
+ =?us-ascii?Q?cJmV2pnYuK/FO68DurTwdXApHKF70ioRD4z+LfDnCsbrmz1mHmSLpW1RDMjj?=
+ =?us-ascii?Q?i+SxcKIx5KVfIjSwqfwYBys6wK4V45o2kaxph8DBAyV/sRnB90xdc6cGiBEe?=
+ =?us-ascii?Q?HsS7k4+LJm3WCIVdd0YMbypJoCJAvpSFHisW0/FqJWt7SZEIKrJUiz7Rkb4/?=
+ =?us-ascii?Q?wzcdfI+aRlwmh/g/3CiZPx3NVnv1nNr7k/4H7iGJCG4AMwOv/5ZNRFZYfBIw?=
+ =?us-ascii?Q?rMSNxedT6R5qIEoQMkUb7B6Ar28qOEZ7TjRw3t29riQSqQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?4BDO7vWjzliW4r2OXCiMmbQLnCg3VG+tA9fu4CPe9ZP/yNNoxX5tc/ZR0aWo?=
+ =?us-ascii?Q?G+szZNjfzugehUlRUyGPblrm/aEFk3gSP6tdozKDtOp/OHyUSc9xYaUKCTJr?=
+ =?us-ascii?Q?oZ3Ziq7KEBFFXo2V5okD3hnIboExO23aBtsFbuQi42b/Pl4boYG6rzitApeC?=
+ =?us-ascii?Q?LPhawV/9lLF3Ic0p48qwapVMmkZW5qMi6sIeyIRG9hYmmbyM7vpoR++bxxVF?=
+ =?us-ascii?Q?mIt64ofLAr+INNutV+rHTznXizG8P5kvOK4AgGtLCBZ1lMeyfrZpvsMf7SyJ?=
+ =?us-ascii?Q?RJVS8TXfzQEUb7vThNb/7pbk56mAH9AJMmd5LvrRzTZR7LmwiL+PmFZ0xIdC?=
+ =?us-ascii?Q?ehIH69g2Urd6UkdbPBED3V1M3hclRmwwyV5wXrClecgY5o2jmtM94YyIk9wq?=
+ =?us-ascii?Q?U1mFvXCTlrBSTE3UbfuEVo+QC9Itl+rsSA5FQveoPku+Cg0yfdXcZ5DA+LRe?=
+ =?us-ascii?Q?N63wgioGKSSkBsNzKxpIRwXS6MRUtBPDpJW4fRh2s7AyIFMjfZ09G+8LBxfl?=
+ =?us-ascii?Q?0VU9GhFYB4VT6H3hDUUQw3Tc7ZR7HYChPS0xS7jVQ8iCNYbm7neIrImAjDbI?=
+ =?us-ascii?Q?fIepWEfP5Ldf6YXz16AAcl0ddHZQHWGgeatqkP+X3RZApiWsMKo5KB1WcyO4?=
+ =?us-ascii?Q?AAUNYqwsW+xJEeSSzVywOz1RQerTAoLNxHys5yxCaA2M7qAx+V/NWkOt0EkL?=
+ =?us-ascii?Q?/SykHz315uG2CBC6aWizVyQxGDZWCrsFPhu5NkaSglgjE5GmLRchTLFn6EF4?=
+ =?us-ascii?Q?/BCIw9Ni39xeqtxy7LnoENxrLCIGMkRXZPluaIUT64JVg/v0farTx0CgNuBS?=
+ =?us-ascii?Q?LF7q1UbJg06FytzFvPMZR0dQKL1oHsVKm3PF85sE+XWfQXOEdIXDjUmq/9bi?=
+ =?us-ascii?Q?4tYWsiufRvVo7yDajidBd4TjMaivsuAiO/pnHEs/BsKVXuUULeQLAGo02KOn?=
+ =?us-ascii?Q?fmoDxP/y/KD7u0Ok2Q41KtzIl2p1aDaKlmy9dn3gBVD5NtU4i0pA2u0hQJUv?=
+ =?us-ascii?Q?yjcNlBSldA6bajSzFOsiqN99ptHzVvUcEEXFvOjIRIlyBbBdSM+iSa6LHRZp?=
+ =?us-ascii?Q?e6M9axoRNbWBH5TBS2YSEUlYupfkHqQi5cgO9S6ED+CvrktsJSKSDGxWH8Sb?=
+ =?us-ascii?Q?Ks7g3cD0MelgNT1WKj02+nPsMNxxcXuLgK8zp5F1sr0aV31PItxRxifr4lJp?=
+ =?us-ascii?Q?zD2yeWt1G6fF5+UNld2LWYu7vBzEsjbIZ/SpJpZQ0A+ucQU8V5PYEmJQQ6iB?=
+ =?us-ascii?Q?1s7WvD3xW1KyU3IJzC3lSeGJN4EZQvxQwUrF4lthwYudOIenr5SYnSCRYJBD?=
+ =?us-ascii?Q?Ve+aHJDzxQ61uTU9lMSO0+BkDrfEqGit3mXvdOr8IqKmHeRhVU/fT1Rsm5cr?=
+ =?us-ascii?Q?+F7rSy/9HK64CuDsHSWOIp0zoxYnGRhNFNeNyEXnMiq2Ma9b0uYI77d9+7YE?=
+ =?us-ascii?Q?zNBB2GPwZnzP491SN/3R+6Wra8vy6jl0QYWgTlfNq+s+k6/693jt+sHfql/9?=
+ =?us-ascii?Q?ZlKedttLKwOw2Ux5mwMpaq7jKsHaG+ZMQtFS2DcVXGcHR62kZ+HBgwh3egcR?=
+ =?us-ascii?Q?ehX4eN5i1V3YBOZZTVyYZyk0dj6n6IounbUdQ78p?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 19b3bc10-5a53-47f4-a83c-08dc9a84d7e4
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jul 2024 10:50:52.9365
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cH3e8+JqqVVzXZGzU4/557t8yK8CU7L+KUK5wWAI8gpXs2W+hx8bXd4OVYDnBzzd+lTBhzqJsNPN0CxbcFFDZA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4063
 
 
-Best regards,
-Krzysztof
+David Hildenbrand <david@redhat.com> writes:
 
+> On 27.06.24 02:54, Alistair Popple wrote:
+>> Currently to map a DAX page the DAX driver calls vmf_insert_pfn. This
+>> creates a special devmap PTE entry for the pfn but does not take a
+>> reference on the underlying struct page for the mapping. This is
+>> because DAX page refcounts are treated specially, as indicated by the
+>> presence of a devmap entry.
+>> To allow DAX page refcounts to be managed the same as normal page
+>> refcounts introduce dax_insert_pfn. This will take a reference on the
+>> underlying page much the same as vmf_insert_page, except it also
+>> permits upgrading an existing mapping to be writable if
+>> requested/possible.
+>
+> We have this comparably nasty vmf_insert_mixed() that FS dax abused to
+> insert into !VM_MIXED VMAs. Is that abuse now stopping and are there
+> maybe ways to get rid of vmf_insert_mixed()?
+
+It's not something I've looked at but quite possibly - there are a
+couple of other users of vmf_insert_mixed() that would need to be
+removed though. I just added this as dax_insert_pfn() because as an API
+it is really specific to the DAX use case. For example a more general
+API would likely pass a page/folio.
 
