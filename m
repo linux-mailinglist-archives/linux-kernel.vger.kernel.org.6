@@ -1,112 +1,209 @@
-Return-Path: <linux-kernel+bounces-238099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61D58924378
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:23:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAA9392437B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:24:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0248E1F237F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:23:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D03CBB23E03
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F321BD039;
-	Tue,  2 Jul 2024 16:23:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E340E1BD03C;
+	Tue,  2 Jul 2024 16:23:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="h7DeL/sh"
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YeVHaUQ8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4F4148825
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 16:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615D2148825
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 16:23:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719937381; cv=none; b=g++HwjktgJDJiZpoByRZcU46qoevVK/JgMWaLlH/sB5ZtzGWYUQa5QoFX3O01IwkfNZ5sbQbEeSWMXrK1sXWTjyaat6w7ZdssokFNoXvUtnCXzoNlLWdiHXErp51ekhthegKZiDgrD1AH2YIuX8ZNByxMlMqhDHHEzmHgQTXz08=
+	t=1719937432; cv=none; b=nalFNvsRXAwFJCXATLu/Mn+REYuYSb/Fq9oqfJF1zgANmU4NbyQ5+64x5mI2XFSxG2o+wnFXwjGyKtpaBiaztDWPpm2e01VIKqFNmES2wM/nrvGGKf6nGC8TjNtsSCZ1BtyUmpdix77bIbYMmd8hArNmzfWwxjXmi0feBflxxTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719937381; c=relaxed/simple;
-	bh=aj7Fh5tckyx4zu/F74GNuIwtbH6bAWyEVqrM39kj9s0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lSKZi1n/5wJgQfV+/DIt4rj6fF6AhvioatkDLGgZNQ/kaItAMEKIp6fpI123fZQEQddgMWffURg8TaDOeVqk/7xqh7H+Wdm7SSxhS0/wTKEADEU5v3wU5gs+F6ou4veY49eK59i3sVUdFZOFI479z6kFEoRDWuw1Sf1OV9jC3jU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=h7DeL/sh; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-375deacb3e1so2306355ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 09:22:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1719937379; x=1720542179; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2rbjjRjoLEssCm6u4+AV7tPUfRxSj6hss64397RvroU=;
-        b=h7DeL/sh5Z6d1HLDp08A3MD/4P3jsy/7Nx7QgbFHfcP0kDWZI9U+lECd4d5jnSww65
-         rjG/SkAip3XTpY9+TQ/asOTa381B4B4DpjqN8FMqD4licLeFCOCX97cjtc6A7VoQlNiT
-         4d6doZpJv5Ef5PZwR8zj72mmInQZ3iSpTLkpM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719937379; x=1720542179;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2rbjjRjoLEssCm6u4+AV7tPUfRxSj6hss64397RvroU=;
-        b=Y5LoCw+zQqVoyMWUtiNzZQLdeCc3NbsmZkd3aOrifOI5qkx78zpmxIsxZq7uz/z0S+
-         RSkeFJ9ppOubp3OAyBN/dVPwLZR+If5Iy0OQeEJ+QeuL6W9OCNWuUKV2HV/doNlX8T5P
-         8Kqrx//ASFRQKkXlOsmH59z1NhqH9vvVkGXCzSP8xMPMJzcx3B7XiyxJFmZDbgo0X/xX
-         UMaK06gnHmPI8eTbZBZyfsJC3xcuwK3GGAsVY8OrIw5rb1d1dmVrpzN1Zrebu5x/3qjK
-         bm3nzuF+3ibVSKLc3eK3SbzPlIClxU5jE+I7cq9URlGbUoFdDHtMXO5tKabm9HrUFKuY
-         2t6w==
-X-Forwarded-Encrypted: i=1; AJvYcCUnlPoDZE82O34Lf6pa9lW3gzfW6u1W2k1gMBFAZ1ToUHH31MZ5AF7N71RmR6AmsCSdM47bDr0P7h0BH3v5ljLqH4uiAkL6ZtM3APMh
-X-Gm-Message-State: AOJu0YzRoRjtFG8OiBSY027wxfdgitnKVoSu7N1YdMs9UDY0JD72qFwI
-	GBg8ONsaoDBRqtvmEg83d4Gy2ijD0blntpn14y6DYKTXMVo6a+Qt8lAXiTgUirs=
-X-Google-Smtp-Source: AGHT+IFaE6xtD3QoZ0GJUmaljKznWWghEaM1pxbA7lx4mZdmW5LUG8WeCqAieecbB73l+pYHLBf7vg==
-X-Received: by 2002:a05:6602:2581:b0:7f3:d3ed:1ca3 with SMTP id ca18e2360f4ac-7f62ee5c6a1mr876430339f.1.1719937378696;
-        Tue, 02 Jul 2024 09:22:58 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4bb73e05e31sm2811216173.73.2024.07.02.09.22.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jul 2024 09:22:58 -0700 (PDT)
-Message-ID: <3d7e1a06-28d1-4d78-b04a-ff9cbf85aaa3@linuxfoundation.org>
-Date: Tue, 2 Jul 2024 10:22:57 -0600
+	s=arc-20240116; t=1719937432; c=relaxed/simple;
+	bh=EwyqrLqUf8eTjZr7JdVW0TBoavl/of+gG/Bw/O5RTOU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nZukEAf5keqyjSkEHWtYLe+bA6M4JGVaGYsWTZAsEgAG/ssaHeUheHzTjG6GI7vmnJ8+VbFfvI41kPkKmDCh6Tymn2PSJ9EmBjz4PCkTTe6Z48Apg9IUHQhNWkOaiHfXQapUXp00D/Kh/sDLw4se82GuK8kRduHgHmW0ml1c/js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YeVHaUQ8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719937429;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LbjKzw63beH/L1h+dQZmsnWElqOgkbbZL0WaCpU1GH4=;
+	b=YeVHaUQ8cA1v9whT5hFpSwg+0XtD/KRjyRJRI0hB754Ck5crQKfOLoYQl1+Ou84YoU+fbd
+	I7+SOwLX1udft2weFhoO+wuF4+nVJULTNtui9yVSdDfKOpwEBv0LuoGSu9ehJa9/rXY+dC
+	z2ONxjrCj6L+gQeWrrGYF/7G7+U3hhE=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-513-tLIYhAZWNhm5M3FpAKGHJw-1; Tue,
+ 02 Jul 2024 12:23:44 -0400
+X-MC-Unique: tLIYhAZWNhm5M3FpAKGHJw-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3B1B919560BA;
+	Tue,  2 Jul 2024 16:23:37 +0000 (UTC)
+Received: from bmarzins-01.fast.eng.rdu2.dc.redhat.com (bmarzins-01.fast.eng.rdu2.dc.redhat.com [10.6.23.12])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8DE4D3000221;
+	Tue,  2 Jul 2024 16:23:36 +0000 (UTC)
+Received: from bmarzins-01.fast.eng.rdu2.dc.redhat.com (localhost [127.0.0.1])
+	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.17.2/8.17.1) with ESMTPS id 462GNZgA1633791
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 2 Jul 2024 12:23:35 -0400
+Received: (from bmarzins@localhost)
+	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.17.2/8.17.2/Submit) id 462GNYFY1633790;
+	Tue, 2 Jul 2024 12:23:34 -0400
+Date: Tue, 2 Jul 2024 12:23:34 -0400
+From: Benjamin Marzinski <bmarzins@redhat.com>
+To: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Abhinav Jain <jain.abhinav177@gmail.com>, agk@redhat.com,
+        snitzer@kernel.org, dm-devel@lists.linux.dev,
+        linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+        javier.carrasco.cruz@gmail.com
+Subject: Re: [PATCH v2] dm: Add support for escaped characters in
+ str_field_delimit()
+Message-ID: <ZoQphjlssygSBiRr@redhat.com>
+References: <20240613162632.38065-1-jain.abhinav177@gmail.com>
+ <c5133ae3-1655-3364-a272-68cae447b490@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] selftests/capabilities: Fix possible file leak in
- copy_fromat_to
-To: Ma Ke <make24@iscas.ac.cn>, shuah@kernel.org, usama.anjum@collabora.com,
- swarupkotikalapudi@gmail.com, amer.shanawany@gmail.com, kees@kernel.org,
- akpm@linux-foundation.org, luto@kernel.org
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240630130038.3671507-1-make24@iscas.ac.cn>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240630130038.3671507-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c5133ae3-1655-3364-a272-68cae447b490@redhat.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 6/30/24 07:00, Ma Ke wrote:
-> The open() function returns -1 on error. openat() and open() initialize
-> 'from' and 'to', and only 'from' validated with 'if' statement. If the
-> initialization of variable 'to' fails, we should better check the value
-> of 'to' and close 'from' to avoid possible file leak. Improve the checking
-> of 'from' additionally.
+On Tue, Jul 02, 2024 at 05:18:38PM +0200, Mikulas Patocka wrote:
+> Hi
 > 
-> Fixes: 32ae976ed3b5 ("selftests/capabilities: Add tests for capability evolution")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
-> Changes in v3:
-> - Thank you for your interest in our vulnerability detection method. We
-> extract vulnerability characteristics from a known vulnerability and match
-> the same characteristics in the project code. As our work is still in
-> progress, we are not able to disclose it at this time. Appreciate your
-> understanding, we could better focus on the potential vulnerability itself.
-> Reference link: https://lore.kernel.org/all/20240510003424.2016914-1-samasth.norway.ananda@oracle.com/
+> I'd like to ask why is this needed. AFAIK, none of the allowed targets use 
+> ',' on their table line.
 
-Sorry it is a NACK - without more details on the tool and warning,
-I can't accept this patch.
+',' and ';' are both legal characters in DM names and UUIDs, although I
+can't think of a good reason why anyone would want to use them.
 
-thanks,
--- Shuah
+-Ben
+
+> 
+> Mikulas
+> 
+> 
+> On Thu, 13 Jun 2024, Abhinav Jain wrote:
+> 
+> > Remove all the escape characters that come before separator.
+> > Tested this code by writing a dummy program containing the two
+> > functions and testing it on below input, sharing results:
+> > 
+> > Original string: "field1\,with\,commas,field2\,with\,more\,commas"
+> > Field: "field1"
+> > Field: "with"
+> > Field: "commas"
+> > Field: "field2"
+> > Field: "with"
+> > Field: "more"
+> > Field: "commas"
+> > 
+> > Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
+> > ---
+> > PATCH v1:
+> > https://lore.kernel.org/all/20240609141721.52344-1-jain.abhinav177@gmail.com/
+> > 
+> > Changes since v1:
+> >  - Modified the str_field_delimit function as per shared feedback
+> >  - Added remove_escaped_characters function
+> > ---
+> > ---
+> >  drivers/md/dm-init.c | 53 +++++++++++++++++++++++++++++++++++++++-----
+> >  1 file changed, 47 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/md/dm-init.c b/drivers/md/dm-init.c
+> > index 2a71bcdba92d..0e31ecf1b48e 100644
+> > --- a/drivers/md/dm-init.c
+> > +++ b/drivers/md/dm-init.c
+> > @@ -76,6 +76,24 @@ static void __init dm_setup_cleanup(struct list_head *devices)
+> >  	}
+> >  }
+> >  
+> > +/* Remove escape characters from a given field string. */
+> > +static void __init remove_escape_characters(char *field)
+> > +{
+> > +	char *src = field;
+> > +	char *dest = field;
+> > +
+> > +	while (*src) {
+> > +		if (*src == '\\') {
+> > +			src++;
+> > +			if (*src)
+> > +				*dest++ = *src++;
+> > +		} else {
+> > +			*dest++ = *src++;
+> > +		}
+> > +	}
+> > +	*dest = '\0';
+> > +}
+> > +
+> >  /**
+> >   * str_field_delimit - delimit a string based on a separator char.
+> >   * @str: the pointer to the string to delimit.
+> > @@ -87,16 +105,39 @@ static void __init dm_setup_cleanup(struct list_head *devices)
+> >   */
+> >  static char __init *str_field_delimit(char **str, char separator)
+> >  {
+> > -	char *s;
+> > +	char *s, *escaped, *field;
+> >  
+> > -	/* TODO: add support for escaped characters */
+> >  	*str = skip_spaces(*str);
+> >  	s = strchr(*str, separator);
+> > -	/* Delimit the field and remove trailing spaces */
+> > -	if (s)
+> > +
+> > +	/* Check for escaped character */
+> > +	escaped = strchr(*str, '\\');
+> > +	while (escaped && (s == NULL || escaped < s)) {
+> > +		/*
+> > +		 * Move the separator search ahead if escaped
+> > +		 * character comes before.
+> > +		 */
+> > +		s = strchr(escaped + 1, separator);
+> > +		escaped = strchr(escaped + 1, '\\');
+> > +	}
+> > +
+> > +	/* If we found a separator, we need to handle escape characters */
+> > +	if (s) {
+> > +		*s = '\0';
+> > +
+> > +		remove_escape_characters(*str);
+> > +		field = *str;
+> > +		*str = s + 1;
+> > +	} else {
+> > +		/* Handle the last field when no separator is present */
+> > +		s = *str + strlen(*str);
+> >  		*s = '\0';
+> > -	*str = strim(*str);
+> > -	return s ? ++s : NULL;
+> > +
+> > +		remove_escape_characters(*str);
+> > +		field = *str;
+> > +		*str = s;
+> > +	}
+> > +	return field;
+> >  }
+> >  
+> >  /**
+> > -- 
+> > 2.34.1
+> > 
+
 
