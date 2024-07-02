@@ -1,173 +1,206 @@
-Return-Path: <linux-kernel+bounces-238141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1701092440F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:05:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0395924427
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:07:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 849921F22000
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:05:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CE2F2821E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:07:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E881BE224;
-	Tue,  2 Jul 2024 17:05:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF971BE22F;
+	Tue,  2 Jul 2024 17:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="2Ctd8DWr";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rH8/pphW";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="2Ctd8DWr";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rH8/pphW"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MjsvDOWh"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3BF4178381
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 17:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1491E178381;
+	Tue,  2 Jul 2024 17:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719939926; cv=none; b=XzDj3c7d1LoFh+iXB2180uMQkXdIZ7CsWFzkgpWbFKG20PUIVD9ivrm7S0EVVYqzGhqwmYgqL9klThWk83KKGV5QJo1i8GhA6YQ7R4G944gDbe7h8GDRmD2QHbw/7rIzMZJA7CuZtp5XS8Tx8zd1gOBZzu/ovSmScMFnFP4+0ZA=
+	t=1719940022; cv=none; b=s2gm+4PN0za5tqitKojBv4OMcTPPEVKmOjpknb7tdeQnPlu+WtlTPiWXc3yfnvAqua4997+spxCPOUOGwvzk6AkD9doLZONz4MXGB5g1Z+e4E5/1/20VqycZIPMje9qUBXckMhN2DvK1EI13IxrEHcuL9AdQt8VFD/4MLvth7Is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719939926; c=relaxed/simple;
-	bh=qADlBCfCfuOm/AUMWzAwt/KOM+/fwy4TFtr439mG4+w=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TuDVG1QCYZ1sPTggsmIxIUOB86RRyytRA618GBU84NsiWMYhXrQ3h+I2ufuK5dU+96ISgxATey9Csvyst43wG8+xaRuA+ET4B+aqZLiF6l0F1KUFTWf7iqaoRW2SRpc5bjUwvNoFMDgNwksNcKGYuqXqGFZ80+CnIsCT9OBeLjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=2Ctd8DWr; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rH8/pphW; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=2Ctd8DWr; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rH8/pphW; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1719940022; c=relaxed/simple;
+	bh=stnT9VHL8D7sKzLq7A6gLELNoVjidpFadno3u6FQKHs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lJrI66xGY9jUH0OQ09YqIKJJYIibcxAG87Ag2PrIdRZfMpy5fBwUyc0xMAWKdjsBfwsIWERzHFKMt6mvXYGKCgKO+QlwnXC3mgfgFmcbhbJ9jHDSetZcpP2sttoljPi/I2evlHo5Ikr/W+MbJ9iHBrW3fO2Z93N5V1uQprDOIT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=MjsvDOWh; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1719940015;
+	bh=6sLw9MQZhQc+HTNLYMKYnVJTRlC72RBttPky6RnqO2M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MjsvDOWhGlcOnQM7PZZcoZDj6QKMhSTRqQJjwXMx3tnTiposOVi+sbE8pzUJQKnCU
+	 yi+jiWjL1X5b1ZjeEtTRkcVcMkNWpB8cVX55Tva2ASYN6onIQvJMyIgEuJ+YtBEbsq
+	 921yoMx3rKjB5QlTyk7V4IG5l4MELxSAoszv/EfQB/HO7ZPilKKsRg1MwwaXn7+Hxu
+	 xdiogJ7Kp/3Au2CqBMG/2BsnZSdMVe2l1HHWJRufRukm+QDwRzAtKz4qLnhM7nSBwk
+	 QU71rtow0C7q4Zdz9SJInQp2EuU91ncYzKVl/MQg+AuqgWMj1OLLOCoO1GN4+QT3ll
+	 a/fFIMJjswbIw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 01D5C21B70;
-	Tue,  2 Jul 2024 17:05:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1719939923; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RA1eifoXZ+Ze7uLWwcBTp71FsSduRk80zWQLo01NY8U=;
-	b=2Ctd8DWrkTuWjzPhsIE30EyPO7vHLI43engB6OYeOY93dhy7qDwA1I7mnvwDORCbUu04KK
-	pLDu4KaDxOnOPSDRuG8bBInXhsLpSbRQkOpNHeoOPg2k6hH4XxcyU16dQKqMSbHCCBvznl
-	iRJyjKFgXrwSBZQ6eiogHc6TKXR919o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1719939923;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RA1eifoXZ+Ze7uLWwcBTp71FsSduRk80zWQLo01NY8U=;
-	b=rH8/pphWoyqDZW0wxUnq22T+PRR08NQ3qz4uwr5PLkKDV/Z7fifSF9Es/iEsY4nOoP0Oku
-	CT4f2t3oAIkQN0Dg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1719939923; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RA1eifoXZ+Ze7uLWwcBTp71FsSduRk80zWQLo01NY8U=;
-	b=2Ctd8DWrkTuWjzPhsIE30EyPO7vHLI43engB6OYeOY93dhy7qDwA1I7mnvwDORCbUu04KK
-	pLDu4KaDxOnOPSDRuG8bBInXhsLpSbRQkOpNHeoOPg2k6hH4XxcyU16dQKqMSbHCCBvznl
-	iRJyjKFgXrwSBZQ6eiogHc6TKXR919o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1719939923;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RA1eifoXZ+Ze7uLWwcBTp71FsSduRk80zWQLo01NY8U=;
-	b=rH8/pphWoyqDZW0wxUnq22T+PRR08NQ3qz4uwr5PLkKDV/Z7fifSF9Es/iEsY4nOoP0Oku
-	CT4f2t3oAIkQN0Dg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E3C811395F;
-	Tue,  2 Jul 2024 17:05:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 3yBOMFEzhGYORgAAD6G6ig
-	(envelope-from <jdelvare@suse.de>); Tue, 02 Jul 2024 17:05:21 +0000
-Message-ID: <364518a3a279657815b631e85f3177880b42f4f7.camel@suse.de>
-Subject: Re: CVE-2024-39362: i2c: acpi: Unbind mux adapters before delete
-From: Jean Delvare <jdelvare@suse.de>
-To: cve@kernel.org, linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hamish Martin
-	 <Hamish.Martin@alliedtelesis.co.nz>, Mika Westerberg
-	 <mika.westerberg@linux.intel.com>, Andi Shyti <andi.shyti@kernel.org>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Tue, 02 Jul 2024 19:05:19 +0200
-In-Reply-To: <2024062550-CVE-2024-39362-2d27@gregkh>
-References: <2024062550-CVE-2024-39362-2d27@gregkh>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WD8TV3vSgz4wx6;
+	Wed,  3 Jul 2024 03:06:54 +1000 (AEST)
+Date: Wed, 3 Jul 2024 03:06:52 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Jiri Olsa
+ <olsajiri@gmail.com>, Steven Rostedt <rostedt@goodmis.org>
+Cc: Christian Brauner <brauner@kernel.org>, Christian =?UTF-8?B?R8O2dHRz?=
+ =?UTF-8?B?Y2hl?= <cgzones@googlemail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, Mark
+ Brown <broonie@kernel.org>
+Subject: Re: linux-next: manual merge of the ftrace tree with the
+ vfs-brauner tree
+Message-ID: <20240703030652.1e40e057@canb.auug.org.au>
+In-Reply-To: <20240614100748.fcaa7efe6debea3801682ba1@kernel.org>
+References: <20240613114243.2a50059b@canb.auug.org.au>
+	<ZmqaytbJ0r0EXO8d@krava>
+	<20240614090523.246f48e4@canb.auug.org.au>
+	<20240614100748.fcaa7efe6debea3801682ba1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -2.80
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[renesas];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+Content-Type: multipart/signed; boundary="Sig_/u2Ep.m7UPegn4BAjcOS.3wW";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/u2Ep.m7UPegn4BAjcOS.3wW
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Tue, 2024-06-25 at 16:22 +0200, Greg Kroah-Hartman wrote:
-> In the Linux kernel, the following vulnerability has been resolved:
-> 
-> i2c: acpi: Unbind mux adapters before delete
-> (...)
-> 
-> The Linux kernel CVE team has assigned CVE-2024-39362 to this issue.
+On Fri, 14 Jun 2024 10:07:48 +0900 Masami Hiramatsu (Google) <mhiramat@kern=
+el.org> wrote:
+>
+> On Fri, 14 Jun 2024 09:05:23 +1000 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> >=20
+> > On Thu, 13 Jun 2024 09:07:54 +0200 Jiri Olsa <olsajiri@gmail.com> wrote=
+: =20
+> > >
+> > > On Thu, Jun 13, 2024 at 11:42:43AM +1000, Stephen Rothwell wrote: =20
+> > > >=20
+> > > > Today's linux-next merge of the ftrace tree got conflicts in:
+> > > >=20
+> > > >   arch/x86/entry/syscalls/syscall_64.tbl
+> > > >   include/uapi/asm-generic/unistd.h
+> > > >=20
+> > > > between commit:
+> > > >=20
+> > > >   e6873349f700 ("fs/xattr: add *at family syscalls")
+> > > >=20
+> > > > from the vfs-brauner tree and commit:
+> > > >=20
+> > > >   190fec72df4a ("uprobe: Wire up uretprobe system call")
+> > > >=20
+> > > > from the ftrace tree.
+> > > >=20
+> > > > I fixed it up (see below) and can carry the fix as necessary. This
+> > > > is now fixed as far as linux-next is concerned, but any non trivial
+> > > > conflicts should be mentioned to your upstream maintainer when your=
+ tree
+> > > > is submitted for merging.  You may also want to consider cooperating
+> > > > with the maintainer of the conflicting tree to minimise any particu=
+larly
+> > > > complex conflicts.
+> > > >=20
+> > > >=20
+> > > > diff --cc arch/x86/entry/syscalls/syscall_64.tbl
+> > > > index 26af003921d2,6452c2ec469a..000000000000
+> > > > --- a/arch/x86/entry/syscalls/syscall_64.tbl
+> > > > +++ b/arch/x86/entry/syscalls/syscall_64.tbl
+> > > > @@@ -385,10 -384,7 +385,11 @@@
+> > > >   460	common	lsm_set_self_attr	sys_lsm_set_self_attr
+> > > >   461	common	lsm_list_modules	sys_lsm_list_modules
+> > > >   462 	common  mseal			sys_mseal
+> > > >  -463	64	uretprobe		sys_uretprobe
+> > > >  +463	common	setxattrat		sys_setxattrat
+> > > >  +464	common	getxattrat		sys_getxattrat
+> > > >  +465	common	listxattrat		sys_listxattrat
+> > > >  +466	common	removexattrat		sys_removexattrat
+> > > > ++467	64	uretprobe		sys_uretprobe
+> > > >  =20
+> > > >   #
+> > > >   # Due to a historical design error, certain syscalls are numbered=
+ differently
+> > > > diff --cc include/uapi/asm-generic/unistd.h
+> > > > index 5b8dab0b934e,2378f88d5ad4..000000000000
+> > > > --- a/include/uapi/asm-generic/unistd.h
+> > > > +++ b/include/uapi/asm-generic/unistd.h
+> > > > @@@ -845,17 -845,11 +845,20 @@@ __SYSCALL(__NR_lsm_list_modules, sy=
+s_ls
+> > > >   #define __NR_mseal 462
+> > > >   __SYSCALL(__NR_mseal, sys_mseal)
+> > > >  =20
+> > > >  -#define __NR_uretprobe 463
+> > > >  +#define __NR_setxattrat 463
+> > > >  +__SYSCALL(__NR_setxattrat, sys_setxattrat)
+> > > >  +#define __NR_getxattrat 464
+> > > >  +__SYSCALL(__NR_getxattrat, sys_getxattrat)
+> > > >  +#define __NR_listxattrat 465
+> > > >  +__SYSCALL(__NR_listxattrat, sys_listxattrat)
+> > > >  +#define __NR_removexattrat 466
+> > > >  +__SYSCALL(__NR_removexattrat, sys_removexattrat)
+> > > >  +
+> > > > ++#define __NR_uretprobe 467
+> > > > + __SYSCALL(__NR_uretprobe, sys_uretprobe)   =20
+> > >=20
+> > > we need one more change in tests (below), otherwise lgtm
+> > > I can send formal patch for you if needed, plz let me know
+> > >=20
+> > > ---
+> > > diff --git a/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c =
+b/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
+> > > index c8517c8f5313..bd8c75b620c2 100644
+> > > --- a/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
+> > > +++ b/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
+> > > @@ -216,7 +216,7 @@ static void test_uretprobe_regs_change(void)
+> > >  }
+> > > =20
+> > >  #ifndef __NR_uretprobe
+> > > -#define __NR_uretprobe 463
+> > > +#define __NR_uretprobe 467
+> > >  #endif
+> > > =20
+> > >  __naked unsigned long uretprobe_syscall_call_1(void) =20
+> >=20
+> > Or you could change __NR_uretprobe in the patch set to 467, then this
+> > will become just a conflict and not a renumbering. =20
+>=20
+> OK, Jiri, can you send it to me. I will update probes/for-next.
 
-I would like to dispute this CVE. I don't quite understand how this bug
-qualifies as a security bug, considering that only root can load and
-unload overlay SSDT tables. The bug can't be triggered on purpose by a
-remote or local unprivileged user.
+So, is there any chance that the uretprobe syscall can change to 467 in
+the ftrace tree, so we have no overlap in syscall numbers for all the
+syscalls likely to be merged by Linus?
 
-The bug causes a warning to be dumped to the kernel log, due to trying
-to unbind a companion device which is already unbound, but as far as I
-can see, that's all. acpi_unbind_one() is a best-effort function, it
-returns 0 no matter what. kernfs_remove_by_ame_ns() will gracefully
-return an error code. I can't see any obvious use-after-free happening
-so I see no way an attacker could exploit this bug.
+--=20
+Cheers,
+Stephen Rothwell
 
-So I would cancel this CVE.
+--Sig_/u2Ep.m7UPegn4BAjcOS.3wW
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-For completeness and in case someone objects to the cancellation, I
-would also point out that I don't think upstream commit 525e6fabeae2
-("i2c / ACPI: add support for ACPI reconfigure notifications") is
-sufficient to reproduce the bug. Support for ACPI-defined I2C
-multiplexing was only added by commit 98b2b712bc85 ("i2c: i2c-mux-gpio:
-Enable this driver in ACPI land") in kernel v5.12 and my understanding
-is that this capability has to be used by the SSDT tables in order to
-trigger the bug. So at the minimum, the CVE should be amended with this
-piece of information.
+-----BEGIN PGP SIGNATURE-----
 
-Thanks,
--- 
-Jean Delvare
-SUSE L3 Support
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaEM6wACgkQAVBC80lX
+0Gx1XwgAjtmiYFDMqsVjZWzerNj+iuHdTn5PhpMTb35jb0/KOCoGD6GMpIIYWsnS
+eO+USCjhQMrJZP0okEKpD/g5YFrRQzd0GRK3IpOAq5Auy1NqcfrpX9/UBH3zdghy
+2gsFjulU3QYW76H/2Of3NsnIPu3aXoTb/dKohdGXonR+4ALbwTEIvOmCek1JXVq1
+mlBpUAm9jINMeE4KNiZ9NQ7rLw7AUXKXLAePlOeH6P66QYhTVppBBEeBl3cxxRHc
+Po9LXBBIxynXE7I45lGpl/RWA/w3pyWOmSrWebVjyy1ug6zsDL75S4AfS5rUuSUL
+n+Yv2cHpstWplOYfXJAtCEYcbbkhZg==
+=xe/t
+-----END PGP SIGNATURE-----
+
+--Sig_/u2Ep.m7UPegn4BAjcOS.3wW--
 
