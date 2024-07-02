@@ -1,120 +1,185 @@
-Return-Path: <linux-kernel+bounces-238558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C666924C11
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:19:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E28A924C12
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:20:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1409F1F2385C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:19:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E708128582B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE1417A5A1;
-	Tue,  2 Jul 2024 23:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E20115921B;
+	Tue,  2 Jul 2024 23:20:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a18w35X3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BRtUbb+y"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E6D1DA30B;
-	Tue,  2 Jul 2024 23:19:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459941DA30B;
+	Tue,  2 Jul 2024 23:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719962377; cv=none; b=gWwmZoWaJgD5PoyLRRTb96avfTYLBUq9Ya4Ah3DnQ1R2xxhvcsZqZJfL+7NIihrfHr7tIkk812WfYW+GTFUWGpPjs9YzPbgyrIZri+/U+JCAVc3rIJmvtwYYowFdycqqgGQsOb8FPyuOn5SOBtm3kJlw34Xh4cyGVCrOxm6gsVc=
+	t=1719962439; cv=none; b=L71GPbRRBJ2bIdQHZkxxIwGjUp6G+8PP4sbQrB3M+AwqBhssTjsBWHKcrs5a61t8QmK+MKmxrr2ypruxJIFUvFKRHupjgV+Z7Ulhezpq6O2R+WB3xcsfK9YgH83a4MaiyU0cEONksEJJaQaGBvJb+xBvMviWN5yh1IH74c7rPHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719962377; c=relaxed/simple;
-	bh=bQ06CraotrSkN7AxaRIsNmFzHLZgnyqFgvxFVuefRxA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NIOxWB6GMiSU/8E1Lggm4n/pERmIbP0CSrXzdGLaLheJ6smPBrJzQTZPhYa0aJ3EO2hVJEx8K+XNIKq1wc6l/mUGIAdAwj7ZBbtqQ8Wvl153kMcsGYc903rk2T4VJBm8uWNJOEKsI8ayBPCpnFdNL3Sdb4sn7t4tFKKtzfsNu+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a18w35X3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3105C2BD10;
-	Tue,  2 Jul 2024 23:19:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719962376;
-	bh=bQ06CraotrSkN7AxaRIsNmFzHLZgnyqFgvxFVuefRxA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=a18w35X3SJOnfUOilKyaCN3KPlK+3XTqA9O3RrSVf7Wl2k+7uY/FqCJmdoeB6tryh
-	 xXI6VL5bbIa3RSucHTTpdgdf0ylMbQWScXfEBmzJQ+/fAkHEaA60bXkuLuqzBhWWAC
-	 pU2gq5f+Z/jIBzmNSOyFLxc8IQKriBmIaMYP64H2DMJLnJZzgniEGs8jvQZPhTxvZQ
-	 f+pdhInzJHUrYe10h0f3gszF1p2iza+6M0RMccFkj1/5kyOpGoKLhiyhk3Rr8ThHEy
-	 NAJJys0rfNzg2rZwvf90HAoJS3O7nWpDBZtYhLY5jRnFyw9uvlr57P2QrrSmDbf2D2
-	 /3s/5QHet59ug==
-From: SeongJae Park <sj@kernel.org>
-To: Lorenzo Stoakes <lstoakes@gmail.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Matthew Wilcox <willy@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Kees Cook <kees@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [RFC PATCH v2 5/7] MAINTAINERS: Add entry for new VMA files
-Date: Tue,  2 Jul 2024 16:19:32 -0700
-Message-Id: <20240702231933.78857-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <0319419d965adc03bf22fee66e39244fc3d65528.1719584707.git.lstoakes@gmail.com>
-References: 
+	s=arc-20240116; t=1719962439; c=relaxed/simple;
+	bh=bpyJm8lxbDc2q85IMQqnT9fTV06FGhkC9f0cwxjqP4s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d1gWpZMh2JLcJhORhAut/6/eEQcHdIrz0DoJlq7YgW1PzKWTCgy4Hxy4R+SIYYeUUInIJ0z9WkD4g1Sd0L1R2dggjvgb05e1aLDtPBJ3Q6GotCVfIOcnPuHrMY7ZQ+LxI1cZnGRpn++jSLRpnn1epe+/zmZNAAWlzzQE71Gj8RM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BRtUbb+y; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-79d5e61704eso288530285a.3;
+        Tue, 02 Jul 2024 16:20:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719962437; x=1720567237; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qjSB7hLGu+RSjy1F3pz8TY7vKbIQRE/DZkSdMM026z4=;
+        b=BRtUbb+ykfZUrSEL9umUEI2KM8eFl2huOCL6QKKvDeiNvAWzXGEOVmftj4ApJDzSvr
+         Ksq2AljB56Mseqqdgv4hY3ZqiCyofKA9DTgOcpmRGmF1H9GI81egtkhDZ5PJQ+gLHy0P
+         mQBUm3f/2MGndCZe6zIxvqymawbDa9vQwiyGhmbEyEVWGgPAJ1oeYf7YYX0m/pHxbVUT
+         KRLQjhrLtAzQkK1yC5S3eLZAju1eFCDilrLZH9hCCooWiSOmdPwH1+C6Gdf8fyD1tpDJ
+         toI8qqlLNHgwrmXMhfG1Kg9EQVAqse+nRJ+Cu3WseLuTMHwdq1upAs072ZP+5BrlBgP/
+         TBrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719962437; x=1720567237;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qjSB7hLGu+RSjy1F3pz8TY7vKbIQRE/DZkSdMM026z4=;
+        b=Z8bQtUlFdUfUJ+cEDPlr6F545pH825GaHjpFy27n9ZSh3mKdr5WtAke90Wm0nnKelN
+         I13LNixzJA4R7sTbGaPiliPo+img062rNMBPryfy3F7ADwzhaZc6b2jhyl+pV0QvxSiS
+         1G+ENV4DBG3Df1loSc8cJHbXv9mLKjkPsPUs0HOwM+HwxlEk6qx3BRookl1h9hdh7VoP
+         x0lwfwYdZWF4VfXCHaupgpyXzz72B8UMpnN2e6k70Aed/rlZI+BKOo/3WR6WNSJXgi/h
+         4N38KiCN/ilp9awamgaE5iGdCDH+bBhvMAQG3ChEIQ9iX73m0iB7yt/Pnguq1rEf/BhJ
+         VTBw==
+X-Forwarded-Encrypted: i=1; AJvYcCV94uduIReQ2U33+aWaJxvA2JtPP24M+WE+kFnGh7+1Wr7+mgzGFb4SPaMiMRyRPBoUzK4KjwJ1XKNt/2Q4+qzB49r7
+X-Gm-Message-State: AOJu0YxUAInSwhDg1EyV2FeGtv/lxyqS4v+4ot1bMVod0Sg1/SVUMSgf
+	oYluTSbLOWmrkUQXV83vELIVXnvpII6gctzr+WfqBXFquPH9TlAl
+X-Google-Smtp-Source: AGHT+IFqzoEArcUNqIvbViixR0/Meat25i/cKIFz+5YuJrxKNDABNkuzD0s7fM8Q0BGMt4VIrPUnhw==
+X-Received: by 2002:a05:620a:558c:b0:79d:5ff2:c39f with SMTP id af79cd13be357-79d7b9f1ae6mr1024818185a.33.1719962437039;
+        Tue, 02 Jul 2024 16:20:37 -0700 (PDT)
+Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-446641f7ea9sm31907881cf.26.2024.07.02.16.20.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 16:20:36 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id E59071200043;
+	Tue,  2 Jul 2024 19:20:35 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Tue, 02 Jul 2024 19:20:35 -0400
+X-ME-Sender: <xms:Q4uEZkm1NoVNEzPbXq1ErwORQiyzbDwEcx2609ZDvYOtecv3mJJSGQ>
+    <xme:Q4uEZj3ibJSoHOF4lwGlkl84Wql-RZFMkmzQHZahWdWrVRp6HLFDEBmKLQy6nSTLu
+    NEO_f56Kw2abOV4sQ>
+X-ME-Received: <xmr:Q4uEZip6O3MXqtdMwvkodohl1UPEdpKFgwl_wVuBubL7fQzOHkrWcCN1B8ql1g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeigddvudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhn
+    ucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrth
+    htvghrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveeiudff
+    iedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsg
+    hoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieeg
+    qddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigi
+    hmvgdrnhgrmhgv
+X-ME-Proxy: <xmx:Q4uEZgkssM8md12s09nu65YHtUX9VLe3_B3-2PzXgwYlP3HT-ZVrIA>
+    <xmx:Q4uEZi2aIliUa_2ftBtkVeX8INBfqEgu-NUlQ4dkFbrffLoWdv8IQw>
+    <xmx:Q4uEZnuvokUU2BBYKMWHgqW8Rg8D-DOP9XaS7i54A4CLUkgyix6Ydg>
+    <xmx:Q4uEZuXK7rFTGA7BZR3APzjhXMxCgnB5gQsE0EbwuSJqFURlm4-atA>
+    <xmx:Q4uEZl3uwvaVGiM1iLnQ_8eaka8t8oVN4wQwMFZabcdrk9LMSKke863z>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 2 Jul 2024 19:20:35 -0400 (EDT)
+Date: Tue, 2 Jul 2024 16:19:36 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
+Subject: Re: [PATCH 11/11] rcu/nocb: Simplify (de-)offloading state machine
+Message-ID: <ZoSLCHWKXAOvd5Zl@boqun-archlinux>
+References: <20240530134552.5467-1-frederic@kernel.org>
+ <20240530134552.5467-12-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240530134552.5467-12-frederic@kernel.org>
 
-Hi Lorenzo,
-
-On Fri, 28 Jun 2024 15:35:26 +0100 Lorenzo Stoakes <lstoakes@gmail.com> wrote:
-
-> The vma files contain logic split from mmap.c for the most part and are all
-> relevant to VMA logic, so maintain the same reviewers for both.
+On Thu, May 30, 2024 at 03:45:52PM +0200, Frederic Weisbecker wrote:
+> Now that the (de-)offloading process can only apply to offline CPUs,
+> there is no more concurrency between rcu_core and nocb kthreads. Also
+> the mutation now happens on empty queues.
 > 
-> Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
+> Therefore the state machine can be reduced to a single bit called
+> SEGCBLIST_OFFLOADED. Simplify the transition as follows:
+> 
+> * Upon offloading: queue the rdp to be added to the rcuog list and
+>   wait for the rcuog kthread to set the SEGCBLIST_OFFLOADED bit. Unpark
+>   rcuo kthread.
+> 
+> * Upon de-offloading: Park rcuo kthread. Queue the rdp to be removed
+>   from the rcuog list and wait for the rcuog kthread to clear the
+>   SEGCBLIST_OFFLOADED bit.
+> 
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 > ---
->  MAINTAINERS | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 098d214f78d9..0847cb5903ab 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -23971,6 +23971,19 @@ F:	include/uapi/linux/vsockmon.h
->  F:	net/vmw_vsock/
->  F:	tools/testing/vsock/
+[...]
+> diff --git a/kernel/rcu/tree_nocb.h b/kernel/rcu/tree_nocb.h
+> index 24daf606de0c..72a2990d2087 100644
+> --- a/kernel/rcu/tree_nocb.h
+> +++ b/kernel/rcu/tree_nocb.h
+[...]
+> @@ -1079,29 +1080,14 @@ static int rcu_nocb_rdp_deoffload(struct rcu_data *rdp)
+>  		 * but we stick to paranoia in this rare path.
+>  		 */
+>  		rcu_nocb_lock_irqsave(rdp, flags);
+> -		rcu_segcblist_clear_flags(&rdp->cblist, SEGCBLIST_KTHREAD_GP);
+> -		rcu_nocb_unlock_irqrestore(rdp, flags);
+> +		rcu_segcblist_clear_flags(&rdp->cblist, SEGCBLIST_OFFLOADED);
+> +		raw_spin_unlock_irqrestore(&rdp->nocb_lock, flags);
 >  
-> +VMA
-> +M:	Andrew Morton <akpm@linux-foundation.org>
-> +R:	Liam R. Howlett <Liam.Howlett@oracle.com>
-> +R:	Vlastimil Babka <vbabka@suse.cz>
-> +R:	Lorenzo Stoakes <lstoakes@gmail.com>
-> +L:	linux-mm@kvack.org
-> +S:	Maintained
-> +W:	http://www.linux-mm.org
 
-I know this is just copy-pasted. But, what about using https instead of http?
+Dropping rdp->nocb_lock unconditionally means we are the holder of it,
+right? If so, I think we better replace the above
+rcu_nocb_lock_irqsave() with raw_spin_lock_irqsave().
 
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
-> +F:	mm/vma.c
-> +F:	mm/vma.h
-> +F:	mm/vma_internal.h
+Regards,
+Boqun
+
+>  		list_del(&rdp->nocb_entry_rdp);
+>  	}
 > +
->  VMALLOC
->  M:	Andrew Morton <akpm@linux-foundation.org>
->  R:	Uladzislau Rezki <urezki@gmail.com>
-> -- 
-> 2.45.1
-> 
-> 
-
-
-Thanks,
-SJ
+>  	mutex_unlock(&rdp_gp->nocb_gp_kthread_mutex);
+>  
+> -	/*
+> -	 * Lock one last time to acquire latest callback updates from kthreads
+> -	 * so we can later handle callbacks locally without locking.
+> -	 */
+> -	rcu_nocb_lock_irqsave(rdp, flags);
+> -	/*
+> -	 * Theoretically we could clear SEGCBLIST_LOCKING after the nocb
+> -	 * lock is released but how about being paranoid for once?
+> -	 */
+> -	rcu_segcblist_clear_flags(cblist, SEGCBLIST_LOCKING);
+> -	/*
+> -	 * Without SEGCBLIST_LOCKING, we can't use
+> -	 * rcu_nocb_unlock_irqrestore() anymore.
+> -	 */
+> -	raw_spin_unlock_irqrestore(&rdp->nocb_lock, flags);
+> -
+>  	return 0;
+>  }
+>  
+[...]
 
