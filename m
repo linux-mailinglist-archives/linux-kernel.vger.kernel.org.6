@@ -1,100 +1,113 @@
-Return-Path: <linux-kernel+bounces-237697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EC68923CCC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:47:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62D9A923CCF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:48:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 437E31C20DB7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:47:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 117541F21BF3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E964F15B13A;
-	Tue,  2 Jul 2024 11:47:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AFB815B14E;
+	Tue,  2 Jul 2024 11:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Oqz4wM9d"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="k2kfU3xi"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF72815B12D
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 11:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4FB012FB02
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 11:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719920851; cv=none; b=ENp2OeXQpmJb694Sd8Fmo+nicvXVMVacO35xZS+kPCz7Bigh4BF4tBv7IbldtkBDTQ1nOJJTc7CVJU216i52V6J5YT4Nz9pCj/A/EUQKPGePb26y7cAoGX2kxu1x8wOV9AG0e4U5wmQDXM3sG7IQ8S+bDfepYQV5A08QXB7GLKs=
+	t=1719920894; cv=none; b=qDQskHmXdY31F4bLVkrm0kzHtzbLAiBBPSdECbzldNdsOibk04NORQH73l3fLOJNyRVZieKil1dIfuIRmyFWPFnM6dodL9ha1sszRZMiiCZUZW1WWZYGF8PXM98ucNoPVF6vdfd6wkK7D76fGfkbp1cF1XPo4LWHQU16QR+2c/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719920851; c=relaxed/simple;
-	bh=FglxcTnzwOQwmJlE5WNCXHTrByMhmiPk6znqE6jdt1Y=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cYxPGn2ws6E515a/R0bydo4MzGflI9fVLjLiSpf4vifaftS8HkjRaSdc0z+vx+94MtxmIdZNZxwJPbwaqg5RcSx8IiMhWyyMlDmot6y0NvPYPQtGlbPVEbi5IMMY5MG0ViYRhOlJ2DhARGMgOOnycTOxWVHtyPeB89D6giZ61qY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Oqz4wM9d; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719920849;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FglxcTnzwOQwmJlE5WNCXHTrByMhmiPk6znqE6jdt1Y=;
-	b=Oqz4wM9dJJuEGOzZSneRuLUll1qMTNa5KCKO1B9CXEI4+KRphBz32ebwsio5HLCDpIhSCH
-	ntAq97vsn/leXHkO5m0rmYcZjjU0kZKibCP1qcHQf5S/4q7XTwXl9XXUd84M68sM9SDLfX
-	Mt7YL1/kCco/uJPlZedsvs7sPnPTyL4=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-671-CMqW4YMWNiaOc1-uPSWZvg-1; Tue,
- 02 Jul 2024 07:47:27 -0400
-X-MC-Unique: CMqW4YMWNiaOc1-uPSWZvg-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E632E1955F0D;
-	Tue,  2 Jul 2024 11:47:25 +0000 (UTC)
-Received: from RHTRH0061144 (unknown [10.22.8.184])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 64B2C19560A3;
-	Tue,  2 Jul 2024 11:47:22 +0000 (UTC)
-From: Aaron Conole <aconole@redhat.com>
-To: Adrian Moreno <amorenoz@redhat.com>
-Cc: netdev@vger.kernel.org,  echaudro@redhat.com,  horms@kernel.org,
-  i.maximets@ovn.org,  dev@openvswitch.org,  "David S. Miller"
- <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
- Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Donald
- Hunter <donald.hunter@gmail.com>,  Pravin B Shelar <pshelar@ovn.org>,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v8 05/10] net: openvswitch: add psample action
-In-Reply-To: <20240702095336.596506-6-amorenoz@redhat.com> (Adrian Moreno's
-	message of "Tue, 2 Jul 2024 11:53:22 +0200")
-References: <20240702095336.596506-1-amorenoz@redhat.com>
-	<20240702095336.596506-6-amorenoz@redhat.com>
-Date: Tue, 02 Jul 2024 07:47:20 -0400
-Message-ID: <f7t7ce4ow1j.fsf@redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1719920894; c=relaxed/simple;
+	bh=J+IFH/UAtx0MadyzuFPkt42kK2cdz7LHsWds9tSV8Ac=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lGfBCZ4QK3NzUc7UnCKMu0W6MY26Xwyk97Td1EsfuO1KYLDSZtue9Abilde2am5M7vhr4HJ14I3ITzGVeZtf1ybHIBvuI07SRwlasZXUHR8wPBga//XqJA47tPaItEDwlCh16X1bp3sfEQYogAszO6Gp4K+X+7DMzjGXzOywD5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=k2kfU3xi; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ec4eefbaf1so42772851fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 04:48:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719920891; x=1720525691; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J+IFH/UAtx0MadyzuFPkt42kK2cdz7LHsWds9tSV8Ac=;
+        b=k2kfU3xikfYi1UDFshkUsg42cOuzIpcklVFzdpdG/4MLc9TYYy1PhqiJtL4pvjrD2G
+         NPx+ntX9mfRgZFUtdUhMVb8/fcpdakiGDswo8+8xTD8ezgRHGccosoRItdYX2Vlt6NOt
+         rNBQJCDbtQd2QfCNxGLx1ylFrJNx5v4OdWd4jL4bZpIEH1uD1kVTqlMJuKuXn5GI9T5X
+         4dEnfNL/Smt8Cojkbb5rP1UtHWwMKT+JqhooOCyPUlYPft87lW4TqnZQf+DMWIIvQFZL
+         NyK+scHXFwV8iFbj+SSc/JCe/pqTFGxKfJJkh7edn9uegHRpljo9i4iDDCEkUYoBDlAW
+         cSog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719920891; x=1720525691;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=J+IFH/UAtx0MadyzuFPkt42kK2cdz7LHsWds9tSV8Ac=;
+        b=bzS0gj1zxAJH7Xy54NYCkGoc+f7qzVM3FMxoIE+b+aw/mdsZFWs0G4E7UuS1KqDy6z
+         9DD2hUsnc7JMW6ZHVbHoFcfF6+KaGrLw1/qQovQy4Pb3ORbzDzsypBzQJ9Sq2m7aKQ+R
+         Ucndjj9tx96H1pIMWUpN6hu347INa62mM5t3BLHuqxeEwFY+Cnayb94VtE7bNh5XpDUh
+         h8GafGHHx/Fp7oTCSS1HfjOi1WfWQg64UB6PpvNkNooRU3ctox2bUqgvC01N8Ohv9qt0
+         bByofe5iM8MsdiFB5BNAQ9q6RCCQXFWlB8BJXoL4dDQRfRwnRi7suAQDTTNIyY8i0wTw
+         hKoA==
+X-Forwarded-Encrypted: i=1; AJvYcCV5O6iZekhkl/EZ41g6xigybff44oFsMqWuWpt9LePIcz+9xPBQaFp1nuX4VSP5jlfCjJGm8EAHax9Yd0AtzmFgNL8smBhvrgpt+5Hg
+X-Gm-Message-State: AOJu0YyKBMx561s0NHk3radmdeF0XZOuOBs7LSh1y5HaXYoebmCdApg7
+	HEFi5ppsD7RS2i+hGSdFwq9bJVSFxLyd+knjOr6PO+HjLDMVed2KDXctQOS+sY4adV8bL2+J9QO
+	RZLopIiCFfBrbrcGXx191TSLk+pfgylI2gQlnsQ==
+X-Google-Smtp-Source: AGHT+IGYlnBmWEqJp+GJI605I3OI/Z/NbtE8viKRB4pNaGMzYRQDjSTGWfLQ7W+EGMfmgv9q+2mq30gnD2xwey5TD5M=
+X-Received: by 2002:a05:651c:1509:b0:2ec:5603:41a with SMTP id
+ 38308e7fff4ca-2ee5e345927mr55982491fa.2.1719920890946; Tue, 02 Jul 2024
+ 04:48:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+References: <20240702114103.16068-1-brgl@bgdev.pl> <CAA8EJppo4X1KmeeTRz9n7+9S0fGWE4AD1O1cCc_aPHTWPUGVvw@mail.gmail.com>
+In-Reply-To: <CAA8EJppo4X1KmeeTRz9n7+9S0fGWE4AD1O1cCc_aPHTWPUGVvw@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 2 Jul 2024 13:48:00 +0200
+Message-ID: <CAMRc=McVo364EruPtBCkLdR86=PfvSQFztTC_HUO0RPRCayAxQ@mail.gmail.com>
+Subject: Re: [PATCH] power: sequencing: qcom-wcn: don't request BT enable
+ GPIOs for wcn7850
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Amit Pundir <amit.pundir@linaro.org>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Adrian Moreno <amorenoz@redhat.com> writes:
-
-> Add support for a new action: psample.
+On Tue, Jul 2, 2024 at 1:42=E2=80=AFPM Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
 >
-> This action accepts a u32 group id and a variable-length cookie and uses
-> the psample multicast group to make the packet available for
-> observability.
+> On Tue, 2 Jul 2024 at 14:41, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> >
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > Due to having many existing users of wcn7850 in the kernel, conversion
+> > of the hci_qca driver to using pwrseq exclusively must be done
+> > carefully. Right now, the Bluetooth driver requests and controls the BT
+> > enable GPIO and so the PMU pwrseq driver must not do it or we will run
+> > into problems depending on the probe ordering.
+> >
+> > Add a flag that tells the driver not to request the BT-enable GPIO. We
+> > will remove it once the conversion of the Bluetooth driver is complete.
 >
-> The maximum length of the user-defined cookie is set to 16, same as
-> tc_cookie, to discourage using cookies that will not be offloadable.
+> This will not prevent the pinctrl conflict if both PMU and BT devices
+> declare pinctrl for the BT_EN pin.
 >
-> Reviewed-by: Ilya Maximets <i.maximets@ovn.org>
-> Acked-by: Eelco Chaudron <echaudro@redhat.com>
-> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
-> ---
 
-Reviewed-by: Aaron Conole <aconole@redhat.com>
+Hmm... So maybe we'll need to modify the BT driver after all. Should
+we see if we have the enable-gpios property in hci_qca and - if not -
+try to use the power sequencer? Or prioritize the sequencer first and
+if it doesn't match, then fall-back to the current mode of operation?
 
+Bart
 
