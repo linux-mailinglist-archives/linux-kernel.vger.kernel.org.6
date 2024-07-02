@@ -1,202 +1,174 @@
-Return-Path: <linux-kernel+bounces-237657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC85923C3E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:18:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14EED923C4A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:20:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 240632816AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:18:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0D961F24FE7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3A315B118;
-	Tue,  2 Jul 2024 11:18:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UWX4TTDZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB1915B12D;
+	Tue,  2 Jul 2024 11:20:16 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F240157469;
-	Tue,  2 Jul 2024 11:18:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E228276F17;
+	Tue,  2 Jul 2024 11:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719919086; cv=none; b=t3sLIKuMP1HUHh0lg3tReT9YbqMN6r1+3hxf7hCJ55R/ODvYQl84Up6NmaqONbgkZWmJSHxju90gZ+H+OIDgSo7YkXAcCsdJxfU/5yOvZ4EUBKjzER6JfVB4223x6zHjRpWuTNzmwjtdrjPvOBeV3Ozychogq6Szm/9L3bM/ZAY=
+	t=1719919216; cv=none; b=ehCIsXtIyMSxddkhRbFGCCxo8qwLBWDQOcaUdRFNw2QjX5z5H7NzHQoybcNHY6Hg06XR2sGiP9K6m1nAu19lKRSmeLLC7WOcqnTXY0olmTuJ4xDnc5wpjYltqO58AV2A4S0SuDQm8wN3/d9gLz7I9uXJNcTaI1T8WKZB/S+w5U8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719919086; c=relaxed/simple;
-	bh=FoMJEf11Lf66dhLhMVRO8nkinE1cWndTb/sbrx0+H3w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ntzxp2+wTnITQIczwyYO3wpo/0wuzLW6TI4I1Od5Wj+Ni2IwQ6hGqg9jS4YXkvLLxv1dhDVZl+JFWnQ8XorCCDaojSYWKhO/geD9gX052iSG9hU6/VK1CF/SLHtGNXBqls7kCX8F0KMt9NlGVloHxYUmYjvhehDN2LZQEjIZB3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UWX4TTDZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10F70C4AF0E;
-	Tue,  2 Jul 2024 11:18:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719919086;
-	bh=FoMJEf11Lf66dhLhMVRO8nkinE1cWndTb/sbrx0+H3w=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=UWX4TTDZflWPasT7VEjcnWzmqTvL4hpDJewnnk61hH3mx54u63K8u68IQ7ql8SDJW
-	 rGIFs9GI5vI3b7bwRjDx0gcQckkRa2ILsnZHAGQgwkiw5/PAwHDWJQftEE7BLo+Mna
-	 ZjeDDOJBY1NnZPcIjrrWRFU2dAiaYalAxRjcb0iM6aPPp0zRhoNYf1r+uGU+fYF5DJ
-	 hCPzLF9mSyeoAnb7wTb9qwtqVmBQAiGGWMUqfZ7yOG+0g3x1HfJbTy5vxgKoLK50RG
-	 Mb0oXqlHiS1ibslI8br81uJFi1zb5lRuskH+0NbJLMIwoGJkXMDlit71RUf918+Hl8
-	 DOZ4OdiqCCI/Q==
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-25d0f8d79ebso609417fac.0;
-        Tue, 02 Jul 2024 04:18:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXBBOKJkPSi1RPt3L/6lfqT7kAV97l65Q3lLKlEAEpKnVtiyLWWnwcTatCIqvTzb/9k95Tjpx+zK2+Lo0sxsTfPbJ1Bg8sVVZcYV+i9PGnCIda8Rv5Vg8O5lHlBICpeDYvxKxGGlDDUF0fWuhnKVx5hFDlnTVbG6bwlRotFfXUoIxN0
-X-Gm-Message-State: AOJu0YyDEGUfXeskovj9dhBS7ap0UwmfBA7T/Y523g2zDGUTbqG3l5ZJ
-	Pm0HW6swn0p53XZWkR/9gdP/UfVl2rFJY/WBXEEBAuqNwn8kaS1Du8uJEpVBKw0t7H/rsb6GQg1
-	JGmeckI4Y3Uv9hnuWxpBIaoJ5TO0=
-X-Google-Smtp-Source: AGHT+IFSROubL/WzUl2sx2objLG8DvmvKWe6cA/P6eX8rr89hODSqXxMCvpxDjHg0YZehdNgAgdbkFSnDnT5+aJSjD0=
-X-Received: by 2002:a05:6870:2892:b0:255:1fea:340d with SMTP id
- 586e51a60fabf-25db3049d93mr8496774fac.0.1719919085156; Tue, 02 Jul 2024
- 04:18:05 -0700 (PDT)
+	s=arc-20240116; t=1719919216; c=relaxed/simple;
+	bh=up5dMVI+CcLW1poGQSUzbtN2tghPfjyvdIb1LegsMJA=;
+	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=r0yZ8AaLSrjjgfL8graclV7Dr4fS0mw3qO+5eLHAown3g9lpOjfQSrx+Am/gvKtIKrdABlGjJEF4Yws1Xiz3BNcYjewl7hcWCyQvjzDDuHf9hN/Ri0iPEtF4wFg4nwyOkMo08qjetZ93C7uf+xfS1WTst6OceGs0SwHwEn4h1r8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WD0lV21WFzdflq;
+	Tue,  2 Jul 2024 19:18:30 +0800 (CST)
+Received: from kwepemi500008.china.huawei.com (unknown [7.221.188.139])
+	by mail.maildlp.com (Postfix) with ESMTPS id F04D014041B;
+	Tue,  2 Jul 2024 19:20:06 +0800 (CST)
+Received: from [10.67.120.126] (10.67.120.126) by
+ kwepemi500008.china.huawei.com (7.221.188.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 2 Jul 2024 19:20:06 +0800
+Subject: Re: [bug report] scsi: SATA devices missing after FLR is triggered
+ during HBA suspended
+To: Damien Le Moal <dlemoal@kernel.org>, <cassel@kernel.org>
+References: <20240618132900.2731301-1-liyihang9@huawei.com>
+ <0c5e14eb-5560-48cb-9086-6ad9c3970427@kernel.org>
+ <f27d6fa7-3088-0e60-043e-e71232066b12@huawei.com>
+ <b39b4a5b-07b7-483b-9c42-3ac80503120d@kernel.org>
+ <0d9bce26-c45b-5ce1-93c0-ca8af50547ae@huawei.com>
+ <85cebcb9-ce97-43f2-8da5-01c3a745fe2c@kernel.org>
+CC: <James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>,
+	<john.g.garry@oracle.com>, <yanaijie@huawei.com>,
+	<linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+	<linuxarm@huawei.com>, <chenxiang66@hisilicon.com>, <prime.zeng@huawei.com>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Bjorn Helgaas
+	<bhelgaas@google.com>, <alex.williamson@redhat.com>
+From: Yihang Li <liyihang9@huawei.com>
+Message-ID: <5f8598e8-b371-f6c3-7497-6226d17238f5@huawei.com>
+Date: Tue, 2 Jul 2024 19:20:05 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240627085451.3813989-1-daniel.lezcano@linaro.org>
- <20240701162600.GA4119789-robh@kernel.org> <98fe3146-07ae-4095-b372-6aed6e080d94@linaro.org>
- <CAJZ5v0ix+RDtrR+r3jd=A_W7D5U7JodMiirJ519-wwLrHeBbSw@mail.gmail.com>
- <1eb7eb88-4230-4803-83fe-415ce0745951@linaro.org> <CAJZ5v0jV+0bWqpCR1Q2rYLJvx0J6hgExzRks6YDPL9gX_HK0rA@mail.gmail.com>
-In-Reply-To: <CAJZ5v0jV+0bWqpCR1Q2rYLJvx0J6hgExzRks6YDPL9gX_HK0rA@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 2 Jul 2024 13:17:54 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iFR8v=Kwj=aW84NTfqZGvTbXrL=dsLsaMt=okFTAftDQ@mail.gmail.com>
-Message-ID: <CAJZ5v0iFR8v=Kwj=aW84NTfqZGvTbXrL=dsLsaMt=okFTAftDQ@mail.gmail.com>
-Subject: Re: [PATCH] thermal/core: Introduce user trip points
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, linux-pm@vger.kernel.org, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <85cebcb9-ce97-43f2-8da5-01c3a745fe2c@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemi500008.china.huawei.com (7.221.188.139)
 
-On Tue, Jul 2, 2024 at 1:03=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.org=
-> wrote:
->
-> On Tue, Jul 2, 2024 at 12:56=E2=80=AFPM Daniel Lezcano
-> <daniel.lezcano@linaro.org> wrote:
-> >
-> > On 02/07/2024 12:22, Rafael J. Wysocki wrote:
-> > > On Tue, Jul 2, 2024 at 11:29=E2=80=AFAM Daniel Lezcano
-> > > <daniel.lezcano@linaro.org> wrote:
-> > >>
-> > >> On 01/07/2024 18:26, Rob Herring wrote:
-> > >>> On Thu, Jun 27, 2024 at 10:54:50AM +0200, Daniel Lezcano wrote:
-> > >>>> Currently the thermal framework has 4 trip point types:
-> > >>>>
-> > >>>> - active : basically for fans (or anything requiring energy to coo=
-l
-> > >>>>     down)
-> > >>>>
-> > >>>> - passive : a performance limiter
-> > >>>>
-> > >>>> - hot : for a last action before reaching critical
-> > >>>>
-> > >>>> - critical : a without return threshold leading to a system shutdo=
-wn
-> > >>>>
-> > >>>> A thermal zone monitors the temperature regarding these trip
-> > >>>> points. The old way to do that is actively polling the temperature
-> > >>>> which is very bad for embedded systems, especially mobile and it i=
-s
-> > >>>> even worse today as we can have more than fifty thermal zones. The
-> > >>>> modern way is to rely on the driver to send an interrupt when the =
-trip
-> > >>>> points are crossed, so the system can sleep while the temperature
-> > >>>> monitoring is offloaded to a dedicated hardware.
-> > >>>>
-> > >>>> However, the thermal aspect is also managed from userspace to prot=
-ect
-> > >>>> the user, especially tracking down the skin temperature sensor. Th=
-e
-> > >>>> logic is more complex than what we found in the kernel because it
-> > >>>> needs multiple sources indicating the thermal situation of the ent=
-ire
-> > >>>> system.
-> > >>>>
-> > >>>> For this reason it needs to setup trip points at different levels =
-in
-> > >>>> order to get informed about what is going on with some thermal zon=
-es
-> > >>>> when running some specific application.
-> > >>>>
-> > >>>> For instance, the skin temperature must be limited to 43=C2=B0C on=
- a long
-> > >>>> run but can go to 48=C2=B0C for 10 minutes, or 60=C2=B0C for 1 min=
-ute.
-> > >>>>
-> > >>>> The thermal engine must then rely on trip points to monitor those
-> > >>>> temperatures. Unfortunately, today there is only 'active' and
-> > >>>> 'passive' trip points which has a specific meaning for the kernel,=
- not
-> > >>>> the userspace. That leads to hacks in different platforms for mobi=
-le
-> > >>>> and embedded systems where 'active' trip points are used to send
-> > >>>> notification to the userspace. This is obviously not right because
-> > >>>> these trip are handled by the kernel.
-> > >>>>
-> > >>>> This patch introduces the 'user' trip point type where its semanti=
-c is
-> > >>>> simple: do nothing at the kernel level, just send a notification t=
-o
-> > >>>> the user space.
-> > >>>
-> > >>> Sounds like OS behavior/policy though I guess the existing ones kin=
-d are
-> > >>> too. Maybe we should have defined *what* action to take and then th=
-e OS
-> > >>> could decide whether what actions to handle vs. pass it up a level.
-> > >>
-> > >> Right
-> > >>
-> > >>> Why can't userspace just ask to be notified at a trip point it
-> > >>> defines?
-> > >>
-> > >> Yes I think it is possible to create a netlink message to create a t=
-rip
-> > >> point which will return a trip id.
-> > >>
-> > >> Rafael what do you think ?
-> > >
-> > > Trips cannot be created on the fly ATM.
-> > >
-> > > What can be done is to create trips that are invalid to start with an=
-d
-> > > then set their temperature via sysfs.  This has been done already for
-> > > quite a while AFAICS.
-> >
-> > Yes, I remember that.
-> >
-> > I would like to avoid introducing more weirdness in the thermal
-> > framework which deserve a clear ABI.
-> >
-> > What is missing to create new trip points on the fly ?
->
-> A different data structure to store them (essentially, a list instead
-> of an array).
->
-> I doubt it's worth the hassle.
->
-> What's wrong with the current approach mentioned above?  It will need
-> to be supported going forward anyway.
 
-BTW, there are two different concepts that seem to be mixed here.
 
-One of them is a "trigger" that will cause a netlink message to be
-sent to user space when a given temperature level is crossed (either
-way) and nothing more.  This in principle can be added to any thermal
-zone (even tripless) and should be possible to implement as a separate
-mechanism independent of trip points.
+On 2024/7/1 11:03, Damien Le Moal wrote:
+> On 6/24/24 21:10, Yihang Li wrote:
+>>> Thank you for the explanation, but as Niklas said, it would be a lot easier for
+>>> me to recreate the issue if you send the exact commands you execute to trigger
+>>> the issue. E.g. "suspend all disks" in step a can have a lot of different
+>>> meaning depending on which type os suspend you are using... So please send the
+>>> exact commands you use.
+>>> is what exactly ? autosuspend ? or something else ?
+> 
+> I am failing to recreate the exact same issue. I do see a lot of bad things
+> happening though, but that is not looking like what you sent. I do endup with
+> the 4 drives connected on my HBA being disabled by libata as revalidate/IDENTIFY
+> fails. And even worse: I hit a deadlock on dev->mutex when I try to do "rmmod
+> pm80xx" after running your test.
+> 
+> I am using a pm80xx adapter as that is the only libsas adapter I have.
+> 
+> I think your test just kicked a big can of worms... There seem to be a lot of
+> wrong things going on, but I now need to sort out if the problems are with the
+> pm80xx driver, libsas, libata or sd. Probably a combination of all.
+> 
+> ATA device suspend/resume has been a constant source of issues since scsi layer
+> switched to doing PM operations asynchronouly. Your issue is latest one.
+> This will take a while to debug.
+> 
+>> In step a, I suspend all disks by issuing the following command to all disks
+>> attached to the SAS controller 0000:b4:02.0:
+>> [root@localhost ~]# echo auto > /sys/devices/pci0000:b4/0000:b4:02.0/host6/port-6:0/end_device-6:0/target6:0:0/6:0:0:0/power/control
+>> [root@localhost ~]# echo 5000 > /sys/devices/pci0000:b4/0000:b4:02.0/host6/port-6:0/end_device-6:0/target6:0:0/6:0:0:0/power/autosuspend_delay_ms
+>> ...
+>> [root@localhost ~]# echo auto > /sys/devices/pci0000:b4/0000:b4:02.0/host6/port-6:6/end_device-6:6/target6:0:6/6:0:6:0/power/control
+>> [root@localhost ~]# echo 5000 > /sys/devices/pci0000:b4/0000:b4:02.0/host6/port-6:6/end_device-6:6/target6:0:6/6:0:6:0/power/autosuspend_delay_ms
+> 
+> This works as expected on my system and I see my drives going to sleep after 5s.
+> 
+>> Step b, Suspend the SAS controller:
+>> [root@localhost ~]# echo auto > /sys/devices/pci0000:b4/0000:b4:02.0/power/control
+> 
+> This has no effect for me. Can you confirm that your controller is actually
+> sleeping ? I.e., what do the following show ?
+> 
+> cat /sys/devices/pci0000:b4/0000:b4:02.0/power/runtime_active_kids
+> cat /sys/devices/pci0000:b4/0000:b4:02.0/power/runtime_status
 
-The other one is a pair of trip points that can be set "around" the
-current zone temperature so that the .set_trips() callback uses them
-to program interrupts to trigger when one of them is crossed.  This at
-least requires the thermal zone to provide a .set_trips() callback, so
-it depends on the driver registering the thermal zone.  Arguably, the
-driver in question can reserve a pair of "trip slots" in the trip
-table passed to the zone registration function.
+I don't have a sysfs node for runtime_active_kids in my system.
+My controller runtime_status has changed to "suspended" after step b.
+
+[root@localhost ~]# cat /sys/devices/pci0000:b4/0000:b4:02.0/power/runtime_status
+suspended
+
+
+> 
+> ?
+> 
+>> At this point, the SAS controller is suspended. Next step c is trigger PCI FLR.
+>> [root@localhost ~]# echo 1 > /sys/bus/pci/devices/0000:b4:02.0/reset
+> 
+> What does
+> 
+> cat /sys/bus/pci/devices/0000:b4:02.0/reset_method
+> 
+> is on your system ?
+> 
+> Mine is "bus" only.
+
+The results in my system are as follows:
+
+[root@localhost ~]# cat /sys/devices/pci0000:b4/0000:b4:02.0/reset_method
+acpi flr pm
+
+
+> 
+>>>> The issue 2:
+>>>> a. Suspend all disks on controller B.
+>>>> b. Suspend controller B.
+>>>> c. Resuming all disks on controller B.
+>>>> d. Run the "lsmod" command to check the driver reference counting.
+> 
+> What is the reference count before you do step (a), after you run step (b) and
+> at step (d) ?
+
+Before step a, the hisi_sas driver reference count is 0.
+After step b, the driver reference count is 0.
+At step d, the reference count is 2405 (this value is not the same every time).
+
+hisi_sas_v3_hw         77824  2405
+hisi_sas_main          45056  1 hisi_sas_v3_hw
+libsas                 98304  2 hisi_sas_v3_hw,hisi_sas_main
+
+
+> 
+> For my system using the pm80xx driver, I get:
+> 
+> pm80xx                352256  0
+> libsas                155648  1 pm80xx
+> 
+> before and after, and that is all normal. But there is the difference that
+> suspending the pm80xx controller does not seem to be supported and does nothing.
+> 
 
