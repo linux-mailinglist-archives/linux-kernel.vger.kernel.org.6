@@ -1,81 +1,110 @@
-Return-Path: <linux-kernel+bounces-238049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 110B69242A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:42:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 038059242B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:45:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B07E11F22D33
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:42:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2E7728732E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B84471BC07B;
-	Tue,  2 Jul 2024 15:42:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2091BC096;
+	Tue,  2 Jul 2024 15:44:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jjPJ4A44"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b="VHYqLSid"
+Received: from mail.fris.de (mail.fris.de [116.203.77.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A781BC072
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 15:42:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F201BC07D;
+	Tue,  2 Jul 2024 15:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.77.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719934962; cv=none; b=ktmLQTYZB1FH3RFKFax8UliX562/vuF9r60Y41Hrh1ZEdu5KXs4I5nfyeH1TahyaVaxghyrXfbJryNO3mTjCsFraOpCcHVrk7vkhmUtS2miDPfIEEVNAmH0l9oohPj50nxgzSwfzCdXJldsl1GFJeZPphY518sKdpwtk9rNSI34=
+	t=1719935092; cv=none; b=cPltKYntjBEm67o6Xu5YsDwhzlE7ZB+voCm5zAYhSbA5JMHJ0DqnuKlcMDl/eyvuUk04NwB6bkAvkYDoN1kHyd/MeOvrAQghbjTjqoNlQsJ11t0GmeOhQ91kD/LIVK0yPMcxLXCGdRcjNSw1lQlLxpYQU4NkWPcl7M+npDLBCx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719934962; c=relaxed/simple;
-	bh=t6Yxs4HaE6O1bEqgahjGVoTgAg0PybsibHgREDvBJOY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lUREEIlHElXwBic4j25DFaT2aOs+1TwxYylOf91DUz0xLH61ZnHNp2XSko8gIWHxhpTjbbvLfrE/wuvkV+1323PQMw0cqZBZa0V2nk/bHpDg626V4F+Au6BDpHvHp4VALt6Mxb8qwsw/BcuqtYteLl6ANTMdX88yCI/8g5K7tSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jjPJ4A44; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 330D360002;
-	Tue,  2 Jul 2024 15:42:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1719934952;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kh2++094kq3DmBu80JcmSjBMq3G/fZgQjDvdh0jXcNU=;
-	b=jjPJ4A443cEhcRwyZ/TohO8txRrKadPkV/4RoeAI8TrkziRq8HG2O6/tSJtdActGk/heaP
-	kf/A5rZUtC+w93nvHyQkuKe9lqkJtsFrVuXJs9d3pF1vdjQf2Op2/dYLQZVoA2tD+pOZey
-	3gUyzjSN1fdh1blwg7nJ1loTgBx2vSIT8iIrbZcM/NfhgZJ/vumzT5iRZKTTjQqJSm54C0
-	fn6C3pYad+W4DzP42TQgVVWiLie9eG8Edn4JaZyVTEfjoeTnYOQLbPD1okWhfWXUTqHn8o
-	BGTwyj4am3sRiXA6m8AuC/y4/Q1S6bMG4d8kYXgvEYvNjNpjvKnRsTYrUHviKw==
-Date: Tue, 2 Jul 2024 17:42:30 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: miquel.raynal@bootlin.com, conor.culhane@silvaco.com,
-	Chen Ni <nichen@iscas.ac.cn>
-Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i3c: master: svc: Convert comma to semicolon
-Message-ID: <171993493884.371587.3917562829848581690.b4-ty@bootlin.com>
-References: <20240702024758.1411569-1-nichen@iscas.ac.cn>
+	s=arc-20240116; t=1719935092; c=relaxed/simple;
+	bh=+B5HFZZzPNn2JmY4lkyPmQPkOj2DqJDKtWdUCztVPkw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rkEoeuHo2FP2Ju3dYrJELLvWEr7v2CF981RCOB6KDhOAP2AjqguZVikIjFk+zBhsHM3HpZpIw2hTd+ffXD1hakoiaNv+T1tBx+H3BfONcuHHZi5p0gifQbpGwDOvY36ohBcVJOa2ecm9FhKdA/I5AH/OXBm8JJp187yyCajvgsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de; spf=fail smtp.mailfrom=fris.de; dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b=VHYqLSid; arc=none smtp.client-ip=116.203.77.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=fris.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 19E50BFB06;
+	Tue,  2 Jul 2024 17:44:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fris.de; s=dkim;
+	t=1719935087; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=CBORLJR9aM7cMwsJ5VoFFFTmCJUb5MCP6fApLxgN76E=;
+	b=VHYqLSidx9XZxGm0XQ8WvkbUTiDGFWnj8DPr6Ygt5KJU9rQQism1V9bbZYou0uIExwjypV
+	XYRvwpsWZZ5WXgxStFicF6lB2KpgtjXodBDbW2xDlj3A0vYv9WXaqhsS+y0H/mEl53rgas
+	fM5T9sJttWYT7JvKnhlhsaWvMKFjKYZSsgvb+R8ydv7hjwtz2xG3FABt4dTh3zLocB0+GM
+	6Ry5u6DQYZ/qQsRZ6KdwpuceGkBgn+JRxtXfdlk23Khnt0MFdR9g87tAiYZwUppjyVvF7W
+	s6OxCqcH2dfst2wqeyHENhZkDSrLuM9fB6Kvfqn6zWizSCIbZllyiRbCv21HXg==
+From: Frieder Schrempf <frieder@fris.de>
+To: Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Li Yang <leoyang.li@nxp.com>,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>
+Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
+	Hiago De Franco <hiago.franco@toradex.com>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Joao Paulo Goncalves <joao.goncalves@toradex.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Marco Felsch <m.felsch@pengutronix.de>,
+	Markus Niebel <Markus.Niebel@ew.tq-group.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Tim Harvey <tharvey@gateworks.com>
+Subject: [PATCH 0/3] Add support for Kontron OSM-S i.MX8MP SoM and carrier boards
+Date: Tue,  2 Jul 2024 17:43:18 +0200
+Message-ID: <20240702154413.968044-1-frieder@fris.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240702024758.1411569-1-nichen@iscas.ac.cn>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, 02 Jul 2024 10:47:58 +0800, Chen Ni wrote:
-> Replace a comma between expression statements by a semicolon.
-> 
-> 
+From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-Applied, thanks!
+Patch 1: board DT bindings
+Patch 2: OSM-S i.MX8MP SoM and BL carrier board devicetrees
+Patch 3: i.MX8MP SMARC module and eval carrier board devicetrees
 
-[1/1] i3c: master: svc: Convert comma to semicolon
-      https://git.kernel.org/abelloni/c/9ea7dc97d9a1
+Frieder Schrempf (3):
+  dt-bindings: arm: fsl: Add Kontron i.MX8MP OSM-S based boards
+  arm64: dts: Add support for Kontron OSM-S i.MX8MP SoM and BL carrier
+    board
+  arm64: dts: Add support for Kontron i.MX8MP SMARC module and eval
+    carrier
 
-Best regards,
+ .../devicetree/bindings/arm/fsl.yaml          |  13 +
+ arch/arm64/boot/dts/freescale/Makefile        |   6 +
+ .../dts/freescale/imx8mp-kontron-bl-osm-s.dts | 307 ++++++
+ .../boot/dts/freescale/imx8mp-kontron-dl.dtso | 112 +++
+ .../dts/freescale/imx8mp-kontron-osm-s.dtsi   | 908 ++++++++++++++++++
+ .../imx8mp-kontron-smarc-eval-carrier.dts     | 224 +++++
+ .../dts/freescale/imx8mp-kontron-smarc.dtsi   | 271 ++++++
+ 7 files changed, 1841 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-kontron-bl-osm-s.dts
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-kontron-dl.dtso
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-kontron-osm-s.dtsi
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-kontron-smarc-eval-carrier.dts
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-kontron-smarc.dtsi
 
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.45.2
+
 
