@@ -1,86 +1,110 @@
-Return-Path: <linux-kernel+bounces-237910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65964923FB3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:57:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DFAA923FC4
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:00:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 976321C2612C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:57:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FAC4B20BA4
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39C7D1B5829;
-	Tue,  2 Jul 2024 13:57:05 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A9821BA063;
+	Tue,  2 Jul 2024 13:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SD/4Xdcy"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74491BA2D
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 13:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10258BA2D
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 13:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719928624; cv=none; b=UY4fLZAQP2RQQbTfPChWlhYycVv73FFHk60f+Gss5ArYtScaOZVpmswuMW245OsI4Gc5rHWMs9xS0VQe70kco4DB4nLUU03IfRXap+aYO8SeyDOTh8p1j1h3iIaTSqLyZ8Zn523dXRyQBH42pKRSB/60GgtGXoYqoOeZZfoZBAc=
+	t=1719928649; cv=none; b=nX9Db119hatzCzTBeru+3utcdpSO1YALj7TrnAUbWWnHHt7VQ9Xh6j93Ms+J2TdwzV/v6XdrpFuWz1rlTkQMBpgyccER4y8P0M/x7+7+rY7s+NQFMKcbG1CcvyJ6pmeZ7bNYMsyE63sth//SZ4wfCtdk03/aOQdZjxMLcAYr1Zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719928624; c=relaxed/simple;
-	bh=4rgCz356vNOf2eZfVUDW8FJrR4x6ZF3Ok+kNtGQZZYQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=l8ulIEofgrctgRRATScHXYnv4C/Fac3YW/zxHqH4f79TeHmTo+7uba1ZlBy+bdmFccYnj49piJ4oSw4TsFqz9zIu3vkcfJjWBvlK+Wlb+XKw8WPMnjtKL2ZT93e1lIaVyQxlEWJS9oUX1rmeSCBYJvlRd2xy3PJIVDNDmVKYEs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7f3c9b72aebso454145839f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 06:57:03 -0700 (PDT)
+	s=arc-20240116; t=1719928649; c=relaxed/simple;
+	bh=qt01brAtBuYeYDb5XU6vCoxDmnQV+1+Sre8GzSkYpTs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y/rjK8j3CXG0jgQpKrS/99G9hjeBDM7o+en/+5PQQBO1VBqNiD9nQUKZ5Pn7M3tkFLPndGWn32UwdniFRq+rJ2aFOcr5R3d3rH1GQuyWSBYNZWOJUOL1YppcR4I7kOn0a5T0dJXbAjvG/jiSGUWKImgyBECHIaHzJKK3aEJdhck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SD/4Xdcy; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-6f8d0a00a35so3977058a34.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 06:57:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719928647; x=1720533447; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ePmiEYi/a4AH0wn7ckFFYm2PTW/+uVYsAN+yRliA3Bs=;
+        b=SD/4Xdcy4fe3ZVO3oqqPa9q++Hszs4ulZr+39UOdXOyvkdKhvwxmZKrmgdd8yCaT44
+         hdfCXKvZYcDiQ3oUXQd/guxEeUHK4MZo+A/3YKrwPtSp0ZTcnPTsqWXmMiNY5mvRbNYL
+         7ew+UjSEDqgPZqHhuchJkmRn0iHR2vzuDgvYouou/tFzOESIL5bAPGwn+631ctrH2xqI
+         X0kdOTs4OyB0RI9VrakfixnBTs09+l5czZ7QAGxKniScmlgTDw/6rjmiqIzh24vGuuMO
+         A0RGrmTmMiw6ig5S0YU4n0qwPMhZQPWQm0wiwN9pGD6uXJLcOIaXQ4ZoTyOLQACl5CZJ
+         lutw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719928622; x=1720533422;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dIxp382DaDGD6JdY4m6R7aKF0MjGNqYtOwkuonM4f9g=;
-        b=uPwXn/EV6JwDEPBvkCjgwG4tzLi98rAjbiy9oEiE7deJ5wOIlsIpJA9J36FyB21Z7x
-         SShNsP6nw/ldjXD6G4ivCHrFjm32wXtKXsKkBqTnsW/RFKsxSm7mjLUJJD1hKQWX+Jjm
-         m4V7/ZQWiuoYS1j0DNihXSUY4u5rytzq0WL9EtdUisV1rCqf04DUJxe8dXLR2W/RcN0p
-         a2RowK+9m1KokysTBQfUWxltlIiFpTNj4H2OxfD9Hsd3m7sBv3Q4U+LlVoLea/3mEQ8S
-         p5INFVQ3Ft0FuZMD+LgdoTvhvTIbIDxUbLiPjZtzMZsVg/J0t8lnAlFeqF1KvHmCKeWD
-         +FqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/AWUMNo77oCGZZYYo1SoNOAfyAIO1ktsP5GzPnsuKS0vMg1G1q91jGOi2GYQW3Yn8SqhXLmL+kCRDzJdKjn6M17bF6PCdhKzO2RpN
-X-Gm-Message-State: AOJu0YwreUL8wfjfPHseu19HS93Xze8lbgVIl5OSdbM6+0h4GAAIJCfv
-	Cq4F8LZO0rws/0x+DFv3XTiXoMyiQNoggLfjYiBCnm2ZU9BIWELrAl0HOMU7zd+wQ7PVnggNMk7
-	l+r51f1EYGXQ4hZR/EL9t3+9PomLUHpQpioVtgJUrrLzXxnCV4f2BYYc=
-X-Google-Smtp-Source: AGHT+IHNGq2NgKwvy8Lj4f92qOBt/bBmbWhmAmgK2E0ZApB7tFEe8W27qMBLv24u0upqi7IpaynfJoDTwF9dZ55RMNk9OKOYlgd8
+        d=1e100.net; s=20230601; t=1719928647; x=1720533447;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ePmiEYi/a4AH0wn7ckFFYm2PTW/+uVYsAN+yRliA3Bs=;
+        b=lGlEvExbzO4Vqe9Mwv5OKVJO9CTJSvoN4XntgPkhNr+rojHUXgTOcBLMmwmzn5Szq+
+         71fjW/g77BMuPgEaGm0UhsM+JUJv/RO/VBUBs8SVvo6n9U4X69nLwJlsB4x+Ac+0op1x
+         RBCCSyc/amqg82e5RaCoWfEBkUNBZRxFnR0dGcw2Vhhxj9nAydeqEaVROlnwwG6EUmyC
+         zstr6+NMrnTgTNZNAkRb+Uj9Rml8DyTVRQ1WjckWDL5xgSA4GK5Afduun7CRZ0PBQEJs
+         C6VPHoVsS+hTk7a/SCYcVx7IUH+Bn+opjDwIKnlvq+weViFg/BT4ZkmOG1jsZ3Jde1V+
+         NTMA==
+X-Forwarded-Encrypted: i=1; AJvYcCVBpBa/2NMAhEBStN7fQM/PYTWiYP5mw+g0l/vOEgPplRyvMeJxvtS4xvuUIIQmyxCbPcCvhLQyMKGc3KPG/MOkC3EFGzNS7esEbRMy
+X-Gm-Message-State: AOJu0YxkJZ3NI09hG30qFkk6fkqe2ss+9ldTsVAwLgBJH/71ingUTQyZ
+	wa37DJjOC1gmzrt0KYIg4BF+RDAqNXG+R/PbhzQqyBQA91Nxx10UfGwKJbz5H7I=
+X-Google-Smtp-Source: AGHT+IH5Vk/edmC8lLAXOlWnBYfSKbo/eOsXpv1FuEvdKG37AODsGoiz394zQKMr5V6bCT7B+XImXQ==
+X-Received: by 2002:a9d:7c84:0:b0:700:cf6e:e261 with SMTP id 46e09a7af769-70207708212mr10589665a34.31.1719928647061;
+        Tue, 02 Jul 2024 06:57:27 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:a6f1:b7be:4c8c:bf62])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-701f7ab6931sm1688615a34.31.2024.07.02.06.57.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 06:57:26 -0700 (PDT)
+Date: Tue, 2 Jul 2024 15:57:23 +0200
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Su Hui <suhui@nfschina.com>
+Cc: arend.vanspriel@broadcom.com, kvalo@kernel.org, johannes.berg@intel.com,
+	kees@kernel.org, a@bayrepo.ru, marcan@marcan.st,
+	quic_alokad@quicinc.com, zyytlz.wz@163.com,
+	petr.tesarik.ext@huawei.com, duoming@zju.edu.cn,
+	colin.i.king@gmail.com, frankyl@broadcom.com, meuleman@broadcom.com,
+	phaber@broadcom.com, linville@tuxdriver.com,
+	linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
+	brcm80211-dev-list.pdl@broadcom.com, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH wireless 1/9]  wifi: cfg80211: avoid garbage value of
+ 'io_type' in  brcmf_cfg80211_attach()
+Message-ID: <ba67020a-04bb-46b8-bc05-751684f71e8a@suswa.mountain>
+References: <20240702122450.2213833-1-suhui@nfschina.com>
+ <20240702122450.2213833-2-suhui@nfschina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:871d:b0:488:e34a:5f76 with SMTP id
- 8926c6da1cb9f-4bbb6bce7e5mr691661173.1.1719928622614; Tue, 02 Jul 2024
- 06:57:02 -0700 (PDT)
-Date: Tue, 02 Jul 2024 06:57:02 -0700
-In-Reply-To: <20240702112814.2760-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000971697061c441663@google.com>
-Subject: Re: [syzbot] [netfilter?] KASAN: slab-use-after-free Read in nf_tables_trans_destroy_work
-From: syzbot <syzbot+4fd66a69358fc15ae2ad@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240702122450.2213833-2-suhui@nfschina.com>
 
-Hello,
+On Tue, Jul 02, 2024 at 08:24:44PM +0800, Su Hui wrote:
+>  brcmf_fil_cmd_int_get() reads the value of 'io_type' and passes it to
+>  brcmf_fil_cmd_data_get(). Initialize 'io_type' to avoid garbage value.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Since you're going to be resending anyway, please delete the space char
+from the start of the line.
 
-Reported-and-tested-by: syzbot+4fd66a69358fc15ae2ad@syzkaller.appspotmail.com
+It's weird that brcmf_fil_cmd_data_get() uses the uninitialized data.
+It looks like it just goes to great lengths to preserve the original
+data in io_type...  So it likely is harmless enough but still a strange
+and complicated way write a no-op.
 
-Tested on:
+regards,
+dan carpenter
 
-commit:         1c5fc27b Merge tag 'nf-next-24-06-28' of git://git.ker..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=10e91b25980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5264b58fdff6e881
-dashboard link: https://syzkaller.appspot.com/bug?extid=4fd66a69358fc15ae2ad
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=104f8466980000
-
-Note: testing is done by a robot and is best-effort only.
 
