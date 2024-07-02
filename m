@@ -1,114 +1,133 @@
-Return-Path: <linux-kernel+bounces-238265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 583809247A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:55:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3A899247CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:04:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F5341F22A7E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:55:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5FEE1C20E81
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:04:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3202C1CCCA7;
-	Tue,  2 Jul 2024 18:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43DC012C559;
+	Tue,  2 Jul 2024 19:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fhC4gmgC"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ayTDMh5Y"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC5F481D0
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 18:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0644A1EB25;
+	Tue,  2 Jul 2024 19:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719946544; cv=none; b=UPjFKJlp6NRTW6bYUF6AX2MCBdInlGUy/GamorhNXldCX9UgT75Om5hvZL5amTrcPqb9DuHnOhesWVqHv2tVpW+5+ZdjaQ9sENzv0ZhEc99v0P6UIhFvpSD+Pqq3BUtSPnF+Er1qv/pkteVlPhjD6PLr22a4XuGygCE6B1ANJF0=
+	t=1719947047; cv=none; b=XBw1wJOJZKcZlEJ7engeFw0S7fBJ5WSjtvWMVxnChUyieYQkN4eD08e8RAxilfVgIpkG1Dx1QvqKN7NN7VUnid4T5Wt8XEsAcsB1tkrXBP8F3N5f33+Qn6iIaahd44HDbXBBiF016vnv0+Cve/WLeYeiOIk6D4B/JMFlX6xaoqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719946544; c=relaxed/simple;
-	bh=VHQDmH8SsJUyNwP4grJbVP//d5gH37ksxqZPODeqm44=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VDejVomXp/T4EhQrOpmxEOGA1fEXTZM3MxqTQmT6m7A7mEUV5wLm/cNXOCYxKc+SLsJHCuPwAXjVKTkx8lxGXrWh9fLEgpzXf3OWs1RiCh68nKJhvpoG0UieT1HEK4oglc92IJsQdu1uuwrg53daED065M2UJjErSaibAnoTZf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fhC4gmgC; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-58bac81f341so1059329a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 11:55:42 -0700 (PDT)
+	s=arc-20240116; t=1719947047; c=relaxed/simple;
+	bh=72jQsOwZhtv7NmowAKLnAHDBjN6SnciL4Pl7yt/yJs0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iNOnIuINgpNkdaEYHmlDHmfyBh3Kz1GmULkAXOwmZR99GozfEPkdZ299rmGbzb1zCEwBVwxzex3qk1NneiKDxEhseySiabNengBNwz1aWIDYwI/YUWDU5Ik+HTCvE1A7KUKlmE294T2wd7RSvao+iYivJzFxOqTrwFmgrAFeshg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ayTDMh5Y; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-424ad289912so32115845e9.2;
+        Tue, 02 Jul 2024 12:04:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719946541; x=1720551341; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EN1U9vxr20829AjhJZIMvx8ur+LMDGCD9A9bJO/P0+s=;
-        b=fhC4gmgCckyoMKrspIkloqxLTjfdhwrRjTWo6Z1e7wX15CwbKozmyksW6NBBHYVAU/
-         4JgifzTWMW3awBuHG+mFy0vKRn+366G35W2l2yPSI+XzsSiDHJ1B3Ggrd4iXOQDkvDn1
-         J433iKnNocJaaeg49vv0xVZudZA5t8alhJMo187LCjg/ZUjn1edcUNmRm+JiVHnjo3zW
-         Y9p+ZalznQ3kZ5fxes3HeFt+OVWDIHri2ecNgmnZmZAyID5ZI/WBDgSuqwUj5R+B8s1f
-         hdqkgGaI+ned0G5snVr3XACf5RFKMU24EGXVf3iG6Oc8498fpIALOZSD+ILNZBdwGvXy
-         xgMA==
+        d=gmail.com; s=20230601; t=1719947044; x=1720551844; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4wKiM0LoVnSJlvFGJ4zMxAkn2aVFBxR/LJM4ELZBaDg=;
+        b=ayTDMh5YNNX5QbXG7Rxey4KKXyx7bw1z4Q8P+TlVmvmG+HVHb7dvZ0oDImLVBorXor
+         OUepvCQYb/tYzSoN4A8AL067bdp9zs/KHyWPXGT+D31sIFAbopsMzHoproBPpLXIgLsC
+         HSc9xbN3ZZ5fYSFUWbx6NW5NnHU3GXBPMK17UXOs3hCvTvzNXP9KMgn2UrBPKysHIO+O
+         1QGVNQS/vK36cYXRo7jCGSPdlUQ5kRHm6bYHFaPSX9Uxagj3z41OcIORJdGDInDZx0KZ
+         uXoadjFCi0mEj7N8uiF85teTS/b+U4drAHzQhG2Bl9NvsmwBMwxJhjVoQKuD+8MzU6BK
+         2FmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719946541; x=1720551341;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EN1U9vxr20829AjhJZIMvx8ur+LMDGCD9A9bJO/P0+s=;
-        b=C24nQr8JTucp5jAGo3+0B9b5Tq+TR7EMCh6AOsWPx2E3TFom9rXk7U9Gw03WGrRp07
-         8AvnCNvKCq/ULqq4qTOKlmgEl4qfIoRMrleGgVe4oKI9o2rx+9RTMs0VdPCaLes4m7qG
-         KPc1kj/RE4pnERMJYP8QLLcfLdquVOYQhzXn7g/UvNUFiVFPPXyWaOS3C/FhcMNB7Oty
-         8eH3CfDQtXHwf5bnIrWUW3si7v/L0AuqmjSddj5GorBWJeyvKElZaqrHa6LSC0xvICpm
-         x8wZgihSS4qYtXQbpjvYWAtMmLROuaLAOAcFnIUD7XdypalVjNqa/MHu6KUGFcOmiaFi
-         ThqA==
-X-Forwarded-Encrypted: i=1; AJvYcCX87KHiYT4y4ra1+b1GSWIfFGZKx8iwNaf4TW2jf+awQSq5fFhMC6aQK+XmMKONkAj1h6KjfKT1wuNul2w/tcr+fUHRKpe06PdgcLOD
-X-Gm-Message-State: AOJu0Yyjoah+aNekwKas+JhdUAs5e9ZPY2e5mEu5Cp5X9axgb9rinqFT
-	PGv5cG3CijLmA8qV1mqt6H0Q7Ko5bteTTjMrygeba5uhnnX+JTxtKjISlIZQlucrBqjKFzrB98G
-	0oQiBGNrZpusvvhYJmDAtVw599A+EDdcUHZFU
-X-Google-Smtp-Source: AGHT+IE9/j59ePHsIE7wROexb2r7j2+PVDNkibAeLARQjWi3O8iWwuHamyAydSfc2QE7vUP1IXfFrbc67BULZGXTcBI=
-X-Received: by 2002:a17:906:3185:b0:a6f:1590:ab06 with SMTP id
- a640c23a62f3a-a7514430d69mr573632566b.31.1719946540767; Tue, 02 Jul 2024
- 11:55:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719947044; x=1720551844;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4wKiM0LoVnSJlvFGJ4zMxAkn2aVFBxR/LJM4ELZBaDg=;
+        b=Jy378if44e7Bcu+8xcxOB/rNTrESeASGIOVfFXV4cxilriqeUsVmd2Z1LW0MSwm3sm
+         FBSvDWj8C2wMV/tje7PTtfi4nG0JawsInJ6K5lytv9Vxy5Crfsd8oXb9syYptjncKySt
+         B/WDNRUKtKhx0dXLJVhLQXKEgPy5wy0q26l9tq+buE+NV2riaPQ4tVedoQAqCmLVqB78
+         vEm+HxhLMbk6NbUyfAdTk7ks2v6OGUVk8s7ZcHf4eksNsPqM5JfxzKyuBcwQeDRrpZeI
+         +VrdqkY40ey+JJ+8LBuX4iYyLlpCcn7lKYqU8j+1KFEoYFls40iZXetviHEkvGkQgzfu
+         29xg==
+X-Forwarded-Encrypted: i=1; AJvYcCVB2aaZvBy0GEiaGGhVaKe+JfQH0SyDpspCSGcmWOFDViOWq5L00WTRC81ixx2FEkEf1iVDdfOK9Mw2GWOEY9D+m68nz9cw58GLBZaAyVtsEZoouFxHRBXQ2VxJdcPyAU20jz8WqQRiLQ==
+X-Gm-Message-State: AOJu0Yy2UJyt6KrO3AxdMlp0q/so7dEnm6Qr0czgffUGc4r3PBN0HP58
+	WeB43G+mw4FubQQBWjrJT10uX3kV1Bq+w0LB4RDrwIz7IePvN5m4
+X-Google-Smtp-Source: AGHT+IEg7Ylb0a0AliUiVMF+rVgKJlQM5K3IpV+SBP/fB47GeoimS1/x+hfjjTAv03cj8BzLban4yA==
+X-Received: by 2002:a5d:404f:0:b0:366:e1a6:3386 with SMTP id ffacd0b85a97d-3677571c5a7mr5535190f8f.44.1719947044099;
+        Tue, 02 Jul 2024 12:04:04 -0700 (PDT)
+Received: from qamajeed.Home ([39.45.181.116])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0e169dsm13909412f8f.65.2024.07.02.12.03.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 12:04:03 -0700 (PDT)
+From: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
+To: rafael@kernel.org,
+	lenb@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
+Subject: [PATCH v2] Updating a vulnerable use of strcpy.
+Date: Tue,  2 Jul 2024 23:55:24 +0500
+Message-Id: <20240702185523.17716-1-qasim.majeed20@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702132139.3332013-1-yosryahmed@google.com>
- <20240702103628.61879ef17b9b01305515c634@linux-foundation.org>
- <CAJD7tkb7=sBdxXTmcqxe3+UWsTT7R6-rKGBhkEfgEAdTY+5jCw@mail.gmail.com>
- <20240702113554.2471f000055f3c717fced4f5@linux-foundation.org> <9c8a139e-9e20-4f39-b750-fa390a8a745a@intel.com>
-In-Reply-To: <9c8a139e-9e20-4f39-b750-fa390a8a745a@intel.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 2 Jul 2024 11:55:02 -0700
-Message-ID: <CAJD7tka+=v2rSjWgs8zcNg2rQwgxg8V1m-nA-mxXdox=WoARXg@mail.gmail.com>
-Subject: Re: [RESEND PATCH v3 0/3] x86/mm: LAM fixups and cleanups
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 2, 2024 at 11:38=E2=80=AFAM Dave Hansen <dave.hansen@intel.com>=
- wrote:
->
-> On 7/2/24 11:35, Andrew Morton wrote:
-> > But when people run older (or current) kernels on newer hardware, they
-> > will hit this.  So a backport to cover 82721d8b25d7 ("x86/mm: Handle
-> > LAM on context switch") is needed.
-> >
-> > The series doesn't seem to be getting much traction so I can add it to
-> > mm.git's mm-unstable branch for wider testing, but it's clearly an x86
-> > tree thing.
->
-> I was really hoping Andy L would look at this since he suggested this
-> whole thing really.
->
-> I completely agree that this needs some wider testing.  How about I pull
-> it into x86/mm so it gets some linux-next testing instead of having it
-> in mm-unstable?  Maybe it'll also attract Andy's attention once it's in
-> there.
+Replacing strcpy with strscpy and memory bound the copy. strcpy is a deprecated function. It should be removed from the kernel source.
 
-That would be great. Thanks Dave!
+Reference: https://github.com/KSPP/linux/issues/88
+
+Signed-off-by: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
+
+> In what way exactly is it vulnerable?
+strcpy is a deprecated interface (reference: https://github.com/KSPP/linux/issues/88). It should be removed from kernel source.
+It is reported as vulnerable in Enabling Linux in Safety Critical Applications (ELISA) builder.
+
+> Why is a runtime check needed here if all of the sizes in question are known at compile time?
+Runtime check has been replaced with compile time check.
+
+---
+v1 -> v2: Commit message has been updated and runtime check is replace with compile time check.
+
+ drivers/acpi/acpi_video.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index 1fda30388297..be8346a66374 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -1128,8 +1128,8 @@ static int acpi_video_bus_get_one_device(struct acpi_device *device, void *arg)
+ 		return -ENOMEM;
+ 	}
+ 
+-	strcpy(acpi_device_name(device), ACPI_VIDEO_DEVICE_NAME);
+-	strcpy(acpi_device_class(device), ACPI_VIDEO_CLASS);
++	strscpy(acpi_device_name(device), ACPI_VIDEO_DEVICE_NAME, sizeof(ACPI_VIDEO_DEVICE_NAME));
++	strscpy(acpi_device_class(device), ACPI_VIDEO_CLASS, sizeof(ACPI_VIDEO_CLASS));
+ 
+ 	data->device_id = device_id;
+ 	data->video = video;
+@@ -2010,8 +2010,8 @@ static int acpi_video_bus_add(struct acpi_device *device)
+ 	}
+ 
+ 	video->device = device;
+-	strcpy(acpi_device_name(device), ACPI_VIDEO_BUS_NAME);
+-	strcpy(acpi_device_class(device), ACPI_VIDEO_CLASS);
++	strscpy(acpi_device_name(device), ACPI_VIDEO_BUS_NAME, sizeof(ACPI_VIDEO_BUS_NAME));
++	strscpy(acpi_device_class(device), ACPI_VIDEO_CLASS, sizeof(ACPI_VIDEO_CLASS));
+ 	device->driver_data = video;
+ 
+ 	acpi_video_bus_find_cap(video);
+-- 
+2.34.1
+
 
