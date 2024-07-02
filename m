@@ -1,132 +1,124 @@
-Return-Path: <linux-kernel+bounces-237590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3CBC923B33
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:17:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EECF923B38
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:18:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EE3D283C97
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:17:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4544B2159C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:18:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C5D157A5A;
-	Tue,  2 Jul 2024 10:17:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2880D15749C;
+	Tue,  2 Jul 2024 10:18:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oi/9xOCg"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GNR+DIhe"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1C3156F3A
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 10:17:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C06E12CD8B;
+	Tue,  2 Jul 2024 10:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719915453; cv=none; b=lE5ZLpmfdCR2ho1pWUiSxdfL0dGwwdFWGThEOZLQWMaM2edx8lc0AVxivhi14d0kqLAtabGEy0Y6HH1l7Us+HvyVs1SEGemsLyLue9WFM/TwELGZC7Lsu/p5FUVkJEY77d+U5mFLfeOt7oPLmdllYSPqxJ6RgEIXLBQuN75RITM=
+	t=1719915496; cv=none; b=uYH7QIUDZlz+Sn4uz2b2655pC6fa1OEhI1gdVyH9HSdN997PItIt05PJbp+tRZKr1BYXeYf6kM2lg2jRrdFp11Ove9Gjtj9LjFCiXrjPku3udQvrZeyB0EL93iFo9I9h5Oa8SlUj4+UAyU0jzxh/HYPQJmT/zA0mPmNGlU0FmvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719915453; c=relaxed/simple;
-	bh=siQZBD9sunBwr34OkX0W48YJK07Ln8v4+0iG1uCeLGE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bv+hWy7ocq7QL7o8sSyarAvilopfk3XlthCdT0MyDQXGts7Gtuis1L764YgALDN5uJ0h4SpjRbNUxGhgXQ+cgyCOO3GLkqn1XgDChbHSY/Wbx+qKKVknTvLXJ5M3WezfDJZIrFkWb+gBEhY7ikUz/lya3eWRx71YTvzv+/RH6IY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oi/9xOCg; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fab03d2eecso30710305ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 03:17:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719915450; x=1720520250; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4pKTTPmrnQobxgE7l8dU8flNulXP3EKlbQMbrPlJki0=;
-        b=oi/9xOCg2XvwABheFw6zU/5Mcy6ehXLaKDDdDw9pzqDcPqSNnxDXV0vNZbwwWqsq5A
-         /KvU6aOpHyO9DCgbhzO2pjU57Du9SaPT9wKQzJZBIsvGnBLI3gFSMePgH8l8I/jlRT+o
-         Mchie0vHqyD1aONoUty6CjET260c0mT/131g/lbkfzns1UvDeMF6HG9uiczUuolQoob+
-         R6qqSsx4ek8YRe2JaEvwyaXVXc4BXBW4aq3HWqTwTf5iQnn8rd/n2IU6e33NnrdGQwes
-         OVLOr7o/It82AVr2Be2OsTvYb4ay2QV3uhHTIl3NfY0fnkFtz4xKhyVc6uVlUBt16CWF
-         sQnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719915450; x=1720520250;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4pKTTPmrnQobxgE7l8dU8flNulXP3EKlbQMbrPlJki0=;
-        b=QJRB33mMW3697LHzmZnSIMByqBouaoIujU1swltuEQKp79MOINidxB1OCQxfdhb7wx
-         eDD7So6YHt9VnP6mIeC/fLYQKjijZtg5YZ1LCo/Al1WT8wCx9PxS9ICeEQLiwoWDyFIz
-         5Ag0kA9TdZZPCrNj3I2R6H240mVv40WFweiuqpgIWv/1dpZrg+99R1kGbpOO9TX+mEgC
-         5N0ep3cW2lUS/aVhjarv/I8h7gixrZkhpdKgCOE68sllVEn4FDrroQXinYnVcrNpfxo+
-         RhsNRNOvoSQPe6OGZrAXiBdAVw7BVth7x6JTsMVOM9/scrjyascAuHtTfjGv7tN/7XGn
-         WsIg==
-X-Forwarded-Encrypted: i=1; AJvYcCVhaj0xre19HvxHpJirYdy7WytvcbbNmj9t65TG1SifLPvbni81FYYLIJHQct/gBoJB93RXM7r3p7dpAWBBHvtFfqVyFAUwHqueAkAe
-X-Gm-Message-State: AOJu0Yy7SGvmL95doR10ogE5M/nEluji9Cx31yHHRoQ9Uf3BgtQrwrZR
-	P9Ej5DuXyVvukN7yRePhJQFWQYM0Tq+u7+rG+zFP2O3k7bNIp1UqY1kd/fiW7rk=
-X-Google-Smtp-Source: AGHT+IHMrBbMSgnyrBXJhkELUhdwwa1R4OK+0ew1rSLs2lXmY8A6OkIB5/dasHrqflqjUaIo8Xz5rw==
-X-Received: by 2002:a17:902:c40c:b0:1f9:b1a4:d43e with SMTP id d9443c01a7336-1fadbc96accmr80929285ad.20.1719915450474;
-        Tue, 02 Jul 2024 03:17:30 -0700 (PDT)
-Received: from localhost ([122.172.82.13])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac1549e59sm82771525ad.179.2024.07.02.03.17.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 03:17:29 -0700 (PDT)
-Date: Tue, 2 Jul 2024 15:47:27 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Juergen Gross <jgross@suse.com>
-Cc: Stefano Stabellini <sstabellini@kernel.org>,
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
-	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Al Viro <viro@zeniv.linux.org.uk>, xen-devel@lists.xenproject.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] xen: privcmd: Switch from mutex to spinlock for
- irqfds
-Message-ID: <20240702101727.nytmrgdzcebtinbt@vireshk-i7>
-References: <a66d7a7a9001424d432f52a9fc3931a1f345464f.1718703669.git.viresh.kumar@linaro.org>
- <17aa46c3-89e9-40aa-bb15-817230712f07@suse.com>
+	s=arc-20240116; t=1719915496; c=relaxed/simple;
+	bh=BkT4rWQ3OfnksBriWFGbdeSNo8U96033Ydeq12RMW2A=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=E9CBV8yS6v4rxnqXVeUs+DSXNpszEwiRamT+HH7FgNievBa9I4mfHsZ+Hz7z/RofI2r99QFmIj3xpNJ8j6c0Gku/ODu58CM7G1/6/RJfMv/6hxOasGDB+DND702HgCnDzTKSyN1RwR5/W8BqvNWzj5hnrptQ42C/cQzsrBISWHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GNR+DIhe; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1719915493;
+	bh=BkT4rWQ3OfnksBriWFGbdeSNo8U96033Ydeq12RMW2A=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=GNR+DIhea/jWN8FskA19elRIHHjiMWmoKv2chfAkQ9LtF8SzDMI8Fl4vefnD8Gsne
+	 loNCWJ/+iLjARnyOuR0eIGjJqgaWOWk/qS5cTpIzjjdIRj2XuE9KbUPFM31HCEn+H9
+	 uKYXGnhTQrJYjtGwYXOgXhf6mSry5Ktg+N+SU4b1Cwc9vx6qf/YbmIFdoDQvpfyUqJ
+	 khor/Iz2XJG0FbfoZ8Hc179ikdashKh80XAUhgTInWt17STlyqgvZdnJsMrxS5DsWC
+	 OyDn/4Qy3YX0SoM/MRAwMKBVGBOHiUGVqm7KrRbG3HKd7PcinFGtMFXBl0UPGkZzt4
+	 Y5vKb8o9pe45A==
+Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id C379C3782194;
+	Tue,  2 Jul 2024 10:18:04 +0000 (UTC)
+Message-ID: <23db41bb-1f3b-4b7b-95ac-960b8775a062@collabora.com>
+Date: Tue, 2 Jul 2024 15:17:59 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <17aa46c3-89e9-40aa-bb15-817230712f07@suse.com>
+User-Agent: Mozilla Thunderbird
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, kernel@collabora.com,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>
+Subject: Re: [PATCH 0/4] selftest: x86: conform tests to TAP format output
+To: Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org
+References: <20240414131807.2253344-1-usama.anjum@collabora.com>
+ <dd277b6b-b28e-4860-b285-e89fd5fd3d41@collabora.com>
+ <90dc0dfc-4c67-4ea1-b705-0585d6e2ec47@linuxfoundation.org>
+ <386da8e3-1559-4ec2-9a66-f5f3f6405a2b@collabora.com>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <386da8e3-1559-4ec2-9a66-f5f3f6405a2b@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 02-07-24, 12:12, Juergen Gross wrote:
-> On 18.06.24 11:42, Viresh Kumar wrote:
-> > irqfd_wakeup() gets EPOLLHUP, when it is called by
-> > eventfd_release() by way of wake_up_poll(&ctx->wqh, EPOLLHUP), which
-> > gets called under spin_lock_irqsave(). We can't use a mutex here as it
-> > will lead to a deadlock.
-> > 
-> > Fix it by switching over to a spin lock.
-> > 
-> > Reported-by: Al Viro <viro@zeniv.linux.org.uk>
-> > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > ---
-> >   drivers/xen/privcmd.c | 26 +++++++++++++++-----------
-> >   1 file changed, 15 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
-> > index 67dfa4778864..5ceb6c56cf3e 100644
-> > --- a/drivers/xen/privcmd.c
-> > +++ b/drivers/xen/privcmd.c
-> > @@ -13,7 +13,6 @@
-> >   #include <linux/file.h>
-> >   #include <linux/kernel.h>
-> >   #include <linux/module.h>
-> > -#include <linux/mutex.h>
+On 6/10/24 10:19 AM, Muhammad Usama Anjum wrote:
+> Adding Borislav, Dave and x86 mailing list:
+> 	Please review the series.
+Kind reminder
+
 > 
-> I don't think you can drop that. There is still the ioreq_lock mutex.
-
-You are right. The header got included from somewhere else I believe
-since the build didn't fail for me.
-
-> I can fix that up while committing, with that:
+> On 6/8/24 1:52 AM, Shuah Khan wrote:
+>> On 5/27/24 23:04, Muhammad Usama Anjum wrote:
+>>> Kind reminder
+>>>
+>>> On 4/14/24 6:18 PM, Muhammad Usama Anjum wrote:
+>>>> In this series, 4 tests are being conformed to TAP.
+>>>>
+>>>> Muhammad Usama Anjum (4):
+>>>>    selftests: x86: check_initial_reg_state: conform test to TAP format
+>>>>      output
+>>>>    selftests: x86: corrupt_xstate_header: conform test to TAP format
+>>>>      output
+>>>>    selftests: fsgsbase_restore: conform test to TAP format output
+>>>>    selftests: entry_from_vm86: conform test to TAP format output
+>>>>
+>>>>   .../selftests/x86/check_initial_reg_state.c   |  24 ++--
+>>>>   .../selftests/x86/corrupt_xstate_header.c     |  30 +++--
+>>>>   tools/testing/selftests/x86/entry_from_vm86.c | 109 ++++++++--------
+>>>>   .../testing/selftests/x86/fsgsbase_restore.c  | 117 +++++++++---------
+>>>>   4 files changed, 139 insertions(+), 141 deletions(-)
+>>>>
+>>>
+>>
+>> These patches usually go through x86 repo to avoid merge conflicts.
+>>
+>> I need ack from x86 maintainers to take these. I don't see x86 list
+>> cc'ed.
+>>
+>> Please make sure to include everybody on these threads to get quicker
+>> response.
+> It seems like selftests/x86 path is missing from Maintainers file and it
+> causes these issues. I'll look at fixing it.
 > 
-> Reviewed-by: Juergen Gross <jgross@suse.com>
-
-Thanks.
+>>
+>> thanks,
+>> -- Shuah
+>>
+>>
+> 
 
 -- 
-viresh
+BR,
+Muhammad Usama Anjum
 
