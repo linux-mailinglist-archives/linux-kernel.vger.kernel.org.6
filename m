@@ -1,152 +1,155 @@
-Return-Path: <linux-kernel+bounces-237913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBE38923FCE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:01:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 181D8923FD5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:04:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29EA01C23CA9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:01:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42F171C212F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70361B581B;
-	Tue,  2 Jul 2024 14:01:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F663770D;
+	Tue,  2 Jul 2024 14:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="dkYKV11w"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="OHSlqMtW"
+Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A0A25601;
-	Tue,  2 Jul 2024 14:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F3ABA2D;
+	Tue,  2 Jul 2024 14:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719928898; cv=none; b=is0nVpGMNIpbApyLvuY4TjVSylPbUqjyTJb2e5x7W+rLCdAOTAlmaSScv3fJB+h7sZO6QH/gOCt/2meDenBvXlwBkBhrQTPmTcvFPIPikR1lmnnjJ1u0X2eSZUfZVwhL9SESBQvxgD+TaNodMJVFUTTCbRxq2fVlmEIAahrFLsY=
+	t=1719929034; cv=none; b=Dihkhuih33Df8seMIE63wIYGW5H+tlHZaLPwa3vHOJ3S3yP1ugzA3JxEmhmmQJSk31jdaAYS3fM3WqPkUZZkXsaaPi1XmUS0WyKaI0WdwGvpZwn4c+iQB00dMAT0oD2XJmv9S+6vqeBNc/Jx17t2iqZ9fZ6RS1GMIaH19SspN9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719928898; c=relaxed/simple;
-	bh=7MaRnJNNbK0yFj8reqUPokn1/QUzs447GBRZjWZumRc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B3fxK0IYuSWou+gZNyi0doQuDjivdmSXTKtcOH+JWdaJu72s0wYTpcDDn167bn97HK/nc0ZbIHJOJ0JZFfCayp3vootXRqFxpGLNH8Hr3Lw3QeEEpHvmEh1G1r9YrV34anZx/0NfUZBxB57zLbdlOhssNdxSArkrd77yMPhnH6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=dkYKV11w; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4WD4MX5qJlz9scM;
-	Tue,  2 Jul 2024 16:01:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1719928888;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J6W5uuHM9ZW/rEky4ztQshWxBTdgHKyHpuUWE6Z27TI=;
-	b=dkYKV11weiLwFZR7c/DrT5d2a6fAJRM81tYaaNbCabxi3EXwnG32NzShMiXaGpk8PFHZ7j
-	1A+r2PDhFZKos+HXcuniuhlfbSi74LCBKFvW6a96siJGjAhy5jBd3D6XvqD7Tv0C8itl2c
-	gD2P6mYzM7UoL5AhZ0uaMf0Itvldd/aFsUPi74ytaOuyzTfakrF6S6EYeKK7FH3o5Xlh9n
-	7SginUHFUNydqIR79xCnQr69PFDY38TKf42c+XaAv+MWyf3YTOPmY13kH13mvBChvBWBVX
-	L4f5JbCaoF5xoYAjmpTuXhlsMtZptSkOOYHN28ZAJgZTwE4Jk81+EsFj1jx4bw==
-Date: Tue, 2 Jul 2024 14:01:23 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: david@fromorbit.com, willy@infradead.org, chandan.babu@oracle.com,
-	djwong@kernel.org, brauner@kernel.org, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
-	linux-mm@kvack.org, john.g.garry@oracle.com,
-	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
-	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org, Zi Yan <zi.yan@sent.com>
-Subject: Re: [PATCH v8 06/10] iomap: fix iomap_dio_zero() for fs bs > system
- page size
-Message-ID: <20240702140123.emt2gz5kbigth2en@quentin>
-References: <20240625114420.719014-1-kernel@pankajraghav.com>
- <20240625114420.719014-7-kernel@pankajraghav.com>
- <20240702074203.GA29410@lst.de>
- <20240702101556.jdi5anyr3v5zngnv@quentin>
- <20240702120250.GA17373@lst.de>
+	s=arc-20240116; t=1719929034; c=relaxed/simple;
+	bh=625v53wes7Bvv0wAtLAXA470pPJVJzm/uHoRyuklkVU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OhGWqoLWKwLY+96bIVvOuwxE3oLJv4ZyR34qbska/1DsjeMDp2zz9FXWPePP0PvZG8GcspMz9dJyMoWkjWCPkSn6GvufWNrCyAhVHQaA/oU4GBQq+jFNbzTWjg9/irvoA7yVEdl7KeS7yfidczFjQd5aSnq5njBRnf++MkCrIKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=OHSlqMtW; arc=none smtp.client-ip=109.73.34.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
+Received: from mx1.t-argos.ru (localhost [127.0.0.1])
+	by mx1.t-argos.ru (Postfix) with ESMTP id 6F2EB100002;
+	Tue,  2 Jul 2024 17:03:32 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
+	t=1719929012; bh=OIRWtO9tmmvE5rTVXX2zQUO9W6ij8CfZDofL07ySZds=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=OHSlqMtWM45LdOJGQaQszpLwJYeZ1cn4GGbhfFwpxWjNwj6ymQQxU2qY8KU5lQapM
+	 plg4JurwmY4pbT6oLGUjxftqfOiaq71204y0vZ4sXWIH80WqopAkZsVuFBZNQBdM3u
+	 ASuApnHOKGLdhzTzH9b+MDVyauCpN787NTFQvu/ukh+82sO3+3eBpwkXJugo8ljKON
+	 wYTdhWMB+uqP3z8o5i4m0QekUax3m+6b1gPqOt/z8wl6Xl5Dx20rXtGO7ALoHCGnpE
+	 bT2YwZ1FuQN0fcL4qDo5KM0Ow93VEHYjmlY+KzWlz8OcVEStd7QBK88lg5Soknke7s
+	 GFO+5WQABIa2w==
+Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
+	by mx1.t-argos.ru (Postfix) with ESMTP;
+	Tue,  2 Jul 2024 17:02:24 +0300 (MSK)
+Received: from localhost.localdomain (172.17.215.5) by ta-mail-02
+ (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 2 Jul 2024
+ 17:02:04 +0300
+From: Aleksandr Mishin <amishin@t-argos.ru>
+To: Igal Liberman <igal.liberman@freescale.com>
+CC: Aleksandr Mishin <amishin@t-argos.ru>, Madalin Bucur
+	<madalin.bucur@nxp.com>, Sean Anderson <sean.anderson@seco.com>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH v2] fsl/fman: Validate cell-index value obtained from Device Tree
+Date: Tue, 2 Jul 2024 17:01:24 +0300
+Message-ID: <20240702140124.19096-1-amishin@t-argos.ru>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20240702095034.12371-1-amishin@t-argos.ru>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240702120250.GA17373@lst.de>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
+ (172.17.13.212)
+X-KSMG-Rule-ID: 1
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 186281 [Jul 02 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 21 0.3.21 ebee5449fc125b2da45f1a6a6bc2c5c0c3ad0e05, {Tracking_from_domain_doesnt_match_to}, t-argos.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;mx1.t-argos.ru.ru:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/07/02 10:26:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/07/02 07:20:00 #25796017
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-> > > A WARN_ON without actually erroring out here is highly dangerous. 
-> > 
-> > I agree but I think we decided that we are safe with 64k for now as fs 
-> > that uses iomap will not have a block size > 64k. 
-> > 
-> > But this function needs some changes when we decide to go beyond 64k
-> > by returning error instead of not returning anything. 
-> > Until then WARN_ON_ONCE would be a good stop gap for people developing
-> > the feature to go beyond 64k block size[1]. 
-> 
-> Sure, but please make it return an error and return that instead of
-> just warning and going beyond the allocated page.
+Cell-index value is obtained from Device Tree and then used to calculate
+the index for accessing arrays port_mfl[], mac_mfl[] and intr_mng[].
+In case of broken DT due to any error cell-index can contain any value
+and it is possible to go beyond the array boundaries which can lead
+at least to memory corruption.
+Validate cell-index value obtained from Device Tree.
 
-Does this make sense?
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index 61d09d2364f7..14be34703588 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -240,16 +240,19 @@ void iomap_dio_bio_end_io(struct bio *bio)
- }
- EXPORT_SYMBOL_GPL(iomap_dio_bio_end_io);
+Fixes: 414fd46e7762 ("fsl/fman: Add FMan support")
+Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+---
+v1->v2: Move check to mac.c to avoid allmodconfig build errors and reference leaks
+
+ drivers/net/ethernet/freescale/fman/fman.c | 1 -
+ drivers/net/ethernet/freescale/fman/fman.h | 3 +++
+ drivers/net/ethernet/freescale/fman/mac.c  | 4 ++++
+ 3 files changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/freescale/fman/fman.c b/drivers/net/ethernet/freescale/fman/fman.c
+index d96028f01770..fb416d60dcd7 100644
+--- a/drivers/net/ethernet/freescale/fman/fman.c
++++ b/drivers/net/ethernet/freescale/fman/fman.c
+@@ -24,7 +24,6 @@
  
--static void iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
-+static int iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
-                loff_t pos, unsigned len)
- {
-        struct inode *inode = file_inode(dio->iocb->ki_filp);
-        struct bio *bio;
+ /* General defines */
+ #define FMAN_LIODN_TBL			64	/* size of LIODN table */
+-#define MAX_NUM_OF_MACS			10
+ #define FM_NUM_OF_FMAN_CTRL_EVENT_REGS	4
+ #define BASE_RX_PORTID			0x08
+ #define BASE_TX_PORTID			0x28
+diff --git a/drivers/net/ethernet/freescale/fman/fman.h b/drivers/net/ethernet/freescale/fman/fman.h
+index 2ea575a46675..74eb62eba0d7 100644
+--- a/drivers/net/ethernet/freescale/fman/fman.h
++++ b/drivers/net/ethernet/freescale/fman/fman.h
+@@ -74,6 +74,9 @@
+ #define BM_MAX_NUM_OF_POOLS		64 /* Buffers pools */
+ #define FMAN_PORT_MAX_EXT_POOLS_NUM	8  /* External BM pools per Rx port */
  
-+       if (!len)
-+               return 0;
-        /*
-         * Max block size supported is 64k
-         */
--       WARN_ON_ONCE(len > ZERO_PAGE_64K_SIZE);
-+       if (len > ZERO_PAGE_64K_SIZE)
-+               return -EINVAL;
- 
-        bio = iomap_dio_alloc_bio(iter, dio, 1, REQ_OP_WRITE | REQ_SYNC | REQ_IDLE);
-        fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
-@@ -260,6 +263,7 @@ static void iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
- 
-        __bio_add_page(bio, zero_page_64k, len, 0);
-        iomap_dio_submit_bio(iter, dio, bio, pos);
-+       return 0;
- }
- 
- /*
-@@ -368,8 +372,10 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
-        if (need_zeroout) {
-                /* zero out from the start of the block to the write offset */
-                pad = pos & (fs_block_size - 1);
--               if (pad)
--                       iomap_dio_zero(iter, dio, pos - pad, pad);
++/* General defines */
++#define MAX_NUM_OF_MACS			10
 +
-+               ret = iomap_dio_zero(iter, dio, pos - pad, pad);
-+               if (ret)
-+                       goto out;
-        }
+ struct fman; /* FMan data */
  
-        /*
-@@ -443,7 +449,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
-                /* zero out from the end of the write to the end of the block */
-                pad = pos & (fs_block_size - 1);
-                if (pad)
--                       iomap_dio_zero(iter, dio, pos, fs_block_size - pad);
-+                       ret = iomap_dio_zero(iter, dio, pos, fs_block_size - pad);
-        }
- out:
-        /* Undo iter limitation to current extent */
+ /* Enum for defining port types */
+diff --git a/drivers/net/ethernet/freescale/fman/mac.c b/drivers/net/ethernet/freescale/fman/mac.c
+index 9767586b4eb3..ac9ad5e67b44 100644
+--- a/drivers/net/ethernet/freescale/fman/mac.c
++++ b/drivers/net/ethernet/freescale/fman/mac.c
+@@ -247,6 +247,10 @@ static int mac_probe(struct platform_device *_of_dev)
+ 		dev_err(dev, "failed to read cell-index for %pOF\n", mac_node);
+ 		return -EINVAL;
+ 	}
++	if (val >= MAX_NUM_OF_MACS) {
++		dev_err(dev, "cell-index value is too big for %pOF\n", mac_node);
++		return -EINVAL;
++	}
+ 	priv->cell_index = (u8)val;
+ 
+ 	/* Get the MAC address */
+-- 
+2.30.2
 
---
-Pankaj
 
