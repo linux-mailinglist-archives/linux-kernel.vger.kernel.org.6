@@ -1,110 +1,180 @@
-Return-Path: <linux-kernel+bounces-238148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21AC69244A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:13:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D8DE9244E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:16:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A25D3B25903
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:13:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0813B2654D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0341BE246;
-	Tue,  2 Jul 2024 17:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C0A1C0054;
+	Tue,  2 Jul 2024 17:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K7jBBI0c"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="LP/7BBDn"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2087.outbound.protection.outlook.com [40.107.243.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7F015B0FE;
-	Tue,  2 Jul 2024 17:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719940373; cv=none; b=OCB6b/kNPztqyiJbht3u7pLZf9FxmZMejJ2kCvT6snAvH1NvYvJzXnidPthCUC7ntnWsXmfHOTFhp6d1gpv5W1CFsmOzhMcCAozMggVOoE2onNHaJelRQP2X7vDxJUvGjfcX3ER7ocBuCQbC9kDjGn5TXM67V/I0+OkxQcGhQO8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719940373; c=relaxed/simple;
-	bh=DgA7cfU5r9OZRCmLMvOPAI4mDa2XadFyFMbIQBBRS50=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OWT3i798pMn+cbWg7OkQFV9NH+Nrxz0j8ExPTXPR4Cilkcl8HAYjR5HCbaQOW5xOQCJHn90H2xWzV5F+I/f2w7+8QVroQeGDyQFoj0y7KJ8eCFgOIZXYC6q8ezvw6HeEBClgiF0+v7OrPSDOgg2z1E5YxKYI8UOEAOSIl4pLduc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K7jBBI0c; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fa0f143b85so31719735ad.3;
-        Tue, 02 Jul 2024 10:12:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719940371; x=1720545171; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ijlINSkzKP0UYjx8QkFk3CJQA3Xa/exZyxHOlqZ+kd0=;
-        b=K7jBBI0cKxoRlC0Z9A0sObvFQLtU8xFznK18IzxwldfJc+1z0cVdcNLi/UZRV/ZYEc
-         clFBIPHhSbQv4kbOUeocUOxS8W0vYZ7t8Cqr2LLclsnJfkg5XZFyWFHNjh0Rp6r++IBg
-         6KS/Vz7HipU4HYXyTnyGWEO/XV2Z13sNUsP46GELU23ccUvaRDiKYSUmhcDDGAp5QEiH
-         +fM0G7fF7qsTCYRVQwaxqwGAKWPf+msLiwh9k2RoE2v10PfwPEb9aBtvR86G190j0p46
-         8tCTpFYy9mQk/ep/dWi5gJwfRJqYmcsBxwhuwI70hgSbZf/tAGqQXmM45eD69+RU1pHU
-         Koug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719940371; x=1720545171;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ijlINSkzKP0UYjx8QkFk3CJQA3Xa/exZyxHOlqZ+kd0=;
-        b=wiL8CoJpv0lXOvFb50zmv8orPrNx4D9qRZ18VONE1DLS7G2XqXwN9WQsuF03E9LH4F
-         emN/birFBLAaWbRuGjP4ugYbX8xhN074aenB11ugVKrvipSD6+Kxn3GrrCB/IwEL5rcE
-         2ObYpc+g2dnSYVC3gvwm5p2fBDrY2qMQg0kC5Oc9NxRkBW8qP8VwjEMGEXQZc0BtKJSs
-         i/FK14TJm0D2o6KsKoACdbzMrsH9m2+Ms5CcnAwu/9g13zmv01G4c/tQTZPKffHrBX0K
-         yJfFkHpWv/UjHrVcUdUemFLRzHotJTCpzTtksrFEV1QWszvlKw2FXKPtkjMRF87Cabed
-         vWsg==
-X-Forwarded-Encrypted: i=1; AJvYcCVP0jBSt1EDoc9LmFn2ilr2SY3BiiWZgBH4YfVWSUWeXM1FYtJzDMWQGL2/PIWUrddeFX/9N1HYO0pTEgKd6p7u0ITZfUy66A==
-X-Gm-Message-State: AOJu0YxluwsY6K4UTEESirlVtXJuoTV4iNfG8gdZjg5ZdqQ+3zqJ+4Kb
-	On1Ot/eMpx0lGy1P1twSnAYPnc76PUulDatBJbGIFCKdhQxbVT7zGvdIkg==
-X-Google-Smtp-Source: AGHT+IFtvOAOPvBw51G6xGDnGYQR4jj0xhEcOUX9FgXruavu5hhPth9FgxN59oXFPCdDtUuxbpcupA==
-X-Received: by 2002:a17:902:d492:b0:1fa:4b9:cffc with SMTP id d9443c01a7336-1fadbb5ecdemr57563255ad.0.1719940371388;
-        Tue, 02 Jul 2024 10:12:51 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac10d2060sm89296925ad.15.2024.07.02.10.12.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 10:12:51 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Tue, 2 Jul 2024 07:12:49 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	Vipin Sharma <vipinsh@google.com>,
-	Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH] cgroup_misc: add kernel-doc comments for enum
- misc_res_type
-Message-ID: <ZoQ1ETVlajXTSbr9@slm.duckdns.org>
-References: <20240701234937.8234-1-rdunlap@infradead.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4CB1BE248;
+	Tue,  2 Jul 2024 17:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719940551; cv=fail; b=TiOzzm6RgZKmmnX1/Tiv1M5appvrAIo6AC8TVYZ/Oa3XjZnpPOnskge26mtIs1t8SmSjzkZ62g/QkxJ5DyECD2uQ56iJwMG7G258GPoXrXXlkjLADrYUJaXm7Xm9AO6VRBYnr0mD9A2uM445if1ZHyUJ6PyVv50zpj9SGNyfybs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719940551; c=relaxed/simple;
+	bh=yDSdeIXaHEWI0p+SVSp2OwVPdQbLc/kOng8lp3YQhiU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cvdo+2qaAH9XEjrHDghf4+KOQbwFHpOCUQAgfLVeCAjZAmoESQlSxM1CDqJNOAEylRTGWC5GGIKyHU2sNsmUmJzHb96Xcocpe5bmqp2TLsSDw3kTbz4RMMQXPSmupBcKVd/NpBzxRvSxpdWRC/xns3Tkl/f4P2ZzkQIn0QhaWQw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=LP/7BBDn; arc=fail smtp.client-ip=40.107.243.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nxQ75zzA/Yi0scF2eYwJG7ERYGvegTvpjMxXbvbXBB9hJmX4ISjskycx1zYLQXkTVblj9PdjWlZ/YXxJRqSUgkbDqTPWJxU66ClG+gmmi1kvH+lzRLOYOkSZR+H6ZIMT2k4Tgrp19jzKL2Qx81CaFZ4+Ep/3TMXF4Hl5sn+jdT+IS/4Tod9xexMK/6duslut6vc4kOwlbahSslWIf5gu6GLU0+XL7k/PZUpyLvV9N4yzomqbjZroTykttCNDJCqF3cMzENuPlEqKKIZVrKHgAU1yLetay29o3ahgsTCQJkQkMha8AHT2TssUA1QoyVYrxbMYx3T+2kmHVlewdvm9lg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=efGjyeGz+CX9Gb5D6Ag6M6ahh59pFv68S0tThCAlAJo=;
+ b=BHE+v/vLxVTkHRCBcoO15VS5lsZhvK2yIIRFyEps0O0GMEGEmaqysD1xg/ra2hXzaxkps3XqfNoObd8bYF/R0DzrqGmcb9VcFrfBWtDI0vVIdvzAyHRA24zmvsdd50YSG5F0QckSCpLdiPkmgV7WaVBhsJN+8Br4FXTwZdnyLTU3cdL0SBPddb203PIBm401ovGrbDtGbFJ+Og851cvlA1mL3r2YjtE+0yQKhY+NRs1jVlMtgLYA0+f5DBhQGaQDnQVWYnvXDavLU9VYwk6nKBjKlGF4hj/YWDcvRKUcuLCYF55XQBosO+TTZboQad3rh5lXjLxtlesz6lGCUS2J1w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=efGjyeGz+CX9Gb5D6Ag6M6ahh59pFv68S0tThCAlAJo=;
+ b=LP/7BBDnht2jpy7S8kewEV+coHdlvQs4CLtW+gOlom5SqV3sJHGCNug+5WWPJ8kqSsHKROxUd15SLBpHQe9GMvFhAQd/MM4aX+1dsYg+p4eWDSX6AIm6ONGbqSrXhJRm45YYiEsg7vBQ2X7jgHuM33Jp39saHO3YpfQPvZh9s9w=
+Received: from BN9PR03CA0275.namprd03.prod.outlook.com (2603:10b6:408:f5::10)
+ by IA1PR12MB7709.namprd12.prod.outlook.com (2603:10b6:208:423::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.32; Tue, 2 Jul
+ 2024 17:15:41 +0000
+Received: from BN1PEPF00004689.namprd05.prod.outlook.com
+ (2603:10b6:408:f5:cafe::c9) by BN9PR03CA0275.outlook.office365.com
+ (2603:10b6:408:f5::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.23 via Frontend
+ Transport; Tue, 2 Jul 2024 17:15:41 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN1PEPF00004689.mail.protection.outlook.com (10.167.243.134) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7741.18 via Frontend Transport; Tue, 2 Jul 2024 17:15:41 +0000
+Received: from AUS-HP-PV-STX4.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 2 Jul
+ 2024 12:15:40 -0500
+From: Mario Limonciello <mario.limonciello@amd.com>
+To: "Gautham R . Shenoy" <gautham.shenoy@amd.com>
+CC: Meng Li <li.meng@amd.com>, Perry Yuan <perry.yuan@amd.com>, "open list:AMD
+ PSTATE DRIVER" <linux-pm@vger.kernel.org>, open list
+	<linux-kernel@vger.kernel.org>, Dhananjay Ugwekar
+	<Dhananjay.Ugwekar@amd.com>, Mario Limonciello <mario.limonciello@amd.com>
+Subject: [PATCH 1/2] cpufreq/amd-pstate-ut: Don't check for highest perf matching on prefcore
+Date: Tue, 2 Jul 2024 12:15:14 -0500
+Message-ID: <20240702171515.6780-1-mario.limonciello@amd.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240701234937.8234-1-rdunlap@infradead.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN1PEPF00004689:EE_|IA1PR12MB7709:EE_
+X-MS-Office365-Filtering-Correlation-Id: ed11b728-fce5-44e5-4f95-08dc9aba99d7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?NdnVK+6ip4lKT3CXE2oqVO/5EWaRfW2eYtTenbFdlAw7lNE0YwX0p8h8Rt9U?=
+ =?us-ascii?Q?y1ZO/qkWZuUEdt1AUBKTiITOmnM9XhffhKvq5LIUbutJ0HIagQeFbJcRXkp3?=
+ =?us-ascii?Q?UFlUP5VmQbZE+Z8uProrag8M41UFH+fl/v+lbaOoKTiWXlHBhp5cYEsO9yCl?=
+ =?us-ascii?Q?DPXkOGQQYtkvNgHzNicPRLG6CNxM2LS16bfEb+o8brHE4Ci3NXYCJT8DNNkH?=
+ =?us-ascii?Q?vxDmawPJFMM8MjYkishGR/vHxU3+b3n7epZA8olqbFxhyInb2c/rSu/UN6D/?=
+ =?us-ascii?Q?RHMZu3sh0glFrbIQ3VDGvTh7PCEr8L39pT3W81IC5193gi0clUCpUDamO/QG?=
+ =?us-ascii?Q?naRpJeDYX/4SNRoyWrXj0EQSCW0+vWebg4XWX6MnE9/MNbkS+MOYDzOrcNlY?=
+ =?us-ascii?Q?GvmRMVVC5HOiTTLU8q6r7LlX/T9Z8+x8h15CWMX6+hG66qKbnVeUQ8UhQCCg?=
+ =?us-ascii?Q?4rfI+W4vvrhy4wslhxFQQ32b/vWmF91NeCGvdnLLugx5497GRcMjBOQf2pzq?=
+ =?us-ascii?Q?FaBp3EgYQuOrVVayZbFE5D2qVGfp2kHLv59+Su+FgbgQrNfZ16UEU+mK7uHC?=
+ =?us-ascii?Q?TsbPcZY3ECYm5d28DGFzF5sbCoiAcd6hfZG9xXPLLSnf4ygZplIMxAFFGcN6?=
+ =?us-ascii?Q?Cl5JmXNLKo8dH+0QFw6PyajEbY1MvdjEYEnrb+xuZTukkxqYNpk58B2zwXTs?=
+ =?us-ascii?Q?CYI5TR3zL4i9LpVtS+Q7MHf5bzgNFS/g3TCSW6KvoIWfX1fm13r4Mja+OFV0?=
+ =?us-ascii?Q?8ea1Uv4Jo8KfGGNiMNj+hIxKTrUTDHmHi+Euq/FreEeN72nK2luaz+Z9Zq1j?=
+ =?us-ascii?Q?ZeTUpFYcR669hEauFg9JXjkAfiiC0WI1OtHHpuMo4JJBhoindqRav5h9XnWS?=
+ =?us-ascii?Q?a+gnk3+fP5basIGcGC8koKJLKa4NtGSShTwwmpu/S7oc9Elkm2CVxzdnqWrc?=
+ =?us-ascii?Q?qfUiNixfMgoUJJdQigVTnyBvroaSaWJDJLGcEg1kB3EKX6q6QDHRDOlpJn+O?=
+ =?us-ascii?Q?A4aDpMEzjpKB467TApyZYVUNegIopONS31+Hvbze1Cww0XlkQPlUFB9Q6iXH?=
+ =?us-ascii?Q?Ws5owBwaUlu3WGFdRg2Z078dC2IRgxycoFwW7FlIFbtbc20TnBAeFG4zVNwz?=
+ =?us-ascii?Q?5GN1JFWEMaSgVxC+67Z6kLZxIvwRKf6kdjeC9IJlIC40E5BKlU7DKSyp2e7p?=
+ =?us-ascii?Q?Am8/r/BB40VJ9p9Sj3WaGFSIeV/XQC62OPLU19d6QCssGtxbq5wH4FPe2L+w?=
+ =?us-ascii?Q?L8/TeDBJS+fNROc4j2Z1NOdZCJCcNXqs9Q7VwazVaINDq+jfJDPGE2+JwM7l?=
+ =?us-ascii?Q?KC0InY6psUN/pZ7e9xFQMGzWCxsU7t6EWfNAuRpDY7CbBaxQFj3k2D6GlQf5?=
+ =?us-ascii?Q?GpJRFNRN3Jr5RDJEBTcKeVklNem3/wXH0xCNByW+aopOp1prt2hA63XiFl9f?=
+ =?us-ascii?Q?tFnacDDme4rPapzeAP6pRQ+F2dcfgxm8?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jul 2024 17:15:41.4762
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ed11b728-fce5-44e5-4f95-08dc9aba99d7
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF00004689.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7709
 
-On Mon, Jul 01, 2024 at 04:49:37PM -0700, Randy Dunlap wrote:
-> Fully document enum misc_res_type with kernel-doc comments to prevent
-> kernel-doc warnings:
-> 
-> misc_cgroup.h:12: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
->  * Types of misc cgroup entries supported by the host.
-> misc_cgroup.h:12: warning: missing initial short description on line:
->  * Types of misc cgroup entries supported by the host.
-> 
-> Fixes: a72232eabdfc ("cgroup: Add misc cgroup controller")
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: cgroups@vger.kernel.org
+If a system is using preferred cores the highest perf will be inconsistent
+as it can change from system events.
 
-Applied to cgroup/for-6.11.
+Skip the checks for it.
 
-Thanks.
+Fixes: e571a5e2068e ("cpufreq: amd-pstate: Update amd-pstate preferred core ranking dynamically")
+Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+---
+ drivers/cpufreq/amd-pstate-ut.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/cpufreq/amd-pstate-ut.c b/drivers/cpufreq/amd-pstate-ut.c
+index 66b73c308ce6..b7318669485e 100644
+--- a/drivers/cpufreq/amd-pstate-ut.c
++++ b/drivers/cpufreq/amd-pstate-ut.c
+@@ -160,14 +160,17 @@ static void amd_pstate_ut_check_perf(u32 index)
+ 			lowest_perf = AMD_CPPC_LOWEST_PERF(cap1);
+ 		}
+ 
+-		if ((highest_perf != READ_ONCE(cpudata->highest_perf)) ||
+-			(nominal_perf != READ_ONCE(cpudata->nominal_perf)) ||
++		if (highest_perf != READ_ONCE(cpudata->highest_perf) && !cpudata->hw_prefcore) {
++			pr_err("%s cpu%d highest=%d %d highest perf doesn't match\n",
++				__func__, cpu, highest_perf, cpudata->highest_perf);
++			goto skip_test;
++		}
++		if ((nominal_perf != READ_ONCE(cpudata->nominal_perf)) ||
+ 			(lowest_nonlinear_perf != READ_ONCE(cpudata->lowest_nonlinear_perf)) ||
+ 			(lowest_perf != READ_ONCE(cpudata->lowest_perf))) {
+ 			amd_pstate_ut_cases[index].result = AMD_PSTATE_UT_RESULT_FAIL;
+-			pr_err("%s cpu%d highest=%d %d nominal=%d %d lowest_nonlinear=%d %d lowest=%d %d, they should be equal!\n",
+-				__func__, cpu, highest_perf, cpudata->highest_perf,
+-				nominal_perf, cpudata->nominal_perf,
++			pr_err("%s cpu%d nominal=%d %d lowest_nonlinear=%d %d lowest=%d %d, they should be equal!\n",
++				__func__, cpu, nominal_perf, cpudata->nominal_perf,
+ 				lowest_nonlinear_perf, cpudata->lowest_nonlinear_perf,
+ 				lowest_perf, cpudata->lowest_perf);
+ 			goto skip_test;
 -- 
-tejun
+2.43.0
+
 
