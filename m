@@ -1,50 +1,56 @@
-Return-Path: <linux-kernel+bounces-238048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EA0C9242A0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:42:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 110B69242A4
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:42:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 517281C23ED2
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:42:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B07E11F22D33
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1431BC08A;
-	Tue,  2 Jul 2024 15:42:30 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B84471BC07B;
+	Tue,  2 Jul 2024 15:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jjPJ4A44"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16DE14D42C;
-	Tue,  2 Jul 2024 15:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A781BC072
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 15:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719934950; cv=none; b=WXHK57rRqbII7K3kQTfBRsiT9nSh2CUP657n4WKqQ2XGafcv9PN0WciJmi343zbBRoPJLjlzoxCmQmfmmZB0RX/rQr/qVkKHFReHSoPEoc9yrCqEPiJH/iFDGgMfpgf5FYpvHFp0JT9IDXg/7Vm0KgTkdhBPQfKR3oNUJcQ0rfE=
+	t=1719934962; cv=none; b=ktmLQTYZB1FH3RFKFax8UliX562/vuF9r60Y41Hrh1ZEdu5KXs4I5nfyeH1TahyaVaxghyrXfbJryNO3mTjCsFraOpCcHVrk7vkhmUtS2miDPfIEEVNAmH0l9oohPj50nxgzSwfzCdXJldsl1GFJeZPphY518sKdpwtk9rNSI34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719934950; c=relaxed/simple;
-	bh=aV/L68Jag8FiloFG5N6zdozHvLyOLD33i4y1O1Z9cj4=;
+	s=arc-20240116; t=1719934962; c=relaxed/simple;
+	bh=t6Yxs4HaE6O1bEqgahjGVoTgAg0PybsibHgREDvBJOY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I2v9QoWzQLTBICmRzfHb2NesaisDR5Yp3xAtVxoENGsJXcgDxtA6nh/3XN+IRwjBHJllmP2lbMqpAvdoqJtEop2zdp2XORRkLGydJDhMoI/KE6uAJ4nP9qTqDTSPfcaQImuwS2R77UzqfJr9+9NZ7OYPOBIO25tB5ycN2JePc60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 77F3668BFE; Tue,  2 Jul 2024 17:42:16 +0200 (CEST)
-Date: Tue, 2 Jul 2024 17:42:16 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: Christoph Hellwig <hch@lst.de>, david@fromorbit.com,
-	willy@infradead.org, chandan.babu@oracle.com, djwong@kernel.org,
-	brauner@kernel.org, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
-	linux-mm@kvack.org, john.g.garry@oracle.com,
-	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
-	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org, Zi Yan <zi.yan@sent.com>
-Subject: Re: [PATCH v8 06/10] iomap: fix iomap_dio_zero() for fs bs >
- system page size
-Message-ID: <20240702154216.GA1037@lst.de>
-References: <20240625114420.719014-1-kernel@pankajraghav.com> <20240625114420.719014-7-kernel@pankajraghav.com> <20240702074203.GA29410@lst.de> <20240702101556.jdi5anyr3v5zngnv@quentin> <20240702120250.GA17373@lst.de> <20240702140123.emt2gz5kbigth2en@quentin>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lUREEIlHElXwBic4j25DFaT2aOs+1TwxYylOf91DUz0xLH61ZnHNp2XSko8gIWHxhpTjbbvLfrE/wuvkV+1323PQMw0cqZBZa0V2nk/bHpDg626V4F+Au6BDpHvHp4VALt6Mxb8qwsw/BcuqtYteLl6ANTMdX88yCI/8g5K7tSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jjPJ4A44; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 330D360002;
+	Tue,  2 Jul 2024 15:42:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1719934952;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kh2++094kq3DmBu80JcmSjBMq3G/fZgQjDvdh0jXcNU=;
+	b=jjPJ4A443cEhcRwyZ/TohO8txRrKadPkV/4RoeAI8TrkziRq8HG2O6/tSJtdActGk/heaP
+	kf/A5rZUtC+w93nvHyQkuKe9lqkJtsFrVuXJs9d3pF1vdjQf2Op2/dYLQZVoA2tD+pOZey
+	3gUyzjSN1fdh1blwg7nJ1loTgBx2vSIT8iIrbZcM/NfhgZJ/vumzT5iRZKTTjQqJSm54C0
+	fn6C3pYad+W4DzP42TQgVVWiLie9eG8Edn4JaZyVTEfjoeTnYOQLbPD1okWhfWXUTqHn8o
+	BGTwyj4am3sRiXA6m8AuC/y4/Q1S6bMG4d8kYXgvEYvNjNpjvKnRsTYrUHviKw==
+Date: Tue, 2 Jul 2024 17:42:30 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: miquel.raynal@bootlin.com, conor.culhane@silvaco.com,
+	Chen Ni <nichen@iscas.ac.cn>
+Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i3c: master: svc: Convert comma to semicolon
+Message-ID: <171993493884.371587.3917562829848581690.b4-ty@bootlin.com>
+References: <20240702024758.1411569-1-nichen@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,32 +59,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240702140123.emt2gz5kbigth2en@quentin>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20240702024758.1411569-1-nichen@iscas.ac.cn>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Tue, Jul 02, 2024 at 02:01:23PM +0000, Pankaj Raghav (Samsung) wrote:
-+static int iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
->                 loff_t pos, unsigned len)
->  {
->         struct inode *inode = file_inode(dio->iocb->ki_filp);
->         struct bio *bio;
->  
-> +       if (!len)
-> +               return 0;
->         /*
->          * Max block size supported is 64k
->          */
-> -       WARN_ON_ONCE(len > ZERO_PAGE_64K_SIZE);
-> +       if (len > ZERO_PAGE_64K_SIZE)
-> +               return -EINVAL;
+On Tue, 02 Jul 2024 10:47:58 +0800, Chen Ni wrote:
+> Replace a comma between expression statements by a semicolon.
+> 
+> 
 
-The should probably be both WARN_ON_ONCE in addition to the error
-return (and ZERO_PAGE_64K_SIZE really needs to go away..)
+Applied, thanks!
 
-> +                       ret = iomap_dio_zero(iter, dio, pos, fs_block_size - pad);
+[1/1] i3c: master: svc: Convert comma to semicolon
+      https://git.kernel.org/abelloni/c/9ea7dc97d9a1
 
-Overly lone line here.
+Best regards,
 
-Otherwise this looks good.
-
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
