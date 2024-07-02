@@ -1,369 +1,171 @@
-Return-Path: <linux-kernel+bounces-238335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F435924877
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:38:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C67192487D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:39:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33DB41C212E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:38:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FF2F1C23E8D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17AE11CE09C;
-	Tue,  2 Jul 2024 19:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E8B1CE09C;
+	Tue,  2 Jul 2024 19:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bsOOPoLN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RDsG/4K4"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8AD1CCCDA;
-	Tue,  2 Jul 2024 19:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5786E5ED;
+	Tue,  2 Jul 2024 19:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719949112; cv=none; b=f9weZsLUxOq4iDhZ8q3G4p9eR5vjzaYpCKdLZlkUMLvUvve+iRoNma9XM2pDuMwV6ckmEKgDzhfDFjMxmlO/3HlTTCo/tpYuJQmyINiFUGSLi/EWKS8z47adJot1pQHI78ox2wUj1LAatpRpsi+6LSEgvJUw53+gpKHKw2nmDqo=
+	t=1719949182; cv=none; b=ZVZqhIV4xBVPEtu4U7Z3cIUTx3iwsso3vgvzL7n6i1FRzWblM5XXHUncrjFnzhcDtLEGzjdNVax3sLJCIC0IhptuWhbDcQHYjuKf8Prejw+uoOsKbXnkGDYt6Dde/Kaz6kGlmf1EoC5+spJFNN2lEemKD1p9cstYYTaCBoy7jKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719949112; c=relaxed/simple;
-	bh=iUNdoj/wPDxjLTPgtKmz7+YGlVRjPAtE2/pv9NEzpnI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k6Un2ByUb5YgKDeWxyLo/LxXBWapN3hHYhnAjIdhl1BZ5icVBqHikH9r7zQN0cfTNvpfJuWcJJgmen7o2nznvVdbw2fU2G2w9cd6WOi5nSncgDUuP1qzascmZHj0Y9hklDpPtSQT5ftcYGZd8gnSpfKC0LYVxA2iHvEZIFDnsZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bsOOPoLN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EA38C116B1;
-	Tue,  2 Jul 2024 19:38:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719949111;
-	bh=iUNdoj/wPDxjLTPgtKmz7+YGlVRjPAtE2/pv9NEzpnI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bsOOPoLNpnnZw9+2pw3A/w/5kdZd9Fu9g6WYEFuV1/FVvogtwyeBtD7Oeq9kZDel+
-	 e/HdU8RQh+2wQ71HxRT/HkOkCefqK3i6tZQbJNK5Qn/xV75FYaM2qbiG6ub38rM1E2
-	 01afVdJMcmYkOJ4MNzCa7hx4Rf7LZwpF+stH2jTFGroYMc8zGtg19iQQjexLDDhsJx
-	 0f25b3wNBShET7ZKhcchRw1n68qtkWDqB2FV6CCEVj9EtWsMYNBpkV9+r7g0o13qxB
-	 ZmxY8B60qfdrI5K4f4JgdLoO906yBb3jh2TNDyiWMsMS53TCp789zFkm3Jnt0R8mWH
-	 MX5Il/R6IXZCQ==
-Date: Tue, 2 Jul 2024 12:38:30 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: david@fromorbit.com, willy@infradead.org, chandan.babu@oracle.com,
-	brauner@kernel.org, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
-	linux-mm@kvack.org, john.g.garry@oracle.com,
-	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
-	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org, hch@lst.de, Zi Yan <zi.yan@sent.com>
-Subject: Re: [PATCH v8 03/10] readahead: allocate folios with
- mapping_min_order in readahead
-Message-ID: <20240702193830.GM612460@frogsfrogsfrogs>
-References: <20240625114420.719014-1-kernel@pankajraghav.com>
- <20240625114420.719014-4-kernel@pankajraghav.com>
+	s=arc-20240116; t=1719949182; c=relaxed/simple;
+	bh=oRlSI9t2p3jGFJ880LK9WDLLsE0d6mzD6XkeeFAK5Pw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=otPNzx5Nr7SOGPT9imMFRn4xXS/t5tcAKcBovIxnf+99o/8Uy+4QtVxEnaA/2DniHKhHdM3T6S/3rZjMOMgsAEHTNmM4+VimT0JeO4J3vfK6aZ/eB+5iCe561WG3RskYpdquUai6Wtb0i77sYnOhRxhYvnDPYA5BhbDGlyztSkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RDsG/4K4; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2c2d25b5432so2750536a91.2;
+        Tue, 02 Jul 2024 12:39:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719949181; x=1720553981; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=S8RmM/nQ903jD1e784juDC9He5+yPgPg+HlP+Yxh+mY=;
+        b=RDsG/4K4Hen4/TkA9to5zweFgNQiZHKqThyNSZkq6m+zAaI/dh7DahX9VvskSmTjd0
+         b5gZgabHvN/7/vGAWGrgqm99srKzbyO+z+VbsC6sMG2UUJEspbx1FRCxjHbw/ZbNXPNA
+         JR1Q+nv41hZLPJnpr1MgMUXnZ7hwCURD5RUi3drag/u9Cc8jMHpbekNJAOmqp1byt959
+         gZ4Q4oHQbXUGZYKtFnlswqGpdpS6rkYt7D8qHjeACyGO2i9i1lwTTBgb3MdWHvtXR6fe
+         bvvuq82WY8oGzZATnDewXXloTuXJlXvAHvKdr0tbshjQBxSf2Hl6PQ7mAdkBRqjXJGTw
+         XtHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719949181; x=1720553981;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S8RmM/nQ903jD1e784juDC9He5+yPgPg+HlP+Yxh+mY=;
+        b=ET5VNSiQoR5bFskL1wo+mqm6Oy3D72VzJ91J+U6kU8OcEvoffMhT89MOEReWm3lVTT
+         YFlC9VbfFb2ot025fAoCEl9vPeHBthcr//Rr1+Vmdb/7RI/jhARnedkX8jqCSiklDwsj
+         Kx0bZ9TB62OvXlVeWR16W042rF/ofvMKGcUfbyBm78Hr/5E24etAL23PY1DJRJLUm8TC
+         81wtVEXjrPIfTAOWyjD2rITxAPHZSm3mcs9Rq88m9k9ZHjskJ6I4onBt97/u07dND/66
+         jg+ZI/SrI/K1ibYfUHUlNYsG6xX5JFNXpj6PBAQBLtn4TbbAcv4XjsxAiPDvRpfWwldK
+         uJsw==
+X-Forwarded-Encrypted: i=1; AJvYcCWSMlnwQ2vqCT7jNAMqWtCj4He3GnHV+feP0mNsQQG0DNLc6Fnf4K9BmsrcFMcAEXxNeUYUnQ2bVV8kSwDSSqXa9FlX+Qk0ahHpe1pok+5sSAtaTSkNiwBTPMAImxun7ZRl5RqO2uWfIWrh5K01o+tBkCwlzo3+rs560OV0G+xUZIC3a335Tp/pkuoGRfv59kVMqN8tinP/ELLlzHF6d1t8DXuiUlg3YdQytQbMNPG1ELveHs1ADD1u3PIR
+X-Gm-Message-State: AOJu0Yy/aEA4M8b0ufnWsDk68jGY4QzDsCLdepsiHSzIvKPYMKcSlnc7
+	5tBU40Ji4F5qZbIfRjnq8lLSyK1btKFiu5I+c11iuQt0ufjrqAz1
+X-Google-Smtp-Source: AGHT+IERdVtlgKLMdAMQSFOlOPmsLrxNuImG3ycfTmId0OWD4i32DoVyGKXhjOqTzMWyCCtp4yaYmw==
+X-Received: by 2002:a17:90b:2287:b0:2c7:70ba:3efe with SMTP id 98e67ed59e1d1-2c93d7097c6mr5833019a91.17.1719949180632;
+        Tue, 02 Jul 2024 12:39:40 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91ce4668esm9297079a91.21.2024.07.02.12.39.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Jul 2024 12:39:40 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <da649c17-2237-430f-80c9-253cef47deb6@roeck-us.net>
+Date: Tue, 2 Jul 2024 12:39:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240625114420.719014-4-kernel@pankajraghav.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] hwmon: add MP5920 driver
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
+ Alex Vdovydchenko <xzeol@yahoo.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Sean Anderson <sean.anderson@linux.dev>,
+ Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+ Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org
+References: <20240702115252.981416-1-xzeol@yahoo.com>
+ <20240702115252.981416-3-xzeol@yahoo.com>
+ <956582ec-0205-46c3-b4dd-820aa150c03d@t-8ch.de>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <956582ec-0205-46c3-b4dd-820aa150c03d@t-8ch.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 25, 2024 at 11:44:13AM +0000, Pankaj Raghav (Samsung) wrote:
-> From: Pankaj Raghav <p.raghav@samsung.com>
+On 7/2/24 12:00, Thomas Weißschuh wrote:
+> On 2024-07-02 14:52:51+0000, Alex Vdovydchenko wrote:
+>> Add support for MPS Hot-Swap controller mp5920. This driver exposes
+>> telemetry and limit value readings and writings.
+>>
+>> Signed-off-by: Alex Vdovydchenko <xzeol@yahoo.com>
+>> ---
+>>   Documentation/hwmon/index.rst  |  1 +
+>>   Documentation/hwmon/mp5920.rst | 91 +++++++++++++++++++++++++++++++++
+>>   drivers/hwmon/pmbus/Kconfig    |  9 ++++
+>>   drivers/hwmon/pmbus/Makefile   |  1 +
+>>   drivers/hwmon/pmbus/mp5920.c   | 93 ++++++++++++++++++++++++++++++++++
+>>   5 files changed, 195 insertions(+)
+>>   create mode 100644 Documentation/hwmon/mp5920.rst
+>>   create mode 100644 drivers/hwmon/pmbus/mp5920.c
 > 
-> page_cache_ra_unbounded() was allocating single pages (0 order folios)
-> if there was no folio found in an index. Allocate mapping_min_order folios
-> as we need to guarantee the minimum order if it is set.
-> While we are at it, rework the loop in page_cache_ra_unbounded() to
-> advance with the number of pages in a folio instead of just one page at
-> a time.
-
-Ok, sounds pretty straightforward so far.
-
-> page_cache_ra_order() tries to allocate folio to the page cache with a
-> higher order if the index aligns with that order. Modify it so that the
-> order does not go below the mapping_min_order requirement of the page
-> cache. This function will do the right thing even if the new_order passed
-> is less than the mapping_min_order.
-
-Hmm.  So if I'm understanding this correctly: Currently,
-page_cache_ra_order tries to allocate higher order folios if the
-readahead index happens to be aligned to one of those higher orders.
-With the minimum mapping order requirement, it now expands the readahead
-range upwards and downwards to maintain the mapping_min_order
-requirement.  Right?
-
-> When adding new folios to the page cache we must also ensure the index
-> used is aligned to the mapping_min_order as the page cache requires the
-> index to be aligned to the order of the folio.
+> The entry in MAINTAINERS seems to be missing.
 > 
-> readahead_expand() is called from readahead aops to extend the range of
-> the readahead so this function can assume ractl->_index to be aligned with
-> min_order.
 
-...and I guess this function also has to be modified to expand the ra
-range even further if necessary to align with mapping_min_order.  Right?
+That isn't mandatory; checkpatch asks for it, but I prefer not to have it
+in the first place if the submitter doesn't really plan to maintain it.
 
-> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-> Co-developed-by: Hannes Reinecke <hare@suse.de>
-> Signed-off-by: Hannes Reinecke <hare@suse.de>
-> ---
->  mm/readahead.c | 81 +++++++++++++++++++++++++++++++++++++++-----------
->  1 file changed, 63 insertions(+), 18 deletions(-)
+> Otherwise:
 > 
-> diff --git a/mm/readahead.c b/mm/readahead.c
-> index 66058ae02f2e..2acfd6447d7b 100644
-> --- a/mm/readahead.c
-> +++ b/mm/readahead.c
-> @@ -206,9 +206,10 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
->  		unsigned long nr_to_read, unsigned long lookahead_size)
->  {
->  	struct address_space *mapping = ractl->mapping;
-> -	unsigned long index = readahead_index(ractl);
-> +	unsigned long ra_folio_index, index = readahead_index(ractl);
->  	gfp_t gfp_mask = readahead_gfp_mask(mapping);
-> -	unsigned long i;
-> +	unsigned long mark, i = 0;
-> +	unsigned int min_nrpages = mapping_min_folio_nrpages(mapping);
->  
->  	/*
->  	 * Partway through the readahead operation, we will have added
-> @@ -223,10 +224,26 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
-
-I'm not as familiar with this function since xfs/iomap don't use it.
-
-Does anyone actually pass nonzero lookahead size?
-
-What does ext4_read_merkle_tree_page do??
-
-	folio = __filemap_get_folio(inode->i_mapping, index, FGP_ACCESSED, 0);
-	if (IS_ERR(folio) || !folio_test_uptodate(folio)) {
-		DEFINE_READAHEAD(ractl, NULL, NULL, inode->i_mapping, index);
-
-		if (!IS_ERR(folio))
-			folio_put(folio);
-		else if (num_ra_pages > 1)
-			page_cache_ra_unbounded(&ractl, num_ra_pages, 0);
-
-So we try to get the folio.  If the folio is an errptr then we try
-unbounded readahead, which I guess works for ENOENT or EAGAIN; maybe
-less well if __filemap_get_folio returns ENOMEM.
-
-If @folio is a real but !uptodate folio then we put the folio and read
-it again, but without doing readahead.  <shrug>
-
->  	unsigned int nofs = memalloc_nofs_save();
->  
->  	filemap_invalidate_lock_shared(mapping);
-> +	index = mapping_align_index(mapping, index);
-> +
-> +	/*
-> +	 * As iterator `i` is aligned to min_nrpages, round_up the
-> +	 * difference between nr_to_read and lookahead_size to mark the
-> +	 * index that only has lookahead or "async_region" to set the
-> +	 * readahead flag.
-> +	 */
-> +	ra_folio_index = round_up(readahead_index(ractl) + nr_to_read - lookahead_size,
-> +				  min_nrpages);
-
-So at this point we've rounded index down and the readahead region up to
-fit the min_nrpages requirement.  I'm not sure what the lookahead region
-does, since nobody passes nonzero.  Judging from the other functions, I
-guess that's the region that we're allowed to do asynchronously?
-
-> +	mark = ra_folio_index - index;
-
-Ah, ok, yes.  We mark the first folio in the "async" region so that we
-(re)start readahead when someone accesses that folio.
-
-> +	if (index != readahead_index(ractl)) {
-> +		nr_to_read += readahead_index(ractl) - index;
-> +		ractl->_index = index;
-> +	}
-
-So then if we rounded inded down, now we have to add that to the ra
-region.
-
-> +
->  	/*
->  	 * Preallocate as many pages as we will need.
->  	 */
-> -	for (i = 0; i < nr_to_read; i++) {
-> +	while (i < nr_to_read) {
->  		struct folio *folio = xa_load(&mapping->i_pages, index + i);
->  		int ret;
->  
-> @@ -240,12 +257,13 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
->  			 * not worth getting one just for that.
->  			 */
->  			read_pages(ractl);
-> -			ractl->_index++;
-> -			i = ractl->_index + ractl->_nr_pages - index - 1;
-> +			ractl->_index += min_nrpages;
-> +			i = ractl->_index + ractl->_nr_pages - index;
->  			continue;
->  		}
->  
-> -		folio = filemap_alloc_folio(gfp_mask, 0);
-> +		folio = filemap_alloc_folio(gfp_mask,
-> +					    mapping_min_folio_order(mapping));
->  		if (!folio)
->  			break;
->  
-> @@ -255,14 +273,15 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
->  			if (ret == -ENOMEM)
->  				break;
->  			read_pages(ractl);
-> -			ractl->_index++;
-> -			i = ractl->_index + ractl->_nr_pages - index - 1;
-> +			ractl->_index += min_nrpages;
-> +			i = ractl->_index + ractl->_nr_pages - index;
->  			continue;
->  		}
-> -		if (i == nr_to_read - lookahead_size)
-> +		if (i == mark)
->  			folio_set_readahead(folio);
->  		ractl->_workingset |= folio_test_workingset(folio);
-> -		ractl->_nr_pages++;
-> +		ractl->_nr_pages += min_nrpages;
-> +		i += min_nrpages;
->  	}
->  
->  	/*
-> @@ -492,13 +511,19 @@ void page_cache_ra_order(struct readahead_control *ractl,
->  {
->  	struct address_space *mapping = ractl->mapping;
->  	pgoff_t index = readahead_index(ractl);
-> +	unsigned int min_order = mapping_min_folio_order(mapping);
->  	pgoff_t limit = (i_size_read(mapping->host) - 1) >> PAGE_SHIFT;
->  	pgoff_t mark = index + ra->size - ra->async_size;
->  	unsigned int nofs;
->  	int err = 0;
->  	gfp_t gfp = readahead_gfp_mask(mapping);
-> +	unsigned int min_ra_size = max(4, mapping_min_folio_nrpages(mapping));
->  
-> -	if (!mapping_large_folio_support(mapping) || ra->size < 4)
-> +	/*
-> +	 * Fallback when size < min_nrpages as each folio should be
-> +	 * at least min_nrpages anyway.
-> +	 */
-> +	if (!mapping_large_folio_support(mapping) || ra->size < min_ra_size)
->  		goto fallback;
->  
->  	limit = min(limit, index + ra->size - 1);
-> @@ -507,11 +532,20 @@ void page_cache_ra_order(struct readahead_control *ractl,
->  		new_order += 2;
->  		new_order = min(mapping_max_folio_order(mapping), new_order);
->  		new_order = min_t(unsigned int, new_order, ilog2(ra->size));
-> +		new_order = max(new_order, min_order);
->  	}
->  
->  	/* See comment in page_cache_ra_unbounded() */
->  	nofs = memalloc_nofs_save();
->  	filemap_invalidate_lock_shared(mapping);
-> +	/*
-> +	 * If the new_order is greater than min_order and index is
-> +	 * already aligned to new_order, then this will be noop as index
-> +	 * aligned to new_order should also be aligned to min_order.
-> +	 */
-> +	ractl->_index = mapping_align_index(mapping, index);
-> +	index = readahead_index(ractl);
-
-I guess this also rounds index down to mapping_min_order...
-
-> +
->  	while (index <= limit) {
->  		unsigned int order = new_order;
->  
-> @@ -519,7 +553,7 @@ void page_cache_ra_order(struct readahead_control *ractl,
->  		if (index & ((1UL << order) - 1))
->  			order = __ffs(index);
->  		/* Don't allocate pages past EOF */
-> -		while (index + (1UL << order) - 1 > limit)
-> +		while (order > min_order && index + (1UL << order) - 1 > limit)
->  			order--;
-
-...and then we try to find an order that works and doesn't go below
-min_order.  We already rounded index down to mapping_min_order, so that
-will always succeed.  Right?
-
->  		err = ra_alloc_folio(ractl, index, mark, order, gfp);
->  		if (err)
-> @@ -783,8 +817,15 @@ void readahead_expand(struct readahead_control *ractl,
->  	struct file_ra_state *ra = ractl->ra;
->  	pgoff_t new_index, new_nr_pages;
->  	gfp_t gfp_mask = readahead_gfp_mask(mapping);
-> +	unsigned long min_nrpages = mapping_min_folio_nrpages(mapping);
-> +	unsigned int min_order = mapping_min_folio_order(mapping);
->  
->  	new_index = new_start / PAGE_SIZE;
-> +	/*
-> +	 * Readahead code should have aligned the ractl->_index to
-> +	 * min_nrpages before calling readahead aops.
-> +	 */
-> +	VM_BUG_ON(!IS_ALIGNED(ractl->_index, min_nrpages));
->  
->  	/* Expand the leading edge downwards */
->  	while (ractl->_index > new_index) {
-> @@ -794,9 +835,11 @@ void readahead_expand(struct readahead_control *ractl,
->  		if (folio && !xa_is_value(folio))
->  			return; /* Folio apparently present */
->  
-> -		folio = filemap_alloc_folio(gfp_mask, 0);
-> +		folio = filemap_alloc_folio(gfp_mask, min_order);
->  		if (!folio)
->  			return;
-> +
-> +		index = mapping_align_index(mapping, index);
->  		if (filemap_add_folio(mapping, folio, index, gfp_mask) < 0) {
->  			folio_put(folio);
->  			return;
-> @@ -806,7 +849,7 @@ void readahead_expand(struct readahead_control *ractl,
->  			ractl->_workingset = true;
->  			psi_memstall_enter(&ractl->_pflags);
->  		}
-> -		ractl->_nr_pages++;
-> +		ractl->_nr_pages += min_nrpages;
->  		ractl->_index = folio->index;
->  	}
->  
-> @@ -821,9 +864,11 @@ void readahead_expand(struct readahead_control *ractl,
->  		if (folio && !xa_is_value(folio))
->  			return; /* Folio apparently present */
->  
-> -		folio = filemap_alloc_folio(gfp_mask, 0);
-> +		folio = filemap_alloc_folio(gfp_mask, min_order);
->  		if (!folio)
->  			return;
-> +
-> +		index = mapping_align_index(mapping, index);
->  		if (filemap_add_folio(mapping, folio, index, gfp_mask) < 0) {
->  			folio_put(folio);
->  			return;
-> @@ -833,10 +878,10 @@ void readahead_expand(struct readahead_control *ractl,
->  			ractl->_workingset = true;
->  			psi_memstall_enter(&ractl->_pflags);
->  		}
-> -		ractl->_nr_pages++;
-> +		ractl->_nr_pages += min_nrpages;
->  		if (ra) {
-> -			ra->size++;
-> -			ra->async_size++;
-> +			ra->size += min_nrpages;
-> +			ra->async_size += min_nrpages;
-
-...and here we are expanding the ra window yet again, only now taking
-min order into account.  Right?  Looks ok to me, though again, iomap/xfs
-don't use this function so I'm not that familiar with it.
-
-If the answer to /all/ the questions is 'yes' then
-
-Acked-by: Darrick J. Wong <djwong@kernel.org>
-
---D
-
->  		}
->  	}
->  }
-> -- 
-> 2.44.1
+> Reviewed-by: Thomas Weißschuh <linux@weissschuh.net>
 > 
-> 
+
+Thanks,
+Guenter
+
 
