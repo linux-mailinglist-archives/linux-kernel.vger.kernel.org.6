@@ -1,125 +1,121 @@
-Return-Path: <linux-kernel+bounces-237808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4E11923E67
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:08:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D89B8923E7A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:11:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F22D81C21FD1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:08:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1580B1C21B31
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF94E19D8BC;
-	Tue,  2 Jul 2024 13:08:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 132E019DF72;
+	Tue,  2 Jul 2024 13:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KXYmwcmM"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lB+TECet"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28BB19AD74
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 13:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB11B19D085
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 13:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719925701; cv=none; b=oGtGDnJrsv0QwudwGiSbDpCfKZDR6hEobZ2E+VXf6NWE0QRzc9HXPowENJeXKRnefxeuez75np6dGetsyc8yVovqgMpZ4YQm+Yq6qhOTB0lQNLQ0MEL7b7lAlbcVIKWgJES8mkMHYmHvxodjZjst/SNIYtv5S5+ygJgCg0+8E6k=
+	t=1719925885; cv=none; b=nZHkpqx1X5nlsC3viRvzyG/AmzAkX35ZWn/niMKkpT4MisAcC1IZHEu5p+RAXJ+tiNeay4bX8OOFZo24yKaRCaxwchSysRfZot/eW5Otc8vDp6EtuDoQnlEbMGVAkAyfj4WuaAoVGKKJMrjZmMX5orjyLVaUmWcils4s7iTlRFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719925701; c=relaxed/simple;
-	bh=S9WAdF5zIp6DOMlbWzRmjzJu0uGlfzXZ7p8RCFnmTG8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cGLfuyD3D1aeusVyw9nOhSY082boM09PY6/jqyAnv9i/J0LiCheT+0RG6A7HqBX8I/09Ri1HujEfdjsmntUCB/JW+xUhCa+M+lvUvCJs53X/HAUXa8B85cCfpuPsPw0mwQs86X8oMJ2o7vySCRwM4hKRMA6lG5JYeJpi2qBQ/Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KXYmwcmM; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e02b79c6f21so4405155276.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 06:08:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719925699; x=1720530499; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S9WAdF5zIp6DOMlbWzRmjzJu0uGlfzXZ7p8RCFnmTG8=;
-        b=KXYmwcmMKKYBi5yexqO4pin1cb5HGL430GBaG4HMJDkbBPx86anhXl3g8NSbAHii6h
-         /ha4gOQfIPioxjSNw6v7pgeB+0uGeqZ9jJP2jpLlhP54Bh3OoLtrSN+GXml0/V2Xl+eo
-         dI7WQACmUfVpkB+pkX6SoPw696xDHwtX0N+lSByeRPAjhl7ula38smq00J9PW+ghCjRe
-         cv80+xhPZQpo7t8rG9ZHHbt2epdNNUJ8UaxiEo1OH7ZpcYla+DLFsL/XaXTFILWh0gaV
-         aHWN7ewZtO6FUXGuIIDdx+2CwHnuiaXbUowXB3TyRLRHRK42t5qCJqCt8zs/VRm8LjKT
-         j8mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719925699; x=1720530499;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S9WAdF5zIp6DOMlbWzRmjzJu0uGlfzXZ7p8RCFnmTG8=;
-        b=Y0D2+pRaPKVGWFF+Ht8fTmq6IiVJoChu3XaOgZaYsPppKty3EB/YbchIHWDpeDvBpL
-         LucG78eDW+FpKqxCvhcx8GfI4471pIejd8gBY/bq58XDwSx8dWbjLzLtc3hH595B5u+I
-         B0a/Se01WBk877xCRRK8vLOrX63fEi4XAZBZl2gk4i0uIxu3lQi+JhqurhMKeFXkWTpv
-         XquW9JQ9iK+ddFUM2kc4cz0W15OjNqY4IeDZSYHzb1A6r5y4YI6+0UcgMtP3BnT23XHW
-         GZF5EzNmiZZXvm7vTmUrNl3S5wqSCglU3hvry/rdc+Bm/ncdJEbM3N9+9KRpB3uMGWAU
-         xC2g==
-X-Forwarded-Encrypted: i=1; AJvYcCVeBnUeL9sTxtqS1vYQty6KSwWzlY8nvzswsX4ocr2eGMR70F+OIfXCDBLBZyLkRn6WB1hEWHCq+Rzhg5Ga8Nnr/7vAaUm8sNUAbcwP
-X-Gm-Message-State: AOJu0Yyc/f2MmvQtmvyZ06MyAofs73eWIUzADMIBvDz9ldlz+mKRHYOw
-	yonDPp1z2NA4vbX38+T9Je3VcruL959xYcdX8ymWwCPNziSUX7mhjVsPDd1h//Dpu7+/X0TPO2m
-	HhwiB4V7BzWjPLYiNvN7ecn10nCC+8ZZ+1FysLA==
-X-Google-Smtp-Source: AGHT+IFd5P5nvAOCFhI34eu3EgzzjA69f2Au+mefSwkWxzhefLYYUPNhJFm+L/KZewGETUij+yyWjdPRQk02bxj11bk=
-X-Received: by 2002:a0d:e604:0:b0:646:7b75:5c2c with SMTP id
- 00721157ae682-64c718039c9mr86962577b3.16.1719925698688; Tue, 02 Jul 2024
- 06:08:18 -0700 (PDT)
+	s=arc-20240116; t=1719925885; c=relaxed/simple;
+	bh=YZn0x+z03ip1L3EiHj1D9rs3c6TN7O0rjwXqtOiBDSg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=T2xdHxe5tjzGM7iPY/H19qRQW3l0b8bWdQ4c3eMgvVLJie2nKNZ9T2UF+iw/Qvu0lSRBaCuV+M13cOG0ad/4fiCKRKG3lMumSdpltQS4Z9xa30SStL1nKqcRfiiVWeTBW3P/1P44XRalIStDkHh7vv3GlBcVkSsQPz4d7bJ3Kt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lB+TECet; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719925884; x=1751461884;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=YZn0x+z03ip1L3EiHj1D9rs3c6TN7O0rjwXqtOiBDSg=;
+  b=lB+TECet4Ix3Mz3YMMYuD5qbyh7uBrNW5pgCNQcf/vXyjcMbiQFccMtz
+   yqSWHtmK/sFSKnuvB/UYyqBgsjHZjwDbkSWj8QPEeDk2tbZK+X9/Twle6
+   RPfQMZs+GEYNjXwjyWcfsXlZ1aVc3FsLVCSBptMXIBqDl+h8sS18p6IOW
+   vA39vwMCKhjh8sp/b04EpQpNyIRyaGxEriXkBLd3VLQ/skhQeRdMWlZQM
+   ofjSCP3XY5Od7VBUyEPXc5krI8R9qVzori9PQG530Ocn3zZgaeWP6XRev
+   uiWsUXaaUgD3JfRT+xMC8E53zPpkILQE5UPcXZFaadR889EvOP8biK583
+   Q==;
+X-CSE-ConnectionGUID: ZaP/gynDRUiZVeL0rObjjg==
+X-CSE-MsgGUID: i8Qad9YNQCOZJua1fGOMRg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="27699990"
+X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
+   d="scan'208";a="27699990"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2024 06:11:24 -0700
+X-CSE-ConnectionGUID: Cp6LEnc3RneOefPsy3tz8w==
+X-CSE-MsgGUID: XrLZzZWXQqOY9qEQ/qDdPA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
+   d="scan'208";a="50250826"
+Received: from unknown (HELO allen-box.sh.intel.com) ([10.239.159.127])
+  by fmviesa003.fm.intel.com with ESMTP; 02 Jul 2024 06:11:22 -0700
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>
+Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/7] [PULL REQUEST] Intel IOMMU updates for v6.11
+Date: Tue,  2 Jul 2024 21:08:32 +0800
+Message-Id: <20240702130839.108139-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702114103.16068-1-brgl@bgdev.pl> <CAA8EJppo4X1KmeeTRz9n7+9S0fGWE4AD1O1cCc_aPHTWPUGVvw@mail.gmail.com>
- <CAMRc=McVo364EruPtBCkLdR86=PfvSQFztTC_HUO0RPRCayAxQ@mail.gmail.com>
-In-Reply-To: <CAMRc=McVo364EruPtBCkLdR86=PfvSQFztTC_HUO0RPRCayAxQ@mail.gmail.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 2 Jul 2024 16:08:07 +0300
-Message-ID: <CAA8EJpqk+yko_jqyRFo4sFJgtz+YZyEPh2sOEcDa-cYD3pGtnA@mail.gmail.com>
-Subject: Re: [PATCH] power: sequencing: qcom-wcn: don't request BT enable
- GPIOs for wcn7850
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Amit Pundir <amit.pundir@linaro.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2 Jul 2024 at 14:48, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->
-> On Tue, Jul 2, 2024 at 1:42=E2=80=AFPM Dmitry Baryshkov
-> <dmitry.baryshkov@linaro.org> wrote:
-> >
-> > On Tue, 2 Jul 2024 at 14:41, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> > >
-> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > >
-> > > Due to having many existing users of wcn7850 in the kernel, conversio=
-n
-> > > of the hci_qca driver to using pwrseq exclusively must be done
-> > > carefully. Right now, the Bluetooth driver requests and controls the =
-BT
-> > > enable GPIO and so the PMU pwrseq driver must not do it or we will ru=
-n
-> > > into problems depending on the probe ordering.
-> > >
-> > > Add a flag that tells the driver not to request the BT-enable GPIO. W=
-e
-> > > will remove it once the conversion of the Bluetooth driver is complet=
-e.
-> >
-> > This will not prevent the pinctrl conflict if both PMU and BT devices
-> > declare pinctrl for the BT_EN pin.
-> >
->
-> Hmm... So maybe we'll need to modify the BT driver after all. Should
-> we see if we have the enable-gpios property in hci_qca and - if not -
-> try to use the power sequencer? Or prioritize the sequencer first and
-> if it doesn't match, then fall-back to the current mode of operation?
+Hi Will,
 
-I'd say, try powerseq first, then fallback to enable-gpio.
+The following changes have been queued for v6.11-rc1. They are all about
+small refactoring, including:
 
---=20
-With best wishes
-Dmitry
+ - Use READ_ONCE to read volatile descriptor status
+ - Remove support for handling Execute-Requested requests
+ - Downgrade warning for pre-enabled interrupt remapping
+ - Remove calling iommu_domain_alloc()
+ - Refactor the PRI enable/disable flows
+ - Cleanups
+
+These patches are based on v6.10-rc5. The complete patches are also
+available at:
+
+https://github.com/LuBaolu/intel-iommu/commits/vtd-update-for-v6.11
+
+Please consider them for iommu next.
+
+Best regards,
+baolu
+
+Jacob Pan (1):
+  iommu/vt-d: Handle volatile descriptor status read
+
+Lu Baolu (6):
+  iommu/vt-d: Remove comment for def_domain_type
+  iommu/vt-d: Remove control over Execute-Requested requests
+  iommu/vt-d: Downgrade warning for pre-enabled IR
+  iommu/vt-d: Add helper to allocate paging domain
+  iommu/vt-d: Add helper to flush caches for context change
+  iommu/vt-d: Refactor PCI PRI enabling/disabling callbacks
+
+ drivers/iommu/intel/iommu.h         |  19 ++-
+ drivers/iommu/intel/pasid.h         |  10 --
+ drivers/iommu/intel/dmar.c          |   2 +-
+ drivers/iommu/intel/iommu.c         | 194 +++++++++++++++++++---------
+ drivers/iommu/intel/irq_remapping.c |   4 +-
+ drivers/iommu/intel/pasid.c         | 109 ++++++++++++----
+ 6 files changed, 241 insertions(+), 97 deletions(-)
+
+-- 
+2.34.1
+
 
