@@ -1,180 +1,86 @@
-Return-Path: <linux-kernel+bounces-237909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCA53923FB2
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:57:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65964923FB3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:57:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FEC61F26ACD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:57:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 976321C2612C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5BB1B580C;
-	Tue,  2 Jul 2024 13:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="meadaPSQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39C7D1B5829;
+	Tue,  2 Jul 2024 13:57:05 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0881BA2D;
-	Tue,  2 Jul 2024 13:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74491BA2D
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 13:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719928615; cv=none; b=CvsY0D5naOAUym5X9jzeVP+icECA9Gj13TkUg7LPEVBhd+d9Sa2Y4A+B/zAa8MIrvUKRknZcIYhv1rBb7OmitGRTu7b8pERWqDjmobT4dO7dW7jiL0wxx5dnHEMu5k7iffoHLsECAxmrAvdsXZ4PVr4/kQf4y4ikw+m0YUJ19Vg=
+	t=1719928624; cv=none; b=UY4fLZAQP2RQQbTfPChWlhYycVv73FFHk60f+Gss5ArYtScaOZVpmswuMW245OsI4Gc5rHWMs9xS0VQe70kco4DB4nLUU03IfRXap+aYO8SeyDOTh8p1j1h3iIaTSqLyZ8Zn523dXRyQBH42pKRSB/60GgtGXoYqoOeZZfoZBAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719928615; c=relaxed/simple;
-	bh=2C/dfpjesDaWHRmIpWeBPH1MXFkYQjqK4EO539CJrjc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rR+tUmmzs88bOyXaCgcR80WqbJcKsX8UFUfwurwdN/T35g/vYjOo4i0Ff7pDiIvO/0y5X1TiELjpAfD9Axr/4YLzQmVT1XL/Pp7vwmvEnDyxI5oLoDv/ma29Cw9HF4XauGLDGLEKyh+Wd7BMIQNwlVp9cqq/yxUderqBt1FvpOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=meadaPSQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5FE2C116B1;
-	Tue,  2 Jul 2024 13:56:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719928615;
-	bh=2C/dfpjesDaWHRmIpWeBPH1MXFkYQjqK4EO539CJrjc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=meadaPSQglu7unL8Z8Z6MQ46aSSUX2EWfgybQ2BFIt3Ue5V5SIZc+X0BTwR/tBvjK
-	 +O0zcbbp3j5JiED8Vvia52Mzo1OnlxmuPoAVRp24Px95+mOxM4ochB6CF+2Ys5XJZn
-	 gHmylmK9JYVBc/NkxY+xyi999zbhxd//O7pM66+tl29RLZqsIb54WGzfnk6jrX0AAt
-	 CeIvMC80ssIF3uXW+mFr3SUAP9KueCGRZqxxEZqxJqGla7fCByIBJZeuDswyeZCfvt
-	 3ukRRa1SerrwIeO9oFt9iNIbpSj0T+u6Nnp213aKUip7Euj+RtteCYlKfCc8G/nPHv
-	 QlyaKoAcXcV+g==
-Date: Tue, 2 Jul 2024 15:56:52 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Marco Felsch <m.felsch@pengutronix.de>, Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Russell King <linux@armlinux.org.uk>, 
-	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Gregory Clement <gregory.clement@bootlin.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
-	Tony Lindgren <tony@atomide.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, Dinh Nguyen <dinguyen@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, linux-mtd@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-aspeed@lists.ozlabs.org, imx@lists.linux.dev, linux-omap@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org, openbmc@lists.ozlabs.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-mips@vger.kernel.org, loongarch@lists.linux.dev
-Subject: Re: [PATCH 4/9] mtd: devices: add AT24 eeprom support
-Message-ID: <20240702-congenial-vigilant-boar-aeae44@houat>
-References: <20240701-b4-v6-10-topic-usbc-tcpci-v1-0-3fd5f4a193cc@pengutronix.de>
- <20240701-b4-v6-10-topic-usbc-tcpci-v1-4-3fd5f4a193cc@pengutronix.de>
- <07b701a9-7b52-45b7-8dba-1c25d77cbf15@linaro.org>
- <mafs0ikxnykpr.fsf@kernel.org>
+	s=arc-20240116; t=1719928624; c=relaxed/simple;
+	bh=4rgCz356vNOf2eZfVUDW8FJrR4x6ZF3Ok+kNtGQZZYQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=l8ulIEofgrctgRRATScHXYnv4C/Fac3YW/zxHqH4f79TeHmTo+7uba1ZlBy+bdmFccYnj49piJ4oSw4TsFqz9zIu3vkcfJjWBvlK+Wlb+XKw8WPMnjtKL2ZT93e1lIaVyQxlEWJS9oUX1rmeSCBYJvlRd2xy3PJIVDNDmVKYEs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7f3c9b72aebso454145839f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 06:57:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719928622; x=1720533422;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dIxp382DaDGD6JdY4m6R7aKF0MjGNqYtOwkuonM4f9g=;
+        b=uPwXn/EV6JwDEPBvkCjgwG4tzLi98rAjbiy9oEiE7deJ5wOIlsIpJA9J36FyB21Z7x
+         SShNsP6nw/ldjXD6G4ivCHrFjm32wXtKXsKkBqTnsW/RFKsxSm7mjLUJJD1hKQWX+Jjm
+         m4V7/ZQWiuoYS1j0DNihXSUY4u5rytzq0WL9EtdUisV1rCqf04DUJxe8dXLR2W/RcN0p
+         a2RowK+9m1KokysTBQfUWxltlIiFpTNj4H2OxfD9Hsd3m7sBv3Q4U+LlVoLea/3mEQ8S
+         p5INFVQ3Ft0FuZMD+LgdoTvhvTIbIDxUbLiPjZtzMZsVg/J0t8lnAlFeqF1KvHmCKeWD
+         +FqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/AWUMNo77oCGZZYYo1SoNOAfyAIO1ktsP5GzPnsuKS0vMg1G1q91jGOi2GYQW3Yn8SqhXLmL+kCRDzJdKjn6M17bF6PCdhKzO2RpN
+X-Gm-Message-State: AOJu0YwreUL8wfjfPHseu19HS93Xze8lbgVIl5OSdbM6+0h4GAAIJCfv
+	Cq4F8LZO0rws/0x+DFv3XTiXoMyiQNoggLfjYiBCnm2ZU9BIWELrAl0HOMU7zd+wQ7PVnggNMk7
+	l+r51f1EYGXQ4hZR/EL9t3+9PomLUHpQpioVtgJUrrLzXxnCV4f2BYYc=
+X-Google-Smtp-Source: AGHT+IHNGq2NgKwvy8Lj4f92qOBt/bBmbWhmAmgK2E0ZApB7tFEe8W27qMBLv24u0upqi7IpaynfJoDTwF9dZ55RMNk9OKOYlgd8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wpznzlm3ricogeh2"
-Content-Disposition: inline
-In-Reply-To: <mafs0ikxnykpr.fsf@kernel.org>
+X-Received: by 2002:a05:6638:871d:b0:488:e34a:5f76 with SMTP id
+ 8926c6da1cb9f-4bbb6bce7e5mr691661173.1.1719928622614; Tue, 02 Jul 2024
+ 06:57:02 -0700 (PDT)
+Date: Tue, 02 Jul 2024 06:57:02 -0700
+In-Reply-To: <20240702112814.2760-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000971697061c441663@google.com>
+Subject: Re: [syzbot] [netfilter?] KASAN: slab-use-after-free Read in nf_tables_trans_destroy_work
+From: syzbot <syzbot+4fd66a69358fc15ae2ad@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
---wpznzlm3ricogeh2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On Tue, Jul 02, 2024 at 03:41:52PM GMT, Pratyush Yadav wrote:
-> On Mon, Jul 01 2024, Tudor Ambarus wrote:
->=20
-> > On 7/1/24 2:53 PM, Marco Felsch wrote:
-> >> EEPROMs can become quite large nowadays (>=3D64K). Exposing such devic=
-es
-> >> as single device isn't always sufficient. There may be partitions which
-> >> require different access permissions. Also write access always need to
-> >> to verify the offset.
-> >>=20
-> >> Port the current misc/eeprom/at24.c driver to the MTD framework since
-> >> EEPROMs are memory-technology devices and the framework already suppor=
-ts
-> >
-> > I was under the impression that MTD devices are tightly coupled by erase
-> > blocks. But then we see MTD_NO_ERASE, so what are MTD devices after all?
->=20
-> I was curious as well so I did some digging.
->=20
-> The Kconfig help says:
->=20
->     Memory Technology Devices are flash, RAM and similar chips, often
->     used for solid state file systems on embedded devices [...]
->=20
-> The FAQ on the MTD documentation [0] says:
->=20
->     Unix traditionally only knew block devices and character devices.
->     Character devices were things like keyboards or mice, that you could
->     read current data from, but couldn't be seek-ed and didn't have a siz=
-e.
->     Block devices had a fixed size and could be seek-ed. They also happen=
-ed
->     to be organized in blocks of multiple bytes, usually 512.
->=20
->     Flash doesn't match the description of either block or character
->     devices. They behave similar to block device, but have differences. F=
-or
->     example, block devices don't distinguish between write and erase
->     operations. Therefore, a special device type to match flash
->     characteristics was created: MTD.
->=20
->     So MTD is neither a block nor a char device. There are translations to
->     use them, as if they were. But those translations are nowhere near the
->     original, just like translated Chinese poems.
->=20
-> And in the section below, it lists some properties of an MTD device:
->=20
->     - Consists of eraseblocks.
->     - Eraseblocks are larger (typically 128KiB).
->     - Maintains 3 main operations: read from eraseblock, write to
->       eraseblock, and erase eraseblock.
->     - Bad eraseblocks are not hidden and should be dealt with in
->       software.
->     - Eraseblocks wear-out and become bad and unusable after about 10^3
->       (for MLC NAND) - 10^5 (NOR, SLC NAND) erase cycles.
->=20
-> This does support the assumption you had about MTD devices being tightly
-> coupled with erase block. It also makes it quite clear that an EEPROM is
-> not MTD -- since EEPROMs are byte-erasable.
->=20
-> Of course, the existence of MTD_NO_ERASE nullifies a lot of
-> these points. So it seems the subsystem has evolved. MTD_NO_ERASE was
-> added by 92cbfdcc3661d ("[MTD] replace MTD_RAM with MTD_GENERIC_TYPE")
-> in 2006, but this commit only adds the flag. The functionality of "not
-> requiring an explicit erase" for RAM devices has existed since the start
-> of the git history at least.
->=20
-> I also found a thread from 2013 by Maxime Ripard (+Cc) suggesting adding
-> EEPROMs to MTD [1]. The main purpose would have been unifying the EEPROM
-> drivers under a single interface. I am not sure what came of it though,
-> since I can't find any patches that followed up with the proposal.
+Reported-and-tested-by: syzbot+4fd66a69358fc15ae2ad@syzkaller.appspotmail.com
 
-That discussion led to drivers/nvmem after I started to work on
-some early prototype, and Srinivas took over that work.
+Tested on:
 
-Maxime
+commit:         1c5fc27b Merge tag 'nf-next-24-06-28' of git://git.ker..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=10e91b25980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5264b58fdff6e881
+dashboard link: https://syzkaller.appspot.com/bug?extid=4fd66a69358fc15ae2ad
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=104f8466980000
 
---wpznzlm3ricogeh2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZoQHJAAKCRDj7w1vZxhR
-xcDlAP9DQxX4F3MhMtO+FlHTFu+wxuxX+ZgAUtWf1AzFSKdAXwD/Vb6XmtdU4OXO
-fQTMfYwmoIMqez6M7+ko/r2XXgK7BQ4=
-=KD1l
------END PGP SIGNATURE-----
-
---wpznzlm3ricogeh2--
+Note: testing is done by a robot and is best-effort only.
 
