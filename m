@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-238473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95452924B34
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:09:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2195B924B36
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:09:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 410B81F24312
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:09:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DC1B287DA9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:09:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4011C8151;
-	Tue,  2 Jul 2024 21:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C19D1CA2A8;
+	Tue,  2 Jul 2024 21:59:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IxZ/RwoW"
-Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TwLicMRv"
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D5B1C5A37
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 21:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474E31C8132
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 21:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719957552; cv=none; b=mqczB6PktNSswsgEg2VO/V6sbEvB06ljq9e2/+BMFZ+8LmfYIyDmpx6nFq4UbeHWf/DO8WxVSAJ075YhzRv1xZK+le55S1Zgf+nKWxEycvj2y/5TKz1onWXPFcvTDPcQIn2LDj85K8UZgRUmcAOSAQDw8PlZwDqGr0BqBkjU2c8=
+	t=1719957553; cv=none; b=NknRpWj/m7ykndDs7GMRa2CC13ocUMHNEx04bGc8dK/V17wP/59HDnb8QBXIOkO9rbJNIO2Ap/GoAePQH93eyOdZ2cNNV6s06gncB0rLkb3+7FJsOQNI72g03r2EIcJv6D2EdbINVykcSf0o3nWtgFUiQNN9GSPmuVFC6FH2r2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719957552; c=relaxed/simple;
-	bh=zmyLO65yPZ2P+sQ2d3HjTXHc3m95hCKtg7yLZG+YhsY=;
+	s=arc-20240116; t=1719957553; c=relaxed/simple;
+	bh=BACRdEKE/EdGzYnQC1ja1K39qZMWUunTQiDC4kIMOMI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=t8DqWelVuiP0YbLOtRD/kXf9AVUzZN0p+7AwwEdCsofZ78EzdFwyHvcWD5hy+sbbnckoOjv+j5VKvgQYvMkbi138AJs7e+o4gNZg950upMtpNN6l0FyeogDJfs/ZBQhTcvewECCgqNGe0nQAIjO6KZ89nHzq9WdsIlsX8yVRgvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IxZ/RwoW; arc=none smtp.client-ip=209.85.166.54
+	 MIME-Version; b=HTJUDMBUDii1p0Oi75d8E3z6jJNp8F5Hqy/0f03jbsFdUOvdgwUv8riIMqxLWKJyMVX+hyoe3pKS8TLc6p7SpcYb0O2BKs8he42bXRltylCyO4pFHyzEgc9PaLPnEyJdLo1BT6uok3UXyrIrueidgE5S3aH9tRIBeSwniBkvoFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TwLicMRv; arc=none smtp.client-ip=209.85.166.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-7f61e75642cso212366939f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 14:59:10 -0700 (PDT)
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-7f3cd802729so172623639f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 14:59:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719957550; x=1720562350; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1719957551; x=1720562351; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wzxAaDu6jznCkYGTIESxKGj+agIaj+uEvHm/3W7k4f4=;
-        b=IxZ/RwoWgCjp73yK4++Yy7t+ZQst7Ch1HkkTNIHfZcleWESj1IlypCshiZ3hQaa8Mk
-         vUYNkIJJv/xPWt4b4Bmt+6+7QNc+0/hu0XyqrZnZMo4m/ZQK95mxRiGC6419Yhv6jyD5
-         xLT48CO2ZYoeWwrfDmx+gtAZ+mcJQarc934OQ88SPmJSLl5y6BFH8Oywkkw7quX7l/7/
-         otq8FW79imajBdL1RdHVgCh2uUoBDZKBIEt5MSiYdcQyXtUbZcdhjvfqMh288pIbxWjT
-         Hp1nhJJN/U4tqNzAvXV3MXawrPbzfDOc5yEgmgaiGju8sjaIwlLQTfGWjEJcuWOZhuuf
-         SimA==
+        bh=V5Ysg7vbItKfqIGM0QbE+cddDiZC+jdjQozEcgbAHb0=;
+        b=TwLicMRvESj6d9255tjFcrJlAZU02rNWR1ELZNWhezYCE8kXSzc9gRiJSDZLZCIgB7
+         sEj50/ZX1ZZ8hnE4oTpIjlMIuJTi0xghQ8B2OQb3GFyEk4EzVJR823iWxrRJkR/E54fR
+         r4nXIeiWr059mThOoVaTL50sSmL7KRSJZBINyHV3dcOMTIBlj8gJnr1tTT2W17ZkbAvP
+         mdf79mZLtNDI38j4PSb4Ww+iS46Msu7P7pnnk7fSvCZBLtbPA/hY14FQuVc2kEVQOPVi
+         ezF2M6au1qYg1hAM+4l8jHI0U5aMvKLrsdfAHYNYYsOmANZC3MGri4XWQ/u2HAxaxs7U
+         f/9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719957550; x=1720562350;
+        d=1e100.net; s=20230601; t=1719957551; x=1720562351;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wzxAaDu6jznCkYGTIESxKGj+agIaj+uEvHm/3W7k4f4=;
-        b=sTDj2dBmoaE74HtTa58padASvX/GQFDMviDgjShYD6DzqEF1o1IdUkXzsO/CXPxUaB
-         LZlpGTEy8+gozrlGvsWP7dyBIbL03jegLjjdZF5mskidMJ5ntU4KXjOsS4OukcXrcZ51
-         y6eg83QM733W7z458GqpQGhPD+4fqs2mz7TEJdUGeNxyT+p2S6HgBXNychgJaq/I9dN3
-         qIZWZFBBKTn2Wo7JTVz0CWWSIcKy5WBGLo4fWW8I2Bok3zbGI9IXoeUwDXwUDfRvuJ9O
-         ZAFjy8gDubYg4UR6OK5roVU0Oyl0pHqT3ZhqW+H30uCfe2vF+PF5agLfBBShZlMLv+VN
-         HX6w==
-X-Gm-Message-State: AOJu0Yy9tUYvFMLyOuRrUo0uv7qL1I0vhIlE4YlnaVWLEvFCfRTKdhFI
-	mUO8eCwmd6FCixnLegVXJzLPTIeDW2JynGiarnKf5MGzbO4lfQcG
-X-Google-Smtp-Source: AGHT+IH6FgmYtruVie6MYmI+39/gsTLr9f9UoNDdF0ISkmNJ1lHfdTSInJOZogzQSQ9dyJk1hbdfQA==
-X-Received: by 2002:a05:6602:600b:b0:7f6:4f7e:b87e with SMTP id ca18e2360f4ac-7f64f7eba13mr445681639f.21.1719957550253;
-        Tue, 02 Jul 2024 14:59:10 -0700 (PDT)
+        bh=V5Ysg7vbItKfqIGM0QbE+cddDiZC+jdjQozEcgbAHb0=;
+        b=AdmB5nvV8DFD5kjjzP+tHAz6YhVcFGGI/Xx18nyYaanz+EuTyoETcFCqUbuCl0dPBE
+         9s8QDtvwJEc3+9vRZEkvR/nAMiB2g2FI1c4MdQDbtLaTumMUjZypdeCCiqgrNLtUX9JO
+         4k71ArSXDWvVoFzl1XibkoHA/zQorayvGFocrxzPyihN3xHcB5rSPlfGTzBVDtA845oT
+         i8b4M1vH1w7EPnNBuYI8bv2YV4t2Qvcml7MdpYU8ofM3YPrATaIieS/zKUdni+B2g/DE
+         Ay0QVZeJrjSckcwuJjiMPWbItP75h/O1+IymY6bqLzDCl5/M3t3X425ko3chU/jQQ0Iu
+         J/Ow==
+X-Gm-Message-State: AOJu0Yz4Gw6ByK2nq+yWTNBCI3ayiiaqJFjX2+qtuFcMhWBS5yTCb/Uu
+	uv+DXviQ51fNz0gFId5zdIYDCg0ITONnKDTmqh9uemaBDUoz353b
+X-Google-Smtp-Source: AGHT+IHqMpLCRs5CaWnYQ1hnUZnwKhYGHnh3SZ6WBUA2X+aJ/huxMzEjPlMSt2OgDoaqgK5zAZJzPA==
+X-Received: by 2002:a5e:c812:0:b0:7f3:d7cb:8464 with SMTP id ca18e2360f4ac-7f62ee559c4mr1048046639f.10.1719957551288;
+        Tue, 02 Jul 2024 14:59:11 -0700 (PDT)
 Received: from frodo.. (c-73-78-62-130.hsd1.co.comcast.net. [73.78.62.130])
-        by smtp.googlemail.com with ESMTPSA id ca18e2360f4ac-7f61d207fcesm279944739f.51.2024.07.02.14.59.09
+        by smtp.googlemail.com with ESMTPSA id ca18e2360f4ac-7f61d207fcesm279944739f.51.2024.07.02.14.59.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 14:59:09 -0700 (PDT)
+        Tue, 02 Jul 2024 14:59:10 -0700 (PDT)
 From: Jim Cromie <jim.cromie@gmail.com>
 To: daniel.vetter@ffwll.ch,
 	tvrtko.ursulin@linux.intel.com,
@@ -82,9 +82,9 @@ Cc: linux-kernel@vger.kernel.org,
 	joe@perches.com,
 	mcgrof@kernel.org,
 	Jim Cromie <jim.cromie@gmail.com>
-Subject: [PATCH v9 40/52] drm-dyndbg: add DRM_CLASSMAP_USE to simpledrm
-Date: Tue,  2 Jul 2024 15:57:38 -0600
-Message-ID: <20240702215804.2201271-49-jim.cromie@gmail.com>
+Subject: [PATCH v9 40/53] drm-dyndbg: add DRM_CLASSMAP_USE to virtio_gpu
+Date: Tue,  2 Jul 2024 15:57:39 -0600
+Message-ID: <20240702215804.2201271-50-jim.cromie@gmail.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240702215804.2201271-1-jim.cromie@gmail.com>
 References: <20240702215804.2201271-1-jim.cromie@gmail.com>
@@ -96,28 +96,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-tiny/simpledrm has 3 DRM_UT_DRIVER debugs, make them controllable when
+virtio_gpu has 10 DRM_UT_CORE debugs, make them controllable when
 CONFIG_DRM_USE_DYNAMIC_DEBUG=y by telling dyndbg that the module has
 class'd debugs.
 
 Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
 ---
- drivers/gpu/drm/tiny/simpledrm.c | 2 ++
+ drivers/gpu/drm/virtio/virtgpu_drv.c | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/tiny/simpledrm.c b/drivers/gpu/drm/tiny/simpledrm.c
-index 7ce1c4617675..9cab48bd0581 100644
---- a/drivers/gpu/drm/tiny/simpledrm.c
-+++ b/drivers/gpu/drm/tiny/simpledrm.c
-@@ -33,6 +33,8 @@
- #define DRIVER_MAJOR	1
- #define DRIVER_MINOR	0
+diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.c b/drivers/gpu/drm/virtio/virtgpu_drv.c
+index 9539aa28937f..bb3a3e042264 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_drv.c
++++ b/drivers/gpu/drm/virtio/virtgpu_drv.c
+@@ -44,6 +44,8 @@ static const struct drm_driver driver;
+ 
+ static int virtio_gpu_modeset = -1;
  
 +DRM_CLASSMAP_USE(drm_debug_classes);
 +
- /*
-  * Helpers for simplefb
-  */
+ MODULE_PARM_DESC(modeset, "Disable/Enable modesetting");
+ module_param_named(modeset, virtio_gpu_modeset, int, 0400);
+ 
 -- 
 2.45.2
 
