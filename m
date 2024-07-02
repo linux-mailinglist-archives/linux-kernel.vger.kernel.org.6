@@ -1,140 +1,423 @@
-Return-Path: <linux-kernel+bounces-237694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AF8D923CC0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:45:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BEB8923CC4
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:45:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D48D1C20C6D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:45:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00FF3B251D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E61816132A;
-	Tue,  2 Jul 2024 11:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C2515B546;
+	Tue,  2 Jul 2024 11:45:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jEXTQq+s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AzyKRmfu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E60B15B551;
-	Tue,  2 Jul 2024 11:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1F4145B09
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 11:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719920663; cv=none; b=K8STbtv6tXJqoGhkA7tIBWdOpuergFOvCa0Wwzjo20aJv3Dnl+ZCfuHGgXWAdK1ZzfweDfLI3dUXTA5xTRh2VM2ZZKsUq79rW3KCY4eHDJTIEbymkuoeQOVLqHB6al7kUQOKyoaKjev8dI80xolw7MoZDIXBk64sbdOrkA37lfM=
+	t=1719920735; cv=none; b=tn6qe5Pbn8VAzPPv3G5cg7UYIV+Hd17e6o3+Bn3pNSC6yWW7LyhRV0g80Hy3VZE7n0xpdYSATMCLZX2khigo1cbXqhan1wiDi2nsYwoJzwIAGOqvB28rWOoND9hvzYJl1GK4aJBw7hk2a4BfRFZ5GTWSVtpq7hde2jGj94l2gtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719920663; c=relaxed/simple;
-	bh=UmZsE+AjLizDxKJ5HHWqPFuIGQkriS5+xN/E/9SwgFA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Zl+oGPSrlLFQHg6EJpYvuE4XOOPo5lG/y8F3mJqnYu6m3TirmQFlf2/hdcFfIw+amF/jsZK2lNir/pxUgXx6Qijnb5WoiNVgZLg2HJ+qvhZW4ufJQPquS6bQIN9Snng6LHyvx5RG4CXymR0RNUSFKN/wfFBvkQL+BOxbvSwwXd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jEXTQq+s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 897E5C2BD10;
-	Tue,  2 Jul 2024 11:44:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719920662;
-	bh=UmZsE+AjLizDxKJ5HHWqPFuIGQkriS5+xN/E/9SwgFA=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=jEXTQq+spItmIkVuPduP7ABviELlqAVWHGYfIwe6yHHIjBdbX/143Vh2POZJBHUJo
-	 ZAVl59Xue5b0EBBYo11uGB99dEkpQr29hlvVLh+agnVVG+QuPTdR9sb3QAXyeHdNW+
-	 EEiwJz0aUWSzA5SQ1Qu8hoMFthjUIhJo9SE03BSN4BfOui4Hv8dwNbKyrWBfjGKUNK
-	 QF82JSrZ6u1ug0i1JQDShW3qP7rECXRhORRzj3udENPWAJVuJuicfdq+GjZc3NilSJ
-	 eAcCd5cvD3fqSvq2RXton8T9qaT25F/1Plbej8xLKD9edamvu59g1P8q3sAVtjOzjA
-	 Niw0aHng+j7Pg==
-Message-ID: <958080f6de517cf9d0a1994e3ca500f23599ca33.camel@kernel.org>
-Subject: Re: [PATCH 01/10] fs: turn inode ctime fields into a single ktime_t
-From: Jeff Layton <jlayton@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Christoph Hellwig <hch@infradead.org>, "Darrick J. Wong"
- <djwong@kernel.org>,  Alexander Viro <viro@zeniv.linux.org.uk>, Christian
- Brauner <brauner@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Masami
- Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Chandan Babu R <chandan.babu@oracle.com>,
- Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
- Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba
- <dsterba@suse.com>,  Hugh Dickins <hughd@google.com>, Andrew Morton
- <akpm@linux-foundation.org>, kernel-team@fb.com, 
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
- linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
- linux-mm@kvack.org,  linux-nfs@vger.kernel.org
-Date: Tue, 02 Jul 2024 07:44:19 -0400
-In-Reply-To: <20240702101902.qcx73xgae2sqoso7@quack3>
-References: <20240626-mgtime-v1-0-a189352d0f8f@kernel.org>
-	 <20240626-mgtime-v1-1-a189352d0f8f@kernel.org>
-	 <20240701224941.GE612460@frogsfrogsfrogs>
-	 <3042db2f803fbc711575ec4f1c4a273912a50904.camel@kernel.org>
-	 <ZoOuSxRlvEQ5rOqn@infradead.org>
-	 <d91a29f0e600793917b73ac23175e02dafd56beb.camel@kernel.org>
-	 <20240702101902.qcx73xgae2sqoso7@quack3>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1719920735; c=relaxed/simple;
+	bh=itu6pNVdyfoB76DotsYaSiqN7adMJczc3AiHky6OHEc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Jfg18G5F2Ms54AJO+8A7Wghn8OKKKwhJu93TzTlC03tVf8nfjfFQJQWSfNfKnfBe4T+9WqmbGBGgDegF7lvBP7lAhYX5vTGenCauFc0GHK9sK6aWURl/0pP7eY3VAK3kJ0Zu6SdvjjF/hXfJw1nyhF63BesHBE8q4/Vzk2HS4DI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AzyKRmfu; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719920731;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2ZSuG4jg6fN5yoroR9xZLM4JS/xKphek81wZ95P4CUI=;
+	b=AzyKRmfuWgiKoryBY7NtsyC1G6jtyiXUxHk0WjAi/9ReslaR4vV9a/Whb+RRpCIqxok76W
+	saCf3+3j78yCNecQre4zyiUkR44oE13BxWx6dyp5GKu4IDwIxoY5DCBCSDvGNSunybjDIx
+	l54uDFzNjWoiasVHtTC2oyVuWA5yGyU=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-99-t9pzsh9oMdCjeV82ll5z8g-1; Tue,
+ 02 Jul 2024 07:45:28 -0400
+X-MC-Unique: t9pzsh9oMdCjeV82ll5z8g-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D6B1F19560A7;
+	Tue,  2 Jul 2024 11:45:26 +0000 (UTC)
+Received: from RHTRH0061144 (unknown [10.22.8.184])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7ECAF1956089;
+	Tue,  2 Jul 2024 11:45:23 +0000 (UTC)
+From: Aaron Conole <aconole@redhat.com>
+To: =?utf-8?Q?Adri=C3=A1n?= Moreno <amorenoz@redhat.com>
+Cc: netdev@vger.kernel.org,  echaudro@redhat.com,  horms@kernel.org,
+  i.maximets@ovn.org,  dev@openvswitch.org,  Pravin B Shelar
+ <pshelar@ovn.org>,  "David S. Miller" <davem@davemloft.net>,  Eric Dumazet
+ <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>,  Paolo Abeni
+ <pabeni@redhat.com>,  Shuah Khan <shuah@kernel.org>,
+  linux-kselftest@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v7 10/10] selftests: openvswitch: add psample test
+In-Reply-To: <CAG=2xmNSe7TB0CBD9stYf8dDex6dPo_smr79rYGXZC0AXGEzWA@mail.gmail.com>
+	(=?utf-8?Q?=22Adri=C3=A1n?= Moreno"'s message of "Tue, 2 Jul 2024 02:16:49
+ -0500")
+References: <20240630195740.1469727-1-amorenoz@redhat.com>
+	<20240630195740.1469727-11-amorenoz@redhat.com>
+	<f7tfrstvtxn.fsf@redhat.com>
+	<CAG=2xmNSe7TB0CBD9stYf8dDex6dPo_smr79rYGXZC0AXGEzWA@mail.gmail.com>
+Date: Tue, 02 Jul 2024 07:45:21 -0400
+Message-ID: <f7to77gow4u.fsf@redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Tue, 2024-07-02 at 12:19 +0200, Jan Kara wrote:
-> On Tue 02-07-24 05:56:37, Jeff Layton wrote:
-> > On Tue, 2024-07-02 at 00:37 -0700, Christoph Hellwig wrote:
-> > > On Mon, Jul 01, 2024 at 08:22:07PM -0400, Jeff Layton wrote:
-> > > > 2) the filesystem has been altered (fuzzing? deliberate doctoring?)=
-.
-> > > >=20
-> > > > None of these seem like legitimate use cases so I'm arguing that we
-> > > > shouldn't worry about them.
-> > >=20
-> > > Not worry seems like the wrong answer here.=C2=A0 Either we decide th=
-ey
-> > > are legitimate enough and we preserve them, or we decide they are
-> > > bogus and refuse reading the inode.=C2=A0 But we'll need to conscious=
-ly
-> > > deal with the case.
-> > >=20
-> >=20
-> > Is there a problem with consciously dealing with it by clamping the
-> > time at KTIME_MAX? If I had a fs with corrupt timestamps, the last
-> > thing I'd want is the filesystem refusing to let me at my data because
-> > of them.
->=20
-> Well, you could also view it differently: If I have a fs that corrupts ti=
-me
-> stamps, the last thing I'd like is that the kernel silently accepts it
-> without telling me about it :)
->=20
+Adri=C3=A1n Moreno <amorenoz@redhat.com> writes:
 
-Fair enough.
+> On Mon, Jul 01, 2024 at 02:38:44PM GMT, Aaron Conole wrote:
+>> Adrian Moreno <amorenoz@redhat.com> writes:
+>>
+>> > Add a test to verify sampling packets via psample works.
+>> >
+>> > In order to do that, create a subcommand in ovs-dpctl.py to listen to
+>> > on the psample multicast group and print samples.
+>> >
+>> > Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+>> > ---
+>> >  .../selftests/net/openvswitch/openvswitch.sh  | 115 +++++++++++++++++-
+>> >  .../selftests/net/openvswitch/ovs-dpctl.py    |  73 ++++++++++-
+>> >  2 files changed, 182 insertions(+), 6 deletions(-)
+>> >
+>> > diff --git a/tools/testing/selftests/net/openvswitch/openvswitch.sh b/=
+tools/testing/selftests/net/openvswitch/openvswitch.sh
+>> > index 15bca0708717..02a366e01004 100755
+>> > --- a/tools/testing/selftests/net/openvswitch/openvswitch.sh
+>> > +++ b/tools/testing/selftests/net/openvswitch/openvswitch.sh
+>> > @@ -20,7 +20,8 @@ tests=3D"
+>> >  	nat_related_v4				ip4-nat-related: ICMP related matches work with SN=
+AT
+>> >  	netlink_checks				ovsnl: validate netlink attrs and settings
+>> >  	upcall_interfaces			ovs: test the upcall interfaces
+>> > -	drop_reason				drop: test drop reasons are emitted"
+>> > +	drop_reason				drop: test drop reasons are emitted
+>> > +	psample					psample: Sampling packets with psample"
+>> >
+>> >  info() {
+>> >      [ $VERBOSE =3D 0 ] || echo $*
+>> > @@ -102,12 +103,21 @@ ovs_netns_spawn_daemon() {
+>> >  	shift
+>> >  	netns=3D$1
+>> >  	shift
+>> > -	info "spawning cmd: $*"
+>> > -	ip netns exec $netns $*  >> $ovs_dir/stdout  2>> $ovs_dir/stderr &
+>> > +	if [ "$netns" =3D=3D "_default" ]; then
+>> > +		$*  >> $ovs_dir/stdout  2>> $ovs_dir/stderr &
+>> > +	else
+>> > +		ip netns exec $netns $*  >> $ovs_dir/stdout  2>> $ovs_dir/stderr &
+>> > +	fi
+>> >  	pid=3D$!
+>> >  	ovs_sbx "$sbx" on_exit "kill -TERM $pid 2>/dev/null"
+>> >  }
+>> >
+>> > +ovs_spawn_daemon() {
+>> > +	sbx=3D$1
+>> > +	shift
+>> > +	ovs_netns_spawn_daemon $sbx "_default" $*
+>> > +}
+>> > +
+>> >  ovs_add_netns_and_veths () {
+>> >  	info "Adding netns attached: sbx:$1 dp:$2 {$3, $4, $5}"
+>> >  	ovs_sbx "$1" ip netns add "$3" || return 1
+>> > @@ -170,6 +180,19 @@ ovs_drop_reason_count()
+>> >  	return `echo "$perf_output" | grep "$pattern" | wc -l`
+>> >  }
+>> >
+>> > +ovs_test_flow_fails () {
+>> > +	ERR_MSG=3D"Flow actions may not be safe on all matching packets"
+>> > +
+>> > +	PRE_TEST=3D$(dmesg | grep -c "${ERR_MSG}")
+>> > +	ovs_add_flow $@ &> /dev/null $@ && return 1
+>> > +	POST_TEST=3D$(dmesg | grep -c "${ERR_MSG}")
+>> > +
+>> > +	if [ "$PRE_TEST" =3D=3D "$POST_TEST" ]; then
+>> > +		return 1
+>> > +	fi
+>> > +	return 0
+>> > +}
+>> > +
+>> >  usage() {
+>> >  	echo
+>> >  	echo "$0 [OPTIONS] [TEST]..."
+>> > @@ -184,6 +207,92 @@ usage() {
+>> >  	exit 1
+>> >  }
+>> >
+>> > +
+>> > +# psample test
+>> > +# - use psample to observe packets
+>> > +test_psample() {
+>> > +	sbx_add "test_psample" || return $?
+>> > +
+>> > +	# Add a datapath with per-vport dispatching.
+>> > +	ovs_add_dp "test_psample" psample -V 2:1 || return 1
+>> > +
+>> > +	info "create namespaces"
+>> > +	ovs_add_netns_and_veths "test_psample" "psample" \
+>> > +		client c0 c1 172.31.110.10/24 -u || return 1
+>> > +	ovs_add_netns_and_veths "test_psample" "psample" \
+>> > +		server s0 s1 172.31.110.20/24 -u || return 1
+>> > +
+>> > +	# Check if psample actions can be configured.
+>> > +	ovs_add_flow "test_psample" psample \
+>> > +	'in_port(1),eth(),eth_type(0x0806),arp()' 'psample(group=3D1)'
+>>
+>> Might be good to redirect this stdout/stderr line to /dev/null -
+>> otherwise on an unsupported system there will be the following extra
+>> splat:
+>>
+>>   Traceback (most recent call last):
+>>     File "/home/aconole/git/linux/tools/testing/selftests/net/openvswitc=
+h/ovs-dpctl.py", line 2774, in <module>
+>>       sys.exit(main(sys.argv))
+>>    ...
+>>     File "/usr/lib/python3.12/site-packages/pyroute2/netlink/nlsocket.py=
+", line 489, in get
+>>       raise msg['header']['error']
+>>   pyroute2.netlink.exceptions.NetlinkError: (22, 'Invalid argument')
+>>
+>
+> I thought knowing the return value was kind of useful but sure, we can
+> redirect it to /dev/null.
+>
+>> > +	if [ $? =3D=3D 1 ]; then
+>> > +		info "no support for psample - skipping"
+>> > +		ovs_exit_sig
+>> > +		return $ksft_skip
+>> > +	fi
+>> > +
+>> > +	ovs_del_flows "test_psample" psample
+>> > +
+>> > +	# Test action verification.
+>> > +	OLDIFS=3D$IFS
+>> > +	IFS=3D'*'
+>> > +	min_key=3D'in_port(1),eth(),eth_type(0x0800),ipv4()'
+>> > +	for testcase in \
+>> > + "cookie to
+>> > large"*"psample(group=3D1,cookie=3D1615141312111009080706050403020100)"
+>> > \
+>> > +		"no group with cookie"*"psample(cookie=3Dabcd)" \
+>> > +		"no group"*"psample()";
+>> > +	do
+>> > +		set -- $testcase;
+>> > +		ovs_test_flow_fails "test_psample" psample $min_key $2
+>> > +		if [ $? =3D=3D 1 ]; then
+>> > +			info "failed - $1"
+>> > +			return 1
+>> > +		fi
+>> > +	done
+>> > +	IFS=3D$OLDIFS
+>> > +
+>> > +	ovs_del_flows "test_psample" psample
+>> > +	# Allow ARP
+>> > +	ovs_add_flow "test_psample" psample \
+>> > +		'in_port(1),eth(),eth_type(0x0806),arp()' '2' || return 1
+>> > +	ovs_add_flow "test_psample" psample \
+>> > +		'in_port(2),eth(),eth_type(0x0806),arp()' '1' || return 1
+>> > +
+>> > +	# Sample first 14 bytes of all traffic.
+>> > +	ovs_add_flow "test_psample" psample \
+>> > +	    "in_port(1),eth(),eth_type(0x0800),ipv4()" \
+>> > +            "trunc(14),psample(group=3D1,cookie=3Dc0ffee),2"
+>> > +
+>> > +	# Sample all traffic. In this case, use a sample() action with both
+>> > +	# psample and an upcall emulating simultaneous local sampling and
+>> > +	# sFlow / IPFIX.
+>> > +	nlpid=3D$(grep -E "listening on upcall packet handler" \
+>> > +            $ovs_dir/s0.out | cut -d ":" -f 2 | tr -d ' ')
+>> > +
+>> > +	ovs_add_flow "test_psample" psample \
+>> > +            "in_port(2),eth(),eth_type(0x0800),ipv4()" \
+>> > +
+>> > "sample(sample=3D100%,actions(psample(group=3D2,cookie=3Deeff0c),users=
+pace(pid=3D${nlpid},userdata=3Deeff0c))),1"
+>> > +
+>> > +	# Record psample data.
+>> > + ovs_spawn_daemon "test_psample" python3 $ovs_base/ovs-dpctl.py
+>> > psample-events
+>> > +
+>> > +	# Send a single ping.
+>> > +	sleep 1
+>> > + ovs_sbx "test_psample" ip netns exec client ping -I c1
+>> > 172.31.110.20 -c 1 || return 1
+>> > +	sleep 1
+>> > +
+>> > + # We should have received one userspace action upcall and 2
+>> > psample packets.
+>> > + grep -E "userspace action command" $ovs_dir/s0.out >/dev/null
+>> > 2>&1 || return 1
+>>
+>> I wonder if it would be better to check a few times instead of the one
+>> shot sleep.  There are some constrained environments that may run this
+>> test, and if you're worried about some kinds of races, maybe it makes
+>> sense to check a few times?
+>
+> Yes. I thought about that. There are other sleeps in this file that I
+> was planning to replace with a "wait_until()" function. Should we do
+> this as a follow-up patch to also cover the other instances?
 
-> But more seriously, my filesystem development experience shows that if th=
-e
-> kernel silently tries to accept and fixup the breakage, it is nice in the
-> short term (no complaining users) but it tends to get ugly in the long te=
-rm
-> (where tend people come up with nasty cases where it was wrong to fix it
-> up). So I think Christoph's idea of refusing to load inodes with ctimes o=
-ut
-> of range makes sense. Or at least complain about it if nothing else (whic=
-h
-> has some precedens in the year 2038 problem).
+That makes sense to me.
 
-Complaining about it is fairly simple. We could just throw a pr_warn in
-inode_set_ctime_to_ts when the time comes back as KTIME_MAX. This might
-also be what we need to do for filesystems like NFS, where a future
-ctime on the server is not necessarily a problem for the client.
+>>
+>> Outside of that:
+>>
+>> Reviewed-by: Aaron Conole <aconole@redhat.com>
+>>
+>> > +
+>> > +	# client -> server samples should only contain the first 14 bytes of=
+ the packet.
+>> > +	grep -E "rate:4294967295,group:1,cookie:c0ffee data:[0-9a-f]{28}$" \
+>> > +			 $ovs_dir/stdout >/dev/null 2>&1 || return 1
+>> > +	grep -E "rate:4294967295,group:2,cookie:eeff0c" \
+>> > +			 $ovs_dir/stdout >/dev/null 2>&1 || return 1
+>> > +
+>> > +	return 0
+>> > +}
+>> > +
+>> >  # drop_reason test
+>> >  # - drop packets and verify the right drop reason is reported
+>> >  test_drop_reason() {
+>> > diff --git a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py b/to=
+ols/testing/selftests/net/openvswitch/ovs-dpctl.py
+>> > index e8dc9af10d4d..1e15b0818074 100644
+>> > --- a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
+>> > +++ b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
+>> > @@ -28,8 +28,10 @@ try:
+>> >      from pyroute2.netlink import genlmsg
+>> >      from pyroute2.netlink import nla
+>> >      from pyroute2.netlink import nlmsg_atoms
+>> > +    from pyroute2.netlink.event import EventSocket
+>> >      from pyroute2.netlink.exceptions eimport NetlinkError
+>> >      from pyroute2.netlink.generic import GenericNetlinkSocket
+>> > +    from pyroute2.netlink.nlsocket import Marshal
+>> >      import pyroute2
+>> >      import pyroute2.iproute
+>> >
+>> > @@ -2460,10 +2462,70 @@ class OvsFlow(GenericNetlinkSocket):
+>> >          print("MISS upcall[%d/%s]: %s" % (seq, pktpres, keystr), flus=
+h=3DTrue)
+>> >
+>> >      def execute(self, packetmsg):
+>> > -        print("userspace execute command")
+>> > +        print("userspace execute command", flush=3DTrue)
+>> >
+>> >      def action(self, packetmsg):
+>> > -        print("userspace action command")
+>> > +        print("userspace action command", flush=3DTrue)
+>> > +
+>> > +
+>> > +class psample_sample(genlmsg):
+>> > +    nla_map =3D (
+>> > +        ("PSAMPLE_ATTR_IIFINDEX", "none"),
+>> > +        ("PSAMPLE_ATTR_OIFINDEX", "none"),
+>> > +        ("PSAMPLE_ATTR_ORIGSIZE", "none"),
+>> > +        ("PSAMPLE_ATTR_SAMPLE_GROUP", "uint32"),
+>> > +        ("PSAMPLE_ATTR_GROUP_SEQ", "none"),
+>> > +        ("PSAMPLE_ATTR_SAMPLE_RATE", "uint32"),
+>> > +        ("PSAMPLE_ATTR_DATA", "array(uint8)"),
+>> > +        ("PSAMPLE_ATTR_GROUP_REFCOUNT", "none"),
+>> > +        ("PSAMPLE_ATTR_TUNNEL", "none"),
+>> > +        ("PSAMPLE_ATTR_PAD", "none"),
+>> > +        ("PSAMPLE_ATTR_OUT_TC", "none"),
+>> > +        ("PSAMPLE_ATTR_OUT_TC_OCC", "none"),
+>> > +        ("PSAMPLE_ATTR_LATENCY", "none"),
+>> > +        ("PSAMPLE_ATTR_TIMESTAMP", "none"),
+>> > +        ("PSAMPLE_ATTR_PROTO", "none"),
+>> > +        ("PSAMPLE_ATTR_USER_COOKIE", "array(uint8)"),
+>> > +    )
+>> > +
+>> > +    def dpstr(self):
+>> > +        fields =3D []
+>> > +        data =3D ""
+>> > +        for (attr, value) in self["attrs"]:
+>> > +            if attr =3D=3D "PSAMPLE_ATTR_SAMPLE_GROUP":
+>> > +                fields.append("group:%d" % value)
+>> > +            if attr =3D=3D "PSAMPLE_ATTR_SAMPLE_RATE":
+>> > +                fields.append("rate:%d" % value)
+>> > +            if attr =3D=3D "PSAMPLE_ATTR_USER_COOKIE":
+>> > +                value =3D "".join(format(x, "02x") for x in value)
+>> > +                fields.append("cookie:%s" % value)
+>> > +            if attr =3D=3D "PSAMPLE_ATTR_DATA" and len(value) > 0:
+>> > +                data =3D "data:%s" % "".join(format(x, "02x") for x i=
+n value)
+>> > +
+>> > +        return ("%s %s" % (",".join(fields), data)).strip()
+>> > +
+>> > +
+>> > +class psample_msg(Marshal):
+>> > +    PSAMPLE_CMD_SAMPLE =3D 0
+>> > +    PSAMPLE_CMD_GET_GROUP =3D 1
+>> > +    PSAMPLE_CMD_NEW_GROUP =3D 2
+>> > +    PSAMPLE_CMD_DEL_GROUP =3D 3
+>> > +    PSAMPLE_CMD_SET_FILTER =3D 4
+>> > +    msg_map =3D {PSAMPLE_CMD_SAMPLE: psample_sample}
+>> > +
+>> > +
+>> > +class PsampleEvent(EventSocket):
+>> > +    genl_family =3D "psample"
+>> > +    mcast_groups =3D ["packets"]
+>> > +    marshal_class =3D psample_msg
+>> > +
+>> > +    def read_samples(self):
+>> > +        while True:
+>> > +            try:
+>> > +                for msg in self.get():
+>> > +                    print(msg.dpstr(), flush=3DTrue)
+>> > +            except NetlinkError as ne:
+>> > +                raise ne
+>> >
+>> >
+>> >  def print_ovsdp_full(dp_lookup_rep, ifindex, ndb=3DNDB(), vpl=3DOvsVp=
+ort()):
+>> > @@ -2530,7 +2592,7 @@ def main(argv):
+>> >          help=3D"Increment 'verbose' output counter.",
+>> >          default=3D0,
+>> >      )
+>> > -    subparsers =3D parser.add_subparsers()
+>> > +    subparsers =3D parser.add_subparsers(dest=3D"subcommand")
+>> >
+>> >      showdpcmd =3D subparsers.add_parser("show")
+>> >      showdpcmd.add_argument(
+>> > @@ -2605,6 +2667,8 @@ def main(argv):
+>> >      delfscmd =3D subparsers.add_parser("del-flows")
+>> >      delfscmd.add_argument("flsbr", help=3D"Datapath name")
+>> >
+>> > +    subparsers.add_parser("psample-events")
+>> > +
+>> >      args =3D parser.parse_args()
+>> >
+>> >      if args.verbose > 0:
+>> > @@ -2619,6 +2683,9 @@ def main(argv):
+>> >
+>> >      sys.setrecursionlimit(100000)
+>> >
+>> > +    if args.subcommand =3D=3D "psample-events":
+>> > +        PsampleEvent().read_samples()
+>> > +
+>> >      if hasattr(args, "showdp"):
+>> >          found =3D False
+>> >          for iface in ndb.interfaces:
+>>
 
-Refusing to load the inode on disk-based filesystems is harder, but is
-probably possible. There are ~90 calls to inode_set_ctime_to_ts in the
-kernel, so we'd need to vet the places that are loading times from disk
-images or the like and fix them to return errors in this situation.
-
-Is warning acceptable, or do we really need to reject inodes that have
-corrupt timestamps like this?
---=20
-Jeff Layton <jlayton@kernel.org>
 
