@@ -1,93 +1,166 @@
-Return-Path: <linux-kernel+bounces-237391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B05F91F05B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:38:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C843291F063
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:40:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7065B26600
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:38:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D80B28848D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:40:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25CDB1494BC;
-	Tue,  2 Jul 2024 07:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC04146A68;
+	Tue,  2 Jul 2024 07:40:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GCBLdFrj"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mwOFnNRw"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 465744CB23;
-	Tue,  2 Jul 2024 07:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5FB54FB5;
+	Tue,  2 Jul 2024 07:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719905876; cv=none; b=W6wg9moEUN1R95TjERWcw/pXdnkLbfVI+EATzZV+auLbFu3aq6Xcx1zw0UeIET0bNfk7Sjm933pHv4a0o03lXs0umM4F7Yt052NVKvHV5CsUxCD2rp2J5Zej0KvIHkd7XQBDWc6YuU2l0Nq38u0hjzPhyfzGDvVxUsJnlwN0uIo=
+	t=1719906035; cv=none; b=AP/k0Pg9tk3ntDk0tnpf/+4JkC3IDZudMztTJSst6VskcycCbJA6GhIAQDBGvFqUynnwnwYRXmgP7mLOMkaA+LHNpKLEeiJhS2R6XxTt+kZRUFGi+0G9Azt0orQVy9hddmBv/D0Of/guRMbyLzDuXWrQIsDY1VtyTUPhbrGqWr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719905876; c=relaxed/simple;
-	bh=2VYDxOt/ANNEhf8pUSMHmU8uQwhxTzHw4bbej7YnNQA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cpN4Tc6FSFKq2h40U5YAA1r5V8GZwxAVDMTK7k2suZ107bocAxi8yni0bg90brOZJ1T/4d8yMcGw+KnYZz8QRf5Rup7EqDynhW6/ApP8LD1eeifbwhQVlA0f9YzJzfyvNHTjePfFupm4/SFnjMmRiiDPdFIhhlBt3PopjO/YJLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GCBLdFrj; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=rxGl+63oN1WDMSTt3tuoEFowmTF6ElvlJY4+FmesakA=; b=GCBLdFrjfKQdOXAbJDYAUldMcU
-	DSmkwndO1FhRCRFEv30KICrnRNwrFf9kJcEYMqhwqQDtLGuTCsv/XKs1i4qYzbEK4bDB//29ZIl/Z
-	TyUMsccI/iUY5NQUTOrNNQZM0hhSV+5kkoK79H8Po0NcbQPcICCM3GQwh25NRLhmhXCICDRSuyiPq
-	wrFue8viWQOTqL+Fg5JPI4ghXP1YvSA80e3qc0eztth2PFfU/1m0gidDEYPN+n80rPsZURhP7EL1V
-	ZfShbVBnFGywltDR18+pzXwEuIrHk/UYIUMD5W1zc+qOJRqd8wAWe5dbAhyAv/2NL90AXPEqVJLQ0
-	Xb2L/HoA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sOY5D-00000005sux-1EZd;
-	Tue, 02 Jul 2024 07:37:47 +0000
-Date: Tue, 2 Jul 2024 00:37:47 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>, kernel-team@fb.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-mm@kvack.org, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH 01/10] fs: turn inode ctime fields into a single ktime_t
-Message-ID: <ZoOuSxRlvEQ5rOqn@infradead.org>
-References: <20240626-mgtime-v1-0-a189352d0f8f@kernel.org>
- <20240626-mgtime-v1-1-a189352d0f8f@kernel.org>
- <20240701224941.GE612460@frogsfrogsfrogs>
- <3042db2f803fbc711575ec4f1c4a273912a50904.camel@kernel.org>
+	s=arc-20240116; t=1719906035; c=relaxed/simple;
+	bh=PcVk9pcskDazelhQkcuxF07f4ocoy3fBKZA9lVRhRdc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MhdTNyBD6jZGFRZ55Xq7K1lOn531PjvuzB0R2oE/AporRsSOo0V0Ip1H/rUqjWa2CCJgXHj7VLThA6NoSpkt7lXkH2YzwgStcjjFVTSlJcElkjQXR/b0rtUk3vPDlybdNYOXeEFrEDkjrQokHQbyWQb/41/HZWgtAT57TUPOI9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mwOFnNRw; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a72988749f0so573259466b.0;
+        Tue, 02 Jul 2024 00:40:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719906032; x=1720510832; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PcVk9pcskDazelhQkcuxF07f4ocoy3fBKZA9lVRhRdc=;
+        b=mwOFnNRwVuZSRKTuD9YocuxaIqIZQIfh2ppMMMQnM/9BMSgy6mzQZpOGJQ5AJVS2JV
+         8DT+YU6PKRb3rRkO8cJwBg7G0f8Y6dK8dLGkOP05fHMuP3wOan8vqibOY7hZRnoH7Grq
+         mtEd1HBnkCNEesOB3Zyeeldxcz8EOUOgHpWj5VnPZsQzWjAO02WUTinTTq/CgYC5c9mA
+         /5JvXRaQT3d/5gYST6nXfJhXmnUwnr9P6F1qSRhtY68r6sgyG4fC1E7W0tCeVY0t47GD
+         SKha3CZv17ba5Pb0LWsOre+WPXCtKTN/NeasDB7WNw5FhEnj3859SsXM6m8PuVtphuf2
+         kHQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719906032; x=1720510832;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PcVk9pcskDazelhQkcuxF07f4ocoy3fBKZA9lVRhRdc=;
+        b=oACZLjdQL57B6ah9rGQCpwlAukyfhnqDROrbupAQzGQ351CBiZb+Gb7mMeRiEyLBEB
+         PfQUQ/ZaZXJvnbFS/4W8T/0oWE0Hy0rWNjLmw/j9aCOIIRBXyOveDArYYMmWZSlbXEFz
+         h/3aRLxjRaFsMTu3eFMuQN3QGtgKh7uKm6hek1OqDC+laL2hqhly7lSd+Siea7rI8+Fy
+         0J12r3V8RHY87NFSolz0se3eIOgCoO2wB7ZvS9CWGU5jSOy9SCtNE1/YeuAlAN5HqJqx
+         qV5dv+MiuMueI6fS36+8vGCqRMTq+0gLlHTZbOYRJ2IeRKYMMuKVNvnWijtKtHZJPmMJ
+         oevw==
+X-Forwarded-Encrypted: i=1; AJvYcCUvxSgk4aWIOhMg5KZeGyg3LHzC7TVqczr2Wyw1AiWJTb6ptyY/H9opEQT0VVCqiNohSYRoF1QLnhTn5frLB0G5k9jECllE2R5qfj6mRqQcaZsVW9MacsmKP5yX7Ziruvk8Mm2+vBc=
+X-Gm-Message-State: AOJu0Yx2gynxUgxCEjGA0mvhzE42T+kRFHZI/O4PZdHIvfwoFNy9vAt6
+	yvPma65mxNMHCL4yk2osAfBo62l1Y5pJhy3XvP1E2SWcAsMzqyojUm8+SfPYjRM+jWhcItWMKuz
+	f2LdUrsiwXb4/zUn1yKEf3HMm52g=
+X-Google-Smtp-Source: AGHT+IHgGHjnZenrRqWi/oLaXC+N3WLnnNwhl7v5Bn7Ch8VqF+oo9nxaMmCeFy5urpbboScGqmnOrD3RwjIoehRm/gs=
+X-Received: by 2002:a17:906:c28a:b0:a6f:5815:f5e6 with SMTP id
+ a640c23a62f3a-a751446321amr463320566b.8.1719906031756; Tue, 02 Jul 2024
+ 00:40:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3042db2f803fbc711575ec4f1c4a273912a50904.camel@kernel.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20240627-fix-help-issue-v3-1-85318a3974e4@gmail.com>
+ <c9df6637-6055-4668-b80b-a1a6e6be445e@linuxfoundation.org>
+ <CALsPMBMeo5E9ZND0bPK089VHBZnybsigkvoC2r8BLCTjYt9QFA@mail.gmail.com>
+ <f1261f1c-abbe-49e4-b0bb-b72af367da7f@linuxfoundation.org>
+ <CALsPMBP42_oKJDegVQOzHUE00mie2Mh_aPyvyTUhgsnjQO1DDQ@mail.gmail.com> <501954d6-3f0a-4f1e-863b-c60353435700@linuxfoundation.org>
+In-Reply-To: <501954d6-3f0a-4f1e-863b-c60353435700@linuxfoundation.org>
+From: Roman Storozhenko <romeusmeister@gmail.com>
+Date: Tue, 2 Jul 2024 09:40:19 +0200
+Message-ID: <CALsPMBPkE=CCTgm8UcsdL7qEG+1u1H8NFYYTJvEMK3uXvg97Ng@mail.gmail.com>
+Subject: Re: [PATCH v3] cpupower: Make help command available for custom
+ install dir
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>, 
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 01, 2024 at 08:22:07PM -0400, Jeff Layton wrote:
-> 2) the filesystem has been altered (fuzzing? deliberate doctoring?).
-> 
-> None of these seem like legitimate use cases so I'm arguing that we
-> shouldn't worry about them.
+On Mon, Jul 1, 2024 at 9:40=E2=80=AFPM Shuah Khan <skhan@linuxfoundation.or=
+g> wrote:
+>
+> On 6/29/24 04:48, Roman Storozhenko wrote:
+> > On Fri, Jun 28, 2024 at 9:45=E2=80=AFPM Shuah Khan <skhan@linuxfoundati=
+on.org> wrote:
+> >>
+> >> On 6/28/24 05:30, Roman Storozhenko wrote:
+> >>> On Thu, Jun 27, 2024 at 7:33=E2=80=AFPM Shuah Khan <skhan@linuxfounda=
+tion.org> wrote:
+> >>>>
+> >>>> On 6/27/24 01:49, Roman Storozhenko wrote:
+> >>>>> When the 'cpupower' utility installed in the custom dir, it fails t=
+o
+> >>>>> render appropriate help info for a particular subcommand:
+> >>>>> $ LD_LIBRARY_PATH=3Dlib64/ bin/cpupower help monitor
+> >>>>> with error message like 'No manual entry for cpupower-monitor.1'
+> >>>>> The issue is that under the hood it calls 'exec' function with
+> >>>>> the following args: 'man cpupower-monitor.1'. In turn, 'man' search
+> >>>>> path is defined in '/etc/manpath.config'. Of course it contains onl=
+y
+> >>>>> standard system man paths.
+> >>>>> Make subcommands help available for a user by setting up 'MANPATH'
+> >>>>> environment variable to the custom installation man pages dir. That
+> >>>>> variable value will be prepended to the man pages standard search p=
+aths
+> >>>>> as described in 'SEARCH PATH' section of MANPATH(5).
+> >>>>
+> >>>> What I am asking you is what happens when you set the MANPATH before
+> >>>> running the command?
+> >>>
+> >>> It adds the custom search path to the beginning of the MANPATH variab=
+le.
+> >>> I tested this case. All works as expected.
+> >>>
+> >>
+> >> Let's try again. What happens if you run the command with MANPATH set =
+and
+> >> exported and then run the command. Can you send the output?
+> >
+> > hedin@laptop:~/prj/cpupower/install/usr$ echo $MANPATH
+> > /tmp/
+> > hedin@laptop:~/prj/cpupower/install/usr$ LD_LIBRARY_PATH=3Dlib64/
+> > bin/cpupower help monitor
+> > ...................
+> > man output
+> > ...................
+> > hedin@laptop:~/prj/cpupower/install/usr$ echo $MANPATH
+> > /tmp/
+> > hedin@laptop:~/prj/cpupower/install/usr$
+> >
+>
+> Is this with your patch or mainline? Can you give cut and paste
+> the man output here for the mainline coupower without your patch?
 
-Not worry seems like the wrong answer here.  Either we decide they
-are legitimate enough and we preserve them, or we decide they are
-bogus and refuse reading the inode.  But we'll need to consciously
-deal with the case.
+The above output is from my patch.
+This is the output from the mainline:
+hedin@laptop:~/prj/cpupower/install/usr$ sudo LD_LIBRARY_PATH=3Dlib64/
+bin/cpupower help monitor
+[sudo] password for hedin:
+No manual entry for cpupower-monitor
+hedin@laptop:~/prj/cpupower/install/usr$ echo $MANPATH
+/tmp/
+hedin@laptop:~/prj/cpupower/install/usr$
 
+
+>
+> thanks,
+> -- Shuah
+>
+
+
+--=20
+Kind regards,
+Roman Storozhenko
 
