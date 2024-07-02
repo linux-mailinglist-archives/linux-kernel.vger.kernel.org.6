@@ -1,127 +1,209 @@
-Return-Path: <linux-kernel+bounces-237283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66F7D91EEB4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:02:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9246891EEB7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:02:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 294D528487D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:02:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE07BB214F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C485FDA7;
-	Tue,  2 Jul 2024 06:01:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50CA15A788;
+	Tue,  2 Jul 2024 06:02:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="L7vC1fK5"
-Received: from mx0.riseup.net (mx0.riseup.net [198.252.153.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ia6Wdthh";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QNbMJsVZ";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ia6Wdthh";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QNbMJsVZ"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4AF747F;
-	Tue,  2 Jul 2024 06:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6066A342;
+	Tue,  2 Jul 2024 06:02:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719900114; cv=none; b=gW3UKREedViabUV/sWKWY+Vf448TWWijtwW2KtTUHvfZJJBC8fltG7lquc+jst2USBiV3yMnGHuuLKseCkcpP65m4wrMjzeE8ohN3eZ0Zt4wsaBRY+BoytfKdldykg2lcfdc0m7HvvVKrjZl35ewqCEeVf+NVdOs27AqDmeuIoY=
+	t=1719900156; cv=none; b=e+uK60TUSCIGztcHPQDjBDQRdJ0ETBuhJCcybxze/+9l7y6UKNsfeEUVRFnMJJ1vLybOcEV5V8bcRPP6Sn2kxHeiyHli2aFhYhmw9wNvjHZ89O4bNVltZkiOBlMowF01PTWEMmKnwKwxMsnRyWVqQtPY1hOaJT2ItNhsLSwYmmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719900114; c=relaxed/simple;
-	bh=xcSQiVNOMATEXEpewV4rKAkfpC7Es+uQVI1OXvCfdSs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=lmcHoAesSpgHqH4HcCvRAuWpwC2ooDf653LiGmxc2usL27pFngnb3YCfBROY4sHYKVubDQpB1c+xIVxS1dBH1lLgQ6EDYgx81zlzhBM+kAv6PS+ouhqyi/742jfUUfoAql2f01oJnDuDyeO3bm5i07yldtSiw0P6IYFyLtrNdAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=L7vC1fK5; arc=none smtp.client-ip=198.252.153.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
-Received: from fews01-sea.riseup.net (fews01-sea-pn.riseup.net [10.0.1.109])
+	s=arc-20240116; t=1719900156; c=relaxed/simple;
+	bh=kGvkyIJchibKQwsRixensZtOji8fEHU+wBr15WUN4rA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IlV8JLXaiZj9PUKgTGS19olg00dKPmfYy5crQAgx72aC84PYNRViA7071i+/wari104GqIgZiJEKOa898NG+Pa0C9xgZLkabqMVzXKjPZ7jadA6SIKKQzrXAsLICHD+ds3jVhzEAGoiae3N7uu4T4NPP+kwb73zfzgiDOBIi8ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ia6Wdthh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QNbMJsVZ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ia6Wdthh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QNbMJsVZ; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx0.riseup.net (Postfix) with ESMTPS id 4WCsk800Mwz9tCm;
-	Tue,  2 Jul 2024 06:01:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
-	t=1719900112; bh=xcSQiVNOMATEXEpewV4rKAkfpC7Es+uQVI1OXvCfdSs=;
-	h=From:Date:Subject:To:Cc:From;
-	b=L7vC1fK5z/bNPFDADUtNi/2HsHiRSXQ5l/nCXi1INv5MxJQTTwIvOmtCwCGG/s74L
-	 CtLAmzcX2U2xtn59L4Y263H0uececU0eG+9MeJljSXZ2z+OmoqDkuz9cZGb3NGVewD
-	 HdWbuC9XbBRtNW/+GS7qySGh5lUzUzDttL1EfdQA=
-X-Riseup-User-ID: 03BF26FFB56FD71EFBC1F986A0C6E788064EFC6FD312FAC9CB199716DF497863
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	 by fews01-sea.riseup.net (Postfix) with ESMTPSA id 4WCsjt025dzJrSk;
-	Tue,  2 Jul 2024 06:01:37 +0000 (UTC)
-From: Dang Huynh <danct12@riseup.net>
-Date: Tue, 02 Jul 2024 13:01:19 +0700
-Subject: [PATCH v3] arm64: dts: qcom: qrb4210-rb2: Correct max current draw
- for VBUS
+	by smtp-out2.suse.de (Postfix) with ESMTPS id AA1A11FB84;
+	Tue,  2 Jul 2024 06:02:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1719900136; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vCyFo7qTaIUmUWUVVm7e2zEuFe/h+LUUA4eXNYgfnWE=;
+	b=ia6WdthhZxnuf0zzE8iw3tHplSmY+zsIsUR/hgKA+vxPH2FNKAYOrC9yX0M+YIj5/cJ18t
+	8zGyXziKILCqOCTpQxIUSbfw/o+7pzMhe2XyQhXzekK7WyUxCdJRknSCBr1hPyQzOA12Kf
+	nXLdtdcpCN7ey+xvOj3sv2Xg4P2wRrc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1719900136;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vCyFo7qTaIUmUWUVVm7e2zEuFe/h+LUUA4eXNYgfnWE=;
+	b=QNbMJsVZnqU3O+ZLbWky7BRI6nwiOkQZl5v1Zo6N6/E+VRKAio3/JuRt+00nMeaKT7OlSq
+	MGxyg5sAkwWoJkAw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ia6Wdthh;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=QNbMJsVZ
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1719900136; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vCyFo7qTaIUmUWUVVm7e2zEuFe/h+LUUA4eXNYgfnWE=;
+	b=ia6WdthhZxnuf0zzE8iw3tHplSmY+zsIsUR/hgKA+vxPH2FNKAYOrC9yX0M+YIj5/cJ18t
+	8zGyXziKILCqOCTpQxIUSbfw/o+7pzMhe2XyQhXzekK7WyUxCdJRknSCBr1hPyQzOA12Kf
+	nXLdtdcpCN7ey+xvOj3sv2Xg4P2wRrc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1719900136;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vCyFo7qTaIUmUWUVVm7e2zEuFe/h+LUUA4eXNYgfnWE=;
+	b=QNbMJsVZnqU3O+ZLbWky7BRI6nwiOkQZl5v1Zo6N6/E+VRKAio3/JuRt+00nMeaKT7OlSq
+	MGxyg5sAkwWoJkAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 12ACA13A9A;
+	Tue,  2 Jul 2024 06:02:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Gl/fN+eXg2YmagAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 02 Jul 2024 06:02:15 +0000
+Message-ID: <a78246f8-635f-4718-8190-5147a03495ea@suse.de>
+Date: Tue, 2 Jul 2024 08:02:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240702-qrd4210rb2-vbus-volt-v3-1-fbd24661eec4@riseup.net>
-X-B4-Tracking: v=1; b=H4sIAK6Xg2YC/43NQQ6CMBCF4auQrh3TDoU2rryHcUFLkUkM6BQaD
- eHuFnaudPm/ZL5ZRAxMIYpTsQgOiSKNQ47yUAjfN8MtALW5BUrU0kgFT241KskOIbk5QhrvE1h
- EU2tvfOcbkU8fHDp67ezlmrunOI383r8kta0/wKRAQeVl3dmysrqsz0wxzI/jECaxiQn/UTArz
- jjfYmOst+5LWdf1A1oRinX/AAAA
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Luca Weiss <luca.weiss@fairphone.com>, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Dang Huynh <danct12@riseup.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/7] ata: libata-scsi: Honor the D_SENSE bit for
+ CK_COND=1 and no error
+Content-Language: en-US
+To: Igor Pylypiv <ipylypiv@google.com>, Damien Le Moal <dlemoal@kernel.org>,
+ Niklas Cassel <cassel@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>, linux-ide@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20240702024735.1152293-1-ipylypiv@google.com>
+ <20240702024735.1152293-4-ipylypiv@google.com>
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20240702024735.1152293-4-ipylypiv@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-4.50 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	MX_GOOD(-0.01)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: AA1A11FB84
+X-Spam-Flag: NO
+X-Spam-Score: -4.50
+X-Spam-Level: 
 
-According to downstream sources, maximum current for PMI632 VBUS
-is 1A.
+On 7/2/24 04:47, Igor Pylypiv wrote:
+> SAT-5 revision 8 specification removed the text about the ANSI INCITS
+> 431-2007 compliance which was requiring SCSI/ATA Translation (SAT) to
+> return descriptor format sense data for the ATA PASS-THROUGH commands
+> regardless of the setting of the D_SENSE bit.
+> 
+> Let's honor the D_SENSE bit for ATA PASS-THROUGH commands while
+> generating the "ATA PASS-THROUGH INFORMATION AVAILABLE" sense data.
+> 
+> SAT-5 revision 7
+> ================
+> 
+> 12.2.2.8 Fixed format sense data
+> 
+> Table 212 shows the fields returned in the fixed format sense data
+> (see SPC-5) for ATA PASS-THROUGH commands. SATLs compliant with ANSI
+> INCITS 431-2007, SCSI/ATA Translation (SAT) return descriptor format
+> sense data for the ATA PASS-THROUGH commands regardless of the setting
+> of the D_SENSE bit.
+> 
+> SAT-5 revision 8
+> ================
+> 
+> 12.2.2.8 Fixed format sense data
+> 
+> Table 211 shows the fields returned in the fixed format sense data
+> (see SPC-5) for ATA PASS-THROUGH commands.
+> 
+> Cc: stable@vger.kernel.org # 4.19+
+> Reported-by: Niklas Cassel <cassel@kernel.org>
+> Closes: https://lore.kernel.org/linux-ide/Zn1WUhmLglM4iais@ryzen.lan
+> Reviewed-by: Niklas Cassel <cassel@kernel.org>
+> Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
+> ---
+>   drivers/ata/libata-scsi.c | 7 ++-----
+>   1 file changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+> index b59cbb5ce5a6..076fbeadce01 100644
+> --- a/drivers/ata/libata-scsi.c
+> +++ b/drivers/ata/libata-scsi.c
+> @@ -941,11 +941,8 @@ static void ata_gen_passthru_sense(struct ata_queued_cmd *qc)
+>   				   &sense_key, &asc, &ascq);
+>   		ata_scsi_set_sense(qc->dev, cmd, sense_key, asc, ascq);
+>   	} else {
+> -		/*
+> -		 * ATA PASS-THROUGH INFORMATION AVAILABLE
+> -		 * Always in descriptor format sense.
+> -		 */
+> -		scsi_build_sense(cmd, 1, RECOVERED_ERROR, 0, 0x1D);
+> +		/* ATA PASS-THROUGH INFORMATION AVAILABLE */
+> +		ata_scsi_set_sense(qc->dev, cmd, RECOVERED_ERROR, 0, 0x1D);
+>   	}
+>   }
+>   
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-Taken from msm-4.19 (631561973a034e46ccacd0e53ef65d13a40d87a4)
-Line 685-687 in drivers/power/supply/qcom/qpnp-smb5.c
+Cheers,
 
-Fixes: a06a2f12f9e2 ("arm64: dts: qcom: qrb4210-rb2: enable USB-C port handling")
-Reviewed-by: Luca Weiss <luca.weiss@fairphone.com>
-Signed-off-by: Dang Huynh <danct12@riseup.net>
----
-In previous patch series, there's a suggestion to correct maximum
-current for PMI632 VBUS.
-
-Unfortunately it didn't make it and probably forgotten.
-
-Link to the suggestion mentioned:
-https://lore.kernel.org/linux-arm-msm/CYMDEAJZ0TJK.K31XZB3E9QOG@fairphone.com/
-
-Signed-off-by: Dang Huynh <danct12@riseup.net>
-----
-Changes in v3:
-- Fixed wrong usage of electrical units.
-- Link to v2: https://lore.kernel.org/r/20240701-qrd4210rb2-vbus-volt-v2-1-b7bcd2a78c8b@riseup.net
-
-Changes in v2:
-- Fixed typo (voltage -> ampere)
-- Link to v1: https://lore.kernel.org/r/20240701-qrd4210rb2-vbus-volt-v1-1-5c06f8358436@riseup.net
----
- arch/arm64/boot/dts/qcom/qrb4210-rb2.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-index 1c7de7f2db79..1888d99d398b 100644
---- a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-+++ b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-@@ -305,7 +305,7 @@ pmi632_ss_in: endpoint {
- 
- &pmi632_vbus {
- 	regulator-min-microamp = <500000>;
--	regulator-max-microamp = <3000000>;
-+	regulator-max-microamp = <1000000>;
- 	status = "okay";
- };
- 
-
----
-base-commit: 642a16ca7994a50d7de85715996a8ce171a5bdfb
-change-id: 20240701-qrd4210rb2-vbus-volt-822764c7cfca
-
-Best regards,
+Hannes
 -- 
-Dang Huynh <danct12@riseup.net>
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
 
