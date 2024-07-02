@@ -1,108 +1,112 @@
-Return-Path: <linux-kernel+bounces-238096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4886F92436C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:18:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA36F924373
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:19:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8DA61F2498A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:18:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87642B22C52
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:19:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F6EC1BD039;
-	Tue,  2 Jul 2024 16:18:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19941BD504;
+	Tue,  2 Jul 2024 16:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Ir52Gvz2"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oWe8+4vr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525C01B5838
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 16:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4CB615B11D;
+	Tue,  2 Jul 2024 16:19:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719937116; cv=none; b=OpyjieNIJTS+qpvS2Eadn1YTkYGH91/nJm961+6doBnRFm8lZmQs36mKttat0XP/HwV2Tb1G6mlmGfWx+UodQBbSRqfffDMYJ3pvcGWn34rtuhW1Wov5mT7BfZbpq+eacw6YUnmqO5x6DS/ZR35k3C0DbxMyVTghxh2PQG+rkvk=
+	t=1719937146; cv=none; b=cLayFQonFoT0r5aV3qNq25Enrs6c0UqngtzbWhg4qUmnEaNcOorJWP9CgyRRe3gpnNUDNooWGm4myuJs0dRAEeow/foi4gVhDyrYVDXrdz2Npzt2ykxIgiNrYi2NWqUvHs67+wFrlFAml3bCqP5T90kQmt9XIKwYDXg7Ss8Nchc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719937116; c=relaxed/simple;
-	bh=AgE9FQGxGJLTJVWx55pmmSppZoMtGlA6Xq23h+emmxY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m2xGN3QYvoItROnMwXdRiqYT1vjwNbzP9ydxs8DehIdg3Y6acBQW6T5/QPMJ+Zf07wTFXaO/2QkzitYW0UZAriK2zmWhxapLFvNxpE06fOyGFLqhat6it4JLcwP2TQ9jfITUOSxovip+wZxQbk4zvK/gW0VgnJQmAtQ5fh8GU/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Ir52Gvz2; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-7f59854ace1so10305039f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 09:18:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1719937114; x=1720541914; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=f++KokYJIsMEcn6psVzWi3mhtO0eFnkLSGycni+7ewA=;
-        b=Ir52Gvz2vnCk2m95LUZoeve/FIGcE1wNZ0PxZw4/SfC8couEJI4TMAsGg7ndIaelWZ
-         iUDBe8Fnek95l7Z1w83wA15Ka/vodZXCtdBll2fMA8eSsr1zrRntHpYFlwHXT8tNQcuG
-         eXMWI5NjZQvG6OOqXxCkmc3+H2Xdj7UZwCjjY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719937114; x=1720541914;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f++KokYJIsMEcn6psVzWi3mhtO0eFnkLSGycni+7ewA=;
-        b=XAKiCip2KlsC2yaGmLd+wm7EsrSy3DoTdz8Xf6WIBewMK5G2ahg8xz6H6cCDAhoALu
-         ay3ZU1evKBHaH20ZmFJHIbtdZ4hf9n7Akj5YECE6dqRO3f7ib5TjX9GfrYSI3VM0O049
-         0Dgo/1vJRfubpnPBVs/3QnmwUwM5BrZn+c1hhj2eAc2JWteb01a+TFHm5y+MklJRFBCX
-         VUCbwl23aaFw516RD1ACDKqqL9DqXVvjTgFdBv7R+4X2AR9RydSC0G9Xd8YUkh4fU7TX
-         KBLdDxOXvq7NfO4xT7sElR5lmXeiaV8yiKKQVWvXL6dPE+1zqPFcvHkfAjHLZPtETLgV
-         AW7A==
-X-Forwarded-Encrypted: i=1; AJvYcCU1EWbTyGcARm3a0t62yQy5gECizjA5+NjZfEfoeZDXe7zhiWVZHesblOnzLEarLg0oYteBVdBYMBQBos+zwWJtekOQBTvXh6hsP0yw
-X-Gm-Message-State: AOJu0Yz3SSxsL3+eD3ibLMi+sr5TLJHl5FSE4x3TX/d8NmWiTlz3Di7m
-	rEsWdQO80nAxKRjhMqwTYBkQp6t3gToDddubDICZVvpbEYONP0dpUA+nkGN712R+DsCgfLbgjjA
-	J
-X-Google-Smtp-Source: AGHT+IHZnMx5g9NW1e1RoZwZPcbUtmjlUGCxfhAaVxw/3os/XLw3MU5JXoUSSBLT0QRg8QjaO0HmOQ==
-X-Received: by 2002:a05:6602:42c5:b0:7eb:69ec:43f2 with SMTP id ca18e2360f4ac-7f62ee5deaemr843037239f.1.1719937114541;
-        Tue, 02 Jul 2024 09:18:34 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4bb73f90cebsm2845555173.93.2024.07.02.09.18.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jul 2024 09:18:34 -0700 (PDT)
-Message-ID: <3298ef84-0404-4608-9e7a-887d8e30a5cd@linuxfoundation.org>
-Date: Tue, 2 Jul 2024 10:18:33 -0600
+	s=arc-20240116; t=1719937146; c=relaxed/simple;
+	bh=f/Lt6TGAChQhJDo1d9S1C9KYvC+2NSkWdhgXVkkdLDw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pEljVPxeReaao268QOPZbdgc3ZoiY1hmRDBA6GIKVJhDJq/lMLrmXbZaR7/iFna54t18AQrAsxcRybtuwExHGX+KYeFJXyNnaKsD/3lOnMNuDMAOk5BYKFPN71epdFWpnEXKNV/PbgHhGHvymCdygI6yZ4LW7eTwYTlmPE4A5ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oWe8+4vr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47053C116B1;
+	Tue,  2 Jul 2024 16:18:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719937146;
+	bh=f/Lt6TGAChQhJDo1d9S1C9KYvC+2NSkWdhgXVkkdLDw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oWe8+4vrZ82aLpFmQ/xxCaJvhq1zmz0VUCOjwx+pO4joEWaTNHfWjLRMGZoaPiVDt
+	 budCT+VnEcgyoSf2Ab8MdsbVsBFm77eny8iEcIwJQ8JyEGL4+bTuUEjbENlNcYIpp/
+	 gL3SnCOgO6dZZl8vgmgZ762DzwQodDtcRzBW6kItR6KjM163XwjU2Lgn7iM5pgI6/7
+	 XBsh3uDkaMZxoYbbDoDEcrrpMrlrSldQO/fACxHAu6ntHbLUVC4HHK5mhcmY/NpEBF
+	 XVA4ga3Rk7WIXoZ0aUPw+mEDsMkvhR1DhZmouNn2Tfi29hI2nY5C6cVQ0Pr5Mz7q2M
+	 Il08gNdV6QXbQ==
+Date: Tue, 2 Jul 2024 18:18:57 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>, 
+	"Darrick J. Wong" <djwong@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Chandan Babu R <chandan.babu@oracle.com>, 
+	Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, 
+	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
+	David Sterba <dsterba@suse.com>, Hugh Dickins <hughd@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, kernel-team@fb.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mm@kvack.org, 
+	linux-nfs@vger.kernel.org
+Subject: Re: [PATCH 01/10] fs: turn inode ctime fields into a single ktime_t
+Message-ID: <20240702-inwiefern-beraten-cc4b5efce8ef@brauner>
+References: <20240701224941.GE612460@frogsfrogsfrogs>
+ <3042db2f803fbc711575ec4f1c4a273912a50904.camel@kernel.org>
+ <ZoOuSxRlvEQ5rOqn@infradead.org>
+ <d91a29f0e600793917b73ac23175e02dafd56beb.camel@kernel.org>
+ <20240702101902.qcx73xgae2sqoso7@quack3>
+ <958080f6de517cf9d0a1994e3ca500f23599ca33.camel@kernel.org>
+ <ZoPs0TfTEktPaCHo@infradead.org>
+ <09ad82419eb78a2f81dda5dca9caae10663a2a19.camel@kernel.org>
+ <ZoPvR39vGeluD5T2@infradead.org>
+ <a11d84a3085c6a6920d086bf8fae1625ceff5764.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] kunit/usercopy: Disable testing on !CONFIG_MMU
-To: Kees Cook <kees@kernel.org>
-Cc: Rae Moar <rmoar@google.com>, kernel test robot <lkp@intel.com>,
- Brendan Higgins <brendan.higgins@linux.dev>, David Gow
- <davidgow@google.com>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, linux-kselftest@vger.kernel.org,
- kunit-dev@googlegroups.com, linux-hardening@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240619202511.it.861-kees@kernel.org>
- <CA+GJov5ZpFxKxK44SAb_B8SzWUF9uQV13A8BcVPijo0CV0mStg@mail.gmail.com>
- <202406271005.4E767DAE@keescook>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <202406271005.4E767DAE@keescook>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <a11d84a3085c6a6920d086bf8fae1625ceff5764.camel@kernel.org>
 
-On 6/27/24 11:07, Kees Cook wrote:
-> Hi Shuah,
+On Tue, Jul 02, 2024 at 08:21:42AM GMT, Jeff Layton wrote:
+> On Tue, 2024-07-02 at 05:15 -0700, Christoph Hellwig wrote:
+> > On Tue, Jul 02, 2024 at 08:09:46AM -0400, Jeff Layton wrote:
+> > > > > corrupt timestamps like this?
+> > > > 
+> > > > inode_set_ctime_to_ts should return an error if things are out of
+> > > > range.
+> > > 
+> > > Currently it just returns the timespec64 we're setting it to (which
+> > > makes it easy to do several assignments), so we'd need to change
+> > > its
+> > > prototype to handle this case, and fix up the callers to recognize
+> > > the
+> > > error.
+> > > 
+> > > Alternately it may be easier to just add in a test for when
+> > > __i_ctime == KTIME_MAX in the appropriate callers and have them
+> > > error
+> > > out. I'll have a look and see what makes sense.
+> > 
+> > The seems like a more awkward interface vs one that explicitly
+> > checks.
+> > 
 > 
-> Can you please add this to your -next tree since it fixes test failures
-> on non-MMU systems, after commit cf6219ee889f ("usercopy: Convert
-> test_user_copy to KUnit test").
+> Many of the existing callers of inode_ctime_to_ts are in void return
+> functions. They're just copying data from an internal representation to
+> struct inode and assume it always succeeds. For those we'll probably
+> have to catch bad ctime values earlier.
 > 
+> So, I think I'll probably have to roll bespoke error handling in all of
+> the relevant filesystems if we go this route. There are also
 
-Applied to linux-kselftest kunit branch for next.
-
-thanks,
--- Shuah
-
-
+Shudder, let's try and avoid that.
 
