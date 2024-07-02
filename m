@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-237234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12DCF91EDC5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:19:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA83591EDCB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:20:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD7132847DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 04:19:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D04D51C23A10
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 04:20:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17A838DEC;
-	Tue,  2 Jul 2024 04:19:02 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71BF512EBE1;
+	Tue,  2 Jul 2024 04:19:09 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C5E2030B;
-	Tue,  2 Jul 2024 04:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4F97EEE7;
+	Tue,  2 Jul 2024 04:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719893942; cv=none; b=UmgvQ1kK2HYOT5Kg/ynWFSZyqt3ZOAELM70lpur/fk9AyXmSfhHe8ZzOuBroLMr6dRXNbj7IKgQiqtxIW85KFo8AMNi/0sQwvfTTwBHjfziOyIPYU4zjY4Ntkrtq4TNrZo0Usu1fQKmTf+QHMEKfvOx1pgctMuu4GvSSCqFSPec=
+	t=1719893949; cv=none; b=TF1QjNSpwEv3wY5gOc7ODqNImMIm9swRa6GB7eGKOJFejiSecwmdy7iUjHO/B89ki/711Kxt+A+xLTWnWLOz+yuud353gm8JwS/7fXo0nyv8mdVrxcR7MoSMmMaxCBrhI0P7egpmjzObAuxSDDiHpp/quuqle23SRqWzpijr2fU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719893942; c=relaxed/simple;
-	bh=B1wopyCB6TwD/11E6lk/IigAXVhadQ1tVMMgoE/cy0g=;
+	s=arc-20240116; t=1719893949; c=relaxed/simple;
+	bh=6KnXP5/kVbBhp4xtOY0o8D1oZBIYLXMx71oUKcb6ZK4=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZsU0HZ+QOsG7uAdI+1jOmqiJCXKWJ+WUWPf3tVH9w0lx2g2vvAWZ1o+Um+8IsNhDuENMKHQ90CicDL0SwXjoAUt6Mbe6hqFYrbVBE8NBD0OBqn7O47sLhzH5pvcgNNf7zp/ymeT5lmzqDJXCzU8JYkFcStjZRXgq7fgn1I6I95c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+	 MIME-Version:Content-Type; b=DqFiCazQe27z+rw7ed68Vh7nU8gvwozv+fyIhJvkudf6+ncpYysGO6IviDoT81zFMxRxj1Jp7/FJbYPu4zIg9w+iOakhmoY4gP21LGtoCAMvsFWkOL7q9D6kB5BspSJ7w9j4JrGmpnAqztsdS5Ki38wZL2omN41vkfe4FnVyWUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WCqLC2R2Dz1T4HB;
-	Tue,  2 Jul 2024 12:14:27 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WCqPb61qLzdfvf;
+	Tue,  2 Jul 2024 12:17:23 +0800 (CST)
 Received: from kwepemd100011.china.huawei.com (unknown [7.221.188.204])
-	by mail.maildlp.com (Postfix) with ESMTPS id F12C114037D;
-	Tue,  2 Jul 2024 12:18:58 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 646271403D2;
+	Tue,  2 Jul 2024 12:19:00 +0800 (CST)
 Received: from M910t.huawei.com (10.110.54.157) by
  kwepemd100011.china.huawei.com (7.221.188.204) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 2 Jul 2024 12:18:57 +0800
+ 15.2.1258.34; Tue, 2 Jul 2024 12:18:58 +0800
 From: Changbin Du <changbin.du@huawei.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim
@@ -50,9 +50,9 @@ CC: Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin
 	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<llvm@lists.linux.dev>, Hui Wang <hw.huiwang@huawei.com>, Changbin Du
 	<changbin.du@huawei.com>
-Subject: [PATCH v5 3/8] perf: disasm: use build_id_path if fallback failed
-Date: Tue, 2 Jul 2024 12:18:32 +0800
-Message-ID: <20240702041837.5306-4-changbin.du@huawei.com>
+Subject: [PATCH v5 4/8] perf: build-id: name debugging vdso as "debug"
+Date: Tue, 2 Jul 2024 12:18:33 +0800
+Message-ID: <20240702041837.5306-5-changbin.du@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240702041837.5306-1-changbin.du@huawei.com>
 References: <20240702041837.5306-1-changbin.du@huawei.com>
@@ -67,46 +67,29 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
  kwepemd100011.china.huawei.com (7.221.188.204)
 
-If we can not fallback for special dso (vmlinx and vdso), use the
-build_id_path found previously.
+As normal objects, we will add debugging vdso elf to build-id cache later.
+Here we name the debugging one as "debug".
 
 Signed-off-by: Changbin Du <changbin.du@huawei.com>
 ---
- tools/perf/util/disasm.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ tools/perf/util/build-id.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
-index c4ab98c0eaa1..f4e94ff37e50 100644
---- a/tools/perf/util/disasm.c
-+++ b/tools/perf/util/disasm.c
-@@ -1176,15 +1176,21 @@ static int dso__disassemble_filename(struct dso *dso, char *filename, size_t fil
- 		return fallback_filename(dso, filename, filename_size);
- 
- 	if (dso__is_kcore(dso) || dso__is_vdso(dso))
--		return fallback_filename(dso, filename, filename_size);
-+		goto fallback;
- 
--	if (read_buildid_linkname(filename, linkname, sizeof(linkname) - 1) ||
--	    strstr(linkname, DSO__NAME_KALLSYMS) || strstr(linkname, DSO__NAME_VDSO)) {
--		return fallback_filename(dso, filename, filename_size);
-+	if (!read_buildid_linkname(filename, linkname, sizeof(linkname) - 1) &&
-+	    (!strstr(linkname, DSO__NAME_KALLSYMS) && !strstr(linkname, DSO__NAME_VDSO))) {
-+		/* It's not kallsysms or vdso, use build_id path found above */
-+		goto out;
- 	}
- 
--	if (dso__binary_type(dso) == DSO_BINARY_TYPE__NOT_FOUND)
--		dso__set_binary_type(dso, DSO_BINARY_TYPE__BUILD_ID_CACHE);
-+fallback:
-+	if (fallback_filename(dso, filename, filename_size)) {
-+		/* if fallback failed, use build_id path found above */
-+out:
-+		if (dso__binary_type(dso) == DSO_BINARY_TYPE__NOT_FOUND)
-+			dso__set_binary_type(dso, DSO_BINARY_TYPE__BUILD_ID_CACHE);
-+	}
- 	return 0;
+diff --git a/tools/perf/util/build-id.c b/tools/perf/util/build-id.c
+index 83a1581e8cf1..15530af2bad9 100644
+--- a/tools/perf/util/build-id.c
++++ b/tools/perf/util/build-id.c
+@@ -259,8 +259,8 @@ static bool build_id_cache__valid_id(char *sbuild_id)
+ static const char *build_id_cache__basename(bool is_kallsyms, bool is_vdso,
+ 					    bool is_debug)
+ {
+-	return is_kallsyms ? "kallsyms" : (is_vdso ? "vdso" : (is_debug ?
+-	    "debug" : "elf"));
++	return is_kallsyms ? "kallsyms" : (is_debug ? "debug" : (is_vdso ?
++		"vdso" : "elf"));
  }
  
+ char *__dso__build_id_filename(const struct dso *dso, char *bf, size_t size,
 -- 
 2.34.1
 
