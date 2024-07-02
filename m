@@ -1,263 +1,241 @@
-Return-Path: <linux-kernel+bounces-237568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C6F3923AFE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:02:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C89C3923B06
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:04:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36C992818BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:02:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A4331F21B18
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CECD4157493;
-	Tue,  2 Jul 2024 10:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00571581EE;
+	Tue,  2 Jul 2024 10:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uxSo8KW0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AhQ4e/Fx";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vw73PFWL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ho2GxMOC"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFFF014F9FA;
-	Tue,  2 Jul 2024 10:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="EiLHhZOF"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E5815748C
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 10:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719914515; cv=none; b=rFVwdL24t8GpPInaxrCpr+IHQC1imzCz5MSqPw7zvTMuFqjyufSk34FOhLu3RrWH20zeOdqHM4HLrjx2xonvb2otk5PhXPARSBbDip5KlobvFyq2ckG7VB3q6uPR1cWTC8THmkx27yHjW7Gw8B36Ii2wINyeoaJhuuBK7/w8biA=
+	t=1719914623; cv=none; b=dfVjjk28RvR0c4nWIZ++9/R8ehSYVNovi1GRJhbM+3ooxAwOLYE0akxGEg1qI1AmuqLz2DPcbeVYa/cTpynqxj7h8Qxu1+/k8P7NStYUqL/XNGYazG6x4+t2j2MZMZ4O5TKHk/otCQMglUsqYDIEcBbW1sMADwvjNZyhLncfG1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719914515; c=relaxed/simple;
-	bh=pKzdN6zQ8+YZCkXU1ly2+sx3rugOOC0ui044eHAwIF4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cUatVkiDCrh+vbPo855GjUDQCy0QNJr8VytcAsbmQOVqQSzS4AlOqcYKSLEJ0wpROgtCueo2BrVRs5Mgn9dNcfJ9JiTwMNkDAatk7ClzyMngmdEn6IbatRsWzpTy/0VUKn6G+iWB3lJE01fNTsPA6OY9VthLjyb0szDYTBTCwbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uxSo8KW0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AhQ4e/Fx; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vw73PFWL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ho2GxMOC; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id EE3331FB96;
-	Tue,  2 Jul 2024 10:01:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719914512; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qEi8cgHl/U1n72reX2G1VxiSazemZP/lxQo7blAElqU=;
-	b=uxSo8KW0q1L3c7zd72VSW5ucrqMQ9TpMj1m1AmodGRueHb0ylN6oOn5f2tNNVhSWkJmmG5
-	xf8yVVTVZLn8VXNcvyNIrppvfx/4/rPRl//zhclKgFsat0i+G3LmYtYfztIuFefikvUvj5
-	UtsRJKcsmWVgbVV0jongv3Clrn7u7Dg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719914512;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qEi8cgHl/U1n72reX2G1VxiSazemZP/lxQo7blAElqU=;
-	b=AhQ4e/FxEd9KpLLes95Ya8wmrINo6A4WZ9v5iZVG/EATMjdz9mgM1AcEVN0f6IpQPgjwbG
-	d/lyJktBI3b8rzBg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=vw73PFWL;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Ho2GxMOC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719914511; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qEi8cgHl/U1n72reX2G1VxiSazemZP/lxQo7blAElqU=;
-	b=vw73PFWLYs8H4rGWbAKPFpXVfjZqNNjpFaggu9g9orMhsb89eEUQYR2eB29zCuuPaMYGMV
-	kexSTshdxOC6Am4XbMC3DbaF/CD6Yc42wqxlEElo7Wqs+tuWpa0w6q9Qs/AUHuCP647kQg
-	FxJjoBzVryKPBfEbbJX9C8Q9UqUt2vs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719914511;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qEi8cgHl/U1n72reX2G1VxiSazemZP/lxQo7blAElqU=;
-	b=Ho2GxMOCs0IEHwNGr+tVvQdKE8Q9YsmmGkZQD3dhDAbfW+R9DWpQqFOlYtJM5hgx7Qpi+R
-	Tgs3/Scokkc64+BQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DEE4313A9A;
-	Tue,  2 Jul 2024 10:01:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id zDFkNg/Qg2ZnOQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 02 Jul 2024 10:01:51 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 5D60FA08A6; Tue,  2 Jul 2024 12:01:47 +0200 (CEST)
-Date: Tue, 2 Jul 2024 12:01:47 +0200
-From: Jan Kara <jack@suse.cz>
-To: Ian Kent <ikent@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Matthew Wilcox <willy@infradead.org>,
-	Lucas Karpinski <lkarpins@redhat.com>, viro@zeniv.linux.org.uk,
-	raven@themaw.net, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Alexander Larsson <alexl@redhat.com>,
-	Eric Chanudet <echanude@redhat.com>
-Subject: Re: [RFC v3 1/1] fs/namespace: remove RCU sync for MNT_DETACH umount
-Message-ID: <20240702100147.by5iwwutbnr23hac@quack3>
-References: <20240626201129.272750-2-lkarpins@redhat.com>
- <20240626201129.272750-3-lkarpins@redhat.com>
- <Znx-WGU5Wx6RaJyD@casper.infradead.org>
- <50512ec3-da6d-4140-9659-58e0514a4970@redhat.com>
- <20240627115418.lcnpctgailhlaffc@quack3>
- <cfda4682-34b4-462c-acf6-976b0d79ba06@redhat.com>
- <20240628111345.3bbcgie4gar6icyj@quack3>
- <20240702-sauna-tattoo-31b01a5f98f6@brauner>
- <a9963f50-6349-4e76-8f12-c12c2ad4d2ab@redhat.com>
+	s=arc-20240116; t=1719914623; c=relaxed/simple;
+	bh=vz4aY8OF6owaFzq4OL1FRnnjBZrBEhnHlzs1u7Hj6EU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=CV7jbh0kkg44+lcoi7cXm0+vN7Pu9GDj0kcs8vv6fpfr7HYkuE2ivk/OXh9rcMZgx9JuDFv8wJV0VcWCueMAE5tTr6RccQH59O5x4Qel9PSEmuYBgacqsig8hF32DN3W0G7w9JCy9yGqwCcSqM+QOdXi1GeXdsPLR4tPn5OzK1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=EiLHhZOF; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:Reply-To:MIME-Version;
+	bh=8FbDO25MgR0OBg4ghDSk/qfsedlmdOP5SL6u05bo5P8=; b=EiLHhZOFu7tJS
+	aZFRQ4lXR+37PglfQm4Z8c0jf2Rnsf91yj97XoQruB8TZMhmmqA7DucuvJ6KYYy9
+	D5xd7TlzeWXMMA3DtFgTP/7Wtt4wJ7U8Kvd7LKcyfj/pjeLGofZrqoKih7V6pBg5
+	ryDYrO9JlX83IUqU9mX7zx7Karllpc=
+Received: from localhost.localdomain (unknown [183.192.130.164])
+	by gzga-smtp-mta-g1-2 (Coremail) with SMTP id _____wD3_2Vb0INmpmSMBQ--.35615S2;
+	Tue, 02 Jul 2024 18:03:08 +0800 (CST)
+From: Ping Gan <jacky_gam_2001@163.com>
+To: sagi@grimberg.me,
+	hch@lst.de,
+	kch@nvidia.com,
+	linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: ping.gan@dell.com
+Subject: Re: [PATCH 0/2] nvmet: support polling task for RDMA and TCP 
+Date: Tue,  2 Jul 2024 18:02:14 +0800
+Message-Id: <20240702100215.2265-1-jacky_gam_2001@163.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <f9828eb4-39be-498b-8b90-2cb7ce42d3c7@grimberg.me>
+References: <f9828eb4-39be-498b-8b90-2cb7ce42d3c7@grimberg.me>
+Reply-To: sagi@grimberg.me
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a9963f50-6349-4e76-8f12-c12c2ad4d2ab@redhat.com>
-X-Rspamd-Queue-Id: EE3331FB96
-X-Spam-Score: -4.01
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.cz:dkim];
-	MISSING_XM_UA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3_2Vb0INmpmSMBQ--.35615S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3AF17uFWfCFW5Zr4DXF4xWFg_yoWxGFy7pF
+	WftFW5KrsrKrWUCw1IvanruFy09wn3J3y5Jr1fJry7Cw1Y93sxAryxKr15WFyDCr1kKw1a
+	qFyDX3sxuF1qyrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UI2N_UUUUU=
+X-CM-SenderInfo: 5mdfy55bjdzsisqqiqqrwthudrp/1tbiEB0QKWXAluk-igAAsb
 
-On Tue 02-07-24 15:01:54, Ian Kent wrote:
-> On 2/7/24 12:58, Christian Brauner wrote:
-> > On Fri, Jun 28, 2024 at 01:13:45PM GMT, Jan Kara wrote:
-> > > On Fri 28-06-24 10:58:54, Ian Kent wrote:
-> > > > On 27/6/24 19:54, Jan Kara wrote:
-> > > > > On Thu 27-06-24 09:11:14, Ian Kent wrote:
-> > > > > > On 27/6/24 04:47, Matthew Wilcox wrote:
-> > > > > > > On Wed, Jun 26, 2024 at 04:07:49PM -0400, Lucas Karpinski wrote:
-> > > > > > > > +++ b/fs/namespace.c
-> > > > > > > > @@ -78,6 +78,7 @@ static struct kmem_cache *mnt_cache __ro_after_init;
-> > > > > > > >     static DECLARE_RWSEM(namespace_sem);
-> > > > > > > >     static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
-> > > > > > > >     static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
-> > > > > > > > +static bool lazy_unlock = false; /* protected by namespace_sem */
-> > > > > > > That's a pretty ugly way of doing it.  How about this?
-> > > > > > Ha!
-> > > > > > 
-> > > > > > That was my original thought but I also didn't much like changing all the
-> > > > > > callers.
-> > > > > > 
-> > > > > > I don't really like the proliferation of these small helper functions either
-> > > > > > but if everyone
-> > > > > > 
-> > > > > > is happy to do this I think it's a great idea.
-> > > > > So I know you've suggested removing synchronize_rcu_expedited() call in
-> > > > > your comment to v2. But I wonder why is it safe? I *thought*
-> > > > > synchronize_rcu_expedited() is there to synchronize the dropping of the
-> > > > > last mnt reference (and maybe something else) - see the comment at the
-> > > > > beginning of mntput_no_expire() - and this change would break that?
-> > > > Interesting, because of the definition of lazy umount I didn't look closely
-> > > > enough at that.
-> > > > 
-> > > > But I wonder, how exactly would that race occur, is holding the rcu read
-> > > > lock sufficient since the rcu'd mount free won't be done until it's
-> > > > released (at least I think that's how rcu works).
-> > > I'm concerned about a race like:
-> > > 
-> > > [path lookup]				[umount -l]
-> > > ...
-> > > path_put()
-> > >    mntput(mnt)
-> > >      mntput_no_expire(m)
-> > >        rcu_read_lock();
-> > >        if (likely(READ_ONCE(mnt->mnt_ns))) {
-> > > 					do_umount()
-> > > 					  umount_tree()
-> > > 					    ...
-> > > 					    mnt->mnt_ns = NULL;
-> > > 					    ...
-> > > 					  namespace_unlock()
-> > > 					    mntput(&m->mnt)
-> > > 					      mntput_no_expire(mnt)
-> > > 				              smp_mb();
-> > > 					      mnt_add_count(mnt, -1);
-> > > 					      count = mnt_get_count(mnt);
-> > > 					      if (count != 0) {
-> > > 						...
-> > > 						return;
-> > >          mnt_add_count(mnt, -1);
-> > >          rcu_read_unlock();
-> > >          return;
-> > > -> KABOOM, mnt->mnt_count dropped to 0 but nobody cleaned up the mount!
-> > >        }
-> > Yeah, I think that's a valid concern. mntput_no_expire() requires that
-> > the last reference is dropped after an rcu grace period and that can
-> > only be done by synchronize_rcu_*() (It could be reworked but that would
-> > be quite ugly.). See also mnt_make_shortterm() caller's for kernel
-> > initiated unmounts.
-> 
-> I've thought about this a couple of times now.
-> 
-> Isn't it the case here that the path lookup thread will have taken a
-> reference (because it's calling path_put()) and the umount will have
-> taken a reference on system call entry.
+>On 01/07/2024 10:42, Ping Gan wrote:
+>>> Hey Ping Gan,
+>>>
+>>>
+>>> On 26/06/2024 11:28, Ping Gan wrote:
+>>>> When running nvmf on SMP platform, current nvme target's RDMA and
+>>>> TCP use kworker to handle IO. But if there is other high workload
+>>>> in the system(eg: on kubernetes), the competition between the
+>>>> kworker and other workload is very radical. And since the kworker
+>>>> is scheduled by OS randomly, it's difficult to control OS resource
+>>>> and also tune the performance. If target support to use delicated
+>>>> polling task to handle IO, it's useful to control OS resource and
+>>>> gain good performance. So it makes sense to add polling task in
+>>>> rdma-rdma and rdma-tcp modules.
+>>> This is NOT the way to go here.
+>>>
+>>> Both rdma and tcp are driven from workqueue context, which are bound
+>>> workqueues.
+>>>
+>>> So there are two ways to go here:
+>>> 1. Add generic port cpuset and use that to direct traffic to the
+>>> appropriate set of cores
+>>> (i.e. select an appropriate comp_vector for rdma and add an
+>>> appropriate
+>>> steering rule
+>>> for tcp).
+>>> 2. Add options to rdma/tcp to use UNBOUND workqueues, and allow
+>>> users
+>>> to
+>>> control
+>>> these UNBOUND workqueues cpumask via sysfs.
+>>>
+>>> (2) will not control interrupts to steer to other workloads cpus,
+>>> but
+>>> the handlers may
+>>> run on a set of dedicated cpus.
+>>>
+>>> (1) is a better solution, but harder to implement.
+>>>
+>>> You also should look into nvmet-fc as well (and nvmet-loop for that
+>>> matter).
+>> hi Sagi Grimberg,
+>> Thanks for your reply, actually we had tried the first advice you
+>> suggested, but we found the performance was poor when using spdk
+>> as initiator.
+>
+>I suggest that you focus on that instead of what you proposed.
+>What is the source of your poor performance?
+Before these patches, we had used linux's RPS to forward the packets
+to a fixed cpu set for nvmet-tcp. But when did that we can still not 
+cancel the competition between softirq and workqueue since nvme target's
+kworker cpu core bind on socket's cpu which is from skb. Besides that
+we found workqueue's wait latency was very high even we enabled polling
+on nvmet-tcp by module parameter idle_poll_period_usecs. So when
+initiator
+is polling mode, the target of workqueue is the bottleneck. Below is 
+work's wait latency trace log of our test on our cluster(per node uses 
+4 numas 96 cores, 192G memory, one dual ports mellanox CX4LX(25Gbps X 2)
+ethernet adapter and randrw 1M IO size) by RPS to 6 cpu cores. And
+system's CPU and memory were used about 80%.
+ogden-brown:~ #/usr/share/bcc/tools/wqlat -T -w nvmet_tcp_wq 1 2
+01:06:59
+     usecs               : count     distribution
+         0 -> 1          : 0        |                              |
+         2 -> 3          : 0        |                              |
+         4 -> 7          : 0        |                              |
+         8 -> 15         : 3        |                              |
+        16 -> 31         : 10       |                              |
+        32 -> 63         : 3        |                              |
+        64 -> 127        : 2        |                              |
+       128 -> 255        : 0        |                              |
+       256 -> 511        : 5        |                              |
+       512 -> 1023       : 12       |                              |
+      1024 -> 2047       : 26       |*                             |
+      2048 -> 4095       : 34       |*                             |
+      4096 -> 8191       : 350      |************                  |
+      8192 -> 16383      : 625      |******************************|
+     16384 -> 32767      : 244      |*********                     |
+     32768 -> 65535      : 39       |*                             |
 
-Yes, path lookup has taken a reference to mnt in this case. Umount syscall
-also has a reference to the mount in its struct path it has got from
-user_path_at(). But note that single umount call can end up tearing the
-whole tree of mounts AFAICT (in umount_tree()) so you cannot really rely on
-the fact that the syscall holds a ref to the mount it is tearing down.
+01:07:00
+     usecs               : count     distribution
+         0 -> 1          : 1        |                              |
+         2 -> 3          : 0        |                              |
+         4 -> 7          : 4        |                              |
+         8 -> 15         : 3        |                              |
+        16 -> 31         : 8        |                              |
+        32 -> 63         : 10       |                              |
+        64 -> 127        : 3        |                              |
+       128 -> 255        : 6        |                              |
+       256 -> 511        : 8        |                              |
+       512 -> 1023       : 20       |*                             |
+      1024 -> 2047       : 19       |*                             |
+      2048 -> 4095       : 57       |**                            |
+      4096 -> 8191       : 325      |****************              |
+      8192 -> 16383      : 647      |******************************|
+     16384 -> 32767      : 228      |***********                   |
+     32768 -> 65535      : 43       |**                            |
+     65536 -> 131071     : 1        |                              |
 
-Secondly, even if the path_umount() would be holding a reference to the
-mount being torn down, it is trivial to extend the race window so that
-the task doing 'umount -l' continues until it gets past mntput_no_expire()
-in path_umount() and only then the task doing path_put() wakes up and you
-get the same problem.
+And the bandwidth of a node is only 3100MB. While we used the patch
+and enable 6 polling task, the bandwidth can be 4000MB. It's a good 
+improvement.
 
-> So for the mount being umounted the starting count will be at lest three
-> then if the umount mntput() is called from namespace_unlock() it will
-> correctly see count != 0 and the path lookup mntput() to release it's
-> reference finally leaving the mntput() of the path_put() from the top
-> level system call function to release the last reference.
-> 
-> Once again I find myself thinking this should be independent of the rcu
-> wait because only path walks done before the mount being detached can be
-> happening and the lockless walks are done holding the rcu read lock and
-> how likely is it a ref-walk path lookup (that should follow a failed
-> rcu-walk in this case) has been able to grab a reference anyway?
+>>   You know this patch is not only resolving OS resource
+>> competition issue, but also the perf issue. We have analyzed if we
+>> still use workqueue(kworker) as target when initiator is polling
+>> driver(eg: spdk), then workqueue/kworker target is the bottleneck
+>> since every nvmf request may have a wait latency from queuing on
+>> workqueue to begin processing,
+>
+>That is incorrect, the work context polls the cq until it either drains
+>it
+>completely, or exhaust a quota of IB_POLL_BUDGET_WORKQUEUE (or
+>NVMET_TCP_IO_WORK_BUDGET). Not every command gets its own workqueue
+>queuing delay.
+>
+>And, what does the spdk initiator has to do with it? Didn't
+>understand...
+Yes, target workqueue implementation will poll a quota; but when the
+work
+load was high we found many work will wait too long(some of them at
+several
+ms to hundred ms shown above histogram). We use the spdk initiator(by 
+polling mode) to send IO's read/write to nvme disks of a kubernetes 
+cluster's remote node.
 
-No, it really is not independent of the RCU wait. mntput_no_expire() uses
-RCU for proper synchronization of dropping of the last mount reference.
-AFAIU there's a rule - after you clear mnt->mnt_ns, you must wait for RCU
-period to expire before you can drop the mnt reference you are holding. RCU
-path walk uses this fact but also any part of the kernel calling
-mntput_no_expire() implicitely depends on this behavior. And the changes to
-lazy umount path must not break this rule (or they have to come up with a
-different way to synchronize dropping of the last mnt reference).
+>>   and the latency can be traced by wqlat
+>> of bcc (https://github.com/iovisor/bcc/blob/master/tools/wqlat.py).
+>> We think the latency is a disaster for the polling driver data plane,
+>> right?
+>
+>If you need a target that polls all the time, you should probably
+>resort 
+>to spdk.
+>If there is room for optimization in nvmet we'll gladly take it, but 
+>this is not the
+>way to go IMO.
+Yes, in the begining we did use the spdk as polling target driver,
+but we suffered from spdk target could not support disk hot plug/unplug
+well, sometimes it will cause data loss when did disk hot plug/unplug.
+So we switch to kernel target driver because in production customer's
+data security is first priority. And for kernel's target it has no
+polling mode target driver, so we implemented these patches.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>> So we think adding a polling task mode on nvmet side to handle
+>> IO does really make sense; what's your opinion about this?
+>
+>I personally think that adding a polling kthread is questionable.
+>However there is a precedent, io_uring sqthreads. So please look
+>into what is done there. I don't mind having something like 
+>IB_POLL_IOTASK (or
+>io_task threads in nvmet-tcp) if its done correctly (leverages common
+>code).
+Yes, we have studied io_uring's code before implementing the patches.
+Actually we followed io_uring's design idea in these patches.
+
+>>   And you
+>> mentioned we should also look into nvmet-fc, I agree with you.
+>> However currently we have no nvmf-fc's testbed; if we get the
+>> testbed,
+>> will do that.
+>
+>There is fcloop, you should use that to test, same for loop. We don't
+>want
+>the transports to diverge in functionality.
+Ok, I will try, would you please give me some configuration guide for
+fcloop since I never used fcloop before.
+
+Thanks,
+Ping
+
+
 
