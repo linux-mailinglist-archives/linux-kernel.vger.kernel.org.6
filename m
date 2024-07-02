@@ -1,54 +1,57 @@
-Return-Path: <linux-kernel+bounces-237530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68E1A923A5C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:42:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B338923A5F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:42:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27A681F23956
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:42:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C593284F32
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:42:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B21155735;
-	Tue,  2 Jul 2024 09:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gVN9QI5s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900A115572D;
+	Tue,  2 Jul 2024 09:42:42 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772D313D8BA;
-	Tue,  2 Jul 2024 09:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C2914E2FB;
+	Tue,  2 Jul 2024 09:42:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719913341; cv=none; b=f7ysgVFZFpOarDSqTwQCk9kjdqADcyu2GjWB4hMG8m7sm4GQEm5E1iIFg43l2ylbuKMBWpozR1hHVsMd1Mu2VGxSz2H/IX+ePqfsvnrdHej6dF1+WoxSDHikRAGEmhX+IrC2jRpiHYLdzeuUXVtsLl48/Ju1A86+pahWl7R/iBg=
+	t=1719913362; cv=none; b=QkyKbmX8o9UonHHcyuMWzUt01FGXbq7YgWmaZtIAk5AUlCLzfRE49bROCbNkFMLzcNK/3oWmqDJEZHLlGcaYoLq0f+drUiYRwG6IfsJOvalnDkQuupW7Ck+VhII6K7ZvIRM6QUw9V5DCaKrxca0G9wT4nJo17b5cprOVc2X2gWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719913341; c=relaxed/simple;
-	bh=IdsBWoTpm6MC5BQctO736Zwu3gL2rlz9Gvm+xB0DvLE=;
+	s=arc-20240116; t=1719913362; c=relaxed/simple;
+	bh=eEipO0eOiE/f2CIFA7wvUWVXg4f0TbJAAfs+ySTN0I4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=McSSagUBSPS5k0szmXXAVPbVlrqt/6rXYSGvAq/oo5Cnxdo1y/kW7jojnf1EITlawohV7bB+d5Jh04CKePKNt0Titte42kKUtomDAhxlmkxhXlRf6bMLPDN0zGPYZ6gETUCSCGcqqaZ9ACwM7AqJJvxqUTs/luIW5sLO/mO1OJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gVN9QI5s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C4D8C116B1;
-	Tue,  2 Jul 2024 09:42:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1719913341;
-	bh=IdsBWoTpm6MC5BQctO736Zwu3gL2rlz9Gvm+xB0DvLE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gVN9QI5s/ek2EI6v275cWiCBY1KIfITsrBeAeO//UjiznstGnuvKJigGnHkkl3JdN
-	 hWm1PTpIbEd1M8x+0xrIgNztlGX8QRfysYUUcUgls8h5JLrA5LBmybR0Oq5gzCPE5d
-	 N3XKpu7KgqjOwgVU81LVjO7LRQaf5Q15XBU8so2A=
-Date: Tue, 2 Jul 2024 11:42:17 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Kazunori Kobayashi <kazunori.kobayashi@miraclelinux.com>
-Cc: netdev@vger.kernel.org, stable@vger.kernel.org,
-	linux-kernel@vger.kernel.org, hiraku.toyooka@miraclelinux.com,
-	Eric Dumazet <edumazet@google.com>,
-	"David S . Miller" <davem@davemloft.net>
-Subject: Re: [PATCH 5.15 1/3] ipv6: annotate some data-races around
- sk->sk_prot
-Message-ID: <2024070241-equivocal-dismantle-5dd2@gregkh>
-References: <20230417165348.26189-1-kazunori.kobayashi@miraclelinux.com>
- <20230417165348.26189-2-kazunori.kobayashi@miraclelinux.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XJxaLcKjr7cKpI6HdvEgw+hK/AziPEt3EgzZreMyl6CREPi1adAkCM89LB939X38UyC4vDT2KIAMSYQ+vEEuV2RCwKPZBFP5iuj7/Fsa8e4+s6NB9MtanUhEN9jIhwGtXLwP1s30MplmUyv8rHEHlnT0yc+dsrZZY/Js0nGGui4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Date: Tue, 2 Jul 2024 09:42:35 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Palmer Dabbelt <palmer@sifive.com>, linux-riscv@lists.infradead.org,
+	linux-serial@vger.kernel.org, Inochi Amaoto <inochiama@outlook.com>,
+	Meng Zhang <zhangmeng.kevin@spacemit.com>,
+	Yangyu Chen <cyy@cyyself.name>
+Subject: Re: [PATCH v2 03/10] dt-bindings: riscv: add SpacemiT K1 bindings
+Message-ID: <20240702094235.GA2506224@ofsar>
+References: <20240627-k1-01-basic-dt-v2-0-cc06c7555f07@gentoo.org>
+ <20240627-k1-01-basic-dt-v2-3-cc06c7555f07@gentoo.org>
+ <20240701-undercook-flatterer-7f18f7420a6d@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,71 +60,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230417165348.26189-2-kazunori.kobayashi@miraclelinux.com>
+In-Reply-To: <20240701-undercook-flatterer-7f18f7420a6d@spud>
 
-On Mon, Apr 17, 2023 at 04:53:46PM +0000, Kazunori Kobayashi wrote:
-> From: Eric Dumazet <edumazet@google.com>
-> 
-> commit 086d49058cd8471046ae9927524708820f5fd1c7 upstream.
-> 
-> IPv6 has this hack changing sk->sk_prot when an IPv6 socket
-> is 'converted' to an IPv4 one with IPV6_ADDRFORM option.
-> 
-> This operation is only performed for TCP and UDP, knowing
-> their 'struct proto' for the two network families are populated
-> in the same way, and can not disappear while a reader
-> might use and dereference sk->sk_prot.
-> 
-> If we think about it all reads of sk->sk_prot while
-> either socket lock or RTNL is not acquired should be using READ_ONCE().
-> 
-> Also note that other layers like MPTCP, XFRM, CHELSIO_TLS also
-> write over sk->sk_prot.
-> 
-> BUG: KCSAN: data-race in inet6_recvmsg / ipv6_setsockopt
-> 
-> write to 0xffff8881386f7aa8 of 8 bytes by task 26932 on cpu 0:
->  do_ipv6_setsockopt net/ipv6/ipv6_sockglue.c:492 [inline]
->  ipv6_setsockopt+0x3758/0x3910 net/ipv6/ipv6_sockglue.c:1019
->  udpv6_setsockopt+0x85/0x90 net/ipv6/udp.c:1649
->  sock_common_setsockopt+0x5d/0x70 net/core/sock.c:3489
->  __sys_setsockopt+0x209/0x2a0 net/socket.c:2180
->  __do_sys_setsockopt net/socket.c:2191 [inline]
->  __se_sys_setsockopt net/socket.c:2188 [inline]
->  __x64_sys_setsockopt+0x62/0x70 net/socket.c:2188
->  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->  do_syscall_64+0x44/0xd0 arch/x86/entry/common.c:80
->  entry_SYSCALL_64_after_hwframe+0x44/0xae
-> 
-> read to 0xffff8881386f7aa8 of 8 bytes by task 26911 on cpu 1:
->  inet6_recvmsg+0x7a/0x210 net/ipv6/af_inet6.c:659
->  ____sys_recvmsg+0x16c/0x320
->  ___sys_recvmsg net/socket.c:2674 [inline]
->  do_recvmmsg+0x3f5/0xae0 net/socket.c:2768
->  __sys_recvmmsg net/socket.c:2847 [inline]
->  __do_sys_recvmmsg net/socket.c:2870 [inline]
->  __se_sys_recvmmsg net/socket.c:2863 [inline]
->  __x64_sys_recvmmsg+0xde/0x160 net/socket.c:2863
->  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->  do_syscall_64+0x44/0xd0 arch/x86/entry/common.c:80
->  entry_SYSCALL_64_after_hwframe+0x44/0xae
-> 
-> value changed: 0xffffffff85e0e980 -> 0xffffffff85e01580
-> 
-> Reported by Kernel Concurrency Sanitizer on:
-> CPU: 1 PID: 26911 Comm: syz-executor.3 Not tainted 5.17.0-rc2-syzkaller-00316-g0457e5153e0e-dirty #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> 
-> Reported-by: syzbot <syzkaller@googlegroups.com>
-> Signed-off-by: Eric Dumazet <edumazet@google.com>
-> Signed-off-by: David S. Miller <davem@davemloft.net>
-> Signed-off-by: Kazunori Kobayashi <kazunori.kobayashi@miraclelinux.com>
+Hi
 
-This backport didn't apply at all, are you sure you made it against the
-proper tree?
+On 13:24 Mon 01 Jul     , Conor Dooley wrote:
+> On Thu, Jun 27, 2024 at 03:31:17PM +0000, Yixun Lan wrote:
+> > From: Yangyu Chen <cyy@cyyself.name>
+> > 
+> > Add DT binding documentation for the SpacemiT K1 Soc[1] and the Banana
+> > Pi BPi-F3 board[2] which used it.
+> > 
+> > [1] https://www.spacemit.com/en/spacemit-key-stone-2/
+> > [2] https://docs.banana-pi.org/en/BPI-F3/BananaPi_BPI-F3
+> > 
+> 
+> Please make these link tags when you resend, like
+> 
+> Link: https://foo [1]
+> 
+> and don't leave blank lines between them and the signoff.
+> 
+sure, will fix in v3
 
-The original commit does seem to apply properly, so I'll go apply that
-one instead...
+> > Signed-off-by: Yangyu Chen <cyy@cyyself.name>
+> > Signed-off-by: Yixun Lan <dlan@gentoo.org>
+> > ---
+> >  .../devicetree/bindings/riscv/spacemit.yaml        | 24 ++++++++++++++++++++++
+> >  1 file changed, 24 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/riscv/spacemit.yaml b/Documentation/devicetree/bindings/riscv/spacemit.yaml
+> > new file mode 100644
+> > index 0000000000000..3b151fd02473e
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/riscv/spacemit.yaml
+> > @@ -0,0 +1,24 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/riscv/spacemit.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: SpacemiT SoC-based boards
+> > +
+> > +description:
+> > +  SpacemiT SoC-based boards
+> 
+> Please work out who is gonna maintain these SoCs and add that here to
+> resolve the bot's report.
+> 
+sure, talked to Yangyu, will also add him as maintainer
+this should fix bot's complaint..
 
-greg k-h
+btw, thanks for all your other comments in the whole thread, will fix them all
+> Thanls,
+> Conor.
+> 
+> > +
+> > +properties:
+> > +  $nodename:
+> > +    const: '/'
+> > +  compatible:
+> > +    oneOf:
+> > +      - items:
+> > +          - enum:
+> > +              - bananapi,bpi-f3
+> > +          - const: spacemit,k1
+> > +
+> > +additionalProperties: true
+> > +
+> > +...
+> > 
+> > -- 
+> > 2.45.2
+> > 
+
+
+
+-- 
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
