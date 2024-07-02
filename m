@@ -1,285 +1,220 @@
-Return-Path: <linux-kernel+bounces-237160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49E6391ECDC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 03:59:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF75791ECE6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 04:09:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AD09B223C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 01:59:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43F83283685
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 02:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1730C129;
-	Tue,  2 Jul 2024 01:59:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC3D712E63;
+	Tue,  2 Jul 2024 02:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gzo4mmP4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="acgWr6EG"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88759441;
-	Tue,  2 Jul 2024 01:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA798830
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 02:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719885554; cv=none; b=IK8VHW7PZ7H788QadCY4gpYA1S8AO4iv9+RcAbq4nC60I96cvF8NkHx8Zwfn00f1kkV3F/FkMNvJGMiU8+wy7UXTb5JZYXWimAH/p+yIrDfu7d4EwQG6SXdmDBFTv1qhMoQpn1nnnkvxl5HzyJhI5f+Iy0K+jjtJtD9ifY3rCtw=
+	t=1719886180; cv=none; b=QIQ5YVYizgq16zxc/FniAHGgX/+bNxfcENfSFqaGw8mqL6c2SIAbTo14fImJ1izvzyac0/pIFFsBDNPmLCkBKB5sjAq50J1lAyMd0DJPn32+3zcIRNay6olP1wsa3qC6ubeHew9Cobc1ms0JAoLTvqjEl9uXqhkSbu5WFYXMYfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719885554; c=relaxed/simple;
-	bh=R8ygghPnMfeWQ9Y4PoN7pER1HV/QcG/H9FSCeeKEm4U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TrLQWlqUFneRKiCct/gXyPXDhVFUdZZ4WE+MyDnub6wtdBwnAixrYIFTmHVhy07rwDP168SDxoqcW4osr2V20mByzsIPVJpaNmnxXQUjoHl0dh2a5HwRa3MxvoGvHbdovNYqeUnfUDiFoL8NKTGFNEJFEGErFwENYIDjSfXgP4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gzo4mmP4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E826C2BD10;
-	Tue,  2 Jul 2024 01:59:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719885554;
-	bh=R8ygghPnMfeWQ9Y4PoN7pER1HV/QcG/H9FSCeeKEm4U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Gzo4mmP4ASTKe1swkDTOnnNFG8ffE9s9UJAD8iT1kulSuTuGODqy2c5WIQhEhssal
-	 OZNPBS8BZcquJZzT9MFyzHT9C1QXKQ63dnJKYgGKpJr7Y8Ohp5N9yOaV4JGCQxcabH
-	 drnaFsX37xy8YdLQ0ZhGVGSj2nVDpESXbGvs07mc4vxHC2wUnQbdxVmX9kIiq/Xw4T
-	 HBpaeUqmW2lZw1trUyisJdMdqcu8TNjSudZe5LeVHZgXFQmAtRe2WyM5td22ow6bdj
-	 7Hsea9WOvpktPQ5viknXFW8/x0Fm5UsXmHWUg8RqmuQT3acu3KShFthaK4M7EMICCg
-	 QmqM+WVOww8KA==
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-584ef6c07c2so1233987a12.1;
-        Mon, 01 Jul 2024 18:59:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUaj+0wiK5skIKbQZS8cxAI91eDelcsPPSCMNO6L6wcm3Y5aC/pMmfDf8WtVpd9eWNZpXQ3XItK4EZkcCdXrIDzXch5tU9NYBv6g1RJmIfMpyRRnEEAy+k+Hzs9BcDG4BlE
-X-Gm-Message-State: AOJu0Yz2YabA/qiVx9Lw2STT9CiPKrGWstaghSFsMiZoUfPmaX0++095
-	Py1FTGF3xCQzyi75kdIJOJYiFrUop11DasJ2Cc6jlL9LyzEWkFaf9X9VG/azop7cJInWHiNhAse
-	eDEP/WcBoo+n1ELv3TUoO2lMfCag=
-X-Google-Smtp-Source: AGHT+IFtsV1QUGIFWF3mQ/wUe8OQuXpfXGrZ6rn6PRIo37hgmZtPg1Xazv1l/NOIgekb2HfJCqfdflFbHBYjUx00tNc=
-X-Received: by 2002:a17:906:2709:b0:a6f:e699:a9f8 with SMTP id
- a640c23a62f3a-a72aeeb255fmr645830866b.18.1719885552896; Mon, 01 Jul 2024
- 18:59:12 -0700 (PDT)
+	s=arc-20240116; t=1719886180; c=relaxed/simple;
+	bh=1p5SSAb7qWtnxkRYsNQrcwnlK8Do+lQhJ411E3url84=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=mznbWuN81k1nZjhfdRHC+d91AHi0PZttm04niVphvkF0zpZo+iCm1aE5rOMTfrs31f/Zv/hPSojZN3NN3BBM5JfVLOQpnDLPeWhQ9RcxDDiWg5C7ZPk2i8ZFVymL/DUSNQAPzI6f2fmbUM4t0wxGDm/Qrshvor/aiyuFRcVBgE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=acgWr6EG; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id F2BEB2C0372;
+	Tue,  2 Jul 2024 14:09:28 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1719886168;
+	bh=e6Uweuk36+t1GhH6gy7+RAA1GKrHEeOut/4k2q3eTg8=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=acgWr6EGciDtutsPoIOpJCgxjUXZKYFbc/8TcD0kJRP6hv/PscoZM5ovPZ+h07JTT
+	 p2nFbYpqs44xLu24gIe9haJOr/5ft9NywD7shJVjbDoGD1o31h476KC+ZNAUSOtRj/
+	 ri1wdHBjDemlvqogPcRPKD6JO0wQMNub+VLHO9t2MG1utn9kEmJkAqkPcc+CNhzkI7
+	 CyAbU1lQER0wVjCCqsgXCCfQx3fdLEm+luQSt2G+0+6xtquXGXHwHopKvwPnPMXVfd
+	 FQtYFrJc9bP1re3lEGdaMIM732KQD62vxEn+0rvCk6puUepbZWIcikmwxFYaFg7qDQ
+	 BbIMqXe2JDTvA==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B668361580000>; Tue, 02 Jul 2024 14:09:28 +1200
+Received: from [10.33.22.30] (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id D73C313EE4B;
+	Tue,  2 Jul 2024 14:09:28 +1200 (NZST)
+Message-ID: <b15b15ce-ae24-4e04-83ab-87017226f558@alliedtelesis.co.nz>
+Date: Tue, 2 Jul 2024 14:09:28 +1200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240626063239.3722175-1-maobibo@loongson.cn> <20240626063239.3722175-3-maobibo@loongson.cn>
- <CAAhV-H4O8QNb61xkErd9y_1tK_70=Y=LNqzy=9Ny5EQK1XZJaQ@mail.gmail.com>
- <79dcf093-614f-2737-bb03-698b0b3abc57@loongson.cn> <CAAhV-H5bQutcLcVaHn-amjF6_NDnCf2BFqqnGSRT_QQ_6q6REg@mail.gmail.com>
- <9c7d242e-660b-8d39-b69e-201fd0a4bfbf@loongson.cn>
-In-Reply-To: <9c7d242e-660b-8d39-b69e-201fd0a4bfbf@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Tue, 2 Jul 2024 09:59:02 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4wwrYyMYpL1u5Z3sFp6EeW4eWhGbBv0Jn9XYJGXgwLfg@mail.gmail.com>
-Message-ID: <CAAhV-H4wwrYyMYpL1u5Z3sFp6EeW4eWhGbBv0Jn9XYJGXgwLfg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] LoongArch: KVM: Add LBT feature detection function
-To: maobibo <maobibo@loongson.cn>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>, kvm@vger.kernel.org, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird Beta
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: Re: net: dsa: Realtek switch drivers
+To: Luiz Angelo Daros de Luca <luizluca@gmail.com>,
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: "alsi@bang-olufsen.dk" <alsi@bang-olufsen.dk>,
+ Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+ "olteanv@gmail.com" <olteanv@gmail.com>, =?UTF-8?Q?Marek_Beh=C3=BAn?=
+ <kabel@kernel.org>, "ericwouds@gmail.com" <ericwouds@gmail.com>,
+ David Miller <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ "kuba@kernel.org" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ "justinstitt@google.com" <justinstitt@google.com>,
+ "rmk+kernel@armlinux.org.uk" <rmk+kernel@armlinux.org.uk>,
+ netdev <netdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "sander@svanheule.net" <sander@svanheule.net>
+References: <aa5ffa9a-62cc-4a79-9368-989f5684c29c@alliedtelesis.co.nz>
+ <CACRpkdbF-OsV_jUp42yttvdjckqY0MsLg4kGxTr3JDnjGzLRsA@mail.gmail.com>
+ <CAJq09z6dN0TkxxjmXT6yui8ydRUPTLcpFHyeExq_41RmSDdaHg@mail.gmail.com>
+Content-Language: en-US
+In-Reply-To: <CAJq09z6dN0TkxxjmXT6yui8ydRUPTLcpFHyeExq_41RmSDdaHg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=CvQccW4D c=1 sm=1 tr=0 ts=66836158 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=VwQbUJbxAAAA:8 a=l7AzUe4WSKfLcy4FgSgA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=hPAN1OI7KfYA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-On Tue, Jul 2, 2024 at 9:51=E2=80=AFAM maobibo <maobibo@loongson.cn> wrote:
->
-> Huacai,
->
-> On 2024/7/1 =E4=B8=8B=E5=8D=886:26, Huacai Chen wrote:
-> > On Mon, Jul 1, 2024 at 9:27=E2=80=AFAM maobibo <maobibo@loongson.cn> wr=
-ote:
-> >>
-> >>
-> >> Huacai,
-> >>
-> >> On 2024/6/30 =E4=B8=8A=E5=8D=8810:07, Huacai Chen wrote:
-> >>> Hi, Bibo,
-> >>>
-> >>> On Wed, Jun 26, 2024 at 2:32=E2=80=AFPM Bibo Mao <maobibo@loongson.cn=
-> wrote:
-> >>>>
-> >>>> Two kinds of LBT feature detection are added here, one is VCPU
-> >>>> feature, the other is VM feature. VCPU feature dection can only
-> >>>> work with VCPU thread itself, and requires VCPU thread is created
-> >>>> already. So LBT feature detection for VM is added also, it can
-> >>>> be done even if VM is not created, and also can be done by any
-> >>>> thread besides VCPU threads.
-> >>>>
-> >>>> Loongson Binary Translation (LBT) feature is defined in register
-> >>>> cpucfg2. Here LBT capability detection for VCPU is added.
-> >>>>
-> >>>> Here ioctl command KVM_HAS_DEVICE_ATTR is added for VM, and macro
-> >>>> KVM_LOONGARCH_VM_FEAT_CTRL is added to check supported feature. And
-> >>>> three sub-features relative with LBT are added as following:
-> >>>>    KVM_LOONGARCH_VM_FEAT_X86BT
-> >>>>    KVM_LOONGARCH_VM_FEAT_ARMBT
-> >>>>    KVM_LOONGARCH_VM_FEAT_MIPSBT
-> >>>>
-> >>>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
-> >>>> ---
-> >>>>    arch/loongarch/include/uapi/asm/kvm.h |  6 ++++
-> >>>>    arch/loongarch/kvm/vcpu.c             |  6 ++++
-> >>>>    arch/loongarch/kvm/vm.c               | 44 ++++++++++++++++++++++=
-++++-
-> >>>>    3 files changed, 55 insertions(+), 1 deletion(-)
-> >>>>
-> >>>> diff --git a/arch/loongarch/include/uapi/asm/kvm.h b/arch/loongarch/=
-include/uapi/asm/kvm.h
-> >>>> index ddc5cab0ffd0..c40f7d9ffe13 100644
-> >>>> --- a/arch/loongarch/include/uapi/asm/kvm.h
-> >>>> +++ b/arch/loongarch/include/uapi/asm/kvm.h
-> >>>> @@ -82,6 +82,12 @@ struct kvm_fpu {
-> >>>>    #define KVM_IOC_CSRID(REG)             LOONGARCH_REG_64(KVM_REG_L=
-OONGARCH_CSR, REG)
-> >>>>    #define KVM_IOC_CPUCFG(REG)            LOONGARCH_REG_64(KVM_REG_L=
-OONGARCH_CPUCFG, REG)
-> >>>>
-> >>>> +/* Device Control API on vm fd */
-> >>>> +#define KVM_LOONGARCH_VM_FEAT_CTRL     0
-> >>>> +#define  KVM_LOONGARCH_VM_FEAT_X86BT   0
-> >>>> +#define  KVM_LOONGARCH_VM_FEAT_ARMBT   1
-> >>>> +#define  KVM_LOONGARCH_VM_FEAT_MIPSBT  2
-> >>>> +
-> >>>>    /* Device Control API on vcpu fd */
-> >>>>    #define KVM_LOONGARCH_VCPU_CPUCFG      0
-> >>>>    #define KVM_LOONGARCH_VCPU_PVTIME_CTRL 1
-> >>> If you insist that LBT should be a vm feature, then I suggest the
-> >>> above two also be vm features. Though this is an UAPI change, but
-> >>> CPUCFG is upstream in 6.10-rc1 and 6.10-final hasn't been released. W=
-e
-> >>> have a chance to change it now.
-> >>
-> >> KVM_LOONGARCH_VCPU_PVTIME_CTRL need be attr percpu since every vcpu
-> >> has is own different gpa address.
-> > Then leave this as a vm feature.
-> >
-> >>
-> >> For KVM_LOONGARCH_VCPU_CPUCFG attr, it will not changed. We cannot bre=
-ak
-> >> the API even if it is 6.10-rc1, VMM has already used this. Else there =
-is
-> >> uapi breaking now, still will be in future if we cannot control this.
-> > UAPI changing before the first release is allowed, which means, we can
-> > change this before the 6.10-final, but cannot change it after
-> > 6.10-final.
-> Now QEMU has already synced uapi to its own directory, also I never hear
-> about this, with my experience with uapi change, there is only newly
-> added or removed deprecated years ago.
->
-> Is there any documentation about UAPI change rules?
-No document, but learn from my more than 10 years upstream experience.
 
-> >
-> >>
-> >> How about adding new extra features capability for VM such as?
-> >> +#define  KVM_LOONGARCH_VM_FEAT_LSX   3
-> >> +#define  KVM_LOONGARCH_VM_FEAT_LASX  4
-> > They should be similar as LBT, if LBT is vcpu feature, they should
-> > also be vcpu features; if LBT is vm feature, they should also be vm
-> > features.
-> On other architectures, with function kvm_vm_ioctl_check_extension()
->     KVM_CAP_XSAVE2/KVM_CAP_PMU_CAPABILITY on x86
->     KVM_CAP_ARM_PMU_V3/KVM_CAP_ARM_SVE on arm64
-> These features are all cpu features, at the same time they are VM feature=
-s.
+On 15/06/24 09:36, Luiz Angelo Daros de Luca wrote:
+> Hello Chris and Linus,
 >
-> If they are cpu features, how does VMM detect validity of these features
-> passing from command line? After all VCPUs are created and send bootup
-> command to these VCPUs? That is too late, VMM main thread is easy to
-> detect feature validity if they are VM features also.
+>>> I'm starting to look at some L2/L3 switches with Realtek silicon. I see
+>>> in the upstream kernel there are dsa drivers for a couple of simple L2
+>>> switches. While openwrt has support for a lot of the more advanced
+>>> silicon. I'm just wondering if there is a particular reason no-one has
+>>> attempted to upstream support for these switches?
+>> It began with the RTL8366RB ("RTL8366 revision B") which I think is
+>> equivalent to RTL8366S as well, but have not been able to test.
+>>
+>> Then Luiz and Alvin jumped in and fixed up the RTL8365MB family.
+>>
+>> So the support is pretty much what is stated in the DT bindings
+>> in Documentation/devicetree/bindings/net/dsa/realtek.yaml:
+>>
+>> properties:
+>>    compatible:
+>>      enum:
+>>        - realtek,rtl8365mb
+>>        - realtek,rtl8366rb
+>>      description: |
+>>        realtek,rtl8365mb:
+>>          Use with models RTL8363NB, RTL8363NB-VB, RTL8363SC, RTL8363SC-VB,
+>>          RTL8364NB, RTL8364NB-VB, RTL8365MB, RTL8366SC, RTL8367RB-VB, RTL8367S,
+>>          RTL8367SB, RTL8370MB, RTL8310SR
+>>        realtek,rtl8366rb:
+>>          Use with models RTL8366RB, RTL8366S
+>>
+>> It may look like just RTL8365 and RTL8366 on the surface but the sub-version
+>> is detected at runtime.
+>>
+>>> If I were to start
+>>> grabbing drivers from openwrt and trying to get them landed would that
+>>> be a problem?
+>> I think the base is there, when I started with RTL8366RB it was pretty
+>> uphill but the kernel DSA experts (Vladimir & Andrew especially) are super
+>> helpful so eventually we have arrived at something that works reasonably.
+>>
+>> The RTL8356MB-family driver is more advanced and has a lot more features,
+>> notably it supports all known RTL8367 variants.
+> I played with RTL8367R. It mostly works with rtl8365mb driver but I
+> wasn't able to enable the CPU tagging. Although
 >
-> To be honest, I am not familiar with KVM still, only get further
-> understanding after actual problems solving. Welcome to give comments,
-> however please read more backgroud if you insist on, else there will be
-> endless argument again.
-I just say CPUCFG/LSX/LASX and LBT should be in the same class, I
-haven't insisted on whether they should be vcpu features or vm
-features.
+>> The upstream OpenWrt in target/linux/generic/files/drivers/net/phy
+>> has the following drivers for the old switchdev:
+>> -rw-r--r--. 1 linus linus 25382 Jun  7 21:44 rtl8306.c
+>> -rw-r--r--. 1 linus linus 40268 Jun  7 21:44 rtl8366rb.c
+>> -rw-r--r--. 1 linus linus 33681 Jun  7 21:44 rtl8366s.c
+>> -rw-r--r--. 1 linus linus 36324 Jun  7 21:44 rtl8366_smi.c
+>> -rw-r--r--. 1 linus linus  4838 Jun  7 21:44 rtl8366_smi.h
+>> -rw-r--r--. 1 linus linus 58021 Jun 12 18:50 rtl8367b.c
+>> -rw-r--r--. 1 linus linus 59612 Jun 12 18:50 rtl8367.c
+>>
+>> As far as I can tell we cover all but RTL8306 with the current in-tree
+>> drivers, the only reason these are still in OpenWrt would be that some
+>> boards are not migrated to DSA.
+> These drivers you listed are mostly found in old or low spec devices.
+> There is little incentive to invest too much time to migrate them. For
+> rtl8365mb, it still lacks support for vlan and forwarding offload. So,
+> the swconfig driver still makes sense.
+> There is also a performance problem with checksum offloading. These
+> switches are used with non-realtek SoC, which might lead to:
+>
+> "Checksum offload should work with category 1 and 2 taggers when the
+> DSA conduit driver declares NETIF_F_HW_CSUM in vlan_features and looks
+> at csum_start and csum_offset. For those cases, DSA will shift the
+> checksum start and offset by the tag size. If the DSA conduit driver
+> still uses the legacy NETIF_F_IP_CSUM or NETIF_F_IPV6_CSUM in
+> vlan_features, the offload might only work if the offload hardware
+> already expects that specific tag (perhaps due to matching vendors).
+> DSA user ports inherit those flags from the conduit, and it is up to
+> the driver to correctly fall back to software checksum when the IP
+> header is not where the hardware expects. If that check is
+> ineffective, the packets might go to the network without a proper
+> checksum (the checksum field will have the pseudo IP header sum). For
+> category 3, when the offload hardware does not already expect the
+> switch tag in use, the checksum must be calculated before any tag is
+> inserted (i.e. inside the tagger). Otherwise, the DSA conduit would
+> include the tail tag in the (software or hardware) checksum
+> calculation. Then, when the tag gets stripped by the switch during
+> transmission, it will leave an incorrect IP checksum in place."
+> See: https://docs.kernel.org/networking/dsa/dsa.html
+>
+>> But maybe I missed something?
+> I guess Chris is talking about the realtek target that uses Realtek
+> SoC (target/linux/realtek/files-5.15/). That is a completely different
+> beast. Although it might share some (or a lot) logic with current
+> upstream drivers, it is way more complex. It might require a
+> multi-function device driver. Anyway, the current realtek SoC/target
+> drivers need some love, like using regmap, implement functions using
+> an abstraction layer (and not if model a inside the code), get rid of
+> all magic numbers and replace them with meaningful macros, create a
+> proper tagger (and not translate a generic one just before forwarding
+> it). In OpenWrt, a code that gets things done might be acceptable but
+> the upstream kernel requires something more maintainable. So, if you
+> want to upstream those drivers, you can start by improving them in the
+> openwrt.
 
-Huacai
+So now got access to the Realtek docs and I've been pouring over them 
+and the openwrt code (I'm avoiding looking at the Realtek SDK for now, 
+just to make sure I don't submit something I don't have the rights to).
 
->
-> Regards
-> Bibo, Mao
-> >
-> > Huacai
-> >
-> >>
-> >> Regards
-> >> Bibo Mao
-> >>>
-> >>> Huacai
-> >>>
-> >>>> diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
-> >>>> index 233d28d0e928..9734b4d8db05 100644
-> >>>> --- a/arch/loongarch/kvm/vcpu.c
-> >>>> +++ b/arch/loongarch/kvm/vcpu.c
-> >>>> @@ -565,6 +565,12 @@ static int _kvm_get_cpucfg_mask(int id, u64 *v)
-> >>>>                           *v |=3D CPUCFG2_LSX;
-> >>>>                   if (cpu_has_lasx)
-> >>>>                           *v |=3D CPUCFG2_LASX;
-> >>>> +               if (cpu_has_lbt_x86)
-> >>>> +                       *v |=3D CPUCFG2_X86BT;
-> >>>> +               if (cpu_has_lbt_arm)
-> >>>> +                       *v |=3D CPUCFG2_ARMBT;
-> >>>> +               if (cpu_has_lbt_mips)
-> >>>> +                       *v |=3D CPUCFG2_MIPSBT;
-> >>>>
-> >>>>                   return 0;
-> >>>>           case LOONGARCH_CPUCFG3:
-> >>>> diff --git a/arch/loongarch/kvm/vm.c b/arch/loongarch/kvm/vm.c
-> >>>> index 6b2e4f66ad26..09e05108c68b 100644
-> >>>> --- a/arch/loongarch/kvm/vm.c
-> >>>> +++ b/arch/loongarch/kvm/vm.c
-> >>>> @@ -99,7 +99,49 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm,=
- long ext)
-> >>>>           return r;
-> >>>>    }
-> >>>>
-> >>>> +static int kvm_vm_feature_has_attr(struct kvm *kvm, struct kvm_devi=
-ce_attr *attr)
-> >>>> +{
-> >>>> +       switch (attr->attr) {
-> >>>> +       case KVM_LOONGARCH_VM_FEAT_X86BT:
-> >>>> +               if (cpu_has_lbt_x86)
-> >>>> +                       return 0;
-> >>>> +               return -ENXIO;
-> >>>> +       case KVM_LOONGARCH_VM_FEAT_ARMBT:
-> >>>> +               if (cpu_has_lbt_arm)
-> >>>> +                       return 0;
-> >>>> +               return -ENXIO;
-> >>>> +       case KVM_LOONGARCH_VM_FEAT_MIPSBT:
-> >>>> +               if (cpu_has_lbt_mips)
-> >>>> +                       return 0;
-> >>>> +               return -ENXIO;
-> >>>> +       default:
-> >>>> +               return -ENXIO;
-> >>>> +       }
-> >>>> +}
-> >>>> +
-> >>>> +static int kvm_vm_has_attr(struct kvm *kvm, struct kvm_device_attr =
-*attr)
-> >>>> +{
-> >>>> +       switch (attr->group) {
-> >>>> +       case KVM_LOONGARCH_VM_FEAT_CTRL:
-> >>>> +               return kvm_vm_feature_has_attr(kvm, attr);
-> >>>> +       default:
-> >>>> +               return -ENXIO;
-> >>>> +       }
-> >>>> +}
-> >>>> +
-> >>>>    int kvm_arch_vm_ioctl(struct file *filp, unsigned int ioctl, unsi=
-gned long arg)
-> >>>>    {
-> >>>> -       return -ENOIOCTLCMD;
-> >>>> +       struct kvm *kvm =3D filp->private_data;
-> >>>> +       void __user *argp =3D (void __user *)arg;
-> >>>> +       struct kvm_device_attr attr;
-> >>>> +
-> >>>> +       switch (ioctl) {
-> >>>> +       case KVM_HAS_DEVICE_ATTR:
-> >>>> +               if (copy_from_user(&attr, argp, sizeof(attr)))
-> >>>> +                       return -EFAULT;
-> >>>> +
-> >>>> +               return kvm_vm_has_attr(kvm, &attr);
-> >>>> +       default:
-> >>>> +               return -EINVAL;
-> >>>> +       }
-> >>>>    }
-> >>>> --
-> >>>> 2.39.3
-> >>>>
-> >>
->
+If someone were to look at the block diagram in the brief datasheet 
+they'd probably come away with the impression that it very much fits the 
+DSA model. There's a SoC portion with the CPU, peripherals and a "NIC". 
+That NIC is connected to the CPU MAC in the switch block. All seems like 
+a pretty standard DSA type design and that's what the openwrt code 
+implements a ethernet/rtl838x_eth.c driver for the Ethernet NIC and a 
+dsa/rtl83xx driver for the DSA switch.
+
+But when you start digging into the detail you find that the registers 
+for the NIC are scattered through the address space for the switch. Same 
+for the MDIO related registers. There is a more detailed block diagram 
+in the CPU and Peripherals datasheet that shows the NIC and switch as 
+part of the same IP block. The openwrt implementation does things that I 
+think would be frowned upon upstream like calling from the Ethernet 
+driver into the switch driver to access registers.
+
+This leads me to conclude that what Realtek call the "NIC" is actually 
+just the DMA interface for packets sent from or trapped to the CPU. 
+Rather than trying to make this fit the DSA model I should be looking at 
+using switchdev directly (I can still probably leverage a lot of code 
+from the openwrt drivers because the switch tables are the same either way).
+
+What would I be loosing if I don't use the DSA infrastructure? I got 
+kind of hung up at the point where it really wanted a CPU port and I 
+just couldn't provide a nice discrete NIC.
+
+
 
