@@ -1,230 +1,188 @@
-Return-Path: <linux-kernel+bounces-238529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73E8A924B91
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:23:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC61A924B97
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:26:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9DBF29201E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:23:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8A0F1C2213F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06071DA30C;
-	Tue,  2 Jul 2024 22:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 768151DA317;
+	Tue,  2 Jul 2024 22:25:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="rGzJiUgW"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NLPZewcd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E9081DA30D
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 22:22:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9659D1DA302;
+	Tue,  2 Jul 2024 22:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719958970; cv=none; b=leFOWA6bd0JiOpgT/a5/bMBu8Nv5IqugxdFy/EzZmIVnHTGAOaBH388kbKX9FLLQEKHH3L6QrZORvUgYk0Bnsww2J/IUfKA3Eqru6XnzCCpy46WZ5Any6QJKzvMt2hx8zHxhiiAVBqEv1836qVApHesDi/o8NPl2rqn7oA6gEqQ=
+	t=1719959150; cv=none; b=Qr3Vz+BU3Gpd3Pr/2Ij6rd0zhL6LoIHYRu6VoEwR1DU/lcTw7tnbtuUKRNTZ2lQs0gnDMQBLJDg1stMC67skgaXl+c0tHatjOPiG86m0xt957jK6wsgsPoJdVqH390BgH6q4hlfT31WEEI9qP4GCh6kMpxyqCQh98wF+rk0FHBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719958970; c=relaxed/simple;
-	bh=NHOWiWOwWkWjt43c2sZEwV67bQhm4bQuKR/fXOr1FYw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b0mzDgkPHBMKCWPqBtx6/l9iHiiLyL4CguVCMSs0jzdz1IwU1YFkXOwtZ/nI/ljBF/gwa9yoO7Vn3HBIWmUHAmJJQGNueMMeyrTPwCJAjh6cZ8UXwWruSUrI5V8U+u5ClJCvm+k5Rg1HIjSoy+LSWoFIAAMfkGH0iWJ4NKS7Dco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=rGzJiUgW; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-726d9b3bcf8so3523639a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 15:22:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1719958967; x=1720563767; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2HAreNgSKd2flbDmhZ9kzCgXWhr/5FjsTCmFlTvboqE=;
-        b=rGzJiUgWmcbborbR8rbq3iBOf89vBv3y0fIil/UVC0mPXVHoYeqB009ZsXHsZRjwIj
-         18JufHnzW0SPgnJCvafudPURzHW+hXsTvNxEekbgsmRnEW2wynOewuS5Kyfup1SCdWqG
-         NEu4KP711XXsT0Woy1V8UBlzwZczZZOPAYGGG9BOHdtftPEf4RyRGzom1uBFpX7eQ6t3
-         9k/oCjaNPaYtySwct7uctZenPd07FFruVDv5I/xHPzrmaPI5eXV4p8A6GuXhmsITeAB3
-         SCxmikJmTK6K8bZbuqzmCIVoRCq5QBSvBaa/YQFK4uwIByi9Fn7aCeEbDKrsNRGIL7KG
-         Fd9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719958967; x=1720563767;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2HAreNgSKd2flbDmhZ9kzCgXWhr/5FjsTCmFlTvboqE=;
-        b=c5F6dhmBB20H3bXDS5v/Rb2eHjEUlKPWkNemYeGB7+/wYeBOEfpp/0+v7nOqf8Bb63
-         6JDG0FP4GICtFAcYM+jbXyej1QBu8kqPdgBV7fizgMUwI3OAT3TlRGFee1I4GQksh900
-         5QFjfhFMwEgSRBf2VTgvuw2oZc4HsCR/WQCL7pRhbc2qmFy5lEiFeRKsYaaQgP/PRt0G
-         Uli4u9cv4kio/Ej97dfPWXPyJSuwWUt0eSXltxyXyk0BdQ3CjCx463NsTBajj0J5N5Yz
-         9HjHCZT13zQjtOwF4p0Aehbr0W112YJyiWNPiGPqZlCL8fwwxG/+icgwivgYaFI97yu5
-         l38Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ7jJD1fiKCUKVx13gkk99hrOMej9f3ZN+ObcmpWGKIUMkn4IW0YFVSEskNKR0L56IhS0HxZPxD18Mq1bds5Lt+yXiwW5U8i7ZaArA
-X-Gm-Message-State: AOJu0YwN6UCrYk3lLJdwc8Q4eNt6itNMomE4ztjqT4QrBOC8PnAAx0XD
-	yD6PXdY7aqCGl62fWOLosnVqHbbXdLFjGB6rVIQ4rHsVIQoVh8UoaQa84SeKisw=
-X-Google-Smtp-Source: AGHT+IFv/UktdfqfVi4xgaaycbPb7pdL54C2mZHYwO0zrmNP80hR83Y1Fy2VM2Z6FDn1I046+MIzxQ==
-X-Received: by 2002:a05:6a20:1586:b0:1be:cb97:a918 with SMTP id adf61e73a8af0-1bef610bf3dmr9638155637.29.1719958967187;
-        Tue, 02 Jul 2024 15:22:47 -0700 (PDT)
-Received: from ghost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70803ecf97csm9053071b3a.127.2024.07.02.15.22.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 15:22:46 -0700 (PDT)
-Date: Tue, 2 Jul 2024 15:22:43 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>
-Cc: Conor Dooley <conor@kernel.org>, Jesse Taube <jesse@rivosinc.com>,
-	linux-riscv@lists.infradead.org, Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Evan Green <evan@rivosinc.com>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Xiao Wang <xiao.w.wang@intel.com>, Andy Chiu <andy.chiu@sifive.com>,
-	Eric Biggers <ebiggers@google.com>,
-	Greentime Hu <greentime.hu@sifive.com>,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Costa Shulyupin <costa.shul@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>, Anup Patel <apatel@ventanamicro.com>,
-	Zong Li <zong.li@sifive.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Ben Dooks <ben.dooks@codethink.co.uk>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Erick Archer <erick.archer@gmx.com>,
-	Joel Granados <j.granados@samsung.com>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 4/8] RISC-V: Check Zicclsm to set unaligned access
- speed
-Message-ID: <ZoR9swwgsGuGbsTG@ghost>
-References: <20240625005001.37901-1-jesse@rivosinc.com>
- <20240625005001.37901-5-jesse@rivosinc.com>
- <20240626-march-abreast-83414e844250@spud>
- <Zn3XrLRl/yazsoZe@ghost>
- <43941f48-9905-4b25-89ef-6ad75bf1a123@rivosinc.com>
- <20240701-ajar-italicize-9e3d9b8a0264@spud>
- <ef639748-3979-4236-b48d-c0c44e2d5ad2@rivosinc.com>
+	s=arc-20240116; t=1719959150; c=relaxed/simple;
+	bh=xPUDoFRaSIIRZKlVHUF3wDN0LVVADMlRmKTOrYQ/+WQ=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=lhlC9INB25LEj3me44bTf+/5nhxyTuPfnlAX02zYT14cAeud/IUHIMMJY79rHWRrRU/uH8//CIBCKU6E+xPgNsjpXS3Eh1BbvJkkhhZprXWXlbv9NmP3lpxaPXq8k4jVUbGmjQaCIByTgsC4vI9zsJxerVAvRDoCKeuvxFZ2vWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NLPZewcd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE852C116B1;
+	Tue,  2 Jul 2024 22:25:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719959150;
+	bh=xPUDoFRaSIIRZKlVHUF3wDN0LVVADMlRmKTOrYQ/+WQ=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=NLPZewcddc/jeneoRtTxm3HZYkNS05iJd83e+K5Yn+iMQ/xm1D4HupLCMLI8KTDeL
+	 dXKL+ZYzLOkJ4gS7b5UdXjzYJMV3VcjaRrFc87cisdMGPqePm7Jbl855imMgfn8ORN
+	 v9kWaZy3oUESimmQfiwFQIoPrExNGpT7hdg3e2cFwLoDDaNeD4/4RtLrAtkc+vub46
+	 6/b1sCFW0fOIY9i6Da8J9UXAw3D+s0iOTMhmkbczwfDyj/zpfPOKss/wVnmYh/kfYV
+	 QlA14ALAvcJRoxdL/PDwJUsuv34EdOQ5hOpb/sHDkBIcdLOh62NepK/j46YFP473Ea
+	 yg/laUu19IetA==
+Message-ID: <c88fbeb65cfda6c568b4d8d69215139f.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ef639748-3979-4236-b48d-c0c44e2d5ad2@rivosinc.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CABVgOS=4Qnb7pvc_mmkPGdyVFGNWU9wdyn9p-QBKKG+rbJGtfA@mail.gmail.com>
+References: <20240603223811.3815762-1-sboyd@kernel.org> <20240603223811.3815762-12-sboyd@kernel.org> <CABVgOS=4Qnb7pvc_mmkPGdyVFGNWU9wdyn9p-QBKKG+rbJGtfA@mail.gmail.com>
+Subject: Re: [PATCH v5 11/11] clk: Add KUnit tests for clks registered with struct clk_parent_data
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, patches@lists.linux.dev, kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rafael J . Wysocki <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Daniel Latypov <dlatypov@google.com>, Christian Marangi <ansuelsmth@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <maxime@cerno.tech>
+To: David Gow <davidgow@google.com>
+Date: Tue, 02 Jul 2024 15:25:47 -0700
+User-Agent: alot/0.10
 
-On Mon, Jul 01, 2024 at 04:20:15PM +0200, Clément Léger wrote:
-> 
-> 
-> On 01/07/2024 15:58, Conor Dooley wrote:
-> > On Mon, Jul 01, 2024 at 09:15:09AM +0200, Clément Léger wrote:
-> >>
-> >>
-> >> On 27/06/2024 23:20, Charlie Jenkins wrote:
-> >>> On Wed, Jun 26, 2024 at 03:39:14PM +0100, Conor Dooley wrote:
-> >>>> On Mon, Jun 24, 2024 at 08:49:57PM -0400, Jesse Taube wrote:
-> >>>>> Check for Zicclsm before checking for unaligned access speed. This will
-> >>>>> greatly reduce the boot up time as finding the access speed is no longer
-> >>>>> necessary.
-> >>>>>
-> >>>>> Signed-off-by: Jesse Taube <jesse@rivosinc.com>
-> >>>>> ---
-> >>>>> V2 -> V3:
-> >>>>>  - New patch split from previous patch
-> >>>>> ---
-> >>>>>  arch/riscv/kernel/unaligned_access_speed.c | 26 ++++++++++++++--------
-> >>>>>  1 file changed, 17 insertions(+), 9 deletions(-)
-> >>>>>
-> >>>>> diff --git a/arch/riscv/kernel/unaligned_access_speed.c b/arch/riscv/kernel/unaligned_access_speed.c
-> >>>>> index a9a6bcb02acf..329fd289b5c8 100644
-> >>>>> --- a/arch/riscv/kernel/unaligned_access_speed.c
-> >>>>> +++ b/arch/riscv/kernel/unaligned_access_speed.c
-> >>>>> @@ -259,23 +259,31 @@ static int check_unaligned_access_speed_all_cpus(void)
-> >>>>>  	kfree(bufs);
-> >>>>>  	return 0;
-> >>>>>  }
-> >>>>> +#else /* CONFIG_RISCV_PROBE_UNALIGNED_ACCESS */
-> >>>>> +static int check_unaligned_access_speed_all_cpus(void)
-> >>>>> +{
-> >>>>> +	return 0;
-> >>>>> +}
-> >>>>> +#endif
-> >>>>>  
-> >>>>>  static int check_unaligned_access_all_cpus(void)
-> >>>>>  {
-> >>>>> -	bool all_cpus_emulated = check_unaligned_access_emulated_all_cpus();
-> >>>>> +	bool all_cpus_emulated;
-> >>>>> +	int cpu;
-> >>>>> +
-> >>>>> +	if (riscv_has_extension_unlikely(RISCV_ISA_EXT_ZICCLSM)) {
-> >>>>> +		for_each_online_cpu(cpu) {
-> >>>>> +			per_cpu(misaligned_access_speed, cpu) = RISCV_HWPROBE_MISALIGNED_FAST;
-> >>>>
-> >>>> - const: zicclsm
-> >>>>   description:
-> >>>>     The standard Zicclsm extension for misaligned support for all regular
-> >>>>     load and store instructions (including scalar and vector) but not AMOs
-> >>>>     or other specialized forms of memory access. Defined in the
-> >>>>     RISC-V RVA Profiles Specification. 
-> >>>>
-> >>>> Doesn't, unfortunately, say anywhere there that they're actually fast :(
-> >>>
-> >>> Oh no! That is unfortunate that the ISA does not explicitly call that
-> >>> out, but I think that acceptable.
-> >>>
-> >>> If a vendor puts Zicclsm in their isa string, they should expect
-> >>> software to take advantage of misaligned accesses. FAST is our signal to
-> >>> tell software that they should emit misaligned accesses.
-> >>
-> >> AFAIK, Zicclsm is not even an ISA extension, simply a profile
-> >> specification which means that only the execution environment which
-> >> provides the profile support misaligned accesses (cf
-> >> https://lists.riscv.org/g/tech-profiles/message/56).
-> > 
-> > I dunno, the specification status page used to describe it as an
-> > extension:
-> > https://wiki.riscv.org/display/HOME/Specification+Status+-+Historical
-> > My understanding was that these could be considered extensions, just
-> > like we are considering svade to be one.
-> > 
-> >> . I don't think we
-> >> can extrapolate that the misaligned accesses will be fast at all.
-> > 
-> > That is my opinion on it too. If it doesn't say "fast" and give a
-> > definition for what that means in the binding, then we can't assume that
-> > it is fast. I'm also wary of extending definitions of extensions in the
-> > binding, because a) I am 90% sure that people writing devicetrees don't
-> > care and b) it'd be a potential difference between DT and ACPI without a
-> > real justification (unlike the zkr or svade/svadu situations).
-> 
-> BTW, the profile spec [1] has a note that states the following for Zicclsm:
-> 
-> "Even though mandated, misaligned loads and stores might execute
-> extremely slowly. Standard software distributions should assume their
-> existence only for correctness, not for performance."
-> 
-> Which was also quoted in patch 1, so I guess that settles it.
+Quoting David Gow (2024-06-13 00:56:08)
+> On Tue, 4 Jun 2024 at 06:38, Stephen Boyd <sboyd@kernel.org> wrote:
+> >
+> > Test that clks registered with 'struct clk_parent_data' work as
+> > intended and can find their parents.
+> >
+> > Cc: Christian Marangi <ansuelsmth@gmail.com>
+> > Cc: Brendan Higgins <brendan.higgins@linux.dev>
+> > Cc: David Gow <davidgow@google.com>
+> > Cc: Rae Moar <rmoar@google.com>
+> > Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> > ---
+>=20
+> This seems good to me overall, but will break if we can't compile the
+> dtbo.o file. Maybe these need to live behind a  #if
+> IS_ENABLED(CONFIG_OF) or equivalent.
+>=20
+> Also, there's a cast to kunit_action_t* which needs to use a wrapper.
+>=20
+> Otherwise,
+> Reviewed-by: David Gow <davidgow@google.com>
+>=20
+> Cheers,
+> -- David
+>=20
+> >  drivers/clk/Kconfig                         |   1 +
+> >  drivers/clk/Makefile                        |   3 +-
+> >  drivers/clk/clk_parent_data_test.h          |  10 +
+> >  drivers/clk/clk_test.c                      | 451 +++++++++++++++++++-
+> >  drivers/clk/kunit_clk_parent_data_test.dtso |  28 ++
+> >  5 files changed, 491 insertions(+), 2 deletions(-)
+> >  create mode 100644 drivers/clk/clk_parent_data_test.h
+> >  create mode 100644 drivers/clk/kunit_clk_parent_data_test.dtso
+> >
+> > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> > index f649f2a0279c..c33fdf9fdcd6 100644
+> > --- a/drivers/clk/Kconfig
+> > +++ b/drivers/clk/Kconfig
+> > @@ -508,6 +508,7 @@ config CLK_KUNIT_TEST
+> >         tristate "Basic Clock Framework Kunit Tests" if !KUNIT_ALL_TESTS
+> >         depends on KUNIT
+> >         default KUNIT_ALL_TESTS
+> > +       select OF_OVERLAY if OF
+> >         help
+> >           Kunit tests for the common clock framework.
+> >
+> > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> > index 7b57e3d22cee..ed4e1a0e6943 100644
+> > --- a/drivers/clk/Makefile
+> > +++ b/drivers/clk/Makefile
+> > @@ -2,7 +2,8 @@
+> >  # common clock types
+> >  obj-$(CONFIG_HAVE_CLK)         +=3D clk-devres.o clk-bulk.o clkdev.o
+> >  obj-$(CONFIG_COMMON_CLK)       +=3D clk.o
+> > -obj-$(CONFIG_CLK_KUNIT_TEST)   +=3D clk_test.o
+> > +obj-$(CONFIG_CLK_KUNIT_TEST)   +=3D clk_test.o \
+> > +                                  kunit_clk_parent_data_test.dtbo.o
+>=20
+> This breaks if CONFIG_OF isn't enabled, as there's no rule to compile it:
+> make[5]: *** No rule to make target
+> 'drivers/clk/kunit_clk_parent_data_test.dtbo.o', needed by
+> 'drivers/clk/modules.order'.  Stop.
+>=20
 
-The intention here was to allow vendors to configure an option to skip
-the probing. This extension does not seem useful as it is written! A way
-around this would be to add a kernel arg to set the access speed but
-maybe it doesn't matter. For the sake of this patch, it looks like we
-should get rid of this Zicclsm check.
+Ah, I see that I need to set CONFIG_DTC or the DT compiler (dtc) won't
+be built. Maybe I should just select OF_OVERLAY instead of being nice
+and letting OF be disabled? The problem is that I can't test the
+CONFIG_OF=3Dn case easily then.
 
-- Charlie
+For now I'll go with 'select DTC', but it really feels like we should
+just get rid of that Kconfig and build 'dtc' if it is needed.
 
-> 
-> Thanks,
-> 
-> Clément
-> 
-> Link:
-> https://github.com/riscv/riscv-profiles/blob/main/src/profiles.adoc?plain=1#L524
-> [1]
-> 
-> > 
-> >>> This allows for a generic kernel, like the one a distro would compile, to
-> >>> skip the probing when booting on a system that explicitly called out
-> >>> that the hardware supports misaligned accesses.
+> > diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+> > index 39e2b5ff4f51..bdf3c4bb2243 100644
+> > --- a/drivers/clk/clk_test.c
+> > +++ b/drivers/clk/clk_test.c
+> > @@ -4,12 +4,19 @@
+> >   */
+> >  #include <linux/clk.h>
+> >  #include <linux/clk-provider.h>
+> > +#include <linux/of.h>
+> > +#include <linux/platform_device.h>
+> >
+> >  /* Needed for clk_hw_get_clk() */
+> >  #include "clk.h"
+[...]
+> > +
+> > +/**
+> > + * struct clk_register_clk_parent_data_of_ctx - Context for clk_parent=
+_data OF tests
+> > + * @np: device node of clk under test
+> > + * @hw: clk_hw for clk under test
+> > + */
+> > +struct clk_register_clk_parent_data_of_ctx {
+> > +       struct device_node *np;
+> > +       struct clk_hw hw;
+> > +};
+> > +
+> > +static int clk_register_clk_parent_data_of_test_init(struct kunit *tes=
+t)
+> > +{
+> > +       struct clk_register_clk_parent_data_of_ctx *ctx;
+> > +
+> > +       KUNIT_ASSERT_EQ(test, 0,
+> > +                       of_overlay_apply_kunit(test, kunit_clk_parent_d=
+ata_test));
+> > +
+> > +       ctx =3D kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
+> > +       if (!ctx)
+> > +               return -ENOMEM;
+> > +       test->priv =3D ctx;
+> > +
+> > +       ctx->np =3D of_find_compatible_node(NULL, NULL, "test,clk-paren=
+t-data");
+> > +       if (!ctx->np)
+> > +               return -ENODEV;
+> > +
+> > +       return kunit_add_action_or_reset(test, (kunit_action_t *)&of_no=
+de_put, ctx->np);
+>=20
+> We should use an action wrapper here (KUNIT_DEFINE_ACTION_WRAPPER()),
+> as casting function pointers to kunit_action_t* breaks control-flow
+> integrity.
+
+Got it, thanks. Maybe there should be an of_node_put_kunit_exit() helper th=
+at
+does that and can be used anywhere.
 
