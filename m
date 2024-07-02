@@ -1,123 +1,198 @@
-Return-Path: <linux-kernel+bounces-238273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F9719247BB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:58:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7897C9247BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:59:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B13571C24FCC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:58:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE4301F22B41
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:59:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2070B1CCCD7;
-	Tue,  2 Jul 2024 18:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QRdeVJpG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A0D1CCCDC;
+	Tue,  2 Jul 2024 18:59:26 +0000 (UTC)
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9CB1BF31D;
-	Tue,  2 Jul 2024 18:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080B584A40;
+	Tue,  2 Jul 2024 18:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719946723; cv=none; b=DxABgzjuCVZ6BRJuEGjKiUTSv9s2vu9LfsDJWlce19wvAnZ5quq/sB97aw3P5RbP9T9w/0to+p+zwjot1Z6VCCjH/SynaAO7L2Dz66RDaFUiqgpHVI6IPKwP2/ivltLclOHF0MSN1xuPivPsdm3hGicvNh4L0JwgW8rDFegXs1o=
+	t=1719946766; cv=none; b=WCRjrNt8u4VYcCzVr5wyo492LKMuiXN02xtOQmVJoLCWBmp6wd72rNYo8WUIejZ7nf39AIMdtPtkHsLbvxR1NaDPAf4wNumEqAD1yE2mr1+GMXSMdPGIPX8lXvyxUffWJPlKjE1CcediYcxDCa3UUP4xC/X1EwSgnYn2P1ljxZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719946723; c=relaxed/simple;
-	bh=Ar3wR6ASOgGCK1m2Gm9pQgjh2S7TBujxoLQT+MNP91A=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=mYTU6u3OrGaWXfPEiwkkUStkmwuQouO1hC1mUo+ojWEBHgGIiDWLtEtVrg5p75XO+VeZ/xH8Mr5rAmL1FKn1m+y/6290GesTjeGIPgUbBJpdamgxspCN/9nGpDczP6NLp8B6NT+k1Sxl1hOG/FrbMSJtbLgCvMVSZIheOs9Akn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QRdeVJpG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7113C116B1;
-	Tue,  2 Jul 2024 18:58:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719946722;
-	bh=Ar3wR6ASOgGCK1m2Gm9pQgjh2S7TBujxoLQT+MNP91A=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=QRdeVJpGkXLXZJEgLb1vSgrUq0fILUNypj0FCUeD5bapgGZNVHY/zDXNwa7RW5QO0
-	 m/RZcgWpXfPOTf+XrS9i5uvdkjI8axpobNWyezOyWiD0p7NI+i40atSXzTHPWBzBsC
-	 lzTn1uEm1sueLHmZZaaclbUZHmfLcnTZfWrB6kmTabBDL2jDBGrozp5dZsAB2W6XUf
-	 c967mc/EZAbohZrO9lPxo0y8OJnXG4T44LSxzPwLLPbdH8NiqoWO1iqdSlWLJALnmn
-	 w938MaezXitd7rn5N6USyPrUuhrYmoPmu7kGoFyLFp0om0E64nPIRBvbCn40lhduOc
-	 CXUr+vQljQ2TA==
-Message-ID: <217a785212d7c1a5b504c6040b3636e6.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1719946766; c=relaxed/simple;
+	bh=r3rsrgYvDNPot/J0J9qW+ROTWJ+QO7HKBNmC7Ub0TXs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dyKtwBLDYB4PUYE32OTbmLPHCfd4Dg/YWxL5sLZgkEMjeAwDSnvJitDXk2fPVQgRcmpmLQ7qwGzWlYVe5Cs0bz6fz7LPZ2zq7jvTwNfL6cD7iM/1FYRvurIRdRpSDJGihnyuKVuuSOW+nzevZnEeed8lajj0FzL0iwDdaBozmjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2c964f5a037so581493a91.0;
+        Tue, 02 Jul 2024 11:59:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719946764; x=1720551564;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SwzG6F4f5E6fksBgJirQ54c8SNWFrroy6GPzSmRvfqQ=;
+        b=anWh0mgCPYSDgl3XdJfp/KppuuBIbW5hIfAkORZ73cM08bWzQhrzEHcRZxMkggTSr3
+         NEWwGm0p2akKrGekUDOjr1fmwz2QGYoA4gJRaUyOlPjoVJTJsXQWKcS6XPg8+OK2LUvR
+         jQVETHZfmU3NjbeZ5JRZqHPl4HkOW1S4kSs6eTtJZV/4vhFvPa7gwUkw1n9TZGdIjBXh
+         vx6NIvADQtyQYp65Rkr8qqn5K4KNJAZ3wofTulDEgtMMtQX2gnydZVG7yohqr/PLtJUY
+         12niNKbQXOExjhOuTu0sXyecMFJFhSa7bGJIPHL0LOpxx4F/OuLlwjP5n4GhXc6PLDaT
+         gtBA==
+X-Forwarded-Encrypted: i=1; AJvYcCU63X9uZi+xfFF+lhyQupJrJi+c/w1RfG+LRs+/EVYU+TkTQWv43JaghHT37krkJwYtrxkHlacuo+FEANQZeBNzTMqBIp9ZMWoUgn68iIil326kDqq2XgYN/nV8d7+ii5Glh4bKkugfekvOu0yLHA==
+X-Gm-Message-State: AOJu0YxtxY3IatuucSHy3sWcP1v5vgd/LnTLC1vT+CNpKWekBNXm9N06
+	Bz7gb2XwimjNOARk/0MGcYEYHBNVVVbgQcp3zXYGLfzn69VThJ6BU2p1J51kmbRElw1RV5pvj2H
+	1bA2syNvaILbnbj98a1ewzVx8rbA=
+X-Google-Smtp-Source: AGHT+IGC6dX/dOAx2dakhe0u99rDFvwClutmuvkHsvn9RBM56LEvW+skwbUj15GzJlliKKHiByK2zvk/nj0sgFXKmrs=
+X-Received: by 2002:a17:90a:ac8:b0:2c5:12b5:b816 with SMTP id
+ 98e67ed59e1d1-2c93d77cf94mr5568002a91.48.1719946764039; Tue, 02 Jul 2024
+ 11:59:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240624222026.229401-1-weilin.wang@intel.com>
+ <ZnxW4u_TB5agiFJT@google.com> <CO6PR11MB563505F0D97C0E2D5949F583EED62@CO6PR11MB5635.namprd11.prod.outlook.com>
+ <Zn3MV8lCSHLEEXDG@google.com> <CO6PR11MB5635353A7B7A010FB727C5A5EED22@CO6PR11MB5635.namprd11.prod.outlook.com>
+ <DM8PR11MB56372A51C1D0D2EEDDA95E31EEDC2@DM8PR11MB5637.namprd11.prod.outlook.com>
+In-Reply-To: <DM8PR11MB56372A51C1D0D2EEDDA95E31EEDC2@DM8PR11MB5637.namprd11.prod.outlook.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Tue, 2 Jul 2024 11:59:11 -0700
+Message-ID: <CAM9d7chcdiHCBdwagj=zAeB3P1yT1Edc+q31Uq3LZfOFpP7vaQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v14 0/8] TPEBS counting mode support
+To: "Wang, Weilin" <weilin.wang@intel.com>
+Cc: Ian Rogers <irogers@google.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	"Hunter, Adrian" <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Taylor, Perry" <perry.taylor@intel.com>, 
+	"Alt, Samantha" <samantha.alt@intel.com>, "Biggers, Caleb" <caleb.biggers@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1jikyhp0pc.fsf@starbuckisacylon.baylibre.com>
-References: <20240516150842.705844-1-jbrunet@baylibre.com> <20240516150842.705844-9-jbrunet@baylibre.com> <68518f93af68cbc0153c8bd765dc885f.sboyd@kernel.org> <1jikyhp0pc.fsf@starbuckisacylon.baylibre.com>
-Subject: Re: [RFC PATCH 8/9] clk: meson: add auxiliary reset helper driver
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, Jan Dakinevich <jan.dakinevich@salutedevices.com>, linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
-To: Jerome Brunet <jbrunet@baylibre.com>
-Date: Tue, 02 Jul 2024 11:58:40 -0700
-User-Agent: alot/0.10
 
-Quoting Jerome Brunet (2024-06-10 03:10:55)
-> On Wed 29 May 2024 at 18:01, Stephen Boyd <sboyd@kernel.org> wrote:
->=20
+Hello Weilin,
+
+On Mon, Jul 1, 2024 at 9:27=E2=80=AFPM Wang, Weilin <weilin.wang@intel.com>=
+ wrote:
+>
+>
+>
+> > -----Original Message-----
+> > From: Wang, Weilin
+> > Sent: Saturday, June 29, 2024 10:13 PM
+> > To: Namhyung Kim <namhyung@kernel.org>
+> > Cc: Ian Rogers <irogers@google.com>; Arnaldo Carvalho de Melo
+> > <acme@kernel.org>; Peter Zijlstra <peterz@infradead.org>; Ingo Molnar
+> > <mingo@redhat.com>; Alexander Shishkin
+> > <alexander.shishkin@linux.intel.com>; Jiri Olsa <jolsa@kernel.org>; Hun=
+ter,
+> > Adrian <adrian.hunter@intel.com>; Kan Liang <kan.liang@linux.intel.com>=
+;
+> > linux-perf-users@vger.kernel.org; linux-kernel@vger.kernel.org; Taylor,=
+ Perry
+> > <perry.taylor@intel.com>; Alt, Samantha <samantha.alt@intel.com>; Bigge=
+rs,
+> > Caleb <caleb.biggers@intel.com>
+> > Subject: RE: [RFC PATCH v14 0/8] TPEBS counting mode support
 > >
-> > I'd prefer we move the device creation and registration logic to
-> > drivers/reset as well. See commit 098c290a490d ("clock, reset:
-> > microchip: move all mpfs reset code to the reset subsystem") for some
-> > inspiration.
->=20
-> Ok but if it lives in reset I don't really get the purpose served by the
-> auxiliary devices in that case. Why not export a function that directly
-> calls reset_controller_register() in that case ?=20
->=20
-> I thought the point was to properly decouple both sides.
-
-Yes.
-
-We use auxiliary devices so that the clk and reset drivers are
-decoupled. Calling reset_controller_register() directly must return
-success, whereas creating a device _should_ only fail if the device
-couldn't be created/registered. It's less likely to fail with an
-auxiliary device. This also allows the clk driver to be a module and the
-reset driver builtin if, for example, the reset framework doesn't
-support modules. Another benefit would be moving the probe context to
-another thread if it can be async.
-
->=20
-> I don't have strong opinion about it, TBH. It is just how it made sense
-> to me. If you are sure about this, I don't mind changing
-
-It seems better to put the device creation in the same file as the
-driver so that it's further decoupled from the clk driver and
-consolidated in the reset directory. This way, a single API is the only
-thing the clk driver uses to create the reset device, instead of putting
-the matching string for the device and driver in the clk and reset
-drivers and having to know that the auxiliary bus is used.
-
-The downside I see is that the clk driver can't be builtin if the reset
-driver is a module. I'm not sure that's really a problem though. If it
-is then we can make the registration API into another C file that still
-lives in drivers/reset that has another kconfig symbol.
-
->=20
 > >
-> > One thing I haven't really thought about too much is if they're two
-> > different modules. One for clk and one for reset. If the device
-> > registration API is a symbol the clk module depends on then maybe that
-> > is better because it means both modules are loaded, avoiding a
-> > round-trip through modprobe. It also makes sure that the drivers are
-> > either both builtin or both modular.
->=20
-> I have checked with the current implementation, if the reset driver is
-> missing, the clock part does not fail. Registering the aux device
-> succeeds in clock but the device never comes up (duh). So it does
-> not crash, the consumers of the aux reset device will just defer.
->=20
-> Said differently, the '#if IS_ENABLED(CONFIG_RESET_CONTROLLER)' in
-> clk-mpfs.c was not necessary ... it was removed in the changed you
-> linked anyway.
->=20
+> >
+> > > -----Original Message-----
+> > > From: Namhyung Kim <namhyung@kernel.org>
+> > > Sent: Thursday, June 27, 2024 1:32 PM
+> > > To: Wang, Weilin <weilin.wang@intel.com>
+> > > Cc: Ian Rogers <irogers@google.com>; Arnaldo Carvalho de Melo
+> > > <acme@kernel.org>; Peter Zijlstra <peterz@infradead.org>; Ingo Molnar
+> > > <mingo@redhat.com>; Alexander Shishkin
+> > > <alexander.shishkin@linux.intel.com>; Jiri Olsa <jolsa@kernel.org>; H=
+unter,
+> > > Adrian <adrian.hunter@intel.com>; Kan Liang <kan.liang@linux.intel.co=
+m>;
+> > > linux-perf-users@vger.kernel.org; linux-kernel@vger.kernel.org; Taylo=
+r, Perry
+> > > <perry.taylor@intel.com>; Alt, Samantha <samantha.alt@intel.com>;
+> > Biggers,
+> > > Caleb <caleb.biggers@intel.com>
+> > > Subject: Re: [RFC PATCH v14 0/8] TPEBS counting mode support
+> > >
+> > > On Wed, Jun 26, 2024 at 06:17:22PM +0000, Wang, Weilin wrote:
+> > > >
+> > > >
+> > > > > -----Original Message-----
+> > > > > From: Namhyung Kim <namhyung@kernel.org>
+> > > > > Sent: Wednesday, June 26, 2024 10:59 AM
+> > > > > To: Wang, Weilin <weilin.wang@intel.com>
+> > > > > Cc: Ian Rogers <irogers@google.com>; Arnaldo Carvalho de Melo
+> > > > > <acme@kernel.org>; Peter Zijlstra <peterz@infradead.org>; Ingo Mo=
+lnar
+> > > > > <mingo@redhat.com>; Alexander Shishkin
+> > > > > <alexander.shishkin@linux.intel.com>; Jiri Olsa <jolsa@kernel.org=
+>;
+> > Hunter,
+> > > > > Adrian <adrian.hunter@intel.com>; Kan Liang
+> > <kan.liang@linux.intel.com>;
+> > > > > linux-perf-users@vger.kernel.org; linux-kernel@vger.kernel.org; T=
+aylor,
+> > > Perry
+> > > > > <perry.taylor@intel.com>; Alt, Samantha <samantha.alt@intel.com>;
+> > > Biggers,
+> > > > > Caleb <caleb.biggers@intel.com>
+> > > > > Subject: Re: [RFC PATCH v14 0/8] TPEBS counting mode support
+> > > > >
+> > > > > On Mon, Jun 24, 2024 at 06:20:16PM -0400, weilin.wang@intel.com
+> > > wrote:
+> > > > > > From: Weilin Wang <weilin.wang@intel.com>
+> > > > > >
+> > > > > > Changes in v14:
+> > > > > >  - Fix the python import test failure. We cannot support PYTHON=
+_PERF
+> > > > > because it
+> > > > > >  will trigger a chain of dependency issues if we add intel-tpeb=
+s.c to it.
+> > So,
+> > > > > >  only enable tpebs functions in evsel and evlist when PYTHON_PE=
+RF is
+> > not
+> > > > > >  defined.
+> > > > >
+> > > > > I think it's easier if we have Ian's python build cleanup first.
+> > > > >
+> > > > >   https://lore.kernel.org/linux-perf-users/20240625214117.953777-=
+1-
+> > > > > irogers@google.com
+> > > > >
+> > > > > Let me take a look at it..
+> > > >
+> > > > Ok, I will hold the cmd option name update until we conclude on thi=
+s one.
+> > > > Thanks a lot!
+> > >
+> > > Please take a look at the current perf-tools-next branch.
+> >
+> > Hi Namhyung,
+> >
+> > The python import test works correctly with the latest perf-tools-next =
+branch
+> > without the change I added in v14. I will send a new version that rever=
+ts this
+> > change and update the command line option. Is there any other changes
+> > you'd
+> > like me to add?
+>
+> Hi Namhyung,
+>
+> I'm planning to submit the new version before Wednesday. Please let me kn=
+ow if
+> you have any new comment on this.
 
-Cool.
+Yep, I think it's ok unless it introduces new test failures.
+
+Thanks,
+Namhyung
 
