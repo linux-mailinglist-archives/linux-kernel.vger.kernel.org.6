@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-238465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EEDC924B2A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:07:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F1E4924B2D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1B321C22763
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:07:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A8D0284830
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BCBA1C0930;
-	Tue,  2 Jul 2024 21:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210F81C2DCD;
+	Tue,  2 Jul 2024 21:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G7Da93wx"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DuQr2WDO"
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B6E1B1215
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 21:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2701B6A73
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 21:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719957545; cv=none; b=TMdYMBmNgIgDl+sJEBW6Z3AouIfEFlUxNwGsqMbeqeBczop4T+WTjcVtP3KCe2npwJZdBYmIaSIVLDikPuXkuCN9spoWB9Y45QmHisD1i1h27AkJ9PLL9R8oHoNLpHliz4gykNC+5v5rg4Hluk5n04seUV6KUx/l6UCyS025pAw=
+	t=1719957547; cv=none; b=TmWwtMfDEeEjVOlrYAO2d1ATsEFUiVMQMiu3+iFqW72aaYyhMgJ311dAuSKFXmf/1JhyanJGwoPGXBIGYbPUJZyXbdhZl11weviZW3bZybTRhBid4XtHfC6rUpB4jDOFrtRSVqsuY7UU7thbrC7ddtnvxuLtaHPTjpOjERGCQsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719957545; c=relaxed/simple;
-	bh=HsVJ+8bSyTwxbd5PVHZFf8uV50bzhcBL2G646/K/2NQ=;
+	s=arc-20240116; t=1719957547; c=relaxed/simple;
+	bh=O9PUNSxHH2hOtI+j2/xlVettstmLCDGZaJ8HHPON96o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=t92RZaFPSGXyWW+YthLBS4AAaUjdL6qmRZ+hT9jVIuUKu/2KHgFsCFW4iXmr2eGj8zbJPEwXVpwvVczalgPRuUaNYYSzQFhcMTlmQB5DPXnv1ZiepnEmzbQ9F7rIzQeix7OhOjDGhLBhG8HBv0xMA2cNGom2csfb2PJ+XNtNOVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G7Da93wx; arc=none smtp.client-ip=209.85.166.52
+	 MIME-Version; b=BEIrS/G2inWN1C9uO94X8cUxDnYnVby/Id1u/OsqcNQklLS5eEq95BnDnwhAFoco/D4m1+2hA6MvhJ1Q4G9CyRXcYiVNmPOM8CorkFvx+vRksVwBb+08p/1npqgI6xDIoNId5eCHSFLk4/vuRhBVBQU5ln+znJ6utMx7ODrS4dY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DuQr2WDO; arc=none smtp.client-ip=209.85.166.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-7f3ca6869e8so168994939f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 14:59:04 -0700 (PDT)
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-7f624e70870so253611539f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 14:59:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719957543; x=1720562343; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1719957545; x=1720562345; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Qc7kDWbr1ZOLQ8+EMlKcMIOk0gPIa550UiXaV/Fsdqw=;
-        b=G7Da93wx6fn1iPHLsVMNJ7ZK3+mNFvgg0SWnz6P7agZjhSsUM0SRaRavyZL20xVlsZ
-         +nDuWfcoMK4HNFicOdpbHWVmBuHcY1mZrEnB3hr/0hqFwrTKwoSHR2IpyEUC+XB4jN1m
-         VayGGRtNkzZoGbiVr9OdAy9feoNXiuzWgq5MsW3whKUW5LNn50G7nNJuf9m1QoPEle67
-         kGjJbJuBy9vmg6kDUYummVZW1ZVraQJ1uN648u8EnlIFPNRb+Gw8RJKZRFsGVxuPjDJ7
-         wJ5DCFJ8zZVJH3p7jUgk8rKy+e8dYtYJfDNTK0mFNrQE7gydWR3kRjDd/X0QZPLE7FyD
-         bkHg==
+        bh=+GNz3zEEsQ52HQj9oGak+wZ8oAPfmA3LCU3EZ10XWgs=;
+        b=DuQr2WDOzqoh6jjtqdI3ek97VdZOrNvgoIiKFVH+rbZcEbpBcbMfkqKrNtC8GbEQAF
+         ndOxt0ZjE62oVwYk0E6djF5Gsas1SNKkJjNRKRy417X+HPGIOFe7OB5wshXGMsoeg7DW
+         jvM7YiYtKu98kZYtjLilulXFIoJL/I7lhktgqClk8+3jpKL1voDmVhlqI/3uR1Iky3HE
+         jCSfLI4Ek3aMwFBiaOAGqoM5s1nvqXQ9Fj4FKmkFoUBhLtMNOszTdGPfvB9wNY/HuyaG
+         HpEH/dRweg3pv7A6siPp0wFAnATBU0Im837TfXnpM7n9tcqsis5pIauvmrzl7gDBWoaj
+         Y9RQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719957543; x=1720562343;
+        d=1e100.net; s=20230601; t=1719957545; x=1720562345;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Qc7kDWbr1ZOLQ8+EMlKcMIOk0gPIa550UiXaV/Fsdqw=;
-        b=T9QGAos6apQ32KtFKHkLm4B4EkUFiTj2JbAPCrrh11ncGRYWPd7I5ISrNlKHDexhIN
-         st56wEXfDjg5hBCuImZfZy8+8kT9HO/FmrTKjVWCeR8r2DRlxEvydG68Ix2TYMxBCCY/
-         483VpAdIxo6ka8h/jA7dcezAKw+5QEvFNQ8OdXtIwe4lUFMU4iOwgzziirOR2/eCYrdr
-         fjaAOYBRApyUK0x1OboYTplaNxYJQpDkgGeTdtuBYi4W+qhWjRBmtc/yP63YGvA39ujW
-         RyuuN69EuUND64pM0atX9YrRJabLqLURGNf6eFJt7Oii4+Ya9RKX5Is5VJ29Wr0yHq3J
-         72JA==
-X-Gm-Message-State: AOJu0YxZYsAgFBTUFc+Cdru+KGp7VAWnV5MOi0W5a0b/nu4o6yUaap2h
-	FovtGZmlsE5fV+qyYY2BuCpIgUZ6yEhfrv9XWhCmQ48c+ZTIcL+n
-X-Google-Smtp-Source: AGHT+IFU7HE3OnORXf/jPfIvwK8ZL9okfkzaVw0Y9XlHErXhQ5Il5ia22RtTXqA/C72TmprohxCaoA==
-X-Received: by 2002:a5e:a819:0:b0:7eb:c68b:8250 with SMTP id ca18e2360f4ac-7f62ee8d422mr1089812139f.18.1719957543284;
-        Tue, 02 Jul 2024 14:59:03 -0700 (PDT)
+        bh=+GNz3zEEsQ52HQj9oGak+wZ8oAPfmA3LCU3EZ10XWgs=;
+        b=KCSjEnfw9SPZYuSHziJ3hQ5QJAu8q2EqS1I99w8gjXpP8ThCO6nugL4bk7DGY8DJ12
+         eSUr2Ql7r5fsUhaKnYiSbwNYI8LBgR/C/ah8YyJO8oDNwvO0neWAifp32HOgtQ6HtHiO
+         ZQ65UFS3igEX+LMavjJCVDgUlwedXundCusEOlZdsvy3J8KzHElrd6/yUPuhrxlxZ39I
+         BV8yS8M5NHyipHTAH5ml5RcIhZIAsdLXqVWqNc/uYEDaJlWpHWnv0dxoPHexvCgab0x0
+         7Gk2OO5U2UxtQT3P6o8mwQ4x/2oMVKOmsWszYSIcT8+LCEnMewY1oWtay+jWGc5p/wOV
+         /ouA==
+X-Gm-Message-State: AOJu0Yxu4zucUFBroWwK0JlTleGf0yu769jwqEbm7KWtW1NLY8dP9pxz
+	vtAB1WjVz0YLgTTO16kF+Q9Kma6KE5+pJlTOVVTdMA6GCPPrARiP
+X-Google-Smtp-Source: AGHT+IEpSIuUlWiXo7AlLLZ9H4oUpyxuj1IwsW6JEpLdySuCQ2Dy4tOK0pH6QgalXu1yNAVKG98Eig==
+X-Received: by 2002:a5e:cb42:0:b0:7f6:1f5d:3e02 with SMTP id ca18e2360f4ac-7f62ee18215mr1105126939f.2.1719957544885;
+        Tue, 02 Jul 2024 14:59:04 -0700 (PDT)
 Received: from frodo.. (c-73-78-62-130.hsd1.co.comcast.net. [73.78.62.130])
-        by smtp.googlemail.com with ESMTPSA id ca18e2360f4ac-7f61d207fcesm279944739f.51.2024.07.02.14.59.02
+        by smtp.googlemail.com with ESMTPSA id ca18e2360f4ac-7f61d207fcesm279944739f.51.2024.07.02.14.59.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 14:59:02 -0700 (PDT)
+        Tue, 02 Jul 2024 14:59:04 -0700 (PDT)
 From: Jim Cromie <jim.cromie@gmail.com>
 To: daniel.vetter@ffwll.ch,
 	tvrtko.ursulin@linux.intel.com,
@@ -82,9 +82,9 @@ Cc: linux-kernel@vger.kernel.org,
 	joe@perches.com,
 	mcgrof@kernel.org,
 	Jim Cromie <jim.cromie@gmail.com>
-Subject: [PATCH v9 37/53] drm-dyndbg: DRM_CLASSMAP_USE in nouveau
-Date: Tue,  2 Jul 2024 15:57:32 -0600
-Message-ID: <20240702215804.2201271-43-jim.cromie@gmail.com>
+Subject: [PATCH v9 37/52] drm-print: workaround unused variable compiler meh
+Date: Tue,  2 Jul 2024 15:57:33 -0600
+Message-ID: <20240702215804.2201271-44-jim.cromie@gmail.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240702215804.2201271-1-jim.cromie@gmail.com>
 References: <20240702215804.2201271-1-jim.cromie@gmail.com>
@@ -96,43 +96,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Following the dyndbg-api-fix, replace DECLARE_DYNDBG_CLASSMAP with
-DRM_CLASSMAP_USE.  This refs the defined & exported classmap, rather
-than re-declaring it redundantly, and error-prone-ly.
+With CONFIG_DRM_USE_DYNAMIC_DEBUG=y, I'm getting an unused variable
+warning/error on 'category', though the usage follows immediately, in
+drm_debug_enabled().
 
-This resolves the appearance of "class:_UNKNOWN_" in the control file
-for the driver's drm_dbg()s.
+This drops the local var and refs the field directly in the
+macro-call, which avoids the warning.  For static-key optimized
+dyndbg, the macro doesn't actually check the category, since the
+static-key patches in the proper state.  This is also likely why the
+auto var appears to be unused by the compiler.
 
-Fixes: f158936b60a7 ("drm: POC drm on dyndbg - use in core, 2 helpers, 3 drivers.")
-
+commit 9fd6f61a297e ("drm/print: add drm_dbg_printer() for drm device specific printer")
+CC: Jani Nikula <jani.nikula@intel.com>
 Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
 ---
- drivers/gpu/drm/nouveau/nouveau_drm.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+ drivers/gpu/drm/drm_print.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
-index a947e1d5f309..27995c0c9b31 100644
---- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-@@ -72,17 +72,7 @@
- #include "nouveau_uvmm.h"
- #include "nouveau_sched.h"
+diff --git a/drivers/gpu/drm/drm_print.c b/drivers/gpu/drm/drm_print.c
+index efdf82f8cbbb..c400441cd77e 100644
+--- a/drivers/gpu/drm/drm_print.c
++++ b/drivers/gpu/drm/drm_print.c
+@@ -183,11 +183,10 @@ void __drm_printfn_dbg(struct drm_printer *p, struct va_format *vaf)
+ {
+ 	const struct drm_device *drm = p->arg;
+ 	const struct device *dev = drm ? drm->dev : NULL;
+-	enum drm_debug_category category = p->category;
+ 	const char *prefix = p->prefix ?: "";
+ 	const char *prefix_pad = p->prefix ? " " : "";
  
--DECLARE_DYNDBG_CLASSMAP(drm_debug_classes, DD_CLASS_TYPE_DISJOINT_BITS, 0,
--			"DRM_UT_CORE",
--			"DRM_UT_DRIVER",
--			"DRM_UT_KMS",
--			"DRM_UT_PRIME",
--			"DRM_UT_ATOMIC",
--			"DRM_UT_VBL",
--			"DRM_UT_STATE",
--			"DRM_UT_LEASE",
--			"DRM_UT_DP",
--			"DRM_UT_DRMRES");
-+DRM_CLASSMAP_USE(drm_debug_classes);
+-	if (!__drm_debug_enabled(category))
++	if (!__drm_debug_enabled(p->category))
+ 		return;
  
- MODULE_PARM_DESC(config, "option string to pass to driver core");
- static char *nouveau_config;
+ 	/* Note: __builtin_return_address(0) is useless here. */
 -- 
 2.45.2
 
