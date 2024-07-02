@@ -1,114 +1,98 @@
-Return-Path: <linux-kernel+bounces-237997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 796639241E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:08:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 149E89241EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:08:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F6251F25538
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:08:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5EC03B27348
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:08:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8B61BB6AE;
-	Tue,  2 Jul 2024 15:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5DCF1BBBC6;
+	Tue,  2 Jul 2024 15:08:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oYR4p705"
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="JD42hutR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331DC1BB68D;
-	Tue,  2 Jul 2024 15:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB48B1BB685;
+	Tue,  2 Jul 2024 15:08:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719932890; cv=none; b=PyYSHxeFvFJl8SLEHHeH0a5gSUdZDC/3PZ6SjBO8olyB7xGNQZp1kT7HQ0hIQnNsoM7N+Ysh3LHimwV/VmSKcWBRyoEwpgPM26gy/YsZKiJ7wRaOv3dQgiWwM7Bijug78MN+WiTV2CurHQ/AMLQdv1Q/2AoH0YBhFKR8JudyV+4=
+	t=1719932923; cv=none; b=e7c/sSb1au5Hb/OOX41JXYmeNjU/YlFZ+D22yku45x6z7oUuhM3d8OwuhhfGvRB9u2h+vkFkYbSKXbU2OzZXfwXHjvRLM0vK1GBrvldsI1HyEAH/Kdwu4fwYCHziksAUDt4nv3/GodsQhdGIFhGbLTtuwkko9Ujf/Qmwa+Ha7OE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719932890; c=relaxed/simple;
-	bh=2BEp/xQFjVsQI+IPcKnwBwcUgI78+VSrXnR8I30AQRk=;
+	s=arc-20240116; t=1719932923; c=relaxed/simple;
+	bh=r+3+y5Bqpte3FWzeov5eAIYc0Xj4txwX8QQ/c1nIrT4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X2TWKuGW15hE7l34TspJ/AoCZkpktn6Ojyx19+eYwzBgjl6X+juL2XGhYQ3RKQvGJM/CTLotULDJMhrdxnIRJYA0uBQCn5JnMik1YsPvLe3Kh1N3KBZ+d+fgomMzSqqSXaZtzAoosGrWtmPxDC2/8O6JrmjBPp8PM1iZ5LjO4h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oYR4p705; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E29BC116B1;
-	Tue,  2 Jul 2024 15:08:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719932890;
-	bh=2BEp/xQFjVsQI+IPcKnwBwcUgI78+VSrXnR8I30AQRk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oYR4p705kYM2wGDu+juLlWEn74qpeY2oekLMWvilK/+/xXNCrJxLm27UUcEBv3l4S
-	 LLRX/iQNiOA5HPft4IL71kjrRJqUAVyT+unzf+3sjaulrkWLgiicjtomh4daqmQJjG
-	 qSX5123JDAMEXaV6fUXaaa628HpzqxLepPL3EGTIfljErvGR7Mzxbtgd0RQ9m2NkVl
-	 GqtyembOpx6F6zAwFoNTU6ks5Mry+xXCND0LWx+19E0psMCpZyqefq27JCckeRjw8o
-	 SfNMlah9tM4hWeAldbTfwnR5Zt5o25/jN4jE3E4WMkHAAYlkWTvhuR/cCfkRN03+K8
-	 XrMgSmAmlhadw==
-Date: Tue, 2 Jul 2024 16:08:05 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Kim Seer Paller <kimseer.paller@analog.com>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Dimitri Fedrau <dima.fedrau@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-Subject: Re: [PATCH v5 4/6] dt-bindings: iio: dac: Add adi,ltc2664.yaml
-Message-ID: <20240702-septic-cake-f839ff7048a9@spud>
-References: <20240702030025.57078-1-kimseer.paller@analog.com>
- <20240702030025.57078-5-kimseer.paller@analog.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MkVy5cevC2TSe/gvZZtWZPpTINwajMcFpGCvUuXBAeFwF00guAgUdGvzUkliLcswPkYxLy4LClah6zjoxhmYdwyEiaNWRKXN5j+XhXy8ZnXufXI6XLz0+Ae8+UVTbXhZzPcSNpGU9y4f8CsRLbNMfjtDjqqmw1MNSmspsDvIFVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=JD42hutR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19C49C116B1;
+	Tue,  2 Jul 2024 15:08:41 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="JD42hutR"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1719932919;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vn+Q8NW4bbMGozhTyvScvIPS122WxS7dCXcrNrQNePA=;
+	b=JD42hutR8R9eR9bl8Mk9GlUUg7WChrnYNR0XMRMyM5jMhIXnhl7DWdPNmEvbXrCX9i+vDC
+	PmuqcG+oBdx+PogQ+NgfsDLGKhSbnkXlG43fhSEoEglUgS/0rRzPwrMoOzTTQp19JTTK1b
+	gFb9GX3U+wwhcbEKl/8tXeob2erGp1c=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 6661eee5 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Tue, 2 Jul 2024 15:08:37 +0000 (UTC)
+Date: Tue, 2 Jul 2024 17:08:34 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+	tglx@linutronix.de, linux-crypto@vger.kernel.org,
+	linux-api@vger.kernel.org, x86@kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+	Carlos O'Donell <carlos@redhat.com>,
+	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+	Jann Horn <jannh@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
+Subject: Re: [PATCH v19 1/5] mm: add VM_DROPPABLE for designating always
+ lazily freeable mappings
+Message-ID: <ZoQX8uxqww6Zkq2C@zx2c4.com>
+References: <20240701135801.3698-1-Jason@zx2c4.com>
+ <20240701135801.3698-2-Jason@zx2c4.com>
+ <20240702004254.3ab2db4a98cb7fdd245407cb@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="yPz5+S6+ASY1g/ES"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240702030025.57078-5-kimseer.paller@analog.com>
+In-Reply-To: <20240702004254.3ab2db4a98cb7fdd245407cb@linux-foundation.org>
 
+Hey Andrew,
 
---yPz5+S6+ASY1g/ES
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Tue, Jul 02, 2024 at 12:42:54AM -0700, Andrew Morton wrote:
+> The patch is impressively comment-free.  It is a little harsh to make
+> readers go poking around in the git history to figure out what
+> VM_DROPPABLE is, and why it exists.
 
-On Tue, Jul 02, 2024 at 11:00:23AM +0800, Kim Seer Paller wrote:
-> +  adi,manual-span-operation-config:
-> +    description:
-> +      This property must mimic the MSPAN pin configurations. By tying the MSPAN
-> +      pins (MSP2, MSP1 and MSP0) to GND and/or VCC, any output range can be
-> +      hardware-configured with different mid-scale or zero-scale reset options.
-> +      The hardware configuration is latched during power on reset for proper
-> +      operation.
-> +        0 - MPS2=GND, MPS1=GND, MSP0=GND (+-10V, reset to 0V)
-> +        1 - MPS2=GND, MPS1=GND, MSP0=VCC (+-5V, reset to 0V)
-> +        2 - MPS2=GND, MPS1=VCC, MSP0=GND (+-2.5V, reset to 0V)
-> +        3 - MPS2=GND, MPS1=VCC, MSP0=VCC (0V to 10, reset to 0V)
-> +        4 - MPS2=VCC, MPS1=GND, MSP0=GND (0V to 10V, reset to 5V)
-> +        5 - MPS2=VCC, MPS1=GND, MSP0=VCC (0V to 5V, reset to 0V)
-> +        6 - MPS2=VCC, MPS1=VCC, MSP0=GND (0V to 5V, reset to 2.5V)
-> +        7 - MPS2=VCC, MPS1=VCC, MSP0=VCC (0V to 5V, reset to 0V, enables SoftSpan)
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [0, 1, 2, 3, 4, 5, 6, 7]
-> +    default: 7
+Sure, I'll add some comments to the conditionals added to make it more
+clear.
 
-I still don't like this property, but I still don't really understand
-some of the iteraction between it and the output ranges and cannot
-suggest anything better, so
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> Seems hard to test that this mode is working correctly.  Can you think
+> of a way for userspace to check this?  And if so, add it to selftests?
 
---yPz5+S6+ASY1g/ES
-Content-Type: application/pgp-signature; name="signature.asc"
+I've got a pretty straight forward test I've been using during my own
+testing that I can add to the vgetrandom_alloc() selftest (which exposes
+these code paths). It works fairly reliably. Basically, one process
+keeps checking to see if the memory has been dropped, while the other
+consumes memory a page at a time. Pretty soon (depending on how much ram
+you have), the memory gets dropped, and this is detected, and the test
+completes with a pass. I'll have this in v+1 of this series.
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoQX1AAKCRB4tDGHoIJi
-0nWUAP9UyDAtocaLuOOrPmRL9kXLexDGODjjOxKb3odePf5Q5wD/fZFn5DoyuHvg
-s8cbkMbQfoyl0EOoxt5wVh5DaKqTcg0=
-=ZhuX
------END PGP SIGNATURE-----
-
---yPz5+S6+ASY1g/ES--
+Jason
 
