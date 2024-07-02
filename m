@@ -1,125 +1,137 @@
-Return-Path: <linux-kernel+bounces-237149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C961291EC7F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 03:15:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4184F91ECAE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 03:29:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61565281ED3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 01:15:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D54A028297F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 01:29:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0712C8BFA;
-	Tue,  2 Jul 2024 01:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nTLG4PuT"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21DA8C07;
+	Tue,  2 Jul 2024 01:28:55 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17DFA4A06;
-	Tue,  2 Jul 2024 01:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175D88830;
+	Tue,  2 Jul 2024 01:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719882934; cv=none; b=PzntgPGGqXUozD62iEnYY6fq8eYPpRXMuJin1NUQu3qozxd/y7Z7cGVy0pqAweGzkgA0hkBeOAg+C/e8g3LhGXQa32Ob/Ipy2DlH2kPKXJ41Rh0Cb4itFY9LgBx/H6yf8FyAe/B93KXjAtIls7RMa/cfJck34UD6GoLc4miao3s=
+	t=1719883735; cv=none; b=GkGEkchaArgpKogbiVlWCQ0n72MomVj3Ryq6amo2NXMf8OwIorA3zLG8TZqapRqPJtkwn4VfjNsVxnLpMrQwsVH++ZVzGDq7+kBVYH5/eW/WPBLei3XBoUlblgQUgCgN2Jv6rDR+9yzhoC0n4XkfAUPOgS+r5xubwmgj+/sPD7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719882934; c=relaxed/simple;
-	bh=Gtrt6hGFdlUrCR0r7K3OdsOn2P42A6OdRY4ERZo9r70=;
+	s=arc-20240116; t=1719883735; c=relaxed/simple;
+	bh=CnHqwkeS90MMNuM2cK3PUfFffxA7KW+C+qvrwEke0jg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xbft0/k5OOx3W8dQAOe3sA7J62+7R0dglD/arhgZQqIuuHLsqQSfM3BuTo3775ljYonYZIbthzzCl6PMzufDxjzTc6B2DunmyJkK/t4EXOPGm2VqkngICTEedE/1NvApwpzQ5upCioIT90KtPHuXl0q/yVmMIsDDcu1n137iR0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nTLG4PuT; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-71884eda768so1970606a12.1;
-        Mon, 01 Jul 2024 18:15:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719882932; x=1720487732; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=urlS9+H2rKMJUth4dq3lOVQ77liEguo0Lq3ss6wvw5Q=;
-        b=nTLG4PuT2koQFDCifkM45vHIR/aNJXISioHhZHYqHe/6o8+nDGbYl2fVWRHJ0uo4/n
-         F+QJ5JfwRNICC7V4i1F/oiTzkjPppgTfRUXnB9c0ctNYqTaLfFH+W7H98w6URLyNRir1
-         LEq+w+SCFXJYo1CBYaZfrJJKHk+3V9FWBwLUqhu3nGcmyGHLExjN96DWrXRCYmaiNXH3
-         VelmNb+n3m1XorAirAER6Cd4ZaO+D24mcAH4mCfQMa6OLl6tuE5eMbB52dSdgb73cuu2
-         trfurN3sIbNrod5K0edQlAKxiZjWCSWqcgWrlQdsFTRBAwDmIiUSVrAh7icPZwwyBFO8
-         BaaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719882932; x=1720487732;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=urlS9+H2rKMJUth4dq3lOVQ77liEguo0Lq3ss6wvw5Q=;
-        b=NJhypjxW4vRdU1HzrSobUDaBeY8+2MjjsuZqVVlFBeTdob05Rt+KZYUosRrUOuMeDN
-         RnXnyOd5J5eFMdj3Vs6vvZ6r9RHRdoeZWbzlxWrBkAffJ+jAQ9JS5TRkctNvaojjXnVI
-         AQ6RrAhf1ZaNmebEvpWb1/WGSTQWzHInVFqwlZnEaqwIzb51ZiTRc8Q4GnY75zoXpiRJ
-         NfFbKUZECczQb6qi/BypncS4DYQRtPhElDR7vJvGg9mphfy16EFNQn2m8pzLL7n3Eu3e
-         NbZiRTCAc2PzeB7gY1Loz/FVKE7zpLc+0u3VjWrxh1M9SrOWgymFLKxX8n/Arn9UCCqd
-         qjNw==
-X-Forwarded-Encrypted: i=1; AJvYcCXb4dCUia5okaLY+DKlBeclK5UwQPFaCYz1stAD1qBdbEPsHB9nk1WT0mS9gI/l6cxm6rVTinVET1QauS1Ns42mFg+svd8QaeYhcwm1PcgHO+fqHNNkRcWm9WcupBDwxjzr+JvOMFNH
-X-Gm-Message-State: AOJu0YyS5WMJGHu/ceF5ekezWQDlJejK9SFtGl1ORFwRA+zDMJqncCZ8
-	nd5LwwRqe9LGmnZLUGtiT1GTgvDdvDVpZB+1gaROUrAeXT8pCW+s
-X-Google-Smtp-Source: AGHT+IHGBjNarJxkMTwR1vMfijoLiLQNzgEK7uXM4+u3EZpSJkCYQ0nWUNT6zcB7AAoLL2Ohvh6O4Q==
-X-Received: by 2002:a05:6a21:191:b0:1bd:22b6:121d with SMTP id adf61e73a8af0-1bef62141f3mr6633091637.52.1719882932208;
-        Mon, 01 Jul 2024 18:15:32 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac15693f3sm71464175ad.218.2024.07.01.18.15.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 18:15:31 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id D8FB51816BD2C; Tue, 02 Jul 2024 08:15:28 +0700 (WIB)
-Date: Tue, 2 Jul 2024 08:15:28 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Raphael Gallais-Pou <rgallaispou@gmail.com>,
-	"'Rafael J . Wysocki'" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Linux Power Management <linux-pm@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] cpufreq: docs: Add missing scaling_available_frequencies
- description
-Message-ID: <ZoNUsBou78XACmdc@archie.me>
-References: <20240701171040.369030-1-rgallaispou@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rz8+etkwkXDfzrbfmXtl1WJbwcV4DGmGCVUeNFRNfeVNHVDpd+WpVl+xCGwys4S660BUbILKHXOb5OIyg71CMqsOQlhSCfejY87cdMOhyMSSd/vh0nRipyEp+r/KXhlbVU6UmbGJJy/mFngRC/3TTjR78YtDRyYTPemy5HNGZJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Date: Tue, 2 Jul 2024 01:28:47 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Palmer Dabbelt <palmer@sifive.com>, linux-riscv@lists.infradead.org,
+	linux-serial@vger.kernel.org, Inochi Amaoto <inochiama@outlook.com>,
+	Meng Zhang <zhangmeng.kevin@spacemit.com>,
+	Yangyu Chen <cyy@cyyself.name>
+Subject: Re: [PATCH v2 08/10] riscv: dts: add initial SpacemiT K1 SoC device
+ tree
+Message-ID: <20240702012847.GA2447193@ofsar>
+References: <20240627-k1-01-basic-dt-v2-0-cc06c7555f07@gentoo.org>
+ <20240627-k1-01-basic-dt-v2-8-cc06c7555f07@gentoo.org>
+ <CAJM55Z9jeAQTsVjRiLeofDm1RyMWCuHXC0a-pdKtpUiTkSjJCA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="AFijACploa3LrsLr"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240701171040.369030-1-rgallaispou@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJM55Z9jeAQTsVjRiLeofDm1RyMWCuHXC0a-pdKtpUiTkSjJCA@mail.gmail.com>
+
+On 12:49 Mon 01 Jul     , Emil Renner Berthing wrote:
+> Yixun Lan wrote:
+> > From: Yangyu Chen <cyy@cyyself.name>
+> >
+> > Banana Pi BPI-F3 motherboard is powered by SpacemiT K1[1].
+> >
+> > Key features:
+> > - 4 cores per cluster, 2 clusters on chip
+> > - UART IP is Intel XScale UART
+> >
+> > Some key considerations:
+> > - ISA string is inferred from vendor documentation[2]
+> > - Cluster topology is inferred from datasheet[1] and L2 in vendor dts[3]
+> > - No coherent DMA on this board
+> >     Inferred by taking vendor ethernet and MMC drivers to the mainline
+> >     kernel. Without dma-noncoherent in soc node, the driver fails.
+> > - No cache nodes now
+> >     The parameters from vendor dts are likely to be wrong. It has 512
+> >     sets for a 32KiB L1 Cache. In this case, each set is 64B in size.
+> >     When the size of the cache line is 64B, it is a directly mapped
+> >     cache rather than a set-associative cache, the latter is commonly
+> >     used. Thus, I didn't use the parameters from vendor dts.
+> >
+> > Currently only support booting into console with only uart, other
+> > features will be added soon later.
+> >
+...
+
+> > +		clint: timer@e4000000 {
+> > +			compatible = "spacemit,k1-clint", "sifive,clint0";
+> > +			reg = <0x0 0xe4000000 0x0 0x10000>;
+> > +			interrupts-extended = <&cpu0_intc 3>, <&cpu0_intc 7>,
+> > +					      <&cpu1_intc 3>, <&cpu1_intc 7>,
+> > +					      <&cpu2_intc 3>, <&cpu2_intc 7>,
+> > +					      <&cpu3_intc 3>, <&cpu3_intc 7>,
+> > +					      <&cpu4_intc 3>, <&cpu4_intc 7>,
+> > +					      <&cpu5_intc 3>, <&cpu5_intc 7>,
+> > +					      <&cpu6_intc 3>, <&cpu6_intc 7>,
+> > +					      <&cpu7_intc 3>, <&cpu7_intc 7>;
+> > +		};
+> > +
+> > +		uart0: serial@d4017000 {
+> > +			compatible = "spacemit,k1-uart", "intel,xscale-uart";
+> > +			reg = <0x0 0xd4017000 0x0 0x100>;
+> > +			interrupts = <42>;
+> > +			clock-frequency = <14857000>;
+> > +			reg-shift = <2>;
+> > +			reg-io-width = <4>;
+> > +			status = "disabled";
+> > +		};
+> > +
+> > +		/* note: uart1 skipped */
+> 
+> The datasheet page you link to above says "-UART (×10)", but here you're
+> skipping one of them. Why? I can see the vendor tree does the same, but it
+> would be nice with an explanation of what's going on.
+> 
+/* note: uart1 in 0xf0612000, reserved for TEE usage */
+I would put something like this, does this sound ok to you?
+
+more detail, iomem range from 0xf000,0000 - 0xf080,0000 are dedicated for TEE purpose,
+It won't be exposed to Linux once TEE feature is enabled..
+
+skipping uart1 may make people confused but we are trying to follow datasheet..
 
 
---AFijACploa3LrsLr
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Jul 01, 2024 at 07:10:40PM +0200, Raphael Gallais-Pou wrote:
-> +``scaling_available_frequencies``
-> +	List of available frequencies of the CPUs belonging to this policy
-> +	(in kHz).
-> +
-
-LGTM, thanks!
-
-Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---AFijACploa3LrsLr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZoNUsAAKCRD2uYlJVVFO
-owD7AP0WIyBtpy7PzyR7Qxahrz6raKGfHhvs7okvWJu7UHKUmQEAzP8mOwd3yD8H
-vSh623WaG75qA0IHEQvcoPW79Zo5VwM=
-=dPo2
------END PGP SIGNATURE-----
-
---AFijACploa3LrsLr--
+-- 
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
