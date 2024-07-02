@@ -1,282 +1,107 @@
-Return-Path: <linux-kernel+bounces-237791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DE37923E27
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:53:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C45F923E2A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:54:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7413FB21613
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:53:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2575F1F2261A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:54:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AEEB16B3B4;
-	Tue,  2 Jul 2024 12:53:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD7B16CD3B;
+	Tue,  2 Jul 2024 12:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="U99sVV+o"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="PA8R9hEm"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD08E158DD1
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 12:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484BA15DBAE;
+	Tue,  2 Jul 2024 12:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719924786; cv=none; b=gqKJZjFpDQTgpR6QDVeCaPUbUNKRDGSjoscoqGM5YdeXMIHtU2aL0Olk5Tq/AdGjYgH5lMDqYLDMWiUiNCghY3wsnTkcuEkoeU0otNkW6U82WzGHzkOvlrbyaHK+i+OyoRLqrnMCeZtJYNhwtqlVAfP7zqBrINLTIZRGbCqQOsY=
+	t=1719924881; cv=none; b=mpjYU0OesUPZ9c1fVkBZEmOVoeA6pAApz0fwySnoRkfP1R6Bx7KzpkAamB7dyb3z/f2YzUXIeORHpuNdpvTrGA19AQTxTv6vN/Ks3cjjgsdh7LgM7w1c6d0SlBUXN3E5P1l5a2obuDhQTcVIAkio7BRau/okrxerBbDMm4z/CQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719924786; c=relaxed/simple;
-	bh=EE9VMssCnR5r1SJkLPOTxAxdyk/ynSBn2ejlAazK20g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QSGtB4UvSHpqyaLZpupMsHwItTYI3tRfsri62envFx2oXfX6zAUk9JWl7hGB12moMBwKV+HZ9rUYMWs0gNgGUY7NO7eUDBxLvs6Hd/OYix9+b1E2Ur1Ttfl30Y1yJvHcacu0B9OU8LtWU86EVZNVEf+UA3gBkW56jwzfZNqsswE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=U99sVV+o; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-36701e6c6e8so2186409f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 05:53:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719924782; x=1720529582; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TzqRvuDLH0pBN0onOuhawPxbUBxlc5j7kY4fNlDza2k=;
-        b=U99sVV+oJCvjoxmDVLZ9ODC/kHDOFl5H3zUn0cK/yceDnZH2yKyVcfOTaquEsaF1cx
-         NZda/rrPWRlUsLW5ewOqvbQPSFdu6h2QI1Iir/HuHbTuT6zk5qAjnKFLkqv6PP4aXQaf
-         Pg/7YdmXZtscZ5J0DVrqn/wLSJS9iubTXrKtMtdVH/hAxP57LVqNDt06XhIgZicr7zUL
-         Pxqa2XcEJ1xz1efxGa4mK86h75l1Luvx9BPZkO2lBLyaM8XcMR+t1Ee7yM4u7R/X4ehE
-         Hf5f2WWsOUcEB282Oe2lQ7B2UI59NVJKB/vBNl+fgAoFA5QAv5usvpuCyqje/5IpEMKg
-         HjUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719924782; x=1720529582;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TzqRvuDLH0pBN0onOuhawPxbUBxlc5j7kY4fNlDza2k=;
-        b=Z774+SnUI0QmAL38ibvxSYSnNnvEl8/FqfCIY05WDSrXu+zzUznSobe4xNkaBXSqHH
-         nZYCrd7gl3tBbRWKY6E4XRorz2YNlscHpw/UC1on64+PXMFVQoqqwQaEmXYFaVEZQOlo
-         tgHW2/sfy8q8AqZf62KwAfTgxdixNQybu+O6RwPaUhN8ASR5cIpD6KwIDq0od1pE5lVJ
-         go6MNg1ojVtr1032OPYzS7Rrx0N1nzRhIjTorqXUSolzXZ7PCONNmAy6ZgqbonJ0UVqM
-         uvCm/KWecZ2ZrL6yanHWta3UiBSJG1DQMxzkS2/jMpYboYKZEaZnG3BVJxLow1kJZS44
-         4MyA==
-X-Forwarded-Encrypted: i=1; AJvYcCUmSj+Wn0VRtDiB5vYJXw3+7HzPRkPBjHckc47lm3TEQsPT55JIe1eMuIEseytJ4qsOHGDfYlAurNrmhnrAwFq4AkGKxVMGq61BGDbz
-X-Gm-Message-State: AOJu0YwiVuzeEcJYVeiyW26hv+g4QUwwH9Rj9cxsriFwr04x8tp+3AO/
-	V3bVV4L486CFa9Ki38UahfawNdxFNJIXtwg+xqyzQMqfk0QlEKmBINhqMkFwbH0=
-X-Google-Smtp-Source: AGHT+IFdY57KtbrSnjYiE9ePTLLZUjyexs3HjSholeijR4GbHb11DetPRQQxPAzH4tDgaabHTWXYrg==
-X-Received: by 2002:adf:f550:0:b0:35f:2c43:8861 with SMTP id ffacd0b85a97d-367757282e8mr4654577f8f.66.1719924782036;
-        Tue, 02 Jul 2024 05:53:02 -0700 (PDT)
-Received: from [127.0.1.1] (frhb82016ds.ikexpress.com. [185.246.87.17])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a103e44sm13142858f8f.107.2024.07.02.05.53.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 05:53:01 -0700 (PDT)
-From: Guillaume Stols <gstols@baylibre.com>
-Date: Tue, 02 Jul 2024 12:52:51 +0000
-Subject: [PATCH v3] iio: adc: ad7606: remove frstdata check for serial mode
+	s=arc-20240116; t=1719924881; c=relaxed/simple;
+	bh=2iIZy7SlB0jAZ9TkAiqve6GfYZdkRUOk9lB99hJIXNU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=sjoMmybmeKPrmRiJVFWsp/LQx3aTfZbSJV9wBRFO+CJ0vWZq9RY037K2ytmv7+0+iOZocUjDASaWQ/HZ/D3TwKMlwhf6Yj0cfcr7LEqUITvZIp1DHkcQ/SS+8cJldntVkDXomYWvHJd4XU2LZbZWuxCyimjh/4XyzYHMJfTsPxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=PA8R9hEm; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719924856; x=1720529656; i=markus.elfring@web.de;
+	bh=8EdSDaPZ3LtCvKt6hB7EMQ4nfFXkwws5F1h/m8sBfHA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=PA8R9hEmr8R47HD2hSoDF0K/T+/fJUZdXStU+yq6qEO6lVh0ceIv25u+GpokjGXu
+	 eXkINbbEgR+/BDWwB4h2VD1VafzobTjBuT+A+MU0Lk46rmQlY2Eh660TBKU6ji0vg
+	 Xes/r9lGRaMu9IiXJmCihJ2t/V7dHspnk1ggL0a+Z9jMEKmzBMe7pRIbJsRySXAq+
+	 fkoRptvX2/oFpLChs0Y75/khCUvfCqEDWKSEgCSGmysHe2aaf09eYcrpe9Fhsw3t7
+	 VmT/NPGqc0seLx8A7ydhxOzcefLH/zcid6s5X4vjjBgWW356datqElhcd77cGAHbQ
+	 Cl/cVlkAC7IOBY1/9Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mi4yz-1rtP0D36u1-00pMe6; Tue, 02
+ Jul 2024 14:54:16 +0200
+Message-ID: <8b083a48-5e56-493a-b235-60afaf794fd7@web.de>
+Date: Tue, 2 Jul 2024 14:54:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240702-cleanup-ad7606-v3-1-18d5ea18770e@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIACP4g2YC/2XM3QqCMBjG8VuRHbfY+6ZTO+o+ooN9vObAVLYai
- XjvTSECO/w/8PxmFsg7CuyczcxTdMENfYrTIWOmVf2duLOpGQrMRQ6Sm45U/xq5sqUUkoMEQrJ
- 1BZVm6TR6atx7A6+31K0Lz8FPmx9hXb9UuacicOCFQYW1lGiEumg1dU57OprhwVYt4k+QUP0Jm
- AQtGiugKCqp9sKyLB/jU42v8QAAAA==
-To: Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, Greg Kroah-Hartman <gregkh@suse.de>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jonathan Cameron <jic23@cam.ac.uk>, 
- Michael Hennerich <michael.hennerich@analog.com>, jstephan@baylibre.com, 
- dlechner@baylibre.com, Guillaume Stols <gstols@baylibre.com>
-X-Mailer: b4 0.14.0
+User-Agent: Mozilla Thunderbird
+To: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
+ devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
+ Saravana Kannan <saravanak@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240701215441.54353-1-heinrich.schuchardt@canonical.com>
+Subject: Re: [PATCH] libfdt: check return value of fdt_num_mem_rsv() in
+ fdt_pack()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240701215441.54353-1-heinrich.schuchardt@canonical.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:iKiFzF4NqJPmgTpvG9imowyhVJTEdTTNPfyl4Lyzlejcj5mt7D5
+ Z+GsCfXT2LLj8Y6N4HdQO+bjvzMAQoOy5147IZ0yzYRmTnOk/snGXGSr8wgGDdBDVRx+Aqz
+ TsY65tBc8TeOwNvUawZAqylz5W5guiAMX/9TszW9rttlCJ7lXqIkAemIhT6cjcBaXPX2o38
+ zCgWlGUflyxZVJcMnu4SA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:IeHm/+z6TIM=;z8KTcBoD8+RvSXYoP47j+u7DMg0
+ pWuXUOKHtVAFMN6ZO7gPNN7zK8Up75W4nD9C5aeCSbmotezL0dbeMUEFyq7CQb3S5BmhO0QH9
+ 3W3as9Oqygov0LqxH8KJLxqu9fvhNCTGj93kZBfJzgBqNNWUgyatqNy8N/EIr0p3rowWhhVvk
+ 7Y5gMQV5phkWcRuULXzwAAoJm6wHN5Yu4fYcIVZOijMVsP/hQwe+TEjKGajJl3YTbwL9F0+/q
+ 3P5ATcBKCm6YpN2dU4GlR2yqZDlLMZk7aCJMfUeggY0KS/k2XVi5JPaxpE8EzYVvHuZhd7LxY
+ I6tKzk1R2G+0PJxKVCV1vbVXh8wotSmX9zYAUkg2VwPYF16kGD7RNbiyFflT+uiyBJDAE3g6y
+ 4h/Ij3P7KG2zNyoLr/1V94gPRGgLiXDa/vU8SubyCZCkUpBvOPWDzyPOYZGvSFiXX1qPloKV+
+ s+wzC1s6zwbrPzvVhAAgtZnBrqwyxGRxeVuaLrwntZrIsC5M+9V3sZLStbivVv8XdKQCWvm+r
+ OaUZJwuMMjZHO/R6MNpY39il+O2D/KHu652dPYWFOu4wYHov6ukhBGXODQmOdPMY9eJ8YyLVh
+ 4RePvk7SjIodIDwyyX4lHt/s9ROp0ZHu8xv2o2/kzBCUaMR288MZV2JE5Vg1pZgDcsv6XY1qr
+ /cFrGOzCONimI/I6gMLoyQdVvXhXHzyoxgkDLPdFoFRL9v2XAiuz95IjoJrVp/5FuL5013m97
+ /Jo9vZ51v0U+4iG2ZTl9T4BaWLC/wsomawfrmFX5AoqIxWAWz/m7YqYDBNIthxrgU4vwHmjWU
+ gdyBKQgcfsomxV791W+X9XHyNgyMeh7B+q6/8pN5MsFkQ=
 
-The current implementation attempts to recover from an eventual glitch
-in the clock by checking frstdata state after reading the first
-channel's sample: If frstdata is low, it will reset the chip and
-return -EIO.
+> fdt_num_mem_rsv() may return -FDT_ERR_TRUNCATED.
+> In this case fdt_pack() should propagate the error code.
 
-This will only work in parallel mode, where frstdata pin is set low
-after the 2nd sample read starts.
+1. Please choose imperative wordings for an improved change description.
+   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/Documentation/process/submitting-patches.rst?h=3Dv6.10-rc6#n94
 
-For the serial mode, according to the datasheet, "The FRSTDATA output
-returns to a logic low following the 16th SCLK falling edge.", thus
-after the Xth pulse, X being the number of bits in a sample, the check
-will always be true, and the driver will not work at all in serial
-mode if frstdata(optional) is defined in the devicetree as it will
-reset the chip, and return -EIO every time read_sample is called.
+2. Would you like to add any tags (like =E2=80=9CFixes=E2=80=9D and =E2=80=
+=9CCc=E2=80=9D)?
 
-Hence, this check must be removed for serial mode.
+3. How do you think about to use a summary phrase like =E2=80=9CComplete e=
+rror handling
+   in fdt_pack()=E2=80=9D?
 
-Fixes: b9618c0cacd7 ("staging: IIO: ADC: New driver for AD7606/AD7606-6/AD7606-4")
 
-Signed-off-by: Guillaume Stols <gstols@baylibre.com>
----
-Changes in v3:
-- Improve commit message.
-- Add Fixes tag: the fixes tag is the initial commit since the issue
-  have been there from then on, probably overlooked because removing
-  frstdata from DT solved the issue.
-- Remove extra linebreak.
-- Link to v2: https://lore.kernel.org/r/20240618-cleanup-ad7606-v2-1-b0fd015586aa@baylibre.com
-
-iio: adc: ad7606: remove frstdata check for serial modei
-
-Changes in v2:
- - Remove frstdata check only for the serial interface as suggested by
-   Michael Hennerich.
- - Link to v1: https://lore.kernel.org/r/20240417-cleanup-ad7606-v1-1-5c2a29662c0a@baylibre.com
----
- drivers/iio/adc/ad7606.c     | 28 ++------------------------
- drivers/iio/adc/ad7606.h     |  2 ++
- drivers/iio/adc/ad7606_par.c | 48 +++++++++++++++++++++++++++++++++++++++++---
- 3 files changed, 49 insertions(+), 29 deletions(-)
-
-diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
-index 3a417595294f..c321c6ef48df 100644
---- a/drivers/iio/adc/ad7606.c
-+++ b/drivers/iio/adc/ad7606.c
-@@ -49,7 +49,7 @@ static const unsigned int ad7616_oversampling_avail[8] = {
- 	1, 2, 4, 8, 16, 32, 64, 128,
- };
- 
--static int ad7606_reset(struct ad7606_state *st)
-+int ad7606_reset(struct ad7606_state *st)
- {
- 	if (st->gpio_reset) {
- 		gpiod_set_value(st->gpio_reset, 1);
-@@ -60,6 +60,7 @@ static int ad7606_reset(struct ad7606_state *st)
- 
- 	return -ENODEV;
- }
-+EXPORT_SYMBOL_NS_GPL(ad7606_reset, IIO_AD7606);
- 
- static int ad7606_reg_access(struct iio_dev *indio_dev,
- 			     unsigned int reg,
-@@ -88,31 +89,6 @@ static int ad7606_read_samples(struct ad7606_state *st)
- {
- 	unsigned int num = st->chip_info->num_channels - 1;
- 	u16 *data = st->data;
--	int ret;
--
--	/*
--	 * The frstdata signal is set to high while and after reading the sample
--	 * of the first channel and low for all other channels. This can be used
--	 * to check that the incoming data is correctly aligned. During normal
--	 * operation the data should never become unaligned, but some glitch or
--	 * electrostatic discharge might cause an extra read or clock cycle.
--	 * Monitoring the frstdata signal allows to recover from such failure
--	 * situations.
--	 */
--
--	if (st->gpio_frstdata) {
--		ret = st->bops->read_block(st->dev, 1, data);
--		if (ret)
--			return ret;
--
--		if (!gpiod_get_value(st->gpio_frstdata)) {
--			ad7606_reset(st);
--			return -EIO;
--		}
--
--		data++;
--		num--;
--	}
- 
- 	return st->bops->read_block(st->dev, num, data);
- }
-diff --git a/drivers/iio/adc/ad7606.h b/drivers/iio/adc/ad7606.h
-index 0c6a88cc4695..6649e84d25de 100644
---- a/drivers/iio/adc/ad7606.h
-+++ b/drivers/iio/adc/ad7606.h
-@@ -151,6 +151,8 @@ int ad7606_probe(struct device *dev, int irq, void __iomem *base_address,
- 		 const char *name, unsigned int id,
- 		 const struct ad7606_bus_ops *bops);
- 
-+int ad7606_reset(struct ad7606_state *st);
-+
- enum ad7606_supported_device_ids {
- 	ID_AD7605_4,
- 	ID_AD7606_8,
-diff --git a/drivers/iio/adc/ad7606_par.c b/drivers/iio/adc/ad7606_par.c
-index d8408052262e..6bc587b20f05 100644
---- a/drivers/iio/adc/ad7606_par.c
-+++ b/drivers/iio/adc/ad7606_par.c
-@@ -7,6 +7,7 @@
- 
- #include <linux/mod_devicetable.h>
- #include <linux/module.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/platform_device.h>
- #include <linux/types.h>
- #include <linux/err.h>
-@@ -21,8 +22,29 @@ static int ad7606_par16_read_block(struct device *dev,
- 	struct iio_dev *indio_dev = dev_get_drvdata(dev);
- 	struct ad7606_state *st = iio_priv(indio_dev);
- 
--	insw((unsigned long)st->base_address, buf, count);
- 
-+	/*
-+	 * On the parallel interface, the frstdata signal is set to high while
-+	 * and after reading the sample of the first channel and low for all
-+	 * other channels.  This can be used to check that the incoming data is
-+	 * correctly aligned.  During normal operation the data should never
-+	 * become unaligned, but some glitch or electrostatic discharge might
-+	 * cause an extra read or clock cycle.  Monitoring the frstdata signal
-+	 * allows to recover from such failure situations.
-+	 */
-+	int num = count;
-+	u16 *_buf = buf;
-+
-+	if (st->gpio_frstdata) {
-+		insw((unsigned long)st->base_address, _buf, 1);
-+		if (!gpiod_get_value(st->gpio_frstdata)) {
-+			ad7606_reset(st);
-+			return -EIO;
-+		}
-+		_buf++;
-+		num--;
-+	}
-+	insw((unsigned long)st->base_address, _buf, num);
- 	return 0;
- }
- 
-@@ -35,8 +57,28 @@ static int ad7606_par8_read_block(struct device *dev,
- {
- 	struct iio_dev *indio_dev = dev_get_drvdata(dev);
- 	struct ad7606_state *st = iio_priv(indio_dev);
--
--	insb((unsigned long)st->base_address, buf, count * 2);
-+	/*
-+	 * On the parallel interface, the frstdata signal is set to high while
-+	 * and after reading the sample of the first channel and low for all
-+	 * other channels.  This can be used to check that the incoming data is
-+	 * correctly aligned.  During normal operation the data should never
-+	 * become unaligned, but some glitch or electrostatic discharge might
-+	 * cause an extra read or clock cycle.  Monitoring the frstdata signal
-+	 * allows to recover from such failure situations.
-+	 */
-+	int num = count;
-+	u16 *_buf = buf;
-+
-+	if (st->gpio_frstdata) {
-+		insb((unsigned long)st->base_address, _buf, 2);
-+		if (!gpiod_get_value(st->gpio_frstdata)) {
-+			ad7606_reset(st);
-+			return -EIO;
-+		}
-+		_buf++;
-+		num--;
-+	}
-+	insb((unsigned long)st->base_address, _buf, num * 2);
- 
- 	return 0;
- }
-
----
-base-commit: 07d4d0bb4a8ddcc463ed599b22f510d5926c2495
-change-id: 20240416-cleanup-ad7606-161e2ed9818b
-
-Best regards,
--- 
-Guillaume Stols <gstols@baylibre.com>
-
+Regards,
+Markus
 
