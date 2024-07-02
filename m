@@ -1,244 +1,254 @@
-Return-Path: <linux-kernel+bounces-237636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA641923BE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:54:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3487923BD1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:51:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50EBD1F216E4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:54:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F176B21EBA
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED951591E0;
-	Tue,  2 Jul 2024 10:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE7D1591E0;
+	Tue,  2 Jul 2024 10:50:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="gwGaxGLq"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD0B51004;
-	Tue,  2 Jul 2024 10:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719917640; cv=none; b=V09pI3tfIdyZ+gdjklpF0/+JyndXrw40vvQ6ufIaizUJAND0lKB+iEIm+rBt/Ir3EYzpUiCggRmWmEh5pwk4LqlGMIyUlucVWgCFfQq/t409ULif1cv03tatsU3KqnxerUWF5YkE+LEi+8Kt6GSZduPhodqaM4YWzuy6BxcBPAM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719917640; c=relaxed/simple;
-	bh=CpTcOvl0QkABqKFQB6/gYUAOE1TtybWUTE1vLk4wGmo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RGOF2sr8Phjbv7JkuviPECf7iYJ/QsNKWePRu1hrrobdkx09Fo58CUCiwzP/ilDmHR3PRC/VK6rTbCbn8JpeflhfjsJRQqiCqcHSBX4TiaEZ7FxjaITr81JBHB2us0I8B83e51XQslwmiBAV0Tgd08ipeogW5Tr1murK9RHJeLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=gwGaxGLq; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=PQ9RM
-	3z3im+VjcU0v0S4k3STJQrv4lvRtxUnRKvb9y8=; b=gwGaxGLqTXIHZJ6NtaNn4
-	d1I0KA5rRuSylBta9YIHGn+N86gdMZ8J5z0lcmMXirnOtWolqBvKUH78kAViu1sO
-	YODAVuR6FRVKFJonz69iKnNj4sP0utoOESDPPwexyXJ/an6beq2iA/IoFLT1C4I9
-	wZfES0vrEMG3VllHqTvLjY=
-Received: from localhost (unknown [101.132.132.191])
-	by gzga-smtp-mta-g3-0 (Coremail) with SMTP id _____wD3P7Kp24NmfgFZAw--.52978S2;
-	Tue, 02 Jul 2024 18:51:22 +0800 (CST)
-From: Xavier <xavier_qy@163.com>
-To: tj@kernel.org
-Cc: longman@redhat.com,
-	mkoutny@suse.com,
-	lizefan.x@bytedance.com,
-	hannes@cmpxchg.org,
-	cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	Xavier <xavier_qy@163.com>
-Subject: [PATCH-cpuset v9 2/2] cpuset: use Union-Find to optimize the merging of cpumasks
-Date: Tue,  2 Jul 2024 18:50:10 +0800
-Message-Id: <20240702105010.253933-3-xavier_qy@163.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240702105010.253933-1-xavier_qy@163.com>
-References: <ZoMXN3G72xtCLjgp@slm.duckdns.org>
- <20240702105010.253933-1-xavier_qy@163.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XgkuyJKt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1CCC51004;
+	Tue,  2 Jul 2024 10:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719917453; cv=fail; b=p2r5R1RZBAab+ciaIXJxANoGR16qS6vFujAvG27K7QbHx+5HgUBLPR2UyxhIgkLJZRkqZKFhC8V/BaDyvIdHnJ821w3ihJfpNAPenJG+Pp39gbklLhTlUDQ0L1IikxCpDlPTfnSu310vwhQXCRI6677o6KFqWf/RQVD2bcdNsiU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719917453; c=relaxed/simple;
+	bh=MN9HHMYwB4BTGu/iKHfGlqJjwDGf4NhZZykqEYaqHBY=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=XDglXvqeNXWM1nYD44sIOFMCB6flBkryCA67WGU6crd5WslL3O0p2o5PROeM1LRu3x06GUhGC2pjJzTpoYyddW8PpOZ+oJGjzpVjb+ZKuTYS4qHNLYgzCL5i3WNzErVQd+ThlJlrLDuDbSsNAwtCE+im+6eKIEdM5wiJ+5vIw8o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XgkuyJKt; arc=fail smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719917452; x=1751453452;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=MN9HHMYwB4BTGu/iKHfGlqJjwDGf4NhZZykqEYaqHBY=;
+  b=XgkuyJKtcPu+Tssz54wMMaW4LeieKunWelAwL3Y3g/o4NMbC2Q3wOOzo
+   0kfYiDpC+f9gDHCfpX+3lyTkvUJq9WU+RZ5iqXEV51tILeN/A++2TaIy3
+   pnz7OVve7IfbGt3QQ3PwMIUkNUKHzCm5s4oxiryThZ/9wC8exRQ82HcKs
+   +cG3kKd1/6rBo2/o/jDG2yXOCRko8QfGLHW8IaGM7kl5f6gmfwzH60OnE
+   0tiZ+VIP0tqPB8wuI00loUBdMzVvWFw7H8zy58PZxfq0Sq5G9xFmcU44I
+   OJN7tIDCPSifGtIC1/APHZHTDxxuEzd/WSC06aMApecoN1nIIXNg60r4C
+   A==;
+X-CSE-ConnectionGUID: XyoBv8I+RdCFG1I4cPyZ4Q==
+X-CSE-MsgGUID: fECfCdhXS2urARldYLVU1A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="28216710"
+X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
+   d="scan'208";a="28216710"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2024 03:50:52 -0700
+X-CSE-ConnectionGUID: tKPO2WTsTl+sEmB4erWHTA==
+X-CSE-MsgGUID: hppKYLWtQz6FMYwA+b+NRw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
+   d="scan'208";a="45655544"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 02 Jul 2024 03:50:50 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 2 Jul 2024 03:50:50 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 2 Jul 2024 03:50:50 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 2 Jul 2024 03:50:50 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.173)
+ by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 2 Jul 2024 03:50:49 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LI2Jr43MaUOtpgTCcv64wIp6GxsgLo6Zpou1/nW+SglAuyRPuQ3u2hnHUOk9mum7I+azc/KrcvHWtl2isJvRxBYk7m0s0DfxGA7OrX8BaWEm9aGKWYE5fsvaPr1IHp+d7//fqnyYRDlV2yDKLn0iwokh2Kp1Xcn0seK/Ka/gMht+SNsBKBT1krq5lFKm/eQzA9WCFt9UuDmWiAdXvl2nHqO7/Gp9tjq4DaIoWLriACAPlV82kwuwh8I6vQnt9tK0HeHwMWAfpFsOSFKDirP16wEnGZfSX3M+8cKqB3Sj990f2KlwyTVkRP+pAGM7QbyLTFOriLmy8nDl3D5ObKflFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CwBL9KvizV0qBzvgd2YgNIEc8FrFMaNKueZ9F2RPz9w=;
+ b=i33Eb7ntyBiryCl7VZO9MMnKRFIFrNVvwVvOFe/9P4iXrjD5M7y2XnV71O46nLxio3tStaE5jsBvenpCvNK8KQFfTaFro1eDqW/7r3c+I2l8HFzQffdpYMWgvmj8Usa8X1lHhhWVcUG4aJXL3VEFaoPc+xIpZlcqTDTPIW8VllcFk0JXzKLetDycxc5nLxnX1RsSILxPc2qt4rsMPosNSnMaS+md1B5jZq0homXK7qVr4xnqY4TrxxsfrV1brg9ryZqT14P3GmT6tVFyiXu4bcJRsWvsb/1X9UfdKlWaWLSmLcSiQ+nCNOjKilRCLprqse0bbN6dYiJOJa5Fw2TLoA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MN6PR11MB8102.namprd11.prod.outlook.com (2603:10b6:208:46d::9)
+ by CH0PR11MB5316.namprd11.prod.outlook.com (2603:10b6:610:bf::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.32; Tue, 2 Jul
+ 2024 10:50:47 +0000
+Received: from MN6PR11MB8102.namprd11.prod.outlook.com
+ ([fe80::15b2:ee05:2ae7:cfd6]) by MN6PR11MB8102.namprd11.prod.outlook.com
+ ([fe80::15b2:ee05:2ae7:cfd6%7]) with mapi id 15.20.7719.028; Tue, 2 Jul 2024
+ 10:50:47 +0000
+Message-ID: <c631fc5e-1cc6-467a-963a-69ef03c20f40@intel.com>
+Date: Tue, 2 Jul 2024 12:50:41 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] mlxsw: core_linecards: Fix double memory deallocation
+ in case of invalid INI file
+To: Aleksandr Mishin <amishin@t-argos.ru>, Jiri Pirko <jiri@resnulli.us>
+CC: Ido Schimmel <idosch@nvidia.com>, Petr Machata <petrm@nvidia.com>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>
+References: <20240702103352.15315-1-amishin@t-argos.ru>
+From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Content-Language: en-US
+In-Reply-To: <20240702103352.15315-1-amishin@t-argos.ru>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MI1P293CA0013.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:2::15) To MN6PR11MB8102.namprd11.prod.outlook.com
+ (2603:10b6:208:46d::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3P7Kp24NmfgFZAw--.52978S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxAFWfur4kKFyUZFWUJrW3Awb_yoWruryUpF
-	4Sk3y2qrWrJryUGwsakay8Zw1Yk3ykJayUtw15Gw1rtrnrA3Z29a40qFs3KayUZrWq9F1U
-	uF9Igr47Wr1UKFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UbBMNUUUUU=
-X-CM-SenderInfo: 50dyxvpubt5qqrwthudrp/1tbiYwoQEGV4JGHcNAAAsZ
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN6PR11MB8102:EE_|CH0PR11MB5316:EE_
+X-MS-Office365-Filtering-Correlation-Id: a9642c40-ed4a-407e-0dcd-08dc9a84d4ce
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?cHFpRVRtZVlvYVZSVWdnL0J5a3RLcjBLU0JnR2pLUkU0UEJhY3lWSEtyd0Nq?=
+ =?utf-8?B?ZytPb05XdWxOUWsxZlM3elErTVZlL290aytXZmVYaGp1bXlJc0lhN2M3MTJH?=
+ =?utf-8?B?SitXZE1tVFVMSVBiSU5ZTWFIVTdQbnZGZ09QcVBlQ0R1SWoxKzlCL1lvZmF3?=
+ =?utf-8?B?bnZ2WjZzZ3picWdwZHU2aERxZkhobHZkUFBUUFY2MEMwWWlZdnVMSVNoelhs?=
+ =?utf-8?B?Zjhsdk80TUh3NjZoSE9JbmZySDExV1dUUUpCWjZEUUhnUTdud2JhZEI2MXVJ?=
+ =?utf-8?B?UW03MHFnY0h2Qk1XN3ZMYjNCMnhLM2wzSjlTM05vTThSV1praVNrZG9HNmNo?=
+ =?utf-8?B?R0hKTWlzUkk1SVRzQ1h3TU1sZ3Rac05zZWlIYWswL1NOc2Q0bkFTeTY5Snhi?=
+ =?utf-8?B?TmF1bVprYzVJTDRyNjh0aEdkY0thb1lzV3NXODZxVVVwTjRTNHRhWWN1blp5?=
+ =?utf-8?B?UTNyeHVwckgyQWNheEQveU5IbWFGTGN4Q1BBYU9SWWxyUnZCVE44NTVUemc2?=
+ =?utf-8?B?SjNnZnRpVm5ZSmk0eG5wTFc2Yzd4V0JRK2dYeVJ0RTh6Szh0bGlFMStWeDRS?=
+ =?utf-8?B?WDZQUk55YngxK3U0U3R0dHVRekwyU0orTHordFpITUIrUiszQUFyeHgzN2Qy?=
+ =?utf-8?B?NkVGOURyMFRBTS9oWWVwVkNkVGhEOW1yYXNTUFYvL3VxSGZ4OEUvb08xU3BO?=
+ =?utf-8?B?eTcyTjhFaG4vU2djMmdPRk5uRUp0ckVuNlJCdTFhOUU1ZmVkVHdyMG16NkJh?=
+ =?utf-8?B?T21ubDhKbjUxZkF6Nmg0KzJzTFBGaTJDdXJwSDJHNGVlM3g2OWxaUVdsVnlt?=
+ =?utf-8?B?VnRsVFVGalc4WGFRdVBuTXVVM2dZMU05Q1ljTjZtc3dOZytCYkFuSHBucUFH?=
+ =?utf-8?B?UmFnRmEwY2pZV3Y4WkZyM3Izcm8yR0NZb1FBVk8raUdldDYwTThqMGhNaW1V?=
+ =?utf-8?B?cFpVdkFJTk5adlhWeGoxUVNDMkhBakdENzkwS0loaUVnMDhSRlhhUkFTUDJ4?=
+ =?utf-8?B?K2dyMmJYdXVuRnpkR1Y0NFhBUXVlbG1MUGI3QmY3dk9MTm1CMk1VS0ErTU9E?=
+ =?utf-8?B?ZEF4VnBkd2xBa0lId0hiU1puNHlmU1dXWXphV2c1TUJKb29Wdjh2VXMvS2cy?=
+ =?utf-8?B?QWVNMS9FUEpmK0krYzJyank4SUNsUlgxdlVSdzVMM0hSbGxIbVZaVCtaQXlG?=
+ =?utf-8?B?WTR2MnBQU2Q5VFFhWjJIaGM5V1pweER0ZDd5Z0tMNm5Yb2lreHkyOEZERXJx?=
+ =?utf-8?B?WkM0cUdpbXQwNWdXWW8zTFBaelJVcmg2a0VueUFNejRhTWd2QURERXVlQUl6?=
+ =?utf-8?B?alVodjEwcVE2dDNvZk1qb0V3b2YwNVROeTBIa0NzUGh0cGI1cmZIZDc1aWE5?=
+ =?utf-8?B?U056L1JiU0lIODh4OG5PNm9ZWURyU1JSci9YL1A2Mk1kT2Z0SDdpMHJ2OEo4?=
+ =?utf-8?B?d2lZVXNCVFoxd05TSENwSUhneTExUHdLZjlORkFla3ZEbXE0RVp2aDRYVGhs?=
+ =?utf-8?B?enBKamFDQTNaOWJKYWpoOTRhbmg2STlBVE9pRkJRMHVMMldMbVVzRWhCVnRj?=
+ =?utf-8?B?UkZCeWpDRndtd2hoWDJURUZ5UEFPaUx4OHA1Y3R3cHlYbWJpam1ja2FIU0V0?=
+ =?utf-8?B?djRjY1NsQVAvdUhWN0ZCakFQa29vaGlXLzZvVzVVWEhoS1h1Qy9rTXVjZURx?=
+ =?utf-8?B?czVqaTdtY0x5TkUyaWE4R2t3YlMvVkZ2bEtWemZWbk94dEp3NHQyZ1BQYXl2?=
+ =?utf-8?B?aWN4T3UrRWovNnNpTTZKVjBOakcrS1RGeWI2bkUvQ05NRFI5c0huOEVQVWJC?=
+ =?utf-8?B?dldTY2JYWmpMTnhqNUNhQT09?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN6PR11MB8102.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NStOdlNLVHdsNTBONEFmVWl1QmtjU1Y2Y3pTMTh5bDZSR3lQRzdLWmFwVzNZ?=
+ =?utf-8?B?UUJ4L2xPbDBCRVQ0VWdseEJwSU45cWlBTHkrWk1DZjQ4clczTUNESVJXeTBE?=
+ =?utf-8?B?aUtRbTlXQ2V3VTNDN2hveCtuQm5MdWg2VXN3TXJqS21vUHJyeWdrZG9OZXZm?=
+ =?utf-8?B?QndGdERtNVhWRWhFdFRYeFNyd3BIWWRQbUJ6a2ZkWEJSWlhsU294RTdGNmVI?=
+ =?utf-8?B?OWIvL1oxOGJPM3lXc2xWSXFtMTM4eTlWcDY2ZXFjY0VkeEdIbXZnbTNjTHZi?=
+ =?utf-8?B?MERLWG5mdjB2SGdLeU0rdG5QVVdJeU1CbGs4SzJXOEtaY1RLblZJdEkwbHVy?=
+ =?utf-8?B?ZFB2QkxQQk5mRFJaUGY0VGlXMGtZb1ZlVGdFWHFKZUdHbGxVT21oSTBTRTJW?=
+ =?utf-8?B?bkpvano0ZUdsYlFKWkFNNWxVYTVrdFM2ckdmSnZiK3B3b0NOTk5jY0FBRitq?=
+ =?utf-8?B?R0xCTzZBWmgvQUMyZUs5Y1pVRDZSWjNrQjdadXZYRG1wbThBNjUzMVM3T254?=
+ =?utf-8?B?NHdlZExhejRUMlFpbzhVNmlHYnBJYjdCSjh4OVJFdU5wNnlzWHc1MjMzYUxH?=
+ =?utf-8?B?dVNLR2hzMjJjd0RQdnpqakI0aGtISHhTLzRReWJHYzd4OVVqY1MrdVprMnlh?=
+ =?utf-8?B?MVBxMGZNVUk0ZVdaaFdaTGdZMG1JQ2FubVlNOE5oUDhxSHMxaG0vbkRpdzhq?=
+ =?utf-8?B?dzRBWkh1NFpIanhoU0d4QzZWU2ZLWk4xVEJSelZLcGFlRGZqeWx6U0t6bkN0?=
+ =?utf-8?B?N3N5elpMMUJlekMvRWN6aWl2bUlpRHlleXFFS1ZHN0VyR3dQOUpHSzBpUzZG?=
+ =?utf-8?B?TmJrcm5rdDMvMkhtSmhJTVZQUHBINU00Tm1CeG1PalpRQWU0U1dBbGF2WmZo?=
+ =?utf-8?B?UjBtckRMemlXK1d6eUFiMm85Smd6OFl0YXJWK0FZdkpmREowdkM0eDVtTDJx?=
+ =?utf-8?B?UDYwejJJQ3NhM1grdWhuanVnS0QrN1c3S3IvRlNBRUEyNk5wRGpydjV3WVVM?=
+ =?utf-8?B?amlub3J1UUtld3ZEMmlseElqYkZUTnZTUWgvMGc5a01iUEorQnROcTlxYTIz?=
+ =?utf-8?B?NCtlK1VpTk9WV0c5OW5mZ05SV2pEc1ZkaHBwNm5hWThUT1ZZOUNNaFRsa3Bs?=
+ =?utf-8?B?eFV0aml1MGd3R0YvZnNWVUJ0aHZYUVdxTUtwdm5DK0VuZmVQMG1rU3dVMU1P?=
+ =?utf-8?B?YVAvNzVWU1JyS1ZjenA3b0FDUk5rLzZNZ3VSSVB5ckZUMXB5eXBxMmZTTmIz?=
+ =?utf-8?B?T0Q2aUNNWDNpcDJ4OElUOHlXNm5ZS3pDdndOd3NTdWtZWDd2cGlYUTE3Zkdv?=
+ =?utf-8?B?RTVxVFlpODNveWlkdGZuQ2FHL0VSUmtJcDFreVBEaGJYMHhvSzZ4VmdDNis0?=
+ =?utf-8?B?a25rOW5OYmF4YVFNaUxkRkpiNzg1OEVTZlNHc0RKSklpMDV2RlRiS0xwVkl0?=
+ =?utf-8?B?VzEycjJ2a3p4aFkwc2JncjRSa3lIU2NhRGFieTBac2ZzOHRWZmxQWjVhcDFl?=
+ =?utf-8?B?ZkR5eE9Pb0J1ZHlPRFpJOHV3Q1BwazFHZy91THpTYzYvWXc0ZkVlK3o2Nmo4?=
+ =?utf-8?B?dmZsSnhIaTlBZ1ovclNveERNZ0U1K1dKWmtHUXdPV0RVT0dCSy9adW1JNC9q?=
+ =?utf-8?B?RjBBb1Y2L1M3bm9lbGZzdjFVY3JFSFpzRVFGT1hIUE43M1BMektPdjlKR1I4?=
+ =?utf-8?B?N1VROVFFWjVsbmE5cGJkeUlmS0p3cUw5bjQvR1dpN3AxT084ZVVjKzJCREQy?=
+ =?utf-8?B?UURYZWdMY0NVaVZEbk5nY3lEMU9GeWlJWFpBZkxxZUdsZ0ZlWjFKNDhZQnNU?=
+ =?utf-8?B?NTB1YUc1akljZTN3MmwzU1RZK2JoVkpsc1Z3ZVBFTndKZXcyTTd0NERXdXNq?=
+ =?utf-8?B?bGhPRVVwV2hvdTZlTG9XbW94KzM2SDJkZWpyc1lWZWZBTHdxbXI3TGRtOW1h?=
+ =?utf-8?B?S2VOOVFSaSt1Z2U1b1ZSdzJiSjJWeFhlcTBTMGx2SnFUcjVJa0NIclZ6RDM0?=
+ =?utf-8?B?RkxkQ2FET2E1ZmpJVVFGQTY1alV2b3ZOSjNXeVFGeFVGZjRQVTl6eDVEaUFJ?=
+ =?utf-8?B?NmdNaGUvSEVHQzRKWTQxL0VTSUxWUWp1UDVUNzlsUEtpUnFidTlhczRkSElO?=
+ =?utf-8?B?MVFFRVFWUnhvZHBEcm50cERxbFlWOUVIaDV4YzB0UkxQRzZaRjU1bWNJMXpR?=
+ =?utf-8?Q?TUzH3tcq/UudChFlcr6PeG8=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: a9642c40-ed4a-407e-0dcd-08dc9a84d4ce
+X-MS-Exchange-CrossTenant-AuthSource: MN6PR11MB8102.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jul 2024 10:50:47.7032
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZgjcKX7QaAfDHT/xRq9bkuk6SekQ7hFZyBIilt1tBKy01IF4fAx+oXyKtTGvQ70Q6qdRhEaUdoRFR1IMGgLUwKjsgY2ZOzM9B+pYLuJT+5M=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR11MB5316
+X-OriginatorOrg: intel.com
 
-The process of constructing scheduling domains
- involves multiple loops and repeated evaluations, leading to numerous
- redundant and ineffective assessments that impact code efficiency.
+On 7/2/24 12:33, Aleksandr Mishin wrote:
+> In case of invalid INI file mlxsw_linecard_types_init() deallocates memory
 
-Here, we use Union-Find to optimize the merging of cpumasks. By employing
-path compression and union by rank, we effectively reduce the number of
-lookups and merge comparisons.
+IMO there should be some comment in the code indicating that invalid
+file is not a critical error. I find it weird anyway that you ignore
+invalid-file-error, but propagate ENOMEM.
 
-Signed-off-by: Xavier <xavier_qy@163.com>
----
- kernel/cgroup/cpuset.c | 95 ++++++++++++++++--------------------------
- 1 file changed, 36 insertions(+), 59 deletions(-)
+> but doesn't reset pointer to NULL and returns 0. In case of any error
+> occured after mlxsw_linecard_types_init() call, mlxsw_linecards_init()
 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index fe76045aa5..4d32cd1407 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -45,6 +45,7 @@
- #include <linux/cgroup.h>
- #include <linux/wait.h>
- #include <linux/workqueue.h>
-+#include <linux/union_find.h>
- 
- DEFINE_STATIC_KEY_FALSE(cpusets_pre_enable_key);
- DEFINE_STATIC_KEY_FALSE(cpusets_enabled_key);
-@@ -172,9 +173,6 @@ struct cpuset {
- 	 */
- 	int attach_in_progress;
- 
--	/* partition number for rebuild_sched_domains() */
--	int pn;
--
- 	/* for custom sched domain */
- 	int relax_domain_level;
- 
-@@ -208,6 +206,9 @@ struct cpuset {
- 
- 	/* Remote partition silbling list anchored at remote_children */
- 	struct list_head remote_sibling;
-+
-+	/* Used to merge intersecting subsets for generate_sched_domains*/
-+	struct uf_node node;
- };
- 
- /*
-@@ -1007,7 +1008,7 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 	struct cpuset *cp;	/* top-down scan of cpusets */
- 	struct cpuset **csa;	/* array of all cpuset ptrs */
- 	int csn;		/* how many cpuset ptrs in csa so far */
--	int i, j, k;		/* indices for partition finding loops */
-+	int i, j;		/* indices for partition finding loops */
- 	cpumask_var_t *doms;	/* resulting partition; i.e. sched domains */
- 	struct sched_domain_attr *dattr;  /* attributes for custom domains */
- 	int ndoms = 0;		/* number of sched domains in result */
-@@ -1015,6 +1016,7 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 	struct cgroup_subsys_state *pos_css;
- 	bool root_load_balance = is_sched_load_balance(&top_cpuset);
- 	bool cgrpv2 = cgroup_subsys_on_dfl(cpuset_cgrp_subsys);
-+	int nslot_update;
- 
- 	doms = NULL;
- 	dattr = NULL;
-@@ -1102,31 +1104,25 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 	if (root_load_balance && (csn == 1))
- 		goto single_root_domain;
- 
--	for (i = 0; i < csn; i++)
--		csa[i]->pn = i;
--	ndoms = csn;
--
--restart:
--	/* Find the best partition (set of sched domains) */
--	for (i = 0; i < csn; i++) {
--		struct cpuset *a = csa[i];
--		int apn = a->pn;
-+	if (!cgrpv2) {
-+		for (i = 0; i < csn; i++)
-+			uf_node_init(&csa[i]->node);
- 
--		for (j = 0; j < csn; j++) {
--			struct cpuset *b = csa[j];
--			int bpn = b->pn;
--
--			if (apn != bpn && cpusets_overlap(a, b)) {
--				for (k = 0; k < csn; k++) {
--					struct cpuset *c = csa[k];
--
--					if (c->pn == bpn)
--						c->pn = apn;
--				}
--				ndoms--;	/* one less element */
--				goto restart;
-+		/* Merge overlapping cpusets */
-+		for (i = 0; i < csn; i++) {
-+			for (j = i + 1; j < csn; j++) {
-+				if (cpusets_overlap(csa[i], csa[j]))
-+					uf_union(&csa[i]->node, &csa[j]->node);
- 			}
- 		}
-+
-+		/* Count the total number of domains */
-+		for (i = 0; i < csn; i++) {
-+			if (csa[i]->node.parent == &csa[i]->node)
-+				ndoms++;
-+		}
-+	} else {
-+		ndoms = csn;
- 	}
- 
- 	/*
-@@ -1159,44 +1155,25 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 	}
- 
- 	for (nslot = 0, i = 0; i < csn; i++) {
--		struct cpuset *a = csa[i];
--		struct cpumask *dp;
--		int apn = a->pn;
--
--		if (apn < 0) {
--			/* Skip completed partitions */
--			continue;
--		}
--
--		dp = doms[nslot];
--
--		if (nslot == ndoms) {
--			static int warnings = 10;
--			if (warnings) {
--				pr_warn("rebuild_sched_domains confused: nslot %d, ndoms %d, csn %d, i %d, apn %d\n",
--					nslot, ndoms, csn, i, apn);
--				warnings--;
--			}
--			continue;
--		}
--
--		cpumask_clear(dp);
--		if (dattr)
--			*(dattr + nslot) = SD_ATTR_INIT;
-+		nslot_update = 0;
- 		for (j = i; j < csn; j++) {
--			struct cpuset *b = csa[j];
--
--			if (apn == b->pn) {
--				cpumask_or(dp, dp, b->effective_cpus);
-+			if (uf_find(&csa[j]->node) == &csa[i]->node) {
-+				struct cpumask *dp = doms[nslot];
-+
-+				if (i == j) {
-+					nslot_update = 1;
-+					cpumask_clear(dp);
-+					if (dattr)
-+						*(dattr + nslot) = SD_ATTR_INIT;
-+				}
-+				cpumask_or(dp, dp, csa[j]->effective_cpus);
- 				cpumask_and(dp, dp, housekeeping_cpumask(HK_TYPE_DOMAIN));
- 				if (dattr)
--					update_domain_attr_tree(dattr + nslot, b);
--
--				/* Done with this partition */
--				b->pn = -1;
-+					update_domain_attr_tree(dattr + nslot, csa[j]);
- 			}
- 		}
--		nslot++;
-+		if (nslot_update)
-+			nslot++;
- 	}
- 	BUG_ON(nslot != ndoms);
- 
--- 
-2.45.0
+typo: occurred
 
+> calls mlxsw_linecard_types_fini() which perform memory deallocation again.
+> 
+> Add pointer reset to NULL.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Fixes: b217127e5e4e ("mlxsw: core_linecards: Add line card objects and implement provisioning")
+
+this indeed avoids double free,
+Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+
+> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+> ---
+>   drivers/net/ethernet/mellanox/mlxsw/core_linecards.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/net/ethernet/mellanox/mlxsw/core_linecards.c b/drivers/net/ethernet/mellanox/mlxsw/core_linecards.c
+> index 025e0db983fe..b032d5a4b3b8 100644
+> --- a/drivers/net/ethernet/mellanox/mlxsw/core_linecards.c
+> +++ b/drivers/net/ethernet/mellanox/mlxsw/core_linecards.c
+> @@ -1484,6 +1484,7 @@ static int mlxsw_linecard_types_init(struct mlxsw_core *mlxsw_core,
+>   	vfree(types_info->data);
+>   err_data_alloc:
+>   	kfree(types_info);
+> +	linecards->types_info = NULL;
+>   	return err;
+>   }
+>   
+
+BTW:
+mlxsw_linecard_types_file_validate() don't need @types_info param
 
