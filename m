@@ -1,188 +1,176 @@
-Return-Path: <linux-kernel+bounces-237139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2370D91EC14
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 02:56:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF11791EBF3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 02:50:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB2191F222E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 00:56:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B2FC1F21CA4
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 00:50:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754468830;
-	Tue,  2 Jul 2024 00:56:39 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E96883D;
+	Tue,  2 Jul 2024 00:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IpNTycdv"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35238BFA;
-	Tue,  2 Jul 2024 00:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8AEB393;
+	Tue,  2 Jul 2024 00:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719881799; cv=none; b=T4Dk2oSyIzhinWr6H6zv813ZNlDoedXD/JXVRbqF9+ldsh1x3SAeGnRcveJESK6e9TTYFc7/PEGU/cxuJP9nbS+WEO86ef4mjsGxB2TvzuHFqYZU36Mcf5bB6eJMKzlhQtff4Sg9768xFF3BrRpQKUa+f0QLywjDKYlZ3tekIcg=
+	t=1719881450; cv=none; b=I5FL883rBrLuHXU8Lmzqs4q5Jgf0ECr37G8YWBfuZ606+EBGmieceGPS6j70FeZ+mPazAWM8Y8VgwgrICfvou66mYM1ZLB6OthW85N0KHXCXjUEN/RkxqaLfs0j6fMXMidkLhTFwebwBPfxPhl8lRcnqOlpEEUyK3xc2/8Ed7H0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719881799; c=relaxed/simple;
-	bh=EnhqeMXGbc7n+0B+x9uZXw1qozd+uPIwqq+yfJMYLl4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I2ShXEbwNXVs2g/bohj2DuAwFpC+yhrYk985jTDWwPbBhXPpLNhNY1BG/21MubNbZJvK3pTCJ3zu7Lcqvc1W2CsuRzqaaEj3eO3RV0Veew4thikRaWKSEajl/cU8tX12i9rv2Tc2oq2P/T3NmLaIQTTU4r3UE992aoO7/fvUE4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WCkrf6X1gz1T4Ln;
-	Tue,  2 Jul 2024 08:52:02 +0800 (CST)
-Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
-	by mail.maildlp.com (Postfix) with ESMTPS id 60C6A14037B;
-	Tue,  2 Jul 2024 08:56:34 +0800 (CST)
-Received: from hulk-vt.huawei.com (10.67.174.26) by
- dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 2 Jul 2024 08:56:34 +0800
-From: Xiu Jianfeng <xiujianfeng@huawei.com>
-To: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
-	<corbet@lwn.net>, <kamalesh.babulal@oracle.com>,
-	<haitao.huang@linux.intel.com>
-CC: <cgroups@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 -next] cgroup/misc: Introduce misc.peak
-Date: Tue, 2 Jul 2024 00:48:20 +0000
-Message-ID: <20240702004820.2645868-1-xiujianfeng@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1719881450; c=relaxed/simple;
+	bh=0PXRHIHZoSwkwd+wtEfJAGq4W2ivS2XcgyCtdGxzRkg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tLJ40Z4m0LIsZjfxuhGvydrYGmM4xf85UFyt+O5hOrpXkZLPD/+K3LCr3DCBDyVZKT+0UIHALXJRZ9G5vuBQ2ytvCVF79blFcjOOvTdx3iWKwiaYRi6+VhpH0UehlW1HxlJsWSSZIXrnd/3MGah0wxhjjtSxyO3QiI6bVDID88E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IpNTycdv; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-706524adf91so2914504b3a.2;
+        Mon, 01 Jul 2024 17:50:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719881448; x=1720486248; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=30AfonYGYq2X4o/7NFpqRFDK9omT6ND1cVfdbuoTNhY=;
+        b=IpNTycdvHKdEXwla1A0HpgUUHq07TCMdxSaL6aodT+Z1fNa+lXgQkT4VdMBd/twdi8
+         RaMojrTgEhBjVTLSWrH2TxPCSTmRVGWutob8SWSV1eBbi5DGLPhdVN24kLy1sntJxdR3
+         4TKioD/YchzXbNwb0xWJTATxHDYdxVTBMygcZqtpT5PojSSg9FS1iQVgI717I4GmPXze
+         /c5bIP2UjEBT6vWd2W9Z3LAxHwXw4xWQeOAuVt9lR5psZcqM0ua11ns8/1ioF7RMj4dP
+         4vN/ZPd+p4pIU6jDe0JurbjNidv6afutHsrx80uRaNxehy4DUT1+Pb+GQ2rVS7JNAeWr
+         uwgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719881448; x=1720486248;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=30AfonYGYq2X4o/7NFpqRFDK9omT6ND1cVfdbuoTNhY=;
+        b=iDv8k69Hprr2AVV2j22o5IsbudkmdVNdq13bw+7P1b2kyInrJdZg3jBGHUulaJcGQN
+         arC/krlczg+px2UCMF6DiSwdu3x2g5osLnxIAHnBBPR5K0DGzdyrrYTG34lrvjNID5MC
+         vsFlYeDoD8/ttFo0oorTodcrZWfB/GloYeFcQC/vSUVDe+vxJ1Qx1iuyllU9OS5iwr6X
+         lKc8heGZnrSd15KcK0j2i5l3QWPbANN6lWu1L+yA5QbtRR14MNKdIsyrBTxlr+IeSJRt
+         a82aHcCBmW0pqBbPDf+mioz+sdPxVBMbFY86lYJ4FoQFOfD/kpttyqxdqAZe2a/jrl4Z
+         DyxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXPInaz5yLn9PmutoR76OXgzp9yUpFyPZ6ugxeboyJfQ4IAHyTb8dxBDi99eVg2dSHjncsaBQfvyOJYdH9n0PZ19khAqcLTCMu7+MBM0ksh6Kotuw6jdyBEzOt/fPyN/4DqZU1utno6ZFM/r9ak3nRr7NBAbF7+eEFiwyx2ru+N
+X-Gm-Message-State: AOJu0YzRExXzTLRH9vd/0tY4Q5RmMr+g0mYsLVBXempOXccZKv9ZMoek
+	leC9hA0j/RrnAbA4MoDIFP9RS5SKWWbimFzQL9esPfunu60+TyLq3kVzWbOgNCqCxssi1MeC7nx
+	SDpGBL1pM4sfu4EONBb2Z+2AokDQ=
+X-Google-Smtp-Source: AGHT+IEuyqWwK3sealCqYh/T3xqkNnFIiFfzKLJAJ8MIbp8FqNT0HzMFiNJW077uTKRQKnq3ArRhsw/XFgs3IAHRt7s=
+X-Received: by 2002:a05:6a00:179d:b0:705:b0aa:a6bf with SMTP id
+ d2e1a72fcca58-70aaad2bd89mr9322805b3a.2.1719881448051; Mon, 01 Jul 2024
+ 17:50:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpeml500023.china.huawei.com (7.185.36.114)
+References: <20240702003119.3641219-1-briannorris@chromium.org> <20240702003119.3641219-4-briannorris@chromium.org>
+In-Reply-To: <20240702003119.3641219-4-briannorris@chromium.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 1 Jul 2024 17:50:35 -0700
+Message-ID: <CAEf4Bzbxu_PJsDE_ex_FBi+SKnWZjVA8vA11vL2BxUhyBB6CAw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] tools build: Correct bpf fixdep dependencies
+To: Brian Norris <briannorris@chromium.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>, Namhyung Kim <namhyung@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Thomas Richter <tmricht@linux.ibm.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	Masahiro Yamada <masahiroy@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Introduce misc.peak to record the historical maximum usage of the
-resource, as in some scenarios the value of misc.max could be
-adjusted based on the peak usage of the resource.
+On Mon, Jul 1, 2024 at 5:32=E2=80=AFPM Brian Norris <briannorris@chromium.o=
+rg> wrote:
+>
+> The dependencies in tools/lib/bpf/Makefile are incorrect. Before we
+> recurse to build $(BPF_IN_STATIC), we need to build its 'fixdep'
+> executable.
+>
+> I can't use the usual shortcut from Makefile.include:
+>
+>   <target>: <sources> fixdep
+>
+> because its 'fixdep' target relies on $(OUTPUT), and $(OUTPUT) differs
+> in the parent 'make' versus the child 'make' -- so I imitate it via
+> open-coding.
+>
+> I tweak a few $(MAKE) invocations while I'm at it, because
+> 1. I'm adding a new recursive make; and
+> 2. these recursive 'make's print spurious lines about files that are "up
+>    to date" (which isn't normally a feature in Kbuild subtargets) or
+>    "jobserver not available" (see [1])
+>
+> After this change, top-level builds result in an empty grep result from:
+>
+>   $ grep 'cannot find fixdep' $(find tools/ -name '*.cmd')
+>
+> [1] https://www.gnu.org/software/make/manual/html_node/MAKE-Variable.html
+> If we're not using $(MAKE) directly, then we need to use more '+'.
+>
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> ---
+>
+>  tools/build/Makefile.include | 10 +++++++++-
+>  tools/lib/bpf/Makefile       |  6 +++++-
+>  2 files changed, 14 insertions(+), 2 deletions(-)
+>
+> diff --git a/tools/build/Makefile.include b/tools/build/Makefile.include
+> index 8dadaa0fbb43..c95e4773b826 100644
+> --- a/tools/build/Makefile.include
+> +++ b/tools/build/Makefile.include
+> @@ -1,8 +1,16 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>  build :=3D -f $(srctree)/tools/build/Makefile.build dir=3D. obj
+>
+> +# More than just $(Q), we sometimes want to suppress all command output =
+from a
+> +# recursive make -- even the 'up to date' printout.
+> +ifeq ($(V),1)
+> +  SILENT_MAKE =3D +$(Q)$(MAKE)
+> +else
+> +  SILENT_MAKE =3D +$(Q)$(MAKE) --silent
+> +endif
+> +
+>  fixdep:
+> -       $(Q)$(MAKE) -C $(srctree)/tools/build CFLAGS=3D LDFLAGS=3D $(OUTP=
+UT)fixdep
+> +       $(SILENT_MAKE) -C $(srctree)/tools/build CFLAGS=3D LDFLAGS=3D $(O=
+UTPUT)fixdep
+>
+>  fixdep-clean:
+>         $(Q)$(MAKE) -C $(srctree)/tools/build clean
+> diff --git a/tools/lib/bpf/Makefile b/tools/lib/bpf/Makefile
+> index 2cf892774346..0743cf653615 100644
+> --- a/tools/lib/bpf/Makefile
+> +++ b/tools/lib/bpf/Makefile
+> @@ -153,7 +153,11 @@ $(BPF_IN_SHARED): force $(BPF_GENERATED)
+>         echo "Warning: Kernel ABI header at 'tools/include/uapi/linux/if_=
+xdp.h' differs from latest version at 'include/uapi/linux/if_xdp.h'" >&2 ))=
+ || true
+>         $(Q)$(MAKE) $(build)=3Dlibbpf OUTPUT=3D$(SHARED_OBJDIR) CFLAGS=3D=
+"$(CFLAGS) $(SHLIB_FLAGS)"
+>
+> -$(BPF_IN_STATIC): force $(BPF_GENERATED)
+> +$(STATIC_OBJDIR):
+> +       $(Q)mkdir -p $@
+> +
+> +$(BPF_IN_STATIC): force $(BPF_GENERATED) | $(STATIC_OBJDIR)
 
-Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+wouldn't $(BPF_IN_SHARED) target need a similar treatment?
 
----
-v3: fix while (0)
-v2: use cmpxchg to update the watermark
----
- Documentation/admin-guide/cgroup-v2.rst |  9 ++++++
- include/linux/misc_cgroup.h             |  2 ++
- kernel/cgroup/misc.c                    | 39 +++++++++++++++++++++++++
- 3 files changed, 50 insertions(+)
-
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index ae0fdb6fc618..468a95379009 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -2646,6 +2646,15 @@ Miscellaneous controller provides 3 interface files. If two misc resources (res_
- 	  res_a 3
- 	  res_b 0
- 
-+  misc.peak
-+        A read-only flat-keyed file shown in all cgroups.  It shows the
-+        historical maximum usage of the resources in the cgroup and its
-+        children.::
-+
-+	  $ cat misc.peak
-+	  res_a 10
-+	  res_b 8
-+
-   misc.max
-         A read-write flat-keyed file shown in the non root cgroups. Allowed
-         maximum usage of the resources in the cgroup and its children.::
-diff --git a/include/linux/misc_cgroup.h b/include/linux/misc_cgroup.h
-index e799b1f8d05b..faf72a537596 100644
---- a/include/linux/misc_cgroup.h
-+++ b/include/linux/misc_cgroup.h
-@@ -30,11 +30,13 @@ struct misc_cg;
- /**
-  * struct misc_res: Per cgroup per misc type resource
-  * @max: Maximum limit on the resource.
-+ * @watermark: Historical maximum usage of the resource.
-  * @usage: Current usage of the resource.
-  * @events: Number of times, the resource limit exceeded.
-  */
- struct misc_res {
- 	u64 max;
-+	u64 watermark;
- 	atomic64_t usage;
- 	atomic64_t events;
- };
-diff --git a/kernel/cgroup/misc.c b/kernel/cgroup/misc.c
-index 79a3717a5803..7f5180a8f461 100644
---- a/kernel/cgroup/misc.c
-+++ b/kernel/cgroup/misc.c
-@@ -121,6 +121,17 @@ static void misc_cg_cancel_charge(enum misc_res_type type, struct misc_cg *cg,
- 		  misc_res_name[type]);
- }
- 
-+static void misc_cg_update_watermark(struct misc_res *res, u64 new_usage)
-+{
-+	u64 old;
-+
-+	do {
-+		old = READ_ONCE(res->watermark);
-+		if (cmpxchg(&res->watermark, old, new_usage) == old)
-+			break;
-+	} while (1);
-+}
-+
- /**
-  * misc_cg_try_charge() - Try charging the misc cgroup.
-  * @type: Misc res type to charge.
-@@ -159,6 +170,7 @@ int misc_cg_try_charge(enum misc_res_type type, struct misc_cg *cg, u64 amount)
- 			ret = -EBUSY;
- 			goto err_charge;
- 		}
-+		misc_cg_update_watermark(res, new_usage);
- 	}
- 	return 0;
- 
-@@ -307,6 +319,29 @@ static int misc_cg_current_show(struct seq_file *sf, void *v)
- 	return 0;
- }
- 
-+/**
-+ * misc_cg_peak_show() - Show the peak usage of the misc cgroup.
-+ * @sf: Interface file
-+ * @v: Arguments passed
-+ *
-+ * Context: Any context.
-+ * Return: 0 to denote successful print.
-+ */
-+static int misc_cg_peak_show(struct seq_file *sf, void *v)
-+{
-+	int i;
-+	u64 watermark;
-+	struct misc_cg *cg = css_misc(seq_css(sf));
-+
-+	for (i = 0; i < MISC_CG_RES_TYPES; i++) {
-+		watermark = READ_ONCE(cg->res[i].watermark);
-+		if (READ_ONCE(misc_res_capacity[i]) || watermark)
-+			seq_printf(sf, "%s %llu\n", misc_res_name[i], watermark);
-+	}
-+
-+	return 0;
-+}
-+
- /**
-  * misc_cg_capacity_show() - Show the total capacity of misc res on the host.
-  * @sf: Interface file
-@@ -357,6 +392,10 @@ static struct cftype misc_cg_files[] = {
- 		.name = "current",
- 		.seq_show = misc_cg_current_show,
- 	},
-+	{
-+		.name = "peak",
-+		.seq_show = misc_cg_peak_show,
-+	},
- 	{
- 		.name = "capacity",
- 		.seq_show = misc_cg_capacity_show,
--- 
-2.34.1
-
+> +       $(SILENT_MAKE) -C $(srctree)/tools/build CFLAGS=3D LDFLAGS=3D OUT=
+PUT=3D$(STATIC_OBJDIR) $(STATIC_OBJDIR)fixdep
+>         $(Q)$(MAKE) $(build)=3Dlibbpf OUTPUT=3D$(STATIC_OBJDIR)
+>
+>  $(BPF_HELPER_DEFS): $(srctree)/tools/include/uapi/linux/bpf.h
+> --
+> 2.45.2.803.g4e1b14247a-goog
+>
+>
 
