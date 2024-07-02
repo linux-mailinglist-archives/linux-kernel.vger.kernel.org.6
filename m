@@ -1,200 +1,206 @@
-Return-Path: <linux-kernel+bounces-238233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65535924744
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:26:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B01A924746
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:30:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3D39B24575
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:26:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E254A287646
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8D41C9EA9;
-	Tue,  2 Jul 2024 18:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BCB41C9EC2;
+	Tue,  2 Jul 2024 18:30:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tW8/trxG"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2054.outbound.protection.outlook.com [40.107.95.54])
+	dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b="gBVBB012"
+Received: from serv108.segi.ulg.ac.be (serv108.segi.ulg.ac.be [139.165.32.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F7F1DFE3;
-	Tue,  2 Jul 2024 18:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719944759; cv=fail; b=dws7VzTv7e2X2OxAxtKELmdentg82Ss2+srf/oEmQC6PDrSG1yirKcIxEq2eEDmXbepI2Z8WYLz1vw0Y0PwR43RtXbe152aVKibpTjWVfTvoFfXQXt+D86PYRD5OhNsr41Dmjb3EvdKUFublvP/MbxML5sxFVUwdiHpHkHSKhTs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719944759; c=relaxed/simple;
-	bh=ApZFb/OadEyomSSMoB91bbN9BVbgTC4xNr2CmsuPFXY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Xx2Tsp0H5x404AvYkIpwFHCUpQJBm7BiJcPUhvZJiOf/KyhaNIN0bHgGJng/nWVgWKbS5/u7bui63Xvr5Ge9/TkjY5fBcjrIUty3begyvh+URnGKpvmgp3WnRTKhhXA4TJ+DTZV6UEa/vEu2JjKIns46aP7w2Wn4VUh8O32q1vo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tW8/trxG; arc=fail smtp.client-ip=40.107.95.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=B6JwZ5Pcz3qIu+PJj8NVBga6hVgVFZEOpky1zZEl9IFMlv0NnTp7UyHjZzkdhjpiGFZ0KOCH4Y3QPjhoYvwvjtpRW26lEsKZtwamb554EiX8XDECI+Ny2ubBM+qow6iezWWv0+WVQgOYn4zwMoWszBkITWlmrIuY7G5XnVT5+poVeFFMxz1TZbNnfyZraWzzwri060ecoJTXXVjegcvg4vfWnDxFTe7glF8MDfjqDOHOJ7uB+7SVMekBpKp8M0ZZ1SuG/dbDvExFKJhce0WeT5+JlVpOGsfcxp3e4YeCuYhoe5Y6tL0o0GWJ+dK2UtqzgH1+IaUQ3fW+yk4kVeWh/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YfKptGNR77B1746Nk6AAHZs7Pd6vyTZZyy89KZcNPhs=;
- b=EUDl8c4a/PVryDART8a67r4xWwJnDLhCRVVP9MNBTQ+sDEL1Odfv5fu/QFkLzGsCu+1p5ILo72kFdq3ZcLQ9isfV4mY+VmBaZVM9R3/t3UE9swtCAZJueGpcr69YUUBEQKjYcfeg5i84T2lOn7mpSjIa9gac0Rs3YLy24LSvLMEbmFWAh5kmVfE3hkKGYKfljCkt+aKAZG0NavdNxAZ4R+zGpy/q/wcyaSEpZZIEzN5qiAjdqdBkGruqiplWFayO9RdiObJwTluDxpJa0a/YGhDJ+cXbAE+hYgCYcGilqxkWJdM9hrsNzSnNy6CwcwTemIjngKlaWyhH+E7EOsyQtQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YfKptGNR77B1746Nk6AAHZs7Pd6vyTZZyy89KZcNPhs=;
- b=tW8/trxGWBM2sTdeUwRt93YQquTZjBBQOzNljyUSPROWYJ/CymhAklaiFhg4vYCKZkQpfHHJWo6oigOr4QwKXdz8QWLm0YBnYxW8yzOyfXulUtFkNmD0AFPvS05klsaKDxLDJZ43MB2OXkSeEZYUknEOCTYOWeP6oKKZwCtMuQOT0xonjSFOevj5VFRjenwyvbjHXe/GB6st2thfmhIBYbiJ4KQpP2lBa16GvpaztGJAvqDMnqKRQe7ik0OL6sSa3Hjvmpzd0NKg51T841yDMBarMQbUacipfxJDlEzuFrQiQauBN0IGC5X7qLtgDYyo/uLzKhPHr4PRIzScul98bA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB4140.namprd12.prod.outlook.com (2603:10b6:5:221::13)
- by CY8PR12MB7415.namprd12.prod.outlook.com (2603:10b6:930:5d::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.29; Tue, 2 Jul
- 2024 18:25:49 +0000
-Received: from DM6PR12MB4140.namprd12.prod.outlook.com
- ([fe80::657e:28eb:3569:4f91]) by DM6PR12MB4140.namprd12.prod.outlook.com
- ([fe80::657e:28eb:3569:4f91%7]) with mapi id 15.20.7719.029; Tue, 2 Jul 2024
- 18:25:49 +0000
-Message-ID: <b4720a40-6e74-4b1d-93ca-a3444e400a1a@nvidia.com>
-Date: Tue, 2 Jul 2024 11:25:01 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] selftests/vDSO: fix clang build errors and
- warnings
-To: Edward Liaw <edliaw@google.com>
-Cc: Shuah Khan <shuah@kernel.org>, "Jason A . Donenfeld" <Jason@zx2c4.com>,
- Andy Lutomirski <luto@kernel.org>, Mark Brown <broonie@kernel.org>,
- Vincenzo Frascino <vincenzo.frascino@arm.com>,
- Colin Ian King <colin.i.king@gmail.com>,
- Valentin Obst <kernel@valentinobst.de>, linux-kselftest@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev,
- Carlos Llamas <cmllamas@google.com>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>
-References: <20240614233105.265009-1-jhubbard@nvidia.com>
- <20240614233105.265009-2-jhubbard@nvidia.com>
- <CAG4es9WQOOga8Oh9BOjr_JXy5gcUzVN0iTtfjN_HVdRj7_G7iQ@mail.gmail.com>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <CAG4es9WQOOga8Oh9BOjr_JXy5gcUzVN0iTtfjN_HVdRj7_G7iQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BY5PR04CA0017.namprd04.prod.outlook.com
- (2603:10b6:a03:1d0::27) To DM6PR12MB4140.namprd12.prod.outlook.com
- (2603:10b6:5:221::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079E515B0FE;
+	Tue,  2 Jul 2024 18:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.165.32.111
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719945017; cv=none; b=KwyG8/ADV0Vul4P3COKOh5uLwVa/mn0dvOdv58bfmcdryXfHgr4yNFmVwqgEcR8hZSeeAoLpBxQ5kW0yar6iN8kdA4467ufra/4MjDUo1lF4o28N9Ue6dPc/jp7uIX/P7GMwvN5gMjanluNFZV+WCnYfEuWIbGwgtO7AAWokP34=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719945017; c=relaxed/simple;
+	bh=mkzx4GZZ7v8MlE2lFXruNChUcVJJStgHKf+MnqgVCR8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NNGKjNU7YaijzPc7mjeJbP+ULAQjuLOwBnHC5tB102gOefKT6jsaveUHcbv+Y5bySz6/YMKevetKXEmqiVrV2XhxigyZfg4V6zfbroyuKzNeC9zfXlYhcEmSiALkip4OwTvHDNqJjfMx1QFkM206kQvzs96RFRvCdc1PCd0VuaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be; spf=pass smtp.mailfrom=uliege.be; dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b=gBVBB012; arc=none smtp.client-ip=139.165.32.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uliege.be
+Received: from [192.168.1.17] (48.39-182-91.adsl-dyn.isp.belgacom.be [91.182.39.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by serv108.segi.ulg.ac.be (Postfix) with ESMTPSA id 5E284200BFE3;
+	Tue,  2 Jul 2024 20:30:13 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 serv108.segi.ulg.ac.be 5E284200BFE3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uliege.be;
+	s=ulg20190529; t=1719945013;
+	bh=CpgYOOQn+M4Cm6o301G6/udMHGrxro4JJRy3+oFtaWU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gBVBB012lEDPO6Jyy2ptZRyUkRcfyyCrJ4A2Rj2ieZ31jKUcK21q7rJQ6jDL+1UUd
+	 fZgR2e/UAwHCmGOWnmCC0FHkuRR7nNn/KAXRhPiBGvcN6zcJLZMx3cg05X3YS5RaSq
+	 DYFYYe3yXXNOhEmw1Z2l7j0/Ju7SqrqG52qUsKQGwnY3rTQGdVaqgEvnwpkrjIvUOG
+	 BixgyyExB/WgKoucf/755mBk3EsTtZDzVmihhoAR2uHMdL1BEH36F63w7bDLDp21rd
+	 hWNT6CscRNvlue4COzSnFk8zTlbhn8ZdE8c6Aiz9hT/vWbytj19+H09MKDaAewAMaO
+	 Wkh1nzQILnFvA==
+Message-ID: <d6b0d5ff-d3b0-4eda-b6ed-11add69f4dff@uliege.be>
+Date: Tue, 2 Jul 2024 20:30:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB4140:EE_|CY8PR12MB7415:EE_
-X-MS-Office365-Filtering-Correlation-Id: dda7ad56-4b5e-4fc7-8eae-08dc9ac465a5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TkxEYnk0WHB3M2llSmZpT0Z5S3JDcjYvcmxpVjhkNkRRUFRhdk9GVC9lMVV2?=
- =?utf-8?B?cC9ycWlqUEkvZHFvczgrTlB0SWt0ampGOFFGUncxOW1TUHZta2c0Ylhmd01u?=
- =?utf-8?B?OERMdjZqTWpDbm4yVUFKVEdEZzJHRlFVTmpXTFZGUnIvSUJXSDFDSExIQjFa?=
- =?utf-8?B?UjFpWXBzNzJkcVRDTzVDbEVVTldHYVhNMjF1TVhaejdWUStuNGZtN3R5VENM?=
- =?utf-8?B?TWNXQzFxVHRLSnl6ejd2QVJCYTFIbW9qRzlMUm9FbVUzUFBDWnVjckg2L0FL?=
- =?utf-8?B?VWdYQkRRNHlueGNidkpBUmhMMW9YR2Q4RFdOd1BUTlJvRjhHVU1nU2N2M0cr?=
- =?utf-8?B?VktFTHBHWEMyVHJTaUFDbmNoTzNURWdkZ2kwL1UrRGFEaThnOE9uaG1KYS9J?=
- =?utf-8?B?RTVJVElKakplTkJLajZmMnhsZDBPUHA5enRqYlpYbjBYcVpxZjhsYjVhN2Yw?=
- =?utf-8?B?WjBqVDdKalNJQzU1Qk4vK243cWM1cXlKVDl2U2k3dFZGemg3Z2RUYytLSkdx?=
- =?utf-8?B?bVN4YkNFNG0vRzBUWkxibEc4WG92K0FhKzRBWTJNTEFJaHFRTFVKaUZpbmIr?=
- =?utf-8?B?VmI5N0FZa0ZwRDNEMENqUTJaQnRXUG9vdG1EejJHZlJqVlBlWmxXeGhENHh5?=
- =?utf-8?B?ZVV5aFFvNWxFa0p3d1RSWHJncG9zRGJKbnF2R01USFRBR0Nram8vZVBLdjRO?=
- =?utf-8?B?RkhKQy83VVc0dVZyRUx2bHJwdHZERHhIYWJ4OGp0UXJIWC9HZXNtV3VLS0lB?=
- =?utf-8?B?dzdnTE84c3VPZmRMRDlqYld3TnlpT3diNTliQUxrUFVub04xaTQxYzBUeGY2?=
- =?utf-8?B?K25qR0xjWHpFaTNxWktJeXVLMHJHM1JURUFvV2VxWGlPRmRDNWJZcUF2Tk9m?=
- =?utf-8?B?QWRRMU9Yb0pqck5tRDlQNnZ4VTg3bDh5RWp5anlNZUZGN0Q0a1NhZzdUdjhW?=
- =?utf-8?B?VEYxY3c3eVplQml5dGp5V1RsNWpmaWluK2hFajJxUWhrbUtHL05QM2hxSmR5?=
- =?utf-8?B?MTkwelp4Tk1JcnhZZ2FSRlJuRjhMQy9LQlFEMGdyenNNbFhSSXJXTDR1MDAz?=
- =?utf-8?B?cU1vZ0lrWjcrUzBYa2U3TkxZNGR0S2hhTzJOVW1NakNuM2xpRlJzeFBSRjFx?=
- =?utf-8?B?NmRoZkR4Qm1qT1dvRVlKS3BOd1U1UDMrVmZZdWtyYjUvTjlJTEJaNmgwSGFZ?=
- =?utf-8?B?Y2ZPN1NMSmk2UThoMUJ0bTFKMDBKbVRDM3hiZjRTeUdCejI4LzZCeEVBejU1?=
- =?utf-8?B?dnlSVG9YU3BWMElPcXhkcEpsVm96WVEwOHB0Qks1bkd0TTRkYUZ6TDdUYzFT?=
- =?utf-8?B?ZkJaSW84SWw0TUFmMzAyZzRPbUNBeHRMYVR1QlA3eWFCTXdTalZwV1lIM3N3?=
- =?utf-8?B?cGpWbUFzcVFNQnJZYUpIdFc0VWloVlliN3J3VnJlamJmM2JBMjVxa1hadCtl?=
- =?utf-8?B?a2hyaFlCUFl4U0w5RUdlb29tZHd3S2lGMUZxRDZzcENhWWVhcnVXd2FSWThW?=
- =?utf-8?B?Vm1WSlRHOE5FaWNUd2RZWU5oWHZ2Y3EyclZ0TVVBd1JqUTNOdGQ0T2w2dVVX?=
- =?utf-8?B?aWgvS3NQM1IxYWp1T25vSlZxeSs5Smw1OXMxSFlBcHZ1Z0p3Q0hCZ3Fja09x?=
- =?utf-8?B?TDNTYW5rYU5tZHZYK090R0xkYXhKZW94YWN4cUlTbXdrQWE5cE1YZXRRalFG?=
- =?utf-8?B?RDF1UEVkOUtjOVJHeWFhZllPMXRoSkt1WnZkTC9yYVpoa2Y3R0l3NlFyM0Vy?=
- =?utf-8?B?aHR3VGhZaGNIZ3kyVjhYcjJ6eVpaQ3VIZ3RaVnBoTzk1bVVKUHNHdGtOZkUr?=
- =?utf-8?B?UDZycGVQRnFkbWhPbVdHUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB4140.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bEhiWXJVUDFrWnhaVnQ5alluL1RxQ2hsN2RJSWRvQWZpcmFJbk9wN0psN1Ba?=
- =?utf-8?B?aXhmVmQwS0NoaHcvZ1JyN1hkWUpaVW9XL1hkRkNFdWlsU25kakV2WjVCdzdR?=
- =?utf-8?B?NGcxdlphZG5qSno3K1UzZGxFVUR3Q0tJUTZCakQ3OWRuQTh6dHJpVUU3UDVw?=
- =?utf-8?B?dC9qRVlqMzhRWVdud01rUVhmZzh2NU1WaHQxK3BXT1RuckUrN3o5OG5yOGx0?=
- =?utf-8?B?bGZJQzhkWEZ4WGZKTDBZMktya3NWYTE4eFVJcmsyMjk0U1VKVWQxK3c5S0xy?=
- =?utf-8?B?YVE2YU9Hc3NiV29RN0xhbmowaTRtdFRHaDgzY2lzQnkzNEpUZ2ZuWFVHbUZw?=
- =?utf-8?B?ZnhmYTlXY3l1VjRUOWMvZVRwRGFDK0taSSt0R1ZZSWZ4aGh3ejhCRXRSbWdH?=
- =?utf-8?B?Vm5RQktubUxKQWVRdGVzMnQxRTYvRFJmb1BvYVd3c0RtaWNRTnlCemRCait0?=
- =?utf-8?B?eGRRL3lpNlZYOXFJaVI5cWIrOEtNUjF1S2lOL2NFNmJ1aEwzd2dYVFcrSU9m?=
- =?utf-8?B?VXpTTHRHNnZuUFgrZ3ZnZlduZUM2bHYrTlI2c0pIaVdSVjh2eEZRclVpTytT?=
- =?utf-8?B?S01YdVgrMzA1TTFqZWtmY1gzN2F3MzV2bysxSTBjYTNBbFRLY283VUo3VENO?=
- =?utf-8?B?S3FvRXo4clJjNVRxMCtubHUwNnZuK0lXa0hoRWthaC9oYnZldnlmVHM4Rm8r?=
- =?utf-8?B?c1FrVThoelRUNVI3Y3d3L05OM01mWHozMW9ROGRpbFI0WkN2YW5zZVZ6b210?=
- =?utf-8?B?ek91cEkwcHZDUEpZZUtEQktQRFlDYjhaVUt5SHA3RzRYd1VoL3ZkQjgyRUlJ?=
- =?utf-8?B?a3FYUnRWTGgvM2Z1NloxL3JYMzdubVBjelVEM1FkNE4rYnRBS3YyTTYyQ0FE?=
- =?utf-8?B?Y3ByOVRYNzV5ay91SGhPNnhjV2tKNzVTNTQ1ZS9ZdHZnUVpUSFBKU3lDTXlC?=
- =?utf-8?B?VTZNQ2FiakpDWlh2TnZ4Z3hrSTdTREZZcW9YOUNOek9ldEZJVTluOUxwWVpI?=
- =?utf-8?B?aElwMEx5ZjZZWFNuSzJaM2NXUWJDWDZ4QnlYZkc3K2xrUmpweGM3b1pYd2wz?=
- =?utf-8?B?QkxscUFBa3IrMXZHelkzdHhQM043UE9BVkZYUk80dWpzdmRrK08zQ29nODZu?=
- =?utf-8?B?M1YwNDdOWXJ4ZGZCMnd0SlR2c3MxbHVXNjdCYitpMnFYSWFVOFljSlpPTzc0?=
- =?utf-8?B?TEEwNzFWVy9ZMmNMNGlzeElRWnBvZk85T0F5TEVXQWhob1Y2aUtFejR6RUQx?=
- =?utf-8?B?V3AyVXdxa2RwOFpDcnVSQ2pOcjVOeXMxczN6YVYxS3hIMjFMK3ovcnFyV3NK?=
- =?utf-8?B?aENxeXpnUnR0WlgvUUtLdngvWEZ5R3RjSzF2UXpYZnY3Mys5ODJvcHEzMGxV?=
- =?utf-8?B?TzBwanYyL1NsUytoR1RaRmNlY0NFUUpES0RRalc0bkk2M3hrUnJjdWl5YkpT?=
- =?utf-8?B?SDYvNm5ka0plSW9lbFVuM2NwVVpySzVqRjEzV21nSlpSdmNocTFjUVdoa0tq?=
- =?utf-8?B?QzVHbVFIdnJkNDhod25TQVRKRC8rc3V4Mk90bTZaQ013QVo2YXI0OUcxWkd0?=
- =?utf-8?B?NHh0bUMvWkNzRy9uS01GTzlacHZaeXBWWFk0b29UY0R2R3Rvc0tpdWR1R1gz?=
- =?utf-8?B?R0d5Wkk2Ty9TcDhZbGJDQVlndzZ3ZWJlYzBkdWZmVUdyYzkvallodkFuZ2Zh?=
- =?utf-8?B?TExJNHNqSHU3dzdJaGlZeXdrZ3FUWFFzT0VjRWxtZ2l0ejl5Y3U4M2l3d0xN?=
- =?utf-8?B?QnVmTk1lYzJ1MStxS09Xa1JSa3UxNjJVRm00WDN5ZS90OUNFUm5nY3MwNS9m?=
- =?utf-8?B?SHhrNmoxaHBOc0s3NFo2QXVBRC9ZK0l5NnkvZlI1ZmtxQnB6czdZd3JlMjh1?=
- =?utf-8?B?Rk9sRm1OdjBhQ1paSllrVWFWYzh2YzJaUklvQVJqSnhsVGFyMWZIOGU4NlVR?=
- =?utf-8?B?VW1FUWNWazhVL3owSjlRbXVhNENVdXlDU3dnS3I2bnhmRFVjRGMwTUlNVmMw?=
- =?utf-8?B?YncrQkhURjBDcXNJR3ZoS0xvSFd1bjF3emZtK1phRE1tSGRCNndvenlzWWFv?=
- =?utf-8?B?VW40TFhKVTE3SmljKzlrdnl5U3FiK1JxbW1xeTAyWGZ3Skh1ak1PWUc1c2k2?=
- =?utf-8?B?Yk8rUG5UeWdFMW1ROWNWdWttakZDZWovdmxXRHZRK1pxZzA2T0VkMTU5YW1s?=
- =?utf-8?B?Nnc9PQ==?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dda7ad56-4b5e-4fc7-8eae-08dc9ac465a5
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB4140.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jul 2024 18:25:49.0507
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: v9rS8ARUToiF7Ldlv3vu0jCmuFYBIchgkyrvzgOa2k2J1IDHc1EDU5DdY4yrKqdcVcOi6hi+27urV976RQGH9Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7415
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net 2/2] net: ioam6: mitigate the two reallocations
+ problem
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
+ justin.iurman@uliege.be
+References: <20240702174451.22735-1-justin.iurman@uliege.be>
+ <20240702174451.22735-3-justin.iurman@uliege.be>
+Content-Language: en-US
+From: Justin Iurman <justin.iurman@uliege.be>
+In-Reply-To: <20240702174451.22735-3-justin.iurman@uliege.be>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 7/2/24 11:12 AM, Edward Liaw wrote:
-> On Fri, Jun 14, 2024 at 4:31 PM John Hubbard <jhubbard@nvidia.com> wrote:
-...
-> Hi John,
-> Could you try re-submitting this series with the RESEND prefix?
+On 7/2/24 19:44, Justin Iurman wrote:
+> Get the cache _before_ adding bytes. This way, we provide the dst entry
+> to skb_cow_head(), so that we call LL_RESERVED_SPACE() on it and avoid
+> two reallocations in some specific cases. We cannot do much when the dst
+> entry is empty (cache is empty, this is the first time): in that case,
+> we use skb->mac_len by default and two reallocations will happen in
+> those specific cases. However, it will only happen once, not every
+> single time.
+
+This fix could also be applied to seg6 and rpl. Not sure if the problem 
+would show up though (I did some quick computations, seems unlikely), 
+but still... would probably be interesting to have it there too, just in 
+case. Any opinion?
+
+> Fixes: 8cb3bf8bff3c ("ipv6: ioam: Add support for the ip6ip6 encapsulation")
+> Signed-off-by: Justin Iurman <justin.iurman@uliege.be>
+> ---
+>   net/ipv6/ioam6_iptunnel.c | 36 ++++++++++++++++++++----------------
+>   1 file changed, 20 insertions(+), 16 deletions(-)
 > 
-> Thanks,
-> Edward
-
-Sure. Is that the key, for kselftests? Because I've got 5+ small
-patchsets that are languishing there, and I'm at a loss for how to even
-get a response, much less get something merged.
-
-
-thanks,
--- 
-John Hubbard
-NVIDIA
-
+> diff --git a/net/ipv6/ioam6_iptunnel.c b/net/ipv6/ioam6_iptunnel.c
+> index b08c13550144..e5a7e7472b71 100644
+> --- a/net/ipv6/ioam6_iptunnel.c
+> +++ b/net/ipv6/ioam6_iptunnel.c
+> @@ -220,14 +220,16 @@ static int ioam6_do_fill(struct net *net, struct sk_buff *skb)
+>   }
+>   
+>   static int ioam6_do_inline(struct net *net, struct sk_buff *skb,
+> -			   struct ioam6_lwt_encap *tuninfo)
+> +			   struct ioam6_lwt_encap *tuninfo,
+> +			   struct dst_entry *dst)
+>   {
+>   	struct ipv6hdr *oldhdr, *hdr;
+>   	int hdrlen, err;
+>   
+>   	hdrlen = (tuninfo->eh.hdrlen + 1) << 3;
+>   
+> -	err = skb_cow_head(skb, hdrlen + skb->mac_len);
+> +	err = skb_cow_head(skb, hdrlen + (!dst ? skb->mac_len
+> +					       : LL_RESERVED_SPACE(dst->dev)));
+>   	if (unlikely(err))
+>   		return err;
+>   
+> @@ -256,16 +258,17 @@ static int ioam6_do_inline(struct net *net, struct sk_buff *skb,
+>   
+>   static int ioam6_do_encap(struct net *net, struct sk_buff *skb,
+>   			  struct ioam6_lwt_encap *tuninfo,
+> -			  struct in6_addr *tundst)
+> +			  struct in6_addr *tundst,
+> +			  struct dst_entry *dst)
+>   {
+> -	struct dst_entry *dst = skb_dst(skb);
+>   	struct ipv6hdr *hdr, *inner_hdr;
+>   	int hdrlen, len, err;
+>   
+>   	hdrlen = (tuninfo->eh.hdrlen + 1) << 3;
+>   	len = sizeof(*hdr) + hdrlen;
+>   
+> -	err = skb_cow_head(skb, len + skb->mac_len);
+> +	err = skb_cow_head(skb, len + (!dst ? skb->mac_len
+> +					    : LL_RESERVED_SPACE(dst->dev)));
+>   	if (unlikely(err))
+>   		return err;
+>   
+> @@ -285,7 +288,7 @@ static int ioam6_do_encap(struct net *net, struct sk_buff *skb,
+>   	hdr->nexthdr = NEXTHDR_HOP;
+>   	hdr->payload_len = cpu_to_be16(skb->len - sizeof(*hdr));
+>   	hdr->daddr = *tundst;
+> -	ipv6_dev_get_saddr(net, dst->dev, &hdr->daddr,
+> +	ipv6_dev_get_saddr(net, skb_dst(skb)->dev, &hdr->daddr,
+>   			   IPV6_PREFER_SRC_PUBLIC, &hdr->saddr);
+>   
+>   	skb_postpush_rcsum(skb, hdr, len);
+> @@ -313,6 +316,10 @@ static int ioam6_output(struct net *net, struct sock *sk, struct sk_buff *skb)
+>   
+>   	orig_daddr = ipv6_hdr(skb)->daddr;
+>   
+> +	local_bh_disable();
+> +	dst = dst_cache_get(&ilwt->cache);
+> +	local_bh_enable();
+> +
+>   	switch (ilwt->mode) {
+>   	case IOAM6_IPTUNNEL_MODE_INLINE:
+>   do_inline:
+> @@ -320,7 +327,7 @@ static int ioam6_output(struct net *net, struct sock *sk, struct sk_buff *skb)
+>   		if (ipv6_hdr(skb)->nexthdr == NEXTHDR_HOP)
+>   			goto out;
+>   
+> -		err = ioam6_do_inline(net, skb, &ilwt->tuninfo);
+> +		err = ioam6_do_inline(net, skb, &ilwt->tuninfo, dst);
+>   		if (unlikely(err))
+>   			goto drop;
+>   
+> @@ -328,7 +335,8 @@ static int ioam6_output(struct net *net, struct sock *sk, struct sk_buff *skb)
+>   	case IOAM6_IPTUNNEL_MODE_ENCAP:
+>   do_encap:
+>   		/* Encapsulation (ip6ip6) */
+> -		err = ioam6_do_encap(net, skb, &ilwt->tuninfo, &ilwt->tundst);
+> +		err = ioam6_do_encap(net, skb,
+> +				     &ilwt->tuninfo, &ilwt->tundst, dst);
+>   		if (unlikely(err))
+>   			goto drop;
+>   
+> @@ -346,10 +354,6 @@ static int ioam6_output(struct net *net, struct sock *sk, struct sk_buff *skb)
+>   		goto drop;
+>   	}
+>   
+> -	local_bh_disable();
+> -	dst = dst_cache_get(&ilwt->cache);
+> -	local_bh_enable();
+> -
+>   	if (unlikely(!dst)) {
+>   		struct ipv6hdr *hdr = ipv6_hdr(skb);
+>   		struct flowi6 fl6;
+> @@ -371,15 +375,15 @@ static int ioam6_output(struct net *net, struct sock *sk, struct sk_buff *skb)
+>   		local_bh_disable();
+>   		dst_cache_set_ip6(&ilwt->cache, dst, &fl6.saddr);
+>   		local_bh_enable();
+> +
+> +		err = skb_cow_head(skb, LL_RESERVED_SPACE(dst->dev));
+> +		if (unlikely(err))
+> +			goto drop;
+>   	}
+>   
+>   	skb_dst_drop(skb);
+>   	skb_dst_set(skb, dst);
+>   
+> -	err = skb_cow_head(skb, LL_RESERVED_SPACE(dst->dev));
+> -	if (unlikely(err))
+> -		goto drop;
+> -
+>   	if (!ipv6_addr_equal(&orig_daddr, &ipv6_hdr(skb)->daddr))
+>   		return dst_output(net, sk, skb);
+>   out:
 
