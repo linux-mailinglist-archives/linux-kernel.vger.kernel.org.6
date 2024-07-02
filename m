@@ -1,218 +1,125 @@
-Return-Path: <linux-kernel+bounces-238228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC65C924736
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:20:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94DFE924739
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:22:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62A1C1F25492
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:20:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21E4BB2139F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0381C8FD5;
-	Tue,  2 Jul 2024 18:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84BBB1C9EA3;
+	Tue,  2 Jul 2024 18:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WByVkMQD"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2074.outbound.protection.outlook.com [40.107.102.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ry5Q7izp"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318F41DFFC;
-	Tue,  2 Jul 2024 18:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719944423; cv=fail; b=LyexWhbrso0W4NWyeUm+0+4l2T0m6mDZea1CnHRcC8rKXREgkrVE3Tg1NYFcfFs2ewbtFWbNicmHikaupqLwRIUa+rm1YyUbBo5JF8sdfWXG7cVHUGBs8YxSbVRVcwWQ4lSfRbwW0kn07C+DwDfKG/CSrwznQY0QrADoyYZWPFw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719944423; c=relaxed/simple;
-	bh=knu5tF3OLy0i8HDpZrQDoEaSI/6UtNPPkarML6jGqSY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a0ls9ODaAx6To9u2MEr74D+ofMC4TrdT3l5Q0VDRsaJPtgNymXOkxUpEEzy4JqOu7qA4mQLWxisBoJQd5LO2JYYK9QbSW7bSYnFxH6N1bV6ItzBlGXaysXlQAlEWio/UPHdViwMTZHuZHRWUUV9MGBkqZSQJSwDLWOhKCHRheOU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WByVkMQD; arc=fail smtp.client-ip=40.107.102.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=S4ggzqlnK/qAzTx227E8/GjhHN+n9iWjFTIEeCaY5A2T9IDa8t+bpLeGaVwS6xozFSV9C3KEb6ckVDu65RiCqBmcRFedPz6pFzv7obNAhK0dxBlfzMqCh7MxL2Yi3NxngEk3NjrE2QAuITNhhEKq2sr7g4o+z0YPL15NSFTY7qkcAbuYfrC9/0+H4NNLvEzWSO6oz2L5yNAHtwYsDy2Ljz6ESYJ9FQ4seC2tGwxtrpgHeGBPY5hg86FxAQdzg1F92y0EYD96ooQITirNNVlGF6TsK91q/Aa0hd5e3DH0/4HuPOEHjmKQq4HULYHonhv/WN9A5djatkZ+Mh8FXc3ZiA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ghA9hfT2GgZrLWkF4+gDcny5/8iN74Z8Qm8Djtn5wbM=;
- b=WjI0RORCUEZVX0DhBcLqc9rzeq2c2Aa6b0ccmaSuDlTApaog/xrRxybIPKBVXpmFYt9ORJBXjEo4uGcbXdU8jyf1tEbdbQiM5fQ+qWppv+MTURB7zM/hOeUbphhvT2gUEYlxGXYThEoJvM28xt+awli+o5ymSj5YMH25sDhPVXpOtiPuuukmANBWNqcPLtjSH/xh8hU3yNmgrTqdKuyqIdUR1uJTIdznXRUXqdta7bJI+nWZb1sXFy257KdjBhxgwA+YGWRqbL5WT8GGOL40oyKQXah/lJjCWN7sBG3grivX/d6uKUiexrPVn2pl61YQZZEnmvhnhKqTQNqhqjWexA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ghA9hfT2GgZrLWkF4+gDcny5/8iN74Z8Qm8Djtn5wbM=;
- b=WByVkMQDOpuj+cM9UudmtAkGH9NwMAKUA3Q1D18bBeMZZ159zdoQFgsuSCN6S8J0CI/EX9pw1coy0cg/NqRfiIgJ0IVAltSdAMYX61Q2L8hwJp59lKTMgobekZUPQVbcypHa8yOVVVsGhTnoTrthnUFfeqkXuah4kUiu5iCg0vurYiFqQYWvrCw1To25rzRKR0KPaJuWnsATH6N59LcsHZg5l+XVu31wOJ/GE9IbUF+6LMfK1KU+myNfKrJ62/OwYS9wsWeFpCIOR5V9QWIufUKp0k5iP3SYS7pPys1B5NI5RqPPyZ/r9wmjqXs4v8e6tdL9htV1i0EieCr/TZWtrg==
-Received: from SJ0PR03CA0196.namprd03.prod.outlook.com (2603:10b6:a03:2ef::21)
- by LV2PR12MB6016.namprd12.prod.outlook.com (2603:10b6:408:14e::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.33; Tue, 2 Jul
- 2024 18:20:18 +0000
-Received: from SJ5PEPF000001F3.namprd05.prod.outlook.com
- (2603:10b6:a03:2ef:cafe::b6) by SJ0PR03CA0196.outlook.office365.com
- (2603:10b6:a03:2ef::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.32 via Frontend
- Transport; Tue, 2 Jul 2024 18:20:18 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SJ5PEPF000001F3.mail.protection.outlook.com (10.167.242.71) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7741.18 via Frontend Transport; Tue, 2 Jul 2024 18:20:17 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 2 Jul 2024
- 11:19:59 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 2 Jul 2024
- 11:19:58 -0700
-Received: from Asurada-Nvidia (10.127.8.13) by mail.nvidia.com (10.129.68.8)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Tue, 2 Jul 2024 11:19:57 -0700
-Date: Tue, 2 Jul 2024 11:19:56 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Will Deacon <will@kernel.org>
-CC: <robin.murphy@arm.com>, <joro@8bytes.org>, <jgg@nvidia.com>,
-	<thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v9 4/6] iommu/arm-smmu-v3: Add CS_NONE quirk for
- CONFIG_TEGRA241_CMDQV
-Message-ID: <ZoREzIAqzyamQBWL@Asurada-Nvidia>
-References: <cover.1718228494.git.nicolinc@nvidia.com>
- <d20dc9939523fac490bc02e57d7836f680916a36.1718228494.git.nicolinc@nvidia.com>
- <20240702174307.GB4740@willie-the-truck>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F5D31DFFC
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 18:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719944527; cv=none; b=bUbYNh5YJNnvjYOVMIEcIffUEF23syyT+OAoVIFWGgVhUNHKtyNpM0fUlf6HVuWm+rQVhPgpDAnC/Yv0oQUnjiqId3yGGjVYlSWpBjACgEFSlmvnqAVGG6CJjeaJNqRXF6BjrqQAQKXYf6yLBIF3vHSe1Nmnf0yeTJVln1+6qyQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719944527; c=relaxed/simple;
+	bh=E2J2QkQQsRJmh3/tlADcUy8VsBpOGKquPnoZlertLNM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c3se97HmiMVwann8fyFmAdF8hrXYLDnA1YX/yUwAWhIligV0ja8WDBwnMA8mpKJDK2NedTppYNDp14fA5UGybNoJv0fp5siwX1PSFI3m8+cyCx6wmKT59ZekLZarWoRNK2Zk2xoGt4GetYX6wQD6+fLFQG9vgeNB4Lm3uQmW+cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ry5Q7izp; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52ce6c8db7bso6996041e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 11:22:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1719944524; x=1720549324; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E2J2QkQQsRJmh3/tlADcUy8VsBpOGKquPnoZlertLNM=;
+        b=Ry5Q7izpTH4+NNPS2oYUY4w7pO+teqnbGK5a64T532AOhNFA4rXBOEQM5O/yOjnmBa
+         usoic2JpCor1kAVXSZWOlL90o5nQBXsVN8xpBGD/vDMUIo7O1n+2bE1CvymIKHcqBP9S
+         nHbWj5aaZVflMKobHhEbijt6BEPFJR8ja7FCQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719944524; x=1720549324;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E2J2QkQQsRJmh3/tlADcUy8VsBpOGKquPnoZlertLNM=;
+        b=IN1iiqdbUFHuJMPUZCjXI3o8aFHI2E4F1ADZmqJLUm++/BG3ejhNJoCFOlpOYlsgCM
+         U8C+DS60xE1Fqm9TvTSYAqWsWVwyq5Ilal/f6N8sH82fzNBqLTrAISzivueNjT7/6A6J
+         d0JB1rSFsMNl7qD/lekCRgVN0ffHPJilfm3rgIoghpeEj1kCaew3ZfiXVLhqxEUyZpdu
+         sS5YZfuDwQo3cRdjbd0bK5AJHoJZw4RHrBaGhwha+9aleuoRf9vUVGZ9X6u8Srbx+uZy
+         l+V2kpRNPHQl7sg+jHOJ51+/i+OybXkdnzAQ66EEGmy5MXte3gdlUAZaq+eSgSgNqnla
+         vevg==
+X-Forwarded-Encrypted: i=1; AJvYcCW5wQSyr0sNTZpmFgzXlBqh2TuEgCeYwR/fqUtLnQGpB1CU3psUy+CFZHxuLkk+vt64ZFo0D/iiY0SFJHBvbueJJBmz0YsRmPhNPXQF
+X-Gm-Message-State: AOJu0YyAFCZXx3aF9xClrQxL0ogdfKUt3ReM6tPNGrZS8Z7C78t3Yvt6
+	OIUvNfy3dLwdcVM5kX2Jt1zFQoEbdcsFeCdF33Kh+K5lVin7g59g/IJ1GV//RcRwXJRnbFw64o2
+	u1A==
+X-Google-Smtp-Source: AGHT+IEclaQ0c2FpfZx2xTbrFThyN/yQ68VH02nmbOo3xn6zQCxlCGQglMLv5EdumtLS/rGy0ytoQA==
+X-Received: by 2002:a05:6512:1595:b0:52c:9d38:9df1 with SMTP id 2adb3069b0e04-52e82651a6fmr7012978e87.10.1719944523993;
+        Tue, 02 Jul 2024 11:22:03 -0700 (PDT)
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab3b3bdsm1888762e87.288.2024.07.02.11.22.02
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Jul 2024 11:22:02 -0700 (PDT)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52cd717ec07so5654787e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 11:22:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWhScROjwToDPwtPgujykxlcMFhlZHEsxRKBDVmVzzuNG9RwuTWPdOihMYASo2cIsfvpcE28TWIUQgHlmwof8KedYIF6LEf49xYFrMi
+X-Received: by 2002:a05:6512:3056:b0:52c:dea8:7ca0 with SMTP id
+ 2adb3069b0e04-52e8270faf7mr5904357e87.55.1719944521845; Tue, 02 Jul 2024
+ 11:22:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240702174307.GB4740@willie-the-truck>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F3:EE_|LV2PR12MB6016:EE_
-X-MS-Office365-Filtering-Correlation-Id: aacfebf3-fed4-4671-1707-08dc9ac3a064
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Qu62bWmkV62F+TK72P4IWmeqOCFbMq3cuo01VOlTEc1zcizqjz47trAN1zzm?=
- =?us-ascii?Q?VvpSv2ivdSpu9Vn/MOHX7eiaV210tFv1RXX4YxOqktxldElKzm75USoaW09b?=
- =?us-ascii?Q?jXmuTNV5g6SBddHUzn7eJuziYwoSz6GXsEdYEjBWrwPxzupoCz5WXbaaDZPV?=
- =?us-ascii?Q?/5w2OruDj3j9+dbf/5ZbW61pOZQktqoXJ2Zu3juMdgMryeDk/o4Qun+E1D3u?=
- =?us-ascii?Q?hmOaCjUF6nLE9LEeuvLtKetBHEhUjDULwxNd6lJD/hrWCxLhJGLIGGQZx3ah?=
- =?us-ascii?Q?Gc5BmFuJsz4sXx691JNWWz73A8yZ4NqfYTeleq5olOF+bbmDtMt/kOeXsIdR?=
- =?us-ascii?Q?qT2KQy+01AumbfyLi9Mn5shTW+BqG8/CtuEVaGLN9YaKFgAwsF3w1QOK2jaZ?=
- =?us-ascii?Q?k0vaejKQBPRPJLT7VPc4yPLYjZKe95piVdsTW1AcB/TiOwVpHqoP3A1p//o7?=
- =?us-ascii?Q?06sG27seMTm19J/lqCmz3yKqwmqU6t+gIDRQA+iggWtB8O//m3nVkSUoVG67?=
- =?us-ascii?Q?q1BTm+BDrSg4F9CciKtUAFITQuD2qaypluaMVB1Q0LwH8D8du/CyZsn3VQXM?=
- =?us-ascii?Q?cHis8QJbqS91EFH2CstZN6V0/C70/+3Uu37b7NxAREsva4PbQqsyNYq8SiR3?=
- =?us-ascii?Q?Ngu9aCZ5xBfzIyuaEBDcy7ViY2mr9xBccQJimj85HW4acgJyFYxsKmoi4mcX?=
- =?us-ascii?Q?miCMBjNbra7KxSPKpJbCWhFWFO47Jh7tilbnr03/kAZLA6x+TCIW9DtTE5Bb?=
- =?us-ascii?Q?NZMu/KlP2u06NUtolChoSQUesiSTqEW00wcwNsIBMdKhAAWtP5T3ZqI0I2WU?=
- =?us-ascii?Q?PwdN5vq3YvEDer9G/ZzyQKBdAq2B83YU5tNcF14HUOd297NGpMi5pLMTPFgq?=
- =?us-ascii?Q?HDjUDVWEUz9FbVDUBjnmZ9tl2IQYTMNr5D28rNzvagpmAMJ37t45SXvugdRy?=
- =?us-ascii?Q?ZQLJxtUBXWZiv8fd0rLgsrL2F75a4zLPzQTO2FoM89GwxKBT4NdnPtvZ5Zkt?=
- =?us-ascii?Q?BRM2LKtO9oAioGOSOG0QueW9o3hyUPLnZNPJNyXiHNfGQ8uVw5L+/3a68eGI?=
- =?us-ascii?Q?qlBBG37Oqhnb46/qfasH6npqSrRlfGiRLq8lHiHUh7H3BcZBeFo90vwQJxNA?=
- =?us-ascii?Q?jqtpz5Qz6wJCAWJBvcviF12+9WLgWEVNTpLgSl10i8UHo8r8V+9s1A0MoX5q?=
- =?us-ascii?Q?H198JdH3ZYNZ3ZkU0cx7BoedV4nMOgpe2BeWH4jpRTc7SC3YYtiDST/5KucA?=
- =?us-ascii?Q?mF/L9FYMcz8JxfsNC1p1JZk7Nn11i4UwdzT9/zV23I0Xdtu+45CtKJeOF+j3?=
- =?us-ascii?Q?liEACfxp4YncJCR901Q/QidaKnse+xZptMW1Vzp2vDKcsQyMbNZeA/mI4Sum?=
- =?us-ascii?Q?nOhWcs97RVbQrOgwzB4tZY7dvWWTYXnSCyR2M8qllFy56yOWmRzHXKk/i20H?=
- =?us-ascii?Q?oPnzWeqh5lGQ5Sxwzk5RMAGl+LVqnuT9?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jul 2024 18:20:17.9825
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: aacfebf3-fed4-4671-1707-08dc9ac3a064
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001F3.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB6016
+References: <20240418060626.431202-1-yu-hao.lin@nxp.com> <20240418060626.431202-2-yu-hao.lin@nxp.com>
+ <Zk6TklTIbxZxIWyb@google.com> <PA4PR04MB9638DC958102D07A7B7084B6D1F52@PA4PR04MB9638.eurprd04.prod.outlook.com>
+ <CA+ASDXOE2Pwv3kRhwkAd1e3+U8zxZi7cX0TeLDkycQya9xkdPA@mail.gmail.com>
+ <PA4PR04MB963875C85CFFA0EE2E914BEAD1F52@PA4PR04MB9638.eurprd04.prod.outlook.com>
+ <CA+ASDXMzHRs=CeyVeMbY44ornTa7f8G3ek3bFeyX39QAwr5bog@mail.gmail.com>
+ <PA4PR04MB96380A04A6830AB69024E4B2D1F62@PA4PR04MB9638.eurprd04.prod.outlook.com>
+ <ZnRsfiau_JSWBXTZ@google.com> <PA4PR04MB9638E38BF0C8391582EDB121D1C92@PA4PR04MB9638.eurprd04.prod.outlook.com>
+ <PA4PR04MB9638F352F7026C4DFBD8C562D1D32@PA4PR04MB9638.eurprd04.prod.outlook.com>
+ <CA+ASDXPjT1DywGG_7vVVKfRM-JCO8pBq0jm=yRGvYci2omnkNA@mail.gmail.com> <PA4PR04MB9638B0940ED592CB80A883BFD1DC2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+In-Reply-To: <PA4PR04MB9638B0940ED592CB80A883BFD1DC2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+From: Brian Norris <briannorris@chromium.org>
+Date: Tue, 2 Jul 2024 11:21:48 -0700
+X-Gmail-Original-Message-ID: <CA+ASDXPg86bzZDVeXRz+021RpbhzDm0zg6_Uqpoo4AJybvMbTg@mail.gmail.com>
+Message-ID: <CA+ASDXPg86bzZDVeXRz+021RpbhzDm0zg6_Uqpoo4AJybvMbTg@mail.gmail.com>
+Subject: Re: [EXT] Re: [PATCH v10 1/2] wifi: mwifiex: add host mlme for client mode
+To: David Lin <yu-hao.lin@nxp.com>
+Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvalo@kernel.org" <kvalo@kernel.org>, 
+	"francesco@dolcini.it" <francesco@dolcini.it>, Pete Hsieh <tsung-hsien.hsieh@nxp.com>, 
+	Francesco Dolcini <francesco.dolcini@toradex.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Will,
+On Tue, Jul 2, 2024 at 4:23=E2=80=AFAM David Lin <yu-hao.lin@nxp.com> wrote=
+:
+> I want to confirm with you:
+> For patch v11:
+>
+> [1/2]: Carry your "Acked-by" tag with following comment put to the code
+> used to hook probe_client().
+>
+> "hostapd looks for NL80211_CMD_PROBE_CLIENT support; otherwise, it
+> requires monitor-mode support (which mwifiex doesn't support). Provide
+> fake probe_client support to work around this."
 
-On Tue, Jul 02, 2024 at 06:43:07PM +0100, Will Deacon wrote:
-> On Wed, Jun 12, 2024 at 02:45:31PM -0700, Nicolin Chen wrote:
-> > The CMDQV extension in NVIDIA Tegra241 SoC only supports CS_NONE in the
-> > CS field of CMD_SYNC. Add a quirk flag to accommodate that.
-> >
-> > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> > Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> > ---
-> >  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 8 +++++++-
-> >  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h | 3 +++
-> >  2 files changed, 10 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> > index c864c634cd23..ba0e24d5ffbf 100644
-> > --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> > +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> > @@ -345,6 +345,11 @@ static void arm_smmu_cmdq_build_sync_cmd(u64 *cmd, struct arm_smmu_device *smmu,
-> >                FIELD_PREP(CMDQ_SYNC_0_MSH, ARM_SMMU_SH_ISH) |
-> >                FIELD_PREP(CMDQ_SYNC_0_MSIATTR, ARM_SMMU_MEMATTR_OIWB);
-> >
-> > +     if (q->quirks & CMDQ_QUIRK_SYNC_CS_NONE_ONLY) {
-> > +             cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_CS, CMDQ_SYNC_0_CS_NONE);
-> > +             return;
-> > +     }
-> > +
-> >       if (!(smmu->options & ARM_SMMU_OPT_MSIPOLL)) {
-> >               cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_CS, CMDQ_SYNC_0_CS_SEV);
-> >               return;
-> > @@ -690,7 +695,8 @@ static int arm_smmu_cmdq_poll_until_sync(struct arm_smmu_device *smmu,
-> >                                        struct arm_smmu_cmdq *cmdq,
-> >                                        struct arm_smmu_ll_queue *llq)
-> >  {
-> > -     if (smmu->options & ARM_SMMU_OPT_MSIPOLL)
-> > +     if (smmu->options & ARM_SMMU_OPT_MSIPOLL &&
-> > +         !(cmdq->q.quirks & CMDQ_QUIRK_SYNC_CS_NONE_ONLY))
-> >               return __arm_smmu_cmdq_poll_until_msi(smmu, cmdq, llq);
-> >
-> >       return __arm_smmu_cmdq_poll_until_consumed(smmu, cmdq, llq);
-> > diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> > index 180c0b1e0658..01227c0de290 100644
-> > --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> > +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> > @@ -543,6 +543,9 @@ struct arm_smmu_queue {
-> >
-> >       u32 __iomem                     *prod_reg;
-> >       u32 __iomem                     *cons_reg;
-> > +
-> > +#define CMDQ_QUIRK_SYNC_CS_NONE_ONLY BIT(0)  /* CMD_SYNC CS field supports CS_NONE only */
-> > +     u32                             quirks;
-> 
-> Please can you use the existing smmu->options field instead of adding
-> another place to track quirks? Or do you need this only for some of the
-> queues for a given SMMU device?
+Sure. I never actually acked this patch, but you can have my preemptive:
 
-VCMDQs are extension of a regular SMMU (with its own CMDQ). So,
-SMMU CMDQ still supports SIG_IRQ for the CS field, while VCMDQs
-could only support SIG_NONE. In another word, this quirk is not
-per SMMU but per Queue.
+Acked-by: Brian Norris <briannorris@chromium.org>
 
-I can highlight this in the commit message, if that would make
-it clear.
+> [2/2]: Carry your "Acked-by" tag with the modification of mwifiex_mgmt_st=
+ypes.
 
-Thanks
-Nicolin
+Yes.
+
+Brian
 
