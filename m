@@ -1,72 +1,68 @@
-Return-Path: <linux-kernel+bounces-237585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2E7A923B28
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:15:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A331923B2D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:16:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 154EA1C22536
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:15:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDC2F283EAF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:16:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF3B157493;
-	Tue,  2 Jul 2024 10:15:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7DF157483;
+	Tue,  2 Jul 2024 10:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="v12porom"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="FF4DRMl+"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381C2374F5;
-	Tue,  2 Jul 2024 10:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E23B1514DC;
+	Tue,  2 Jul 2024 10:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719915337; cv=none; b=Fx7YFYLkojaGOr3w2aYdTtcTozgJYKVRtBgXL2LEKeq2SQyiEFJRqU1twefYS5iGLYjOILfBY5Ae9QIqN8BsupgNjMJ1nnnydNYDOsyS9cOCeEBSMD79+re71i/PDyJCHTjlHhvqPy1UuI/MjjV8rxBOXOWDW4FSxvBTKhyOO+Y=
+	t=1719915371; cv=none; b=TFlvqu8G5O8tBhAnNiYG3rPZ0q8JUy5GQ5ANwTuQ//SVCjXJ15rU/NpyWA9vje+BFddwkkdUTJ6QZk/VS+YEdvOcWDYIkDygBCaW7TNkhbp2V2Kv6mzJ0F2wgp67F0fUwx7jHgQ4/05T544iUXdHnEWmni8zpcACtOdpyEm2/8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719915337; c=relaxed/simple;
-	bh=0zbOiOzWTEDtxycxNU5fkEBa+pCqvyOmxAilew1VkjE=;
+	s=arc-20240116; t=1719915371; c=relaxed/simple;
+	bh=xEsM1aO2uLx2f3Z+Syzd55lzyPZVaHlu7JnC0dElj9s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oJoMOBdaHn3zQ/GYrnqr8d1OwnXLzwbftZTPMR2uVMNf7QOPZi9KXvapj34IblW+N3AkmsQ894+0X+bM1YtYkNI0Ckq5OYArBcLiGCBr2ijt06THp4NsaW9WZPrCQvMzx8Y0SdvoInNz7j5GJFW99dEa2owJSy9HkfPpacY14S8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=v12porom; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=KSgvP1Di8b6uqIyo89tU+EzKugA+qtNmAa5rkGbhT9g=; b=v12poromr+fZkYrQd7dCNRZns4
-	kQPR9eJZzqollNvXRmLQcfb/Jt0FJkDN0CL8IrsAinIZw1xU0Kkt1kCajt6gwlIl7tQcEDpvYA75S
-	k051OxYAUvzuQ+Ie3sZBCm/Dg6BCewXqhbnY9wDXDlcUjaC//M0znsKe9Yvv7Z0SS7HN9bi4F5o5u
-	pkIerq2hdEsG/M/EB/Nenig3NUOOuCUTtw4C8mXV8bC8tSXp7jHrWamDAnV045LWowBqUgCxQ/FBw
-	bCbtMUqqoowMXm9VrSqtrrh2AePURjzbCAZ2CWoN++LCfTkqaxWx109/U4NphifKRFi3YFW4l3fR9
-	AI/jgJ+w==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46258)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sOaXi-0003B4-2S;
-	Tue, 02 Jul 2024 11:15:22 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sOaXk-0001rb-7y; Tue, 02 Jul 2024 11:15:24 +0100
-Date: Tue, 2 Jul 2024 11:15:24 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Romain Gantois <romain.gantois@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/6] net: phy: dp83869: Disable autonegotiation
- in RGMII/1000Base-X mode
-Message-ID: <ZoPTPH3YQYMMe4YZ@shell.armlinux.org.uk>
-References: <20240701-b4-dp83869-sfp-v1-0-a71d6d0ad5f8@bootlin.com>
- <3818335.kQq0lBPeGt@fw-rgant>
- <ZoPHQms2bDo5zWZm@shell.armlinux.org.uk>
- <2614671.Lt9SDvczpP@fw-rgant>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MchfnE41jIdjIDpF5taFmozhiUgfwanIJag5/g90FEt4qHN/8VJ38hNtuNc84N0sPsqNHMBn+qeW1CGCZhI4WtOFO5V4Fy9uAfJT4OruN4eInQM/2l+hGKkVdmSz/wVUFu1CsdlB8x4tP6eKhGcJJ3ciOB68i4DdwZyi0ySAb9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=FF4DRMl+; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4WCzMS3Z0Kz9sQ6;
+	Tue,  2 Jul 2024 12:16:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1719915364;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hGA34wKwysx5NC5w2uPw2pO5+dBtQxqRiC/Wy1SKQaw=;
+	b=FF4DRMl+i63yqfv5l5ySVR46sxgKZK3PxHrh7stGuzCkk65s4Cb6QPPwRLa9e112elGwQY
+	wFUIrQf85JyE+Qw9huGuvKNmS8dJtZI0wn/YmDK+sr8f/K5/QsI+FrKiOmsonLkSybqi0D
+	4AS7g1s6MyC+BRw1PAbOw65J3doVTw4+TAIef+7RMyXgB9gj5gYQdGJyramKdyyFyxourJ
+	jZ9HXGRpsMxstbhmDmQy5vPyWKvGPScGog37mvQG+69cUVpXLxG1llo16HbPr9AqtOIrCy
+	c0zu3BgehargAVk+XWlN5MQ4ZVawpxs9RQpzN4WfQvKCxHuG3OfgMchJ/5lpfQ==
+Date: Tue, 2 Jul 2024 10:15:56 +0000
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: david@fromorbit.com, willy@infradead.org, chandan.babu@oracle.com,
+	djwong@kernel.org, brauner@kernel.org, akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
+	linux-mm@kvack.org, john.g.garry@oracle.com,
+	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
+	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org, Zi Yan <zi.yan@sent.com>
+Subject: Re: [PATCH v8 06/10] iomap: fix iomap_dio_zero() for fs bs > system
+ page size
+Message-ID: <20240702101556.jdi5anyr3v5zngnv@quentin>
+References: <20240625114420.719014-1-kernel@pankajraghav.com>
+ <20240625114420.719014-7-kernel@pankajraghav.com>
+ <20240702074203.GA29410@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,59 +71,94 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2614671.Lt9SDvczpP@fw-rgant>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <20240702074203.GA29410@lst.de>
+X-Rspamd-Queue-Id: 4WCzMS3Z0Kz9sQ6
 
-On Tue, Jul 02, 2024 at 11:42:04AM +0200, Romain Gantois wrote:
-> Hello Russell,
+> > +fs_initcall(iomap_pagecache_init);
 > 
-> This seems to be a limitation of this particular PHY. From the DP83869
-> datasheet:
+> s/iomap_pagecache_init/iomap_buffered_init/
 > 
-> "7.4.2.1 1000BASE-X
-> The DP83869HM supports the 1000Base-X Fiber Ethernet protocol as
-> defined in IEEE 802.3 standard. In 1000M Fiber mode, the PHY will use
-> two differential channels for communication. In fiber mode, the speed is not
-> decided through auto-negotiation. Both sides of the link must be
-> configured to the same operating speed. The PHY can be configured to
-> operate in 1000BASE-X through the register settings (Section 7.4.8) or
-> strap settings (Section 7.5.1.2)."
+> We don't use pagecache naming anywhere else in the file.
 
-I think you grossly misunderstand 1000base-X there. You seem to be
-equating auto-negotiation with negotiation of speed. That isn't
-necessarily the case.
+Got it.
+> 
+> > +/*
+> > + * Used for sub block zeroing in iomap_dio_zero()
+> > + */
+> > +#define ZERO_PAGE_64K_SIZE (65536)
+> 
+> just use SZ_64K
+> 
+> > +#define ZERO_PAGE_64K_ORDER (get_order(ZERO_PAGE_64K_SIZE))
+> 
+> No really point in having this.
 
-Clause 37 auto-negotiation doesn't negotiate speed. It negotiates
-other aspects of the link. See 37.2.1:
+Hmm, I used it twice, hence the define. But if we decide to get rid of
+set_memory_ro(), then this does not make sense.
 
-LSB                                                                      MSB
+> 
+> > +static struct page *zero_page_64k;
+> 
+> This should be a folio.  Encoding the size in the name is also really
+> weird and just creates churn when we have to increase it.
 
- D0     D1    D2   D3   D4    D5   D6   D7   D8   D9 D10 D11 D12 D13 D14 D15
-rsvd rsvd rsvd rsvd rsvd      FD   HD PS1 PS2 rsvd rsvd rsvd RF1 RF2 Ack NP
+Willy suggested we could use raw pages as we don't need the metadata
+from using a folio. [0]
 
-FD/HD - full duplex/half duplex capability
-PS1/PS2 - pause capabilties
-RF1/RF2 - remote fault bits
-Ack - Ack bit
-NP - Next Page bit
+> 
+> 
+> > +	/*
+> > +	 * Max block size supported is 64k
+> > +	 */
+> > +	WARN_ON_ONCE(len > ZERO_PAGE_64K_SIZE);
+> 
+> 
+> A WARN_ON without actually erroring out here is highly dangerous. 
 
-So, just because the PHY documentation states that speed is not
-negotiated, that doesn't mean that negotiation is not supported.
-IEEE 802.3 *requires* AN be implemented.
+I agree but I think we decided that we are safe with 64k for now as fs 
+that uses iomap will not have a block size > 64k. 
 
-Moreover, the clue is in the name - 1000base-X. The 1000 part. That
-means it's a protocol operating at 1G speed, just the same as 1000base-T
-which only operates at 1G speed.
+But this function needs some changes when we decide to go beyond 64k
+by returning error instead of not returning anything. 
+Until then WARN_ON_ONCE would be a good stop gap for people developing
+the feature to go beyond 64k block size[1]. 
 
-BTW, with twisted pair, negotiation does include speed, and the result
-of that is used to select between 1000base-T for 1G speeds, 100base-Tx
-for 100M, and 10base-T for 10M - these each are separate protocols.
-There is no 1000base-T operating at 100M or 10M speeds - that just
-doesn't exist.
+> 
+> > +
+> >  	bio = iomap_dio_alloc_bio(iter, dio, 1, REQ_OP_WRITE | REQ_SYNC | REQ_IDLE);
+> 
+> Overly long line here.
+> 
 
-Hope this clears up the issue.
+Not a part of my change, so I didn't bother reformatting it. :)
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> > +
+> > +static int __init iomap_dio_init(void)
+> > +{
+> > +	zero_page_64k = alloc_pages(GFP_KERNEL | __GFP_ZERO,
+> > +				    ZERO_PAGE_64K_ORDER);
+> 
+> > +
+> > +	if (!zero_page_64k)
+> > +		return -ENOMEM;
+> > +
+> > +	set_memory_ro((unsigned long)page_address(zero_page_64k),
+> > +		      1U << ZERO_PAGE_64K_ORDER);
+> 
+> What's the point of the set_memory_ro here?  Yes, we won't write to
+> it, but it's hardly an attack vector and fragments the direct map.
+
+That is a good point. Darrick suggested why not add a ro tag as we don't
+write to it but I did not know the consequence of direct map
+fragmentation when this is added. So probably there is no value calling
+set_memory_ro here.
+
+
+--
+Pankaj
+
+[0] https://lore.kernel.org/linux-fsdevel/ZkT46AsZ3WghOArL@casper.infradead.org/
+[1] I spent a lot of time banging my head why I was getting FS corruption
+when I was doing direct io in XFS while adding LBS support before I found
+the PAGE_SIZE assumption here. 
 
