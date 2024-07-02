@@ -1,125 +1,117 @@
-Return-Path: <linux-kernel+bounces-237878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4971A923F69
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:48:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64622923F6E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:48:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC1A5B2A929
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:46:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25DB1281CD0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7EBD1B4C55;
-	Tue,  2 Jul 2024 13:46:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD321B581A;
+	Tue,  2 Jul 2024 13:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WPzHcDfW"
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hL1xQkTe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C471A38DB
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 13:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706791B5811
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 13:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719927963; cv=none; b=iBDeaQloHNPsUbBCJ7C6GptUIxIjycqUuLidemsxWFFCSxPfwb2xnCEgJxfXidTjH03JcpYk2d6dMSai6FMllLzNAvADpMFhGnL76+38I2LJEK1H8kzHXNRATFfpiGuI2u2G+ZxEOkS3dcu1TkJmFo/0OKroDfHOSE22aRUAg74=
+	t=1719928088; cv=none; b=AXv7uFIeJdHiSnJYufG/DyiEGmR/7PkTa9wMzrNUYT1U16fk+CZL2Rs1h8gsGE+GpE8DuxKTeJH82hRioRMu56kPBA21J3lbu/rbobuzD1WhX06aSwUr/DgVtkhdFzJ/9q9Bat6Pw3nq/eo6iJe6y5YINpGxtE6wkNIVlKTeXNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719927963; c=relaxed/simple;
-	bh=VGdyH+yFJZICp/mwbvFetq0ibB2CUajUHzE5kfWvTEo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rgCbLJPEi4qOsDcm7iFDPi7cJt2aRpxd7F04P/vMfdKUBxDx9yNjxszyswsaa75zOii5Tu+vFvkUgjzR7rP7OPO2Rdq3vSA3zs0vY2uYdtSOsqA3cu3XqZFXwqjygAHJnxMcVT+5x0fGsG6raqX1hr5CqviFCrdj8aQyZ2idoxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WPzHcDfW; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-25e04a7d9f1so37154fac.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 06:46:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719927960; x=1720532760; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=NiyhmXpZS1r7WZeDrgRFtefnzEGTGZ2jJsCR0mdYOhA=;
-        b=WPzHcDfWcap/uSpa3W+MXnbwL2A7RkXNp2gKyn2KGjkbjv/CTyaa4kec4b9RCEVsiA
-         UwGhLQnzVTwd3uKoTU5inbWDY1cf7AMz8j8A8qia02i8SqYYOPdoo1EtAuf1Q0dA1AUy
-         l6titFLHPsgEbyoiNOiQC11oeJbf+uNmcRSjkTbv45rkQmCzL+MSyVEo+UIjuKuRnWtx
-         GyvQk/O6OqeqHp6xT0f/LbA7D5HCWBR9otOWtTkLVlBFkLsjg2dWV5WC07mOmovoiJyR
-         lIYb2rTAhepu3EelekSAkdG5h39dUagzpy+XWJNSgixhZXOK1FU7VXWtXlQ1OR6Qnisa
-         7z1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719927960; x=1720532760;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NiyhmXpZS1r7WZeDrgRFtefnzEGTGZ2jJsCR0mdYOhA=;
-        b=HRfZ04G/GWViMKasIDWYsa5ximcLyHyMLwMd8v4Jwd2chWjScFX6ktawxv+P8eST5c
-         CNtSVsaC6YxV3LMVf23QlqRtFqZxIH0Rz+C0GevVQYpjuiTyzprxPmQhh8wG4NXk3RtR
-         Yb4ra2xJDRUjQQxzOfcgRq5EDgEhwZKdN/VcPh+Z3ab2aLuVWNLmdbYgJm1gJX+5jh6U
-         pxxp9Qu/+oKFX5KJGXp2rnoAjj542TIHfQvPWqtJAPhyaVTFZBo1lw767nMETHgU7yAI
-         9FG7RiCI7Cr13J6FEQaqLvMb2F3ExMn5iUIEd6xNvPyCd1qp1/0608u4UNN68yFQoxqx
-         CI1g==
-X-Forwarded-Encrypted: i=1; AJvYcCU6OUnecglk9Qzlvfma0SyG4IAud2VrGNx3NLVemBD5mM6m9v10ZvHR4E7R9PzGzpFLdVv4H7Sci/QWh1IdztA2sxBi9hjTIEAZiiYD
-X-Gm-Message-State: AOJu0Yx5lJ+fRgybIbB7t1ptTIh8vSmT0KJJHSLvGw1G9DZb2Rh9zlZ1
-	jdHzXxpOzADOC7mG+KNYn0kU2KqUNvx0Ht+9LYRQcAnGj4DJTjTzcd+OZwMbsDg=
-X-Google-Smtp-Source: AGHT+IFpG/+NxuDQTZzifvzctc9H1OWBvWlhgyHr9DRMBTOjzX5KQcOawMFkjTy2lBWhf7Nw/PdOiQ==
-X-Received: by 2002:a05:6870:6494:b0:24f:ebcd:6aa9 with SMTP id 586e51a60fabf-25db338f930mr7423045fac.1.1719927960594;
-        Tue, 02 Jul 2024 06:46:00 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:a6f1:b7be:4c8c:bf62])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25d8e1f0490sm2227612fac.20.2024.07.02.06.45.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 06:45:59 -0700 (PDT)
-Date: Tue, 2 Jul 2024 15:45:55 +0200
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: =?iso-8859-1?Q?=C1gatha?= Isabelle Chris Moreira Guedes <code@agatha.dev>
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	=?iso-8859-1?Q?=C1gatha?= Isabelle Chris Moreira Guedes <patch-reply@agatha.dev>,
-	Jookia <contact@jookia.org>
-Subject: Re: [PATCH] staging: Fix missing warning/taint on builtin code
-Message-ID: <ad745b51-0aef-4a16-95a4-3514846e6504@suswa.mountain>
-References: <yf3ewok3u7fu7f4yqlcovcvedkhyjtibvwzlgbcjwf7ijcsktt@vrk54srlnk2n>
+	s=arc-20240116; t=1719928088; c=relaxed/simple;
+	bh=cvHBMVkFw0cdu8CqXT2tcn8q1A8BbAKQJOw7cbYh+PU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=SH95GM8oasa2blKT8+YHmotAhTFrjehAhRHezaAwgc8AqlW+oMF9Qsc/ggag2qD1cWLVfoM//miZJUhIrLyQrSWMbAWnxGqb5oaDKvHivWOyEgHvCTUCW4/BrWivvcTbWoDDYM1N9uRilAH02gupADYUeVdF+5T4DZuNfqGaJdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hL1xQkTe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DA54C4AF10;
+	Tue,  2 Jul 2024 13:48:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719928088;
+	bh=cvHBMVkFw0cdu8CqXT2tcn8q1A8BbAKQJOw7cbYh+PU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=hL1xQkTe78IaQIpZ+hZSpilbOGr94FXS4BIXNKzjyG2uTOS+E2N2g4xRNTexbh2oX
+	 F6Xvc5pGyU71I9t96h2dd8/1qfxY9Gryak47fH8wHARvc/+sCJrbgL3yEvc+vH5cov
+	 vmUGU4lUZGQ4Ysnw7GwqdW3mrzHpzkESeSIS1LVlGxRM1MJDT9YqY6jwxQx1bCUcNP
+	 yTOO1txNNUdPBtyzSJzLw1sc/ADkxfKCOpSJu41iyqVYA88dOeCc8g3CkYXJiOGb0G
+	 AttlS2lZwy+WzMmMJHgNVjakYmGHSsz39puhca265ag5zm8TfR2yUo5ncy4MBCkNXa
+	 17KzUWDxxu+uA==
+Date: Tue, 2 Jul 2024 21:48:02 +0800
+From: Gao Xiang <xiang@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
+	Sandeep Dhavale <dhavale@google.com>,
+	Huang Xiaojia <huangxiaojia2@huawei.com>, Chao Yu <chao@kernel.org>
+Subject: [GIT PULL] erofs fixes for 6.10-rc7
+Message-ID: <ZoQFEp+U+689DPdO@debian>
+Mail-Followup-To: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
+	Sandeep Dhavale <dhavale@google.com>,
+	Huang Xiaojia <huangxiaojia2@huawei.com>, Chao Yu <chao@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <yf3ewok3u7fu7f4yqlcovcvedkhyjtibvwzlgbcjwf7ijcsktt@vrk54srlnk2n>
 
-On Tue, Jul 02, 2024 at 02:44:31AM -0300, Ágatha Isabelle Chris Moreira Guedes wrote:
-> diff --git a/init/main.c b/init/main.c
-> index 206acdde51f5..fca889f3bcc0 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -1602,3 +1602,23 @@ static noinline void __init kernel_init_freeable(void)
->  
->  	integrity_load_keys();
->  }
-> +
-> +#ifdef CONFIG_STAGING
-> +/**
-> + * staging_init_taint() - We need to taint the kernel whenever staging code
-> + * is initialized (from built-in drivers) or loaded (as modules) and issue
-> + * a warning the first time it happens.
-> + */
-> +void staging_taint(const char *code_id, bool module)
-> +{
-> +	char *code_type = module ? "module" : "builtin driver at";
-> +
-> +	pr_warn("%s %s: The kernel contains code from staging directory"
+Hi Linus,
 
-Needs a space after directory before the quote.
+Could you consider these patches for 6.10-rc7?
 
-> +		"the quality is unknown, you have been warned.\n",
-> +		code_type, code_id);
-> +
-> +	add_taint(TAINT_CRAP, LOCKDEP_STILL_OK);
-> +}
-> +EXPORT_SYMBOL(staging_taint);
+The most important one fixes possible infinite loops reported by
+a smartphone vendor OPPO recently due to some unexpected zero-sized
+compressed pcluster out of interrupted I/Os, storage failures, etc.
 
-regards,
-dan carpenter
+Another patch fixes global buffer memory leak on unloading, and the
+remaining one switches to use super_set_uuid() to keep with the other
+filesystems.
+
+All commits have been in -next for a while and no potential merge
+conflict is observed.
+
+Thanks,
+Gao Xiang
+
+The following changes since commit f2661062f16b2de5d7b6a5c42a9a5c96326b8454:
+
+  Linux 6.10-rc5 (2024-06-23 17:08:54 -0400)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git tags/erofs-for-6.10-rc7-fixes
+
+for you to fetch changes up to 9b32b063be1001e322c5f6e01f2a649636947851:
+
+  erofs: ensure m_llen is reset to 0 if metadata is invalid (2024-06-30 10:54:28 +0800)
+
+----------------------------------------------------------------
+Changes since last update:
+
+ - Fix possible global buffer memory leak when unloading EROFS module;
+
+ - Fix FS_IOC_GETFSUUID ioctl by using super_set_uuid();
+
+ - Reset m_llen to 0 so then it can retry if metadata is invalid.
+
+----------------------------------------------------------------
+Gao Xiang (1):
+      erofs: ensure m_llen is reset to 0 if metadata is invalid
+
+Huang Xiaojia (1):
+      erofs: convert to use super_set_uuid to support for FS_IOC_GETFSUUID
+
+Sandeep Dhavale (1):
+      erofs: fix possible memory leak in z_erofs_gbuf_exit()
+
+ fs/erofs/super.c | 2 +-
+ fs/erofs/zmap.c  | 2 ++
+ fs/erofs/zutil.c | 8 ++++----
+ 3 files changed, 7 insertions(+), 5 deletions(-)
 
