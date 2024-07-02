@@ -1,164 +1,207 @@
-Return-Path: <linux-kernel+bounces-237495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE52E9239AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:20:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAA3E9239AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:20:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7011828277E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:20:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54C3A1F22F6F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:20:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368EA155307;
-	Tue,  2 Jul 2024 09:19:30 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB721553BC;
+	Tue,  2 Jul 2024 09:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="drSqDWEg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QoAuriyS";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="drSqDWEg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QoAuriyS"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB8C15359B
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 09:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8213E155A3C;
+	Tue,  2 Jul 2024 09:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719911969; cv=none; b=QTbciH243gq5uy514yqmcZLWxRaNiv9OV6IQWrFydT0vS1bM0Gc2Otk6KjnzpcnbldOWNwgVoXzNW3B3RussUBcN5W0ZBzuvanI+SKHr5HlewJJLBHMYrgVUrjzjP3PdLdGRRKyHonzzKEG7wvqTGyf66eO4YQJwDODmolGcEcg=
+	t=1719911974; cv=none; b=OfYPaLPtjKtkrU7H6y7ZkGpcleU/fmHuny70jBWJqJo1A6E7s5WaQ1S0N2YAphqyZjiVI1yDMKYksNlZ5M76t39/SfSXk85ti6fxh4PsPDwNr+P3Pxfc1eO66nHaQQJ1wNTaVNydw++KZb6PG718YCmlbt8WaSVZcx2KdHrL+RY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719911969; c=relaxed/simple;
-	bh=cNHTFJ/n3QMWAVCGagrw8w6CJDEPeEFn4tz0HcbbJAw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Ro4EhceDzNv07yWZowUc4wCfQ7VcGv4UtcVfwlaoH/JgaAC7eSntHHhiVt+u3OGUroqG+JRTKYdQwb6wlStXU/TEmjTkR2tjRdHZacS0fe9X6uNOLmi/PDj2XzXzrEpcy1hrkpAuxzP1WCVL9Ehw9hwufJ9xKTsuzuIkwklXoNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1sOZfR-0004nV-G7; Tue, 02 Jul 2024 11:19:17 +0200
-Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1sOZfQ-006Zmn-Sx; Tue, 02 Jul 2024 11:19:16 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1sOZfQ-0003wH-2l;
-	Tue, 02 Jul 2024 11:19:16 +0200
-Message-ID: <3fe74a3fc2747c8f9a3f433352720cfed76918ba.camel@pengutronix.de>
-Subject: Re: [PATCH 2/2] reset: eyeq: add platform driver
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: =?ISO-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>, Rob Herring
-	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	 <conor+dt@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Vladimir
- Kondratiev <vladimir.kondratiev@mobileye.com>, =?ISO-8859-1?Q?Gr=E9gory?=
- Clement <gregory.clement@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>,  Tawfik Bayouk <tawfik.bayouk@mobileye.com>
-Date: Tue, 02 Jul 2024 11:19:16 +0200
-In-Reply-To: <D2EC7KK40YX5.C3G1SM3FEDJO@bootlin.com>
-References: <20240628-mbly-reset-v1-0-2a8294fd4392@bootlin.com>
-	 <20240628-mbly-reset-v1-2-2a8294fd4392@bootlin.com>
-	 <e9bfd8087ddef3d66f437719530df54a1f6529a4.camel@pengutronix.de>
-	 <D2EC7KK40YX5.C3G1SM3FEDJO@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1719911974; c=relaxed/simple;
+	bh=qeF2TTmea+TXKuPS17BGy5j7mNU9TDREIChQgFrqUo0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NXmOOejoox1Ka+rdZQ1iBlDMfZmz2PCKxMBLhk9vfSUfJ+CgBpMzMmTXFZGn0rnqABlV25osOkiyBq5I6ua4LFYXqakl1BbkBc6tvI7JwCb22I+G1k22sDczTdOG+eLFrZoSTGER7X5BYiev4VkBlgg873jYdLWfEIHVt4WHGrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=drSqDWEg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QoAuriyS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=drSqDWEg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QoAuriyS; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A160721B28;
+	Tue,  2 Jul 2024 09:19:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1719911969; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=nS4hKIOxo6Ar0oCfYeL+3M+6QKMvYD0D8Po5/l7dXz4=;
+	b=drSqDWEgPPcVGj3od8OoHz8vTGNWk/fx78KtVkkKn9R4tYz9QKxIYPkumyWhx5pJHRmmK5
+	X1UMU4+oneOPQKrX971Ty61iJ+MLpPywox2HLvKl51j6qdeaiI+XNxvxpDKS+pCicWtVg2
+	W2+vCG7+GG9lotLMZbmvg/3beQzR3yY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1719911969;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=nS4hKIOxo6Ar0oCfYeL+3M+6QKMvYD0D8Po5/l7dXz4=;
+	b=QoAuriyS0QyZSYQwZav+tbQrPFFyHFJtkNp2Hyx8wkEcJgun+jHN6YmOI0v7c+0XbPvSEq
+	ToR6Tci/k6TbJmCw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1719911969; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=nS4hKIOxo6Ar0oCfYeL+3M+6QKMvYD0D8Po5/l7dXz4=;
+	b=drSqDWEgPPcVGj3od8OoHz8vTGNWk/fx78KtVkkKn9R4tYz9QKxIYPkumyWhx5pJHRmmK5
+	X1UMU4+oneOPQKrX971Ty61iJ+MLpPywox2HLvKl51j6qdeaiI+XNxvxpDKS+pCicWtVg2
+	W2+vCG7+GG9lotLMZbmvg/3beQzR3yY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1719911969;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=nS4hKIOxo6Ar0oCfYeL+3M+6QKMvYD0D8Po5/l7dXz4=;
+	b=QoAuriyS0QyZSYQwZav+tbQrPFFyHFJtkNp2Hyx8wkEcJgun+jHN6YmOI0v7c+0XbPvSEq
+	ToR6Tci/k6TbJmCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 070231395F;
+	Tue,  2 Jul 2024 09:19:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id tchUASHGg2bPKgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 02 Jul 2024 09:19:29 +0000
+Message-ID: <5b8e6ddc-6472-4acd-a506-98bc3586f1f3@suse.cz>
+Date: Tue, 2 Jul 2024 11:19:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/6] mm/slab: Introduce kmem_buckets_create() and
+ family
+Content-Language: en-US
+To: Kees Cook <kees@kernel.org>
+Cc: "GONG, Ruiqi" <gongruiqi@huaweicloud.com>,
+ Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+ David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ jvoisin <julien.voisin@dustri.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, Xiu Jianfeng <xiujianfeng@huawei.com>,
+ Suren Baghdasaryan <surenb@google.com>,
+ Kent Overstreet <kent.overstreet@linux.dev>, Jann Horn <jannh@google.com>,
+ Matteo Rizzo <matteorizzo@google.com>, Thomas Graf <tgraf@suug.ch>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, linux-hardening@vger.kernel.org, netdev@vger.kernel.org
+References: <20240701190152.it.631-kees@kernel.org>
+ <20240701191304.1283894-4-kees@kernel.org>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20240701191304.1283894-4-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-2.78 / 50.00];
+	BAYES_HAM(-2.99)[99.94%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	RCVD_TLS_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[huaweicloud.com,linux.com,kernel.org,google.com,lge.com,dustri.org,linux-foundation.org,linux.dev,gmail.com,huawei.com,suug.ch,gondor.apana.org.au,lwn.net,vger.kernel.org,kvack.org];
+	RCPT_COUNT_TWELVE(0.00)[23];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -2.78
+X-Spam-Level: 
 
-Hi Th=C3=A9o,
+On 7/1/24 9:13 PM, Kees Cook wrote:
+>  #ifdef SLAB_SUPPORTS_SYSFS
+>  /*
+>   * For a given kmem_cache, kmem_cache_destroy() should only be called
+> @@ -931,6 +1023,10 @@ void __init create_kmalloc_caches(void)
+>  
+>  	/* Kmalloc array is now usable */
+>  	slab_state = UP;
+> +
+> +	kmem_buckets_cache = kmem_cache_create("kmalloc_buckets",
+> +					       sizeof(kmem_buckets),
+> +					       0, SLAB_NO_MERGE, NULL);
 
-On Mo, 2024-07-01 at 18:19 +0200, Th=C3=A9o Lebrun wrote:
-[...]
-> > Is there any benefit from per-domain mutexes over just a single mutex?
->=20
-> Some domains can stay locked for pretty long in theory because of Logic
-> built-in self-test (LBIST). This is the reasoning behind
-> eqr_busy_wait_locked().
->=20
-> Other domains are not concerned by this behavior.
->=20
-> More concretely, on EyeQ5, SARCR and ACRP domains can lock their mutexes
-> for a relatively long time, and for good reasons. We wouldn't want the
-> PCIE domain  to suffer from that if it happens to (de)assert a reset at
-> the same time.
+Locally adjusted to put this behind "if (IS_ENABLED(CONFIG_SLAB_BUCKETS))"
 
-Thank you for the explanation.
+>  }
+>  
+>  /**
 
-> >=20
-> > > +	void __iomem			*base;
-> > > +	const struct eqr_match_data	*data;
-> > > +	struct reset_controller_dev	rcdev;
-> > > +};
-> > > +
-> > > +#define rcdev_to_priv(rcdev) container_of(rcdev, struct eqr_private,=
- rcdev)
-> >=20
-> > Please use checkpatch --strict, and ideally mention when you ignore a
-> > warning on purpose. In this case, the macro parameter should named
-> > something else, because the last parameter to container_of must be
-> > "rcdev" verbatim. This only works by accident because the passed
-> > parameter also happens to be called called "rcdev" at all call sites.
-
-Thinking about this again, it would be even better to turn this into a
-static inline function instead.
-
-> I have let this CHECK from `checkpatch --strict` slip through indeed.
-> Other remaining messages, with explanations, are:
->=20
->  - WARNING: added, moved or deleted file(s), does MAINTAINERS need
->    updating?
->=20
->    This is done in a single patch [0] in the MIPS series to avoid
->    conflicts in between series.
->
->  - CHECK: struct mutex definition without comment
->=20
->    This is about the above mutexes field. Do you want a code comment
->    about the reasoning for one mutex per domain?
-
-Yes, that would be nice. I'm not pedantic about the lock comments
-because in reset drivers it's usually pretty obvious what the lock is
-used for, but mentioning that the mutexes cover register read-modify-
-write plus waiting for LBIST on some domains seems like a good idea.
-
-[...]
-> >=20
-> > > +static void eqr_assert_locked(struct eqr_private *priv, u32 domain, =
-u32 offset)
-> > > +{
-[...]
-> > > +	case EQR_EYEQ6H_SARCR:
-> > > +		val =3D readl(base + EQR_EYEQ6H_SARCR_RST_REQUEST);
-> > > +		val &=3D ~BIT(offset);
-> > > +		writel(val, base + EQR_EYEQ6H_SARCR_RST_REQUEST);
-> > > +		writel(val, base + EQR_EYEQ6H_SARCR_CLK_REQUEST);
-> >=20
-> > This looks peculiar. Why is it ok to write the value read from
-> > RST_REQUEST into CLK_REQUEST?
->=20
-> What is abstracted away by the hardware on EyeQ5 is not anymore on
-> EyeQ6H. Previously a single register was used for requests and a single
-> register for status. Now there are two request registers and two status
-> registers.
->=20
-> Those registers *must be kept in sync*. The register name referencing
-> clock is not to be confused with the clock driver of the
-> system-controller. It is describing a register within the reset
-> controller.
->=20
-> This hardware interface is odd, I might add a comment?
-
-Yes, please. With the knowledge that those registers must be kept in
-sync, this goes from strange to obvious.
-
-
-regards
-Philipp
 
