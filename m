@@ -1,118 +1,164 @@
-Return-Path: <linux-kernel+bounces-238203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B24FE9246BF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:56:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AD3C9246C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:58:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D49C284448
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:56:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24855B22017
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A584D1C0DF2;
-	Tue,  2 Jul 2024 17:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1FCE1C2309;
+	Tue,  2 Jul 2024 17:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="neuX7k4j"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="mvSgJCG5";
+	dkim=permerror (0-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="2L5SkDMM"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566301BE873;
-	Tue,  2 Jul 2024 17:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719942990; cv=none; b=ikL3XVUDWoSjiA3X9u6bhBQcu99Iu+uRo1akjjEcfWQo6b3EtPxVvdo0j9Q9mwxIRTdqRkcbmwy0P0yu8vMbbEPvLf1Og4do+H/LXUtg+GHTE1u4U/nbaUV0O7MkTeEFq78K0AIhf10wjuejdZsutmvOz5GRoYXbf7MJqQTA02k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719942990; c=relaxed/simple;
-	bh=Apev7mV1TmbmNliNcO9E2giuYRzMGlA8lEdXvzWk5K8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hr9mFwg0yiYisWI7rtJKkEsMVckDrZDxX36YPvqz3u+hjb44ayPIvwgM22AGZJTjXTgs5fbjNFP+/N0W3Y2DxH4amFNVnUFmDgyQBNcdiUv/NNr7J9YzPN7MuUOa5TJhXH75bKbpnxyaRYUKooy7A2ZLJsEhM8c7VleqGp73eNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=neuX7k4j; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719942989; x=1751478989;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Apev7mV1TmbmNliNcO9E2giuYRzMGlA8lEdXvzWk5K8=;
-  b=neuX7k4jwwnJRenC9sc1wHBwyYOwfqdhO1HwLVGux5nQsSpgnH/DjYC7
-   /yXtap0RVqI43zysyT7svqZej0Gwc3Z57TssF85d1hzTyMGtqonfCFpXF
-   RZEe7Fzo8feFhZMkMaWer7gUlLi9pZs3KUhgw0emeGxGmSKjgDyCvMOnH
-   bZaKShb9ZwtGlrpKxdn+Xnf2iFozowbHOlrihxnC8kxj9E+lrzfH1CWIJ
-   X0S5wQVvnmrEWut4I93L5pM1gGegzhyrqOBzZoendyF4liHR7EYMdqRnn
-   VxyUjRBoxQWX14yBB+UxPqadi+n03pstZ6/28lNF39R919/VjElHwqpKS
-   Q==;
-X-CSE-ConnectionGUID: tPjIfqw8Riig4GoSv+2nWA==
-X-CSE-MsgGUID: RaZthrMPR8WQ8toWlulLvw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="16976994"
-X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
-   d="scan'208";a="16976994"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2024 10:56:28 -0700
-X-CSE-ConnectionGUID: 0w0GjoV9TYS9IszbimlegA==
-X-CSE-MsgGUID: qJ2dLYKeReqovNOnMY+mjw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
-   d="scan'208";a="83533564"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 02 Jul 2024 10:56:25 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sOhjq-000OUS-1p;
-	Tue, 02 Jul 2024 17:56:22 +0000
-Date: Wed, 3 Jul 2024 01:55:10 +0800
-From: kernel test robot <lkp@intel.com>
-To: Petar Stoykov via B4 Relay <devnull+pd.pstoykov.gmail.com@kernel.org>,
-	linux-iio@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, Petar Stoykov <pd.pstoykov@gmail.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] MAINTAINERS: Add Sensirion SDP500
-Message-ID: <202407030117.3F6Sm9vA-lkp@intel.com>
-References: <20240702-mainline_sdp500-v3-3-0902047b3eee@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22173D978;
+	Tue,  2 Jul 2024 17:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719943097; cv=pass; b=aRF1ScxhQuu+mrjdjYKLpCtFpdctRohzTkSy2AyVBJ5t5sHRolxFbJHGxY4OzxkE928FoUGhYKVsm2QrBUVoUiX6myjHBFatUkiCqmsDplLxkZB2EYAjCLf+6OsNnze4cDh7xyK0DKN4ozV8RIBkWDWxKN4l8S+QJrkIqpg7rjQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719943097; c=relaxed/simple;
+	bh=VgXk2zt+QB/efFlmObn3xHqoyoyWSNvmihof4cPuzzA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nx6CdOPDdyn0WuLxFmkrqCCndlcSGo02WBrweMP8mHCXW6nuR2kpoUUoahMDBSElJP0xgw9UcsA+9nCUgcH6xq0+PsVfKvFFQIwS+lL+ohNJDcUD+v+h2zexARsUoFDQrI1NDg6OPxtfyv88B0+4QGmqn7qSVLA6YGmHb8QAGZU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de; spf=none smtp.mailfrom=xenosoft.de; dkim=pass (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b=mvSgJCG5; dkim=permerror (0-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b=2L5SkDMM; arc=pass smtp.client-ip=85.215.255.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=xenosoft.de
+ARC-Seal: i=1; a=rsa-sha256; t=1719942903; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=DWGnEPQ9ll4FHGnZdCzyUt/27cf3QCHSLL2H6N7j1y9I8/5t/QSLfLhciIdaMGC42Y
+    ZGbsO4EyECz9Xn5dMA71o8YI7a5GqseVXqZVop6T/IzVSQWEAYfqkJRUhOAG4Y6lLE5q
+    oo/HTc5mRaEMlpT0auXnXLco6/rcwQyRI8Ifl0zecAArrKEf5BuPVP7EMqBZObEY2pjz
+    8O4EcY7onRtxeJyX5gVtjPSiQNsZlG+AwF4kFtyIl52PEB0d0m/oR6ddqLAzV/mW3awJ
+    1k3p9lH+TC68Jurp6Pqj6cK+sHN8mKox01s7A6P3yGk4Wgx6l/tXAEpUeGIjdC5HpggJ
+    H+eQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1719942903;
+    s=strato-dkim-0002; d=strato.com;
+    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=E673tN2YQj+8YdDOgypEUonLvv3SNH0/z/xJh5Re/DY=;
+    b=TUH8DlAnzXLMbDaA3ihEWSXBi0VQHbeMnvhQgaiEWRjHbluLzIqYjTG0W1Fc+vMAzW
+    6qrH5pNpyrNE4iz1yucvS/iJCFZkatQacxjOdufZQQ7T1QBkcVjRcQmUZ5hTJCRqNEnV
+    7kVnJvar/aWp9C3+WYz5sS38Q41UQJYMq4iJkZvEqeJ1WO9G4BbUkcNDvMLI1Z0+E52R
+    p16OMXLEglADqukqNzFp8bUTRVoNov8rrP6TUJHsoX8wdqBCvCAR1QJEVGUFBSJJf12z
+    rUS8/WX4tAL/fMg8SGFPeTNZiAG/yRSmob8qoS0421Z3348yOOQzy4tvqGURq3jSJvUb
+    V0aA==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1719942903;
+    s=strato-dkim-0002; d=xenosoft.de;
+    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=E673tN2YQj+8YdDOgypEUonLvv3SNH0/z/xJh5Re/DY=;
+    b=mvSgJCG5rSIq5dPPNijVjlXgWwhiola37MFtb1m9skjSHrEwcRhKFw/ZcTO6ifc2/j
+    pc4T1yNBPdQzycn+0ygstbXGz2axwqCpcExcrz8XrXX9eswR++lMGY93b9M1Ae6cF8HC
+    petAvBZi2jHzkmgwOGjA14GAKa/hTw4eywvEf05JrKNd680jgimHJ7tT//YlvzjC0Uy5
+    rcW/gQJgAf2lCgz7ut9YKi4HsoGOJmKU2sI5ZBJtXd9VMK1VTAlDkYbRULcr5DfqH6OO
+    aeNMdV2zsMVVFzpYCyxMTqcR4wnyuxFuJi8IwHjGNolp9q61vUNOO1qSpKiMo7H3r2e0
+    FMyg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1719942903;
+    s=strato-dkim-0003; d=xenosoft.de;
+    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=E673tN2YQj+8YdDOgypEUonLvv3SNH0/z/xJh5Re/DY=;
+    b=2L5SkDMMJPrUnN6/0MOrNysN60u+4JYcWSxBecqkr/iZwN1FF+8LF70umCGJRvJDoJ
+    2NmsXx+urSXr+XIM6BAg==
+X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHvJzedR43JwibS68C57Gui33iwqCo/HyxjBt/hV5IkL4zA=="
+Received: from [IPV6:2a01:599:803:d861:d64a:638:126b:586e]
+    by smtp.strato.de (RZmta 50.5.0 AUTH)
+    with ESMTPSA id e08389062Ht2M9R
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Tue, 2 Jul 2024 19:55:02 +0200 (CEST)
+Message-ID: <68b7988d-eaaa-4713-99c3-525a34c5b322@xenosoft.de>
+Date: Tue, 2 Jul 2024 19:55:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240702-mainline_sdp500-v3-3-0902047b3eee@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PowerPC] [PASEMI] Issue with the identification of ATA drives
+ after the of/irq updates 2024-05-29
+To: Marc Zyngier <maz@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, apatel@ventanamicro.com,
+ DTML <devicetree@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+ mad skateman <madskateman@gmail.com>, "R.T.Dickinson" <rtd2@xtra.co.nz>,
+ Matthew Leaman <matthew@a-eon.biz>, Darren Stevens
+ <darren@stevens-zone.net>, Christian Zigotzky <info@xenosoft.de>
+References: <3ab66fab-c3f2-4bed-a04d-a10c57dcdd9b@xenosoft.de>
+ <861q4bizxc.wl-maz@kernel.org>
+Content-Language: en-US
+From: Christian Zigotzky <chzigotzky@xenosoft.de>
+In-Reply-To: <861q4bizxc.wl-maz@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Petar,
+Hello Marc,
 
-kernel test robot noticed the following build warnings:
+Thank you for your reply.
 
-[auto build test WARNING on ab27740f76654ed58dd32ac0ba0031c18a6dea3b]
+On 02.07.24 17:19, Marc Zyngier wrote:
+> Christian,
+>
+> On Sun, 30 Jun 2024 11:21:55 +0100,
+> Christian Zigotzky <chzigotzky@xenosoft.de> wrote:
+>> Hello,
+>>
+>> There is an issue with the identification of ATA drives with our
+>> P.A. Semi Nemo boards [1] after the
+>> commit "of/irq: Factor out parsing of interrupt-map parent
+>> phandle+args from of_irq_parse_raw()" [2].
+>>
+>> Error messages:
+>>
+>> ata2.00: failed to IDENTIFY (I/O error, err_mask=0x4)
+>> ata2.00: qc timeout after 10000 mssecs (cmd 0xec)
+>>
+>> Screenshots [3]
+>>
+>> I bisected yesterday [4] and "of/irq: Factor out parsing of
+>> interrupt-map parent phandle+args from of_irq_parse_raw()" [2] is the
+>> first bad commit.
+>>
+>> Then I created a patch for reverting this first bad commit. I also
+>> reverted the changes in drivers/of/property.c. [5]
+>>
+>> The patched kernel boots with successful detection of the ATA devices.
+>>
+>> Please check the of/irq updates.
+> It is hard to understand what is going on with so little information.
+>
+> Please provide the device tree for your platform. It isn't possible to
+> debug this without it, no matter how many pictures you provide. If it
+> doesn't exist in source form, you can dump it using:
+>
+> # dtc -I dtb /sys/firmware/fdt
+>
+> and posting the full output.
+>
+> Additionally, a full dmesg of both working and non working boots would
+> be useful.
+>
+> Thanks,
+>
+> 	M.
+>
+The device tree of the Nemo board and further information: 
+https://forum.hyperion-entertainment.com/viewtopic.php?p=54406#p54406
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Petar-Stoykov-via-B4-Relay/dt-bindings-iio-pressure-Add-Sensirion-SDP500/20240702-235054
-base:   ab27740f76654ed58dd32ac0ba0031c18a6dea3b
-patch link:    https://lore.kernel.org/r/20240702-mainline_sdp500-v3-3-0902047b3eee%40gmail.com
-patch subject: [PATCH v3 3/3] MAINTAINERS: Add Sensirion SDP500
-reproduce: (https://download.01.org/0day-ci/archive/20240703/202407030117.3F6Sm9vA-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407030117.3F6Sm9vA-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   Warning: Documentation/devicetree/bindings/power/wakeup-source.txt references a file that doesn't exist: Documentation/devicetree/bindings/input/qcom,pm8xxx-keypad.txt
-   Warning: Documentation/devicetree/bindings/regulator/siliconmitus,sm5703-regulator.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/siliconmitus,sm5703.yaml
-   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/watchdog/da90??-wdt.txt
->> Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/iio/pressure/sdp500.yaml
-   Warning: file ./Documentation/ABI/testing/sysfs-platform-silicom#20:
-   What '/sys/devices/platform/silicom-platform/power_cycle' doesn't have a description
-   Using alabaster theme
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Cheers,
+Christian
 
