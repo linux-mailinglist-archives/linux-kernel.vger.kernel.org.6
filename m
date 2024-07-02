@@ -1,126 +1,97 @@
-Return-Path: <linux-kernel+bounces-238240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20593924755
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:35:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13DC3924756
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:36:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF3BD1F23BBC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:35:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C344728793C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:36:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A3A1C9EA3;
-	Tue,  2 Jul 2024 18:35:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36DD11C8FCA;
+	Tue,  2 Jul 2024 18:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cc5wEaS9"
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="zef7oasD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECFF158DD1;
-	Tue,  2 Jul 2024 18:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C18D158DD1
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 18:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719945319; cv=none; b=fMJPGxgOoT/wZYgCWe81Tv9vQIy4u7PkMugaEAXaDDfH4XJxSagHAkaUGborlTb6RgU3Zaiqg3cAbVkt9nexW9cMEDcKtJU88l3swGDmZwAwZs48Ha/cDBOl+gcUELBKU9bXGHaU0ZeDbTvRnN//N8aNfu53tvG/G3AwE08zypo=
+	t=1719945356; cv=none; b=nzvromTr5FYnKxv/ESwPVYXsovs6agFuCRdsY6wpDeuf0k8Su8X5j0yZ+wjatKJhR6hBF1kKmaRJ6B8GsCGuM+huzdb5M2WZA5908bf5ZQ4aZUq39u5Zua2fCODnaGn4fu74TL4GybiansQaW2jZF6cdANFrIlg6gMBlZorcIwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719945319; c=relaxed/simple;
-	bh=hfIC1dzJV63i9JqhLxmmJQ/kZj/j1H5fSz75DC+4KPg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CAId858S1lgsO+g05NBlmyZ8asQ5xjVath6b0XpSBtAxPsQJ0VxgFkZBSwegX6LH/ePZWxjvrxdMunpy+M5L4JSycj7qvLPD1sipngJkxgm233E1gwPiFuJIYL9suybDtGtJJs/SNNXp359+rIdnk7GXpB6Pf/MzYdzXesb67d4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cc5wEaS9; arc=none smtp.client-ip=209.85.161.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5c21f1bb810so2233175eaf.3;
-        Tue, 02 Jul 2024 11:35:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719945317; x=1720550117; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yfZkAgkKDLiBxWm1TW/R5w6toVXsLssVKJzooYjVeFU=;
-        b=cc5wEaS9r8JVN4g3NhCMA2i3bhTVOpp6ZpFwbw0i6QN+aHt528v4Q7YVfWewYLzNme
-         yQbxVIoCZbL6bMSWMlLQXGEub2DfmWl/34GtcQzBHB22IOTmCwVmhlcMDLXiQXXiwr07
-         eIVFfsxUi3uIEkYquLScq4FyCbqFw8pWr3aMddwYAviDZLJ1EhbmdRhr/Yr6ffUKIIob
-         0SzvCWuUPu+7DPa+EtUUVgZ/OiHvlW8WamU+OZk6XsDxcHS8xpq+RNX41PIWYKJ6HIRS
-         7NFvMqvQMo6KFpataFeXy/A0DALSS+5g85ElB+9V4AaAAcyN7Q7CgExQ5WAjdlSNmQ7d
-         jgCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719945317; x=1720550117;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yfZkAgkKDLiBxWm1TW/R5w6toVXsLssVKJzooYjVeFU=;
-        b=SrgIP8yeEgVJXsrkCcLQ5HBx78d7fbBMP6QjJVCfvN3d+FSJOrzUsVoYz1JIDTgnj0
-         cbBx7b6NOebokI6RRXs/FceDjKXYs9ru9yrZuP8/x7UnTJmACn1s5kFVGfV7ShSP3tau
-         4o7up5vwOwxNtO+kOVBe5pTdl3ZPhqKGnOJBnlLOBJ1sguWYGutP+jMwhqn7mxbVhgTn
-         onpkzUmwMYw8rgRAJZ1p3BxTDsR609Kfta7add1ubh6Pz0CJUS6z+6Ztj3Ka0C85Sp3L
-         aZMJ6Plcw+cBB0lVinBOp1vud7BVV0/nK8KAPh3u1Q2+K8aUib+WalcV30g43C/XsIYH
-         PTpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUloAkk2uSSA0rByqM3NyHC9MLTT26hQNDwpBmvOacAMH5x/kvyE57ViCQBU4TMHbapDhWxmf1a0ObM3TKCQzHZ81RrrFp/xoyq0spj
-X-Gm-Message-State: AOJu0YxD9GQo2y8DwG+/vtF07eR4tqwwjg/bOphJcM4FVDUrI7D/WNqU
-	KjzE9BPTSOv2LSuidF0i5G4dLpMYsPHPrqY4eOG3dwxa1emc5zWudzwdTA==
-X-Google-Smtp-Source: AGHT+IE/WyiWOTZIbsPlEwk63c0ctcPKh6b12hMqtcAT/Al/ih5/llZ1LW1U9YiwvhL5kCccrh7LHA==
-X-Received: by 2002:a05:6358:70f:b0:199:28ad:1447 with SMTP id e5c5f4694b2df-1a6acc6e5c3mr922190555d.10.1719945317317;
-        Tue, 02 Jul 2024 11:35:17 -0700 (PDT)
-Received: from carrot.. (i114-180-52-104.s42.a014.ap.plala.or.jp. [114.180.52.104])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-72c6c7f6db9sm6918090a12.72.2024.07.02.11.35.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 11:35:16 -0700 (PDT)
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-nilfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] nilfs2: avoid undefined behavior in nilfs_cnt32_ge macro
-Date: Wed,  3 Jul 2024 03:35:12 +0900
-Message-Id: <20240702183512.6390-1-konishi.ryusuke@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1719945356; c=relaxed/simple;
+	bh=LQa0boYAjyiQy2XLCVd6hOtBE8EViR0thVWazO0ORBE=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=jGQ8mQOMRbnGOt50IoLjGb9Cpe4TIJZFjNr1ubEgRRs5kv6HudontP4b9uDEt5T9CUTppY3Ae3GRkexpdi4FegN85d2g4j7Gzohd3B3XSoXt+PKOWQmiQtscnZUbkKZdb5lxKLO18NMKZPDEnSplH3XYsZuXBgvtQKSbpAdgB6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=zef7oasD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CE57C116B1;
+	Tue,  2 Jul 2024 18:35:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1719945356;
+	bh=LQa0boYAjyiQy2XLCVd6hOtBE8EViR0thVWazO0ORBE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=zef7oasDBBFb8JoFScauVEm3d31GuSk9PSFVdwIdGlqkzeoqssuhuGZVKJF59/a3z
+	 XiI4qE9zGQyfOMiYSRRBwZ5h5EOrBlp1BUtYABxU57cIgZ7bKctUMrg4FC12YMnVvD
+	 g2Lrf9YduwMjgojynKmmrIryRaYjPiwTu4I7fezM=
+Date: Tue, 2 Jul 2024 11:35:54 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+ <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Andy
+ Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Rick Edgecombe
+ <rick.p.edgecombe@intel.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH v3 0/3] x86/mm: LAM fixups and cleanups
+Message-Id: <20240702113554.2471f000055f3c717fced4f5@linux-foundation.org>
+In-Reply-To: <CAJD7tkb7=sBdxXTmcqxe3+UWsTT7R6-rKGBhkEfgEAdTY+5jCw@mail.gmail.com>
+References: <20240702132139.3332013-1-yosryahmed@google.com>
+	<20240702103628.61879ef17b9b01305515c634@linux-foundation.org>
+	<CAJD7tkb7=sBdxXTmcqxe3+UWsTT7R6-rKGBhkEfgEAdTY+5jCw@mail.gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-According to the C standard 3.4.3p3, the result of signed integer
-overflow is undefined.  The macro nilfs_cnt32_ge(), which compares two
-sequence numbers, uses signed integer subtraction that can overflow,
-and therefore the result of the calculation may differ from what is
-expected due to undefined behavior in different environments.
+On Tue, 2 Jul 2024 10:39:03 -0700 Yosry Ahmed <yosryahmed@google.com> wrote:
 
-Similar to an earlier change to the jiffies-related comparison macros
-in commit 5a581b367b5d ("jiffies: Avoid undefined behavior from signed
-overflow"), avoid this potential issue by changing the definition of
-the macro to perform the subtraction as unsigned integers, then cast
-the result to a signed integer for comparison.
+> On Tue, Jul 2, 2024 at 10:36 AM Andrew Morton <akpm@linux-foundation.org> wrote:
+> >
+> > On Tue,  2 Jul 2024 13:21:36 +0000 Yosry Ahmed <yosryahmed@google.com> wrote:
+> >
+> > > This series has fixups and cleanups for LAM. Most importantly, patch 1
+> > > fixes a sycnhronization issue that may cause crashes of userspace
+> > > applications. This is a resend of v3, rebased on top of v6.10-rc6.
+> >
+> > "Crashes of userspace applications" is bad.  Yet the patchset has been
+> > floating about for four months.
+> >
+> > It's unclear (to me) how serious this is.  Can you please explain how
+> > common this is, what the userspace application needs to do to trigger
+> > this, etc?
+> 
+> I don't think it would be common. The bug only happens on new hardware
+> supporting LAM, and it happens in a specific scenario where a
+> userspace task enables LAM while a kthread is using (borrowing) its
+> mm_struct on another CPU.
+> 
+> So it is possible but I certainly wouldn't call it common or easily triggerable.
 
-Link: https://lkml.kernel.org/r/20130727225828.GA11864@linux.vnet.ibm.com
-Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Fixes: 9ff05123e3bf ("nilfs2: segment constructor")
----
-Andrew, please add this to the queue for the next cycle.
+But when people run older (or current) kernels on newer hardware, they
+will hit this.  So a backport to cover 82721d8b25d7 ("x86/mm: Handle
+LAM on context switch") is needed.
 
-This fixes a potential issue with undefined behavior on signed integer
-overflow.
-
-Thanks,
-Ryusuke Konishi
-
- fs/nilfs2/segment.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/nilfs2/segment.c b/fs/nilfs2/segment.c
-index 36e0bb38e1aa..0ca3110d6386 100644
---- a/fs/nilfs2/segment.c
-+++ b/fs/nilfs2/segment.c
-@@ -136,7 +136,7 @@ static void nilfs_dispose_list(struct the_nilfs *, struct list_head *, int);
- 
- #define nilfs_cnt32_ge(a, b)   \
- 	(typecheck(__u32, a) && typecheck(__u32, b) && \
--	 ((__s32)(a) - (__s32)(b) >= 0))
-+	 ((__s32)((a) - (b)) >= 0))
- 
- static int nilfs_prepare_segment_lock(struct super_block *sb,
- 				      struct nilfs_transaction_info *ti)
--- 
-2.34.1
-
+The series doesn't seem to be getting much traction so I can add it to
+mm.git's mm-unstable branch for wider testing, but it's clearly an x86
+tree thing.
 
