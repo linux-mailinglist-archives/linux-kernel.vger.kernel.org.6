@@ -1,129 +1,121 @@
-Return-Path: <linux-kernel+bounces-237813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C02E923E77
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:11:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A447923E86
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:13:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E46D31F22E20
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:11:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEF161F250C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F2119EED6;
-	Tue,  2 Jul 2024 13:10:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ABC419EEC5;
+	Tue,  2 Jul 2024 13:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KX1DvoVI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="APjp0ayf"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61C785C74;
-	Tue,  2 Jul 2024 13:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E86F16C440;
+	Tue,  2 Jul 2024 13:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719925844; cv=none; b=B5/RiMnHMB2xsVQTsOmnWtxsoYDhI2w7YHalOz1m5353Gtk8P3/qbqDh470jnnIYv6/Ap6cxgXeu6qhy8vPSTepGPE2VWI0P+uPfNGvfJep5P6TcbFFF/f+9J0O1/RbJv78+msOPysStTmDYbGnvyM2sNhI1oUJVLE3xIKh6JTk=
+	t=1719925919; cv=none; b=u3FPXssb+tpiDFkz2WikseUuCZasnLTJTpS2iQ8+IlraNFVaGj59c1P2yNQ6gYSiX23/ImEbpiXw+R2Aw+BtvcPRuNzUyiUuROrLcfxKzlsSCrHKLg1PER2RsKxK/C3uqOOym6B04bh/i0hqKimVfA8yQ0MQMLgZhptX/2y6JGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719925844; c=relaxed/simple;
-	bh=gTUvzjDM37z27yYoTrtM5Z4GIXEMOln7R9yBe19BcUc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tIUE5N+aczMXBKC8eqZ38qHArT//Y8Fam+mb2Qy7yCENBq9/8dTt+DPTRJ/QV/VkIXcCsmw3acURaUGbc2RYHG8WS4McFPC8oTNaXTRfWlKOYIFtLRXlaUewcpjFqVe00oNde1jiPbc1aXhTaXS9WqY+jiTPeKs1RQdAqrt0hnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KX1DvoVI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE5B6C116B1;
-	Tue,  2 Jul 2024 13:10:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719925844;
-	bh=gTUvzjDM37z27yYoTrtM5Z4GIXEMOln7R9yBe19BcUc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KX1DvoVIFjA5s5UUU7JkyxMT0elBAp3eZlvV46bSXunOkxGbagzOZ6DHIdDIlCCWO
-	 Ul93piDGNWJPE3cpaX1Oo8zHI68xAmCu9kJB5oeexuuuQZn0hJJ+O2mITmZ9pUyLn6
-	 BQn9NhR4cTi4uefLIZZCDa5qw8SW8HCaBBQKQZfNkMVJK3VpXdMVNNRXGv6GcVNETK
-	 pXVxT5XEb8EKdB4OeuUDTpqAYJcqsj9SyGY6/DeUPkgrB8zJ7ar/ywDcARXQ2IodZh
-	 CQbdotgE5irUQdvvbrRj1c7lS8O55fWZBImAeVPnjmnRqvwv0wxSg1wuQmy0xppmKy
-	 3CHxwSW28PUSA==
-Message-ID: <fcd91462-f8bb-4713-afc1-ba9473405396@kernel.org>
-Date: Tue, 2 Jul 2024 15:10:38 +0200
+	s=arc-20240116; t=1719925919; c=relaxed/simple;
+	bh=liDn5QvB3NTOv7iQ2Q/LV71tMS7ynYvrDPlX0J/YcFY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kHuZ05d7HkjHqjqa+QvAFW/Xlo1D5OLY4OictuPUW/0xdfHy3VOc9UqwZ2Dd3T1JhTgJ5yeCV+Gf2HVlIy/Jo7v/+eA5o9M1qwrCYKNC7U6Hk8JfsxwQxgJpKb3eIxqpFfhethfywSgcII7CVIqW8hp6aqwDjNMUJZ489jDaDPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=APjp0ayf; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fa244db0b2so31763005ad.3;
+        Tue, 02 Jul 2024 06:11:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719925918; x=1720530718; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zhtQtFMCZm11P34Z/J+01S+WnAXcD678eovlYxy5Kxw=;
+        b=APjp0ayfB11AZHazW0gOZqOpPqKswtWPJzIpc+6LMm3tteXWnMG6J4JfYoVopSlUIg
+         I7tnhGvTFIHgfyFd4zdnUnYAgSi7i+qmZeo0Yo7rpAptV7hkEkuIskjtGi6mc6j6I/ot
+         HW48TJuXA3lr5/2yW9j9G+xnaaG2c9lqTJ1DhCRA1rWrbjHFiKCtRaDk82L9WRKZQ+yi
+         i4/TTiJImnA+HlRoUROcx+FxX1GbOlYUhHCXjzu9/2ls4nvrpR2S0clH9+L1JZJVmA2J
+         i7vedNgpKjox9WdJUFlEQPwLEvc4WJyP22vEzTrcsnD9peGb67QFfjTBlWq8Vc8X1at7
+         Mq2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719925918; x=1720530718;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zhtQtFMCZm11P34Z/J+01S+WnAXcD678eovlYxy5Kxw=;
+        b=fAIm9xs9wf53rpgWWC+NGB4J39Zc0vwL6yP9rtAvZ1APr7ZOSdncF+B7SG7DgEUGmp
+         8nTtkoYS09kZCFewR+kMAqBbp4JVgHj2gyHS+t2H0n8C+lChjeje2MN/uMi3Eai2y+63
+         i9NiyWm0Tb1Q7+9ZMn4zy6pjBvTQUp9qKvPIrD/b2PwupMi1BEDUCBVyStlhnJ20P4WK
+         4EEzUTmsD6gpegtodePe77QwwFGGjYJdlMYCpF9Cc1YFEPQ3mCDmQO0oJlxNDqAQchbb
+         41BwlyLWgyXarwcjBehVwXR3X3GoTeqts0iWkyV/9qCRHhufip7XpPRMW4H87YEpuU6R
+         KP3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVy2gF+a3x366jSJL2h0X/1Z2HpuHT395vZFzCcFj1ZFFUjCTr/j4VFE3YxdOAXr6+e6TJ9bBRHpfmEWKX4AOn6SckhAVcg4WdffRLXrHzfpaw4vchqB8EnWHh0XiparvqQ
+X-Gm-Message-State: AOJu0Yzz7GmTdUmNOerpARFJzgNU2+pwS3VsqWShX3zKVxdEh3kfyhRH
+	tchTuhIXtnKETUYm/HQah6Hk+J+YJTB9AIeGG5vNfW76qFRy9tDxHS0mYg==
+X-Google-Smtp-Source: AGHT+IGiT9MIy2ign/waoPuk99ueA6hjVY9lmddp7mAxqE6/faR05ZsxGiTXYWp/vXhvLfzIM7Hqjw==
+X-Received: by 2002:a17:902:db02:b0:1fa:f703:6441 with SMTP id d9443c01a7336-1faf7037b76mr12193155ad.59.1719925917447;
+        Tue, 02 Jul 2024 06:11:57 -0700 (PDT)
+Received: from localhost ([116.198.225.81])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac1568ea7sm83773015ad.186.2024.07.02.06.11.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 06:11:56 -0700 (PDT)
+From: Tao Chen <chen.dylane@gmail.com>
+To: Quentin Monnet <qmo@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	bpf@vger.kernel.org,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	linux-kernel@vger.kernel.org,
+	chen.dylane@gmail.com
+Subject: [PATCH bpf-next] bpftool: Mount bpffs when pinmaps path not under the bpffs
+Date: Tue,  2 Jul 2024 21:11:50 +0800
+Message-Id: <20240702131150.15622-1-chen.dylane@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: hwmon: Add MPS mp5920
-To: Conor Dooley <conor@kernel.org>, Alex Vdovydchenko <keromvp@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Sean Anderson <sean.anderson@linux.dev>,
- Guenter Roeck <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org,
- Alex Vdovydchenko <xzeol@yahoo.com>
-References: <20240701145603.1507516-1-xzeol@yahoo.com>
- <20240701145603.1507516-2-xzeol@yahoo.com>
- <20240701-mug-scuttle-dfe4c84b4e0b@spud>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240701-mug-scuttle-dfe4c84b4e0b@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 01/07/2024 17:47, Conor Dooley wrote:
-> On Mon, Jul 01, 2024 at 05:56:00PM +0300, Alex Vdovydchenko wrote:
->> Add support for MPS mp5920 controller
->>
->> Signed-off-by: Alex Vdovydchenko <xzeol@yahoo.com>
-> 
-> Missing an ack from v2:
-> https://lore.kernel.org/all/20240627-swivel-grower-002af077b654@spud/
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+As qmonnet said [1], map pinning will fail if the pinmaps path not under
+the bpffs, like:
+libbpf: specified path /home/ubuntu/test/sock_ops_map is not on BPF FS
+Error: failed to pin all maps
+[1]: https://github.com/libbpf/bpftool/issues/146
 
-That's third time you give the same ack. I suggest give up...
+Fixes: 3767a94b3253 ("bpftool: add pinmaps argument to the load/loadall")
+Signed-off-by: Tao Chen <chen.dylane@gmail.com>
+---
+ tools/bpf/bpftool/prog.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Best regards,
-Krzysztof
+diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
+index 1a501cf09e78..40ea743d139f 100644
+--- a/tools/bpf/bpftool/prog.c
++++ b/tools/bpf/bpftool/prog.c
+@@ -1813,6 +1813,10 @@ static int load_with_options(int argc, char **argv, bool first_prog_only)
+ 	}
+ 
+ 	if (pinmaps) {
++		err = create_and_mount_bpffs_dir(pinmaps);
++		if (err)
++			goto err_unpin;
++
+ 		err = bpf_object__pin_maps(obj, pinmaps);
+ 		if (err) {
+ 			p_err("failed to pin all maps");
+-- 
+2.34.1
 
 
