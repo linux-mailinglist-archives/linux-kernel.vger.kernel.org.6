@@ -1,117 +1,117 @@
-Return-Path: <linux-kernel+bounces-238165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC67C9245E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:28:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3C789245ED
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:28:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E081281D2A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:28:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5C281C2039D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:28:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6281BE863;
-	Tue,  2 Jul 2024 17:28:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4BA1BE858;
+	Tue,  2 Jul 2024 17:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="eMOjl7uf"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="c8YB6Dpf"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865831514DC
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 17:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0ED41BE251
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 17:28:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719941305; cv=none; b=k6MRnK9zU4QBMcqE5OZ6N/pGg05EtnZ0kgO6erqsmxT+dIQvDS9ZU/NEiaCXo8Y4HdugzXuj0suGxOHwtPMN+asN5e110RcCW45+MNdsuoyjdxx6AMKdZkqE1YTNTFLqmtm09B5GCghiP5HSk/Y+hd9R0mJFXH8hwcvJirqzgV0=
+	t=1719941329; cv=none; b=ti/dbqO+TTvE5gQ37r3lJKsm6M3HR4J29HJlUTWUrrZrhB+aa6qEprCuHvSScoL5xmnQ4RqNql7TCwLC0bs29cUI4rjH55yy5AAZ4stuSG4zd0nekfYtae1oiHlvbaaS+L7ZRyuWd8lLeD/I32Jq//2SiJrN9u+r+jH8MPq1NIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719941305; c=relaxed/simple;
-	bh=zJ01PiKqTGK1aFizfZp2xIRt/CPOcwzWRyfYJQiri4E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IB/fRz4znhEQmN2xWjfvkFgth+PQd4HXkF4nyr/pNLsozuKT4TY9Luo7J65/jtD29q3MCVLa0yw5VygrP34kGFuPfVWOf1+87s2j6RcF/xeZJ5tXAQS7LHDQKLPJf2UIAMKuXVeBMUooy8dRRjc/KjaSPy5J7vSZ1j4SjH9O5H4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=eMOjl7uf; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57ccd1111aeso2561310a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 10:28:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1719941302; x=1720546102; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6HNAk1/iogZZbC+mbI2kSdd+21FuSzIbsGeDPYt2wqg=;
-        b=eMOjl7ufmmW8PBSg8AA5nYpVXoJ7lfan2+2HwFXz4qyPhFsdTAZ8Nnf7olxGKLtEeS
-         mOLGN846J3IB+EgBFIsBOsLacutfZZQhiFlrPlP6FiLgzm2r5SMq6tvcdamKtz7WCi5m
-         2Bz5k21ebe4QkHRvBMotxWDeSFd8IEIEEYI/k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719941302; x=1720546102;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6HNAk1/iogZZbC+mbI2kSdd+21FuSzIbsGeDPYt2wqg=;
-        b=bzEs9CQdW9TqEasdtTY/nE9eJSExT2gMcaJC2gxJANPF2FPGX+H2LY5m6dF5FosnAK
-         CTK9oRQV1TqJvX/m4+Q+eLA2wWR9+tWkq1MmHRtYgXVQ7s7LybsRssY2GXrwVAjpq3UB
-         EXRZd63YgEEx7dODiCu9hYNzhUrEVgEZZ31csyvro93vVeWtT9jAOXKNpM1Abm5giDFg
-         NaPeqbHGRjiQ4rrul7ApCPoUyz2Fw7UuWzE+oCRuUIo2Ql4kANXtnzQFL2mPYbrYY18j
-         Lc/eJ7KI4EaMebA4MPQ8mHjvn4er5A0ILsADM+oOv4Apk/hx5OEISjoBlmG0lpNnGAsJ
-         5aaw==
-X-Forwarded-Encrypted: i=1; AJvYcCXsh5iOPBbqPCLlwvzH3q3ZGufV0CZ/A+Qs1XZZpNvOBryK0Ifv6IYw/gn04SfAH56cIk+0GjBtdE0LwZairHb5aNWlNa/Aw8F/NijM
-X-Gm-Message-State: AOJu0Yx3UpxvLjZIYPI8FwTP4YWqTglu35h0R1MOP2NRenmyXx3G+9N8
-	y3cYvSjcC5jV2TVkbR6zUJvSkS7Nf2IFntf8+Qe0HG21dqMMpDmVjVV4AEpI4v8IHkjLy/JEvS4
-	e80WUxw==
-X-Google-Smtp-Source: AGHT+IG7AGlB6pyUogat17oeSO12Wye7rJ0nEyy2Ywei0v1x8zrxSc9Z9uF8M7czSkiCMs8hs8yrlA==
-X-Received: by 2002:a05:6402:27ce:b0:572:4fc3:3a28 with SMTP id 4fb4d7f45d1cf-5879f982ffamr6960125a12.23.1719941301965;
-        Tue, 02 Jul 2024 10:28:21 -0700 (PDT)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5861324f069sm6062132a12.33.2024.07.02.10.28.21
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jul 2024 10:28:21 -0700 (PDT)
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5854ac817afso2327584a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 10:28:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVhh3u+czeRVUpe+GUdOcQhTGgQr6bvHtsU79Y6AgfAM1N3cVCgkyVmP9qy092N7HbSdHpfBmo+xHWOzK6GR6iewPyLB3HvRWuUuIXc
-X-Received: by 2002:a17:907:97d3:b0:a75:3c31:4f58 with SMTP id
- a640c23a62f3a-a753c315afdmr274936566b.32.1719941300909; Tue, 02 Jul 2024
- 10:28:20 -0700 (PDT)
+	s=arc-20240116; t=1719941329; c=relaxed/simple;
+	bh=jYeWnTV95BPaOOrj5p1AkHVGYGcZWkWIYQfSGVcLzm4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lj/Iq0NMwS3yKeB4GUEnTVefAsuPVuE4KoM05E24r7CEsBy9BjoIam3WjkBl6K2UtoF4V4VSV+KGDULJZD2f5LDc/h6lOpZJ2bNa+KgcRqUe09hv/RrFERwXGROtFZbDGf5C15TvtXL+5cMYD8xzdzSSk37kHRaDI7dvVo3ADQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=c8YB6Dpf; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7E06540E0185;
+	Tue,  2 Jul 2024 17:28:38 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id QGawDHv-E1CW; Tue,  2 Jul 2024 17:28:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1719941314; bh=JXRnBEz8iHQChbdVPhfaSsanLqGse6ktf9ce0Vm9MNE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c8YB6DpfF7+kNM0Y6AVrfahVRUPo+56UPmTO8MdmnwMwiKhwpPqtmmCIBDywghbjI
+	 Fh/SULqXlIKobZA+9MSI8N+MQeQ8tenRkJzLG+ULN3Xq3KRQXnOrOpttXSIHOHvPsZ
+	 249rxhD8VmiFjYzGz4mw1FTL7rHAf9HWTUd/6Ec7Pord2rdtZde1LzgKr2eIM2TWJv
+	 ujnhusJUSYHO80GPewfI+BB0kq2LCv3iZ/ONJtcsurc1AZD8kQNflF67SMbX4HmgNn
+	 TRGAidYLH6fGYBDsBUfp7yLzaJHbJO0KS+JoNUisFnKMwQ+o3T9IKyMw4EK2CMI7Ec
+	 P3m6sTwgLH9LuHgNTWaJkJOcDS1nYdBzMrj2VNpCge2hLF65Ph+GtNt3Fb5juHgTNt
+	 eKL3IJhVRp/ou+RYMxeVo8sjnu2vnVjjm5EmP/HSbJlB5Z6gVfddOjSajH/0LeV6Dy
+	 NYDpn8NYzKXQSUEChv+RKB5lcaTyHQ9EZNQHlu4JIr8iJScgsetopZKwOex2kux3mu
+	 eL7VLR/SaBv7gExdXf3z+QYKaO4tzB+Z85tewXeI234Er33PV6VDKkQz0qO2OBNpbN
+	 kISpECB6LBBWKEwtFn9dm3xgCvUb9a7tRaJPqYQbS88alg3O8j2vm3BlvYXYoXtwEY
+	 93pxbCimogN+7mZoyu8zYIj4=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 75A5440E0187;
+	Tue,  2 Jul 2024 17:28:22 +0000 (UTC)
+Date: Tue, 2 Jul 2024 19:28:09 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Tony Luck <tony.luck@intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Dave Martin <Dave.Martin@arm.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH v23 14/19] x86/resctrl: Handle removing directories in
+ Sub-NUMA Cluster (SNC) mode
+Message-ID: <20240702172809.GGZoQ4qW6OOkL0bQQ7@fat_crate.local>
+References: <20240628215619.76401-1-tony.luck@intel.com>
+ <20240628215619.76401-15-tony.luck@intel.com>
+ <20240702085337.GAZoPAEaEBtT18iD3V@fat_crate.local>
+ <ZoQ1937ntIdMNQwL@agluck-desk3.sc.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202406270912.633e6c61-oliver.sang@intel.com> <lv7ykdnn2nrci3orajf7ev64afxqdw2d65bcpu2mfaqbkvv4ke@hzxat7utjnvx>
- <vgg45kxk2fiyznm44w2saz3qjiwrjp3spvpswsl4ovd2jl5c5g@54dlbd4kdlh4>
- <CAHk-=wgnDSS7yqNbQQ9R6Zt7gzg6SKs6myW1AfkvhApXKgUg4A@mail.gmail.com> <CAGudoHGuTP-nv=zwXdQs38OEqb=BD=i-vA-9xjZ0UOyvWuXP_w@mail.gmail.com>
-In-Reply-To: <CAGudoHGuTP-nv=zwXdQs38OEqb=BD=i-vA-9xjZ0UOyvWuXP_w@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 2 Jul 2024 10:28:04 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgVzKtRnvDXAzueJTbgfo1o12Lw6DH97PzRe1cGA_b1oA@mail.gmail.com>
-Message-ID: <CAHk-=wgVzKtRnvDXAzueJTbgfo1o12Lw6DH97PzRe1cGA_b1oA@mail.gmail.com>
-Subject: Re: [linux-next:master] [lockref] d042dae6ad: unixbench.throughput
- -33.7% regression
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev, 
-	lkp@intel.com, Linux Memory Management List <linux-mm@kvack.org>, linux-kernel@vger.kernel.org, 
-	ying.huang@intel.com, feng.tang@intel.com, fengwei.yin@intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZoQ1937ntIdMNQwL@agluck-desk3.sc.intel.com>
 
-On Tue, 2 Jul 2024 at 10:03, Mateusz Guzik <mjguzik@gmail.com> wrote:
->
-> I was thinking a different approach.
->
-> A lookup variant which resolves everything and returns the dentry + an
-> information whether this is rcu mode.
+On Tue, Jul 02, 2024 at 10:16:39AM -0700, Tony Luck wrote:
+> A helper will avoid this duplication. Draft below. Is this
+> what you want?
 
-That would work equally.
+Yap, looks good.
 
-But the end result ends up being very similar: you need to hook into
-that final complete_walk() -> try_to_unlazy() -> legitimize_path() and
-check a flag whether you actually then do "get_lockref_or_dead()" or
-not.
+> Is the function name OK. I wasn't sure if the
+> "mon" looked better at the beginning. Or as rmdir_one_mon_subdir()
 
-It really *shouldn't* be too bad, but this is just so subtle code that
-it just takes a lot of care. Even if the patch itself ends up not
-necessarily being very large.
+It's a static function so the namespace doesn't matter that much, I'd say.
 
-As mentioned, I've looked at it, but it always ended up being _just_
-scary enough that I never really started doing it.
+> I've also fixed up part 17 to use msr_clear_bit()
 
-               Linus
+Good.
+
+> Are you still digging through the patches?
+
+Yap, and you can send me only those two which you've modified and I'll
+integrate them with the rest and queue them.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
