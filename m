@@ -1,136 +1,127 @@
-Return-Path: <linux-kernel+bounces-238578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9F12924C49
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:44:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D2DA924C4C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:45:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBCB41C222A0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:44:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17C79B2177B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:45:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C1117DA04;
-	Tue,  2 Jul 2024 23:44:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25BA817A5B4;
+	Tue,  2 Jul 2024 23:45:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="XBWcy1D0"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fgeKNCNJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F8817A5B4
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 23:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3DA1DA312
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 23:45:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719963882; cv=none; b=uJylKMymyv0aLcDH+46DeuhqNg2Ubu+ClYWTeiOCJnWYsJoERdhNYMJ4YHXHItVzGcRce7zaak7oRN/eiMeJ5GQvI1Q6a10IHN7aryAR2Kb/G9ROHoXmjJxLl30JImb1AaWBJBiMULT+qLFv0KX5NyLlaU3aqnTTcsLAWDN8C4c=
+	t=1719963948; cv=none; b=GqCOy/uE8uWW6GwXf97e9wjY8DYTIo87qHp1FiEU7+dfLpQRmq4zYeVMPwdxJeic+GNQkrYPQwj8IHNUiaMkqmAY4jn/RdpdstCtOrQmdPIQASRto30fTLDUdSQ7IZs6BuNOGhdAgQ6cyfeZCH1XTqURT+80jJxNBP007KCpGZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719963882; c=relaxed/simple;
-	bh=R1kdNIGoCaWsREHCUMwJVGjiiGc9/mWffR7Nmk/5mdU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o4mvHzodfIhMQydgXDTmbB3LSkV0cViv9j3OTEicGo9VQrBGj/EPspIMvXzVoYJmk8ltRQ5AD6CSmS+IRb5KllC8Yq/MkW7GimaMzmjaf6sYmuKo65ghAmMjsoaZ13XsCRLGOgCVk9kOU52g48AmPL3Gh3icmiXM7WFa3cAyIwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=XBWcy1D0; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2c7dbdc83bfso3315569a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 16:44:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1719963880; x=1720568680; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=E8C8pGBl6PwQv/QUgN+lCj1NZP+HloIAvEgarAJ98W0=;
-        b=XBWcy1D08mH3db+GL/2YHwmqFqLkTcLuzLhT4toXTi+Gbx4VOwTqTp+Lm+SfHA0lYF
-         qA6+6CmeHmy6SXR1Z96UEBZt5J8vSrI2BnQcdddOLJCjWUxz7vGRPYzFzZpJNbOXPsxq
-         /cKRFAJa+uAxzT0SjdJY+uYa385+oJUG930ITHy3Ex62z5EVWsmx3CEQSiKxhJ2dOoCQ
-         4jiJeddgwNnbiw9NYjaxbgkmPvsPv6NJzXymqiKuY9xRRRA1WXhMb6B9iXznlV4bA0pV
-         9AOVpQLQc428Y0OWK9VMnkORzoIiONVx3jvc/2xh81mlOZfmeGqr/KmmAe1QGtp8+MDv
-         eS4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719963880; x=1720568680;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E8C8pGBl6PwQv/QUgN+lCj1NZP+HloIAvEgarAJ98W0=;
-        b=VppPyRGFqK6yPxxZV3IXLzB4Wu5OJd/SVCVK8hDdZcZ/C0/Hg+JYzVKOm2PF5948P8
-         CZTNuYlbLrIlTiLvJmhpbryCBlVZbuzQBcvg9ZjaFRQrux2w/QJq6flq+kbn+RCQMiOt
-         C700iRY5yCyOUf4aS9HL8jzSG4HvhIJ2UQ6cYnPyNBzqRQd57r0dMW7jnMu8LZh6l/K8
-         TCL9878Q5KaS28AaYmEXoBfZIiHDGt5bQuwuCEGSbQViOsrWaBHI5hjEJtVznpy1G9Rw
-         DsrLmwayChJXbOhcBZJaQOr40WhK1aXOZusHM5KlJmRWpwSeM8gVasd5V4iCWCTHvTvV
-         OLqg==
-X-Forwarded-Encrypted: i=1; AJvYcCW1/w2+fOOyx78IxAbEEN36AhI60CpCoGY8th0Z3iN0+1yrCsF7BR0GL7qdfZ56sulIgvSiTh45QcpMpbPAIyYx6FfyBsmMfjBcTIIC
-X-Gm-Message-State: AOJu0YwkxyZNljYnWAzqFVG9DyQzqMkdX0yhPXgEdhlktAuKIp9sJWc/
-	i3MMSefccqqzsEj/MaExH4rFapeGn0S7a8NW+DaT0vkkIZfGkLrXBC94on3IuME=
-X-Google-Smtp-Source: AGHT+IETsvkjzYuCKZ9p0+Ku62Va5mDUhoO32TyPvDTm6zW6hZFOLGO3Cd9d34Mox5TYkCVzYBNnjg==
-X-Received: by 2002:a17:90b:1884:b0:2c9:6ad7:659d with SMTP id 98e67ed59e1d1-2c96ad76752mr1638316a91.6.1719963879903;
-        Tue, 02 Jul 2024 16:44:39 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91ce4333esm9464957a91.18.2024.07.02.16.44.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 16:44:39 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sOnAq-0022iT-21;
-	Wed, 03 Jul 2024 09:44:36 +1000
-Date: Wed, 3 Jul 2024 09:44:36 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: alexjlzheng@gmail.com, chandan.babu@oracle.com, djwong@kernel.org,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	alexjlzheng@tencent.com
-Subject: Re: [PATCH v3 2/2] xfs: make xfs_log_iovec independent from
- xfs_log_vec and free it early
-Message-ID: <ZoSQ5BAhpwoYN4Dz@dread.disaster.area>
-References: <20240626044909.15060-1-alexjlzheng@tencent.com>
- <20240626044909.15060-3-alexjlzheng@tencent.com>
- <ZoH9gVVlwMkQO1dm@dread.disaster.area>
- <ZoI1P1KQzQVVUzny@infradead.org>
+	s=arc-20240116; t=1719963948; c=relaxed/simple;
+	bh=ngbXr5S4NO+359k3fdchEPv1amLfBhw6o2USdVHy0O0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jg09l4CKoGvDNTSJHrFcKkn6cQlcCbcA50yrRm7+7lFlRb9jgjrwRvfyiUfu6H8JBkg4Arhxt9VLRojW62reSQMn0U2a9C7BfyxlDlLqmhuk1OKszi+fdvZiKxGWDZqt+i3kpMRQoGaavhCiYTA8lDNNfJo4/hdQ4iV5tVvg4kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fgeKNCNJ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719963945;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dOfOaTN8FR3CJJcu2Y1S4txQuiktnHa6A2KoG2WP+sU=;
+	b=fgeKNCNJ3eGVE3UX+Oo7Rl8EdSjifaRh03Nnm9bg/juEsXocFwS4MMjhmQQyTi0QJBVN8K
+	n5mDwhX87mDgfWledqVdxwCeJyCpia1yOP+iDUWhoZZFmOyRUcLHd1sLLCzPJU8o/HBRdx
+	0gPjostfonXdGIYaHx3u6/4kBdj5NWg=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-421-r87MrYAWOD605KVXsyp2KQ-1; Tue,
+ 02 Jul 2024 19:45:42 -0400
+X-MC-Unique: r87MrYAWOD605KVXsyp2KQ-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1A02D1956089;
+	Tue,  2 Jul 2024 23:45:41 +0000 (UTC)
+Received: from [10.22.9.99] (unknown [10.22.9.99])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7705019560AD;
+	Tue,  2 Jul 2024 23:45:39 +0000 (UTC)
+Message-ID: <3b4c72ff-7894-4772-a918-7e20d00fac1b@redhat.com>
+Date: Tue, 2 Jul 2024 19:45:38 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZoI1P1KQzQVVUzny@infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: Prevent derefencing NULL ptr in pfn_section_valid()
+To: Charan Teja Kalla <quic_charante@quicinc.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20240626001639.1350646-1-longman@redhat.com>
+ <bf0d9278-2b57-079e-cca5-21163e187ea3@quicinc.com>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <bf0d9278-2b57-079e-cca5-21163e187ea3@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Sun, Jun 30, 2024 at 09:49:03PM -0700, Christoph Hellwig wrote:
-> On Mon, Jul 01, 2024 at 10:51:13AM +1000, Dave Chinner wrote:
-> > Here's the logic - the iovec array is largely "free" with the larger
-> > data allocation.
-> 
-> What the patch does it to free the data allocation, that is the shadow
-> buffer earlier.  Which would safe a quite a bit of memory indeed ... if
-> we didn't expect the shadow buffer to be needed again a little later
-> anyway, which AFAIK is the assumption under which the CIL code operates.
 
-Ah, ok, my bad. I missed that because the xfs_log_iovec is not the
-data buffer - it is specifically just the iovec array that indexes
-the data buffer. Everything in the commit message references the
-xfs_log_iovec, and makes no mention of the actual logged metadata
-that is being stored, and I didn't catch that the submitter was
-using xfs_log_iovec to mean something different to what I understand
-it to be from looking at the code. That's why I take the time to
-explain my reasoning - so that people aren't in any doubt about how
-I interpretted the changes and can easily point out where I've gone
-wrong. :)
+On 7/1/24 09:50, Charan Teja Kalla wrote:
+> Hi Waiman,
+>
+> On 6/26/2024 5:46 AM, Waiman Long wrote:
+>> Commit 5ec8e8ea8b77 ("mm/sparsemem: fix race in accessing
+>> memory_section->usage") changed pfn_section_valid() to add a READ_ONCE()
+>> call around "ms->usage" to fix a race with section_deactivate() where
+>> ms->usage can be cleared.  The READ_ONCE() call, by itself, is not enough
+>> to prevent NULL pointer dereference.  We need to check its value before
+>> dereferencing it.
+> I am unable to see a scenario where ms->usage will be NULL when
+> pfn_section_valid() is called:
+>
+> 1) In pfn_valid, valid_section() check ensures that pfn_section_valid()
+> is not called as the section is marked as invalid.
+>
+> 2) In pfn_to_online_page, online_section() check ensures that
+> pfn_section_valid() is not called.
+>
+> and in the update path, we do:
+>       kfree_rcu(ms->usage, rcu);
+>       WRITE_ONCE(ms->usage, NULL);
+>
+> Could you help me in understanding about what I am missing here, please?
+>
+With the below timing sequence:
 
-> So as asked previously and by you again here I'd love to see numbers
-> for workloads where this actually is a benefit.
+      CPU 0                                      CPU 1
+      -----                                      -----
+                                         if (!valid_section(ms))
+                                             return 0;
+  ms->section_mem_map &=
+     ~SECTION_HAS_MEM_MAP                <interrupt>
 
-Yup, it doesn't change the basic premise that no allocations in the
-fast path is faster than doing even one allocation in the fast
-path. I made the explicit design choice to consume that
-memory as a necessary cost of going fast, and the memory is already
-being consumed while the objects are sitting and being relogged in
-the CIL before the CIL is formatted and checkpointed.
+  WRITE_ONCE(ms->usage, NULL);
+                                         READ_ONCE(ms->usage)->subsection_map
 
-Hence I'm not sure that freeing it before the checkpoint IO is
-submitted actually reduces the memory footprint significantly at
-all. Numbers and workloads are definitely needed.
 
-Cheers,
+In the time gap between valid_section() check and accessing ms->usage,
+it may have been cleared leading to dereferencing a NULL pointer. That is
+why it will be prudent to do a NULL check first.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Regards,
+Longman
+
 
