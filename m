@@ -1,333 +1,197 @@
-Return-Path: <linux-kernel+bounces-238318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3A2792483D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:27:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75C8C924843
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:28:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 130E2B26A7F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:27:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAD501F22E20
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:28:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D34201267;
-	Tue,  2 Jul 2024 19:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC6A1CE0B9;
+	Tue,  2 Jul 2024 19:25:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XR0bkZd7";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Z0RmLmyt"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Y4gPI8WY"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2047.outbound.protection.outlook.com [40.107.94.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D5A1D362E;
-	Tue,  2 Jul 2024 19:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719948262; cv=none; b=MFRbquYm8SYfLhg8Zft8vyTlpw/MpgFeeBXKtu6tv+B+HmF2hO6PlaGx+PFQpe4jhMp1orVp9cDgMzUSiONQ//EWW42EeJgXKa6HfWlstTBpjLCp73Ba6bnkPcnEnxARVfSxwpJLCM+R/dnL2fKwHW5puFqCnuJtIBrrm0lyMCQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719948262; c=relaxed/simple;
-	bh=5pXwVnLjrZZMmclVCPJIpOv8/3X5iL9fXTUooTWkdYU=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=CBeJldpUumITSW3TIZ92bXbkWy8a0OmN7txQ+J3Wn0BpXEMrbPz3XcwL92TBHKODKZJVzDa3lAdVipfRcyRiWixvM3j7K9w3DPdvkdRrhIZpgNAGRg9JLx4IaKBrapeKWTSkeskZ95hC48dgY6yTyA8J48aqYDJ5Evu8TuK7gVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XR0bkZd7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Z0RmLmyt; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 02 Jul 2024 19:24:17 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1719948257;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vWsTkYXYPLUXZS78PWvCCQVM73KomW/BuIRsc/vDrsc=;
-	b=XR0bkZd7KTgUhvoFF0PuLdK95ve+ksy2Nxn28XyEcLn6kYi+v56cp0xiNduoNzdJZgMEtM
-	1lqnbb+6ZMIuwVQdynelCdDk8Oa15RrBy2W3hey1LZFKzsdNWvlNwh11V2VBu8Viz60Nr3
-	4rEWn8BoDVPl1YE6Vu3SPNp1Xhxk30zpltBcmwq19Ed/rbWE0fnULJY/SrhOndSlkyNwJH
-	/NLZkj7ZjBroU1RXwpAyjtYqaMbH2s8HCeYORH9FQcBeN8LTlaoAXIh0M70Zw14pCsmdQB
-	Y4XfxQf1LXAVzSgenGXF8dFD85R2JxkLTbiwDRZ5YjtoSBX3HK7CnGQhgwys3A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1719948257;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vWsTkYXYPLUXZS78PWvCCQVM73KomW/BuIRsc/vDrsc=;
-	b=Z0RmLmytdEOl9Ecghk5LjI8xi9/SsPaiYFbiOEO6JHat11+9A/T5Jcl29O1m6PUeDdMLu8
-	YpMyYvtWb6aovkCg==
-From: "tip-bot2 for Tony Luck" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cache] x86/resctrl: Prepare for new domain scope
-Cc: Tony Luck <tony.luck@intel.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
- Reinette Chatre <reinette.chatre@intel.com>, Babu Moger <babu.moger@amd.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240628215619.76401-2-tony.luck@intel.com>
-References: <20240628215619.76401-2-tony.luck@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA781CCCD7;
+	Tue,  2 Jul 2024 19:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719948318; cv=fail; b=Q1Oo77fMls/Yj6fpOJUcigZTjMYKu1Z0XQno2f9JiWFVsbWZ7IyAkR49v5VuXUFnPHhDnQaaZ+/ExtYrEwpFDnUWFdI/ekYskkVz0vTrtXvQWxlN1qQVgxhC+8EilL4ijoMRmwSECyaGj+GM+FXymQ2pzj0Nkb6f7q23tBgrUNM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719948318; c=relaxed/simple;
+	bh=popCVlFtuZmNetK7yUn8DES61Ygzj+NzaBjzz5B+Wko=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=f4SetD7UCIQ7fmBFdX7+ER5m++Xnd2zwG4z7/raTrWUpKxnIlpwRp+bPshdWobzYlR9tAsOJ4l7nrPuvwFZxQhKLk+OGyPuKDV+3Pc5prVQa9SnPUBUT9jwRqrOEqM3MN3Jybuak3eWko0FvHlisYcTDRLbc0szB+e715ewy88s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Y4gPI8WY; arc=fail smtp.client-ip=40.107.94.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=m5sXFQP1C24ikj1vhzluKYH9nN/CtFTd7CH15yJ7u2ov30XANoCLVpitHsEslwKxFKWQ6LzdEC8bG1ZD1Wj+h2004veatQbdxi53YfnL54kP7JmXZI2LrLx77W9WOneySZtnIv83hFPkaWJlgQbl7MlWyAstom3B2UllZI6kL0q7VWoZa/BUdqkativbNK1a//5dvoH8WqULLLuokPq5Pcx32MdrfeoT5nD0Uwf418bQ5spC+qLbeeqDxRS0u68shlTCGgonKn9obqePFUcnfjSuQp9XTWfBIfTp4zx0qeTx1vU8wkOdEVxzboezNBWBfWjHyPAUQYEdQ9sZ7fh3og==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9aNIHRp0Np8QZ0s8Brw1FplXKoeb7qOeqUOlIRwt1d4=;
+ b=fUd6AJ7gPuT82tYMxEERMeaduoL7mQ3xk4EFW6d+h4XSGHTjLmSwUjaAW1s3jTeLZ1biR6ilFDzARp3NvBmRyBVQ54uHPUZ+yQwIH8Lo3RCkw4STt/DClAVsYWjJ26hC8wgJ5Be2CU3d9KxYHoS1dQJ8uB697Z76BYpZHlxq8ywcIr039x8kF63zfC8hsGghu+IUn3lkB5T1S0cwvrtgOO4zymPA23dBghBcvz2Ad9DJ+TNRYjKR32ugFjXP+jNeoRpB9Z6aoyIeRL73+x+CDJTzNzxirW9vKKhiP45iOqvnpWrugdAl+SkfzvFtDCIT+ZqOpGbjjajLXnzHdcIg1Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9aNIHRp0Np8QZ0s8Brw1FplXKoeb7qOeqUOlIRwt1d4=;
+ b=Y4gPI8WYlrzw/IELIolr2E7YiceVPO5ip6mScCQucZIzPiI1x/J4QrtWzgWaU4PWbPN+vNvh54ZiNH0RUbDpgQ/FCRRKNieD63dB9btHeYcITweEnAnI9va/DnRcFPkIOxhDqtYQXoCRWJ9uMaEwpOxlPKO50YN1+W1SsXFdVNanvyJuTaE96LotSijr7MmNhRPJSNzJXI9nFNpDpzQazHKrzcZ5Hw7ruL8Oqdtzd18qgsLteK4EVqr24ZdwFOaNtuVXj/HTQflMzPiu7xGMBOk7vwhmYV+31he/EK3ixHVIFHEAZttVY7WWk9s9Qc9TQY+HSHiEqdFUuh/eQvQzCA==
+Received: from DM5PR07CA0116.namprd07.prod.outlook.com (2603:10b6:4:ae::45) by
+ BY5PR12MB4241.namprd12.prod.outlook.com (2603:10b6:a03:20c::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7741.23; Tue, 2 Jul 2024 19:25:13 +0000
+Received: from DS1PEPF00017099.namprd05.prod.outlook.com
+ (2603:10b6:4:ae:cafe::4) by DM5PR07CA0116.outlook.office365.com
+ (2603:10b6:4:ae::45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.33 via Frontend
+ Transport; Tue, 2 Jul 2024 19:25:13 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ DS1PEPF00017099.mail.protection.outlook.com (10.167.18.103) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7741.18 via Frontend Transport; Tue, 2 Jul 2024 19:25:12 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 2 Jul 2024
+ 12:24:57 -0700
+Received: from [10.110.48.28] (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 2 Jul 2024
+ 12:24:56 -0700
+Message-ID: <779d0e08-216a-45e9-991a-80a7ec23280d@nvidia.com>
+Date: Tue, 2 Jul 2024 12:24:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171994825740.2215.14130200743347651330.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] selftests/vDSO: fix clang build errors and
+ warnings
+To: Edward Liaw <edliaw@google.com>
+CC: Shuah Khan <shuah@kernel.org>, "Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Andy Lutomirski <luto@kernel.org>, Mark Brown <broonie@kernel.org>, "Vincenzo
+ Frascino" <vincenzo.frascino@arm.com>, Colin Ian King
+	<colin.i.king@gmail.com>, Valentin Obst <kernel@valentinobst.de>,
+	<linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	<llvm@lists.linux.dev>, Carlos Llamas <cmllamas@google.com>, "Muhammad Usama
+ Anjum" <usama.anjum@collabora.com>
+References: <20240614233105.265009-1-jhubbard@nvidia.com>
+ <20240614233105.265009-2-jhubbard@nvidia.com>
+ <CAG4es9WQOOga8Oh9BOjr_JXy5gcUzVN0iTtfjN_HVdRj7_G7iQ@mail.gmail.com>
+ <b4720a40-6e74-4b1d-93ca-a3444e400a1a@nvidia.com>
+ <CAG4es9V4EiVBi08X7xNrEpCd5eUum1-5DrYV7+52BB=OP_4DKA@mail.gmail.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <CAG4es9V4EiVBi08X7xNrEpCd5eUum1-5DrYV7+52BB=OP_4DKA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS1PEPF00017099:EE_|BY5PR12MB4241:EE_
+X-MS-Office365-Filtering-Correlation-Id: b43e99d9-edd0-4c3d-0eca-08dc9accb209
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|82310400026|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?c2VmQVV2dWNUSWUxR2F2cDA3QmtUTnFaRlVjekxGcS9TbjBLMkRrYU1aUVVJ?=
+ =?utf-8?B?RGptQkd5UG00bEZpSmRCcHlpSExDcDVtRHhCTHB5bFFwRVpYRjQzWHJoZE9N?=
+ =?utf-8?B?TUV3b3o5MktwY1JVSGwwMEhITUVTL2ViN2tIcFpBSS9jSDc3TjZnUGNESS8x?=
+ =?utf-8?B?Y0NhcS91eW5iVkJYalB6ajJUZXNuK0gzWWpsc1psTTNmVEFiSnNZL3ltRTdO?=
+ =?utf-8?B?bVF4VXhFTlJKMkF2V2h2eFk0eVhZRlZoWm1yd3NEUFJiaXFaVjlpem0yVHUw?=
+ =?utf-8?B?Uld6S0NtTC93aEhsdUJJU3ZHdGxoTXRTN29YVkRPc0dlRVg2SVRmN01SSWZR?=
+ =?utf-8?B?emN6aC9zZkpUQTZWM2Nxdm5qcHRmN0RuaXFGVGNOcGtTcTF2alQ2akJhQ0xZ?=
+ =?utf-8?B?bmROSkJNU0hqY1NaT3N5VlViUXBzNGRJbTUvamV0bDJIUitRSUdxcERDZlpV?=
+ =?utf-8?B?VFFnVEViQUZRV3hGZ0tnYzZKV1owMG9ON01tMkVzRmR6VkZMc3hRVGozOUkx?=
+ =?utf-8?B?UDlhYi9ncFJTeWV2RDU1cVFRcW92WlBUVER2a05BMmFoOElLUkdSSVRXTVNr?=
+ =?utf-8?B?YVRWNkZmTUNMRW43SVZIWjBlaU1JalBiRW1Vc00vSXovbnVGTjZJUzdNaTU2?=
+ =?utf-8?B?RmNUN0RVR0tNdU9uYWVUVURpb3RYVG0vcGQzcjArWjEwaWJDZEZIOU1Ba21Q?=
+ =?utf-8?B?RlR3ZmN6dWIzRG05OUJYMHAvUUlIeGtjd28yampKSCs3R01uYURCUmtwZ0lC?=
+ =?utf-8?B?WHgxcTkzZmNmREphd1Z5cGE2TWFwZ05uRThWMk9VVytaaVZod0FOUFNKdUd6?=
+ =?utf-8?B?aDVlb2p4SDF0WmhRU1pEWGdpa0s2dDBnUDloZzY1N1NZRE1IR0hxTlRpNHRQ?=
+ =?utf-8?B?cEUyWUVVY0VCbzUvMC96TkVNbmVWdUhFUDd2eU9LK3FhS2xhbnBJMFhXaUh0?=
+ =?utf-8?B?QnQzQmNlRFhlZGhPd0t6c01xSXVTRTBiNXFzSFlnVU9YUXRxNjAvQzVZQTkx?=
+ =?utf-8?B?U29qYXdiMU1PZ3dwMUVXS3VNNWNRVjJXSFM2N3JTRHp4ZGRYbGd6NDR6UElU?=
+ =?utf-8?B?KzZtSUNidGNzVURlRHEzaVVLVTBGc3dtcXpseEN3eVpWdVRqak5WaGFvVHV4?=
+ =?utf-8?B?RVNMY1ozTWZEN3J4a3FnL21iR2N2ank1TjRseUpmc2lBb2hBZHJYYlVQR1R1?=
+ =?utf-8?B?eFJySWhESStkaXRUeVA2TXpwYmh0UTQwaHgvQjFBY3lZczc4UlBGZEZncGlB?=
+ =?utf-8?B?cG5FV0JIc1VhQWlJSkR1WkFIYWUxbWZqdGljMDZndE5kMkQ1aEZ5cktYREZZ?=
+ =?utf-8?B?U1BWSERyQ1FOLy9od1k4VXpYZ0J1SkxCbm02bDd5MlgrYm8yUkJjKzJnajFp?=
+ =?utf-8?B?RXQzOUFIb3ZzaWdHblpmeHpzalhBZ3N4UEUzbWtQN09PYmNvYmxraVJ6Skc4?=
+ =?utf-8?B?S05GU3NXZEZBeDdkcTRuUXQySzRNNllRZkRCcldUSld2T0xaT20vQVBudnlW?=
+ =?utf-8?B?eFVBVlBxRDBiRXFNUG5FQzVTNGdZL2lVcXd3cHpkUzFhQ3VRalczTFYxLzBX?=
+ =?utf-8?B?OUo5OGQrc1Z5RG9aZE9Sb25JRjZaeUNJRGt2OVFrNHE1M29nbmRDZk44eGY0?=
+ =?utf-8?B?N0t0enRycTZtbm9SNWszdVFnNXNVT09KK2pJS3hzSDRqcE9hbGFQK3NGbnAx?=
+ =?utf-8?B?ckIzQ2dMR0s5NGlvS0t3TTBmMEpkZ25lakhtSk40VDcrL0N3cXc5TW9oTFc5?=
+ =?utf-8?B?T1hJdDgxeHBLRU9tYllJeDVxZUhiRmNuT3lsUkQ2aUdjcUtaS1hSYUZTZWlv?=
+ =?utf-8?B?VUxsTW5GbHFFQkZuL2ZnTlhnUCt6djJTZDA2MktCbzFXcFFhQ2U0M0xXeXZa?=
+ =?utf-8?B?ZUlYL1ZQTmxIdG1wMHJRZDlpSmc3NlkrZjhqODF5WUVtODFjbTNRRytkbkZI?=
+ =?utf-8?Q?0zBIkOBCGjOjDKCSQi1mi/6i41A1haSz?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jul 2024 19:25:12.9149
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b43e99d9-edd0-4c3d-0eca-08dc9accb209
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS1PEPF00017099.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4241
 
-The following commit has been merged into the x86/cache branch of tip:
+On 7/2/24 11:49 AM, Edward Liaw wrote:
+> On Tue, Jul 2, 2024 at 11:26 AM John Hubbard <jhubbard@nvidia.com> wrote:
+>>
+>> On 7/2/24 11:12 AM, Edward Liaw wrote:
+>>> On Fri, Jun 14, 2024 at 4:31 PM John Hubbard <jhubbard@nvidia.com> wrote:
+>> ...
+>>> Hi John,
+>>> Could you try re-submitting this series with the RESEND prefix?
+>>>
+>>> Thanks,
+>>> Edward
+>>
+>> Sure. Is that the key, for kselftests? Because I've got 5+ small
+>> patchsets that are languishing there, and I'm at a loss for how to even
+>> get a response, much less get something merged.
+> 
+> I don't really know, but it was suggested to me that it can help to
+> point out that the patch might have been missed before.
+> 
 
-Commit-ID:     f436cb6913a57bf3e1e66d18bc663e6c20751929
-Gitweb:        https://git.kernel.org/tip/f436cb6913a57bf3e1e66d18bc663e6c20751929
-Author:        Tony Luck <tony.luck@intel.com>
-AuthorDate:    Fri, 28 Jun 2024 14:56:01 -07:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Tue, 02 Jul 2024 19:49:53 +02:00
+I wish. But we are three versions into it, plus a special email [1]
+specifically to point out that this is still pending.
 
-x86/resctrl: Prepare for new domain scope
+I think either people are on vacation, or these fixes are not considered
+sufficiently important, or both. :)
 
-Resctrl resources operate on subsets of CPUs in the system with the
-defining attribute of each subset being an instance of a particular
-level of cache. E.g. all CPUs sharing an L3 cache would be part of the
-same domain.
 
-In preparation for features that are scoped at the NUMA node level,
-change the code from explicit references to "cache_level" to a more
-generic scope. At this point the only options for this scope are groups
-of CPUs that share an L2 cache or L3 cache.
+[1] https://lore.kernel.org/e9de90dd-c541-45bf-a364-0e7aaf320314@nvidia.com
 
-Clean up the error handling when looking up domains. Report invalid ids
-before calling rdt_find_domain() in preparation for better messages when
-scope can be other than cache scope. This means that rdt_find_domain()
-will never return an error. So remove checks for error from the call sites.
+thanks,
+-- 
+John Hubbard
+NVIDIA
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
-Tested-by: Babu Moger <babu.moger@amd.com>
-Link: https://lore.kernel.org/r/20240628215619.76401-2-tony.luck@intel.com
----
- arch/x86/kernel/cpu/resctrl/core.c        | 46 +++++++++++++++-------
- arch/x86/kernel/cpu/resctrl/ctrlmondata.c |  2 +-
- arch/x86/kernel/cpu/resctrl/pseudo_lock.c |  6 ++-
- arch/x86/kernel/cpu/resctrl/rdtgroup.c    |  5 +-
- include/linux/resctrl.h                   |  9 +++-
- 5 files changed, 49 insertions(+), 19 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index a113d9a..f85b2ff 100644
---- a/arch/x86/kernel/cpu/resctrl/core.c
-+++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -68,7 +68,7 @@ struct rdt_hw_resource rdt_resources_all[] = {
- 		.r_resctrl = {
- 			.rid			= RDT_RESOURCE_L3,
- 			.name			= "L3",
--			.cache_level		= 3,
-+			.scope			= RESCTRL_L3_CACHE,
- 			.domains		= domain_init(RDT_RESOURCE_L3),
- 			.parse_ctrlval		= parse_cbm,
- 			.format_str		= "%d=%0*x",
-@@ -82,7 +82,7 @@ struct rdt_hw_resource rdt_resources_all[] = {
- 		.r_resctrl = {
- 			.rid			= RDT_RESOURCE_L2,
- 			.name			= "L2",
--			.cache_level		= 2,
-+			.scope			= RESCTRL_L2_CACHE,
- 			.domains		= domain_init(RDT_RESOURCE_L2),
- 			.parse_ctrlval		= parse_cbm,
- 			.format_str		= "%d=%0*x",
-@@ -96,7 +96,7 @@ struct rdt_hw_resource rdt_resources_all[] = {
- 		.r_resctrl = {
- 			.rid			= RDT_RESOURCE_MBA,
- 			.name			= "MB",
--			.cache_level		= 3,
-+			.scope			= RESCTRL_L3_CACHE,
- 			.domains		= domain_init(RDT_RESOURCE_MBA),
- 			.parse_ctrlval		= parse_bw,
- 			.format_str		= "%d=%*u",
-@@ -108,7 +108,7 @@ struct rdt_hw_resource rdt_resources_all[] = {
- 		.r_resctrl = {
- 			.rid			= RDT_RESOURCE_SMBA,
- 			.name			= "SMBA",
--			.cache_level		= 3,
-+			.scope			= RESCTRL_L3_CACHE,
- 			.domains		= domain_init(RDT_RESOURCE_SMBA),
- 			.parse_ctrlval		= parse_bw,
- 			.format_str		= "%d=%*u",
-@@ -392,9 +392,6 @@ struct rdt_domain *rdt_find_domain(struct rdt_resource *r, int id,
- 	struct rdt_domain *d;
- 	struct list_head *l;
- 
--	if (id < 0)
--		return ERR_PTR(-ENODEV);
--
- 	list_for_each(l, &r->domains) {
- 		d = list_entry(l, struct rdt_domain, list);
- 		/* When id is found, return its domain. */
-@@ -484,6 +481,19 @@ static int arch_domain_mbm_alloc(u32 num_rmid, struct rdt_hw_domain *hw_dom)
- 	return 0;
- }
- 
-+static int get_domain_id_from_scope(int cpu, enum resctrl_scope scope)
-+{
-+	switch (scope) {
-+	case RESCTRL_L2_CACHE:
-+	case RESCTRL_L3_CACHE:
-+		return get_cpu_cacheinfo_id(cpu, scope);
-+	default:
-+		break;
-+	}
-+
-+	return -EINVAL;
-+}
-+
- /*
-  * domain_add_cpu - Add a cpu to a resource's domain list.
-  *
-@@ -499,7 +509,7 @@ static int arch_domain_mbm_alloc(u32 num_rmid, struct rdt_hw_domain *hw_dom)
-  */
- static void domain_add_cpu(int cpu, struct rdt_resource *r)
- {
--	int id = get_cpu_cacheinfo_id(cpu, r->cache_level);
-+	int id = get_domain_id_from_scope(cpu, r->scope);
- 	struct list_head *add_pos = NULL;
- 	struct rdt_hw_domain *hw_dom;
- 	struct rdt_domain *d;
-@@ -507,12 +517,14 @@ static void domain_add_cpu(int cpu, struct rdt_resource *r)
- 
- 	lockdep_assert_held(&domain_list_lock);
- 
--	d = rdt_find_domain(r, id, &add_pos);
--	if (IS_ERR(d)) {
--		pr_warn("Couldn't find cache id for CPU %d\n", cpu);
-+	if (id < 0) {
-+		pr_warn_once("Can't find domain id for CPU:%d scope:%d for resource %s\n",
-+			     cpu, r->scope, r->name);
- 		return;
- 	}
- 
-+	d = rdt_find_domain(r, id, &add_pos);
-+
- 	if (d) {
- 		cpumask_set_cpu(cpu, &d->cpu_mask);
- 		if (r->cache.arch_has_per_cpu_cfg)
-@@ -552,15 +564,21 @@ static void domain_add_cpu(int cpu, struct rdt_resource *r)
- 
- static void domain_remove_cpu(int cpu, struct rdt_resource *r)
- {
--	int id = get_cpu_cacheinfo_id(cpu, r->cache_level);
-+	int id = get_domain_id_from_scope(cpu, r->scope);
- 	struct rdt_hw_domain *hw_dom;
- 	struct rdt_domain *d;
- 
- 	lockdep_assert_held(&domain_list_lock);
- 
-+	if (id < 0) {
-+		pr_warn_once("Can't find domain id for CPU:%d scope:%d for resource %s\n",
-+			     cpu, r->scope, r->name);
-+		return;
-+	}
-+
- 	d = rdt_find_domain(r, id, NULL);
--	if (IS_ERR_OR_NULL(d)) {
--		pr_warn("Couldn't find cache id for CPU %d\n", cpu);
-+	if (!d) {
-+		pr_warn("Couldn't find domain with id=%d for CPU %d\n", id, cpu);
- 		return;
- 	}
- 	hw_dom = resctrl_to_arch_dom(d);
-diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-index b7291f6..2bf021d 100644
---- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-+++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-@@ -577,7 +577,7 @@ int rdtgroup_mondata_show(struct seq_file *m, void *arg)
- 
- 	r = &rdt_resources_all[resid].r_resctrl;
- 	d = rdt_find_domain(r, domid, NULL);
--	if (IS_ERR_OR_NULL(d)) {
-+	if (!d) {
- 		ret = -ENOENT;
- 		goto out;
- 	}
-diff --git a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-index 1bbfd3c..201011f 100644
---- a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-+++ b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-@@ -292,9 +292,13 @@ static void pseudo_lock_region_clear(struct pseudo_lock_region *plr)
-  */
- static int pseudo_lock_region_init(struct pseudo_lock_region *plr)
- {
-+	enum resctrl_scope scope = plr->s->res->scope;
- 	struct cacheinfo *ci;
- 	int ret;
- 
-+	if (WARN_ON_ONCE(scope != RESCTRL_L2_CACHE && scope != RESCTRL_L3_CACHE))
-+		return -ENODEV;
-+
- 	/* Pick the first cpu we find that is associated with the cache. */
- 	plr->cpu = cpumask_first(&plr->d->cpu_mask);
- 
-@@ -305,7 +309,7 @@ static int pseudo_lock_region_init(struct pseudo_lock_region *plr)
- 		goto out_region;
- 	}
- 
--	ci = get_cpu_cacheinfo_level(plr->cpu, plr->s->res->cache_level);
-+	ci = get_cpu_cacheinfo_level(plr->cpu, scope);
- 	if (ci) {
- 		plr->line_size = ci->coherency_line_size;
- 		plr->size = rdtgroup_cbm_to_size(plr->s->res, plr->d, plr->cbm);
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index cb68a12..50f5876 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -1454,8 +1454,11 @@ unsigned int rdtgroup_cbm_to_size(struct rdt_resource *r,
- 	struct cacheinfo *ci;
- 	int num_b;
- 
-+	if (WARN_ON_ONCE(r->scope != RESCTRL_L2_CACHE && r->scope != RESCTRL_L3_CACHE))
-+		return size;
-+
- 	num_b = bitmap_weight(&cbm, r->cache.cbm_len);
--	ci = get_cpu_cacheinfo_level(cpumask_any(&d->cpu_mask), r->cache_level);
-+	ci = get_cpu_cacheinfo_level(cpumask_any(&d->cpu_mask), r->scope);
- 	if (ci)
- 		size = ci->size / r->cache.cbm_len * num_b;
- 
-diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-index a365f67..ed693bf 100644
---- a/include/linux/resctrl.h
-+++ b/include/linux/resctrl.h
-@@ -150,13 +150,18 @@ struct resctrl_membw {
- struct rdt_parse_data;
- struct resctrl_schema;
- 
-+enum resctrl_scope {
-+	RESCTRL_L2_CACHE = 2,
-+	RESCTRL_L3_CACHE = 3,
-+};
-+
- /**
-  * struct rdt_resource - attributes of a resctrl resource
-  * @rid:		The index of the resource
-  * @alloc_capable:	Is allocation available on this machine
-  * @mon_capable:	Is monitor feature available on this machine
-  * @num_rmid:		Number of RMIDs available
-- * @cache_level:	Which cache level defines scope of this resource
-+ * @scope:		Scope of this resource
-  * @cache:		Cache allocation related data
-  * @membw:		If the component has bandwidth controls, their properties.
-  * @domains:		RCU list of all domains for this resource
-@@ -174,7 +179,7 @@ struct rdt_resource {
- 	bool			alloc_capable;
- 	bool			mon_capable;
- 	int			num_rmid;
--	int			cache_level;
-+	enum resctrl_scope	scope;
- 	struct resctrl_cache	cache;
- 	struct resctrl_membw	membw;
- 	struct list_head	domains;
 
