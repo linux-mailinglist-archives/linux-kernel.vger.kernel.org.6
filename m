@@ -1,178 +1,136 @@
-Return-Path: <linux-kernel+bounces-238073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAAE39242F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:56:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C8DA9242ED
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:53:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D7871F23017
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:56:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 419B11F26587
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:53:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C9C1BC096;
-	Tue,  2 Jul 2024 15:56:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB0D81BD009;
+	Tue,  2 Jul 2024 15:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="cozWUnlm"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Tg7f1Ocu"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFA926AE4
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 15:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951B01BD004
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 15:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719935812; cv=none; b=HXLrzSYWXifEFedyITORYshruLq1nZh+A37UjYiMsmRCU/+21QziCbr0Mmm4YmeYPA08NzCYVsl7MRyCSDqHq1uvrreMbRGQ2c8QshEHHKUSTi6XldA84dbmU1YNe2qbQKQdnhlSs66TUEg8AHl8nCY3vZIqlLggYFLDZNu25Ac=
+	t=1719935559; cv=none; b=HxqvEvpz2CYHf5Zb+D2YillRjHR1taiCNQPD2DavZIqXNFVL08r5l+kh5pEp3onYXQt+loShV/enHrpLqggj/KYmDdKzxhtrt+phzXhO5UIvZ6U/aZx3zGrgErTHecautO2tCXgLdiRcRgUZZJVjJHMhFF1CSH1/RzRkRvY/jlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719935812; c=relaxed/simple;
-	bh=8ner41gRskw+GSfgxISqqxmCp4VWSYH/4KdQPpuLGM0=;
-	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
-	 From:To:Cc:Subject:References:In-Reply-To; b=JJFQrjSwr/qac0Rj8aCfoA/eOhhY0OwnvBx+IsregrCyoUkvTg0Y7/13HzILdTDzSgG7RMQS8bP18qBkxRBvynra8qsm3zVKTaqZEaDOl5IQ4MNLt99lYvGtZrGxMIbwJmLZeoRdQRy6yuBVwhhcrBWOlXqCpNuRoZ1EB7fgf3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=cozWUnlm; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6b5db7936b3so2574526d6.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 08:56:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1719935809; x=1720540609; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FB8UHDOaIKLrgIWEE8g4mg51WR8c0nOJoFegB46Qoig=;
-        b=cozWUnlmfWxoQ4IxgusiFt3R70S1Q5Q1L5rX1VNTvO2ckMWFW+SrWmJILBcizGo7yi
-         UaD7sbtTaGxIkOPC+AMzcRuBZuRRqaPhrllVoKODDuQGmAZyuQxvlnNSI2A0tdMvFeVi
-         HErL97dxR3z34ThGYBTeEUhRExQUzGX8p1PlxA7AMrm1f9wXd4F17vOCVEdesHKrHg3K
-         E8CL5eOx241hTcxzLcxAz5HN5x1PoETA9ym/aWleTpVWrYcZEh7qwhQFYWcj4yC7odzm
-         SsC/fNhVoVo8gKT7QhwAhIOHGgIOtjwmXSNjrvUNGdlRVlbMwkvSQHu8VreI3yhjG76O
-         L3mQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719935809; x=1720540609;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FB8UHDOaIKLrgIWEE8g4mg51WR8c0nOJoFegB46Qoig=;
-        b=QVO2h55Z01uNwbquGS2SL0J+AfxgPDT5IAuFr/V3Ksmjpjo4qsbwIXs0fY+JgvUgI2
-         jTVp8+R18OEYUeEuBTOKuDtAacU33fe9cWkjP4dFpnhR5kFbLRQ5p5IMduZ17F2I9gDm
-         2NUoYLuaBb+KP3BtsCEhH2MGVhXCACxyxyafvm7XukO33K0ImOr+ZF60Eb8Cd+wBSGA8
-         oaLEJsbpJaRdWhO39vcl5sotZijsEkV3kubp0Yf6Ez8xPr8KTXnmB+5EsPfhVbLFNLv3
-         nWhKSC14qr6Lnli4wjBh6YHF3oX2EeOZRA05vpEiv6XDcLdQH+TbXMkX597daX1Cfdp+
-         v86g==
-X-Forwarded-Encrypted: i=1; AJvYcCUT+PlWUZQ0zoAoY6jaTtRCcDs3JaR7Mg1HAjNoevYh9R3YIpq6zJ50hCPDB8FY+rxCyr4h1rKZhyvvLwxJlV+8PiCCq1Pt34rSrWOd
-X-Gm-Message-State: AOJu0YxT525+ec9YbBa+vSFAh/sN4lXjlWd3qD8LZsMV7VDkvXfGokh1
-	MPCPf0DvxgbAv6pVD9E3U6yEXcBnX7Cg7k96UWWODVnydCZncUmS10TjE6QPZg==
-X-Google-Smtp-Source: AGHT+IGjBlHimts/oaQ3Af8rs53H92WprPl+hFmtp0WMpy+HhR/2A4KlwlRph0QRmPf5uT43vkBHAw==
-X-Received: by 2002:a05:6214:2422:b0:6b0:763c:e069 with SMTP id 6a1803df08f44-6b5b7098a37mr126280576d6.18.1719935809612;
-        Tue, 02 Jul 2024 08:56:49 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b5a705bc83sm41082046d6.131.2024.07.02.08.56.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 08:56:49 -0700 (PDT)
-Date: Tue, 02 Jul 2024 11:56:48 -0400
-Message-ID: <0c6a49b11150cb088f3be6a8e49fdd02@paul-moore.com>
+	s=arc-20240116; t=1719935559; c=relaxed/simple;
+	bh=wZPV+CEpgfvPai1e8+Vih+T/KY60zCsNw6OOzvBD2xA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LYiDn4dNqe8uCurGB/sYZclMWJnsc3n2D7Q8wHTXqWnivBkZbJREJVjA2rz7g7FdzbDgDadAMq30G/399UpzCW5okkodlg5ULu6CgQeMZOvBi/0+v4cAP5VxTqCUJ3xQLQvEvJCaZ0l710guPeTup+EGKzvECzbJwSnW2g45ioA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Tg7f1Ocu; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719935557; x=1751471557;
+  h=date:from:to:cc:subject:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=wZPV+CEpgfvPai1e8+Vih+T/KY60zCsNw6OOzvBD2xA=;
+  b=Tg7f1Ocu1IwuyGRZcDgZO/55kY74+QmMxo4B22h5uaQX5Kgil6bWyr0e
+   KUFGrmHzgLBG36ovUxq9/u3ipZKjgFiFb146fQ7+NFTC7hRZWEJvbPcW8
+   lobwtv08QMIZ2hZB/JFVayl2nhxl3XWeH+s17+uI+VQlYOOF1wfrpw9ct
+   C0imypvFiE3e52WsUQ5XnJwKnit+COAAD4nQyowT7or+WRs1amy+9Dj4z
+   g+xC7fCVq+Xj6iJtTXldldjWXSWrxwj8qz4sR0rBZDYv1uTmnpwQve/wd
+   RQ/ap0nxTXyZGUDH722qd5wDp6NnY2hkEMX5igmxPUCGyqhddLkL87JTN
+   g==;
+X-CSE-ConnectionGUID: oIlndZ6aSbaegS9GlPQC/w==
+X-CSE-MsgGUID: 8spVxMdLSlidrtV5jgBxTQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="27719996"
+X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
+   d="scan'208";a="27719996"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2024 08:52:37 -0700
+X-CSE-ConnectionGUID: +iPT0RxbT4+0+gwNWEGrQg==
+X-CSE-MsgGUID: zviT4DVLRVu1wnVIJoHRLg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
+   d="scan'208";a="50396978"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.54.39.125])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2024 08:52:36 -0700
+Date: Tue, 2 Jul 2024 08:57:49 -0700
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+To: Baolu Lu <baolu.lu@linux.intel.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin
+ Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian
+ <kevin.tian@intel.com>, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org, jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v3 1/2] iommu/vt-d: Add helper to flush caches for
+ context change
+Message-ID: <20240702085749.2e2bbea5@jacob-builder>
+In-Reply-To: <28ade99a-13ad-4b01-aff2-711c006856fd@linux.intel.com>
+References: <20240701112317.94022-1-baolu.lu@linux.intel.com>
+	<20240701112317.94022-2-baolu.lu@linux.intel.com>
+	<20240701214128.5523a1ea@jacob-builder>
+	<28ade99a-13ad-4b01-aff2-711c006856fd@linux.intel.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=utf-8 
-Content-Disposition: inline 
-Content-Transfer-Encoding: 8bit
-From: Paul Moore <paul@paul-moore.com>
-To: Canfeng Guo <guocanfeng@uniontech.com>
-Cc: stephen.smalley.work@gmail.com, omosnace@redhat.com, selinux@vger.kernel.org, linux-kernel@vger.kernel.org, Canfeng Guo <guocanfeng@uniontech.com>
-Subject: Re: [PATCH] selinux: Streamline type determination in  security_compute_sid
-References: <20240629041124.156720-1-guocanfeng@uniontech.com>
-In-Reply-To: <20240629041124.156720-1-guocanfeng@uniontech.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Jun 29, 2024 Canfeng Guo <guocanfeng@uniontech.com> wrote:
+
+On Tue, 2 Jul 2024 12:43:41 +0800, Baolu Lu <baolu.lu@linux.intel.com>
+wrote:
+
+> On 2024/7/2 12:41, Jacob Pan wrote:
+> > On Mon,  1 Jul 2024 19:23:16 +0800, Lu Baolu<baolu.lu@linux.intel.com>
+> > wrote:
+> >   
+> >> +	if (flush_domains) {
+> >> +		/*
+> >> +		 * If the IOMMU is running in scalable mode and there
+> >> might
+> >> +		 * be potential PASID translations, the caller should
+> >> hold
+> >> +		 * the lock to ensure that context changes and cache
+> >> flushes
+> >> +		 * are atomic.
+> >> +		 */
+> >> +		assert_spin_locked(&iommu->lock);
+> >> +		for (i = 0; i < info->pasid_table->max_pasid; i++) {
+> >> +			pte = intel_pasid_get_entry(info->dev, i);
+> >> +			if (!pte || !pasid_pte_is_present(pte))
+> >> +				continue;  
+> > Is it worth going through 1M PASIDs just to skip the PASID cache
+> > invalidation? Or just do the flush on all used DIDs unconditionally.  
 > 
-> Simplifies the logic for determining the security context type in
-> security_compute_sid, enhancing readability and efficiency.
-> 
-> Consolidates default type assignment logic next to type transition
-> checks, removing redundancy and improving code flow.
-> 
-> Signed-off-by: Canfeng Guo <guocanfeng@uniontech.com>
-> ---
->  security/selinux/ss/services.c | 32 ++++++++++++++++----------------
->  1 file changed, 16 insertions(+), 16 deletions(-)
-> 
-> diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
-> index e33e55384b75..0c07ebf0b1e7 100644
-> --- a/security/selinux/ss/services.c
-> +++ b/security/selinux/ss/services.c
-> @@ -1804,21 +1804,7 @@ static int security_compute_sid(u32 ssid,
->  			newcontext.role = OBJECT_R_VAL;
->  	}
->  
-> -	/* Set the type to default values. */
-> -	if (cladatum && cladatum->default_type == DEFAULT_SOURCE) {
-> -		newcontext.type = scontext->type;
-> -	} else if (cladatum && cladatum->default_type == DEFAULT_TARGET) {
-> -		newcontext.type = tcontext->type;
-> -	} else {
-> -		if ((tclass == policydb->process_class) || sock) {
-> -			/* Use the type of process. */
-> -			newcontext.type = scontext->type;
-> -		} else {
-> -			/* Use the type of the related object. */
-> -			newcontext.type = tcontext->type;
-> -		}
-> -	}
-> -
-> +	/* Set the type. */
->  	/* Look for a type transition/member/change rule. */
->  	avkey.source_type = scontext->type;
->  	avkey.target_type = tcontext->type;
-> @@ -1837,9 +1823,23 @@ static int security_compute_sid(u32 ssid,
->  		}
->  	}
->  
-> +	/* If a permanent rule is found, use the type from */
-> +	/* the type transition/member/change rule. Otherwise, */
-> +	/* set the type to its default values. */
+> Currently we don't track all domains attached to a device. If such
+> optimization is necessary, perhaps we can add it later.
 
-In general this patch looks fine with the exception of the comment
-block above, you can either follow the multi-line comment used elsewhere
-in this source file, example:
+I think it is necessary, because without tracking domain IDs, the code
+above would have duplicated invalidations.
+For example: a device PASID table has the following entries
+	PASID	DomainID
+-------------------------
+	100	1
+	200	1
+	300	2
+-------------------------
+When a present context entry changes, we need to do:
+qi_flush_pasid_cache(iommu, 1, QI_PC_ALL_PASIDS, 0);
+qi_flush_pasid_cache(iommu, 2, QI_PC_ALL_PASIDS, 0);
 
- /* line one
-    line two
-    line three */
+With this code, we do
+qi_flush_pasid_cache(iommu, 1, QI_PC_ALL_PASIDS, 0);
+qi_flush_pasid_cache(iommu, 1, QI_PC_ALL_PASIDS, 0);//duplicated!
+qi_flush_pasid_cache(iommu, 2, QI_PC_ALL_PASIDS, 0);
 
-... or you can follow the generally accepted style for multi-line
-comments in the Linux kernel:
+Thanks,
 
- /* line one
-  * line two
-  * line three
-  */
-
-See the link below for more information:
-
-* https://docs.kernel.org/process/coding-style.html#commenting
-
->  	if (avnode) {
-> -		/* Use the type from the type transition/member/change rule. */
->  		newcontext.type = avnode->datum.u.data;
-> +	} else if (cladatum && cladatum->default_type == DEFAULT_SOURCE) {
-> +		newcontext.type = scontext->type;
-> +	} else if (cladatum && cladatum->default_type == DEFAULT_TARGET) {
-> +		newcontext.type = tcontext->type;
-> +	} else {
-> +		if ((tclass == policydb->process_class) || sock) {
-> +			/* Use the type of process. */
-> +			newcontext.type = scontext->type;
-> +		} else {
-> +			/* Use the type of the related object. */
-> +			newcontext.type = tcontext->type;
-> +		}
->  	}
->  
->  	/* if we have a objname this is a file trans check so check those rules */
-> -- 
-> 2.20.1
-
---
-paul-moore.com
+Jacob
 
