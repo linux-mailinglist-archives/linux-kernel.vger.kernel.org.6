@@ -1,496 +1,366 @@
-Return-Path: <linux-kernel+bounces-237779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91E9B923E02
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:36:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F4B7923E04
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:36:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E071AB244C9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:36:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35C0B28CF65
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D12B917164F;
-	Tue,  2 Jul 2024 12:35:08 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4833616B390;
+	Tue,  2 Jul 2024 12:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="eCsreGsS"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988E11534E1;
-	Tue,  2 Jul 2024 12:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F4F15B133
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 12:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719923707; cv=none; b=P7IH9UV9w3fjqd9dKrdXbI1HHq/kaQls52ljtND+W9DzUcWM78fUFqUVF0dlnsPI/1JQntEocRKVGoOYZ7OEunrJWZBQkeuSfTmJCVReTMBEwaDbo2ZnCvXieRoD6g0nrSilfv951Jq9saE0XOrB7CNMR0kijNpC9x0KlzjXadg=
+	t=1719923795; cv=none; b=ZPc1aCOXUllRLIz+uYSJmbMTS7WECh7S0Qd+PRcjE4hDyCtz5YtvrKI5nOSnacjCAIkJCaznrEY/nWfb9IKKc1IcG2UCsFU7Dt+rZgtirF/yVtx2Q34CFAO40cd+dyLjCTgqoDYj74YUDE9GNWUqtDsxV7AEAwOhlbtULX68yGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719923707; c=relaxed/simple;
-	bh=oWiM+1Ip9myVix4kwM/ElvXmULemOp+ULnhEyFq7gxs=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=KKjpSAN3+EVV76nZ+BsHJVu1Vubg+MkZB8AdYwOp4FJqeXLEn+SwNgfZ0pdF+2GFZDnSD2BQ1q72GEVVlCDSc9r+UO3cn+wCxS+T72/HnJYI+pt0pzeuhEIMAlg44K9XY049V7AoSFXlMftXVYPOnsRfxENsX5Urgl3RtIwEgc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WD2Lg4vzRzxTsF;
-	Tue,  2 Jul 2024 20:30:35 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3170F180A9C;
-	Tue,  2 Jul 2024 20:35:02 +0800 (CST)
-Received: from [10.69.30.204] (10.69.30.204) by dggpemf200006.china.huawei.com
- (7.185.36.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 2 Jul
- 2024 20:35:01 +0800
-Subject: Re: [PATCH net-next v9 06/13] mm: page_frag: reuse existing space for
- 'size' and 'pfmemalloc'
-To: Alexander H Duyck <alexander.duyck@gmail.com>, <davem@davemloft.net>,
-	<kuba@kernel.org>, <pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Andrew Morton
-	<akpm@linux-foundation.org>, <linux-mm@kvack.org>
-References: <20240625135216.47007-1-linyunsheng@huawei.com>
- <20240625135216.47007-7-linyunsheng@huawei.com>
- <12a8b9ddbcb2da8431f77c5ec952ccfb2a77b7ec.camel@gmail.com>
-From: Yunsheng Lin <linyunsheng@huawei.com>
-Message-ID: <808be796-6333-c116-6ecb-95a39f7ad76e@huawei.com>
-Date: Tue, 2 Jul 2024 20:35:01 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+	s=arc-20240116; t=1719923795; c=relaxed/simple;
+	bh=s7X2XzL63Zh8SembAIIuePO+vn3GV6K/LvE+qrH93P0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JJeH3BC+gStF39LZwsWqRCKe/DKYI7DBYqb/y73wM7MmGRnjCrE7rIMwHkYE+8ARznQhPqlYOOLRxI78N2omk0vZYdPrHOlJRyHHfBiXbG3x0xdqPH2j5YiBVQOOb/7l5UPl9OKyM7yGuRYpp1tLX6bgNg9xuoeOhfbVXkjX1QQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=eCsreGsS; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ec5779b423so37852741fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 05:36:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1719923789; x=1720528589; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lxDWDzMjkSQ1+z1fxFvWUUsssZakdc6jbkoEFUl/wE8=;
+        b=eCsreGsSIcLyqjBm2Br2Wm1C9Dpc+D721P28KfT1WP8ycqqXtU6ubfCcE/oAKuuHey
+         hivTO56GY8/qE6/3Puu6Nd3DIFFPd4xI4fiZmYDfMh2+XYN4iRZX2UqmSd2ukx1LLGvr
+         EOjE72wpfgY1tZlESyCtYMpyBgmQP+ZlN9OKxtDiuCMOJ7b0GwATCdGkqwINDyxIX1kP
+         eAtElOkXs+DvvRD/vaUEI1fGRFrL4yPC3XzWlVLED3Fx4mVrW3WIvHgBtRtqUZIj4Vo5
+         nrbvMwSHgxH2FJaRJEkvBgoPd3sfpLHH/iuCw9+KA7NvOMxx+mdFXt17QNeZMrNamXzr
+         7sEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719923789; x=1720528589;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lxDWDzMjkSQ1+z1fxFvWUUsssZakdc6jbkoEFUl/wE8=;
+        b=cwyvoeVdjL2R0JejXbZIMn0EBrClwcHxlNOpbI/ZgC++pbCMzuzX4iQ+OGKURQ83tg
+         8nmTgLuVCx5oqwIQqpg2SsXeSSo2+zhrzQ0MwXsw8OXNV3gs6QFlX5Z/bHPWM+l7a//T
+         wTLh65XA/Boj/QZw3+NKbOkEEQA+RMHkLpw716gu8ZblyRuOLBrCyTbsJCVhLqI6y0Fv
+         UsEKBw6GhoQw/Pkw4aC+VW5PfBNOqBkc0u0QmyAO9lLH/hsph6YeLA/dBmwi83EsaWq3
+         3kNpN0rEVKtjhzChCo69sHRmyYiGNzRhKZmPgTmST3yIDZ0/MGdV8NMhpUUI7F68ntaj
+         KZQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWOzF5JaqrwzH+g6oMZ5xl1NYi3vGYseoF3EHzfOsdlJ+Ru/7YK5LGQs0Lxrkh2YPM9TNuIVWqnhFkdpwkQdp1MobDQ6Vj98u/RhJCM
+X-Gm-Message-State: AOJu0YyW3YWQR5ElnDiuYp995gJvSxLh8oOG7R1qztG9aGeQcq8IuAHe
+	CXMOGzYS1K36v0iM77FqrW0BkAJSaZmO57BO7KJHv5tcdMhtalF4B2nx8XM22K/uaqDhnP1Ul7j
+	X1OwwfTQb6tX0gmjRBZRuvB4wlxwRwUx43xlBJQ==
+X-Google-Smtp-Source: AGHT+IFfifkktKCLd/IFCj6auUZ1QdEK4Ad8o5BvZR/PuWatkBgZcs94H1L9sajP3bNjn7X6Gc6g2ju0lEMCOKwnBjA=
+X-Received: by 2002:a2e:b888:0:b0:2ee:4f93:ae25 with SMTP id
+ 38308e7fff4ca-2ee5e4c3ae4mr62837151fa.29.1719923789085; Tue, 02 Jul 2024
+ 05:36:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <12a8b9ddbcb2da8431f77c5ec952ccfb2a77b7ec.camel@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+References: <20240702085034.48395-1-alexghiti@rivosinc.com>
+ <20240702085034.48395-4-alexghiti@rivosinc.com> <CAEEQ3wnxBOTvzwswahP6ciOXKMuCbec_Ns+-H0tj9UK-WNow_A@mail.gmail.com>
+In-Reply-To: <CAEEQ3wnxBOTvzwswahP6ciOXKMuCbec_Ns+-H0tj9UK-WNow_A@mail.gmail.com>
+From: Alexandre Ghiti <alexghiti@rivosinc.com>
+Date: Tue, 2 Jul 2024 14:36:11 +0200
+Message-ID: <CAHVXubjEWdGxKqSUJX+oEoe+Yars8L5xdV3-18Mj_GPu9p-3zQ@mail.gmail.com>
+Subject: Re: [External] [PATCH v3 3/4] riscv: Stop emitting preventive
+ sfence.vma for new vmalloc mappings
+To: yunhui cui <cuiyunhui@bytedance.com>
+Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Ved Shanbhogue <ved@rivosinc.com>, Matt Evans <mev@rivosinc.com>, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/7/2 8:08, Alexander H Duyck wrote:
-> On Tue, 2024-06-25 at 21:52 +0800, Yunsheng Lin wrote:
->> Currently there is one 'struct page_frag' for every 'struct
->> sock' and 'struct task_struct', we are about to replace the
->> 'struct page_frag' with 'struct page_frag_cache' for them.
->> Before begin the replacing, we need to ensure the size of
->> 'struct page_frag_cache' is not bigger than the size of
->> 'struct page_frag', as there may be tens of thousands of
->> 'struct sock' and 'struct task_struct' instances in the
->> system.
->>
->> By or'ing the page order & pfmemalloc with lower bits of
->> 'va' instead of using 'u16' or 'u32' for page size and 'u8'
->> for pfmemalloc, we are able to avoid 3 or 5 bytes space waste.
->> And page address & pfmemalloc & order is unchanged for the
->> same page in the same 'page_frag_cache' instance, it makes
->> sense to fit them together.
->>
->> Also, it is better to replace 'offset' with 'remaining', which
->> is the remaining size for the cache in a 'page_frag_cache'
->> instance, we are able to do a single 'fragsz > remaining'
->> checking for the case of cache not being enough, which should be
->> the fast path if we ensure size is zoro when 'va' == NULL by
->> memset'ing 'struct page_frag_cache' in page_frag_cache_init()
->> and page_frag_cache_drain().
->>
->> After this patch, the size of 'struct page_frag_cache' should be
->> the same as the size of 'struct page_frag'.
->>
->> CC: Alexander Duyck <alexander.duyck@gmail.com>
->> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
->> ---
->>  include/linux/page_frag_cache.h | 76 +++++++++++++++++++++++-----
->>  mm/page_frag_cache.c            | 90 ++++++++++++++++++++-------------
->>  2 files changed, 118 insertions(+), 48 deletions(-)
->>
->> diff --git a/include/linux/page_frag_cache.h b/include/linux/page_frag_cache.h
->> index 6ac3a25089d1..b33904d4494f 100644
->> --- a/include/linux/page_frag_cache.h
->> +++ b/include/linux/page_frag_cache.h
->> @@ -8,29 +8,81 @@
->>  #define PAGE_FRAG_CACHE_MAX_SIZE	__ALIGN_MASK(32768, ~PAGE_MASK)
->>  #define PAGE_FRAG_CACHE_MAX_ORDER	get_order(PAGE_FRAG_CACHE_MAX_SIZE)
->>  
->> -struct page_frag_cache {
->> -	void *va;
->> +/*
->> + * struct encoded_va - a nonexistent type marking this pointer
->> + *
->> + * An 'encoded_va' pointer is a pointer to a aligned virtual address, which is
->> + * at least aligned to PAGE_SIZE, that means there are at least 12 lower bits
->> + * space available for other purposes.
->> + *
->> + * Currently we use the lower 8 bits and bit 9 for the order and PFMEMALLOC
->> + * flag of the page this 'va' is corresponding to.
->> + *
->> + * Use the supplied helper functions to endcode/decode the pointer and bits.
->> + */
->> +struct encoded_va;
->> +
-> 
-> Why did you create a struct for this? The way you use it below it is
-> just a pointer. No point in defining a struct that doesn't exist
-> anywhere.
+Hi Yunhui,
 
-The encoded_va is mirroring the encoded_page below:
-https://elixir.bootlin.com/linux/v6.10-rc6/source/include/linux/mm_types.h#L222
-https://github.com/torvalds/linux/commit/70fb4fdff5826a48886152fd5c5db04eb6c59a40
+On Tue, Jul 2, 2024 at 11:48=E2=80=AFAM yunhui cui <cuiyunhui@bytedance.com=
+> wrote:
+>
+> Hi Alexandre,
+>
+> On Tue, Jul 2, 2024 at 4:54=E2=80=AFPM Alexandre Ghiti <alexghiti@rivosin=
+c.com> wrote:
+> >
+> > In 6.5, we removed the vmalloc fault path because that can't work (see
+> > [1] [2]). Then in order to make sure that new page table entries were
+> > seen by the page table walker, we had to preventively emit a sfence.vma
+> > on all harts [3] but this solution is very costly since it relies on IP=
+I.
+> >
+> > And even there, we could end up in a loop of vmalloc faults if a vmallo=
+c
+> > allocation is done in the IPI path (for example if it is traced, see
+> > [4]), which could result in a kernel stack overflow.
+> >
+> > Those preventive sfence.vma needed to be emitted because:
+> >
+> > - if the uarch caches invalid entries, the new mapping may not be
+> >   observed by the page table walker and an invalidation may be needed.
+> > - if the uarch does not cache invalid entries, a reordered access
+> >   could "miss" the new mapping and traps: in that case, we would actual=
+ly
+> >   only need to retry the access, no sfence.vma is required.
+> >
+> > So this patch removes those preventive sfence.vma and actually handles
+> > the possible (and unlikely) exceptions. And since the kernel stacks
+> > mappings lie in the vmalloc area, this handling must be done very early
+> > when the trap is taken, at the very beginning of handle_exception: this
+> > also rules out the vmalloc allocations in the fault path.
+> >
+> > Link: https://lore.kernel.org/linux-riscv/20230531093817.665799-1-bjorn=
+@kernel.org/ [1]
+> > Link: https://lore.kernel.org/linux-riscv/20230801090927.2018653-1-dyla=
+n@andestech.com [2]
+> > Link: https://lore.kernel.org/linux-riscv/20230725132246.817726-1-alexg=
+hiti@rivosinc.com/ [3]
+> > Link: https://lore.kernel.org/lkml/20200508144043.13893-1-joro@8bytes.o=
+rg/ [4]
+> > Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> > ---
+> >  arch/riscv/include/asm/cacheflush.h  | 18 +++++-
+> >  arch/riscv/include/asm/thread_info.h |  5 ++
+> >  arch/riscv/kernel/asm-offsets.c      |  5 ++
+> >  arch/riscv/kernel/entry.S            | 84 ++++++++++++++++++++++++++++
+> >  arch/riscv/mm/init.c                 |  2 +
+> >  5 files changed, 113 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/riscv/include/asm/cacheflush.h b/arch/riscv/include/a=
+sm/cacheflush.h
+> > index ce79c558a4c8..8de73f91bfa3 100644
+> > --- a/arch/riscv/include/asm/cacheflush.h
+> > +++ b/arch/riscv/include/asm/cacheflush.h
+> > @@ -46,7 +46,23 @@ do {                                                =
+ \
+> >  } while (0)
+> >
+> >  #ifdef CONFIG_64BIT
+> > -#define flush_cache_vmap(start, end)           flush_tlb_kernel_range(=
+start, end)
+> > +extern u64 new_vmalloc[NR_CPUS / sizeof(u64) + 1];
+> > +extern char _end[];
+> > +#define flush_cache_vmap flush_cache_vmap
+> > +static inline void flush_cache_vmap(unsigned long start, unsigned long=
+ end)
+> > +{
+> > +       if (is_vmalloc_or_module_addr((void *)start)) {
+> > +               int i;
+> > +
+> > +               /*
+> > +                * We don't care if concurrently a cpu resets this valu=
+e since
+> > +                * the only place this can happen is in handle_exceptio=
+n() where
+> > +                * an sfence.vma is emitted.
+> > +                */
+> > +               for (i =3D 0; i < ARRAY_SIZE(new_vmalloc); ++i)
+> > +                       new_vmalloc[i] =3D -1ULL;
+> > +       }
+> > +}
+> >  #define flush_cache_vmap_early(start, end)     local_flush_tlb_kernel_=
+range(start, end)
+> >  #endif
+> >
+> > diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/=
+asm/thread_info.h
+> > index 5d473343634b..32631acdcdd4 100644
+> > --- a/arch/riscv/include/asm/thread_info.h
+> > +++ b/arch/riscv/include/asm/thread_info.h
+> > @@ -60,6 +60,11 @@ struct thread_info {
+> >         void                    *scs_base;
+> >         void                    *scs_sp;
+> >  #endif
+> > +       /*
+> > +        * Used in handle_exception() to save a0, a1 and a2 before know=
+ing if we
+> > +        * can access the kernel stack.
+> > +        */
+> > +       unsigned long           a0, a1, a2;
+> >  };
+> >
+> >  #ifdef CONFIG_SHADOW_CALL_STACK
+> > diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-of=
+fsets.c
+> > index b09ca5f944f7..29c0734f2972 100644
+> > --- a/arch/riscv/kernel/asm-offsets.c
+> > +++ b/arch/riscv/kernel/asm-offsets.c
+> > @@ -36,6 +36,8 @@ void asm_offsets(void)
+> >         OFFSET(TASK_THREAD_S9, task_struct, thread.s[9]);
+> >         OFFSET(TASK_THREAD_S10, task_struct, thread.s[10]);
+> >         OFFSET(TASK_THREAD_S11, task_struct, thread.s[11]);
+> > +
+> > +       OFFSET(TASK_TI_CPU, task_struct, thread_info.cpu);
+> >         OFFSET(TASK_TI_FLAGS, task_struct, thread_info.flags);
+> >         OFFSET(TASK_TI_PREEMPT_COUNT, task_struct, thread_info.preempt_=
+count);
+> >         OFFSET(TASK_TI_KERNEL_SP, task_struct, thread_info.kernel_sp);
+> > @@ -43,6 +45,9 @@ void asm_offsets(void)
+> >  #ifdef CONFIG_SHADOW_CALL_STACK
+> >         OFFSET(TASK_TI_SCS_SP, task_struct, thread_info.scs_sp);
+> >  #endif
+> > +       OFFSET(TASK_TI_A0, task_struct, thread_info.a0);
+> > +       OFFSET(TASK_TI_A1, task_struct, thread_info.a1);
+> > +       OFFSET(TASK_TI_A2, task_struct, thread_info.a2);
+> >
+> >         OFFSET(TASK_TI_CPU_NUM, task_struct, thread_info.cpu);
+> >         OFFSET(TASK_THREAD_F0,  task_struct, thread.fstate.f[0]);
+> > diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+> > index 68a24cf9481a..822311266a12 100644
+> > --- a/arch/riscv/kernel/entry.S
+> > +++ b/arch/riscv/kernel/entry.S
+> > @@ -19,6 +19,78 @@
+> >
+> >         .section .irqentry.text, "ax"
+> >
+> > +.macro new_vmalloc_check
+> > +       REG_S   a0, TASK_TI_A0(tp)
+> > +       REG_S   a1, TASK_TI_A1(tp)
+> > +       REG_S   a2, TASK_TI_A2(tp)
+>
+> We discussed in the previous version that when executing blt a0, zero,
+> _new_vmalloc_restore_context, there is no need to save a1, a2 first,
+> right?
 
-"So this introduces a 'struct encoded_page' pointer that cannot be used for
-anything else than to encode a real page pointer and a couple of extra
-bits in the low bits.  That way the compiler can trivially track the state
-of the pointer and you just explicitly encode and decode the extra bits."
+And you're totally right, I forgot to do so...Thanks for bringing that
+up again, as it's important we do the minimum amount of work here. I
+respin a new version, I should send this in a couple of days.
 
-It seems to be similar for encoded_va case too, I guess this is more of personal
-preference for using a struct or unsigned long here, I have no strong preference
-here and it can be changed if you really insist.
+Thanks,
 
-> 
->> +#define PAGE_FRAG_CACHE_ORDER_MASK		GENMASK(7, 0)
->> +#define PAGE_FRAG_CACHE_PFMEMALLOC_BIT		BIT(8)
->> +#define PAGE_FRAG_CACHE_PFMEMALLOC_SHIFT	8
->> +
->> +static inline struct encoded_va *encode_aligned_va(void *va,
->> +						   unsigned int order,
->> +						   bool pfmemalloc)
->> +{
->>  #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
->> -	__u16 offset;
->> -	__u16 size;
->> +	return (struct encoded_va *)((unsigned long)va | order |
->> +			pfmemalloc << PAGE_FRAG_CACHE_PFMEMALLOC_SHIFT);
->>  #else
->> -	__u32 offset;
->> +	return (struct encoded_va *)((unsigned long)va |
->> +			pfmemalloc << PAGE_FRAG_CACHE_PFMEMALLOC_SHIFT);
->> +#endif
->> +}
->> +
->> +static inline unsigned long encoded_page_order(struct encoded_va *encoded_va)
->> +{
->> +#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
->> +	return PAGE_FRAG_CACHE_ORDER_MASK & (unsigned long)encoded_va;
->> +#else
->> +	return 0;
->> +#endif
->> +}
->> +
->> +static inline bool encoded_page_pfmemalloc(struct encoded_va *encoded_va)
->> +{
->> +	return PAGE_FRAG_CACHE_PFMEMALLOC_BIT & (unsigned long)encoded_va;
->> +}
->> +
-> 
-> My advice is that if you just make encoded_va an unsigned long this
-> just becomes some FIELD_GET and bit operations.
+Alex
 
-As above.
-
-> 
->> +static inline void *encoded_page_address(struct encoded_va *encoded_va)
->> +{
->> +	return (void *)((unsigned long)encoded_va & PAGE_MASK);
->> +}
->> +
->> +struct page_frag_cache {
->> +	struct encoded_va *encoded_va;
-> 
-> This should be an unsigned long, not a pointer since you are storing
-> data other than just a pointer in here. The pointer is just one of the
-> things you extract out of it.
-> 
->> +
->> +#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE) && (BITS_PER_LONG <= 32)
->> +	u16 pagecnt_bias;
->> +	u16 remaining;
->> +#else
->> +	u32 pagecnt_bias;
->> +	u32 remaining;
->>  #endif
->> -	/* we maintain a pagecount bias, so that we dont dirty cache line
->> -	 * containing page->_refcount every time we allocate a fragment.
->> -	 */
->> -	unsigned int		pagecnt_bias;
->> -	bool pfmemalloc;
->>  };
->>  
->>  static inline void page_frag_cache_init(struct page_frag_cache *nc)
->>  {
->> -	nc->va = NULL;
->> +	memset(nc, 0, sizeof(*nc));
-> 
-> Shouldn't need to memset 0 the whole thing. Just setting page and order
-> to 0 should be enough to indicate that there isn't anything there.
-
-As mentioned in the commit log:
-'Also, it is better to replace 'offset' with 'remaining', which
-is the remaining size for the cache in a 'page_frag_cache'
-instance, we are able to do a single 'fragsz > remaining'
-checking for the case of cache not being enough, which should be
-the fast path if we ensure 'remaining' is zero when 'va' == NULL by
-memset'ing 'struct page_frag_cache' in page_frag_cache_init()
-and page_frag_cache_drain().'
-
-Yes, we are only really depending on nc->remaining being zero
-when 'va' == NULL untill next patch refactors more codes in
-__page_frag_alloc_va_align() to __page_frag_cache_refill().
-Perhap I should do the memset() thing in next patch.
-
-> 
->>  }
->>  
->>  static inline bool page_frag_cache_is_pfmemalloc(struct page_frag_cache *nc)
->>  {
->> -	return !!nc->pfmemalloc;
->> +	return encoded_page_pfmemalloc(nc->encoded_va);
->> +}
->> +
->> +static inline unsigned int page_frag_cache_page_size(struct encoded_va *encoded_va)
->> +{
->> +	return PAGE_SIZE << encoded_page_order(encoded_va);
->>  }
->>  
->>  void page_frag_cache_drain(struct page_frag_cache *nc);
->> diff --git a/mm/page_frag_cache.c b/mm/page_frag_cache.c
->> index dd640af5607a..a3316dd50eff 100644
->> --- a/mm/page_frag_cache.c
->> +++ b/mm/page_frag_cache.c
->> @@ -18,34 +18,61 @@
->>  #include <linux/page_frag_cache.h>
->>  #include "internal.h"
->>  
->> +static void *page_frag_cache_current_va(struct page_frag_cache *nc)
->> +{
->> +	struct encoded_va *encoded_va = nc->encoded_va;
->> +
->> +	return (void *)(((unsigned long)encoded_va & PAGE_MASK) |
->> +		(page_frag_cache_page_size(encoded_va) - nc->remaining));
->> +}
->> +
-> 
-> Rather than an OR here I would rather see this just use addition.
-> Otherwise this logic becomes overly complicated.
-
-Sure.
-
-> 
->>  static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
->>  					     gfp_t gfp_mask)
->>  {
->>  	struct page *page = NULL;
->>  	gfp_t gfp = gfp_mask;
->> +	unsigned int order;
->>  
->>  #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
->>  	gfp_mask = (gfp_mask & ~__GFP_DIRECT_RECLAIM) |  __GFP_COMP |
->>  		   __GFP_NOWARN | __GFP_NORETRY | __GFP_NOMEMALLOC;
->>  	page = alloc_pages_node(NUMA_NO_NODE, gfp_mask,
->>  				PAGE_FRAG_CACHE_MAX_ORDER);
->> -	nc->size = page ? PAGE_FRAG_CACHE_MAX_SIZE : PAGE_SIZE;
->>  #endif
->> -	if (unlikely(!page))
->> +	if (unlikely(!page)) {
->>  		page = alloc_pages_node(NUMA_NO_NODE, gfp, 0);
->> +		if (unlikely(!page)) {
->> +			memset(nc, 0, sizeof(*nc));
->> +			return NULL;
->> +		}
->> +
->> +		order = 0;
->> +		nc->remaining = PAGE_SIZE;
->> +	} else {
->> +		order = PAGE_FRAG_CACHE_MAX_ORDER;
->> +		nc->remaining = PAGE_FRAG_CACHE_MAX_SIZE;
->> +	}
->>  
->> -	nc->va = page ? page_address(page) : NULL;
->> +	/* Even if we own the page, we do not use atomic_set().
->> +	 * This would break get_page_unless_zero() users.
->> +	 */
->> +	page_ref_add(page, PAGE_FRAG_CACHE_MAX_SIZE);
->>  
->> +	/* reset page count bias of new frag */
->> +	nc->pagecnt_bias = PAGE_FRAG_CACHE_MAX_SIZE + 1;
-> 
-> I would rather keep the pagecnt_bias, page reference addition, and
-> resetting of remaining outside of this. The only fields we should be
-> setting are order, the virtual address, and pfmemalloc since those are
-> what is encoded in your unsigned long variable.
-
-Is there any reason why you want to keep them outside of this?
-
-For resetting of remaining, it seems we need more check to decide the
-value of remaining if it is kept outside of this.
-
-Also, for the next patch, more common codes are refactored out of
- __page_frag_alloc_va_align() to __page_frag_cache_refill(), so that
-the new API can make use of them, so I am not sure it really matter
-that much.
-
-> 
->> +	nc->encoded_va = encode_aligned_va(page_address(page), order,
->> +					   page_is_pfmemalloc(page));
->>  	return page;
->>  }
->>  
->>  void page_frag_cache_drain(struct page_frag_cache *nc)
->>  {
->> -	if (!nc->va)
->> +	if (!nc->encoded_va)
->>  		return;
->>  
->> -	__page_frag_cache_drain(virt_to_head_page(nc->va), nc->pagecnt_bias);
->> -	nc->va = NULL;
->> +	__page_frag_cache_drain(virt_to_head_page(nc->encoded_va),
->> +				nc->pagecnt_bias);
->> +	memset(nc, 0, sizeof(*nc));
-> 
-> Again, no need for memset when "nv->encoded_va = 0" will do.
-> 
->>  }
->>  EXPORT_SYMBOL(page_frag_cache_drain);
->>  
->> @@ -62,51 +89,41 @@ void *__page_frag_alloc_va_align(struct page_frag_cache *nc,
->>  				 unsigned int fragsz, gfp_t gfp_mask,
->>  				 unsigned int align_mask)
->>  {
->> -	unsigned int size = PAGE_SIZE;
->> +	struct encoded_va *encoded_va = nc->encoded_va;
->>  	struct page *page;
->> -	int offset;
->> +	int remaining;
->> +	void *va;
->>  
->> -	if (unlikely(!nc->va)) {
->> +	if (unlikely(!encoded_va)) {
->>  refill:
->> -		page = __page_frag_cache_refill(nc, gfp_mask);
->> -		if (!page)
->> +		if (unlikely(!__page_frag_cache_refill(nc, gfp_mask)))
->>  			return NULL;
->>  
->> -		/* Even if we own the page, we do not use atomic_set().
->> -		 * This would break get_page_unless_zero() users.
->> -		 */
->> -		page_ref_add(page, PAGE_FRAG_CACHE_MAX_SIZE);
->> -
->> -		/* reset page count bias and offset to start of new frag */
->> -		nc->pfmemalloc = page_is_pfmemalloc(page);
->> -		nc->pagecnt_bias = PAGE_FRAG_CACHE_MAX_SIZE + 1;
->> -		nc->offset = 0;
->> +		encoded_va = nc->encoded_va;
->>  	}
->>  
->> -#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
->> -	/* if size can vary use size else just use PAGE_SIZE */
->> -	size = nc->size;
->> -#endif
->> -
->> -	offset = __ALIGN_KERNEL_MASK(nc->offset, ~align_mask);
->> -	if (unlikely(offset + fragsz > size)) {
->> -		page = virt_to_page(nc->va);
->> -
->> +	remaining = nc->remaining & align_mask;
->> +	remaining -= fragsz;
->> +	if (unlikely(remaining < 0)) {
-> 
-> Now this is just getting confusing. You essentially just added an
-> additional addition step and went back to the countdown approach I was
-> using before except for the fact that you are starting at 0 whereas I
-> was actually moving down through the page.
-
-Does the 'additional addition step' mean the additional step to calculate
-the offset using the new 'remaining' field? I guess that is the disadvantage
-by changing 'offset' to 'remaining', but it also some advantages too:
-
-1. it is better to replace 'offset' with 'remaining', which
-   is the remaining size for the cache in a 'page_frag_cache'
-   instance, we are able to do a single 'fragsz > remaining'
-   checking for the case of cache not being enough, which should be
-   the fast path if we ensure size is zoro when 'va' == NULL by
-   memset'ing 'struct page_frag_cache' in page_frag_cache_init()
-   and page_frag_cache_drain().
-2. It seems more convenient to implement the commit/probe API too
-   when using 'remaining' instead of 'offset' as those API needs
-   the remaining size of the page_frag_cache anyway.
-
-So it is really a trade-off between using 'offset' and 'remaining',
-it is like the similar argument about trade-off between allocating
-fragment 'countdown' and 'countup' way.
-
-About confusing part, as the nc->remaining does mean how much cache
-is left in the 'nc', and nc->remaining does start from
-PAGE_FRAG_CACHE_MAX_SIZE/PAGE_SIZE to zero naturally if that was what
-you meant by 'countdown', but it is different from the 'offset countdown'
-before this patchset as my understanding.
-
-> 
-> What I would suggest doing since "remaining" is a negative offset
-> anyway would be to look at just storing it as a signed negative number.
-> At least with that you can keep to your original approach and would
-> only have to change your check to be for "remaining + fragsz <= 0".
-
-Did you mean by using s16/s32 for 'remaining'? And set nc->remaining like
-below?
-nc->remaining = -PAGE_SIZE or
-nc->remaining = -PAGE_FRAG_CACHE_MAX_SIZE
-
-struct page_frag_cache {
-        struct encoded_va *encoded_va;
-
-#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE) && (BITS_PER_LONG <= 32)
-        u16 pagecnt_bias;
-        s16 remaining;
-#else
-        u32 pagecnt_bias;
-        s32 remaining;
-#endif
-};
-
-If I understand above correctly, it seems we really need a better name
-than 'remaining' to reflect that.
-
-> With that you can still do your math but it becomes an addition instead
-> of a subtraction.
-
-And I am not really sure what is the gain here by using an addition
-instead of a subtraction here.
-
-> 
->> +		page = virt_to_page(encoded_va);
->>  		if (!page_ref_sub_and_test(page, nc->pagecnt_bias))
->>  			goto refill;
->>  
->> -		if (unlikely(nc->pfmemalloc)) {
->> -			free_unref_page(page, compound_order(page));
->> +		if (unlikely(encoded_page_pfmemalloc(encoded_va))) {
->> +			VM_BUG_ON(compound_order(page) !=
->> +				  encoded_page_order(encoded_va));
->> +			free_unref_page(page, encoded_page_order(encoded_va));
->>  			goto refill;
->>  		}
->>  
->>  		/* OK, page count is 0, we can safely set it */
->>  		set_page_count(page, PAGE_FRAG_CACHE_MAX_SIZE + 1);
->>  
->> -		/* reset page count bias and offset to start of new frag */
->> +		/* reset page count bias and remaining of new frag */
->>  		nc->pagecnt_bias = PAGE_FRAG_CACHE_MAX_SIZE + 1;
->> -		offset = 0;
->> -		if (unlikely(fragsz > PAGE_SIZE)) {
->> +		nc->remaining = remaining = page_frag_cache_page_size(encoded_va);
->> +		remaining -= fragsz;
->> +		if (unlikely(remaining < 0)) {
->>  			/*
->>  			 * The caller is trying to allocate a fragment
->>  			 * with fragsz > PAGE_SIZE but the cache isn't big
-> 
-> I find it really amusing that you went to all the trouble of flipping
-> the logic just to flip it back to being a countdown setup. If you were
-> going to bother with all that then why not just make the remaining
-> negative instead? You could save yourself a ton of trouble that way and
-> all you would need to do is flip a few signs.
-
-I am not sure I understand the 'a ton of trouble' part here, if 'flipping
-a few signs' does save a ton of trouble here, I would like to avoid 'a
-ton of trouble' here, but I am not really understand the gain here yet as
-mentioned above.
+>
+> > +
+> > +       csrr    a0, CSR_CAUSE
+> > +       /* Exclude IRQs */
+> > +       blt     a0, zero, _new_vmalloc_restore_context
+> > +       /* Only check new_vmalloc if we are in page/protection fault */
+> > +       li      a1, EXC_LOAD_PAGE_FAULT
+> > +       beq     a0, a1, _new_vmalloc_kernel_address
+> > +       li      a1, EXC_STORE_PAGE_FAULT
+> > +       beq     a0, a1, _new_vmalloc_kernel_address
+> > +       li      a1, EXC_INST_PAGE_FAULT
+> > +       bne     a0, a1, _new_vmalloc_restore_context
+> > +
+> > +_new_vmalloc_kernel_address:
+> > +       /* Is it a kernel address? */
+> > +       csrr    a0, CSR_TVAL
+> > +       bge     a0, zero, _new_vmalloc_restore_context
+> > +
+> > +       /* Check if a new vmalloc mapping appeared that could explain t=
+he trap */
+> > +
+> > +       /*
+> > +        * Computes:
+> > +        * a0 =3D &new_vmalloc[BIT_WORD(cpu)]
+> > +        * a1 =3D BIT_MASK(cpu)
+> > +        */
+> > +       REG_L   a2, TASK_TI_CPU(tp)
+> > +       /*
+> > +        * Compute the new_vmalloc element position:
+> > +        * (cpu / 64) * 8 =3D (cpu >> 6) << 3
+> > +        */
+> > +       srli    a1, a2, 6
+> > +       slli    a1, a1, 3
+> > +       la      a0, new_vmalloc
+> > +       add     a0, a0, a1
+> > +       /*
+> > +        * Compute the bit position in the new_vmalloc element:
+> > +        * bit_pos =3D cpu % 64 =3D cpu - (cpu / 64) * 64 =3D cpu - (cp=
+u >> 6) << 6
+> > +        *         =3D cpu - ((cpu >> 6) << 3) << 3
+> > +        */
+> > +       slli    a1, a1, 3
+> > +       sub     a1, a2, a1
+> > +       /* Compute the "get mask": 1 << bit_pos */
+> > +       li      a2, 1
+> > +       sll     a1, a2, a1
+> > +
+> > +       /* Check the value of new_vmalloc for this cpu */
+> > +       REG_L   a2, 0(a0)
+> > +       and     a2, a2, a1
+> > +       beq     a2, zero, _new_vmalloc_restore_context
+> > +
+> > +       /* Atomically reset the current cpu bit in new_vmalloc */
+> > +       amoxor.w        a0, a1, (a0)
+> > +
+> > +       /* Only emit a sfence.vma if the uarch caches invalid entries *=
+/
+> > +       ALTERNATIVE("sfence.vma", "nop", 0, RISCV_ISA_EXT_SVVPTC, 1)
+> > +
+> > +       REG_L   a0, TASK_TI_A0(tp)
+> > +       REG_L   a1, TASK_TI_A1(tp)
+> > +       REG_L   a2, TASK_TI_A2(tp)
+> > +       csrw    CSR_SCRATCH, x0
+> > +       sret
+> > +
+> > +_new_vmalloc_restore_context:
+> > +       REG_L   a0, TASK_TI_A0(tp)
+> > +       REG_L   a1, TASK_TI_A1(tp)
+> > +       REG_L   a2, TASK_TI_A2(tp)
+> > +.endm
+> > +
+> > +
+> >  SYM_CODE_START(handle_exception)
+> >         /*
+> >          * If coming from userspace, preserve the user thread pointer a=
+nd load
+> > @@ -30,6 +102,18 @@ SYM_CODE_START(handle_exception)
+> >
+> >  .Lrestore_kernel_tpsp:
+> >         csrr tp, CSR_SCRATCH
+> > +
+> > +       /*
+> > +        * The RISC-V kernel does not eagerly emit a sfence.vma after e=
+ach
+> > +        * new vmalloc mapping, which may result in exceptions:
+> > +        * - if the uarch caches invalid entries, the new mapping would=
+ not be
+> > +        *   observed by the page table walker and an invalidation is n=
+eeded.
+> > +        * - if the uarch does not cache invalid entries, a reordered a=
+ccess
+> > +        *   could "miss" the new mapping and traps: in that case, we o=
+nly need
+> > +        *   to retry the access, no sfence.vma is required.
+> > +        */
+> > +       new_vmalloc_check
+> > +
+> >         REG_S sp, TASK_TI_KERNEL_SP(tp)
+> >
+> >  #ifdef CONFIG_VMAP_STACK
+> > diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+> > index e3405e4b99af..2367a156c33b 100644
+> > --- a/arch/riscv/mm/init.c
+> > +++ b/arch/riscv/mm/init.c
+> > @@ -36,6 +36,8 @@
+> >
+> >  #include "../kernel/head.h"
+> >
+> > +u64 new_vmalloc[NR_CPUS / sizeof(u64) + 1];
+> > +
+> >  struct kernel_mapping kernel_map __ro_after_init;
+> >  EXPORT_SYMBOL(kernel_map);
+> >  #ifdef CONFIG_XIP_KERNEL
+> > --
+> > 2.39.2
+> >
+>
+> Thanks=EF=BC=8C
+> Yunhui
 
