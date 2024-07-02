@@ -1,74 +1,187 @@
-Return-Path: <linux-kernel+bounces-237706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C73FE923CF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:54:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F0B8923CF7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:55:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0419A1C209DC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:54:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9362F1C2254E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:55:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67CA15B12A;
-	Tue,  2 Jul 2024 11:54:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88EC515B561;
+	Tue,  2 Jul 2024 11:54:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D1uHxzXA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="u8r+VV/0"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC9691DFD8
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 11:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 023171DFD8;
+	Tue,  2 Jul 2024 11:54:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719921250; cv=none; b=rG3uIr+zd+7LNvIiXwN9gjymOdGNni/Xpexoyi8Syza1/71sTQlutvodww/LGQRuVzBn2R7+kXphnedZgpnrIOhBQAxxu0fxcxQAkEF+m52l8uuITKJzR23cIkO2KfD4Go29wfIBtrQaKfU1XIn8cjUrXOYjf0WZzuCsmJbCHOA=
+	t=1719921297; cv=none; b=uP3uWynwcm0oNcSpMjlwrljsH6uw7kVkLl4FT+BIQKtWM9salUS4TWGQVGBZ61NWiXz+0UWaq0JmzwY2ntiBRpby9oFY0OLKE71NTaQWoRxuyNss6IW9p3jIpabKuAgZ3ugx+aK0Pq69cwdrIIWvCY6bSdRgD+tPRV7Yjlf4ov4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719921250; c=relaxed/simple;
-	bh=ty1qZLwFA4LCJPhQ5+oQL+NTqlr44hCXTZWfi9VlxiE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PjdewpU4+oGz0hQsXTlirNWcSgkJdIG181MFG2dlG1oR0pwSB+8CDL3ZiCEh8NgcZ7DcBNYD4JtfQTilC3IFXll2d3HcMf9dsbE2Nxu0PGMtnIILR+9SAckZ5PIk2R341aW4jgYrEwbGFmKRlzKJjm0nqW3ddl90CR4mkoGoUlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D1uHxzXA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E612C116B1;
-	Tue,  2 Jul 2024 11:54:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719921249;
-	bh=ty1qZLwFA4LCJPhQ5+oQL+NTqlr44hCXTZWfi9VlxiE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=D1uHxzXASDrj0Xo4U53R9izLeGl/NaX6UFUGzneXoKA1L+NyquI/9cX26qXyeVHDY
-	 jYQGC2o4CLhPiMuym5mKkOtr7Fn/H2r9bk0Pmf4UUYK+y3vOleFlOfniF30u6pimN2
-	 96iSO5DhMUY8HbZkdgOoHZMOSugn/ITGxfmtDSEEfxQuZ8vXhfFKj+0r71r0gONbQJ
-	 +/6HhoaRQWM2FmvEVvq6K+fQtvOONZP+2dBqhtjg2wIFEtmCLBh+EWhaGRhvKiAkNT
-	 BcbAVirTjccDd1i6idZswa9vAcJqPkozOp8vdbSr7PnWm+dtz50AsR0CGjeXZk6gpW
-	 nmP8hC1ctbotg==
-Message-ID: <b73fa427-9b55-4ca5-8edd-530ad26c7df4@kernel.org>
-Date: Tue, 2 Jul 2024 14:54:04 +0300
+	s=arc-20240116; t=1719921297; c=relaxed/simple;
+	bh=rNcI9WAwJLfST7zxjrhIs1uKlJYxYHjP5PFmZEBw0us=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tmamLUEEXBlXis2REZ3FOopW7kF3Ybp3HrrQtWHnQUHLw76UFbI48xB4FeQVWDGgz2Emu6NKsMPuSw1u6uhFYc7E4c3ToU/0Uf2+1M+itoLmKDydSRtldLHdeX3Fu/dUw7suSJ4C5s5L5EZWN6K0BKbsvB21ITjqY+JB5IIGnoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=u8r+VV/0; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=W5+1pkYUfssEUxhFH+k/bV6mkTwNmU7jab8KfThNUF4=; b=u8r+VV/0QkBFa3UZRjC2MUQzFt
+	DwAOnTVr3x9WWa8GVdiy++hqI3Ow0R+OHZ+YP9QeWKdcEbpu9tLiOT+0Tz1tkYjgLDZJKGfKRZS9b
+	ycBmPcIScabWRF0N7QLy6SNylSI355yg8vCRlS/BXIUgE2dmGL/PHdXoAqFAbiii+MEjga5Knqv2O
+	jtrup9ZLCXSRMkNufaBKmviXZ16l7ZkPvWulVvAbFkZLQmNWPao8dhTtLVAfxJbcwZcdMe6mbflu9
+	BmkdcCAL1IFz0rvKOzENyVD4NIOhHhv5BHCAaKFaQ9vc/Pd5Uxh+jUCk1BGO3No9NNRrcCxGWnsAl
+	2vEFyiQQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sOc5x-00000000k39-38Ol;
+	Tue, 02 Jul 2024 11:54:50 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 73169300694; Tue,  2 Jul 2024 13:54:47 +0200 (CEST)
+Date: Tue, 2 Jul 2024 13:54:47 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org,
+	mhiramat@kernel.org, oleg@redhat.com, mingo@redhat.com,
+	bpf@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org,
+	clm@meta.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/12] uprobes: add batched register/unregister APIs
+ and per-CPU RW semaphore
+Message-ID: <20240702115447.GA28838@noisy.programming.kicks-ass.net>
+References: <20240701223935.3783951-1-andrii@kernel.org>
+ <20240702102353.GG11386@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] phy: cadence-torrent: Check return value on register read
-To: Ma Ke <make24@iscas.ac.cn>, vkoul@kernel.org, kishon@kernel.org,
- sjakhade@cadence.com, sergio.paracuellos@gmail.com, robh@kernel.org
-Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240702032042.3993031-1-make24@iscas.ac.cn>
-Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <20240702032042.3993031-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240702102353.GG11386@noisy.programming.kicks-ass.net>
 
 
++LKML
 
-On 02/07/2024 06:20, Ma Ke wrote:
-> cdns_torrent_dp_set_power_state() does not consider that ret might be
-> overwritten. Add return value check of regmap_read_poll_timeout() after
-> register read in cdns_torrent_dp_set_power_state().
+On Tue, Jul 02, 2024 at 12:23:53PM +0200, Peter Zijlstra wrote:
+> On Mon, Jul 01, 2024 at 03:39:23PM -0700, Andrii Nakryiko wrote:
+> > This patch set, ultimately, switches global uprobes_treelock from RW spinlock
+> > to per-CPU RW semaphore, which has better performance and scales better under
+> > contention and multiple parallel threads triggering lots of uprobes.
 > 
-> Fixes: 5b16a790f18d ("phy: cadence-torrent: Reorder few functions to remove function declarations")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> Why not RCU + normal lock thing?
 
-Reviewed-by: Roger Quadros <rogerq@kernel.org>
+Something like the *completely* untested below.
+
+---
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 2c83ba776fc7..03b38f3f7be3 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -40,6 +40,7 @@ static struct rb_root uprobes_tree = RB_ROOT;
+ #define no_uprobe_events()	RB_EMPTY_ROOT(&uprobes_tree)
+ 
+ static DEFINE_RWLOCK(uprobes_treelock);	/* serialize rbtree access */
++static seqcount_rwlock_t uprobes_seqcount = SEQCNT_RWLOCK_ZERO(uprobes_seqcount, &uprobes_treelock);
+ 
+ #define UPROBES_HASH_SZ	13
+ /* serialize uprobe->pending_list */
+@@ -54,6 +55,7 @@ DEFINE_STATIC_PERCPU_RWSEM(dup_mmap_sem);
+ struct uprobe {
+ 	struct rb_node		rb_node;	/* node in the rb tree */
+ 	refcount_t		ref;
++	struct rcu_head		rcu;
+ 	struct rw_semaphore	register_rwsem;
+ 	struct rw_semaphore	consumer_rwsem;
+ 	struct list_head	pending_list;
+@@ -67,7 +69,7 @@ struct uprobe {
+ 	 * The generic code assumes that it has two members of unknown type
+ 	 * owned by the arch-specific code:
+ 	 *
+-	 * 	insn -	copy_insn() saves the original instruction here for
++	 *	insn -	copy_insn() saves the original instruction here for
+ 	 *		arch_uprobe_analyze_insn().
+ 	 *
+ 	 *	ixol -	potentially modified instruction to execute out of
+@@ -593,6 +595,12 @@ static struct uprobe *get_uprobe(struct uprobe *uprobe)
+ 	return uprobe;
+ }
+ 
++static void uprobe_free_rcu(struct rcu_head *rcu)
++{
++	struct uprobe *uprobe = container_of(rcu, struct uprobe, rcu);
++	kfree(uprobe);
++}
++
+ static void put_uprobe(struct uprobe *uprobe)
+ {
+ 	if (refcount_dec_and_test(&uprobe->ref)) {
+@@ -604,7 +612,8 @@ static void put_uprobe(struct uprobe *uprobe)
+ 		mutex_lock(&delayed_uprobe_lock);
+ 		delayed_uprobe_remove(uprobe, NULL);
+ 		mutex_unlock(&delayed_uprobe_lock);
+-		kfree(uprobe);
++
++		call_rcu(&uprobe->rcu, uprobe_free_rcu);
+ 	}
+ }
+ 
+@@ -668,12 +677,25 @@ static struct uprobe *__find_uprobe(struct inode *inode, loff_t offset)
+ static struct uprobe *find_uprobe(struct inode *inode, loff_t offset)
+ {
+ 	struct uprobe *uprobe;
++	unsigned seq;
+ 
+-	read_lock(&uprobes_treelock);
+-	uprobe = __find_uprobe(inode, offset);
+-	read_unlock(&uprobes_treelock);
++	guard(rcu)();
+ 
+-	return uprobe;
++	do {
++		seq = read_seqcount_begin(&uprobes_seqcount);
++		uprobes = __find_uprobe(inode, offset);
++		if (uprobes) {
++			/*
++			 * Lockless RB-tree lookups are prone to false-negatives.
++			 * If they find something, it's good. If they do not find,
++			 * it needs to be validated.
++			 */
++			return uprobes;
++		}
++	} while (read_seqcount_retry(&uprobes_seqcount, seq));
++
++	/* Really didn't find anything. */
++	return NULL;
+ }
+ 
+ static struct uprobe *__insert_uprobe(struct uprobe *uprobe)
+@@ -702,7 +724,9 @@ static struct uprobe *insert_uprobe(struct uprobe *uprobe)
+ 	struct uprobe *u;
+ 
+ 	write_lock(&uprobes_treelock);
++	write_seqcount_begin(&uprobes_seqcount);
+ 	u = __insert_uprobe(uprobe);
++	write_seqcount_end(&uprobes_seqcount);
+ 	write_unlock(&uprobes_treelock);
+ 
+ 	return u;
+@@ -936,7 +960,9 @@ static void delete_uprobe(struct uprobe *uprobe)
+ 		return;
+ 
+ 	write_lock(&uprobes_treelock);
++	write_seqcount_begin(&uprobes_seqcount);
+ 	rb_erase(&uprobe->rb_node, &uprobes_tree);
++	write_seqcount_end(&uprobes_seqcount);
+ 	write_unlock(&uprobes_treelock);
+ 	RB_CLEAR_NODE(&uprobe->rb_node); /* for uprobe_is_active() */
+ 	put_uprobe(uprobe);
 
