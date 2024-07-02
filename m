@@ -1,165 +1,92 @@
-Return-Path: <linux-kernel+bounces-237185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 173F291ED28
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 04:57:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1162991ED2B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 04:58:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B56501F222A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 02:57:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A82201F228AC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 02:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 220A71756A;
-	Tue,  2 Jul 2024 02:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pmn4rVl5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C02179B2;
+	Tue,  2 Jul 2024 02:57:58 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1E329CF0
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 02:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3E4A23;
+	Tue,  2 Jul 2024 02:57:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719889016; cv=none; b=tZL3VaMknHR13Fjw34CSaI+yrvIYHGIpwO8nK/LpI+IbK4JZB07PpoHeyjzduKT1LePR4wvWFdhgLdCk3MbKGu2i1EGxHmZzJiiSA5sMRXK0czdubFEA+6aaUg08C68zcnUcKU/Cw9S/X98oEtGim+1lb20C4n2WjoSC6IpD/x8=
+	t=1719889078; cv=none; b=RzKtZghR/5Ty7vGImG/KY0+8PbO39crY35NYyeLwCv5Atv1yVOvw0IodJaEtvEREHXqFors5XYaJ8ezy7azhPQaEj3HwnH+zdtQm28OZs7BjtFNxWPK5ngddwdAFooZ1v7qkBsfi8A2TE8N6fzHBevFucRubGwoB8IhP1KoUazI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719889016; c=relaxed/simple;
-	bh=PJeB1T6WtFGRGHqRWzoEPRuTK3UanbHnCIilELdSNEA=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=XwIeIenw926IwBntc+k7d3K0uH48tXlcu+FRP7dmwgQ1QD8t3cetWTB3w5fIu8NCBGby8/9+hiLEMXjoVSW21K1faJ2T4hCBMktpMn3lWorUkqmejJ5M8hc9+qozZAj5hkv5E7pgYh/6D6Yc8DQSSezx4zH6Ocm1BJQpQkhl5eM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pmn4rVl5; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719889014; x=1751425014;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=PJeB1T6WtFGRGHqRWzoEPRuTK3UanbHnCIilELdSNEA=;
-  b=Pmn4rVl5yKVYdC71KyN/P9yegbx0VZ7H0NHnV3EICcyjhxX3eW2PzdMm
-   YuJSnVdqDCYm0rCS/+6HRPZTjiq3zCahIIKkrRPBwqvJqdfbV7ErsASpR
-   eTnYG4oKj8FG7oi3Rm/m4aWh1xJu5mGLCnkBj8sffZLDd1cWuoowdskPo
-   zczUoYUn/tdMonO8M6e+xPH03Ps2wprIeVYCACrEj8MOOawcxDgdj+NrW
-   QLDeT/x63rrULB28k26Q/wsz8jgTFAzq627qyPLMGIVj4doyt9TYdbhCM
-   ttKYCFEbyOfdR1Rdbv+NlhYCeYKGP0O9mX1tIQGk0l4NhaUxjBcEDlkxU
-   Q==;
-X-CSE-ConnectionGUID: wPMKpFjdRleVWc3FI6dgJg==
-X-CSE-MsgGUID: n1kCplg2TMGFR/sunwLvOw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="17171745"
-X-IronPort-AV: E=Sophos;i="6.09,177,1716274800"; 
-   d="scan'208";a="17171745"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 19:56:54 -0700
-X-CSE-ConnectionGUID: jv1h/Hj1Tsi9eKZnFDIjjg==
-X-CSE-MsgGUID: 7c35zjW2RfmY6UoGVFRosw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
-   d="scan'208";a="50598103"
-Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
-  by orviesa003.jf.intel.com with ESMTP; 01 Jul 2024 19:56:52 -0700
-Message-ID: <663b7309-31e6-4b60-a792-b7aca77c190d@linux.intel.com>
-Date: Tue, 2 Jul 2024 10:54:09 +0800
+	s=arc-20240116; t=1719889078; c=relaxed/simple;
+	bh=Lq2JPw5gQzhsl5eNueEUR6Xw5v9KGxCiQOxnv7s0TAg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FNuKqVbJZED7NwF+vlEircGSXIkhPisuIcS+dRzenCb+NLdVlmfmOT7ZP5n9apdwFVRsHxGGF35wHEsodNcMDfbnK8KAeMkpZTdljX8J7I0TQ1kQkq7zO4JrX3lTBVSn6SLu925zPcz/FBq3jagvZkVnYmvP4v2gjeL+cOLkpvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-03 (Coremail) with SMTP id rQCowABXX3esbINm7liXEw--.36260S2;
+	Tue, 02 Jul 2024 10:57:49 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: laurent.pinchart@ideasonboard.com,
+	paul.elder@ideasonboard.com,
+	mchehab@kernel.org
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] media: i2c: thp7312: Convert comma to semicolon
+Date: Tue,  2 Jul 2024 10:57:11 +0800
+Message-Id: <20240702025711.1411715-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>,
- iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] iommu/vt-d: Add helper to flush caches for context
- change
-To: Jacob Pan <jacob.jun.pan@linux.intel.com>
-References: <20240627023121.50166-1-baolu.lu@linux.intel.com>
- <20240627023121.50166-2-baolu.lu@linux.intel.com>
- <20240701172319.264e718c@jacob-builder>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20240701172319.264e718c@jacob-builder>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowABXX3esbINm7liXEw--.36260S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Jw4UZF15Zr47Gryktr15XFb_yoW3GrXEkr
+	13XrW2gr1DtF1ak3W5J3WrCr9FkFWkuwn3uF1FyrZ5Gay3X3WUZr1DuwnrZayDXF15K3W5
+	Jr98WF1UCwnrKjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbckFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
+	1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkIecxEwVAFwVW8
+	JwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r
+	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij
+	64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr
+	0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF
+	0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUatC7UUUUU=
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On 7/2/24 8:23 AM, Jacob Pan wrote:
-> On Thu, 27 Jun 2024 10:31:20 +0800, Lu Baolu<baolu.lu@linux.intel.com>
-> wrote:
-> 
->> +/*
->> + * Cache invalidations after change in a context table entry that was
->> present
->> + * according to the Spec 6.5.3.3 (Guidance to Software for
->> Invalidations). If
->> + * IOMMU is in scalable mode and all PASID table entries of the device
->> were
->> + * non-present, set affect_domains to true. Otherwise, false.
->> + */
-> The spec says:
-> "Domain-selective PASID-cache invalidation to affected domains (can be
-> skipped if all PASID entries were not-present and CM=0)"
-> 
-> So we should skip PASID cache invalidation if affect_domain is true
-> according to this comment.
-> 
->> +void intel_context_flush_present(struct device_domain_info *info,
->> +				 struct context_entry *context,
->> +				 bool affect_domains)
->> +{
->> +	struct intel_iommu *iommu = info->iommu;
->> +	u16 did = context_domain_id(context);
->> +	struct pasid_entry *pte;
->> +	int i;
->> +
->> +	assert_spin_locked(&iommu->lock);
->> +
->> +	/*
->> +	 * Device-selective context-cache invalidation. The Domain-ID
->> field
->> +	 * of the Context-cache Invalidate Descriptor is ignored by
->> hardware
->> +	 * when operating in scalable mode. Therefore the @did value
->> doesn't
->> +	 * matter in scalable mode.
->> +	 */
->> +	iommu->flush.flush_context(iommu, did, PCI_DEVID(info->bus,
->> info->devfn),
->> +				   DMA_CCMD_MASK_NOBIT,
->> DMA_CCMD_DEVICE_INVL); +
->> +	/*
->> +	 * For legacy mode:
->> +	 * - Domain-selective IOTLB invalidation
->> +	 * - Global Device-TLB invalidation to all affected functions
->> +	 */
->> +	if (!sm_supported(iommu)) {
->> +		iommu->flush.flush_iotlb(iommu, did, 0, 0,
->> DMA_TLB_DSI_FLUSH);
->> +		__context_flush_dev_iotlb(info);
->> +
->> +		return;
->> +	}
->> +
->> +	/*
->> +	 * For scalable mode:
->> +	 * - Domain-selective PASID-cache invalidation to affected
->> domains
->> +	 * - Domain-selective IOTLB invalidation to affected domains
->> +	 * - Global Device-TLB invalidation to affected functions
->> +	 */
->> +	if (affect_domains) {
->> +		for (i = 0; i < info->pasid_table->max_pasid; i++) {
->> +			pte = intel_pasid_get_entry(info->dev, i);
->> +			if (!pte || !pasid_pte_is_present(pte))
->> +				continue;
->> +
->> +			did = pasid_get_domain_id(pte);
->> +			qi_flush_pasid_cache(iommu, did,
->> QI_PC_ALL_PASIDS, 0);
-> This is conflicting with the comments above where PASID cache flush can be
-> skipped if affect_domain==true, no?
+Replace a comma between expression statements by a semicolon.
 
-Yes. I have fixed it in the v3.
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/media/i2c/thp7312.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-baolu
+diff --git a/drivers/media/i2c/thp7312.c b/drivers/media/i2c/thp7312.c
+index 19bd923a7315..75225ff5eff6 100644
+--- a/drivers/media/i2c/thp7312.c
++++ b/drivers/media/i2c/thp7312.c
+@@ -1503,7 +1503,7 @@ static int __thp7312_flash_reg_read(struct thp7312_device *thp7312,
+ 
+ 	msgs[0].addr = client->addr;
+ 	msgs[0].flags = 0;
+-	msgs[0].len = sizeof(thp7312_cmd_read_reg),
++	msgs[0].len = sizeof(thp7312_cmd_read_reg);
+ 	msgs[0].buf = (u8 *)thp7312_cmd_read_reg;
+ 
+ 	msgs[1].addr = client->addr;
+-- 
+2.25.1
+
 
