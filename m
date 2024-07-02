@@ -1,268 +1,135 @@
-Return-Path: <linux-kernel+bounces-238516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28FAD924B75
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:18:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BD8D924B77
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:18:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A48461F21611
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:18:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A0F72918E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:18:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4541C2DC6;
-	Tue,  2 Jul 2024 22:11:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3F01DA30C;
+	Tue,  2 Jul 2024 22:14:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aJMqOupr"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E3o5pB5n"
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC6DE1C0950;
-	Tue,  2 Jul 2024 22:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660711DA303
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 22:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719958270; cv=none; b=kp7IDQTJOYigXg/KchKWVlYQkii/jEq6xLOje2aj2gRZajWm6RCo7vBIUKxYrxNvmi5ky9azhKdQjn72YTCOywAf99mVrdzNZyYDGFAxZ+t7uVZwJZYbsm1eVWpkdKrZ1iMtlDyz2aBAejvpeJ/0Ti3/RiK+XWkg4AHj8uFde/4=
+	t=1719958470; cv=none; b=ZBmK3RIbK5KHVZR6jJF+0lNaaLgBbXGZw4yol68g7ODgBrCCujPQxmc/PaoJWjXeQsKpRjVRqH7QJTfE7bNyQN3S0wMdEdeeMA5z590xDXx3t+IaR/N7KGNZsnvqPFS6iv3m9beq9qaDDr8VXUaPmYxbhu2e1N0e4usEOSHCFXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719958270; c=relaxed/simple;
-	bh=2NMCyaWR4evinVUCD179WEKkI0Q5gm7rUoAhi8vYmfg=;
+	s=arc-20240116; t=1719958470; c=relaxed/simple;
+	bh=6ll4s5hWO8hb3f/5cgn9ls9vhCpyGt6d2EZDxyzusJo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kAJE+fAW8YKpqEgbjTjmLLyC4v40hTaOROVOhjyBBEfEEVt8W7xrClNk+Qn+Lt+6dEUxxPwkofsB8veiBMc1NWjJ37sh0gjBbMpGu+BjDLm3bG+1gXn7ofT6E+xmwvA2uh+em42j4kFqYCpzg8yyWpXIG67zXHYuXSzQwLgiYmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aJMqOupr; arc=none smtp.client-ip=209.85.215.176
+	 To:Cc:Content-Type; b=kl1qLN8qP4cKGlW3Ct1LhB/T3cyKxU3quzydLgdTNxAAhSZGjYiFw9FUM3nwxWfceebIpl2LmK+jUfnQZjOcqMNOk7Azwn1FTsZGqs3M84/c+tFh/UP9NHn564as1bS9AV2/CqCSkRdeMpKmMMVRracIQG8gYmrlrx9kBa2xwIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E3o5pB5n; arc=none smtp.client-ip=209.85.217.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-6c5bcb8e8edso3902039a12.2;
-        Tue, 02 Jul 2024 15:11:08 -0700 (PDT)
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-48fde151f25so14076137.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 15:14:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719958268; x=1720563068; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1719958468; x=1720563268; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZnqKEO5ZZcp9/4+BqafJQuEQPd8pEu3nC1s3xKx77jQ=;
-        b=aJMqOuprIF4Wp6Wtt7XLhuexuXFFijhZrXab+rrKpONg4XjEOBqLYgdTWQ0nq+6sKS
-         dxHZgLjwpxXfQXj0bum6Kp22kHIJqqH5Jz/SzyoIde+5mYCX2EdodK7+ya82JrjP35mq
-         deEcHmiPtUMZGugzZqt2SA4Ny+gtiRWfAc/tcu6AuqEAy4ubQYwcc8k0XAp6MmatIle/
-         ii+Pk6dZFyp+AdiDZxNpR9i0SbFKgumQ9MKofwqJP1/GL28IrSOfgz259XBDUrS485ZJ
-         ZDOMT/Z7eOPRm0MGIjjHENMnRTcIFHc8S2yagGFw1RtoAQIhKr6kf3HUZdeTGFQKML0b
-         diNQ==
+        bh=9sD8orU3RBfAf2hoz6apBJzmcU2qvSOHNCAhe0iXUBY=;
+        b=E3o5pB5nob7IJzsU5lDANqS3qu1ldW6l2u3XjLvyjKsZMyR1Pf/i+YdkzUjgBvp5l2
+         gblxWJNfgbXo9KZYwbKezwlUhZnQKGg+E4QliTtgsmQtFDHJuc+HpELO08JFbW/JGpem
+         uwbTmbjGDwI4zt8HcB27tVmeiyyu+Ge15k+8LLydJKCES6bxliVJi+ppl0ek8OQ9bClP
+         k4kXN7VEEp2QOyCF26gqzPD1qlctA3DlF6HCkWZmDF/8eVbLIIsd/39c+pvqOcM/dzdq
+         GM8e2M7UbR/54mstyUwreZ3rwHQD+LmFBfdd8lQu8qQYC7t/WQMRs1zw8GJi1cBdDbS2
+         aVPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719958268; x=1720563068;
+        d=1e100.net; s=20230601; t=1719958468; x=1720563268;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZnqKEO5ZZcp9/4+BqafJQuEQPd8pEu3nC1s3xKx77jQ=;
-        b=rhx4aNIr5slFT1SveCR2Y79cRGVQOy2kn67W9YPZPgYJ3EP6XsUrldHlgXydYuVhrb
-         yn0KXcYLzxcx95vGQAVN+W2eQKd649JylyC1OWtZeRMD3MUuBIgE2J2pzdVivENCVgwD
-         7bpklsTABEXkFKMdiHKl2SDdAFxZi6v3FHL6Jd0ql0CYImGtF2xyAmI8rGkQmOON2X5a
-         oGWvwnyY9GoXMFDT3Auv4KmgGZ4pQErBoXmSoaCbfSVPRBGS371Lbw+Q3qIHYbMm7uD5
-         LeKN6eic4/dmGHj1s4Trb22SLyreJDhTyPfmvdj4olSQYArrcEUCQNLHh2Og1+Cws60s
-         zdeg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0iWjGhxjyDfThtBxSXuHb1csqSTyqa//l/vfIDPTB6RKq+X/D8u2e6vso5usjUDm5svufi5tgFssVHrCX12mSlnGrT3z+gbZoCk78TiNyXtWQlVw11iiqBWDBxyyUN1q8cYjVxpglxQAe1FWMvuksrhxzE+X6N2EXRkbV11BlDItvaUfW
-X-Gm-Message-State: AOJu0Yy5wNXMqQOxfnFQSY/mS+c4mhizzp7prVfdCTO/5XI5J09evuZB
-	fJbzUPMHgoE4gSWJHX21UiXGqjabwep0DyYCX/akDcafCa0WSNCRFYREWhJaUGlchGNeRaBNhyz
-	WPXxOZ9EegiyGuHzt0t2InhqCq08=
-X-Google-Smtp-Source: AGHT+IFimS1GxdoU3Td43x8MAf5jBXtU0svz9P3Elu0oSiqmpSxOmN9dgQ0Zu6rrb21dDj4NiLhvIm7vOI6LWDXUEOw=
-X-Received: by 2002:a05:6a20:431b:b0:1be:e1e1:d5de with SMTP id
- adf61e73a8af0-1bef613f48bmr13555315637.30.1719958268208; Tue, 02 Jul 2024
- 15:11:08 -0700 (PDT)
+        bh=9sD8orU3RBfAf2hoz6apBJzmcU2qvSOHNCAhe0iXUBY=;
+        b=OseNir6mWahCpXR+TBOdEp3Dik0sB8epR8Vzb9BaFrNU8blKVD8opQdANVLclfNqYa
+         Q68jE3NKRkE/n7J7qH93G0DRZWQdA/bnF8hMVS0nH/BLo51wbX202DVi8jlM+TIr3DTY
+         gGmcYwnriAmgNYgCo3bHQEXzGC4+Ml7xX8aUW2Wv5WxMXxcPFChpbEgu5wzijOyp2IEX
+         xlJbVfrnw1SnjUyaZ6afXb3vFHJfqDjoaZHQJ+8tv0LXnsPbZ9LLRxYyllQVnOuai9Xt
+         49X+rH9bjnLo13Er/qkmuRa6UzNsdcX2i44C3LGoeBYGplOQAc+g0kfJIOTcdGI+/s5g
+         aehw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNMzgwj8BQpzH/zoNFYiDEIREc5wFQX6bcumOI8T/idVpvNNW/qwhi51Dnq9zuv8PXNPRqoypGVEssXhBm9eWFdSjBeqIfL+Xebpw7
+X-Gm-Message-State: AOJu0YzJqCHpCU/bKYy7Wd3LU/Ciczcq6uOjN6FJr2g5KS4atZvkDmRU
+	iWBjhFGf9GwV0/W9aIPL/wvOSZefkfvvLxr6jJSPPjctAVfcoCQQ2vf08/QvC93yeh8INqzOpBB
+	DDRcDooQgRYldjQFuhRw/eY3ISIA=
+X-Google-Smtp-Source: AGHT+IFXhbMOr7DzwzYNNyCsqRINNrgPdR0zpixK3ln2x5FkwZHpp8LDhrs2Je7fcFc10Y+XcQgRdrAqwBXhcj1xmd8=
+X-Received: by 2002:a67:cb16:0:b0:48f:a93b:502 with SMTP id
+ ada2fe7eead31-48faf133971mr11356498137.26.1719958468275; Tue, 02 Jul 2024
+ 15:14:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240701164115.723677-1-jolsa@kernel.org> <20240701164115.723677-10-jolsa@kernel.org>
-In-Reply-To: <20240701164115.723677-10-jolsa@kernel.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 2 Jul 2024 15:10:55 -0700
-Message-ID: <CAEf4BzYzpyZL+hQogXp-BaWEu6CFvWyicCOnGUxJawMpErLWRQ@mail.gmail.com>
-Subject: Re: [PATCHv2 bpf-next 9/9] selftests/bpf: Add uprobe session
- consumers test
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>, 
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
-	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@chromium.org>, 
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
+References: <20240702215804.2201271-1-jim.cromie@gmail.com> <ZoR40nWmpEV2Ly_6@bombadil.infradead.org>
+In-Reply-To: <ZoR40nWmpEV2Ly_6@bombadil.infradead.org>
+From: jim.cromie@gmail.com
+Date: Tue, 2 Jul 2024 16:14:01 -0600
+Message-ID: <CAJfuBxyxamRhOyz8WuL+7=eJkEKSw8jnAWjyAuqU2i7gvg-rsQ@mail.gmail.com>
+Subject: Re: [PATCH v9 00/53] fix CONFIG_DRM_USE_DYNAMIC_DEBUG=y
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com, 
+	jani.nikula@intel.com, ville.syrjala@linux.intel.com, jbaron@akamai.com, 
+	gregkh@linuxfoundation.org, ukaszb@chromium.org, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, 
+	intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, 
+	linux@rasmusvillemoes.dk, joe@perches.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 1, 2024 at 9:44=E2=80=AFAM Jiri Olsa <jolsa@kernel.org> wrote:
+On Tue, Jul 2, 2024 at 4:01=E2=80=AFPM Luis Chamberlain <mcgrof@kernel.org>=
+ wrote:
 >
-> Adding test that attached/detaches multiple consumers on
-> single uprobe and verifies all were hit as expected.
+> On Tue, Jul 02, 2024 at 03:56:50PM -0600, Jim Cromie wrote:
+> > This fixes dynamic-debug support for DRM.debug, added via classmaps.
+> > commit bb2ff6c27bc9 (drm: Disable dynamic debug as broken)
+> >
+> > CONFIG_DRM_USE_DYNAMIC_DEBUG=3Dy was marked broken because drm.debug=3D=
+val
+> > was applied when drm.ko was modprobed; too early for the yet-to-load
+> > drivers, which thus missed the enablement.  My testing with
+> > /etc/modprobe.d/ entries and modprobes with dyndbg=3D$querycmd options
+> > obscured this omission.
+> >
+> > The fix is to replace invocations of DECLARE_DYNDBG_CLASSMAP with
+> > DYNDBG_CLASSMAP_DEFINE for core, and DYNDBG_CLASSMAP_USE for drivers.
+> > The distinction allows dyndbg to also handle the users properly.
+> >
+> > DRM is the only current classmaps user, and is not really using it,
+> > so if you think DRM could benefit from zero-off-cost debugs based on
+> > static-keys, please test.
+> >
+> > HISTORY
+> >
+> > 9/4/22  - ee879be38bc8..ace7c4bbb240 commited - classmaps-v1 dyndbg par=
+ts
+> > 9/11/22 - 0406faf25fb1..16deeb8e18ca commited - classmaps-v1 drm parts
+> >
+> > https://lore.kernel.org/lkml/Y3XUrOGAV4I7bB3M@kroah.com/
+> > greg k-h says:
+> > This should go through the drm tree now.  The rest probably should also
+> > go that way and not through my tree as well.
 >
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->  .../bpf/prog_tests/uprobe_multi_test.c        | 203 ++++++++++++++++++
->  .../progs/uprobe_multi_session_consumers.c    |  53 +++++
->  2 files changed, 256 insertions(+)
->  create mode 100644 tools/testing/selftests/bpf/progs/uprobe_multi_sessio=
-n_consumers.c
+> Can't this just be defined as a coccinelle smpl patch? Must easier
+> to read than 53 patches?
 >
 
-This is clever, though bit notation obscures the meaning of the code a
-bit. But thanks for the long comment explaining the overall idea.
+perhaps it could - Im not sure that would be easier to review
+than a file-scoped struct declaration or reference per driver
 
-> diff --git a/tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c b=
-/tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c
-> index b521590fdbb9..83eac954cf00 100644
-> --- a/tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c
-> @@ -9,6 +9,7 @@
->  #include "uprobe_multi_session.skel.h"
->  #include "uprobe_multi_session_cookie.skel.h"
->  #include "uprobe_multi_session_recursive.skel.h"
-> +#include "uprobe_multi_session_consumers.skel.h"
->  #include "bpf/libbpf_internal.h"
->  #include "testing_helpers.h"
->  #include "../sdt.h"
-> @@ -739,6 +740,206 @@ static void test_session_recursive_skel_api(void)
->         uprobe_multi_session_recursive__destroy(skel);
->  }
+Also, I did it hoping to solicit more Tested-by:s with drm.debug=3D0x1ff
+
+Jim
+
+>   Luis
 >
-> +static int uprobe_attach(struct uprobe_multi_session_consumers *skel, in=
-t bit)
-> +{
-> +       struct bpf_program **prog =3D &skel->progs.uprobe_0 + bit;
-> +       struct bpf_link **link =3D &skel->links.uprobe_0 + bit;
-> +       LIBBPF_OPTS(bpf_uprobe_multi_opts, opts);
-> +
-> +       /*
-> +        * bit: 0,1 uprobe session
-> +        * bit: 2,3 uprobe entry
-> +        * bit: 4,5 uprobe return
-> +        */
-> +       opts.session =3D bit < 2;
-> +       opts.retprobe =3D bit =3D=3D 4 || bit =3D=3D 5;
-> +
-> +       *link =3D bpf_program__attach_uprobe_multi(*prog, 0, "/proc/self/=
-exe",
-> +                                                "uprobe_session_consumer=
-_test",
-> +                                                &opts);
-> +       if (!ASSERT_OK_PTR(*link, "bpf_program__attach_uprobe_multi"))
-> +               return -1;
-> +       return 0;
-> +}
-> +
-> +static void uprobe_detach(struct uprobe_multi_session_consumers *skel, i=
-nt bit)
-> +{
-> +       struct bpf_link **link =3D &skel->links.uprobe_0 + bit;
-
-ok, this is nasty, no one guarantees this should keep working,
-explicit switch would be preferable
-
-> +
-> +       bpf_link__destroy(*link);
-> +       *link =3D NULL;
-> +}
-> +
-> +static bool test_bit(int bit, unsigned long val)
-> +{
-> +       return val & (1 << bit);
-> +}
-> +
-> +noinline int
-> +uprobe_session_consumer_test(struct uprobe_multi_session_consumers *skel=
-,
-> +                            unsigned long before, unsigned long after)
-> +{
-> +       int bit;
-> +
-> +       /* detach uprobe for each unset bit in 'before' state ... */
-> +       for (bit =3D 0; bit < 6; bit++) {
-
-Does "bit" correspond to the uprobe_X program? Maybe call it an uprobe
-index or something, if that's the case? bits are just representations,
-but semantically meaningful is identifier of an uprobe program, right?
-
-> +               if (test_bit(bit, before) && !test_bit(bit, after))
-> +                       uprobe_detach(skel, bit);
-> +       }
-> +
-> +       /* ... and attach all new bits in 'after' state */
-> +       for (bit =3D 0; bit < 6; bit++) {
-> +               if (!test_bit(bit, before) && test_bit(bit, after)) {
-> +                       if (!ASSERT_OK(uprobe_attach(skel, bit), "uprobe_=
-attach_after"))
-> +                               return -1;
-> +               }
-> +       }
-> +       return 0;
-> +}
-> +
-
-[...]
-
-> +
-> +static void test_session_consumers(void)
-> +{
-> +       struct uprobe_multi_session_consumers *skel;
-> +       int before, after;
-> +
-> +       skel =3D uprobe_multi_session_consumers__open_and_load();
-> +       if (!ASSERT_OK_PTR(skel, "uprobe_multi_session_consumers__open_an=
-d_load"))
-> +               return;
-> +
-> +       /*
-> +        * The idea of this test is to try all possible combinations of
-> +        * uprobes consumers attached on single function.
-> +        *
-> +        *  - 1 uprobe session with return handler called
-> +        *  - 1 uprobe session without return handler called
-> +        *  - 2 uprobe entry consumer
-> +        *  - 2 uprobe exit consumers
-> +        *
-> +        * The test uses 6 uprobes attached on single function, but that
-> +        * translates into single uprobe with 6 consumers in kernel.
-> +        *
-> +        * The before/after values present the state of attached consumer=
-s
-> +        * before and after the probed function:
-> +        *
-> +        *  bit 0   : uprobe session with return
-> +        *  bit 1   : uprobe session with no return
-> +        *  bit 2,3 : uprobe entry
-> +        *  bit 4,5 : uprobe return
-> +        *
-> +        * For example for:
-> +        *
-> +        *   before =3D 0b10101
-> +        *   after  =3D 0b00110
-> +        *
-> +        * it means that before we call 'uprobe_session_consumer_test' we
-> +        * attach uprobes defined in 'before' value:
-> +        *
-> +        *   - bit 0: uprobe session with return
-> +        *   - bit 2: uprobe entry
-> +        *   - bit 4: uprobe return
-> +        *
-> +        * uprobe_session_consumer_test is called and inside it we attach
-> +        * and detach * uprobes based on 'after' value:
-> +        *
-> +        *   - bit 0: uprobe session with return is detached
-> +        *   - bit 1: uprobe session without return is attached
-> +        *   - bit 2: stays untouched
-> +        *   - bit 4: uprobe return is detached
-> +        *
-> +        * uprobe_session_consumer_test returs and we check counters valu=
-es
-> +        * increased by bpf programs on each uprobe to match the expected
-> +        * count based on before/after bits.
-> +        */
-> +       for (before =3D 0; before < 64; before++) {
-> +               for (after =3D 0; after < 64; after++)
-> +                       session_consumer_test(skel, before, after);
-> +       }
-> +
-> +       uprobe_multi_session_consumers__destroy(skel);
-> +}
-> +
-
-[...]
 
