@@ -1,175 +1,217 @@
-Return-Path: <linux-kernel+bounces-237573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74FF4923B08
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:04:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54439923B0C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:05:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2216C282ECC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:04:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A41EAB21696
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0311534EC;
-	Tue,  2 Jul 2024 10:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF35157491;
+	Tue,  2 Jul 2024 10:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="ex9r250k";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="vhc5Rfl9"
-Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mjk0hAPn";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kAuK0Vrs";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mjk0hAPn";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kAuK0Vrs"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74FC12F392
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 10:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52ED27F47B;
+	Tue,  2 Jul 2024 10:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719914642; cv=none; b=Hi2kbDkx+f1i/uHUvUPVbnWl7qjyQmTFPBKwdNZFAObob7hRGsYPGrAj+DoKwHc8m2S6cQB9ahi6bMbmqqdpCcTH8duoWOgOblkxF63TjhVJuYrB+p9a8/A2dwgktg5+9FHjDuPp7mSNT1Z70RVXaoCpzWLMtYOHhN+97opFyqo=
+	t=1719914724; cv=none; b=Mo8R6LjMAENtwC8wjlbaOPuLLhEgnHax8BsxLNWKAckP+2KK14edtQCeC5r8sfooVjteKGX+cw+GWdmPViOuCUtKe2Ve7d4AEypypGIdbun8A4T6StRrNfngIreAuOIQ5RETmJJq7G/WKV7aQZl2v3t2YrQUHEA71kaNtqtq35U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719914642; c=relaxed/simple;
-	bh=w0BsET4XO2EbD/Q55BNLIPKw+27X4/d1LTf3mFB9I8E=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=TVguYnaupjIytBLcKDYzur5ZHNZHS5gZ22rI8XSuVkZMa0cqdRofQoiL1wlqx3iiGsQbk7tt08XEujLLRpl2yH72EGa9XIFhLyErzuBJa8GR5seO3D5xbwF1Idhc+5gXLjXSkzOZKBdTe4lZp8sxPDkRpSHvY1Y2owMJQ4/NPLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=ex9r250k; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=vhc5Rfl9; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfout.nyi.internal (Postfix) with ESMTP id A041A138019C;
-	Tue,  2 Jul 2024 06:03:59 -0400 (EDT)
-Received: from imap44 ([10.202.2.94])
-  by compute3.internal (MEProxy); Tue, 02 Jul 2024 06:03:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1719914639;
-	 x=1720001039; bh=w0BsET4XO2EbD/Q55BNLIPKw+27X4/d1LTf3mFB9I8E=; b=
-	ex9r250kwDRCDdvJ3HMp6mKSzdvEg5JRtpeVZA2XzMlbG3yqWcG/6ODWxLzpCLqI
-	o0isffMgdjne1jrmpJ9oKZJV6OT0rwMbj84madVhsFLCTkejrobrxegicEtI9nwM
-	aUnB06KhUcwWYuPlH4cQbW6tRETdb4iOkjV+WItHekDeNWIMoIVkFBGrbftBCxyD
-	VFa7tdAN8YZpTRNLxzr1XODKHfnL5niZqXwpUeCstaWqJnAHlASmouaU0h+9d4/H
-	Wf4GroXcCmlsNRMKWBZfV1RBA1A8zW6kQ+OLFP2AQfcHOpUoLgWg/WacUix4m2GB
-	ygbeHtmIQtxXFv0IRkr/AA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1719914639; x=
-	1720001039; bh=w0BsET4XO2EbD/Q55BNLIPKw+27X4/d1LTf3mFB9I8E=; b=v
-	hc5Rfl9tST/T0gL6boDn7oupli4x0OqFxRJIAYjPw1feUyeSqNJvFGvL1LR06qOK
-	2eNm+o6kApn43P4QWuZefgL9Qq+e6EGT+nrfwFkUEc8rUY/rEJmsO2qdPh6EdTgB
-	jFs72uO7PaRx33XNdRLzEuMDtOMTcmnjjfcHUZ3b+biXV1cRRan1DrmVtcFX7axn
-	yvVsXVh2YSbq3U3k5rH7qi7+e0CC/RFTgS4DzDA82vkjJG4sGQgRPVEgnFU97Nm2
-	LnuLsBxGONXXv1aC9VexlfXDNYiOzsDjU6F38XkJZh2UfIPJpAiktGBypUNYdAhD
-	JSS6zzo7hCqLD99R47P2A==
-X-ME-Sender: <xms:jtCDZiY8s8YICgZZhhqRfoPfIgV8TwXUYuX-1gMqG5q-49kv_jCXCw>
-    <xme:jtCDZlbcWFHp4jyhOjcyRiwqdz8zG9ccl3xTTXvDlYkrA1Go-IdeHIvjJZoed9-4X
-    j63YKFLKnO5aPLc4Iw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehgddvudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedflfhi
-    rgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
-    eqnecuggftrfgrthhtvghrnhepudefgeeftedugeehffdtheefgfevffelfefghefhjeeu
-    geevtefhudduvdeihefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
-    hilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
-X-ME-Proxy: <xmx:jtCDZs9scyNdgoMJEeDSDiXIG3hZhYVLfNA-1rtViUjGfsxOXm4PlQ>
-    <xmx:jtCDZkq6nuFn4Qk8x_UPWtANu4mBTzCh7DDJPkSs_rcfqj0-hLNvXg>
-    <xmx:jtCDZtqRb9DaJ6zJ-zLfZl-KXmk42-IcIw9Ucf4SNtVs-ZF4V7f32g>
-    <xmx:jtCDZiSSaf6gDsDY1jgXLMkXM-0YK_tqtoWJNrvnP3B-KK7hxuntog>
-    <xmx:j9CDZo0BX82S6ioGFEzkgZG-EdLY40OahBqdbw_0G4uDY7ftjoWnnkM2>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id B2A5536A0074; Tue,  2 Jul 2024 06:03:58 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-566-g3812ddbbc-fm-20240627.001-g3812ddbb
+	s=arc-20240116; t=1719914724; c=relaxed/simple;
+	bh=mhOJZW7Zk/WukhprJ5A7RkP8chUJyL8pjmf42EkjSZY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mX49hyC66vgUO1ie031BugyRD95hRW8Q31Z2h93bzT+Btme7tYbDGXYUyZT5JCeqLMo6aLWDsXEhEPaWs+U7u4w6UoZH3kB26eFIYunDEJ10Ev0I8NwmRFKf4RxTcrKD8tZLwRBnrm33yiS4iSuNV8efNx6/hfLjgvrIJz4B01Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mjk0hAPn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kAuK0Vrs; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mjk0hAPn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kAuK0Vrs; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 46B752199A;
+	Tue,  2 Jul 2024 10:05:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1719914721; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VT/A0LJZ/LMX/rqyuXqUDapR9hC/2J9IlVs+gBCcdC8=;
+	b=mjk0hAPnNv1wryFP+AJU02jxDou69zJVzAWsLACvtVQyy7srL/U3dDS0u1gn28cIz54AGW
+	BTmoALSKK/08C8ZBJqnsgrSVPYtIQXdN7Tpd93ZYi7rWOdnX3oT5/Tv1bIAueoCCf5EuXG
+	D0RFCq1kIbvUlIy9q+2g1RiuucxMY9Q=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1719914721;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VT/A0LJZ/LMX/rqyuXqUDapR9hC/2J9IlVs+gBCcdC8=;
+	b=kAuK0VrsYMQy54aX0Hf+1pLSDte8Z4KNso4lHVagnSivX+RBTzCkz8q+b67iiNDO2Cbt3W
+	kSINNIZ2+QGBTWBQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=mjk0hAPn;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=kAuK0Vrs
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1719914721; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VT/A0LJZ/LMX/rqyuXqUDapR9hC/2J9IlVs+gBCcdC8=;
+	b=mjk0hAPnNv1wryFP+AJU02jxDou69zJVzAWsLACvtVQyy7srL/U3dDS0u1gn28cIz54AGW
+	BTmoALSKK/08C8ZBJqnsgrSVPYtIQXdN7Tpd93ZYi7rWOdnX3oT5/Tv1bIAueoCCf5EuXG
+	D0RFCq1kIbvUlIy9q+2g1RiuucxMY9Q=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1719914721;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VT/A0LJZ/LMX/rqyuXqUDapR9hC/2J9IlVs+gBCcdC8=;
+	b=kAuK0VrsYMQy54aX0Hf+1pLSDte8Z4KNso4lHVagnSivX+RBTzCkz8q+b67iiNDO2Cbt3W
+	kSINNIZ2+QGBTWBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5625913A9A;
+	Tue,  2 Jul 2024 10:05:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Hmt0EuDQg2Z0OgAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Tue, 02 Jul 2024 10:05:20 +0000
+Message-ID: <34701ce5-4f35-463d-a2d2-5144a20aaf0f@suse.de>
+Date: Tue, 2 Jul 2024 13:05:15 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <fd1d0a97-7075-4936-b58b-e99bab9afc58@app.fastmail.com>
-In-Reply-To: <ae7085fd-3bca-4a4a-b465-5e4941011877@amd.com>
-References: <20240629052247.2653363-1-uwu@icenowy.me>
- <20240629052247.2653363-3-uwu@icenowy.me>
- <a143a2c3-c6f0-4537-acc6-94f229f14639@app.fastmail.com>
- <2760BA02-8FF8-4B29-BFE2-1322B5BFB6EC@icenowy.me>
- <7e30177b-ff13-4fed-aa51-47a9cbd5d572@amd.com>
- <6303afecce2dff9e7d30f67e0a74205256e0a524.camel@icenowy.me>
- <ff1bf596-83cb-4b3e-a33a-621ac2c8171c@amd.com>
- <b9189c97f7efbaa895198113ee5b47012bd8b4dc.camel@icenowy.me>
- <ae7085fd-3bca-4a4a-b465-5e4941011877@amd.com>
-Date: Tue, 02 Jul 2024 18:03:37 +0800
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- "Icenowy Zheng" <uwu@icenowy.me>, "Huang Rui" <ray.huang@amd.com>,
- "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
- "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>,
- "David Airlie" <airlied@gmail.com>, "Daniel Vetter" <daniel@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 2/2] drm/ttm: downgrade cached to write_combined when snooping
- not available
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/7] Add PCIe support for bcm2712
+To: Florian Fainelli <florian.fainelli@broadcom.com>,
+ Stanimir Varbanov <svarbanov@suse.de>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jim Quinlan <jim2101024@gmail.com>,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Andrea della Porta <andrea.porta@suse.com>,
+ Phil Elwell <phil@raspberrypi.com>, Jonathan Bell <jonathan@raspberrypi.com>
+References: <20240626104544.14233-1-svarbanov@suse.de>
+ <5bbf813f-9a7b-467b-a2c7-6bc21ea85ef8@broadcom.com>
+Content-Language: en-US
+From: Stanimir Varbanov <svarbanov@suse.de>
+In-Reply-To: <5bbf813f-9a7b-467b-a2c7-6bc21ea85ef8@broadcom.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 46B752199A
+X-Spam-Score: -3.00
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-3.00 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	XM_UA_NO_VERSION(0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[21];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[linutronix.de,kernel.org,gmail.com,google.com,linux.com,pengutronix.de,suse.com,raspberrypi.com];
+	RCVD_TLS_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[dt];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
+Hi Florian,
 
+On 6/26/24 14:31, Florian Fainelli wrote:
+> Hi,
+> 
+> On 26/06/2024 11:45, Stanimir Varbanov wrote:
+>> This patchset aims to add bare minimum support for bcm2712
+>> in brcmstb PCIe driver needed to support the peripherals from
+>> RP1 south-bridge found in RPi5. In order to support RP1
+>> PCIe endpoint peripherals a new interrupt controller is added.
+>> The interrupt controller supports 64 interrupt sources which
+>> are enough to handle 61 RP1 peripherals.
+>>
+>> Patch 1 is adding DT binding schema for the MIP interrupt
+>> controller, patch 2 is adding relevant changes for PCIe
+>> bcm2712 in yaml. Patch 3 adds MIP intterrupt cotroller driver.
+>> Patches 4 and 5 are preparations for adding bcm2712 support in 6.
+>> The last patch updates bcm2712 .dsti by adding pcie DT nodes.
+>>
+>> Few concerns about the implementation:
+>>   - the connection between MIP interrupt-controller and PCIe RC is
+>>     done through BAR1. The PCIe driver is parsing the msi_parent
+>>     DT property in order to obtain few private DT properties like
+>>     "brcm,msi-pci-addr" and "reg". IMO this looks hackish but I failed
+>>     to find something better. Ideas?
+>>
+>>   - in downstream RPi kernel "ranges" and "dma-ranges" DT properties
+>>     are under an axi {} simple-bus node even that PCIe block is on CPU
+>>     MMIO bus. I tried to merge axi {} in soc {} and the result could be
+>>     seen on the last patch in this series, but I'm still not sure that
+>>     it looks good enough.
+>>
+>> This series has been functionally tested on OpenSUSE Tumbleweed with
+>> downstream RP1 south-bridge PCIe endpoint driver implementation as
+>> MFD by using ethernet which is part of it.
+>>
+>> The series is based on Andrea's "Add minimal boot support for
+>> Raspberry Pi 5"
+>> series.
+>>
+>> Comments are welcome!
+> 
+> We are just about submitting support for 7712 which is the sister chip
+> of 2712 and requires similar, if not identical types of changes to
+> pcie-brcmstb.c, would you mind reviewing that patch series when it gets
+> posted by Jim in the next few days, and base yours upon that one? It
 
-=E5=9C=A82024=E5=B9=B47=E6=9C=882=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8B=E5=
-=8D=885:27=EF=BC=8CChristian K=C3=B6nig=E5=86=99=E9=81=93=EF=BC=9A
-> Am 02.07.24 um 11:06 schrieb Icenowy Zheng:
->> [SNIP] However I don't think the definition of the AGP spec could app=
-ly on all
->> PCI(e) implementations. The AGP spec itself don't apply on
->> implementations that do not implement AGP (which is the most PCI(e)
->> implementations today), and it's not in the reference list of the PCIe
->> spec, so it does no help on this context.=20
-> No, exactly that is not correct.
->
-> See as I explained the No-Snoop extension to PCIe was created to help=20
-> with AGP support and later merged into the base PCIe specification.
->
-> So the AGP spec is now part of the PCIe spec.
+Sure, I'll review bcm7712 series and rebase bcm2712 on top of it.
 
-We don't really buy this theory.
+> does separate changes in a more atomic and a more reviewer friendly
+> rather than having one big commit modifying pcie-brcmstb.c
 
-Keyword "AGP" doesn't appear in "PCI Express Base 4.0 Base Specification=
-" even
-once.
+Agreed.
 
-If PCIe is a predecessor of AGP, where does AGP specific software interf=
-ace like
- AGP aperture goes? PCIe GPUs are only borrowing software concepts from =
-AGP,
-but they didn't inherit any hardware properties.
+> 
+> Thanks.
 
-[...]
-> We seem to have a misunderstanding here, this is not a software issue.=20
-> The hardware platform is considered broken by the hardware vendor!
-
-It's up to the specification text to define compliance means. So far as =
-per analysis
-from Icenowy of PCIe specification text itself it's not prohibited.
-
->
-> In other words people have stitched together hardware in a way which i=
-s=20
-> not supported by the creator of that hardware.
->
-> So as long as you can't convince anybody from ARM or the RISC-V team o=
-r=20
-> whoever created that hardware to confirm that the hardware actually=20
-> works you won't get any support for that.
-
-Well we are trying to support them on our own in mainline, we are not as=
-king
-for any support.
-
-Thanks
-- Jiaxun
->
-> Regards,
-> Christian.
-
---=20
-- Jiaxun
+~Stan
 
