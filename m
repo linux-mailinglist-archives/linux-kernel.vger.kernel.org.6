@@ -1,216 +1,160 @@
-Return-Path: <linux-kernel+bounces-238262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 864A2924799
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:53:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7CD7924797
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:53:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E8562820AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:53:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 004FF1C23354
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4819B1CD5CA;
-	Tue,  2 Jul 2024 18:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H8rzKs7m"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7328F1CCCBD;
+	Tue,  2 Jul 2024 18:53:01 +0000 (UTC)
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1CDE481D0;
-	Tue,  2 Jul 2024 18:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9114043152;
+	Tue,  2 Jul 2024 18:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719946381; cv=none; b=U3xFdC3YjE3q7TWDsp++q5IfonzT7Bohnmd8peb61KZHxGhhg9/UKPiClbU1oWWd830mfSX0sN3KeiZVz932756t9TAsUlHp/xa6coMXA+uYcZJ2mdAO13Vwkve1+TsA3sNxguiwtlpknN+feevHobfP0xNel46J8P7fF3J6L1M=
+	t=1719946381; cv=none; b=UVKzSamZFkEAR3Vs/Z51FHs1iMX6Td9olbJsJe5IqtnBVXSEoj20TCqSxlZaCcYgOPosPTUEuCBUJfbOx2xyc84kL/r5I3wo73WgMW1CGYwcxe50YMfsyqajM0IXwPFUdH/lSNgkjX8xe8JJYyxNoO/KrsigpSiSlApcR1ALWBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719946381; c=relaxed/simple;
-	bh=fx7y1zfZDl+Gycet3dUj8TAXXUjjcumC4lRXDq8EyXA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qjap19LEOaKZIFEHA+wgvwSSyUB42ypQNQc0IhbR/lNO5k+gMDhAk0kkIiFhurmE+QXOVwJU1rfJem2aoYqcfzjHFsH5fe4jSNiJKWKwSMkiS4iG0e9MYZAKdmbP39hNUnEFy10M1WpBR9gOJfYGsDavyPRlm7R7Seb/WKT6azw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H8rzKs7m; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-58b966b4166so1331113a12.1;
-        Tue, 02 Jul 2024 11:52:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719946378; x=1720551178; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fx7y1zfZDl+Gycet3dUj8TAXXUjjcumC4lRXDq8EyXA=;
-        b=H8rzKs7mxe/f+kuJUXFpv2EJ5Lbje/nalmzRbJEHoQZA0UJ9r7Lu6EuYqZbSieTukr
-         Kpgf47CzwuHLgAC/Okajzv8RD0vBfly41gRyUQGjNNDCHLoZ4u3TBNuJWzWoak9XUHUF
-         caMHew+NKYx7sBr/yRMbDZRFlg3sX4s9IpFdmSHzqyqaAawvxb5eYx69W6wtPVnt3/Yt
-         WRicxHAy3EixCYdJP8iezhH7Uf0GHvLuPXu+ThcEmI1O6Bl3V+f8tsU4fNlS0o+xFElf
-         z+mYO73o2QxdQCLzDw3d6X8pRuz4B5k9QiiFM2Tn6jn4mT7YqWm6FzUheT+aBddQYFIk
-         yIGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719946378; x=1720551178;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fx7y1zfZDl+Gycet3dUj8TAXXUjjcumC4lRXDq8EyXA=;
-        b=B+N91dxqJN8c/jEkdn3X9+1w02lxJ67Mx4aZK8DfH9q0Y0sucV7n2u2WZucT1KG8qx
-         PStPheWml3oM4ViyUqfgN9sfwMmt5ASCkLFK7y5kCy1O/UNelLgDaENfSxZGapUMY6Fy
-         K8WTnY7ki+AGWOMkcghGs30O+59OSbDeBlWo8ZceehRdGCASLBso7Spp3IyckGoEdbvC
-         2OsULQuQ0ieQUBgwJIZZHLinI+LCDM7wfrSoMqUzTQzuFO/JiVnA2hqI1HmWq+c5lG7j
-         HFC4c/kkBVB5McwMRXwaw0b7zVsmrgOdHSDfEEZhq9ck36f9mfaEnXsa6laTysBa3JwR
-         9FVg==
-X-Forwarded-Encrypted: i=1; AJvYcCUg4K6BAoeyvaJ92u0S2S8zBx2UtpRGbjoxBl7S1I/y5RmepnZKi9V5oxCBUWnzN3ewVzK763DC47PgGR4BxByCl4AJ2K7v4F5WLl8lnGd+l7q1XT3Iw81H7GhKMS3m6WR3tY7nO2E=
-X-Gm-Message-State: AOJu0Yw1qquqY4+TKc7WogEepoWcgXzGJhmgWVa4lGgJJoIuMQaGe2it
-	LB8mbDQ4xaWWtHh6q33y+hWsSEB9mASWb7nNuZhWxkPdcFtMjX34S3OKPUVanBnUYNky7NonA+j
-	F3rcsPCiYyfT2RBeRwVjA4Z9A1VI=
-X-Google-Smtp-Source: AGHT+IEYc/PB6/JZIlvU8rpBd/OR3sKMF3W4z+xWLfAR/Vxnk5NUnFRvXVo5wFkGvuD96Xgq0D8dISY2DuvmbMuRe9M=
-X-Received: by 2002:a05:6402:4302:b0:582:774c:a6b6 with SMTP id
- 4fb4d7f45d1cf-5879f0c4b0dmr6614640a12.4.1719946377940; Tue, 02 Jul 2024
- 11:52:57 -0700 (PDT)
+	bh=5Dg8bFTgjy9yiTLLqi6coW5BHHilvLZYvB8KNwGZjwo=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=jbOfOaNhU5cKKFIOC9dDc9uMCNHxndy8TOFcKTKDYUW53lslsbvmpCEiby0nA2w0Xtt8H7tFKENT6/3IL+AXmPf4GqPlYI6cXsWEovaj2fp3miXu5oAunw40luJ1esLTjPQSxDjZJ0l0VALgpGvpVxgiORUvXyYUZopTBZTOQDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org; spf=pass smtp.mailfrom=ovn.org; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ovn.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8E87160005;
+	Tue,  2 Jul 2024 18:52:53 +0000 (UTC)
+Message-ID: <8c42156c-747b-4d4d-b6e0-93fcd19fad92@ovn.org>
+Date: Tue, 2 Jul 2024 20:52:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240627-fix-help-issue-v3-1-85318a3974e4@gmail.com>
- <c9df6637-6055-4668-b80b-a1a6e6be445e@linuxfoundation.org>
- <CALsPMBMeo5E9ZND0bPK089VHBZnybsigkvoC2r8BLCTjYt9QFA@mail.gmail.com>
- <f1261f1c-abbe-49e4-b0bb-b72af367da7f@linuxfoundation.org>
- <CALsPMBP42_oKJDegVQOzHUE00mie2Mh_aPyvyTUhgsnjQO1DDQ@mail.gmail.com>
- <501954d6-3f0a-4f1e-863b-c60353435700@linuxfoundation.org> <CALsPMBPkE=CCTgm8UcsdL7qEG+1u1H8NFYYTJvEMK3uXvg97Ng@mail.gmail.com>
-In-Reply-To: <CALsPMBPkE=CCTgm8UcsdL7qEG+1u1H8NFYYTJvEMK3uXvg97Ng@mail.gmail.com>
-From: Roman Storozhenko <romeusmeister@gmail.com>
-Date: Tue, 2 Jul 2024 20:52:46 +0200
-Message-ID: <CALsPMBP8HR8eETzuua1STdnLPwLb1-53ipQg1c3vcEN4inU65g@mail.gmail.com>
-Subject: Re: [PATCH v3] cpupower: Make help command available for custom
- install dir
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>, 
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: i.maximets@ovn.org, Simon Horman <horms@kernel.org>,
+ =?UTF-8?Q?Adri=C3=A1n_Moreno?= <amorenoz@redhat.com>,
+ Aaron Conole <aconole@redhat.com>, netdev@vger.kernel.org,
+ echaudro@redhat.com, dev@openvswitch.org,
+ Donald Hunter <donald.hunter@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Pravin B Shelar <pshelar@ovn.org>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v7 05/10] net: openvswitch: add psample action
+To: Jakub Kicinski <kuba@kernel.org>
+References: <20240630195740.1469727-1-amorenoz@redhat.com>
+ <20240630195740.1469727-6-amorenoz@redhat.com> <f7to77hvunj.fsf@redhat.com>
+ <CAG=2xmOaMy2DVNfTOkh1sK+NR_gz+bXvKLg9YSp1t_K+sEUzJg@mail.gmail.com>
+ <20240702093726.GD598357@kernel.org>
+ <447c0d2a-f7cf-4c34-b5d5-96ca6fffa6b0@ovn.org>
+ <20240702110645.1c6b5b1a@kernel.org>
+ <a6728234-b453-4404-8d4f-eed64293a5f6@ovn.org>
+ <20240702112454.408757f7@kernel.org>
+Content-Language: en-US
+From: Ilya Maximets <i.maximets@ovn.org>
+Autocrypt: addr=i.maximets@ovn.org; keydata=
+ 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
+In-Reply-To: <20240702112454.408757f7@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: i.maximets@ovn.org
 
-On Tue, Jul 2, 2024 at 9:40=E2=80=AFAM Roman Storozhenko
-<romeusmeister@gmail.com> wrote:
->
-> On Mon, Jul 1, 2024 at 9:40=E2=80=AFPM Shuah Khan <skhan@linuxfoundation.=
-org> wrote:
-> >
-> > On 6/29/24 04:48, Roman Storozhenko wrote:
-> > > On Fri, Jun 28, 2024 at 9:45=E2=80=AFPM Shuah Khan <skhan@linuxfounda=
-tion.org> wrote:
-> > >>
-> > >> On 6/28/24 05:30, Roman Storozhenko wrote:
-> > >>> On Thu, Jun 27, 2024 at 7:33=E2=80=AFPM Shuah Khan <skhan@linuxfoun=
-dation.org> wrote:
-> > >>>>
-> > >>>> On 6/27/24 01:49, Roman Storozhenko wrote:
-> > >>>>> When the 'cpupower' utility installed in the custom dir, it fails=
- to
-> > >>>>> render appropriate help info for a particular subcommand:
-> > >>>>> $ LD_LIBRARY_PATH=3Dlib64/ bin/cpupower help monitor
-> > >>>>> with error message like 'No manual entry for cpupower-monitor.1'
-> > >>>>> The issue is that under the hood it calls 'exec' function with
-> > >>>>> the following args: 'man cpupower-monitor.1'. In turn, 'man' sear=
-ch
-> > >>>>> path is defined in '/etc/manpath.config'. Of course it contains o=
-nly
-> > >>>>> standard system man paths.
-> > >>>>> Make subcommands help available for a user by setting up 'MANPATH=
-'
-> > >>>>> environment variable to the custom installation man pages dir. Th=
-at
-> > >>>>> variable value will be prepended to the man pages standard search=
- paths
-> > >>>>> as described in 'SEARCH PATH' section of MANPATH(5).
-> > >>>>
-> > >>>> What I am asking you is what happens when you set the MANPATH befo=
-re
-> > >>>> running the command?
-> > >>>
-> > >>> It adds the custom search path to the beginning of the MANPATH vari=
-able.
-> > >>> I tested this case. All works as expected.
-> > >>>
-> > >>
-> > >> Let's try again. What happens if you run the command with MANPATH se=
-t and
-> > >> exported and then run the command. Can you send the output?
-> > >
-> > > hedin@laptop:~/prj/cpupower/install/usr$ echo $MANPATH
-> > > /tmp/
-> > > hedin@laptop:~/prj/cpupower/install/usr$ LD_LIBRARY_PATH=3Dlib64/
-> > > bin/cpupower help monitor
-> > > ...................
-> > > man output
-> > > ...................
-> > > hedin@laptop:~/prj/cpupower/install/usr$ echo $MANPATH
-> > > /tmp/
-> > > hedin@laptop:~/prj/cpupower/install/usr$
-> > >
-> >
-> > Is this with your patch or mainline? Can you give cut and paste
-> > the man output here for the mainline coupower without your patch?
->
-> The above output is from my patch.
-> This is the output from the mainline:
-> hedin@laptop:~/prj/cpupower/install/usr$ sudo LD_LIBRARY_PATH=3Dlib64/
-> bin/cpupower help monitor
-> [sudo] password for hedin:
-> No manual entry for cpupower-monitor
-> hedin@laptop:~/prj/cpupower/install/usr$ echo $MANPATH
-> /tmp/
-> hedin@laptop:~/prj/cpupower/install/usr$
->
-Based on our today's conversation the following is the output for the mainl=
-ine:
+On 7/2/24 20:24, Jakub Kicinski wrote:
+> On Tue, 2 Jul 2024 20:16:51 +0200 Ilya Maximets wrote:
+>> On 7/2/24 20:06, Jakub Kicinski wrote:
+>>> On Tue, 2 Jul 2024 11:53:01 +0200 Ilya Maximets wrote:  
+>>>> Or create a simple static function and mark all the arguments as unused,
+>>>> which kind of compliant to the coding style, but the least pretty.  
+>>>
+>>> To be clear - kernel explicitly disables warnings about unused
+>>> arguments. Unused arguments are not a concern.  
+>>
+>> OK.  Good to know.
+>>
+>> Though I think, the '12) Macros, Enums and RTL' section of the
+>> coding style document needs some rephrasing in that case.
+> 
+> Do you mean something like:
+> 
+> diff --git a/Documentation/process/coding-style.rst b/Documentation/process/coding-style.rst
+> index 7e768c65aa92..0516b7009688 100644
+> --- a/Documentation/process/coding-style.rst
+> +++ b/Documentation/process/coding-style.rst
+> @@ -828,7 +828,7 @@ Generally, inline functions are preferable to macros resembling functions.
+>  		} while (0)
+>  
+>  Function-like macros with unused parameters should be replaced by static
+> -inline functions to avoid the issue of unused variables:
+> +inline functions to avoid the issue of unused variables in the caller:
+>  
+>  .. code-block:: c
+>  
+> ?
 
-hedin@laptop:~/prj/cpupower/install/usr$
-MANPATH=3D"/home/hedin/prj/cpupower/install/usr/man:"
-LD_LIBRARY_PATH=3Dlib64/ bin/cpupower help monitor
-hedin@laptop:~/prj/cpupower/install/usr$ echo $MANPATH
-
-.............
-man output
-.............
-
-hedin@laptop:~/prj/cpupower/install/usr$ export
-MANPATH=3D"/home/hedin/prj/cpupower/install/usr/man:"
-hedin@laptop:~/prj/cpupower/install/usr$ echo $MANPATH
-/home/hedin/prj/cpupower/install/usr/man:
-hedin@laptop:~/prj/cpupower/install/usr$ LD_LIBRARY_PATH=3Dlib64/
-bin/cpupower help monitor
-
-.............
-man output
-.............
-
-hedin@laptop:~/prj/cpupower/install/usr$ LD_LIBRARY_PATH=3Dlib64/ sudo
-bin/cpupower help monitor
-[sudo] password for hedin:
-bin/cpupower: error while loading shared libraries: libcpupower.so.1:
-cannot open shared object file: No such file or directory
-
-As you can see we can use MANPATH for correct help invocation, unless
-we call it with 'sudo'. I can guess that it simply
-inherits the environment variables from the root shell that contains
-no 'MANPATH' variable set with an ordinary user.
-
-Worth mentioning this in an appropriate manpage?
-
->
-> >
-> > thanks,
-> > -- Shuah
-> >
->
->
-> --
-> Kind regards,
-> Roman Storozhenko
+Yes, that makes the logic behind the sentence way more clear.  At least
+for me.  Without this change it's hard to tell if the doc is talking about
+unused function arguments or unused variables in the caller.
 
 
 
---=20
-Kind regards,
-Roman Storozhenko
+There is another issue though that this particular phrase directly leads
+a developer to declaring 'static inline' functions in .c files.  And even
+'15) The inline disease' cites this use case as appropriate.  And it is,
+with the exception for a macro that is a no-op stub version of some function.
+Having an example on how to write a stub version of the function in both
+.h and .c files might be a good addition to '21) Conditional Compilation'
+section breaking the tie for this particular use case.  This section also
+discourages from conditional compilation in .c files, but it doesn't seem
+reasonable to export a static function outside for that reason.  I suppose
+that section is mostly concerned about use of other modules.
+
+Best regards, Ilya Maximets.
 
