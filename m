@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-237873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAE17923F2C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:40:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 324CD923F31
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:40:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BECF61C21F7A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:40:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAE6C1F22746
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1811B4C56;
-	Tue,  2 Jul 2024 13:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F901B14FF;
+	Tue,  2 Jul 2024 13:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iBPVwi6L"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u6LehY74"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C414A1AED5D;
-	Tue,  2 Jul 2024 13:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E6E1B5806;
+	Tue,  2 Jul 2024 13:40:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719927632; cv=none; b=FNQ4D+D4OEh61UEaI4sA2glmNLRpx9paHmORiZcmDcJlTcZTzoFozlWjfLDwry9rKkPugHFZZPKqo3GxqsPArHciBIVSSWkG/TrTORnQnaMv07fVgbRzYb4Esb0InxG4LW24VK6VDq70g03/QMTWjusQyi7XrljM36drFNgh1f4=
+	t=1719927634; cv=none; b=LnRoiyYMVGlk18pGMW5sUnJ7fkI6l2leWdXtUEEO9Pw4fkDEcVdxA9v5lpxVxacNcXOWLhY+XJcYE8IzqWngBXpsOVYfXqpxA1TsAZzkXmRu4Zpc9nZ/Qn/oHZf+XwS2HXgbFiXgjnxcUFOTX0DxoECEcW2/3ylriMO21ne/qXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719927632; c=relaxed/simple;
-	bh=oWyMMPuMnk/cVjDHZftH+TzqlB1ahjPwRtOGWTrmum4=;
+	s=arc-20240116; t=1719927634; c=relaxed/simple;
+	bh=pirxWw773xu5RQIIpdcnxs6Z4AgajmiN1N9tjfkWv30=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=dG9IVJy7jK8T65e70N5agKy+NTLUmvBVTIaJEyeh0bQvy6uHc7RrnRHULb347B+x8sdCsQZiI/erMorxrFqsfAJHrD63ygdJ0hYFzB6x2avNfznoIYCdLl1zL96j19Z5weV9lm5MvMjfos5HCei9ETs7AHf8V1tueWDW62PKyMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iBPVwi6L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4C7AAC116B1;
-	Tue,  2 Jul 2024 13:40:32 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=qn8VLv8qwLvSpEGcOZ6NNQWwtdwmHbioaLf7YR4N/vwE3OdYOclkI16dfAuXcDFdTFOI0prwJp/ayKLHjF/kCjo/jmBXs0LKO/GvMPPEz48bDp3+XrLgNTf4MwDSB49025Jd1TKQZIR0GlyK+3NhpOx+4mRpwK+nB/I3Jd24wDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u6LehY74; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 89082C4AF0C;
+	Tue,  2 Jul 2024 13:40:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719927632;
-	bh=oWyMMPuMnk/cVjDHZftH+TzqlB1ahjPwRtOGWTrmum4=;
+	s=k20201202; t=1719927633;
+	bh=pirxWw773xu5RQIIpdcnxs6Z4AgajmiN1N9tjfkWv30=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=iBPVwi6LyVgmhJNUGEtqynTEpSRPX/kUSJrh9ZjrUKwHEy0Z/svKF1QxOl0ldaJ6/
-	 YnNkN53iWQNyVTRWUot5Fx2Q/1Y0YqzT+OIPcl73IDoGywY2wzbcqsxumYOeKK+RP9
-	 31690r0e+f+OYTvzOPfDex/4GcMC/fUJ9QFZmW1GC6dQRNohtAbC/fZFh4Q2IkXEVI
-	 yN0l5chOUxW6g2tDVzwKGbssDRXy+wydi3WPfotNJl4M4bbS3EBmrfDQakGbbbdzlZ
-	 s92nAey6swXuU3dsjDnxmuH8tmEmR2eshfvkJqQ68Ud2JKFX7p+1dK1KWKyCu6ZbdH
-	 VSb9Fl9S+hReQ==
+	b=u6LehY74eg+cOh6kEtnIMnRGosYjQ7jUv7ET/UBgLnQeOhEnwc9Ut9koYabzR5GRU
+	 CwFw2WCyCoymXKuJbdcF4SKbt9MK47avpEbbjUnJzE6swFcPSJh6Muv7zDNook1zID
+	 vBShPDV59Fgoc5qN2c/RSUHbB5V5loNbFsxpVuTJ26PgVEvs5WDy0mq1gaec2eih3S
+	 uYo3YVWZK7BqKUjCukJdMFE7oNh2B1xOOfxhpL3t+LjgL4Tie+EQL73mBCjvXhTWFq
+	 aGgjpcHDiqejWSZBoF0qSYL3GNM/s7SZlmFwtnMRx5fkJoJaeweNcQUVJ+pgp+krg8
+	 CgB1GNX30OiHQ==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 38CB5CF3B95;
-	Tue,  2 Jul 2024 13:40:32 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 79454CF3B95;
+	Tue,  2 Jul 2024 13:40:33 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,43 +51,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: stmmac: dwmac-qcom-ethqos: fix error array size
+Subject: Re: [PATCH net-next] dt-bindings: net: dwmac: Validate PBL for all
+ IP-cores
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <171992763222.28501.4782727810061359612.git-patchwork-notify@kernel.org>
-Date: Tue, 02 Jul 2024 13:40:32 +0000
-References: <20240701014720.2547856-1-quic_yijiyang@quicinc.com>
-In-Reply-To: <20240701014720.2547856-1-quic_yijiyang@quicinc.com>
-To: YijieYang <quic_yijiyang@quicinc.com>
-Cc: vkoul@kernel.org, alexandre.torgue@foss.st.com, joabreu@synopsys.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- mcoquelin.stm32@gmail.com, bartosz.golaszewski@linaro.org,
- netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- kernel@quicinc.com, quic_tengfan@quicinc.com, quic_aiquny@quicinc.com,
- quic_jiegan@quicinc.com, stable@vger.kernel.org
+ <171992763349.28501.13027793993497248100.git-patchwork-notify@kernel.org>
+Date: Tue, 02 Jul 2024 13:40:33 +0000
+References: <20240628154515.8783-1-fancer.lancer@gmail.com>
+In-Reply-To: <20240628154515.8783-1-fancer.lancer@gmail.com>
+To: Serge Semin <fancer.lancer@gmail.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ alexandre.torgue@foss.st.com, joabreu@synopsys.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ peppe.cavallaro@st.com, netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
 Hello:
 
-This patch was applied to netdev/net.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Paolo Abeni <pabeni@redhat.com>:
 
-On Mon, 1 Jul 2024 09:47:20 +0800 you wrote:
-> From: Yijie Yang <quic_yijiyang@quicinc.com>
-> 
-> Correct member @num_por with size of right array @emac_v4_0_0_por for
-> struct ethqos_emac_driver_data @emac_v4_0_0_data.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 8c4d92e82d50 ("net: stmmac: dwmac-qcom-ethqos: add support for emac4 on sa8775p platforms")
-> Signed-off-by: Yijie Yang <quic_yijiyang@quicinc.com>
+On Fri, 28 Jun 2024 18:45:12 +0300 you wrote:
+> Indeed the maximum DMA burst length can be programmed not only for DW
+> xGMACs, Allwinner EMACs and Spear SoC GMAC, but in accordance with
+> [1, 2, 3] for Generic DW *MAC IP-cores. Moreover the STMMAC driver parses
+> the property and then apply the configuration for all supported DW MAC
+> devices. All of that makes the property being available for all IP-cores
+> the bindings supports. Let's make sure the PBL-related properties are
+> validated for all of them by the common DW *MAC DT schema.
 > 
 > [...]
 
 Here is the summary with links:
-  - net: stmmac: dwmac-qcom-ethqos: fix error array size
-    https://git.kernel.org/netdev/net/c/b698ab56837b
+  - [net-next] dt-bindings: net: dwmac: Validate PBL for all IP-cores
+    https://git.kernel.org/netdev/net-next/c/d01e0e98de31
 
 You are awesome, thank you!
 -- 
