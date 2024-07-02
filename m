@@ -1,93 +1,179 @@
-Return-Path: <linux-kernel+bounces-237545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E15923AB0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:52:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D0FD923ABA
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:52:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E4891F23276
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:52:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0160AB21589
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:52:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F2F157469;
-	Tue,  2 Jul 2024 09:52:04 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33536157469;
+	Tue,  2 Jul 2024 09:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bx+pMg1z"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761A5155C90
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 09:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099F9156C40
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 09:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719913923; cv=none; b=RurokqRliFX94ZyxdiUuYoiV1Gl4QwDUXOv2KlUdFgynx7or/Scm7xodoO40CiFXXUSaNb63TgEGSXwpiznHc9PEZJP0s9cGRIB0V0vgnAbkqonFLRy5oVLN6zP/ffXD0mD9TH/QX8l8fZG1GsNHVpI5rzE7cRYiyRV65aPM+AU=
+	t=1719913962; cv=none; b=AOST8v9AWYWevJY8kmrQ28NpfJcxAs80aqKREfl0Io47hZsLL5DaKbUgh4+6fmL94WOZ8yzNu6Mhq+VqbxjppTm+qT8X6GjrMjqPqkdV5LYApdo/DxcI/51dyO0lKMBZC3vcT+It/tp9gc2VJtcC/MtDVX3oXxyWRDQOz7OKdks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719913923; c=relaxed/simple;
-	bh=lXY2X8K0XjptrYm6YYDokwI6irXE0xiGwkCu7Dav81E=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=llq3jxbRB9sL955S2gdaE/1piFDyFFhqy7xFL+HNn0qus3l40IrZiJAvwv7yH5kZK+i89wz1gTmzj6k5GKAbiJ0dr6cavWO03Md6mVP/qYsOyh6JpmC9oyk+3zOlDFu25GMSSqkhJapFm3PDFFQ/wO4jBWPdn2Uh26723Ta7C+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7ebd11f77d8so470115639f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 02:52:02 -0700 (PDT)
+	s=arc-20240116; t=1719913962; c=relaxed/simple;
+	bh=VOJKjCp3jR7kcHcYPgkIxJUAg/3LFIoGG0GeL022wbE=;
+	h=From:References:MIME-Version:In-Reply-To:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RbKk6CWzsTAtwdlUnfarIKRCfNnX2S1n5d8m7KaiVZE9VpM5/6UZS4LSmLLjTOEsGkUTeMyOJofRBhBNg/Y2v0b5QxEJaETnWrKXl3uyMfPuuY/QIr7NbhYRjKLjN7gZY38a+Vwbk4at/mcrbBjOSkSmR6lKZ1q5pJTyTJsRvZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bx+pMg1z; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719913960;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DP5F3FQZT9AEjJbD/+HIliGJ1E4COuK06MVeuQ7o+74=;
+	b=bx+pMg1zDrZanbWcjl7uj2t/T8832y2Gbwsc70ljXGte8JgqufKtHGZ/JRojmK0kG6/b57
+	OOSfTXyDy9t6XNLa4CLMAts3GbViQWcP2fxkYG3jkM/RBppEMdOGbCH8/mvSys9N7TTZYp
+	nsd/z3l6xZaWRTnAD+UWzaFQJ2UpnpU=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-594-2yh4xiBtNpqsuWBMyjiRJQ-1; Tue, 02 Jul 2024 05:52:38 -0400
+X-MC-Unique: 2yh4xiBtNpqsuWBMyjiRJQ-1
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6b5d8fa54fcso4859016d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 02:52:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719913921; x=1720518721;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z9b4bWMFEWWl2Go9Q+boI/fxAFB2QlxWJEGLP8d7bMM=;
-        b=B14ApCO1vPktEDKptlx6kL+0rqZ8WnAXDwRk3522h/qJsIPOIFehQbvSRH2BL9d0E1
-         VzxVbG6L1kTE7W7CTrQlBZ190C/iyqv7QG/bNKDROl4k7g4Shy7d0ZItbsqZT9igdB+N
-         +tU1HpqXmCL5H2M9SeHVUYzJdv+o4eCprOsr75lSY1CtQMqwRD0dOl8E4Ixk0d81hDhF
-         AiO80puBmhFLgulC8AsuFa124OQCXC50lEIjPNrO+ubfQnqVB+M+IXS4FTfQ9sbBpGHl
-         PLASaX36B/BDYty9CY5d4u5JhwO55owmrHx/wBGyAATJkcZ3xDYxlkrvZHo6Ea95i+6a
-         H0Ng==
-X-Forwarded-Encrypted: i=1; AJvYcCUO/0KGNvnI5nJrzM1YMrOhZai69T2c1dpaNdKtVUMevc3X1C0pM6kTo7mPQ2Cwfm5piTAExHRPhJdToVeaIWXL6euC9u8QteO93lg1
-X-Gm-Message-State: AOJu0YxBbCrnGsjV6zGi59mAGsgSommXVPDoJOmMCbDe55sWF4vTX+6S
-	aVa44RzN+a8rJXTLVoskWZY3VwIwXkorT8yFUPz5KyZhYU2qmPSkQXVsRPZeWnzyanxWL7acDCK
-	8OsY+SeZhofPV1xgaB4WKQSMpajaY7de6EPznW1+MgHvEPNA0dSrNi4U=
-X-Google-Smtp-Source: AGHT+IFaEq1cmHnpCH05HIC7Kr/wWnCkdAe6BJFKRNmYd0TIN1/uja/tQKcGOmV9w2Bt2ED/Hd3eqfhFF3Mh85uO5nS/thOv8mzG
+        d=1e100.net; s=20230601; t=1719913958; x=1720518758;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:in-reply-to
+         :mime-version:references:from:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=DP5F3FQZT9AEjJbD/+HIliGJ1E4COuK06MVeuQ7o+74=;
+        b=TZJkDmOhbtZ6+JPs/j9fPFCTg2w1qXIJyEQEDd/vTvjSfUoaEgHY7Rf3enIoDMXc4/
+         NGBpryQRPtcFX+lYGtt+EcNHl/GNU0K6/q74se6bqD1TjFFNyJZXO5JtUzYIm8/tmm09
+         Y+2r6uGAceFdu0C95RHbdtLRxX55fYqRpTMlA2Eb0TSP3woD9Nx8Bzsrd4WRZ7TigZiS
+         ByKsgMaN6mIJlk4EJKGf94eU53Sb+JC7cG3jj3kGjUYlR2msoFoUloIUjbgkzsTNaf9R
+         kY3Rua0MGFC8RJJYi0tZOQjYRsfZyx1MkWV7vcX1tmSljekPMLbAPrKhbJ0RNwN0nWXY
+         sA0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXJh8npqduk/gopKi70N/h6ufvMnaH7zh8KubHTXukI48JKDsiJsqJ2L6r7sUKY0njEzPczKjGsNcbj7pa3JVXo/7Phrfm1TzXO+b60
+X-Gm-Message-State: AOJu0YzWgJYD2u7cMyugaDW/cSQTNKf10hS9axnWjuzltSGnbJDtximp
+	DDA6wUs8mri7O2NjQ1H5u8BEWOaG2T4N+9gb3q54tGrlDbeuLf5nSJyaxrBV7FVD1TlEPjPZcr1
+	HGu7c42JTZcl1tz4x1IueCNf+rOja4Mbdq1tOy5ZoVAjXZA1zuDGbw+K44A1Yobo3qInDT2l2K3
+	lQ0tl507V7WJZxo5NRD3/BHlkI28SdsrvIWv35
+X-Received: by 2002:a05:6214:5094:b0:6b0:77a8:f416 with SMTP id 6a1803df08f44-6b5b716c590mr91539136d6.47.1719913958175;
+        Tue, 02 Jul 2024 02:52:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE0pXlmMNoeRDeiooxStpfBdXN4rvBZfr/TYjnTJqrAO2XPoSia5lnQ7HNIgp+xR7Oyai5jussGPovwhsA9FeQ=
+X-Received: by 2002:a05:6214:5094:b0:6b0:77a8:f416 with SMTP id
+ 6a1803df08f44-6b5b716c590mr91538996d6.47.1719913957850; Tue, 02 Jul 2024
+ 02:52:37 -0700 (PDT)
+Received: from 311643009450 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 2 Jul 2024 05:52:36 -0400
+From: =?UTF-8?Q?Adri=C3=A1n_Moreno?= <amorenoz@redhat.com>
+References: <20240630195740.1469727-1-amorenoz@redhat.com> <20240630195740.1469727-6-amorenoz@redhat.com>
+ <f7to77hvunj.fsf@redhat.com> <CAG=2xmOaMy2DVNfTOkh1sK+NR_gz+bXvKLg9YSp1t_K+sEUzJg@mail.gmail.com>
+ <20240702093726.GD598357@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:4112:b0:4b9:b9a4:848b with SMTP id
- 8926c6da1cb9f-4bbb7042b77mr656074173.3.1719913921615; Tue, 02 Jul 2024
- 02:52:01 -0700 (PDT)
-Date: Tue, 02 Jul 2024 02:52:01 -0700
-In-Reply-To: <0000000000008405e0061bb6d4d5@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000057abc4061c40aa8b@google.com>
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in l2tp_session_delete
-From: syzbot <syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspotmail.com>
-To: davem@davemloft.net, eadavis@qq.com, edumazet@google.com, hdanton@sina.com, 
-	jchapman@katalix.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, samuel.thibault@ens-lyon.org, 
-	syzkaller-bugs@googlegroups.com, tparkin@katalix.com
+In-Reply-To: <20240702093726.GD598357@kernel.org>
+Date: Tue, 2 Jul 2024 05:52:36 -0400
+Message-ID: <CAG=2xmOwtdBJVk+=7KMgp1oEMuL=-OLzaWgvvV3n9Y=thnfwgA@mail.gmail.com>
+Subject: Re: [PATCH net-next v7 05/10] net: openvswitch: add psample action
+To: Simon Horman <horms@kernel.org>
+Cc: Aaron Conole <aconole@redhat.com>, netdev@vger.kernel.org, echaudro@redhat.com, 
+	i.maximets@ovn.org, dev@openvswitch.org, 
+	Donald Hunter <donald.hunter@gmail.com>, Jakub Kicinski <kuba@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Pravin B Shelar <pshelar@ovn.org>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has bisected this issue to:
+On Tue, Jul 02, 2024 at 10:37:26AM GMT, Simon Horman wrote:
+> On Tue, Jul 02, 2024 at 03:05:02AM -0400, Adri=C3=A1n Moreno wrote:
+> > On Mon, Jul 01, 2024 at 02:23:12PM GMT, Aaron Conole wrote:
+> > > Adrian Moreno <amorenoz@redhat.com> writes:
+>
+> ...
+>
+> > > > diff --git a/net/openvswitch/actions.c b/net/openvswitch/actions.c
+>
+> ...
+>
+> > > > @@ -1299,6 +1304,39 @@ static int execute_dec_ttl(struct sk_buff *s=
+kb, struct sw_flow_key *key)
+> > > >  	return 0;
+> > > >  }
+> > > >
+> > > > +#if IS_ENABLED(CONFIG_PSAMPLE)
+> > > > +static void execute_psample(struct datapath *dp, struct sk_buff *s=
+kb,
+> > > > +			    const struct nlattr *attr)
+> > > > +{
+> > > > +	struct psample_group psample_group =3D {};
+> > > > +	struct psample_metadata md =3D {};
+> > > > +	const struct nlattr *a;
+> > > > +	int rem;
+> > > > +
+> > > > +	nla_for_each_attr(a, nla_data(attr), nla_len(attr), rem) {
+> > > > +		switch (nla_type(a)) {
+> > > > +		case OVS_PSAMPLE_ATTR_GROUP:
+> > > > +			psample_group.group_num =3D nla_get_u32(a);
+> > > > +			break;
+> > > > +
+> > > > +		case OVS_PSAMPLE_ATTR_COOKIE:
+> > > > +			md.user_cookie =3D nla_data(a);
+> > > > +			md.user_cookie_len =3D nla_len(a);
+> > > > +			break;
+> > > > +		}
+> > > > +	}
+> > > > +
+> > > > +	psample_group.net =3D ovs_dp_get_net(dp);
+> > > > +	md.in_ifindex =3D OVS_CB(skb)->input_vport->dev->ifindex;
+> > > > +	md.trunc_size =3D skb->len - OVS_CB(skb)->cutlen;
+> > > > +
+> > > > +	psample_sample_packet(&psample_group, skb, 0, &md);
+> > > > +}
+> > > > +#else
+> > > > +static inline void execute_psample(struct datapath *dp, struct sk_=
+buff *skb,
+> > > > +				   const struct nlattr *attr) {}
+> > >
+> > > I noticed that this got flagged in patchwork since it is 'static inli=
+ne'
+> > > while being part of a complete translation unit - but I also see some
+> > > other places where that has been done.  I guess it should be just
+> > > 'static' though.  I don't feel very strongly about it.
+> > >
+> >
+> > We had a bit of discussion about this with Ilya. It seems "static
+> > inline" is a common pattern around the kernel. The coding style
+> > documentation says:
+> > "Generally, inline functions are preferable to macros resembling functi=
+ons."
+> >
+> > So I think this "inline" is correct but I might be missing something.
+>
+> Hi Adri=C3=A1n,
+>
+> TL;DR: Please remove this inline keyword
+>
+> For Kernel networking code at least it is strongly preferred not
+> to use inline in .c files unless there is a demonstrable - usually
+> performance - reason to do so. Rather, it is preferred to let the
+> compiler decide when to inline such functions. OTOH, the inline
+> keyword in .h files is fine.
+>
 
-commit d18d3f0a24fc4a3513495892ab1a3753628b341b
-Author: James Chapman <jchapman@katalix.com>
-Date:   Thu Jun 20 11:22:44 2024 +0000
+Ok. I'll send a new version.
 
-    l2tp: replace hlist with simple list for per-tunnel session list
+Thanks.
+Adri=C3=A1n
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15f2a512980000
-start commit:   185d72112b95 net: xilinx: axienet: Enable multicast by def..
-git tree:       net-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=17f2a512980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=13f2a512980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e78fc116033e0ab7
-dashboard link: https://syzkaller.appspot.com/bug?extid=c041b4ce3a6dfd1e63e2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12521b9c980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1062bd46980000
-
-Reported-by: syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspotmail.com
-Fixes: d18d3f0a24fc ("l2tp: replace hlist with simple list for per-tunnel session list")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
