@@ -1,187 +1,87 @@
-Return-Path: <linux-kernel+bounces-237707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F0B8923CF7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:55:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E59B7923CFB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9362F1C2254E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:55:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F2961F21A5F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88EC515B561;
-	Tue,  2 Jul 2024 11:54:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222E815B141;
+	Tue,  2 Jul 2024 11:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="u8r+VV/0"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LPkJYK3L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 023171DFD8;
-	Tue,  2 Jul 2024 11:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0EA15B12A;
+	Tue,  2 Jul 2024 11:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719921297; cv=none; b=uP3uWynwcm0oNcSpMjlwrljsH6uw7kVkLl4FT+BIQKtWM9salUS4TWGQVGBZ61NWiXz+0UWaq0JmzwY2ntiBRpby9oFY0OLKE71NTaQWoRxuyNss6IW9p3jIpabKuAgZ3ugx+aK0Pq69cwdrIIWvCY6bSdRgD+tPRV7Yjlf4ov4=
+	t=1719921337; cv=none; b=UnV1cXo6Bo1m4e6RF+yEIRUxIMuCH3JwyxAvfKn9jZ01Ay7O94P6Yg7jCh1YlExTkdpIoADpgdc9eR4kF2QnRk6Q3TQE5L5Q87nmX0L9OXIOOro6AdZm4CuaSLMPZcry7fKJfq8TXD/HjzZrAnJNwZw184p7/5eHU8e0HlG672c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719921297; c=relaxed/simple;
-	bh=rNcI9WAwJLfST7zxjrhIs1uKlJYxYHjP5PFmZEBw0us=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tmamLUEEXBlXis2REZ3FOopW7kF3Ybp3HrrQtWHnQUHLw76UFbI48xB4FeQVWDGgz2Emu6NKsMPuSw1u6uhFYc7E4c3ToU/0Uf2+1M+itoLmKDydSRtldLHdeX3Fu/dUw7suSJ4C5s5L5EZWN6K0BKbsvB21ITjqY+JB5IIGnoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=u8r+VV/0; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=W5+1pkYUfssEUxhFH+k/bV6mkTwNmU7jab8KfThNUF4=; b=u8r+VV/0QkBFa3UZRjC2MUQzFt
-	DwAOnTVr3x9WWa8GVdiy++hqI3Ow0R+OHZ+YP9QeWKdcEbpu9tLiOT+0Tz1tkYjgLDZJKGfKRZS9b
-	ycBmPcIScabWRF0N7QLy6SNylSI355yg8vCRlS/BXIUgE2dmGL/PHdXoAqFAbiii+MEjga5Knqv2O
-	jtrup9ZLCXSRMkNufaBKmviXZ16l7ZkPvWulVvAbFkZLQmNWPao8dhTtLVAfxJbcwZcdMe6mbflu9
-	BmkdcCAL1IFz0rvKOzENyVD4NIOhHhv5BHCAaKFaQ9vc/Pd5Uxh+jUCk1BGO3No9NNRrcCxGWnsAl
-	2vEFyiQQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sOc5x-00000000k39-38Ol;
-	Tue, 02 Jul 2024 11:54:50 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 73169300694; Tue,  2 Jul 2024 13:54:47 +0200 (CEST)
-Date: Tue, 2 Jul 2024 13:54:47 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org,
-	mhiramat@kernel.org, oleg@redhat.com, mingo@redhat.com,
-	bpf@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org,
-	clm@meta.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/12] uprobes: add batched register/unregister APIs
- and per-CPU RW semaphore
-Message-ID: <20240702115447.GA28838@noisy.programming.kicks-ass.net>
-References: <20240701223935.3783951-1-andrii@kernel.org>
- <20240702102353.GG11386@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1719921337; c=relaxed/simple;
+	bh=0WLx0sVpAm2PfL4LXPyRIZSBzMFqc5zzhcWp8V1oGZc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dhMXLmzkCQvk+2m7QIM79RNnIsUemzGo+Qvrz8hSAkqrY7ROUPa5wR2QwZbQFQARtIstJ9YlqzRD7MaL830OUe8UypBv0tN40GrjsVUxneqoLCXEwqxB9jlL3VrosoPNE80720Er9ubW8UCYExZk86ciPa8U3wDsDdR0vyzVFyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LPkJYK3L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DB26C116B1;
+	Tue,  2 Jul 2024 11:55:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719921336;
+	bh=0WLx0sVpAm2PfL4LXPyRIZSBzMFqc5zzhcWp8V1oGZc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LPkJYK3L0EF7ZaPmft0aOZPoTcm1QhgePfpyJD4EYI1TEOIG3tJVXcYWgREHuc/er
+	 Aef6Ks3CiQfJW9G7zTnDMi2/6C/6h1QzTjK+6i6jbT5+FsxgcIRrSLNUe/BIPQ+yd8
+	 3Z6QHnfSn5gq/8hWGEy1VFfpM/9m/X8mnJZ1HytDRlkTvXKamxeeAe83V1xqXjQWez
+	 TRA+Wos9dj3jMwVy5K2aNTDUSlVfE1s81Nmfyl4qzMzKZb/I4MEVAQAOR8UrLL94Jp
+	 /e/7AxScUCRNXD8KL82EEXoxQK29Zw2rghMy4XIhSkoAho619jh9xrGLXH7sgZRXi6
+	 6MGoTo/MpdUug==
+Date: Tue, 2 Jul 2024 13:55:32 +0200
+From: Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM
+ <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the arm-soc tree
+Message-ID: <20240702135532.18156015@dellmb>
+In-Reply-To: <20240702174938.04c12aab@canb.auug.org.au>
+References: <20240702174938.04c12aab@canb.auug.org.au>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240702102353.GG11386@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Tue, 2 Jul 2024 17:49:38 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-+LKML
-
-On Tue, Jul 02, 2024 at 12:23:53PM +0200, Peter Zijlstra wrote:
-> On Mon, Jul 01, 2024 at 03:39:23PM -0700, Andrii Nakryiko wrote:
-> > This patch set, ultimately, switches global uprobes_treelock from RW spinlock
-> > to per-CPU RW semaphore, which has better performance and scales better under
-> > contention and multiple parallel threads triggering lots of uprobes.
+> Hi all,
 > 
-> Why not RCU + normal lock thing?
+> After merging the arm-soc tree, today's linux-next build (htmldocs)
+> produced this warning:
+> 
+> Documentation/ABI/testing/sysfs-bus-i2c-devices-turris-omnia-mcu:26: ERROR: Unexpected indentation.
+> Documentation/ABI/testing/sysfs-bus-i2c-devices-turris-omnia-mcu:26: WARNING: Block quote ends without a blank line; unexpected unindent.
+> 
+> Introduced by commit
+> 
+>   dfa556e45ae9 ("platform: cznic: turris-omnia-mcu: Add support for MCU connected GPIOs")
+> 
 
-Something like the *completely* untested below.
+I don't see what can be the problem on those lines. Is it possible to
+build that specific file?
 
----
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 2c83ba776fc7..03b38f3f7be3 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -40,6 +40,7 @@ static struct rb_root uprobes_tree = RB_ROOT;
- #define no_uprobe_events()	RB_EMPTY_ROOT(&uprobes_tree)
- 
- static DEFINE_RWLOCK(uprobes_treelock);	/* serialize rbtree access */
-+static seqcount_rwlock_t uprobes_seqcount = SEQCNT_RWLOCK_ZERO(uprobes_seqcount, &uprobes_treelock);
- 
- #define UPROBES_HASH_SZ	13
- /* serialize uprobe->pending_list */
-@@ -54,6 +55,7 @@ DEFINE_STATIC_PERCPU_RWSEM(dup_mmap_sem);
- struct uprobe {
- 	struct rb_node		rb_node;	/* node in the rb tree */
- 	refcount_t		ref;
-+	struct rcu_head		rcu;
- 	struct rw_semaphore	register_rwsem;
- 	struct rw_semaphore	consumer_rwsem;
- 	struct list_head	pending_list;
-@@ -67,7 +69,7 @@ struct uprobe {
- 	 * The generic code assumes that it has two members of unknown type
- 	 * owned by the arch-specific code:
- 	 *
--	 * 	insn -	copy_insn() saves the original instruction here for
-+	 *	insn -	copy_insn() saves the original instruction here for
- 	 *		arch_uprobe_analyze_insn().
- 	 *
- 	 *	ixol -	potentially modified instruction to execute out of
-@@ -593,6 +595,12 @@ static struct uprobe *get_uprobe(struct uprobe *uprobe)
- 	return uprobe;
- }
- 
-+static void uprobe_free_rcu(struct rcu_head *rcu)
-+{
-+	struct uprobe *uprobe = container_of(rcu, struct uprobe, rcu);
-+	kfree(uprobe);
-+}
-+
- static void put_uprobe(struct uprobe *uprobe)
- {
- 	if (refcount_dec_and_test(&uprobe->ref)) {
-@@ -604,7 +612,8 @@ static void put_uprobe(struct uprobe *uprobe)
- 		mutex_lock(&delayed_uprobe_lock);
- 		delayed_uprobe_remove(uprobe, NULL);
- 		mutex_unlock(&delayed_uprobe_lock);
--		kfree(uprobe);
-+
-+		call_rcu(&uprobe->rcu, uprobe_free_rcu);
- 	}
- }
- 
-@@ -668,12 +677,25 @@ static struct uprobe *__find_uprobe(struct inode *inode, loff_t offset)
- static struct uprobe *find_uprobe(struct inode *inode, loff_t offset)
- {
- 	struct uprobe *uprobe;
-+	unsigned seq;
- 
--	read_lock(&uprobes_treelock);
--	uprobe = __find_uprobe(inode, offset);
--	read_unlock(&uprobes_treelock);
-+	guard(rcu)();
- 
--	return uprobe;
-+	do {
-+		seq = read_seqcount_begin(&uprobes_seqcount);
-+		uprobes = __find_uprobe(inode, offset);
-+		if (uprobes) {
-+			/*
-+			 * Lockless RB-tree lookups are prone to false-negatives.
-+			 * If they find something, it's good. If they do not find,
-+			 * it needs to be validated.
-+			 */
-+			return uprobes;
-+		}
-+	} while (read_seqcount_retry(&uprobes_seqcount, seq));
-+
-+	/* Really didn't find anything. */
-+	return NULL;
- }
- 
- static struct uprobe *__insert_uprobe(struct uprobe *uprobe)
-@@ -702,7 +724,9 @@ static struct uprobe *insert_uprobe(struct uprobe *uprobe)
- 	struct uprobe *u;
- 
- 	write_lock(&uprobes_treelock);
-+	write_seqcount_begin(&uprobes_seqcount);
- 	u = __insert_uprobe(uprobe);
-+	write_seqcount_end(&uprobes_seqcount);
- 	write_unlock(&uprobes_treelock);
- 
- 	return u;
-@@ -936,7 +960,9 @@ static void delete_uprobe(struct uprobe *uprobe)
- 		return;
- 
- 	write_lock(&uprobes_treelock);
-+	write_seqcount_begin(&uprobes_seqcount);
- 	rb_erase(&uprobe->rb_node, &uprobes_tree);
-+	write_seqcount_end(&uprobes_seqcount);
- 	write_unlock(&uprobes_treelock);
- 	RB_CLEAR_NODE(&uprobe->rb_node); /* for uprobe_is_active() */
- 	put_uprobe(uprobe);
+I tried make htmldocs SPHINXDIRS=ABI/testing, but that does not work
+(probably because there are no .rst files in that directory?).
+
+Marek
 
