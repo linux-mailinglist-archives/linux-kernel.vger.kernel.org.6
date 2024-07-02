@@ -1,118 +1,185 @@
-Return-Path: <linux-kernel+bounces-238081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EED4592432B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:05:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 091F892432D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:05:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D7281C2406A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:05:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6029C28C7E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:05:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546621BD016;
-	Tue,  2 Jul 2024 16:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B031BD038;
+	Tue,  2 Jul 2024 16:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jR6N/eyn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BUIujZyX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C84B1BA868
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 16:05:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B881BD4F7;
+	Tue,  2 Jul 2024 16:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719936321; cv=none; b=mIGnPc3f3IFhI14hEjgXthZjoQ1Mq+KnOnC9AjCdADbUrLJiLyNFiV5tyshvtMx1N/HmozES6D8bJvg2AvCQMsVbcj7FaWQXfqcKKuwZANg+T6ATkmEIn/9lmiKO7TdQeIPm83w9rdhuRUuy2UsERaEcTfzMi+6DAlzk/m4U6k0=
+	t=1719936325; cv=none; b=j3Dt0PJPMUAGLHALlKHR+cD2Cu3pUCnPFARP+V8+M3eHq6xWHimiwqFA9I/OidJPtVVsc1xJMGfRMWqSL6O5utRMGHEEoCLIpmH9MXJM6U2+RxBAkOtDlK3seZF7mjgj10Z9Z8KCbZLnlAnsbgECLTHNhnaq/b/bVAgsDG0M0EM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719936321; c=relaxed/simple;
-	bh=syIp2eAtSwSV1hJbA1lDFrbWh4wHMuVpkhgYugmdvnU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MaEEPlnqnp0tazAY2eyNSWrX1a1kIQJ3+hKtrvjXOaUm6LJotHM9y4AN5MIIyCthdAPL2LewZ/8CP/oaZM1eCkZYM5IxAs9AG7svSGfkcAMn5FcEvQhgWTzrBhJ+ggJYaE/inf8UeGfYqltuyz80l5esEGIRCq8mzwE7g72tUHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jR6N/eyn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FD5AC4AF13
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 16:05:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719936321;
-	bh=syIp2eAtSwSV1hJbA1lDFrbWh4wHMuVpkhgYugmdvnU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=jR6N/eyng+xqAZrCwVB3AkqP86jCFo5ENmDSyMnINnqWe25QcmAL+WZOSaTgJPQTe
-	 LXNmiGW4wga9uSrf16qwxrQPI6qPuzitGCXUMGOspvgPjlJMenJS9aCUnYaEC2NWnV
-	 Mn6x84PO9Ew+3i3L8pdNyTzWQ9rVd9hXLjbfEt5B9b9FVlM1vd88uOiNXWZgY95QYO
-	 FvqggpPLcebX+0471D0bZmkLxYTA8qK19g/7OC+dOyiFpZO+df0y+zDJi54i/WKc2L
-	 XeJTvxGZxwjJSPPboNrhHSnqE0Lh7F552JG2WGPgG4BM97ACCzni4fiS1mkylmTT5v
-	 DUrY/jFvcuczw==
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a724958f118so536050366b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 09:05:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXLYW3iyrZlXVT3j3b+U+pcyP8GmartS04mBD0Flo4B+qZ0YX6qqMOElQvR5qsO4xHxiayv3ZDRtJ+00xYM1WyDVgDEGpw1TIDLgIqX
-X-Gm-Message-State: AOJu0Yw22BtOO0Sykag+fYMhLadTWqNwTR8G6ms9D0gyTHexpWlsvUdx
-	QXv/yS49nsyYuV0wW6dsQrS0tx6CwI6ym4J1htID/BxtslYUHoIzYbiZr+zzVHd+f2EKMjp8sZl
-	msv180IBgbam0pGjXHagvMl6VzPIRitEfNGXevA==
-X-Google-Smtp-Source: AGHT+IEBp4AdEUbTVgkYnrR4l+M9u5QRL7lxuLE7wPVki6HJriUGGhJlS+z/qX598S3G9T3Nof1fz6H2Rp80Ffza6Tk=
-X-Received: by 2002:a17:907:6e9f:b0:a6f:668b:3442 with SMTP id
- a640c23a62f3a-a75144de9c7mr601088966b.77.1719936319707; Tue, 02 Jul 2024
- 09:05:19 -0700 (PDT)
+	s=arc-20240116; t=1719936325; c=relaxed/simple;
+	bh=3xrxAwXmOpIV32GmleYZYkrSYEq5t6QQCU4QH90JDn0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t20C/viC4sWLcQ8UFLNm+fi3M22S/w1OSbM1x+iD4OMwT+D7NQxsdcnzKj1SFTXyW3yNwuN0dSyCLoP01EaUtM06KcCZYQTqdETB1YpGzKysYJwfg1/QK4zRLIZdeGuxz28ih2XgOrZ0gOZ7zyNyeDGrKgpabJQ2qhyM0ob83XU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BUIujZyX; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719936324; x=1751472324;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=3xrxAwXmOpIV32GmleYZYkrSYEq5t6QQCU4QH90JDn0=;
+  b=BUIujZyXIHW+pwyZA/ZMSFDJl983XCBWqFvCDpGaLllyMj62L2/w9F3U
+   aMo3wSH6+oFoX+ppDFl5snxNTWTHqE7wAOihK8MBkglFG4pO4YOT5476P
+   RAnngr8fRgL+g5wA7KQ4gJ7Kdf1itul8s7eT374lGATGKtvFa4hOGm2nc
+   zAdkWdA7A1+NDDcC2wdAASMQzOSZAZvgKXt1DoMQoqBtTDbgY93s4kZNv
+   zwlC335UEcbqhjnDSadZ+gYv9K81gym72v0N1hxqlHSeZT2OBhiOG7RJ1
+   injddSnaWdIjHp9kbtewpER5/0VAav8MPjCYzgvJWlTF+mfPh2QXvgZdg
+   A==;
+X-CSE-ConnectionGUID: LFFvezv2SsWjUnYEB+308Q==
+X-CSE-MsgGUID: OjiY26wYRmqJ3LHmc3euQA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="27721856"
+X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
+   d="scan'208";a="27721856"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2024 09:05:23 -0700
+X-CSE-ConnectionGUID: f4B0kDMIT9Wiw71KqXYSIA==
+X-CSE-MsgGUID: tnRnGK9VQh2WMryStXXuVQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
+   d="scan'208";a="50400684"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2024 09:05:22 -0700
+Received: from [10.212.94.246] (kliang2-mobl1.ccr.corp.intel.com [10.212.94.246])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 90C70201A797;
+	Tue,  2 Jul 2024 09:05:20 -0700 (PDT)
+Message-ID: <d9c26690-5147-4a4a-815b-fb5d46d043c6@linux.intel.com>
+Date: Tue, 2 Jul 2024 12:05:18 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240628-x1e80100-bindings-thermal-qcom-tsens-v2-1-4843d4c2ba24@linaro.org>
-In-Reply-To: <20240628-x1e80100-bindings-thermal-qcom-tsens-v2-1-4843d4c2ba24@linaro.org>
-From: Amit Kucheria <amitk@kernel.org>
-Date: Tue, 2 Jul 2024 21:35:07 +0530
-X-Gmail-Original-Message-ID: <CAHLCerNKcHf3e71jTSihbd+Mp1W9ndZ+ULbn-B-iJ734Cj8OEQ@mail.gmail.com>
-Message-ID: <CAHLCerNKcHf3e71jTSihbd+Mp1W9ndZ+ULbn-B-iJ734Cj8OEQ@mail.gmail.com>
-Subject: Re: [PATCH v2] dt-bindings: thermal: qcom-tsens: Document the
- X1E80100 Temperature Sensor
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Thara Gopinath <thara.gopinath@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] perf topdown: Correct leader selection with
+ sample_read enabled
+To: Dapeng Mi <dapeng1.mi@linux.intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Yanfei Xu <yanfei.xu@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
+References: <20240702224037.343958-1-dapeng1.mi@linux.intel.com>
+ <20240702224037.343958-2-dapeng1.mi@linux.intel.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20240702224037.343958-2-dapeng1.mi@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 28, 2024 at 2:01=E2=80=AFPM Abel Vesa <abel.vesa@linaro.org> wr=
-ote:
->
-> Document the Temperature Sensor (TSENS) on the X1E80100 Platform.
->
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 
-Reviewed-by: Amit Kucheria <amitk@kernel.org>
 
+On 2024-07-02 6:40 p.m., Dapeng Mi wrote:
+> Addresses an issue where, in the absence of a topdown metrics event
+> within a sampling group, the slots event was incorrectly bypassed as
+> the sampling leader when sample_read was enabled.
+> 
+> perf record -e '{slots,branches}:S' -c 10000 -vv sleep 1
+> 
+> In this case, the slots event should be sampled as leader but the
+> branches event is sampled in fact like the verbose output shows.
+> 
+> perf_event_attr:
+>   type                             4 (cpu)
+>   size                             168
+>   config                           0x400 (slots)
+>   sample_type                      IP|TID|TIME|READ|CPU|IDENTIFIER
+>   read_format                      ID|GROUP|LOST
+>   disabled                         1
+>   sample_id_all                    1
+>   exclude_guest                    1
+> ------------------------------------------------------------
+> sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 = 5
+> ------------------------------------------------------------
+> perf_event_attr:
+>   type                             0 (PERF_TYPE_HARDWARE)
+>   size                             168
+>   config                           0x4 (PERF_COUNT_HW_BRANCH_INSTRUCTIONS)
+>   { sample_period, sample_freq }   10000
+>   sample_type                      IP|TID|TIME|READ|CPU|IDENTIFIER
+>   read_format                      ID|GROUP|LOST
+>   sample_id_all                    1
+>   exclude_guest                    1
+> 
+> The sample period of slots event instead of branches event is reset to
+> 0.
+> 
+> This fix ensures the slots event remains the leader under these
+> conditions.
+> 
+> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
 > ---
-> Changes in v2:
-> - Just picked up Krzysztof's R-b tag
-> - Link to v1: https://lore.kernel.org/r/20240527-x1e80100-bindings-therma=
-l-qcom-tsens-v1-1-0f50f58253e1@linaro.org
-> ---
->  Documentation/devicetree/bindings/thermal/qcom-tsens.yaml | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml b/=
-Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-> index 99d9c526c0b6..ac54ed604b74 100644
-> --- a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-> +++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-> @@ -67,6 +67,7 @@ properties:
->                - qcom,sm8450-tsens
->                - qcom,sm8550-tsens
->                - qcom,sm8650-tsens
-> +              - qcom,x1e80100-tsens
->            - const: qcom,tsens-v2
->
->        - description: v2 of TSENS with combined interrupt
->
-> ---
-> base-commit: 0fc4bfab2cd45f9acb86c4f04b5191e114e901ed
-> change-id: 20240522-x1e80100-bindings-thermal-qcom-tsens-aa2db90c4a74
->
-> Best regards,
-> --
-> Abel Vesa <abel.vesa@linaro.org>
->
+>  tools/perf/arch/x86/util/topdown.c | 16 ++++++++++++++--
+>  1 file changed, 14 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/arch/x86/util/topdown.c b/tools/perf/arch/x86/util/topdown.c
+> index 3f9a267d4501..5d7b78eb7516 100644
+> --- a/tools/perf/arch/x86/util/topdown.c
+> +++ b/tools/perf/arch/x86/util/topdown.c
+> @@ -1,6 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  #include "api/fs/fs.h"
+>  #include "util/evsel.h"
+> +#include "util/evlist.h"
+>  #include "util/pmu.h"
+>  #include "util/pmus.h"
+>  #include "util/topdown.h"
+> @@ -41,11 +42,22 @@ bool topdown_sys_has_perf_metrics(void)
+>   */
+>  bool arch_topdown_sample_read(struct evsel *leader)
+>  {
+> +	struct evsel *event;
+> +
+>  	if (!evsel__sys_has_perf_metrics(leader))
+>  		return false;
+>  
+> -	if (leader->core.attr.config == TOPDOWN_SLOTS)
+> -		return true;
+> +	if (leader->core.attr.config != TOPDOWN_SLOTS)
+> +		return false;
+> +
+> +	/*
+> +	 * If slots event as leader event but no topdown metric events in group,
+> +	 * slots event should still sample as leader.
+> +	 */
+> +	evlist__for_each_entry(leader->evlist, event) {
+> +		if (event != leader && strcasestr(event->name, "topdown"))
+
+User may uses the RAW format. It may not be good enough to just check
+the event name.
+
+I recall you have a complete support for this in the previous patch. Why
+drop it?
+
+Thanks,
+Kan
+
+> +			return true;
+> +	}
+>  
+>  	return false;
+>  }
 
