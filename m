@@ -1,201 +1,157 @@
-Return-Path: <linux-kernel+bounces-237437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 043D1923778
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:41:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B88B2923776
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:40:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 367811C22009
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:41:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 449C5B224B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:40:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A7B14F9EA;
-	Tue,  2 Jul 2024 08:40:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB51C14E2FB;
+	Tue,  2 Jul 2024 08:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iAzpE2rL"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="EmI6dyGE"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058DF14B97A;
-	Tue,  2 Jul 2024 08:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D0314B97A
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 08:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719909657; cv=none; b=hcUYa6ORONdtW9F+A0mhnocuVMsaAoTi0ln64OO5S0Yhv1yotkiNAg7jkyRjcL8nj7Jp9bqWUFhfJlPsEiCxvazzSQkH1HVsRYVMSGpF/4Igd7kJ509+IJbJjZvw6/7U6D+v1vj76Mzv7042FUP94tdfgl3soOWqsnioU/7CfLw=
+	t=1719909649; cv=none; b=orXyqbASTqaGL+z5KQ9nLBRqxUSonPS/H5aKyqaQor6sQHMm9c6YtX3I8GmvSm5Tw673xd/+vPbsG2LTk7hGsCuhBxENeu8fcI8H51qTTaqqJxkST0LSlWn1z7371DxkXPJugvAe5nffjLxZb91mdIbUdzcyWVKUUfRyyt7f82U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719909657; c=relaxed/simple;
-	bh=u+aOJF3gZZR5fDXd86dDnlILnB/6Ycly+pFrUKbGE+s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nVP2dI8U98Nl7KnezY/TDlNiOqavxN01GWJFSasTjhucnIqhnadzk4l6n1an9RLNeghtX8KA5bWg1v/m3rJI0N2jcG+J5oOSBs5qdtlOrCDH/PY9taGzhC1bciwQskcsQjGScExg/FyjLH8jvJFGRCeZwYpX8MMQjjAykhnEnvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iAzpE2rL; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4628eZII011448;
-	Tue, 2 Jul 2024 08:40:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ai4mMkxG7K2zhtMaV60b0R6R2hGk3c6gNObnKdp7cck=; b=iAzpE2rLBMfbirZA
-	xYkjaP2BrBkTm10pKM3/Bn5ngsOOTSzCidKIpDrwlikX6HjC/nYDzrkwsKIr/xqT
-	Ibg8Z7wE2nB0GFwsT1CjhbzbodYGryGZSDlMSYJiJ5t5M2TH+kLxH+jjIcY1oWWS
-	knBVvnaPgr+K59Kwa8CAfjM7q16XYm0Rzejjn5erAOMl3H4tW9+mBgELDDeeFz+T
-	XwS2vnzbjjNYsv9qv9BBcl66fBT2dIth/aMCB66kPYEd6F8pTtCHXHhzL9Xcz/cW
-	6dZfluIuAL4tx6i4hS4WX9UvXSHYFVNzzZWaThiXNGkW0rGqb6OyB2tn9R6virn8
-	IgcXAw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 402an769bk-1
+	s=arc-20240116; t=1719909649; c=relaxed/simple;
+	bh=lgoQKwqrl6lo6adIzSJoSWBrS+YYMJNu7jiDehJS7ro=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:Mime-Version; b=s1I62tMLTR/P4tduIfD7mVUauFTXHxzIIWv0BPK3m5p5HbJKbXK8Ow6AgEYGi3Hvmr/e761w7ERwieDecH1OI9u6t9vJOAvRkTqFRWUl32CrkVScj+Oi+9svVH+sp9B/ncmtqerAmT2srcJ0fgiD72GQFtERzbCJkNLY2WFVN2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=EmI6dyGE; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4628SnYL017531;
+	Tue, 2 Jul 2024 08:40:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:subject:from:to:cc:date:in-reply-to:references
+	:content-type:mime-version:content-transfer-encoding; s=pp1; bh=
+	L+MNS6vysixusrBR190iOQ2dv0Bm9953vZGDkAjubRw=; b=EmI6dyGEWDqdpC/A
+	cKScFvNvaAlM75fpGqAMBcCxE1kvcr94YZIw7PouxvfD1IvwD+RE3QahlaTHO0B8
+	1mAMKl21heXPhWaeH6lTNxrM+NMoDYn+8TJKUM/sLN/mCONGkCPlaLqBnyE4sjI8
+	zZK2aiXKx7oDVYfzCQ4KQ7PiIR9PiHTEoCF+88PruGTxCwjbXebM1/oJrKejGF1/
+	5pkG1kPcWYdNi8d+dYIWbrY4y4WioJ/xrI2dYRg8EReaAKpxkvOMStd4uMQkvHrM
+	98QOGdmbqTEe/gVCnGgvM14f9EUuEqWBYxFjZ9qifnjNScHhAZNeJYPQMF7BAEZF
+	rRyIIA==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 404e2nr1c6-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 02 Jul 2024 08:40:34 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4628eX7f008915
+	Tue, 02 Jul 2024 08:40:42 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4628C9L2009473;
+	Tue, 2 Jul 2024 08:40:42 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 402xtmkndb-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 2 Jul 2024 08:40:33 GMT
-Received: from [10.204.65.49] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 2 Jul 2024
- 01:40:29 -0700
-Message-ID: <46aa3914-7ac9-4605-911f-5120e8a33720@quicinc.com>
-Date: Tue, 2 Jul 2024 14:10:26 +0530
+	Tue, 02 Jul 2024 08:40:42 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4628ednd21168724
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 2 Jul 2024 08:40:41 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5EBED58045;
+	Tue,  2 Jul 2024 08:40:39 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D595D58062;
+	Tue,  2 Jul 2024 08:40:37 +0000 (GMT)
+Received: from li-34d1fccc-27cd-11b2-a85c-c167793e56f7.ibm.com (unknown [9.204.200.131])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  2 Jul 2024 08:40:37 +0000 (GMT)
+Message-ID: <a0e9dea5a434a471576f192b980ad48cb40b742a.camel@linux.ibm.com>
+Subject: Re: [PATCH sched_ext/for-6.11] sched_ext: Documentation: Remove
+ mentions of scx_bpf_switch_all
+From: Aboorva Devarajan <aboorvad@linux.ibm.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: void@manifault.com, linux-kernel@vger.kernel.org
+Date: Tue, 02 Jul 2024 14:10:36 +0530
+In-Reply-To: <ZoLtGmBw6kcNtmts@slm.duckdns.org>
+References: <20240701123022.68700-1-aboorvad@linux.ibm.com>
+	 <ZoLtGmBw6kcNtmts@slm.duckdns.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-25.el8_9) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] misc: fastrpc: Increase max user PD initmem size
-Content-Language: en-US
-To: Bjorn Andersson <quic_bjorande@quicinc.com>
-CC: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
-        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
-        <dri-devel@lists.freedesktop.org>, <arnd@arndb.de>,
-        stable
-	<stable@kernel.org>
-References: <20240701115237.371020-1-quic_ekangupt@quicinc.com>
- <ZoMcM+F8r58tmE7g@hu-bjorande-lv.qualcomm.com>
-From: Ekansh Gupta <quic_ekangupt@quicinc.com>
-In-Reply-To: <ZoMcM+F8r58tmE7g@hu-bjorande-lv.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: OUYXYds6jrjvyUvX1jaQQfxaPyVkCN5k
-X-Proofpoint-ORIG-GUID: OUYXYds6jrjvyUvX1jaQQfxaPyVkCN5k
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: rcH9BWqFlyfUJsziErLnfyC02IeXlCMC
+X-Proofpoint-ORIG-GUID: rcH9BWqFlyfUJsziErLnfyC02IeXlCMC
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-07-02_04,2024-07-02_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- clxscore=1015 adultscore=0 malwarescore=0 mlxlogscore=999 suspectscore=0
- phishscore=0 bulkscore=0 spamscore=0 impostorscore=0 lowpriorityscore=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=546 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 phishscore=0 clxscore=1015 spamscore=0
+ priorityscore=1501 bulkscore=0 impostorscore=0 adultscore=0 suspectscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2407020065
+ definitions=main-2407020063
 
+On Mon, 2024-07-01 at 07:53 -1000, Tejun Heo wrote:
+> Hello,
+> 
+> On Mon, Jul 01, 2024 at 06:00:22PM +0530, Aboorva Devarajan wrote:
+> ...
+> > +sched_ext is used only when the BPF scheduler is loaded and
+> > running. To use
+> > +sched_ext, a task can invoke ``sched_setscheduler`` with the
+> > ``SCHED_EXT``
+> > +policy constant.
+> 
+> I wonder whether the last sentence is a bit confusing given that
+> tasks can
+> be on SCX without setting SCHED_EXT.
+> 
+> > +When the BPF scheduler is not loaded, tasks with the
+> > ``SCHED_EXT`` policy are
+> > +treated as ``SCHED_NORMAL`` and scheduled by CFS.
+> > ``SCHED_NORMAL`` tasks
+> > +continue to be scheduled by CFS.
+> > +
+> > +When the BPF scheduler is loaded, all tasks with the
+> > ``SCHED_EXT`` policy are
+> > +switched to sched_ext. By default, if the ``struct ops->flag`` is
+> > not set to
+> > +``SCX_OPS_SWITCH_PARTIAL``, ``SCHED_EXT``, ``SCHED_NORMAL``, and
+> > lower class
+> > +tasks are scheduled by sched_ext. In this case, all
+> > ``SCHED_NORMAL``,
+> > +``SCHED_BATCH``, ``SCHED_IDLE``, and ``SCHED_EXT`` tasks are
+> > scheduled by
+> > +sched_ext.
+> 
+> How about something like:
+> 
+> When the BPF scheduler is loaded and ``SCX_OPS_SWITCH_PARTIAL`` is
+> not set
+> in ops->flags, all ``SCHED_NORMAL``, ``SCHED_BATCH``,
+> ``SCHED_IDLE``, and
+> ``SCHED_EXT`` tasks are scheduled by sched_ext.
+> 
+> > +However, if the ``struct ops->flag`` is set
+> > to``SCX_OPS_SWITCH_PARTIAL``,
+> > +only tasks with the policy set to ``SCHED_EXT`` are scheduled by
+> > sched_ext.
+> 
+> And update this paragraph in a similar fashion?
+> 
+> Thanks.
+> 
 
+Hi Tejun, Thanks for the review.
 
-On 7/2/2024 2:44 AM, Bjorn Andersson wrote:
-> On Mon, Jul 01, 2024 at 05:22:37PM +0530, Ekansh Gupta wrote:
->> For user PD initialization, initmem is allocated and sent to DSP for
->> initial memory requirements like shell loading. This size is passed
->> by user space and is checked against a max size.
-> Why does fastrpc_init_create_process() allocate 4x the passed value and
-> why is the value rounded up to INIT_FILELEN_MAX?
-The passed value is actually the size of fastrpc shell. This size is not sufficient for the user
-PD initialization and the PD also needs some additional memory for it's other requirements
-like heap. The value is aligned to 1 MB and there is a possibility that the user passed value
-is zero(user can only pass the size if it can open the shell). For this, there is at least some
-memory allocated and sent to DSP for PD initialization(2MB as of today).
->> For unsigned PD
->> offloading requirement, more than 2MB size could be passed by user
->> which would result in PD initialization failure. Increase the maximum
->> size that can be passed py user for user PD initmem allocation.
-> Sounds good, but why not 2.1MB or a rounder arbitrary value of 8 or 16?
->
-> What is actually expected to fit in this initial memory? Is it the shell
-> that has grown beyond 2MB?
-I checked this again with the size of shell and I see that the shell size is not going beyond
-2 MB, it's the unsigned PD requirement which is asking for more memory. This is because
-there are some static heap initialization specifically for unsigned PD. Do you suggest having
-a different definition for minimum initmem? Or have it as a local variable which changes
-based on PD type(2MB for signed PD and 5MB for unsigned PD)?
->
-> Also, s/py/by
->
->> Any
->> additional memory sent to DSP during PD init is used as the PD heap.
->>
-> Does this mean that the initmem is used for shell loading and initial
-> heap, and if more heap is needed after that the DSP can request more
-> memory? Related to the question in v2, how is this memory accounted for?
-Yes this is for the initial heap requirement of PD(described above also). In case any more
-memory is required by DSP PD, it will make a reverse call to borrow more memory from
-HLOS using ADD_PAGES request which is supported by fastrpc_req_mmap. However,
-for unsigned PD the heaps are statically initialized which brings the requirement of some
-additional memory.
->
-> What would it mean that init.filefd != 0 in
-> fastrpc_init_create_process(), will that pre-allocated memory (which was
-> allocated without any size checks afaict) then be used for the same
-> purpose? Why is a buffer of 4x the size of initfd then also allocated
-> and mapped to the DSP?
-The init.filefd is the FD of fastrpc shell that is opened and read by the process user space.
-I believe the pre-allocated memory you mentioned is the memory pointed by init.file. If
-the shell file is opened by user process DSP will load the shell and add the initmem to the
-DSP PD pool. If the user space has not opened and read the shell, DSP root PD daemon
-will open and read the shell for loading for PD spawning. Please let me know if there are
-any more questions here. Basically the usage of initmem is for shell loading and remaining
-memory is added to PD pool of heap and other usage.
->
->
-> Could you please send a patch adding some comments documenting these
-> things, the steps taken to create a new process, and what the 6
-> arguments built in fastrpc_init_create_process() actually means?
-Sure, I'll add this information in the next spin.
->
-> Perhaps I'm just failing to read the answers already in the
-> implementation, if so I'm sorry.
-Thanks for reviewing the patch. I'll add most of the information in commit text and as
-comments in the next patch.
+Sent out a v2 with the suggested changes.
 
---Ekansh
->
-> Regards,
-> Bjorn
->
->> Fixes: 7f1f481263c3 ("misc: fastrpc: check before loading process to the DSP")
->> Cc: stable <stable@kernel.org>
->> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
->> ---
->> Changes in v2:
->>   - Modified commit text.
->>   - Removed size check instead of updating max file size.
->> Changes in v3:
->>   - Added bound check again with a higher max size definition.
->>   - Modified commit text accordingly.
->>
->>  drivers/misc/fastrpc.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
->> index 5204fda51da3..11a230af0b10 100644
->> --- a/drivers/misc/fastrpc.c
->> +++ b/drivers/misc/fastrpc.c
->> @@ -38,7 +38,7 @@
->>  #define FASTRPC_INIT_HANDLE	1
->>  #define FASTRPC_DSP_UTILITIES_HANDLE	2
->>  #define FASTRPC_CTXID_MASK (0xFF0)
->> -#define INIT_FILELEN_MAX (2 * 1024 * 1024)
->> +#define INIT_FILELEN_MAX (5 * 1024 * 1024)
->>  #define INIT_FILE_NAMELEN_MAX (128)
->>  #define FASTRPC_DEVICE_NAME	"fastrpc"
->>  
->> -- 
->> 2.34.1
->>
->>
->>
 
 
