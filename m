@@ -1,127 +1,132 @@
-Return-Path: <linux-kernel+bounces-237127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B25B91EBBE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 02:19:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3D2691EBC1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 02:19:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC0D7284D41
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 00:19:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56952B224A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 00:19:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BE064A29;
-	Tue,  2 Jul 2024 00:19:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="hgsDS1QC"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6520AA954;
+	Tue,  2 Jul 2024 00:19:16 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CDB33D66;
-	Tue,  2 Jul 2024 00:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71D7E817;
+	Tue,  2 Jul 2024 00:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719879553; cv=none; b=GnAiuQunKw58d6/ENBnOxXKDIyAHR5JmIXSQFnWS3ncsxtS+wOihtdbf2bRM7hvoFyIdx2+cCwNf5s/U4tibpatxiteJWcwnD6yNPsAwjg2lvrcb9a3MqBARNcPK6xd+xzI7thHVBuZPv4xT/DCHE9as5qpLxjaz0YpT5oDib6s=
+	t=1719879556; cv=none; b=UK4jvO6PsAy/wtgR4m3Ywhg/0TCXCOhq4BwzajYE8KNG4LifX1s4rSWnG50xxLatg/1ol+QmNZ2cnuWSXqRnLpRNa5Kbpp+xDe2BvCCOhw/Zogtt2NAKCHyHFlirJmL46jX4Sm72HjelaNIfY5k0tDkW4TyZvO/pP1rAR8Uu4iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719879553; c=relaxed/simple;
-	bh=K9oeLGJQU+rgsK96dB9QMC+iN8/+4+J/PBYB7gUN7Zs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Fy1PREH8+cQC6uVMSyCIXvyLIQN9ENo6rU91lOCoKL6UpQExW1FBuITNYtTToS2kWATItJ7GqK+/cpKMChZTxYeRgmGdI+iOngztDXxo5621fAtEyo4a/Bg6SKi953Jeait24J1XGyp2qnf3QexuIavzNC6TlOo3tvnaZd71fEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=hgsDS1QC; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1719879545;
-	bh=K9oeLGJQU+rgsK96dB9QMC+iN8/+4+J/PBYB7gUN7Zs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=hgsDS1QCjQdVgp1dT+k+xCgYKDv9+/NO7OuKPD5gSHHb2n8GHvpxBWICIUFcSQ/P/
-	 zq5c3c4v6Qz0rYIbBLCIHsOOrOfmrz/rWjzlKveoQz2j0f/gb5DN/4DOOqGQmPtqs5
-	 MRYrGg/V2soCvU5db/DmnXP/3dGLtMrrPQo0ZXYvGiLpnbWiW5WGoo5yut6MxTw+7S
-	 LxrRj3oJZJy7PvTxv7E5koOZUTmk6IEYQZRksmLTRf2HRBEykDbUKgW08ebGdrpr38
-	 eP2AiFpQlI9Vemdz1ACoQG6wJ6IeHZhuNuaTIhnWobz/8mQjdvdGE6EyUhcQV9Vkfe
-	 YyN2U+C+GZWew==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WCk6d19g7z4wcS;
-	Tue,  2 Jul 2024 10:19:04 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>,
- regressions@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org, naveen.n.rao@linux.ibm.com, Stefan Berger
- <stefanb@linux.ibm.com>, linux-integrity@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, jarkko@kernel.org
-Subject: Re: [PATCH] tpm: ibmvtpm: Call tpm2_sessions_init() to initialize
- session support
-In-Reply-To: <4108938158d888cc6ec371bb151e7ac35d3b4cb0.camel@HansenPartnership.com>
-References: <20240617193408.1234365-1-stefanb@linux.ibm.com>
- <87pls1lwe0.fsf@mail.lhotse>
- <4108938158d888cc6ec371bb151e7ac35d3b4cb0.camel@HansenPartnership.com>
-Date: Tue, 02 Jul 2024 10:19:04 +1000
-Message-ID: <87y16kk5mv.fsf@mail.lhotse>
+	s=arc-20240116; t=1719879556; c=relaxed/simple;
+	bh=M+44DFQP1ah2DNL1TocHiBNwyFYryPGUnuaQ9b8Cfz0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=OAZ2F3HqQwcb8c+w/At7W1w8poqx5f7i1rXNxxFDg51WCBclNQYZ5Dp2g38L4M/4c9yccv8PyZprNB8ObBEP1DX+6gNhbwtt7fIA3bNUa59bTDolXBeI+IDMVZoIMTGoWTqSnavs5mzZkc9PBdmAuN56V8LOAGMaiLMOFKjJrPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WCk6P648wznYls;
+	Tue,  2 Jul 2024 08:18:53 +0800 (CST)
+Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
+	by mail.maildlp.com (Postfix) with ESMTPS id 87B5C18007E;
+	Tue,  2 Jul 2024 08:19:08 +0800 (CST)
+Received: from [10.67.110.112] (10.67.110.112) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 2 Jul 2024 08:19:08 +0800
+Message-ID: <a7dbb226-9382-fe4f-43b2-9ce46c12026d@huawei.com>
+Date: Tue, 2 Jul 2024 08:19:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH -next] cgroup/misc: Introduce misc.peak
+To: Randy Dunlap <rdunlap@infradead.org>, <tj@kernel.org>,
+	<lizefan.x@bytedance.com>, <hannes@cmpxchg.org>, <corbet@lwn.net>,
+	<kamalesh.babulal@oracle.com>, <haitao.huang@linux.intel.com>
+CC: <cgroups@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240701125259.2611466-1-xiujianfeng@huawei.com>
+ <047579c5-582a-46ac-8967-e9ca9a90cea7@infradead.org>
+Content-Language: en-US
+From: xiujianfeng <xiujianfeng@huawei.com>
+In-Reply-To: <047579c5-582a-46ac-8967-e9ca9a90cea7@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
 
-James Bottomley <James.Bottomley@HansenPartnership.com> writes:
-> On Fri, 2024-06-28 at 10:54 +1000, Michael Ellerman wrote:
->> Stefan Berger <stefanb@linux.ibm.com> writes:
->> > Fix the following type of error message caused by a missing call to
->> > tpm2_sessions_init() in the IBM vTPM driver:
->> >=20
->> > [=C2=A0=C2=A0=C2=A0 2.987131] tpm tpm0: tpm2_load_context: failed with=
- a TPM error
->> > 0x01C4
->> > [=C2=A0=C2=A0=C2=A0 2.987140] ima: Error Communicating to TPM chip, re=
-sult: -14
->> >=20
->> > Fixes: d2add27cf2b8 ("tpm: Add NULL primary creation")
->> > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
->> > ---
->> > =C2=A0drivers/char/tpm/tpm_ibmvtpm.c | 4 ++++
->> > =C2=A01 file changed, 4 insertions(+)
->> >=20
->> > diff --git a/drivers/char/tpm/tpm_ibmvtpm.c
->> > b/drivers/char/tpm/tpm_ibmvtpm.c
->> > index d3989b257f42..1e5b107d1f3b 100644
->> > --- a/drivers/char/tpm/tpm_ibmvtpm.c
->> > +++ b/drivers/char/tpm/tpm_ibmvtpm.c
->> > @@ -698,6 +698,10 @@ static int tpm_ibmvtpm_probe(struct vio_dev
->> > *vio_dev,
->> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0rc =3D tpm2_get_cc_attrs_tbl(chip);
->> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0if (rc)
->> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-goto init_irq_cleanup;
->> > +
->> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0rc =3D tpm2_sessions_init(chip);
->> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0if (rc)
->> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0goto i=
-nit_irq_cleanup;
->> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
->> > =C2=A0
->> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return tpm_chip_regist=
-er(chip);
->>=20
->> #regzbot ^introduced: d2add27cf2b8=20
->
-> Could you please test out the patch I proposed for this:
->
-> https://lore.kernel.org/linux-integrity/1302b413a2d7bf3b275133e7fdb04b44b=
-fe2d5e3.camel@HansenPartnership.com/
 
-Your patch does fix the issue on my PowerVM system, as does Stefan's.
 
-cheers
+On 2024/7/1 23:01, Randy Dunlap wrote:
+> Hi--
+> 
+> On 7/1/24 5:52 AM, Xiu Jianfeng wrote:
+>> Introduce misc.peak to record the historical maximum usage of the
+>> resource, as in some scenarios the value of misc.max could be
+>> adjusted based on the peak usage of the resource.
+>>
+>> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+>> ---
+>>  Documentation/admin-guide/cgroup-v2.rst |  9 ++++++++
+>>  include/linux/misc_cgroup.h             |  2 ++
+>>  kernel/cgroup/misc.c                    | 29 +++++++++++++++++++++++++
+>>  3 files changed, 40 insertions(+)
+>>
+>> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+>> index ae0fdb6fc618..48ae30f2d9ab 100644
+>> --- a/Documentation/admin-guide/cgroup-v2.rst
+>> +++ b/Documentation/admin-guide/cgroup-v2.rst
+>> @@ -2646,6 +2646,15 @@ Miscellaneous controller provides 3 interface files. If two misc resources (res_
+>>  	  res_a 3
+>>  	  res_b 0
+>>  
+>> +  misc.peak
+>> +        A read-only flat-keyed file shown in the all cgroups.  It shows
+> 
+> 	                               shown in all cgroups. It shows
+
+Thanks for your review, will fix it in v2.
+> 
+>> +        the historical maximum usage of the resources in the cgroup and
+>> +        its children.::
+>> +
+>> +	  $ cat misc.peak
+>> +	  res_a 10
+>> +	  res_b 8
+>> +
+>>    misc.max
+>>          A read-write flat-keyed file shown in the non root cgroups. Allowed
+>>          maximum usage of the resources in the cgroup and its children.::
+>> diff --git a/include/linux/misc_cgroup.h b/include/linux/misc_cgroup.h
+>> index e799b1f8d05b..8aa69818291e 100644
+>> --- a/include/linux/misc_cgroup.h
+>> +++ b/include/linux/misc_cgroup.h
+>> @@ -30,11 +30,13 @@ struct misc_cg;
+>>  /**
+>>   * struct misc_res: Per cgroup per misc type resource
+>>   * @max: Maximum limit on the resource.
+>> + * $watermark: Historical maximum usage of the resource.
+> 
+>       @watermark:
+> 
+>>   * @usage: Current usage of the resource.
+>>   * @events: Number of times, the resource limit exceeded.
+>>   */
+>>  struct misc_res {
+>>  	u64 max;
+>> +	u64 watermark;
+>>  	atomic64_t usage;
+>>  	atomic64_t events;
+>>  };
+> 
+> 
 
