@@ -1,199 +1,127 @@
-Return-Path: <linux-kernel+bounces-238590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 749E9924C76
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:57:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 950CB924C7A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:57:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30F3C282C89
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:57:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 499F01F2323D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BACE17DA0F;
-	Tue,  2 Jul 2024 23:56:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C741817DA10;
+	Tue,  2 Jul 2024 23:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hYkiTOq2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="qamueW1+"
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455481DA32A;
-	Tue,  2 Jul 2024 23:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719964614; cv=none; b=BXnQyPseKnqPDG89dgqzcbVLSiT5sxuB1QscLrY5Q+nFbFWu9I8CgsbxLtGbHiewkccK7PssUdHzJ/hH0DsIWAi49RapL/jo1vjIQhpsjQpNKJsgop6IqdLmUBFiCkW487nGIACksrBellKDyq+kdJpuebunZlR5HqPnpDBmhgk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719964614; c=relaxed/simple;
-	bh=/u+NT7gZlV7JM/3SqAiqA14tPU21QGJcXgMdMkFdSaY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NF+pAkqNndn7sKVGBXumxsHjN/n+vCgBcYRmQNTVnAUCU1BuMS0o4PC4z+WK4Wak6lXfP5dISHjDFvyzExIKwokEIGKjDIdble3C4mYzt13U2t5S2L1cOOCCGFLnaYTr3rLAE2ZhLwYeUQvo3QFU0yuOAQIxm53Ndig79cgTr8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hYkiTOq2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E464C116B1;
-	Tue,  2 Jul 2024 23:56:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719964614;
-	bh=/u+NT7gZlV7JM/3SqAiqA14tPU21QGJcXgMdMkFdSaY=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=hYkiTOq2Q16q8EYqT5DEL5bPis6Txv2cNl/WmKQ9svP2VNOO/SUG4ZEtF0CRSdEuW
-	 yl8z8oJR/dLfwGvj3zk4NfBgpElNeBAIURafxtis6WQ9HuOYgQn38CkyxVrIA4LCaS
-	 S9x46m9LhpgG/JFUqfTKv4+pfrxVUFLKdl4EvolmtW5CmELZcNLaC7/dOgotwEsjKq
-	 ld5YKIziU1ckWmOVKxA/UwlTTL3gb3ncFrS/OEIeZcRUdEikCa8L0Nbig9NOZvYTS9
-	 1p1E0XXnuDHSHzmhodiftI6CbCkH9sdgqwp0YbgsQLkgVSGZ6ULwMDO9AIoTH7XTD0
-	 vEc0blplBhkUQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id A947BCE03D3; Tue,  2 Jul 2024 16:56:53 -0700 (PDT)
-Date: Tue, 2 Jul 2024 16:56:53 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org,
-	mhiramat@kernel.org, oleg@redhat.com, mingo@redhat.com,
-	bpf@vger.kernel.org, jolsa@kernel.org, clm@meta.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/12] uprobes: add batched register/unregister APIs
- and per-CPU RW semaphore
-Message-ID: <fd1d8b71-2a42-4649-b7ba-1b2e88028a20@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240701223935.3783951-1-andrii@kernel.org>
- <20240702102353.GG11386@noisy.programming.kicks-ass.net>
- <20240702115447.GA28838@noisy.programming.kicks-ass.net>
- <CAEf4BzaQUzQdba2=F2NoV7=Th98fxz2EN62QX2Ej92bazt1GAg@mail.gmail.com>
- <20240702191857.GJ11386@noisy.programming.kicks-ass.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A313017A5B8;
+	Tue,  2 Jul 2024 23:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719964645; cv=pass; b=bRhrvS4Wq4sMjOsrh93N6YRb7nzDFO1tDyEQedubmxkbF1GcM4Zjfr0GgV0ITHxmU5ssyT5jNrBtiOJj4EbFGmkSh40XcRCYF+EYGAwndBIdxu/hGoK+GTJiLmMfE37J6XMtntp+rusD+68N1806wTSZrpgAChaszp38eUwzv3w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719964645; c=relaxed/simple;
+	bh=fH5bbDhEXvtMJL7qCu+hVIBvgWhvFakxFwuRo7NuQWA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=IfIvFRiDnb79gQFq/VrFph+roC9UsbHKwmtU9DWFkK1atIhbp2rDId8NcYBkh6zBLc7YdImmBnWIxV2elS9ZSlwzqhDaTSPzpgakDEG6rH6M6i/I/6PYbsUKM5Dyj+EzkjFifOsOzYU+ZIssrCrMTsCa9IgoXRDPZgXZe/PCADE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=qamueW1+; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from localhost (83-245-197-232.elisa-laajakaista.fi [83.245.197.232])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sakkinen)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4WDKZz5vNwz49Pxq;
+	Wed,  3 Jul 2024 02:57:15 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1719964636;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ae2vVQG57Q2h/mntUgu3XIHv6iZuHpnmF7N11wBhPI4=;
+	b=qamueW1+pPabdyRKgBxC7qWrdRKjykyDIwMIfbFs913fDpOZsYUTA/42GBC8eO3c+c13oc
+	5tBbt0NeNqzccGG6jI0ktw1yvpNlZKNJZQAk6GnTjA3paumehxdYPYcNcnbHSkVmds0Tzd
+	eTrFPsGw7dy3Wb85zYtXUySHmEt+PbvkAYp3wArDZ8yv64Z5Lg8naeO801P7N07ltdpmgb
+	UCsOu+yD9ZHvKVZ4JThrKy/YK1QBE75sXuvqjHWHJI2wrJCwFRjs9bL6Id6P2iKGrvx+Uf
+	XeA+EJPqFqX0pnyYtYMg6C3OQU/Vr160YOMnv3irfZ8C/sqR5/nffBt6zZ63eA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=lahtoruutu; t=1719964636;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ae2vVQG57Q2h/mntUgu3XIHv6iZuHpnmF7N11wBhPI4=;
+	b=XttoVwwjlGfFZXD2ZlDbbzUeMhKlHN0r1R+zoJ8h30c364lpxi1UIGExZesxoPsLsN2hJf
+	2/1FgSx1DuurRSPuTPbpQqdIOhNRjmbu4c3lNE3IC0Tc68QDxf0vNjk4ETS6satC7kc2Ct
+	sCK9yY+pOHnTxKKWsci9wHqfaM2gGk7Nggxao/tGNc7POWH1RMtwosCz5qxzpm+NGuZlxb
+	orF/RTMk09KWYrwhDKVzy5NnLvNmaquuTSA8P+DfZ8fwP/SVpRIK8OS9Vm0g1NrlnJXhgX
+	a6IktxzbZOt1WkrUkXT6kD17UCfxF1J3JDQhBpGVOS0f7s0sFU8N7GnK1pxXtw==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sakkinen smtp.mailfrom=jarkko.sakkinen@iki.fi
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1719964636; a=rsa-sha256;
+	cv=none;
+	b=VTg+xNP14IPNLh13ojFJr1rF45cHQdvj5jiTOYgV5MnHHvovJ45SF7nWY0F1ld9J/MsxaM
+	fKNVymTdkQ1RHy9SbQwGzMeQxk+m6EUcWt2Owhm/StEEOdKo46kg5CM0P2jFqV/IdLZef0
+	xir+o7algRklWUgVBTwPKqqpOJtHqPihxsAkbWL7516jJlRWY5uNIGbIUD6xID/bI/+L3Z
+	NKZsCH8GohGH4ri04BZNLhjC86hn6/RsVZhuzZfdE300Bks1oFbBgF+vDmqqE9b6eZQeuS
+	qOztWgPFO60Vg0E/5dKXm8HMvsrWsGQNhiRBLc2/dPXnhHiTBYfvhKlgYQN0xQ==
+Message-ID: <85f882ff079554c41a73d8ad4275072c5229f716.camel@iki.fi>
+Subject: Re: [PATCH] tpm: ibmvtpm: Call tpm2_sessions_init() to initialize
+ session support
+From: Jarkko Sakkinen <jarkko.sakkinen@iki.fi>
+To: Stefan Berger <stefanb@linux.ibm.com>, Linux regressions mailing list
+	 <regressions@lists.linux.dev>
+Cc: naveen.n.rao@linux.ibm.com, linux-kernel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Wed, 03 Jul 2024 02:57:14 +0300
+In-Reply-To: <b7559dbb323d16fb334f8f8f35b8fda3fb6e481c.camel@iki.fi>
+References: <20240617193408.1234365-1-stefanb@linux.ibm.com>
+	 <9e167f3e-cd81-45ab-bd34-939f516b05a4@linux.ibm.com>
+	 <55e8331d-4682-40df-9a1b-8a08dc5f6409@leemhuis.info>
+	 <9f86a167074d9b522311715c567f1c19b88e3ad4.camel@kernel.org>
+	 <53d96a8b-26ef-46a3-9b68-3d791613e47c@linux.ibm.com>
+	 <D2EFNJTR80JS.1RW91OVY1UH1N@iki.fi>
+	 <e7db74a0-cd5c-4394-b87e-c31ea0861ea1@linux.ibm.com>
+	 <b7559dbb323d16fb334f8f8f35b8fda3fb6e481c.camel@iki.fi>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240702191857.GJ11386@noisy.programming.kicks-ass.net>
 
-On Tue, Jul 02, 2024 at 09:18:57PM +0200, Peter Zijlstra wrote:
-> On Tue, Jul 02, 2024 at 10:54:51AM -0700, Andrii Nakryiko wrote:
-> 
-> > > @@ -593,6 +595,12 @@ static struct uprobe *get_uprobe(struct uprobe *uprobe)
-> > >         return uprobe;
-> > >  }
-> > >
-> > > +static void uprobe_free_rcu(struct rcu_head *rcu)
-> > > +{
-> > > +       struct uprobe *uprobe = container_of(rcu, struct uprobe, rcu);
-> > > +       kfree(uprobe);
-> > > +}
-> > > +
-> > >  static void put_uprobe(struct uprobe *uprobe)
-> > >  {
-> > >         if (refcount_dec_and_test(&uprobe->ref)) {
-> > > @@ -604,7 +612,8 @@ static void put_uprobe(struct uprobe *uprobe)
-> > 
-> > right above this we have roughly this:
-> > 
-> > percpu_down_write(&uprobes_treelock);
-> > 
-> > /* refcount check */
-> > rb_erase(&uprobe->rb_node, &uprobes_tree);
-> > 
-> > percpu_up_write(&uprobes_treelock);
-> > 
-> > 
-> > This writer lock is necessary for modification of the RB tree. And I
-> > was under impression that I shouldn't be doing
-> > percpu_(down|up)_write() inside the normal
-> > rcu_read_lock()/rcu_read_unlock() region (percpu_down_write has
-> > might_sleep() in it). But maybe I'm wrong, hopefully Paul can help to
-> > clarify.
-> 
-> preemptible RCU or SRCU would work.
+On Wed, 2024-07-03 at 02:48 +0300, Jarkko Sakkinen wrote:
+> On Mon, 2024-07-01 at 15:14 -0400, Stefan Berger wrote:
+> > Applying it is probably the better path forward than restricting HMAC t=
+o=20
+> > x86_64 now and enabling it on a per-architecture basis afterwards ...
+>=20
+> Why is this here and not in the associated patch?
+>=20
+> Any, what argue against is already done for v6.10.
+>=20
+> The actual bug needs to be fixed before anything
+> else.
+>=20
+> I can look at the patch when in August (back from
+> holiday) but please response to the correct patch
+> next time, thanks.
 
-I agree that SRCU would work from a functional viewpoint.  No so for
-preemptible RCU, which permits preemption (and on -rt, blocking for
-spinlocks), it does not permit full-up blocking, and for good reason.
+Next steps forward:
 
-> > But actually what's wrong with RCU Tasks Trace flavor? 
-> 
-> Paul, isn't this the RCU flavour you created to deal with
-> !rcu_is_watching()? The flavour that never should have been created in
-> favour of just cleaning up the mess instead of making more.
+1  Comment out sessions_init().
+2. See what happens on x86 in QEMU.
+3. All errors were some sort size errors, so look into failing
+   sites and fixup the use of hmac shenanigans.
 
-My guess is that you are instead thinking of RCU Tasks Rude, which can
-be eliminated once all architectures get their entry/exit/deep-idle
-functions either inlined or marked noinstr.
-
-> > I will
-> > ultimately use it anyway to avoid uprobe taking unnecessary refcount
-> > and to protect uprobe->consumers iteration and uc->handler() calls,
-> > which could be sleepable, so would need rcu_read_lock_trace().
-> 
-> I don't think you need trace-rcu for that. SRCU would do nicely I think.
-
-From a functional viewpoint, agreed.
-
-However, in the past, the memory-barrier and array-indexing overhead
-of SRCU has made it a no-go for lightweight probes into fastpath code.
-And these cases were what motivated RCU Tasks Trace (as opposed to RCU
-Tasks Rude).
-
-The other rule for RCU Tasks Trace is that although readers are permitted
-to block, this blocking can be for no longer than a major page fault.
-If you need longer-term blocking, then you should instead use SRCU.
-
-							Thanx, Paul
-
-> > >                 mutex_lock(&delayed_uprobe_lock);
-> > >                 delayed_uprobe_remove(uprobe, NULL);
-> > >                 mutex_unlock(&delayed_uprobe_lock);
-> > > -               kfree(uprobe);
-> > > +
-> > > +               call_rcu(&uprobe->rcu, uprobe_free_rcu);
-> > >         }
-> > >  }
-> > >
-> > > @@ -668,12 +677,25 @@ static struct uprobe *__find_uprobe(struct inode *inode, loff_t offset)
-> > >  static struct uprobe *find_uprobe(struct inode *inode, loff_t offset)
-> > >  {
-> > >         struct uprobe *uprobe;
-> > > +       unsigned seq;
-> > >
-> > > -       read_lock(&uprobes_treelock);
-> > > -       uprobe = __find_uprobe(inode, offset);
-> > > -       read_unlock(&uprobes_treelock);
-> > > +       guard(rcu)();
-> > >
-> > > -       return uprobe;
-> > > +       do {
-> > > +               seq = read_seqcount_begin(&uprobes_seqcount);
-> > > +               uprobes = __find_uprobe(inode, offset);
-> > > +               if (uprobes) {
-> > > +                       /*
-> > > +                        * Lockless RB-tree lookups are prone to false-negatives.
-> > > +                        * If they find something, it's good. If they do not find,
-> > > +                        * it needs to be validated.
-> > > +                        */
-> > > +                       return uprobes;
-> > > +               }
-> > > +       } while (read_seqcount_retry(&uprobes_seqcount, seq));
-> > > +
-> > > +       /* Really didn't find anything. */
-> > > +       return NULL;
-> > >  }
-> > 
-> > Honest question here, as I don't understand the tradeoffs well enough.
-> > Is there a lot of benefit to switching to seqcount lock vs using
-> > percpu RW semaphore (previously recommended by Ingo). The latter is a
-> > nice drop-in replacement and seems to be very fast and scale well.
-> 
-> As you noted, that percpu-rwsem write side is quite insane. And you're
-> creating this batch complexity to mitigate that.
-> 
-> The patches you propose are quite complex, this alternative not so much.
-> 
-> > Right now we are bottlenecked on uprobe->register_rwsem (not
-> > uprobes_treelock anymore), which is currently limiting the scalability
-> > of uprobes and I'm going to work on that next once I'm done with this
-> > series.
-> 
-> Right, but it looks fairly simple to replace that rwsem with a mutex and
-> srcu.
+BR, Jarkko
 
