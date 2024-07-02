@@ -1,198 +1,330 @@
-Return-Path: <linux-kernel+bounces-238001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55C189241EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:09:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 064EB9241FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1A481F249EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:09:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 893AD1F21D45
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:11:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371631B47AC;
-	Tue,  2 Jul 2024 15:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF8E1BB6A8;
+	Tue,  2 Jul 2024 15:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cbn7Iixo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="c878DGhW"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7CF1DFFC;
-	Tue,  2 Jul 2024 15:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFDF81DFFC
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 15:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719932985; cv=none; b=BUuI/6nwO5vdP3IVr3aW/nkyl2C5gNuXC6ncORIgf7uZ6it3SfCQWsBAWWxTQO1MPwmKItpFmJU6JhvZ4LQM/lop8batbrJEJqBjb7bJ+2sdzfhS70pyJ3wB9mTx3HaVjB1F61U+ShzwTSj6rihF+40Zkp0JJUqVIEFt5proXIw=
+	t=1719933092; cv=none; b=GJTQAqCoYniZ3xMHzfadqtPkkWruSxP++Z/wJf/ZFHlvnoCoQZilXtWCSI3wS56iwzyvBhy6pn3K3pqSUlhXwFXm2xCkAPitJj2ym86jps+HNZrs8vdjBdDqk+KBhF4H/BISORPpwWNVUKW1AH/fJ4R74X+NkI8YRAhJvS/7Sn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719932985; c=relaxed/simple;
-	bh=3rky5boCD+BEu0E1VUYi9tbu3OeD4rpuUTcTyB8aeuM=;
+	s=arc-20240116; t=1719933092; c=relaxed/simple;
+	bh=gir7lGK92/Fa2opJLUsmD7yi84wn7iEDvli+DyJr/6A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=unhfSsv5lN0V53LllPiXabP7ofW6RDPm1o8GEyfAhwva7dcrdYF0iW83bW4Re46oEpqZgBVaeisTXWjbhQ/0hEDg+qIB7BeOz94UueL7Xb4SDYz07EslkNeIeka3rZ99RixmOzIe1I9Uei/2r/jIo6cpO1syfL34Nw/3WvgXXO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cbn7Iixo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 802E3C116B1;
-	Tue,  2 Jul 2024 15:09:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719932984;
-	bh=3rky5boCD+BEu0E1VUYi9tbu3OeD4rpuUTcTyB8aeuM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cbn7Iixol4kRCfBatC8RPwq5Jt2TggorrBxyqyhZ+3agbEQGTo6wPjp7TPxJSkp8n
-	 ZJnarubL0csXGLcuD7QWf2NnEHjae2E+qB6sd74a1UO+u/4WxmezzYOdBXBZ6qGKwf
-	 3HGuMTr7p+r6vf1mC2bGFKLadaNA37NIa0mtSUwkuNTKgusQtn6heJMMB3d0/zb/+5
-	 JJSgyWeYYqqvL+YhRGbnOKXontoCi/S0LFC0cNvh7p72657c5M9cmh2bqC0n8kFZav
-	 seO/UHKBBm0TFEiYmvNMJXkt9xKz6/2Mll3vy+4grva6wj4DY/IG4RrMsrO//7zUjJ
-	 t28zE4GD/VhBQ==
-Message-ID: <d4b71376-2864-45af-8ad9-92c8a7cde291@kernel.org>
-Date: Tue, 2 Jul 2024 17:09:35 +0200
+	 In-Reply-To:Content-Type; b=DpKNLGciv4qk0Denm2jwRg1Z/a5wquKRJNFj+fT+EQ4xUJLsXFvpRy0Jc5RaS8irOQUnaE83lKZnqYOK5e7lawkVr6rkaFSGTTpCYgCB5WNj7jtfKPJXKNQc/KdQmhAH5u5E3g5HljNMjf2Hw0I12H+eTjytZaC15fAbDYqCbQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=c878DGhW; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: mark-pk.tsai@mediatek.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1719933087;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jsuhCIwX2lHnQpmQXQKzCY+sOzfjRTFPYPQ7y+FMJRE=;
+	b=c878DGhWqM9mpi+EDCykDhJkbM5MxOfvJJKAqu0HOhqbxOCpNfOqkAlqbZzl7SYxuv1BXn
+	1Zr3aBECbeA4OTPvjd8XEJzcQE1ZmiBW90/ay/2vcaXs62+z7fdlgV/kF20XXnCUOYWjKw
+	4XlSs7RxUvxXjuV7sdP3/umS3pbf1XE=
+X-Envelope-To: joro@8bytes.org
+X-Envelope-To: will@kernel.org
+X-Envelope-To: robin.murphy@arm.com
+X-Envelope-To: corbet@lwn.net
+X-Envelope-To: matthias.bgg@gmail.com
+X-Envelope-To: angelogioacchino.delregno@collabora.com
+X-Envelope-To: yj.chiang@mediatek.com
+X-Envelope-To: linux-doc@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: linux-mediatek@lists.infradead.org
+X-Envelope-To: iommu@lists.linux.dev
+X-Envelope-To: zenghui.yu@linux.dev
+Message-ID: <d4081e8e-ec30-4aab-bfd2-39b8ebd41c2b@linux.dev>
+Date: Tue, 2 Jul 2024 23:11:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: thermal: sophgo,cv1800-thermal: Add
- Sophgo CV1800 thermal
-To: Conor Dooley <conor@kernel.org>, Haylen Chu <heylenay@outlook.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>,
- Inochi Amaoto <inochiama@outlook.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Jisheng Zhang <jszhang@kernel.org>, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org
-References: <SEYPR01MB42213F3A032C60C6AF5EB677D7DC2@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
- <SEYPR01MB42217228213F5F2C739088DED7DC2@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
- <20240702-aptitude-overripe-8ac9aa3c6b90@spud>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] docs: iommu: Remove outdated
+ Documentation/userspace-api/iommu.rst
+To: Mark-PK Tsai <mark-pk.tsai@mediatek.com>
+Cc: joro@8bytes.org, Will Deacon <will@kernel.org>, robin.murphy@arm.com,
+ Jonathan Corbet <corbet@lwn.net>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ yj.chiang@mediatek.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, iommu@lists.linux.dev
+References: <20240702120617.26882-1-mark-pk.tsai@mediatek.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240702-aptitude-overripe-8ac9aa3c6b90@spud>
-Content-Type: text/plain; charset=UTF-8
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zenghui Yu <zenghui.yu@linux.dev>
+In-Reply-To: <20240702120617.26882-1-mark-pk.tsai@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On 02/07/2024 17:00, Conor Dooley wrote:
-> Rob/Krzysztof, Haylen,
->> +
->> +maintainers:
->> +  - Haylen Chu <heylenay@outlook.com>
->> +
->> +description: Binding for Sophgo CV1800 on-SoC thermal sensor
+[ +Cc IOMMU maintainers and list ]
 
-Drop "Binding"
-
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - sophgo,cv1800-thermal
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  clocks:
->> +    description: The thermal sensor clock
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
->> +  accumulation-period:
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    description: Accumulation period for a sample
->> +    enum:
->> +      - 512
->> +      - 1024
->> +      - 2048
->> +      - 4096
->> +    default: 2048
->> +
->> +  chop-period:
-
-period in what sort of units? Sounds like time to me, so this would
-require proper unit suffix.
-
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    description: ADC chop period
->> +    enum:
->> +      - 128
->> +      - 256
->> +      - 512
->> +      - 1024
->> +    default: 1024
->> +
->> +  sample-cycle-us:
+On 2024/7/2 20:05, Mark-PK Tsai wrote:
+> The Documentation/userspace-api/iommu.rst file has become outdated due
+> to the removal of associated structures and APIs.
 > 
-> the more common term btw would be "sample-rate" rather than
-> "sample-cycle".
-
-yeah, sample-rate-hz
-
+> Specifically, struct such as iommu_cache_invalidate_info and guest
+> pasid related uapi were removed in commit 0c9f17877891 ("iommu:
+> Remove guest pasid related interfaces and definitions").
+> And the corresponding uapi/linux/iommu.h file was removed in
+> commit 00a9bc607043 ("iommu: Move iommu fault data to
+> linux/iommu.h").
 > 
->> +    description: Period between samples. Should be greater than 524us.
+> Signed-off-by: Mark-PK Tsai <mark-pk.tsai@mediatek.com>
+> ---
+>  Documentation/userspace-api/iommu.rst | 209 --------------------------
+>  MAINTAINERS                           |   1 -
+>  2 files changed, 210 deletions(-)
+>  delete mode 100644 Documentation/userspace-api/iommu.rst
 > 
-> The constraint here should be "minimum: 524". What's the upper limit?
-> 
->> +    default: 1000000
-> 
-> Rob/Krzysztof, could you comment on the suitability of the three custom
-> properties here? I know if this was an IIO device, these kinds of things
-> would be controllable from userspace, and not in the binding. I
-> mentioned this on the previous version, but I'm not really sure if
-> thermal devices are somehow different:
-> https://lore.kernel.org/all/SEYPR01MB4221A739D0645EF0255336EBD7CE2@SEYPR01MB4221.apcprd01.prod.exchangelabs.com/
-> 
-
-Why would different boards have different values here? Does it affect
-accuracy? If so, how much?
-
-I doubt there are any boards with different values, thus it sounds like
-unnecessary tuning parameter.
-
-Best regards,
-Krzysztof
-
+> diff --git a/Documentation/userspace-api/iommu.rst b/Documentation/userspace-api/iommu.rst
+> deleted file mode 100644
+> index d3108c1519d5..000000000000
+> --- a/Documentation/userspace-api/iommu.rst
+> +++ /dev/null
+> @@ -1,209 +0,0 @@
+> -.. SPDX-License-Identifier: GPL-2.0
+> -.. iommu:
+> -
+> -=====================================
+> -IOMMU Userspace API
+> -=====================================
+> -
+> -IOMMU UAPI is used for virtualization cases where communications are
+> -needed between physical and virtual IOMMU drivers. For baremetal
+> -usage, the IOMMU is a system device which does not need to communicate
+> -with userspace directly.
+> -
+> -The primary use cases are guest Shared Virtual Address (SVA) and
+> -guest IO virtual address (IOVA), wherein the vIOMMU implementation
+> -relies on the physical IOMMU and for this reason requires interactions
+> -with the host driver.
+> -
+> -.. contents:: :local:
+> -
+> -Functionalities
+> -===============
+> -Communications of user and kernel involve both directions. The
+> -supported user-kernel APIs are as follows:
+> -
+> -1. Bind/Unbind guest PASID (e.g. Intel VT-d)
+> -2. Bind/Unbind guest PASID table (e.g. ARM SMMU)
+> -3. Invalidate IOMMU caches upon guest requests
+> -4. Report errors to the guest and serve page requests
+> -
+> -Requirements
+> -============
+> -The IOMMU UAPIs are generic and extensible to meet the following
+> -requirements:
+> -
+> -1. Emulated and para-virtualised vIOMMUs
+> -2. Multiple vendors (Intel VT-d, ARM SMMU, etc.)
+> -3. Extensions to the UAPI shall not break existing userspace
+> -
+> -Interfaces
+> -==========
+> -Although the data structures defined in IOMMU UAPI are self-contained,
+> -there are no user API functions introduced. Instead, IOMMU UAPI is
+> -designed to work with existing user driver frameworks such as VFIO.
+> -
+> -Extension Rules & Precautions
+> ------------------------------
+> -When IOMMU UAPI gets extended, the data structures can *only* be
+> -modified in two ways:
+> -
+> -1. Adding new fields by re-purposing the padding[] field. No size change.
+> -2. Adding new union members at the end. May increase the structure sizes.
+> -
+> -No new fields can be added *after* the variable sized union in that it
+> -will break backward compatibility when offset moves. A new flag must
+> -be introduced whenever a change affects the structure using either
+> -method. The IOMMU driver processes the data based on flags which
+> -ensures backward compatibility.
+> -
+> -Version field is only reserved for the unlikely event of UAPI upgrade
+> -at its entirety.
+> -
+> -It's *always* the caller's responsibility to indicate the size of the
+> -structure passed by setting argsz appropriately.
+> -Though at the same time, argsz is user provided data which is not
+> -trusted. The argsz field allows the user app to indicate how much data
+> -it is providing; it's still the kernel's responsibility to validate
+> -whether it's correct and sufficient for the requested operation.
+> -
+> -Compatibility Checking
+> -----------------------
+> -When IOMMU UAPI extension results in some structure size increase,
+> -IOMMU UAPI code shall handle the following cases:
+> -
+> -1. User and kernel has exact size match
+> -2. An older user with older kernel header (smaller UAPI size) running on a
+> -   newer kernel (larger UAPI size)
+> -3. A newer user with newer kernel header (larger UAPI size) running
+> -   on an older kernel.
+> -4. A malicious/misbehaving user passing illegal/invalid size but within
+> -   range. The data may contain garbage.
+> -
+> -Feature Checking
+> -----------------
+> -While launching a guest with vIOMMU, it is strongly advised to check
+> -the compatibility upfront, as some subsequent errors happening during
+> -vIOMMU operation, such as cache invalidation failures cannot be nicely
+> -escalated to the guest due to IOMMU specifications. This can lead to
+> -catastrophic failures for the users.
+> -
+> -User applications such as QEMU are expected to import kernel UAPI
+> -headers. Backward compatibility is supported per feature flags.
+> -For example, an older QEMU (with older kernel header) can run on newer
+> -kernel. Newer QEMU (with new kernel header) may refuse to initialize
+> -on an older kernel if new feature flags are not supported by older
+> -kernel. Simply recompiling existing code with newer kernel header should
+> -not be an issue in that only existing flags are used.
+> -
+> -IOMMU vendor driver should report the below features to IOMMU UAPI
+> -consumers (e.g. via VFIO).
+> -
+> -1. IOMMU_NESTING_FEAT_SYSWIDE_PASID
+> -2. IOMMU_NESTING_FEAT_BIND_PGTBL
+> -3. IOMMU_NESTING_FEAT_BIND_PASID_TABLE
+> -4. IOMMU_NESTING_FEAT_CACHE_INVLD
+> -5. IOMMU_NESTING_FEAT_PAGE_REQUEST
+> -
+> -Take VFIO as example, upon request from VFIO userspace (e.g. QEMU),
+> -VFIO kernel code shall query IOMMU vendor driver for the support of
+> -the above features. Query result can then be reported back to the
+> -userspace caller. Details can be found in
+> -Documentation/driver-api/vfio.rst.
+> -
+> -
+> -Data Passing Example with VFIO
+> -------------------------------
+> -As the ubiquitous userspace driver framework, VFIO is already IOMMU
+> -aware and shares many key concepts such as device model, group, and
+> -protection domain. Other user driver frameworks can also be extended
+> -to support IOMMU UAPI but it is outside the scope of this document.
+> -
+> -In this tight-knit VFIO-IOMMU interface, the ultimate consumer of the
+> -IOMMU UAPI data is the host IOMMU driver. VFIO facilitates user-kernel
+> -transport, capability checking, security, and life cycle management of
+> -process address space ID (PASID).
+> -
+> -VFIO layer conveys the data structures down to the IOMMU driver. It
+> -follows the pattern below::
+> -
+> -   struct {
+> -	__u32 argsz;
+> -	__u32 flags;
+> -	__u8  data[];
+> -   };
+> -
+> -Here data[] contains the IOMMU UAPI data structures. VFIO has the
+> -freedom to bundle the data as well as parse data size based on its own flags.
+> -
+> -In order to determine the size and feature set of the user data, argsz
+> -and flags (or the equivalent) are also embedded in the IOMMU UAPI data
+> -structures.
+> -
+> -A "__u32 argsz" field is *always* at the beginning of each structure.
+> -
+> -For example:
+> -::
+> -
+> -   struct iommu_cache_invalidate_info {
+> -	__u32	argsz;
+> -	#define IOMMU_CACHE_INVALIDATE_INFO_VERSION_1 1
+> -	__u32	version;
+> -	/* IOMMU paging structure cache */
+> -	#define IOMMU_CACHE_INV_TYPE_IOTLB	(1 << 0) /* IOMMU IOTLB */
+> -	#define IOMMU_CACHE_INV_TYPE_DEV_IOTLB	(1 << 1) /* Device IOTLB */
+> -	#define IOMMU_CACHE_INV_TYPE_PASID	(1 << 2) /* PASID cache */
+> -	#define IOMMU_CACHE_INV_TYPE_NR		(3)
+> -	__u8	cache;
+> -	__u8	granularity;
+> -	__u8	padding[6];
+> -	union {
+> -		struct iommu_inv_pasid_info pasid_info;
+> -		struct iommu_inv_addr_info addr_info;
+> -	} granu;
+> -   };
+> -
+> -VFIO is responsible for checking its own argsz and flags. It then
+> -invokes appropriate IOMMU UAPI functions. The user pointers are passed
+> -to the IOMMU layer for further processing. The responsibilities are
+> -divided as follows:
+> -
+> -- Generic IOMMU layer checks argsz range based on UAPI data in the
+> -  current kernel version.
+> -
+> -- Generic IOMMU layer checks content of the UAPI data for non-zero
+> -  reserved bits in flags, padding fields, and unsupported version.
+> -  This is to ensure not breaking userspace in the future when these
+> -  fields or flags are used.
+> -
+> -- Vendor IOMMU driver checks argsz based on vendor flags. UAPI data
+> -  is consumed based on flags. Vendor driver has access to
+> -  unadulterated argsz value in case of vendor specific future
+> -  extensions. Currently, it does not perform the copy_from_user()
+> -  itself. A __user pointer can be provided in some future scenarios
+> -  where there's vendor data outside of the structure definition.
+> -
+> -IOMMU code treats UAPI data in two categories:
+> -
+> -- structure contains vendor data
+> -  (Example: iommu_uapi_cache_invalidate())
+> -
+> -- structure contains only generic data
+> -  (Example: iommu_uapi_sva_bind_gpasid())
+> -
+> -
+> -
+> -Sharing UAPI with in-kernel users
+> ----------------------------------
+> -For UAPIs that are shared with in-kernel users, a wrapper function is
+> -provided to distinguish the callers. For example,
+> -
+> -Userspace caller ::
+> -
+> -  int iommu_uapi_sva_unbind_gpasid(struct iommu_domain *domain,
+> -                                   struct device *dev,
+> -                                   void __user *udata)
+> -
+> -In-kernel caller ::
+> -
+> -  int iommu_sva_unbind_gpasid(struct iommu_domain *domain,
+> -                              struct device *dev, ioasid_t ioasid);
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 0748d6bd0c4f..1359ed17337e 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -11544,7 +11544,6 @@ L:	iommu@lists.linux.dev
+>  S:	Maintained
+>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git
+>  F:	Documentation/devicetree/bindings/iommu/
+> -F:	Documentation/userspace-api/iommu.rst
+>  F:	drivers/iommu/
+>  F:	include/linux/iommu.h
+>  F:	include/linux/iova.h
 
