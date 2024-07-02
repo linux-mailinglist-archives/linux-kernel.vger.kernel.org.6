@@ -1,124 +1,116 @@
-Return-Path: <linux-kernel+bounces-237409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B4D191F0A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:59:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B11B91F0AB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:00:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC2CDB21207
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:59:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E863B284FB2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:00:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C67E3148847;
-	Tue,  2 Jul 2024 07:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nlDVsS9W"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF87414A4ED;
+	Tue,  2 Jul 2024 08:00:22 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A18146A68
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 07:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601222AE66;
+	Tue,  2 Jul 2024 08:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719907167; cv=none; b=mWQ4yvqLKY/QwF5rv3mpf4A6AmbK/jw6S/W7nVp9HZbVvyUnJLiFqd5ovuWG9TMoUCB+NOFeZP9n+ff68hUbocQ4XtSTcbFwreApAY9bLFRMHJcAaVC9KRyWps6SPxfmpp11oALl6Nm15rwjFKMEaiEBIfVfoHk9FUxLzpX6UEU=
+	t=1719907222; cv=none; b=QvKYfXggYbuCYgCABtkwSIsfT65+EmrL57y7onq/FBLQsgNhhjDCbiRcdQZZwN3hWs1GyjyMuM22N70ZzH4RFgQiPYWrQSYeZPmPNs6D/oC2fBRw+lo9NqYWgltFFFcKTEOtgkmr71Yre5cMyUg9XsZHooKntDHg3tmu0UAYxw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719907167; c=relaxed/simple;
-	bh=xO4jgFcHGGtM3PtvZAzuNk3ui4TywDxw1FF2Di44KFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VIazZD96E+3ypgEwvGdBgwcFMwZWkIhrG0itNdE/rOZTeRC/1EJ0u53K+gNSxasfezvdfqLRh4S+ROxfPRa72DqXSCaN82B4qQ9XBc9IrBpEbNtIc1i8k9u3I4++IxfOk8bfYX3zc8jwTePTPXEdqDMXDtGhiJbBvhpvfhPhops=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nlDVsS9W; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52cf4ca8904so6278920e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 00:59:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719907163; x=1720511963; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HpyvxQ8xbjmGUnixp39QhyA5GFx0SN+s+GmNtVx8+E0=;
-        b=nlDVsS9WQkg8MQeV7oo59ZKzp7z2S1AkcllrYCvGu/tz8yqd1vKYNKItHDtMhsPPzw
-         Q4+187fxnN+OmuzNyQXdmCdy/ExfcLntXwiKz5QB0GHNWWb7VUmjYYJo2n2If7OyGhVn
-         YsKGwL0ZdDx2HCTpaAmMUddDRc6WemjGbRK0It4Xhdlq0YwqXpkTrnHo09qzbjllkqLI
-         Egt1F3z1e2mjx/0IlyD6mYSZiiAkC+baPeRzBwjUtnr0HxGmD1REUWU1IJoi8rqYzXAj
-         S+dHeZ9Yd34DBXHBFDaSSO0jko8RM4ZssC6ns6iRsPeqv43ZW0VtLbM1IaegU+cpd+r+
-         oz0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719907163; x=1720511963;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HpyvxQ8xbjmGUnixp39QhyA5GFx0SN+s+GmNtVx8+E0=;
-        b=XllNdDZk73M5Jibq3NPA0Kp/IDm8c50L67z12RvPVktEdxcE26pmVW8Dgx0YD/m0mp
-         XFl/1OR6nx4PRnDemoNvwRiUzEFOatw+FRh4MqqiS0t0xKkSzXSfU4rTpvbGWeDue9TU
-         dftRWxRM2m1/kClf3bXOY218F+syK/hGVWRyEQSE19pNydvJhrt+zDMJrB2BPE4/whEM
-         Qigcsccs4uyESfEW8tK0R2le6lGlpXEyB0r27vhl8CD+f3IKMAHZzYdFK0iWR92/Q0lH
-         pu3EeK1lx463E1sJ4nsn8hxPHYJ6jEIE3DZHIxctKEzYPUIQl+Sy30KTu1dT1Z6FbCoX
-         jArA==
-X-Forwarded-Encrypted: i=1; AJvYcCUy1aUl0gzdrtxLv8Z3ZCGszGoBPFVu2H3Wbtqw5RQNmEmvEao6332FXQ3qw+FoaH1kOzXkfGvXjmJauHAvlU2hew4cPrk+djSZYVXX
-X-Gm-Message-State: AOJu0Yx5EEVxJA+m/pB84PmUZbnFML6DDIFykt6OtKaMxC5mv85bONlD
-	mWYNeGSK4Z3yf049Sr41dW9jMNM4avgDVrDCl3j8tEGstbTYOk8VPTKTBBQpKqI=
-X-Google-Smtp-Source: AGHT+IFu60DTwWGR8MMLwXSmwkhC75Hs8TtEXLJtowjRn73LqZP6vLcd/4pHjJ3ShXg72GnfNAT4Pg==
-X-Received: by 2002:a05:6512:3a91:b0:52c:dca7:c9bd with SMTP id 2adb3069b0e04-52e82687f28mr4318804e87.30.1719907163576;
-        Tue, 02 Jul 2024 00:59:23 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab2f8b5sm1710321e87.233.2024.07.02.00.59.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 00:59:23 -0700 (PDT)
-Date: Tue, 2 Jul 2024 10:59:21 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Sudeepgoud Patil <quic_sudeepgo@quicinc.com>
-Cc: quic_bjorande@quicinc.com, andersson@kernel.org, quic_clew@quicinc.com, 
-	mathieu.poirier@linaro.org, linux-kernel@vger.kernel.org, quic_deesin@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>
-Subject: Re: [PATCH V3 1/2] soc: qcom: smp2p: Use devname for interrupt
- descriptions
-Message-ID: <nrqojhdkt3ay5mtj6fcpmzqlo6xjo6rkvwymm673nn2b3tqqxj@4cjlba7j4o3p>
-References: <20240627104831.4176799-1-quic_sudeepgo@quicinc.com>
- <20240627104831.4176799-2-quic_sudeepgo@quicinc.com>
+	s=arc-20240116; t=1719907222; c=relaxed/simple;
+	bh=c8VGHJXPXEpy3xwGECZzCe1tAvhvCx2JnJAKiN5R+Gw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PbzMcFxzjsiNocY+VmtxMMLAxHjIpSBzQ3obSXbvM8lHSxddOn/iOrTMK0msyDbf5CyXbPx52i4kHaXs4EKzOonPhTWLWQ+q3BCj7G5GO0yig7l+nqsb8eeHwOB/GlJysuJQng8oEb5bvDzNKpSyO1ggf6AOrQDSVtWBxgrnH9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WCwFf2JFbzxTt7;
+	Tue,  2 Jul 2024 15:55:50 +0800 (CST)
+Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
+	by mail.maildlp.com (Postfix) with ESMTPS id 99641180A9C;
+	Tue,  2 Jul 2024 16:00:16 +0800 (CST)
+Received: from [10.67.110.112] (10.67.110.112) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 2 Jul 2024 16:00:16 +0800
+Message-ID: <acebe1de-1281-cfd2-8497-b7d52a26e8ec@huawei.com>
+Date: Tue, 2 Jul 2024 16:00:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240627104831.4176799-2-quic_sudeepgo@quicinc.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH v3 -next] cgroup/misc: Introduce misc.peak
+Content-Language: en-US
+To: Kamalesh Babulal <kamalesh.babulal@oracle.com>, <tj@kernel.org>,
+	<lizefan.x@bytedance.com>, <hannes@cmpxchg.org>, <corbet@lwn.net>,
+	<haitao.huang@linux.intel.com>
+CC: <cgroups@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240702004820.2645868-1-xiujianfeng@huawei.com>
+ <8bd9b2a6-e1c2-423c-9cea-45b14763e251@oracle.com>
+From: xiujianfeng <xiujianfeng@huawei.com>
+In-Reply-To: <8bd9b2a6-e1c2-423c-9cea-45b14763e251@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
 
-On Thu, Jun 27, 2024 at 04:18:30PM GMT, Sudeepgoud Patil wrote:
-> From: Chris Lew <quic_clew@quicinc.com>
-> 
-> When using /proc/interrupts to collect statistics on smp2p interrupt
-> counts, it is hard to distinguish the different instances of smp2p from
-> each other. For example to debug a processor boot issue, the ready and
-> handover interrupts are checked for sanity to ensure the firmware
-> reached a specific initialization stage.
-> 
-> Remove "smp2p" string from the irq request so that the irq will default
-> to the device name. Add an .irq_print_chip() callback to print the irq
-> chip name as the device name. These two changes allow for a unique name
-> to be used in /proc/interrupts as shown below.
-> 
-> / # cat /proc/interrupts | grep smp2p
->  18:  ...      ipcc 196610 Edge      smp2p-adsp
->  20:  ...      ipcc 131074 Edge      smp2p-modem
-> 170:  ...  smp2p-modem   1 Edge      q6v5 ready
-> 178:  ...  smp2p-adsp   1 Edge      q6v5 ready
-> 
-> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
 
-Your sign-off is missing. LGTM otherwise
 
-> ---
->  drivers/soc/qcom/smp2p.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
+On 2024/7/2 15:24, Kamalesh Babulal wrote:
+> Hi,
 > 
+> On 7/2/24 6:18 AM, Xiu Jianfeng wrote:
+> [...]
+> 
+>> diff --git a/kernel/cgroup/misc.c b/kernel/cgroup/misc.c
+>> index 79a3717a5803..7f5180a8f461 100644
+>> --- a/kernel/cgroup/misc.c
+>> +++ b/kernel/cgroup/misc.c
+>> @@ -121,6 +121,17 @@ static void misc_cg_cancel_charge(enum misc_res_type type, struct misc_cg *cg,
+>>  		  misc_res_name[type]);
+>>  }
+>>  
+>> +static void misc_cg_update_watermark(struct misc_res *res, u64 new_usage)
+>> +{
+>> +	u64 old;
+>> +
+>> +	do {
+>> +		old = READ_ONCE(res->watermark);
+>> +		if (cmpxchg(&res->watermark, old, new_usage) == old)
+>> +			break;
+>> +	} while (1);
+>> +}
+>> +
+>>  /**
+>>   * misc_cg_try_charge() - Try charging the misc cgroup.
+>>   * @type: Misc res type to charge.
+>> @@ -159,6 +170,7 @@ int misc_cg_try_charge(enum misc_res_type type, struct misc_cg *cg, u64 amount)
+>>  			ret = -EBUSY;
+>>  			goto err_charge;
+>>  		}
+> 
+> you may need to re-introduce the check:
+> 	if (new_usage > READ_ONCE(res->watermark))
+> 
+> without it, the res->watermark will be updated unconditionally.
+
+Thanks for your review, will fix it.
 
 > 
-
--- 
-With best wishes
-Dmitry
+>> +		misc_cg_update_watermark(res, new_usage);
+>>  	}
+>>  	return 0;
+>>  
+> 
+> 
 
