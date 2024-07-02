@@ -1,197 +1,131 @@
-Return-Path: <linux-kernel+bounces-238020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82C00924231
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:19:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA0F4924235
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:20:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38CB72887BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:19:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26AFB1C21666
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5442D1BC07A;
-	Tue,  2 Jul 2024 15:18:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9674B1BBBD2;
+	Tue,  2 Jul 2024 15:20:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VDt0zSta"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K6i1SNuY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB1FA1BA883
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 15:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62EB1BA868;
+	Tue,  2 Jul 2024 15:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719933537; cv=none; b=PhgtLuZlAYUcQB68tmb0GZNdPCtfE8AagFI+JLSonOkiyChSA40K/s2xZaYNSigN0vfsX7jpKhX6bmwrbGL/MX1Ni1F5sHdSMjNtnsrzNJzDcHZn+jKZN3ODxqUPlKu5sXck6qeozYgHL4rJC/13iAjwKokV0qRzEK7i6BqZsPE=
+	t=1719933602; cv=none; b=KA/XDdicJ/S1VdP6mTwtXDNaCitDXCnWpeNYGXj/2nc/ux8eGU7S+FY8IdpGUV9sTTq9eBhKiWeDa0HSPvUwPNfBHT2IA4TetG3c3C7qgoXW9VLzSDPtuOjMrigML10od+vacm+369rL7PC7z1JKh8g/z0dx0W7WM6pPJpoQ1uA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719933537; c=relaxed/simple;
-	bh=OzzgLwRtnLguaYycgM2mWeRHE2MYEtakZWNRRb0MwpM=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=J8sRagLEh/FLIRFD0GL5hBJX6gJp330+BWfCxg0dcwyojLXtqZY/URhMzkcz7DizwwNl8xbfcdM4TqWVhIzN7Y6W22MYGSVziruM8tqbTCmpvp2IHkzCiJa9ZBteMI8GkyI+O6PEumEnd7Tnm8OigV9hAlQDO/FMvec9K1TICP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VDt0zSta; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719933533;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HfIrN8Ih42t2PeAb2UTyqpVzhdS6VIkRbXYjEu5XNwU=;
-	b=VDt0zStaQss/IzhULNSSVAoSSZu5DMAv3/pjaq6UvTbZ8byc7mzUTMCSHcPcnPGubxkmAY
-	+NEkjc2AdqTRJ0n8h2WQRaewi+qZpCaveYrnr1TFfKhnD6G2N5y1AZXZFrF1rVuiw8YMyZ
-	OKv4rUF58xaHj0lOtYelJaQ+F4Bavc0=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-320-oVr2HnLLMGqAZPLJDcjCsQ-1; Tue,
- 02 Jul 2024 11:18:46 -0400
-X-MC-Unique: oVr2HnLLMGqAZPLJDcjCsQ-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4B61E1944D44;
-	Tue,  2 Jul 2024 15:18:40 +0000 (UTC)
-Received: from file1-rdu.file-001.prod.rdu2.dc.redhat.com (unknown [10.11.5.21])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AB9B41955D8B;
-	Tue,  2 Jul 2024 15:18:39 +0000 (UTC)
-Received: by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix, from userid 12668)
-	id A59DF30C1C14; Tue,  2 Jul 2024 15:18:38 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-	by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix) with ESMTP id A25363E32F;
-	Tue,  2 Jul 2024 17:18:38 +0200 (CEST)
-Date: Tue, 2 Jul 2024 17:18:38 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Abhinav Jain <jain.abhinav177@gmail.com>
-cc: agk@redhat.com, snitzer@kernel.org, dm-devel@lists.linux.dev, 
-    linux-kernel@vger.kernel.org, bmarzins@redhat.com, 
-    skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com
-Subject: Re: [PATCH v2] dm: Add support for escaped characters in
- str_field_delimit()
-In-Reply-To: <20240613162632.38065-1-jain.abhinav177@gmail.com>
-Message-ID: <c5133ae3-1655-3364-a272-68cae447b490@redhat.com>
-References: <20240613162632.38065-1-jain.abhinav177@gmail.com>
+	s=arc-20240116; t=1719933602; c=relaxed/simple;
+	bh=vDRfgq1khjg3V3GqZTi2bS11LujWGqPMZ8TLlczYvnA=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EKyaXxq2oPIiBcLTNkRJAJRqjHdB1By/w31rd6nAWNZIeIszBQ4eLYMFi3NNiQ4OtDWtslSVuDKdq1wl1wyBGOphlYIiryi2xuMFURczLxzUG7kDUxZZ+cO500xcILwTJaUf6Es34B8doMHaBct33zmD7Z87e/nOXjPaG+UhF8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K6i1SNuY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7421BC116B1;
+	Tue,  2 Jul 2024 15:20:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719933602;
+	bh=vDRfgq1khjg3V3GqZTi2bS11LujWGqPMZ8TLlczYvnA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=K6i1SNuYGTNT6OO7pKaDxagvIFhwMk/t6uNJ9i46XtUxP4y5uzmIZICtKnJoLWvyi
+	 bAfF4fZTOJbdEWSWfisAINCU7oOyYbWkmSmscs7ke8iVrcTAVPvRYirHnCllSmU1I2
+	 uCIvzfnu8OIIbanoZCrinKiyQfZ9LIt+3iY0PpQcmuHg9Q0/bvX722/lqmk9bOVsci
+	 zjgN3S/rCZalTlcvt6P9xAIlOvoCeI5Nl6cr9j20FoC4Dyhq5hiS90LMMXlljEWo3s
+	 6jHC3aA9BNmSbcRduDOZcYCOAE0ZvZxXmoFvCPj394sPQzvzSQwmN3PXaToy6F5OYa
+	 2/uBd1pdHcWyg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sOfIV-0099Nu-US;
+	Tue, 02 Jul 2024 16:20:00 +0100
+Date: Tue, 02 Jul 2024 16:19:59 +0100
+Message-ID: <861q4bizxc.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Christian Zigotzky <chzigotzky@xenosoft.de>
+Cc: Rob Herring <robh@kernel.org>,
+	apatel@ventanamicro.com,
+	DTML <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+	mad skateman <madskateman@gmail.com>,
+	"R.T.Dickinson" <rtd2@xtra.co.nz>,
+	Matthew Leaman <matthew@a-eon.biz>,
+	Darren Stevens
+ <darren@stevens-zone.net>,
+	Christian Zigotzky <info@xenosoft.de>
+Subject: Re: [PowerPC] [PASEMI] Issue with the identification of ATA drives after the of/irq updates 2024-05-29
+In-Reply-To: <3ab66fab-c3f2-4bed-a04d-a10c57dcdd9b@xenosoft.de>
+References: <3ab66fab-c3f2-4bed-a04d-a10c57dcdd9b@xenosoft.de>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: chzigotzky@xenosoft.de, robh@kernel.org, apatel@ventanamicro.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, madskateman@gmail.com, rtd2@xtra.co.nz, matthew@a-eon.biz, darren@stevens-zone.net, info@xenosoft.de
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi
+Christian,
 
-I'd like to ask why is this needed. AFAIK, none of the allowed targets use 
-',' on their table line.
-
-Mikulas
-
-
-On Thu, 13 Jun 2024, Abhinav Jain wrote:
-
-> Remove all the escape characters that come before separator.
-> Tested this code by writing a dummy program containing the two
-> functions and testing it on below input, sharing results:
+On Sun, 30 Jun 2024 11:21:55 +0100,
+Christian Zigotzky <chzigotzky@xenosoft.de> wrote:
 > 
-> Original string: "field1\,with\,commas,field2\,with\,more\,commas"
-> Field: "field1"
-> Field: "with"
-> Field: "commas"
-> Field: "field2"
-> Field: "with"
-> Field: "more"
-> Field: "commas"
+> Hello,
 > 
-> Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
-> ---
-> PATCH v1:
-> https://lore.kernel.org/all/20240609141721.52344-1-jain.abhinav177@gmail.com/
+> There is an issue with the identification of ATA drives with our
+> P.A. Semi Nemo boards [1] after the
+> commit "of/irq: Factor out parsing of interrupt-map parent
+> phandle+args from of_irq_parse_raw()" [2].
 > 
-> Changes since v1:
->  - Modified the str_field_delimit function as per shared feedback
->  - Added remove_escaped_characters function
-> ---
-> ---
->  drivers/md/dm-init.c | 53 +++++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 47 insertions(+), 6 deletions(-)
+> Error messages:
 > 
-> diff --git a/drivers/md/dm-init.c b/drivers/md/dm-init.c
-> index 2a71bcdba92d..0e31ecf1b48e 100644
-> --- a/drivers/md/dm-init.c
-> +++ b/drivers/md/dm-init.c
-> @@ -76,6 +76,24 @@ static void __init dm_setup_cleanup(struct list_head *devices)
->  	}
->  }
->  
-> +/* Remove escape characters from a given field string. */
-> +static void __init remove_escape_characters(char *field)
-> +{
-> +	char *src = field;
-> +	char *dest = field;
-> +
-> +	while (*src) {
-> +		if (*src == '\\') {
-> +			src++;
-> +			if (*src)
-> +				*dest++ = *src++;
-> +		} else {
-> +			*dest++ = *src++;
-> +		}
-> +	}
-> +	*dest = '\0';
-> +}
-> +
->  /**
->   * str_field_delimit - delimit a string based on a separator char.
->   * @str: the pointer to the string to delimit.
-> @@ -87,16 +105,39 @@ static void __init dm_setup_cleanup(struct list_head *devices)
->   */
->  static char __init *str_field_delimit(char **str, char separator)
->  {
-> -	char *s;
-> +	char *s, *escaped, *field;
->  
-> -	/* TODO: add support for escaped characters */
->  	*str = skip_spaces(*str);
->  	s = strchr(*str, separator);
-> -	/* Delimit the field and remove trailing spaces */
-> -	if (s)
-> +
-> +	/* Check for escaped character */
-> +	escaped = strchr(*str, '\\');
-> +	while (escaped && (s == NULL || escaped < s)) {
-> +		/*
-> +		 * Move the separator search ahead if escaped
-> +		 * character comes before.
-> +		 */
-> +		s = strchr(escaped + 1, separator);
-> +		escaped = strchr(escaped + 1, '\\');
-> +	}
-> +
-> +	/* If we found a separator, we need to handle escape characters */
-> +	if (s) {
-> +		*s = '\0';
-> +
-> +		remove_escape_characters(*str);
-> +		field = *str;
-> +		*str = s + 1;
-> +	} else {
-> +		/* Handle the last field when no separator is present */
-> +		s = *str + strlen(*str);
->  		*s = '\0';
-> -	*str = strim(*str);
-> -	return s ? ++s : NULL;
-> +
-> +		remove_escape_characters(*str);
-> +		field = *str;
-> +		*str = s;
-> +	}
-> +	return field;
->  }
->  
->  /**
-> -- 
-> 2.34.1
+> ata2.00: failed to IDENTIFY (I/O error, err_mask=0x4)
+> ata2.00: qc timeout after 10000 mssecs (cmd 0xec)
 > 
+> Screenshots [3]
+> 
+> I bisected yesterday [4] and "of/irq: Factor out parsing of
+> interrupt-map parent phandle+args from of_irq_parse_raw()" [2] is the
+> first bad commit.
+> 
+> Then I created a patch for reverting this first bad commit. I also
+> reverted the changes in drivers/of/property.c. [5]
+> 
+> The patched kernel boots with successful detection of the ATA devices.
+> 
+> Please check the of/irq updates.
 
+It is hard to understand what is going on with so little information.
+
+Please provide the device tree for your platform. It isn't possible to
+debug this without it, no matter how many pictures you provide. If it
+doesn't exist in source form, you can dump it using:
+
+# dtc -I dtb /sys/firmware/fdt
+
+and posting the full output.
+
+Additionally, a full dmesg of both working and non working boots would
+be useful.
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
