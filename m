@@ -1,78 +1,94 @@
-Return-Path: <linux-kernel+bounces-238382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB96C9249A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:57:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55E4F9249A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD0551C2259A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:57:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0161286476
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1C820125C;
-	Tue,  2 Jul 2024 20:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C7420125A;
+	Tue,  2 Jul 2024 20:59:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZK4VdKd+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e7pEACpe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9870A201253;
-	Tue,  2 Jul 2024 20:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 262D2201253
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 20:59:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719953811; cv=none; b=dXmL2ADoM8iuqOImvwbWIrhyTj0QDWG44f+Z7mCvunhWD2QD2+Y0gN9daeaK63UKPZOCDAawN4gx9kGB6Gae8AxUtHK1M1NEGY+G6WJdpJYbYaDg/A9ILVws2Pq5PiJarv/CwReRHBvMff4aVDwKmN4AMLxqlK/e8HSHyLrbY8E=
+	t=1719953946; cv=none; b=cGoBABcfh50hrWdrPpe+O9S9/ECOmigaRGsFKkyZyHS97OyTTm4VxDDO3luuoaaHxOKskzA7Q3wvZkDW0lsMoxtlrbpupsT7zye2xFJLCQb3pXZ+KSgEHCAmVlqRr4NamTzjd7DkLRyu4H4VmOFPweSMFxxfpnuiDJRtJjfyVsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719953811; c=relaxed/simple;
-	bh=G8YeaSu41JY0T99M2q2DXkxKV+kUg0JiMQk/DeSPrj4=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=FHESEkXpyz/yuz5ZAsLtvq7X/ab8oP2cD27ncuUMM6Btu+rrhyEC3DE9P1YBLNu4GJX+Fn37uVNRd65maZtsRqgYLFMso6AtpVX66W3r9/VTQrM/wLx0AgmQT1xp3luGl5JcPaeHwjhlQ0Th2Hb033vcF4zB9L3uQJJZ1BzP6TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZK4VdKd+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 29D3DC116B1;
-	Tue,  2 Jul 2024 20:56:51 +0000 (UTC)
+	s=arc-20240116; t=1719953946; c=relaxed/simple;
+	bh=M5dTMNNKFSZPNRLeXlD7QixMEqci7PRpRdcKKTHwXT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=czEYxog5x/kpzTVAwXnhcg3qmZquzYs6METSABLLVSiDd7xVd1i45Zd+AIn8NesFD+uCaiBgrK1Q7eOPTBEubN8MPHd0r57/RGy+d5jx4rhbVN0YoKPnnO3KDjp+7ayuNbDAYC4pq+ZDUCPtid+6ixQPwpSsLRU7fCOdnRdmwIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e7pEACpe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B24E9C116B1;
+	Tue,  2 Jul 2024 20:59:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719953811;
-	bh=G8YeaSu41JY0T99M2q2DXkxKV+kUg0JiMQk/DeSPrj4=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=ZK4VdKd+5vVlgSzqeGe2LZwLbv028jGH2vzVH0z022e2L1H/FHdIai5Cxb/x3r2Sc
-	 CZGH30oqLYhuNb9/TVdGR5dRKYE1NJQ6wkOyDDPWqGNHyTFhSyON8YoWEoslD1OJMz
-	 jbVZO3aRz1BtjfyKCaXf+UU3TiBBMZARP/0VxIiUgGtMub2aQZZI1MU3+ZKoWVX4XJ
-	 O5z4RBRfpqq++ncmRFYfxfXbzZTgRbwfTE6U+pQNFnN2ePtFY0wFQWPVzAfr6M6zEQ
-	 fD8SoxFm3O3Tly4Kzt07ZM5W36z5/Y3udA8ocXkbikPqbDWCjvy3xcs31QZnhE3AVC
-	 VW/iWiWnk0xkg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 1A0ACC43332;
-	Tue,  2 Jul 2024 20:56:51 +0000 (UTC)
-Subject: Re: [GIT PULL] Kselftest fixes for Linux 6.10-rc7
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <457af485-777d-4675-aea5-e3b77ccb8246@linuxfoundation.org>
-References: <457af485-777d-4675-aea5-e3b77ccb8246@linuxfoundation.org>
-X-PR-Tracked-List-Id: <linux-kselftest.vger.kernel.org>
-X-PR-Tracked-Message-Id: <457af485-777d-4675-aea5-e3b77ccb8246@linuxfoundation.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux_kselftest-fixes-6.10-rc7
-X-PR-Tracked-Commit-Id: 48236960c06d32370bfa6f2cc408e786873262c8
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: e9d22f7a6655941fc8b2b942ed354ec780936b3e
-Message-Id: <171995381110.5346.125140324739356226.pr-tracker-bot@kernel.org>
-Date: Tue, 02 Jul 2024 20:56:51 +0000
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, shuah <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+	s=k20201202; t=1719953945;
+	bh=M5dTMNNKFSZPNRLeXlD7QixMEqci7PRpRdcKKTHwXT0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e7pEACpep47fM5EzPqXSGjiuTLxe7K5mNh9DdqI5hx0vTSI1SZ/cGPgnfIxMbfOVZ
+	 CD+P+li0lCXZeMWlM/V6yLPoD0AKn9ZchhmERR8zjSkciPX9O5Of++hxCIPkPGq+4E
+	 17NMFeNi3ankZnfSFjiPdDeXGtQCux1FlEIeseNFfXImBEk5i4fbxDDg5h7kRBnLdm
+	 Ldyh3mz1LPgXJS7a4xH0iBySYDO8AqTnE20Q/6QWd4dc68EhTG+VudSTH1dMiuTQwR
+	 OcUff5j4/kzbhrKGJsuk2mH/kJLYebuC8kn2pv/a8q5YUx38EnDd40KeCjxfGSe8Fj
+	 fNZoKd7lGTpEQ==
+Date: Tue, 2 Jul 2024 13:59:05 -0700
+From: Kees Cook <kees@kernel.org>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, oleg@redhat.com,
+	tglx@linutronix.de, peterz@infradead.org, luto@kernel.org,
+	wad@chromium.org, rostedt@goodmis.org, arnd@arndb.de,
+	ardb@kernel.org, broonie@kernel.org, mark.rutland@arm.com,
+	rick.p.edgecombe@intel.com, leobras@redhat.com,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 0/3] arm64: entry: Convert to generic entry
+Message-ID: <202407021358.D259DF0BCA@keescook>
+References: <20240629085601.470241-1-ruanjinjie@huawei.com>
+ <202407010839.125126F@keescook>
+ <ab934094-ec54-b580-512e-199017ca99fc@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ab934094-ec54-b580-512e-199017ca99fc@huawei.com>
 
-The pull request you sent on Tue, 2 Jul 2024 14:49:16 -0600:
+On Tue, Jul 02, 2024 at 09:01:42AM +0800, Jinjie Ruan wrote:
+> 
+> 
+> On 2024/7/1 23:40, Kees Cook wrote:
+> > On Sat, Jun 29, 2024 at 04:55:58PM +0800, Jinjie Ruan wrote:
+> >> Changes in v3:
+> >> - Test the MTE test cases.
+> >> - Handle forget_syscall() in arch_post_report_syscall_entry()
+> >> - Make the arch funcs not use __weak as Thomas suggested, so move
+> >>   the arch funcs to entry-common.h, and make arch_forget_syscall() folded
+> >>   in arch_post_report_syscall_entry() as suggested.
+> >> - Move report_single_step() to thread_info.h for arm64
+> >> - Change __always_inline() to inline, add inline for the other arch funcs.
+> >> - Remove unused signal.h for entry-common.h.
+> >> - Add Suggested-by.
+> >> - Update the commit message.
+> > 
+> > I didn't see the mentioned feedback from tglx in any of the threads. Is
+> > lore busted or is there discussion on this series happening somewhere
+> > else?
+> 
+> It Seems Thomas only sent it to me without a public email.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux_kselftest-fixes-6.10-rc7
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/e9d22f7a6655941fc8b2b942ed354ec780936b3e
-
-Thank you!
+Ah ha! Okay, thanks. I thought I was missing some discussion somewhere. :)
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Kees Cook
 
