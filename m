@@ -1,104 +1,152 @@
-Return-Path: <linux-kernel+bounces-237505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D1E59239E4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:26:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E6BA9239F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:28:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BADEB1F22ED1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:26:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC695B20DFD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70BC0152782;
-	Tue,  2 Jul 2024 09:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709641534EB;
+	Tue,  2 Jul 2024 09:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="bMpovPSX"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hi1z9qn9"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAA6E4A06;
-	Tue,  2 Jul 2024 09:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05943152782
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 09:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719912359; cv=none; b=gDk3iCjkACNKMlMTx7FW8nojQfQ+SiI9RtIny2XhzukIs47qGV8hfXyenXCBV8OjjxfxQdoyWaRQtJ4wfsuuLfHT9KlUd56Rof0UvHlgQgTbhC6MQkY1MOMLnRlBpCnlgSM+5rabQF9LKqZ9FFRNtr2eWEUVZaf9JdONrOzYPGc=
+	t=1719912479; cv=none; b=fWy2a9vucpc2F/sG2711OsiWeklBvZjxsPxwnK4Sg0JLX6pt7dryLghUgK3lzTfsiu+fDLDAJeJzaP5ir9A8lizYArVQ1PsYtHWejv81It0DqCcwhjeJrB0groPBDQOqAlt24UHB/EW5I99YCrk70I+GjnqdH0Ei/py1PyRn1Gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719912359; c=relaxed/simple;
-	bh=83bEojgqDgebbSTn/AK1l+LKtArGnXDeMuaoMsN2qtA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JllT69+sC3aerq7OXZL5Ueg2fB2JQH3cYp5nEK8fa9uDyN+Dzu59qvGro8exERezwrzouEwPjmDg/TpWQJrzp+5EwKljMtQh5/stk4xrettSsetVNYeV8/NXLLDnzFGk/TKuUPhNifIprByZGk5whRioenxP/4GhtnwEJsd+XcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=bMpovPSX; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8D1C540E0192;
-	Tue,  2 Jul 2024 09:25:55 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id ZNaac-jqXZ4Y; Tue,  2 Jul 2024 09:25:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1719912352; bh=s8UrH3VcJ28nM0gGiUZ1ReX90tzHONE7G4tZ2ef+2Ns=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bMpovPSXrQ942JBZfofo0Zl6kIqCOviSdJUpkyh2l/kQsxIxNA+L+38NHIjwIV6ZH
-	 yswLC3JHJDGc9dekEswMzmi8DMDszS9CAPSRht/gLOYcGV7R5G+6WoLITq38U/7M+d
-	 lKUXq8j2FtjmmZHaLm2gQbfPh4lfy/fuw/y5c0WnN17u6rs/Up53drcqSZQgNUkZL/
-	 wMBHckMlI44H8IpgO+C/X8DhyfNkLwNFjdQ7+9dtd5pP69REgveVxA/Kso0/FbmrFU
-	 3KGRHscUVQwDnAc5ddMYtQiGhcqbqEddE39/YYbcBRRl8to5haNhPOkMQYtutnYNPi
-	 T7aw9aJ8gR/0QwBcFGdmbgmN8h4AdUWVCBe2gUcu+CiPfIHuBCp0qkPfm/x86rPWAO
-	 re1F++cyBfqNvpHq0GGI/I3J5hWp5HK/u3rLy7u7rPkCcQcXOcL3U89tXi+lQYAvXe
-	 /6Z4KMZM99oo156IV2dd8QxhUKqUpAG1RrrpKDng3zE0/eJJjvGO759lj400xye5cg
-	 mmMKAcojB14PLH7OG53g1OSTf66NpR39ra0N6H3M9YPoARO8ieSZXir7ldSYrCneaN
-	 wgWJt/nBtxhKyxbg/KhSAuI0r/leIZUuj4Njw6ppR0tSH+X4SikSICYuMW7rvs2v2W
-	 xmldMEtzv34eZn7nPw0VEPF8=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 105C640E0185;
-	Tue,  2 Jul 2024 09:25:39 +0000 (UTC)
-Date: Tue, 2 Jul 2024 11:25:33 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Xiaojian Du <Xiaojian.Du@amd.com>
-Subject: Re: linux-next: manual merge of the tip tree with the pm tree
-Message-ID: <20240702092533.GCZoPHjbvItZ9FjXNV@fat_crate.local>
-References: <20240702141555.3494c5a6@canb.auug.org.au>
+	s=arc-20240116; t=1719912479; c=relaxed/simple;
+	bh=ZeQuxXK7KAGjoVlKgP92Wn3eMsD4hK+v+4X6SF5SyVQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gGJTszf8NZGqA5ogffH+ulWFIb3iFK6ZMBw+SV3/8nUBiD1j1LEzuMa4GEwlBbXXYiAoR/v/WetzhVfIgHIiLw1vauC6gSppJyV2/yQ4lxH+n3LBMeX7agcMX2WwECl2u20q/uRkkNLc0d+wm0ub6E+fjumjhvtwU6Sv90/xkNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hi1z9qn9; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ee7885aa5fso3053261fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 02:27:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719912476; x=1720517276; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nW5NUpvADTD8UVO2vLBBZH7ScJjLCuiOXUWaKXBk80A=;
+        b=Hi1z9qn99AiQf9f2AtiMbMv2exY4eDu/UHVgtUankR4K59kqQsNRX9qRwqSFj/asNK
+         VZ7A5KHvRLYqRhUxPATgmnZyKVdeaBkBVj4kFGkrkBOrob5xRRm6xzzvzPO+H570f8cs
+         Vp6gsMdjkMufN5o2iPf99CwPaOum8WE7PdYnHGDDRLTF8CWJE62ptR4dR0nADQS2Lemq
+         uMmwWcqxldvevLMQhab0XHaEPPUSihtiqzqIEanVw2mDu4vLq8KRLCLwuzwnvgVLdheE
+         oOUST2u5UklTrqGQy4wxc2zk+NNiYQPHFTwBndnAsd3/OSkwFrBBHHJ5944KlFaNRboH
+         iKSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719912476; x=1720517276;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nW5NUpvADTD8UVO2vLBBZH7ScJjLCuiOXUWaKXBk80A=;
+        b=pqzs3TR57dairjpr9gmwz1cnn4QeBs6oE5vkK+cpcZWJRFw+aXYD1HCN1WlmDjBRLd
+         UHxdGxbh+yfQX8nWUp+iJGdy86jEzF64GyXzYeukNKsbggOdKFwMezJoByrX8zldaWw/
+         L2rHR8B7xA6HARwkRcYolnhR9Y+ZzaHBeIdcm9b7qHcboYh8EnJEZjbOJp2HY3Chohng
+         sAMO/U2JjDA/hb2QuLVLWtjYt3C9AHbb5f72LfHP+xnT+/T5jRxPViDbnwwoVHXG2ceV
+         Wqw0ygc1xfjiMCCILOSaAe38e2Wy3x1SJ9owX0aZMAW+vcZKkFq0EhLVhMO4JKQLP50N
+         YFaw==
+X-Forwarded-Encrypted: i=1; AJvYcCUoDNlXLmA58qOLHII1xtcZCwhbY+uaI3s0OSby4veBl7EsK6mYEZgAkLEC7CJh5mJjA5bhuVnA2ZN7CRLdxVxuZ8eyY1Nji4rEECoX
+X-Gm-Message-State: AOJu0YxM/HozKX6s6CQUo6kpSxgIZ7Ldi/5LpE/hDL9gjQbMIpBHzDr0
+	2dNaK62DcLO3KK+lcVx9ryyvCwXUg401x03Jli6PmISfcyiMbctTJJFHZwR6Uv2XDkgNztBcM6F
+	/x1vjCO5sPxSc+J+3h1qVJAjCewU=
+X-Google-Smtp-Source: AGHT+IHEO5OiCIH3xFHQ38s2EbEo+++BlCllu0Kc3PP0e/MXs8XptBFZ09d7RoqPv7WEmY7LcHd5XEhDXnGeTqpA7JE=
+X-Received: by 2002:a2e:a912:0:b0:2ee:4e67:85ec with SMTP id
+ 38308e7fff4ca-2ee5e337908mr73043911fa.5.1719912475717; Tue, 02 Jul 2024
+ 02:27:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240702141555.3494c5a6@canb.auug.org.au>
+References: <20240701075138.1144575-1-yi.sun@unisoc.com> <20240701075138.1144575-2-yi.sun@unisoc.com>
+ <ZoLoJ-uBo9qyAlMg@slm.duckdns.org> <ycmaxfuqpnj3vnmseikx7m7jkzsp2t2qtlncgub44xhxohs6du@hucdavhpcvpi>
+In-Reply-To: <ycmaxfuqpnj3vnmseikx7m7jkzsp2t2qtlncgub44xhxohs6du@hucdavhpcvpi>
+From: yi sun <sunyibuaa@gmail.com>
+Date: Tue, 2 Jul 2024 17:27:19 +0800
+Message-ID: <CALpufv3bAsMey1DFb8HPbp8gPZWBU-6rrhvRWwVQsxXhPXOvdA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] workqueue: new struct io_work
+To: Kent Overstreet <kent.overstreet@linux.dev>, Tejun Heo <tj@kernel.org>
+Cc: Yi Sun <yi.sun@unisoc.com>, jiangshanlai@gmail.com, jaegeuk@kernel.org, 
+	chao@kernel.org, ebiggers@google.com, linux-f2fs-devel@lists.sourceforge.net, 
+	linux-kernel@vger.kernel.org, niuzhiguo84@gmail.com, Hao_hao.Wang@unisoc.com, 
+	yunlongxing23@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 02, 2024 at 02:15:55PM +1000, Stephen Rothwell wrote:
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+Yes, adding the io priority attribute to work will bring huge benefits in t=
+he
+following scenarios:
+The system has huge IO pressure (these IOs may all be low-priority IOs),
+and a work (we hope to complete quickly) is also doing IO. If this work
+does not set IO priority, it will be blocked because it is difficult to get=
+ IO
+resources. And if this work sets a high IO priority and passes the IO prior=
+ity
+to kworker, then this work will be completed quickly (as we expect).
 
-Thanks, LGTM.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+On Tue, Jul 2, 2024 at 11:53=E2=80=AFAM Kent Overstreet
+<kent.overstreet@linux.dev> wrote:
+>
+> On Mon, Jul 01, 2024 at 07:32:23AM GMT, Tejun Heo wrote:
+> > Hello,
+> >
+> > On Mon, Jul 01, 2024 at 03:51:37PM +0800, Yi Sun wrote:
+> > > +/*
+> > > + * If a work may do disk IO, it is recommended to use struct io_work
+> > > + * instead of struct work_struct.
+> > > + */
+> > > +struct io_work {
+> > > +   struct work_struct work;
+> > > +
+> > > +   /* If the work does submit_bio, io priority may be needed. */
+> > > +   unsigned short ioprio;
+> > > +   /* Record kworker's original io priority. */
+> > > +   unsigned short ori_ioprio;
+> > > +   /* Whether the work has set io priority? */
+> > > +   long ioprio_flag;
+> > > +};
+> >
+> > There are fundamental limitations to this approach in terms of
+> > prioritization. If you tag each work items with priority and then send =
+them
+> > to the same workqueue, there's nothing preventing a low priority issuer=
+ from
+> > flooding the workqueue and causing a priority inversion. ie. To solve t=
+his
+> > properly, you need per-issuer-class workqueue so that the concurrency l=
+imit
+> > is not shared across different priorities.
+> >
+> > Now, this limited implementation, while incomplete and easy to defeat, =
+may
+> > still be useful. After all, ioprio itself, I think, is flawed in the sa=
+me
+> > way. If f2fs wants to implement this internally, that's okay, I suppose=
+, but
+> > as a generic mechanism, I don't think this makes a lot of sense.
+>
+> And I wonder if the reason for submitting from a workqueue isn't also
+> priority inversion?
+>
+> I haven't looked at the f2fs code, but that comes up in bcachefs; we
+> have IOs that we submit from worqueue context because they're submitted
+> in contexts where we _really_ cannot block - they're metadata IOs, and
+> thus also high priority IOs. But if the queue is already full with lower
+> priority IOs...
+>
+> perhaps what we need is a bio flag to say "do not block in the
+> submission path, queue is allowed to exceed normal limits for this (high
+> priority) IO"
 
