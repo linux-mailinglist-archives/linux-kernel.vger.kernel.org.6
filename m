@@ -1,218 +1,74 @@
-Return-Path: <linux-kernel+bounces-238024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20FFF924251
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:25:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECE45924256
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:28:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44A901C238DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:25:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E8AF1F2503C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:28:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6973C1BC079;
-	Tue,  2 Jul 2024 15:25:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="kEkbHH/X";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ITaMGUSc"
-Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8197E1BC07A;
+	Tue,  2 Jul 2024 15:28:07 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486761AD9E7;
-	Tue,  2 Jul 2024 15:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108C41BA89E;
+	Tue,  2 Jul 2024 15:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719933937; cv=none; b=qFhGJxrsimjSVcupi/i2uUl3KOtmBokWE7CaubfYxG9Yj7qdrYTvRWBRAQLGn3/7MA+6jw9F6VASJPXQUvneIuYwW6AGHNWvcYzL7qAs2DDwh7Hy/8akiGkL8x/tm2ZMQuiR4b0An7Z7A9K/ZuwjtN89jv91yT76r7LmsSWUIJM=
+	t=1719934087; cv=none; b=HXbDZHZmZgtr7OsCpD6Wax3mf0Vf2jfYpSDKG/beihgNQb43fx9k99y8sJagYBw1vtFRb/Mzs7d3Nq89hj28AiulWYznHFWW1MNzU72Asu8Kg9qtI6nxJPInI8+zCuBxKacU0bp2+1jNMX3iM2aPxUeAzviIX1iSFWd1zZTPaTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719933937; c=relaxed/simple;
-	bh=yRg+8F091FuUES+JYKaVyH2G6lgo5Hr0AeAjnDuBU74=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=NrygjBQt21fiUZGQlq0tNCGsHpwtpaKc3OvR6wr7fkJtQk7qcV2Aa+axJX1dx6U39HVVK8JFlbLt1IEFDIzQTY8E44qjrEMtFhHfHHWxWcrp/jqXTGi3MT3gUkY2FcmjXOdODvCVObUKbBfhH9+8xw+cHXp1/XjNhafvnpss2U0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=kEkbHH/X; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ITaMGUSc; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 48F9413804AD;
-	Tue,  2 Jul 2024 11:25:33 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Tue, 02 Jul 2024 11:25:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1719933933; x=1720020333; bh=//A1hzQZrR
-	Fs+Jf7FIQ+nCDerLffGWLM2hRD5dKs7d4=; b=kEkbHH/XWCSn06of/wqt97JCcJ
-	d63/Ez6gIB61Do7L3zzyqlwIy1tVZClPACYGlmn2ihv8WrN2RKGIuE/YWSDyC5X3
-	NyOBG9hCHKcF6B3d0U6ABCoD0ABGEWQ4onpwFrpFKgwhkPriO5tL2mLgWIzO/S5V
-	BK65nyq5m/J6OOYIDUMu7j60fcabWeGzEZ/nBnJlg794+Dt+QugkelVT9hEEp7Sw
-	Fb6pognCnQ28sK53xdF4VE9qsQQ0GWTJbnxxBqYdwtuQTnzrL2C+BkxLIGKS77ML
-	e992b6+4qaUoXXMBF0AqrVDeY8pVe53x+UuXMFbiYP/7AuoX43hHfXvDlb/g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1719933933; x=1720020333; bh=//A1hzQZrRFs+Jf7FIQ+nCDerLff
-	GWLM2hRD5dKs7d4=; b=ITaMGUScvo3efaios+nmJ+l2HFnt+Ouk1xOR9SCejBQX
-	X+nMNacgNPtPKVi4irj4dEYmGrr8FNITbhQUvWqAYQQPILNRrWJVHQULFVvNoLM7
-	rTdtpiL1WJQ2qMf+/vYV45qnUD9+xhUBPDPwmPbuPForpfbAg5MR7IWuf4lWJOgu
-	ZjcC9O6LcbgYKxFqEkJjij/TmMxzFEnaFEMin+DhBtFLzdFURKTy10k+bo8qqvn6
-	Y6zNLEL+rF6C87PnO3yUyXaOLtKKo2b6FHT7E7qU6piIjRurUT67VkufhxxxVfli
-	WkgrL30i15fkwtNeO2lCJCtYhLxBOKJhGEzhWh11AQ==
-X-ME-Sender: <xms:7BuEZttoIOu3FgcnRTCwlUY9enW-fWdSGJA21XR6uYg7nZNfEvYT4A>
-    <xme:7BuEZmeD2xZcTgq_x095S6hIFE_CXNZyvUj2JjppPZHG2X6yvowIK7ZB0ttBhCkdS
-    mKq1RK7-XDTo4l4GAg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehgdekiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
-    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
-    hnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:7BuEZgzV2V9m7yHeP1-CY_1ToL-7saFDkeYbauhzrcIdP0hWxpdECQ>
-    <xmx:7BuEZkPqG5nj4biEtgHDOMbrIFpZ-CZs4LyXyDGqrlwrKeiI3XmUng>
-    <xmx:7BuEZt-0YpFxDaNOoYfGLVTo6xVdfiYwpii7nZD9L9GApKzNrmdlDg>
-    <xmx:7BuEZkX5ATZdeALUPYBN_7NUDUsZodxq3UocvaVEljBw0ouzzUeugQ>
-    <xmx:7RuEZhWiOkzLt1hDorcP0Kt54ntgBJmUM8iMCFrY5Nkd-AbR7KPNeG0_>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id A1149B60092; Tue,  2 Jul 2024 11:25:32 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-566-g3812ddbbc-fm-20240627.001-g3812ddbb
+	s=arc-20240116; t=1719934087; c=relaxed/simple;
+	bh=pDeHVRV9Y0UmQbfvePSna4sC2ujf3+Vy3QX1aGdopPw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VE7RGtYtuv/nmsl4F336BJqlZyGdi3tU4RW+EvmlG+FTqW7lZSoWuCr0/3j9RA6tkFnDgxRLeTj65GjuTjY8YJHEUWK5synIsbpHG0unGCC8ydqp1TUukEA2kfdkjz0VwlewXdk5HvQxb9mtd1TNWt9tP07gKa2pa5UbqT/Ne3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 036FDC116B1;
+	Tue,  2 Jul 2024 15:28:03 +0000 (UTC)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Huacai Chen <chenhuacai@loongson.cn>
+Subject: [PATCH V2 0/2] LoongArch: Add Loongson-3 CPUFreq driver support
+Date: Tue,  2 Jul 2024 23:27:35 +0800
+Message-ID: <20240702152737.1184244-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <35691b55-436c-4c52-b241-f0c5326227cb@app.fastmail.com>
-In-Reply-To: <20240628003253.1694510-11-almasrymina@google.com>
-References: <20240628003253.1694510-1-almasrymina@google.com>
- <20240628003253.1694510-11-almasrymina@google.com>
-Date: Tue, 02 Jul 2024 17:25:11 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Mina Almasry" <almasrymina@google.com>, Netdev <netdev@vger.kernel.org>,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: "David S . Miller" <davem@davemloft.net>,
- "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
- "Paolo Abeni" <pabeni@redhat.com>,
- "Donald Hunter" <donald.hunter@gmail.com>,
- "Jonathan Corbet" <corbet@lwn.net>,
- "Richard Henderson" <richard.henderson@linaro.org>,
- "Ivan Kokshaysky" <ink@jurassic.park.msu.ru>,
- "Matt Turner" <mattst88@gmail.com>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Helge Deller" <deller@gmx.de>, "Andreas Larsson" <andreas@gaisler.com>,
- "Jesper Dangaard Brouer" <hawk@kernel.org>,
- "Ilias Apalodimas" <ilias.apalodimas@linaro.org>,
- "Steven Rostedt" <rostedt@goodmis.org>,
- "Masami Hiramatsu" <mhiramat@kernel.org>,
- "Mathieu Desnoyers" <mathieu.desnoyers@efficios.com>,
- "Alexei Starovoitov" <ast@kernel.org>,
- "Daniel Borkmann" <daniel@iogearbox.net>,
- "Andrii Nakryiko" <andrii@kernel.org>,
- "Martin KaFai Lau" <martin.lau@linux.dev>,
- "Eduard Zingerman" <eddyz87@gmail.com>, "Song Liu" <song@kernel.org>,
- "Yonghong Song" <yonghong.song@linux.dev>,
- "John Fastabend" <john.fastabend@gmail.com>,
- "KP Singh" <kpsingh@kernel.org>, "Stanislav Fomichev" <sdf@fomichev.me>,
- "Hao Luo" <haoluo@google.com>, "Jiri Olsa" <jolsa@kernel.org>,
- "Steffen Klassert" <steffen.klassert@secunet.com>,
- "Herbert Xu" <herbert@gondor.apana.org.au>,
- "David Ahern" <dsahern@kernel.org>,
- "Willem de Bruijn" <willemdebruijn.kernel@gmail.com>,
- shuah <shuah@kernel.org>, "Sumit Semwal" <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- "Bagas Sanjaya" <bagasdotme@gmail.com>,
- "Christoph Hellwig" <hch@infradead.org>,
- "Nikolay Aleksandrov" <razor@blackwall.org>,
- "Pavel Begunkov" <asml.silence@gmail.com>, "David Wei" <dw@davidwei.uk>,
- "Jason Gunthorpe" <jgg@ziepe.ca>,
- "Yunsheng Lin" <linyunsheng@huawei.com>,
- "Shailend Chand" <shailend@google.com>,
- "Harshitha Ramamurthy" <hramamurthy@google.com>,
- "Shakeel Butt" <shakeel.butt@linux.dev>,
- "Jeroen de Borst" <jeroendb@google.com>,
- "Praveen Kaligineedi" <pkaligineedi@google.com>,
- "Willem de Bruijn" <willemb@google.com>,
- "Kaiyuan Zhang" <kaiyuanz@google.com>
-Subject: Re: [PATCH net-next v15 10/14] tcp: RX path for devmem TCP
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 28, 2024, at 02:32, Mina Almasry wrote:
-> --- a/arch/alpha/include/uapi/asm/socket.h
-> +++ b/arch/alpha/include/uapi/asm/socket.h
-> @@ -140,6 +140,11 @@
->  #define SO_PASSPIDFD		76
->  #define SO_PEERPIDFD		77
-> 
-> +#define SO_DEVMEM_LINEAR	78
-> +#define SCM_DEVMEM_LINEAR	SO_DEVMEM_LINEAR
-> +#define SO_DEVMEM_DMABUF	79
-> +#define SCM_DEVMEM_DMABUF	SO_DEVMEM_DMABUF
+This series add architectural preparation and CPUFreq driver for
+Loongson-3 (based on LoongArch).
 
-Something is still wrong with the number assignment:
+Some of LoongArch processors support DVFS, their IOCSR.FEATURES has
+IOCSRF_FREQSCALE set. And they has a micro-core in the package called
+SMC (System Management Controller) to scale frequency, voltage, etc.
 
-> --- a/arch/mips/include/uapi/asm/socket.h
-> +++ b/arch/mips/include/uapi/asm/socket.h
-> @@ -151,6 +151,11 @@
->  #define SO_PASSPIDFD		76
->  #define SO_PEERPIDFD		77
-> 
-> +#define SO_DEVMEM_LINEAR	78
-> +#define SCM_DEVMEM_LINEAR	SO_DEVMEM_LINEAR
-> +#define SO_DEVMEM_DMABUF	79
-> +#define SCM_DEVMEM_DMABUF	SO_DEVMEM_DMABUF
-> +
->  #if !defined(__KERNEL__)
-> 
->  #if __BITS_PER_LONG == 64
+V1 -> V2:
+1, Use module_platform_driver() instead of module_init()/module_exit();
+2, Move the lock protection into do_service_request();
+3, Add light-weight hotplug support with help of online()/offline() callbacks;
+4, Simplify loongson3_freq_data by removing cur_cpu_freq;
+5, Remove unneeded cpu_online() checking.
 
-so alpha and mips use the same numbering system as
-the generic version for existing numbers
+Huacai Chen(2):
+ LoongArch: Add architectural preparation for CPUFreq.
+ cpufreq: Add Loongson-3 CPUFreq driver support.
 
-> diff --git a/arch/parisc/include/uapi/asm/socket.h 
-> b/arch/parisc/include/uapi/asm/socket.h
-> index be264c2b1a117..2b817efd45444 100644
-> --- a/arch/parisc/include/uapi/asm/socket.h
-> +++ b/arch/parisc/include/uapi/asm/socket.h
-> @@ -132,6 +132,11 @@
->  #define SO_PASSPIDFD		0x404A
->  #define SO_PEERPIDFD		0x404B
-> 
-> +#define SO_DEVMEM_LINEAR	78
-> +#define SCM_DEVMEM_LINEAR	SO_DEVMEM_LINEAR
-> +#define SO_DEVMEM_DMABUF	79
-> +#define SCM_DEVMEM_DMABUF	SO_DEVMEM_DMABUF
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+---
+2.27.0
 
-parisc uses a different number, but you start using the
-generic version here. This is probably fine but needs 
-a comment.
-
-> index 8ce8a39a1e5f0..25a2f5255f523 100644
-> --- a/include/uapi/asm-generic/socket.h
-> +++ b/include/uapi/asm-generic/socket.h
-> @@ -135,6 +135,11 @@
->  #define SO_PASSPIDFD		76
->  #define SO_PEERPIDFD		77
-> 
-> +#define SO_DEVMEM_LINEAR	98
-> +#define SCM_DEVMEM_LINEAR	SO_DEVMEM_LINEAR
-> +#define SO_DEVMEM_DMABUF	99
-> +#define SCM_DEVMEM_DMABUF	SO_DEVMEM_DMABUF
-
-These on the other hand look like a typo: did you
-mean number 78 and 79 instead of 98 and 99?
-
-Alternatively, you could continue with number 87,
-which is the next unused number on sparc, and have
-the same numbers on all architectures?
-
-     Arnd
 
