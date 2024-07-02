@@ -1,220 +1,136 @@
-Return-Path: <linux-kernel+bounces-238358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2485D9248D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:14:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D45C9248D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:14:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF27C286279
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:14:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1419AB21AC4
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C21B20013B;
-	Tue,  2 Jul 2024 20:14:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B5C200139;
+	Tue,  2 Jul 2024 20:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="T5xF/ldV"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PobfWWYd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4041BD4EF;
-	Tue,  2 Jul 2024 20:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0128F1BD4EF
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 20:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719951240; cv=none; b=GJLMIzmAQj9GsbPeL7smnCzCJmt6CH4/3KbmuPQXBkDs+eRkw1Y5zpVhzJBofDYIIt6aD7e23mDY5jwAPBS8w+whSsDwLdoSSKty4YG9ZqOFWzJD3jVLlUIsTwqKtrWnTMTkKAMFgkWSDD1QMyLWxoBFP84k8bEy6sBD5rTW30U=
+	t=1719951256; cv=none; b=a04jifKMmA5JIISiySDI70E/ZMdK4EDJVJN+WlejXKQhRpVP8aTG9wtpjoFNO6QQtWWS+oBKwGa8JS0ZsXXI6OYkWNEq4+Bf5m9Rlt4i12/wukpWJ01LDyBFblJO2SkbOKPsFLYwaLjETKO9QbRWTpcGfEqViTULpV2rGAlZ1t0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719951240; c=relaxed/simple;
-	bh=tIrWAMtYQDHGnAKcDAHOxAuCGlOo7sWRf0KLjVuDOpU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=XwCJrFPf5cu2c52xPRlxJksSG/BubpT40aqObZjBInfBDEqArZ6EAiKzrMGM6EgSd5Go3AX3qNHp8a8BRjcPwfQYboB4J8wL9U5tfKZE5rwb8v+NFRidIMbbtkj86l5bjuwrxBwcdWnTv6NzdlxuUOHEk/n8Jh+FyUtsXVGvDss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=T5xF/ldV; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 462EVAcH028799;
-	Tue, 2 Jul 2024 20:13:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	tIrWAMtYQDHGnAKcDAHOxAuCGlOo7sWRf0KLjVuDOpU=; b=T5xF/ldVpkdXlidm
-	FxEWRWZyy9IwIo5EL5yItM5H0fhTXsNtl7M1IRHiTWHou5GCgF2Bb+oruJKsgeI+
-	Gtmw+2dHbEW30NpBuhV9olzclPrRsFKKIcP7dDHEFEy+13hnlGPXZFxPGCby3OLk
-	a0bIH07dAVpXXLmR0YcL1zOiQl83zDIiuQB//S70jAxqI6/ppyXPol1ESMTk6AP4
-	LCWWH6GfzLT9pPLDOu5stnKPKi+hC3MqA8I3g7Lwd6Tf9qxaKnTTE3riVfcl6ouN
-	P9tDn3w1OBtHD2tjngdcFuReWh3a94WjqCUeEzPmkENrHRhNgDXh38sc0/8We+aU
-	fD/3zQ==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 404kcth6gh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 02 Jul 2024 20:13:52 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 462KDpR3024415
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 2 Jul 2024 20:13:51 GMT
-Received: from [10.110.36.143] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 2 Jul 2024
- 13:13:50 -0700
-Message-ID: <1fcea728-6ee6-4361-b3c5-63d8a2facd74@quicinc.com>
-Date: Tue, 2 Jul 2024 13:13:49 -0700
+	s=arc-20240116; t=1719951256; c=relaxed/simple;
+	bh=6yQX24i0j5POCJvd/ZR1KFxvOAs2rK2wuTtDubWxa24=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YFeqHDj4O9sh/QMpt3d/O1/DLg3x0qhb0lKoDUQlgQ6qRmLVHPMpltt6aWrXA2tOoAL5DHZYDdji8szu8CHnxHxO/891GT45uKgYfKrqVvnb4lxji9Os7V8e/CibQLcEWfM4MRfCnronkcHlTTnzDfDlTtRZ1LasDXJeeqmuLDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PobfWWYd; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719951253;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fBu7ePDVo++7D4IjJbMnU5rjjRnV5+agERHDVqnqF08=;
+	b=PobfWWYdItRFIUAKiekTXIDlSFNitlhpdxu/gjXfgJ4/crhfMwVdQ2D5vmW0tcOiFvMmsl
+	xg9e8p8BdnD154+U7No91El1Yjl1ExbWUyifow6/QgkYGBAXDMSh1aucc7i8S8hzAcghRr
+	jFyCcbnkLDrCwtettAD6+HM/7muY6Ew=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-77-UCZzHcZWNomj7qEdP3F5iw-1; Tue, 02 Jul 2024 16:14:10 -0400
+X-MC-Unique: UCZzHcZWNomj7qEdP3F5iw-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4256569a4faso28941435e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 13:14:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719951249; x=1720556049;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fBu7ePDVo++7D4IjJbMnU5rjjRnV5+agERHDVqnqF08=;
+        b=mW5kIC7R4BfMnXEByugH9do8iwm7Rbvy+fh5RNsuu19myccIsuvDwd+mQUhnBBx1oh
+         c4+alANf/Ol06Q5/3nrnWkBDeQZVqHQ0BICHJWKl/mwcI1/pXaSBNUbH7YHa9Pa8PN+v
+         LR/g2+935OT+IiKqbIF3SFwb85F1cjGtStxQ0lnuN1UKFCZmSBRcuy51g50jhsJcr+Bs
+         MnGmLFFRq0yJpeSAZaZbjcgC4Uk44kn34GACQojv0vCRQt8uC+6euTCZhVMGXGY0h/2H
+         oX2TKT7hF+5OUULzRxsP0qYuxuiAZu+a6WMmNQmWcIu/wnK3KMTAMwomeaHqvGpULaQU
+         kmbA==
+X-Forwarded-Encrypted: i=1; AJvYcCXUz7/c1k8iNGXUkI6BtK01tKLNntxOGTFznEyq5aY7m192KnGVSTHXucHo7g4wwpiBjpIBFCmu65v+cdgnDwCrSYPVcBb28ashqrYj
+X-Gm-Message-State: AOJu0YxFWN+2z9AWi2z3m0i0IWXghfMFB0E+GB8e34ZpdT7XP7xYNHjN
+	sUIhSPRZ6ye9SccF8NdbDlACV9QLC8qOSfYzvcLYJpyTu+gQF96Tc1lM6O715jGObxQWGiouZGj
+	ie5cZpek3prwGlJvIELF/o0nVZRxVWcQTlkEDcwkPF1kjkQM68uJIa0P6QkZV8w==
+X-Received: by 2002:a05:600c:5113:b0:424:8836:310c with SMTP id 5b1f17b1804b1-4256d4d3063mr114936105e9.5.1719951249213;
+        Tue, 02 Jul 2024 13:14:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH3yYy+Pj4KvbuOhw9OhwaRAp+IJ09cqGiSTJv3EMe94RolCEIKpfHnntszHbV+PrhqoxF3tA==
+X-Received: by 2002:a05:600c:5113:b0:424:8836:310c with SMTP id 5b1f17b1804b1-4256d4d3063mr114935935e9.5.1719951248617;
+        Tue, 02 Jul 2024 13:14:08 -0700 (PDT)
+Received: from redhat.com ([2a02:14f:1f5:eadd:8c31:db01:9d01:7604])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af376easm210890935e9.5.2024.07.02.13.14.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 13:14:08 -0700 (PDT)
+Date: Tue, 2 Jul 2024 16:14:03 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] virtio: add missing MODULE_DESCRIPTION() macros
+Message-ID: <20240702161350-mutt-send-email-mst@kernel.org>
+References: <20240702-md-sh-drivers-virtio-v1-1-cf7325ab6ccc@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V6 5/5] arm64: dts: qcom: x1e80100: Enable cpufreq
-To: Sibi Sankar <quic_sibis@quicinc.com>, Johan Hovold <johan@kernel.org>
-CC: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <jassisinghbrar@gmail.com>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <dmitry.baryshkov@linaro.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <quic_rgottimu@quicinc.com>, <quic_kshivnan@quicinc.com>,
-        <conor+dt@kernel.org>, <quic_psodagud@quicinc.com>,
-        <abel.vesa@linaro.org>
-References: <20240612124056.39230-1-quic_sibis@quicinc.com>
- <20240612124056.39230-6-quic_sibis@quicinc.com>
- <ZoQjAWse2YxwyRJv@hovoldconsulting.com>
- <f53bc00f-8217-1dc8-5203-1a83c24d353d@quicinc.com>
-Content-Language: en-US
-From: Nikunj Kela <quic_nkela@quicinc.com>
-In-Reply-To: <f53bc00f-8217-1dc8-5203-1a83c24d353d@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: oM6fzncQLZ4hXXcG4_i6Qz8O2v0WtrIF
-X-Proofpoint-ORIG-GUID: oM6fzncQLZ4hXXcG4_i6Qz8O2v0WtrIF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-02_15,2024-07-02_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- bulkscore=0 mlxlogscore=999 priorityscore=1501 impostorscore=0
- suspectscore=0 mlxscore=0 lowpriorityscore=0 clxscore=1011 malwarescore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407020148
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240702-md-sh-drivers-virtio-v1-1-cf7325ab6ccc@quicinc.com>
 
+On Tue, Jul 02, 2024 at 01:10:18PM -0700, Jeff Johnson wrote:
+> With ARCH=sh, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/virtio/virtio.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/virtio/virtio_ring.o
+> 
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-On 7/2/2024 12:59 PM, Sibi Sankar wrote:
->
->
-> On 7/2/24 21:25, Johan Hovold wrote:
->> On Wed, Jun 12, 2024 at 06:10:56PM +0530, Sibi Sankar wrote:
->>> Enable cpufreq on X1E80100 SoCs through the SCMI perf protocol node.
->>>
->>> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
->>> ---
->>>   arch/arm64/boot/dts/qcom/x1e80100.dtsi | 63
->>> ++++++++++++++++----------
->>>   1 file changed, 39 insertions(+), 24 deletions(-)
->>>
->>> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
->>> b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
->>> index 7b619db07694..d134dc4c7425 100644
->>> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
->>> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
->>> @@ -69,8 +69,8 @@ CPU0: cpu@0 {
->>>               reg = <0x0 0x0>;
->>>               enable-method = "psci";
->>>               next-level-cache = <&L2_0>;
->>> -            power-domains = <&CPU_PD0>;
->>> -            power-domain-names = "psci";
->>> +            power-domains = <&CPU_PD0>, <&scmi_dvfs 0>;
->>> +            power-domain-names = "psci", "perf";
->>>               cpu-idle-states = <&CLUSTER_C4>;
->>
->>> +        scmi {
->>> +            compatible = "arm,scmi";
->>> +            mboxes = <&cpucp_mbox 0>, <&cpucp_mbox 2>;
->>> +            mbox-names = "tx", "rx";
->>> +            shmem = <&cpu_scp_lpri0>, <&cpu_scp_lpri1>;
->>> +
->>> +            #address-cells = <1>;
->>> +            #size-cells = <0>;
->>> +
->>> +            scmi_dvfs: protocol@13 {
->>> +                reg = <0x13>;
->>> +                #power-domain-cells = <1>;
->>> +            };
->>> +        };
->>>       };
->>
->
-> Hey Johan,
->
-> Thanks for trying out the series.
->
->> This series gives a nice performance boost on the x1e80100 CRD, but I'm
->> seeing a bunch of warnings and errors that need to be addressed:
->>
->> [    9.533053] arm-scmi firmware:scmi: Failed to get FC for protocol
->> 13 [MSG_ID:6 / RES_ID:0] - ret:-95. Using regular messaging.
->> [    9.549458] arm-scmi firmware:scmi: Failed to add opps_by_lvl at
->> 3417600 for NCC - ret:-16
->> [    9.563925] arm-scmi firmware:scmi: Failed to add opps_by_lvl at
->> 3417600 for NCC - ret:-16
->> [    9.572835] arm-scmi firmware:scmi: Failed to get FC for protocol
->> 13 [MSG_ID:6 / RES_ID:1] - ret:-95. Using regular messaging.
->> [    9.609471] arm-scmi firmware:scmi: Failed to add opps_by_lvl at
->> 3417600 for NCC - ret:-16
->> [    9.633341] arm-scmi firmware:scmi: Failed to add opps_by_lvl at
->> 3417600 for NCC - ret:-16
->> [    9.650000] arm-scmi firmware:scmi: Failed to get FC for protocol
->> 13 [MSG_ID:6 / RES_ID:2] - ret:-95. Using regular messaging.
->
-> X1E uses fast channels only for message-id: 7 (level set) and regular
-> channels for all the other messages. The spec doesn't mandate fast
-> channels for any of the supported message ids for the perf protocol.
-> So nothing to fix here.
->
->> [    9.727098] cpu cpu4: _opp_is_duplicate: duplicate OPPs detected.
->> Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq:
->> 3417600000, volt: 0, enabled: 1
->> [    9.737157] cpu cpu4: _opp_is_duplicate: duplicate OPPs detected.
->> Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq:
->> 3417600000, volt: 0, enabled: 1
->> [    9.875039] cpu cpu8: _opp_is_duplicate: duplicate OPPs detected.
->> Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq:
->> 3417600000, volt: 0, enabled: 1
->> [    9.888428] cpu cpu8: _opp_is_duplicate: duplicate OPPs detected.
->> Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq:
->> 3417600000, volt: 0, enabled: 1
->
-> The duplicate entries reported by the perf protocol come directly from
-> the speed bins. I was told the duplicate entry with volt 0 is meant to
-> indicate a lower power way of achieving the said frequency at a lower
-> core count. We have no way of using it in the kernel and it gets safely
-> discarded. So again nothing to fix in the kernel.
+tagged, thanks!
 
-Hi Sibi,
+> ---
+>  drivers/virtio/virtio.c      | 1 +
+>  drivers/virtio/virtio_ring.c | 1 +
+>  2 files changed, 2 insertions(+)
+> 
+> diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
+> index b968b2aa5f4d..396d3cd49a1b 100644
+> --- a/drivers/virtio/virtio.c
+> +++ b/drivers/virtio/virtio.c
+> @@ -609,4 +609,5 @@ static void __exit virtio_exit(void)
+>  core_initcall(virtio_init);
+>  module_exit(virtio_exit);
+>  
+> +MODULE_DESCRIPTION("Virtio core interface");
+>  MODULE_LICENSE("GPL");
+> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> index 2a972752ff1b..1cac7d5b3062 100644
+> --- a/drivers/virtio/virtio_ring.c
+> +++ b/drivers/virtio/virtio_ring.c
+> @@ -3244,4 +3244,5 @@ void virtqueue_dma_sync_single_range_for_device(struct virtqueue *_vq,
+>  }
+>  EXPORT_SYMBOL_GPL(virtqueue_dma_sync_single_range_for_device);
+>  
+> +MODULE_DESCRIPTION("Virtio ring implementation");
+>  MODULE_LICENSE("GPL");
+> 
+> ---
+> base-commit: 1dfe225e9af5bd3399a1dbc6a4df6a6041ff9c23
+> change-id: 20240702-md-sh-drivers-virtio-704eb84769cb
 
-Can you try increasing the max_msg_size to 256 bytes in mailbox
-transport? We saw the same issue but got resolved by increasing the
-max_msg_size for the transport(obviously, I reduced the max_msg to 10 to
-keep the total shmem size same). Even the opps_by_lvl warning went away
-with this for us.
-
-Thanks,
-
--Nikunj
-
->
->> [    9.913506] debugfs: Directory 'NCC' with parent 'pm_genpd'
->> already present!
->> [    9.922198] debugfs: Directory 'NCC' with parent 'pm_genpd'
->> already present!
->
-> Yeah I did notice ^^ during dev, the series isn't the one introducing it
-> so it shouldn't block the series acceptance. Meanwhile I'll spend some
-> cycles to get this warn fixed.
->
-> -Sibi
->
->>
->> Johan
->>
 
