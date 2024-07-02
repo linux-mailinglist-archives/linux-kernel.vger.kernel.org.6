@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-237935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65C0F9240B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:26:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 347D59240B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:26:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1293D1F24137
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:26:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70C3D1C21D87
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:26:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033FF1BB6AB;
-	Tue,  2 Jul 2024 14:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA1C1BA869;
+	Tue,  2 Jul 2024 14:25:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nsU3FUlp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PQL7rowR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 445B61BA06B;
-	Tue,  2 Jul 2024 14:25:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596EA1B583E;
+	Tue,  2 Jul 2024 14:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719930304; cv=none; b=GIVDSQsBxHpKjGwDsGhN8p/C0HJYjNOHmL5kLSwpzrsfz9jjQNAWzw01RMOVUmv7zN/rAHZyXQODOjFp9OwwPxAorZEgQjc6YeNsclcS9aKzwvhehkZOjCqnN/ufLSBcOvY7SSqWEF4N0F10MZkPgm/94aryOqCZ7w+4ux67DpI=
+	t=1719930318; cv=none; b=YP3v1O5LoNez2BKL+wf8WA9BW3EOoxXgmLO1NVXvcVRAA2Swfldouol/8riXO/3TKzZPmmQ0f9K4rOTRmmtB0Q/906TGQNk6wvioW9lEBsw4/NDoHQZuH94XwSFg3RnHyWPoQkNlNBvd93dmp5Uh6d1Mf88HzPZ2QrGEOENz2/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719930304; c=relaxed/simple;
-	bh=YxMjFqoZFypceo4E8GRL6bTbLSFyPrQuJNG4Kk8w9+A=;
+	s=arc-20240116; t=1719930318; c=relaxed/simple;
+	bh=fyyuNX3vuwWRe2QVnlPxbjWTgmZfPiqrXLoWmo1s4dI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Peb7AvTPfNen3i9DEJPZekJp2beXsFhnD9aB/bkZaBABVgjtKuU9UjBgALE3cabCO62sdhQzhHQOD3o2rO5uZnOY3LS2X21gr458lINZNY4h5AHzGVWpkXuYOZLGFENnFnkPchEy6P0Y0Sc+1lABl+0eSmyvekTzXjzHAH6wyC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nsU3FUlp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B76AC4AF0C;
-	Tue,  2 Jul 2024 14:25:00 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=nlV2Cj/ZFfj88M+LwOnUN3fiTQhSX10kCjC0G5/YNmyoX4wiPUlGJ1R6shL60QhIgtT36e0XTVjfhieHvzrCLeuR3B4Vtze39dYvN+tW7UP4TDbbTF3DEb2YkSraSoudyWjmTN6FPa+J7ui2e1hb61eI/rdyQyQNs5Quz/HsbcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PQL7rowR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B40BC2BD10;
+	Tue,  2 Jul 2024 14:25:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719930303;
-	bh=YxMjFqoZFypceo4E8GRL6bTbLSFyPrQuJNG4Kk8w9+A=;
+	s=k20201202; t=1719930317;
+	bh=fyyuNX3vuwWRe2QVnlPxbjWTgmZfPiqrXLoWmo1s4dI=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nsU3FUlpR6xTUh4FSwMJr68m4RjzZAsaUURYkCLFlg5asFrHVhRtXHUux/2tbroy5
-	 EBS81ffbfwTz8C6C+6wNdqJuzNRBTn5oDFBmn11ecgfIJJA0L30Z3ezj56VpBpZBvu
-	 XYl0qqTdHNtbfPzcmpYEjKWaa6pqKaFHb71rxagY3g2d8cPFVF/3/Bhw7gb9BLfHQv
-	 u1iV28E/nLX58thJPry+Ozaz7c+xEU/O2pLJ4Nlis2feOp7UnRV8OyP0UiWDZzJ8l3
-	 r4eRNWxAncJcJzetNlUvCp2tH07DFXzq/3Aq3xetF5AKgorKtw0Z9wmbhLRW+hFVp5
-	 KjHj1Pr/fqRXg==
-Message-ID: <897f588f-019e-4519-9106-bc18ef22f5cb@kernel.org>
-Date: Tue, 2 Jul 2024 16:24:58 +0200
+	b=PQL7rowRuO40gGFnUvRW3+YAYt8k7ke67SlEyE9DcHPB6QvTbIK+LCgqhqQaq2fda
+	 jFB3jZzcL0mbIbNArRV+ZXT5dt+cTj/M/UewxL0WWUFxaQT3z9Sreja0mlyLEAIohX
+	 9hb8AqTvh02jZq7NOZE5iZenPD8aHsVb09AZ1zovyhsm2/poXqmaarkindNoinufBe
+	 X3lsKb/NBhhZtN296b06xEiB6q+NnZmnPMSECeUZMRf4AA9E6Wnfds9v8aNFj+1eh4
+	 fwQkuk70zYuX8EG89O3KKhLaCjvr47Uv0PtNNfSTyb0q2+kH/KlbAshiQ0ItMZByeD
+	 3bCZKSMZd78Lw==
+Message-ID: <562d5669-17c9-45cf-bcf1-491663c86c1c@kernel.org>
+Date: Tue, 2 Jul 2024 16:25:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,26 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] dt-bindings: regulator: pca9450: Make interrupt
- optional
+Subject: Re: [PATCH 5/7] dt-bindings: arm: fsl: Add Kontron i.MX93 OSM-S based
+ boards
 To: Frieder Schrempf <frieder@fris.de>, Conor Dooley <conor+dt@kernel.org>,
  devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
- Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Robin Gong <yibin.gong@nxp.com>
-Cc: Frieder Schrempf <frieder.schrempf@kontron.de>, Joy Zou
- <joy.zou@nxp.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ linux-kernel@vger.kernel.org, Li Yang <leoyang.li@nxp.com>,
+ Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>
+Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
+ Alexander Stein <alexander.stein@ew.tq-group.com>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Conor Dooley <conor.dooley@microchip.com>,
+ Gregor Herburger <gregor.herburger@ew.tq-group.com>,
+ Hiago De Franco <hiago.franco@toradex.com>,
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+ Joao Paulo Goncalves <joao.goncalves@toradex.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Marco Felsch <m.felsch@pengutronix.de>,
+ Markus Niebel <Markus.Niebel@ew.tq-group.com>,
+ Mathieu Othacehe <m.othacehe@gmail.com>, Tim Harvey <tharvey@gateworks.com>
 References: <20240702103155.321855-1-frieder@fris.de>
- <20240702103155.321855-5-frieder@fris.de>
+ <20240702103155.321855-6-frieder@fris.de>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,23 +114,21 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240702103155.321855-5-frieder@fris.de>
+In-Reply-To: <20240702103155.321855-6-frieder@fris.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 02/07/2024 12:31, Frieder Schrempf wrote:
 > From: Frieder Schrempf <frieder.schrempf@kontron.de>
 > 
-> The interrupt line is currently only used for printing warnings and
-> the PMIC works just fine without it.
+> Add the bindings for the Kontron i.MX93 OSM-S SoM and BL carrier
+> board.
 > 
-> Allow boards to not use the interrupt line and therefore make it
-> optional.
-> 
+> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+> ---
+>  Documentation/devicetree/bindings/arm/fsl.yaml | 6 ++++++
 
-Do you want to say that interrupt is optional in the hardware and not
-connected in your board? Sorry, but that's quite long statement without
-actually stating the main point why this should be optional in the binding.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
