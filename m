@@ -1,128 +1,134 @@
-Return-Path: <linux-kernel+bounces-238071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90D9A9242F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:55:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 062AA9242F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:56:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D4CC28BB1A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:55:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AD051C248BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5014B1BD001;
-	Tue,  2 Jul 2024 15:55:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889141BD000;
+	Tue,  2 Jul 2024 15:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pJbpM50l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="i43a3zt0"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1AF26AE4;
-	Tue,  2 Jul 2024 15:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C014326AE4;
+	Tue,  2 Jul 2024 15:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719935749; cv=none; b=ucsBsDJThU/3V13riynljmu8LyNzmofcVqRWriO23H1RsbCKU27JUb7wRn0TwWV7pRG59OfbFW4T+/sVi+8/B9eJZqp6xYDakyYvJ1RdYu5cGQupg9XZxHJUnpkjcgqnORrXuPdxsTRGgcsXgg1e8yXVq6iJMs4TRNUR1V+Dlh4=
+	t=1719935779; cv=none; b=Xw7okwRUCsB8FAlVjqShw38UrZx8oVpvhBU5Y5JUoa32sIUdeVUGcMj0lUX07i9XOwCt2ZvaDn+mM+DaX5q6POju3+QaO2o4d3DyfYxJ1zV57xJVH5cFB66WB+npg1p2LLMa92TvvTEEZ6sawN/WDym9x/FgVjJFpdHiWtJ2vUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719935749; c=relaxed/simple;
-	bh=bR4HNfKuY8jGJG6iuXf2xRGlqbsq3FVgf0n2KcVyQlo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G0Qgc9LXlBE7KUCJ0MQOKVI2mYasnsb5WlkAlOo1/e/M+bwywMXzkJJhEVO783QzDvMCiGaVnR9jyL/111PKAvAheljwjdJL9yrf3xAD1uOwZfGBSpYX0of+MfsXdB6L1nTfKgDA6ID5u9cu2WG2i1z1DHD7kT1w4TOPd7nwOLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pJbpM50l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69D7EC4AF07;
-	Tue,  2 Jul 2024 15:55:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719935749;
-	bh=bR4HNfKuY8jGJG6iuXf2xRGlqbsq3FVgf0n2KcVyQlo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pJbpM50lyyIUovqd33O82XefqYGxiM+do2g3jXYXYoxk1GTBC93LwYs+pV0ot3Y8K
-	 UqnVJVu51D3hUcB8VXMFZbJzn9glQPfYrUz8F9rpN+MNExo14wFGuiIrIY9ysDqvKo
-	 OTFRTqcAC0ePiWxzyvaJQXGrV15NbXc08BaE6XwBQoh8mKYMQfR/zCXBwVpthHZR0a
-	 efDoebDxfIGXFWaZhQ/QqzMMEUd01hxtLFfDCy7QXZ1O8O1pPnd8rNZo84Fu/oHrqa
-	 aQWnG/7eGENVZzDQ9r9QBjHU9NTK0a1bjUY+ZwGAwHOrhr8v+4rk155nOb7rPNdtTY
-	 VaBB7glgeMDmQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sOfr7-000000003W1-26rB;
-	Tue, 02 Jul 2024 17:55:46 +0200
-Date: Tue, 2 Jul 2024 17:55:45 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: sudeep.holla@arm.com, cristian.marussi@arm.com, andersson@kernel.org,
-	konrad.dybcio@linaro.org, jassisinghbrar@gmail.com,
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	dmitry.baryshkov@linaro.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	quic_rgottimu@quicinc.com, quic_kshivnan@quicinc.com,
-	conor+dt@kernel.org, quic_nkela@quicinc.com,
-	quic_psodagud@quicinc.com, abel.vesa@linaro.org
-Subject: Re: [PATCH V6 5/5] arm64: dts: qcom: x1e80100: Enable cpufreq
-Message-ID: <ZoQjAWse2YxwyRJv@hovoldconsulting.com>
-References: <20240612124056.39230-1-quic_sibis@quicinc.com>
- <20240612124056.39230-6-quic_sibis@quicinc.com>
+	s=arc-20240116; t=1719935779; c=relaxed/simple;
+	bh=1+gzNbPlpcRYJgNGJGSRAyloxA2ydKZJokzw9VBOuMc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sL5iH8t2UmVuimDizsjn0mkAXLjOn711DXM/guPnIxpqCnmJzu2Qjgi1z2pwsA7z5Fi+55KYiMErxOwNjWal+8siDHo2qykiAfdp9WXVjtDoUd41lPD4PTPqr3gBZ6qRi3kywEBOBeMjtd5b2N4bSHUC+fXFT6bE5K/HZsHdnE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=i43a3zt0; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 462FSOsa020096;
+	Tue, 2 Jul 2024 15:56:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=pp1; bh=0MCtPccUAv/HyOA5SIGH355/4W
+	OzGzAz1a93r83mZlE=; b=i43a3zt0wFoSxGEF8NS1wzom4JXP7Lq/BTcNdayNfN
+	fpXRfZ4KEh3xt0r3jonp3RDD6h69ZWFp1my9UAH+8kH1xfPv5KMzX5t9HvzL9UJw
+	Lsf4c6Tm2txz7dUFk8qmpkm7dpvF1HTJbNHFBPVS2LpC8S5MCYTbq2d//pcBMqFp
+	zUPocpRcx2wzC3nBW5y/ma9CUXDolcdvgiVXlXiI8VmWhsN7dfXymtGUb6Magmq2
+	Iae457+YkkrB1lAVDQkbf/uX/UEkxO38ITNgRRv2PPYS6eYpBdtDSjc+gk6fcSLL
+	TRRTIQ+N1u5quPDVGKLkZdaSxaVqXGTrev4Lbk6SQUaw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 404m7j82tu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Jul 2024 15:56:15 +0000 (GMT)
+Received: from m0353727.ppops.net (m0353727.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 462FuFbf032583;
+	Tue, 2 Jul 2024 15:56:15 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 404m7j82tk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Jul 2024 15:56:15 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 462D8enu005942;
+	Tue, 2 Jul 2024 15:56:14 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 402vku5w0k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Jul 2024 15:56:14 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 462Fu6K156164852
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 2 Jul 2024 15:56:08 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9A5B22004E;
+	Tue,  2 Jul 2024 15:56:06 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6C40920043;
+	Tue,  2 Jul 2024 15:56:06 +0000 (GMT)
+Received: from p-imbrenda.boeblingen.de.ibm.com (unknown [9.152.224.66])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  2 Jul 2024 15:56:06 +0000 (GMT)
+From: Claudio Imbrenda <imbrenda@linux.ibm.com>
+To: kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        frankja@linux.ibm.com, borntraeger@de.ibm.com, nrb@linux.ibm.com,
+        nsg@linux.ibm.com, seiden@linux.ibm.com, david@redhat.com
+Subject: [PATCH v1 1/1] KVM: s390: remove useless include
+Date: Tue,  2 Jul 2024 17:56:06 +0200
+Message-ID: <20240702155606.71398-1-imbrenda@linux.ibm.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240612124056.39230-6-quic_sibis@quicinc.com>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 0hwgbO1KruNFT2MfLeSYV6--RUqPwABr
+X-Proofpoint-ORIG-GUID: CrUXzvGo2326g7e36vx9EoHdMCaJf3V2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-02_11,2024-07-02_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=1 priorityscore=1501
+ impostorscore=0 phishscore=0 spamscore=1 mlxlogscore=198 adultscore=0
+ suspectscore=0 mlxscore=1 malwarescore=0 clxscore=1015 lowpriorityscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407020117
 
-On Wed, Jun 12, 2024 at 06:10:56PM +0530, Sibi Sankar wrote:
-> Enable cpufreq on X1E80100 SoCs through the SCMI perf protocol node.
-> 
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 63 ++++++++++++++++----------
->  1 file changed, 39 insertions(+), 24 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> index 7b619db07694..d134dc4c7425 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> @@ -69,8 +69,8 @@ CPU0: cpu@0 {
->  			reg = <0x0 0x0>;
->  			enable-method = "psci";
->  			next-level-cache = <&L2_0>;
-> -			power-domains = <&CPU_PD0>;
-> -			power-domain-names = "psci";
-> +			power-domains = <&CPU_PD0>, <&scmi_dvfs 0>;
-> +			power-domain-names = "psci", "perf";
->  			cpu-idle-states = <&CLUSTER_C4>;
+arch/s390/include/asm/kvm_host.h includes linux/kvm_host.h, but
+linux/kvm_host.h includes asm/kvm_host.h .
 
-> +		scmi {
-> +			compatible = "arm,scmi";
-> +			mboxes = <&cpucp_mbox 0>, <&cpucp_mbox 2>;
-> +			mbox-names = "tx", "rx";
-> +			shmem = <&cpu_scp_lpri0>, <&cpu_scp_lpri1>;
-> +
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			scmi_dvfs: protocol@13 {
-> +				reg = <0x13>;
-> +				#power-domain-cells = <1>;
-> +			};
-> +		};
->  	};
+It turns out that arch/s390/include/asm/kvm_host.h only needs
+linux/kvm_types.h, which it already includes.
 
-This series gives a nice performance boost on the x1e80100 CRD, but I'm
-seeing a bunch of warnings and errors that need to be addressed:
+Stop including linux/kvm_host.h from arch/s390/include/asm/kvm_host.h .
 
-[    9.533053] arm-scmi firmware:scmi: Failed to get FC for protocol 13 [MSG_ID:6 / RES_ID:0] - ret:-95. Using regular messaging.
-[    9.549458] arm-scmi firmware:scmi: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-[    9.563925] arm-scmi firmware:scmi: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-[    9.572835] arm-scmi firmware:scmi: Failed to get FC for protocol 13 [MSG_ID:6 / RES_ID:1] - ret:-95. Using regular messaging.
-[    9.609471] arm-scmi firmware:scmi: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-[    9.633341] arm-scmi firmware:scmi: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-[    9.650000] arm-scmi firmware:scmi: Failed to get FC for protocol 13 [MSG_ID:6 / RES_ID:2] - ret:-95. Using regular messaging.
-[    9.727098] cpu cpu4: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq: 3417600000, volt: 0, enabled: 1
-[    9.737157] cpu cpu4: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq: 3417600000, volt: 0, enabled: 1
-[    9.875039] cpu cpu8: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq: 3417600000, volt: 0, enabled: 1
-[    9.888428] cpu cpu8: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq: 3417600000, volt: 0, enabled: 1
-[    9.913506] debugfs: Directory 'NCC' with parent 'pm_genpd' already present!
-[    9.922198] debugfs: Directory 'NCC' with parent 'pm_genpd' already present!
+Due to the #ifdef guards, the code works as it is today, but it's ugly
+and it will get in the way of future patches.
 
-Johan
+Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+---
+ arch/s390/include/asm/kvm_host.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
+index 95990461888f..736cc88f497d 100644
+--- a/arch/s390/include/asm/kvm_host.h
++++ b/arch/s390/include/asm/kvm_host.h
+@@ -15,7 +15,6 @@
+ #include <linux/hrtimer.h>
+ #include <linux/interrupt.h>
+ #include <linux/kvm_types.h>
+-#include <linux/kvm_host.h>
+ #include <linux/kvm.h>
+ #include <linux/seqlock.h>
+ #include <linux/module.h>
+-- 
+2.45.2
+
 
