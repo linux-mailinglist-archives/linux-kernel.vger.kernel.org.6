@@ -1,154 +1,216 @@
-Return-Path: <linux-kernel+bounces-237511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFA54923A14
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:30:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94E7F923A15
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:31:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CCA01F21891
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:30:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 291B81F22EC2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:31:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A29C150993;
-	Tue,  2 Jul 2024 09:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6190F153581;
+	Tue,  2 Jul 2024 09:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ek5oh6EC"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Or6wJIF+";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IR5aqluV";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eqmkFc27";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zAAWmqUw"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1955717741
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 09:30:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5CA146D48
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 09:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719912649; cv=none; b=hqUl2L1fBtawYHsMok6bxCIGHDHiZtuoRZpahG2X00BIaMb4/pQQjnhXBIChG4b89Vnk25BB3AYqOHivm7CPZx/8bFlWYLi0sbAYVQ8YP9jDIJYH4Ayqw73Qd3zTuU8kf9Ltho/5Un5TbaNjqse2dSInc+jJTFgfbg6OejIpfpc=
+	t=1719912669; cv=none; b=HNbQcHH0+L1ycKSGPykGt2nFCUhQpJ/p/4WqFFZJgbaIJB7v3H0l6JVj6EYoZdURUHSWi81JJIiWOwgw8+DLa05Cp1MhBNxkHMqmw2Q2AgY/CoZ+THjwj2R+JIbFTTX+/EkFDTnlC1jUtNDwn0Ca1/Oi4wq4e09kOD6BizTbMG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719912649; c=relaxed/simple;
-	bh=9wZMt4XIKtzsHJGnA6q+tBhSLGvVzwp7kne8YAJ4ON4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IjTq2doxYs/T3yoQCnuDJ6lpVuA3exBHZglNTzkxfA2JjQ1ear/29w8tfzn+sSD3TP2X6dY4gV+lg48biWDqKl13/t6jug8r2qYq6wiuFYVsP/iS2iP3Kqfd5OQ3M6AJh2KNe8wYS09tHKOZwmK4Aek93N/NGFjZRFyK0zfQ4MQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ek5oh6EC; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ee794ec046so1749651fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 02:30:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1719912645; x=1720517445; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fuIsxk1T213WYy8gsWuEjbMwN3Poo3nOOrSb0iGSbOY=;
-        b=ek5oh6ECv3ojeOT9KAD6eQVsl6bZFv2RPUs8Fj8+qWrzZd3vKX8Gv27gPRLA6YLLLn
-         nk/4yRC83X432Tu0LRtpNzWRGcaUpDENGXQsTU8V3/SD3gOa7dQZEZygwsHKsvOlR4bw
-         rOxMskN5le3kQ6w6nK1pWxOR2ZdjkvVDkuDLyOTaaljmZ2pmULlHCoyXZgeGQBE+s67N
-         EfCtu/jI8IL5ed9YoMCSrTomOIikO90U9Lul+PoU9P9WAUjvVdxy+Ab5WSrHHn5zFa4P
-         tJ6EaBYsjZ7NXnhwmqHCiwwfUGWo/X7C3AFMeaUmj5/Udn94TJrMn0RT4cjiNgvHqnVZ
-         SalA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719912645; x=1720517445;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fuIsxk1T213WYy8gsWuEjbMwN3Poo3nOOrSb0iGSbOY=;
-        b=oPN6EfMJX8eGqpB1GCcLejpI/oXslulTPkpKfsMiey63l7G5bUyeUfvuFudKB0A4OU
-         yLIj0hl1KOm5nqvJE7a0+vynSAW+Gy6pfYJNfr1SBX661O7ivuX1KUatjGGh+DNk3q55
-         WolpWXikM+xgbYbrMMsTBVk7HjZvu9xuskjsZXPjIgbd/lU0lxdGebkZKmTQoaw3tFVW
-         lVR1jBdP6GhpUXGyDxDivMsirQr/1NQ/piaxdI1LE38zofFf3M6ovjCIExD3KVDN2R3/
-         Az2PXM2AoKWpfdcMj7Nq9SpBjUgqQsnq5Sn8VtHhYviTzSAxJbOCO4eu8yLzAvhUyUdQ
-         zm+A==
-X-Forwarded-Encrypted: i=1; AJvYcCWaPQnYxWvn35uR535NbjGBeT+quEz/CQTWDbdmylQaK55Uyfh5E71U57ZjT/zFnfRSTlUdjfjtAYFcl/NfTmXQQJoaaybKHlNR8Nq5
-X-Gm-Message-State: AOJu0YzGSBntLMhN408UQyStFJBICTK8kjPU2c3hFc4W0yYrXM9VR3pE
-	PWjCd/P4ofzueOMt6FeUcW50pqEh4L0ysAJyD7r2udZyzvSgxQ+NTpGfopa+x48v6mHCnknplOG
-	Q
-X-Google-Smtp-Source: AGHT+IFyoXc0eDp9A4bdmO+DVOA0xE9bWlJ17XsgQKXgjzpgCx/c/dZZ0193bS9tXJ9JaLMJmsJxVA==
-X-Received: by 2002:a2e:bc84:0:b0:2ee:4c72:204e with SMTP id 38308e7fff4ca-2ee5e2c7592mr68018441fa.0.1719912645184;
-        Tue, 02 Jul 2024 02:30:45 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fafb9c3fbfsm8788475ad.12.2024.07.02.02.30.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 02:30:44 -0700 (PDT)
-Date: Tue, 2 Jul 2024 11:30:36 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH printk v2 12/18] printk: Add kthread for all legacy
- consoles
-Message-ID: <ZoPIvPtN1rmrds4a@pathway.suse.cz>
-References: <20240603232453.33992-1-john.ogness@linutronix.de>
- <20240603232453.33992-13-john.ogness@linutronix.de>
- <Zn6iq3n2ggL138Gs@pathway.suse.cz>
- <87cyo1xnmw.fsf@jogness.linutronix.de>
- <Zn67hDCEHdgtYPv3@pathway.suse.cz>
- <877ce9xim6.fsf@jogness.linutronix.de>
- <ZoLCLfcIjQ6FbgR0@pathway.suse.cz>
+	s=arc-20240116; t=1719912669; c=relaxed/simple;
+	bh=My+y33TojPKjem8uoG/oIgg3upZ5k+T7Qg+MxFRnAQk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SD3X/6GI+QKcuE1+4YgAKzCY01afD48Qcoy0qySQOSZacNfsUUSzHPdM3UGbtrTkqXJtEOK19KjnkvOBCwRqnPEsS9Q13+tJL6GZwggcNilY4jXSmnGLH6E0hJOXJpK1NDIrZ6ZvSVIzQI/GsWm58PyeIZ740kZ3n6aWtZtjuMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Or6wJIF+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IR5aqluV; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eqmkFc27; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zAAWmqUw; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E226D1FB90;
+	Tue,  2 Jul 2024 09:31:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1719912665; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VN2koVPOWj3sGqHMQ5WBQyHX/C5oZKpDGLxXVxlIKlM=;
+	b=Or6wJIF+odV4MjKWnmt40ZA8dcZ1zhFSzyMFuUWHTEfLZHYeQcIaeICDqbT3Lq0zDs/Ao9
+	XyJDh74D7G6SL1P1tzVaRazxxRbZBOZH8BLbFGkROvxN74QHnV3nc6EMnznO9wlxd19JZk
+	kJbh38ikULvNn/BvoaCDAc4s8YB6OJ0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1719912665;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VN2koVPOWj3sGqHMQ5WBQyHX/C5oZKpDGLxXVxlIKlM=;
+	b=IR5aqluV6soLhf11GD63gba5KwADgbmh3rf5sjvzbVUweEW/G4oGMBlr32/YhcgX9fTStx
+	Azr+7W2lNis7PeCA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=eqmkFc27;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=zAAWmqUw
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1719912663; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VN2koVPOWj3sGqHMQ5WBQyHX/C5oZKpDGLxXVxlIKlM=;
+	b=eqmkFc27yUiFhBYzKJdGjJxtD75N3ApNZH3wb6LyUgSmrSokF1Tnw1K4fYBVSfPq0x0xmX
+	2m7T5ZVq/F40PnPSUgnqkYFshs/vNR3ZCZt/fvmN7zKmlaKIrPmvG2zJQ3qahLm5LCbOPq
+	fcGaWvlm+XU0g2Zo6jIFzV8EJLtHxe4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1719912663;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VN2koVPOWj3sGqHMQ5WBQyHX/C5oZKpDGLxXVxlIKlM=;
+	b=zAAWmqUwuS0BN8TYJADfAsYGEWXbyvO5kHzrYnUfLjYTH52JL2i1sWkadLieGjokTUDwye
+	LIBSRmssnmR6ZgDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CB7CA1395F;
+	Tue,  2 Jul 2024 09:31:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id B2hUMdfIg2bZLgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 02 Jul 2024 09:31:03 +0000
+Message-ID: <bb4214ca-fada-4aa9-af40-008182ea4006@suse.cz>
+Date: Tue, 2 Jul 2024 11:31:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZoLCLfcIjQ6FbgR0@pathway.suse.cz>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] mm/slab: fix 'variable obj_exts set but not used'
+ warning
+Content-Language: en-US
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev,
+ pasha.tatashin@soleen.com, souravpanda@google.com, keescook@chromium.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ kernel test robot <lkp@intel.com>
+References: <20240614225951.3845577-1-surenb@google.com>
+ <18a30d5c-abf3-4ceb-a7fd-2edfd8bee2a8@suse.cz>
+ <CAJuCfpFPDAjE5aNYxTngxzAusz_9QkOdnELSRNadi2Sxb4O=oA@mail.gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <CAJuCfpFPDAjE5aNYxTngxzAusz_9QkOdnELSRNadi2Sxb4O=oA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-4.50 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	XM_UA_NO_VERSION(0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,suse.cz:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: E226D1FB90
+X-Spam-Flag: NO
+X-Spam-Score: -4.50
+X-Spam-Level: 
 
-On Mon 2024-07-01 16:50:31, Petr Mladek wrote:
-> On Fri 2024-06-28 16:17:13, John Ogness wrote:
-> > On 2024-06-28, Petr Mladek <pmladek@suse.com> wrote:
-> > > On Fri 2024-06-28 14:28:47, John Ogness wrote:
-> > >> On 2024-06-28, Petr Mladek <pmladek@suse.com> wrote:
-> > >> >> @@ -1494,7 +1508,9 @@ void nbcon_cpu_emergency_exit(void)
-> > >> >>  		 * to handle it.
-> > >> >>  		 */
-> > >> >>  		do_trigger_flush = true;
-> > >> >> -		if (printing_via_unlock && !is_printk_deferred()) {
-> > >> >> +		if (!force_printkthreads() &&
-> > >> >
-> > >> > Is this correct? We still need to flush the messages directly
-> > >> > when the legacy kthread is not ready yet.
-> > >> 
-> > >> No! If force_printkthreads() is set, messages will never flush directly
-> > >> except for console_flush_on_panic().
-> > >
-> > > But this is an _emergency_ context! This would be inconsistent with
-> > > the nbcon consoles where the messages are flushed directly.
-> > >
-> > > Is RT sheduling quaranteed when the system reached emergency state?
-> > 
-> > No.
-> > 
-> > > In fact, we probably should not check force_printkthreads() here at
-> > > all. It would be only for NBCON_PRIO_NORMAL context.
-> > 
-> > On PREEMPT_RT, legacy consoles are not allowed to print from
-> > non-preemptible contexts because they use spinlocks (rtmutexes).
+On 6/30/24 9:20 PM, Suren Baghdasaryan wrote:
+> On Mon, Jun 17, 2024 at 3:04 AM Vlastimil Babka <vbabka@suse.cz> wrote:
+>>
+>> On 6/15/24 12:59 AM, Suren Baghdasaryan wrote:
+>> > slab_post_alloc_hook() uses prepare_slab_obj_exts_hook() to obtain
+>> > slabobj_ext object. Currently the only user of slabobj_ext object in
+>> > this path is memory allocation profiling, therefore when it's not enabled
+>> > this object is not needed. This also generates a warning when compiling
+>> > with CONFIG_MEM_ALLOC_PROFILING=n. Move the code under this configuration
+>> > to fix the warning. If more slabobj_ext users appear in the future, the
+>> > code will have to be changed back to call prepare_slab_obj_exts_hook().
+>> >
+>> > Fixes: 4b8736964640 ("mm/slab: add allocation accounting into slab allocation and free paths")
+>> > Reported-by: kernel test robot <lkp@intel.com>
+>> > Closes: https://lore.kernel.org/oe-kbuild-all/202406150444.F6neSaiy-lkp@intel.com/
+>> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+>>
+>> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+>>
+>> But it seems to me we could remove the whole #ifdef if current->alloc_tag
+>> (which doesn't exist with !MEM_ALLOC_PROFILING) had an access helper, or
+>> there was a alloc_tag_add_current() variant?
 > 
-> Ah, I see.
-> 
-> > This is a disadvantage for legacy consoles on PREEMPT_RT. If people want
-> > a legacy console to gain the reliability attribute on PREEMPT_RT, then
-> > that console _must_ be converted to nbcon.
-> 
-> Makes sense.
-> 
-> Thanks a lot for explanation.
+> Hmm. I'll check if current->alloc_tag is the only reason for this
+> ifdef. If so then you are correct and we can simplify this code.
 
-It is clear that the legacy consoles could not be flushed directly in
-nbcon_cpu_emergency_exit() with PREEMPT_RT. I thought whether we
-could/should allow this for other preemption modes.
+The fix is now in mm-hotfixes-stable but we can cleanup for the future as a
+non-hotfix.
 
-My opinion. Let's keep it simple and behave the same in all preemption
-modes. force_printkthreads() is enabled only in PREEMPT_RT by default.
-Users would get the "expected" legacy behavior in other preemption
-modes by default.
-
-By other words, let's keep "force_printkthreads()" to really simulate
-RT behavior also in other preemption modes.
-
-That said, I still suggest to rename the variable/function to
-"force_legacy_thread". It does not affect the behavior of
-the kthreads for nbcon consoles.
-
-Best Regards,
-Petr
 
