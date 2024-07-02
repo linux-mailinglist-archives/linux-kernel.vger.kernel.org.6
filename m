@@ -1,61 +1,62 @@
-Return-Path: <linux-kernel+bounces-237347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D52C591EF86
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:56:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6DC891EF87
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:56:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BB291F23C36
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:56:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6448D287B7B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:56:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 796A212E1E0;
-	Tue,  2 Jul 2024 06:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E91412FB39;
+	Tue,  2 Jul 2024 06:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mzq7sTl6"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n7wQiXUx"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD41E12E1CD
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 06:55:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3619F12E1C6
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 06:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719903360; cv=none; b=UacGjP6iTbxAGe0a/DwybQmfztBGhcblEmsg8OeFU0VNuGlCnJIu3yRwDJMqmOzlQVwnPoQhY/ODqh2KucoPZUAmwhrK3rB7p9llB7n2SWrlkwthoc0z/P6PHb7EchAkFbtbxjJds2h48f3TXHm+QYqTnKNG6DVfqdD8AmqkW2k=
+	t=1719903362; cv=none; b=u6aKqDJ1wfCY2Cv3P2X0hUSKByOTwNwj5zfG3+xudHNzntC5WL38q8nN9OJNaEaO21T/yOv6/klDc66Q8Na/EeVLMnn/SHgu47vhpz2iQAX1JoICO1pOlhPC5MTni7PyVcQT8H9AW5/R4tXPb7s8hZrtgVxlWVtXFb8DiB+Sr6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719903360; c=relaxed/simple;
-	bh=916JHf1x7pQxiP1w5zb4l22Bh5FMWLpzdyrqfqetWw8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GBtbeh2gJB+37jLcscfOEzIpV7r60CbDRqjruoks1/bu1IxCnpssWYKB/ztVBwqInargpsCpUd8rC7bgRpjet8hyOsrfYN/zMFaUV9rkUjZSdX/htnI53HPk/Dfp8ID6XcrotSYFh4tbROsTYZ8px74mBj491DdvFovHc9bpTyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mzq7sTl6; arc=none smtp.client-ip=192.198.163.16
+	s=arc-20240116; t=1719903362; c=relaxed/simple;
+	bh=dG7WcnqU1MnAsJE6b1Kc0O6TyKO5hB3dIVlYUfwOOyU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=UH+gNrULYPnN/4rFYef4K4yCZFX43SrJzlAI58ey8Y++cy2iYOFfDoYIlHTqEcnqgbonlcyYdYob1PapvkJ9HiowCSLpMsjAFy4Z3v2HbO59RrkZMUOms2/Ptbizdy5Aejyw7poD21wpfdxHV+drLTXc7SO1QlK6rqXjnUZmmaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n7wQiXUx; arc=none smtp.client-ip=192.198.163.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719903359; x=1751439359;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=916JHf1x7pQxiP1w5zb4l22Bh5FMWLpzdyrqfqetWw8=;
-  b=Mzq7sTl6Nw3tvoKKPsBz4+BheBwwPAPzbQkrWLN/6QO+NbkzrS5TU+2O
-   cIgUdx4sxCK2j0S3k2eJs90JFgyxEWnT2hJbKUdNhBDvLFEiapPbx4h85
-   ZAv5ZgWr2mO8nKLZojwssgoB2buVyhrprFRJHjtwq69/H/AJRZGI1hfYC
-   VI6Ilx1Ii32qyaqhRSDuc5VxFp6KuQbo/WrBpP5bCntLZXbaHKuQoZkGz
-   a6fww/HY8rrcPJpKU+IOIUiZw5Ksm9Ixwx114+XdlMtzXyYcTN38ZYgAq
-   fYQclyOigKFHp8/5bqBXmvjikWAantVp/lpqSjLzJDbycY+Yx41+GT9MV
-   g==;
-X-CSE-ConnectionGUID: pOjzZjUUQMW7s4o1Eywa0g==
-X-CSE-MsgGUID: mHY9khdeTIGbnmZaQ6VNbQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="12352634"
+  t=1719903361; x=1751439361;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=dG7WcnqU1MnAsJE6b1Kc0O6TyKO5hB3dIVlYUfwOOyU=;
+  b=n7wQiXUxYdCIjfZGmBbVM2i1pNqV0NWz5V3LuQOuuD3JVhbdiRk1Htlp
+   DHBozGMQFTGfOnTdjTS5ha6zg0o5tKCDNsKHL+ZcZpsd+h0qVIp28KYCQ
+   9y9mxNaSTxDe73GxyIFKbaU8UzVKwedZANTTidKpfIQ4dFAu1+DGM32IZ
+   MQKGkCTFuHHpXTjK78j/bWfitfBaLAnsGdE4apEKobkY+Do43Bhbriq+m
+   C11XIbf4fojSMHDLFG4mRIY4QYbZ0ETrp/5JyOH3a3KPkHEXOUEy4ndVb
+   k9POqQXGwUv/U0wUlLv1G7oACi5rulsqXrCs7DZMn1/C4wEaPmwpvSrh2
+   w==;
+X-CSE-ConnectionGUID: x/QEADb3RZCmVBOXn/8kGA==
+X-CSE-MsgGUID: icqb3RWySUaJR4grfLHonA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="12352636"
 X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
-   d="scan'208";a="12352634"
+   d="scan'208";a="12352636"
 Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 23:55:58 -0700
-X-CSE-ConnectionGUID: xom5wlJkQTqOoRKLtycdyg==
-X-CSE-MsgGUID: DT4JYkzrSzuPBVJIiyOBWQ==
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 23:56:01 -0700
+X-CSE-ConnectionGUID: 2ePaUZTcTiOzyCaZGd77Nw==
+X-CSE-MsgGUID: CWnKZAjAQXuFxZVz/I9quw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
-   d="scan'208";a="50405617"
+   d="scan'208";a="50405628"
 Received: from unknown (HELO dell-3650.sh.intel.com) ([10.239.159.147])
-  by fmviesa004.fm.intel.com with ESMTP; 01 Jul 2024 23:55:55 -0700
+  by fmviesa004.fm.intel.com with ESMTP; 01 Jul 2024 23:55:58 -0700
 From: Dapeng Mi <dapeng1.mi@linux.intel.com>
 To: Peter Zijlstra <peterz@infradead.org>,
 	Ingo Molnar <mingo@redhat.com>,
@@ -68,10 +69,12 @@ To: Peter Zijlstra <peterz@infradead.org>,
 Cc: linux-kernel@vger.kernel.org,
 	Dapeng Mi <dapeng1.mi@intel.com>,
 	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: [RESEND Patch 1/2] perf/x86: Remove perf_events_lapic_init() calling from x86_pmu_enable()
-Date: Wed,  3 Jul 2024 06:57:02 +0800
-Message-Id: <20240702225703.346951-1-dapeng1.mi@linux.intel.com>
+Subject: [RESEND Patch 2/2] perf/x86: Typos and invalid indents fix
+Date: Wed,  3 Jul 2024 06:57:03 +0800
+Message-Id: <20240702225703.346951-2-dapeng1.mi@linux.intel.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240702225703.346951-1-dapeng1.mi@linux.intel.com>
+References: <20240702225703.346951-1-dapeng1.mi@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,43 +83,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-perf_events_lapic_init() helper is called to configure PMI to NMI vector
-and clear MASK bit simultaneously by writing APIC_LVTPC MSR. It's called
-firstly to initialize APIC_LVTPC MSR by init_hw_perf_events(), and the
-PMI handler would always to clear the MASK bit in APIC_LVTPC MSR by
-writing APIC_LVTPC MSR directly.
-
-So it becomes unnecessary to call perf_events_lapic_init() again in
-x86_pmu_enable(), and worse x86_pmu_enable() could be called very
-frequently in some scenarios with very high context-switches. This would
-cause performance overhead which can't be ignored especially in KVM guest
-environment since frequent APIC_LVTPC writing would cause huge number
-of VM-Exits.
-
-For example, in guest environment Geekbench score (running multiplxing
-perf-stat command in background) increases 1% and perf-sched benchmark
-increases 7% after removing perf_events_lapic_init() calling from
-x86_pmu_enable().
+Fix several typos and invalid indents.
 
 Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
 ---
- arch/x86/events/core.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/x86/events/intel/core.c      | 2 +-
+ arch/x86/include/asm/perf_event.h | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 5b0dd07b1ef1..580923443813 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -1347,7 +1347,6 @@ static void x86_pmu_enable(struct pmu *pmu)
- 			x86_pmu_start(event, PERF_EF_RELOAD);
- 		}
- 		cpuc->n_added = 0;
--		perf_events_lapic_init();
- 	}
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 38c1b1f1deaa..9600af53d1bc 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -3697,7 +3697,7 @@ static void intel_put_event_constraints(struct cpu_hw_events *cpuc,
+ 	intel_put_shared_regs_event_constraints(cpuc, event);
  
- 	cpuc->enabled = 1;
-
-base-commit: 73e931504f8e0d42978bfcda37b323dbbd1afc08
+ 	/*
+-	 * is PMU has exclusive counter restrictions, then
++	 * If PMU has exclusive counter restrictions, then
+ 	 * all events are subject to and must call the
+ 	 * put_excl_constraints() routine
+ 	 */
+diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
+index 7f1e17250546..d54aa3eb65f5 100644
+--- a/arch/x86/include/asm/perf_event.h
++++ b/arch/x86/include/asm/perf_event.h
+@@ -399,15 +399,15 @@ static inline bool is_topdown_idx(int idx)
+  *
+  * With this fake counter assigned, the guest LBR event user (such as KVM),
+  * can program the LBR registers on its own, and we don't actually do anything
+- * with then in the host context.
++ * with them in the host context.
+  */
+-#define INTEL_PMC_IDX_FIXED_VLBR	(GLOBAL_STATUS_LBRS_FROZEN_BIT)
++#define INTEL_PMC_IDX_FIXED_VLBR		(GLOBAL_STATUS_LBRS_FROZEN_BIT)
+ 
+ /*
+  * Pseudo-encoding the guest LBR event as event=0x00,umask=0x1b,
+  * since it would claim bit 58 which is effectively Fixed26.
+  */
+-#define INTEL_FIXED_VLBR_EVENT	0x1b00
++#define INTEL_FIXED_VLBR_EVENT			0x1b00
+ 
+ /*
+  * Adaptive PEBS v4
 -- 
 2.40.1
 
