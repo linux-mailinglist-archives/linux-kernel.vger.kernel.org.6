@@ -1,209 +1,78 @@
-Return-Path: <linux-kernel+bounces-237284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9246891EEB7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:02:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41B4291EEB9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:03:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE07BB214F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:02:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1418284872
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50CA15A788;
-	Tue,  2 Jul 2024 06:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2930A5C8EF;
+	Tue,  2 Jul 2024 06:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ia6Wdthh";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QNbMJsVZ";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ia6Wdthh";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QNbMJsVZ"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l1wXnrxq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6066A342;
-	Tue,  2 Jul 2024 06:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB59747F;
+	Tue,  2 Jul 2024 06:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719900156; cv=none; b=e+uK60TUSCIGztcHPQDjBDQRdJ0ETBuhJCcybxze/+9l7y6UKNsfeEUVRFnMJJ1vLybOcEV5V8bcRPP6Sn2kxHeiyHli2aFhYhmw9wNvjHZ89O4bNVltZkiOBlMowF01PTWEMmKnwKwxMsnRyWVqQtPY1hOaJT2ItNhsLSwYmmM=
+	t=1719900167; cv=none; b=mI0vk9l9VS/rVT4Fn6rBTz8Y7kK/o4RX2JkSwVmJkN7CBXySZAYiw/Oygv0AriOGM7erd9BuUG0zJu1RLu9CcXnE+Jka6njxzCQ5Urs+zJW4vdCHlahAbGxT54CgUi9yTa90BHy7BnI5IZoDFUOUvkD4H0KLZemjn1nz+NfBV+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719900156; c=relaxed/simple;
-	bh=kGvkyIJchibKQwsRixensZtOji8fEHU+wBr15WUN4rA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IlV8JLXaiZj9PUKgTGS19olg00dKPmfYy5crQAgx72aC84PYNRViA7071i+/wari104GqIgZiJEKOa898NG+Pa0C9xgZLkabqMVzXKjPZ7jadA6SIKKQzrXAsLICHD+ds3jVhzEAGoiae3N7uu4T4NPP+kwb73zfzgiDOBIi8ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ia6Wdthh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QNbMJsVZ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ia6Wdthh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QNbMJsVZ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id AA1A11FB84;
-	Tue,  2 Jul 2024 06:02:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1719900136; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vCyFo7qTaIUmUWUVVm7e2zEuFe/h+LUUA4eXNYgfnWE=;
-	b=ia6WdthhZxnuf0zzE8iw3tHplSmY+zsIsUR/hgKA+vxPH2FNKAYOrC9yX0M+YIj5/cJ18t
-	8zGyXziKILCqOCTpQxIUSbfw/o+7pzMhe2XyQhXzekK7WyUxCdJRknSCBr1hPyQzOA12Kf
-	nXLdtdcpCN7ey+xvOj3sv2Xg4P2wRrc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1719900136;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vCyFo7qTaIUmUWUVVm7e2zEuFe/h+LUUA4eXNYgfnWE=;
-	b=QNbMJsVZnqU3O+ZLbWky7BRI6nwiOkQZl5v1Zo6N6/E+VRKAio3/JuRt+00nMeaKT7OlSq
-	MGxyg5sAkwWoJkAw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ia6Wdthh;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=QNbMJsVZ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1719900136; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vCyFo7qTaIUmUWUVVm7e2zEuFe/h+LUUA4eXNYgfnWE=;
-	b=ia6WdthhZxnuf0zzE8iw3tHplSmY+zsIsUR/hgKA+vxPH2FNKAYOrC9yX0M+YIj5/cJ18t
-	8zGyXziKILCqOCTpQxIUSbfw/o+7pzMhe2XyQhXzekK7WyUxCdJRknSCBr1hPyQzOA12Kf
-	nXLdtdcpCN7ey+xvOj3sv2Xg4P2wRrc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1719900136;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vCyFo7qTaIUmUWUVVm7e2zEuFe/h+LUUA4eXNYgfnWE=;
-	b=QNbMJsVZnqU3O+ZLbWky7BRI6nwiOkQZl5v1Zo6N6/E+VRKAio3/JuRt+00nMeaKT7OlSq
-	MGxyg5sAkwWoJkAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 12ACA13A9A;
-	Tue,  2 Jul 2024 06:02:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Gl/fN+eXg2YmagAAD6G6ig
-	(envelope-from <hare@suse.de>); Tue, 02 Jul 2024 06:02:15 +0000
-Message-ID: <a78246f8-635f-4718-8190-5147a03495ea@suse.de>
-Date: Tue, 2 Jul 2024 08:02:15 +0200
+	s=arc-20240116; t=1719900167; c=relaxed/simple;
+	bh=72XmuVkNycJ2t1SqzWWZzLzDmPcmg7GvS5A85XqlRg0=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=VFVRxZAIboAFZ1cgSJcFCiLofvWQSs7uQ9DX+25tuor2FZoypHllqwAUr/9Aw/p/tiLZGGVoyWyauOqgo/YrmEABgI6DdLYCdxycgjvluKyLmSTAhXTsKSMNWDOKH0KT80D+awxGdJY4TAQlkcoyhpGW8DgylCANJnUqD24sNak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l1wXnrxq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D5C66C116B1;
+	Tue,  2 Jul 2024 06:02:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719900166;
+	bh=72XmuVkNycJ2t1SqzWWZzLzDmPcmg7GvS5A85XqlRg0=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=l1wXnrxq+WWyvuL5a6v03V97njepbw5SvwF4NTAXPxReLnFVXOVTKab7gB1LiBAyL
+	 eZPYD9NTldwOQKqf1TKLYtyJoZNunKTUiZlIgLMVdL89ZvfLedZ4s2pJLbsT03tkS6
+	 5SnNuhitBIxWDOf9SWKk3V06UUMVATD71ttcX2WFjoMVW7ASrCxVcn+xrmEVjC7+Sb
+	 rGeaGmCwTQsxe5y4z+TMbtsvXajq/XdXCt40vw/jmhpmyyLdPD7AeGjB3taykGPfwA
+	 9LkaOif1SMCgVBFo1n5fPQoPIU8PtOvfh6gwfekQYk44NsWshcyH5kZm3DZYI1XMxq
+	 aRczfp740CJeA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id CD5A8C433A2;
+	Tue,  2 Jul 2024 06:02:46 +0000 (UTC)
+Subject: Re: [GIT PULL] SCSI fixes for 6.10-rc6
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <912f0f5fe2c02157edb47b1e9c730d1dbc563c55.camel@HansenPartnership.com>
+References: <912f0f5fe2c02157edb47b1e9c730d1dbc563c55.camel@HansenPartnership.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <912f0f5fe2c02157edb47b1e9c730d1dbc563c55.camel@HansenPartnership.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
+X-PR-Tracked-Commit-Id: ab2068a6fb84751836a84c26ca72b3beb349619d
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 1dfe225e9af5bd3399a1dbc6a4df6a6041ff9c23
+Message-Id: <171990016683.15679.7090758159449378329.pr-tracker-bot@kernel.org>
+Date: Tue, 02 Jul 2024 06:02:46 +0000
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/7] ata: libata-scsi: Honor the D_SENSE bit for
- CK_COND=1 and no error
-Content-Language: en-US
-To: Igor Pylypiv <ipylypiv@google.com>, Damien Le Moal <dlemoal@kernel.org>,
- Niklas Cassel <cassel@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>, linux-ide@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20240702024735.1152293-1-ipylypiv@google.com>
- <20240702024735.1152293-4-ipylypiv@google.com>
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20240702024735.1152293-4-ipylypiv@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-4.50 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	MX_GOOD(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: AA1A11FB84
-X-Spam-Flag: NO
-X-Spam-Score: -4.50
-X-Spam-Level: 
 
-On 7/2/24 04:47, Igor Pylypiv wrote:
-> SAT-5 revision 8 specification removed the text about the ANSI INCITS
-> 431-2007 compliance which was requiring SCSI/ATA Translation (SAT) to
-> return descriptor format sense data for the ATA PASS-THROUGH commands
-> regardless of the setting of the D_SENSE bit.
-> 
-> Let's honor the D_SENSE bit for ATA PASS-THROUGH commands while
-> generating the "ATA PASS-THROUGH INFORMATION AVAILABLE" sense data.
-> 
-> SAT-5 revision 7
-> ================
-> 
-> 12.2.2.8 Fixed format sense data
-> 
-> Table 212 shows the fields returned in the fixed format sense data
-> (see SPC-5) for ATA PASS-THROUGH commands. SATLs compliant with ANSI
-> INCITS 431-2007, SCSI/ATA Translation (SAT) return descriptor format
-> sense data for the ATA PASS-THROUGH commands regardless of the setting
-> of the D_SENSE bit.
-> 
-> SAT-5 revision 8
-> ================
-> 
-> 12.2.2.8 Fixed format sense data
-> 
-> Table 211 shows the fields returned in the fixed format sense data
-> (see SPC-5) for ATA PASS-THROUGH commands.
-> 
-> Cc: stable@vger.kernel.org # 4.19+
-> Reported-by: Niklas Cassel <cassel@kernel.org>
-> Closes: https://lore.kernel.org/linux-ide/Zn1WUhmLglM4iais@ryzen.lan
-> Reviewed-by: Niklas Cassel <cassel@kernel.org>
-> Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
-> ---
->   drivers/ata/libata-scsi.c | 7 ++-----
->   1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-> index b59cbb5ce5a6..076fbeadce01 100644
-> --- a/drivers/ata/libata-scsi.c
-> +++ b/drivers/ata/libata-scsi.c
-> @@ -941,11 +941,8 @@ static void ata_gen_passthru_sense(struct ata_queued_cmd *qc)
->   				   &sense_key, &asc, &ascq);
->   		ata_scsi_set_sense(qc->dev, cmd, sense_key, asc, ascq);
->   	} else {
-> -		/*
-> -		 * ATA PASS-THROUGH INFORMATION AVAILABLE
-> -		 * Always in descriptor format sense.
-> -		 */
-> -		scsi_build_sense(cmd, 1, RECOVERED_ERROR, 0, 0x1D);
-> +		/* ATA PASS-THROUGH INFORMATION AVAILABLE */
-> +		ata_scsi_set_sense(qc->dev, cmd, RECOVERED_ERROR, 0, 0x1D);
->   	}
->   }
->   
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+The pull request you sent on Mon, 01 Jul 2024 22:26:43 -0400:
 
-Cheers,
+> git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
-Hannes
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/1dfe225e9af5bd3399a1dbc6a4df6a6041ff9c23
+
+Thank you!
+
 -- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
