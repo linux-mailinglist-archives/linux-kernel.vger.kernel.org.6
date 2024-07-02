@@ -1,96 +1,126 @@
-Return-Path: <linux-kernel+bounces-237951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EADE9924117
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:43:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B016C924121
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:45:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55B78B27B19
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:43:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 407E428320D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5FA1BA087;
-	Tue,  2 Jul 2024 14:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B781BA888;
+	Tue,  2 Jul 2024 14:44:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="ZqFDZos4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="Ex0/AGAA"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6580FBE7F;
-	Tue,  2 Jul 2024 14:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D980D1B582F;
+	Tue,  2 Jul 2024 14:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719931414; cv=none; b=NC2CGjXWUD9tsfASRit8Fy1Ov5csB7zsnq+60Uy4T+/UGDFSzFVPc7JbUyMgGnLBW/AYJ7IlZb7+bUd/do+JsEpNyFxFVV63m5aJCb9sj+9YmUPtkPhkVgssF7fvsch4ZN48AOwZkiRl3TRgWixm/xM7uwD1DvRd4UUbFfEfscE=
+	t=1719931495; cv=none; b=TfKSeT6DeHf5zA8ScLDs6yQmMNfkCD7foPZ0U2X6nbTIW/xZ/iWrHJS5EITKSDbeaKccA1HFvmXKcdXX9JiA9ZMYZLLqxgdGOMOeLyTh0RQbN/IiZhmHR5WQyLjReykzZj692DKOl5vrKECMw/a5aX6NUwpqQMM2Tkk7tWKsmWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719931414; c=relaxed/simple;
-	bh=Ewc+Nh03yjPZR+ueWNbFezjcHbaY+TESO4Fc3R9gE1E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b/YbrBI9H9kH7fe1hNr2rP/ZwLbDoo5Mh9kqGi/bwiTZVciH46crU3fAUKaM1/6m1N9XNuuR328c+EWzDCbpcHrfLhbuE9RUT1frw8Gtv3FPNSI5kN765cFBOqF16ebSa7DQGMk5N1uAzpxiXNfQTUCTFrr0lg0tyL3jnGmEk0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=ZqFDZos4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05289C4AF0E;
-	Tue,  2 Jul 2024 14:43:33 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="ZqFDZos4"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1719931411;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zXXeFMq/nRaS9iayRn6IsvflwzLp/kF0XFNwUtC+MBQ=;
-	b=ZqFDZos441mvpYJQ2HrCAPLSQFw0DaHlAIaA649IELznV2d0xJOJFkr80MloEpKUEyTnKJ
-	g0zH2K5CnEhXVMssS1ftcOkVBtb+vv3rvx70zmqGkyQoQrVS0HrCtgYgLKov4kp/vMtBfZ
-	qzSOX33cS57ZQ9QiQVhQYlkOz5+gsPY=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 54d48fee (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Tue, 2 Jul 2024 14:43:29 +0000 (UTC)
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-25c9786835eso2519713fac.3;
-        Tue, 02 Jul 2024 07:43:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXNSWJacyEjIrHe/HuAlnmDeildfHYDRR5nLp1peC7bsiT7RpyDU303t6Iy74pFoRU5AHWrdOUfjRmbyfWOCIENYUgMmpRyq0M4E/JQJVnsqtXE0OZC/pGsfjfOYP9yRGIhVuEDKXMT/Q==
-X-Gm-Message-State: AOJu0Yx+nO4HE58vbgd1c6xcFRENeK/dbnxGJCVlKPzbMiMzIOuKmr54
-	YZCPvoydcJppXWrPTDnOORDYguZY30k9DCq+DnATEMVWrE6LwuSxzeB3WtknfvnOjWf63Arqb7S
-	cw0+Pw4wbVcJuPq5oE+qX1aXm0SQ=
-X-Google-Smtp-Source: AGHT+IGclrLKwuVggXhaPkcX0BzCbOmf+xj1+cgZxD0rVwMU8M8iRW42aSuLffCowufW6GLjoyYsWbtg7xBfCjVAD+I=
-X-Received: by 2002:a05:6870:3751:b0:254:a810:cdf with SMTP id
- 586e51a60fabf-25db340a2bamr8358777fac.13.1719931408681; Tue, 02 Jul 2024
- 07:43:28 -0700 (PDT)
+	s=arc-20240116; t=1719931495; c=relaxed/simple;
+	bh=igm8Hsce+3exsKL3ldkATepEb7/+cdyJt0g/twzxO/E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=f13qYN6d75fqvqAyQy855wMzxAZhMvQG01qJigLTXH7jBiRQ8bni3MtxMjZS7gsUq+xsQ1knOD1/hXcNCWd1fCpFcRfoxFvUO+nn6FH3L2NPh61Ag1B0sileIo6iByFyrVPXJMy0q8sB+0CvRTy/QzDxI8RznmbMn2Ly0MeiC4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=Ex0/AGAA reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id ea584e3ebb090532; Tue, 2 Jul 2024 16:44:44 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 2D65FA562AE;
+	Tue,  2 Jul 2024 16:44:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1719931484;
+	bh=igm8Hsce+3exsKL3ldkATepEb7/+cdyJt0g/twzxO/E=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=Ex0/AGAAQX/vvvEHT/32DS9NyiXCAdcoJ4xJ3fYsipzmIBNMGAwvzxJU62C8PJmFb
+	 eqw1Fu6y8BVtx5EFUCiwCydzn7EVVLssufBnmE/udNswkET/uWOkXFE/BprlWNApOG
+	 SzAnR7G5ZmelE/bAEhco502CjRZQADGuEnVplekIwieK7gbDFK5BChNqZYc1acFtYi
+	 nuswFuWWCd6UBBdmg7U95xsrRahkTBLKtrFWBvdKXs84Bljkamyfbux2j3Ekn/Mj1o
+	 D8oYez5KmhNswvR4xJwdMSnuIEqDTW6TGtMGgqRmdPABnF1ufxOZweg27WTkhd/mcO
+	 M/nzcZI1LnTDQ==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Zhang Rui <rui.zhang@intel.com>, Shawn Guo <shawnguo@kernel.org>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Thara Gopinath <thara.gopinath@gmail.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-wireless@vger.kernel.org,
+ linux-tegra@vger.kernel.org
+Subject:
+ [RESEND][PATCH v1 4/5] thermal: imx: Drop critical trip check from
+ imx_set_trip_temp()
+Date: Tue, 02 Jul 2024 16:43:36 +0200
+Message-ID: <2272035.iZASKD2KPV@rjwysocki.net>
+In-Reply-To: <1890956.tdWV9SEqCh@rjwysocki.net>
+References: <1890956.tdWV9SEqCh@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702165601.08bb4545@canb.auug.org.au>
-In-Reply-To: <20240702165601.08bb4545@canb.auug.org.au>
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date: Tue, 2 Jul 2024 16:43:17 +0200
-X-Gmail-Original-Message-ID: <CAHmME9rYfTtO9CPGi1nB=ohZ_SBMFocxpB=Ga3cqA54EF8F7Og@mail.gmail.com>
-Message-ID: <CAHmME9rYfTtO9CPGi1nB=ohZ_SBMFocxpB=Ga3cqA54EF8F7Og@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the random tree with the vfs-brauner,
- ftrace trees
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, Christian Brauner <brauner@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	=?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrudehgdejjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopedugedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopegurghnihgvlhdrlhgviigt
+ rghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtohepshhrihhnihhvrghsrdhprghnughruhhvrggurgeslhhinhhugidrihhnthgvlhdrtghomh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=14 Fuz1=14 Fuz2=14
 
-Hi Stephen,
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-On Tue, Jul 2, 2024 at 8:56=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org.=
-au> wrote:
->  +466   n32     removexattrat                   sys_removexattrat
-> ++468   n32     vgetrandom_alloc                sys_vgetrandom_alloc
+Because the IMX thermal driver does not flag its critical trip as
+writable, imx_set_trip_temp() will never be invoked for it and so the
+critical trip check can be dropped from there.
 
-Wondering why 467 was skipped.
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/thermal/imx_thermal.c |    9 ---------
+ 1 file changed, 9 deletions(-)
 
-Also, any chance you can let me keep 463 and shift the others (unless
-Christian objects)? Or does it not really matter anyway because Linus
-is gonna merge this how he wants, separately from what you do in
--next?
+Index: linux-pm/drivers/thermal/imx_thermal.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/imx_thermal.c
++++ linux-pm/drivers/thermal/imx_thermal.c
+@@ -335,21 +335,12 @@ static int imx_set_trip_temp(struct ther
+ 			     int temp)
+ {
+ 	struct imx_thermal_data *data = thermal_zone_device_priv(tz);
+-	struct thermal_trip trip;
+ 	int ret;
+ 
+ 	ret = pm_runtime_resume_and_get(data->dev);
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	ret = __thermal_zone_get_trip(tz, trip_id, &trip);
+-	if (ret)
+-		return ret;
+-
+-	/* do not allow changing critical threshold */
+-	if (trip.type == THERMAL_TRIP_CRITICAL)
+-		return -EPERM;
+-
+ 	/* do not allow passive to be set higher than critical */
+ 	if (temp < 0 || temp > trips[IMX_TRIP_CRITICAL].temperature)
+ 		return -EINVAL;
 
-Jason
+
+
 
