@@ -1,162 +1,97 @@
-Return-Path: <linux-kernel+bounces-238403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A93389249FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:35:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B55249249FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:38:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A4A32853E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:35:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50FFC285EA7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C921205E0E;
-	Tue,  2 Jul 2024 21:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A69205E0B;
+	Tue,  2 Jul 2024 21:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gYbU5oeU"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ULMVfy5V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 170317EEE7;
-	Tue,  2 Jul 2024 21:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5300D7EEE7;
+	Tue,  2 Jul 2024 21:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719956092; cv=none; b=D0uASB1W27zj7hnK2gzAAKOkxs7v39VXhZ5+7da3xDKcHve4WS7+eyJItAhOh5KO910TwJn9rSgwfz3xq/1lidRJ5EmMbjC2oCOxDrMMQmT6/PV8j0fKX/8LHht+NzJ5O7c5P/5jDSTsNm3nxZkxI5EjokohYy9O1ZfHv3otP2o=
+	t=1719956328; cv=none; b=YyKWscnrCi0djRHLtycgbet+4RJfbgm87uWpJGgsl6tMXWbz407Jz6Mecj7VIH4pziLYksMTXwuav30cU6ndD+EQKqvjI4kr8vZ5mSAzgXXZyPthAnk3VYBkIHy5bfCouZ414r7YNCfA4FpNvtuGOQQWP5ZEPWt+86oUvIRW6sI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719956092; c=relaxed/simple;
-	bh=pjY9q7p++zS/H2NWRf3PwR6JvPpZA4K0nI+XHDLu7n8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cvBHNKdIobXWlIppEhPRBYg61jFfaNSWbNLN1Gmz3Mabe1RzUhas8oIbsJ3vw2zyGAdCnE9mIJaPuxbtHOX+1/ZyBbmqknuZ3na41+ZHsDrTBHzDcpeMcdt+t37iKm9BONaYoDpE4iPIJZZcW41IgH8WeqzpyUdQhaOnfQ34G0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gYbU5oeU; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a724b3a32d2so543751966b.2;
-        Tue, 02 Jul 2024 14:34:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719956089; x=1720560889; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lNIEBN48BUarwjdlHvfFRLjDjXUEDIAJ8YA1P/t4Ao4=;
-        b=gYbU5oeUu4dz/AiRKVvO/24bIo+pZ6reLxJr0iwjiVcbP5cNHHxTahQT4dJL+y90PM
-         cUrOUmvLWvV4H34IHDsQ0eB8RNiWv1H2yyOPD3Iry30DClulDnLOJJCTwpUobL26CFcz
-         s+0Z++FaYyxq81CT7BB/tPIJGLggx+mq+1iISKySbGyjhQ4qsSBSE24osgU/lzN+CvJC
-         Wl7JOkfy+bzQuqNIYlM6m8ZRp+6vyJiGjlv7nNhczABlrqYSgKzKoIFdv/QQbshjxeAV
-         Uphr1mBSrQH8WqZcGuDqLjzznZR1Bxt5mXGArpseUIGtjEDXuxHqPe8PB2n56hnZBc3L
-         Eo4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719956089; x=1720560889;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lNIEBN48BUarwjdlHvfFRLjDjXUEDIAJ8YA1P/t4Ao4=;
-        b=PaPG8GIVe0V1JIGxPsB6P+BAsOUQPJK6D6Yk8X06ERwV79D6QpfKyzKOg+gGuHHxl8
-         jSSxZDalmBvs4SH+OLendpKBnsfqAqa87UGj1b4gLBXIwAvsxMp08SUiIaGrvsXdWAYK
-         1tAEz20EK6/wBMoAkZd6NpgNUHtMelFBFlLLRc3C1hnoa1vP02zwpL+7tF2A4+/N0X8f
-         30NAKDpZiVYm6IQjJzSTF12EL+ovOHYjeiwfm3E641X0DHo2eg6qGjXHO/5lZ+B4zhe/
-         cq+ePezyc2Qk/o8pSIjJmuHibNnm9LXUwgMm7Uqi9VnRcDmvot5Tmof8fT19QRxz/pqh
-         IRmA==
-X-Forwarded-Encrypted: i=1; AJvYcCX5VgNwKEjkqkB1hhY9q7ygjCEQh4IyYFKaWzLK7yDraQljkGJ5GHzWCkQbrKD0FD/ZDsi09ebOHDvuIEkLQTkJiCWogwTth9iPphD9iHrPD4aXiksysOkSocNV91LBZrhW977cFgK0ABe+oQr6G23uHKtu6AuGmHIbckLsjo1tyGk7z0sM
-X-Gm-Message-State: AOJu0YxhcKkND3NazWpWvXBGyDzxfzkJ/g1Bblwbd39xf6LDkI4oGOw/
-	97rpizDRF5NUsJG0vjwywVF6PmyJELcYjrT7yoFU4AHC8uQgrcrlJ/6ngY/3wwW62PpBIbCagVp
-	iYHeNAL9HrkNZ3RTKhPq2QXFPnpw=
-X-Google-Smtp-Source: AGHT+IE67kVdBXP1jdj20qhCLnDStDdU9bC2i3kH1m6wJ2m/bIINIsm8LnxomXIX/xLJULhRjCumndLG1zughsNgUz4=
-X-Received: by 2002:a17:907:845:b0:a75:2387:7801 with SMTP id
- a640c23a62f3a-a752387794bmr522579366b.61.1719956089136; Tue, 02 Jul 2024
- 14:34:49 -0700 (PDT)
+	s=arc-20240116; t=1719956328; c=relaxed/simple;
+	bh=Hi2MAjeoOywR2rNMt5PjIhlO64Ph+QfHrP4FVwlVzNc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uGEyCkmrEmEUj6sNLn2j3DNLZWlz4T5oRVqjMAdT+/YV6n3SphN9SSmmg2dW2+VTQgWLoMdRFxQQxC50LC3ZK/7tPIsAvphdLdhAlEIg9R2CC8fHu0Oj/TBqmLPcPOTNEm1kKLRJdbAVRc4k9U8qNd799VsbAeB6MkqjXMdQCjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ULMVfy5V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BA50C116B1;
+	Tue,  2 Jul 2024 21:38:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719956327;
+	bh=Hi2MAjeoOywR2rNMt5PjIhlO64Ph+QfHrP4FVwlVzNc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ULMVfy5VdDI3GfBFmQowVhuWTIBE0LdL+ZOMzxib5hLe2FZR3TlRretrQJZ3QhVQN
+	 gppxYuW3BeDFN5abCYMCM3OlcGK3N5SgicmAUAOyLBRb4U5Uei6EQAnKPGDzv6WzP7
+	 OJzHElyYFC0DJdRbrsozViN8pfkUFiOvtvjtt0zqsrns+54YaYqTljz/hxc7Dro0ch
+	 F/feyLURAwBfJ4jwwXBbuGtobHDit+wBi5Aop29/oFp+cbnKdohTpde3zVDIZG9Tkf
+	 p8kB113gyHwlT/lbi0I6t/h33wDXInXk7ixZp9vi8WVdVVljA3DjOcLCdaooPn0uWd
+	 ljFKJf0eHBLLw==
+Date: Tue, 2 Jul 2024 22:38:41 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com
+Subject: Re: [PATCH 6.9 000/222] 6.9.8-rc1 review
+Message-ID: <ea541956-4b43-402a-b66f-562b4f1a9518@sirena.org.uk>
+References: <20240702170243.963426416@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240701164115.723677-1-jolsa@kernel.org> <20240701164115.723677-5-jolsa@kernel.org>
-In-Reply-To: <20240701164115.723677-5-jolsa@kernel.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 2 Jul 2024 14:34:34 -0700
-Message-ID: <CAEf4BzYP6zW0Mmi_=J5ng+GiUSJpB1JCg-qai0kp_N+_vestxA@mail.gmail.com>
-Subject: Re: [PATCHv2 bpf-next 4/9] libbpf: Add support for uprobe multi
- session attach
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>, 
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
-	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@chromium.org>, 
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="DQPDThAnoIZ/tdqC"
+Content-Disposition: inline
+In-Reply-To: <20240702170243.963426416@linuxfoundation.org>
+X-Cookie: Phasers locked on target, Captain.
 
-On Mon, Jul 1, 2024 at 9:42=E2=80=AFAM Jiri Olsa <jolsa@kernel.org> wrote:
->
-> Adding support to attach program in uprobe session mode
-> with bpf_program__attach_uprobe_multi function.
->
-> Adding session bool to bpf_uprobe_multi_opts struct that allows
-> to load and attach the bpf program via uprobe session.
-> the attachment to create uprobe multi session.
->
-> Also adding new program loader section that allows:
->   SEC("uprobe.session/bpf_fentry_test*")
->
-> and loads/attaches uprobe program as uprobe session.
->
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->  tools/lib/bpf/bpf.c    |  1 +
->  tools/lib/bpf/libbpf.c | 50 ++++++++++++++++++++++++++++++++++++++++--
->  tools/lib/bpf/libbpf.h |  4 +++-
->  3 files changed, 52 insertions(+), 3 deletions(-)
->
 
-[...]
+--DQPDThAnoIZ/tdqC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> @@ -9362,6 +9363,7 @@ static const struct bpf_sec_def section_defs[] =3D =
-{
->         SEC_DEF("kprobe.session+",      KPROBE, BPF_TRACE_KPROBE_SESSION,=
- SEC_NONE, attach_kprobe_session),
->         SEC_DEF("uprobe.multi+",        KPROBE, BPF_TRACE_UPROBE_MULTI, S=
-EC_NONE, attach_uprobe_multi),
->         SEC_DEF("uretprobe.multi+",     KPROBE, BPF_TRACE_UPROBE_MULTI, S=
-EC_NONE, attach_uprobe_multi),
-> +       SEC_DEF("uprobe.session+",      KPROBE, BPF_TRACE_UPROBE_SESSION,=
- SEC_NONE, attach_uprobe_session),
+On Tue, Jul 02, 2024 at 07:00:38PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.9.8 release.
+> There are 222 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-sleepable ones as well?
+Tested-by: Mark Brown <broonie@kernel.org>
 
->         SEC_DEF("uprobe.multi.s+",      KPROBE, BPF_TRACE_UPROBE_MULTI, S=
-EC_SLEEPABLE, attach_uprobe_multi),
->         SEC_DEF("uretprobe.multi.s+",   KPROBE, BPF_TRACE_UPROBE_MULTI, S=
-EC_SLEEPABLE, attach_uprobe_multi),
->         SEC_DEF("ksyscall+",            KPROBE, 0, SEC_NONE, attach_ksysc=
-all),
-> @@ -11698,6 +11700,40 @@ static int attach_uprobe_multi(const struct bpf_=
-program *prog, long cookie, stru
->         return ret;
->  }
->
-> +static int attach_uprobe_session(const struct bpf_program *prog, long co=
-okie, struct bpf_link **link)
-> +{
-> +       char *binary_path =3D NULL, *func_name =3D NULL;
-> +       LIBBPF_OPTS(bpf_uprobe_multi_opts, opts,
-> +               .session =3D true,
-> +       );
+--DQPDThAnoIZ/tdqC
+Content-Type: application/pgp-signature; name="signature.asc"
 
-nit: keep a single line?
+-----BEGIN PGP SIGNATURE-----
 
-> +       int n, ret =3D -EINVAL;
-> +       const char *spec;
-> +
-> +       *link =3D NULL;
-> +
-> +       spec =3D prog->sec_name + sizeof("uprobe.session/") - 1;
-> +       n =3D sscanf(spec, "%m[^:]:%m[^\n]",
-> +                  &binary_path, &func_name);
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaEc2AACgkQJNaLcl1U
+h9CK9wf/fRKt+On4eGZ8UduWir3za2toZxkgjloGSN2nd5PC1tdX0FimxNcpcSD4
+tf1L5gaiyfVKEY7k+hDIGh+cKqBhphUH0jcbhcy4ARopCHJOJpZ49BYTNuZaaoTn
+wtBEu9V/g/nEpGFs00RMgm/MH7Xglh3ngQNBLlqzxGQzdjeuC23YLUt/lxgLo642
+iWhnCZPDxkXTKr/mU1J2Ck6moLYQCx8HgUNf6TJgEnU9opdyHpXRMDwR8uplF0Bf
+fP1hrr6zvEDG73653PzNAoCNImW+TNKB9YCzp+F6Ofk233paIjc7CpcywNV36a4k
+RxD90aXMdwGaLnx4ftrxNwQSVAS/tA==
+=XTDv
+-----END PGP SIGNATURE-----
 
-single line, wrapping lines is a necessary evil, please
-
-[...]
+--DQPDThAnoIZ/tdqC--
 
