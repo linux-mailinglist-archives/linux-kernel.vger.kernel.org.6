@@ -1,538 +1,119 @@
-Return-Path: <linux-kernel+bounces-237394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 143F891F068
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:41:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46F6791F06B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:42:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF9742884AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:41:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A57FBB24258
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB3D13D8BA;
-	Tue,  2 Jul 2024 07:41:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DOqh0nnr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C42146D43;
+	Tue,  2 Jul 2024 07:42:12 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A9A144D36
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 07:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142A0537E7;
+	Tue,  2 Jul 2024 07:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719906094; cv=none; b=eqKKNOnVvdTf2FwOIksEcJJ8kgm2FEKsWHSIyx8s2AfRAuhLzkn0WxaCQ4t6pTubzXdSUHZOxoycwivBj4UcoQIz9RGCavuN39iBq5Ev4sPgZ30FqQp9TXrxBGo9zoAnKltJu4RXtGQ75vVYFzXU/U7UWP9qdOA/4IBVijc3UBs=
+	t=1719906131; cv=none; b=OH8VCf7EBlgHr2SMC/5SglnJ3ZegNZ4c7QTClz6soswiXMTOlYcS9z76A6gdelgyVQA8rJ61y+QRxM63ERIg2qNNNxVuJ4yudfSfAXw5bgDxagd9B6c27OjJKFeWlbtC7fsZEk7oSJN59mbU3Lxent56RMLg2udQoR9K+zWZJK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719906094; c=relaxed/simple;
-	bh=B9EYcjT9Ec9iNdc7gI7kDDfaayVW1Ye+VYHuY/jKDjc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qNv9BNu72H4eZTNcKC+FsuGIR2lYX7dW9mt5ylPtVI5sEXFvDWTtqS0CGov2FsU4Yra+H/ByOeD7OVjEmnxzcSWuVB4RKlzeKsk2Pue+KJlPibauZGnGwKO16iXl/wMMtXicW8I9Ul08S1BCryR4lmHElWHAlCnXinsaeUH/WUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DOqh0nnr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95F23C4AF0C
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 07:41:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719906093;
-	bh=B9EYcjT9Ec9iNdc7gI7kDDfaayVW1Ye+VYHuY/jKDjc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=DOqh0nnr7Se3dVuuUmVFC/07bEz2/jMppDWlArB0cwMYJhgpOEvtdJVIb1RgaAVOs
-	 jinPVFyMMUbAGO5uORB6ikJwHNpb1rKeEPefxNNxJxobnfv3ZfV0DU2PW4hMgG3cF6
-	 q+Zl7WDka0fTqSWJiY27ehcpJLONlF+8wfVK+feUbpJhOM98sOOiRFjUCfmTu2Qu/j
-	 hD41lrYS57DYMkyHLCoJVNOPD5LqS0zQJDGF/k8Aau7RNiT8o9SRPb9YY2xxHU9ILO
-	 ZyckMi92RVWjKeN5tV3FvYrMZQ0f9YATFZE4DxOKlSadYMurOEvZDs4MNM+Ra7rHju
-	 2rIzI39MoQVkA==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5295e488248so4907104e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 00:41:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXF4w62G0XCpM0FDAAR04M664Z6XXWlHj2sJg/+PfXiWR0Pd6i8cTiYb625bxPNYDfp3GAy+KO+NVyp2f6rKrwckHWeuQtvkwdNRiM/
-X-Gm-Message-State: AOJu0YwIPMS/ZEBnPOpxN1gs6HwZj6TW77VxbMneMKC5Yq9E/3B5cBsH
-	vxmAyaUuP9MFyrT0O78J5QKfdZXAClW36k0NIbMbA+J7BQtC23VzixC3SrEiXktc36tcM236cRD
-	BR/VHUY7Us/WEx3o3UbLrwc3xjp0=
-X-Google-Smtp-Source: AGHT+IEdbgWC3FgWnBnUAs5LnPmwdOSP0NHXFnv21qylpAea4CsDvZmLMb+l8vkFagbcwxmTa2q1oEl68xWMO867rp0=
-X-Received: by 2002:ac2:5052:0:b0:52e:7f6b:577d with SMTP id
- 2adb3069b0e04-52e82672d0amr4332194e87.24.1719906091775; Tue, 02 Jul 2024
- 00:41:31 -0700 (PDT)
+	s=arc-20240116; t=1719906131; c=relaxed/simple;
+	bh=XYA+tZcK3FwJGaNsBu0yee8YqNCuyxVDT51PYRw1Cik=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C5NgcILcQ7hEM8clpBOq9691+8CTnqNkgzBi5lyefkOlLKds3VI0m10xTihBpEZ6m2rztOzMCUIUqBFAUfT2i6cRHmnG6L8bvGLWn9U4FB3AcbiBFJnCrBzU3PhOJGUAmFucYdf8aY0io90j7VlDPl7VXU30WxIL0CM4JkiQZ18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 2D1EE68AFE; Tue,  2 Jul 2024 09:42:04 +0200 (CEST)
+Date: Tue, 2 Jul 2024 09:42:03 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: david@fromorbit.com, willy@infradead.org, chandan.babu@oracle.com,
+	djwong@kernel.org, brauner@kernel.org, akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
+	linux-mm@kvack.org, john.g.garry@oracle.com,
+	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
+	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org, hch@lst.de, Zi Yan <zi.yan@sent.com>
+Subject: Re: [PATCH v8 06/10] iomap: fix iomap_dio_zero() for fs bs >
+ system page size
+Message-ID: <20240702074203.GA29410@lst.de>
+References: <20240625114420.719014-1-kernel@pankajraghav.com> <20240625114420.719014-7-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702064835.120541-1-ebiggers@kernel.org> <20240702064835.120541-8-ebiggers@kernel.org>
-In-Reply-To: <20240702064835.120541-8-ebiggers@kernel.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 2 Jul 2024 09:41:19 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFE45J9fDJ9XtMyJiUP1F-odZUmH0zLKkuZeWL_bLdDZQ@mail.gmail.com>
-Message-ID: <CAMj1kXFE45J9fDJ9XtMyJiUP1F-odZUmH0zLKkuZeWL_bLdDZQ@mail.gmail.com>
-Subject: Re: [PATCH 7/7] dm-verity: hash blocks with shash import+finup when possible
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: dm-devel@lists.linux.dev, Alasdair Kergon <agk@redhat.com>, 
-	Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>, linux-kernel@vger.kernel.org, 
-	Sami Tolvanen <samitolvanen@google.com>, Bart Van Assche <bvanassche@acm.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240625114420.719014-7-kernel@pankajraghav.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Hi Eric,
+On Tue, Jun 25, 2024 at 11:44:16AM +0000, Pankaj Raghav (Samsung) wrote:
+> -static int __init iomap_init(void)
+> +static int __init iomap_pagecache_init(void)
+>  {
+>  	return bioset_init(&iomap_ioend_bioset, 4 * (PAGE_SIZE / SECTOR_SIZE),
+>  			   offsetof(struct iomap_ioend, io_bio),
+>  			   BIOSET_NEED_BVECS);
+>  }
+> -fs_initcall(iomap_init);
+> +fs_initcall(iomap_pagecache_init);
 
-One question below.
+s/iomap_pagecache_init/iomap_buffered_init/
 
-On Tue, 2 Jul 2024 at 08:49, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> From: Eric Biggers <ebiggers@google.com>
->
-> Currently dm-verity computes the hash of each block by using multiple
-> calls to the "ahash" crypto API.  While the exact sequence depends on
-> the chosen dm-verity settings, in the vast majority of cases it is:
->
->     1. crypto_ahash_init()
->     2. crypto_ahash_update() [salt]
->     3. crypto_ahash_update() [data]
->     4. crypto_ahash_final()
->
-> This is inefficient for two main reasons:
->
-> - It makes multiple indirect calls, which is expensive on modern CPUs
->   especially when mitigations for CPU vulnerabilities are enabled.
->
->   Since the salt is the same across all blocks on a given dm-verity
->   device, a much more efficient sequence would be to do an import of the
->   pre-salted state, then a finup.
->
-> - It uses the ahash (asynchronous hash) API, despite the fact that
->   CPU-based hashing is almost always used in practice, and therefore it
->   experiences the overhead of the ahash-based wrapper for shash.
->
->   Because dm-verity was intentionally converted to ahash to support
->   off-CPU crypto accelerators, a full reversion to shash might not be
->   acceptable.  Yet, we should still provide a fast path for shash with
->   the most common dm-verity settings.
->
->   Another reason for shash over ahash is that the upcoming multibuffer
->   hashing support, which is specific to CPU-based hashing, is much
->   better suited for shash than for ahash.  Supporting it via ahash would
->   add significant complexity and overhead.  And it's not possible for
->   the "same" code to properly support both multibuffer hashing and HW
->   accelerators at the same time anyway, given the different computation
->   models.  Unfortunately there will always be code specific to each
->   model needed (for users who want to support both).
->
-> Therefore, this patch adds a new shash import+finup based fast path to
-> dm-verity.  It is used automatically when appropriate.  This makes
-> dm-verity optimized for what the vast majority of users want: CPU-based
-> hashing with the most common settings, while still retaining support for
-> rarer settings and off-CPU crypto accelerators.
->
-> In benchmarks with veritysetup's default parameters (SHA-256, 4K data
-> and hash block sizes, 32-byte salt), which also match the parameters
-> that Android currently uses, this patch improves block hashing
-> performance by about 15% on x86_64 using the SHA-NI instructions, or by
-> about 5% on arm64 using the ARMv8 SHA2 instructions.  On x86_64 roughly
-> two-thirds of the improvement comes from the use of import and finup,
-> while the remaining third comes from the switch from ahash to shash.
->
-> Note that another benefit of using "import" to handle the salt is that
-> if the salt size is equal to the input size of the hash algorithm's
-> compression function, e.g. 64 bytes for SHA-256, then the performance is
-> exactly the same as no salt.  This doesn't seem to be much better than
-> veritysetup's current default of 32-byte salts, due to the way SHA-256's
-> finalization padding works, but it should be marginally better.
->
-> Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
-> Acked-by: Ard Biesheuvel <ardb@kernel.org>
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
->  drivers/md/dm-verity-target.c | 169 ++++++++++++++++++++++++----------
->  drivers/md/dm-verity.h        |  18 ++--
->  2 files changed, 130 insertions(+), 57 deletions(-)
->
-> diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
-> index 4aa140751166..d16c51958465 100644
-> --- a/drivers/md/dm-verity-target.c
-> +++ b/drivers/md/dm-verity-target.c
-> @@ -46,10 +46,13 @@ static unsigned int dm_verity_prefetch_cluster = DM_VERITY_DEFAULT_PREFETCH_SIZE
->
->  module_param_named(prefetch_cluster, dm_verity_prefetch_cluster, uint, 0644);
->
->  static DEFINE_STATIC_KEY_FALSE(use_bh_wq_enabled);
->
-> +/* Is at least one dm-verity instance using ahash_tfm instead of shash_tfm? */
-> +static DEFINE_STATIC_KEY_FALSE(ahash_enabled);
+We don't use pagecache naming anywhere else in the file.
+
+> +/*
+> + * Used for sub block zeroing in iomap_dio_zero()
+> + */
+> +#define ZERO_PAGE_64K_SIZE (65536)
+
+just use SZ_64K
+
+> +#define ZERO_PAGE_64K_ORDER (get_order(ZERO_PAGE_64K_SIZE))
+
+No really point in having this.
+
+> +static struct page *zero_page_64k;
+
+This should be a folio.  Encoding the size in the name is also really
+weird and just creates churn when we have to increase it.
+
+
+> +	/*
+> +	 * Max block size supported is 64k
+> +	 */
+> +	WARN_ON_ONCE(len > ZERO_PAGE_64K_SIZE);
+
+
+A WARN_ON without actually erroring out here is highly dangerous. 
+
 > +
->  struct dm_verity_prefetch_work {
->         struct work_struct work;
->         struct dm_verity *v;
->         unsigned short ioprio;
->         sector_t block;
-> @@ -100,11 +103,11 @@ static sector_t verity_position_at_level(struct dm_verity *v, sector_t block,
->                                          int level)
->  {
->         return block >> (level * v->hash_per_block_bits);
->  }
->
-> -static int verity_hash_update(struct dm_verity *v, struct ahash_request *req,
-> +static int verity_ahash_update(struct dm_verity *v, struct ahash_request *req,
->                                 const u8 *data, size_t len,
->                                 struct crypto_wait *wait)
->  {
->         struct scatterlist sg;
->
-> @@ -133,16 +136,16 @@ static int verity_hash_update(struct dm_verity *v, struct ahash_request *req,
->  }
->
->  /*
->   * Wrapper for crypto_ahash_init, which handles verity salting.
->   */
-> -static int verity_hash_init(struct dm_verity *v, struct ahash_request *req,
-> +static int verity_ahash_init(struct dm_verity *v, struct ahash_request *req,
->                                 struct crypto_wait *wait, bool may_sleep)
->  {
->         int r;
->
-> -       ahash_request_set_tfm(req, v->tfm);
-> +       ahash_request_set_tfm(req, v->ahash_tfm);
->         ahash_request_set_callback(req,
->                 may_sleep ? CRYPTO_TFM_REQ_MAY_SLEEP | CRYPTO_TFM_REQ_MAY_BACKLOG : 0,
->                 crypto_req_done, (void *)wait);
->         crypto_init_wait(wait);
->
-> @@ -153,22 +156,22 @@ static int verity_hash_init(struct dm_verity *v, struct ahash_request *req,
->                         DMERR("crypto_ahash_init failed: %d", r);
->                 return r;
->         }
->
->         if (likely(v->salt_size && (v->version >= 1)))
-> -               r = verity_hash_update(v, req, v->salt, v->salt_size, wait);
-> +               r = verity_ahash_update(v, req, v->salt, v->salt_size, wait);
->
->         return r;
->  }
->
-> -static int verity_hash_final(struct dm_verity *v, struct ahash_request *req,
-> -                            u8 *digest, struct crypto_wait *wait)
-> +static int verity_ahash_final(struct dm_verity *v, struct ahash_request *req,
-> +                             u8 *digest, struct crypto_wait *wait)
->  {
->         int r;
->
->         if (unlikely(v->salt_size && (!v->version))) {
-> -               r = verity_hash_update(v, req, v->salt, v->salt_size, wait);
-> +               r = verity_ahash_update(v, req, v->salt, v->salt_size, wait);
->
->                 if (r < 0) {
->                         DMERR("%s failed updating salt: %d", __func__, r);
->                         goto out;
->                 }
-> @@ -181,25 +184,28 @@ static int verity_hash_final(struct dm_verity *v, struct ahash_request *req,
->  }
->
->  int verity_hash(struct dm_verity *v, struct dm_verity_io *io,
->                 const u8 *data, size_t len, u8 *digest, bool may_sleep)
->  {
-> -       struct ahash_request *req = verity_io_hash_req(v, io);
->         int r;
-> -       struct crypto_wait wait;
-> -
-> -       r = verity_hash_init(v, req, &wait, may_sleep);
-> -       if (unlikely(r < 0))
-> -               goto out;
->
-> -       r = verity_hash_update(v, req, data, len, &wait);
-> -       if (unlikely(r < 0))
-> -               goto out;
-> +       if (static_branch_unlikely(&ahash_enabled) && !v->shash_tfm) {
+>  	bio = iomap_dio_alloc_bio(iter, dio, 1, REQ_OP_WRITE | REQ_SYNC | REQ_IDLE);
 
-Is the static key really worth the hassle? Couldn't this just be
+Overly long line here.
 
-if (unlikely(!v->shash_tfm)) {
-
-so that the ahash logic is moved to the cold path? We need to
-dereference v->shash_tfm right away in any case, and if it is never
-NULL, the branch predictor should be able to remember that.
-
-
-> +               struct ahash_request *req = verity_io_hash_req(v, io);
-> +               struct crypto_wait wait;
->
-> -       r = verity_hash_final(v, req, digest, &wait);
-> +               r = verity_ahash_init(v, req, &wait, may_sleep) ?:
-> +                   verity_ahash_update(v, req, data, len, &wait) ?:
-> +                   verity_ahash_final(v, req, digest, &wait);
-> +       } else {
-> +               struct shash_desc *desc = verity_io_hash_req(v, io);
->
-> -out:
-> +               desc->tfm = v->shash_tfm;
-> +               r = crypto_shash_import(desc, v->initial_hashstate) ?:
-> +                   crypto_shash_finup(desc, data, len, digest);
-> +       }
-> +       if (unlikely(r))
-> +               DMERR("Error hashing block: %d", r);
->         return r;
->  }
->
->  static void verity_hash_at_level(struct dm_verity *v, sector_t block, int level,
->                                  sector_t *hash_block, unsigned int *offset)
-> @@ -932,15 +938,20 @@ static void verity_dtr(struct dm_target *ti)
->         if (v->bufio)
->                 dm_bufio_client_destroy(v->bufio);
->
->         kvfree(v->validated_blocks);
->         kfree(v->salt);
-> +       kfree(v->initial_hashstate);
->         kfree(v->root_digest);
->         kfree(v->zero_digest);
->
-> -       if (v->tfm)
-> -               crypto_free_ahash(v->tfm);
-> +       if (v->ahash_tfm) {
-> +               static_branch_dec(&ahash_enabled);
-> +               crypto_free_ahash(v->ahash_tfm);
-> +       } else {
-> +               crypto_free_shash(v->shash_tfm);
-> +       }
->
->         kfree(v->alg_name);
->
->         if (v->hash_dev)
->                 dm_put_device(ti, v->hash_dev);
-> @@ -990,11 +1001,11 @@ static int verity_alloc_zero_digest(struct dm_verity *v)
->         v->zero_digest = kmalloc(v->digest_size, GFP_KERNEL);
->
->         if (!v->zero_digest)
->                 return r;
->
-> -       io = kmalloc(sizeof(*io) + v->ahash_reqsize, GFP_KERNEL);
-> +       io = kmalloc(sizeof(*io) + v->hash_reqsize, GFP_KERNEL);
->
->         if (!io)
->                 return r; /* verity_dtr will free zero_digest */
->
->         zero_data = kzalloc(1 << v->data_dev_block_bits, GFP_KERNEL);
-> @@ -1129,40 +1140,110 @@ static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v,
->
->  static int verity_setup_hash_alg(struct dm_verity *v, const char *alg_name)
->  {
->         struct dm_target *ti = v->ti;
->         struct crypto_ahash *ahash;
-> +       struct crypto_shash *shash = NULL;
-> +       const char *driver_name;
->
->         v->alg_name = kstrdup(alg_name, GFP_KERNEL);
->         if (!v->alg_name) {
->                 ti->error = "Cannot allocate algorithm name";
->                 return -ENOMEM;
->         }
->
-> +       /*
-> +        * Allocate the hash transformation object that this dm-verity instance
-> +        * will use.  The vast majority of dm-verity users use CPU-based
-> +        * hashing, so when possible use the shash API to minimize the crypto
-> +        * API overhead.  If the ahash API resolves to a different driver
-> +        * (likely an off-CPU hardware offload), use ahash instead.  Also use
-> +        * ahash if the obsolete dm-verity format with the appended salt is
-> +        * being used, so that quirk only needs to be handled in one place.
-> +        */
->         ahash = crypto_alloc_ahash(alg_name, 0,
->                                    v->use_bh_wq ? CRYPTO_ALG_ASYNC : 0);
->         if (IS_ERR(ahash)) {
->                 ti->error = "Cannot initialize hash function";
->                 return PTR_ERR(ahash);
->         }
-> -       v->tfm = ahash;
-> -
-> -       /*
-> -        * dm-verity performance can vary greatly depending on which hash
-> -        * algorithm implementation is used.  Help people debug performance
-> -        * problems by logging the ->cra_driver_name.
-> -        */
-> -       DMINFO("%s using implementation \"%s\"", alg_name,
-> -              crypto_hash_alg_common(ahash)->base.cra_driver_name);
-> -
-> -       v->digest_size = crypto_ahash_digestsize(ahash);
-> +       driver_name = crypto_ahash_driver_name(ahash);
-> +       if (v->version >= 1 /* salt prepended, not appended? */) {
-> +               shash = crypto_alloc_shash(alg_name, 0, 0);
-> +               if (!IS_ERR(shash) &&
-> +                   strcmp(crypto_shash_driver_name(shash), driver_name) != 0) {
-> +                       /*
-> +                        * ahash gave a different driver than shash, so probably
-> +                        * this is a case of real hardware offload.  Use ahash.
-> +                        */
-> +                       crypto_free_shash(shash);
-> +                       shash = NULL;
-> +               }
-> +       }
-> +       if (!IS_ERR_OR_NULL(shash)) {
-> +               crypto_free_ahash(ahash);
-> +               ahash = NULL;
-> +               v->shash_tfm = shash;
-> +               v->digest_size = crypto_shash_digestsize(shash);
-> +               v->hash_reqsize = sizeof(struct shash_desc) +
-> +                                 crypto_shash_descsize(shash);
-> +               DMINFO("%s using shash \"%s\"", alg_name, driver_name);
-> +       } else {
-> +               v->ahash_tfm = ahash;
-> +               static_branch_inc(&ahash_enabled);
-> +               v->digest_size = crypto_ahash_digestsize(ahash);
-> +               v->hash_reqsize = sizeof(struct ahash_request) +
-> +                                 crypto_ahash_reqsize(ahash);
-> +               DMINFO("%s using ahash \"%s\"", alg_name, driver_name);
-> +       }
->         if ((1 << v->hash_dev_block_bits) < v->digest_size * 2) {
->                 ti->error = "Digest size too big";
->                 return -EINVAL;
->         }
-> -       v->ahash_reqsize = sizeof(struct ahash_request) +
-> -                          crypto_ahash_reqsize(ahash);
-> +       return 0;
-> +}
 > +
-> +static int verity_setup_salt_and_hashstate(struct dm_verity *v, const char *arg)
+> +static int __init iomap_dio_init(void)
 > +{
-> +       struct dm_target *ti = v->ti;
+> +	zero_page_64k = alloc_pages(GFP_KERNEL | __GFP_ZERO,
+> +				    ZERO_PAGE_64K_ORDER);
+
 > +
-> +       if (strcmp(arg, "-") != 0) {
-> +               v->salt_size = strlen(arg) / 2;
-> +               v->salt = kmalloc(v->salt_size, GFP_KERNEL);
-> +               if (!v->salt) {
-> +                       ti->error = "Cannot allocate salt";
-> +                       return -ENOMEM;
-> +               }
-> +               if (strlen(arg) != v->salt_size * 2 ||
-> +                   hex2bin(v->salt, arg, v->salt_size)) {
-> +                       ti->error = "Invalid salt";
-> +                       return -EINVAL;
-> +               }
-> +       }
-> +       if (v->shash_tfm) {
-> +               SHASH_DESC_ON_STACK(desc, v->shash_tfm);
-> +               int r;
+> +	if (!zero_page_64k)
+> +		return -ENOMEM;
 > +
-> +               /*
-> +                * Compute the pre-salted hash state that can be passed to
-> +                * crypto_shash_import() for each block later.
-> +                */
-> +               v->initial_hashstate = kmalloc(
-> +                       crypto_shash_statesize(v->shash_tfm), GFP_KERNEL);
-> +               if (!v->initial_hashstate) {
-> +                       ti->error = "Cannot allocate initial hash state";
-> +                       return -ENOMEM;
-> +               }
-> +               desc->tfm = v->shash_tfm;
-> +               r = crypto_shash_init(desc) ?:
-> +                   crypto_shash_update(desc, v->salt, v->salt_size) ?:
-> +                   crypto_shash_export(desc, v->initial_hashstate);
-> +               if (r) {
-> +                       ti->error = "Cannot set up initial hash state";
-> +                       return r;
-> +               }
-> +       }
->         return 0;
->  }
->
->  /*
->   * Target parameters:
-> @@ -1304,25 +1385,13 @@ static int verity_ctr(struct dm_target *ti, unsigned int argc, char **argv)
->                 r = -EINVAL;
->                 goto bad;
->         }
->         root_hash_digest_to_validate = argv[8];
->
-> -       if (strcmp(argv[9], "-")) {
-> -               v->salt_size = strlen(argv[9]) / 2;
-> -               v->salt = kmalloc(v->salt_size, GFP_KERNEL);
-> -               if (!v->salt) {
-> -                       ti->error = "Cannot allocate salt";
-> -                       r = -ENOMEM;
-> -                       goto bad;
-> -               }
-> -               if (strlen(argv[9]) != v->salt_size * 2 ||
-> -                   hex2bin(v->salt, argv[9], v->salt_size)) {
-> -                       ti->error = "Invalid salt";
-> -                       r = -EINVAL;
-> -                       goto bad;
-> -               }
-> -       }
-> +       r = verity_setup_salt_and_hashstate(v, argv[9]);
-> +       if (r)
-> +               goto bad;
->
->         argv += 10;
->         argc -= 10;
->
->         /* Optional parameters */
-> @@ -1420,11 +1489,11 @@ static int verity_ctr(struct dm_target *ti, unsigned int argc, char **argv)
->                 ti->error = "Cannot allocate workqueue";
->                 r = -ENOMEM;
->                 goto bad;
->         }
->
-> -       ti->per_io_data_size = sizeof(struct dm_verity_io) + v->ahash_reqsize;
-> +       ti->per_io_data_size = sizeof(struct dm_verity_io) + v->hash_reqsize;
->
->         r = verity_fec_ctr(v);
->         if (r)
->                 goto bad;
->
-> diff --git a/drivers/md/dm-verity.h b/drivers/md/dm-verity.h
-> index 0e1dd02a916f..aac3a1b1d94a 100644
-> --- a/drivers/md/dm-verity.h
-> +++ b/drivers/md/dm-verity.h
-> @@ -37,13 +37,15 @@ struct dm_verity {
->         struct dm_dev *data_dev;
->         struct dm_dev *hash_dev;
->         struct dm_target *ti;
->         struct dm_bufio_client *bufio;
->         char *alg_name;
-> -       struct crypto_ahash *tfm;
-> +       struct crypto_ahash *ahash_tfm; /* either this or shash_tfm is set */
-> +       struct crypto_shash *shash_tfm; /* either this or ahash_tfm is set */
->         u8 *root_digest;        /* digest of the root block */
->         u8 *salt;               /* salt: its size is salt_size */
-> +       u8 *initial_hashstate;  /* salted initial state, if shash_tfm is set */
->         u8 *zero_digest;        /* digest for a zero block */
->         unsigned int salt_size;
->         sector_t data_start;    /* data offset in 512-byte sectors */
->         sector_t hash_start;    /* hash start in blocks */
->         sector_t data_blocks;   /* the number of data blocks */
-> @@ -54,11 +56,11 @@ struct dm_verity {
->         unsigned char levels;   /* the number of tree levels */
->         unsigned char version;
->         bool hash_failed:1;     /* set if hash of any block failed */
->         bool use_bh_wq:1;       /* try to verify in BH wq before normal work-queue */
->         unsigned int digest_size;       /* digest size for the current hash algorithm */
-> -       unsigned int ahash_reqsize;/* the size of temporary space for crypto */
-> +       unsigned int hash_reqsize; /* the size of temporary space for crypto */
->         enum verity_mode mode;  /* mode for handling verification errors */
->         unsigned int corrupted_errs;/* Number of errors for corrupted blocks */
->
->         struct workqueue_struct *verify_wq;
->
-> @@ -91,19 +93,21 @@ struct dm_verity_io {
->
->         u8 real_digest[HASH_MAX_DIGESTSIZE];
->         u8 want_digest[HASH_MAX_DIGESTSIZE];
->
->         /*
-> -        * This struct is followed by a variable-sized struct ahash_request of
-> -        * size v->ahash_reqsize.  To access it, use verity_io_hash_req().
-> +        * This struct is followed by a variable-sized hash request of size
-> +        * v->hash_reqsize, either a struct ahash_request or a struct shash_desc
-> +        * (depending on whether ahash_tfm or shash_tfm is being used).  To
-> +        * access it, use verity_io_hash_req().
->          */
->  };
->
-> -static inline struct ahash_request *verity_io_hash_req(struct dm_verity *v,
-> -                                                    struct dm_verity_io *io)
-> +static inline void *verity_io_hash_req(struct dm_verity *v,
-> +                                      struct dm_verity_io *io)
->  {
-> -       return (struct ahash_request *)(io + 1);
-> +       return io + 1;
->  }
->
->  static inline u8 *verity_io_real_digest(struct dm_verity *v,
->                                         struct dm_verity_io *io)
->  {
-> --
-> 2.45.2
->
+> +	set_memory_ro((unsigned long)page_address(zero_page_64k),
+> +		      1U << ZERO_PAGE_64K_ORDER);
+
+What's the point of the set_memory_ro here?  Yes, we won't write to
+it, but it's hardly an attack vector and fragments the direct map.
+
 
