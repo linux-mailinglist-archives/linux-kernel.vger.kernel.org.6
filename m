@@ -1,88 +1,108 @@
-Return-Path: <linux-kernel+bounces-238056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AA449242BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:45:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 115349242B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:44:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26F07289530
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:45:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 986D0B26BA7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:44:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C3E1BD03D;
-	Tue,  2 Jul 2024 15:45:22 +0000 (UTC)
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5061BC08D;
+	Tue,  2 Jul 2024 15:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eoPr7mrI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D871BC09D;
-	Tue,  2 Jul 2024 15:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB51C14D42C;
+	Tue,  2 Jul 2024 15:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719935121; cv=none; b=DmAxwYF3dAr4fOkZVxzqHHIixthIZpLr/lvamSXb1ltqMizJGjs0LSA3eitEpCLlQW2rGZOb1ua+hp/htIsJh1A2Ze7ZgWragVAxQ9c5zyInwu5imtmOd2HzMqzJLOaI/AhzuIIIIm1V8UqK7oD0jz+W+cb80Yn+0UzhCv2j8Ek=
+	t=1719935062; cv=none; b=Svb2Q8/Txs3xlYCugZPUG97mzgt7LI6ARgNZAxsAeZYWrWVcANrS/FUQKHFI+op3ksRGMRPdpBKrG/2fhfzDgIQLT/wmexQa+pOIQ/agDaxz7i4R3Cb5iZYVf+CcGQ7rGCDxxamw8KZ7VmpybUTJXTE7jyeyzN+CFdwGls/z7Fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719935121; c=relaxed/simple;
-	bh=53x6wd9/axPR7qzEIOl3zaUmIi/DmvdNSJXwbnmOY0c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e/bojwPNzMfAPN/naLITF1GEKh9gdJCwVVb9FJVTwyRDdIXgUALT6fybtO+kah3dsauwqygIgPEQEO6z9svtKnut8IKdS+Ua8BvFXoW3N5IyuWWrtRnyJ4lT3lrWz10kGSgk+H01U33O+ts0GQvFee4wtqTlX2URYwY68WGtTpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=none smtp.client-ip=54.204.34.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-X-QQ-mid: bizesmtp84t1719935050tdogj5kd
-X-QQ-Originating-IP: NGe9nAZ0lDhi5NYOuKfSyIeI7Nf/ayaiffpMbMYb8TU=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 02 Jul 2024 23:44:08 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 17054690860164996744
-From: WangYuli <wangyuli@uniontech.com>
-To: gregkh@linuxfoundation.org,
-	hgajjar@de.adit-jv.com,
-	stern@rowland.harvard.edu,
-	lb@semihalf.com,
-	wangyuli@uniontech.com
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	guanwentao@uniontech.com
-Subject: [PATCH] USB: Add USB_QUIRK_NO_SET_INTF quirk for START BP-850k
-Date: Tue,  2 Jul 2024 23:44:08 +0800
-Message-ID: <202E4B2BD0F0FEA4+20240702154408.631201-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.43.4
+	s=arc-20240116; t=1719935062; c=relaxed/simple;
+	bh=v1t1MaxBQImoIXMUPjRrALLxH2leye75HXLGWWUFfKg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aQaGoSYEJVa5PlmbSCHa1wsqjmZvTFPr1FNb2XLfqkKXnMnKnnSjhPL911qu2P9wkqRgJa0VMWijPCEvexWbaPYMGMSiZXmiO61IBbiHFHScNqIOn0M1PT1Q6uADCWqQDASbM62NnSWmrq+xSy7rXOnfZ9Fl6M8NFLPJ9qc2hrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eoPr7mrI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43BC0C2BD10;
+	Tue,  2 Jul 2024 15:44:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719935062;
+	bh=v1t1MaxBQImoIXMUPjRrALLxH2leye75HXLGWWUFfKg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eoPr7mrIRVJM8iEaeui0mZbM3fDnT8SdwrLSTWjW0PiG2xDM5sNxeVaUU6hCqYahu
+	 VPQcXNCNvg5khueBu7asJhJmnnOTFoRyEWgIT2HERr1QgD9lK0g2hVP6YkUCo83rJr
+	 9I+Rx5Mf0VjuFAiA08CwhLp9Zv9zhxPw0S4TyonHUb0iC53DblnqHdewTr72gZpv1k
+	 u3TB5x9/e1ZTV08qPfIKs3/8Uq0t7WWcFpAJ+T3P/S5XEHrJU3rBfq6SMs+r68qdLL
+	 tw+qNz2vnbGiJ/qGMffJsXmQLQfvCMOwQNQVZgaEfncUNLMlxcTSTtr2hP2OFDk2u/
+	 92jalahj1ULGw==
+Date: Tue, 2 Jul 2024 16:44:17 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Alex Vdovydchenko <keromvp@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sean Anderson <sean.anderson@linux.dev>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-i2c@vger.kernel.org, Alex Vdovydchenko <xzeol@yahoo.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: hwmon: Add MPS mp5920
+Message-ID: <20240702-hacked-uncorrupt-f47bdc0ca8e3@spud>
+References: <20240701145603.1507516-1-xzeol@yahoo.com>
+ <20240701145603.1507516-2-xzeol@yahoo.com>
+ <20240701-mug-scuttle-dfe4c84b4e0b@spud>
+ <fcd91462-f8bb-4713-afc1-ba9473405396@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="cnwz3vA9WW8lYRuE"
+Content-Disposition: inline
+In-Reply-To: <fcd91462-f8bb-4713-afc1-ba9473405396@kernel.org>
 
-START BP-850K is a dot matrix printer that crashes when
-it receives a Set-Interface request and needs USB_QUIRK_NO_SET_INTF
-to work properly.
 
-Signed-off-by: jinxiaobo <jinxiaobo@uniontech.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- drivers/usb/core/quirks.c | 3 +++
- 1 file changed, 3 insertions(+)
+--cnwz3vA9WW8lYRuE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
-index b4783574b8e6..13171454f959 100644
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -506,6 +506,9 @@ static const struct usb_device_id usb_quirk_list[] = {
- 	{ USB_DEVICE(0x1b1c, 0x1b38), .driver_info = USB_QUIRK_DELAY_INIT |
- 	  USB_QUIRK_DELAY_CTRL_MSG },
- 
-+	/* START BP-850k Printer */
-+	{ USB_DEVICE(0x1bc3, 0x0003), .driver_info = USB_QUIRK_NO_SET_INTF },
-+
- 	/* MIDI keyboard WORLDE MINI */
- 	{ USB_DEVICE(0x1c75, 0x0204), .driver_info =
- 			USB_QUIRK_CONFIG_INTF_STRINGS },
--- 
-2.43.4
+On Tue, Jul 02, 2024 at 03:10:38PM +0200, Krzysztof Kozlowski wrote:
+> On 01/07/2024 17:47, Conor Dooley wrote:
+> > On Mon, Jul 01, 2024 at 05:56:00PM +0300, Alex Vdovydchenko wrote:
+> >> Add support for MPS mp5920 controller
+> >>
+> >> Signed-off-by: Alex Vdovydchenko <xzeol@yahoo.com>
+> >=20
+> > Missing an ack from v2:
+> > https://lore.kernel.org/all/20240627-swivel-grower-002af077b654@spud/
+> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
+>=20
+> That's third time you give the same ack. I suggest give up...
 
+
+Yeah, I guess. It's just not really any slower to re-ack than it is to
+complain about the ack being missing.
+
+--cnwz3vA9WW8lYRuE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoQgUQAKCRB4tDGHoIJi
+0jjwAP9FGIR2sKM6PEyujeg3Aa1yFh8BuTEEcQ6LkcO2cVVsBwD/Q2bFhdQ4M8mC
+Mf8Js+efMEtSMDxrvPHMe7pqcXq+2wg=
+=REgq
+-----END PGP SIGNATURE-----
+
+--cnwz3vA9WW8lYRuE--
 
