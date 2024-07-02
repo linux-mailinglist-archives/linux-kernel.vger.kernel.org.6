@@ -1,164 +1,112 @@
-Return-Path: <linux-kernel+bounces-238098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40A11924375
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:19:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61D58924378
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:23:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2D29B227FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:19:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0248E1F237F7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD63A1BD03E;
-	Tue,  2 Jul 2024 16:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F321BD039;
+	Tue,  2 Jul 2024 16:23:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KFZN/teI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="h7DeL/sh"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF561BBBD7;
-	Tue,  2 Jul 2024 16:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4F4148825
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 16:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719937188; cv=none; b=qJ4en0Sm/zhM1Qbiqk/0q6li55/n+vWS4/rQXdMmtX3ji4X1VpX4Fd+mO/cvLhl50JqxEnBwo5Ea5ivvoGFuiy1BaeU+ihO9tMMMlwUENKTA/8phbrionapytjSLXgJbxCNwpxMJ+dXa85F88YXdytOEz1uJYn0b5Ixk3UfqHac=
+	t=1719937381; cv=none; b=g++HwjktgJDJiZpoByRZcU46qoevVK/JgMWaLlH/sB5ZtzGWYUQa5QoFX3O01IwkfNZ5sbQbEeSWMXrK1sXWTjyaat6w7ZdssokFNoXvUtnCXzoNlLWdiHXErp51ekhthegKZiDgrD1AH2YIuX8ZNByxMlMqhDHHEzmHgQTXz08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719937188; c=relaxed/simple;
-	bh=lVQmHI+LCB+7I2btTVAeudIE1E/R0zerK0QF7WkCDJg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ozOtPu5sbNM21XrUUesTwAmOqjvwCYiE/7lP3qAhYlwdAd+A8cOzVq0GY811QOCiOcn8n8v6jh9WE+hK4aTDZAUwnbg5h5Oa4tDDe2zH41DAfviCMV9+7MYVtLlsVJOJKIQIV+jsIsBnc5LPy6hZq7XWSHEABxW2FfVT7VxqYXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KFZN/teI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6965C116B1;
-	Tue,  2 Jul 2024 16:19:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719937187;
-	bh=lVQmHI+LCB+7I2btTVAeudIE1E/R0zerK0QF7WkCDJg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KFZN/teI9CkmW0iOWqSmXr/ZYdGvy+z/jP2qp+ujTEwwY4xzOjGY3b15+KbrRXlQ4
-	 +Cxy33ZcFI90gE+8LtOphor/Iqn3TU6pCQ7ojazeBHMFkhxWasd2Bts5Ty7i75LSnu
-	 +1LfDYpniU+5H+dDLj14xL+K26hfYqjNgipBlMEOoOFfdg01Cv8+ORHoDGs4+Pm1dg
-	 cC2P+1KG5KIgkezBQLiR98sJ15yvnPB7hgK92wvYXZItkgfsYvNuYz7RAZH9XP4UdK
-	 HjCRxp4GoLEGcnaZM2GrSN3SWHBQfkqAxEF8EhVitwV4QocRoS9UukgANWfn0m7eA0
-	 hKssnf0roWL6g==
-Date: Tue, 2 Jul 2024 17:19:40 +0100
-From: Will Deacon <will@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Marc Zyngier <maz@kernel.org>, Russell King <linux@armlinux.org.uk>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	James Clark <james.clark@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, kvmarm@lists.linux.dev
-Subject: Re: [PATCH v2 06/12] perf: arm_pmu: Remove event index to counter
- remapping
-Message-ID: <20240702161940.GA4460@willie-the-truck>
-References: <20240626-arm-pmu-3-9-icntr-v2-0-c9784b4f4065@kernel.org>
- <20240626-arm-pmu-3-9-icntr-v2-6-c9784b4f4065@kernel.org>
- <86ikxuir2k.wl-maz@kernel.org>
- <20240701135216.GD2250@willie-the-truck>
- <CAL_JsqKYstLZQy_VQTvg-285jj1mpH+4d9CVJ_1_iAus5_rTRA@mail.gmail.com>
+	s=arc-20240116; t=1719937381; c=relaxed/simple;
+	bh=aj7Fh5tckyx4zu/F74GNuIwtbH6bAWyEVqrM39kj9s0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lSKZi1n/5wJgQfV+/DIt4rj6fF6AhvioatkDLGgZNQ/kaItAMEKIp6fpI123fZQEQddgMWffURg8TaDOeVqk/7xqh7H+Wdm7SSxhS0/wTKEADEU5v3wU5gs+F6ou4veY49eK59i3sVUdFZOFI479z6kFEoRDWuw1Sf1OV9jC3jU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=h7DeL/sh; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-375deacb3e1so2306355ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 09:22:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1719937379; x=1720542179; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2rbjjRjoLEssCm6u4+AV7tPUfRxSj6hss64397RvroU=;
+        b=h7DeL/sh5Z6d1HLDp08A3MD/4P3jsy/7Nx7QgbFHfcP0kDWZI9U+lECd4d5jnSww65
+         rjG/SkAip3XTpY9+TQ/asOTa381B4B4DpjqN8FMqD4licLeFCOCX97cjtc6A7VoQlNiT
+         4d6doZpJv5Ef5PZwR8zj72mmInQZ3iSpTLkpM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719937379; x=1720542179;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2rbjjRjoLEssCm6u4+AV7tPUfRxSj6hss64397RvroU=;
+        b=Y5LoCw+zQqVoyMWUtiNzZQLdeCc3NbsmZkd3aOrifOI5qkx78zpmxIsxZq7uz/z0S+
+         RSkeFJ9ppOubp3OAyBN/dVPwLZR+If5Iy0OQeEJ+QeuL6W9OCNWuUKV2HV/doNlX8T5P
+         8Kqrx//ASFRQKkXlOsmH59z1NhqH9vvVkGXCzSP8xMPMJzcx3B7XiyxJFmZDbgo0X/xX
+         UMaK06gnHmPI8eTbZBZyfsJC3xcuwK3GGAsVY8OrIw5rb1d1dmVrpzN1Zrebu5x/3qjK
+         bm3nzuF+3ibVSKLc3eK3SbzPlIClxU5jE+I7cq9URlGbUoFdDHtMXO5tKabm9HrUFKuY
+         2t6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUnlPoDZE82O34Lf6pa9lW3gzfW6u1W2k1gMBFAZ1ToUHH31MZ5AF7N71RmR6AmsCSdM47bDr0P7h0BH3v5ljLqH4uiAkL6ZtM3APMh
+X-Gm-Message-State: AOJu0YzRoRjtFG8OiBSY027wxfdgitnKVoSu7N1YdMs9UDY0JD72qFwI
+	GBg8ONsaoDBRqtvmEg83d4Gy2ijD0blntpn14y6DYKTXMVo6a+Qt8lAXiTgUirs=
+X-Google-Smtp-Source: AGHT+IFaE6xtD3QoZ0GJUmaljKznWWghEaM1pxbA7lx4mZdmW5LUG8WeCqAieecbB73l+pYHLBf7vg==
+X-Received: by 2002:a05:6602:2581:b0:7f3:d3ed:1ca3 with SMTP id ca18e2360f4ac-7f62ee5c6a1mr876430339f.1.1719937378696;
+        Tue, 02 Jul 2024 09:22:58 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4bb73e05e31sm2811216173.73.2024.07.02.09.22.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Jul 2024 09:22:58 -0700 (PDT)
+Message-ID: <3d7e1a06-28d1-4d78-b04a-ff9cbf85aaa3@linuxfoundation.org>
+Date: Tue, 2 Jul 2024 10:22:57 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL_JsqKYstLZQy_VQTvg-285jj1mpH+4d9CVJ_1_iAus5_rTRA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] selftests/capabilities: Fix possible file leak in
+ copy_fromat_to
+To: Ma Ke <make24@iscas.ac.cn>, shuah@kernel.org, usama.anjum@collabora.com,
+ swarupkotikalapudi@gmail.com, amer.shanawany@gmail.com, kees@kernel.org,
+ akpm@linux-foundation.org, luto@kernel.org
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240630130038.3671507-1-make24@iscas.ac.cn>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240630130038.3671507-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 01, 2024 at 09:49:29AM -0600, Rob Herring wrote:
-> On Mon, Jul 1, 2024 at 7:52 AM Will Deacon <will@kernel.org> wrote:
-> >
-> > On Thu, Jun 27, 2024 at 12:05:23PM +0100, Marc Zyngier wrote:
-> > > On Wed, 26 Jun 2024 23:32:30 +0100,
-> > > "Rob Herring (Arm)" <robh@kernel.org> wrote:
-> > > >
-> > > > Xscale and Armv6 PMUs defined the cycle counter at 0 and event counters
-> > > > starting at 1 and had 1:1 event index to counter numbering. On Armv7 and
-> > > > later, this changed the cycle counter to 31 and event counters start at
-> > > > 0. The drivers for Armv7 and PMUv3 kept the old event index numbering
-> > > > and introduced an event index to counter conversion. The conversion uses
-> > > > masking to convert from event index to a counter number. This operation
-> > > > relies on having at most 32 counters so that the cycle counter index 0
-> > > > can be transformed to counter number 31.
-> > > >
-> > > > Armv9.4 adds support for an additional fixed function counter
-> > > > (instructions) which increases possible counters to more than 32, and
-> > > > the conversion won't work anymore as a simple subtract and mask. The
-> > > > primary reason for the translation (other than history) seems to be to
-> > > > have a contiguous mask of counters 0-N. Keeping that would result in
-> > > > more complicated index to counter conversions. Instead, store a mask of
-> > > > available counters rather than just number of events. That provides more
-> > > > information in addition to the number of events.
-> > > >
-> > > > No (intended) functional changes.
-> > > >
-> > > > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> > >
-> > > [...]
-> > >
-> > > > diff --git a/include/linux/perf/arm_pmu.h b/include/linux/perf/arm_pmu.h
-> > > > index b3b34f6670cf..e5d6d204beab 100644
-> > > > --- a/include/linux/perf/arm_pmu.h
-> > > > +++ b/include/linux/perf/arm_pmu.h
-> > > > @@ -96,7 +96,7 @@ struct arm_pmu {
-> > > >     void            (*stop)(struct arm_pmu *);
-> > > >     void            (*reset)(void *);
-> > > >     int             (*map_event)(struct perf_event *event);
-> > > > -   int             num_events;
-> > > > +   DECLARE_BITMAP(cntr_mask, ARMPMU_MAX_HWEVENTS);
-> > >
-> > > I'm slightly worried by this, as this size is never used, let alone
-> > > checked by the individual drivers. I can perfectly picture some new
-> > > (non-architectural) PMU driver having more counters than that, and
-> > > blindly setting bits outside of the allowed range.
-> >
-> > I tend to agree.
-> >
-> > > One way to make it a bit safer would be to add a helper replacing the
-> > > various bitmap_set() calls, and enforcing that we never overflow this
-> > > bitmap.
-> >
-> > Or perhaps wd could leave the 'num_events' field intact and allocate the
-> > new bitmap dynamically?
-> >
-> > Rob -- what do you prefer? I think the rest of the series is ready to go.
+On 6/30/24 07:00, Ma Ke wrote:
+> The open() function returns -1 on error. openat() and open() initialize
+> 'from' and 'to', and only 'from' validated with 'if' statement. If the
+> initialization of variable 'to' fails, we should better check the value
+> of 'to' and close 'from' to avoid possible file leak. Improve the checking
+> of 'from' additionally.
 > 
-> I think the list of places we're initializing cntr_mask is short
-> enough to check and additions to arm_pmu users are rare enough I would
-> not be too worried about it.
-> 
-> If anything, I think the issue is with the bitmap API in that it has
-> no bounds checking. I'm sure it will get on someone's radar to fix at
-> some point.
-> 
-> But if we want to have something check, this is what I have:
-> 
-> static inline void armpmu_set_counter_mask(struct arm_pmu *pmu,
->                                           unsigned int start, unsigned int nr)
-> {
->        if (WARN_ON(start + nr > ARMPMU_MAX_HWEVENTS))
->                return;
->        bitmap_set(pmu->cntr_mask, start, nr);
-> }
+> Fixes: 32ae976ed3b5 ("selftests/capabilities: Add tests for capability evolution")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+> Changes in v3:
+> - Thank you for your interest in our vulnerability detection method. We
+> extract vulnerability characteristics from a known vulnerability and match
+> the same characteristics in the project code. As our work is still in
+> progress, we are not able to disclose it at this time. Appreciate your
+> understanding, we could better focus on the potential vulnerability itself.
+> Reference link: https://lore.kernel.org/all/20240510003424.2016914-1-samasth.norway.ananda@oracle.com/
 
-Fair enough, for the sake of consistency, let's leave the series as-is
-and we can add helpers for all the counter-bound structures later, if we
-want to.
+Sorry it is a NACK - without more details on the tool and warning,
+I can't accept this patch.
 
-Will
+thanks,
+-- Shuah
 
