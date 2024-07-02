@@ -1,155 +1,125 @@
-Return-Path: <linux-kernel+bounces-237915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 181D8923FD5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:04:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 124A3923FD3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42F171C212F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:03:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C838828C453
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F663770D;
-	Tue,  2 Jul 2024 14:03:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79B41B5820;
+	Tue,  2 Jul 2024 14:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="OHSlqMtW"
-Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mW3PXgof"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F3ABA2D;
-	Tue,  2 Jul 2024 14:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D08BA2D;
+	Tue,  2 Jul 2024 14:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719929034; cv=none; b=Dihkhuih33Df8seMIE63wIYGW5H+tlHZaLPwa3vHOJ3S3yP1ugzA3JxEmhmmQJSk31jdaAYS3fM3WqPkUZZkXsaaPi1XmUS0WyKaI0WdwGvpZwn4c+iQB00dMAT0oD2XJmv9S+6vqeBNc/Jx17t2iqZ9fZ6RS1GMIaH19SspN9Y=
+	t=1719928960; cv=none; b=CoqjbKUy/By3EUkTQEGl2V8eAYxBhd43Ch/1/Se9LqrY7WjtnclEJZkxseqOBXenEk/QIKZa9aqmFv7n1fvBSZSOBiMDxfoCyIJYnQmURV1q8zWz4pO5C6wQXXWlmAD/1r6ZWC2JszmB0iMDjEpOhaYe/1KnpWESIQN7xpxu374=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719929034; c=relaxed/simple;
-	bh=625v53wes7Bvv0wAtLAXA470pPJVJzm/uHoRyuklkVU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OhGWqoLWKwLY+96bIVvOuwxE3oLJv4ZyR34qbska/1DsjeMDp2zz9FXWPePP0PvZG8GcspMz9dJyMoWkjWCPkSn6GvufWNrCyAhVHQaA/oU4GBQq+jFNbzTWjg9/irvoA7yVEdl7KeS7yfidczFjQd5aSnq5njBRnf++MkCrIKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=OHSlqMtW; arc=none smtp.client-ip=109.73.34.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
-Received: from mx1.t-argos.ru (localhost [127.0.0.1])
-	by mx1.t-argos.ru (Postfix) with ESMTP id 6F2EB100002;
-	Tue,  2 Jul 2024 17:03:32 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
-	t=1719929012; bh=OIRWtO9tmmvE5rTVXX2zQUO9W6ij8CfZDofL07ySZds=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=OHSlqMtWM45LdOJGQaQszpLwJYeZ1cn4GGbhfFwpxWjNwj6ymQQxU2qY8KU5lQapM
-	 plg4JurwmY4pbT6oLGUjxftqfOiaq71204y0vZ4sXWIH80WqopAkZsVuFBZNQBdM3u
-	 ASuApnHOKGLdhzTzH9b+MDVyauCpN787NTFQvu/ukh+82sO3+3eBpwkXJugo8ljKON
-	 wYTdhWMB+uqP3z8o5i4m0QekUax3m+6b1gPqOt/z8wl6Xl5Dx20rXtGO7ALoHCGnpE
-	 bT2YwZ1FuQN0fcL4qDo5KM0Ow93VEHYjmlY+KzWlz8OcVEStd7QBK88lg5Soknke7s
-	 GFO+5WQABIa2w==
-Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
-	by mx1.t-argos.ru (Postfix) with ESMTP;
-	Tue,  2 Jul 2024 17:02:24 +0300 (MSK)
-Received: from localhost.localdomain (172.17.215.5) by ta-mail-02
- (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 2 Jul 2024
- 17:02:04 +0300
-From: Aleksandr Mishin <amishin@t-argos.ru>
-To: Igal Liberman <igal.liberman@freescale.com>
-CC: Aleksandr Mishin <amishin@t-argos.ru>, Madalin Bucur
-	<madalin.bucur@nxp.com>, Sean Anderson <sean.anderson@seco.com>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH v2] fsl/fman: Validate cell-index value obtained from Device Tree
-Date: Tue, 2 Jul 2024 17:01:24 +0300
-Message-ID: <20240702140124.19096-1-amishin@t-argos.ru>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20240702095034.12371-1-amishin@t-argos.ru>
-References: 
+	s=arc-20240116; t=1719928960; c=relaxed/simple;
+	bh=rvLq1+m8vg5sjoU1mr41s2ejjDcYQZEP8b81SL/Ncv0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P2ef0tjIdvY8iCUrSbVs1alRnCktXUBfUmci6ZCWKCH8pEZJj8Qh54oumWctbHZzbhaAEGSmZ002ZQOO9CwCK2NHFIDKCh14niaNitWfX2q5YTUWxDjQgbQrbzbGPERLlFV6F+oTaf37TTnotHsu+zYvyTRJ/2nXnMIagUNokv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mW3PXgof; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2c84df0e2f4so2936989a91.1;
+        Tue, 02 Jul 2024 07:02:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719928958; x=1720533758; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=UHRR9paF0c3vAEmjr04Xd/MVPuaCgs2m6+t9yEgF4PI=;
+        b=mW3PXgofSdXwU4pk9LBA7TB19bl1YqGmHu2fHsddKyF7O0QSGL/ZrR03NcFa3syT8U
+         NK8ji504Xvi8ONZSnuP8ufKB0GvgdsdiT3eqabBWD0FEK6oPDvxLmaD0Y2IRQAtdRzbu
+         BXwbFMcu5ZUABrXh4Vre/9sLIATdjBn7xFKEOhdb1FvI2CwGB7bIXKhh6gPWWprJ/7YR
+         PiIoB6Bj3WIA6NuaQ+VRipz34M0G6yeXCH+/V1EO1P+8jjWdaWjZV5L2U2jGa5PlyHxK
+         ayttVFS3ooSw+SUyqYsmJloWmjht3bLIMYKTOYAbkYXHw/CrMxZS/EHNEHnL+wl8D7I3
+         Aajg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719928958; x=1720533758;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UHRR9paF0c3vAEmjr04Xd/MVPuaCgs2m6+t9yEgF4PI=;
+        b=T5ZNurz/qpSKurFJutLkN1IRlFlEKIhSsc2/ZpXK8FrjXrpU0JrPNb3TjCo2rBvC64
+         hk/1SUAQ2lGXonqbLP/85RNsX4Kdc62rMZ79aSBTrLM64Q8Mk22zsYzU/nVy7+HljdCb
+         roN0oXIKevFUm+M6QoIL4OJ5VqBNfOM9TzM1SMbzK3FZkzxoScG+LxG9nDOWWi5OuJsz
+         o+SElxgkxmmGjY756eQPomH89WgI5NyBukuNoowq75GjXWNdtSSEL7sl+t2CI38hrCzg
+         I5sFuWfmK69FWTB0qE5XGSgXymHuP1HHxV4wh7Xh2mp0ZIFO4MwKq1lvMl2sgDiQOoOh
+         AO+g==
+X-Forwarded-Encrypted: i=1; AJvYcCXEqtWL8DGnqL6yVOP1rVybkhIUX2rue2ps8yv8W9vhFPonqSGcgxx/JgyL4HnOzywxzPMdIaAGdpJ+lh3DppXQ6TvHtL3387XSxZolfmYMIxKQC/9XuRTf9GufPYtstmb5/ABS96ccPEGjHaAjl8qnU15TGRARNwORFG9Vnb1zUujeWrArr5KhkweraT8=
+X-Gm-Message-State: AOJu0Ywe3vJZyueOlXGrIZW4co6PHTnQ0ffoI0QiF6R5FrgoIbW1YTTh
+	/dD/rhRuYbF4DZIMgix2MhGDqOCAXluWrYgNKnm3ABtJ6X8cEMl9fUEdn09W1qBkdJ+DPg5HBGZ
+	yphFgCgTo+/Cy8Bf8L2fJVVIeNq4=
+X-Google-Smtp-Source: AGHT+IGr1IVhpma/X7cSGsV5+8epSN8AW4SxOgaesf6/u7RkxgP+qDb+mA8xG/CFotsUpvIlfd9npkCfvELtxOAGNQo=
+X-Received: by 2002:a17:90b:3543:b0:2c9:6abd:ca64 with SMTP id
+ 98e67ed59e1d1-2c96abdcad1mr769838a91.9.1719928957854; Tue, 02 Jul 2024
+ 07:02:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
- (172.17.13.212)
-X-KSMG-Rule-ID: 1
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186281 [Jul 02 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 21 0.3.21 ebee5449fc125b2da45f1a6a6bc2c5c0c3ad0e05, {Tracking_from_domain_doesnt_match_to}, t-argos.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;mx1.t-argos.ru.ru:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/07/02 10:26:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/07/02 07:20:00 #25796017
-X-KSMG-AntiVirus-Status: Clean, skipped
+References: <20240702122450.2213833-1-suhui@nfschina.com>
+In-Reply-To: <20240702122450.2213833-1-suhui@nfschina.com>
+From: Jonas Gorski <jonas.gorski@gmail.com>
+Date: Tue, 2 Jul 2024 16:02:25 +0200
+Message-ID: <CAOiHx=n5rfCBkO8wfqpa=UgL==Ty9=s1f=roVHiaFy2acQOHtw@mail.gmail.com>
+Subject: Re: [PATCH wireless 0/9] wifi: cfg80211: avoid some garbage values
+To: Su Hui <suhui@nfschina.com>
+Cc: arend.vanspriel@broadcom.com, kvalo@kernel.org, johannes.berg@intel.com, 
+	kees@kernel.org, a@bayrepo.ru, quic_alokad@quicinc.com, zyytlz.wz@163.com, 
+	marcan@marcan.st, petr.tesarik.ext@huawei.com, duoming@zju.edu.cn, 
+	colin.i.king@gmail.com, u.kleine-koenig@pengutronix.de, 
+	quic_jjohnson@quicinc.com, linville@tuxdriver.com, pieterpg@broadcom.com, 
+	meuleman@broadcom.com, frankyl@broadcom.com, stanley.hsu@cypress.com, 
+	wright.feng@cypress.com, ian.lin@infineon.com, chi-hsien.lin@cypress.com, 
+	zajec5@gmail.com, antonio@open-mesh.com, franky.lin@broadcom.com, 
+	linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev, 
+	brcm80211-dev-list.pdl@broadcom.com, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Cell-index value is obtained from Device Tree and then used to calculate
-the index for accessing arrays port_mfl[], mac_mfl[] and intr_mng[].
-In case of broken DT due to any error cell-index can contain any value
-and it is possible to go beyond the array boundaries which can lead
-at least to memory corruption.
-Validate cell-index value obtained from Device Tree.
+Hi,
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+On Tue, 2 Jul 2024 at 14:50, Su Hui <suhui@nfschina.com> wrote:
+>
+> Clang static checker (scan-build) has some warnings as follows.
+>
+> included from drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c:16
+> drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.h:123:2:
+> warning:Assigned value is garbage or undefined [core.uninitialized.Assign]
+>   123 |         __le32 data_le = cpu_to_le32(*data);
+>       |         ^~~~~~~~~~~~~~   ~~~~~~~~~~~~~~~~~~
+> drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c:138:3:warning
+> Value stored to 'err' is never read [deadcode.DeadStores]
+>
+> There are some functions like brcmf_fil_{cmd,iovar,basscfg}_int_get()
+> which read the value of its parameter, but some callers have not
+> initialized these parameters which will be read. And this patchset fixes
+> these problems.
 
-Fixes: 414fd46e7762 ("fsl/fman: Add FMan support")
-Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
----
-v1->v2: Move check to mac.c to avoid allmodconfig build errors and reference leaks
+The core issue here seems to be that
+brcmf_fil_{cmd,iovar,basscfg}_int_get() function (needlessly?) read
+from *data.
 
- drivers/net/ethernet/freescale/fman/fman.c | 1 -
- drivers/net/ethernet/freescale/fman/fman.h | 3 +++
- drivers/net/ethernet/freescale/fman/mac.c  | 4 ++++
- 3 files changed, 7 insertions(+), 1 deletion(-)
+So instead of forcing all callers of
+brcmf_fil_{cmd,iovar,basscfg}_int_get() to initialize *data first, I
+suggest changing brcmf_fil_{cmd,iovar,basscfg}_int_get() to just not
+read from it.
 
-diff --git a/drivers/net/ethernet/freescale/fman/fman.c b/drivers/net/ethernet/freescale/fman/fman.c
-index d96028f01770..fb416d60dcd7 100644
---- a/drivers/net/ethernet/freescale/fman/fman.c
-+++ b/drivers/net/ethernet/freescale/fman/fman.c
-@@ -24,7 +24,6 @@
- 
- /* General defines */
- #define FMAN_LIODN_TBL			64	/* size of LIODN table */
--#define MAX_NUM_OF_MACS			10
- #define FM_NUM_OF_FMAN_CTRL_EVENT_REGS	4
- #define BASE_RX_PORTID			0x08
- #define BASE_TX_PORTID			0x28
-diff --git a/drivers/net/ethernet/freescale/fman/fman.h b/drivers/net/ethernet/freescale/fman/fman.h
-index 2ea575a46675..74eb62eba0d7 100644
---- a/drivers/net/ethernet/freescale/fman/fman.h
-+++ b/drivers/net/ethernet/freescale/fman/fman.h
-@@ -74,6 +74,9 @@
- #define BM_MAX_NUM_OF_POOLS		64 /* Buffers pools */
- #define FMAN_PORT_MAX_EXT_POOLS_NUM	8  /* External BM pools per Rx port */
- 
-+/* General defines */
-+#define MAX_NUM_OF_MACS			10
-+
- struct fman; /* FMan data */
- 
- /* Enum for defining port types */
-diff --git a/drivers/net/ethernet/freescale/fman/mac.c b/drivers/net/ethernet/freescale/fman/mac.c
-index 9767586b4eb3..ac9ad5e67b44 100644
---- a/drivers/net/ethernet/freescale/fman/mac.c
-+++ b/drivers/net/ethernet/freescale/fman/mac.c
-@@ -247,6 +247,10 @@ static int mac_probe(struct platform_device *_of_dev)
- 		dev_err(dev, "failed to read cell-index for %pOF\n", mac_node);
- 		return -EINVAL;
- 	}
-+	if (val >= MAX_NUM_OF_MACS) {
-+		dev_err(dev, "cell-index value is too big for %pOF\n", mac_node);
-+		return -EINVAL;
-+	}
- 	priv->cell_index = (u8)val;
- 
- 	/* Get the MAC address */
--- 
-2.30.2
+I see no reason why they should care about what the previous value
+was, since they are supposed to overwrite it anyway.
 
+Best Regards,
+Jonas
 
