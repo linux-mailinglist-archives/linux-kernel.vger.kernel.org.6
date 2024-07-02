@@ -1,138 +1,130 @@
-Return-Path: <linux-kernel+bounces-238552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7E00924BF8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:05:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30421924BFD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:07:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ACB41F23578
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:05:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 298071C227C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:07:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7CC17A584;
-	Tue,  2 Jul 2024 23:05:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D56D817A5A9;
+	Tue,  2 Jul 2024 23:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SX0VDV+s"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CS+ypEcv"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222E41DA32F
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 23:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06DF1DA32F;
+	Tue,  2 Jul 2024 23:07:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719961512; cv=none; b=hZWppnagH8Oi4PEz4LV2XOOTZdJQ3LFmMrnanTieu9SolNjn6oVvjDmjEWb62eRFKg439sadpACfb2dbw4hEXsi6WNRT3THVpBp463xeM3lpIhOAGk/Uk+9zzII9FRtYZhmiAXEcEgO40YWceudUjgQjvUW6rQjq6+VFogh4F3A=
+	t=1719961628; cv=none; b=qwqbjKrSWR8dfzIhb2U2kamJJCl4SJwUkt3cn7Vh2OTtFxB8w1WUNt0l0Cg1hPAXqIzhl0TlWAPmQNY5FjDN/rINL/40bEcOOMC6kgnKwJ0UwlkPqYlWrIZHVKFh+HQ6cU4+5oSMsLazFfYbX3lOYCiBRPZqJMrFKCrNLkanct0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719961512; c=relaxed/simple;
-	bh=GAZLNxCDl/VzE2feZ2Or9rZGG2bf2m8cFjRgNzJefBk=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=uJmZRcgGHdB2jQ4PMqsQ61TWSy9A1jxA6uKkhfcxF894bT/caoNzWKDo4PPZuDmT3YVvL4SPTlRRGqe8kSmMYWaUq5ZF6opApfwSRgymh6hnLwjp9zclsWvZouep0W/FHMaUhryfEXoJXKZk4pW353u/uqa6RECIYiatVLK2b5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yutingtseng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SX0VDV+s; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yutingtseng.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-6507e2f0615so2898011a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 16:05:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719961510; x=1720566310; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6sbCbDH8DWJ9lXy6bGpx3jz+av+y6CU73Pt4IvzsaJU=;
-        b=SX0VDV+sNJeF5W+cIkf8wGxHeNXBAhrbgrB9UuoRUqPEflUT1UNhEDWGzJu2c69jhb
-         jIUES9JvotAesQkTGdT5zfDmWliaceMw/ci+CbeTov5abjzOtQP57R9vK/iurvNeU6gw
-         meAjm8UbxIZ1NmrsneR9FdPgSTxEgbxbfzR9sZZOK3cwehDZiaeUY8g8/+Q16hsZvTBH
-         ekwqhRJ+B9KG4nUiMdFXLAYsaB/nHxbJQ6+oxiXdW6Lzaf829kuLPB5Gdq5ewPYzHydS
-         ml7GDSs7ojk1NlPy9GkvuFeK+f4Kby372WSuSHTrttqeDv19uMfrt7aic74ymg0me241
-         5Iuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719961510; x=1720566310;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6sbCbDH8DWJ9lXy6bGpx3jz+av+y6CU73Pt4IvzsaJU=;
-        b=OLnRWYCA8pGcr86gygM2AatthK5hwIjLd7tfS19taHuvBm2yIiYPLDKRAY41412F3z
-         WKb8SZFqgX2HxLwgw/yxuyqhI+RFouBO6IG7AaVFcKKc9dm09D37wq6NeKbrfwbey+jK
-         8iIBYP5sNwXj7+bdLVKKkentPdMIfz7LIjmOYzHG4TNB+arDltFuDoPsc9q3Ebg+U16H
-         uLYIyh6MljWoJ+VGnK/igoiK0yaC4IGl99zwm2CRuy/ZStZRErSywcoTQ0cIJTB5nzld
-         cbDVL7jd5LV/44sw5nEJuYJ8X/R8jykn3ceq/e83diIXy17XqiQu+xH3Iu9sQxzuKvAB
-         pPDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUnhjhxc7SURuszBPNTZk7rfETKes4Iofn3e9UVg6YoW5y74b4A1lQfxf/0TSDNUFLhAM7ItiBpGbsRshOnc9Oqtpgs2KeDLgOaQMMQ
-X-Gm-Message-State: AOJu0YzxiAxwoXvxqv41wIARJjuvAXtCCE7OO+sAx39yN5kdy2othEWC
-	fmhpeoNwK0tgJP93p3hyK1OCT7H0OUcI/YfMxkjdnBxM3RmLlZSyAO5p/JXppEY3Os9tycTUbCz
-	JvND1as+PzFujocBjgnf1yA==
-X-Google-Smtp-Source: AGHT+IHM1kQ3vOaWP/zy1B+T0BIwVrVldgIGWVYTZIiQiW6Vm1X7Dn2vlVibHWtc5rsRwr/S7PgQhHQcrVHieyzjHw==
-X-Received: from yuting.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:317f])
- (user=yutingtseng job=sendgmr) by 2002:a63:371d:0:b0:6e5:fc24:5fe8 with SMTP
- id 41be03b00d2f7-73ce1b5754dmr22650a12.0.1719961510026; Tue, 02 Jul 2024
- 16:05:10 -0700 (PDT)
-Date: Tue,  2 Jul 2024 16:04:54 -0700
+	s=arc-20240116; t=1719961628; c=relaxed/simple;
+	bh=VaZbpHrnVdRdxut18TFiJFMK7EU8ulNyiBToDBAPk7o=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aauljZ466rBxEHHQHpIsUkU5fD3pi8vJXIc1+rpWIzK1FGE7B60qvXRm8aG470s5jsUacVGPqJmSoQcrPV1MdaPynztjvmBAOKGiOL2zY9eaQ9GJFqHkZP7Pwp2JMyV2aTVmmu9KpBSxNufo7keEyMUa1ahg7Yp1CsWQrkTH7/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CS+ypEcv; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 462IsmDW007871;
+	Tue, 2 Jul 2024 23:06:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=5pNzyK56bwu0gf2EFSYChrj/
+	qBc7aPtMRqvy55yKLxg=; b=CS+ypEcvai+grbzhkJNWcf9IuIIHgkbYcxlDzSIV
+	xDSaA0yaed+i/eT9wz8HSF7f17eMQuAxROvQS7WUq7SvA6Sk6pdocbW2+UodLBTV
+	hW1mPM+uPCgqLxpAuCwSzhjXNZH7JvsYzwXginUSjuEcExmwqtFzFtkNrXBOEygR
+	g3nOvbxTjr4wCqO+rgpw5N1IhPl67/7Kze3h6SSdGyEf7eRWH2u6/DFFIBlEDPRJ
+	JXhJZvLsSZ4lcUcSWNMuSveySI1r4vBhiOJCtwRZs1W1rpjsL55sLcL0bQ1Niqw2
+	AsSDbp5zeKs3gIiOkUwMQb16m5mjNi3BmwOqU9Hqtio+uA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 402bj89qbd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Jul 2024 23:06:49 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 462N6nId018069
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 2 Jul 2024 23:06:49 GMT
+Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 2 Jul 2024 16:06:48 -0700
+Date: Tue, 2 Jul 2024 16:06:47 -0700
+From: Elliot Berman <quic_eberman@quicinc.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+CC: Sebastian Reichel <sre@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Andy Yan
+	<andy.yan@rock-chips.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        "Mark
+ Rutland" <mark.rutland@arm.com>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        Satya Durga Srinivasu Prabhala
+	<quic_satyap@quicinc.com>,
+        Melody Olvera <quic_molvera@quicinc.com>,
+        Shivendra Pratap <quic_spratap@quicinc.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        <linux-pm@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+Subject: Re: [PATCH v5 3/4] firmware: psci: Read and use vendor reset types
+Message-ID: <20240702155630416-0700.eberman@hu-eberman-lv.qualcomm.com>
+References: <20240617-arm-psci-system_reset2-vendor-reboots-v5-0-086950f650c8@quicinc.com>
+ <20240617-arm-psci-system_reset2-vendor-reboots-v5-3-086950f650c8@quicinc.com>
+ <20240619135143.kr2tx4ynxayc5v3a@bogus>
+ <20240619080933071-0700.eberman@hu-eberman-lv.qualcomm.com>
+ <20240620162547309-0700.eberman@hu-eberman-lv.qualcomm.com>
+ <ZnmTtmZB8epgbUTN@bogus>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
-Message-ID: <20240702230453.1441209-2-yutingtseng@google.com>
-Subject: [PATCH v1] binder: frozen notification binder_features flag
-From: Yu-Ting Tseng <yutingtseng@google.com>
-To: cmllamas@google.com, tkjos@google.com
-Cc: gregkh@linuxfoundation.org, arve@android.com, maco@android.com, 
-	joel@joelfernandes.org, brauner@kernel.org, surenb@google.com, 
-	aliceryhl@google.com, kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	Yu-Ting Tseng <yutingtseng@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <ZnmTtmZB8epgbUTN@bogus>
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: G7CnMmUwN--HDCXDBHEnONEcrL9zzQLM
+X-Proofpoint-GUID: G7CnMmUwN--HDCXDBHEnONEcrL9zzQLM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-02_16,2024-07-02_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
+ spamscore=0 suspectscore=0 mlxlogscore=805 mlxscore=0 priorityscore=1501
+ malwarescore=0 adultscore=0 bulkscore=0 phishscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2407020169
 
-Add a flag to binder_features to indicate that the freeze notification
-feature is available.
----
- drivers/android/binderfs.c                                | 8 ++++++++
- .../selftests/filesystems/binderfs/binderfs_test.c        | 1 +
- 2 files changed, 9 insertions(+)
+Hi Sudeep,
 
-diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
-index 3001d754ac36..ad1fa7abc323 100644
---- a/drivers/android/binderfs.c
-+++ b/drivers/android/binderfs.c
-@@ -58,6 +58,7 @@ enum binderfs_stats_mode {
- struct binder_features {
- 	bool oneway_spam_detection;
- 	bool extended_error;
-+	bool freeze_notification;
- };
- 
- static const struct constant_table binderfs_param_stats[] = {
-@@ -74,6 +75,7 @@ static const struct fs_parameter_spec binderfs_fs_parameters[] = {
- static struct binder_features binder_features = {
- 	.oneway_spam_detection = true,
- 	.extended_error = true,
-+	.freeze_notification = true,
- };
- 
- static inline struct binderfs_info *BINDERFS_SB(const struct super_block *sb)
-@@ -608,6 +610,12 @@ static int init_binder_features(struct super_block *sb)
- 	if (IS_ERR(dentry))
- 		return PTR_ERR(dentry);
- 
-+	dentry = binderfs_create_file(dir, "freeze_notification",
-+				      &binder_features_fops,
-+				      &binder_features.freeze_notification);
-+	if (IS_ERR(dentry))
-+		return PTR_ERR(dentry);
-+
- 	return 0;
- }
- 
-diff --git a/tools/testing/selftests/filesystems/binderfs/binderfs_test.c b/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
-index 5f362c0fd890..319567f0fae1 100644
---- a/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
-+++ b/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
-@@ -65,6 +65,7 @@ static int __do_binderfs_test(struct __test_metadata *_metadata)
- 	static const char * const binder_features[] = {
- 		"oneway_spam_detection",
- 		"extended_error",
-+		"freeze_notification",
- 	};
- 
- 	change_mountns(_metadata);
--- 
-2.45.2.803.g4e1b14247a-goog
+On Mon, Jun 24, 2024 at 04:41:42PM +0100, Sudeep Holla wrote:
+> Sorry, I completely missed to see that you had already answered those
+> in your commit message. As mentioned earlier I haven't looked at the
+> reboot mode framework completely yet, so I can't comment on it yet.
+> 
+> I don't want to be blocker though if others are happy with this.
+
+I think folks are satisfied with the other parts of the series and now
+looking for your conclusion on the PSCI driver part.
+
+Thanks,
+Elliot
 
 
