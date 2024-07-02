@@ -1,136 +1,178 @@
-Return-Path: <linux-kernel+bounces-238359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D45C9248D5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:14:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DC779248E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:16:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1419AB21AC4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:14:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73E171C22425
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:16:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B5C200139;
-	Tue,  2 Jul 2024 20:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65566200135;
+	Tue,  2 Jul 2024 20:16:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PobfWWYd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hmw6HnjP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0128F1BD4EF
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 20:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18F1282E1;
+	Tue,  2 Jul 2024 20:16:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719951256; cv=none; b=a04jifKMmA5JIISiySDI70E/ZMdK4EDJVJN+WlejXKQhRpVP8aTG9wtpjoFNO6QQtWWS+oBKwGa8JS0ZsXXI6OYkWNEq4+Bf5m9Rlt4i12/wukpWJ01LDyBFblJO2SkbOKPsFLYwaLjETKO9QbRWTpcGfEqViTULpV2rGAlZ1t0=
+	t=1719951383; cv=none; b=tMkQd2Feq3U/eNJCBkuL3NIrNZPR82EQSy/zAdrrcvuZHT3c6D/8Y4jMBy6rwYP1hexk61agKWYPW5Blhwk2pZ5USJcfltUaj5dL4zJOAXqLPVAf/SOd1WEi3dPc83XVdXuqUi+dbh0EYb1ej084JLVet5s24j2teN1R+DW9cYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719951256; c=relaxed/simple;
-	bh=6yQX24i0j5POCJvd/ZR1KFxvOAs2rK2wuTtDubWxa24=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YFeqHDj4O9sh/QMpt3d/O1/DLg3x0qhb0lKoDUQlgQ6qRmLVHPMpltt6aWrXA2tOoAL5DHZYDdji8szu8CHnxHxO/891GT45uKgYfKrqVvnb4lxji9Os7V8e/CibQLcEWfM4MRfCnronkcHlTTnzDfDlTtRZ1LasDXJeeqmuLDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PobfWWYd; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719951253;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fBu7ePDVo++7D4IjJbMnU5rjjRnV5+agERHDVqnqF08=;
-	b=PobfWWYdItRFIUAKiekTXIDlSFNitlhpdxu/gjXfgJ4/crhfMwVdQ2D5vmW0tcOiFvMmsl
-	xg9e8p8BdnD154+U7No91El1Yjl1ExbWUyifow6/QgkYGBAXDMSh1aucc7i8S8hzAcghRr
-	jFyCcbnkLDrCwtettAD6+HM/7muY6Ew=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-77-UCZzHcZWNomj7qEdP3F5iw-1; Tue, 02 Jul 2024 16:14:10 -0400
-X-MC-Unique: UCZzHcZWNomj7qEdP3F5iw-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4256569a4faso28941435e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 13:14:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719951249; x=1720556049;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fBu7ePDVo++7D4IjJbMnU5rjjRnV5+agERHDVqnqF08=;
-        b=mW5kIC7R4BfMnXEByugH9do8iwm7Rbvy+fh5RNsuu19myccIsuvDwd+mQUhnBBx1oh
-         c4+alANf/Ol06Q5/3nrnWkBDeQZVqHQ0BICHJWKl/mwcI1/pXaSBNUbH7YHa9Pa8PN+v
-         LR/g2+935OT+IiKqbIF3SFwb85F1cjGtStxQ0lnuN1UKFCZmSBRcuy51g50jhsJcr+Bs
-         MnGmLFFRq0yJpeSAZaZbjcgC4Uk44kn34GACQojv0vCRQt8uC+6euTCZhVMGXGY0h/2H
-         oX2TKT7hF+5OUULzRxsP0qYuxuiAZu+a6WMmNQmWcIu/wnK3KMTAMwomeaHqvGpULaQU
-         kmbA==
-X-Forwarded-Encrypted: i=1; AJvYcCXUz7/c1k8iNGXUkI6BtK01tKLNntxOGTFznEyq5aY7m192KnGVSTHXucHo7g4wwpiBjpIBFCmu65v+cdgnDwCrSYPVcBb28ashqrYj
-X-Gm-Message-State: AOJu0YxFWN+2z9AWi2z3m0i0IWXghfMFB0E+GB8e34ZpdT7XP7xYNHjN
-	sUIhSPRZ6ye9SccF8NdbDlACV9QLC8qOSfYzvcLYJpyTu+gQF96Tc1lM6O715jGObxQWGiouZGj
-	ie5cZpek3prwGlJvIELF/o0nVZRxVWcQTlkEDcwkPF1kjkQM68uJIa0P6QkZV8w==
-X-Received: by 2002:a05:600c:5113:b0:424:8836:310c with SMTP id 5b1f17b1804b1-4256d4d3063mr114936105e9.5.1719951249213;
-        Tue, 02 Jul 2024 13:14:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH3yYy+Pj4KvbuOhw9OhwaRAp+IJ09cqGiSTJv3EMe94RolCEIKpfHnntszHbV+PrhqoxF3tA==
-X-Received: by 2002:a05:600c:5113:b0:424:8836:310c with SMTP id 5b1f17b1804b1-4256d4d3063mr114935935e9.5.1719951248617;
-        Tue, 02 Jul 2024 13:14:08 -0700 (PDT)
-Received: from redhat.com ([2a02:14f:1f5:eadd:8c31:db01:9d01:7604])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af376easm210890935e9.5.2024.07.02.13.14.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 13:14:08 -0700 (PDT)
-Date: Tue, 2 Jul 2024 16:14:03 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] virtio: add missing MODULE_DESCRIPTION() macros
-Message-ID: <20240702161350-mutt-send-email-mst@kernel.org>
-References: <20240702-md-sh-drivers-virtio-v1-1-cf7325ab6ccc@quicinc.com>
+	s=arc-20240116; t=1719951383; c=relaxed/simple;
+	bh=PPeV90arzQu+7Uv9VI11vXizNAfNFrLCWhgvo+R3uuk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CMLJJwVddRUfMFkAqVNh0C45ex8mXhbgnarPnyHhY/q1Jy0u/ysL7i8ssdQgPsReu75qqP5l2CtzCdigPj4QSTw0fyLpO2B0L50gfEUGw41uLnmnjsuep07a8b6mjlLLJIs4nFDCm7rj9e91DT2frw8WiBtMRAnPyqCUfuwaeB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hmw6HnjP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C189CC116B1;
+	Tue,  2 Jul 2024 20:16:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719951383;
+	bh=PPeV90arzQu+7Uv9VI11vXizNAfNFrLCWhgvo+R3uuk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hmw6HnjPnTlVr8wghJ+PY75Z4lo3Y/1gxeotH/pxM/tZkGw08IpWWNCMHffUkyc46
+	 OQ73Zi5sgzEwqVh4cyL28P9zFGfAr3gPk+Ndue5Ijgd4IyjtpKOF4WkBs3iwhw3RVJ
+	 ryw3NH7m0KUnUnUKCWSyG1Uxd11uaNdco2XNDMEVXjESPmt9Sfuqe7n0huDkuMkrBW
+	 ntokMvCiTvLWkxtuSIe1rEkjWi8OjXPq1TQmXf1B8Rn28E0wHWvbg1ZHvIDVDKhcUZ
+	 qLlrl2/7H3ttjzrtONxOJ/4hvvrqobUTvVBStQPAxiF9H0w82wSKzcOvgBfI9laizl
+	 OWOo6wMci/Ycg==
+Date: Tue, 2 Jul 2024 21:16:15 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Petar Stoykov via B4 Relay <devnull+pd.pstoykov.gmail.com@kernel.org>
+Cc: pd.pstoykov@gmail.com, linux-iio@vger.kernel.org, Lars-Peter Clausen
+ <lars@metafoo.de>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] iio: pressure: Add driver for Sensirion SDP500
+Message-ID: <20240702211615.0334c2e6@jic23-huawei>
+In-Reply-To: <20240702-mainline_sdp500-v3-2-0902047b3eee@gmail.com>
+References: <20240702-mainline_sdp500-v3-0-0902047b3eee@gmail.com>
+	<20240702-mainline_sdp500-v3-2-0902047b3eee@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240702-md-sh-drivers-virtio-v1-1-cf7325ab6ccc@quicinc.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 02, 2024 at 01:10:18PM -0700, Jeff Johnson wrote:
-> With ARCH=sh, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/virtio/virtio.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/virtio/virtio_ring.o
-> 
-> Add the missing invocations of the MODULE_DESCRIPTION() macro.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+On Tue, 02 Jul 2024 16:59:09 +0200
+Petar Stoykov via B4 Relay <devnull+pd.pstoykov.gmail.com@kernel.org> wrote:
 
-tagged, thanks!
-
-> ---
->  drivers/virtio/virtio.c      | 1 +
->  drivers/virtio/virtio_ring.c | 1 +
->  2 files changed, 2 insertions(+)
+> From: Petar Stoykov <pd.pstoykov@gmail.com>
 > 
-> diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
-> index b968b2aa5f4d..396d3cd49a1b 100644
-> --- a/drivers/virtio/virtio.c
-> +++ b/drivers/virtio/virtio.c
-> @@ -609,4 +609,5 @@ static void __exit virtio_exit(void)
->  core_initcall(virtio_init);
->  module_exit(virtio_exit);
->  
-> +MODULE_DESCRIPTION("Virtio core interface");
->  MODULE_LICENSE("GPL");
-> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> index 2a972752ff1b..1cac7d5b3062 100644
-> --- a/drivers/virtio/virtio_ring.c
-> +++ b/drivers/virtio/virtio_ring.c
-> @@ -3244,4 +3244,5 @@ void virtqueue_dma_sync_single_range_for_device(struct virtqueue *_vq,
->  }
->  EXPORT_SYMBOL_GPL(virtqueue_dma_sync_single_range_for_device);
->  
-> +MODULE_DESCRIPTION("Virtio ring implementation");
->  MODULE_LICENSE("GPL");
+> Sensirion SDP500 is a digital differential pressure sensor. The sensor is
+> accessed over I2C.
 > 
-> ---
-> base-commit: 1dfe225e9af5bd3399a1dbc6a4df6a6041ff9c23
-> change-id: 20240702-md-sh-drivers-virtio-704eb84769cb
+> Signed-off-by: Petar Stoykov <pd.pstoykov@gmail.com>
+Hi Petar
 
+Given you are going to be doing a v4, a few comments inline on things
+to tidy up in here.
+
+Note that I've already tagged what may be the last pull request from me
+for the 6.11 merge window, so this is probably 6.12 material now anyway.
+Hence plenty of time to tidy up.
+
+Jonathan
+
+> diff --git a/drivers/iio/pressure/sdp500.c b/drivers/iio/pressure/sdp500.c
+> new file mode 100644
+> index 000000000000..661c70bc1b5b
+> --- /dev/null
+> +++ b/drivers/iio/pressure/sdp500.c
+> @@ -0,0 +1,153 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Driver for Sensirion sdp500 and sdp510 pressure sensors
+> + *
+> + * Datasheet: https://sensirion.com/resource/datasheet/sdp600
+> + */
+> +
+> +#include <linux/i2c.h>
+> +#include <linux/crc8.h>
+> +#include <linux/iio/iio.h>
+
+#include <linux/mod_devicetable.h> appropriate for the id tables.
+
+> +#include <linux/regulator/consumer.h>
+> +#include <asm/unaligned.h>
+> +
+> +#define SDP500_CRC8_POLYNOMIAL  0x31   // x8 + x5 + x4 + 1 (normalized to 0x31)
+
+For IIO we tend to just use c style comments /* xxx */
+and not c++ ones.
+
+> +#define SDP500_READ_SIZE        3
+
+> +static int sdp500_read_raw(struct iio_dev *indio_dev,
+> +			  struct iio_chan_spec const *chan,
+> +			  int *val, int *val2, long mask)
+> +{
+> +	int ret;
+> +	u8 rxbuf[SDP500_READ_SIZE];
+> +	u8 received_crc, calculated_crc;
+> +	struct sdp500_data *data = iio_priv(indio_dev);
+> +	struct i2c_client *client = to_i2c_client(data->dev);
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_RAW:
+> +		ret = i2c_master_recv(client, rxbuf, SDP500_READ_SIZE);
+> +		if (ret < 0) {
+> +			dev_err(data->dev, "Failed to receive data");
+> +			return ret;
+> +		}
+> +		if (ret != SDP500_READ_SIZE) {
+> +			dev_err(data->dev, "Data is received wrongly");
+> +			return -EIO;
+> +		}
+> +
+> +		received_crc = rxbuf[2];
+> +		calculated_crc = crc8(sdp500_crc8_table, rxbuf, sizeof(rxbuf) - 1, 0x00);
+A line break in here to keep it under 80 chars would be good (see below).
+
+> +		if (received_crc != calculated_crc) {
+> +			dev_err(data->dev, "calculated crc = 0x%.2X, received 0x%.2X",
+> +				calculated_crc, received_crc);
+> +			return -EIO;
+> +		}
+> +
+> +		*val = get_unaligned_be16(rxbuf);
+> +		return IIO_VAL_INT;
+> +	case IIO_CHAN_INFO_SCALE:
+> +		*val = 1;
+> +		*val2 = 60;
+> +
+> +		return IIO_VAL_FRACTIONAL;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static const struct iio_info sdp500_info = {
+> +	.read_raw = &sdp500_read_raw,
+> +};
+> +
+> +static int sdp500_probe(struct i2c_client *client)
+> +{
+> +	struct iio_dev *indio_dev;
+> +	struct sdp500_data *data;
+> +	struct device *dev = &client->dev;
+> +	int ret;
+> +	u8 rxbuf[SDP500_READ_SIZE];
+> +
+> +	ret = devm_regulator_get_enable(dev, "vdd");
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to get and enable regulator\n");
+Given you are going around again.  Add a line break before "
+General rule is stay under 80 chars unless it hurts readability.
+ 
+> +
 
