@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-237197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DAF691ED49
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 05:03:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FCDE91ED4B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 05:04:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2230D1F22E1C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 03:03:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71AA51C21665
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 03:04:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14AB012E1E0;
-	Tue,  2 Jul 2024 03:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0116112FB1B;
+	Tue,  2 Jul 2024 03:02:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b="opkiiNOE"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b="lRW/TU5+"
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5EAE12CD8B
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 03:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76AA412CD8B
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 03:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719889334; cv=none; b=olA6+eyznFnptbQZCztNYn5hPoYe1+sqEZ6jDVNu3UIOSCkXyBP/En0R9HkcAt8b2NrhnzAxCJ0ZM9me6n0huPTsb1sgio3kkxan/OQf0hXKW3pk0YPfTxd9lyT0IV0+NMd/oZNKy1uuVgTKB96NTEC03xuGdofd7a3okVM7QqA=
+	t=1719889340; cv=none; b=SHqlYVoliOC8aymsNC/hzAN+6rPL47HG4itcCi6HfFpK2egnEMMgx4oHF13dCyn9UrGvlXf6KiVJ9JaVeBxM/h0tfLOyzT746FmVWaWo5D2x59i2KZVdmXkRKCtQyzAxmb5ry3d9w8lhQiy85Wb8oBZUoh1s1vA2lI7WMFHnVWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719889334; c=relaxed/simple;
-	bh=yiJFaJgdWIpSzq4I1bh4NFNS0sS3mumsKHKQMWi9Duw=;
+	s=arc-20240116; t=1719889340; c=relaxed/simple;
+	bh=76AMBBXtU5aCqHyAiKD9DbjKd2koPJbTbe5mV7L1o6s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EBbm7n3IICYM/Pf9J6+ZEDxMNumO6ejeCg4/15MYUMDRlD3aMiO24Z0FfFXvxzUNdMjhCU8tKV032ZeILvDgOqclmFhnbBwLzEyV59P+x7sH5Rbsf85rq8xQsTI5Hcm0lE8UMm1PgEP8fjPHnLXSvgBOFgNcgyF1FlJzspt7dr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=smartx.com; spf=pass smtp.mailfrom=smartx.com; dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b=opkiiNOE; arc=none smtp.client-ip=209.85.166.178
+	 MIME-Version; b=TPY5yjZBfLBB+Asozu4O/w3LupRbHZlT1yddZsW16uXr+PNxjM3C8DtDAuzRLJFYfbtGpr0utHhOeAnCD6zl58JMm71KXq2OcnKSNJNJY7RfBNARQw4wtA2rZi68eDNBx3w8GKRYf1DZkJHlFTmenopYvEIZYsougHSXGXdx7RM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=smartx.com; spf=pass smtp.mailfrom=smartx.com; dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b=lRW/TU5+; arc=none smtp.client-ip=209.85.210.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=smartx.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smartx.com
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-375daa47685so14255875ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 20:02:12 -0700 (PDT)
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-700d083b65bso2614998a34.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 20:02:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=smartx-com.20230601.gappssmtp.com; s=20230601; t=1719889332; x=1720494132; darn=vger.kernel.org;
+        d=smartx-com.20230601.gappssmtp.com; s=20230601; t=1719889337; x=1720494137; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Z5wro2DPQQzDm4JEbFr9RFX4ZrKb+KLG6vY37L6bP9Y=;
-        b=opkiiNOE6G/+ZxDBex22KOc3oTB0pSYB7lJfPDnTQc16jMbCY81GKcS5sNUI4BgVwb
-         o7VkuUq+B/oXK/1YjvPZnPRSoEK7+Yrj/ij+4udZwSAAcveIYl9W4jtuCEiCbH9+WfkR
-         4f2SxYVJhFRF7gICy/UG09xXuDXJXuqaP3FwDaiX6rQMYM0WjIG6Mn+2BSqrMe3dRk0G
-         aE3omH3f9AsaAThh+5RaEEy3yf+rnOq5BrN9f064V58bZ2Gi5Z5cDImjEC02V13NKWmj
-         PV/LHColcl3zbJDA/E/XNfuYaxn/P178CCQtm24f92k/V0k9bukr3uoLS/2FNqH7Cqko
-         72Ag==
+        bh=QQQwXyMsRqqUNEWCeRrNsfzgQh+cx/wn5vbkQhMYQAQ=;
+        b=lRW/TU5+JlaDB6RTSJh2UefQqtuM/TxtLjVqRhugqTyBRyWMBFo1QMjsUPVouHSIL7
+         LLO5Zldc56NstXoWgmUUtb7rdCZYnJhuj315RAMA2UuHBfBPR4/47I14ljvOd5LZt8kt
+         8+N2oBHllEE08j+NrDijsmQcabHESFhilUVNZb+ZEl9odQ18jRrV2Ah5fHlT3pSE5tkI
+         sOLpxtPJfnXt8F46LXt2fck9RoYkhVfzKI3M44jnnxVCjp4JF6Qy0167Y18lLySyYpXb
+         WtVAIgoytYrRHbi9kvhItuypxA9ebEUkM/ddRpAROTt/UiQwHxQFUzHqIPrMF6si9QbH
+         awAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719889332; x=1720494132;
+        d=1e100.net; s=20230601; t=1719889337; x=1720494137;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Z5wro2DPQQzDm4JEbFr9RFX4ZrKb+KLG6vY37L6bP9Y=;
-        b=i815k+8lSmO8eVYRMh+HkdgKMKfMhyb/nU4qKrEcTn6uk3eni+3HZXGo/JFM9NK4No
-         VVDu5I2rGm6v+MsBAmDL9ch4uYRViGs25vvmNk1fOLGaLPZjn6a89SzXL3Abu8hLv2pX
-         jZINpS+beD9T0zmGaRaxQECrEEoJ25sslYc8slSKuztAjtZz01w8lXfxoUrWzqAVgI2f
-         muUyojo4JSugWBix64aJVWJLQZOaXxG5dpphUfLeocu9FfEL16vTU2nsOhpfvdFUgVkJ
-         a7a2s7zayaZSc8zW4dZNuyS9pn3z9i3onXzh4/cdVZYHeS2fqZra+blXQFdbMNASWIjd
-         o8GQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVoG1054Qhn50Gtzy4Vl6s1EKJ3X7Vd/Ldain2dZHp3L43hqMpOX+JnlEiRDeSydc6s13/spkJr93m7eoyUOhWl/tJyfKoX60Pt/n47
-X-Gm-Message-State: AOJu0Yw0C5csLoScTkkY9N+tBTHVDvotNa9vn/zBNKpVBW8q8h7O/0Qc
-	I4J1kJKCf55D7tZgf8h1zgG++z9dDErnpmZJBROzxJJnG7+yUiPXcORk147WVTE=
-X-Google-Smtp-Source: AGHT+IEpTMk59V3NV8KVvtbOMVVsa4fULF1zm0uglqoSp4Io1UgeVjGAy7FP7CAi425G0Y2cNLDt1A==
-X-Received: by 2002:a92:c54b:0:b0:374:5a2d:178 with SMTP id e9e14a558f8ab-37cd07285b2mr89734205ab.2.1719889332060;
-        Mon, 01 Jul 2024 20:02:12 -0700 (PDT)
+        bh=QQQwXyMsRqqUNEWCeRrNsfzgQh+cx/wn5vbkQhMYQAQ=;
+        b=QSKGO5lAQ+C3ecAe3AQxDY4C7VyFUxljCT8y3plWXfcH/mqxfutZqov7TvCI2yWx12
+         5nznfV3aOSOIB0P648nx8Y77ji0Rxi0MM6z5ZnWMhhL6datVgat9Vav+6iz/jEpMIPMP
+         GsqW0HsiaOz+wndTmRBH17nP2JvF9pQ9WhNB6tP6DDujcGyF0jDPG0jrXjZ4Lt7szJ3e
+         l7i4vsLh/72IY9B9De5a+O906w4tdobbD6wXycsW9T69oWMq8lB8HLdCuqLVKZyOgH9X
+         5CZqwI51kTkBuB1bpDX26CMaDmvsom1us45my+DPwryKVLXvz0GRTcJni0E0kMXiCSdk
+         LJQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXyDUe5C+hmc9M1MxmvQ/RMMgsBLYr6RXAgeNoSh2OSXBWVtLfhueBgFl8wxBOsbUjDVCpjY0tBr0LsXkBiUx9Wi6rACSql8Etqj6or
+X-Gm-Message-State: AOJu0Yx3u440+oIzI7meNJ+4QL4fxvuehNMa8iCXo/bBxL/15RwXulWd
+	8VgTC6Z9rZsVjzOSAX9ORwa5lZs7rF8mj+8t0md+qhPN0kz5YdFYfTkBDWz6HMY=
+X-Google-Smtp-Source: AGHT+IEo6Ekcikz9MU8COKrqbNv2gz5ysi3gbJlGTeBCwSZVzy9i9s/b1kCO7DSOJ+UAekre76dXuA==
+X-Received: by 2002:a05:6830:6b47:b0:702:59b:d26 with SMTP id 46e09a7af769-7020766b795mr8938625a34.27.1719889337505;
+        Mon, 01 Jul 2024 20:02:17 -0700 (PDT)
 Received: from fedora.smartx.com ([103.172.41.200])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-72c6a8dbb2fsm4792904a12.31.2024.07.01.20.02.10
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-72c6a8dbb2fsm4792904a12.31.2024.07.01.20.02.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 20:02:11 -0700 (PDT)
+        Mon, 01 Jul 2024 20:02:17 -0700 (PDT)
 From: Haoqian He <haoqian.he@smartx.com>
 To: Christoph Hellwig <hch@infradead.org>,
 	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
@@ -73,9 +73,9 @@ To: Christoph Hellwig <hch@infradead.org>,
 	linux-scsi@vger.kernel.org (open list:SCSI SUBSYSTEM),
 	"Martin K. Petersen" <martin.petersen@oracle.com>
 Cc: fengli@smartx.com
-Subject: [PATCH 2/3] scsi: sd: remove scsi_disk field lbpvpd
-Date: Mon,  1 Jul 2024 23:01:15 -0400
-Message-ID: <20240702030118.2198570-3-haoqian.he@smartx.com>
+Subject: [PATCH 3/3] scsi: sd: remove some redundant initialization code
+Date: Mon,  1 Jul 2024 23:01:16 -0400
+Message-ID: <20240702030118.2198570-4-haoqian.he@smartx.com>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <20240702030118.2198570-1-haoqian.he@smartx.com>
 References: <20240702030118.2198570-1-haoqian.he@smartx.com>
@@ -87,63 +87,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The lbpme bit in scsi_disk can be used directly to indicate
-if the logical unit supports logical block provisioning
-management. The lbpvpd bit is no longer needed, so remove
-this field from scsi_disk.
+Since the memory allocated by kzalloc for sdkp has been
+initialized to 0, the code that initializes some sdkp
+fields to 0 is no longer needed.
 
 Signed-off-by: Haoqian He <haoqian.he@smartx.com>
 Signed-off-by: Li Feng <fengli@smartx.com>
 ---
- drivers/scsi/sd.c | 8 ++++----
- drivers/scsi/sd.h | 1 -
- 2 files changed, 4 insertions(+), 5 deletions(-)
+ drivers/scsi/sd.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
 diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 44a19945b5b6..b49bab1d8610 100644
+index b49bab1d8610..c7268780c642 100644
 --- a/drivers/scsi/sd.c
 +++ b/drivers/scsi/sd.c
-@@ -3306,8 +3306,10 @@ static void sd_read_app_tag_own(struct scsi_disk *sdkp, unsigned char *buffer)
+@@ -3957,7 +3957,6 @@ static int sd_probe(struct device *dev)
+ 	sdkp->disk = gd;
+ 	sdkp->index = index;
+ 	sdkp->max_retries = SD_MAX_RETRIES;
+-	atomic_set(&sdkp->openers, 0);
+ 	atomic_set(&sdkp->device->ioerr_cnt, 0);
  
- static unsigned int sd_discard_mode(struct scsi_disk *sdkp)
- {
--	if (!sdkp->lbpvpd)
--		/* Disable discard if LBP VPD page not provided */
-+	if (!sdkp->lbpme)
-+		/* LBPME was not set means the logical unit
-+		 * is fully provisioned, so disable discard.
-+		 */
- 		return SD_LBP_DISABLE;
+ 	if (!sdp->request_queue->rq_timeout) {
+@@ -3990,13 +3989,7 @@ static int sd_probe(struct device *dev)
  
- 	/* LBP VPD page tells us what to use */
-@@ -3430,7 +3432,6 @@ static void sd_read_block_provisioning(struct scsi_disk *sdkp)
- 	struct scsi_vpd *vpd;
+ 	/* defaults, until the device tells us otherwise */
+ 	sdp->sector_size = 512;
+-	sdkp->capacity = 0;
+ 	sdkp->media_present = 1;
+-	sdkp->write_prot = 0;
+-	sdkp->cache_override = 0;
+-	sdkp->WCE = 0;
+-	sdkp->RCD = 0;
+-	sdkp->ATO = 0;
+ 	sdkp->first_scan = 1;
+ 	sdkp->max_medium_access_timeouts = SD_MAX_MEDIUM_TIMEOUTS;
  
- 	if (!sdkp->lbpme) {
--		sdkp->lbpvpd    = 0;
- 		sdkp->lbpu      = 0;
- 		sdkp->lbpws     = 0;
- 		sdkp->lbpws10   = 0;
-@@ -3445,7 +3446,6 @@ static void sd_read_block_provisioning(struct scsi_disk *sdkp)
- 		return;
- 	}
- 
--	sdkp->lbpvpd	= 1;
- 	sdkp->lbpu	= (vpd->data[5] >> 7) & 1; /* UNMAP */
- 	sdkp->lbpws	= (vpd->data[5] >> 6) & 1; /* WRITE SAME(16) w/ UNMAP */
- 	sdkp->lbpws10	= (vpd->data[5] >> 5) & 1; /* WRITE SAME(10) w/ UNMAP */
-diff --git a/drivers/scsi/sd.h b/drivers/scsi/sd.h
-index 36382eca941c..ff9ff2655c25 100644
---- a/drivers/scsi/sd.h
-+++ b/drivers/scsi/sd.h
-@@ -146,7 +146,6 @@ struct scsi_disk {
- 	unsigned	lbpu : 1;
- 	unsigned	lbpws : 1;
- 	unsigned	lbpws10 : 1;
--	unsigned	lbpvpd : 1;
- 	unsigned	ws10 : 1;
- 	unsigned	ws16 : 1;
- 	unsigned	rc_basis: 2;
 -- 
 2.44.0
 
