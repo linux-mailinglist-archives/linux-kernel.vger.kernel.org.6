@@ -1,337 +1,197 @@
-Return-Path: <linux-kernel+bounces-237836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66FF2923ECE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:21:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 420AC923EE9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:26:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0507B2515F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:21:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA774B2206C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:26:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF151B4C5D;
-	Tue,  2 Jul 2024 13:21:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28EB11B47B5;
+	Tue,  2 Jul 2024 13:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U6W9oWqF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g2UENySI"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5735E1B4C44
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 13:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719926492; cv=fail; b=Q9cXv6koJaacvVdH5BI6U7vu5J4e8s+dPZt05QLGaPXSEcyvegSuruUl00p5vn08/5O4ItB2MD/5r10qSuGDhJno60KDapA62O55CewolnY6A/XSFdXhEIYk0V5hdCvrLLG6yzggc5CcCx6RFGb8+c7E9ffmybFU5fv9/SL9aW8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719926492; c=relaxed/simple;
-	bh=Bor3Dk8i5sozNpwgWHCf88vARoa23jjdyekL6DkasoY=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Zvob6d9aWes0RuPugVdSurhz0EwbA3bmT25ToSg4OBXki8fpzpX9ifVeGaDK06dWyERPM3pvOZJ6qc0eXIEaJrgK2xL6F4uV0GQbRwitVVofC0w9TQRlJxZcQuokL1017WdqW9Zt7lSeyU+eFmmqAK87D3JrisI4dbZ6RkmWpnM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U6W9oWqF; arc=fail smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719926490; x=1751462490;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=Bor3Dk8i5sozNpwgWHCf88vARoa23jjdyekL6DkasoY=;
-  b=U6W9oWqFV3MghUagoLaZdgVVOJy1XnVuKwoyANQEOH0TOhZdVpK2wwyA
-   V/j79TfL+cQqi1nAgCeoZv5CKolg5yyDEUwbkbuYm0s/LQ/T/fbHwUVhS
-   27D0sJObU2zy9SgaPDcaHl92sAlK8KgY2TWxwBiwhJq5lJEllrp3aL80F
-   9/ZqaSLW4QjL2bav/8vWrLmm08dSd9BhqhzEklQVyfiKZL52xJhwE1UBv
-   k2mO3LHTyIMlxnIywComw3sBR+lPF6WOCXPSgZ33EYsNpWR9iNi7M2OWk
-   9Qwnz4p1lkf1OFJI9iUnpP8kmTpqesXPRcr/kg+sL+mq3pKCG+nDXjS6u
-   g==;
-X-CSE-ConnectionGUID: d7R0rrtYRGyyjcTozvcy5A==
-X-CSE-MsgGUID: HcBkeUZkRhuwbMnYoT+wbA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="12357427"
-X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
-   d="scan'208";a="12357427"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2024 06:21:29 -0700
-X-CSE-ConnectionGUID: T8FbgESnT9622M1eL6tdRA==
-X-CSE-MsgGUID: 7YzqY/foSHSg3hcdXt/nVA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
-   d="scan'208";a="76628004"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by orviesa002.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 02 Jul 2024 06:21:29 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 2 Jul 2024 06:21:28 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 2 Jul 2024 06:21:28 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 2 Jul 2024 06:21:28 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.174)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 2 Jul 2024 06:21:28 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ctc763zUFnEa4om4tIFhJSlXZXcQ9n9au5QEapboN6AwaBqaymPG0Xzf4H0xL4ttcgUaJCYT2wQl1wP8k0q+Oh0ke4f9HGU7KSrXLMBoAx+RyfQzuG5koNMT0OMbS/UduuSgWOp4g62P/K9ldYuC60uWkR76XfQAgJ/R3glth476dKsOBaosz5NVRjeglJE/NA34eNJGfjG80FgY9ieM+C/4TTWFNpCENQkTE9kiGAz7H5sqCysZKUhTlzjaEvzJvrsQjo0NGpg2fTR2OlU4CdS9zFwsFe4c1bf2PEem2IigeUJO6oTZ348dxLGlhQlKIMUzQFwN6nnV68eo9nFuOw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cz4bdVftIeQZUHS/GyAi2myNuOxJ0nnZ2FIX5Ly8hD8=;
- b=Us6V3s7FWpSRxxlWDE1FXquPHKySaofBAKATHne7sJko1t/g7pS2JLBX9peeL8Jw0/DVhjObVINTkmag8krruV+SinJq8HOsj6QSc+erc0AL+jJUDkBvXM+XENyiiNx79kKBzFRaHTQtTnVcL5xc7K3DcPKF8IjheSq+C7db6Z3sKyJwVa+jy0ylfQdrLz0spxWCFAtMdIUChwQ6C92EpzdWGhVLVQvUnjFE6IPmFLxrbWRvecZf3yZf3gdMAvGVn4SBiPqB6iaXi0IcnIarm88mpECbUVVsgkbOtOCAByuqwDcEa24utRhJiEy6KvsrcTyt+KYKP1355ZDSXXDRBw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7529.namprd11.prod.outlook.com (2603:10b6:8:141::20)
- by CYXPR11MB8711.namprd11.prod.outlook.com (2603:10b6:930:d7::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.23; Tue, 2 Jul
- 2024 13:21:26 +0000
-Received: from DS0PR11MB7529.namprd11.prod.outlook.com
- ([fe80::d244:15cd:1060:941a]) by DS0PR11MB7529.namprd11.prod.outlook.com
- ([fe80::d244:15cd:1060:941a%3]) with mapi id 15.20.7719.022; Tue, 2 Jul 2024
- 13:21:26 +0000
-Message-ID: <d6e0ce90-a188-41f4-aaaa-ccbbeb605666@intel.com>
-Date: Tue, 2 Jul 2024 21:25:22 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/7] iommu/vt-d: Add helper to allocate paging domain
-To: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, "Will
- Deacon" <will@kernel.org>
-CC: Jacob Pan <jacob.jun.pan@linux.intel.com>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-References: <20240702130839.108139-1-baolu.lu@linux.intel.com>
- <20240702130839.108139-6-baolu.lu@linux.intel.com>
-Content-Language: en-US
-From: Yi Liu <yi.l.liu@intel.com>
-In-Reply-To: <20240702130839.108139-6-baolu.lu@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG3P274CA0022.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:be::34)
- To DS0PR11MB7529.namprd11.prod.outlook.com (2603:10b6:8:141::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95CAC1BA08D
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 13:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719926743; cv=none; b=PM0Vw1YUpPnsWXRlZv2uqfnSmTJrBxuB5bLTKb2ao8YbFheVVLKHMipvC6xgA5ZA5+WzaACRPOuiG2J/sqXBmxmYU/EhCz5NIrUsLlxzLTmWvZt9ndE6ZpGGd1qekA1YdsP0mA1Jd/tJTAFJvgbVTEClcTV/wB1j5DdXpbMM4kU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719926743; c=relaxed/simple;
+	bh=LDbBMgURoimPN8pnzhNAdm0t9sywKUzDkH05WXpy9+E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MlPlYsUrBj1+bBRnmFzhf3THy/2tz/pt6hyfdgB16BaLj1IyDt7rK9iJsaxZCZVqptLQlbFI4ByVtmGGgbaKjllxFd4w2ozLQsMt1RrM1DWBGW9g9g31PUO9ewyWnWCFfILBao/07KzmLv90sQ1IRjumlXScwEDrPv/tdE6+VAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g2UENySI; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7066c9741b7so2539297b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 06:25:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719926741; x=1720531541; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=eKrbYmlryvrrza+SxvqUJ8Kw/3hJWfiKxWp/gumJk80=;
+        b=g2UENySI8HFTlJbjmAYm/QiZdLCxC1yvElI/J95WiTNiVoexRZlrvcgqAsnxvP7oC2
+         SMwkzlvKY9B2YoeSw99tSsS2alH0U+2317ytLEkxv2XLFyo0xz1/NhWnL86ATTcKZXuj
+         H/2GwY5XtFunGJ23OkzvQWG0yypflBq2q0Wloh5+XC+VsO37pf8hxaZwUXcR5MrQ++9d
+         eGhl0G+ab3w/SN1fzZmYSNICrPG9TesVEB/X8UtQbMJZLp3M1kv7tSI4PR6KeFDk1lCq
+         W3BbYgzc1FTQkN4GHwhFJg3t32ZKxWkY/A30SrIwFhweZg+j8DuWlCsPX66xr+rxtOLS
+         b8jQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719926741; x=1720531541;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eKrbYmlryvrrza+SxvqUJ8Kw/3hJWfiKxWp/gumJk80=;
+        b=X3KVSZd11fKBRswZt7Fli++mlfAGlYYeLlziMv+v8bMEBh1T6nB1AO8nf1L+BRlu37
+         JsDT4hJESdGPOb88uIBsZ+VpNSaFWt9xK80XZ94ekn9hJfOvZKmens+7yDwGshxnL5Vw
+         I6KNdzc47uQ6WaYt9QUPhGrZTfv+QLtFsOZ31hUPEpNkT2wcaEPXqNO42IwFShlY2UQB
+         9sIMuDtUHNTDX/nnwLU+DLEjey8Zn/cXYpWlswQBBw7+ue0hmWE5E8nZzZ3hl46Yk7EX
+         38rEjMM9JxxUAOP4kWHJFj8bN8dWXwQXrUWDPIggZEFntA8ZS5xTftdKqE98Xce1QCGO
+         +4bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXlU6DxNUvwhMsy1g6lrpwmf81QoPEtDm/Qtqqlvo0UUrl7hhx+/11BpT/VVH0pGYHb4Vx3VSf3L8GqFrUCbUB3iOLgdm4GE9llNYV4
+X-Gm-Message-State: AOJu0YxIkojdg4YnnjtpTE+CFbS7FazIKU4hCUJ0IOwDSCI1BibdQYRG
+	fI2mCW+Q1fIUvv5mPeqOhZhxyM4YFfCZ+OSyKWfjPTJOMWriBBJxf7LxRbmZYpGycKGQUWhltcp
+	eE08K0otkZoQ3Cjv+a495Mo9vyKNkW6MB/g1A8Q==
+X-Google-Smtp-Source: AGHT+IH2jsMeeJ7hhaJ9eZiUnwgxIWqwHKuYFmZWuJEUw4Q2J3DcFYMPakqScS2mtSeVsrzkTEUaYaxN+8Il3PKIaQA=
+X-Received: by 2002:a05:6a20:7285:b0:1be:e0ed:6b49 with SMTP id
+ adf61e73a8af0-1bef60f3d38mr8464078637.3.1719926740802; Tue, 02 Jul 2024
+ 06:25:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7529:EE_|CYXPR11MB8711:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5349d084-b5c0-43b5-68e5-08dc9a99e006
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?aGc2S1RPVlBQNE1MUzZRWXlRUmhiZGV3SzdCSHRLdkgzVkUrdVFINEoza1RG?=
- =?utf-8?B?QmZIcUZFQWppOGJRK0VudkIwdzdabXUwaWpIUkFvU3kya290QlpxdmU3d3Vv?=
- =?utf-8?B?R0VLOWdNK2JuRkRST2VQZ3B4WmJiYlZNQ0NBSXFyT2NkelgxendqZFU1cUQx?=
- =?utf-8?B?OE1FZGdQUGxjcXRKaS9XVERZVmcrN3NYR3BQZVZvNlM0NEpwQkkzT0gxek5S?=
- =?utf-8?B?ZmxIbHp1eWZ2UHJzSVkxb1VzWjhBN240Y1FUTEZ1WTB1ZWthbXNPa09GZVRa?=
- =?utf-8?B?VndTK1hRYjU5dlc0NXphNEFOSUJEUm5CYTlOWnFEOWlZbVpZUC9FdzlIWUds?=
- =?utf-8?B?REFqbW96Z3JGcGYzMmVkMmU4d1ZnUkhFMjN5dkUzbEg1Ym1qU1J3c3doU3JE?=
- =?utf-8?B?UUo2UEhqczIyZ3BuK3lnRS83OGxRVGV0ZWZmNExzUFBMSXJPTXU4QUppRzho?=
- =?utf-8?B?bFhpLzZZcDRBTVdwejVYdWsrM0hOdEN1WGVYalhnRE9GSVN2VklVWkp3T1hl?=
- =?utf-8?B?aU02ZXEwUlBONHVzS1FRcTdKL0grcVg5OHIrU1JhNGJLeFdUMFNmYjF1Z1JT?=
- =?utf-8?B?TlIrL0trVEZqTkhmVXRzNWF2UVNhV1VjNDB6Tm9NeDN5dFJKQXZ5dktaMkdS?=
- =?utf-8?B?bm14WlZJNVF1OVVkT1QwNDFZMFBKS25yOG0yWEt1UXhEVUZaOG5GUWtLUDBD?=
- =?utf-8?B?djh4elk2WXE4d1hRRElNbjFlL0d5MWpiMkZyWWpIblkzR0srTGRzLzR4YTlU?=
- =?utf-8?B?YktpQVAyUzg1Vk9Pd3NjTjRRVEV6YmFNRFA3eWNmVVUrdDBmVVppSS9YcFM4?=
- =?utf-8?B?SVI4cVMyZDVCc2RlSlpIL0JoQU45ckpZRTdYbmw0Y1lNdzVtS3U0dzBMRXJp?=
- =?utf-8?B?bmFObHhzeHpoWGlOMk1wR21PRWkzN1p2emZwc2w0U1c4Ny8yQVc0WnRDS0ti?=
- =?utf-8?B?Zm4zVTRpRDJ6YTF4VmpoT3k4MGNOa3ltOGJrVjNPcUZaNlFBN29VcEtvUHF6?=
- =?utf-8?B?RzdGTWRnRFFYS1NkNXpPV09yNVUzTlViR0xPdUV4M3BYUWs2cjJXemorNTkv?=
- =?utf-8?B?TVhLV1A0NXNHR2QwcnBzMzFWQ2tnVGFIdW1MVGhEbklTVlM0QjAyOHNPWGVn?=
- =?utf-8?B?MGdGRUdwbVkrS2N1Uml6M0RXTFFaSjd6bHgvLytQTnlyS3l1UVI0OUZzcGNR?=
- =?utf-8?B?NjhseEZ1SkhOK01JdjBpWjkvNk9aRVlyUE1OVGMySDBrNHplTzNkQ2ZyZ1lD?=
- =?utf-8?B?UHptVjRrNmxkUVZIUndWYTgxMjU5S2ZxcFh4L3N2K1Y4bzUrYlpjd2lxVmtC?=
- =?utf-8?B?Zkp0dmlEZW5Fa3dhOXhEa0xYUzhJdDR3MUpLbTdZT3pKajdrcDZqVjJIU0tv?=
- =?utf-8?B?TzJ2MEN2Ukg2NGRBY0lZNW5sL0U0TDVONGdoMTlPdEJUM2MwR0ZVVDJ4MjQr?=
- =?utf-8?B?VFJOZVlpbDRlaGZJRmwwLzZFVFlaT2lXZGpSTlZVSS94N1cvc2g0ckNKSmYw?=
- =?utf-8?B?VGQwc0pIMGlhWU9IaUZMUzZVUCtnaEl0Q2UxTjYyd0piTUE3WDBUcVZZekQv?=
- =?utf-8?B?bmNJaGNMYnFyTit5ZVF5SWw5L3BQeTc0MWtGbjQzVERaUTJ0S0doMm5EOTZR?=
- =?utf-8?B?a0VuSjhKcDdyWFZzUXVxVnNOSVpRb2VWclpCVmtadUlvMS9jTC9SL0hYODFY?=
- =?utf-8?B?bzFZYVBqUnpVbGpXcVNGUTJLa1pYdk12UjJUa1Q1bkpRSVQ2MEt0MkVweTRZ?=
- =?utf-8?Q?m7TNnnGELUphhi8MrE=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB7529.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TUtLQkhQMkxSbnZhbjZmTGU4TDFKOXdRSmRObS9GZHpFbWFheFJsR1NaWmdV?=
- =?utf-8?B?Q3BtNklZQktQMUtHTk9pTnRIMHROSjR2d0lTdlNFdHgwc3UwQjhhY0thU084?=
- =?utf-8?B?RFFMdjd1M0RFRzE3eCtCUkh0Qm4xZklkWXlqVytDOVE4YmIrZThQanZEQ1RU?=
- =?utf-8?B?ejFqZld4SThpSVNzUCtZU3B3WDBGdWZ4cEk0TnUzdkN2ZWRydGJLQmFQWGh4?=
- =?utf-8?B?eWQ4RVlmUlBQMFdVVzJXMGpaemduWXdRM0I1Z2MyazR0RnFwV3VmMEVBeHRV?=
- =?utf-8?B?ajFkNUVhMjI3WEZMTGxsR2hub3lsa2RyYVk4dDBVVzJRekdXdUh0b1J1WWtY?=
- =?utf-8?B?WGdFYStnZmZUamdiYzNOSjdnRHg2Y0ZObG5zTTBIazJBUWJ3T1c2ZU5qejRU?=
- =?utf-8?B?YWlwako5ekJEUUV1d0pQdmVkL3p0aWxocVNNNnM3cDV0Vk1ha1loeWZhZ3Fj?=
- =?utf-8?B?dnhzYXZmS1dXRWE3YU1SekJWQUNLS0lCcVI1TzUxaG4veDdXdngyZWpOMmhS?=
- =?utf-8?B?ZTZlbktBUy9VVTN5ckpXN0htTkp0WllmKzlxTlJJUE9nbmtndnBmMVpiVkdv?=
- =?utf-8?B?ejhDekJGbzA1TkptaWdkR2NIQmRWa3RZdnFQbjR3bGI1MkU2NGt2eVRHK0NR?=
- =?utf-8?B?dEJMRzVZT0JKMzlnaXRvNjNqam5PYys2SmF3Z2JreUdFRlJXckp4SmFXTW9B?=
- =?utf-8?B?MUc4N3pvUXFpYzQvQ3RWSmp3ZGpMcGhJN0F5M0RvanljMzMrVGVabU1HaDBH?=
- =?utf-8?B?ZHd3UURFK0UrT01tckU3N3Q1YnNwbW5rVk5aeXg2MDNOSTdIenBMckpjMlZU?=
- =?utf-8?B?ZUU4eGYzVTVnbkFCTVExWm5mTFE4bnlzVHFMaHhvL1lWREwwaGFwblhvY3Bi?=
- =?utf-8?B?NlQ5VW9tSEdlOVlFTUYrYWkxNXowWjlrVzhock5IZDdGbGNscW1ERHFkVlVh?=
- =?utf-8?B?bTFydmVQMUFZNTZhTVhORjJML0RseTR4SyswUG9hUk54bXJpR3Q5bWtENEYv?=
- =?utf-8?B?U0ZJdEg4MHBUYlViQmRaYkpwU2hsRkE3OUg1c3J5bzQvbFpkd1ZVZkxQWEor?=
- =?utf-8?B?UjBWbm1NYkZTSldmWVluMStqdk94OEVXQUs1TnpBK0dTdGhyQUw5MXpSRmhn?=
- =?utf-8?B?cVN4QUpRRmx1OXBnb21yQzlEaFJuMzlMZVhFeWErdWhBckVsSGp4WHo3VjVm?=
- =?utf-8?B?L0JLNmR0bzdHNFBNcWxYYysrTFdVR0Z2VE1jM3p5K3FlODhFb1daVDlYS1Zo?=
- =?utf-8?B?WWxEVlFYZEY0MnVaZzJjMmkyNHhXTXFtaHFjSFpjWDdLc1BJd3cvYW05Sldp?=
- =?utf-8?B?MWhjb0NvbmZyeUNjbktXeUJZU1U3UEE3RUlVelkvQ0ozbUlWZUIrMEI1dkIw?=
- =?utf-8?B?MXY2NHJ5NWsvV1UzM0lpekFMcVdUb2VwU2NMbXhsZWhZUjVzaytnWGpCMjAz?=
- =?utf-8?B?Nko2Q2NNZWxOekcvNkF3a0czQUVHeGZHbEpGL1FtcTNRYW96QnBnSWdLTXpU?=
- =?utf-8?B?aHBaRXFQaWZLRmZKek9LVDZ2R1dnZHdUTFpLa2Z6RTlrSzNuTkFqbXBZc21D?=
- =?utf-8?B?OWJ6L2xncENyay91eHJzY0xuc1FKRzU5ZzdGNDcyQ3g3aE5xNHNCaHFDQXIr?=
- =?utf-8?B?clQzQk9IcnkrUkFMV1ZqMzI2ampOL3EvL2k1ZEF6bHFicEN2VUYxYThHQzBv?=
- =?utf-8?B?dEx0aFZ5Rjlkclpyd0JnT01jZ05sMUdJM1ZDMWhLZnliM1ZQbHhsZlhDRy80?=
- =?utf-8?B?VmFVTVN3aHhFQ1c2eG04SkVvcWlLS09WWGdQMjcrT25FTTM0MGtVbE4zYldD?=
- =?utf-8?B?UWlGRE5RUEt6a2pjaEFEc0poNXpkUGtZL1ZLQkRtM1JrbmlnSFdhRDJqbkZZ?=
- =?utf-8?B?djR6WXRPQ0d4WlVCYkNUQ0Z3bFFLN0F3OTIzMUs2WWJlS25CdTVuRHdBMTJZ?=
- =?utf-8?B?eVVncWlqdkN6eFlnU01JT1JPSmpIZ0lJUkhIdERnR3ZVQjgvZWJxQWk1bndD?=
- =?utf-8?B?dU5EZVNqandGT1Q2NlZlUXBaZTJpcUtSTFFPKzBCKy9vMHRBVjdTVVVUQThP?=
- =?utf-8?B?ZVpTQVB5TW1uV042ZlliZjJidFhFOXlLNW12ZHAvZ3gvR0pPMmc0aUpHVnMz?=
- =?utf-8?Q?oSrmX4TgGxZzTQHjhtjDLjZti?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5349d084-b5c0-43b5-68e5-08dc9a99e006
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7529.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jul 2024 13:21:25.9618
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: U+s7N61PS4mtetWwq+s5ElDbIT7kXMeWS0/C3nm2mVxbvYNpKlPo6W2WuCiArBfQgZdAB6EWDBPymJ5Sw6IocA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR11MB8711
-X-OriginatorOrg: intel.com
+References: <20240624082011.4990-1-xuewen.yan@unisoc.com> <20240624082011.4990-3-xuewen.yan@unisoc.com>
+ <20240628012832.37swdtxr4ds2kkp7@airbuntu>
+In-Reply-To: <20240628012832.37swdtxr4ds2kkp7@airbuntu>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 2 Jul 2024 15:25:28 +0200
+Message-ID: <CAKfTPtALDtnbPmq4401oLKzcEDurLKuCyqyNKOb1oYLAVJ2P4A@mail.gmail.com>
+Subject: Re: [PATCH V2 2/2] sched/fair: Use actual_cpu_capacity everywhere in util_fits_cpu()
+To: Qais Yousef <qyousef@layalina.io>
+Cc: Xuewen Yan <xuewen.yan@unisoc.com>, dietmar.eggemann@arm.com, mingo@redhat.com, 
+	peterz@infradead.org, juri.lelli@redhat.com, rostedt@goodmis.org, 
+	bsegall@google.com, mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com, 
+	christian.loehle@arm.com, vincent.donnefort@arm.com, ke.wang@unisoc.com, 
+	di.shen@unisoc.com, xuewen.yan94@gmail.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/7/2 21:08, Lu Baolu wrote:
-> The domain_alloc_user operation is currently implemented by allocating a
-> paging domain using iommu_domain_alloc(). This is because it needs to fully
-> initialize the domain before return. Add a helper to do this to avoid using
-> iommu_domain_alloc().
-> 
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> Link: https://lore.kernel.org/r/20240610085555.88197-16-baolu.lu@linux.intel.com
-> ---
->   drivers/iommu/intel/iommu.c | 90 +++++++++++++++++++++++++++++++++----
->   1 file changed, 81 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-> index 1b5519dfa085..1f0d6892a0b6 100644
-> --- a/drivers/iommu/intel/iommu.c
-> +++ b/drivers/iommu/intel/iommu.c
-> @@ -3622,6 +3622,79 @@ static struct iommu_domain blocking_domain = {
->   	}
->   };
->   
-> +static int iommu_superpage_capability(struct intel_iommu *iommu, bool first_stage)
-> +{
-> +	if (!intel_iommu_superpage)
-> +		return 0;
-> +
-> +	if (first_stage)
-> +		return cap_fl1gp_support(iommu->cap) ? 2 : 1;
-> +
-> +	return fls(cap_super_page_val(iommu->cap));
-> +}
-> +
-> +static struct dmar_domain *paging_domain_alloc(struct device *dev, bool first_stage)
-> +{
-> +	struct device_domain_info *info = dev_iommu_priv_get(dev);
-> +	struct intel_iommu *iommu = info->iommu;
-> +	struct dmar_domain *domain;
-> +	int addr_width;
-> +
-> +	domain = kzalloc(sizeof(*domain), GFP_KERNEL);
-> +	if (!domain)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	INIT_LIST_HEAD(&domain->devices);
-> +	INIT_LIST_HEAD(&domain->dev_pasids);
-> +	INIT_LIST_HEAD(&domain->cache_tags);
-> +	spin_lock_init(&domain->lock);
-> +	spin_lock_init(&domain->cache_lock);
-> +	xa_init(&domain->iommu_array);
-> +
-> +	domain->nid = dev_to_node(dev);
-> +	domain->has_iotlb_device = info->ats_enabled;
-> +	domain->use_first_level = first_stage;
-> +
-> +	/* calculate the address width */
-> +	addr_width = agaw_to_width(iommu->agaw);
-> +	if (addr_width > cap_mgaw(iommu->cap))
-> +		addr_width = cap_mgaw(iommu->cap);
-> +	domain->gaw = addr_width;
-> +	domain->agaw = iommu->agaw;
-> +	domain->max_addr = __DOMAIN_MAX_ADDR(addr_width);
-> +
-> +	/* iommu memory access coherency */
-> +	domain->iommu_coherency = iommu_paging_structure_coherency(iommu);
-> +
-> +	/* pagesize bitmap */
-> +	domain->domain.pgsize_bitmap = SZ_4K;
-> +	domain->iommu_superpage = iommu_superpage_capability(iommu, first_stage);
-> +	domain->domain.pgsize_bitmap |= domain_super_pgsize_bitmap(domain);
-> +
-> +	/*
-> +	 * IOVA aperture: First-level translation restricts the input-address
-> +	 * to a canonical address (i.e., address bits 63:N have the same value
-> +	 * as address bit [N-1], where N is 48-bits with 4-level paging and
-> +	 * 57-bits with 5-level paging). Hence, skip bit [N-1].
-> +	 */
-> +	domain->domain.geometry.force_aperture = true;
-> +	domain->domain.geometry.aperture_start = 0;
-> +	if (first_stage)
-> +		domain->domain.geometry.aperture_end = __DOMAIN_MAX_ADDR(domain->gaw - 1);
-> +	else
-> +		domain->domain.geometry.aperture_end = __DOMAIN_MAX_ADDR(domain->gaw);
-> +
-> +	/* always allocate the top pgd */
-> +	domain->pgd = iommu_alloc_page_node(domain->nid, GFP_KERNEL);
-> +	if (!domain->pgd) {
-> +		kfree(domain);
-> +		return ERR_PTR(-ENOMEM);
-> +	}
-> +	domain_flush_cache(domain, domain->pgd, PAGE_SIZE);
-> +
-> +	return domain;
-> +}
-> +
->   static struct iommu_domain *intel_iommu_domain_alloc(unsigned type)
->   {
->   	struct dmar_domain *dmar_domain;
-> @@ -3684,15 +3757,14 @@ intel_iommu_domain_alloc_user(struct device *dev, u32 flags,
->   	if (user_data || (dirty_tracking && !ssads_supported(iommu)))
->   		return ERR_PTR(-EOPNOTSUPP);
->   
-> -	/*
-> -	 * domain_alloc_user op needs to fully initialize a domain before
-> -	 * return, so uses iommu_domain_alloc() here for simple.
+On Fri, 28 Jun 2024 at 03:28, Qais Yousef <qyousef@layalina.io> wrote:
+>
+> On 06/24/24 16:20, Xuewen Yan wrote:
+> > Commit f1f8d0a22422 ("sched/cpufreq: Take cpufreq feedback into account")
+> > introduced get_actual_cpu_capacity(), and it had aggregated the
+> > different pressures applied on the capacity of CPUs.
+> > And in util_fits_cpu(), it would return true when uclamp_max
+> > is smaller than SCHED_CAPACITY_SCALE, althought the uclamp_max
+> > is bigger than actual_cpu_capacity.
+> >
+> > So use actual_cpu_capacity everywhere in util_fits_cpu() to
+> > cover all cases.
+> >
+> > Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+> > ---
+> >  kernel/sched/fair.c | 19 +++++++++----------
+> >  1 file changed, 9 insertions(+), 10 deletions(-)
+> >
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index 5ca6396ef0b7..9c16ae192217 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+> > @@ -4980,7 +4980,7 @@ static inline int util_fits_cpu(unsigned long util,
+> >                               int cpu)
+> >  {
+> >       unsigned long capacity = capacity_of(cpu);
+> > -     unsigned long capacity_orig;
+> > +     unsigned long capacity_actual;
+> >       bool fits, uclamp_max_fits;
+> >
+> >       /*
+> > @@ -4992,15 +4992,15 @@ static inline int util_fits_cpu(unsigned long util,
+> >               return fits;
+> >
+> >       /*
+> > -      * We must use arch_scale_cpu_capacity() for comparing against uclamp_min and
+> > +      * We must use actual_cpu_capacity() for comparing against uclamp_min and
+> >        * uclamp_max. We only care about capacity pressure (by using
+> >        * capacity_of()) for comparing against the real util.
+> >        *
+> >        * If a task is boosted to 1024 for example, we don't want a tiny
+> >        * pressure to skew the check whether it fits a CPU or not.
+> >        *
+> > -      * Similarly if a task is capped to arch_scale_cpu_capacity(little_cpu), it
+> > -      * should fit a little cpu even if there's some pressure.
+> > +      * Similarly if a task is capped to actual_cpu_capacity, it should fit
+> > +      * the cpu even if there's some pressure.
+>
+> This statement is not clear now. We need to be specific since
+> actual_cpu_capacity() includes thermal pressure and cpufreq limits.
+>
+> /even if there's some pressure/even if there is non OPP based pressure ie: RT,
+> DL or irq/?
+>
+> >        *
+> >        * Only exception is for HW or cpufreq pressure since it has a direct impact
+> >        * on available OPP of the system.
+> > @@ -5011,7 +5011,7 @@ static inline int util_fits_cpu(unsigned long util,
+> >        * For uclamp_max, we can tolerate a drop in performance level as the
+> >        * goal is to cap the task. So it's okay if it's getting less.
+> >        */
+> > -     capacity_orig = arch_scale_cpu_capacity(cpu);
+> > +     capacity_actual = get_actual_cpu_capacity(cpu);
+> >
+> >       /*
+> >        * We want to force a task to fit a cpu as implied by uclamp_max.
+> > @@ -5039,7 +5039,7 @@ static inline int util_fits_cpu(unsigned long util,
+> >        *     uclamp_max request.
+> >        *
+> >        *   which is what we're enforcing here. A task always fits if
+> > -      *   uclamp_max <= capacity_orig. But when uclamp_max > capacity_orig,
+> > +      *   uclamp_max <= capacity_actual. But when uclamp_max > capacity_actual,
+> >        *   the normal upmigration rules should withhold still.
+> >        *
+> >        *   Only exception is when we are on max capacity, then we need to be
+> > @@ -5050,8 +5050,8 @@ static inline int util_fits_cpu(unsigned long util,
+> >        *     2. The system is being saturated when we're operating near
+> >        *        max capacity, it doesn't make sense to block overutilized.
+> >        */
+> > -     uclamp_max_fits = (capacity_orig == SCHED_CAPACITY_SCALE) && (uclamp_max == SCHED_CAPACITY_SCALE);
+> > -     uclamp_max_fits = !uclamp_max_fits && (uclamp_max <= capacity_orig);
+> > +     uclamp_max_fits = (capacity_actual == SCHED_CAPACITY_SCALE) && (uclamp_max == SCHED_CAPACITY_SCALE);
+>
+> We should use capacity_orig here. We are checking if the CPU is the max
+> capacity CPU.
 
-I think it is still valuable to note the requirement of full initialize
-a domain. is it? Otherwise, looks good to me.
+I was also wondering what would be the best choice there. If we
+consider that we have only one performance domain with all max
+capacity cpus then I agree that we should keep capacity_orig as we
+can't find a better cpu that would fit. But is it always true that all
+max cpu are tied to the same perf domain ?
 
-Reviewed-by: Yi Liu <yi.l.liu@intel.com>
-
-> -	 */
-> -	domain = iommu_domain_alloc(dev->bus);
-> -	if (!domain)
-> -		return ERR_PTR(-ENOMEM);
-> -
-> -	dmar_domain = to_dmar_domain(domain);
-> +	/* Do not use first stage for user domain translation. */
-> +	dmar_domain = paging_domain_alloc(dev, false);
-> +	if (IS_ERR(dmar_domain))
-> +		return ERR_CAST(dmar_domain);
-> +	domain = &dmar_domain->domain;
-> +	domain->type = IOMMU_DOMAIN_UNMANAGED;
-> +	domain->owner = &intel_iommu_ops;
-> +	domain->ops = intel_iommu_ops.default_domain_ops;
->   
->   	if (nested_parent) {
->   		dmar_domain->nested_parent = true;
-
--- 
-Regards,
-Yi Liu
+>
+> > +     uclamp_max_fits = !uclamp_max_fits && (uclamp_max <= capacity_actual);
+> >       fits = fits || uclamp_max_fits;
+> >
+> >       /*
+> > @@ -5086,8 +5086,7 @@ static inline int util_fits_cpu(unsigned long util,
+> >        * handle the case uclamp_min > uclamp_max.
+> >        */
+> >       uclamp_min = min(uclamp_min, uclamp_max);
+> > -     if (fits && (util < uclamp_min) &&
+> > -         (uclamp_min > get_actual_cpu_capacity(cpu)))
+> > +     if (fits && (util < uclamp_min) && (uclamp_min > capacity_actual))
+> >               return -1;
+> >
+> >       return fits;
+> > --
+> > 2.25.1
+> >
 
