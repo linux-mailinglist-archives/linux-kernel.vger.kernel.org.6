@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-237664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1846F923C67
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:31:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF7B923C70
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:31:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A9F61C21C85
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:31:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9C3A1F220A2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:31:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BFA715B54A;
-	Tue,  2 Jul 2024 11:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC24D166311;
+	Tue,  2 Jul 2024 11:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="TLlPRAaG"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Lurz1Wbr"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F285143746;
-	Tue,  2 Jul 2024 11:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738EA7CF1F;
+	Tue,  2 Jul 2024 11:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719919865; cv=none; b=WRB52q34ysaizLq5VQdxIxtd1Kj17E0tt54D9TH82hxUnZ02chgT9uWHIVdp/fNd3Nptv0taibG1hvCe144r3VCcVGAiAMe3CwPwiAquIps4izDyb7/KpKFD9/naHnriR0RJe0IkrQGTx8EkYbM4ewhNethTukVhzS0oH297f7M=
+	t=1719919866; cv=none; b=pBUEn5XXa1c/4//AYCNoujMnLeRvIcrKy+vSozdS72M/xBlQZL9K6av0mChPS9ZTglVEB5t5QSh/422wphDOhmUPLx++/ltlxlYCFMfDs/opUKMyaiKcKdrGIWx/aFkVNOCSlZPDHnyy6yC4I+SZGZOAe+0+O9LPc9P5TkMjjSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719919865; c=relaxed/simple;
-	bh=uCu68Z1bpcRG5OT0Z3gl5xWAnsWzMuJTChZVlqhueZQ=;
+	s=arc-20240116; t=1719919866; c=relaxed/simple;
+	bh=TEd52duGVATpUwEpzoWdNe9mvSqhdqSIGBuITxjXiOY=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EJJsrxypFNiPy62kr8txtEMNNhiFAGVuhqySS0ekrFV+JD4Uqh22L8qF9yi3RShdIT8t04zNtS72y4GFyjUiXXEIX0WAyt0GxL8MExXvE7OU+ZTu9QBphZeBalOEqHXJDwUDtps+MvUxCTXiDBg6HQ3hEO8JKbdiBuIoAFdFyn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=TLlPRAaG; arc=none smtp.client-ip=60.244.123.138
+	 MIME-Version:Content-Type; b=NqvwrY0za9s6bSv+UQu+qYDyoSp6c3NqM/nz/oUUwI8X0yt2T3DbLtM//gsnQtW+lLySOdKmeUx5eQ/yynJy3580NnnxjoCr6Otd1F3YsUuAHM+JzhwG+Timru/y2HAbnWCivN0Ev8l/01pZgetGOs5fNKIWcpuAQB9lCsbKhik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Lurz1Wbr; arc=none smtp.client-ip=210.61.82.184
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 8c5182ec386611ef8b8f29950b90a568-20240702
+X-UUID: 8bd387ac386611ef99dc3f8fac2c3230-20240702
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=rz5boOxsi/u+gkabvKEweLBuuQ8l1CKIHW5Q1pnKZyU=;
-	b=TLlPRAaG+vsCGedssAG/L7iTvVA/QoaAiXBFxR9XoydzMDn6HlLYSCNVZDpDdw+Rp3GJXCEqx4UBcQdXDh3bEykrMt3JGRGDsW7oSOCWiZf30r4rU66TfJfgVzjfDSy98L5rCC32pU4nJ8WNCk4SdKXFy1xjN92tqmNymImGMAU=;
+	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=IRsg1rpjZkP9O+7FX5ib2fnl+eWYWcxVRXO42mkwG/0=;
+	b=Lurz1WbrVBw70yQMpyvz2gkAuf0ID1SuzStcKSbqUZQt+gqxrGmceUaWjOxf81Um1HtlSDWs7GtHyd+/5LANvIRYoyOtsGJXB4GNwNZ500fcd+4h/Xzz/kMXaGd6pljyfmc1x4dgNMckWGe+k1AhSLHHK2+i77ZNv4jA2WYf0s8=;
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.40,REQID:183b0df1-986e-476e-9977-cfc9496713d8,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-5
-X-CID-META: VersionHash:ba885a6,CLOUDID:99badcd4-0d68-4615-a20f-01d7bd41f0bb,B
+X-CID-O-INFO: VERSION:1.1.40,REQID:7cb363f6-d8a2-4a6b-a46e-1aeb12a7f307,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:ba885a6,CLOUDID:9abadcd4-0d68-4615-a20f-01d7bd41f0bb,B
 	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
 	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
 	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
 X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: 8c5182ec386611ef8b8f29950b90a568-20240702
-Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
+X-UUID: 8bd387ac386611ef99dc3f8fac2c3230-20240702
+Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw02.mediatek.com
 	(envelope-from <chris.lu@mediatek.com>)
 	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 2043749492; Tue, 02 Jul 2024 19:30:56 +0800
+	with ESMTP id 108594998; Tue, 02 Jul 2024 19:30:55 +0800
 Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.2.1118.26; Tue, 2 Jul 2024 19:30:54 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
@@ -65,9 +65,9 @@ CC: Sean Wang <sean.wang@mediatek.com>, Aaron Hou <aaron.hou@mediatek.com>,
 	<linux-bluetooth@vger.kernel.org>, linux-kernel
 	<linux-kernel@vger.kernel.org>, linux-mediatek
 	<linux-mediatek@lists.infradead.org>, Chris Lu <chris.lu@mediatek.com>
-Subject: [PATCH v6 1/8] Bluetooth: btusb: mediatek: remove the unnecessary goto tag
-Date: Tue, 2 Jul 2024 19:30:44 +0800
-Message-ID: <20240702113051.24372-2-chris.lu@mediatek.com>
+Subject: [PATCH v6 2/8] Bluetooth: btusb: mediatek: return error for failed reg access
+Date: Tue, 2 Jul 2024 19:30:45 +0800
+Message-ID: <20240702113051.24372-3-chris.lu@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20240702113051.24372-1-chris.lu@mediatek.com>
 References: <20240702113051.24372-1-chris.lu@mediatek.com>
@@ -78,44 +78,164 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--4.468500-8.000000
-X-TMASE-MatchedRID: +drbuUTY1kqd5MMyOelRHUhEDfw/93BuuoYFb0nRiqMGW3hFnC9N1cHZ
-	AvQpPtWOxiqnR+5LS88BtjkcfRMmqY5S9RIYp1E+S3OTftLNfg19LQinZ4QefCP/VFuTOXUT3n8
-	eBZjGmUzkwjHXXC/4I66NVEWSRWybkPZ1zEIiY1OqosqXYkcNGNrIBUvoKoWgzXtJngQ86QZWJi
-	/KSfD6tTW7iBcoYt72Bp8yRCY8d4aQD51mC4VVLRF+1mOPGajPjofsMjQaxVwyYjbiqIQ3Csykh
-	tyXcigD6rVdgBjDT2r1nXJavJVNag==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--4.468500-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP: 24D18DA9FA4F2AE4B35311283515DDEA5CAAB6351648141E79161E89433E36C02000:8
 
-Remove the unnecessary goto tag whether there is an error or not, we have
-to free the buffer at the end of the function.
+Update the code to immediately return an error code if accessing a
+related register fails. This ensures that our desired logic for
+subsequent register operations is maintained and allows us to promptly
+catch any unexpected errors.
 
 Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 Signed-off-by: Chris Lu <chris.lu@mediatek.com>
 ---
- drivers/bluetooth/btusb.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/bluetooth/btusb.c | 114 ++++++++++++++++++++++++++++----------
+ 1 file changed, 84 insertions(+), 30 deletions(-)
 
 diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 79aefdb3324d..fcdd660add19 100644
+index fcdd660add19..8239d9c891e6 100644
 --- a/drivers/bluetooth/btusb.c
 +++ b/drivers/bluetooth/btusb.c
-@@ -2953,12 +2953,9 @@ static int btusb_mtk_uhw_reg_write(struct btusb_data *data, u32 reg, u32 val)
- 			      0x5E,
- 			      reg >> 16, reg & 0xffff,
- 			      buf, 4, USB_CTRL_SET_TIMEOUT);
--	if (err < 0) {
-+	if (err < 0)
- 		bt_dev_err(hdev, "Failed to write uhw reg(%d)", err);
--		goto err_free_buf;
--	}
+@@ -3037,47 +3037,98 @@ static int btusb_mtk_subsys_reset(struct hci_dev *hdev, u32 dev_id)
+ 	int err;
  
--err_free_buf:
- 	kfree(buf);
+ 	if (dev_id == 0x7922) {
+-		btusb_mtk_uhw_reg_read(data, MTK_BT_SUBSYS_RST, &val);
++		err = btusb_mtk_uhw_reg_read(data, MTK_BT_SUBSYS_RST, &val);
++		if (err < 0)
++			return err;
+ 		val |= 0x00002020;
+-		btusb_mtk_uhw_reg_write(data, MTK_BT_SUBSYS_RST, val);
+-		btusb_mtk_uhw_reg_write(data, MTK_EP_RST_OPT, 0x00010001);
+-		btusb_mtk_uhw_reg_read(data, MTK_BT_SUBSYS_RST, &val);
++		err = btusb_mtk_uhw_reg_write(data, MTK_BT_SUBSYS_RST, val);
++		if (err < 0)
++			return err;
++		err = btusb_mtk_uhw_reg_write(data, MTK_EP_RST_OPT, 0x00010001);
++		if (err < 0)
++			return err;
++		err = btusb_mtk_uhw_reg_read(data, MTK_BT_SUBSYS_RST, &val);
++		if (err < 0)
++			return err;
+ 		val |= BIT(0);
+-		btusb_mtk_uhw_reg_write(data, MTK_BT_SUBSYS_RST, val);
++		err = btusb_mtk_uhw_reg_write(data, MTK_BT_SUBSYS_RST, val);
++		if (err < 0)
++			return err;
+ 		msleep(100);
+ 	} else if (dev_id == 0x7925) {
+-		btusb_mtk_uhw_reg_read(data, MTK_BT_RESET_REG_CONNV3, &val);
++		err = btusb_mtk_uhw_reg_read(data, MTK_BT_RESET_REG_CONNV3, &val);
++		if (err < 0)
++			return err;
+ 		val |= (1 << 5);
+-		btusb_mtk_uhw_reg_write(data, MTK_BT_RESET_REG_CONNV3, val);
+-		btusb_mtk_uhw_reg_read(data, MTK_BT_RESET_REG_CONNV3, &val);
++		err = btusb_mtk_uhw_reg_write(data, MTK_BT_RESET_REG_CONNV3, val);
++		if (err < 0)
++			return err;
++		err = btusb_mtk_uhw_reg_read(data, MTK_BT_RESET_REG_CONNV3, &val);
++		if (err < 0)
++			return err;
+ 		val &= 0xFFFF00FF;
++		if (err < 0)
++			return err;
+ 		val |= (1 << 13);
+-		btusb_mtk_uhw_reg_write(data, MTK_BT_RESET_REG_CONNV3, val);
+-		btusb_mtk_uhw_reg_write(data, MTK_EP_RST_OPT, 0x00010001);
+-		btusb_mtk_uhw_reg_read(data, MTK_BT_RESET_REG_CONNV3, &val);
++		err = btusb_mtk_uhw_reg_write(data, MTK_BT_RESET_REG_CONNV3, val);
++		if (err < 0)
++			return err;
++		err = btusb_mtk_uhw_reg_write(data, MTK_EP_RST_OPT, 0x00010001);
++		if (err < 0)
++			return err;
++		err = btusb_mtk_uhw_reg_read(data, MTK_BT_RESET_REG_CONNV3, &val);
++		if (err < 0)
++			return err;
+ 		val |= (1 << 0);
+-		btusb_mtk_uhw_reg_write(data, MTK_BT_RESET_REG_CONNV3, val);
+-		btusb_mtk_uhw_reg_write(data, MTK_UDMA_INT_STA_BT, 0x000000FF);
+-		btusb_mtk_uhw_reg_read(data, MTK_UDMA_INT_STA_BT, &val);
+-		btusb_mtk_uhw_reg_write(data, MTK_UDMA_INT_STA_BT1, 0x000000FF);
+-		btusb_mtk_uhw_reg_read(data, MTK_UDMA_INT_STA_BT1, &val);
++		err = btusb_mtk_uhw_reg_write(data, MTK_BT_RESET_REG_CONNV3, val);
++		if (err < 0)
++			return err;
++		err = btusb_mtk_uhw_reg_write(data, MTK_UDMA_INT_STA_BT, 0x000000FF);
++		if (err < 0)
++			return err;
++		err = btusb_mtk_uhw_reg_read(data, MTK_UDMA_INT_STA_BT, &val);
++		if (err < 0)
++			return err;
++		err = btusb_mtk_uhw_reg_write(data, MTK_UDMA_INT_STA_BT1, 0x000000FF);
++		if (err < 0)
++			return err;
++		err = btusb_mtk_uhw_reg_read(data, MTK_UDMA_INT_STA_BT1, &val);
++		if (err < 0)
++			return err;
+ 		msleep(100);
+ 	} else {
+ 		/* It's Device EndPoint Reset Option Register */
+ 		bt_dev_dbg(hdev, "Initiating reset mechanism via uhw");
+-		btusb_mtk_uhw_reg_write(data, MTK_EP_RST_OPT, MTK_EP_RST_IN_OUT_OPT);
+-		btusb_mtk_uhw_reg_read(data, MTK_BT_WDT_STATUS, &val);
+-
++		err = btusb_mtk_uhw_reg_write(data, MTK_EP_RST_OPT, MTK_EP_RST_IN_OUT_OPT);
++		if (err < 0)
++			return err;
++		err = btusb_mtk_uhw_reg_read(data, MTK_BT_WDT_STATUS, &val);
++		if (err < 0)
++			return err;
+ 		/* Reset the bluetooth chip via USB interface. */
+-		btusb_mtk_uhw_reg_write(data, MTK_BT_SUBSYS_RST, 1);
+-		btusb_mtk_uhw_reg_write(data, MTK_UDMA_INT_STA_BT, 0x000000FF);
+-		btusb_mtk_uhw_reg_read(data, MTK_UDMA_INT_STA_BT, &val);
+-		btusb_mtk_uhw_reg_write(data, MTK_UDMA_INT_STA_BT1, 0x000000FF);
+-		btusb_mtk_uhw_reg_read(data, MTK_UDMA_INT_STA_BT1, &val);
++		err = btusb_mtk_uhw_reg_write(data, MTK_BT_SUBSYS_RST, 1);
++		if (err < 0)
++			return err;
++		err = btusb_mtk_uhw_reg_write(data, MTK_UDMA_INT_STA_BT, 0x000000FF);
++		if (err < 0)
++			return err;
++		err = btusb_mtk_uhw_reg_read(data, MTK_UDMA_INT_STA_BT, &val);
++		if (err < 0)
++			return err;
++		err = btusb_mtk_uhw_reg_write(data, MTK_UDMA_INT_STA_BT1, 0x000000FF);
++		if (err < 0)
++			return err;
++		err = btusb_mtk_uhw_reg_read(data, MTK_UDMA_INT_STA_BT1, &val);
++		if (err < 0)
++			return err;
+ 		/* MT7921 need to delay 20ms between toggle reset bit */
+ 		msleep(20);
+-		btusb_mtk_uhw_reg_write(data, MTK_BT_SUBSYS_RST, 0);
+-		btusb_mtk_uhw_reg_read(data, MTK_BT_SUBSYS_RST, &val);
++		err = btusb_mtk_uhw_reg_write(data, MTK_BT_SUBSYS_RST, 0);
++		if (err < 0)
++			return err;
++		err = btusb_mtk_uhw_reg_read(data, MTK_BT_SUBSYS_RST, &val);
++		if (err < 0)
++			return err;
+ 	}
+ 
+ 	err = readx_poll_timeout(btusb_mtk_reset_done, hdev, val,
+@@ -3085,11 +3136,14 @@ static int btusb_mtk_subsys_reset(struct hci_dev *hdev, u32 dev_id)
+ 	if (err < 0)
+ 		bt_dev_err(hdev, "Reset timeout");
+ 
+-	if (dev_id == 0x7922)
+-		btusb_mtk_uhw_reg_write(data, MTK_UDMA_INT_STA_BT, 0x000000FF);
++	if (dev_id == 0x7922) {
++		err = btusb_mtk_uhw_reg_write(data, MTK_UDMA_INT_STA_BT, 0x000000FF);
++		if (err < 0)
++			return err;
++	}
+ 
+-	btusb_mtk_id_get(data, 0x70010200, &val);
+-	if (!val)
++	err = btusb_mtk_id_get(data, 0x70010200, &val);
++	if (err < 0 || !val)
+ 		bt_dev_err(hdev, "Can't get device id, subsys reset fail.");
  
  	return err;
 -- 
