@@ -1,95 +1,153 @@
-Return-Path: <linux-kernel+bounces-238060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F3D49242C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:50:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D35619242CF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:51:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA3051F258C6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:50:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89A2128A0A4
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060D21BC082;
-	Tue,  2 Jul 2024 15:50:27 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3941BC094;
+	Tue,  2 Jul 2024 15:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZdhqjKT/"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E1015D5B3;
-	Tue,  2 Jul 2024 15:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8098115D5B3;
+	Tue,  2 Jul 2024 15:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719935426; cv=none; b=JHEADEAcGyUgXMwQi30f+4jJiKHEygfAzKnrU71ikKBM7DZH4tcF/OYVQURTiyGpvtYeCXziZVUPN/FcRZsTYUUtZoYaHz5D3pn0XJYbKURWXb+/BxA0fhAz3qOlJTJTV3G+XFASciHA8482YcGHB0/T1ZS6zJEg2uwE37H5bGs=
+	t=1719935487; cv=none; b=H0vbxqr0RTU9axetCtnUoDbKtfw2slK/0JDi1usm4BeEYEmShtiZVCBzHtneD1ls0H1nyJ4dxIoAoA8INGrezLJ0WFD9SxgVmjkBVmzwQTwtg1HJRO30VncR7pXmnJ+3GBZqYHVQUIRJSzF549Q7XInrVuvz+IyLPDp3r4SQdOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719935426; c=relaxed/simple;
-	bh=E6hdHuxMh6fsOTHnFHY4x/3TGR9k9iUx9/lV9US18w4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G9YJAUHT3UZG1SErguN0KPtjBbPqOJLPj7vYCQ1cqkCMsqJ8J86wGYVlzWTiM8mgsqAomdKtzDTJa1WINGBkdUEyelkAi+zu91oz8rpgcJxPBDsnrsuYlJ1r9HGvftDZiwAkth/Ar0c4ZSWZ1ON0H+Gl8yg4n2cu2Lke3YIaTQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 10E0568AA6; Tue,  2 Jul 2024 17:50:21 +0200 (CEST)
-Date: Tue, 2 Jul 2024 17:50:20 +0200
-From: "hch@lst.de" <hch@lst.de>
-To: Gulam Mohamed <gulam.mohamed@oracle.com>
-Cc: "hch@lst.de" <hch@lst.de>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"yukuai1@huaweicloud.com" <yukuai1@huaweicloud.com>,
-	"axboe@kernel.dk" <axboe@kernel.dk>
-Subject: Re: [PATCH V6 for-6.11/block] loop: Fix a race between loop detach
- and loop open
-Message-ID: <20240702155020.GB1037@lst.de>
-References: <20240618164042.343777-1-gulam.mohamed@oracle.com> <202406281350.b7298127-oliver.sang@intel.com> <IA1PR10MB7240DE46976A3B027DE5484998D22@IA1PR10MB7240.namprd10.prod.outlook.com>
+	s=arc-20240116; t=1719935487; c=relaxed/simple;
+	bh=D6uGys9FhxRx9YIGIpBKfl1RcN+x5hM+PnbFemNoneo=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=ppqqT6fBTHkxmNSmqAgPySP8+Av38mUzuHE4teKAP46lwKCSc9ThMcEJP/iHtIcJj3eZ35Gd/Bv7bNILjxHkXE856P9cATqXHC45bKn2zhez22wjhnlrJaJUdu21wupQj/ZCWQECBakidop+isdHgWmrsCQDt07cLiirtLegCmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZdhqjKT/; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 462EV7kP028755;
+	Tue, 2 Jul 2024 15:50:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=U0TT+FTeWvZbKfMhpqhO8i
+	mLQ1ceB6cKaD2FZ2ipbx0=; b=ZdhqjKT/N4ldyUxGQmif4ZYGBhIE62mjlRHmDs
+	kIlZwQgEGbPS/RnENhQ6iRqVFH7jgyexyM3JwG/D2c3fNjjYB2l+a1lekhpwlkMH
+	ScAmUaHsFXWF0MbVzDNwpLF/HAhDmDXf+T05+zpwuD0JiJE31NWPjaCDj/3YRB4i
+	0mOEHuAB8mvBzuf93bG6WigpjEtsOFM5e0UEiRDfnqfd8EraCUkoyfcNrmADmcbT
+	ZVOlm0FKni8qIf69TRuBr1rxnR30p9LsB8uMdnGoOMfWdi9FEjRStBCB31BXfnfy
+	Tj5LcJnk9JWOSbK6xEs2embj3Bc8XTFpKo4CfsX+f63To1fw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 404kctgeg1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Jul 2024 15:50:54 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 462ForRt008840
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 2 Jul 2024 15:50:53 GMT
+Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 2 Jul 2024 08:50:47 -0700
+From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Subject: [PATCH v2 0/6] clk: qcom: sm8150: Add camera clock controller
+ support for SM8150
+Date: Tue, 2 Jul 2024 21:20:38 +0530
+Message-ID: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <IA1PR10MB7240DE46976A3B027DE5484998D22@IA1PR10MB7240.namprd10.prod.outlook.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAM4hhGYC/4WNQQ6CMBBFr0Jm7Zh2RCmuvIdhUYcis4DWFoiGc
+ HcrF3D5XvLfXyG5KC7BtVghukWS+DEDHQrg3o5Ph9JmBlJUKqIa2Q7MmOYQfJwwDUafFbanriJ
+ bWm3pAXkaouvkvWfvTeZe0uTjZ39Z9M/+CS4aFRomwxc2VV2r22sWlpGP7Adotm37AlTNfuC6A
+ AAA
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: Stephen Boyd <sboyd@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
+        "Imran
+ Shaik" <quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Satya Priya Kakitapalli
+	<quic_skakitap@quicinc.com>,
+        <stable@vger.kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: uO_wj_DIpogF7GLf1pl90PGR1HYSZ8YM
+X-Proofpoint-ORIG-GUID: uO_wj_DIpogF7GLf1pl90PGR1HYSZ8YM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-02_11,2024-07-02_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ bulkscore=0 mlxlogscore=982 priorityscore=1501 impostorscore=0
+ suspectscore=0 mlxscore=0 lowpriorityscore=0 clxscore=1011 malwarescore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407020117
 
-Hi Gulam,
+Add camcc support and Regera PLL ops. Also, fix the pll post div mask.
 
-On Sun, Jun 30, 2024 at 10:11:14PM +0000, Gulam Mohamed wrote:
-> With our latest version of the patch V6, the "kernel robot test" failed
-> in the ioctl_loop06 test (LTP tests) as in below mail.
-> the reason for the failure is, the deferring of the "detach" loop
-> device to release function. The test opens the loop device, sends
-> LOOP_SET_BLOCK_SIZE and LOOP_CONFIGURE commands and in between that,
-> it will also detach the loop device. At the end of the test, while
-> cleanup, it will close the loop device. As we deferred the detach to
-> last close, the detach will be at the end only but before that we are
-> setting the lo_state to Lo_rundown. This setting of Lo_rundown we are
-> doing in the beginning because, there was another LTP test case failed
-> earlier due to the same reason.
-> 
-> So, when the LOOP_CONFIGURE was sent, the loop device was still in
-> Lo_rundown state (Lo_unbound will be set after detach in
-> __loop_clr_fd()) due to which kernel returned the EBUSY error causing
-> the test to fail.
+Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+---
+Changes in v2:
+- As per Konrad's comments, re-use the zonda pll code for regera, as
+  both are mostly same.
+- Fix the zonda_set_rate API and also the pll_post_div shift used in
+  trion pll post div set rate API
+- Link to v1: https://lore.kernel.org/r/20240229-camcc-support-sm8150-v1-0-8c28c6c87990@quicinc.com
 
-Before we'd end up in Lo_unbound toward the end of __loop_clr_fd
-if there was a single opener. 
+---
+Satya Priya Kakitapalli (5):
+      clk: qcom: alpha-pll: Fix the pll post div mask and shift
+      clk: qcom: clk-alpha-pll: Update set_rate for Zonda PLL
+      dt-bindings: clock: qcom: Add SM8150 camera clock controller
+      clk: qcom: Add camera clock controller driver for SM8150
+      arm64: dts: qcom: Add camera clock controller for sm8150
 
-> I have noticed that a good number of test cases are having a behaviour
-> that it will send different loop commands and in between the detach
-> command also, with only a single open. And close happens at the end.
-> Due to this, I think a couple  of test cases needs to be modified.
-> 
-> Now, as per my understanding, we have two options here:
-> 
-> 1. Continue with this kernel patch and modify few test cases to
-> accommodate this new kernel behaviour
+Taniya Das (1):
+      clk: qcom: clk-alpha-pll: Add support for Regera PLL ops
 
-That would be my preference.  Any code that is doing a clear_fd
-and then tries to configure it again is prone to races vs other
-openers.  It also does not seem very useful outside of test code.
-But if we end up breaking real code and not test cases we might have
-to go and bring it back.
+ .../bindings/clock/qcom,sm8150-camcc.yaml          |   77 +
+ arch/arm64/boot/dts/qcom/sa8155p.dtsi              |    4 +
+ arch/arm64/boot/dts/qcom/sm8150.dtsi               |   13 +
+ drivers/clk/qcom/Kconfig                           |    9 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/camcc-sm8150.c                    | 2159 ++++++++++++++++++++
+ drivers/clk/qcom/clk-alpha-pll.c                   |   56 +-
+ drivers/clk/qcom/clk-alpha-pll.h                   |    5 +
+ include/dt-bindings/clock/qcom,sm8150-camcc.h      |  135 ++
+ 9 files changed, 2455 insertions(+), 4 deletions(-)
+---
+base-commit: 20af1ca418d2c0b11bc2a1fe8c0c88f67bcc2a7e
+change-id: 20240229-camcc-support-sm8150-d3f72a4a1a2b
+
+Best regards,
+-- 
+Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
 
 
