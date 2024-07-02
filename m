@@ -1,225 +1,186 @@
-Return-Path: <linux-kernel+bounces-238408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95EAD924A07
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:40:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFCAA924A08
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:42:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CB87285F38
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:40:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DB381C228FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:42:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E1B205E20;
-	Tue,  2 Jul 2024 21:39:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF9C9205E0F;
+	Tue,  2 Jul 2024 21:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="s7LIah/J";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+jUKWyuT"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sbb7qiKF"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72DE201279;
-	Tue,  2 Jul 2024 21:39:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A103E1CD5DA;
+	Tue,  2 Jul 2024 21:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719956395; cv=none; b=SweYy7LAjOVp0pOHA/tz+xPmnWlAiNk1K0IqSB+cfFjtn5dd4iNTkxSisGUabBjVHueDvpmSBbROmvKG9997aGeK9DlAwKhsfeewcgYH3HnGH0fBbFB0rz+bbD0gcq8O9l3CNgbGo4uvwkqNE3rzgFXULCljdJTIJBZ57cYW02Y=
+	t=1719956534; cv=none; b=YH+tGOG/Y8aWpidXVXBMHu4y6V8UAYxPy1EE2fXEuXp7TQJdT99zVn/uKEJ4AOyyb0JLG15b0rfqrxV0jc+davyTZlAX+7Eci8X2oqX0N4BvFttGfNVTiKBIOgn4pPe+OXZF7IueenxHC3OwVhcKH521CMkastXsrdlGMLyIGPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719956395; c=relaxed/simple;
-	bh=YrSGBgXnYq8R8F7CAYcvlKpY1wjydH6UQOKmmY54csM=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=T/pGt8gFH11JwTHI7eJbd4bU5Cqb3BKm1DHqbUMAeHIoCKGxgwTrFiPtPlvSgCEk+YsAlpUwSwQBn7dxLrFF7l0fTGLjKBStsek3rIFtO63r2LlVNz+34YiNnPKe3Ngcy7WfZnrby5nRo0d8nZ6i3kD9htxq/25RfttY0YWwm0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=s7LIah/J; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+jUKWyuT; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 02 Jul 2024 21:39:52 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1719956392;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=cmDCzOzK7zb7Zz8xPx5MiSsaOU8NA3Z51iO8W05uLnY=;
-	b=s7LIah/JAejXXptP5X40zfmasQw2a2jU6IZWMfHhYLEbb2yq3GFZPPAsH8PgbURpswEKN8
-	MxAwg/Ot2sBS6tE9kodpLQlaWkIQuWJVr4x+xOZctJ7Yt9Mj6+eaptE6lQu56aIZT18dU6
-	dVRZsTP2qkTdmWlk1lrSncGSaGDbsIgg7nbaJrEOXJhxxPdW+z2qtG0sbcvty1hHbq0rBI
-	hnDjgZcJW+ZXGo3TH//37LCnIOsWjJoFDt5F9+5AuU6dExiFN66s9QpkMw9M1ybiP/j1ni
-	SHC2/F3AsYu4F9grRF9LFYey7+43lcchI+F8GxG6u0TbrEIKVXe/GYY3qtRKdA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1719956392;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=cmDCzOzK7zb7Zz8xPx5MiSsaOU8NA3Z51iO8W05uLnY=;
-	b=+jUKWyuT05mMbJfoquACq2d//+9hCu9/TSwY+WUZ+VTU75LNIK7NLjnXmKIGu9fS+L3Mt/
-	DaWcxzkKT3H7DcDg==
-From: "tip-bot2 for Yosry Ahmed" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/mm] x86/mm: Use IPIs to synchronize LAM enablement
-Cc: Andy Lutomirski <luto@kernel.org>, Yosry Ahmed <yosryahmed@google.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1719956534; c=relaxed/simple;
+	bh=0L7pcPBtAXPj0S/S+3MgLSoRSkxPBc3fu178Utq2xHI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OJoyNljjSZ/y6s9T0TBrej6z0JUo321Qb/0anJlyHxtMm1vagt+KezQBNLcd9bM7xs5FzWtps/7mnSmvJQLhkVAza8ZvkgAKpLdP1NP6+++ZNjNPpTOdfu6+abldnOrqOobxr9elOoOZd/ThI/urqg3A4DTP+tjug0ylEerdm+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sbb7qiKF; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e039fdd0d13so1236929276.1;
+        Tue, 02 Jul 2024 14:42:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719956531; x=1720561331; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=gJQj9aBGbbKul4hCpDKi82UeY7RwXMGhGVaVDyW0wOk=;
+        b=Sbb7qiKF1W7KUfjKuAMl+rLr+J3a719UGODd7NeIMcyQBuLblaafjUqkHv1HlwdrhA
+         DRbi/So9mPNAhCJfnKhCY00yejfMPGTouAYam02g8l2GOgaUij0pQiqdoJVbB0UByhiU
+         6g7RoMdWY0Zp2B6SIhh5KwblZ2Y21K6nPYh/8pFdjor2YMd3TdMyLTccOw3n4/KhZW1j
+         PXNHCBrQFvx4ETQY9ZXIAX0EdOSAp/LPPx5tGwgF3OIA7pBlxMrnZ1ZWjkRz0tbTjSOP
+         C6n+fbmj9mooOOKYqo0TJjsXohPk1H2wD0Wu1wMcvTu/hGfYqBWXZTRBLCQkKjD6MMzb
+         nhmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719956531; x=1720561331;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gJQj9aBGbbKul4hCpDKi82UeY7RwXMGhGVaVDyW0wOk=;
+        b=BNUnvPEpcPfTgjfNLTzTwOdPW+x5K2GIQ6brdyU4IZwVt2gROToy5Lh0DRiTlI4akB
+         Q+rY+wHi1/V4lsfZRSy80WN37ae9ci4tojVkSFcrZLdq3dxXZHAbQFdEVzoV3dIpJFRl
+         nIaDk3Fx6j0O3IZiCeZSBssBOJ7zgVQ37EEW3V04rFO5RU4nwlwDwAQUTz2dlGMwNWhQ
+         4Mk7EQX4mWOcTwwYFcZrMgfJI33L+4f7XGjgLmlFQBKFnAOeIaHOvfWY5/6j0Dxj9oXT
+         k32x52k9xYJdDv3gJMMD2s96cGqtTPQ4BWb35PKiDq1LaDSE5N5YSWCscY4EtaqGuce9
+         /sTA==
+X-Forwarded-Encrypted: i=1; AJvYcCXMNwIGvLGosjKnv9sUbUHBmr4mDDqzCp4KE37ojmjVcmvomsliXuf/iWdprXXPYHC0PPIwflLJ3bpkYcfWCI+LBU3Y8Tef6sw2MDx7/FVU+88+khvxODThzea1wVj6nVnzlSAuOPlbILsTsyE=
+X-Gm-Message-State: AOJu0Yy8Eby9+fhjSPiJZVK0CCEJxkkBsBhngUbngzzdaThV1bb2CWDb
+	ydTwqr5aumaDkVRqPuJDJ6+3v73Q0ST6GOzYblGup3S6xqtBHsD2
+X-Google-Smtp-Source: AGHT+IH1O8QzAcBaZC3Iu5DWMawGK4UuV/285H1s7NP0rmqg1WqoLOmUjwLDaVwNlrwR4zcAGkYHmA==
+X-Received: by 2002:a5b:f09:0:b0:e02:c70d:d292 with SMTP id 3f1490d57ef6-e036eb6e1b9mr10684186276.33.1719956531633;
+        Tue, 02 Jul 2024 14:42:11 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b59e6228b7sm47620306d6.126.2024.07.02.14.42.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 14:42:11 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 984251200043;
+	Tue,  2 Jul 2024 17:42:10 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Tue, 02 Jul 2024 17:42:10 -0400
+X-ME-Sender: <xms:MnSEZvN0sPtNAnYIf9YbO8j7mSY3p9VSa86TKISGAOmC-Z6B4oKQSg>
+    <xme:MnSEZp85LoVbZ1qGQDZ9MPiEBdqsX8HN4-nq5JvGf2O9GpfPOfNekB8_863GG4UIu
+    JI8BxeUn5XM6VjfIQ>
+X-ME-Received: <xmr:MnSEZuS6ZzTnDee-lcfKCXqGcYJctGGiP1QxD-IcrcDL0S0DmvshU-MCJR0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeiucetufdoteggodetrfdotffvucfrrh
+    hofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgenuceurghi
+    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
+    epfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpeeuohhquhhnucfh
+    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
+    hrnhepvefghfeuveekudetgfevudeuudejfeeltdfhgfehgeekkeeigfdukefhgfegleef
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
+    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
+    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
+    drnhgrmhgv
+X-ME-Proxy: <xmx:MnSEZjvXJslJ44UG8IywgIjlo4sk6T-wUqhUAZ8uwEixr-mtvMgTTQ>
+    <xmx:MnSEZndqkFt7Px6mAgyBrmh-psaI42RTfyjwdRqcgBJxrSxEu2939A>
+    <xmx:MnSEZv3avpRhxKs9NwPuo9y3wfyZCATSDhuVC7Kq7WuUv5jIqS7euw>
+    <xmx:MnSEZj8d3IdRWACMmogPlj7_iYr2yE2e3JkD28-s27pGGBmCm6lCHg>
+    <xmx:MnSEZq_awzvPDd_sJbg0WrnCIv-ULBpheWX4-6lPZOWOh16uDZ1KGQ_j>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 2 Jul 2024 17:42:10 -0400 (EDT)
+Date: Tue, 2 Jul 2024 14:41:11 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Alice Ryhl <aliceryhl@google.com>, linux-mm@kvack.org,
+	David Rientjes <rientjes@google.com>,
+	Christoph Lameter <cl@linux.com>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Kees Cook <keescook@chromium.org>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH] mm, slab: extend kmalloc() alignment for non
+ power-of-two sizes
+Message-ID: <ZoRz9yEy5wQAu9R9@boqun-archlinux>
+References: <20240702155800.166503-2-vbabka@suse.cz>
+ <CAH5fLgj=uOktnNCEm+npBh8LLbYUEO8uO30YUBsLS-iK+BKQJQ@mail.gmail.com>
+ <c8061293-8457-4d2b-85c2-7c631c00245a@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171995639211.2215.8349848296734689610.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c8061293-8457-4d2b-85c2-7c631c00245a@suse.cz>
 
-The following commit has been merged into the x86/mm branch of tip:
+On Tue, Jul 02, 2024 at 11:18:36PM +0200, Vlastimil Babka wrote:
+> On 7/2/24 6:40 PM, Alice Ryhl wrote:
+> > On Tue, Jul 2, 2024 at 5:58 PM Vlastimil Babka <vbabka@suse.cz> wrote:
+> > Thanks!
+> > 
+> > Since this change is motivated by Rust, why not also include the Rust
+> > change in this patch? You would need to remove the if inside
+> > krealloc_aligned in rust/kernel/alloc/allocator.rs and update the
+> > comments.
+> 
+> Right, thanks. Does this look ok? (not tested as I don't have the
+> environment working)
+> 
 
-Commit-ID:     3b299b99556c1753923f8d9bbd9304bcd139282f
-Gitweb:        https://git.kernel.org/tip/3b299b99556c1753923f8d9bbd9304bcd139282f
-Author:        Yosry Ahmed <yosryahmed@google.com>
-AuthorDate:    Tue, 02 Jul 2024 13:21:37 
-Committer:     Dave Hansen <dave.hansen@linux.intel.com>
-CommitterDate: Tue, 02 Jul 2024 11:31:51 -07:00
+Thanks! This overall looks good to me.
 
-x86/mm: Use IPIs to synchronize LAM enablement
+> diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocator.rs
+> index 229642960cd1..c619acb8b285 100644
+> --- a/rust/kernel/alloc/allocator.rs
+> +++ b/rust/kernel/alloc/allocator.rs
+> @@ -18,23 +18,16 @@ pub(crate) unsafe fn krealloc_aligned(ptr: *mut u8, new_layout: Layout, flags: F
+>      // Customized layouts from `Layout::from_size_align()` can have size < align, so pad first.
+>      let layout = new_layout.pad_to_align();
+>  
+> +    // Note that `layout.size()` (after padding) is guaranteed to be a multiple of `layout.align()`
+> +    // which together with the slab guarantee means the `krealloc` will return a properly aligned
+> +    // object (see comments in `kmalloc()` for more information).
+>      let mut size = layout.size();
 
-LAM can only be enabled when a process is single-threaded.  But _kernel_
-threads can temporarily use a single-threaded process's mm.
+The `mut` needs to be removed since no need to modify `size` afterwards.
 
-If LAM is enabled by a userspace process while a kthread is using its
-mm, the kthread will not observe LAM enablement (i.e.  LAM will be
-disabled in CR3). This could be fine for the kthread itself, as LAM only
-affects userspace addresses. However, if the kthread context switches to
-a thread in the same userspace process, CR3 may or may not be updated
-because the mm_struct doesn't change (based on pending TLB flushes). If
-CR3 is not updated, the userspace thread will run incorrectly with LAM
-disabled, which may cause page faults when using tagged addresses.
-Example scenario:
+>  
+> -    if layout.align() > bindings::ARCH_SLAB_MINALIGN {
+> -        // The alignment requirement exceeds the slab guarantee, thus try to enlarge the size
+> -        // to use the "power-of-two" size/alignment guarantee (see comments in `kmalloc()` for
+> -        // more information).
+> -        //
+> -        // Note that `layout.size()` (after padding) is guaranteed to be a multiple of
+> -        // `layout.align()`, so `next_power_of_two` gives enough alignment guarantee.
+> -        size = size.next_power_of_two();
+> -    }
+> -
+>      // SAFETY:
+>      // - `ptr` is either null or a pointer returned from a previous `k{re}alloc()` by the
+>      //   function safety requirement.
+>      // - `size` is greater than 0 since it's either a `layout.size()` (which cannot be zero
+> -    //   according to the function safety requirement) or a result from `next_power_of_two()`.
+> +    //   according to the function safety requirement)
 
-CPU 1                                   CPU 2
-/* kthread */
-kthread_use_mm()
-                                        /* user thread */
-                                        prctl_enable_tagged_addr()
-                                        /* LAM enabled on CPU 2 */
-/* LAM disabled on CPU 1 */
-                                        context_switch() /* to CPU 1 */
-/* Switching to user thread */
-switch_mm_irqs_off()
-/* CR3 not updated */
-/* LAM is still disabled on CPU 1 */
+The word "either" needs to be removed as well.
 
-Synchronize LAM enablement by sending an IPI to all CPUs running with
-the mm_struct to enable LAM. This makes sure LAM is enabled on CPU 1
-in the above scenario before prctl_enable_tagged_addr() returns and
-userspace starts using tagged addresses, and before it's possible to
-run the userspace process on CPU 1.
+With these changes,
 
-In switch_mm_irqs_off(), move reading the LAM mask until after
-mm_cpumask() is updated. This ensures that if an outdated LAM mask is
-written to CR3, an IPI is received to update it right after IRQs are
-re-enabled.
+Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
 
-[ dhansen: Add a LAM enabling helper and comment it ]
+Regards,
+Boqun
 
-Fixes: 82721d8b25d7 ("x86/mm: Handle LAM on context switch")
-Suggested-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Link: https://lore.kernel.org/all/20240702132139.3332013-2-yosryahmed%40google.com
----
- arch/x86/kernel/process_64.c | 29 ++++++++++++++++++++++++++---
- arch/x86/mm/tlb.c            |  7 +++----
- 2 files changed, 29 insertions(+), 7 deletions(-)
-
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index 6d3d20e..d8d582b 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -798,6 +798,27 @@ static long prctl_map_vdso(const struct vdso_image *image, unsigned long addr)
- 
- #define LAM_U57_BITS 6
- 
-+static void enable_lam_func(void *__mm)
-+{
-+	struct mm_struct *mm = __mm;
-+
-+	if (this_cpu_read(cpu_tlbstate.loaded_mm) == mm) {
-+		write_cr3(__read_cr3() | mm->context.lam_cr3_mask);
-+		set_tlbstate_lam_mode(mm);
-+	}
-+}
-+
-+static void mm_enable_lam(struct mm_struct *mm)
-+{
-+	/*
-+	 * Even though the process must still be single-threaded at this
-+	 * point, kernel threads may be using the mm.  IPI those kernel
-+	 * threads if they exist.
-+	 */
-+	on_each_cpu_mask(mm_cpumask(mm), enable_lam_func, mm, true);
-+	set_bit(MM_CONTEXT_LOCK_LAM, &mm->context.flags);
-+}
-+
- static int prctl_enable_tagged_addr(struct mm_struct *mm, unsigned long nr_bits)
- {
- 	if (!cpu_feature_enabled(X86_FEATURE_LAM))
-@@ -814,6 +835,10 @@ static int prctl_enable_tagged_addr(struct mm_struct *mm, unsigned long nr_bits)
- 	if (mmap_write_lock_killable(mm))
- 		return -EINTR;
- 
-+	/*
-+	 * MM_CONTEXT_LOCK_LAM is set on clone.  Prevent LAM from
-+	 * being enabled unless the process is single threaded:
-+	 */
- 	if (test_bit(MM_CONTEXT_LOCK_LAM, &mm->context.flags)) {
- 		mmap_write_unlock(mm);
- 		return -EBUSY;
-@@ -830,9 +855,7 @@ static int prctl_enable_tagged_addr(struct mm_struct *mm, unsigned long nr_bits)
- 		return -EINVAL;
- 	}
- 
--	write_cr3(__read_cr3() | mm->context.lam_cr3_mask);
--	set_tlbstate_lam_mode(mm);
--	set_bit(MM_CONTEXT_LOCK_LAM, &mm->context.flags);
-+	mm_enable_lam(mm);
- 
- 	mmap_write_unlock(mm);
- 
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 44ac64f..a041d2e 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -503,9 +503,9 @@ void switch_mm_irqs_off(struct mm_struct *unused, struct mm_struct *next,
- {
- 	struct mm_struct *prev = this_cpu_read(cpu_tlbstate.loaded_mm);
- 	u16 prev_asid = this_cpu_read(cpu_tlbstate.loaded_mm_asid);
--	unsigned long new_lam = mm_lam_cr3_mask(next);
- 	bool was_lazy = this_cpu_read(cpu_tlbstate_shared.is_lazy);
- 	unsigned cpu = smp_processor_id();
-+	unsigned long new_lam;
- 	u64 next_tlb_gen;
- 	bool need_flush;
- 	u16 new_asid;
-@@ -619,9 +619,7 @@ void switch_mm_irqs_off(struct mm_struct *unused, struct mm_struct *next,
- 			cpumask_clear_cpu(cpu, mm_cpumask(prev));
- 		}
- 
--		/*
--		 * Start remote flushes and then read tlb_gen.
--		 */
-+		/* Start receiving IPIs and then read tlb_gen (and LAM below) */
- 		if (next != &init_mm)
- 			cpumask_set_cpu(cpu, mm_cpumask(next));
- 		next_tlb_gen = atomic64_read(&next->context.tlb_gen);
-@@ -633,6 +631,7 @@ void switch_mm_irqs_off(struct mm_struct *unused, struct mm_struct *next,
- 		barrier();
- 	}
- 
-+	new_lam = mm_lam_cr3_mask(next);
- 	set_tlbstate_lam_mode(next);
- 	if (need_flush) {
- 		this_cpu_write(cpu_tlbstate.ctxs[new_asid].ctx_id, next->context.ctx_id);
+>      unsafe { bindings::krealloc(ptr as *const core::ffi::c_void, size, flags.0) as *mut u8 }
+>  }
+>  
+> 
 
