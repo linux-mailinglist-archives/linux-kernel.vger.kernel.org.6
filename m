@@ -1,130 +1,153 @@
-Return-Path: <linux-kernel+bounces-237827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50719923EA5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:16:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F81C923EA9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:17:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBA011F250E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:16:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A86328AEF7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:17:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2484B1AD403;
-	Tue,  2 Jul 2024 13:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C86F1B47CB;
+	Tue,  2 Jul 2024 13:17:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b="sk04YmNk"
-Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
+	dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b="scwfPmS1";
+	dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b="OGwEOZ8T"
+Received: from gofer.mess.org (gofer.mess.org [88.97.38.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B671ACE97;
-	Tue,  2 Jul 2024 13:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89AE41B47B0;
+	Tue,  2 Jul 2024 13:17:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.97.38.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719926187; cv=none; b=p0pkcj8tUJB4bk85tz/O517y8qv8zGPWRnWWf01H0+JY8/J3FdgXj1o2W6f0TDchMHXjizjXe/Vbag/8ZAu6yTUdIZev+yQg6NOi3azxbN9FZMC1aR7eihJ3lsYkU+mTnKYKJcWXh6SpxI26lbfWMQyXiG/ZBUqQIuwf7QeYilM=
+	t=1719926251; cv=none; b=U24dKV4B8swIZSDK5yT/ff2vhj+5zffKgSN1RxKmmEQnRD82j5UaFtOZTB2+KY0W+3c6D+HYFhxRm8Rvedo2DuucRhAq7EAd80ou61GMYZopBD/j5hcshhoYTt15ig1MyXlsiQnvtOjpB0LjCtqNRSoaaqvZ008vkO1wQGYSnKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719926187; c=relaxed/simple;
-	bh=MDY8ecdXb/NSyqs6WxNmoPqHuIqePwiEKrrY0Kg3tfo=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:From:To:Subject:
-	 References:In-Reply-To; b=jO88k13L1ejMRjuu1BzlwQ/gBcaTW6u3t9h2ZekZBpPr60qxPfwC2RZlp2x+XW9xJSCBxaeoytnDuDOSsIL5Khiqw/BIOsEshMUP5SLjaiyaDzryJFT/g4tIzq5URKfQg1MFunmqnvjqlxZNWTx5+NKqjfs8c4WvlZHlHsHp4i0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc; spf=pass smtp.mailfrom=walle.cc; dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b=sk04YmNk; arc=none smtp.client-ip=159.69.201.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
-Received: from localhost (unknown [IPv6:2a02:810b:4340:4ee9:4685:ff:fe12:5967])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	s=arc-20240116; t=1719926251; c=relaxed/simple;
+	bh=09ay23XCwOzUyA7BLTEjSvUFpkRNBr4tnF64rIfEiG8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OZUzvwdwfP6fsTrFeQfmSatUBRm9Rx4wBjYyr3cWQs2d7ONpUblDKdWzAbM32GR388/Dd8hFu0IGzYHGTNUV5bOMRAxJr5+oN5aIgLJZiUc8wb0zelHeoJdh1/MFY/wIs0mwpcuwPoLfGZYCbDnI5VR+6j+UcPlV+BuYWBy3lps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org; spf=pass smtp.mailfrom=mess.org; dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b=scwfPmS1; dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b=OGwEOZ8T; arc=none smtp.client-ip=88.97.38.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mess.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
+	t=1719926241; bh=09ay23XCwOzUyA7BLTEjSvUFpkRNBr4tnF64rIfEiG8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=scwfPmS1HpLhSZWeaqB3jphFpv3gfVWFQriE7QQJoO/M2dMDX2Ryirh2bkZZKzdKA
+	 1BpAZ/YJsx51Kk2daHgWVs7MxYBdSLVTM97U7M1cT+KDhPujucn8ST0lMqLXWKD3jk
+	 5TAVTg0KzsAn20+T5SZD6sCozjZ1gYt1WGKiYw/oSKkiRD7XOt52Ejwn7SkrbKfa1A
+	 XwICjFZF76nfq/VSJeJsLTRAUEn739BzA1xC+k0n+0Hgwb0zsKX06XMT/smyxmHEph
+	 DPWM50DO9MFgdOZucqt2XKfSCnMtuhoJa1sP1I2NTzIgz7ecQIbYAkQyC/8ZYrPdMC
+	 OE86gHhdy9TNw==
+Received: by gofer.mess.org (Postfix, from userid 501)
+	id A9E7E10029F; Tue,  2 Jul 2024 14:17:21 +0100 (BST)
+X-Spam-Level: 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
+	t=1719926240; bh=09ay23XCwOzUyA7BLTEjSvUFpkRNBr4tnF64rIfEiG8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=OGwEOZ8ThNX8/q6cQJ/AU/d209gMXox6qx2NdfMeHTJiyMLyijGzgbLDyYQh71UdQ
+	 5+uuGVW5Zfo78Bz/hbcjVp/mKU6IZWRLiaLh6/xJNGUUb9UDrkGUnGX8YeqWCc96oq
+	 iujbczd4Y3lg6/M5wvXcmKTLM7URjKnbYeT1i+B9ErmL2HdDqDXFbJb/abpjukEGVo
+	 3kbFZvikiHSt6FP8aK1J4l5iGuOBrxRzANq4K2/oG251kaIfvY0GeobBglYm/FZOc1
+	 WFH1GWwOvvRRPiNRHbWqgR0b6SZ5bAh5dbCQydIhRouNwMcr6AZEugfh6gsEHu86zh
+	 4E0/KEPzac4BQ==
+Received: from localhost.localdomain (bigcore.local [IPv6:2a02:8011:d000:212:bc3c:1b4a:a6fa:362f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.3ffe.de (Postfix) with ESMTPSA id 21DCA1302;
-	Tue,  2 Jul 2024 15:16:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
-	t=1719926182;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mPtqbnLIuPypIQzyM7UQW85fKEOBMFybQLigjCASTCw=;
-	b=sk04YmNkpd3ad4onJCjNhBAzxzT5PU3Moau+nJXonpzbwZJ2p+uPIRkf4/Ply3sLm4DnmQ
-	jxj5xD0b4pobyK4BTM2TWo9cuQ8aVcfrkUbmGgtsrZFIE+y7jLDZoiSrteoA1xRM/MTsAB
-	9hyTScexreNf9l1jaMR+S19pSdoAVA6UX20dbZWq32bZpt+Fuvw9xTRV7pA0R9bDC5C8VL
-	5MdqnMZlaecI/jP3glI+ImkG2qZyCQUUiGGjP04SwW/+CFzFtnD0MKaew6SK5f4sPyrT/6
-	aqw85xfTk9LEc+CL1kTDd5A+SA+o8wYwO06FnnQpj3vm6t47hRFbLgH7o2QS7A==
+	by gofer.mess.org (Postfix) with ESMTPSA id 04DD3100074;
+	Tue,  2 Jul 2024 14:17:20 +0100 (BST)
+From: Sean Young <sean@mess.org>
+To: linux-media@vger.kernel.org,
+	Maxim Levitsky <maximlevitsky@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] media: rc: remove unused tx_resolution field
+Date: Tue,  2 Jul 2024 14:17:02 +0100
+Message-ID: <20240702131705.1073761-1-sean@mess.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 02 Jul 2024 15:16:21 +0200
-Message-Id: <D2F2Y45Y1LQS.8GN3PG7ZYAPB@walle.cc>
-Cc: "Andrew Lunn" <andrew@lunn.ch>, "Heiner Kallweit"
- <hkallweit1@gmail.com>, "Russell King" <linux@armlinux.org.uk>, "David S.
- Miller" <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Jakub
- Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>,
- <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <lvc-project@linuxtesting.org>
-From: "Michael Walle" <michael@walle.cc>
-To: "Aleksandr Mishin" <amishin@t-argos.ru>
-Subject: Re: [PATCH net v2] net: phy: mscc-miim: Validate bus frequency
- obtained from Device Tree
-X-Mailer: aerc 0.16.0
-References: <20240702110650.17563-1-amishin@t-argos.ru>
- <20240702130247.18515-1-amishin@t-argos.ru>
-In-Reply-To: <20240702130247.18515-1-amishin@t-argos.ru>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi,
+The tx_resolution field is never read. In theory you can imagine this
+field being useful for detecting whether the transmitter has the
+resolution for the message you are trying to send, but I am not aware of
+any hardware where this could be an issue.
 
-Please post a new version of a patch at the earliest after 24 hours,
-so reviewers got a chance to reply.
+Just remove.
 
-On Tue Jul 2, 2024 at 3:02 PM CEST, Aleksandr Mishin wrote:
-> In mscc_miim_clk_set() miim->bus_freq is taken from Device Tree and can
-> contain any value in case of any error or broken DT. A value of 214748364=
-8
-> multiplied by 2 will result in an overflow and division by 0.
->
-> Add bus frequency value check to avoid overflow.
->
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
->
-> Fixes: bb2a1934ca01 ("net: phy: mscc-miim: add support to set MDIO bus fr=
-equency")
-> Suggested-by: Michael Walle <michael@walle.cc>
-> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
-> ---
-> v1->v2: Detect overflow event instead of using magic numbers as suggested=
- by Michael
->
->  drivers/net/mdio/mdio-mscc-miim.c | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/drivers/net/mdio/mdio-mscc-miim.c b/drivers/net/mdio/mdio-ms=
-cc-miim.c
-> index c29377c85307..b344d0b03d8e 100644
-> --- a/drivers/net/mdio/mdio-mscc-miim.c
-> +++ b/drivers/net/mdio/mdio-mscc-miim.c
-> @@ -254,6 +254,11 @@ static int mscc_miim_clk_set(struct mii_bus *bus)
->  	if (!miim->bus_freq)
->  		return 0;
-> =20
-> +	if (2 * miim->bus_freq =3D=3D 0) {
-> +		dev_err(&bus->dev, "Incorrect bus frequency\n");
-> +		return -EINVAL;
-> +	}
+Signed-off-by: Sean Young <sean@mess.org>
+---
+ drivers/media/rc/ene_ir.c      | 3 ---
+ drivers/media/rc/ite-cir.c     | 1 -
+ drivers/media/rc/rc-loopback.c | 1 -
+ include/media/rc-core.h        | 2 --
+ 4 files changed, 7 deletions(-)
 
-DRY. Save it in a variable and use it in DIV_ROUND_UP(). Also you
-just check for the div-by-zero, but what if the value will overflow
-beyond zero? The calculation will be wrong, right?
-
-There's also check_mul_overflow() but not sure that's encouraged in
-netdev.
-
--michael
-
-> +
->  	rate =3D clk_get_rate(miim->clk);
-> =20
->  	div =3D DIV_ROUND_UP(rate, 2 * miim->bus_freq) - 1;
+diff --git a/drivers/media/rc/ene_ir.c b/drivers/media/rc/ene_ir.c
+index 11ee21a7db8f0..67722e2e47ff7 100644
+--- a/drivers/media/rc/ene_ir.c
++++ b/drivers/media/rc/ene_ir.c
+@@ -451,9 +451,6 @@ static void ene_rx_setup(struct ene_device *dev)
+ 		dev->rdev->max_timeout = 200000;
+ 	}
+ 
+-	if (dev->hw_learning_and_tx_capable)
+-		dev->rdev->tx_resolution = sample_period;
+-
+ 	if (dev->rdev->timeout > dev->rdev->max_timeout)
+ 		dev->rdev->timeout = dev->rdev->max_timeout;
+ 	if (dev->rdev->timeout < dev->rdev->min_timeout)
+diff --git a/drivers/media/rc/ite-cir.c b/drivers/media/rc/ite-cir.c
+index fcfadd7ea31cf..2bacecb022623 100644
+--- a/drivers/media/rc/ite-cir.c
++++ b/drivers/media/rc/ite-cir.c
+@@ -1380,7 +1380,6 @@ static int ite_probe(struct pnp_dev *pdev, const struct pnp_device_id
+ 	rdev->timeout = IR_DEFAULT_TIMEOUT;
+ 	rdev->max_timeout = 10 * IR_DEFAULT_TIMEOUT;
+ 	rdev->rx_resolution = ITE_BAUDRATE_DIVISOR * sample_period / 1000;
+-	rdev->tx_resolution = ITE_BAUDRATE_DIVISOR * sample_period / 1000;
+ 
+ 	/* set up transmitter related values */
+ 	rdev->tx_ir = ite_tx_ir;
+diff --git a/drivers/media/rc/rc-loopback.c b/drivers/media/rc/rc-loopback.c
+index b356041c5c00e..8288366f891fc 100644
+--- a/drivers/media/rc/rc-loopback.c
++++ b/drivers/media/rc/rc-loopback.c
+@@ -230,7 +230,6 @@ static int __init loop_init(void)
+ 	rc->min_timeout		= 1;
+ 	rc->max_timeout		= IR_MAX_TIMEOUT;
+ 	rc->rx_resolution	= 1;
+-	rc->tx_resolution	= 1;
+ 	rc->s_tx_mask		= loop_set_tx_mask;
+ 	rc->s_tx_carrier	= loop_set_tx_carrier;
+ 	rc->s_tx_duty_cycle	= loop_set_tx_duty_cycle;
+diff --git a/include/media/rc-core.h b/include/media/rc-core.h
+index 803349599c272..d095908073ef9 100644
+--- a/include/media/rc-core.h
++++ b/include/media/rc-core.h
+@@ -127,7 +127,6 @@ struct lirc_fh {
+  * @min_timeout: minimum timeout supported by device
+  * @max_timeout: maximum timeout supported by device
+  * @rx_resolution : resolution (in us) of input sampler
+- * @tx_resolution: resolution (in us) of output sampler
+  * @lirc_dev: lirc device
+  * @lirc_cdev: lirc char cdev
+  * @gap_start: start time for gap after timeout if non-zero
+@@ -194,7 +193,6 @@ struct rc_dev {
+ 	u32				min_timeout;
+ 	u32				max_timeout;
+ 	u32				rx_resolution;
+-	u32				tx_resolution;
+ #ifdef CONFIG_LIRC
+ 	struct device			lirc_dev;
+ 	struct cdev			lirc_cdev;
+-- 
+2.45.2
 
 
