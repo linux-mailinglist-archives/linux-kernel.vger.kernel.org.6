@@ -1,214 +1,116 @@
-Return-Path: <linux-kernel+bounces-238039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57BD7924281
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:36:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C282A924287
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:37:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B6231C21038
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:36:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C65C81C213A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:37:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533931BC079;
-	Tue,  2 Jul 2024 15:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6648A1BC07C;
+	Tue,  2 Jul 2024 15:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="NXXE2flL"
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IsAWtP/5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971A01BBBDB
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 15:36:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A8D1BBBF7;
+	Tue,  2 Jul 2024 15:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719934594; cv=none; b=K7CcyuGxfj//fDoETeKw1uSu2kff1KmNlScg39OCTFoK9HeJKonsj4yC3dNskcf+E9zL/Bts78eiD2CDBaS2QFb3dQbIQlSyiAP5zNGzARkqOEXU+IKSdRq6ncgARb+cYyRNlOk1Bm+gjhM5dedfd0zBFs4j1aG0BmlG+i/AZVQ=
+	t=1719934624; cv=none; b=eUBPLUmIvqa//154zDuBlHHv3QyANVdjZAiI0MDkDY+OLRPcWuUCyCDsm2iIINnlqRumNEiDG1m3CnjXNQrUfujZzRkBxcKHr2fAtMbWipIAn4gTfvWjp0/9I/sBnRuAiljpHCvqwNXF4wLcY//mpb4sVtAuwtqMpo83O4qfxrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719934594; c=relaxed/simple;
-	bh=Fp3x+Gzf/0uHBv6XR8uh15iec1h9n1SDOYsklJ3emuA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X7Qs26rP1+P17tht/G6lJAj2ghO7fpmMz9TJiWarYlpnzlCynS8xWzAbpb2gaW5lBfhiQFnwVwne85DOuUbCS6TiVgUzi9iT4ENofk5u02asz/+k+4y6GCsrJ0JnVXbNjilA3n0ZeN7+muLg/i0GPHu2bTf/tZogyzIUUMECQHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=NXXE2flL; arc=none smtp.client-ip=209.85.160.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-250c0555a63so2136880fac.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 08:36:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719934592; x=1720539392; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CbTCjOUMkDZIPmsuH+iEeMyNeIVhzfAOvL5XjW90R68=;
-        b=NXXE2flLjyXXQkAq4Rr7DNTlkYZsK5VCWJlLzPePYPuIngbukXBJQqSzIlS+NM0lzM
-         UuHkn+4hjv0lF453qevgTUqgX4esVwwKDLMLdXc4kQBgMBNDQav2AL1jNcP8iRkoi2CL
-         kNZMTHk/wRzhY/G5jDUZbRGU/7hZwMk/OHufhZXHP5xhVcqR8DysoURcRvbbksA1dP+b
-         71jvGNGXLmQYC1ap1lz63AkWEYMKblDk/ziZLYbYcYPvWp8Qf+P8xMhEN5loHwJdFvb1
-         iiP7D+PkNgQkdmrQR044Qi269DTiTKskD+KGqCkxmAWPQtVMQojNYUkG/DQrlVkTkDpM
-         uoLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719934592; x=1720539392;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CbTCjOUMkDZIPmsuH+iEeMyNeIVhzfAOvL5XjW90R68=;
-        b=BmXNo2XxJj4FapHB8Lb93yYudIyFOH/Fwjk+f9PuICpf0rQ8HE4tL2jSSBc70MXaSx
-         l81SqibmSjaI5fdOs1K5Ra4x+RobAqo6X8N7163wUIhg/rDbmMLTyifBGC8B4V4ROqQg
-         eFmNr+sBMA/+nl/9U86NHcF6vL0aKJaeo6nifssHBn9xcfY3YLNFV53XF4dj3o9Wcbv+
-         O7GQx/4IRvlWssg1gjcz+P0Ssodh1restS4OjJ7q9NfUZEw6VSZFgkR3hD5FBLG4QGbs
-         meB15dS88qWyymHSf/yQWgC9K+nSUz9uB53f2dGweg9IBpSdtgJQQowNzEQBPXXkJmZ/
-         vlPw==
-X-Forwarded-Encrypted: i=1; AJvYcCWraHDBNRuDbQcytGDeY2zCt5gO9r1GQgpZrKUnB+iYe15pprSwqs2VpfuNkNpTi0w/WAObAHIvnKv3a027ArK05potn8wNXb2lt6ZT
-X-Gm-Message-State: AOJu0YwVJlrMyZ7xsT13whXiu7xtM+J4Ezst4h4ZdpsHCYzy3WRtg+c8
-	kI2mCHCaqT+5TOT+c0LWMe6ltes7fpqROqPsdOT2/V+0rkwh0NjISU4FApTimXI=
-X-Google-Smtp-Source: AGHT+IFP+4Qsz+EqJ6flGJt/Sal9Z9g3tdmP0nSmapG6Dq5fs42rjFxxPjALA3t+5y4sIsynpQJ4HA==
-X-Received: by 2002:a05:6870:164c:b0:254:85c0:c70c with SMTP id 586e51a60fabf-25db35936bbmr7665818fac.40.1719934591605;
-        Tue, 02 Jul 2024 08:36:31 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25d8e388597sm2231963fac.56.2024.07.02.08.36.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jul 2024 08:36:31 -0700 (PDT)
-Message-ID: <bba8a12a-9d1e-467b-a7c1-8a027d5c2f89@baylibre.com>
-Date: Tue, 2 Jul 2024 10:36:29 -0500
+	s=arc-20240116; t=1719934624; c=relaxed/simple;
+	bh=WTGvOz3HRhLyyqq4Zh1ZbWhG2m2SzbOevLYrkdYK0Ac=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AEGpQwFeFge0kf/r6gcobrxHVsc7991C2sonuDYo/Y2L0CmqpNyStzgAhmKX/ca7Qntp3qV7Le317wz3sa6qufvA66yrgl1PEkMiem5kZHE5RXhLtAMYFrc2irQ9OTaHmXb35SfggXFm1HUkDRrQUlPgC9n0Ufw6dqNB1REbH1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IsAWtP/5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30631C4AF07;
+	Tue,  2 Jul 2024 15:37:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719934624;
+	bh=WTGvOz3HRhLyyqq4Zh1ZbWhG2m2SzbOevLYrkdYK0Ac=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=IsAWtP/5sywxnJ3K4GhdvT0CoKl6Wx7LlTBWBtriyGsqNoyMg7IhVmk61VqdXFky0
+	 T1tgw6GnFa/6AW67rk6Zv5of+0v/ZWvtFtybMOJo5nr9OjNIvvWiphf6h6o1wCpwW3
+	 fDnjF7GyUgnYd+W69xW1jKWfQ6lbEv/iYecBfpwh0q2GEG0xqRMlfmxaXx6EBVFOky
+	 KLswnROVOBB+nkybbNu8+0OjcDlue3n+kDKRk4zehl49xBfWElFENxsVl2reH2kWvQ
+	 ghJ7NPLIAls8pIe2zFxf/JYmZFhJ2pwBw5gp4rJ+xfb3RkpRumMpOS1c1QFHGYSaBW
+	 vlP8gw1m8b9MA==
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a754746f3easo84863466b.0;
+        Tue, 02 Jul 2024 08:37:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWHrx04RCxaQCulqu03/KMyZg+ucrhs7rGOWL48R4HmxZDhBXqhYx35ATCBSJQvP87dC1OO0HXxfui/7sAp1p1IwGLuqsU6JjmFn3fyB7ZWN+2YVV9/K6XghzPXmQOIYNM3NeTL1Z0jv/fcpS+x9wa8a6TW6jSHJesmP9Adwb5kOmFx4N/H
+X-Gm-Message-State: AOJu0Yy+WUbNJoRVJbJvOMaqFwS9d/W8XINWd6jBOtDjUky4LuOptxww
+	qFYin6g2OoAq2+7hkFtPLKCOvZW69NoR4Tv2y3//QwH8NdhaEOHKJGW4LUCodTmY4gtBZGP6RyY
+	P7nQhP2D2OXk3+MPMNYyvNkJAvW4=
+X-Google-Smtp-Source: AGHT+IHbRwTQFTOsGOu8dsXrAJCptQY1MXaOy1rNd3Y3lFjz+6X1PC/qmnx2H22UI1+PZJ+qeXsVVq8MLpI02IBHqk0=
+X-Received: by 2002:a17:907:86a0:b0:a5c:eafb:5288 with SMTP id
+ a640c23a62f3a-a751448a596mr822072466b.31.1719934622768; Tue, 02 Jul 2024
+ 08:37:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/6] dt-bindings: iio: dac: Add adi,ltc2664.yaml
-To: Kim Seer Paller <kimseer.paller@analog.com>,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Hennerich <michael.hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>
-References: <20240702030025.57078-1-kimseer.paller@analog.com>
- <20240702030025.57078-5-kimseer.paller@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20240702030025.57078-5-kimseer.paller@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240625110029.606032-1-mjguzik@gmail.com> <20240625110029.606032-3-mjguzik@gmail.com>
+ <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
+ <e8db013bf06d2170dc48a8252c7049c6d1ee277a.camel@xry111.site>
+ <CAAhV-H7iKyQBvV+J9T1ekxh9OF8h=F9zp_QMyuhFBrFXGHHmTg@mail.gmail.com>
+ <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site> <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com>
+In-Reply-To: <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 2 Jul 2024 23:36:50 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
+Message-ID: <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Xi Ruoyao <xry111@xry111.site>, Mateusz Guzik <mjguzik@gmail.com>, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, loongarch@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/1/24 10:00 PM, Kim Seer Paller wrote:
-> Add documentation for ltc2664.
-> 
+Hi, Arnd,
 
-...
+On Mon, Jul 1, 2024 at 7:59=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Sun, Jun 30, 2024, at 04:39, Xi Ruoyao wrote:
+> > On Sun, 2024-06-30 at 09:40 +0800, Huacai Chen wrote:
+> >> >
+> >> > Yes, both Linus and Christian hates introducing a new AT_ flag for
+> >> > this.
+> >> >
+> >> > This patch just makes statx(fd, NULL, AT_EMPTY_PATH, ...) behave
+> >> > like
+> >> > statx(fd, "", AT_EMPTY_PATH, ...) instead.  NULL avoids the
+> >> > performance
+> >> > issue and it's also audit-able by seccomp BPF.
+> >> To be honest, I still want to restore __ARCH_WANT_NEW_STAT. Because
+> >> even if statx() becomes audit-able, it is still blacklisted now.
+> >
+> > Then patch the sandbox to allow it.
+> >
+> > The sandbox **must** be patched anyway or it'll be broken on all 32-bit
+> > systems after 2037.  [Unless they'll unsupport all 32-bit systems befor=
+e
+> > 2037.]
+>
+> More importantly, the sandbox won't be able to support any 32-bit
+> targets that support running after 2037, regardless of how long
+> the sandbox supports them: if you turn off COMPAT_32BIT_TIME today
+> in order to be sure those don't get called by accident, the
+> fallback is immediately broken.
+Would you mind if I restore newstat for LoongArch64 even if this patch exis=
+t?
 
-> +  adi,manual-span-operation-config:
-> +    description:
-> +      This property must mimic the MSPAN pin configurations. By tying the MSPAN
-> +      pins (MSP2, MSP1 and MSP0) to GND and/or VCC, any output range can be
-> +      hardware-configured with different mid-scale or zero-scale reset options.
-> +      The hardware configuration is latched during power on reset for proper
-> +      operation.
-> +        0 - MPS2=GND, MPS1=GND, MSP0=GND (+-10V, reset to 0V)
-> +        1 - MPS2=GND, MPS1=GND, MSP0=VCC (+-5V, reset to 0V)
-> +        2 - MPS2=GND, MPS1=VCC, MSP0=GND (+-2.5V, reset to 0V)
-> +        3 - MPS2=GND, MPS1=VCC, MSP0=VCC (0V to 10, reset to 0V)
-> +        4 - MPS2=VCC, MPS1=GND, MSP0=GND (0V to 10V, reset to 5V)
-> +        5 - MPS2=VCC, MPS1=GND, MSP0=VCC (0V to 5V, reset to 0V)
-> +        6 - MPS2=VCC, MPS1=VCC, MSP0=GND (0V to 5V, reset to 2.5V)
-> +        7 - MPS2=VCC, MPS1=VCC, MSP0=VCC (0V to 5V, reset to 0V, enables SoftSpan)
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [0, 1, 2, 3, 4, 5, 6, 7]
-> +    default: 7
-> +
-> +  io-channels:
-> +    description:
-> +      ADC channel to monitor voltages and temperature at the MUXOUT pin.
-> +    maxItems: 1
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
-> +
-> +patternProperties:
-> +  "^channel@[0-3]$":
-> +    $ref: dac.yaml
-> +    type: object
-> +    additionalProperties: false
-> +
-> +    properties:
-> +      reg:
-> +        description: The channel number representing the DAC output channel.
-> +        maximum: 3
-> +
-> +      adi,toggle-mode:
-> +        description:
-> +          Set the channel as a toggle enabled channel. Toggle operation enables
-> +          fast switching of a DAC output between two different DAC codes without
-> +          any SPI transaction.
-> +        type: boolean
-> +
-> +      output-range-microvolt:
+Huacai
 
-Could be helpful to add a description that says this property is only allowed when
-SoftSpan is enabled rather than requiring people to reason through the logic.
-
-> +        oneOf:
-> +          - items:
-> +              - const: 0
-> +              - enum: [5000000, 10000000]
-> +          - items:
-> +              - const: -5000000
-> +              - const: 5000000
-> +          - items:
-> +              - const: -10000000
-> +              - const: 10000000
-> +          - items:
-> +              - const: -2500000
-> +              - const: 2500000
-
-           default: [0, 5000000]
-
-> +
-> +    required:
-> +      - reg
-> +
-> +    allOf:
-> +      - if:
-> +          properties:
-> +            adi,manual-span-operation-config:
-> +              const: 7
-> +        then:
-> +          patternProperties:
-> +            "^channel@[0-3]$":
-> +              required: [output-range-microvolt]
-
-
-This logic doesn't look right to me. If adi,manual-span-operation-config
-is not 7, then SoftSpan is disabled, so we should have:
-
-    output-range-microvolt: false
-
-In that case since individual channels can't have a per-channel
-configuration because SoftSpan is not enabled (unless I am misunderstanding
-the datasheet?).
-
-Also, output-range-microvolt should never be required, even when
-adi,manual-span-operation-config is 7 because there is already a default
-value range (0V to 5V) specified by the adi,manual-span-operation-config
-property.
-
-I think the correct logic would be:
-
-    - if:
-        not:
-          properties:
-            adi,manual-span-operation-config:
-              const: 7
-        then:
-          patternProperties:
-            "^channel@[0-3]$":
-              properties:
-                output-range-microvolt: false
-
+>
+>       Arnd
 
