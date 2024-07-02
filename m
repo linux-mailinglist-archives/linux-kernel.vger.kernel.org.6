@@ -1,90 +1,72 @@
-Return-Path: <linux-kernel+bounces-238088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDEB6924354
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:11:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 438F292435E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:13:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A989289901
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:11:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1A711F24172
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 032061BD025;
-	Tue,  2 Jul 2024 16:11:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C73161BD039;
+	Tue,  2 Jul 2024 16:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i9m/LTV0"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="GTze8lmn"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0701BBBD7;
-	Tue,  2 Jul 2024 16:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3977D1BD005;
+	Tue,  2 Jul 2024 16:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719936668; cv=none; b=VO3kOS4PBuFIod9P2vo69utvRVvEM4zHJi/wco3zoFhXnV0V0jHILrZo8DzyknL1LqNCdXe7R4dAsP8tgYoz+C8G4cPXbaow8JGLKRgJlt/0u/pHt2pIIIMdZW8tv+9vqqJVxi4+/b4p4GqqKqq/8bE7GDl+wUuu2Igsa/HQv+E=
+	t=1719936826; cv=none; b=ZvA8N6YhSuxMZZ18AEwXMoK3Ql7Blf5DC7qDNcSe3MBlzgZm+9MLq6ahNmjtSpcbnqhWgR80vro8EsRvsmMTYPfKhyZvYVKoQHye3zQ5n/I1yoShjxAG5gzx+OcRDk1UtqBSIcVA7I7KPhAK+xBCwsyaIqpNNr8v301rc4c6Hkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719936668; c=relaxed/simple;
-	bh=3xJuzOTRMluaoR8nsvkgFb7mnpaY4B66CdYGgij2JvE=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DLQWsGBu6IvSSPci6YHZyXVXlj4isoz4ZldA8XTWeoldpIamBCCNKibaS52fUi+y/xQ1njVeQhUFUojqA8/kpbsDBsXphG06sFNt70RYmPDz8zy+5cUyYMbCjNfM14RvWgS84YjH9psnmaZWjrL92rR+Sxe37KdO7GzCwjDUa7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i9m/LTV0; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-424ad289912so31011965e9.2;
-        Tue, 02 Jul 2024 09:11:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719936665; x=1720541465; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=V0Qz98KWmiG+EMpaS/dWI6Z22uc/M7LVTuKKam6RTUU=;
-        b=i9m/LTV0N2dD9sCg8hGwELfMHD3G5FA986CUb6JKsSpzcaOdYKfpTXLioFueKzfi3N
-         NcapAMkIt6RgcwoKynRcdaQwjBVU2tcGN4F2y/ngQtZZzrHfe6h4y3W+a8gvG8eHYl6c
-         NN/oKRTjKcD+mMNd35nhjNtegKsBs405FIdaGMvtVCo1mKOJmLNsIHmHt/AbcY0CO30w
-         0YHWocDVLcBT2G6obGZgjI1TOKHACR2Ny70pmaRDXItsqtiGbkMn0aFBeOFSmfVXPP2K
-         elB1V0fvfcqomAx2GH3IUHXDrQzgqENmqECfwKS11eytMaxaHCy9qB6EVTzoaXx1O02w
-         YTGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719936665; x=1720541465;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V0Qz98KWmiG+EMpaS/dWI6Z22uc/M7LVTuKKam6RTUU=;
-        b=uPG47nBl6mkqjxmvgA6GBym23DTXHNmWwoIRoMpZ6ae348hRMaLI45EJVQUQhPUVMa
-         U0g5OfZjUgUdBM6Wujmlvq+VAiE12sIdBr4GRNaKKWbD8u86WOD0cy1J9QZlIbH/Ahlb
-         RXJoarFlUhlRAH5sTMgMZKguMaF/qfeCzuepAD1fYNC3HO/+Y3HJVH38bLbhGqh06HJh
-         u3Dhk4TPrMv9fVr7B9MygGzTOjW1Zm/WuQ/853crCtMAPNyvazjf9ux+E2/JCG/fvGYo
-         SDxfrn1x5fnaHeSXuUd12wlpxTZHR8tvMSym9Rq+IS1LweyEW7t/1cnpfr5hQDh3Axhi
-         Uupw==
-X-Forwarded-Encrypted: i=1; AJvYcCVgl6b5s9Ww/L/ijwZk7l0AC7ibuypsaboscgFdXRsdtSjNwCF6L7oeXkE8PQ7+Pjee9Dh/HmEY+WS2jE9NzwZzX3jwoDM7axaP8VJCfvnJSptz0JcNjpkXwqIk5iQrpaBM/j+BPxpoAMd7yHvwQvEezt1unjT4yTuBSc5/8SqDprzccpo8
-X-Gm-Message-State: AOJu0Yxym2InxVnFwMTpiRoVIpvze0y1gla0JRbdqMWMQC5BMb+vS+Fv
-	UQ2Wa9D2hVXxCzhR3sZKVc7BLUNo+dUYbFFAskFyn0FoJ+TZ9TYM
-X-Google-Smtp-Source: AGHT+IFxlAlKL7CVEdpm+YsZgzcGzjI937/84Y3tdXQrGJ2iODKxpg6z2gXa40cQl9BEceDHAi8nvQ==
-X-Received: by 2002:a05:600c:4da1:b0:424:acf6:6068 with SMTP id 5b1f17b1804b1-4257a03479emr70285705e9.34.1719936664991;
-        Tue, 02 Jul 2024 09:11:04 -0700 (PDT)
-Received: from krava ([176.105.156.1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b09a2bcsm202179825e9.36.2024.07.02.09.11.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 09:11:04 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Tue, 2 Jul 2024 18:10:58 +0200
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@chromium.org>,
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 bpf-next 1/9] uprobe: Add support for session consumer
-Message-ID: <ZoQmkiKwsy41JNt4@krava>
-References: <20240701164115.723677-1-jolsa@kernel.org>
- <20240701164115.723677-2-jolsa@kernel.org>
- <20240702130408.GH11386@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1719936826; c=relaxed/simple;
+	bh=1NPPosvEoa7YEfb3YTpwtuFz3L6/xLc2gKJ9TAc2y6Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C8FcZQrUUi+q5eRYTIBrSXD/XB0b8aP7d949jfW45dzEKIQXP2Sb8zYGjAsFpa7HXTkxNACTwF9Z8EYKOGoqREnIR9NGvO3gnBMUc7xxAW4vVnmD9CDsrhhzhqHe21dlb+B+zL/4qs/ND1QfLPvns3ML6XOsUoHCclR++hF7ygU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=GTze8lmn; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4WD7Hy1Dr1z9sST;
+	Tue,  2 Jul 2024 18:13:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1719936814;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oA2Wr6VOMzgFZ0qUaQebVyDCKpm9ZO191hQv44sz+Fs=;
+	b=GTze8lmnNNlFCHrThB/+rsNsw9R8Twukx9Hl2tJi+qQCgI2mMsh/6+J0lnPan0kqT7d0XQ
+	i6zh7ni3jyRVUt67LghCN9oST2X3rtk+66m9JqtltYVdQ4A9f+kGM85FgdKhBqlVam9dn8
+	5bkKl55oquwI57fbnrw0THmxQDb7sn0ckmNc7jXyGg0uakz9HpUoq+D0kBtY/P/0XStobb
+	v5xK0h+Oy/fTOPu/AzF4QsQjYimxfrFo6Nogyk4PWMk5ugxFCWbht1K3WYl+JQvIAAUsmJ
+	orz3r2CEWAiVfMEHP7Gb5qJ1EH9b59z3ibtoOyBLfzODISoZsBsKbzZh1Snc1A==
+Date: Tue, 2 Jul 2024 16:13:29 +0000
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: david@fromorbit.com, willy@infradead.org, chandan.babu@oracle.com,
+	djwong@kernel.org, brauner@kernel.org, akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
+	linux-mm@kvack.org, john.g.garry@oracle.com,
+	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
+	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org, Zi Yan <zi.yan@sent.com>
+Subject: Re: [PATCH v8 06/10] iomap: fix iomap_dio_zero() for fs bs > system
+ page size
+Message-ID: <20240702161329.i4w6ipfs7jg5rpwx@quentin>
+References: <20240625114420.719014-1-kernel@pankajraghav.com>
+ <20240625114420.719014-7-kernel@pankajraghav.com>
+ <20240702074203.GA29410@lst.de>
+ <20240702101556.jdi5anyr3v5zngnv@quentin>
+ <20240702120250.GA17373@lst.de>
+ <20240702140123.emt2gz5kbigth2en@quentin>
+ <20240702154216.GA1037@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,38 +75,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240702130408.GH11386@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240702154216.GA1037@lst.de>
+X-Rspamd-Queue-Id: 4WD7Hy1Dr1z9sST
 
-On Tue, Jul 02, 2024 at 03:04:08PM +0200, Peter Zijlstra wrote:
-> On Mon, Jul 01, 2024 at 06:41:07PM +0200, Jiri Olsa wrote:
+On Tue, Jul 02, 2024 at 05:42:16PM +0200, Christoph Hellwig wrote:
+> On Tue, Jul 02, 2024 at 02:01:23PM +0000, Pankaj Raghav (Samsung) wrote:
+> +static int iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
+> >                 loff_t pos, unsigned len)
+> >  {
+> >         struct inode *inode = file_inode(dio->iocb->ki_filp);
+> >         struct bio *bio;
+> >  
+> > +       if (!len)
+> > +               return 0;
+> >         /*
+> >          * Max block size supported is 64k
+> >          */
+> > -       WARN_ON_ONCE(len > ZERO_PAGE_64K_SIZE);
+> > +       if (len > ZERO_PAGE_64K_SIZE)
+> > +               return -EINVAL;
 > 
-> > +static void
-> > +uprobe_consumer_account(struct uprobe *uprobe, struct uprobe_consumer *uc)
-> > +{
-> > +	static unsigned int session_id;
-> > +
-> > +	if (uc->session) {
-> > +		uprobe->sessions_cnt++;
-> > +		uc->session_id = ++session_id ?: ++session_id;
-> > +	}
-> > +}
-> 
-> The way I understand this code, you create a consumer every time you do
-> uprobe_register() and unregister makes it go away.
-> 
-> Now, register one, then 4g-1 times register+unregister, then register
-> again.
-> 
-> The above seems to then result in two consumers with the same
-> session_id, which leads to trouble.
-> 
-> Hmm?
+> The should probably be both WARN_ON_ONCE in addition to the error
+> return (and ZERO_PAGE_64K_SIZE really needs to go away..)
 
-ugh true.. will make it u64 :)
-
-I think we could store uprobe_consumer pointer+ref in session_consumer,
-and that would make the unregister path more interesting.. will check
-
-thanks,
-jirka
+Yes, I will rename it to ZERO_PAGE_SZ_64K as you suggested.
+> 
+> > +                       ret = iomap_dio_zero(iter, dio, pos, fs_block_size - pad);
+> 
+> Overly lone line here.
+> 
+> Otherwise this looks good.
+> 
 
