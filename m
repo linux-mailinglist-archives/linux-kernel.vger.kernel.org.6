@@ -1,184 +1,214 @@
-Return-Path: <linux-kernel+bounces-238038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A95E92427B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:34:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57BD7924281
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:36:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCDCB1C20FCD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:34:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B6231C21038
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:36:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C701BC06C;
-	Tue,  2 Jul 2024 15:34:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533931BC079;
+	Tue,  2 Jul 2024 15:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aHlopjPf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="NXXE2flL"
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D4216C69A;
-	Tue,  2 Jul 2024 15:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971A01BBBDB
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 15:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719934488; cv=none; b=VVcRLJWO+KnCIlx3Oczto1mGT9INS4KbmRowqFoEWwwybfZkjMh4iYxeUQhfVEB6ZrUA7NFTpOTqLQdTjVCMQi4r91Q66/RTLaNJj105bkYnT6v40LC4P3Z1WwRcN9YNRoUi7Az1Nl6eKMDWu6hjvFL5W5Cg0gQ3bqjUp6W1WoU=
+	t=1719934594; cv=none; b=K7CcyuGxfj//fDoETeKw1uSu2kff1KmNlScg39OCTFoK9HeJKonsj4yC3dNskcf+E9zL/Bts78eiD2CDBaS2QFb3dQbIQlSyiAP5zNGzARkqOEXU+IKSdRq6ncgARb+cYyRNlOk1Bm+gjhM5dedfd0zBFs4j1aG0BmlG+i/AZVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719934488; c=relaxed/simple;
-	bh=+dYiFmhmoQq6ipJE6mlBFSYVxPXJIa9oBX8SvQ1Od/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jLyFjAEV3MNgj9UJPmTr1vdCqITzNJ63m/qOhxjtrU88jn5mY6r6pLnRn5M0j5kr6/3bBKA4fPndoIvoEZ1CtzT8+Lxc1corcOgeQWu5encfn4cCP2mxjTtk4D3DeV1cLSCpVbYsQfSETMxWjafKWsrKq3OzxGjdPYskj0FyVYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aHlopjPf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9F94C116B1;
-	Tue,  2 Jul 2024 15:34:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719934487;
-	bh=+dYiFmhmoQq6ipJE6mlBFSYVxPXJIa9oBX8SvQ1Od/0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aHlopjPfwKNLP8sg48SSnpmQ5D4dZ5ylFVdez1Wv3FlKTOo5st+VquVoSvYCuDngm
-	 CQQ91dB4rDedUSUmeu3oHUw84DE9Y5lZk+8YqwrLFvALUgnkXDXMF/pUDylGL7YwVt
-	 rDbDfwbJbaLW/YBG5xoHocFBZaoelikmsCqlrKGc872N+PgViLLKu23JsEYt6nY49g
-	 vmFtWis0SaLdjhp1krsTKDI7tjmLWl9TryPOlT/HidCCOlbC0+tymUcTtvBlCPAPcn
-	 u1odPFJgqegm0pP5tw4OU1oX15iI53gi8l83+6eIyNtAlf08aFFSO/1ZpnkrA8RTdJ
-	 jRsr0+ya4LRhA==
-Date: Tue, 2 Jul 2024 16:34:42 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Hironori KIKUCHI <kikuchan98@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Jagan Teki <jagan@amarulasolutions.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Sam Ravnborg <sam@ravnborg.org>, David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: display: st7701: Add Anbernic RG28XX
- panel
-Message-ID: <20240702-magnetism-amends-d535f626e433@spud>
-References: <20240628051019.975172-1-kikuchan98@gmail.com>
- <20240628051019.975172-2-kikuchan98@gmail.com>
- <20240628-splashy-slug-1d74e3fd9fe6@spud>
- <CAG40kxERY2r2cj58kjVMMg1JVOChRKraKYFo_K5C5fnx0g80Qw@mail.gmail.com>
- <20240630-babied-grill-13c840abb70a@spud>
- <CAG40kxHxnSNp1_4fX0fOWypLunPm-NnH1UEKZNQgM0g-Z1u1DQ@mail.gmail.com>
+	s=arc-20240116; t=1719934594; c=relaxed/simple;
+	bh=Fp3x+Gzf/0uHBv6XR8uh15iec1h9n1SDOYsklJ3emuA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X7Qs26rP1+P17tht/G6lJAj2ghO7fpmMz9TJiWarYlpnzlCynS8xWzAbpb2gaW5lBfhiQFnwVwne85DOuUbCS6TiVgUzi9iT4ENofk5u02asz/+k+4y6GCsrJ0JnVXbNjilA3n0ZeN7+muLg/i0GPHu2bTf/tZogyzIUUMECQHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=NXXE2flL; arc=none smtp.client-ip=209.85.160.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-250c0555a63so2136880fac.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 08:36:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719934592; x=1720539392; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CbTCjOUMkDZIPmsuH+iEeMyNeIVhzfAOvL5XjW90R68=;
+        b=NXXE2flLjyXXQkAq4Rr7DNTlkYZsK5VCWJlLzPePYPuIngbukXBJQqSzIlS+NM0lzM
+         UuHkn+4hjv0lF453qevgTUqgX4esVwwKDLMLdXc4kQBgMBNDQav2AL1jNcP8iRkoi2CL
+         kNZMTHk/wRzhY/G5jDUZbRGU/7hZwMk/OHufhZXHP5xhVcqR8DysoURcRvbbksA1dP+b
+         71jvGNGXLmQYC1ap1lz63AkWEYMKblDk/ziZLYbYcYPvWp8Qf+P8xMhEN5loHwJdFvb1
+         iiP7D+PkNgQkdmrQR044Qi269DTiTKskD+KGqCkxmAWPQtVMQojNYUkG/DQrlVkTkDpM
+         uoLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719934592; x=1720539392;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CbTCjOUMkDZIPmsuH+iEeMyNeIVhzfAOvL5XjW90R68=;
+        b=BmXNo2XxJj4FapHB8Lb93yYudIyFOH/Fwjk+f9PuICpf0rQ8HE4tL2jSSBc70MXaSx
+         l81SqibmSjaI5fdOs1K5Ra4x+RobAqo6X8N7163wUIhg/rDbmMLTyifBGC8B4V4ROqQg
+         eFmNr+sBMA/+nl/9U86NHcF6vL0aKJaeo6nifssHBn9xcfY3YLNFV53XF4dj3o9Wcbv+
+         O7GQx/4IRvlWssg1gjcz+P0Ssodh1restS4OjJ7q9NfUZEw6VSZFgkR3hD5FBLG4QGbs
+         meB15dS88qWyymHSf/yQWgC9K+nSUz9uB53f2dGweg9IBpSdtgJQQowNzEQBPXXkJmZ/
+         vlPw==
+X-Forwarded-Encrypted: i=1; AJvYcCWraHDBNRuDbQcytGDeY2zCt5gO9r1GQgpZrKUnB+iYe15pprSwqs2VpfuNkNpTi0w/WAObAHIvnKv3a027ArK05potn8wNXb2lt6ZT
+X-Gm-Message-State: AOJu0YwVJlrMyZ7xsT13whXiu7xtM+J4Ezst4h4ZdpsHCYzy3WRtg+c8
+	kI2mCHCaqT+5TOT+c0LWMe6ltes7fpqROqPsdOT2/V+0rkwh0NjISU4FApTimXI=
+X-Google-Smtp-Source: AGHT+IFP+4Qsz+EqJ6flGJt/Sal9Z9g3tdmP0nSmapG6Dq5fs42rjFxxPjALA3t+5y4sIsynpQJ4HA==
+X-Received: by 2002:a05:6870:164c:b0:254:85c0:c70c with SMTP id 586e51a60fabf-25db35936bbmr7665818fac.40.1719934591605;
+        Tue, 02 Jul 2024 08:36:31 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25d8e388597sm2231963fac.56.2024.07.02.08.36.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Jul 2024 08:36:31 -0700 (PDT)
+Message-ID: <bba8a12a-9d1e-467b-a7c1-8a027d5c2f89@baylibre.com>
+Date: Tue, 2 Jul 2024 10:36:29 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="8Wkwgm2LZxTD6wYX"
-Content-Disposition: inline
-In-Reply-To: <CAG40kxHxnSNp1_4fX0fOWypLunPm-NnH1UEKZNQgM0g-Z1u1DQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/6] dt-bindings: iio: dac: Add adi,ltc2664.yaml
+To: Kim Seer Paller <kimseer.paller@analog.com>,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Michael Hennerich <michael.hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>
+References: <20240702030025.57078-1-kimseer.paller@analog.com>
+ <20240702030025.57078-5-kimseer.paller@analog.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20240702030025.57078-5-kimseer.paller@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 7/1/24 10:00 PM, Kim Seer Paller wrote:
+> Add documentation for ltc2664.
+> 
+
+...
+
+> +  adi,manual-span-operation-config:
+> +    description:
+> +      This property must mimic the MSPAN pin configurations. By tying the MSPAN
+> +      pins (MSP2, MSP1 and MSP0) to GND and/or VCC, any output range can be
+> +      hardware-configured with different mid-scale or zero-scale reset options.
+> +      The hardware configuration is latched during power on reset for proper
+> +      operation.
+> +        0 - MPS2=GND, MPS1=GND, MSP0=GND (+-10V, reset to 0V)
+> +        1 - MPS2=GND, MPS1=GND, MSP0=VCC (+-5V, reset to 0V)
+> +        2 - MPS2=GND, MPS1=VCC, MSP0=GND (+-2.5V, reset to 0V)
+> +        3 - MPS2=GND, MPS1=VCC, MSP0=VCC (0V to 10, reset to 0V)
+> +        4 - MPS2=VCC, MPS1=GND, MSP0=GND (0V to 10V, reset to 5V)
+> +        5 - MPS2=VCC, MPS1=GND, MSP0=VCC (0V to 5V, reset to 0V)
+> +        6 - MPS2=VCC, MPS1=VCC, MSP0=GND (0V to 5V, reset to 2.5V)
+> +        7 - MPS2=VCC, MPS1=VCC, MSP0=VCC (0V to 5V, reset to 0V, enables SoftSpan)
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1, 2, 3, 4, 5, 6, 7]
+> +    default: 7
+> +
+> +  io-channels:
+> +    description:
+> +      ADC channel to monitor voltages and temperature at the MUXOUT pin.
+> +    maxItems: 1
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+> +
+> +patternProperties:
+> +  "^channel@[0-3]$":
+> +    $ref: dac.yaml
+> +    type: object
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      reg:
+> +        description: The channel number representing the DAC output channel.
+> +        maximum: 3
+> +
+> +      adi,toggle-mode:
+> +        description:
+> +          Set the channel as a toggle enabled channel. Toggle operation enables
+> +          fast switching of a DAC output between two different DAC codes without
+> +          any SPI transaction.
+> +        type: boolean
+> +
+> +      output-range-microvolt:
+
+Could be helpful to add a description that says this property is only allowed when
+SoftSpan is enabled rather than requiring people to reason through the logic.
+
+> +        oneOf:
+> +          - items:
+> +              - const: 0
+> +              - enum: [5000000, 10000000]
+> +          - items:
+> +              - const: -5000000
+> +              - const: 5000000
+> +          - items:
+> +              - const: -10000000
+> +              - const: 10000000
+> +          - items:
+> +              - const: -2500000
+> +              - const: 2500000
+
+           default: [0, 5000000]
+
+> +
+> +    required:
+> +      - reg
+> +
+> +    allOf:
+> +      - if:
+> +          properties:
+> +            adi,manual-span-operation-config:
+> +              const: 7
+> +        then:
+> +          patternProperties:
+> +            "^channel@[0-3]$":
+> +              required: [output-range-microvolt]
 
 
---8Wkwgm2LZxTD6wYX
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This logic doesn't look right to me. If adi,manual-span-operation-config
+is not 7, then SoftSpan is disabled, so we should have:
 
-On Tue, Jul 02, 2024 at 02:28:27AM +0900, Hironori KIKUCHI wrote:
-> On Sun, Jun 30, 2024 at 11:17=E2=80=AFPM Conor Dooley <conor@kernel.org> =
-wrote:
-> > On Sat, Jun 29, 2024 at 05:26:56PM +0900, Hironori KIKUCHI wrote:
-> > > On Sat, Jun 29, 2024 at 1:27=E2=80=AFAM Conor Dooley <conor@kernel.or=
-g> wrote:
-> > > > On Fri, Jun 28, 2024 at 02:10:15PM +0900, Hironori KIKUCHI wrote:
+    output-range-microvolt: false
 
-> > > > >            - densitron,dmt028vghmcmi-1a
-> > > > >            - elida,kd50t048a
-> > > > >            - techstar,ts8550b
-> > > > >        - const: sitronix,st7701
-> > > > >
-> > > > >    reg:
-> > > > > -    description: DSI virtual channel used by that screen
-> > > > > +    description: DSI / SPI channel used by that screen
-> > > > >      maxItems: 1
-> > > > >
-> > > > >    VCC-supply:
-> > > > > @@ -43,6 +41,13 @@ properties:
-> > > > >    IOVCC-supply:
-> > > > >      description: I/O system regulator
-> > > > >
-> > > > > +  dc-gpios:
-> > > > > +    maxItems: 1
-> > > > > +    description:
-> > > > > +      Controller data/command selection (D/CX) in 4-line SPI mod=
-e.
-> > > > > +      If not set, the controller is in 3-line SPI mode.
-> > > > > +      Disallowed for DSI.
-> > > > > +
-> > > > >    port: true
-> > > > >    reset-gpios: true
-> > > > >    rotation: true
-> > > > > @@ -57,7 +62,38 @@ required:
-> > > > >    - port
-> > > > >    - reset-gpios
-> > > > >
-> > > > > -additionalProperties: false
-> > > > > +allOf:
-> > > > > +  - $ref: panel-common.yaml#
-> > > > > +  - if:
-> > > > > +      properties:
-> > > > > +        compatible:
-> > > > > +          contains:
-> > > > > +            # SPI connected panels
-> > > > > +            enum:
-> > > > > +              - anbernic,rg28xx-panel
-> > > > > +    then:
-> > > > > +      $ref: /schemas/spi/spi-peripheral-props.yaml
-> > > >
-> > > > I'm not really keen on this. I'd rather see a different binding for=
- the
-> > > > SPI version compared to the MIPI ones. Is doing things like this co=
-mmon
-> > > > for panels? If it is, I'll turn a blind eye..
-> > >
-> > > This might be the first case that a driver supports both DSI and SPI
-> > > for a panel.
-> > > The panel can be either a DSI device or an SPI device.
-> >
-> > The commit message sounded like the panel was capable of doing SPI
-> > instead of DSI, is that not the case and the panel is actually capable
-> > of doing both, just happens to be connected as SPI in this particular
-> > device?
->=20
-> Sorry for the confusion.
-> I think it depends on what the "panel" refers to...
-> Although the "panel driver IC" (ST7701 variant) is capable of doing
-> both, the "panel assy" (including its cable) of the RG28XX only has an
-> SPI interface in its pinout.
-> If the compatible string "rg28xx-panel" represents the assy, then I
-> could say the "panel" only supports SPI, and the other panels only
-> support DSI.
-> But if it only represents a specific LCD panel and its driver IC with
-> control parameters, then it theoretically supports both, and it might
-> be sufficient to just include spi-peripheral-props, as in v1.
-> v1: https://lore.kernel.org/linux-kernel/20240618081515.1215552-2-kikucha=
-n98@gmail.com/
+In that case since individual channels can't have a per-channel
+configuration because SoftSpan is not enabled (unless I am misunderstanding
+the datasheet?).
 
-I thought about it some more, and I think what you've got for this in
-the binding at present is fine. Splitting the binding I think would
-require a select and wouldn't really be any "cleaner" of an
-implementation.
+Also, output-range-microvolt should never be required, even when
+adi,manual-span-operation-config is 7 because there is already a default
+value range (0V to 5V) specified by the adi,manual-span-operation-config
+property.
 
-Thanks,
-Conor.
+I think the correct logic would be:
 
---8Wkwgm2LZxTD6wYX
-Content-Type: application/pgp-signature; name="signature.asc"
+    - if:
+        not:
+          properties:
+            adi,manual-span-operation-config:
+              const: 7
+        then:
+          patternProperties:
+            "^channel@[0-3]$":
+              properties:
+                output-range-microvolt: false
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoQeEgAKCRB4tDGHoIJi
-0vvsAP9+fpoFYD3SA3hRRGAIfCwJ3EiGoPOw3FcWVA1dtXs6FwEA7OBNrPnGxdQo
-DSBupiUCLvbAS0u7Q+v/iLTAaozWdAY=
-=4eFZ
------END PGP SIGNATURE-----
-
---8Wkwgm2LZxTD6wYX--
 
