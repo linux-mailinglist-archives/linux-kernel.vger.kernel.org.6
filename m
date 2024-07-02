@@ -1,190 +1,109 @@
-Return-Path: <linux-kernel+bounces-238160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 271E6924534
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:19:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4472D924543
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:20:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7ADF28A67A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:19:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0162A28AB67
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85A1B1C004A;
-	Tue,  2 Jul 2024 17:19:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCEA41BF30B;
+	Tue,  2 Jul 2024 17:19:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TFYJSQ4j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A/UKvDnm"
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B29E91BE251;
-	Tue,  2 Jul 2024 17:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2D31BE85B;
+	Tue,  2 Jul 2024 17:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719940749; cv=none; b=Vo/N9Zfxc6SehcUGNvOYtKVPIHplKwSzd5WLp5XG6Lmg9LTkmNHMsW/OklEDr6l+vTQbQZyDmpsa0HNdYxE8f7Bfv8q7DFgfnk8z2wIpFidfknnZV5O0kVGHpaNwPBXFlbRPhnhDMu86rNxShGsKceC9wVlXLdXFwdCcwASy7ug=
+	t=1719940794; cv=none; b=QOBBfKaFubkVKORTGlMDz8AG3bx94L13/5mUKnjMvdDcqooX4z52RAm+ls5+JvKYXdqupyuaFFU/u3Qkp3Jhy2n6QCREn8sh/GLGXdgVdEIml3bSwZSMzcehHIyAoSLTcu8xJfNlIYkm3aIA1i/zMzmC4oaAQR+nAOUdfs2mwBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719940749; c=relaxed/simple;
-	bh=VMmtFC7QyTgjRqS+dVEUQxcZspJ6zLcavmMVHtHX44Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hlPBSBZeUlGyusRdqPqu6MXY21huHZlPsvZ7skC2Jq1z44c+e3A1svDuUryDFkAhJiblV4Q4XdNWhBZ9848qwAW+NmWnZC+OxES/IhpEeR9NmlfoEOJjOz0UWR8bmgoXMZYSK6+R75iNt7ft+4Pp+7mz9Wi5bE7lrmCD2YRo7Jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TFYJSQ4j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E32BC116B1;
-	Tue,  2 Jul 2024 17:19:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719940749;
-	bh=VMmtFC7QyTgjRqS+dVEUQxcZspJ6zLcavmMVHtHX44Y=;
-	h=From:To:Cc:Subject:Date:From;
-	b=TFYJSQ4jPF3Zvl7KrK7x4szkiQSlzlFE8qv0zNaxt4eFNqqB52qZgWzkjizV453SL
-	 iaFlZ9eP7U9wPFYXO/dlvE+CyD/BTF509qON2DtUfMGMG3MlIJwKEc3+yH684k68aN
-	 aAYAeJPlzdamCMEGeGIsRV2axI7zfAW0in1r1A+sgDxDks2Cab9eNAfmVSXQiVgwQJ
-	 Ps8x6RJznae6etrWuyjmxyMGe5QKqrQJHyknYSywzYSBmywKQrtvFEZQt8vb5G1spv
-	 KgaY3VzK+o9mVzDkxW9htJKrSWG9qK4A+kAURZUnUlqu+8nxcwgyfeyjG/fiqscl7J
-	 XnamNPloeaX9w==
-From: Andrii Nakryiko <andrii@kernel.org>
-To: linux-trace-kernel@vger.kernel.org,
-	peterz@infradead.org,
-	rostedt@goodmis.org,
-	mhiramat@kernel.org
-Cc: x86@kernel.org,
-	mingo@redhat.com,
-	tglx@linutronix.de,
-	jpoimboe@redhat.com,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	rihams@fb.com,
-	linux-perf-users@vger.kernel.org,
-	Andrii Nakryiko <andrii@kernel.org>
-Subject: [PATCH v2] perf,x86: avoid missing caller address in stack traces captured in uprobe
-Date: Tue,  2 Jul 2024 10:18:58 -0700
-Message-ID: <20240702171858.187562-1-andrii@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1719940794; c=relaxed/simple;
+	bh=DTrYWF3WX9XTMQJjDxP1P7/Hs6Ylpuj2bLq4FCk9sVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QVQGYt+Sd8L3hTZqC5CC42wKmXZv60w4FmyZrLC5srI7I9LEBpu/hAKdQub17YLDnw/xUDvwzCvq20hJ+zB8HTQM7RYGtlr2G/rfys9lPBpul1IYH2DYGlzjQmiSmJhVIQ7RmnMoOSQKJTEspXAgx6Y+hjfG/vXqQkx9re+/1bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A/UKvDnm; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-25da8a19acaso2083153fac.2;
+        Tue, 02 Jul 2024 10:19:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719940792; x=1720545592; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o+LeKSyNiYZl01CREUkEC5UyawrBHODzePPwogqcsLo=;
+        b=A/UKvDnmv1Ggc5Klp9d6FhqIbNohyc413MVAnBCcXvdQ1CpJFfev8iR4zk3+F+J/cx
+         a8dRcQxDkyjvUpJYrZZZZVxQU52W1Pe1as4KDf1Vg4Uo7aE/0LGKG99a4bcFKEZkyRsl
+         td7EWurhDUBJLo+PMgMHr9RcNuqGOVY8JDtSKAuoQ8iSzB92KtIVdKc+548El6TfHwZR
+         41I0ppNuu40jtjvsvysrwMjXF2TO/OaQ1CWM3z3N5ZTNAovXeh9VyUKMZAmhWWnt/ySz
+         4PLCEpo0J9uuY8uSUCVH60UOouiCNh48ryu4/awV6UBFn0Y9kl1oPS546tNJRKPptEgJ
+         fKpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719940792; x=1720545592;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o+LeKSyNiYZl01CREUkEC5UyawrBHODzePPwogqcsLo=;
+        b=UWLa1d+YJ7/tXbXhe7EIwXifbI1tb0DFHDD8B1XBOdmVnAVUyBohbQFv3V3Gi14qfR
+         U/+RuBFG53IfVRwfZGlbQ5WEKWSm/844wwIr1cvvrjVw/hf4JfZThhwkdYJRtYkutrir
+         jf5uT/fC2aSV8LKjMcF5hncughnf4tR9+ifb0MAzq2V+7JJpQXUvf4ha+LM4ctjyoYml
+         yeQp4E5HqDPP8yDFn3JrP1I1hvA46fN3eFPQyNaGqx0oGBaJsIrMwqJ3/lAuDZbkAakT
+         Gg0K1saaG5r8Kp7Y5Zw9TL0wfS9qTOMM9dRWYfVV1TABIm4atFw3rMDpmC/j4zf5o5EG
+         UmnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVKVFozgWLU05sl+kjj5l8AKMkMDOE/7TdCIgHocipsiVonuu1x9QANfJszIqB2PaFIJW4PwIjACx2g3DjbATMR5ScuDM00seZUmjkZXo3+z7z8LrfaTm54486KUc0OTVgmQ0YAew==
+X-Gm-Message-State: AOJu0Yy6Ak9KKFfd1SuexSp2G8/3Oo+j11ZMXo2Ych3kaFoETBbMiEz5
+	S4q8hKKcfQ7nmRsxF1X36SFqZ1gkjAXn6plI5iA/by/RZkBpBVKX
+X-Google-Smtp-Source: AGHT+IERtRWeqDgNUQBksZ3dIu7zuC2ahEwg1n7khkj/y2qPZPJUjYuhjpolYC+OaJl6ryJSpmbWDw==
+X-Received: by 2002:a05:6871:24c2:b0:25e:368:b5a4 with SMTP id 586e51a60fabf-25e0368bc3emr843194fac.18.1719940791783;
+        Tue, 02 Jul 2024 10:19:51 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70838a9a188sm8606794b3a.131.2024.07.02.10.19.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 10:19:51 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Tue, 2 Jul 2024 07:19:50 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Chen Ridong <chenridong@huawei.com>
+Cc: lizefan.x@bytedance.com, hannes@cmpxchg.org, longman@redhat.com,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 -next] cgroup/rstat: add force idle show helper
+Message-ID: <ZoQ2ti7nnz9EJSc3@slm.duckdns.org>
+References: <20240702022822.1032693-1-chenridong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240702022822.1032693-1-chenridong@huawei.com>
 
-When tracing user functions with uprobe functionality, it's common to
-install the probe (e.g., a BPF program) at the first instruction of the
-function. This is often going to be `push %rbp` instruction in function
-preamble, which means that within that function frame pointer hasn't
-been established yet. This leads to consistently missing an actual
-caller of the traced function, because perf_callchain_user() only
-records current IP (capturing traced function) and then following frame
-pointer chain (which would be caller's frame, containing the address of
-caller's caller).
+Hello,
 
-So when we have target_1 -> target_2 -> target_3 call chain and we are
-tracing an entry to target_3, captured stack trace will report
-target_1 -> target_3 call chain, which is wrong and confusing.
+On Tue, Jul 02, 2024 at 02:28:22AM +0000, Chen Ridong wrote:
+...
+>  	if (cgroup_parent(cgrp)) {
+>  		cgroup_rstat_flush_hold(cgrp);
+>  		usage = cgrp->bstat.cputime.sum_exec_runtime;
+>  		cputime_adjust(&cgrp->bstat.cputime, &cgrp->prev_cputime,
+>  			       &utime, &stime);
+> -#ifdef CONFIG_SCHED_CORE
+> -		forceidle_time = cgrp->bstat.forceidle_sum;
+> -#endif
+> +		bstat = cgrp->bstat;
 
-This patch proposes a x86-64-specific heuristic to detect `push %rbp`
-(`push %ebp` on 32-bit architecture) instruction being traced. Given
-entire kernel implementation of user space stack trace capturing works
-under assumption that user space code was compiled with frame pointer
-register (%rbp/%ebp) preservation, it seems pretty reasonable to use
-this instruction as a strong indicator that this is the entry to the
-function. In that case, return address is still pointed to by %rsp/%esp,
-so we fetch it and add to stack trace before proceeding to unwind the
-rest using frame pointer-based logic.
+Please don't copy non-trivial struct like this. Maybe add a pointer which
+points to the bstat to use?
 
-Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
----
-v1->v2:
-  - use native unsigned long for ret_addr (Peter);
-  - add same logic for compat logic in perf_callchain_user32 (Peter).
+Thanks.
 
- arch/x86/events/core.c  | 33 +++++++++++++++++++++++++++++++++
- include/linux/uprobes.h |  2 ++
- kernel/events/uprobes.c |  2 ++
- 3 files changed, 37 insertions(+)
-
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 5b0dd07b1ef1..60821c1ff2f3 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -2833,6 +2833,19 @@ perf_callchain_user32(struct pt_regs *regs, struct perf_callchain_entry_ctx *ent
- 
- 	fp = compat_ptr(ss_base + regs->bp);
- 	pagefault_disable();
-+
-+#ifdef CONFIG_UPROBES
-+	/* see perf_callchain_user() below for why we do this */
-+	if (current->utask) {
-+		struct arch_uprobe *auprobe = current->utask->auprobe;
-+		u32 ret_addr;
-+
-+		if (auprobe && auprobe->insn[0] == 0x55 /* push %ebp */ &&
-+		    !__get_user(ret_addr, (const u32 __user *)regs->sp))
-+			perf_callchain_store(entry, ret_addr);
-+	}
-+#endif
-+
- 	while (entry->nr < entry->max_stack) {
- 		if (!valid_user_frame(fp, sizeof(frame)))
- 			break;
-@@ -2884,6 +2897,26 @@ perf_callchain_user(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs
- 		return;
- 
- 	pagefault_disable();
-+
-+#ifdef CONFIG_UPROBES
-+	/*
-+	 * If we are called from uprobe handler, and we are indeed at the very
-+	 * entry to user function (which is normally a `push %rbp` instruction,
-+	 * under assumption of application being compiled with frame pointers),
-+	 * we should read return address from *regs->sp before proceeding
-+	 * to follow frame pointers, otherwise we'll skip immediate caller
-+	 * as %rbp is not yet setup.
-+	 */
-+	if (current->utask) {
-+		struct arch_uprobe *auprobe = current->utask->auprobe;
-+		unsigned long ret_addr;
-+
-+		if (auprobe && auprobe->insn[0] == 0x55 /* push %rbp/%ebp */ &&
-+		    !__get_user(ret_addr, (const unsigned long __user *)regs->sp))
-+			perf_callchain_store(entry, ret_addr);
-+	}
-+#endif
-+
- 	while (entry->nr < entry->max_stack) {
- 		if (!valid_user_frame(fp, sizeof(frame)))
- 			break;
-diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-index b503fafb7fb3..a270a5892ab4 100644
---- a/include/linux/uprobes.h
-+++ b/include/linux/uprobes.h
-@@ -76,6 +76,8 @@ struct uprobe_task {
- 	struct uprobe			*active_uprobe;
- 	unsigned long			xol_vaddr;
- 
-+	struct arch_uprobe              *auprobe;
-+
- 	struct return_instance		*return_instances;
- 	unsigned int			depth;
- };
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 99be2adedbc0..6e22e4d80f1e 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -2082,6 +2082,7 @@ static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs)
- 	bool need_prep = false; /* prepare return uprobe, when needed */
- 
- 	down_read(&uprobe->register_rwsem);
-+	current->utask->auprobe = &uprobe->arch;
- 	for (uc = uprobe->consumers; uc; uc = uc->next) {
- 		int rc = 0;
- 
-@@ -2096,6 +2097,7 @@ static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs)
- 
- 		remove &= rc;
- 	}
-+	current->utask->auprobe = NULL;
- 
- 	if (need_prep && !remove)
- 		prepare_uretprobe(uprobe, regs); /* put bp at return */
 -- 
-2.43.0
-
+tejun
 
