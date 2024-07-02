@@ -1,84 +1,76 @@
-Return-Path: <linux-kernel+bounces-237719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DB72923D20
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:03:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B42CE923D22
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:04:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F9F6B22C6E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:03:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E2DA281104
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:04:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA71615D5BE;
-	Tue,  2 Jul 2024 12:02:59 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F1E815CD75;
+	Tue,  2 Jul 2024 12:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NM7Nr6ER"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C371C686;
-	Tue,  2 Jul 2024 12:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98971C686
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 12:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719921779; cv=none; b=ACRw50Iij5Fl9Wsp+Z2TRldEjI7QJliJJoHvO9nN1Ts48LxC01ftaGLgtPmBspOvCE4A2CU2tPLwfUxXClIGWxC03PB6+pMMi06mDcJPOwiDlHVL4REj4uhLwyZOrn3JHm0N7LKP7mkCyA9k3Wx1mhghI+VQtxXjjsCpOsn/KwM=
+	t=1719921848; cv=none; b=jaCsXHeyIhS6twO6HNz8eRWbfDkijRxGneT9fcU5ZLCmDPwlTXOmTAy56szZJ7jzIo5T6MogagYBZDxC8nv3JwFSO1N8SR3Hdh3FShr1fli0pwd7ZAAkle4Kro+PNRSovv/8Qg6BgfruugGLXzms/G/evLve5haPe/xqTK0Ef54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719921779; c=relaxed/simple;
-	bh=0iI8lxDGNyMCXms2D+NpXyjFS1o8mMf1bWr0prHRedA=;
+	s=arc-20240116; t=1719921848; c=relaxed/simple;
+	bh=U6k8vxYF1WQP7pgl6xyCEmERDtMiGkz6FFV4EynGhGI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lL9Azb3ee7zDmufskIAv/jS3WGAtY0I20mJfYO1PwVT15ZkI0cfODe02D9RtTSsDquJTUjw0lJoUe57L3SVzpFuFcSuQ01ZPsgAeTimH1C+4ZsJp2FXGMHlHXufEQvul2+L9juLhNWyqs1tYRlhdXaK3naUFsqPwHv/elFXvJAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 1ABC168AA6; Tue,  2 Jul 2024 14:02:51 +0200 (CEST)
-Date: Tue, 2 Jul 2024 14:02:50 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: Christoph Hellwig <hch@lst.de>, david@fromorbit.com,
-	willy@infradead.org, chandan.babu@oracle.com, djwong@kernel.org,
-	brauner@kernel.org, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
-	linux-mm@kvack.org, john.g.garry@oracle.com,
-	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
-	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org, Zi Yan <zi.yan@sent.com>
-Subject: Re: [PATCH v8 06/10] iomap: fix iomap_dio_zero() for fs bs >
- system page size
-Message-ID: <20240702120250.GA17373@lst.de>
-References: <20240625114420.719014-1-kernel@pankajraghav.com> <20240625114420.719014-7-kernel@pankajraghav.com> <20240702074203.GA29410@lst.de> <20240702101556.jdi5anyr3v5zngnv@quentin>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dB8dOh+zBSxBkXMGl/DTomrZbq2QXIrkaaC7SeZ2jOWolfvoxylXlzPMPLV+ii5D4B1m45sgfL0LMT3MK2F7sqD516iR6wkdLPZWceZ8moAL8ArFVLZb9JD0m0gOMz/RQuvKAtBz05/J03FddCdEB/mNUD0uCXk154JN5WjdxG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NM7Nr6ER; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D03AC116B1;
+	Tue,  2 Jul 2024 12:04:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719921848;
+	bh=U6k8vxYF1WQP7pgl6xyCEmERDtMiGkz6FFV4EynGhGI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NM7Nr6ERvIfvMKmXwK5HRhN/eSBjfJJO0Je2geKQarmSq0axS+TJXPttHFFECbWWp
+	 9vlFyKZoM9kMJw9I2ZFJlD42pRqDB3SVZxNTi+6SpQZqgpClKOkZP5Qd4biCQmOLQg
+	 cLNhmmvYqHKOL+zjHP2wI6B4tgyGeQU2ZpJhCTHHWiFKS4Ht98ZWMw0cuSS9k0tS5X
+	 uJOkyUAeGs+6jkMZ85ZRYudUQjPZ/vvf8jUtBHHmj+r3fRQiPFj9AQy1jNdwOO/eQO
+	 FyySm0G5VJzmd40/B4S7Qul2V1JL/FuQ1SJD+v3/1axqrSS6gSe1JBYfygUjFMUVFx
+	 QzYTklqX6yv4w==
+Date: Tue, 2 Jul 2024 14:04:05 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/8] timers/migration: Read childmask and parent
+ pointer in a single place
+Message-ID: <ZoPstQRns3wl4Bf7@localhost.localdomain>
+References: <20240701-tmigr-fixes-v3-0-25cd5de318fb@linutronix.de>
+ <20240701-tmigr-fixes-v3-5-25cd5de318fb@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240702101556.jdi5anyr3v5zngnv@quentin>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240701-tmigr-fixes-v3-5-25cd5de318fb@linutronix.de>
 
-On Tue, Jul 02, 2024 at 10:15:56AM +0000, Pankaj Raghav (Samsung) wrote:
-> Willy suggested we could use raw pages as we don't need the metadata
-> from using a folio. [0]
+Le Mon, Jul 01, 2024 at 12:18:41PM +0200, Anna-Maria Behnsen a écrit :
+> Reading the childmask and parent pointer is required when propagating
+> changes through the hierarchy. At the moment this reads are spread all over
 
-Ok, that feels weird but I'll defer to his opinion in that case.
+*these
 
-> > > +	/*
-> > > +	 * Max block size supported is 64k
-> > > +	 */
-> > > +	WARN_ON_ONCE(len > ZERO_PAGE_64K_SIZE);
-> > 
-> > 
-> > A WARN_ON without actually erroring out here is highly dangerous. 
+> the place which makes it harder to follow.
 > 
-> I agree but I think we decided that we are safe with 64k for now as fs 
-> that uses iomap will not have a block size > 64k. 
+> Move those reads to a single place to keep code clean.
 > 
-> But this function needs some changes when we decide to go beyond 64k
-> by returning error instead of not returning anything. 
-> Until then WARN_ON_ONCE would be a good stop gap for people developing
-> the feature to go beyond 64k block size[1]. 
+> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
 
-Sure, but please make it return an error and return that instead of
-just warning and going beyond the allocated page.
-
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
