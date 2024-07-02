@@ -1,113 +1,105 @@
-Return-Path: <linux-kernel+bounces-238016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43AFF924228
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:18:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA6AA92422C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:18:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7669E1C2370E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:18:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 460C7B28D98
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:18:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C3751BC062;
-	Tue,  2 Jul 2024 15:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y6snYiGe"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC46B1BC07A;
+	Tue,  2 Jul 2024 15:18:11 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2CE51BB69C;
-	Tue,  2 Jul 2024 15:18:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9051BA883;
+	Tue,  2 Jul 2024 15:18:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719933483; cv=none; b=A8w+BVcTB7V1BopZbLct4UY+39JjekaGypxz/S+rHH61DjKv+RidDWsuSc6iLb0OXVjXB0MnE0wcqLKS8aGCKXoY+12RRqTzfOib9BMU0lbkee1duVW+rKPb2cb9C7j1gvja5iMwMZ/C8q6uP1vVAqrZk5TDnnRg6lqRRXO8cp4=
+	t=1719933491; cv=none; b=uua3549IAefJUoFHKAaTsT9N+Yc/Tk09g8QfFKi4+WE4byBhDjjZ2nN6/4eRgXAzBCwa0jcnpu37HC/ZpIgADNBk+sciOWWo+0g2OpOQO5Hga2JQxS5b5+wffQQ1YEiY27UCFaOUtCrojlSVPYbRq04CqUymTR28j4m99Lt9YDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719933483; c=relaxed/simple;
-	bh=0TTPDgoTlftH5Xx9Yej6Fvq0f2C1Wrvm/WNEckwSl1A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K5N5p7V+/Qvt8c4CSwOyw6iq4oYitcEDNxd6NAVbzMQLDoJB5lRirmam24Cc4BRCTSTtcLYMrgorjpmMRrd/qTxsSiWAPM/hAWM5MApOUATof4s/aPUfF9C52faHeKB1e4MZcziQRrentOd+uFE8DdXwAmMj//vM2fro+abm8lY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y6snYiGe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7741CC4AF07;
-	Tue,  2 Jul 2024 15:18:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719933483;
-	bh=0TTPDgoTlftH5Xx9Yej6Fvq0f2C1Wrvm/WNEckwSl1A=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Y6snYiGeve5Jm3Ob/2+M+oOqaX3AR+gwf56AjTnwH3ADblqkTJ+TuP/Ta95UmHPK3
-	 VZp3WIrCT3z3EhVQjPhbEJuBnXgL5Sfcf+78UwIClyiBViIByTWi+5r/K/5HBXgfxr
-	 pR6quB7zBXTQuhVuYVmg91/L9CyWbMoJLwb9afE7YiLpR8iq6zCNbC2q9V1CnJLFsP
-	 yVsmX+1UJZ0tB0wmE9Fm2/vUze3O/FvnjxfzB8Dpltupw7OR4FyArjHKgWzfzBp6My
-	 DbI9UiKHc+z1c52nsE8+Tqwb48qBoy5Mwza0YCAd41//DOaHe+Ywom55dOXe8jzNoM
-	 XL/hePPaz03ew==
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ee7a1ad286so4391141fa.2;
-        Tue, 02 Jul 2024 08:18:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVyrmnVQ5cYHUHgLSwesVDFcug/ilBskPzzPc49CnjlY014qYETK4ko9mmNx2OeYtpdd55KPJzcgSOlPzvH9/B+TF9UOHPrTrvoir3lqg0Jspr0DLtjOdgtoh9WObuHueeWzuht0XorBNWgAMj2v59/DgQyDn0fqNVBMdDYWdOiErVzIQ==
-X-Gm-Message-State: AOJu0YyJcnxsQhmtzp+Y6Ob0G8uMJtJm0Rrv69PTPpmrMVFGo8CbnuzZ
-	6SXCgVuuuGXCUz7Vw+us5TF+WwWHmrV25s41hmjzOxMwIuU5rzE4M0IwkZNUMCXM4JrKH14cVBg
-	WN3crlP8ZbosxTHnwOp8vnoe8pA==
-X-Google-Smtp-Source: AGHT+IH0Yy1gkO6ZKfqNqogCDjZRVek+6RMQmG2JeWbBttUSQOmDTm3VP16BG9r2eRHRNTZ0qjfbPTNWdPI6mLcA83k=
-X-Received: by 2002:a05:6512:ad2:b0:52c:df4e:3343 with SMTP id
- 2adb3069b0e04-52e8266ee75mr5683563e87.16.1719933481802; Tue, 02 Jul 2024
- 08:18:01 -0700 (PDT)
+	s=arc-20240116; t=1719933491; c=relaxed/simple;
+	bh=4+6bb590DiNQ9QG+pwIJYPGpZqN7VtIX8tkAx55gPe4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LktNupwGCbF5HRp4cXrBmnWH4o8pKpdDmk7fHOzAWKfSx5Yl2MMbLxv0ulREmv6IZQgws6Uyw6/7fkgZhqRJGaxmC9P9fmKE5WW2uTrcldxlAI7JDGbACcvF9TquBjWTLF4eX7npThwgLV4w0bz0sP/iCRo5oqfGdviKwfepFnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CADA0C116B1;
+	Tue,  2 Jul 2024 15:18:09 +0000 (UTC)
+Date: Tue, 2 Jul 2024 11:18:07 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: "Dmitry V. Levin" <ldv@strace.io>, Vincent Donnefort
+ <vdonnefort@google.com>, mhiramat@kernel.org, kernel-team@android.com,
+ rdunlap@infradead.org, rppt@kernel.org, david@redhat.com,
+ linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-api@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds
+ <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v23 3/5] tracing: Allow user-space mapping of the
+ ring-buffer
+Message-ID: <20240702111807.13d2dd2c@rorschach.local.home>
+In-Reply-To: <9a9c8ea4-8e17-4e7e-95fe-7b51441a228c@efficios.com>
+References: <20240510140435.3550353-1-vdonnefort@google.com>
+	<20240510140435.3550353-4-vdonnefort@google.com>
+	<20240630105322.GA17573@altlinux.org>
+	<20240630084053.0b506916@rorschach.local.home>
+	<9a9c8ea4-8e17-4e7e-95fe-7b51441a228c@efficios.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240627-mikrobus-scratch-spi-v5-0-9e6c148bf5f0@beagleboard.org>
- <20240627-mikrobus-scratch-spi-v5-1-9e6c148bf5f0@beagleboard.org>
- <20240628162847.GB3143032-robh@kernel.org> <61649bee-f7dc-452c-beb5-cc8ee2179b99@beagleboard.org>
-In-Reply-To: <61649bee-f7dc-452c-beb5-cc8ee2179b99@beagleboard.org>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 2 Jul 2024 09:17:48 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+mxxStZLwUbk9An2pA+Uce+QFjDnnNTMb24m1iMg7B+A@mail.gmail.com>
-Message-ID: <CAL_Jsq+mxxStZLwUbk9An2pA+Uce+QFjDnnNTMb24m1iMg7B+A@mail.gmail.com>
-Subject: Re: [PATCH v5 1/7] dt-bindings: connector: Add mikrobus-connector
-To: Ayush Singh <ayush@beagleboard.org>
-Cc: Mark Brown <broonie@kernel.org>, Vaishnav M A <vaishnav@beagleboard.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nishanth Menon <nm@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, Michael Walle <mwalle@kernel.org>, 
-	Andrew Lunn <andrew@lunn.ch>, jkridner@beagleboard.org, robertcnelson@beagleboard.org, 
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 2, 2024 at 9:14=E2=80=AFAM Ayush Singh <ayush@beagleboard.org> =
-wrote:
->
-> On 6/28/24 21:58, Rob Herring wrote:
->
-> > On Thu, Jun 27, 2024 at 09:56:11PM +0530, Ayush Singh wrote:
-> >> Add DT bindings for mikroBUS interface. MikroBUS is an open standard
-> >> developed by MikroElektronika for connecting add-on boards to
-> >> microcontrollers or microprocessors.
+On Tue, 2 Jul 2024 10:36:03 -0400
+Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
 
-[...]
+> > I can send a patch this week to update it. Or feel free to send a patch
+> > yourself.  
+> 
+> You need to reserve an unused ioctl Code and Seq# range within:
+> 
+> Documentation/userspace-api/ioctl/ioctl-number.rst
 
-> >> +  mikrobus-gpios:
-> >> +    minItems: 1
-> >> +    maxItems: 12
-> >> +
-> >> +  mikrobus-gpio-names:
-> > The GPIO binding does not work this way as the name is in the property.
-> > Either drop if you want to keep the array or you have to do something
-> > like this:
-> >
-> > pwm-gpios
-> > int-gpios
-> > rx-gpios
-> >
-> > Really, the intention was for connectors to use gpio-map property to
-> > renumber GPIOs relative to the connector.
->
-> Can you point me to what you mean by gpio-map property?
+Ug, it's been so long, I completely forgot about that file.
 
-It is defined in the DT specification.
+Thanks for catching this.
 
-Rob
+> 
+> Otherwise this duplicate will confuse all system call instrumentation
+> tooling.
+
+Agreed, what if we did this then:
+
+-- Steve
+
+diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
+index a141e8e65c5d..9a97030c6c8d 100644
+--- a/Documentation/userspace-api/ioctl/ioctl-number.rst
++++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+@@ -186,6 +186,7 @@ Code  Seq#    Include File                                           Comments
+ 'Q'   all    linux/soundcard.h
+ 'R'   00-1F  linux/random.h                                          conflict!
+ 'R'   01     linux/rfkill.h                                          conflict!
++'R'   20-2F  linux/trace_mmap.h
+ 'R'   C0-DF  net/bluetooth/rfcomm.h
+ 'R'   E0     uapi/linux/fsl_mc.h
+ 'S'   all    linux/cdrom.h                                           conflict!
+diff --git a/include/uapi/linux/trace_mmap.h b/include/uapi/linux/trace_mmap.h
+index bd1066754220..c102ef35d11e 100644
+--- a/include/uapi/linux/trace_mmap.h
++++ b/include/uapi/linux/trace_mmap.h
+@@ -43,6 +43,6 @@ struct trace_buffer_meta {
+ 	__u64	Reserved2;
+ };
+ 
+-#define TRACE_MMAP_IOCTL_GET_READER		_IO('T', 0x1)
++#define TRACE_MMAP_IOCTL_GET_READER		_IO('R', 0x20)
+ 
+ #endif /* _TRACE_MMAP_H_ */
 
