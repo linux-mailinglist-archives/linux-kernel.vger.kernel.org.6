@@ -1,95 +1,60 @@
-Return-Path: <linux-kernel+bounces-237765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37155923DDD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:31:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0F90923DE0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:31:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B663D1F2646A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:31:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0F9F1C247D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:31:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1EC7173326;
-	Tue,  2 Jul 2024 12:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5011741C8;
+	Tue,  2 Jul 2024 12:29:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KyybAynO";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9AK5dBZc";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KyybAynO";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9AK5dBZc"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="V7uvODUv"
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C2A171E66
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 12:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2BC9171E66;
+	Tue,  2 Jul 2024 12:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719923363; cv=none; b=csH1CypQZRfCD6pMNvOLzSmAhz98+tHCulCgORN2+bQQxpv1ys7S4iKWItop0c0KEEqZvMYvrzDWBm2JVfV+uDVOKEi9SPgKMzqsJJMZNxpbo3uqOJSPk6IQF8Wuteuizu7kIdbrLpQD7OVUe7uRt39YNVZ+46klRsnX81oKebE=
+	t=1719923385; cv=none; b=gv93UpmUYqA2jjrfuO4Yg7F8N8TFfOncIFkf5x0G1GYhbxKoX9y23s5XU2hYZ1OAKPY5CjAyp9U2L3tdRb8FA55hDGGT8HkbdpnxgQGqnOj0qqNmW3/Cx8mUA+ndrsn1zT7jiy6cyHrOSLgeCHYzh/AQxFzUjfVHXT1ygIG1Vzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719923363; c=relaxed/simple;
-	bh=knt9h1bNKFVzxNBi29IcnJroZqNRZV1ZrBU8I5F/6z0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cRTLuRI4CURzPW4ByTnuKTSGTn31FVQjC7d6O+jFobyOHOjb5HUOkIafEhdyB1O8i2YuVVEhAhrFqQQPLYK2A0xrzrXc4GEBh5i9T34WeY+X4LbzalornnP9Bf2lxaZ296/M6Sb4n2IKC5+8pYJEdGZL6Odr5pkMcX2hv/NqsjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KyybAynO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9AK5dBZc; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KyybAynO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9AK5dBZc; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1719923385; c=relaxed/simple;
+	bh=ub8nrZjAshM9poetjgAQUtT06ScuMMiWEri2/MbcD54=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TFAzjZlGaH/TDe4pz6GG8JYjhBBodtcYpLCCPwQdEhJyqqQGB8ve0/2erlIYG8pkAAxit4H5qmd2PYo84bwPUH+y/7yIlCAK29t4KbcGjGdU/usnfF34yHYcJSGQyHAciiMISxZ65Gmk2ePLoiMGMDireStF6wDAOBiUO1ao768=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=V7uvODUv; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id C4E2E12000A;
+	Tue,  2 Jul 2024 15:29:36 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru C4E2E12000A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1719923376;
+	bh=dRg6152bEnilxNCIoE5zA/wmMBOuMDTu0AIr+x54D4w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
+	b=V7uvODUvcYFk1y+du59hc3HqKuLLj3yNsdafT7CCsNDKzRrbsv5Tl2d0LD0zNxjm8
+	 KnM7JwvrnrSvgCAiaLKf3893wX9dwIVfPp5+onT2rRWv0sNZy53dmjdHurpXJ3W5QQ
+	 Oa/cneThEv0vMriZYaJrWtlWSZWTZRfEjlL/smfLMphKsfvYxqNa5xGuBdMC+Cym52
+	 zkthJ+HqkJkhDXW7vM9qAbIL3Ssjy9IHfoAnUnaPLNjELGVqBZfboX+/6RgANbIbJ0
+	 /Vt/C1uQkRYJkvDl6ISRIoiC+j5w9VH3Jlri+LJo5SXZP2NyZjVQxbhxJctfdXfTMQ
+	 lTBexzl94ZRGg==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A195221A14;
-	Tue,  2 Jul 2024 12:29:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1719923359; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=a6hd/yIJamDo19Skutb6LGAvGT3lcHTFzsw/VnEF6dc=;
-	b=KyybAynOwrCV2p6/0iCEh8BCHpjp7SW6UM+thDkUN/EDXuAO+TirIzUJdPJ2uSwlqfY1h7
-	2EJSu9WxKcnV++pPb7Thb6SejDEzr1p6keD6fn0OwJbPqbwzaXrsSpxoCpJBiV3PRlM9af
-	qJ0OZE/Pzex5IpLOGc2vwllwFHrTTcg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1719923359;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=a6hd/yIJamDo19Skutb6LGAvGT3lcHTFzsw/VnEF6dc=;
-	b=9AK5dBZcs96xDA9805X9l33uAXxkno4jniF0YM7nkCxKE8QpMKKZw4n/841Cxc0Ow16tba
-	KASEjoeKdsuE0bCQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=KyybAynO;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=9AK5dBZc
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1719923359; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=a6hd/yIJamDo19Skutb6LGAvGT3lcHTFzsw/VnEF6dc=;
-	b=KyybAynOwrCV2p6/0iCEh8BCHpjp7SW6UM+thDkUN/EDXuAO+TirIzUJdPJ2uSwlqfY1h7
-	2EJSu9WxKcnV++pPb7Thb6SejDEzr1p6keD6fn0OwJbPqbwzaXrsSpxoCpJBiV3PRlM9af
-	qJ0OZE/Pzex5IpLOGc2vwllwFHrTTcg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1719923359;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=a6hd/yIJamDo19Skutb6LGAvGT3lcHTFzsw/VnEF6dc=;
-	b=9AK5dBZcs96xDA9805X9l33uAXxkno4jniF0YM7nkCxKE8QpMKKZw4n/841Cxc0Ow16tba
-	KASEjoeKdsuE0bCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 53D7513A9A;
-	Tue,  2 Jul 2024 12:29:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8MY3E5/yg2aDaQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 02 Jul 2024 12:29:19 +0000
-Message-ID: <1093718b-5ec1-4eab-996b-f688bf9a1c03@suse.de>
-Date: Tue, 2 Jul 2024 14:29:18 +0200
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Tue,  2 Jul 2024 15:29:36 +0300 (MSK)
+Received: from [172.28.129.1] (100.64.160.123) by
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Tue, 2 Jul 2024 15:29:36 +0300
+Message-ID: <66278f9c-3dde-420a-b446-69693690dc10@salutedevices.com>
+Date: Tue, 2 Jul 2024 15:29:27 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,129 +62,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/fbdev-dma: Fix framebuffer mode for big endian
- devices
-To: Thomas Huth <thuth@redhat.com>, dri-devel@lists.freedesktop.org,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>,
- Javier Martinez Canillas <javierm@redhat.com>
-References: <20240702121737.522878-1-thuth@redhat.com>
+Subject: Re: [PATCH v2 2/3] dt-bindings: pwm: amlogic: Add optional
+ power-domains
+To: Rob Herring <robh@kernel.org>
+CC: <ukleinek@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<neil.armstrong@linaro.org>, <khilman@baylibre.com>, <jbrunet@baylibre.com>,
+	<martin.blumenstingl@googlemail.com>, <hkallweit1@gmail.com>,
+	<linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <kernel@salutedevices.com>
+References: <20240701172016.523402-1-gnstark@salutedevices.com>
+ <20240701172016.523402-3-gnstark@salutedevices.com>
+ <20240701183631.GA349021-robh@kernel.org>
 Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20240702121737.522878-1-thuth@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: George Stark <gnstark@salutedevices.com>
+In-Reply-To: <20240701183631.GA349021-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: A195221A14
-X-Spam-Score: -5.50
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-5.50 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_LOW(-1.00)[suse.de:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com,ffwll.ch,redhat.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 186277 [Jul 02 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: gnstark@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 21 0.3.21 ebee5449fc125b2da45f1a6a6bc2c5c0c3ad0e05, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;100.64.160.123:7.1.2;salutedevices.com:7.1.1;smtp.sberdevices.ru:7.1.1,5.0.1;127.0.0.199:7.1.2, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/02 07:59:00 #25796134
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-Hi
+Hello Rob
 
-Am 02.07.24 um 14:17 schrieb Thomas Huth:
-> The drm_mode_legacy_fb_format() function only generates formats suitable
-> for little endian devices. switch to drm_driver_legacy_fb_format() here
-> instead to take the device endianness into consideration, too.
->
-> Suggested-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Signed-off-by: Thomas Huth <thuth@redhat.com>
+Thanks for the review.
 
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+On 7/1/24 21:36, Rob Herring wrote:
+> On Mon, Jul 01, 2024 at 08:20:15PM +0300, George Stark wrote:
+>> On newer SoCs, the PWM can require a power-domain to operate so add it
+>> as optional.
+> 
+> If required, then how is it optional?
 
-Thank you for taking the time to make the patch for fbdev-dma. I'll take 
-care of merging both patches into the correct branches.
+Newly adding SoC's PWM definitely requires power-domains, older SoCs
+don't have dedicated power-domain for that that kind of periphery.
+But I can't say other new SoCs won't require it too that's why I made it
+by a separate patch. And squash the power-domians patch into main one
+is ok too.
 
-Best regards
-Thomas
+> 
+> If the 'newer SoCs' means the one you just added, then this should be
+> squashed into the prior patch with a conditional schema making it
+> required for the new compatible.
 
-> ---
->   Note: Patch has only been compile-tested since I lack an environment
->         for testing it. But it's the same fix as I required for the
->         drm_mode_legacy_fb_format() in drm_fbdev_generic.c / drm_fbdev_ttm.c
->         so I think this should be fine.
->
->   drivers/gpu/drm/drm_fbdev_dma.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/drm_fbdev_dma.c b/drivers/gpu/drm/drm_fbdev_dma.c
-> index 97ef6300d47e..fdef4a2f883f 100644
-> --- a/drivers/gpu/drm/drm_fbdev_dma.c
-> +++ b/drivers/gpu/drm/drm_fbdev_dma.c
-> @@ -101,7 +101,8 @@ static int drm_fbdev_dma_helper_fb_probe(struct drm_fb_helper *fb_helper,
->   		    sizes->surface_width, sizes->surface_height,
->   		    sizes->surface_bpp);
->   
-> -	format = drm_mode_legacy_fb_format(sizes->surface_bpp, sizes->surface_depth);
-> +	format = drm_driver_legacy_fb_format(dev, sizes->surface_bpp,
-> +					     sizes->surface_depth);
->   	buffer = drm_client_framebuffer_create(client, sizes->surface_width,
->   					       sizes->surface_height, format);
->   	if (IS_ERR(buffer))
+> 
+>>
+>> Signed-off-by: George Stark <gnstark@salutedevices.com>
+>> ---
+>>   Documentation/devicetree/bindings/pwm/pwm-amlogic.yaml | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/pwm/pwm-amlogic.yaml b/Documentation/devicetree/bindings/pwm/pwm-amlogic.yaml
+>> index da22cb3ed878..c814d88748dd 100644
+>> --- a/Documentation/devicetree/bindings/pwm/pwm-amlogic.yaml
+>> +++ b/Documentation/devicetree/bindings/pwm/pwm-amlogic.yaml
+>> @@ -60,6 +60,9 @@ properties:
+>>       minItems: 1
+>>       maxItems: 2
+>>   
+>> +  power-domains:
+>> +    maxItems: 1
+>> +
+>>     "#pwm-cells":
+>>       const: 3
+>>   
+>> -- 
+>> 2.25.1
+>>
 
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
+Best regards
+George
 
