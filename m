@@ -1,89 +1,109 @@
-Return-Path: <linux-kernel+bounces-238514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A66BD924B70
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:17:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6993924B72
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:18:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6128D2907FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:17:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D67061C20A32
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905A91C0920;
-	Tue,  2 Jul 2024 22:09:20 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCFB71C093F;
+	Tue,  2 Jul 2024 22:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="GlEy/DVA"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA7B1B6A6A
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 22:09:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12681C0937;
+	Tue,  2 Jul 2024 22:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719958160; cv=none; b=LXyJRZdW+dCYRiZLt9IAP9L8HivdA7jXhNviuDC3X3Z/K6fPNqQ7I8wjicFQQ5x38lGHp6umOlOOeAYyKnR2igAOlrZbHQvDXBobI3OknzL01I182RVJdH4WDLFnwbZZ8nw7jm3d11crO7/puCC4hHDwsEBKq9ZNTqiHrgCpyik=
+	t=1719958180; cv=none; b=kJoQOe56gWv9GVZr1zwmpXbWxtIW5uRPvCqjz8Xdm3mYE0je5K65K8IFizUV1TCgJcfs4J1w58vHV7fVOwAI7TFBbdnQOwn6oKrNeQA5U8YWVsGCJoj4chZzc5LSl9rwCbAad1+n3rULRxLXmot/TsbHdJxjXcceaWgHjB5Opao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719958160; c=relaxed/simple;
-	bh=DFSD+Dzwv2mh8jBCiuOSVWAEqRjEmTrmWxZhzxgNbxM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=HLVVK8mDP/KzG+n+0zrQA2KKDAM8LVK7sWuX55ErsOmwNHlwfr6CZlZ9HaEkvTUexQSTC1ODqzZGOtOh145CpjCYYWtwghXEcIwAfKXnDUGaS91H/LSIyyzap3g3pwwApe1epQikf6iPFLkHMbyrdPRNJ9iTq4VGsoQJU9t1/rU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav314.sakura.ne.jp (fsav314.sakura.ne.jp [153.120.85.145])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 462M8nSc061721;
-	Wed, 3 Jul 2024 07:08:49 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav314.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav314.sakura.ne.jp);
- Wed, 03 Jul 2024 07:08:49 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav314.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 462M8nlt061716
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Wed, 3 Jul 2024 07:08:49 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <98dcfbda-6237-4bf6-bc66-6f31cf12f678@I-love.SAKURA.ne.jp>
-Date: Wed, 3 Jul 2024 07:08:47 +0900
+	s=arc-20240116; t=1719958180; c=relaxed/simple;
+	bh=HneT7Zg0Pf23OwjE62Awq/LcjB5/GI8zOXPmaFXRTgM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=rGxux8287JgfYyOE5HtIV1PUaAqoYYha+KVyHvQpPWdc5Lcs8TcFhzCwanNe1JRrgL7tUjDKgVu7X5rqk+LLbWLNJOFZDerlOIVUZioQAWkx2r4q7ENzGfmvJpZGV4ZzMUnAzI0CcZstNg9g0ZHTwmcXTscuvQ8FYGVXOpk66OQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=GlEy/DVA; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1719958173;
+	bh=1DMbAfswIQcxH5Q12ImA4L+b9UxvSpiTqVZ53v+IvhI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=GlEy/DVAtrc+wTkc9ktUD7tlT/+I2Y9dVHtxZyAtHEP38OtUCE0XxMUG+n8YKffSO
+	 n/yC2/gavDniVcxSuKe+YnD+Qyuqg0bsj2J1yIE1DJRLDtonFCVtSQsTUpNIbmdXzd
+	 XuyqOFi+gS+fVb0YhFjKF+iIrmc9MU2NCVvv21nngLY2tgjy/fD60TKd2QwXDRVx5Q
+	 ACEZZ8OJ1pHsK8D2Z7YuBg/J59biyEL90Bhi1OvY61FqMt65vaX6P4Nr3fkpbVNmDn
+	 A1Jr5y5zoLdFJzqOQrOD024m/aLCPwuwNDhjWjtiI0ShuGTpRoP1Ff4qKFLY0EflW8
+	 hT+v6+mHalzQw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WDHBf6pH5z4wx6;
+	Wed,  3 Jul 2024 08:09:30 +1000 (AEST)
+Date: Wed, 3 Jul 2024 08:09:29 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Paul Menzel <pmenzel@molgen.mpg.de>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the mm-hotfixes tree
+Message-ID: <20240703080929.319d3e52@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [mm?] possible deadlock in __mmap_lock_do_trace_released
-To: syzbot+16b6ab88e66b34d09014@syzkaller.appspotmail.com,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Axel Rasmussen <axelrasmussen@google.com>
-References: <0000000000002be09b061c483ea1@google.com>
-Content-Language: en-US
-Cc: linux-mm <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>,
-        Nicolas Saenz Julienne <nsaenzju@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <0000000000002be09b061c483ea1@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/=uLm2ThrxjEsSbDbsMPY7l3";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-The local lock itself will be removed by
+--Sig_/=uLm2ThrxjEsSbDbsMPY7l3
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-mm: mmap_lock: replace get_memcg_path_buf() with on-stack buffer
+Hi all,
 
-but is there possibility that this bpf program forms an infinite
-recursion (kernel stack overflow) bug?
+In commit
 
-On 2024/07/03 3:54, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    a12978712d90 selftests/bpf: Move ARRAY_SIZE to bpf_misc.h
-> git tree:       bpf-next
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=130457fa980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=736daf12bd72e034
-> dashboard link: https://syzkaller.appspot.com/bug?extid=16b6ab88e66b34d09014
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=125718be980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14528876980000
+  e968e6d21d03 ("lib/build_OID_registry: avoid non-destructive substitution=
+ for Perl < 5.13.2 compat")
 
+Fixes tag
+
+  Fixes: 5ef6dc08cfde ("lib/build_OID_registry: don't mention the full path=
+ of
+
+has these problem(s):
+
+  - Subject has leading but no trailing parentheses
+  - Subject has leading but no trailing quotes
+
+Please do not split Fixes tags over more than one line.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/=uLm2ThrxjEsSbDbsMPY7l3
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaEepkACgkQAVBC80lX
+0Gw75Af8CTrF1A8Igob1jit9YI5K2ceQQaK+82rKIbMJcvXWzdzvTclXR+yVb7oz
+gpGy0hHeXRBRt16ddGnDZXUGTYo9z2YE1YhqOWmh5QfJkUaxWIPKMjKXDOOpJ9Vf
+pG8ddeg6ZeTf8X09AyKWcBbE9Fv8kMi62DNRkJsJeVOg4QGZxxvCDc2Tv0MRYZpt
+O7Vncqldu3r4HxkoRUUGOrB2WxlehkQ5q2nyZc9gBDKXMLnONP2ex83VelDdhAOv
+1dssMI94nUxOQ8kJEuSsiVmSKnwd9WGKdPCIwEhq2EWbLO6oub4DL4VMZ9K2R1eq
+3zIyw/PcnIsQe4kNJre7RX+4LwLv7A==
+=wuYU
+-----END PGP SIGNATURE-----
+
+--Sig_/=uLm2ThrxjEsSbDbsMPY7l3--
 
