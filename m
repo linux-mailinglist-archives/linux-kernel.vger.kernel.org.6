@@ -1,208 +1,177 @@
-Return-Path: <linux-kernel+bounces-237945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6C4E9240EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:31:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BB759240F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:31:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F120283F6E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:31:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECDDDB280F7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4AD1BA86C;
-	Tue,  2 Jul 2024 14:30:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803BA1BA07C;
+	Tue,  2 Jul 2024 14:31:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XcjrS/mU"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="LOA4i/QO"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AF91B47B5
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 14:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E940CBE7F
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 14:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719930652; cv=none; b=Y5Cdwv587CGC0S6zpBCZYAN8X/DIRry8mQQm0K2CXgo8022MEYqQBHRwsOpWjX0gIcbeb7rndJt2evCHOh9H8rlbKXoklSJyKUDJ+1BYxasaYd8m+kIIpf0Edel/y2WEd9gJaHXFkRKkHTIKUZk9/J1UAXGEZeEFgzEuG+WXVwU=
+	t=1719930682; cv=none; b=e90zPM6HQ2IRKeBlULJaKnSQkF71CZmwFei+aiAZYZaPQNKiDPqaPjLF4Ox6pYoqzBJuZ/oXx2jNO0+Qk9vIyq7yydElFdwhj/3Ff0T130ltShmZ8sxliOzPJvDhuett0+3gBa+A10rpC5UA+t7JCea1igAJfXvoEBuztO6w0mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719930652; c=relaxed/simple;
-	bh=nPsWzSKNKWp6syDtdY7Ir2nt0wTvI1SQEd/GjSGs6hs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N8ml6aqx320zsLZnofeh+ccQbTyi0lhlmbjM4nKjjYKlTd9R38hy5VZ9ZZEZUf7VxxeuOPgTBuZvv9T65pmz6KKWPOcmq9IgR7r3czgZ35b4O10bFV5rg+totoHBxyymT6WuUTauJF9lBNfuloAON+O1J4orQaJ3mJsnv9GTu3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XcjrS/mU; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57d119fddd9so23706a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 07:30:50 -0700 (PDT)
+	s=arc-20240116; t=1719930682; c=relaxed/simple;
+	bh=l6JVGMlNyYRkcFYfdqOo5/r/SI3XCX2R3K6D4nyaWZY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gInlzBFS77nV3TN9Vpq67wHlhJJ0QFMObW0jkKEWsq6+u+nv5lga6faBQyPalQ0H7wmVmTSITbQ+1XczLuatQqhOQWQMGaIfmmwXlUGvDoQkcs9Fw9ptP1xoi4RzuN8ZT0G99wPSh0qLHZG77eMun96GLSYkqkhD8cE7szqXzH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=LOA4i/QO; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ec52fbb50aso51044611fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 07:31:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719930649; x=1720535449; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3jM7/wfZzza6LzDSng98O/sFMouLELQtFerEOq9E8OA=;
-        b=XcjrS/mUBdohB1KNhGJQfJf/nbZ8kwgOfO6qBmU7gseA2VjYs3KYNg6P3qjdS6kXwA
-         t3PYUEXsAYNAnugIOeyWNrMKC9zpbt9E2WcvB3YJqqb45ymsEt1oYukBzuoT48ERCr13
-         qAhDw+AsJhrb54yNrOORg0LQz50mBF2K7N645UDwGtgq3FLU/FUwoCEkGz8KC/gfnEPh
-         kCjhKxR/KPHv8ud5NsMekoA8HF6CNdf2M9HPr5BKCrCkxZhD6UFov63lSjr16CW4Qv/0
-         UUNHiPyslXVCt/BKP8SCP6MSQOYal4roNuMJgSUBSneb1BxDv8FD0LAV+td72x/VG8LW
-         /vnA==
+        d=suse.com; s=google; t=1719930677; x=1720535477; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pjc/BRxjcmiCb2253U5dycj6Bj9X7JTZEyKzIJ2pbhE=;
+        b=LOA4i/QOYICnJmjuN0EUJHZ6GJXeJeNJ+aunGKLYfCh8MXWk0RicbsuZx4qepVkmBw
+         Qvu5LTC9JLWjSiuLLhhoHYirPqj1XI3CSkRP4G8xaqFkfBXh9mlZZDbbC4TsJ+qApc1b
+         SWzDaWe99WZJ5SsW50fXBSGkLpr4LrHVnBf6v1lWhepKNxTFRBWj3xS/GlqAJ4/mj4hs
+         cFBi1XHukHvmnbsXXQrg15OJSpz1fPWGJr+flNpI8Df9dtT8/pIRD7lZOU9AYzeholb7
+         MbHyY2WpP4N1xWIuTPdWl94VMELkpyIY/K5JJA7+68EVKlgnYnis6ovtBiiVlSbSBuC2
+         8Qug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719930649; x=1720535449;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3jM7/wfZzza6LzDSng98O/sFMouLELQtFerEOq9E8OA=;
-        b=iCO6/1TCGcYQTUNsNX43PR9Nwcqltke8ojIIvW5TELM4Hse5m281SZoj+tsQRSDp+1
-         fybDFK1mQ2GaTFjDmrT8neTrjhmR1xxNKluSiBxt2DBf5FPB7W0TbcBCf7WkqT4x2O5K
-         x3L6qdrSu4+eR3Et7KKG1PhLG7v8UqubGK1oUDzGm36Gy8IrYniDY27PTG7DK6/LxA0c
-         rI9ukEw+xf7PxmtmOB0osf8+5LJC+k4wG5nbyxaMzMuBuD0S5d93nBMseqGD1ZDV0KS4
-         4NrjWzUuob+GeIxiYPmmhyF5uDmX76CmRKXb/GfqyZ52E4gRCfhGNcNkh9rMYVDod0eU
-         P7SA==
-X-Forwarded-Encrypted: i=1; AJvYcCXUrieindYI8d25+C71hMytKZSvo7uGqE9iIkgV+lbYOOJxWJVjGrKDB+NuDhZ0uWPJkd6xcbWVr5y7BTgVxVEnnai7b3fxlx6TsqUJ
-X-Gm-Message-State: AOJu0YzrO1/gKwbBN+sQ/2/qNJym2QA8VX9/Lif11hPPnzMBfzBDtoh1
-	HU7dBnfzDaDal/6Nws48JZiWHArUOVBeqFqZ/uBKufmWnxheug6wIOYoiB6/Ty4e8hhwDBBx0ze
-	3Rdxxf+qYMX2BokhhOXBJjiYxbVmru7YeLRJC
-X-Google-Smtp-Source: AGHT+IG6q9qlZv6p0XsjYtQr/2CJh2iWJHZfafuRVFcTNadBZxk7tzb9cfayzAyvnfb859R1NpQn1uwJAUI6SXHDoq4=
-X-Received: by 2002:a50:f68b:0:b0:58b:e3b:c5d8 with SMTP id
- 4fb4d7f45d1cf-58c61e8924fmr10222a12.0.1719930648903; Tue, 02 Jul 2024
- 07:30:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719930677; x=1720535477;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pjc/BRxjcmiCb2253U5dycj6Bj9X7JTZEyKzIJ2pbhE=;
+        b=MXISEQ7SlvcUDRBeJs9VpEpUDRpCWNC8jzavNWQ+W3+O1ilBi+2KnxLhLMNgyE/q4Q
+         GFs43cf17cR2ShgVSsJGnoS3sgXoilOp8NQunOb4DHh9U2isT6W55bG8KvlevDsUKGRZ
+         SC25K5ndaxSpP6Hqg9e1W9xMqtIluFWljff5A88baBLf6+xKqiHSKvNuXIy7knjqA0V6
+         cDGSb4dqjhGVrArOR5F+kgf4U2RNSLjx1aBoiu0X4wCEI2gZn0RepvQqr0MJWP0mrU1T
+         S20UGjGTB3k6PqbQoWuOxItvijyDY81BKubntJA/QVB1Na3ItdPPZCzUsQFisc8LnWgH
+         Qm6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVk46pP4VEbFOcc8ktMsCm6j5es+7A47c3CPxyxNFinJMKUWk5lJHqB0jZHpZhUF9AqAbHLXbAtuustVamZxRhx0qXk0WdaVi3/Zta4
+X-Gm-Message-State: AOJu0YwZuFRnNfeHExTtqFiRYsaW1/XMOKthR9+nlaQnpPlB5iiS6YEK
+	lz+w2Y7KoDgsEhZ/YFmqfzuplGgyVERQ6/pAaYd12q9ownyPmJQMpSs0SKYlrLgmHTOJ56MeevY
+	F
+X-Google-Smtp-Source: AGHT+IFo6KTiQ1JrCqd5r6y21NRg87CBVANurgUAb5IOP4DgbPWsyqy655pzyYd7G2J9dP9SRSrrhg==
+X-Received: by 2002:a2e:a889:0:b0:2ec:558d:4e0a with SMTP id 38308e7fff4ca-2ee5e393e16mr80931611fa.19.1719930677016;
+        Tue, 02 Jul 2024 07:31:17 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-72c6c7f6021sm6729746a12.71.2024.07.02.07.31.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jul 2024 07:31:16 -0700 (PDT)
+Date: Tue, 2 Jul 2024 16:31:09 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH printk v2 18/18] printk: nbcon: Add function for printers
+ to reacquire ownership
+Message-ID: <ZoQPLe-VogelU4Jm@pathway.suse.cz>
+References: <20240603232453.33992-1-john.ogness@linutronix.de>
+ <20240603232453.33992-19-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240628003253.1694510-1-almasrymina@google.com> <20240628003253.1694510-12-almasrymina@google.com>
-In-Reply-To: <20240628003253.1694510-12-almasrymina@google.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 2 Jul 2024 16:30:37 +0200
-Message-ID: <CANn89iLRRaf31svCM9KUChwmKo53T9TTKayr3_bnbUu+Fuej7g@mail.gmail.com>
-Subject: Re: [PATCH net-next v15 11/14] net: add SO_DEVMEM_DONTNEED setsockopt
- to release RX frags
-To: Mina Almasry <almasrymina@google.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, "David S. Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
-	Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
-	Nikolay Aleksandrov <razor@blackwall.org>, Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, 
-	Shailend Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst <jeroendb@google.com>, 
-	Praveen Kaligineedi <pkaligineedi@google.com>, Willem de Bruijn <willemb@google.com>, 
-	Kaiyuan Zhang <kaiyuanz@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603232453.33992-19-john.ogness@linutronix.de>
 
-On Fri, Jun 28, 2024 at 2:33=E2=80=AFAM Mina Almasry <almasrymina@google.co=
-m> wrote:
->
-> Add an interface for the user to notify the kernel that it is done
-> reading the devmem dmabuf frags returned as cmsg. The kernel will
-> drop the reference on the frags to make them available for reuse.
->
-> Signed-off-by: Willem de Bruijn <willemb@google.com>
-> Signed-off-by: Kaiyuan Zhang <kaiyuanz@google.com>
-> Signed-off-by: Mina Almasry <almasrymina@google.com>
->
-> ---
->
-> v10:
-> - Fix leak of tokens (Nikolay).
->
-> v7:
-> - Updated SO_DEVMEM_* uapi to use the next available entry (Arnd).
->
-> v6:
-> - Squash in locking optimizations from edumazet@google.com. With his
->   changes we lock the xarray once per sock_devmem_dontneed operation
->   rather than once per frag.
->
-> Changes in v1:
-> - devmemtoken -> dmabuf_token (David).
-> - Use napi_pp_put_page() for refcounting (Yunsheng).
-> - Fix build error with missing socket options on other asms.
->
-> ---
->  arch/alpha/include/uapi/asm/socket.h  |  1 +
->  arch/mips/include/uapi/asm/socket.h   |  1 +
->  arch/parisc/include/uapi/asm/socket.h |  1 +
->  arch/sparc/include/uapi/asm/socket.h  |  1 +
->  include/uapi/asm-generic/socket.h     |  1 +
->  include/uapi/linux/uio.h              |  4 ++
->  net/core/sock.c                       | 61 +++++++++++++++++++++++++++
->  7 files changed, 70 insertions(+)
->
-
->
-> +struct dmabuf_token {
-> +       __u32 token_start;
-> +       __u32 token_count;
-> +};
->  /*
->   *     UIO_MAXIOV shall be at least 16 1003.1g (5.4.1.1)
->   */
-> diff --git a/net/core/sock.c b/net/core/sock.c
-> index 9abc4fe259535..040c66ac26244 100644
-> --- a/net/core/sock.c
-> +++ b/net/core/sock.c
-> @@ -124,6 +124,7 @@
->  #include <linux/netdevice.h>
->  #include <net/protocol.h>
->  #include <linux/skbuff.h>
-> +#include <linux/skbuff_ref.h>
->  #include <net/net_namespace.h>
->  #include <net/request_sock.h>
->  #include <net/sock.h>
-> @@ -1049,6 +1050,62 @@ static int sock_reserve_memory(struct sock *sk, in=
-t bytes)
->         return 0;
+On Tue 2024-06-04 01:30:53, John Ogness wrote:
+> Since ownership can be lost at any time due to handover or
+> takeover, a printing context _must_ be prepared to back out
+> immediately and carefully. However, there are scenarios where
+> the printing context must reacquire ownership in order to
+> finalize or revert hardware changes.
+> 
+> One such example is when interrupts are disabled during
+> printing. No other context will automagically re-enable the
+> interrupts. For this case, the disabling context _must_
+> reacquire nbcon ownership so that it can re-enable the
+> interrupts.
+> 
+> Provide nbcon_reacquire() for exactly this purpose. It allows a
+> printing context to reacquire ownership using the same priority
+> as its previous ownership.
+> 
+> Note that after a successful reacquire the printing context
+> will have no output buffer because that has been lost. This
+> function cannot be used to resume printing.
+> 
+> --- a/kernel/printk/nbcon.c
+> +++ b/kernel/printk/nbcon.c
+> @@ -838,6 +838,38 @@ bool nbcon_exit_unsafe(struct nbcon_write_context *wctxt)
 >  }
->
-> +#ifdef CONFIG_PAGE_POOL
-> +static noinline_for_stack int
-> +sock_devmem_dontneed(struct sock *sk, sockptr_t optval, unsigned int opt=
-len)
+>  EXPORT_SYMBOL_GPL(nbcon_exit_unsafe);
+>  
+> +/**
+> + * nbcon_reacquire - Reacquire a console after losing ownership while printing
+> + * @wctxt:	The write context that was handed to the write callback
+> + *
+> + * Since ownership can be lost at any time due to handover or takeover, a
+> + * printing context _must_ be prepared to back out immediately and
+> + * carefully. However, there are scenarios where the printing context must
+> + * reacquire ownership in order to finalize or revert hardware changes.
+> + *
+> + * This function allows a printing context to reacquire ownership using the
+> + * same priority as its previous ownership.
+> + *
+> + * Note that after a successful reacquire the printing context will have no
+> + * output buffer because that has been lost. This function cannot be used to
+> + * resume printing.
+> + */
+> +void nbcon_reacquire(struct nbcon_write_context *wctxt)
+
+I think about calling it "nbcon_reacquire_nobuf" to make it clear
+that it is not a complete recovery.
+
 > +{
-> +       unsigned int num_tokens, i, j, k, netmem_num =3D 0;
-> +       struct dmabuf_token *tokens;
-> +       netmem_ref netmems[16];
-> +       int ret =3D 0;
+> +	struct nbcon_context *ctxt = &ACCESS_PRIVATE(wctxt, ctxt);
+> +	struct console *con = ctxt->console;
+> +	struct nbcon_state cur;
 > +
-> +       if (sk->sk_type !=3D SOCK_STREAM || sk->sk_protocol !=3D IPPROTO_=
-TCP)
-> +               return -EBADF;
-
-This might use sk_is_tcp() helper.
-
+> +	while (!nbcon_context_try_acquire(ctxt))
+> +		cpu_relax();
 > +
-> +       if (optlen % sizeof(struct dmabuf_token) ||
-> +           optlen > sizeof(*tokens) * 128)
-> +               return -EINVAL;
-> +
-> +       tokens =3D kvmalloc_array(128, sizeof(*tokens), GFP_KERNEL);
+> +	wctxt->outbuf = NULL;
+> +	wctxt->len = 0;
+> +	nbcon_state_read(con, &cur);
+> +	wctxt->unsafe_takeover = cur.unsafe_takeover;
 
-This allocates 8192 bytes even for small optlen ?
+The nbcon_state_read() makes it a bit tricky. I would hide it into
+a helper script:
 
-Probably no big deal, no need to send a new version.
+void nbcon_write_context_set_buf(struct nbcon_write_context *wctxt,
+				 char *buf, unsigned int len)
+{
+	struct nbcon_context *ctxt = &ACCESS_PRIVATE(wctxt, ctxt);
+	struct console *con = ctxt->console;
+	struct nbcon_state cur;
 
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+	wctxt->outbuf = buf;
+	wctxt->len = len;
+	nbcon_state_read(con, &cur);
+	wctxt->unsafe_takeover = cur.unsafe_takeover;
+}
+
+It would help to keep it in sync with nbcon_emit_next_record().
+
+> +}
+> +EXPORT_SYMBOL_GPL(nbcon_reacquire);
+
+Otherwise, it looks good. I do not resist on the proposed changes.
+
+Best Regards,
+Petr
 
