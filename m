@@ -1,65 +1,47 @@
-Return-Path: <linux-kernel+bounces-237388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D23791F04B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:34:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 031B591F04F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:35:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4AFBB261CF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:34:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 199471C2412D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A8D148FE6;
-	Tue,  2 Jul 2024 07:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dm983W0E"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88924144D0B;
+	Tue,  2 Jul 2024 07:35:12 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78536130487;
-	Tue,  2 Jul 2024 07:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE14174047;
+	Tue,  2 Jul 2024 07:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719905647; cv=none; b=dN7eWF+hHS8yaSYVROJwsM+s2DbImL1xFsz8gcJLwfUBaQ6iBj5k3RekWE8tUz48X5DEtkIrC7EDTU9i48OhhQzw3hVQ2KKtxuvSqxaViazltDRzwe69JPDcOQ8f4HG2pHkY6RC0gmeDuUuZUZpr4AwnViggfw+wBjQG5xJDvVc=
+	t=1719905712; cv=none; b=VgtTnHJH+d3w8hEnTvVLNAZOAHuQQnoe2v1u81YOeQQHLYceUneV+epPaVwSXLNW9nIWKZug2LA+66sFrfIktSifbOy9bbciq8cTkWmdNPrQQckmlxyH2KtWaWdl57fhK3jRmO8drMaLA0D0nLl681zvwxwOP1vEBCFEaiYfThA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719905647; c=relaxed/simple;
-	bh=lA80AihC2eqTMmimgkJN1h68e1M+V+/njypX+oT5/ds=;
+	s=arc-20240116; t=1719905712; c=relaxed/simple;
+	bh=0yNWfrktYXxBCVqkz3LsRguM6Od88HtvY6n70FtxqUI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FtjRg4ZAxczZa2T2gkAJ9oqf2IhKjy5e0dnXFZ1X38awXTB0aB1BRkmFeX70+GEF0HRcqsb4//DDtDj0tddF/o5e7KyGryPvqkWlWdCzhISlWlHBr/Xk4Daypw+vM5Bmeu2Zn+JCXzPRvY/uIzpk/y/xTVDw2A/40gStoyQ0YLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dm983W0E; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=OzDUA4LrKNelvvsq9HHXvMDITh/bxFk1FZFMFL1EbZ4=; b=dm983W0EMoSrZuYM4RGD/m4lo5
-	uFVyGbtwzQFgeBUhCEMg4kAJlTt16PlXY0ctrCgu3qQYGuylcv7uxpuvm4E71DhXlNrQHChAFeKGg
-	NhxQ4MZskhWNK3i8PdWOp1j9LbkLvLREgLwrgRyuQ8/b+6FeDX3Af22WBOlt90Wt0rkkhppMKkByS
-	D6uWUV8uPx+IgJxye8mlRIeS7qtYU25uPCS2TO2fiIl1fMOIBkMoIZIKkSZV+LekzHl33Z4HSeoKC
-	+VBarxoVgKjKSIu5ep5IetNbm+H1yD6EEAtOKc+gObU18sSoz41bq2UuGp7ty+YS9D0HkwSo5wsFq
-	ZdvRJi0A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sOY1b-00000005sVe-38ce;
-	Tue, 02 Jul 2024 07:34:03 +0000
-Date: Tue, 2 Jul 2024 00:34:03 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Zhang Yi <yi.zhang@huaweicloud.com>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	djwong@kernel.org, hch@infradead.org, brauner@kernel.org,
-	chandanbabu@kernel.org, John Garry <john.g.garry@oracle.com>,
-	jack@suse.cz, yi.zhang@huawei.com, chengzhihao1@huawei.com,
-	yukuai3@huawei.com
-Subject: Re: [PATCH -next v6 1/2] xfs: reserve blocks for truncating large
- realtime inode
-Message-ID: <ZoOta_ot6UNvB6i5@infradead.org>
-References: <20240618142112.1315279-1-yi.zhang@huaweicloud.com>
- <20240618142112.1315279-2-yi.zhang@huaweicloud.com>
- <ZoIDVHaS8xjha1mA@dread.disaster.area>
- <b27977d3-3764-886d-7067-483cea203fbe@huaweicloud.com>
- <ZoKie9aZV0sHIbA8@dread.disaster.area>
+	 Content-Type:Content-Disposition:In-Reply-To; b=K1UM1Bnr07nwHu6GgUWRb9T/6B7ueMTDwxk6aXC2hSbt8DI0tngvAK/6Rk2IW/fjGW4LDof4mNzWoBi8ypJQ3MeKMm73gHLie4uJBoBj+EuWeHXXTiHubRJsVrALQ2a844j2wjr8z/Uqm21PKozPz98bpPmx7pwYRUyXkCZBgFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 9631968AFE; Tue,  2 Jul 2024 09:35:04 +0200 (CEST)
+Date: Tue, 2 Jul 2024 09:35:04 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Thorsten Blum <thorsten.blum@toblux.com>, jack@suse.cz,
+	surenb@google.com, linux-kernel@vger.kernel.org,
+	Sumit Semwal <sumit.semwal@linaro.org>, linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH] dma-buf: Remove unnecessary kmalloc() cast
+Message-ID: <20240702073504.GA29323@lst.de>
+References: <20240630011215.42525-1-thorsten.blum@toblux.com> <20240701232634.0bddb542ddea123b48dcabdf@linux-foundation.org> <20240702064017.GA24838@lst.de> <e0f384b0-6913-4224-a3ea-bdae784f5dab@amd.com> <20240702003357.6bfd1d918c56d536bb664c37@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,25 +50,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZoKie9aZV0sHIbA8@dread.disaster.area>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20240702003357.6bfd1d918c56d536bb664c37@linux-foundation.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Mon, Jul 01, 2024 at 10:35:07PM +1000, Dave Chinner wrote:
-> Sorry, but I don't really care what either John or Christoph say on
-> this matter: xfs_inode_has_bigrtalloc() is recently introduced
-> technical debt that should not be propagated further.
+On Tue, Jul 02, 2024 at 12:33:57AM -0700, Andrew Morton wrote:
+> Dang, yes, that was a regrettable change.  But hardly the end of the
+> world.  I do think each such alteration should have included a comment
+> to prevent people from going and cleaning them up.
 
-So send a patch to fix it.
-
-> xfs_inode_has_bigrtalloc() needs to be replaced completely with
-> xfs_inode_alloc_unitsize() and any conditional behaviour needed can
-> be based on the return value from xfs_inode_alloc_unitsize(). That
-> works for everything that has an allocation block size larger than
-> one filesystem block, not just one specific RT case.
-
-Only assuming we actually get these larger alloc sizes.  Which right
-now we don't have, and to be honest I'm not sure they are a good
-idea.  The whole larger alloc size thing has been a massive pain
-to deal with, and we'll need good argument for furthering that pain.
+.. or we should have never merged that utter mess ..
 
 
