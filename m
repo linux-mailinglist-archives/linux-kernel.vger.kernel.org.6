@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-238436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7AB8924B01
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:01:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07F91924B06
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:02:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB3CD1C22923
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:01:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A3FB1C2294A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7B017DA29;
-	Tue,  2 Jul 2024 21:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F1D183245;
+	Tue,  2 Jul 2024 21:58:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OHuMQk5n"
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FDDuS4Pj"
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165B717DA09
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 21:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E4B17DA15
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 21:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719957516; cv=none; b=bIZuzkQonKDb3L0QtUg7bNMYjKnkFFFT2qXpQVE+atZSpxUomZBLSfUY8+2Vv3EK1GB511FXo8HTkBJrzY8B699QCwT+1EbNB25gwHbb6zhPhCwZjIBgRCaq1cprQl5DNd8eJVuEXcYwJFp3Eh7UiX238vOmLPS0MCWMRgHg1u4=
+	t=1719957518; cv=none; b=dUlhodjC0h91ftg9gnZWI3iyvn7Ll6S4HpHtJMPhGUz8B2EvONSFv+IDMIVAMrPwEQWxC0e4NKCaNCrCmtNTF92rBV6hTJQkXVNeh+hQ+gmWeiZi7iyiCPRTpGSZ7gJ6+5vGqn677oi+PC6S4FMqFIL4LjUrRbLGfbx0KAonO4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719957516; c=relaxed/simple;
-	bh=hJhE5lsBwgxxOdISpEA8GvMMkT46PJQbLaa7y9GcbT0=;
+	s=arc-20240116; t=1719957518; c=relaxed/simple;
+	bh=rkyHyIRrVxPlQtQIJq+1MS/XFdntI2z6XQ5sFA29ViA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L2hHjJikLQdxCvT3ab19lW7+nDT0BptsGJgVQxcKE+qveS7CNOqjvQMBGfhJmhnKS7IyeG5cykBuzgaYAZVsWB+4wV6lB96etFlWXrJtnvkqD/Ur+3Xwyn8f31lO7NLKphUEcMTZHDbZW3r4Iews/v7WBA8ZO8oOOzEIckM0QHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OHuMQk5n; arc=none smtp.client-ip=209.85.166.41
+	 MIME-Version; b=llraE/dNfTCWVeOMr0YRUKQZNq2GrrD/XMB/6tQpfBK/wZGHAWpBne90KFjZYYr/2tp0dA/KtbKNpyPSzDj6zDm7ru1W7uvBnxx9rYS7xnJoj+YNoFrjIqNU4pFvyVKTeCX3sVmWd8uVgqTP4raPtQlIE0rzr6Vk4iFDdWgy9E8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FDDuS4Pj; arc=none smtp.client-ip=209.85.166.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-7f63db7a69cso142335839f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 14:58:34 -0700 (PDT)
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-7f649f7868dso113911339f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 14:58:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719957514; x=1720562314; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1719957515; x=1720562315; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IV/+5wwHTeWzOxSke4OB6kYyIW8aBgx7MWxd77xRKcc=;
-        b=OHuMQk5nJfP2czBBtPdCdjsEGXyM5far2IAhWaw8TFFlZRruth+emQjULMeMlIj73u
-         lVXrpfagdWBkQsF0PZx/Tr4R5xspzOPNsxfN8LXrv06Yp564JXaH7CsNaI9caaKvPb9a
-         AXFFV+4O8RakH/b6fy3Z8BIS3f/MScqbm07+2VpoEx7qXFUGWiQ3wbZpg5qlv2KsHXxc
-         Ok4sinJECRVcJGm2kAGEZaCCYbeukYQCH2QUc704T3ZxkZZWQtC+apy+Hf7UhVssi4FY
-         36A9mmT2TPJweWK5Chs4+O7P72AAHEy/G3uGNnMMfFasHJa7+yWpMaP35gB9JjHepbpP
-         r43Q==
+        bh=ixqe2fvQ+p3xJowFXczfx5KdZEaC8a1vzuHPaRlFrmw=;
+        b=FDDuS4PjtkFlT5VXvnbnbapgAvIpDYtoRUVRSm7oId75FzkLx9QgpXETbPxh1qkTaX
+         od5he6XFsQ4SPSGVjIxP6yCmhu0L6G9a/2sPH0xqHvJc7gQ2MvXBZ5QjfpVOSJvDNOho
+         vbScClwrx52RfSgNdcu05nI4FExmAkuvjnX/rnxc9xDNX6liwbf0YLjP5FmTm+apJGMt
+         D1bb4OGOrYzWrOLBXsts+rDRnOZtYT1xoav8SMehvU/5OmPh31c8ORe5ub3iMaNHrrg0
+         rOhNSntsP0Se5lqP+SwOrgLU4qh7nqP5dYc/O+UbUwIJ2xtvIIgUVrcGIS9kUk9y+Np+
+         M//Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719957514; x=1720562314;
+        d=1e100.net; s=20230601; t=1719957515; x=1720562315;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IV/+5wwHTeWzOxSke4OB6kYyIW8aBgx7MWxd77xRKcc=;
-        b=XqkbvUlsfgE7xx8b1Sb26/VE/dPGBa4+TogiSsE3mVzzaJU4CUl85dApvcBVUghL/W
-         nfTSvmge4Y9xB1NR7OhBaw6qCoyQS597bo53Avl1v5JDRwXCvF1el+3bbHSwSvEf/Mxm
-         KXSncrKohtAs2TCYTYTc1WaFftFXxcWPh6s1y9IPu7AU/xmMNIUlNZP0/rsWyq5V28HE
-         kuAocU3SzBHvU13FgsKUFf6hsoEZ3aj+E7PI7opPnKdjr1VlsQLZuYZz7FPjk9RSnkI2
-         yxpXCQbHaYLjjE0q66rA6BGLTskt1Vfc/OpydGNUWctqZSTO7mkL5DNN4xKa5cSIsfJ4
-         Sh1A==
-X-Gm-Message-State: AOJu0YzU71FfNlTQS01EjiX+ORplmZqY5mW0NGBCiQynKOCMEVikdp3v
-	vDQLosUMMiYNbk0HIGsXqQZrekgxTOoWBLuEE2kIie7xcQE6L4X+
-X-Google-Smtp-Source: AGHT+IFIuGEFSJwD0zrikgcy7eyzzh9OMyzELZnPifGHnbyDqr+YvwVITj3dJs9GO2JbYNz3OWCbyA==
-X-Received: by 2002:a6b:5a0e:0:b0:7f6:210c:61b0 with SMTP id ca18e2360f4ac-7f62ee853a4mr1060872939f.20.1719957514134;
-        Tue, 02 Jul 2024 14:58:34 -0700 (PDT)
+        bh=ixqe2fvQ+p3xJowFXczfx5KdZEaC8a1vzuHPaRlFrmw=;
+        b=EueAQZEHkvoLdAIEoX8FeJ9w+MarMU2ZJAfVb50Gf14viOCoO2ChaKVUkznYYFk+7P
+         OXaKZQEMF0OJ4Rs1+3yz0GogeSkm9BNmQww3LUg10nDDkvKGksmwoewrpEyd0mYuT2az
+         AvUTIjjgdVtqMjij1gSdxZhs0ZTFkwwGp4Lsc9UrddQCBW3Kp11Wtak6yyjzgO9gc8Ks
+         Cjlvja8lLGhsyGHxG08NZ4AHzx+JvBJFNXUQWFXpoT9cw+xmxulGitmU9/WtoIZmW6m6
+         K7P95QP8zw4IUsp1LMWxxAExtaeleezCbIj5E0Cvpr01V46SKeQTCHW4aD0FVI89iPKU
+         rh6Q==
+X-Gm-Message-State: AOJu0YwxdXWMGABsU/OwFJY5ygjV9lJZJwM1/7Q9W9jVN3K6FHdkLCSw
+	ZKLZSD2drD4L25V70u+ffQQskMLuo1hMOz3+eY1gQ/27fyq04bus
+X-Google-Smtp-Source: AGHT+IGuF3X4wd/Q+QiMc/SNYxya2QDBND8SXs2NtMYBQ3/4cpFsTf5QXlJhmfj13W/6t+FhpK5Wug==
+X-Received: by 2002:a6b:6f02:0:b0:7f6:1f4c:96d2 with SMTP id ca18e2360f4ac-7f62ed42fbamr1056411939f.0.1719957515370;
+        Tue, 02 Jul 2024 14:58:35 -0700 (PDT)
 Received: from frodo.. (c-73-78-62-130.hsd1.co.comcast.net. [73.78.62.130])
-        by smtp.googlemail.com with ESMTPSA id ca18e2360f4ac-7f61d207fcesm279944739f.51.2024.07.02.14.58.32
+        by smtp.googlemail.com with ESMTPSA id ca18e2360f4ac-7f61d207fcesm279944739f.51.2024.07.02.14.58.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 14:58:33 -0700 (PDT)
+        Tue, 02 Jul 2024 14:58:34 -0700 (PDT)
 From: Jim Cromie <jim.cromie@gmail.com>
 To: daniel.vetter@ffwll.ch,
 	tvrtko.ursulin@linux.intel.com,
@@ -82,9 +82,9 @@ Cc: linux-kernel@vger.kernel.org,
 	joe@perches.com,
 	mcgrof@kernel.org,
 	Jim Cromie <jim.cromie@gmail.com>
-Subject: [PATCH v9 16/52] selftests-dyndbg: add tools/testing/selftests/dynamic_debug/*
-Date: Tue,  2 Jul 2024 15:57:06 -0600
-Message-ID: <20240702215804.2201271-17-jim.cromie@gmail.com>
+Subject: [PATCH v9 17/52] dyndbg-API: promote DYNDBG_CLASSMAP_PARAM to API
+Date: Tue,  2 Jul 2024 15:57:07 -0600
+Message-ID: <20240702215804.2201271-18-jim.cromie@gmail.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240702215804.2201271-1-jim.cromie@gmail.com>
 References: <20240702215804.2201271-1-jim.cromie@gmail.com>
@@ -94,368 +94,330 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add a selftest script for dynamic-debug.  The config requires
-CONFIG_TEST_DYNAMIC_DEBUG=m (and CONFIG_TEST_DYNAMIC_DEBUG_SUBMOD=m),
-which tacitly requires either CONFIG_DYNAMIC_DEBUG=y or
-CONFIG_DYNAMIC_DEBUG_CORE=y
+move the DYNDBG_CLASSMAP_PARAM macro from test-dynamic-debug.c into
+the header, and refine it, by distinguishing the 2 use cases:
 
-ATM this has just basic_tests(), it modifies pr_debug flags in a few
-builtins (init/main, params), counts the callsite flags changed, and
-verifies against expected values.
+1.DYNDBG_CLASSMAP_PARAM_REF
+    for DRM, to pass in extern __drm_debug by name.
+    dyndbg keeps bits in it, so drm can still use it as before
 
-This is backported from another feature branch; the support-fns (thx
-Lukas) have unused features at the moment, they'll get used shortly.
+2.DYNDBG_CLASSMAP_PARAM
+    new user (test_dynamic_debug) doesn't need to share state,
+    decls a static long unsigned int to store the bitvec.
 
-The script enables simple virtme-ng testing:
+__DYNDBG_CLASSMAP_PARAM
+   bottom layer - allocate,init a ddebug-class-param, module-param-cb.
 
-  $> vng --verbose --name v6.8-32-g30d431000676 --user root \
-     --cwd ../.. -a dynamic_debug.verbose=2 -p 4 \
-     ./tools/testing/selftests/dynamic_debug/dyndbg_selftest.sh
-
-virtme: waiting for virtiofsd to start
-virtme: use 'microvm' QEMU architecture
-...
-[    4.136168] virtme-init: Setting hostname to v6.8-32-g30d431000676...
-[    4.240874] virtme-init: starting script
-test_dynamic_debug_submod not there
-test_dynamic_debug not there
-...
-[    4.474435] virtme-init: script returned {0}
-Powering off.
-[    4.529318] ACPI: PM: Preparing to enter system sleep state S5
-[    4.529991] kvm: exiting hardware virtualization
-[    4.530428] reboot: Power down
-
-And add dynamic_debug to TARGETS, so `make run_tests` sees it properly
-
-for the impatient, set TARGETS explicitly:
-
-bash-5.2# make TARGETS=dynamic_debug run_tests
-make[1]: ...
-TAP version 13
-1..1
-[   35.552922] dyndbg: read 3 bytes from userspace
-[   35.553099] dyndbg: query 0: "=_" mod:*
-[   35.553544] dyndbg: processed 1 queries, with 1778 matches, 0 errs
-...
-
-TLDR:
-
-This selftest is slightly naive wrt the init state of call-site flags.
-
-In particular, it fails if class'd pr_debugs have been set
-
-  $ cat /etc/modprobe.d/drm-test.conf
-  options drm dyndbg=class,DRM_UT_CORE,+mfslt%class,DRM_UT_KMS,+mf
-
-By Contract, class'd pr_debugs are protected from alteration by
-default (only by direct "class FOO" queries), so the "=_" logged above
-(TAP version 13) cannot affect the DRM_UT_CORE,KMS pr_debugs.
-
-These class'd flag-settings, added by modprobe, alter the counts of
-flag-matching patterns, breaking the tests' expectations.
+Also clean up and improve comments in test-code, and add
+MODULE_DESCRIPTIONs.
 
 Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
-Co-developed-by: Łukasz Bartosik <ukaszb@chromium.org>
-Signed-off-by: Łukasz Bartosik <ukaszb@chromium.org>
 ---
- MAINTAINERS                                   |   1 +
- tools/testing/selftests/Makefile              |   1 +
- .../testing/selftests/dynamic_debug/Makefile  |   9 +
- tools/testing/selftests/dynamic_debug/config  |   2 +
- .../dynamic_debug/dyndbg_selftest.sh          | 231 ++++++++++++++++++
- 5 files changed, 244 insertions(+)
- create mode 100644 tools/testing/selftests/dynamic_debug/Makefile
- create mode 100644 tools/testing/selftests/dynamic_debug/config
- create mode 100755 tools/testing/selftests/dynamic_debug/dyndbg_selftest.sh
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c9ed48109ff5..e7bb7b1c44c8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7527,6 +7527,7 @@ S:	Maintained
- F:	include/linux/dynamic_debug.h
- F:	lib/dynamic_debug.c
- F:	lib/test_dynamic_debug*.c
-+F:	tools/testing/selftest/dynamic_debug/*
+fixup drm-print.h  add PARAM_REF forwarding macros
+
+with DYNDBG_CLASSMAP_PARAM_REF in the API, add DRM_ variant
+---
+ include/linux/dynamic_debug.h   | 37 ++++++++++++++++-
+ lib/dynamic_debug.c             | 70 ++++++++++++++++++++++-----------
+ lib/test_dynamic_debug.c        | 50 +++++++++--------------
+ lib/test_dynamic_debug_submod.c |  9 ++++-
+ 4 files changed, 110 insertions(+), 56 deletions(-)
+
+diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debug.h
+index 2c6944c0d6cd..19f959f9a6b4 100644
+--- a/include/linux/dynamic_debug.h
++++ b/include/linux/dynamic_debug.h
+@@ -91,7 +91,7 @@ struct ddebug_class_map {
+  * used to validate a "class FOO .." >control command on the module
+  */
+ #define __DYNDBG_CLASSMAP_DEFINE(_var, _maptype, _base, ...)		\
+-	const char *_var##_classnames[] = { __VA_ARGS__ };		\
++	static const char *_var##_classnames[] = { __VA_ARGS__ };	\
+ 	struct ddebug_class_map __aligned(8) __used			\
+ 		__section("__dyndbg_classes") _var = {			\
+ 		.mod = THIS_MODULE,					\
+@@ -164,6 +164,41 @@ struct ddebug_class_param {
+ 	const struct ddebug_class_map *map;
+ };
  
- DYNAMIC INTERRUPT MODERATION
- M:	Tal Gilboa <talgi@nvidia.com>
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index e1504833654d..84edf0bd8e80 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -20,6 +20,7 @@ TARGETS += drivers/s390x/uvdevice
- TARGETS += drivers/net/bonding
- TARGETS += drivers/net/team
- TARGETS += dt
-+TARGETS += dynamic_debug
- TARGETS += efivarfs
- TARGETS += exec
- TARGETS += fchmodat2
-diff --git a/tools/testing/selftests/dynamic_debug/Makefile b/tools/testing/selftests/dynamic_debug/Makefile
-new file mode 100644
-index 000000000000..6d06fa7f1040
---- /dev/null
-+++ b/tools/testing/selftests/dynamic_debug/Makefile
-@@ -0,0 +1,9 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+# borrowed from Makefile for user memory selftests
++/**
++ * DYNDBG_CLASSMAP_PARAM - wrap a dyndbg-classmap with a controlling sys-param
++ * @_name  sysfs node name
++ * @_var   name of the struct classmap var defining the controlled classes
++ * @_flags flags to be toggled, typically just 'p'
++ *
++ * Creates a sysfs-param to control the classes defined by the
++ * classmap.  Keeps bits in a private/static
++ */
++#define DYNDBG_CLASSMAP_PARAM(_name, _var, _flags)			\
++	static unsigned long _name##_bvec;				\
++	__DYNDBG_CLASSMAP_PARAM(_name, _name##_bvec, _var, _flags)
 +
-+# No binaries, but make sure arg-less "make" doesn't trigger "run_tests"
-+all:
++/**
++ * DYNDBG_CLASSMAP_PARAM_REF - wrap a dyndbg-classmap with a controlling sys-param
++ * @_name  sysfs node name
++ * @_bits  name of the module's unsigned long bit-vector, ex: __drm_debug
++ * @_var   name of the struct classmap var defining the controlled classes
++ * @_flags flags to be toggled, typically just 'p'
++ *
++ * Creates a sysfs-param to control the classmap, keeping bitvec in user @_bits.
++ * This lets drm use __drm_debug elsewhere too.
++ */
++#define DYNDBG_CLASSMAP_PARAM_REF(_name, _bits, _var, _flags)		\
++	__DYNDBG_CLASSMAP_PARAM(_name, _bits, _var, _flags)
 +
-+TEST_PROGS := dyndbg_selftest.sh
++#define __DYNDBG_CLASSMAP_PARAM(_name, _bits, _var, _flags)		\
++	static struct ddebug_class_param _name##_##_flags = {		\
++		.bits = &(_bits),					\
++		.flags = #_flags,					\
++		.map = &(_var),						\
++	};								\
++	module_param_cb(_name, &param_ops_dyndbg_classes,		\
++			&_name##_##_flags, 0600)
 +
-+include ../lib.mk
-diff --git a/tools/testing/selftests/dynamic_debug/config b/tools/testing/selftests/dynamic_debug/config
-new file mode 100644
-index 000000000000..d080da571ac0
---- /dev/null
-+++ b/tools/testing/selftests/dynamic_debug/config
-@@ -0,0 +1,2 @@
-+CONFIG_TEST_DYNAMIC_DEBUG=m
-+CONFIG_TEST_DYNAMIC_DEBUG_SUBMOD=m
-diff --git a/tools/testing/selftests/dynamic_debug/dyndbg_selftest.sh b/tools/testing/selftests/dynamic_debug/dyndbg_selftest.sh
-new file mode 100755
-index 000000000000..1be70af26a38
---- /dev/null
-+++ b/tools/testing/selftests/dynamic_debug/dyndbg_selftest.sh
-@@ -0,0 +1,231 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0-only
+ /*
+  * pr_debug() and friends are globally enabled or modules have selectively
+  * enabled them.
+diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
+index 9150e0e5145f..e9a95b0f3757 100644
+--- a/lib/dynamic_debug.c
++++ b/lib/dynamic_debug.c
+@@ -657,6 +657,30 @@ static int ddebug_apply_class_bitmap(const struct ddebug_class_param *dcp,
+ 
+ #define CLASSMAP_BITMASK(width) ((1UL << (width)) - 1)
+ 
++static void ddebug_class_param_clamp_input(unsigned long *inrep, const struct kernel_param *kp)
++{
++	const struct ddebug_class_param *dcp = kp->arg;
++	const struct ddebug_class_map *map = dcp->map;
 +
-+V=${V:=0}  # invoke as V=1 $0  for global verbose
-+RED="\033[0;31m"
-+GREEN="\033[0;32m"
-+YELLOW="\033[0;33m"
-+BLUE="\033[0;34m"
-+MAGENTA="\033[0;35m"
-+CYAN="\033[0;36m"
-+NC="\033[0;0m"
-+error_msg=""
-+
-+function vx () {
-+    echo $1 > /sys/module/dynamic_debug/parameters/verbose
++	switch (map->map_type) {
++	case DD_CLASS_TYPE_DISJOINT_BITS:
++		/* expect bits. mask and warn if too many */
++		if (*inrep & ~CLASSMAP_BITMASK(map->length)) {
++			pr_warn("%s: input: 0x%lx exceeds mask: 0x%lx, masking\n",
++				KP_NAME(kp), *inrep, CLASSMAP_BITMASK(map->length));
++			*inrep &= CLASSMAP_BITMASK(map->length);
++		}
++		break;
++	case DD_CLASS_TYPE_LEVEL_NUM:
++		/* input is bitpos, of highest verbosity to be enabled */
++		if (*inrep > map->length) {
++			pr_warn("%s: level:%ld exceeds max:%d, clamping\n",
++				KP_NAME(kp), *inrep, map->length);
++			*inrep = map->length;
++		}
++		break;
++	}
 +}
+ static int param_set_dyndbg_module_classes(const char *instr,
+ 					   const struct kernel_param *kp,
+ 					   const char *modnm)
+@@ -675,26 +699,15 @@ static int param_set_dyndbg_module_classes(const char *instr,
+ 		pr_err("expecting numeric input, not: %s > %s\n", instr, KP_NAME(kp));
+ 		return -EINVAL;
+ 	}
++	ddebug_class_param_clamp_input(&inrep, kp);
+ 
+ 	switch (map->map_type) {
+ 	case DD_CLASS_TYPE_DISJOINT_BITS:
+-		/* expect bits. mask and warn if too many */
+-		if (inrep & ~CLASSMAP_BITMASK(map->length)) {
+-			pr_warn("%s: input: 0x%lx exceeds mask: 0x%lx, masking\n",
+-				KP_NAME(kp), inrep, CLASSMAP_BITMASK(map->length));
+-			inrep &= CLASSMAP_BITMASK(map->length);
+-		}
+ 		v2pr_info("bits:0x%lx > %s.%s\n", inrep, modnm ?: "*", KP_NAME(kp));
+ 		totct += ddebug_apply_class_bitmap(dcp, &inrep, *dcp->bits, modnm);
+ 		*dcp->bits = inrep;
+ 		break;
+ 	case DD_CLASS_TYPE_LEVEL_NUM:
+-		/* input is bitpos, of highest verbosity to be enabled */
+-		if (inrep > map->length) {
+-			pr_warn("%s: level:%ld exceeds max:%d, clamping\n",
+-				KP_NAME(kp), inrep, map->length);
+-			inrep = map->length;
+-		}
+ 		old_bits = CLASSMAP_BITMASK(*dcp->lvl);
+ 		new_bits = CLASSMAP_BITMASK(inrep);
+ 		v2pr_info("lvl:%ld bits:0x%lx > %s\n", inrep, new_bits, KP_NAME(kp));
+@@ -1161,16 +1174,27 @@ static const char * const ddebug_classmap_typenames[] = {
+ 		  ddebug_classmap_typenames[_cm->map_type]);		\
+ 	})
+ 
+-static void ddebug_sync_classbits(const struct ddebug_class_param *dcp, const char *modname)
++static void ddebug_sync_classbits(const struct kernel_param *kp, const char *modname)
+ {
+-	/* clamp initial bitvec, mask off hi-bits */
+-	if (*dcp->bits & ~CLASSMAP_BITMASK(dcp->map->length)) {
+-		*dcp->bits &= CLASSMAP_BITMASK(dcp->map->length);
+-		v2pr_info("preset classbits: %lx\n", *dcp->bits);
++	struct ddebug_class_param *dcp = kp->arg;
++	unsigned long new_bits;
 +
-+function ddgrep () {
-+    grep $1 /proc/dynamic_debug/control
-+}
++	ddebug_class_param_clamp_input(dcp->bits, kp);
 +
-+function doprints () {
-+    cat /sys/module/test_dynamic_debug/parameters/do_prints
-+}
++	switch (dcp->map->map_type) {
++	case DD_CLASS_TYPE_DISJOINT_BITS:
++		v2pr_info("  %s: classbits: 0x%lx\n", KP_NAME(kp), *dcp->bits);
++		ddebug_apply_class_bitmap(dcp, dcp->bits, 0UL, modname);
++		break;
++	case DD_CLASS_TYPE_LEVEL_NUM:
++		new_bits = CLASSMAP_BITMASK(*dcp->lvl);
++		v2pr_info("  %s: lvl:%ld bits:0x%lx\n", KP_NAME(kp), *dcp->lvl, new_bits);
++		ddebug_apply_class_bitmap(dcp, &new_bits, 0UL, modname);
++		break;
++	default:
++		pr_err("bad map type %d\n", dcp->map->map_type);
++		return;
+ 	}
+-	/* force class'd prdbgs (in USEr module) to match (DEFINEr module) class-param */
+-	ddebug_apply_class_bitmap(dcp, dcp->bits, ~0, modname);
+-	ddebug_apply_class_bitmap(dcp, dcp->bits, 0, modname);
+ }
+ 
+ static void ddebug_match_apply_kparam(const struct kernel_param *kp,
+@@ -1185,9 +1209,9 @@ static void ddebug_match_apply_kparam(const struct kernel_param *kp,
+ 	dcp = (struct ddebug_class_param *)kp->arg;
+ 
+ 	if (map == dcp->map) {
+-		v2pr_info("found kp:%s =0x%lx", kp->name, *dcp->bits);
+-		vpr_cm_info(map, "mapped to:");
+-		ddebug_sync_classbits(dcp, modnm);
++		v2pr_info(" found kp:%s =0x%lx", kp->name, *dcp->bits);
++		vpr_cm_info(map, "  mapped to:");
++		ddebug_sync_classbits(kp, modnm);
+ 	}
+ }
+ 
+diff --git a/lib/test_dynamic_debug.c b/lib/test_dynamic_debug.c
+index ff9b879286d5..b3c6f90b9fe8 100644
+--- a/lib/test_dynamic_debug.c
++++ b/lib/test_dynamic_debug.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * Kernel module for testing dynamic_debug
++ * Kernel module to test/demonstrate dynamic_debug features,
++ * particularly classmaps and their support for subsystems like DRM.
+  *
+  * Authors:
+  *      Jim Cromie	<jim.cromie@gmail.com>
+@@ -35,24 +36,8 @@ module_param_cb(do_prints, &param_ops_do_prints, NULL, 0600);
+ 
+ #define CLASSMAP_BITMASK(width, base) (((1UL << (width)) - 1) << base)
+ 
+-/* sysfs param wrapper, proto-API */
+-#define DYNDBG_CLASSMAP_PARAM_(_model, _flags, _init)			\
+-	static unsigned long bits_##_model = _init;			\
+-	static struct ddebug_class_param _flags##_##_model = {		\
+-		.bits = &bits_##_model,					\
+-		.flags = #_flags,					\
+-		.map = &map_##_model,					\
+-	};								\
+-	module_param_cb(_flags##_##_model, &param_ops_dyndbg_classes,	\
+-			&_flags##_##_model, 0600)
+-#ifdef DEBUG
+-#define DYNDBG_CLASSMAP_PARAM(_model, _flags)  DYNDBG_CLASSMAP_PARAM_(_model, _flags, ~0)
+-#else
+-#define DYNDBG_CLASSMAP_PARAM(_model, _flags)  DYNDBG_CLASSMAP_PARAM_(_model, _flags, 0)
+-#endif
+-
+ /*
+- * Demonstrate/test all 4 class-typed classmaps with a sys-param.
++ * Demonstrate/test both types of classmaps, each with a sys-param.
+  *
+  * Each is 3 part: client-enum decl, _DEFINE, _PARAM.
+  * Declare them in blocks to show patterns of use (repetitions and
+@@ -64,7 +49,7 @@ module_param_cb(do_prints, &param_ops_do_prints, NULL, 0600);
+  * Modules with multiple CLASSMAPS must have enums with distinct
+  * value-ranges, arranged below with explicit enum_sym = X inits.
+  *
+- * Declare all 4 enums now, for different types
++ * Declare all enums now, for different types
+  */
+ 
+ /* numeric input, independent bits */
+@@ -83,12 +68,15 @@ enum cat_disjoint_bits {
+ /* numeric verbosity, V2 > V1 related */
+ enum cat_level_num { V0 = 14, V1, V2, V3, V4, V5, V6, V7 };
+ 
+-/* recapitulate DRM's parent(drm.ko) <-- _submod(drivers,helpers) */
++/*
++ * use/demonstrate multi-module-group classmaps, as for DRM
++ */
+ #if !defined(TEST_DYNAMIC_DEBUG_SUBMOD)
+ /*
+- * In single user, or parent / coordinator (drm.ko) modules, define
+- * classmaps on the client enums above, and then declares the PARAMS
+- * ref'g the classmaps.  Each is exported.
++ * For module-groups of 1+, define classmaps with names (stringified
++ * enum-symbols) copied from above. 1-to-1 mapping is recommended.
++ * The classmap is exported, so that other modules in the group can
++ * link to it and control their prdbgs.
+  */
+ DYNDBG_CLASSMAP_DEFINE(map_disjoint_bits, DD_CLASS_TYPE_DISJOINT_BITS,
+ 		       D2_CORE,
+@@ -107,19 +95,18 @@ DYNDBG_CLASSMAP_DEFINE(map_level_num, DD_CLASS_TYPE_LEVEL_NUM,
+ 		       V0, "V0", "V1", "V2", "V3", "V4", "V5", "V6", "V7");
+ 
+ /*
+- * now add the sysfs-params
++ * for use-cases that want it, provide a sysfs-param to set the
++ * classes in the classmap.  It is at this interface where the
++ * "v3>v2" property is applied to DD_CLASS_TYPE_LEVEL_NUM inputs.
+  */
+-
+-DYNDBG_CLASSMAP_PARAM(disjoint_bits, p);
+-DYNDBG_CLASSMAP_PARAM(level_num, p);
++DYNDBG_CLASSMAP_PARAM(p_disjoint_bits,	map_disjoint_bits, p);
++DYNDBG_CLASSMAP_PARAM(p_level_num,	map_level_num, p);
+ 
+ #else /* TEST_DYNAMIC_DEBUG_SUBMOD */
+-
+ /*
+- * in submod/drm-drivers, use the classmaps defined in top/parent
+- * module above.
++ * the +1 members of a multi-module group refer to the classmap
++ * DEFINEd (and exported) above.
+  */
+-
+ DYNDBG_CLASSMAP_USE(map_disjoint_bits);
+ DYNDBG_CLASSMAP_USE(map_level_num);
+ 
+@@ -180,5 +167,6 @@ static void __exit test_dynamic_debug_exit(void)
+ module_init(test_dynamic_debug_init);
+ module_exit(test_dynamic_debug_exit);
+ 
++MODULE_DESCRIPTION("test/demonstrate dynamic-debug features");
+ MODULE_AUTHOR("Jim Cromie <jim.cromie@gmail.com>");
+ MODULE_LICENSE("GPL");
+diff --git a/lib/test_dynamic_debug_submod.c b/lib/test_dynamic_debug_submod.c
+index 9a893402ce1a..0d15f3ffe466 100644
+--- a/lib/test_dynamic_debug_submod.c
++++ b/lib/test_dynamic_debug_submod.c
+@@ -1,6 +1,9 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Kernel module for testing dynamic_debug
++ * Kernel module to test/demonstrate dynamic_debug features,
++ * particularly classmaps and their support for subsystems, like DRM,
++ * which defines its drm_debug classmap in drm module, and uses it in
++ * helpers & drivers.
+  *
+  * Authors:
+  *      Jim Cromie	<jim.cromie@gmail.com>
+@@ -8,3 +11,7 @@
+ 
+ #define TEST_DYNAMIC_DEBUG_SUBMOD
+ #include "test_dynamic_debug.c"
 +
-+function ddcmd () {
-+    exp_exit_code=0
-+    num_args=$#
-+    if [ "${@:$#}" = "pass" ]; then
-+	num_args=$#-1
-+    elif [ "${@:$#}" = "fail" ]; then
-+        num_args=$#-1
-+	exp_exit_code=1
-+    fi
-+    args=${@:1:$num_args}
-+    output=$((echo "$args" > /proc/dynamic_debug/control) 2>&1)
-+    exit_code=$?
-+    error_msg=$(echo $output | cut -d ":" -f 5 | sed -e 's/^[[:space:]]*//')
-+    handle_exit_code $BASH_LINENO $FUNCNAME $exit_code $exp_exit_code
-+}
-+
-+function handle_exit_code() {
-+    local exp_exit_code=0
-+    [ $# == 4 ] && exp_exit_code=$4
-+    if [ $3 -ne $exp_exit_code ]; then
-+        echo -e "${RED}: $BASH_SOURCE:$1 $2() expected to exit with code $exp_exit_code"
-+	[ $3 == 1 ] && echo "Error: '$error_msg'"
-+        exit
-+    fi
-+}
-+
-+# $1 - pattern to match, pattern in $1 is enclosed by spaces for a match ""\s$1\s"
-+# $2 - number of times the pattern passed in $1 is expected to match
-+# $3 - optional can be set either to "-r" or "-v"
-+#       "-r" means relaxed matching in this case pattern provided in $1 is passed
-+#       as is without enclosing it with spaces
-+#       "-v" prints matching lines
-+# $4 - optional when $3 is set to "-r" then $4 can be used to pass "-v"
-+function check_match_ct {
-+    pattern="\s$1\s"
-+    exp_cnt=0
-+
-+    [ "$3" == "-r" ] && pattern="$1"
-+    let cnt=$(ddgrep "$pattern" | wc -l)
-+    if [ $V -eq 1 ] || [ "$3" == "-v" ] || [ "$4" == "-v" ]; then
-+        echo -ne "${BLUE}" && ddgrep $pattern && echo -ne "${NC}"
-+    fi
-+    [ $# -gt 1 ] && exp_cnt=$2
-+    if [ $cnt -ne $exp_cnt ]; then
-+        echo -e "${RED}: $BASH_SOURCE:$BASH_LINENO check failed expected $exp_cnt on $1, got $cnt"
-+        exit
-+    else
-+        echo ": $cnt matches on $1"
-+    fi
-+}
-+
-+# $1 - trace instance name
-+# #2 - if > 0 then directory is expected to exist, if <= 0 then otherwise
-+# $3 - "-v" for verbose
-+function check_trace_instance_dir {
-+    if [ -e /sys/kernel/tracing/instances/$1 ]; then
-+        if [ "$3" == "-v" ] ; then
-+            echo "ls -l /sys/kernel/tracing/instances/$1: "
-+            ls -l /sys/kernel/tracing/instances/$1
-+        fi
-+	if [ $2 -le 0 ]; then
-+            echo -e "${RED}: $BASH_SOURCE:$BASH_LINENO error trace instance \
-+		    '/sys/kernel/tracing/instances/$1' does exist"
-+	    exit
-+	fi
-+    else
-+	if [ $2 -gt 0 ]; then
-+            echo -e "${RED}: $BASH_SOURCE:$BASH_LINENO error trace instance \
-+		    '/sys/kernel/tracing/instances/$1' does not exist"
-+	    exit
-+        fi
-+    fi
-+}
-+
-+function tmark {
-+    echo $* > /sys/kernel/tracing/trace_marker
-+}
-+
-+# $1 - trace instance name
-+# $2 - line number
-+# $3 - if > 0 then the instance is expected to be opened, otherwise
-+# the instance is expected to be closed
-+function check_trace_instance {
-+    output=$(tail -n9 /proc/dynamic_debug/control | grep ": Opened trace instances" \
-+	    | xargs -n1 | grep $1)
-+    if [ "$output" != $1 ] && [ $3 -gt 0 ]; then
-+        echo -e "${RED}: $BASH_SOURCE:$2 trace instance $1 is not opened"
-+        exit
-+    fi
-+    if [ "$output" == $1 ] && [ $3 -le 0 ]; then
-+        echo -e "${RED}: $BASH_SOURCE:$2 trace instance $1 is not closed"
-+        exit
-+    fi
-+}
-+
-+function is_trace_instance_opened {
-+    check_trace_instance $1 $BASH_LINENO 1
-+}
-+
-+function is_trace_instance_closed {
-+    check_trace_instance $1 $BASH_LINENO 0
-+}
-+
-+# $1 - trace instance directory to delete
-+# $2 - if > 0 then directory is expected to be deleted successfully, if <= 0 then otherwise
-+function del_trace_instance_dir() {
-+    exp_exit_code=1
-+    [ $2 -gt 0 ] && exp_exit_code=0
-+    output=$((rmdir /sys/kernel/debug/tracing/instances/$1) 2>&1)
-+    exit_code=$?
-+    error_msg=$(echo $output | cut -d ":" -f 3 | sed -e 's/^[[:space:]]*//')
-+    handle_exit_code $BASH_LINENO $FUNCNAME $exit_code $exp_exit_code
-+}
-+
-+function error_log_ref {
-+    # to show what I got
-+    : echo "# error-log-ref: $1"
-+    : echo cat \$2
-+}
-+
-+function ifrmmod {
-+    lsmod | grep $1 2>&1>/dev/null || echo $1 not there
-+    lsmod | grep $1 2>&1>/dev/null && rmmod $1
-+}
-+
-+# $1 - text to search for
-+function search_trace() {
-+    search_trace_name 0 1 $1
-+}
-+
-+# $1 - trace instance name, 0 for global event trace
-+# $2 - line number counting from the bottom
-+# $3 - text to search for
-+function search_trace_name() {
-+	if [ "$1" = "0" ]; then
-+	    buf=$(cat /sys/kernel/debug/tracing/trace)
-+	    line=$(tail -$2 /sys/kernel/debug/tracing/trace | head -1 | sed -e 's/^[[:space:]]*//')
-+	else
-+	    buf=$(cat /sys/kernel/debug/tracing/instances/$1/trace)
-+	    line=$(tail -$2 /sys/kernel/debug/tracing/instances/$1/trace | head -1 | \
-+		   sed -e 's/^[[:space:]]*//')
-+	fi
-+	if [ $2 = 0 ]; then
-+	    # whole-buf check
-+	    output=$(echo $buf | grep "$3")
-+	else
-+	    output=$(echo $line | grep "$3")
-+	fi
-+	if [ "$output" = "" ]; then
-+            echo -e "${RED}: $BASH_SOURCE:$BASH_LINENO search for '$3' failed \
-+		    in line '$line' or '$buf'"
-+	    exit
-+	fi
-+	if [ $V = 1 ]; then
-+	    echo -e "${MAGENTA}: search_trace_name in $1 found: \n$output \nin:${BLUE} $buf ${NC}"
-+        fi
-+}
-+
-+# $1 - error message to check
-+function check_err_msg() {
-+    if [ "$error_msg" != "$1" ]; then
-+        echo -e "${RED}: $BASH_SOURCE:$BASH_LINENO error message '$error_msg' \
-+		does not match with '$1'"
-+        exit
-+    fi
-+}
-+
-+function basic_tests {
-+    echo -e "${GREEN}# BASIC_TESTS ${NC}"
-+    ddcmd =_ # zero everything (except class'd sites)
-+    check_match_ct =p 0
-+    # there are several main's :-/
-+    ddcmd module main file */module/main.c +p
-+    check_match_ct =p 14
-+    ddcmd =_
-+    check_match_ct =p 0
-+    # multi-cmd input, newline separated, with embedded comments
-+    cat <<"EOF" > /proc/dynamic_debug/control
-+      module main +mf                   # multi-query
-+      module main file init/main.c +ml  # newline separated
-+EOF
-+    # the intersection of all those main's is hard to track/count
-+    # esp when mixed with overlapping greps
-+    check_match_ct =mf 21
-+    check_match_ct =ml 0
-+    check_match_ct =mfl 6
-+    ddcmd =_
-+}
-+
-+
-+tests_list=(
-+    basic_tests
-+)
-+
-+# Run tests
-+
-+ifrmmod test_dynamic_debug_submod
-+ifrmmod test_dynamic_debug
-+
-+for test in "${tests_list[@]}"
-+do
-+    $test
-+    echo ""
-+done
-+echo -en "${GREEN}# Done on: "
-+date
++MODULE_DESCRIPTION("test/demonstrate dynamic-debug subsystem support");
++MODULE_AUTHOR("Jim Cromie <jim.cromie@gmail.com>");
++MODULE_LICENSE("GPL");
 -- 
 2.45.2
 
