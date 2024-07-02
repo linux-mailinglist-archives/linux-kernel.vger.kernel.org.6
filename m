@@ -1,100 +1,153 @@
-Return-Path: <linux-kernel+bounces-237543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2456923AA5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:50:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5EF7923ABD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:53:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39F05B23EA2
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:50:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 404521F22D7D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D69E157495;
-	Tue,  2 Jul 2024 09:50:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0348E157A74;
+	Tue,  2 Jul 2024 09:52:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="eifLgXRW"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="hNZOWcX3"
+Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B7A15748B;
-	Tue,  2 Jul 2024 09:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C2C15748F;
+	Tue,  2 Jul 2024 09:52:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719913828; cv=none; b=dFGY4zbTmCQmrZFQk/kj9Kbf69Rd8GAwHzEJQ/gsBHXOstgvw8v3BGKtV/4y4bzOXMljV4zqG+vLd+TMFzvItMPlVIaNsAmXR0HbFOvTyhMdYH0hTuj6Vu78oQRapwqq99YESdeBa49Muo7qwuSO10e4hyckEC2xnhGpceEmsrM=
+	t=1719913970; cv=none; b=EMoNblCn7Kc9ke06ixeuz/wGbVGwqjgyuTnKRRasz7b5/2B4vjJLiFpYkQoy+uOj4TphqzUjJmptvSP+B2K7mUcdL5C0hV79tqDtkZVZZMp5W+NISrmDpTr/EEwYcHKr5BPbwN17W8n9AgJGovx4xOlHKBkPYe98h0Alw4DIkOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719913828; c=relaxed/simple;
-	bh=FkcdLSdW9xocNBg7uzxx+yfN9x9ctxVGXVfohvNj1KQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=n9M5YTrWz91BMEmY3a5nqd999DSmPRzJ0V9Kvcaj0yeOSGq9+ktwu+8+9IT1/zVSsF6Hyey80ZDGFV9DBwCy8ZTFdH54JbsJ3vGrwoGjChORA8Tx5eRodFRP+eO6Xmw1h6DJ6j7sYlPe5OUSbE3B2jvVcHLu1vYST90JTMXeQCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=eifLgXRW; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719913815; x=1720518615; i=markus.elfring@web.de;
-	bh=FkcdLSdW9xocNBg7uzxx+yfN9x9ctxVGXVfohvNj1KQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=eifLgXRW5eOWwmP5DwgEI0g+L5Tu00nrGwdMdzIKD43sQJlNGJ4mgENEyI0ZtHzg
-	 K63v2AiHUKFPgQLLEXp5RxKGJ9Oo/IorI1APfw9Ky00eH5HBHc+tr/+jEKcMdn2gx
-	 TiY6q4kwbwtfGcs5KY5dvhIAQJXE0Dy32spTDvvg2nenAbDPID95afSqq6rUY2U5S
-	 DBH3qYpRaJ6Dd4NdoQprkmmqJL+nZoos4uGCiC5YKSjdegoVhkkwyfABW/wjCG442
-	 fvMUqcDGNfg9ejf6Ify+nqjUbWRIKusx9r0yP8xlQO8HbsSw6ArU7uY79U6Egfavv
-	 Ra7bl6HDHOmwj4HKDQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mrfp8-1s3asN2Rt6-00cXCM; Tue, 02
- Jul 2024 11:50:15 +0200
-Message-ID: <56575b8b-5721-4179-8566-6218c9affbd8@web.de>
-Date: Tue, 2 Jul 2024 11:50:11 +0200
+	s=arc-20240116; t=1719913970; c=relaxed/simple;
+	bh=bxm7EwGm4U7hZabbWvg8Mgu7xEnH4BGn9uR6qJR2Fg0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YLoqY1r6+nnneXDubJGH2n7kKmfhMfTKgQaRe5Je6BBPcMexr2QhrVymd9e9vdCA5TOEJL156RTkcQ5wz4CTTANSkm7UiuPAUUjMhQO3H4UQygGIU7im95prs/31SY0i6yQil3Jzk/rq6fpDqrZvUh3t2Tg5w16pKxCvpdh4KoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=hNZOWcX3; arc=none smtp.client-ip=109.73.34.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
+Received: from mx1.t-argos.ru (localhost [127.0.0.1])
+	by mx1.t-argos.ru (Postfix) with ESMTP id 09A0D100003;
+	Tue,  2 Jul 2024 12:52:27 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
+	t=1719913947; bh=zivgzMCNQd/zVFarZ2SxkTXpeBtz2aMNAkA+qBWI4m0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=hNZOWcX33q8Ds50Sv4Rn4agriI1Y+ZFoAsZUtRteaZR6fJp3lhlUpfh8wsYfxg9Ri
+	 uIXfHeIYr1UCoIBx6eT6ovY776IX55o7tHC6MkrYyX4xNIbhEGuc2O3Tlr6HthmJ53
+	 OpTuu5AL2/mPG/J7V5l+4RjrH00aGLuEbfrNs0N5GuIRG9X7tfpG9e1ZO1sHLJo28N
+	 aVVJ9Kw17ZiMi47pxbH/EoNC0mFxrHdO8/BRuZFOinpBVsYUXDGls8YdJEZavkhFaI
+	 6J3G+wjajosJt61AIY5hDxxzMpnxDkPTJmeTI7lB2aWeVpJWNE5zfsdA+To2AYB2Vt
+	 r9fpmhHh4angg==
+Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
+	by mx1.t-argos.ru (Postfix) with ESMTP;
+	Tue,  2 Jul 2024 12:51:20 +0300 (MSK)
+Received: from localhost.localdomain (172.17.215.5) by ta-mail-02
+ (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 2 Jul 2024
+ 12:50:56 +0300
+From: Aleksandr Mishin <amishin@t-argos.ru>
+To: Igal Liberman <igal.liberman@freescale.com>
+CC: Aleksandr Mishin <amishin@t-argos.ru>, Madalin Bucur
+	<madalin.bucur@nxp.com>, Sean Anderson <sean.anderson@seco.com>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH] fsl/fman: Validate cell-index value obtained from Device Tree
+Date: Tue, 2 Jul 2024 12:50:34 +0300
+Message-ID: <20240702095034.12371-1-amishin@t-argos.ru>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org,
- Michael Hennerich <michael.hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
- Utsav Agarwal <utsav.agarwal@analog.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-References: <ZoLt_qBCQS-tG8Ar@google.com>
-Subject: Re: [PATCH] Input: adp5588-keys - use guard notation when acquiring
- mutexes
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <ZoLt_qBCQS-tG8Ar@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:HWuNKOu6jS4twv//0qiIKr+vEkAUkBGBD9FQ5D3sd5ymYCOXKcr
- dJ2iSX8SjvZqnPv5Zp+0EJ/RrQ4/PdslSomApoY7V8gFiWwQ5ZVg0WvwMAhX/1fncTKq7GJ
- +hAo8lPi9aIfePbkYHZmvq47bOFG9DEerceEJ43hLwjlxFD3qibAgyoDqmhnUyYF2vfGLaj
- dfnp1myTc9Hw+rzM279sg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:aIRSDS7Rnqc=;23LmmY/UWa0UQTEx4Hrl1c3VeIk
- Wc95fJekMVvTVtzHj5hHYQSMz75Tb8nIY8FEDuUq+gbd4scbaYiN8GgFDooNFncXPvWUvBNyO
- zswakydQz7R8KmqX/jyDiIU0cBiX+IQWnM/wI7qZ0BDwJlxV3TMxgAmcmlqlCFeRlKvt6//Sh
- qOw1BOe0r45yCeE+/mK1+Kb1+RNDzBK8Xg2fIfV0Eizws7DbxNA6/7wnSnKkyVUWNh9tQ9UCr
- I6Fztt+1r2ZuKmkBRYijWUewNKgGdnUmP3a2kMxZNiSSXFEah+J8eZ2hrB4ioGt1u1t1toQRH
- 3IZs40ZMKwKC5tmRleItJP4cmdkRB4TK5HEsM+iUdVD1LF05gQwzZksaaPfHWWJW7OnwEFh+i
- PCkA3HRW+Y0TaXLSIiBrPJEv0l4UJRHLa3RvmS9Pkrjfy4G4ZSYoY3yanBvEcAtNlusQAY1N6
- TH7ZapDIbAPW9DriU2plmuBYqHaWvLYf72CTF4qiD/0f6xsqLu4o6Av9I32uk+ouhhQEUmeBo
- CLY/CVwAf+S8xQNBTeeuNljf63cJW1IedOEg5TRtkwlrSRzVJ0J/sGxGvsetSmHy/yOpK1fbo
- GbDyrRfBcGSJc+fJf/wX2TU3NzrwyW4eZT0U9qPmUWH3Hz7ytSXmFdFa9v9iSybagljCrJlHM
- EDDLWql34N2iIkRYdrb6qm1mBM4SzmouPCEwH/PLGjhJvv3AGDJeVSlqKUsAcvLAXUJ9to6W8
- fh1NRapxAYAux0XNIqsnyMx1WfqpC6fUdZfE6yX1BhW5eieuzIUqFwuNrTvbh6pWF8BkkIaNL
- vvwUYQoy3h/Msq01wzG6mCpw1ZlEXZ6X3q7Yousb+Fdw8=
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
+ (172.17.13.212)
+X-KSMG-Rule-ID: 1
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 186273 [Jul 02 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 21 0.3.21 ebee5449fc125b2da45f1a6a6bc2c5c0c3ad0e05, {Tracking_from_domain_doesnt_match_to}, t-argos.ru:7.1.1;127.0.0.199:7.1.2;mx1.t-argos.ru.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/07/02 08:55:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/07/02 07:20:00 #25796017
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-> This makes the code more compact and error handling more robust.
+Cell-index value is obtained from Device Tree and then used to calculate
+the index for accessing arrays port_mfl[], mac_mfl[] and intr_mng[].
+In case of broken DT due to any error cell-index can contain any value
+and it is possible to go beyond the array boundaries which can lead
+at least to memory corruption.
+Validate cell-index value obtained from Device Tree.
 
-I suggest to improve such a change description another bit.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.10-rc6#n45
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-Regards,
-Markus
+Fixes: 414fd46e7762 ("fsl/fman: Add FMan support")
+Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+---
+ drivers/net/ethernet/freescale/fman/fman.c | 7 +++++++
+ drivers/net/ethernet/freescale/fman/fman.h | 2 ++
+ drivers/net/ethernet/freescale/fman/mac.c  | 5 +++++
+ 3 files changed, 14 insertions(+)
+
+diff --git a/drivers/net/ethernet/freescale/fman/fman.c b/drivers/net/ethernet/freescale/fman/fman.c
+index d96028f01770..6929bca3f768 100644
+--- a/drivers/net/ethernet/freescale/fman/fman.c
++++ b/drivers/net/ethernet/freescale/fman/fman.c
+@@ -2933,3 +2933,10 @@ module_exit(fman_unload);
+ 
+ MODULE_LICENSE("Dual BSD/GPL");
+ MODULE_DESCRIPTION("Freescale DPAA Frame Manager driver");
++
++int check_mac_id(u32 mac_id)
++{
++	if (mac_id >= MAX_NUM_OF_MACS)
++		return -EINVAL;
++	return 0;
++}
+diff --git a/drivers/net/ethernet/freescale/fman/fman.h b/drivers/net/ethernet/freescale/fman/fman.h
+index 2ea575a46675..3cedde4851e1 100644
+--- a/drivers/net/ethernet/freescale/fman/fman.h
++++ b/drivers/net/ethernet/freescale/fman/fman.h
+@@ -372,6 +372,8 @@ u16 fman_get_max_frm(void);
+ 
+ int fman_get_rx_extra_headroom(void);
+ 
++int check_mac_id(u32 mac_id);
++
+ #ifdef CONFIG_DPAA_ERRATUM_A050385
+ bool fman_has_errata_a050385(void);
+ #endif
+diff --git a/drivers/net/ethernet/freescale/fman/mac.c b/drivers/net/ethernet/freescale/fman/mac.c
+index 9767586b4eb3..7a67b4c887e2 100644
+--- a/drivers/net/ethernet/freescale/fman/mac.c
++++ b/drivers/net/ethernet/freescale/fman/mac.c
+@@ -247,6 +247,11 @@ static int mac_probe(struct platform_device *_of_dev)
+ 		dev_err(dev, "failed to read cell-index for %pOF\n", mac_node);
+ 		return -EINVAL;
+ 	}
++	err = check_mac_id(val);
++	if (err) {
++		dev_err(dev, "cell-index value is out of range for %pOF\n", mac_node);
++		return err;
++	}
+ 	priv->cell_index = (u8)val;
+ 
+ 	/* Get the MAC address */
+-- 
+2.30.2
+
 
