@@ -1,168 +1,139 @@
-Return-Path: <linux-kernel+bounces-237126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D75E91EBBB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 02:18:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 447D491EBD0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 02:32:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4DD0B21DBF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 00:18:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 068E1283CE6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 00:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C886F3209;
-	Tue,  2 Jul 2024 00:18:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906E9883D;
+	Tue,  2 Jul 2024 00:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d+xss2fp"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TadceGcS"
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B718A8BFC
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 00:18:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6BB257B
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 00:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719879489; cv=none; b=Tm8wSpJrVY1+UK3pYv3I5sH1O1I1DF+RFcecv5P8YY+OxZPkarezMZ7BsIoa3pok6qBgO8swdhl1vj4JU/hp2JWCc+XJwpkJX+ZdQ697ygK0TcdJe0u7aJSZxQRrg1QYI2ikU6lHQ5gwIiv1ObjTtEiGQh1Nv1+1PD0EG3UMMdg=
+	t=1719880314; cv=none; b=O0TVZN4+yqgJVmdM81TIENutkEEytG6zii31UhqO+BmF4V45UrfxIhxiPUjXIes/vPrLkIx7YfVgqKM22HOEAgPt8PXb8e+8kSqEpHdnxQYP3lhHPf/6E9uAALNbOEYnQxDytFHDMvndUPBmfuv4W4/KOmXPn7yYZv1+nLEWOIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719879489; c=relaxed/simple;
-	bh=zXHRxJfQ76pZA5jJuEeDkgW74LynXLABZeuPfCmaDGI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ArgG0DTDkf65Q3YsU1bYgty9aOX0cxSwoe+9ZttycYQuKIxJFju1jycleXgdQyBWaCVYq/PLiaL9ukLZT6D0aA5KeJZxktyqVl+tvRxN9pZ5J2ujtS6C0V/3+A7yALrgNl209kaQGubd5+AVNkZRiTbtJfvDR+IFCZBI8TNOOjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d+xss2fp; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719879488; x=1751415488;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=zXHRxJfQ76pZA5jJuEeDkgW74LynXLABZeuPfCmaDGI=;
-  b=d+xss2fpeFMjdoP1gR0eiUPYfOJkaQcFGTg6hBbq2jLdf2TQGJpjXss7
-   qY0fNxJv0CIrxFebKlJEgsJRH91g8jvFactcEKfy/OZ71kTqxxtgZggBq
-   f0APiOsqfMSPEbY+mMM8t8W0j8iHn2VFYD5kERBELqryM9Ul96hi4qShj
-   5D3abBFaf5EMqvqKtJAfBNZvO13PohcVC1h3wfHYcUAITVu+rgccMWyYb
-   tYJT3P5YiHA1XzvT6K6Xu2ep9qm3BA2cdJ+KlgS4C8ZasKV7VO4qd9s0B
-   wruy0DW+Ad0eFxTbMUdUZgWxEwbcBdoXRxtxAV9EtoQdGiE26WuLdMGu9
-   g==;
-X-CSE-ConnectionGUID: CmBPiwhuTYe6y0Dz3p6qLA==
-X-CSE-MsgGUID: cGGIdxKVS6WRIwwssdXyzQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="16987086"
-X-IronPort-AV: E=Sophos;i="6.09,177,1716274800"; 
-   d="scan'208";a="16987086"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 17:18:08 -0700
-X-CSE-ConnectionGUID: YY4/KY8YSIqWsHANr3ImDA==
-X-CSE-MsgGUID: TN8Xm8u8Tp6Bt/zNut4/ug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,177,1716274800"; 
-   d="scan'208";a="68912610"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.54.39.125])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 17:18:07 -0700
-Date: Mon, 1 Jul 2024 17:23:19 -0700
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin
- Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian
- <kevin.tian@intel.com>, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org, jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v2 1/2] iommu/vt-d: Add helper to flush caches for
- context change
-Message-ID: <20240701172319.264e718c@jacob-builder>
-In-Reply-To: <20240627023121.50166-2-baolu.lu@linux.intel.com>
-References: <20240627023121.50166-1-baolu.lu@linux.intel.com>
-	<20240627023121.50166-2-baolu.lu@linux.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719880314; c=relaxed/simple;
+	bh=qLQf0CVR5JUqHpKxNCt8TQc9aEbcxmuLQam92qG1+68=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qg1hL+HzuYV99SlVd6WJ1nlcm/Pqf58e4sqhfg/YMlw4xp7B3MdcSWvL/K13mwu0kVZbly5VTLcmuHbkdekXuLJhuAK5YRxVYATfaypZ+4c/iiv1H1DWEbwCZmSDdcSgZKnstywWGXZanGq+3aIJlSDMTQW2u7v06lf3Hfswc4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=TadceGcS; arc=none smtp.client-ip=209.85.210.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-701f9fb9483so1875759a34.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 17:31:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1719880312; x=1720485112; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sdizYQHOdkDm7056vUMEU6wUps2ltp149WdDOrN6TkY=;
+        b=TadceGcSiuj1MosBPFeqwUDUBSgelhOH0qTU1DJImx25L705K6wYdbFH4iGc7Vw6LF
+         tVmxHiD0v7EaqJln7D0G1Jt0y6OXgV7I/Ox76IGL+B5rrL+OPsVf1QrxLmQRPjrur3iA
+         tzbiOda9tvmJgJzdpvUU5wyIjbkvn5A7xcD4Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719880312; x=1720485112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sdizYQHOdkDm7056vUMEU6wUps2ltp149WdDOrN6TkY=;
+        b=nJgaJzYaazHM9iSbAhRmfWMYpcG3tqOJFbuzSJazL02CpB9Cy2+vz3SoP/L9hGNFFm
+         bHSlrfptWDlSN4NzvTOYT42ZD3rpwjkaHOulTk70v88OFXQdBBFNMoFujj7uNzqa6msu
+         pxK/rLFLAsp87VxEqP+B361EsCa1YZfOpQO8NjGurm9DqntITacXoCjq77RbIxt3faRt
+         fqJ1AlvkgwqIAXdu6tckhNXv861Mi2jEcPAiDebatZ7Ig4rHHhxlWx/5hRBkhhNyK7Qb
+         uYGmqE0N5bje9H94ZBEIeUNXC4Jzk9PWWBU5Ri+E+dKQcBp422cD4CSX2HQj7XDLwCdU
+         aIZA==
+X-Gm-Message-State: AOJu0Yzbji2nKZsM94Xq6L16RWhHHX+ZbGMMmwh2Ks3eBPIV4JqOf2ep
+	l0mTXB5PLjiwW7cgg24ETtW4GN8gddqXFpIlDsEwGaOenoGfHCG52y9fPzH03hh7Sx7PjuPJtWU
+	+8w==
+X-Google-Smtp-Source: AGHT+IFm95zOi+dbh9XAZw0ozUTy2kx3MdibUvrnQRCXXUdROROISk/reLFRPr0QMNLQb7xYnBFuEg==
+X-Received: by 2002:a05:6870:b155:b0:23c:bc3a:6ccb with SMTP id 586e51a60fabf-25db33bc10emr7113651fac.19.1719880312512;
+        Mon, 01 Jul 2024 17:31:52 -0700 (PDT)
+Received: from localhost ([2620:15c:9d:2:32ea:b45d:f22f:94c0])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-70802568f18sm7161266b3a.76.2024.07.01.17.31.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Jul 2024 17:31:52 -0700 (PDT)
+From: Brian Norris <briannorris@chromium.org>
+To: Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Brian Norris <briannorris@chromium.org>
+Subject: [PATCH 0/3] tools build: Incorrect fixdep dependencies
+Date: Mon,  1 Jul 2024 17:29:14 -0700
+Message-ID: <20240702003119.3641219-1-briannorris@chromium.org>
+X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+
+Hi all,
+
+The following series consists of a few bugfixes on the topic of "misuse
+of fixdep in the tools/ build tree." There is no listed maintainer for
+tools/build, but there are for tools/bpf and tools/objtool, which are
+the main pieces that affect most users, because they're built as part of
+the main kernel build. I've addressed this series to a selection of
+those maintainers, and those that have previously applied build changes
+in tools/. I hope one of you can apply this series, pending favorable
+review. Or feel free to point me to a different set of maintainers.
+
+This patch series came out of poking around some build errors seen by me
+and my coworkers, and I found that there were rather similar reports a
+while back here:
+
+    Subject: possible dependency error?
+    https://lore.kernel.org/all/ZGVi9HbI43R5trN8@bhelgaas/
+
+I reported some findings to that thread; see also subsequent discussion:
+
+    https://lore.kernel.org/all/Zk-C5Eg84yt6_nml@google.com/
+
+One element of that discussion: these problems are already solved
+consistently in Kbuild. tools/build purposely borrows some from Kbuild,
+but also purposely does not actually use Kbuild. While it'd make my life
+easier if tools/ would just adopt Kbuild (at least for the tools which
+are built during kernel builds), I've chosen a path that I hope will
+yield less resistance -- simply hacking up the existing tools/ build
+without major changes to its design.
+
+NB: I've also CC'd Kbuild folks, since Masahiro has already been so
+helpful here, but note that this is not really a "kbuild" patch series.
+
+Regards,
+Brian
 
 
-On Thu, 27 Jun 2024 10:31:20 +0800, Lu Baolu <baolu.lu@linux.intel.com>
-wrote:
+Brian Norris (3):
+  tools build: Correct libsubcmd fixdep dependencies
+  tools build: Avoid circular .fixdep-in.o.cmd issues
+  tools build: Correct bpf fixdep dependencies
 
-> +/*
-> + * Cache invalidations after change in a context table entry that was
-> present
-> + * according to the Spec 6.5.3.3 (Guidance to Software for
-> Invalidations). If
-> + * IOMMU is in scalable mode and all PASID table entries of the device
-> were
-> + * non-present, set affect_domains to true. Otherwise, false.
-> + */
-The spec says:
-"Domain-selective PASID-cache invalidation to affected domains (can be
-skipped if all PASID entries were not-present and CM=0)"
+ tools/build/Makefile         | 11 ++---------
+ tools/build/Makefile.include | 10 +++++++++-
+ tools/lib/bpf/Makefile       |  6 +++++-
+ tools/lib/subcmd/Makefile    |  2 +-
+ 4 files changed, 17 insertions(+), 12 deletions(-)
 
-So we should skip PASID cache invalidation if affect_domain is true
-according to this comment.
+-- 
+2.45.2.803.g4e1b14247a-goog
 
-> +void intel_context_flush_present(struct device_domain_info *info,
-> +				 struct context_entry *context,
-> +				 bool affect_domains)
-> +{
-> +	struct intel_iommu *iommu = info->iommu;
-> +	u16 did = context_domain_id(context);
-> +	struct pasid_entry *pte;
-> +	int i;
-> +
-> +	assert_spin_locked(&iommu->lock);
-> +
-> +	/*
-> +	 * Device-selective context-cache invalidation. The Domain-ID
-> field
-> +	 * of the Context-cache Invalidate Descriptor is ignored by
-> hardware
-> +	 * when operating in scalable mode. Therefore the @did value
-> doesn't
-> +	 * matter in scalable mode.
-> +	 */
-> +	iommu->flush.flush_context(iommu, did, PCI_DEVID(info->bus,
-> info->devfn),
-> +				   DMA_CCMD_MASK_NOBIT,
-> DMA_CCMD_DEVICE_INVL); +
-> +	/*
-> +	 * For legacy mode:
-> +	 * - Domain-selective IOTLB invalidation
-> +	 * - Global Device-TLB invalidation to all affected functions
-> +	 */
-> +	if (!sm_supported(iommu)) {
-> +		iommu->flush.flush_iotlb(iommu, did, 0, 0,
-> DMA_TLB_DSI_FLUSH);
-> +		__context_flush_dev_iotlb(info);
-> +
-> +		return;
-> +	}
-> +
-> +	/*
-> +	 * For scalable mode:
-> +	 * - Domain-selective PASID-cache invalidation to affected
-> domains
-> +	 * - Domain-selective IOTLB invalidation to affected domains
-> +	 * - Global Device-TLB invalidation to affected functions
-> +	 */
-> +	if (affect_domains) {
-> +		for (i = 0; i < info->pasid_table->max_pasid; i++) {
-> +			pte = intel_pasid_get_entry(info->dev, i);
-> +			if (!pte || !pasid_pte_is_present(pte))
-> +				continue;
-> +
-> +			did = pasid_get_domain_id(pte);
-> +			qi_flush_pasid_cache(iommu, did,
-> QI_PC_ALL_PASIDS, 0);
-This is conflicting with the comments above where PASID cache flush can be
-skipped if affect_domain==true, no?
-
-> +			iommu->flush.flush_iotlb(iommu, did, 0, 0,
-> DMA_TLB_DSI_FLUSH);
-> +		}
-> +	}
-
-Thanks,
-
-Jacob
 
