@@ -1,121 +1,112 @@
-Return-Path: <linux-kernel+bounces-237489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFAE7923994
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:18:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4860F923991
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:18:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80CEBB20B22
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:18:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEC32B243B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:18:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1903157E6C;
-	Tue,  2 Jul 2024 09:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6559715381C;
+	Tue,  2 Jul 2024 09:13:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qoZ3W3SP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b="LWOxqZSk"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F236115250C;
-	Tue,  2 Jul 2024 09:13:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E5A152500
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 09:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719911606; cv=none; b=q7td/pqvzOz9O0VyhUkD1HKXDNqAZ9h241yOo8Vbnp4X3YSgaEM0IVhDxobBXz5hgJljfmxU6AW2iwp8kuEVh3FhrXLPNvGMo34MuURkwV1gFmXcQp3uyH1O3fHF2yYyo6GGGMhEB76QDLkq2ZY2azsVU/TEhkRSKeZ4fE5wfYQ=
+	t=1719911600; cv=none; b=PQZ97mDLHZbu+44NdoRIro9ZVeEox7VvHeqBghKsXug9gG+O5Tl9/mtIcH+lPeDqEGxhuyy8B2sZf+RrS6jI5g2PFvh54TbLmNG5kzhneG4g32z8JZiwsZlQs9VNavDkf7siZbFV1trA6HHKRXbbJLoSWjWMnUl6TMCXZhGOhNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719911606; c=relaxed/simple;
-	bh=EN+fZczi+LadHo7pVDqIpgLNzdZC4KhXpnGwFBU+wLY=;
+	s=arc-20240116; t=1719911600; c=relaxed/simple;
+	bh=Cj/ExZo5KegJayf9omvwYrTwM3WwmmvC/v2iKfUUqys=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hj7+5IeKZSfYJbXRU+ebGmDNaua68dNc8XVtwCxtERUSQv2SngIdbzbH36g5296cdfdALt0Z3lrcF4VYBf+4tAHAn1ug8ghzsoM4xqewg6uEC/HSa26Zhl/+GwfZKRzgK6sAFK19lc6NDiKNL0XtpRetSpmlbfBW9LYuKLwsyjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qoZ3W3SP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BB95C4AF0C;
-	Tue,  2 Jul 2024 09:13:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719911605;
-	bh=EN+fZczi+LadHo7pVDqIpgLNzdZC4KhXpnGwFBU+wLY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=qoZ3W3SP5tDcD9G2IkC1sMoj5usWsH4F/SICk8WY99glXkBaZXEIopKUOBKJxopfd
-	 4bl7vp/0Iwr22BX7eS+0grLDVcSUdK7aZ6C3eOpoyaNUbl6cTyAayuNtEc8x2h0b8o
-	 qDuC5A3pZg8KkI5iVzNtPxoXLW9Nc3Ips+dav+auwsO4tbOI7ke9b0GfYSFjT9tTI2
-	 eqF0zNVfkmN2egAy/dYHcxT4dZnFwh9cBhtMLkIAjEWInxPKaWcpGpGA/b6xPKyaIW
-	 Eanr9rZVgFw1RQRiHQbrWnLcgvJ5Bus45asSMNht+onIYx4mHr8YlF2545rLEZXd3O
-	 pBS0antx30R+w==
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ed5ac077f5so46887041fa.1;
-        Tue, 02 Jul 2024 02:13:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXnM3iFTbHnLLpm27h87Rs5l0zUih0MEtCTHa2o9SNgOhLBS9VfjEkTUeVsj+vClvGKkwxuqbrClYDCAiFmyDIYu5Z5tHnPPkEUli2Lt9/UKjfQkgtbPKLD2fAjendVbpLw15+lPbMHxwNghzCA5cJBFrntAYrMlyFjtpEtOx68rwujoEORWA==
-X-Gm-Message-State: AOJu0YwvPRRsUxqaxRaPSUbB/LmDNXbhHWVGQ8Lktptcqm1S/Bsh8gkp
-	L7u36je9vrwZ/LQ70Yaw1itY3tlTvkf0y4Z52JOl01g0f8IjMrzOclcNnjn5M0dOnOh8Z1xn5qm
-	ir1vrvllVbJ0Jp96dTRxQMymzG0I=
-X-Google-Smtp-Source: AGHT+IFEe92tS+e/cecnfWoEsAPnErKNJlXt7cPyFBkW4rAE4bnXZGIxHYAcu3eFPFCqU322B0r9fAdlEYdhpzvPyvo=
-X-Received: by 2002:a2e:a912:0:b0:2ec:4d8d:375f with SMTP id
- 38308e7fff4ca-2ee5e3767fdmr57532011fa.16.1719911604217; Tue, 02 Jul 2024
- 02:13:24 -0700 (PDT)
+	 To:Cc:Content-Type; b=hPF2GQtiRWb6EiNG3gOcEwBvIJCV9OLXIt5naXVoosasEePE/vktW8mVZVLeim/XBMfLpU3TQ71gumA8e11j2qRNBv/92mTD0mgEK2F1g696vrVLOvvA1/okVWBByRm0RbPBNBeKE8f1NKCuXRv/NH7VO4AcoZ12bokxBpAqIDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com; spf=pass smtp.mailfrom=timesys.com; dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b=LWOxqZSk; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timesys.com
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6b5932383e0so40138816d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 02:13:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=timesys-com.20230601.gappssmtp.com; s=20230601; t=1719911597; x=1720516397; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MNCRj5+WTS2zLnBy60cKB4H7fdiaThTpR4MM3eLLC+M=;
+        b=LWOxqZSk9f90D1lpHC3ioWGCt+9EyatQmc2ZogjfpVYMTVxRoEFSTxQUAy6vvLsDVx
+         ZC2hmgSj/K3jjEhWrZBdVPi+087UMmwwsn/d61NfdEKTXEVact4KIOyHykfTaqG2Gq8R
+         spHiuuly4AbgtN/df2k+/SEuozJOBmVEYFHwKlkqws+G6topELcwsmzUDsyRU96p6rKO
+         GGh5h8cGiixRe1TfoVpa+tJXmz+fnTNiCCasj2g2fZZNay9/mcKtwnZad6JfnJStxci+
+         4GpzMxw1iA6D4URwKsPddMdRsZSph+8mxmKBp7QNxxLoK7kncvR2UbX8SzUjlC67fhk9
+         U4dA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719911597; x=1720516397;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MNCRj5+WTS2zLnBy60cKB4H7fdiaThTpR4MM3eLLC+M=;
+        b=F02PCLgdX8VrcM5+UQnze2N91zzUn4TIGVXV7GHR0IIJCJL2iD7Ra7ptsBxTN8bTWb
+         q56EkD9vdNvNjfQbtvanlZcJGiIyQRhaaNebS66ciUO6PvkZueWMZA7RZJ170ABe1VO6
+         TV5GghUJbfVp9+1TbGorHOOZroaZxBFi9LmWZbC55nysweguUhJ68tLKlNvrNJlNprxT
+         ngFYbLAJ+MMINr4zGNUfJvXAlJkKPtTJWwhOoZcbETWKYDEz6s6UAiu6TcFkqqG6ZkVu
+         TNBZ6kAIJ5i6bh0c1OQ++gj36N/aYjQVOKGY0GOOOM5xSoPDW6D22TkmWKtCDHJUsofw
+         3aQg==
+X-Forwarded-Encrypted: i=1; AJvYcCW4/gY9Rg3QmMlWQzwZpANquUq0rnj5D6jX/QsGTT1Nrgy9VIp1dDEQLx8PHwezQq5CrMrHjkpHJMlC8sBWkpRJpbI5tM9f3quPJUXu
+X-Gm-Message-State: AOJu0YzNrecthI24U+FFtlShy52h+8rYC04LjNwZlIw9eKWmrcjPG2aU
+	jz23ku8oBBmxLnPS0coeZEUX+Loi5JR7cTxESqkA5sN5XK1fCOIjH5zfTrfzKrn4JSMjV1V2sQ1
+	cg6HcTX5E84Oh6Xp4sqmJXc26gcHyRzH01/Zkbw==
+X-Google-Smtp-Source: AGHT+IEksGpwMqWlcG2UmMwDj/u3dj8gsEuKSsiaTnE/PE6G/zcQs9Tki36CrUO/LfzjGUlMpfNogpKWCk0jvx3CAJc=
+X-Received: by 2002:ad4:5c4d:0:b0:6b5:2c82:7d7d with SMTP id
+ 6a1803df08f44-6b5a545b22cmr230774936d6.24.1719911597497; Tue, 02 Jul 2024
+ 02:13:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240427145502.2804311-1-masahiroy@kernel.org>
- <20240427145502.2804311-5-masahiroy@kernel.org> <ea24aa9b-291d-47bc-98cf-5893926ff8da@kernel.org>
- <CAK7LNAT5_pDn1ZOfm8TzubH-s2HR4DQu9eEx0RgdJ3s4Cmxqow@mail.gmail.com>
- <9771d50d95e508bf8971a36b6475c782c42b46a1.camel@intel.com>
- <CAK7LNATGGibmjZzYX_A2SkJthmOPbKw2K3R7JYuHTWzgGL2Zjg@mail.gmail.com> <803eabc8e2fa5dec950d149f83027fd204d5ef69.camel@intel.com>
-In-Reply-To: <803eabc8e2fa5dec950d149f83027fd204d5ef69.camel@intel.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 2 Jul 2024 18:12:47 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATLnRqLeisBOiWbxvUZ0N8p1k8DRHv-sGMUwT0SmCuoww@mail.gmail.com>
-Message-ID: <CAK7LNATLnRqLeisBOiWbxvUZ0N8p1k8DRHv-sGMUwT0SmCuoww@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] kbuild: use $(src) instead of $(srctree)/$(src)
- for source directory
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "nicolas@fjasle.eu" <nicolas@fjasle.eu>, "conor@kernel.org" <conor@kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "robh@kernel.org" <robh@kernel.org>, 
-	"linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "krzk@kernel.org" <krzk@kernel.org>
+References: <20240628152543.281105-1-piotr.wojtaszczyk@timesys.com> <dudh4jdce3yxwv5yw345gw23diwparhwvsl4jrpsyzpv3sgge3@ojtdgsdgwcor>
+In-Reply-To: <dudh4jdce3yxwv5yw345gw23diwparhwvsl4jrpsyzpv3sgge3@ojtdgsdgwcor>
+From: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
+Date: Tue, 2 Jul 2024 11:13:06 +0200
+Message-ID: <CAG+cZ06sqDuOer=fBcGhQkTUgWt9XqaLkAW0cmT8g=EJ+e8pWA@mail.gmail.com>
+Subject: Re: [Patch v6] i2c: pnx: Fix potential deadlock warning from
+ del_timer_sync() call in isr
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Vladimir Zapolskiy <vz@mleia.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jun 29, 2024 at 6:24=E2=80=AFAM Edgecombe, Rick P
-<rick.p.edgecombe@intel.com> wrote:
+On Tue, Jul 2, 2024 at 1:01=E2=80=AFAM Andi Shyti <andi.shyti@kernel.org> w=
+rote:
+> > @@ -653,7 +624,10 @@ static int i2c_pnx_probe(struct platform_device *p=
+dev)
+> >       alg_data->adapter.algo_data =3D alg_data;
+> >       alg_data->adapter.nr =3D pdev->id;
+> >
+> > -     alg_data->timeout =3D I2C_PNX_TIMEOUT_DEFAULT;
+> > +     alg_data->timeout =3D msecs_to_jiffies(I2C_PNX_TIMEOUT_DEFAULT);
+> > +     if (alg_data->timeout <=3D 1)
+> > +             alg_data->timeout =3D 2;
 >
-> On Fri, 2024-06-28 at 11:13 +0900, Masahiro Yamada wrote:
-> > There are two solutions, depending on what you want to achieve.
-> >
-> > The official way is to pass the absolute path to M=3D
-> > (or relative path to ../linux-tdm-kvm-out)
-> >
-> > The other unofficial way is to pass VPATH.
-> > The external module build does not officially support
-> > the separate output directory, but you can still
-> > do it in this case.
-> >
-> > [1] will work like before.
+> I don't see the need for this check. The default timeout is
+> defined as 10.
 >
-> The absolute path worked, but why not make it use the relative path by de=
-fault
-> in this case? "arch/x86/kvm/" shouldn't be confused with an absolute path=
-...
+> Thanks,
+> Andi
 
-
-
-
-If you give a relative path to the M=3D option,
-it is relative to the top of the build tree,
-not relative to the top of the source tree.
-
-
-If you use the relative path correctly,
-it is interchangeable with the absolute path.
-
-
-It did not work as you expected because
-you used it in the wrong way.
-
-
+That's the timeout value which was in the previous timer in i2c_pnx_arm_tim=
+er(),
+without this I had time out events.
 
 
 --=20
-Best Regards
-Masahiro Yamada
+Piotr Wojtaszczyk
+Timesys
 
