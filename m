@@ -1,159 +1,123 @@
-Return-Path: <linux-kernel+bounces-237500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 440019239D1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:24:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CD3A9239D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:24:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BAB61C22316
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:24:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C32E4B22C68
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3991534EB;
-	Tue,  2 Jul 2024 09:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q2Hjq0TU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E1A152189;
+	Tue,  2 Jul 2024 09:24:28 +0000 (UTC)
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC881A28B;
-	Tue,  2 Jul 2024 09:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B15B1A28B
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 09:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719912259; cv=none; b=O7YKfsa++dM2XqlrCsJFMJ8RGJM0OMyvu43zdiUeYiCS/nvhAH4i7tsqChR+qFAv2qoVWrQ5WUhBvgh9e9p8mA5zMtLsT/Dd+2zTk4RlvWzBwKD6L4R2zCwivcrvnfQIDWQqYeNRS1d1xoUXsV9am0ajXWyQzElfmWbwLWBlGv8=
+	t=1719912268; cv=none; b=d8lMGLaOXXetov0lJj0pR2hUkOuS2UQuFVYMkveGXJ9TDvCFc3q2Aq/IhqVyoJsuA5f+iVVv3hGt2PkvACgA9EDjGjSS177w0CllJVKMNJeXB2doZMXjVn+quYzmt7ZYSEGqH//2rY8qPpudX/JkL+OV9SmSPRT/eOXQ6OUnC+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719912259; c=relaxed/simple;
-	bh=AtHy76LhHZBuSG9Zh2PI2i7sJXyX+B7OpLr/QLRadpI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sm129PvAWYF1pj90DPUqB+OCU8aS7wtaYc/Tk+XXXxRJVRUytn9gsPgibwKIcgpupms0iBptBj8eWhztlaxZEaHomaHvd83Oc5dSd8x+NqQoEslULRMmWFLm76T0FXOO0agO6xYcUbsC3VZlYm3y+rcA8etaAkj7PLMoQX5ymy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q2Hjq0TU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEF5EC116B1;
-	Tue,  2 Jul 2024 09:24:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719912258;
-	bh=AtHy76LhHZBuSG9Zh2PI2i7sJXyX+B7OpLr/QLRadpI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=q2Hjq0TU9t3QwFokgmXFJjV7uoaiaMVjGf4tOzonGWAPERO39E9APLO+kpIb9ziSZ
-	 JNhvtfxPTYxiaBYEsus2q2gKwUqEwI8Xr9jIt/gnWnsj21Sp2Q8XfmiTVwcUlMlXVl
-	 3suRjumYVFt53AALwPX1M2NvEJl6HWQtuD9SzLNH4sdwkKq0j39UhpBeewFeaFqbRL
-	 oMBn910fmL31N/GZTE/hxNURN7TDwHEPel7oP4X0sH/E+zCANua+sUi4aDCIH3jxFo
-	 z+oKC49/gCjvlmLAAI4TsYX6WjwZxtgdbemQ+BkatQxA4VxOKzBURC1W1AK7iVaHGL
-	 DA2wMa4ZST45w==
-Date: Tue, 2 Jul 2024 10:24:13 +0100
-From: Simon Horman <horms@kernel.org>
-To: Roger Quadros <rogerq@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>,
-	Julien Panis <jpanis@baylibre.com>, Andrew Lunn <andrew@lunn.ch>,
-	srk@ti.com, vigneshr@ti.com, danishanwar@ti.com,
-	pekka Varis <p-varis@ti.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: Re: [PATCH net-next v2 6/7] net: ethernet: ti: cpsw_ale: add helper
- to setup classifier defaults
-Message-ID: <20240702092413.GB598357@kernel.org>
-References: <20240628-am65-cpsw-multi-rx-v2-0-c399cb77db56@kernel.org>
- <20240628-am65-cpsw-multi-rx-v2-6-c399cb77db56@kernel.org>
- <20240701073505.GI17134@kernel.org>
- <4124798a-cda5-47fe-a67b-e84d72f3ecf8@kernel.org>
+	s=arc-20240116; t=1719912268; c=relaxed/simple;
+	bh=LxGzyz1DiRsNhaxhpPwdQb9KqJ29vpI6qOPgCOtDD2I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QpU9bArHY28OsMs1AR21MxPFc8katnliuJU8GyUQcdAXqn4f9SvrQFOOfVTE/UeJGXQafQ3JphKd/YABWWvtrK4BBO+EBfprgudnwS+Mojj1QZj6Xax0LN+tVSj50npIxU/PwBT+yC+QB7EFS3WXOjy/5wfPwJ1z91sX2lY4nt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:6bda:2a86:97aa:1205])
+	by baptiste.telenet-ops.be with bizsmtp
+	id iZQG2C006232J2U01ZQGaL; Tue, 02 Jul 2024 11:24:18 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sOZk7-000uaT-GG;
+	Tue, 02 Jul 2024 11:24:16 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sOZkG-001QrH-04;
+	Tue, 02 Jul 2024 11:24:16 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Marc Zyngier <maz@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] irqchip/gic-v3: Pass #redistributor-regions to gic_of_setup_kvm_info()
+Date: Tue,  2 Jul 2024 11:24:14 +0200
+Message-Id: <808286a3ac08f60585ae7e2c848e0f9b3cb79cf8.1719912215.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4124798a-cda5-47fe-a67b-e84d72f3ecf8@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 01, 2024 at 01:32:08PM +0300, Roger Quadros wrote:
-> 
-> On 01/07/2024 10:35, Simon Horman wrote:
-> > On Fri, Jun 28, 2024 at 03:01:55PM +0300, Roger Quadros wrote:
-> >> Default behaviour is to have 8 classifiers to map 8 DSCP/PCP
-> >> priorities to N receive threads (flows). N depends on number of
-> >> RX channels enabled for the port.
-> >>
-> >> Signed-off-by: Roger Quadros <rogerq@kernel.org>
-> >> ---
-> >>  drivers/net/ethernet/ti/cpsw_ale.c | 57 ++++++++++++++++++++++++++++++++++++++
-> >>  drivers/net/ethernet/ti/cpsw_ale.h |  1 +
-> >>  2 files changed, 58 insertions(+)
-> >>
-> >> diff --git a/drivers/net/ethernet/ti/cpsw_ale.c b/drivers/net/ethernet/ti/cpsw_ale.c
-> >> index 75a17184d34c..51da527388df 100644
-> >> --- a/drivers/net/ethernet/ti/cpsw_ale.c
-> >> +++ b/drivers/net/ethernet/ti/cpsw_ale.c
-> >> @@ -1650,3 +1650,60 @@ static void cpsw_ale_policer_thread_idx_enable(struct cpsw_ale *ale, u32 idx,
-> >>  	regmap_field_write(ale->fields[ALE_THREAD_VALUE], thread_id);
-> >>  	regmap_field_write(ale->fields[ALE_THREAD_ENABLE], enable ? 1 : 0);
-> >>  }
-> >> +
-> >> +/* Disable all policer entries and thread mappings */
-> >> +static void cpsw_ale_policer_reset(struct cpsw_ale *ale)
-> >> +{
-> >> +	int i;
-> >> +
-> >> +	for (i = 0; i < ale->params.num_policers ; i++) {
-> >> +		cpsw_ale_policer_read_idx(ale, i);
-> >> +		regmap_field_write(ale->fields[POL_PORT_MEN], 0);
-> >> +		regmap_field_write(ale->fields[POL_PRI_MEN], 0);
-> >> +		regmap_field_write(ale->fields[POL_OUI_MEN], 0);
-> >> +		regmap_field_write(ale->fields[POL_DST_MEN], 0);
-> >> +		regmap_field_write(ale->fields[POL_SRC_MEN], 0);
-> >> +		regmap_field_write(ale->fields[POL_OVLAN_MEN], 0);
-> >> +		regmap_field_write(ale->fields[POL_IVLAN_MEN], 0);
-> >> +		regmap_field_write(ale->fields[POL_ETHERTYPE_MEN], 0);
-> >> +		regmap_field_write(ale->fields[POL_IPSRC_MEN], 0);
-> >> +		regmap_field_write(ale->fields[POL_IPDST_MEN], 0);
-> >> +		regmap_field_write(ale->fields[POL_EN], 0);
-> >> +		regmap_field_write(ale->fields[POL_RED_DROP_EN], 0);
-> >> +		regmap_field_write(ale->fields[POL_YELLOW_DROP_EN], 0);
-> >> +		regmap_field_write(ale->fields[POL_PRIORITY_THREAD_EN], 0);
-> >> +
-> >> +		cpsw_ale_policer_thread_idx_enable(ale, i, 0, 0);
-> >> +	}
-> >> +}
-> >> +
-> >> +/* Default classifer is to map 8 user priorities to N receive channels */
-> >> +void cpsw_ale_classifier_setup_default(struct cpsw_ale *ale, int num_rx_ch)
-> >> +{
-> >> +	int pri, idx;
-> >> +	int pri_thread_map[8][9] = {	{ 0, 0, 0, 0, 0, 0, 0, 0, },
-> >> +					{ 0, 0, 0, 0, 1, 1, 1, 1, },
-> >> +					{ 0, 0, 0, 0, 1, 1, 2, 2, },
-> >> +					{ 1, 0, 0, 1, 2, 2, 3, 3, },
-> >> +					{ 1, 0, 0, 1, 2, 3, 4, 4, },
-> >> +					{ 1, 0, 0, 2, 3, 4, 5, 5, },
-> >> +					{ 1, 0, 0, 2, 3, 4, 5, 6, },
-> >> +					{ 2, 0, 1, 3, 4, 5, 6, 7, } };
-> > 
-> > Hi Roger,
-> > 
-> > Perhaps it is obvious, but I'm wondering if it is appropriate
-> > to add a comment explaining the layout of the table, especially
-> > the latter rows where the mapping of priority to receive channel
-> > seems somewhat non-trivial.
-> 
-> Sure. I took the table straight off from the All new switch book. [1]
-> 
-> Priorities 3 to 7 are straight forward. Priorities 0 to 2 are listed like so in
-> decreasing order of priority
-> 
-> 0 (default)	Best Effort
-> 2 		Spare (undefined)
-> 1 (lowest)	Background
-> 
-> [1] Table 13-2 IEEE 802.1p Recommended Priority Mappings to Class of Service.
+The caller of gic_of_setup_kvm_info() already queried DT for the value
+of the #redistributor-regions property.  So just pass this value,
+instead of doing the DT look-up again in the callee.
 
-Thanks Roger,
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Marc Zyngier <maz@kernel.org>
+---
+This is v2 of "irqchip/gic-v3: Pass GICV index to
+gic_of_setup_kvm_info()".
 
-I was able to correlate this with tables G-2 and G-3 of 802.1D-2004.
+v2:
+  - Pass nr_redist_regions instead of gicv_idx,
+  - Keep comment about skipping GICD, GICC, GICH,
+  - Add Acked-by.
+---
+ drivers/irqchip/irq-gic-v3.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
-I do think it would be adding some sort of comment to the code
-about this.
+diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+index 1f70262742f3b7c7..79a8a2f189e94c7f 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -2185,11 +2185,10 @@ static void __init gic_populate_ppi_partitions(struct device_node *gic_node)
+ 	of_node_put(parts_node);
+ }
+ 
+-static void __init gic_of_setup_kvm_info(struct device_node *node)
++static void __init gic_of_setup_kvm_info(struct device_node *node, u32 nr_redist_regions)
+ {
+ 	int ret;
+ 	struct resource r;
+-	u32 gicv_idx;
+ 
+ 	gic_v3_kvm_info.type = GIC_V3;
+ 
+@@ -2197,12 +2196,8 @@ static void __init gic_of_setup_kvm_info(struct device_node *node)
+ 	if (!gic_v3_kvm_info.maint_irq)
+ 		return;
+ 
+-	if (of_property_read_u32(node, "#redistributor-regions",
+-				 &gicv_idx))
+-		gicv_idx = 1;
+-
+-	gicv_idx += 3;	/* Also skip GICD, GICC, GICH */
+-	ret = of_address_to_resource(node, gicv_idx, &r);
++	/* Also skip GICD, GICC, GICH */
++	ret = of_address_to_resource(node, nr_redist_regions + 3, &r);
+ 	if (!ret)
+ 		gic_v3_kvm_info.vcpu = r;
+ 
+@@ -2292,7 +2287,7 @@ static int __init gic_of_init(struct device_node *node, struct device_node *pare
+ 	gic_populate_ppi_partitions(node);
+ 
+ 	if (static_branch_likely(&supports_deactivate_key))
+-		gic_of_setup_kvm_info(node);
++		gic_of_setup_kvm_info(node, nr_redist_regions);
+ 	return 0;
+ 
+ out_unmap_rdist:
+-- 
+2.34.1
 
-...
 
