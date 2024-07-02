@@ -1,136 +1,256 @@
-Return-Path: <linux-kernel+bounces-238069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C8DA9242ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:53:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B98A4924300
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:58:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 419B11F26587
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:53:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E615E1C248FC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB0D81BD009;
-	Tue,  2 Jul 2024 15:52:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2811BD4F1;
+	Tue,  2 Jul 2024 15:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Tg7f1Ocu"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1x1+B5V6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vr79WnWh";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="V3TCk0Rl";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WiGNbOPw"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951B01BD004
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 15:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0B71BD032;
+	Tue,  2 Jul 2024 15:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719935559; cv=none; b=HxqvEvpz2CYHf5Zb+D2YillRjHR1taiCNQPD2DavZIqXNFVL08r5l+kh5pEp3onYXQt+loShV/enHrpLqggj/KYmDdKzxhtrt+phzXhO5UIvZ6U/aZx3zGrgErTHecautO2tCXgLdiRcRgUZZJVjJHMhFF1CSH1/RzRkRvY/jlg=
+	t=1719935891; cv=none; b=osdOsHK+JySHRLY4Zyf1l3ftDAuHKhay5S6m9iqmSXhRkjU2Wsx2dalYRiKSmyF7uRncuj83Y6rq+0vRF2yru+5HUmRBrDS04r3tEIZODLm6my9I2JSS2v5yuxP62vzvWDUvCN2/oE/GCkaenGAzUFGjRn0uQfGCsvOIoX4pplw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719935559; c=relaxed/simple;
-	bh=wZPV+CEpgfvPai1e8+Vih+T/KY60zCsNw6OOzvBD2xA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LYiDn4dNqe8uCurGB/sYZclMWJnsc3n2D7Q8wHTXqWnivBkZbJREJVjA2rz7g7FdzbDgDadAMq30G/399UpzCW5okkodlg5ULu6CgQeMZOvBi/0+v4cAP5VxTqCUJ3xQLQvEvJCaZ0l710guPeTup+EGKzvECzbJwSnW2g45ioA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Tg7f1Ocu; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719935557; x=1751471557;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=wZPV+CEpgfvPai1e8+Vih+T/KY60zCsNw6OOzvBD2xA=;
-  b=Tg7f1Ocu1IwuyGRZcDgZO/55kY74+QmMxo4B22h5uaQX5Kgil6bWyr0e
-   KUFGrmHzgLBG36ovUxq9/u3ipZKjgFiFb146fQ7+NFTC7hRZWEJvbPcW8
-   lobwtv08QMIZ2hZB/JFVayl2nhxl3XWeH+s17+uI+VQlYOOF1wfrpw9ct
-   C0imypvFiE3e52WsUQ5XnJwKnit+COAAD4nQyowT7or+WRs1amy+9Dj4z
-   g+xC7fCVq+Xj6iJtTXldldjWXSWrxwj8qz4sR0rBZDYv1uTmnpwQve/wd
-   RQ/ap0nxTXyZGUDH722qd5wDp6NnY2hkEMX5igmxPUCGyqhddLkL87JTN
-   g==;
-X-CSE-ConnectionGUID: oIlndZ6aSbaegS9GlPQC/w==
-X-CSE-MsgGUID: 8spVxMdLSlidrtV5jgBxTQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="27719996"
-X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
-   d="scan'208";a="27719996"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2024 08:52:37 -0700
-X-CSE-ConnectionGUID: +iPT0RxbT4+0+gwNWEGrQg==
-X-CSE-MsgGUID: zviT4DVLRVu1wnVIJoHRLg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
-   d="scan'208";a="50396978"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.54.39.125])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2024 08:52:36 -0700
-Date: Tue, 2 Jul 2024 08:57:49 -0700
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-To: Baolu Lu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin
- Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian
- <kevin.tian@intel.com>, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org, jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v3 1/2] iommu/vt-d: Add helper to flush caches for
- context change
-Message-ID: <20240702085749.2e2bbea5@jacob-builder>
-In-Reply-To: <28ade99a-13ad-4b01-aff2-711c006856fd@linux.intel.com>
-References: <20240701112317.94022-1-baolu.lu@linux.intel.com>
-	<20240701112317.94022-2-baolu.lu@linux.intel.com>
-	<20240701214128.5523a1ea@jacob-builder>
-	<28ade99a-13ad-4b01-aff2-711c006856fd@linux.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719935891; c=relaxed/simple;
+	bh=BNA7h2+hbaCtPD6zTsd/1n30CL75PtZV8rfutIRexK0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u016thBYF5Nyl31VHnX2kuFu0LHr98Z1bPP63KlLnm81Qdz2w4SMrhLtQg/ZwUOeuPtSs3wtvqkBD/6ne4DVFiIIFtLYUa5y+UBDQqYWXnt7Q3xXAyGY2OHb52hZmRtL1nIKiWQCKnMi5UR294tbJ7iyH1OqMI2cTnkHZzoohVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1x1+B5V6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vr79WnWh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=V3TCk0Rl; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WiGNbOPw; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 00B2D21AE7;
+	Tue,  2 Jul 2024 15:58:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1719935886; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=ZUXJa6qZ1Z85tU8NRRhDqffNTAJHYAKpnrU2JbYigmg=;
+	b=1x1+B5V6VO16gcDXPWruRSuHy3ASUQ6OSGNwuHaQw9msV3aqKnchPiCWPrX2nCX2CuFE75
+	Dr2XDPshXdKkFZJZcw6v1lLoQblUazWtL2ZvXZscf9MipEteKJ5mb4vCiaG/aYG23CQTIz
+	W/4gHll3tNhH1mpUELQr2wB7k0bY2vs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1719935886;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=ZUXJa6qZ1Z85tU8NRRhDqffNTAJHYAKpnrU2JbYigmg=;
+	b=vr79WnWh0OSe6gXYBRvDNQRwvXU8g6rMVkZ0jLdrYUtZvrY7laWbG58dOYscFWzoyzqpVd
+	repYS55oqSmRzMAg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=V3TCk0Rl;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=WiGNbOPw
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1719935885; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=ZUXJa6qZ1Z85tU8NRRhDqffNTAJHYAKpnrU2JbYigmg=;
+	b=V3TCk0RlMSZAidW1rWOKh+fkjzUw7oFfX43T0DbAZnER/9hIC303LYKs4LW7f1GQa1VqPV
+	6A02cVf+RaQ7rO1CI+1z6mI6zIBsb9MQDzlG/B0qpbAH3rZp/njh2w2tQ0/EvwtE0/kbSF
+	Krw8tjEWELO8q2WWU+55yZTjPvxzwBg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1719935885;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=ZUXJa6qZ1Z85tU8NRRhDqffNTAJHYAKpnrU2JbYigmg=;
+	b=WiGNbOPwwF9Jv0WQ7/9zyFt/L3g2WIE+q1uxP8+CVW4+J/xWVCSqyhzOEKi1/sWfS/LNdn
+	eS3/uG3wB+dU68BA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DDD0613A9A;
+	Tue,  2 Jul 2024 15:58:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id G7rNNYwjhGZSMQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 02 Jul 2024 15:58:04 +0000
+From: Vlastimil Babka <vbabka@suse.cz>
+To: linux-mm@kvack.org,
+	David Rientjes <rientjes@google.com>,
+	Christoph Lameter <cl@linux.com>
+Cc: Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Kees Cook <keescook@chromium.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	Vlastimil Babka <vbabka@suse.cz>
+Subject: [PATCH] mm, slab: extend kmalloc() alignment for non power-of-two sizes
+Date: Tue,  2 Jul 2024 17:58:01 +0200
+Message-ID: <20240702155800.166503-2-vbabka@suse.cz>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 00B2D21AE7
+X-Spam-Score: -1.51
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-1.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	FREEMAIL_CC(0.00)[gmail.com,linux.dev,chromium.org,google.com,vger.kernel.org,lists.linux.dev,suse.cz];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
+Slab allocators have been guaranteeing natural alignment for
+power-of-two sizes since commit 59bb47985c1d ("mm, sl[aou]b: guarantee
+natural alignment for kmalloc(power-of-two)"), while any other sizes are
+aligned only to ARCH_KMALLOC_MINALIGN bytes.
 
-On Tue, 2 Jul 2024 12:43:41 +0800, Baolu Lu <baolu.lu@linux.intel.com>
-wrote:
+Rust's allocator API specifies size and alignment per allocation, which
+have to satisfy the following rules, per Alice Ryhl [1]:
 
-> On 2024/7/2 12:41, Jacob Pan wrote:
-> > On Mon,  1 Jul 2024 19:23:16 +0800, Lu Baolu<baolu.lu@linux.intel.com>
-> > wrote:
-> >   
-> >> +	if (flush_domains) {
-> >> +		/*
-> >> +		 * If the IOMMU is running in scalable mode and there
-> >> might
-> >> +		 * be potential PASID translations, the caller should
-> >> hold
-> >> +		 * the lock to ensure that context changes and cache
-> >> flushes
-> >> +		 * are atomic.
-> >> +		 */
-> >> +		assert_spin_locked(&iommu->lock);
-> >> +		for (i = 0; i < info->pasid_table->max_pasid; i++) {
-> >> +			pte = intel_pasid_get_entry(info->dev, i);
-> >> +			if (!pte || !pasid_pte_is_present(pte))
-> >> +				continue;  
-> > Is it worth going through 1M PASIDs just to skip the PASID cache
-> > invalidation? Or just do the flush on all used DIDs unconditionally.  
-> 
-> Currently we don't track all domains attached to a device. If such
-> optimization is necessary, perhaps we can add it later.
+  1. The alignment is a power of two.
+  2. The size is non-zero.
+  3. When you round up the size to the next multiple of the alignment,
+     then it must not overflow the signed type isize / ssize_t.
 
-I think it is necessary, because without tracking domain IDs, the code
-above would have duplicated invalidations.
-For example: a device PASID table has the following entries
-	PASID	DomainID
--------------------------
-	100	1
-	200	1
-	300	2
--------------------------
-When a present context entry changes, we need to do:
-qi_flush_pasid_cache(iommu, 1, QI_PC_ALL_PASIDS, 0);
-qi_flush_pasid_cache(iommu, 2, QI_PC_ALL_PASIDS, 0);
+In order to map this to kmalloc()'s guarantees, some requested
+allocation sizes have to be enlarged to the next power-of-two size [2].
+For example, an allocation of size 96 and alignment of 32 will be
+enlarged to an allocation of size 128, because the existing kmalloc-96
+bucket doesn't guarantee alignent above ARCH_KMALLOC_MINALIGN. Without
+slab debugging active, the layout of the kmalloc-96 slabs however
+naturally aligns the objects to 32 bytes, so extending the size to 128
+bytes is wasteful.
 
-With this code, we do
-qi_flush_pasid_cache(iommu, 1, QI_PC_ALL_PASIDS, 0);
-qi_flush_pasid_cache(iommu, 1, QI_PC_ALL_PASIDS, 0);//duplicated!
-qi_flush_pasid_cache(iommu, 2, QI_PC_ALL_PASIDS, 0);
+To improve the situation we can extend the kmalloc() alignment
+guarantees in a way that
 
-Thanks,
+1) doesn't change the current slab layout (and thus does not increase
+   internal fragmentation) when slab debugging is not active
+2) reduces waste in the Rust allocator use case
+3) is a superset of the current guarantee for power-of-two sizes.
 
-Jacob
+The extended guarantee is that alignment is at least the largest
+power-of-two divisor of the requested size. For power-of-two sizes the
+largest divisor is the size itself, but let's keep this case documented
+separately for clarity.
+
+For current kmalloc size buckets, it means kmalloc-96 will guarantee
+alignment of 32 bytes and kmalloc-196 will guarantee 64 bytes.
+
+This covers the rules 1 and 2 above of Rust's API as long as the size is
+a multiple of the alignment. The Rust layer should now only need to
+round up the size to the next multiple if it isn't, while enforcing the
+rule 3.
+
+Implementation-wise, this changes the alignment calculation in
+create_boot_cache(). While at it also do the calulation only for caches
+with the SLAB_KMALLOC flag, because the function is also used to create
+the initial kmem_cache and kmem_cache_node caches, where no alignment
+guarantee is necessary.
+
+Link: https://lore.kernel.org/all/CAH5fLggjrbdUuT-H-5vbQfMazjRDpp2%2Bk3%3DYhPyS17ezEqxwcw@mail.gmail.com/ [1]
+Link: https://lore.kernel.org/all/CAH5fLghsZRemYUwVvhk77o6y1foqnCeDzW4WZv6ScEWna2+_jw@mail.gmail.com/ [2]
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+---
+ Documentation/core-api/memory-allocation.rst | 6 ++++--
+ include/linux/slab.h                         | 3 ++-
+ mm/slab_common.c                             | 9 +++++----
+ 3 files changed, 11 insertions(+), 7 deletions(-)
+
+diff --git a/Documentation/core-api/memory-allocation.rst b/Documentation/core-api/memory-allocation.rst
+index 1c58d883b273..8b84eb4bdae7 100644
+--- a/Documentation/core-api/memory-allocation.rst
++++ b/Documentation/core-api/memory-allocation.rst
+@@ -144,8 +144,10 @@ configuration, but it is a good practice to use `kmalloc` for objects
+ smaller than page size.
+ 
+ The address of a chunk allocated with `kmalloc` is aligned to at least
+-ARCH_KMALLOC_MINALIGN bytes.  For sizes which are a power of two, the
+-alignment is also guaranteed to be at least the respective size.
++ARCH_KMALLOC_MINALIGN bytes. For sizes which are a power of two, the
++alignment is also guaranteed to be at least the respective size. For other
++sizes, the alignment is guaranteed to be at least the largest power-of-two
++divisor of the size.
+ 
+ Chunks allocated with kmalloc() can be resized with krealloc(). Similarly
+ to kmalloc_array(): a helper for resizing arrays is provided in the form of
+diff --git a/include/linux/slab.h b/include/linux/slab.h
+index ed6bee5ec2b6..640cea6e6323 100644
+--- a/include/linux/slab.h
++++ b/include/linux/slab.h
+@@ -604,7 +604,8 @@ void *__kmalloc_large_node_noprof(size_t size, gfp_t flags, int node)
+  *
+  * The allocated object address is aligned to at least ARCH_KMALLOC_MINALIGN
+  * bytes. For @size of power of two bytes, the alignment is also guaranteed
+- * to be at least to the size.
++ * to be at least to the size. For other sizes, the alignment is guaranteed to
++ * be at least the largest power-of-two divisor of @size.
+  *
+  * The @flags argument may be one of the GFP flags defined at
+  * include/linux/gfp_types.h and described at
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index 1560a1546bb1..7272ef7bc55f 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -617,11 +617,12 @@ void __init create_boot_cache(struct kmem_cache *s, const char *name,
+ 	s->size = s->object_size = size;
+ 
+ 	/*
+-	 * For power of two sizes, guarantee natural alignment for kmalloc
+-	 * caches, regardless of SL*B debugging options.
++	 * kmalloc caches guarantee alignment of at least the largest
++	 * power-of-two divisor of the size. For power-of-two sizes,
++	 * it is the size itself.
+ 	 */
+-	if (is_power_of_2(size))
+-		align = max(align, size);
++	if (flags & SLAB_KMALLOC)
++		align = max(align, 1U << (ffs(size) - 1));
+ 	s->align = calculate_alignment(flags, align, size);
+ 
+ #ifdef CONFIG_HARDENED_USERCOPY
+-- 
+2.45.2
+
 
