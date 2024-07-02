@@ -1,126 +1,175 @@
-Return-Path: <linux-kernel+bounces-238134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD6B9243FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:55:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 582B7924404
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:00:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E407EB22650
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:55:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5E061F261E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347A71BD514;
-	Tue,  2 Jul 2024 16:54:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29321BE234;
+	Tue,  2 Jul 2024 17:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HNgkDJ8Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cVZ1n+op";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="eeBQ+Znn";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SgfSY445";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="v0kNTFFe"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE9F1BC06B;
-	Tue,  2 Jul 2024 16:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140B7846D;
+	Tue,  2 Jul 2024 17:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719939294; cv=none; b=WExlY9vdKTcWKUb4Xt9V0Bbs68jQRDb5ERs7olHopfmqdDmNBLRBj2z9lxA2FYysLsWOpiJrecIDnAObnwOjJfb9PcG35LOiGdVe9H4ht8gQR2sZ7sSL3xzxtx5XR9kL5siXSOTPdYvtlp4tZYjL3gDeOw0EvauVz3pn+wg6jIc=
+	t=1719939634; cv=none; b=G/gCsQfRibM6trWBUFSUmg9HG+TaaeaXkWFiduVLrh35+MrJHUMxYQZiNTAIsbmC/lZ/hSaXelxG3U8ej31FZs5queMLxCjgKdKVvz3TNUNwdVHwh9IjervAS9sX2xSmX72EXuSHsIRSShj2ZycI12i627ia6j7zppQ0rKjMnYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719939294; c=relaxed/simple;
-	bh=7cP9c/D+q/wwGCs5nQnAntLQJsixlKhlsJONo87tLoY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pgYX5H0fjFU5PQ3vZ54ALb8vTHlYB6+oVOG5rqYWkfbvXmeJ1SsLvj+e0/O8HJronyw5ZBRPQlw2NYY2dteeGXh8nOFK/F3nffMt9MfN0fGgW/6rnhDzH5VnKMVDs9TiTrRJaMHwppW6XZLKQvuZlGoCScNsHfLiXUlRn1LV8VI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HNgkDJ8Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DC98C116B1;
-	Tue,  2 Jul 2024 16:54:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719939294;
-	bh=7cP9c/D+q/wwGCs5nQnAntLQJsixlKhlsJONo87tLoY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HNgkDJ8Q/P40NY9TZxmDmG4C9x5ZfwJNAio6ABrveLE4/VxBMWsk+7qsErG6I3vrs
-	 yWoswVVemNDliIVNA6OOW2JLYX/U+YVTORNFZb3yzKbTeHa9gA3JG9hk+U4tcNjJMY
-	 XL6Qf2PuZ7w6OJsprQrTxc8bz3tSZjkK1OpmP4UDLcVU3YwTACM3/ENnCAJGBU340J
-	 K+cfY9fOTRMZUOCJD9dLobZE8RXgJDRHUaHnki4DMFfk1M17DeWPgk0I8PEvG3YBn1
-	 wg7dNbiesOY0SbNP6tageljV9oROiJny8oyIUPgNg8G6aDAe/lj0PNc4qk3NGIHEsP
-	 yjnvmE3t7n8FQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sOgmJ-009Ao2-My;
-	Tue, 02 Jul 2024 17:54:51 +0100
-Date: Tue, 02 Jul 2024 17:54:51 +0100
-Message-ID: <86zfqzhgys.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Christian Zigotzky <chzigotzky@xenosoft.de>
-Cc: Rob Herring <robh@kernel.org>,
-	apatel@ventanamicro.com,
-	DTML <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-	mad skateman <madskateman@gmail.com>,
-	"R.T.Dickinson" <rtd2@xtra.co.nz>,
-	Matthew Leaman <matthew@a-eon.biz>,
-	Darren Stevens
- <darren@stevens-zone.net>,
-	Christian Zigotzky <info@xenosoft.de>
-Subject: Re: [PowerPC] [PASEMI] Issue with the identification of ATA drives after the of/irq updates 2024-05-29
-In-Reply-To: <3ab66fab-c3f2-4bed-a04d-a10c57dcdd9b@xenosoft.de>
-References: <3ab66fab-c3f2-4bed-a04d-a10c57dcdd9b@xenosoft.de>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1719939634; c=relaxed/simple;
+	bh=K8VsCGrUyV4lSHiM8Vd6ArHffkld8kqllhhm3HPOngE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OEYbfyhimEUlD7duRVZWUAbC3+cyJuxwxFe9Wusz0vMOTiEFBVwiZRXeUZzrP0ZrgIGbAp6SLXzoxyEw2MYaqLsF9frLRGuyEZfP8pflG+WvBL00FoYiSATnNLeBMMJOEJ4ozwY/SCkkcNr0MN0se4BBJEEmmYq0P+eZTw8ytSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cVZ1n+op; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=eeBQ+Znn; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SgfSY445; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=v0kNTFFe; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id BED241FBB3;
+	Tue,  2 Jul 2024 17:00:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1719939631;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=93MeAty8m/ZPbv/+ZPblI57xMCCiCRrqvCNZ35C2P0g=;
+	b=cVZ1n+opU5gK4buhdJNaT17zO244czOisrP4KWJeFFxE8o3Q27QrCR7B8u+vI4dXmZRKYG
+	0KxOQyujGupF/spyqb4qFs2jE58g0W+wL0nwa+1lmCImX+Ib4BHqsfd8dshv9awIPUtD9E
+	dCeoSA04xfLRcc73G0szl5GjGpBga40=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1719939631;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=93MeAty8m/ZPbv/+ZPblI57xMCCiCRrqvCNZ35C2P0g=;
+	b=eeBQ+Znnc4REG1k027OHwl2f7eGGOVd6a38T6KGvZjqJCyNwS15c7jY5hhT/5yCVm3L0Ar
+	Nztm+gzLNnm0qtCg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=SgfSY445;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=v0kNTFFe
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1719939630;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=93MeAty8m/ZPbv/+ZPblI57xMCCiCRrqvCNZ35C2P0g=;
+	b=SgfSY445r2ehH/qfQ6aSkd53Wv9bvaE4IemcwYTlw8zJlNGuDESxNCD70BpouulR/QuP0G
+	yF85AVXPmYNbETbeebtEceQnYju4JUIJ7ZrotnKU+8nc0M1pfuO7+UDdRX9xn1/v3gEM9b
+	rKSIWwTqDBn8pldAVCKJKfiurnxOCRs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1719939630;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=93MeAty8m/ZPbv/+ZPblI57xMCCiCRrqvCNZ35C2P0g=;
+	b=v0kNTFFe3WMSnHZySF7qX9SRXSKoiXkPjlw4jIJNWrEeN8BpFmgHZZQ3POLNymkOUVXlas
+	hyUwJnDWd4G9zyCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7F0F31395F;
+	Tue,  2 Jul 2024 17:00:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id QSlcHi4yhGbDRAAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Tue, 02 Jul 2024 17:00:30 +0000
+Date: Tue, 2 Jul 2024 19:00:21 +0200
+From: David Sterba <dsterba@suse.cz>
+To: syzbot <syzbot+026119922c20a8915631@syzkaller.appspotmail.com>
+Cc: brauner@kernel.org, clm@fb.com, dsterba@suse.com, jack@suse.cz,
+	josef@toxicpanda.com, konishi.ryusuke@gmail.com,
+	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nilfs@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Subject: Re: [syzbot] [nilfs?] [btrfs?] WARNING in filemap_unaccount_folio
+Message-ID: <20240702170021.GM21023@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <0000000000005c66ec061902110a@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: chzigotzky@xenosoft.de, robh@kernel.org, apatel@ventanamicro.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, madskateman@gmail.com, rtd2@xtra.co.nz, matthew@a-eon.biz, darren@stevens-zone.net, info@xenosoft.de
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0000000000005c66ec061902110a@google.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Rspamd-Queue-Id: BED241FBB3
+X-Spam-Score: -1.52
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-1.52 / 50.00];
+	BAYES_HAM(-2.81)[99.19%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=713476114e57eef3];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[kernel.org,fb.com,suse.com,suse.cz,toxicpanda.com,gmail.com,vger.kernel.org,googlegroups.com,zeniv.linux.org.uk];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[026119922c20a8915631];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
-On Sun, 30 Jun 2024 11:21:55 +0100,
-Christian Zigotzky <chzigotzky@xenosoft.de> wrote:
-> 
+On Tue, May 21, 2024 at 07:55:32PM -0700, syzbot wrote:
 > Hello,
 > 
-> There is an issue with the identification of ATA drives with our
-> P.A. Semi Nemo boards [1] after the
-> commit "of/irq: Factor out parsing of interrupt-map parent
-> phandle+args from of_irq_parse_raw()" [2].
+> syzbot found the following issue on:
+> 
+> HEAD commit:    b6394d6f7159 Merge tag 'pull-misc' of git://git.kernel.org..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=142a7cb2980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=713476114e57eef3
+> dashboard link: https://syzkaller.appspot.com/bug?extid=026119922c20a8915631
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14d43f84980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11d4fadc980000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/e8e1377d4772/disk-b6394d6f.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/19fbbb3b6dd5/vmlinux-b6394d6f.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/4dcce16af95d/bzImage-b6394d6f.xz
+> mounted in repro #1: https://storage.googleapis.com/syzbot-assets/e197bb1019a1/mount_0.gz
+> mounted in repro #2: https://storage.googleapis.com/syzbot-assets/1c62d475ecf4/mount_2.gz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+026119922c20a8915631@syzkaller.appspotmail.com
 
-[snip]
-
-My earlier request for valuable debug information still stands. But
-while you're at it, can you please give the following hack a go?
-
-	M.
-
---- a/drivers/of/irq.c
-+++ b/drivers/of/irq.c
-@@ -282,8 +282,10 @@ int of_irq_parse_raw(const __be32 *addr, struct of_phandle_args *out_irq)
- 
- 			oldimap = imap;
- 			imap = of_irq_parse_imap_parent(oldimap, imaplen, out_irq);
--			if (!imap)
--				goto fail;
-+			if (!imap) {
-+				match = 0;
-+				break;
-+			}
- 
- 			match &= of_device_is_available(out_irq->np);
- 			if (match)
-
-This may not be the final workaround even if it solves your boot
-problem, but will at least give us a hint at what is going wrong.
-
-I have the fuzzy feeling that we may be able to lob this broken system
-as part of the of_irq_imap_abusers[] array, which would solve things
-pretty "neatly".
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+#syz set subsystems: nilfs
 
