@@ -1,71 +1,73 @@
-Return-Path: <linux-kernel+bounces-238097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA36F924373
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:19:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40A11924375
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87642B22C52
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:19:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2D29B227FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:19:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19941BD504;
-	Tue,  2 Jul 2024 16:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD63A1BD03E;
+	Tue,  2 Jul 2024 16:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oWe8+4vr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KFZN/teI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4CB615B11D;
-	Tue,  2 Jul 2024 16:19:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF561BBBD7;
+	Tue,  2 Jul 2024 16:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719937146; cv=none; b=cLayFQonFoT0r5aV3qNq25Enrs6c0UqngtzbWhg4qUmnEaNcOorJWP9CgyRRe3gpnNUDNooWGm4myuJs0dRAEeow/foi4gVhDyrYVDXrdz2Npzt2ykxIgiNrYi2NWqUvHs67+wFrlFAml3bCqP5T90kQmt9XIKwYDXg7Ss8Nchc=
+	t=1719937188; cv=none; b=qJ4en0Sm/zhM1Qbiqk/0q6li55/n+vWS4/rQXdMmtX3ji4X1VpX4Fd+mO/cvLhl50JqxEnBwo5Ea5ivvoGFuiy1BaeU+ihO9tMMMlwUENKTA/8phbrionapytjSLXgJbxCNwpxMJ+dXa85F88YXdytOEz1uJYn0b5Ixk3UfqHac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719937146; c=relaxed/simple;
-	bh=f/Lt6TGAChQhJDo1d9S1C9KYvC+2NSkWdhgXVkkdLDw=;
+	s=arc-20240116; t=1719937188; c=relaxed/simple;
+	bh=lVQmHI+LCB+7I2btTVAeudIE1E/R0zerK0QF7WkCDJg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pEljVPxeReaao268QOPZbdgc3ZoiY1hmRDBA6GIKVJhDJq/lMLrmXbZaR7/iFna54t18AQrAsxcRybtuwExHGX+KYeFJXyNnaKsD/3lOnMNuDMAOk5BYKFPN71epdFWpnEXKNV/PbgHhGHvymCdygI6yZ4LW7eTwYTlmPE4A5ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oWe8+4vr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47053C116B1;
-	Tue,  2 Jul 2024 16:18:59 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ozOtPu5sbNM21XrUUesTwAmOqjvwCYiE/7lP3qAhYlwdAd+A8cOzVq0GY811QOCiOcn8n8v6jh9WE+hK4aTDZAUwnbg5h5Oa4tDDe2zH41DAfviCMV9+7MYVtLlsVJOJKIQIV+jsIsBnc5LPy6hZq7XWSHEABxW2FfVT7VxqYXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KFZN/teI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6965C116B1;
+	Tue,  2 Jul 2024 16:19:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719937146;
-	bh=f/Lt6TGAChQhJDo1d9S1C9KYvC+2NSkWdhgXVkkdLDw=;
+	s=k20201202; t=1719937187;
+	bh=lVQmHI+LCB+7I2btTVAeudIE1E/R0zerK0QF7WkCDJg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oWe8+4vrZ82aLpFmQ/xxCaJvhq1zmz0VUCOjwx+pO4joEWaTNHfWjLRMGZoaPiVDt
-	 budCT+VnEcgyoSf2Ab8MdsbVsBFm77eny8iEcIwJQ8JyEGL4+bTuUEjbENlNcYIpp/
-	 gL3SnCOgO6dZZl8vgmgZ762DzwQodDtcRzBW6kItR6KjM163XwjU2Lgn7iM5pgI6/7
-	 XBsh3uDkaMZxoYbbDoDEcrrpMrlrSldQO/fACxHAu6ntHbLUVC4HHK5mhcmY/NpEBF
-	 XVA4ga3Rk7WIXoZ0aUPw+mEDsMkvhR1DhZmouNn2Tfi29hI2nY5C6cVQ0Pr5Mz7q2M
-	 Il08gNdV6QXbQ==
-Date: Tue, 2 Jul 2024 18:18:57 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>, 
-	"Darrick J. Wong" <djwong@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Chandan Babu R <chandan.babu@oracle.com>, 
-	Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, 
-	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
-	David Sterba <dsterba@suse.com>, Hugh Dickins <hughd@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, kernel-team@fb.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mm@kvack.org, 
-	linux-nfs@vger.kernel.org
-Subject: Re: [PATCH 01/10] fs: turn inode ctime fields into a single ktime_t
-Message-ID: <20240702-inwiefern-beraten-cc4b5efce8ef@brauner>
-References: <20240701224941.GE612460@frogsfrogsfrogs>
- <3042db2f803fbc711575ec4f1c4a273912a50904.camel@kernel.org>
- <ZoOuSxRlvEQ5rOqn@infradead.org>
- <d91a29f0e600793917b73ac23175e02dafd56beb.camel@kernel.org>
- <20240702101902.qcx73xgae2sqoso7@quack3>
- <958080f6de517cf9d0a1994e3ca500f23599ca33.camel@kernel.org>
- <ZoPs0TfTEktPaCHo@infradead.org>
- <09ad82419eb78a2f81dda5dca9caae10663a2a19.camel@kernel.org>
- <ZoPvR39vGeluD5T2@infradead.org>
- <a11d84a3085c6a6920d086bf8fae1625ceff5764.camel@kernel.org>
+	b=KFZN/teI9CkmW0iOWqSmXr/ZYdGvy+z/jP2qp+ujTEwwY4xzOjGY3b15+KbrRXlQ4
+	 +Cxy33ZcFI90gE+8LtOphor/Iqn3TU6pCQ7ojazeBHMFkhxWasd2Bts5Ty7i75LSnu
+	 +1LfDYpniU+5H+dDLj14xL+K26hfYqjNgipBlMEOoOFfdg01Cv8+ORHoDGs4+Pm1dg
+	 cC2P+1KG5KIgkezBQLiR98sJ15yvnPB7hgK92wvYXZItkgfsYvNuYz7RAZH9XP4UdK
+	 HjCRxp4GoLEGcnaZM2GrSN3SWHBQfkqAxEF8EhVitwV4QocRoS9UukgANWfn0m7eA0
+	 hKssnf0roWL6g==
+Date: Tue, 2 Jul 2024 17:19:40 +0100
+From: Will Deacon <will@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>, Russell King <linux@armlinux.org.uk>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	James Clark <james.clark@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, kvmarm@lists.linux.dev
+Subject: Re: [PATCH v2 06/12] perf: arm_pmu: Remove event index to counter
+ remapping
+Message-ID: <20240702161940.GA4460@willie-the-truck>
+References: <20240626-arm-pmu-3-9-icntr-v2-0-c9784b4f4065@kernel.org>
+ <20240626-arm-pmu-3-9-icntr-v2-6-c9784b4f4065@kernel.org>
+ <86ikxuir2k.wl-maz@kernel.org>
+ <20240701135216.GD2250@willie-the-truck>
+ <CAL_JsqKYstLZQy_VQTvg-285jj1mpH+4d9CVJ_1_iAus5_rTRA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,39 +76,89 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <a11d84a3085c6a6920d086bf8fae1625ceff5764.camel@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL_JsqKYstLZQy_VQTvg-285jj1mpH+4d9CVJ_1_iAus5_rTRA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Tue, Jul 02, 2024 at 08:21:42AM GMT, Jeff Layton wrote:
-> On Tue, 2024-07-02 at 05:15 -0700, Christoph Hellwig wrote:
-> > On Tue, Jul 02, 2024 at 08:09:46AM -0400, Jeff Layton wrote:
-> > > > > corrupt timestamps like this?
-> > > > 
-> > > > inode_set_ctime_to_ts should return an error if things are out of
-> > > > range.
-> > > 
-> > > Currently it just returns the timespec64 we're setting it to (which
-> > > makes it easy to do several assignments), so we'd need to change
-> > > its
-> > > prototype to handle this case, and fix up the callers to recognize
-> > > the
-> > > error.
-> > > 
-> > > Alternately it may be easier to just add in a test for when
-> > > __i_ctime == KTIME_MAX in the appropriate callers and have them
-> > > error
-> > > out. I'll have a look and see what makes sense.
-> > 
-> > The seems like a more awkward interface vs one that explicitly
-> > checks.
-> > 
+On Mon, Jul 01, 2024 at 09:49:29AM -0600, Rob Herring wrote:
+> On Mon, Jul 1, 2024 at 7:52 AM Will Deacon <will@kernel.org> wrote:
+> >
+> > On Thu, Jun 27, 2024 at 12:05:23PM +0100, Marc Zyngier wrote:
+> > > On Wed, 26 Jun 2024 23:32:30 +0100,
+> > > "Rob Herring (Arm)" <robh@kernel.org> wrote:
+> > > >
+> > > > Xscale and Armv6 PMUs defined the cycle counter at 0 and event counters
+> > > > starting at 1 and had 1:1 event index to counter numbering. On Armv7 and
+> > > > later, this changed the cycle counter to 31 and event counters start at
+> > > > 0. The drivers for Armv7 and PMUv3 kept the old event index numbering
+> > > > and introduced an event index to counter conversion. The conversion uses
+> > > > masking to convert from event index to a counter number. This operation
+> > > > relies on having at most 32 counters so that the cycle counter index 0
+> > > > can be transformed to counter number 31.
+> > > >
+> > > > Armv9.4 adds support for an additional fixed function counter
+> > > > (instructions) which increases possible counters to more than 32, and
+> > > > the conversion won't work anymore as a simple subtract and mask. The
+> > > > primary reason for the translation (other than history) seems to be to
+> > > > have a contiguous mask of counters 0-N. Keeping that would result in
+> > > > more complicated index to counter conversions. Instead, store a mask of
+> > > > available counters rather than just number of events. That provides more
+> > > > information in addition to the number of events.
+> > > >
+> > > > No (intended) functional changes.
+> > > >
+> > > > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> > >
+> > > [...]
+> > >
+> > > > diff --git a/include/linux/perf/arm_pmu.h b/include/linux/perf/arm_pmu.h
+> > > > index b3b34f6670cf..e5d6d204beab 100644
+> > > > --- a/include/linux/perf/arm_pmu.h
+> > > > +++ b/include/linux/perf/arm_pmu.h
+> > > > @@ -96,7 +96,7 @@ struct arm_pmu {
+> > > >     void            (*stop)(struct arm_pmu *);
+> > > >     void            (*reset)(void *);
+> > > >     int             (*map_event)(struct perf_event *event);
+> > > > -   int             num_events;
+> > > > +   DECLARE_BITMAP(cntr_mask, ARMPMU_MAX_HWEVENTS);
+> > >
+> > > I'm slightly worried by this, as this size is never used, let alone
+> > > checked by the individual drivers. I can perfectly picture some new
+> > > (non-architectural) PMU driver having more counters than that, and
+> > > blindly setting bits outside of the allowed range.
+> >
+> > I tend to agree.
+> >
+> > > One way to make it a bit safer would be to add a helper replacing the
+> > > various bitmap_set() calls, and enforcing that we never overflow this
+> > > bitmap.
+> >
+> > Or perhaps wd could leave the 'num_events' field intact and allocate the
+> > new bitmap dynamically?
+> >
+> > Rob -- what do you prefer? I think the rest of the series is ready to go.
 > 
-> Many of the existing callers of inode_ctime_to_ts are in void return
-> functions. They're just copying data from an internal representation to
-> struct inode and assume it always succeeds. For those we'll probably
-> have to catch bad ctime values earlier.
+> I think the list of places we're initializing cntr_mask is short
+> enough to check and additions to arm_pmu users are rare enough I would
+> not be too worried about it.
 > 
-> So, I think I'll probably have to roll bespoke error handling in all of
-> the relevant filesystems if we go this route. There are also
+> If anything, I think the issue is with the bitmap API in that it has
+> no bounds checking. I'm sure it will get on someone's radar to fix at
+> some point.
+> 
+> But if we want to have something check, this is what I have:
+> 
+> static inline void armpmu_set_counter_mask(struct arm_pmu *pmu,
+>                                           unsigned int start, unsigned int nr)
+> {
+>        if (WARN_ON(start + nr > ARMPMU_MAX_HWEVENTS))
+>                return;
+>        bitmap_set(pmu->cntr_mask, start, nr);
+> }
 
-Shudder, let's try and avoid that.
+Fair enough, for the sake of consistency, let's leave the series as-is
+and we can add helpers for all the counter-bound structures later, if we
+want to.
+
+Will
 
