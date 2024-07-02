@@ -1,115 +1,124 @@
-Return-Path: <linux-kernel+bounces-238345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74734924899
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:49:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A16D492489D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:50:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08617B224B0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:49:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 237791F241E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 058C61CCCBF;
-	Tue,  2 Jul 2024 19:49:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1061D1CD5B9;
+	Tue,  2 Jul 2024 19:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JJp1yF3Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="c/37CnBk"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467EE129E93;
-	Tue,  2 Jul 2024 19:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E575C129E93;
+	Tue,  2 Jul 2024 19:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719949762; cv=none; b=T0SkqXi7D9kz6mqAkzrUcSWe3gMdWiS7ymg67pjcpzDnEcPOAXshTABK19NIkQOZN1Dr91UJe4cynYmKzl/Y/Q2+mkg+eZqinGsQ4sGSe0u224ZUjEh8nbNBY4Jxrb3UHb2yXcOprC1m4tD1dYy9YHXu8i8zG1KOIs9xZGx2KoA=
+	t=1719949829; cv=none; b=uvNA49D4sfaoG21CX6P1ByXx/sO6FeGXYq9NqqnU1lh4ER5udnkmEiR0NZ/7aXOheZkUFZ6uq+6sQWlIyuHGPNznul7OhGLsI2SX4pYJ6fUeRHEBxYTsTuJg7s2FQsHJbTSBhHGzUt0lH60al+KwZXbAByiIqignNsXsEHcJA70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719949762; c=relaxed/simple;
-	bh=IzPBlqQ/4Tj0Uk881o0FtB2r6D4ok3HgHe3q8VdKMYQ=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=IgzoEwf7HnJTr5NVW/94QuFZYXR0KxKarsWiBMkLy6S4wiOkgbZUZAP50icdQJSM6poQJAUoQZnYL7Rn0bZa+NDpWHAN0d1sGUndydCC91B3gMciXYZwmrrWreW5kG1To3W+M2Hs8qnblTIx5MzSiqN2lBNoQ5aGHdkQ8A182aQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JJp1yF3Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB711C116B1;
-	Tue,  2 Jul 2024 19:49:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719949761;
-	bh=IzPBlqQ/4Tj0Uk881o0FtB2r6D4ok3HgHe3q8VdKMYQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=JJp1yF3ZqPfcjcf1fQipSRB97E8twMHSKw2qvDcIkGsQufK9CbZMjG1tHNofyntZw
-	 zVLxQ3TvW2Ex7gPj0v+r7PopNZNh11BDv28j1KD/MzCpH3dP+esWC2JBepOdhde7QT
-	 jcWu6vEGnDo3CO6iej+4BBhjQRnNoTX6MC5XAusQjb2eJS9XtyATJ9kpUmCKxigaHW
-	 mczEY797vfO1L6B6nON6QiRZoLtiRpGhKiOGDt9wxA7cEzomDz9km1AZxfavq6bgbI
-	 i2f2iulHL+yX3lqJ8PHGi9lgiyhb4vaS9FcIaMpD0s51BFvR6+ZvcyFNBohWH9zBok
-	 OLk6cHB/FRYAA==
-Received: from disco-boy.misterjones.org ([217.182.43.188] helo=www.loen.fr)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sOjV9-009CvD-B4;
-	Tue, 02 Jul 2024 20:49:19 +0100
+	s=arc-20240116; t=1719949829; c=relaxed/simple;
+	bh=o+vvPmSt6cMytrcP0spRNiIUB3VFa7o2SwGLT3i29Pw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=i3OPArIyDrDUyUV93nRqYq/igCskb62wE5BKB3DhnoJ+eJ0HDqdyLySIvEScbhAKSmI56fwFq3x0zTOLeM6Ys3+4I2+Zaxsv0c0ipykORSA8DC4Gb5JAtFCUIn9kBNOa6BSk1pVOY5FI0rUhCzPBr1Df4DeHz6XM2YZs7toQU6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=c/37CnBk; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 462HEvFV009458;
+	Tue, 2 Jul 2024 19:50:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=X9k8irR/hjfHe9E2iDRNhO
+	+8kHtzMs2pvoUZ0QJlGYM=; b=c/37CnBkWdAONoYR4nDXGJ6VzXuSJ1l1LMxBZN
+	At2LWdvjCxXAbytGrgE7aB9BnmM4Trcw7CSlRb/l0i8E+1ANKFTunYjkkRw/H+tE
+	gBeGlGqk4xW0IvuQYjD8U9bwkAYlPvd3xNjktR5fcxwzrwpkvH6NudSQE5xtDKPh
+	5QhA5qj3xdZmUtf/+oNMs5StBonHecf7DVQQ/wAirbzAyQJN8/czwkLghmNvCMd/
+	AqzSj7buzDWBMjYzGmzgHkQQgm+1ce5iylLh10y90XT1qbInFqdxNmPCzYOEdlMi
+	gbyhnUE8TMXtM4EKef31/L9P4UYr21IRY2D5k4QLoQnsNebg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4029kh6ur7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Jul 2024 19:50:09 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 462Jo77E008191
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 2 Jul 2024 19:50:07 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 2 Jul 2024
+ 12:50:07 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Tue, 2 Jul 2024 12:50:02 -0700
+Subject: [PATCH] um: harddog: add missing MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 02 Jul 2024 20:49:18 +0100
-From: Marc Zyngier <maz@kernel.org>
-To: Christian Zigotzky <chzigotzky@xenosoft.de>
-Cc: Rob Herring <robh@kernel.org>, apatel@ventanamicro.com, DTML
- <devicetree@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, linuxppc-dev
- <linuxppc-dev@lists.ozlabs.org>, mad skateman <madskateman@gmail.com>,
- "R.T.Dickinson" <rtd2@xtra.co.nz>, Matthew Leaman <matthew@a-eon.biz>,
- Darren Stevens <darren@stevens-zone.net>, Christian Zigotzky
- <info@xenosoft.de>
-Subject: Re: [PowerPC] [PASEMI] Issue with the identification of ATA drives
- after the of/irq updates 2024-05-29
-In-Reply-To: <68b7988d-eaaa-4713-99c3-525a34c5b322@xenosoft.de>
-References: <3ab66fab-c3f2-4bed-a04d-a10c57dcdd9b@xenosoft.de>
- <861q4bizxc.wl-maz@kernel.org>
- <68b7988d-eaaa-4713-99c3-525a34c5b322@xenosoft.de>
-User-Agent: Roundcube Webmail/1.4.15
-Message-ID: <5a6166f107ae31536665d42f410d314d@kernel.org>
-X-Sender: maz@kernel.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 217.182.43.188
-X-SA-Exim-Rcpt-To: chzigotzky@xenosoft.de, robh@kernel.org, apatel@ventanamicro.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, madskateman@gmail.com, rtd2@xtra.co.nz, matthew@a-eon.biz, darren@stevens-zone.net, info@xenosoft.de
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Message-ID: <20240702-md-um-arch-um-drivers-v1-1-79e4f50b5bab@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAOpZhGYC/x3MQQrCMBCF4auUWTsQQyTiVcTFNBnNgIkyY0uh9
+ O5NXT2+xftXMFZhg9uwgvIsJp/WcT4NkAq1F6PkbvDOBxedx5pxqkiayrFZZWY1pGug4LOLcbx
+ A/36Vn7L8u/dH90jGOCq1VI7aW9q0YCX7scK27fAiSeqGAAAA
+To: Richard Weinberger <richard@nod.at>,
+        Anton Ivanov
+	<anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>
+CC: <linux-um@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: j6JyB1mUKIKkcTJGQPu2pa9ccsk8Y1Du
+X-Proofpoint-ORIG-GUID: j6JyB1mUKIKkcTJGQPu2pa9ccsk8Y1Du
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-02_14,2024-07-02_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ priorityscore=1501 suspectscore=0 adultscore=0 mlxscore=0 clxscore=1011
+ malwarescore=0 bulkscore=0 spamscore=0 impostorscore=0 lowpriorityscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407020145
 
-On 2024-07-02 18:55, Christian Zigotzky wrote:
-> Hello Marc,
-> 
-> Thank you for your reply.
-> 
-> On 02.07.24 17:19, Marc Zyngier wrote:
->> Please provide the device tree for your platform. It isn't possible to
->> debug this without it, no matter how many pictures you provide. If it
->> doesn't exist in source form, you can dump it using:
->> 
->> # dtc -I dtb /sys/firmware/fdt
->> 
->> and posting the full output.
->> 
->> Additionally, a full dmesg of both working and non working boots would
->> be useful.
->> 
->> Thanks,
->> 
->> 	M.
->> 
-> The device tree of the Nemo board and further information:
-> https://forum.hyperion-entertainment.com/viewtopic.php?p=54406#p54406
+With ARCH=um, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in arch/um/drivers/harddog.o
 
-Please post these things on the list. I have no interest in
-fishing things on a random forum, and this information is
-useful for everyone.
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-Thanks,
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+Description taken from the file prologue:
+/* UML hardware watchdog, shamelessly stolen from:
+---
+ arch/um/drivers/harddog_kern.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-          M.
--- 
-Jazz is not dead. It just smells funny...
+diff --git a/arch/um/drivers/harddog_kern.c b/arch/um/drivers/harddog_kern.c
+index 60d1c6cab8a9..99a7144b229f 100644
+--- a/arch/um/drivers/harddog_kern.c
++++ b/arch/um/drivers/harddog_kern.c
+@@ -49,6 +49,7 @@
+ #include "mconsole.h"
+ #include "harddog.h"
+ 
++MODULE_DESCRIPTION("UML hardware watchdog");
+ MODULE_LICENSE("GPL");
+ 
+ static DEFINE_MUTEX(harddog_mutex);
+
+---
+base-commit: 1dfe225e9af5bd3399a1dbc6a4df6a6041ff9c23
+change-id: 20240702-md-um-arch-um-drivers-a84a42d077b5
+
 
