@@ -1,159 +1,142 @@
-Return-Path: <linux-kernel+bounces-238209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AAE79246DC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:02:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64F979246E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:03:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BE381C24B42
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:02:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 611031C24BF7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4BA71C6894;
-	Tue,  2 Jul 2024 18:02:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939621C6891;
+	Tue,  2 Jul 2024 18:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hHi3r7rE"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W8x+wrmP"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438C316B394;
-	Tue,  2 Jul 2024 18:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3062F4A;
+	Tue,  2 Jul 2024 18:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719943320; cv=none; b=tbioN6LzackZ313NZtR640xd8OqV0uJXec+W9Y1p7ZZUYwZRdiSycLcBGEyyRUtL52XOj3YPeYBG9q3Zn3/PNXkR99Whcv72sEdBphn2rdJRZRI6qymhbLu6n2BGPXc9KLRWQpNj0MjLWJf440DIIiAqpnOqP7JMj0oWxScvOk0=
+	t=1719943386; cv=none; b=gxEglnCqCyySsWmoySFMqOi7PoTRCH/zZFrFCkkeoRDs5ejcZGtQ+9QKGFylL1op+kmeFcmwNe3Bjn9ObOvhIZuji5aGUlinp+1VRg3IqVB3m2wNHtM3+HVdWG8ljW/lDs6LRFGm3FjC+9gTtGCeQOnrX3NKAAiClaoQgQrDxyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719943320; c=relaxed/simple;
-	bh=lP+nGGPwNE1RQTO6K8Nb1MPdV0ZDMIU2K4L1RrDfDgE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Gt0STjtQ0FeW5ceJjKUWtufWMin6d+8bF93GeiYuzGbRZb+nz1XF9ltJlZrDFKCd+zb8eMfCrfg/mrIZOez6nFR13HmwXW+rly3gmg2QMo3+SBeipydJCZaUwNEubmEc2P94zKRmXjI4CuQSwU/D7CUTL3vrUF07aaCfhl8g7YA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hHi3r7rE; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 462HE9d5026185;
-	Tue, 2 Jul 2024 18:01:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	3WAkOOmx+EV/jeAG/Z7JRQqqLw7VidhBmcMNbDg3RJk=; b=hHi3r7rE6Uf5pdkx
-	BP+FKu8dns4sMYzEjp7/OW3O7N2OiV2cxoYoPABSwfGzoWoCr1+Vx/dcqc5SI8Px
-	FhRZfglIIBdd3Yb07pGpIGY/OnAjC45wv8TcpsUOT63ee8gRq14ExqyvbBGVgHRK
-	QTFZ5o2baLPnVH038GDC70m0w/KWbFmV5qb7Ka4UHsEyecDmrvxwSrQBP4qaRAAI
-	DxU0+iqIVB8dWdoCmXjQK7Nytl31ankn/XPC7AFS9uufkdhUg1BE9XiaJd1d/0h6
-	ODGkSdItKwptPSHJVaTDln+dfHm+Rr56zfqmm4KBXCyy3Ie1fLE04LEXQPwH5mQt
-	q4GxLg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4027mnpxvk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 02 Jul 2024 18:01:53 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 462I1pxE022434
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 2 Jul 2024 18:01:51 GMT
-Received: from [10.50.20.191] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 2 Jul 2024
- 11:01:45 -0700
-Message-ID: <0a2d2bea-b043-443d-a898-c5e4c24b2b8d@quicinc.com>
-Date: Tue, 2 Jul 2024 23:31:42 +0530
+	s=arc-20240116; t=1719943386; c=relaxed/simple;
+	bh=B3dWdEDyNXQmx6muZkNVWHD7xKSIJpgZf/xlYbSegAA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m6R78aaHRW/OdLkr1vk0YwVgVXkbDlo1uNPBbLhmF9uSkSxhsWvQb6Z+idG/t9wtmWyvniP1ozu/fgEc2pgETlOgBmswJfMmAEyPQ5zsEEHzRB7/k/hRJ5w8uALWN6EBWSS0SV+hG2YRnVYCS0/GgNZyZ9En1eDqxq++FezrZRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W8x+wrmP; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fa55dbf2e7so25332205ad.2;
+        Tue, 02 Jul 2024 11:03:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719943385; x=1720548185; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qvoM6VT0CJn7MVKzubAGpZvllDEzwbyo5vD8p8L/0v8=;
+        b=W8x+wrmPf2I+S48Gkvq6HW8DWtOa9hr7eiI5uoY5eaPapYgbS+qVfsXxBYC/vKxhP0
+         LOSNukXRwnOAzU/F4jq/nprmc4WyGxHi0MqVpQJABAA+pKjci+brv6GpY1/JT2PmtRRL
+         7OebjQKjwCia2L8/iZD/b4lRH/sT+xytNreKo+C89FJxu36s4imbg0PobRUyc774N2X5
+         X92mYBJdUd1kqZxIFuj52SiKTrAs0un4h7FVD+Os5VpkRcAVDOWELN1WG5m+oejhwMoY
+         iuwa/RwZ08q9hf/Q8Q27D2nBNgIvHfXjnsVRmolwo2ZydNtd+tBdzepn74pwCOEkDGs7
+         TkhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719943385; x=1720548185;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qvoM6VT0CJn7MVKzubAGpZvllDEzwbyo5vD8p8L/0v8=;
+        b=e/QsMZPKpv3bXmGH7kQSz54VlLUul6tsa05+1RPrkfaiUHa8vzhpbCsigPc5GDm0q8
+         b74PFUfkglAecG1Jjxu9kQFqEMHekmNw606sYAKO1n6lDU0KOpHwn3sDcXvvWvKf9IpT
+         J4x6didvmQ/2fWQFm0oNQV9hObr6V/xNB7PEBdhCL7pOcCI9dYivbAdO5Ph9T421c1V3
+         jwjpRbzl27PbxIk7U0RrXi7BTd498BnM2V0P/d1ZKN0DJeFbO8HqZk61DtA/GjnhhKgD
+         hLbYbaX0VjY9bAkiLumIe6s97sikpTl3us13dpaf3rUV0EvNCA2lOJkg8H933LnxWB2l
+         YEpA==
+X-Forwarded-Encrypted: i=1; AJvYcCWqvl9PclItVlBt62o0k/kVD7Tt9DiDNdaf9mE6gbNZ7he0E5HzXj2TGJEB4J9KIvZ5+P78FlyBDYrqZONmOg4iOonxZXZkYBruDFVJ4eKR+LHSHLq29oV5zyjwVbbqUp5jMuk/l1mscIDZq9rw+a4taCm8mTG7q9ttRI38vkiBWJLHpuBWqSar1KX5rZmN4ndu/ingqjahQU+wdy0zye5i
+X-Gm-Message-State: AOJu0YyBIaqj2Q+rebYT2DLeXTRYlk5bWghoDIYeW18bwNelRUK3TC4q
+	moAiM4CN12T3VdoMR3OTKrQfUgvPbot1VRmi9v7m56reBaVQ0hvI
+X-Google-Smtp-Source: AGHT+IHfXBmJeNjdGUFTKNNAA0/gNX+F/GIrIVr1TbrrIrL6KTYRjIkDBb+7kMaXkDHLKvHq8JwmSg==
+X-Received: by 2002:a17:903:2303:b0:1f9:fca9:742a with SMTP id d9443c01a7336-1fadbd04454mr59020895ad.57.1719943384771;
+        Tue, 02 Jul 2024 11:03:04 -0700 (PDT)
+Received: from localhost.localdomain ([118.32.98.101])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fad2eb7cdesm78518005ad.146.2024.07.02.11.03.01
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 02 Jul 2024 11:03:04 -0700 (PDT)
+From: Yunseong Kim <yskelg@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Paolo Abeni <pabeni@redhat.com>,
+	Sasha Levin <sashal@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>
+Cc: Taehee Yoo <ap420073@gmail.com>,
+	Pedro Tammela <pctammela@mojatatu.com>,
+	Austin Kim <austindh.kim@gmail.com>,
+	MichelleJin <shjy180909@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	ppbuk5246@gmail.com,
+	Yeoreum Yun <yeoreum.yun@arm.com>
+Subject: [PATCH] tracing/net_sched: NULL pointer dereference in perf_trace_qdisc_reset()
+Date: Wed,  3 Jul 2024 03:01:47 +0900
+Message-ID: <20240702180146.5126-2-yskelg@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/4] interconnect: qcom: sc7280: enable QoS
- configuration
-To: Georgi Djakov <djakov@kernel.org>, Bjorn Andersson <andersson@kernel.org>
-CC: Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Kees Cook <keescook@chromium.org>,
-        <cros-qcom-dts-watchers@chromium.org>,
-        "Gustavo A . R . Silva"
-	<gustavoars@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-hardening@vger.kernel.org>, <quic_rlaggysh@quicinc.com>,
-        <quic_mdtipton@quicinc.com>
-References: <20240607173927.26321-1-quic_okukatla@quicinc.com>
- <20240607173927.26321-3-quic_okukatla@quicinc.com>
- <ciji6nlxn752ina4tmh6kwvek52nxpnguomqek6plwvwgvoqef@yrtexkpmn5br>
- <a7b959ff-a041-4380-86dd-05cdbc11fab4@kernel.org>
-Content-Language: en-US
-From: Odelu Kukatla <quic_okukatla@quicinc.com>
-In-Reply-To: <a7b959ff-a041-4380-86dd-05cdbc11fab4@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: GjBYqGc1vZkj_4zU9iuCMsASOoElOJ5y
-X-Proofpoint-GUID: GjBYqGc1vZkj_4zU9iuCMsASOoElOJ5y
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-02_13,2024-07-02_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- spamscore=0 malwarescore=0 adultscore=0 priorityscore=1501
- lowpriorityscore=0 phishscore=0 mlxscore=0 suspectscore=0 clxscore=1011
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407020132
+Content-Transfer-Encoding: 8bit
 
+Support backports for stable version. There are two places where null
+deref could happen before
+commit 2c92ca849fcc ("tracing/treewide: Remove second parameter of __assign_str()")
+Link: https://lore.kernel.org/linux-trace-kernel/20240516133454.681ba6a0@rorschach.local.home/
 
+I've checked +v6.1.82 +v6.6.22 +v6.7.10, +v6.8, +6.9, this version need
+to be applied, So, I applied the patch, tested it again, and confirmed
+working fine.
 
-On 7/2/2024 5:02 AM, Georgi Djakov wrote:
-> On 1.07.24 19:42, Bjorn Andersson wrote:
->> On Fri, Jun 07, 2024 at 11:09:25PM GMT, Odelu Kukatla wrote:
->>> Enable QoS configuration for master ports with predefined values
->>> for priority and urgency forawrding.
->>>
->>
->> This patch causes QCS6490 RB3Gen2 to hit a bus timeout and crash during
->> boot, unless the associated DeviceTree change (adding clocks) is
->> present.
->>
->> The two patches are reaching linux-next, and hence mainline, through
->> different code paths we now have periods where rb3gen2 is not bootable.
->> But more importantly, devices with current .dtbs installed can not boot
->> the new kernel.
->>
->>
->> It is not acceptable to introduce non-backwards compatible changes in
->> drivers (unless there's extraordinary reasons to do so).
->>
-> 
-> Thanks for the report, Bjorn! The intent of the patches is to keep it
-> backwards compatible. I think that the patch below should fix it.
-> I'll try to validate it and get it merged.
-> 
-> BR,
-> Georgi
-> 
+Fixes: 51270d573a8d ("tracing/net_sched: Fix tracepoints that save qdisc_dev() as a string")
+Link: https://lore.kernel.org/lkml/20240229143432.273b4871@gandalf.local.home/t/
+Cc: netdev@vger.kernel.org
+Cc: stable@vger.kernel.org # +v6.1.82 +v6.6.22 +v6.7.10, +v6.8, +6.9
+Tested-by: Yunseong Kim <yskelg@gmail.com>
+Reviewed-by: Pedro Tammela <pctammela@mojatatu.com>
+Signed-off-by: Yunseong Kim <yskelg@gmail.com>
+Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+Link: https://lore.kernel.org/r/20240624173320.24945-4-yskelg@gmail.com
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ include/trace/events/qdisc.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks Bjorn and Georgi!
-I will send a patch to address the boot up issue on old devices and keep it backwards compatible.
+diff --git a/include/trace/events/qdisc.h b/include/trace/events/qdisc.h
+index 1f4258308b96..061fd4960303 100644
+--- a/include/trace/events/qdisc.h
++++ b/include/trace/events/qdisc.h
+@@ -81,14 +81,14 @@ TRACE_EVENT(qdisc_reset,
+ 	TP_ARGS(q),
+ 
+ 	TP_STRUCT__entry(
+-		__string(	dev,		qdisc_dev(q)->name	)
++		__string(	dev,		qdisc_dev(q) ? qdisc_dev(q)->name : "(null)"	)
+ 		__string(	kind,		q->ops->id		)
+ 		__field(	u32,		parent			)
+ 		__field(	u32,		handle			)
+ 	),
+ 
+ 	TP_fast_assign(
+-		__assign_str(dev, qdisc_dev(q)->name);
++		__assign_str(dev, qdisc_dev(q) ? qdisc_dev(q)->name : "(null)");
+ 		__assign_str(kind, q->ops->id);
+ 		__entry->parent = q->parent;
+ 		__entry->handle = q->handle;
+-- 
+2.45.2
 
-> -->8--
-> diff --git a/drivers/interconnect/qcom/icc-rpmh.c b/drivers/interconnect/qcom/icc-rpmh.c
-> index 93047defd5e2..487e562dbd22 100644
-> --- a/drivers/interconnect/qcom/icc-rpmh.c
-> +++ b/drivers/interconnect/qcom/icc-rpmh.c
-> @@ -311,7 +311,7 @@ int qcom_icc_rpmh_probe(struct platform_device *pdev)
->   		}
-> 
->   		qp->num_clks = devm_clk_bulk_get_all(qp->dev, &qp->clks);
-> -		if (qp->num_clks < 0) {
-> +		if (qp->num_clks <= 0) {
->   			dev_info(dev, "Skipping QoS, failed to get clk: %d\n", qp->num_clks);
->   			goto skip_qos_config;
->   		}
-This will skip the QOS configuration for the providers which don't need any clock to be enabled.
-we may have to add a flag at provider level to check if it is associated with qos clocks.
-
-
-Thanks,
-Odelu
 
