@@ -1,137 +1,210 @@
-Return-Path: <linux-kernel+bounces-237774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7598B923DF3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:34:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED16B923E00
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:35:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31E18288B3F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:34:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 631D3B27347
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:35:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC0F16C6A5;
-	Tue,  2 Jul 2024 12:34:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE6B16728B;
+	Tue,  2 Jul 2024 12:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HAS+20eI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Be35Opg+"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B62816B748
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 12:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB38E167D8C
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 12:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719923679; cv=none; b=oL4vBv01Y4u6XrvzWIF8uoAMntFhbVt4m+Zz+sc97m2BlOu2nSRZ7lqCWYs/13rJCWUbb2K+P+dzMjaN2J+hQ3EacENaQ+EFT7mDZK3t4ME/fV2HGKzT1dl2PC4+rjMQ2R464uqBXvArDGqHuR7aKdyuKliiyUt7LHtXcsXXFI8=
+	t=1719923706; cv=none; b=WgIIAMy7BT9K32R7juQThWHnTgLGSsfl9mYfJxmM/3eH4KqyBuWCnbAUTQZg5HqxsqveSm0uvETIOWox3rLRSlashQgLhOFV0XfkwjcSkw8s95ReYOhVX4oUjVyjNLOYSrDSD3Kvn37XGzpx1NfbYOsZ4P4PYC96qhN5HgxBasA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719923679; c=relaxed/simple;
-	bh=JL5qIavQaoAaG/gmZoRicxABH1aGBETvW5jK0CfOzjM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=i6Prs623tuz371MC90XBQ/+RWzDq4bdCZfgt98sKJqWm6rwzcF6V/3bvD4yE3QjDYtnaYCkBCOlChvzv9KFTe07OoBg50rK82qPk+Q1B5Zq0IDefW62VlTLVJdq6rugWOziSmLFA8z6sH6iDuPo0oZIoPXpzKDdlGVfWhopWUU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HAS+20eI; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719923676;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OJJl1XdsZbN/nrhzL8kDmExeBA4K2F968qXwb+izwJ0=;
-	b=HAS+20eITHvUyfN8lUnEUYgMr9gHwbKgyr3MgbyMTSL6SypnH8cluVRvOdqILmNVHAb2zk
-	VRRW/gyyoa+9M6xNcPS6hLePkGJZ5iTrITGMWHI/7umku0U8hd2Er8BweTQS000yx10w1y
-	cSxO0CfdScwr0eQIW47f4SOb/yf/ePA=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-213-VPrUEIuCPQeG5BcflP0FRQ-1; Tue, 02 Jul 2024 08:34:34 -0400
-X-MC-Unique: VPrUEIuCPQeG5BcflP0FRQ-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-36740a84ad8so3608596f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 05:34:34 -0700 (PDT)
+	s=arc-20240116; t=1719923706; c=relaxed/simple;
+	bh=CYAdJeB+CqncFSyqJi1YrjNIbpA52qv/O23+hWZWLAs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d6W/GAx2OZIXHC/9kJ7WKiVoU8dgAuvzmKFn2V75tO86VjU7PoKmlamjt5ikWMTxEeS/4y3Q4ckSlCrv08+hlpN/stRDWf2Ky2TONwbIOuQhuMu6qzoG2xQXPP5u0AE9AbNQjNgLBVSrZUxRqM3DQb1AJ4OPDwNLyV5M57+hHNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Be35Opg+; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f9ffd24262so23555695ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 05:35:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1719923704; x=1720528504; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t2VzYQ+j8+6iQewLkeQCbIq09NlR4ehs8d7s9IHNlCc=;
+        b=Be35Opg+cNzuc5fytG3Frz39IU9QYbH9304zWoqyz2ZA6JjD1ynxs4RjvBWTNMGySi
+         1d6dHhn7RhdGrqOz9YQ4TP88QwbBMggeZB2jbQbyNuXf3VUaSQgRuY03E03SPl9ZG/8Q
+         g4sbKNaA8HmHxlvhaw+4t/Zjcup+ReWNBNMQE74mD4rneQ7GFNWh5NNtev00RoXUGtt9
+         Mc9tk8VQPVqKD8Bw7zsBiNmpcnaByT1qF3pXqqbd5j2FI/mXUyL25998Y2YCGLfsEOUi
+         R9JaT5k4ZOWzsf/lG5S26brN10CEL/l3Z8ezao/3x6NSP9KVhMQvNIb1wc1M0GYGruV+
+         uMDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719923674; x=1720528474;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OJJl1XdsZbN/nrhzL8kDmExeBA4K2F968qXwb+izwJ0=;
-        b=reFgxz5tZxJvBsq9+QWwZbYVuEPSgrM557J6poEq6snbus8fNEvBMxeeuLnxJn6dEw
-         /x8e1tn6lGQQVPzb6Smxy7ExXINfhafo2Ykb5P+U4zHb4toOBft7zrybHjt3hMPQ7hZZ
-         WpByMo11to7u/f9TYkldt7OR0ybmZ7ILqSC1Iq99KqO5kuwEr5vp/FBoAEV1cUkle9pk
-         zzTDmQsAmWOTcJ4jU0nFsWqPyxhhBBCxlrU2wnf1tnScxLK+4vtHAmn4xqEX0c7l2VA7
-         P9+Xe4vGq7dtB9LXSEXaTZDj6LVoQKucOBxp2eyWL4BLGHtngvLBz1AsPUuiecpAu9Ty
-         IJRw==
-X-Gm-Message-State: AOJu0YzOvxJiNsgIYw5AcrtIGW+JgzJQFPstCAyv3J608VI9S8fW2j3H
-	fk/97TTmBTBhRdaVThYwK7O5XFUBIuunPloH+3uz6rJii7AsGMAGB12dcy23Xvki+vc6ds3FELq
-	hUuD8fv514Ox0F+fVlRPcY7/nFJkxSfNaQEkoJckVaIzApEOqZmL4NJ9TZlWRqQ==
-X-Received: by 2002:a05:6000:401f:b0:364:ee85:e6e4 with SMTP id ffacd0b85a97d-36775724906mr7434290f8f.53.1719923673871;
-        Tue, 02 Jul 2024 05:34:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGA+M0i7qjFWDaCOkZBrFAY0zMWbhrnTGVMNJwTg7YQzPp1pRXF9LAHlA3zU/fuNw0+XU4dLw==
-X-Received: by 2002:a05:6000:401f:b0:364:ee85:e6e4 with SMTP id ffacd0b85a97d-36775724906mr7434270f8f.53.1719923673534;
-        Tue, 02 Jul 2024 05:34:33 -0700 (PDT)
-Received: from localhost (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3678c379cc6sm786301f8f.49.2024.07.02.05.34.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 05:34:33 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Thomas Huth <thuth@redhat.com>, dri-devel@lists.freedesktop.org, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Geert
- Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@gmail.com>, Daniel
- Vetter <daniel@ffwll.ch>, Thomas Huth <thuth@redhat.com>
-Subject: Re: [PATCH] drm/fbdev-dma: Fix framebuffer mode for big endian devices
-In-Reply-To: <20240702121737.522878-1-thuth@redhat.com>
-References: <20240702121737.522878-1-thuth@redhat.com>
-Date: Tue, 02 Jul 2024 14:34:32 +0200
-Message-ID: <87bk3gm0pz.fsf@minerva.mail-host-address-is-not-set>
+        d=1e100.net; s=20230601; t=1719923704; x=1720528504;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=t2VzYQ+j8+6iQewLkeQCbIq09NlR4ehs8d7s9IHNlCc=;
+        b=upHNrNoG4o01lH2+6hckQiqpO8K7bOkMZsprojs1MmdYZzNFTKzGOSd8wy4IVoCUen
+         Tj36mxn5vC7PC45z0Cr1JWF0rH4lM1dwlBcsB+TBsnnae9pbish3iI6EYsSmiFe0EkWn
+         CL8sPUReIkDyfwzttWGvD3PyxF148Vs7A3lnRo+zOwJqvP+UO888TCy3l9ldiivTbFlh
+         YySvLF/8r/fAzHB/543M048+94C5uBvGx9EJuYyVjtQOOqw4JS/bHi6an41Q49jfXi+L
+         umRRE4Fd956erqhULXSMOn/6LakiHBMvrKwWlRgiTvxE7pLi80iWKnp2sZSsWidYWmbX
+         8ibQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX6y2UG6pAn73C+1HBbfBL/rsIIcU2BJhgaZzlc86n8ZvzKYkE3WrAQ9VC53Qpg6belyQyV2hy2awwTxbiatyCxrVFo2QM15oBIm/9f
+X-Gm-Message-State: AOJu0Ywg0QiFbqe7wN8mGXg+xhIBtqmGVpEg7DgJThyTJ6pg/flwAmx7
+	COnj3nP4jKB9CgYqvM7m3drXPFgqhKGa94yY22Z1AGYgt/jz5/Gmmo2I1oEtkBcPun35XJ0d4OC
+	i
+X-Google-Smtp-Source: AGHT+IHQnoogWURs/kZMnk2ajJRFjETen6Zlw109v1iQySDinr13mF+vbirF+SJ/r8hNYxe5uKUJlA==
+X-Received: by 2002:a17:902:e80f:b0:1f9:ddb9:3ee5 with SMTP id d9443c01a7336-1fadbc85f8dmr67450555ad.26.1719923703933;
+        Tue, 02 Jul 2024 05:35:03 -0700 (PDT)
+Received: from [10.3.154.188] ([61.213.176.6])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac11d9685sm83027985ad.111.2024.07.02.05.34.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Jul 2024 05:35:02 -0700 (PDT)
+Message-ID: <616a1162-233e-46a9-98e8-cfac36426a2b@bytedance.com>
+Date: Tue, 2 Jul 2024 20:34:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [External] [PATCH v3 8/9] cachefiles: cyclic allocation of msg_id
+ to avoid reuse
+To: libaokun@huaweicloud.com, netfs@lists.linux.dev, dhowells@redhat.com,
+ jlayton@kernel.org
+Cc: hsiangkao@linux.alibaba.com, jefflexu@linux.alibaba.com,
+ linux-erofs@lists.ozlabs.org, brauner@kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yangerkun@huawei.com, houtao1@huawei.com, yukuai3@huawei.com,
+ wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>, zhujia.zj@bytedance.com
+References: <20240628062930.2467993-1-libaokun@huaweicloud.com>
+ <20240628062930.2467993-9-libaokun@huaweicloud.com>
+From: Jia Zhu <zhujia.zj@bytedance.com>
+In-Reply-To: <20240628062930.2467993-9-libaokun@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Thomas Huth <thuth@redhat.com> writes:
 
-Hello Thomas,
 
-> The drm_mode_legacy_fb_format() function only generates formats suitable
-> for little endian devices. switch to drm_driver_legacy_fb_format() here
-> instead to take the device endianness into consideration, too.
->
-> Suggested-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Signed-off-by: Thomas Huth <thuth@redhat.com>
+在 2024/6/28 14:29, libaokun@huaweicloud.com 写道:
+> From: Baokun Li <libaokun1@huawei.com>
+> 
+> Reusing the msg_id after a maliciously completed reopen request may cause
+> a read request to remain unprocessed and result in a hung, as shown below:
+> 
+>         t1       |      t2       |      t3
+> -------------------------------------------------
+> cachefiles_ondemand_select_req
+>   cachefiles_ondemand_object_is_close(A)
+>   cachefiles_ondemand_set_object_reopening(A)
+>   queue_work(fscache_object_wq, &info->work)
+>                  ondemand_object_worker
+>                   cachefiles_ondemand_init_object(A)
+>                    cachefiles_ondemand_send_req(OPEN)
+>                      // get msg_id 6
+>                      wait_for_completion(&req_A->done)
+> cachefiles_ondemand_daemon_read
+>   // read msg_id 6 req_A
+>   cachefiles_ondemand_get_fd
+>   copy_to_user
+>                                  // Malicious completion msg_id 6
+>                                  copen 6,-1
+>                                  cachefiles_ondemand_copen
+>                                   complete(&req_A->done)
+>                                   // will not set the object to close
+>                                   // because ondemand_id && fd is valid.
+> 
+>                  // ondemand_object_worker() is done
+>                  // but the object is still reopening.
+> 
+>                                  // new open req_B
+>                                  cachefiles_ondemand_init_object(B)
+>                                   cachefiles_ondemand_send_req(OPEN)
+>                                   // reuse msg_id 6
+> process_open_req
+>   copen 6,A.size
+>   // The expected failed copen was executed successfully
+> 
+> Expect copen to fail, and when it does, it closes fd, which sets the
+> object to close, and then close triggers reopen again. However, due to
+> msg_id reuse resulting in a successful copen, the anonymous fd is not
+> closed until the daemon exits. Therefore read requests waiting for reopen
+> to complete may trigger hung task.
+> 
+> To avoid this issue, allocate the msg_id cyclically to avoid reusing the
+> msg_id for a very short duration of time.
+> 
+> Fixes: c8383054506c ("cachefiles: notify the user daemon when looking up cookie")
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> Acked-by: Jeff Layton <jlayton@kernel.org>
+> Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+
+Reviewed-by: Jia Zhu <zhujia.zj@bytedance.com>
+
 > ---
->  Note: Patch has only been compile-tested since I lack an environment
->        for testing it. But it's the same fix as I required for the
->        drm_mode_legacy_fb_format() in drm_fbdev_generic.c / drm_fbdev_ttm.c
->        so I think this should be fine.
->
->  drivers/gpu/drm/drm_fbdev_dma.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/drm_fbdev_dma.c b/drivers/gpu/drm/drm_fbdev_dma.c
-> index 97ef6300d47e..fdef4a2f883f 100644
-> --- a/drivers/gpu/drm/drm_fbdev_dma.c
-> +++ b/drivers/gpu/drm/drm_fbdev_dma.c
-> @@ -101,7 +101,8 @@ static int drm_fbdev_dma_helper_fb_probe(struct drm_fb_helper *fb_helper,
->  		    sizes->surface_width, sizes->surface_height,
->  		    sizes->surface_bpp);
->  
-> -	format = drm_mode_legacy_fb_format(sizes->surface_bpp, sizes->surface_depth);
-> +	format = drm_driver_legacy_fb_format(dev, sizes->surface_bpp,
-> +					     sizes->surface_depth);
->  	buffer = drm_client_framebuffer_create(client, sizes->surface_width,
->  					       sizes->surface_height, format);
->  	if (IS_ERR(buffer))
-
-Makes sense to me.
-
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
-
--- 
-Best regards,
-
-Javier Martinez Canillas
-Core Platforms
-Red Hat
-
+>   fs/cachefiles/internal.h |  1 +
+>   fs/cachefiles/ondemand.c | 20 ++++++++++++++++----
+>   2 files changed, 17 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
+> index a1a1d25e9514..7b99bd98de75 100644
+> --- a/fs/cachefiles/internal.h
+> +++ b/fs/cachefiles/internal.h
+> @@ -129,6 +129,7 @@ struct cachefiles_cache {
+>   	unsigned long			req_id_next;
+>   	struct xarray			ondemand_ids;	/* xarray for ondemand_id allocation */
+>   	u32				ondemand_id_next;
+> +	u32				msg_id_next;
+>   };
+>   
+>   static inline bool cachefiles_in_ondemand_mode(struct cachefiles_cache *cache)
+> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
+> index 1d5b970206d0..470c96658385 100644
+> --- a/fs/cachefiles/ondemand.c
+> +++ b/fs/cachefiles/ondemand.c
+> @@ -528,20 +528,32 @@ static int cachefiles_ondemand_send_req(struct cachefiles_object *object,
+>   		smp_mb();
+>   
+>   		if (opcode == CACHEFILES_OP_CLOSE &&
+> -			!cachefiles_ondemand_object_is_open(object)) {
+> +		    !cachefiles_ondemand_object_is_open(object)) {
+>   			WARN_ON_ONCE(object->ondemand->ondemand_id == 0);
+>   			xas_unlock(&xas);
+>   			ret = -EIO;
+>   			goto out;
+>   		}
+>   
+> -		xas.xa_index = 0;
+> +		/*
+> +		 * Cyclically find a free xas to avoid msg_id reuse that would
+> +		 * cause the daemon to successfully copen a stale msg_id.
+> +		 */
+> +		xas.xa_index = cache->msg_id_next;
+>   		xas_find_marked(&xas, UINT_MAX, XA_FREE_MARK);
+> +		if (xas.xa_node == XAS_RESTART) {
+> +			xas.xa_index = 0;
+> +			xas_find_marked(&xas, cache->msg_id_next - 1, XA_FREE_MARK);
+> +		}
+>   		if (xas.xa_node == XAS_RESTART)
+>   			xas_set_err(&xas, -EBUSY);
+> +
+>   		xas_store(&xas, req);
+> -		xas_clear_mark(&xas, XA_FREE_MARK);
+> -		xas_set_mark(&xas, CACHEFILES_REQ_NEW);
+> +		if (xas_valid(&xas)) {
+> +			cache->msg_id_next = xas.xa_index + 1;
+> +			xas_clear_mark(&xas, XA_FREE_MARK);
+> +			xas_set_mark(&xas, CACHEFILES_REQ_NEW);
+> +		}
+>   		xas_unlock(&xas);
+>   	} while (xas_nomem(&xas, GFP_KERNEL));
+>   
 
