@@ -1,80 +1,61 @@
-Return-Path: <linux-kernel+bounces-237348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6DC891EF87
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:56:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 852B091F0C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:07:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6448D287B7B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:56:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 382B72859F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:07:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E91412FB39;
-	Tue,  2 Jul 2024 06:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n7wQiXUx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3619F12E1C6
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 06:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D68C14B977;
+	Tue,  2 Jul 2024 08:07:13 +0000 (UTC)
+Received: from chinatelecom.cn (smtpnm6-03.21cn.com [182.42.153.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14969146D57;
+	Tue,  2 Jul 2024 08:07:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=182.42.153.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719903362; cv=none; b=u6aKqDJ1wfCY2Cv3P2X0hUSKByOTwNwj5zfG3+xudHNzntC5WL38q8nN9OJNaEaO21T/yOv6/klDc66Q8Na/EeVLMnn/SHgu47vhpz2iQAX1JoICO1pOlhPC5MTni7PyVcQT8H9AW5/R4tXPb7s8hZrtgVxlWVtXFb8DiB+Sr6w=
+	t=1719907632; cv=none; b=oSVCo6IND2ZLlvJsBC2AMNdCHvBimoDZAgv0uzMGZMdI6Oyjn3Uq58vhEiYoRZ9nicz5XGzwVkX2oQuRvLKAJaxFTHzAPr6HZNw/xN6ItDo4CBtfcKj59NdL1Qmnvh2+IZAzZkldkDwfbpa059TxZkJ4GyyOOYICqR1Ry0ErsHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719903362; c=relaxed/simple;
-	bh=dG7WcnqU1MnAsJE6b1Kc0O6TyKO5hB3dIVlYUfwOOyU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UH+gNrULYPnN/4rFYef4K4yCZFX43SrJzlAI58ey8Y++cy2iYOFfDoYIlHTqEcnqgbonlcyYdYob1PapvkJ9HiowCSLpMsjAFy4Z3v2HbO59RrkZMUOms2/Ptbizdy5Aejyw7poD21wpfdxHV+drLTXc7SO1QlK6rqXjnUZmmaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n7wQiXUx; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719903361; x=1751439361;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=dG7WcnqU1MnAsJE6b1Kc0O6TyKO5hB3dIVlYUfwOOyU=;
-  b=n7wQiXUxYdCIjfZGmBbVM2i1pNqV0NWz5V3LuQOuuD3JVhbdiRk1Htlp
-   DHBozGMQFTGfOnTdjTS5ha6zg0o5tKCDNsKHL+ZcZpsd+h0qVIp28KYCQ
-   9y9mxNaSTxDe73GxyIFKbaU8UzVKwedZANTTidKpfIQ4dFAu1+DGM32IZ
-   MQKGkCTFuHHpXTjK78j/bWfitfBaLAnsGdE4apEKobkY+Do43Bhbriq+m
-   C11XIbf4fojSMHDLFG4mRIY4QYbZ0ETrp/5JyOH3a3KPkHEXOUEy4ndVb
-   k9POqQXGwUv/U0wUlLv1G7oACi5rulsqXrCs7DZMn1/C4wEaPmwpvSrh2
-   w==;
-X-CSE-ConnectionGUID: x/QEADb3RZCmVBOXn/8kGA==
-X-CSE-MsgGUID: icqb3RWySUaJR4grfLHonA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="12352636"
-X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
-   d="scan'208";a="12352636"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 23:56:01 -0700
-X-CSE-ConnectionGUID: 2ePaUZTcTiOzyCaZGd77Nw==
-X-CSE-MsgGUID: CWnKZAjAQXuFxZVz/I9quw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
-   d="scan'208";a="50405628"
-Received: from unknown (HELO dell-3650.sh.intel.com) ([10.239.159.147])
-  by fmviesa004.fm.intel.com with ESMTP; 01 Jul 2024 23:55:58 -0700
-From: Dapeng Mi <dapeng1.mi@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org,
-	Dapeng Mi <dapeng1.mi@intel.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: [RESEND Patch 2/2] perf/x86: Typos and invalid indents fix
-Date: Wed,  3 Jul 2024 06:57:03 +0800
-Message-Id: <20240702225703.346951-2-dapeng1.mi@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240702225703.346951-1-dapeng1.mi@linux.intel.com>
-References: <20240702225703.346951-1-dapeng1.mi@linux.intel.com>
+	s=arc-20240116; t=1719907632; c=relaxed/simple;
+	bh=92dFSfRbS5RmLRskRjZ2zcudhCzrBgOuK58ydCAwa10=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=deeUoiPLvmsv/me0QmnBtFXOBgfsfvvtYXD3QO4h+lpeCA3HrhOw0kNRWujaSifA4Zt2kr9OgVTBW4tlbpmN414b9Syr2GslRvNrawJ9pjOayW6+ytLAMqXagGfBs0sX+0pzDY0hay694zefMAB2msrOh+J3JalXoxMAXd122hQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chinatelecom.cn; spf=pass smtp.mailfrom=chinatelecom.cn; arc=none smtp.client-ip=182.42.153.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chinatelecom.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chinatelecom.cn
+HMM_SOURCE_IP:192.168.137.232:0.732275872
+HMM_ATTACHE_NUM:0000
+HMM_SOURCE_TYPE:SMTP
+Received: from clientip-36.111.64.84 (unknown [192.168.137.232])
+	by chinatelecom.cn (HERMES) with SMTP id 4E61FE3B26;
+	Tue,  2 Jul 2024 15:56:25 +0800 (CST)
+X-189-SAVE-TO-SEND: +liuq131@chinatelecom.cn
+Received: from  ([36.111.64.84])
+	by gateway-ssl-dep-67bdc54df-b7md5 with ESMTP id 303878b1da4b4347b4843b31d3a4b404 for seanjc@google.com;
+	Tue, 02 Jul 2024 15:56:36 CST
+X-Transaction-ID: 303878b1da4b4347b4843b31d3a4b404
+X-Real-From: liuq131@chinatelecom.cn
+X-Receive-IP: 36.111.64.84
+X-MEDUSA-Status: 0
+Sender: liuq131@chinatelecom.cn
+From: Qiang Liu <liuq131@chinatelecom.cn>
+To: seanjc@google.com
+Cc: pbonzini@redhat.com,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Qiang Liu <liuq131@chinatelecom.cn>
+Subject: [PATCH] KVM: VMX: Modify the BUILD_BUG_ON_MSG of the 32-bit field in the vmcs_check16 function
+Date: Tue,  2 Jul 2024 06:46:09 +0000
+Message-Id: <20240702064609.52487-1-liuq131@chinatelecom.cn>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,51 +64,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Fix several typos and invalid indents.
+According to the SDM, the meaning of field bit 0 is:
+Access type (0 = full; 1 = high); must be full for 16-bit, 32-bit,
+and natural-width fields. So there is no 32-bit high field here,
+it should be a 32-bit field instead.
 
-Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Signed-off-by: Qiang Liu <liuq131@chinatelecom.cn>
 ---
- arch/x86/events/intel/core.c      | 2 +-
- arch/x86/include/asm/perf_event.h | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/kvm/vmx/vmx_ops.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 38c1b1f1deaa..9600af53d1bc 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -3697,7 +3697,7 @@ static void intel_put_event_constraints(struct cpu_hw_events *cpuc,
- 	intel_put_shared_regs_event_constraints(cpuc, event);
- 
- 	/*
--	 * is PMU has exclusive counter restrictions, then
-+	 * If PMU has exclusive counter restrictions, then
- 	 * all events are subject to and must call the
- 	 * put_excl_constraints() routine
- 	 */
-diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
-index 7f1e17250546..d54aa3eb65f5 100644
---- a/arch/x86/include/asm/perf_event.h
-+++ b/arch/x86/include/asm/perf_event.h
-@@ -399,15 +399,15 @@ static inline bool is_topdown_idx(int idx)
-  *
-  * With this fake counter assigned, the guest LBR event user (such as KVM),
-  * can program the LBR registers on its own, and we don't actually do anything
-- * with then in the host context.
-+ * with them in the host context.
-  */
--#define INTEL_PMC_IDX_FIXED_VLBR	(GLOBAL_STATUS_LBRS_FROZEN_BIT)
-+#define INTEL_PMC_IDX_FIXED_VLBR		(GLOBAL_STATUS_LBRS_FROZEN_BIT)
- 
- /*
-  * Pseudo-encoding the guest LBR event as event=0x00,umask=0x1b,
-  * since it would claim bit 58 which is effectively Fixed26.
-  */
--#define INTEL_FIXED_VLBR_EVENT	0x1b00
-+#define INTEL_FIXED_VLBR_EVENT			0x1b00
- 
- /*
-  * Adaptive PEBS v4
+diff --git a/arch/x86/kvm/vmx/vmx_ops.h b/arch/x86/kvm/vmx/vmx_ops.h
+index 8060e5fc6dbd..93e020dc88f6 100644
+--- a/arch/x86/kvm/vmx/vmx_ops.h
++++ b/arch/x86/kvm/vmx/vmx_ops.h
+@@ -47,7 +47,7 @@ static __always_inline void vmcs_check16(unsigned long field)
+ 	BUILD_BUG_ON_MSG(__builtin_constant_p(field) && ((field) & 0x6001) == 0x2001,
+ 			 "16-bit accessor invalid for 64-bit high field");
+ 	BUILD_BUG_ON_MSG(__builtin_constant_p(field) && ((field) & 0x6000) == 0x4000,
+-			 "16-bit accessor invalid for 32-bit high field");
++			 "16-bit accessor invalid for 32-bit field");
+ 	BUILD_BUG_ON_MSG(__builtin_constant_p(field) && ((field) & 0x6000) == 0x6000,
+ 			 "16-bit accessor invalid for natural width field");
+ }
 -- 
-2.40.1
+2.27.0
 
 
