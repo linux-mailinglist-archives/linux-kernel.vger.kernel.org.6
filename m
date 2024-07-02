@@ -1,105 +1,205 @@
-Return-Path: <linux-kernel+bounces-237943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AF709240E4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:30:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19387923FFE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:11:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBCC3281D12
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:30:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D2461C23522
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:11:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1891BA087;
-	Tue,  2 Jul 2024 14:30:20 +0000 (UTC)
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E801BA061;
+	Tue,  2 Jul 2024 14:11:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YxCVCEV3"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CE31DFE1;
-	Tue,  2 Jul 2024 14:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881641DDD6;
+	Tue,  2 Jul 2024 14:10:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719930619; cv=none; b=LZyTtfcpnXy/9Ejyn0JH4oVIFRJuMFK535fDCz1TB7A5zqCM21PXPW6J91AwcY1EOVepydQPmCY96OqakiwRblFkIvhESM3lplkvKVbi/ck1AQXPu96QEaRd4UJxjHTo4fMeES2URSMoODc6Fv5j1F3xBqEgHdAYrDKHuxV1Yh4=
+	t=1719929460; cv=none; b=WujGegQVCqUGD6wmCsnaE0Ixq3TjlXIOp6kkaeXZG+dF0ucSPVECFkRPkxn8zyx10yXdEh97abZTj9W4ShiVkBgDJ2kBGwbCuBae6rkvOifbnFdsKuX0DWjIMRc6RvX77g9No/ZuOXJhWp2uzTvD3QpYs6HM5dvtHEVsmo5yssg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719930619; c=relaxed/simple;
-	bh=T3DWqD+Ol1/VNz18zDmIpBFqHT4hlrXFgHlH4ruVB2Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TJd9eJaJ/F81l5Lr16+EHPWDNejPin5Adg0oElg/lSuxkoeDnOTdyrhhc9xB8/DQJv0fD/MFljj504dCBCdb7dtKH0BaOrrGT2jthl38q379/qb7lIV4tsnqSwAbnSyxGO/O56aYUYr08vgqHKagGNMO1i3RKpnVv7RZxOaQqwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=breakpoint.cc; arc=none smtp.client-ip=91.216.245.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=breakpoint.cc
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
-	(envelope-from <fw@breakpoint.cc>)
-	id 1sOeWN-0008BV-L4; Tue, 02 Jul 2024 16:30:15 +0200
-From: Florian Westphal <fw@strlen.de>
-To: <netfilter-devel@vger.kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	<netdev@vger.kernel.org>,
-	syzkaller-bugs@googlegroups.com,
-	Florian Westphal <fw@strlen.de>,
-	syzbot+4fd66a69358fc15ae2ad@syzkaller.appspotmail.com
-Subject: [PATCH nf] netfilter: nf_tables: unconditionally flush pending work before notifier
-Date: Tue,  2 Jul 2024 16:08:14 +0200
-Message-ID: <20240702140841.3337-1-fw@strlen.de>
-X-Mailer: git-send-email 2.44.2
-In-Reply-To: <000000000000aa1dbb061c354fe6@google.com>
-References: <000000000000aa1dbb061c354fe6@google.com>
+	s=arc-20240116; t=1719929460; c=relaxed/simple;
+	bh=jB7e0BWJUYy8pnYPEEOc3nSFaGq1u1krnDozmi3jQjM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J+Iopty+QZYF2qTmEqqQGhEcD/Cystd5cr0Nlz263uruqWfRp+mDZD84X7eUG3XVuZkJGMt60SX8a8XLYqwPEraiQq4kQylJ0WhcSlu9jDdLkKXZgYop2JVJi2ekTE5IpylY7CFeC4w0u9tyQLj5UxAo3n02SnsSTZkkLD4X/Rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YxCVCEV3; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 462DwE8l027175;
+	Tue, 2 Jul 2024 14:10:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=d
+	DTSHAKS0Syv4Qne1bjB6vcqNRJn3LQKmhsFFS/Xv2k=; b=YxCVCEV36K5XqJKql
+	BBR0a3hGZW6GKYPUpzCG+NsP1wRfGQWYXVNtpEFWxp828rN5xZPGqxQrLAwahztL
+	RLGRkquw4gp/dn8iaxFgokebNU0fV8QzEvUVd6VJfnJUzKCnpXj2VdmuQ3MT6p3S
+	tAQNl3bNcujBxRw22ImHCgSeTBtvGk+Q6rrSHKqFHtcJqg6vfVNOvBQ2tRvLJrX5
+	axxs7WpQx0BiEnjjXiylWFTwlHy/KTxCS8vwfLTZqro88+BmaO35No6riat/Lkgw
+	E6rXsYRdxAoXYMj+1ZYwPWjRPZPaCyBI+gJsI+B80+7Q15nRZ0/EeGdlQ+NioPvD
+	DFX3g==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 404jw9r1a9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Jul 2024 14:10:10 +0000 (GMT)
+Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 462EAAj5013168;
+	Tue, 2 Jul 2024 14:10:10 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 404jw9r1a1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Jul 2024 14:10:10 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 462CAdDe024071;
+	Tue, 2 Jul 2024 14:10:09 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 402ya3cttf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Jul 2024 14:10:09 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 462EA5mm62128520
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 2 Jul 2024 14:10:08 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AC03C58086;
+	Tue,  2 Jul 2024 14:10:01 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4EFE258051;
+	Tue,  2 Jul 2024 14:09:54 +0000 (GMT)
+Received: from [9.195.35.111] (unknown [9.195.35.111])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  2 Jul 2024 14:09:54 +0000 (GMT)
+Message-ID: <d9625965-6742-4d48-ab8a-60a5a8b6be30@linux.ibm.com>
+Date: Tue, 2 Jul 2024 19:39:52 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 21/21] sched/cputime: Cope with steal time going
+ backwards or negative
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, Paul Durrant
+ <paul@xen.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Daniel Bristot de Oliveira
+ <bristot@redhat.com>,
+        Valentin Schneider <vschneid@redhat.com>,
+        Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jalliste@amazon.co.uk, sveith@amazon.de,
+        zide.chen@intel.com, Dongli Zhang <dongli.zhang@oracle.com>,
+        Chenyi Qiang <chenyi.qiang@intel.com>, kvm@vger.kernel.org
+References: <20240522001817.619072-1-dwmw2@infradead.org>
+ <20240522001817.619072-22-dwmw2@infradead.org>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <20240522001817.619072-22-dwmw2@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 8Kkr1ADykf2YsmO5WnLXu5WZuSB9XAYW
+X-Proofpoint-ORIG-GUID: T3nKIhJIKBS1A199aUafYu2FD1DdVyo8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-02_09,2024-07-02_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
+ malwarescore=0 lowpriorityscore=0 mlxlogscore=999 clxscore=1011
+ impostorscore=0 suspectscore=0 spamscore=0 phishscore=0 priorityscore=1501
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407020103
 
-syzbot reports:
 
-KASAN: slab-uaf in nft_ctx_update include/net/netfilter/nf_tables.h:1831
-KASAN: slab-uaf in nft_commit_release net/netfilter/nf_tables_api.c:9530
-KASAN: slab-uaf int nf_tables_trans_destroy_work+0x152b/0x1750 net/netfilter/nf_tables_api.c:9597
-Read of size 2 at addr ffff88802b0051c4 by task kworker/1:1/45
-[..]
-Workqueue: events nf_tables_trans_destroy_work
-Call Trace:
- nft_ctx_update include/net/netfilter/nf_tables.h:1831 [inline]
- nft_commit_release net/netfilter/nf_tables_api.c:9530 [inline]
- nf_tables_trans_destroy_work+0x152b/0x1750 net/netfilter/nf_tables_api.c:9597
 
-Problem is that the notifier does a conditional flush, but its possible
-that the table-to-be-removed is still referenced by transactions being
-processed by the worker, so we need to flush unconditionally.
+On 5/22/24 5:47 AM, David Woodhouse wrote:
+> From: David Woodhouse <dwmw@amazon.co.uk>
+> 
+> In steal_account_process_time(), a delta is calculated between the value
+> returned by paravirt_steal_clock(), and this_rq()->prev_steal_time which
+> is assumed to be the *previous* value returned by paravirt_steal_clock().
+> 
+> However, instead of just assigning the newly-read value directly into
+> ->prev_steal_time for use in the next iteration, ->prev_steal_time is
+> *incremented* by the calculated delta.
 
-We could make the flush_work depend on whether we found a table to delete
-in nf-next to avoid the flush for most cases.
 
-AFAICS this problem is only exposed in nf-next, with
-commit e169285f8c56 ("netfilter: nf_tables: do not store nft_ctx in transaction objects"),
-with this commit applied there is an unconditional fetch of
-table->family which is whats triggering the above splat.
+Does this happen because ULONG_MAX and u64 aren't of same size? If so, 
+would using the u64 variant of MAX would be a simpler fix?
 
-Fixes: 2c9f0293280e ("netfilter: nf_tables: flush pending destroy work before netlink notifier")
-Reported-and-tested-by: syzbot+4fd66a69358fc15ae2ad@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=4fd66a69358fc15ae2ad
-Signed-off-by: Florian Westphal <fw@strlen.de>
----
- net/netfilter/nf_tables_api.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
-index 02d75aefaa8e..683f6a4518ee 100644
---- a/net/netfilter/nf_tables_api.c
-+++ b/net/netfilter/nf_tables_api.c
-@@ -11552,8 +11552,7 @@ static int nft_rcv_nl_event(struct notifier_block *this, unsigned long event,
- 
- 	gc_seq = nft_gc_seq_begin(nft_net);
- 
--	if (!list_empty(&nf_tables_destroy_list))
--		nf_tables_trans_destroy_flush_work();
-+	nf_tables_trans_destroy_flush_work();
- again:
- 	list_for_each_entry(table, &nft_net->tables, list) {
- 		if (nft_table_has_owner(table) &&
--- 
-2.44.2
-
+> 
+> This used to be roughly the same, modulo conversion to jiffies and back,
+> until commit 807e5b80687c0 ("sched/cputime: Add steal time support to
+> full dynticks CPU time accounting") started clamping that delta to a
+> maximum of the actual time elapsed. So now, if the value returned by
+> paravirt_steal_clock() jumps by a large amount, instead of a *single*
+> period of reporting 100% steal time, the system will report 100% steal
+> time for as long as it takes to "catch up" with the reported value.
+> Which is up to 584 years.
+> 
+> But there is a benefit to advancing ->prev_steal_time only by the time
+> which was *accounted* as having been stolen. It means that any extra
+> time truncated by the clamping will be accounted in the next sample
+> period rather than lost. Given the stochastic nature of the sampling,
+> that is more accurate overall.
+> 
+> So, continue to advance ->prev_steal_time by the accounted value as
+> long as the delta isn't egregiously large (for which, use maxtime * 2).
+> If the delta is more than that, just set ->prev_steal_time directly to
+> the value returned by paravirt_steal_clock().
+> 
+> Fixes: 807e5b80687c0 ("sched/cputime: Add steal time support to full dynticks CPU time accounting")
+> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+> ---
+>  kernel/sched/cputime.c | 20 ++++++++++++++------
+>  1 file changed, 14 insertions(+), 6 deletions(-)
+> 
+> diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
+> index af7952f12e6c..3a8a8b38966d 100644
+> --- a/kernel/sched/cputime.c
+> +++ b/kernel/sched/cputime.c
+> @@ -254,13 +254,21 @@ static __always_inline u64 steal_account_process_time(u64 maxtime)
+>  {
+>  #ifdef CONFIG_PARAVIRT
+>  	if (static_key_false(&paravirt_steal_enabled)) {
+> -		u64 steal;
+> -
+> -		steal = paravirt_steal_clock(smp_processor_id());
+> -		steal -= this_rq()->prev_steal_time;
+> -		steal = min(steal, maxtime);
+> +		u64 steal, abs_steal;
+> +
+> +		abs_steal = paravirt_steal_clock(smp_processor_id());
+> +		steal = abs_steal - this_rq()->prev_steal_time;
+> +		if (unlikely(steal > maxtime)) {
+> +			/*
+> +			 * If the delta isn't egregious, it can be counted
+> +			 * in the next time period. Only advance by maxtime.
+> +			 */
+> +			if (steal < maxtime * 2)
+> +				abs_steal = this_rq()->prev_steal_time + maxtime;
+> +			steal = maxtime;
+> +		}
+>  		account_steal_time(steal);
+> -		this_rq()->prev_steal_time += steal;
+> +		this_rq()->prev_steal_time = abs_steal;
+>  
+>  		return steal;
+>  	}
 
