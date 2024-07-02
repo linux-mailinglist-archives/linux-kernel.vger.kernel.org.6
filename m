@@ -1,196 +1,138 @@
-Return-Path: <linux-kernel+bounces-237138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2C3B91EC0F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 02:56:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A75591EC1D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 02:58:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FE6F1C2176D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 00:56:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18321B20E5D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 00:58:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9DDD8F44;
-	Tue,  2 Jul 2024 00:56:09 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903DE8BFA;
+	Tue,  2 Jul 2024 00:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="THXcN8xj"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F317A8489;
-	Tue,  2 Jul 2024 00:56:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD53747F;
+	Tue,  2 Jul 2024 00:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719881769; cv=none; b=i/MMyLHA1MQr8nIFjcQyx2I9R/1Iu3GUEWXk5UyL9AhIECY/5fLNcHGPpY4Jj7+g+xJGWH3+moobfOcsXaxbtlwDmanceVtvbO5/sB419L1jsBpcwirJENd+qqw8X65IF0ENU6u2Wtj2CPk0UKDk0JDs1xiAs6OHqBNjg9dcXMY=
+	t=1719881909; cv=none; b=o49IilA2mcRkblu03wAQNhYfNzUcejrvw0dm+ajLPMhKomJzIeM7CUW/N+QujCfx6utrIt80Snfp7tMLS1MFpag7/9yUVpSYmGSZJvCr8OlHfoZn64ImKExMZSoZeIKRToTugGIOdQy6rSpoaNdlM7pQA0YDxnnp88tOaStiLfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719881769; c=relaxed/simple;
-	bh=XkgX5lxEHXnFt3gb4fSXx2x+XrRrziD/N4QGblQpoSg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=NCfbBZVxGPYM03hJTCDKCSG/9vlUw/dVwNjenlaa/pUOKWUfWm2TcTSW1BpDTAbUcUIFKYOjOBwNKP4CJiFMmKTfnpOhJitSMBzPBkVHsTBQj7XD4O3+6iOSEgWXF/EeMQ/UYV6seGzGA1PBknwiX8KpGFRBc0k2mSgy8K9blaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WCkvP1zqpz5sZl;
-	Tue,  2 Jul 2024 08:54:25 +0800 (CST)
-Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
-	by mail.maildlp.com (Postfix) with ESMTPS id C035B18006C;
-	Tue,  2 Jul 2024 08:56:01 +0800 (CST)
-Received: from [10.67.110.112] (10.67.110.112) by
- dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 2 Jul 2024 08:56:01 +0800
-Message-ID: <2f586040-73f2-df74-6ae2-a26afddd7263@huawei.com>
-Date: Tue, 2 Jul 2024 08:56:01 +0800
+	s=arc-20240116; t=1719881909; c=relaxed/simple;
+	bh=Er1wpDGC44or5ssRI8CbjMXWiS2P/zgwLlcNysvBWPo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fr5soYWpltHTTVB2jkzHIRmwN2e17/h/h6hG/H2bh7kjW2f78GNUbW6QLxk4rrBtR5vXFbP1woax2CM2H6yGSkKWkFe3xn60b1Zv3ogZVaEal5ZMrWNDGs6lk5qNxEu0EZU+pYv7RhYeczr6UOp6/zZz2CQxv5biUnrX2ySxJLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=THXcN8xj; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719881908; x=1751417908;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Er1wpDGC44or5ssRI8CbjMXWiS2P/zgwLlcNysvBWPo=;
+  b=THXcN8xjNCajsw4WotEsT3zFdPdIO019eG1LmoZARmJHhnRsv7UKVt1C
+   YBnHjs75nqS7GBYgEBvOnNJIVTuexkX8u5ZAOPm7s9KqzxMQyMBX9wWDa
+   IOvsLWK4X9RNMHBjY+H5hd2mVoeuO/98FntngSgths8otLT9OaVyzhyJI
+   Z+Ii06P5lteyENSONIc2/eSSeLxs8aLVFf8IyUScyAwbXx3r2U6UioIRL
+   QT8Rcfo3PlQWyY6JhBU0dY/OHm2BEpjr9YK+gC3T/zo8ayjRqOZkFWWX+
+   i9OevttK0DThWKKaJJG0bRO6t36fDDFuXhnUBvhT5rR7w5uOwCXoutMW6
+   A==;
+X-CSE-ConnectionGUID: NJV8b953Qfa1/Dc1m9RFRw==
+X-CSE-MsgGUID: e+yKjjFfTeioQut9MP1QKw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="12347424"
+X-IronPort-AV: E=Sophos;i="6.09,177,1716274800"; 
+   d="scan'208";a="12347424"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 17:58:27 -0700
+X-CSE-ConnectionGUID: sCuDy8avTmucpIQG9+SxeQ==
+X-CSE-MsgGUID: RfiTWdokQC63YJS2uTSC+Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,177,1716274800"; 
+   d="scan'208";a="46356983"
+Received: from unknown (HELO zhiquan-linux-dev.bj.intel.com) ([10.238.156.102])
+  by orviesa007.jf.intel.com with ESMTP; 01 Jul 2024 17:58:25 -0700
+From: Zhiquan Li <zhiquan1.li@intel.com>
+To: tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	kirill.shutemov@linux.intel.com,
+	x86@kernel.org
+Cc: rafael@kernel.org,
+	hpa@zytor.com,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zhiquan1.li@intel.com
+Subject: [PATCH v3] x86/acpi: fix panic while AP online later with kernel parameter maxcpus=1
+Date: Tue,  2 Jul 2024 08:58:00 +0800
+Message-Id: <20240702005800.622910-1-zhiquan1.li@intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH v2 -next] cgroup/misc: Introduce misc.peak
-Content-Language: en-US
-From: xiujianfeng <xiujianfeng@huawei.com>
-To: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
-	<corbet@lwn.net>, <kamalesh.babulal@oracle.com>,
-	<haitao.huang@linux.intel.com>
-CC: <cgroups@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240702004108.2645587-1-xiujianfeng@huawei.com>
-In-Reply-To: <20240702004108.2645587-1-xiujianfeng@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpeml500023.china.huawei.com (7.185.36.114)
+Content-Transfer-Encoding: 8bit
 
+The issue was found on the platform that using "Multiprocessor Wakeup
+Structure"[1] to startup secondary CPU, which is usually used by
+encrypted guest.  When restrict boot time CPU to 1 with the kernel
+parameter "maxcpus=1" and bring other CPUs online later, there will be
+a kernel panic.
 
+The variable acpi_mp_wake_mailbox, which holds the virtual address of
+the MP Wakeup Structure mailbox, will be set as read-only after init.
+If the first AP gets online later, after init, the attempt to update
+the variable results in panic.
 
-On 2024/7/2 8:41, Xiu Jianfeng wrote:
-> Introduce misc.peak to record the historical maximum usage of the
-> resource, as in some scenarios the value of misc.max could be
-> adjusted based on the peak usage of the resource.
-> 
-> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
-> 
-> ---
-> v2: use cmpxchg to update the watermark
-> ---
->  Documentation/admin-guide/cgroup-v2.rst |  9 ++++++
->  include/linux/misc_cgroup.h             |  2 ++
->  kernel/cgroup/misc.c                    | 39 +++++++++++++++++++++++++
->  3 files changed, 50 insertions(+)
-> 
-> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-> index ae0fdb6fc618..468a95379009 100644
-> --- a/Documentation/admin-guide/cgroup-v2.rst
-> +++ b/Documentation/admin-guide/cgroup-v2.rst
-> @@ -2646,6 +2646,15 @@ Miscellaneous controller provides 3 interface files. If two misc resources (res_
->  	  res_a 3
->  	  res_b 0
->  
-> +  misc.peak
-> +        A read-only flat-keyed file shown in all cgroups.  It shows the
-> +        historical maximum usage of the resources in the cgroup and its
-> +        children.::
-> +
-> +	  $ cat misc.peak
-> +	  res_a 10
-> +	  res_b 8
-> +
->    misc.max
->          A read-write flat-keyed file shown in the non root cgroups. Allowed
->          maximum usage of the resources in the cgroup and its children.::
-> diff --git a/include/linux/misc_cgroup.h b/include/linux/misc_cgroup.h
-> index e799b1f8d05b..faf72a537596 100644
-> --- a/include/linux/misc_cgroup.h
-> +++ b/include/linux/misc_cgroup.h
-> @@ -30,11 +30,13 @@ struct misc_cg;
->  /**
->   * struct misc_res: Per cgroup per misc type resource
->   * @max: Maximum limit on the resource.
-> + * @watermark: Historical maximum usage of the resource.
->   * @usage: Current usage of the resource.
->   * @events: Number of times, the resource limit exceeded.
->   */
->  struct misc_res {
->  	u64 max;
-> +	u64 watermark;
->  	atomic64_t usage;
->  	atomic64_t events;
->  };
-> diff --git a/kernel/cgroup/misc.c b/kernel/cgroup/misc.c
-> index 79a3717a5803..42642a96f4dc 100644
-> --- a/kernel/cgroup/misc.c
-> +++ b/kernel/cgroup/misc.c
-> @@ -121,6 +121,17 @@ static void misc_cg_cancel_charge(enum misc_res_type type, struct misc_cg *cg,
->  		  misc_res_name[type]);
->  }
->  
-> +static void misc_cg_update_watermark(struct misc_res *res, u64 new_usage)
-> +{
-> +	u64 old;
-> +
-> +	do {
-> +		old = READ_ONCE(res->watermark);
-> +		if (cmpxchg(&res->watermark, old, new_usage) == old)
-> +			break;
-> +	} while (0);
+The memremap() call that initializes the variable cannot be moved into
+acpi_parse_mp_wake() because memremap() is not functional at that point
+in the boot process.
 
-oops! should be while (1) here.
+[1] Details about the MP Wakeup structure can be found in ACPI v6.4, in
+    the "Multiprocessor Wakeup Structure" section.
 
+Signed-off-by: Zhiquan Li <zhiquan1.li@intel.com>
+Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-> +}
-> +
->  /**
->   * misc_cg_try_charge() - Try charging the misc cgroup.
->   * @type: Misc res type to charge.
-> @@ -159,6 +170,7 @@ int misc_cg_try_charge(enum misc_res_type type, struct misc_cg *cg, u64 amount)
->  			ret = -EBUSY;
->  			goto err_charge;
->  		}
-> +		misc_cg_update_watermark(res, new_usage);
->  	}
->  	return 0;
->  
-> @@ -307,6 +319,29 @@ static int misc_cg_current_show(struct seq_file *sf, void *v)
->  	return 0;
->  }
->  
-> +/**
-> + * misc_cg_peak_show() - Show the peak usage of the misc cgroup.
-> + * @sf: Interface file
-> + * @v: Arguments passed
-> + *
-> + * Context: Any context.
-> + * Return: 0 to denote successful print.
-> + */
-> +static int misc_cg_peak_show(struct seq_file *sf, void *v)
-> +{
-> +	int i;
-> +	u64 watermark;
-> +	struct misc_cg *cg = css_misc(seq_css(sf));
-> +
-> +	for (i = 0; i < MISC_CG_RES_TYPES; i++) {
-> +		watermark = READ_ONCE(cg->res[i].watermark);
-> +		if (READ_ONCE(misc_res_capacity[i]) || watermark)
-> +			seq_printf(sf, "%s %llu\n", misc_res_name[i], watermark);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  /**
->   * misc_cg_capacity_show() - Show the total capacity of misc res on the host.
->   * @sf: Interface file
-> @@ -357,6 +392,10 @@ static struct cftype misc_cg_files[] = {
->  		.name = "current",
->  		.seq_show = misc_cg_current_show,
->  	},
-> +	{
-> +		.name = "peak",
-> +		.seq_show = misc_cg_peak_show,
-> +	},
->  	{
->  		.name = "capacity",
->  		.seq_show = misc_cg_capacity_show,
+---
+
+V2: https://lore.kernel.org/all/20240628082119.357735-1-zhiquan1.li@intel.com/
+
+Changes since V2:
+- Modify the commit log as suggested by Kirill.
+- Add Kirill's Reviewed-by tag.
+
+V1: https://lore.kernel.org/all/20240626073920.176471-1-zhiquan1.li@intel.com/
+
+Changes since V1:
+- Amend the commit message as per Kirill's comments.
+---
+ arch/x86/kernel/acpi/madt_wakeup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/acpi/madt_wakeup.c b/arch/x86/kernel/acpi/madt_wakeup.c
+index 6cfe762be28b..d5ef6215583b 100644
+--- a/arch/x86/kernel/acpi/madt_wakeup.c
++++ b/arch/x86/kernel/acpi/madt_wakeup.c
+@@ -19,7 +19,7 @@
+ static u64 acpi_mp_wake_mailbox_paddr __ro_after_init;
+ 
+ /* Virtual address of the Multiprocessor Wakeup Structure mailbox */
+-static struct acpi_madt_multiproc_wakeup_mailbox *acpi_mp_wake_mailbox __ro_after_init;
++static struct acpi_madt_multiproc_wakeup_mailbox *acpi_mp_wake_mailbox;
+ 
+ static u64 acpi_mp_pgd __ro_after_init;
+ static u64 acpi_mp_reset_vector_paddr __ro_after_init;
+
+base-commit: ec6574a634db84f25e4eee6698d76fed5649e3bd
+-- 
+2.25.1
+
 
