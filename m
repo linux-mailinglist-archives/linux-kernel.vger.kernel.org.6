@@ -1,62 +1,80 @@
-Return-Path: <linux-kernel+bounces-237729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 835E7923D5C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:14:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88A8C923D66
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:15:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4C30B2535F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:14:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6DDD1C22CA1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB751662F4;
-	Tue,  2 Jul 2024 12:13:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A240515D5C8;
+	Tue,  2 Jul 2024 12:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j1rjxOnI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BkRP4wh6"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27BB615CD75;
-	Tue,  2 Jul 2024 12:13:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1F81581EA;
+	Tue,  2 Jul 2024 12:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719922426; cv=none; b=fLIJyFTMiNmXesFUqj4K0d0kla0tyD4b3e+FJoRV3BU+56xHa10Y9djiCQukPxjvRzRbczS713/+nbBsOfcWO2CRFy/NCMbXN+yqgXOtlXooQBnoeafoi2zJoXKkb5clZ083HtPja7F3OK4v9oIZ6DT6Pi3B20yBCsefBf3U5Is=
+	t=1719922513; cv=none; b=Ylg16Jb30ZY2v9tNC5R+zR+Wl2I7xU4XlGYRUsMY6AUsdxF6ZU7THLqXX35F0IpeDOYpT3U1SXALngbFOhibe3INIeztaHAWuc39LnOyS0r3p9nTTm7rJXkVblbjQnUTNETnN+HzTFV3ECAXTdgA91JcFpAAU5sVfvSBCJNyU54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719922426; c=relaxed/simple;
-	bh=Bf2wlVUAC4llSs8EkU+I8ySlnGn5ovG0nUk6KILafEo=;
+	s=arc-20240116; t=1719922513; c=relaxed/simple;
+	bh=daknPN5+UD0AOsgseyyPKy+GhsmNuv/Kgat0Tz4/+yA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B1n3JhROY5dI+SeH8/BKlR7rAIWwPC0L8Ei/rI34S+d+kcS4mxoetP1D1eJyjeJNYbRn4vJyjPyKm7pHIhs/RhB5Wcf+InEKs21vJ3YiriIckCgyeg/kgCXpN53+U/Jjvd4lMWt80nyjq5ZahK0OaT61zUdQIuGNvKA8c1/kb94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j1rjxOnI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17318C32781;
-	Tue,  2 Jul 2024 12:13:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719922425;
-	bh=Bf2wlVUAC4llSs8EkU+I8ySlnGn5ovG0nUk6KILafEo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j1rjxOnI7wPme9phxNtAAD8YnUXRJAhBnrQAb0/wrXahT8rZwRg+jAjlxq4ZSsBDn
-	 PiplLOSUmpkdLF9thsweqx+Xx6I4XnL70P0/klizHUQUGLivvzGIDOnjws6cdgxn7l
-	 GOPonwNWWNmxMb2yiEf/atO1ZPyyTKGC67otwU3uLF3d1RiKuzJjDF6taQQERE7sap
-	 cnC11CLC95d5P2NlAbWWXLhFwRjm/qEMilUDx8ylkkTno2f+dM61Knek+eUmeqQEBz
-	 XKx8kp8UGd+t+zaw2dYBbi0CW02fVTN9shHT4M4Mh2aSqienFqtgMQC5OmAMngQkJY
-	 J07hzEB7IiLrQ==
-Date: Tue, 2 Jul 2024 13:13:40 +0100
-From: Will Deacon <will@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Yangyu Chen <cyy@cyyself.name>, linux-arm-kernel@lists.infradead.org,
-	Mark Rutland <mark.rutland@arm.com>, Janne Grunau <j@jannau.net>,
-	Hector Martin <marcan@marcan.st>, Asahi Lina <lina@asahilina.net>,
-	asahi@lists.linux.dev,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] drivers/perf: apple_m1: fix affinity table for event
- 0x96 and 0x9b
-Message-ID: <20240702121340.GB3542@willie-the-truck>
-References: <tencent_7B71486CE305DF8AE084B6BB6313EE550C06@qq.com>
- <20240701140148.GE2250@willie-the-truck>
- <87cynxp52o.wl-maz@kernel.org>
- <87bk3hp3z7.wl-maz@kernel.org>
- <tencent_371517268623E4A61194EF4C70497BDC5105@qq.com>
- <8634oshxhj.wl-maz@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WNc0sTY9+NAk9iZXssr6v1hGg29i7drYjQSKWCN58L8Q2m5DjGTMk7M66cT6lBteJY8CZz3Nwn54B7Lhiha7g4yiR9Rpkgso8j3ZrbUMCaM/5vhV01C5MWq+06qGVKecnX9PMrm7d7ljkJE/TW3WcR2WhH8AM8+0pa73aAF1D9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BkRP4wh6; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=4H0kn1lNWzVJfOABE8UVhmMrapLkOqkflBiu0II1OzI=; b=BkRP4wh6h5/M14B1AqqGglvNcX
+	iwivozmzpyoWh27g/3lRhEJLrmxdm1tf02XoZ26+xBicXfsIpJuturWphgXWW7rvN95zuXNqYgDQR
+	9UIkUGf3C2jrueKsbdD1Ky1jo5iRPz/W11ehsVYkllZ35LOsCd48VblmSG/IgOmtaXrnsy2WZz8hp
+	CESuZMR/SYEHEPla3jWILQ/PYhfoMfwKULLddVzXgcZkB8zT6nViFpsn1tESLNDxrXxODCZewyjYP
+	2eoTrrBtZ7DYLNQL98MRR7e5zUdKhSmb7tnywmPhxl8XS2meRungD78uUInbOm3Rezf5D+IEVZC4/
+	GDIK3Ihw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sOcPX-00000006ddf-2NOb;
+	Tue, 02 Jul 2024 12:15:03 +0000
+Date: Tue, 2 Jul 2024 05:15:03 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>, kernel-team@fb.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-mm@kvack.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH 01/10] fs: turn inode ctime fields into a single ktime_t
+Message-ID: <ZoPvR39vGeluD5T2@infradead.org>
+References: <20240626-mgtime-v1-0-a189352d0f8f@kernel.org>
+ <20240626-mgtime-v1-1-a189352d0f8f@kernel.org>
+ <20240701224941.GE612460@frogsfrogsfrogs>
+ <3042db2f803fbc711575ec4f1c4a273912a50904.camel@kernel.org>
+ <ZoOuSxRlvEQ5rOqn@infradead.org>
+ <d91a29f0e600793917b73ac23175e02dafd56beb.camel@kernel.org>
+ <20240702101902.qcx73xgae2sqoso7@quack3>
+ <958080f6de517cf9d0a1994e3ca500f23599ca33.camel@kernel.org>
+ <ZoPs0TfTEktPaCHo@infradead.org>
+ <09ad82419eb78a2f81dda5dca9caae10663a2a19.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,60 +83,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8634oshxhj.wl-maz@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <09ad82419eb78a2f81dda5dca9caae10663a2a19.camel@kernel.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, Jul 02, 2024 at 11:58:00AM +0100, Marc Zyngier wrote:
-> On Tue, 02 Jul 2024 11:22:21 +0100,
-> Yangyu Chen <cyy@cyyself.name> wrote:
+On Tue, Jul 02, 2024 at 08:09:46AM -0400, Jeff Layton wrote:
+> > > corrupt timestamps like this?
 > > 
-> > > Yangyu, can you please clarify how you came to the conclusion that
-> > > these events didn't count anywhere other than counter 7?
-> > > 
+> > inode_set_ctime_to_ts should return an error if things are out of range.
+> 
+> Currently it just returns the timespec64 we're setting it to (which
+> makes it easy to do several assignments), so we'd need to change its
+> prototype to handle this case, and fix up the callers to recognize the
+> error.
+> 
+> Alternately it may be easier to just add in a test for when
+> __i_ctime == KTIME_MAX in the appropriate callers and have them error
+> out. I'll have a look and see what makes sense.
+
+The seems like a more awkward interface vs one that explicitly checks.
+
+> 
+> > How do we currently catch this when it comes from userland?
 > > 
-> > IIRC, I came across some web page that says events 0x96 and 0x9b
-> > can only be installed on counter 7 to count Apple AMX, but I can't
-> > find the page now. Since AMX is not usable in Linux, I don't know
-> > if this will affect some other instructions that are usable in
-> > Linux.
 > 
-> As you said, AMX cannot be used with Linux, and that's unlikely to
-> ever change. But when it comes to the standard ARM ISA, we can only
-> witness counters 5,6 and 7 being incremented with at the exact same
-> rate.
-> 
-> So reading between the lines, what I understand is that AMX
-> instructions would only have their effects counted in counter 7 for
-> these events, while other instructions would be counted in all 3
-> counters.
-> 
-> By extension, such behaviour could be applied to SME on HW that
-> supports it (wild guess).
-> 
-> > There are some other reasons, but I can't say in public.
-> 
-> Fair enough, I'm not asking for the disclosure of anything that isn't
-> public (the least I know, the better).
-> 
-> > Even though I can't find the actual usage, I think using count 7
-> > only for these 2 events is safer. If this reason is insufficient,
-> > we can ignore this patch until we find other evidence that this
-> > affinity affects some instructions usable in Linux.
-> 
-> I honestly don't mind.
-> 
-> The whole thing is a black box, and is more useful as an interrupt
-> generator than an actual PMU, due to the lack of freely available
-> documentation. If the PMU maintainers want to merge this, I won't
-> oppose it.
+> Not sure I understand this question. ctime values should never come
+> from userland. They should only ever come from the system clock.
 
-I'd rather leave the code as-is than tweak specific counters based on
-a combination of guesswork and partial information.
-
-Of course, if somebody who knows better wants to fix up all of the
-mappings (because this surely isn't the only corner-case), then we can
-take that. But at least what we have today has _some_ sort of consistent
-rationale behind it.
-
-Will
+Ah, yes, utimes only changes mtime.
 
