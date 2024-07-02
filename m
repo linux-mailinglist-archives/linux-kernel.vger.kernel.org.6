@@ -1,98 +1,101 @@
-Return-Path: <linux-kernel+bounces-237882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2AA7923F78
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:49:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B1AA923F7D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:50:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 208461C229AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:49:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A4B81C22E5F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E4E1B5814;
-	Tue,  2 Jul 2024 13:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480CF1B5818;
+	Tue,  2 Jul 2024 13:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FtzzuTBe"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oPM95ljN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22FF38F83;
-	Tue,  2 Jul 2024 13:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8666B38F83;
+	Tue,  2 Jul 2024 13:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719928165; cv=none; b=m0Yxtf4JCtJaWPvfUykIUWxXK43T2YGGCkU0CNvvyj0qSRGE+D1rqSXW9YtIBkUNJEmv+NE2gl81ZdeTMLM1/9UtaMXAiEpmndzSUKyvHTS2wyUvtEW08vqh/+EHs1ZlG78Np/9IgD+6Gw7qgVRkv6VGNYvXXVURZs7arlIP+28=
+	t=1719928229; cv=none; b=FG1X0vA8DWiwIeCKLcqkKUuzOFmjnsz/gT3cqzlNXIBpfNJuWwV7xYqJmLq8NatLcPimlfQ9k2QuVwtrY1uOk0yuhY009UvR+9a6+1PaSsjaUMLSfsc124OU/fi+okhGX2R4n3d4gMdWHB08H/j7akL1OgNB5t+w22Mkzd8ADhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719928165; c=relaxed/simple;
-	bh=jcu1eHnQGhamY6wVo2Qpj2POiy7zT0qk2jzOZ3HxQg8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R3y7Iiac9DNuPJKDhbE6JPTEmcxMK+2PNlqJ6q9nGQ7Atx2JPSEfMoTtRgdZo9Y5exWmsovYd0lGyObFo1WKpll9gMKNUgj5pK4174pTtbU9mWAcR42kjExPo4Cv7FFBkP80dYci7VNGOHuHFtSYHtlbEH8efCZ8UwfkhJTjJNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FtzzuTBe; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=dX5/1nrCmtj/7vSG0Hm+XX1H/8yMNBHnIxLwZ0Lk3Vk=; b=FtzzuTBeQAWpHYFr42EsfwUQ6P
-	ldVx5PM//U6UVq1UhOktpZ7jFKvEqRb7NsIyp7nJUSlC/H0AE1tc8N7qtnjImnbocNEp1quehLjBn
-	7cEfx2ONxGxq96CwxlhSRxtPRT/UFRCLnzhS3V4fzGsGjphULm8DG3U4ufJ8hofj58Yx7t24TLqQu
-	hTVqbCiew+N4Pck4VZFgy1vpXqnph8m6kO0/QmXAHKv0wFZrtrCX+647gPPmzEw1MrfV9RVA0lufi
-	9JmkYog0SekBwIwRSm+vx8QlVSMkRwMH7mi4MR/pf0B05aSg+pn10ATSgNYOzrtYGSJiWjObUkl6Z
-	3LhJXOSw==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sOdsk-00000006v4b-171E;
-	Tue, 02 Jul 2024 13:49:18 +0000
-Date: Tue, 2 Jul 2024 06:49:18 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
-	Mike Rapoport <rppt@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, david@fromorbit.com,
-	willy@infradead.org, chandan.babu@oracle.com, djwong@kernel.org,
-	brauner@kernel.org, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
-	linux-mm@kvack.org, john.g.garry@oracle.com,
-	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
-	gost.dev@samsung.com, cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org, Zi Yan <zi.yan@sent.com>
-Subject: Re: [PATCH v8 06/10] iomap: fix iomap_dio_zero() for fs bs > system
- page size
-Message-ID: <ZoQFXlfLMzF9hiLU@bombadil.infradead.org>
-References: <20240625114420.719014-1-kernel@pankajraghav.com>
- <20240625114420.719014-7-kernel@pankajraghav.com>
- <20240702074203.GA29410@lst.de>
- <20240702101556.jdi5anyr3v5zngnv@quentin>
+	s=arc-20240116; t=1719928229; c=relaxed/simple;
+	bh=fbUnMj+W+KQMyuUsKadHUYxc1aaxyEkdq8ydp6tjVnk=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=DQDU2QnB2QAdB6SJdEeElfLHXEpRxpO452VhEdEb/GiAieZ6MPL0Uy3kNFRW42wBsU3ZKGYGXG5ShpbChrTKUd2HTir+PU/FyYYmfZDvqRdDexZgxL/gF6OZRu5E+w2qCExadOre0BlZDgvEIVzBexWlOuN25HS040bRNRrWKLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oPM95ljN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0F8BDC2BD10;
+	Tue,  2 Jul 2024 13:50:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719928229;
+	bh=fbUnMj+W+KQMyuUsKadHUYxc1aaxyEkdq8ydp6tjVnk=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=oPM95ljNuijlOVg8nG40F5xP4JJsGa6p43c02Lbe93XEu1UtYWu2xPA9kzSiT6HM7
+	 pyW6BwM1lzAyd3yiG7uqc1mEmme6sUbWPpawi7oWcmY9SCdyhXyQraLxbnvYIkEdPA
+	 GBw9pJXYNhmcXppAQXWmWaMOsReUrZgE7OEKC3AdSRLItvAI+DL7kksV/RbYh0UTUn
+	 omV62BoS2jb7cE6saoaXrgB5OGCSIevNAFedTDfXB4Y5zktrGufmjwMQQB1R0pB408
+	 +B8drJYG4wjpxd9XDD9npRld5iAneVn2GXXefI9tPbtZz7WxGDOr6imDj3NWla3iGL
+	 /5XkES7RhzwiQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id F1809C43331;
+	Tue,  2 Jul 2024 13:50:28 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240702101556.jdi5anyr3v5zngnv@quentin>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [net-next,PATCH v2 0/2] Fixes for stm32-dwmac driver fails to probe
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171992822898.3744.15499171958760914768.git-patchwork-notify@kernel.org>
+Date: Tue, 02 Jul 2024 13:50:28 +0000
+References: <20240701064838.425521-1-christophe.roullier@foss.st.com>
+In-Reply-To: <20240701064838.425521-1-christophe.roullier@foss.st.com>
+To: Christophe Roullier <christophe.roullier@foss.st.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ conor+dt@kernel.org, mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+ richardcochran@gmail.com, joabreu@synopsys.com, lgirdwood@gmail.com,
+ broonie@kernel.org, marex@denx.de, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Tue, Jul 02, 2024 at 10:15:56AM +0000, Pankaj Raghav (Samsung) wrote:
-> > > +	set_memory_ro((unsigned long)page_address(zero_page_64k),
-> > > +		      1U << ZERO_PAGE_64K_ORDER);
-> > 
-> > What's the point of the set_memory_ro here?  Yes, we won't write to
-> > it, but it's hardly an attack vector and fragments the direct map.
+Hello:
+
+This series was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Mon, 1 Jul 2024 08:48:36 +0200 you wrote:
+> Mark Brown found issue during stm32-dwmac probe:
 > 
-> That is a good point. Darrick suggested why not add a ro tag as we don't
-> write to it but I did not know the consequence of direct map
-> fragmentation when this is added. So probably there is no value calling
-> set_memory_ro here.
+> For the past few days networking has been broken on the Avenger 96, a
+> stm32mp157a based platform.  The stm32-dwmac driver fails to probe:
+> 
+> <6>[    1.894271] stm32-dwmac 5800a000.ethernet: IRQ eth_wake_irq not found
+> <6>[    1.899694] stm32-dwmac 5800a000.ethernet: IRQ eth_lpi not found
+> <6>[    1.905849] stm32-dwmac 5800a000.ethernet: IRQ sfty not found
+> <3>[    1.912304] stm32-dwmac 5800a000.ethernet: Unable to parse OF data
+> <3>[    1.918393] stm32-dwmac 5800a000.ethernet: probe with driver stm32-dwmac failed with error -75
+> 
+> [...]
 
-Mike Rapoport already did the thankless hard work to evaluate if direct
-map fragmentation is something which causes a performance issue and it
-is not [0]. Either way, this is a *one* time thing, not something that
-happens as often as other things which aggrevate direct map fragmentation
-like eBPF, and so from my perspective there is no issue to using, if
-we want set_memory_ro().
+Here is the summary with links:
+  - [net-next,v2,1/2] net: stmmac: dwmac-stm32: Add test to verify if ETHCK is used before checking clk rate
+    https://git.kernel.org/netdev/net-next/c/3cd1d4651ceb
+  - [net-next,v2,2/2] net: stmmac: dwmac-stm32: update err status in case different of stm32mp13
+    https://git.kernel.org/netdev/net-next/c/f8dbe58e2f1a
 
-[0] https://lwn.net/Articles/931406/
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-  Luis
+
 
