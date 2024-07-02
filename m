@@ -1,126 +1,104 @@
-Return-Path: <linux-kernel+bounces-237662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9DD8923C61
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:28:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 712E8923C63
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:30:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 546FFB22A15
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:28:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0ED33B23414
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2DDA15B11E;
-	Tue,  2 Jul 2024 11:28:46 +0000 (UTC)
-Received: from smtp134-33.sina.com.cn (smtp134-33.sina.com.cn [180.149.134.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DEB415B543;
+	Tue,  2 Jul 2024 11:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MsFQzMwg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C595915218A
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 11:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AABA91534E6;
+	Tue,  2 Jul 2024 11:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719919726; cv=none; b=L+sP7+H0pr8UYCLxbV7vQCgaUBvNm2cWTc0juKb0uX/SYFJVt2I33hKbm0b3GM8vzrqPTLoFBu4vB9bGmIRLDdsAyjunUTKpbQs5d1Auasw2Ff9bbgx5bKdl5MHDGdth+fFWSJ/G+UreRTeQjf8Q9ANpgm8MzedW2gvwIZpHbZo=
+	t=1719919804; cv=none; b=VN7nz58bIwr0qnfYRBpXMjqvfaSFCH3CI5qPSZTsBhUsF2VaxtoxuOr1X6uFhTEGozWUrjvDoKXPhUIZoK9AdZnu6FUa878meUmcdDzbBCgqaKF/jlavi9TfxA/NFJJeC0bZuGFqkVREFn4uvWsswFxX4gEGrB4YRIhseL4DP+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719919726; c=relaxed/simple;
-	bh=oVsqQcM+R6Z1/qrxt7MIzTyuo8UzND5cjzA7GyjdBGA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YEUAHlfDgt0DcCDdXwBSgFJJ/7EnXBzChwMKvvT+r6H0MQ9r0T7LzlOx+f9iO5bVw5xtlCZH1VkyZBzGkMtnLlVHj+37XMTmazmJS88LuDrW5EwRoJ1Y4RnlY+Z1TIg+Y9F9jrjF/zxNC9VklVcTCtgfnRq3kbnHgL8ly70MBxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.71.52])
-	by sina.com (10.185.250.21) with ESMTP
-	id 6683E458000043A8; Tue, 2 Jul 2024 19:28:26 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 7997793408658
-X-SMAIL-UIID: B87B1765489C41E3B80B876BE2DD2EC0-20240702-192826-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+4fd66a69358fc15ae2ad@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [netfilter?] KASAN: slab-use-after-free Read in nf_tables_trans_destroy_work
-Date: Tue,  2 Jul 2024 19:28:14 +0800
-Message-Id: <20240702112814.2760-1-hdanton@sina.com>
-In-Reply-To: <000000000000aa1dbb061c354fe6@google.com>
-References: 
+	s=arc-20240116; t=1719919804; c=relaxed/simple;
+	bh=8VjB7u2o1X6Fkf4ljzLQulZ+iIR1INcOkKXgXFjoEP4=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=kDvC1f2BXzQOhz8RniXBCUdp0fw2s6/V+8TXqiaX+2zW7TZk9qFzSUPxhfmlWH0J9FOuf8V0qbRtqBMOVn8km4TmFUbVjDaQ2ttYQetWkAFD8EL7Pppo4R3sYNVja4iM2rNjdmmGJfwz7ew8ZFGrRgURnkz2bApLJRXCdJcZGiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MsFQzMwg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE852C116B1;
+	Tue,  2 Jul 2024 11:30:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719919804;
+	bh=8VjB7u2o1X6Fkf4ljzLQulZ+iIR1INcOkKXgXFjoEP4=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=MsFQzMwgt8Dy9o13LHIHXMusSsQkTEC1XvOsyAP6RSb/rBFCn8lrmAFmMHdqrHed3
+	 ycKjB0ZCtwaURxZt321m9Qsmp3TUFeIDgWWm3LQDC9+JuhpTv7n/t/mjmIE9G/D1q/
+	 fQ0GVgEZDbHasKgk0wsfFOiC7KZ4S1eCPF9R01JuwvkdCIjh38zxlRCzIDK7ygCrlz
+	 8F4eYxJ0gGcAmZc6DUoiUx0WWFMYpaNmuS17q/VsUcdUXnWwu1uffIdQNOxmg3NUmp
+	 DeZeJcuwRuMJIB/kEUbSuFoD3UfGBOoeFQwKElhjX5DT7pUCjfKZYAIdotTAD1aVBW
+	 cll11JNGiBC9Q==
+From: Mark Brown <broonie@kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, alsa-devel@alsa-project.org, 
+ linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240628095831.207942-1-krzysztof.kozlowski@linaro.org>
+References: <20240628095831.207942-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 1/2] ASoC: codecs: lpass-rx-macro: Fix using NULL
+ pointer in probe() dev_err
+Message-Id: <171991980162.18111.8940228821828803310.b4-ty@kernel.org>
+Date: Tue, 02 Jul 2024 12:30:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev-d4707
 
-On Mon, 01 Jul 2024 13:19:15 -0700
-> syzbot found the following issue on:
+On Fri, 28 Jun 2024 11:58:30 +0200, Krzysztof Kozlowski wrote:
+> The 'rx->dev' is assigned closer to the end of the probe() function, so
+> the dev_err() must not use it - it is still NULL at this point.  Instead
+> there is already a local 'dev' variable.
 > 
-> HEAD commit:    1c5fc27bc48a Merge tag 'nf-next-24-06-28' of git://git.ker..
-> git tree:       net-next
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12cecb1e980000
+> 
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git  1c5fc27bc48a
+Applied to
 
---- x/include/net/netfilter/nf_tables.h
-+++ y/include/net/netfilter/nf_tables.h
-@@ -1281,6 +1281,7 @@ struct nft_table {
- 	u64				hgenerator;
- 	u64				handle;
- 	u32				use;
-+	atomic_t			cnt;
- 	u16				family:6,
- 					flags:8,
- 					genmask:2;
---- x/net/netfilter/nf_tables_api.c
-+++ y/net/netfilter/nf_tables_api.c
-@@ -162,6 +162,8 @@ static struct nft_trans *nft_trans_alloc
- 
- 	trans->net = ctx->net;
- 	trans->table = ctx->table;
-+	if (trans->table)
-+		atomic_inc(&trans->table->cnt);
- 	trans->seq = ctx->seq;
- 	trans->flags = ctx->flags;
- 	trans->report = ctx->report;
-@@ -1498,6 +1500,7 @@ static int nf_tables_newtable(struct sk_
- 	if (err < 0)
- 		goto err_trans;
- 
-+	atomic_inc(&table->cnt);
- 	list_add_tail_rcu(&table->list, &nft_net->tables);
- 	return 0;
- err_trans:
-@@ -1663,6 +1666,8 @@ static int nf_tables_deltable(struct sk_
- 
- static void nf_tables_table_destroy(struct nft_table *table)
- {
-+	if (!atomic_dec_and_test(&table->cnt))
-+		return;
- 	if (WARN_ON(table->use > 0))
- 		return;
- 
-@@ -9532,7 +9537,6 @@ static void nft_commit_release(struct nf
- 	switch (trans->msg_type) {
- 	case NFT_MSG_DELTABLE:
- 	case NFT_MSG_DESTROYTABLE:
--		nf_tables_table_destroy(trans->table);
- 		break;
- 	case NFT_MSG_NEWCHAIN:
- 		free_percpu(nft_trans_chain_stats(trans));
-@@ -9572,6 +9576,9 @@ static void nft_commit_release(struct nf
- 		break;
- 	}
- 
-+	if (trans->table)
-+		nf_tables_table_destroy(trans->table);
-+
- 	if (trans->put_net)
- 		put_net(trans->net);
- 
---
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/2] ASoC: codecs: lpass-rx-macro: Fix using NULL pointer in probe() dev_err
+      commit: 2e068fe01ecbf677d414d4c1b02eea1636dd614c
+[2/2] ASoC: codecs: lpass-wsa-macro: Fix using NULL pointer in probe() dev_err
+      commit: 765d3a2aa195882e231835f5d9ac4d99affc8c07
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
