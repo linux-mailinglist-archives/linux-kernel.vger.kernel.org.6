@@ -1,139 +1,124 @@
-Return-Path: <linux-kernel+bounces-237294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1E4491EED6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:19:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B2F791EED2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 330A42833A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:19:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F296C283374
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:18:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3EE7E0FC;
-	Tue,  2 Jul 2024 06:19:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66DB5CDE9;
+	Tue,  2 Jul 2024 06:18:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="CoUYIKQ6"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.14])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3893F5CDE9;
-	Tue,  2 Jul 2024 06:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.14
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="xq9BHxRa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C008BFA;
+	Tue,  2 Jul 2024 06:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719901143; cv=none; b=JzEP158lKBZP/GLJVatMXrciiKO1UMimU4+TWc3sQ1y9g62pMkI+2T3MBaVaTf6wc0atkAgwNo7k5ThGc42SG2AwZ2xwZx9QXdMvbYgAD0Jt/e/sCMyB9DBX9Ye0wvtATvCUV4uhhE7438G3PKRV2stMSLi5Nj1PW0Cit4Ff5SQ=
+	t=1719901108; cv=none; b=U4ENHhU4u+ju7ihMnuXgM4/eHEuQSlVl2F4ndy6W+LNCfPFoKW/BUsEosZyhUo0xpczJrf87lDNFbIDsHdO1l+S+lN0nqYclAW3MeV6aO85Yz2R+7rWhn9uZbkxnmVLsiki3X3BnzCKpu/xTLSfm+7E960k31310t2B1J0mIzwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719901143; c=relaxed/simple;
-	bh=O0w7oKR0burBEOSpg+U3UFChgxP0OfT3G9l1MZDodiE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P7txL0vhEhmWloTQ+y5vX/ECoYRboDVwExS9ICbiLJ4Xh4FjlPcOVDZQ7zp/ihnnfqnRrOgRxVt+mkh+iqd0IMSn5oNvA4trtV6BnezIwrmc3zlMAGxJ85D+JCA+HSQQeiqybEOrCKsj2LPJwV+cI2wcEu8DkKDHv3ZAQTcXvhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=CoUYIKQ6; arc=none smtp.client-ip=1.95.21.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=Ak5QZwwkUOt94pN1EzjhG1GszUbTrlXG7hmPV7Sskx0=;
-	b=CoUYIKQ6GYEzZp3TKUEtEfKy7wrlsPkaps7HvlVQ/V9uREkeuMJ635kHQogJ9x
-	arN06v5fF/Z0eeB0+viRPlkHb8obnpRQ9BO1Rm5l6l0lUhcY65yPviTUrxqF2kW6
-	UX2WPl6oLD4VW7dQMxd/KjAFdaUJOPUoGSUNcw3OlGyOE=
-Received: from dragon (unknown [114.218.218.47])
-	by gzsmtp3 (Coremail) with SMTP id M88vCgD3Pwedm4Nm4zIHAA--.18405S3;
-	Tue, 02 Jul 2024 14:18:06 +0800 (CST)
-Date: Tue, 2 Jul 2024 14:18:04 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Dong Aisheng <aisheng.dong@nxp.com>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/8] arm64: dts: imx8qm: add lvds subsystem
-Message-ID: <ZoObnDqMd2EL4W6F@dragon>
-References: <20240701-imx8qm-dts-usb-v4-0-03cdbc8c44b6@nxp.com>
- <20240701-imx8qm-dts-usb-v4-2-03cdbc8c44b6@nxp.com>
- <ZoN90rHfpK7niqEr@dragon>
- <ZoOAjSUp29DBhY+/@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1719901108; c=relaxed/simple;
+	bh=xcbo7H35s62k57wpp5CZn9fiLqU/YmxQeNb6aW/ijbo=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=ToKDqVS4X/qdS5YCvkmzJUS2qXu8AsZmgx7a7lUrxAX/Y30+ShRskUUp06dY7rD6X1an51L+vKU67QS4yutYFM/wD78m7xV0C4ypAxOSqaHQDtr2htzdKadL4dciY9RdMR+BTosB3gvfV1B402rWdJJxJ9nGdiQNngPgboHawow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=xq9BHxRa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5652BC116B1;
+	Tue,  2 Jul 2024 06:18:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1719901107;
+	bh=xcbo7H35s62k57wpp5CZn9fiLqU/YmxQeNb6aW/ijbo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=xq9BHxRaLm52nTg3V4uSDWdhiU55d5dItWGm5OHO3o4KIVhuoqsvVssq6bDEMMvrb
+	 um7p7vo59/H5oQatAtFS2oz2iJvFHgWrKF7uKqXdWuXI5g91dRjjQs6nD+yBMdCV0n
+	 cijErqWZNuWe6RxHe81qqlkxaUUY8GJkrQgUYybM=
+Date: Mon, 1 Jul 2024 23:18:26 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Jiaqi Yan <jiaqiyan@google.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, linux-doc@vger.kernel.org
+Subject: Re: linux-next: build warnings after merge of the mm tree
+Message-Id: <20240701231826.fb3044bb52dc97bedc9853ab@linux-foundation.org>
+In-Reply-To: <CACw3F52wm=5Rg+QP-E7JDOjBvA2mYv0uDBL+8=KPCfQ8tkHQaA@mail.gmail.com>
+References: <20240701184912.01f1f9ce@canb.auug.org.au>
+	<20240701201448.7878e9b35e1569bfc1f2ddbc@linux-foundation.org>
+	<CACw3F52=GxTCDw-PqFh3-GDM-fo3GbhGdu0hedxYXOTT4TQSTg@mail.gmail.com>
+	<CACw3F52wm=5Rg+QP-E7JDOjBvA2mYv0uDBL+8=KPCfQ8tkHQaA@mail.gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZoOAjSUp29DBhY+/@lizhi-Precision-Tower-5810>
-X-CM-TRANSID:M88vCgD3Pwedm4Nm4zIHAA--.18405S3
-X-Coremail-Antispam: 1Uf129KBjvJXoW7uF15GFWDXrW8uw13CrW8tFb_yoW8uw48p3
-	48CF1aqr18tFW7ur9Ig3W8KFn5Kwn5tF1Uur17G34jyrnIyrnrtr1rCr45ury8Xr4Ik3yS
-	9Fn0qr4fKrn8ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j6_M3UUUUU=
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCRsQZWZv-d19HwABst
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 02, 2024 at 12:22:37AM -0400, Frank Li wrote:
-> On Tue, Jul 02, 2024 at 12:10:58PM +0800, Shawn Guo wrote:
-> > On Mon, Jul 01, 2024 at 11:03:28AM -0400, Frank Li wrote:
-> > > Add irqsteer, pwm and i2c in lvds subsystem.
-> > > 
-> > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > > ---
-> > >  arch/arm64/boot/dts/freescale/imx8qm-ss-lvds.dtsi | 77 +++++++++++++++++++++++
-> > >  arch/arm64/boot/dts/freescale/imx8qm.dtsi         | 10 +++
-> > >  2 files changed, 87 insertions(+)
-> > > 
-> > > diff --git a/arch/arm64/boot/dts/freescale/imx8qm-ss-lvds.dtsi b/arch/arm64/boot/dts/freescale/imx8qm-ss-lvds.dtsi
-> > > new file mode 100644
-> > > index 0000000000000..1da3934847057
-> > > --- /dev/null
-> > > +++ b/arch/arm64/boot/dts/freescale/imx8qm-ss-lvds.dtsi
-> > > @@ -0,0 +1,77 @@
-> > > +// SPDX-License-Identifier: GPL-2.0+
-> > > +
-> > > +/*
-> > > + * Copyright 2024 NXP
-> > > + */
-> > > +
-> > > +&qm_lvds0_lis_lpcg {
-> > > +	clocks = <&lvds_ipg_clk>;
-> > > +	clock-indices = <IMX_LPCG_CLK_4>;
-> > > +};
-> > > +
-> > > +&qm_lvds0_pwm_lpcg {
-> > > +	clocks = <&clk IMX_SC_R_LVDS_0_PWM_0 IMX_SC_PM_CLK_PER>,
-> > > +		 <&lvds_ipg_clk>;
-> > > +	clock-indices = <IMX_LPCG_CLK_0>, <IMX_LPCG_CLK_4>;
-> > > +};
-> > > +
-> > > +&qm_lvds0_i2c0_lpcg {
-> > > +	clocks = <&clk IMX_SC_R_LVDS_0_I2C_0 IMX_SC_PM_CLK_PER>,
-> > > +		 <&lvds_ipg_clk>;
-> > > +	clock-indices = <IMX_LPCG_CLK_0>, <IMX_LPCG_CLK_4>;
-> > > +};
-> > > +
-> > > +&qm_pwm_lvds0 {
-> > > +	clocks = <&qm_lvds0_pwm_lpcg IMX_LPCG_CLK_4>,
-> > > +		 <&qm_lvds0_pwm_lpcg IMX_LPCG_CLK_0>;
-> > > +};
-> > > +
-> > > +&qm_i2c0_lvds0 {
-> > > +	clocks = <&qm_lvds0_i2c0_lpcg IMX_LPCG_CLK_0>,
-> > > +		 <&qm_lvds0_i2c0_lpcg IMX_LPCG_CLK_4>;
-> > > +};
-> > > +
-> > > +&lvds0_subsys {
-> > > +	interrupt-parent = <&irqsteer_lvds0>;
-> > > +
-> > > +	irqsteer_lvds0: interrupt-controller@56240000 {
-> > > +		compatible = "fsl,imx8qm-irqsteer", "fsl,imx-irqsteer";
-> > 
-> > Is compatible "fsl,imx8qm-irqsteer" documented in bindings?
+On Mon, 1 Jul 2024 21:33:20 -0700 Jiaqi Yan <jiaqiyan@google.com> wrote:
+
+> > > This seems a reasonable thing to do so there's probably some way in
+> > > which to do it, but a bit of grepping failed to turn up examples in
+> > > existing .rst files.  Can someone please suggest?
+> >
+> > It seems I need to add some blank lines according to [1], especially
+> > to add a blank line above the first list item:
+> >
+> > diff --git a/Documentation/admin-guide/sysctl/vm.rst
+> > b/Documentation/admin-guide/sysctl/vm.rst
+> > index 75e22137d849..74b4c0f65213 100644
+> > --- a/Documentation/admin-guide/sysctl/vm.rst
+> > +++ b/Documentation/admin-guide/sysctl/vm.rst
+> > @@ -274,12 +274,15 @@ Correctable memory errors are very common on
+> > servers. Soft-offline is kernel's
+> >  solution for memory pages having (excessive) corrected memory errors.
+> >
+> >  For different types of page, soft-offline has different behaviors / costs.
+> > +
+> >  - For a raw error page, soft-offline migrates the in-use page's content to
+> >    a new raw page.
+> > +
+> >  - For a page that is part of a transparent hugepage, soft-offline splits the
+> >    transparent hugepage into raw pages, then migrates only the raw error page.
+> >    As a result, user is transparently backed by 1 less hugepage, impacting
+> >    memory access performance.
+> > +
+> >  - For a page that is part of a HugeTLB hugepage, soft-offline first migrates
+> >    the entire HugeTLB hugepage, during which a free hugepage will be consumed
+> >    as migration target.  Then the original hugepage is dissolved into raw
+> >
+> > But I am having trouble testing the build, so wasn't able to validate
+> > the change above:
+> >
+> > Documentation$ make
+> > /tools/net/ynl/ynl-gen-rst.py -o
+> > /Documentation/networking/netlink_spec/index.rst -x
+> > make: /tools/net/ynl/ynl-gen-rst.py: No such file or directory
+> > make: *** [Makefile:113:
+> > /Documentation/networking/netlink_spec/index.rst] Error 127
+
+You need to install all sorts of whacky system and python packages. 
+The (failed) build process should guide you through this.
+
+> I tried another way: make htmldocs at repo's root directory. Although
+> I wasn't able to finish the make process,
 > 
-> In rob' tree
+> - without the blank lines:
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git/commit/?h=dt/next&id=285c645d842c5a15d3be2d653faaa5f68d81be1f
+>   Documentation/admin-guide/sysctl/vm.rst:278: ERROR: Unexpected indentation.
+>   Documentation/admin-guide/sysctl/vm.rst:279: WARNING: Block quote
+> ends without a blank line; unexpected unindent.
+> 
+> - with the blank lines added, the ERROR and WARNING in vm/rst are gone.
+> 
+> Andrew and Stephen, what is the best way to post the fix for this?
+> Should I send out a v8 of the patch with the blank lines added? or a
+> standalone commit for this fix?
 
-I do not see "fsl,imx8qm-irqsteer" in the patch.
-
-Shawn
-
+I added your fix, thanks.
 
