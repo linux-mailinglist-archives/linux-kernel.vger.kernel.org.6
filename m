@@ -1,79 +1,70 @@
-Return-Path: <linux-kernel+bounces-238281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3A899247CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:04:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFCC69247A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:57:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5FEE1C20E81
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:04:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FE53B2486A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:57:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43DC012C559;
-	Tue,  2 Jul 2024 19:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ayTDMh5Y"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1891CD5B3;
+	Tue,  2 Jul 2024 18:56:53 +0000 (UTC)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0644A1EB25;
-	Tue,  2 Jul 2024 19:04:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 219F91CB313;
+	Tue,  2 Jul 2024 18:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719947047; cv=none; b=XBw1wJOJZKcZlEJ7engeFw0S7fBJ5WSjtvWMVxnChUyieYQkN4eD08e8RAxilfVgIpkG1Dx1QvqKN7NN7VUnid4T5Wt8XEsAcsB1tkrXBP8F3N5f33+Qn6iIaahd44HDbXBBiF016vnv0+Cve/WLeYeiOIk6D4B/JMFlX6xaoqM=
+	t=1719946612; cv=none; b=XIBbAfnNdjgbmtrYSU1adDWmaujmPMvisL6zpROAkNrkK6rzJP6m4abW5JULkSNVdKcn6xobrmxvYC5IvBEr6ujJt8PnOV+BEDu7F3XaYDaXnfxHYh6lcRXlxtvs5uJbeymCuqVGM/jAUu5+/dyEth663megaAroHtuxKkszXLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719947047; c=relaxed/simple;
-	bh=72jQsOwZhtv7NmowAKLnAHDBjN6SnciL4Pl7yt/yJs0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iNOnIuINgpNkdaEYHmlDHmfyBh3Kz1GmULkAXOwmZR99GozfEPkdZ299rmGbzb1zCEwBVwxzex3qk1NneiKDxEhseySiabNengBNwz1aWIDYwI/YUWDU5Ik+HTCvE1A7KUKlmE294T2wd7RSvao+iYivJzFxOqTrwFmgrAFeshg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ayTDMh5Y; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1719946612; c=relaxed/simple;
+	bh=oZCuWrk77Oh6MOcRNODRuXQLaDoO86CGQtEiADu7gFY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eMZ9m0sqcjAJ6nNiy+DaUUATtZY1Tl0RYoepOBdNEpPBC5a/jqkEcFf1NeC+gVQUaJx0oShFxSG8OSTUWvcrwVVJJMleQO7W7AVdOR8oKmYTbdkKAaAohpn+xU0g4gFkUB+C8izpGs8DFo3sjULmcf2ATRpCijmV91KrGoor5MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-424ad289912so32115845e9.2;
-        Tue, 02 Jul 2024 12:04:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719947044; x=1720551844; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4wKiM0LoVnSJlvFGJ4zMxAkn2aVFBxR/LJM4ELZBaDg=;
-        b=ayTDMh5YNNX5QbXG7Rxey4KKXyx7bw1z4Q8P+TlVmvmG+HVHb7dvZ0oDImLVBorXor
-         OUepvCQYb/tYzSoN4A8AL067bdp9zs/KHyWPXGT+D31sIFAbopsMzHoproBPpLXIgLsC
-         HSc9xbN3ZZ5fYSFUWbx6NW5NnHU3GXBPMK17UXOs3hCvTvzNXP9KMgn2UrBPKysHIO+O
-         1QGVNQS/vK36cYXRo7jCGSPdlUQ5kRHm6bYHFaPSX9Uxagj3z41OcIORJdGDInDZx0KZ
-         uXoadjFCi0mEj7N8uiF85teTS/b+U4drAHzQhG2Bl9NvsmwBMwxJhjVoQKuD+8MzU6BK
-         2FmQ==
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a732cb4ea31so610612566b.0;
+        Tue, 02 Jul 2024 11:56:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719947044; x=1720551844;
+        d=1e100.net; s=20230601; t=1719946609; x=1720551409;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=4wKiM0LoVnSJlvFGJ4zMxAkn2aVFBxR/LJM4ELZBaDg=;
-        b=Jy378if44e7Bcu+8xcxOB/rNTrESeASGIOVfFXV4cxilriqeUsVmd2Z1LW0MSwm3sm
-         FBSvDWj8C2wMV/tje7PTtfi4nG0JawsInJ6K5lytv9Vxy5Crfsd8oXb9syYptjncKySt
-         B/WDNRUKtKhx0dXLJVhLQXKEgPy5wy0q26l9tq+buE+NV2riaPQ4tVedoQAqCmLVqB78
-         vEm+HxhLMbk6NbUyfAdTk7ks2v6OGUVk8s7ZcHf4eksNsPqM5JfxzKyuBcwQeDRrpZeI
-         +VrdqkY40ey+JJ+8LBuX4iYyLlpCcn7lKYqU8j+1KFEoYFls40iZXetviHEkvGkQgzfu
-         29xg==
-X-Forwarded-Encrypted: i=1; AJvYcCVB2aaZvBy0GEiaGGhVaKe+JfQH0SyDpspCSGcmWOFDViOWq5L00WTRC81ixx2FEkEf1iVDdfOK9Mw2GWOEY9D+m68nz9cw58GLBZaAyVtsEZoouFxHRBXQ2VxJdcPyAU20jz8WqQRiLQ==
-X-Gm-Message-State: AOJu0Yy2UJyt6KrO3AxdMlp0q/so7dEnm6Qr0czgffUGc4r3PBN0HP58
-	WeB43G+mw4FubQQBWjrJT10uX3kV1Bq+w0LB4RDrwIz7IePvN5m4
-X-Google-Smtp-Source: AGHT+IEg7Ylb0a0AliUiVMF+rVgKJlQM5K3IpV+SBP/fB47GeoimS1/x+hfjjTAv03cj8BzLban4yA==
-X-Received: by 2002:a5d:404f:0:b0:366:e1a6:3386 with SMTP id ffacd0b85a97d-3677571c5a7mr5535190f8f.44.1719947044099;
-        Tue, 02 Jul 2024 12:04:04 -0700 (PDT)
-Received: from qamajeed.Home ([39.45.181.116])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0e169dsm13909412f8f.65.2024.07.02.12.03.59
+        bh=DTTcbpXMOFADYW0lRHSPwqJdZc7vf70BCGyE+fxxMmA=;
+        b=MkcFnSG9/wkJxaZg5Vnt5i4blqcNl6qML9L81VMQ2od4mGrpNYjGPc/GbjEMxh/Bif
+         BFm7Tzp6wnsA/NT35W5Zz5z/dgfqFY9duc9Sv5j3xFXoDp93pqWVUM61Sdac7cANe0EQ
+         T5csQgDktn1Yiqz0+xmuOPLyHkTd6+wYZyKON9dFhBG5rZzHKA54ec0PGCNMf+gjMWaD
+         M51mJrmI5943oskiqz9gVChAje7KvZaUVvymbQ8OeewHue1JO3kDtnH+lCzwPGueq2oL
+         9LOqcwFmNrqB5umJ6ecR4UJ4spHiQHVmnyTPDe7xD1tx5Glv4+M5wQnS/Ev1gWLPW0m2
+         SFEA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+XsCvoymkN9uPCLwjANFUKTJb5ex8VBq+ZCxOxsZnE20uoaVYFeyH5gk68zf7ttmTp4ZKw3k5WsyKT8yRbI2WbOh6zXFOV2G6ZUG2MS8TMXZJ7K/Iik3/W4UxUF1OCsJc4PtMjWJlItocihSEl1/z6bGNbYtH1bdWBq2+XCpAO+Au
+X-Gm-Message-State: AOJu0YzhBDXxG3wk7mawZOHXJpeCjRHNCIr5tZZqqT8jkFGP6+4y3Mn0
+	LWN3c/02antmVqBiy03TaCfWl4p9J11/pTjuG7VjMDxr/j719EXW
+X-Google-Smtp-Source: AGHT+IGdP6OiJHfi7JEGv9W7ei+6MpmPcS2a8RBrZUry8A/33/AybdkBk5mhiEmuBAcjdpUEwGdfdQ==
+X-Received: by 2002:a17:907:c1f:b0:a73:9037:fdf5 with SMTP id a640c23a62f3a-a751386d999mr908347766b.6.1719946609215;
+        Tue, 02 Jul 2024 11:56:49 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-114.fbsv.net. [2a03:2880:30ff:72::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab0900f1sm441886766b.168.2024.07.02.11.56.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 12:04:03 -0700 (PDT)
-From: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
-To: rafael@kernel.org,
-	lenb@kernel.org,
-	linux-acpi@vger.kernel.org,
+        Tue, 02 Jul 2024 11:56:48 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: kuba@kernel.org,
+	horia.geanta@nxp.com,
+	pankaj.gupta@nxp.com,
+	gaurav.jain@nxp.com,
+	linux-crypto@vger.kernel.org
+Cc: horms@kernel.org,
+	netdev@vger.kernel.org,
+	herbert@gondor.apana.org.au,
 	linux-kernel@vger.kernel.org
-Cc: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
-Subject: [PATCH v2] Updating a vulnerable use of strcpy.
-Date: Tue,  2 Jul 2024 23:55:24 +0500
-Message-Id: <20240702185523.17716-1-qasim.majeed20@gmail.com>
-X-Mailer: git-send-email 2.34.1
+Subject: [PATCH net-next v3 0/3] crypto: caam: Unembed net_dev
+Date: Tue,  2 Jul 2024 11:55:50 -0700
+Message-ID: <20240702185557.3699991-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,52 +73,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Replacing strcpy with strscpy and memory bound the copy. strcpy is a deprecated function. It should be removed from the kernel source.
+This will un-embed the net_device struct from inside other struct, so we
+can add flexible array into net_device.
 
-Reference: https://github.com/KSPP/linux/issues/88
+This also enable COMPILE test for FSL_CAAM, as any config option that
+depends on ARCH_LAYERSCAPE.
 
-Signed-off-by: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
+Changelog:
+v3:
+	* Fix free_netdev() deference per-cpu (Simon)
+	* Hide imx8m_machine_match under CONFIG_OF (Jakub)
+v2:
+        * added a cover letter (Jakub)
+        * dropped the patch that makes FSL_DPAA dependent of
+          COMPILE_TEST, since it exposes other problems.
+v1:
+        * https://lore.kernel.org/all/20240624162128.1665620-1-leitao@debian.org/
 
-> In what way exactly is it vulnerable?
-strcpy is a deprecated interface (reference: https://github.com/KSPP/linux/issues/88). It should be removed from kernel source.
-It is reported as vulnerable in Enabling Linux in Safety Critical Applications (ELISA) builder.
+Breno Leitao (4):
+  crypto: caam: Avoid unused variable
+  crypto: caam: Make CRYPTO_DEV_FSL_CAAM dependent of COMPILE_TEST
+  crypto: caam: Unembed net_dev structure from qi
+  crypto: caam: Unembed net_dev structure in dpaa2
 
-> Why is a runtime check needed here if all of the sizes in question are known at compile time?
-Runtime check has been replaced with compile time check.
+ drivers/crypto/caam/Kconfig       |  2 +-
+ drivers/crypto/caam/caamalg_qi2.c | 28 +++++++++++++++++---
+ drivers/crypto/caam/caamalg_qi2.h |  2 +-
+ drivers/crypto/caam/ctrl.c        |  2 ++
+ drivers/crypto/caam/qi.c          | 43 +++++++++++++++++++++++++------
+ 5 files changed, 64 insertions(+), 13 deletions(-)
 
----
-v1 -> v2: Commit message has been updated and runtime check is replace with compile time check.
-
- drivers/acpi/acpi_video.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
-index 1fda30388297..be8346a66374 100644
---- a/drivers/acpi/acpi_video.c
-+++ b/drivers/acpi/acpi_video.c
-@@ -1128,8 +1128,8 @@ static int acpi_video_bus_get_one_device(struct acpi_device *device, void *arg)
- 		return -ENOMEM;
- 	}
- 
--	strcpy(acpi_device_name(device), ACPI_VIDEO_DEVICE_NAME);
--	strcpy(acpi_device_class(device), ACPI_VIDEO_CLASS);
-+	strscpy(acpi_device_name(device), ACPI_VIDEO_DEVICE_NAME, sizeof(ACPI_VIDEO_DEVICE_NAME));
-+	strscpy(acpi_device_class(device), ACPI_VIDEO_CLASS, sizeof(ACPI_VIDEO_CLASS));
- 
- 	data->device_id = device_id;
- 	data->video = video;
-@@ -2010,8 +2010,8 @@ static int acpi_video_bus_add(struct acpi_device *device)
- 	}
- 
- 	video->device = device;
--	strcpy(acpi_device_name(device), ACPI_VIDEO_BUS_NAME);
--	strcpy(acpi_device_class(device), ACPI_VIDEO_CLASS);
-+	strscpy(acpi_device_name(device), ACPI_VIDEO_BUS_NAME, sizeof(ACPI_VIDEO_BUS_NAME));
-+	strscpy(acpi_device_class(device), ACPI_VIDEO_CLASS, sizeof(ACPI_VIDEO_CLASS));
- 	device->driver_data = video;
- 
- 	acpi_video_bus_find_cap(video);
 -- 
-2.34.1
+2.43.0
 
 
