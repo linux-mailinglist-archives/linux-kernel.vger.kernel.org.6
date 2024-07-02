@@ -1,152 +1,131 @@
-Return-Path: <linux-kernel+bounces-237608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62684923B6B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:30:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5587923BA6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:42:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95C101C21E1D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:30:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88B9C1F2402D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:42:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6797158879;
-	Tue,  2 Jul 2024 10:30:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CD015921D;
+	Tue,  2 Jul 2024 10:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="YN8Aq/Fz"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b="SQsI/dWY"
+Received: from mail.fris.de (mail.fris.de [116.203.77.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00CA17BBB;
-	Tue,  2 Jul 2024 10:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E0B158A3D;
+	Tue,  2 Jul 2024 10:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.77.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719916222; cv=none; b=o/rWr186LgrEkrTT9E3jiBWFGPS8b8KzV2t4ZWNw9xsp1uH3LRWLY+zVbOxlpWwYZRoY5UwZzSwmvv0ZKwNRoVID8w5snM7slWdEr19bQ5GLOCoFRTnLrvlRP8LvcsAr/h65Hlbnt9tB/DaC/l/ZHM49NlSQjdl0wJ+m2tzfLqA=
+	t=1719916916; cv=none; b=HAM0iiLp6foTyxcfBWSw4KGRX7Bdd6cedgrwcwAUJxYE5vveKmH8CrsKGux3Y6QAmKcczkAfFuV9VC72VMJSeJ2pERWLoFlFBQWf/ZclflSJcD15xKk06rNf9ErUnA9RRMjLC/P/pQ6aYGUHv0X2JfiuFWnCpNUKunNXkQeN8Og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719916222; c=relaxed/simple;
-	bh=1B+3GT30ZinzSkjOdYycyY46lYkUK/OOoaS5AOUtjso=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QX6Euwz2gy98HWoZaYMh8QInyHYWldaSke4eJinP70qwCGDr591mcIfUxk4OqJeeIy6crrjr+TNzQxU7khlzoIsWFVn7eSBQloHhCxczwfMubYGDNpQk21kmLQj7ZnYULz/GRnzJiM3dflF6ZD0KXR3azLmRAUnfnVkyrBjfKC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=YN8Aq/Fz; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=0qf92CZPlH8uBrIdQYOCZH5zn+O7ufKU3N+Njh8N6FI=;
-	t=1719916219; x=1720348219; b=YN8Aq/Fz/3/68OHbPf+/Su+eX0aoDB9+l08kXea9Zte/ctC
-	09sHBDuHGIwThUfW7EsKADke7wy7v3ZhJa4MVTEnl7cwDPQx6q89NQx047kaQAKwc12f7KT+HQ9JU
-	s3BTXlpC0A4Q7TEUozJs5/McZpps0l7UUv0j6mLbIQvP3tzhH4CHu36mxrwuj+vqF+W8xIlKlrcHM
-	jfdlaMRvnU0oOhF8+C90cIvv5jeJmw3qswm5n5draI/JWiEzPHouhB2w0iTYl9AkqiP31llRy2Mmx
-	ScqpERsJiWKvY2niAS213K8jJy7kHUa+ETd+zsDZquZMEw4lK0p5PSP0FoOXL6UQ==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sOam1-000827-BY; Tue, 02 Jul 2024 12:30:09 +0200
-Message-ID: <c7bca2f0-1006-45c1-a13d-6d8f19357533@leemhuis.info>
-Date: Tue, 2 Jul 2024 12:30:08 +0200
+	s=arc-20240116; t=1719916916; c=relaxed/simple;
+	bh=elBbal48p86/kZHBof/VjLRnd3BGmbEnAawFg4N0H8w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VA3Y9Rqjf9+CUeBvyIGrtfa3npZ/Wu0SQBSaVqpHCvzV2/MrGi+PPPCUPe9k0fmVdRpQjP88rhA6CPxQR14tCymAODE7POCmlvv78LSm/sJMp/iI6r6dHMNuNRo4IvFZNJKgQ/ibpIDHg88zSMp1nkRkUMsA+GYQilocWDEWnf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de; spf=fail smtp.mailfrom=fris.de; dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b=SQsI/dWY; arc=none smtp.client-ip=116.203.77.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=fris.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 53BA8BFB39;
+	Tue,  2 Jul 2024 12:32:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fris.de; s=dkim;
+	t=1719916373; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=FWOSDRgRrfQHpSWqoIecrwtJ3fiVFmkYNSiqz7G5o8M=;
+	b=SQsI/dWY01BypXms4ywHrv4INPF+88zC/OaWHajNQCirUa9e0QpaAbGAB3d4y1nb2GjFzf
+	K/XudMZ8tjFSQGBNXPX5tf8XqBG5Ph3zTq7aoEXcf6fBxkWdKlL+ZnyBm4hSj+ttGTZb1J
+	GUlUaYxfRvvrFmcxIZn+w7fjANMx8QPVLIgoRXNTm9AR5n4RIDtc4ahyOdrb3w+wsmm9Pw
+	etRHKn4yMcsDJs2TbXCPEeGAZLHqOMVngL2eUkvyq89LjElWkFizmMFmCBpyeuwQ/M2fN3
+	zYushx/mevT0+mUd1s7aYEPrMFNSV4qRI4n2dnBdPjLK3eNzc8xUNV4zGQJ/Eg==
+From: Frieder Schrempf <frieder@fris.de>
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	imx@lists.linux.dev,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Li Yang <leoyang.li@nxp.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Robin Gong <yibin.gong@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Stefan Agner <stefan@agner.ch>
+Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Bo Liu <liubo03@inspur.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
+	Hiago De Franco <hiago.franco@toradex.com>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Joao Paulo Goncalves <joao.goncalves@toradex.com>,
+	Joy Zou <joy.zou@nxp.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Marco Felsch <m.felsch@pengutronix.de>,
+	Marek Vasut <marex@denx.de>,
+	Markus Niebel <Markus.Niebel@ew.tq-group.com>,
+	Mathieu Othacehe <m.othacehe@gmail.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Tim Harvey <tharvey@gateworks.com>
+Subject: [PATCH 0/7] Add support for Kontron OSM-S i.MX93 SoM and carrier board
+Date: Tue,  2 Jul 2024 12:31:12 +0200
+Message-ID: <20240702103155.321855-1-frieder@fris.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Kernel hang caused by commit "can: m_can: Start/Cancel polling
- timer together with interrupts"
-To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
- Linux regressions mailing list <regressions@lists.linux.dev>,
- Markus Schneider-Pargmann <msp@baylibre.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
- Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Tony Lindgren <tony@atomide.com>, Judith Mendez <jm@ti.com>,
- linux-can@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux@ew.tq-group.com
-References: <e72771c75988a2460fa8b557b0e2d32e6894f75d.camel@ew.tq-group.com>
- <c93ab2cc-d8e9-41ba-9f56-51acb331ae38@leemhuis.info>
- <h7lmtmqizoipzlazl36fz37w2f5ow7nbghvya3wu766la5hx6d@3jdesa3ltmuz>
- <08aabeaf-6a81-48a9-9c5b-82a69b071faa@leemhuis.info>
- <734a29a87613b9052fc795d56a30690833e4aba9.camel@ew.tq-group.com>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-In-Reply-To: <734a29a87613b9052fc795d56a30690833e4aba9.camel@ew.tq-group.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1719916219;976f19fd;
-X-HE-SMSGID: 1sOam1-000827-BY
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 02.07.24 12:03, Matthias Schiffer wrote:
-> On Tue, 2024-07-02 at 07:37 +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
->> On 01.07.24 16:34, Markus Schneider-Pargmann wrote:
->>> On Mon, Jul 01, 2024 at 02:12:55PM GMT, Linux regression tracking (Thorsten Leemhuis) wrote:
->
->>> @Matthias: Thanks for debugging and sorry for breaking it. If you have a
->>> fix for this, let me know. I have a lot of work right now, so I am not
->>> sure when I will have a proper fix ready. But it is on my todo list.
->>
->> Thx. This made me wonder: is "revert the culprit to resolve this quickly
->> and reapply it later together with a fix" something that we should
->> consider if a proper fix takes some time? Or is this not worth it in
->> this case or extremely hard? Or would it cause a regression on it's own
->> for users of 6.9?
-> 
-> I think on 6.9 a revert is not easily possible (without reverting several other commits adding new
-> features), but it should be considered for 6.6.
->> I don't think further regressions are possible by reverting, as on
-6.6 the timer is only used for
-> platforms without an m_can IRQ, and on these platforms the current behavior is "the kernel
-> reproducibly deadlocks in atomic context", so there is not much room for making it worse.
+From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-Often Greg does not revert commits in a stable branches when they cause
-the same problem in mainline. But I suspect in this case it is something
-different. But I guess he would prefer to hear "please revert
-887407b622f8e4 ("can: m_can: Start/Cancel polling timer together with
-interrupts")" coming from Markus, hence:
+Patch 1-4: small DT binding fixups
+Patch 5: board DT bindings
+Patch 6: support PMIC driver without IRQ
+Patch 7: add devicetrees
 
-Markus, if you agree that a revert from 6.6.y might be best, could you
-simply ask for a revert in a reply to this mail while CCing Greg and the
-stable list? tia!
+Frieder Schrempf (7):
+  dt-bindings: eeprom: at24: Move compatible for Belling BL24C16A to
+    proper place
+  dt-bindings: eeprom: at24: Add compatible for ONSemi N24S64B
+  dt-bindings: gpio: vf610: Allow gpio-line-names to be set
+  dt-bindings: regulator: pca9450: Make interrupt optional
+  dt-bindings: arm: fsl: Add Kontron i.MX93 OSM-S based boards
+  regulator: pca9450: Make IRQ optional
+  arm64: dts: Add support for Kontron i.MX93 OSM-S SoM and BL carrier
+    board
 
-Ciao, Thorsten
+ .../devicetree/bindings/arm/fsl.yaml          |   6 +
+ .../devicetree/bindings/eeprom/at24.yaml      |  10 +-
+ .../devicetree/bindings/gpio/gpio-vf610.yaml  |   1 +
+ .../regulator/nxp,pca9450-regulator.yaml      |   1 -
+ .../dts/freescale/imx93-kontron-bl-osm-s.dts  | 165 ++++++
+ .../dts/freescale/imx93-kontron-osm-s.dtsi    | 547 ++++++++++++++++++
+ drivers/regulator/pca9450-regulator.c         |  41 +-
+ 7 files changed, 744 insertions(+), 27 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx93-kontron-bl-osm-s.dts
+ create mode 100644 arch/arm64/boot/dts/freescale/imx93-kontron-osm-s.dtsi
 
-> Like Markus, I have writing a proper fix for this on my TODO list, but I'm not sure when I can get
-> to it - hopefully next week.
-> 
-> Best regards,
-> Matthias
-> 
-> 
-> 
->>
->>>> On 18.06.24 18:12, Matthias Schiffer wrote:
->>>>> Hi Markus,
->>>>>
->>>>> we've found that recent kernels hang on the TI AM62x SoC (where no m_can interrupt is available and
->>>>> thus the polling timer is used), always a few seconds after the CAN interfaces are set up.
->>>>>
->>>>> I have bisected the issue to commit a163c5761019b ("can: m_can: Start/Cancel polling timer together
->>>>> with interrupts"). Both master and 6.6 stable (which received a backport of the commit) are
->>>>> affected. On 6.6 the commit is easy to revert, but on master a lot has happened on top of that
->>>>> change.
->>>>>
->>>>> As far as I can tell, the reason is that hrtimer_cancel() tries to cancel the timer synchronously,
->>>>> which will deadlock when called from the hrtimer callback itself (hrtimer_callback -> m_can_isr ->
->>>>> m_can_disable_all_interrupts -> hrtimer_cancel).
->>>>>
->>>>> I can try to come up with a fix, but I think you are much more familiar with the driver code. Please
->>>>> let me know if you need any more information.
->>>>>
->>>>> Best regards,
->>>>> Matthias
->>>>>
->>>>>
->>>
->>>
-> 
+-- 
+2.45.2
+
 
