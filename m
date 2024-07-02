@@ -1,95 +1,46 @@
-Return-Path: <linux-kernel+bounces-237503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 890A49239DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:25:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0829E9239DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 11:25:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 126091F22F29
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:25:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6A8C2828E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:25:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ADA4153828;
-	Tue,  2 Jul 2024 09:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 721D6152782;
+	Tue,  2 Jul 2024 09:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="F9+I5ki4";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PdrXH2ZG";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QYs9mOYm";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZFzFQMGO"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="fgI7nkmx"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D787B1514E0;
-	Tue,  2 Jul 2024 09:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59464A06
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 09:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719912301; cv=none; b=mq3o+yRhXWFPFg63p8XXc/y4o7peXZU66EZkk2+yBQZEbLrs27RhKhpJC/Mmt6Ub2dvVPSdNBIYIOgaGlZvaHqOs7NgW7rYAX4SSZWOxpjtK19TxHe97xWs1Am2eQGUuKjquCnMD6IeZXtG82sxMccrQqur6yI5XhjtSObv3ZEY=
+	t=1719912326; cv=none; b=k9ZmKnWlqOAnRkcP4nMg0T1z/59xiCZcCpNqUZoZr+InT/GZzAAeak/bUUHVhzkvVQoBUvLWhziCUwm5FB5t9vcjLejCAfGk045NjjTxfNWmm/VZZF8N4R35NdlEBSRb25zBRbs3f7ieim7yuGGJByoCbXxlok1cXgGkcZJv8pM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719912301; c=relaxed/simple;
-	bh=Vnzj3qnk7b6cjDEN60nc7RvJ49vCjCaFwSdAAmBSPv8=;
+	s=arc-20240116; t=1719912326; c=relaxed/simple;
+	bh=Nvxisu21jPsb8LbI1c7CKoN6IL1eScA7epWq8jN4Ld4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rGLEYEUo8FdftwfMK53y9oH5WN+4/ueyuukZSnO+v6HBz2M7Kg9qARYuvQvDjg31Gy7p9rnUR5Y06z09+bwYzbhPMoEVPIHrBuvHVjhPH+pdt9jkBeLCTSd1V2H86+ddYs2ukHt8rR9zt6atsyzrXyRdu1rjc2jasKL42sOcLyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=F9+I5ki4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PdrXH2ZG; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QYs9mOYm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZFzFQMGO; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CD17221B26;
-	Tue,  2 Jul 2024 09:24:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719912298; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=UktWkysOiCUWKutaYWCtQrqgdTH2AKGF5J22mQ/F9zA=;
-	b=F9+I5ki4Odmoy2XHAPDDhDae8UbD7BBAcn3h+J6yyvu9seSX2T+sZ/7asrxcTctL3qlGTr
-	EjQWot4RNmDqSUQbbKZOhoL3jTQZwh6H4pwd4TaVdvV/czY31JK/dR0xmPic94JH596+73
-	e6lSvsGBmt63gyLcSeQ1Lmw2ORnxGqc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719912298;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=UktWkysOiCUWKutaYWCtQrqgdTH2AKGF5J22mQ/F9zA=;
-	b=PdrXH2ZGrJH9C6F056rNRXZAAmPy3wHDUYmAnW395cB8I4V/C5yeBNcRBrDLFl2R+ovcqJ
-	Vr3CxngIDtNUljBg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=QYs9mOYm;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ZFzFQMGO
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719912297; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=UktWkysOiCUWKutaYWCtQrqgdTH2AKGF5J22mQ/F9zA=;
-	b=QYs9mOYmguxLYkYMgP9N2AY3+Ggoh829eXjbX/cLuUHZCY2g3x19soWbV8ZR1xmOj1U6g6
-	bt0VWVtPOxrxMtvbc77JRt2HvoAJNtUyUIsff5wv9XnHiwjbhYIKxPficoqzEVSCFsaPma
-	pTtHq6cFWpIawuT8kfnKzep4BPYwom4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719912297;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=UktWkysOiCUWKutaYWCtQrqgdTH2AKGF5J22mQ/F9zA=;
-	b=ZFzFQMGOxGEXxyOq2I7ufsh7NdiC7YFkl5lyMnOe79oXNGLkX8Akt4hv7oYTblQy/B411x
-	9YIqnfzoSlFAk6BQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9B10F1395F;
-	Tue,  2 Jul 2024 09:24:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /WiFJWnHg2bNLAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 02 Jul 2024 09:24:57 +0000
-Message-ID: <e74d47c7-0873-4adb-88a3-60597bf31af6@suse.cz>
-Date: Tue, 2 Jul 2024 11:24:57 +0200
+	 In-Reply-To:Content-Type; b=e1Kw6oGZO2mM0fQypl2qkvTcchCQ8pWf5jA2mEpbqq0WnnQQSvkSWPeLV9M/OGJgBZR7VvPRXE8U6YUOtnm0zDRDwZlBDKp4nSiepePIVnLpWXYhfCA1F0eemnSEKUbEVjSxJaNf8ieYTCTRE/VYeCvpATVatZ/7Rta8V78IdPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=fgI7nkmx; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1719912316; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=88FhrTdAAOLnVCcdXcU1cjyLM244d5Y30iTtfNaAcY0=;
+	b=fgI7nkmxV24TEHMqdRlkiqnYp3hux1NDzQNHy+ZhQNz4x5lq8WMRC6losy21K30dPOYQ3YiluVZ77Ey6PCdFV0w8TtzjZjrcPX/27XpVbqpc7q7fTVmqAmjgwWO6pEmdmTfx9zDH4g14jSZp0xqi/FMOhbLxtqNSVrlkjkBFj/k=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R921e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045220184;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0W9iE.E5_1719912314;
+Received: from 30.97.56.72(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W9iE.E5_1719912314)
+          by smtp.aliyun-inc.com;
+          Tue, 02 Jul 2024 17:25:14 +0800
+Message-ID: <da6bad97-18b8-4cd0-9dcc-b60fb20b7a84@linux.alibaba.com>
+Date: Tue, 2 Jul 2024 17:25:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,126 +48,128 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/6] slab: Introduce dedicated bucket allocator
-Content-Language: en-US
-To: Kees Cook <kees@kernel.org>
-Cc: "GONG, Ruiqi" <gongruiqi@huaweicloud.com>,
- Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
- David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- jvoisin <julien.voisin@dustri.org>, Andrew Morton
- <akpm@linux-foundation.org>, Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, Xiu Jianfeng <xiujianfeng@huawei.com>,
- Suren Baghdasaryan <surenb@google.com>,
- Kent Overstreet <kent.overstreet@linux.dev>, Jann Horn <jannh@google.com>,
- Matteo Rizzo <matteorizzo@google.com>, Thomas Graf <tgraf@suug.ch>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, linux-hardening@vger.kernel.org, netdev@vger.kernel.org
-References: <20240701190152.it.631-kees@kernel.org>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
- KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
- 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
- 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
- tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
- Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
- 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
- LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
- 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
- BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
- QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
- AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJkBREIBQkRadznAAoJECJPp+fMgqZkNxIQ
- ALZRqwdUGzqL2aeSavbum/VF/+td+nZfuH0xeWiO2w8mG0+nPd5j9ujYeHcUP1edE7uQrjOC
- Gs9sm8+W1xYnbClMJTsXiAV88D2btFUdU1mCXURAL9wWZ8Jsmz5ZH2V6AUszvNezsS/VIT87
- AmTtj31TLDGwdxaZTSYLwAOOOtyqafOEq+gJB30RxTRE3h3G1zpO7OM9K6ysLdAlwAGYWgJJ
- V4JqGsQ/lyEtxxFpUCjb5Pztp7cQxhlkil0oBYHkudiG8j1U3DG8iC6rnB4yJaLphKx57NuQ
- PIY0Bccg+r9gIQ4XeSK2PQhdXdy3UWBr913ZQ9AI2usid3s5vabo4iBvpJNFLgUmxFnr73SJ
- KsRh/2OBsg1XXF/wRQGBO9vRuJUAbnaIVcmGOUogdBVS9Sun/Sy4GNA++KtFZK95U7J417/J
- Hub2xV6Ehc7UGW6fIvIQmzJ3zaTEfuriU1P8ayfddrAgZb25JnOW7L1zdYL8rXiezOyYZ8Fm
- ZyXjzWdO0RpxcUEp6GsJr11Bc4F3aae9OZtwtLL/jxc7y6pUugB00PodgnQ6CMcfR/HjXlae
- h2VS3zl9+tQWHu6s1R58t5BuMS2FNA58wU/IazImc/ZQA+slDBfhRDGYlExjg19UXWe/gMcl
- De3P1kxYPgZdGE2eZpRLIbt+rYnqQKy8UxlszsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
- J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
- /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
- IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
- X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
- wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
- PVAiT6fnzIKmZAUCZAUSmwUJDK5EZgAKCRAiT6fnzIKmZOJGEACOKABgo9wJXsbWhGWYO7mD
- 8R8mUyJHqbvaz+yTLnvRwfe/VwafFfDMx5GYVYzMY9TWpA8psFTKTUIIQmx2scYsRBUwm5VI
- EurRWKqENcDRjyo+ol59j0FViYysjQQeobXBDDE31t5SBg++veI6tXfpco/UiKEsDswL1WAr
- tEAZaruo7254TyH+gydURl2wJuzo/aZ7Y7PpqaODbYv727Dvm5eX64HCyyAH0s6sOCyGF5/p
- eIhrOn24oBf67KtdAN3H9JoFNUVTYJc1VJU3R1JtVdgwEdr+NEciEfYl0O19VpLE/PZxP4wX
- PWnhf5WjdoNI1Xec+RcJ5p/pSel0jnvBX8L2cmniYnmI883NhtGZsEWj++wyKiS4NranDFlA
- HdDM3b4lUth1pTtABKQ1YuTvehj7EfoWD3bv9kuGZGPrAeFNiHPdOT7DaXKeHpW9homgtBxj
- 8aX/UkSvEGJKUEbFL9cVa5tzyialGkSiZJNkWgeHe+jEcfRT6pJZOJidSCdzvJpbdJmm+eED
- w9XOLH1IIWh7RURU7G1iOfEfmImFeC3cbbS73LQEFGe1urxvIH5K/7vX+FkNcr9ujwWuPE9b
- 1C2o4i/yZPLXIVy387EjA6GZMqvQUFuSTs/GeBcv0NjIQi8867H3uLjz+mQy63fAitsDwLmR
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20240701190152.it.631-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH hotfix] mm: fix crashes from deferred split racing folio
+ migration
+To: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Nhat Pham <nphamcs@gmail.com>, Yang Shi <shy828301@gmail.com>,
+ Zi Yan <ziy@nvidia.com>, Barry Song <baohua@kernel.org>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>,
+ David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <29c83d1a-11ca-b6c9-f92e-6ccb322af510@google.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <29c83d1a-11ca-b6c9-f92e-6ccb322af510@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: CD17221B26
-X-Spam-Score: -3.00
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.00 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	XM_UA_NO_VERSION(0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[23];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[huaweicloud.com,linux.com,kernel.org,google.com,lge.com,dustri.org,linux-foundation.org,linux.dev,gmail.com,huawei.com,suug.ch,gondor.apana.org.au,lwn.net,vger.kernel.org,kvack.org];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
-On 7/1/24 9:12 PM, Kees Cook wrote:
+
+
+On 2024/7/2 15:40, Hugh Dickins wrote:
+> Even on 6.10-rc6, I've been seeing elusive "Bad page state"s (often on
+> flags when freeing, yet the flags shown are not bad: PG_locked had been
+> set and cleared??), and VM_BUG_ON_PAGE(page_ref_count(page) == 0)s from
+> deferred_split_scan()'s folio_put(), and a variety of other BUG and WARN
+> symptoms implying double free by deferred split and large folio migration.
 > 
-> Kees Cook (6):
->   mm/slab: Introduce kmem_buckets typedef
->   mm/slab: Plumb kmem_buckets into __do_kmalloc_node()
->   mm/slab: Introduce kvmalloc_buckets_node() that can take kmem_buckets
->     argument
->   mm/slab: Introduce kmem_buckets_create() and family
->   ipc, msg: Use dedicated slab buckets for alloc_msg()
->   mm/util: Use dedicated slab buckets for memdup_user()
+> 6.7 commit 9bcef5973e31 ("mm: memcg: fix split queue list crash when large
+> folio migration") was right to fix the memcg-dependent locking broken in
+> 85ce2c517ade ("memcontrol: only transfer the memcg data for migration"),
+> but missed a subtlety of deferred_split_scan(): it moves folios to its own
+> local list to work on them without split_queue_lock, during which time
+> folio->_deferred_list is not empty, but even the "right" lock does nothing
+> to secure the folio and the list it is on.
+> 
+> Fortunately, deferred_split_scan() is careful to use folio_try_get(): so
+> folio_migrate_mapping() can avoid the race by folio_undo_large_rmappable()
+> while the old folio's reference count is temporarily frozen to 0 - adding
+> such a freeze in the !mapping case too (originally, folio lock and
+> unmapping and no swap cache left an anon folio unreachable, so no freezing
+> was needed there: but the deferred split queue offers a way to reach it).
 
-pushed to slab/for-6.11/buckets, slab/for-next
+Thanks Hugh.
 
-Thanks!
+But after reading your analysis, I am concerned that the 
+folio_undo_large_rmappable() and deferred_split_scan() may still 
+encounter a race condition with the local list, even with your patch.
+
+Suppose folio A has already been queued into the local list in 
+deferred_split_scan() by thread A, but fails to 'folio_trylock' and then 
+releases the reference count. At the same time, folio A can be frozen by 
+another thread B in folio_migrate_mapping(). In such a case, 
+folio_undo_large_rmappable() would remove folio A from the local list 
+without *any* lock protection, creating a race condition with the local 
+list iteration in deferred_split_scan().
+
+Anyway, I think this patch can still fix some possible races. Feel free 
+to add:
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
 > 
->  include/linux/slab.h            |  48 ++++++++++++---
->  ipc/msgutil.c                   |  13 +++-
->  kernel/configs/hardening.config |   1 +
->  mm/Kconfig                      |  17 ++++++
->  mm/slab.h                       |   6 +-
->  mm/slab_common.c                | 101 +++++++++++++++++++++++++++++++-
->  mm/slub.c                       |  20 +++----
->  mm/util.c                       |  23 ++++++--
->  scripts/kernel-doc              |   1 +
->  9 files changed, 200 insertions(+), 30 deletions(-)
+> Fixes: 9bcef5973e31 ("mm: memcg: fix split queue list crash when large folio migration")
+> Signed-off-by: Hugh Dickins <hughd@google.com>
+> Cc: stable@vger.kernel.org
+> ---
+> This patch against 6.10-rc6: Kefeng has commits in the mm-tree which
+> which will need adjustment to go over this, but we can both check the
+> result.  I have wondered whether just reverting 85ce2c517ade and its
+> subsequent fixups would be better: but that would be a bigger job,
+> and probably not the right choice.
 > 
-
+>   mm/memcontrol.c | 11 -----------
+>   mm/migrate.c    | 13 +++++++++++++
+>   2 files changed, 13 insertions(+), 11 deletions(-)
+> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 71fe2a95b8bd..8f2f1bb18c9c 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -7823,17 +7823,6 @@ void mem_cgroup_migrate(struct folio *old, struct folio *new)
+>   
+>   	/* Transfer the charge and the css ref */
+>   	commit_charge(new, memcg);
+> -	/*
+> -	 * If the old folio is a large folio and is in the split queue, it needs
+> -	 * to be removed from the split queue now, in case getting an incorrect
+> -	 * split queue in destroy_large_folio() after the memcg of the old folio
+> -	 * is cleared.
+> -	 *
+> -	 * In addition, the old folio is about to be freed after migration, so
+> -	 * removing from the split queue a bit earlier seems reasonable.
+> -	 */
+> -	if (folio_test_large(old) && folio_test_large_rmappable(old))
+> -		folio_undo_large_rmappable(old);
+>   	old->memcg_data = 0;
+>   }
+>   
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index 20cb9f5f7446..a8c6f466e33a 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -415,6 +415,15 @@ int folio_migrate_mapping(struct address_space *mapping,
+>   		if (folio_ref_count(folio) != expected_count)
+>   			return -EAGAIN;
+>   
+> +		/* Take off deferred split queue while frozen and memcg set */
+> +		if (folio_test_large(folio) &&
+> +		    folio_test_large_rmappable(folio)) {
+> +			if (!folio_ref_freeze(folio, expected_count))
+> +				return -EAGAIN;
+> +			folio_undo_large_rmappable(folio);
+> +			folio_ref_unfreeze(folio, expected_count);
+> +		}
+> +
+>   		/* No turning back from here */
+>   		newfolio->index = folio->index;
+>   		newfolio->mapping = folio->mapping;
+> @@ -433,6 +442,10 @@ int folio_migrate_mapping(struct address_space *mapping,
+>   		return -EAGAIN;
+>   	}
+>   
+> +	/* Take off deferred split queue while frozen and memcg set */
+> +	if (folio_test_large(folio) && folio_test_large_rmappable(folio))
+> +		folio_undo_large_rmappable(folio);
+> +
+>   	/*
+>   	 * Now we know that no one else is looking at the folio:
+>   	 * no turning back from here.
 
