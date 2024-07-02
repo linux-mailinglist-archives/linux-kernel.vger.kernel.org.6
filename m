@@ -1,209 +1,333 @@
-Return-Path: <linux-kernel+bounces-238101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D786B92437E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:27:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0ABD924383
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:28:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CDCAB24E26
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:27:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32EB11F25641
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:28:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D56941BD503;
-	Tue,  2 Jul 2024 16:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 634EB1BD4F7;
+	Tue,  2 Jul 2024 16:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Cmt79gt/"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aL4LJTCJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686841BD03A
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 16:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E3A1BC06B;
+	Tue,  2 Jul 2024 16:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719937619; cv=none; b=ZMWwCqWSKgd0jp+UiF9Oogkb+Iew9qX2Kvni8NwJL+RlQWChLPdw6P7L2AIdiE4Bu5vRyWs7UYwShbd7aGjoVVPCI55NJC6lu+nJ9Yhnb4ozugQbr1oZO8vc2zECKiMOBbEo6i/LysCREiwelxQ+h8fMV7LqP0Qej5H+Isprmhc=
+	t=1719937692; cv=none; b=Ay+FIGk6XuqHhIic8GYJlitboMGr/bI4iajns7AK+u7nXldR3mpiVi1UEZoSbQBZYt+CmlxV79YooeWTjfM2pLWf4CmzZwxiivnFqSPJxH1P2AMbjMOrA1/Y+sj8nvFDSKqY2Cs9mciDwRe3aNhU7w/U4zJ9hjvZh2C8fnj+uWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719937619; c=relaxed/simple;
-	bh=OIMUChgVr7nLTuZwx5NiN2jIgwqNdR8iaaCwqtxZ7rE=;
-	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=MkehjEMrxNU3ApzigjEZIHEleBHY8SG3dOtxHxV//0MASMzCyTHkPTXJ63u7UzshNJUa5Cor3Y1U24HbMTUJXCm7RgrLvLyjDA9T211w/kmhNzAEK20XK/+MyW9NSPn/kXQxa+q+Ax0F0G0ekl1WAQ+ISK7YcVruJfJ/0zZL6Pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Cmt79gt/; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7449fbfeb6bso1649076a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 09:26:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1719937618; x=1720542418; darn=vger.kernel.org;
-        h=mime-version:subject:user-agent:references:in-reply-to:message-id
-         :date:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=s5nXaBugWkOrid73TgOkHpgJfgkvYoIzG8Oddp9NvLA=;
-        b=Cmt79gt/IzHSQfpyfeCs+T3yFc6KGdY/umZhBbt/XvM/a6TMyP5GgiFKxeW/rL3LCw
-         LqEqJX2VwK5n2QJhQBPsBDk3dbgaP9YmiIbj3v3P05HDlfEOj8jrGcZNxaGexIXqLcTP
-         Po84Tuy5hMyZYROjgQF3gODx3btyYHfaWheXM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719937618; x=1720542418;
-        h=mime-version:subject:user-agent:references:in-reply-to:message-id
-         :date:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s5nXaBugWkOrid73TgOkHpgJfgkvYoIzG8Oddp9NvLA=;
-        b=R02yKIAN/kUhpQe22ygXeJHYxbV7CXmJsSEdOd5Pb2BmFrYsRZnKZX46zHNMXZ7k4G
-         vwPkSu6n91ZiL2XmCWHu/xQYKPEMJO/1iXEUko6aWn1FMxJSWhonvaIhfMNWUgPy2bFk
-         SxVo3DkJKgMU1NHQutHVvl6N5tX06hfj/uQ8VpE9HIC8pin71V1ecl8RnlO2HAyZWTZa
-         PlNeFo9QBjmLzXLIwhBZnuV6YxCyTD1etW/lHAA2nTYN7alpNBEtESXMKsSJip8qyh9E
-         z0xAY9HZOWEHjCpUpY+y1OlJj9qWwqfdi9gRZcSrx7ek9WALFkRLihyJuzuBPb1be9Qe
-         e1DQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTAKfdW0ztZAYXL+e3KNRpv5MNrXBCw80wrTBG5FyEN3p1gifjUAjpc80NrULbt1lfXu9AQoNtXguJZj9wZevu613aJOTWrhB6QwuE
-X-Gm-Message-State: AOJu0YzyDx+x0RZQMjvka6G/rVISrVnOWK5vGzhJqTI89Z9SPpZ7zjFq
-	D875ioTgc7LUIAxjVwpsrrHA5XrcWeIxj8+zvrDKYY/pTyFWbV13JQdIjdj89g==
-X-Google-Smtp-Source: AGHT+IHaKEzsVjhtAgyonPaS4x7MGwSeBIOGNBpe/ox6nPbhDA4jnqihFInNrZdsokg0QOjhvTL1mQ==
-X-Received: by 2002:a17:90a:9ee:b0:2c9:63a4:a138 with SMTP id 98e67ed59e1d1-2c963a4a232mr1209263a91.11.1719937617616;
-        Tue, 02 Jul 2024 09:26:57 -0700 (PDT)
-Received: from [192.168.178.38] (f215227.upc-f.chello.nl. [80.56.215.227])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91d3be561sm9035933a91.43.2024.07.02.09.26.51
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Jul 2024 09:26:57 -0700 (PDT)
-From: Arend Van Spriel <arend.vanspriel@broadcom.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>, Kalle Valo <kvalo@kernel.org>
-CC: Su Hui <suhui@nfschina.com>, <johannes.berg@intel.com>, <kees@kernel.org>, <a@bayrepo.ru>, <marcan@marcan.st>, <quic_alokad@quicinc.com>, <zyytlz.wz@163.com>, <petr.tesarik.ext@huawei.com>, <duoming@zju.edu.cn>, <colin.i.king@gmail.com>, <frankyl@broadcom.com>, <meuleman@broadcom.com>, <phaber@broadcom.com>, <linville@tuxdriver.com>, <linux-wireless@vger.kernel.org>, <brcm80211@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>, <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Date: Tue, 02 Jul 2024 18:26:49 +0200
-Message-ID: <19074452940.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
-In-Reply-To: <3071fd19-5cc7-440a-8184-3aeeb81c96e0@suswa.mountain>
-References: <20240702122450.2213833-1-suhui@nfschina.com>
- <20240702122450.2213833-2-suhui@nfschina.com>
- <ba67020a-04bb-46b8-bc05-751684f71e8a@suswa.mountain>
- <19073fcc9e8.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
- <878qyjg6cv.fsf@kernel.org>
- <3071fd19-5cc7-440a-8184-3aeeb81c96e0@suswa.mountain>
-User-Agent: AquaMail/1.51.5 (build: 105105504)
-Subject: Re: [PATCH wireless 1/9]  wifi: cfg80211: avoid garbage value of 'io_type' in  brcmf_cfg80211_attach()
+	s=arc-20240116; t=1719937692; c=relaxed/simple;
+	bh=C2xAMNCA0bq3Yf7LBiebEp9Zv7nzNrK9boSL2VnUezs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MzpXKK494R/iurnaXWTMZs8H9YFGFKcp+3LU00JAI9m9JwJs0Jy4kUIyjo/J5ga/xnQkx18RhOqSmc9uY9rlspITw8j5C/NzbkE8Fv2gXwKThyoeDfApy/sN/mDMXUT3CTfby2xV4Rmz9/J+Dq6TKAJIiqvxtMkF7f5ahHq96Mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aL4LJTCJ; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719937691; x=1751473691;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=C2xAMNCA0bq3Yf7LBiebEp9Zv7nzNrK9boSL2VnUezs=;
+  b=aL4LJTCJwLOHHyLlo9F8YNyqa4BctqkjhKgCxOTsklZpH2ZazA7YChLu
+   UDHg93ce4CYIwcmZoWKvzBUjpRWg95Z0FRO3j5TwSzzrJ5pE2w9MTsH4b
+   4DHJIyxfLThRJ+vt/u8738nxmIml/wLXeRD0t2G6uFdsaYmo4r22EMww4
+   KmIvSYz2NZsTjr5nDjajd/8LSYSbytM7qldq8woaDoUvG3wTfiw711MpF
+   9LCBRsmb+4FOcG3M9fq4CY6uvs+nvS5EnQ1Kinqe3noGS7sIIR0hCBY1k
+   EF42+zATCQeesE340boZjUqM1aQVbtzOXECZMbyv31cHta8Qc/NLIc2/5
+   Q==;
+X-CSE-ConnectionGUID: qNzIjySxQU2p9zKWFnjSfw==
+X-CSE-MsgGUID: LxH3p/J8S5GHtnVSsTPBuw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="17255171"
+X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
+   d="scan'208";a="17255171"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2024 09:28:10 -0700
+X-CSE-ConnectionGUID: 15WMY8GuS3Gemc+EdG0tDg==
+X-CSE-MsgGUID: KaztnQAARZObwRASAUQCEg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
+   d="scan'208";a="76687022"
+Received: from test2-linux-lab.an.intel.com ([10.122.105.166])
+  by orviesa002.jf.intel.com with ESMTP; 02 Jul 2024 09:28:07 -0700
+From: matthew.gerlach@linux.intel.com
+To: lpieralisi@kernel.org,
+	kw@linux.com,
+	robh@kernel.org,
+	bhelgaas@google.com,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	joyce.ooi@intel.com,
+	linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Matthew Gerlach <matthew.gerlach@linux.intel.com>
+Subject: [PATCH v8] dt-bindings: PCI: altera: Convert to YAML
+Date: Tue,  2 Jul 2024 11:26:52 -0500
+Message-Id: <20240702162652.1349121-1-matthew.gerlach@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000c2ff2d061c462efe"
-
---000000000000c2ff2d061c462efe
-Content-Type: text/plain; format=flowed; charset="us-ascii"
 Content-Transfer-Encoding: 8bit
 
-On July 2, 2024 5:37:10 PM Dan Carpenter <dan.carpenter@linaro.org> wrote:
+From: Matthew Gerlach <matthew.gerlach@linux.intel.com>
 
-> On Tue, Jul 02, 2024 at 06:29:20PM +0300, Kalle Valo wrote:
->> Arend Van Spriel <arend.vanspriel@broadcom.com> writes:
->>
->>> On July 2, 2024 3:57:27 PM Dan Carpenter <dan.carpenter@linaro.org> wrote:
->>>
->>>> On Tue, Jul 02, 2024 at 08:24:44PM +0800, Su Hui wrote:
->>>>> brcmf_fil_cmd_int_get() reads the value of 'io_type' and passes it to
->>>>> brcmf_fil_cmd_data_get(). Initialize 'io_type' to avoid garbage value.
->>>>
->>>> Since you're going to be resending anyway, please delete the space char
->>>> from the start of the line.
->>>>
->>>> It's weird that brcmf_fil_cmd_data_get() uses the uninitialized data.
->>>> It looks like it just goes to great lengths to preserve the original
->>>> data in io_type...  So it likely is harmless enough but still a strange
->>>> and complicated way write a no-op.
->>>
->>> Not sure if it helps, but I tried to explain the reason in response to
->>> patch 0 (cover letter).
->>
->> Would it make more sense to have just one patch? It's the same issue
->> anyway.
->
-> The Fixes tags are different though.  I'd probably leave them as
-> separate patches just because of that.
+Convert the device tree bindings for the Altera Root Port PCIe controller
+from text to YAML. Update the entries in the interrupt-map field to have
+the correct number of address cells for the interrupt parent.
 
-Depending how you look at the problem those tags are wrong.
+Signed-off-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
+---
+v8:
+ - Precisely constrain the number of items for reg and reg-names properties.
+   Constrain maxItems to 2 for altr,pcie-root-port-1.0.
+   Constrain minItems to 3 for altr,pcie-root-port-2.0.
 
-Regards,
-Arend
+v7:
+ - Keep original example dts, but fix warnings of interrupt-map field.
 
+v6:
+ - Fix dt_binding_check warnings by creating interrupt-controller subnode
+   and fixing interrupt-map.
+ - Updated filename in MAINTAINERS.
 
+v5:
+ - add interrupt-controller #interrupt-cells to required field
+ - don't touch original example dts
 
---000000000000c2ff2d061c462efe
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+v4:
+ - reorder reg-names to match original binding
+ - move reg and reg-names to top level with limits.
 
-MIIQdwYJKoZIhvcNAQcCoIIQaDCCEGQCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-gg3OMIIFDTCCA/WgAwIBAgIQeEqpED+lv77edQixNJMdADANBgkqhkiG9w0BAQsFADBMMSAwHgYD
-VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
-AxMKR2xvYmFsU2lnbjAeFw0yMDA5MTYwMDAwMDBaFw0yODA5MTYwMDAwMDBaMFsxCzAJBgNVBAYT
-AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBS
-MyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA
-vbCmXCcsbZ/a0fRIQMBxp4gJnnyeneFYpEtNydrZZ+GeKSMdHiDgXD1UnRSIudKo+moQ6YlCOu4t
-rVWO/EiXfYnK7zeop26ry1RpKtogB7/O115zultAz64ydQYLe+a1e/czkALg3sgTcOOcFZTXk38e
-aqsXsipoX1vsNurqPtnC27TWsA7pk4uKXscFjkeUE8JZu9BDKaswZygxBOPBQBwrA5+20Wxlk6k1
-e6EKaaNaNZUy30q3ArEf30ZDpXyfCtiXnupjSK8WU2cK4qsEtj09JS4+mhi0CTCrCnXAzum3tgcH
-cHRg0prcSzzEUDQWoFxyuqwiwhHu3sPQNmFOMwIDAQABo4IB2jCCAdYwDgYDVR0PAQH/BAQDAgGG
-MGAGA1UdJQRZMFcGCCsGAQUFBwMCBggrBgEFBQcDBAYKKwYBBAGCNxQCAgYKKwYBBAGCNwoDBAYJ
-KwYBBAGCNxUGBgorBgEEAYI3CgMMBggrBgEFBQcDBwYIKwYBBQUHAxEwEgYDVR0TAQH/BAgwBgEB
-/wIBADAdBgNVHQ4EFgQUljPR5lgXWzR1ioFWZNW+SN6hj88wHwYDVR0jBBgwFoAUj/BLf6guRSSu
-TVD6Y5qL3uLdG7wwegYIKwYBBQUHAQEEbjBsMC0GCCsGAQUFBzABhiFodHRwOi8vb2NzcC5nbG9i
-YWxzaWduLmNvbS9yb290cjMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5j
-b20vY2FjZXJ0L3Jvb3QtcjMuY3J0MDYGA1UdHwQvMC0wK6ApoCeGJWh0dHA6Ly9jcmwuZ2xvYmFs
-c2lnbi5jb20vcm9vdC1yMy5jcmwwWgYDVR0gBFMwUTALBgkrBgEEAaAyASgwQgYKKwYBBAGgMgEo
-CjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAN
-BgkqhkiG9w0BAQsFAAOCAQEAdAXk/XCnDeAOd9nNEUvWPxblOQ/5o/q6OIeTYvoEvUUi2qHUOtbf
-jBGdTptFsXXe4RgjVF9b6DuizgYfy+cILmvi5hfk3Iq8MAZsgtW+A/otQsJvK2wRatLE61RbzkX8
-9/OXEZ1zT7t/q2RiJqzpvV8NChxIj+P7WTtepPm9AIj0Keue+gS2qvzAZAY34ZZeRHgA7g5O4TPJ
-/oTd+4rgiU++wLDlcZYd/slFkaT3xg4qWDepEMjT4T1qFOQIL+ijUArYS4owpPg9NISTKa1qqKWJ
-jFoyms0d0GwOniIIbBvhI2MJ7BSY9MYtWVT5jJO3tsVHwj4cp92CSFuGwunFMzCCA18wggJHoAMC
-AQICCwQAAAAAASFYUwiiMA0GCSqGSIb3DQEBCwUAMEwxIDAeBgNVBAsTF0dsb2JhbFNpZ24gUm9v
-dCBDQSAtIFIzMRMwEQYDVQQKEwpHbG9iYWxTaWduMRMwEQYDVQQDEwpHbG9iYWxTaWduMB4XDTA5
-MDMxODEwMDAwMFoXDTI5MDMxODEwMDAwMFowTDEgMB4GA1UECxMXR2xvYmFsU2lnbiBSb290IENB
-IC0gUjMxEzARBgNVBAoTCkdsb2JhbFNpZ24xEzARBgNVBAMTCkdsb2JhbFNpZ24wggEiMA0GCSqG
-SIb3DQEBAQUAA4IBDwAwggEKAoIBAQDMJXaQeQZ4Ihb1wIO2hMoonv0FdhHFrYhy/EYCQ8eyip0E
-XyTLLkvhYIJG4VKrDIFHcGzdZNHr9SyjD4I9DCuul9e2FIYQebs7E4B3jAjhSdJqYi8fXvqWaN+J
-J5U4nwbXPsnLJlkNc96wyOkmDoMVxu9bi9IEYMpJpij2aTv2y8gokeWdimFXN6x0FNx04Druci8u
-nPvQu7/1PQDhBjPogiuuU6Y6FnOM3UEOIDrAtKeh6bJPkC4yYOlXy7kEkmho5TgmYHWyn3f/kRTv
-riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
-QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
-UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
-M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
-Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
-14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
-a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
-XzCCBVYwggQ+oAMCAQICDE79bW6SMzVJMuOi1zANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
-RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
-UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAxMTQzMjNaFw0yNTA5MTAxMTQzMjNaMIGV
-MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
-BgNVBAoTDUJyb2FkY29tIEluYy4xGTAXBgNVBAMTEEFyZW5kIFZhbiBTcHJpZWwxKzApBgkqhkiG
-9w0BCQEWHGFyZW5kLnZhbnNwcmllbEBicm9hZGNvbS5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IB
-DwAwggEKAoIBAQDxOB8Yu89pZLsG9Ic8ZY3uGibuv+NRsij+E70OMJQIwugrByyNq5xgH0BI22vJ
-LT7VKCB6YJC88ewEFfYi3EKW/sn6RL16ImUM40beDmQ12WBquJRoxVNyoByNalmTOBNYR95ZQZJw
-1nrzaoJtK0XIsv0dNCUcLlAc+jHkngD+I0ptVuWoMO1BcJexqJf5iX2M1CdC8PXTh9g4FIQnG2mc
-2Gzj3QNJRLsZu1TLyOyBBIr/BE7UiY3RabgRzknBGAPmzhS+fmyM8OtM5BYBsFBrSUFtZZO2p/tf
-Nbc24J2zf2peoZ8MK+7WQqummYlOnz+FyDkA9EybeNMcS5C+xi/PAgMBAAGjggHdMIIB2TAOBgNV
-HQ8BAf8EBAMCBaAwgaMGCCsGAQUFBwEBBIGWMIGTME4GCCsGAQUFBzAChkJodHRwOi8vc2VjdXJl
-Lmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcnQwQQYI
-KwYBBQUHMAGGNWh0dHA6Ly9vY3NwLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24y
-Y2EyMDIwME0GA1UdIARGMEQwQgYKKwYBBAGgMgEoCjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3
-dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAJBgNVHRMEAjAAMEkGA1UdHwRCMEAwPqA8oDqG
-OGh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3Js
-MCcGA1UdEQQgMB6BHGFyZW5kLnZhbnNwcmllbEBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYB
-BQUHAwQwHwYDVR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFIikAXd8CEtv
-ZbDflDRnf3tuStPuMA0GCSqGSIb3DQEBCwUAA4IBAQCdS5XCYx6k2GGZui9DlFsFm75khkqAU7rT
-zBX04sJU1+B1wtgmWTVIzW7ugdtDZ4gzaV0S9xRhpDErjJaltxPbCylb1DEsLj+AIvBR34caW6ZG
-sQk444t0HPb29HnWYj+OllIGMbdJWr0/P95ZrKk2bP24ub3ZP/8SyzrohfIba9WZKMq6g2nTLZE3
-BtkeSGJx/8dy0h8YmRn+adOrxKXHxhSL8BNn8wsmIZyYWe6fRcBtO3Ks2DOLyHCdkoFlN8x9VUQF
-N2ulEgqCbRKkx+qNirW86eF138lr1gRxzclu/38ko//MmkAYR/+hP3WnBll7zbpIt0jc9wyFkSqH
-p8a1MYICbTCCAmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1z
-YTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMTv1t
-bpIzNUky46LXMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCANkW8i6xNH461hlU4N
-tir5y4Q+4435V9AqoArP0RVMlTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJ
-BTEPFw0yNDA3MDIxNjI2NThaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFl
-AwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzAL
-BglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAUhwgqzRKh4tj3CM5qfY7ImL+adYce23127oE
-EV1xi42PY8yJUyFQ9BhzWLNbUFCznXK2Bjc0lbIQz6CuVGdpSDRifrWdp10nZeHFofva6973ABBO
-3KiVAGUSjsNy0rgDhhQabqTc8FXqDsMmN+570X9LHh9S33fku7IfnvwOrt4cSH0s9D2PEPEUNTB4
-S+s9JlTMocH9BAr9jS8hheOnRaxIGyMcadGt1bOXLw5KXPcvRcgiyZWLFo24zDvOd/dl9VzKpDpD
-AocArzaWW/SzjygUUSxiP6rHwHVa38zwIxAaD2dEh6+bk1ps3qOcXVYj5A2+APGDdalCIR4C5zb3
-gA==
---000000000000c2ff2d061c462efe--
+v3:
+ - Added years to copyright
+ - Correct order in file of allOf and unevaluatedProperties
+ - remove items: in compatible field
+ - fix reg and reg-names constraints
+ - replace deprecated pci-bus.yaml with pci-host-bridge.yaml
+ - fix entries in ranges property
+ - remove device_type from required
+
+v2:
+ - Move allOf: to bottom of file, just like example-schema is showing
+ - add constraint for reg and reg-names
+ - remove unneeded device_type
+ - drop #address-cells and #size-cells
+ - change minItems to maxItems for interrupts:
+ - change msi-parent to just "msi-parent: true"
+ - cleaned up required:
+ - make subject consistent with other commits coverting to YAML
+ - s/overt/onvert/g
+
+v8 fix
+---
+ .../devicetree/bindings/pci/altera-pcie.txt   |  50 --------
+ .../bindings/pci/altr,pcie-root-port.yaml     | 114 ++++++++++++++++++
+ MAINTAINERS                                   |   2 +-
+ 3 files changed, 115 insertions(+), 51 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/pci/altera-pcie.txt
+ create mode 100644 Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml
+
+diff --git a/Documentation/devicetree/bindings/pci/altera-pcie.txt b/Documentation/devicetree/bindings/pci/altera-pcie.txt
+deleted file mode 100644
+index 816b244a221e..000000000000
+--- a/Documentation/devicetree/bindings/pci/altera-pcie.txt
++++ /dev/null
+@@ -1,50 +0,0 @@
+-* Altera PCIe controller
+-
+-Required properties:
+-- compatible :	should contain "altr,pcie-root-port-1.0" or "altr,pcie-root-port-2.0"
+-- reg:		a list of physical base address and length for TXS and CRA.
+-		For "altr,pcie-root-port-2.0", additional HIP base address and length.
+-- reg-names:	must include the following entries:
+-		"Txs": TX slave port region
+-		"Cra": Control register access region
+-		"Hip": Hard IP region (if "altr,pcie-root-port-2.0")
+-- interrupts:	specifies the interrupt source of the parent interrupt
+-		controller.  The format of the interrupt specifier depends
+-		on the parent interrupt controller.
+-- device_type:	must be "pci"
+-- #address-cells:	set to <3>
+-- #size-cells:		set to <2>
+-- #interrupt-cells:	set to <1>
+-- ranges:	describes the translation of addresses for root ports and
+-		standard PCI regions.
+-- interrupt-map-mask and interrupt-map: standard PCI properties to define the
+-		mapping of the PCIe interface to interrupt numbers.
+-
+-Optional properties:
+-- msi-parent:	Link to the hardware entity that serves as the MSI controller
+-		for this PCIe controller.
+-- bus-range:	PCI bus numbers covered
+-
+-Example
+-	pcie_0: pcie@c00000000 {
+-		compatible = "altr,pcie-root-port-1.0";
+-		reg = <0xc0000000 0x20000000>,
+-			<0xff220000 0x00004000>;
+-		reg-names = "Txs", "Cra";
+-		interrupt-parent = <&hps_0_arm_gic_0>;
+-		interrupts = <0 40 4>;
+-		interrupt-controller;
+-		#interrupt-cells = <1>;
+-		bus-range = <0x0 0xFF>;
+-		device_type = "pci";
+-		msi-parent = <&msi_to_gic_gen_0>;
+-		#address-cells = <3>;
+-		#size-cells = <2>;
+-		interrupt-map-mask = <0 0 0 7>;
+-		interrupt-map = <0 0 0 1 &pcie_0 1>,
+-			            <0 0 0 2 &pcie_0 2>,
+-			            <0 0 0 3 &pcie_0 3>,
+-			            <0 0 0 4 &pcie_0 4>;
+-		ranges = <0x82000000 0x00000000 0x00000000 0xc0000000 0x00000000 0x10000000
+-			  0x82000000 0x00000000 0x10000000 0xd0000000 0x00000000 0x10000000>;
+-	};
+diff --git a/Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml b/Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml
+new file mode 100644
+index 000000000000..52533fccc134
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml
+@@ -0,0 +1,114 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++# Copyright (C) 2015, 2019, 2024, Intel Corporation
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/altr,pcie-root-port.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Altera PCIe Root Port
++
++maintainers:
++  - Matthew Gerlach <matthew.gerlach@linux.intel.com>
++
++properties:
++  compatible:
++    enum:
++      - altr,pcie-root-port-1.0
++      - altr,pcie-root-port-2.0
++
++  reg:
++    items:
++      - description: TX slave port region
++      - description: Control register access region
++      - description: Hard IP region
++    minItems: 2
++
++  reg-names:
++    items:
++      - const: Txs
++      - const: Cra
++      - const: Hip
++    minItems: 2
++
++  interrupts:
++    maxItems: 1
++
++  interrupt-controller: true
++
++  interrupt-map-mask:
++    items:
++      - const: 0
++      - const: 0
++      - const: 0
++      - const: 7
++
++  interrupt-map:
++    maxItems: 4
++
++  "#interrupt-cells":
++    const: 1
++
++  msi-parent: true
++
++required:
++  - compatible
++  - reg
++  - reg-names
++  - interrupts
++  - "#interrupt-cells"
++  - interrupt-controller
++  - interrupt-map
++  - interrupt-map-mask
++
++allOf:
++  - $ref: /schemas/pci/pci-host-bridge.yaml#
++  - if:
++      properties:
++        compatible:
++          enum:
++            - altr,pcie-root-port-1.0
++    then:
++      properties:
++        reg:
++          maxItems: 2
++
++        reg-names:
++          maxItems: 2
++
++    else:
++      properties:
++        reg:
++          minItems: 3
++
++        reg-names:
++          minItems: 3
++
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++    pcie_0: pcie@c00000000 {
++        compatible = "altr,pcie-root-port-1.0";
++        reg = <0xc0000000 0x20000000>,
++              <0xff220000 0x00004000>;
++        reg-names = "Txs", "Cra";
++        interrupt-parent = <&hps_0_arm_gic_0>;
++        interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
++        interrupt-controller;
++        #interrupt-cells = <1>;
++        bus-range = <0x0 0xff>;
++        device_type = "pci";
++        msi-parent = <&msi_to_gic_gen_0>;
++        #address-cells = <3>;
++        #size-cells = <2>;
++        interrupt-map-mask = <0 0 0 7>;
++        interrupt-map = <0 0 0 1 &pcie_0 0 0 0 1>,
++                        <0 0 0 2 &pcie_0 0 0 0 2>,
++                        <0 0 0 3 &pcie_0 0 0 0 3>,
++                        <0 0 0 4 &pcie_0 0 0 0 4>;
++        ranges = <0x82000000 0x00000000 0x00000000 0xc0000000 0x00000000 0x10000000>,
++                 <0x82000000 0x00000000 0x10000000 0xd0000000 0x00000000 0x10000000>;
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index cbc186250383..ff2d2c110e41 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -17274,7 +17274,7 @@ PCI DRIVER FOR ALTERA PCIE IP
+ M:	Joyce Ooi <joyce.ooi@intel.com>
+ L:	linux-pci@vger.kernel.org
+ S:	Supported
+-F:	Documentation/devicetree/bindings/pci/altera-pcie.txt
++F:	Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml
+ F:	drivers/pci/controller/pcie-altera.c
+ 
+ PCI DRIVER FOR APPLIEDMICRO XGENE
+-- 
+2.34.1
+
 
