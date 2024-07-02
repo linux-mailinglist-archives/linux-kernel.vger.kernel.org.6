@@ -1,100 +1,137 @@
-Return-Path: <linux-kernel+bounces-237205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61CD791ED6F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 05:21:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DBCC91ED74
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 05:31:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CA831F22DB2
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 03:21:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71981B21F23
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 03:31:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9AB1CF8F;
-	Tue,  2 Jul 2024 03:21:03 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA22D22301;
+	Tue,  2 Jul 2024 03:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UDZxqUte"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8BCA946C
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 03:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF2C10F9;
+	Tue,  2 Jul 2024 03:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719890463; cv=none; b=kOdkq9zuip0ONm3RD/yKfgwez/MIrLX2v6sQgejC4H19rdlgjVVPSOLTT8DOaPJqtiRQ6+a0zXDKjxU2nIu/0pXhnnHAbNm6IiUaZkTrgflH7P+R/UDTVup8Iqof2nqygpF06ivOM3DGCJ7XNwdQu9ce64f7crQula2E6G6dtMw=
+	t=1719891061; cv=none; b=R4y8bot31dduCou4rNVxsosC9RGlraqfe21UsaSrKWSBIUVumwskNsm8xNg6nvDSFu+GYfs2gzpi3OItxkMNWbJEkYPo/HogqvjWqMrzGnGfsdkGBAleEHx/XfMY6uy4EXJabxwzz5FyWD/+8wm+7D5rmPOGTcKKBdxTWsQx7Ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719890463; c=relaxed/simple;
-	bh=aD0aY/O5Lrs4dCtaN4PGlhe0OVwHV/Hg3OqdaZD6iIU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qo2eM4I95XvEY1ji5cGwBibZWQrqZfb5LQwSuwHjIDR3BNDxaqh41sMUWv4ZKq5HkhCZcvX9E8++ZTGLmVyL2GpKP8aycQBeo/WbVpRuyXHTEtPlCZn3vCMrHGhLO0o4nK5fI+xGcYWpAwi2Vzv66r0e7RXZTqR0y9h0gaFBZhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-01 (Coremail) with SMTP id qwCowAAXH8sLcoNm9e0gAQ--.390S2;
-	Tue, 02 Jul 2024 11:20:51 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: vkoul@kernel.org,
-	kishon@kernel.org,
-	rogerq@kernel.org,
-	sjakhade@cadence.com,
-	sergio.paracuellos@gmail.com,
-	robh@kernel.org,
-	make24@iscas.ac.cn
-Cc: linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] phy: cadence-torrent: Check return value on register read
-Date: Tue,  2 Jul 2024 11:20:42 +0800
-Message-Id: <20240702032042.3993031-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1719891061; c=relaxed/simple;
+	bh=gTuhRnzycDrX3ztlznec6pPw0hdjvQ5QSUvoaeUPKCM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PupJs/CsvPl1JOfpxwBt9kkYlldsu+V5Xqoz5JpanrYTqXS+1jtUc1MqCOa6iZZ0+XKy/uSxuwpdS8G2QptJwWqEE06Ol6F8pbD5C3OciQilLemiyeCEoXqg6guQ2gY6eN5H/1tgMG+cCCd0l4ktHxVaqCZzFni8v+lVLlPZE1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UDZxqUte; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83CA1C116B1;
+	Tue,  2 Jul 2024 03:30:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719891060;
+	bh=gTuhRnzycDrX3ztlznec6pPw0hdjvQ5QSUvoaeUPKCM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UDZxqUteofBKpyEogoxBH/mcplk1TTIF/vFG5ckX2FQP1BalFMg/nr9hgP/5nVYqZ
+	 czil/wvfD3G0yftxmJ6+ywle2C3/QGTvlQPWGZCAMQ/xK5H3tZssyUou4GdYfRLDLm
+	 q3OgW2Y+jzu/PMNiE9mHDAP3KYWPTSvgaDq/W7F8NbNz4IkQXgVGW9BQ7wXiMs7kou
+	 J2YG/JNIwsdVI/bfTJYNSXvGodhck13TWhp3ZmPlF6U4Y7nZMiWdShbzVxNlYoTD56
+	 LVtvH7v6rz+Yt41hxu1B54+2M6EO3E1DVfpxuegmds9vQisPIpBXJy1HAdFrCwwgaF
+	 78iPTBbHQCOTA==
+Message-ID: <469c4c38-ee78-4782-a58c-0e6f6c1faedc@kernel.org>
+Date: Tue, 2 Jul 2024 12:30:58 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAAXH8sLcoNm9e0gAQ--.390S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7GFykWF48CF4fWryrCr1kuFg_yoWkGwb_Gw
-	1xZwn3GFsxGrs2yF4qkw1xX34jv3W0vFy8u3Z7tF4fur9rJ3s2v3WFvr1DC348Ww1UGFn8
-	Kwnru3Z8tasrGjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb4kFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
-	1j6rxdM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
-	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJV
-	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
-	0VAGYxC7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
-	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCI
-	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
-	AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
-	Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUOlksUU
-	UUU
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] scsi: sd: remove scsi_disk field lbpvpd
+To: Haoqian He <haoqian.he@smartx.com>, Christoph Hellwig
+ <hch@infradead.org>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:SCSI SUBSYSTEM" <linux-scsi@vger.kernel.org>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: fengli@smartx.com
+References: <20240702030118.2198570-1-haoqian.he@smartx.com>
+ <20240702030118.2198570-3-haoqian.he@smartx.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20240702030118.2198570-3-haoqian.he@smartx.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-cdns_torrent_dp_set_power_state() does not consider that ret might be
-overwritten. Add return value check of regmap_read_poll_timeout() after
-register read in cdns_torrent_dp_set_power_state().
+On 7/2/24 12:01, Haoqian He wrote:
+> The lbpme bit in scsi_disk can be used directly to indicate
+> if the logical unit supports logical block provisioning
+> management. The lbpvpd bit is no longer needed, so remove
+> this field from scsi_disk.
+> 
+> Signed-off-by: Haoqian He <haoqian.he@smartx.com>
+> Signed-off-by: Li Feng <fengli@smartx.com>
+> ---
+>  drivers/scsi/sd.c | 8 ++++----
+>  drivers/scsi/sd.h | 1 -
+>  2 files changed, 4 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+> index 44a19945b5b6..b49bab1d8610 100644
+> --- a/drivers/scsi/sd.c
+> +++ b/drivers/scsi/sd.c
+> @@ -3306,8 +3306,10 @@ static void sd_read_app_tag_own(struct scsi_disk *sdkp, unsigned char *buffer)
+>  
+>  static unsigned int sd_discard_mode(struct scsi_disk *sdkp)
+>  {
+> -	if (!sdkp->lbpvpd)
+> -		/* Disable discard if LBP VPD page not provided */
+> +	if (!sdkp->lbpme)
+> +		/* LBPME was not set means the logical unit
+> +		 * is fully provisioned, so disable discard.
+> +		 */
 
-Fixes: 5b16a790f18d ("phy: cadence-torrent: Reorder few functions to remove function declarations")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/phy/cadence/phy-cadence-torrent.c | 3 +++
- 1 file changed, 3 insertions(+)
+Incorrect multi-line comment format. Please start the comment with a "/*" line
+and no text. It may also be a good idea to add curly brackets for this if as it
+is multi line (but single statement). Or move the comment before the if.
 
-diff --git a/drivers/phy/cadence/phy-cadence-torrent.c b/drivers/phy/cadence/phy-cadence-torrent.c
-index 95924a09960c..6113f0022e6e 100644
---- a/drivers/phy/cadence/phy-cadence-torrent.c
-+++ b/drivers/phy/cadence/phy-cadence-torrent.c
-@@ -1156,6 +1156,9 @@ static int cdns_torrent_dp_set_power_state(struct cdns_torrent_phy *cdns_phy,
- 	ret = regmap_read_poll_timeout(regmap, PHY_PMA_XCVR_POWER_STATE_ACK,
- 				       read_val, (read_val & mask) == value, 0,
- 				       POLL_TIMEOUT_US);
-+	if (ret)
-+		return ret;
-+
- 	cdns_torrent_dp_write(regmap, PHY_PMA_XCVR_POWER_STATE_REQ, 0x00000000);
- 	ndelay(100);
- 
+>  		return SD_LBP_DISABLE;
+>  
+>  	/* LBP VPD page tells us what to use */
+> @@ -3430,7 +3432,6 @@ static void sd_read_block_provisioning(struct scsi_disk *sdkp)
+>  	struct scsi_vpd *vpd;
+>  
+>  	if (!sdkp->lbpme) {
+> -		sdkp->lbpvpd    = 0;
+>  		sdkp->lbpu      = 0;
+>  		sdkp->lbpws     = 0;
+>  		sdkp->lbpws10   = 0;
+> @@ -3445,7 +3446,6 @@ static void sd_read_block_provisioning(struct scsi_disk *sdkp)
+>  		return;
+>  	}
+>  
+> -	sdkp->lbpvpd	= 1;
+>  	sdkp->lbpu	= (vpd->data[5] >> 7) & 1; /* UNMAP */
+>  	sdkp->lbpws	= (vpd->data[5] >> 6) & 1; /* WRITE SAME(16) w/ UNMAP */
+>  	sdkp->lbpws10	= (vpd->data[5] >> 5) & 1; /* WRITE SAME(10) w/ UNMAP */
+> diff --git a/drivers/scsi/sd.h b/drivers/scsi/sd.h
+> index 36382eca941c..ff9ff2655c25 100644
+> --- a/drivers/scsi/sd.h
+> +++ b/drivers/scsi/sd.h
+> @@ -146,7 +146,6 @@ struct scsi_disk {
+>  	unsigned	lbpu : 1;
+>  	unsigned	lbpws : 1;
+>  	unsigned	lbpws10 : 1;
+> -	unsigned	lbpvpd : 1;
+>  	unsigned	ws10 : 1;
+>  	unsigned	ws16 : 1;
+>  	unsigned	rc_basis: 2;
+
 -- 
-2.25.1
+Damien Le Moal
+Western Digital Research
 
 
