@@ -1,113 +1,197 @@
-Return-Path: <linux-kernel+bounces-238188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8750D924694
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:39:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABDEA924696
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:42:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3921E2826D9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:39:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDD6C1C21B83
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051D11BE874;
-	Tue,  2 Jul 2024 17:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7321BF313;
+	Tue,  2 Jul 2024 17:41:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t8PEBxd1"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="epCLP+YH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92D61BBBD7
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 17:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D187D3D978;
+	Tue,  2 Jul 2024 17:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719941985; cv=none; b=vE/+jS+2VYrQwJ43nPPAE6A0veW5xoWCMTy1uPQCGSbaXlfB1MYJM/mXVJ6m/kIQ2e5wdB9P705fs13tuJrrrn7G/3OAnXxtKTMsYURb+uVlQZHjn2UXyiGXS18fESY//ZWFfA2qJqW9sj9Tr1VhC71Uqs+wHiM+B5/tpJ/o+v4=
+	t=1719942118; cv=none; b=mA0RS6Lf8+xghMNp3xAjueOaO0LdoJGDZjGV1GXM5XeNuYhIb9z1e48NfCxNfrYL1/gOvhO5ENKD3pTSJ1JW29nCV3ErPSV5MEujAYCVuuL7Or4gJ53EvdeAgow1PstXEAC+h9kjtnNWDtRVf2wVEZ99MAM4ooVkMoZYTDoAlNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719941985; c=relaxed/simple;
-	bh=QlpvXG/LgibJyXK6E1rumspc8P6BBUlQPRcKtdcwxm8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D5A3zg9xZcfh02avgRkx6lcepVA070gCKKQXfhRtBl/a/ob5U/V/RFEHvKz3MR/VZGrDonO72YNYUNmnBpPE+0MvNKtimCfY1S2uSyeMX2UKqnCETu9E8uayxg4Ugqxv98fcgCT7xQPKVQmD2zo8roz1VZX0YaFOr6kYFqsbp3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t8PEBxd1; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52cdc4d221eso4908397e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 10:39:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719941982; x=1720546782; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Nz8pkBTyEqDD1ohwerHDRnUgJUoGMLVYZpzfAlDWlFI=;
-        b=t8PEBxd1Jw8B8tiPlIDiBtZ3skhTzj974FEg0+Oz5/du0yr2FeXMOIGT7RR4cUB71a
-         3roZBGs69YKh0GgWfWuI2tBVeKIeULjChj7zSbIlbkxnViBfjC+RzAS/G2W3UxmasgPo
-         Fmy/8kwAuP80YUZAboo5WiZn8VvM6+4wTyiQ8Kk3j4zCqWk+lG72yzX3HoN3M8hyW52H
-         8Z/PUjrLWdONLBbTLpowi4cAD1DtX6YAeAxy6u0j8Cr507p3ShYXhWilQlOt2kRcufex
-         EWhDxZ22hcKcgbAFVjV0fGsiBawHVN3PMsKk9pTZMdZRtBUyoLVHI9MsJgkudt/L/v0o
-         e21Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719941982; x=1720546782;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Nz8pkBTyEqDD1ohwerHDRnUgJUoGMLVYZpzfAlDWlFI=;
-        b=X3IxamdpvRdOkS0Zawu5L5QbVPlOBsdj5R5Bquk4exIWMd7XhsnNbBHMCBVxJ27iC5
-         KeRv858uRT2xF5ln1kih6SqY7SHUHcr1UjgYZcf1rRXhTXymuog0k7zZxaQjL5CduIi7
-         IWYir1eVE6VW/G9+TP3ypx3Jnm/2ZlZtl0l14UqrxSDAwZVVb6D+lWxDRPSKH0jtcrii
-         L3KbLlhR2/a3rCiCuV3lGa/RoQi2DTi55eX/XioStGn/+SK/+39E9Vywh+tTUGrFORpQ
-         yEAAhdJNcqkWaniuQNYBePM01eSahschAPKVktLf+J8dA59Xr8gGRsfSCsTgzBdW9Ygp
-         v7IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXLmyv+FbLvnYspl6KeoZAEfaGA7yvhLt2Y4HbshZ/CrCaF3gnBtbviY8d+yFFCSr7hUxjEE/5ogtksAtpenH0oo0D+cTt73VBhoIaZ
-X-Gm-Message-State: AOJu0Ywd3gZQ7iyg5tep8XOmDSgB2hQ67mMPaxh71JFLtuqaqtT0JfG8
-	RqFkqbJOjMR3bTunCWNOlDJSldJ3BcIAiLvmNUC92lXcQEWoUVSWv0RXoy/UVw0KAUzfXkKXfFZ
-	f8jfKx0urtwdnqh5q8bjRNqr/E6/axMYVi6BC
-X-Google-Smtp-Source: AGHT+IHNCgOfo07FxQq9CHe0uLfkDXA32xCu+2Hb4sEv5+vLc3y7mTWk1yBnPNReHksA2PW0+t33PKKBYTQLIHitJOk=
-X-Received: by 2002:a05:6512:4014:b0:52e:7f23:5d8d with SMTP id
- 2adb3069b0e04-52e82685f67mr6090722e87.30.1719941981475; Tue, 02 Jul 2024
- 10:39:41 -0700 (PDT)
+	s=arc-20240116; t=1719942118; c=relaxed/simple;
+	bh=V1br44Suz4Wiyv69CA10ClMypjB26LNaQ5yMRsJPc48=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X7mIa9hFm4jIV/o+WUW1+yOG517981NbgMkUpivfzR60KDJP6TZLzWR9QjJXYlsrFtMN4uwn8gDXY7P4ub2eRvd3ksJRiESLOrMCnH8/neTOFHTRqVQ1XwzYVmFRH15DtQ8op+9IGxhE11RWQ14k/miXBbWbWhL/qEqomdL1BFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=epCLP+YH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AB19C116B1;
+	Tue,  2 Jul 2024 17:41:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719942118;
+	bh=V1br44Suz4Wiyv69CA10ClMypjB26LNaQ5yMRsJPc48=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=epCLP+YHoh28Xp9koK/so0cTTVZFe1iZfYFnoERH6CX1YHknZdN6Mk10gChe1aDzO
+	 73/1uPwfyJN/Otm3uEZKqtSYL5vcXomG+Kjl7Vi5zWLpuNKAp2fdJuce4r3IO+7oEg
+	 c5XIx+EPUQAcmilIWXFV5Mh/M8UhtmevEb4D7p1dD7IoyLAGGitIrLs1XPYPG/j0Xt
+	 8XCDmHM8wixDLgKYka8J1+YVuPF00bKLdByBpZ5lmSsc1/hTkLm+LW3Q7ZbrFkbRlA
+	 JK6Hso2PLvpV/8lAVholV08Af4ln1NcaC404pJ0IPPC3/X6h+bVgYlK23bW0eQCR85
+	 +XDbu66xlnblQ==
+Date: Tue, 2 Jul 2024 18:41:53 +0100
+From: Will Deacon <will@kernel.org>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: robin.murphy@arm.com, joro@8bytes.org, jgg@nvidia.com,
+	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v9 5/6] iommu/arm-smmu-v3: Add in-kernel support for
+ NVIDIA Tegra241 (Grace) CMDQV
+Message-ID: <20240702174152.GA4740@willie-the-truck>
+References: <cover.1718228494.git.nicolinc@nvidia.com>
+ <d74b091a1216421ab8431f4c684242cd70ef0b77.1718228494.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702132139.3332013-1-yosryahmed@google.com> <20240702103628.61879ef17b9b01305515c634@linux-foundation.org>
-In-Reply-To: <20240702103628.61879ef17b9b01305515c634@linux-foundation.org>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 2 Jul 2024 10:39:03 -0700
-Message-ID: <CAJD7tkb7=sBdxXTmcqxe3+UWsTT7R6-rKGBhkEfgEAdTY+5jCw@mail.gmail.com>
-Subject: Re: [RESEND PATCH v3 0/3] x86/mm: LAM fixups and cleanups
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d74b091a1216421ab8431f4c684242cd70ef0b77.1718228494.git.nicolinc@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Tue, Jul 2, 2024 at 10:36=E2=80=AFAM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
->
-> On Tue,  2 Jul 2024 13:21:36 +0000 Yosry Ahmed <yosryahmed@google.com> wr=
-ote:
->
-> > This series has fixups and cleanups for LAM. Most importantly, patch 1
-> > fixes a sycnhronization issue that may cause crashes of userspace
-> > applications. This is a resend of v3, rebased on top of v6.10-rc6.
->
-> "Crashes of userspace applications" is bad.  Yet the patchset has been
-> floating about for four months.
->
-> It's unclear (to me) how serious this is.  Can you please explain how
-> common this is, what the userspace application needs to do to trigger
-> this, etc?
+On Wed, Jun 12, 2024 at 02:45:32PM -0700, Nicolin Chen wrote:
+> From: Nate Watterson <nwatterson@nvidia.com>
+> 
+> NVIDIA's Tegra241 Soc has a CMDQ-Virtualization (CMDQV) hardware, extending
+> the standard ARM SMMU v3 IP to support multiple VCMDQs with virtualization
+> capabilities. In terms of command queue, they are very like a standard SMMU
+> CMDQ (or ECMDQs), but only support CS_NONE in the CS field of CMD_SYNC.
+> 
+> Add a new tegra241-cmdqv driver, and insert its structure pointer into the
+> existing arm_smmu_device, and then add related function calls in the SMMUv3
+> driver to interact with the CMDQV driver.
+> 
+> In the CMDQV driver, add a minimal part for the in-kernel support: reserve
+> VINTF0 for in-kernel use, and assign some of the VCMDQs to the VINTF0, and
+> select one VCMDQ based on the current CPU ID to execute supported commands.
+> This multi-queue design for in-kernel use gives some limited improvements:
+> up to 20% reduction of invalidation time was measured by a multi-threaded
+> DMA unmap benchmark, compared to a single queue.
+> 
+> The other part of the CMDQV driver will be user-space support that gives a
+> hypervisor running on the host OS to talk to the driver for virtualization
+> use cases, allowing VMs to use VCMDQs without trappings, i.e. no VM Exits.
+> This is designed based on IOMMUFD, and its RFC series is also under review.
+> It will provide a guest OS a bigger improvement: 70% to 90% reductions of
+> TLB invalidation time were measured by DMA unmap tests running in a guest,
+> compared to nested SMMU CMDQ (with trappings).
+> 
+> However, it is very important for this in-kernel support to get merged and
+> installed to VMs running on Grace-powered servers as soon as possible. So,
+> later those servers would only need to upgrade their host kernels for the
+> user-space support.
 
-I don't think it would be common. The bug only happens on new hardware
-supporting LAM, and it happens in a specific scenario where a
-userspace task enables LAM while a kthread is using (borrowing) its
-mm_struct on another CPU.
+^^^ This is a weird paragraph to put in the commit message.
 
-So it is possible but I certainly wouldn't call it common or easily trigger=
-able.
+> 
+> As the initial version, the CMDQV driver only supports ACPI configurations.
+> 
+> Signed-off-by: Nate Watterson <nwatterson@nvidia.com>
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Co-developed-by: Nicolin Chen <nicolinc@nvidia.com>
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> ---
+>  MAINTAINERS                                   |   1 +
+>  drivers/iommu/Kconfig                         |  11 +
+>  drivers/iommu/arm/arm-smmu-v3/Makefile        |   1 +
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   |  52 +-
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |  50 ++
+>  .../iommu/arm/arm-smmu-v3/tegra241-cmdqv.c    | 842 ++++++++++++++++++
+>  6 files changed, 945 insertions(+), 12 deletions(-)
+>  create mode 100644 drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index aacccb376c28..ecf7af1b2df8 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -22078,6 +22078,7 @@ M:	Thierry Reding <thierry.reding@gmail.com>
+>  R:	Krishna Reddy <vdumpa@nvidia.com>
+>  L:	linux-tegra@vger.kernel.org
+>  S:	Supported
+> +F:	drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+>  F:	drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
+>  F:	drivers/iommu/tegra*
+>  
+> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+> index c04584be3089..e009387d3cba 100644
+> --- a/drivers/iommu/Kconfig
+> +++ b/drivers/iommu/Kconfig
+> @@ -423,6 +423,17 @@ config ARM_SMMU_V3_KUNIT_TEST
+>  	  Enable this option to unit-test arm-smmu-v3 driver functions.
+>  
+>  	  If unsure, say N.
+> +
+> +config TEGRA241_CMDQV
+> +	bool "NVIDIA Tegra241 CMDQ-V extension support for ARM SMMUv3"
+> +	depends on ACPI
+> +	help
+> +	  Support for NVIDIA CMDQ-Virtualization extension for ARM SMMUv3. The
+> +	  CMDQ-V extension is similar to v3.3 ECMDQ for multi command queues
+> +	  support, except with virtualization capabilities.
+> +
+> +	  Say Y here if your system is NVIDIA Tegra241 (Grace) or it has the same
+> +	  CMDQ-V extension.
+>  endif
+>  
+>  config S390_IOMMU
+> diff --git a/drivers/iommu/arm/arm-smmu-v3/Makefile b/drivers/iommu/arm/arm-smmu-v3/Makefile
+> index 014a997753a8..55201fdd7007 100644
+> --- a/drivers/iommu/arm/arm-smmu-v3/Makefile
+> +++ b/drivers/iommu/arm/arm-smmu-v3/Makefile
+> @@ -2,6 +2,7 @@
+>  obj-$(CONFIG_ARM_SMMU_V3) += arm_smmu_v3.o
+>  arm_smmu_v3-objs-y += arm-smmu-v3.o
+>  arm_smmu_v3-objs-$(CONFIG_ARM_SMMU_V3_SVA) += arm-smmu-v3-sva.o
+> +arm_smmu_v3-objs-$(CONFIG_TEGRA241_CMDQV) += tegra241-cmdqv.o
+>  arm_smmu_v3-objs := $(arm_smmu_v3-objs-y)
+>  
+>  obj-$(CONFIG_ARM_SMMU_V3_KUNIT_TEST) += arm-smmu-v3-test.o
+> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> index ba0e24d5ffbf..430e84fe3679 100644
+> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> @@ -334,6 +334,9 @@ static int arm_smmu_cmdq_build_cmd(u64 *cmd, struct arm_smmu_cmdq_ent *ent)
+>  
+>  static struct arm_smmu_cmdq *arm_smmu_get_cmdq(struct arm_smmu_device *smmu)
+>  {
+> +	if (arm_smmu_has_tegra241_cmdqv(smmu))
+> +		return tegra241_cmdqv_get_cmdq(smmu);
+> +
+>  	return &smmu->cmdq;
+
+Hardcoding all these tegra-specific checks in the core driver is pretty
+horrible :/
+
+Instead, please can we do something similar to the SMMUv2 driver? That
+is, tweak the probe routine to call something akin to the
+arm_smmu_impl_init() function, which looks at the 'model' field pulled
+out of the IORT and can then dispatch directly to a tegra-specific init
+function (see, e.g. nvidia_smmu_impl_init() for SMMUv2).
+
+From there, you can both install function pointers into the
+'arm_smmu_device' structure which can be used instead of having the the
+'if (tegra)' checks in the main driver and you can also re-allocate the
+structu to live inside a private structure instead of having the
+backpointer.
+
+Maybe those cmdq function pointers would be happy for other extensions
+too (e.g. the ECMDQ stuff at [1]).
+
+Will
+
+[1] https://lore.kernel.org/r/20240425144152.52352-3-tanmay@marvell.com
 
