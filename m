@@ -1,139 +1,159 @@
-Return-Path: <linux-kernel+bounces-238208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 976549246D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:01:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AAE79246DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26D831F260E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:01:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BE381C24B42
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBE51C2310;
-	Tue,  2 Jul 2024 18:01:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4BA71C6894;
+	Tue,  2 Jul 2024 18:02:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="aY/czv/6"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hHi3r7rE"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE5A1C0076
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 18:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438C316B394;
+	Tue,  2 Jul 2024 18:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719943266; cv=none; b=JzmWSoTjA5eZb9lvz5TLq6xhZnq/Y4Iy5/Ag7GOIHUvdHFpqJxJQyi1zSed2LBBieb+dYNmLG37tDGzdcMstHA7kugvCmleCLGWv725QphPBC58ev0hSEebeCAhrv+HXoEPKZc7y22qjQhh9iAfIl4keDn/Gcrb9LkHEag485aI=
+	t=1719943320; cv=none; b=tbioN6LzackZ313NZtR640xd8OqV0uJXec+W9Y1p7ZZUYwZRdiSycLcBGEyyRUtL52XOj3YPeYBG9q3Zn3/PNXkR99Whcv72sEdBphn2rdJRZRI6qymhbLu6n2BGPXc9KLRWQpNj0MjLWJf440DIIiAqpnOqP7JMj0oWxScvOk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719943266; c=relaxed/simple;
-	bh=kkk+18D6HhFB3odNtIldrjiYxcFuE4z8q+l57h14CsU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=quKIYM8uzXg/kKpR9Fys98pJpF4lfHZatapFli1KHESHsn9Jrh0fdjNFrrhfz164eEgUpWnmKT8yOfVRhplDw75Rrb1R+qPk8PDZinqTovTEp/Mu+Uen+4J4l4FAzNelItuGzJC0buFf4LcjSZ/EACmiIRRrFDmrnl3fAd07Urc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=aY/czv/6; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52e7ad786dfso3837253e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 11:01:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719943261; x=1720548061; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sKnWasz019XWbKpY8JDNjxDoiZJi0JBpRkDvY6AW8TU=;
-        b=aY/czv/61EnxXtMlJceXV+wDGDTN1kmhZ+V2IwbsxrqgKHq/C4vOmtoCUKF8buhNNI
-         X3yjApMPMFtTaHPylY8cYDjDQVK/Fvt4/D6wjiyoFvQcBHgjPU05i7JzwFJSshDNYAO2
-         UgbAVjiTwvAKWqbHpJNIDlebNnTGaMXYsM3pw/Xpdx8bdahFbsnKEJaOw3JCUrez43Nh
-         ZSdqs5cNhIJmlbg+TpjXt0o/jdxPS2vLMWaD7G+hUoKTJMSNuGLsjNSOi8MuD2hU6gnd
-         1N9f4OYP04L9+LzLryThfv7KQ1EbWBgoepOeoickqbB3Gn90XkCpNUgFjMhbL2yDq0bn
-         cO7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719943261; x=1720548061;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sKnWasz019XWbKpY8JDNjxDoiZJi0JBpRkDvY6AW8TU=;
-        b=wULykbZURY2hUKjYQ+WTv0Q8qPO7s8EDZolutv1MSOFarjWo+JHW6PSMt6m0H+v/tr
-         GNCL9GivuPsY/qDrXqqwB4jVLV0kM39ZTygkq7nwPIXfrqH9Oo84/6yVXmTT5vw2ZNQ7
-         4RqdmLf2RTKHyM0ZLnnnsSF4W5pC5SLzoUjuVDOK4PfC363vOBz5TufHeRonDkfGPSbA
-         imqhXr+VgSd2kbiVZ+cbF0l9CKlKBwQm7wA0D1Ll/9gYUz5dIGXcmsOviYshXDpeT5dB
-         U6zPvprln4FVGhBwl+1klF3BXB3dtGbg6FaGe0yV1xKZr2CuNVMIkA8eL6Ma7ztKKk/7
-         UOXg==
-X-Forwarded-Encrypted: i=1; AJvYcCVmCtEJpMBT5VMzqUuJIijrVKurTZdWCRv/h9mfcs3JWJwcClIXDeFrIIkflNcvEl8UVaQsxr44MMNMjlY9uiq60nTCC8JBtgs8Q0e4
-X-Gm-Message-State: AOJu0YwY4l9fNusyyidyQInuRfi4EhEtH+7vcJ8zZ5qxghsLZJIl7+Hc
-	41kudU1jDmsW5bO1PGKQlrgtFStdR76w1xf4jaPnjQ9FfSSt7yQOvkCK/sj14seG6x8QLVfK80H
-	PmuOoDtjbj2io0b6jQ6cot2JMXySh0VFPscLQYA==
-X-Google-Smtp-Source: AGHT+IGj6gnbb3k6BOFN8B1zCkyv+bXntzux6J3q7+mN1aD56dPlbThJPM72pIoJryrNFkZyrexSAN/Zmu9KJEVHVTI=
-X-Received: by 2002:a05:6512:31c9:b0:52b:faa1:7c74 with SMTP id
- 2adb3069b0e04-52e7b8dedb3mr4684885e87.5.1719943260686; Tue, 02 Jul 2024
- 11:01:00 -0700 (PDT)
+	s=arc-20240116; t=1719943320; c=relaxed/simple;
+	bh=lP+nGGPwNE1RQTO6K8Nb1MPdV0ZDMIU2K4L1RrDfDgE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Gt0STjtQ0FeW5ceJjKUWtufWMin6d+8bF93GeiYuzGbRZb+nz1XF9ltJlZrDFKCd+zb8eMfCrfg/mrIZOez6nFR13HmwXW+rly3gmg2QMo3+SBeipydJCZaUwNEubmEc2P94zKRmXjI4CuQSwU/D7CUTL3vrUF07aaCfhl8g7YA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hHi3r7rE; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 462HE9d5026185;
+	Tue, 2 Jul 2024 18:01:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	3WAkOOmx+EV/jeAG/Z7JRQqqLw7VidhBmcMNbDg3RJk=; b=hHi3r7rE6Uf5pdkx
+	BP+FKu8dns4sMYzEjp7/OW3O7N2OiV2cxoYoPABSwfGzoWoCr1+Vx/dcqc5SI8Px
+	FhRZfglIIBdd3Yb07pGpIGY/OnAjC45wv8TcpsUOT63ee8gRq14ExqyvbBGVgHRK
+	QTFZ5o2baLPnVH038GDC70m0w/KWbFmV5qb7Ka4UHsEyecDmrvxwSrQBP4qaRAAI
+	DxU0+iqIVB8dWdoCmXjQK7Nytl31ankn/XPC7AFS9uufkdhUg1BE9XiaJd1d/0h6
+	ODGkSdItKwptPSHJVaTDln+dfHm+Rr56zfqmm4KBXCyy3Ie1fLE04LEXQPwH5mQt
+	q4GxLg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4027mnpxvk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Jul 2024 18:01:53 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 462I1pxE022434
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 2 Jul 2024 18:01:51 GMT
+Received: from [10.50.20.191] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 2 Jul 2024
+ 11:01:45 -0700
+Message-ID: <0a2d2bea-b043-443d-a898-c5e4c24b2b8d@quicinc.com>
+Date: Tue, 2 Jul 2024 23:31:42 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702173255.39932-1-superm1@kernel.org>
-In-Reply-To: <20240702173255.39932-1-superm1@kernel.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 2 Jul 2024 20:00:49 +0200
-Message-ID: <CAMRc=MfBJi2BGZxfLHgbu2AgRyZ9Z_smWMCy_hD6HuW3HxrNsw@mail.gmail.com>
-Subject: Re: [PATCH] PCI/pwrctl: Decrease message about child OF nodes to debug
-To: superm1@kernel.org
-Cc: Bjorn Helgaas <bhelgaas@google.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Mario Limonciello <mario.limonciello@amd.com>, 
-	Amit Pundir <amit.pundir@linaro.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Caleb Connolly <caleb.connolly@linaro.org>, Praveenkumar Patil <PraveenKumar.Patil@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/4] interconnect: qcom: sc7280: enable QoS
+ configuration
+To: Georgi Djakov <djakov@kernel.org>, Bjorn Andersson <andersson@kernel.org>
+CC: Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, Kees Cook <keescook@chromium.org>,
+        <cros-qcom-dts-watchers@chromium.org>,
+        "Gustavo A . R . Silva"
+	<gustavoars@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-hardening@vger.kernel.org>, <quic_rlaggysh@quicinc.com>,
+        <quic_mdtipton@quicinc.com>
+References: <20240607173927.26321-1-quic_okukatla@quicinc.com>
+ <20240607173927.26321-3-quic_okukatla@quicinc.com>
+ <ciji6nlxn752ina4tmh6kwvek52nxpnguomqek6plwvwgvoqef@yrtexkpmn5br>
+ <a7b959ff-a041-4380-86dd-05cdbc11fab4@kernel.org>
+Content-Language: en-US
+From: Odelu Kukatla <quic_okukatla@quicinc.com>
+In-Reply-To: <a7b959ff-a041-4380-86dd-05cdbc11fab4@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: GjBYqGc1vZkj_4zU9iuCMsASOoElOJ5y
+X-Proofpoint-GUID: GjBYqGc1vZkj_4zU9iuCMsASOoElOJ5y
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-02_13,2024-07-02_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ spamscore=0 malwarescore=0 adultscore=0 priorityscore=1501
+ lowpriorityscore=0 phishscore=0 mlxscore=0 suspectscore=0 clxscore=1011
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407020132
 
-On Tue, Jul 2, 2024 at 7:33=E2=80=AFPM <superm1@kernel.org> wrote:
->
-> From: Mario Limonciello <mario.limonciello@amd.com>
->
-> commit 8fb18619d910 ("PCI/pwrctl: Create platform devices for child OF
-> nodes of the port node") introduced a new error message about populating
-> OF nodes. This message isn't relevant on non-OF platforms, so downgrade
-> it to debug instead.
->
-> Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> Cc: Amit Pundir <amit.pundir@linaro.org>
-> Cc: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD, SM8650-QR=
-D & SM8650-HDK
-> Cc: Caleb Connolly <caleb.connolly@linaro.org> # OnePlus 8T
-> Reported-by: Praveenkumar Patil <PraveenKumar.Patil@amd.com>
-> Fixes: 8fb18619d910 ("PCI/pwrctl: Create platform devices for child OF no=
-des of the port node")
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->  drivers/pci/bus.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
-> index e4735428814d..f21c4ec979b5 100644
-> --- a/drivers/pci/bus.c
-> +++ b/drivers/pci/bus.c
-> @@ -354,7 +354,7 @@ void pci_bus_add_device(struct pci_dev *dev)
->                 retval =3D of_platform_populate(dev->dev.of_node, NULL, N=
-ULL,
->                                               &dev->dev);
->                 if (retval)
-> -                       pci_err(dev, "failed to populate child OF nodes (=
-%d)\n",
-> +                       pci_dbg(dev, "failed to populate child OF nodes (=
-%d)\n",
->                                 retval);
->         }
->  }
-> --
-> 2.43.0
->
->
 
-Ah! I was under the impression that of_platform_populate() would
-return 0 with !OF but it returns -ENODEV instead...
 
-Maybe do:
+On 7/2/2024 5:02 AM, Georgi Djakov wrote:
+> On 1.07.24 19:42, Bjorn Andersson wrote:
+>> On Fri, Jun 07, 2024 at 11:09:25PM GMT, Odelu Kukatla wrote:
+>>> Enable QoS configuration for master ports with predefined values
+>>> for priority and urgency forawrding.
+>>>
+>>
+>> This patch causes QCS6490 RB3Gen2 to hit a bus timeout and crash during
+>> boot, unless the associated DeviceTree change (adding clocks) is
+>> present.
+>>
+>> The two patches are reaching linux-next, and hence mainline, through
+>> different code paths we now have periods where rb3gen2 is not bootable.
+>> But more importantly, devices with current .dtbs installed can not boot
+>> the new kernel.
+>>
+>>
+>> It is not acceptable to introduce non-backwards compatible changes in
+>> drivers (unless there's extraordinary reasons to do so).
+>>
+> 
+> Thanks for the report, Bjorn! The intent of the patches is to keep it
+> backwards compatible. I think that the patch below should fix it.
+> I'll try to validate it and get it merged.
+> 
+> BR,
+> Georgi
+> 
 
-if (retval && retval !=3D -ENODEV) and keep pci_err() here?
+Thanks Bjorn and Georgi!
+I will send a patch to address the boot up issue on old devices and keep it backwards compatible.
 
-Bart
+> -->8--
+> diff --git a/drivers/interconnect/qcom/icc-rpmh.c b/drivers/interconnect/qcom/icc-rpmh.c
+> index 93047defd5e2..487e562dbd22 100644
+> --- a/drivers/interconnect/qcom/icc-rpmh.c
+> +++ b/drivers/interconnect/qcom/icc-rpmh.c
+> @@ -311,7 +311,7 @@ int qcom_icc_rpmh_probe(struct platform_device *pdev)
+>   		}
+> 
+>   		qp->num_clks = devm_clk_bulk_get_all(qp->dev, &qp->clks);
+> -		if (qp->num_clks < 0) {
+> +		if (qp->num_clks <= 0) {
+>   			dev_info(dev, "Skipping QoS, failed to get clk: %d\n", qp->num_clks);
+>   			goto skip_qos_config;
+>   		}
+This will skip the QOS configuration for the providers which don't need any clock to be enabled.
+we may have to add a flag at provider level to check if it is associated with qos clocks.
+
+
+Thanks,
+Odelu
 
