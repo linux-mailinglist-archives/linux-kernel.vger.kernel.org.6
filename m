@@ -1,47 +1,80 @@
-Return-Path: <linux-kernel+bounces-237357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52D7991EFA4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:00:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44D6C91EFA9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:02:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F22141F236BB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:00:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A2C11C221EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC22512E1FF;
-	Tue,  2 Jul 2024 07:00:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B70D12E1E0;
+	Tue,  2 Jul 2024 07:02:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hq8PoOKz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EkbSaiXG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB1E4CB23
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 07:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDDB13EA69
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 07:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719903650; cv=none; b=Oh8hwpIaz9gXsY1JBLSIM2Fbz1/qQrnD2T5yROgJODxJ2rAYUwLxMwLiAHdl4WlGhiDikpmiL1aukO89qSv4EzfpLn3xwzjv5eNHixT+cuR5ioRyd7YewZKfxtEghBY9JRGnZR1g3BNBjZDynARCvtgVcaWHLRfkGHkmLEv+WdI=
+	t=1719903727; cv=none; b=jCXzV/BJa7IbY6KxpLHCK11uKJyNhafUTXMQcwWWUG9Iuy8yaKN00jv9jHmMon31iRgXGxlzHw+9hYGYuPyuN5Ttyi5nJKpFsJEhZ4Y4K0b6DBgYfemjj+tBs9Xv9nrkcZxKMFtiiFjABKTOIl9iwmaRTW6RhKfOH51dyF7cJTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719903650; c=relaxed/simple;
-	bh=FS41p/aHV/AdeAid3qNfKkLGKSCulGrxDVJp7+CTRfg=;
+	s=arc-20240116; t=1719903727; c=relaxed/simple;
+	bh=kLOMf4M+kzP2Nz8LInv8BiHYwztbqZy8TEQYWFbTFK0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f3npyjbzvswNGpoWgQgXWfilXPaqPOFswai+yQuVHdctYVp99yIE7zICn0SbQxBZkfLQceUCtk84et5WHf0Rh3x0djzv/PeW358/Ama06By3QVz3UBwM35EKwqNd9WDJoeP+uE6w1PChZFKcpNORnU8XfdcX0Ahg1xnM8A4Pdv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hq8PoOKz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0473FC116B1;
-	Tue,  2 Jul 2024 07:00:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719903649;
-	bh=FS41p/aHV/AdeAid3qNfKkLGKSCulGrxDVJp7+CTRfg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hq8PoOKz319snuW5x/MvSEZd5jRkj6iwZKJsU5uNMY9VStk2BTjFvT+jlKjkincBZ
-	 qFsEH16mLERORU1nxU7CQSSUfNo0Dz6yVClX4rPrWNVYXKJoExxMJ0r3fQzp5UifnC
-	 lCrYbi0BRfahKm6ZpvoZykRFZomQ/0N2uryOglJAwoKiKe8MeKZ6eFxrXP9I7HW7hA
-	 6+0NboW42LKV5V+JZxu1HOnQ0eZ4ECnZwTnVvzRgT2Rode58QOkghUx9JZBAC9wl+Z
-	 TGu72UDOzZlkqwBQZQyOgQhp3YJgT3Y4CzGmSKKI4DyXkHmfuppovNFoCh/rQlVGSz
-	 XJc0eZY9eFioQ==
-Message-ID: <515e039b-2a1a-414b-96ce-9690fe0dd7b1@kernel.org>
-Date: Tue, 2 Jul 2024 09:00:41 +0200
+	 In-Reply-To:Content-Type; b=VlgpgPl9wEJ+vINlB3e+yI9Ox46rNxxbRz9E9E658iu06U0sscO6Abmiv1LXeHRppm10/pCtCqmAJOTQcKoGGTxfP2YGZHTPaJRpu+Lesx5ny6Ni1OrwMdiUFplkvjyNb6mo+l8vl6leuqdMlxSfq+YDsTwo+TZyCwOaqfyo4/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EkbSaiXG; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719903724;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Lpj/jq7DA83TJSwYLzaPnGSJ7qsFxmTwS+I4ShrrMwc=;
+	b=EkbSaiXGAqy6+t8aBvFuolCwKpN3AkbVfEN/XUtSqcC3faYcoQHcI8uaxyJQae9sqhT3AB
+	k79VQCc4F2TCpg6q9K5QPPq/JXyZt4FZJZEB7hsk8/3s9/ief0gY0y/YHOMxQ7bg/WUm15
+	qXHaT9W0pRzRhJF7VZNLhQGVpSiVwn4=
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
+ [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-679-WYvAEx4mMUibYMm7asHMmg-1; Tue, 02 Jul 2024 03:02:03 -0400
+X-MC-Unique: WYvAEx4mMUibYMm7asHMmg-1
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-707fb3c31c6so1606135b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 00:02:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719903722; x=1720508522;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Lpj/jq7DA83TJSwYLzaPnGSJ7qsFxmTwS+I4ShrrMwc=;
+        b=Ledu6ejGjPyCR4u7SUemOvfFC2w+M4e+WGdvOI4cVnABRZs+McA47cQ98uqgxUWoT2
+         /5MxT+tcgNVm/XkmhqLMD6A759fx0wk7QI/thQ3cmAlTSsfp+By9HZDR6VpfN5grhWzT
+         5qVhfDHA0xHUDQPlP3b2/99JVOFBHxCo/e20mpLKF5+aVzi59CrE5vxk8yzooOPoL1wz
+         EJlzoi619RYRjpT7JedG19swR7Rot86QM/vSGBKfe1d1hZ8AzU+XsVPm+8lWyDnvBPew
+         BRHXKFJF6OoYt/YXdDtEYUJlntfeAziv19+wN3C9o7pOJlTa90AIKYm8PEsWyfhQr31i
+         W3lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOeffM17w/dHF9GCcSQKJHPyEMEUgtYlqTRBVJdzf/1ZqZ5bIUSt9t3XrFTKcdsYn9QIut6gYUpmo6GOHT7sDtfVq5XQnnFKGIRVSs
+X-Gm-Message-State: AOJu0YzsXPk7K3sR2CQ+7rhmezqAuigppkuXUT3apCxsqXAp1gYGD13g
+	Q8gWGRviPo/JyYUJl2Dv1X/uSC1f4lrRedT/uqeG/R4x53mV5Yha0qxxYn8JFpSFLw2xJLUSpMn
+	dzfrk1cJfomo9VmENIzamGAvuLKQVzT/AdEMl/C5zuho8utZ+XSxTakC2unnopA==
+X-Received: by 2002:a05:6a00:244e:b0:706:683d:2999 with SMTP id d2e1a72fcca58-70aaaee3fb5mr7009413b3a.24.1719903721944;
+        Tue, 02 Jul 2024 00:02:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHFr6bxaIiPxFd2P802HsnJLq4x/rg6LaIBuNZttw7D30VytWtMlmDqtT/bl94lm9TE7r8ifA==
+X-Received: by 2002:a05:6a00:244e:b0:706:683d:2999 with SMTP id d2e1a72fcca58-70aaaee3fb5mr7009395b3a.24.1719903721516;
+        Tue, 02 Jul 2024 00:02:01 -0700 (PDT)
+Received: from ?IPV6:2403:580f:7fe0:0:ae49:39b9:2ee8:2187? (2403-580f-7fe0-0-ae49-39b9-2ee8-2187.ip6.aussiebb.net. [2403:580f:7fe0:0:ae49:39b9:2ee8:2187])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-708045aac85sm7910670b3a.174.2024.07.02.00.01.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Jul 2024 00:02:00 -0700 (PDT)
+Message-ID: <a9963f50-6349-4e76-8f12-c12c2ad4d2ab@redhat.com>
+Date: Tue, 2 Jul 2024 15:01:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,81 +82,189 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] arm64/configs: Update defconfig with now
- user-visible CONFIG_FSL_IFC
-To: Esben Haabendal <esben@geanix.com>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
-References: <20240530-fsl-ifc-config-v3-0-1fd2c3d233dd@geanix.com>
- <20240530-fsl-ifc-config-v3-3-1fd2c3d233dd@geanix.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [RFC v3 1/1] fs/namespace: remove RCU sync for MNT_DETACH umount
+To: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: Matthew Wilcox <willy@infradead.org>,
+ Lucas Karpinski <lkarpins@redhat.com>, viro@zeniv.linux.org.uk,
+ raven@themaw.net, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Alexander Larsson <alexl@redhat.com>,
+ Eric Chanudet <echanude@redhat.com>
+References: <20240626201129.272750-2-lkarpins@redhat.com>
+ <20240626201129.272750-3-lkarpins@redhat.com>
+ <Znx-WGU5Wx6RaJyD@casper.infradead.org>
+ <50512ec3-da6d-4140-9659-58e0514a4970@redhat.com>
+ <20240627115418.lcnpctgailhlaffc@quack3>
+ <cfda4682-34b4-462c-acf6-976b0d79ba06@redhat.com>
+ <20240628111345.3bbcgie4gar6icyj@quack3>
+ <20240702-sauna-tattoo-31b01a5f98f6@brauner>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240530-fsl-ifc-config-v3-3-1fd2c3d233dd@geanix.com>
-Content-Type: text/plain; charset=UTF-8
+From: Ian Kent <ikent@redhat.com>
+Autocrypt: addr=ikent@redhat.com; keydata=
+ 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
+In-Reply-To: <20240702-sauna-tattoo-31b01a5f98f6@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 30/05/2024 16:46, Esben Haabendal wrote:
-> With CONFIG_FSL_IFC now being user-visible, and thus changed from a select
-> to depends in CONFIG_MTD_NAND_FSL_IFC, the dependencies needs to be
-> selected in defconfig.
-> 
-> Signed-off-by: Esben Haabendal <esben@geanix.com>
+On 2/7/24 12:58, Christian Brauner wrote:
+> On Fri, Jun 28, 2024 at 01:13:45PM GMT, Jan Kara wrote:
+>> On Fri 28-06-24 10:58:54, Ian Kent wrote:
+>>> On 27/6/24 19:54, Jan Kara wrote:
+>>>> On Thu 27-06-24 09:11:14, Ian Kent wrote:
+>>>>> On 27/6/24 04:47, Matthew Wilcox wrote:
+>>>>>> On Wed, Jun 26, 2024 at 04:07:49PM -0400, Lucas Karpinski wrote:
+>>>>>>> +++ b/fs/namespace.c
+>>>>>>> @@ -78,6 +78,7 @@ static struct kmem_cache *mnt_cache __ro_after_init;
+>>>>>>>     static DECLARE_RWSEM(namespace_sem);
+>>>>>>>     static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
+>>>>>>>     static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
+>>>>>>> +static bool lazy_unlock = false; /* protected by namespace_sem */
+>>>>>> That's a pretty ugly way of doing it.  How about this?
+>>>>> Ha!
+>>>>>
+>>>>> That was my original thought but I also didn't much like changing all the
+>>>>> callers.
+>>>>>
+>>>>> I don't really like the proliferation of these small helper functions either
+>>>>> but if everyone
+>>>>>
+>>>>> is happy to do this I think it's a great idea.
+>>>> So I know you've suggested removing synchronize_rcu_expedited() call in
+>>>> your comment to v2. But I wonder why is it safe? I *thought*
+>>>> synchronize_rcu_expedited() is there to synchronize the dropping of the
+>>>> last mnt reference (and maybe something else) - see the comment at the
+>>>> beginning of mntput_no_expire() - and this change would break that?
+>>> Interesting, because of the definition of lazy umount I didn't look closely
+>>> enough at that.
+>>>
+>>> But I wonder, how exactly would that race occur, is holding the rcu read
+>>> lock sufficient since the rcu'd mount free won't be done until it's
+>>> released (at least I think that's how rcu works).
+>> I'm concerned about a race like:
+>>
+>> [path lookup]				[umount -l]
+>> ...
+>> path_put()
+>>    mntput(mnt)
+>>      mntput_no_expire(m)
+>>        rcu_read_lock();
+>>        if (likely(READ_ONCE(mnt->mnt_ns))) {
+>> 					do_umount()
+>> 					  umount_tree()
+>> 					    ...
+>> 					    mnt->mnt_ns = NULL;
+>> 					    ...
+>> 					  namespace_unlock()
+>> 					    mntput(&m->mnt)
+>> 					      mntput_no_expire(mnt)
+>> 				              smp_mb();
+>> 					      mnt_add_count(mnt, -1);
+>> 					      count = mnt_get_count(mnt);
+>> 					      if (count != 0) {
+>> 						...
+>> 						return;
+>>          mnt_add_count(mnt, -1);
+>>          rcu_read_unlock();
+>>          return;
+>> -> KABOOM, mnt->mnt_count dropped to 0 but nobody cleaned up the mount!
+>>        }
+> Yeah, I think that's a valid concern. mntput_no_expire() requires that
+> the last reference is dropped after an rcu grace period and that can
+> only be done by synchronize_rcu_*() (It could be reworked but that would
+> be quite ugly.). See also mnt_make_shortterm() caller's for kernel
+> initiated unmounts.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+I've thought about this a couple of times now.
 
-Best regards,
-Krzysztof
+
+Isn't it the case here that the path lookup thread will have taken a 
+reference
+
+(because it's calling path_put()) and the umount will have taken a 
+reference on
+
+system call entry.
+
+
+So for the mount being umounted the starting count will be at lest three 
+then if
+
+the umount mntput() is called from namespace_unlock() it will correctly see
+
+count != 0 and the path lookup mntput() to release it's reference 
+finally leaving
+
+the mntput() of the path_put() from the top level system call function 
+to release
+
+the last reference.
+
+
+Once again I find myself thinking this should be independent of the rcu 
+wait because
+
+only path walks done before the mount being detached can be happening 
+and the lockless
+
+walks are done holding the rcu read lock and how likely is it a ref-walk 
+path lookup
+
+(that should follow a failed rcu-walk in this case) has been able to 
+grab a reference
+
+anyway?
+
+
+I think the only reason the wait could be significant is to prevent 
+changes to the
+
+structures concerned causing problems because they happen earlier than 
+can be
+
+tolerated. That I can understand.
+
+
+Mmm ... I feel like I'm starting to sound like a broken record ... oops!
+
+Ian
 
 
