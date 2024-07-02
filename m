@@ -1,237 +1,317 @@
-Return-Path: <linux-kernel+bounces-237401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 935A291F080
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:51:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66F4191F081
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:51:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F74D1F2321E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:51:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89DD81C21BA9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0691C14830D;
-	Tue,  2 Jul 2024 07:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Pe7BXWC1"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED6374297;
+	Tue,  2 Jul 2024 07:51:36 +0000 (UTC)
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E731E7829C
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 07:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3572055C1A
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 07:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719906655; cv=none; b=NluXGvKJdSh0Dm1ZGSnTfoj9egLHfebuYz/ZaboCR9uKKD0onDDFqbhJ1dYetdyzoOGsZTWlJwEe8dnuNz5mQ5WlZnLKHjVy1Rw+JlF2ei7NLd4nT+2nKqp9xDDOsxoTPx87SNM5RCoN+jYDX1e0u3sU2iHaoatldD5jqC6I67c=
+	t=1719906695; cv=none; b=t9eHnlnymrOmxq1E2Ms2d0cQMfeuvFQseX4SEPq5SDfDkqBcS3CKnyaUQkqSc00KoiQqEOwlEAw1X842EOSkjb3hYIfwoNMuGizjNBdBKuT3FywrWD1omFPU+XVhqYtrl3FVR+TCU7HCLDcJaP/aBAHRvQjUwz6GxdQThf4TT8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719906655; c=relaxed/simple;
-	bh=9czvJGOvhkjvTp8PcjNjfzcP7w0rgKYFY5zHgd9obAU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uuW3eNu3Byg2SxIpGz0BB1StxuPGB+i300YnDpBP0sfFNQcjk7jIgqVZpqAYiZIxhP/Cn5MKvkwo0TuF/sclNa6ISYcBJQ7CWffk4KRcSbCJmwuNw9nCB4d27SG8mukUoJj1pH2VKGF5D7iEwMecV0E4J3hXK3y1xWZl/lgM2rY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Pe7BXWC1; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57d203d4682so1454434a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 00:50:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719906651; x=1720511451; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vhAmzmcq0WuiQKKI22a1SwLWFklDX0v9Vk9Oow2Okq8=;
-        b=Pe7BXWC1QRFOE7T4gE/orT8thR5nLMlCQ1MpO1La56BdVlnC0Ja5PZ4CYc2UXAL7Eu
-         1fvKAvuI4MjYeRXxyrXqYf08ym8nq7RAtWw8tj9zXc+S7nMGb3t/cFzhA2ueG1TBwYRL
-         85ir6Y/ydNLpICtP7E9U3baXyMd3VDsIU+laK7rA7UJWEA3TN7iUITpimRbloMDeSDUr
-         gnahU3Gm8VU78QYJurBeCyTNP0erp8sbiSrpUCXrMZ7EV4IxU+rju87m7RK7UyURQy0K
-         eNz8vPO6I3/RxivdUfTusm+Pulv1yCYLbyiVmqEdug+nPrgkt42djdDm6IZh/g49qIT/
-         y+pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719906651; x=1720511451;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vhAmzmcq0WuiQKKI22a1SwLWFklDX0v9Vk9Oow2Okq8=;
-        b=iBAxs6oMPct7fkXf3fsXkX4bQj1agz89QCoywLm+hQ9DD07q3Wgi5S4WMZclTexzUB
-         cluj0Dan+igZYQDeez2P29K0eCxfC1oQdKdAab59sgofKOLc8uynmFW4oIBzDrWEXzrV
-         W+84KjXv8nTvBSks2k+uVYirGbfwqlb7PaKtlohWeAN27fvzbcGvpJFgIN3TRmTwYo0z
-         35sFcd2SE/86pVbRimI7MF43RANe4K7u/E28NGgG1uDuxKRcBTSjfDyPjSleEWrFBDxb
-         jS/gO2IiOHvyMlj1XoS00Ozs7y4Y1a49PjGbWDZlE4xtBZbFNS0t8nmA+TT/SIvjlg46
-         Ekdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOMGg4vA6cqbm5wQAf8JWUTHbtuaLhU5vQME37D5wT3KsBa/kLWQsPuuaJs7kEnpyPwUfKkiwJ8PQ7a4bMIE0xH/tgvfciRpggsoJu
-X-Gm-Message-State: AOJu0YxDFN88RK3Cwod1tgkWuFf8tSUwYohDnyAQVc0ZLf0i3Ow+mpYb
-	KIje4Haha0MUVuXRyYH9vlNkRhmsVitd3Qj+d2p7jZFFM1s0YOZzrqQkv5ExdCc=
-X-Google-Smtp-Source: AGHT+IFi6j8VAuo5d2PZ/pxMR/jTGMp1MlQFd306txfl5rOiDjRTXE8kLhWglEC0VzjiFtE+VJJlcw==
-X-Received: by 2002:a17:906:e289:b0:a6f:51d0:d226 with SMTP id a640c23a62f3a-a75144a7c20mr471162066b.66.1719906651179;
-        Tue, 02 Jul 2024 00:50:51 -0700 (PDT)
-Received: from localhost ([2a02:8071:b783:6940:36f3:9aff:fec2:7e46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab08cf7csm397251966b.155.2024.07.02.00.50.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 00:50:50 -0700 (PDT)
-Date: Tue, 2 Jul 2024 09:50:49 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: 
-	=?utf-8?Q?=C3=81gatha?= Isabelle Chris Moreira Guedes <code@agatha.dev>
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-modules@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, 
-	=?utf-8?Q?=C3=81gatha?= Isabelle Chris Moreira Guedes <patch-reply@agatha.dev>, Jookia <contact@jookia.org>
-Subject: Re: [PATCH] staging: Fix missing warning/taint on builtin code
-Message-ID: <lm4ju5czrrmbiq3jgrjwrgsbudnkcydixnribyuspqcvblt3q5@u5oiczdrzajq>
-References: <yf3ewok3u7fu7f4yqlcovcvedkhyjtibvwzlgbcjwf7ijcsktt@vrk54srlnk2n>
+	s=arc-20240116; t=1719906695; c=relaxed/simple;
+	bh=fch6ZLSl2+9tlIre8PLtE+G4Pua9xl2DHwHdEyILws8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I7t081fYYOnYRR40dqla1pwnadRJgSB84yHUEoEebQ/mII/JwtXExY66/fZS7wewyQSpn8Yw3aX3IY6KXRwJn5TOjwkbtbkvbDZ1jsEWPRzkzmZGx45/0GbrNJLGjvYZRnKV6MKKNyl2s+wcgLSdgXlQVvmv/mu2sna4GQDttkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 4669860007;
+	Tue,  2 Jul 2024 07:51:27 +0000 (UTC)
+Message-ID: <a21f990c-fc74-4a5e-ad03-10c83a051e65@ghiti.fr>
+Date: Tue, 2 Jul 2024 09:51:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jntomoi4xkbaz2om"
-Content-Disposition: inline
-In-Reply-To: <yf3ewok3u7fu7f4yqlcovcvedkhyjtibvwzlgbcjwf7ijcsktt@vrk54srlnk2n>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v2 0/9] Merge arm64/riscv hugetlbfs contpte support
+Content-Language: en-US
+To: Ryan Roberts <ryan.roberts@arm.com>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Andrew Morton
+ <akpm@linux-foundation.org>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-mm@kvack.org
+References: <20240508113419.18620-1-alexghiti@rivosinc.com>
+ <6d37f914-d139-48ea-be63-c428ac767cc1@arm.com>
+ <CAHVXubhmihZA50pdaek4=fx83ycdOyuYkRmVLPtZk59uKBoWPw@mail.gmail.com>
+ <863092ed-2b04-46bb-8d99-5796346cef3a@ghiti.fr>
+ <b7ae4c41-5de8-4097-9f66-b98bb9885395@arm.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <b7ae4c41-5de8-4097-9f66-b98bb9885395@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: alex@ghiti.fr
+
+Hi Ryan,
+
+On 24/06/2024 10:00, Ryan Roberts wrote:
+> On 28/05/2024 09:07, Alexandre Ghiti wrote:
+>> Hi Ryan,
+>>
+>> On 12/05/2024 19:25, Alexandre Ghiti wrote:
+>>> Hi Ryan,
+>>>
+>>> On Fri, May 10, 2024 at 3:49 PM Ryan Roberts <ryan.roberts@arm.com> wrote:
+>>>> On 08/05/2024 12:34, Alexandre Ghiti wrote:
+>>>>> This patchset intends to merge the contiguous ptes hugetlbfs implementation
+>>>>> of arm64 and riscv.
+>>>>>
+>>>>> Both arm64 and riscv support the use of contiguous ptes to map pages that
+>>>>> are larger than the default page table size, respectively called contpte
+>>>>> and svnapot.
+>>>>>
+>>>>> The riscv implementation differs from the arm64's in that the LSBs of the
+>>>>> pfn of a svnapot pte are used to store the size of the mapping, allowing
+>>>>> for future sizes to be added (for now only 64KB is supported). That's an
+>>>>> issue for the core mm code which expects to find the *real* pfn a pte points
+>>>>> to. Patch 1 fixes that by always returning svnapot ptes with the real pfn
+>>>>> and restores the size of the mapping when it is written to a page table.
+>>>>>
+>>>>> The following patches are just merges of the 2 different implementations
+>>>>> that currently exist in arm64 and riscv which are very similar. It paves
+>>>>> the way to the reuse of the recent contpte THP work by Ryan [1] to avoid
+>>>>> reimplementing the same in riscv.
+>>>> Hi Alexandre,
+>>>>
+>>>> I've skimmed through this series and the one that moves contpte. I can see there
+>>>> is definitely value in sharing the implementation, and the rough shape of things
+>>>> seems appropriate. I had some minor concerns about making it harder to implement
+>>>> potential future arm64 errata workarounds but on reflection, most of the
+>>>> now-shared code is really just wrapping the primitives that are still
+>>>> arch-specific.
+>>>>
+>>>> I'm going to need to spend proper time reviewing it to give detailed feedback,
+>>>> but I'll be out on paternity leave for 3 weeks from end of Monday at the latest.
+>>> Too bad, I expected to discuss that with you at LSF/MM...But congrats!
+>>> Hope your wife is fine :)
+>>>
+>>>> So realistically I won't be able to do the detailed review until at least the
+>>>> first week of June.
+> Hi Alexandre,
+>
+> Sorry for the radio silence. I'm back at work now and have some cycles to review
+> this. Did you ever post a new version based on the suggestions below?
 
 
---jntomoi4xkbaz2om
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Unfortunately no, other things happened that took all my attention, sorry.
 
-Hello =C1gatha,
 
-On Tue, Jul 02, 2024 at 02:44:31AM -0300, =C1gatha Isabelle Chris Moreira G=
-uedes wrote:
-> ACKNOWLEDGEMENTS
-> Thanks for Jookia, heat and ukleinek for the important comments &
-> suggestions on this patch prior to submission.
+>>>> Some high level thoughts:
+>>>>
+>>>>    - huge_ptep_* functions could be working on different sized huge ptes - arm64
+>>>> supports contpte, pmd, contpmd and pud. Is keeping them in contpte.c
+>>>> appropriate?
+>>> Hmm indeed, I'll see what I can do.
+>>
+>> So I took a look at that. It amounts to doing the same as what we do for THP
+>> contptes, ie having both contpte-aware and "normal" APIs. Let's take for example
+>> huge_ptep_get(), below is what I get. To me it's not that bad, so I'll implement
+>> this unless there is strong opposition.
+> I'm not sure I've understood what you are going here... see below.
+>
+>>
+>> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+>> index f8efbc128446..869a9aae6c68 100644
+>> --- a/arch/arm64/include/asm/pgtable.h
+>> +++ b/arch/arm64/include/asm/pgtable.h
+>> @@ -1715,6 +1715,16 @@ static inline void clear_young_dirty_ptes(struct
+>> vm_area_struct *vma,
+>>                  contpte_clear_young_dirty_ptes(vma, addr, ptep, nr, flags);
+>>   }
+>>
+>> +static inline pte_t huge_ptep_get(pte_t *ptep)
+>> +{
+>> +        pte_t orig_pte = __ptep_get(ptep);
+>> +
+>> +        if (!pte_present(orig_pte) || !pte_cont(orig_pte))
+>> +                return orig_pte;
+>> +
+>> +        return contpte_huge_ptep_get(ptep);
+> A "huge pte" is not the same as a "cont pte". A huge pte is an abstract thing,
+> which maybe of a number of different sizes; on arm64 with 4K base pages, 64K,
+> 2M, 32M, 1G are supported. The 64K size is implemented using the PTE_CONT bit at
+> PTE level. 2M is a single PMD level block, 32M uses PMD_CONT at PMD level and 1G
+> is 1 PUD block. So I'm not sure it makes sense to tie this up with "contpte_"
+> functions?
+>
+>> +}
+>> +
+>>   #else /* CONFIG_ARM64_CONTPTE */
+>>
+>>   #define ptep_get                               __ptep_get
+>> @@ -1736,6 +1746,8 @@ static inline void clear_young_dirty_ptes(struct
+>> vm_area_struct *vma,
+>>   #define ptep_set_access_flags __ptep_set_access_flags
+>>   #define clear_young_dirty_ptes __clear_young_dirty_ptes
+>>
+>> +#define huge_ptep_get                          __ptep_get
+> I don't quite understand the logic here. huge ptes are needed for hugetlb so
+> their definition needs to be tied to that, not to ARM64_CONTPTE, which is an
+> independent feature.
+>
+>> +
+>>   #endif /* CONFIG_ARM64_CONTPTE */
+>>
+>>   #endif /* !__ASSEMBLY__ */
+>> diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
+>> index 3f09ac73cce3..aa0ee3f02226 100644
+>> --- a/arch/arm64/mm/hugetlbpage.c
+>> +++ b/arch/arm64/mm/hugetlbpage.c
+>> @@ -127,28 +127,6 @@ static inline int num_contig_ptes(unsigned long size,
+>> size_t *pgsize)
+>>          return contig_ptes;
+>>   }
+>>
+>> -pte_t huge_ptep_get(pte_t *ptep)
+>> -{
+>> -       int ncontig, i;
+>> -       size_t pgsize;
+>> -       pte_t orig_pte = __ptep_get(ptep);
+>> -
+>> -       if (!pte_present(orig_pte) || !pte_cont(orig_pte))
+>> -               return orig_pte;
+>> -
+>> -       ncontig = num_contig_ptes(page_size(pte_page(orig_pte)), &pgsize);
+>> -       for (i = 0; i < ncontig; i++, ptep++) {
+>> -               pte_t pte = __ptep_get(ptep);
+>> -
+>> -               if (pte_dirty(pte))
+>> -                       orig_pte = pte_mkdirty(orig_pte);
+>> -
+>> -               if (pte_young(pte))
+>> -                       orig_pte = pte_mkyoung(orig_pte);
+>> -       }
+>> -       return orig_pte;
+>> -}
+>> -
+>>   /*
+>>    * Changing some bits of contiguous entries requires us to follow a
+>>    * Break-Before-Make approach, breaking the whole contiguous set
+>> diff --git a/mm/contpte.c b/mm/contpte.c
+>> new file mode 100644
+>> index 000000000000..4e742cf00b6f
+>> --- /dev/null
+>> +++ b/mm/contpte.c
+>> @@ -0,0 +1,17 @@
+>> +pte_t contpte_huge_ptep_get(pte_t *ptep)
+>> +{
+>> +        int ncontig, i;
+>> +        size_t pgsize;
+>> +
+>> +        ncontig = num_contig_ptes(page_size(pte_page(orig_pte)), &pgsize);
+>> +        for (i = 0; i < ncontig; i++, ptep++) {
+>> +                pte_t pte = __ptep_get(ptep);
+>> +
+>> +                if (pte_dirty(pte))
+>> +                        orig_pte = pte_mkdirty(orig_pte);
+>> +
+>> +                if (pte_young(pte))
+>> +                        orig_pte = pte_mkyoung(orig_pte);
+>> +        }
+>> +        return orig_pte;
+>> +}
+> I guess your observation is that contpte_ and hugepte_ code looks similar so it
+> shold be grouped? I think if we can get some actual reuse that might make sense,
+> but as implemented, this function is completely separate from
+> contpte_ptep_get(). I wonder if its simpler just to have contpte.c for contpte_
+> and hugepte_.c for hugepte_ then they can be included in the build independently
+> based on arch/core Kconfigs (e.g. CONFIG_HUGETLB_PAGE vs CONFIG_ARM64_CONTPTE).
 
-FTR: That happend in the #kernelnewbies irc channel.
 
->  drivers/staging/Makefile |  2 ++
->  include/linux/init.h     |  6 ++++++
->  include/linux/module.h   | 33 +++++++++++++++++++++++++++++++++
->  init/main.c              | 20 ++++++++++++++++++++
->  kernel/module/main.c     |  4 +---
->  5 files changed, 62 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/staging/Makefile b/drivers/staging/Makefile
-> index 5390879b5d1b..7cea13436426 100644
-> --- a/drivers/staging/Makefile
-> +++ b/drivers/staging/Makefile
-> @@ -1,6 +1,8 @@
->  # SPDX-License-Identifier: GPL-2.0
->  # Makefile for staging directory
-> =20
-> +subdir-ccflags-y +=3D -DSTAGING_CODE
-> +
->  obj-y				+=3D media/
->  obj-$(CONFIG_FB_OLPC_DCON)	+=3D olpc_dcon/
->  obj-$(CONFIG_RTL8192E)		+=3D rtl8192e/
-> diff --git a/include/linux/init.h b/include/linux/init.h
-> index 58cef4c2e59a..68c37600958f 100644
-> --- a/include/linux/init.h
-> +++ b/include/linux/init.h
-> @@ -397,4 +397,10 @@ void __init parse_early_options(char *cmdline);
->  #define __exit_p(x) NULL
->  #endif
-> =20
-> +#ifdef CONFIG_STAGING
-> +#ifndef __ASSEMBLY__
-> +extern void staging_taint(const char *code_id, bool module);
-> +#endif /* __ASSEMBLY__ */
-> +#endif /* CONFIG_STAGING */
+Yes, you're right, this was just rambling :)
 
-You could drop the #ifdef for CONFIG_STAGING here. The obvious downside
-of this suggestion is that then you have a declaration of a function
-that isn't available depending on configuration. However the compiler
-doesn't care and the upside of not having CONFIG_STAGING in
-<linux/init.h> is that compile units that have nothing to do with
-CONFIG_STAGING but include <linux/init.h> won't get recompiled if you
-switch the setting.
 
-(OK, maybe a minor issue given that most drivers also include
-<linux/module.h> where the #ifdef cannot be dropped.)
+>
+>>>> Perhaps it's better to keep huge_pte and contpte separate? Also, it
+>>>> only works on arm64 because we can get away with calling the lower-level pte
+>>>> functions even when the huge_pte is actually a contpmd/pmd/pud, because the
+>>>> format is the same. That might present challenges to other arches if the format
+>>>> is different?
+>>> Yes, but I think that if that happens, we could get away with it by
+>>> choosing the right function depending on the size of the mapping?
+>>>
+>>>>    - It might be easier to review if the arm64 stuff is first moved (without
+>>>> changes) then modified to make it suitable for riscv, then for riscv to be
+>>>> hooked up. At the moment I'm trying to follow all 3 parts per-function.
+>>> Ok, let me give it a try during your paternity leave!
+> Review would certainly be easier with this approach!
 
->  #endif /* _LINUX_INIT_H */
-> diff --git a/include/linux/module.h b/include/linux/module.h
-> index 330ffb59efe5..ffe58f5d143b 100644
-> --- a/include/linux/module.h
-> +++ b/include/linux/module.h
-> @@ -76,6 +76,39 @@ extern struct module_attribute module_uevent;
->  extern int init_module(void);
->  extern void cleanup_module(void);
-> =20
-> +#ifdef CONFIG_STAGING
-> +
-> +#define __lower_define_initcall(fn, id) ___define_initcall(fn, id, .init=
-call##id)
-> +
-> +/**
-> + * __staging_define_initcall(fn,id) - staging initialization entry point
-> + * @fn: the function to run at kernel boot time
-> + * @id: the initcall level
-> + *
-> + * __staging_define_initcall() will ensure the drive's init function is =
-always
-> + * called during initcalls for staging code by producing a wrapper funct=
-ion.
-> + * It applies if a module from the drivers/staging subtree is builtin to=
- the
-> + * kernel. It reproduces the behavior in load_module() by tainting the k=
-ernel
-> + * and logging a warning about the code quality.
-> + */
-> +
-> +#define __staging_define_initcall(fn, id) \
-> +	static int __init __staging_wrapped_##fn(void) \
-> +	{ \
-> +		staging_taint(__FILE__, false); \
-> +		return fn(); \
-> +	} \
-> +__lower_define_initcall(__staging_wrapped_##fn, id)
-> +
-> +#ifdef STAGING_CODE
-> +
-> +#undef __define_initcall
-> +#define __define_initcall(fn, id) __staging_define_initcall(fn, id)
 
-undefining macros makes the implemented logic hard to understand. While
-it allows to keep the touched code compact, in the long run it's more
-important that it's understandable.
+I'll do my best to do that soon.
 
-So I suggest to modify the original definition of __define_initcall().
+Hope everything went well for you.
 
-> +#endif /* STAGING_CODE */
-> +
-> +#endif /* CONFIG_STAGING */
-> +
->  #ifndef MODULE
->  /**
->   * module_init() - driver initialization entry point
+Thanks,
 
-I like the idea and think the missing taint for built-in code is an
-oversight that went unnoticed for an astonishingly long time (since 2008
-if my quick research is right).
+Alex
 
-Maybe add
 
-Fixes: 061b1bd394ca ("Staging: add TAINT_CRAP for all drivers/staging code")
-
-to the commit log?!
-
-Best regards
-Uwe
-
---jntomoi4xkbaz2om
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmaDsVYACgkQj4D7WH0S
-/k71Ewf/eFkpkA1Kp0Qe7mX8QA2q8Er+fkdCxbRIf9Ue/wWQWx13hfhiITsc66Nk
-StoFD2Xmy6BDBIyNDKfIyH4sGd+El1JdYbOaDZ1E5HbAjEyTQW+65iMv4w8fo+xh
-UcWf+ynPp3nhRsOgwivl5jBv9WKyuqEO+Zg8EKm0aJffn1i8+tiQlvRGYOZDMQN9
-aq9Iwi56neepw3wR/dtIlbOpbhlviH7ldUdoTFub2DXOnvsTgIn4uQxOqpYle8Cn
-DqODC9fUAyna51N1cMnYkR6gYpZ3ZgIWmgPaqUeoYKfq5cRYSZzuvLqSu6vIzFmB
-A8w60BWYs4vNuuD7UmwRqvMmaIKWGQ==
-=uzyz
------END PGP SIGNATURE-----
-
---jntomoi4xkbaz2om--
+>
+> Thanks,
+> Ryan
+>
+>>>> Thanks,
+>>>> Ryan
+>>> Thanks,
+>>>
+>>> Alex
+>>>
+>>>>> This patchset was tested by running the libhugetlbfs testsuite with 64KB
+>>>>> and 2MB pages on both architectures (on a 4KB base page size arm64 kernel).
+>>>>>
+>>>>> [1]
+>>>>> https://lore.kernel.org/linux-arm-kernel/20240215103205.2607016-1-ryan.roberts@arm.com/
+>>>>>
+>>>>> Changes in v2:
+>>>>>     - Rebase on top of 6.9-rc3
+>>>>>
+>>>>> Alexandre Ghiti (9):
+>>>>>     riscv: Restore the pfn in a NAPOT pte when manipulated by core mm code
+>>>>>     riscv: Safely remove huge_pte_offset() when manipulating NAPOT ptes
+>>>>>     mm: Use common huge_ptep_get() function for riscv/arm64
+>>>>>     mm: Use common set_huge_pte_at() function for riscv/arm64
+>>>>>     mm: Use common huge_pte_clear() function for riscv/arm64
+>>>>>     mm: Use common huge_ptep_get_and_clear() function for riscv/arm64
+>>>>>     mm: Use common huge_ptep_set_access_flags() function for riscv/arm64
+>>>>>     mm: Use common huge_ptep_set_wrprotect() function for riscv/arm64
+>>>>>     mm: Use common huge_ptep_clear_flush() function for riscv/arm64
+>>>>>
+>>>>>    arch/arm64/Kconfig                  |   1 +
+>>>>>    arch/arm64/include/asm/pgtable.h    |  56 +++++-
+>>>>>    arch/arm64/mm/hugetlbpage.c         | 291 +---------------------------
+>>>>>    arch/riscv/Kconfig                  |   1 +
+>>>>>    arch/riscv/include/asm/hugetlb.h    |   2 +-
+>>>>>    arch/riscv/include/asm/pgtable-64.h |  11 ++
+>>>>>    arch/riscv/include/asm/pgtable.h    | 153 +++++++++++++--
+>>>>>    arch/riscv/mm/hugetlbpage.c         | 227 ----------------------
+>>>>>    arch/riscv/mm/pgtable.c             |   6 +-
+>>>>>    mm/Kconfig                          |   3 +
+>>>>>    mm/Makefile                         |   1 +
+>>>>>    mm/contpte.c                        | 272 ++++++++++++++++++++++++++
+>>>>>    12 files changed, 480 insertions(+), 544 deletions(-)
+>>>>>    create mode 100644 mm/contpte.c
+>>>>>
+>>> _______________________________________________
+>>> linux-riscv mailing list
+>>> linux-riscv@lists.infradead.org
+>>> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
