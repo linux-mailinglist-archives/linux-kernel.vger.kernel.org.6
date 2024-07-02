@@ -1,142 +1,191 @@
-Return-Path: <linux-kernel+bounces-238564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9940924C20
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:33:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0281924C25
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:34:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 115701C22A4D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:33:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3D4D1C213B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:34:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1D4E17A58C;
-	Tue,  2 Jul 2024 23:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480C717A5BF;
+	Tue,  2 Jul 2024 23:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dMRM6eya"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UjyzXxDd"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B4471DA332;
-	Tue,  2 Jul 2024 23:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11C51DA320;
+	Tue,  2 Jul 2024 23:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719963210; cv=none; b=KHkEKGP1EaCMndkOYPxU8FtG8nCNEhrv+nB6NnNxkj50KwU6UeUt0wEQd79Prxzp+e2wMaUE1uE2VvfDzaHz/fhPsEXRkuiPynJHzYhuEf1+4W+IexDB4Eknoc6JdoQm8rwyznuTJYWwQsHGvprAAfvRrlEF377NSKOtCr3Pv/U=
+	t=1719963273; cv=none; b=cnZVSOARCDtZQ3HnCtC2Cyt1ivDzVFVR46dLlI8u+ecEHUDPzWv6oNpH+bmwmYEnOEWXfUTfDtwHRKwPEK3tQ5588C0nfVhOJgfZ+VJpF5NMHvBfiDJGXj9OSzCXXhNbx/wPdmOW7Zcg125w/K5JrozET/xrMCkeOkxxqGaIy9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719963210; c=relaxed/simple;
-	bh=ozDuD4Psgba1OdA7ZnHbob123nne67USOF7W6rutdr8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AypJPXVaPlBfSTFIXvB2mIx3NWKKo+T6e36O1GBsSkwiIIRnMvHQTsevBZ06hMLlIJ7zhANxG6cbUQSQkCrPK8KOBi5rHavIFaVNxCzhbayQZdD88sMoqrLiFne1zfb02cb4STUEvCXgq6BiLp5EzrYJrISVl661PfVh2IfwZyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dMRM6eya; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42CBAC116B1;
-	Tue,  2 Jul 2024 23:33:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719963209;
-	bh=ozDuD4Psgba1OdA7ZnHbob123nne67USOF7W6rutdr8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dMRM6eya6aF17bPW5DLpY3Gt49pNgE5GKNVyCs5DNvVnx2IVGos4MLEccN/VcH+bf
-	 Qx5WXCw+OGxCCwW7yM8yUPgCpEwl9/z7EqayobEkPgSF1jR9rn7y6y1g/3SDl0IE78
-	 tX4+kmiwrvaWdoJB6a7ToRe5vmPcWMwfIt+S8e0Asr+5X3dS8Lx1/2ntWLoMEjYvVo
-	 3Wml8HErtFMtcvb94rQR4FBCNy49znJga1D6zU7GXyY7hbS/EpLH+mPjIQ9OVo6zQi
-	 RxdFAok1qGyyE62ZoVZuwFwZJnazdlBzryKF8p+lI2WsAZ1GHU3CiZQDN4LPz7CRQO
-	 BzIIMNpBSqNuQ==
-Date: Tue, 2 Jul 2024 16:33:27 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Guilherme Amadio <amadio@gentoo.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Thorsten Leemhuis <linux@leemhuis.info>, Leo Yan <leo.yan@arm.com>,
-	linux-perf-users@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/6] perf build: Conditionally add feature check flags
- for libtrace{event,fs}
-Message-ID: <ZoSOR0ULxXLxLZvA@google.com>
-References: <20240628202608.3273329-1-amadio@gentoo.org>
- <20240628203432.3273625-1-amadio@gentoo.org>
+	s=arc-20240116; t=1719963273; c=relaxed/simple;
+	bh=LNH3O5IfY6PoWnz4btQ0PNI/uE/ZJQXWAD5uRijVgoo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GIC0xIOPI2eDEOELR3nARsj6mel+kf1KNIZ8xDM6tV31osyr+A1qyn1/dGbtndqSqFettWuG6O6ZtqtfFCGkLBcAdfUvoMw0KOSJU7YHNKQb/Lu5AwZv1HIDeyXzcrBsRZ9mMB2/xxeodn3KCWKUy8uKy3Xrc5SWwC+YenU7RW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UjyzXxDd; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 462HJL7W023818;
+	Tue, 2 Jul 2024 23:34:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	LNH3O5IfY6PoWnz4btQ0PNI/uE/ZJQXWAD5uRijVgoo=; b=UjyzXxDdt3+S5ipz
+	Xqb3V2a6qismCtxLuKBWoGkFU/4i4P80dIpDf8hww/0NdkOcf7oQfGohv0VMi8R+
+	y8DxI9fx6D9jhL9djOr4FdUF9VmxopCNyV025AvR+pdjiOiTXLLO+loqMAbT1kIQ
+	sP7XTQYtIdSlr27WW/NYQK8KWkCInJaynzhFcl95Lqiaeijdrb7cmsYBYlvpixmx
+	nzWHDiaZmNnfb7AcCthsYEruft40PmKI2wGPDttTquo/XrgCwa9HX2XXiMT+Jx9U
+	h6Dq71Pv1qv5zq0fRBM98o672loSsxC2gatRt5lvBNg6VgY8RHqESJoTwc8qQcV4
+	7ieS9w==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40297rt2vy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Jul 2024 23:34:09 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 462NY96V026581
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 2 Jul 2024 23:34:09 GMT
+Received: from [10.110.95.24] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 2 Jul 2024
+ 16:34:08 -0700
+Message-ID: <3c358604-6926-4f90-8fc8-8139c68c3418@quicinc.com>
+Date: Tue, 2 Jul 2024 16:34:07 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240628203432.3273625-1-amadio@gentoo.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v23 32/32] ASoC: doc: Add documentation for SOC USB
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
+	<amadeuszx.slawinski@linux.intel.com>,
+        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
+        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
+        <broonie@kernel.org>, <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
+        <Thinh.Nguyen@synopsys.com>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
+        <robh@kernel.org>, <gregkh@linuxfoundation.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>
+References: <20240610235808.22173-1-quic_wcheng@quicinc.com>
+ <20240610235808.22173-33-quic_wcheng@quicinc.com>
+ <5be51e1f-70c9-4bbc-96fa-1e50e441bd35@linux.intel.com>
+ <408d9e8e-0f40-7e66-54be-2f8d2c0783a3@quicinc.com>
+ <ca1e1063-e1bd-4e03-a7cd-91985e9954e9@linux.intel.com>
+ <096d59a0-5e18-092c-c9ae-d98130226f06@quicinc.com>
+ <368d9019-2c96-468e-b472-7e1127f76213@linux.intel.com>
+ <eb6370ea-47a0-3659-3c10-cb7f95e3e520@quicinc.com>
+ <510468c7-b181-48d0-bf2d-3e478b2f2aca@linux.intel.com>
+ <c7a95157-1b71-1489-3657-8fe67f9acb4e@quicinc.com>
+ <90463a4e-c2e7-4b59-9a79-23533b4acd1e@linux.intel.com>
+ <fd8f1eb0-4b21-4697-8175-a61bc3858852@quicinc.com>
+ <f982842a-1804-420b-a539-a609ecf8fb8a@linux.intel.com>
+Content-Language: en-US
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+In-Reply-To: <f982842a-1804-420b-a539-a609ecf8fb8a@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: sz5hhODFOp_NmTAUPVtNmQvfhu6jIR9c
+X-Proofpoint-GUID: sz5hhODFOp_NmTAUPVtNmQvfhu6jIR9c
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-02_16,2024-07-02_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
+ lowpriorityscore=0 clxscore=1011 mlxscore=0 suspectscore=0 spamscore=0
+ adultscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407020173
 
-Hello,
+Hi Pierre/Amadeusz,
 
-On Fri, Jun 28, 2024 at 10:34:27PM +0200, Guilherme Amadio wrote:
-> This avoids reported warnings when the packages are not installed.
-> 
-> Fixes: 0f0e1f44569061e3dc590cd0b8cb74d8fd53706b
-> Signed-off-by: Guilherme Amadio <amadio@gentoo.org>
+On 7/2/2024 1:30 AM, Pierre-Louis Bossart wrote:
+>>> There are really multiple layers to deal with
+>>>
+>>> a) is the controller able to support the offload path? IIRC this is
+>>> embedded in an obscure XHCI property, it would make sense to expose it
+>>> as a control, or component string, of the USB card.
+>> If a component string/tag is desired, I already have some way of doing that.  I can add it to the USB card.
+>>
+>>> b) is there a companion card capable of dealing with the offload path?
+>>> Since the presence of this card may depend on driver probe, there should
+>>> be a control on the USB card. userspace could detect changes to this
+>>> control and detect if that path is or is no longer enabled.
+>> So currently, the "USB Offload Playback Capable Card" kcontrol (on the USB card) will determine if there is an offload path.  However, this differs than what Amadeusz is suggesting, in that he wants a single kcontrol created for EACH USB card identified (per USB audio device), and a simple enable/disable control to determine if the offload path is enabled for that card/pcm stream.
+>>
+>> It would be a simpler approach for the userspace, and if the card that handles the offload card isn't present, then these enable/disable control will be set to "disabled," and even if users attempt to set the control, it won't go through.
+> Not following. Are you suggesting userspace would modify the
+> enable/disable status?
 
-Thanks for working on this.
+Yes, this is the suggestion.  One writeable kcontrol on the USB SND audio device that will control if that USB audio device is going to be offloaded.  If the kcontrol reads back "enabled" (or 1) then userspace knows that the offload path is active.  Else, if it reads "disabled" (or 0) after the attempt to set the kcontrol, then the offload path was unsuccessfully enabled, ie maybe due to no available offload streams.
 
-> ---
->  tools/perf/Makefile.config | 28 +++++++++++++++-------------
->  1 file changed, 15 insertions(+), 13 deletions(-)
-> 
-> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-> index 5271a4c1d2b3..5387babb8f04 100644
-> --- a/tools/perf/Makefile.config
-> +++ b/tools/perf/Makefile.config
-> @@ -182,13 +182,21 @@ endif
->  FEATURE_CHECK_CFLAGS-libzstd := $(LIBZSTD_CFLAGS)
->  FEATURE_CHECK_LDFLAGS-libzstd := $(LIBZSTD_LDFLAGS)
->  
-> -# for linking with debug library, run like:
-> -# make DEBUG=1 PKG_CONFIG_PATH=/opt/libtraceevent/(lib|lib64)/pkgconfig
-> -FEATURE_CHECK_CFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --cflags libtraceevent)
-> -FEATURE_CHECK_LDFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --libs libtraceevent)
-> -
-> -FEATURE_CHECK_CFLAGS-libtracefs := $(shell $(PKG_CONFIG) --cflags libtracefs)
-> -FEATURE_CHECK_LDFLAGS-libtracefs := $(shell $(PKG_CONFIG) --libs libtracefs)
-> +ifneq ($(NO_LIBTRACEEVENT),1)
-> +  ifeq ($(call get-executable,$(PKG_CONFIG)),)
-> +  dummy := $(error Error: $(PKG_CONFIG) needed by libtraceevent is missing on this system, please install it)
+> I would just have a read-only control that reports what the hardware can
+> do and which other card can deal with offload. It's up to userspace to
+> select the offloaded PCM device or not.
+>
+That is what I have implemented in the previous patch series.  One USB SND kcontrol within each USB audio device, which points to the ASoC platform card that supports offloading:
 
-I know you just copied the code, but IIRC we wanted to remove this dummy
-assignment before.
+"USB Offload Playback Capable Card" --> returns the card index to the ASoC platform card
 
-> +  endif
-> +endif
-> +ifeq ($(shell $(PKG_CONFIG) --exists libtraceevent 2>&1 1>/dev/null; echo $$?),0)
-> +  # for linking with debug library, run like:
-> +  # make DEBUG=1 PKG_CONFIG_PATH=/opt/libtraceevent/(lib|lib64)/pkgconfig
-> +  FEATURE_CHECK_CFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --cflags libtraceevent)
-> +  FEATURE_CHECK_LDFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --libs libtraceevent)
-> +endif
-> +ifeq ($(shell $(PKG_CONFIG) --exists libtracefs 2>&1 1>/dev/null; echo $$?),0)
-> +  FEATURE_CHECK_CFLAGS-libtracefs := $(shell $(PKG_CONFIG) --cflags libtracefs)
-> +  FEATURE_CHECK_LDFLAGS-libtracefs := $(shell $(PKG_CONFIG) --libs libtracefs)
+From there the offloading control is all within the ASoC platform card.  This is opposite to what Amaduesz suggested in that, the offload control of which USB device to offload should be within USB SND (not ASoC)
 
-I'm curious if we can redirect stderr to /dev/null to surpress the
-output when pkg-config is not installed.  Then we don't need to check
-the `ifeq`.
+>
+>>> c) which PCM device is actually offloaded? This could be plural for some
+>>> implementations. The mapping between PCM devices exposed by the USB
+>>> card, and those exposed by the companion card, should be known to
+>>> userspace. I am not sure how this would be done though, a variable
+>>> number of controls is a sure way to confuse userspace.
+>> Expanding on Amadeusz's suggestion, my idea is to have an enable/disable kcontrol per USB stream.  For example, one USB card could have multiple PCM devices (USB streams).  So we would have something like:
+>>
+>> PCM Offload Playback Enable Stream#0  enable/disable
+>>
+>> PCM Offload Playback Enable Stream#1  enable/disable
+>>
+>> ....
+> are those read-only or not?
 
-Thanks,
-Namhyung
+No, writable and readable.
 
+>
+>> So we'd know which USB card and PCM device is selected for USB SND.  However, I see what you're getting at in case there are multiple supported streams, because userspace needs to know which ASoC card/pcm combination corresponds to which USB device/combination.
+> I don't understand how this would help map the two parts? There's got to
+> be an additional mapping...
+It won't help with the mapping.  That is something which we'd need to add, suggestion below.
+>> What do you think about having a USB card kcontrol to display the mapped ASoC card and PCM indexes?
+>>
+>> PCM Offload Playback Enable Stream Mapping#0  0, 1 (ASoC card#0, PCM device#1)
+>>
+>> To summarize, if we did this, I'd plan to remove all the kcontrols in ASoC card, and have the following in the USB card for an USB audio device that supports one USB stream:
+>>
+>> PCM Offload Playback Enable Stream#0  enable/disable
+>>
+>> PCM Offload Playback Enable Stream Mapping#0  0, 1 (ASoC card#0, PCM device#1)
+> ... which is suggested here.
+>
+> Assuming these are read-only controls, we would need to know which PCM
+> device on the USB card can be optimized with the use of which PCM device
+> on the ASoC card. That means a set of three values. You would also want
+> a number of streams to make the guesswork on controls less painful.
 
-> +endif
->  
->  FEATURE_CHECK_CFLAGS-bpf = -I. -I$(srctree)/tools/include -I$(srctree)/tools/arch/$(SRCARCH)/include/uapi -I$(srctree)/tools/include/uapi
->  # include ARCH specific config
-> @@ -208,12 +216,6 @@ ifeq ($(call get-executable,$(BISON)),)
->    $(error Error: $(BISON) is missing on this system, please install it)
->  endif
->  
-> -ifneq ($(NO_LIBTRACEEVENT),1)
-> -  ifeq ($(call get-executable,$(PKG_CONFIG)),)
-> -  dummy := $(error Error: $(PKG_CONFIG) needed by libtraceevent is missing on this system, please install it)
-> -  endif
-> -endif
-> -
->  ifneq ($(OUTPUT),)
->    ifeq ($(shell expr $(shell $(BISON) --version | grep bison | sed -e 's/.\+ \([0-9]\+\).\([0-9]\+\).\([0-9]\+\)/\1\2\3/g') \>\= 371), 1)
->      BISON_FILE_PREFIX_MAP := --file-prefix-map=$(OUTPUT)=
-> -- 
-> 2.45.2
-> 
+OK, so now to just figuring out something that both you and Amadeusz can agree on before I put time implementing it.  So I've implemented the "enable/disable" path that Amadeusz suggested, which is highlighted in my previous response, for evaluation purposes.  The overall question is which layer should control the devices that will be offloaded.  In my submissions up until now, the control was given to the ASoC platform card to determine which USB device to offload.  Amadeusz mentioned that it might be beneficial to move the control to the USB SND devices, because what if the offloading is NOT backed by ASoC. (highlighted in [1])  However, IMO the current implementation assumes there is ASoC involved, which should mean that there is some platform "card" that is backing the offload path.  Please let me know if my understanding is incorrect, @Amadeusz. 
+
+[1] - Re: [PATCH v23 32/32] ASoC: doc: Add documentation for SOC USB - Amadeusz Sławiński (kernel.org) <https://lore.kernel.org/linux-usb/510468c7-b181-48d0-bf2d-3e478b2f2aca@linux.intel.com/>
+
+Thanks
+
+Wesley Cheng
+
 
