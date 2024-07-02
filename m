@@ -1,105 +1,117 @@
-Return-Path: <linux-kernel+bounces-238132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A08629243F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:52:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A827C9243F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:52:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D170B27B43
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:52:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 517601F2622B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0918E1BD514;
-	Tue,  2 Jul 2024 16:52:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603D41BC08A;
+	Tue,  2 Jul 2024 16:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aj1qMLLz"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NJ8JYCrs"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6B71509AE;
-	Tue,  2 Jul 2024 16:52:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2861BD4F8
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 16:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719939122; cv=none; b=oFzixGUkMuAOYL19OvzH8YXRFuBRzCh5+VnxHJcBKs1QNyyawukzR6K8IoQ5n0MTQ3t/baORBDw6XJSrb+rLXYlDSyAMtmErGZqd5Vcs59hTA+e+qta3nRbJau0hb4ZiF8VrMfS39VekakEO5nq7bftWlPC0bD6jPQcO/9yrbxI=
+	t=1719939135; cv=none; b=OMrMc7jcL7yHvHa6SOZJ7gYSA+C7d390qpdmv1a/JNEiYaz3rrmYiJPDl9EipOsjOTI+VRcPcA7QLbvG7AXT/VH995I04XuIU8ln+TvKRjMLJo+7r2jpiYbjZTiye1iXlz1c+y5Udma9q96WTWcrouai4T84nTGFGxplZWFTZEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719939122; c=relaxed/simple;
-	bh=GCRqDVLCekcBX56SlIiYsghqaVoGPKvF7IxMxfLjxFk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q9akIWLlpk+Gef/Hsg9xR7aucWhTDX+OxY8kMKTxOzt8ifXdLupymcXxrS4BKQ2LeYyUrB7Kx+OZ1H27MQApwawXPXMiMObyYiAf+JR41D07aPwtLSlw0K8u/6p/2mE9Xydh1q0z7Q84BgRYhNiqd4F9cDP5+8Nxa36Utrd0qhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aj1qMLLz; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=t7a/aHEDbr14CJa/+qvpFMgVsA/T3gcImqxhM0zCkOk=; b=aj1qMLLz45jfsjGgj3OABoFYSY
-	XY+0xFseGxJzE8ONLBlJtdBF3IdVifKJr/bG03yY6f/KA9aq+TqbhUw9sXH5/a/JUV5Fis1nwhj8Y
-	lzHLKxD9MA0vx83hW+lV5CjDITJXQkHhFQjNLwgNFy0XwU2CycPspT1hh5yMi931AhAkR5zM6qQ95
-	EIbp2N0xGY+c5K9sB1CtbJooSLTIBpKuFyq8aW9GNrw7DhLGbl/zkIMbFdIpAa2TykQkK1EGAFoTC
-	bZxujctftCqYGsTRDps3U98p6YpYESSLqoo2NurKHjyaUHIbfZMFXcpWkEkXSh9ZUzsXfNnyQ+MG2
-	R+TaRBlw==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sOgjT-00000000xhV-0F3Y;
-	Tue, 02 Jul 2024 16:51:55 +0000
-Date: Tue, 2 Jul 2024 17:51:54 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: Christoph Hellwig <hch@lst.de>, david@fromorbit.com,
-	chandan.babu@oracle.com, djwong@kernel.org, brauner@kernel.org,
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-	yang@os.amperecomputing.com, linux-mm@kvack.org,
-	john.g.garry@oracle.com, linux-fsdevel@vger.kernel.org,
-	hare@suse.de, p.raghav@samsung.com, mcgrof@kernel.org,
-	gost.dev@samsung.com, cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org, Zi Yan <zi.yan@sent.com>
-Subject: Re: [PATCH v8 06/10] iomap: fix iomap_dio_zero() for fs bs > system
- page size
-Message-ID: <ZoQwKlYkI5oik32m@casper.infradead.org>
-References: <20240625114420.719014-1-kernel@pankajraghav.com>
- <20240625114420.719014-7-kernel@pankajraghav.com>
- <20240702074203.GA29410@lst.de>
- <20240702101556.jdi5anyr3v5zngnv@quentin>
- <20240702120250.GA17373@lst.de>
- <20240702140123.emt2gz5kbigth2en@quentin>
- <20240702154216.GA1037@lst.de>
- <20240702161329.i4w6ipfs7jg5rpwx@quentin>
+	s=arc-20240116; t=1719939135; c=relaxed/simple;
+	bh=67wdZHMGthQ9tYMWUTf83nlNhKOnjz2Zui5kHHhZWVc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r0JM8iCWMrUV4kgjhZHnTtGdYaJb0JSaHA7r2k6+ZWZIKiMBqCyjYv1DCE27k0SrjnwT0+4N99L6efd7s0cE4VdO7aeVxDz1CpbIv8kHS3YtaAofNm/n2Sajm6sE+TVS6/V3LCE7zqwu19gsiHQ9+x9XEzWHa8vAPwGxYdfEKak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NJ8JYCrs; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4257a390a4eso22735955e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 09:52:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719939132; x=1720543932; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eehroHY6jsxRCXVO0ZlO8N+9Mr345Lhd3RIOJPZlnAY=;
+        b=NJ8JYCrsx8afLy1T6M8bA1WiodCFtQsH7vLP2kB8q0/4ekAdOY4bDeeV0fYcQO+0ZV
+         lXzr4Z+/+ywQE7L7I61ti/ffc+4Zd3qEiK0r8gbon2TwEQE1QOzf1hj28vdHnSsDCmpc
+         CYQjrA1HqfmGVlCclWUzBFkcl9C2NUGUSm2b+CsErmgydE77Y/hdnC6Qlp6GPWLreaPN
+         FKMwdw622kW6dD4cNu0wo3Bil4Gv6sDvCnfjeSjUNiNsT/BlOmpFwB+59G7u8aw2Cemk
+         593TjzNi4/EKxnbwA5vIvKc0A5uCgstfqKPpGiyver7mwmIOA6Hj/U3+qtWR0IeAPacl
+         UvwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719939132; x=1720543932;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eehroHY6jsxRCXVO0ZlO8N+9Mr345Lhd3RIOJPZlnAY=;
+        b=TSBBq/hUWTXDr6xFayM0jV0wPpSKZlHO+QpiKtBWwx7KPbJvyw92vzlxi+fE72+/lV
+         r7n0K+8NWnSvvB+imSqVt37WVIOseLTEoSwAGBmFuyIT7xviTZdrelhyP279bjx2sRI7
+         mNRLZ8njFYpzxlqg7OG37dlEG7QH3d0N0UpXPWXEjSt16fWKAHi5HFZMxP21b2qxiDAe
+         YnxknqG2WJtQgm6UQjDcca3Jps/Rnd74eRHiT4Ik7MT93yCuWOQShhIPsVNTctznJXVs
+         Lox8s4MwgmgBkehXpOYVpGuw2C5z90B8UX1DFpL1HTdzNisPiofcYD28T4j2RF67CgWi
+         PASQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUPGNZohjKqKsnDx4o3Gl69tr6lJP1QZWGw0c87Dty1pFg0Sz09BdcqLcRF/WVXPx5KBAOboIjSBVs31Uib2nNpV/3F/2hAqf9Yq/GU
+X-Gm-Message-State: AOJu0YzX7jbUkMQPDN3gBv7CaB24z4fyfHO//l4KfwWcRI57sGmcsmD9
+	wwxpa5P3QCfGBWIIXmqN9UGxFPsgEJbj5B3J9wOLqLOyk8cy4d5ZYEI3EfmF5fQ=
+X-Google-Smtp-Source: AGHT+IF3V1HC4chVUPw7FP944I/P3u9IFqa0gz5TuDk7AOj8IDGj87TQ830i2eIZSX6jeLFY+OsoJw==
+X-Received: by 2002:a05:600c:2d8c:b0:425:7833:db91 with SMTP id 5b1f17b1804b1-4257a00cd97mr64098005e9.20.1719939132436;
+        Tue, 02 Jul 2024 09:52:12 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0? ([2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4256af5a3b0sm206096705e9.13.2024.07.02.09.52.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Jul 2024 09:52:11 -0700 (PDT)
+Message-ID: <eee20abf-6bb2-48f5-a0c1-a8c023a2b7b4@linaro.org>
+Date: Tue, 2 Jul 2024 18:52:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240702161329.i4w6ipfs7jg5rpwx@quentin>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: thermal: correct thermal zone node name
+ limit
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+References: <20240702145248.47184-1-krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20240702145248.47184-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 02, 2024 at 04:13:29PM +0000, Pankaj Raghav (Samsung) wrote:
-> On Tue, Jul 02, 2024 at 05:42:16PM +0200, Christoph Hellwig wrote:
-> > On Tue, Jul 02, 2024 at 02:01:23PM +0000, Pankaj Raghav (Samsung) wrote:
-> > +static int iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
-> > >                 loff_t pos, unsigned len)
-> > >  {
-> > >         struct inode *inode = file_inode(dio->iocb->ki_filp);
-> > >         struct bio *bio;
-> > >  
-> > > +       if (!len)
-> > > +               return 0;
-> > >         /*
-> > >          * Max block size supported is 64k
-> > >          */
-> > > -       WARN_ON_ONCE(len > ZERO_PAGE_64K_SIZE);
-> > > +       if (len > ZERO_PAGE_64K_SIZE)
-> > > +               return -EINVAL;
-> > 
-> > The should probably be both WARN_ON_ONCE in addition to the error
-> > return (and ZERO_PAGE_64K_SIZE really needs to go away..)
+On 02/07/2024 16:52, Krzysztof Kozlowski wrote:
+> Linux kernel uses thermal zone node name during registering thermal
+> zones and has a hard-coded limit of 20 characters, including terminating
+> NUL byte.  The bindings expect node names to finish with '-thermal'
+> which is eight bytes long, thus we have only 11 characters for the reset
+> of the node name (thus 10 for the pattern after leading fixed character).
 > 
-> Yes, I will rename it to ZERO_PAGE_SZ_64K as you suggested.
+> Reported-by: Rob Herring <robh@kernel.org>
+> Closes: https://lore.kernel.org/all/CAL_JsqKogbT_4DPd1n94xqeHaU_J8ve5K09WOyVsRX3jxxUW3w@mail.gmail.com/
+> Fixes: 1202a442a31f ("dt-bindings: thermal: Add yaml bindings for thermal zones")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-No.  It needs a symbolic name that doesn't include the actual size.
-Maybe ZERO_PAGE_IO_MAX.  Christoph suggested using SZ_64K to define
-it, not to include it in the name.
+Applied, thanks
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
 
