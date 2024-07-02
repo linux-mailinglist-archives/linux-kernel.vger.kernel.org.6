@@ -1,127 +1,125 @@
-Return-Path: <linux-kernel+bounces-237289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0DA391EEC2
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:05:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DFA691EEC8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 08:12:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D35FE1C21A65
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:05:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FFE61C219EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:12:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDBD212E1C7;
-	Tue,  2 Jul 2024 06:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ARJsxFGO"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B26D54FB5;
+	Tue,  2 Jul 2024 06:11:57 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C653A12C54A;
-	Tue,  2 Jul 2024 06:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42EC9747F
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 06:11:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719900310; cv=none; b=tuMuiQxwuzZJ2SHM0URlca919bcvD+JLXSOJGCZ+ezucYxaLEMQarEyTJAiZBYXTEtK/A4BF+tOWZZsK3p5y+msF1xcyDHLCtLDo02Q3YsQl4gP7smRH/AXPuCQcKzg7TvCU4XQqNC1iiAhB1AlqfI70FxDkguCmtmsJbp4LY8c=
+	t=1719900716; cv=none; b=glvuTl7na235qL5EcAkYVYA3rIj0lhyZUHWZJlhWXa03/qQyMFm1V5E3J//xdqhxKoeBIo5sc1BokZQvPuj7H944OYlYtEf24xkkTWNegsqk9t55JFwrTjJztB2yla3nSYpnCOuq83Pch61yte8ZqnIs48TLEVa+XFTBgpazhSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719900310; c=relaxed/simple;
-	bh=ZNdxnGPfETJa9uUYOCiuRxUSQF8J7Opi/FFw5TRGvIA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PR6k37l5YFa1x5XJSl8txO5stwT8+YADV4qFLlaLlXUV7sRaWfVlmGod5zLIe3iiN3KGyS/9hUCtFfhjaNPols+QPXzq2yz3yL0Nt2q59MV7vyBcnSR2KfzmgiIJOMZcVfYr7I2iaArl8PLeieSgoppIhuXRXKFuqpT7TeUOrtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ARJsxFGO; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f480624d0dso29163545ad.1;
-        Mon, 01 Jul 2024 23:05:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719900308; x=1720505108; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DbE0aIHExF+1pl24Q0B2lrRdlvYWUhpDzJPWc86zCWQ=;
-        b=ARJsxFGOFRMWCxE1bSNDwTJg4z+VEiqCoeBCfj69Yn0K3mcsRQkClC5l0B2IAP+kc4
-         FLWVHk+FS0EuGJAf17oMkCT0DxNi4jmWIaMHjMF717e0MEY5jfMdS2KzV0nUhWVM0H1y
-         vouJ1xN2fsejan+6E/zCOgZYgubLRG30RQSX9nc0KBrq+lacyskxFbCvkCdOj0Sz850U
-         Mn/B/yD0xY1Zs870H0t2t6lrLkmL+Q/Uv//0Nt+iyyCZJ7nZ3QIAa3Qf8908LrRcdEuY
-         OERHkvxDOfBgq57KdmzRDIqQ7csxvKNIes0QjMJ7WgyeqDSeb1vXlj4HEQ78zAwAJBf0
-         PqOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719900308; x=1720505108;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DbE0aIHExF+1pl24Q0B2lrRdlvYWUhpDzJPWc86zCWQ=;
-        b=vtEe+TZlvO5qv379sgDDybJFsTpph3g/YxQaxYNNewbpZpMSnG0P6LeGAnzyuesOQ0
-         0u0Dr0TP6y6yjx97TmdtY/3VT6d7z03lYPMbikVyQuJgTK3OdTCUyAqMFGJF4ZPCSHhk
-         yTh6Fh8j/5s2dn0tZ5EMVrKc/Xd5hjD4RdqZF7lKQ3PLZsxEP6wE2cnsNBSWG4lr/tNZ
-         YSAVPZu3EE0j0LUWBcUMvSOcCD6rD52XBbdxgWdcDLR5KpqejNHpVKkQrUA/EzTYUddl
-         ZyAQxI+cX71nzt8SSmPYAgPUV2DnGlivd8rf56WQyQzB52LGSy6hhgaubVoZ6jOcJiaT
-         7J+g==
-X-Forwarded-Encrypted: i=1; AJvYcCXBNA5+gfcq6mOfjRVyMgKcKYUkZ3yCkLUV9KqKaQEY9PmqQYY+vgCHI57EBeaNRO2ccHrs/vUhMQDzH9KeTwkKNgLWR0axZNXUg6gWuLgXmpQeoIU93GmMu5/Fjtg4cY8JqwIR46RB
-X-Gm-Message-State: AOJu0YxxlcYY+uwT8ve1unA1zh6DGucJ1Nopd0nKIoGIc/YaNjE4YIHY
-	o7/kP1uf34RZbi47esyAtLFB/FdR3wZRZMzKkofi4FzCQLWPQraU
-X-Google-Smtp-Source: AGHT+IFw23N44QYbnBt7D/dVDlYpnki+jkjcVK85ZTXmGeCz/nIS1a1XbqHQMMMEJIQp5JbG80HwZQ==
-X-Received: by 2002:a17:903:2308:b0:1fa:1d37:700b with SMTP id d9443c01a7336-1fadbce6a01mr68705095ad.45.1719900308217;
-        Mon, 01 Jul 2024 23:05:08 -0700 (PDT)
-Received: from toolbox.alistair23.me (2403-580b-97e8-0-82ce-f179-8a79-69f4.ip6.aussiebb.net. [2403:580b:97e8:0:82ce:f179:8a79:69f4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac10d23edsm75484225ad.58.2024.07.01.23.05.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jul 2024 23:05:07 -0700 (PDT)
-From: Alistair Francis <alistair23@gmail.com>
-X-Google-Original-From: Alistair Francis <alistair.francis@wdc.com>
-To: bhelgaas@google.com,
-	linux-pci@vger.kernel.org,
-	Jonathan.Cameron@huawei.com,
-	lukas@wunner.de
-Cc: alex.williamson@redhat.com,
-	christian.koenig@amd.com,
-	kch@nvidia.com,
-	gregkh@linuxfoundation.org,
-	logang@deltatee.com,
-	linux-kernel@vger.kernel.org,
-	alistair23@gmail.com,
-	chaitanyak@nvidia.com,
-	rdunlap@infradead.org,
-	Alistair Francis <alistair.francis@wdc.com>
-Subject: [PATCH v13 4/4] PCI/DOE: Allow enabling DOE without CXL
-Date: Tue,  2 Jul 2024 16:04:18 +1000
-Message-ID: <20240702060418.387500-4-alistair.francis@wdc.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240702060418.387500-1-alistair.francis@wdc.com>
-References: <20240702060418.387500-1-alistair.francis@wdc.com>
+	s=arc-20240116; t=1719900716; c=relaxed/simple;
+	bh=sH/nGSx4Rr38TllMdTGi9/ODcJdW+0jHT4ObLDhUghk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qsRuKED4pOrCBuaJdzNO6nzfJPuO+KVVFzZiAH0iu/YHImQ+sGK3un+wmCxZ0/yCkGIjb/w4gilSbGb0pHJMd/7vMIQUBOm4yHzhubLWFW+slx/+cDiwXfE1IiJJUR2tbHmkiz/kyYhpq/POmlmL81iz4AyIstGkK3+G6eSJDi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav315.sakura.ne.jp (fsav315.sakura.ne.jp [153.120.85.146])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 4626BDsl058061;
+	Tue, 2 Jul 2024 15:11:13 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav315.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav315.sakura.ne.jp);
+ Tue, 02 Jul 2024 15:11:13 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav315.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 4626BCmT058057
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 2 Jul 2024 15:11:12 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <ec7411af-01ac-4ebd-99ad-98019ff355bf@I-love.SAKURA.ne.jp>
+Date: Tue, 2 Jul 2024 15:11:12 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [kernel?] KASAN: stack-out-of-bounds Read in __show_regs
+ (2)
+To: Andrey Konovalov <andreyknvl@gmail.com>
+Cc: syzbot <syzbot+e9be5674af5e3a0b9ecc@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        kasan-dev <kasan-dev@googlegroups.com>, linux-mm <linux-mm@kvack.org>,
+        bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+        mingo@redhat.com, tglx@linutronix.de, x86@kernel.org
+References: <000000000000a8c856061ae85e20@google.com>
+ <82cf2f25-fd3b-40a2-8d2b-a6385a585601@I-love.SAKURA.ne.jp>
+ <daad75ac-9fd5-439a-b04b-235152bea222@I-love.SAKURA.ne.jp>
+ <CA+fCnZdg=o3bA-kBM4UKEftiGfBffWXbqSapje8w25aKUk_4Nw@mail.gmail.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <CA+fCnZdg=o3bA-kBM4UKEftiGfBffWXbqSapje8w25aKUk_4Nw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-PCIe devices (not CXL) can support DOE as well, so allow DOE to be
-enabled even if CXL isn't.
+On 2024/07/02 0:10, Andrey Konovalov wrote:
+> This is weird, because if the metadata is 00, then the memory should
+> be accessible and there should be no KASAN report.
+> 
+> Which makes me believe you have some kind of a race in your patch (or
+> there's a race in the kernel that your patch somehow exposes).
 
-Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
----
- drivers/pci/Kconfig | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Yes, I consider that my patch is exposing an existing race, for I can't
+find a race in my patch. (Since
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=b96342141183ffa62bfed5998f9b808c84042322
+calls get_task_struct() when recording in-use state, report_rtnl_holders()
+can't trigger use-after-free even if the thread died. Also, since previous version
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=5210cbe9a47fc5c1f43ba16d481e6335f3e2f345
+synchronously calls synchronize_rcu() when clearing in-use state,
+report_rtnl_holders() can't trigger use-after-free because the thread
+can't die before calling put_rtnl_holder(). The variable "now" cannot be
+0, and !cmpxchg(&rtnl_started[idx], 0, now) must serve as a serialization
+lock when recording in-use state.)
 
-diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
-index d35001589d88..09d3f5c8555c 100644
---- a/drivers/pci/Kconfig
-+++ b/drivers/pci/Kconfig
-@@ -122,7 +122,10 @@ config PCI_ATS
- 	bool
- 
- config PCI_DOE
--	bool
-+	bool "Enable PCI Data Object Exchange (DOE) support"
-+	help
-+	  Say Y here if you want be able to communicate with PCIe DOE
-+	  mailboxes.
- 
- config PCI_ECAM
- 	bool
--- 
-2.45.2
+>                                                                At
+> least between the moment KASAN detected the issue and the moment the
+> reporting procedure got to printing the memory state, the memory state
+> changed.
+
+Indeed, the exact line KASAN complained at varies suggests that the
+memory state is modified by somebody else.
+
+>          As this is stack memory that comes from a vmalloc allocation,
+> I suspect the task whose stack had been at that location died, and
+> something else got mapped there.
+
+I consider that the task can't die while calling __show_regs() from
+report_rtnl_holders().
+
+> 
+> This is my best guess, I hope it's helpful.
+
+Well, KASAN says "out-of-bounds". But the reported address
+
+  BUG: KASAN: stack-out-of-bounds in __show_regs+0x172/0x610
+  Read of size 8 at addr ffffc90003c4f798 by task kworker/u8:5/234
+
+is within the kernel stack memory mapping
+
+  The buggy address belongs to the virtual mapping at
+   [ffffc90003c48000, ffffc90003c51000) created by:
+   copy_process+0x5d1/0x3d7
+
+. Why is this "out-of-bounds" ? What boundary did KASAN compare with?
+Is this just a race of KASAN detecting a problem and KASAN reporting
+that problem? (But as I explained above, it is unlikely that the thread
+to be reported can die while processing report_rtnl_holders()...)
 
 
