@@ -1,106 +1,94 @@
-Return-Path: <linux-kernel+bounces-238003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 931CE924203
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:12:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3B6692420B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:14:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C49691C23272
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:12:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E389B277DD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C1D1BBBD2;
-	Tue,  2 Jul 2024 15:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dCljCzJR"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 230A61BB6AA;
+	Tue,  2 Jul 2024 15:14:29 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED231DFFC;
-	Tue,  2 Jul 2024 15:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADCE371B51;
+	Tue,  2 Jul 2024 15:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719933163; cv=none; b=Rq2t65owanOnDswCs4Mtc23lq5z/T371ks43KUHghXiUNwn9ooe/iXElS6eCjXW5K4Xblhy40GXegYpUxbfPq6UvldqrVby5m0Wwrjn4Jc4yJ32xwUNGU1S4CLhtok1GaRO0kzjVESvqa6mFLcTT3u8XBiSMCLpb3Rs3OqgBtM8=
+	t=1719933268; cv=none; b=fIzhvenqvoRBYWku+usKf5BevWTTRwEOce8TZYF/QKqwtjUIAWTIkMf57ZCcXdw1AVdT17AxQoUNeNml2qhNfxR/YPeHDon5tg1QBUi8aOmLZ6RX8URaNISh/mhFbp+K8ZX1S5YRwXXhszT9N3ikG5E9iTZ8ZFYCRiOdpRg3iE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719933163; c=relaxed/simple;
-	bh=ABYatGOHDvGjohsk6pDUWhV3e0zacUzLxB8sgh2L0Kk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dS03hnGJVjnp0+l26vMKQRu/W2PM/qVCp9D19ue3JZYQrhk3JP1b/ZzhL1YGX4ydCLkj5rVJn4efI/YoicjLYigOmT7NyVvbj1zRV0O5tBqSqNvrhPCrszRAou2VUyYcpUGrIOSUwGlS9K8e7G67P9uDCp6X41lz1DL8XzMkE6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dCljCzJR; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=8aouOiHZz/CtkLH8RlphiC+CuL1fGX3TYjmQQVPOhZE=; b=dCljCzJRSfznNuYHX5KeHFLuWV
-	1bGB2/E0ElcUGou1naiVTb8GjiRYIwBvBWILQ6RLqqRbBdOIErpJ+SWkBWdjlw0iN1lSHfonwrj0h
-	wVdYu0AnkD5wOr6zpmOvc/VRJ7EyUE9eLSu3jJDW06TfZ4HwOGaTRkiCfriacF5Wo6FBnITHbgOe2
-	cUWZdK2jsEKUktlwltOfhcgJvoqG4q8eukNIK7KWBynHYywL5TPP8gs5jg82+w2Xyc2gd4deZhrue
-	H21CvG2clgGVczz798MUMmJhoWGmR3TMIxyr1HailAgCTaIgccNe/f1h4oVzV2bhQzXPmu4J40qQX
-	V4LqdFhA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sOfBK-000000079no-1zHc;
-	Tue, 02 Jul 2024 15:12:34 +0000
-Date: Tue, 2 Jul 2024 08:12:34 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>, kernel-team@fb.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-mm@kvack.org, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH 01/10] fs: turn inode ctime fields into a single ktime_t
-Message-ID: <ZoQY4jdTc5dHPGGG@infradead.org>
-References: <20240701224941.GE612460@frogsfrogsfrogs>
- <3042db2f803fbc711575ec4f1c4a273912a50904.camel@kernel.org>
- <ZoOuSxRlvEQ5rOqn@infradead.org>
- <d91a29f0e600793917b73ac23175e02dafd56beb.camel@kernel.org>
- <20240702101902.qcx73xgae2sqoso7@quack3>
- <958080f6de517cf9d0a1994e3ca500f23599ca33.camel@kernel.org>
- <ZoPs0TfTEktPaCHo@infradead.org>
- <09ad82419eb78a2f81dda5dca9caae10663a2a19.camel@kernel.org>
- <ZoPvR39vGeluD5T2@infradead.org>
- <a11d84a3085c6a6920d086bf8fae1625ceff5764.camel@kernel.org>
+	s=arc-20240116; t=1719933268; c=relaxed/simple;
+	bh=Zo9CB+pznKodLNYJMJRXIQ4bz6Q5UrlUI+rwerwj6eA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bKToP59tj2/2yQTDzeBdQwzTEGnVk6aixrPuUR64Qasdkpf67zGkgs08TRq1k3C2VcD/5CfTqjla46y5CZcZ0un8CnB7+h+e0FQwJ6q1r1SDFayClPwudbAyHV5rwIgObPDTlZQRd2kOwg3SeIHJQwg2JlqWxpEZVUIL1GItD1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB76CC116B1;
+	Tue,  2 Jul 2024 15:14:25 +0000 (UTC)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
+	Xuefeng Li <lixuefeng@loongson.cn>,
+	Guo Ren <guoren@kernel.org>,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	linux-kernel@vger.kernel.org,
+	loongson-kernel@lists.loongnix.cn,
+	Huacai Chen <chenhuacai@loongson.cn>
+Subject: [PATCH] LoongArch: Use correct API to map cmdline in relocate_kernel()
+Date: Tue,  2 Jul 2024 23:14:15 +0800
+Message-ID: <20240702151415.1160566-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a11d84a3085c6a6920d086bf8fae1625ceff5764.camel@kernel.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 02, 2024 at 08:21:42AM -0400, Jeff Layton wrote:
-> Many of the existing callers of inode_ctime_to_ts are in void return
-> functions. They're just copying data from an internal representation to
-> struct inode and assume it always succeeds. For those we'll probably
-> have to catch bad ctime values earlier.
-> 
-> So, I think I'll probably have to roll bespoke error handling in all of
-> the relevant filesystems if we go this route. There are also
-> differences between filesystems -- does it make sense to refuse to load
-> an inode with a bogus ctime on NFS or AFS? Probably not.
-> 
-> Hell, it may be simpler to just ditch this patch and reimplement
-> mgtimes using the nanosecond fields like the earlier versions did.
+fw_arg1 is in memory space rather than I/O space, so we should use
+early_memremap_ro() instead of early_ioremap() to map the cmdline.
+Moreover, we should unmap it after using.
 
-Thatdoes for sure sound simpler.  What is the big advantage of the
-ktime_t?  Smaller size?
+Suggested-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+---
+ arch/loongarch/kernel/relocate.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/arch/loongarch/kernel/relocate.c b/arch/loongarch/kernel/relocate.c
+index 1acfa704c8d0..0eddd4a66b87 100644
+--- a/arch/loongarch/kernel/relocate.c
++++ b/arch/loongarch/kernel/relocate.c
+@@ -13,6 +13,7 @@
+ #include <asm/bootinfo.h>
+ #include <asm/early_ioremap.h>
+ #include <asm/inst.h>
++#include <asm/io.h>
+ #include <asm/sections.h>
+ #include <asm/setup.h>
+ 
+@@ -170,7 +171,7 @@ unsigned long __init relocate_kernel(void)
+ 	unsigned long kernel_length;
+ 	unsigned long random_offset = 0;
+ 	void *location_new = _text; /* Default to original kernel start */
+-	char *cmdline = early_ioremap(fw_arg1, COMMAND_LINE_SIZE); /* Boot command line is passed in fw_arg1 */
++	char *cmdline = early_memremap_ro(fw_arg1, COMMAND_LINE_SIZE); /* Boot command line is passed in fw_arg1 */
+ 
+ 	strscpy(boot_command_line, cmdline, COMMAND_LINE_SIZE);
+ 
+@@ -182,6 +183,7 @@ unsigned long __init relocate_kernel(void)
+ 		random_offset = (unsigned long)location_new - (unsigned long)(_text);
+ #endif
+ 	reloc_offset = (unsigned long)_text - VMLINUX_LOAD_ADDRESS;
++	early_memunmap(cmdline, COMMAND_LINE_SIZE);
+ 
+ 	if (random_offset) {
+ 		kernel_length = (long)(_end) - (long)(_text);
+-- 
+2.43.0
 
 
