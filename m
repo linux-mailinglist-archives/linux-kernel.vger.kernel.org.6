@@ -1,232 +1,133 @@
-Return-Path: <linux-kernel+bounces-238123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB18A9243DC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:45:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 671E29243DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:46:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ECE71F275CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:45:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 037ACB26F65
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8AD1BF31E;
-	Tue,  2 Jul 2024 16:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93C11C68BE;
+	Tue,  2 Jul 2024 16:44:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GSCah1Xc"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="bcQC1gNg"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534511BE224
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 16:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71461C0DD4
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 16:44:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719938692; cv=none; b=FEpyEXMLWHagGDmNhXV0O3lJIwiltnDLR1CCT7UtL8jS7Jpnw/YA2b+V72CZJwJ9KcxUhhNnv/YecTmoZYGLRd4GjPuHpS80Ekw5axuxO8iGFwdxuLhVgizhBz7lFPIYG6q/6hSQi6WLSyipjVKcZ/k+tg2jV4SMoG8oDBoj82Y=
+	t=1719938697; cv=none; b=ugBoYCcTfDTuPYtRleYI/+5JNM4tIEmnQ1IXrS1aKID3iTaOWvh82A0A3dpPzTxw4XrVAoJjnRkOfqeA0P28Z2mbGfvfNBnbiT5EJU6ywdx4NvshB82OAMjtlx3VEYO42Hhl1OwSJ56zMIoMSIH9ODJb02/lF7Xr03uRSJZjuic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719938692; c=relaxed/simple;
-	bh=ATUjMmlBzJXWDRoyHEYZwS5ktVHrLx8QR2mtfkcx3e0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aCuJCStnWUpbp5x6LxqHpw2hze2wSrZsHlVLoIoQOF9BG8i73jRJGyMv6VuqPgxYnkWqLHczQVyj8TFRFC/qOX8KrYZteMpfMVsbzDJlaRv8MfDmqOvy/8JLvR2nDCHW7Y7bdmmx8lAm2AEXkQdsJt5OLfeGPIMFRNjjyEOE4+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GSCah1Xc; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-718354c17e4so2718803a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 09:44:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719938691; x=1720543491; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Phw++KCNea16DU8eOTMmV36Mdb5a7m8SacK5PGBp32U=;
-        b=GSCah1XcYOWuVB5ftAwicT/YCPMMa6EerGIXQlmjseDT+IpaJyeW8jcyfE1AJuYS57
-         FZztVjdagRl/EyIxynjUynfC2PjcRoZsxov3z2TU4ZHOyu+1WvpBAhIWgzSp7gS7jq4u
-         iNDDviRBYCPB3IASZ9JTEgDunSvCZ62SxjVQFjZ1MkKJVT49JpcRrBm91zQPJODqdekz
-         4lr6E69VtaCAcDioW+5a8p4MAOg70e5hkw+hUJLt5AVjlPUIIEEq3Ml50p1mFWIhpTZv
-         1Hj1czIVZ+zhtjYwORwPg8nGh7C93Oi5xXm0f7GjBxAcqJQkqvWrZJycM82miX7EzI4U
-         pl4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719938691; x=1720543491;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Phw++KCNea16DU8eOTMmV36Mdb5a7m8SacK5PGBp32U=;
-        b=ocAhjouDmA8uRBLvpze302El/eOw9UaJDwH1N97fYaNQh/HBCYv4WOzWVTwW31xQ2Y
-         dAUensCdRWV1bO1whRTKBBMY8/WN46OKQ7QOui8TS/jd7U+hc2P43Sq0fvU2E0chG441
-         BB4diW+0E+fZiUn2fN3VtWMBAMV/e0HpCRIQpiNxKk+a4gmplGSLpBdCh5xXsDoGlxiY
-         l5Az+OUw+I8pq3s5JFlPffuwtW/yAi91Pxwd2KVvsehimptzQYYfy8CmtT6pRSwkr2QJ
-         ZhOR2lsoi9Yti6MEiyy++VObWJ2FWCPZgw6fJ563iYyAvtFNzrjUzfKlCBpTJfLVO+I7
-         3WFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX0NHATrbG1Pho3ei+mhs1i6QNUuGENYwjrAYA1XnUGncd0lSm49uq0s5BfLkCSZIYdqGVbEs4/312NsA9ZNK99J2auE5SLJIJOqUmU
-X-Gm-Message-State: AOJu0YyqknOTSCUJw1i/YMapDpzR4We4PE1SAhL8q0QoCXG7VMFyxU/n
-	iQggBceJ2Pti4GSB3Lsz15AIgtk4ivM1pIfDQS8wUrKxEf3fNeJVUR/Ht3BWAGI=
-X-Google-Smtp-Source: AGHT+IEwftAV+W5epvlPenld+i4k1K8ts6v6lErfwD0yVJfMBJDDLudodQFJyGkNq/gL/ZnZMvMS1A==
-X-Received: by 2002:a05:6a20:c992:b0:1bd:91b0:10a5 with SMTP id adf61e73a8af0-1bef6248467mr7426144637.47.1719938690225;
-        Tue, 02 Jul 2024 09:44:50 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:a83c:9cd1:70fd:d18a])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-708029582d5sm8709470b3a.89.2024.07.02.09.44.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 09:44:49 -0700 (PDT)
-Date: Tue, 2 Jul 2024 10:44:46 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v8 5/5] remoteproc: stm32: Add support of an OP-TEE TA to
- load the firmware
-Message-ID: <ZoQufshvHg1AR90C@p14s>
-References: <20240621143759.547793-1-arnaud.pouliquen@foss.st.com>
- <20240621143759.547793-6-arnaud.pouliquen@foss.st.com>
+	s=arc-20240116; t=1719938697; c=relaxed/simple;
+	bh=sAtodnEEl8mReT3BIkXwqo9FkryU2zquaGIJub47SpQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MzAS1e3v19p2LapWq1I/O8Gqwl5LmawYZxQSpNx9DBM/PovnGzuGp2hRYmzEh1dk9oRIolAmuPsYSOB9iJr1/Qcxf7+1f3xmKT+w9Gri4poiU9yhOlziVV3dMa2ykmMiwlqOwyOTsWXzcBLDyJzARwayd+ynGHbzv97tIOLUvZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=bcQC1gNg; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 77CBF240003;
+	Tue,  2 Jul 2024 16:44:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
+	t=1719938693;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=unb3QJ1ZSaRryP9Bs3P1fLuG39JlH4isF5oYd+2RhRQ=;
+	b=bcQC1gNgP3gDQfpW0v23OOjOxdP0I2luTbTTLxfUXVTUL7/jRRjMhpCL5kQzqcUNwyvVs6
+	ly8+SPm0Uxlb5CXCg9Tj26hBJYHZhQWry2GCUecSInf3AhHWtNdUwZ+28quErq/hMvxqm4
+	1aLtj3rOF2it97inFG6FKmcpFCAE0i+4Ywh+SkeIZjXPKpNVYbXa1FUtU1Q0XyqA77qbjp
+	QwYSKTtOq/6epwUFyBd2lSGHUxxP679j3RRiKNx5E5EV5zr152wukzLyqVhyTM4HzJ7KCB
+	WwEKEaq/EW9ToVvQxMcUTMdYGLs2LvHc755NQHutKnM01u8AJgp7gPZOWN0F4A==
+Message-ID: <b974df45-daf5-4156-8532-cf9e2be8bdfa@yoseli.org>
+Date: Tue, 2 Jul 2024 18:44:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240621143759.547793-6-arnaud.pouliquen@foss.st.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] arch: m68k: Add definitions for flash NFC support
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Stefan Agner <stefan@agner.ch>, linux-m68k@lists.linux-m68k.org,
+ linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
+References: <20240627-upstream-nfc-mcf5441x-v2-0-312929d09ee5@yoseli.org>
+ <20240627-upstream-nfc-mcf5441x-v2-1-312929d09ee5@yoseli.org>
+ <20240628094511.75cc9c78@xps-13>
+Content-Language: en-US
+From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+In-Reply-To: <20240628094511.75cc9c78@xps-13>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: jeanmichel.hautbois@yoseli.org
 
-On Fri, Jun 21, 2024 at 04:37:59PM +0200, Arnaud Pouliquen wrote:
-> The new TEE remoteproc device is used to manage remote firmware in a
+Hi Miquel,
 
-Device or driver?
+On 28/06/2024 09:45, Miquel Raynal wrote:
+> Hi Jean-Michel & Geert,
+> 
+> jeanmichel.hautbois@yoseli.org wrote on Thu, 27 Jun 2024 18:05:28 +0200:
+> 
+>> Add a few definitions, as the base address for the NFC for the M5441x.
+>>
+>> Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+>> ---
+>>   arch/m68k/include/asm/m5441xsim.h | 7 +++++++
+>>   1 file changed, 7 insertions(+)
+>>
+>> diff --git a/arch/m68k/include/asm/m5441xsim.h b/arch/m68k/include/asm/m5441xsim.h
+>> index f48cf63bd782..d4ee1eab7c4a 100644
+>> --- a/arch/m68k/include/asm/m5441xsim.h
+>> +++ b/arch/m68k/include/asm/m5441xsim.h
+>> @@ -99,6 +99,7 @@
+>>   #define MCFINT2_PIT1		14
+>>   #define MCFINT2_PIT2		15
+>>   #define MCFINT2_PIT3		16
+>> +#define MCFINT2_NFC		25
+>>   #define MCFINT2_RTC		26
+>>   
+>>   /*
+>> @@ -333,4 +334,10 @@
+>>   #define MCF_IRQ_BOFF1		(MCFINT1_VECBASE + MCFINT1_FLEXCAN1_BOFF)
+>>   #define MCF_IRQ_ERR1		(MCFINT1_VECBASE + MCFINT1_FLEXCAN1_ERR)
+>>   
+>> +/*
+>> + * Flash module
+>> + */
+>> +#define MCF_NFC_BASE		0xfc0fc000
+>> +#define MCF_NFC_SIZE		(0xfc0fff3b - 0xfc0fc000)
+>> +#define MCF_NFC_ISR		(MCFINT2_VECBASE + MCFINT2_NFC)
+> 
+> I'm sorry but this feels really backwards. Platform data as C
+> structures are already legacy, but defining these information in
+> some arch headers and using them directly from drivers really seems
+> even "wronger" to me. What's the mid/long term plan for this? If the
+> platforms are still in use today and need to be maintained, why not
+> finally enabling device tree support? I know it's harder to do than to
+> say, but I'd like some really good explanation on why we should accept
+> to do this in 2024 because it feels rather inadequate.
 
-> secure, trusted context. The 'st,stm32mp1-m4-tee' compatibility is
-> introduced to delegate the loading of the firmware to the trusted
-> execution context. In such cases, the firmware should be signed and
-> adhere to the image format defined by the TEE.
-> 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> ---
->  drivers/remoteproc/stm32_rproc.c | 63 ++++++++++++++++++++++++++++++--
->  1 file changed, 60 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-> index 8cd838df4e92..fd905b3cf206 100644
-> --- a/drivers/remoteproc/stm32_rproc.c
-> +++ b/drivers/remoteproc/stm32_rproc.c
-> @@ -18,6 +18,7 @@
->  #include <linux/pm_wakeirq.h>
->  #include <linux/regmap.h>
->  #include <linux/remoteproc.h>
-> +#include <linux/remoteproc_tee.h>
->  #include <linux/reset.h>
->  #include <linux/slab.h>
->  #include <linux/workqueue.h>
-> @@ -257,6 +258,19 @@ static int stm32_rproc_release(struct rproc *rproc)
->  	return 0;
->  }
->  
-> +static int stm32_rproc_tee_stop(struct rproc *rproc)
-> +{
-> +	int err;
-> +
-> +	stm32_rproc_request_shutdown(rproc);
-> +
-> +	err = tee_rproc_stop(rproc);
-> +	if (err)
-> +		return err;
-> +
-> +	return stm32_rproc_release(rproc);
-> +}
-> +
->  static int stm32_rproc_prepare(struct rproc *rproc)
->  {
->  	struct device *dev = rproc->dev.parent;
-> @@ -693,8 +707,20 @@ static const struct rproc_ops st_rproc_ops = {
->  	.get_boot_addr	= rproc_elf_get_boot_addr,
->  };
->  
-> +static const struct rproc_ops st_rproc_tee_ops = {
-> +	.prepare	= stm32_rproc_prepare,
-> +	.start		= tee_rproc_start,
-> +	.stop		= stm32_rproc_tee_stop,
-> +	.kick		= stm32_rproc_kick,
-> +	.load		= tee_rproc_load_fw,
-> +	.parse_fw	= tee_rproc_parse_fw,
-> +	.find_loaded_rsc_table = tee_rproc_find_loaded_rsc_table,
-> +
-> +};
-> +
->  static const struct of_device_id stm32_rproc_match[] = {
->  	{ .compatible = "st,stm32mp1-m4" },
-> +	{ .compatible = "st,stm32mp1-m4-tee" },
->  	{},
->  };
->  MODULE_DEVICE_TABLE(of, stm32_rproc_match);
-> @@ -853,17 +879,42 @@ static int stm32_rproc_probe(struct platform_device *pdev)
->  	struct device *dev = &pdev->dev;
->  	struct stm32_rproc *ddata;
->  	struct device_node *np = dev->of_node;
-> +	struct tee_rproc *trproc = NULL;
->  	struct rproc *rproc;
->  	unsigned int state;
-> +	u32 proc_id;
->  	int ret;
->  
->  	ret = dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(32));
->  	if (ret)
->  		return ret;
->  
-> -	rproc = devm_rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
-> -	if (!rproc)
-> -		return -ENOMEM;
-> +	if (of_device_is_compatible(np, "st,stm32mp1-m4-tee")) {
-> +		/*
-> +		 * Delegate the firmware management to the secure context.
-> +		 * The firmware loaded has to be signed.
-> +		 */
-> +		ret = of_property_read_u32(np, "st,proc-id", &proc_id);
-> +		if (ret) {
-> +			dev_err(dev, "failed to read st,rproc-id property\n");
-> +			return ret;
-> +		}
-> +
-> +		rproc = devm_rproc_alloc(dev, np->name, &st_rproc_tee_ops, NULL, sizeof(*ddata));
-> +		if (!rproc)
-> +			return -ENOMEM;
-> +
-> +		trproc = tee_rproc_register(dev, rproc, proc_id);
-> +		if (IS_ERR(trproc)) {
-> +			dev_err_probe(dev, PTR_ERR(trproc),
-> +				      "signed firmware not supported by TEE\n");
-> +			return PTR_ERR(trproc);
-> +		}
-> +	} else {
-> +		rproc = devm_rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
-> +		if (!rproc)
-> +			return -ENOMEM;
-> +	}
->  
->  	ddata = rproc->priv;
->  
-> @@ -915,6 +966,9 @@ static int stm32_rproc_probe(struct platform_device *pdev)
->  		dev_pm_clear_wake_irq(dev);
->  		device_init_wakeup(dev, false);
->  	}
-> +	if (trproc)
-> +		tee_rproc_unregister(trproc);
-> +
->  	return ret;
->  }
->  
-> @@ -935,6 +989,9 @@ static void stm32_rproc_remove(struct platform_device *pdev)
->  		dev_pm_clear_wake_irq(dev);
->  		device_init_wakeup(dev, false);
->  	}
-> +	if (rproc->tee_interface)
-> +		tee_rproc_unregister(rproc->tee_interface);
-> +
->  }
->  
->  static int stm32_rproc_suspend(struct device *dev)
-> -- 
-> 2.25.1
-> 
+Thanks for your review !
+
+I agree with you it is legacy. I use a lot of ARM platforms and 
+device-tree is indeed great. Though, switching the m68k architecture to 
+use this sounds really tough.
+
+I will obviously let Geert and maybe others answer, but my feeling is it 
+is not really worth it to implement the dts on those platforms are they 
+are not that used (compared, again, to ARM for instance).
+
+AFAIK the platform data is not officialy considered deprecated ? As it 
+concerns a few platforms out there...
+
+Thanks,
+JM
 
