@@ -1,170 +1,105 @@
-Return-Path: <linux-kernel+bounces-237917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7019C923FE7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:08:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AF709240E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:30:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BB231C239BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:08:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBCC3281D12
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7931B5835;
-	Tue,  2 Jul 2024 14:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pd1kgJmj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1891BA087;
+	Tue,  2 Jul 2024 14:30:20 +0000 (UTC)
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D971B581A;
-	Tue,  2 Jul 2024 14:08:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CE31DFE1;
+	Tue,  2 Jul 2024 14:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719929292; cv=none; b=s52VEheeCmJIxnnRcN/2D/h0U2YSmZYRMMwfjhokn7EGodjcOkXSX06SNSP777OwdW5dlemEycjHEb6rHMwUutujGDMplUGdcFOyh+ZyCsKHP/OWI0bGDnRwzwv62lVYPWIMB2Gxj2xkgNGYerCKYz/LfH4ziEG0mM9xGtPJRRc=
+	t=1719930619; cv=none; b=LZyTtfcpnXy/9Ejyn0JH4oVIFRJuMFK535fDCz1TB7A5zqCM21PXPW6J91AwcY1EOVepydQPmCY96OqakiwRblFkIvhESM3lplkvKVbi/ck1AQXPu96QEaRd4UJxjHTo4fMeES2URSMoODc6Fv5j1F3xBqEgHdAYrDKHuxV1Yh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719929292; c=relaxed/simple;
-	bh=FczaPhMPNC2StePC+oGnLGpU1tRFqdJWKJZyTLhC67U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zr3HgxjrX7fe8A2xHGj/kXXmLpdo2IoslogB9Rp8v2iwhbZEsJmo1+OUK3RMD0VR+bHmVuPviHIYhdnSvWBjVdJuD8omojswVOCdcex7hV8EWUUjkVkR2pcM5x0WChHKeZyNL8XSScCq/O//Zna4TgdoJ0q1HXJFIUw1necMyv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pd1kgJmj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4831C2BD10;
-	Tue,  2 Jul 2024 14:08:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719929291;
-	bh=FczaPhMPNC2StePC+oGnLGpU1tRFqdJWKJZyTLhC67U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Pd1kgJmjphvQZpFYPGN5fWrwFeCN4vdbE37IPda6u/ZDAXOjwNht89sKsRynFIoO5
-	 ZN5AATxpTwAdDCt7Yi+IndVIPBtE4s+XjYj+x7ByM74y3HqRiXjZPvXS51qOLCC2lM
-	 j17ah0qHZX3Bq3UW5yCU8RuIsteqSG03qgqseXAnspD7LiR+3egEEC0PBoj2jDXKT+
-	 6ASk2Ke2SMX9WaI3K94tVueVY/ntVogA1vjm49Hty59Kja+OKIo94w5aNkf5kLTFDC
-	 DaPq6hsfupejni532Qx7Ndp4hOvLcVctRKu1jSBihfHGR10tktG3plBWTMCUB0ZO6/
-	 G28xOD4jn4paQ==
-Date: Tue, 2 Jul 2024 15:08:05 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Jesse Taube <jesse@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, Ard Biesheuvel <ardb@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Wende Tan <twd2.me@gmail.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>,
-	"Mike Rapoport (IBM)" <rppt@kernel.org>,
-	"Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v3 4/4] RISC-V: Use Zkr to seed KASLR base address
-Message-ID: <20240702-unissued-dreamlike-badd0fb75ab0@spud>
-References: <20240701185132.319995-1-jesse@rivosinc.com>
- <20240701185132.319995-5-jesse@rivosinc.com>
+	s=arc-20240116; t=1719930619; c=relaxed/simple;
+	bh=T3DWqD+Ol1/VNz18zDmIpBFqHT4hlrXFgHlH4ruVB2Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TJd9eJaJ/F81l5Lr16+EHPWDNejPin5Adg0oElg/lSuxkoeDnOTdyrhhc9xB8/DQJv0fD/MFljj504dCBCdb7dtKH0BaOrrGT2jthl38q379/qb7lIV4tsnqSwAbnSyxGO/O56aYUYr08vgqHKagGNMO1i3RKpnVv7RZxOaQqwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=breakpoint.cc; arc=none smtp.client-ip=91.216.245.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=breakpoint.cc
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
+	(envelope-from <fw@breakpoint.cc>)
+	id 1sOeWN-0008BV-L4; Tue, 02 Jul 2024 16:30:15 +0200
+From: Florian Westphal <fw@strlen.de>
+To: <netfilter-devel@vger.kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	<netdev@vger.kernel.org>,
+	syzkaller-bugs@googlegroups.com,
+	Florian Westphal <fw@strlen.de>,
+	syzbot+4fd66a69358fc15ae2ad@syzkaller.appspotmail.com
+Subject: [PATCH nf] netfilter: nf_tables: unconditionally flush pending work before notifier
+Date: Tue,  2 Jul 2024 16:08:14 +0200
+Message-ID: <20240702140841.3337-1-fw@strlen.de>
+X-Mailer: git-send-email 2.44.2
+In-Reply-To: <000000000000aa1dbb061c354fe6@google.com>
+References: <000000000000aa1dbb061c354fe6@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="x34tUiPHU+DtDFfq"
-Content-Disposition: inline
-In-Reply-To: <20240701185132.319995-5-jesse@rivosinc.com>
+Content-Transfer-Encoding: 8bit
 
+syzbot reports:
 
---x34tUiPHU+DtDFfq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+KASAN: slab-uaf in nft_ctx_update include/net/netfilter/nf_tables.h:1831
+KASAN: slab-uaf in nft_commit_release net/netfilter/nf_tables_api.c:9530
+KASAN: slab-uaf int nf_tables_trans_destroy_work+0x152b/0x1750 net/netfilter/nf_tables_api.c:9597
+Read of size 2 at addr ffff88802b0051c4 by task kworker/1:1/45
+[..]
+Workqueue: events nf_tables_trans_destroy_work
+Call Trace:
+ nft_ctx_update include/net/netfilter/nf_tables.h:1831 [inline]
+ nft_commit_release net/netfilter/nf_tables_api.c:9530 [inline]
+ nf_tables_trans_destroy_work+0x152b/0x1750 net/netfilter/nf_tables_api.c:9597
 
-On Mon, Jul 01, 2024 at 02:51:32PM -0400, Jesse Taube wrote:
+Problem is that the notifier does a conditional flush, but its possible
+that the table-to-be-removed is still referenced by transactions being
+processed by the worker, so we need to flush unconditionally.
 
-> +/**
-> + *  isa_string_contains - check if isa string contains an extension
-> + *
-> + * @isa_str: isa string to search
-> + * @ext_name: the extension to search for
-> + *
-> + *  Returns true if the extension is in the given isa string,
-> + *  false otherwise
-> + */
-> +static bool isa_string_contains(const char *isa_str, const char *ext_name)
-> +{
-> +	size_t i, single_end, len = strlen(ext_name);
-> +	char ext_end;
-> +
-> +	/* Error must contain rv32/64 */
-> +	if (strlen(isa_str) < 4)
-> +		return false;
-> +
-> +	if (len == 1) {
-> +		single_end = strcspn(isa_str, "sSxXzZ");
-> +		/* Search for single chars between rv32/64 and multi-letter extensions */
-> +		for (i = 4; i < single_end; i++) {
-> +			if (tolower(isa_str[i]) == ext_name[0])
-> +				return true;
-> +		}
-> +		return false;
-> +	}
-> +
-> +	/* Skip to start of multi-letter extensions */
-> +	isa_str = strpbrk(isa_str, "sSxXzZ");
+We could make the flush_work depend on whether we found a table to delete
+in nf-next to avoid the flush for most cases.
 
-Technically this could break with the old QEMUs that had "su" in the
-single letter part, but at this point I think enough time has passed
-that it does not matter.
+AFAICS this problem is only exposed in nf-next, with
+commit e169285f8c56 ("netfilter: nf_tables: do not store nft_ctx in transaction objects"),
+with this commit applied there is an unconditional fetch of
+table->family which is whats triggering the above splat.
 
-> +	while (isa_str) {
-> +		if (strncasecmp(isa_str, ext_name, len) == 0) {
-> +			ext_end = isa_str[len];
-> +			/* Check if matches the whole extension excluding version. */
-> +			if (ext_end == '\0' || ext_end == '_' || isdigit(ext_end))
+Fixes: 2c9f0293280e ("netfilter: nf_tables: flush pending destroy work before netlink notifier")
+Reported-and-tested-by: syzbot+4fd66a69358fc15ae2ad@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=4fd66a69358fc15ae2ad
+Signed-off-by: Florian Westphal <fw@strlen.de>
+---
+ net/netfilter/nf_tables_api.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-I'm also not entirely sure about the final clause here. If you have an
-extension "foo" and "foo32b", you'd match on the latter, right? I don't
-think any extensions like that at the minute (foo32b type stuff does,
-but the "root" alphabetical part for a foo32b doesn't), but I also don't
-wanna have to chase down bugs in a parser this early in the future! The
-devicetree binding doesn't actually allow anyone to put version
-information in the isa string, so maybe the thing to do is just drop the
-isdigit() check, given we only support devicetree right now for this early
-probing?
+diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
+index 02d75aefaa8e..683f6a4518ee 100644
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -11552,8 +11552,7 @@ static int nft_rcv_nl_event(struct notifier_block *this, unsigned long event,
+ 
+ 	gc_seq = nft_gc_seq_begin(nft_net);
+ 
+-	if (!list_empty(&nf_tables_destroy_list))
+-		nf_tables_trans_destroy_flush_work();
++	nf_tables_trans_destroy_flush_work();
+ again:
+ 	list_for_each_entry(table, &nft_net->tables, list) {
+ 		if (nft_table_has_owner(table) &&
+-- 
+2.44.2
 
-> +				return true;
-> +		}
-> +		/* Multi-letter extensions must be split from other multi-letter
-> +		 * extensions with an "_", the end of a multi-letter extension will
-> +		 * either be the null character or the "_" at the start of the next
-> +		 * multi-letter extension.
-> +		 */
-> +		isa_str = strchr(isa_str, '_');
-> +		if (isa_str)
-> +			isa_str++;
-> +	}
-> +
-> +	return false;
-> +}
-
-Otherwise, I think this is fine now. Thanks for the updates.
-
-Cheers,
-Conor.
-
---x34tUiPHU+DtDFfq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoQJxQAKCRB4tDGHoIJi
-0k6uAP4h26hzrqUn8SQOtea5MoE7pVfXu05eNbYHvp84e0SVewEAtZqV1yZzenjn
-RAoQXWnUc4/VGcwTElosMZrjivWItQY=
-=D3gK
------END PGP SIGNATURE-----
-
---x34tUiPHU+DtDFfq--
 
