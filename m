@@ -1,117 +1,227 @@
-Return-Path: <linux-kernel+bounces-238577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF34E924C47
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:44:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92AC3924C4B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 01:45:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 339641F2348C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:44:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14FAF1F234EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 23:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E1417DA03;
-	Tue,  2 Jul 2024 23:44:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="EIHyJU9E"
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8344817DA0B;
+	Tue,  2 Jul 2024 23:44:58 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3110F17A5B4
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 23:44:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E913158853;
+	Tue,  2 Jul 2024 23:44:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719963860; cv=none; b=Kzo0/t1YqfP68yr8Ag9ElzYF20xQgMIZOCekR5/QPUObMYlUM8LYHk7Up+oWr59QRoVYwkmonOvUle0A7APpscX7g7/tXY2h4pE5US2r1DZvH9srILiv8ig+Zn5gdbckw+9jUitm13hcyn1kIy+JLVYvOJiZDJLBq5dEkEagwYc=
+	t=1719963898; cv=none; b=AK6P8DT2ViA4V70OoGN+wUFH35UNxBCgQ9wHNi4Wv7Ss6xeRB/FTLvYjH573fDo7RKq0hxAB09/MZxbBvNAacTfPfnQoYwAeyk999V+b/RgTjE5Jd8Pkf/HZY1Srb9fwBuyhS0G3s68Yon23hK8y4tTLf3hGuKqy7FT3ALtqx3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719963860; c=relaxed/simple;
-	bh=nugYxFvqkZ3GdtJPIrAFiDsnYPiIlN3gx7rBB0rx1kg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qhuOgY5TfpsgrZcQq+zJXv2Vty59+N2rvl0uREy7MnrGj9bRaw5vQGUAjhBv0/lZ082wJ0SL5RA/F4iwHvbP/ICKfzMxl6/xcbxOpqqa64/LiOXXbM9fkPN8bCmBB/m8w0bz/WfCaf/8tOi5cn9Xf0JxWsn0pQVQVhPdGzyx0Po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=EIHyJU9E; arc=none smtp.client-ip=209.85.160.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-24c5ec50da1so693248fac.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 16:44:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1719963858; x=1720568658; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Pm45MIjIaeWm4BhjkbsfpReUNUivy1UEQs0ZvejH8fQ=;
-        b=EIHyJU9E3/Pdp81jNZe92O+49Aa5NDKbQnumuZX5YPtPgDV7fttXYCit+82ogGha9P
-         gHzUqfnki9u8kbujp6EMYwsX10XFjm7W4c7DYY2MKMfynf8hM5R3DQorqJuBEB4pJJXf
-         aborWGugO5u6mSh30kgvqeCq7HRyI/p7xsfGs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719963858; x=1720568658;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pm45MIjIaeWm4BhjkbsfpReUNUivy1UEQs0ZvejH8fQ=;
-        b=JrsRod+SJtG3OxpyIthgVLzuQrDgmhDxQufzA+p7Jp9v57m3X9rgH+wc99UtpinMEt
-         1n1P92gjhUos/RbsMBC58GXpNu6qf3iuddKf28GL7FCzh81QZzLDJcuaDZjnP7tUmcUb
-         A6a8PZvRRHURcnCFpmaP+keofkASll/bB4SwnjShPc5+bPaSLj+KaV/wj32g0abbMwPD
-         PeK9xyBbmgXGtWi6Y8Gl3HnjTX30GzjQ9l1FrlMzy7D/4usCEAwnwU8Lh39BGBvFeOnh
-         3UUtuP6s0XkA2/YdWDI/VgPnkCscZURqQiw30hAzag7ragz1k4PEP52WZJoaKcmXID7W
-         IE3w==
-X-Forwarded-Encrypted: i=1; AJvYcCWxCFXraJkTsckD+2crLrCuIV+drYWQQrnyEQBm+UXPfK1ensR7MfelQ3DEvCs7/ZCPRhiKku7QzvgoTpI5xhqZZ0vh7+kC67ZuBWur
-X-Gm-Message-State: AOJu0YwrzQX4296hkAliz90o/EXuYp5r6jrRqv/vm6SZIujWb6JPDu8p
-	6/lasfufCUBmDk6TaF40UG4bhCbj4510ENr0W5dqigtYa7h5ot2DQ1fVWh/0ie4=
-X-Google-Smtp-Source: AGHT+IGmqmuHlWuvkaXE07Rh5CKoFmBmZoQmtyD6UtHJqCbjW06Ub0MNM9EHQlJGbJkxvCbgPsH50g==
-X-Received: by 2002:a05:6871:24d2:b0:25e:180:9183 with SMTP id 586e51a60fabf-25e0180af8amr2263497fac.4.1719963858211;
-        Tue, 02 Jul 2024 16:44:18 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25df77cef10sm434167fac.19.2024.07.02.16.44.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jul 2024 16:44:17 -0700 (PDT)
-Message-ID: <bb8f0689-0989-4c18-bc75-f73ce6743c22@linuxfoundation.org>
-Date: Tue, 2 Jul 2024 17:44:16 -0600
+	s=arc-20240116; t=1719963898; c=relaxed/simple;
+	bh=QIGQ12SfRMKhY4RdG2H7gQvUao7tIDkEk7Yy9wG41gc=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ab1/dFvT8kvs1K8GDbJcP1rUTfITGLM3oCqSkrPBR1BuaETxmw6G7QZSLVM5U4pMmfklsFhdxgt1aPrZ3ELzMxxksxVNd3Sr3UhIcMyjNoRcv1CcXtlUMO+buAZmUQ1di0jkM/42Qf3B3ibBlVjzpLhFgxZL9uRnwlM552Pj7+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.97.1)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1sOnAq-000000006lM-23eU;
+	Tue, 02 Jul 2024 23:44:36 +0000
+Date: Wed, 3 Jul 2024 00:44:28 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: =?utf-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	DENG Qingfang <dqfext@gmail.com>,
+	Sean Wang <sean.wang@mediatek.com>, Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Landen Chao <Landen.Chao@mediatek.com>,
+	Frank Wunderlich <linux@fw-web.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, regressions@lists.linux.dev
+Subject: [PATCH net v3] net: dsa: mt7530: fix impossible MDIO address and
+ issue warning
+Message-ID: <7e3fed489c0bbca84a386b1077c61589030ff4ab.1719963228.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1 000/128] 6.1.97-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240702170226.231899085@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240702170226.231899085@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 7/2/24 11:03, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.97 release.
-> There are 128 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 04 Jul 2024 17:01:55 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.97-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+The MDIO address of the MT7530 and MT7531 switch ICs can be configured
+using bootstrap pins. However, there are only 4 possible options for the
+switch itself: 7, 15, 23 and 31. As in MediaTek's SDK the address of the
+switch is wrongly stated in the device tree as 0 (while in reality it is
+31), warn the user about such broken device tree and make a good guess
+what was actually intended.
 
-Compiled and booted on my test system. No dmesg regressions.
+This is imporant also to not break compatibility with older Device Trees
+as with commit 868ff5f4944a ("net: dsa: mt7530-mdio: read PHY address of
+switch from device tree") the address in device tree will be taken into
+account, while before it was hard-coded to 0x1f.
 
-Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+Fixes: b8f126a8d543 ("net-next: dsa: add dsa support for Mediatek MT7530 switch")
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+---
+Only tested on BPi-R3 (with various deliberately broken DT) for now!
 
-thanks,
--- Shuah
+Changes since v2 [2]:
+ - use macros instead of magic numbers
+ - introduce helper functions
+ - register new device on MDIO bus instead of messing with the address
+   and schedule delayed_work to unregister the "wrong" device.
+   This is a slightly different approach than suggested by Russell, but
+   imho makes things much easier than keeping the "wrong" device and
+   having to deal with keeping the removal of both devices linked.
+ - improve comments
+
+Changes since v1 [1]:
+ - use FW_WARN as suggested.
+ - fix build on net tree which doesn't have 'mdiodev' as member of the
+   priv struct. Imho including this patch as fix makes sense to warn
+   users about broken firmware, even if the change introducing the
+   actual breakage is only present in net-next for now.
+
+[1]: https://patchwork.kernel.org/project/netdevbpf/patch/e615351aefba25e990215845e4812e6cb8153b28.1714433716.git.daniel@makrotopia.org/
+[2]: https://patchwork.kernel.org/project/netdevbpf/patch/11f5f127d0350e72569c36f9060b6e642dfaddbb.1714514208.git.daniel@makrotopia.org/
+
+ drivers/net/dsa/mt7530-mdio.c | 92 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 92 insertions(+)
+
+diff --git a/drivers/net/dsa/mt7530-mdio.c b/drivers/net/dsa/mt7530-mdio.c
+index 51df42ccdbe6..b5049ec2d84d 100644
+--- a/drivers/net/dsa/mt7530-mdio.c
++++ b/drivers/net/dsa/mt7530-mdio.c
+@@ -11,6 +11,7 @@
+ #include <linux/regmap.h>
+ #include <linux/reset.h>
+ #include <linux/regulator/consumer.h>
++#include <linux/workqueue.h>
+ #include <net/dsa.h>
+ 
+ #include "mt7530.h"
+@@ -136,6 +137,93 @@ static const struct of_device_id mt7530_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, mt7530_of_match);
+ 
++static int
++mt7530_correct_addr(int phy_addr)
++{
++	/* The corrected address is calculated as stated below:
++	 * 0~6   -> 31
++	 * 8~14  -> 7
++	 * 16~22 -> 15
++	 * 24~30 -> 23
++	 */
++return ((((phy_addr - MT7530_NUM_PORTS) & ~MT7530_NUM_PORTS) % PHY_MAX_ADDR) +
++	MT7530_NUM_PORTS) & (PHY_MAX_ADDR - 1);
++}
++
++static bool
++mt7530_is_invalid_addr(int phy_addr)
++{
++	/* Only MDIO bus addresses 7, 15, 23, and 31 are valid options,
++	 * which all have the least significant three bits set. Check
++	 * for this.
++	 */
++	return (phy_addr & MT7530_NUM_PORTS) != MT7530_NUM_PORTS;
++}
++
++struct remove_impossible_priv {
++	struct delayed_work remove_impossible_work;
++	struct mdio_device *mdiodev;
++};
++
++static void
++mt7530_remove_impossible(struct work_struct *work)
++{
++	struct remove_impossible_priv *priv = container_of(work, struct remove_impossible_priv,
++							   remove_impossible_work.work);
++	struct mdio_device *mdiodev = priv->mdiodev;
++
++	mdio_device_remove(mdiodev);
++	mdio_device_free(mdiodev);
++	kfree(priv);
++}
++
++static int
++mt7530_reregister(struct mdio_device *mdiodev)
++{
++	/* If the address in DT must be wrong, make a good guess about
++	 * the most likely intention, issue a warning, register a new
++	 * MDIO device at the correct address and schedule the removal
++	 * of the device having an impossible address.
++	 */
++	struct fwnode_handle *fwnode = dev_fwnode(&mdiodev->dev);
++	int corrected_addr = mt7530_correct_addr(mdiodev->addr);
++	struct remove_impossible_priv *rem_priv;
++	struct mdio_device *new_mdiodev;
++	int ret;
++
++	rem_priv = kmalloc(sizeof(*rem_priv), GFP_KERNEL);
++	if (!rem_priv)
++		return -ENOMEM;
++
++	new_mdiodev = mdio_device_create(mdiodev->bus, corrected_addr);
++	if (IS_ERR(new_mdiodev)) {
++		ret = PTR_ERR(new_mdiodev);
++		goto out_free_work;
++	}
++	device_set_node(&new_mdiodev->dev, fwnode);
++
++	ret = mdio_device_register(new_mdiodev);
++	if (WARN_ON(ret))
++		goto out_free_dev;
++
++	dev_warn(&mdiodev->dev, FW_WARN
++		 "impossible switch MDIO address in device tree, assuming %d\n",
++		 corrected_addr);
++
++	/* schedule impossible device for removal from mdio bus */
++	rem_priv->mdiodev = mdiodev;
++	INIT_DELAYED_WORK(&rem_priv->remove_impossible_work, mt7530_remove_impossible);
++	schedule_delayed_work(&rem_priv->remove_impossible_work, 0);
++
++	return -EFAULT;
++
++out_free_dev:
++	mdio_device_free(new_mdiodev);
++out_free_work:
++	kfree(rem_priv);
++	return ret;
++}
++
+ static int
+ mt7530_probe(struct mdio_device *mdiodev)
+ {
+@@ -144,6 +232,10 @@ mt7530_probe(struct mdio_device *mdiodev)
+ 	struct device_node *dn;
+ 	int ret;
+ 
++	/* Check and if needed correct the MDIO address of the switch */
++	if (mt7530_is_invalid_addr(mdiodev->addr))
++		return mt7530_reregister(mdiodev);
++
+ 	dn = mdiodev->dev.of_node;
+ 
+ 	priv = devm_kzalloc(&mdiodev->dev, sizeof(*priv), GFP_KERNEL);
+-- 
+2.45.2
+
 
