@@ -1,205 +1,102 @@
-Return-Path: <linux-kernel+bounces-238217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E56509246EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:04:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9728C9246E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:04:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C52F1F22933
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:04:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48D5F1F21994
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89FD51CE094;
-	Tue,  2 Jul 2024 18:03:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842281CB33A;
+	Tue,  2 Jul 2024 18:03:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ADbFIJ2M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qSBsnTtv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBDDF1C2308;
-	Tue,  2 Jul 2024 18:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E141CCCB5;
+	Tue,  2 Jul 2024 18:03:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719943420; cv=none; b=Naa7ewa3T0g/NjhgAK3UfR7D/JfqtU2JZG/g9fe0c1FOtOAVSAIQ+jlNr4OJW/+ZKsyIVVV9s4nL8jQe2h8NVFN6oDD7Ir4BjMi/o0185yJT9EVNgBlzge6midCzqPbKOVVIHrX/Mn7WZDtD9JtkalrduPXa68jU+pTMIV7Igzc=
+	t=1719943402; cv=none; b=jPlKUxErV1lw6Z3YmFkEbFf9YKIRfJ2BV/6qKML9GSQlYdCymNRG30S02LK3pqWbtRK8l0mQ6qxn1vRu4iv/4gamD7HtliachxP7rjDi/TlrNJyAYUiSNmjEVMpqi+Fks30mVuQjcE5YB3HdObKEl4vB1aKe3Ih4kBEKJiVSns0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719943420; c=relaxed/simple;
-	bh=zzOU2P/2RX733uvIXhmTJk0qMFVBXzpz0F9MYY9P1CM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=c9v9rY8gIwRVBa59SlxurqRWfA377D3/C/DVvycC8x8RSuOi4k/xLHeZ1W1NGTPVMx8udhwOKimbmRtgINBBmM3oiwM6C1KtKZSK/6aaxQYbcI22W+UUu2AWD0t9sDa6blmUhTKK0v8Gx6ajjQQPgDnffj8nKIbo9kduQ7btM+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ADbFIJ2M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A80A3C116B1;
-	Tue,  2 Jul 2024 18:03:39 +0000 (UTC)
+	s=arc-20240116; t=1719943402; c=relaxed/simple;
+	bh=Er855fFtE0tkTlrfhmXtCi5qQalirVV6oBWt2PpMAcU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=DjY2j7DfirM0O0deIUXp95+fPdG8ralSMfIdW27Zu5fsUaBNTDAe6TQbZsrnSfw75T7QmJL1yjobzf68NGhAXMpTCCZ2m3Yk+WOjFQCa9TXjqAIrhtyKcAV3kXGw1DeUPLMuaT23P3XVQLxWFsfcDEr6EIT6dlz8PLU7dtEC84U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qSBsnTtv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C287C4AF07;
+	Tue,  2 Jul 2024 18:03:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719943420;
-	bh=zzOU2P/2RX733uvIXhmTJk0qMFVBXzpz0F9MYY9P1CM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ADbFIJ2MkWPBlb9McLjo7MSiCu7ike6JJjdsCmooB4q45vqRUAs9xx3XIsP7Zxe+p
-	 14iKFcAkLm2rtTmDsxBJ5gIlad5ooTKr7DEbG72Jw7gdNiliIbqNM13maU6aRq9dWl
-	 xTWqMAlmgYvMyAGLYWDmMRtqb/Lf5tZ6bIH2kmUnEqTRqxNk2u1c+Y/hj5Gd+yXpkJ
-	 cptlyycnyi44LfnSeGWLNkforWSB24F1XVhwSfbWr4gFs/M/q+eusG2ANrhUSaHmOd
-	 j/mwa1qXVVtoD42vIwiG9lROM/nLWW4wsL3yhIE3n1aRq/g3BXOizuZaBpv/eeZ8P3
-	 vCDXI1vAEOQJA==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: [PATCH v2 3/3] kbuild: package: add -e and -u options to some shell scripts
-Date: Wed,  3 Jul 2024 03:02:42 +0900
-Message-ID: <20240702180332.398978-3-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240702180332.398978-1-masahiroy@kernel.org>
-References: <20240702180332.398978-1-masahiroy@kernel.org>
+	s=k20201202; t=1719943402;
+	bh=Er855fFtE0tkTlrfhmXtCi5qQalirVV6oBWt2PpMAcU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=qSBsnTtv333Tg5/uNsOrIT8MBev3AQVNEGGM7Kfk7qXhandVtK+zgy5oWN/zz0cMn
+	 AKjOn2xJrkow1BcvWdm0q7YXxEQZclaGrlw8UvLNbYNvJZyzOJ6MzcdbdBzaPvo0i0
+	 VI64DGTw7ccbUG2lxgwnPLqiWvsIinNLRF9z7EuqVJwMwk89RxK18UTEUm5n/VrTJ6
+	 DjUmqM1wuqVpN9fYl1eMFOIKJKZqEPxI/pPP0B8HS2ePcbneeaXeCynK3pDqXXigmr
+	 AU617yqWTTqi6AfUd79xrw/tZB1boPoB3cMBgRR568j4I5y5ZjPEIjKNTagkuVdgtn
+	 wpKdDNQy5etGA==
+From: Mark Brown <broonie@kernel.org>
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
+In-Reply-To: <20240702110809.16836-1-rf@opensource.cirrus.com>
+References: <20240702110809.16836-1-rf@opensource.cirrus.com>
+Subject: Re: [PATCH] firmware: cs_dsp: Don't allow writes to read-only
+ controls
+Message-Id: <171994340097.996226.8732396451392780066.b4-ty@kernel.org>
+Date: Tue, 02 Jul 2024 19:03:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev-d4707
 
-Set -e to make these scripts fail on the first error.
+On Tue, 02 Jul 2024 12:08:09 +0100, Richard Fitzgerald wrote:
+> Add a check to cs_dsp_coeff_write_ctrl() to abort if the control
+> is not writeable.
+> 
+> The cs_dsp code originated as an ASoC driver (wm_adsp) where all
+> controls were exported as ALSA controls. It relied on ALSA to
+> enforce the read-only permission. Now that the code has been
+> separated from ALSA/ASoC it must perform its own permission check.
+> 
+> [...]
 
-Set -u because these scripts are invoked by Makefile, and do not work
-properly without necessary variables defined.
+Applied to
 
-I tweaked mkdebian to cope with optional environment variables.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Remove the explicit "test -n ..." from install-extmod-build.
+Thanks!
 
-Both options are described in POSIX. [1]
+[1/1] firmware: cs_dsp: Don't allow writes to read-only controls
+      commit: 62412a9357b16a4e39dc582deb2e2a682b92524c
 
-[1]: https://pubs.opengroup.org/onlinepubs/009604499/utilities/set.html
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
----
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Changes in v2:
- - Fix build errors from scripts/package/mkdebian
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
- scripts/package/builddeb             | 2 +-
- scripts/package/buildtar             | 2 +-
- scripts/package/gen-diff-patch       | 2 ++
- scripts/package/install-extmod-build | 5 +----
- scripts/package/mkdebian             | 8 ++++----
- scripts/package/mkspec               | 2 ++
- 6 files changed, 11 insertions(+), 10 deletions(-)
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-diff --git a/scripts/package/builddeb b/scripts/package/builddeb
-index e797ad360f7a..c1757db6aa8a 100755
---- a/scripts/package/builddeb
-+++ b/scripts/package/builddeb
-@@ -10,7 +10,7 @@
- # specified in KDEB_HOOKDIR) that will be called on package install and
- # removal.
- 
--set -e
-+set -eu
- 
- is_enabled() {
- 	grep -q "^$1=y" include/config/auto.conf
-diff --git a/scripts/package/buildtar b/scripts/package/buildtar
-index eb67787f8673..cc87a473c01f 100755
---- a/scripts/package/buildtar
-+++ b/scripts/package/buildtar
-@@ -11,7 +11,7 @@
- # Wichert Akkerman <wichert@wiggy.net>.
- #
- 
--set -e
-+set -eu
- 
- #
- # Some variables and settings used throughout the script
-diff --git a/scripts/package/gen-diff-patch b/scripts/package/gen-diff-patch
-index 8a98b7bb78a0..f272f7770ea3 100755
---- a/scripts/package/gen-diff-patch
-+++ b/scripts/package/gen-diff-patch
-@@ -1,6 +1,8 @@
- #!/bin/sh
- # SPDX-License-Identifier: GPL-2.0-only
- 
-+set -eu
-+
- diff_patch=$1
- 
- mkdir -p "$(dirname "${diff_patch}")"
-diff --git a/scripts/package/install-extmod-build b/scripts/package/install-extmod-build
-index 76e0765dfcd6..8cc9e13403ae 100755
---- a/scripts/package/install-extmod-build
-+++ b/scripts/package/install-extmod-build
-@@ -1,13 +1,10 @@
- #!/bin/sh
- # SPDX-License-Identifier: GPL-2.0-only
- 
--set -e
-+set -eu
- 
- destdir=${1}
- 
--test -n "${srctree}"
--test -n "${SRCARCH}"
--
- is_enabled() {
- 	grep -q "^$1=y" include/config/auto.conf
- }
-diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
-index 83c6636fadb8..0cc1913aad30 100755
---- a/scripts/package/mkdebian
-+++ b/scripts/package/mkdebian
-@@ -4,7 +4,7 @@
- #
- # Simple script to generate a debian/ directory for a Linux kernel.
- 
--set -e
-+set -eu
- 
- is_enabled() {
- 	grep -q "^$1=y" include/config/auto.conf
-@@ -19,7 +19,7 @@ if_enabled_echo() {
- }
- 
- set_debarch() {
--	if [ -n "$KBUILD_DEBARCH" ] ; then
-+	if [ "${KBUILD_DEBARCH:+set}" ]; then
- 		debarch="$KBUILD_DEBARCH"
- 		return
- 	fi
-@@ -141,7 +141,7 @@ fi
- 
- # Some variables and settings used throughout the script
- version=$KERNELRELEASE
--if [ -n "$KDEB_PKGVERSION" ]; then
-+if [ "${KDEB_PKGVERSION:+set}" ]; then
- 	packageversion=$KDEB_PKGVERSION
- else
- 	packageversion=$(${srctree}/scripts/setlocalversion --no-local ${srctree})-$($srctree/scripts/build-version)
-@@ -158,7 +158,7 @@ debarch=
- set_debarch
- 
- # Try to determine distribution
--if [ -n "$KDEB_CHANGELOG_DIST" ]; then
-+if [ "${KDEB_CHANGELOG_DIST:+set}" ]; then
-         distribution=$KDEB_CHANGELOG_DIST
- # In some cases lsb_release returns the codename as n/a, which breaks dpkg-parsechangelog
- elif distribution=$(lsb_release -cs 2>/dev/null) && [ -n "$distribution" ] && [ "$distribution" != "n/a" ]; then
-diff --git a/scripts/package/mkspec b/scripts/package/mkspec
-index cffc2567bef2..77d25dda37e3 100755
---- a/scripts/package/mkspec
-+++ b/scripts/package/mkspec
-@@ -9,6 +9,8 @@
- #	Patched for non-x86 by Opencon (L) 2002 <opencon@rio.skydome.net>
- #
- 
-+set -eu
-+
- output=$1
- 
- mkdir -p "$(dirname "${output}")"
--- 
-2.43.0
+Thanks,
+Mark
 
 
