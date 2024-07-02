@@ -1,135 +1,79 @@
-Return-Path: <linux-kernel+bounces-238337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 723C4924881
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:41:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 153ED924883
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:41:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA9C5B23D8F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:40:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46A2A1C22664
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70761CE094;
-	Tue,  2 Jul 2024 19:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="eBvyqQPH"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C27D1CE094;
+	Tue,  2 Jul 2024 19:41:50 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82C51BB69E;
-	Tue,  2 Jul 2024 19:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F696E5ED;
+	Tue,  2 Jul 2024 19:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719949249; cv=none; b=EodpaNzpnpdNQyLVHtqw6mBzYwzRKdb9EKLam/MPLZ5l0mZiQkgHMq89olWrqMC88EI/4Rd0iapxzpshpM49rBdxnD7b40x+wBo0+QbFpCyVZ2fKMkYXh/0Ah7Qi4PBnWptxTDRDRfS7Hdmi6RipqNpB/PE1mjwNhCGOQFhPbsQ=
+	t=1719949309; cv=none; b=rHVL7t1GhUFottjhom7jf794lUlgiUnBsaLfZL24umbibOxQzHeIKVVPopbqa0YyyaynMo2VZgxGV4nKiI/sSRSuVhTdUVoI+jJK1sydozt/+pMAsUPuNtCPDkUJnraBAWSr5fvr5h9GM43orCF+M+H+pmh/16euLknwXHkvYB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719949249; c=relaxed/simple;
-	bh=pkS+uehYQlYkeUjG9ipfbE+aFZyfxuZEjI584xLWUA8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=YiBxpTVb/XMBKvEwuwLjJxOEygn+edTIipkhxa3/dsIlmv5BwmcITj7fNJ2fRWuvMz/j50u7lMQdzynw+x7BdE9KKDj0klaD0tx56IvAeFubNCLwTHR/qb/9jzH9ybjxpEANAaWYpOKpjwo/ipfeJmx+lLPkV1rwkQufwXnqzjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=eBvyqQPH; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719949235; x=1720554035; i=markus.elfring@web.de;
-	bh=Dhc39LuDQM+jcrdSlNLZclGK8q3LqZ3pmc/NDCCAcVE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=eBvyqQPH9fyxpbaK89lxdGwkjYo8MbzeWlMs8joyXg3ePkux70SD5rqGn59KDots
-	 qpBEWznQHjPLYSgXMW679oVVj5vSvh8bobMyvxm+B67U1E/z/dgCwzGzf9Vslz3H4
-	 8usgIcRMFLPzS7k25BvPt8B5w61xwZQRsFXevaQbwMDk4W4jlMQmDwF2F0Vz2ENLv
-	 ajR5csjnzp5yiltWl45TX82pVXsO3hJomTXNrkZG3jg/yNOHqUGZxhwphOW84tCp2
-	 ssh/uci44kWs7eSeO4/VlwRACBMv4qXmAazaSzapZb/qQRkrvifrhJGE3U5ZEcDcG
-	 Wj5LxM52ehbeDDlVIQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N4N9I-1sFTfh1YMI-00zBJ3; Tue, 02
- Jul 2024 21:40:35 +0200
-Message-ID: <4036b194-3014-4523-b8d0-ea39664607a3@web.de>
-Date: Tue, 2 Jul 2024 21:40:21 +0200
+	s=arc-20240116; t=1719949309; c=relaxed/simple;
+	bh=quOm75f4d0jmhzpI2KIY6f6RpCy8CjJ0XUfSDP/koc4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DV7Bjqz+o8t7CyBeSId2dVVud5wXfZb8nInGpTjBZKzl5AhX8eSZrqQYDE3oVGMNGJRxJqcYMeWyUqsXdFeEGWzOkZieWEa+NMeWtD3hOkjMqkqtaYFM5IOSppl+5OVNY7Ui7gFRnJjDuUMcytMqtF6QYeNouxiN3yTov8BGMHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8212AC116B1;
+	Tue,  2 Jul 2024 19:41:48 +0000 (UTC)
+Date: Tue, 2 Jul 2024 15:41:46 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, "Dmitry V. Levin" <ldv@strace.io>, Jonathan Corbet
+ <corbet@lwn.net>, linux-doc@vger.kernel.org
+Subject: Re: [PATCH] tracing: Have memmapped ring buffer use ioctl of "R"
+ range 0x20-2F
+Message-ID: <20240702154146.754e2ad5@rorschach.local.home>
+In-Reply-To: <2227082b-381d-40bf-a106-eb789e433215@efficios.com>
+References: <20240702153354.367861db@rorschach.local.home>
+	<2227082b-381d-40bf-a106-eb789e433215@efficios.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Levi Yun <yeoreum.yun@arm.com>, Yunseong Kim <yskelg@gmail.com>,
- linux-bluetooth@vger.kernel.org, Johan Hedberg <johan.hedberg@gmail.com>,
- Luiz Von Dentz <luiz.dentz@gmail.com>, Marcel Holtmann <marcel@holtmann.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Austin Kim <austindh.kim@gmail.com>,
- MichelleJin <shjy180909@gmail.com>, Levi Yun <ppbuk5246@gmail.com>
-References: <20240701194531.97576-2-yskelg@gmail.com>
-Subject: Re: [PATCH] hci: fix double free in hci_req_sync
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240701194531.97576-2-yskelg@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:nVwmcktw2EYzu877tUCa7svrrEhZ1hamaJtqWuUoPJLpFwPJbJe
- cv4vExJyFG8r9t9GhN49Zs4TeuJj3b+UuX7idLJ7yqMuAUoQxvJPSZ+EzMprx7veR+ejJq7
- mdAH045uB2bxA5vMO4xNTHx09sC5r7FkY5/Awe1Vh6as7O4x3/YjuJxkgEMhu7AG5fv7nWT
- dOvarq064+4g+sHZ3HEtA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:44BwTlUuJh0=;ZkMUOwb34lNWL1PT5pTmzoXFR3R
- htrYeea2NjbabDgePmVU8FdyjNP21quHeuHIouuO1fdasZ82JDZ/hsXbcBRLQDLE70Cmi1zms
- XH5OYrFuo67C8HH6cdWYpdj1eHh8J/jlfQuEe/+MmaaLW6OMZUMUUV7u/liwZpHhoaJUyITmJ
- 4DDzLN9tLMd5O1//f8pRsYi1R1/kBP4drn4dKITqiH9rgbPxIgd/xKHza1HSFBMiTT3Il88jo
- /dZyE/DnB2pO39QTsndLS27mxz7x5qgY5QI55DMFyBLiJDYC5hN72+2tYFc41J5n3WCrXMmop
- VyVpdC6pqQzSZwHiXYVL+8LNAUaR/Jx1RaRMWsof0AAJSwjMZAs4N4K+2s8mXkE03fLOlmZSZ
- y+GFe/GK1G6Ngywsn7RngNfcBg/+PuSaBMrEgZvbWkfrJqcrQ08H1QgeGUzWAwX4/3k/autQW
- J/gIR50tAUvLLe4iM8lXVAMLj+WTEd6f/HgeBVLc7vDVsf27Z1a9pgIjjx9Z+o00Ng2VOVnAb
- rF2kabI5t8QRgzE0AtcKrZ2aB9/7kJOtJ9pfUlDRHCPvzkuBmGVcyHwYwpkJnti2BSdepJ+vG
- 5JRNwfQnT1T9IhaWistTN1r6cEQd0u8xvn3H9TsCPvPdyUp7/07o8jdvtig29Tp4J+mEdl6Y8
- enrpgnVil8IgTg3pEsEDidWVpzfoY3nJMloncjdRK0aSynTDtfrOzwqIMgQ74Gv3g2tP34nxe
- leRrnN16Z/enGsn1AqE8eCzzHPejdp7m7hokfYSAUl9kaLHtudJOfUnlbq1Cz6sOKcgiJHHYC
- BLl+3Haf/NUPy4Mhg8TFUjBXeXw/Fh5JrX9q8ERsrmb6A=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-=E2=80=A6
-> +++ b/net/bluetooth/hci_request.c
-> @@ -106,8 +106,7 @@ void hci_req_sync_complete(struct hci_dev *hdev, u8 =
-result, u16 opcode,
->  		hdev->req_result =3D result;
->  		hdev->req_status =3D HCI_REQ_DONE;
->  		if (skb) {
-> -			kfree_skb(hdev->req_skb);
-> -			hdev->req_skb =3D skb_get(skb);
-> +			hci_req_skb_release_and_set(hdev, skb_get(skb));
->  		}
->  		wake_up_interruptible(&hdev->req_wait_q);
-=E2=80=A6
+On Tue, 2 Jul 2024 15:38:10 -0400
+Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
 
-How do you think about to omit any curly brackets here?
+> On 2024-07-02 15:33, Steven Rostedt wrote:
+> > From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
+> > 
+> > To prevent conflicts with other ioctl numbers to allow strace to have an
+> > idea of what is happening, add the rang of ioctls for the trace buffer
 
+Hmm, someone "rang an ioctl" ;-)
 
-=E2=80=A6
-> +++ b/net/bluetooth/hci_request.h
-> @@ -28,6 +28,15 @@
->
->  #define hci_req_sync_lock(hdev)   mutex_lock(&hdev->req_lock)
->  #define hci_req_sync_unlock(hdev) mutex_unlock(&hdev->req_lock)
-> +#define hci_req_skb_release_and_set(hdev, val)		\
-> +({							\
-> +	if (hdev->req_skb) {				\
-> +		spin_lock(&hdev->req_skb_lock);		\
-> +		kfree_skb(hdev->req_skb);		\
-> +		hdev->req_skb =3D val;			\
-> +		spin_unlock(&hdev->req_skb_lock);	\
-> +	}						\
-> +})
-=E2=80=A6
+I'll update the change log before pulling this in.
 
-* Do you expect that any data synchronisation should be performed
-  for the shown pointer check?
+> > mapping from _IO("T", 0x1) to the range of "R" 0x20 - 0x2F.
+> > 
+> > Link: https://lore.kernel.org/linux-trace-kernel/20240630105322.GA17573@altlinux.org/
+> > 
+> > Reported-by: "Dmitry V. Levin" <ldv@strace.io>
+> > Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>  
+> 
+> Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 
-* Can it eventually matter to implement such a macro with a statement
-  like =E2=80=9Cguard(spinlock)(&hdev->req_skb_lock);=E2=80=9D?
-  https://elixir.bootlin.com/linux/v6.10-rc6/source/include/linux/spinlock=
-.h#L561
+Thanks,
 
-
-Regards,
-Markus
+-- Steve
 
