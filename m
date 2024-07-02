@@ -1,254 +1,117 @@
-Return-Path: <linux-kernel+bounces-238373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5695692497C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:41:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD1A9924983
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:43:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C07CBB220D2
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:41:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AF711F22F6B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:43:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4EA820125A;
-	Tue,  2 Jul 2024 20:41:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0B61CF8F;
-	Tue,  2 Jul 2024 20:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D78A201247;
+	Tue,  2 Jul 2024 20:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bewMYo6f"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E63F11D47D9
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 20:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719952897; cv=none; b=Sy4HIvdxqN5N9NtkOOCoTp5JqF1zClf3Djvdv8V7lQUebW4mDFPIf6EPnHcBgBcpOPLfOYL6tANxe/0IB4Y7a+G1yeTV58JadWSb2+pAy+m57RvoQZTE9Y5R0So1pZQGjWCv84RGnK/wIQGvcCM1rRKk+lPSEJ3tdwghbUZgJ/I=
+	t=1719952989; cv=none; b=mLTUYZGEddAMemn++ebHJuMTfUKt2d5aDuGCRDWM8U3sHxYGS3cMQsmH2IK4VQZpxu46bvaTNgV/98aulS0L6t2HEfk7N4Fb/+EzUWBJ0paGth0HBhTeROYdHPGp6qgRFcxoInApNsFMIfkMZvXdZmYkMExCovDg4gMJlDh57uE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719952897; c=relaxed/simple;
-	bh=hhH4iZXp8qOnFwnFupvfayXAquZLbQ+GU/0m8/x3+Qs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IW5PzvlfQYftXPWOCSPfYy8FXmn3/TpNruqOsppK0e1A0t2S6SjtCJClWYLxhMYIUPTlyW/eSjofHd+xMC6QMfmBJ/aztvkSc/XuMQDtpfUup4GrKW3PfPsYEZ5t1fgvdxYB2u9t/VAPqS1MGWAoPffKGaAt3MO1cs9Iv47GSFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6C2A7339;
-	Tue,  2 Jul 2024 13:41:58 -0700 (PDT)
-Received: from [10.57.82.69] (unknown [10.57.82.69])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F33893F766;
-	Tue,  2 Jul 2024 13:41:31 -0700 (PDT)
-Message-ID: <20208c07-1ea8-43a0-a499-51c9fd63b037@arm.com>
-Date: Tue, 2 Jul 2024 21:41:30 +0100
+	s=arc-20240116; t=1719952989; c=relaxed/simple;
+	bh=6LNyVKKBMDAeeCTDCW+Q7xzEdYm5alFZdgDwqZcfDpU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n5pTC2/pgqTDFus5+dTSSmi8dwUOF10XkZ3YDbukEQOK72I6eyqUfQOF4qzT+ut7ZHtTE/7+QXszFgl11v87UPGkyCYDXjrhVmLOlj6usRNk9K4PD1zHniwKt2kySQoW2NWZc7zxJhWN/untIb/jblxRbEjc4dumWV2lM6JoZTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=bewMYo6f; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7245453319so737627466b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 13:43:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1719952986; x=1720557786; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=m06DGl+JsSnB+foAEKorv4GRJLNuZ2K+S42zJ3Ubdg0=;
+        b=bewMYo6fkfqBZxysZZOHmFXLymINyxOtnfy17+bhDwAFZonTgyL5DTBQK3yV4v45l8
+         rQWRwNsA27oamwvdEnqhjv7xSOjeuw3+r5dMp1kEFSTKDz6RXdUWSmMn1qRqSHOSphDp
+         MyXNupQkPM3ijmgJcpne/mbdXI/AonFm+QXM8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719952986; x=1720557786;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=m06DGl+JsSnB+foAEKorv4GRJLNuZ2K+S42zJ3Ubdg0=;
+        b=TjiUSvV9WjfDbzj3qC+SL3LwOrPAutf/GgWO+1r8RWyAdhIolbV0OJ1N/cKxWoyeCM
+         hp7SOYWZoLyQHsj2fAZyx27bORCv3iXRRycScPth9sZeP52bpcX3DwJWXuOxIMeM+0B2
+         HhtJmiK82nTLEU2MYoOTtdkbIsB8fuCj1zka4ISQcVuMDKB2a+v3dsFvrirOgSm5ktUf
+         qYe1HucmXZ5l7/TM9OP1rWpH9O76rLMrnTTBk6D/7a9O+c6bE03pB5nWEIghfI273IBD
+         04aquP+i+0nPWR8GgJ7eiFIxE3j9dFJVVuT2AndQoB4FRUBlN9rsXjyr1VWOx1eDEgDH
+         D/6w==
+X-Forwarded-Encrypted: i=1; AJvYcCWbmqPn3Bn6+DE3jdHRpVH4pY/HD9SANdLDlQOtijOszBRcd/uB1DA/hRD+QMiK9micHvTRRA92L/us4b3OXMFtiKJfdOsZxm8q0qfM
+X-Gm-Message-State: AOJu0Yx7ItFmmNTHNxGNTaBg3HyZL7+L4elz/KxTLJpK1/am34toBaid
+	y0bP3FB0yxr2sZ2+mr5SCWs7/HgBzxXiXwmTb4sA4K5zpTPRpMtVNadQ9ekOxrVe78cgJMCuAEN
+	+YuvopQ==
+X-Google-Smtp-Source: AGHT+IFedUSNuj1+/NjVNzWmBLrNNUJXQGz3zzDVz1qk4xmVynmP2R+kcPU64gSIBcDqL9tbApQXVg==
+X-Received: by 2002:a17:906:329a:b0:a72:6442:d53a with SMTP id a640c23a62f3a-a751388ed48mr600131766b.9.1719952986060;
+        Tue, 02 Jul 2024 13:43:06 -0700 (PDT)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72aaf651d5sm455615466b.90.2024.07.02.13.43.05
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Jul 2024 13:43:05 -0700 (PDT)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a729d9d7086so897779966b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 13:43:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWX1Q3J/1c6OgIvHvAjvzSYfJehsha7J6x4/PTmiGCaONSt5Yrk0zz+mD6fl0xapiRW/AIntPZUfgITCcCKSLNaYkGLYY61O/dB4pfn
+X-Received: by 2002:a17:906:eb4c:b0:a6f:935b:8777 with SMTP id
+ a640c23a62f3a-a72aefa5ab3mr919607766b.25.1719952985057; Tue, 02 Jul 2024
+ 13:43:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] sched_ext: Add cpuperf support
-To: Tejun Heo <tj@kernel.org>
-Cc: rafael@kernel.org, viresh.kumar@linaro.org, linux-pm@vger.kernel.org,
- void@manifault.com, linux-kernel@vger.kernel.org, kernel-team@meta.com,
- mingo@redhat.com, peterz@infradead.org, David Vernet <dvernet@meta.com>,
- "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-References: <20240619031250.2936087-1-tj@kernel.org>
- <20240619031250.2936087-3-tj@kernel.org>
- <63c76af4-6451-4d6a-8aeb-0bc4812c4101@arm.com>
- <ZoQs384bAMuaeDEs@slm.duckdns.org>
- <940a41d0-2660-4a7a-ad07-581b3ac24cca@arm.com>
- <ZoQ_XuXn1Y2Kp3Ba@slm.duckdns.org>
-Content-Language: en-US
-From: Hongyan Xia <hongyan.xia2@arm.com>
-In-Reply-To: <ZoQ_XuXn1Y2Kp3Ba@slm.duckdns.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <202406270912.633e6c61-oliver.sang@intel.com> <lv7ykdnn2nrci3orajf7ev64afxqdw2d65bcpu2mfaqbkvv4ke@hzxat7utjnvx>
+ <vgg45kxk2fiyznm44w2saz3qjiwrjp3spvpswsl4ovd2jl5c5g@54dlbd4kdlh4>
+ <CAHk-=wgnDSS7yqNbQQ9R6Zt7gzg6SKs6myW1AfkvhApXKgUg4A@mail.gmail.com>
+ <CAGudoHGuTP-nv=zwXdQs38OEqb=BD=i-vA-9xjZ0UOyvWuXP_w@mail.gmail.com>
+ <CAHk-=wgVzKtRnvDXAzueJTbgfo1o12Lw6DH97PzRe1cGA_b1oA@mail.gmail.com>
+ <CAGudoHH_z1a6MX8Z8Cqbz-jDTUoAjoxdV9KrQ6yvUkNszXO5aw@mail.gmail.com>
+ <CAGudoHHg-T+ZOTm0fSpW0Hztfxn=fpfnksz5Q3=3YeCeEPo7LQ@mail.gmail.com>
+ <CAHk-=wiBGSLNW6GGbnec-dCbn0kWvD+OXAa5VNXPBKLXYy5KOQ@mail.gmail.com> <3g3arsrwnyvv562v2rsfv2ms4ht4mk45vwdkvssxkrjhfjtpdz@umyx5tl2du7o>
+In-Reply-To: <3g3arsrwnyvv562v2rsfv2ms4ht4mk45vwdkvssxkrjhfjtpdz@umyx5tl2du7o>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 2 Jul 2024 13:42:48 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg6e8QMaBOyFaGon7pik_C1COrkmEz37mtUqpBoq=R44w@mail.gmail.com>
+Message-ID: <CAHk-=wg6e8QMaBOyFaGon7pik_C1COrkmEz37mtUqpBoq=R44w@mail.gmail.com>
+Subject: Re: [linux-next:master] [lockref] d042dae6ad: unixbench.throughput
+ -33.7% regression
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev, 
+	lkp@intel.com, Linux Memory Management List <linux-mm@kvack.org>, linux-kernel@vger.kernel.org, 
+	ying.huang@intel.com, feng.tang@intel.com, fengwei.yin@intel.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 02/07/2024 18:56, Tejun Heo wrote:
-> Hello,
-> 
-> So, maybe something like this. It's not the prettiest but avoids adding
-> indirect calls to fair and rt while allowing sched_ext to report what the
-> BPF scheduler wants. Only compile tested. Would something like this work for
-> the use cases you have on mind?
-> 
-> Thanks.
-> 
-> Index: work/kernel/sched/core.c
-> ===================================================================
-> --- work.orig/kernel/sched/core.c
-> +++ work/kernel/sched/core.c
-> @@ -1671,6 +1671,20 @@ static inline void uclamp_rq_dec_id(stru
->   	}
->   }
->   
-> +bool sched_uclamp_enabled(void)
-> +{
-> +	return true;
-> +}
-> +
-> +static bool class_supports_uclamp(const struct sched_class *class)
-> +{
-> +	if (likely(class->uclamp_enabled == sched_uclamp_enabled))
-> +		return true;
-> +	if (!class->uclamp_enabled)
-> +		return false;
-> +	return class->uclamp_enabled();
-> +}
-> +
->   static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
->   {
->   	enum uclamp_id clamp_id;
-> @@ -1684,7 +1698,7 @@ static inline void uclamp_rq_inc(struct
->   	if (!static_branch_unlikely(&sched_uclamp_used))
->   		return;
->   
-> -	if (unlikely(!p->sched_class->uclamp_enabled))
-> +	if (class_supports_uclamp(p->sched_class))
->   		return;
->   
->   	for_each_clamp_id(clamp_id)
-> @@ -1708,7 +1722,7 @@ static inline void uclamp_rq_dec(struct
->   	if (!static_branch_unlikely(&sched_uclamp_used))
->   		return;
->   
-> -	if (unlikely(!p->sched_class->uclamp_enabled))
-> +	if (class_supports_uclamp(p->sched_class))
->   		return;
->   
->   	for_each_clamp_id(clamp_id)
-> Index: work/kernel/sched/ext.c
-> ===================================================================
-> --- work.orig/kernel/sched/ext.c
-> +++ work/kernel/sched/ext.c
-> @@ -116,10 +116,17 @@ enum scx_ops_flags {
->   	 */
->   	SCX_OPS_SWITCH_PARTIAL	= 1LLU << 3,
->   
-> +	/*
-> +	 * Disable built-in uclamp support. Can be useful when the BPF scheduler
-> +	 * wants to implement custom uclamp support.
-> +	 */
-> +	SCX_OPS_DISABLE_UCLAMP	= 1LLU << 4,
-> +
->   	SCX_OPS_ALL_FLAGS	= SCX_OPS_KEEP_BUILTIN_IDLE |
->   				  SCX_OPS_ENQ_LAST |
->   				  SCX_OPS_ENQ_EXITING |
-> -				  SCX_OPS_SWITCH_PARTIAL,
-> +				  SCX_OPS_SWITCH_PARTIAL |
-> +				  SCX_OPS_DISABLE_UCLAMP,
->   };
->   
->   /* argument container for ops.init_task() */
-> @@ -3437,6 +3444,13 @@ static void switched_from_scx(struct rq
->   static void wakeup_preempt_scx(struct rq *rq, struct task_struct *p,int wake_flags) {}
->   static void switched_to_scx(struct rq *rq, struct task_struct *p) {}
->   
-> +#ifdef CONFIG_UCLAMP_TASK
-> +static bool uclamp_enabled_scx(void)
-> +{
-> +	return !(scx_ops.flags & SCX_OPS_DISABLE_UCLAMP);
-> +}
-> +#endif
-> +
->   int scx_check_setscheduler(struct task_struct *p, int policy)
->   {
->   	lockdep_assert_rq_held(task_rq(p));
-> @@ -3522,7 +3536,7 @@ DEFINE_SCHED_CLASS(ext) = {
->   	.update_curr		= update_curr_scx,
->   
->   #ifdef CONFIG_UCLAMP_TASK
-> -	.uclamp_enabled		= 1,
-> +	.uclamp_enabled		= uclamp_enabled_scx,
->   #endif
->   };
->   
-> Index: work/kernel/sched/fair.c
-> ===================================================================
-> --- work.orig/kernel/sched/fair.c
-> +++ work/kernel/sched/fair.c
-> @@ -13228,9 +13228,7 @@ DEFINE_SCHED_CLASS(fair) = {
->   	.task_is_throttled	= task_is_throttled_fair,
->   #endif
->   
-> -#ifdef CONFIG_UCLAMP_TASK
-> -	.uclamp_enabled		= 1,
-> -#endif
-> +	SCHED_CLASS_UCLAMP_ENABLED
->   };
->   
->   #ifdef CONFIG_SCHED_DEBUG
-> Index: work/kernel/sched/rt.c
-> ===================================================================
-> --- work.orig/kernel/sched/rt.c
-> +++ work/kernel/sched/rt.c
-> @@ -2681,9 +2681,7 @@ DEFINE_SCHED_CLASS(rt) = {
->   	.task_is_throttled	= task_is_throttled_rt,
->   #endif
->   
-> -#ifdef CONFIG_UCLAMP_TASK
-> -	.uclamp_enabled		= 1,
-> -#endif
-> +	SCHED_CLASS_UCLAMP_ENABLED
->   };
->   
->   #ifdef CONFIG_RT_GROUP_SCHED
-> Index: work/kernel/sched/sched.h
-> ===================================================================
-> --- work.orig/kernel/sched/sched.h
-> +++ work/kernel/sched/sched.h
-> @@ -2339,11 +2339,6 @@ struct affinity_context {
->   extern s64 update_curr_common(struct rq *rq);
->   
->   struct sched_class {
-> -
-> -#ifdef CONFIG_UCLAMP_TASK
-> -	int uclamp_enabled;
-> -#endif
-> -
->   	void (*enqueue_task) (struct rq *rq, struct task_struct *p, int flags);
->   	void (*dequeue_task) (struct rq *rq, struct task_struct *p, int flags);
->   	void (*yield_task)   (struct rq *rq);
-> @@ -2405,8 +2400,21 @@ struct sched_class {
->   #ifdef CONFIG_SCHED_CORE
->   	int (*task_is_throttled)(struct task_struct *p, int cpu);
->   #endif
-> +
-> +#ifdef CONFIG_UCLAMP_TASK
-> +	bool (*uclamp_enabled)(void);
-> +#endif
->   };
->   
-> +#ifdef CONFIG_UCLAMP_TASK
-> +bool sched_uclamp_enabled(void);
-> +
-> +#define SCHED_CLASS_UCLAMP_ENABLED	\
-> +	.uclamp_enabled = sched_uclamp_enabled,
-> +#else
-> +#define SCHED_CLASS_UCLAMP_ENABLED
-> +#endif
-> +
->   static inline void put_prev_task(struct rq *rq, struct task_struct *prev)
->   {
->   	WARN_ON_ONCE(rq->curr != prev);
+On Tue, 2 Jul 2024 at 13:33, Mateusz Guzik <mjguzik@gmail.com> wrote:
+>
+> If you are politely by lkml standards suggesting I should probably drop
+> the idea due to unforseen complexities
 
-Looks good to me!
+Oh, absolutely not. I'd love to see how nasty - or not nasty - the
+patch would end up being. I think it would be very interesting.
 
-Actually, if we are okay with changing the sched_class struct and 
-touching the code of other classes, I wonder if a cleaner solution is 
-just to completely remove sched_class->uclamp_enabled and let each class 
-decide what to do in enqueue and dequeue, so instead of
+I'm just explaining why _I_ never got around to it.
 
-	uclamp_inc/dec();
-	p->sched_class->enqueue/dequeue_task();
+I do think that the 'stat()' family of syscalls are some of the most
+critical system calls out there. And while I suspect the benchmarks
+that stat the same file over and over in parallel are worthless, if we
+can do 'stat()' without ever even dirtying the dentry at all, that
+would be absolutely lovely.
 
-we can just
-
-	p->sched_class->enqueue/dequeue_task();
-		do_uclamp_inside_each_class();
-
-and we export uclamp_inc/dec() functions from core.c to RT, fair and 
-ext. For RT and fair, just
-
-	enqueue/dequeue_task_fair/rt();
-		uclamp_inc/dec();
-
-For ext, maybe expose bpf_uclamp_inc/dec() to the custom scheduler. If a 
-scheduler wants to reuse the current uclamp implementation, just call 
-these. If not, skip them and implement its own.
+           Linus
 
