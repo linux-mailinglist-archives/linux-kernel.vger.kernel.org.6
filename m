@@ -1,108 +1,116 @@
-Return-Path: <linux-kernel+bounces-238051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 115349242B1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:44:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C853B9242C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:46:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 986D0B26BA7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:44:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 855CC289A61
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5061BC08D;
-	Tue,  2 Jul 2024 15:44:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCEA11BC07B;
+	Tue,  2 Jul 2024 15:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eoPr7mrI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="nbWt8gbR"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB51C14D42C;
-	Tue,  2 Jul 2024 15:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B007D266;
+	Tue,  2 Jul 2024 15:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719935062; cv=none; b=Svb2Q8/Txs3xlYCugZPUG97mzgt7LI6ARgNZAxsAeZYWrWVcANrS/FUQKHFI+op3ksRGMRPdpBKrG/2fhfzDgIQLT/wmexQa+pOIQ/agDaxz7i4R3Cb5iZYVf+CcGQ7rGCDxxamw8KZ7VmpybUTJXTE7jyeyzN+CFdwGls/z7Fs=
+	t=1719935182; cv=none; b=jmUS/NB4H0JBJbdhdhF4l4oHLPasQ1RkWSzECYKqBDV5K7Xk9s69za6z0ItS5wlQvXgkmz5CtWIz3CMpUolxeRUFTq2eM2IXhknyhtIO0whGw7iuQ0vAXIWFtxZWk7vMpftopr8e+MeI5k2XwXRdxlo/avpPiZWhN41bQIM0T6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719935062; c=relaxed/simple;
-	bh=v1t1MaxBQImoIXMUPjRrALLxH2leye75HXLGWWUFfKg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aQaGoSYEJVa5PlmbSCHa1wsqjmZvTFPr1FNb2XLfqkKXnMnKnnSjhPL911qu2P9wkqRgJa0VMWijPCEvexWbaPYMGMSiZXmiO61IBbiHFHScNqIOn0M1PT1Q6uADCWqQDASbM62NnSWmrq+xSy7rXOnfZ9Fl6M8NFLPJ9qc2hrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eoPr7mrI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43BC0C2BD10;
-	Tue,  2 Jul 2024 15:44:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719935062;
-	bh=v1t1MaxBQImoIXMUPjRrALLxH2leye75HXLGWWUFfKg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eoPr7mrIRVJM8iEaeui0mZbM3fDnT8SdwrLSTWjW0PiG2xDM5sNxeVaUU6hCqYahu
-	 VPQcXNCNvg5khueBu7asJhJmnnOTFoRyEWgIT2HERr1QgD9lK0g2hVP6YkUCo83rJr
-	 9I+Rx5Mf0VjuFAiA08CwhLp9Zv9zhxPw0S4TyonHUb0iC53DblnqHdewTr72gZpv1k
-	 u3TB5x9/e1ZTV08qPfIKs3/8Uq0t7WWcFpAJ+T3P/S5XEHrJU3rBfq6SMs+r68qdLL
-	 tw+qNz2vnbGiJ/qGMffJsXmQLQfvCMOwQNQVZgaEfncUNLMlxcTSTtr2hP2OFDk2u/
-	 92jalahj1ULGw==
-Date: Tue, 2 Jul 2024 16:44:17 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Alex Vdovydchenko <keromvp@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sean Anderson <sean.anderson@linux.dev>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
-	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-i2c@vger.kernel.org, Alex Vdovydchenko <xzeol@yahoo.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: hwmon: Add MPS mp5920
-Message-ID: <20240702-hacked-uncorrupt-f47bdc0ca8e3@spud>
-References: <20240701145603.1507516-1-xzeol@yahoo.com>
- <20240701145603.1507516-2-xzeol@yahoo.com>
- <20240701-mug-scuttle-dfe4c84b4e0b@spud>
- <fcd91462-f8bb-4713-afc1-ba9473405396@kernel.org>
+	s=arc-20240116; t=1719935182; c=relaxed/simple;
+	bh=0ibR360hPUqQ7hgWtx3NG9BBOAI0tL4aSNSl8jIXVrg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=kVc2c+vkIgs0z765dO72ni1C51shC4MP0XUwaVxjOK9IXpHBQC+pD7B5mrpfU82Hel5o7uVJIyiDSTi/BBgcW71SWZ6KBZu+AOOo5Tj9WtJQRJl7+c8x2FbqStfjfCHLiysIqDTTc0nf3TPIwAR8YL0NwuxMykNtEqSScIqtqU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=nbWt8gbR; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 16644FF805;
+	Tue,  2 Jul 2024 15:46:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1719935172;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GXc+8fEuYxBnCX11OGCVRsvxNL2Mw6mHKpkE9BRDssM=;
+	b=nbWt8gbREQMCfAcf84382i0POulvVG2BhOSx/zeMZfMFN87iTQxOcuZYtMtDiGLGFZhOVk
+	Xxp8eT4x07nnhud4srCWWMZ/nd2xNVJ8YVAL+VkRkKYJQQmXj51T1ipbRMaOSau/stqZ8P
+	pEE6BFxwH601uiBtLS/vc/6/Glie8cYwHYKnwplFxvI9Qat8STAnKtj0LIjN4d+0TZbeK6
+	WJDIrxwin1CKcBt32szaooHJeIX+aKpmRwwT9HNFbgJFPnxKjfKC5PE9K2gOvWJHQYxuWA
+	MPVf2DnKhBJvBu18vfYJerLtZFq8azVk8n3oBETGRLpyVleNueaSzF8gta7nFA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="cnwz3vA9WW8lYRuE"
-Content-Disposition: inline
-In-Reply-To: <fcd91462-f8bb-4713-afc1-ba9473405396@kernel.org>
-
-
---cnwz3vA9WW8lYRuE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 02 Jul 2024 17:46:11 +0200
+Message-Id: <D2F64U1H2P8J.16H1SVRMYFROM@bootlin.com>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH 2/2] pinctrl: eyeq5: add platform driver
+Cc: <oe-kbuild-all@lists.linux.dev>, <linux-gpio@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Vladimir
+ Kondratiev" <vladimir.kondratiev@mobileye.com>,
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>
+To: "kernel test robot" <lkp@intel.com>, "Linus Walleij"
+ <linus.walleij@linaro.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240628-mbly-pinctrl-v1-2-c878192d6b0a@bootlin.com>
+ <202407020641.JqMWvOOu-lkp@intel.com>
+In-Reply-To: <202407020641.JqMWvOOu-lkp@intel.com>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On Tue, Jul 02, 2024 at 03:10:38PM +0200, Krzysztof Kozlowski wrote:
-> On 01/07/2024 17:47, Conor Dooley wrote:
-> > On Mon, Jul 01, 2024 at 05:56:00PM +0300, Alex Vdovydchenko wrote:
-> >> Add support for MPS mp5920 controller
-> >>
-> >> Signed-off-by: Alex Vdovydchenko <xzeol@yahoo.com>
-> >=20
-> > Missing an ack from v2:
-> > https://lore.kernel.org/all/20240627-swivel-grower-002af077b654@spud/
-> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
->=20
-> That's third time you give the same ack. I suggest give up...
+Hello,
 
+On Tue Jul 2, 2024 at 12:49 AM CEST, kernel test robot wrote:
+> kernel test robot noticed the following build errors:
+>
+> [auto build test ERROR on f2661062f16b2de5d7b6a5c42a9a5c96326b8454]
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Th-o-Lebrun/Revert=
+-dt-bindings-pinctrl-mobileye-eyeq5-pinctrl-add-bindings/20240630-070720
+> base:   f2661062f16b2de5d7b6a5c42a9a5c96326b8454
+> patch link:    https://lore.kernel.org/r/20240628-mbly-pinctrl-v1-2-c8781=
+92d6b0a%40bootlin.com
+> patch subject: [PATCH 2/2] pinctrl: eyeq5: add platform driver
+> config: m68k-randconfig-r131-20240701
+> compiler: m68k-linux-gcc (GCC) 13.2.0
+> reproduce:
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202407020641.JqMWvOOu-lkp=
+@intel.com/
+>
+> All errors (new ones prefixed by >>):
+>
+>    m68k-linux-ld: drivers/pinctrl/pinctrl-eyeq5.o: in function `pinconf_g=
+eneric_dt_node_to_map_pin':
+> >> pinctrl-eyeq5.c:(.text+0xe0): undefined reference to `pinconf_generic_=
+dt_node_to_map'
 
-Yeah, I guess. It's just not really any slower to re-ack than it is to
-complain about the ack being missing.
+Argh yes, pinconf_generic_dt_node_to_map() requires CONFIG_OF. I'll add
+that to the Kconfig entry in the next revision, as a "depends on OF"
+similar to other pinctrl driver config options.
 
---cnwz3vA9WW8lYRuE
-Content-Type: application/pgp-signature; name="signature.asc"
+Regards,
 
------BEGIN PGP SIGNATURE-----
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoQgUQAKCRB4tDGHoIJi
-0jjwAP9FGIR2sKM6PEyujeg3Aa1yFh8BuTEEcQ6LkcO2cVVsBwD/Q2bFhdQ4M8mC
-Mf8Js+efMEtSMDxrvPHMe7pqcXq+2wg=
-=REgq
------END PGP SIGNATURE-----
-
---cnwz3vA9WW8lYRuE--
 
