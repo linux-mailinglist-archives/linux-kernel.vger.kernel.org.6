@@ -1,533 +1,102 @@
-Return-Path: <linux-kernel+bounces-238231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 806D492473E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:23:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48CE2924742
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:25:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32684282ECF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:23:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 755F81C22AE6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:25:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E8FF1BC074;
-	Tue,  2 Jul 2024 18:23:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E5891C9EAA;
+	Tue,  2 Jul 2024 18:24:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SNl0n+xq"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f7R3Samg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79361DFFC;
-	Tue,  2 Jul 2024 18:23:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA9C1DFFC;
+	Tue,  2 Jul 2024 18:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719944609; cv=none; b=QEw8XK3P1D9ihFxGr0i/Se01unYTg3ePWARJyguNL108euX7GnqTKoq8qmyalTb7Rezvog8VLXvosU9m5whTJ5tYM/gOTmU/FmAnFBB9YLohenB2NYsbFOk7jckik7eUX1xwAs94oE85frJsRPCPksfddNWRgxkpBohknM/tId0=
+	t=1719944696; cv=none; b=Oscs/Pn2z/JpfDYQfs09vdSeGaP71Uxse/hpkq2HUhvcegXaQUF5vmQSOoza4Q77jBoXwLHnK+67lqZzdRlVoUGh/4ZswsL/G3BzBSOmUOuFWEiveLPufGJxQusQ/ujURYvArSSJS3Ecrz5nNQ1gPcYWEMcPyE8sbt/2IBMST3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719944609; c=relaxed/simple;
-	bh=6boExFlNIjmJeIJNdrEufSNdQ5RH225E5h8FFIs5LGY=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=TSTqxb1MXn01/iDxkMnwlE+YYK3MlkfMn+B+J1RFlx5KfoRAxyqbpya/Ly28PpYf+ZquTG/pkmI9br3UggmhXhEvrPs2+I+g0MZiYcctu3SxYaMssjIMD/8wkcR+shZQ3K606q42V+ph5aaKFJ62WNSF2SZAwZ6fr689fkdA9Pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SNl0n+xq; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a754746f3easo106475266b.0;
-        Tue, 02 Jul 2024 11:23:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719944605; x=1720549405; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DQKTBwRoIZpnlsNqAZnKnJg720WuqQOhmxvlfHuZrf8=;
-        b=SNl0n+xqawAiOJuEtKDp2lAqgrDUNhSqfAjmT1LpYCk7HI87g5YJ/9JqqFkpQuZx+g
-         mVIlbrUG08WqExLXjhVn6CmRfyKjeMoMIvMeJYvq3ycYLO2UUBshSWXfUeFEZjod4Imb
-         LhpOE4CBTs0ZPWI+9IEYzS3WVbHMt9XCnyFE80Azq+960cGE6QeXPzG4WwQlBqNKvmMl
-         HYzVw722G5vmX8I0NSnf1lnkwbv3NrPPpFGMyTbEoNbGqsNdZN/2TJDngGvAHPw0HFXk
-         dSt5vzvSXNSkNYuP2Ivy51JK1889LjeW2g0PcRQP1vCGIIEkn42+akuo5202dthZeE+B
-         dGGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719944605; x=1720549405;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=DQKTBwRoIZpnlsNqAZnKnJg720WuqQOhmxvlfHuZrf8=;
-        b=jUmt37GoYZ+zVi7KdTqrcD5KT0TcFJ6mQLsugIv6kL6TImqZe86DfSzcz337VeCCDk
-         Du1PCuiBcdgVxJKUc5VpkfVQIuVxXdqmHViWE5adZJ/zC15BMzXU4/Ie+d2JeYswmLbl
-         ix19MyKGYu+bzrDyyh7uN9Iy/2Yb173xpPacfbRzDIaP3QiY/ToDYYZ9RxziGl2h/Zvn
-         tIYQ8OHjIMJcetcUfr3U/uyEYP+FdRzFjdMLzT3YRZLS0T3CO2zhMnKF7soSChgRS/wL
-         snRDC4qlPctGXVDFiRUqlxP9fbQjwouBQAcjL8l98tqDmxbZ41viiYwS89Fuqt7VcPWL
-         wGqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWON+L3pKW3FIqZYFLCD2pYlOZiZdyXmbSvZo0fuG4l/9AKsgwxGlPCStEhiXRuAAMx7s2OkSFRFSpHw6CjNXpXG6+ltnH4q62tZMbYpFRhY2TISvG5pB4MjYueG+EBjSkjTkXTqM8KxfE=
-X-Gm-Message-State: AOJu0YwlOXaeSt2Vxk+4VJYgINjt+6XAPCgDL2rfaHXInPF1eG/7VpQd
-	XPVkzY+YtpCADzsXJsGNaVrCRMP6h9LtHX10yBwDO+kHNNHCKIDI
-X-Google-Smtp-Source: AGHT+IFDIlPA4uU/SMPqUkQiUtLcEE6fP2T4f6JXal7SqszJNzbyraiAqdyG79QAw6NDuVkWUAWsTA==
-X-Received: by 2002:a17:906:4788:b0:a6f:ab9c:7779 with SMTP id a640c23a62f3a-a7514468055mr931923266b.9.1719944605030;
-        Tue, 02 Jul 2024 11:23:25 -0700 (PDT)
-Received: from ?IPV6:2a02:a449:4071:1:32d0:42ff:fe10:6983? (2a02-a449-4071-1-32d0-42ff-fe10-6983.fixed6.kpn.net. [2a02:a449:4071:1:32d0:42ff:fe10:6983])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab08f74dsm440755466b.169.2024.07.02.11.23.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jul 2024 11:23:24 -0700 (PDT)
-Message-ID: <3bd738a7-379f-4b93-befd-e6ee96e802b5@gmail.com>
-Date: Tue, 2 Jul 2024 20:23:24 +0200
+	s=arc-20240116; t=1719944696; c=relaxed/simple;
+	bh=FJQ3lZqtw652OWICIXnNWRgnwvihqoWvwkWMQQbYgSw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZrGrYo08oyc0unQ/plrWKe4EdCsUAi23LfUbdnjiWGcF3+zho6o31v0zISWj2LZ/PCeRoWD71a47YULecVej+jfLb7YZaygJ1XwQAdUHM1Ig+teOnzo/cL8mTMXFApQ2sBWM/SQg47IZF9u0lmsmf3O6hbYc3iypegY/Xr1zP50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f7R3Samg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B602C116B1;
+	Tue,  2 Jul 2024 18:24:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719944696;
+	bh=FJQ3lZqtw652OWICIXnNWRgnwvihqoWvwkWMQQbYgSw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=f7R3Samgpsbh/EjNVZP6Wzi0JS8JnZj/1VHmeFlJMxwnDpg8SOsQv9csJdvcQtFpA
+	 Wmmp06Duyp1Jm5gULYiGPz4ViGeZ5UiHcnGPEfXXdHapxl0SkDMNfVhS4XBVJNeqYu
+	 kII2PYa6b4kItcvgr5SCglTexXMMaKTtQcXMv2TBvHa5pIEYgWzAv2lpk02sXeZepn
+	 YuvVrhoarbEMecgpdsVUVgn8wEuqgFmbXIvMu4/Xc4ma6wEIY0hnWfEkxzwm5dMWHY
+	 ppZBIWjQRnBFqg5XF6xAJSNZzlqfLe/e69OWVTCIj2WmsuHb4iU0cWP7d9FwvOqSlF
+	 iYayGeQ22tGww==
+Date: Tue, 2 Jul 2024 11:24:54 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Ilya Maximets <i.maximets@ovn.org>
+Cc: Simon Horman <horms@kernel.org>, =?UTF-8?B?QWRyacOhbg==?= Moreno
+ <amorenoz@redhat.com>, Aaron Conole <aconole@redhat.com>,
+ netdev@vger.kernel.org, echaudro@redhat.com, dev@openvswitch.org, Donald
+ Hunter <donald.hunter@gmail.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Pravin
+ B Shelar <pshelar@ovn.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v7 05/10] net: openvswitch: add psample action
+Message-ID: <20240702112454.408757f7@kernel.org>
+In-Reply-To: <a6728234-b453-4404-8d4f-eed64293a5f6@ovn.org>
+References: <20240630195740.1469727-1-amorenoz@redhat.com>
+	<20240630195740.1469727-6-amorenoz@redhat.com>
+	<f7to77hvunj.fsf@redhat.com>
+	<CAG=2xmOaMy2DVNfTOkh1sK+NR_gz+bXvKLg9YSp1t_K+sEUzJg@mail.gmail.com>
+	<20240702093726.GD598357@kernel.org>
+	<447c0d2a-f7cf-4c34-b5d5-96ca6fffa6b0@ovn.org>
+	<20240702110645.1c6b5b1a@kernel.org>
+	<a6728234-b453-4404-8d4f-eed64293a5f6@ovn.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Johan Jonker <jbx6244@gmail.com>
-Subject: [PATCH v8] drm/rockchip: rk3066_hdmi: add sound support
-To: heiko@sntech.de
-Cc: hjc@rock-chips.com, andy.yan@rock-chips.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, daniel@ffwll.ch, lgirdwood@gmail.com, broonie@kernel.org,
- linux-sound@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Add sound support to the RK3066 HDMI driver.
-The HDMI TX audio source is connected to I2S_8CH.
+On Tue, 2 Jul 2024 20:16:51 +0200 Ilya Maximets wrote:
+> On 7/2/24 20:06, Jakub Kicinski wrote:
+> > On Tue, 2 Jul 2024 11:53:01 +0200 Ilya Maximets wrote:  
+> >> Or create a simple static function and mark all the arguments as unused,
+> >> which kind of compliant to the coding style, but the least pretty.  
+> > 
+> > To be clear - kernel explicitly disables warnings about unused
+> > arguments. Unused arguments are not a concern.  
+> 
+> OK.  Good to know.
+> 
+> Though I think, the '12) Macros, Enums and RTL' section of the
+> coding style document needs some rephrasing in that case.
 
-Signed-off-by: Zheng Yang <zhengyang@rock-chips.com>
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
----
+Do you mean something like:
 
-Changed V8:
-  return -EPROBE_DEFER as early as possible
-  move rk3066_hdmi_audio_codec_init() function after rk3066_hdmi_register()
-  restyle
-
-Changed V7:
-  rebase
----
- drivers/gpu/drm/rockchip/Kconfig       |   2 +
- drivers/gpu/drm/rockchip/rk3066_hdmi.c | 296 +++++++++++++++++++++++--
- 2 files changed, 283 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/rockchip/Kconfig
-index 1bf3e2829cd0..a32ee558408c 100644
---- a/drivers/gpu/drm/rockchip/Kconfig
-+++ b/drivers/gpu/drm/rockchip/Kconfig
-@@ -102,6 +102,8 @@ config ROCKCHIP_RGB
- config ROCKCHIP_RK3066_HDMI
- 	bool "Rockchip specific extensions for RK3066 HDMI"
- 	depends on DRM_ROCKCHIP
-+	select SND_SOC_HDMI_CODEC if SND_SOC
-+	select SND_SOC_ROCKCHIP_I2S if SND_SOC
- 	help
- 	  This selects support for Rockchip SoC specific extensions
- 	  for the RK3066 HDMI driver. If you want to enable
-diff --git a/drivers/gpu/drm/rockchip/rk3066_hdmi.c b/drivers/gpu/drm/rockchip/rk3066_hdmi.c
-index 784de990da1b..296094a3c405 100644
---- a/drivers/gpu/drm/rockchip/rk3066_hdmi.c
-+++ b/drivers/gpu/drm/rockchip/rk3066_hdmi.c
-@@ -15,12 +15,20 @@
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-
-+#include <sound/hdmi-codec.h>
-+
- #include "rk3066_hdmi.h"
-
- #include "rockchip_drm_drv.h"
-
- #define DEFAULT_PLLA_RATE 30000000
-
-+struct audio_info {
-+	int channels;
-+	int sample_rate;
-+	int sample_width;
-+};
-+
- struct hdmi_data_info {
- 	int vic; /* The CEA Video ID (VIC) of the current drm display mode. */
- 	unsigned int enc_out_format;
-@@ -40,7 +48,6 @@ struct rk3066_hdmi_i2c {
-
- struct rk3066_hdmi {
- 	struct device *dev;
--	struct drm_device *drm_dev;
- 	struct regmap *grf_regmap;
- 	int irq;
- 	struct clk *hclk;
-@@ -54,9 +61,15 @@ struct rk3066_hdmi {
-
- 	unsigned int tmdsclk;
-
-+	struct platform_device *audio_pdev;
-+	struct audio_info audio;
-+	bool audio_enable;
-+
- 	struct hdmi_data_info hdmi_data;
- };
-
-+static int rk3066_hdmi_config_audio(struct rk3066_hdmi *hdmi, struct audio_info *audio);
-+
- static struct rk3066_hdmi *encoder_to_rk3066_hdmi(struct drm_encoder *encoder)
- {
- 	struct rockchip_encoder *rkencoder = to_rockchip_encoder(encoder);
-@@ -214,6 +227,23 @@ static int rk3066_hdmi_config_avi(struct rk3066_hdmi *hdmi,
- 					HDMI_INFOFRAME_AVI, 0, 0, 0);
- }
-
-+static int rk3066_hdmi_config_aai(struct rk3066_hdmi *hdmi,
-+				  struct audio_info *audio)
-+{
-+	union hdmi_infoframe frame;
-+	int rc;
-+
-+	rc = hdmi_audio_infoframe_init(&frame.audio);
-+
-+	frame.audio.coding_type = HDMI_AUDIO_CODING_TYPE_STREAM;
-+	frame.audio.sample_frequency = HDMI_AUDIO_SAMPLE_FREQUENCY_STREAM;
-+	frame.audio.sample_size = HDMI_AUDIO_SAMPLE_SIZE_STREAM;
-+	frame.audio.channels = hdmi->audio.channels;
-+
-+	return rk3066_hdmi_upload_frame(hdmi, rc, &frame,
-+					HDMI_INFOFRAME_AAI, 0, 0, 0);
-+}
-+
- static int rk3066_hdmi_config_video_timing(struct rk3066_hdmi *hdmi,
- 					   struct drm_display_mode *mode)
- {
-@@ -364,6 +394,7 @@ static int rk3066_hdmi_setup(struct rk3066_hdmi *hdmi,
- 		hdmi_modb(hdmi, HDMI_HDCP_CTRL, HDMI_VIDEO_MODE_MASK,
- 			  HDMI_VIDEO_MODE_HDMI);
- 		rk3066_hdmi_config_avi(hdmi, mode);
-+		rk3066_hdmi_config_audio(hdmi, &hdmi->audio);
- 	} else {
- 		hdmi_modb(hdmi, HDMI_HDCP_CTRL, HDMI_VIDEO_MODE_MASK, 0);
- 	}
-@@ -380,9 +411,20 @@ static int rk3066_hdmi_setup(struct rk3066_hdmi *hdmi,
- 	 */
- 	rk3066_hdmi_i2c_init(hdmi);
-
--	/* Unmute video output. */
-+	/* Unmute video and audio output. */
- 	hdmi_modb(hdmi, HDMI_VIDEO_CTRL2,
- 		  HDMI_VIDEO_AUDIO_DISABLE_MASK, HDMI_AUDIO_DISABLE);
-+	if (hdmi->audio_enable) {
-+		hdmi_modb(hdmi, HDMI_VIDEO_CTRL2, HDMI_AUDIO_DISABLE, 0);
-+		/* Reset audio capture logic. */
-+		hdmi_modb(hdmi, HDMI_VIDEO_CTRL2,
-+			  HDMI_AUDIO_CP_LOGIC_RESET_MASK,
-+			  HDMI_AUDIO_CP_LOGIC_RESET);
-+		usleep_range(900, 1000);
-+		hdmi_modb(hdmi, HDMI_VIDEO_CTRL2,
-+			  HDMI_AUDIO_CP_LOGIC_RESET_MASK, 0);
-+	}
-+
- 	return 0;
- }
-
-@@ -431,6 +473,7 @@ static void rk3066_hdmi_encoder_disable(struct drm_encoder *encoder,
- 			  HDMI_AUDIO_CP_LOGIC_RESET);
- 		usleep_range(500, 510);
- 	}
-+
- 	rk3066_hdmi_set_power_mode(hdmi, HDMI_SYS_POWER_MODE_A);
- }
-
-@@ -534,23 +577,228 @@ struct drm_connector_helper_funcs rk3066_hdmi_connector_helper_funcs = {
- 	.best_encoder = rk3066_hdmi_connector_best_encoder,
- };
-
--static int
--rk3066_hdmi_register(struct drm_device *drm, struct rk3066_hdmi *hdmi)
-+static int rk3066_hdmi_config_audio(struct rk3066_hdmi *hdmi, struct audio_info *audio)
- {
--	struct drm_encoder *encoder = &hdmi->encoder.encoder;
--	struct device *dev = hdmi->dev;
-+	u32 rate, channel, word_length, N, CTS;
-+	u64 tmp;
-+
-+	if (audio->channels < 3)
-+		channel = HDMI_AUDIO_I2S_CHANNEL_1_2;
-+	else if (audio->channels < 5)
-+		channel = HDMI_AUDIO_I2S_CHANNEL_3_4;
-+	else if (audio->channels < 7)
-+		channel = HDMI_AUDIO_I2S_CHANNEL_5_6;
-+	else
-+		channel = HDMI_AUDIO_I2S_CHANNEL_7_8;
-+
-+	switch (audio->sample_rate) {
-+	case 32000:
-+		rate = HDMI_AUDIO_SAMPLE_FRE_32000;
-+		N = N_32K;
-+		break;
-+	case 44100:
-+		rate = HDMI_AUDIO_SAMPLE_FRE_44100;
-+		N = N_441K;
-+		break;
-+	case 48000:
-+		rate = HDMI_AUDIO_SAMPLE_FRE_48000;
-+		N = N_48K;
-+		break;
-+	case 88200:
-+		rate = HDMI_AUDIO_SAMPLE_FRE_88200;
-+		N = N_882K;
-+		break;
-+	case 96000:
-+		rate = HDMI_AUDIO_SAMPLE_FRE_96000;
-+		N = N_96K;
-+		break;
-+	case 176400:
-+		rate = HDMI_AUDIO_SAMPLE_FRE_176400;
-+		N = N_1764K;
-+		break;
-+	case 192000:
-+		rate = HDMI_AUDIO_SAMPLE_FRE_192000;
-+		N = N_192K;
-+		break;
-+	default:
-+		DRM_DEV_ERROR(hdmi->dev, "no support for sample rate %d\n",
-+			      audio->sample_rate);
-+		return -ENOENT;
-+	}
-
--	encoder->possible_crtcs =
--		drm_of_find_possible_crtcs(drm, dev->of_node);
-+	switch (audio->sample_width) {
-+	case 16:
-+		word_length = 0x02;
-+		break;
-+	case 20:
-+		word_length = 0x0a;
-+		break;
-+	case 24:
-+		word_length = 0x0b;
-+		break;
-+	default:
-+		DRM_DEV_ERROR(hdmi->dev, "no support for word length %d\n",
-+			      audio->sample_width);
-+		return -ENOENT;
-+	}
-+
-+	tmp = (u64)hdmi->tmdsclk * N;
-+	do_div(tmp, 128 * audio->sample_rate);
-+	CTS = tmp;
-+
-+	/* Set_audio source I2S. */
-+	hdmi_writeb(hdmi, HDMI_AUDIO_CTRL1, 0x00);
-+	hdmi_writeb(hdmi, HDMI_AUDIO_CTRL2, 0x40);
-+	hdmi_writeb(hdmi, HDMI_I2S_AUDIO_CTRL,
-+		    HDMI_AUDIO_I2S_FORMAT_STANDARD | channel);
-+	hdmi_writeb(hdmi, HDMI_I2S_SWAP, 0x00);
-+	hdmi_modb(hdmi, HDMI_AV_CTRL1, HDMI_AUDIO_SAMPLE_FRE_MASK, rate);
-+	hdmi_writeb(hdmi, HDMI_AUDIO_SRC_NUM_AND_LENGTH, word_length);
-+
-+	/* Set N value. */
-+	hdmi_modb(hdmi, HDMI_LR_SWAP_N3,
-+		  HDMI_AUDIO_N_19_16_MASK, (N >> 16) & 0x0F);
-+	hdmi_writeb(hdmi, HDMI_N2, (N >> 8) & 0xFF);
-+	hdmi_writeb(hdmi, HDMI_N1, N & 0xFF);
-+
-+	/* Set CTS value. */
-+	hdmi_writeb(hdmi, HDMI_CTS_EXT1, CTS & 0xff);
-+	hdmi_writeb(hdmi, HDMI_CTS_EXT2, (CTS >> 8) & 0xff);
-+	hdmi_writeb(hdmi, HDMI_CTS_EXT3, (CTS >> 16) & 0xff);
-+
-+	if (audio->channels > 2)
-+		hdmi_modb(hdmi, HDMI_LR_SWAP_N3,
-+			  HDMI_AUDIO_LR_SWAP_MASK,
-+			  HDMI_AUDIO_LR_SWAP_SUBPACKET1);
-+	rate = (~(rate >> 4)) & 0x0f;
-+	hdmi_writeb(hdmi, HDMI_AUDIO_STA_BIT_CTRL1, rate);
-+	hdmi_writeb(hdmi, HDMI_AUDIO_STA_BIT_CTRL2, 0);
-+
-+	return rk3066_hdmi_config_aai(hdmi, audio);
-+}
-+
-+static int rk3066_hdmi_audio_hw_params(struct device *dev, void *d,
-+				       struct hdmi_codec_daifmt *daifmt,
-+				       struct hdmi_codec_params *params)
-+{
-+	struct rk3066_hdmi *hdmi = dev_get_drvdata(dev);
-+	struct drm_display_info *display = &hdmi->connector.display_info;
-+
-+	if (!display->has_audio) {
-+		DRM_DEV_ERROR(hdmi->dev, "no audio support\n");
-+		return -ENODEV;
-+	}
-+
-+	if (!hdmi->encoder.encoder.crtc)
-+		return -ENODEV;
-+
-+	switch (daifmt->fmt) {
-+	case HDMI_I2S:
-+		break;
-+	default:
-+		DRM_DEV_ERROR(dev, "invalid format %d\n", daifmt->fmt);
-+		return -EINVAL;
-+	}
-+
-+	hdmi->audio.channels = params->channels;
-+	hdmi->audio.sample_rate = params->sample_rate;
-+	hdmi->audio.sample_width = params->sample_width;
-+
-+	return rk3066_hdmi_config_audio(hdmi, &hdmi->audio);
-+}
-+
-+static void rk3066_hdmi_audio_shutdown(struct device *dev, void *d)
-+{
-+	/* do nothing */
-+}
-+
-+static int rk3066_hdmi_audio_mute_stream(struct device *dev, void *d, bool mute, int direction)
-+{
-+	struct rk3066_hdmi *hdmi = dev_get_drvdata(dev);
-+	struct drm_display_info *display = &hdmi->connector.display_info;
-+
-+	if (!display->has_audio) {
-+		DRM_DEV_ERROR(hdmi->dev, "no audio support\n");
-+		return -ENODEV;
-+	}
-+
-+	hdmi->audio_enable = !mute;
-+
-+	if (mute)
-+		hdmi_modb(hdmi, HDMI_VIDEO_CTRL2,
-+			  HDMI_AUDIO_DISABLE, HDMI_AUDIO_DISABLE);
-+	else
-+		hdmi_modb(hdmi, HDMI_VIDEO_CTRL2, HDMI_AUDIO_DISABLE, 0);
-
- 	/*
--	 * If we failed to find the CRTC(s) which this encoder is
--	 * supposed to be connected to, it's because the CRTC has
--	 * not been registered yet.  Defer probing, and hope that
--	 * the required CRTC is added later.
-+	 * Under power mode E we need to reset the audio capture logic to
-+	 * make the audio setting update.
- 	 */
--	if (encoder->possible_crtcs == 0)
--		return -EPROBE_DEFER;
-+	if (rk3066_hdmi_get_power_mode(hdmi) == HDMI_SYS_POWER_MODE_E) {
-+		hdmi_modb(hdmi, HDMI_VIDEO_CTRL2,
-+			  HDMI_AUDIO_CP_LOGIC_RESET_MASK,
-+			  HDMI_AUDIO_CP_LOGIC_RESET);
-+		usleep_range(900, 1000);
-+		hdmi_modb(hdmi, HDMI_VIDEO_CTRL2,
-+			  HDMI_AUDIO_CP_LOGIC_RESET_MASK, 0);
-+	}
-+
-+	return 0;
-+}
-+
-+static int rk3066_hdmi_audio_get_eld(struct device *dev, void *d, u8 *buf, size_t len)
-+{
-+	struct rk3066_hdmi *hdmi = dev_get_drvdata(dev);
-+	struct drm_mode_config *config = &hdmi->encoder.encoder.dev->mode_config;
-+	struct drm_connector *connector;
-+	int ret = -ENODEV;
-+
-+	mutex_lock(&config->mutex);
-+	list_for_each_entry(connector, &config->connector_list, head) {
-+		if (&hdmi->encoder.encoder == connector->encoder) {
-+			memcpy(buf, connector->eld,
-+			       min(sizeof(connector->eld), len));
-+			ret = 0;
-+		}
-+	}
-+	mutex_unlock(&config->mutex);
-+
-+	return ret;
-+}
-+
-+static const struct hdmi_codec_ops audio_codec_ops = {
-+	.hw_params = rk3066_hdmi_audio_hw_params,
-+	.audio_shutdown = rk3066_hdmi_audio_shutdown,
-+	.mute_stream = rk3066_hdmi_audio_mute_stream,
-+	.get_eld = rk3066_hdmi_audio_get_eld,
-+	.no_capture_mute = 1,
-+};
-+
-+static int rk3066_hdmi_audio_codec_init(struct rk3066_hdmi *hdmi, struct device *dev)
-+{
-+	struct hdmi_codec_pdata codec_data = {
-+		.i2s = 1,
-+		.ops = &audio_codec_ops,
-+		.max_i2s_channels = 8,
-+	};
-+
-+	hdmi->audio.channels = 2;
-+	hdmi->audio.sample_rate = 48000;
-+	hdmi->audio.sample_width = 16;
-+	hdmi->audio_enable = false;
-+	hdmi->audio_pdev =
-+		platform_device_register_data(dev,
-+					      HDMI_CODEC_DRV_NAME,
-+					      PLATFORM_DEVID_NONE,
-+					      &codec_data,
-+					      sizeof(codec_data));
-+
-+	return PTR_ERR_OR_ZERO(hdmi->audio_pdev);
-+}
-+
-+static int rk3066_hdmi_register(struct drm_device *drm, struct rk3066_hdmi *hdmi)
-+{
-+	struct drm_encoder *encoder = &hdmi->encoder.encoder;
-
- 	drm_encoder_helper_add(encoder, &rk3066_hdmi_encoder_helper_funcs);
- 	drm_simple_encoder_init(drm, encoder, DRM_MODE_ENCODER_TMDS);
-@@ -740,6 +988,7 @@ static int rk3066_hdmi_bind(struct device *dev, struct device *master,
- {
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct drm_device *drm = data;
-+	struct drm_encoder *encoder;
- 	struct rk3066_hdmi *hdmi;
- 	int irq;
- 	int ret;
-@@ -748,8 +997,21 @@ static int rk3066_hdmi_bind(struct device *dev, struct device *master,
- 	if (!hdmi)
- 		return -ENOMEM;
-
-+	encoder = &hdmi->encoder.encoder;
-+
-+	encoder->possible_crtcs =
-+		drm_of_find_possible_crtcs(drm, dev->of_node);
-+
-+	/*
-+	 * If we failed to find the CRTC(s) which this encoder is
-+	 * supposed to be connected to, it's because the CRTC has
-+	 * not been registered yet.  Defer probing, and hope that
-+	 * the required CRTC is added later.
-+	 */
-+	if (encoder->possible_crtcs == 0)
-+		return -EPROBE_DEFER;
-+
- 	hdmi->dev = dev;
--	hdmi->drm_dev = drm;
- 	hdmi->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(hdmi->regs))
- 		return PTR_ERR(hdmi->regs);
-@@ -800,6 +1062,8 @@ static int rk3066_hdmi_bind(struct device *dev, struct device *master,
- 	if (ret)
- 		goto err_disable_i2c;
-
-+	rk3066_hdmi_audio_codec_init(hdmi, dev);
-+
- 	dev_set_drvdata(dev, hdmi);
-
- 	ret = devm_request_threaded_irq(dev, irq, rk3066_hdmi_hardirq,
-@@ -813,6 +1077,7 @@ static int rk3066_hdmi_bind(struct device *dev, struct device *master,
- 	return 0;
-
- err_cleanup_hdmi:
-+	platform_device_unregister(hdmi->audio_pdev);
- 	hdmi->connector.funcs->destroy(&hdmi->connector);
- 	hdmi->encoder.encoder.funcs->destroy(&hdmi->encoder.encoder);
- err_disable_i2c:
-@@ -828,6 +1093,7 @@ static void rk3066_hdmi_unbind(struct device *dev, struct device *master,
- {
- 	struct rk3066_hdmi *hdmi = dev_get_drvdata(dev);
-
-+	platform_device_unregister(hdmi->audio_pdev);
- 	hdmi->connector.funcs->destroy(&hdmi->connector);
- 	hdmi->encoder.encoder.funcs->destroy(&hdmi->encoder.encoder);
-
---
-2.39.2
-
+diff --git a/Documentation/process/coding-style.rst b/Documentation/process/coding-style.rst
+index 7e768c65aa92..0516b7009688 100644
+--- a/Documentation/process/coding-style.rst
++++ b/Documentation/process/coding-style.rst
+@@ -828,7 +828,7 @@ Generally, inline functions are preferable to macros resembling functions.
+ 		} while (0)
+ 
+ Function-like macros with unused parameters should be replaced by static
+-inline functions to avoid the issue of unused variables:
++inline functions to avoid the issue of unused variables in the caller:
+ 
+ .. code-block:: c
+ 
+?
 
