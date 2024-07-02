@@ -1,209 +1,209 @@
-Return-Path: <linux-kernel+bounces-238100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAA9392437B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:24:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D786B92437E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:27:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D03CBB23E03
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:23:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CDCAB24E26
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:27:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E340E1BD03C;
-	Tue,  2 Jul 2024 16:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D56941BD503;
+	Tue,  2 Jul 2024 16:27:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YeVHaUQ8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Cmt79gt/"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615D2148825
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 16:23:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686841BD03A
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 16:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719937432; cv=none; b=nalFNvsRXAwFJCXATLu/Mn+REYuYSb/Fq9oqfJF1zgANmU4NbyQ5+64x5mI2XFSxG2o+wnFXwjGyKtpaBiaztDWPpm2e01VIKqFNmES2wM/nrvGGKf6nGC8TjNtsSCZ1BtyUmpdix77bIbYMmd8hArNmzfWwxjXmi0feBflxxTo=
+	t=1719937619; cv=none; b=ZMWwCqWSKgd0jp+UiF9Oogkb+Iew9qX2Kvni8NwJL+RlQWChLPdw6P7L2AIdiE4Bu5vRyWs7UYwShbd7aGjoVVPCI55NJC6lu+nJ9Yhnb4ozugQbr1oZO8vc2zECKiMOBbEo6i/LysCREiwelxQ+h8fMV7LqP0Qej5H+Isprmhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719937432; c=relaxed/simple;
-	bh=EwyqrLqUf8eTjZr7JdVW0TBoavl/of+gG/Bw/O5RTOU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nZukEAf5keqyjSkEHWtYLe+bA6M4JGVaGYsWTZAsEgAG/ssaHeUheHzTjG6GI7vmnJ8+VbFfvI41kPkKmDCh6Tymn2PSJ9EmBjz4PCkTTe6Z48Apg9IUHQhNWkOaiHfXQapUXp00D/Kh/sDLw4se82GuK8kRduHgHmW0ml1c/js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YeVHaUQ8; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719937429;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LbjKzw63beH/L1h+dQZmsnWElqOgkbbZL0WaCpU1GH4=;
-	b=YeVHaUQ8cA1v9whT5hFpSwg+0XtD/KRjyRJRI0hB754Ck5crQKfOLoYQl1+Ou84YoU+fbd
-	I7+SOwLX1udft2weFhoO+wuF4+nVJULTNtui9yVSdDfKOpwEBv0LuoGSu9ehJa9/rXY+dC
-	z2ONxjrCj6L+gQeWrrGYF/7G7+U3hhE=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-513-tLIYhAZWNhm5M3FpAKGHJw-1; Tue,
- 02 Jul 2024 12:23:44 -0400
-X-MC-Unique: tLIYhAZWNhm5M3FpAKGHJw-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3B1B919560BA;
-	Tue,  2 Jul 2024 16:23:37 +0000 (UTC)
-Received: from bmarzins-01.fast.eng.rdu2.dc.redhat.com (bmarzins-01.fast.eng.rdu2.dc.redhat.com [10.6.23.12])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8DE4D3000221;
-	Tue,  2 Jul 2024 16:23:36 +0000 (UTC)
-Received: from bmarzins-01.fast.eng.rdu2.dc.redhat.com (localhost [127.0.0.1])
-	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.17.2/8.17.1) with ESMTPS id 462GNZgA1633791
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Tue, 2 Jul 2024 12:23:35 -0400
-Received: (from bmarzins@localhost)
-	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.17.2/8.17.2/Submit) id 462GNYFY1633790;
-	Tue, 2 Jul 2024 12:23:34 -0400
-Date: Tue, 2 Jul 2024 12:23:34 -0400
-From: Benjamin Marzinski <bmarzins@redhat.com>
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Abhinav Jain <jain.abhinav177@gmail.com>, agk@redhat.com,
-        snitzer@kernel.org, dm-devel@lists.linux.dev,
-        linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
-        javier.carrasco.cruz@gmail.com
-Subject: Re: [PATCH v2] dm: Add support for escaped characters in
- str_field_delimit()
-Message-ID: <ZoQphjlssygSBiRr@redhat.com>
-References: <20240613162632.38065-1-jain.abhinav177@gmail.com>
- <c5133ae3-1655-3364-a272-68cae447b490@redhat.com>
+	s=arc-20240116; t=1719937619; c=relaxed/simple;
+	bh=OIMUChgVr7nLTuZwx5NiN2jIgwqNdR8iaaCwqtxZ7rE=;
+	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=MkehjEMrxNU3ApzigjEZIHEleBHY8SG3dOtxHxV//0MASMzCyTHkPTXJ63u7UzshNJUa5Cor3Y1U24HbMTUJXCm7RgrLvLyjDA9T211w/kmhNzAEK20XK/+MyW9NSPn/kXQxa+q+Ax0F0G0ekl1WAQ+ISK7YcVruJfJ/0zZL6Pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Cmt79gt/; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7449fbfeb6bso1649076a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 09:26:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1719937618; x=1720542418; darn=vger.kernel.org;
+        h=mime-version:subject:user-agent:references:in-reply-to:message-id
+         :date:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=s5nXaBugWkOrid73TgOkHpgJfgkvYoIzG8Oddp9NvLA=;
+        b=Cmt79gt/IzHSQfpyfeCs+T3yFc6KGdY/umZhBbt/XvM/a6TMyP5GgiFKxeW/rL3LCw
+         LqEqJX2VwK5n2QJhQBPsBDk3dbgaP9YmiIbj3v3P05HDlfEOj8jrGcZNxaGexIXqLcTP
+         Po84Tuy5hMyZYROjgQF3gODx3btyYHfaWheXM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719937618; x=1720542418;
+        h=mime-version:subject:user-agent:references:in-reply-to:message-id
+         :date:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s5nXaBugWkOrid73TgOkHpgJfgkvYoIzG8Oddp9NvLA=;
+        b=R02yKIAN/kUhpQe22ygXeJHYxbV7CXmJsSEdOd5Pb2BmFrYsRZnKZX46zHNMXZ7k4G
+         vwPkSu6n91ZiL2XmCWHu/xQYKPEMJO/1iXEUko6aWn1FMxJSWhonvaIhfMNWUgPy2bFk
+         SxVo3DkJKgMU1NHQutHVvl6N5tX06hfj/uQ8VpE9HIC8pin71V1ecl8RnlO2HAyZWTZa
+         PlNeFo9QBjmLzXLIwhBZnuV6YxCyTD1etW/lHAA2nTYN7alpNBEtESXMKsSJip8qyh9E
+         z0xAY9HZOWEHjCpUpY+y1OlJj9qWwqfdi9gRZcSrx7ek9WALFkRLihyJuzuBPb1be9Qe
+         e1DQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUTAKfdW0ztZAYXL+e3KNRpv5MNrXBCw80wrTBG5FyEN3p1gifjUAjpc80NrULbt1lfXu9AQoNtXguJZj9wZevu613aJOTWrhB6QwuE
+X-Gm-Message-State: AOJu0YzyDx+x0RZQMjvka6G/rVISrVnOWK5vGzhJqTI89Z9SPpZ7zjFq
+	D875ioTgc7LUIAxjVwpsrrHA5XrcWeIxj8+zvrDKYY/pTyFWbV13JQdIjdj89g==
+X-Google-Smtp-Source: AGHT+IHaKEzsVjhtAgyonPaS4x7MGwSeBIOGNBpe/ox6nPbhDA4jnqihFInNrZdsokg0QOjhvTL1mQ==
+X-Received: by 2002:a17:90a:9ee:b0:2c9:63a4:a138 with SMTP id 98e67ed59e1d1-2c963a4a232mr1209263a91.11.1719937617616;
+        Tue, 02 Jul 2024 09:26:57 -0700 (PDT)
+Received: from [192.168.178.38] (f215227.upc-f.chello.nl. [80.56.215.227])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91d3be561sm9035933a91.43.2024.07.02.09.26.51
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Jul 2024 09:26:57 -0700 (PDT)
+From: Arend Van Spriel <arend.vanspriel@broadcom.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>, Kalle Valo <kvalo@kernel.org>
+CC: Su Hui <suhui@nfschina.com>, <johannes.berg@intel.com>, <kees@kernel.org>, <a@bayrepo.ru>, <marcan@marcan.st>, <quic_alokad@quicinc.com>, <zyytlz.wz@163.com>, <petr.tesarik.ext@huawei.com>, <duoming@zju.edu.cn>, <colin.i.king@gmail.com>, <frankyl@broadcom.com>, <meuleman@broadcom.com>, <phaber@broadcom.com>, <linville@tuxdriver.com>, <linux-wireless@vger.kernel.org>, <brcm80211@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>, <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Date: Tue, 02 Jul 2024 18:26:49 +0200
+Message-ID: <19074452940.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+In-Reply-To: <3071fd19-5cc7-440a-8184-3aeeb81c96e0@suswa.mountain>
+References: <20240702122450.2213833-1-suhui@nfschina.com>
+ <20240702122450.2213833-2-suhui@nfschina.com>
+ <ba67020a-04bb-46b8-bc05-751684f71e8a@suswa.mountain>
+ <19073fcc9e8.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+ <878qyjg6cv.fsf@kernel.org>
+ <3071fd19-5cc7-440a-8184-3aeeb81c96e0@suswa.mountain>
+User-Agent: AquaMail/1.51.5 (build: 105105504)
+Subject: Re: [PATCH wireless 1/9]  wifi: cfg80211: avoid garbage value of 'io_type' in  brcmf_cfg80211_attach()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c5133ae3-1655-3364-a272-68cae447b490@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000c2ff2d061c462efe"
 
-On Tue, Jul 02, 2024 at 05:18:38PM +0200, Mikulas Patocka wrote:
-> Hi
-> 
-> I'd like to ask why is this needed. AFAIK, none of the allowed targets use 
-> ',' on their table line.
+--000000000000c2ff2d061c462efe
+Content-Type: text/plain; format=flowed; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 
-',' and ';' are both legal characters in DM names and UUIDs, although I
-can't think of a good reason why anyone would want to use them.
+On July 2, 2024 5:37:10 PM Dan Carpenter <dan.carpenter@linaro.org> wrote:
 
--Ben
+> On Tue, Jul 02, 2024 at 06:29:20PM +0300, Kalle Valo wrote:
+>> Arend Van Spriel <arend.vanspriel@broadcom.com> writes:
+>>
+>>> On July 2, 2024 3:57:27 PM Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>>>
+>>>> On Tue, Jul 02, 2024 at 08:24:44PM +0800, Su Hui wrote:
+>>>>> brcmf_fil_cmd_int_get() reads the value of 'io_type' and passes it to
+>>>>> brcmf_fil_cmd_data_get(). Initialize 'io_type' to avoid garbage value.
+>>>>
+>>>> Since you're going to be resending anyway, please delete the space char
+>>>> from the start of the line.
+>>>>
+>>>> It's weird that brcmf_fil_cmd_data_get() uses the uninitialized data.
+>>>> It looks like it just goes to great lengths to preserve the original
+>>>> data in io_type...  So it likely is harmless enough but still a strange
+>>>> and complicated way write a no-op.
+>>>
+>>> Not sure if it helps, but I tried to explain the reason in response to
+>>> patch 0 (cover letter).
+>>
+>> Would it make more sense to have just one patch? It's the same issue
+>> anyway.
+>
+> The Fixes tags are different though.  I'd probably leave them as
+> separate patches just because of that.
 
-> 
-> Mikulas
-> 
-> 
-> On Thu, 13 Jun 2024, Abhinav Jain wrote:
-> 
-> > Remove all the escape characters that come before separator.
-> > Tested this code by writing a dummy program containing the two
-> > functions and testing it on below input, sharing results:
-> > 
-> > Original string: "field1\,with\,commas,field2\,with\,more\,commas"
-> > Field: "field1"
-> > Field: "with"
-> > Field: "commas"
-> > Field: "field2"
-> > Field: "with"
-> > Field: "more"
-> > Field: "commas"
-> > 
-> > Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
-> > ---
-> > PATCH v1:
-> > https://lore.kernel.org/all/20240609141721.52344-1-jain.abhinav177@gmail.com/
-> > 
-> > Changes since v1:
-> >  - Modified the str_field_delimit function as per shared feedback
-> >  - Added remove_escaped_characters function
-> > ---
-> > ---
-> >  drivers/md/dm-init.c | 53 +++++++++++++++++++++++++++++++++++++++-----
-> >  1 file changed, 47 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/md/dm-init.c b/drivers/md/dm-init.c
-> > index 2a71bcdba92d..0e31ecf1b48e 100644
-> > --- a/drivers/md/dm-init.c
-> > +++ b/drivers/md/dm-init.c
-> > @@ -76,6 +76,24 @@ static void __init dm_setup_cleanup(struct list_head *devices)
-> >  	}
-> >  }
-> >  
-> > +/* Remove escape characters from a given field string. */
-> > +static void __init remove_escape_characters(char *field)
-> > +{
-> > +	char *src = field;
-> > +	char *dest = field;
-> > +
-> > +	while (*src) {
-> > +		if (*src == '\\') {
-> > +			src++;
-> > +			if (*src)
-> > +				*dest++ = *src++;
-> > +		} else {
-> > +			*dest++ = *src++;
-> > +		}
-> > +	}
-> > +	*dest = '\0';
-> > +}
-> > +
-> >  /**
-> >   * str_field_delimit - delimit a string based on a separator char.
-> >   * @str: the pointer to the string to delimit.
-> > @@ -87,16 +105,39 @@ static void __init dm_setup_cleanup(struct list_head *devices)
-> >   */
-> >  static char __init *str_field_delimit(char **str, char separator)
-> >  {
-> > -	char *s;
-> > +	char *s, *escaped, *field;
-> >  
-> > -	/* TODO: add support for escaped characters */
-> >  	*str = skip_spaces(*str);
-> >  	s = strchr(*str, separator);
-> > -	/* Delimit the field and remove trailing spaces */
-> > -	if (s)
-> > +
-> > +	/* Check for escaped character */
-> > +	escaped = strchr(*str, '\\');
-> > +	while (escaped && (s == NULL || escaped < s)) {
-> > +		/*
-> > +		 * Move the separator search ahead if escaped
-> > +		 * character comes before.
-> > +		 */
-> > +		s = strchr(escaped + 1, separator);
-> > +		escaped = strchr(escaped + 1, '\\');
-> > +	}
-> > +
-> > +	/* If we found a separator, we need to handle escape characters */
-> > +	if (s) {
-> > +		*s = '\0';
-> > +
-> > +		remove_escape_characters(*str);
-> > +		field = *str;
-> > +		*str = s + 1;
-> > +	} else {
-> > +		/* Handle the last field when no separator is present */
-> > +		s = *str + strlen(*str);
-> >  		*s = '\0';
-> > -	*str = strim(*str);
-> > -	return s ? ++s : NULL;
-> > +
-> > +		remove_escape_characters(*str);
-> > +		field = *str;
-> > +		*str = s;
-> > +	}
-> > +	return field;
-> >  }
-> >  
-> >  /**
-> > -- 
-> > 2.34.1
-> > 
+Depending how you look at the problem those tags are wrong.
 
+Regards,
+Arend
+
+
+
+--000000000000c2ff2d061c462efe
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+2Gzj3QNJRLsZu1TLyOyBBIr/BE7UiY3RabgRzknBGAPmzhS+fmyM8OtM5BYBsFBrSUFtZZO2p/tf
+Nbc24J2zf2peoZ8MK+7WQqummYlOnz+FyDkA9EybeNMcS5C+xi/PAgMBAAGjggHdMIIB2TAOBgNV
+HQ8BAf8EBAMCBaAwgaMGCCsGAQUFBwEBBIGWMIGTME4GCCsGAQUFBzAChkJodHRwOi8vc2VjdXJl
+Lmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcnQwQQYI
+KwYBBQUHMAGGNWh0dHA6Ly9vY3NwLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24y
+Y2EyMDIwME0GA1UdIARGMEQwQgYKKwYBBAGgMgEoCjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3
+dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAJBgNVHRMEAjAAMEkGA1UdHwRCMEAwPqA8oDqG
+OGh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3Js
+MCcGA1UdEQQgMB6BHGFyZW5kLnZhbnNwcmllbEBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYB
+BQUHAwQwHwYDVR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFIikAXd8CEtv
+ZbDflDRnf3tuStPuMA0GCSqGSIb3DQEBCwUAA4IBAQCdS5XCYx6k2GGZui9DlFsFm75khkqAU7rT
+zBX04sJU1+B1wtgmWTVIzW7ugdtDZ4gzaV0S9xRhpDErjJaltxPbCylb1DEsLj+AIvBR34caW6ZG
+sQk444t0HPb29HnWYj+OllIGMbdJWr0/P95ZrKk2bP24ub3ZP/8SyzrohfIba9WZKMq6g2nTLZE3
+BtkeSGJx/8dy0h8YmRn+adOrxKXHxhSL8BNn8wsmIZyYWe6fRcBtO3Ks2DOLyHCdkoFlN8x9VUQF
+N2ulEgqCbRKkx+qNirW86eF138lr1gRxzclu/38ko//MmkAYR/+hP3WnBll7zbpIt0jc9wyFkSqH
+p8a1MYICbTCCAmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1z
+YTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMTv1t
+bpIzNUky46LXMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCANkW8i6xNH461hlU4N
+tir5y4Q+4435V9AqoArP0RVMlTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJ
+BTEPFw0yNDA3MDIxNjI2NThaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFl
+AwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzAL
+BglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAUhwgqzRKh4tj3CM5qfY7ImL+adYce23127oE
+EV1xi42PY8yJUyFQ9BhzWLNbUFCznXK2Bjc0lbIQz6CuVGdpSDRifrWdp10nZeHFofva6973ABBO
+3KiVAGUSjsNy0rgDhhQabqTc8FXqDsMmN+570X9LHh9S33fku7IfnvwOrt4cSH0s9D2PEPEUNTB4
+S+s9JlTMocH9BAr9jS8hheOnRaxIGyMcadGt1bOXLw5KXPcvRcgiyZWLFo24zDvOd/dl9VzKpDpD
+AocArzaWW/SzjygUUSxiP6rHwHVa38zwIxAaD2dEh6+bk1ps3qOcXVYj5A2+APGDdalCIR4C5zb3
+gA==
+--000000000000c2ff2d061c462efe--
 
