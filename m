@@ -1,76 +1,104 @@
-Return-Path: <linux-kernel+bounces-237720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B42CE923D22
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:04:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB537923D27
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 14:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E2DA281104
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:04:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B533B23DA3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:05:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F1E815CD75;
-	Tue,  2 Jul 2024 12:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B7216631A;
+	Tue,  2 Jul 2024 12:04:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NM7Nr6ER"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RLlELJu9"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98971C686
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 12:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A962F1C686;
+	Tue,  2 Jul 2024 12:04:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719921848; cv=none; b=jaCsXHeyIhS6twO6HNz8eRWbfDkijRxGneT9fcU5ZLCmDPwlTXOmTAy56szZJ7jzIo5T6MogagYBZDxC8nv3JwFSO1N8SR3Hdh3FShr1fli0pwd7ZAAkle4Kro+PNRSovv/8Qg6BgfruugGLXzms/G/evLve5haPe/xqTK0Ef54=
+	t=1719921884; cv=none; b=cXKpEyNWmdKC5dj9OnPFlQcZjOcBOD/n2VEqMyMG8aD/PG6RT1wfdWbOAi4jmgPqNYfeRpQJPfDIQ86YRcBAgEtOx7Gkw6WiMC8kuVrctJRmhDl59VqgNAyTu/8jgUqG5HW5Z+6I88bvRc0JLdoNn9BmpvUp5W0J8Sb2I5qRrm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719921848; c=relaxed/simple;
-	bh=U6k8vxYF1WQP7pgl6xyCEmERDtMiGkz6FFV4EynGhGI=;
+	s=arc-20240116; t=1719921884; c=relaxed/simple;
+	bh=b5GM9ijpBeGynJURaypdSlk8pKpNi4papiSVaQlHPkA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dB8dOh+zBSxBkXMGl/DTomrZbq2QXIrkaaC7SeZ2jOWolfvoxylXlzPMPLV+ii5D4B1m45sgfL0LMT3MK2F7sqD516iR6wkdLPZWceZ8moAL8ArFVLZb9JD0m0gOMz/RQuvKAtBz05/J03FddCdEB/mNUD0uCXk154JN5WjdxG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NM7Nr6ER; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D03AC116B1;
-	Tue,  2 Jul 2024 12:04:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719921848;
-	bh=U6k8vxYF1WQP7pgl6xyCEmERDtMiGkz6FFV4EynGhGI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NM7Nr6ERvIfvMKmXwK5HRhN/eSBjfJJO0Je2geKQarmSq0axS+TJXPttHFFECbWWp
-	 9vlFyKZoM9kMJw9I2ZFJlD42pRqDB3SVZxNTi+6SpQZqgpClKOkZP5Qd4biCQmOLQg
-	 cLNhmmvYqHKOL+zjHP2wI6B4tgyGeQU2ZpJhCTHHWiFKS4Ht98ZWMw0cuSS9k0tS5X
-	 uJOkyUAeGs+6jkMZ85ZRYudUQjPZ/vvf8jUtBHHmj+r3fRQiPFj9AQy1jNdwOO/eQO
-	 FyySm0G5VJzmd40/B4S7Qul2V1JL/FuQ1SJD+v3/1axqrSS6gSe1JBYfygUjFMUVFx
-	 QzYTklqX6yv4w==
-Date: Tue, 2 Jul 2024 14:04:05 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/8] timers/migration: Read childmask and parent
- pointer in a single place
-Message-ID: <ZoPstQRns3wl4Bf7@localhost.localdomain>
-References: <20240701-tmigr-fixes-v3-0-25cd5de318fb@linutronix.de>
- <20240701-tmigr-fixes-v3-5-25cd5de318fb@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FGwKdGnknFTsnXmKXLhTqQgG7nUlVI1cVSGInLqCcRNaS6L1xpNrImGfp+uz2pAl1fK9WBcVbSC6hp5MAqBaw8X7C4SZTLBJeq2SxZ/AleOodb4pbv6OOO7Rei9dDl2t6n/x3YooLeAWfqhu1hfktQBFOah3KdMlB91TRNne0Ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RLlELJu9; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=d9z4p2MzaEAaeaMBOOPYtXfjQBBoKbQHMUDRf2gF2pw=; b=RLlELJu9ZDvb6/ca5kEpiffpn9
+	AXM4DXiayCCL/ue1TvQdBfuuONUrUp2KY9mHdvvHSFj8qiRwQCzBeWukZl/NQpK9fYgoDgolJ8RTp
+	7CatmwQKkCDwqrfPy4afHx56bsBzomm9Qzd+VOf4LJS/FfLKPcIKwtH8K8VJAhNUAckJqcXkxnsv/
+	1DSgpoQZfYdkDzfQZHPxKk1P5B9K0dd6w+7mrLkL3mRX0bFReG7ANIUEgNso3r3fYPet5Y3PR16zh
+	LpHCDFHjoVx3UuaRSrtK6EOq8Lbhh6ho3GKWV2k3SpssdidQ4MXGuO6V/s4r3aqANyozmhV2Nb1Lj
+	TeYixs3g==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sOcFN-00000006bnO-0uO9;
+	Tue, 02 Jul 2024 12:04:33 +0000
+Date: Tue, 2 Jul 2024 05:04:33 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>, kernel-team@fb.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-mm@kvack.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH 01/10] fs: turn inode ctime fields into a single ktime_t
+Message-ID: <ZoPs0TfTEktPaCHo@infradead.org>
+References: <20240626-mgtime-v1-0-a189352d0f8f@kernel.org>
+ <20240626-mgtime-v1-1-a189352d0f8f@kernel.org>
+ <20240701224941.GE612460@frogsfrogsfrogs>
+ <3042db2f803fbc711575ec4f1c4a273912a50904.camel@kernel.org>
+ <ZoOuSxRlvEQ5rOqn@infradead.org>
+ <d91a29f0e600793917b73ac23175e02dafd56beb.camel@kernel.org>
+ <20240702101902.qcx73xgae2sqoso7@quack3>
+ <958080f6de517cf9d0a1994e3ca500f23599ca33.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240701-tmigr-fixes-v3-5-25cd5de318fb@linutronix.de>
+In-Reply-To: <958080f6de517cf9d0a1994e3ca500f23599ca33.camel@kernel.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Le Mon, Jul 01, 2024 at 12:18:41PM +0200, Anna-Maria Behnsen a écrit :
-> Reading the childmask and parent pointer is required when propagating
-> changes through the hierarchy. At the moment this reads are spread all over
-
-*these
-
-> the place which makes it harder to follow.
+On Tue, Jul 02, 2024 at 07:44:19AM -0400, Jeff Layton wrote:
+> Complaining about it is fairly simple. We could just throw a pr_warn in
+> inode_set_ctime_to_ts when the time comes back as KTIME_MAX. This might
+> also be what we need to do for filesystems like NFS, where a future
+> ctime on the server is not necessarily a problem for the client.
 > 
-> Move those reads to a single place to keep code clean.
+> Refusing to load the inode on disk-based filesystems is harder, but is
+> probably possible. There are ~90 calls to inode_set_ctime_to_ts in the
+> kernel, so we'd need to vet the places that are loading times from disk
+> images or the like and fix them to return errors in this situation.
 > 
-> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+> Is warning acceptable, or do we really need to reject inodes that have
+> corrupt timestamps like this?
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+inode_set_ctime_to_ts should return an error if things are out of range.
+How do we currently catch this when it comes from userland?
+
 
