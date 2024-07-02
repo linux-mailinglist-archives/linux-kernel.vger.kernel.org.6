@@ -1,216 +1,348 @@
-Return-Path: <linux-kernel+bounces-237584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E38A923B25
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:14:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C87A3923B1D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 12:13:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75D351C221C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:14:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 839B22828DD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 10:13:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF9C157491;
-	Tue,  2 Jul 2024 10:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C83E157493;
+	Tue,  2 Jul 2024 10:13:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="tGmKiQR3"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="AB091qlD"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9AC157492;
-	Tue,  2 Jul 2024 10:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A268B152782
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 10:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719915260; cv=none; b=Ou+Ja4VZ7/GETIxvl34ZDX3BMtvUJb2sg3FAIQ8WInFPy+pqFwMP1x+Jb5r3KHK4rM4jlgZn+dN6lgAbGWnk6u35pNk2HrdE2CGmok6ChNdKCj/0Ak0+OrxMqnSEQBamDFBprr8zSUixdHX1oqYLrc1Xj0g92PI1OR+cjIPhCBs=
+	t=1719915191; cv=none; b=uiNKqGYF4sZdgNrEm4c0r7/m/8QRX+QRCMzNZ6hddgP1DiIZsGa3zkdYPTSegXazX3DGH8Sm3d6ytjLyhtSWhJrf834ahnEEANbN2nJ+b6lIu0ViP+/qyIcUqIErr53rD9KHLfcpQkm48pe67RgQxAB0o7HvbEeJOa5VdszFQZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719915260; c=relaxed/simple;
-	bh=MnEfz1/l/s2PrKTuxm4/iG3t0pUcQA7Ilg20un9eIrI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SMfUjks6SXXIoq9cLLWP1wMAfnAtzqwsiSk4wKJxumKZc/VtnjPDJQnuuGQkr+Hl/rVmYBnNbUEUhe48zgzBlQ/+HP+cj1IutgO8FrwO0nNf2KOSbcfGsAq3ADcBv/UkN8dDx63YZ0k3cx2nkkS9GQrAfvzd6tIhT4XPfy8txsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=tGmKiQR3; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1719915257;
-	bh=MnEfz1/l/s2PrKTuxm4/iG3t0pUcQA7Ilg20un9eIrI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tGmKiQR31/nISSUeCzbvyNpKm1dTt2e37TVuLXYXG8sVt3MQ854Td+smENoXtSCfX
-	 oOSadk2+qR1Nk+15jYCqWXjqDtziLo3eSwAHldhE+SF554qcDtYjdtI0apnKUNnGTb
-	 7vbtR5stKWkTVJkUTFVsz5IR5d1ZyhWD+Vv9lFWWyuS4fSnViHbNCF+ovkMPNoIGw7
-	 01A5nrtcI9+fPiF4eZhylNYc1VIa4MlM4Vt/OmbxWdB0DlRyKJHHq1cmwbr/RZSOvK
-	 rvua0QRhuUQM3rLHTeGjao+UmJb/qbwAmRCJrGG6FaLpjUL4L6J85yeIYve3+dY2M9
-	 xY/Cu23SgVU2g==
-Received: from localhost.localdomain (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 109E53782139;
-	Tue,  2 Jul 2024 10:14:10 +0000 (UTC)
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: kernel@collabora.com,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] selftests/thermel/intel: conform the test to TAP output
-Date: Tue,  2 Jul 2024 15:12:53 +0500
-Message-Id: <20240702101259.1251377-2-usama.anjum@collabora.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240702101259.1251377-1-usama.anjum@collabora.com>
-References: <20240702101259.1251377-1-usama.anjum@collabora.com>
+	s=arc-20240116; t=1719915191; c=relaxed/simple;
+	bh=SPbHJYsiPJjsmyvySqe/VP1Q7pmCunLfCkECUEwNfLk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dPUyyzbBy2Ul+3e5Nf0QaPseGBCFd8idnJYKXr7H9oRT4YZXWXLNDn8Jv4N9F4y1xjzIP75rjs+l11nfeZ2LL+GjXgg3ZCrZCFFESl/9+/pq8/CdK2l/SR35EJyJM7+Mh2lbWNiKUDOsln3jPfDDtlfkKPjdv0RvE6nf0cI+sPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=AB091qlD; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-7f4e272b425so143133739f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 03:13:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1719915188; x=1720519988; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a/sfLp11hmW8XmCatXqx8ssHvyyK3qsyCd37VaEVAL8=;
+        b=AB091qlDVzepmqK5XJtE6C4P/8dBzKmKo7AmtrVPxOKA7K5xMvQT1nrpAfutL8Vhey
+         dURjEOnQKaCYykKgIH6KZ5Ere3bsv0HvxVn8T2fHXyJlTWxSO6FF/D0v4GClByVCRodc
+         nl8VqaMPbiLUi1CJowWQ2PIi8WdGkGxSt9oDmyM6d4K0IofsNTWuQhpl84e8vRP/8DO1
+         Voh3o0HhhzsfmlH/7ee7knftyx11SSTCAcUWDZhXIFuTPk+aFLFlYWRbqnuXBAqTdzc6
+         UnaPS2qC4foSNws/5i9a4hibLX0uGTkP8XZXZSauABRjcD6AKU6xzRdwoAfFHV6nY5gk
+         Li8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719915188; x=1720519988;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a/sfLp11hmW8XmCatXqx8ssHvyyK3qsyCd37VaEVAL8=;
+        b=J1GI6HhlOoecwwNumyiHr76/sb97fZyJ8s4fjUstfWHf6fCM4778Yjy3gJUthrvAnT
+         B6iYTqvqsUYqz94U10T/zGB0nAkUbWJ2lnZSL/sJiEd3DUtkyDtN7zWwoSaMlbr4q+5G
+         7tl08vu3BUA0JMTXP/qvuJfdbd0ZgyVO3uSoQozlzUHjFA4v/Zdub/MkyHqBCZ+5Ln2V
+         uZR83bZFdaSzy6lWwfe9JUwprId8ymapW6z9WSmPXFki5ijznCLXAMMnNnNiM6aDsqds
+         PdnBsSkshfr2lkukfTLhI2WBI/Kl9eoE2PhLDrean3G4A7x7su2t1MixdcVwCc7lDuGU
+         mJGA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5ExMD23lKBHWDoqRWnUCo4y/teAcZCX0EumW2JIHfiXQcL26gD/zaaY8VLoJLfp9BhOFNWBx075o0Aewact2Jvo7WFsoFES7z3KNg
+X-Gm-Message-State: AOJu0Yy4c+RCCmLxSic98KWlsdpMRomR+RPmrSl5iDds9kPpWB61rG2s
+	qXcixIil0gtF6wNVz5t9gRB46u31n4EFElN1MlVql/mCG2R3YHRjCaySCez2mo10vb3ppBUHAgb
+	2Voz/0Y+A44ay/bAmBp07Rmvmr7JnNqAby8TXPA==
+X-Google-Smtp-Source: AGHT+IGoEgVDZjPWAam4RvZu0N/hvH3TdQfOxT1+hDZWpA6VO+SGZ99U6V5aJh8q7Z9zzeuPqfSR+JhreaWsEEhEJpU=
+X-Received: by 2002:a05:6e02:164c:b0:381:17b4:763 with SMTP id
+ e9e14a558f8ab-38117b40a2fmr2935795ab.9.1719915187606; Tue, 02 Jul 2024
+ 03:13:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240702085034.48395-1-alexghiti@rivosinc.com> <20240702085034.48395-4-alexghiti@rivosinc.com>
+In-Reply-To: <20240702085034.48395-4-alexghiti@rivosinc.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Tue, 2 Jul 2024 15:42:55 +0530
+Message-ID: <CAAhSdy3_N7nubTwaR15WNeiysDDQ5BkB5qCq-6Fh2ZwDbV-6qw@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] riscv: Stop emitting preventive sfence.vma for new
+ vmalloc mappings
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Ved Shanbhogue <ved@rivosinc.com>, Matt Evans <mev@rivosinc.com>, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Conform the layout, informational and status messages to TAP. No
-functional change is intended other than the layout of output messages.
+On Tue, Jul 2, 2024 at 2:24=E2=80=AFPM Alexandre Ghiti <alexghiti@rivosinc.=
+com> wrote:
+>
+> In 6.5, we removed the vmalloc fault path because that can't work (see
+> [1] [2]). Then in order to make sure that new page table entries were
+> seen by the page table walker, we had to preventively emit a sfence.vma
+> on all harts [3] but this solution is very costly since it relies on IPI.
+>
+> And even there, we could end up in a loop of vmalloc faults if a vmalloc
+> allocation is done in the IPI path (for example if it is traced, see
+> [4]), which could result in a kernel stack overflow.
+>
+> Those preventive sfence.vma needed to be emitted because:
+>
+> - if the uarch caches invalid entries, the new mapping may not be
+>   observed by the page table walker and an invalidation may be needed.
+> - if the uarch does not cache invalid entries, a reordered access
+>   could "miss" the new mapping and traps: in that case, we would actually
+>   only need to retry the access, no sfence.vma is required.
+>
+> So this patch removes those preventive sfence.vma and actually handles
+> the possible (and unlikely) exceptions. And since the kernel stacks
+> mappings lie in the vmalloc area, this handling must be done very early
+> when the trap is taken, at the very beginning of handle_exception: this
+> also rules out the vmalloc allocations in the fault path.
+>
+> Link: https://lore.kernel.org/linux-riscv/20230531093817.665799-1-bjorn@k=
+ernel.org/ [1]
+> Link: https://lore.kernel.org/linux-riscv/20230801090927.2018653-1-dylan@=
+andestech.com [2]
+> Link: https://lore.kernel.org/linux-riscv/20230725132246.817726-1-alexghi=
+ti@rivosinc.com/ [3]
+> Link: https://lore.kernel.org/lkml/20200508144043.13893-1-joro@8bytes.org=
+/ [4]
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> ---
+>  arch/riscv/include/asm/cacheflush.h  | 18 +++++-
+>  arch/riscv/include/asm/thread_info.h |  5 ++
+>  arch/riscv/kernel/asm-offsets.c      |  5 ++
+>  arch/riscv/kernel/entry.S            | 84 ++++++++++++++++++++++++++++
+>  arch/riscv/mm/init.c                 |  2 +
+>  5 files changed, 113 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/riscv/include/asm/cacheflush.h b/arch/riscv/include/asm=
+/cacheflush.h
+> index ce79c558a4c8..8de73f91bfa3 100644
+> --- a/arch/riscv/include/asm/cacheflush.h
+> +++ b/arch/riscv/include/asm/cacheflush.h
+> @@ -46,7 +46,23 @@ do {                                                 \
+>  } while (0)
+>
+>  #ifdef CONFIG_64BIT
+> -#define flush_cache_vmap(start, end)           flush_tlb_kernel_range(st=
+art, end)
+> +extern u64 new_vmalloc[NR_CPUS / sizeof(u64) + 1];
 
-The test has infinite loop to read the value of status_str. Break the
-loop after getting the value once and finish the test.
+Why is this u64 and not "unsigned long" ?
 
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
----
-Changes since v1:
-- Use ksft_exit_fail_perror if read() returns error
-- Break the infinite loop after printing status_str
----
- .../intel/power_floor/power_floor_test.c      | 70 ++++++++-----------
- 1 file changed, 30 insertions(+), 40 deletions(-)
+Was this tested on rv32 ?
 
-diff --git a/tools/testing/selftests/thermal/intel/power_floor/power_floor_test.c b/tools/testing/selftests/thermal/intel/power_floor/power_floor_test.c
-index 0326b39a11b91..c06b275acd36b 100644
---- a/tools/testing/selftests/thermal/intel/power_floor/power_floor_test.c
-+++ b/tools/testing/selftests/thermal/intel/power_floor/power_floor_test.c
-@@ -9,6 +9,7 @@
- #include <fcntl.h>
- #include <poll.h>
- #include <signal.h>
-+#include "../../../kselftest.h"
- 
- #define POWER_FLOOR_ENABLE_ATTRIBUTE "/sys/bus/pci/devices/0000:00:04.0/power_limits/power_floor_enable"
- #define POWER_FLOOR_STATUS_ATTRIBUTE  "/sys/bus/pci/devices/0000:00:04.0/power_limits/power_floor_status"
-@@ -20,17 +21,13 @@ void power_floor_exit(int signum)
- 	/* Disable feature via sysfs knob */
- 
- 	fd = open(POWER_FLOOR_ENABLE_ATTRIBUTE, O_RDWR);
--	if (fd < 0) {
--		perror("Unable to open power floor enable file\n");
--		exit(1);
--	}
-+	if (fd < 0)
-+		ksft_exit_fail_perror("Unable to open power floor enable file");
- 
--	if (write(fd, "0\n", 2) < 0) {
--		perror("Can' disable power floor notifications\n");
--		exit(1);
--	}
-+	if (write(fd, "0\n", 2) < 0)
-+		ksft_exit_fail_perror("Can' disable power floor notifications");
- 
--	printf("Disabled power floor notifications\n");
-+	ksft_print_msg("Disabled power floor notifications\n");
- 
- 	close(fd);
- }
-@@ -41,6 +38,9 @@ int main(int argc, char **argv)
- 	char status_str[3];
- 	int fd, ret;
- 
-+	ksft_print_header();
-+	ksft_set_plan(1);
-+
- 	if (signal(SIGINT, power_floor_exit) == SIG_IGN)
- 		signal(SIGINT, SIG_IGN);
- 	if (signal(SIGHUP, power_floor_exit) == SIG_IGN)
-@@ -50,59 +50,49 @@ int main(int argc, char **argv)
- 
- 	/* Enable feature via sysfs knob */
- 	fd = open(POWER_FLOOR_ENABLE_ATTRIBUTE, O_RDWR);
--	if (fd < 0) {
--		perror("Unable to open power floor enable file\n");
--		exit(1);
--	}
-+	if (fd < 0)
-+		ksft_exit_fail_perror("Unable to open power floor enable file");
- 
--	if (write(fd, "1\n", 2) < 0) {
--		perror("Can' enable power floor notifications\n");
--		exit(1);
--	}
-+	if (write(fd, "1\n", 2) < 0)
-+		ksft_exit_fail_perror("Can' enable power floor notifications");
- 
- 	close(fd);
- 
--	printf("Enabled power floor notifications\n");
-+	ksft_print_msg("Enabled power floor notifications\n");
- 
- 	while (1) {
- 		fd = open(POWER_FLOOR_STATUS_ATTRIBUTE, O_RDONLY);
--		if (fd < 0) {
--			perror("Unable to power floor status file\n");
--			exit(1);
--		}
-+		if (fd < 0)
-+			ksft_exit_fail_perror("Unable to power floor status file");
- 
--		if ((lseek(fd, 0L, SEEK_SET)) < 0) {
--			fprintf(stderr, "Failed to set pointer to beginning\n");
--			exit(1);
--		}
-+		if ((lseek(fd, 0L, SEEK_SET)) < 0)
-+			ksft_exit_fail_perror("Failed to set pointer to beginning\n");
- 
--		if (read(fd, status_str, sizeof(status_str)) < 0) {
--			fprintf(stderr, "Failed to read from:%s\n",
--			POWER_FLOOR_STATUS_ATTRIBUTE);
--			exit(1);
--		}
-+		if (read(fd, status_str, sizeof(status_str)) < 0)
-+			ksft_exit_fail_perror("Failed to read from: power_floor_status");
- 
- 		ufd.fd = fd;
- 		ufd.events = POLLPRI;
- 
- 		ret = poll(&ufd, 1, -1);
- 		if (ret < 0) {
--			perror("poll error");
--			exit(1);
-+			ksft_exit_fail_msg("Poll error\n");
- 		} else if (ret == 0) {
--			printf("Poll Timeout\n");
-+			ksft_print_msg("Poll Timeout\n");
- 		} else {
--			if ((lseek(fd, 0L, SEEK_SET)) < 0) {
--				fprintf(stderr, "Failed to set pointer to beginning\n");
--				exit(1);
--			}
-+			if ((lseek(fd, 0L, SEEK_SET)) < 0)
-+				ksft_exit_fail_msg("Failed to set pointer to beginning\n");
- 
- 			if (read(fd, status_str, sizeof(status_str)) < 0)
--				exit(0);
-+				ksft_exit_fail_perror("Failed to read");
- 
--			printf("power floor status: %s\n", status_str);
-+			ksft_print_msg("power floor status: %s\n", status_str);
-+			break;
- 		}
- 
- 		close(fd);
- 	}
-+
-+	ksft_test_result_pass("Successfully read\n");
-+	ksft_finished();
- }
--- 
-2.39.2
+> +extern char _end[];
+> +#define flush_cache_vmap flush_cache_vmap
+> +static inline void flush_cache_vmap(unsigned long start, unsigned long e=
+nd)
+> +{
+> +       if (is_vmalloc_or_module_addr((void *)start)) {
+> +               int i;
+> +
+> +               /*
+> +                * We don't care if concurrently a cpu resets this value =
+since
+> +                * the only place this can happen is in handle_exception(=
+) where
+> +                * an sfence.vma is emitted.
+> +                */
+> +               for (i =3D 0; i < ARRAY_SIZE(new_vmalloc); ++i)
+> +                       new_vmalloc[i] =3D -1ULL;
+> +       }
+> +}
+>  #define flush_cache_vmap_early(start, end)     local_flush_tlb_kernel_ra=
+nge(start, end)
+>  #endif
+>
+> diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/as=
+m/thread_info.h
+> index 5d473343634b..32631acdcdd4 100644
+> --- a/arch/riscv/include/asm/thread_info.h
+> +++ b/arch/riscv/include/asm/thread_info.h
+> @@ -60,6 +60,11 @@ struct thread_info {
+>         void                    *scs_base;
+>         void                    *scs_sp;
+>  #endif
+> +       /*
+> +        * Used in handle_exception() to save a0, a1 and a2 before knowin=
+g if we
+> +        * can access the kernel stack.
+> +        */
+> +       unsigned long           a0, a1, a2;
+>  };
+>
+>  #ifdef CONFIG_SHADOW_CALL_STACK
+> diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-offs=
+ets.c
+> index b09ca5f944f7..29c0734f2972 100644
+> --- a/arch/riscv/kernel/asm-offsets.c
+> +++ b/arch/riscv/kernel/asm-offsets.c
+> @@ -36,6 +36,8 @@ void asm_offsets(void)
+>         OFFSET(TASK_THREAD_S9, task_struct, thread.s[9]);
+>         OFFSET(TASK_THREAD_S10, task_struct, thread.s[10]);
+>         OFFSET(TASK_THREAD_S11, task_struct, thread.s[11]);
+> +
+> +       OFFSET(TASK_TI_CPU, task_struct, thread_info.cpu);
+>         OFFSET(TASK_TI_FLAGS, task_struct, thread_info.flags);
+>         OFFSET(TASK_TI_PREEMPT_COUNT, task_struct, thread_info.preempt_co=
+unt);
+>         OFFSET(TASK_TI_KERNEL_SP, task_struct, thread_info.kernel_sp);
+> @@ -43,6 +45,9 @@ void asm_offsets(void)
+>  #ifdef CONFIG_SHADOW_CALL_STACK
+>         OFFSET(TASK_TI_SCS_SP, task_struct, thread_info.scs_sp);
+>  #endif
+> +       OFFSET(TASK_TI_A0, task_struct, thread_info.a0);
+> +       OFFSET(TASK_TI_A1, task_struct, thread_info.a1);
+> +       OFFSET(TASK_TI_A2, task_struct, thread_info.a2);
+>
+>         OFFSET(TASK_TI_CPU_NUM, task_struct, thread_info.cpu);
+>         OFFSET(TASK_THREAD_F0,  task_struct, thread.fstate.f[0]);
+> diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+> index 68a24cf9481a..822311266a12 100644
+> --- a/arch/riscv/kernel/entry.S
+> +++ b/arch/riscv/kernel/entry.S
+> @@ -19,6 +19,78 @@
+>
+>         .section .irqentry.text, "ax"
+>
+> +.macro new_vmalloc_check
+> +       REG_S   a0, TASK_TI_A0(tp)
+> +       REG_S   a1, TASK_TI_A1(tp)
+> +       REG_S   a2, TASK_TI_A2(tp)
+> +
+> +       csrr    a0, CSR_CAUSE
+> +       /* Exclude IRQs */
+> +       blt     a0, zero, _new_vmalloc_restore_context
+> +       /* Only check new_vmalloc if we are in page/protection fault */
+> +       li      a1, EXC_LOAD_PAGE_FAULT
+> +       beq     a0, a1, _new_vmalloc_kernel_address
+> +       li      a1, EXC_STORE_PAGE_FAULT
+> +       beq     a0, a1, _new_vmalloc_kernel_address
+> +       li      a1, EXC_INST_PAGE_FAULT
+> +       bne     a0, a1, _new_vmalloc_restore_context
+> +
+> +_new_vmalloc_kernel_address:
+> +       /* Is it a kernel address? */
+> +       csrr    a0, CSR_TVAL
+> +       bge     a0, zero, _new_vmalloc_restore_context
+> +
+> +       /* Check if a new vmalloc mapping appeared that could explain the=
+ trap */
+> +
+> +       /*
+> +        * Computes:
+> +        * a0 =3D &new_vmalloc[BIT_WORD(cpu)]
+> +        * a1 =3D BIT_MASK(cpu)
+> +        */
+> +       REG_L   a2, TASK_TI_CPU(tp)
+> +       /*
+> +        * Compute the new_vmalloc element position:
+> +        * (cpu / 64) * 8 =3D (cpu >> 6) << 3
+> +        */
+> +       srli    a1, a2, 6
+> +       slli    a1, a1, 3
+> +       la      a0, new_vmalloc
+> +       add     a0, a0, a1
+> +       /*
+> +        * Compute the bit position in the new_vmalloc element:
+> +        * bit_pos =3D cpu % 64 =3D cpu - (cpu / 64) * 64 =3D cpu - (cpu =
+>> 6) << 6
+> +        *         =3D cpu - ((cpu >> 6) << 3) << 3
+> +        */
+> +       slli    a1, a1, 3
+> +       sub     a1, a2, a1
+> +       /* Compute the "get mask": 1 << bit_pos */
+> +       li      a2, 1
+> +       sll     a1, a2, a1
+> +
+> +       /* Check the value of new_vmalloc for this cpu */
+> +       REG_L   a2, 0(a0)
+> +       and     a2, a2, a1
+> +       beq     a2, zero, _new_vmalloc_restore_context
+> +
+> +       /* Atomically reset the current cpu bit in new_vmalloc */
+> +       amoxor.w        a0, a1, (a0)
 
+Doing only 32bit atomic here, is this intentional ?
+
+> +
+> +       /* Only emit a sfence.vma if the uarch caches invalid entries */
+> +       ALTERNATIVE("sfence.vma", "nop", 0, RISCV_ISA_EXT_SVVPTC, 1)
+> +
+> +       REG_L   a0, TASK_TI_A0(tp)
+> +       REG_L   a1, TASK_TI_A1(tp)
+> +       REG_L   a2, TASK_TI_A2(tp)
+> +       csrw    CSR_SCRATCH, x0
+> +       sret
+> +
+> +_new_vmalloc_restore_context:
+> +       REG_L   a0, TASK_TI_A0(tp)
+> +       REG_L   a1, TASK_TI_A1(tp)
+> +       REG_L   a2, TASK_TI_A2(tp)
+> +.endm
+> +
+> +
+>  SYM_CODE_START(handle_exception)
+>         /*
+>          * If coming from userspace, preserve the user thread pointer and=
+ load
+> @@ -30,6 +102,18 @@ SYM_CODE_START(handle_exception)
+>
+>  .Lrestore_kernel_tpsp:
+>         csrr tp, CSR_SCRATCH
+> +
+> +       /*
+> +        * The RISC-V kernel does not eagerly emit a sfence.vma after eac=
+h
+> +        * new vmalloc mapping, which may result in exceptions:
+> +        * - if the uarch caches invalid entries, the new mapping would n=
+ot be
+> +        *   observed by the page table walker and an invalidation is nee=
+ded.
+> +        * - if the uarch does not cache invalid entries, a reordered acc=
+ess
+> +        *   could "miss" the new mapping and traps: in that case, we onl=
+y need
+> +        *   to retry the access, no sfence.vma is required.
+> +        */
+> +       new_vmalloc_check
+> +
+>         REG_S sp, TASK_TI_KERNEL_SP(tp)
+>
+>  #ifdef CONFIG_VMAP_STACK
+> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+> index e3405e4b99af..2367a156c33b 100644
+> --- a/arch/riscv/mm/init.c
+> +++ b/arch/riscv/mm/init.c
+> @@ -36,6 +36,8 @@
+>
+>  #include "../kernel/head.h"
+>
+> +u64 new_vmalloc[NR_CPUS / sizeof(u64) + 1];
+> +
+>  struct kernel_mapping kernel_map __ro_after_init;
+>  EXPORT_SYMBOL(kernel_map);
+>  #ifdef CONFIG_XIP_KERNEL
+> --
+> 2.39.2
+>
+>
+
+Regards,
+Anup
 
