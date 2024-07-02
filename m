@@ -1,108 +1,94 @@
-Return-Path: <linux-kernel+bounces-238105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34F6892439F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:31:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5855092439E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68AD01C20D39
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:31:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC659B24D99
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090E91BD50F;
-	Tue,  2 Jul 2024 16:30:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB2A1BD4FE;
+	Tue,  2 Jul 2024 16:30:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IGzfhmoC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cGWy6cnK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F541BC08B;
-	Tue,  2 Jul 2024 16:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF1614293;
+	Tue,  2 Jul 2024 16:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719937844; cv=none; b=hLZrQ5nUr9sHYn12lP4F1i1hedPOvGtSnDc82+LEpJ5FlS0XS4pDGba/vw/9faDMwv2x37W5MQ/rUyDY4f+p4XCtz9vUwKuuzlkf5nVYvlbAxh4qAATyENzVbta9UH7Q0N1DvA/3NXqb0ECqR2PLYvcgeUU8/e6HhNeEHjxn2/g=
+	t=1719937844; cv=none; b=nL8klX6oq9Hk2my8zC9h4XaZioIPM/x5esUZBR4R2DK0SWTjVnozEPc9bvgnnIM54+75haKxPnI/3QqAQxggi/C7V+QgG4IfavOGNiE1O1KFJzM9hzWWGJpoaSukzNd5xGBBA1ISm2sBTBmoYJu8VOa9O4njC9ijUKYll62lU+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719937844; c=relaxed/simple;
-	bh=oEbf74yka16937zk2YkPUMNYRWLZTn0q4LUgV8PRn4E=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=m9Zs416zsIGuq5D3R2tGPqOgqNXLYjRV2+W7i5NCBS7KC4O7zImSjn9WdXUm+zxULVi7B0TzT6MFRq6a9aM0GOTUHJp1U84UmGlWjZzgP9186Rgv+niafi/tajU9eVKBv8yv8V19SOPx9xdIRxFPe80t6DidMkwLAOaLl8uZD8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IGzfhmoC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B160AC4AF07;
+	bh=yg4aPDBbW9uUffjVz6BgdWKqSwBFTVMjQloATSZQEXE=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=IXEuw8aWo4rCmF1GPvSxLZSy2F4sxKzcUdqFCuSSvw+MGreZM0HX1fZWAzaLVkK2vO4mJ6KbEynOhqocps/ZnemVueGE36J9wsZ7PaY/Vj9RSPKKCugkXbqtAPILCd4XF+qAcbBXXLktbEjHMddzsieYJXCbcQ+h2g6dSBVuymk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cGWy6cnK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B7E97C4AF0A;
 	Tue,  2 Jul 2024 16:30:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1719937843;
-	bh=oEbf74yka16937zk2YkPUMNYRWLZTn0q4LUgV8PRn4E=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=IGzfhmoC4UrCMZ+AHzmh37RY8SL7XeWYcnke2157T/iS4i9B+R1+IIk2ea4WeEn0l
-	 /MuAL1n8BxPKrz0LKvuB22P6DiVVooV0nFwXETIIsShig7moeiP79EPsySxiYTckMb
-	 GCK6oD6FH1gddyWtBg8LwS5Ol+xyM+rAMNDp6A2VFbOdFxjaYJCKDCHzubxuSLpDmt
-	 BPmQhAKPe77eOkMaiiImvj8T9GyFNBNOMzQS5B9o0IDRulQIdtFqiCz5E/kdaFLDB5
-	 LyznCaMSY1CCj3eZOeKjX+Gr1SKrMowuVXccZGXKcWPFM1r/o03I4qxRff/Eb+3xnl
-	 fqzIzDvXel9/g==
-Date: Tue, 02 Jul 2024 10:30:42 -0600
+	bh=yg4aPDBbW9uUffjVz6BgdWKqSwBFTVMjQloATSZQEXE=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=cGWy6cnKmx5K3dmAhRWrYwJF9Rb+ZvLavrD/zWZe32JY0ZkjnP0WIPF4xEEcfdBuW
+	 MdUreShSMD/+D7swZ8pda+nGD2EBe8wWQVb1dn8CB1Ggg00vOLEm4uNFYmoSqdZ2Js
+	 ubj6myD7Vfb6mQQqBMONfSRflvyrFU24FhW1bElghtlPcvl6ohtoDIa3Dt/gDLhSbb
+	 kMkb4ZZ6auYCIl9xEozEmFFBOwFbXfmi+XaTlMpO6a5WlOirpDmxMcyAi7VAvSYP9X
+	 kQpRWmDObUQCHBg/I46lWQ5tTadkU76z22h6Im3Wy5S4p3jbbnUWJ0gs9bGpnDW6po
+	 PYrdlsRuY3zvw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A0C25C43601;
+	Tue,  2 Jul 2024 16:30:43 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Petar Stoykov <pd.pstoykov@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- linux-iio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, 
- devicetree@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-In-Reply-To: <20240702-mainline_sdp500-v3-1-0902047b3eee@gmail.com>
-References: <20240702-mainline_sdp500-v3-0-0902047b3eee@gmail.com>
- <20240702-mainline_sdp500-v3-1-0902047b3eee@gmail.com>
-Message-Id: <171993784259.3739500.10383587148467749192.robh@kernel.org>
-Subject: Re: [PATCH v3 1/3] dt-bindings: iio: pressure: Add Sensirion
- SDP500
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf-next] bpftool: Mount bpffs when pinmaps path not under the
+ bpffs
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171993784364.9332.4670316229438625760.git-patchwork-notify@kernel.org>
+Date: Tue, 02 Jul 2024 16:30:43 +0000
+References: <20240702131150.15622-1-chen.dylane@gmail.com>
+In-Reply-To: <20240702131150.15622-1-chen.dylane@gmail.com>
+To: Tao Chen <chen.dylane@gmail.com>
+Cc: qmo@kernel.org, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ bpf@vger.kernel.org, martin.lau@linux.dev, eddyz87@gmail.com,
+ song@kernel.org, yonghong.song@linux.dev, linux-kernel@vger.kernel.org
 
+Hello:
 
-On Tue, 02 Jul 2024 16:59:08 +0200, Petar Stoykov wrote:
-> Sensirion SDP500 is a digital differential pressure sensor. It provides
-> a digital I2C output. Add devicetree bindings requiring the compatible
-> string and I2C slave address (reg).
+This patch was applied to bpf/bpf-next.git (master)
+by Daniel Borkmann <daniel@iogearbox.net>:
+
+On Tue,  2 Jul 2024 21:11:50 +0800 you wrote:
+> As qmonnet said [1], map pinning will fail if the pinmaps path not under
+> the bpffs, like:
+> libbpf: specified path /home/ubuntu/test/sock_ops_map is not on BPF FS
+> Error: failed to pin all maps
+> [1]: https://github.com/libbpf/bpftool/issues/146
 > 
-> Signed-off-by: Petar Stoykov <pd.pstoykov@gmail.com>
-> ---
->  .../bindings/iio/pressure/sensirion,sdp500.yaml    | 41 ++++++++++++++++++++++
->  1 file changed, 41 insertions(+)
+> Fixes: 3767a94b3253 ("bpftool: add pinmaps argument to the load/loadall")
+> Signed-off-by: Tao Chen <chen.dylane@gmail.com>
 > 
+> [...]
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Here is the summary with links:
+  - [bpf-next] bpftool: Mount bpffs when pinmaps path not under the bpffs
+    https://git.kernel.org/bpf/bpf-next/c/da5f8fd1f0d3
 
-yamllint warnings/errors:
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/pressure/sensirion,sdp500.yaml: $id: Cannot determine base path from $id, relative path/filename doesn't match actual path or filename
- 	 $id: http://devicetree.org/schemas/iio/pressure/sdp500.yaml
- 	file: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/pressure/sensirion,sdp500.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/pressure/sensirion,sdp500.example.dtb: pressure@40: 'vdd-supply' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/iio/pressure/sdp500.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240702-mainline_sdp500-v3-1-0902047b3eee@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
 
 
