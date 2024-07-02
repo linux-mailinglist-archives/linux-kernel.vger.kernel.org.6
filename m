@@ -1,75 +1,54 @@
-Return-Path: <linux-kernel+bounces-238336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C67192487D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:39:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 723C4924881
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 21:41:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FF2F1C23E8D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:39:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA9C5B23D8F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E8B1CE09C;
-	Tue,  2 Jul 2024 19:39:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70761CE094;
+	Tue,  2 Jul 2024 19:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RDsG/4K4"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="eBvyqQPH"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5786E5ED;
-	Tue,  2 Jul 2024 19:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82C51BB69E;
+	Tue,  2 Jul 2024 19:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719949182; cv=none; b=ZVZqhIV4xBVPEtu4U7Z3cIUTx3iwsso3vgvzL7n6i1FRzWblM5XXHUncrjFnzhcDtLEGzjdNVax3sLJCIC0IhptuWhbDcQHYjuKf8Prejw+uoOsKbXnkGDYt6Dde/Kaz6kGlmf1EoC5+spJFNN2lEemKD1p9cstYYTaCBoy7jKg=
+	t=1719949249; cv=none; b=EodpaNzpnpdNQyLVHtqw6mBzYwzRKdb9EKLam/MPLZ5l0mZiQkgHMq89olWrqMC88EI/4Rd0iapxzpshpM49rBdxnD7b40x+wBo0+QbFpCyVZ2fKMkYXh/0Ah7Qi4PBnWptxTDRDRfS7Hdmi6RipqNpB/PE1mjwNhCGOQFhPbsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719949182; c=relaxed/simple;
-	bh=oRlSI9t2p3jGFJ880LK9WDLLsE0d6mzD6XkeeFAK5Pw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=otPNzx5Nr7SOGPT9imMFRn4xXS/t5tcAKcBovIxnf+99o/8Uy+4QtVxEnaA/2DniHKhHdM3T6S/3rZjMOMgsAEHTNmM4+VimT0JeO4J3vfK6aZ/eB+5iCe561WG3RskYpdquUai6Wtb0i77sYnOhRxhYvnDPYA5BhbDGlyztSkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RDsG/4K4; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2c2d25b5432so2750536a91.2;
-        Tue, 02 Jul 2024 12:39:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719949181; x=1720553981; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=S8RmM/nQ903jD1e784juDC9He5+yPgPg+HlP+Yxh+mY=;
-        b=RDsG/4K4Hen4/TkA9to5zweFgNQiZHKqThyNSZkq6m+zAaI/dh7DahX9VvskSmTjd0
-         b5gZgabHvN/7/vGAWGrgqm99srKzbyO+z+VbsC6sMG2UUJEspbx1FRCxjHbw/ZbNXPNA
-         JR1Q+nv41hZLPJnpr1MgMUXnZ7hwCURD5RUi3drag/u9Cc8jMHpbekNJAOmqp1byt959
-         gZ4Q4oHQbXUGZYKtFnlswqGpdpS6rkYt7D8qHjeACyGO2i9i1lwTTBgb3MdWHvtXR6fe
-         bvvuq82WY8oGzZATnDewXXloTuXJlXvAHvKdr0tbshjQBxSf2Hl6PQ7mAdkBRqjXJGTw
-         XtHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719949181; x=1720553981;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S8RmM/nQ903jD1e784juDC9He5+yPgPg+HlP+Yxh+mY=;
-        b=ET5VNSiQoR5bFskL1wo+mqm6Oy3D72VzJ91J+U6kU8OcEvoffMhT89MOEReWm3lVTT
-         YFlC9VbfFb2ot025fAoCEl9vPeHBthcr//Rr1+Vmdb/7RI/jhARnedkX8jqCSiklDwsj
-         Kx0bZ9TB62OvXlVeWR16W042rF/ofvMKGcUfbyBm78Hr/5E24etAL23PY1DJRJLUm8TC
-         81wtVEXjrPIfTAOWyjD2rITxAPHZSm3mcs9Rq88m9k9ZHjskJ6I4onBt97/u07dND/66
-         jg+ZI/SrI/K1ibYfUHUlNYsG6xX5JFNXpj6PBAQBLtn4TbbAcv4XjsxAiPDvRpfWwldK
-         uJsw==
-X-Forwarded-Encrypted: i=1; AJvYcCWSMlnwQ2vqCT7jNAMqWtCj4He3GnHV+feP0mNsQQG0DNLc6Fnf4K9BmsrcFMcAEXxNeUYUnQ2bVV8kSwDSSqXa9FlX+Qk0ahHpe1pok+5sSAtaTSkNiwBTPMAImxun7ZRl5RqO2uWfIWrh5K01o+tBkCwlzo3+rs560OV0G+xUZIC3a335Tp/pkuoGRfv59kVMqN8tinP/ELLlzHF6d1t8DXuiUlg3YdQytQbMNPG1ELveHs1ADD1u3PIR
-X-Gm-Message-State: AOJu0Yy/aEA4M8b0ufnWsDk68jGY4QzDsCLdepsiHSzIvKPYMKcSlnc7
-	5tBU40Ji4F5qZbIfRjnq8lLSyK1btKFiu5I+c11iuQt0ufjrqAz1
-X-Google-Smtp-Source: AGHT+IERdVtlgKLMdAMQSFOlOPmsLrxNuImG3ycfTmId0OWD4i32DoVyGKXhjOqTzMWyCCtp4yaYmw==
-X-Received: by 2002:a17:90b:2287:b0:2c7:70ba:3efe with SMTP id 98e67ed59e1d1-2c93d7097c6mr5833019a91.17.1719949180632;
-        Tue, 02 Jul 2024 12:39:40 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91ce4668esm9297079a91.21.2024.07.02.12.39.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jul 2024 12:39:40 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <da649c17-2237-430f-80c9-253cef47deb6@roeck-us.net>
-Date: Tue, 2 Jul 2024 12:39:38 -0700
+	s=arc-20240116; t=1719949249; c=relaxed/simple;
+	bh=pkS+uehYQlYkeUjG9ipfbE+aFZyfxuZEjI584xLWUA8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=YiBxpTVb/XMBKvEwuwLjJxOEygn+edTIipkhxa3/dsIlmv5BwmcITj7fNJ2fRWuvMz/j50u7lMQdzynw+x7BdE9KKDj0klaD0tx56IvAeFubNCLwTHR/qb/9jzH9ybjxpEANAaWYpOKpjwo/ipfeJmx+lLPkV1rwkQufwXnqzjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=eBvyqQPH; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719949235; x=1720554035; i=markus.elfring@web.de;
+	bh=Dhc39LuDQM+jcrdSlNLZclGK8q3LqZ3pmc/NDCCAcVE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=eBvyqQPH9fyxpbaK89lxdGwkjYo8MbzeWlMs8joyXg3ePkux70SD5rqGn59KDots
+	 qpBEWznQHjPLYSgXMW679oVVj5vSvh8bobMyvxm+B67U1E/z/dgCwzGzf9Vslz3H4
+	 8usgIcRMFLPzS7k25BvPt8B5w61xwZQRsFXevaQbwMDk4W4jlMQmDwF2F0Vz2ENLv
+	 ajR5csjnzp5yiltWl45TX82pVXsO3hJomTXNrkZG3jg/yNOHqUGZxhwphOW84tCp2
+	 ssh/uci44kWs7eSeO4/VlwRACBMv4qXmAazaSzapZb/qQRkrvifrhJGE3U5ZEcDcG
+	 Wj5LxM52ehbeDDlVIQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N4N9I-1sFTfh1YMI-00zBJ3; Tue, 02
+ Jul 2024 21:40:35 +0200
+Message-ID: <4036b194-3014-4523-b8d0-ea39664607a3@web.de>
+Date: Tue, 2 Jul 2024 21:40:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,95 +56,80 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] hwmon: add MP5920 driver
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
- Alex Vdovydchenko <xzeol@yahoo.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Sean Anderson <sean.anderson@linux.dev>,
- Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
- Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org
-References: <20240702115252.981416-1-xzeol@yahoo.com>
- <20240702115252.981416-3-xzeol@yahoo.com>
- <956582ec-0205-46c3-b4dd-820aa150c03d@t-8ch.de>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <956582ec-0205-46c3-b4dd-820aa150c03d@t-8ch.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+To: Levi Yun <yeoreum.yun@arm.com>, Yunseong Kim <yskelg@gmail.com>,
+ linux-bluetooth@vger.kernel.org, Johan Hedberg <johan.hedberg@gmail.com>,
+ Luiz Von Dentz <luiz.dentz@gmail.com>, Marcel Holtmann <marcel@holtmann.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Austin Kim <austindh.kim@gmail.com>,
+ MichelleJin <shjy180909@gmail.com>, Levi Yun <ppbuk5246@gmail.com>
+References: <20240701194531.97576-2-yskelg@gmail.com>
+Subject: Re: [PATCH] hci: fix double free in hci_req_sync
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240701194531.97576-2-yskelg@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:nVwmcktw2EYzu877tUCa7svrrEhZ1hamaJtqWuUoPJLpFwPJbJe
+ cv4vExJyFG8r9t9GhN49Zs4TeuJj3b+UuX7idLJ7yqMuAUoQxvJPSZ+EzMprx7veR+ejJq7
+ mdAH045uB2bxA5vMO4xNTHx09sC5r7FkY5/Awe1Vh6as7O4x3/YjuJxkgEMhu7AG5fv7nWT
+ dOvarq064+4g+sHZ3HEtA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:44BwTlUuJh0=;ZkMUOwb34lNWL1PT5pTmzoXFR3R
+ htrYeea2NjbabDgePmVU8FdyjNP21quHeuHIouuO1fdasZ82JDZ/hsXbcBRLQDLE70Cmi1zms
+ XH5OYrFuo67C8HH6cdWYpdj1eHh8J/jlfQuEe/+MmaaLW6OMZUMUUV7u/liwZpHhoaJUyITmJ
+ 4DDzLN9tLMd5O1//f8pRsYi1R1/kBP4drn4dKITqiH9rgbPxIgd/xKHza1HSFBMiTT3Il88jo
+ /dZyE/DnB2pO39QTsndLS27mxz7x5qgY5QI55DMFyBLiJDYC5hN72+2tYFc41J5n3WCrXMmop
+ VyVpdC6pqQzSZwHiXYVL+8LNAUaR/Jx1RaRMWsof0AAJSwjMZAs4N4K+2s8mXkE03fLOlmZSZ
+ y+GFe/GK1G6Ngywsn7RngNfcBg/+PuSaBMrEgZvbWkfrJqcrQ08H1QgeGUzWAwX4/3k/autQW
+ J/gIR50tAUvLLe4iM8lXVAMLj+WTEd6f/HgeBVLc7vDVsf27Z1a9pgIjjx9Z+o00Ng2VOVnAb
+ rF2kabI5t8QRgzE0AtcKrZ2aB9/7kJOtJ9pfUlDRHCPvzkuBmGVcyHwYwpkJnti2BSdepJ+vG
+ 5JRNwfQnT1T9IhaWistTN1r6cEQd0u8xvn3H9TsCPvPdyUp7/07o8jdvtig29Tp4J+mEdl6Y8
+ enrpgnVil8IgTg3pEsEDidWVpzfoY3nJMloncjdRK0aSynTDtfrOzwqIMgQ74Gv3g2tP34nxe
+ leRrnN16Z/enGsn1AqE8eCzzHPejdp7m7hokfYSAUl9kaLHtudJOfUnlbq1Cz6sOKcgiJHHYC
+ BLl+3Haf/NUPy4Mhg8TFUjBXeXw/Fh5JrX9q8ERsrmb6A=
 
-On 7/2/24 12:00, Thomas Weißschuh wrote:
-> On 2024-07-02 14:52:51+0000, Alex Vdovydchenko wrote:
->> Add support for MPS Hot-Swap controller mp5920. This driver exposes
->> telemetry and limit value readings and writings.
->>
->> Signed-off-by: Alex Vdovydchenko <xzeol@yahoo.com>
->> ---
->>   Documentation/hwmon/index.rst  |  1 +
->>   Documentation/hwmon/mp5920.rst | 91 +++++++++++++++++++++++++++++++++
->>   drivers/hwmon/pmbus/Kconfig    |  9 ++++
->>   drivers/hwmon/pmbus/Makefile   |  1 +
->>   drivers/hwmon/pmbus/mp5920.c   | 93 ++++++++++++++++++++++++++++++++++
->>   5 files changed, 195 insertions(+)
->>   create mode 100644 Documentation/hwmon/mp5920.rst
->>   create mode 100644 drivers/hwmon/pmbus/mp5920.c
-> 
-> The entry in MAINTAINERS seems to be missing.
-> 
+=E2=80=A6
+> +++ b/net/bluetooth/hci_request.c
+> @@ -106,8 +106,7 @@ void hci_req_sync_complete(struct hci_dev *hdev, u8 =
+result, u16 opcode,
+>  		hdev->req_result =3D result;
+>  		hdev->req_status =3D HCI_REQ_DONE;
+>  		if (skb) {
+> -			kfree_skb(hdev->req_skb);
+> -			hdev->req_skb =3D skb_get(skb);
+> +			hci_req_skb_release_and_set(hdev, skb_get(skb));
+>  		}
+>  		wake_up_interruptible(&hdev->req_wait_q);
+=E2=80=A6
 
-That isn't mandatory; checkpatch asks for it, but I prefer not to have it
-in the first place if the submitter doesn't really plan to maintain it.
+How do you think about to omit any curly brackets here?
 
-> Otherwise:
-> 
-> Reviewed-by: Thomas Weißschuh <linux@weissschuh.net>
-> 
 
-Thanks,
-Guenter
+=E2=80=A6
+> +++ b/net/bluetooth/hci_request.h
+> @@ -28,6 +28,15 @@
+>
+>  #define hci_req_sync_lock(hdev)   mutex_lock(&hdev->req_lock)
+>  #define hci_req_sync_unlock(hdev) mutex_unlock(&hdev->req_lock)
+> +#define hci_req_skb_release_and_set(hdev, val)		\
+> +({							\
+> +	if (hdev->req_skb) {				\
+> +		spin_lock(&hdev->req_skb_lock);		\
+> +		kfree_skb(hdev->req_skb);		\
+> +		hdev->req_skb =3D val;			\
+> +		spin_unlock(&hdev->req_skb_lock);	\
+> +	}						\
+> +})
+=E2=80=A6
 
+* Do you expect that any data synchronisation should be performed
+  for the shown pointer check?
+
+* Can it eventually matter to implement such a macro with a statement
+  like =E2=80=9Cguard(spinlock)(&hdev->req_skb_lock);=E2=80=9D?
+  https://elixir.bootlin.com/linux/v6.10-rc6/source/include/linux/spinlock=
+.h#L561
+
+
+Regards,
+Markus
 
