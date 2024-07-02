@@ -1,95 +1,76 @@
-Return-Path: <linux-kernel+bounces-238130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3DDB9243ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:50:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B8C89243EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:51:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 361D4B2783E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:50:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A5A428434A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 16:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839911BD512;
-	Tue,  2 Jul 2024 16:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gdEun3Yo"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3011BD50D;
+	Tue,  2 Jul 2024 16:51:30 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5511BC08A;
-	Tue,  2 Jul 2024 16:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24FAF1BC08A;
+	Tue,  2 Jul 2024 16:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719939020; cv=none; b=dKP/CfdY5wd+sCjAPZIONg/K+sQHx7KItLyOIF7DYZG6a9HK/VhqrQRL1vwLhtPDXaBoMioIjbNZSn2JPRTnZNNTK/xP4PnmLyfrzC5XUOJsoqWeD9mlyc24BY0OLfTkxpXo+L620yhl77R5KH2XTbQBwHNPpJl4172yZcqbHFo=
+	t=1719939090; cv=none; b=oVAK04xAfrwUD0zun3BZemPiyIpCT+cALWn7N8uZk8hwjcvYhqYQ9JKlis338arSac7vPuIR1QEeUOO+AFWT0fZyYQNMXEHed/J077zokD6SzrENirl1v40pYI6UUcvg87ecbWyOLsx7Na8xg3VnvCRcQ8OaU0XKhqa312sLmCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719939020; c=relaxed/simple;
-	bh=NBU8FpE3Irj66yKw+4xwB67VdXxsBFU30+zKXbrRKJ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uPnx4rlLgBgJZMufSulbt0a2nmbCTiKnKhvxZTMYH7AIkp9fHvedLb06Hh8xmOz6rc42D5hhVusuapoA78tIQ8jmlPOqDP6YmedM7Sud2bD1+u0niYNZbn468HeLQMMuaLGt4W6iZeiC0vTHagPmtrXmJjRgP6mQZNYEBL3YWTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gdEun3Yo; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=DyQD/12RCuPa/pHvJFloMLSkNit2iJNd6Y55+8X+S9o=; b=gdEun3Yo7nq+uQsT+MfWgV2pI0
-	NHKpEb0uH816likmx6uDX2hKw+Uc1cgxWuJzGWdM0N2ToOKGE37jkxuzGKaHDc56W+fqj7rKhaUap
-	NZ6wzMLKNNHlKgNOfy07Fmma9XVs3WvxXNZo9XIZc6hM9rE8E8YXjAEV8QTKm7nhNynBKr0xGhfw/
-	81zSiGZJlgL0iwa/YVtUsnEZfKvD1d21JVYUa+FWbJxHtji1EBsNmd04aAg7jmyorIlSoqDO3dqi4
-	OWNJ9Z6aOIkh37x35qi0IT0MhNYZzaSVujIMrIvDDj6wcl91BkUS03IR0zOXzV7eZswDOjHcc/0Hw
-	5QXNhjFQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sOghm-00000000xck-3ywy;
-	Tue, 02 Jul 2024 16:50:10 +0000
-Date: Tue, 2 Jul 2024 17:50:10 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
-	david@fromorbit.com, chandan.babu@oracle.com, djwong@kernel.org,
-	brauner@kernel.org, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
-	linux-mm@kvack.org, john.g.garry@oracle.com,
-	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
-	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org, Zi Yan <zi.yan@sent.com>
-Subject: Re: [PATCH v8 06/10] iomap: fix iomap_dio_zero() for fs bs > system
- page size
-Message-ID: <ZoQvwkcL3uWONfzV@casper.infradead.org>
-References: <20240625114420.719014-1-kernel@pankajraghav.com>
- <20240625114420.719014-7-kernel@pankajraghav.com>
- <20240702074203.GA29410@lst.de>
- <20240702101556.jdi5anyr3v5zngnv@quentin>
- <20240702120250.GA17373@lst.de>
+	s=arc-20240116; t=1719939090; c=relaxed/simple;
+	bh=ICrjSB/puKn4FpfGSe2MZmByySg0y3v/6MkyAa0VOnY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cSvaQ9sTJ0SwCefC42V+JNmXdpzbrAq+AsWmqkAHX40H9pgztuIDULLnXWFOo81jRBDH8DlV0gK1yGqG0OYNQZ41f33W3I1a8aqArSCls7JpH2GloAkx+nJUVI6VIp0J5AmFIldN1dOfIUPRSAu2//yj8LNrmiUefMZzmx6uwOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBB78C116B1;
+	Tue,  2 Jul 2024 16:51:27 +0000 (UTC)
+Date: Tue, 2 Jul 2024 12:51:26 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Beau Belgrave <beaub@linux.microsoft.com>, "Dmitry V. Levin"
+ <ldv@strace.io>, Vincent Donnefort <vdonnefort@google.com>,
+ mhiramat@kernel.org, kernel-team@android.com, rdunlap@infradead.org,
+ rppt@kernel.org, david@redhat.com, linux-trace-kernel@vger.kernel.org,
+ linux-mm@kvack.org, linux-api@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Linus Torvalds
+ <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v23 3/5] tracing: Allow user-space mapping of the
+ ring-buffer
+Message-ID: <20240702125126.50a6267c@rorschach.local.home>
+In-Reply-To: <cb02f5a0-d6a3-4228-9cbb-473fd392ee48@efficios.com>
+References: <20240510140435.3550353-1-vdonnefort@google.com>
+	<20240510140435.3550353-4-vdonnefort@google.com>
+	<20240630105322.GA17573@altlinux.org>
+	<20240630084053.0b506916@rorschach.local.home>
+	<9a9c8ea4-8e17-4e7e-95fe-7b51441a228c@efficios.com>
+	<20240702111807.13d2dd2c@rorschach.local.home>
+	<cb02f5a0-d6a3-4228-9cbb-473fd392ee48@efficios.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240702120250.GA17373@lst.de>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 02, 2024 at 02:02:50PM +0200, Christoph Hellwig wrote:
-> On Tue, Jul 02, 2024 at 10:15:56AM +0000, Pankaj Raghav (Samsung) wrote:
-> > Willy suggested we could use raw pages as we don't need the metadata
-> > from using a folio. [0]
-> 
-> Ok, that feels weird but I'll defer to his opinion in that case.
+On Tue, 2 Jul 2024 11:32:53 -0400
+Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
 
-Let me see if I can make you feel less weird about it, since I think
-this is something that people should have a clear feeling about.
+> If we use '*' for user events already, perhaps we'd want to consider
+> using the same range for the ring buffer ioctls ? Arguably one is
+> about instrumentation and the other is about ring buffer interaction
+> (data transport), but those are both related to tracing.
 
-In the Glorious Future, when we've separated pages and folios from each
-other, folios are conceptually memory that gets mapped to userspace.
-They have refcounts, mapcounts, a pointer to a file's mapping or an anon
-vma's anon_vma, an index within that object, an LRU list, a dirty flag,
-a lock bit, and so on.
+Yeah, but I still rather keep them separate.
 
-We don't need any of that here.  We might choose to use a special memdesc
-for accounting purposes, but there's no need to allocate a folio for it.
-For now, leaving it as a plain allocation of pages seems like the smartest
-option, and we can revisit in the future.
+Beau, care to send a patch adding an entry into that ioctl document for
+user events?
+
+-- Steve
 
