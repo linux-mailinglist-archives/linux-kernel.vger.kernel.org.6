@@ -1,199 +1,99 @@
-Return-Path: <linux-kernel+bounces-238272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F4799247B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:58:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 192369247BC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 20:59:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1F851F272A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:58:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4ACAC1C2500A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 18:59:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745301CD5B9;
-	Tue,  2 Jul 2024 18:57:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D01084A40;
+	Tue,  2 Jul 2024 18:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KTfAgzop"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="BNRE8li+"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03AF91CD5AD
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 18:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B101CB313
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 18:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719946633; cv=none; b=r1Tzyepw2f0Y8vsmmrchx3LZitgbsH9nE5iFbE5pOKkoViujGEwA7tSrnBZ6nYkQilicaTCoCG8PtAL//jzduUl0c0EwPe2Lsw9eyCYEuUn2q/2a6KRt4LrSf3EJnAwTfndVfbY3BuJ+8uu2ULoBP1k5MeI8S0ntZ9P0Hk1ZRhA=
+	t=1719946742; cv=none; b=bty3H718e7gJE6+7PmCo8mkSPzgnaCIOjHUkzB8f6KaLWS6CNVhPc70RKWbMJTpgYTcLGP5H9gGASaD8+h/9mufqem7kOVFGw3gZ7AxAdAIZs4eMgKspAbYQNcws+q6UEKcqBhpivwFChV3JA5s4y/vrEtBBGOVzuxn3BiJvCR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719946633; c=relaxed/simple;
-	bh=395FfH3xyemItAqtIn4JAJLEifepSzNJDc6f4+Ca/t0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gZVPv/SuneFON1u5wdV8yQkUbnIRzTzz6gNBDJzltuY/qFlVoOlGGPYeCA4rpTq+xxrLDAoQeFCVC29RUll/fScSyLqHFsNY2Z2vvECTMMwMuIsFz/qeLis28YMUACAsH3rUcfCRY6WmKqHZBhOri67/x8ICR2U2bdVklLOUTXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KTfAgzop; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-375f6841f01so2279925ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 11:57:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1719946631; x=1720551431; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aL4LL4Ha0vSgUoObHMQfmtayw/DD40MrTBIZ2B5uF0Q=;
-        b=KTfAgzopUvBfwAjnN9oy9AjPdhynAFgjdt82VQu8SjKQUKX61z/O9sr4Vf6tYcu9BD
-         ghHak/Da9SwB0hwfGOQ3qW2g7UgdupkTb1ANWdov0RaZD9jj5l2bcTMM4XtkFMAOfoDm
-         F9bsDo9a01b2LZssSc+rXCccSzw9AOzon8Zr8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719946631; x=1720551431;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aL4LL4Ha0vSgUoObHMQfmtayw/DD40MrTBIZ2B5uF0Q=;
-        b=C8aeE0BCBsoR5XuXeYGSGsxFSRNMK8BFklq26uR/f2BNFdoc2O6yaOXOrq/4fzt6qN
-         stOpY/cK9W97WW3TONx6S72StB+ZyofxSuE4fs0/yjppfMhqVGEWjre679J4WcEBH4nH
-         XsfkFH5ubwNdyWhU38svLBV5P2L/FBbK8h7VqDEsSzZDsKZRdE6FHPsYhDqyPStkqcXV
-         iNXAuMDelFpi1gGjr+0mNz6G5RWWCgPwZfAmhNFrzupJtHQsTkRA/OeMOOLoNLOVs7EH
-         a1ZMRO4Pl+ti7Vs9UW0xdombjadRykP1ynQZH6K072p388lj+vDWveR68MtQUgnvrXu/
-         yiEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUB32FHiGqygeSbGQHyWD7cd+5utpaUsmkjU9oujLTgbI+i7LRi+D9sLpjKMdJVLu2cRPmbi8cMNSGg8pLx2QdTCTdNcwwYQ1RX1o42
-X-Gm-Message-State: AOJu0YzSPCCWp2P+IsBhaImSjO+wGIWFvTXoeYQoGL+OQ3bFoprYa5CD
-	xAIDosXIKrdxNQA9eVmgnKGO9boAoBCk0BtWz72wV4jY3iVJDRC0+aUpx7ln0rI=
-X-Google-Smtp-Source: AGHT+IHt3Y/VJxYBqGCtROlUks2wWRLkDb1nCKLi8QuYrby7x99CL5CbK8pGf/fuI+6Twv+MWKldsQ==
-X-Received: by 2002:a92:3647:0:b0:375:a4f9:e701 with SMTP id e9e14a558f8ab-37cd4124f46mr82780445ab.3.1719946631117;
-        Tue, 02 Jul 2024 11:57:11 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-37ad4370c2csm24815785ab.58.2024.07.02.11.57.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jul 2024 11:57:10 -0700 (PDT)
-Message-ID: <a7e0810c-2d35-48c6-9140-1ebfa3edd660@linuxfoundation.org>
-Date: Tue, 2 Jul 2024 12:57:10 -0600
+	s=arc-20240116; t=1719946742; c=relaxed/simple;
+	bh=rSgaHqVZQImHTOfgOEqTu4ULIR2aezhDn/5iYMs/7bg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vw/TnikM36V0Bvo914amwn+w57D0rJ/hf8yfW1BgkJyxOCScnKtk0m4Dqz/RNJTf5hbmBaMekRG4Cmy5X4EhS4lb6UPpcoYSo1IObVUCCjYX3bPTg0Hq7gSe5mBi7r4I0VLD73EJqG6b7zK0u8hKlVa0P7cOjPhGhz9iHybAie8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=BNRE8li+; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 689C040E0185;
+	Tue,  2 Jul 2024 18:58:57 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id RsFJfm7RO5gT; Tue,  2 Jul 2024 18:58:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1719946734; bh=q093ooWosuu4xO1lQUGjKU525ujMW+zd9lX5wt+JL3s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BNRE8li+UWwsfDIt8FNop1QVprUu99EAMtTMjo0ogkDbJ4BTlrCFr7CmE/RT8SK5H
+	 foLjwwCfPOzwoWKHz/+l7yS0OV+MVEpOsKpTVjXKPqXH3G0Aumy+XxBMXKkMJXlNAc
+	 2S1wqy3yna6vok1gora14mk3KQX8vqrJbhPSVk7QDWdRY8iuwOiE2krBzMMGleflh9
+	 h+mCa++pvf0BTIM3EjGvb60hMiaIy74dxziHjSh6aMpIBHccw+/fS+Vx1xA8gnmxHN
+	 ZoH0NOSdT2FWMxydIZ9c+yJh18P/CkdsoNpIi7LKfpew+IQpp3EdKuXo0X5mrHQYLI
+	 Kwc/VGImvbQpCdDetYDwD3ZRP2kVB2pFWy4097K3y5uCqUFZ9yaEapaE8YKZevpfBR
+	 7yyEcu3S0/VeRFgoOPO1vDPjnRWhDfG7jqNqdwFvuuX7mspTzsgLTKjw3ojunMJTrX
+	 v+baoU7VIujDcchwaVXYuS/jNEok9Lfet7XkxSf/VL+HKshiVzd9OlR/sUcqEWdxzO
+	 AMMfb9zYnaxKxIKLeHQXZ6h6d+MTX4PJUfdPZPGlOIagXLYtDKIjfU4UjL15vgHhQ0
+	 Yk0msO1Bz0KiUQdC5r/FIH8e9xh6Xai8C7iOrEX8xS73TM4zLzVccUTv0Ez05M5x9U
+	 G2U4eM6miaL6RKwCJTVJRSyQ=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 578C340E021E;
+	Tue,  2 Jul 2024 18:58:41 +0000 (UTC)
+Date: Tue, 2 Jul 2024 20:58:35 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH v3 1/3] x86/mm: Use IPIs to synchronize LAM
+ enablement
+Message-ID: <20240702185835.GIZoRN297EJA0QgBDC@fat_crate.local>
+References: <20240702132139.3332013-1-yosryahmed@google.com>
+ <20240702132139.3332013-2-yosryahmed@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] cpupower: Make help command available for custom
- install dir
-To: Roman Storozhenko <romeusmeister@gmail.com>
-Cc: Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240627-fix-help-issue-v3-1-85318a3974e4@gmail.com>
- <c9df6637-6055-4668-b80b-a1a6e6be445e@linuxfoundation.org>
- <CALsPMBMeo5E9ZND0bPK089VHBZnybsigkvoC2r8BLCTjYt9QFA@mail.gmail.com>
- <f1261f1c-abbe-49e4-b0bb-b72af367da7f@linuxfoundation.org>
- <CALsPMBP42_oKJDegVQOzHUE00mie2Mh_aPyvyTUhgsnjQO1DDQ@mail.gmail.com>
- <501954d6-3f0a-4f1e-863b-c60353435700@linuxfoundation.org>
- <CALsPMBPkE=CCTgm8UcsdL7qEG+1u1H8NFYYTJvEMK3uXvg97Ng@mail.gmail.com>
- <CALsPMBP8HR8eETzuua1STdnLPwLb1-53ipQg1c3vcEN4inU65g@mail.gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <CALsPMBP8HR8eETzuua1STdnLPwLb1-53ipQg1c3vcEN4inU65g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240702132139.3332013-2-yosryahmed@google.com>
 
-On 7/2/24 12:52, Roman Storozhenko wrote:
-> On Tue, Jul 2, 2024 at 9:40 AM Roman Storozhenko
-> <romeusmeister@gmail.com> wrote:
->>
->> On Mon, Jul 1, 2024 at 9:40 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
->>>
->>> On 6/29/24 04:48, Roman Storozhenko wrote:
->>>> On Fri, Jun 28, 2024 at 9:45 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
->>>>>
->>>>> On 6/28/24 05:30, Roman Storozhenko wrote:
->>>>>> On Thu, Jun 27, 2024 at 7:33 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
->>>>>>>
->>>>>>> On 6/27/24 01:49, Roman Storozhenko wrote:
->>>>>>>> When the 'cpupower' utility installed in the custom dir, it fails to
->>>>>>>> render appropriate help info for a particular subcommand:
->>>>>>>> $ LD_LIBRARY_PATH=lib64/ bin/cpupower help monitor
->>>>>>>> with error message like 'No manual entry for cpupower-monitor.1'
->>>>>>>> The issue is that under the hood it calls 'exec' function with
->>>>>>>> the following args: 'man cpupower-monitor.1'. In turn, 'man' search
->>>>>>>> path is defined in '/etc/manpath.config'. Of course it contains only
->>>>>>>> standard system man paths.
->>>>>>>> Make subcommands help available for a user by setting up 'MANPATH'
->>>>>>>> environment variable to the custom installation man pages dir. That
->>>>>>>> variable value will be prepended to the man pages standard search paths
->>>>>>>> as described in 'SEARCH PATH' section of MANPATH(5).
->>>>>>>
->>>>>>> What I am asking you is what happens when you set the MANPATH before
->>>>>>> running the command?
->>>>>>
->>>>>> It adds the custom search path to the beginning of the MANPATH variable.
->>>>>> I tested this case. All works as expected.
->>>>>>
->>>>>
->>>>> Let's try again. What happens if you run the command with MANPATH set and
->>>>> exported and then run the command. Can you send the output?
->>>>
->>>> hedin@laptop:~/prj/cpupower/install/usr$ echo $MANPATH
->>>> /tmp/
->>>> hedin@laptop:~/prj/cpupower/install/usr$ LD_LIBRARY_PATH=lib64/
->>>> bin/cpupower help monitor
->>>> ...................
->>>> man output
->>>> ...................
->>>> hedin@laptop:~/prj/cpupower/install/usr$ echo $MANPATH
->>>> /tmp/
->>>> hedin@laptop:~/prj/cpupower/install/usr$
->>>>
->>>
->>> Is this with your patch or mainline? Can you give cut and paste
->>> the man output here for the mainline coupower without your patch?
->>
->> The above output is from my patch.
->> This is the output from the mainline:
->> hedin@laptop:~/prj/cpupower/install/usr$ sudo LD_LIBRARY_PATH=lib64/
->> bin/cpupower help monitor
->> [sudo] password for hedin:
->> No manual entry for cpupower-monitor
->> hedin@laptop:~/prj/cpupower/install/usr$ echo $MANPATH
->> /tmp/
->> hedin@laptop:~/prj/cpupower/install/usr$
->>
-> Based on our today's conversation the following is the output for the mainline:
-> 
-> hedin@laptop:~/prj/cpupower/install/usr$
-> MANPATH="/home/hedin/prj/cpupower/install/usr/man:"
-> LD_LIBRARY_PATH=lib64/ bin/cpupower help monitor
-> hedin@laptop:~/prj/cpupower/install/usr$ echo $MANPATH
-> 
-> .............
-> man output
-> .............
-> 
-> hedin@laptop:~/prj/cpupower/install/usr$ export
-> MANPATH="/home/hedin/prj/cpupower/install/usr/man:"
-> hedin@laptop:~/prj/cpupower/install/usr$ echo $MANPATH
-> /home/hedin/prj/cpupower/install/usr/man:
-> hedin@laptop:~/prj/cpupower/install/usr$ LD_LIBRARY_PATH=lib64/
-> bin/cpupower help monitor
-> 
-> .............
-> man output
-> .............
-> 
-> hedin@laptop:~/prj/cpupower/install/usr$ LD_LIBRARY_PATH=lib64/ sudo
-> bin/cpupower help monitor
-> [sudo] password for hedin:
-> bin/cpupower: error while loading shared libraries: libcpupower.so.1:
-> cannot open shared object file: No such file or directory
-> 
-> As you can see we can use MANPATH for correct help invocation, unless
-> we call it with 'sudo'. I can guess that it simply
-> inherits the environment variables from the root shell that contains
-> no 'MANPATH' variable set with an ordinary user.
-> 
+On Tue, Jul 02, 2024 at 01:21:37PM +0000, Yosry Ahmed wrote:
+> Change-Id: I7fd573a9db5fe5284d69bc46f9b3758f1f9fb467
 
-sudo -s will inherit the environment. Check sudo man page.
+What do those tags mean?
 
-> Worth mentioning this in an appropriate manpage?
+-- 
+Regards/Gruss,
+    Boris.
 
-I don't think so.
-
-thanks,
--- Shuah
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
