@@ -1,125 +1,186 @@
-Return-Path: <linux-kernel+bounces-237230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 690F691EDB9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:14:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5721491EDBF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 06:15:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2451928558A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 04:14:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88CE91C215C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 04:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 929AC130A53;
-	Tue,  2 Jul 2024 04:12:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1BC2BB1C;
+	Tue,  2 Jul 2024 04:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NhctQyFU"
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rt7L4I+i"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880DF5A0FE
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 04:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1949946C
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 04:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719893552; cv=none; b=QbmOxt1FIFidJUS7lCi23nJZyadyvXOqFPFSyAHsOInJW3yFb41NFiLDAQHxZ0tHvflAw4KS/bGp+IUndpz+aEKg4zoJ4dM2cWUpVWd1NH3B+v9qt7/Drd812rHTBP3UliB3k0OVNW9u3mB7aT9cIZporXW8kR3Etz32WXapH0s=
+	t=1719893720; cv=none; b=rlxL7EeXCDbSJ9ROxkotB0JUiFwTdyjb5LDcggknKjte/VHzhh1BTvTjNjjPPpCMN46TqTLsELW0bakoktQImkdnMxvLnjFTEB4IjYhneI8Az74Ubnys4F7ALv8W6Ru0R44HKGq2K79MRr0QhAL0FBU5Z1u4Wby8bB8Jc3fpWM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719893552; c=relaxed/simple;
-	bh=d9D77y0p71i8HH+N5bc+JYRyqBwg+cABo2Fllx5tVPE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oyVmbQKqt/G16o3Zf+djB22hovHxBhEgyV9oeiXmSJ8K1CUkbPx74tcws8oEe3eMynIIs6jQkd9nQeOX1oUzGajYEIJXFCen/aKGSrQ0zHNRVE9Nxge+P8+gHEDrgpZOh5SbY/jRhrgsUJqH7xgsTm8An+1rT4Y0P4JgHR9JXaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NhctQyFU; arc=none smtp.client-ip=209.85.210.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-702003e213eso1826366a34.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 21:12:31 -0700 (PDT)
+	s=arc-20240116; t=1719893720; c=relaxed/simple;
+	bh=ZWsNogRVnns5cet+PBja4gLwrx9LY7hMmua3yurU3JM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fQfnxeMC1gTR3xVkQxPxlY5czmAhBuA0t7W22u++4wzmtQt3W31wqkyCir8V9ZOzXqUO09X4k9p27Rae3P3E+otdv5GT9RcgS8wQNqqsLwi8uYZiSE+OFUGPG2RYBzAeBCjQDEiPBbeSiUQ6+KVLl7o8fUAbE5TNM4fYpD+o5C0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rt7L4I+i; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42565670e20so27942165e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Jul 2024 21:15:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719893550; x=1720498350; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1719893717; x=1720498517; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8oH7C0ySMktpef1FHPyy60fyeYjwvUSz+ek4mpdhRp4=;
-        b=NhctQyFUm3GVf61QJkoQjbKtM0RNg9iD4YUFZ3O6eMf63Jv4LOZ1llK66uFqmwF2Vx
-         f/nXwvRUiPBIjlRPISENRfWFIVke9cV48w17UvH/SVzI7ms5x2p11rMKe4Z57sD0VGzP
-         1bmVGyiQPMA+OI1FbW/4tWzoSyMlHQZ0TGIZZKGH479zafrb4HuRMQzQ2DOb7Ol1KETv
-         Z1e5Ew7rOzfvv6qtrJuNcXfYn56eYk5zYcgLelkMKg1czA999y0+jaCr+tfD//cnQWkp
-         ucWMo9XitH85Nw8XafJ3aPSd0QSqkCPvvoc5mXO5Ax30Q8eDsHMyPBPXjBFYfVoWW/qP
-         qCmg==
+        bh=EevALuEQAKTYdIpOrLnzivNt8QLRmSfCy/CDC5aK0TA=;
+        b=rt7L4I+i5cmtvgMPqVIboFQV65vRhs1iMvxcIx+ZU+qunZivLHzlyg0lr1XtTlmxLr
+         p2hIJLq2VQGxMmgjB3RSUahoyweaHUjX8/u5mtiSq+zq/7FnvI2PKFL/fpfgvRcNzWxl
+         88jyKSd1AWLxF/eRXLjN9BwOkyN1Tuc1qMJQWM/kwgJs83BqsWOMCzw4OTWBSMYek5XO
+         k2qYuVDVGbnsqyEcQXSl25JacOJlve1sYTPHnphIx62qN6faxweanvIe6eO1XmByx/ir
+         Bpuew3Uji9hxPHHa1cHmGM29BkCZbcYflaZpX2hswjdvOt5gLsPI3p4YrMPyBYmef2eS
+         xtHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719893550; x=1720498350;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1719893717; x=1720498517;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8oH7C0ySMktpef1FHPyy60fyeYjwvUSz+ek4mpdhRp4=;
-        b=Dp7XBEKJLsKHG3WPSlsUZhEyX0MS8GZIjV/4gZczPq6qdwmWjT4xdsvPm/7qGTFiEW
-         Miq0FruvN6WLEsy8m2+5Cse7BaAdWwsIQzqfrI3/r02hKo+JFgH2qQVcnt4EGlPlTu5b
-         RagCTnmId3BdYCY7qJS+z/EDR/Ok1rEdi29K21Y7a2RE9TDltZr6m70NngklfJ0RUJWs
-         V6Fb+P82B6uFVkGCRF/fU02TWSDxA+7rgHfFmKKLqSVnJ7wCjWCLpqxK4TMn6hfLMQQ/
-         Y944aWnIhHmNHUAuBoxJV4d0QhzHygvC6C2shlsl4Og95JQ997c9Mnizv/Bz3dD3QTJg
-         bFAg==
-X-Gm-Message-State: AOJu0Yx0R5W3DvA3eb071jtUqXdpU2PeTLNisu0pvnMdiFz5fRsXzL6a
-	f7TB+GFuKA5UxUtAo9rNcMU+Yo0UUGP42FiX02jzrTrtyBGe06FGOOiXVA==
-X-Google-Smtp-Source: AGHT+IE2k8MTAdtb6NSKS7+v5pIAn6NQhoE++UiWLLwpnvOpBvxjPjlU2UImE/kdeskjWzpghsX0wg==
-X-Received: by 2002:a05:6358:7e89:b0:19f:54a7:4f0b with SMTP id e5c5f4694b2df-1a6acde1b96mr764237755d.19.1719893550139;
-        Mon, 01 Jul 2024 21:12:30 -0700 (PDT)
-Received: from localhost ([47.88.5.130])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c9618a9c03sm198705a91.7.2024.07.01.21.12.29
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Jul 2024 21:12:29 -0700 (PDT)
-From: Lai Jiangshan <jiangshanlai@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Lai Jiangshan <jiangshan.ljs@antgroup.com>,
-	Waiman Long <longman@redhat.com>,
-	Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: [PATCH 2/2] workqueue: Simplify goto statement
-Date: Tue,  2 Jul 2024 12:14:56 +0800
-Message-Id: <20240702041456.629328-3-jiangshanlai@gmail.com>
-X-Mailer: git-send-email 2.19.1.6.gb485710b
-In-Reply-To: <20240702041456.629328-1-jiangshanlai@gmail.com>
-References: <20240702041456.629328-1-jiangshanlai@gmail.com>
+        bh=EevALuEQAKTYdIpOrLnzivNt8QLRmSfCy/CDC5aK0TA=;
+        b=GmAkiYG9x4UBhIUH1abT8AomjTEXVtYR1kPe/xC67RZFgZWppQoqdgs6N8NKPjl4Ht
+         aKMAQwNLh13cu3Ucbo8pRyH0qesliJIK3RNayxCutXSxbOKbbDyU15FwYSNEg8lsGCIu
+         KVpRO6dlRg1dNcQxEOx5Z1sLTEwbyvVjvLLLWW1HJJKGVhyLoFOaZcxf1zo9v3+wps8a
+         5TLcK02sF7cHZ8BUBIFh5P65RMIwJDrZ8gALAfTA7swadfL5jn8QT7oHabtw8CnxNwv7
+         p1F3ogKLLNsL09LBqAbhtBgjnQJmSlo3OC/bRRxJpRKJMBh3U6RcRUKTerammHdURhke
+         2pFA==
+X-Forwarded-Encrypted: i=1; AJvYcCWWez17BYR41as9ZR+gFhdl0PQKqUWECa10kGdkeew5c0z3u7xChv1xEdMkTi5mwZBWq8kfPLiSX4Ex9GWQr3Wnw+cNohucN8p3mG61
+X-Gm-Message-State: AOJu0Yz+eDMJMsjsgihJ+NXe7BfR6AHWu/0piuQOQoQ9FIgBxvvtNE7g
+	xV6Ji6fcFJNhmclzYWK491CLk65/bxqouXnHAAB6jj+zFkVAM7x4A4RPflGGJoQ7XA1Sfv2czkA
+	UmuPaliPoRb0FnriAo95R/96ycBK5T4NFXGNJ
+X-Google-Smtp-Source: AGHT+IHBcNobxBEs8U0B2IiWSXZ7vTR+8oM61v830nDHqdxeYwUA0Ip4SprAWAT+QBBPSTarwvfJsXsKhnhRNWDVwYI=
+X-Received: by 2002:adf:fa82:0:b0:364:4321:271a with SMTP id
+ ffacd0b85a97d-36760aa2ea8mr8855849f8f.25.1719893716958; Mon, 01 Jul 2024
+ 21:15:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240701184912.01f1f9ce@canb.auug.org.au> <20240701201448.7878e9b35e1569bfc1f2ddbc@linux-foundation.org>
+In-Reply-To: <20240701201448.7878e9b35e1569bfc1f2ddbc@linux-foundation.org>
+From: Jiaqi Yan <jiaqiyan@google.com>
+Date: Mon, 1 Jul 2024 21:15:05 -0700
+Message-ID: <CACw3F52=GxTCDw-PqFh3-GDM-fo3GbhGdu0hedxYXOTT4TQSTg@mail.gmail.com>
+Subject: Re: linux-next: build warnings after merge of the mm tree
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Lai Jiangshan <jiangshan.ljs@antgroup.com>
+On Mon, Jul 1, 2024 at 8:15=E2=80=AFPM Andrew Morton <akpm@linux-foundation=
+.org> wrote:
+>
+> On Mon, 1 Jul 2024 18:49:12 +1000 Stephen Rothwell <sfr@canb.auug.org.au>=
+ wrote:
+>
+> > Hi all,
+> >
+> > After merging the mm tree, today's linux-next build (htmldocs) produced
+> > these warnings:
+> >
+> > Documentation/admin-guide/sysctl/vm.rst:278: ERROR: Unexpected indentat=
+ion.
+> > Documentation/admin-guide/sysctl/vm.rst:279: WARNING: Block quote ends =
+without a blank line; unexpected unindent.
+> >
+> > Introduced by commit
+> >
+> >   2cba7831f62c ("docs: mm: add enable_soft_offline sysctl")
+>
+> Well that's annoying.
+>
+> @@ -267,6 +268,37 @@ used::
+>  These are informational only.  They do not mean that anything is wrong
+>  with your system.  To disable them, echo 4 (bit 2) into drop_caches.
+>
+> +enable_soft_offline
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +Correctable memory errors are very common on servers. Soft-offline is ke=
+rnel's
+> +solution for memory pages having (excessive) corrected memory errors.
+> +
+> +For different types of page, soft-offline has different behaviors / cost=
+s.
+> +- For a raw error page, soft-offline migrates the in-use page's content =
+to
+> +  a new raw page.
+> +- For a page that is part of a transparent hugepage, soft-offline splits=
+ the
+> +  transparent hugepage into raw pages, then migrates only the raw error =
+page.
+> +  As a result, user is transparently backed by 1 less hugepage, impactin=
+g
+> +  memory access performance.
+> +- For a page that is part of a HugeTLB hugepage, soft-offline first migr=
+ates
+> +  the entire HugeTLB hugepage, during which a free hugepage will be cons=
+umed
+> +  as migration target.  Then the original hugepage is dissolved into raw
+> +  pages without compensation, reducing the capacity of the HugeTLB pool =
+by 1.
+> +
+> + ...
+>
+> This seems a reasonable thing to do so there's probably some way in
+> which to do it, but a bit of grepping failed to turn up examples in
+> existing .rst files.  Can someone please suggest?
 
-Use a simple if-statement to replace the cumbersome goto-statement in
-workqueue_set_unbound_cpumask().
+It seems I need to add some blank lines according to [1], especially
+to add a blank line above the first list item:
 
-Cc: Waiman Long <longman@redhat.com>
-Signed-off-by: Lai Jiangshan <jiangshan.ljs@antgroup.com>
----
- kernel/workqueue.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+diff --git a/Documentation/admin-guide/sysctl/vm.rst
+b/Documentation/admin-guide/sysctl/vm.rst
+index 75e22137d849..74b4c0f65213 100644
+--- a/Documentation/admin-guide/sysctl/vm.rst
++++ b/Documentation/admin-guide/sysctl/vm.rst
+@@ -274,12 +274,15 @@ Correctable memory errors are very common on
+servers. Soft-offline is kernel's
+ solution for memory pages having (excessive) corrected memory errors.
 
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index a3f9ff4fe657..7a33f958dcb2 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -7202,15 +7202,10 @@ static int workqueue_set_unbound_cpumask(cpumask_var_t cpumask)
- 	 */
- 	cpumask_and(cpumask, cpumask, cpu_possible_mask);
- 	if (!cpumask_empty(cpumask)) {
-+		ret = 0;
- 		apply_wqattrs_lock();
--		if (cpumask_equal(cpumask, wq_unbound_cpumask)) {
--			ret = 0;
--			goto out_unlock;
--		}
--
--		ret = workqueue_apply_unbound_cpumask(cpumask);
--
--out_unlock:
-+		if (!cpumask_equal(cpumask, wq_unbound_cpumask))
-+			ret = workqueue_apply_unbound_cpumask(cpumask);
- 		if (!ret)
- 			cpumask_copy(wq_requested_unbound_cpumask, cpumask);
- 		apply_wqattrs_unlock();
--- 
-2.19.1.6.gb485710b
+ For different types of page, soft-offline has different behaviors / costs.
++
+ - For a raw error page, soft-offline migrates the in-use page's content to
+   a new raw page.
++
+ - For a page that is part of a transparent hugepage, soft-offline splits t=
+he
+   transparent hugepage into raw pages, then migrates only the raw error pa=
+ge.
+   As a result, user is transparently backed by 1 less hugepage, impacting
+   memory access performance.
++
+ - For a page that is part of a HugeTLB hugepage, soft-offline first migrat=
+es
+   the entire HugeTLB hugepage, during which a free hugepage will be consum=
+ed
+   as migration target.  Then the original hugepage is dissolved into raw
 
+But I am having trouble testing the build, so wasn't able to validate
+the change above:
+
+Documentation$ make
+/tools/net/ynl/ynl-gen-rst.py -o
+/Documentation/networking/netlink_spec/index.rst -x
+make: /tools/net/ynl/ynl-gen-rst.py: No such file or directory
+make: *** [Makefile:113:
+/Documentation/networking/netlink_spec/index.rst] Error 127
+
+[1] https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#bull=
+et-lists
 
