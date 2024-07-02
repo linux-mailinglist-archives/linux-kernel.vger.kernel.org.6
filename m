@@ -1,49 +1,62 @@
-Return-Path: <linux-kernel+bounces-237364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56AF791EFB8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:06:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CC5991EFBB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 09:07:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C23191F21976
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:06:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C037E1F217E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 07:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368A312EBE1;
-	Tue,  2 Jul 2024 07:05:58 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4320812FB39;
+	Tue,  2 Jul 2024 07:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iinhIyCc"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420033EA69
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 07:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE76612DDAF;
+	Tue,  2 Jul 2024 07:07:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719903957; cv=none; b=sJ9GnENgDjwwE/3c50VmvCJqT5FsV4YI3JKbmjmqyRu4JeTmnQT3mcAOv854bTSwTIJN+BwXzsSNSUBtWc8+feglSljKiHawdVl26yR70+rQIM5J33YVg/DZeVOWC77Kl8YKQdmiZCM1kAjsIFrr8mZjLRAicsyl0EEcLx4JuVY=
+	t=1719904061; cv=none; b=n7P0LoQPV1DvH5Mjsax6ouQZDlPZHzMjmCtyZBUfXwTfdsnPRSCFuPmj2nJLjt+PsE3TjGe5Cqofi0tsyWokgypbcLwldVUtMMByG5d/jwvH+6eXPsSppCEzQUPVBm6vjAjV6OsOukxWp7yu6LVvtw+INkjqbTllFPsxBbrDGVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719903957; c=relaxed/simple;
-	bh=I++kslG8ihenEvWXSMDFZqI3nirvDtne2p9d6pqkVIA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=LWlQ54Z27Mgsx8ZhKRVB8IVJO8M1UAfbmAsBAtMS5EwCHDHzVaa81XxptQEvrnJ9BzRzMu2/R+xnFijVUJQbyc3UlcANcUCfFJMdqt/kRzF9fA5YY2GENjUNwtLm4YxlR7s9Kwl84O7/C58qq9HSQ6d+/fGN+T+YEPpXgZESDQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav111.sakura.ne.jp (fsav111.sakura.ne.jp [27.133.134.238])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 46275JJp069284;
-	Tue, 2 Jul 2024 16:05:19 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav111.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav111.sakura.ne.jp);
- Tue, 02 Jul 2024 16:05:19 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav111.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 46275JB6069281
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 2 Jul 2024 16:05:19 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <e045dcff-a6cd-4110-83e0-6fc2a56d0413@I-love.SAKURA.ne.jp>
-Date: Tue, 2 Jul 2024 16:05:19 +0900
+	s=arc-20240116; t=1719904061; c=relaxed/simple;
+	bh=Vk4bYNKhpK6COrm6nr1+yRC4zvYfwQ5t+wYF1UvIWd0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GN8zPvRCCl4IbqK3DyLsLeLUBMwejaJH+OU7QNqKP3mx5NJR/wwB151cGrKowvjrl8ECcRemaYWK17oSUFXfnCB03Rc5jMI9GEyx/qt8nGO3PfC0ms0xry5j+Y0lJQEv+mcVFlUw6HkU6NvT1Mi+C5uv5EE5y03+xB2WAHB7fc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iinhIyCc; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 461L0Y9h013083;
+	Tue, 2 Jul 2024 07:07:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	B/tDdP2Z1keyEASbG3gxexaFA29gWOsTfObNOgHDdoM=; b=iinhIyCc65Cwmfmj
+	7mlmSav7clUGbmcbQDEZUSD6SI7yNMaGDWyRNAscb7IIPQa8JYUouldQIhLWERhh
+	hBX0y4TLS8cm8fW1a7VAF0ijLGEtjOr21pNkT91bqiPvcyhRcOflWc+Wcni7Z4u5
+	KdQw5mZGXJPTmHZaBwnqCnZQ8vczNi32PRndv14yhzsxIt7ZIMBS12jrtt/JMhge
+	zGP6nBicBPUadBUWeXvaad1+Wxst/FMoxz2UvU3mhl0WBLjanJFwQfGVxh35aHcH
+	XX6Y3lu7EA0H2gZHtZBM8DQnXZgeuhrao7kFXCDY8zwUbuc/MjyBwBKsN/xhU36y
+	im6MLg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 402ag2ebp3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Jul 2024 07:07:32 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46277VIY012507
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 2 Jul 2024 07:07:31 GMT
+Received: from [10.204.65.49] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 2 Jul 2024
+ 00:07:28 -0700
+Message-ID: <3b07be20-e0c9-4ee2-a37b-34400e63862b@quicinc.com>
+Date: Tue, 2 Jul 2024 12:37:25 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,173 +64,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [kernel?] KASAN: stack-out-of-bounds Read in __show_regs
- (2)
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: syzbot <syzbot+e9be5674af5e3a0b9ecc@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        kasan-dev <kasan-dev@googlegroups.com>, linux-mm <linux-mm@kvack.org>,
-        bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
-        mingo@redhat.com, tglx@linutronix.de, x86@kernel.org
-References: <000000000000a8c856061ae85e20@google.com>
- <82cf2f25-fd3b-40a2-8d2b-a6385a585601@I-love.SAKURA.ne.jp>
- <daad75ac-9fd5-439a-b04b-235152bea222@I-love.SAKURA.ne.jp>
- <CA+fCnZdg=o3bA-kBM4UKEftiGfBffWXbqSapje8w25aKUk_4Nw@mail.gmail.com>
- <ec7411af-01ac-4ebd-99ad-98019ff355bf@I-love.SAKURA.ne.jp>
+Subject: Re: [PATCH v2] misc: fastrpc: Remove user PD initmem size check
 Content-Language: en-US
-In-Reply-To: <ec7411af-01ac-4ebd-99ad-98019ff355bf@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Greg KH <gregkh@linuxfoundation.org>, <srinivas.kandagatla@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <quic_bkumar@quicinc.com>,
+        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
+        <dri-devel@lists.freedesktop.org>, <arnd@arndb.de>,
+        stable
+	<stable@kernel.org>
+References: <20240627060518.1510124-1-quic_ekangupt@quicinc.com>
+ <62dzilcvsp3efxpxulzkf6e62rzcrhp55k6yjk5fymkqthdfzw@yageexbx6ddz>
+ <f3d502ca-228e-4be4-b296-a9073975d34b@quicinc.com>
+ <a5e69a5e-b882-4f36-b023-f85da430fa2f@quicinc.com>
+ <2024062849-brunt-humvee-d338@gregkh>
+ <2e616e9d-fc04-4826-b784-4c6ee45bfbc2@quicinc.com>
+ <foe6khsckzdvd5ccwitzfpdwoigdgu3uostuar3zk5d5stcd4s@hkrdg7vp4mqt>
+From: Ekansh Gupta <quic_ekangupt@quicinc.com>
+In-Reply-To: <foe6khsckzdvd5ccwitzfpdwoigdgu3uostuar3zk5d5stcd4s@hkrdg7vp4mqt>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: B9XM07VYNaMfDIjZ_s349d8y1bzur172
+X-Proofpoint-GUID: B9XM07VYNaMfDIjZ_s349d8y1bzur172
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-02_02,2024-07-02_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
+ malwarescore=0 phishscore=0 impostorscore=0 mlxlogscore=916 bulkscore=0
+ spamscore=0 priorityscore=1501 suspectscore=0 adultscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407020053
 
-On 2024/07/02 15:11, Tetsuo Handa wrote:
-> Well, KASAN says "out-of-bounds". But the reported address
-> 
->   BUG: KASAN: stack-out-of-bounds in __show_regs+0x172/0x610
->   Read of size 8 at addr ffffc90003c4f798 by task kworker/u8:5/234
-> 
-> is within the kernel stack memory mapping
-> 
->   The buggy address belongs to the virtual mapping at
->    [ffffc90003c48000, ffffc90003c51000) created by:
->    copy_process+0x5d1/0x3d7
-> 
-> . Why is this "out-of-bounds" ? What boundary did KASAN compare with?
 
-I think I found a hint. The KASAN message is printed when the call trace
-starts with
 
-  __schedule()
-  preempt_schedule_irq()
-  irqentry_exit()
+On 7/1/2024 10:41 PM, Dmitry Baryshkov wrote:
+> On Mon, Jul 01, 2024 at 10:50:38AM GMT, Ekansh Gupta wrote:
+>>
+>> On 6/28/2024 7:51 PM, Greg KH wrote:
+>>> On Fri, Jun 28, 2024 at 04:12:10PM +0530, Ekansh Gupta wrote:
+>>>> On 6/28/2024 3:59 PM, Ekansh Gupta wrote:
+>>>>> On 6/27/2024 4:43 PM, Dmitry Baryshkov wrote:
+>>>>>> On Thu, Jun 27, 2024 at 11:35:18AM GMT, Ekansh Gupta wrote:
+>>>>>>> For user PD initialization, initmem is allocated and sent to DSP for
+>>>>>>> initial memory requirements like shell loading. This size is passed
+>>>>>>> by user space and is checked against a max size. For unsigned PD
+>>>>>>> offloading, more than 2MB size could be passed by user which would
+>>>>>>> result in PD initialization failure. Remove the user PD initmem size
+>>>>>>> check and allow buffer allocation for user passed size. Any additional
+>>>>>>> memory sent to DSP during PD init is used as the PD heap.
+>>>>>> Would it allow malicious userspace to allocate big enough buffers and
+>>>>>> reduce the amount of memory available to the system? To other DSP
+>>>>>> programs?
+>>>>> The allocation here is happening from SMMU context bank which is uniquely assigned
+>>>>> to processes going to DSP. As per my understanding process can allocate maximum
+>>>>> 4GB of memory from the context bank and the memory availability will be taken care
+>>>>> by kernel memory management. Please correct me if my understanding is incorrect.
+>>>> Just wanted to add 1 question here:
+>>>> User space can also directly allocate memory. Wouldn't that be a problem if any malicious userspace
+>>>> allocated huge memory?
+>>> No, because any userspace program that takes up too much memory will be
+>>> killed by the kernel.
+>>>
+>>> You can not have userspace tell the kernel to allocate 100Gb of memory,
+>>> as then the kernel is the one that just took it all up, and then
+>>> userspace applications will start to be killed off.
+>>>
+>>> You MUST bounds check your userspace-supplied memory requests.  Remember
+>>> the 4 words of kernel development:
+>>>
+>>> 	All input is evil.
+>> Thanks for the detailed explanation, Greg. I'll remember this going forward.
+>>
+>> For this change, I'll increase the max size limit to 5MB which is the requirement for
+>> unsigned PD to run on DSP.
+> So we are back to the quesiton of why 5MB is considered to be enough,
+> see
+>
+> https://lore.kernel.org/linux-arm-msm/2024061755-snare-french-de38@gregkh/
+This is based on the initial memory requirement for unsigned PD. This includes memory for shell loading on DSP
++ memory for static heap allocations(heap allocations are dynamic for Signed PD). This requirement tends to
+around 5MB. I'll update this  also information in commit text. There will be some additional memory passed to
+the PD which will get added to the PD heap.
 
-. That is, when preemption happens, KASAN by error tries to compare with
-unintended stack boundary?
-
-[  504.507489][    C0] DEBUG: holding rtnl_mutex for 3212 jiffies.
-[  504.513708][    C0] task:kworker/u8:5    state:R  running task     stack:19992 pid:340   tgid:340   ppid:2      flags:0x00004000
-[  504.525827][    C0] Workqueue: netns cleanup_net
-[  504.530890][    C0] Call Trace:
-[  504.534213][    C0]  <TASK>
-[  504.537244][    C0]  __schedule+0x17e8/0x4a20
-[  504.541874][    C0]  ? mark_lock+0x9a/0x360
-[  504.546279][    C0]  ? lockdep_hardirqs_on_prepare+0x43d/0x780
-[  504.552396][    C0]  ? __virt_addr_valid+0x183/0x520
-[  504.557711][    C0]  ? __pfx_lockdep_hardirqs_on_prepare+0x10/0x10
-[  504.564121][    C0]  ? lock_release+0xbf/0x9f0
-[  504.568918][    C0]  ? __pfx___schedule+0x10/0x10
-[  504.573835][    C0]  ? lockdep_hardirqs_on+0x99/0x150
-[  504.579189][    C0]  ? mark_lock+0x9a/0x360
-[  504.583592][    C0]  preempt_schedule_irq+0xfb/0x1c0
-[  504.588984][    C0]  ? __pfx_preempt_schedule_irq+0x10/0x10
-[  504.594785][    C0]  irqentry_exit+0x5e/0x90
-[  504.599421][    C0]  asm_sysvec_reschedule_ipi+0x1a/0x20
-
-[  463.514954][    C1] DEBUG: holding rtnl_mutex for 993 jiffies.
-[  463.528845][    C1] task:kworker/u8:10   state:R  running task     stack:19856 pid:5725  tgid:5725  ppid:2      flags:0x00004000
-[  463.536743][ T9938] rock: corrupted directory entry. extent=41, offset=65536, size=8
-[  463.540652][    C1] Workqueue: netns cleanup_net
-[  463.553421][    C1] Call Trace:
-[  463.556740][    C1]  <TASK>
-[  463.559706][    C1]  __schedule+0x17e8/0x4a20
-[  463.564304][    C1]  ? __pfx_validate_chain+0x10/0x10
-[  463.569611][    C1]  ? __pfx___schedule+0x10/0x10
-[  463.574628][    C1]  ? lockdep_hardirqs_on_prepare+0x43d/0x780
-[  463.580760][    C1]  ? preempt_schedule_irq+0xf0/0x1c0
-[  463.586149][    C1]  preempt_schedule_irq+0xfb/0x1c0
-[  463.591401][    C1]  ? __pfx_preempt_schedule_irq+0x10/0x10
-[  463.597269][    C1]  irqentry_exit+0x5e/0x90
-[  463.601834][    C1]  asm_sysvec_apic_timer_interrupt+0x1a/0x20
-
-[ 1558.178669][    C1] DEBUG: holding rtnl_mutex for 536 jiffies.
-[ 1558.184806][    C1] task:syz-executor.3  state:R  running task     stack:25968 pid:6351  tgid:6345  ppid:6200   flags:0x00004006
-[ 1558.196699][    C1] Call Trace:
-[ 1558.200068][    C1]  <TASK>
-[ 1558.203055][    C1]  __schedule+0x17e8/0x4a20
-[ 1558.207638][    C1]  ? __pfx___schedule+0x10/0x10
-[ 1558.212585][    C1]  ? lockdep_hardirqs_on_prepare+0x43d/0x780
-[ 1558.218675][    C1]  ? preempt_schedule_irq+0xf0/0x1c0
-[ 1558.224004][    C1]  preempt_schedule_irq+0xfb/0x1c0
-[ 1558.229196][    C1]  ? __pfx_preempt_schedule_irq+0x10/0x10
-[ 1558.234986][    C1]  irqentry_exit+0x5e/0x90
-[ 1558.239503][    C1]  asm_sysvec_reschedule_ipi+0x1a/0x20
-
-[ 1104.439430][    C0] DEBUG: holding rtnl_mutex for 578 jiffies.
-[ 1104.445729][    C0] task:kworker/u8:3    state:R  running task     stack:18544 pid:53    tgid:53    ppid:2      flags:0x00004000
-[ 1104.459070][    C0] Workqueue: netns cleanup_net
-[ 1104.464170][    C0] Call Trace:
-[ 1104.467478][    C0]  <TASK>
-[ 1104.470481][    C0]  __schedule+0x17e8/0x4a20
-[ 1104.476080][    C0]  ? mark_lock+0x9a/0x360
-[ 1104.480776][    C0]  ? __lock_acquire+0x1359/0x2000
-[ 1104.486043][    C0]  ? __pfx___schedule+0x10/0x10
-[ 1104.490987][    C0]  ? lockdep_hardirqs_on_prepare+0x43d/0x780
-[ 1104.497017][    C0]  ? preempt_schedule_irq+0xf0/0x1c0
-[ 1104.502486][    C0]  preempt_schedule_irq+0xfb/0x1c0
-[ 1104.507809][    C0]  ? __pfx_preempt_schedule_irq+0x10/0x10
-[ 1104.514030][    C0]  irqentry_exit+0x5e/0x90
-[ 1104.518689][    C0]  asm_sysvec_reschedule_ipi+0x1a/0x20
-
-[  926.207053][    C1] DEBUG: holding rtnl_mutex for 517 jiffies.
-[  926.213142][    C1] task:syz.1.1365      state:R  running task     stack:24672 pid:11152 tgid:11152 ppid:10992  flags:0x00004006
-[  926.225053][    C1] Call Trace:
-[  926.228434][    C1]  <TASK>
-[  926.231441][    C1]  __schedule+0x17e8/0x4a20
-[  926.236054][    C1]  ? __pfx___schedule+0x10/0x10
-[  926.241130][    C1]  ? lockdep_hardirqs_on_prepare+0x43d/0x780
-[  926.247265][    C1]  ? kasan_save_track+0x51/0x80
-[  926.252225][    C1]  ? preempt_schedule_irq+0xf0/0x1c0
-[  926.257705][    C1]  preempt_schedule_irq+0xfb/0x1c0
-[  926.262899][    C1]  ? __pfx_preempt_schedule_irq+0x10/0x10
-[  926.268725][    C1]  ? __pfx_pfifo_fast_destroy+0x10/0x10
-[  926.274379][    C1]  irqentry_exit+0x5e/0x90
-[  926.278903][    C1]  asm_sysvec_apic_timer_interrupt+0x1a/0x20
-
-[  940.917894][    C0] DEBUG: holding rtnl_mutex for 1611 jiffies.
-[  940.924066][    C0] task:syz.2.2274      state:R  running task     stack:24336 pid:15954 tgid:15954 ppid:14850  flags:0x00004006
-[  940.936192][    C0] Call Trace:
-[  940.939550][    C0]  <TASK>
-[  940.942540][    C0]  __schedule+0x17e8/0x4a20
-[  940.947134][    C0]  ? __pfx___schedule+0x10/0x10
-[  940.952070][    C0]  ? lockdep_hardirqs_on_prepare+0x43d/0x780
-[  940.958362][    C0]  ? kasan_save_track+0x51/0x80
-[  940.963266][    C0]  ? preempt_schedule_irq+0xf0/0x1c0
-[  940.968628][    C0]  preempt_schedule_irq+0xfb/0x1c0
-[  940.973790][    C0]  ? __pfx_preempt_schedule_irq+0x10/0x10
-[  940.979610][    C0]  ? __pfx_pfifo_fast_destroy+0x10/0x10
-[  940.985227][    C0]  irqentry_exit+0x5e/0x90
-[  940.989731][    C0]  asm_sysvec_apic_timer_interrupt+0x1a/0x20
-
-[ 2120.744289][    C1] DEBUG: holding rtnl_mutex for 1675 jiffies.
-[ 2120.750440][    C1] task:syz-executor    state:R  running task     stack:20288 pid:2431  tgid:2431  ppid:1      flags:0x00004006
-[ 2120.762291][    C1] Call Trace:
-[ 2120.765647][    C1]  <TASK>
-[ 2120.768615][    C1]  __schedule+0x17e8/0x4a20
-[ 2120.773210][    C1]  ? __pfx___schedule+0x10/0x10
-[ 2120.778152][    C1]  ? lockdep_hardirqs_on_prepare+0x43d/0x780
-[ 2120.784188][    C1]  ? kasan_save_track+0x51/0x80
-[ 2120.789118][    C1]  ? preempt_schedule_irq+0xf0/0x1c0
-[ 2120.794445][    C1]  preempt_schedule_irq+0xfb/0x1c0
-[ 2120.799621][    C1]  ? __pfx_preempt_schedule_irq+0x10/0x10
-[ 2120.805378][    C1]  ? kvm_kick_cpu+0x26/0xb0
-[ 2120.809965][    C1]  irqentry_exit+0x5e/0x90
-[ 2120.814423][    C1]  asm_sysvec_apic_timer_interrupt+0x1a/0x20
-
-[ 1465.514982][    C1] DEBUG: holding rtnl_mutex for 583 jiffies.
-[ 1465.521071][    C1] task:kworker/u8:2    state:R  running task     stack:20232 pid:35    tgid:35    ppid:2      flags:0x00004000
-[ 1465.532945][    C1] Workqueue: netns cleanup_net
-[ 1465.537846][    C1] Call Trace:
-[ 1465.541164][    C1]  <TASK>
-[ 1465.544132][    C1]  __schedule+0x17e8/0x4a20
-[ 1465.548730][    C1]  ? mark_lock+0x9a/0x360
-[ 1465.553148][    C1]  ? lockdep_hardirqs_on_prepare+0x43d/0x780
-[ 1465.559257][    C1]  ? __pfx_lockdep_hardirqs_on_prepare+0x10/0x10
-[ 1465.565697][    C1]  ? __pfx___schedule+0x10/0x10
-[ 1465.570636][    C1]  ? lockdep_hardirqs_on+0x99/0x150
-[ 1465.575968][    C1]  ? mark_lock+0x9a/0x360
-[ 1465.580381][    C1]  preempt_schedule_irq+0xfb/0x1c0
-[ 1465.585599][    C1]  ? __pfx_preempt_schedule_irq+0x10/0x10
-[ 1465.591383][    C1]  irqentry_exit+0x5e/0x90
-[ 1465.595895][    C1]  asm_sysvec_reschedule_ipi+0x1a/0x20
+--Ekansh
+>
+>> --Ekansh
+>>> thanks,
+>>>
+>>> greg k-h
 
 
