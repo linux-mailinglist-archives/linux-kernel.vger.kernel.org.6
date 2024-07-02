@@ -1,93 +1,82 @@
-Return-Path: <linux-kernel+bounces-238499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54C02924B4F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:14:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61A13924B23
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Jul 2024 00:06:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD988B26397
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:14:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23A6A288145
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 22:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5423D1DA300;
-	Tue,  2 Jul 2024 21:59:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6011B1213;
+	Tue,  2 Jul 2024 21:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LKutTrbJ"
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nQ5/FDKQ"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64AB31D7036
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 21:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 250731AEFE7
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 21:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719957581; cv=none; b=d3Dt0MrIAIbr4Zm+F9CKRhqOQLAS6LMdhkVtqyNHcZ1OczcQv20MWDchLiFUKw4qaSNuLdfEfe88CRPtabBUOQ3yN7VycLtpzzKcuvlQkwMJjAGyGrZXLuwOMHBhFni7oO9TMX12bl0ZwBilyRkVFvUziB/89n5yJraiK8LeoWI=
+	t=1719957543; cv=none; b=bJdAF2sc1smtQoUmaAifB8Hv9zTJ7fb5yKlIiYtw2geaU3J9M1LTCAnQqntx7pE5rObNJz3oRFA4HyJoP/SW+yduy2nGmFT91DiS94Ds1yORamF/oQPbfRwvRnQbcqnmI79Sx/DA2uiHkMrfhNDfGmXbIpmFtXbdynm/9oOO8nU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719957581; c=relaxed/simple;
-	bh=NrZTh+SVApVcDabxYuiZu5lzSzV3H/ZDPU+/aI7Ofs0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mQIczECiPr6wT/o7NMRDGygEsiN3L+EgaenfW0U5du5ALONY2WjYn0GeQigf2lQ2SMgt6wWtU0NGTaIIFtdYIFStnNSWDdj2OGMDk8cIk1H3acYnlKrEeDCzzm9GvoQ2CBGa2HmnBW3rIfevdyd0yeLj9WMOIl6MUVi1RZdo7Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LKutTrbJ; arc=none smtp.client-ip=209.85.166.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-7f3c5af0a04so246317639f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 14:59:40 -0700 (PDT)
+	s=arc-20240116; t=1719957543; c=relaxed/simple;
+	bh=M01YDRrouAlAzlCLyGiYQynak61DO+REujqSpJFVxvc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qp1U4xFDIFN9goynBZS5Pp5koYTlO9axuHbfe38fYMJ7bx7px/gQZ+mUPSe5ZVMksGdRT0DZLM0LMIPf1F5VV13jM6aa/Rcfmjj/57e81YFCWJAyQgr839XhcgX8o9kjxgjsuHOykTro3exVt9XYf5i3XWOmTKDDfvX0gBIaUyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nQ5/FDKQ; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fa55dbf2e7so26761975ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Jul 2024 14:59:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719957579; x=1720562379; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ym+La6D/NLLhNjjl/GCbF3WdukVm3ek2K4bqw3UNhOo=;
-        b=LKutTrbJ/rdYCmKym1NGbxk3QFipDqdro6jwousFvmzyZ9KEopBsMan1ui0JqYAdff
-         2JZifakBNMPHEqfAgof6mCkt5pfTSyHZDt9GST5PloYf95xJ+jDVVncAaJ0QwUPvHkPH
-         8AknhocYtTD4APmfihZ8MWgEGEqDps79k3wt8OUJgwgA9F6myvw3exk2jKrt7ZUUwyOD
-         ZBZKYUdLZHneCp40ZhRIHED6pPUeBHaBrk177/MqYA6jkpgY2R+C4QjXlxikrTVNJEfl
-         TUHaTeXuZyyHWueeb9nF2oH9ey/dBClAK9SuAMWCIDrgxiKxv1k+JOvR5M1AaxMQ/LyX
-         kofQ==
+        d=chromium.org; s=google; t=1719957540; x=1720562340; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FT7lewTlvqPcebAQ7sdKPrt4rD1V8IX/L9ApopkhaiM=;
+        b=nQ5/FDKQuDGFbq6YERjqmx1aCEazsTVlIGLTAQdSU91Lz1MtBNw0Mo2hwYFWH/7xHz
+         /YXLhTgI7uG88EpaDtc6KqoUjp0fRtnaNmlS5YMOFj70eV+xUjiO6aHHdPkZtfljT4VJ
+         gt+ylu+d9ehfwRHPlWmTaw/wtbvJaFrUDJBJs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719957579; x=1720562379;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ym+La6D/NLLhNjjl/GCbF3WdukVm3ek2K4bqw3UNhOo=;
-        b=uWKn1KNsemQEgYVBjWc8P3kGwlpxsswCf5NZ+RlIkx8GJa5qI9crO3SOdMUMtngHeG
-         Yw8g2YeWj5osZf+z11WYBTnSqbT+lQC6FVCsSjeH4iYhciZjBZdhN3rMRtW9fIIZ6z7N
-         rjErWohSf77LPKxPNNNxgznu8ZwSig4dYkuOJ96UVM3njoKW0OaL334JflqATfUxcr5e
-         sGxssiqC/JSJbDkTIeJkRIJ6jcxKeIYpRVuskCG3IsmB2J6sRWQt+yPSWZUs/qZ2FMMn
-         Y//wG3h/buHx/gKn+O2uHsJRD3+4mhzGTHhWNCKuyK0oghKmxMhWcXWxquxiRNNc+ArI
-         fiBg==
-X-Gm-Message-State: AOJu0YwajQH8Mveu3rZK73UfPOpXjxZ8QZVnzOxWqS9/Yx6QaouaHKt0
-	4bWvw9U8wU7z+SpYP70jblB9jj10Ni4noZfDu3oGXhwf3PZ2kWUS
-X-Google-Smtp-Source: AGHT+IHIRUIlmI3WUW2mIpy7hm5XHgMqtIZ7QkWlOh59CvhPr4UBjQt+AtFMIBoct5NjwYy95AHiIg==
-X-Received: by 2002:a5e:d606:0:b0:7f6:1fcc:25c9 with SMTP id ca18e2360f4ac-7f62ee19639mr1076084139f.9.1719957579545;
-        Tue, 02 Jul 2024 14:59:39 -0700 (PDT)
-Received: from frodo.. (c-73-78-62-130.hsd1.co.comcast.net. [73.78.62.130])
-        by smtp.googlemail.com with ESMTPSA id ca18e2360f4ac-7f61d207fcesm279944739f.51.2024.07.02.14.59.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 14:59:38 -0700 (PDT)
-From: Jim Cromie <jim.cromie@gmail.com>
-To: daniel.vetter@ffwll.ch,
-	tvrtko.ursulin@linux.intel.com,
-	jani.nikula@intel.com,
-	ville.syrjala@linux.intel.com,
-	jbaron@akamai.com,
-	gregkh@linuxfoundation.org,
-	ukaszb@chromium.org
-Cc: linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	amd-gfx@lists.freedesktop.org,
-	intel-gvt-dev@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org,
-	linux@rasmusvillemoes.dk,
-	joe@perches.com,
-	mcgrof@kernel.org,
-	Jim Cromie <jim.cromie@gmail.com>
-Subject: [PATCH v9 53/53] drm: restore CONFIG_DRM_USE_DYNAMIC_DEBUG un-BROKEN
-Date: Tue,  2 Jul 2024 15:58:04 -0600
-Message-ID: <20240702215804.2201271-75-jim.cromie@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240702215804.2201271-1-jim.cromie@gmail.com>
-References: <20240702215804.2201271-1-jim.cromie@gmail.com>
+        d=1e100.net; s=20230601; t=1719957540; x=1720562340;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FT7lewTlvqPcebAQ7sdKPrt4rD1V8IX/L9ApopkhaiM=;
+        b=H+f+p5uawGQBgsGwOdTg/UFlvtzSJ8bxkSnAme+ZdHf+cwbEZ/HLysAh0tgN1LjUXx
+         Jg0+qrRBZylYaJToS1EJRjRn54RNjhvjfxAx1O4YlhoxLqEKt4BmJXEO6K2TkrlaLkFN
+         r5JBRWM/hmfJ/3RtM0NyRf6tl/oR0oCaYJl50AlBbqnZeRnoHeNqCPmq75AvqKHNfJUi
+         W9gn5RqYDNfxqrj/gZ59wlQCB467HF5Q0QRJOfYsNb1sSUltk4K8HJSVPmDURlNBSFtH
+         tFEiQ33msxvjqxAOTVs9LzQDJWiw8bxlzxnqGgsHJb5iBtGW0ykf+8raZI39hz0JH/4A
+         iMSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWfBoGPp6uwyzEZOasqWUx7D85usr6qon48fhqiBSrhOwcxN2d1CHw408THot35dcR9WrPOVXDKM5XjFuSVq/xvkUeaukclabjHNeQm
+X-Gm-Message-State: AOJu0Yxx8nbbtzmEC/RhbAPZkLmbLFWOEqjjz+PHdsFtqpLMlP+J4/gb
+	6EjEF6XLmHf2PpiplEL519gzSUHaZOaedAjHqLT34f768RjYGCEQu6Oh3HrYcw==
+X-Google-Smtp-Source: AGHT+IGeWRRAgVyeKiau5CRBkZj201MTdIub9SKabxaU3j/E01KOBS3aEn2OeI76DdOYFGg5Zmz1pw==
+X-Received: by 2002:a05:6a20:7350:b0:1bd:207a:da31 with SMTP id adf61e73a8af0-1bef613f4b2mr10203315637.23.1719957540361;
+        Tue, 02 Jul 2024 14:59:00 -0700 (PDT)
+Received: from localhost ([2620:15c:9d:2:5fa9:4b10:46fe:4740])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7080246f656sm9018274b3a.65.2024.07.02.14.58.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Jul 2024 14:58:59 -0700 (PDT)
+From: Brian Norris <briannorris@chromium.org>
+To: Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	Brian Norris <briannorris@chromium.org>
+Subject: [PATCH v2 0/3] tools build: Incorrect fixdep dependencies
+Date: Tue,  2 Jul 2024 14:58:36 -0700
+Message-ID: <20240702215854.408532-1-briannorris@chromium.org>
+X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,30 +85,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-end of official submission.
+Hi all,
 
-Time for some quality CI
+The following series consists of a few bugfixes on the topic of "misuse
+of fixdep in the tools/ build tree." There is no listed maintainer for
+tools/build, but there are for tools/bpf and tools/objtool, which are
+the main pieces that affect most users, because they're built as part of
+the main kernel build. I've addressed this series to a selection of
+those maintainers, and those that have previously applied build changes
+in tools/. I hope one of you can apply this series, pending favorable
+review. Or feel free to point me to a different set of maintainers.
 
-Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
----
- drivers/gpu/drm/Kconfig | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+This patch series came out of poking around some build errors seen by me
+and my coworkers, and I found that there were rather similar reports a
+while back here:
 
-diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
-index 5a0c476361c3..b2ea73ae48f0 100644
---- a/drivers/gpu/drm/Kconfig
-+++ b/drivers/gpu/drm/Kconfig
-@@ -54,8 +54,7 @@ config DRM_DEBUG_MM
- 
- config DRM_USE_DYNAMIC_DEBUG
- 	bool "use dynamic debug to implement drm.debug"
--	default n
--	depends on BROKEN
-+	default y
- 	depends on DRM
- 	depends on DYNAMIC_DEBUG || DYNAMIC_DEBUG_CORE
- 	depends on JUMP_LABEL
+    Subject: possible dependency error?
+    https://lore.kernel.org/all/ZGVi9HbI43R5trN8@bhelgaas/
+
+I reported some findings to that thread; see also subsequent discussion:
+
+    https://lore.kernel.org/all/Zk-C5Eg84yt6_nml@google.com/
+
+One element of that discussion: these problems are already solved
+consistently in Kbuild. tools/build purposely borrows some from Kbuild,
+but also purposely does not actually use Kbuild. While it'd make my life
+easier if tools/ would just adopt Kbuild (at least for the tools which
+are built during kernel builds), I've chosen a path that I hope will
+yield less resistance -- simply hacking up the existing tools/ build
+without major changes to its design.
+
+NB: I've also CC'd Kbuild folks, since Masahiro has already been so
+helpful here, but note that this is not really a "kbuild" patch series.
+
+Regards,
+Brian
+
+Changes in v2:
+ - also fix libbpf shared library rules
+ - ensure OUTPUT is always set in lib/bpf, and always an absolute path
+ - add backup $(Q) definition in tools/build/Makefile.include
+
+Brian Norris (3):
+  tools build: Correct libsubcmd fixdep dependencies
+  tools build: Avoid circular .fixdep-in.o.cmd issues
+  tools build: Correct bpf fixdep dependencies
+
+ tools/build/Makefile         | 11 ++---------
+ tools/build/Makefile.include | 12 +++++++++++-
+ tools/lib/bpf/Makefile       | 14 ++++++++++++--
+ tools/lib/subcmd/Makefile    |  2 +-
+ 4 files changed, 26 insertions(+), 13 deletions(-)
+
 -- 
-2.45.2
+2.45.2.803.g4e1b14247a-goog
 
 
