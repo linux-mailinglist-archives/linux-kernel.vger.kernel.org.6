@@ -1,58 +1,60 @@
-Return-Path: <linux-kernel+bounces-237853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-237854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26669923EF0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:28:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E2D6923EF3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 15:29:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60D55B2358F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:28:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0B081C22C07
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 13:29:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC0C1B47A5;
-	Tue,  2 Jul 2024 13:28:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 167791B47C7;
+	Tue,  2 Jul 2024 13:28:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iDxCGrTw"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PHL6HdF6"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B4A2AF16
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 13:28:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09358172BC8
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Jul 2024 13:28:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719926926; cv=none; b=Hp5LnnnGC70FF6PZfBGkT/zMVMsb7PYB3fxQciezpIkMnZ3eH4UyY8kx24zVAMWgoP51qNQUVHqS7DkQKyTFw7+Ylq+XP17X6rl50MtEIJJEfRDgsp5Ssh1P1i29H5fmYrvJ9dNgRpCc8CTCb0VngsQIBMko9O7rs77gGZszeUk=
+	t=1719926935; cv=none; b=QYp5mvdZP9u666EZtr+Bt7BiH2pr8xjR7ttW6EXzUfqp7l7XHk5XWaA8uVBnASWQOY72bBXBexU39K3v4r4euWbdpc1TrwyyuDvz6waUs2OZUlEcHidIrJrWebweyU+x9MXJE6PwQxNXb2t2XcZnemZEYx/VVYxTdSj9yHkQcIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719926926; c=relaxed/simple;
-	bh=q4svAmMc1YfDU639c9nrEQ3wazxYZ3hYbGX2/VSIc/w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pLo0SpCBWri2mSU/WHFvKxVugTUHJkuRO9lte4upAKOcpVaha+U2r4+d553zmFcqROEacpeaw4/LQ7FbWYg/adP89P9fKHl0X4mGo8+NVBk490OsjIXj6KBna0oQAn9MmpN8zcsDDmYghWLj9BlbvZFWRSLaFusahJDqAhueNUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iDxCGrTw; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1719926935; c=relaxed/simple;
+	bh=jyZG55KbeIoMjk6imOGduy5VGWOolxy4yZAD40rYJSI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=EcZzpuCCgK9dxEz7G+TeDpx/9zQNXuRNw/hb0k4iceT+k88oUZFzuE7wE6mTtVeH9MZJKa0uXJzzIMcqS+aI2xRYKkNV8BdRGjofveCM5+Z6l+6EXE5S+crwyAZbfS0N0jJlKNhyorCfO+M5iJ/qVs1sw4ke+mij54IFL2f8Y8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PHL6HdF6; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719926922;
+	s=mimecast20190719; t=1719926933;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=TZPqfUHHXo3++9COyemfH9RMfBNgVvcEH+ci6+xoSdQ=;
-	b=iDxCGrTw1NTszPoal/Yrm0Vbnd1/H5sBMuYgKMj8WuQascfIddnq3wGZ3d7UA6zMD2aiWi
-	7aZAndzkbNWafojlPT5n+ibqnU8rFgV0Mib51YT+SrcPFdfv64Jjl1JtYLmNAdzvrH8kcS
-	Mo4r5p1B/LF3CqOVE5uXdh1jiuBfOpA=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+jl2z9/pX2zCRMT6h5qbae+biJ++Up1G2LDt2lVB89I=;
+	b=PHL6HdF6DdlLamY7BEc+qPPBCDoovtj9KqEsng1hrJzpntb+2EHZaVfUMkXxuERqrWIaHy
+	t4ImSAxda9UF4ppm/5PrKUvIkS8mdW/UeQj+miPrNG3qXVUnqDqpG7UFO0XZ8AFhQJz6l6
+	3ZL1UgXBm0oyp2T/FxS8aaZ1FaAmmRs=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-147-q5tTnlavPdSRguWfHzVwdQ-1; Tue,
- 02 Jul 2024 09:28:40 -0400
-X-MC-Unique: q5tTnlavPdSRguWfHzVwdQ-1
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-607-4CUHkCvhOzucYTBx6Br-kQ-1; Tue,
+ 02 Jul 2024 09:28:48 -0400
+X-MC-Unique: 4CUHkCvhOzucYTBx6Br-kQ-1
 Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 82C6C19560A7;
-	Tue,  2 Jul 2024 13:28:34 +0000 (UTC)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0DC611933182;
+	Tue,  2 Jul 2024 13:28:47 +0000 (UTC)
 Received: from RHTRH0061144.bos.redhat.com (dhcp-17-72.bos.redhat.com [10.18.17.72])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CD56319560A3;
-	Tue,  2 Jul 2024 13:28:31 +0000 (UTC)
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4DCE319560AE;
+	Tue,  2 Jul 2024 13:28:34 +0000 (UTC)
 From: Aaron Conole <aconole@redhat.com>
 To: netdev@vger.kernel.org
 Cc: dev@openvswitch.org,
@@ -66,9 +68,11 @@ Cc: dev@openvswitch.org,
 	Shuah Khan <shuah@kernel.org>,
 	=?UTF-8?q?Adri=C3=A1n=20Moreno?= <amorenoz@redhat.com>,
 	Simon Horman <horms@kernel.org>
-Subject: [PATCH net-next 0/3] selftests: openvswitch: Address some flakes in the CI environment
-Date: Tue,  2 Jul 2024 09:28:27 -0400
-Message-ID: <20240702132830.213384-1-aconole@redhat.com>
+Subject: [PATCH net-next 1/3] selftests: openvswitch: Bump timeout to 15 minutes.
+Date: Tue,  2 Jul 2024 09:28:28 -0400
+Message-ID: <20240702132830.213384-2-aconole@redhat.com>
+In-Reply-To: <20240702132830.213384-1-aconole@redhat.com>
+References: <20240702132830.213384-1-aconole@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,23 +82,23 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-These patches aim to make using the openvswitch testsuite more reliable.
-These should address the major sources of flakiness in the openvswitch
-test suite allowing the CI infrastructure to exercise the openvswitch
-module for patch series.  There should be no change for users who simply
-run the tests (except that patch 3/3 does make some of the debugging a bit
-easier by making some output more verbose).
+We found that since some tests rely on the TCP SYN timeouts to cause flow
+misses, the default test suite timeout of 45 seconds is quick to be
+exceeded.  Bump the timeout to 15 minutes.
 
-Aaron Conole (3):
-  selftests: openvswitch: Bump timeout to 15 minutes.
-  selftests: openvswitch: Attempt to autoload module.
-  selftests: openvswitch: Be more verbose with selftest debugging.
-
- .../selftests/net/openvswitch/openvswitch.sh  | 23 ++++++++++++-------
- .../selftests/net/openvswitch/settings        |  1 +
- 2 files changed, 16 insertions(+), 8 deletions(-)
+Signed-off-by: Aaron Conole <aconole@redhat.com>
+---
+ tools/testing/selftests/net/openvswitch/settings | 1 +
+ 1 file changed, 1 insertion(+)
  create mode 100644 tools/testing/selftests/net/openvswitch/settings
 
+diff --git a/tools/testing/selftests/net/openvswitch/settings b/tools/testing/selftests/net/openvswitch/settings
+new file mode 100644
+index 000000000000..e2206265f67c
+--- /dev/null
++++ b/tools/testing/selftests/net/openvswitch/settings
+@@ -0,0 +1 @@
++timeout=900
 -- 
 2.45.1
 
