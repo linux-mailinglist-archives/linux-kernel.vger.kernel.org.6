@@ -1,197 +1,254 @@
-Return-Path: <linux-kernel+bounces-238201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-238202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9017E9246B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:55:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6B999246BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 19:55:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C6BD1F23EE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:55:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA3EE1C208F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Jul 2024 17:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878361C0DE3;
-	Tue,  2 Jul 2024 17:55:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992631C8FAB;
+	Tue,  2 Jul 2024 17:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="itJE+CY7"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2064.outbound.protection.outlook.com [40.107.102.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DLooFOTV"
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12AFB15B104;
-	Tue,  2 Jul 2024 17:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719942899; cv=fail; b=qLsYTmmE2x4i7BqBieTCN+vTbjewly/fXQCJ7y7S2FVvu4hqEG3mXPtTF7Mxyo169Sil6oIbeI4B5P+qmRtSiaJNmxsZ/lh36586KzypCJcGcLgrZLqq8oUCfXhWe5MO+kwced83sXR0np7UrZOUVRGL4WUCO3nM1TzQn96H+Ko=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719942899; c=relaxed/simple;
-	bh=zW6JsaUXu1FErppz17lP9eqe+5BtwgXU/ycNSlYDhkk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=pzoawpKmydHJBd2MPDeTeLeLUZ/NEJe07TIFd+7628yTYc1h27iXGWVKAiopGIiX0NOszsrhukbUIsQcmuDhuwU0RN6MZhAKTcV5w2xxTJaiKsF9qZlLJHPrGotGQJ+gtU+DL22ffI9aGz5q3uNZarcX6SC+wH3KL8WNDUKDopo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=itJE+CY7; arc=fail smtp.client-ip=40.107.102.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aXwoycv4SJVOAAJYSmA0qFrmyzZJ6rBRZRlWIEwStvf4+hZSR7Z+TlEF9r2wmmUaCDOStg5Jy1aec0Lb6yP0msJWvinXEU8yOgJPVDDjU5PfwjinRJIPcNdyMvA8XhnTyXR4ILD0SOdbmPjbnSMmNWRP9jVXpVeaX5J8/JOmRV3iGeOEiQj5WKlvHNb1MCz8OcUD+rF/3Cg/eKpYMcmrx0h/kG1U6431XwEvF0SZA60mp7MuQwYW96Eeh38iPMZJlA+Ni/g8Bi3Gjcv2Ztv0aLN9p1YWgu9WhqiSUv+gGz7LIQjsOjHhoQKrySGtg+zxOHILdv+Y9txY5OeVj4FZag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JdFn24KjnMPlQqtFS6Bb6/iDrMg4IwNfHb1+wH/Plds=;
- b=EAenCg/jgwOo4rYlLOScK5FBd+ZW4Ku9bU4xS3wE8SdnBJgooC29vjc7l1UguogEzahZEQJN6k/QbQ5HAzO99EZuqtRTSqrpMKOl7zMkOuAAwGAuHogn5JIBJSVQx2p2XcgIuylsjazAqlXQGV//+IMdvJCRtrBIAqmZEyewo77jARMPEKbL8/3vsag00WEHOk7DvjvtfG2ID+2OWrws2pu3nu3jp0kWNAVzn6Y93KZGbqcwjvI1+BwCURnUEvC2RM+ic4t99F6Oh9rUlItzEEwK7H29OTBs+8aR8Ipj43fVK4cEab/9omqaw6p4abwGfHtkKNaeSAunXOC8YlkBMg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JdFn24KjnMPlQqtFS6Bb6/iDrMg4IwNfHb1+wH/Plds=;
- b=itJE+CY7xtvAzNS88416F7Fp0tNXf8NH3a/RCn8s2qaD7GzBidn8AjkM2NaDLgDhpUwYg0OOpy+BDsWnJCke2kbEK3xeWfxfn3GYUqqNT28JlziDuR71U2NQ7n6AQly92rFqllL1EKe7DXkzKMyjNgXAPxERotKPQugP5Tpkhbc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by PH7PR12MB7377.namprd12.prod.outlook.com (2603:10b6:510:20c::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.33; Tue, 2 Jul
- 2024 17:54:49 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%6]) with mapi id 15.20.7719.029; Tue, 2 Jul 2024
- 17:54:48 +0000
-Message-ID: <9e0e74dd-7b79-412b-bb1d-0e0ff6d7e989@amd.com>
-Date: Tue, 2 Jul 2024 12:54:46 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] AMD Pstate driver fixes
-To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- rafael@kernel.org, viresh.kumar@linaro.org, gautham.shenoy@amd.com,
- perry.yuan@amd.com, skhan@linuxfoundation.org, li.meng@amd.com,
- ray.huang@amd.com
-References: <20240702081413.5688-1-Dhananjay.Ugwekar@amd.com>
- <cf835a26-1a76-4cf4-840a-c0bc6cb03452@amd.com>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <cf835a26-1a76-4cf4-840a-c0bc6cb03452@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA1P222CA0024.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:22c::26) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B8B15B104;
+	Tue,  2 Jul 2024 17:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719942906; cv=none; b=Ibn6//pzvK4NTmNUZlM3OFonnONL60WbE6yfoTt+ivawve/5SirlTQJDcNehaVCwuZBch/e5idT89SmSe3u1pqH2xVd2Y17zUyoXak8wMrjQN+n4jDqPZTWQ9VA/P/Xazj4KmRjkxB8GXpXXO3DXoRVauZFTQf8C6SejjvOjRLo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719942906; c=relaxed/simple;
+	bh=oRQApVEe2s158r1wJospfawwOp3o/XpQXXhOYr/y7IE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aNHvNqe3kaDIdDu2uZdCqQDrlJQHVu4fk7cY8+9ynJV6IaxRDu44lN6VVEoqDNXrvnyfRVy9iqefwbX2EIqTIe38JBSs5U7diTbQk9r4SXy6fcnRCdJbAakQgLdg30+BKHJlquCiCJrWhJatd8k/DtufR9ubkJ708VYJRF8Xrys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DLooFOTV; arc=none smtp.client-ip=209.85.160.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-25d8ab4f279so2560804fac.3;
+        Tue, 02 Jul 2024 10:55:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719942904; x=1720547704; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tKUGvgpI83xD4b3uGOJIjYtXHI59r73b7qdVFPeKbA0=;
+        b=DLooFOTVJJuyoheooTPAuwKAvGaUsUZcI5D4pHomvb+yODXSiuiIUmNa/scI6lkhXM
+         ioIpoHW8qMwqDYofSDLvhGoIzzsHJ0mVFyzoPoLcmU2HdKzo8pheZ9tPMzzE/XrRgaY/
+         uQAoHRHi68AceNa5w5p9rGQ5QQheNegp0742aiON5QlGoqS+wZSgMOjQGGJuN+//fFGW
+         GaaB5FGvZCvgEykHjmdgZKpZiHA7jbQjWxHw38YKmHQ6/Lt/GZ+uoP9WOa+a9qi6vaDg
+         hNz0IMX5t+SqhJjtM3Fy8AoVgKA4uwQ+Wivlkcd8IygkTn/mvxt1NLRCSmltkcUkxvxs
+         GRmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719942904; x=1720547704;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tKUGvgpI83xD4b3uGOJIjYtXHI59r73b7qdVFPeKbA0=;
+        b=Pc7DW0Osuri7jG2R6Syf7jafEgK84yvSfgemsC2sgTaDjGf4fcWzSYDXUJqoCkXsXM
+         skH2CRiMhIzVjYMXfVafIEUFp4m76X6tKTswRWq6hmc83fSFrf9Vsx4zuJe3Nhc2OzxJ
+         0uimfbJcsKsmqrA/4TnBKBcHAESSVFlA9hCFilUqCScN5qT0b+eK14l1dJys6Dd/V3Zc
+         0tmBzXByFfXQEdfOBEUnHVZYVakIDCJk6lSvTm8YnqzeUwMYMhUFUV6Ijd95MA5UL4DM
+         vPhAb719ZmtomfLdTlOoaQAkoNFnhZI2vnq8rnLuRkPtcJpJ2EOfl+Kc48dsHR8bCQkk
+         oyDA==
+X-Forwarded-Encrypted: i=1; AJvYcCWYGNr60kzNJv8Elt1yNU2XVoQZhLz7pesHvQA+zdVZRkZnoVWQ2U0E2TwaWFn7+lwXNMWK7ycq1Lf4QaKEN8fH4ES2vCHZvRtjCeX6DqtIWxrznfz2WpJuQykcaD270uolP5RjLvRPLHyjhhP5z3fHutuyIsiFxwm5CizESMWBJG3tKbks
+X-Gm-Message-State: AOJu0YxhYnPGGG7nCbAu8BYPK+455O4ALvCxA9APSrz8r32QpNoyFoL6
+	R64kwSpJEjdmlrsvnCcr1Omgl6Ji3KqL7XbS5qgZCK0Lz4Vn3chzms9JKx9g4TAp/Lz8OrlG+hK
+	P3W+wANwpZ9jQdfsZSIpa86n2x3yjzSBv
+X-Google-Smtp-Source: AGHT+IEZgIAQE0Oa6Z3JyHRrDUyaBxqoyHRtKtZmJVmhLd42aC/XcYZy6Wc4NlLDIGDDNh+w2CshSw5enyRJhIY99BI=
+X-Received: by 2002:a05:6871:3a13:b0:254:b5d7:f469 with SMTP id
+ 586e51a60fabf-25db351715amr8168306fac.31.1719942904058; Tue, 02 Jul 2024
+ 10:55:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|PH7PR12MB7377:EE_
-X-MS-Office365-Filtering-Correlation-Id: 266d0f3e-0df6-4f09-00ee-08dc9ac010dd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UGJWcW9kVWdtdmNBeithZmlPR3ZYb2pSbkdMNVhWK20rZzBYVjM3UWcwK09j?=
- =?utf-8?B?Y2FlaFdoYi9xdFBQQTVZYlRzQmJsVUFqSVprZldiSVN2L1loWDZ2Vm40Y240?=
- =?utf-8?B?ZU95SFc5S2Y5TWgrNDhGTXZYSE9sME91dmpONFdkeFBqWk12Sy84WVUrOXVs?=
- =?utf-8?B?V1hTMXZNRTlmTVZZVC9xK0xpQnoyeE5xUkd0VDBDeHBWZlcrc3R1WGVjUnNN?=
- =?utf-8?B?T3hpbUppL3BNdXAxUUZxRzRyY24zK2JILzJXVGVsbnI0TGVCNnZFVVQ0VVUy?=
- =?utf-8?B?bllpblErQkxnWC9TZVpCbkFzWTVKcm5pRDc1L1NZZ0xNdVVrWm4yaTdwcnZO?=
- =?utf-8?B?S20ybWVhTUF0c01FU1ExQnBDUEdIdEd0a1RRbEhMQ1VqVUo5bG5jZFltS2d1?=
- =?utf-8?B?M0FVQk1OdzQ3Rkg3NEp0RWhLa3ZlWXM2MDYycHRScnpWeXFsK1BDVnhDRkQx?=
- =?utf-8?B?RWJkTXo2VUhmd0RkV0FQUzJDUS85QWhHM3ZIeXhuT0RZODVqc2pRRXNNWkZD?=
- =?utf-8?B?bm9mR3JaYk5KQk83ZG5WM1QxdUVGREdJUGNiNjJpcURIdlA4a3RNcmIxNVh6?=
- =?utf-8?B?SXE5RURTb0xMa0QrMGtKSlBMb0xBYTdYaWNZTFdEV2ZpbGpZN09aa2l6N3Ex?=
- =?utf-8?B?Q1RZTXRFb2gxTEtZVFh6RzFjcExsVXZpNjRaL1l0dzFKU3o5ZDYxUXF1NU9t?=
- =?utf-8?B?M21KNytKdlljT3N2R1REaEJRckVlOUhnSEhkSkJpODQvS0dySFdSUThTTjAr?=
- =?utf-8?B?TE9MczJCSVU2MStwRGY4a1ZmQ1BrdHZCdWlCcmNQYkdjMFpzWGFBcHJhdGRC?=
- =?utf-8?B?YUdGTXNaeEZOMFdpSlNYeSthd1J3NU1vbHRRMXJ4dDJGK1BUZEFGaFJmcmFE?=
- =?utf-8?B?ZWwrdzU1NFhJNW1rSXJmR3NJRUJnZzVYaW5HSm5aNlVESEtTNS9tUURNbTZp?=
- =?utf-8?B?WjB6YzFNbkhsT2FqUldZTzQ5aTNmcERId21mNlRnY2JtcTNPRUxmbytVSHJ4?=
- =?utf-8?B?R0JLMTk5cjdSQUxXUkEvUC9maVptbzROSno1dUJMM3dpaUZSb1VQb2dYeksr?=
- =?utf-8?B?VHFZK0RUbEh6Q1NCY200TFBVZk54czliNElCMG9RM1crbzhNenFxOFZtZnp6?=
- =?utf-8?B?Nm50SGRrVjZCSXp5dklCVlJ5NXVvYkdRdFlicFYzMkNKM2NWMnJkQ1lPVEJH?=
- =?utf-8?B?aWROSDk2THJJQ2RaK0pBQ1FVU1RQdlB6MWJwbmtoNDBHRTN2VTF1Q0ZRQ1NU?=
- =?utf-8?B?emFYZk1ETmlENUh3d1JycnVjNzdpYVNicUVEYUU3ZGhQYW1WS1VEQXd4OWk1?=
- =?utf-8?B?bHN3dGZpL0hScEJRZENyRFgwZUFUMXpvZFFGcXVUOHB1eDJBSHJ5UmJxZmJS?=
- =?utf-8?B?R2ZvUzd5R0ZFSFhLcUtmY21lVUd3U1JBQzl4TGQ4c1c3UEE0VElpRnFmRVVH?=
- =?utf-8?B?SSt6RlArNkpSZU9JdmI4TnJKUU5pQU9BNzZ2ak9mWVRqRUtTOXFrMzg4aTdy?=
- =?utf-8?B?TW5ISk1QUTFsRjNIdjFPK2JiTWpEVUhTZU5zdXNqeWpzRXgrT0thRCs3Ykg1?=
- =?utf-8?B?WGRRSWtFT3pPQ05qN0xVYTFiWXFUSlNjenJmNGR4ak96Yjkwb0pNbnhYak11?=
- =?utf-8?B?bm9ZTjRxMjRXNFVVKy9ma2lZNjlObWJYc2pnRk04dHBaUmliUUdhY01ZNjJC?=
- =?utf-8?B?ZWt2NDdHZ1hqK3l5MGZMMzV1UlNxNjJCUEtESDhnUDhzQjk5N2xNVEh6c0FB?=
- =?utf-8?Q?4GRdT6i2Z9Jvr4iJ4c=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?emtJc1YySWZlcWFwOTNDZ1A4ZVo2TGlya09FNFlVNGVQSU00Znp0Tm9vWXlG?=
- =?utf-8?B?Rk9DZUpuTEJqM2JqMDRMV2ZqMjRsSmZtN3ZMN2FnNWZCRHJxVmFwYVRSK3JM?=
- =?utf-8?B?TnZrdlhxd0hlUDRzb1ZjUVNzZFUzYmFOaTdlOHdiME03Mk9mUzRaNVdpTEsy?=
- =?utf-8?B?NjlXNU10WHlKcXJ6bmZUcmFuL1FSZnlidTJlNUpsUk13MS9EWU9SVVV4c2RQ?=
- =?utf-8?B?WVRJWHdIR29TQ0s5cDdNRWJjYTF4VHloQTM1amdBbkd4NFg5QWRHNUJEQWpF?=
- =?utf-8?B?c2dXanZhdURZN2lHTDFJZE1LazZMWjVJS2wxVHdMOVp6K254K0lKdXJkT2Mr?=
- =?utf-8?B?WFFDNGNFZjdSSFFPVHEyK2FvYUxVUmJRakFmZEJyV2tkZ2NoS1NOcEJkdllR?=
- =?utf-8?B?UnZYalEzeWFBdkI4ZERaL3pYQ3RDeVhXdVFLanBzeElnd0tCOE1UYk1EQnFv?=
- =?utf-8?B?b2dmbWxwNVFCZFZaeXVWd2VhRjJ2M25yN1lWQVdDbFA2a2RybE9uMldUclhV?=
- =?utf-8?B?L1V6cFdua0xCcEU2ZGlmaGM1RmU4ejl4dXlrNW5kelJPclRBbHFRZ2ZVKzVj?=
- =?utf-8?B?Q0F0VjVlSmFnQ25ZZDZuVkdrQ3Y3UzVTdk00WGluamM2Mjk2azRmRmNLK2lq?=
- =?utf-8?B?aHZ3NXBvczE2OEc4T1hIQ3Ntd243TzcrdFg2cWcxTHcvbTFqV29WVTFJMUVs?=
- =?utf-8?B?WjRMY0IwYWo3TmNaWGZ6VERBVVFtdlJsRlJCTkF3Q2Focmo3MkhMU0Z0V0ox?=
- =?utf-8?B?TXR4Q0xqWU1ETUc3RnIwYkZUK0tsWHpWbzBmTEFSTWN6V3pPQlgyWndLbkM0?=
- =?utf-8?B?QXpGZ3EveDdBSXNEUWRsRUtMcDRsN2duQ1VZc1ZPaEI4Y1U1Rjdta05ud2xN?=
- =?utf-8?B?amgwWlJLeFVHblpUMnFQK3c1WE9xWTFQdEpZZXFmS2FneDNQL0RIamFVOG5j?=
- =?utf-8?B?QmF6OUN6elVGemtYZ2Nhcmd4NmVvd0JURW15eXJWVnFBUEpqNVBBOGFKdDBT?=
- =?utf-8?B?ZnJaSDhrTDZMQ0l4b3Z2anlZeFIwS29CK01XKzdmOE5aeU5ydlpWc2JnaTNR?=
- =?utf-8?B?LzBYNk5EckYyaFU4WjFya1Y2SXpBYnZ3WHVyU2Y3RjNtdkkrcjhtQmxIdVRX?=
- =?utf-8?B?RW8vbFVsd1ErcVFXQkdxeHdjU2dvY0tld2xJeWZrQ3Qwd2MzQ01IYStYMXpJ?=
- =?utf-8?B?N1ZWTlR2Sk8zQm1lNDUxSlNLaWZ2RStQeWJUNFExeTB1TmdBOUxMS3czRk9s?=
- =?utf-8?B?SFRSaS81b3pZMXRIM1lmUlIvS1JJa0laakxZckZ5RDQ1WWhXL2IxTHkzTURX?=
- =?utf-8?B?T0lNNmQxZ2xMb25RUzZVaVFjbi83MDFBZkJHL1hETzFReVlZeG5RSjRTdHZF?=
- =?utf-8?B?eWhlbDRaVjV5Ukw5VDl3VDhDUDFNK1JYQitNblMxbGJYR1RYcW9SbDZoMWVz?=
- =?utf-8?B?R2VOR2VBa2JHMkp4VEErSXVsZVBiMzJVc3hENFhWSTRRSnZaVEpPaGhSTFI1?=
- =?utf-8?B?cm5pb1lncHpONkI2dnpEQWhsU2JsbHFLY0VqVi9zS0JzUldNZllDU0FHVFZr?=
- =?utf-8?B?VlB1NEsvemtLeGpZc29lNy94M1JvUnJ1eVRIZXhVamp4UHNldzQ4SUNsUFNL?=
- =?utf-8?B?SW1JQ2QwdkIxaWVXMmR0aHlHdjN3MEtmcytIamlscWZGdnpHby8vL2kzYWtK?=
- =?utf-8?B?SjJSTW1XOEFtR0UxL3lHOFhCMWtxQnpsYjFpU2FZTGZjZnVtSmlkKy9ReEli?=
- =?utf-8?B?b2kzWmJWT0tWQ3prTkhkdm0vZCtiV1IrdlR4eE4xTWxRbXEydEJ4YXFQY0lk?=
- =?utf-8?B?ODRyN2dMWERoMkltUzZhYnJvTHF5UUEwQkJJN0JtOW1pM0hsRnlMT1lmUHNJ?=
- =?utf-8?B?THExa1gvZ0hYLzJlcGtxRmQ3OTc4bzl1UmNrQ0lsTVNNUzZFalZsZDFmSjhs?=
- =?utf-8?B?WDNtUU1BZDd4VTM5djlVSHVFWlRvZU1zdzRyRkoxYlorcjFXS00yTjY2c0tX?=
- =?utf-8?B?c1ZWQkxOK09hUnVxQkVycVl1NDROYngzMW1uZU5sRTk1b0grV21pbDQ1SU82?=
- =?utf-8?B?b3g0WW80d3hLUWNPSnpKNjl0M0JiZ1JiOGlsSWpNWDY1ODlTSzU0K205dVJ4?=
- =?utf-8?Q?+eZUWP03AP7KTRv/hwvlyuRM2?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 266d0f3e-0df6-4f09-00ee-08dc9ac010dd
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jul 2024 17:54:48.9106
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JC2jvoMNoeGfFXOgkQiiQkYFxHD8LEa0iWoS0ahIEudq+SZsPdQpIXQDXg3cx1YuUyI/8xn0ZE3yp9BifJDRTg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7377
+References: <20240701223935.3783951-1-andrii@kernel.org> <20240702102353.GG11386@noisy.programming.kicks-ass.net>
+ <20240702115447.GA28838@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240702115447.GA28838@noisy.programming.kicks-ass.net>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 2 Jul 2024 10:54:51 -0700
+Message-ID: <CAEf4BzaQUzQdba2=F2NoV7=Th98fxz2EN62QX2Ej92bazt1GAg@mail.gmail.com>
+Subject: Re: [PATCH v2 00/12] uprobes: add batched register/unregister APIs
+ and per-CPU RW semaphore
+To: Peter Zijlstra <peterz@infradead.org>, "Paul E . McKenney" <paulmck@kernel.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
+	rostedt@goodmis.org, mhiramat@kernel.org, oleg@redhat.com, mingo@redhat.com, 
+	bpf@vger.kernel.org, jolsa@kernel.org, clm@meta.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/2/2024 3:24, Dhananjay Ugwekar wrote:
-> Forgot to mention the v2 changes,
-> 
-> v2 changes:
-> * Add reported-by tags (Gautham)
-> * Modify patch 2 to use amd_pstate_update_perf (Mario)
-> * Modify commit name for patch 1 (Gautham)
-> * Modify commit message for patch 2, from scaling_min/max_freq to
->    just scaling_max_freq, as scaling_min_freq still needs some debugging
->    to work correctly with active mode.
-> 
-> Regards,
-> Dhananjay
-> 
+On Tue, Jul 2, 2024 at 4:54=E2=80=AFAM Peter Zijlstra <peterz@infradead.org=
+> wrote:
+>
+>
+> +LKML
+>
+> On Tue, Jul 02, 2024 at 12:23:53PM +0200, Peter Zijlstra wrote:
+> > On Mon, Jul 01, 2024 at 03:39:23PM -0700, Andrii Nakryiko wrote:
+> > > This patch set, ultimately, switches global uprobes_treelock from RW =
+spinlock
+> > > to per-CPU RW semaphore, which has better performance and scales bett=
+er under
+> > > contention and multiple parallel threads triggering lots of uprobes.
+> >
+> > Why not RCU + normal lock thing?
+>
+> Something like the *completely* untested below.
+>
+> ---
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index 2c83ba776fc7..03b38f3f7be3 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -40,6 +40,7 @@ static struct rb_root uprobes_tree =3D RB_ROOT;
+>  #define no_uprobe_events()     RB_EMPTY_ROOT(&uprobes_tree)
+>
+>  static DEFINE_RWLOCK(uprobes_treelock);        /* serialize rbtree acces=
+s */
+> +static seqcount_rwlock_t uprobes_seqcount =3D SEQCNT_RWLOCK_ZERO(uprobes=
+_seqcount, &uprobes_treelock);
+>
+>  #define UPROBES_HASH_SZ        13
+>  /* serialize uprobe->pending_list */
+> @@ -54,6 +55,7 @@ DEFINE_STATIC_PERCPU_RWSEM(dup_mmap_sem);
+>  struct uprobe {
+>         struct rb_node          rb_node;        /* node in the rb tree */
+>         refcount_t              ref;
+> +       struct rcu_head         rcu;
+>         struct rw_semaphore     register_rwsem;
+>         struct rw_semaphore     consumer_rwsem;
+>         struct list_head        pending_list;
+> @@ -67,7 +69,7 @@ struct uprobe {
+>          * The generic code assumes that it has two members of unknown ty=
+pe
+>          * owned by the arch-specific code:
+>          *
+> -        *      insn -  copy_insn() saves the original instruction here f=
+or
+> +        *      insn -  copy_insn() saves the original instruction here f=
+or
+>          *              arch_uprobe_analyze_insn().
+>          *
+>          *      ixol -  potentially modified instruction to execute out o=
+f
+> @@ -593,6 +595,12 @@ static struct uprobe *get_uprobe(struct uprobe *upro=
+be)
+>         return uprobe;
+>  }
+>
+> +static void uprobe_free_rcu(struct rcu_head *rcu)
+> +{
+> +       struct uprobe *uprobe =3D container_of(rcu, struct uprobe, rcu);
+> +       kfree(uprobe);
+> +}
+> +
+>  static void put_uprobe(struct uprobe *uprobe)
+>  {
+>         if (refcount_dec_and_test(&uprobe->ref)) {
+> @@ -604,7 +612,8 @@ static void put_uprobe(struct uprobe *uprobe)
 
-Thanks!  On it's own it looks good.  I've added it to 
-superm1/bleeding-edge for some more testing.
+right above this we have roughly this:
 
-While testing I did uncover some other issues that I dropped some other 
-patches for review if you can please look them over.
+percpu_down_write(&uprobes_treelock);
 
-https://lore.kernel.org/linux-pm/20240702171515.6780-1-mario.limonciello@amd.com/T/#m1304e6bfe80b7a76e41d551784542fc1038e03e8
+/* refcount check */
+rb_erase(&uprobe->rb_node, &uprobes_tree);
 
-Thanks,
+percpu_up_write(&uprobes_treelock);
 
+
+This writer lock is necessary for modification of the RB tree. And I
+was under impression that I shouldn't be doing
+percpu_(down|up)_write() inside the normal
+rcu_read_lock()/rcu_read_unlock() region (percpu_down_write has
+might_sleep() in it). But maybe I'm wrong, hopefully Paul can help to
+clarify.
+
+But actually what's wrong with RCU Tasks Trace flavor? I will
+ultimately use it anyway to avoid uprobe taking unnecessary refcount
+and to protect uprobe->consumers iteration and uc->handler() calls,
+which could be sleepable, so would need rcu_read_lock_trace().
+
+>                 mutex_lock(&delayed_uprobe_lock);
+>                 delayed_uprobe_remove(uprobe, NULL);
+>                 mutex_unlock(&delayed_uprobe_lock);
+> -               kfree(uprobe);
+> +
+> +               call_rcu(&uprobe->rcu, uprobe_free_rcu);
+>         }
+>  }
+>
+> @@ -668,12 +677,25 @@ static struct uprobe *__find_uprobe(struct inode *i=
+node, loff_t offset)
+>  static struct uprobe *find_uprobe(struct inode *inode, loff_t offset)
+>  {
+>         struct uprobe *uprobe;
+> +       unsigned seq;
+>
+> -       read_lock(&uprobes_treelock);
+> -       uprobe =3D __find_uprobe(inode, offset);
+> -       read_unlock(&uprobes_treelock);
+> +       guard(rcu)();
+>
+> -       return uprobe;
+> +       do {
+> +               seq =3D read_seqcount_begin(&uprobes_seqcount);
+> +               uprobes =3D __find_uprobe(inode, offset);
+> +               if (uprobes) {
+> +                       /*
+> +                        * Lockless RB-tree lookups are prone to false-ne=
+gatives.
+> +                        * If they find something, it's good. If they do =
+not find,
+> +                        * it needs to be validated.
+> +                        */
+> +                       return uprobes;
+> +               }
+> +       } while (read_seqcount_retry(&uprobes_seqcount, seq));
+> +
+> +       /* Really didn't find anything. */
+> +       return NULL;
+>  }
+
+Honest question here, as I don't understand the tradeoffs well enough.
+Is there a lot of benefit to switching to seqcount lock vs using
+percpu RW semaphore (previously recommended by Ingo). The latter is a
+nice drop-in replacement and seems to be very fast and scale well.
+Right now we are bottlenecked on uprobe->register_rwsem (not
+uprobes_treelock anymore), which is currently limiting the scalability
+of uprobes and I'm going to work on that next once I'm done with this
+series.
+
+>
+>  static struct uprobe *__insert_uprobe(struct uprobe *uprobe)
+> @@ -702,7 +724,9 @@ static struct uprobe *insert_uprobe(struct uprobe *up=
+robe)
+>         struct uprobe *u;
+>
+>         write_lock(&uprobes_treelock);
+> +       write_seqcount_begin(&uprobes_seqcount);
+>         u =3D __insert_uprobe(uprobe);
+> +       write_seqcount_end(&uprobes_seqcount);
+>         write_unlock(&uprobes_treelock);
+>
+>         return u;
+> @@ -936,7 +960,9 @@ static void delete_uprobe(struct uprobe *uprobe)
+>                 return;
+>
+>         write_lock(&uprobes_treelock);
+> +       write_seqcount_begin(&uprobes_seqcount);
+>         rb_erase(&uprobe->rb_node, &uprobes_tree);
+> +       write_seqcount_end(&uprobes_seqcount);
+>         write_unlock(&uprobes_treelock);
+>         RB_CLEAR_NODE(&uprobe->rb_node); /* for uprobe_is_active() */
+>         put_uprobe(uprobe);
 
